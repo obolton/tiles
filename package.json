@@ -4,5 +4,8 @@
   "workspaces": [
     "packages/api",
     "packages/web"
-  ]
+  ],
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
 }
