@@ -1,6 +1,7 @@
 {
   "name": "tiles",
   "private": true,
+  "type": "module",
   "workspaces": [
     "packages/api",
     "packages/web"
