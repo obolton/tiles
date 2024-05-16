@@ -9,6 +9,11 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   reactRecommended,
   {
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
     rules: {
       "react/react-in-jsx-scope": "off",
     },
