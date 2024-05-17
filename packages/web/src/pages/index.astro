@@ -1,16 +1,19 @@
 ---
-
+import Page from "../layouts/Page.astro";
+import Toolbar from "../components/Toolbar.astro";
+import Switch from "../components/Switch.astro";
+import PageTitle from "../components/header/PageTitle";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Page title="Tiles">
+  <PageTitle pageId="TODO" title="Tiles" client:edit slot="header" />
+  <Toolbar><Switch id="editSwitch" label="Edit" /></Toolbar>
+</Page>
+<script>
+  import { setEditMode } from "../utils/edit";
+  document
+    .getElementById("editSwitch")
+    ?.addEventListener("change", (event) =>
+      setEditMode((event.target as HTMLInputElement).checked)
+    );
+</script>
