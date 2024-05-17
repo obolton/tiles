@@ -1,7 +1,7 @@
 import type { ClientDirective } from "astro";
 import { EDIT_START_EVENT } from "../../constants/edit";
 
-const directive: ClientDirective = (load, options, element) => {
+const directive: ClientDirective = (load, options) => {
   document.addEventListener(
     EDIT_START_EVENT,
     async (event) => {
