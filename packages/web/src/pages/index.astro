@@ -4,12 +4,13 @@ import Toolbar from "../components/Toolbar.astro";
 import Switch from "../components/Switch.astro";
 import PageTitle from "../components/header/PageTitle";
 import Grid from "../components/Grid.astro";
+import TileTypeSelector from "../components/TileTypeSelector.astro";
 ---
 
 <Page title="Tiles">
   <PageTitle pageId="TODO" title="Tiles" client:edit slot="header" />
   <Toolbar><Switch id="editSwitch" label="Edit" /></Toolbar>
-  <Grid />
+  <Grid><TileTypeSelector /></Grid>
 </Page>
 <script>
   import { setEditMode } from "../utils/edit";
