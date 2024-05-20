@@ -1,15 +1,35 @@
-import Fastify from "fastify";
+import { createHTTPServer } from "@trpc/server/adapters/standalone";
+import cors from "cors";
+import router from "./router/index.js";
 
-const fastify = Fastify({ logger: true });
+const PORT = parseInt(process.env.PORT || "", 10);
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
+const USER_ID = process.env.USER_ID;
 
-fastify.get("/", async (request, reply) => {
-  reply.send({ hello: "world" });
-});
+if (!PORT) {
+  throw new Error("PORT environment variable is not set");
+}
 
-fastify.listen({ port: 3000 }, (error, address) => {
-  if (error) {
-    fastify.log.error(error);
-    process.exit(1);
-  }
-  fastify.log.info(`Server listening at ${address}`);
-});
+if (Number.isNaN(PORT)) {
+  throw new Error("PORT environment variable is invalid");
+}
+
+if (!CLIENT_ORIGIN) {
+  throw new Error("CLIENT_ORIGIN environment variable is not set");
+}
+
+if (!USER_ID) {
+  throw new Error("USER_ID environment variable is not set");
+}
+
+createHTTPServer({
+  router,
+  middleware: cors({
+    origin: CLIENT_ORIGIN,
+  }),
+  createContext() {
+    return {
+      userId: USER_ID,
+    };
+  },
+}).listen(PORT);
