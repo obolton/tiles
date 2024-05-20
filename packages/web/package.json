@@ -14,6 +14,7 @@
   "dependencies": {
     "@astrojs/check": "^0.6.0",
     "@astrojs/react": "^3.3.4",
+    "@trpc/client": "^11.0.0-rc.374",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
     "astro": "^4.8.3",
