@@ -6,6 +6,9 @@
     "packages/api",
     "packages/web"
   ],
+  "scripts": {
+    "dev": "npm run dev --workspace=api & npm run dev --workspace=web"
+  },
   "devDependencies": {
     "@eslint/js": "^9.2.0",
     "eslint": "^8.57.0",
