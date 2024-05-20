@@ -1,6 +1,6 @@
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
 import cors from "cors";
-import router from "./router/index.js";
+import router from "./router/index.ts";
 
 const PORT = parseInt(process.env.PORT || "", 10);
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;

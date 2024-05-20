@@ -1,5 +1,5 @@
 import type { Page } from "@prisma/client";
-import prisma from "../database/prisma.js";
+import prisma from "../database/prisma.ts";
 
 export async function getPage(id: string) {
   return prisma.page.findUniqueOrThrow({

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { router, procedure } from "./trpc.js";
-import { getPage, updatePage } from "../models/pages.js";
+import { router, procedure } from "./trpc.ts";
+import { getPage, updatePage } from "../models/pages.ts";
 
 export default router({
   getById: procedure.input(z.string()).query(async ({ input }) => {

@@ -1,5 +1,5 @@
-import { router } from "./trpc.js";
-import pagesRouter from "./pages.js";
+import { router } from "./trpc.ts";
+import pagesRouter from "./pages.ts";
 
 const appRouter = router({
   pages: pagesRouter,
