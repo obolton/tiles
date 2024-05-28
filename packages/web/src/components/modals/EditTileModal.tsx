@@ -4,12 +4,14 @@ import {
   useCallback,
   useRef,
   useEffect,
+  useMemo,
   useState,
   type LazyExoticComponent,
   type ComponentType,
 } from "react";
 import useSearchParam from "../../hooks/useSearchParam";
 import { setSearchParams } from "../../utils/navigation";
+import type { TileType } from "../../types/tiles";
 import styles from "./EditTileModal.module.css";
 
 interface ModalProps {
@@ -17,10 +19,10 @@ interface ModalProps {
   close: () => void;
 }
 
-const MODALS: Record<string, LazyExoticComponent<ComponentType<ModalProps>>> = {
-  image: lazy(() => import("./EditImageTileModal")),
-  text: lazy(() => import("./EditTextTileModal")),
-};
+const MODALS = {
+  IMAGE: lazy(() => import("./EditImageTileModal")),
+  TEXT: lazy(() => import("./EditTextTileModal")),
+} satisfies Record<TileType, LazyExoticComponent<ComponentType<ModalProps>>>;
 
 interface Props {
   pageId: string;
@@ -28,11 +30,10 @@ interface Props {
 
 export default function EditTileModal({ pageId }: Props) {
   const modal = useSearchParam("modal");
+  const tileId = useSearchParam("tileId");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [style, setStyle] = useState<React.CSSProperties>({});
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {}, []);
 
   useEffect(() => {
     if (modal) {
@@ -64,12 +65,29 @@ export default function EditTileModal({ pageId }: Props) {
     []
   );
 
-  const ModalComponent = modal ? MODALS[modal] : null;
+  const ModalComponent = modal ? MODALS[modal.toUpperCase() as TileType] : null;
 
   if (modal && !ModalComponent) {
     console.error(`Invalid modal type: ${modal}`);
     return null;
   }
+
+  const tileData = useMemo(() => {
+    if (!tileId) {
+      return null;
+    }
+    const element = document.querySelector(
+      `[data-tile-id="${tileId}"]`
+    ) as HTMLElement;
+    if (!element) {
+      throw new Error("Tile not found");
+    }
+    const data = element.dataset.tile;
+    if (!data) {
+      throw new Error("Tile data not found");
+    }
+    return JSON.parse(data);
+  }, [tileId]);
 
   return (
     <dialog
@@ -82,7 +100,7 @@ export default function EditTileModal({ pageId }: Props) {
     >
       {ModalComponent && (
         <Suspense>
-          <ModalComponent pageId={pageId} close={close} />
+          <ModalComponent pageId={pageId} close={close} tile={tileData} />
         </Suspense>
       )}
     </dialog>

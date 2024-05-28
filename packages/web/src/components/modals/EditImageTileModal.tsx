@@ -1,17 +1,24 @@
 import { useCallback, useRef, useState } from "react";
 import { uploadMedia } from "../../utils/media";
+import { getImageUrl } from "../../utils/images";
 import client from "../../api/client";
+import type { ImageTileData } from "../../types/tiles";
 import styles from "./EditImageTileModal.module.css";
 
 interface Props {
   pageId: string;
   close: () => void;
+  tile?: ImageTileData;
 }
 
-export default function EditImageTileModal({ pageId, close }: Props) {
+export default function EditImageTileModal({ pageId, close, tile }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [imageKey, setImageKey] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(
+    tile ? getImageUrl(tile.image.imageKey) : null
+  );
+  const [imageKey, setImageKey] = useState<string | null>(
+    tile?.image.imageKey ?? null
+  );
 
   const selectImage = useCallback(() => {
     if (inputRef.current) {
@@ -35,12 +42,15 @@ export default function EditImageTileModal({ pageId, close }: Props) {
       if (!imageKey) {
         return;
       }
-      const tile = await client.tiles.create.mutate({
+
+      const result = await client.tiles.createOrUpdate.mutate({
         pageId,
         type: "IMAGE",
+        id: tile?.image.id,
         imageKey,
       });
-      window.dispatchEvent(new CustomEvent("tile:add", { detail: tile }));
+      window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
+
       close();
     },
     [imageKey, pageId]
