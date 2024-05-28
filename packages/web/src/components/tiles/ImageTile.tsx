@@ -1,3 +1,4 @@
+import { getImageUrl } from "../../utils/images";
 import styles from "./ImageTile.module.css";
 
 export interface ImageTileProps {
@@ -5,12 +6,6 @@ export interface ImageTileProps {
 }
 
 export default function ImageTile({ imageKey }: ImageTileProps) {
-  const src = `${
-    import.meta.env.PUBLIC_IMAGES_BASE_URL
-  }/${imageKey}?class=thumbnail`;
-  return (
-    <div className={`editable ${styles.imageTile}`}>
-      <img className={styles.image} src={src} alt="Image" />
-    </div>
-  );
+  const src = getImageUrl(imageKey);
+  return <img className={styles.image} src={src} alt="Image" />;
 }

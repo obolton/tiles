@@ -5,5 +5,5 @@ export interface TextTileProps {
 }
 
 export default function TextTile({ content }: TextTileProps) {
-  return <div className={`editable ${styles.textTile}`}>{content}</div>;
+  return <div className={`${styles.text}`}>{content}</div>;
 }
