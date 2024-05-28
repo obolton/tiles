@@ -41,7 +41,7 @@ const { title } = Astro.props;
 
   .editable {
     outline: 3px solid transparent;
-    outline-offset: 8px;
+    outline-offset: 5px;
     transition: outline-color 0.2s ease;
   }
 
@@ -51,5 +51,16 @@ const { title } = Astro.props;
 
   body[data-editing] .editable:focus-within {
     outline-color: #0070f3;
+  }
+
+  button {
+    background: #080808;
+    border: 0;
+    border-radius: 8px;
+    color: white;
+    -webkit-font-smoothing: antialiased;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 8px 16px;
   }
 </style>
