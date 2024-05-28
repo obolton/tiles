@@ -34,6 +34,7 @@ model Page {
 
 enum TileType {
   IMAGE
+  TEXT
 }
 
 model Tile {
@@ -45,6 +46,7 @@ model Tile {
   page  Page       @relation(fields: [pageId], references: [id])
   type  TileType
   image ImageTile?
+  text  TextTile?
 
   @@map("tiles")
 }
@@ -59,4 +61,16 @@ model ImageTile {
   tile Tile @relation(fields: [tileId], references: [id])
 
   @@map("image_tiles")
+}
+
+model TextTile {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  tileId    String   @unique @map("tile_id") @db.Uuid
+  content   String
+
+  tile Tile @relation(fields: [tileId], references: [id])
+
+  @@map("text_tiles")
 }
