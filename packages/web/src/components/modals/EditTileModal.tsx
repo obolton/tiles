@@ -9,7 +9,7 @@ import {
   type ComponentType,
 } from "react";
 import useSearchParam from "../../hooks/useSearchParam";
-import { setSearchParam } from "../../utils/navigation";
+import { setSearchParams } from "../../utils/navigation";
 import styles from "./EditTileModal.module.css";
 
 interface ModalProps {
@@ -59,7 +59,10 @@ export default function EditTileModal({ pageId }: Props) {
     }
   }, [open]);
 
-  const close = useCallback(() => setSearchParam("modal", null), []);
+  const close = useCallback(
+    () => setSearchParams({ modal: null, tileId: null }),
+    []
+  );
 
   const ModalComponent = modal ? MODALS[modal] : null;
 

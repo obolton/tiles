@@ -84,7 +84,7 @@ const TILE_TYPES = [
   }
 </style>
 <script>
-  import { setSearchParam } from "../utils/navigation";
+  import { setSearchParams } from "../utils/navigation";
   const root = document.getElementById("tileTypeSelector");
 
   // Highlight the selected item
@@ -106,10 +106,9 @@ const TILE_TYPES = [
   document.querySelectorAll("#tileTypeSelector menu li").forEach((element) => {
     observer.observe(element);
     element.addEventListener("pointerdown", (event) =>
-      setSearchParam(
-        "modal",
-        (event.target as HTMLElement).getAttribute("data-value")
-      )
+      setSearchParams({
+        modal: (event.target as HTMLElement).getAttribute("data-value"),
+      })
     );
   });
 </script>

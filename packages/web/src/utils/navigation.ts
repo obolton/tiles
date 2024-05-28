@@ -1,19 +1,21 @@
-export function setSearchParam(name: string, value: string | null) {
+type Params = Record<string, string | null>;
+
+export function setSearchParams(params: Params) {
   const searchParams = new URLSearchParams(window.location.search);
-  if (searchParams.get(name) === value) {
-    return;
-  }
-  if (!value) {
-    searchParams.delete(name);
-  } else {
-    searchParams.set(name, value);
+  const entries = Object.entries(params);
+  for (const [key, value] of entries) {
+    if (!value) {
+      searchParams.delete(key);
+    } else {
+      searchParams.set(key, value);
+    }
   }
   history.pushState(
     null,
     "",
-    `?${searchParams.toString()}${window.location.hash}`
+    `${window.location.pathname}${
+      searchParams.size > 0 ? `?${searchParams.toString()}` : ""
+    }${window.location.hash}`
   );
-  window.dispatchEvent(
-    new CustomEvent("navigate:search-params", { detail: { name, value } })
-  );
+  window.dispatchEvent(new CustomEvent("navigate:search-params"));
 }
