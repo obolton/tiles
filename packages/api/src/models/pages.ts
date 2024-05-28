@@ -1,8 +1,11 @@
-import type { Page } from "@prisma/client";
 import prisma from "../database/prisma.ts";
+import type { Page } from "@prisma/client";
+import type { Tile } from "../types/tiles.ts";
 
-export async function getPage(id: string) {
-  return prisma.page.findUniqueOrThrow({
+export async function getPage(
+  id: string
+): Promise<{ id: string; title: string; tiles: Tile[] }> {
+  const page = await prisma.page.findUniqueOrThrow({
     where: { id },
     select: {
       id: true,
@@ -27,6 +30,11 @@ export async function getPage(id: string) {
       },
     },
   });
+  return {
+    id: page.id,
+    title: page.title,
+    tiles: page.tiles as Tile[],
+  };
 }
 
 export async function createPage({
