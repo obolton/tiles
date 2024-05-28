@@ -13,7 +13,8 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
   name      String
   email     String   @unique
-  pages     Page[]
+
+  pages Page[]
 
   @@map("users")
 }
@@ -23,8 +24,39 @@ model Page {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   title     String
-  author    User     @relation(fields: [authorId], references: [id])
   authorId  String   @map("author_id") @db.Uuid
 
+  author User   @relation(fields: [authorId], references: [id])
+  tiles  Tile[]
+
   @@map("pages")
+}
+
+enum TileType {
+  IMAGE
+}
+
+model Tile {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  pageId    String   @map("page_id") @db.Uuid
+
+  page  Page       @relation(fields: [pageId], references: [id])
+  type  TileType
+  image ImageTile?
+
+  @@map("tiles")
+}
+
+model ImageTile {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  tileId    String   @unique @map("tile_id") @db.Uuid
+  imageKey  String   @map("image_key")
+
+  tile Tile @relation(fields: [tileId], references: [id])
+
+  @@map("image_tiles")
 }
