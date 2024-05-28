@@ -3,7 +3,7 @@ import Page from "../layouts/Page.astro";
 import Toolbar from "../components/Toolbar.astro";
 import Switch from "../components/Switch.astro";
 import PageTitle from "../components/header/PageTitle";
-import Grid from "../components/Grid.astro";
+import Grid from "../components/grid/Grid";
 import TileTypeSelector from "../components/TileTypeSelector.astro";
 import EditTileModal from "../components/modals/EditTileModal";
 import client from "../api/client";
@@ -16,7 +16,7 @@ const page = await client.pages.getById.query(pageId);
 <Page title={page.title}>
   <PageTitle pageId={page.id} title={page.title} client:edit slot="header" />
   <Toolbar><Switch id="editSwitch" label="Edit" /></Toolbar>
-  <Grid><TileTypeSelector /></Grid>
+  <Grid tiles={page.tiles} client:edit><TileTypeSelector /></Grid>
   <EditTileModal pageId={pageId} client:edit />
 </Page>
 <script>
