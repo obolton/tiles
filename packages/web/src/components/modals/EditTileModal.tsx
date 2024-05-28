@@ -19,6 +19,7 @@ interface ModalProps {
 
 const MODALS: Record<string, LazyExoticComponent<ComponentType<ModalProps>>> = {
   image: lazy(() => import("./EditImageTileModal")),
+  text: lazy(() => import("./EditTextTileModal")),
 };
 
 interface Props {
