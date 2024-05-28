@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import styles from "./Grid.module.css";
-import Tile, { type TileProps } from "../tiles/Tile";
+import Tile from "../tiles/Tile";
+import type { Tile as TileData } from "../../types/tiles";
 
 interface GridProps {
-  tiles: TileProps[];
+  tiles: TileData[];
   children: React.ReactNode;
 }
 
@@ -12,19 +13,29 @@ export default function Grid({ children, tiles: initialTiles }: GridProps) {
 
   useEffect(() => {
     const callback = (event: Event) => {
-      const { detail } = event as CustomEvent<{ tile: TileProps }>;
-      setTiles((prevTiles) => [...prevTiles, detail.tile]);
+      const {
+        detail: { tile },
+      } = event as CustomEvent<{ tile: TileData }>;
+      if (tile.id) {
+        setTiles((prevTiles) =>
+          prevTiles.map((prevTile) =>
+            prevTile.id === tile.id ? tile : prevTile
+          )
+        );
+      } else {
+        setTiles((prevTiles) => [...prevTiles, tile]);
+      }
     };
-    window.addEventListener("tile:add", callback);
+    window.addEventListener("tile:update", callback);
     return () => {
-      window.removeEventListener("tile:add", callback);
+      window.removeEventListener("tile:update", callback);
     };
   }, []);
 
   return (
     <section className={styles.grid}>
       {tiles.map((tile) => (
-        <Tile key={tile.id} {...tile} />
+        <Tile key={tile.id} tile={tile} />
       ))}
       {children}
     </section>
