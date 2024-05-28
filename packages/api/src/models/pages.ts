@@ -7,6 +7,18 @@ export async function getPage(id: string) {
     select: {
       id: true,
       title: true,
+      tiles: {
+        select: {
+          id: true,
+          type: true,
+          image: {
+            select: {
+              id: true,
+              imageKey: true,
+            },
+          },
+        },
+      },
     },
   });
 }
