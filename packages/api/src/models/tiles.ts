@@ -11,16 +11,22 @@ const CreateImageTileSchema = BaseCreateTileSchema.extend({
   imageKey: z.string(),
 });
 
+const CreateTextTileSchema = BaseCreateTileSchema.extend({
+  type: z.literal("TEXT"),
+  content: z.string(),
+});
+
 export const CreateTileSchema = z.discriminatedUnion("type", [
   CreateImageTileSchema,
+  CreateTextTileSchema,
 ]);
 
 export async function createTile(properties: z.infer<typeof CreateTileSchema>) {
   switch (properties.type) {
     case "IMAGE":
       return createImageTile(properties);
-    default:
-      throw new Error(`Invalid tile type: ${properties.type}`);
+    case "TEXT":
+      return createTextTile(properties);
   }
 }
 
@@ -46,6 +52,36 @@ async function createImageTile({
           image: {
             select: {
               imageKey: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+async function createTextTile({
+  pageId,
+  content,
+}: z.infer<typeof CreateTextTileSchema>) {
+  return prisma.textTile.create({
+    data: {
+      tile: {
+        create: {
+          pageId,
+          type: "TEXT",
+        },
+      },
+      content,
+    },
+    select: {
+      tile: {
+        select: {
+          id: true,
+          type: true,
+          text: {
+            select: {
+              content: true,
             },
           },
         },
