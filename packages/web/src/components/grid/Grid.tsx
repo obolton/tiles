@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import styles from "./Grid.module.css";
 import Tile from "../tiles/Tile";
-import type { Tile as TileData } from "../../types/tiles";
+import type { ClientTile } from "../../types/tiles";
 
 interface GridProps {
-  tiles: TileData[];
+  tiles: ClientTile[];
   children: React.ReactNode;
 }
 
@@ -12,23 +12,25 @@ export default function Grid({ children, tiles: initialTiles }: GridProps) {
   const [tiles, setTiles] = useState(initialTiles);
 
   useEffect(() => {
-    const callback = (event: Event) => {
-      const {
-        detail: { tile },
-      } = event as CustomEvent<{ tile: TileData }>;
-      if (tile.id) {
-        setTiles((prevTiles) =>
-          prevTiles.map((prevTile) =>
-            prevTile.id === tile.id ? tile : prevTile
-          )
-        );
-      } else {
-        setTiles((prevTiles) => [...prevTiles, tile]);
-      }
+    const create = (event: Event) => {
+      const { detail: tile } = event as CustomEvent<ClientTile>;
+
+      setTiles((prevTiles) => [...prevTiles, tile]);
     };
-    window.addEventListener("tile:update", callback);
+    const update = (event: Event) => {
+      const { detail: tile } = event as CustomEvent<ClientTile>;
+
+      setTiles((prevTiles) =>
+        prevTiles.map((prevTile) => (prevTile.id === tile.id ? tile : prevTile))
+      );
+    };
+      const {
+    };
+    window.addEventListener("tile:create", create);
+    window.addEventListener("tile:update", update);
     return () => {
-      window.removeEventListener("tile:update", callback);
+      window.removeEventListener("tile:create", create);
+      window.removeEventListener("tile:update", update);
     };
   }, []);
 
