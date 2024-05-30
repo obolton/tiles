@@ -2,13 +2,13 @@ import { useCallback, useRef, useState } from "react";
 import { uploadMedia } from "../../utils/media";
 import { getImageUrl } from "../../utils/images";
 import client from "../../api/client";
-import type { ImageTileData } from "../../types/tiles";
+import type { ClientImageTile } from "../../types/tiles";
 import styles from "./EditImageTileModal.module.css";
 
 interface Props {
   pageId: string;
   close: () => void;
-  tile?: ImageTileData;
+  tile?: ClientImageTile;
 }
 
 export default function EditImageTileModal({ pageId, close, tile }: Props) {
@@ -43,13 +43,30 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
         return;
       }
 
-      const result = await client.tiles.createOrUpdate.mutate({
-        pageId,
-        type: "IMAGE",
-        id: tile?.image.id,
-        imageKey,
-      });
-      window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
+      if (tile) {
+        const result = await client.tiles.update.mutate({
+          pageId,
+          type: "IMAGE",
+          id: tile.id,
+          image: {
+            imageKey,
+          },
+        });
+        window.dispatchEvent(
+          new CustomEvent("tile:update", { detail: result })
+        );
+      } else {
+        const result = await client.tiles.create.mutate({
+          pageId,
+          type: "IMAGE",
+          image: {
+            imageKey,
+          },
+        });
+        window.dispatchEvent(
+          new CustomEvent("tile:create", { detail: result })
+        );
+      }
 
       close();
     },

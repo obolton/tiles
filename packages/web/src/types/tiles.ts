@@ -1,6 +1,5 @@
 export type {
-  Tile,
-  TileType,
-  TextTileData,
-  ImageTileData,
+  ClientTile,
+  ClientImageTile,
+  ClientTextTile,
 } from "api/src/types/tiles.ts";

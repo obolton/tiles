@@ -1,12 +1,12 @@
 import { useCallback, useRef, useState } from "react";
 import client from "../../api/client";
-import type { TextTileData } from "../../types/tiles";
+import type { ClientTextTile } from "../../types/tiles";
 import styles from "./EditTextTileModal.module.css";
 
 interface Props {
   pageId: string;
   close: () => void;
-  tile?: TextTileData;
+  tile?: ClientTextTile;
 }
 
 export default function EditTextTileModal({ pageId, close, tile }: Props) {
@@ -26,13 +26,30 @@ export default function EditTextTileModal({ pageId, close, tile }: Props) {
         return;
       }
 
-      const result = await client.tiles.createOrUpdate.mutate({
-        pageId,
-        id: tile?.text.id,
-        type: "TEXT",
-        content,
-      });
-      window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
+      if (tile) {
+        const result = await client.tiles.update.mutate({
+          pageId,
+          id: tile.id,
+          type: "TEXT",
+          text: {
+            content,
+          },
+        });
+        window.dispatchEvent(
+          new CustomEvent("tile:update", { detail: result })
+        );
+      } else {
+        const result = await client.tiles.create.mutate({
+          pageId,
+          type: "TEXT",
+          text: {
+            content,
+          },
+        });
+        window.dispatchEvent(
+          new CustomEvent("tile:create", { detail: result })
+        );
+      }
 
       close();
     },
