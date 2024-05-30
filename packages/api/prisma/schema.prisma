@@ -42,6 +42,7 @@ model Tile {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   pageId    String   @map("page_id") @db.Uuid
+  position  Int
 
   page  Page       @relation(fields: [pageId], references: [id])
   type  TileType
