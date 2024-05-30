@@ -1,39 +1,55 @@
-import { TileType } from "@prisma/client";
-import type { TextTileSchema } from "./schema.ts";
-import prisma from "../../database/prisma.ts";
+import { TileType, type Prisma } from "@prisma/client";
+import type { CreateTextTileSchema, UpdateTextTileSchema } from "./schema.ts";
 
-export async function createOrUpdateTextTile({
-  id,
-  pageId,
-  content,
-}: TextTileSchema) {
-  return prisma.textTile.upsert({
+export async function createTextTile(
+  tx: Prisma.TransactionClient,
+  { pageId, text: { content } }: CreateTextTileSchema,
+  position: number
+) {
+  return tx.tile.create({
+    data: {
+      pageId,
+      type: TileType.TEXT,
+      position,
+      text: {
+        create: {
+          content,
+        },
+      },
+    },
+    select: {
+      id: true,
+      type: true,
+      text: {
+        select: {
+          content: true,
+        },
+      },
+    },
+  });
+}
+
+export async function updateTextTile(
+  tx: Prisma.TransactionClient,
+  { id, text: { content } }: UpdateTextTileSchema
+) {
+  return tx.tile.update({
     where: {
       id,
     },
-    create: {
-      tile: {
-        create: {
-          pageId,
-          type: TileType.TEXT,
+    data: {
+      text: {
+        update: {
+          content,
         },
       },
-      content,
-    },
-    update: {
-      content,
     },
     select: {
-      tile: {
+      id: true,
+      type: true,
+      text: {
         select: {
-          id: true,
-          type: true,
-          text: {
-            select: {
-              id: true,
-              content: true,
-            },
-          },
+          content: true,
         },
       },
     },

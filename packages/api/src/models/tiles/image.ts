@@ -1,39 +1,55 @@
-import { TileType } from "@prisma/client";
-import type { ImageTileSchema } from "./schema.ts";
-import prisma from "../../database/prisma.ts";
+import { TileType, type Prisma } from "@prisma/client";
+import type { CreateImageTileSchema, UpdateImageTileSchema } from "./schema.ts";
 
-export async function createOrUpdateImageTile({
-  id,
-  pageId,
-  imageKey,
-}: ImageTileSchema) {
-  return prisma.imageTile.upsert({
+export async function createImageTile(
+  tx: Prisma.TransactionClient,
+  { pageId, image: { imageKey } }: CreateImageTileSchema,
+  position: number
+) {
+  return tx.tile.create({
+    data: {
+      pageId,
+      type: TileType.IMAGE,
+      position,
+      image: {
+        create: {
+          imageKey,
+        },
+      },
+    },
+    select: {
+      id: true,
+      type: true,
+      image: {
+        select: {
+          imageKey: true,
+        },
+      },
+    },
+  });
+}
+
+export async function updateImageTile(
+  tx: Prisma.TransactionClient,
+  { id, image: { imageKey } }: UpdateImageTileSchema
+) {
+  return tx.tile.update({
     where: {
       id,
     },
-    create: {
-      tile: {
-        create: {
-          pageId,
-          type: TileType.IMAGE,
+    data: {
+      image: {
+        update: {
+          imageKey,
         },
       },
-      imageKey,
-    },
-    update: {
-      imageKey,
     },
     select: {
-      tile: {
+      id: true,
+      type: true,
+      image: {
         select: {
-          id: true,
-          type: true,
-          image: {
-            select: {
-              id: true,
-              imageKey: true,
-            },
-          },
+          imageKey: true,
         },
       },
     },
