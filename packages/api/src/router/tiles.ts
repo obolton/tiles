@@ -3,6 +3,7 @@ import { createTile, updateTile, moveTile } from "../models/tiles/tiles.ts";
 import {
   CreateTileSchema,
   UpdateTileSchema,
+  MoveTileSchema,
 } from "../models/tiles/schema.ts";
 
 export default router({
@@ -13,5 +14,9 @@ export default router({
   update: procedure.input(UpdateTileSchema).mutation(async ({ input }) => {
     const tile = await updateTile(input);
     return tile;
+  }),
+  move: procedure.input(MoveTileSchema).mutation(async ({ input }) => {
+    const result = await moveTile(input);
+    return result;
   }),
 });

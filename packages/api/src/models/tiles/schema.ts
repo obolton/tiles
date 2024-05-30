@@ -57,3 +57,12 @@ export const UpdateTileSchema = z.discriminatedUnion("type", [
   UpdateTextTileSchema,
 ]);
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
+
+// Move
+
+export const MoveTileSchema = z.object({
+  id: z.string(),
+  pageId: z.string(),
+  position: z.number(),
+});
+export type MoveTileSchema = z.infer<typeof MoveTileSchema>;
