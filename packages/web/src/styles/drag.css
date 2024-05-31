@@ -1,0 +1,30 @@
+[data-draggable] {
+  cursor: grab;
+}
+
+[data-draggable][data-drag-preview] {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.3);
+
+  transform: translate(var(--translate-x), var(--translate-y));
+
+  animation-name: drag;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes drag {
+  from {
+    box-shadow: unset;
+    transform: translate(var(--initial-x), var(--initial-y));
+  }
+
+  to {
+    box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.3);
+    transform: translate(var(--translate-x), var(--translate-y));
+  }
+}
