@@ -1,5 +1,16 @@
 .tile {
   border-radius: 8px;
+  background: #ffffff;
   overflow: hidden;
   box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
+}
+
+.tile[data-dragging] {
+  opacity: 0.3;
+  filter: blur(1px);
+}
+
+.tile[data-drag-preview] {
+  outline: none;
 }

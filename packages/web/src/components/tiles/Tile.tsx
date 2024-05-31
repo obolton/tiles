@@ -1,17 +1,19 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { TileType } from "@prisma/client";
 import ImageTile from "./ImageTile";
 import TextTile from "./TextTile";
 import useEditable from "../../hooks/useEditable";
+import useDraggable from "../../hooks/useDraggable";
 import { setSearchParams } from "../../utils/navigation";
-import type { Tile as TileData } from "../../types/tiles";
+import type { ClientTile } from "../../types/tiles";
 import styles from "./Tile.module.css";
 
 export type TileProps = {
-  tile: TileData;
+  pageId: string;
+  tile: ClientTile;
 };
 
-function getTileComponent(tile: TileData) {
+function getTileComponent(pageId: string, tile: ClientTile) {
   switch (tile.type) {
     case TileType.IMAGE:
       if (!tile.image) {
@@ -28,16 +30,23 @@ function getTileComponent(tile: TileData) {
   }
 }
 
-export default function Tile({ tile }: TileProps) {
+export default function Tile({ pageId, tile }: TileProps) {
   const isEditable = useEditable();
-  const component = getTileComponent(tile);
+  const ref = useRef<HTMLDivElement>(null);
+  useDraggable(ref, isEditable);
+
   const edit = useCallback(
     () => setSearchParams({ modal: tile.type.toLowerCase(), tileId: tile.id }),
     [tile]
   );
+
+  const component = getTileComponent(pageId, tile);
+
   return (
     <div
+      ref={ref}
       className={`editable ${styles.tile}`}
+      data-drop-target={isEditable ? "true" : undefined}
       data-tile-id={tile.id}
       data-tile={JSON.stringify(tile)}
       onClick={isEditable ? edit : undefined}
