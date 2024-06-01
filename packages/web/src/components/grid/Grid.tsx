@@ -58,15 +58,8 @@ export default function Grid({
       }
     };
     const drop = async (event: Event) => {
-      const {
-        target: dragSource,
-        detail: { dropTarget },
-      } = event as CustomEvent<{ dropTarget: HTMLElement }>;
-      if (
-        ref.current &&
-        dragSource instanceof HTMLElement &&
-        dropTarget instanceof HTMLElement
-      ) {
+      const { target: dragSource } = event;
+      if (ref.current && dragSource instanceof HTMLElement) {
         const id = dragSource.dataset.tileId ?? "";
         const position = Array.prototype.indexOf.call(
           ref.current.children,

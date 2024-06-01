@@ -1,7 +1,6 @@
 const DRAG_THRESHOLD = 10;
 let dragSource: HTMLElement | null = null;
 let dragElement: HTMLElement | null = null;
-let dropTarget: HTMLElement | null = null;
 let initialPointerX: number;
 let initialPointerY: number;
 let rect: DOMRect | null = null;
@@ -53,7 +52,6 @@ function pointerMove(event: PointerEvent) {
 
     if (distance >= DRAG_THRESHOLD) {
       isDragging = true;
-      dropTarget = dragSource;
 
       dragElement = dragSource.cloneNode(true) as HTMLElement;
       dragElement.dataset.dragPreview = "true";
@@ -83,7 +81,7 @@ function pointerUp() {
 
   // Animate the drag element image to its final position
   if (dragElement) {
-    const destinationRect = (dropTarget ?? dragSource).getBoundingClientRect();
+    const destinationRect = dragSource.getBoundingClientRect();
     const animation = dragElement.animate(
       [
         {
@@ -110,25 +108,21 @@ function pointerUp() {
   disableDropTargetEvents();
   document.body.style.removeProperty("cursor");
 
-  dragSource.dispatchEvent(
-    new CustomEvent("drop", {
-      detail: { dropTarget },
-      bubbles: true,
-    })
-  );
+  dragSource.dispatchEvent(new CustomEvent("drop", { bubbles: true }));
 
   // Wait for pointer events to complete before resetting state
   requestAnimationFrame(() => {
     isDragging = false;
     dragSource = null;
-    dropTarget = null;
     rect = null;
   });
 }
 
 function pointerEnterDropTarget(event: PointerEvent) {
-  dropTarget = event.target as HTMLElement;
-  dropTarget.dispatchEvent(
+  if (!(event.currentTarget instanceof HTMLElement)) {
+    return;
+  }
+  event.currentTarget.dispatchEvent(
     new CustomEvent("drag-over", {
       detail: {
         dragSource,
