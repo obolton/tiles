@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./Grid.module.css";
 import Tile from "../tiles/Tile";
 import { moveElement } from "../../utils/arrays";
+import useLayoutTransition from "../../hooks/useLayoutTransition";
 import client from "../../api/client";
 import type { ClientTile } from "../../types/tiles";
 
@@ -18,6 +19,7 @@ export default function Grid({
 }: GridProps) {
   const ref = useRef<HTMLElement>(null);
   const [tiles, setTiles] = useState(initialTiles);
+  const { startLayoutTransition } = useLayoutTransition(ref);
 
   useEffect(() => {
     const create = (event: Event) => {
@@ -48,9 +50,11 @@ export default function Grid({
           ref.current.children,
           dropTarget
         );
-        setTiles((prevTiles) =>
-          moveElement(prevTiles, fromPosition, toPosition)
-        );
+        startLayoutTransition(() => {
+          setTiles((prevTiles) =>
+            moveElement(prevTiles, fromPosition, toPosition)
+          );
+        });
       }
     };
     const drop = async (event: Event) => {
