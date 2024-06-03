@@ -37,14 +37,8 @@ function pointerMove(event: PointerEvent) {
   if (isDragging) {
     requestAnimationFrame(() => {
       if (dragElement && rect) {
-        dragElement.style.setProperty(
-          "--translate-x",
-          `${rect.left + deltaX}px`
-        );
-        dragElement.style.setProperty(
-          "--translate-y",
-          `${rect.top + deltaY}px`
-        );
+        dragElement.style.setProperty("--translate-x", `${deltaX}px`);
+        dragElement.style.setProperty("--translate-y", `${deltaY}px`);
       }
     });
   } else {
@@ -56,12 +50,27 @@ function pointerMove(event: PointerEvent) {
       dragElement = dragSource.cloneNode(true) as HTMLElement;
       dragElement.dataset.dragPreview = "true";
       delete dragElement.dataset.dropTarget;
+
       dragElement.style.setProperty("width", `${rect.width}px`);
       dragElement.style.setProperty("height", `${rect.height}px`);
       dragElement.style.setProperty("--initial-x", `${rect.left}px`);
       dragElement.style.setProperty("--initial-y", `${rect.top}px`);
-      dragElement.style.setProperty("--translate-x", `${rect.left + deltaX}px`);
-      dragElement.style.setProperty("--translate-y", `${rect.top + deltaY}px`);
+      dragElement.style.setProperty("--translate-x", `${deltaX}px`);
+      dragElement.style.setProperty("--translate-y", `${deltaY}px`);
+
+      const offsetX = initialPointerX - rect.left;
+      const offsetY = initialPointerY - rect.top;
+      const rotateX = (offsetX / rect.width - 0.5) * -2;
+      const rotateY = (offsetY / rect.height - 0.5) * 2;
+      const rotateAngle =
+        5 * Math.sqrt(Math.pow(rotateX, 2) + Math.pow(rotateY, 2));
+
+      dragElement.style.setProperty("--transform-origin-x", `${offsetX}px`);
+      dragElement.style.setProperty("--transform-origin-y", `${offsetY}px`);
+      dragElement.style.setProperty("--rotate-x", `${rotateX}`);
+      dragElement.style.setProperty("--rotate-y", `${rotateY}`);
+      dragElement.style.setProperty("--rotate-angle", `${rotateAngle}deg`);
+
       document.body.appendChild(dragElement);
       document.body.style.setProperty("cursor", "grab");
 
@@ -80,12 +89,14 @@ function pointerUp() {
   delete dragSource.dataset.dragging;
 
   // Animate the drag element image to its final position
-  if (dragElement) {
+  if (dragElement && rect) {
     const destinationRect = dragSource.getBoundingClientRect();
+    const deltaX = destinationRect.left - rect.left;
+    const deltaY = destinationRect.top - rect.top;
     const animation = dragElement.animate(
       [
         {
-          transform: `translate(${destinationRect.left}px, ${destinationRect.top}px)`,
+          transform: `translate(${deltaX}px, ${deltaY}px)`,
           boxShadow: "inherit",
         },
       ],

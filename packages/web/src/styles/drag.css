@@ -4,27 +4,45 @@
 
 [data-draggable][data-drag-preview] {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: var(--initial-y);
+  left: var(--initial-x);
   z-index: 1;
   pointer-events: none;
-  box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.3);
 
-  transform: translate(var(--translate-x), var(--translate-y));
+  transform: perspective(1000px);
+  transform-origin: var(--transform-origin-x) var(--transform-origin-y);
 
-  animation-name: drag;
-  animation-duration: 0.2s;
-  animation-timing-function: ease-in-out;
+  animation-name: drag, lift;
+  animation-duration: 0.25s, 0.75s;
+  animation-timing-function: ease;
+  animation-composition: add;
+  animation-fill-mode: forwards;
 }
 
 @keyframes drag {
-  from {
-    box-shadow: unset;
-    transform: translate(var(--initial-x), var(--initial-y));
+  0% {
+    transform: translate(0, 0);
   }
 
-  to {
-    box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.3);
+  100% {
     transform: translate(var(--translate-x), var(--translate-y));
+  }
+}
+
+@keyframes lift {
+  0% {
+    box-shadow: unset;
+    transform: translateZ(0) rotate3d(0, 0, 0, 0);
+  }
+
+  33% {
+    box-shadow: 0 10px 10px -2px rgba(0, 0, 0, 0.2);
+    transform: translateZ(40px)
+      rotate3d(var(--rotate-y), var(--rotate-x), 0, var(--rotate-angle));
+  }
+
+  100% {
+    box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+    transform: translateZ(40px) rotate3d(var(--rotate-y), var(--rotate-x), 0, 0);
   }
 }
