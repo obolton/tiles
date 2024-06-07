@@ -4,7 +4,7 @@ import ImageTile from "./ImageTile";
 import TextTile from "./TextTile";
 import useEditable from "../../hooks/useEditable";
 import useDraggable from "../../hooks/useDraggable";
-import { setSearchParams } from "../../utils/navigation";
+import { editTile } from "../../utils/edit";
 import type { ClientTile } from "../../types/tiles";
 import styles from "./Tile.module.css";
 
@@ -35,10 +35,7 @@ export default function Tile({ pageId, tile }: TileProps) {
   const ref = useRef<HTMLDivElement>(null);
   useDraggable(ref, isEditable);
 
-  const edit = useCallback(
-    () => setSearchParams({ modal: tile.type.toLowerCase(), tileId: tile.id }),
-    [tile]
-  );
+  const edit = useCallback(() => editTile(tile.id), [tile]);
 
   const component = getTileComponent(pageId, tile);
 
