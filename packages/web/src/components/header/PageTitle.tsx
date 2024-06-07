@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import useEditable from "../../hooks/useEditable";
 import client from "../../api/client";
-import "./PageTitle.module.css";
+import styles from "./PageTitle.module.css";
 
 interface PageTitleProps {
   pageId: string;
@@ -18,7 +18,7 @@ export default function PageTitle({ pageId, title }: PageTitleProps) {
   );
 
   return (
-    <h1 className="editable">
+    <h1 className={`${styles.pageTitle} editable`}>
       {isEditable ? (
         <input
           id="page-title"

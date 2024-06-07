@@ -63,6 +63,7 @@ export default function EditTextTileModal({ pageId, close, tile }: Props) {
       <ModalHeader>Text</ModalHeader>
 
       <textarea
+        autoFocus
         className={styles.textarea}
         ref={inputRef}
         onChange={change}
