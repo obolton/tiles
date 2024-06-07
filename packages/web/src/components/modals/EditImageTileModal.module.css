@@ -1,12 +1,3 @@
-.header {
-  margin: 0;
-  padding: 0;
-}
-
-.heading {
-  margin-bottom: 16px;
-}
-
 .input {
   display: none;
 }
@@ -28,10 +19,4 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.footer {
-  margin-top: 16px;
-  display: flex;
-  gap: 8px;
 }

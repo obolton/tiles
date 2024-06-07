@@ -2,6 +2,8 @@ import { useCallback, useRef, useState } from "react";
 import { uploadMedia } from "../../utils/media";
 import { getImageUrl } from "../../utils/images";
 import client from "../../api/client";
+import ModalHeader from "./ModalHeader";
+import ModalFooter from "./ModalFooter";
 import type { ClientImageTile } from "../../types/tiles";
 import styles from "./EditImageTileModal.module.css";
 
@@ -75,9 +77,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
 
   return (
     <form onSubmit={submit}>
-      <header className={styles.header}>
-        <h2 className={styles.heading}>Image</h2>
-      </header>
+      <ModalHeader>Image</ModalHeader>
 
       <input
         className={styles.input}
@@ -93,14 +93,14 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
         )}
       </section>
 
-      <footer className={styles.footer}>
-        <button type="submit" disabled={!imageKey}>
+      <ModalFooter>
+        <button className="primary" type="submit" aria-disabled={!imageKey}>
           Save
         </button>
-        <button type="button" onClick={close}>
+        <button className="secondary" type="button" onClick={close}>
           Cancel
         </button>
-      </footer>
+      </ModalFooter>
     </form>
   );
 }

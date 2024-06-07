@@ -1,5 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import client from "../../api/client";
+import ModalHeader from "./ModalHeader";
+import ModalFooter from "./ModalFooter";
 import type { ClientTextTile } from "../../types/tiles";
 import styles from "./EditTextTileModal.module.css";
 
@@ -58,9 +60,7 @@ export default function EditTextTileModal({ pageId, close, tile }: Props) {
 
   return (
     <form onSubmit={submit}>
-      <header className={styles.header}>
-        <h2 className={styles.heading}>Text</h2>
-      </header>
+      <ModalHeader>Text</ModalHeader>
 
       <textarea
         className={styles.textarea}
@@ -69,14 +69,14 @@ export default function EditTextTileModal({ pageId, close, tile }: Props) {
         value={content}
       />
 
-      <footer className={styles.footer}>
-        <button type="submit" disabled={!content}>
+      <ModalFooter>
+        <button className="primary" type="submit" aria-disabled={!content}>
           Save
         </button>
-        <button type="button" onClick={close}>
+        <button className="secondary" type="button" onClick={close}>
           Cancel
         </button>
-      </footer>
+      </ModalFooter>
     </form>
   );
 }
