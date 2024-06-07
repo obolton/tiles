@@ -2,6 +2,7 @@ import { useCallback, useRef } from "react";
 import { TileType } from "@prisma/client";
 import ImageTile from "./ImageTile";
 import TextTile from "./TextTile";
+import PlaceTile from "./PlaceTile";
 import useEditable from "../../hooks/useEditable";
 import useDraggable from "../../hooks/useDraggable";
 import { editTile } from "../../utils/edit";
@@ -25,6 +26,11 @@ function getTileComponent(pageId: string, tile: ClientTile) {
         throw new Error("Invalid text tile");
       }
       return <TextTile {...tile.text} />;
+    case TileType.PLACE:
+      if (!tile.place) {
+        throw new Error("Invalid place tile");
+      }
+      return <PlaceTile {...tile.place} />;
     default:
       return null;
   }
