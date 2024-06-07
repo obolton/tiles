@@ -27,6 +27,18 @@ export async function getPage(
               content: true,
             },
           },
+          place: {
+            select: {
+              id: true,
+              name: true,
+              thumbnailKey: true,
+              providerId: true,
+              lat: true,
+              long: true,
+              boundingBox: true,
+              address: true,
+            },
+          },
         },
         orderBy: {
           position: "asc",
@@ -54,6 +66,12 @@ export async function getPage(
           ...base,
           type,
           text: tile.text!,
+        };
+      case "PLACE":
+        return {
+          ...base,
+          type,
+          place: tile.place!,
         };
     }
   };
