@@ -1,6 +1,7 @@
 import prisma from "../../database/prisma.ts";
 import { createImageTile, updateImageTile } from "./image.ts";
 import { createTextTile, updateTextTile } from "./text.ts";
+import { createPlaceTile, updatePlaceTile } from "./place.ts";
 import type {
   CreateTileSchema,
   UpdateTileSchema,
@@ -17,6 +18,8 @@ export async function createTile(properties: CreateTileSchema) {
         return createImageTile(tx, properties, position);
       case "TEXT":
         return createTextTile(tx, properties, position);
+      case "PLACE":
+        return createPlaceTile(tx, properties, position);
     }
   });
 }
@@ -27,6 +30,8 @@ export async function updateTile(properties: UpdateTileSchema) {
       return updateImageTile(prisma, properties);
     case "TEXT":
       return updateTextTile(prisma, properties);
+    case "PLACE":
+      return updatePlaceTile(prisma, properties);
   }
 }
 
