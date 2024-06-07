@@ -1,5 +1,6 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { Upload } from "@aws-sdk/lib-storage";
 
 const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
 const CLOUDFLARE_R2_ACCESS_KEY_ID = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
@@ -38,4 +39,25 @@ export async function createSignedUploadUrl(key: string) {
     Key: key,
   });
   return getSignedUrl(S3, command, { expiresIn: 180 });
+}
+
+export async function upload(
+  bucket: string,
+  key: string,
+  body: ReadableStream,
+  contentType: string
+) {
+  const upload = new Upload({
+    client: S3,
+    params: {
+      Bucket: bucket,
+      Key: key,
+      // @ts-expect-error The type definition for Body does not currently recognize Node.js ReadableStream, although it is supported
+      Body: body,
+      ContentType: contentType,
+    },
+    queueSize: 4,
+    leavePartsOnError: false,
+  });
+  return upload.done();
 }
