@@ -21,6 +21,7 @@ interface ModalProps {
 const MODALS = {
   IMAGE: lazy(() => import("./EditImageTileModal")),
   TEXT: lazy(() => import("./EditTextTileModal")),
+  PLACE: lazy(() => import("./EditPlaceTileModal")),
 } satisfies Record<TileType, LazyExoticComponent<ComponentType<ModalProps>>>;
 
 interface Props {
