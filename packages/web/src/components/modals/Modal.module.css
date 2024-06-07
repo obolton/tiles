@@ -1,0 +1,96 @@
+.modal {
+  position: fixed;
+  backdrop-filter: blur(10px) saturate(70%);
+  border-radius: 24px;
+  border: none;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 10px 10px -8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
+  top: 100px;
+  width: 520px;
+  min-height: 200px;
+  padding: 0;
+  transform-origin: center;
+
+  --transition-duration: 0.3s;
+  --transition-timing-function: ease-in-out;
+  animation-duration: var(--transition-duration);
+  animation-timing-function: var(--transition-timing-function);
+
+  /* Enable overlay transitions */
+  transition: overlay var(--transition-duration) allow-discrete,
+    display var(--transition-duration) allow-discrete;
+}
+
+.modal::backdrop {
+  background: none;
+  animation-duration: var(--transition-duration);
+  animation-timing-function: var(--transition-timing-function);
+  animation-fill-mode: forwards;
+}
+
+.modal[open] {
+  animation-name: appear;
+}
+
+.modal[open]::backdrop {
+  animation-name: overlay-appear;
+}
+
+.modal:not([open]) {
+  animation-name: disappear;
+}
+
+.modal:not([open])::backdrop {
+  animation-name: overlay-disappear;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: perspective(1000px)
+      translate3d(var(--delta-x), var(--delta-y), -400px);
+    filter: blur(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: perspective(1000px) translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+}
+
+@keyframes disappear {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: perspective(1000px)
+      translate3d(var(--delta-x), var(--delta-y), -400px);
+    filter: blur(5px);
+  }
+}
+
+@keyframes overlay-appear {
+  from {
+    backdrop-filter: blur(0);
+  }
+
+  to {
+    backdrop-filter: blur(5px);
+  }
+}
+
+@keyframes overlay-disappear {
+  from {
+    backdrop-filter: blur(5px);
+  }
+
+  to {
+    backdrop-filter: blur(0);
+  }
+}

@@ -8,7 +8,7 @@ import styles from "./EditTextTileModal.module.css";
 interface Props {
   pageId: string;
   close: () => void;
-  tile?: ClientTextTile;
+  tile?: ClientTextTile | null;
 }
 
 export default function EditTextTileModal({ pageId, close, tile }: Props) {

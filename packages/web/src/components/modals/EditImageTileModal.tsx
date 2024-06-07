@@ -10,7 +10,7 @@ import styles from "./EditImageTileModal.module.css";
 interface Props {
   pageId: string;
   close: () => void;
-  tile?: ClientImageTile;
+  tile?: ClientImageTile | null;
 }
 
 export default function EditImageTileModal({ pageId, close, tile }: Props) {
