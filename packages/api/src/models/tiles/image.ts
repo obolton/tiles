@@ -1,9 +1,10 @@
 import { TileType, type Prisma } from "@prisma/client";
+import { cleanUserInput } from "../../utils/text.ts";
 import type { CreateImageTileSchema, UpdateImageTileSchema } from "./schema.ts";
 
 export async function createImageTile(
   tx: Prisma.TransactionClient,
-  { pageId, image: { imageKey } }: CreateImageTileSchema,
+  { pageId, image: { imageKey, caption } }: CreateImageTileSchema,
   position: number
 ) {
   return tx.tile.create({
@@ -14,6 +15,7 @@ export async function createImageTile(
       image: {
         create: {
           imageKey,
+          caption: caption ? cleanUserInput(caption) : null,
         },
       },
     },
@@ -23,6 +25,7 @@ export async function createImageTile(
       image: {
         select: {
           imageKey: true,
+          caption: true,
         },
       },
     },
@@ -31,7 +34,7 @@ export async function createImageTile(
 
 export async function updateImageTile(
   tx: Prisma.TransactionClient,
-  { id, image: { imageKey } }: UpdateImageTileSchema
+  { id, image: { imageKey, caption } }: UpdateImageTileSchema
 ) {
   return tx.tile.update({
     where: {
@@ -41,6 +44,7 @@ export async function updateImageTile(
       image: {
         update: {
           imageKey,
+          caption: caption ? cleanUserInput(caption) : null,
         },
       },
     },
@@ -50,6 +54,7 @@ export async function updateImageTile(
       image: {
         select: {
           imageKey: true,
+          caption: true,
         },
       },
     },

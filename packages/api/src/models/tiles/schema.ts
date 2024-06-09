@@ -25,6 +25,7 @@ const ImageTileBaseSchema = z.object({
   type: z.literal(TileType.IMAGE),
   image: z.object({
     imageKey: z.string(),
+    caption: z.string().optional(),
   }),
 });
 

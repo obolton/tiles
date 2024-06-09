@@ -19,6 +19,7 @@ export async function getPage(
             select: {
               id: true,
               imageKey: true,
+              caption: true,
             },
           },
           text: {
