@@ -19,6 +19,6 @@ function getServerSnapshot() {
   return null;
 }
 
-export default function useEditable() {
+export default function useEditTile() {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
