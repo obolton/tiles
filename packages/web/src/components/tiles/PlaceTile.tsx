@@ -6,5 +6,10 @@ type PlaceTileProps = ClientPlaceTile["place"];
 
 export default function PlaceTile({ name, thumbnailKey }: PlaceTileProps) {
   const src = getMapImageUrl(thumbnailKey);
-  return <img className={styles.map} src={src} alt={`A map showing ${name}`} />;
+  return (
+    <figure className={styles.figure}>
+      <img className={styles.map} src={src} alt={`A map showing ${name}`} />
+      <figcaption>{name}</figcaption>
+    </figure>
+  );
 }
