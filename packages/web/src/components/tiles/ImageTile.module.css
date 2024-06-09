@@ -4,13 +4,13 @@
   height: 100%;
 }
 
-.image {
+.figure > img {
   object-fit: cover;
   width: 100%;
   height: 100%;
 }
 
-.caption {
+.figure > figcaption {
   position: absolute;
   width: 100%;
   bottom: 0;

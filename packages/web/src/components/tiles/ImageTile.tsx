@@ -8,8 +8,8 @@ export default function ImageTile({ imageKey, caption }: ImageTileProps) {
   const src = getImageUrl(imageKey);
   return (
     <figure className={styles.figure}>
-      <img className={styles.image} src={src} alt="Image" />
-      {caption && <figcaption className={styles.caption}>{caption}</figcaption>}
+      <img src={src} alt="Image" />
+      {caption && <figcaption>{caption}</figcaption>}
     </figure>
   );
 }
