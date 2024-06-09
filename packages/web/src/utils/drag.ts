@@ -82,7 +82,9 @@ function pointerMove(event: PointerEvent) {
 }
 
 function pointerUp() {
-  if (!dragSource) {
+  window.removeEventListener("pointermove", pointerMove);
+
+  if (!dragSource || !isDragging) {
     return;
   }
 
@@ -115,7 +117,6 @@ function pointerUp() {
     );
   }
 
-  window.removeEventListener("pointermove", pointerMove);
   disableDropTargetEvents();
   document.body.style.removeProperty("cursor");
 
