@@ -60,6 +60,7 @@ model ImageTile {
   updatedAt DateTime @updatedAt @map("updated_at")
   tileId    String   @unique @map("tile_id") @db.Uuid
   imageKey  String   @map("image_key")
+  caption   String?
 
   tile Tile @relation(fields: [tileId], references: [id])
 
