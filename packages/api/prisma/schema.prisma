@@ -62,7 +62,7 @@ model ImageTile {
   imageKey  String   @map("image_key")
   caption   String?
 
-  tile Tile @relation(fields: [tileId], references: [id])
+  tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
 
   @@map("image_tiles")
 }
@@ -74,7 +74,7 @@ model TextTile {
   tileId    String   @unique @map("tile_id") @db.Uuid
   content   String
 
-  tile Tile @relation(fields: [tileId], references: [id])
+  tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
 
   @@map("text_tiles")
 }
@@ -92,7 +92,7 @@ model PlaceTile {
   providerId   String?  @map("provider_id")
   thumbnailKey String   @map("thumbnail_key")
 
-  tile Tile @relation(fields: [tileId], references: [id])
+  tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
 
   @@map("place_tiles")
 }
