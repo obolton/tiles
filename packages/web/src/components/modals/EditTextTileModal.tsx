@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import client from "../../api/client";
 import ModalHeader from "./ModalHeader";
 import ModalFooter from "./ModalFooter";
@@ -12,7 +12,6 @@ interface Props {
 }
 
 export default function EditTextTileModal({ pageId, close, tile }: Props) {
-  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [content, setContent] = useState<string>(tile?.text.content ?? "");
 
   const change = useCallback(
@@ -24,6 +23,7 @@ export default function EditTextTileModal({ pageId, close, tile }: Props) {
   const submit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+
       if (!content) {
         return;
       }
@@ -63,9 +63,10 @@ export default function EditTextTileModal({ pageId, close, tile }: Props) {
       <ModalHeader>Text</ModalHeader>
 
       <textarea
-        autoFocus
         className={styles.textarea}
-        ref={inputRef}
+        name="content"
+        placeholder="Write something"
+        autoFocus
         onChange={change}
         value={content}
       />
