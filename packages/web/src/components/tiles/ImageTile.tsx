@@ -1,11 +1,15 @@
 import { getImageUrl } from "../../utils/images";
 import styles from "./ImageTile.module.css";
+import type { ClientImageTile } from "../../types/tiles";
 
-export interface ImageTileProps {
-  imageKey: string;
-}
+type ImageTileProps = ClientImageTile["image"];
 
-export default function ImageTile({ imageKey }: ImageTileProps) {
+export default function ImageTile({ imageKey, caption }: ImageTileProps) {
   const src = getImageUrl(imageKey);
-  return <img className={styles.image} src={src} alt="Image" />;
+  return (
+    <figure className={styles.figure}>
+      <img className={styles.image} src={src} alt="Image" />
+      {caption && <figcaption className={styles.caption}>{caption}</figcaption>}
+    </figure>
+  );
 }
