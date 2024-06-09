@@ -4,8 +4,8 @@ import { getImageUrl } from "../../utils/images";
 import client from "../../api/client";
 import ModalHeader from "./ModalHeader";
 import ModalFooter from "./ModalFooter";
-import type { ClientImageTile } from "../../types/tiles";
 import styles from "./EditImageTileModal.module.css";
+import type { ClientImageTile } from "../../types/tiles";
 
 interface Props {
   pageId: string;
@@ -21,6 +21,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
   const [imageKey, setImageKey] = useState<string | null>(
     tile?.image.imageKey ?? null
   );
+  const [caption, setCaption] = useState<string>(tile?.image.caption ?? "");
 
   const selectImage = useCallback(() => {
     if (inputRef.current) {
@@ -28,7 +29,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
     }
   }, []);
 
-  const change = useCallback(async () => {
+  const uploadImage = useCallback(async () => {
     const file = inputRef.current?.files?.[0];
     if (!file) {
       return;
@@ -37,6 +38,12 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
     const key = await uploadMedia(file);
     setImageKey(key);
   }, []);
+
+  const captionChange = useCallback(
+    (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+      setCaption(event.target.value),
+    []
+  );
 
   const submit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -52,6 +59,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
           id: tile.id,
           image: {
             imageKey,
+            caption,
           },
         });
         window.dispatchEvent(
@@ -63,6 +71,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
           type: "IMAGE",
           image: {
             imageKey,
+            caption,
           },
         });
         window.dispatchEvent(
@@ -72,7 +81,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
 
       close();
     },
-    [imageKey, pageId]
+    [imageKey, pageId, caption, tile, close]
   );
 
   return (
@@ -81,9 +90,10 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
 
       <input
         className={styles.input}
+        name="file"
         type="file"
         ref={inputRef}
-        onChange={change}
+        onChange={uploadImage}
       />
       <section className={styles.placeholder} onClick={selectImage}>
         {imageUrl ? (
@@ -92,6 +102,15 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
           <>Select an image</>
         )}
       </section>
+
+      <textarea
+        className={styles.textarea}
+        name="caption"
+        placeholder="Add a caption"
+        autoFocus
+        onChange={captionChange}
+        value={caption}
+      />
 
       <ModalFooter>
         <button className="primary" type="submit" aria-disabled={!imageKey}>
