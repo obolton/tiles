@@ -1,9 +1,15 @@
 import { router, procedure } from "./trpc.ts";
-import { createTile, updateTile, moveTile } from "../models/tiles/tiles.ts";
+import {
+  createTile,
+  updateTile,
+  moveTile,
+  deleteTile,
+} from "../models/tiles/tiles.ts";
 import {
   CreateTileSchema,
   UpdateTileSchema,
   MoveTileSchema,
+  DeleteTileSchema,
 } from "../models/tiles/schema.ts";
 
 export default router({
@@ -18,5 +24,9 @@ export default router({
   move: procedure.input(MoveTileSchema).mutation(async ({ input }) => {
     const result = await moveTile(input);
     return result;
+  }),
+  delete: procedure.input(DeleteTileSchema).mutation(async ({ input }) => {
+    await deleteTile(input);
+    return null;
   }),
 });

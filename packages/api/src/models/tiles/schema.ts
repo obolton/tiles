@@ -100,3 +100,11 @@ export const MoveTileSchema = z.object({
   position: z.number(),
 });
 export type MoveTileSchema = z.infer<typeof MoveTileSchema>;
+
+// Delete
+
+export const DeleteTileSchema = z.object({
+  id: z.string(),
+  pageId: z.string(),
+});
+export type DeleteTileSchema = z.infer<typeof DeleteTileSchema>;
