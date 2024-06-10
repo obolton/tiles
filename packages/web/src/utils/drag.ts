@@ -169,15 +169,12 @@ function click(event: MouseEvent) {
 }
 
 export function makeDraggable(element: HTMLElement) {
-  element.addEventListener("pointerdown", pointerDown, {
-    capture: true,
-    passive: false,
-  });
+  element.addEventListener("pointerdown", pointerDown, { passive: false });
   element.addEventListener("click", click, { capture: true, passive: false });
   element.dataset.draggable = "true";
 
   return () => {
-    element.removeEventListener("pointerdown", pointerDown, { capture: true });
+    element.removeEventListener("pointerdown", pointerDown);
     element.removeEventListener("click", click, { capture: true });
     delete element.dataset.draggable;
   };
