@@ -1,13 +1,16 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { TileType } from "@prisma/client";
 import ImageTile from "./ImageTile";
 import TextTile from "./TextTile";
 import PlaceTile from "./PlaceTile";
+import Icon from "../icons/Icon";
 import useEditable from "../../hooks/useEditable";
 import useDraggable from "../../hooks/useDraggable";
-import { editTile } from "../../utils/edit";
-import type { ClientTile } from "../../types/tiles";
+import { editTile, deleteTile } from "../../utils/edit";
+import client from "../../api/client";
+import deleteIcon from "../../icons/delete.svg";
 import styles from "./Tile.module.css";
+import type { ClientTile } from "../../types/tiles";
 
 export type TileProps = {
   pageId: string;
@@ -40,21 +43,57 @@ export default function Tile({ pageId, tile }: TileProps) {
   const isEditable = useEditable();
   const ref = useRef<HTMLDivElement>(null);
   useDraggable(ref, isEditable);
+  const [isDeleted, setIsDeleted] = useState(false);
 
-  const edit = useCallback(() => editTile(tile.id), [tile]);
+  const edit = useCallback(() => editTile(tile.id, tile.type), [tile]);
+
+  const onDelete = useCallback(
+    async (event: React.MouseEvent) => {
+      event.stopPropagation();
+      event.preventDefault();
+      await client.tiles.delete.mutate({ id: tile.id, pageId });
+      setIsDeleted(true);
+    },
+    [tile, pageId]
+  );
+
+  const onDeletePointerDown = useCallback((event: React.PointerEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+  }, []);
+
+  const onAnimationEnd = useCallback(
+    (event: React.AnimationEvent) => {
+      if (event.animationName === styles.disappear) {
+        deleteTile(tile.id);
+      }
+    },
+    [tile]
+  );
 
   const component = getTileComponent(pageId, tile);
 
   return (
     <div
       ref={ref}
-      className={`editable ${styles.tile}`}
+      className={`editable ${styles.tile} ${isDeleted ? styles.deleted : ""}`}
       data-drop-target={isEditable ? "true" : undefined}
       data-tile-id={tile.id}
       data-tile={JSON.stringify(tile)}
       onClick={isEditable ? edit : undefined}
+      onAnimationEnd={onAnimationEnd}
     >
       {component}
+      {isEditable ? (
+        <button
+          className={styles.deleteButton}
+          type="button"
+          onClick={onDelete}
+          onPointerDownCapture={onDeletePointerDown}
+        >
+          <Icon src={deleteIcon.src} />
+        </button>
+      ) : null}
     </div>
   );
 }
