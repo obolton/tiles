@@ -4,6 +4,7 @@ import {
   EDIT_TILE_START_EVENT,
   EDIT_TILE_END_EVENT,
 } from "../constants/edit";
+import type { TileType } from "../types/tiles";
 
 export function setEditMode(isEditing: boolean) {
   if (isEditing) {
@@ -15,15 +16,26 @@ export function setEditMode(isEditing: boolean) {
   }
 }
 
-export function editTile(tileId: string) {
+export function editTile(tileId: string, tileType: TileType) {
   if (!document.body.hasAttribute("data-editing")) {
     throw new Error("Not in editing mode");
   }
-  document.body.setAttribute("data-edit-tile-id", tileId);
-  document.dispatchEvent(new CustomEvent(EDIT_TILE_START_EVENT));
+  document.dispatchEvent(
+    new CustomEvent(EDIT_TILE_START_EVENT, { detail: { tileId, tileType } })
+  );
+}
+
+export function createTile(tileType: TileType) {
+  if (!document.body.hasAttribute("data-editing")) {
+    throw new Error("Not in editing mode");
+  }
+  document.dispatchEvent(
+    new CustomEvent(EDIT_TILE_START_EVENT, {
+      detail: { tileId: null, tileType },
+    })
+  );
 }
 
 export function finishEditingTile() {
-  document.body.removeAttribute("data-edit-tile-id");
   document.dispatchEvent(new CustomEvent(EDIT_TILE_END_EVENT));
 }

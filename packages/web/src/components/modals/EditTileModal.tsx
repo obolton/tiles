@@ -29,7 +29,7 @@ interface Props {
 }
 
 export default function EditTileModal({ pageId }: Props) {
-  const tileId = useEditTile();
+  const { tileId, tileType } = useEditTile();
   const [open, setOpen] = useState(false);
   const [originRect, setOriginRect] = useState<DOMRect | undefined>();
 
@@ -41,7 +41,7 @@ export default function EditTileModal({ pageId }: Props) {
   }, [tileId]);
 
   const tileData = useMemo(() => {
-    if (!tileElement) {
+    if (!tileId || !tileElement) {
       return null;
     }
     const data = tileElement.dataset.tile;
@@ -49,11 +49,11 @@ export default function EditTileModal({ pageId }: Props) {
       throw new Error("Tile data not found");
     }
     return JSON.parse(data) as ClientTile;
-  }, [tileElement]);
+  }, [tileId, tileElement]);
 
   useEffect(() => {
-    if (tileId) {
-      const originElement = tileElement
+    if (tileType) {
+      const originElement = tileId
         ? tileElement
         : document.getElementById("tileTypeSelector");
       const rect = originElement?.getBoundingClientRect();
@@ -62,14 +62,14 @@ export default function EditTileModal({ pageId }: Props) {
     } else {
       setOpen(false);
     }
-  }, [tileId, tileElement]);
+  }, [tileId, tileType, tileElement]);
 
   const close = useCallback(() => setOpen(false), []);
 
-  const ModalComponent = tileData ? MODALS[tileData.type] : null;
+  const ModalComponent = tileType ? MODALS[tileType] : null;
 
-  if (tileData && !ModalComponent) {
-    throw new Error(`Unsupported tile type: ${tileData.type}`);
+  if (tileType && !ModalComponent) {
+    throw new Error(`Unsupported tile type: ${tileType}`);
   }
 
   if (!ModalComponent) {

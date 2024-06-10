@@ -1,8 +1,10 @@
 ---
-const TILE_TYPES = [
-  { name: "Image", value: "image" },
-  { name: "Text", value: "text" },
-  { name: "Place", value: "place" },
+import type { TileType } from "../types/tiles";
+
+const TILE_TYPES: { name: string; value: TileType }[] = [
+  { name: "Image", value: "IMAGE" },
+  { name: "Text", value: "TEXT" },
+  { name: "Place", value: "PLACE" },
 ];
 ---
 
@@ -84,7 +86,9 @@ const TILE_TYPES = [
   }
 </style>
 <script>
-  import { setSearchParams } from "../utils/navigation";
+  import { createTile } from "../utils/edit";
+  import type { TileType } from "../types/tiles";
+
   const root = document.getElementById("tileTypeSelector");
 
   // Highlight the selected item
@@ -106,9 +110,9 @@ const TILE_TYPES = [
   document.querySelectorAll("#tileTypeSelector menu li").forEach((element) => {
     observer.observe(element);
     element.addEventListener("pointerdown", (event) =>
-      setSearchParams({
-        modal: (event.target as HTMLElement).getAttribute("data-value"),
-      })
+      createTile(
+        (event.target as HTMLElement).getAttribute("data-value") as TileType
+      )
     );
   });
 </script>
