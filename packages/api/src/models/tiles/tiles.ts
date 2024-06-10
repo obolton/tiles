@@ -77,5 +77,17 @@ export async function moveTile({ id, pageId, position }: MoveTileSchema) {
 }
 
 export async function deleteTile({ id }: DeleteTileSchema) {
-  return prisma.tile.delete({ where: { id } });
+  return prisma.$transaction(async (tx) => {
+    const { pageId, position } = await tx.tile.delete({
+      where: { id },
+      select: { pageId: true, position: true },
+    });
+    await tx.tile.updateMany({
+      where: {
+        pageId,
+        position: { gt: position },
+      },
+      data: { position: { decrement: 1 } },
+    });
+  });
 }
