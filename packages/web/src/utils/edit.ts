@@ -3,6 +3,7 @@ import {
   EDIT_END_EVENT,
   EDIT_TILE_START_EVENT,
   EDIT_TILE_END_EVENT,
+  DELETE_TILE_EVENT,
 } from "../constants/edit";
 import type { TileType } from "../types/tiles";
 
@@ -38,4 +39,8 @@ export function createTile(tileType: TileType) {
 
 export function finishEditingTile() {
   document.dispatchEvent(new CustomEvent(EDIT_TILE_END_EVENT));
+}
+
+export function deleteTile(id: string) {
+  window.dispatchEvent(new CustomEvent(DELETE_TILE_EVENT, { detail: { id } }));
 }

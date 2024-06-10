@@ -32,6 +32,14 @@ export default function Grid({
         prevTiles.map((prevTile) => (prevTile.id === tile.id ? tile : prevTile))
       );
     };
+    const deleteTile = (event: Event) => {
+      const { detail: tile } = event as CustomEvent<ClientTile>;
+      startLayoutTransition(() => {
+        setTiles((prevTiles) =>
+          prevTiles.filter((prevTile) => prevTile.id !== tile.id)
+        );
+      });
+    };
     const dragOver = (event: Event) => {
       const {
         detail: { dragSource },
@@ -70,15 +78,17 @@ export default function Grid({
     };
     window.addEventListener("tile:create", create);
     window.addEventListener("tile:update", update);
+    window.addEventListener("tile:delete", deleteTile);
     window.addEventListener("drag-over", dragOver);
     window.addEventListener("drop", drop);
     return () => {
       window.removeEventListener("tile:create", create);
       window.removeEventListener("tile:update", update);
+      window.removeEventListener("tile:delete", deleteTile);
       window.removeEventListener("drag-over", dragOver);
       window.removeEventListener("drop", drop);
     };
-  }, []);
+  }, [pageId, startLayoutTransition]);
 
   return (
     <section className={styles.grid} ref={ref}>
