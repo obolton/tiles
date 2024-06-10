@@ -14,7 +14,7 @@ export default function PageTitle({ pageId, title }: PageTitleProps) {
 
   const commit = useCallback(
     () => client.pages.update.mutate({ id: pageId, title: value }),
-    [value]
+    [pageId, value]
   );
 
   return (

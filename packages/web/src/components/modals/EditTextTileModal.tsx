@@ -55,7 +55,7 @@ export default function EditTextTileModal({ pageId, close, tile }: Props) {
 
       close();
     },
-    [content, pageId]
+    [close, content, pageId, tile]
   );
 
   return (
