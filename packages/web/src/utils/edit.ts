@@ -1,44 +1,41 @@
-import {
-  EDIT_START_EVENT,
-  EDIT_END_EVENT,
-  EDIT_TILE_START_EVENT,
-  EDIT_TILE_END_EVENT,
-  DELETE_TILE_EVENT,
-} from "../constants/edit";
+import { get, set, remove } from "./state";
+import { EDIT_START_EVENT, DELETE_TILE_EVENT } from "../constants/edit";
 import type { TileType } from "../types/tiles";
 
 export function setEditMode(isEditing: boolean) {
   if (isEditing) {
+    set("edit", "true");
     document.body.dataset.editing = "true";
     document.dispatchEvent(new CustomEvent(EDIT_START_EVENT));
   } else {
+    remove("edit");
     delete document.body.dataset.editing;
-    document.dispatchEvent(new CustomEvent(EDIT_END_EVENT));
   }
+}
+
+export function isEditModeEnabled() {
+  return get("edit") === "true";
 }
 
 export function editTile(tileId: string, tileType: TileType) {
-  if (!document.body.hasAttribute("data-editing")) {
+  if (!isEditModeEnabled()) {
     throw new Error("Not in editing mode");
   }
-  document.dispatchEvent(
-    new CustomEvent(EDIT_TILE_START_EVENT, { detail: { tileId, tileType } })
-  );
+  set("editTileId", tileId);
+  set("editTileType", tileType);
 }
 
 export function createTile(tileType: TileType) {
-  if (!document.body.hasAttribute("data-editing")) {
+  if (!isEditModeEnabled()) {
     throw new Error("Not in editing mode");
   }
-  document.dispatchEvent(
-    new CustomEvent(EDIT_TILE_START_EVENT, {
-      detail: { tileId: null, tileType },
-    })
-  );
+  set("editTileType", tileType);
+  remove("editTileId");
 }
 
 export function finishEditingTile() {
-  document.dispatchEvent(new CustomEvent(EDIT_TILE_END_EVENT));
+  remove("editTileType");
+  remove("editTileId");
 }
 
 export function deleteTile(id: string) {

@@ -9,7 +9,7 @@ import {
   type ComponentType,
 } from "react";
 import Modal from "./Modal";
-import useEditTile from "../../hooks/useEditTile";
+import useSessionState from "../../hooks/useSessionState";
 import { finishEditingTile } from "../../utils/edit";
 import type { ClientTile, TileType } from "../../types/tiles";
 
@@ -29,7 +29,8 @@ interface Props {
 }
 
 export default function EditTileModal({ pageId }: Props) {
-  const { tileId, tileType } = useEditTile();
+  const tileId = useSessionState("editTileId");
+  const tileType = useSessionState("editTileType") as TileType | null;
   const [open, setOpen] = useState(false);
   const [originRect, setOriginRect] = useState<DOMRect | undefined>();
 
