@@ -21,11 +21,23 @@ const page = await client.pages.getById.query(pageId);
   >
   <EditTileModal pageId={pageId} client:edit />
 </Page>
+<script is:inline>
+  if (sessionStorage.getItem("edit")) {
+    document.body.dataset.editing = "true";
+    document.getElementById("editSwitch").checked = true;
+  }
+  window.addEventListener(
+    "DOMContentLoaded",
+    () => {
+      delete document.body.dataset.disableTransitions;
+    },
+    { once: true }
+  );
+</script>
 <script>
   import { setEditMode } from "../utils/edit";
-  document
-    .getElementById("editSwitch")
-    ?.addEventListener("change", (event) =>
-      setEditMode((event.target as HTMLInputElement).checked)
-    );
+  const editSwitch = document.getElementById("editSwitch") as HTMLInputElement;
+  editSwitch.addEventListener("change", (event) =>
+    setEditMode(editSwitch.checked)
+  );
 </script>
