@@ -79,14 +79,14 @@ export default function Grid({
     window.addEventListener("tile:create", create);
     window.addEventListener("tile:update", update);
     window.addEventListener("tile:delete", deleteTile);
-    window.addEventListener("drag-over", dragOver);
-    window.addEventListener("drop", drop);
+    window.addEventListener("drag:drag-over", dragOver);
+    window.addEventListener("drag:drop", drop);
     return () => {
       window.removeEventListener("tile:create", create);
       window.removeEventListener("tile:update", update);
       window.removeEventListener("tile:delete", deleteTile);
-      window.removeEventListener("drag-over", dragOver);
-      window.removeEventListener("drop", drop);
+      window.removeEventListener("drag:drag-over", dragOver);
+      window.removeEventListener("drag:drop", drop);
     };
   }, [pageId, startLayoutTransition]);
 

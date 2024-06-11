@@ -120,7 +120,7 @@ function pointerUp() {
   disableDropTargetEvents();
   document.body.style.removeProperty("cursor");
 
-  dragSource.dispatchEvent(new CustomEvent("drop", { bubbles: true }));
+  dragSource.dispatchEvent(new CustomEvent("drag:drop", { bubbles: true }));
 
   // Wait for pointer events to complete before resetting state
   requestAnimationFrame(() => {
@@ -135,7 +135,7 @@ function pointerEnterDropTarget(event: PointerEvent) {
     return;
   }
   event.currentTarget.dispatchEvent(
-    new CustomEvent("drag-over", {
+    new CustomEvent("drag:drag-over", {
       detail: {
         dragSource,
       },
