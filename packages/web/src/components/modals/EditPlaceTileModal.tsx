@@ -68,6 +68,9 @@ export default function EditPlaceTileModal({
     const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
       mapboxgl: mapboxgl,
+      flyTo: {
+        animate: false,
+      },
     });
     geocoder.on("result", ({ result }: { result: Result }) =>
       setPlace({
