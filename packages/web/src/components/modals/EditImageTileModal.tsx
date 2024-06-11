@@ -7,6 +7,8 @@ import ModalFooter from "./ModalFooter";
 import styles from "./EditImageTileModal.module.css";
 import type { ClientImageTile } from "../../types/tiles";
 
+const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
+
 interface Props {
   pageId: string;
   close: () => void;
@@ -22,6 +24,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
     tile?.image.imageKey ?? null
   );
   const [caption, setCaption] = useState<string>(tile?.image.caption ?? "");
+  const [isDragOver, setDragOver] = useState<boolean>(false);
 
   const selectImage = useCallback(() => {
     if (inputRef.current) {
@@ -29,15 +32,50 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
     }
   }, []);
 
-  const uploadImage = useCallback(async () => {
-    const file = inputRef.current?.files?.[0];
-    if (!file) {
-      return;
+  const dragOver = useCallback((event: React.DragEvent) => {
+    const { dataTransfer } = event;
+    if (
+      dataTransfer.items.length === 1 &&
+      ACCEPT_CONTENT_TYPES.includes(dataTransfer.items[0].type)
+    ) {
+      event.preventDefault();
+      dataTransfer.dropEffect = "move";
+      setDragOver(true);
     }
+  }, []);
+
+  const dragLeave = useCallback(() => setDragOver(false), []);
+
+  const setFile = useCallback(async (file: File) => {
     setImageUrl(URL.createObjectURL(file));
     const key = await uploadMedia(file);
     setImageKey(key);
   }, []);
+
+  const drop = useCallback(
+    (event: React.DragEvent) => {
+      const { dataTransfer } = event;
+      event.preventDefault();
+      if (
+        dataTransfer.items.length === 1 &&
+        ACCEPT_CONTENT_TYPES.includes(dataTransfer.items[0].type)
+      ) {
+        const file = dataTransfer.items[0].getAsFile();
+        if (file) {
+          setFile(file);
+        }
+      }
+      setDragOver(false);
+    },
+    [setFile]
+  );
+
+  const uploadImage = useCallback(async () => {
+    const file = inputRef.current?.files?.[0];
+    if (file) {
+      setFile(file);
+    }
+  }, [setFile]);
 
   const captionChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -88,29 +126,42 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
     <form onSubmit={submit}>
       <ModalHeader>Image</ModalHeader>
 
-      <input
-        className={styles.input}
-        name="file"
-        type="file"
-        ref={inputRef}
-        onChange={uploadImage}
-      />
-      <section className={styles.placeholder} onClick={selectImage}>
+      <section
+        className={`${styles.placeholder} ${isDragOver ? styles.dragOver : ""}`}
+        onClick={selectImage}
+        onDragOver={dragOver}
+        onDragLeave={dragLeave}
+        onDrop={drop}
+      >
+        <input
+          className={styles.input}
+          name="file"
+          type="file"
+          accept={ACCEPT_CONTENT_TYPES.join(",")}
+          ref={inputRef}
+          onChange={uploadImage}
+        />
         {imageUrl ? (
-          <img className={styles.image} src={imageUrl} alt="Preview" />
+          <img
+            className={styles.image}
+            src={imageUrl}
+            alt="The uploaded image preview"
+          />
         ) : (
-          <>Select an image</>
+          <>Select an image or drag and drop</>
         )}
       </section>
 
-      <textarea
-        className={styles.textarea}
-        name="caption"
-        placeholder="Add a caption"
-        autoFocus
-        onChange={captionChange}
-        value={caption}
-      />
+      {imageUrl && (
+        <textarea
+          className={styles.textarea}
+          name="caption"
+          placeholder="Add a caption"
+          autoFocus
+          onChange={captionChange}
+          value={caption}
+        />
+      )}
 
       <ModalFooter>
         <button className="primary" type="submit" aria-disabled={!imageKey}>
