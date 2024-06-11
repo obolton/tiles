@@ -1,4 +1,10 @@
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import mapboxgl from "mapbox-gl";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import ModalHeader from "./ModalHeader";
@@ -93,6 +99,22 @@ export default function EditPlaceTileModal({
       mapRef.current?.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (!tile) {
+      navigator.geolocation.getCurrentPosition(
+        (location) => {
+          mapRef.current?.setCenter([
+            location.coords.longitude,
+            location.coords.latitude,
+          ]);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
+  }, [tile]);
 
   const submit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
