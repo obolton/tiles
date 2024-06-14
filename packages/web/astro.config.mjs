@@ -12,6 +12,7 @@ const env = loadEnv(
 );
 
 export default defineConfig({
+  output: "server",
   integrations: [react(), editClientDirective()],
   vite: {
     server: {
