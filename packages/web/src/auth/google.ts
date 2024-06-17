@@ -73,6 +73,7 @@ export async function getGoogleUser(accessToken: string) {
     id: googleUser.id,
     name: googleUser.name,
     email: googleUser.email,
-    emailIsVerified: googleUser.verified_email,
+    emailVerified: googleUser.verified_email,
+    imageUrl: googleUser.picture,
   };
 }

@@ -1,5 +1,5 @@
 import { createTRPCClient, httpLink } from "@trpc/client";
-import type { AppRouter } from "api/src/router/index.ts";
+import type { AppRouter, AppRouterInputs } from "api/src/router/index.ts";
 
 const client = createTRPCClient<AppRouter>({
   links: [
@@ -11,5 +11,7 @@ const client = createTRPCClient<AppRouter>({
     }),
   ],
 });
+
+export type { AppRouterInputs };
 
 export default client;

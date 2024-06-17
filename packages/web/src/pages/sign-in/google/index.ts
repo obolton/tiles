@@ -31,7 +31,8 @@ export const GET: APIRoute = async ({ cookies, redirect, request }) => {
     providerId: googleUser.id,
     name: googleUser.name,
     email: googleUser.email,
-    emailVerified: googleUser.emailIsVerified,
+    emailVerified: googleUser.emailVerified,
+    imageUrl: googleUser.imageUrl,
   });
   setAuthenticationCookies(cookies, session.id, new Date(session.expiresAt));
 

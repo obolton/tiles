@@ -1,6 +1,5 @@
-import client from "../api/client";
+import client, { type AppRouterInputs } from "../api/client";
 import { SESSION_COOKIE_NAME, SIGNED_IN_FLAG_COOKIE_NAME } from "./constants";
-import type { AuthenticationProvider } from "@prisma/client";
 import type { AstroCookies, AstroCookieSetOptions } from "astro";
 
 const SESSION_COOKIE_OPTIONS: AstroCookieSetOptions = {
@@ -17,13 +16,7 @@ const SIGNED_IN_FLAG_COOKIE_OPTIONS: AstroCookieSetOptions = {
   sameSite: "strict",
 };
 
-type SignInOptions = {
-  provider: AuthenticationProvider;
-  providerId: string;
-  name: string;
-  email: string;
-  emailVerified: boolean;
-};
+type SignInOptions = AppRouterInputs["auth"]["signIn"];
 
 export async function signIn({
   provider,
@@ -31,6 +24,7 @@ export async function signIn({
   name,
   email,
   emailVerified,
+  imageUrl,
 }: SignInOptions) {
   return client.auth.signIn.mutate({
     provider,
@@ -38,6 +32,7 @@ export async function signIn({
     name,
     email,
     emailVerified,
+    imageUrl,
   });
 }
 
