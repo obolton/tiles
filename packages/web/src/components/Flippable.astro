@@ -1,0 +1,87 @@
+---
+interface Props {
+  id: string;
+  axis?: "x" | "y";
+  width?: string;
+  height?: string;
+}
+
+const { id, axis = "x", width, height } = Astro.props;
+---
+
+<div
+  id={id}
+  class:list={["flippable", axis === "x" ? "x-axis" : "y-axis"]}
+  data-animate="true"
+>
+  <div class="face"><slot name="front" /></div>
+  <div class="face back"><slot name="back" /></div>
+</div>
+
+<style define:vars={{ width, height }}>
+  .flippable {
+    position: relative;
+    perspective: 200px;
+    width: var(--width, unset);
+    height: var(--height, unset);
+    transform-style: preserve-3d;
+    animation-duration: 0.5s;
+    animation-timing-function: ease;
+    animation-fill-mode: forwards;
+    animation-composition: add;
+    transform: perspective(200px);
+  }
+
+  .face {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    backface-visibility: hidden;
+  }
+
+  .back {
+    transform: rotateX(180deg);
+  }
+
+  .x-axis[data-flipped][data-animate="true"] {
+    animation-name: flip-x-axis;
+  }
+
+  .y-axis[data-flipped][data-animate="true"] {
+    animation-name: flip-y-axis;
+  }
+
+  .flippable[data-flipped][data-animate="false"] {
+    transform: rotateX(180deg);
+  }
+
+  .flippable[data-flipped]) .back {
+    display: block;
+  }
+
+  .flippable:not([data-flipped]) .back {
+    display: none;
+  }
+
+  @keyframes flip-x-axis {
+    from {
+      transform: rotateX(0deg);
+    }
+
+    to {
+      transform: rotateX(180deg);
+    }
+  }
+
+  @keyframes flip-y-axis {
+    from {
+      transform: rotateY(0deg);
+    }
+
+    to {
+      transform: rotateY(180deg);
+    }
+  }
+</style>
