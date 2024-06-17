@@ -10,6 +10,7 @@ export async function signIn({
   name,
   email,
   emailVerified,
+  imageUrl,
 }: SignInSchema) {
   return prisma.$transaction(async (transaction) => {
     const existingUserId = await getUserIdByProviderId(transaction, {
@@ -24,6 +25,7 @@ export async function signIn({
         name,
         email,
         emailVerified,
+        imageUrl,
       });
       const [, session] = await Promise.all([
         createKey(transaction, { provider, providerId, userId: user.id }),

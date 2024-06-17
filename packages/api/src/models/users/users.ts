@@ -5,17 +5,19 @@ type CreateUserOptions = {
   name: string;
   email: string;
   emailVerified: boolean;
+  imageUrl?: string;
 };
 
 export async function createUser(
   db: Prisma.TransactionClient,
-  { name, email, emailVerified }: CreateUserOptions
+  { name, email, emailVerified, imageUrl }: CreateUserOptions
 ) {
   return db.user.create({
     data: {
       name,
       email,
       emailVerified,
+      imageUrl,
     },
     select: {
       id: true,
@@ -31,6 +33,7 @@ export async function getUserBySessionId(sessionId: string) {
         select: {
           id: true,
           name: true,
+          imageUrl: true,
         },
       },
     },

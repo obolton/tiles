@@ -7,6 +7,7 @@ export const SignInSchema = z.object({
   name: z.string().min(1),
   email: z.string().min(3),
   emailVerified: z.boolean(),
+  imageUrl: z.string().optional(),
 });
 export type SignInSchema = z.infer<typeof SignInSchema>;
 
