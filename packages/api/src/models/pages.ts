@@ -4,8 +4,8 @@ import type { ClientTile } from "../types/tiles.ts";
 
 export async function getPage(
   id: string
-): Promise<{ id: string; title: string; tiles: ClientTile[] }> {
-  const page = await prisma.page.findUniqueOrThrow({
+): Promise<{ id: string; title: string; tiles: ClientTile[] } | null> {
+  const page = await prisma.page.findUnique({
     where: { id },
     select: {
       id: true,
@@ -47,6 +47,10 @@ export async function getPage(
       },
     },
   });
+
+  if (!page) {
+    return null;
+  }
 
   const formatTile = ({
     id,

@@ -1,0 +1,36 @@
+---
+import Page from "../../layouts/Page.astro";
+import Menu from "../../components/menu/Menu.astro";
+import PageTitle from "../../components/header/PageTitle";
+import Grid from "../../components/grid/Grid";
+import TileTypeSelector from "../../components/TileTypeSelector.astro";
+import EditTileModal from "../../components/modals/EditTileModal";
+import client from "../../api/client";
+
+const { id: pageId } = Astro.params;
+if (!pageId) {
+  return new Response(null, {
+    status: 404,
+    statusText: "Page not found",
+  });
+}
+
+const page = await client.pages.getById.query(pageId);
+if (!page) {
+  return new Response(null, {
+    status: 404,
+    statusText: "Page not found",
+  });
+}
+---
+
+<Page title={page.title}>
+  <Menu slot="menu" />
+  <PageTitle pageId={page.id} title={page.title} slot="header" client:edit />
+
+  <Grid pageId={page.id} tiles={page.tiles} client:edit>
+    <TileTypeSelector />
+  </Grid>
+
+  <EditTileModal pageId={page.id} client:edit />
+</Page>

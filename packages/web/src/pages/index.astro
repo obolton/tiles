@@ -8,17 +8,22 @@ import EditTileModal from "../components/modals/EditTileModal";
 import client from "../api/client";
 
 const pageId = import.meta.env.PAGE_ID;
-
 const page = await client.pages.getById.query(pageId);
+if (!page) {
+  return new Response(null, {
+    status: 404,
+    statusText: "Page not found",
+  });
+}
 ---
 
 <Page title={page.title}>
   <Menu slot="menu" />
   <PageTitle pageId={page.id} title={page.title} slot="header" client:edit />
 
-  <Grid pageId={pageId} tiles={page.tiles} client:edit>
+  <Grid pageId={page.id} tiles={page.tiles} client:edit>
     <TileTypeSelector />
   </Grid>
 
-  <EditTileModal pageId={pageId} client:edit />
+  <EditTileModal pageId={page.id} client:edit />
 </Page>
