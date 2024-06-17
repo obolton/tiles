@@ -19,5 +19,7 @@ export async function getUserInfo() {
   } else {
     remove("userId");
     remove("userName");
+    throw new Error("User not found");
   }
+  return user;
 }
