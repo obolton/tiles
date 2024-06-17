@@ -2,6 +2,10 @@ export function get(key: string) {
   return sessionStorage.getItem(key);
 }
 
+export function has(key: string) {
+  return !!sessionStorage.getItem(key);
+}
+
 export function set(key: string, value: string) {
   sessionStorage.setItem(key, value);
   window.dispatchEvent(
