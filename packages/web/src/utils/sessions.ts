@@ -1,14 +1,10 @@
 import { SIGNED_IN_FLAG_COOKIE_NAME } from "../auth/constants";
 import { getCookie } from "./cookies";
 import client from "../api/client";
-import { set, remove, has } from "./state";
+import { set, remove, get } from "./state";
 
 export function isSignedIn() {
   return getCookie(SIGNED_IN_FLAG_COOKIE_NAME) === "1";
-}
-
-export function hasUserInfo() {
-  return has("userId");
 }
 
 export async function getUserInfo() {
@@ -22,4 +18,13 @@ export async function getUserInfo() {
     throw new Error("User not found");
   }
   return user;
+}
+
+export function getCachedUserInfo() {
+  const id = get("userId");
+  const name = get("userName");
+  if (!id || !name) {
+    return null;
+  }
+  return { id, name };
 }
