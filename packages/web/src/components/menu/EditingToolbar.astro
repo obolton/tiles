@@ -1,0 +1,21 @@
+---
+import Toolbar from "./Toolbar.astro";
+import Switch from "../Switch.astro";
+---
+
+<Toolbar label="Editing toolbar">
+  <Switch id="editSwitch" label="Edit" />
+</Toolbar>
+<script is:inline>
+  if (sessionStorage.getItem("edit")) {
+    document.body.dataset.editing = "true";
+    document.getElementById("editSwitch").checked = true;
+  }
+</script>
+<script>
+  import { setEditMode } from "../../utils/edit";
+  const editSwitch = document.getElementById("editSwitch") as HTMLInputElement;
+  editSwitch.addEventListener("change", (event) =>
+    setEditMode(editSwitch.checked)
+  );
+</script>

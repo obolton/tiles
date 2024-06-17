@@ -1,9 +1,6 @@
 ---
 import Page from "../layouts/Page.astro";
-import Menubar from "../components/Menubar.astro";
-import Flippable from "../components/Flippable.astro";
-import Toolbar from "../components/Toolbar.astro";
-import Switch from "../components/Switch.astro";
+import Menu from "../components/menu/Menu.astro";
 import PageTitle from "../components/header/PageTitle";
 import Grid from "../components/grid/Grid";
 import TileTypeSelector from "../components/TileTypeSelector.astro";
@@ -16,20 +13,8 @@ const page = await client.pages.getById.query(pageId);
 ---
 
 <Page title={page.title}>
-  <PageTitle pageId={page.id} title={page.title} client:edit slot="header" />
-
-  <Menubar>
-    <Flippable id="authentication" axis="x" width="150px">
-      <Toolbar id="signIn" label="Account toolbar" slot="front">
-        <a href="/sign-in">Sign in</a>
-      </Toolbar>
-      <Toolbar id="user" label="Account toolbar" slot="back" />
-    </Flippable>
-
-    <Toolbar label="Editing toolbar">
-      <Switch id="editSwitch" label="Edit" />
-    </Toolbar>
-  </Menubar>
+  <Menu slot="menu" />
+  <PageTitle pageId={page.id} title={page.title} slot="header" client:edit />
 
   <Grid pageId={pageId} tiles={page.tiles} client:edit>
     <TileTypeSelector />
@@ -37,80 +22,3 @@ const page = await client.pages.getById.query(pageId);
 
   <EditTileModal pageId={pageId} client:edit />
 </Page>
-<script is:inline>
-  if (sessionStorage.getItem("edit")) {
-    document.body.dataset.editing = "true";
-    document.getElementById("editSwitch").checked = true;
-  }
-  window.addEventListener(
-    "DOMContentLoaded",
-    () => {
-      delete document.body.dataset.disableTransitions;
-    },
-    { once: true }
-  );
-</script>
-<script>
-  import { setEditMode } from "../utils/edit";
-  import {
-    isSignedIn,
-    getUserInfo,
-    getCachedUserInfo,
-  } from "../utils/sessions";
-
-  const editSwitch = document.getElementById("editSwitch") as HTMLInputElement;
-  editSwitch.addEventListener("change", (event) =>
-    setEditMode(editSwitch.checked)
-  );
-
-  function showUserInfo({
-    name,
-    imageUrl,
-  }: {
-    name: string;
-    imageUrl: string | null;
-  }) {
-    const user = document.getElementById("user")!;
-    if (imageUrl) {
-      user.innerHTML = `<img class="profileImage" src="${imageUrl}" alt="Your profile picture" /><span>${name}</span>`;
-    } else {
-      user.innerHTML = `<span>${name}</span>`;
-    }
-  }
-
-  if (isSignedIn()) {
-    const authState = document.getElementById("authentication")!;
-
-    const signIn = document.getElementById("signIn")!;
-
-    const userInfo = getCachedUserInfo();
-
-    if (userInfo) {
-      showUserInfo(userInfo);
-      authState.dataset.animate = "false";
-      authState.dataset.flipped = "true";
-    } else {
-      signIn.innerHTML = "Signing in...";
-
-      Promise.all([
-        getUserInfo().then((user) => showUserInfo(user)),
-        new Promise((resolve) => setTimeout(resolve, 1500)),
-      ])
-        .then(() => {
-          authState.dataset.animate = "true";
-          authState.dataset.flipped = "true";
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  }
-</script>
-<style is:global>
-  .profileImage {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.3);
-  }
-</style>

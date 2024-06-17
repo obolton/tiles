@@ -1,0 +1,19 @@
+---
+import AuthenticationToolbar from "./AuthenticationToolbar.astro";
+import EditingToolbar from "./EditingToolbar.astro";
+---
+
+<div id="menubar" role="menubar" aria-label="Menu bar">
+  <AuthenticationToolbar />
+  <EditingToolbar />
+</div>
+<style>
+  #menubar {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 1;
+    display: flex;
+    gap: 16px;
+  }
+</style>
