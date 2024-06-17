@@ -23,9 +23,7 @@ const page = await client.pages.getById.query(pageId);
       <Toolbar id="signIn" label="Account toolbar" slot="front">
         <a href="/sign-in">Sign in</a>
       </Toolbar>
-      <Toolbar id="user" label="Account toolbar" slot="back">
-        <span id="userName">Anonymous</span>
-      </Toolbar>
+      <Toolbar id="user" label="Account toolbar" slot="back" />
     </Flippable>
 
     <Toolbar label="Editing toolbar">
@@ -65,26 +63,40 @@ const page = await client.pages.getById.query(pageId);
     setEditMode(editSwitch.checked)
   );
 
+  function showUserInfo({
+    name,
+    imageUrl,
+  }: {
+    name: string;
+    imageUrl: string | null;
+  }) {
+    const user = document.getElementById("user")!;
+    if (imageUrl) {
+      user.innerHTML = `<img class="profileImage" src="${imageUrl}" alt="Your profile picture" /><span>${name}</span>`;
+    } else {
+      user.innerHTML = `<span>${name}</span>`;
+    }
+  }
+
   if (isSignedIn()) {
     const authState = document.getElementById("authentication")!;
-    const userName = document.getElementById("userName")!;
+
     const signIn = document.getElementById("signIn")!;
 
     const userInfo = getCachedUserInfo();
 
     if (userInfo) {
-      userName.innerText = userInfo.name;
+      showUserInfo(userInfo);
       authState.dataset.animate = "false";
       authState.dataset.flipped = "true";
     } else {
       signIn.innerHTML = "Signing in...";
 
       Promise.all([
-        getUserInfo(),
+        getUserInfo().then((user) => showUserInfo(user)),
         new Promise((resolve) => setTimeout(resolve, 1500)),
       ])
-        .then(([user]) => {
-          userName.innerText = user.name;
+        .then(() => {
           authState.dataset.animate = "true";
           authState.dataset.flipped = "true";
         })
@@ -94,3 +106,11 @@ const page = await client.pages.getById.query(pageId);
     }
   }
 </script>
+<style is:global>
+  .profileImage {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+  }
+</style>

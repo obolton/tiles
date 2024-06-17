@@ -12,6 +12,7 @@ export async function getUserInfo() {
   if (user) {
     set("userId", user.id);
     set("userName", user.name);
+    set("userImageUrl", user.imageUrl ?? "");
   } else {
     remove("userId");
     remove("userName");
@@ -23,8 +24,9 @@ export async function getUserInfo() {
 export function getCachedUserInfo() {
   const id = get("userId");
   const name = get("userName");
+  const imageUrl = get("userImageUrl");
   if (!id || !name) {
     return null;
   }
-  return { id, name };
+  return { id, name, imageUrl };
 }
