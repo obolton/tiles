@@ -23,6 +23,7 @@ const handler = createHTTPHandler({
   router,
   middleware: cors({
     origin: CLIENT_ORIGIN,
+    credentials: true,
   }),
   createContext,
 });
