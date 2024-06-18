@@ -2,12 +2,13 @@ import type {
   ImageTile,
   TextTile,
   PlaceTile,
+  LinkTile,
   Tile,
   TileType,
 } from "@prisma/client";
 
-type TilePropertiesKey = "image" | "text" | "place";
-type TileProperties = ImageTile | TextTile | PlaceTile;
+type TilePropertiesKey = "image" | "text" | "place" | "link";
+type TileProperties = ImageTile | TextTile | PlaceTile | LinkTile;
 
 type ClientTileType<
   Type extends TileType,
@@ -25,5 +26,10 @@ type ClientTileType<
 export type ClientImageTile = ClientTileType<"IMAGE", "image", ImageTile>;
 export type ClientTextTile = ClientTileType<"TEXT", "text", TextTile>;
 export type ClientPlaceTile = ClientTileType<"PLACE", "place", PlaceTile>;
-export type ClientTile = ClientImageTile | ClientTextTile | ClientPlaceTile;
+export type ClientLinkTile = ClientTileType<"LINK", "link", LinkTile>;
+export type ClientTile =
+  | ClientImageTile
+  | ClientTextTile
+  | ClientPlaceTile
+  | ClientLinkTile;
 export type { TileType };
