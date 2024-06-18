@@ -3,5 +3,6 @@ export type {
   ClientImageTile,
   ClientTextTile,
   ClientPlaceTile,
+  ClientLinkTile,
   TileType,
 } from "api/src/types/tiles.ts";
