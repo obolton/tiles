@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { TileType, type Prisma } from "@prisma/client";
 import type { CreatePlaceTileSchema, UpdatePlaceTileSchema } from "./schema.ts";
 import { getStaticMap } from "../../utils/maps.ts";
