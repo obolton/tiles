@@ -1,0 +1,31 @@
+<button id="newPage" type="button" aria-label="Create a new page"> + </button>
+<style>
+  #newPage {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(246, 240, 240, 0.9);
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.3),
+      0 4px 4px -2px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.15);
+    color: #303030;
+    font-size: 36px;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+<script>
+  import client from "../../api/client";
+  document.getElementById("newPage")!.addEventListener("click", () => {
+    client.pages.create
+      .mutate({ title: "New page" })
+      .then(({ id }) => {
+        window.open(`/pages/${id}?edit=true`, "_blank");
+      })
+      .catch((error) => console.error(error));
+  });
+</script>

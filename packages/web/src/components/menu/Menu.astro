@@ -1,12 +1,14 @@
 ---
 import AuthenticationToolbar from "./AuthenticationToolbar.astro";
 import EditingToolbar from "./EditingToolbar.astro";
+import NewPageButton from "./NewPageButton.astro";
 ---
 
 <div id="menubar" role="menubar" aria-label="Menu bar">
   <AuthenticationToolbar />
   <EditingToolbar />
 </div>
+<NewPageButton />
 <style>
   #menubar {
     position: fixed;
