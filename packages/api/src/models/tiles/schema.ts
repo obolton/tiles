@@ -74,12 +74,30 @@ export const UpdatePlaceTileSchema =
   UpdateTileBaseSchema.merge(PlaceTileBaseSchema);
 export type UpdatePlaceTileSchema = z.infer<typeof UpdatePlaceTileSchema>;
 
+// Link
+
+const LinkTileBaseSchema = z.object({
+  type: z.literal(TileType.LINK),
+  link: z.object({
+    url: z.string().url(),
+  }),
+});
+
+export const CreateLinkTileSchema =
+  CreateTileBaseSchema.merge(LinkTileBaseSchema);
+export type CreateLinkTileSchema = z.infer<typeof CreateLinkTileSchema>;
+
+export const UpdateLinkTileSchema =
+  UpdateTileBaseSchema.merge(LinkTileBaseSchema);
+export type UpdateLinkTileSchema = z.infer<typeof UpdateLinkTileSchema>;
+
 // Create
 
 export const CreateTileSchema = z.discriminatedUnion("type", [
   CreateImageTileSchema,
   CreateTextTileSchema,
   CreatePlaceTileSchema,
+  CreateLinkTileSchema,
 ]);
 export type CreateTileSchema = z.infer<typeof CreateTileSchema>;
 
@@ -89,6 +107,7 @@ export const UpdateTileSchema = z.discriminatedUnion("type", [
   UpdateImageTileSchema,
   UpdateTextTileSchema,
   UpdatePlaceTileSchema,
+  UpdateLinkTileSchema,
 ]);
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 
