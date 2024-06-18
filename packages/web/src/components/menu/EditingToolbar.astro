@@ -7,7 +7,17 @@ import Switch from "../Switch.astro";
   <Switch id="editSwitch" label="Edit" />
 </Toolbar>
 <script is:inline>
-  if (sessionStorage.getItem("edit")) {
+  const url = new URL(window.location);
+  const editSearchParam = url.searchParams.get("edit");
+  const isEditing = sessionStorage.getItem("edit") || editSearchParam;
+
+  if (editSearchParam) {
+    url.searchParams.delete("edit");
+    sessionStorage.setItem("edit", "true");
+    history.replaceState(null, "", url);
+  }
+
+  if (isEditing) {
     document.body.dataset.editing = "true";
     document.getElementById("editSwitch").checked = true;
   }
