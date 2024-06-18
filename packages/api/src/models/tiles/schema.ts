@@ -10,12 +10,12 @@ import {
 // Base
 
 const CreateTileBaseSchema = z.object({
-  pageId: z.string(),
+  pageId: z.string().length(36),
 });
 
 const UpdateTileBaseSchema = z.object({
-  id: z.string().optional(),
-  pageId: z.string(),
+  id: z.string().length(36),
+  pageId: z.string().length(36),
 });
 
 // Tile types
@@ -95,8 +95,8 @@ export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 // Move
 
 export const MoveTileSchema = z.object({
-  id: z.string(),
-  pageId: z.string(),
+  id: z.string().length(36),
+  pageId: z.string().length(36),
   position: z.number(),
 });
 export type MoveTileSchema = z.infer<typeof MoveTileSchema>;
@@ -104,7 +104,7 @@ export type MoveTileSchema = z.infer<typeof MoveTileSchema>;
 // Delete
 
 export const DeleteTileSchema = z.object({
-  id: z.string(),
-  pageId: z.string(),
+  id: z.string().length(36),
+  pageId: z.string().length(36),
 });
 export type DeleteTileSchema = z.infer<typeof DeleteTileSchema>;
