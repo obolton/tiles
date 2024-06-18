@@ -71,6 +71,7 @@ enum TileType {
   IMAGE
   TEXT
   PLACE
+  LINK
 }
 
 model Tile {
@@ -85,6 +86,7 @@ model Tile {
   image ImageTile?
   text  TextTile?
   place PlaceTile?
+  link  LinkTile?
 
   @@map("tiles")
 }
@@ -130,4 +132,20 @@ model PlaceTile {
   tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
 
   @@map("place_tiles")
+}
+
+model LinkTile {
+  id          String   @id @default(uuid()) @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tileId      String   @unique @map("tile_id") @db.Uuid
+  url         String
+  title       String?
+  description String?
+  siteName    String?  @map("site_name")
+  imageUrl    String?  @map("image_url")
+
+  tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
+
+  @@map("link_tiles")
 }
