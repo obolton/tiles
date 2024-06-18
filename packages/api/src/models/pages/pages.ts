@@ -46,6 +46,16 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
               address: true,
             },
           },
+          link: {
+            select: {
+              id: true,
+              url: true,
+              title: true,
+              description: true,
+              siteName: true,
+              imageUrl: true,
+            },
+          },
         },
         orderBy: {
           position: "asc",
@@ -83,6 +93,12 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
           ...base,
           type,
           place: tile.place!,
+        };
+      case "LINK":
+        return {
+          ...base,
+          type,
+          link: tile.link!,
         };
     }
   };
