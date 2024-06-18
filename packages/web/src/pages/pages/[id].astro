@@ -15,7 +15,7 @@ if (!pageId) {
   });
 }
 
-const page = await client.pages.getById.query(pageId);
+const page = await client.pages.getById.query({ id: pageId });
 if (!page) {
   return new Response(null, {
     status: 404,
