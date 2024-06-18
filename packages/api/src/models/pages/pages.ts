@@ -1,9 +1,12 @@
 import prisma from "../../database/prisma.ts";
-import type { Page } from "@prisma/client";
-import type { GetPageByIdSchema, UpdatePageSchema } from "./schema.ts";
+import type {
+  GetPageByIdSchema,
+  CreatePageSchema,
+  UpdatePageSchema,
+} from "./schema.ts";
 import type { ClientTile } from "../../types/tiles.ts";
 
-export async function getPage({ id }: GetPageByIdSchema): Promise<{
+export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   id: string;
   title: string;
   tiles: ClientTile[];
@@ -91,10 +94,7 @@ export async function getPage({ id }: GetPageByIdSchema): Promise<{
   };
 }
 
-export async function createPage({
-  authorId,
-  title,
-}: Pick<Page, "authorId" | "title">) {
+export async function createPage({ authorId, title }: CreatePageSchema) {
   return prisma.page.create({
     data: {
       authorId,
@@ -102,7 +102,6 @@ export async function createPage({
     },
     select: {
       id: true,
-      title: true,
     },
   });
 }
