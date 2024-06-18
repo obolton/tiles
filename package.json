@@ -7,7 +7,8 @@
     "packages/web"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace=api & npm run dev --workspace=web"
+    "dev": "npm run dev --workspace=api & npm run dev --workspace=web",
+    "db:push": "npm run db:push --workspace=api"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
