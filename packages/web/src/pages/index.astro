@@ -8,7 +8,7 @@ import EditTileModal from "../components/modals/EditTileModal";
 import client from "../api/client";
 
 const pageId = import.meta.env.PAGE_ID;
-const page = await client.pages.getById.query(pageId);
+const page = await client.pages.getById.query({ id: pageId });
 if (!page) {
   return new Response(null, {
     status: 404,

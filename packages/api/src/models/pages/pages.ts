@@ -1,10 +1,13 @@
-import prisma from "../database/prisma.ts";
+import prisma from "../../database/prisma.ts";
 import type { Page } from "@prisma/client";
-import type { ClientTile } from "../types/tiles.ts";
+import type { GetPageByIdSchema, UpdatePageSchema } from "./schema.ts";
+import type { ClientTile } from "../../types/tiles.ts";
 
-export async function getPage(
-  id: string
-): Promise<{ id: string; title: string; tiles: ClientTile[] } | null> {
+export async function getPage({ id }: GetPageByIdSchema): Promise<{
+  id: string;
+  title: string;
+  tiles: ClientTile[];
+} | null> {
   const page = await prisma.page.findUnique({
     where: { id },
     select: {
@@ -104,7 +107,7 @@ export async function createPage({
   });
 }
 
-export async function updatePage(id: string, { title }: Pick<Page, "title">) {
+export async function updatePage({ id, title }: UpdatePageSchema) {
   return prisma.page.update({
     where: { id },
     data: { title },

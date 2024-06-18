@@ -1,18 +1,15 @@
-import { z } from "zod";
 import { router, procedure } from "./trpc.ts";
-import { getPage, updatePage } from "../models/pages.ts";
+import { GetPageByIdSchema, UpdatePageSchema } from "../models/pages/schema.ts";
+import { getPage, updatePage } from "../models/pages/pages.ts";
 
 export default router({
-  getById: procedure.input(z.string()).query(async ({ input }) => {
+  getById: procedure.input(GetPageByIdSchema).query(async ({ input }) => {
     const page = await getPage(input);
     return page;
   }),
 
-  update: procedure
-    .input(z.object({ id: z.string(), title: z.string() }))
-    .mutation(async ({ input }) => {
-      const { id, title } = input;
-      const page = await updatePage(id, { title });
-      return page;
-    }),
+  update: procedure.input(UpdatePageSchema).mutation(async ({ input }) => {
+    const page = await updatePage(input);
+    return page;
+  }),
 });
