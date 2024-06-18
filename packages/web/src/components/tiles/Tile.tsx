@@ -3,6 +3,7 @@ import { TileType } from "@prisma/client";
 import ImageTile from "./ImageTile";
 import TextTile from "./TextTile";
 import PlaceTile from "./PlaceTile";
+import LinkTile from "./LinkTile";
 import Icon from "../icons/Icon";
 import useEditable from "../../hooks/useEditable";
 import useDraggable from "../../hooks/useDraggable";
@@ -34,6 +35,11 @@ function getTileComponent(pageId: string, tile: ClientTile) {
         throw new Error("Invalid place tile");
       }
       return <PlaceTile {...tile.place} />;
+    case TileType.LINK:
+      if (!tile.link) {
+        throw new Error("Invalid link tile");
+      }
+      return <LinkTile {...tile.link} />;
     default:
       return null;
   }
