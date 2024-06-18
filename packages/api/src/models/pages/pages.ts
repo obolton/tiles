@@ -94,7 +94,10 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   };
 }
 
-export async function createPage({ authorId, title }: CreatePageSchema) {
+export async function createPage(
+  authorId: string,
+  { title }: CreatePageSchema
+) {
   return prisma.page.create({
     data: {
       authorId,

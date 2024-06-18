@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { router, procedure } from "./trpc.ts";
 import {
   GetPageByIdSchema,
@@ -12,12 +13,18 @@ export default router({
     return page;
   }),
 
-  create: procedure.input(CreatePageSchema).mutation(async ({ input }) => {
-    const page = await createPage(input);
+  create: procedure.input(CreatePageSchema).mutation(async ({ input, ctx }) => {
+    if (!ctx.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    const page = await createPage(ctx.user.id, input);
     return page;
   }),
 
-  update: procedure.input(UpdatePageSchema).mutation(async ({ input }) => {
+  update: procedure.input(UpdatePageSchema).mutation(async ({ input, ctx }) => {
+    if (!ctx.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
     const page = await updatePage(input);
     return page;
   }),
