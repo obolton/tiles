@@ -1,21 +1,21 @@
-<button id="newPage" type="button" aria-label="Create a new page"> + </button>
+---
+import newIcon from "../../icons/new.svg";
+---
+
+<button
+  id="newPageButton"
+  class="floating"
+  type="button"
+  aria-label="Create a new page"
+>
+  <span>New page</span>
+  <img src={newIcon.src} alt="Plus icon" />
+</button>
 <style>
-  #newPage {
+  #newPageButton {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: rgba(246, 240, 240, 0.9);
-    box-shadow:
-      0 0 0 1px rgba(0, 0, 0, 0.3),
-      0 4px 4px -2px rgba(0, 0, 0, 0.2);
-    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.15);
-    color: #303030;
-    font-size: 36px;
-    border: none;
-    cursor: pointer;
+    bottom: 24px;
+    right: 24px;
   }
 </style>
 <script>
