@@ -9,14 +9,9 @@ import type { ClientTile } from "../../types/tiles";
 interface GridProps {
   pageId: string;
   tiles: ClientTile[];
-  children: React.ReactNode;
 }
 
-export default function Grid({
-  children,
-  pageId,
-  tiles: initialTiles,
-}: GridProps) {
+export default function Grid({ pageId, tiles: initialTiles }: GridProps) {
   const ref = useRef<HTMLElement>(null);
   const [tiles, setTiles] = useState(initialTiles);
   const { startLayoutTransition } = useLayoutTransition(ref);
@@ -95,7 +90,6 @@ export default function Grid({
       {tiles.map((tile) => (
         <Tile key={tile.id} pageId={pageId} tile={tile} />
       ))}
-      {children}
     </section>
   );
 }

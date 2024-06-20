@@ -3,7 +3,6 @@ import Page from "../../layouts/Page.astro";
 import Menu from "../../components/menu/Menu.astro";
 import PageTitle from "../../components/header/PageTitle";
 import Grid from "../../components/grid/Grid";
-import TileTypeSelector from "../../components/TileTypeSelector.astro";
 import EditTileModal from "../../components/modals/EditTileModal";
 import client from "../../api/client";
 
@@ -28,9 +27,7 @@ if (!page) {
   <Menu slot="menu" />
   <PageTitle pageId={page.id} title={page.title} slot="header" client:edit />
 
-  <Grid pageId={page.id} tiles={page.tiles} client:edit>
-    <TileTypeSelector />
-  </Grid>
+  <Grid pageId={page.id} tiles={page.tiles} client:edit />
 
   <EditTileModal pageId={page.id} client:edit />
 </Page>
