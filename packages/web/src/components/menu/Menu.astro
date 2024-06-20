@@ -2,9 +2,11 @@
 import AuthenticationToolbar from "./AuthenticationToolbar.astro";
 import EditingToolbar from "./EditingToolbar.astro";
 import NewPageButton from "./NewPageButton.astro";
+import CreateTileToolbar from "./CreateTileToolbar";
 ---
 
 <div id="menubar" role="menubar" aria-label="Menu bar">
+  <CreateTileToolbar client:edit />
   <AuthenticationToolbar />
   <EditingToolbar />
 </div>
