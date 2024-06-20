@@ -56,3 +56,48 @@ button.secondary {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3), 0 4px 4px -2px rgba(0, 0, 0, 0.2),
     inset 0 0px 1px 1px rgba(255, 255, 255, 0.5);
 }
+
+/* Floating */
+
+button.floating {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 24px;
+  padding: 12px;
+  color: #303030;
+  background-color: rgba(240, 240, 240, 0.9);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3), 0 4px 4px -2px rgba(0, 0, 0, 0.2),
+    inset 0 0px 1px 1px rgba(255, 255, 255, 0.5);
+  transform-origin: center right;
+  transform: scale(0.9);
+  transition: max-width var(--transition-duration) ease,
+    transform var(--transition-duration) ease;
+}
+
+button.floating:hover {
+  max-width: 150px;
+  transform: scale(1);
+}
+
+button.floating > span {
+  padding: 0 8px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--transition-duration) ease;
+}
+
+button.floating:hover > span {
+  opacity: 1;
+}
+
+button.floating > img {
+  width: 24px;
+  height: 24px;
+  opacity: 0.8;
+  filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.7));
+}
