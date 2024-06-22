@@ -20,7 +20,7 @@ import newIcon from "../../icons/new.svg";
 </style>
 <script>
   import client from "../../api/client";
-  document.getElementById("newPage")!.addEventListener("click", () => {
+  document.getElementById("newPageButton")!.addEventListener("click", () => {
     client.pages.create
       .mutate({ title: "New page" })
       .then(({ id }) => {
