@@ -21,6 +21,8 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
           id: true,
           type: true,
           position: true,
+          columns: true,
+          rows: true,
           image: {
             select: {
               id: true,
@@ -72,9 +74,11 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
     id,
     type,
     position,
+    rows,
+    columns,
     ...tile
   }: (typeof page.tiles)[0]) => {
-    const base = { id, position };
+    const base = { id, position, rows, columns };
     switch (type) {
       case "IMAGE":
         return {
