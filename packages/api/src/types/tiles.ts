@@ -14,7 +14,7 @@ type ClientTileType<
   Type extends TileType,
   PropertiesKey extends TilePropertiesKey,
   Properties extends TileProperties
-> = Pick<Tile, "id" | "position" | "type"> & {
+> = Pick<Tile, "id" | "type" | "position" | "columns" | "rows"> & {
   type: Type;
 } & {
   [key in PropertiesKey]: Omit<
