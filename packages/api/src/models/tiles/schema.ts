@@ -120,6 +120,15 @@ export const MoveTileSchema = z.object({
 });
 export type MoveTileSchema = z.infer<typeof MoveTileSchema>;
 
+// Resize
+
+export const ResizeTileSchema = z.object({
+  id: z.string().length(36),
+  columns: z.number().int().gte(1).lte(3),
+  rows: z.number().int().gte(1).lte(3),
+});
+export type ResizeTileSchema = z.infer<typeof ResizeTileSchema>;
+
 // Delete
 
 export const DeleteTileSchema = z.object({
