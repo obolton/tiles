@@ -3,12 +3,14 @@ import {
   createTile,
   updateTile,
   moveTile,
+  resizeTile,
   deleteTile,
 } from "../models/tiles/tiles.ts";
 import {
   CreateTileSchema,
   UpdateTileSchema,
   MoveTileSchema,
+  ResizeTileSchema,
   DeleteTileSchema,
 } from "../models/tiles/schema.ts";
 
@@ -23,6 +25,10 @@ export default router({
   }),
   move: procedure.input(MoveTileSchema).mutation(async ({ input }) => {
     const result = await moveTile(input);
+    return result;
+  }),
+  resize: procedure.input(ResizeTileSchema).mutation(async ({ input }) => {
+    const result = await resizeTile(input);
     return result;
   }),
   delete: procedure.input(DeleteTileSchema).mutation(async ({ input }) => {

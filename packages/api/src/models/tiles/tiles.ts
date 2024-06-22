@@ -8,6 +8,7 @@ import type {
   UpdateTileSchema,
   MoveTileSchema,
   DeleteTileSchema,
+  ResizeTileSchema,
 } from "./schema.ts";
 
 export async function createTile(properties: CreateTileSchema) {
@@ -78,6 +79,21 @@ export async function moveTile({ id, pageId, position }: MoveTileSchema) {
       fromPosition: oldPosition,
       toPosition: position,
     };
+  });
+}
+
+export async function resizeTile({ id, columns, rows }: ResizeTileSchema) {
+  return prisma.tile.update({
+    where: { id },
+    data: {
+      columns,
+      rows,
+    },
+    select: {
+      id: true,
+      columns: true,
+      rows: true,
+    },
   });
 }
 
