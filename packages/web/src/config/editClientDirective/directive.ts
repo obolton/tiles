@@ -21,9 +21,12 @@ const directive: ClientDirective = (load, options) => {
   }
 
   if (sessionStorage.getItem("edit")) {
-    requestIdleCallback(() => {
-      hydrateComponent(performance.now());
-    });
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(() => hydrateComponent(performance.now()));
+    } else {
+      // Safari
+      setTimeout(() => hydrateComponent(performance.now()), 100);
+    }
   }
 
   document.addEventListener(
@@ -33,7 +36,7 @@ const directive: ClientDirective = (load, options) => {
         hydrateComponent(event.timeStamp);
       }
     },
-    { once: true }
+    { once: true },
   );
 };
 
