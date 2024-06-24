@@ -6,6 +6,15 @@ let initialPointerY: number;
 let rect: DOMRect | null = null;
 let isDragging = false;
 
+export class DragDropEvent extends Event {
+  constructor(
+    type: string,
+    readonly dragSource: HTMLElement,
+  ) {
+    super(type, { bubbles: true, cancelable: false });
+  }
+}
+
 function pointerDown(event: PointerEvent) {
   if (!(event.currentTarget instanceof HTMLElement)) {
     return;
@@ -105,7 +114,7 @@ function pointerUp() {
       {
         duration: 200,
         easing: "ease-in-out",
-      }
+      },
     );
     animation.addEventListener(
       "finish",
@@ -113,14 +122,14 @@ function pointerUp() {
         dragElement?.remove();
         dragElement = null;
       },
-      { once: true }
+      { once: true },
     );
   }
 
   disableDropTargetEvents();
   document.body.style.removeProperty("cursor");
 
-  dragSource.dispatchEvent(new CustomEvent("drag:drop", { bubbles: true }));
+  dragSource.dispatchEvent(new DragDropEvent("drag:drop", dragSource));
 
   // Wait for pointer events to complete before resetting state
   requestAnimationFrame(() => {
@@ -131,16 +140,11 @@ function pointerUp() {
 }
 
 function pointerEnterDropTarget(event: PointerEvent) {
-  if (!(event.currentTarget instanceof HTMLElement)) {
+  if (!(event.currentTarget instanceof HTMLElement) || !dragSource) {
     return;
   }
   event.currentTarget.dispatchEvent(
-    new CustomEvent("drag:drag-over", {
-      detail: {
-        dragSource,
-      },
-      bubbles: true,
-    })
+    new DragDropEvent("drag:drag-over", dragSource),
   );
 }
 
@@ -156,7 +160,7 @@ function enableDropTargetEvents() {
 
 function disableDropTargetEvents() {
   getDropTargets().forEach((element) =>
-    element.removeEventListener("pointerenter", pointerEnterDropTarget)
+    element.removeEventListener("pointerenter", pointerEnterDropTarget),
   );
 }
 
