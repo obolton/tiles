@@ -5,11 +5,9 @@ import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import editClientDirective from "./src/config/editClientDirective/register";
 
-const env = loadEnv(
-  import.meta.env.MODE,
-  path.dirname(import.meta.filename),
-  "CERTIFICATE_"
-);
+const packageRoot = path.dirname(import.meta.filename);
+
+const env = loadEnv(import.meta.env.MODE, packageRoot, "CERTIFICATE_");
 
 export default defineConfig({
   output: "server",
@@ -19,6 +17,11 @@ export default defineConfig({
       https: {
         key: fs.readFileSync(env.CERTIFICATE_KEY_PATH),
         cert: fs.readFileSync(env.CERTIFICATE_PATH),
+      },
+    },
+    resolve: {
+      alias: {
+        "@": path.resolve(packageRoot, "./src"),
       },
     },
   },
