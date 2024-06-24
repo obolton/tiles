@@ -5,6 +5,7 @@ import { moveElement } from "../../utils/arrays";
 import useLayoutTransition from "../../hooks/useLayoutTransition";
 import client from "../../api/client";
 import type { ClientTile } from "../../types/tiles";
+import type { DragDropEvent } from "@/utils/drag";
 
 interface GridProps {
   pageId: string;
@@ -24,49 +25,44 @@ export default function Grid({ pageId, tiles: initialTiles }: GridProps) {
     const update = (event: Event) => {
       const { detail: tile } = event as CustomEvent<ClientTile>;
       setTiles((prevTiles) =>
-        prevTiles.map((prevTile) => (prevTile.id === tile.id ? tile : prevTile))
+        prevTiles.map((prevTile) =>
+          prevTile.id === tile.id ? tile : prevTile,
+        ),
       );
     };
     const deleteTile = (event: Event) => {
       const { detail: tile } = event as CustomEvent<ClientTile>;
       startLayoutTransition(() => {
         setTiles((prevTiles) =>
-          prevTiles.filter((prevTile) => prevTile.id !== tile.id)
+          prevTiles.filter((prevTile) => prevTile.id !== tile.id),
         );
       });
     };
-    const dragOver = (event: Event) => {
-      const {
-        detail: { dragSource },
-      } = event as CustomEvent<{ dragSource: HTMLElement }>;
-      const dropTarget = event.target;
-      if (
-        ref.current &&
-        dragSource instanceof HTMLElement &&
-        dropTarget instanceof HTMLElement
-      ) {
+    const dragOver = (event: DragDropEvent) => {
+      const { target, dragSource } = event;
+      if (ref.current && target instanceof HTMLElement) {
         const fromPosition = Array.prototype.indexOf.call(
           ref.current.children,
-          dragSource
+          dragSource,
         );
         const toPosition = Array.prototype.indexOf.call(
           ref.current.children,
-          dropTarget
+          target,
         );
         startLayoutTransition(() => {
           setTiles((prevTiles) =>
-            moveElement(prevTiles, fromPosition, toPosition)
+            moveElement(prevTiles, fromPosition, toPosition),
           );
         });
       }
     };
-    const drop = async (event: Event) => {
-      const { target: dragSource } = event;
-      if (ref.current && dragSource instanceof HTMLElement) {
+    const drop = async (event: DragDropEvent) => {
+      const { dragSource } = event;
+      if (ref.current) {
         const id = dragSource.dataset.tileId ?? "";
         const position = Array.prototype.indexOf.call(
           ref.current.children,
-          dragSource
+          dragSource,
         );
         await client.tiles.move.mutate({ id, pageId, position });
       }
