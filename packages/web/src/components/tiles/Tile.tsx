@@ -7,6 +7,7 @@ import LinkTile from "./LinkTile";
 import Icon from "../icons/Icon";
 import useEditable from "../../hooks/useEditable";
 import useDraggable from "../../hooks/useDraggable";
+import useResizable from "../../hooks/useResizable";
 import { editTile, deleteTile } from "../../utils/edit";
 import client from "../../api/client";
 import deleteIcon from "../../icons/delete.svg";
@@ -49,6 +50,7 @@ export default function Tile({ pageId, tile }: TileProps) {
   const isEditable = useEditable();
   const ref = useRef<HTMLDivElement>(null);
   useDraggable(ref, isEditable);
+  useResizable(ref, isEditable);
   const [isDeleted, setIsDeleted] = useState(false);
 
   const edit = useCallback(() => editTile(tile.id, tile.type), [tile]);
@@ -60,7 +62,7 @@ export default function Tile({ pageId, tile }: TileProps) {
       await client.tiles.delete.mutate({ id: tile.id, pageId });
       setIsDeleted(true);
     },
-    [tile, pageId]
+    [tile, pageId],
   );
 
   const onDeletePointerDown = useCallback((event: React.PointerEvent) => {
@@ -74,7 +76,7 @@ export default function Tile({ pageId, tile }: TileProps) {
         deleteTile(tile.id);
       }
     },
-    [tile]
+    [tile],
   );
 
   const component = getTileComponent(pageId, tile);
@@ -83,22 +85,31 @@ export default function Tile({ pageId, tile }: TileProps) {
     <div
       ref={ref}
       className={`editable ${styles.tile} ${isDeleted ? styles.deleted : ""}`}
+      style={
+        {
+          "--columns": tile.columns,
+          "--rows": tile.rows,
+        } as React.CSSProperties
+      }
       data-drop-target={isEditable ? "true" : undefined}
       data-tile-id={tile.id}
       data-tile={JSON.stringify(tile)}
       onClick={isEditable ? edit : undefined}
       onAnimationEnd={onAnimationEnd}
     >
-      {component}
+      <div className={styles.content}>{component}</div>
       {isEditable ? (
-        <button
-          className={styles.deleteButton}
-          type="button"
-          onClick={onDelete}
-          onPointerDownCapture={onDeletePointerDown}
-        >
-          <Icon src={deleteIcon.src} />
-        </button>
+        <>
+          <button
+            className={styles.deleteButton}
+            type="button"
+            onClick={onDelete}
+            onPointerDownCapture={onDeletePointerDown}
+          >
+            <Icon src={deleteIcon.src} />
+          </button>
+          <div className="resizeHandle" data-resize="true" />
+        </>
       ) : null}
     </div>
   );
