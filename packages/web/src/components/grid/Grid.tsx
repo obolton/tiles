@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import Tile from "@/components/tiles/Tile";
+import useLayoutTransition from "@/hooks/useLayoutTransition";
+import useElementSizeRef from "@/hooks/useElementSizeRef";
+import { moveElement } from "@/utils/arrays";
+import client from "@/api/client";
 import styles from "./Grid.module.css";
-import Tile from "../tiles/Tile";
-import { moveElement } from "../../utils/arrays";
-import useLayoutTransition from "../../hooks/useLayoutTransition";
-import useElementSizeRef from "../../hooks/useElementSizeRef";
-import client from "../../api/client";
-import type { ClientTile } from "../../types/tiles";
+import type { ClientTile } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
 import type { ResizeEvent } from "@/utils/resize";
 
