@@ -3,9 +3,11 @@ import styles from "./Grid.module.css";
 import Tile from "../tiles/Tile";
 import { moveElement } from "../../utils/arrays";
 import useLayoutTransition from "../../hooks/useLayoutTransition";
+import useElementSizeRef from "../../hooks/useElementSizeRef";
 import client from "../../api/client";
 import type { ClientTile } from "../../types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
+import type { ResizeEvent } from "@/utils/resize";
 
 interface GridProps {
   pageId: string;
@@ -14,6 +16,7 @@ interface GridProps {
 
 export default function Grid({ pageId, tiles: initialTiles }: GridProps) {
   const ref = useRef<HTMLElement>(null);
+  const sizeRef = useElementSizeRef(ref);
   const [tiles, setTiles] = useState(initialTiles);
   const { startLayoutTransition } = useLayoutTransition(ref);
 
@@ -67,19 +70,69 @@ export default function Grid({ pageId, tiles: initialTiles }: GridProps) {
         await client.tiles.move.mutate({ id, pageId, position });
       }
     };
+    const resize = (event: ResizeEvent) => {
+      const { target, size } = event;
+      if (
+        !(target instanceof HTMLElement) ||
+        !target.dataset.tileId ||
+        !sizeRef.current ||
+        !size
+      ) {
+        return;
+      }
+      const id = target.dataset.tileId;
+      const columnWidth = sizeRef.current.width / 3;
+      const columns = Math.round(size.width / columnWidth);
+      const rows = Math.round(size.height / columnWidth);
+      const tile = tiles.find((tile) => tile.id === id);
+
+      if (!tile) {
+        return;
+      }
+
+      if (columns !== tile.columns || rows != tile.rows) {
+        startLayoutTransition(() => {
+          setTiles((prevTiles) =>
+            prevTiles.map((prevTile) =>
+              prevTile.id === id ? { ...prevTile, columns, rows } : prevTile,
+            ),
+          );
+        });
+      }
+    };
+    const resizeEnd = async (event: ResizeEvent) => {
+      const { target, size } = event;
+      if (
+        !(target instanceof HTMLElement) ||
+        !sizeRef.current ||
+        !size ||
+        !target.dataset.tileId
+      ) {
+        return;
+      }
+      const id = target.dataset.tileId;
+      const columnWidth = sizeRef.current.width / 3;
+      const columns = Math.round(size.width / columnWidth);
+      const rows = Math.round(size.height / columnWidth);
+      await client.tiles.resize.mutate({ id, columns, rows });
+    };
     window.addEventListener("tile:create", create);
     window.addEventListener("tile:update", update);
     window.addEventListener("tile:delete", deleteTile);
     window.addEventListener("drag:drag-over", dragOver);
     window.addEventListener("drag:drop", drop);
+    window.addEventListener("resize:resize", resize);
+    window.addEventListener("resize:end", resizeEnd);
     return () => {
       window.removeEventListener("tile:create", create);
       window.removeEventListener("tile:update", update);
       window.removeEventListener("tile:delete", deleteTile);
       window.removeEventListener("drag:drag-over", dragOver);
       window.removeEventListener("drag:drop", drop);
+      window.removeEventListener("resize:resize", resize);
+      window.removeEventListener("resize:end", resizeEnd);
     };
-  }, [pageId, startLayoutTransition]);
+  }, [pageId, sizeRef, startLayoutTransition, tiles]);
 
   return (
     <section className={styles.grid} ref={ref}>
