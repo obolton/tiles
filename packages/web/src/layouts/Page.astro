@@ -1,7 +1,9 @@
 ---
-import "../styles/buttons.css";
-import "../styles/drag.css";
-import "../styles/resize.css";
+import "@/styles/global.css";
+import "@/styles/editing.css";
+import "@/styles/buttons.css";
+import "@/styles/drag.css";
+import "@/styles/resize.css";
 
 interface Props {
   title: string;
@@ -35,64 +37,3 @@ const { title } = Astro.props;
     </script>
   </body>
 </html>
-<style is:global>
-  :root {
-    --focus-ring-color: #0070f3;
-  }
-
-  * {
-    box-sizing: border-box;
-    margin: 0;
-  }
-
-  html,
-  body,
-  input,
-  textarea {
-    font-family: system-ui, sans-serif;
-  }
-
-  header,
-  main {
-    margin: 0 auto;
-    max-width: 1024px;
-  }
-
-  header {
-    padding: 48px 0;
-  }
-
-  main {
-    padding-bottom: 96px;
-    container: main / inline-size;
-  }
-
-  body[data-disable-transitions] * {
-    transition: none !important;
-    animation-name: none !important;
-  }
-
-  .editable {
-    outline: 4px solid transparent;
-    outline-offset: 0px;
-    transition: outline-color 0.2s ease;
-  }
-
-  body[data-editing] .editable {
-    outline-color: rgba(0, 0, 0, 0.1);
-  }
-
-  body[data-editing] .editable:focus-within {
-    outline-color: var(--focus-ring-color);
-  }
-
-  body:has(dialog[open]) {
-    overflow: hidden;
-  }
-
-  a {
-    color: rgba(0, 0, 0, 0.8);
-    font-weight: 500;
-    text-decoration: none;
-  }
-</style>

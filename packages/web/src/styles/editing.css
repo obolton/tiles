@@ -1,0 +1,13 @@
+.editable {
+  outline: 4px solid transparent;
+  outline-offset: 0px;
+  transition: outline-color 0.2s ease;
+}
+
+body[data-editing] .editable {
+  outline-color: rgba(0, 0, 0, 0.1);
+}
+
+body[data-editing] .editable:focus-within {
+  outline-color: var(--focus-ring-color);
+}
