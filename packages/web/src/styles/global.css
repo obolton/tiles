@@ -26,11 +26,11 @@ main {
 }
 
 header {
-  padding: 48px 0;
+  padding: 72px 24px clamp(24px, 4vw, 48px);
 }
 
 main {
-  padding-bottom: 96px;
+  padding: 0 24px 96px;
   container: main / inline-size;
 }
 
