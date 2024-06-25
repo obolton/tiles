@@ -1,5 +1,6 @@
 .text {
-  font-size: 16px;
+  font-size: 1rem;
+  line-height: 1rlh;
   padding: 16px;
   white-space: pre-line;
 }

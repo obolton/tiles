@@ -17,13 +17,10 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
   flex-grow: 0;
   flex-shrink: 1;
-  padding: 11px 16px 12px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
+  padding: calc(0.75rem - 1px) 1rem 0.75rem;
   white-space: pre-line;
   color: #303030;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.15);
@@ -33,15 +30,15 @@
 }
 
 .title {
-  font-size: 16px;
-  line-height: 16px;
+  font-size: 1rem;
+  line-height: 1rlh;
   font-weight: 500;
   margin: 0;
   padding: 0;
 }
 
 .meta {
-  font-size: 14px;
+  font-size: 0.8rem;
   font-weight: 400;
   color: #606060;
   text-overflow: ellipsis;

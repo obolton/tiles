@@ -14,10 +14,10 @@
   position: absolute;
   width: 100%;
   bottom: 0;
-  padding: 11px 16px 12px;
-  font-size: 14px;
+  padding: calc(0.75rem - 1px) 1rem 0.75rem;
+  font-size: 1rem;
   font-weight: 500;
-  line-height: 14px;
+  line-height: 1rlh;
   white-space: pre-line;
   color: #303030;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.15);

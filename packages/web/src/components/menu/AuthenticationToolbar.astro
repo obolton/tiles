@@ -3,7 +3,7 @@ import Toolbar from "./Toolbar.astro";
 import Flippable from "../Flippable.astro";
 ---
 
-<Flippable id="authentication" axis="x" width="180px">
+<Flippable id="authentication" axis="x" width="12rem">
   <Toolbar id="signIn" label="Account toolbar" slot="front">
     <a href="/sign-in">Sign in</a>
   </Toolbar>
@@ -11,8 +11,8 @@ import Flippable from "../Flippable.astro";
 </Flippable>
 <style is:global>
   .profileImage {
-    width: 32px;
-    height: 32px;
+    width: 2rem;
+    height: 2rem;
     border-radius: 50%;
     border: 1px solid rgba(0, 0, 0, 0.3);
   }
