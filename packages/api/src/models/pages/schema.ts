@@ -13,5 +13,6 @@ export type CreatePageSchema = z.infer<typeof CreatePageSchema>;
 export const UpdatePageSchema = z.object({
   id: z.string().length(36),
   title: z.string().min(1),
+  subtitle: z.string().optional(),
 });
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;

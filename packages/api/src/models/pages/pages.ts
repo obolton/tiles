@@ -9,6 +9,7 @@ import type { ClientTile } from "../../types/tiles.ts";
 export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   id: string;
   title: string;
+  subtitle: string | null;
   tiles: ClientTile[];
 } | null> {
   const page = await prisma.page.findUnique({
@@ -16,6 +17,7 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
     select: {
       id: true,
       title: true,
+      subtitle: true,
       tiles: {
         select: {
           id: true,
@@ -110,13 +112,14 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   return {
     id: page.id,
     title: page.title,
+    subtitle: page.subtitle,
     tiles: page.tiles.map(formatTile),
   };
 }
 
 export async function createPage(
   authorId: string,
-  { title }: CreatePageSchema
+  { title }: CreatePageSchema,
 ) {
   return prisma.page.create({
     data: {
@@ -129,13 +132,14 @@ export async function createPage(
   });
 }
 
-export async function updatePage({ id, title }: UpdatePageSchema) {
+export async function updatePage({ id, title, subtitle }: UpdatePageSchema) {
   return prisma.page.update({
     where: { id },
-    data: { title },
+    data: { title, subtitle },
     select: {
       id: true,
       title: true,
+      subtitle: true,
       authorId: true,
       createdAt: true,
       updatedAt: true,
