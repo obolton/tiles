@@ -59,6 +59,7 @@ model Page {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   title     String
+  subtitle  String?
   authorId  String   @map("author_id") @db.Uuid
 
   author User   @relation(fields: [authorId], references: [id])
