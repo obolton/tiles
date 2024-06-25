@@ -1,7 +1,7 @@
 ---
 import Page from "../../layouts/Page.astro";
 import Menu from "../../components/menu/Menu.astro";
-import PageTitle from "../../components/header/PageTitle";
+import PageHeader from "../../components/header/PageHeader";
 import Grid from "../../components/grid/Grid";
 import EditTileModal from "../../components/modals/EditTileModal";
 import client from "../../api/client";
@@ -25,7 +25,13 @@ if (!page) {
 
 <Page title={page.title}>
   <Menu slot="menu" />
-  <PageTitle pageId={page.id} title={page.title} slot="header" client:edit />
+  <PageHeader
+    pageId={page.id}
+    title={page.title}
+    subtitle={page.subtitle}
+    slot="header"
+    client:edit
+  />
 
   <Grid pageId={page.id} tiles={page.tiles} client:edit />
 
