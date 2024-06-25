@@ -1,0 +1,4 @@
+.resizingTextarea {
+  resize: none;
+  field-sizing: content;
+}
