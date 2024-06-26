@@ -1,7 +1,7 @@
 import { SIGNED_IN_FLAG_COOKIE_NAME } from "../auth/constants";
 import { getCookie } from "./cookies";
 import client from "../api/client";
-import { set, remove, get } from "./state";
+import { setPersistent, removePersistent, getPersistent } from "./state";
 
 export function isSignedIn() {
   return getCookie(SIGNED_IN_FLAG_COOKIE_NAME) === "1";
@@ -10,23 +10,20 @@ export function isSignedIn() {
 export async function getUserInfo() {
   const user = await client.auth.getUserInfo.query();
   if (user) {
-    set("userId", user.id);
-    set("userName", user.name);
-    set("userImageUrl", user.imageUrl ?? "");
+    setPersistent("user", user);
   } else {
-    remove("userId");
-    remove("userName");
+    removePersistent("user");
     throw new Error("User not found");
   }
   return user;
 }
 
 export function getCachedUserInfo() {
-  const id = get("userId");
-  const name = get("userName");
-  const imageUrl = get("userImageUrl");
-  if (!id || !name) {
+  const user = getPersistent<{ id: string; name: string; imageUrl: string }>(
+    "user",
+  );
+  if (!user) {
     return null;
   }
-  return { id, name, imageUrl };
+  return user;
 }
