@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import client from "../../api/client";
 import ModalHeader from "./ModalHeader";
 import ModalFooter from "./ModalFooter";
-import type { ClientLinkTile } from "../../types/tiles";
+import { createTile, updateTile } from "@/utils/edit";
+import type { ClientLinkTile } from "@/types/tiles";
 import styles from "./EditLinkTileModal.module.css";
 
 interface Props {
@@ -16,7 +16,7 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
 
   const change = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => setUrl(event.target.value),
-    []
+    [],
   );
 
   const submit = useCallback(
@@ -28,7 +28,7 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
       }
 
       if (tile) {
-        const result = await client.tiles.update.mutate({
+        await updateTile({
           pageId,
           id: tile.id,
           type: "LINK",
@@ -36,25 +36,19 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
             url,
           },
         });
-        window.dispatchEvent(
-          new CustomEvent("tile:update", { detail: result })
-        );
       } else {
-        const result = await client.tiles.create.mutate({
+        await createTile({
           pageId,
           type: "LINK",
           link: {
             url,
           },
         });
-        window.dispatchEvent(
-          new CustomEvent("tile:create", { detail: result })
-        );
       }
 
       close();
     },
-    [close, url, pageId, tile]
+    [close, url, pageId, tile],
   );
 
   return (

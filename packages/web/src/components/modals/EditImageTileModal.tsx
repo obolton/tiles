@@ -1,11 +1,11 @@
 import { useCallback, useRef, useState } from "react";
-import { uploadMedia } from "../../utils/media";
-import { getImageUrl } from "../../utils/images";
-import client from "../../api/client";
+import { uploadMedia } from "@/utils/media";
+import { getImageUrl } from "@/utils/images";
 import ModalHeader from "./ModalHeader";
 import ModalFooter from "./ModalFooter";
+import { createTile, updateTile } from "@/utils/edit";
 import styles from "./EditImageTileModal.module.css";
-import type { ClientImageTile } from "../../types/tiles";
+import type { ClientImageTile } from "@/types/tiles";
 
 const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
 
@@ -91,7 +91,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
       }
 
       if (tile) {
-        const result = await client.tiles.update.mutate({
+        await updateTile({
           pageId,
           type: "IMAGE",
           id: tile.id,
@@ -100,11 +100,8 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
             caption,
           },
         });
-        window.dispatchEvent(
-          new CustomEvent("tile:update", { detail: result }),
-        );
       } else {
-        const result = await client.tiles.create.mutate({
+        await createTile({
           pageId,
           type: "IMAGE",
           image: {
@@ -112,9 +109,6 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
             caption,
           },
         });
-        window.dispatchEvent(
-          new CustomEvent("tile:create", { detail: result }),
-        );
       }
 
       close();

@@ -9,12 +9,12 @@ import mapboxgl from "mapbox-gl";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import ModalHeader from "./ModalHeader";
 import ModalFooter from "./ModalFooter";
-import client from "../../api/client";
+import { createTile, updateTile } from "@/utils/edit";
 import styles from "./EditPlaceTileModal.module.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import type { Result } from "@mapbox/mapbox-gl-geocoder";
-import type { ClientPlaceTile } from "../../types/tiles";
+import type { ClientPlaceTile } from "@/types/tiles";
 
 mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_ACCESS_TOKEN;
 
@@ -83,7 +83,7 @@ export default function EditPlaceTileModal({
         lat: result.center[1],
         boundingBox: result.bbox ?? null,
         address: result.properties?.address ?? null,
-      })
+      }),
     );
     map.addControl(geocoder);
 
@@ -114,7 +114,7 @@ export default function EditPlaceTileModal({
         },
         (error) => {
           console.error(error);
-        }
+        },
       );
     }
   }, [tile]);
@@ -128,29 +128,23 @@ export default function EditPlaceTileModal({
       }
 
       if (tile) {
-        const result = await client.tiles.update.mutate({
+        await updateTile({
           pageId,
           id: tile.id,
           type: "PLACE",
           place,
         });
-        window.dispatchEvent(
-          new CustomEvent("tile:update", { detail: result })
-        );
       } else {
-        const result = await client.tiles.create.mutate({
+        await createTile({
           pageId,
           type: "PLACE",
           place,
         });
-        window.dispatchEvent(
-          new CustomEvent("tile:create", { detail: result })
-        );
       }
 
       close();
     },
-    [pageId, place, tile, close]
+    [pageId, place, tile, close],
   );
 
   return (

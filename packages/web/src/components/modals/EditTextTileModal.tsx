@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import client from "../../api/client";
 import ModalHeader from "./ModalHeader";
 import ModalFooter from "./ModalFooter";
-import type { ClientTextTile } from "../../types/tiles";
+import { createTile, updateTile } from "@/utils/edit";
+import type { ClientTextTile } from "@/types/tiles";
 import styles from "./EditTextTileModal.module.css";
 
 interface Props {
@@ -17,7 +17,7 @@ export default function EditTextTileModal({ pageId, close, tile }: Props) {
   const change = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) =>
       setContent(event.target.value),
-    []
+    [],
   );
 
   const submit = useCallback(
@@ -29,7 +29,7 @@ export default function EditTextTileModal({ pageId, close, tile }: Props) {
       }
 
       if (tile) {
-        const result = await client.tiles.update.mutate({
+        await updateTile({
           pageId,
           id: tile.id,
           type: "TEXT",
@@ -37,25 +37,19 @@ export default function EditTextTileModal({ pageId, close, tile }: Props) {
             content,
           },
         });
-        window.dispatchEvent(
-          new CustomEvent("tile:update", { detail: result })
-        );
       } else {
-        const result = await client.tiles.create.mutate({
+        await createTile({
           pageId,
           type: "TEXT",
           text: {
             content,
           },
         });
-        window.dispatchEvent(
-          new CustomEvent("tile:create", { detail: result })
-        );
       }
 
       close();
     },
-    [close, content, pageId, tile]
+    [close, content, pageId, tile],
   );
 
   return (
