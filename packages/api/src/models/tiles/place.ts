@@ -12,11 +12,11 @@ export async function createPlaceTile(
     pageId,
     place: { name, providerId, lat, long, boundingBox, address },
   }: CreatePlaceTileSchema,
-  position: number
+  position: number,
 ) {
   if (!MAPS_BUCKET) {
     throw new Error(
-      "CLOUDFLARE_R2_BUCKET_MAPS environment variable is undefined"
+      "CLOUDFLARE_R2_BUCKET_MAPS environment variable is undefined",
     );
   }
   const { stream, contentType } = await getStaticMap({
@@ -33,6 +33,8 @@ export async function createPlaceTile(
       pageId,
       type: TileType.PLACE,
       position,
+      columns: 1,
+      rows: 1,
       place: {
         create: {
           name,
@@ -48,6 +50,9 @@ export async function createPlaceTile(
     select: {
       id: true,
       type: true,
+      position: true,
+      columns: true,
+      rows: true,
       place: {
         select: {
           name: true,
@@ -68,11 +73,11 @@ export async function updatePlaceTile(
   {
     id,
     place: { name, providerId, lat, long, boundingBox, address },
-  }: UpdatePlaceTileSchema
+  }: UpdatePlaceTileSchema,
 ) {
   if (!MAPS_BUCKET) {
     throw new Error(
-      "CLOUDFLARE_R2_BUCKET_MAPS environment variable is undefined"
+      "CLOUDFLARE_R2_BUCKET_MAPS environment variable is undefined",
     );
   }
   const { stream, contentType } = await getStaticMap({
@@ -104,6 +109,9 @@ export async function updatePlaceTile(
     select: {
       id: true,
       type: true,
+      position: true,
+      columns: true,
+      rows: true,
       place: {
         select: {
           name: true,

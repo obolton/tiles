@@ -5,13 +5,15 @@ import type { CreateImageTileSchema, UpdateImageTileSchema } from "./schema.ts";
 export async function createImageTile(
   tx: Prisma.TransactionClient,
   { pageId, image: { imageKey, caption } }: CreateImageTileSchema,
-  position: number
+  position: number,
 ) {
   return tx.tile.create({
     data: {
       pageId,
       type: TileType.IMAGE,
       position,
+      columns: 1,
+      rows: 1,
       image: {
         create: {
           imageKey,
@@ -22,6 +24,9 @@ export async function createImageTile(
     select: {
       id: true,
       type: true,
+      position: true,
+      columns: true,
+      rows: true,
       image: {
         select: {
           imageKey: true,
@@ -34,7 +39,7 @@ export async function createImageTile(
 
 export async function updateImageTile(
   tx: Prisma.TransactionClient,
-  { id, image: { imageKey, caption } }: UpdateImageTileSchema
+  { id, image: { imageKey, caption } }: UpdateImageTileSchema,
 ) {
   return tx.tile.update({
     where: {
@@ -51,6 +56,9 @@ export async function updateImageTile(
     select: {
       id: true,
       type: true,
+      position: true,
+      columns: true,
+      rows: true,
       image: {
         select: {
           imageKey: true,
