@@ -4,7 +4,7 @@ import textIcon from "../../icons/text.svg";
 import imageIcon from "../../icons/image.svg";
 import linkIcon from "../../icons/link.svg";
 import placeIcon from "../../icons/place.svg";
-import { createTile } from "../../utils/edit";
+import { openCreateTileModal } from "../../utils/edit";
 import styles from "./CreateTileToolbar.module.css";
 import type { TileType } from "../../types/tiles";
 
@@ -29,7 +29,7 @@ export default function CreateTileToolbar() {
       | TileType
       | undefined;
     if (tileType) {
-      createTile(tileType);
+      openCreateTileModal(tileType);
     }
   }, []);
 

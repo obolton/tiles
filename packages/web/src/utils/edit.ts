@@ -25,7 +25,7 @@ export function editTile(tileId: string, tileType: TileType) {
   set("editTileType", tileType);
 }
 
-export function createTile(tileType: TileType) {
+export function openCreateTileModal(tileType: TileType) {
   if (!isEditModeEnabled()) {
     throw new Error("Not in editing mode");
   }
