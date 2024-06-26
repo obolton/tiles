@@ -3,7 +3,7 @@ import newIcon from "../../icons/new.svg";
 ---
 
 <button
-  id="newPageButton"
+  id="new-page-button"
   class="floating"
   type="button"
   aria-label="Create a new page"
@@ -12,7 +12,7 @@ import newIcon from "../../icons/new.svg";
   <img src={newIcon.src} alt="Plus icon" />
 </button>
 <style>
-  #newPageButton {
+  #new-page-button {
     position: fixed;
     bottom: 1.5rem;
     right: 1.5rem;
@@ -21,7 +21,7 @@ import newIcon from "../../icons/new.svg";
 </style>
 <script>
   import client from "../../api/client";
-  document.getElementById("newPageButton")!.addEventListener("click", () => {
+  document.getElementById("new-page-button")!.addEventListener("click", () => {
     client.pages.create
       .mutate({ title: "New page" })
       .then(({ id }) => {

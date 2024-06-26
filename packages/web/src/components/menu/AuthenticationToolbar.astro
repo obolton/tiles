@@ -10,11 +10,11 @@ import Flippable from "../Flippable.astro";
   <Toolbar id="user" label="Account toolbar" slot="back" />
 </Flippable>
 <style is:global>
-  .profileImage {
+  .profile-image {
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.3);
+    border: 1px solid rgb(0 0 0 / 30%);
   }
 </style>
 <script>
@@ -33,7 +33,7 @@ import Flippable from "../Flippable.astro";
   }) {
     const user = document.getElementById("user")!;
     if (imageUrl) {
-      user.innerHTML = `<img class="profileImage" src="${imageUrl}" alt="Your profile picture" /><span>${name}</span>`;
+      user.innerHTML = `<img class="profile-image" src="${imageUrl}" alt="Your profile picture" /><span>${name}</span>`;
     } else {
       user.innerHTML = `<span>${name}</span>`;
     }
