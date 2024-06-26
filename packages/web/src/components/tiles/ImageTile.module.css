@@ -20,8 +20,8 @@
   line-height: 1rlh;
   white-space: pre-line;
   color: #303030;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 1px rgb(255 255 255 / 15%);
+  background: rgb(255 255 255 / 70%);
   backdrop-filter: blur(8px);
-  box-shadow: 0 -1px 0 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 -1px 0 0 rgb(0 0 0 / 20%);
 }

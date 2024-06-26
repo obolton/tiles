@@ -101,14 +101,14 @@ export default function Tile({ pageId, tile }: TileProps) {
       {isEditable ? (
         <>
           <button
-            className={styles.deleteButton}
+            className={styles["delete-button"]}
             type="button"
             onClick={onDelete}
             onPointerDownCapture={onDeletePointerDown}
           >
             <Icon src={deleteIcon.src} />
           </button>
-          <div className="resizeHandle" data-resize="true" />
+          <div className="resize-handle" data-resize="true" />
         </>
       ) : null}
     </div>

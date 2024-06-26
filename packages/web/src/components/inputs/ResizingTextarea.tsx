@@ -25,7 +25,7 @@ export default function ResizingTextarea({
   return (
     <textarea
       {...props}
-      className={`${styles.resizingTextarea} ${className ?? ""}`}
+      className={`${styles.textarea} ${className ?? ""}`}
       ref={ref}
       value={value}
     />

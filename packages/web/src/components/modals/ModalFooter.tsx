@@ -6,7 +6,7 @@ interface ModalFooterProps {
 }
 
 function ModalFooter({ children }: ModalFooterProps) {
-  return <footer className={styles.modalFooter}>{children}</footer>;
+  return <footer className={styles.footer}>{children}</footer>;
 }
 
 export default memo(ModalFooter);

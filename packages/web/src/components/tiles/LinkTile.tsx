@@ -23,7 +23,7 @@ export default function LinkTile({
     </>
   );
   return (
-    <div className={styles.linkTile}>
+    <div className={styles["link-tile"]}>
       {isEditable ? (
         content
       ) : (

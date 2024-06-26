@@ -1,22 +1,24 @@
-.resizeHandle {
+.resize-handle {
   position: absolute;
   right: -6px;
   bottom: -6px;
   width: 16px;
   height: 16px;
   border-radius: 4px;
-  background: rgb(248, 248, 248);
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 2px 1px -1px rgba(0, 0, 0, 0.2);
+  background: rgb(248 248 248);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 40%),
+    0 2px 1px -1px rgb(0 0 0 / 20%);
   transition: transform 0.2s ease;
   cursor: nwse-resize;
   z-index: 1;
 }
 
-.resizeHandle:hover {
+.resize-handle:hover {
   transform: scale(1.2);
 }
 
-.resizeOutline {
+.resize-outline {
   position: fixed;
   outline: #0070f3 solid 5px;
   z-index: 2;
@@ -26,6 +28,6 @@
   z-index: 1;
 }
 
-[data-drag-preview] .resizeHandle {
+[data-drag-preview] .resize-handle {
   display: none;
 }

@@ -1,12 +1,11 @@
 .tile {
   position: relative;
   border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 6px 4px -4px rgba(0, 0, 0, 0.15);
+  background: #fff;
+  box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
   transition:
     opacity 0.2s ease-in-out,
     filter 0.2s ease-in-out;
-
   grid-column: span var(--columns, 1);
   grid-row: span var(--rows, 1);
   min-width: var(--grid-size);
@@ -17,11 +16,8 @@
   content: "";
   position: absolute;
   border-radius: 12px;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+  inset: 0;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 20%);
   pointer-events: none;
 }
 
@@ -57,6 +53,7 @@
     transform: scale(1);
     filter: blur(0);
   }
+
   to {
     opacity: 0;
     transform: scale(0.3);
@@ -64,7 +61,7 @@
   }
 }
 
-.deleteButton {
+.delete-button {
   position: absolute;
   display: flex;
   align-items: center;
@@ -77,11 +74,10 @@
   border-radius: 16px;
   background: linear-gradient(0deg, #202020, #484848);
   box-shadow:
-    0 3px 4px 0 rgba(0, 0, 0, 0.3),
-    0 0 0 2px rgba(255, 255, 255, 0.8);
+    0 3px 4px 0 rgb(0 0 0 / 30%),
+    0 0 0 2px rgb(255 255 255 / 80%);
   cursor: pointer;
   opacity: 1;
-
   transition:
     transform 0.25s ease,
     box-shadow 0.25s ease;
@@ -90,14 +86,14 @@
   animation-duration: 0.25s;
 }
 
-.deleteButton:active {
+.delete-button:active {
   transform: scale(0.95) translateY(1px);
   box-shadow:
-    0 2px 4px 0 rgba(0, 0, 0, 0.3),
-    0 0 0 2px rgba(255, 255, 255, 0.8);
+    0 2px 4px 0 rgb(0 0 0 / 30%),
+    0 0 0 2px rgb(255 255 255 / 80%);
 }
 
-.tile[data-drag-preview] .deleteButton {
+.tile[data-drag-preview] .delete-button {
   animation-name: button-fade;
   animation-fill-mode: forwards;
 }
@@ -107,6 +103,7 @@
     opacity: 0;
     transform: translateY(3px) scale(0.2);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -117,6 +114,7 @@
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0.6;
   }

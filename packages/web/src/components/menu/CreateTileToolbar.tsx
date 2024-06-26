@@ -39,7 +39,7 @@ export default function CreateTileToolbar() {
 
   return (
     <div
-      className={styles.createTileToolbar}
+      className={styles.toolbar}
       role="toolbar"
       aria-label="Create a new tile"
       aria-orientation="vertical"

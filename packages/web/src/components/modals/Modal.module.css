@@ -3,8 +3,10 @@
   backdrop-filter: blur(10px) saturate(70%);
   border-radius: 24px;
   border: none;
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 10px 10px -8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.2);
+  background: rgb(255 255 255 / 80%);
+  box-shadow:
+    0 10px 10px -8px rgb(0 0 0 / 30%),
+    0 0 0 1px rgb(0 0 0 / 20%);
   margin: 0 auto;
   top: 100px;
   width: 520px;
@@ -14,11 +16,13 @@
 
   --transition-duration: 0.3s;
   --transition-timing-function: ease-in-out;
+
   animation-duration: var(--transition-duration);
   animation-timing-function: var(--transition-timing-function);
 
   /* Enable overlay transitions */
-  transition: overlay var(--transition-duration) allow-discrete,
+  transition:
+    overlay var(--transition-duration) allow-discrete,
     display var(--transition-duration) allow-discrete;
 }
 

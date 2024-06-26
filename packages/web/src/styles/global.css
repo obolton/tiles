@@ -44,7 +44,7 @@ body:has(dialog[open]) {
 }
 
 a {
-  color: rgba(0, 0, 0, 0.8);
+  color: rgb(0 0 0 / 80%);
   font-weight: 500;
   text-decoration: none;
 }

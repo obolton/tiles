@@ -15,6 +15,7 @@
     --grid-size: calc(
       (100cqw - ((var(--columns) - 1) * var(--gap))) / var(--columns)
     );
+
     grid-auto-rows: var(--grid-size);
   }
 }

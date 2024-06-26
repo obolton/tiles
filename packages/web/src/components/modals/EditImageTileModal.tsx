@@ -18,10 +18,10 @@ interface Props {
 export default function EditImageTileModal({ pageId, close, tile }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(
-    tile ? getImageUrl(tile.image.imageKey) : null
+    tile ? getImageUrl(tile.image.imageKey) : null,
   );
   const [imageKey, setImageKey] = useState<string | null>(
-    tile?.image.imageKey ?? null
+    tile?.image.imageKey ?? null,
   );
   const [caption, setCaption] = useState<string>(tile?.image.caption ?? "");
   const [isDragOver, setDragOver] = useState<boolean>(false);
@@ -67,7 +67,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
       }
       setDragOver(false);
     },
-    [setFile]
+    [setFile],
   );
 
   const uploadImage = useCallback(async () => {
@@ -80,7 +80,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
   const captionChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) =>
       setCaption(event.target.value),
-    []
+    [],
   );
 
   const submit = useCallback(
@@ -101,7 +101,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
           },
         });
         window.dispatchEvent(
-          new CustomEvent("tile:update", { detail: result })
+          new CustomEvent("tile:update", { detail: result }),
         );
       } else {
         const result = await client.tiles.create.mutate({
@@ -113,13 +113,13 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
           },
         });
         window.dispatchEvent(
-          new CustomEvent("tile:create", { detail: result })
+          new CustomEvent("tile:create", { detail: result }),
         );
       }
 
       close();
     },
-    [imageKey, pageId, caption, tile, close]
+    [imageKey, pageId, caption, tile, close],
   );
 
   return (
@@ -127,7 +127,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
       <ModalHeader>Image</ModalHeader>
 
       <section
-        className={`${styles.placeholder} ${isDragOver ? styles.dragOver : ""}`}
+        className={`${styles.placeholder} ${isDragOver ? styles["drag-over"] : ""}`}
         onClick={selectImage}
         onDragOver={dragOver}
         onDragLeave={dragLeave}
