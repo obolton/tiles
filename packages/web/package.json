@@ -9,7 +9,10 @@
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "lint:ts": "eslint src",
+    "lint:css": "stylelint \"src/**/*.{css,astro}\"",
+    "lint": "npm run lint:ts && npm run lint:css"
   },
   "dependencies": {
     "@astrojs/check": "^0.6.0",
