@@ -1,5 +1,5 @@
 import { startTransition, useCallback, useEffect } from "react";
-import { animateLayout, willAnimateLayout } from "../utils/animation";
+import { animateLayout, willAnimateLayout } from "@/utils/animation/layout";
 
 export default function useLayoutTransition(ref: React.RefObject<HTMLElement>) {
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function useLayoutTransition(ref: React.RefObject<HTMLElement>) {
       }
       startTransition(scope);
     },
-    [ref]
+    [ref],
   );
 
   return { startLayoutTransition };
