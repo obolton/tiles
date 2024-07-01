@@ -1,10 +1,13 @@
 .editable {
-  outline: 4px solid transparent;
+  outline: 0 solid transparent;
   outline-offset: 0;
-  transition: outline-color 0.2s ease;
+  transition:
+    outline-color 0.2s ease,
+    outline-width 0.2s ease;
 }
 
 body[data-editing] .editable {
+  outline-width: 4px;
   outline-color: rgb(0 0 0 / 10%);
 }
 
