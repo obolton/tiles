@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import Tile from "@/components/tiles/Tile";
+import ImageTile from "@/components/tiles/ImageTile";
+import TextTile from "@/components/tiles/TextTile";
+import PlaceTile from "@/components/tiles/PlaceTile";
+import LinkTile from "@/components/tiles/LinkTile";
 import useLayoutTransition from "@/hooks/useLayoutTransition";
 import useElementSizeRef from "@/hooks/useElementSizeRef";
 import { moveElement } from "@/utils/arrays";
@@ -11,6 +14,22 @@ import type { ResizeEvent } from "@/utils/resize";
 
 interface GridProps {
   tiles: ClientTile[];
+}
+
+function getTileComponent(tile: ClientTile) {
+  const type = tile.type;
+  switch (type) {
+    case "IMAGE":
+      return <ImageTile key={tile.id} tile={tile} />;
+    case "TEXT":
+      return <TextTile key={tile.id} tile={tile} />;
+    case "PLACE":
+      return <PlaceTile key={tile.id} tile={tile} />;
+    case "LINK":
+      return <LinkTile key={tile.id} tile={tile} />;
+    default:
+      throw new Error(`Unknown tile type: ${type}`);
+  }
 }
 
 export default function Grid({ tiles: initialTiles }: GridProps) {
@@ -135,9 +154,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
 
   return (
     <section className={styles.grid} ref={ref}>
-      {tiles.map((tile) => (
-        <Tile key={tile.id} tile={tile} />
-      ))}
+      {tiles.map(getTileComponent)}
     </section>
   );
 }
