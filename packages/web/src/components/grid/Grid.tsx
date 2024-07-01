@@ -10,11 +10,10 @@ import type { DragDropEvent } from "@/utils/drag";
 import type { ResizeEvent } from "@/utils/resize";
 
 interface GridProps {
-  pageId: string;
   tiles: ClientTile[];
 }
 
-export default function Grid({ pageId, tiles: initialTiles }: GridProps) {
+export default function Grid({ tiles: initialTiles }: GridProps) {
   const ref = useRef<HTMLElement>(null);
   const sizeRef = useElementSizeRef(ref);
   const [tiles, setTiles] = useState(initialTiles);
@@ -137,7 +136,7 @@ export default function Grid({ pageId, tiles: initialTiles }: GridProps) {
   return (
     <section className={styles.grid} ref={ref}>
       {tiles.map((tile) => (
-        <Tile key={tile.id} pageId={pageId} tile={tile} />
+        <Tile key={tile.id} tile={tile} />
       ))}
     </section>
   );
