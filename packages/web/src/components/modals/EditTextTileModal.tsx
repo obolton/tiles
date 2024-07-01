@@ -30,7 +30,6 @@ export default function EditTextTileModal({ pageId, close, tile }: Props) {
 
       if (tile) {
         await updateTile({
-          pageId,
           id: tile.id,
           type: "TEXT",
           text: {

@@ -129,7 +129,6 @@ export default function EditPlaceTileModal({
 
       if (tile) {
         await updateTile({
-          pageId,
           id: tile.id,
           type: "PLACE",
           place,

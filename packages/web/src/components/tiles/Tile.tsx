@@ -59,10 +59,10 @@ export default function Tile({ pageId, tile }: TileProps) {
     async (event: React.MouseEvent) => {
       event.stopPropagation();
       event.preventDefault();
-      await client.tiles.delete.mutate({ id: tile.id, pageId });
+      await client.tiles.delete.mutate({ id: tile.id });
       setIsDeleted(true);
     },
-    [tile, pageId],
+    [tile],
   );
 
   const onDeletePointerDown = useCallback((event: React.PointerEvent) => {

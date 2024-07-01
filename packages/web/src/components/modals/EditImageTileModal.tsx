@@ -92,9 +92,8 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
 
       if (tile) {
         await updateTile({
-          pageId,
-          type: "IMAGE",
           id: tile.id,
+          type: "IMAGE",
           image: {
             imageKey,
             caption,

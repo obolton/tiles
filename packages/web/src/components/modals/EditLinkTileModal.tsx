@@ -29,7 +29,6 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
 
       if (tile) {
         await updateTile({
-          pageId,
           id: tile.id,
           type: "LINK",
           link: {
