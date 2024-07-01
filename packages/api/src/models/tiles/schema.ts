@@ -90,6 +90,24 @@ export const UpdateLinkTileSchema =
   UpdateTileBaseSchema.merge(LinkTileBaseSchema);
 export type UpdateLinkTileSchema = z.infer<typeof UpdateLinkTileSchema>;
 
+// Heading
+const HeadingTileBaseSchema = z.object({
+  type: z.literal(TileType.HEADING),
+  heading: z.object({
+    content: z.string(),
+  }),
+});
+
+export const CreateHeadingTileSchema = CreateTileBaseSchema.merge(
+  HeadingTileBaseSchema,
+);
+export type CreateHeadingTileSchema = z.infer<typeof CreateHeadingTileSchema>;
+
+export const UpdateHeadingTileSchema = UpdateTileBaseSchema.merge(
+  HeadingTileBaseSchema,
+);
+export type UpdateHeadingTileSchema = z.infer<typeof UpdateHeadingTileSchema>;
+
 // Create
 
 export const CreateTileSchema = z.discriminatedUnion("type", [
@@ -97,6 +115,7 @@ export const CreateTileSchema = z.discriminatedUnion("type", [
   CreateTextTileSchema,
   CreatePlaceTileSchema,
   CreateLinkTileSchema,
+  CreateHeadingTileSchema,
 ]);
 export type CreateTileSchema = z.infer<typeof CreateTileSchema>;
 
@@ -107,6 +126,7 @@ export const UpdateTileSchema = z.discriminatedUnion("type", [
   UpdateTextTileSchema,
   UpdatePlaceTileSchema,
   UpdateLinkTileSchema,
+  UpdateHeadingTileSchema,
 ]);
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 
