@@ -5,48 +5,35 @@ import TextTile from "./TextTile";
 import PlaceTile from "./PlaceTile";
 import LinkTile from "./LinkTile";
 import Icon from "../icons/Icon";
-import useEditable from "../../hooks/useEditable";
-import useDraggable from "../../hooks/useDraggable";
-import useResizable from "../../hooks/useResizable";
-import { editTile, deleteTile } from "../../utils/edit";
-import client from "../../api/client";
-import deleteIcon from "../../icons/delete.svg";
+import useEditable from "@/hooks/useEditable";
+import useDraggable from "@/hooks/useDraggable";
+import useResizable from "@/hooks/useResizable";
+import { editTile, deleteTile } from "@/utils/edit";
+import client from "@/api/client";
+import deleteIcon from "@/icons/delete.svg";
 import styles from "./Tile.module.css";
-import type { ClientTile } from "../../types/tiles";
+import type { ClientTile } from "@/types/tiles";
 
 export type TileProps = {
-  pageId: string;
   tile: ClientTile;
 };
 
-function getTileComponent(pageId: string, tile: ClientTile) {
+function getTileComponent(tile: ClientTile, openEditModal: () => void) {
   switch (tile.type) {
     case TileType.IMAGE:
-      if (!tile.image) {
-        throw new Error("Invalid image tile");
-      }
-      return <ImageTile {...tile.image} />;
+      return <ImageTile {...tile} openEditModal={openEditModal} />;
     case TileType.TEXT:
-      if (!tile.text) {
-        throw new Error("Invalid text tile");
-      }
-      return <TextTile {...tile.text} />;
+      return <TextTile {...tile} />;
     case TileType.PLACE:
-      if (!tile.place) {
-        throw new Error("Invalid place tile");
-      }
-      return <PlaceTile {...tile.place} />;
+      return <PlaceTile {...tile} openEditModal={openEditModal} />;
     case TileType.LINK:
-      if (!tile.link) {
-        throw new Error("Invalid link tile");
-      }
-      return <LinkTile {...tile.link} />;
+      return <LinkTile {...tile} openEditModal={openEditModal} />;
     default:
-      return null;
+      throw new Error("Unknown tile type");
   }
 }
 
-export default function Tile({ pageId, tile }: TileProps) {
+export default function Tile({ tile }: TileProps) {
   const isEditable = useEditable();
   const ref = useRef<HTMLDivElement>(null);
   useDraggable(ref, isEditable);
@@ -79,7 +66,7 @@ export default function Tile({ pageId, tile }: TileProps) {
     [tile],
   );
 
-  const component = getTileComponent(pageId, tile);
+  const component = getTileComponent(tile, edit);
 
   return (
     <div
@@ -94,7 +81,6 @@ export default function Tile({ pageId, tile }: TileProps) {
       data-drop-target={isEditable ? "true" : undefined}
       data-tile-id={tile.id}
       data-tile={JSON.stringify(tile)}
-      onClick={isEditable ? edit : undefined}
       onAnimationEnd={onAnimationEnd}
     >
       <div className={styles.content}>{component}</div>
