@@ -1,12 +1,19 @@
 import { useCallback, useState } from "react";
 import useEditable from "@/hooks/useEditable";
 import { updateTile } from "@/utils/edit";
+import Tile from "./Tile";
 import styles from "./TextTile.module.css";
 import type { ClientTextTile } from "@/types/tiles";
 
-type TextTileProps = ClientTextTile;
+type TextTileProps = {
+  tile: ClientTextTile;
+};
 
-export default function TextTile({ id, text: { content } }: TextTileProps) {
+export default function TextTile({ tile }: TextTileProps) {
+  const {
+    id,
+    text: { content },
+  } = tile;
   const isEditable = useEditable();
   const [value, setValue] = useState(content);
   const onChange = useCallback(
@@ -32,16 +39,20 @@ export default function TextTile({ id, text: { content } }: TextTileProps) {
     [],
   );
 
-  return isEditable ? (
-    <textarea
-      className={styles.textarea}
-      value={value}
-      onPointerDownCapture={onPointerDown}
-      onClickCapture={onPointerDown}
-      onBlur={onBlur}
-      onChange={onChange}
-    />
-  ) : (
-    <div className={styles.text}>{value}</div>
+  return (
+    <Tile tile={tile}>
+      {isEditable ? (
+        <textarea
+          className={styles.textarea}
+          value={value}
+          onPointerDownCapture={onPointerDown}
+          onClickCapture={onPointerDown}
+          onBlur={onBlur}
+          onChange={onChange}
+        />
+      ) : (
+        <div className={styles.text}>{value}</div>
+      )}
+    </Tile>
   );
 }
