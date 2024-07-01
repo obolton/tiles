@@ -11,3 +11,7 @@ body[data-editing] .editable {
 body[data-editing] .editable:focus-within {
   outline-color: var(--focus-ring-color);
 }
+
+.editable[data-drag-preview] {
+  outline: none;
+}

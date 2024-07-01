@@ -17,6 +17,11 @@
   animation-fill-mode: forwards;
 }
 
+[data-dragging] {
+  opacity: 0.3;
+  filter: blur(1px);
+}
+
 @keyframes drag {
   0% {
     transform: translate(0, 0);
