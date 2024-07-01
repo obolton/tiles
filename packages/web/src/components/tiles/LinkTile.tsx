@@ -1,15 +1,14 @@
-import useEditable from "../../hooks/useEditable";
+import useEditable from "@/hooks/useEditable";
 import styles from "./LinkTile.module.css";
 import type { ClientLinkTile } from "../../types/tiles";
 
-type LinkTileProps = ClientLinkTile["link"];
+type LinkTileProps = ClientLinkTile & {
+  openEditModal: () => void;
+};
 
 export default function LinkTile({
-  url,
-  title,
-  description,
-  siteName,
-  imageUrl,
+  link: { url, title, description, siteName, imageUrl },
+  openEditModal,
 }: LinkTileProps) {
   const isEditable = useEditable();
   const content = (
@@ -22,15 +21,13 @@ export default function LinkTile({
       </div>
     </>
   );
-  return (
-    <div className={styles["link-tile"]}>
-      {isEditable ? (
-        content
-      ) : (
-        <a className={styles.link} href={url}>
-          {content}
-        </a>
-      )}
+  return isEditable ? (
+    <div className={styles["link-tile"]} onClick={openEditModal}>
+      {content}
     </div>
+  ) : (
+    <a className={styles["link-tile"]} href={url}>
+      {content}
+    </a>
   );
 }
