@@ -16,6 +16,6 @@
       (100cqw - ((var(--columns) - 1) * var(--gap))) / var(--columns)
     );
 
-    grid-auto-rows: var(--grid-size);
+    grid-auto-rows: fit-content(var(--grid-size));
   }
 }
