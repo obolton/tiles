@@ -67,7 +67,7 @@ export default function Grid({ pageId, tiles: initialTiles }: GridProps) {
           ref.current.children,
           dragSource,
         );
-        await client.tiles.move.mutate({ id, pageId, position });
+        await client.tiles.move.mutate({ id, position });
       }
     };
     const resize = (event: ResizeEvent) => {
@@ -132,7 +132,7 @@ export default function Grid({ pageId, tiles: initialTiles }: GridProps) {
       window.removeEventListener("resize:resize", resize);
       window.removeEventListener("resize:end", resizeEnd);
     };
-  }, [pageId, sizeRef, startLayoutTransition, tiles]);
+  }, [sizeRef, startLayoutTransition, tiles]);
 
   return (
     <section className={styles.grid} ref={ref}>
