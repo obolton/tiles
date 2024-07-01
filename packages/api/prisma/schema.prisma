@@ -73,6 +73,7 @@ enum TileType {
   TEXT
   PLACE
   LINK
+  HEADING
 }
 
 model Tile {
@@ -84,12 +85,13 @@ model Tile {
   columns   Int      @default(1) @db.SmallInt
   rows      Int      @default(1) @db.SmallInt
 
-  page  Page       @relation(fields: [pageId], references: [id])
-  type  TileType
-  image ImageTile?
-  text  TextTile?
-  place PlaceTile?
-  link  LinkTile?
+  page    Page         @relation(fields: [pageId], references: [id])
+  type    TileType
+  image   ImageTile?
+  text    TextTile?
+  place   PlaceTile?
+  link    LinkTile?
+  heading HeadingTile?
 
   @@map("tiles")
 }
@@ -151,4 +153,16 @@ model LinkTile {
   tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
 
   @@map("link_tiles")
+}
+
+model HeadingTile {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  tileId    String   @unique @map("tile_id") @db.Uuid
+  content   String
+
+  tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
+
+  @@map("heading_tiles")
 }
