@@ -20,24 +20,3 @@
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 20%);
   pointer-events: none;
 }
-
-.deleted {
-  animation-name: disappear;
-  animation-duration: 0.5s;
-  animation-timing-function: ease;
-  animation-fill-mode: forwards;
-}
-
-@keyframes disappear {
-  from {
-    opacity: 1;
-    transform: scale(1);
-    filter: blur(0);
-  }
-
-  to {
-    opacity: 0;
-    transform: scale(0.3);
-    filter: blur(5px);
-  }
-}

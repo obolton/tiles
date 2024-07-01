@@ -1,10 +1,11 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import useEditable from "@/hooks/useEditable";
 import useDraggable from "@/hooks/useDraggable";
 import useResizable from "@/hooks/useResizable";
 import { deleteTile } from "@/utils/edit";
 import client from "@/api/client";
 import DeleteButton from "./DeleteButton";
+import { destroy } from "@/utils/animation/effects";
 import styles from "./Tile.module.css";
 import type { ClientTile } from "@/types/tiles";
 
@@ -14,27 +15,21 @@ export type TileProps = {
 };
 
 export default function Tile({ tile, children }: TileProps) {
-  const isEditable = useEditable();
   const ref = useRef<HTMLDivElement>(null);
+  const isEditable = useEditable();
   useDraggable(ref, isEditable);
   useResizable(ref, isEditable);
-  const [isDeleted, setIsDeleted] = useState(false);
 
   const onDelete = useCallback(
     async (event: React.MouseEvent) => {
+      if (!ref.current) {
+        return;
+      }
       event.stopPropagation();
       event.preventDefault();
       await client.tiles.delete.mutate({ id: tile.id });
-      setIsDeleted(true);
-    },
-    [tile],
-  );
-
-  const onAnimationEnd = useCallback(
-    (event: React.AnimationEvent) => {
-      if (event.animationName === styles.disappear) {
-        deleteTile(tile.id);
-      }
+      await destroy(ref.current);
+      deleteTile(tile.id);
     },
     [tile],
   );
@@ -42,7 +37,7 @@ export default function Tile({ tile, children }: TileProps) {
   return (
     <div
       ref={ref}
-      className={`editable ${styles.tile} ${isDeleted ? styles.deleted : ""}`}
+      className={`editable ${styles.tile}`}
       style={
         {
           "--columns": tile.columns,
@@ -52,7 +47,6 @@ export default function Tile({ tile, children }: TileProps) {
       data-drop-target={isEditable ? "true" : undefined}
       data-tile-id={tile.id}
       data-tile={JSON.stringify(tile)}
-      onAnimationEnd={onAnimationEnd}
     >
       {children}
       {isEditable ? (

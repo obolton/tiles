@@ -5,6 +5,7 @@ import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import DeleteButton from "./DeleteButton";
 import { updateTile, deleteTile } from "@/utils/edit";
 import client from "@/api/client";
+import { destroy } from "@/utils/animation/effects";
 import styles from "./HeadingTile.module.css";
 import type { ClientHeadingTile } from "@/types/tiles";
 
@@ -25,7 +26,6 @@ export default function HeadingTile({ tile }: HeadingTileProps) {
   const isEditable = useEditable();
   useDraggable(ref, isEditable);
   const [value, setValue] = useState(content);
-  const [isDeleted, setIsDeleted] = useState(false);
 
   const onChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -52,19 +52,14 @@ export default function HeadingTile({ tile }: HeadingTileProps) {
 
   const onDelete = useCallback(
     async (event: React.MouseEvent) => {
+      if (!ref.current) {
+        return;
+      }
       event.stopPropagation();
       event.preventDefault();
       await client.tiles.delete.mutate({ id: tile.id });
-      setIsDeleted(true);
-    },
-    [tile],
-  );
-
-  const onAnimationEnd = useCallback(
-    (event: React.AnimationEvent) => {
-      if (event.animationName === styles.disappear) {
-        deleteTile(tile.id);
-      }
+      await destroy(ref.current);
+      deleteTile(tile.id);
     },
     [tile],
   );
@@ -72,8 +67,7 @@ export default function HeadingTile({ tile }: HeadingTileProps) {
   return (
     <header
       ref={ref}
-      className={`${styles.heading} editable ${isDeleted ? styles.deleted : ""}`}
-      onAnimationEnd={onAnimationEnd}
+      className={`${styles.heading} editable`}
       data-drop-target={isEditable ? "true" : undefined}
       data-tile-id={tile.id}
       data-tile={JSON.stringify(tile)}
