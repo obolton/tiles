@@ -3,10 +3,15 @@ import AuthenticationToolbar from "./AuthenticationToolbar.astro";
 import EditingToolbar from "./EditingToolbar.astro";
 import NewPageButton from "./NewPageButton.astro";
 import CreateTileToolbar from "./CreateTileToolbar";
+
+interface Props {
+  pageId: string;
+}
+const { pageId } = Astro.props;
 ---
 
 <div id="menubar" role="menubar" aria-label="Menu bar">
-  <CreateTileToolbar client:edit />
+  <CreateTileToolbar pageId={pageId} client:edit />
   <AuthenticationToolbar />
   <EditingToolbar />
 </div>

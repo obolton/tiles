@@ -21,7 +21,11 @@ const BUTTONS: TileButton[] = [
   { label: "Link", type: "LINK", icon: linkIcon.src },
 ];
 
-export default function CreateTileToolbar() {
+interface CreateTileToolbarProps {
+  pageId: string;
+}
+
+export default function CreateTileToolbar({ pageId }: CreateTileToolbarProps) {
   const isEditable = useEditable();
 
   const onClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
