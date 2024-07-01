@@ -6,6 +6,7 @@
   position: fixed;
   top: var(--initial-y);
   left: var(--initial-x);
+  margin: 0;
   z-index: 1;
   pointer-events: none;
   transform: perspective(1000px);
