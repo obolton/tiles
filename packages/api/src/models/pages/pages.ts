@@ -60,6 +60,12 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
               imageUrl: true,
             },
           },
+          heading: {
+            select: {
+              id: true,
+              content: true,
+            },
+          },
         },
         orderBy: {
           position: "asc",
@@ -105,6 +111,12 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
           ...base,
           type,
           link: tile.link!,
+        };
+      case "HEADING":
+        return {
+          ...base,
+          type,
+          heading: tile.heading!,
         };
     }
   };
