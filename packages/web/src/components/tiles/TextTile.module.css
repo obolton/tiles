@@ -1,6 +1,17 @@
-.text {
+.text,
+.textarea {
   font-size: 1rem;
   line-height: 1rlh;
   padding: 16px;
   white-space: pre-line;
+}
+
+.textarea {
+  position: absolute;
+  display: block;
+  inset: 16px;
+  padding: 0;
+  resize: none;
+  border: none;
+  outline: none;
 }
