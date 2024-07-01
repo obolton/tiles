@@ -42,13 +42,12 @@ export async function updateTile(properties: UpdateTileSchema) {
   }
 }
 
-export async function moveTile({ id, pageId, position }: MoveTileSchema) {
+export async function moveTile({ id, position }: MoveTileSchema) {
   return prisma.$transaction(async (tx) => {
-    const tile = await tx.tile.findUniqueOrThrow({
-      where: { pageId, id },
-      select: { position: true },
+    const { pageId, position: oldPosition } = await tx.tile.findUniqueOrThrow({
+      where: { id },
+      select: { pageId: true, position: true },
     });
-    const oldPosition = tile.position;
     if (oldPosition === position) {
       return;
     } else if (position > oldPosition) {

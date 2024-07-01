@@ -15,7 +15,6 @@ const CreateTileBaseSchema = z.object({
 
 const UpdateTileBaseSchema = z.object({
   id: z.string().length(36),
-  pageId: z.string().length(36),
 });
 
 // Tile types
@@ -115,7 +114,6 @@ export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 
 export const MoveTileSchema = z.object({
   id: z.string().length(36),
-  pageId: z.string().length(36),
   position: z.number(),
 });
 export type MoveTileSchema = z.infer<typeof MoveTileSchema>;
@@ -133,6 +131,5 @@ export type ResizeTileSchema = z.infer<typeof ResizeTileSchema>;
 
 export const DeleteTileSchema = z.object({
   id: z.string().length(36),
-  pageId: z.string().length(36),
 });
 export type DeleteTileSchema = z.infer<typeof DeleteTileSchema>;
