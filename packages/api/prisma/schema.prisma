@@ -62,8 +62,9 @@ model Page {
   subtitle  String?
   authorId  String   @map("author_id") @db.Uuid
 
-  author User   @relation(fields: [authorId], references: [id])
-  tiles  Tile[]
+  author        User           @relation(fields: [authorId], references: [id])
+  tiles         Tile[]
+  pageLinkTiles PageLinkTile[]
 
   @@map("pages")
 }
@@ -74,6 +75,7 @@ enum TileType {
   PLACE
   LINK
   HEADING
+  PAGE_LINK
 }
 
 model Tile {
@@ -85,13 +87,14 @@ model Tile {
   columns   Int      @default(1) @db.SmallInt
   rows      Int      @default(1) @db.SmallInt
 
-  page    Page         @relation(fields: [pageId], references: [id])
-  type    TileType
-  image   ImageTile?
-  text    TextTile?
-  place   PlaceTile?
-  link    LinkTile?
-  heading HeadingTile?
+  page     Page          @relation(fields: [pageId], references: [id])
+  type     TileType
+  image    ImageTile?
+  text     TextTile?
+  place    PlaceTile?
+  link     LinkTile?
+  heading  HeadingTile?
+  pageLink PageLinkTile?
 
   @@map("tiles")
 }
@@ -165,4 +168,17 @@ model HeadingTile {
   tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
 
   @@map("heading_tiles")
+}
+
+model PageLinkTile {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  tileId    String   @unique @map("tile_id") @db.Uuid
+  pageId    String?  @map("page_id") @db.Uuid
+
+  tile Tile  @relation(fields: [tileId], references: [id], onDelete: Cascade)
+  page Page? @relation(fields: [pageId], references: [id], onDelete: SetNull)
+
+  @@map("page_link_tiles")
 }
