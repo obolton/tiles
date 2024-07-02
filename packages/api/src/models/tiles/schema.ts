@@ -108,6 +108,25 @@ export const UpdateHeadingTileSchema = UpdateTileBaseSchema.merge(
 );
 export type UpdateHeadingTileSchema = z.infer<typeof UpdateHeadingTileSchema>;
 
+// Page link
+
+const PageLinkTileBaseSchema = z.object({
+  type: z.literal(TileType.PAGE_LINK),
+  pageLink: z.object({
+    pageId: z.string().uuid(),
+  }),
+});
+
+export const CreatePageLinkTileSchema = CreateTileBaseSchema.merge(
+  PageLinkTileBaseSchema,
+);
+export type CreatePageLinkTileSchema = z.infer<typeof CreatePageLinkTileSchema>;
+
+export const UpdatePageLinkTileSchema = UpdateTileBaseSchema.merge(
+  PageLinkTileBaseSchema,
+);
+export type UpdatePageLinkTileSchema = z.infer<typeof UpdatePageLinkTileSchema>;
+
 // Create
 
 export const CreateTileSchema = z.discriminatedUnion("type", [
@@ -116,6 +135,7 @@ export const CreateTileSchema = z.discriminatedUnion("type", [
   CreatePlaceTileSchema,
   CreateLinkTileSchema,
   CreateHeadingTileSchema,
+  CreatePageLinkTileSchema,
 ]);
 export type CreateTileSchema = z.infer<typeof CreateTileSchema>;
 
@@ -127,6 +147,7 @@ export const UpdateTileSchema = z.discriminatedUnion("type", [
   UpdatePlaceTileSchema,
   UpdateLinkTileSchema,
   UpdateHeadingTileSchema,
+  UpdatePageLinkTileSchema,
 ]);
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 
