@@ -4,6 +4,7 @@ import type {
   CreatePageSchema,
   UpdatePageSchema,
 } from "./schema.ts";
+import { PAGE_LINK_TILE_PAGE_FIELDS } from "../tiles/pageLink.ts";
 import type { ClientTile } from "../../types/tiles.ts";
 
 export async function getPageById({ id }: GetPageByIdSchema): Promise<{
@@ -66,6 +67,15 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
               content: true,
             },
           },
+          pageLink: {
+            select: {
+              id: true,
+              pageId: true,
+              page: {
+                select: PAGE_LINK_TILE_PAGE_FIELDS,
+              },
+            },
+          },
         },
         orderBy: {
           position: "asc",
@@ -117,6 +127,12 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
           ...base,
           type,
           heading: tile.heading!,
+        };
+      case "PAGE_LINK":
+        return {
+          ...base,
+          type,
+          pageLink: tile.pageLink!,
         };
     }
   };
