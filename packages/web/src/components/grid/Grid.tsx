@@ -4,6 +4,7 @@ import TextTile from "@/components/tiles/TextTile";
 import PlaceTile from "@/components/tiles/PlaceTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import HeadingTile from "@/components/tiles/HeadingTile";
+import PageLinkTile from "@/components/tiles/PageLinkTile";
 import useLayoutTransition from "@/hooks/useLayoutTransition";
 import useElementSizeRef from "@/hooks/useElementSizeRef";
 import { moveElement } from "@/utils/arrays";
@@ -30,6 +31,8 @@ function getTileComponent(tile: ClientTile) {
       return <LinkTile key={tile.id} tile={tile} />;
     case "HEADING":
       return <HeadingTile key={tile.id} tile={tile} />;
+    case "PAGE_LINK":
+      return <PageLinkTile key={tile.id} tile={tile} />;
     default:
       throw new Error(`Unknown tile type: ${type}`);
   }
