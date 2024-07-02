@@ -129,6 +129,21 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   };
 }
 
+export async function getRecentPages(userId: string) {
+  const pages = await prisma.page.findMany({
+    where: { authorId: userId },
+    select: {
+      id: true,
+      title: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+    take: 10,
+  });
+  return pages;
+}
+
 export async function createPage(
   authorId: string,
   { title }: CreatePageSchema,

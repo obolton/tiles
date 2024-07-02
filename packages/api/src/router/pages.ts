@@ -5,12 +5,25 @@ import {
   CreatePageSchema,
   UpdatePageSchema,
 } from "../models/pages/schema.ts";
-import { getPageById, createPage, updatePage } from "../models/pages/pages.ts";
+import {
+  getPageById,
+  getRecentPages,
+  createPage,
+  updatePage,
+} from "../models/pages/pages.ts";
 
 export default router({
   getById: procedure.input(GetPageByIdSchema).query(async ({ input }) => {
     const page = await getPageById(input);
     return page;
+  }),
+
+  getRecent: procedure.query(async ({ ctx }) => {
+    if (!ctx.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    const pages = await getRecentPages(ctx.user.id);
+    return pages;
   }),
 
   create: procedure.input(CreatePageSchema).mutation(async ({ input, ctx }) => {
