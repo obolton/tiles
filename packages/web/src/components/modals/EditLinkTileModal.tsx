@@ -1,22 +1,57 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ModalHeader from "./ModalHeader";
 import ModalFooter from "./ModalFooter";
 import { createTile, updateTile } from "@/utils/edit";
-import type { ClientLinkTile } from "@/types/tiles";
+import client from "@/api/client";
+import type { ClientLinkTile, ClientPageLinkTile } from "@/types/tiles";
 import styles from "./EditLinkTileModal.module.css";
 
 interface Props {
   pageId: string;
   close: () => void;
-  tile?: ClientLinkTile | null;
+  tile?: ClientLinkTile | ClientPageLinkTile | null;
 }
 
 export default function EditLinkTileModal({ pageId, close, tile }: Props) {
-  const [url, setUrl] = useState<string>(tile?.link.url ?? "");
+  const [url, setUrl] = useState<string>(
+    tile && "link" in tile ? tile.link.url : "",
+  );
+  const [recentPages, setRecentPages] = useState<
+    { id: string; title: string }[]
+  >([]);
+
+  useEffect(() => {
+    client.pages.getRecent.query().then(setRecentPages);
+  }, []);
 
   const change = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => setUrl(event.target.value),
     [],
+  );
+
+  const selectPage = useCallback(
+    async (linkedPageId: string) => {
+      if (tile) {
+        await updateTile({
+          id: tile.id,
+          type: "PAGE_LINK",
+          pageLink: {
+            pageId: linkedPageId,
+          },
+        });
+      } else {
+        await createTile({
+          pageId,
+          type: "PAGE_LINK",
+          pageLink: {
+            pageId: linkedPageId,
+          },
+        });
+      }
+
+      close();
+    },
+    [close, pageId, tile],
   );
 
   const submit = useCallback(
@@ -63,6 +98,14 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
         onChange={change}
         value={url}
       />
+
+      <ol className={styles["page-select"]}>
+        {recentPages.map((page) => (
+          <li key={page.id} onClick={() => selectPage(page.id)}>
+            {page.title}
+          </li>
+        ))}
+      </ol>
 
       <ModalFooter>
         <button className="primary" type="submit" aria-disabled={!url}>

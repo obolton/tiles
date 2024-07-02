@@ -18,3 +18,35 @@
   outline: var(--focus-ring-color) solid 3px;
   outline-offset: -3px;
 }
+
+.page-select {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 4px;
+  border: none;
+  margin: 0;
+  padding: 0.5rem;
+  background: none;
+  outline: none;
+  list-style: none;
+}
+
+.page-select > li {
+  padding: 0.5rem;
+  font-size: 1rem;
+  line-height: 1rlh;
+  color: #303030;
+  background: none;
+  outline-offset: -4px;
+  outline: transparent solid 0;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition:
+    outline-width 0.2s ease-in-out,
+    outline-color 0.2s ease-in-out;
+}
+
+.page-select > li:hover {
+  background: rgb(255 255 255 / 80%);
+}
