@@ -1,0 +1,62 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+}
+
+.image {
+  display: block;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 50%),
+    0 6px 4px -4px rgb(0 0 0 / 15%);
+}
+
+.title,
+.subtitle {
+  display: block;
+  padding: 0;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #303030;
+}
+
+.subtitle {
+  border-radius: 1rem;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #707070;
+  padding: 0.5rem;
+  margin: 0 -0.5rem;
+}
+
+.subtitle:empty {
+  display: none;
+}
+
+.header textarea {
+  display: block;
+  width: 100%;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  font-family: inherit;
+  border: none;
+  border-radius: 0;
+  background: none;
+  outline: none;
+}
