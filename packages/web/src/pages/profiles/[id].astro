@@ -1,0 +1,42 @@
+---
+import Page from "@/layouts/Page.astro";
+import Menu from "@/components/menu/Menu.astro";
+import ProfilePageHeader from "@/components/header/ProfilePageHeader";
+import Grid from "@/components/grid/Grid";
+import EditTileModal from "@/components/modals/EditTileModal";
+import client from "@/api/client";
+
+const { id: userId } = Astro.params;
+
+if (!userId) {
+  return new Response(null, {
+    status: 404,
+    statusText: "Page not found",
+  });
+}
+
+const profile = await client.pages.getProfilePageByUserId.query({ userId });
+if (!profile) {
+  return new Response(null, {
+    status: 404,
+    statusText: "Page not found",
+  });
+}
+---
+
+<Page title={profile.name}>
+  <Menu pageId={profile.profilePage.id} slot="menu" />
+
+  <ProfilePageHeader
+    pageId={profile.profilePage.id}
+    name={profile.name}
+    imageUrl={profile.imageUrl}
+    subtitle={profile.profilePage.subtitle}
+    slot="header"
+    client:edit
+  />
+
+  <Grid tiles={profile.profilePage.tiles} client:edit />
+
+  <EditTileModal pageId={profile.profilePage.id} client:edit />
+</Page>
