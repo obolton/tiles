@@ -25,17 +25,19 @@ import Flippable from "../Flippable.astro";
   } from "../../utils/sessions";
 
   function showUserInfo({
+    id,
     name,
     imageUrl,
   }: {
+    id: string;
     name: string;
     imageUrl: string | null;
   }) {
     const user = document.getElementById("user")!;
     if (imageUrl) {
-      user.innerHTML = `<img class="profile-image" src="${imageUrl}" alt="Your profile picture" /><span>${name}</span>`;
+      user.innerHTML = `<img class="profile-image" src="${imageUrl}" alt="Your profile picture" /><a href="/profiles/${id}">${name}</a>`;
     } else {
-      user.innerHTML = `<span>${name}</span>`;
+      user.innerHTML = `<a href="/profiles/${id}">${name}</a>`;
     }
   }
 
