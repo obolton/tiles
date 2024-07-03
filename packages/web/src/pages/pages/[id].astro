@@ -1,12 +1,13 @@
 ---
-import Page from "../../layouts/Page.astro";
-import Menu from "../../components/menu/Menu.astro";
-import PageHeader from "../../components/header/PageHeader";
-import Grid from "../../components/grid/Grid";
-import EditTileModal from "../../components/modals/EditTileModal";
-import client from "../../api/client";
+import Page from "@/layouts/Page.astro";
+import Menu from "@/components/menu/Menu.astro";
+import PageHeader from "@/components/header/PageHeader";
+import Grid from "@/components/grid/Grid";
+import EditTileModal from "@/components/modals/EditTileModal";
+import client from "@/api/client";
 
 const { id: pageId } = Astro.params;
+
 if (!pageId) {
   return new Response(null, {
     status: 404,
@@ -24,7 +25,8 @@ if (!page) {
 ---
 
 <Page title={page.title}>
-  <Menu pageId={pageId} slot="menu" />
+  <Menu pageId={page.id} slot="menu" />
+
   <PageHeader
     pageId={page.id}
     title={page.title}

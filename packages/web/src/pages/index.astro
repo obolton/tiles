@@ -1,13 +1,14 @@
 ---
-import Page from "../layouts/Page.astro";
-import Menu from "../components/menu/Menu.astro";
-import PageHeader from "../components/header/PageHeader";
-import Grid from "../components/grid/Grid";
-import EditTileModal from "../components/modals/EditTileModal";
-import client from "../api/client";
+import Page from "@/layouts/Page.astro";
+import Menu from "@/components/menu/Menu.astro";
+import PageHeader from "@/components/header/PageHeader";
+import Grid from "@/components/grid/Grid";
+import EditTileModal from "@/components/modals/EditTileModal";
+import client from "@/api/client";
 
 const pageId = import.meta.env.PAGE_ID;
 const page = await client.pages.getById.query({ id: pageId });
+
 if (!page) {
   return new Response(null, {
     status: 404,
@@ -18,6 +19,7 @@ if (!page) {
 
 <Page title={page.title}>
   <Menu pageId={page.id} slot="menu" />
+
   <PageHeader
     pageId={page.id}
     title={page.title}
