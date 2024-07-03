@@ -1,4 +1,4 @@
-import prisma from "../../database/prisma.ts";
+import prisma from "@/database/prisma.ts";
 import type { Prisma } from "@prisma/client";
 
 type CreateUserOptions = {
@@ -10,14 +10,22 @@ type CreateUserOptions = {
 
 export async function createUser(
   db: Prisma.TransactionClient,
-  { name, email, emailVerified, imageUrl }: CreateUserOptions
+  { name, email, emailVerified, imageUrl }: CreateUserOptions,
 ) {
+  const id = crypto.randomUUID();
   return db.user.create({
     data: {
+      id,
       name,
       email,
       emailVerified,
       imageUrl,
+      profilePage: {
+        create: {
+          authorId: id,
+          title: name,
+        },
+      },
     },
     select: {
       id: true,
