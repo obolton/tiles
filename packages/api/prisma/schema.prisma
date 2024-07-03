@@ -69,6 +69,8 @@ model Page {
   tiles         Tile[]
   pageLinkTiles PageLinkTile[]
 
+  @@index([authorId])
+  @@index([authorId, updatedAt])
   @@map("pages")
 }
 
