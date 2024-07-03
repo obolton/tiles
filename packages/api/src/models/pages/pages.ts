@@ -1,11 +1,137 @@
-import prisma from "../../database/prisma.ts";
+import { Prisma } from "@prisma/client";
+import prisma from "@/database/prisma.ts";
+import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/models/tiles/pageLink.ts";
 import type {
   GetPageByIdSchema,
+  GetProfilePageByUserIdSchema,
   CreatePageSchema,
   UpdatePageSchema,
 } from "./schema.ts";
-import { PAGE_LINK_TILE_PAGE_FIELDS } from "../tiles/pageLink.ts";
-import type { ClientTile } from "../../types/tiles.ts";
+import type { ClientTile } from "@/types/tiles.ts";
+
+const TILES_FIELDS = {
+  id: true,
+  type: true,
+  position: true,
+  columns: true,
+  rows: true,
+  image: {
+    select: {
+      id: true,
+      imageKey: true,
+      caption: true,
+    },
+  },
+  text: {
+    select: {
+      id: true,
+      content: true,
+    },
+  },
+  place: {
+    select: {
+      id: true,
+      name: true,
+      thumbnailKey: true,
+      providerId: true,
+      lat: true,
+      long: true,
+      boundingBox: true,
+      address: true,
+    },
+  },
+  link: {
+    select: {
+      id: true,
+      url: true,
+      title: true,
+      description: true,
+      siteName: true,
+      imageUrl: true,
+    },
+  },
+  heading: {
+    select: {
+      id: true,
+      content: true,
+    },
+  },
+  pageLink: {
+    select: {
+      id: true,
+      pageId: true,
+      page: {
+        select: PAGE_LINK_TILE_PAGE_FIELDS,
+      },
+    },
+  },
+} as const;
+
+const PAGE_FIELDS = {
+  id: true,
+  title: true,
+  subtitle: true,
+  tiles: {
+    select: TILES_FIELDS,
+    orderBy: {
+      position: "asc",
+    },
+  },
+} as const;
+
+const tileWithDataValidator = Prisma.validator<Prisma.TileDefaultArgs>()({
+  select: TILES_FIELDS,
+});
+type TileWithData = Prisma.TileGetPayload<typeof tileWithDataValidator>;
+
+function formatTile({
+  id,
+  type,
+  position,
+  rows,
+  columns,
+  ...tile
+}: TileWithData) {
+  const base = { id, position, rows, columns };
+  switch (type) {
+    case "IMAGE":
+      return {
+        ...base,
+        type,
+        image: tile.image!,
+      };
+    case "TEXT":
+      return {
+        ...base,
+        type,
+        text: tile.text!,
+      };
+    case "PLACE":
+      return {
+        ...base,
+        type,
+        place: tile.place!,
+      };
+    case "LINK":
+      return {
+        ...base,
+        type,
+        link: tile.link!,
+      };
+    case "HEADING":
+      return {
+        ...base,
+        type,
+        heading: tile.heading!,
+      };
+    case "PAGE_LINK":
+      return {
+        ...base,
+        type,
+        pageLink: tile.pageLink!,
+      };
+  }
+}
 
 export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   id: string;
@@ -15,133 +141,44 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
 } | null> {
   const page = await prisma.page.findUnique({
     where: { id },
-    select: {
-      id: true,
-      title: true,
-      subtitle: true,
-      tiles: {
-        select: {
-          id: true,
-          type: true,
-          position: true,
-          columns: true,
-          rows: true,
-          image: {
-            select: {
-              id: true,
-              imageKey: true,
-              caption: true,
-            },
-          },
-          text: {
-            select: {
-              id: true,
-              content: true,
-            },
-          },
-          place: {
-            select: {
-              id: true,
-              name: true,
-              thumbnailKey: true,
-              providerId: true,
-              lat: true,
-              long: true,
-              boundingBox: true,
-              address: true,
-            },
-          },
-          link: {
-            select: {
-              id: true,
-              url: true,
-              title: true,
-              description: true,
-              siteName: true,
-              imageUrl: true,
-            },
-          },
-          heading: {
-            select: {
-              id: true,
-              content: true,
-            },
-          },
-          pageLink: {
-            select: {
-              id: true,
-              pageId: true,
-              page: {
-                select: PAGE_LINK_TILE_PAGE_FIELDS,
-              },
-            },
-          },
-        },
-        orderBy: {
-          position: "asc",
-        },
-      },
-    },
+    select: PAGE_FIELDS,
   });
 
   if (!page) {
     return null;
   }
 
-  const formatTile = ({
-    id,
-    type,
-    position,
-    rows,
-    columns,
-    ...tile
-  }: (typeof page.tiles)[0]) => {
-    const base = { id, position, rows, columns };
-    switch (type) {
-      case "IMAGE":
-        return {
-          ...base,
-          type,
-          image: tile.image!,
-        };
-      case "TEXT":
-        return {
-          ...base,
-          type,
-          text: tile.text!,
-        };
-      case "PLACE":
-        return {
-          ...base,
-          type,
-          place: tile.place!,
-        };
-      case "LINK":
-        return {
-          ...base,
-          type,
-          link: tile.link!,
-        };
-      case "HEADING":
-        return {
-          ...base,
-          type,
-          heading: tile.heading!,
-        };
-      case "PAGE_LINK":
-        return {
-          ...base,
-          type,
-          pageLink: tile.pageLink!,
-        };
-    }
+  return {
+    ...page,
+    tiles: page.tiles.map(formatTile),
   };
+}
+
+export async function getProfilePageByUserId({
+  userId,
+}: GetProfilePageByUserIdSchema) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      imageUrl: true,
+      profilePage: {
+        select: PAGE_FIELDS,
+      },
+    },
+  });
+
+  if (!user || !user.profilePage) {
+    return null;
+  }
 
   return {
-    id: page.id,
-    title: page.title,
-    subtitle: page.subtitle,
-    tiles: page.tiles.map(formatTile),
+    ...user,
+    profilePage: {
+      ...user.profilePage,
+      tiles: user.profilePage.tiles.map(formatTile),
+    },
   };
 }
 
