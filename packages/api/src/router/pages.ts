@@ -2,21 +2,30 @@ import { TRPCError } from "@trpc/server";
 import { router, procedure } from "./trpc.ts";
 import {
   GetPageByIdSchema,
+  GetProfilePageByUserIdSchema,
   CreatePageSchema,
   UpdatePageSchema,
-} from "../models/pages/schema.ts";
+} from "@/models/pages/schema.ts";
 import {
   getPageById,
+  getProfilePageByUserId,
   getRecentPages,
   createPage,
   updatePage,
-} from "../models/pages/pages.ts";
+} from "@/models/pages/pages.ts";
 
 export default router({
   getById: procedure.input(GetPageByIdSchema).query(async ({ input }) => {
     const page = await getPageById(input);
     return page;
   }),
+
+  getProfilePageByUserId: procedure
+    .input(GetProfilePageByUserIdSchema)
+    .query(async ({ input }) => {
+      const page = await getProfilePageByUserId(input);
+      return page;
+    }),
 
   getRecent: procedure.query(async ({ ctx }) => {
     if (!ctx.user) {
