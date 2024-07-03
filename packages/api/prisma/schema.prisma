@@ -15,10 +15,12 @@ model User {
   email         String   @unique
   emailVerified Boolean  @default(false) @map("email_verified")
   imageUrl      String?  @map("image_url")
+  profilePageId String   @unique @map("profile_page_id") @db.Uuid
 
-  sessions Session[]
-  keys     Key[]
-  pages    Page[]
+  sessions    Session[]
+  keys        Key[]
+  profilePage Page      @relation("ProfilePage", fields: [profilePageId], references: [id])
+  pages       Page[]    @relation("Pages")
 
   @@map("users")
 }
@@ -62,7 +64,8 @@ model Page {
   subtitle  String?
   authorId  String   @map("author_id") @db.Uuid
 
-  author        User           @relation(fields: [authorId], references: [id])
+  author        User           @relation("Pages", fields: [authorId], references: [id])
+  profileUser   User?          @relation("ProfilePage")
   tiles         Tile[]
   pageLinkTiles PageLinkTile[]
 
