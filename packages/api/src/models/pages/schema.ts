@@ -7,6 +7,16 @@ export const GetPageByIdSchema = z.object({
 });
 export type GetPageByIdSchema = z.infer<typeof GetPageByIdSchema>;
 
+// Get profile page by user ID
+
+export const GetProfilePageByUserIdSchema = z.object({
+  userId: z.string().uuid(),
+});
+export type GetProfilePageByUserIdSchema = z.infer<
+  typeof GetProfilePageByUserIdSchema
+>;
+
+// Create
 export const CreatePageSchema = z.object({
   title: z.string().min(1),
 });
