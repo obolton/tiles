@@ -19,6 +19,12 @@ textarea {
   font-family: system-ui, sans-serif;
 }
 
+ol,
+ul {
+  list-style: none;
+  padding: 0;
+}
+
 header,
 main {
   margin: 0 auto;
