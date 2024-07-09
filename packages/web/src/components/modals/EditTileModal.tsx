@@ -23,7 +23,12 @@ const MODALS = {
   TEXT: lazy(() => import("./EditTextTileModal")),
   PLACE: lazy(() => import("./EditPlaceTileModal")),
   LINK: lazy(() => import("./EditLinkTileModal")),
-} satisfies Record<TileType, LazyExoticComponent<ComponentType<ModalProps>>>;
+  HEADING: null,
+  PAGE_LINK: null,
+} satisfies Record<
+  TileType,
+  LazyExoticComponent<ComponentType<ModalProps>> | null
+>;
 
 interface Props {
   pageId: string;
