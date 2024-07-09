@@ -19,7 +19,7 @@ model User {
 
   sessions    Session[]
   keys        Key[]
-  profilePage Page      @relation("ProfilePage", fields: [profilePageId], references: [id])
+  profilePage Page      @relation("ProfilePage", fields: [profilePageId], references: [id], onDelete: Cascade)
   pages       Page[]    @relation("Pages")
 
   @@map("users")
@@ -64,7 +64,7 @@ model Page {
   subtitle  String?
   authorId  String   @map("author_id") @db.Uuid
 
-  author        User           @relation("Pages", fields: [authorId], references: [id])
+  author        User           @relation("Pages", fields: [authorId], references: [id], onDelete: Cascade)
   profileUser   User?          @relation("ProfilePage")
   tiles         Tile[]
   pageLinkTiles PageLinkTile[]
@@ -92,7 +92,7 @@ model Tile {
   columns   Int      @default(1) @db.SmallInt
   rows      Int      @default(1) @db.SmallInt
 
-  page     Page          @relation(fields: [pageId], references: [id])
+  page     Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
   type     TileType
   image    ImageTile?
   text     TextTile?
