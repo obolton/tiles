@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch --clear-screen=false src/index.ts",
-    "build": "esbuild src/index.ts --bundle --outdir=dist --platform=node --target=node21 --packages=external --format=esm",
+    "build": "prisma generate && esbuild src/index.ts --bundle --outdir=dist --platform=node --target=node21 --packages=external --format=esm",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint src",
     "db:generate-client": "prisma generate",
