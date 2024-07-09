@@ -25,7 +25,7 @@ import Switch from "../inputs/Switch.astro";
 <script>
   import { setEditMode } from "../../utils/edit";
   const editSwitch = document.getElementById("editSwitch") as HTMLInputElement;
-  editSwitch.addEventListener("change", (event) =>
-    setEditMode(editSwitch.checked)
-  );
+  editSwitch.addEventListener("change", () => setEditMode(editSwitch.checked), {
+    passive: true,
+  });
 </script>
