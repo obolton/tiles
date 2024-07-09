@@ -23,6 +23,9 @@ export default defineConfig({
           },
         }
       : {},
+    ssr: {
+      external: ["node:assert", "node:crypto"],
+    },
     resolve: {
       alias: {
         "@": path.resolve(packageRoot, "./src"),
