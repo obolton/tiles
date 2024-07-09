@@ -28,3 +28,24 @@
   backdrop-filter: blur(8px);
   box-shadow: 0 -1px 0 0 rgb(0 0 0 / 20%);
 }
+
+[data-lightbox] .figure {
+  overflow: visible;
+}
+
+[data-lightbox] .figure > img {
+  object-fit: contain;
+}
+
+[data-lightbox] .figure > figcaption {
+  top: 0;
+  left: 0;
+  background: none;
+  padding: 0;
+  color: rgba(255 255 255 / 90%);
+  font-weight: 400;
+  text-shadow: 0 1px 1px rgb(0 0 0 / 70%);
+  backdrop-filter: none;
+  box-shadow: none;
+  translate: calc(100% + 2rem) 0;
+}
