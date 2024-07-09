@@ -12,6 +12,9 @@
     "db:generate-client": "prisma generate",
     "db:push": "prisma db push"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.577.0",
     "@aws-sdk/lib-storage": "^3.590.0",
