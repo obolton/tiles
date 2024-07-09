@@ -1,3 +1,4 @@
+/* eslint-env node */
 import fs from "node:fs";
 import path from "node:path";
 import { loadEnv } from "vite";
@@ -15,6 +16,9 @@ export default defineConfig({
   output: "server",
   integrations: [react(), editClientDirective()],
   vite: {
+    define: {
+      "process.env": process.env,
+    },
     server: ENABLE_HTTPS
       ? {
           https: {
