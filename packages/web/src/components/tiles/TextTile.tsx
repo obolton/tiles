@@ -40,7 +40,7 @@ export default function TextTile({ tile }: TextTileProps) {
   );
 
   return (
-    <Tile tile={tile}>
+    <Tile tile={tile} showInLightbox={false}>
       {isEditable ? (
         <textarea
           className={styles.textarea}

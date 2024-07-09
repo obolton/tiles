@@ -27,7 +27,7 @@ export default function LinkTile({ tile }: LinkTileProps) {
     </>
   );
   return (
-    <Tile tile={tile}>
+    <Tile tile={tile} showInLightbox={false}>
       {isEditable ? (
         <div className={styles["link-tile"]} onClick={edit}>
           {content}

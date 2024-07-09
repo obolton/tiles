@@ -88,7 +88,7 @@ export default function PageLinkTile({ tile }: PageLinkTileProps) {
 
   if (!page) {
     return (
-      <Tile tile={tile}>
+      <Tile tile={tile} showInLightbox={false}>
         <div className={`${styles.page} ${styles.deleted}`}>
           This page no longer exists.
         </div>
@@ -99,7 +99,7 @@ export default function PageLinkTile({ tile }: PageLinkTileProps) {
   const { title, subtitle, tiles } = page;
 
   return (
-    <Tile tile={tile}>
+    <Tile tile={tile} showInLightbox={false}>
       {/* eslint-disable-next-line react/jsx-no-target-blank */}
       <a className={styles.page} href={`/pages/${pageId}`} target="_blank">
         <h3>{title}</h3>

@@ -12,9 +12,14 @@ import type { ClientTile } from "@/types/tiles";
 export type TileProps = {
   children: React.ReactNode;
   tile: ClientTile;
+  showInLightbox?: boolean;
 };
 
-export default function Tile({ tile, children }: TileProps) {
+export default function Tile({
+  tile,
+  children,
+  showInLightbox = true,
+}: TileProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isEditable = useEditable();
   useDraggable(ref, isEditable);
@@ -47,6 +52,7 @@ export default function Tile({ tile, children }: TileProps) {
       data-drop-target={isEditable ? "true" : undefined}
       data-tile-id={tile.id}
       data-tile={JSON.stringify(tile)}
+      data-show-in-lightbox={showInLightbox ? "true" : undefined}
     >
       {children}
       {isEditable ? (
