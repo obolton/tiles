@@ -6,7 +6,10 @@ const client = createTRPCClient<AppRouter>({
     httpLink({
       url: import.meta.env.PUBLIC_API_BASE_URL,
       fetch(url, options) {
-        return fetch(url, { ...options, credentials: "include" });
+        return fetch(url, {
+          ...options,
+          credentials: typeof window !== "undefined" ? "include" : undefined,
+        });
       },
     }),
   ],
