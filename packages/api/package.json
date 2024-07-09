@@ -9,6 +9,7 @@
     "build": "esbuild src/index.ts --bundle --outdir=dist --platform=node --target=node21 --packages=external --format=esm",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint src",
+    "db:generate-client": "prisma generate",
     "db:push": "prisma db push"
   },
   "dependencies": {
