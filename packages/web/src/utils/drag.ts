@@ -37,7 +37,14 @@ function pointerDown(event: PointerEvent) {
 
   window.addEventListener("pointermove", pointerMove, { passive: true });
   window.addEventListener("pointerup", pointerUp, { passive: true });
-  longPressTimeout = setTimeout(startDrag, LONG_PRESS_DURATION);
+  longPressTimeout = setTimeout(() => {
+    startDrag();
+
+    // Disable scrolling while dragging with touch
+    if (event.pointerType === "touch") {
+      window.addEventListener("touchmove", touchMove, { passive: false });
+    }
+  }, LONG_PRESS_DURATION);
 }
 
 function pointerMove(event: PointerEvent) {
@@ -68,6 +75,10 @@ function pointerMove(event: PointerEvent) {
       startDrag(deltaX, deltaY);
     }
   }
+}
+
+function touchMove(event: TouchEvent) {
+  event.preventDefault();
 }
 
 function startDrag(translateX: number = 0, translateY: number = 0) {
@@ -121,6 +132,7 @@ function pointerUp(event: PointerEvent) {
   }
 
   window.removeEventListener("pointermove", pointerMove);
+  window.removeEventListener("touchmove", touchMove);
   window.removeEventListener("pointerup", pointerUp);
 
   if (!dragSource || !isDragging) {
