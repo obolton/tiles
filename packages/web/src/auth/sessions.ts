@@ -1,12 +1,16 @@
+import assert from "node:assert";
 import client, { type AppRouterInputs } from "../api/client";
 import { SESSION_COOKIE_NAME, SIGNED_IN_FLAG_COOKIE_NAME } from "./constants";
 import type { AstroCookies, AstroCookieSetOptions } from "astro";
+
+assert(import.meta.env.SESSION_COOKIE_DOMAIN);
 
 const SESSION_COOKIE_OPTIONS: AstroCookieSetOptions = {
   httpOnly: true,
   secure: true,
   path: "/",
   sameSite: "strict",
+  domain: import.meta.env.SESSION_COOKIE_DOMAIN,
 };
 
 const SIGNED_IN_FLAG_COOKIE_OPTIONS: AstroCookieSetOptions = {
@@ -39,7 +43,7 @@ export async function signIn({
 export function setAuthenticationCookies(
   cookies: AstroCookies,
   sessionId: string,
-  expiresAt: Date
+  expiresAt: Date,
 ) {
   cookies.set(SESSION_COOKIE_NAME, sessionId, {
     ...SESSION_COOKIE_OPTIONS,
