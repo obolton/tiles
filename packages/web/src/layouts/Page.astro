@@ -37,7 +37,11 @@ const { title } = Astro.props;
       );
     </script>
     <script>
+      import { isSignedIn } from "@/utils/sessions";
       import { initialize } from "@/utils/lightbox";
+      if (isSignedIn()) {
+        document.body.dataset.signedIn = "true";
+      }
       initialize();
     </script>
   </body>
