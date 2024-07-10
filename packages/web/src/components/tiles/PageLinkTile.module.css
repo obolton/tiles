@@ -59,6 +59,12 @@
   grid-auto-rows: fit-content(var(--grid-size));
 }
 
+@media (width < 640px) {
+  .grid {
+    display: none;
+  }
+}
+
 .grid h4 {
   grid-column: span 3;
   margin: 0.25rem 0;
