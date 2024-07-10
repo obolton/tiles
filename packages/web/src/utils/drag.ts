@@ -1,5 +1,6 @@
 const DRAG_THRESHOLD = 10;
 const PRIMARY_MOUSE_BUTTON = 0;
+const LONG_PRESS_DURATION = 500;
 
 let dragSource: HTMLElement | null = null;
 let dragElement: HTMLElement | null = null;
@@ -7,6 +8,7 @@ let initialPointerX: number;
 let initialPointerY: number;
 let rect: DOMRect | null = null;
 let isDragging = false;
+let longPressTimeout: ReturnType<typeof setTimeout> | null = null;
 
 export class DragDropEvent extends Event {
   constructor(
@@ -35,10 +37,18 @@ function pointerDown(event: PointerEvent) {
 
   window.addEventListener("pointermove", pointerMove, { passive: true });
   window.addEventListener("pointerup", pointerUp, { passive: true });
+  longPressTimeout = setTimeout(startDrag, LONG_PRESS_DURATION);
 }
 
 function pointerMove(event: PointerEvent) {
   if (!dragSource || !rect) {
+    return;
+  }
+
+  // Cancel long press
+  if (longPressTimeout !== null) {
+    clearTimeout(longPressTimeout);
+    longPressTimeout = null;
     return;
   }
 
@@ -54,47 +64,60 @@ function pointerMove(event: PointerEvent) {
     });
   } else {
     const distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-
     if (distance >= DRAG_THRESHOLD) {
-      isDragging = true;
-
-      dragElement = dragSource.cloneNode(true) as HTMLElement;
-      dragElement.dataset.dragPreview = "true";
-      delete dragElement.dataset.dropTarget;
-
-      dragElement.style.setProperty("width", `${rect.width}px`);
-      dragElement.style.setProperty("height", `${rect.height}px`);
-      dragElement.style.setProperty("--initial-x", `${rect.left}px`);
-      dragElement.style.setProperty("--initial-y", `${rect.top}px`);
-      dragElement.style.setProperty("--translate-x", `${deltaX}px`);
-      dragElement.style.setProperty("--translate-y", `${deltaY}px`);
-
-      const offsetX = initialPointerX - rect.left;
-      const offsetY = initialPointerY - rect.top;
-      const rotateX = (offsetX / rect.width - 0.5) * -2;
-      const rotateY = (offsetY / rect.height - 0.5) * 2;
-      const rotateAngle =
-        5 * Math.sqrt(Math.pow(rotateX, 2) + Math.pow(rotateY, 2));
-
-      dragElement.style.setProperty("--transform-origin-x", `${offsetX}px`);
-      dragElement.style.setProperty("--transform-origin-y", `${offsetY}px`);
-      dragElement.style.setProperty("--rotate-x", `${rotateX}`);
-      dragElement.style.setProperty("--rotate-y", `${rotateY}`);
-      dragElement.style.setProperty("--rotate-angle", `${rotateAngle}deg`);
-
-      document.body.appendChild(dragElement);
-      document.body.style.setProperty("cursor", "grab");
-
-      dragSource.dataset.dragging = "true";
-
-      enableDropTargetEvents();
+      startDrag(deltaX, deltaY);
     }
   }
+}
+
+function startDrag(translateX: number = 0, translateY: number = 0) {
+  if (!dragSource || !rect || isDragging) {
+    return;
+  }
+
+  isDragging = true;
+
+  dragElement = dragSource.cloneNode(true) as HTMLElement;
+  dragElement.dataset.dragPreview = "true";
+  delete dragElement.dataset.dropTarget;
+
+  dragElement.style.setProperty("width", `${rect.width}px`);
+  dragElement.style.setProperty("height", `${rect.height}px`);
+  dragElement.style.setProperty("--initial-x", `${rect.left}px`);
+  dragElement.style.setProperty("--initial-y", `${rect.top}px`);
+  dragElement.style.setProperty("--translate-x", `${translateX}px`);
+  dragElement.style.setProperty("--translate-y", `${translateY}px`);
+
+  const offsetX = initialPointerX - rect.left;
+  const offsetY = initialPointerY - rect.top;
+  const rotateX = (offsetX / rect.width - 0.5) * -2;
+  const rotateY = (offsetY / rect.height - 0.5) * 2;
+  const rotateAngle =
+    5 * Math.sqrt(Math.pow(rotateX, 2) + Math.pow(rotateY, 2));
+
+  dragElement.style.setProperty("--transform-origin-x", `${offsetX}px`);
+  dragElement.style.setProperty("--transform-origin-y", `${offsetY}px`);
+  dragElement.style.setProperty("--rotate-x", `${rotateX}`);
+  dragElement.style.setProperty("--rotate-y", `${rotateY}`);
+  dragElement.style.setProperty("--rotate-angle", `${rotateAngle}deg`);
+
+  document.body.appendChild(dragElement);
+  document.body.style.setProperty("cursor", "grab");
+
+  dragSource.dataset.dragging = "true";
+
+  enableDropTargetEvents();
 }
 
 function pointerUp(event: PointerEvent) {
   if (event.button !== PRIMARY_MOUSE_BUTTON) {
     return;
+  }
+
+  // Cancel long press
+  if (longPressTimeout !== null) {
+    clearTimeout(longPressTimeout);
+    longPressTimeout = null;
   }
 
   window.removeEventListener("pointermove", pointerMove);
