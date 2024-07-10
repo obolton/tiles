@@ -1,4 +1,6 @@
 const DRAG_THRESHOLD = 10;
+const PRIMARY_MOUSE_BUTTON = 0;
+
 let dragSource: HTMLElement | null = null;
 let dragElement: HTMLElement | null = null;
 let initialPointerX: number;
@@ -16,7 +18,10 @@ export class DragDropEvent extends Event {
 }
 
 function pointerDown(event: PointerEvent) {
-  if (!(event.currentTarget instanceof HTMLElement)) {
+  if (
+    event.button !== PRIMARY_MOUSE_BUTTON ||
+    !(event.currentTarget instanceof HTMLElement)
+  ) {
     return;
   }
 
@@ -29,10 +34,7 @@ function pointerDown(event: PointerEvent) {
   rect = dragSource.getBoundingClientRect();
 
   window.addEventListener("pointermove", pointerMove, { passive: true });
-  window.addEventListener("pointerup", pointerUp, {
-    once: true,
-    passive: true,
-  });
+  window.addEventListener("pointerup", pointerUp, { passive: true });
 }
 
 function pointerMove(event: PointerEvent) {
@@ -90,8 +92,13 @@ function pointerMove(event: PointerEvent) {
   }
 }
 
-function pointerUp() {
+function pointerUp(event: PointerEvent) {
+  if (event.button !== PRIMARY_MOUSE_BUTTON) {
+    return;
+  }
+
   window.removeEventListener("pointermove", pointerMove);
+  window.removeEventListener("pointerup", pointerUp);
 
   if (!dragSource || !isDragging) {
     return;
