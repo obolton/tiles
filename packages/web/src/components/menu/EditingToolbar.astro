@@ -3,9 +3,14 @@ import Toolbar from "./Toolbar.astro";
 import Switch from "../inputs/Switch.astro";
 ---
 
-<Toolbar label="Editing toolbar">
+<Toolbar id="editing-toolbar" label="Editing toolbar">
   <Switch id="editSwitch" label="Edit" />
 </Toolbar>
+<style is:global>
+  body:not([data-signed-in]) #editing-toolbar {
+    display: none;
+  }
+</style>
 <script is:inline>
   const url = new URL(window.location);
   const editSearchParam = url.searchParams.get("edit");
