@@ -62,7 +62,7 @@ function pointerMove(event: PointerEvent) {
         dragElement.style.setProperty("--translate-y", `${deltaY}px`);
       }
     });
-  } else {
+  } else if (event.pointerType !== "touch") {
     const distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
     if (distance >= DRAG_THRESHOLD) {
       startDrag(deltaX, deltaY);
