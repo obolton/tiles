@@ -5,7 +5,7 @@ import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone"
 
 export async function createContext({ req }: CreateHTTPContextOptions) {
   const sessionId = req.headers.cookie
-    ? getCookie(req.headers.cookie, "__Host-session")
+    ? getCookie(req.headers.cookie, "__Secure-session")
     : null;
 
   if (sessionId) {
