@@ -33,7 +33,12 @@ export default function LinkTile({ tile }: LinkTileProps) {
           {content}
         </div>
       ) : (
-        <a className={styles["link-tile"]} href={url}>
+        <a
+          className={styles["link-tile"]}
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+        >
           {content}
         </a>
       )}
