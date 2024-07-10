@@ -172,6 +172,10 @@ function pointerDown(event: PointerEvent) {
   window.addEventListener("keydown", keyDown, {
     once: true,
   });
+  // Disable scrolling while dragging with touch
+  if (event.pointerType === "touch") {
+    window.addEventListener("touchmove", touchMove, { passive: false });
+  }
 }
 
 function pointerMove(event: PointerEvent) {
@@ -211,9 +215,14 @@ function pointerMove(event: PointerEvent) {
   }
 }
 
+function touchMove(event: TouchEvent) {
+  event.preventDefault();
+}
+
 function pointerUp(event: PointerEvent) {
   window.removeEventListener("pointermove", pointerMove);
   window.removeEventListener("keydown", keyDown);
+  window.removeEventListener("touchmove", touchMove);
 
   if (state?.isResizing) {
     state.element.dispatchEvent(
