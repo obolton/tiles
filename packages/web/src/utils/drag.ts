@@ -214,14 +214,22 @@ function click(event: MouseEvent) {
   }
 }
 
+function contextMenu(event: PointerEvent | MouseEvent) {
+  if (event instanceof PointerEvent && event.pointerType === "touch") {
+    event.preventDefault();
+  }
+}
+
 export function makeDraggable(element: HTMLElement) {
   element.addEventListener("pointerdown", pointerDown, { passive: false });
   element.addEventListener("click", click, { capture: true, passive: false });
+  element.addEventListener("contextmenu", contextMenu, { passive: false });
   element.dataset.draggable = "true";
 
   return () => {
     element.removeEventListener("pointerdown", pointerDown);
     element.removeEventListener("click", click, { capture: true });
+    element.removeEventListener("contextmenu", contextMenu);
     delete element.dataset.draggable;
   };
 }
