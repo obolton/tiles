@@ -8,7 +8,7 @@ import cloudflare from "@astrojs/cloudflare";
 import editClientDirective from "./src/config/editClientDirective/register";
 
 const packageRoot = path.dirname(import.meta.filename);
-const env = loadEnv(import.meta.env.MODE, packageRoot, "CERTIFICATE_");
+const env = loadEnv(import.meta.env.MODE, packageRoot, "");
 const ENABLE_HTTPS = env.ENABLE_HTTPS === "true";
 
 // https://astro.build/config
