@@ -1,6 +1,10 @@
 import { getCenter } from "../geometry";
 
-const DEFAULT_TIMING: EffectTiming = { duration: 500, easing: "ease" };
+const DEFAULT_TIMING: EffectTiming = {
+  duration: 500,
+  easing: "ease",
+  fill: "forwards",
+};
 
 function createAnimationPromise(animation: Animation) {
   return new Promise((resolve, reject) => {
