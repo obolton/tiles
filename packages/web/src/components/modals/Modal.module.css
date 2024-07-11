@@ -1,52 +1,66 @@
 .modal {
   position: fixed;
   backdrop-filter: blur(10px) saturate(70%);
-  border-radius: 24px;
+  border-radius: 1.5rem;
   border: none;
-  background: rgb(255 255 255 / 80%);
+  background: rgb(255 255 255 / 90%);
   box-shadow:
     0 10px 10px -8px rgb(0 0 0 / 30%),
     0 0 0 1px rgb(0 0 0 / 20%);
   margin: 0 auto;
   top: 100px;
   width: 520px;
+  max-width: 520px;
   min-height: 200px;
   padding: 0;
   transform-origin: center;
 
-  --transition-duration: 0.3s;
-  --transition-timing-function: ease-in-out;
-
-  animation-duration: var(--transition-duration);
-  animation-timing-function: var(--transition-timing-function);
+  --animation-duration: 0.3s;
+  --animation-timing: ease-in-out;
 
   /* Enable overlay transitions */
   transition:
-    overlay var(--transition-duration) allow-discrete,
-    display var(--transition-duration) allow-discrete;
+    overlay var(--animation-duration) allow-discrete,
+    display var(--animation-duration) allow-discrete;
 }
 
 .modal::backdrop {
-  background: none;
-  animation-duration: var(--transition-duration);
-  animation-timing-function: var(--transition-timing-function);
-  animation-fill-mode: forwards;
+  background: rgba(0 0 0 / 40%);
 }
 
 .modal[open] {
-  animation-name: appear;
+  animation: var(--animation-duration) var(--animation-timing) appear;
 }
 
 .modal[open]::backdrop {
-  animation-name: overlay-appear;
+  animation: var(--animation-duration) var(--animation-timing) forwards
+    overlay-appear;
 }
 
 .modal:not([open]) {
-  animation-name: disappear;
+  animation: var(--animation-duration) var(--animation-timing) disappear;
 }
 
 .modal:not([open])::backdrop {
-  animation-name: overlay-disappear;
+  animation: var(--animation-duration) var(--animation-timing) overlay-disappear;
+}
+
+@media (width < 640px) {
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    top: unset;
+    bottom: 0;
+    border-radius: 0;
+  }
+
+  .modal[open] {
+    animation: var(--animation-duration) var(--animation-timing) slide-up;
+  }
+
+  .modal:not([open]) {
+    animation: var(--animation-duration) var(--animation-timing) slide-down;
+  }
 }
 
 @keyframes appear {
@@ -61,6 +75,18 @@
     opacity: 1;
     transform: perspective(1000px) translate3d(0, 0, 0);
     filter: blur(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -79,22 +105,38 @@
   }
 }
 
+@keyframes slide-down {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
 @keyframes overlay-appear {
   from {
+    opacity: 0;
     backdrop-filter: blur(0);
   }
 
   to {
+    opacity: 1;
     backdrop-filter: blur(5px);
   }
 }
 
 @keyframes overlay-disappear {
   from {
+    opacity: 1;
     backdrop-filter: blur(5px);
   }
 
   to {
+    opacity: 0;
     backdrop-filter: blur(0);
   }
 }
