@@ -1,3 +1,5 @@
+import { getCenter, getDistance, getOffsetCenter } from "./geometry";
+
 const DRAG_THRESHOLD = 10;
 const PRIMARY_MOUSE_BUTTON = 0;
 const LONG_PRESS_DURATION = 500;
@@ -9,6 +11,8 @@ let initialPointerY: number;
 let rect: DOMRect | null = null;
 let isDragging = false;
 let longPressTimeout: ReturnType<typeof setTimeout> | null = null;
+let dropTargets: NodeListOf<HTMLElement> | null = null;
+let dropTarget: HTMLElement | null = null;
 
 export class DragDropEvent extends Event {
   constructor(
@@ -64,9 +68,17 @@ function pointerMove(event: PointerEvent) {
 
   if (isDragging) {
     requestAnimationFrame(() => {
-      if (dragElement && rect) {
+      if (dragSource && dragElement) {
         dragElement.style.setProperty("--translate-x", `${deltaX}px`);
         dragElement.style.setProperty("--translate-y", `${deltaY}px`);
+
+        const target = findDropTarget();
+        if (target !== dropTarget) {
+          dropTarget = target;
+          dropTarget?.dispatchEvent(
+            new DragDropEvent("drag:drag-over", dragSource),
+          );
+        }
       }
     });
   } else if (event.pointerType !== "touch") {
@@ -87,6 +99,10 @@ function startDrag(translateX: number = 0, translateY: number = 0) {
   }
 
   isDragging = true;
+
+  dropTargets = document.querySelectorAll<HTMLElement>(
+    '[data-drop-target="true"]',
+  );
 
   dragElement = dragSource.cloneNode(true) as HTMLElement;
   dragElement.dataset.dragPreview = "true";
@@ -116,8 +132,6 @@ function startDrag(translateX: number = 0, translateY: number = 0) {
   document.body.style.setProperty("cursor", "grab");
 
   dragSource.dataset.dragging = "true";
-
-  enableDropTargetEvents();
 }
 
 function pointerUp(event: PointerEvent) {
@@ -168,7 +182,6 @@ function pointerUp(event: PointerEvent) {
     );
   }
 
-  disableDropTargetEvents();
   document.body.style.removeProperty("cursor");
 
   dragSource.dispatchEvent(new DragDropEvent("drag:drop", dragSource));
@@ -178,32 +191,55 @@ function pointerUp(event: PointerEvent) {
     isDragging = false;
     dragSource = null;
     rect = null;
+    dropTargets = null;
   });
 }
 
-function pointerEnterDropTarget(event: PointerEvent) {
-  if (!(event.currentTarget instanceof HTMLElement) || !dragSource) {
-    return;
+function findDropTarget() {
+  if (!dragElement || !rect || !dragSource || !dropTargets) {
+    return null;
   }
-  event.currentTarget.dispatchEvent(
-    new DragDropEvent("drag:drag-over", dragSource),
-  );
-}
 
-function getDropTargets() {
-  return document.querySelectorAll<HTMLElement>('[data-drop-target="true"]');
-}
+  const dragCenter = getCenter(dragElement.getBoundingClientRect());
+  const containerRect = dragSource.offsetParent?.getBoundingClientRect();
+  if (!containerRect) {
+    return null;
+  }
 
-function enableDropTargetEvents() {
-  getDropTargets().forEach((element) => {
-    element.addEventListener("pointerenter", pointerEnterDropTarget);
-  });
-}
+  // Find the drop target with the center closest to the drag element center
 
-function disableDropTargetEvents() {
-  getDropTargets().forEach((element) =>
-    element.removeEventListener("pointerenter", pointerEnterDropTarget),
-  );
+  let minDistance = Infinity;
+  let targetIndex = -1;
+
+  for (let i = 0; i < dropTargets.length; i++) {
+    const targetCenter = getOffsetCenter(dropTargets[i]);
+    targetCenter.x += containerRect.left;
+    targetCenter.y += containerRect.top;
+
+    const distance = getDistance(dragCenter, targetCenter);
+    if (distance < minDistance) {
+      targetIndex = i;
+      minDistance = distance;
+    }
+  }
+
+  // Look backwards for a target that can accommodate the drag element width
+
+  if (targetIndex >= 0) {
+    const dragWidth = dragSource.clientWidth;
+    const containerWidth = containerRect.width;
+
+    while (targetIndex >= 0) {
+      const target = dropTargets[targetIndex];
+      const space = containerWidth - target.offsetLeft;
+      if (space >= dragWidth) {
+        return target;
+      }
+      targetIndex--;
+    }
+  }
+
+  return null;
 }
 
 // Prevent click events while dragging
