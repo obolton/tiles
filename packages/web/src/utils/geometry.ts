@@ -1,6 +1,14 @@
 export function getCenter(rect: DOMRect) {
-  return {
-    x: rect.x + rect.width / 2,
-    y: rect.y + rect.height / 2,
-  };
+  return new DOMPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+}
+
+export function getOffsetCenter(element: HTMLElement) {
+  return new DOMPoint(
+    element.offsetLeft + element.offsetWidth / 2,
+    element.offsetTop + element.offsetHeight / 2,
+  );
+}
+
+export function getDistance(a: DOMPoint, b: DOMPoint) {
+  return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 }
