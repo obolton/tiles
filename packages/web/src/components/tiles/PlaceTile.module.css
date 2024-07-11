@@ -30,7 +30,7 @@
 }
 
 [data-lightbox] .figure {
-  overflow: visible;
+  display: flex;
 }
 
 [data-lightbox] .figure > img {
@@ -38,14 +38,23 @@
 }
 
 [data-lightbox] .figure > figcaption {
-  top: 0;
-  left: 0;
+  position: static;
+  width: 20vw;
+  min-width: 150px;
   background: none;
-  padding: 0;
   color: rgba(255 255 255 / 90%);
   font-weight: 400;
   text-shadow: 0 1px 1px rgb(0 0 0 / 70%);
   backdrop-filter: none;
   box-shadow: none;
-  translate: calc(100% + 2rem) 0;
+}
+
+@media (width < 640px) {
+  [data-lightbox] .figure {
+    flex-direction: column;
+  }
+
+  [data-lightbox] .figure > figcaption {
+    width: 100%;
+  }
 }
