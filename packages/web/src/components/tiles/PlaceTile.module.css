@@ -50,11 +50,16 @@
 }
 
 @media (width < 640px) {
+  .figure > figcaption {
+    display: none;
+  }
+
   [data-lightbox] .figure {
     flex-direction: column;
   }
 
   [data-lightbox] .figure > figcaption {
+    display: block;
     width: 100%;
   }
 }
