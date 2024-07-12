@@ -21,7 +21,7 @@ export default function PlaceTile({ tile }: PlaceTileProps) {
   return (
     <Tile tile={tile}>
       <figure className={styles.figure} onClick={isEditable ? edit : undefined}>
-        <img src={src} alt={`A map showing ${name}`} />
+        <img src={src} alt={`A map showing ${name}`} draggable={!isEditable} />
         <figcaption>{name}</figcaption>
       </figure>
     </Tile>
