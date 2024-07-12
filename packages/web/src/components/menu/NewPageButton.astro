@@ -18,6 +18,10 @@ import newIcon from "../../icons/new.svg";
     right: 1.5rem;
     z-index: 1;
   }
+
+  body:not([data-signed-in]) #new-page-button {
+    display: none;
+  }
 </style>
 <script>
   import client from "../../api/client";
