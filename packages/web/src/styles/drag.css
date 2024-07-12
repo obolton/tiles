@@ -1,5 +1,6 @@
 [data-draggable] {
   cursor: grab;
+  -webkit-touch-callout: none;
 }
 
 [data-draggable][data-drag-preview] {
