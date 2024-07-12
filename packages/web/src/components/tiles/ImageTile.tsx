@@ -21,7 +21,7 @@ export default function ImageTile({ tile }: ImageTileProps) {
   return (
     <Tile tile={tile}>
       <figure className={styles.figure} onClick={isEditable ? edit : undefined}>
-        <img src={src} alt="Image" />
+        <img src={src} alt="Image" draggable={!isEditable} />
         {caption && <figcaption>{caption}</figcaption>}
       </figure>
     </Tile>
