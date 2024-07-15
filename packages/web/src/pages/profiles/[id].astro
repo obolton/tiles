@@ -38,5 +38,5 @@ if (!profile) {
 
   <Grid tiles={profile.profilePage.tiles} client:edit />
 
-  <EditTileModal pageId={profile.profilePage.id} client:edit />
+  <EditTileModal pageId={profile.profilePage.id} slot="end" client:edit />
 </Page>

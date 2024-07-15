@@ -34,5 +34,5 @@ if (!page) {
 
   <Grid tiles={page.tiles} client:edit />
 
-  <EditTileModal pageId={page.id} client:edit />
+  <EditTileModal pageId={page.id} slot="end" client:edit />
 </Page>
