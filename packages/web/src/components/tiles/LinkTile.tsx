@@ -17,14 +17,14 @@ export default function LinkTile({ tile }: LinkTileProps) {
   const isEditable = useEditable();
   const edit = useCallback(() => editTile(id, "LINK"), [id]);
   const content = (
-    <>
-      {imageUrl && <img className={styles.image} src={imageUrl} alt="TODO" />}
-      <div className={styles.metadata}>
+    <figure className={styles.figure}>
+      {imageUrl && <img src={imageUrl} alt="TODO" />}
+      <figcaption>
         <h3 className={styles.title}>{title || "Unnamed page"}</h3>
-        {description && <p className={styles.meta}>{description}</p>}
-        <p className={styles.meta}>{siteName || url}</p>
-      </div>
-    </>
+        {description && <p>{description}</p>}
+        <p>{siteName || url}</p>
+      </figcaption>
+    </figure>
   );
   return (
     <Tile tile={tile} showInLightbox={false}>

@@ -8,29 +8,49 @@
   overflow: hidden;
 }
 
-.metadata {
+.figure {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.figure > img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.figure > figcaption {
   position: absolute;
   width: 100%;
   bottom: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  flex-grow: 0;
-  flex-shrink: 1;
   padding: calc(0.75rem - 1px) 1rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1rlh;
   white-space: pre-line;
   color: #303030;
   text-shadow: 0 1px 1px rgb(255 255 255 / 15%);
   background: rgb(255 255 255 / 70%);
   backdrop-filter: blur(8px);
   box-shadow: 0 -1px 0 0 rgb(0 0 0 / 20%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-.metadata > * {
+.figure > figcaption > * {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+}
+
+.figure > figcaption p {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #606060;
 }
 
 .title {
@@ -41,21 +61,8 @@
   padding: 0;
 }
 
-.meta {
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: #606060;
-}
-
 @media (width < 640px) {
-  .meta {
+  .figure > figcaption {
     display: none;
   }
-}
-
-.image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  flex-grow: 1;
 }
