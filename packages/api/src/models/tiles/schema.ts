@@ -5,7 +5,8 @@ import {
   MAX_LATITUDE,
   MIN_LONGITUDE,
   MAX_LONGITUDE,
-} from "../../constants/geo.ts";
+} from "@/constants/geo.ts";
+import { RichTextSchema } from "@/schema/RichText.ts";
 
 // Base
 
@@ -37,10 +38,11 @@ export const UpdateImageTileSchema =
 export type UpdateImageTileSchema = z.infer<typeof UpdateImageTileSchema>;
 
 // Text
+
 const TextTileBaseSchema = z.object({
   type: z.literal(TileType.TEXT),
   text: z.object({
-    content: z.string(),
+    content: RichTextSchema,
   }),
 });
 
