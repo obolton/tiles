@@ -2,6 +2,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -122,7 +126,9 @@ model TextTile {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   tileId    String   @unique @map("tile_id") @db.Uuid
-  content   String
+
+  /// [RichText]
+  content Json @db.JsonB
 
   tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
 
