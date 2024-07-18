@@ -45,7 +45,7 @@ button.primary {
 }
 
 button.secondary {
-  color: #303030;
+  color: var(--text-color);
   border: none;
   background-color: rgb(240 240 240 / 90%);
   text-shadow: 0 1px 1px rgb(255 255 255 / 70%);
