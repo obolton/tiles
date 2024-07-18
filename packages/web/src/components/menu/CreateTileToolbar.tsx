@@ -46,6 +46,14 @@ export default function CreateTileToolbar({ pageId }: CreateTileToolbarProps) {
             content: "Heading",
           },
         });
+      } else if (tileType === "TEXT") {
+        await createTile({
+          pageId,
+          type: "TEXT",
+          text: {
+            content: [],
+          },
+        });
       } else {
         openCreateTileModal(tileType);
       }
