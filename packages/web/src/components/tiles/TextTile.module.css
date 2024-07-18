@@ -1,17 +1,11 @@
-.text,
-.textarea {
+.text {
   font-size: 1rem;
-  line-height: 1rlh;
+  line-height: 1.5rlh;
   padding: 16px;
-  white-space: pre-line;
 }
 
-.textarea {
+.editor {
   position: absolute;
   display: block;
   inset: 16px;
-  padding: 0;
-  resize: none;
-  border: none;
-  outline: none;
 }
