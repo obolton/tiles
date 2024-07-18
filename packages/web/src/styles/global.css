@@ -58,3 +58,22 @@ input[type="text"]::placeholder,
 textarea::placeholder {
   color: #b0b0b0;
 }
+
+strong,
+.bold {
+  font-weight: 600;
+}
+
+em,
+.italic {
+  font-style: italic;
+}
+
+del,
+.strikethrough {
+  text-decoration: line-through;
+}
+
+.underline {
+  text-decoration: underline;
+}
