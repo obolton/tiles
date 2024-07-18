@@ -2,6 +2,7 @@ import { useCallback, useRef } from "react";
 import useEditable from "@/hooks/useEditable";
 import useDraggable from "@/hooks/useDraggable";
 import useResizable from "@/hooks/useResizable";
+import useScrollIntoView from "@/hooks/useScrollIntoView";
 import { deleteTile } from "@/utils/edit";
 import client from "@/api/client";
 import DeleteButton from "./DeleteButton";
@@ -26,6 +27,7 @@ export default function Tile({
   const isEditable = useEditable();
   useDraggable(ref, isEditable);
   useResizable(ref, isEditable);
+  useScrollIntoView(ref);
 
   const onDelete = useCallback(
     async (event: React.MouseEvent) => {
@@ -43,6 +45,7 @@ export default function Tile({
 
   return (
     <div
+      id={tile.id}
       ref={ref}
       className={`editable ${styles.tile} ${showBorder ? styles.border : ""}`}
       style={

@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import useEditable from "@/hooks/useEditable";
 import useDraggable from "@/hooks/useDraggable";
+import useScrollIntoView from "@/hooks/useScrollIntoView";
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import DeleteButton from "./DeleteButton";
 import { updateTile, deleteTile } from "@/utils/edit";
@@ -25,6 +26,7 @@ export default function HeadingTile({ tile }: HeadingTileProps) {
   const ref = useRef<HTMLHeadingElement>(null);
   const isEditable = useEditable();
   useDraggable(ref, isEditable);
+  useScrollIntoView(ref);
   const [value, setValue] = useState(content);
 
   const onChange = useCallback(
@@ -66,6 +68,7 @@ export default function HeadingTile({ tile }: HeadingTileProps) {
 
   return (
     <header
+      id={tile.id}
       ref={ref}
       className={`${styles.heading} editable`}
       data-drop-target={isEditable ? "true" : undefined}

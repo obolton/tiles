@@ -7,6 +7,7 @@ import HeadingTile from "@/components/tiles/HeadingTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import useLayoutTransition from "@/hooks/useLayoutTransition";
 import useElementSizeRef from "@/hooks/useElementSizeRef";
+import { scrollIntoView } from "@/hooks/useScrollIntoView";
 import { moveElement } from "@/utils/arrays";
 import client from "@/api/client";
 import styles from "./Grid.module.css";
@@ -48,6 +49,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
     const create = (event: Event) => {
       const { detail: tile } = event as CustomEvent<ClientTile>;
       setTiles((prevTiles) => [...prevTiles, tile]);
+      scrollIntoView(tile.id);
     };
     const update = (event: Event) => {
       const { detail: tile } = event as CustomEvent<ClientTile>;
