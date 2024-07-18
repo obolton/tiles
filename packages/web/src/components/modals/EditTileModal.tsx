@@ -20,9 +20,9 @@ interface ModalProps {
 
 const MODALS = {
   IMAGE: lazy(() => import("./EditImageTileModal")),
-  TEXT: lazy(() => import("./EditTextTileModal")),
   PLACE: lazy(() => import("./EditPlaceTileModal")),
   LINK: lazy(() => import("./EditLinkTileModal")),
+  TEXT: null,
   HEADING: null,
   PAGE_LINK: null,
 } satisfies Record<
