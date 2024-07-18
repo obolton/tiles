@@ -2,7 +2,6 @@
   position: relative;
   border-radius: 12px;
   background: #fff;
-  box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
   transition:
     opacity 0.2s ease-in-out,
     filter 0.2s ease-in-out,
@@ -15,7 +14,13 @@
   min-height: var(--grid-size);
 }
 
-.tile::after {
+.border,
+.tile[data-drag-preview] {
+  box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
+}
+
+.border::after,
+.tile[data-drag-preview]::after {
   content: "";
   position: absolute;
   border-radius: 12px;

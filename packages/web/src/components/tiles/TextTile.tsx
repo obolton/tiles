@@ -43,7 +43,7 @@ export default function TextTile({ tile }: TextTileProps) {
   );
 
   return (
-    <Tile tile={tile} showInLightbox={false}>
+    <Tile tile={tile} showBorder={tile.columns < 3} showInLightbox={false}>
       {isEditable ? (
         <RichTextEditor
           className={`${styles.text} ${styles.editor}`}

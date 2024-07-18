@@ -12,12 +12,14 @@ import type { ClientTile } from "@/types/tiles";
 export type TileProps = {
   children: React.ReactNode;
   tile: ClientTile;
+  showBorder?: boolean;
   showInLightbox?: boolean;
 };
 
 export default function Tile({
   tile,
   children,
+  showBorder = true,
   showInLightbox = true,
 }: TileProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -42,7 +44,7 @@ export default function Tile({
   return (
     <div
       ref={ref}
-      className={`editable ${styles.tile}`}
+      className={`editable ${styles.tile} ${showBorder ? styles.border : ""}`}
       style={
         {
           "--columns": tile.columns,
