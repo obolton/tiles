@@ -1,5 +1,6 @@
 import Tile from "./Tile";
 import { getImageUrl, getMapImageUrl } from "@/utils/images";
+import RichText from "@/components/text/RichText";
 import styles from "./PageLinkTile.module.css";
 import type { ClientPageLinkTile, ClientThumbnailTile } from "@/types/tiles";
 
@@ -49,7 +50,7 @@ function getTileComponent(tile: ClientThumbnailTile) {
     case "TEXT":
       return (
         <ThumbnailTile key={tile.id} {...tile}>
-          {tile.text?.content}
+          <RichText content={tile.text?.content ?? []} />
         </ThumbnailTile>
       );
     case "PLACE":
