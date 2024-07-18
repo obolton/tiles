@@ -226,8 +226,18 @@ export async function createPage(
               columns: 3,
               text: {
                 create: {
-                  content:
-                    "This is a new page. You can edit it however you like.",
+                  content: [
+                    {
+                      type: "paragraph",
+                      spans: [
+                        {
+                          type: "text",
+                          text: "This is a new page. You can edit it however you like.",
+                          format: 0,
+                        },
+                      ],
+                    },
+                  ],
                 },
               },
             },
