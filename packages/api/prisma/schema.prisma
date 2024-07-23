@@ -128,7 +128,8 @@ model TextTile {
   tileId    String   @unique @map("tile_id") @db.Uuid
 
   /// [RichText]
-  content Json @db.JsonB
+  content Json   @db.JsonB
+  hue     Float? @db.Real
 
   tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
 
