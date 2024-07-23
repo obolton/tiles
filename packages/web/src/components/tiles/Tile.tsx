@@ -15,11 +15,13 @@ export type TileProps = {
   tile: ClientTile;
   showBorder?: boolean;
   showInLightbox?: boolean;
+  hue?: number | null;
 };
 
 export default function Tile({
   tile,
   children,
+  hue,
   showBorder = true,
   showInLightbox = true,
 }: TileProps) {
@@ -47,11 +49,12 @@ export default function Tile({
     <div
       id={tile.id}
       ref={ref}
-      className={`editable ${styles.tile} ${showBorder ? styles.border : ""}`}
+      className={`editable ${styles.tile} ${showBorder ? styles.border : ""} ${typeof hue === "number" ? styles.color : ""}`}
       style={
         {
           "--columns": tile.columns,
           "--rows": tile.rows,
+          "--hue": typeof hue === "number" ? `${hue.toFixed(2)}deg` : undefined,
         } as React.CSSProperties
       }
       data-drop-target={isEditable ? "true" : undefined}

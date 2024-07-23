@@ -14,6 +14,10 @@
   min-height: var(--grid-size);
 }
 
+.tile.color {
+  background: oklch(90% 50% var(--hue));
+}
+
 .border,
 .tile[data-drag-preview] {
   box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
