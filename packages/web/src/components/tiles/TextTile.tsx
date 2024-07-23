@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { serialize } from "@/utils/richText/serialize";
 import RichTextEditor from "@/components/inputs/RichTextEditor/RichTextEditor";
 import RichText from "@/components/text/RichText";
+import ColorPicker from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
 import { updateTile } from "@/utils/edit";
 import Tile from "./Tile";
@@ -16,10 +17,11 @@ type TextTileProps = {
 export default function TextTile({ tile }: TextTileProps) {
   const {
     id,
-    text: { content },
+    text: { content, hue: initialHue },
   } = tile;
   const isEditable = useEditable();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
+  const [hue, setHue] = useState(initialHue);
 
   const onBlur = useCallback(async () => {
     if (!editorState) {
@@ -33,7 +35,21 @@ export default function TextTile({ tile }: TextTileProps) {
         content,
       },
     });
-  }, [id, editorState]);
+  }, [editorState, id]);
+
+  const onChangeColor = useCallback(
+    async (hue: number) => {
+      setHue(hue);
+      await updateTile({
+        id,
+        type: "TEXT",
+        text: {
+          hue,
+        },
+      });
+    },
+    [id],
+  );
 
   const onPointerDown = useCallback(
     (event: React.PointerEvent | React.MouseEvent) => {
@@ -43,7 +59,12 @@ export default function TextTile({ tile }: TextTileProps) {
   );
 
   return (
-    <Tile tile={tile} showBorder={tile.columns < 3} showInLightbox={false}>
+    <Tile
+      hue={hue}
+      tile={tile}
+      showBorder={tile.columns < 3}
+      showInLightbox={false}
+    >
       {isEditable ? (
         <RichTextEditor
           className={`${styles.text} ${styles.editor}`}
@@ -54,7 +75,13 @@ export default function TextTile({ tile }: TextTileProps) {
           placeholder="Enter some text"
           value={content}
           editable
-        />
+        >
+          <ColorPicker
+            className={styles["color-picker"]}
+            value={hue}
+            onChange={onChangeColor}
+          />
+        </RichTextEditor>
       ) : (
         <div className={styles.text}>
           <RichText content={content} />
