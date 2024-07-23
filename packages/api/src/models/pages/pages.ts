@@ -26,6 +26,7 @@ const TILES_FIELDS = {
     select: {
       id: true,
       content: true,
+      hue: true,
     },
   },
   place: {
