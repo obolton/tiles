@@ -32,6 +32,7 @@ interface RichTextEditorProps
 }
 
 export default function RichTextEditor({
+  children,
   className,
   editable,
   onChange,
@@ -71,6 +72,7 @@ export default function RichTextEditor({
         <OnChangePlugin onChange={onChange} />
         <EditorRefPlugin editorRef={ref} />
         <Toolbar />
+        {children}
       </LexicalComposer>
     </div>
   );
