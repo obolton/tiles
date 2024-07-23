@@ -42,7 +42,8 @@ export type UpdateImageTileSchema = z.infer<typeof UpdateImageTileSchema>;
 const TextTileBaseSchema = z.object({
   type: z.literal(TileType.TEXT),
   text: z.object({
-    content: RichTextSchema,
+    content: RichTextSchema.optional(),
+    hue: z.number().gte(0).lte(360).optional(),
   }),
 });
 
