@@ -11,6 +11,7 @@
   position: relative;
   width: 28px;
   height: 28px;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,6 +19,7 @@
   border: none;
   border-radius: 50%;
   outline-offset: -2px;
+  -webkit-tap-highlight-color: transparent;
   box-shadow: inset 0 0 0 1px rgba(0 0 0 / 20%);
   background: radial-gradient(
       rgba(220 220 220) 0%,
@@ -89,6 +91,7 @@
   width: 0;
   height: 24px;
   overflow: visible;
+  -webkit-tap-highlight-color: transparent;
   transform: scale(1);
   transition: transform 100ms ease;
 }
