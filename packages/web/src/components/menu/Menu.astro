@@ -3,6 +3,7 @@ import AuthenticationToolbar from "./AuthenticationToolbar.astro";
 import EditingToolbar from "./EditingToolbar.astro";
 import NewPageButton from "./NewPageButton.astro";
 import CreateTileToolbar from "./CreateTileToolbar";
+import FormattingToolbar from "./FormattingToolbar";
 
 interface Props {
   pageId: string;
@@ -15,6 +16,7 @@ const { pageId } = Astro.props;
   <AuthenticationToolbar />
   <EditingToolbar />
 </div>
+<FormattingToolbar pageId={pageId} client:edit />
 <NewPageButton />
 <style>
   #menubar {
