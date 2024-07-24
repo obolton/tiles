@@ -7,6 +7,7 @@ import type {
 export const PAGE_LINK_TILE_PAGE_FIELDS = {
   title: true,
   subtitle: true,
+  hue: true,
   tiles: {
     select: {
       id: true,
@@ -22,6 +23,7 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
       text: {
         select: {
           content: true,
+          hue: true,
         },
       },
       link: {

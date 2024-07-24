@@ -72,6 +72,7 @@ const PAGE_FIELDS = {
   id: true,
   title: true,
   subtitle: true,
+  hue: true,
   tiles: {
     select: TILES_FIELDS,
     orderBy: {
@@ -138,6 +139,7 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   id: string;
   title: string;
   subtitle: string | null;
+  hue: number | null;
   tiles: ClientTile[];
 } | null> {
   const page = await prisma.page.findUnique({
@@ -275,17 +277,23 @@ export async function createPage(
   });
 }
 
-export async function updatePage({ id, title, subtitle }: UpdatePageSchema) {
+export async function updatePage({
+  id,
+  title,
+  subtitle,
+  hue,
+}: UpdatePageSchema) {
   return prisma.page.update({
     where: { id },
-    data: { title, subtitle },
+    data: { title, subtitle, hue },
     select: {
       id: true,
-      title: true,
-      subtitle: true,
-      authorId: true,
       createdAt: true,
       updatedAt: true,
+      authorId: true,
+      title: true,
+      subtitle: true,
+      hue: true,
     },
   });
 }

@@ -42,7 +42,7 @@ export type ClientThumbnailTile = Pick<
   "id" | "type" | "columns" | "rows"
 > & {
   image: Pick<ImageTile, "imageKey" | "caption"> | null;
-  text: Pick<TextTile, "content"> | null;
+  text: Pick<TextTile, "content" | "hue"> | null;
   place: Pick<PlaceTile, "name" | "thumbnailKey"> | null;
   link: Pick<LinkTile, "title"> | null;
   heading: Pick<HeadingTile, "content"> | null;
@@ -65,6 +65,7 @@ export type ClientPageLinkTile = ClientTileType<
     page: {
       title: string;
       subtitle: string | null;
+      hue: number | null;
       tiles: ClientThumbnailTile[];
     } | null;
   }
