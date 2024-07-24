@@ -2,6 +2,7 @@
 import Page from "@/layouts/Page.astro";
 import Menu from "@/components/menu/Menu.astro";
 import PageHeader from "@/components/header/PageHeader";
+import Author from "@/components/header/Author";
 import Grid from "@/components/grid/Grid";
 import EditTileModal from "@/components/modals/EditTileModal";
 import client from "@/api/client";
@@ -33,6 +34,13 @@ if (!page) {
     subtitle={page.subtitle}
     slot="header"
     client:edit
+  />
+
+  <Author
+    id={page.author.id}
+    name={page.author.name}
+    imageUrl={page.author.imageUrl}
+    slot="header"
   />
 
   <Grid tiles={page.tiles} client:edit />
