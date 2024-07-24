@@ -64,9 +64,10 @@ model Page {
   id        String   @id @default(uuid()) @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  authorId  String   @map("author_id") @db.Uuid
   title     String
   subtitle  String?
-  authorId  String   @map("author_id") @db.Uuid
+  hue       Float?   @db.Real
 
   author        User           @relation("Pages", fields: [authorId], references: [id], onDelete: Cascade)
   profileUser   User?          @relation("ProfilePage")
