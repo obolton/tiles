@@ -10,10 +10,10 @@
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: linear-gradient(0deg, #202020, #404040);
+  background: oklch(from var(--page-color) 60% 40% h);
   box-shadow:
     0 2px 3px 0 rgb(0 0 0 / 30%),
-    0 0 0 1px rgb(255 255 255 / 80%);
+    inset 0 0 0 1px rgb(0 0 0 / 20%);
   opacity: 1;
   transition:
     transform 0.25s ease,
@@ -25,7 +25,11 @@
   transform: scale(0.95) translateY(1px);
   box-shadow:
     0 2px 4px 0 rgb(0 0 0 / 30%),
-    0 0 0 2px rgb(255 255 255 / 80%);
+    inset 0 0 0 1px rgb(0 0 0 / 20%);
+}
+
+.button > img {
+  opacity: 0.9;
 }
 
 [data-drag-preview] .button {
