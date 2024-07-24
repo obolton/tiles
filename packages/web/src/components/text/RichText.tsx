@@ -28,6 +28,13 @@ interface ParagraphProps {
 }
 
 function Paragraph({ node }: ParagraphProps) {
+  if (node.spans.length === 0) {
+    return (
+      <p>
+        <br />
+      </p>
+    );
+  }
   return (
     <p>
       {node.spans.map((span, index) => (
