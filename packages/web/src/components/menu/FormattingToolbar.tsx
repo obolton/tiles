@@ -14,6 +14,7 @@ export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
   const onChangeColor = useCallback(
     async (hue: number) => {
       document.body.style.setProperty("--page-hue", `${hue.toFixed(2)}deg`);
+      document.body.classList.add("color");
       await client.pages.update.mutate({
         id: pageId,
         hue,
