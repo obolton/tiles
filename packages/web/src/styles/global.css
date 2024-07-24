@@ -1,6 +1,8 @@
 :root {
   --text-color: #303030;
   --focus-ring-color: #0070f3;
+  --lightness: 90%;
+  --chroma: 20%;
 }
 
 * {
@@ -15,6 +17,16 @@ html {
 
 body {
   color: var(--text-color);
+
+  --page-color: #fff;
+
+  background: var(--page-color);
+}
+
+body.color {
+  --page-color: oklch(var(--lightness) var(--chroma) var(--page-hue));
+
+  background: var(--page-color);
 }
 
 html,
