@@ -1,0 +1,18 @@
+.toolbar {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 1;
+  animation: 0.5s ease fade-in;
+  overflow: visible;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
