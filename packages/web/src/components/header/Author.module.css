@@ -1,0 +1,29 @@
+.author {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 12px;
+  font-style: normal;
+  font-size: 1.25rem;
+}
+
+.author > a {
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: rgba(0 0 0 / 60%);
+}
+
+.author > a:hover {
+  text-decoration: underline;
+  color: rgba(0 0 0 / 80%);
+}
+
+.author > img {
+  display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 60%),
+    0 6px 4px -4px rgb(0 0 0 / 15%);
+}
