@@ -1,5 +1,5 @@
 :root {
-  --text-color: #303030;
+  --text-color: rgba(0 0 0 / 80%);
   --focus-ring-color: #0070f3;
   --lightness: 90%;
   --chroma: 20%;
@@ -73,7 +73,7 @@ a {
 
 input[type="text"]::placeholder,
 textarea::placeholder {
-  color: #b0b0b0;
+  color: rgba(0 0 0 / 40%);
 }
 
 strong,
