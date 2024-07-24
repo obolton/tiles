@@ -24,7 +24,7 @@ if (!profile) {
 }
 ---
 
-<Page title={profile.name}>
+<Page title={profile.name} hue={profile.profilePage.hue}>
   <Menu pageId={profile.profilePage.id} slot="menu" />
 
   <ProfilePageHeader
