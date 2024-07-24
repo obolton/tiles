@@ -15,7 +15,7 @@
 }
 
 .tile.color {
-  background: oklch(90% 50% var(--hue));
+  background: oklch(var(--lightness) var(--chroma) var(--hue));
 }
 
 .border,

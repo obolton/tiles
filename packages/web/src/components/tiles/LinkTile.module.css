@@ -32,8 +32,8 @@
   line-height: 1rlh;
   white-space: pre-line;
   text-shadow: 0 1px 1px rgb(255 255 255 / 15%);
-  background: rgb(255 255 255 / 70%);
-  backdrop-filter: blur(8px);
+  background: oklch(from var(--page-color) l calc(c * 1.5) h / 50%);
+  backdrop-filter: blur(10px);
   box-shadow: 0 -1px 0 0 rgb(0 0 0 / 20%);
   display: flex;
   flex-direction: column;

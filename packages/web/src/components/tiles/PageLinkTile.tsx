@@ -11,6 +11,7 @@ type PageLinkTileProps = {
 interface ThumbnailTileProps extends ClientThumbnailTile {
   children: React.ReactNode;
   padding?: boolean;
+  hue?: number | null;
 }
 
 function ThumbnailTile({
@@ -18,6 +19,7 @@ function ThumbnailTile({
   rows,
   children,
   padding = true,
+  hue,
 }: ThumbnailTileProps) {
   return (
     <div
@@ -26,6 +28,7 @@ function ThumbnailTile({
         {
           "--columns": columns,
           "--rows": rows,
+          "--hue": typeof hue === "number" ? `${hue.toFixed(2)}deg` : undefined,
         } as React.CSSProperties
       }
     >
@@ -49,7 +52,7 @@ function getTileComponent(tile: ClientThumbnailTile) {
       ) : null;
     case "TEXT":
       return (
-        <ThumbnailTile key={tile.id} {...tile}>
+        <ThumbnailTile key={tile.id} {...tile} hue={tile.text?.hue}>
           <RichText content={tile.text?.content ?? []} />
         </ThumbnailTile>
       );
@@ -100,7 +103,7 @@ export default function PageLinkTile({ tile }: PageLinkTileProps) {
   const { title, subtitle, tiles } = page;
 
   return (
-    <Tile tile={tile} showInLightbox={false}>
+    <Tile tile={tile} showInLightbox={false} hue={page.hue}>
       {/* eslint-disable-next-line react/jsx-no-target-blank */}
       <a className={styles.page} href={`/pages/${pageId}`} target="_blank">
         <h3>{title}</h3>
