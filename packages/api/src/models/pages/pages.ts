@@ -73,6 +73,13 @@ const PAGE_FIELDS = {
   title: true,
   subtitle: true,
   hue: true,
+  author: {
+    select: {
+      id: true,
+      name: true,
+      imageUrl: true,
+    },
+  },
   tiles: {
     select: TILES_FIELDS,
     orderBy: {
