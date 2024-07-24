@@ -28,5 +28,6 @@ export const UpdatePageSchema = z.object({
   id: z.string().uuid(),
   title: z.string().min(1).optional(),
   subtitle: z.string().optional(),
+  hue: z.number().gte(0).lte(360).optional(),
 });
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
