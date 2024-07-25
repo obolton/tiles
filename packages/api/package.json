@@ -21,11 +21,13 @@
     "@aws-sdk/s3-request-presigner": "^3.577.0",
     "@prisma/client": "^5.14.0",
     "@trpc/server": "^11.0.0-rc.374",
+    "cookie": "^0.6.0",
     "cors": "^2.8.5",
     "htmlparser2": "^9.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/cookie": "^0.6.0",
     "@types/cors": "^2.8.17",
     "@types/node": "^20.12.12",
     "esbuild": "^0.23.0",
