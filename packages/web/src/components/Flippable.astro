@@ -21,15 +21,28 @@ const { id, axis = "x", width, height } = Astro.props;
 <style define:vars={{ width, height }}>
   .flippable {
     position: relative;
-    perspective: 200px;
-    width: var(--width, unset);
-    height: var(--height, unset);
+    width: var(--width, 100%);
+    height: var(--height, 100%);
     transform-style: preserve-3d;
-    animation-duration: 0.5s;
-    animation-timing-function: ease;
-    animation-fill-mode: forwards;
-    animation-composition: add;
-    transform: perspective(200px);
+    transform-origin: center;
+
+    --transition-duration: 500ms;
+    --perspective: 200px;
+
+    transform: perspective(var(--perspective)) rotateX(0) rotateY(0);
+  }
+
+  .back {
+    display: none;
+    transform: rotateX(180deg);
+  }
+
+  .flippable[data-animate="true"] {
+    transition: transform var(--transition-duration) ease;
+  }
+
+  .flippable[data-animate="true"] .back {
+    transition: display var(--transition-duration) allow-discrete;
   }
 
   .face {
@@ -38,47 +51,15 @@ const { id, axis = "x", width, height } = Astro.props;
     backface-visibility: hidden;
   }
 
-  .back {
-    transform: rotateX(180deg);
-  }
-
-  .x-axis[data-flipped][data-animate="true"] {
-    animation-name: flip-x-axis;
-  }
-
-  .y-axis[data-flipped][data-animate="true"] {
-    animation-name: flip-y-axis;
-  }
-
-  .flippable[data-flipped][data-animate="false"] {
-    transform: rotateX(180deg);
-  }
-
-  .flippable[data-flipped] .back {
+  .flippable[data-flipped="true"] .back {
     display: block;
   }
 
-  .flippable:not([data-flipped]) .back {
-    display: none;
+  .x-axis[data-flipped="true"] {
+    transform: perspective(var(--perspective)) rotateX(180deg);
   }
 
-  @keyframes flip-x-axis {
-    from {
-      transform: rotateX(0deg);
-    }
-
-    to {
-      transform: rotateX(180deg);
-    }
-  }
-
-  @keyframes flip-y-axis {
-    from {
-      transform: rotateY(0deg);
-    }
-
-    to {
-      transform: rotateY(180deg);
-    }
+  .y-axis[data-flipped="true"] {
+    transform: perspective(var(--perspective)) rotateY(180deg);
   }
 </style>
