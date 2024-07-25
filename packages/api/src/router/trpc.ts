@@ -1,10 +1,10 @@
 import { initTRPC } from "@trpc/server";
-import { getCookie } from "../utils/cookies.ts";
-import { getUserBySessionId } from "../models/users/users.ts";
+import { getCookie } from "@/utils/cookies.ts";
+import { getUserBySessionId } from "@/models/users/users.ts";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies.ts";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 
-export async function createContext({ req }: CreateHTTPContextOptions) {
+export async function createContext({ req, res }: CreateHTTPContextOptions) {
   const sessionId = req.headers.cookie
     ? getCookie(req.headers.cookie, SESSION_COOKIE_NAME)
     : null;
@@ -13,12 +13,14 @@ export async function createContext({ req }: CreateHTTPContextOptions) {
     const user = await getUserBySessionId(sessionId);
     if (user) {
       return {
+        res,
         sessionId,
         user,
       };
     }
   }
   return {
+    res,
     sessionId: null,
     user: null,
   };
