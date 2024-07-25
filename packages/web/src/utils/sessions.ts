@@ -1,7 +1,7 @@
 import { SIGNED_IN_FLAG_COOKIE_NAME } from "api/src/constants/cookies";
+import client from "@/api/client";
 import { getCookie } from "./cookies";
-import client from "../api/client";
-import { setPersistent, removePersistent, getPersistent } from "./state";
+import { clear, setPersistent, removePersistent, getPersistent } from "./state";
 
 export function isSignedIn() {
   return getCookie(SIGNED_IN_FLAG_COOKIE_NAME) === "1";
@@ -19,11 +19,15 @@ export async function getUserInfo() {
 }
 
 export function getCachedUserInfo() {
-  const user = getPersistent<{ id: string; name: string; imageUrl: string }>(
-    "user",
-  );
-  if (!user) {
-    return null;
-  }
-  return user;
+  return getPersistent<{ id: string; name: string; imageUrl: string }>("user");
+}
+
+export function clearAuthenticationCookies() {
+  document.cookie = `${SIGNED_IN_FLAG_COOKIE_NAME}=; Path=/; Secure; SameSite=Strict; Max-Age=0`;
+}
+
+export async function signOut() {
+  await client.auth.signOut.mutate();
+  clearAuthenticationCookies();
+  clear();
 }
