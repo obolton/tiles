@@ -1,5 +1,6 @@
 import prisma from "@/database/prisma.ts";
 import type { Prisma } from "@prisma/client";
+import type { UpdateUserSchema } from "@/models/users/schema.ts";
 
 type CreateUserOptions = {
   name: string;
@@ -47,4 +48,19 @@ export async function getUserBySessionId(sessionId: string) {
     },
   });
   return session?.user ?? null;
+}
+
+export async function updateUser({ id, name, email }: UpdateUserSchema) {
+  return prisma.user.update({
+    where: { id },
+    data: {
+      name,
+      email,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+    },
+  });
 }
