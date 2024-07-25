@@ -10,3 +10,10 @@ export const SignInSchema = z.object({
   imageUrl: z.string().optional(),
 });
 export type SignInSchema = z.infer<typeof SignInSchema>;
+
+export const UpdateUserSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1).optional(),
+  email: z.string().email().optional(),
+});
+export type UpdateUserSchema = z.infer<typeof UpdateUserSchema>;
