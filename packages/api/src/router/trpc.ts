@@ -2,6 +2,7 @@ import { initTRPC } from "@trpc/server";
 import { getCookie } from "@/utils/cookies.ts";
 import { getUserBySessionId } from "@/models/users/users.ts";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies.ts";
+import { clearSessionCookie } from "@/utils/cookies.ts";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 
 export async function createContext({ req, res }: CreateHTTPContextOptions) {
@@ -17,8 +18,11 @@ export async function createContext({ req, res }: CreateHTTPContextOptions) {
         sessionId,
         user,
       };
+    } else {
+      clearSessionCookie(res);
     }
   }
+
   return {
     res,
     sessionId: null,
