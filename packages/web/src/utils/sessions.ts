@@ -1,4 +1,4 @@
-import { SIGNED_IN_FLAG_COOKIE_NAME } from "../auth/constants";
+import { SIGNED_IN_FLAG_COOKIE_NAME } from "api/src/constants/cookies";
 import { getCookie } from "./cookies";
 import client from "../api/client";
 import { setPersistent, removePersistent, getPersistent } from "./state";

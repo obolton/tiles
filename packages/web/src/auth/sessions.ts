@@ -1,6 +1,9 @@
 import assert from "node:assert";
 import client, { type AppRouterInputs } from "../api/client";
-import { SESSION_COOKIE_NAME, SIGNED_IN_FLAG_COOKIE_NAME } from "./constants";
+import {
+  SESSION_COOKIE_NAME,
+  SIGNED_IN_FLAG_COOKIE_NAME,
+} from "api/src/constants/cookies";
 import type { AstroCookies, AstroCookieSetOptions } from "astro";
 
 assert(import.meta.env.SESSION_COOKIE_DOMAIN);
