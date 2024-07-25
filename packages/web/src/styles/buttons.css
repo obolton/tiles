@@ -1,9 +1,9 @@
 /* Shared */
 
 button {
-  cursor: pointer;
   font-size: 1rem;
   line-height: 1rlh;
+  cursor: pointer;
   user-select: none;
 
   --transition-duration: 0.2s;
@@ -19,7 +19,7 @@ button[aria-disabled="true"] {
   opacity: 0.5;
 }
 
-/* Primary and secondary */
+/* Primary and secondary buttons */
 
 button.primary,
 button.secondary {
@@ -63,7 +63,7 @@ button.secondary:enabled:active:not([aria-disabled="true"]) {
     0 4px 3px -3px rgb(0 0 0 / 30%);
 }
 
-/* Floating */
+/* Floating buttons */
 
 button.floating {
   display: flex;
@@ -109,4 +109,19 @@ button.floating > img {
   height: 1.5rem;
   opacity: 0.8;
   filter: drop-shadow(0 1px 1px rgb(255 255 255 / 70%));
+}
+
+/* Text buttons */
+
+button.text {
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  font-weight: inherit;
+  text-shadow: inherit;
+  background: none;
+  border: none;
+  padding: 0;
 }
