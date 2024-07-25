@@ -1,14 +1,42 @@
 ---
 import Toolbar from "./Toolbar.astro";
 import Flippable from "../Flippable.astro";
+import profileIcon from "@/icons/profile.svg";
+import settingsIcon from "@/icons/settings.svg";
+import signOutIcon from "@/icons/sign-out.svg";
 ---
 
-<Flippable id="authentication" axis="x" width="12rem">
-  <Toolbar id="signIn" label="Account toolbar" slot="front">
-    <a href="/sign-in">Sign in</a>
-  </Toolbar>
-  <Toolbar id="user" label="Account toolbar" slot="back" />
-</Flippable>
+<div id="authentication-toolbar">
+  <Flippable id="authentication" axis="x" width="12rem" height="48px">
+    <Toolbar id="sign-in" label="Account toolbar" slot="front">
+      <a href="/sign-in">Sign in</a>
+    </Toolbar>
+    <Toolbar id="user" label="Account toolbar" slot="back" />
+  </Flippable>
+
+  <nav class="nav-menu">
+    <ol class="nav-items">
+      <li>
+        <a id="profile-link" href="/profile">
+          <img class="icon" src={profileIcon.src} alt="" />
+          Profile
+        </a>
+      </li>
+      <li>
+        <a href="/settings">
+          <img class="icon" src={settingsIcon.src} alt="" />
+          Settings
+        </a>
+      </li>
+      <li>
+        <button id="sign-out" class="text" type="button">
+          <img class="icon" src={signOutIcon.src} alt="" />
+          Sign out
+        </button>
+      </li>
+    </ol>
+  </nav>
+</div>
 <style is:global>
   .profile-image {
     width: 2rem;
@@ -16,13 +44,137 @@ import Flippable from "../Flippable.astro";
     border-radius: 50%;
     border: 1px solid rgb(0 0 0 / 30%);
   }
+
+  #authentication {
+    z-index: 1;
+  }
+
+  #sign-in a {
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1rem;
+    width: 100%;
+    height: 100%;
+  }
+
+  #authentication-toolbar #user {
+    transition: background-color 0.5s ease;
+  }
+
+  #authentication-toolbar:hover #user {
+    background: rgb(240 240 240 / 100%);
+  }
+</style>
+<style>
+  #authentication-toolbar {
+    position: relative;
+    overflow: visible;
+    height: 48px;
+  }
+
+  .nav-menu {
+    z-index: 0;
+    position: absolute;
+    top: 24px;
+    left: 0;
+    width: 100%;
+    clip-path: inset(0 -10px -10px -10px);
+    pointer-events: none;
+  }
+
+  .nav-items {
+    display: flex;
+    flex-direction: column;
+    padding: 32px 0 0;
+    border-radius: 0 0 24px 24px;
+    background: oklch(from var(--page-color) 94% 15% h / 95%);
+    backdrop-filter: blur(2px);
+    box-shadow:
+      0 0 0 1px rgba(0 0 0 / 20%),
+      0 4px 4px -3px rgb(0 0 0 / 20%);
+    overflow: hidden;
+    opacity: 0;
+    filter: blur(3px);
+    transform: translateY(-100%);
+    transition:
+      opacity 0.5s ease,
+      filter 0.5s ease,
+      transform 0.5s ease;
+  }
+
+  body[data-signed-in] #authentication-toolbar:hover .nav-items,
+  body[data-signed-in] #authentication-toolbar:focus-within .nav-items {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .nav-items li {
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    color: rgba(255 255 255 / 80%);
+    text-shadow: 0 1px 0 rgb(255 255 255 / 15%);
+  }
+
+  .nav-items li > * {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 18px;
+    width: 100%;
+    padding: 12px 19px;
+    outline: 0 solid transparent;
+    outline-offset: -3px;
+    transition:
+      outline-color 0.2s ease,
+      outline-width 0.2s ease;
+  }
+
+  .nav-items li > *:focus-visible {
+    outline-width: 3px;
+    outline-color: var(--focus-ring-color);
+  }
+
+  .nav-items li:last-child > * {
+    padding: 12px 19px 13px;
+    border-radius: 0 0 24px 24px;
+  }
+
+  .nav-items li:hover > * {
+    background: rgba(0 0 0 / 10%);
+  }
+
+  .icon {
+    opacity: 0.8;
+    width: 18px;
+    height: 18px;
+    filter: drop-shadow(0 1px 0 rgb(255 255 255 / 15%));
+  }
 </style>
 <script>
   import {
     isSignedIn,
     getUserInfo,
     getCachedUserInfo,
-  } from "../../utils/sessions";
+    signOut,
+  } from "@/utils/sessions";
+  const user = document.getElementById("user")!;
+  const signIn = document.getElementById("sign-in")!;
+  const authState = document.getElementById("authentication")!;
+  const signOutButton = document.getElementById("sign-out")!;
+
+  signOutButton.addEventListener("click", async () => {
+    await signOut();
+    signIn.innerHTML = '<a href="/sign-in">Sign in</a>';
+    authState.dataset.animate = "true";
+    delete authState.dataset.flipped;
+    delete document.body.dataset.signedIn;
+  });
 
   function showUserInfo({
     id,
@@ -33,17 +185,17 @@ import Flippable from "../Flippable.astro";
     name: string;
     imageUrl: string | null;
   }) {
-    const user = document.getElementById("user")!;
     if (imageUrl) {
       user.innerHTML = `<img class="profile-image" src="${imageUrl}" alt="Your profile picture" /><a href="/profiles/${id}">${name}</a>`;
     } else {
       user.innerHTML = `<a href="/profiles/${id}">${name}</a>`;
     }
+    document
+      .getElementById("profile-link")
+      ?.setAttribute("href", `/profiles/${id}`);
   }
 
   if (isSignedIn()) {
-    const authState = document.getElementById("authentication")!;
-    const signIn = document.getElementById("signIn")!;
     const userInfo = getCachedUserInfo();
 
     if (userInfo) {
@@ -55,13 +207,14 @@ import Flippable from "../Flippable.astro";
 
       Promise.all([
         getUserInfo().then((user) => showUserInfo(user)),
-        new Promise((resolve) => setTimeout(resolve, 1500)),
+        new Promise((resolve) => setTimeout(resolve, 1000)),
       ])
         .then(() => {
           authState.dataset.animate = "true";
           authState.dataset.flipped = "true";
         })
         .catch((error) => {
+          signIn.innerHTML = '<a href="/sign-in">Sign in</a>';
           console.error(error);
         });
     }
