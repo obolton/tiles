@@ -1,8 +1,8 @@
-import prisma from "../../database/prisma.ts";
+import prisma from "@/database/prisma.ts";
 import { createUser } from "./users.ts";
 import { createKey, getUserIdByProviderId } from "./keys.ts";
 import { createSession, deleteSession } from "./sessions.ts";
-import type { SignInSchema, SignOutSchema } from "./schema.ts";
+import type { SignInSchema } from "./schema.ts";
 
 export async function signIn({
   provider,
@@ -36,6 +36,6 @@ export async function signIn({
   });
 }
 
-export async function signOut({ sessionId }: SignOutSchema) {
+export async function signOut(sessionId: string) {
   return deleteSession(sessionId);
 }

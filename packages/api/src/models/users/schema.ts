@@ -10,14 +10,3 @@ export const SignInSchema = z.object({
   imageUrl: z.string().optional(),
 });
 export type SignInSchema = z.infer<typeof SignInSchema>;
-
-export const SignOutSchema = z.object({
-  sessionId: z.string(),
-});
-export type SignOutSchema = z.infer<typeof SignOutSchema>;
-
-export const GetUserInfoSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-});
-export type GetUserInfoSchema = z.infer<typeof GetUserInfoSchema>;
