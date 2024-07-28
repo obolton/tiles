@@ -6,6 +6,8 @@ declare global {
     "resize:resize": ResizeEvent;
     "resize:end": ResizeEvent;
     "resize:cancel": ResizeEvent;
+    "state:update": StorageEvent;
+    "state:update-persistent": StorageEvent;
   }
 }
 
