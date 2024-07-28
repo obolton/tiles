@@ -38,11 +38,15 @@ export function remove(key: string) {
 
 // Persistent storage
 
-export function getPersistent<T extends Value>(key: string) {
+export function getPersistent<T extends Value>(path: string) {
+  const [key, childPath] = path.split(".");
   const valueAsString = localStorage.getItem(key);
-  return typeof valueAsString === "string"
-    ? (JSON.parse(valueAsString) as T)
-    : null;
+  const value =
+    typeof valueAsString === "string" ? JSON.parse(valueAsString) : null;
+  if (!value) {
+    return null;
+  }
+  return childPath ? (value[childPath] as T) : (value as T);
 }
 
 export function hasPersistent(key: string) {
