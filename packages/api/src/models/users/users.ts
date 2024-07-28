@@ -42,6 +42,7 @@ export async function getUserBySessionId(sessionId: string) {
         select: {
           id: true,
           name: true,
+          email: true,
           imageUrl: true,
         },
       },
@@ -61,6 +62,7 @@ export async function updateUser({ id, name, email }: UpdateUserSchema) {
       id: true,
       name: true,
       email: true,
+      imageUrl: true,
     },
   });
 }
