@@ -78,11 +78,6 @@ a {
   text-decoration: none;
 }
 
-input[type="text"]::placeholder,
-textarea::placeholder {
-  color: rgba(0 0 0 / 40%);
-}
-
 strong,
 .bold {
   font-weight: 600;

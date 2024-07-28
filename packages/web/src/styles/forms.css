@@ -1,0 +1,58 @@
+form.vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+label {
+  display: block;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1rlh;
+  color: var(--text-color);
+}
+
+input[type="text"],
+input[type="email"] {
+  display: block;
+  padding: 8px;
+  margin: 0;
+  min-width: 300px;
+  border: 1px solid rgba(0 0 0 / 20%);
+  font-size: 1rem;
+  line-height: 1rlh;
+  color: var(--text-color);
+  background: rgba(0 0 0 / 2%);
+  border-radius: 8px;
+  outline: 0 solid transparent;
+  outline-offset: 1px;
+  transition:
+    outline-color 0.2s ease,
+    outline-width 0.2s ease;
+}
+
+label > input[type="text"],
+label > input[type="email"] {
+  margin-top: 4px;
+}
+
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible {
+  outline-width: 3px;
+  outline-color: var(--focus-ring-color);
+}
+
+input[type="text"]:invalid,
+input[type="email"]:invalid {
+  outline-width: 3px;
+  outline-color: red;
+}
+
+form:invalid button[type="submit"] {
+  opacity: 0.5;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(0 0 0 / 40%);
+}
