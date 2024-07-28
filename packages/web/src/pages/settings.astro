@@ -68,7 +68,11 @@ if (!user) {
     delete form.dataset.error;
 
     const formData = new FormData(form);
-    const input = Object.fromEntries(formData.entries());
+    const input = Object.fromEntries(formData.entries()) as {
+      id: string;
+      name: string;
+      email: string;
+    };
 
     try {
       await Promise.all([

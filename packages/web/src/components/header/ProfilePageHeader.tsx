@@ -7,7 +7,7 @@ import styles from "./ProfilePageHeader.module.css";
 interface ProfilePageHeaderProps {
   pageId: string;
   name: string;
-  imageUrl: string;
+  imageUrl: string | null;
   subtitle: string | null;
 }
 
@@ -41,7 +41,7 @@ export default function ProfilePageHeader({
 
   return (
     <div className={styles.header}>
-      <img className={styles.image} src={imageUrl} alt={name} />
+      {imageUrl && <img className={styles.image} src={imageUrl} alt={name} />}
       <div className={styles.text}>
         <h1>{name}</h1>
 

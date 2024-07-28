@@ -21,7 +21,8 @@ export async function getUserInfo() {
 export function setUserInfo(user: {
   id: string;
   name: string;
-  imageUrl: string;
+  email: string;
+  imageUrl: string | null;
 }) {
   setPersistent("user", { ...user, profile: `/profiles/${user.id}` });
 }
