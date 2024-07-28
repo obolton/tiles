@@ -101,3 +101,7 @@ del,
 .underline {
   text-decoration: underline;
 }
+
+data-binding {
+  display: contents;
+}
