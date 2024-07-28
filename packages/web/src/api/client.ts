@@ -1,6 +1,7 @@
 import { createTRPCClient, httpLink } from "@trpc/client";
 import type { AppRouter, AppRouterInputs } from "api/src/router/index.ts";
 
+// TODO: Split into browser and Node clients
 const client = createTRPCClient<AppRouter>({
   links: [
     httpLink({
@@ -10,6 +11,15 @@ const client = createTRPCClient<AppRouter>({
           ...options,
           credentials: typeof window !== "undefined" ? "include" : undefined,
         });
+      },
+      headers({ op: { context } }) {
+        const { sessionId } = context;
+        // TODO: Validate session ID before sending
+        return sessionId
+          ? {
+              Authorization: `Bearer ${sessionId}`,
+            }
+          : {};
       },
     }),
   ],
