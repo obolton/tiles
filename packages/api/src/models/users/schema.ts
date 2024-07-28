@@ -13,7 +13,7 @@ export type SignInSchema = z.infer<typeof SignInSchema>;
 
 export const UpdateUserSchema = z.object({
   id: z.string().uuid(),
-  name: z.string().min(1).optional(),
-  email: z.string().email().optional(),
+  name: z.string().min(1).max(64).optional(),
+  email: z.string().email().max(254).optional(),
 });
 export type UpdateUserSchema = z.infer<typeof UpdateUserSchema>;
