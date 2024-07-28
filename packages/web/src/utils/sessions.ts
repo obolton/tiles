@@ -10,7 +10,7 @@ export function isSignedIn() {
 export async function getUserInfo() {
   const user = await client.auth.getUserInfo.query();
   if (user) {
-    setPersistent("user", user);
+    setUserInfo(user);
   } else {
     removePersistent("user");
     throw new Error("User not found");
@@ -18,8 +18,21 @@ export async function getUserInfo() {
   return user;
 }
 
+export function setUserInfo(user: {
+  id: string;
+  name: string;
+  imageUrl: string;
+}) {
+  setPersistent("user", { ...user, profile: `/profiles/${user.id}` });
+}
+
 export function getCachedUserInfo() {
-  return getPersistent<{ id: string; name: string; imageUrl: string }>("user");
+  return getPersistent<{
+    id: string;
+    name: string;
+    imageUrl: string;
+    profile: string;
+  }>("user");
 }
 
 export function clearAuthenticationCookies() {
