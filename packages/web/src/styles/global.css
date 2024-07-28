@@ -66,6 +66,13 @@ body:has(dialog[open]) {
   overflow: hidden;
 }
 
+h1 {
+  display: block;
+  padding: 0;
+  font-size: 2.5rem;
+  font-weight: 600;
+}
+
 a {
   color: rgb(0 0 0 / 80%);
   text-decoration: none;

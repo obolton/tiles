@@ -21,18 +21,8 @@
     0 6px 4px -4px rgb(0 0 0 / 15%);
 }
 
-.title,
 .subtitle {
   display: block;
-  padding: 0;
-}
-
-.title {
-  font-size: 2.5rem;
-  font-weight: 600;
-}
-
-.subtitle {
   border-radius: 1rem;
   font-size: 1.5rem;
   font-weight: 500;

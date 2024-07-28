@@ -47,7 +47,7 @@ export default function PageHeader({
 
   return (
     <div className={`${styles.header} editable`}>
-      <h1 className={styles.title}>
+      <h1>
         {isEditable ? (
           <ResizingTextarea
             id="page-title-textarea"

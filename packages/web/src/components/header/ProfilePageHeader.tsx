@@ -43,7 +43,7 @@ export default function ProfilePageHeader({
     <div className={styles.header}>
       <img className={styles.image} src={imageUrl} alt={name} />
       <div className={styles.text}>
-        <h1 className={styles.title}>{name}</h1>
+        <h1>{name}</h1>
 
         <p className={`${styles.subtitle} editable`}>
           {isEditable ? (
