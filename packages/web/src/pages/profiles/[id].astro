@@ -24,7 +24,11 @@ if (!profile) {
 }
 ---
 
-<Page title={profile.name} hue={profile.profilePage.hue}>
+<Page
+  id={profile.profilePage.id}
+  title={profile.name}
+  hue={profile.profilePage.hue}
+>
   <Menu pageId={profile.profilePage.id} slot="menu" />
 
   <ProfilePageHeader
