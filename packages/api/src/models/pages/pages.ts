@@ -6,6 +6,7 @@ import type {
   GetProfilePageByUserIdSchema,
   CreatePageSchema,
   UpdatePageSchema,
+  DeletePageSchema,
 } from "./schema.ts";
 import type { ClientTile } from "@/types/tiles.ts";
 
@@ -301,6 +302,15 @@ export async function updatePage({
       title: true,
       subtitle: true,
       hue: true,
+    },
+  });
+}
+
+export async function deletePage({ id }: DeletePageSchema) {
+  return prisma.page.delete({
+    where: { id },
+    select: {
+      id: true,
     },
   });
 }

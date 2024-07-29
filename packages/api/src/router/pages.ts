@@ -5,6 +5,7 @@ import {
   GetProfilePageByUserIdSchema,
   CreatePageSchema,
   UpdatePageSchema,
+  DeletePageSchema,
 } from "@/models/pages/schema.ts";
 import {
   getPageById,
@@ -12,6 +13,7 @@ import {
   getRecentPages,
   createPage,
   updatePage,
+  deletePage,
 } from "@/models/pages/pages.ts";
 
 export default router({
@@ -48,6 +50,14 @@ export default router({
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     const page = await updatePage(input);
+    return page;
+  }),
+
+  delete: procedure.input(DeletePageSchema).mutation(async ({ input, ctx }) => {
+    if (!ctx.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    const page = await deletePage(input);
     return page;
   }),
 });
