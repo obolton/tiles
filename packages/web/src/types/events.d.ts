@@ -9,6 +9,10 @@ declare global {
     "state:update": StorageEvent;
     "state:update-persistent": StorageEvent;
   }
+
+  interface HTMLElementEventMap {
+    beforetoggle: ToggleEvent;
+  }
 }
 
 export {};
