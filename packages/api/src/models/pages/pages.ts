@@ -148,6 +148,11 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   title: string;
   subtitle: string | null;
   hue: number | null;
+  author: {
+    id: string;
+    name: string;
+    imageUrl: string | null;
+  };
   tiles: ClientTile[];
 } | null> {
   const page = await prisma.page.findUnique({
