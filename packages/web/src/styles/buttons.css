@@ -110,18 +110,3 @@ button.floating > img {
   opacity: 0.8;
   filter: drop-shadow(0 1px 1px rgb(255 255 255 / 70%));
 }
-
-/* Text buttons */
-
-button.text {
-  color: var(--text-color);
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  text-align: inherit;
-  font-weight: inherit;
-  text-shadow: inherit;
-  background: none;
-  border: none;
-  padding: 0;
-}
