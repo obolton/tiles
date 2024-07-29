@@ -7,14 +7,15 @@ import FormattingToolbar from "./FormattingToolbar";
 
 interface Props {
   pageId: string;
+  allowDelete?: boolean;
 }
-const { pageId } = Astro.props;
+const { pageId, allowDelete } = Astro.props;
 ---
 
 <div id="menubar" role="menubar" aria-label="Menu bar">
   <CreateTileToolbar pageId={pageId} client:edit />
   <AuthenticationToolbar />
-  <EditingToolbar />
+  <EditingToolbar allowDelete={allowDelete} />
 </div>
 <FormattingToolbar pageId={pageId} client:edit />
 <NewPageButton />

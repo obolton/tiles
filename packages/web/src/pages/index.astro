@@ -22,7 +22,7 @@ if (!page) {
 ---
 
 <Page id={page.id} title={page.title} hue={page.hue}>
-  <Menu pageId={page.id} slot="menu" />
+  <Menu pageId={page.id} allowDelete={false} slot="menu" />
 
   <PageHeader
     pageId={page.id}
