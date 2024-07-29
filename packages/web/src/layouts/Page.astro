@@ -10,11 +10,12 @@ import "@/styles/popovers.css";
 import "@/styles/menus.css";
 
 interface Props {
+  id?: string;
   title: string;
   hue?: number | null;
 }
 
-const { title, hue } = Astro.props;
+const { id, title, hue } = Astro.props;
 ---
 
 <!doctype html>
@@ -28,6 +29,7 @@ const { title, hue } = Astro.props;
     <title>{title}</title>
   </head>
   <body
+    data-page-id={id}
     data-disable-transitions="true"
     class={typeof hue === "number" ? "color" : undefined}
     style={typeof hue === "number"
