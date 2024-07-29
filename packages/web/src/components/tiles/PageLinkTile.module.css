@@ -27,7 +27,13 @@
 }
 
 .deleted {
-  color: #707070;
+  font-size: 1rem;
+  line-height: 1rlh;
+  color: rgba(0 0 0 / 60%);
+  padding: 1rem;
+  width: 100%;
+  height: 100%;
+  transform: scale(1);
 }
 
 .page h3 {
