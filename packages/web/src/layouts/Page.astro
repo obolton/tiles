@@ -6,6 +6,7 @@ import "@/styles/forms.css";
 import "@/styles/drag.css";
 import "@/styles/resize.css";
 import "@/styles/lightbox.css";
+import "@/styles/popovers.css";
 
 interface Props {
   title: string;
@@ -22,6 +23,7 @@ const { title, hue } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <script src="@/utils/binding.ts"></script>
+    <script src="@/utils/popoverMenu.ts"></script>
     <title>{title}</title>
   </head>
   <body

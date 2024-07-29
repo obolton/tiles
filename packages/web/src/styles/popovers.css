@@ -1,0 +1,57 @@
+popover-menu {
+  --animation-duration: 100ms;
+
+  position: fixed;
+  inset: auto;
+  border: none;
+  margin: 8px 0;
+  padding: 0;
+  background: rgb(240 240 240 / 90%);
+  border-radius: 16px;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 30%),
+    0 4px 4px -2px rgb(0 0 0 / 20%),
+    inset 0 0 1px 1px rgb(255 255 255 / 50%);
+  transform-origin: top left;
+  transition: display var(--animation-duration) allow-discrete;
+
+  &[align="right"] {
+    transform-origin: top right;
+  }
+
+  &:popover-open {
+    animation: var(--animation-duration) ease appear;
+  }
+
+  &:not(:popover-open) {
+    animation: var(--animation-duration) ease disappear;
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+    filter: blur(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes disappear {
+  from {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+    filter: blur(3px);
+  }
+}
