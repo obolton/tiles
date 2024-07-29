@@ -31,3 +31,10 @@ export const UpdatePageSchema = z.object({
   hue: z.number().gte(0).lte(360).optional(),
 });
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
+
+// Delete
+
+export const DeletePageSchema = z.object({
+  id: z.string().uuid(),
+});
+export type DeletePageSchema = z.infer<typeof DeletePageSchema>;
