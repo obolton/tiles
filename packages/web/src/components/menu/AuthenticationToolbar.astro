@@ -29,7 +29,7 @@ import signOutIcon from "@/icons/sign-out.svg";
   </Flippable>
 
   <nav class="nav-menu">
-    <ol class="nav-items">
+    <menu class="vertical nav-items">
       <li>
         <data-binding href="user.profile">
           <a href="/profiles">
@@ -45,12 +45,12 @@ import signOutIcon from "@/icons/sign-out.svg";
         </a>
       </li>
       <li>
-        <button id="sign-out" class="text" type="button">
+        <button id="sign-out" type="button">
           <img class="icon" src={signOutIcon.src} alt="" />
           Sign out
         </button>
       </li>
-    </ol>
+    </menu>
   </nav>
 </div>
 <style is:global>
@@ -116,8 +116,6 @@ import signOutIcon from "@/icons/sign-out.svg";
   }
 
   .nav-items {
-    display: flex;
-    flex-direction: column;
     padding: 32px 0 0;
     border-radius: 0 0 24px 24px;
     background: rgba(240 240 240 / 95%);
@@ -147,44 +145,9 @@ import signOutIcon from "@/icons/sign-out.svg";
     pointer-events: auto;
   }
 
-  .nav-items li {
-    font-size: 14px;
-    font-weight: 500;
-    text-align: center;
-    color: rgba(255 255 255 / 80%);
-    text-shadow: 0 1px 0 rgb(255 255 255 / 15%);
-  }
-
-  .nav-items li a,
-  .nav-items li button {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 18px;
-    width: 100%;
-    padding: 12px 19px;
-    outline: 0 solid transparent;
-    outline-offset: -3px;
-    transition:
-      outline-color 0.2s ease,
-      outline-width 0.2s ease;
-  }
-
-  .nav-items li a:focus-visible,
-  .nav-items li button:focus-visible {
-    outline-width: 3px;
-    outline-color: var(--focus-ring-color);
-  }
-
   .nav-items li:last-child a,
   .nav-items li:last-child button {
     padding: 12px 19px 13px;
-    border-radius: 0 0 24px 24px;
-  }
-
-  .nav-items li:hover a,
-  .nav-items li:hover button {
-    background: rgba(0 0 0 / 10%);
   }
 
   .icon {
