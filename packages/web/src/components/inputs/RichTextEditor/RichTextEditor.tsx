@@ -10,6 +10,7 @@ import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import Toolbar from "./Toolbar";
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
 import { useEffect, useRef } from "react";
+import { handleError } from "@/utils/errors";
 import styles from "./RichTextEditor.module.css";
 
 export type { EditorState };
@@ -49,7 +50,7 @@ export default function RichTextEditor({
       theme,
       editable,
       editorState: () => importNodes(value),
-      onError: (error: Error) => console.error(error),
+      onError: handleError,
     };
   }
 

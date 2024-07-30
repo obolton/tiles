@@ -164,6 +164,7 @@ import signOutIcon from "@/icons/sign-out.svg";
     getCachedUserInfo,
     signOut,
   } from "@/utils/sessions";
+  import { handleError } from "@/utils/errors";
   const signIn = document.getElementById("sign-in")!;
   const authState = document.getElementById("authentication")!;
   const signOutButton = document.getElementById("sign-out")!;
@@ -196,7 +197,7 @@ import signOutIcon from "@/icons/sign-out.svg";
         })
         .catch((error) => {
           signIn.innerHTML = '<a href="/sign-in">Sign in</a>';
-          console.error(error);
+          handleError(error);
         });
     }
   }

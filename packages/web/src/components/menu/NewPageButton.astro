@@ -24,13 +24,14 @@ import newIcon from "../../icons/new.svg";
   }
 </style>
 <script>
-  import client from "../../api/client";
+  import client from "@/api/client";
+  import { handleError } from "@/utils/errors";
   document.getElementById("new-page-button")!.addEventListener("click", () => {
     client.pages.create
       .mutate({ title: "New page" })
       .then(({ id }) => {
         window.open(`/pages/${id}?edit=true`, "_blank");
       })
-      .catch((error) => console.error(error));
+      .catch(handleError);
   });
 </script>

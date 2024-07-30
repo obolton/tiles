@@ -59,6 +59,7 @@ if (!user) {
 <script>
   import client from "@/api/client";
   import { setUserInfo } from "@/utils/sessions";
+  import { handleError } from "@/utils/errors";
 
   const form = document.getElementById("settings-form")! as HTMLFormElement;
   form.addEventListener("submit", async (event) => {
@@ -81,6 +82,9 @@ if (!user) {
       ]);
     } catch (error) {
       form.dataset.error = "true";
+      if (error instanceof Error) {
+        handleError(error);
+      }
     } finally {
       delete form.dataset.submitting;
     }
