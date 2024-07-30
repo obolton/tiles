@@ -1,0 +1,66 @@
+toast-container {
+  position: fixed;
+  contain: layout;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  & output {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    font-size: 0.875rem;
+    line-height: 0.875rlh;
+    padding: 16px;
+    border-radius: 16px;
+    color: var(--text-color);
+    background: rgba(255 255 255 / 90%);
+    box-shadow:
+      0 0 0 1px rgba(0 0 0 / 40%),
+      0 4px 4px -2px rgb(0 0 0 / 20%),
+      inset 0 0 1px 1px rgb(255 255 255 / 50%);
+    user-select: none;
+    animation: 0.5s ease slide-up;
+    z-index: 1;
+
+    &.success {
+      background: oklch(from var(--success-color) 95% 20% h / 90%);
+      box-shadow:
+        0 0 0 1px oklch(from var(--success-color) 40% c h / 40%),
+        0 4px 4px -2px rgb(0 0 0 / 20%),
+        inset 0 0 1px 1px rgb(255 255 255 / 50%);
+    }
+
+    &.error {
+      color: var(--destructive-color);
+      background: oklch(from var(--destructive-color) 95% 20% h / 90%);
+      box-shadow:
+        0 0 0 1px oklch(from var(--destructive-color) 40% c h / 40%),
+        0 4px 4px -2px rgb(0 0 0 / 20%),
+        inset 0 0 1px 1px rgb(255 255 255 / 50%);
+    }
+
+    & img {
+      opacity: 0.8;
+      width: 18px;
+      height: 18px;
+      filter: drop-shadow(0 1px 0 rgb(255 255 255 / 15%));
+    }
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

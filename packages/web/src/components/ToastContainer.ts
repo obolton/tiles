@@ -1,0 +1,118 @@
+import { get, remove } from "@/utils/state";
+import { fadeOut, moveTo } from "@/utils/animation/effects";
+import infoIcon from "@/icons/info.svg";
+import successIcon from "@/icons/success.svg";
+import errorIcon from "@/icons/error.svg";
+
+export type ToastType = "info" | "success" | "error";
+
+const TOAST_DURATION = 5000;
+const MAX_TOASTS = 5;
+
+export default class ToastContainer extends HTMLElement {
+  private paused = false;
+  private timeout: ReturnType<typeof setTimeout> | null = null;
+
+  constructor() {
+    super();
+    this.pause = this.pause.bind(this);
+    this.setRemoveToastTimeout = this.setRemoveToastTimeout.bind(this);
+    this.removeNextToast = this.removeNextToast.bind(this);
+  }
+
+  connectedCallback() {
+    this.addEventListener("pointerover", this.pause);
+    this.addEventListener("pointerout", this.setRemoveToastTimeout);
+
+    // Check for queued toasts
+    const toast = get<{ message: string; type?: ToastType }>("toast");
+    if (toast) {
+      this.showToast(toast.message, toast.type);
+      remove("toast");
+    }
+  }
+
+  disconnectedCallback() {
+    this.removeEventListener("pointerover", this.pause);
+    this.removeEventListener("pointerout", this.setRemoveToastTimeout);
+
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+    }
+    this.paused = false;
+  }
+
+  private pause() {
+    this.paused = true;
+
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+    }
+  }
+
+  private setRemoveToastTimeout() {
+    this.paused = false;
+
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+    this.timeout = setTimeout(this.removeNextToast, TOAST_DURATION);
+  }
+
+  private async removeNextToast() {
+    const toast = this.lastElementChild;
+
+    if (!toast) {
+      return;
+    }
+
+    await Promise.all([
+      fadeOut(toast),
+      moveTo(this, {
+        y: `${toast.clientHeight + 8}px`,
+      }),
+    ]);
+    toast.remove();
+
+    if (!this.paused && this.childElementCount > 0) {
+      this.setRemoveToastTimeout();
+    }
+  }
+
+  public showToast(message: string, type: ToastType = "info") {
+    if (this.childElementCount >= MAX_TOASTS) {
+      return;
+    }
+
+    const toast = document.createElement("output");
+    toast.classList.add(type);
+    toast.setAttribute("role", "status");
+
+    const icon = document.createElement("img");
+    icon.setAttribute("aria-hidden", "true");
+    switch (type) {
+      case "success":
+        icon.src = successIcon.src;
+        icon.alt = "Success";
+        break;
+      case "error":
+        icon.src = errorIcon.src;
+        icon.alt = "Error";
+        break;
+      case "info":
+      default:
+        icon.src = infoIcon.src;
+        icon.alt = "Info";
+        break;
+    }
+
+    toast.append(icon, document.createTextNode(message));
+    this.prepend(toast);
+
+    if (!this.paused && this.childElementCount === 1) {
+      this.setRemoveToastTimeout();
+    }
+  }
+}
