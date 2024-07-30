@@ -67,7 +67,7 @@ if (!user) {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    form.dataset.submitting = "true";
+    form.dataset.pending = "true";
     delete form.dataset.error;
 
     const formData = new FormData(form);
@@ -78,22 +78,19 @@ if (!user) {
     };
 
     try {
-      await Promise.all([
-        client.users.update.mutate(input).then(setUserInfo),
-        new Promise((resolve) => setTimeout(resolve, 2000)),
-      ]);
+      const userInfo = await client.users.update.mutate(input);
+      setUserInfo(userInfo);
       redirectWithToast(
         getPersistent("user.profile") ?? "/",
         "Your settings were saved.",
         "success"
       );
     } catch (error) {
+      delete form.dataset.pending;
       form.dataset.error = "true";
       if (error instanceof Error) {
         handleError(error);
       }
-    } finally {
-      delete form.dataset.submitting;
     }
   });
 </script>
