@@ -88,3 +88,26 @@ export function moveFrom(
   );
   return createAnimationPromise(animation);
 }
+
+export function moveTo(
+  element: Element,
+  {
+    x = "0",
+    y = "0",
+    timing = { duration: 500, easing: "ease" },
+  }: { x?: string; y?: string; timing?: EffectTiming },
+) {
+  const animation = element.animate(
+    [{ translate: "none" }, { translate: `${x} ${y}` }],
+    timing,
+  );
+  return createAnimationPromise(animation);
+}
+
+export function fadeOut(
+  element: Element,
+  { timing = DEFAULT_TIMING } = { timing: DEFAULT_TIMING },
+) {
+  const animation = element.animate([{ opacity: 1 }, { opacity: 0 }], timing);
+  return createAnimationPromise(animation);
+}
