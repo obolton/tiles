@@ -7,6 +7,7 @@ import newIcon from "../../icons/new.svg";
   class="floating"
   type="button"
   aria-label="Create a new page"
+  data-pending-text=""
 >
   <span>New page</span>
   <img src={newIcon.src} alt="Plus icon" />
@@ -26,12 +27,17 @@ import newIcon from "../../icons/new.svg";
 <script>
   import client from "@/api/client";
   import { handleError } from "@/utils/errors";
-  document.getElementById("new-page-button")!.addEventListener("click", () => {
-    client.pages.create
-      .mutate({ title: "New page" })
-      .then(({ id }) => {
-        window.open(`/pages/${id}?edit=true`, "_blank");
-      })
-      .catch(handleError);
-  });
+  document
+    .getElementById("new-page-button")!
+    .addEventListener("click", (event) => {
+      const button = event.currentTarget as HTMLButtonElement;
+      button.classList.add("pending");
+      client.pages.create
+        .mutate({ title: "New page" })
+        .then(({ id }) => {
+          button.classList.remove("pending");
+          window.open(`/pages/${id}?edit=true`, "_blank");
+        })
+        .catch(handleError);
+    });
 </script>
