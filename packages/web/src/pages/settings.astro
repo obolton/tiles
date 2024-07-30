@@ -59,6 +59,8 @@ if (!user) {
 <script>
   import client from "@/api/client";
   import { setUserInfo } from "@/utils/sessions";
+  import { redirectWithToast } from "@/utils/toasts";
+  import { getPersistent } from "@/utils/state";
   import { handleError } from "@/utils/errors";
 
   const form = document.getElementById("settings-form")! as HTMLFormElement;
@@ -80,6 +82,11 @@ if (!user) {
         client.users.update.mutate(input).then(setUserInfo),
         new Promise((resolve) => setTimeout(resolve, 2000)),
       ]);
+      redirectWithToast(
+        getPersistent("user.profile") ?? "/",
+        "Your settings were saved.",
+        "success"
+      );
     } catch (error) {
       form.dataset.error = "true";
       if (error instanceof Error) {

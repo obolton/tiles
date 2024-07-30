@@ -78,6 +78,7 @@ const { allowDelete = true } = Astro.props;
 </script>
 <script>
   import { setEditMode } from "@/utils/edit";
+  import { redirectWithToast } from "@/utils/toasts";
   import client from "@/api/client";
   const editSwitch = document.getElementById("editSwitch") as HTMLInputElement;
   editSwitch.addEventListener("change", () => setEditMode(editSwitch.checked), {
@@ -88,6 +89,6 @@ const { allowDelete = true } = Astro.props;
     .addEventListener("click", async () => {
       const pageId = document.body.dataset.pageId ?? "";
       await client.pages.delete.mutate({ id: pageId });
-      window.location.href = "/";
+      redirectWithToast("/", "The page was deleted.", "success");
     });
 </script>
