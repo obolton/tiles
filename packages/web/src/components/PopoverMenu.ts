@@ -1,4 +1,4 @@
-class PopoverMenu extends HTMLElement {
+export default class PopoverMenu extends HTMLElement {
   static observedAttributes = ["anchor", "align"];
 
   private state: "open" | "closed" = "closed";
@@ -65,5 +65,3 @@ class PopoverMenu extends HTMLElement {
     }
   }
 }
-
-customElements.define("popover-menu", PopoverMenu);

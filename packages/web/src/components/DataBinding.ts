@@ -1,6 +1,6 @@
-import { getPersistent } from "./state";
+import { getPersistent } from "@/utils/state";
 
-class DataBinding extends HTMLElement {
+export default class DataBinding extends HTMLElement {
   constructor() {
     super();
     this.stateChanged = this.stateChanged.bind(this);
@@ -53,5 +53,3 @@ class DataBinding extends HTMLElement {
     window.removeEventListener("state:update-persistent", this.stateChanged);
   }
 }
-
-customElements.define("data-binding", DataBinding);
