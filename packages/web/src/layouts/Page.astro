@@ -8,6 +8,7 @@ import "@/styles/resize.css";
 import "@/styles/lightbox.css";
 import "@/styles/popovers.css";
 import "@/styles/menus.css";
+import "@/styles/toasts.css";
 
 interface Props {
   id?: string;
@@ -42,6 +43,7 @@ const { id, title, hue } = Astro.props;
       <slot name="header" />
     </header>
     <main><slot /></main>
+    <toast-container></toast-container>
     <slot name="end" />
     <script is:inline>
       window.addEventListener(
