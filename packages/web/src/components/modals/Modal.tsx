@@ -41,9 +41,9 @@ export default function Modal({
           : ({
               "--delta-x": "0",
               "--delta-y": "100px",
-            } as React.CSSProperties)
+            } as React.CSSProperties),
       ),
-    [originRect]
+    [originRect],
   );
 
   useEffect(() => {
@@ -55,7 +55,9 @@ export default function Modal({
     } else if (!open && dialogRef.current.open) {
       dialogRef.current.close();
       Promise.all(
-        dialogRef.current.getAnimations().map((animation) => animation.finished)
+        dialogRef.current
+          .getAnimations()
+          .map((animation) => animation.finished),
       )
         .catch(console.error)
         .finally(onHide);
@@ -69,7 +71,7 @@ export default function Modal({
         onClose();
       }
     },
-    [onClose]
+    [onClose],
   );
 
   const click = useCallback(
@@ -78,13 +80,13 @@ export default function Modal({
         onClose();
       }
     },
-    [mouseDownOutside, onClose]
+    [mouseDownOutside, onClose],
   );
 
   const mouseDown = useCallback(
     (event: React.MouseEvent) =>
       setMouseDownOutside(event.target === dialogRef.current),
-    []
+    [],
   );
 
   return (
