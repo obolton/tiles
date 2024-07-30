@@ -23,6 +23,9 @@ button[aria-disabled="true"] {
 
 button.primary,
 button.secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 600;
   border-radius: 24px;
   padding: 12px 20px;
@@ -30,6 +33,7 @@ button.secondary {
   box-shadow:
     inset 0 1px 1px 0 rgb(255 255 255 / 30%),
     0 5px 3px -3px rgb(0 0 0 / 30%);
+  overflow: hidden;
   transition:
     opacity var(--transition-duration) ease-in-out,
     transform var(--transition-duration) ease-in-out,
@@ -71,12 +75,13 @@ button.floating {
   justify-content: flex-end;
   max-width: 3rem;
   height: 3rem;
+  overflow: hidden;
   border: none;
   border-radius: 1.5rem;
   padding: 0.75rem;
-  color: #303030;
+  color: rgba(0 0 0 / 80%);
   background-color: rgb(240 240 240 / 90%);
-  text-shadow: 0 1px 1px rgb(255 255 255 / 70%);
+  text-shadow: 0 1px 1px rgb(255 255 255 / 50%);
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 30%),
     0 4px 4px -2px rgb(0 0 0 / 20%),
@@ -86,29 +91,40 @@ button.floating {
   transition:
     max-width var(--transition-duration) ease,
     transform var(--transition-duration) ease;
-}
 
-button.floating:hover {
-  max-width: 150px;
-  transform: scale(1);
-}
+  & > span {
+    z-index: 1;
+    padding: 0 0.5rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--transition-duration) ease;
+  }
 
-button.floating > span {
-  padding: 0 0.5rem;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity var(--transition-duration) ease;
-}
+  & > img {
+    z-index: 1;
+    width: 1.5rem;
+    height: 1.5rem;
+    opacity: 0.8;
+    filter: drop-shadow(0 1px 1px rgb(255 255 255 / 70%));
+  }
 
-button.floating:hover > span {
-  opacity: 1;
-}
+  &.pending,
+  &:hover {
+    max-width: 150px;
+    transform: scale(1);
+  }
 
-button.floating > img {
-  width: 1.5rem;
-  height: 1.5rem;
-  opacity: 0.8;
-  filter: drop-shadow(0 1px 1px rgb(255 255 255 / 70%));
+  &:hover > span {
+    opacity: 1;
+  }
+
+  &.pending > span {
+    opacity: 0.6;
+  }
+
+  &.pending > img {
+    opacity: 0.4;
+  }
 }
 
 /* Toolbar buttons */
@@ -134,5 +150,82 @@ button.floating > img {
   &:active,
   &[aria-pressed="true"] {
     box-shadow: inset 0 0 0 1px rgb(0 0 0 / 30%);
+  }
+}
+
+/* Pending states */
+
+button.pending,
+form[data-pending] button[type="submit"] {
+  position: relative;
+  pointer-events: none;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: auto 0;
+    min-width: 100%;
+    min-height: 100%;
+    aspect-ratio: 1;
+    background: radial-gradient(
+        closest-side,
+        rgb(255 255 255) 0%,
+        transparent 60%
+      ),
+      conic-gradient(
+        oklch(80% 90% 0deg),
+        oklch(80% 90% 30deg),
+        oklch(80% 90% 60deg),
+        oklch(80% 90% 90deg),
+        oklch(80% 90% 120deg),
+        oklch(80% 90% 150deg),
+        oklch(80% 90% 180deg),
+        oklch(80% 90% 210deg),
+        oklch(80% 90% 240deg),
+        oklch(80% 90% 270deg),
+        oklch(80% 90% 300deg),
+        oklch(80% 90% 330deg),
+        oklch(80% 90% 360deg)
+      );
+    animation: 1s linear infinite rotate;
+  }
+
+  &::after {
+    content: "Saving\2026";
+    position: absolute;
+    inset: 0;
+    display: inherit;
+    align-items: inherit;
+    justify-content: inherit;
+    border-radius: inherit;
+    background: inherit;
+    color: rgba(from currentcolor r g b / 70%);
+    animation: 500ms ease forwards reveal-border;
+  }
+
+  &[data-pending-text]::after {
+    content: attr(data-pending-text);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotateZ(0);
+  }
+
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
+@keyframes reveal-border {
+  from {
+    opacity: 1;
+    clip-path: inset(0 round 24px);
+  }
+
+  to {
+    opacity: 0.9;
+    clip-path: inset(3px round 24px);
   }
 }
