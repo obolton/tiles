@@ -57,6 +57,8 @@ export default function Tile({
           "--hue": typeof hue === "number" ? `${hue.toFixed(2)}deg` : undefined,
         } as React.CSSProperties
       }
+      data-rows={tile.rows}
+      data-columns={tile.columns}
       data-drop-target={isEditable ? "true" : undefined}
       data-tile-id={tile.id}
       data-tile={JSON.stringify(tile)}
