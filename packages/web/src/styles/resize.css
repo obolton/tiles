@@ -43,6 +43,14 @@
   z-index: 2;
 }
 
+body[data-resize] {
+  cursor: nwse-resize;
+
+  & * {
+    pointer-events: none;
+  }
+}
+
 [data-resizing] {
   z-index: 1;
 }

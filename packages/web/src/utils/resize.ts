@@ -72,8 +72,8 @@ function startResizing(clientX: number, clientY: number) {
   const { element, rect } = state;
 
   state.isResizing = true;
+  document.body.dataset.resize = "true";
   element.dataset.resizing = "true";
-  document.body.style.setProperty("cursor", "nwse-resize");
 
   const style = getComputedStyle(element);
   state.minWidth = parseInt(style.getPropertyValue("min-width") ?? "0", 10);
@@ -115,8 +115,8 @@ function cleanUp() {
   }
 
   const { element, outlineElement } = state;
-  delete element.dataset.dragging;
-  document.body.style.removeProperty("cursor");
+  delete document.body.dataset.resize;
+  delete element.dataset.resizing;
 
   if (outlineElement) {
     outlineElement
