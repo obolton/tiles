@@ -1,5 +1,6 @@
 const rects = new WeakMap<HTMLElement, DOMRect>();
 const animations = new WeakMap<HTMLElement, Animation>();
+const transitionElements = new WeakMap<HTMLElement, HTMLElement>();
 
 function animatePosition(element: HTMLElement) {
   const previousRect = rects.get(element);
@@ -16,11 +17,57 @@ function animatePosition(element: HTMLElement) {
   const rect = element.getBoundingClientRect();
   rects.set(element, rect);
 
-  const deltaX = previousRect.left - rect.left;
-  const deltaY = previousRect.top - rect.top;
+  const deltaX = Math.round(previousRect.left - rect.left);
+  const deltaY = Math.round(previousRect.top - rect.top);
+  const deltaWidth = Math.round(previousRect.width - rect.width);
+  const deltaHeight = Math.round(previousRect.height - rect.height);
 
-  if (deltaX === 0 && deltaY === 0) {
+  if (deltaX === 0 && deltaY === 0 && deltaWidth === 0 && deltaHeight === 0) {
     return;
+  }
+
+  // If performing a resize transition, animate a clone of the element to prevent layout thrashing
+  if (deltaWidth || deltaHeight) {
+    let clone = transitionElements.get(element);
+
+    if (!clone) {
+      clone = element.cloneNode(true) as HTMLElement;
+      clone.setAttribute("inert", "");
+      clone.style.setProperty("top", `${rect.top + window.scrollY}px`);
+      clone.style.setProperty("left", `${rect.left + window.scrollX}px`);
+      clone.style.setProperty("width", `${previousRect.width}px`);
+      clone.style.setProperty("height", `${previousRect.height}px`);
+
+      delete clone.dataset.resizing;
+      clone.dataset.resizePreview = "true";
+
+      // If the transition completes, remove the clone and show the original element
+      clone.addEventListener(
+        "transitionend",
+        (event) => {
+          if (
+            event.propertyName === "width" ||
+            event.propertyName === "height"
+          ) {
+            (event.currentTarget as HTMLElement).remove();
+            transitionElements.delete(element);
+            element.style.removeProperty("visibility");
+          }
+        },
+        { passive: true },
+      );
+
+      transitionElements.set(element, clone);
+      document.body.appendChild(clone);
+
+      // Temporarily hide the original element
+      element.style.setProperty("visibility", "hidden");
+    }
+
+    requestAnimationFrame(() => {
+      clone.style.setProperty("width", `${rect.width}px`);
+      clone.style.setProperty("height", `${rect.height}px`);
+    });
   }
 
   // Prevent pointer events during the animation
@@ -32,9 +79,9 @@ function animatePosition(element: HTMLElement) {
       { transform: "none" },
     ],
     {
-      duration: 200,
+      duration: 500,
       easing: "ease-in-out",
-    }
+    },
   );
   animation.addEventListener(
     "finish",
@@ -42,7 +89,7 @@ function animatePosition(element: HTMLElement) {
       element.style.removeProperty("pointer-events");
       animations.delete(element);
     },
-    { once: true }
+    { once: true },
   );
   animations.set(element, animation);
 }

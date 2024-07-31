@@ -63,3 +63,13 @@ body[data-resize] {
 [data-resizing] {
   z-index: 1;
 }
+
+[data-resize-preview] {
+  position: absolute !important;
+  contain: strict !important;
+  will-change: width, height !important;
+  pointer-events: none !important;
+  transition:
+    width 500ms ease-in-out,
+    height 500ms ease-in-out !important;
+}
