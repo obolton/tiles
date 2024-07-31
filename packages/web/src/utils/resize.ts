@@ -19,6 +19,7 @@ let state: {
   initialPointerY: number;
   minWidth: number;
   minHeight: number;
+  maxWidth?: number;
 } | null = null;
 
 const DRAG_THRESHOLD = 10;
@@ -43,8 +44,11 @@ function getDimensions(clientX: number, clientY: number) {
     throw new Error("Resize state is not initialized");
   }
 
-  const { rect, minWidth, minHeight } = state;
-  const width = Math.max(clientX - rect.left, minWidth);
+  const { rect, minWidth, minHeight, maxWidth } = state;
+  const width = Math.min(
+    Math.max(clientX - rect.left, minWidth),
+    maxWidth ?? Infinity,
+  );
   const height = Math.max(clientY - rect.top, minHeight);
   return {
     width,
@@ -74,6 +78,7 @@ function startResizing(clientX: number, clientY: number) {
   const style = getComputedStyle(element);
   state.minWidth = parseInt(style.getPropertyValue("min-width") ?? "0", 10);
   state.minHeight = parseInt(style.getPropertyValue("min-height") ?? "0", 10);
+  state.maxWidth = element.parentElement?.clientWidth;
 
   const { width, height } = getDimensions(clientX, clientY);
 
