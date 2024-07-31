@@ -78,7 +78,9 @@ function startResizing(clientX: number, clientY: number) {
   const style = getComputedStyle(element);
   state.minWidth = parseInt(style.getPropertyValue("min-width") ?? "0", 10);
   state.minHeight = parseInt(style.getPropertyValue("min-height") ?? "0", 10);
-  state.maxWidth = element.parentElement?.clientWidth;
+  state.maxWidth = element.offsetParent
+    ? element.offsetParent.clientWidth - element.offsetLeft
+    : undefined;
 
   const { width, height } = getDimensions(clientX, clientY);
 
