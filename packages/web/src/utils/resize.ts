@@ -78,7 +78,7 @@ function startResizing(clientX: number, clientY: number) {
   const { width, height } = getDimensions(clientX, clientY);
 
   const outline = document.createElement("div");
-  outline.className = "resizeOutline";
+  outline.className = "resize-outline";
   outline.style.setProperty("top", `${rect.top}px`);
   outline.style.setProperty("left", `${rect.left}px`);
   outline.style.setProperty("width", `${width}px`);
