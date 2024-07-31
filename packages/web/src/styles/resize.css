@@ -6,6 +6,8 @@
   height: 16px;
   cursor: nwse-resize;
   z-index: 1;
+  opacity: 1;
+  transition: opacity 0.5s ease;
 
   &::after {
     content: "";
@@ -21,8 +23,7 @@
   }
 }
 
-.resize-handle:hover::after,
-[data-resizing] .resize-handle::after {
+.resize-handle:hover::after {
   transform: scale(1.2);
 }
 
@@ -43,18 +44,22 @@
   z-index: 2;
 }
 
+[data-drag-preview] .resize-handle {
+  opacity: 0;
+}
+
 body[data-resize] {
   cursor: nwse-resize;
 
   & * {
     pointer-events: none;
   }
+
+  & .resize-handle {
+    opacity: 0;
+  }
 }
 
 [data-resizing] {
   z-index: 1;
-}
-
-[data-drag-preview] .resize-handle {
-  display: none;
 }
