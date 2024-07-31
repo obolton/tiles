@@ -37,7 +37,7 @@
 }
 
 .resize-outline {
-  position: fixed;
+  position: absolute;
   outline: var(--focus-ring-color) solid 5px;
   outline-offset: -1px;
   z-index: 2;
