@@ -23,6 +23,7 @@
 [data-dragging] {
   opacity: 0.3;
   filter: blur(1px);
+  z-index: -1;
 }
 
 @keyframes drag {
