@@ -39,11 +39,18 @@ function getTileComponent(tile: ClientTile) {
   }
 }
 
+const LAYOUT_TRANSITION_OPTIONS = {
+  attributes: ["data-rows", "data-columns"],
+};
+
 export default function Grid({ tiles: initialTiles }: GridProps) {
   const ref = useRef<HTMLElement>(null);
   const sizeRef = useElementSizeRef(ref);
   const [tiles, setTiles] = useState(initialTiles);
-  const { startLayoutTransition } = useLayoutTransition(ref);
+  const { startLayoutTransition } = useLayoutTransition(
+    ref,
+    LAYOUT_TRANSITION_OPTIONS,
+  );
 
   useEffect(() => {
     const create = (event: Event) => {
