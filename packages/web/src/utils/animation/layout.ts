@@ -55,17 +55,45 @@ export function willAnimateLayout(element: HTMLElement) {
   }
 }
 
-export function animateLayout(element: HTMLElement) {
-  const observer = new MutationObserver(() => {
-    for (const child of element.children) {
-      if (child instanceof HTMLElement) {
-        animatePosition(child);
-      }
+export type AnimateLayoutOptions = {
+  attributes?: string[];
+};
+
+function animateChildren(element: HTMLElement) {
+  for (const child of element.children) {
+    if (child instanceof HTMLElement) {
+      animatePosition(child);
     }
-  });
-  observer.observe(element, { childList: true });
+  }
+}
+
+export function animateLayout(
+  element: HTMLElement,
+  options?: AnimateLayoutOptions,
+) {
+  const observers: MutationObserver[] = [];
+
+  const childListObserver = new MutationObserver(() =>
+    animateChildren(element),
+  );
+  childListObserver.observe(element, { childList: true });
+  observers.push(childListObserver);
+
+  if (options?.attributes && options.attributes.length > 0) {
+    const attributesObserver = new MutationObserver(() =>
+      animateChildren(element),
+    );
+    attributesObserver.observe(element, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: options.attributes,
+    });
+    observers.push(attributesObserver);
+  }
 
   return () => {
-    observer.disconnect();
+    for (const observer of observers) {
+      observer.disconnect();
+    }
   };
 }
