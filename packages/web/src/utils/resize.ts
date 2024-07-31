@@ -39,17 +39,17 @@ export function makeResizable(element: HTMLElement) {
   };
 }
 
-function getDimensions(clientX: number, clientY: number) {
+function getDimensions(pageX: number, pageY: number) {
   if (!state) {
     throw new Error("Resize state is not initialized");
   }
 
   const { rect, minWidth, minHeight, maxWidth } = state;
   const width = Math.min(
-    Math.max(clientX - rect.left, minWidth),
+    Math.max(pageX - rect.left, minWidth),
     maxWidth ?? Infinity,
   );
-  const height = Math.max(clientY - rect.top, minHeight);
+  const height = Math.max(pageY - rect.top, minHeight);
   return {
     width,
     height,
@@ -64,7 +64,7 @@ function click(event: MouseEvent) {
   }
 }
 
-function startResizing(clientX: number, clientY: number) {
+function startResizing(pageX: number, pageY: number) {
   if (!state) {
     throw new Error("Resize state is not initialized");
   }
@@ -82,7 +82,7 @@ function startResizing(clientX: number, clientY: number) {
     ? element.offsetParent.clientWidth - element.offsetLeft
     : undefined;
 
-  const { width, height } = getDimensions(clientX, clientY);
+  const { width, height } = getDimensions(pageX, pageY);
 
   const outline = document.createElement("div");
   outline.className = "resize-outline";
@@ -159,14 +159,17 @@ function pointerDown(event: PointerEvent) {
   event.stopPropagation();
 
   const element = event.currentTarget;
+  const rect = element.getBoundingClientRect();
+  rect.x += window.scrollX;
+  rect.y += window.scrollY;
 
   state = {
     isResizing: false,
     element,
-    rect: element.getBoundingClientRect(),
+    rect,
     outlineElement: null,
-    initialPointerX: event.clientX,
-    initialPointerY: event.clientY,
+    initialPointerX: event.pageX,
+    initialPointerY: event.pageY,
     minWidth: 0,
     minHeight: 0,
   };
@@ -199,7 +202,7 @@ function pointerMove(event: PointerEvent) {
   } = state;
 
   if (isResizing) {
-    const { width, height } = getDimensions(event.clientX, event.clientY);
+    const { width, height } = getDimensions(event.pageX, event.pageY);
 
     element.dispatchEvent(
       new ResizeEvent("resize:resize", {
@@ -213,11 +216,11 @@ function pointerMove(event: PointerEvent) {
       outlineElement?.style.setProperty("height", `${height}px`);
     });
   } else {
-    const deltaX = event.clientX - initialPointerX;
-    const deltaY = event.clientY - initialPointerY;
+    const deltaX = event.pageX - initialPointerX;
+    const deltaY = event.pageY - initialPointerY;
     const distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
     if (distance >= DRAG_THRESHOLD) {
-      startResizing(event.clientX, event.clientY);
+      startResizing(event.pageX, event.pageY);
     }
   }
 }
@@ -233,10 +236,7 @@ function pointerUp(event: PointerEvent) {
 
   if (state?.isResizing) {
     state.element.dispatchEvent(
-      new ResizeEvent(
-        "resize:end",
-        getDimensions(event.clientX, event.clientY),
-      ),
+      new ResizeEvent("resize:end", getDimensions(event.pageX, event.pageY)),
     );
   }
 
