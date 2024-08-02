@@ -14,6 +14,7 @@ const ENABLE_HTTPS = process.env.ENABLE_HTTPS === "true";
 const CERTIFICATE_PATH = process.env.CERTIFICATE_PATH;
 const CERTIFICATE_KEY_PATH = process.env.CERTIFICATE_KEY_PATH;
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
+const SERVER_URL = `${ENABLE_HTTPS ? "https" : "http"}://${HOST}:${PORT}`;
 
 assert(HOST);
 assert(PORT);
@@ -59,7 +60,5 @@ server.on("error", (error) => {
   console.error("API:", error);
 });
 server.listen({ host: HOST, port: PORT }, () => {
-  console.log(
-    `API: Server started at ${ENABLE_HTTPS ? "https" : "http"}://${HOST}:${PORT}`,
-  );
+  console.log(`API: Server started at ${SERVER_URL}`);
 });
