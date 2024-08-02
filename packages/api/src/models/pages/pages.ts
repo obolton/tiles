@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import prisma from "@/database/prisma.ts";
+import { getProfileImageUrl } from "@/utils/cdn.ts";
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/models/tiles/pageLink.ts";
 import type {
   GetPageByIdSchema,
@@ -78,7 +79,7 @@ const PAGE_FIELDS = {
     select: {
       id: true,
       name: true,
-      imageUrl: true,
+      imageKey: true,
     },
   },
   tiles: {
@@ -166,6 +167,13 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
 
   return {
     ...page,
+    author: {
+      id: page.author.id,
+      name: page.author.name,
+      imageUrl: page.author.imageKey
+        ? getProfileImageUrl(page.author.imageKey)
+        : null,
+    },
     tiles: page.tiles.map(formatTile),
   };
 }
@@ -178,7 +186,7 @@ export async function getProfilePageByUserId({
     select: {
       id: true,
       name: true,
-      imageUrl: true,
+      imageKey: true,
       profilePage: {
         select: PAGE_FIELDS,
       },
@@ -190,7 +198,9 @@ export async function getProfilePageByUserId({
   }
 
   return {
-    ...user,
+    id: user.name,
+    name: user.name,
+    imageUrl: user.imageKey ? getProfileImageUrl(user.imageKey) : null,
     profilePage: {
       ...user.profilePage,
       tiles: user.profilePage.tiles.map(formatTile),

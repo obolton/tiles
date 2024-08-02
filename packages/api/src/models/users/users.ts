@@ -7,6 +7,7 @@ import {
   IMAGE_FILE_EXTENSIONS,
 } from "@/constants/images.ts";
 import { getStream } from "@/utils/http.ts";
+import { getProfileImageUrl } from "@/utils/cdn.ts";
 import type { Prisma } from "@prisma/client";
 import type { UpdateUserSchema } from "@/models/users/schema.ts";
 
@@ -75,11 +76,20 @@ export async function getUserBySessionId(sessionId: string) {
       },
     },
   });
-  return session?.user ?? null;
+  const user = session?.user;
+  if (!user) {
+    return null;
+  }
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    imageUrl: user.imageKey ? getProfileImageUrl(user.imageKey) : null,
+  };
 }
 
 export async function updateUser({ id, name, email }: UpdateUserSchema) {
-  return prisma.user.update({
+  const user = await prisma.user.update({
     where: { id },
     data: {
       name,
@@ -89,7 +99,13 @@ export async function updateUser({ id, name, email }: UpdateUserSchema) {
       id: true,
       name: true,
       email: true,
-      imageUrl: true,
+      imageKey: true,
     },
   });
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    imageUrl: user.imageKey ? getProfileImageUrl(user.imageKey) : null,
+  };
 }
