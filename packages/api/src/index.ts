@@ -1,11 +1,12 @@
 import assert from "node:assert";
 import fs from "node:fs";
-import http from "node:http";
+import http, { IncomingMessage, ServerResponse } from "node:http";
 import https from "node:https";
 import { createHTTPHandler } from "@trpc/server/adapters/standalone";
 import cors from "cors";
 import router from "./router/index.ts";
 import { createContext } from "./router/trpc.ts";
+import { resourcesHandler } from "./resources/index.ts";
 
 const HOST = process.env.HOST;
 const PORT = parseInt(process.env.PORT || "", 10);
@@ -19,7 +20,7 @@ assert(PORT);
 assert(!Number.isNaN(PORT));
 assert(CLIENT_ORIGIN);
 
-const handler = createHTTPHandler({
+const trpcHandler = createHTTPHandler({
   router,
   middleware: cors({
     origin: CLIENT_ORIGIN,
@@ -27,6 +28,15 @@ const handler = createHTTPHandler({
   }),
   createContext,
 });
+
+async function requestHandler(req: IncomingMessage, res: ServerResponse) {
+  const [, path] = req.url?.split("/", 2) ?? [];
+  if (path === "resources") {
+    return resourcesHandler(req, res);
+  } else {
+    return trpcHandler(req, res);
+  }
+}
 
 function getServer() {
   if (ENABLE_HTTPS) {
@@ -38,10 +48,10 @@ function getServer() {
         key: fs.readFileSync(CERTIFICATE_KEY_PATH),
         cert: fs.readFileSync(CERTIFICATE_PATH),
       },
-      handler,
+      requestHandler,
     );
   }
-  return http.createServer(handler);
+  return http.createServer(requestHandler);
 }
 
 const server = getServer();
