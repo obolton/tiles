@@ -7,6 +7,7 @@ import react from "@astrojs/react";
 import cloudflare from "@astrojs/cloudflare";
 import editClientDirective from "./src/config/editClientDirective/register";
 
+const isTestEnvironment = process.env.VITEST === "true";
 const packageRoot = path.dirname(import.meta.filename);
 const env = loadEnv(import.meta.env.MODE, packageRoot, "");
 const ENABLE_HTTPS = env.ENABLE_HTTPS === "true";
@@ -36,5 +37,5 @@ export default defineConfig({
       },
     },
   },
-  adapter: cloudflare(),
+  adapter: !isTestEnvironment ? cloudflare() : undefined,
 });
