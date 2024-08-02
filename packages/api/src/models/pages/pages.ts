@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import prisma from "@/database/prisma.ts";
-import { getProfileImageUrl } from "@/utils/cdn.ts";
+import { getProfileImageUrl, getLinkImageUrl } from "@/utils/cdn.ts";
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/models/tiles/pageLink.ts";
 import type {
   GetPageByIdSchema,
@@ -127,7 +127,10 @@ function formatTile({
       return {
         ...base,
         type,
-        link: tile.link!,
+        link: {
+          ...tile.link!,
+          imageUrl: tile.link!.imageUrl ? getLinkImageUrl(id) : null,
+        },
       };
     case "HEADING":
       return {

@@ -1,5 +1,6 @@
 import { getLinkMetadata } from "../../utils/linkMetadata.ts";
 import prisma from "@/database/prisma.ts";
+import { getLinkImageUrl } from "@/utils/cdn.ts";
 import type { Prisma } from "@prisma/client";
 import type { CreateLinkTileSchema, UpdateLinkTileSchema } from "./schema.ts";
 
@@ -10,7 +11,7 @@ export async function createLinkTile(
 ) {
   const linkMetadata = await getLinkMetadata(url);
   const { title, description, siteName, imageUrl } = linkMetadata || {};
-  return db.tile.create({
+  const tile = await db.tile.create({
     data: {
       pageId,
       type: "LINK",
@@ -44,6 +45,13 @@ export async function createLinkTile(
       },
     },
   });
+  return {
+    ...tile,
+    link: {
+      ...tile.link!,
+      imageUrl: tile.link!.imageUrl ? getLinkImageUrl(tile.id) : null,
+    },
+  };
 }
 
 export async function updateLinkTile(
@@ -52,7 +60,7 @@ export async function updateLinkTile(
 ) {
   const linkMetadata = await getLinkMetadata(url);
   const { title, description, siteName, imageUrl } = linkMetadata || {};
-  return db.tile.update({
+  const tile = await db.tile.update({
     where: {
       id,
     },
@@ -84,6 +92,13 @@ export async function updateLinkTile(
       },
     },
   });
+  return {
+    ...tile,
+    link: {
+      ...tile.link!,
+      imageUrl: tile.link!.imageUrl ? getLinkImageUrl(tile.id) : null,
+    },
+  };
 }
 
 export async function getLinkTileImageUrl(id: string) {
