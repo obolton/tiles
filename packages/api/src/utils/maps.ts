@@ -3,7 +3,9 @@ import {
   MAX_LATITUDE,
   MIN_LONGITUDE,
   MAX_LONGITUDE,
-} from "../constants/geo.ts";
+} from "@/constants/geo.ts";
+import { IMAGE_CONTENT_TYPES } from "@/constants/images.ts";
+import { getStream } from "@/utils/http.ts";
 
 const MAPBOX_STYLE_USERNAME = "mapbox";
 const MAPBOX_STYLE_ID = "streets-v12";
@@ -14,8 +16,6 @@ const PIN_COLOR = "555555";
 
 const MIN_DIMENSION = 100;
 const MAX_DIMENSION = 1280;
-
-const ACCEPT_CONTENT_TYPES = ["image/png", "image/jpeg"];
 
 const MAPBOX_ACCESS_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
 
@@ -67,26 +67,5 @@ export async function getStaticMap({
       : `${long},${lat},${ZOOM},${BEARING},${PITCH}`;
   const size = `${Math.round(width)}x${Math.round(height)}`;
   const url = `https://api.mapbox.com/styles/v1/${style}/static/${pin}/${location}/${size}@2x?access_token=${MAPBOX_ACCESS_TOKEN}&logo=false`;
-  const response = await fetch(url, {
-    headers: {
-      Accept: ACCEPT_CONTENT_TYPES.join(", "),
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`Failed to get static map: ${response.statusText}`);
-  }
-  const contentType = response.headers.get("Content-Type");
-  if (!contentType) {
-    throw new Error(
-      "Failed to get static map: no Content-Type header returned"
-    );
-  }
-  if (!ACCEPT_CONTENT_TYPES.includes(contentType)) {
-    throw new Error(`Unexpected content type: ${contentType}`);
-  }
-  const stream = response.body;
-  if (!stream) {
-    throw new Error("Failed to get static map: no response body");
-  }
-  return { stream, contentType };
+  return getStream(url, IMAGE_CONTENT_TYPES);
 }
