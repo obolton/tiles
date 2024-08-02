@@ -11,6 +11,9 @@ node_modules/
 # Logs
 npm-debug.log*
 
+# Code coverage
+coverage/
+
 # macOS files
 .DS_Store
 
