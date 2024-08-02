@@ -1,4 +1,5 @@
 import { getLinkMetadata } from "../../utils/linkMetadata.ts";
+import prisma from "@/database/prisma.ts";
 import type { Prisma } from "@prisma/client";
 import type { CreateLinkTileSchema, UpdateLinkTileSchema } from "./schema.ts";
 
@@ -83,4 +84,20 @@ export async function updateLinkTile(
       },
     },
   });
+}
+
+export async function getLinkTileImageUrl(id: string) {
+  const tile = await prisma.tile.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      link: {
+        select: {
+          imageUrl: true,
+        },
+      },
+    },
+  });
+  return tile?.link?.imageUrl;
 }
