@@ -1,12 +1,14 @@
-import { IncomingMessage, ServerResponse } from "node:http";
+import { ServerResponse } from "node:http";
+import { z } from "zod";
 import { getLinkTileImageUrl } from "@/models/tiles/link.ts";
 
+const ResourceIdSchema = z.string().uuid();
+
 export async function resourcesHandler(
-  req: IncomingMessage,
+  pathSegments: string[],
   res: ServerResponse,
 ) {
-  console.log("REQUEST URL", req.url);
-  const [, , resourceType, resourceId] = req.url?.split("/", 4) ?? [];
+  const [resourceType, resourceId] = pathSegments;
 
   switch (resourceType) {
     case "links":
@@ -19,14 +21,28 @@ export async function resourcesHandler(
 }
 
 async function handleLinkTile(id: string, res: ServerResponse) {
-  const imageUrl = await getLinkTileImageUrl(id);
-  if (imageUrl) {
-    res.writeHead(301, {
-      Location: imageUrl,
-    });
-    res.end();
-  } else {
+  try {
+    ResourceIdSchema.parse(id);
+  } catch (error) {
     res.writeHead(404);
+    res.end();
+    return;
+  }
+
+  try {
+    const imageUrl = await getLinkTileImageUrl(id);
+    if (imageUrl) {
+      res.writeHead(301, {
+        Location: imageUrl,
+      });
+      res.end();
+    } else {
+      res.writeHead(404);
+      res.end();
+    }
+  } catch (error) {
+    console.log(error);
+    res.writeHead(500);
     res.end();
   }
 }

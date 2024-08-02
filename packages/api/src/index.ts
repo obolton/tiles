@@ -31,9 +31,11 @@ const trpcHandler = createHTTPHandler({
 });
 
 async function requestHandler(req: IncomingMessage, res: ServerResponse) {
-  const [, path] = req.url?.split("/", 2) ?? [];
+  const url = new URL(req.url ?? "/", SERVER_URL);
+  const [path, ...remainingPathSegments] =
+    url.pathname.slice(1).split("/", 3) ?? [];
   if (path === "resources") {
-    return resourcesHandler(req, res);
+    return resourcesHandler(remainingPathSegments, res);
   } else {
     return trpcHandler(req, res);
   }
