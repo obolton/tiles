@@ -18,7 +18,7 @@ model User {
   name          String
   email         String   @unique
   emailVerified Boolean  @default(false) @map("email_verified")
-  imageUrl      String?  @map("image_url")
+  imageKey      String?  @map("image_key")
   profilePageId String   @unique @map("profile_page_id") @db.Uuid
 
   sessions    Session[]
