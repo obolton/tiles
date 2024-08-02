@@ -10,5 +10,5 @@ export function getOffsetCenter(element: HTMLElement) {
 }
 
 export function getDistance(a: DOMPoint, b: DOMPoint) {
-  return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+  return Math.hypot(a.x - b.x, a.y - b.y);
 }
