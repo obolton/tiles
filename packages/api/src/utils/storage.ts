@@ -45,7 +45,7 @@ export async function upload(
   bucket: string,
   key: string,
   body: ReadableStream,
-  contentType: string
+  contentType: string,
 ) {
   const upload = new Upload({
     client: S3,
