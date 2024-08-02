@@ -10,6 +10,9 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
     "lint:ts": "eslint src",
     "lint:css": "stylelint \"src/**/*.{css,astro}\"",
     "lint": "npm run lint:ts && npm run lint:css"
