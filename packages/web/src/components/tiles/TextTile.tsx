@@ -66,22 +66,24 @@ export default function TextTile({ tile }: TextTileProps) {
       showInLightbox={false}
     >
       {isEditable ? (
-        <RichTextEditor
-          className={`${styles.text} ${styles.editor}`}
-          onBlur={onBlur}
-          onChange={setEditorState}
-          onPointerDownCapture={onPointerDown}
-          onClickCapture={onPointerDown}
-          placeholder="Enter some text"
-          value={content}
-          editable
-        >
+        <>
+          <RichTextEditor
+            className={`${styles.text} ${styles.editor}`}
+            onBlur={onBlur}
+            onChange={setEditorState}
+            onPointerDownCapture={onPointerDown}
+            onClickCapture={onPointerDown}
+            placeholder="Enter some text"
+            value={content}
+            editable
+          />
+
           <ColorPicker
             className={styles["color-picker"]}
             value={hue}
             onChange={onChangeColor}
           />
-        </RichTextEditor>
+        </>
       ) : (
         <div className={styles.text}>
           <RichText content={content} />

@@ -2,6 +2,8 @@
   font-size: 1rem;
   line-height: 1.5rlh;
   padding: 16px;
+  inset: 0;
+  overflow: auto;
 }
 
 .editor {
@@ -12,12 +14,12 @@
 
 .color-picker {
   position: absolute;
-  left: -8px;
-  bottom: -8px;
+  left: 8px;
+  bottom: 8px;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
 
-.editor:focus-within .color-picker {
+.editor:focus-within + .color-picker {
   opacity: 1;
 }
