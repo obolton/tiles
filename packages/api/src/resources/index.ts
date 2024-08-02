@@ -5,6 +5,7 @@ export async function resourcesHandler(
   req: IncomingMessage,
   res: ServerResponse,
 ) {
+  console.log("REQUEST URL", req.url);
   const [, , resourceType, resourceId] = req.url?.split("/", 4) ?? [];
 
   switch (resourceType) {
