@@ -26,3 +26,9 @@
     inset 0 0 0 1px rgba(0 0 0 / 30%),
     0 4px 4px -2px rgb(0 0 0 / 20%);
 }
+
+@media (width < 640px) {
+  .marker {
+    display: none;
+  }
+}
