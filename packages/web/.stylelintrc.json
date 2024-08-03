@@ -1,1 +1,11 @@
-{ "extends": ["stylelint-config-standard", "stylelint-config-html/astro"] }
+{
+  "extends": ["stylelint-config-standard", "stylelint-config-html/astro"],
+  "rules": {
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["global"]
+      }
+    ]
+  }
+}
