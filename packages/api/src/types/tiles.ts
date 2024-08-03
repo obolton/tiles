@@ -43,7 +43,7 @@ export type ClientThumbnailTile = Pick<
 > & {
   image: Pick<ImageTile, "imageKey" | "caption"> | null;
   text: Pick<TextTile, "content" | "hue"> | null;
-  place: Pick<PlaceTile, "name" | "thumbnailKey"> | null;
+  place: Pick<PlaceTile, "name" | "lat" | "long" | "boundingBox"> | null;
   link: Pick<LinkTile, "title"> | null;
   heading: Pick<HeadingTile, "content"> | null;
   pageLink: Pick<PageLinkTile, "pageId"> | null;

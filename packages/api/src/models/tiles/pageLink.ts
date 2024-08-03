@@ -34,7 +34,9 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
       place: {
         select: {
           name: true,
-          thumbnailKey: true,
+          lat: true,
+          long: true,
+          boundingBox: true,
         },
       },
       heading: {
