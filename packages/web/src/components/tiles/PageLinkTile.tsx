@@ -1,5 +1,5 @@
 import Tile from "./Tile";
-import { getImageUrl, getMapImageUrl } from "@/utils/images";
+import { getImageUrl } from "@/utils/images";
 import RichText from "@/components/text/RichText";
 import styles from "./PageLinkTile.module.css";
 import type { ClientPageLinkTile, ClientThumbnailTile } from "@/types/tiles";
@@ -59,10 +59,11 @@ function getTileComponent(tile: ClientThumbnailTile) {
     case "PLACE":
       return tile.place ? (
         <ThumbnailTile key={tile.id} {...tile} padding={false}>
-          <img
-            className={styles.image}
-            src={getMapImageUrl(tile.place?.thumbnailKey)}
-            alt={tile.place.name}
+          <map-view
+            lat={tile.place.lat}
+            long={tile.place.long}
+            bounds={tile.place.boundingBox.join(",")}
+            label={tile.place.name}
           />
         </ThumbnailTile>
       ) : null;
