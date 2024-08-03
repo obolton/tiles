@@ -1,7 +1,4 @@
-import { useCallback } from "react";
 import useEditable from "@/hooks/useEditable";
-import { getMapImageUrl } from "@/utils/images";
-import { editTile } from "@/utils/edit";
 import Tile from "./Tile";
 import styles from "./PlaceTile.module.css";
 import type { ClientPlaceTile } from "@/types/tiles";
@@ -12,18 +9,19 @@ type PlaceTileProps = {
 
 export default function PlaceTile({ tile }: PlaceTileProps) {
   const {
-    id,
-    place: { name, thumbnailKey },
+    place: { name, lat, long, boundingBox },
   } = tile;
   const isEditable = useEditable();
-  const edit = useCallback(() => editTile(id, "PLACE"), [id]);
-  const src = getMapImageUrl(thumbnailKey);
   return (
     <Tile tile={tile}>
-      <figure className={styles.figure} onClick={isEditable ? edit : undefined}>
-        <img src={src} alt={`A map showing ${name}`} draggable={!isEditable} />
-        <figcaption>{name}</figcaption>
-      </figure>
+      <map-view
+        class={styles.map}
+        movable={!isEditable}
+        lat={lat}
+        long={long}
+        bounds={boundingBox.length === 4 ? boundingBox.join(",") : undefined}
+        label={name}
+      ></map-view>
     </Tile>
   );
 }
