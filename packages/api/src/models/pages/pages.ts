@@ -35,7 +35,6 @@ const TILES_FIELDS = {
     select: {
       id: true,
       name: true,
-      thumbnailKey: true,
       providerId: true,
       lat: true,
       long: true,
