@@ -138,17 +138,16 @@ model TextTile {
 }
 
 model PlaceTile {
-  id           String   @id @default(uuid()) @db.Uuid
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  tileId       String   @unique @map("tile_id") @db.Uuid
-  name         String
-  lat          Float
-  long         Float
-  boundingBox  Float[]  @map("bounding_box")
-  address      String?
-  providerId   String?  @map("provider_id")
-  thumbnailKey String   @map("thumbnail_key")
+  id          String   @id @default(uuid()) @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tileId      String   @unique @map("tile_id") @db.Uuid
+  name        String
+  lat         Float
+  long        Float
+  boundingBox Float[]  @map("bounding_box")
+  address     String?
+  providerId  String?  @map("provider_id")
 
   tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
 
