@@ -18,7 +18,7 @@ import type { ClientPlaceTile } from "@/types/tiles";
 
 mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_ACCESS_TOKEN;
 
-type Place = Omit<ClientPlaceTile["place"], "thumbnailKey">;
+type Place = ClientPlaceTile["place"];
 
 interface EditPlaceTileModalProps {
   pageId: string;
