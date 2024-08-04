@@ -3,7 +3,7 @@
   grid-column: span var(--columns);
   border-radius: 16px;
   margin: 0;
-  padding: 0.25rem 0.5rem;
+  padding: 8px;
 }
 
 .heading > h1,

@@ -2,14 +2,13 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin: 0 12px;
+  padding: 16px 8px;
   font-style: normal;
-  font-size: 1.25rem;
 }
 
 .author > a {
-  font-size: 1.25rem;
-  font-weight: 400;
+  font-size: 1rem;
+  font-weight: 500;
   color: rgba(0 0 0 / 60%);
 }
 
