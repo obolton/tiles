@@ -57,24 +57,27 @@ export default function RichTextEditor({
   useEffect(() => ref.current?.setEditable(editable ?? false), [editable]);
 
   return (
-    <div className={className}>
-      <LexicalComposer initialConfig={initialConfig.current}>
-        <RichTextPlugin
-          contentEditable={
-            <ContentEditable className={styles.editor} {...props} />
-          }
-          placeholder={
-            placeholder ? (
-              <p className={styles.placeholder}>{placeholder}</p>
-            ) : null
-          }
-          ErrorBoundary={LexicalErrorBoundary}
-        />
-        <OnChangePlugin onChange={onChange} />
-        <EditorRefPlugin editorRef={ref} />
-        <Toolbar />
-        {children}
-      </LexicalComposer>
-    </div>
+    <LexicalComposer initialConfig={initialConfig.current}>
+      <RichTextPlugin
+        contentEditable={
+          <ContentEditable
+            className={`${styles.editor} ${className || ""}`}
+            {...props}
+          />
+        }
+        placeholder={
+          placeholder ? (
+            <p className={`${styles.placeholder} ${className || ""}`}>
+              {placeholder}
+            </p>
+          ) : null
+        }
+        ErrorBoundary={LexicalErrorBoundary}
+      />
+      <OnChangePlugin onChange={onChange} />
+      <EditorRefPlugin editorRef={ref} />
+      <Toolbar />
+      {children}
+    </LexicalComposer>
   );
 }
