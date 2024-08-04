@@ -15,6 +15,6 @@
   transition: opacity 0.2s ease;
 }
 
-.editor:focus-within + .color-picker {
+.editor:focus-within ~ .color-picker {
   opacity: 1;
 }
