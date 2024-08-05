@@ -1,6 +1,13 @@
 import { memo } from "react";
 import { TextFormat } from "@/utils/richText/types";
-import type { RichText, BlockNode, TextNode } from "@/utils/richText/types";
+import type {
+  RichText,
+  TextNode,
+  ParagraphNode,
+  ListNode,
+  ListItemNode,
+} from "@/utils/richText/types";
+import { ListType } from "@/utils/richText/types";
 
 interface RichTextProps {
   content: RichText;
@@ -9,10 +16,12 @@ interface RichTextProps {
 function RichText({ content }: RichTextProps) {
   return (
     <>
-      {content.map((block, index) => {
-        switch (block.type) {
+      {content.map((node, index) => {
+        switch (node.type) {
           case "paragraph":
-            return <Paragraph key={index} node={block} />;
+            return <Paragraph key={index} node={node} />;
+          case "list":
+            return <List key={index} node={node} />;
           default:
             return null;
         }
@@ -24,7 +33,7 @@ function RichText({ content }: RichTextProps) {
 export default memo(RichText);
 
 interface ParagraphProps {
-  node: BlockNode;
+  node: ParagraphNode;
 }
 
 function Paragraph({ node }: ParagraphProps) {
@@ -42,6 +51,51 @@ function Paragraph({ node }: ParagraphProps) {
       ))}
     </p>
   );
+}
+
+interface ListItemProps {
+  node: ListItemNode;
+}
+
+function ListItem({ node }: ListItemProps) {
+  if (node.spans.length === 0) {
+    return (
+      <li>
+        <br />
+      </li>
+    );
+  }
+  return (
+    <li>
+      {node.spans.map((span, index) => (
+        <Text key={index} node={span} />
+      ))}
+    </li>
+  );
+}
+
+interface ListProps {
+  node: ListNode;
+}
+
+function List({ node }: ListProps) {
+  if (node.listType === ListType.ORDERED) {
+    return (
+      <ol>
+        {node.children.map((child, index) => (
+          <ListItem key={index} node={child} />
+        ))}
+      </ol>
+    );
+  } else {
+    return (
+      <ul>
+        {node.children.map((child, index) => (
+          <ListItem key={index} node={child} />
+        ))}
+      </ul>
+    );
+  }
 }
 
 interface TextProps {
