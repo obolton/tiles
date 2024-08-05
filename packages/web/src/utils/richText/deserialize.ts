@@ -1,35 +1,63 @@
 import { $createParagraphNode, $createTextNode, $getRoot } from "lexical";
-import type { BlockNode, ParagraphNode, RichText } from "./types";
-import { TextFormat } from "./types";
+import { $createListNode, $createListItemNode } from "@lexical/list";
+import type {
+  BlockNode,
+  ListNode,
+  ListItemNode,
+  ParagraphNode,
+  TextNode,
+  RichText,
+} from "./types";
+import { TextFormat, ListType } from "./types";
+
+function createLexicalTextNode(text: TextNode) {
+  const textNode = $createTextNode(text.text);
+  if (text.format & TextFormat.BOLD) {
+    textNode.toggleFormat("bold");
+  }
+  if (text.format & TextFormat.ITALIC) {
+    textNode.toggleFormat("italic");
+  }
+  if (text.format & TextFormat.STRIKETHROUGH) {
+    textNode.toggleFormat("strikethrough");
+  }
+  if (text.format & TextFormat.UNDERLINE) {
+    textNode.toggleFormat("underline");
+  }
+  return textNode;
+}
 
 function createLexicalParagraphNode(paragraph: ParagraphNode) {
   const node = $createParagraphNode();
-  const spans = paragraph.spans.map((span) => {
-    const textNode = $createTextNode(span.text);
-    if (span.format & TextFormat.BOLD) {
-      textNode.toggleFormat("bold");
-    }
-    if (span.format & TextFormat.ITALIC) {
-      textNode.toggleFormat("italic");
-    }
-    if (span.format & TextFormat.STRIKETHROUGH) {
-      textNode.toggleFormat("strikethrough");
-    }
-    if (span.format & TextFormat.UNDERLINE) {
-      textNode.toggleFormat("underline");
-    }
-    return textNode;
-  });
-  node.append(...spans);
+  node.append(...paragraph.spans.map(createLexicalTextNode));
+  return node;
+}
+
+function createLexicalListNode(list: ListNode) {
+  const node = $createListNode(
+    list.listType === ListType.ORDERED ? "number" : "bullet",
+  );
+  node.append(...list.children.map(createLexicalListItemNode));
+  return node;
+}
+
+function createLexicalListItemNode(listItem: ListItemNode) {
+  const node = $createListItemNode();
+  node.append(...listItem.spans.map(createLexicalTextNode));
   return node;
 }
 
 function createLexicalNode(node: BlockNode) {
-  switch (node.type) {
+  const type = node.type;
+  switch (type) {
     case "paragraph":
       return createLexicalParagraphNode(node);
+    case "list":
+      return createLexicalListNode(node);
+    case "listitem":
+      return createLexicalListItemNode(node);
     default:
-      throw new Error(`Unsupported node type: ${node.type}`);
+      throw new Error(`Unsupported node type: ${type}`);
   }
 }
 
