@@ -61,16 +61,15 @@ export default function RichTextEditor({
       <RichTextPlugin
         contentEditable={
           <ContentEditable
-            className={`${styles.editor} ${className || ""}`}
             {...props}
+            className={`${styles.editor} ${className || ""}`}
+            aria-placeholder={placeholder || ""}
+            placeholder={
+              <p className={`${styles.placeholder} ${className || ""}`}>
+                {placeholder}
+              </p>
+            }
           />
-        }
-        placeholder={
-          placeholder ? (
-            <p className={`${styles.placeholder} ${className || ""}`}>
-              {placeholder}
-            </p>
-          ) : null
         }
         ErrorBoundary={LexicalErrorBoundary}
       />
