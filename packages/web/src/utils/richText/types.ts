@@ -6,6 +6,11 @@ export enum TextFormat {
   UNDERLINE = 1 << 3,
 }
 
+export enum ListType {
+  ORDERED = 0,
+  UNORDERED = 1,
+}
+
 export interface BaseNode {
   type: string;
 }
@@ -21,7 +26,18 @@ export interface ParagraphNode extends BaseNode {
   spans: TextNode[];
 }
 
-export type BlockNode = ParagraphNode;
+export interface ListNode extends BaseNode {
+  type: "list";
+  listType: ListType;
+  children: ListItemNode[];
+}
+
+export interface ListItemNode extends BaseNode {
+  type: "listitem";
+  spans: TextNode[];
+}
+
+export type BlockNode = ParagraphNode | ListNode | ListItemNode;
 
 export type BlockNodeType = BlockNode["type"];
 
