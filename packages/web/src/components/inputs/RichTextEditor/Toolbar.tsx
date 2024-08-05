@@ -8,11 +8,19 @@ import {
   SELECTION_CHANGE_COMMAND,
   COMMAND_PRIORITY_EDITOR,
 } from "lexical";
+import {
+  $isListNode,
+  INSERT_ORDERED_LIST_COMMAND,
+  INSERT_UNORDERED_LIST_COMMAND,
+  REMOVE_LIST_COMMAND,
+} from "@lexical/list";
 import Icon from "@/components/icons/Icon";
 import boldIcon from "@/icons/bold.svg";
 import italicIcon from "@/icons/italic.svg";
 import underlineIcon from "@/icons/underline.svg";
 import strikethroughIcon from "@/icons/strikethrough.svg";
+import orderedListIcon from "@/icons/ordered-list.svg";
+import unorderedListIcon from "@/icons/unordered-list.svg";
 import styles from "./Toolbar.module.css";
 
 type Format = {
@@ -20,7 +28,29 @@ type Format = {
   italic: boolean;
   underline: boolean;
   strikethrough: boolean;
+  orderedList: boolean;
+  unorderedList: boolean;
 };
+
+function $getSelectionListType() {
+  const selectedNodes = $getSelection()?.getNodes();
+  if (!selectedNodes) {
+    return null;
+  }
+
+  const listTypes = selectedNodes.map((node) => {
+    const top = node.getTopLevelElement();
+    return $isListNode(top) ? top.getListType() : null;
+  });
+
+  if (listTypes.every((type) => type === "number")) {
+    return "ordered";
+  }
+  if (listTypes.every((type) => type === "bullet")) {
+    return "unordered";
+  }
+  return null;
+}
 
 export default function Toolbar() {
   const [editor] = useLexicalComposerContext();
@@ -31,6 +61,8 @@ export default function Toolbar() {
     italic: false,
     underline: false,
     strikethrough: false,
+    orderedList: false,
+    unorderedList: false,
   });
 
   useEffect(() => {
@@ -42,11 +74,15 @@ export default function Toolbar() {
             return;
           }
 
+          const listType = $getSelectionListType();
+
           setFormat({
             bold: selection.hasFormat("bold"),
             italic: selection.hasFormat("italic"),
             underline: selection.hasFormat("underline"),
             strikethrough: selection.hasFormat("strikethrough"),
+            orderedList: listType === "ordered",
+            unorderedList: listType === "unordered",
           });
         });
       }),
@@ -113,6 +149,26 @@ export default function Toolbar() {
     [editor],
   );
 
+  const formatOrderedList = useCallback(() => {
+    editor.getEditorState().read(() => {
+      if ($getSelectionListType() !== "ordered") {
+        editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+      } else {
+        editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+      }
+    });
+  }, [editor]);
+
+  const formatUnorderedList = useCallback(() => {
+    editor.getEditorState().read(() => {
+      if ($getSelectionListType() !== "unordered") {
+        editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+      } else {
+        editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+      }
+    });
+  }, [editor]);
+
   if (!position) {
     return null;
   }
@@ -129,7 +185,7 @@ export default function Toolbar() {
     >
       <li>
         <button
-          aria-label="Format the text as bold"
+          aria-label="Format as bold"
           type="button"
           aria-pressed={format.bold ? "true" : "false"}
           onClick={formatBold}
@@ -139,7 +195,7 @@ export default function Toolbar() {
       </li>
       <li>
         <button
-          aria-label="Format the text as italic"
+          aria-label="Format as italic"
           type="button"
           aria-pressed={format.italic ? "true" : "false"}
           onClick={formatItalic}
@@ -149,7 +205,7 @@ export default function Toolbar() {
       </li>
       <li>
         <button
-          aria-label="Format the text as underlined"
+          aria-label="Format as underlined"
           type="button"
           aria-pressed={format.underline ? "true" : "false"}
           onClick={formatUnderline}
@@ -159,12 +215,32 @@ export default function Toolbar() {
       </li>
       <li>
         <button
-          aria-label="Format the text as strike-through"
+          aria-label="Format as strike-through"
           type="button"
           aria-pressed={format.strikethrough ? "true" : "false"}
           onClick={formatStrikethrough}
         >
           <Icon src={strikethroughIcon.src} />
+        </button>
+      </li>
+      <li>
+        <button
+          aria-label="Format as an ordered list"
+          type="button"
+          aria-pressed={format.orderedList ? "true" : "false"}
+          onClick={formatOrderedList}
+        >
+          <Icon src={orderedListIcon.src} />
+        </button>
+      </li>
+      <li>
+        <button
+          aria-label="Format as an unordered list"
+          type="button"
+          aria-pressed={format.unorderedList ? "true" : "false"}
+          onClick={formatUnorderedList}
+        >
+          <Icon src={unorderedListIcon.src} />
         </button>
       </li>
     </menu>
