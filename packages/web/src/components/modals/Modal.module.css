@@ -29,7 +29,7 @@
 }
 
 .modal[open] {
-  animation: var(--animation-duration) var(--animation-timing) appear;
+  animation: var(--animation-duration) var(--animation-timing) modal-appear;
 }
 
 .modal[open]::backdrop {
@@ -38,7 +38,7 @@
 }
 
 .modal:not([open]) {
-  animation: var(--animation-duration) var(--animation-timing) disappear;
+  animation: var(--animation-duration) var(--animation-timing) modal-disappear;
 }
 
 .modal:not([open])::backdrop {
@@ -55,15 +55,16 @@
   }
 
   .modal[open] {
-    animation: var(--animation-duration) var(--animation-timing) slide-up;
+    animation: var(--animation-duration) var(--animation-timing) modal-slide-up;
   }
 
   .modal:not([open]) {
-    animation: var(--animation-duration) var(--animation-timing) slide-down;
+    animation: var(--animation-duration) var(--animation-timing)
+      modal-slide-down;
   }
 }
 
-@keyframes appear {
+@keyframes modal-appear {
   from {
     opacity: 0;
     transform: perspective(1000px)
@@ -78,7 +79,7 @@
   }
 }
 
-@keyframes slide-up {
+@keyframes modal-slide-up {
   from {
     opacity: 0;
     transform: translateY(100%);
@@ -90,7 +91,7 @@
   }
 }
 
-@keyframes disappear {
+@keyframes modal-disappear {
   from {
     opacity: 1;
     transform: translate3d(0, 0, 0);
@@ -105,7 +106,7 @@
   }
 }
 
-@keyframes slide-down {
+@keyframes modal-slide-down {
   from {
     opacity: 1;
     transform: translateY(0);

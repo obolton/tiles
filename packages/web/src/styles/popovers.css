@@ -20,15 +20,15 @@ popover-menu {
   }
 
   &:popover-open {
-    animation: var(--animation-duration) ease appear;
+    animation: var(--animation-duration) ease popover-appear;
   }
 
   &:not(:popover-open) {
-    animation: var(--animation-duration) ease disappear;
+    animation: var(--animation-duration) ease popover-disappear;
   }
 }
 
-@keyframes appear {
+@keyframes popover-appear {
   from {
     opacity: 0;
     transform: scale(0.8);
@@ -42,7 +42,7 @@ popover-menu {
   }
 }
 
-@keyframes disappear {
+@keyframes popover-disappear {
   from {
     opacity: 1;
     transform: scale(1);

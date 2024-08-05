@@ -25,11 +25,11 @@
 }
 
 .lightbox[open] {
-  animation: var(--animation-duration) var(--timing-function) appear;
+  animation: var(--animation-duration) var(--timing-function) lightbox-appear;
 }
 
 .lightbox:not([open]) {
-  animation: var(--animation-duration) var(--timing-function) disappear;
+  animation: var(--animation-duration) var(--timing-function) lightbox-disappear;
 }
 
 .lightbox-list {
@@ -53,7 +53,7 @@
   scroll-snap-stop: always;
 }
 
-@keyframes appear {
+@keyframes lightbox-appear {
   from {
     opacity: 0;
     backdrop-filter: blur(0);
@@ -65,7 +65,7 @@
   }
 }
 
-@keyframes disappear {
+@keyframes lightbox-disappear {
   from {
     opacity: 1;
     backdrop-filter: blur(10px);
