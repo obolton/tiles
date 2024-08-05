@@ -7,6 +7,8 @@ import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { ListNode, ListItemNode } from "@lexical/list";
 import Toolbar from "./Toolbar";
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
 import { useEffect, useRef } from "react";
@@ -51,6 +53,7 @@ export default function RichTextEditor({
       editable,
       editorState: () => importNodes(value),
       onError: handleError,
+      nodes: [ListNode, ListItemNode],
     };
   }
 
@@ -75,6 +78,7 @@ export default function RichTextEditor({
       />
       <OnChangePlugin onChange={onChange} />
       <EditorRefPlugin editorRef={ref} />
+      <ListPlugin />
       <Toolbar />
       {children}
     </LexicalComposer>
