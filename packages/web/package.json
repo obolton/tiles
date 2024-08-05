@@ -21,6 +21,7 @@
     "@astrojs/check": "^0.8.3",
     "@astrojs/cloudflare": "^11.0.1",
     "@astrojs/react": "^3.6.0",
+    "@lexical/list": "^0.17.0",
     "@lexical/react": "^0.17.0",
     "@mapbox/mapbox-gl-geocoder": "^5.0.2",
     "@trpc/client": "^11.0.0-rc.374",
