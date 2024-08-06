@@ -1,0 +1,24 @@
+img.profile,
+.profile-image-placeholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+
+  &.large {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+.profile-image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(255 255 255 / 30%);
+  color: rgb(0 0 0 / 60%);
+  border: 1px solid rgb(0 0 0 / 20%);
+
+  &.large {
+    font-size: 2.5rem;
+  }
+}
