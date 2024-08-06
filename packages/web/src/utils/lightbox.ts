@@ -1,4 +1,4 @@
-import { appearFrom, moveFrom } from "./animation/effects";
+import { appearFrom, moveFrom, moveTo, fadeOut } from "./animation/effects";
 
 let lightbox: HTMLDialogElement | null = null;
 let currentIndex = 0;
@@ -27,7 +27,6 @@ function openLightbox(element: Element) {
   lightbox.dataset.lightbox = "true";
   lightbox.classList.add("lightbox");
   const list = document.createElement("ol");
-  list.classList.add("lightbox-list");
   lightbox.appendChild(list);
 
   const observer = new IntersectionObserver(intersectionObserverCallback, {
@@ -57,6 +56,22 @@ function openLightbox(element: Element) {
     "close",
     () => {
       observer.disconnect();
+
+      // Animate out the visible items
+      const visible = list.children[currentIndex];
+      const previous = list.children[currentIndex - 1];
+      const next = list.children[currentIndex + 1];
+
+      if (visible.firstElementChild) {
+        fadeOut(visible.firstElementChild);
+      }
+      if (previous) {
+        moveTo(previous, { y: "-5vh" });
+      }
+      if (next) {
+        moveTo(next, { y: "5vh" });
+      }
+
       Promise.all(
         lightbox?.getAnimations().map((animation) => animation.finished) ?? [],
       ).finally(() => {
@@ -75,12 +90,16 @@ function openLightbox(element: Element) {
     block: "center",
   });
 
-  // Animate the visible items
+  // Animate in the visible items
   const visible = list.children[currentIndex];
   const previous = list.children[currentIndex - 1];
   const next = list.children[currentIndex + 1];
+
   if (visible.firstElementChild) {
-    appearFrom(visible.firstElementChild, { origin: element });
+    appearFrom(visible.firstElementChild, {
+      origin: element,
+      endClipPath: "inset(0 -20vw 0 0)",
+    });
   }
   if (previous) {
     moveFrom(previous, { y: "-5vh" });
@@ -101,7 +120,6 @@ function createItem(element: Element) {
   content.removeAttribute("style");
 
   const item = document.createElement("li");
-  item.classList.add("lightbox-item");
   item.addEventListener("click", itemClick);
   item.appendChild(content);
   return item;

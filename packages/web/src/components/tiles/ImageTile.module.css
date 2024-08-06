@@ -28,7 +28,7 @@
 }
 
 [data-lightbox] .figure {
-  display: flex;
+  overflow: visible;
 }
 
 [data-lightbox] .figure > img {
@@ -36,13 +36,19 @@
 }
 
 [data-lightbox] .figure > figcaption {
-  position: static;
+  position: absolute;
+  right: -20vw;
   width: 20vw;
-  min-width: 150px;
-  background: none;
+  height: 100%;
+  padding: 24px;
+  display: flex;
+  align-items: center;
   color: rgba(255 255 255 / 90%);
+  -webkit-font-smoothing: antialiased;
+  background: none;
+  font-size: 1.125rem;
   font-weight: 400;
-  text-shadow: 0 1px 1px rgb(0 0 0 / 70%);
+  text-shadow: 0 1px 1px #000;
   backdrop-filter: none;
   box-shadow: none;
 }

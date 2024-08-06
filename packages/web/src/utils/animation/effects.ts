@@ -41,32 +41,42 @@ export function appearFrom(
   element: Element,
   {
     origin,
-    dampingFactor = 0.5,
+    endClipPath = "inset(0)",
     timing = { duration: 500, easing: "ease" },
-  }: { origin: Element; dampingFactor?: number; timing?: EffectTiming },
+  }: { origin: Element; endClipPath?: string; timing?: EffectTiming },
 ) {
   const originRect = origin.getBoundingClientRect();
   const originCenter = getCenter(originRect);
   const rect = element.getBoundingClientRect();
   const center = getCenter(rect);
-  const translateX = (originCenter.x - center.x) * dampingFactor;
-  const translateY = (originCenter.y - center.y) * dampingFactor;
-  const insetX = ((rect.width - originRect.width) / 2) * dampingFactor;
-  const insetY = ((rect.height - originRect.height) / 2) * dampingFactor;
-  const style = getComputedStyle(origin);
-  const borderRadius = style.getPropertyValue("border-radius");
+  const borderRadius =
+    getComputedStyle(origin).getPropertyValue("border-radius");
+
+  const translateX = originCenter.x - center.x;
+  const translateY = originCenter.y - center.y;
+
+  const scale = Math.max(
+    originRect.width / rect.width,
+    originRect.height / rect.height,
+  );
+
+  const scaledWidth = originRect.width / scale;
+  const scaledHeight = originRect.height / scale;
+
+  const insetX = (rect.width - scaledWidth) / 2;
+  const insetY = (rect.height - scaledHeight) / 2;
 
   const animation = element.animate(
     [
       {
         translate: `${translateX}px ${translateY}px`,
         clipPath: `inset(${insetY}px ${insetX}px round ${borderRadius})`,
-        opacity: 0,
+        transform: `scale(${scale})`,
       },
       {
         translate: "none",
-        clipPath: "inset(0)",
-        opacity: 1,
+        clipPath: endClipPath,
+        transform: "scale(1)",
       },
     ],
     timing,
