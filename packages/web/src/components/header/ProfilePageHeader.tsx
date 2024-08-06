@@ -41,7 +41,12 @@ export default function ProfilePageHeader({
 
   return (
     <div className={styles.header}>
-      {imageUrl && <img className={styles.image} src={imageUrl} alt={name} />}
+      {imageUrl ? (
+        <img className="profile large" src={imageUrl} alt={name} />
+      ) : (
+        <div className="profile-image-placeholder large">{name.charAt(0)}</div>
+      )}
+
       <div className={styles.text}>
         <h1>{name}</h1>
 

@@ -16,11 +16,7 @@ import signOutIcon from "@/icons/sign-out.svg";
       <data-binding href="user.profile">
         <a href="/profiles">
           <data-binding src="user.imageUrl">
-            <img
-              class="profile-image"
-              src="data:,"
-              alt="Your profile picture"
-            />
+            <img class="profile" src="data:," alt="Your profile picture" />
           </data-binding>
           <data-binding text="user.name"><span></span></data-binding>
         </a>
@@ -54,13 +50,6 @@ import signOutIcon from "@/icons/sign-out.svg";
   </nav>
 </div>
 <style is:global>
-  .profile-image {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    border: 1px solid rgb(0 0 0 / 30%);
-  }
-
   #authentication {
     z-index: 1;
   }

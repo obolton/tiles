@@ -9,7 +9,11 @@ interface AuthorProps {
 export default function Author({ id, name, imageUrl }: AuthorProps) {
   return (
     <address className={styles.author}>
-      {imageUrl ? <img src={imageUrl} alt={name} /> : null}
+      {imageUrl ? (
+        <img className="profile" src={imageUrl} alt={name} />
+      ) : (
+        <div className="profile-image-placeholder">{name.charAt(0)}</div>
+      )}
       <a href={`/profiles/${id}`}>{name}</a>
     </address>
   );
