@@ -1,6 +1,6 @@
 .header {
   display: flex;
-  flex-direction: row;
+  align-items: center;
   gap: 2rem;
 }
 
@@ -16,7 +16,7 @@
   border-radius: 1rem;
   font-size: 1.5rem;
   font-weight: 500;
-  color: rgba(0 0 0 / 60%);
+  color: oklch(from var(--page-color) 50% calc(c * 0.75) h);
   padding: 0.25rem 0.5rem;
   margin: 0 -0.5rem;
 }
