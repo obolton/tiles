@@ -107,3 +107,7 @@ del,
 data-binding {
   display: contents;
 }
+
+map-view {
+  display: block;
+}
