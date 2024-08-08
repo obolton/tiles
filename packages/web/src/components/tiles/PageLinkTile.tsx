@@ -50,6 +50,12 @@ function getTileComponent(tile: ClientThumbnailTile) {
           />
         </ThumbnailTile>
       ) : null;
+    case "VIDEO":
+      return (
+        <ThumbnailTile key={tile.id} {...tile}>
+          {tile.video?.title}
+        </ThumbnailTile>
+      );
     case "TEXT":
       return (
         <ThumbnailTile key={tile.id} {...tile} hue={tile.text?.hue}>
