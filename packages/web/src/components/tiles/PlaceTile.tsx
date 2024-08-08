@@ -13,7 +13,7 @@ export default function PlaceTile({ tile }: PlaceTileProps) {
   } = tile;
   const isEditable = useEditable();
   return (
-    <Tile tile={tile}>
+    <Tile tile={tile} fullWidth>
       <map-view
         class={styles.map}
         movable={!isEditable}
