@@ -1,0 +1,128 @@
+import stylesheet from "./EmbeddedVideo.css?url";
+
+export default class EmbeddedVideo extends HTMLElement {
+  static observedAttributes = ["src", "imagesrc"] as const;
+
+  private shadow: ShadowRoot;
+  private placeholder?: HTMLElement;
+  private iframe?: HTMLIFrameElement;
+  private intersectionObserver?: IntersectionObserver;
+
+  constructor() {
+    super();
+
+    this.shadow = this.attachShadow({ mode: "closed" });
+
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = stylesheet;
+    this.shadow.append(link);
+  }
+
+  connectedCallback() {
+    this.showPlaceholder();
+
+    // If the video is inside a lightbox, start playing when it's in view
+    if (this.closest("[data-lightbox]")) {
+      this.intersectionObserver = new IntersectionObserver(
+        this.intersectionObserverCallback.bind(this),
+        {
+          rootMargin: "30% 0px 30% 0px",
+          threshold: [1],
+        },
+      );
+      this.intersectionObserver.observe(this);
+    }
+  }
+
+  disconnectedCallback() {
+    this.intersectionObserver?.disconnect();
+    this.intersectionObserver = undefined;
+    this.iframe?.remove();
+    this.iframe = undefined;
+    this.placeholder?.remove();
+    this.placeholder = undefined;
+  }
+
+  attributeChangedCallback(
+    name: (typeof EmbeddedVideo.observedAttributes)[number],
+    _: string,
+    value: string,
+  ) {
+    switch (name) {
+      case "src":
+        if (this.iframe) {
+          this.iframe.src = value;
+        }
+        break;
+
+      case "imagesrc":
+        this.placeholder?.querySelector("img")?.setAttribute("src", value);
+        break;
+    }
+  }
+
+  private intersectionObserverCallback(entries: IntersectionObserverEntry[]) {
+    const [entry] = entries;
+
+    if (!entry) {
+      return;
+    }
+
+    if (entry.isIntersecting) {
+      this.play();
+    } else {
+      this.stop();
+    }
+  }
+
+  private showPlaceholder() {
+    if (this.placeholder) {
+      return;
+    }
+
+    this.placeholder = document.createElement("figure");
+    this.placeholder.id = "placeholder";
+
+    const imageSrc = this.getAttribute("imagesrc");
+    if (imageSrc) {
+      const image = document.createElement("img");
+      image.src = imageSrc;
+      image.alt = "Video thumbnail";
+      this.placeholder.append(image);
+    }
+
+    this.shadow.append(this.placeholder);
+  }
+
+  private play() {
+    if (this.iframe) {
+      return;
+    }
+
+    const src = this.getAttribute("src");
+    if (!src) {
+      throw new Error("No video URL");
+    }
+
+    this.iframe = document.createElement("iframe");
+    this.iframe.referrerPolicy = "no-referrer";
+    this.iframe.allow = "autoplay; fullscreen";
+    this.iframe.src = src;
+    this.iframe.addEventListener(
+      "load",
+      () => {
+        this.placeholder?.remove();
+        this.placeholder = undefined;
+      },
+      { once: true },
+    );
+    this.shadow.append(this.iframe);
+  }
+
+  private stop() {
+    this.iframe?.remove();
+    this.iframe = undefined;
+    this.showPlaceholder();
+  }
+}

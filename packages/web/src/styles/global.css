@@ -108,6 +108,8 @@ data-binding {
   display: contents;
 }
 
-map-view {
+map-view,
+embedded-video {
   display: block;
+  contain: strict;
 }

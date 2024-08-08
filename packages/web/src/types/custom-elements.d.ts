@@ -9,5 +9,11 @@ declare namespace JSX {
       bounds?: string;
       label?: string;
     };
+    "embedded-video": {
+      id?: string;
+      class?: string;
+      src: string;
+      imagesrc?: string;
+    };
   }
 }
