@@ -89,23 +89,32 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
     <form onSubmit={submit}>
       <ModalHeader>Link</ModalHeader>
 
-      <input
-        className={styles.input}
-        type="url"
-        name="content"
-        placeholder="Paste a URL"
-        autoFocus
-        onChange={change}
-        value={url}
-      />
+      <div className={styles["modal-body"]}>
+        <label>
+          Link URL
+          <input
+            className={styles.input}
+            type="url"
+            name="content"
+            placeholder="Enter a link URL"
+            autoFocus
+            onChange={change}
+            value={url}
+          />
+        </label>
 
-      <ol className={styles["page-select"]}>
-        {recentPages.map((page) => (
-          <li key={page.id} onClick={() => selectPage(page.id)}>
-            {page.title}
-          </li>
-        ))}
-      </ol>
+        <div>
+          <label>Your recent pages</label>
+
+          <ol className={styles["page-select"]}>
+            {recentPages.map((page) => (
+              <li key={page.id} onClick={() => selectPage(page.id)}>
+                {page.title}
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
 
       <ModalFooter>
         <button className="primary" type="submit" aria-disabled={!url}>
