@@ -1,6 +1,8 @@
-import { getLinkMetadata } from "../../utils/linkMetadata.ts";
 import prisma from "@/database/prisma.ts";
+import { getLinkMetadata } from "@/utils/linkMetadata.ts";
 import { getLinkImageUrl } from "@/utils/cdn.ts";
+import { getVideoInfo } from "@/utils/videos.ts";
+import { createVideoTile } from "./video.ts";
 import type { Prisma } from "@prisma/client";
 import type { CreateLinkTileSchema, UpdateLinkTileSchema } from "./schema.ts";
 
@@ -9,6 +11,22 @@ export async function createLinkTile(
   { pageId, link: { url } }: CreateLinkTileSchema,
   position: number,
 ) {
+  // Convert links to video tiles if they are video links
+  const videoInfo = getVideoInfo(url);
+  if (videoInfo) {
+    return createVideoTile(
+      db,
+      {
+        pageId,
+        type: "VIDEO",
+        video: {
+          url,
+        },
+      },
+      position,
+    );
+  }
+
   const linkMetadata = await getLinkMetadata(url);
   const { title, description, siteName, imageUrl } = linkMetadata || {};
   const tile = await db.tile.create({
