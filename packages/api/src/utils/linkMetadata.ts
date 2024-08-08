@@ -20,14 +20,14 @@ async function parseDocument(url: string, language: string) {
 
   if (!response.ok) {
     throw new Error(
-      `Link metadata: Failed to fetch ${url}: [${response.status}] ${response.statusText}`
+      `Link metadata: Failed to fetch ${url}: [${response.status}] ${response.statusText}`,
     );
   }
 
   const body = response.body;
   if (!body) {
     throw new Error(
-      `Link metadata: Failed to fetch ${url}: No content returned`
+      `Link metadata: Failed to fetch ${url}: No content returned`,
     );
   }
 
@@ -98,7 +98,7 @@ async function parseDocument(url: string, language: string) {
 
 export async function getLinkMetadata(
   url: string,
-  language: string = "en-US,en"
+  language: string = "en-US,en",
 ) {
   try {
     const metadata = await parseDocument(url, language);
@@ -118,7 +118,7 @@ export async function getLinkMetadata(
     };
   } catch (error) {
     console.error(
-      `Link metadata: Failed to fetch metadata for ${url}: ${error}`
+      `Link metadata: Failed to fetch metadata for ${url}: ${error}`,
     );
     return null;
   }
