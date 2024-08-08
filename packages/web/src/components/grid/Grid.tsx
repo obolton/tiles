@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import ImageTile from "@/components/tiles/ImageTile";
+import VideoTile from "@/components/tiles/VideoTile";
 import TextTile from "@/components/tiles/TextTile";
 import PlaceTile from "@/components/tiles/PlaceTile";
 import LinkTile from "@/components/tiles/LinkTile";
@@ -24,6 +25,8 @@ function getTileComponent(tile: ClientTile) {
   switch (type) {
     case "IMAGE":
       return <ImageTile key={tile.id} tile={tile} />;
+    case "VIDEO":
+      return <VideoTile key={tile.id} tile={tile} />;
     case "TEXT":
       return <TextTile key={tile.id} tile={tile} />;
     case "PLACE":
