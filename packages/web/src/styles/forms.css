@@ -13,7 +13,8 @@ label {
 }
 
 input[type="text"],
-input[type="email"] {
+input[type="email"],
+input[type="url"] {
   display: block;
   padding: 8px;
   margin: 0;
@@ -32,18 +33,21 @@ input[type="email"] {
 }
 
 label > input[type="text"],
-label > input[type="email"] {
+label > input[type="email"],
+label > input[type="url"] {
   margin-top: 4px;
 }
 
 input[type="text"]:focus-visible,
-input[type="email"]:focus-visible {
+input[type="email"]:focus-visible,
+input[type="url"]:focus-visible {
   outline-width: 3px;
   outline-color: var(--focus-ring-color);
 }
 
 input[type="text"]:invalid,
-input[type="email"]:invalid {
+input[type="email"]:invalid,
+input[type="url"]:invalid {
   outline-width: 3px;
   outline-color: red;
 }
