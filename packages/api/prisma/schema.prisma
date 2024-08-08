@@ -81,6 +81,7 @@ model Page {
 
 enum TileType {
   IMAGE
+  VIDEO
   TEXT
   PLACE
   LINK
@@ -100,6 +101,7 @@ model Tile {
   page     Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
   type     TileType
   image    ImageTile?
+  video    VideoTile?
   text     TextTile?
   place    PlaceTile?
   link     LinkTile?
@@ -120,6 +122,26 @@ model ImageTile {
   tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
 
   @@map("image_tiles")
+}
+
+enum VideoType {
+  YOUTUBE
+}
+
+model VideoTile {
+  id          String    @id @default(uuid()) @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  tileId      String    @unique @map("tile_id") @db.Uuid
+  videoType   VideoType @map("video_type")
+  videoId     String    @map("video_id")
+  imageUrl    String?   @map("image_url")
+  title       String
+  description String?
+
+  tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
+
+  @@map("video_tiles")
 }
 
 model TextTile {
