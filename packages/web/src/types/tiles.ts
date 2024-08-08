@@ -1,6 +1,7 @@
 export type {
   ClientTile,
   ClientImageTile,
+  ClientVideoTile,
   ClientTextTile,
   ClientPlaceTile,
   ClientLinkTile,
