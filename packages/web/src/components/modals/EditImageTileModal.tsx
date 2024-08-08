@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { uploadMedia } from "@/utils/media";
 import { getImageUrl } from "@/utils/images";
-import ModalHeader from "./ModalHeader";
 import ModalFooter from "./ModalFooter";
 import { createTile, updateTile } from "@/utils/edit";
 import styles from "./EditImageTileModal.module.css";
@@ -117,8 +116,6 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
 
   return (
     <form onSubmit={submit}>
-      <ModalHeader>Image</ModalHeader>
-
       <section
         className={`${styles.placeholder} ${isDragOver ? styles["drag-over"] : ""}`}
         onClick={selectImage}
