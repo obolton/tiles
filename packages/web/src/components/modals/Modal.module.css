@@ -1,9 +1,8 @@
 .modal {
   position: fixed;
-  backdrop-filter: blur(10px) saturate(70%);
   border-radius: 1.5rem;
   border: none;
-  background: rgb(255 255 255 / 90%);
+  background: #fff;
   box-shadow:
     0 10px 10px -8px rgb(0 0 0 / 30%),
     0 0 0 1px rgb(0 0 0 / 20%);
