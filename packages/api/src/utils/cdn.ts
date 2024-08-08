@@ -3,5 +3,9 @@ export function getProfileImageUrl(imageKey: string) {
 }
 
 export function getLinkImageUrl(tileId: string) {
-  return `${process.env.LINK_IMAGES_BASE_URL}/${tileId}`;
+  return `${process.env.RESOURCES_BASE_URL}/links/${tileId}`;
+}
+
+export function getVideoImageUrl(tileId: string) {
+  return `${process.env.RESOURCES_BASE_URL}/videos/${tileId}`;
 }
