@@ -15,7 +15,7 @@ async function parseDocument(url: string, language: string) {
     headers: {
       Accept: "text/html,application/xhtml+xml,application/xml",
       "Accept-Language": language,
-      "User-Agent": "Mozilla/5.0 (compatible)",
+      "User-Agent": "facebookexternalhit/1.1",
     },
   });
 
