@@ -25,6 +25,7 @@ const MODALS = {
   TEXT: null,
   HEADING: null,
   PAGE_LINK: null,
+  VIDEO: null,
 } satisfies Record<
   TileType,
   LazyExoticComponent<ComponentType<ModalProps>> | null
