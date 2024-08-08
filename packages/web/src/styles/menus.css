@@ -51,6 +51,7 @@ menu.vertical {
       text-align: inherit;
       font-weight: inherit;
       text-shadow: inherit;
+      color: inherit;
       background: none;
       border: none;
     }
