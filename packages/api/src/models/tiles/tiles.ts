@@ -1,5 +1,6 @@
 import prisma from "../../database/prisma.ts";
 import { createImageTile, updateImageTile } from "./image.ts";
+import { createVideoTile, updateVideoTile } from "./video.ts";
 import { createTextTile, updateTextTile } from "./text.ts";
 import { createPlaceTile, updatePlaceTile } from "./place.ts";
 import { createLinkTile, updateLinkTile } from "./link.ts";
@@ -21,6 +22,8 @@ export async function createTile(properties: CreateTileSchema) {
     switch (properties.type) {
       case "IMAGE":
         return createImageTile(tx, properties, position);
+      case "VIDEO":
+        return createVideoTile(tx, properties, position);
       case "TEXT":
         return createTextTile(tx, properties, position);
       case "PLACE":
@@ -39,6 +42,8 @@ export async function updateTile(properties: UpdateTileSchema) {
   switch (properties.type) {
     case "IMAGE":
       return updateImageTile(prisma, properties);
+    case "VIDEO":
+      return updateVideoTile(prisma, properties);
     case "TEXT":
       return updateTextTile(prisma, properties);
     case "PLACE":
