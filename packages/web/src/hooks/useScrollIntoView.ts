@@ -12,6 +12,10 @@ export default function useScrollIntoView(ref: React.RefObject<HTMLElement>) {
   const elementId = useSessionState(SCROLL_INTO_VIEW_KEY);
   useEffect(() => {
     if (elementId && elementId === ref.current?.id) {
+      const input = ref.current.querySelector<HTMLElement>(
+        'textarea, [role="textbox"]',
+      );
+      input?.focus({ preventScroll: true });
       ref.current.scrollIntoView({ behavior: "smooth" });
       remove(SCROLL_INTO_VIEW_KEY);
     }
