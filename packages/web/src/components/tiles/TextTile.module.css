@@ -23,10 +23,11 @@
 
 .color-picker {
   position: absolute;
-  left: 8px;
-  bottom: 8px;
+  left: -16px;
+  bottom: -16px;
   opacity: 0;
   transition: opacity 0.2s ease;
+  z-index: 2;
 }
 
 .editor:focus-within ~ .color-picker {
