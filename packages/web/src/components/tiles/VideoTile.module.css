@@ -1,0 +1,70 @@
+.figure {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.figure > figcaption {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  padding: calc(0.75rem - 1px) 1rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1rlh;
+  white-space: pre-line;
+  text-shadow: 0 1px 1px rgb(255 255 255 / 15%);
+  background: oklch(from var(--page-color) l calc(c * 1.5) h / 50%);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -1px 0 0 rgb(0 0 0 / 20%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+[data-lightbox] .figure {
+  overflow: visible;
+}
+
+[data-lightbox] .video {
+  position: relative;
+}
+
+[data-lightbox] .figure > figcaption {
+  display: none;
+}
+
+.figure > figcaption > * {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.figure > figcaption p {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: rgba(0 0 0 / 70%);
+}
+
+.title {
+  font-size: 1rem;
+  line-height: 1rlh;
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+}
+
+@media (width < 640px) {
+  .figure > figcaption {
+    display: none;
+  }
+}
