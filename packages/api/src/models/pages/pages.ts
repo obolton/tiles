@@ -1,6 +1,10 @@
 import { Prisma } from "@prisma/client";
 import prisma from "@/database/prisma.ts";
-import { getProfileImageUrl, getLinkImageUrl } from "@/utils/cdn.ts";
+import {
+  getProfileImageUrl,
+  getLinkImageUrl,
+  getVideoImageUrl,
+} from "@/utils/cdn.ts";
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/models/tiles/pageLink.ts";
 import type {
   GetPageByIdSchema,
@@ -22,6 +26,16 @@ const TILES_FIELDS = {
       id: true,
       imageKey: true,
       caption: true,
+    },
+  },
+  video: {
+    select: {
+      id: true,
+      videoType: true,
+      videoId: true,
+      imageUrl: true,
+      title: true,
+      description: true,
     },
   },
   text: {
@@ -109,6 +123,15 @@ function formatTile({
         ...base,
         type,
         image: tile.image!,
+      };
+    case "VIDEO":
+      return {
+        ...base,
+        type,
+        video: {
+          ...tile.video!,
+          imageUrl: tile.video!.imageUrl ? getVideoImageUrl(id) : null,
+        },
       };
     case "TEXT":
       return {

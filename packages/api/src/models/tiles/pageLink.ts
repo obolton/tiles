@@ -20,6 +20,11 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
           imageKey: true,
         },
       },
+      video: {
+        select: {
+          title: true,
+        },
+      },
       text: {
         select: {
           content: true,
