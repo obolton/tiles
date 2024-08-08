@@ -15,6 +15,7 @@ export type TileProps = {
   tile: ClientTile;
   showBorder?: boolean;
   showInLightbox?: boolean;
+  fullWidth?: boolean;
   hue?: number | null;
 };
 
@@ -24,6 +25,7 @@ export default function Tile({
   hue,
   showBorder = true,
   showInLightbox = true,
+  fullWidth = false,
 }: TileProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isEditable = useEditable();
@@ -49,7 +51,7 @@ export default function Tile({
     <div
       id={tile.id}
       ref={ref}
-      className={`editable ${styles.tile} ${showBorder ? styles.border : ""} ${typeof hue === "number" ? styles.color : ""}`}
+      className={`editable ${styles.tile} ${showBorder ? styles.border : ""} ${typeof hue === "number" ? styles.color : ""} ${fullWidth ? styles["full-width"] : ""}`}
       style={
         {
           "--columns": tile.columns,

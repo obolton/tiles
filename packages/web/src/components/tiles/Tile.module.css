@@ -40,7 +40,12 @@
   box-shadow: none;
   grid-column: none;
   grid-row: none;
+  width: auto;
   height: 100%;
+
+  &.full-width {
+    flex: 1 0 auto;
+  }
 }
 
 [data-lightbox] .tile::after {
