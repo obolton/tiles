@@ -37,6 +37,22 @@ export const UpdateImageTileSchema =
   UpdateTileBaseSchema.merge(ImageTileBaseSchema);
 export type UpdateImageTileSchema = z.infer<typeof UpdateImageTileSchema>;
 
+// Video
+const VideoTileBaseSchema = z.object({
+  type: z.literal(TileType.VIDEO),
+  video: z.object({
+    url: z.string().url(),
+  }),
+});
+
+export const CreateVideoTileSchema =
+  CreateTileBaseSchema.merge(VideoTileBaseSchema);
+export type CreateVideoTileSchema = z.infer<typeof CreateVideoTileSchema>;
+
+export const UpdateVideoTileSchema =
+  UpdateTileBaseSchema.merge(VideoTileBaseSchema);
+export type UpdateVideoTileSchema = z.infer<typeof UpdateVideoTileSchema>;
+
 // Text
 
 const TextTileBaseSchema = z.object({
@@ -134,6 +150,7 @@ export type UpdatePageLinkTileSchema = z.infer<typeof UpdatePageLinkTileSchema>;
 
 export const CreateTileSchema = z.discriminatedUnion("type", [
   CreateImageTileSchema,
+  CreateVideoTileSchema,
   CreateTextTileSchema,
   CreatePlaceTileSchema,
   CreateLinkTileSchema,
@@ -146,6 +163,7 @@ export type CreateTileSchema = z.infer<typeof CreateTileSchema>;
 
 export const UpdateTileSchema = z.discriminatedUnion("type", [
   UpdateImageTileSchema,
+  UpdateVideoTileSchema,
   UpdateTextTileSchema,
   UpdatePlaceTileSchema,
   UpdateLinkTileSchema,
