@@ -1,5 +1,6 @@
 import type {
   ImageTile,
+  VideoTile,
   TextTile,
   PlaceTile,
   LinkTile,
@@ -11,6 +12,7 @@ import type {
 
 type TilePropertiesKey =
   | "image"
+  | "video"
   | "text"
   | "place"
   | "link"
@@ -18,6 +20,7 @@ type TilePropertiesKey =
   | "pageLink";
 type TileProperties =
   | ImageTile
+  | VideoTile
   | TextTile
   | PlaceTile
   | LinkTile
@@ -42,6 +45,7 @@ export type ClientThumbnailTile = Pick<
   "id" | "type" | "columns" | "rows"
 > & {
   image: Pick<ImageTile, "imageKey" | "caption"> | null;
+  video: Pick<VideoTile, "title"> | null;
   text: Pick<TextTile, "content" | "hue"> | null;
   place: Pick<PlaceTile, "name" | "lat" | "long" | "boundingBox"> | null;
   link: Pick<LinkTile, "title"> | null;
@@ -50,6 +54,7 @@ export type ClientThumbnailTile = Pick<
 };
 
 export type ClientImageTile = ClientTileType<"IMAGE", "image", ImageTile>;
+export type ClientVideoTile = ClientTileType<"VIDEO", "video", VideoTile>;
 export type ClientTextTile = ClientTileType<"TEXT", "text", TextTile>;
 export type ClientPlaceTile = ClientTileType<"PLACE", "place", PlaceTile>;
 export type ClientLinkTile = ClientTileType<"LINK", "link", LinkTile>;
@@ -72,6 +77,7 @@ export type ClientPageLinkTile = ClientTileType<
 >;
 export type ClientTile =
   | ClientImageTile
+  | ClientVideoTile
   | ClientTextTile
   | ClientPlaceTile
   | ClientLinkTile
