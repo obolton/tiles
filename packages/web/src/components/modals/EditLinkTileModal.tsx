@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import ModalHeader from "./ModalHeader";
+import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import { createTile, updateTile } from "@/utils/edit";
 import client from "@/api/client";
@@ -89,7 +90,7 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
     <form onSubmit={submit}>
       <ModalHeader>Link</ModalHeader>
 
-      <div className={styles["modal-body"]}>
+      <ModalBody>
         <label>
           Link URL
           <input
@@ -114,7 +115,7 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
             ))}
           </ol>
         </div>
-      </div>
+      </ModalBody>
 
       <ModalFooter>
         <button className="primary" type="submit" aria-disabled={!url}>
