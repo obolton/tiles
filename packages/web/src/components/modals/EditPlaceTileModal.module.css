@@ -1,4 +1,44 @@
-.map {
-  width: 520px;
-  height: 400px;
+.input {
+  width: 100%;
+}
+
+.place-select {
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+  overflow: auto;
+  margin: 0 -24px;
+  padding: 0 16px;
+  background: none;
+  outline: none;
+  list-style: none;
+  transition: height 350ms ease;
+}
+
+.place-select:empty {
+  height: 0;
+}
+
+.place-select > li {
+  padding: 8px;
+  font-size: 1rem;
+  line-height: 1rlh;
+  background: none;
+  border: 1px solid transparent;
+  outline-offset: -4px;
+  outline: transparent solid 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    outline-width 0.2s ease-in-out,
+    outline-color 0.2s ease-in-out;
+}
+
+.place-select > li:hover {
+  background: rgb(0 0 0 / 5%);
+  border-color: rgb(0 0 0 / 50%);
+}
+
+.description {
+  color: rgba(0 0 0 / 50%);
 }
