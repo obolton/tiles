@@ -14,7 +14,8 @@ label {
 
 input[type="text"],
 input[type="email"],
-input[type="url"] {
+input[type="url"],
+input[type="search"] {
   display: block;
   padding: 8px;
   margin: 0;
@@ -34,20 +35,23 @@ input[type="url"] {
 
 label > input[type="text"],
 label > input[type="email"],
-label > input[type="url"] {
+label > input[type="url"],
+label > input[type="search"] {
   margin-top: 4px;
 }
 
 input[type="text"]:focus-visible,
 input[type="email"]:focus-visible,
-input[type="url"]:focus-visible {
+input[type="url"]:focus-visible,
+input[type="search"]:focus-visible {
   outline-width: 3px;
   outline-color: var(--focus-ring-color);
 }
 
 input[type="text"]:invalid,
 input[type="email"]:invalid,
-input[type="url"]:invalid {
+input[type="url"]:invalid,
+input[type="search"]:invalid {
   outline-width: 3px;
   outline-color: red;
 }
