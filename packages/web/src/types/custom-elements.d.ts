@@ -15,5 +15,11 @@ declare namespace JSX {
       src: string;
       imagesrc?: string;
     };
+    "profile-image": {
+      id?: string;
+      class?: string;
+      src?: string | null;
+      name?: string | null;
+    };
   }
 }
