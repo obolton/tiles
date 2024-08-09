@@ -1,5 +1,5 @@
 export default class PopoverMenu extends HTMLElement {
-  static observedAttributes = ["anchor", "align"];
+  static observedAttributes = ["anchor", "align"] as const;
 
   private state: "open" | "closed" = "closed";
   private anchor: HTMLElement | null = null;
@@ -48,7 +48,11 @@ export default class PopoverMenu extends HTMLElement {
     }
   }
 
-  attributeChangedCallback(name: string, _: string, value: string) {
+  attributeChangedCallback(
+    name: (typeof PopoverMenu.observedAttributes)[number],
+    _: string,
+    value: string,
+  ) {
     switch (name) {
       case "anchor":
         this.anchor = value ? document.getElementById(value) : null;
