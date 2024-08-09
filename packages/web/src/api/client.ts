@@ -1,5 +1,9 @@
 import { createTRPCClient, httpLink } from "@trpc/client";
-import type { AppRouter, AppRouterInputs } from "api/src/router/index.ts";
+import type {
+  AppRouter,
+  AppRouterInputs,
+  AppRouterOutputs,
+} from "api/src/router/index.ts";
 
 // TODO: Split into browser and Node clients
 const client = createTRPCClient<AppRouter>({
@@ -25,6 +29,6 @@ const client = createTRPCClient<AppRouter>({
   ],
 });
 
-export type { AppRouterInputs };
+export type { AppRouterInputs, AppRouterOutputs };
 
 export default client;
