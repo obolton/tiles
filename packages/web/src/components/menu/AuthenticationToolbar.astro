@@ -15,8 +15,8 @@ import signOutIcon from "@/icons/sign-out.svg";
     <Toolbar id="user" label="Account toolbar" slot="back">
       <data-binding href="user.profile">
         <a href="/profiles">
-          <data-binding src="user.imageUrl">
-            <img class="profile" src="data:," alt="Your profile picture" />
+          <data-binding src="user.imageUrl" name="user.name">
+            <profile-image></profile-image>
           </data-binding>
           <data-binding text="user.name"><span></span></data-binding>
         </a>

@@ -27,13 +27,8 @@ if (!user) {
   <form id="settings-form" class="vertical">
     <input type="hidden" name="id" value={user.id} />
 
-    {
-      user.imageUrl ? (
-        <img class="profile large" src={user.imageUrl} alt="Profile picture" />
-      ) : (
-        <div class="profile-image-placeholder large">{user.name.charAt(0)}</div>
-      )
-    }
+    <profile-image class="large" src={user.imageUrl} name={user.name}>
+    </profile-image>
 
     <label>
       Name
