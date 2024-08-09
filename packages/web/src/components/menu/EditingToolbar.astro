@@ -1,5 +1,4 @@
 ---
-import Toolbar from "./Toolbar.astro";
 import Switch from "../inputs/Switch.astro";
 import moreIcon from "@/icons/more.svg";
 import trashIcon from "@/icons/trash.svg";
@@ -11,7 +10,12 @@ interface Props {
 const { allowDelete = true } = Astro.props;
 ---
 
-<Toolbar id="editing-toolbar" label="Editing toolbar">
+<div
+  id="editing-toolbar"
+  class="floating-toolbar"
+  role="toolbar"
+  aria-label="Editing toolbar"
+>
   <Switch id="editSwitch" label="Edit" />
   <button
     type="button"
@@ -47,7 +51,7 @@ const { allowDelete = true } = Astro.props;
       </li>
     </menu>
   </popover-menu>
-</Toolbar>
+</div>
 <style is:global>
   body:not([data-signed-in]) #editing-toolbar {
     display: none;
