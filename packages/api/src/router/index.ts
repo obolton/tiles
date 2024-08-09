@@ -4,6 +4,7 @@ import pagesRouter from "./pages.ts";
 import mediaRouter from "./media.ts";
 import tilesRouter from "./tiles.ts";
 import usersRouter from "./users.ts";
+import placesRouter from "./places.ts";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 const appRouter = router({
@@ -12,6 +13,7 @@ const appRouter = router({
   media: mediaRouter,
   tiles: tilesRouter,
   users: usersRouter,
+  places: placesRouter,
 });
 
 export type AppRouter = typeof appRouter;
