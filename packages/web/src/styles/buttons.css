@@ -129,7 +129,7 @@ button.floating {
 
 /* Toolbar buttons */
 
-.toolbar > button {
+.floating-toolbar > button {
   width: 32px;
   height: 32px;
   display: flex;
