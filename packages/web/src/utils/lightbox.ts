@@ -4,13 +4,13 @@ let lightbox: HTMLDialogElement | null = null;
 let currentIndex = 0;
 
 function intersectionObserverCallback(entries: IntersectionObserverEntry[]) {
-  if (!lightbox?.firstChild) {
+  if (!lightbox?.firstElementChild) {
     return null;
   }
   for (const entry of entries) {
     if (entry.isIntersecting) {
       currentIndex = Array.prototype.indexOf.call(
-        lightbox.firstChild.childNodes,
+        lightbox.firstElementChild.children,
         entry.target,
       );
       return;
@@ -126,12 +126,21 @@ function createItem(element: Element) {
 }
 
 function itemClick(event: MouseEvent) {
-  event.preventDefault();
   event.stopPropagation();
-  (event.currentTarget as Element).scrollIntoView({
-    behavior: "smooth",
-    block: "center",
-  });
+
+  const element = event.currentTarget as Element;
+  const index = Array.prototype.indexOf.call(
+    element.parentElement?.children,
+    element,
+  );
+
+  // Scroll item into view
+  if (index !== currentIndex) {
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }
 }
 
 function keyDown(event: KeyboardEvent) {
