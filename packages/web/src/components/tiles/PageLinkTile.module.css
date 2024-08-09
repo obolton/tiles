@@ -40,7 +40,7 @@
   font-size: 2rem;
   font-weight: 600;
   line-height: 2rlh;
-  margin: 0 0 1rem;
+  margin: 0 0 0.5rem;
 }
 
 .page h3,
@@ -110,4 +110,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
 }

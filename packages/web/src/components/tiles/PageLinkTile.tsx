@@ -66,6 +66,7 @@ function getTileComponent(tile: ClientThumbnailTile) {
       return tile.place ? (
         <ThumbnailTile key={tile.id} {...tile} padding={false}>
           <map-view
+            class={styles.map}
             lat={tile.place.lat}
             long={tile.place.long}
             bounds={tile.place.boundingBox.join(",")}
