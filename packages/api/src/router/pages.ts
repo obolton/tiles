@@ -3,6 +3,7 @@ import { router, procedure } from "./trpc.ts";
 import {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
+  GetRecentPagesWithTilesSchema,
   CreatePageSchema,
   UpdatePageSchema,
   DeletePageSchema,
@@ -11,6 +12,7 @@ import {
   getPageById,
   getProfilePageByUserId,
   getRecentPages,
+  getRecentPagesWithTiles,
   createPage,
   updatePage,
   deletePage,
@@ -36,6 +38,16 @@ export default router({
     const pages = await getRecentPages(ctx.user.id);
     return pages;
   }),
+
+  getRecentWithTiles: procedure
+    .input(GetRecentPagesWithTilesSchema)
+    .query(async ({ input, ctx }) => {
+      if (!ctx.user) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      const pages = await getRecentPagesWithTiles(ctx.user.id, input);
+      return pages;
+    }),
 
   create: procedure.input(CreatePageSchema).mutation(async ({ input, ctx }) => {
     if (!ctx.user) {

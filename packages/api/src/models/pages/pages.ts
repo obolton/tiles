@@ -9,6 +9,7 @@ import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/models/tiles/pageLink.ts";
 import type {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
+  GetRecentPagesWithTilesSchema,
   CreatePageSchema,
   UpdatePageSchema,
   DeletePageSchema,
@@ -246,6 +247,26 @@ export async function getRecentPages(userId: string) {
     take: 10,
   });
   return pages;
+}
+
+export async function getRecentPagesWithTiles(
+  userId: string,
+  { offset }: GetRecentPagesWithTilesSchema,
+) {
+  const count = 15;
+  const pages = await prisma.page.findMany({
+    where: { authorId: userId },
+    select: PAGE_LINK_TILE_PAGE_FIELDS,
+    orderBy: {
+      updatedAt: "desc",
+    },
+    take: count + 1,
+    skip: offset,
+  });
+  return {
+    pages: pages.slice(0, count),
+    hasMore: pages.length > count,
+  };
 }
 
 export async function createPage(
