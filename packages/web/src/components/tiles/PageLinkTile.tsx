@@ -65,13 +65,7 @@ function getTileComponent(tile: ClientThumbnailTile) {
     case "PLACE":
       return tile.place ? (
         <ThumbnailTile key={tile.id} {...tile} padding={false}>
-          <map-view
-            class={styles.map}
-            lat={tile.place.lat}
-            long={tile.place.long}
-            bounds={tile.place.boundingBox.join(",")}
-            label={tile.place.name}
-          />
+          {tile.place.name}
         </ThumbnailTile>
       ) : null;
     case "LINK":
