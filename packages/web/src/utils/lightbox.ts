@@ -1,4 +1,11 @@
-import { appearFrom, moveFrom, moveTo, fadeOut } from "./animation/effects";
+import {
+  appearFrom,
+  disappearTo,
+  moveFrom,
+  moveTo,
+  fadeOut,
+} from "./animation/effects";
+import { scrollIntoViewIfNeeded } from "./scroll";
 
 let lightbox: HTMLDialogElement | null = null;
 let currentIndex = 0;
@@ -58,12 +65,27 @@ function openLightbox(element: Element) {
       observer.disconnect();
 
       // Animate out the visible items
-      const visible = list.children[currentIndex];
+      const visible = list.children[currentIndex]?.firstElementChild;
       const previous = list.children[currentIndex - 1];
       const next = list.children[currentIndex + 1];
 
-      if (visible.firstElementChild) {
-        fadeOut(visible.firstElementChild);
+      if (visible) {
+        const relatedId = visible.getAttribute("data-related");
+        const related = relatedId ? document.getElementById(relatedId) : null;
+        if (related) {
+          scrollIntoViewIfNeeded(related, {
+            behavior: "instant",
+            block: "center",
+          });
+          requestAnimationFrame(() => {
+            disappearTo(visible, {
+              destination: related,
+              startClipPath: "inset(0 -20vw 0 0)",
+            });
+          });
+        } else {
+          fadeOut(visible);
+        }
       }
       if (previous) {
         moveTo(previous, { y: "-5vh" });
@@ -113,11 +135,14 @@ function createItem(element: Element) {
   const content = element.cloneNode(true) as HTMLElement;
   content.classList.remove("editable");
 
-  // Clear attributes
+  // Clear data attributes
   for (const attribute in content.dataset) {
     delete content.dataset[attribute];
   }
   content.removeAttribute("style");
+
+  content.dataset.related = element.id;
+  content.removeAttribute("id");
 
   const item = document.createElement("li");
   item.addEventListener("click", itemClick);
