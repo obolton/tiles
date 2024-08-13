@@ -71,6 +71,7 @@ export type ClientPageLinkTile = ClientTileType<
       title: string;
       subtitle: string | null;
       hue: number | null;
+      font: string | null;
       tiles: ClientThumbnailTile[];
     } | null;
   }

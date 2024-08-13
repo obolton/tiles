@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import type { Font } from "@prisma/client";
 import prisma from "@/database/prisma.ts";
 import {
   getProfileImageUrl,
@@ -89,6 +90,7 @@ const PAGE_FIELDS = {
   title: true,
   subtitle: true,
   hue: true,
+  font: true,
   author: {
     select: {
       id: true,
@@ -175,6 +177,7 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   title: string;
   subtitle: string | null;
   hue: number | null;
+  font: Font;
   author: {
     id: string;
     name: string;
@@ -351,10 +354,11 @@ export async function updatePage({
   title,
   subtitle,
   hue,
+  font,
 }: UpdatePageSchema) {
   return prisma.page.update({
     where: { id },
-    data: { title, subtitle, hue },
+    data: { title, subtitle, hue, font },
     select: {
       id: true,
       createdAt: true,
@@ -363,6 +367,7 @@ export async function updatePage({
       title: true,
       subtitle: true,
       hue: true,
+      font: true,
     },
   });
 }

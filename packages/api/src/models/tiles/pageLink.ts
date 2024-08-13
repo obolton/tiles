@@ -9,6 +9,7 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
   title: true,
   subtitle: true,
   hue: true,
+  font: true,
   tiles: {
     select: {
       id: true,
