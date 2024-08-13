@@ -104,7 +104,8 @@ del,
   color: var(--destructive-color);
 }
 
-data-binding {
+data-binding,
+infinite-scroll {
   display: contents;
 }
 
