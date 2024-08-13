@@ -1,6 +1,7 @@
 ---
 import Flippable from "../Flippable.astro";
 import profileIcon from "@/icons/profile.svg";
+import libraryIcon from "@/icons/library.svg";
 import settingsIcon from "@/icons/settings.svg";
 import signOutIcon from "@/icons/sign-out.svg";
 ---
@@ -44,6 +45,12 @@ import signOutIcon from "@/icons/sign-out.svg";
             Profile
           </a>
         </data-binding>
+      </li>
+      <li>
+        <a href="/library">
+          <img class="icon" src={libraryIcon.src} alt="" />
+          Library
+        </a>
       </li>
       <li>
         <a href="/settings">
