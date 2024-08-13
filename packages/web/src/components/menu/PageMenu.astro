@@ -14,8 +14,8 @@ const { pageId, allowDelete } = Astro.props;
 
 <div id="menubar" role="menubar" aria-label="Menu bar">
   <EditingToolbar allowDelete={allowDelete} />
-  <AuthenticationToolbar />
   <CreateTileToolbar pageId={pageId} client:edit />
+  <AuthenticationToolbar />
 </div>
 <FormattingToolbar pageId={pageId} client:edit />
 <NewPageButton />
