@@ -5,6 +5,7 @@
   --destructive-color: rgba(255 0 0 / 80%);
   --lightness: 90%;
   --chroma: 20%;
+  --ui-font: "Inter", system, sans-serif;
 }
 
 * {
@@ -18,10 +19,9 @@ html {
 }
 
 body {
-  color: var(--text-color);
-
   --page-color: #fff;
 
+  color: var(--text-color);
   background: var(--page-color);
 }
 
@@ -35,7 +35,7 @@ html,
 body,
 input,
 textarea {
-  font-family: system-ui, sans-serif;
+  font-family: var(--ui-font);
 }
 
 ol,
