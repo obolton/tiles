@@ -88,7 +88,7 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
 
   return (
     <form onSubmit={submit}>
-      <ModalHeader>Link</ModalHeader>
+      <ModalHeader>Add a link</ModalHeader>
 
       <ModalBody>
         <label>
