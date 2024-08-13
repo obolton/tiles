@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Font } from "@prisma/client";
 
 // Get by ID
 
@@ -38,6 +39,7 @@ export const UpdatePageSchema = z.object({
   title: z.string().min(1).optional(),
   subtitle: z.string().optional(),
   hue: z.number().gte(0).lte(360).optional(),
+  font: z.nativeEnum(Font).optional(),
 });
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
 
