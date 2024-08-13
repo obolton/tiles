@@ -5,6 +5,7 @@ import type {
 } from "./schema.ts";
 
 export const PAGE_LINK_TILE_PAGE_FIELDS = {
+  id: true,
   title: true,
   subtitle: true,
   hue: true,
