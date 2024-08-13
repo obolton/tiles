@@ -70,7 +70,7 @@ export function appearFrom(
     [
       {
         translate: `${translateX}px ${translateY}px`,
-        clipPath: `inset(${insetY}px ${insetX}px round ${borderRadius})`,
+        clipPath: `inset(${insetY}px ${insetX}px round calc(${borderRadius} / ${scale}))`,
         transform: `scale(${scale})`,
       },
       {
