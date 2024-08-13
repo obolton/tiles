@@ -21,5 +21,10 @@ declare namespace JSX {
       src?: string | null;
       name?: string | null;
     };
+    "infinite-scroll": {
+      id?: string;
+      ref?: React.RefObject<HTMLElement>;
+      children: JSX.Element | JSX.Element[];
+    };
   }
 }
