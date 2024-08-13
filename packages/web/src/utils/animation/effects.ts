@@ -84,6 +84,53 @@ export function appearFrom(
   return createAnimationPromise(animation);
 }
 
+export function disappearTo(
+  element: Element,
+  {
+    destination,
+    startClipPath = "inset(0)",
+    timing = { duration: 500, easing: "ease" },
+  }: { destination: Element; startClipPath?: string; timing?: EffectTiming },
+) {
+  const destinationRect = destination.getBoundingClientRect();
+  const destinationCenter = getCenter(destinationRect);
+  const rect = element.getBoundingClientRect();
+  const center = getCenter(rect);
+  const borderRadius =
+    getComputedStyle(destination).getPropertyValue("border-radius");
+
+  const translateX = destinationCenter.x - center.x;
+  const translateY = destinationCenter.y - center.y;
+
+  const scale = Math.max(
+    destinationRect.width / rect.width,
+    destinationRect.height / rect.height,
+  );
+
+  const scaledWidth = destinationRect.width / scale;
+  const scaledHeight = destinationRect.height / scale;
+
+  const insetX = (rect.width - scaledWidth) / 2;
+  const insetY = (rect.height - scaledHeight) / 2;
+
+  const animation = element.animate(
+    [
+      {
+        translate: "none",
+        clipPath: startClipPath,
+        transform: "scale(1)",
+      },
+      {
+        translate: `${translateX}px ${translateY}px`,
+        clipPath: `inset(${insetY}px ${insetX}px round calc(${borderRadius} / ${scale}))`,
+        transform: `scale(${scale})`,
+      },
+    ],
+    timing,
+  );
+  return createAnimationPromise(animation);
+}
+
 export function moveFrom(
   element: Element,
   {
