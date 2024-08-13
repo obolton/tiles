@@ -60,6 +60,12 @@ model Session {
   @@map("sessions")
 }
 
+enum Font {
+  SANS_SERIF
+  SERIF
+  MONOSPACE
+}
+
 model Page {
   id        String   @id @default(uuid()) @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
@@ -68,6 +74,7 @@ model Page {
   title     String
   subtitle  String?
   hue       Float?   @db.Real
+  font      Font     @default(SANS_SERIF)
 
   author        User           @relation("Pages", fields: [authorId], references: [id], onDelete: Cascade)
   profileUser   User?          @relation("ProfilePage")
