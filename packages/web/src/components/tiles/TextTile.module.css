@@ -8,7 +8,7 @@
 
   & ol,
   & ul {
-    margin-left: 24px;
+    margin-left: 1.5em;
     list-style-position: outside;
   }
 
@@ -19,6 +19,10 @@
   & ul {
     list-style-type: disc;
   }
+}
+
+[data-font="MONOSPACE"] .text ol {
+  margin-left: 2.2em;
 }
 
 .color-picker {
