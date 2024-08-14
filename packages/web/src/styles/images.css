@@ -17,6 +17,7 @@ profile-image {
   }
 
   &::part(placeholder) {
+    font-family: var(--ui-font);
     text-decoration: none;
   }
 
