@@ -64,3 +64,15 @@ input::placeholder,
 textarea::placeholder {
   color: rgba(0 0 0 / 40%);
 }
+
+swatch-item {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transform-origin: left center;
+  transform: scale(1);
+  transition: transform 100ms ease;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+}
