@@ -39,6 +39,6 @@ export interface ListItemNode extends BaseNode {
 
 export type BlockNode = ParagraphNode | ListNode | ListItemNode;
 
-export type BlockNodeType = BlockNode["type"];
+export type RootNode = ParagraphNode | ListNode;
 
-export type RichText = BlockNode[];
+export type RichText = RootNode[];
