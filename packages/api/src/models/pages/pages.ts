@@ -163,13 +163,45 @@ function formatTile({
         type,
         heading: tile.heading!,
       };
-    case "PAGE_LINK":
+    case "PAGE_LINK": {
+      const pageLink = tile.pageLink;
+      const page = pageLink?.page;
+      if (!pageLink) {
+        throw new Error("Page link tile missing page info");
+      }
       return {
         ...base,
         type,
-        pageLink: tile.pageLink!,
+        pageLink: {
+          id: pageLink.id,
+          pageId: pageLink.pageId,
+          page: page
+            ? {
+                title: page.title,
+                subtitle: page.subtitle,
+                hue: page.hue,
+                font: page.font,
+                author: formatAuthor(page.author),
+                imageKey: page.tiles[0]?.image?.imageKey ?? null,
+              }
+            : null,
+        },
       };
+    }
   }
+}
+
+function formatAuthor({
+  name,
+  imageKey,
+}: {
+  name: string;
+  imageKey: string | null;
+}) {
+  return {
+    name,
+    imageUrl: imageKey ? getProfileImageUrl(imageKey) : null,
+  };
 }
 
 export async function getPageById({ id }: GetPageByIdSchema): Promise<{
@@ -267,7 +299,15 @@ export async function getRecentPagesWithTiles(
     skip: offset,
   });
   return {
-    pages: pages.slice(0, count),
+    pages: pages.slice(0, count).map((page) => ({
+      id: page.id,
+      title: page.title,
+      subtitle: page.subtitle,
+      hue: page.hue,
+      font: page.font,
+      author: formatAuthor(page.author),
+      imageKey: page.tiles[0]?.image?.imageKey ?? null,
+    })),
     hasMore: pages.length > count,
   };
 }

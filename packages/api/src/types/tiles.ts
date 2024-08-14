@@ -40,19 +40,6 @@ type ClientTileType<
   >;
 };
 
-export type ClientThumbnailTile = Pick<
-  Tile,
-  "id" | "type" | "columns" | "rows"
-> & {
-  image: Pick<ImageTile, "imageKey" | "caption"> | null;
-  video: Pick<VideoTile, "title"> | null;
-  text: Pick<TextTile, "content" | "hue"> | null;
-  place: Pick<PlaceTile, "name" | "lat" | "long" | "boundingBox"> | null;
-  link: Pick<LinkTile, "title"> | null;
-  heading: Pick<HeadingTile, "content"> | null;
-  pageLink: Pick<PageLinkTile, "pageId"> | null;
-};
-
 export type ClientImageTile = ClientTileType<"IMAGE", "image", ImageTile>;
 export type ClientVideoTile = ClientTileType<"VIDEO", "video", VideoTile>;
 export type ClientTextTile = ClientTileType<"TEXT", "text", TextTile>;
@@ -70,9 +57,10 @@ export type ClientPageLinkTile = ClientTileType<
     page: {
       title: string;
       subtitle: string | null;
+      author: { name: string; imageUrl: string | null };
       hue: number | null;
       font: string | null;
-      tiles: ClientThumbnailTile[];
+      imageKey: string | null;
     } | null;
   }
 >;

@@ -10,57 +10,25 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
   subtitle: true,
   hue: true,
   font: true,
-  tiles: {
+  author: {
     select: {
-      id: true,
-      type: true,
-      rows: true,
-      columns: true,
+      name: true,
+      imageKey: true,
+    },
+  },
+  tiles: {
+    where: { type: "IMAGE" },
+    select: {
       image: {
         select: {
-          caption: true,
           imageKey: true,
-        },
-      },
-      video: {
-        select: {
-          title: true,
-        },
-      },
-      text: {
-        select: {
-          content: true,
-          hue: true,
-        },
-      },
-      link: {
-        select: {
-          title: true,
-        },
-      },
-      place: {
-        select: {
-          name: true,
-          lat: true,
-          long: true,
-          boundingBox: true,
-        },
-      },
-      heading: {
-        select: {
-          content: true,
-        },
-      },
-      pageLink: {
-        select: {
-          pageId: true,
         },
       },
     },
     orderBy: {
       position: "asc",
     },
-    take: 6,
+    take: 1,
   },
 } as const;
 
