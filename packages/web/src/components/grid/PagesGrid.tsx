@@ -5,8 +5,10 @@ import PageLinkTile from "@/components/tiles/PageLinkTile";
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Grid.module.css";
 
+type Pages = AppRouterOutputs["pages"]["getRecentWithTiles"];
+
 interface PagesGridProps {
-  pages: AppRouterOutputs["pages"]["getRecentWithTiles"];
+  pages: Pages;
 }
 
 export default function PagesGrid({ pages: initialPages }: PagesGridProps) {
