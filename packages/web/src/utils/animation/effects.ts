@@ -131,6 +131,29 @@ export function disappearTo(
   return createAnimationPromise(animation);
 }
 
+export function move(
+  element: Element,
+  {
+    fromX = "0",
+    fromY = "0",
+    toX = "0",
+    toY = "0",
+    timing = { duration: 500, easing: "ease" },
+  }: {
+    fromX?: string;
+    fromY?: string;
+    toX?: string;
+    toY?: string;
+    timing?: EffectTiming;
+  },
+) {
+  const animation = element.animate(
+    [{ translate: `${fromX} ${fromY}` }, { translate: `${toX} ${toY}` }],
+    timing,
+  );
+  return createAnimationPromise(animation);
+}
+
 export function moveFrom(
   element: Element,
   {
@@ -161,10 +184,30 @@ export function moveTo(
   return createAnimationPromise(animation);
 }
 
+export function fadeIn(
+  element: Element,
+  { timing = DEFAULT_TIMING } = { timing: DEFAULT_TIMING },
+) {
+  const animation = element.animate(
+    [
+      { opacity: 0, filter: "blur(3px)" },
+      { opacity: 1, filter: "blur(0)" },
+    ],
+    timing,
+  );
+  return createAnimationPromise(animation);
+}
+
 export function fadeOut(
   element: Element,
   { timing = DEFAULT_TIMING } = { timing: DEFAULT_TIMING },
 ) {
-  const animation = element.animate([{ opacity: 1 }, { opacity: 0 }], timing);
+  const animation = element.animate(
+    [
+      { opacity: 1, filter: "blur(0)" },
+      { opacity: 0, filter: "blur(3px)" },
+    ],
+    timing,
+  );
   return createAnimationPromise(animation);
 }
