@@ -80,7 +80,7 @@ function animatePosition(element: HTMLElement) {
     ],
     {
       duration: 500,
-      easing: "ease-in-out",
+      easing: "ease",
     },
   );
   animation.addEventListener(
