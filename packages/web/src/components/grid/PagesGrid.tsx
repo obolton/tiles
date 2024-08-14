@@ -56,11 +56,11 @@ export default function PagesGrid({ pages: initialPages }: PagesGridProps) {
           <PageLinkTile
             key={page.id}
             tile={{
-              position: i,
-              id: "",
+              id: page.id,
+              type: "PAGE_LINK",
               rows: 1,
               columns: 1,
-              type: "PAGE_LINK",
+              position: i,
               pageLink: { pageId: page.id, page },
             }}
           />
