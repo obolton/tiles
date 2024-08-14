@@ -23,8 +23,23 @@ declare namespace JSX {
     };
     "infinite-scroll": {
       id?: string;
-      ref?: React.RefObject<HTMLElement>;
+      ref?: React.RefObject;
       children: JSX.Element | JSX.Element[];
+    };
+    "swatch-select": {
+      id?: string;
+      class?: string;
+      ref?: React.RefObject;
+      children: JSX.Element | JSX.Element[];
+    };
+    "swatch-item": {
+      key?: string;
+      id?: string;
+      class?: string;
+      style?: React.CSSProperties;
+      ref?: React.RefObject;
+      value: string;
+      children?: string | JSX.Element | JSX.Element[];
     };
   }
 }

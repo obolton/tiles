@@ -1,0 +1,84 @@
+:host {
+  position: relative;
+
+  --animation-duration: 400ms;
+  --animation-timing: ease;
+}
+
+button {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    inset 0 0 0 1px rgba(0 0 0 / 20%),
+    0 4px 4px -2px rgb(0 0 0 / 20%);
+  transition: transform var(--animation-duration) var(--animation-timing);
+
+  & > img,
+  & ::slotted(img) {
+    position: absolute;
+    top: calc(50% - 12px);
+    left: calc(50% - 12px);
+    width: 24px;
+    height: 24px;
+    filter: drop-shadow(0 1px 1px rgba(0 0 0 / 40%));
+    transition:
+      opacity var(--animation-duration) var(--animation-timing),
+      transform var(--animation-duration) var(--animation-timing);
+  }
+
+  & > img {
+    opacity: 0;
+    transform: scale(0.7) rotateZ(-45deg);
+  }
+
+  & ::slotted(img) {
+    opacity: 0.9;
+  }
+
+  &[aria-pressed="true"] {
+    transform: scale(1.2) rotateZ(45deg);
+
+    & > img {
+      opacity: 0.9;
+      transform: scale(1) rotateZ(-45deg);
+    }
+
+    & ::slotted(img) {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-color) solid 3px;
+    outline-offset: -1px;
+  }
+}
+
+#items {
+  position: absolute;
+  top: 0;
+  left: 22px;
+  height: 100%;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  clip-path: inset(-20px -20px -20px 0);
+
+  &.hidden {
+    display: none;
+  }
+}

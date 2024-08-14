@@ -5,6 +5,8 @@ import MapView from "./maps/MapView";
 import EmbeddedVideo from "./video/EmbeddedVideo";
 import ProfileImage from "./ProfileImage";
 import InfiniteScroll from "./InfiniteScroll";
+import SwatchSelect from "./inputs/SwatchSelect";
+import SwatchItem from "./inputs/SwatchItem";
 
 customElements.define("data-binding", DataBinding);
 customElements.define("popover-menu", PopoverMenu);
@@ -13,3 +15,5 @@ customElements.define("map-view", MapView);
 customElements.define("embedded-video", EmbeddedVideo);
 customElements.define("profile-image", ProfileImage);
 customElements.define("infinite-scroll", InfiniteScroll);
+customElements.define("swatch-select", SwatchSelect);
+customElements.define("swatch-item", SwatchItem);
