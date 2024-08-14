@@ -105,7 +105,7 @@ export default function PageLinkTile({ tile }: PageLinkTileProps) {
   const { title, subtitle, tiles } = page;
 
   return (
-    <Tile tile={tile} showInLightbox={false} hue={page.hue}>
+    <Tile tile={tile} showInLightbox={false} hue={page.hue} font={page.font}>
       {/* eslint-disable-next-line react/jsx-no-target-blank */}
       <a className={styles.page} href={`/pages/${pageId}`} target="_blank">
         <h3>{title}</h3>

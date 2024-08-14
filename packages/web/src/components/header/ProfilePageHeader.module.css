@@ -9,6 +9,7 @@
   flex-direction: column;
   justify-content: center;
   flex: 1;
+  font-family: var(--font);
 }
 
 .subtitle {

@@ -17,12 +17,14 @@ export type TileProps = {
   showInLightbox?: boolean;
   fullWidth?: boolean;
   hue?: number | null;
+  font?: string | null;
 };
 
 export default function Tile({
   tile,
   children,
   hue,
+  font,
   showBorder = true,
   showInLightbox = true,
   fullWidth = false,
@@ -65,6 +67,7 @@ export default function Tile({
       data-tile-id={tile.id}
       data-tile={JSON.stringify(tile)}
       data-show-in-lightbox={showInLightbox ? "true" : undefined}
+      data-font={font}
     >
       {children}
       {isEditable ? (
