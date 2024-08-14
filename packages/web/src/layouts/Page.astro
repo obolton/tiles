@@ -16,9 +16,10 @@ interface Props {
   id?: string;
   title: string;
   hue?: number | null;
+  font?: "SANS_SERIF" | "SERIF" | "MONOSPACE";
 }
 
-const { id, title, hue } = Astro.props;
+const { id, title, hue, font } = Astro.props;
 ---
 
 <!doctype html>
@@ -39,6 +40,7 @@ const { id, title, hue } = Astro.props;
   <body
     data-page-id={id}
     data-disable-transitions="true"
+    data-font={font}
     class={typeof hue === "number" ? "color" : undefined}
     style={typeof hue === "number"
       ? {
