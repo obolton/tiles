@@ -25,6 +25,15 @@ body {
   background: var(--page-color);
 }
 
+body.light {
+  --page-color: #fff;
+}
+
+body.dark {
+  --page-color: #202020;
+  --text-color: rgba(255 255 255 / 80%);
+}
+
 body.color {
   --page-color: oklch(var(--lightness) var(--chroma) var(--page-hue));
 
