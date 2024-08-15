@@ -68,12 +68,13 @@
   font-size: 18px;
   line-height: 18px;
   font-weight: 500;
+  color: var(--ui-color);
   text-shadow: 0 1px 0 rgb(0 0 0 / 10%);
   padding: 0 24px;
   border-radius: 24px;
   background: linear-gradient(
-    oklch(from var(--page-color) 100% 0% h),
-    oklch(from var(--page-color) 100% 20% h)
+    hsl(from var(--page-color) h s 100%),
+    hsl(from var(--page-color) h s 95%)
   );
   box-shadow:
     0 0 0 1px rgba(0 0 0 / 20%),
@@ -109,8 +110,5 @@
 }
 
 .font::part(button) {
-  background: linear-gradient(
-    oklch(from var(--page-color) 60% 50% h),
-    oklch(from var(--page-color) 50% 50% h)
-  );
+  background: var(--accent);
 }
