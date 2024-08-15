@@ -27,7 +27,13 @@ export default function PageLinkTile({ tile }: PageLinkTileProps) {
   const { title, subtitle, author, imageKey } = page;
 
   return (
-    <Tile tile={tile} showInLightbox={false} hue={page.hue} font={page.font}>
+    <Tile
+      tile={tile}
+      showInLightbox={false}
+      theme={page.theme as "LIGHT" | "DARK" | "COLOR"}
+      hue={page.hue}
+      font={page.font}
+    >
       {imageKey ? (
         <img
           className={styles.image}
@@ -38,7 +44,11 @@ export default function PageLinkTile({ tile }: PageLinkTileProps) {
       ) : null}
 
       {/* eslint-disable-next-line react/jsx-no-target-blank */}
-      <a className={styles.contents} href={`/pages/${pageId}`} target="_blank">
+      <a
+        className={`${styles.contents} ${page.theme === "LIGHT" ? styles.light : page.theme === "DARK" ? styles.dark : styles.color}`}
+        href={`/pages/${pageId}`}
+        target="_blank"
+      >
         <Icon src={arrowOutwardIcon.src} className={styles.icon} />
 
         <section
