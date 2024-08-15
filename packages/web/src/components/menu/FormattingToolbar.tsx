@@ -39,12 +39,36 @@ export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
 
   const setColor = useCallback(
     async (event: Event) => {
-      const hue = parseFloat((event.target as SwatchSelect).value);
-      document.body.style.setProperty("--page-hue", `${hue.toFixed(2)}deg`);
-      document.body.classList.add("color");
+      const value = (event.target as SwatchSelect).value;
+      const [theme, hue] = value.split(":") as
+        | ["DARK" | "LIGHT"]
+        | ["COLOR", string];
+      switch (theme) {
+        case "LIGHT":
+          document.body.classList.add("light");
+          document.body.classList.remove("dark");
+          document.body.classList.remove("color");
+          document.body.style.removeProperty("--page-hue");
+          break;
+
+        case "DARK":
+          document.body.classList.add("dark");
+          document.body.classList.remove("light");
+          document.body.classList.remove("color");
+          document.body.style.removeProperty("--page-hue");
+          break;
+
+        case "COLOR":
+          document.body.classList.add("color");
+          document.body.classList.remove("light");
+          document.body.classList.remove("dark");
+          document.body.style.setProperty("--page-hue", `${hue}deg`);
+          break;
+      }
       await client.pages.update.mutate({
         id: pageId,
-        hue,
+        theme,
+        hue: hue ? parseFloat(hue) : undefined,
       });
     },
     [pageId],
@@ -107,18 +131,32 @@ export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
         aria-label="Color"
         aria-orientation="horizontal"
       >
-        {HUES.map(([hue, name]) => (
-          <swatch-item
-            key={`color-${hue}`}
-            aria-label={name}
-            style={
-              {
-                "--hue": `${hue}deg`,
-              } as React.CSSProperties
-            }
-            value={String(hue)}
-          ></swatch-item>
-        ))}
+        <>
+          {HUES.map(([hue, name]) => (
+            <swatch-item
+              key={`color-${hue}`}
+              aria-label={name}
+              style={
+                {
+                  "--hue": `${hue}deg`,
+                } as React.CSSProperties
+              }
+              value={`COLOR:${hue}`}
+            ></swatch-item>
+          ))}
+        </>
+        <swatch-item
+          key="DARK"
+          aria-label="Dark"
+          class={styles.dark}
+          value="DARK"
+        ></swatch-item>
+        <swatch-item
+          key="LIGHT"
+          aria-label="Light"
+          class={styles.light}
+          value="LIGHT"
+        ></swatch-item>
       </swatch-select>
     </div>
   );
