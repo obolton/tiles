@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TileType } from "@prisma/client";
+import { TileType, Theme } from "@prisma/client";
 import {
   MIN_LATITUDE,
   MAX_LATITUDE,
@@ -59,6 +59,7 @@ const TextTileBaseSchema = z.object({
   type: z.literal(TileType.TEXT),
   text: z.object({
     content: RichTextSchema.optional(),
+    theme: z.nativeEnum(Theme).optional(),
     hue: z.number().gte(0).lte(360).optional(),
   }),
 });
