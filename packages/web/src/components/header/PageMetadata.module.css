@@ -4,7 +4,7 @@
   justify-content: flex-start;
   gap: 16px;
   padding: 16px 8px;
-  color: rgba(0 0 0 / 60%);
+  color: oklch(from var(--text-color) l c h / 60%);
 
   & address {
     display: flex;
