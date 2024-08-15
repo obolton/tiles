@@ -89,6 +89,7 @@ const PAGE_FIELDS = {
   id: true,
   title: true,
   subtitle: true,
+  updatedAt: true,
   hue: true,
   font: true,
   author: {
@@ -208,6 +209,7 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   id: string;
   title: string;
   subtitle: string | null;
+  updatedAt: Date;
   hue: number | null;
   font: Font;
   author: {
