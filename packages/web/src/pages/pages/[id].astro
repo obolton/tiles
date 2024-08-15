@@ -2,7 +2,7 @@
 import Page from "@/layouts/Page.astro";
 import Menu from "@/components/menu/PageMenu.astro";
 import PageHeader from "@/components/header/PageHeader";
-import Author from "@/components/header/Author";
+import PageMetadata from "@/components/header/PageMetadata";
 import Grid from "@/components/grid/Grid";
 import EditTileModal from "@/components/modals/EditTileModal";
 import client from "@/api/client";
@@ -36,10 +36,11 @@ if (!page) {
     client:edit
   />
 
-  <Author
+  <PageMetadata
     id={page.author.id}
     name={page.author.name}
     imageUrl={page.author.imageUrl}
+    updatedAt={page.updatedAt}
     slot="header"
   />
 
