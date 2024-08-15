@@ -6,6 +6,7 @@ profile-image {
   align-items: center;
   justify-content: center;
   background: rgb(255 255 255 / 30%);
+  background-clip: padding-box;
   color: rgb(0 0 0 / 60%);
   border: 1px solid rgb(0 0 0 / 20%);
 
