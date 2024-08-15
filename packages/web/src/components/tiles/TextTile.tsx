@@ -17,10 +17,11 @@ type TextTileProps = {
 export default function TextTile({ tile }: TextTileProps) {
   const {
     id,
-    text: { content, hue: initialHue },
+    text: { content, theme: initialTheme, hue: initialHue },
   } = tile;
   const isEditable = useEditable();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
+  const [theme, setTheme] = useState(initialTheme);
   const [hue, setHue] = useState(initialHue);
 
   const onBlur = useCallback(async () => {
@@ -38,12 +39,22 @@ export default function TextTile({ tile }: TextTileProps) {
   }, [editorState, id]);
 
   const onChangeColor = useCallback(
-    async (hue: number) => {
-      setHue(hue);
+    async ({
+      theme,
+      hue,
+    }: {
+      theme: "LIGHT" | "DARK" | "COLOR";
+      hue?: number;
+    }) => {
+      setTheme(theme);
+      if (typeof hue === "number") {
+        setHue(hue);
+      }
       await updateTile({
         id,
         type: "TEXT",
         text: {
+          theme,
           hue,
         },
       });
@@ -60,6 +71,7 @@ export default function TextTile({ tile }: TextTileProps) {
 
   return (
     <Tile
+      theme={theme}
       hue={hue}
       tile={tile}
       showBorder={tile.columns < 3}
@@ -80,7 +92,7 @@ export default function TextTile({ tile }: TextTileProps) {
 
           <ColorPicker
             className={styles["color-picker"]}
-            value={hue}
+            value={{ theme, hue: hue ?? undefined }}
             onChange={onChangeColor}
           />
         </>
