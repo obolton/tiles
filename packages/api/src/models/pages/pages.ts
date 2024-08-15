@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import type { Font } from "@prisma/client";
+import type { Theme, Font } from "@prisma/client";
 import prisma from "@/database/prisma.ts";
 import {
   getProfileImageUrl,
@@ -44,6 +44,7 @@ const TILES_FIELDS = {
     select: {
       id: true,
       content: true,
+      theme: true,
       hue: true,
     },
   },
@@ -90,6 +91,7 @@ const PAGE_FIELDS = {
   title: true,
   subtitle: true,
   updatedAt: true,
+  theme: true,
   hue: true,
   font: true,
   author: {
@@ -180,6 +182,7 @@ function formatTile({
             ? {
                 title: page.title,
                 subtitle: page.subtitle,
+                theme: page.theme,
                 hue: page.hue,
                 font: page.font,
                 author: formatAuthor(page.author),
@@ -213,6 +216,7 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   title: string;
   subtitle: string | null;
   updatedAt: Date;
+  theme: Theme;
   hue: number | null;
   font: Font;
   author: {
@@ -302,6 +306,7 @@ export async function getRecentPagesWithTiles(
       id: page.id,
       title: page.title,
       subtitle: page.subtitle,
+      theme: page.theme,
       hue: page.hue,
       font: page.font,
       author: formatAuthor(page.author),
@@ -356,12 +361,13 @@ export async function updatePage({
   id,
   title,
   subtitle,
+  theme,
   hue,
   font,
 }: UpdatePageSchema) {
   return prisma.page.update({
     where: { id },
-    data: { title, subtitle, hue, font },
+    data: { title, subtitle, theme, hue, font },
     select: {
       id: true,
       createdAt: true,
@@ -369,6 +375,7 @@ export async function updatePage({
       authorId: true,
       title: true,
       subtitle: true,
+      theme: true,
       hue: true,
       font: true,
     },

@@ -8,6 +8,7 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
   id: true,
   title: true,
   subtitle: true,
+  theme: true,
   hue: true,
   font: true,
   author: {

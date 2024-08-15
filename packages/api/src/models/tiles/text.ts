@@ -3,7 +3,7 @@ import type { CreateTextTileSchema, UpdateTextTileSchema } from "./schema.ts";
 
 export async function createTextTile(
   tx: Prisma.TransactionClient,
-  { pageId, text: { content, hue } }: CreateTextTileSchema,
+  { pageId, text: { content, theme, hue } }: CreateTextTileSchema,
   position: number,
 ) {
   return tx.tile.create({
@@ -16,6 +16,7 @@ export async function createTextTile(
       text: {
         create: {
           content,
+          theme,
           hue,
         },
       },
@@ -29,6 +30,7 @@ export async function createTextTile(
       text: {
         select: {
           content: true,
+          theme: true,
           hue: true,
         },
       },
@@ -38,7 +40,7 @@ export async function createTextTile(
 
 export async function updateTextTile(
   tx: Prisma.TransactionClient,
-  { id, text: { content, hue } }: UpdateTextTileSchema,
+  { id, text: { content, theme, hue } }: UpdateTextTileSchema,
 ) {
   return tx.tile.update({
     where: {
@@ -48,6 +50,7 @@ export async function updateTextTile(
       text: {
         update: {
           content,
+          theme,
           hue,
         },
       },
@@ -61,6 +64,7 @@ export async function updateTextTile(
       text: {
         select: {
           content: true,
+          theme: true,
           hue: true,
         },
       },
