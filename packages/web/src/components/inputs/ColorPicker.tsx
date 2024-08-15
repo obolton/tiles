@@ -3,7 +3,7 @@ import styles from "./ColorPicker.module.css";
 import type SwatchSelect from "./SwatchSelect";
 import type { Theme } from "@/types/pages";
 
-type ColorPickerValue = {
+export type ColorPickerValue = {
   theme: Theme;
   hue?: number;
 };
@@ -59,10 +59,8 @@ export default function ColorPicker({
       aria-orientation="horizontal"
       value={
         value
-          ? value.theme === "COLOR"
-            ? `COLOR:${value.hue}`
-            : value.theme
-          : ""
+          ? `${value.theme}${value.theme === "COLOR" ? `:${value.hue}` : ""}`
+          : undefined
       }
     >
       <>

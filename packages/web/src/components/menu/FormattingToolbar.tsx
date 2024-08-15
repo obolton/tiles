@@ -1,26 +1,19 @@
 import { useCallback, useEffect, useRef } from "react";
+import ColorPicker from "@/components/inputs/ColorPicker";
+import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
 import client from "@/api/client";
 import styles from "./FormattingToolbar.module.css";
 import fontIcon from "@/icons/font.svg";
-import type SwatchSelect from "../inputs/SwatchSelect";
+import type SwatchSelect from "@/components/inputs/SwatchSelect";
 
 interface FormattingToolbarProps {
   pageId: string;
 }
 
-const HUES: [number, string][] = [];
-const NUM_HUES = 10;
-const HUE_ROTATION = 20;
-for (let i = 0; i < NUM_HUES; i++) {
-  HUES.push([HUE_ROTATION + (i / NUM_HUES) * 360, "TODO: color name " + i]);
-}
-HUES.reverse();
-
 export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
   const isEditable = useEditable();
   const fontSelectRef = useRef<SwatchSelect>(null);
-  const colorSelectRef = useRef<SwatchSelect>(null);
 
   const setFont = useCallback(
     async (event: Event) => {
@@ -38,11 +31,7 @@ export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
   );
 
   const setColor = useCallback(
-    async (event: Event) => {
-      const value = (event.target as SwatchSelect).value;
-      const [theme, hue] = value.split(":") as
-        | ["DARK" | "LIGHT"]
-        | ["COLOR", string];
+    async ({ theme, hue }: ColorPickerValue) => {
       switch (theme) {
         case "LIGHT":
           document.body.classList.add("light");
@@ -68,7 +57,7 @@ export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
       await client.pages.update.mutate({
         id: pageId,
         theme,
-        hue: hue ? parseFloat(hue) : undefined,
+        hue,
       });
     },
     [pageId],
@@ -76,17 +65,14 @@ export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
 
   useEffect(() => {
     const fontSelect = fontSelectRef.current;
-    const colorSelect = colorSelectRef.current;
-    if (!fontSelect || !colorSelect) {
+    if (!fontSelect) {
       return;
     }
     fontSelect.addEventListener("change", setFont);
-    colorSelect.addEventListener("change", setColor);
     return () => {
       fontSelect.removeEventListener("change", setFont);
-      colorSelect.removeEventListener("change", setColor);
     };
-  }, [isEditable, setColor, setFont]);
+  }, [isEditable, setFont]);
 
   if (!isEditable) {
     return null;
@@ -125,39 +111,7 @@ export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
         </swatch-item>
       </swatch-select>
 
-      <swatch-select
-        class={styles.color}
-        ref={colorSelectRef}
-        aria-label="Color"
-        aria-orientation="horizontal"
-      >
-        <>
-          {HUES.map(([hue, name]) => (
-            <swatch-item
-              key={`color-${hue}`}
-              aria-label={name}
-              style={
-                {
-                  "--hue": `${hue}deg`,
-                } as React.CSSProperties
-              }
-              value={`COLOR:${hue}`}
-            ></swatch-item>
-          ))}
-        </>
-        <swatch-item
-          key="DARK"
-          aria-label="Dark"
-          class={styles.dark}
-          value="DARK"
-        ></swatch-item>
-        <swatch-item
-          key="LIGHT"
-          aria-label="Light"
-          class={styles.light}
-          value="LIGHT"
-        ></swatch-item>
-      </swatch-select>
+      <ColorPicker onChange={setColor} />
     </div>
   );
 }
