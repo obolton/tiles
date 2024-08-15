@@ -58,6 +58,7 @@ export type ClientPageLinkTile = ClientTileType<
       title: string;
       subtitle: string | null;
       author: { name: string; imageUrl: string | null };
+      theme: string;
       hue: number | null;
       font: string | null;
       imageKey: string | null;
