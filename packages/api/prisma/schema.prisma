@@ -60,6 +60,12 @@ model Session {
   @@map("sessions")
 }
 
+enum Theme {
+  LIGHT
+  DARK
+  COLOR
+}
+
 enum Font {
   SANS_SERIF
   SERIF
@@ -73,6 +79,7 @@ model Page {
   authorId  String   @map("author_id") @db.Uuid
   title     String
   subtitle  String?
+  theme     Theme    @default(LIGHT) @map("theme")
   hue       Float?   @db.Real
   font      Font     @default(SANS_SERIF)
 
@@ -159,6 +166,7 @@ model TextTile {
 
   /// [RichText]
   content Json   @db.JsonB
+  theme   Theme  @default(LIGHT) @map("theme")
   hue     Float? @db.Real
 
   tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
