@@ -315,76 +315,40 @@ export async function createPage(
   authorId: string,
   { title }: CreatePageSchema,
 ) {
-  return prisma.$transaction(async (db) => {
-    const page = await db.page.create({
-      data: {
-        authorId,
-        title,
-        tiles: {
-          create: [
-            {
-              type: "HEADING",
-              position: 0,
-              rows: 1,
-              columns: 1,
-              heading: {
-                create: {
-                  content: "Welcome to your new page",
-                },
-              },
-            },
-            {
-              type: "TEXT",
-              position: 1,
-              rows: 1,
-              columns: 3,
-              text: {
-                create: {
-                  content: [
-                    {
-                      type: "paragraph",
-                      spans: [
-                        {
-                          type: "text",
-                          text: "This is a new page. You can edit it however you like.",
-                          format: 0,
-                        },
-                      ],
-                    },
-                  ],
-                },
-              },
-            },
-          ],
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
-    await db.user.update({
-      where: { id: authorId },
-      data: {
-        profilePage: {
-          update: {
-            tiles: {
+  return prisma.page.create({
+    data: {
+      authorId,
+      title,
+      tiles: {
+        create: [
+          {
+            type: "TEXT",
+            position: 0,
+            rows: 1,
+            columns: 3,
+            text: {
               create: {
-                type: "PAGE_LINK",
-                position: 0, // TODO
-                rows: 1,
-                columns: 1,
-                pageLink: {
-                  create: {
-                    pageId: page.id,
+                content: [
+                  {
+                    type: "paragraph",
+                    spans: [
+                      {
+                        type: "text",
+                        text: "This is a new page. You can edit it however you like.",
+                        format: 0,
+                      },
+                    ],
                   },
-                },
+                ],
               },
             },
           },
-        },
+        ],
       },
-    });
-    return page;
+    },
+    select: {
+      id: true,
+    },
   });
 }
 
