@@ -3,6 +3,7 @@ import { serialize } from "@/utils/richText/serialize";
 import RichTextEditor from "@/components/inputs/RichTextEditor/RichTextEditor";
 import RichText from "@/components/text/RichText";
 import ColorPicker from "@/components/inputs/ColorPicker";
+import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
 import { updateTile } from "@/utils/edit";
 import Tile from "./Tile";
@@ -39,13 +40,7 @@ export default function TextTile({ tile }: TextTileProps) {
   }, [editorState, id]);
 
   const onChangeColor = useCallback(
-    async ({
-      theme,
-      hue,
-    }: {
-      theme: "LIGHT" | "DARK" | "COLOR";
-      hue?: number;
-    }) => {
+    async ({ theme, hue }: ColorPickerValue) => {
       setTheme(theme);
       if (typeof hue === "number") {
         setHue(hue);
