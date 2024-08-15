@@ -193,13 +193,16 @@ function formatTile({
 }
 
 function formatAuthor({
+  id,
   name,
   imageKey,
 }: {
+  id: string;
   name: string;
   imageKey: string | null;
 }) {
   return {
+    id,
     name,
     imageUrl: imageKey ? getProfileImageUrl(imageKey) : null,
   };
@@ -230,13 +233,7 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
 
   return {
     ...page,
-    author: {
-      id: page.author.id,
-      name: page.author.name,
-      imageUrl: page.author.imageKey
-        ? getProfileImageUrl(page.author.imageKey)
-        : null,
-    },
+    author: formatAuthor(page.author),
     tiles: page.tiles.map(formatTile),
   };
 }

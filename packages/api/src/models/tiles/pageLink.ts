@@ -12,6 +12,7 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
   font: true,
   author: {
     select: {
+      id: true,
       name: true,
       imageKey: true,
     },
