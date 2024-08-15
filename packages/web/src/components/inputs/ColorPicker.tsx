@@ -1,12 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import Icon from "@/components/icons/Icon";
-import deleteIcon from "@/icons/delete.svg";
+import { useCallback, useEffect, useRef } from "react";
 import styles from "./ColorPicker.module.css";
+import type SwatchSelect from "./SwatchSelect";
+
+type ColorPickerValue = {
+  theme: "LIGHT" | "DARK" | "COLOR";
+  hue?: number;
+};
 
 interface ColorPickerProps {
   className?: string;
-  value?: number | null;
-  onChange: (hue: number) => void;
+  value?: ColorPickerValue;
+  onChange: (value: ColorPickerValue) => void;
 }
 
 const HUES: [number, string][] = [];
@@ -22,78 +26,70 @@ export default function ColorPicker({
   value,
   onChange,
 }: ColorPickerProps) {
-  const swatchRef = useRef<HTMLOListElement>(null);
-  const [isVisible, setVisible] = useState(false);
-  const [isHiding, setHiding] = useState(false);
-  const toggle = useCallback(() => {
-    if (isVisible) {
-      setHiding(true);
-    } else {
-      setVisible(true);
-    }
-  }, [isVisible]);
+  const ref = useRef<SwatchSelect>(null);
 
-  const selectColor = useCallback(
-    (event: React.MouseEvent<HTMLLIElement>) => {
-      const hue = event.currentTarget.dataset.hue;
-      if (typeof hue !== "string") {
-        return;
-      }
-      onChange(parseInt(hue, 10));
-      setHiding(true);
+  const setColor = useCallback(
+    async (event: Event) => {
+      const value = (event.target as SwatchSelect).value;
+      const [theme, hue] = value.split(":") as
+        | ["DARK" | "LIGHT"]
+        | ["COLOR", string];
+      onChange({ theme, hue: hue ? parseFloat(hue) : undefined });
     },
     [onChange],
   );
 
   useEffect(() => {
-    if (isHiding) {
-      Promise.all(
-        swatchRef.current
-          ?.getAnimations()
-          .map((animation) => animation.finished) ?? [],
-      ).finally(() => {
-        setHiding(false);
-        setVisible(false);
-      });
+    const colorSelect = ref.current;
+    if (!colorSelect) {
+      return;
     }
-  }, [isHiding]);
+    colorSelect.addEventListener("change", setColor);
+    return () => {
+      colorSelect.removeEventListener("change", setColor);
+    };
+  }, [setColor]);
 
   return (
-    <div className={`${styles["color-picker"]} ${className ?? ""}`}>
-      <button
-        className={styles.button}
-        type="button"
-        aria-label="Select a color"
-        aria-pressed={isVisible && !isHiding}
-        onClick={toggle}
-      >
-        <Icon src={deleteIcon.src} />
-      </button>
-
-      {isVisible ? (
-        <ol
-          ref={swatchRef}
-          role="listbox"
-          aria-orientation="horizontal"
-          className={`${styles.swatch} ${isHiding ? styles.hide : ""}`}
-        >
-          {HUES.map(([hue, name]) => (
-            <li
-              key={`color-${hue}`}
-              role="option"
-              aria-label={name}
-              aria-selected={value === hue}
-              data-hue={hue}
-              style={
-                {
-                  "--hue": `${hue}deg`,
-                } as React.CSSProperties
-              }
-              onClick={selectColor}
-            ></li>
-          ))}
-        </ol>
-      ) : null}
-    </div>
+    <swatch-select
+      class={`${styles.color} ${className ?? ""}`}
+      ref={ref}
+      aria-label="Color"
+      aria-orientation="horizontal"
+      value={
+        value
+          ? value.theme === "COLOR"
+            ? `COLOR:${value.hue}`
+            : value.theme
+          : ""
+      }
+    >
+      <>
+        {HUES.map(([hue, name]) => (
+          <swatch-item
+            key={`color-${hue}`}
+            aria-label={name}
+            style={
+              {
+                "--hue": `${hue}deg`,
+              } as React.CSSProperties
+            }
+            value={`COLOR:${hue}`}
+          ></swatch-item>
+        ))}
+      </>
+      <swatch-item
+        key="DARK"
+        aria-label="Dark"
+        class={styles.dark}
+        value="DARK"
+      ></swatch-item>
+      <swatch-item
+        key="LIGHT"
+        aria-label="Light"
+        class={styles.light}
+        value="LIGHT"
+      ></swatch-item>
+    </swatch-select>
   );
 }
