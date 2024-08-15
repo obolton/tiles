@@ -10,7 +10,7 @@
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: oklch(from var(--page-color) 60% 40% h);
+  background: var(--accent);
   box-shadow:
     0 2px 3px 0 rgb(0 0 0 / 30%),
     inset 0 0 0 1px rgb(0 0 0 / 20%);
