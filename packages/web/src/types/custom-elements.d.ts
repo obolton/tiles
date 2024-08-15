@@ -30,6 +30,7 @@ declare namespace JSX {
       id?: string;
       class?: string;
       ref?: React.RefObject;
+      value?: string;
       children: JSX.Element | JSX.Element[];
     };
     "swatch-item": {
