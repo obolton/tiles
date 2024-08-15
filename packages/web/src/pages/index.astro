@@ -21,7 +21,13 @@ if (!page) {
 }
 ---
 
-<Page id={page.id} title={page.title} hue={page.hue} font={page.font}>
+<Page
+  id={page.id}
+  title={page.title}
+  theme={page.theme}
+  hue={page.hue}
+  font={page.font}
+>
   <Menu pageId={page.id} allowDelete={false} slot="menu" />
 
   <PageHeader

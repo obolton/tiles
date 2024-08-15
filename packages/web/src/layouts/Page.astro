@@ -15,11 +15,12 @@ import "@/styles/fonts.css";
 interface Props {
   id?: string;
   title: string;
+  theme?: "LIGHT" | "DARK" | "COLOR";
   hue?: number | null;
   font?: "SANS_SERIF" | "SERIF" | "MONOSPACE";
 }
 
-const { id, title, hue, font } = Astro.props;
+const { id, title, theme = "LIGHT", hue, font } = Astro.props;
 ---
 
 <!doctype html>
@@ -41,8 +42,8 @@ const { id, title, hue, font } = Astro.props;
     data-page-id={id}
     data-disable-transitions="true"
     data-font={font}
-    class={typeof hue === "number" ? "color" : undefined}
-    style={typeof hue === "number"
+    class={theme === "LIGHT" ? "light" : theme === "DARK" ? "dark" : "color"}
+    style={theme === "COLOR" && typeof hue === "number"
       ? {
           "--page-hue": `${hue.toFixed(2)}deg`,
         }
