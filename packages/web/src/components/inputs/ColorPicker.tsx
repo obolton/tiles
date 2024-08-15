@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef } from "react";
 import styles from "./ColorPicker.module.css";
 import type SwatchSelect from "./SwatchSelect";
+import type { Theme } from "@/types/pages";
 
 type ColorPickerValue = {
-  theme: "LIGHT" | "DARK" | "COLOR";
+  theme: Theme;
   hue?: number;
 };
 
@@ -34,7 +35,7 @@ export default function ColorPicker({
       const [theme, hue] = value.split(":") as
         | ["DARK" | "LIGHT"]
         | ["COLOR", string];
-      onChange({ theme, hue: hue ? parseFloat(hue) : undefined });
+      onChange(theme === "COLOR" ? { theme, hue: parseFloat(hue) } : { theme });
     },
     [onChange],
   );

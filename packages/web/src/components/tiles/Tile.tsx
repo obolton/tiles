@@ -9,6 +9,7 @@ import DeleteButton from "./DeleteButton";
 import { destroy } from "@/utils/animation/effects";
 import styles from "./Tile.module.css";
 import type { ClientTile } from "@/types/tiles";
+import type { Theme } from "@/types/pages";
 
 export type TileProps = {
   children: React.ReactNode;
@@ -16,7 +17,7 @@ export type TileProps = {
   showBorder?: boolean;
   showInLightbox?: boolean;
   fullWidth?: boolean;
-  theme?: "LIGHT" | "DARK" | "COLOR" | null;
+  theme?: Theme | null;
   hue?: number | null;
   font?: string | null;
 };

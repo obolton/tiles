@@ -11,11 +11,12 @@ import "@/styles/menus.css";
 import "@/styles/toasts.css";
 import "@/styles/images.css";
 import "@/styles/fonts.css";
+import type { Theme } from "@/types/pages";
 
 interface Props {
   id?: string;
   title: string;
-  theme?: "LIGHT" | "DARK" | "COLOR";
+  theme?: Theme;
   hue?: number | null;
   font?: "SANS_SERIF" | "SERIF" | "MONOSPACE";
 }
