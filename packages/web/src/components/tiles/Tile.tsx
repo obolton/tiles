@@ -16,6 +16,7 @@ export type TileProps = {
   showBorder?: boolean;
   showInLightbox?: boolean;
   fullWidth?: boolean;
+  theme?: "LIGHT" | "DARK" | "COLOR" | null;
   hue?: number | null;
   font?: string | null;
 };
@@ -23,6 +24,7 @@ export type TileProps = {
 export default function Tile({
   tile,
   children,
+  theme,
   hue,
   font,
   showBorder = true,
@@ -53,7 +55,7 @@ export default function Tile({
     <div
       id={tile.id}
       ref={ref}
-      className={`editable ${styles.tile} ${showBorder ? styles.border : ""} ${typeof hue === "number" ? styles.color : ""} ${fullWidth ? styles["full-width"] : ""}`}
+      className={`editable ${styles.tile} ${showBorder ? styles.border : ""} ${theme === "LIGHT" ? styles.light : theme === "DARK" ? styles.dark : styles.color} ${fullWidth ? styles["full-width"] : ""}`}
       style={
         {
           "--columns": tile.columns,

@@ -16,8 +16,19 @@
   font-family: var(--font);
 }
 
+.tile.light {
+  background: #fff;
+  color: rgba(0 0 0 / 80%);
+}
+
+.tile.dark {
+  background: #202020;
+  color: rgba(255 255 255 / 80%);
+}
+
 .tile.color {
   background: oklch(var(--lightness) var(--chroma) var(--hue));
+  color: rgba(0 0 0 / 80%);
 }
 
 .border,
