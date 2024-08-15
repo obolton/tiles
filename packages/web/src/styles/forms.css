@@ -9,7 +9,7 @@ label {
   font-weight: 500;
   font-size: 1rem;
   line-height: 1rlh;
-  color: var(--text-color);
+  color: var(--ui-color);
 }
 
 input[type="text"],
@@ -23,7 +23,7 @@ input[type="search"] {
   border: 1px solid rgba(0 0 0 / 20%);
   font-size: 1rem;
   line-height: 1rlh;
-  color: var(--text-color);
+  color: var(--ui-color);
   background: rgba(0 0 0 / 2%);
   border-radius: 8px;
   outline: 0 solid transparent;

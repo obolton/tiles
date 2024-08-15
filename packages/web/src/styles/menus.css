@@ -4,7 +4,7 @@ menu.vertical {
   border-radius: inherit;
 
   li {
-    color: var(--text-color);
+    color: var(--ui-color);
     font-size: 0.875rem;
     font-weight: 500;
     text-shadow: 0 1px 0 rgb(255 255 255 / 15%);
@@ -66,6 +66,7 @@ menu.vertical {
   gap: 8px;
   border-radius: 24px;
   padding: 8px;
+  color: var(--ui-color);
   text-shadow: 0 1px 1px rgb(255 255 255 / 70%);
   background-color: rgb(240 240 240 / 95%);
   box-shadow:

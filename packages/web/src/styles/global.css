@@ -6,6 +6,7 @@
   --lightness: 90%;
   --chroma: 20%;
   --ui-font: "Inter", system, sans-serif;
+  --ui-color: rgba(0 0 0 / 80%);
 }
 
 * {
