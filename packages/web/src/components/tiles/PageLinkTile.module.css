@@ -81,6 +81,7 @@
 
   &.dark {
     & .with-image {
+      -webkit-font-smoothing: antialiased;
       background: rgb(24 24 24 / 70%);
       text-shadow: 0 1px 1px rgb(0 0 0 / 20%);
     }
