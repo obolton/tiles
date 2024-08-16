@@ -31,7 +31,7 @@ button {
     left: calc(50% - 12px);
     width: 24px;
     height: 24px;
-    filter: drop-shadow(0 1px 1px rgba(0 0 0 / 40%));
+    filter: drop-shadow(0 1px 1px rgba(0 0 0 / 50%));
     transition:
       opacity var(--animation-duration) var(--animation-timing),
       transform var(--animation-duration) var(--animation-timing);

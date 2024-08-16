@@ -5,13 +5,16 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: oklch(var(--lightness) var(--chroma) var(--hue));
+  background: linear-gradient(
+    oklch(var(--lightness) var(--chroma) var(--hue)),
+    oklch(calc(var(--lightness) - 10%) var(--chroma) var(--hue))
+  );
   box-shadow:
     1px 0 2px 0 oklch(20% var(--chroma) var(--hue) / 30%),
     inset 0 0 0 1px rgba(0 0 0 / 30%);
 
   &.light {
-    background: #fff;
+    background: linear-gradient(#fff, #f0f0f0);
     box-shadow:
       1px 0 2px 0 rgb(0 0 0 / 30%),
       inset 0 0 0 1px rgba(0 0 0 / 30%);
@@ -24,7 +27,7 @@
   }
 
   &.dark {
-    background: #202020;
+    background: linear-gradient(#202020, #000);
     box-shadow:
       1px 0 2px 0 rgb(0 0 0 / 30%),
       inset 0 0 0 1px rgba(255 255 255 / 30%);
