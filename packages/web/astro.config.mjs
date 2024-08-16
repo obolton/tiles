@@ -9,7 +9,8 @@ import editClientDirective from "./src/config/editClientDirective/register";
 
 const isTestEnvironment = process.env.VITEST === "true";
 const packageRoot = path.dirname(import.meta.filename);
-const env = loadEnv(import.meta.env.MODE, packageRoot, "");
+const workspaceRoot = path.resolve(packageRoot, "../..");
+const env = loadEnv(import.meta.env.MODE, workspaceRoot, "");
 const ENABLE_HTTPS = env.ENABLE_HTTPS === "true";
 
 // https://astro.build/config
@@ -17,6 +18,7 @@ export default defineConfig({
   output: "server",
   integrations: [react(), editClientDirective()],
   vite: {
+    envDir: "../..",
     define: {
       "process.env": process.env,
     },
