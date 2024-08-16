@@ -44,6 +44,7 @@
     justify-content: flex-start;
     gap: 12vh;
     scroll-snap-type: y mandatory;
+    outline: none;
 
     & > li {
       flex: 1 0 auto;
@@ -59,6 +60,28 @@
         pointer-events: auto;
       }
     }
+  }
+}
+
+#close-lightbox {
+  position: absolute;
+  display: block;
+  top: 8px;
+  left: 8px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  background: none;
+
+  &::after {
+    content: url("@/icons/delete.svg");
+    position: absolute;
+    inset: 12px;
+    width: 24px;
+    height: 24px;
+    opacity: 0.8;
   }
 }
 

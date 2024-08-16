@@ -33,8 +33,16 @@ function openLightbox(element: Element) {
   lightbox = document.createElement("dialog");
   lightbox.dataset.lightbox = "true";
   lightbox.classList.add("lightbox");
+
   const list = document.createElement("ol");
-  lightbox.appendChild(list);
+
+  const closeButton = document.createElement("button");
+  closeButton.setAttribute("type", "button");
+  closeButton.setAttribute("aria-label", "Close");
+  closeButton.setAttribute("id", "close-lightbox");
+  closeButton.addEventListener("click", () => lightbox?.close());
+
+  lightbox.append(list, closeButton);
 
   const observer = new IntersectionObserver(intersectionObserverCallback, {
     root: list,
@@ -93,6 +101,7 @@ function openLightbox(element: Element) {
       if (next) {
         moveTo(next, { y: "5vh" });
       }
+      fadeOut(closeButton);
 
       Promise.all(
         lightbox?.getAnimations().map((animation) => animation.finished) ?? [],
