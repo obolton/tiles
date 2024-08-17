@@ -34,18 +34,14 @@ export default function PageLinkTile({ tile }: PageLinkTileProps) {
       hue={page.hue}
       font={page.font}
     >
-      {imageKey ? (
-        <img
-          className={styles.image}
-          src={getImageUrl(imageKey)}
-          alt={"Background image"}
-          draggable={false}
-        />
-      ) : null}
-
       {/* eslint-disable-next-line react/jsx-no-target-blank */}
       <a
         className={`${styles.contents} ${page.theme === "LIGHT" ? styles.light : page.theme === "DARK" ? styles.dark : styles.color}`}
+        style={
+          imageKey
+            ? { backgroundImage: `url(${getImageUrl(imageKey)})` }
+            : undefined
+        }
         href={`/pages/${pageId}`}
         target="_blank"
       >
