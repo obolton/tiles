@@ -65,3 +65,25 @@
   border-radius: 0;
   box-shadow: none;
 }
+
+body[data-editing] .tile {
+  &:hover {
+    outline-color: transparent;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -24px -3px -3px;
+    border-radius: 15px;
+    background: var(--accent);
+    cursor: move;
+    opacity: 0;
+    transition: opacity 250ms ease;
+  }
+
+  &:hover::before,
+  &[data-drag-preview]::before {
+    opacity: 0.6;
+  }
+}
