@@ -1,9 +1,6 @@
-import {
-  getOAuth2StateCookie,
-  clearOAuth2StateCookie,
-} from "../../../auth/oauth2";
-import { getAccessToken, getGoogleUser } from "../../../auth/google";
-import { signIn, setAuthenticationCookies } from "../../../auth/sessions";
+import { getOAuth2StateCookie, clearOAuth2StateCookie } from "@/auth/oauth2";
+import { getAccessToken, getGoogleUser } from "@/auth/google";
+import { signIn, setAuthenticationCookies } from "@/auth/sessions";
 import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async ({ cookies, redirect, request }) => {
