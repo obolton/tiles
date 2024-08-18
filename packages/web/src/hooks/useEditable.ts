@@ -1,5 +1,10 @@
 import useSessionState from "./useSessionState";
 
 export default function useEditable() {
-  return useSessionState("edit") === true;
+  const editPathname = useSessionState("edit");
+  return (
+    typeof window !== "undefined" &&
+    editPathname &&
+    window.location.pathname === editPathname
+  );
 }

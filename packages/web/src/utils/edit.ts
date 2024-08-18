@@ -6,7 +6,7 @@ import type { TileType } from "@/types/tiles";
 
 export function setEditMode(isEditing: boolean) {
   if (isEditing) {
-    set("edit", true);
+    set("edit", window.location.pathname);
     document.body.dataset.editing = "true";
     document.dispatchEvent(new CustomEvent(EDIT_START_EVENT));
   } else {
@@ -16,7 +16,7 @@ export function setEditMode(isEditing: boolean) {
 }
 
 export function isEditModeEnabled() {
-  return get<boolean>("edit");
+  return get<string>("edit") === window.location.pathname;
 }
 
 export function editTile(tileId: string, tileType: TileType) {
