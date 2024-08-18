@@ -71,10 +71,16 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
     };
     const deleteTile = (event: Event) => {
       const { detail: tile } = event as CustomEvent<ClientTile>;
+      const element = document.getElementById(tile.id);
+      const adjacentTileId =
+        element?.previousElementSibling?.id || element?.nextElementSibling?.id;
       startLayoutTransition(() => {
         setTiles((prevTiles) =>
           prevTiles.filter((prevTile) => prevTile.id !== tile.id),
         );
+        if (adjacentTileId) {
+          scrollIntoView(adjacentTileId);
+        }
       });
     };
     const dragOver = (event: DragDropEvent) => {
