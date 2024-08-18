@@ -80,7 +80,7 @@ export default function TextTile({ tile }: TextTileProps) {
             onChange={setEditorState}
             onPointerDownCapture={onPointerDown}
             onClickCapture={onPointerDown}
-            placeholder="Enter some text"
+            placeholder="Write something"
             value={content}
             editable
           />
