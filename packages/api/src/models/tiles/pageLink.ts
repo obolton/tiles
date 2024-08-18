@@ -1,4 +1,5 @@
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { getProfileImageUrl } from "@/utils/cdn.ts";
 import type {
   CreatePageLinkTileSchema,
   UpdatePageLinkTileSchema,
@@ -34,6 +35,28 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
   },
 } as const;
 
+const pageValidator = Prisma.validator<Prisma.PageDefaultArgs>()({
+  select: PAGE_LINK_TILE_PAGE_FIELDS,
+});
+type Page = Prisma.PageGetPayload<typeof pageValidator>;
+
+function formatPage(page: Page) {
+  const { title, subtitle, theme, hue, font, author, tiles } = page;
+  return {
+    title,
+    subtitle,
+    theme,
+    hue,
+    font,
+    author: {
+      id: author.id,
+      name: author.name,
+      imageUrl: author.imageKey ? getProfileImageUrl(author.imageKey) : null,
+    },
+    imageKey: tiles[0]?.image?.imageKey ?? null,
+  };
+}
+
 export async function createPageLinkTile(
   db: Prisma.TransactionClient,
   { pageId, pageLink: { pageId: linkedPageId } }: CreatePageLinkTileSchema,
@@ -42,7 +65,7 @@ export async function createPageLinkTile(
   if (pageId === linkedPageId) {
     throw new Error("Cannot link to the same page.");
   }
-  return db.tile.create({
+  const tile = await db.tile.create({
     data: {
       pageId,
       type: "PAGE_LINK",
@@ -71,13 +94,21 @@ export async function createPageLinkTile(
       },
     },
   });
+
+  return {
+    ...tile,
+    pageLink: {
+      ...tile.pageLink,
+      page: tile.pageLink?.page ? formatPage(tile.pageLink.page) : null,
+    },
+  };
 }
 
 export async function updatePageLinkTile(
   db: Prisma.TransactionClient,
   { id, pageLink: { pageId: linkedPageId } }: UpdatePageLinkTileSchema,
 ) {
-  return db.tile.update({
+  const tile = await db.tile.update({
     where: {
       id,
     },
@@ -104,4 +135,12 @@ export async function updatePageLinkTile(
       },
     },
   });
+
+  return {
+    ...tile,
+    pageLink: {
+      ...tile.pageLink,
+      page: tile.pageLink?.page ? formatPage(tile.pageLink.page) : null,
+    },
+  };
 }
