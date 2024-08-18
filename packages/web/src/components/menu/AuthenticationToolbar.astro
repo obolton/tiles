@@ -1,5 +1,6 @@
 ---
 import Flippable from "../Flippable.astro";
+import homeIcon from "@/icons/home.svg";
 import profileIcon from "@/icons/profile.svg";
 import libraryIcon from "@/icons/library.svg";
 import settingsIcon from "@/icons/settings.svg";
@@ -39,28 +40,54 @@ import signOutIcon from "@/icons/sign-out.svg";
   <nav class="nav-menu">
     <menu class="vertical nav-items">
       <li>
+        <a href="/">
+          <img class="icon" src={homeIcon.src} alt="Home" aria-hidden="true" />
+          Home
+        </a>
+      </li>
+      <li>
         <data-binding href="user.profile">
           <a href="/profiles">
-            <img class="icon" src={profileIcon.src} alt="" />
+            <img
+              class="icon"
+              src={profileIcon.src}
+              alt="Profile"
+              aria-hidden="true"
+            />
             Profile
           </a>
         </data-binding>
       </li>
       <li>
         <a href="/library">
-          <img class="icon" src={libraryIcon.src} alt="" />
+          <img
+            class="icon"
+            src={libraryIcon.src}
+            alt="Library"
+            aria-hidden="true"
+          />
           Library
         </a>
       </li>
       <li>
         <a href="/settings">
-          <img class="icon" src={settingsIcon.src} alt="" />
+          <img
+            class="icon"
+            src={settingsIcon.src}
+            alt="Settings"
+            aria-hidden="true"
+          />
           Settings
         </a>
       </li>
       <li>
         <button id="sign-out" type="button">
-          <img class="icon" src={signOutIcon.src} alt="" />
+          <img
+            class="icon"
+            src={signOutIcon.src}
+            alt="Sign out"
+            aria-hidden="true"
+          />
           Sign out
         </button>
       </li>
