@@ -35,6 +35,10 @@
   overflow: visible;
 }
 
+body[data-editing] .figure {
+  pointer-events: none;
+}
+
 [data-lightbox] .video {
   position: relative;
 }
