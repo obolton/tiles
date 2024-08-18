@@ -129,7 +129,7 @@ function startDrag(translateX: number = 0, translateY: number = 0) {
   dragElement.style.setProperty("--rotate-angle", `${rotateAngle}deg`);
 
   document.body.appendChild(dragElement);
-  document.body.style.setProperty("cursor", "grab");
+  document.body.style.setProperty("cursor", "move");
 
   dragSource.dataset.dragging = "true";
 }
