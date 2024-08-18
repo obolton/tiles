@@ -3,6 +3,7 @@ import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import { createTile, updateTile } from "@/utils/edit";
+import { handleError } from "@/utils/errors";
 import client from "@/api/client";
 import type { ClientLinkTile, ClientPageLinkTile } from "@/types/tiles";
 import styles from "./EditLinkTileModal.module.css";
@@ -32,22 +33,28 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
 
   const selectPage = useCallback(
     async (linkedPageId: string) => {
-      if (tile) {
-        await updateTile({
-          id: tile.id,
-          type: "PAGE_LINK",
-          pageLink: {
-            pageId: linkedPageId,
-          },
-        });
-      } else {
-        await createTile({
-          pageId,
-          type: "PAGE_LINK",
-          pageLink: {
-            pageId: linkedPageId,
-          },
-        });
+      try {
+        if (tile) {
+          await updateTile({
+            id: tile.id,
+            type: "PAGE_LINK",
+            pageLink: {
+              pageId: linkedPageId,
+            },
+          });
+        } else {
+          await createTile({
+            pageId,
+            type: "PAGE_LINK",
+            pageLink: {
+              pageId: linkedPageId,
+            },
+          });
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          handleError(error);
+        }
       }
 
       close();
