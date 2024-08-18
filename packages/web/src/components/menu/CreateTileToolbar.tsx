@@ -43,7 +43,7 @@ export default function CreateTileToolbar({ pageId }: CreateTileToolbarProps) {
           pageId,
           type: "HEADING",
           heading: {
-            content: "Heading",
+            content: "",
           },
         });
       } else if (tileType === "TEXT") {
