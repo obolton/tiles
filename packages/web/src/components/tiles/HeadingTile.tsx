@@ -89,7 +89,7 @@ export default function HeadingTile({ tile }: HeadingTileProps) {
           <DeleteButton onPress={onDelete} />
         </>
       ) : (
-        <h1>{value}</h1>
+        <h1>{value || "Heading"}</h1>
       )}
     </header>
   );
