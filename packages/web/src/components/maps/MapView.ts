@@ -52,13 +52,13 @@ export default class MapView extends HTMLElement {
       throw new Error("Map is already initialized");
     }
 
-    const movable = !!this.getAttribute("movable");
+    const movable = this.getAttribute("movable");
     const lat = parseFloat(this.getAttribute("lat") ?? "0");
     const long = parseFloat(this.getAttribute("long") ?? "0");
     const bounds = parseBounds(this.getAttribute("bounds") ?? "");
     const label = this.getAttribute("label");
 
-    if (!movable) {
+    if (movable === "false") {
       this.root.classList.add("static");
     } else {
       this.root.classList.remove("static");
@@ -118,10 +118,10 @@ export default class MapView extends HTMLElement {
 
     switch (name) {
       case "movable":
-        if (value) {
-          this.root.classList.remove("static");
-        } else {
+        if (value === "false") {
           this.root.classList.add("static");
+        } else {
+          this.root.classList.remove("static");
         }
         break;
 
