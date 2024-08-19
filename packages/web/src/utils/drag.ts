@@ -1,8 +1,11 @@
 import { getCenter, getDistance, getOffsetCenter } from "./geometry";
 
-const DRAG_THRESHOLD = 10;
+const DRAG_THRESHOLD = 10; // px
+const SCROLL_MARGIN = 50; // px from viewport edge
+const SCROLL_INTERVAL = 16; // ms
+const MAX_SCROLL_SPEED = 20; // px per scroll
 const PRIMARY_MOUSE_BUTTON = 0;
-const LONG_PRESS_DURATION = 500;
+const LONG_PRESS_DURATION = 500; // ms
 
 export class DragState {
   readonly element: HTMLElement;
@@ -17,6 +20,8 @@ export class DragState {
   private dropTarget: HTMLElement | null = null;
   private dropTargets: NodeListOf<HTMLElement> | null = null;
   private longPressTimeout: ReturnType<typeof setTimeout> | null = null;
+  private scrollInterval: ReturnType<typeof setInterval> | null = null;
+  private scrollSpeed = 0;
 
   constructor(element: HTMLElement, fromPoint: DOMPoint) {
     this.element = element;
@@ -90,6 +95,24 @@ export class DragState {
         this.startDrag(deltaX, deltaY);
       }
     }
+
+    if (event.clientY <= SCROLL_MARGIN) {
+      this.scrollSpeed = -(SCROLL_MARGIN - event.clientY);
+      this.scrollInterval ??= setInterval(
+        this.scroll.bind(this),
+        SCROLL_INTERVAL,
+      );
+    } else if (window.innerHeight - event.clientY <= SCROLL_MARGIN) {
+      this.scrollSpeed = SCROLL_MARGIN - (window.innerHeight - event.clientY);
+      this.scrollInterval ??= setInterval(
+        this.scroll.bind(this),
+        SCROLL_INTERVAL,
+      );
+    } else if (this.scrollInterval !== null) {
+      clearInterval(this.scrollInterval);
+      this.scrollInterval = null;
+      this.scrollSpeed = 0;
+    }
   }
 
   private pointerUp(event: PointerEvent) {
@@ -101,6 +124,11 @@ export class DragState {
 
     // Remove all event listeners
     this.abortController.abort();
+
+    if (this.scrollInterval !== null) {
+      clearInterval(this.scrollInterval);
+      this.scrollInterval = null;
+    }
 
     if (!this.isDragging) {
       return;
@@ -240,6 +268,16 @@ export class DragState {
     }
 
     return null;
+  }
+
+  private scroll() {
+    if (this.scrollSpeed === 0) {
+      return;
+    }
+    window.scrollBy({
+      top: (this.scrollSpeed / SCROLL_MARGIN) * MAX_SCROLL_SPEED,
+      behavior: "instant",
+    });
   }
 }
 
