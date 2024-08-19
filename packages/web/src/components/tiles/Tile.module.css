@@ -66,7 +66,8 @@
   box-shadow: none;
 }
 
-body[data-editing] .tile {
+body[data-editing]:not([data-drag]) .tile,
+.tile[data-drag-preview] {
   &:hover {
     outline-color: transparent;
   }

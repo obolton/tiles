@@ -108,6 +108,7 @@ export class DragState {
 
     this.isDragging = false;
 
+    delete document.body.dataset.drag;
     delete this.element.dataset.dragging;
 
     // Animate the drag element image to its final position
@@ -153,6 +154,7 @@ export class DragState {
     }
 
     this.isDragging = true;
+    document.body.dataset.drag = "true";
 
     this.dropTargets = document.querySelectorAll<HTMLElement>(
       '[data-drop-target="true"]',
