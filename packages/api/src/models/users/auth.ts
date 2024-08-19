@@ -2,6 +2,8 @@ import prisma from "@/database/prisma.ts";
 import { createUser } from "./users.ts";
 import { createKey, getUserIdByProviderId } from "./keys.ts";
 import { createSession, deleteSession } from "./sessions.ts";
+import { sendEmail } from "@/utils/email.ts";
+import { signUpEmail } from "@/emails/signUp.ts";
 import type { SignInSchema } from "./schema.ts";
 
 export async function signIn({
@@ -30,6 +32,7 @@ export async function signIn({
       const [, session] = await Promise.all([
         createKey(transaction, { provider, providerId, userId: user.id }),
         createSession(transaction, user.id),
+        sendEmail(email, signUpEmail({ id: user.id, name })),
       ]);
       return session;
     }
