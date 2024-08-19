@@ -19,9 +19,9 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.577.0",
-    "@aws-sdk/lib-storage": "^3.590.0",
-    "@aws-sdk/s3-request-presigner": "^3.577.0",
+    "@aws-sdk/client-s3": "^3.633.0",
+    "@aws-sdk/lib-storage": "^3.633.0",
+    "@aws-sdk/s3-request-presigner": "^3.633.0",
     "@prisma/client": "^5.17.0",
     "@trpc/server": "^11.0.0-rc.374",
     "cookie": "^0.6.0",
