@@ -4,7 +4,7 @@ export default function useEditable() {
   const editPathname = useSessionState("edit");
   return (
     typeof window !== "undefined" &&
-    editPathname &&
+    !!editPathname &&
     window.location.pathname === editPathname
   );
 }
