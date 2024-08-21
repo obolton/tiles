@@ -43,7 +43,7 @@ export default class MapView extends HTMLElement {
 
     this.intersectionObserver = new IntersectionObserver(
       this.intersectionObserverCallback.bind(this),
-      { rootMargin: "0px 0px 0px 0px", threshold: 0 },
+      { rootMargin: "128px 128px 128px 128px", threshold: 0 },
     );
   }
 
