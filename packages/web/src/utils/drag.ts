@@ -3,6 +3,7 @@ import { getCenter, getDistance, getOffsetCenter } from "./geometry";
 const DRAG_THRESHOLD = 10; // px
 const SCROLL_MARGIN = 50; // px from viewport edge
 const SCROLL_INTERVAL = 16; // ms
+const MOVE_DEBOUNCE_INTERVAL = 100; // ms
 const MAX_SCROLL_SPEED = 20; // px per scroll
 const PRIMARY_MOUSE_BUTTON = 0;
 const LONG_PRESS_DURATION = 500; // ms
@@ -17,17 +18,23 @@ export class DragState {
 
   private isDragging = false;
   private dragElement: HTMLElement | null = null;
-  private dropTarget: HTMLElement | null = null;
   private dropTargets: NodeListOf<HTMLElement> | null = null;
   private longPressTimeout: ReturnType<typeof setTimeout> | null = null;
+  private moveTimeout: ReturnType<typeof setTimeout> | null = null;
   private scrollInterval: ReturnType<typeof setInterval> | null = null;
   private scrollSpeed = 0;
+  private centerOffsetX = 0;
+  private centerOffsetY = 0;
 
   constructor(element: HTMLElement, fromPoint: DOMPoint) {
     this.element = element;
     this.container = element.offsetParent || document.body;
     this.elementRect = element.getBoundingClientRect();
     this.fromPoint = fromPoint;
+
+    const center = getCenter(this.elementRect);
+    this.centerOffsetX = this.fromPoint.x - center.x;
+    this.centerOffsetY = this.fromPoint.y - center.y;
 
     const signal = this.abortController.signal;
 
@@ -80,15 +87,23 @@ export class DragState {
         if (this.dragElement) {
           this.dragElement.style.setProperty("--translate-x", `${deltaX}px`);
           this.dragElement.style.setProperty("--translate-y", `${deltaY}px`);
-
-          const target = this.findDropTarget();
-          if (target !== this.dropTarget) {
-            this.dropTarget = target;
-            this.dropTarget?.dispatchEvent(
-              new DragDropEvent("drag:drag-over", this.element),
-            );
-          }
         }
+
+        if (this.moveTimeout !== null) {
+          clearTimeout(this.moveTimeout);
+        }
+        this.moveTimeout = setTimeout(() => {
+          const target = this.findDropTarget(
+            new DOMPoint(
+              event.clientX - this.centerOffsetX,
+              event.clientY - this.centerOffsetY,
+            ),
+          );
+          target?.dispatchEvent(
+            new DragDropEvent("drag:drag-over", this.element),
+          );
+          this.moveTimeout = null;
+        }, MOVE_DEBOUNCE_INTERVAL);
       });
     } else if (event.pointerType !== "touch") {
       if (Math.hypot(deltaX, deltaY) >= DRAG_THRESHOLD) {
@@ -128,6 +143,11 @@ export class DragState {
     if (this.scrollInterval !== null) {
       clearInterval(this.scrollInterval);
       this.scrollInterval = null;
+    }
+
+    if (this.moveTimeout !== null) {
+      clearTimeout(this.moveTimeout);
+      this.moveTimeout = null;
     }
 
     if (!this.isDragging) {
@@ -172,7 +192,6 @@ export class DragState {
 
     this.element.dispatchEvent(new DragDropEvent("drag:drop", this.element));
 
-    this.dropTarget = null;
     this.dropTargets = null;
   }
 
@@ -226,12 +245,11 @@ export class DragState {
     this.element.dataset.dragging = "true";
   }
 
-  private findDropTarget() {
+  private findDropTarget(point: DOMPoint) {
     if (!this.dragElement || !this.dropTargets) {
       return null;
     }
 
-    const dragCenter = getCenter(this.dragElement.getBoundingClientRect());
     const containerRect = this.container.getBoundingClientRect();
 
     // Find the drop target with the center closest to the drag element center
@@ -244,7 +262,7 @@ export class DragState {
       targetCenter.x += containerRect.left;
       targetCenter.y += containerRect.top;
 
-      const distance = getDistance(dragCenter, targetCenter);
+      const distance = getDistance(point, targetCenter);
       if (distance < minDistance) {
         targetIndex = i;
         minDistance = distance;
