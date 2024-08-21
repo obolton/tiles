@@ -6,6 +6,7 @@
 
 [data-draggable][data-drag-preview] {
   position: fixed;
+  contain: size layout style;
   top: var(--initial-y);
   left: var(--initial-x);
   margin: 0;
