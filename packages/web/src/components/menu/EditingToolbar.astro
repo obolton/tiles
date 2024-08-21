@@ -68,8 +68,9 @@ const { allowDelete = true } = Astro.props;
 <script is:inline>
   const url = new URL(window.location);
   const editSearchParam = url.searchParams.get("edit");
-  const isEditing =
-    sessionStorage.getItem("edit") === url.pathname || editSearchParam;
+
+  const editPath = JSON.parse(sessionStorage.getItem("edit") ?? "null");
+  const isEditing = editPath === url.pathname || editSearchParam;
 
   if (editSearchParam) {
     url.searchParams.delete("edit");
