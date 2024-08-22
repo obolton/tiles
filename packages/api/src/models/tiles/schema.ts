@@ -147,6 +147,27 @@ export const UpdatePageLinkTileSchema = UpdateTileBaseSchema.merge(
 );
 export type UpdatePageLinkTileSchema = z.infer<typeof UpdatePageLinkTileSchema>;
 
+// Event
+
+const EventTileBaseSchema = z.object({
+  type: z.literal(TileType.EVENT),
+  event: z.object({
+    title: z.string().nullable(),
+    start: z.string().datetime(),
+    end: z.string().datetime().nullable(),
+    allDay: z.boolean().optional(),
+    timeZone: z.string().optional(),
+  }),
+});
+
+export const CreateEventTileSchema =
+  CreateTileBaseSchema.merge(EventTileBaseSchema);
+export type CreateEventTileSchema = z.infer<typeof CreateEventTileSchema>;
+
+export const UpdateEventTileSchema =
+  UpdateTileBaseSchema.merge(EventTileBaseSchema);
+export type UpdateEventTileSchema = z.infer<typeof UpdateEventTileSchema>;
+
 // Create
 
 export const CreateTileSchema = z.discriminatedUnion("type", [
@@ -157,6 +178,7 @@ export const CreateTileSchema = z.discriminatedUnion("type", [
   CreateLinkTileSchema,
   CreateHeadingTileSchema,
   CreatePageLinkTileSchema,
+  CreateEventTileSchema,
 ]);
 export type CreateTileSchema = z.infer<typeof CreateTileSchema>;
 
@@ -170,6 +192,7 @@ export const UpdateTileSchema = z.discriminatedUnion("type", [
   UpdateLinkTileSchema,
   UpdateHeadingTileSchema,
   UpdatePageLinkTileSchema,
+  UpdateEventTileSchema,
 ]);
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 
