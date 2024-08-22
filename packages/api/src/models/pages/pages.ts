@@ -84,6 +84,16 @@ const TILES_FIELDS = {
       },
     },
   },
+  event: {
+    select: {
+      id: true,
+      title: true,
+      start: true,
+      end: true,
+      allDay: true,
+      timeZone: true,
+    },
+  },
 } as const;
 
 const PAGE_FIELDS = {
@@ -192,6 +202,12 @@ function formatTile({
         },
       };
     }
+    case "EVENT":
+      return {
+        ...base,
+        type,
+        event: tile.event!,
+      };
   }
 }
 
