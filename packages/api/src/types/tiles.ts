@@ -6,6 +6,7 @@ import type {
   LinkTile,
   HeadingTile,
   PageLinkTile,
+  EventTile,
   Tile,
   TileType,
   Theme,
@@ -18,20 +19,13 @@ type TilePropertiesKey =
   | "place"
   | "link"
   | "heading"
-  | "pageLink";
-type TileProperties =
-  | ImageTile
-  | VideoTile
-  | TextTile
-  | PlaceTile
-  | LinkTile
-  | HeadingTile
-  | PageLinkTile;
+  | "pageLink"
+  | "event";
 
 type ClientTileType<
   Type extends TileType,
   PropertiesKey extends TilePropertiesKey,
-  Properties extends TileProperties,
+  Properties extends object,
 > = Pick<Tile, "id" | "type" | "position" | "columns" | "rows"> & {
   type: Type;
 } & {
@@ -66,6 +60,12 @@ export type ClientPageLinkTile = ClientTileType<
     } | null;
   }
 >;
+export type ClientEventTile = ClientTileType<
+  "EVENT",
+  "event",
+  Omit<EventTile, "start" | "end"> & { start: string; end: string | null }
+>;
+
 export type ClientTile =
   | ClientImageTile
   | ClientVideoTile
@@ -73,5 +73,7 @@ export type ClientTile =
   | ClientPlaceTile
   | ClientLinkTile
   | ClientHeadingTile
-  | ClientPageLinkTile;
+  | ClientPageLinkTile
+  | ClientEventTile;
+
 export type { TileType };
