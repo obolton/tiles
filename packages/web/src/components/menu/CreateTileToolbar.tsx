@@ -1,13 +1,14 @@
 import { useCallback } from "react";
-import useEditable from "../../hooks/useEditable";
-import textIcon from "../../icons/text.svg";
-import imageIcon from "../../icons/image.svg";
-import linkIcon from "../../icons/link.svg";
-import placeIcon from "../../icons/place.svg";
-import headingIcon from "../../icons/heading.svg";
-import { openCreateTileModal, createTile } from "../../utils/edit";
+import useEditable from "@/hooks/useEditable";
+import textIcon from "@/icons/text.svg";
+import imageIcon from "@/icons/image.svg";
+import linkIcon from "@/icons/link.svg";
+import placeIcon from "@/icons/place.svg";
+import headingIcon from "@/icons/heading.svg";
+import eventIcon from "@/icons/event.svg";
+import { openCreateTileModal, createTile } from "@/utils/edit";
 import styles from "./CreateTileToolbar.module.css";
-import type { TileType } from "../../types/tiles";
+import type { TileType } from "@/types/tiles";
 
 type TileButton = {
   label: string;
@@ -21,6 +22,7 @@ const BUTTONS: TileButton[] = [
   { label: "Text", type: "TEXT", icon: textIcon.src },
   { label: "Place", type: "PLACE", icon: placeIcon.src },
   { label: "Link", type: "LINK", icon: linkIcon.src },
+  { label: "Event", type: "EVENT", icon: eventIcon.src },
 ];
 
 interface CreateTileToolbarProps {
