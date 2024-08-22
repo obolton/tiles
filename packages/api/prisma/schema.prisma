@@ -101,6 +101,7 @@ enum TileType {
   LINK
   HEADING
   PAGE_LINK
+  EVENT
 }
 
 model Tile {
@@ -121,6 +122,7 @@ model Tile {
   link     LinkTile?
   heading  HeadingTile?
   pageLink PageLinkTile?
+  event    EventTile?
 
   @@map("tiles")
 }
@@ -230,4 +232,20 @@ model PageLinkTile {
   page Page? @relation(fields: [pageId], references: [id], onDelete: SetNull)
 
   @@map("page_link_tiles")
+}
+
+model EventTile {
+  id        String    @id @default(uuid()) @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  tileId    String    @unique @map("tile_id") @db.Uuid
+  title     String?
+  start     DateTime  @db.Timestamp(0)
+  end       DateTime? @db.Timestamp(0)
+  allDay    Boolean   @default(false) @map("all_day")
+  timeZone  String?   @map("time_zone")
+
+  tile Tile @relation(fields: [tileId], references: [id], onDelete: Cascade)
+
+  @@map("event_tiles")
 }
