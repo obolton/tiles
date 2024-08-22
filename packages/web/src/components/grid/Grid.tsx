@@ -6,6 +6,7 @@ import PlaceTile from "@/components/tiles/PlaceTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import HeadingTile from "@/components/tiles/HeadingTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
+import EventTile from "@/components/tiles/EventTile";
 import useLayoutTransition from "@/hooks/useLayoutTransition";
 import useElementSizeRef from "@/hooks/useElementSizeRef";
 import { scrollIntoView } from "@/hooks/useScrollIntoView";
@@ -37,6 +38,8 @@ function getTileComponent(tile: ClientTile) {
       return <HeadingTile key={tile.id} tile={tile} />;
     case "PAGE_LINK":
       return <PageLinkTile key={tile.id} tile={tile} />;
+    case "EVENT":
+      return <EventTile key={tile.id} tile={tile} />;
     default:
       throw new Error(`Unknown tile type: ${type}`);
   }

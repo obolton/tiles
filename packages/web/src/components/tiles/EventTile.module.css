@@ -1,0 +1,160 @@
+.event {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  border-radius: inherit;
+  background: linear-gradient(
+    oklch(from var(--page-color) 100% 6% h),
+    oklch(from var(--page-color) 97% 12% h)
+  );
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  font-size: 1.25rem;
+  line-height: 1.25rlh;
+  font-weight: 600;
+  color: rgba(255 255 255 / 80%);
+  -webkit-font-smoothing: antialiased;
+  background: var(--accent);
+  border-radius: 12px 12px 0 0;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 30%);
+  border-bottom: 1px solid rgb(0 0 0 / 30%);
+  background-clip: border-box;
+  box-shadow: 0 2px 4px 0 rgba(0 0 0 / 30%);
+  width: 100%;
+  flex: none;
+}
+
+.title {
+  font-size: 1.25rem;
+  line-height: 1.25rlh;
+  font-weight: 500;
+  text-align: center;
+  text-shadow: 0 1px 1px rgb(255 255 255 / 70%);
+  flex: none;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+  gap: 8px;
+  padding: 24px;
+  height: 100%;
+}
+
+.dates {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  padding: 16px 0;
+  width: 100%;
+
+  &.all-day {
+    flex-direction: row;
+    gap: 16px;
+  }
+}
+
+.date-time {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.day {
+  color: transparent;
+  text-align: center;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(255 255 255 / 40%);
+  background-image: var(--accent);
+  background-clip: text;
+}
+
+.month {
+  color: transparent;
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(255 255 255 / 20%);
+  background-image: linear-gradient(#303030, #000);
+  background-clip: text;
+}
+
+.small {
+  & .month {
+    font-size: 1.4rem;
+    line-height: 1.4rem;
+  }
+
+  & .day {
+    font-size: 2.8rem;
+    line-height: 1.9rlh;
+  }
+}
+
+.medium {
+  & .month {
+    font-size: 2rem;
+    line-height: 1.9rem;
+  }
+
+  & .day {
+    font-size: 4rem;
+    line-height: 2.8rlh;
+  }
+}
+
+.large {
+  & .month {
+    font-size: 2.8rem;
+    line-height: 2.6rem;
+  }
+
+  & .day {
+    font-size: 6rem;
+    line-height: 4rlh;
+  }
+}
+
+.time {
+  padding: 8px;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  text-shadow: 0 1px 1px rgb(255 255 255 / 70%);
+  background: rgb(255 255 255 / 30%);
+  border: 1px solid rgb(0 0 0 / 5%);
+  border-radius: 8px;
+  background-clip: padding-box;
+  white-space: nowrap;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.6;
+}
