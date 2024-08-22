@@ -7,5 +7,6 @@ export type {
   ClientLinkTile,
   ClientHeadingTile,
   ClientPageLinkTile,
+  ClientEventTile,
   TileType,
 } from "api/src/types/tiles.ts";
