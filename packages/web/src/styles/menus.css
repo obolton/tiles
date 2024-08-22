@@ -86,4 +86,8 @@ menu.vertical {
     outline-width: 3px;
     outline-color: var(--focus-ring-color);
   }
+
+  & > label {
+    padding-left: 12px;
+  }
 }
