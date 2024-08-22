@@ -1,5 +1,4 @@
 ---
-import Switch from "../inputs/Switch.astro";
 import moreIcon from "@/icons/more.svg";
 import trashIcon from "@/icons/trash.svg";
 
@@ -16,7 +15,10 @@ const { allowDelete = true } = Astro.props;
   role="toolbar"
   aria-label="Editing toolbar"
 >
-  <Switch id="editSwitch" label="Edit" />
+  <label>
+    Edit
+    <input id="editSwitch" type="checkbox" role="switch" />
+  </label>
   <button
     type="button"
     role="menuitem"
