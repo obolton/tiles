@@ -76,3 +76,55 @@ swatch-item {
     transform: scale(1.15);
   }
 }
+
+input[type="checkbox"][role="switch"] {
+  appearance: none;
+  position: relative;
+  display: block;
+  width: 56px;
+  height: 32px;
+  background-color: rgba(0 0 0 / 20%);
+  border: 1px solid rgb(0 0 0 / 30%);
+  border-radius: 16px;
+  box-shadow: inset 0 0 1px 1px rgb(0 0 0 / 10%);
+  outline: 0 solid transparent;
+  outline-offset: 2px;
+  cursor: pointer;
+  transition:
+    background-color 250ms ease,
+    outline-color 250ms ease,
+    outline-width 250ms ease;
+
+  &::after {
+    position: absolute;
+    content: "";
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 0 3px 1px rgb(0 0 0 / 20%);
+    translate: none;
+    transition: translate 250ms ease;
+  }
+
+  &:checked {
+    background-color: var(--focus-ring-color);
+
+    &::after {
+      translate: 24px 0;
+    }
+  }
+
+  &:focus-visible {
+    outline-color: var(--focus-ring-color);
+    outline-width: 3px;
+  }
+
+  label:has(> &) {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+}
