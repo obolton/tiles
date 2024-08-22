@@ -22,6 +22,7 @@ const MODALS = {
   IMAGE: lazy(() => import("./EditImageTileModal")),
   PLACE: lazy(() => import("./EditPlaceTileModal")),
   LINK: lazy(() => import("./EditLinkTileModal")),
+  EVENT: lazy(() => import("./EditEventTileModal")),
   TEXT: null,
   HEADING: null,
   PAGE_LINK: null,
