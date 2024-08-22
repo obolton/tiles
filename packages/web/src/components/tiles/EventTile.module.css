@@ -15,6 +15,14 @@
   overflow: hidden;
 }
 
+body:global(.light) .event {
+  background: linear-gradient(#fff, #f0f0f0);
+}
+
+body:global(.dark) .event {
+  background: linear-gradient(#404040, #606060);
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -40,7 +48,7 @@
   line-height: 1.25rlh;
   font-weight: 500;
   text-align: center;
-  text-shadow: 0 1px 1px rgb(255 255 255 / 70%);
+  text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
   flex: none;
 }
 
@@ -145,7 +153,7 @@
   margin: 0;
   font-size: 1.25rem;
   font-weight: 500;
-  text-shadow: 0 1px 1px rgb(255 255 255 / 70%);
+  text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
   background: rgb(255 255 255 / 30%);
   border: 1px solid rgb(0 0 0 / 5%);
   border-radius: 8px;
