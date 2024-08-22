@@ -114,10 +114,10 @@ input[type="checkbox"][role="switch"] {
     outline-color: var(--focus-ring-color);
     outline-width: 3px;
   }
+}
 
-  label:has(> &) {
-    flex-direction: row;
-    align-items: center;
-    gap: 16px;
-  }
+label:has(> input[type="checkbox"][role="switch"]) {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
 }
