@@ -32,7 +32,13 @@ export async function signIn({
       const [, session] = await Promise.all([
         createKey(transaction, { provider, providerId, userId: user.id }),
         createSession(transaction, user.id),
-        sendEmail(email, signUpEmail({ id: user.id, name })),
+        async () => {
+          try {
+            sendEmail(email, signUpEmail({ id: user.id, name }));
+          } catch (error) {
+            console.error(error);
+          }
+        },
       ]);
       return session;
     }
