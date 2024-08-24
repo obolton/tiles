@@ -42,5 +42,10 @@ declare namespace JSX {
       value: string;
       children?: string | JSX.Element | JSX.Element[];
     };
+    "calendar-month": {
+      id?: string;
+      class?: string;
+      date?: string;
+    };
   }
 }
