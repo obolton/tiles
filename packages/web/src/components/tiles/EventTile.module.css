@@ -1,7 +1,5 @@
 .event {
   position: absolute;
-  width: 100%;
-  height: 100%;
   inset: 0;
   display: flex;
   flex-direction: column;
@@ -12,7 +10,6 @@
     oklch(from var(--page-color) 100% 6% h),
     oklch(from var(--page-color) 97% 12% h)
   );
-  overflow: hidden;
 }
 
 body:global(.light) .event {
@@ -43,13 +40,11 @@ body:global(.dark) .event {
   flex: none;
 }
 
-.title {
-  font-size: 1.25rem;
-  line-height: 1.25rlh;
-  font-weight: 500;
-  text-align: center;
-  text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
-  flex: none;
+.grid {
+  display: grid;
+  grid-template-columns: var(--grid-size) 1fr;
+  padding: 24px 0 16px;
+  flex: 1;
 }
 
 .details {
@@ -58,8 +53,15 @@ body:global(.dark) .event {
   align-items: center;
   justify-content: stretch;
   gap: 8px;
-  padding: 24px;
-  height: 100%;
+
+  & h3 {
+    font-size: 1.25rem;
+    line-height: 1.25rlh;
+    font-weight: 500;
+    text-align: center;
+    text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
+    flex: none;
+  }
 }
 
 .dates {

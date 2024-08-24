@@ -67,25 +67,28 @@ export default function EventTile({ tile }: EventTileProps) {
         <header className={styles.header}>
           {yearFormatter.format(startDate)}
         </header>
+        <div className={styles.grid}>
+          <section className={styles.details}>
+            <h3>{title}</h3>
 
-        <section className={styles.details}>
-          <h3 className={styles.title}>{title}</h3>
+            <div
+              className={`${styles.dates} ${allDay ? styles["all-day"] : ""}`}
+            >
+              <DateTime date={startDate} showTime={!allDay} size={size} />
 
-          <div className={`${styles.dates} ${allDay ? styles["all-day"] : ""}`}>
-            <DateTime date={startDate} showTime={!allDay} size={size} />
-
-            {endDate ? (
-              <>
-                {allDay ? (
-                  <Icon src={arrowRightIcon.src} className={styles.icon} />
-                ) : (
-                  <Icon src={arrowDownIcon.src} className={styles.icon} />
-                )}
-                <DateTime date={endDate} showTime={!allDay} size={size} />
-              </>
-            ) : null}
-          </div>
-        </section>
+              {endDate ? (
+                <>
+                  <Icon
+                    src={allDay ? arrowRightIcon.src : arrowDownIcon.src}
+                    className={styles.icon}
+                  />
+                  <DateTime date={endDate} showTime={!allDay} size={size} />
+                </>
+              ) : null}
+            </div>
+          </section>
+          <calendar-month date={startDate.toISOString()} />
+        </div>
       </div>
     </Tile>
   );
