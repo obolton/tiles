@@ -35,3 +35,26 @@ export function formatRelativeDate(
     return formatter.format(Math.round(delta / YEAR), "year");
   }
 }
+
+type WeekInfo = {
+  firstDay: number;
+  weekend: number[];
+  minimalDays: number;
+};
+
+export function getFirstDayOfWeek() {
+  const locale = new Intl.Locale(navigator.language);
+  if ("getWeekInfo" in locale && typeof locale.getWeekInfo === "function") {
+    const weekInfo = locale.getWeekInfo() as WeekInfo;
+    return weekInfo.firstDay % 7;
+  } else if ("weekInfo" in locale) {
+    const weekInfo = locale.weekInfo as WeekInfo;
+    return weekInfo.firstDay % 7;
+  } else {
+    return 0;
+  }
+}
+
+export function getDaysInMonth(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+}
