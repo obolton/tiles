@@ -16,18 +16,18 @@
   font-family: var(--font);
 }
 
-.tile.light {
+.light {
   background: #fff;
   color: rgba(0 0 0 / 80%);
 }
 
-.tile.dark {
+.dark {
   -webkit-font-smoothing: antialiased;
   background: #202020;
   color: rgba(255 255 255 / 80%);
 }
 
-.tile.color {
+.color {
   background: oklch(var(--lightness) var(--chroma) var(--hue));
   color: rgba(0 0 0 / 80%);
 }
