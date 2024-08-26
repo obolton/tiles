@@ -21,6 +21,7 @@ export type TileProps = {
   theme?: Theme | null;
   hue?: number | null;
   font?: string | null;
+  variableHeight?: boolean;
 };
 
 export default function Tile({
@@ -32,6 +33,7 @@ export default function Tile({
   showBorder = true,
   showInLightbox = true,
   fullWidth = false,
+  variableHeight = false,
 }: TileProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isEditable = useEditable();
@@ -67,6 +69,7 @@ export default function Tile({
             ? styles.dark
             : styles.color,
         fullWidth && styles["full-width"],
+        variableHeight && styles["variable-height"],
       )}
       style={
         {

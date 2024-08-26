@@ -14,6 +14,11 @@
   min-width: var(--grid-size);
   min-height: var(--grid-size);
   font-family: var(--font);
+
+  &.variable-height {
+    height: auto;
+    min-height: unset;
+  }
 }
 
 .light {
