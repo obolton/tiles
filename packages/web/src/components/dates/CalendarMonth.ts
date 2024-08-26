@@ -7,12 +7,21 @@ stylesheet.replaceSync(css);
 export default class CalendarMonth extends HTMLElement {
   static observedAttributes = ["date"] as const;
 
+  // Date formatters
+  private static monthFormatter = new Intl.DateTimeFormat(navigator.language, {
+    month: "long",
+  });
+  private static weekDayFormatter = new Intl.DateTimeFormat(
+    navigator.language,
+    { weekday: "narrow" },
+  );
+  private static dayFormatter = new Intl.DateTimeFormat(navigator.language, {
+    day: "numeric",
+  });
+
   private root: HTMLElement;
   private header: HTMLElement;
   private dates: HTMLElement;
-  private monthFormatter: Intl.DateTimeFormat;
-  private weekDayFormatter: Intl.DateTimeFormat;
-  private dayFormatter: Intl.DateTimeFormat;
 
   private getDate() {
     const attribute = this.getAttribute("date");
@@ -35,16 +44,6 @@ export default class CalendarMonth extends HTMLElement {
 
     this.root.append(this.header, this.dates);
 
-
-    this.monthFormatter = new Intl.DateTimeFormat(navigator.language, {
-      month: "long",
-    });
-    this.weekDayFormatter = new Intl.DateTimeFormat(navigator.language, {
-      weekday: "narrow",
-    });
-    this.dayFormatter = new Intl.DateTimeFormat(navigator.language, {
-      day: "numeric",
-    });
     shadow.append(this.root);
   }
 
@@ -67,7 +66,8 @@ export default class CalendarMonth extends HTMLElement {
     const items = document.createDocumentFragment();
 
     // Header
-    this.header.textContent = this.monthFormatter.format(highlightDate);
+    this.header.textContent =
+      CalendarMonth.monthFormatter.format(highlightDate);
 
     // Weekdays
     const firstDayOfWeek = getFirstDayOfWeek();
@@ -77,7 +77,7 @@ export default class CalendarMonth extends HTMLElement {
     );
     for (let i = 0; i < 7; i++) {
       const weekday = document.createElement("div");
-      weekday.textContent = this.weekDayFormatter.format(headerDate);
+      weekday.textContent = CalendarMonth.weekDayFormatter.format(headerDate);
       weekday.classList.add("weekday");
       items.append(weekday);
 
@@ -101,7 +101,7 @@ export default class CalendarMonth extends HTMLElement {
       date.setDate(j);
 
       const day = document.createElement("time");
-      day.textContent = this.dayFormatter.format(date);
+      day.textContent = CalendarMonth.dayFormatter.format(date);
       day.classList.add("date");
       if (j === highlightDate.getDate()) {
         day.classList.add("highlighted-date");
