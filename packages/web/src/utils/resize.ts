@@ -76,8 +76,11 @@ function startResizing(pageX: number, pageY: number) {
   element.dataset.resizing = "true";
 
   const style = getComputedStyle(element);
-  state.minWidth = parseInt(style.getPropertyValue("min-width") ?? "0", 10);
-  state.minHeight = parseInt(style.getPropertyValue("min-height") ?? "0", 10);
+  const minWidth = style.getPropertyValue("min-width");
+  const minHeight = style.getPropertyValue("min-height");
+
+  state.minWidth = minWidth === "auto" ? 0 : parseInt(minWidth ?? "0", 10);
+  state.minHeight = minHeight === "auto" ? 0 : parseInt(minHeight ?? "0", 10);
   state.maxWidth = element.offsetParent
     ? element.offsetParent.clientWidth - element.offsetLeft
     : undefined;
