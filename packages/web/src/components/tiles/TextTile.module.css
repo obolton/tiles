@@ -1,6 +1,5 @@
 .text {
-  position: absolute;
-  inset: 0;
+  flex: 1;
   padding: 16px;
   font-size: 1rem;
   line-height: 1.5rlh;
@@ -20,6 +19,24 @@
 
   & ul {
     list-style-type: disc;
+  }
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+
+  & [data-editor] {
+    position: relative;
+    background: inherit;
+    border-radius: inherit;
+    padding: 16px;
+    flex: 1;
+  }
+
+  & [data-placeholder] {
+    padding: 16px;
   }
 }
 
