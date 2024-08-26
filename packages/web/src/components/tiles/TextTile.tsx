@@ -72,6 +72,7 @@ export default function TextTile({ tile }: TextTileProps) {
       tile={tile}
       showBorder={tile.columns < 3}
       showInLightbox={false}
+      variableHeight={tile.columns === 3}
     >
       {isEditable ? (
         <>
