@@ -1,10 +1,12 @@
-import stylesheet from "./CalendarMonth.css?url";
+import css from "./CalendarMonth.css?inline";
 import { getFirstDayOfWeek, getDaysInMonth } from "@/utils/dates";
+
+const stylesheet = new CSSStyleSheet();
+stylesheet.replaceSync(css);
 
 export default class CalendarMonth extends HTMLElement {
   static observedAttributes = ["date"] as const;
 
-  private shadow: ShadowRoot;
   private root: HTMLElement;
   private header: HTMLElement;
   private dates: HTMLElement;
@@ -20,12 +22,8 @@ export default class CalendarMonth extends HTMLElement {
   constructor() {
     super();
 
-    this.shadow = this.attachShadow({ mode: "closed" });
-
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = stylesheet;
-    this.shadow.append(link);
+    const shadow = this.attachShadow({ mode: "closed" });
+    shadow.adoptedStyleSheets = [stylesheet];
 
     this.root = document.createElement("section");
     this.root.id = "root";
@@ -37,7 +35,6 @@ export default class CalendarMonth extends HTMLElement {
 
     this.root.append(this.header, this.dates);
 
-    this.shadow.append(link, this.root);
 
     this.monthFormatter = new Intl.DateTimeFormat(navigator.language, {
       month: "long",
@@ -48,6 +45,7 @@ export default class CalendarMonth extends HTMLElement {
     this.dayFormatter = new Intl.DateTimeFormat(navigator.language, {
       day: "numeric",
     });
+    shadow.append(this.root);
   }
 
   connectedCallback() {
