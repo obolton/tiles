@@ -26,8 +26,8 @@
   border-radius: 8px;
   cursor: pointer;
   transition:
-    outline-width 0.2s ease-in-out,
-    outline-color 0.2s ease-in-out;
+    outline-width 200ms ease,
+    outline-color 200ms ease;
 }
 
 .page-select > li:hover {

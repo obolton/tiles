@@ -13,8 +13,8 @@
   padding: 0;
   transform-origin: center;
 
-  --animation-duration: 0.3s;
-  --animation-timing: ease-in-out;
+  --animation-duration: 350ms;
+  --animation-timing: ease;
 
   /* Enable overlay transitions */
   transition:

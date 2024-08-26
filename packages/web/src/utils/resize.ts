@@ -102,7 +102,7 @@ function startResizing(pageX: number, pageY: number) {
 
   outline.animate([{ opacity: 0 }, { opacity: 0.8 }], {
     duration: 200,
-    easing: "ease-in-out",
+    easing: "ease",
     fill: "forwards",
   });
 
@@ -127,7 +127,7 @@ function cleanUp() {
     outlineElement
       .animate([{ opacity: 0.8 }, { opacity: 0 }], {
         duration: 200,
-        easing: "ease-in-out",
+        easing: "ease",
         fill: "forwards",
       })
       .addEventListener("finish", () => outlineElement?.remove(), {

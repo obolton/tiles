@@ -70,6 +70,6 @@ body[data-resize] {
   will-change: width, height !important;
   pointer-events: none !important;
   transition:
-    width 500ms ease-in-out,
-    height 500ms ease-in-out !important;
+    width 500ms ease,
+    height 500ms ease !important;
 }
