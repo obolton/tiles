@@ -157,8 +157,8 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       }
       const id = target.dataset.tileId;
       const columnWidth = sizeRef.current.width / 3;
-      const columns = Math.round(size.width / columnWidth);
-      const rows = Math.round(size.height / columnWidth);
+      const columns = Math.max(Math.round(size.width / columnWidth), 1);
+      const rows = Math.max(Math.round(size.height / columnWidth), 1);
       await client.tiles.resize.mutate({ id, columns, rows });
     };
     window.addEventListener("tile:create", create);
