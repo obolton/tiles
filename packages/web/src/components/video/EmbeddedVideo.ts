@@ -1,4 +1,7 @@
-import stylesheet from "./EmbeddedVideo.css?url";
+import css from "./EmbeddedVideo.css?inline";
+
+const stylesheet = new CSSStyleSheet();
+stylesheet.replaceSync(css);
 
 export default class EmbeddedVideo extends HTMLElement {
   static observedAttributes = ["src", "imagesrc"] as const;
@@ -12,11 +15,7 @@ export default class EmbeddedVideo extends HTMLElement {
     super();
 
     this.shadow = this.attachShadow({ mode: "closed" });
-
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = stylesheet;
-    this.shadow.append(link);
+    this.shadow.adoptedStyleSheets = [stylesheet];
   }
 
   connectedCallback() {
