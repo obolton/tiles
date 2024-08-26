@@ -13,7 +13,6 @@ import Toolbar from "./Toolbar";
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
 import { useEffect, useRef } from "react";
 import { handleError } from "@/utils/errors";
-import { classNames } from "@/utils/css";
 import styles from "./RichTextEditor.module.css";
 
 export type { EditorState };
@@ -61,27 +60,30 @@ export default function RichTextEditor({
   useEffect(() => ref.current?.setEditable(editable ?? false), [editable]);
 
   return (
-    <LexicalComposer initialConfig={initialConfig.current}>
-      <RichTextPlugin
-        contentEditable={
-          <ContentEditable
-            {...props}
-            className={classNames(styles.editor, className)}
-            aria-placeholder={placeholder || ""}
-            placeholder={
-              <p className={classNames(styles.placeholder, className)}>
-                {placeholder}
-              </p>
-            }
-          />
-        }
-        ErrorBoundary={LexicalErrorBoundary}
-      />
-      <OnChangePlugin onChange={onChange} />
-      <EditorRefPlugin editorRef={ref} />
-      <ListPlugin />
-      <Toolbar />
-      {children}
-    </LexicalComposer>
+    <div className={className}>
+      <LexicalComposer initialConfig={initialConfig.current}>
+        <RichTextPlugin
+          contentEditable={
+            <ContentEditable
+              {...props}
+              data-editor="true"
+              className={styles.editor}
+              aria-placeholder={placeholder || ""}
+              placeholder={
+                <p data-placeholder="true" className={styles.placeholder}>
+                  {placeholder}
+                </p>
+              }
+            />
+          }
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+        <OnChangePlugin onChange={onChange} />
+        <EditorRefPlugin editorRef={ref} />
+        <ListPlugin />
+        <Toolbar />
+        {children}
+      </LexicalComposer>
+    </div>
   );
 }
