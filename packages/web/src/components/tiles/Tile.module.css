@@ -1,5 +1,7 @@
 .tile {
   position: relative;
+  display: flex;
+  justify-content: stretch;
   border-radius: 12px;
   background: #fff;
   outline-offset: -1px;
