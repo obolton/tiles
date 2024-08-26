@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import styles from "./ColorPicker.module.css";
+import { classNames } from "@/utils/css";
 import type SwatchSelect from "./SwatchSelect";
 import type { Theme } from "@/types/pages";
 
@@ -53,7 +54,7 @@ export default function ColorPicker({
 
   return (
     <swatch-select
-      class={`${styles.color} ${className ?? ""}`}
+      class={classNames(styles.color, className)}
       ref={ref}
       aria-label="Color"
       aria-orientation="horizontal"

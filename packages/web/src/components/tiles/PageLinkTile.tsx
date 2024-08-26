@@ -3,6 +3,7 @@ import Tile from "./Tile";
 import Icon from "@/components/icons/Icon";
 import arrowOutwardIcon from "@/icons/arrow-outward.svg";
 import styles from "./PageLinkTile.module.css";
+import { classNames } from "@/utils/css";
 import type { ClientPageLinkTile } from "@/types/tiles";
 
 type PageLinkTileProps = {
@@ -36,7 +37,14 @@ export default function PageLinkTile({ tile }: PageLinkTileProps) {
     >
       {/* eslint-disable-next-line react/jsx-no-target-blank */}
       <a
-        className={`${styles.contents} ${page.theme === "LIGHT" ? styles.light : page.theme === "DARK" ? styles.dark : styles.color}`}
+        className={classNames(
+          styles.contents,
+          page.theme === "LIGHT"
+            ? styles.light
+            : page.theme === "DARK"
+              ? styles.dark
+              : styles.color,
+        )}
         style={
           imageKey
             ? { backgroundImage: `url(${getImageUrl(imageKey)})` }
@@ -48,7 +56,7 @@ export default function PageLinkTile({ tile }: PageLinkTileProps) {
         <Icon src={arrowOutwardIcon.src} className={styles.icon} />
 
         <section
-          className={`${styles.text} ${imageKey ? styles["with-image"] : ""}`}
+          className={classNames(styles.text, imageKey && styles["with-image"])}
         >
           <h3>{title}</h3>
 

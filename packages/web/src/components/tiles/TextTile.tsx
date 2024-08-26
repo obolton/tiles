@@ -8,6 +8,7 @@ import useEditable from "@/hooks/useEditable";
 import { updateTile } from "@/utils/edit";
 import Tile from "./Tile";
 import styles from "./TextTile.module.css";
+import { classNames } from "@/utils/css";
 import type { ClientTextTile } from "@/types/tiles";
 import type { EditorState } from "@/components/inputs/RichTextEditor/RichTextEditor";
 
@@ -75,7 +76,7 @@ export default function TextTile({ tile }: TextTileProps) {
       {isEditable ? (
         <>
           <RichTextEditor
-            className={`${styles.text} ${styles.editor}`}
+            className={classNames(styles.text, styles.editor)}
             onBlur={onBlur}
             onChange={setEditorState}
             onPointerDownCapture={onPointerDown}

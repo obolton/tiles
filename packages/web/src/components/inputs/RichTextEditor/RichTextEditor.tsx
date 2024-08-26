@@ -13,6 +13,7 @@ import Toolbar from "./Toolbar";
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
 import { useEffect, useRef } from "react";
 import { handleError } from "@/utils/errors";
+import { classNames } from "@/utils/css";
 import styles from "./RichTextEditor.module.css";
 
 export type { EditorState };
@@ -65,10 +66,10 @@ export default function RichTextEditor({
         contentEditable={
           <ContentEditable
             {...props}
-            className={`${styles.editor} ${className || ""}`}
+            className={classNames(styles.editor, className)}
             aria-placeholder={placeholder || ""}
             placeholder={
-              <p className={`${styles.placeholder} ${className || ""}`}>
+              <p className={classNames(styles.placeholder, className)}>
                 {placeholder}
               </p>
             }

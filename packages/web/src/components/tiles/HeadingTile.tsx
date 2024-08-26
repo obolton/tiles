@@ -8,6 +8,7 @@ import { updateTile, deleteTile } from "@/utils/edit";
 import client from "@/api/client";
 import { destroy } from "@/utils/animation/effects";
 import styles from "./HeadingTile.module.css";
+import { classNames } from "@/utils/css";
 import type { ClientHeadingTile } from "@/types/tiles";
 
 type HeadingTileProps = {
@@ -70,7 +71,7 @@ export default function HeadingTile({ tile }: HeadingTileProps) {
     <header
       id={tile.id}
       ref={ref}
-      className={`${styles.heading} editable`}
+      className={classNames(styles.heading, "editable")}
       data-drop-target={isEditable ? "true" : undefined}
       data-tile-id={tile.id}
       data-tile={JSON.stringify(tile)}

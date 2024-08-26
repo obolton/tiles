@@ -8,6 +8,7 @@ import client from "@/api/client";
 import DeleteButton from "./DeleteButton";
 import { destroy } from "@/utils/animation/effects";
 import styles from "./Tile.module.css";
+import { classNames } from "@/utils/css";
 import type { ClientTile } from "@/types/tiles";
 import type { Theme } from "@/types/pages";
 
@@ -56,7 +57,17 @@ export default function Tile({
     <div
       id={tile.id}
       ref={ref}
-      className={`editable ${styles.tile} ${showBorder ? styles.border : ""} ${theme === "LIGHT" ? styles.light : theme === "DARK" ? styles.dark : styles.color} ${fullWidth ? styles["full-width"] : ""}`}
+      className={classNames(
+        "editable",
+        styles.tile,
+        showBorder && styles.border,
+        theme === "LIGHT"
+          ? styles.light
+          : theme === "DARK"
+            ? styles.dark
+            : styles.color,
+        fullWidth && styles["full-width"],
+      )}
       style={
         {
           "--columns": tile.columns,

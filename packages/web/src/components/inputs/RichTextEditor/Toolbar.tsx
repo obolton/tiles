@@ -21,6 +21,7 @@ import underlineIcon from "@/icons/underline.svg";
 import strikethroughIcon from "@/icons/strikethrough.svg";
 import orderedListIcon from "@/icons/ordered-list.svg";
 import unorderedListIcon from "@/icons/unordered-list.svg";
+import { classNames } from "@/utils/css";
 import styles from "./Toolbar.module.css";
 
 type Format = {
@@ -175,7 +176,7 @@ export default function Toolbar() {
 
   return (
     <menu
-      className={`${styles.toolbar} ${visible ? "" : styles.hidden}`}
+      className={classNames(styles.toolbar, visible ? null : styles.hidden)}
       style={
         {
           "--left": `${position.x}px`,

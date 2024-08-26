@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from "react";
+import { classNames } from "@/utils/css";
 import styles from "./ResizingTextarea.module.css";
 
 type ResizingTextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
@@ -25,7 +26,7 @@ export default function ResizingTextarea({
   return (
     <textarea
       {...props}
-      className={`${styles.textarea} ${className ?? ""}`}
+      className={classNames(styles.textarea, className)}
       ref={ref}
       value={value}
     />

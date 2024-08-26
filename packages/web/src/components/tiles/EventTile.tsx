@@ -5,6 +5,7 @@ import Icon from "@/components/icons/Icon";
 import arrowRightIcon from "@/icons/arrow-right.svg";
 import arrowDownIcon from "@/icons/arrow-down.svg";
 import styles from "./EventTile.module.css";
+import { classNames } from "@/utils/css";
 import type { ClientEventTile } from "@/types/tiles";
 
 type EventTileProps = {
@@ -38,7 +39,7 @@ const timeFormatter = new Intl.DateTimeFormat(undefined, {
 function DateTime({ date, showTime = true, size }: DateTimeProps) {
   return (
     <time className={styles["date-time"]} dateTime={date.toISOString()}>
-      <div className={`${styles.date} ${styles[size]}`}>
+      <div className={classNames(styles.date, styles[size])}>
         <span className={styles.month}>{monthFormatter.format(date)}</span>
         <span className={styles.day}>{dayFormatter.format(date)}</span>
       </div>
@@ -72,7 +73,7 @@ export default function EventTile({ tile }: EventTileProps) {
             <h3>{title}</h3>
 
             <div
-              className={`${styles.dates} ${allDay ? styles["all-day"] : ""}`}
+              className={classNames(styles.dates, allDay && styles["all-day"])}
             >
               <DateTime date={startDate} showTime={!allDay} size={size} />
 

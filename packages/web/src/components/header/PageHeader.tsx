@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import useEditable from "@/hooks/useEditable";
 import client from "@/api/client";
+import { classNames } from "@/utils/css";
 import styles from "./PageHeader.module.css";
 
 interface PageHeaderProps {
@@ -46,7 +47,7 @@ export default function PageHeader({
   );
 
   return (
-    <div className={`${styles.header} editable`}>
+    <div className={classNames(styles.header, "editable")}>
       <h1>
         {isEditable ? (
           <ResizingTextarea
