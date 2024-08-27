@@ -14,7 +14,9 @@
   transition:
     opacity 200ms ease,
     outline-color 200ms ease,
-    outline-width 200ms ease;
+    outline-width 200ms ease,
+    transform 150ms ease,
+    box-shadow 150ms ease;
 
   &.variable-height {
     height: auto;
@@ -70,6 +72,14 @@
 [data-lightbox] .tile::after {
   border-radius: 0;
   box-shadow: none;
+}
+
+body:not([data-editing="true"]) .tile {
+  &[data-show-in-lightbox="true"]:hover,
+  &:has(a):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 5px -2px rgb(0 0 0 / 25%);
+  }
 }
 
 body[data-editing]:not([data-drag]) .tile,
