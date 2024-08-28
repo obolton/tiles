@@ -15,14 +15,7 @@ import type {
   UpdatePageSchema,
   DeletePageSchema,
 } from "./schema.ts";
-import {
-  getHomePageUrl,
-  getPageUrl,
-  invalidateCachedUrl,
-} from "@/utils/cdn.ts";
 import type { ClientTile } from "@/types/tiles.ts";
-
-const HOME_PAGE_ID = process.env.PAGE_ID;
 
 const TILES_FIELDS = {
   id: true,
@@ -392,7 +385,7 @@ export async function updatePage({
   hue,
   font,
 }: UpdatePageSchema) {
-  const result = await prisma.page.update({
+  return prisma.page.update({
     where: { id },
     data: { title, subtitle, theme, hue, font },
     select: {
@@ -407,13 +400,6 @@ export async function updatePage({
       font: true,
     },
   });
-
-  invalidateCachedUrl(getPageUrl(id));
-  if (id === HOME_PAGE_ID) {
-    invalidateCachedUrl(getHomePageUrl());
-  }
-
-  return result;
 }
 
 export async function deletePage({ id }: DeletePageSchema) {

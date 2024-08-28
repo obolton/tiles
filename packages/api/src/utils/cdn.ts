@@ -1,5 +1,7 @@
 import cloudflare, { CLOUDFLARE_ZONE_ID } from "./cloudflare.ts";
 
+const HOME_PAGE_ID = process.env.PAGE_ID;
+
 export function getProfileImageUrl(imageKey: string) {
   return `${process.env.PROFILE_IMAGES_BASE_URL}/${imageKey}`;
 }
@@ -33,4 +35,11 @@ export function invalidateCachedUrl(url: string) {
     .catch((error) =>
       console.error("Failed to invalidate cached URL:", url, error),
     );
+}
+
+export function invalidateCachedPage(id: string) {
+  invalidateCachedUrl(getPageUrl(id));
+  if (id === HOME_PAGE_ID) {
+    invalidateCachedUrl(getHomePageUrl());
+  }
 }
