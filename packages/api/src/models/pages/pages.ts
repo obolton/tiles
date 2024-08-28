@@ -15,6 +15,7 @@ import type {
   UpdatePageSchema,
   DeletePageSchema,
 } from "./schema.ts";
+import { getPageUrl, invalidateCachedUrl } from "@/utils/cdn.ts";
 import type { ClientTile } from "@/types/tiles.ts";
 
 const TILES_FIELDS = {
@@ -381,7 +382,7 @@ export async function updatePage({
   hue,
   font,
 }: UpdatePageSchema) {
-  return prisma.page.update({
+  const result = await prisma.page.update({
     where: { id },
     data: { title, subtitle, theme, hue, font },
     select: {
@@ -396,6 +397,8 @@ export async function updatePage({
       font: true,
     },
   });
+  invalidateCachedUrl(getPageUrl(id));
+  return result;
 }
 
 export async function deletePage({ id }: DeletePageSchema) {
