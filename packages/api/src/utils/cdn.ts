@@ -12,6 +12,10 @@ export function getVideoImageUrl(tileId: string) {
   return `${process.env.RESOURCES_BASE_URL}/videos/${tileId}`;
 }
 
+export function getHomePageUrl() {
+  return `${process.env.CLIENT_ORIGIN}/`;
+}
+
 export function getPageUrl(pageId: string) {
   return `${process.env.CLIENT_ORIGIN}/pages/${pageId}`;
 }
