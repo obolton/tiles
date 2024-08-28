@@ -207,7 +207,11 @@ function formatTile({
       return {
         ...base,
         type,
-        event: tile.event!,
+        event: {
+          ...tile.event!,
+          start: tile.event!.start.toISOString(),
+          end: tile.event!.end?.toISOString() ?? null,
+        },
       };
   }
 }
