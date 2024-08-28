@@ -17,6 +17,7 @@ import {
   updatePage,
   deletePage,
 } from "@/models/pages/pages.ts";
+import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
   getById: procedure.input(GetPageByIdSchema).query(async ({ input }) => {
@@ -62,6 +63,7 @@ export default router({
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     const page = await updatePage(input);
+    invalidateCachedPage(page.id);
     return page;
   }),
 
@@ -70,6 +72,7 @@ export default router({
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     const page = await deletePage(input);
+    invalidateCachedPage(page.id);
     return page;
   }),
 });

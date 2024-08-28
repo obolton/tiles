@@ -5,34 +5,40 @@ import {
   moveTile,
   resizeTile,
   deleteTile,
-} from "../models/tiles/tiles.ts";
+} from "@/models/tiles/tiles.ts";
 import {
   CreateTileSchema,
   UpdateTileSchema,
   MoveTileSchema,
   ResizeTileSchema,
   DeleteTileSchema,
-} from "../models/tiles/schema.ts";
+} from "@/models/tiles/schema.ts";
+import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
   create: procedure.input(CreateTileSchema).mutation(async ({ input }) => {
     const tile = await createTile(input);
+    invalidateCachedPage(input.pageId);
     return tile;
   }),
   update: procedure.input(UpdateTileSchema).mutation(async ({ input }) => {
     const tile = await updateTile(input);
+    invalidateCachedPage(tile.pageId);
     return tile;
   }),
   move: procedure.input(MoveTileSchema).mutation(async ({ input }) => {
     const result = await moveTile(input);
+    invalidateCachedPage(result.pageId);
     return result;
   }),
   resize: procedure.input(ResizeTileSchema).mutation(async ({ input }) => {
     const result = await resizeTile(input);
+    invalidateCachedPage(result.pageId);
     return result;
   }),
   delete: procedure.input(DeleteTileSchema).mutation(async ({ input }) => {
-    await deleteTile(input);
+    const result = await deleteTile(input);
+    invalidateCachedPage(result.pageId);
     return null;
   }),
 });

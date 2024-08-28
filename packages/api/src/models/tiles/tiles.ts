@@ -69,7 +69,7 @@ export async function moveTile({ id, position }: MoveTileSchema) {
       select: { pageId: true, position: true },
     });
     if (oldPosition === position) {
-      return;
+      return { id, pageId, fromPosition: oldPosition, toPosition: position };
     } else if (position > oldPosition) {
       await prisma.tile.updateMany({
         where: {
@@ -95,6 +95,7 @@ export async function moveTile({ id, position }: MoveTileSchema) {
     });
     return {
       id,
+      pageId,
       fromPosition: oldPosition,
       toPosition: position,
     };
@@ -110,6 +111,7 @@ export async function resizeTile({ id, columns, rows }: ResizeTileSchema) {
     },
     select: {
       id: true,
+      pageId: true,
       columns: true,
       rows: true,
     },
@@ -129,5 +131,6 @@ export async function deleteTile({ id }: DeleteTileSchema) {
       },
       data: { position: { decrement: 1 } },
     });
+    return { id, pageId };
   });
 }

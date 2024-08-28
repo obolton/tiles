@@ -89,6 +89,7 @@ export async function updateVideoTile(
     },
     select: {
       id: true,
+      pageId: true,
       type: true,
       position: true,
       columns: true,

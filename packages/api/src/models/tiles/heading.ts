@@ -54,6 +54,7 @@ export async function updateHeadingTile(
     },
     select: {
       id: true,
+      pageId: true,
       type: true,
       position: true,
       columns: true,

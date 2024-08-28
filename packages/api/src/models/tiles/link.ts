@@ -95,6 +95,7 @@ export async function updateLinkTile(
     },
     select: {
       id: true,
+      pageId: true,
       type: true,
       position: true,
       columns: true,
