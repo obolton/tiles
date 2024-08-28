@@ -5,6 +5,7 @@ import PageHeader from "@/components/header/PageHeader";
 import Grid from "@/components/grid/Grid";
 import EditTileModal from "@/components/modals/EditTileModal";
 import client from "@/api/client";
+import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 
 const pageId = import.meta.env.PAGE_ID;
 if (!pageId) {
@@ -19,6 +20,8 @@ if (!page) {
     statusText: "Page not found",
   });
 }
+
+Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
 ---
 
 <Page

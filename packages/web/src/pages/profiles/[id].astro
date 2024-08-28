@@ -5,6 +5,7 @@ import ProfilePageHeader from "@/components/header/ProfilePageHeader";
 import Grid from "@/components/grid/Grid";
 import EditTileModal from "@/components/modals/EditTileModal";
 import client from "@/api/client";
+import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 
 const { id: userId } = Astro.params;
 
@@ -22,6 +23,8 @@ if (!profile) {
     statusText: "Page not found",
   });
 }
+
+Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
 ---
 
 <Page
