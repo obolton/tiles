@@ -1,7 +1,7 @@
-import client from "../api/client";
+import client from "@/api/client";
 
-export async function uploadMedia(file: File) {
-  const { url, key } = await client.media.createSignedUploadUrl.mutate();
+export async function uploadMedia(file: File, type: "image" | "profile-image") {
+  const { url, key } = await client.media.createSignedUploadUrl.mutate(type);
   const uploadResult = await fetch(url, {
     method: "PUT",
     body: file,

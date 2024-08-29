@@ -47,7 +47,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
 
   const setFile = useCallback(async (file: File) => {
     setImageUrl(URL.createObjectURL(file));
-    const key = await uploadMedia(file);
+    const key = await uploadMedia(file, "image");
     setImageKey(key);
   }, []);
 
