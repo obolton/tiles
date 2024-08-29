@@ -20,6 +20,23 @@ function intersectionObserverCallback(entries: IntersectionObserverEntry[]) {
         lightbox.firstElementChild.children,
         entry.target,
       );
+
+      lightbox
+        .querySelectorAll("li.visible")
+        .forEach((element) => element.classList.remove("visible"));
+      entry.target.classList.add("visible");
+
+      if (currentIndex === 0) {
+        lightbox.classList.add("first");
+      } else {
+        lightbox.classList.remove("first");
+      }
+
+      if (currentIndex === lightbox.firstElementChild.childElementCount - 1) {
+        lightbox.classList.add("last");
+      } else {
+        lightbox.classList.remove("last");
+      }
       return;
     }
   }
