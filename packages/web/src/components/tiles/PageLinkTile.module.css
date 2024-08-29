@@ -13,9 +13,9 @@
   justify-content: center;
 
   & h3 {
-    font-size: 1.75rem;
+    font-size: clamp(1rem, 3vw, 1.75rem);
+    line-height: 1.2;
     font-weight: 600;
-    line-height: 1.75rlh;
     margin: 0 0 0.5rem;
   }
 
@@ -41,9 +41,11 @@
     gap: 8px;
     padding: 0 16px 0 0;
     margin-top: 16px;
+    font-size: clamp(0.875rem, 2vw, 1rem);
     font-family: var(--ui-font);
     font-style: normal;
     font-weight: 500;
+    white-space: nowrap;
   }
 
   & .text {
@@ -54,7 +56,7 @@
     text-align: center;
 
     &.with-image {
-      padding: 24px 16px;
+      padding: clamp(8px, 2vw, 24px) clamp(8px, 2vw, 16px);
       border-radius: 8px;
       backdrop-filter: blur(8px) contrast(80%);
       box-shadow:
@@ -110,4 +112,10 @@
 
 .deleted {
   padding: 24px;
+}
+
+@media (width < 640px) {
+  .contents p {
+    display: none;
+  }
 }

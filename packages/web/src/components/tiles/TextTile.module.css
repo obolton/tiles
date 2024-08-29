@@ -1,8 +1,10 @@
 .text {
+  --padding: clamp(8px, 2vw, 16px);
+
   flex: 1;
-  padding: 16px;
-  font-size: 1rem;
-  line-height: 1.5rlh;
+  padding: var(--padding);
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  line-height: 1.8;
   background: inherit;
   border-radius: inherit;
   overflow: auto;
@@ -31,12 +33,12 @@
     position: relative;
     background: inherit;
     border-radius: inherit;
-    padding: 16px;
+    padding: var(--padding);
     flex: 1;
   }
 
   & [data-placeholder] {
-    padding: 16px;
+    padding: var(--padding);
   }
 }
 
