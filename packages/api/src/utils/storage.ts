@@ -1,28 +1,23 @@
+import assert from "node:assert";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Upload } from "@aws-sdk/lib-storage";
+
+type MediaType = "image" | "profile-image";
 
 const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
 const CLOUDFLARE_R2_ACCESS_KEY_ID = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
 const CLOUDFLARE_R2_SECRET_ACCESS_KEY =
   process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
 const CLOUDFLARE_R2_BUCKET_IMAGES = process.env.CLOUDFLARE_R2_BUCKET_IMAGES;
+const CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES =
+  process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
 
-if (!CLOUDFLARE_ACCOUNT_ID) {
-  throw new Error("CLOUDFLARE_ACCOUNT_ID is required");
-}
-
-if (!CLOUDFLARE_R2_ACCESS_KEY_ID) {
-  throw new Error("CLOUDFLARE_R2_ACCESS_KEY_ID is required");
-}
-
-if (!CLOUDFLARE_R2_SECRET_ACCESS_KEY) {
-  throw new Error("CLOUDFLARE_R2_SECRET_ACCESS_KEY is required");
-}
-
-if (!CLOUDFLARE_R2_BUCKET_IMAGES) {
-  throw new Error("CLOUDFLARE_R2_BUCKET is required");
-}
+assert(CLOUDFLARE_ACCOUNT_ID);
+assert(CLOUDFLARE_R2_ACCESS_KEY_ID);
+assert(CLOUDFLARE_R2_SECRET_ACCESS_KEY);
+assert(CLOUDFLARE_R2_BUCKET_IMAGES);
+assert(CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES);
 
 const S3 = new S3Client({
   region: "auto",
@@ -33,9 +28,21 @@ const S3 = new S3Client({
   },
 });
 
-export async function createSignedUploadUrl(key: string) {
+function getBucket(mediaType: MediaType) {
+  switch (mediaType) {
+    case "image":
+      return CLOUDFLARE_R2_BUCKET_IMAGES;
+    case "profile-image":
+      return CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
+    default:
+      throw new Error("Invalid media type:", mediaType);
+  }
+}
+
+export async function createSignedUploadUrl(key: string, type: MediaType) {
+  const bucket = getBucket(type);
   const command = new PutObjectCommand({
-    Bucket: CLOUDFLARE_R2_BUCKET_IMAGES,
+    Bucket: bucket,
     Key: key,
   });
   return getSignedUrl(S3, command, { expiresIn: 180 });
@@ -52,7 +59,6 @@ export async function upload(
     params: {
       Bucket: bucket,
       Key: key,
-      // @ts-expect-error The type definition for Body does not currently recognize Node.js ReadableStream, although it is supported
       Body: body,
       ContentType: contentType,
     },
