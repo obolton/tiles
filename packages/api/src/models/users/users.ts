@@ -88,12 +88,18 @@ export async function getUserBySessionId(sessionId: string) {
   };
 }
 
-export async function updateUser({ id, name, email }: UpdateUserSchema) {
+export async function updateUser({
+  id,
+  name,
+  email,
+  imageKey,
+}: UpdateUserSchema) {
   const user = await prisma.user.update({
     where: { id },
     data: {
       name,
       email,
+      imageKey,
     },
     select: {
       id: true,
