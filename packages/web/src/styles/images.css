@@ -1,4 +1,5 @@
 profile-image {
+  position: relative;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -10,12 +11,17 @@ profile-image {
   background-clip: padding-box;
   color: rgb(0 0 0 / 60%);
   border: 1px solid rgb(0 0 0 / 20%);
+  overflow: hidden;
 
   &::part(image) {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
+    clip-path: circle(50%);
+    transition: clip-path 350ms ease;
   }
 
   &::part(placeholder) {
@@ -27,5 +33,11 @@ profile-image {
     font-size: 2.5rem;
     width: 80px;
     height: 80px;
+  }
+
+  &.pending {
+    &::part(image) {
+      clip-path: circle(calc(50% - 3px));
+    }
   }
 }
