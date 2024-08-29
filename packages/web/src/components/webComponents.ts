@@ -8,6 +8,7 @@ import InfiniteScroll from "./InfiniteScroll";
 import SwatchSelect from "./inputs/SwatchSelect";
 import SwatchItem from "./inputs/SwatchItem";
 import CalendarMonth from "./dates/CalendarMonth";
+import FilePicker from "./forms/FilePicker";
 
 customElements.define("data-binding", DataBinding);
 customElements.define("popover-menu", PopoverMenu);
@@ -19,3 +20,4 @@ customElements.define("infinite-scroll", InfiniteScroll);
 customElements.define("swatch-select", SwatchSelect);
 customElements.define("swatch-item", SwatchItem);
 customElements.define("calendar-month", CalendarMonth);
+customElements.define("file-picker", FilePicker);
