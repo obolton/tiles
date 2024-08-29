@@ -160,7 +160,7 @@ button.floating {
 
 /* Pending states */
 
-button.pending,
+.pending,
 form[data-pending] button[type="submit"] {
   position: relative;
   pointer-events: none;
