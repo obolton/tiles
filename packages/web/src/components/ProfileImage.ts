@@ -42,6 +42,9 @@ export default class ProfileImage extends HTMLElement {
         this.image.setAttribute("src", src);
         this.image.setAttribute("alt", `Profile image for ${name}`);
         this.image.setAttribute("title", name);
+        this.image.addEventListener("load", () =>
+          this.dispatchEvent(new Event("load", { bubbles: false })),
+        );
         this.shadow.append(this.image);
       }
     } else {
