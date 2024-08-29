@@ -17,6 +17,8 @@ const user = await client.auth.getUserInfo.query(undefined, {
 if (!user) {
   return Astro.redirect("/sign-in");
 }
+
+const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
 ---
 
 <Page title="Settings">
@@ -27,8 +29,15 @@ if (!user) {
   <form id="settings-form" class="vertical">
     <input type="hidden" name="id" value={user.id} />
 
-    <profile-image class="large" src={user.imageUrl} name={user.name}>
-    </profile-image>
+    <file-picker
+      id="profile-image-picker"
+      type="profile-image"
+      accept={ACCEPT_CONTENT_TYPES.join(",")}
+    >
+      <data-binding src="user.imageUrl" name="user.name">
+        <profile-image class="large" data-pending-text=""></profile-image>
+      </data-binding>
+    </file-picker>
 
     <label>
       Name
@@ -65,23 +74,43 @@ if (!user) {
   import { redirectWithToast } from "@/utils/toasts";
   import { getPersistent } from "@/utils/state";
   import { handleError } from "@/utils/errors";
+  import type FilePicker from "@/components/forms/FilePicker";
 
+  const filePicker = document.getElementById(
+    "profile-image-picker"
+  )! as FilePicker;
+  const image = filePicker.querySelector("profile-image")!;
   const form = document.getElementById("settings-form")! as HTMLFormElement;
+
+  function getFormData() {
+    const formData = new FormData(form);
+    return Object.fromEntries(formData.entries()) as {
+      id: string;
+      name: string;
+      email: string;
+    };
+  }
+
+  filePicker.addEventListener("change", () => image.classList.add("pending"));
+  filePicker.addEventListener("error", () => image.classList.remove("pending"));
+  image.addEventListener("load", () => image.classList.remove("pending"));
+
+  filePicker.addEventListener("upload", async ({ uploadKey }) => {
+    const userInfo = await client.users.update.mutate({
+      id: getFormData().id,
+      imageKey: uploadKey,
+    });
+    setUserInfo(userInfo);
+  });
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     form.dataset.pending = "true";
     delete form.dataset.error;
 
-    const formData = new FormData(form);
-    const input = Object.fromEntries(formData.entries()) as {
-      id: string;
-      name: string;
-      email: string;
-    };
-
     try {
-      const userInfo = await client.users.update.mutate(input);
+      const userInfo = await client.users.update.mutate(getFormData());
       setUserInfo(userInfo);
       redirectWithToast(
         getPersistent("user.profile") ?? "/",
