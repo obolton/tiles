@@ -43,7 +43,7 @@
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-storybook": "^0.8.0",
-    "jsdom": "^24.1.1",
+    "jsdom": "^25.0.0",
     "postcss-html": "^1.7.0",
     "storybook": "^8.2.9",
     "stylelint": "^16.9.0",
