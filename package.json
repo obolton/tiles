@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "lint": "npm run lint --workspaces"
+    "lint": "npm run lint --workspaces",
+    "storybook": "npm run storybook --workspace=web"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^2.0.5",
