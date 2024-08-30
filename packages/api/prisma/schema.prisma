@@ -23,8 +23,9 @@ model User {
 
   sessions    Session[]
   keys        Key[]
-  profilePage Page      @relation("ProfilePage", fields: [profilePageId], references: [id], onDelete: Cascade)
-  pages       Page[]    @relation("Pages")
+  profilePage Page         @relation("ProfilePage", fields: [profilePageId], references: [id], onDelete: Cascade)
+  pages       Page[]       @relation("Pages")
+  collections Collection[]
 
   @@map("users")
 }
@@ -142,7 +143,8 @@ model ImageTile {
   imageKey  String   @map("image_key")
   caption   String?
 
-  tiles Tile[]
+  tiles       Tile[]
+  collections CollectionItem[]
 
   @@map("image_tiles")
 }
@@ -161,7 +163,8 @@ model VideoTile {
   title       String
   description String?
 
-  tiles Tile[]
+  tiles       Tile[]
+  collections CollectionItem[]
 
   @@map("video_tiles")
 }
@@ -176,7 +179,8 @@ model TextTile {
   theme   Theme  @default(LIGHT) @map("theme")
   hue     Float? @db.Real
 
-  tiles Tile[]
+  tiles       Tile[]
+  collections CollectionItem[]
 
   @@map("text_tiles")
 }
@@ -192,7 +196,8 @@ model PlaceTile {
   address     String?
   providerId  String?  @map("provider_id")
 
-  tiles Tile[]
+  tiles       Tile[]
+  collections CollectionItem[]
 
   @@map("place_tiles")
 }
@@ -207,7 +212,8 @@ model LinkTile {
   siteName    String?  @map("site_name")
   imageUrl    String?  @map("image_url")
 
-  tiles Tile[]
+  tiles       Tile[]
+  collections CollectionItem[]
 
   @@map("link_tiles")
 }
@@ -229,8 +235,9 @@ model PageLinkTile {
   updatedAt DateTime @updatedAt @map("updated_at")
   pageId    String?  @map("page_id") @db.Uuid
 
-  tiles Tile[]
-  page  Page?  @relation(fields: [pageId], references: [id], onDelete: SetNull)
+  page        Page?            @relation(fields: [pageId], references: [id], onDelete: SetNull)
+  tiles       Tile[]
+  collections CollectionItem[]
 
   @@map("page_link_tiles")
 }
@@ -245,7 +252,50 @@ model EventTile {
   allDay    Boolean   @default(false) @map("all_day")
   timeZone  String?   @map("time_zone")
 
-  tiles Tile[]
+  tiles       Tile[]
+  collections CollectionItem[]
 
   @@map("event_tiles")
+}
+
+model Collection {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  userId    String   @map("user_id") @db.Uuid
+  title     String?
+
+  user  User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CollectionItem[]
+
+  @@index([userId])
+  @@index([userId, updatedAt])
+  @@map("collections")
+}
+
+model CollectionItem {
+  id             String   @id @default(uuid()) @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  collectionId   String   @map("collection_id") @db.Uuid
+  position       Int
+  imageTileId    String?  @map("image_tile_id") @db.Uuid
+  videoTileId    String?  @map("video_tile_id") @db.Uuid
+  textTileId     String?  @map("text_tile_id") @db.Uuid
+  placeTileId    String?  @map("place_tile_id") @db.Uuid
+  linkTileId     String?  @map("link_tile_id") @db.Uuid
+  pageLinkTileId String?  @map("page_link_tile_id") @db.Uuid
+  eventTileId    String?  @map("event_tile_id") @db.Uuid
+
+  collection Collection    @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  image      ImageTile?    @relation(fields: [imageTileId], references: [id], onDelete: SetNull)
+  video      VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
+  text       TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
+  place      PlaceTile?    @relation(fields: [placeTileId], references: [id], onDelete: SetNull)
+  link       LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
+  pageLink   PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
+  event      EventTile?    @relation(fields: [eventTileId], references: [id], onDelete: SetNull)
+
+  @@index([collectionId])
+  @@map("collection_items")
 }
