@@ -9,12 +9,13 @@ import DeleteButton from "./DeleteButton";
 import { destroy } from "@/utils/animation/effects";
 import styles from "./Tile.module.css";
 import { classNames } from "@/utils/css";
-import type { ClientTile } from "@/types/tiles";
 import type { Theme } from "@/types/pages";
 
 export type TileProps = {
+  id: string;
+  rows?: number;
+  columns?: number;
   children: React.ReactNode;
-  tile: ClientTile;
   showBorder?: boolean;
   showInLightbox?: boolean;
   fullWidth?: boolean;
@@ -25,7 +26,7 @@ export type TileProps = {
 };
 
 export default function Tile({
-  tile,
+  id,
   children,
   theme,
   hue,
@@ -34,6 +35,8 @@ export default function Tile({
   showInLightbox = true,
   fullWidth = false,
   variableHeight = false,
+  rows = 1,
+  columns = 1,
 }: TileProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isEditable = useEditable();
@@ -48,16 +51,16 @@ export default function Tile({
       }
       event.stopPropagation();
       event.preventDefault();
-      await client.tiles.delete.mutate({ id: tile.id });
+      await client.tiles.delete.mutate({ id });
       await destroy(ref.current);
-      deleteTile(tile.id);
+      deleteTile(id);
     },
-    [tile],
+    [id],
   );
 
   return (
     <div
-      id={tile.id}
+      id={id}
       ref={ref}
       className={classNames(
         "editable",
@@ -73,16 +76,15 @@ export default function Tile({
       )}
       style={
         {
-          "--columns": tile.columns,
-          "--rows": tile.rows,
+          "--columns": columns,
+          "--rows": rows,
           "--hue": typeof hue === "number" ? `${hue.toFixed(2)}deg` : undefined,
         } as React.CSSProperties
       }
-      data-rows={tile.rows}
-      data-columns={tile.columns}
+      data-rows={rows}
+      data-columns={columns}
       data-drop-target={isEditable ? "true" : undefined}
-      data-tile-id={tile.id}
-      data-tile={JSON.stringify(tile)}
+      data-tile-id={id}
       data-show-in-lightbox={showInLightbox ? "true" : undefined}
       data-font={font}
     >
