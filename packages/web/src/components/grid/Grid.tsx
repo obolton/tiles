@@ -23,23 +23,32 @@ interface GridProps {
 
 function getTileComponent(tile: ClientTile) {
   const type = tile.type;
+  const tileProps = {
+    id: tile.id,
+    rows: tile.rows,
+    columns: tile.columns,
+  };
   switch (type) {
     case "IMAGE":
-      return <ImageTile key={tile.id} tile={tile} />;
+      return <ImageTile {...tileProps} key={tile.id} image={tile.image} />;
     case "VIDEO":
-      return <VideoTile key={tile.id} tile={tile} />;
+      return <VideoTile {...tileProps} key={tile.id} video={tile.video} />;
     case "TEXT":
-      return <TextTile key={tile.id} tile={tile} />;
+      return <TextTile {...tileProps} key={tile.id} text={tile.text} />;
     case "PLACE":
-      return <PlaceTile key={tile.id} tile={tile} />;
+      return <PlaceTile {...tileProps} key={tile.id} place={tile.place} />;
     case "LINK":
-      return <LinkTile key={tile.id} tile={tile} />;
+      return <LinkTile {...tileProps} key={tile.id} link={tile.link} />;
     case "HEADING":
-      return <HeadingTile key={tile.id} tile={tile} />;
+      return (
+        <HeadingTile {...tileProps} key={tile.id} heading={tile.heading} />
+      );
     case "PAGE_LINK":
-      return <PageLinkTile key={tile.id} tile={tile} />;
+      return (
+        <PageLinkTile {...tileProps} key={tile.id} pageLink={tile.pageLink} />
+      );
     case "EVENT":
-      return <EventTile key={tile.id} tile={tile} />;
+      return <EventTile {...tileProps} key={tile.id} event={tile.event} />;
     default:
       throw new Error(`Unknown tile type: ${type}`);
   }
