@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { router, procedure } from "./trpc.ts";
 import {
   createTile,
@@ -16,8 +17,11 @@ import {
 import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
-  create: procedure.input(CreateTileSchema).mutation(async ({ input }) => {
-    const tile = await createTile(input);
+  create: procedure.input(CreateTileSchema).mutation(async ({ ctx, input }) => {
+    if (!ctx.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    const tile = await createTile(ctx.user.id, input);
     invalidateCachedPage(input.pageId);
     return tile;
   }),

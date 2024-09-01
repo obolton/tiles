@@ -15,7 +15,7 @@ import type {
   ResizeTileSchema,
 } from "./schema.ts";
 
-export async function createTile(properties: CreateTileSchema) {
+export async function createTile(userId: string, properties: CreateTileSchema) {
   return prisma.$transaction(async (tx) => {
     const position = await tx.tile.count({
       where: { pageId: properties.pageId },
