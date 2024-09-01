@@ -86,6 +86,58 @@ const TILES_FIELDS = {
       timeZone: true,
     },
   },
+  collection: {
+    select: {
+      title: true,
+      items: {
+        select: {
+          id: true,
+          position: true,
+          image: {
+            select: {
+              imageKey: true,
+              caption: true,
+            },
+          },
+          video: {
+            select: {
+              videoType: true,
+              videoId: true,
+              imageUrl: true,
+              title: true,
+              description: true,
+            },
+          },
+          text: {
+            select: {
+              content: true,
+              theme: true,
+              hue: true,
+            },
+          },
+          place: {
+            select: {
+              name: true,
+              providerId: true,
+              lat: true,
+              long: true,
+              boundingBox: true,
+              address: true,
+            },
+          },
+          link: {
+            select: {
+              url: true,
+              title: true,
+              description: true,
+              siteName: true,
+              imageUrl: true,
+            },
+          },
+        },
+      },
+    },
+  },
 } as const;
 
 const PAGE_FIELDS = {
@@ -203,6 +255,14 @@ function formatTile({
           end: tile.event!.end?.toISOString() ?? null,
         },
       };
+    case "COLLECTION":
+      return {
+        ...base,
+        type,
+        collection: tile.collection!,
+      };
+    default:
+      throw new Error(`Unknown tile type: ${type}`);
   }
 }
 
