@@ -65,6 +65,14 @@ export async function createPageLinkTile(
   if (pageId === linkedPageId) {
     throw new Error("Cannot link to the same page.");
   }
+  const pageLinkTile = await db.pageLinkTile.create({
+    data: {
+      pageId: linkedPageId,
+    },
+    select: {
+      id: true,
+    },
+  });
   const tile = await db.tile.create({
     data: {
       pageId,
@@ -72,11 +80,7 @@ export async function createPageLinkTile(
       position,
       columns: 1,
       rows: 1,
-      pageLink: {
-        create: {
-          pageId: linkedPageId,
-        },
-      },
+      pageLinkTileId: pageLinkTile.id,
     },
     select: {
       id: true,

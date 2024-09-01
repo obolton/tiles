@@ -6,6 +6,16 @@ export async function createTextTile(
   { pageId, text: { content, theme, hue } }: CreateTextTileSchema,
   position: number,
 ) {
+  const textTile = await tx.textTile.create({
+    data: {
+      content,
+      theme,
+      hue,
+    },
+    select: {
+      id: true,
+    },
+  });
   return tx.tile.create({
     data: {
       pageId,
@@ -13,13 +23,7 @@ export async function createTextTile(
       position,
       columns: 1,
       rows: 1,
-      text: {
-        create: {
-          content,
-          theme,
-          hue,
-        },
-      },
+      textTileId: textTile.id,
     },
     select: {
       id: true,

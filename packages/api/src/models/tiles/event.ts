@@ -9,6 +9,18 @@ export async function createEventTile(
   }: CreateEventTileSchema,
   position: number,
 ) {
+  const eventTile = await tx.eventTile.create({
+    data: {
+      title,
+      start,
+      end,
+      allDay,
+      timeZone,
+    },
+    select: {
+      id: true,
+    },
+  });
   return tx.tile.create({
     data: {
       pageId,
@@ -16,15 +28,7 @@ export async function createEventTile(
       position,
       columns: 1,
       rows: 1,
-      event: {
-        create: {
-          title,
-          start,
-          end,
-          allDay,
-          timeZone,
-        },
-      },
+      eventTileId: eventTile.id,
     },
     select: {
       id: true,

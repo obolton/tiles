@@ -9,6 +9,14 @@ export async function createHeadingTile(
   { pageId, heading: { content } }: CreateHeadingTileSchema,
   position: number,
 ) {
+  const headingTile = await tx.headingTile.create({
+    data: {
+      content,
+    },
+    select: {
+      id: true,
+    },
+  });
   return tx.tile.create({
     data: {
       pageId,
@@ -16,11 +24,7 @@ export async function createHeadingTile(
       position,
       columns: 1,
       rows: 1,
-      heading: {
-        create: {
-          content,
-        },
-      },
+      headingTileId: headingTile.id,
     },
     select: {
       id: true,

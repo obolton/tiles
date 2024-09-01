@@ -9,6 +9,19 @@ export async function createPlaceTile(
   }: CreatePlaceTileSchema,
   position: number,
 ) {
+  const placeTile = await tx.placeTile.create({
+    data: {
+      name,
+      providerId,
+      lat,
+      long,
+      boundingBox: boundingBox ?? [],
+      address,
+    },
+    select: {
+      id: true,
+    },
+  });
   return tx.tile.create({
     data: {
       pageId,
@@ -16,16 +29,7 @@ export async function createPlaceTile(
       position,
       columns: 1,
       rows: 1,
-      place: {
-        create: {
-          name,
-          providerId,
-          lat,
-          long,
-          boundingBox: boundingBox ?? [],
-          address,
-        },
-      },
+      placeTileId: placeTile.id,
     },
     select: {
       id: true,

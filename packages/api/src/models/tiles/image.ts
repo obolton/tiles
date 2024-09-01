@@ -7,6 +7,15 @@ export async function createImageTile(
   { pageId, image: { imageKey, caption } }: CreateImageTileSchema,
   position: number,
 ) {
+  const imageTile = await tx.imageTile.create({
+    data: {
+      imageKey,
+      caption: caption ? cleanUserInput(caption) : null,
+    },
+    select: {
+      id: true,
+    },
+  });
   return tx.tile.create({
     data: {
       pageId,
@@ -14,12 +23,7 @@ export async function createImageTile(
       position,
       columns: 1,
       rows: 1,
-      image: {
-        create: {
-          imageKey,
-          caption: caption ? cleanUserInput(caption) : null,
-        },
-      },
+      imageTileId: imageTile.id,
     },
     select: {
       id: true,

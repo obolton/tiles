@@ -29,6 +29,18 @@ export async function createLinkTile(
 
   const linkMetadata = await getLinkMetadata(url);
   const { title, description, siteName, imageUrl } = linkMetadata || {};
+  const linkTile = await db.linkTile.create({
+    data: {
+      url,
+      title,
+      description,
+      siteName,
+      imageUrl,
+    },
+    select: {
+      id: true,
+    },
+  });
   const tile = await db.tile.create({
     data: {
       pageId,
@@ -36,15 +48,7 @@ export async function createLinkTile(
       position,
       columns: 1,
       rows: 1,
-      link: {
-        create: {
-          url,
-          title,
-          description,
-          siteName,
-          imageUrl,
-        },
-      },
+      linkTileId: linkTile.id,
     },
     select: {
       id: true,

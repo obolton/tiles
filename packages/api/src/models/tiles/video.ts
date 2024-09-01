@@ -18,6 +18,18 @@ export async function createVideoTile(
   const { videoType, videoId } = videoInfo;
   const linkMetadata = await getLinkMetadata(url);
   const { title, description, imageUrl } = linkMetadata || {};
+  const videoTile = await tx.videoTile.create({
+    data: {
+      videoType,
+      videoId,
+      imageUrl,
+      title: cleanUserInput(title ?? ""),
+      description: description ? cleanUserInput(description) : null,
+    },
+    select: {
+      id: true,
+    },
+  });
   const tile = await tx.tile.create({
     data: {
       pageId,
@@ -25,15 +37,7 @@ export async function createVideoTile(
       position,
       columns: 1,
       rows: 1,
-      video: {
-        create: {
-          videoType,
-          videoId,
-          imageUrl,
-          title: cleanUserInput(title ?? ""),
-          description: description ? cleanUserInput(description) : null,
-        },
-      },
+      videoTileId: videoTile.id,
     },
     select: {
       id: true,
