@@ -1,16 +1,16 @@
 import { useCallback } from "react";
 import { editTile } from "@/utils/edit";
-import Tile from "./Tile";
+import Tile, { type TileProps } from "./Tile";
 import Icon from "@/components/icons/Icon";
 import arrowRightIcon from "@/icons/arrow-right.svg";
 import arrowDownIcon from "@/icons/arrow-down.svg";
 import styles from "./EventTile.module.css";
 import { classNames } from "@/utils/css";
-import type { ClientEventTile } from "@/types/tiles";
+import type { ClientEvent } from "@/types/tiles";
 
-type EventTileProps = {
-  tile: ClientEventTile;
-};
+interface EventTileProps extends TileProps {
+  event: ClientEvent;
+}
 
 interface DateTimeProps {
   date: Date;
@@ -51,11 +51,8 @@ function DateTime({ date, showTime = true, size }: DateTimeProps) {
   );
 }
 
-export default function EventTile({ tile }: EventTileProps) {
-  const {
-    id,
-    event: { title, start, end, allDay },
-  } = tile;
+export default function EventTile({ id, event, ...props }: EventTileProps) {
+  const { title, start, end, allDay } = event;
   const edit = useCallback(() => editTile(id, "EVENT"), [id]);
 
   const startDate = new Date(start);
@@ -63,7 +60,7 @@ export default function EventTile({ tile }: EventTileProps) {
   const size = endDate ? (allDay ? "medium" : "small") : "large";
 
   return (
-    <Tile tile={tile} showInLightbox={false}>
+    <Tile id={id} {...props} showInLightbox={false}>
       <div className={styles.event} onClick={edit}>
         <header className={styles.header}>
           {yearFormatter.format(startDate)}

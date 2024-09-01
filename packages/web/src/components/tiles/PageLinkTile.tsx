@@ -1,23 +1,24 @@
 import { getImageUrl } from "@/utils/images";
-import Tile from "./Tile";
+import Tile, { type TileProps } from "./Tile";
 import Icon from "@/components/icons/Icon";
 import arrowOutwardIcon from "@/icons/arrow-outward.svg";
 import styles from "./PageLinkTile.module.css";
 import { classNames } from "@/utils/css";
-import type { ClientPageLinkTile } from "@/types/tiles";
+import type { ClientPageLink } from "@/types/tiles";
 
-type PageLinkTileProps = {
-  tile: ClientPageLinkTile;
-};
+interface PageLinkTileProps extends TileProps {
+  pageLink: ClientPageLink;
+}
 
-export default function PageLinkTile({ tile }: PageLinkTileProps) {
-  const {
-    pageLink: { pageId, page },
-  } = tile;
+export default function PageLinkTile({
+  pageLink,
+  ...props
+}: PageLinkTileProps) {
+  const { pageId, page } = pageLink;
 
   if (!page) {
     return (
-      <Tile tile={tile} showInLightbox={false}>
+      <Tile {...props} showInLightbox={false}>
         <div className={`${styles.contents} ${styles.deleted}`}>
           This page no longer exists.
         </div>
@@ -29,7 +30,7 @@ export default function PageLinkTile({ tile }: PageLinkTileProps) {
 
   return (
     <Tile
-      tile={tile}
+      {...props}
       showInLightbox={false}
       theme={page.theme as "LIGHT" | "DARK" | "COLOR"}
       hue={page.hue}

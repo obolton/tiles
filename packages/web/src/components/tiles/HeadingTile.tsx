@@ -9,21 +9,19 @@ import client from "@/api/client";
 import { destroy } from "@/utils/animation/effects";
 import styles from "./HeadingTile.module.css";
 import { classNames } from "@/utils/css";
-import type { ClientHeadingTile } from "@/types/tiles";
+import type { ClientHeading } from "@/types/tiles";
 
 type HeadingTileProps = {
-  tile: ClientHeadingTile;
+  id: string;
+  heading: ClientHeading;
 };
 
 function stripLineBreaks(value: string) {
   return value.replace(/\n/g, "");
 }
 
-export default function HeadingTile({ tile }: HeadingTileProps) {
-  const {
-    id,
-    heading: { content },
-  } = tile;
+export default function HeadingTile({ id, heading }: HeadingTileProps) {
+  const { content } = heading;
   const ref = useRef<HTMLHeadingElement>(null);
   const isEditable = useEditable();
   useDraggable(ref, isEditable);
@@ -60,21 +58,20 @@ export default function HeadingTile({ tile }: HeadingTileProps) {
       }
       event.stopPropagation();
       event.preventDefault();
-      await client.tiles.delete.mutate({ id: tile.id });
+      await client.tiles.delete.mutate({ id });
       await destroy(ref.current);
-      deleteTile(tile.id);
+      deleteTile(id);
     },
-    [tile],
+    [id],
   );
 
   return (
     <header
-      id={tile.id}
+      id={id}
       ref={ref}
       className={classNames(styles.heading, "editable")}
       data-drop-target={isEditable ? "true" : undefined}
-      data-tile-id={tile.id}
-      data-tile={JSON.stringify(tile)}
+      data-tile-id={id}
     >
       {isEditable ? (
         <>

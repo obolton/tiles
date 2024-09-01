@@ -1,11 +1,8 @@
-import Tile from "./Tile";
+import Tile, { type TileProps } from "./Tile";
 import styles from "./VideoTile.module.css";
-import type { ClientVideoTile } from "@/types/tiles";
+import type { ClientVideo } from "@/types/tiles";
 
-function getEmbedUrl(
-  videoType: ClientVideoTile["video"]["videoType"],
-  videoId: string,
-) {
+function getEmbedUrl(videoType: ClientVideo["videoType"], videoId: string) {
   switch (videoType) {
     case "YOUTUBE":
       return `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`;
@@ -15,18 +12,16 @@ function getEmbedUrl(
   }
 }
 
-type VideoTileProps = {
-  tile: ClientVideoTile;
-};
+interface VideoTileProps extends TileProps {
+  video: ClientVideo;
+}
 
-export default function VideoTile({ tile }: VideoTileProps) {
-  const {
-    video: { videoType, videoId, imageUrl, title, description },
-  } = tile;
+export default function VideoTile({ id, video, ...props }: VideoTileProps) {
+  const { videoType, videoId, imageUrl, title, description } = video;
   const embedUrl = getEmbedUrl(videoType, videoId);
 
   return (
-    <Tile tile={tile} fullWidth>
+    <Tile id={id} {...props} fullWidth>
       <figure className={styles.figure}>
         <embedded-video
           class={styles.video}

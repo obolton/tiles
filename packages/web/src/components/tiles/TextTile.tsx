@@ -6,21 +6,18 @@ import ColorPicker from "@/components/inputs/ColorPicker";
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
 import { updateTile } from "@/utils/edit";
-import Tile from "./Tile";
+import Tile, { type TileProps } from "./Tile";
 import styles from "./TextTile.module.css";
 import { classNames } from "@/utils/css";
-import type { ClientTextTile } from "@/types/tiles";
+import type { ClientText } from "@/types/tiles";
 import type { EditorState } from "@/components/inputs/RichTextEditor/RichTextEditor";
 
-type TextTileProps = {
-  tile: ClientTextTile;
-};
+interface TextTileProps extends TileProps {
+  text: ClientText;
+}
 
-export default function TextTile({ tile }: TextTileProps) {
-  const {
-    id,
-    text: { content, theme: initialTheme, hue: initialHue },
-  } = tile;
+export default function TextTile({ id, text, ...tile }: TextTileProps) {
+  const { content, theme: initialTheme, hue: initialHue } = text;
   const isEditable = useEditable();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [theme, setTheme] = useState(initialTheme);
@@ -67,10 +64,11 @@ export default function TextTile({ tile }: TextTileProps) {
 
   return (
     <Tile
+      {...tile}
+      id={id}
       theme={theme}
       hue={hue}
-      tile={tile}
-      showBorder={tile.columns < 3}
+      showBorder={!!tile.columns && tile.columns < 3}
       showInLightbox={false}
       variableHeight={tile.columns === 3}
     >

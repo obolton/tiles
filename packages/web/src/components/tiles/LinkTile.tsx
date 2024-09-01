@@ -1,21 +1,18 @@
 import { useCallback } from "react";
 import useEditable from "@/hooks/useEditable";
 import { editTile } from "@/utils/edit";
-import Tile from "./Tile";
+import Tile, { type TileProps } from "./Tile";
 import Icon from "@/components/icons/Icon";
 import arrowOutwardIcon from "@/icons/arrow-outward.svg";
 import styles from "./LinkTile.module.css";
-import type { ClientLinkTile } from "@/types/tiles";
+import type { ClientLink } from "@/types/tiles";
 
-type LinkTileProps = {
-  tile: ClientLinkTile;
-};
+interface LinkTileProps extends TileProps {
+  link: ClientLink;
+}
 
-export default function LinkTile({ tile }: LinkTileProps) {
-  const {
-    id,
-    link: { url, title, description, siteName, imageUrl },
-  } = tile;
+export default function LinkTile({ id, link, ...props }: LinkTileProps) {
+  const { url, title, description, siteName, imageUrl } = link;
   const isEditable = useEditable();
   const edit = useCallback(() => editTile(id, "LINK"), [id]);
 
@@ -31,7 +28,7 @@ export default function LinkTile({ tile }: LinkTileProps) {
   );
 
   return (
-    <Tile tile={tile} showInLightbox={false}>
+    <Tile id={id} {...props} showInLightbox={false}>
       {isEditable ? (
         <div
           className={styles.link}

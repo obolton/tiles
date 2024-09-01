@@ -15,7 +15,7 @@ export type TileProps = {
   id: string;
   rows?: number;
   columns?: number;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   showBorder?: boolean;
   showInLightbox?: boolean;
   fullWidth?: boolean;

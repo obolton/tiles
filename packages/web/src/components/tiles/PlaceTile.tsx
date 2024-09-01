@@ -1,19 +1,17 @@
 import useEditable from "@/hooks/useEditable";
-import Tile from "./Tile";
+import Tile, { type TileProps } from "./Tile";
 import styles from "./PlaceTile.module.css";
-import type { ClientPlaceTile } from "@/types/tiles";
+import type { ClientPlace } from "@/types/tiles";
 
-type PlaceTileProps = {
-  tile: ClientPlaceTile;
-};
+interface PlaceTileProps extends TileProps {
+  place: ClientPlace;
+}
 
-export default function PlaceTile({ tile }: PlaceTileProps) {
-  const {
-    place: { name, lat, long, boundingBox },
-  } = tile;
+export default function PlaceTile({ place, ...props }: PlaceTileProps) {
+  const { name, lat, long, boundingBox } = place;
   const isEditable = useEditable();
   return (
-    <Tile tile={tile} fullWidth>
+    <Tile {...props} fullWidth>
       <map-view
         class={styles.map}
         movable={!isEditable}

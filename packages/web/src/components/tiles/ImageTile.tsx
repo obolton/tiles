@@ -2,24 +2,21 @@ import { useCallback } from "react";
 import useEditable from "@/hooks/useEditable";
 import { getImageUrl } from "@/utils/images";
 import { editTile } from "@/utils/edit";
-import Tile from "./Tile";
+import Tile, { type TileProps } from "./Tile";
 import styles from "./ImageTile.module.css";
-import type { ClientImageTile } from "@/types/tiles";
+import type { ClientImage } from "@/types/tiles";
 
-type ImageTileProps = {
-  tile: ClientImageTile;
-};
+interface ImageTileProps extends TileProps {
+  image: ClientImage;
+}
 
-export default function ImageTile({ tile }: ImageTileProps) {
-  const {
-    id,
-    image: { imageKey, caption },
-  } = tile;
+export default function ImageTile({ id, image, ...props }: ImageTileProps) {
+  const { imageKey, caption } = image;
   const isEditable = useEditable();
   const edit = useCallback(() => editTile(id, "IMAGE"), [id]);
   const src = getImageUrl(imageKey);
   return (
-    <Tile tile={tile}>
+    <Tile id={id} {...props}>
       <figure className={styles.figure} onClick={isEditable ? edit : undefined}>
         <img src={src} alt="Image" draggable={!isEditable} />
         {caption && <figcaption>{caption}</figcaption>}
