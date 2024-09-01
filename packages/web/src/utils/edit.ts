@@ -2,7 +2,7 @@ import { get, set, remove } from "./state";
 import { EDIT_START_EVENT, DELETE_TILE_EVENT } from "@/constants/edit";
 import client from "@/api/client";
 import type { AppRouterInputs } from "@/api/client";
-import type { TileType } from "@/types/tiles";
+import type { TileType, ClientEntity } from "@/types/tiles";
 
 export function setEditMode(isEditing: boolean) {
   if (isEditing) {
@@ -19,12 +19,17 @@ export function isEditModeEnabled() {
   return get<string>("edit") === window.location.pathname;
 }
 
-export function editTile(tileId: string, tileType: TileType) {
+export function editTile(
+  tileId: string,
+  tileType: TileType,
+  data: ClientEntity,
+) {
   if (!isEditModeEnabled()) {
     throw new Error("Not in editing mode");
   }
   set("editTileId", tileId);
   set("editTileType", tileType);
+  set("editTileData", data);
 }
 
 export function openCreateTileModal(tileType: TileType) {
@@ -33,11 +38,13 @@ export function openCreateTileModal(tileType: TileType) {
   }
   set("editTileType", tileType);
   remove("editTileId");
+  remove("editTileData");
 }
 
 export function finishEditingTile() {
   remove("editTileType");
   remove("editTileId");
+  remove("editTileData");
 }
 
 export function deleteTile(id: string) {

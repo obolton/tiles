@@ -1,7 +1,7 @@
 import type { AppRouterOutputs } from "@/api/client";
 import client from "@/api/client";
 import useDebouncedCallback from "@/hooks/useDebouncedCallback";
-import type { ClientPlaceTile } from "@/types/tiles";
+import type { ClientPlace } from "@/types/tiles";
 import { createTile, updateTile } from "@/utils/edit";
 import { useCallback, useEffect, useState } from "react";
 import styles from "./EditPlaceTileModal.module.css";
@@ -11,15 +11,16 @@ import ModalFooter from "./ModalFooter";
 type Place = AppRouterOutputs["places"]["search"][number];
 
 interface EditPlaceTileModalProps {
+  tileId: string | null;
   pageId: string;
   close: () => void;
-  tile?: ClientPlaceTile | null;
+  tile?: ClientPlace | null;
 }
 
 export default function EditPlaceTileModal({
+  tileId,
   pageId,
   close,
-  tile,
 }: EditPlaceTileModalProps) {
   const [location, setLocation] = useState<GeolocationPosition | null>(null);
   const [results, setResults] = useState<Place[]>([]);
@@ -50,9 +51,9 @@ export default function EditPlaceTileModal({
 
   const selectPlace = useCallback(
     async (place: Place) => {
-      if (tile) {
+      if (tileId) {
         await updateTile({
-          id: tile.id,
+          id: tileId,
           type: "PLACE",
           place,
         });
@@ -66,7 +67,7 @@ export default function EditPlaceTileModal({
 
       close();
     },
-    [pageId, tile, close],
+    [tileId, close, pageId],
   );
 
   return (

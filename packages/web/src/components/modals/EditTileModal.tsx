@@ -9,11 +9,12 @@ import {
   type ComponentType,
 } from "react";
 import Modal from "./Modal";
-import useSessionState from "../../hooks/useSessionState";
-import { finishEditingTile } from "../../utils/edit";
-import type { ClientTile, TileType } from "../../types/tiles";
+import useSessionState from "@/hooks/useSessionState";
+import { finishEditingTile } from "@/utils/edit";
+import type { ClientEntity, TileType } from "@/types/tiles";
 
 interface ModalProps {
+  tileId: string | null;
   pageId: string;
   close: () => void;
 }
@@ -27,6 +28,7 @@ const MODALS = {
   HEADING: null,
   PAGE_LINK: null,
   VIDEO: null,
+  COLLECTION: null,
 } satisfies Record<
   TileType,
   LazyExoticComponent<ComponentType<ModalProps>> | null
@@ -37,8 +39,9 @@ interface Props {
 }
 
 export default function EditTileModal({ pageId }: Props) {
-  const tileId = useSessionState("editTileId");
+  const tileId = useSessionState("editTileId") as string | null;
   const tileType = useSessionState("editTileType") as TileType | null;
+  const tileData = useSessionState("editTileData") as ClientEntity | null;
   const [open, setOpen] = useState(false);
   const [originRect, setOriginRect] = useState<DOMRect | undefined>();
 
@@ -49,23 +52,9 @@ export default function EditTileModal({ pageId }: Props) {
     return document.querySelector(`[data-tile-id="${tileId}"]`) as HTMLElement;
   }, [tileId]);
 
-  const tileData = useMemo(() => {
-    if (!tileId || !tileElement) {
-      return null;
-    }
-    const data = tileElement.dataset.tile;
-    if (!data) {
-      throw new Error("Tile data not found");
-    }
-    return JSON.parse(data) as ClientTile;
-  }, [tileId, tileElement]);
-
   useEffect(() => {
     if (tileType) {
-      const originElement = tileId
-        ? tileElement
-        : document.getElementById("tileTypeSelector");
-      const rect = originElement?.getBoundingClientRect();
+      const rect = tileElement?.getBoundingClientRect();
       setOriginRect(rect);
       setOpen(true);
     } else {
@@ -94,6 +83,7 @@ export default function EditTileModal({ pageId }: Props) {
     >
       <Suspense>
         <ModalComponent
+          tileId={tileId}
           pageId={pageId}
           close={close}
           // @ts-expect-error TODO: Improve type inference for tileData

@@ -4,12 +4,13 @@ import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import { createTile, updateTile } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
-import type { ClientEventTile } from "@/types/tiles";
+import type { ClientEvent } from "@/types/tiles";
 
 interface Props {
+  tileId: string | null;
   pageId: string;
   close: () => void;
-  tile?: ClientEventTile | null;
+  tile?: ClientEvent | null;
 }
 
 function getFormattedDate(input: string) {
@@ -29,12 +30,16 @@ function getFormattedDateTime(input: string) {
   )}T${String(date.getUTCHours()).padStart(2, "0")}:${String(date.getUTCMinutes()).padStart(2, "0")}`;
 }
 
-export default function EditEventTileModal({ pageId, close, tile }: Props) {
-  const { event } = tile ?? {};
-  const [allDay, setAllDay] = useState(event?.allDay ?? false);
-  const [title, setTitle] = useState(event?.title ?? "");
-  const [start, setStart] = useState(event?.start ?? "");
-  const [end, setEnd] = useState(event?.end ?? "");
+export default function EditEventTileModal({
+  tileId,
+  pageId,
+  close,
+  tile,
+}: Props) {
+  const [allDay, setAllDay] = useState(tile?.allDay ?? false);
+  const [title, setTitle] = useState(tile?.title ?? "");
+  const [start, setStart] = useState(tile?.start ?? "");
+  const [end, setEnd] = useState(tile?.end ?? "");
 
   const changeTitle = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -65,9 +70,9 @@ export default function EditEventTileModal({ pageId, close, tile }: Props) {
       event.preventDefault();
 
       try {
-        if (tile) {
+        if (tileId) {
           await updateTile({
-            id: tile.id,
+            id: tileId,
             type: "EVENT",
             event: {
               title,
@@ -95,7 +100,7 @@ export default function EditEventTileModal({ pageId, close, tile }: Props) {
         }
       }
     },
-    [allDay, close, end, pageId, start, tile, title],
+    [allDay, close, end, pageId, start, tileId, title],
   );
 
   return (

@@ -13,7 +13,7 @@ interface ImageTileProps extends TileProps {
 export default function ImageTile({ id, image, ...props }: ImageTileProps) {
   const { imageKey, caption } = image;
   const isEditable = useEditable();
-  const edit = useCallback(() => editTile(id, "IMAGE"), [id]);
+  const edit = useCallback(() => editTile(id, "IMAGE", image), [id, image]);
   const src = getImageUrl(imageKey);
   return (
     <Tile id={id} {...props}>

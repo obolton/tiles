@@ -53,7 +53,7 @@ function DateTime({ date, showTime = true, size }: DateTimeProps) {
 
 export default function EventTile({ id, event, ...props }: EventTileProps) {
   const { title, start, end, allDay } = event;
-  const edit = useCallback(() => editTile(id, "EVENT"), [id]);
+  const edit = useCallback(() => editTile(id, "EVENT", event), [id, event]);
 
   const startDate = new Date(start);
   const endDate = end ? new Date(end) : null;

@@ -5,19 +5,23 @@ import ModalFooter from "./ModalFooter";
 import { createTile, updateTile } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
 import client from "@/api/client";
-import type { ClientLinkTile, ClientPageLinkTile } from "@/types/tiles";
+import type { ClientLink, ClientPageLink } from "@/types/tiles";
 import styles from "./EditLinkTileModal.module.css";
 
 interface Props {
+  tileId: string | null;
   pageId: string;
   close: () => void;
-  tile?: ClientLinkTile | ClientPageLinkTile | null;
+  tile?: ClientLink | ClientPageLink | null;
 }
 
-export default function EditLinkTileModal({ pageId, close, tile }: Props) {
-  const [url, setUrl] = useState<string>(
-    tile && "link" in tile ? tile.link.url : "",
-  );
+export default function EditLinkTileModal({
+  tileId,
+  pageId,
+  close,
+  tile,
+}: Props) {
+  const [url, setUrl] = useState<string>(tile && "url" in tile ? tile.url : "");
   const [recentPages, setRecentPages] = useState<
     { id: string; title: string }[]
   >([]);
@@ -34,9 +38,9 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
   const selectPage = useCallback(
     async (linkedPageId: string) => {
       try {
-        if (tile) {
+        if (tileId) {
           await updateTile({
-            id: tile.id,
+            id: tileId,
             type: "PAGE_LINK",
             pageLink: {
               pageId: linkedPageId,
@@ -59,7 +63,7 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
 
       close();
     },
-    [close, pageId, tile],
+    [close, pageId, tileId],
   );
 
   const submit = useCallback(
@@ -70,9 +74,9 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
         return;
       }
 
-      if (tile) {
+      if (tileId) {
         await updateTile({
-          id: tile.id,
+          id: tileId,
           type: "LINK",
           link: {
             url,
@@ -90,7 +94,7 @@ export default function EditLinkTileModal({ pageId, close, tile }: Props) {
 
       close();
     },
-    [close, url, pageId, tile],
+    [url, tileId, close, pageId],
   );
 
   return (

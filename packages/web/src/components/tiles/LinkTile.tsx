@@ -14,7 +14,7 @@ interface LinkTileProps extends TileProps {
 export default function LinkTile({ id, link, ...props }: LinkTileProps) {
   const { url, title, description, siteName, imageUrl } = link;
   const isEditable = useEditable();
-  const edit = useCallback(() => editTile(id, "LINK"), [id]);
+  const edit = useCallback(() => editTile(id, "LINK", link), [id, link]);
 
   const contents = (
     <>

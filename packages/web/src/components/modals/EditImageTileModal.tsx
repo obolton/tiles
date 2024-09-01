@@ -4,25 +4,31 @@ import { getImageUrl } from "@/utils/images";
 import ModalFooter from "./ModalFooter";
 import { createTile, updateTile } from "@/utils/edit";
 import styles from "./EditImageTileModal.module.css";
-import type { ClientImageTile } from "@/types/tiles";
+import type { ClientImage } from "@/types/tiles";
 
 const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
 
 interface Props {
+  tileId: string | null;
   pageId: string;
   close: () => void;
-  tile?: ClientImageTile | null;
+  tile?: ClientImage | null;
 }
 
-export default function EditImageTileModal({ pageId, close, tile }: Props) {
+export default function EditImageTileModal({
+  tileId,
+  pageId,
+  close,
+  tile,
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(
-    tile ? getImageUrl(tile.image.imageKey) : null,
+    tile ? getImageUrl(tile.imageKey) : null,
   );
   const [imageKey, setImageKey] = useState<string | null>(
-    tile?.image.imageKey ?? null,
+    tile?.imageKey ?? null,
   );
-  const [caption, setCaption] = useState<string>(tile?.image.caption ?? "");
+  const [caption, setCaption] = useState<string>(tile?.caption ?? "");
   const [isDragOver, setDragOver] = useState<boolean>(false);
 
   const selectImage = useCallback(() => {
@@ -89,9 +95,9 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
         return;
       }
 
-      if (tile) {
+      if (tileId) {
         await updateTile({
-          id: tile.id,
+          id: tileId,
           type: "IMAGE",
           image: {
             imageKey,
@@ -111,7 +117,7 @@ export default function EditImageTileModal({ pageId, close, tile }: Props) {
 
       close();
     },
-    [imageKey, pageId, caption, tile, close],
+    [imageKey, tileId, close, caption, pageId],
   );
 
   return (
