@@ -103,6 +103,7 @@ enum TileType {
   HEADING
   PAGE_LINK
   EVENT
+  COLLECTION
 }
 
 model Tile {
@@ -121,17 +122,19 @@ model Tile {
   headingTileId  String?  @map("heading_tile_id") @db.Uuid
   pageLinkTileId String?  @map("page_link_tile_id") @db.Uuid
   eventTileId    String?  @map("event_tile_id") @db.Uuid
+  collectionId   String?  @map("collection_id") @db.Uuid
 
-  page     Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  type     TileType
-  image    ImageTile?    @relation(fields: [imageTileId], references: [id], onDelete: SetNull)
-  video    VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
-  text     TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
-  place    PlaceTile?    @relation(fields: [placeTileId], references: [id], onDelete: SetNull)
-  link     LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
-  heading  HeadingTile?  @relation(fields: [headingTileId], references: [id], onDelete: SetNull)
-  pageLink PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
-  event    EventTile?    @relation(fields: [eventTileId], references: [id], onDelete: SetNull)
+  page       Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type       TileType
+  image      ImageTile?    @relation(fields: [imageTileId], references: [id], onDelete: SetNull)
+  video      VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
+  text       TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
+  place      PlaceTile?    @relation(fields: [placeTileId], references: [id], onDelete: SetNull)
+  link       LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
+  heading    HeadingTile?  @relation(fields: [headingTileId], references: [id], onDelete: SetNull)
+  pageLink   PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
+  event      EventTile?    @relation(fields: [eventTileId], references: [id], onDelete: SetNull)
+  collection Collection?   @relation(fields: [collectionId], references: [id], onDelete: SetNull)
 
   @@map("tiles")
 }
@@ -267,6 +270,7 @@ model Collection {
 
   user  User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   items CollectionItem[]
+  tiles Tile[]
 
   @@index([userId])
   @@index([userId, updatedAt])
