@@ -7,6 +7,7 @@ import { createLinkTile, updateLinkTile } from "./link.ts";
 import { createHeadingTile, updateHeadingTile } from "./heading.ts";
 import { createPageLinkTile, updatePageLinkTile } from "./pageLink.ts";
 import { createEventTile, updateEventTile } from "./event.ts";
+import { createCollectionTile, updateCollectionTile } from "./collection.ts";
 import type {
   CreateTileSchema,
   UpdateTileSchema,
@@ -37,6 +38,8 @@ export async function createTile(userId: string, properties: CreateTileSchema) {
         return createPageLinkTile(tx, properties, position);
       case "EVENT":
         return createEventTile(tx, properties, position);
+      case "COLLECTION":
+        return createCollectionTile(tx, userId, properties, position);
     }
   });
 }
@@ -59,6 +62,8 @@ export async function updateTile(properties: UpdateTileSchema) {
       return updatePageLinkTile(prisma, properties);
     case "EVENT":
       return updateEventTile(prisma, properties);
+    case "COLLECTION":
+      return updateCollectionTile(prisma, properties);
   }
 }
 
