@@ -168,6 +168,30 @@ export const UpdateEventTileSchema =
   UpdateTileBaseSchema.merge(EventTileBaseSchema);
 export type UpdateEventTileSchema = z.infer<typeof UpdateEventTileSchema>;
 
+// Collection
+
+const CollectionTileBaseSchema = z.object({
+  type: z.literal(TileType.COLLECTION),
+  collection: z.object({
+    title: z.string().optional(),
+    tileIds: z.array(z.string().uuid()).optional(),
+  }),
+});
+
+export const CreateCollectionTileSchema = CreateTileBaseSchema.merge(
+  CollectionTileBaseSchema,
+);
+export type CreateCollectionTileSchema = z.infer<
+  typeof CreateCollectionTileSchema
+>;
+
+export const UpdateCollectionTileSchema = UpdateTileBaseSchema.merge(
+  CollectionTileBaseSchema,
+);
+export type UpdateCollectionTileSchema = z.infer<
+  typeof UpdateCollectionTileSchema
+>;
+
 // Create
 
 export const CreateTileSchema = z.discriminatedUnion("type", [
@@ -179,6 +203,7 @@ export const CreateTileSchema = z.discriminatedUnion("type", [
   CreateHeadingTileSchema,
   CreatePageLinkTileSchema,
   CreateEventTileSchema,
+  CreateCollectionTileSchema,
 ]);
 export type CreateTileSchema = z.infer<typeof CreateTileSchema>;
 
@@ -193,6 +218,7 @@ export const UpdateTileSchema = z.discriminatedUnion("type", [
   UpdateHeadingTileSchema,
   UpdatePageLinkTileSchema,
   UpdateEventTileSchema,
+  UpdateCollectionTileSchema,
 ]);
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 
