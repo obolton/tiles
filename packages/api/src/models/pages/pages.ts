@@ -25,14 +25,12 @@ const TILES_FIELDS = {
   rows: true,
   image: {
     select: {
-      id: true,
       imageKey: true,
       caption: true,
     },
   },
   video: {
     select: {
-      id: true,
       videoType: true,
       videoId: true,
       imageUrl: true,
@@ -42,7 +40,6 @@ const TILES_FIELDS = {
   },
   text: {
     select: {
-      id: true,
       content: true,
       theme: true,
       hue: true,
@@ -50,7 +47,6 @@ const TILES_FIELDS = {
   },
   place: {
     select: {
-      id: true,
       name: true,
       providerId: true,
       lat: true,
@@ -61,7 +57,6 @@ const TILES_FIELDS = {
   },
   link: {
     select: {
-      id: true,
       url: true,
       title: true,
       description: true,
@@ -71,13 +66,11 @@ const TILES_FIELDS = {
   },
   heading: {
     select: {
-      id: true,
       content: true,
     },
   },
   pageLink: {
     select: {
-      id: true,
       pageId: true,
       page: {
         select: PAGE_LINK_TILE_PAGE_FIELDS,
@@ -86,7 +79,6 @@ const TILES_FIELDS = {
   },
   event: {
     select: {
-      id: true,
       title: true,
       start: true,
       end: true,
@@ -186,7 +178,6 @@ function formatTile({
         ...base,
         type,
         pageLink: {
-          id: pageLink.id,
           pageId: pageLink.pageId,
           page: page
             ? {
