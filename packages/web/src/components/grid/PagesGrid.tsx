@@ -52,17 +52,13 @@ export default function PagesGrid({ pages: initialPages }: PagesGridProps) {
   return (
     <section className={styles.grid}>
       <infinite-scroll ref={ref}>
-        {pages.map((page, i) => (
+        {pages.map((page) => (
           <PageLinkTile
+            id={page.id}
             key={page.id}
-            tile={{
-              id: page.id,
-              type: "PAGE_LINK",
-              rows: 1,
-              columns: 1,
-              position: i,
-              pageLink: { pageId: page.id, page },
-            }}
+            rows={1}
+            columns={1}
+            pageLink={{ pageId: page.id, page }}
           />
         ))}
       </infinite-scroll>
