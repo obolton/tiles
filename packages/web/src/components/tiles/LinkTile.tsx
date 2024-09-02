@@ -5,6 +5,7 @@ import Tile, { type TileProps } from "./Tile";
 import Icon from "@/components/icons/Icon";
 import arrowOutwardIcon from "@/icons/arrow-outward.svg";
 import styles from "./LinkTile.module.css";
+import useCreateCollection from "@/hooks/useCreateCollection";
 import type { ClientLink } from "@/types/tiles";
 
 interface LinkTileProps extends TileProps {
@@ -15,6 +16,7 @@ export default function LinkTile({ id, link, ...props }: LinkTileProps) {
   const { url, title, description, siteName, imageUrl } = link;
   const isEditable = useEditable();
   const edit = useCallback(() => editTile(id, "LINK", link), [id, link]);
+  const onDrop = useCreateCollection(id);
 
   const contents = (
     <>
@@ -28,7 +30,7 @@ export default function LinkTile({ id, link, ...props }: LinkTileProps) {
   );
 
   return (
-    <Tile id={id} {...props} showInLightbox={false}>
+    <Tile id={id} {...props} showInLightbox={false} onDrop={onDrop}>
       {isEditable ? (
         <div
           className={styles.link}

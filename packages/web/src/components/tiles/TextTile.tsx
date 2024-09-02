@@ -9,6 +9,7 @@ import { updateTile } from "@/utils/edit";
 import Tile, { type TileProps } from "./Tile";
 import styles from "./TextTile.module.css";
 import { classNames } from "@/utils/css";
+import useCreateCollection from "@/hooks/useCreateCollection";
 import type { ClientText } from "@/types/tiles";
 import type { EditorState } from "@/components/inputs/RichTextEditor/RichTextEditor";
 
@@ -22,6 +23,7 @@ export default function TextTile({ id, text, ...tile }: TextTileProps) {
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [theme, setTheme] = useState(initialTheme);
   const [hue, setHue] = useState(initialHue);
+  const onDrop = useCreateCollection(id);
 
   const onBlur = useCallback(async () => {
     if (!editorState) {
@@ -69,6 +71,7 @@ export default function TextTile({ id, text, ...tile }: TextTileProps) {
       showBorder={!!tile.columns && tile.columns < 3}
       showInLightbox={false}
       variableHeight={tile.columns === 3}
+      onDrop={onDrop}
     >
       {isEditable ? (
         <>
