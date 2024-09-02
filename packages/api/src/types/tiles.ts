@@ -92,6 +92,7 @@ export interface ClientEventTile extends ClientTileBase {
 
 // Collection
 export type ClientCollection = OmitMetadata<Omit<Collection, "userId">> & {
+  id: string;
   items: (Pick<CollectionItem, "id" | "position"> & {
     image: ClientImage | null;
     video: ClientVideo | null;
