@@ -1,5 +1,5 @@
 import prisma from "@/database/prisma.ts";
-import type { CollectionItem } from "@prisma/client";
+import { COLLECTION_TILE_FIELDS } from "../tiles/collection.ts";
 import type {
   CreateCollectionSchema,
   DeleteCollectionSchema,
@@ -35,48 +35,38 @@ export async function deleteCollection({ id }: DeleteCollectionSchema) {
   });
 }
 
-function getRelationColumn(
-  type: AddToCollectionSchema["type"],
-): keyof Omit<
-  CollectionItem,
-  "id" | "createdAt" | "updatedAt" | "collectionId" | "position"
-> {
-  switch (type) {
-    case "IMAGE":
-      return "imageTileId";
-    case "VIDEO":
-      return "videoTileId";
-    case "TEXT":
-      return "textTileId";
-    case "PLACE":
-      return "placeTileId";
-    case "LINK":
-      return "linkTileId";
-    case "PAGE_LINK":
-      return "pageLinkTileId";
-    case "EVENT":
-      return "eventTileId";
-  }
-}
-
 export async function addToCollection({
   collectionId,
-  type,
-  itemId,
+  tileId,
 }: AddToCollectionSchema) {
   return prisma.$transaction(async (tx) => {
     const position = await tx.collectionItem.count({
       where: { collectionId },
     });
-    return await tx.collectionItem.create({
-      data: {
-        collectionId,
-        [getRelationColumn(type)]: itemId,
-        position,
-      },
+    // TODO: Enforce tile types
+    const tile = await tx.tile.findUniqueOrThrow({
+      where: { id: tileId },
       select: {
-        id: true,
+        imageTileId: true,
+        videoTileId: true,
+        textTileId: true,
+        placeTileId: true,
+        linkTileId: true,
+        pageLinkTileId: true,
+        eventTileId: true,
       },
+    });
+    return await tx.collection.update({
+      where: { id: collectionId },
+      data: {
+        items: {
+          create: {
+            ...tile,
+            position,
+          },
+        },
+      },
+      select: COLLECTION_TILE_FIELDS,
     });
   });
 }
