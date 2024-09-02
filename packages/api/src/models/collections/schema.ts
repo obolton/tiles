@@ -13,16 +13,7 @@ export type DeleteCollectionSchema = z.infer<typeof DeleteCollectionSchema>;
 
 export const AddToCollectionSchema = z.object({
   collectionId: z.string().uuid(),
-  type: z.enum([
-    "IMAGE",
-    "VIDEO",
-    "TEXT",
-    "PLACE",
-    "LINK",
-    "PAGE_LINK",
-    "EVENT",
-  ]),
-  itemId: z.string().uuid(),
+  tileId: z.string().uuid(),
 });
 export type AddToCollectionSchema = z.infer<typeof AddToCollectionSchema>;
 
