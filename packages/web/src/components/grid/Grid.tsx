@@ -97,8 +97,8 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       });
     };
     const dragOver = (event: DragDropEvent) => {
-      const { target, dragSource } = event;
-      if (ref.current && target instanceof HTMLElement) {
+      const { target, dragSource, inside } = event;
+      if (ref.current && target instanceof HTMLElement && !inside) {
         const fromPosition = Array.prototype.indexOf.call(
           ref.current.children,
           dragSource,
@@ -115,8 +115,8 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       }
     };
     const drop = async (event: DragDropEvent) => {
-      const { dragSource } = event;
-      if (ref.current) {
+      const { dragSource, inside } = event;
+      if (!inside && ref.current) {
         const id = dragSource.dataset.tileId ?? "";
         const position = Array.prototype.indexOf.call(
           ref.current.children,
