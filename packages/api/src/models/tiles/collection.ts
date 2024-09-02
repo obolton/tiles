@@ -1,8 +1,5 @@
 import { TileType, type Prisma } from "@prisma/client";
-import type {
-  CreateCollectionTileSchema,
-  UpdateCollectionTileSchema,
-} from "./schema.ts";
+import type { CollectionTileSchema } from "./schema.ts";
 
 export const COLLECTION_TILE_FIELDS = {
   id: true,
@@ -59,7 +56,8 @@ export const COLLECTION_TILE_FIELDS = {
 export async function createCollectionTile(
   tx: Prisma.TransactionClient,
   userId: string,
-  { pageId, collection: { title, tileIds } }: CreateCollectionTileSchema,
+  pageId: string,
+  { collection: { title, tileIds } }: CollectionTileSchema,
   position: number,
 ) {
   if (!tileIds || tileIds.length < 2) {
@@ -154,7 +152,8 @@ export async function createCollectionTile(
 
 export async function updateCollectionTile(
   tx: Prisma.TransactionClient,
-  { id, collection: { title } }: UpdateCollectionTileSchema,
+  id: string,
+  { collection: { title } }: CollectionTileSchema,
 ) {
   return tx.tile.update({
     where: {

@@ -1,10 +1,11 @@
 import { TileType, type Prisma } from "@prisma/client";
 import { cleanUserInput } from "../../utils/text.ts";
-import type { CreateImageTileSchema, UpdateImageTileSchema } from "./schema.ts";
+import type { ImageTileSchema } from "./schema.ts";
 
 export async function createImageTile(
   tx: Prisma.TransactionClient,
-  { pageId, image: { imageKey, caption } }: CreateImageTileSchema,
+  pageId: string,
+  { image: { imageKey, caption } }: ImageTileSchema,
   position: number,
 ) {
   const imageTile = await tx.imageTile.create({
@@ -43,7 +44,8 @@ export async function createImageTile(
 
 export async function updateImageTile(
   tx: Prisma.TransactionClient,
-  { id, image: { imageKey, caption } }: UpdateImageTileSchema,
+  id: string,
+  { image: { imageKey, caption } }: ImageTileSchema,
 ) {
   return tx.tile.update({
     where: {

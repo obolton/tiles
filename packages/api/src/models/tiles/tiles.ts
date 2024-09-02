@@ -21,49 +21,51 @@ export async function createTile(userId: string, properties: CreateTileSchema) {
     const position = await tx.tile.count({
       where: { pageId: properties.pageId },
     });
-    switch (properties.type) {
+    const { pageId, tile } = properties;
+    switch (tile.type) {
       case "IMAGE":
-        return createImageTile(tx, properties, position);
+        return createImageTile(tx, pageId, tile, position);
       case "VIDEO":
-        return createVideoTile(tx, properties, position);
+        return createVideoTile(tx, pageId, tile, position);
       case "TEXT":
-        return createTextTile(tx, properties, position);
+        return createTextTile(tx, pageId, tile, position);
       case "PLACE":
-        return createPlaceTile(tx, properties, position);
+        return createPlaceTile(tx, pageId, tile, position);
       case "LINK":
-        return createLinkTile(tx, properties, position);
+        return createLinkTile(tx, pageId, tile, position);
       case "HEADING":
-        return createHeadingTile(tx, properties, position);
+        return createHeadingTile(tx, pageId, tile, position);
       case "PAGE_LINK":
-        return createPageLinkTile(tx, properties, position);
+        return createPageLinkTile(tx, pageId, tile, position);
       case "EVENT":
-        return createEventTile(tx, properties, position);
+        return createEventTile(tx, pageId, tile, position);
       case "COLLECTION":
-        return createCollectionTile(tx, userId, properties, position);
+        return createCollectionTile(tx, userId, pageId, tile, position);
     }
   });
 }
 
 export async function updateTile(properties: UpdateTileSchema) {
-  switch (properties.type) {
+  const { id, tile } = properties;
+  switch (tile.type) {
     case "IMAGE":
-      return updateImageTile(prisma, properties);
+      return updateImageTile(prisma, id, tile);
     case "VIDEO":
-      return updateVideoTile(prisma, properties);
+      return updateVideoTile(prisma, id, tile);
     case "TEXT":
-      return updateTextTile(prisma, properties);
+      return updateTextTile(prisma, id, tile);
     case "PLACE":
-      return updatePlaceTile(prisma, properties);
+      return updatePlaceTile(prisma, id, tile);
     case "LINK":
-      return updateLinkTile(prisma, properties);
+      return updateLinkTile(prisma, id, tile);
     case "HEADING":
-      return updateHeadingTile(prisma, properties);
+      return updateHeadingTile(prisma, id, tile);
     case "PAGE_LINK":
-      return updatePageLinkTile(prisma, properties);
+      return updatePageLinkTile(prisma, id, tile);
     case "EVENT":
-      return updateEventTile(prisma, properties);
+      return updateEventTile(prisma, id, tile);
     case "COLLECTION":
-      return updateCollectionTile(prisma, properties);
+      return updateCollectionTile(prisma, id, tile);
   }
 }
 

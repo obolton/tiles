@@ -4,11 +4,12 @@ import { getLinkMetadata } from "@/utils/linkMetadata.ts";
 import { getVideoImageUrl } from "@/utils/cdn.ts";
 import { getVideoInfo } from "@/utils/videos.ts";
 import { cleanUserInput } from "@/utils/text.ts";
-import type { CreateVideoTileSchema, UpdateVideoTileSchema } from "./schema.ts";
+import type { VideoTileSchema } from "./schema.ts";
 
 export async function createVideoTile(
   tx: Prisma.TransactionClient,
-  { pageId, video: { url } }: CreateVideoTileSchema,
+  pageId: string,
+  { video: { url } }: VideoTileSchema,
   position: number,
 ) {
   const videoInfo = getVideoInfo(url);
@@ -67,7 +68,8 @@ export async function createVideoTile(
 
 export async function updateVideoTile(
   tx: Prisma.TransactionClient,
-  { id, video: { url } }: UpdateVideoTileSchema,
+  id: string,
+  { video: { url } }: VideoTileSchema,
 ) {
   const videoInfo = getVideoInfo(url);
   if (!videoInfo) {

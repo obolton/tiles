@@ -1,9 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { getProfileImageUrl } from "@/utils/cdn.ts";
-import type {
-  CreatePageLinkTileSchema,
-  UpdatePageLinkTileSchema,
-} from "./schema.ts";
+import type { PageLinkTileSchema } from "./schema.ts";
 
 export const PAGE_LINK_TILE_PAGE_FIELDS = {
   id: true,
@@ -59,7 +56,8 @@ function formatPage(page: Page) {
 
 export async function createPageLinkTile(
   db: Prisma.TransactionClient,
-  { pageId, pageLink: { pageId: linkedPageId } }: CreatePageLinkTileSchema,
+  pageId: string,
+  { pageLink: { pageId: linkedPageId } }: PageLinkTileSchema,
   position: number,
 ) {
   if (pageId === linkedPageId) {
@@ -110,7 +108,8 @@ export async function createPageLinkTile(
 
 export async function updatePageLinkTile(
   db: Prisma.TransactionClient,
-  { id, pageLink: { pageId: linkedPageId } }: UpdatePageLinkTileSchema,
+  id: string,
+  { pageLink: { pageId: linkedPageId } }: PageLinkTileSchema,
 ) {
   const tile = await db.tile.update({
     where: {

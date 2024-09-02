@@ -1,12 +1,10 @@
 import { TileType, type Prisma } from "@prisma/client";
-import type {
-  CreateHeadingTileSchema,
-  UpdateHeadingTileSchema,
-} from "./schema.ts";
+import type { HeadingTileSchema } from "./schema.ts";
 
 export async function createHeadingTile(
   tx: Prisma.TransactionClient,
-  { pageId, heading: { content } }: CreateHeadingTileSchema,
+  pageId: string,
+  { heading: { content } }: HeadingTileSchema,
   position: number,
 ) {
   const headingTile = await tx.headingTile.create({
@@ -43,7 +41,8 @@ export async function createHeadingTile(
 
 export async function updateHeadingTile(
   tx: Prisma.TransactionClient,
-  { id, heading: { content } }: UpdateHeadingTileSchema,
+  id: string,
+  { heading: { content } }: HeadingTileSchema,
 ) {
   return tx.tile.update({
     where: {

@@ -1,12 +1,12 @@
 import { TileType, type Prisma } from "@prisma/client";
-import type { CreatePlaceTileSchema, UpdatePlaceTileSchema } from "./schema.ts";
+import type { PlaceTileSchema } from "./schema.ts";
 
 export async function createPlaceTile(
   tx: Prisma.TransactionClient,
+  pageId: string,
   {
-    pageId,
     place: { name, providerId, lat, long, boundingBox, address },
-  }: CreatePlaceTileSchema,
+  }: PlaceTileSchema,
   position: number,
 ) {
   const placeTile = await tx.placeTile.create({
@@ -53,10 +53,10 @@ export async function createPlaceTile(
 
 export async function updatePlaceTile(
   tx: Prisma.TransactionClient,
+  id: string,
   {
-    id,
     place: { name, providerId, lat, long, boundingBox, address },
-  }: UpdatePlaceTileSchema,
+  }: PlaceTileSchema,
 ) {
   return tx.tile.update({
     where: {

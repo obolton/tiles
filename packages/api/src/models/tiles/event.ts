@@ -1,12 +1,10 @@
 import { TileType, type Prisma } from "@prisma/client";
-import type { CreateEventTileSchema, UpdateEventTileSchema } from "./schema.ts";
+import type { EventTileSchema } from "./schema.ts";
 
 export async function createEventTile(
   tx: Prisma.TransactionClient,
-  {
-    pageId,
-    event: { title, start, end, allDay, timeZone },
-  }: CreateEventTileSchema,
+  pageId: string,
+  { event: { title, start, end, allDay, timeZone } }: EventTileSchema,
   position: number,
 ) {
   const eventTile = await tx.eventTile.create({
@@ -51,7 +49,8 @@ export async function createEventTile(
 
 export async function updateEventTile(
   tx: Prisma.TransactionClient,
-  { id, event: { title, start, end, allDay, timeZone } }: UpdateEventTileSchema,
+  id: string,
+  { event: { title, start, end, allDay, timeZone } }: EventTileSchema,
 ) {
   return tx.tile.update({
     where: {

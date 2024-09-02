@@ -1,9 +1,10 @@
 import { TileType, type Prisma } from "@prisma/client";
-import type { CreateTextTileSchema, UpdateTextTileSchema } from "./schema.ts";
+import type { TextTileSchema } from "./schema.ts";
 
 export async function createTextTile(
   tx: Prisma.TransactionClient,
-  { pageId, text: { content, theme, hue } }: CreateTextTileSchema,
+  pageId: string,
+  { text: { content, theme, hue } }: TextTileSchema,
   position: number,
 ) {
   const textTile = await tx.textTile.create({
@@ -44,7 +45,8 @@ export async function createTextTile(
 
 export async function updateTextTile(
   tx: Prisma.TransactionClient,
-  { id, text: { content, theme, hue } }: UpdateTextTileSchema,
+  id: string,
+  { text: { content, theme, hue } }: TextTileSchema,
 ) {
   return tx.tile.update({
     where: {

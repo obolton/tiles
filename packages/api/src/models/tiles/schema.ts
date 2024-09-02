@@ -8,54 +8,30 @@ import {
 } from "@/constants/geo.ts";
 import { RichTextSchema } from "@/schema/RichText.ts";
 
-// Base
-
-const CreateTileBaseSchema = z.object({
-  pageId: z.string().uuid(),
-});
-
-const UpdateTileBaseSchema = z.object({
-  id: z.string().uuid(),
-});
-
 // Tile types
 
 // Image
-const ImageTileBaseSchema = z.object({
+export const ImageTileSchema = z.object({
   type: z.literal(TileType.IMAGE),
   image: z.object({
     imageKey: z.string(),
     caption: z.string().optional(),
   }),
 });
-
-export const CreateImageTileSchema =
-  CreateTileBaseSchema.merge(ImageTileBaseSchema);
-export type CreateImageTileSchema = z.infer<typeof CreateImageTileSchema>;
-
-export const UpdateImageTileSchema =
-  UpdateTileBaseSchema.merge(ImageTileBaseSchema);
-export type UpdateImageTileSchema = z.infer<typeof UpdateImageTileSchema>;
+export type ImageTileSchema = z.infer<typeof ImageTileSchema>;
 
 // Video
-const VideoTileBaseSchema = z.object({
+export const VideoTileSchema = z.object({
   type: z.literal(TileType.VIDEO),
   video: z.object({
     url: z.string().url(),
   }),
 });
-
-export const CreateVideoTileSchema =
-  CreateTileBaseSchema.merge(VideoTileBaseSchema);
-export type CreateVideoTileSchema = z.infer<typeof CreateVideoTileSchema>;
-
-export const UpdateVideoTileSchema =
-  UpdateTileBaseSchema.merge(VideoTileBaseSchema);
-export type UpdateVideoTileSchema = z.infer<typeof UpdateVideoTileSchema>;
+export type VideoTileSchema = z.infer<typeof VideoTileSchema>;
 
 // Text
 
-const TextTileBaseSchema = z.object({
+export const TextTileSchema = z.object({
   type: z.literal(TileType.TEXT),
   text: z.object({
     content: RichTextSchema.optional(),
@@ -63,17 +39,10 @@ const TextTileBaseSchema = z.object({
     hue: z.number().gte(0).lte(360).optional(),
   }),
 });
-
-export const CreateTextTileSchema =
-  CreateTileBaseSchema.merge(TextTileBaseSchema);
-export type CreateTextTileSchema = z.infer<typeof CreateTextTileSchema>;
-
-export const UpdateTextTileSchema =
-  UpdateTileBaseSchema.merge(TextTileBaseSchema);
-export type UpdateTextTileSchema = z.infer<typeof UpdateTextTileSchema>;
+export type TextTileSchema = z.infer<typeof TextTileSchema>;
 
 // Place
-const PlaceTileBaseSchema = z.object({
+export const PlaceTileSchema = z.object({
   type: z.literal(TileType.PLACE),
   place: z.object({
     name: z.string(),
@@ -84,72 +53,40 @@ const PlaceTileBaseSchema = z.object({
     address: z.string().nullable(),
   }),
 });
-
-export const CreatePlaceTileSchema =
-  CreateTileBaseSchema.merge(PlaceTileBaseSchema);
-export type CreatePlaceTileSchema = z.infer<typeof CreatePlaceTileSchema>;
-
-export const UpdatePlaceTileSchema =
-  UpdateTileBaseSchema.merge(PlaceTileBaseSchema);
-export type UpdatePlaceTileSchema = z.infer<typeof UpdatePlaceTileSchema>;
+export type PlaceTileSchema = z.infer<typeof PlaceTileSchema>;
 
 // Link
 
-const LinkTileBaseSchema = z.object({
+export const LinkTileSchema = z.object({
   type: z.literal(TileType.LINK),
   link: z.object({
     url: z.string().url(),
   }),
 });
-
-export const CreateLinkTileSchema =
-  CreateTileBaseSchema.merge(LinkTileBaseSchema);
-export type CreateLinkTileSchema = z.infer<typeof CreateLinkTileSchema>;
-
-export const UpdateLinkTileSchema =
-  UpdateTileBaseSchema.merge(LinkTileBaseSchema);
-export type UpdateLinkTileSchema = z.infer<typeof UpdateLinkTileSchema>;
+export type LinkTileSchema = z.infer<typeof LinkTileSchema>;
 
 // Heading
-const HeadingTileBaseSchema = z.object({
+export const HeadingTileSchema = z.object({
   type: z.literal(TileType.HEADING),
   heading: z.object({
     content: z.string(),
   }),
 });
-
-export const CreateHeadingTileSchema = CreateTileBaseSchema.merge(
-  HeadingTileBaseSchema,
-);
-export type CreateHeadingTileSchema = z.infer<typeof CreateHeadingTileSchema>;
-
-export const UpdateHeadingTileSchema = UpdateTileBaseSchema.merge(
-  HeadingTileBaseSchema,
-);
-export type UpdateHeadingTileSchema = z.infer<typeof UpdateHeadingTileSchema>;
+export type HeadingTileSchema = z.infer<typeof HeadingTileSchema>;
 
 // Page link
 
-const PageLinkTileBaseSchema = z.object({
+export const PageLinkTileSchema = z.object({
   type: z.literal(TileType.PAGE_LINK),
   pageLink: z.object({
     pageId: z.string().uuid(),
   }),
 });
-
-export const CreatePageLinkTileSchema = CreateTileBaseSchema.merge(
-  PageLinkTileBaseSchema,
-);
-export type CreatePageLinkTileSchema = z.infer<typeof CreatePageLinkTileSchema>;
-
-export const UpdatePageLinkTileSchema = UpdateTileBaseSchema.merge(
-  PageLinkTileBaseSchema,
-);
-export type UpdatePageLinkTileSchema = z.infer<typeof UpdatePageLinkTileSchema>;
+export type PageLinkTileSchema = z.infer<typeof PageLinkTileSchema>;
 
 // Event
 
-const EventTileBaseSchema = z.object({
+export const EventTileSchema = z.object({
   type: z.literal(TileType.EVENT),
   event: z.object({
     title: z.string().nullable(),
@@ -159,67 +96,53 @@ const EventTileBaseSchema = z.object({
     timeZone: z.string().optional(),
   }),
 });
-
-export const CreateEventTileSchema =
-  CreateTileBaseSchema.merge(EventTileBaseSchema);
-export type CreateEventTileSchema = z.infer<typeof CreateEventTileSchema>;
-
-export const UpdateEventTileSchema =
-  UpdateTileBaseSchema.merge(EventTileBaseSchema);
-export type UpdateEventTileSchema = z.infer<typeof UpdateEventTileSchema>;
+export type EventTileSchema = z.infer<typeof EventTileSchema>;
 
 // Collection
 
-const CollectionTileBaseSchema = z.object({
+export const CollectionTileSchema = z.object({
   type: z.literal(TileType.COLLECTION),
   collection: z.object({
     title: z.string().optional(),
     tileIds: z.array(z.string().uuid()).optional(),
   }),
 });
-
-export const CreateCollectionTileSchema = CreateTileBaseSchema.merge(
-  CollectionTileBaseSchema,
-);
-export type CreateCollectionTileSchema = z.infer<
-  typeof CreateCollectionTileSchema
->;
-
-export const UpdateCollectionTileSchema = UpdateTileBaseSchema.merge(
-  CollectionTileBaseSchema,
-);
-export type UpdateCollectionTileSchema = z.infer<
-  typeof UpdateCollectionTileSchema
->;
+export type CollectionTileSchema = z.infer<typeof CollectionTileSchema>;
 
 // Create
 
-export const CreateTileSchema = z.discriminatedUnion("type", [
-  CreateImageTileSchema,
-  CreateVideoTileSchema,
-  CreateTextTileSchema,
-  CreatePlaceTileSchema,
-  CreateLinkTileSchema,
-  CreateHeadingTileSchema,
-  CreatePageLinkTileSchema,
-  CreateEventTileSchema,
-  CreateCollectionTileSchema,
-]);
+export const CreateTileSchema = z.object({
+  pageId: z.string().uuid(),
+  tile: z.discriminatedUnion("type", [
+    ImageTileSchema,
+    VideoTileSchema,
+    TextTileSchema,
+    PlaceTileSchema,
+    LinkTileSchema,
+    HeadingTileSchema,
+    PageLinkTileSchema,
+    EventTileSchema,
+    CollectionTileSchema,
+  ]),
+});
 export type CreateTileSchema = z.infer<typeof CreateTileSchema>;
 
 // Update
 
-export const UpdateTileSchema = z.discriminatedUnion("type", [
-  UpdateImageTileSchema,
-  UpdateVideoTileSchema,
-  UpdateTextTileSchema,
-  UpdatePlaceTileSchema,
-  UpdateLinkTileSchema,
-  UpdateHeadingTileSchema,
-  UpdatePageLinkTileSchema,
-  UpdateEventTileSchema,
-  UpdateCollectionTileSchema,
-]);
+export const UpdateTileSchema = z.object({
+  id: z.string().uuid(),
+  tile: z.discriminatedUnion("type", [
+    ImageTileSchema,
+    VideoTileSchema,
+    TextTileSchema,
+    PlaceTileSchema,
+    LinkTileSchema,
+    HeadingTileSchema,
+    PageLinkTileSchema,
+    EventTileSchema,
+    CollectionTileSchema,
+  ]),
+});
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 
 // Move
