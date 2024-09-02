@@ -25,11 +25,7 @@ const BUTTONS: TileButton[] = [
   { label: "Event", type: "EVENT", icon: eventIcon.src },
 ];
 
-interface CreateTileToolbarProps {
-  pageId: string;
-}
-
-export default function CreateTileToolbar({ pageId }: CreateTileToolbarProps) {
+export default function CreateTileToolbar() {
   const isEditable = useEditable();
 
   const onClick = useCallback(
@@ -42,7 +38,6 @@ export default function CreateTileToolbar({ pageId }: CreateTileToolbarProps) {
       }
       if (tileType === "HEADING") {
         await createTile({
-          pageId,
           type: "HEADING",
           heading: {
             content: "",
@@ -50,7 +45,6 @@ export default function CreateTileToolbar({ pageId }: CreateTileToolbarProps) {
         });
       } else if (tileType === "TEXT") {
         await createTile({
-          pageId,
           type: "TEXT",
           text: {
             content: [],
@@ -60,7 +54,7 @@ export default function CreateTileToolbar({ pageId }: CreateTileToolbarProps) {
         openCreateTileModal(tileType);
       }
     },
-    [pageId],
+    [],
   );
 
   if (!isEditable) {

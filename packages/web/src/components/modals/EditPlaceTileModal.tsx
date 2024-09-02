@@ -12,14 +12,12 @@ type Place = AppRouterOutputs["places"]["search"][number];
 
 interface EditPlaceTileModalProps {
   tileId: string | null;
-  pageId: string;
   close: () => void;
   tile?: ClientPlace | null;
 }
 
 export default function EditPlaceTileModal({
   tileId,
-  pageId,
   close,
 }: EditPlaceTileModalProps) {
   const [location, setLocation] = useState<GeolocationPosition | null>(null);
@@ -52,14 +50,12 @@ export default function EditPlaceTileModal({
   const selectPlace = useCallback(
     async (place: Place) => {
       if (tileId) {
-        await updateTile({
-          id: tileId,
+        await updateTile(tileId, {
           type: "PLACE",
           place,
         });
       } else {
         await createTile({
-          pageId,
           type: "PLACE",
           place,
         });
@@ -67,7 +63,7 @@ export default function EditPlaceTileModal({
 
       close();
     },
-    [tileId, close, pageId],
+    [tileId, close],
   );
 
   return (

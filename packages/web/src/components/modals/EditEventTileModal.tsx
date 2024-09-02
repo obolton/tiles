@@ -8,7 +8,6 @@ import type { ClientEvent } from "@/types/tiles";
 
 interface Props {
   tileId: string | null;
-  pageId: string;
   close: () => void;
   tile?: ClientEvent | null;
 }
@@ -30,12 +29,7 @@ function getFormattedDateTime(input: string) {
   )}T${String(date.getUTCHours()).padStart(2, "0")}:${String(date.getUTCMinutes()).padStart(2, "0")}`;
 }
 
-export default function EditEventTileModal({
-  tileId,
-  pageId,
-  close,
-  tile,
-}: Props) {
+export default function EditEventTileModal({ tileId, close, tile }: Props) {
   const [allDay, setAllDay] = useState(tile?.allDay ?? false);
   const [title, setTitle] = useState(tile?.title ?? "");
   const [start, setStart] = useState(tile?.start ?? "");
@@ -71,8 +65,7 @@ export default function EditEventTileModal({
 
       try {
         if (tileId) {
-          await updateTile({
-            id: tileId,
+          await updateTile(tileId, {
             type: "EVENT",
             event: {
               title,
@@ -83,7 +76,6 @@ export default function EditEventTileModal({
           });
         } else {
           await createTile({
-            pageId,
             type: "EVENT",
             event: {
               title,
@@ -100,7 +92,7 @@ export default function EditEventTileModal({
         }
       }
     },
-    [allDay, close, end, pageId, start, tileId, title],
+    [allDay, close, end, start, tileId, title],
   );
 
   return (

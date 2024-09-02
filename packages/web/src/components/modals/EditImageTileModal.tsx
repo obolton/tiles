@@ -10,17 +10,11 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
 
 interface Props {
   tileId: string | null;
-  pageId: string;
   close: () => void;
   tile?: ClientImage | null;
 }
 
-export default function EditImageTileModal({
-  tileId,
-  pageId,
-  close,
-  tile,
-}: Props) {
+export default function EditImageTileModal({ tileId, close, tile }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(
     tile ? getImageUrl(tile.imageKey) : null,
@@ -96,8 +90,7 @@ export default function EditImageTileModal({
       }
 
       if (tileId) {
-        await updateTile({
-          id: tileId,
+        await updateTile(tileId, {
           type: "IMAGE",
           image: {
             imageKey,
@@ -106,7 +99,6 @@ export default function EditImageTileModal({
         });
       } else {
         await createTile({
-          pageId,
           type: "IMAGE",
           image: {
             imageKey,
@@ -117,7 +109,7 @@ export default function EditImageTileModal({
 
       close();
     },
-    [imageKey, tileId, close, caption, pageId],
+    [imageKey, tileId, close, caption],
   );
 
   return (

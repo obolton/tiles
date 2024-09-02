@@ -28,8 +28,7 @@ export default function TextTile({ id, text, ...tile }: TextTileProps) {
       return;
     }
     const content = serialize(editorState);
-    await updateTile({
-      id,
+    await updateTile(id, {
       type: "TEXT",
       text: {
         content,
@@ -43,8 +42,7 @@ export default function TextTile({ id, text, ...tile }: TextTileProps) {
       if (typeof hue === "number") {
         setHue(hue);
       }
-      await updateTile({
-        id,
+      await updateTile(id, {
         type: "TEXT",
         text: {
           theme,

@@ -10,17 +10,11 @@ import styles from "./EditLinkTileModal.module.css";
 
 interface Props {
   tileId: string | null;
-  pageId: string;
   close: () => void;
   tile?: ClientLink | ClientPageLink | null;
 }
 
-export default function EditLinkTileModal({
-  tileId,
-  pageId,
-  close,
-  tile,
-}: Props) {
+export default function EditLinkTileModal({ tileId, close, tile }: Props) {
   const [url, setUrl] = useState<string>(tile && "url" in tile ? tile.url : "");
   const [recentPages, setRecentPages] = useState<
     { id: string; title: string }[]
@@ -39,8 +33,7 @@ export default function EditLinkTileModal({
     async (linkedPageId: string) => {
       try {
         if (tileId) {
-          await updateTile({
-            id: tileId,
+          await updateTile(tileId, {
             type: "PAGE_LINK",
             pageLink: {
               pageId: linkedPageId,
@@ -48,7 +41,6 @@ export default function EditLinkTileModal({
           });
         } else {
           await createTile({
-            pageId,
             type: "PAGE_LINK",
             pageLink: {
               pageId: linkedPageId,
@@ -63,7 +55,7 @@ export default function EditLinkTileModal({
 
       close();
     },
-    [close, pageId, tileId],
+    [close, tileId],
   );
 
   const submit = useCallback(
@@ -75,8 +67,7 @@ export default function EditLinkTileModal({
       }
 
       if (tileId) {
-        await updateTile({
-          id: tileId,
+        await updateTile(tileId, {
           type: "LINK",
           link: {
             url,
@@ -84,7 +75,6 @@ export default function EditLinkTileModal({
         });
       } else {
         await createTile({
-          pageId,
           type: "LINK",
           link: {
             url,
@@ -94,7 +84,7 @@ export default function EditLinkTileModal({
 
       close();
     },
-    [url, tileId, close, pageId],
+    [url, tileId, close],
   );
 
   return (

@@ -34,15 +34,16 @@ export default function HeadingTile({ id, heading }: HeadingTileProps) {
     [],
   );
 
-  const onBlur = useCallback(async () => {
-    await updateTile({
-      id,
-      type: "HEADING",
-      heading: {
-        content: value,
-      },
-    });
-  }, [id, value]);
+  const onBlur = useCallback(
+    async () =>
+      updateTile(id, {
+        type: "HEADING",
+        heading: {
+          content: value,
+        },
+      }),
+    [id, value],
+  );
 
   const onPointerDown = useCallback(
     (event: React.PointerEvent | React.MouseEvent) => {
