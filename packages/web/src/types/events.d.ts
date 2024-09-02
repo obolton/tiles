@@ -13,6 +13,7 @@ declare global {
   interface HTMLElementEventMap {
     beforetoggle: ToggleEvent;
     upload: import("@/components/forms/FilePicker").FilePickerEvent;
+    "drag:drop-on": DragDropEvent;
   }
 }
 
