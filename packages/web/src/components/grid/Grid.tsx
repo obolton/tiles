@@ -7,6 +7,7 @@ import LinkTile from "@/components/tiles/LinkTile";
 import HeadingTile from "@/components/tiles/HeadingTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import EventTile from "@/components/tiles/EventTile";
+import CollectionTile from "@/components/tiles/CollectionTile";
 import useLayoutTransition from "@/hooks/useLayoutTransition";
 import useElementSizeRef from "@/hooks/useElementSizeRef";
 import { scrollIntoView } from "@/hooks/useScrollIntoView";
@@ -23,32 +24,32 @@ interface GridProps {
 
 function getTileComponent(tile: ClientTile) {
   const type = tile.type;
-  const tileProps = {
+  const props = {
     id: tile.id,
     rows: tile.rows,
     columns: tile.columns,
   };
   switch (type) {
     case "IMAGE":
-      return <ImageTile {...tileProps} key={tile.id} image={tile.image} />;
+      return <ImageTile {...props} key={tile.id} image={tile.image} />;
     case "VIDEO":
-      return <VideoTile {...tileProps} key={tile.id} video={tile.video} />;
+      return <VideoTile {...props} key={tile.id} video={tile.video} />;
     case "TEXT":
-      return <TextTile {...tileProps} key={tile.id} text={tile.text} />;
+      return <TextTile {...props} key={tile.id} text={tile.text} />;
     case "PLACE":
-      return <PlaceTile {...tileProps} key={tile.id} place={tile.place} />;
+      return <PlaceTile {...props} key={tile.id} place={tile.place} />;
     case "LINK":
-      return <LinkTile {...tileProps} key={tile.id} link={tile.link} />;
+      return <LinkTile {...props} key={tile.id} link={tile.link} />;
     case "HEADING":
-      return (
-        <HeadingTile {...tileProps} key={tile.id} heading={tile.heading} />
-      );
+      return <HeadingTile {...props} key={tile.id} heading={tile.heading} />;
     case "PAGE_LINK":
-      return (
-        <PageLinkTile {...tileProps} key={tile.id} pageLink={tile.pageLink} />
-      );
+      return <PageLinkTile {...props} key={tile.id} pageLink={tile.pageLink} />;
     case "EVENT":
-      return <EventTile {...tileProps} key={tile.id} event={tile.event} />;
+      return <EventTile {...props} key={tile.id} event={tile.event} />;
+    case "COLLECTION":
+      return (
+        <CollectionTile {...props} key={tile.id} collection={tile.collection} />
+      );
     default:
       throw new Error(`Unknown tile type: ${type}`);
   }
