@@ -7,6 +7,7 @@ import {
   getVideoImageUrl,
 } from "@/utils/cdn.ts";
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/models/tiles/pageLink.ts";
+import { COLLECTION_TILE_FIELDS } from "@/models/tiles/collection.ts";
 import type {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
@@ -87,56 +88,7 @@ const TILES_FIELDS = {
     },
   },
   collection: {
-    select: {
-      title: true,
-      items: {
-        select: {
-          id: true,
-          position: true,
-          image: {
-            select: {
-              imageKey: true,
-              caption: true,
-            },
-          },
-          video: {
-            select: {
-              videoType: true,
-              videoId: true,
-              imageUrl: true,
-              title: true,
-              description: true,
-            },
-          },
-          text: {
-            select: {
-              content: true,
-              theme: true,
-              hue: true,
-            },
-          },
-          place: {
-            select: {
-              name: true,
-              providerId: true,
-              lat: true,
-              long: true,
-              boundingBox: true,
-              address: true,
-            },
-          },
-          link: {
-            select: {
-              url: true,
-              title: true,
-              description: true,
-              siteName: true,
-              imageUrl: true,
-            },
-          },
-        },
-      },
-    },
+    select: COLLECTION_TILE_FIELDS,
   },
 } as const;
 
