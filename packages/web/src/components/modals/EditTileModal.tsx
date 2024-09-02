@@ -15,7 +15,6 @@ import type { ClientEntity, TileType } from "@/types/tiles";
 
 interface ModalProps {
   tileId: string | null;
-  pageId: string;
   close: () => void;
 }
 
@@ -34,11 +33,7 @@ const MODALS = {
   LazyExoticComponent<ComponentType<ModalProps>> | null
 >;
 
-interface Props {
-  pageId: string;
-}
-
-export default function EditTileModal({ pageId }: Props) {
+export default function EditTileModal() {
   const tileId = useSessionState("editTileId") as string | null;
   const tileType = useSessionState("editTileType") as TileType | null;
   const tileData = useSessionState("editTileData") as ClientEntity | null;
@@ -84,7 +79,6 @@ export default function EditTileModal({ pageId }: Props) {
       <Suspense>
         <ModalComponent
           tileId={tileId}
-          pageId={pageId}
           close={close}
           // @ts-expect-error TODO: Improve type inference for tileData
           tile={tileData}
