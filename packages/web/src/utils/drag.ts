@@ -18,6 +18,7 @@ export class DragState {
 
   private isDragging = false;
   private dragElement: HTMLElement | null = null;
+  private dropTarget: HTMLElement | null = null;
   private dropTargets: NodeListOf<HTMLElement> | null = null;
   private longPressTimeout: ReturnType<typeof setTimeout> | null = null;
   private moveTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -93,14 +94,26 @@ export class DragState {
           clearTimeout(this.moveTimeout);
         }
         this.moveTimeout = setTimeout(() => {
-          const target = this.findDropTarget(
+          const { target, inside } = this.findDropTarget(
             new DOMPoint(
               event.clientX - this.centerOffsetX,
               event.clientY - this.centerOffsetY,
             ),
           );
+
+          if (this.dropTarget && this.dropTarget !== target) {
+            delete this.dropTarget.dataset.dragOver;
+          }
+
+          if (inside && target && target !== this.element) {
+            target.dataset.dragOver = "true";
+            this.dropTarget = target;
+          } else {
+            this.dropTarget = null;
+          }
+
           target?.dispatchEvent(
-            new DragDropEvent("drag:drag-over", this.element),
+            new DragDropEvent("drag:drag-over", this.element, inside),
           );
           this.moveTimeout = null;
         }, MOVE_DEBOUNCE_INTERVAL);
@@ -158,6 +171,9 @@ export class DragState {
 
     delete document.body.dataset.drag;
     delete this.element.dataset.dragging;
+    if (this.dropTarget) {
+      delete this.dropTarget.dataset.dragOver;
+    }
 
     // Animate the drag element image to its final position
     if (this.dragElement) {
@@ -190,8 +206,14 @@ export class DragState {
 
     document.body.style.removeProperty("cursor");
 
-    this.element.dispatchEvent(new DragDropEvent("drag:drop", this.element));
+    this.element.dispatchEvent(
+      new DragDropEvent("drag:drop", this.element, !!this.dropTarget),
+    );
+    this.dropTarget?.dispatchEvent(
+      new DragDropEvent("drag:drop-on", this.element),
+    );
 
+    this.dropTarget = null;
     this.dropTargets = null;
   }
 
@@ -247,7 +269,7 @@ export class DragState {
 
   private findDropTarget(point: DOMPoint) {
     if (!this.dragElement || !this.dropTargets) {
-      return null;
+      return { target: null, inside: false };
     }
 
     const containerRect = this.container.getBoundingClientRect();
@@ -269,6 +291,10 @@ export class DragState {
       }
     }
 
+    if (minDistance < 80) {
+      return { target: this.dropTargets[targetIndex], inside: true };
+    }
+
     // Look backwards for a target that can accommodate the drag element width
 
     if (targetIndex >= 0) {
@@ -279,13 +305,13 @@ export class DragState {
         const target = this.dropTargets[targetIndex];
         const space = containerWidth - target.offsetLeft;
         if (space >= dragWidth) {
-          return target;
+          return { target, inside: false };
         }
         targetIndex--;
       }
     }
 
-    return null;
+    return { target: null, inside: false };
   }
 
   private scroll() {
@@ -301,8 +327,9 @@ export class DragState {
 
 export class DragDropEvent extends Event {
   constructor(
-    type: string,
+    type: "drag:drag-over" | "drag:drop" | "drag:drop-on",
     readonly dragSource: HTMLElement,
+    readonly inside: boolean = false,
   ) {
     super(type, { bubbles: true, cancelable: false });
   }
