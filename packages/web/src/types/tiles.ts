@@ -7,6 +7,7 @@ export type {
   ClientPageLink,
   ClientPlace,
   ClientText,
+  ClientCollection,
   ClientEntity,
   ClientTile,
   TileType,
