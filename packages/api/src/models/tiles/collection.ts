@@ -4,12 +4,104 @@ import type {
   UpdateCollectionTileSchema,
 } from "./schema.ts";
 
+export const COLLECTION_TILE_FIELDS = {
+  id: true,
+  title: true,
+  items: {
+    select: {
+      id: true,
+      position: true,
+      image: {
+        select: {
+          imageKey: true,
+          caption: true,
+        },
+      },
+      video: {
+        select: {
+          videoType: true,
+          videoId: true,
+          imageUrl: true,
+          title: true,
+          description: true,
+        },
+      },
+      text: {
+        select: {
+          content: true,
+          theme: true,
+          hue: true,
+        },
+      },
+      place: {
+        select: {
+          name: true,
+          providerId: true,
+          lat: true,
+          long: true,
+          boundingBox: true,
+          address: true,
+        },
+      },
+      link: {
+        select: {
+          url: true,
+          title: true,
+          description: true,
+          siteName: true,
+          imageUrl: true,
+        },
+      },
+    },
+  },
+} as const;
+
 export async function createCollectionTile(
   tx: Prisma.TransactionClient,
   userId: string,
   { pageId, collection: { title, tileIds } }: CreateCollectionTileSchema,
   position: number,
 ) {
+  if (!tileIds || tileIds.length < 2) {
+    throw new Error("Collection must have at least two tiles");
+  }
+  const parentTile = await tx.tile.findUniqueOrThrow({
+    where: { id: tileIds[0] },
+    select: { id: true, type: true, collection: { select: { id: true } } },
+  });
+
+  const childTile = await tx.tile.findUnique({
+    where: {
+      id: tileIds[1],
+    },
+    select: {
+      imageTileId: true,
+      videoTileId: true,
+      textTileId: true,
+      placeTileId: true,
+      linkTileId: true,
+      pageLinkTileId: true,
+      eventTileId: true,
+    },
+  });
+
+  if (parentTile.collection) {
+    return tx.collection.update({
+      where: {
+        id: parentTile.collection.id,
+      },
+      data: {
+        items: {
+          create: {
+            ...childTile,
+            position: 0,
+          },
+        },
+      },
+      select: COLLECTION_TILE_FIELDS,
+    });
+  }
+
   const tiles = await tx.tile.findMany({
     select: {
       imageTileId: true,
@@ -54,10 +146,7 @@ export async function createCollectionTile(
       columns: true,
       rows: true,
       collection: {
-        select: {
-          id: true,
-          title: true,
-        },
+        select: COLLECTION_TILE_FIELDS,
       },
     },
   });
@@ -86,9 +175,7 @@ export async function updateCollectionTile(
       columns: true,
       rows: true,
       collection: {
-        select: {
-          title: true,
-        },
+        select: COLLECTION_TILE_FIELDS,
       },
     },
   });
