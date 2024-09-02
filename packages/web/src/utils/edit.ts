@@ -53,14 +53,18 @@ export function deleteTile(id: string) {
 
 type CreateTileInput = AppRouterInputs["tiles"]["create"];
 
-export async function createTile(input: CreateTileInput) {
-  const result = await client.tiles.create.mutate(input);
+export async function createTile(tile: CreateTileInput["tile"]) {
+  const pageId = document.body.dataset.pageId;
+  if (!pageId) {
+    throw new Error("No page ID found");
+  }
+  const result = await client.tiles.create.mutate({ pageId, tile });
   window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
 }
 
 type UpdateTileInput = AppRouterInputs["tiles"]["update"];
 
-export async function updateTile(input: UpdateTileInput) {
-  const result = await client.tiles.update.mutate(input);
+export async function updateTile(id: string, tile: UpdateTileInput["tile"]) {
+  const result = await client.tiles.update.mutate({ id, tile });
   window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
 }
