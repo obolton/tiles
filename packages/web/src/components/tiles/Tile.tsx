@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import useEditable from "@/hooks/useEditable";
 import useDraggable from "@/hooks/useDraggable";
 import useResizable from "@/hooks/useResizable";
@@ -10,6 +10,7 @@ import { destroy } from "@/utils/animation/effects";
 import styles from "./Tile.module.css";
 import { classNames } from "@/utils/css";
 import type { Theme } from "@/types/pages";
+import type { DragDropEvent } from "@/utils/drag";
 
 export type TileProps = {
   id: string;
@@ -23,6 +24,8 @@ export type TileProps = {
   hue?: number | null;
   font?: string | null;
   variableHeight?: boolean;
+  allowEdit?: boolean;
+  onDrop?: (event: DragDropEvent) => void;
 };
 
 export default function Tile({
@@ -35,11 +38,13 @@ export default function Tile({
   showInLightbox = true,
   fullWidth = false,
   variableHeight = false,
+  allowEdit = true,
   rows = 1,
   columns = 1,
+  onDrop,
 }: TileProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const isEditable = useEditable();
+  const isEditable = useEditable() && allowEdit;
   useDraggable(ref, isEditable);
   useResizable(ref, isEditable);
   useScrollIntoView(ref);
@@ -58,6 +63,15 @@ export default function Tile({
     [id],
   );
 
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || !allowEdit || !onDrop) {
+      return;
+    }
+    element.addEventListener("drag:drop-on", onDrop);
+    return () => element.removeEventListener("drag:drop-on", onDrop);
+  }, [allowEdit, onDrop]);
+
   return (
     <div
       id={id}
@@ -65,6 +79,7 @@ export default function Tile({
       className={classNames(
         "editable",
         styles.tile,
+        allowEdit && styles["allow-edit"],
         showBorder && styles.border,
         theme === "LIGHT"
           ? styles.light
