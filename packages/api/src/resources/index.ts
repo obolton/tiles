@@ -26,7 +26,7 @@ export async function resourcesHandler(
 async function handleLinkTile(id: string, res: ServerResponse) {
   try {
     ResourceIdSchema.parse(id);
-  } catch (error) {
+  } catch {
     res.writeHead(404);
     res.end();
     return;
@@ -53,7 +53,7 @@ async function handleLinkTile(id: string, res: ServerResponse) {
 async function handleVideoTile(id: string, res: ServerResponse) {
   try {
     ResourceIdSchema.parse(id);
-  } catch (error) {
+  } catch {
     res.writeHead(404);
     res.end();
     return;

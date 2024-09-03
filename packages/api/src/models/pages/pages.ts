@@ -115,6 +115,7 @@ const PAGE_FIELDS = {
   },
 } as const;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const tileWithDataValidator = Prisma.validator<Prisma.TileDefaultArgs>()({
   select: TILES_FIELDS,
 });

@@ -32,6 +32,7 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
   },
 } as const;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const pageValidator = Prisma.validator<Prisma.PageDefaultArgs>()({
   select: PAGE_LINK_TILE_PAGE_FIELDS,
 });
