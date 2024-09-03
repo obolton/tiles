@@ -36,7 +36,6 @@ export default function PageLinkTile({
       hue={page.hue}
       font={page.font}
     >
-      {/* eslint-disable-next-line react/jsx-no-target-blank */}
       <a
         className={classNames(
           styles.contents,
