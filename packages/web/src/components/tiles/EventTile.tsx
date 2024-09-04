@@ -51,7 +51,12 @@ function DateTime({ date, showTime = true, size }: DateTimeProps) {
   );
 }
 
-export default function EventTile({ id, event, ...props }: EventTileProps) {
+export default function EventTile({
+  id,
+  columns,
+  event,
+  ...props
+}: EventTileProps) {
   const { title, start, end, allDay } = event;
   const edit = useCallback(() => editTile(id, "EVENT", event), [id, event]);
 
@@ -60,7 +65,7 @@ export default function EventTile({ id, event, ...props }: EventTileProps) {
   const size = endDate ? (allDay ? "medium" : "small") : "large";
 
   return (
-    <Tile id={id} {...props} showInLightbox={false}>
+    <Tile id={id} columns={columns} {...props} showInLightbox={false}>
       <div className={styles.event} onClick={edit}>
         <header className={styles.header}>
           {yearFormatter.format(startDate)}
@@ -85,7 +90,9 @@ export default function EventTile({ id, event, ...props }: EventTileProps) {
               ) : null}
             </div>
           </section>
-          <calendar-month date={startDate.toISOString()} />
+          {columns && columns > 1 ? (
+            <calendar-month date={startDate.toISOString()} />
+          ) : null}
         </div>
       </div>
     </Tile>
