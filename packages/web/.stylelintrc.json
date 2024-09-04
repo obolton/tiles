@@ -11,7 +11,7 @@
       true,
       {
         "ignore": ["custom-elements"],
-        "ignoreTypes": ["expanded"]
+        "ignoreTypes": ["expanded", "overlay"]
       }
     ]
   }
