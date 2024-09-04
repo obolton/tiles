@@ -3,7 +3,7 @@ import deleteIcon from "@/icons/delete.svg";
 import { move, fadeIn, fadeOut } from "@/utils/animation/effects";
 
 const TIMING: EffectTiming = {
-  duration: 500,
+  duration: 350,
   easing: "ease",
   fill: "forwards",
 };

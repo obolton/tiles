@@ -1,7 +1,7 @@
 import { getCenter } from "../geometry";
 
 const DEFAULT_TIMING: EffectTiming = {
-  duration: 500,
+  duration: 350,
   easing: "ease",
   fill: "forwards",
 };
@@ -42,7 +42,7 @@ export function appearFrom(
   {
     origin,
     endClipPath = "inset(0)",
-    timing = { duration: 500, easing: "ease" },
+    timing = { duration: 350, easing: "ease" },
   }: { origin: Element; endClipPath?: string; timing?: EffectTiming },
 ) {
   const originRect = origin.getBoundingClientRect();
@@ -89,7 +89,7 @@ export function disappearTo(
   {
     destination,
     startClipPath = "inset(0)",
-    timing = { duration: 500, easing: "ease" },
+    timing = { duration: 350, easing: "ease" },
   }: { destination: Element; startClipPath?: string; timing?: EffectTiming },
 ) {
   const destinationRect = destination.getBoundingClientRect();
@@ -138,7 +138,7 @@ export function move(
     fromY = "0",
     toX = "0",
     toY = "0",
-    timing = { duration: 500, easing: "ease" },
+    timing = { duration: 350, easing: "ease" },
   }: {
     fromX?: string;
     fromY?: string;
@@ -159,7 +159,7 @@ export function moveFrom(
   {
     x = "0",
     y = "0",
-    timing = { duration: 500, easing: "ease" },
+    timing = { duration: 350, easing: "ease" },
   }: { x?: string; y?: string; timing?: EffectTiming },
 ) {
   const animation = element.animate(
@@ -174,7 +174,7 @@ export function moveTo(
   {
     x = "0",
     y = "0",
-    timing = { duration: 500, easing: "ease" },
+    timing = { duration: 350, easing: "ease" },
   }: { x?: string; y?: string; timing?: EffectTiming },
 ) {
   const animation = element.animate(

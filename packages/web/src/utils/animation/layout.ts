@@ -84,7 +84,7 @@ function animatePosition(element: HTMLElement, options?: AnimateLayoutOptions) {
       { transform: "none" },
     ],
     {
-      duration: 500,
+      duration: 350,
       easing: "ease",
     },
   );
