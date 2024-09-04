@@ -2,7 +2,12 @@ const rects = new WeakMap<HTMLElement, DOMRect>();
 const animations = new WeakMap<HTMLElement, Animation>();
 const transitionElements = new WeakMap<HTMLElement, HTMLElement>();
 
-function animatePosition(element: HTMLElement) {
+export type AnimateLayoutOptions = {
+  attributes?: string[];
+  size?: boolean;
+};
+
+function animatePosition(element: HTMLElement, options?: AnimateLayoutOptions) {
   const previousRect = rects.get(element);
   if (!previousRect) {
     return;
@@ -27,7 +32,7 @@ function animatePosition(element: HTMLElement) {
   }
 
   // If performing a resize transition, animate a clone of the element to prevent layout thrashing
-  if (deltaWidth || deltaHeight) {
+  if (options?.size && (deltaWidth || deltaHeight)) {
     let clone = transitionElements.get(element);
 
     if (!clone) {
@@ -102,14 +107,13 @@ export function willAnimateLayout(element: HTMLElement) {
   }
 }
 
-export type AnimateLayoutOptions = {
-  attributes?: string[];
-};
-
-function animateChildren(element: HTMLElement) {
+export function animateChildren(
+  element: HTMLElement,
+  options?: AnimateLayoutOptions,
+) {
   for (const child of element.children) {
     if (child instanceof HTMLElement) {
-      animatePosition(child);
+      animatePosition(child, options);
     }
   }
 }
@@ -121,14 +125,14 @@ export function animateLayout(
   const observers: MutationObserver[] = [];
 
   const childListObserver = new MutationObserver(() =>
-    animateChildren(element),
+    animateChildren(element, options),
   );
   childListObserver.observe(element, { childList: true });
   observers.push(childListObserver);
 
   if (options?.attributes && options.attributes.length > 0) {
     const attributesObserver = new MutationObserver(() =>
-      animateChildren(element),
+      animateChildren(element, options),
     );
     attributesObserver.observe(element, {
       subtree: true,
