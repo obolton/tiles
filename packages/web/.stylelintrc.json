@@ -6,6 +6,13 @@
       {
         "ignorePseudoClasses": ["global"]
       }
+    ],
+    "selector-type-no-unknown": [
+      true,
+      {
+        "ignore": ["custom-elements"],
+        "ignoreTypes": ["expanded"]
+      }
     ]
   }
 }
