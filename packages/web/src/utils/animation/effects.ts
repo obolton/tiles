@@ -23,12 +23,12 @@ export function destroy(
     [
       {
         opacity: 1,
-        transform: "scale(1)",
+        scale: 1,
         filter: "blur(0)",
       },
       {
         opacity: 0,
-        transform: "scale(0.3)",
+        scale: 0.3,
         filter: "blur(5px)",
       },
     ],
@@ -70,13 +70,13 @@ export function appearFrom(
     [
       {
         translate: `${translateX}px ${translateY}px`,
+        scale,
         clipPath: `inset(${insetY}px ${insetX}px round calc(${borderRadius} / ${scale}))`,
-        transform: `scale(${scale})`,
       },
       {
         translate: "none",
+        scale: 1,
         clipPath: endClipPath,
-        transform: "scale(1)",
       },
     ],
     timing,
@@ -117,13 +117,13 @@ export function disappearTo(
     [
       {
         translate: "none",
+        scale: 1,
         clipPath: startClipPath,
-        transform: "scale(1)",
       },
       {
         translate: `${translateX}px ${translateY}px`,
+        scale,
         clipPath: `inset(${insetY}px ${insetX}px round calc(${borderRadius} / ${scale}))`,
-        transform: `scale(${scale})`,
       },
     ],
     timing,
