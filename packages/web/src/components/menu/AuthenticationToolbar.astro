@@ -125,7 +125,7 @@ import signOutIcon from "@/icons/sign-out.svg";
   }
 
   #authentication-toolbar #user {
-    transition: background-color 0.5s ease;
+    transition: background-color var(--animation-duration) var(--easing);
   }
 
   #authentication-toolbar:hover #user {
@@ -161,9 +161,9 @@ import signOutIcon from "@/icons/sign-out.svg";
     filter: blur(3px);
     transform: translateY(-100%);
     transition:
-      opacity 0.5s ease,
-      filter 0.5s ease,
-      transform 0.5s ease;
+      opacity var(--animation-duration) var(--easing),
+      filter var(--animation-duration) var(--easing),
+      transform var(--animation-duration) var(--easing);
   }
 
   body.color .nav-items {

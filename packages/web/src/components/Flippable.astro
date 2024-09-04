@@ -26,7 +26,6 @@ const { id, axis = "x", width, height } = Astro.props;
     transform-style: preserve-3d;
     transform-origin: center;
 
-    --transition-duration: 500ms;
     --perspective: 200px;
 
     transform: perspective(var(--perspective)) rotateX(0) rotateY(0);
@@ -38,11 +37,11 @@ const { id, axis = "x", width, height } = Astro.props;
   }
 
   .flippable[data-animate="true"] {
-    transition: transform var(--transition-duration) ease;
+    transition: transform var(--animation-duration) var(--easing);
   }
 
   .flippable[data-animate="true"] .back {
-    transition: display var(--transition-duration) allow-discrete;
+    transition: display var(--animation-duration) allow-discrete;
   }
 
   .face {

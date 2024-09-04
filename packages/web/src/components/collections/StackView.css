@@ -38,7 +38,7 @@
   flex-direction: column;
 
   &::backdrop {
-    animation: 500ms ease forwards backdrop-appear;
+    animation: var(--animation-duration) var(--easing) forwards backdrop-appear;
   }
 
   &::after {

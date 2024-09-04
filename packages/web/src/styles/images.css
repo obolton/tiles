@@ -21,7 +21,7 @@ profile-image {
     border-radius: 50%;
     object-fit: cover;
     clip-path: circle(50%);
-    transition: clip-path 350ms ease;
+    transition: clip-path var(--animation-duration) var(--easing);
   }
 
   &::part(placeholder) {

@@ -16,9 +16,9 @@
     inset 0 0 0 1px rgb(0 0 0 / 20%);
   opacity: 1;
   transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
-  animation: 0.25s ease button-appear;
+    transform var(--animation-duration-short) var(--easing),
+    box-shadow var(--animation-duration-short) var(--easing);
+  animation: var(--animation-duration-short) var(--easing) button-appear;
 }
 
 .button:active {
@@ -33,7 +33,7 @@
 }
 
 [data-drag-preview] .button {
-  animation: 0.25s ease forwards button-fade;
+  animation: var(--animation-duration-short) var(--easing) forwards button-fade;
 }
 
 @keyframes button-appear {

@@ -11,8 +11,8 @@ menu.vertical {
     outline: 0 solid transparent;
     outline-offset: -3px;
     transition:
-      outline-color 0.2s ease,
-      outline-width 0.2s ease;
+      outline-color var(--animation-duration) var(--easing),
+      outline-width var(--animation-duration) var(--easing);
 
     &:first-child {
       border-top-left-radius: inherit;
@@ -79,8 +79,8 @@ menu.vertical {
   outline: 0 solid transparent;
   outline-offset: 0;
   transition:
-    outline-color 0.2s ease,
-    outline-width 0.2s ease;
+    outline-color var(--animation-duration) var(--easing),
+    outline-width var(--animation-duration) var(--easing);
 
   &:has(:focus-visible) {
     outline-width: 3px;

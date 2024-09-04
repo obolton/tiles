@@ -19,9 +19,9 @@
   translate: calc(var(--left) - 50%) calc(var(--top) - 60px);
   transform-origin: center;
   transition:
-    translate 150ms ease,
-    opacity 150ms ease,
-    display 150ms allow-discrete;
+    translate var(--animation-duration-short) var(--easing),
+    opacity var(--animation-duration-short) var(--easing),
+    display var(--animation-duration-short) allow-discrete;
 
   &.hidden {
     display: none;

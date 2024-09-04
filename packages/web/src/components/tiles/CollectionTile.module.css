@@ -10,9 +10,9 @@
     opacity: max(calc(1 - var(--index) * 0.2), 0);
     z-index: calc(1000 - var(--index));
     transition:
-      rotate 500ms ease,
-      scale 500ms ease,
-      opacity 500ms ease;
+      rotate var(--animation-duration) var(--easing),
+      scale var(--animation-duration) var(--easing),
+      opacity var(--animation-duration) var(--easing);
   }
 }
 

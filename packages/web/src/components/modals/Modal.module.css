@@ -13,9 +13,6 @@
   padding: 0;
   transform-origin: center;
 
-  --animation-duration: 350ms;
-  --animation-timing: ease;
-
   /* Enable overlay transitions */
   transition:
     overlay var(--animation-duration) allow-discrete,
@@ -27,20 +24,19 @@
 }
 
 .modal[open] {
-  animation: var(--animation-duration) var(--animation-timing) modal-appear;
+  animation: var(--animation-duration) var(--easing) modal-appear;
 }
 
 .modal[open]::backdrop {
-  animation: var(--animation-duration) var(--animation-timing) forwards
-    overlay-appear;
+  animation: var(--animation-duration) var(--easing) forwards overlay-appear;
 }
 
 .modal:not([open]) {
-  animation: var(--animation-duration) var(--animation-timing) modal-disappear;
+  animation: var(--animation-duration) var(--easing) modal-disappear;
 }
 
 .modal:not([open])::backdrop {
-  animation: var(--animation-duration) var(--animation-timing) overlay-disappear;
+  animation: var(--animation-duration) var(--easing) overlay-disappear;
 }
 
 @media (width < 640px) {
@@ -53,12 +49,11 @@
   }
 
   .modal[open] {
-    animation: var(--animation-duration) var(--animation-timing) modal-slide-up;
+    animation: var(--animation-duration) var(--easing) modal-slide-up;
   }
 
   .modal:not([open]) {
-    animation: var(--animation-duration) var(--animation-timing)
-      modal-slide-down;
+    animation: var(--animation-duration) var(--easing) modal-slide-down;
   }
 }
 

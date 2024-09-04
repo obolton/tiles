@@ -12,9 +12,6 @@
   outline: none;
   contain: strict;
 
-  --animation-duration: 500ms;
-  --timing-function: ease;
-
   /* Enable transitions */
   transition:
     overlay var(--animation-duration) allow-discrete,
@@ -25,12 +22,11 @@
   }
 
   &[open]::backdrop {
-    animation: var(--animation-duration) var(--timing-function) lightbox-appear;
+    animation: var(--animation-duration) var(--easing) lightbox-appear;
   }
 
   &:not([open])::backdrop {
-    animation: var(--animation-duration) var(--timing-function)
-      lightbox-disappear;
+    animation: var(--animation-duration) var(--easing) lightbox-disappear;
   }
 
   & > ol {
@@ -55,7 +51,7 @@
       scroll-snap-align: center;
       scroll-snap-stop: always;
       pointer-events: none;
-      transition: opacity var(--animation-duration) var(--timing-function);
+      transition: opacity var(--animation-duration) var(--easing);
 
       & > * {
         pointer-events: auto;
@@ -86,7 +82,7 @@
     z-index: 1;
     pointer-events: none;
     filter: invert() drop-shadow(0 1px 1px rgb(0 0 0 / 50%));
-    transition: opacity var(--animation-duration) var(--timing-function);
+    transition: opacity var(--animation-duration) var(--easing);
   }
 
   &.first::before,

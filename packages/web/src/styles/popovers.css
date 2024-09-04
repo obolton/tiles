@@ -1,6 +1,4 @@
 popover-menu {
-  --animation-duration: 100ms;
-
   position: fixed;
   inset: auto;
   border: none;
@@ -13,18 +11,18 @@ popover-menu {
     0 4px 4px -2px rgb(0 0 0 / 20%),
     inset 0 0 1px 1px rgb(255 255 255 / 50%);
   transform-origin: top left;
-  transition: display var(--animation-duration) allow-discrete;
+  transition: display var(--animation-duration-short) allow-discrete;
 
   &[align="right"] {
     transform-origin: top right;
   }
 
   &:popover-open {
-    animation: var(--animation-duration) ease popover-appear;
+    animation: var(--animation-duration-short) var(--easing) popover-appear;
   }
 
   &:not(:popover-open) {
-    animation: var(--animation-duration) ease popover-disappear;
+    animation: var(--animation-duration-short) var(--easing) popover-disappear;
   }
 }
 

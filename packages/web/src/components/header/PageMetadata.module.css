@@ -24,7 +24,7 @@
   }
 
   & > a span {
-    transition: color 100ms ease;
+    transition: color var(--animation-duration-short) var(--easing);
   }
 
   & > a:hover span {

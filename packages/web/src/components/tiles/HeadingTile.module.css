@@ -47,7 +47,7 @@ body[data-editing]:not([data-drag]) .heading,
     background: var(--accent);
     cursor: move;
     opacity: 0;
-    transition: opacity 250ms ease;
+    transition: opacity var(--animation-duration) var(--easing);
   }
 
   &:hover::before,

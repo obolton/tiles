@@ -51,7 +51,7 @@
   left: -22px;
   bottom: -22px;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--animation-duration) var(--easing);
   z-index: 2;
 }
 

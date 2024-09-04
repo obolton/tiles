@@ -12,7 +12,7 @@
   background: none;
   outline: none;
   list-style: none;
-  transition: height 350ms ease;
+  transition: height var(--animation-duration) var(--easing);
 }
 
 .place-select:empty {
@@ -30,8 +30,8 @@
   border-radius: 8px;
   cursor: pointer;
   transition:
-    outline-width 200ms ease,
-    outline-color 200ms ease;
+    outline-width var(--animation-duration) var(--easing),
+    outline-color var(--animation-duration) var(--easing);
 }
 
 .place-select > li:hover {

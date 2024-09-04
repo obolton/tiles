@@ -35,8 +35,8 @@ input[type="datetime-local"] {
   outline: 0 solid transparent;
   outline-offset: -1px;
   transition:
-    outline-color 250ms ease,
-    outline-width 250ms ease;
+    outline-color var(--animation-duration) var(--easing),
+    outline-width var(--animation-duration) var(--easing);
 
   &:focus-visible {
     outline-width: 3px;
@@ -63,7 +63,7 @@ swatch-item {
   -webkit-tap-highlight-color: transparent;
   transform-origin: left center;
   transform: scale(1);
-  transition: transform 100ms ease;
+  transition: transform var(--animation-duration-short) var(--easing);
 
   &:hover {
     transform: scale(1.15);
@@ -84,9 +84,9 @@ input[type="checkbox"][role="switch"] {
   outline-offset: 2px;
   cursor: pointer;
   transition:
-    background-color 250ms ease,
-    outline-color 250ms ease,
-    outline-width 250ms ease;
+    background-color var(--animation-duration-short) var(--easing),
+    outline-color var(--animation-duration-short) var(--easing),
+    outline-width var(--animation-duration-short) var(--easing);
 
   &::after {
     position: absolute;
@@ -99,7 +99,7 @@ input[type="checkbox"][role="switch"] {
     background: #fff;
     box-shadow: 0 0 3px 1px rgb(0 0 0 / 20%);
     translate: none;
-    transition: translate 250ms ease;
+    transition: translate var(--animation-duration-short) var(--easing);
   }
 
   &:checked {

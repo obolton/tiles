@@ -7,7 +7,7 @@
   cursor: nwse-resize;
   z-index: 1;
   opacity: 1;
-  transition: opacity 0.5s ease;
+  transition: opacity var(--animation-duration) var(--easing);
 
   &::after {
     content: "";
@@ -19,7 +19,7 @@
     box-shadow:
       0 0 0 1px rgb(0 0 0 / 40%),
       0 2px 1px -1px rgb(0 0 0 / 20%);
-    transition: transform 0.2s ease;
+    transition: transform var(--animation-duration-short) var(--easing);
   }
 }
 
@@ -70,6 +70,6 @@ body[data-resize] {
   will-change: width, height !important;
   pointer-events: none !important;
   transition:
-    width 500ms ease,
-    height 500ms ease !important;
+    width var(--animation-duration) var(--easing),
+    height var(--animation-duration) var(--easing) !important;
 }
