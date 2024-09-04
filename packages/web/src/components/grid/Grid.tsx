@@ -8,7 +8,9 @@ import HeadingTile from "@/components/tiles/HeadingTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import EventTile from "@/components/tiles/EventTile";
 import CollectionTile from "@/components/tiles/CollectionTile";
-import useLayoutTransition from "@/hooks/useLayoutTransition";
+import useLayoutTransition, {
+  type AnimateLayoutOptions,
+} from "@/hooks/useLayoutTransition";
 import useElementSizeRef from "@/hooks/useElementSizeRef";
 import { scrollIntoView } from "@/hooks/useScrollIntoView";
 import { moveElement } from "@/utils/arrays";
@@ -55,8 +57,9 @@ function getTileComponent(tile: ClientTile) {
   }
 }
 
-const LAYOUT_TRANSITION_OPTIONS = {
+const LAYOUT_TRANSITION_OPTIONS: AnimateLayoutOptions = {
   attributes: ["data-rows", "data-columns"],
+  size: true,
 };
 
 export default function Grid({ tiles: initialTiles }: GridProps) {

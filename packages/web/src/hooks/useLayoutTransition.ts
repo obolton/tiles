@@ -2,6 +2,8 @@ import { startTransition, useCallback, useEffect } from "react";
 import { animateLayout, willAnimateLayout } from "@/utils/animation/layout";
 import type { AnimateLayoutOptions } from "@/utils/animation/layout";
 
+export type { AnimateLayoutOptions };
+
 export default function useLayoutTransition(
   ref: React.RefObject<HTMLElement>,
   options?: AnimateLayoutOptions,
