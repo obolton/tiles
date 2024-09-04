@@ -73,21 +73,21 @@ export default function CollectionTile({
       showBorder={false}
       onDrop={onDrop}
     >
-      <ol className={styles.collection}>
+      <stack-view class={styles.stack}>
         {items.map((item, i) => (
-          <li
+          <stack-item
             key={item.id}
             style={
               {
-                "--angle":
-                  i === items.length - 1 ? 0 : `${((i * 123) % 10) - 5}deg`,
+                "--index": i,
+                "--angle": i === 0 ? 0 : `${((i * 123) % 20) - 10}deg`,
               } as React.CSSProperties
             }
           >
             {getTileComponent(item)}
-          </li>
+          </stack-item>
         ))}
-      </ol>
+      </stack-view>
     </Tile>
   );
 }

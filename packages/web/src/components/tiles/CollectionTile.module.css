@@ -1,10 +1,25 @@
-.collection {
+.stack {
   position: absolute;
   inset: 0;
 
-  & > li {
+  & > stack-item {
     position: absolute;
     inset: 0;
-    transform: scale(0.9) rotateZ(var(--angle));
+    rotate: z var(--angle);
+    scale: 0.9;
+    opacity: max(calc(1 - var(--index) * 0.2), 0);
+    z-index: calc(1000 - var(--index));
+    transition:
+      rotate 500ms ease,
+      scale 500ms ease,
+      opacity 500ms ease;
   }
+}
+
+.stack:state(expanded) > stack-item {
+  position: relative;
+  inset: none;
+  rotate: none;
+  scale: none;
+  opacity: 1;
 }
