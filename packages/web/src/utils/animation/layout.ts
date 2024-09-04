@@ -1,3 +1,5 @@
+import { createAnimationPromise } from "./effects";
+
 const rects = new WeakMap<HTMLElement, DOMRect>();
 const animations = new WeakMap<HTMLElement, Animation>();
 const transitionElements = new WeakMap<HTMLElement, HTMLElement>();
@@ -7,7 +9,10 @@ export type AnimateLayoutOptions = {
   size?: boolean;
 };
 
-function animatePosition(element: HTMLElement, options?: AnimateLayoutOptions) {
+async function animatePosition(
+  element: HTMLElement,
+  options?: AnimateLayoutOptions,
+) {
   const previousRect = rects.get(element);
   if (!previousRect) {
     return;
@@ -94,6 +99,7 @@ function animatePosition(element: HTMLElement, options?: AnimateLayoutOptions) {
     { once: true },
   );
   animations.set(element, animation);
+  return createAnimationPromise(animation);
 }
 
 export function willAnimateLayout(element: HTMLElement) {
@@ -104,15 +110,17 @@ export function willAnimateLayout(element: HTMLElement) {
   }
 }
 
-export function animateChildren(
+export async function animateChildren(
   element: HTMLElement,
   options?: AnimateLayoutOptions,
 ) {
-  for (const child of element.children) {
-    if (child instanceof HTMLElement) {
-      animatePosition(child, options);
-    }
-  }
+  return Promise.all(
+    Array.from(element.children).map((child) => {
+      if (child instanceof HTMLElement) {
+        return animatePosition(child, options);
+      }
+    }),
+  );
 }
 
 export function animateLayout(

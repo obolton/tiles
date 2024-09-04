@@ -6,7 +6,7 @@ const DEFAULT_TIMING: EffectTiming = {
   fill: "forwards",
 };
 
-function createAnimationPromise(animation: Animation) {
+export function createAnimationPromise(animation: Animation) {
   return new Promise((resolve, reject) => {
     animation.addEventListener("finish", resolve);
     animation.addEventListener("cancel", reject);
