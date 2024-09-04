@@ -79,10 +79,7 @@ function animatePosition(element: HTMLElement, options?: AnimateLayoutOptions) {
   element.style.setProperty("pointer-events", "none");
 
   const animation = element.animate(
-    [
-      { transform: `translate(${deltaX}px, ${deltaY}px)` },
-      { transform: "none" },
-    ],
+    [{ translate: `${deltaX}px ${deltaY}px` }, { translate: "none" }],
     {
       duration: 350,
       easing: "ease",
