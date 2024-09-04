@@ -9,10 +9,13 @@
     scale: 0.9;
     opacity: max(calc(1 - var(--index) * 0.2), 0);
     z-index: calc(1000 - var(--index));
-    transition:
-      rotate var(--animation-duration) var(--easing),
-      scale var(--animation-duration) var(--easing),
-      opacity var(--animation-duration) var(--easing);
+    transition-property: rotate, scale, opacity;
+    transition-duration: var(--animation-duration);
+    transition-timing-function: var(--easing);
+  }
+
+  &:state(overlay) {
+    z-index: 1;
   }
 }
 

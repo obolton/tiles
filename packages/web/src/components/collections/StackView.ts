@@ -59,6 +59,7 @@ export default class StackView extends HTMLElement {
     willAnimateLayout(this);
     document.body.style.setProperty("overflow", "hidden");
     this.internals.states.add("expanded");
+    this.internals.states.add("overlay");
     this.container.showPopover();
     this.container.scrollTo({ top: 0, behavior: "instant" });
     animateChildren(this);
@@ -70,7 +71,7 @@ export default class StackView extends HTMLElement {
     document.body.style.removeProperty("overflow");
     this.internals.states.delete("expanded");
     this.container.hidePopover();
-    animateChildren(this);
+    animateChildren(this).then(() => this.internals.states.delete("overlay"));
     window.removeEventListener("keydown", this.handleKeyDown);
   }
 }
