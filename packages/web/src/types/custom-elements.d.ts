@@ -47,5 +47,17 @@ declare namespace JSX {
       class?: string;
       date?: string;
     };
+    "stack-view": {
+      id?: string;
+      class?: string;
+      children?: JSX.Element | JSX.Element[];
+    };
+    "stack-item": {
+      key?: string;
+      id?: string;
+      class?: string;
+      style?: React.CSSProperties;
+      children?: JSX.Element | JSX.Element[] | null;
+    };
   }
 }
