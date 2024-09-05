@@ -35,7 +35,9 @@ export default class ProfileImage extends HTMLElement {
       this.placeholder = undefined;
 
       if (this.image) {
-        this.image.src = src;
+        this.image.setAttribute("src", src);
+        this.image.setAttribute("alt", `Profile image for ${name}`);
+        this.image.setAttribute("title", name);
       } else {
         this.image = document.createElement("img");
         this.image.setAttribute("part", "image");
