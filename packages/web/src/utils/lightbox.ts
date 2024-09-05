@@ -113,7 +113,6 @@ function openLightbox(element: Element) {
           requestAnimationFrame(() => {
             disappearTo(visible, {
               destination: related,
-              startClipPath: "inset(0 -20vw 0 0)",
             });
           });
         } else {
@@ -154,7 +153,6 @@ function openLightbox(element: Element) {
   if (visible.firstElementChild) {
     appearFrom(visible.firstElementChild, {
       origin: element,
-      endClipPath: "inset(0 -20vw 0 0)",
     });
   }
   if (previous) {

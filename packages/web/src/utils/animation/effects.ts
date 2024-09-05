@@ -41,9 +41,8 @@ export function appearFrom(
   element: Element,
   {
     origin,
-    endClipPath = "inset(0)",
     timing = { duration: 350, easing: "ease" },
-  }: { origin: Element; endClipPath?: string; timing?: EffectTiming },
+  }: { origin: Element; timing?: EffectTiming },
 ) {
   const originRect = origin.getBoundingClientRect();
   const originCenter = getCenter(originRect);
@@ -76,7 +75,7 @@ export function appearFrom(
       {
         translate: "none",
         scale: 1,
-        clipPath: endClipPath,
+        clipPath: "inset(0)",
       },
     ],
     timing,
@@ -88,9 +87,8 @@ export function disappearTo(
   element: Element,
   {
     destination,
-    startClipPath = "inset(0)",
     timing = { duration: 350, easing: "ease" },
-  }: { destination: Element; startClipPath?: string; timing?: EffectTiming },
+  }: { destination: Element; timing?: EffectTiming },
 ) {
   const destinationRect = destination.getBoundingClientRect();
   const destinationCenter = getCenter(destinationRect);
@@ -118,7 +116,7 @@ export function disappearTo(
       {
         translate: "none",
         scale: 1,
-        clipPath: startClipPath,
+        clipPath: "inset(0)",
       },
       {
         translate: `${translateX}px ${translateY}px`,
