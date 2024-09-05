@@ -80,6 +80,7 @@ function openLightbox(element: Element) {
   });
   list.appendChild(fragment);
   currentIndex = eligibleItems.indexOf(element);
+  list.children[currentIndex].classList.add("visible");
 
   // Handle interactions
   lightbox.addEventListener("click", () => lightbox?.close());
@@ -113,10 +114,10 @@ function openLightbox(element: Element) {
         }
       }
       if (previous) {
-        moveTo(previous, { y: "-5vh" });
+        moveTo(previous, { y: "-6vh" });
       }
       if (next) {
-        moveTo(next, { y: "5vh" });
+        moveTo(next, { y: "6vh" });
       }
       fadeOut(closeButton);
 
@@ -150,10 +151,10 @@ function openLightbox(element: Element) {
     });
   }
   if (previous) {
-    moveFrom(previous, { y: "-5vh" });
+    moveFrom(previous, { y: "-6vh" });
   }
   if (next) {
-    moveFrom(next, { y: "5vh" });
+    moveFrom(next, { y: "6vh" });
   }
 }
 
