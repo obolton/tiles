@@ -80,6 +80,13 @@ function openLightbox(element: Element) {
   });
   list.appendChild(fragment);
   currentIndex = eligibleItems.indexOf(element);
+
+  if (currentIndex === 0) {
+    lightbox.classList.add("first");
+  }
+  if (currentIndex === eligibleItems.length - 1) {
+    lightbox.classList.add("last");
+  }
   list.children[currentIndex].classList.add("visible");
 
   // Handle interactions
