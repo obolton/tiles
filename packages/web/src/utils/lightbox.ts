@@ -183,8 +183,6 @@ function createItem(element: Element) {
 }
 
 function itemClick(event: MouseEvent) {
-  event.stopPropagation();
-
   const element = event.currentTarget as Element;
   const index = Array.prototype.indexOf.call(
     element.parentElement?.children,
@@ -193,6 +191,7 @@ function itemClick(event: MouseEvent) {
 
   // Scroll item into view
   if (index !== currentIndex) {
+    event.stopPropagation();
     element.scrollIntoView({
       behavior: "smooth",
       block: "center",
