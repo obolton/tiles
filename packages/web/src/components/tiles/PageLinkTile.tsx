@@ -60,7 +60,7 @@ export default function PageLinkTile({
 
           <address>
             <profile-image src={author.imageUrl} name={author.name} />
-            {author.name}
+            <span>{author.name}</span>
           </address>
         </section>
       </a>
