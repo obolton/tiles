@@ -9,6 +9,33 @@
   box-sizing: border-box;
 }
 
+#close {
+  position: absolute;
+  display: none;
+  top: 12px;
+  left: 12px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  background-color: rgb(160 160 160 / 50%);
+  -webkit-tap-highlight-color: transparent;
+
+  &::after {
+    content: url("@/icons/delete.svg");
+    position: absolute;
+    inset: 10px;
+    width: 24px;
+    height: 24px;
+  }
+
+  &:active {
+    background-color: rgb(120 120 120 / 50%);
+  }
+}
+
 #container,
 #container:not(:popover-open) {
   display: block;
@@ -42,15 +69,8 @@
     animation: var(--animation-duration) var(--easing) forwards backdrop-appear;
   }
 
-  &::after {
-    content: url("@/icons/delete.svg");
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    width: 24px;
-    height: 24px;
-    opacity: 0.8;
-    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 50%));
+  &:focus-within #close {
+    display: block;
   }
 }
 

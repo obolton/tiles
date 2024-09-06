@@ -24,10 +24,20 @@ export default class StackView extends HTMLElement {
     this.container.setAttribute("popover", "manual");
     this.container.setAttribute("tabindex", "0");
 
+    const closeButton = document.createElement("button");
+    closeButton.setAttribute("type", "button");
+    closeButton.setAttribute("aria-label", "Close");
+    closeButton.setAttribute("id", "close");
+    closeButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      this.hide();
+    });
+
     const items = document.createElement("section");
     items.id = "items";
     items.append(document.createElement("slot"));
-    this.container.append(items);
+
+    this.container.append(closeButton, items);
 
     shadow.append(this.container);
 
