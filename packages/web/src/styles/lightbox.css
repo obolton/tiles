@@ -32,7 +32,7 @@
   & > ol {
     position: absolute;
     inset: 0;
-    padding: 30vh 0;
+    padding: 0;
     overflow: auto;
     display: flex;
     flex-direction: column;
@@ -50,15 +50,19 @@
       height: 70vh;
       scroll-snap-align: center;
       scroll-snap-stop: always;
-      pointer-events: none;
+      opacity: 0.5;
       transition: opacity var(--animation-duration) var(--easing);
 
-      & > * {
-        pointer-events: auto;
+      &:first-child {
+        margin-top: 15vh;
       }
 
-      &:not(.visible) {
-        opacity: 0.5;
+      &:last-child {
+        margin-bottom: 15vh;
+      }
+
+      &.visible {
+        opacity: 1;
       }
     }
   }
