@@ -127,8 +127,7 @@ infinite-scroll {
 }
 
 map-view,
-embedded-video,
-calendar-month {
+embedded-video {
   display: block;
   contain: strict;
 }
