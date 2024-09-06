@@ -19,7 +19,6 @@ export default class CalendarMonth extends HTMLElement {
     day: "numeric",
   });
 
-  private root: HTMLElement;
   private header: HTMLElement;
   private dates: HTMLElement;
 
@@ -34,17 +33,9 @@ export default class CalendarMonth extends HTMLElement {
     const shadow = this.attachShadow({ mode: "closed" });
     shadow.adoptedStyleSheets = [stylesheet];
 
-    this.root = document.createElement("section");
-    this.root.id = "root";
-
     this.header = document.createElement("header");
-
     this.dates = document.createElement("section");
-    this.dates.id = "dates";
-
-    this.root.append(this.header, this.dates);
-
-    shadow.append(this.root);
+    shadow.append(this.header, this.dates);
   }
 
   connectedCallback() {

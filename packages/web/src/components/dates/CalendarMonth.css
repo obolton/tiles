@@ -1,25 +1,24 @@
-#root {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
+:host {
   display: flex;
   flex-direction: column;
+  container: calendar-month / size;
 }
 
 header {
-  font-size: 1.25rem;
-  font-weight: 400;
+  font-size: clamp(0.5rem, 8cqh, 1rem);
+  font-weight: 600;
   opacity: 0.8;
-  margin-bottom: 16px;
-  padding: 0 16px;
+  margin-bottom: 6cqh;
+  padding: 0 5cqw;
   flex: none;
 }
 
-#dates {
+section {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-auto-rows: 1fr;
   flex: 1;
+  font-size: clamp(0.3rem, 8cqh, 1rem);
 }
 
 .weekday {
@@ -27,6 +26,7 @@ header {
   align-items: center;
   justify-content: center;
   font-weight: 600;
+  opacity: 0.8;
 }
 
 .date {
