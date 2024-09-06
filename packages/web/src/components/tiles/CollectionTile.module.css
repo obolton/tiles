@@ -21,7 +21,7 @@
 
 .stack:state(expanded) > stack-item {
   position: relative;
-  inset: none;
+  inset: unset;
   rotate: none;
   scale: none;
   opacity: 1;
