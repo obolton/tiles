@@ -14,7 +14,7 @@ export default class StackView extends HTMLElement {
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
 
-    const shadow = this.attachShadow({ mode: "closed" });
+    const shadow = this.attachShadow({ mode: "closed", delegatesFocus: true });
     shadow.adoptedStyleSheets = [stylesheet];
 
     this.internals = this.attachInternals();
@@ -22,6 +22,7 @@ export default class StackView extends HTMLElement {
     this.container = document.createElement("div");
     this.container.id = "container";
     this.container.setAttribute("popover", "manual");
+    this.container.setAttribute("tabindex", "0");
 
     const items = document.createElement("section");
     items.id = "items";
@@ -63,7 +64,7 @@ export default class StackView extends HTMLElement {
     this.container.showPopover();
     this.container.scrollTo({ top: 0, behavior: "instant" });
     animateChildren(this);
-    window.addEventListener("keydown", this.handleKeyDown);
+    this.addEventListener("keydown", this.handleKeyDown);
   }
 
   hide() {
@@ -72,6 +73,6 @@ export default class StackView extends HTMLElement {
     this.internals.states.delete("expanded");
     this.container.hidePopover();
     animateChildren(this).then(() => this.internals.states.delete("overlay"));
-    window.removeEventListener("keydown", this.handleKeyDown);
+    this.removeEventListener("keydown", this.handleKeyDown);
   }
 }
