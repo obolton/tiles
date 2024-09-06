@@ -1,7 +1,5 @@
 import { getImageUrl } from "@/utils/images";
 import Tile, { type TileProps } from "./Tile";
-import Icon from "@/components/icons/Icon";
-import arrowOutwardIcon from "@/icons/arrow-outward.svg";
 import styles from "./PageLinkTile.module.css";
 import { classNames } from "@/utils/css";
 import type { ClientPageLink } from "@/types/tiles";
@@ -53,8 +51,6 @@ export default function PageLinkTile({
         href={`/pages/${pageId}`}
         target="_blank"
       >
-        <Icon src={arrowOutwardIcon.src} className={styles.icon} />
-
         <section
           className={classNames(styles.text, imageKey && styles["with-image"])}
         >
