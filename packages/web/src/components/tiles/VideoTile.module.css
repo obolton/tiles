@@ -32,6 +32,8 @@
 }
 
 [data-lightbox] .figure {
+  max-width: 1024px;
+  margin: auto;
   overflow: visible;
 }
 
