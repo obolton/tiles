@@ -45,7 +45,7 @@ body:global(.dark) .event {
 .grid {
   display: grid;
   grid-template-columns: repeat(var(--columns), 1fr);
-  padding: 5cqh 0 0;
+  padding: 4cqh 0;
   flex: 1;
 }
 
