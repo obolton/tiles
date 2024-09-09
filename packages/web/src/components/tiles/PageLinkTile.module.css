@@ -6,51 +6,12 @@
   background-size: cover;
   background-position: center;
   border-radius: inherit;
-  padding: 8px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   container: tile / size;
-
-  & h3 {
-    font-size: clamp(0.875rem, 8cqh, 1.75rem);
-    line-height: 1.2;
-    font-weight: 600;
-    margin: 0;
-  }
-
-  & p {
-    font-size: clamp(0.875rem, 6cqh, 1rem);
-    line-height: 1.2;
-    font-weight: 500;
-  }
-
-  & h3,
-  & p {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-  }
-
-  & address {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    font-size: clamp(0.875rem, 2vw, 1rem);
-    font-family: var(--ui-font);
-    font-style: normal;
-    font-weight: 400;
-
-    & > span {
-      opacity: 0.8;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
 
   & .text {
     display: flex;
@@ -66,13 +27,53 @@
     text-align: center;
     overflow: hidden;
 
+    & h3 {
+      font-size: clamp(0.875rem, 8cqh, 1.75rem);
+      line-height: 1.2;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    & p {
+      font-size: clamp(0.875rem, 6cqh, 1rem);
+      line-height: 1.2;
+      font-weight: 500;
+    }
+
+    & h3,
+    & p {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      word-wrap: break-word;
+      padding: 2px 0;
+    }
+
+    & address {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+      font-family: var(--ui-font);
+      font-style: normal;
+      font-weight: 500;
+
+      & > span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
     &.with-image {
       padding: clamp(8px, 6cqw, 24px);
       border-radius: 8px;
       backdrop-filter: blur(8px) contrast(80%);
       box-shadow:
         0 0 0 1px rgba(0 0 0 / 30%),
-        0 4px 3px -2px rgb(0 0 0 / 30%);
+        0 4px 3px -2px rgb(0 0 0 / 25%);
     }
 
     & > * {
@@ -85,7 +86,8 @@
       background: rgb(255 255 255 / 70%);
     }
 
-    & p {
+    & p,
+    & address {
       color: rgb(0 0 0 / 60%);
     }
   }
@@ -97,7 +99,8 @@
       text-shadow: 0 1px 1px rgb(0 0 0 / 20%);
     }
 
-    & p {
+    & p,
+    & address {
       color: rgb(255 255 255 / 60%);
     }
   }
@@ -109,7 +112,8 @@
       );
     }
 
-    & p {
+    & p,
+    & address {
       color: oklch(40% calc(var(--chroma) * 0.75) var(--hue));
     }
   }
@@ -127,6 +131,12 @@
 
 .deleted {
   padding: 24px;
+}
+
+@media (width < 640px) {
+  .contents {
+    padding: 8px;
+  }
 }
 
 @container tile (max-height: 120px) {
