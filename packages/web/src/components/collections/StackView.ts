@@ -75,6 +75,9 @@ export default class StackView extends HTMLElement {
     this.container.scrollTo({ top: 0, behavior: "instant" });
     animateChildren(this);
     this.addEventListener("keydown", this.handleKeyDown);
+    this.dispatchEvent(
+      new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
+    );
   }
 
   hide() {
@@ -84,5 +87,8 @@ export default class StackView extends HTMLElement {
     this.container.hidePopover();
     animateChildren(this).then(() => this.internals.states.delete("overlay"));
     this.removeEventListener("keydown", this.handleKeyDown);
+    this.dispatchEvent(
+      new ToggleEvent("toggle", { oldState: "open", newState: "closed" }),
+    );
   }
 }
