@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Tile, { type TileProps } from "./Tile";
 import ImageTile from "@/components/tiles/ImageTile";
 import VideoTile from "@/components/tiles/VideoTile";
@@ -7,6 +7,7 @@ import PlaceTile from "@/components/tiles/PlaceTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import client from "@/api/client";
 import styles from "./CollectionTile.module.css";
+import type StackView from "@/components/collections/StackView";
 import type { ClientCollection } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
 
@@ -14,10 +15,13 @@ interface CollectionTileProps extends TileProps {
   collection: ClientCollection;
 }
 
-function getTileComponent(item: ClientCollection["items"][number]) {
+function getTileComponent(
+  item: ClientCollection["items"][number],
+  isExpanded: boolean,
+) {
   const props = {
     id: item.id,
-    allowEdit: false,
+    allowEdit: isExpanded,
   };
 
   if (item.text) {
@@ -49,7 +53,9 @@ export default function CollectionTile({
   ...props
 }: CollectionTileProps) {
   const { items: initialItems } = collection;
+  const ref = useRef<StackView>(null);
   const [items, setItems] = useState(initialItems);
+  const [isExpanded, setExpanded] = useState(false);
 
   const onDrop = useCallback(
     async (event: DragDropEvent) => {
@@ -65,6 +71,20 @@ export default function CollectionTile({
     [collection.id],
   );
 
+  const onToggle = useCallback(
+    (event: ToggleEvent) => setExpanded(event.newState === "open"),
+    [],
+  );
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) {
+      return;
+    }
+    element.addEventListener("toggle", onToggle);
+    return () => element.removeEventListener("toggle", onToggle);
+  }, [onToggle]);
+
   return (
     <Tile
       {...props}
@@ -73,7 +93,7 @@ export default function CollectionTile({
       showBorder={false}
       onDrop={onDrop}
     >
-      <stack-view class={styles.stack}>
+      <stack-view class={styles.stack} ref={ref}>
         {items.map((item, i) => (
           <stack-item
             key={item.id}
@@ -84,7 +104,7 @@ export default function CollectionTile({
               } as React.CSSProperties
             }
           >
-            {getTileComponent(item)}
+            {getTileComponent(item, isExpanded)}
           </stack-item>
         ))}
       </stack-view>
