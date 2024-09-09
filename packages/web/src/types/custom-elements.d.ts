@@ -50,6 +50,7 @@ declare namespace JSX {
     "stack-view": {
       id?: string;
       class?: string;
+      ref?: React.RefObject;
       children?: JSX.Element | JSX.Element[];
     };
     "stack-item": {
