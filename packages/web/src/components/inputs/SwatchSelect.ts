@@ -60,6 +60,7 @@ export default class SwatchSelect extends HTMLElement {
     const direction = this.getAttribute("direction") === "left" ? -1 : 1;
 
     if (this.open) {
+      this.setAttribute("aria-pressed", "true");
       this.button.setAttribute("aria-pressed", "true");
       this.items.classList.remove("hidden");
 
@@ -74,6 +75,7 @@ export default class SwatchSelect extends HTMLElement {
         }),
       );
     } else {
+      this.removeAttribute("aria-pressed");
       this.button.removeAttribute("aria-pressed");
 
       fadeOut(this.items, { timing: TIMING });
