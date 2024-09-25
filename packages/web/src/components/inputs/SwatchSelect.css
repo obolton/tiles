@@ -19,7 +19,9 @@ button {
   box-shadow:
     inset 0 0 0 1px rgba(0 0 0 / 20%),
     0 4px 4px -2px rgb(0 0 0 / 20%);
-  transition: transform var(--animation-duration) var(--easing);
+  transition:
+    scale var(--animation-duration-short) var(--easing),
+    rotate var(--animation-duration) var(--easing);
 
   & > img,
   & ::slotted(img) {
@@ -28,15 +30,16 @@ button {
     left: calc(50% - 12px);
     width: 24px;
     height: 24px;
-    filter: drop-shadow(0 1px 1px rgba(0 0 0 / 50%));
-    transition:
-      opacity var(--animation-duration) var(--easing),
-      transform var(--animation-duration) var(--easing);
+    filter: drop-shadow(0 1px 1px rgba(0 0 0 / 10%));
+    transition-duration: var(--animation-duration);
+    transition-timing-function: var(--easing);
+    transition-property: opacity, scale, rotate;
   }
 
   & > img {
     opacity: 0;
-    transform: scale(0.7) rotateZ(-45deg);
+    scale: 0.7;
+    rotate: z -45deg;
   }
 
   & ::slotted(img) {
@@ -44,16 +47,18 @@ button {
   }
 
   &[aria-pressed="true"] {
-    transform: scale(1.2) rotateZ(45deg);
+    scale: 1.1;
+    rotate: z 45deg;
 
     & > img {
       opacity: 0.9;
-      transform: scale(1) rotateZ(-45deg);
+      scale: 1;
+      rotate: z -45deg;
     }
 
     & ::slotted(img) {
       opacity: 0;
-      transform: scale(0.7);
+      scale: 0.7;
     }
   }
 
@@ -77,5 +82,24 @@ button {
 
   &.hidden {
     display: none;
+  }
+}
+
+:host([direction="left"]) {
+  #items {
+    flex-direction: row;
+    left: unset;
+    right: 32px;
+    clip-path: inset(-20px 0 -20px -20px);
+  }
+
+  button {
+    & > img {
+      rotate: z 45deg;
+    }
+
+    &[aria-pressed="true"] {
+      rotate: z -45deg;
+    }
   }
 }

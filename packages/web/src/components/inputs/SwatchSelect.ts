@@ -10,6 +10,8 @@ const TIMING: EffectTiming = {
 const OVERLAP = 8;
 
 export default class SwatchSelect extends HTMLElement {
+  static observedAttributes = ["direction"] as const;
+
   public value: string = "";
 
   private open = false;
@@ -55,6 +57,8 @@ export default class SwatchSelect extends HTMLElement {
   toggle() {
     this.open = !this.open;
 
+    const direction = this.getAttribute("direction") === "left" ? -1 : 1;
+
     if (this.open) {
       this.button.setAttribute("aria-pressed", "true");
       this.items.classList.remove("hidden");
@@ -64,8 +68,8 @@ export default class SwatchSelect extends HTMLElement {
       const items = this.itemsSlot.assignedElements();
       items.forEach((item, i) =>
         move(item, {
-          fromX: `${(items.length - i) * -100}%`,
-          toX: `${(items.length - i - 1) * -OVERLAP + 20}px`,
+          fromX: `${(items.length - i) * -100 * direction}%`,
+          toX: `${(items.length - i - 1) * -OVERLAP * direction + 20 * direction}px`,
           timing: TIMING,
         }),
       );
@@ -78,8 +82,8 @@ export default class SwatchSelect extends HTMLElement {
       Promise.all(
         elements.map((item, i) =>
           move(item, {
-            fromX: `${(elements.length - i - 1) * -OVERLAP + 20}px`,
-            toX: `${(elements.length - i) * -100}%`,
+            fromX: `${(elements.length - i - 1) * -OVERLAP * direction + 20 * direction}px`,
+            toX: `${(elements.length - i) * -100 * direction}%`,
             timing: TIMING,
           }),
         ),

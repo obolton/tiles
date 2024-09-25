@@ -31,6 +31,7 @@ declare namespace JSX {
       class?: string;
       ref?: React.RefObject;
       value?: string;
+      direction?: "left" | "right";
       children: JSX.Element | JSX.Element[];
     };
     "swatch-item": {
