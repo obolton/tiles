@@ -61,5 +61,11 @@ declare namespace JSX {
       style?: React.CSSProperties;
       children?: JSX.Element | JSX.Element[] | null;
     };
+    "popover-menu": {
+      id?: string;
+      class?: string;
+      anchor: string;
+      children?: JSX.Element | JSX.Element[];
+    };
   }
 }
