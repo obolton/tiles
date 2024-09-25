@@ -2,10 +2,10 @@ export default class PopoverMenu extends HTMLElement {
   static observedAttributes = ["anchor", "align"] as const;
 
   private state: "open" | "closed" = "closed";
-  private anchor: HTMLElement | null = null;
 
   constructor() {
     super();
+
     this.addEventListener("beforetoggle", this.beforeToggle.bind(this), {
       passive: true,
     });
@@ -16,24 +16,31 @@ export default class PopoverMenu extends HTMLElement {
   }
 
   private setPosition() {
-    if (!this.anchor) {
-      return;
+    const anchorElementId = this.getAttribute("anchor");
+    if (!anchorElementId) {
+      throw new Error("Missing anchor attribute");
+    }
+    const anchor = document.getElementById(anchorElementId);
+    if (!anchor) {
+      throw new Error(`Anchor element with ID "${anchorElementId}" not found`);
     }
 
-    const rect = this.anchor.getBoundingClientRect();
-    const alignment = this.getAttribute("align") ?? "left";
+    const rect = anchor.getBoundingClientRect();
+    const alignLeft = rect.right < window.innerWidth - 150;
+    const alignBottom = rect.bottom < window.innerHeight - 150;
 
-    if (alignment === "left") {
-      this.style.setProperty(
-        "inset",
-        `${rect.bottom}px auto auto ${rect.left}px`,
-      );
-    } else {
-      this.style.setProperty(
-        "inset",
-        `${rect.bottom}px ${window.innerWidth - (rect.left + rect.width)}px auto auto`,
-      );
-    }
+    const left = alignLeft ? `${rect.left}px` : "auto";
+    const right = alignLeft
+      ? "auto"
+      : `${window.innerWidth - (rect.left + rect.width)}px`;
+    const top = alignBottom ? `${rect.bottom}px` : "auto";
+    const bottom = alignBottom ? "auto" : `${window.innerHeight - rect.top}px`;
+
+    this.style.setProperty(
+      "transform-origin",
+      `${alignBottom ? "top" : "bottom"} ${alignLeft ? "left" : "right"}`,
+    );
+    this.style.setProperty("inset", `${top} ${right} ${bottom} ${left}`);
   }
 
   beforeToggle(event: ToggleEvent) {
@@ -50,12 +57,9 @@ export default class PopoverMenu extends HTMLElement {
 
   attributeChangedCallback(
     name: (typeof PopoverMenu.observedAttributes)[number],
-    _: string,
-    value: string,
   ) {
     switch (name) {
       case "anchor":
-        this.anchor = value ? document.getElementById(value) : null;
         if (this.state === "open") {
           this.setPosition();
         }
