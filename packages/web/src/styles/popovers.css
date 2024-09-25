@@ -4,25 +4,81 @@ popover-menu {
   border: none;
   margin: 8px 0;
   padding: 0;
-  background: rgb(240 240 240 / 90%);
+  background-color: hsl(from var(--page-color) h s 90%);
   border-radius: 16px;
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 30%),
-    0 4px 4px -2px rgb(0 0 0 / 20%),
-    inset 0 0 1px 1px rgb(255 255 255 / 50%);
-  transform-origin: top left;
+    0 4px 4px -2px rgb(0 0 0 / 20%);
   transition: display var(--animation-duration-short) allow-discrete;
-
-  &[align="right"] {
-    transform-origin: top right;
-  }
 
   &:popover-open {
     animation: var(--animation-duration-short) var(--easing) popover-appear;
   }
 
   &:not(:popover-open) {
+    display: none;
     animation: var(--animation-duration-short) var(--easing) popover-disappear;
+  }
+}
+
+popover-menu > menu {
+  display: flex;
+  flex-direction: column;
+  border-radius: inherit;
+
+  & > li {
+    color: var(--ui-color);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-shadow: 0 1px 0 rgb(255 255 255 / 15%);
+    outline: 0 solid transparent;
+    outline-offset: -3px;
+    transition:
+      outline-color var(--animation-duration) var(--easing),
+      outline-width var(--animation-duration) var(--easing);
+
+    &:first-child {
+      border-top-left-radius: inherit;
+      border-top-right-radius: inherit;
+    }
+
+    &:last-child {
+      border-bottom-left-radius: inherit;
+      border-bottom-right-radius: inherit;
+    }
+
+    &:has(:focus-visible) {
+      outline-width: 3px;
+      outline-color: var(--focus-ring-color);
+    }
+
+    &:not(:has(:disabled)):hover {
+      background: rgba(0 0 0 / 10%);
+    }
+
+    & button,
+    & a {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 18px;
+      outline: none;
+      white-space: nowrap;
+    }
+
+    & button {
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      text-align: inherit;
+      font-weight: inherit;
+      text-shadow: inherit;
+      color: inherit;
+      background: none;
+      border: none;
+    }
   }
 }
 
