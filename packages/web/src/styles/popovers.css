@@ -4,10 +4,10 @@ popover-menu {
   border: none;
   margin: 8px 0;
   padding: 0;
-  background-color: hsl(from var(--page-color) h s 90%);
+  background-color: hsl(from var(--page-color) h s 95%);
   border-radius: 16px;
   box-shadow:
-    0 0 0 1px rgb(0 0 0 / 30%),
+    0 0 0 1px rgb(0 0 0 / 20%),
     0 4px 4px -2px rgb(0 0 0 / 20%);
   transition: display var(--animation-duration-short) allow-discrete;
 
