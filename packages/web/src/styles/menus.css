@@ -91,3 +91,64 @@ menu.vertical {
     padding-left: 12px;
   }
 }
+
+.toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: oklch(from var(--page-color) l c h / 90%);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 12px;
+  gap: 8px;
+  z-index: 1;
+
+  & hr {
+    width: 60%;
+    height: 3px;
+    background: rgb(0 0 0 / 10%);
+    border-radius: 2px;
+    border: none;
+    margin: 4px 0;
+  }
+
+  &.secondary {
+    left: unset;
+    right: 0;
+  }
+
+  & > menu {
+    display: flex;
+    flex: 1 0 auto;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+@media (width < 640px) {
+  .toolbar {
+    height: auto;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    top: unset;
+    bottom: 0;
+    overflow: auto;
+
+    &.secondary {
+      top: 0;
+      bottom: unset;
+    }
+
+    & > menu {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+}
