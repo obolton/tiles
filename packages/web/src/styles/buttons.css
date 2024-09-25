@@ -20,7 +20,9 @@ button[aria-disabled="true"] {
 /* Primary and secondary buttons */
 
 button.primary,
-button.secondary {
+button.secondary,
+a.primary,
+a.secondary {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,7 +40,8 @@ button.secondary {
     box-shadow var(--animation-duration-short) var(--easing);
 }
 
-button.primary {
+button.primary,
+a.primary {
   color: rgb(255 255 255 / 90%);
   -webkit-font-smoothing: antialiased;
   border: 1px solid rgb(0 0 0 / 40%);
@@ -53,7 +56,8 @@ button.primary {
   }
 }
 
-button.secondary {
+button.secondary,
+a.secondary {
   color: var(--ui-color);
   border: none;
   background-color: #fff;
