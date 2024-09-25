@@ -15,17 +15,16 @@
 
 .figure > figcaption {
   position: absolute;
-  width: 100%;
-  bottom: 0;
-  padding: calc(0.75rem - 1px) 1rem 0.75rem;
-  font-size: 1rem;
+  left: 8px;
+  bottom: 8px;
+  font-size: 0.875rem;
   font-weight: 500;
-  line-height: 1rlh;
   white-space: pre-line;
-  text-shadow: 0 1px 1px rgb(255 255 255 / 15%);
-  background: oklch(from var(--page-color) l calc(c * 1.5) h / 50%);
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 30%);
+  background: rgb(255 255 255 / 30%);
   backdrop-filter: blur(10px);
-  box-shadow: 0 -1px 0 0 rgb(0 0 0 / 20%);
 }
 
 [data-lightbox] .figure {
