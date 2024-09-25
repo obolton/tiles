@@ -41,3 +41,10 @@ profile-image {
     }
   }
 }
+
+img.icon {
+  opacity: 0.8;
+  width: 18px;
+  height: 18px;
+  filter: drop-shadow(0 1px 0 rgb(255 255 255 / 15%));
+}
