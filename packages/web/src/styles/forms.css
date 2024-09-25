@@ -61,12 +61,15 @@ textarea::placeholder {
 swatch-item {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transform-origin: left center;
-  transform: scale(1);
-  transition: transform var(--animation-duration-short) var(--easing);
+  scale: 1;
+  transition: scale var(--animation-duration-short) var(--easing);
 
   &:hover {
-    transform: scale(1.15);
+    scale: 1.1;
+  }
+
+  &:not(:defined) {
+    display: none;
   }
 }
 
