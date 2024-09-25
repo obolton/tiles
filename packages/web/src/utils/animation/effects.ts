@@ -1,5 +1,3 @@
-import { getCenter } from "../geometry";
-
 const DEFAULT_TIMING: EffectTiming = {
   duration: 350,
   easing: "ease",
@@ -41,41 +39,56 @@ export function appearFrom(
   element: Element,
   {
     origin,
+    scaling = true,
+    transformOrigin = { x: 0.5, y: 0.5 },
     timing = { duration: 350, easing: "ease" },
-  }: { origin: Element; timing?: EffectTiming },
+  }: {
+    origin: Element;
+    timing?: EffectTiming;
+    scaling?: boolean;
+    transformOrigin?: { x: number; y: number };
+  },
 ) {
   const originRect = origin.getBoundingClientRect();
-  const originCenter = getCenter(originRect);
   const rect = element.getBoundingClientRect();
-  const center = getCenter(rect);
   const borderRadius =
     getComputedStyle(origin).getPropertyValue("border-radius");
 
-  const translateX = originCenter.x - center.x;
-  const translateY = originCenter.y - center.y;
+  const translateX =
+    originRect.x +
+    originRect.width * transformOrigin.x -
+    (rect.x + rect.width * transformOrigin.x);
+  const translateY =
+    originRect.y +
+    originRect.height * transformOrigin.y -
+    (rect.y + rect.height * transformOrigin.y);
 
-  const scale = Math.max(
-    originRect.width / rect.width,
-    originRect.height / rect.height,
-  );
+  const scale = scaling
+    ? Math.max(originRect.width / rect.width, originRect.height / rect.height)
+    : 1;
 
   const scaledWidth = originRect.width / scale;
   const scaledHeight = originRect.height / scale;
 
-  const insetX = (rect.width - scaledWidth) / 2;
-  const insetY = (rect.height - scaledHeight) / 2;
+  const insetX = rect.width - scaledWidth;
+  const insetY = rect.height - scaledHeight;
+
+  const top = transformOrigin.y * insetY;
+  const bottom = (1 - transformOrigin.y) * insetY;
+  const left = transformOrigin.x * insetX;
+  const right = (1 - transformOrigin.x) * insetX;
 
   const animation = element.animate(
     [
       {
         translate: `${translateX}px ${translateY}px`,
         scale,
-        clipPath: `inset(${insetY}px ${insetX}px round calc(${borderRadius} / ${scale}))`,
+        clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px round calc(${borderRadius} / ${scale}))`,
       },
       {
         translate: "none",
         scale: 1,
-        clipPath: "inset(0)",
+        clipPath: `inset(0 round calc(${borderRadius} / ${scale}))`,
       },
     ],
     timing,
@@ -87,41 +100,59 @@ export function disappearTo(
   element: Element,
   {
     destination,
+    scaling = true,
+    transformOrigin = { x: 0.5, y: 0.5 },
     timing = { duration: 350, easing: "ease" },
-  }: { destination: Element; timing?: EffectTiming },
+  }: {
+    destination: Element;
+    timing?: EffectTiming;
+    scaling?: boolean;
+    transformOrigin?: { x: number; y: number };
+  },
 ) {
   const destinationRect = destination.getBoundingClientRect();
-  const destinationCenter = getCenter(destinationRect);
   const rect = element.getBoundingClientRect();
-  const center = getCenter(rect);
   const borderRadius =
     getComputedStyle(destination).getPropertyValue("border-radius");
 
-  const translateX = destinationCenter.x - center.x;
-  const translateY = destinationCenter.y - center.y;
+  const translateX =
+    destinationRect.x +
+    destinationRect.width * transformOrigin.x -
+    (rect.x + rect.width * transformOrigin.x);
+  const translateY =
+    destinationRect.y +
+    destinationRect.height * transformOrigin.y -
+    (rect.y + rect.height * transformOrigin.y);
 
-  const scale = Math.max(
-    destinationRect.width / rect.width,
-    destinationRect.height / rect.height,
-  );
+  const scale = scaling
+    ? Math.max(
+        destinationRect.width / rect.width,
+        destinationRect.height / rect.height,
+      )
+    : 1;
 
   const scaledWidth = destinationRect.width / scale;
   const scaledHeight = destinationRect.height / scale;
 
-  const insetX = (rect.width - scaledWidth) / 2;
-  const insetY = (rect.height - scaledHeight) / 2;
+  const insetX = rect.width - scaledWidth;
+  const insetY = rect.height - scaledHeight;
+
+  const top = transformOrigin.y * insetY;
+  const bottom = (1 - transformOrigin.y) * insetY;
+  const left = transformOrigin.x * insetX;
+  const right = (1 - transformOrigin.x) * insetX;
 
   const animation = element.animate(
     [
       {
         translate: "none",
         scale: 1,
-        clipPath: "inset(0)",
+        clipPath: `inset(0 round calc(${borderRadius} / ${scale})`,
       },
       {
         translate: `${translateX}px ${translateY}px`,
         scale,
-        clipPath: `inset(${insetY}px ${insetX}px round calc(${borderRadius} / ${scale}))`,
+        clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px round calc(${borderRadius} / ${scale}))`,
       },
     ],
     timing,
