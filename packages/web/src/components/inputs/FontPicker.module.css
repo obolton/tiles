@@ -1,0 +1,28 @@
+.font swatch-item {
+  display: flex;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font);
+  font-size: 18px;
+  line-height: 18px;
+  font-weight: 500;
+  color: var(--ui-color);
+  text-shadow: 0 1px 0 rgb(0 0 0 / 10%);
+  padding: 0 24px;
+  border-radius: 24px;
+  background: linear-gradient(
+    hsl(from var(--page-color) h s 100%),
+    hsl(from var(--page-color) h s 95%)
+  );
+  box-shadow:
+    0 0 0 1px rgba(0 0 0 / 20%),
+    0 4px 4px -2px rgb(0 0 0 / 20%);
+}
+
+.font swatch-item:hover {
+  box-shadow:
+    0 4px 4px -2px rgb(0 0 0 / 20%),
+    inset 0 0 0 2px var(--focus-ring-color);
+  transform: scale(1.1);
+}
