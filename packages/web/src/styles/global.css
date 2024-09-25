@@ -10,6 +10,7 @@
   --animation-duration: 350ms;
   --animation-duration-short: 200ms;
   --easing: ease;
+  --max-width: 1024px;
 }
 
 * {
@@ -65,7 +66,7 @@ menu {
 header,
 main {
   margin: 0 auto;
-  max-width: 1024px;
+  max-width: var(--max-width);
 }
 
 header {
