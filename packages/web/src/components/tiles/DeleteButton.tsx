@@ -16,6 +16,7 @@ export default function DeleteButton({ onPress }: DeleteButtonProps) {
   return (
     <button
       className={styles.button}
+      aria-label="Delete"
       type="button"
       onClick={onPress}
       onPointerDownCapture={onPointerDown}
