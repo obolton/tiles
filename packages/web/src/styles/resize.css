@@ -14,10 +14,10 @@
     position: absolute;
     width: 16px;
     height: 16px;
-    border-radius: 4px;
-    background: rgb(240 240 240);
+    border-radius: 8px;
+    background: var(--accent);
     box-shadow:
-      0 0 0 1px rgb(0 0 0 / 40%),
+      inset 0 0 0 1px rgb(0 0 0 / 20%),
       0 2px 1px -1px rgb(0 0 0 / 20%);
     transition: transform var(--animation-duration-short) var(--easing);
   }
