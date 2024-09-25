@@ -1,0 +1,116 @@
+---
+import newIcon from "@/icons/new.svg";
+import libraryIcon from "@/icons/library.svg";
+import settingsIcon from "@/icons/settings.svg";
+import signOutIcon from "@/icons/sign-out.svg";
+---
+
+<nav id="navigation" class="toolbar">
+  <menu>
+    <li>
+      <data-binding href="user.profile">
+        <a
+          href="/profiles"
+          class="floating tooltip tooltip-right"
+          aria-label="Your profile"
+        >
+          <data-binding src="user.imageUrl" name="user.name">
+            <profile-image></profile-image>
+          </data-binding>
+        </a>
+      </data-binding>
+    </li>
+    <li>
+      <button
+        id="new-page-button"
+        class="floating tooltip tooltip-right"
+        type="button"
+        aria-label="Create a new page"
+        data-pending-text=""
+      >
+        <img src={newIcon.src} alt="Plus icon" />
+      </button>
+    </li>
+    <li>
+      <a
+        href="/library"
+        class="floating tooltip tooltip-right"
+        aria-label="Library"
+      >
+        <img class="icon" src={libraryIcon.src} alt="Library" />
+      </a>
+    </li>
+    <li>
+      <button
+        id="more-button"
+        class="floating tooltip tooltip-right"
+        type="button"
+        role="menuitem"
+        popovertarget="navigation-overflow"
+        aria-label="More options"
+        aria-haspopup="menu"
+      >
+        <img
+          class="icon"
+          src={settingsIcon.src}
+          alt="Settings"
+          aria-hidden="true"
+        />
+      </button>
+      <popover-menu id="navigation-overflow" anchor="more-button">
+        <menu>
+          <li>
+            <a href="/settings">
+              <img
+                class="icon"
+                src={settingsIcon.src}
+                alt="Settings"
+                aria-hidden="true"
+              />Account settings
+            </a>
+          </li>
+          <li>
+            <button id="sign-out" type="button"
+              ><img
+                class="icon"
+                src={signOutIcon.src}
+                alt="Sign out"
+                aria-hidden="true"
+              />Sign out
+            </button>
+          </li>
+        </menu>
+      </popover-menu>
+    </li>
+  </menu>
+</nav>
+<style>
+  body:not([data-signed-in]) #navigation {
+    display: none;
+  }
+</style>
+<script>
+  import client from "@/api/client";
+  import { handleError } from "@/utils/errors";
+  import { signOut } from "@/utils/sessions";
+
+  const newPageButton = document.getElementById("new-page-button");
+  const signOutButton = document.getElementById("sign-out");
+
+  newPageButton?.addEventListener("click", () => {
+    newPageButton.classList.add("pending");
+    client.pages.create
+      .mutate({ title: "New page" })
+      .then(({ id }) => {
+        newPageButton.classList.remove("pending");
+        window.open(`/pages/${id}?edit=true`, "_blank");
+      })
+      .catch(handleError);
+  });
+
+  signOutButton?.addEventListener("click", async () => {
+    await signOut();
+    delete document.body.dataset.signedIn;
+    window.location.href = "/";
+  });
+</script>

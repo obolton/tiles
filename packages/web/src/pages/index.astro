@@ -1,6 +1,6 @@
 ---
 import Page from "@/layouts/Page.astro";
-import Menu from "@/components/menu/PageMenu.astro";
+import EditingToolbar from "@/components/menu/EditingToolbar.astro";
 import PageHeader from "@/components/header/PageHeader";
 import Grid from "@/components/grid/Grid";
 import EditTileModal from "@/components/modals/EditTileModal";
@@ -31,7 +31,7 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
   hue={page.hue}
   font={page.font}
 >
-  <Menu pageId={page.id} allowDelete={false} slot="menu" />
+  <EditingToolbar pageId={page.id} allowDelete={false} slot="menu" />
 
   <PageHeader
     pageId={page.id}

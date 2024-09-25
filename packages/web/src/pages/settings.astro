@@ -1,6 +1,5 @@
 ---
 import Page from "@/layouts/Page.astro";
-import Menu from "@/components/menu/SettingsMenu.astro";
 import client from "@/api/client";
 import { SESSION_COOKIE_NAME } from "api/src/constants/cookies";
 
@@ -22,8 +21,6 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
 ---
 
 <Page title="Settings">
-  <Menu slot="menu" />
-
   <h1 slot="header">Settings</h1>
 
   <form id="settings-form" class="vertical">

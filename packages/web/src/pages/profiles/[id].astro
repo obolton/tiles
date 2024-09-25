@@ -1,6 +1,6 @@
 ---
 import Page from "@/layouts/Page.astro";
-import Menu from "@/components/menu/PageMenu.astro";
+import EditingToolbar from "@/components/menu/EditingToolbar.astro";
 import ProfilePageHeader from "@/components/header/ProfilePageHeader";
 import Grid from "@/components/grid/Grid";
 import EditTileModal from "@/components/modals/EditTileModal";
@@ -34,7 +34,11 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
   hue={profile.profilePage.hue}
   font={profile.profilePage.font}
 >
-  <Menu pageId={profile.profilePage.id} allowDelete={false} slot="menu" />
+  <EditingToolbar
+    pageId={profile.profilePage.id}
+    allowDelete={false}
+    slot="menu"
+  />
 
   <ProfilePageHeader
     pageId={profile.profilePage.id}

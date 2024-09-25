@@ -1,4 +1,6 @@
 ---
+import Navigation from "@/components/menu/Navigation.astro";
+import SignIn from "@/components/menu/SignIn.astro";
 import "@/styles/global.css";
 import "@/styles/editing.css";
 import "@/styles/buttons.css";
@@ -51,6 +53,8 @@ const { id, title, theme = "LIGHT", hue, font } = Astro.props;
       : undefined}
   >
     <header>
+      <Navigation />
+      <SignIn />
       <slot name="menu" />
       <slot name="header" />
     </header>

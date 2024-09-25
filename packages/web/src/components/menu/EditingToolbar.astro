@@ -1,58 +1,26 @@
 ---
-import moreIcon from "@/icons/more.svg";
-import trashIcon from "@/icons/trash.svg";
+import EditingTools from "./EditingTools";
 
 interface Props {
+  pageId: string;
   allowDelete?: boolean;
 }
 
-const { allowDelete = true } = Astro.props;
+const { pageId, allowDelete = true } = Astro.props;
 ---
 
 <div
   id="editing-toolbar"
-  class="floating-toolbar"
+  class="toolbar secondary"
   role="toolbar"
   aria-label="Editing toolbar"
 >
-  <label>
+  <label id="edit-label">
     Edit
     <input id="editSwitch" type="checkbox" role="switch" />
   </label>
-  <button
-    type="button"
-    role="menuitem"
-    popovertarget="page-options"
-    aria-label="More options"
-    aria-haspopup="menu"
-  >
-    <img
-      class="icon"
-      src={moreIcon.src}
-      alt="More options"
-      aria-hidden="true"
-    />
-  </button>
-  <popover-menu id="page-options" anchor="editing-toolbar" align="right">
-    <menu class="vertical">
-      <li>
-        <button
-          id="delete-page"
-          class="destructive"
-          type="button"
-          disabled={allowDelete ? undefined : true}
-        >
-          <img
-            class="icon"
-            src={trashIcon.src}
-            alt="Delete"
-            aria-hidden="true"
-          />
-          Delete page
-        </button>
-      </li>
-    </menu>
-  </popover-menu>
+
+  <EditingTools pageId={pageId} allowDelete={allowDelete} client:edit />
 </div>
 <style is:global>
   body:not([data-signed-in]) #editing-toolbar {
@@ -60,11 +28,12 @@ const { allowDelete = true } = Astro.props;
   }
 </style>
 <style>
-  .icon {
-    opacity: 0.8;
-    width: 18px;
-    height: 18px;
-    filter: drop-shadow(0 1px 0 rgb(255 255 255 / 15%));
+  #edit-label {
+    flex-direction: column;
+    font-size: 1rem;
+    gap: 2px;
+    font-variant-caps: all-small-caps;
+    font-weight: 600;
   }
 </style>
 <script is:inline>
@@ -87,17 +56,8 @@ const { allowDelete = true } = Astro.props;
 </script>
 <script>
   import { setEditMode } from "@/utils/edit";
-  import { redirectWithToast } from "@/utils/toasts";
-  import client from "@/api/client";
   const editSwitch = document.getElementById("editSwitch") as HTMLInputElement;
   editSwitch.addEventListener("change", () => setEditMode(editSwitch.checked), {
     passive: true,
   });
-  document
-    .getElementById("delete-page")!
-    .addEventListener("click", async () => {
-      const pageId = document.body.dataset.pageId ?? "";
-      await client.pages.delete.mutate({ id: pageId });
-      redirectWithToast("/", "The page was deleted.", "success");
-    });
 </script>

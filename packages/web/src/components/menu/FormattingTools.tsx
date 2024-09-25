@@ -1,0 +1,70 @@
+import { useCallback } from "react";
+import ColorPicker from "@/components/inputs/ColorPicker";
+import FontPicker from "@/components/inputs/FontPicker";
+import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
+import type { FontPickerValue } from "@/components/inputs/FontPicker";
+import useEditable from "@/hooks/useEditable";
+import client from "@/api/client";
+
+interface FormattingToolbarProps {
+  pageId: string;
+}
+
+export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
+  const isEditable = useEditable();
+
+  const setFont = useCallback(
+    async (font: FontPickerValue) => {
+      document.body.dataset.font = font;
+      await client.pages.update.mutate({
+        id: pageId,
+        font,
+      });
+    },
+    [pageId],
+  );
+
+  const setColor = useCallback(
+    async ({ theme, hue }: ColorPickerValue) => {
+      switch (theme) {
+        case "LIGHT":
+          document.body.classList.add("light");
+          document.body.classList.remove("dark");
+          document.body.classList.remove("color");
+          document.body.style.removeProperty("--page-hue");
+          break;
+
+        case "DARK":
+          document.body.classList.add("dark");
+          document.body.classList.remove("light");
+          document.body.classList.remove("color");
+          document.body.style.removeProperty("--page-hue");
+          break;
+
+        case "COLOR":
+          document.body.classList.add("color");
+          document.body.classList.remove("light");
+          document.body.classList.remove("dark");
+          document.body.style.setProperty("--page-hue", `${hue}deg`);
+          break;
+      }
+      await client.pages.update.mutate({
+        id: pageId,
+        theme,
+        hue,
+      });
+    },
+    [pageId],
+  );
+
+  if (!isEditable) {
+    return null;
+  }
+
+  return (
+    <>
+      <FontPicker direction="left" onChange={setFont} />
+      <ColorPicker direction="left" onChange={setColor} />
+    </>
+  );
+}

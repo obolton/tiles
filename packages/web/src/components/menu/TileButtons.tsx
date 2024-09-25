@@ -7,7 +7,6 @@ import placeIcon from "@/icons/place.svg";
 import headingIcon from "@/icons/heading.svg";
 import eventIcon from "@/icons/event.svg";
 import { openCreateTileModal, createTile } from "@/utils/edit";
-import styles from "./CreateTileToolbar.module.css";
 import type { TileType } from "@/types/tiles";
 
 type TileButton = {
@@ -25,7 +24,7 @@ const BUTTONS: TileButton[] = [
   { label: "Event", type: "EVENT", icon: eventIcon.src },
 ];
 
-export default function CreateTileToolbar() {
+export default function TileButtons() {
   const isEditable = useEditable();
 
   const onClick = useCallback(
@@ -62,25 +61,19 @@ export default function CreateTileToolbar() {
   }
 
   return (
-    <div
-      className={styles.toolbar}
-      role="toolbar"
-      aria-label="Create a new tile"
-      aria-orientation="vertical"
-    >
+    <>
       {BUTTONS.map(({ label, type, icon }) => (
         <button
           key={type}
-          className="floating"
+          className="floating tooltip"
           type="button"
           aria-label={label}
           data-tile-type={type}
           onClick={onClick}
         >
-          <span>{label}</span>
           <img src={icon} alt={label} />
         </button>
       ))}
-    </div>
+    </>
   );
 }

@@ -1,6 +1,5 @@
 ---
 import Page from "@/layouts/Page.astro";
-import Menu from "@/components/menu/SettingsMenu.astro";
 import PagesGrid from "@/components/grid/PagesGrid";
 import client from "@/api/client";
 import { SESSION_COOKIE_NAME } from "api/src/constants/cookies";
@@ -24,8 +23,6 @@ if (!pages) {
 ---
 
 <Page title="Library">
-  <Menu slot="menu" />
-
   <h1 slot="header">Library</h1>
 
   <PagesGrid pages={pages} client:load />
