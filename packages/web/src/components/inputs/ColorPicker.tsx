@@ -11,6 +11,7 @@ export type ColorPickerValue = {
 
 interface ColorPickerProps {
   className?: string;
+  direction?: "left" | "right";
   value?: ColorPickerValue;
   onChange: (value: ColorPickerValue) => void;
 }
@@ -25,6 +26,7 @@ HUES.reverse();
 
 export default function ColorPicker({
   className,
+  direction,
   value,
   onChange,
 }: ColorPickerProps) {
@@ -54,10 +56,11 @@ export default function ColorPicker({
 
   return (
     <swatch-select
-      class={classNames(styles.color, className)}
+      class={classNames(styles.color, "tooltip", className)}
       ref={ref}
       aria-label="Color"
       aria-orientation="horizontal"
+      direction={direction}
       value={
         value
           ? `${value.theme}${value.theme === "COLOR" ? `:${value.hue}` : ""}`
