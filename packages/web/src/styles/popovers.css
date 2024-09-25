@@ -26,6 +26,48 @@ popover-menu {
   }
 }
 
+.tooltip {
+  &::after {
+    display: none;
+    content: attr(aria-label);
+    position: absolute;
+    right: 100%;
+    top: 8px;
+    margin: 0 8px;
+    padding: 4px 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgba(0 0 0 / 70%);
+    background: rgb(0 0 0 / 10%);
+    border-radius: 32px;
+    text-shadow: 0 1px 1px rgb(255 255 255 / 10%);
+    align-content: center;
+    pointer-events: none;
+    z-index: 10;
+    white-space: nowrap;
+    opacity: 0;
+    transition:
+      display var(--animation-duration-short) allow-discrete,
+      opacity var(--animation-duration-short) var(--easing);
+  }
+
+  &.tooltip-right::after {
+    right: unset;
+    left: 100%;
+  }
+
+  &:hover::after,
+  &:focus::after {
+    display: flex;
+    opacity: 1;
+  }
+
+  &[aria-pressed="true"]::after {
+    display: none;
+    opacity: 0;
+  }
+}
+
 @keyframes popover-appear {
   from {
     opacity: 0;
