@@ -1,22 +1,37 @@
 .tile {
-  position: relative;
-  display: flex;
-  justify-content: stretch;
-  border-radius: 12px;
-  background: #fff;
   outline-offset: -1px;
   grid-column: span var(--columns, 1);
   grid-row: span var(--rows, 1);
+  font-family: var(--font);
+  border-radius: 12px;
+  transition:
+    opacity var(--animation-duration-short) var(--easing),
+    box-shadow var(--animation-duration-short) var(--easing),
+    transform var(--animation-duration-short) var(--easing);
+}
+
+.light {
+  --tile-text-color: rgba(0 0 0 / 80%);
+  --tile-background: #fff;
+}
+
+.dark {
+  --tile-text-color: rgba(255 255 255 / 80%);
+  --tile-background: #202020;
+
+  -webkit-font-smoothing: antialiased;
+}
+
+.color {
+  --tile-text-color: rgba(0 0 0 / 80%);
+  --tile-background: oklch(var(--lightness) var(--chroma) var(--hue));
+}
+
+.tile,
+.contents {
   height: calc((var(--grid-size) + var(--gap)) * var(--rows) - var(--gap));
   min-width: var(--grid-size);
   min-height: var(--grid-size);
-  font-family: var(--font);
-  transition:
-    opacity var(--animation-duration-short) var(--easing),
-    outline-color var(--animation-duration-short) var(--easing),
-    outline-width var(--animation-duration-short) var(--easing),
-    box-shadow var(--animation-duration-short) var(--easing),
-    transform var(--animation-duration-short) var(--easing);
 
   &.variable-height {
     height: auto;
@@ -24,27 +39,31 @@
   }
 }
 
+.contents {
+  position: relative;
+  display: flex;
+  justify-content: stretch;
+  border-radius: 12px;
+  color: var(--tile-text-color);
+  background: var(--tile-background);
+}
+
+.tile[data-drag-preview] > .contents,
+.tile[data-resize-preview] > .contents {
+  width: 100%;
+  height: 100%;
+}
+
+.tile:state(overlay) .contents {
+  width: 100%;
+  height: 100%;
+}
+
 .allow-edit[data-drag-over="true"] {
   outline: solid var(--focus-ring-color) 3px !important;
   outline-offset: 3px;
   transform: scale(1.3);
   z-index: 1;
-}
-
-.light {
-  background: #fff;
-  color: rgba(0 0 0 / 80%);
-}
-
-.dark {
-  -webkit-font-smoothing: antialiased;
-  background: #202020;
-  color: rgba(255 255 255 / 80%);
-}
-
-.color {
-  background: oklch(var(--lightness) var(--chroma) var(--hue));
-  color: rgba(0 0 0 / 80%);
 }
 
 .border,
@@ -93,7 +112,7 @@ body:not([data-editing="true"]) .tile {
   }
 }
 
-body[data-editing]:not([data-drag]) .allow-edit,
+body[data-editing]:not([data-drag]) .tile:not(:state(expanded)).allow-edit,
 .tile[data-drag-preview] {
   &:hover {
     outline-color: transparent;

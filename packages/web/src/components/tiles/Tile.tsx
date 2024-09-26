@@ -26,6 +26,8 @@ export type TileProps = {
   variableHeight?: boolean;
   allowEdit?: boolean;
   onDrop?: (event: DragDropEvent) => void;
+  expandable?: boolean;
+  origin?: "center" | "top-left";
 };
 
 export default function Tile({
@@ -42,6 +44,8 @@ export default function Tile({
   rows = 1,
   columns = 1,
   onDrop,
+  expandable = false,
+  origin = "center",
 }: TileProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isEditable = useEditable() && allowEdit;
@@ -73,22 +77,17 @@ export default function Tile({
   }, [allowEdit, onDrop]);
 
   return (
-    <div
+    <pop-out
+      expandable={expandable ? "expandable" : undefined}
       id={id}
       ref={ref}
-      className={classNames(
-        "editable",
+      class={classNames(
         styles.tile,
         allowEdit && styles["allow-edit"],
-        showBorder && styles.border,
-        theme === "LIGHT"
-          ? styles.light
-          : theme === "DARK"
-            ? styles.dark
-            : styles.color,
         fullWidth && styles["full-width"],
         variableHeight && styles["variable-height"],
       )}
+      tabindex="0"
       style={
         {
           "--columns": columns,
@@ -102,14 +101,29 @@ export default function Tile({
       data-tile-id={id}
       data-show-in-lightbox={showInLightbox ? "true" : undefined}
       data-font={font}
+      origin={origin}
     >
-      {children}
-      {isEditable ? (
-        <>
-          <DeleteButton onPress={onDelete} />
-          <div className="resize-handle" data-resize="true" />
-        </>
-      ) : null}
-    </div>
+      <div
+        className={classNames(
+          styles.contents,
+          showBorder && styles.border,
+          theme === "LIGHT"
+            ? styles.light
+            : theme === "DARK"
+              ? styles.dark
+              : styles.color,
+          fullWidth && styles["full-width"],
+          variableHeight && styles["variable-height"],
+        )}
+      >
+        {children}
+        {isEditable ? (
+          <>
+            <DeleteButton onPress={onDelete} />
+            <div className="resize-handle" data-resize="true" />
+          </>
+        ) : null}
+      </div>
+    </pop-out>
   );
 }
