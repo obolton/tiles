@@ -86,7 +86,7 @@ function openLightbox(element: Element) {
   if (currentIndex === eligibleItems.length - 1) {
     lightbox.classList.add("last");
   }
-  list.children[currentIndex].classList.add("visible");
+  list.children[currentIndex]?.classList.add("visible");
 
   // Handle interactions
   lightbox.addEventListener("click", () => lightbox?.close());
@@ -139,7 +139,7 @@ function openLightbox(element: Element) {
   // Add the lightbox to the document
   document.body.appendChild(lightbox);
   lightbox.showModal();
-  list.children[currentIndex].scrollIntoView({
+  list.children[currentIndex]?.scrollIntoView({
     behavior: "instant",
     block: "center",
   });
@@ -149,7 +149,7 @@ function openLightbox(element: Element) {
   const previous = list.children[currentIndex - 1];
   const next = list.children[currentIndex + 1];
 
-  if (visible.firstElementChild) {
+  if (visible?.firstElementChild) {
     appearFrom(visible.firstElementChild, {
       origin: element,
     });
