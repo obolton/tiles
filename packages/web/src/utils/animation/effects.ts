@@ -51,8 +51,10 @@ export function appearFrom(
 ) {
   const originRect = origin.getBoundingClientRect();
   const rect = element.getBoundingClientRect();
-  const borderRadius =
+  const startBorderRadius =
     getComputedStyle(origin).getPropertyValue("border-radius");
+  const endBorderRadius =
+    getComputedStyle(element).getPropertyValue("border-radius");
 
   const translateX =
     originRect.x +
@@ -83,12 +85,12 @@ export function appearFrom(
       {
         translate: `${translateX}px ${translateY}px`,
         scale,
-        clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px round calc(${borderRadius} / ${scale}))`,
+        clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px round calc(${startBorderRadius} / ${scale}))`,
       },
       {
         translate: "none",
         scale: 1,
-        clipPath: `inset(0 round calc(${borderRadius} / ${scale}))`,
+        clipPath: `inset(0 round calc(${endBorderRadius} / ${scale}))`,
       },
     ],
     timing,
@@ -112,8 +114,10 @@ export function disappearTo(
 ) {
   const destinationRect = destination.getBoundingClientRect();
   const rect = element.getBoundingClientRect();
-  const borderRadius =
+  const endBorderRadius =
     getComputedStyle(destination).getPropertyValue("border-radius");
+  const startBorderRadius =
+    getComputedStyle(element).getPropertyValue("border-radius");
 
   const translateX =
     destinationRect.x +
@@ -147,12 +151,12 @@ export function disappearTo(
       {
         translate: "none",
         scale: 1,
-        clipPath: `inset(0 round calc(${borderRadius} / ${scale})`,
+        clipPath: `inset(0 round calc(${startBorderRadius} / ${scale})`,
       },
       {
         translate: `${translateX}px ${translateY}px`,
         scale,
-        clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px round calc(${borderRadius} / ${scale}))`,
+        clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px round calc(${endBorderRadius} / ${scale}))`,
       },
     ],
     timing,
