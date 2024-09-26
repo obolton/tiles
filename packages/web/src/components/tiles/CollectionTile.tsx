@@ -86,13 +86,7 @@ export default function CollectionTile({
   }, [onToggle]);
 
   return (
-    <Tile
-      {...props}
-      id={id}
-      showInLightbox={false}
-      showBorder={false}
-      onDrop={onDrop}
-    >
+    <Tile {...props} id={id} showBorder={false} onDrop={onDrop}>
       <stack-view class={styles.stack} ref={ref}>
         {items.map((item, i) => (
           <stack-item

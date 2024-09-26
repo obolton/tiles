@@ -69,7 +69,6 @@ export default function TextTile({ id, text, ...tile }: TextTileProps) {
       theme={theme}
       hue={hue}
       showBorder={!!tile.columns && tile.columns < 3}
-      showInLightbox={false}
       variableHeight={tile.columns === 3}
       onDrop={onDrop}
       expandable={tile.columns !== 3}

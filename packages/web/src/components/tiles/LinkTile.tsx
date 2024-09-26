@@ -30,7 +30,7 @@ export default function LinkTile({ id, link, ...props }: LinkTileProps) {
   );
 
   return (
-    <Tile id={id} {...props} showInLightbox={false} onDrop={onDrop}>
+    <Tile id={id} {...props} onDrop={onDrop}>
       {isEditable ? (
         <div
           className={styles.link}

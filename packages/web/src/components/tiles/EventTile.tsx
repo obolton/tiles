@@ -65,7 +65,7 @@ export default function EventTile({
   const size = endDate ? (allDay ? "medium" : "small") : "large";
 
   return (
-    <Tile id={id} columns={columns} {...props} showInLightbox={false}>
+    <Tile id={id} columns={columns} {...props}>
       <div className={styles.event} onClick={edit}>
         <header className={styles.header}>
           {yearFormatter.format(startDate)}

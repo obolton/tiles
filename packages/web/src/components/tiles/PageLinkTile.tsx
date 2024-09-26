@@ -16,7 +16,7 @@ export default function PageLinkTile({
 
   if (!page) {
     return (
-      <Tile {...props} showInLightbox={false}>
+      <Tile {...props}>
         <div className={`${styles.contents} ${styles.deleted}`}>
           This page no longer exists.
         </div>
@@ -29,7 +29,6 @@ export default function PageLinkTile({
   return (
     <Tile
       {...props}
-      showInLightbox={false}
       theme={page.theme as "LIGHT" | "DARK" | "COLOR"}
       hue={page.hue}
       font={page.font}

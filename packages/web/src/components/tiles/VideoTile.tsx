@@ -23,7 +23,7 @@ export default function VideoTile({ id, video, ...props }: VideoTileProps) {
   const onDrop = useCreateCollection(id);
 
   return (
-    <Tile id={id} {...props} fullWidth onDrop={onDrop}>
+    <Tile id={id} {...props} onDrop={onDrop}>
       <figure className={styles.figure}>
         <embedded-video
           class={styles.video}

@@ -18,8 +18,6 @@ export type TileProps = {
   columns?: number;
   children?: React.ReactNode;
   showBorder?: boolean;
-  showInLightbox?: boolean;
-  fullWidth?: boolean;
   theme?: Theme | null;
   hue?: number | null;
   font?: string | null;
@@ -37,8 +35,6 @@ export default function Tile({
   hue,
   font,
   showBorder = true,
-  showInLightbox = true,
-  fullWidth = false,
   variableHeight = false,
   allowEdit = true,
   rows = 1,
@@ -84,7 +80,6 @@ export default function Tile({
       class={classNames(
         styles.tile,
         allowEdit && styles["allow-edit"],
-        fullWidth && styles["full-width"],
         variableHeight && styles["variable-height"],
       )}
       tabindex="0"
@@ -99,7 +94,6 @@ export default function Tile({
       data-columns={columns}
       data-drop-target={isEditable ? "true" : undefined}
       data-tile-id={id}
-      data-show-in-lightbox={showInLightbox ? "true" : undefined}
       data-font={font}
       origin={origin}
     >
@@ -112,7 +106,6 @@ export default function Tile({
             : theme === "DARK"
               ? styles.dark
               : styles.color,
-          fullWidth && styles["full-width"],
           variableHeight && styles["variable-height"],
         )}
       >
