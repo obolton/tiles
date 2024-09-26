@@ -13,7 +13,15 @@ export default function PlaceTile({ id, place, ...props }: PlaceTileProps) {
   const isEditable = useEditable();
   const onDrop = useCreateCollection(id);
   return (
-    <Tile {...props} id={id} fullWidth onDrop={onDrop}>
+    <Tile
+      {...props}
+      id={id}
+      expandable
+      fullWidth
+      onDrop={onDrop}
+      showInLightbox={false}
+      origin="center"
+    >
       <map-view
         class={styles.map}
         movable={!isEditable}
