@@ -1,80 +1,49 @@
+type CustomElementAttributes = {
+  key?: string;
+  ref?: React.RefObject;
+  id?: string;
+  class?: string;
+  style?: React.CSSProperties;
+  tabindex?: string;
+  children?: React.ReactNode;
+};
+
 declare namespace JSX {
   interface IntrinsicElements {
-    "map-view": {
-      id?: string;
-      class?: string;
+    "map-view": CustomElementAttributes & {
       movable?: boolean;
       lat: number;
       long: number;
       bounds?: string;
       label?: string;
     };
-    "embedded-video": {
-      id?: string;
-      class?: string;
+    "embedded-video": CustomElementAttributes & {
       src: string;
       imagesrc?: string;
     };
-    "profile-image": {
-      id?: string;
-      class?: string;
+    "profile-image": CustomElementAttributes & {
       src?: string | null;
       name?: string | null;
     };
-    "infinite-scroll": {
-      id?: string;
-      ref?: React.RefObject;
-      children: JSX.Element | JSX.Element[];
-    };
-    "swatch-select": {
-      id?: string;
-      class?: string;
-      ref?: React.RefObject;
+    "infinite-scroll": CustomElementAttributes;
+    "swatch-select": CustomElementAttributes & {
       value?: string;
       direction?: "left" | "right";
-      children: JSX.Element | JSX.Element[];
     };
-    "swatch-item": {
-      key?: string;
-      id?: string;
-      class?: string;
-      style?: React.CSSProperties;
-      ref?: React.RefObject;
+    "swatch-item": CustomElementAttributes & {
       value: string;
-      children?: string | JSX.Element | JSX.Element[];
     };
-    "calendar-month": {
-      id?: string;
-      class?: string;
+    "calendar-month": CustomElementAttributes & {
       date?: string;
     };
-    "stack-view": {
-      id?: string;
-      class?: string;
-      ref?: React.RefObject;
-      children?: JSX.Element | JSX.Element[];
-    };
-    "stack-item": {
-      key?: string;
-      id?: string;
-      class?: string;
-      style?: React.CSSProperties;
-      children?: JSX.Element | JSX.Element[] | null;
-    };
-    "popover-menu": {
-      id?: string;
-      class?: string;
+    "stack-view": CustomElementAttributes;
+    "stack-item": CustomElementAttributes;
+    "popover-menu": CustomElementAttributes & {
       anchor: string;
-      children?: JSX.Element | JSX.Element[];
     };
-    "pop-out": {
-      id?: string;
-      class?: string;
-      style?: React.CSSProperties;
-      ref?: React.RefObject;
+    "pop-out": CustomElementAttributes & {
       expandable?: string;
       origin?: "center" | "top-left";
-      children?: React.ReactNode | JSX.Element | JSX.Element[];
     };
   }
 }
