@@ -72,6 +72,8 @@ export default function TextTile({ id, text, ...tile }: TextTileProps) {
       showInLightbox={false}
       variableHeight={tile.columns === 3}
       onDrop={onDrop}
+      expandable={tile.columns !== 3}
+      origin="top-left"
     >
       {isEditable ? (
         <>
@@ -93,7 +95,7 @@ export default function TextTile({ id, text, ...tile }: TextTileProps) {
           />
         </>
       ) : (
-        <div className={styles.text}>
+        <div className={classNames(styles.text, styles.static)} tabIndex={0}>
           <RichText content={content} />
         </div>
       )}

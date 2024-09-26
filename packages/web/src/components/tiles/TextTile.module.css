@@ -7,7 +7,6 @@
   line-height: 1.8;
   background: inherit;
   border-radius: inherit;
-  overflow: auto;
 
   & ol,
   & ul {
@@ -24,10 +23,37 @@
   }
 }
 
+.static {
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 32px;
+    background: linear-gradient(transparent, var(--tile-background) 60%);
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+  }
+}
+
+pop-out:not(:state(expanded)) .static {
+  cursor: pointer;
+}
+
+pop-out:state(expanded) .static {
+  overflow: auto;
+
+  &::after {
+    display: none;
+  }
+}
+
 .editor {
   display: flex;
   flex-direction: column;
   padding: 0;
+  overflow: auto;
 
   & [data-editor] {
     position: relative;
@@ -48,13 +74,17 @@
 
 .color-picker {
   position: absolute;
+  display: none;
   left: -22px;
   bottom: -22px;
   opacity: 0;
-  transition: opacity var(--animation-duration) var(--easing);
+  transition:
+    display var(--animation-duration) allow-discrete,
+    opacity var(--animation-duration) var(--easing);
   z-index: 2;
 }
 
 .editor:focus-within ~ .color-picker {
+  display: block;
   opacity: 1;
 }
