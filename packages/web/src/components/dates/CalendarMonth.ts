@@ -100,7 +100,7 @@ export default class CalendarMonth extends HTMLElement {
       if (j === 1) {
         day.style.setProperty("grid-column-start", `${columnOffset}`);
       }
-      day.setAttribute("datetime", date.toISOString().split("T")[0]);
+      day.setAttribute("datetime", date.toISOString().split("T")[0] ?? "");
       items.append(day);
     }
 
