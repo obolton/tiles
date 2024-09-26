@@ -33,9 +33,11 @@ export default function EditImageTileModal({ tileId, close, tile }: Props) {
 
   const dragOver = useCallback((event: React.DragEvent) => {
     const { dataTransfer } = event;
+    const { items } = dataTransfer;
     if (
-      dataTransfer.items.length === 1 &&
-      ACCEPT_CONTENT_TYPES.includes(dataTransfer.items[0].type)
+      items.length === 1 &&
+      items[0] &&
+      ACCEPT_CONTENT_TYPES.includes(items[0].type)
     ) {
       event.preventDefault();
       dataTransfer.dropEffect = "move";
@@ -54,12 +56,14 @@ export default function EditImageTileModal({ tileId, close, tile }: Props) {
   const drop = useCallback(
     (event: React.DragEvent) => {
       const { dataTransfer } = event;
+      const { items } = dataTransfer;
       event.preventDefault();
       if (
-        dataTransfer.items.length === 1 &&
-        ACCEPT_CONTENT_TYPES.includes(dataTransfer.items[0].type)
+        items.length === 1 &&
+        items[0] &&
+        ACCEPT_CONTENT_TYPES.includes(items[0].type)
       ) {
-        const file = dataTransfer.items[0].getAsFile();
+        const file = items[0].getAsFile();
         if (file) {
           setFile(file);
         }
