@@ -11,6 +11,7 @@ import CalendarMonth from "./dates/CalendarMonth";
 import FilePicker from "./forms/FilePicker";
 import StackView from "./collections/StackView";
 import StackItem from "./collections/StackItem";
+import PopOut from "./expandable/PopOut";
 
 customElements.define("data-binding", DataBinding);
 customElements.define("popover-menu", PopoverMenu);
@@ -25,3 +26,4 @@ customElements.define("calendar-month", CalendarMonth);
 customElements.define("file-picker", FilePicker);
 customElements.define("stack-view", StackView);
 customElements.define("stack-item", StackItem);
+customElements.define("pop-out", PopOut);

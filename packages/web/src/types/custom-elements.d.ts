@@ -67,5 +67,14 @@ declare namespace JSX {
       anchor: string;
       children?: JSX.Element | JSX.Element[];
     };
+    "pop-out": {
+      id?: string;
+      class?: string;
+      style?: React.CSSProperties;
+      ref?: React.RefObject;
+      expandable?: string;
+      origin?: "center" | "top-left";
+      children?: React.ReactNode | JSX.Element | JSX.Element[];
+    };
   }
 }
