@@ -12,10 +12,10 @@ export default function useElementSizeRef(ref: React.RefObject<HTMLElement>) {
     sizeRef.current = { width: initialSize.width, height: initialSize.height };
 
     const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const size = entry.contentBoxSize[0];
-        sizeRef.current = { width: size.inlineSize, height: size.blockSize };
-      }
+      const size = entries[0]?.contentBoxSize[0];
+      sizeRef.current = size
+        ? { width: size.inlineSize, height: size.blockSize }
+        : undefined;
     });
     resizeObserver.observe(ref.current);
 
