@@ -46,11 +46,7 @@ export default function EditingTools({
       >
         <img src={moreIcon.src} alt="More options" aria-hidden="true" />
       </button>
-      <popover-menu
-        id="page-options"
-        anchor="page-options-button"
-        align="right"
-      >
+      <popover-menu id="page-options" anchor="page-options-button">
         <menu>
           <li>
             <button
