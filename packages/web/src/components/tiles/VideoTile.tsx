@@ -26,9 +26,11 @@ export default function VideoTile({ id, video, ...props }: VideoTileProps) {
     <Tile id={id} {...props} onDrop={onDrop}>
       <figure className={styles.figure}>
         <embedded-video
+          id={`${id}-video`}
           class={styles.video}
           src={embedUrl}
           imagesrc={imageUrl ?? undefined}
+          data-show-in-lightbox="true"
         />
         <figcaption>
           <h3 className={styles.title}>{title}</h3>

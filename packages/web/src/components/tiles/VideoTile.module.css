@@ -31,22 +31,13 @@
   height: 100%;
 }
 
-[data-lightbox] .figure {
-  max-width: var(--max-width);
-  margin: auto;
-  overflow: visible;
-}
-
 body[data-editing] .figure {
   pointer-events: none;
 }
 
 [data-lightbox] .video {
   position: relative;
-}
-
-[data-lightbox] .figure > figcaption {
-  display: none;
+  max-width: var(--max-width);
 }
 
 .figure > figcaption > * {

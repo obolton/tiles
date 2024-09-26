@@ -19,7 +19,12 @@ export default function ImageTile({ id, image, ...props }: ImageTileProps) {
   const onDrop = useCreateCollection(id);
   return (
     <Tile id={id} {...props} onDrop={onDrop}>
-      <figure className={styles.figure} onClick={isEditable ? edit : undefined}>
+      <figure
+        id={`${id}-figure`}
+        className={styles.figure}
+        onClick={isEditable ? edit : undefined}
+        data-show-in-lightbox="true"
+      >
         <img src={src} alt="Image" draggable={!isEditable} />
         {caption && <figcaption>{caption}</figcaption>}
       </figure>
