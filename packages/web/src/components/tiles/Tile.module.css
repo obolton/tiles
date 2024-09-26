@@ -82,25 +82,6 @@
   transition: box-shadow var(--animation-duration-short) var(--easing);
 }
 
-[data-lightbox] .tile {
-  background: none;
-  border-radius: 0;
-  box-shadow: none;
-  grid-column: none;
-  grid-row: none;
-  width: auto;
-  height: 100%;
-
-  &.full-width {
-    flex: 1 0 auto;
-  }
-}
-
-[data-lightbox] .tile::after {
-  border-radius: 0;
-  box-shadow: none;
-}
-
 body:not([data-editing="true"]) .tile {
   &[data-show-in-lightbox="true"]:hover,
   &:has(a):hover {
