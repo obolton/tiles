@@ -11,4 +11,9 @@ describe("getCookie", () => {
     document.cookie = "test=123; abc=def";
     expect(getCookie("nonexistent")).toBe(null);
   });
+
+  test("returns an empty value", () => {
+    document.cookie = "test=; abc=def";
+    expect(getCookie("test")).toBe("");
+  });
 });
