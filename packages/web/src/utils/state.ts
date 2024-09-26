@@ -53,6 +53,9 @@ export function remove(key: string) {
 
 export function getPersistent<T extends Value>(path: string) {
   const [key, childPath] = path.split(".");
+  if (!key) {
+    return null;
+  }
   const valueAsString = localStorage.getItem(key);
   const value =
     typeof valueAsString === "string" ? JSON.parse(valueAsString) : null;
