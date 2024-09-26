@@ -69,8 +69,7 @@ function openLightbox(element: Element) {
 
   // Add eligible items
   const eligibleItems = Array.from(
-    element.parentElement?.querySelectorAll('[data-show-in-lightbox="true"]') ||
-      [],
+    document.querySelectorAll('[data-show-in-lightbox="true"]') || [],
   );
   const fragment = document.createDocumentFragment();
   eligibleItems.forEach((content) => {
