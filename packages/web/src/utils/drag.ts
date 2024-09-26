@@ -280,7 +280,11 @@ export class DragState {
     let targetIndex = -1;
 
     for (let i = 0; i < this.dropTargets.length; i++) {
-      const targetCenter = getOffsetCenter(this.dropTargets[i]);
+      const target = this.dropTargets[i];
+      if (!target) {
+        continue;
+      }
+      const targetCenter = getOffsetCenter(target);
       targetCenter.x += containerRect.left;
       targetCenter.y += containerRect.top;
 
@@ -303,9 +307,11 @@ export class DragState {
 
       while (targetIndex >= 0) {
         const target = this.dropTargets[targetIndex];
-        const space = containerWidth - target.offsetLeft;
-        if (space >= dragWidth) {
-          return { target, inside: false };
+        if (target) {
+          const space = containerWidth - target.offsetLeft;
+          if (space >= dragWidth) {
+            return { target, inside: false };
+          }
         }
         targetIndex--;
       }
