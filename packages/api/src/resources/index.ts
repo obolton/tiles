@@ -6,16 +6,15 @@ import { getVideoTileImageUrl } from "@/models/tiles/video.ts";
 const ResourceIdSchema = z.string().uuid();
 
 export async function resourcesHandler(
-  pathSegments: string[],
+  type: string,
+  id: string,
   res: ServerResponse,
 ) {
-  const [resourceType, resourceId] = pathSegments;
-
-  switch (resourceType) {
+  switch (type) {
     case "links":
-      return handleLinkTile(resourceId, res);
+      return handleLinkTile(id, res);
     case "videos":
-      return handleVideoTile(resourceId, res);
+      return handleVideoTile(id, res);
     default:
       res.writeHead(404);
       res.end();

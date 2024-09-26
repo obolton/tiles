@@ -35,7 +35,13 @@ async function requestHandler(req: IncomingMessage, res: ServerResponse) {
   const [path, ...remainingPathSegments] =
     url.pathname.slice(1).split("/", 3) ?? [];
   if (path === "resources") {
-    return resourcesHandler(remainingPathSegments, res);
+    const [resourceType, resourceId] = remainingPathSegments;
+    if (!resourceType || !resourceId) {
+      res.writeHead(404);
+      res.end();
+      return;
+    }
+    return resourcesHandler(resourceType, resourceId, res);
   } else {
     return trpcHandler(req, res);
   }
