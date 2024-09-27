@@ -99,10 +99,10 @@ export default class PopOut extends HTMLElement {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    if (this.expanded && event.key === "Escape") {
+    if (event.key === "Escape" && this.expanded) {
       event.preventDefault();
       this.hide();
-    } else if (!this.expanded && event.key === "Enter") {
+    } else if (event.key === "Enter" && !this.expanded && this.isExpandable()) {
       event.preventDefault();
       this.show();
     }
