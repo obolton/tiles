@@ -7,6 +7,7 @@ import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { ListNode, ListItemNode } from "@lexical/list";
 import Toolbar from "./Toolbar";
@@ -81,6 +82,7 @@ export default function RichTextEditor({
         <OnChangePlugin onChange={onChange} />
         <EditorRefPlugin editorRef={ref} />
         <ListPlugin />
+        <TabIndentationPlugin />
         <Toolbar />
         {children}
       </LexicalComposer>
