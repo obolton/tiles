@@ -37,7 +37,7 @@ interface ParagraphProps {
 }
 
 function Paragraph({ node }: ParagraphProps) {
-  if (node.spans.length === 0) {
+  if (node.children.length === 0) {
     return (
       <p>
         <br />
@@ -46,8 +46,8 @@ function Paragraph({ node }: ParagraphProps) {
   }
   return (
     <p>
-      {node.spans.map((span, index) => (
-        <Text key={index} node={span} />
+      {node.children.map((child, index) => (
+        <Text key={index} node={child} />
       ))}
     </p>
   );
@@ -58,18 +58,23 @@ interface ListItemProps {
 }
 
 function ListItem({ node }: ListItemProps) {
-  if (node.spans.length === 0) {
+  if (node.children.length === 0) {
     return (
-      <li>
+      <li value={node.value}>
         <br />
       </li>
     );
   }
   return (
-    <li>
-      {node.spans.map((span, index) => (
-        <Text key={index} node={span} />
-      ))}
+    <li value={node.value}>
+      {node.children.map((child, index) => {
+        switch (child.type) {
+          case "text":
+            return <Text key={index} node={child} />;
+          case "list":
+            return <List key={index} node={child} />;
+        }
+      })}
     </li>
   );
 }
