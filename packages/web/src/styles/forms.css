@@ -12,7 +12,7 @@ label {
   gap: 6px;
   font-weight: 500;
   font-size: 1rem;
-  line-height: 1rlh;
+  line-height: 1;
   color: var(--ui-color);
 }
 
