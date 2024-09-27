@@ -1,12 +1,12 @@
 import { $createParagraphNode, $createTextNode, $getRoot } from "lexical";
 import { $createListNode, $createListItemNode } from "@lexical/list";
 import type {
-  BlockNode,
   ListNode,
   ListItemNode,
   ParagraphNode,
   TextNode,
   RichText,
+  Node,
 } from "./types";
 import { TextFormat, ListType } from "./types";
 
@@ -29,7 +29,7 @@ function createLexicalTextNode(text: TextNode) {
 
 function createLexicalParagraphNode(paragraph: ParagraphNode) {
   const node = $createParagraphNode();
-  node.append(...paragraph.spans.map(createLexicalTextNode));
+  node.append(...paragraph.children.map(createLexicalTextNode));
   return node;
 }
 
@@ -43,13 +43,16 @@ function createLexicalListNode(list: ListNode) {
 
 function createLexicalListItemNode(listItem: ListItemNode) {
   const node = $createListItemNode();
-  node.append(...listItem.spans.map(createLexicalTextNode));
+  node.setValue(listItem.value);
+  node.append(...listItem.children.map(createLexicalNode));
   return node;
 }
 
-function createLexicalNode(node: BlockNode) {
+function createLexicalNode(node: Node) {
   const type = node.type;
   switch (type) {
+    case "text":
+      return createLexicalTextNode(node);
     case "paragraph":
       return createLexicalParagraphNode(node);
     case "list":
