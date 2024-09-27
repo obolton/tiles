@@ -9,12 +9,7 @@ import type {
   ListNode as LexicalListNode,
   ListItemNode as LexicalListItemNode,
 } from "@lexical/list";
-import {
-  $getRoot,
-  $isElementNode,
-  $isTextNode,
-  $isParagraphNode,
-} from "lexical";
+import { $getRoot, $isTextNode, $isParagraphNode } from "lexical";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import type {
   ListNode,
@@ -31,7 +26,9 @@ type SerializedNode<T extends LexicalNode> = T extends LexicalParagraphNode
     ? ListNode
     : T extends LexicalListItemNode
       ? ListItemNode
-      : null;
+      : T extends LexicalTextNode
+        ? TextNode
+        : null;
 
 function getTextFormat(node: LexicalTextNode) {
   return (
@@ -48,15 +45,14 @@ function getListType(node: LexicalListNode) {
     : ListType.UNORDERED;
 }
 
-function getSpans(node: ElementNode) {
-  const spans: TextNode[] = [];
+function getChildren(node: ElementNode) {
+  const spans: (TextNode | ListNode)[] = [];
   for (const span of node.getChildren()) {
-    if ($isTextNode(span)) {
-      spans.push({
-        type: "text",
-        text: span.getTextContent(),
-        format: getTextFormat(span),
-      });
+    if ($isListNode(span) || $isTextNode(span)) {
+      const serializedNode = serializeNode(span);
+      if (serializedNode) {
+        spans.push(serializedNode);
+      }
     }
   }
   return spans;
@@ -65,16 +61,27 @@ function getSpans(node: ElementNode) {
 function serializeNode<T extends LexicalNode>(
   node: T,
 ): SerializedNode<T> | null {
-  if (!$isElementNode(node)) {
-    return null;
+  if ($isTextNode(node)) {
+    return {
+      type: "text",
+      text: node.getTextContent(),
+      format: getTextFormat(node),
+    } as SerializedNode<T>;
   }
 
   if ($isParagraphNode(node)) {
-    return { type: "paragraph", spans: getSpans(node) } as SerializedNode<T>;
+    return {
+      type: "paragraph",
+      children: getChildren(node),
+    } as SerializedNode<T>;
   }
 
   if ($isListItemNode(node)) {
-    return { type: "listitem", spans: getSpans(node) } as SerializedNode<T>;
+    return {
+      type: "listitem",
+      value: node.getValue(),
+      children: getChildren(node),
+    } as SerializedNode<T>;
   }
 
   if ($isListNode(node)) {
@@ -91,7 +98,7 @@ function serializeNode<T extends LexicalNode>(
     return { type: "list", listType, children } as SerializedNode<T>;
   }
 
-  return null;
+  throw new Error(`Unsupported node type: ${node.getType()}`);
 }
 
 export function serialize(editorState: EditorState) {
