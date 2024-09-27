@@ -113,7 +113,7 @@ popover-menu > menu {
   }
 
   &:hover::after,
-  &:focus::after {
+  &:focus-visible::after {
     display: flex;
     opacity: 1;
   }
