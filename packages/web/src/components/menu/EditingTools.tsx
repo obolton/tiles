@@ -37,7 +37,7 @@ export default function EditingTools({
       <button
         id="page-options-button"
         type="button"
-        className="floating"
+        className="floating tooltip"
         role="menuitem"
         // @ts-expect-error React is not yet aware of popovertarget
         popovertarget="page-options"
