@@ -51,6 +51,7 @@ body.color {
 
 html,
 body,
+button,
 input,
 textarea {
   font-family: var(--ui-font);
