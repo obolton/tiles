@@ -71,7 +71,7 @@ main {
 }
 
 header {
-  padding: 6rem 1rem clamp(24px, 4vw, 64px);
+  padding: clamp(24px, 4vw, 64px) 1rem;
 }
 
 main {
