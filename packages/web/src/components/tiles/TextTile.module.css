@@ -23,7 +23,7 @@
   }
 }
 
-.static {
+pop-out[expandable] .static {
   overflow: hidden;
 
   &::after {
@@ -37,11 +37,11 @@
   }
 }
 
-pop-out:not(:state(expanded)) .static {
+pop-out[expandable]:not(:state(expanded)) .static {
   cursor: pointer;
 }
 
-pop-out:state(expanded) .static {
+pop-out[expandable]:state(expanded) .static {
   overflow: auto;
 
   &::after {
