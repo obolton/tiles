@@ -33,8 +33,8 @@ export default function VideoTile({ id, video, ...props }: VideoTileProps) {
           data-show-in-lightbox="true"
         />
         <figcaption>
-          <h3 className={styles.title}>{title}</h3>
-          {description && <p>{description}</p>}
+          <p>{title}</p>
+          {description && <p className={styles.description}>{description}</p>}
         </figcaption>
       </figure>
     </Tile>

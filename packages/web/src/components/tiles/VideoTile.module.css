@@ -8,20 +8,21 @@
 
 .figure > figcaption {
   position: absolute;
-  width: 100%;
+  left: 0;
   bottom: 0;
-  padding: calc(0.75rem - 1px) 1rem 0.75rem;
-  font-size: 1rem;
+  margin: 8px;
+  max-width: calc(100% - 16px);
+  font-size: 0.875rem;
   font-weight: 500;
-  line-height: 1rlh;
   white-space: pre-line;
-  text-shadow: 0 1px 1px rgb(255 255 255 / 15%);
-  background: oklch(from var(--page-color) l calc(c * 1.5) h / 50%);
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 15%);
+  background: rgb(255 255 255 / 40%);
   backdrop-filter: blur(10px);
-  box-shadow: 0 -1px 0 0 rgb(0 0 0 / 20%);
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 4px;
 }
 
 .video {
@@ -40,16 +41,16 @@ body[data-editing] .figure {
   max-width: var(--max-width);
 }
 
-.figure > figcaption > * {
+.figure > figcaption > p {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 
-.figure > figcaption p {
-  font-size: 0.8rem;
+.description {
   font-weight: 400;
-  color: rgba(0 0 0 / 70%);
+  font-size: 0.8rem;
+  color: rgba(0 0 0 / 60%);
 }
 
 .title {
