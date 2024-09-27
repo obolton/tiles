@@ -112,7 +112,7 @@ export default function Tile({
         {children}
         {isEditable ? (
           <>
-            <DeleteButton onPress={onDelete} />
+            <DeleteButton className={styles.delete} onPress={onDelete} />
             <div className="resize-handle" data-resize="true" />
           </>
         ) : null}

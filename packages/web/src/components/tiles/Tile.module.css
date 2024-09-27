@@ -54,9 +54,16 @@
   height: 100%;
 }
 
-.tile:state(overlay) .contents {
-  width: 100%;
-  height: 100%;
+.tile:state(overlay) {
+  & .contents {
+    width: 100%;
+    height: 100%;
+  }
+
+  & .delete,
+  & :global(.resize-handle) {
+    display: none;
+  }
 }
 
 .allow-edit[data-drag-over="true"] {
