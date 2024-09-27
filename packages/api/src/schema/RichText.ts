@@ -8,12 +8,13 @@ const TextNodeSchema = z.object({
 
 const ParagraphNodeSchema = z.object({
   type: z.literal("paragraph"),
-  spans: z.array(TextNodeSchema),
+  children: z.array(TextNodeSchema),
 });
 
-const ListItemNodeSchema = z.object({
+const ListItemNodeSchema: z.AnyZodObject = z.object({
   type: z.literal("listitem"),
-  spans: z.array(TextNodeSchema),
+  value: z.number().int().gte(1),
+  children: z.lazy(() => z.array(z.union([TextNodeSchema, ListNodeSchema]))),
 });
 
 const ListNodeSchema = z.object({
@@ -22,10 +23,10 @@ const ListNodeSchema = z.object({
   children: z.array(ListItemNodeSchema),
 });
 
-const BlockNodeSchema = z.discriminatedUnion("type", [
+const RootNodeSchema = z.discriminatedUnion("type", [
   ParagraphNodeSchema,
   ListNodeSchema,
 ]);
 
-export const RichTextSchema = z.array(BlockNodeSchema);
+export const RichTextSchema = z.array(RootNodeSchema);
 export type RichTextSchema = z.infer<typeof RichTextSchema>;
