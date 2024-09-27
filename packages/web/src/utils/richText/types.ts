@@ -23,7 +23,7 @@ export interface TextNode extends BaseNode {
 
 export interface ParagraphNode extends BaseNode {
   type: "paragraph";
-  spans: TextNode[];
+  children: TextNode[];
 }
 
 export interface ListNode extends BaseNode {
@@ -34,10 +34,11 @@ export interface ListNode extends BaseNode {
 
 export interface ListItemNode extends BaseNode {
   type: "listitem";
-  spans: TextNode[];
+  value: number;
+  children: (TextNode | ListNode)[];
 }
 
-export type BlockNode = ParagraphNode | ListNode | ListItemNode;
+export type Node = TextNode | ParagraphNode | ListNode | ListItemNode;
 
 export type RootNode = ParagraphNode | ListNode;
 
