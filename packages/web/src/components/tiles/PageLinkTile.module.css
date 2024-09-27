@@ -11,7 +11,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  container: tile / size;
+  container: page-link-tile / size;
 
   & .text {
     display: flex;
@@ -139,14 +139,16 @@
   }
 }
 
-@container tile (max-height: 120px) {
-  .text {
-    width: 100%;
-    height: 100%;
-  }
+@container page-link-tile (max-height: 120px) {
+  .contents {
+    & .text {
+      width: 100%;
+      height: 100%;
 
-  .contents p,
-  .contents address {
-    display: none;
+      & p,
+      & address {
+        display: none;
+      }
+    }
   }
 }
