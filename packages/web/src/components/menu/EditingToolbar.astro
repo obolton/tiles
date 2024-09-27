@@ -17,7 +17,7 @@ const { pageId, allowDelete = true } = Astro.props;
 >
   <label id="edit-label">
     Edit
-    <input id="editSwitch" type="checkbox" role="switch" />
+    <input id="edit-switch" type="checkbox" role="switch" />
   </label>
 
   <EditingTools pageId={pageId} allowDelete={allowDelete} client:edit />
@@ -31,7 +31,7 @@ const { pageId, allowDelete = true } = Astro.props;
   #edit-label {
     flex-direction: column;
     font-size: 1rem;
-    gap: 2px;
+    gap: 4px;
     font-variant-caps: all-small-caps;
     font-weight: 600;
   }
@@ -51,12 +51,12 @@ const { pageId, allowDelete = true } = Astro.props;
 
   if (isEditing) {
     document.body.dataset.editing = "true";
-    document.getElementById("editSwitch").checked = true;
+    document.getElementById("edit-switch").checked = true;
   }
 </script>
 <script>
   import { setEditMode } from "@/utils/edit";
-  const editSwitch = document.getElementById("editSwitch") as HTMLInputElement;
+  const editSwitch = document.getElementById("edit-switch") as HTMLInputElement;
   editSwitch.addEventListener("change", () => setEditMode(editSwitch.checked), {
     passive: true,
   });
