@@ -1,4 +1,5 @@
 ---
+import homeIcon from "@/icons/home.svg";
 import newIcon from "@/icons/new.svg";
 import libraryIcon from "@/icons/library.svg";
 import settingsIcon from "@/icons/settings.svg";
@@ -19,6 +20,11 @@ import signOutIcon from "@/icons/sign-out.svg";
           </data-binding>
         </a>
       </data-binding>
+    </li>
+    <li>
+      <a href="/" class="floating tooltip tooltip-right" aria-label="Home">
+        <img class="icon" src={homeIcon.src} alt="Home" />
+      </a>
     </li>
     <li>
       <button
