@@ -72,8 +72,6 @@ export default function EventTile({
         </header>
         <div className={styles.grid}>
           <section className={styles.details}>
-            <h3>{title}</h3>
-
             <div
               className={classNames(styles.dates, allDay && styles["all-day"])}
             >
@@ -89,6 +87,8 @@ export default function EventTile({
                 </>
               ) : null}
             </div>
+
+            <h3>{title}</h3>
           </section>
           {columns && columns > 1 ? (
             <calendar-month date={startDate.toISOString()} />

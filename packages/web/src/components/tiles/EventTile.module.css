@@ -30,7 +30,7 @@ body:global(.dark) .event {
   font-size: max(0.875rem, 6cqh);
   line-height: 1.5;
   font-weight: 600;
-  color: rgba(255 255 255 / 80%);
+  color: rgba(255 255 255 / 90%);
   -webkit-font-smoothing: antialiased;
   background: var(--accent);
   border-radius: 12px 12px 0 0;
@@ -45,7 +45,7 @@ body:global(.dark) .event {
 .grid {
   display: grid;
   grid-template-columns: repeat(var(--columns), 1fr);
-  padding: 4cqh 0;
+  padding: 5cqh;
   flex: 1;
 }
 
@@ -55,16 +55,16 @@ body:global(.dark) .event {
   align-items: center;
   justify-content: stretch;
   container: event-details / size;
-  padding: 0 3cqw 3cqh;
 
   & h3 {
-    font-size: clamp(0.875rem, 8cqh, 1.25rem);
+    font-size: clamp(0.875rem, 10cqh, 1.25rem);
     line-height: 1.5;
     font-weight: 500;
     text-align: center;
     text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
+    align-content: center;
     width: 100%;
-    flex: none;
+    flex: 1;
   }
 }
 
@@ -103,7 +103,6 @@ body:global(.dark) .event {
   text-align: center;
   font-weight: 700;
   line-height: 0.8;
-  text-shadow: 0 1px 2px rgba(255 255 255 / 40%);
   background-image: var(--accent);
   background-clip: text;
 }
@@ -114,7 +113,6 @@ body:global(.dark) .event {
   font-weight: 700;
   line-height: 1;
   text-transform: uppercase;
-  text-shadow: 0 1px 2px rgba(255 255 255 / 20%);
   background-image: linear-gradient(#303030, #000);
   background-clip: text;
 }
@@ -141,11 +139,11 @@ body:global(.dark) .event {
 
 .large {
   & .month {
-    font-size: 15cqw;
+    font-size: 11cqw;
   }
 
   & .day {
-    font-size: 30cqw;
+    font-size: 22cqw;
   }
 }
 
