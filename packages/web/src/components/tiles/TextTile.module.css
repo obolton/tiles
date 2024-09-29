@@ -45,6 +45,10 @@
   }
 }
 
+.static {
+  outline: none;
+}
+
 pop-out[expandable] .static {
   overflow: hidden;
 
