@@ -1,7 +1,6 @@
-const DEFAULT_TIMING: EffectTiming = {
+export const DEFAULT_TIMING: EffectTiming = {
   duration: 350,
   easing: "ease",
-  fill: "forwards",
 };
 
 export function createAnimationPromise(animation: Animation) {
@@ -41,7 +40,7 @@ export function appearFrom(
     origin,
     scaling = true,
     transformOrigin = { x: 0.5, y: 0.5 },
-    timing = { duration: 350, easing: "ease" },
+    timing = DEFAULT_TIMING,
   }: {
     origin: Element;
     timing?: EffectTiming;
@@ -104,7 +103,7 @@ export function disappearTo(
     destination,
     scaling = true,
     transformOrigin = { x: 0.5, y: 0.5 },
-    timing = { duration: 350, easing: "ease" },
+    timing = DEFAULT_TIMING,
   }: {
     destination: Element;
     timing?: EffectTiming;
@@ -171,7 +170,7 @@ export function move(
     fromY = "0",
     toX = "0",
     toY = "0",
-    timing = { duration: 350, easing: "ease" },
+    timing = DEFAULT_TIMING,
   }: {
     fromX?: string;
     fromY?: string;
@@ -192,7 +191,7 @@ export function moveFrom(
   {
     x = "0",
     y = "0",
-    timing = { duration: 350, easing: "ease" },
+    timing = DEFAULT_TIMING,
   }: { x?: string; y?: string; timing?: EffectTiming },
 ) {
   const animation = element.animate(
@@ -207,7 +206,7 @@ export function moveTo(
   {
     x = "0",
     y = "0",
-    timing = { duration: 350, easing: "ease" },
+    timing = DEFAULT_TIMING,
   }: { x?: string; y?: string; timing?: EffectTiming },
 ) {
   const animation = element.animate(
