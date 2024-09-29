@@ -52,6 +52,16 @@
 pop-out[expandable] .static {
   overflow: hidden;
 
+  &::before {
+    content: url("@/icons/expand.svg");
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 18px;
+    height: 18px;
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 30%));
+  }
+
   &::after {
     content: "";
     position: absolute;
