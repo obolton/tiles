@@ -6,7 +6,7 @@ import useScrollIntoView from "@/hooks/useScrollIntoView";
 import { deleteTile } from "@/utils/edit";
 import client from "@/api/client";
 import DeleteButton from "./DeleteButton";
-import { destroy } from "@/utils/animation/effects";
+import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
 import styles from "./Tile.module.css";
 import { classNames } from "@/utils/css";
 import type { Theme } from "@/types/pages";
@@ -57,7 +57,9 @@ export default function Tile({
       event.stopPropagation();
       event.preventDefault();
       await client.tiles.delete.mutate({ id });
-      await destroy(ref.current);
+      await destroy(ref.current, {
+        timing: { ...DEFAULT_TIMING, fill: "forwards" },
+      });
       deleteTile(id);
     },
     [id],
