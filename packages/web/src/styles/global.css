@@ -32,19 +32,19 @@ body {
 
 body.light {
   --page-color: #fff;
-  --accent: linear-gradient(oklch(65% 5% 180deg), oklch(50% 5% 180deg));
+  --accent: linear-gradient(oklch(60% 5% 180deg), oklch(50% 5% 180deg));
 }
 
 body.dark {
   --page-color: #202020;
   --text-color: rgba(255 255 255 / 80%);
-  --accent: linear-gradient(oklch(65% 5% 180deg), oklch(50% 5% 180deg));
+  --accent: linear-gradient(oklch(60% 5% 180deg), oklch(50% 5% 180deg));
 }
 
 body.color {
   --page-color: oklch(var(--lightness) var(--chroma) var(--page-hue));
   --accent: linear-gradient(
-    oklch(from var(--page-color) 65% 50% h),
+    oklch(from var(--page-color) 60% 50% h),
     oklch(from var(--page-color) 50% 50% h)
   );
 }
