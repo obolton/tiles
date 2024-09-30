@@ -26,8 +26,8 @@ body:global(.dark) .event {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3cqh;
-  font-size: max(0.875rem, 6cqh);
+  padding: clamp(0px, 3cqh, 8px);
+  font-size: clamp(0.875rem, 6cqh, 1.25rem);
   line-height: 1.5;
   font-weight: 600;
   color: rgba(255 255 255 / 90%);
