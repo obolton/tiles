@@ -1,7 +1,9 @@
+import { CollectionType } from "@prisma/client";
 import { z } from "zod";
 
 export const CreateCollectionSchema = z.object({
   title: z.string().optional(),
+  type: z.nativeEnum(CollectionType),
   items: z.array(z.string().uuid()).optional(),
 });
 export type CreateCollectionSchema = z.infer<typeof CreateCollectionSchema>;

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TileType, Theme } from "@prisma/client";
+import { CollectionType, TileType, Theme } from "@prisma/client";
 import {
   MIN_LATITUDE,
   MAX_LATITUDE,
@@ -103,6 +103,7 @@ export type EventTileSchema = z.infer<typeof EventTileSchema>;
 export const CollectionTileSchema = z.object({
   type: z.literal(TileType.COLLECTION),
   collection: z.object({
+    type: z.nativeEnum(CollectionType),
     title: z.string().optional(),
     tileIds: z.array(z.string().uuid()).optional(),
   }),
