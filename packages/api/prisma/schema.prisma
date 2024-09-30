@@ -261,12 +261,18 @@ model EventTile {
   @@map("event_tiles")
 }
 
+enum CollectionType {
+  STACK
+  MAP
+}
+
 model Collection {
-  id        String   @id @default(uuid()) @db.Uuid
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  userId    String   @map("user_id") @db.Uuid
+  id        String         @id @default(uuid()) @db.Uuid
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
+  userId    String         @map("user_id") @db.Uuid
   title     String?
+  type      CollectionType @default(STACK)
 
   user  User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   items CollectionItem[]
