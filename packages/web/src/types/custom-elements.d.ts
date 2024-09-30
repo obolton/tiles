@@ -12,6 +12,8 @@ declare namespace JSX {
   interface IntrinsicElements {
     "map-view": CustomElementAttributes & {
       movable?: boolean;
+    };
+    "map-view-marker": CustomElementAttributes & {
       lat: number;
       long: number;
       bounds?: string;

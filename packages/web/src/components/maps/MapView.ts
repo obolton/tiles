@@ -3,6 +3,13 @@ import stylesheet from "./MapView.css?url";
 
 const STYLE_URL = `https://api.maptiler.com/maps/streets-v2/style.json?key=${import.meta.env.PUBLIC_MAPTILER_API_KEY}`;
 
+type Marker = {
+  lat: number;
+  long: number;
+  bounds: [number, number, number, number] | null;
+  label: string | null;
+};
+
 function parseBounds(value: string): [number, number, number, number] | null {
   if (!value) {
     return null;
@@ -29,6 +36,7 @@ export default class MapView extends HTMLElement {
   private intersectionObserver: IntersectionObserver;
   private map?: maplibregl.Map;
   private labelElement?: HTMLDivElement;
+  private markers: maplibregl.Marker[] = [];
 
   constructor() {
     super();
@@ -47,16 +55,74 @@ export default class MapView extends HTMLElement {
     );
   }
 
+  private getMarkers() {
+    const markers: Marker[] = [];
+    for (const marker of this.querySelectorAll("map-view-marker")) {
+      const lat = marker.getAttribute("lat") ?? "0";
+      const long = marker.getAttribute("long") ?? "0";
+      const bounds = marker.getAttribute("bounds") ?? "";
+      markers.push({
+        lat: parseFloat(lat),
+        long: parseFloat(long),
+        bounds: parseBounds(bounds),
+        label: marker.getAttribute("label"),
+      });
+    }
+    return markers;
+  }
+
+  private getBounds() {
+    const markers = this.getMarkers();
+
+    if (markers.length === 1) {
+      if (markers[0]?.bounds) {
+        return new maplibregl.LngLatBounds(markers[0].bounds);
+      } else {
+        return undefined;
+      }
+    }
+
+    const mapBounds = new maplibregl.LngLatBounds();
+    markers.forEach(({ bounds, lat, long }) =>
+      mapBounds.extend(bounds || [long, lat]),
+    );
+    return mapBounds;
+  }
+
+  private addMarker({ lat, long, label }: Marker) {
+    if (!this.map) {
+      throw new Error("Map is not initialized");
+    }
+
+    const marker = new maplibregl.Marker({
+      color: `var(--marker-color)`,
+      subpixelPositioning: true,
+    })
+      .setLngLat([long, lat])
+      .addTo(this.map);
+    this.markers.push(marker);
+
+    if (label) {
+      this.labelElement = document.createElement("div");
+      this.labelElement.classList.add("marker");
+      this.labelElement.textContent = label;
+      const labelMarker = new maplibregl.Marker({
+        element: this.labelElement,
+        offset: [0, -60],
+        subpixelPositioning: true,
+      })
+        .setLngLat([long, lat])
+        .addTo(this.map);
+      this.markers.push(labelMarker);
+    }
+  }
+
   initializeMap() {
     if (this.map) {
       throw new Error("Map is already initialized");
     }
 
     const movable = this.getAttribute("movable");
-    const lat = parseFloat(this.getAttribute("lat") ?? "0");
-    const long = parseFloat(this.getAttribute("long") ?? "0");
-    const bounds = parseBounds(this.getAttribute("bounds") ?? "");
-    const label = this.getAttribute("label");
 
     if (movable === "false") {
       this.root.classList.add("static");
@@ -64,34 +130,20 @@ export default class MapView extends HTMLElement {
       this.root.classList.remove("static");
     }
 
+    const markers = this.getMarkers();
+
     this.map = new maplibregl.Map({
       container: this.root,
       style: STYLE_URL,
-      center: [long, lat],
-      bounds: bounds ?? undefined,
+      center:
+        markers.length === 1 ? [markers[0]!.long, markers[0]!.lat] : undefined,
+      bounds: this.getBounds(),
       zoom: 13,
       attributionControl: { compact: true },
+      fitBoundsOptions: { padding: 64 },
     });
 
-    new maplibregl.Marker({
-      color: `var(--marker-color)`,
-      subpixelPositioning: true,
-    })
-      .setLngLat([long, lat])
-      .addTo(this.map);
-
-    if (label) {
-      this.labelElement = document.createElement("div");
-      this.labelElement.classList.add("marker");
-      this.labelElement.textContent = label;
-      new maplibregl.Marker({
-        element: this.labelElement,
-        offset: [0, -60],
-        subpixelPositioning: true,
-      })
-        .setLngLat([long, lat])
-        .addTo(this.map);
-    }
+    markers.forEach((marker) => this.addMarker(marker));
 
     requestAnimationFrame(() => this.map?.resize());
   }
