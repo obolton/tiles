@@ -25,7 +25,7 @@ export default function ImageTile({ id, image, ...props }: ImageTileProps) {
         onClick={isEditable ? edit : undefined}
         data-show-in-lightbox="true"
       >
-        <img src={src} alt="Image" draggable={!isEditable} />
+        <img src={src} loading="lazy" alt="Image" draggable={!isEditable} />
         {caption && <figcaption>{caption}</figcaption>}
       </figure>
     </Tile>
