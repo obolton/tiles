@@ -3,7 +3,7 @@ export function scrollIntoViewIfNeeded(
   options?: ScrollIntoViewOptions,
 ) {
   const rect = element.getBoundingClientRect();
-  if (rect.top < 0 || rect.bottom > window.innerHeight) {
+  if (rect.bottom < 0 || rect.top > window.innerHeight) {
     element.scrollIntoView(options);
   }
 }
