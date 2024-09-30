@@ -360,7 +360,7 @@ export async function createPage(
                 content: [
                   {
                     type: "paragraph",
-                    spans: [
+                    children: [
                       {
                         type: "text",
                         text: "This is a new page. You can edit it however you like.",
