@@ -3,7 +3,7 @@ toast-container {
   contain: layout;
   right: 24px;
   bottom: 24px;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 8px;
