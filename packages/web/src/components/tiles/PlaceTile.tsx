@@ -11,7 +11,7 @@ interface PlaceTileProps extends TileProps {
 export default function PlaceTile({ id, place, ...props }: PlaceTileProps) {
   const { name, lat, long, boundingBox } = place;
   const isEditable = useEditable();
-  const onDrop = useCreateCollection(id);
+  const onDrop = useCreateCollection(id, "MAP");
   return (
     <Tile {...props} id={id} expandable onDrop={onDrop} origin="center">
       <map-view

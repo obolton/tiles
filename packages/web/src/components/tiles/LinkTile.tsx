@@ -14,7 +14,7 @@ export default function LinkTile({ id, link, ...props }: LinkTileProps) {
   const { url, title, description, siteName, imageUrl } = link;
   const isEditable = useEditable();
   const edit = useCallback(() => editTile(id, "LINK", link), [id, link]);
-  const onDrop = useCreateCollection(id);
+  const onDrop = useCreateCollection(id, "STACK");
 
   const contents = (
     <div className={styles.caption}>

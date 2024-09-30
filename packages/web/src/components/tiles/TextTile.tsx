@@ -23,7 +23,7 @@ export default function TextTile({ id, text, ...tile }: TextTileProps) {
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [theme, setTheme] = useState(initialTheme);
   const [hue, setHue] = useState(initialHue);
-  const onDrop = useCreateCollection(id);
+  const onDrop = useCreateCollection(id, "STACK");
 
   const onBlur = useCallback(async () => {
     if (!editorState) {

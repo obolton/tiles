@@ -20,7 +20,7 @@ interface VideoTileProps extends TileProps {
 export default function VideoTile({ id, video, ...props }: VideoTileProps) {
   const { videoType, videoId, imageUrl, title, description } = video;
   const embedUrl = getEmbedUrl(videoType, videoId);
-  const onDrop = useCreateCollection(id);
+  const onDrop = useCreateCollection(id, "STACK");
 
   return (
     <Tile id={id} {...props} onDrop={onDrop}>

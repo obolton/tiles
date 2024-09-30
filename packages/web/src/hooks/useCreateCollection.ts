@@ -3,7 +3,10 @@ import { createTile } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
 import type { DragDropEvent } from "@/utils/drag";
 
-export default function useCreateCollection(tileId: string) {
+export default function useCreateCollection(
+  tileId: string,
+  type: "STACK" | "MAP",
+) {
   return useCallback(
     (event: DragDropEvent) => {
       const id = event.dragSource.dataset.tileId;
@@ -13,10 +16,11 @@ export default function useCreateCollection(tileId: string) {
       createTile({
         type: "COLLECTION",
         collection: {
+          type,
           tileIds: [tileId, id],
         },
       }).catch(handleError);
     },
-    [tileId],
+    [tileId, type],
   );
 }
