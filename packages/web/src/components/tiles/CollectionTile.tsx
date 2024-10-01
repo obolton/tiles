@@ -32,6 +32,17 @@ export default function CollectionTile({
     [collection.id],
   );
 
+  const onDelete = useCallback(
+    async (id: string) => {
+      await client.collections.removeFromCollection.mutate({
+        collectionId: collection.id,
+        id,
+      });
+      setItems((items) => items.filter((item) => item.id !== id));
+    },
+    [collection.id],
+  );
+
   switch (type) {
     case "STACK":
       return (
@@ -42,7 +53,7 @@ export default function CollectionTile({
     case "MAP":
       return (
         <Tile {...props} id={id} onDrop={onDrop} expandable>
-          <Map items={items} />
+          <Map items={items} onDelete={onDelete} />
         </Tile>
       );
   }
