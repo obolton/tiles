@@ -4,6 +4,7 @@ import stylesheet from "./MapView.css?url";
 const STYLE_URL = `https://api.maptiler.com/maps/streets-v2/style.json?key=${import.meta.env.PUBLIC_MAPTILER_API_KEY}`;
 
 type Marker = {
+  id: string;
   lat: number;
   long: number;
   bounds: [number, number, number, number] | null;
@@ -62,6 +63,7 @@ export default class MapView extends HTMLElement {
       const long = marker.getAttribute("long") ?? "0";
       const bounds = marker.getAttribute("bounds") ?? "";
       markers.push({
+        id: marker.getAttribute("id") ?? "",
         lat: parseFloat(lat),
         long: parseFloat(long),
         bounds: parseBounds(bounds),
