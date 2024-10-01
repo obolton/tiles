@@ -19,6 +19,10 @@ declare namespace JSX {
       bounds?: string;
       label?: string;
     };
+    "map-legend-item": CustomElementAttributes & {
+      marker: string;
+      delete?: boolean;
+    };
     "embedded-video": CustomElementAttributes & {
       src: string;
       imagesrc?: string;
