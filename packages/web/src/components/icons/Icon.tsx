@@ -1,4 +1,4 @@
-import styles from "./Icon.module.css";
+import { classNames } from "@/utils/css";
 
 interface IconProps {
   className?: string;
@@ -6,5 +6,5 @@ interface IconProps {
 }
 
 export default function Icon({ className, src }: IconProps) {
-  return <img className={`${styles.icon} ${className}`} src={src} alt="" />;
+  return <img className={classNames("icon", className)} src={src} alt="" />;
 }
