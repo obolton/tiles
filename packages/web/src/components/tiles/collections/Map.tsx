@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect } from "react";
+import { useCallback, useEffect, useRef, Fragment } from "react";
 import styles from "./Map.module.css";
 import useEditable from "@/hooks/useEditable";
 import type MapView from "@/components/maps/MapView";
@@ -36,10 +36,9 @@ export default function Map({ items, onDelete }: MapProps) {
     <map-view ref={ref} class={styles.map} movable legend>
       {items.map((item) =>
         item.place ? (
-          <>
             <map-view-marker
+          <Fragment key={item.id}>
               id={item.id}
-              key={item.id}
               lat={item.place.lat}
               long={item.place.long}
               bounds={
@@ -52,7 +51,7 @@ export default function Map({ items, onDelete }: MapProps) {
             <map-legend-item slot="legend" marker={item.id} delete={isEditable}>
               {item.place.name}
             </map-legend-item>
-          </>
+          </Fragment>
         ) : null,
       )}
     </map-view>
