@@ -36,8 +36,8 @@ export default function Map({ items, onDelete }: MapProps) {
     <map-view ref={ref} class={styles.map} movable legend>
       {items.map((item) =>
         item.place ? (
-            <map-view-marker
           <Fragment key={item.id}>
+            <map-marker
               id={item.id}
               lat={item.place.lat}
               long={item.place.long}

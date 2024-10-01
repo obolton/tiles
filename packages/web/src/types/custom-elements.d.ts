@@ -15,7 +15,7 @@ declare namespace JSX {
       movable?: boolean;
       legend?: boolean;
     };
-    "map-view-marker": CustomElementAttributes & {
+    "map-marker": CustomElementAttributes & {
       id: string;
       lat: number;
       long: number;

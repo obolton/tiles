@@ -57,7 +57,7 @@ export default class MapView extends HTMLElement {
 
   private getMarkers() {
     const markers: Marker[] = [];
-    for (const marker of this.querySelectorAll("map-view-marker")) {
+    for (const marker of this.querySelectorAll("map-marker")) {
       const lat = marker.getAttribute("lat") ?? "0";
       const long = marker.getAttribute("long") ?? "0";
       const bounds = marker.getAttribute("bounds") ?? "";
