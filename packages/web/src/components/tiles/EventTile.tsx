@@ -38,8 +38,11 @@ const timeFormatter = new Intl.DateTimeFormat(undefined, {
 
 function DateTime({ date, showTime = true, size }: DateTimeProps) {
   return (
-    <time className={styles["date-time"]} dateTime={date.toISOString()}>
-      <div className={classNames(styles.date, styles[size])}>
+    <time
+      className={classNames(styles["date-time"], styles[size])}
+      dateTime={date.toISOString()}
+    >
+      <div className={styles.date}>
         <span className={styles.month}>{monthFormatter.format(date)}</span>
         <span className={styles.day}>{dayFormatter.format(date)}</span>
       </div>
@@ -79,10 +82,7 @@ export default function EventTile({
 
               {endDate ? (
                 <>
-                  <Icon
-                    src={allDay ? arrowRightIcon.src : arrowDownIcon.src}
-                    className={styles.icon}
-                  />
+                  <Icon src={allDay ? arrowRightIcon.src : arrowDownIcon.src} />
                   <DateTime date={endDate} showTime={!allDay} size={size} />
                 </>
               ) : null}
