@@ -25,19 +25,15 @@ function parseBounds(value: string): [number, number, number, number] | null {
 }
 
 export default class MapView extends HTMLElement {
-  static observedAttributes = [
-    "movable",
-    "lat",
-    "long",
-    "bounds",
-    "label",
-  ] as const;
+  static observedAttributes = ["movable", "legend"] as const;
 
   private root: HTMLElement;
   private intersectionObserver: IntersectionObserver;
+  private mutationObserver: MutationObserver;
   private map?: maplibregl.Map;
   private labelElement?: HTMLDivElement;
   private markers: maplibregl.Marker[] = [];
+  private legend?: HTMLElement;
 
   constructor() {
     super();
@@ -53,6 +49,9 @@ export default class MapView extends HTMLElement {
     this.intersectionObserver = new IntersectionObserver(
       this.intersectionObserverCallback.bind(this),
       { rootMargin: "128px 128px 128px 128px", threshold: 0 },
+    );
+    this.mutationObserver = new MutationObserver(
+      this.mutationObserverCallback.bind(this),
     );
   }
 
@@ -119,7 +118,7 @@ export default class MapView extends HTMLElement {
     }
   }
 
-  initializeMap() {
+  private initializeMap() {
     if (this.map) {
       throw new Error("Map is already initialized");
     }
@@ -144,14 +143,20 @@ export default class MapView extends HTMLElement {
       attributionControl: { compact: true },
       fitBoundsOptions: { padding: 64 },
     });
+    this.map.addControl(new maplibregl.NavigationControl(), "bottom-right");
 
-    markers.forEach((marker) => this.addMarker(marker));
+    this.updateMarkers();
+
+    if (this.getAttribute("legend")) {
+      this.showLegend();
+    }
 
     requestAnimationFrame(() => this.map?.resize());
   }
 
   connectedCallback() {
     this.intersectionObserver.observe(this);
+    this.mutationObserver.observe(this, { childList: true });
   }
 
   disconnectedCallback() {
@@ -159,6 +164,7 @@ export default class MapView extends HTMLElement {
     this.map = undefined;
     this.labelElement = undefined;
     this.intersectionObserver.unobserve(this);
+    this.mutationObserver.disconnect();
   }
 
   attributeChangedCallback(
@@ -179,34 +185,12 @@ export default class MapView extends HTMLElement {
         }
         break;
 
-      case "lat":
-        this.map.setCenter([
-          parseFloat(this.getAttribute("long") ?? "0"),
-          parseFloat(value),
-        ]);
-        break;
-
-      case "long":
-        this.map.setCenter([
-          parseFloat(value),
-          parseFloat(this.getAttribute("lat") ?? "0"),
-        ]);
-        break;
-
-      case "bounds":
-        {
-          const bounds = parseBounds(value);
-          if (bounds) {
-            this.map.fitBounds(bounds);
-          }
+      case "legend":
+        if (value) {
+          this.showLegend();
+        } else {
+          this.hideLegend();
         }
-        break;
-
-      case "label":
-        if (this.labelElement) {
-          this.labelElement.textContent = value;
-        }
-        break;
     }
   }
 
@@ -217,6 +201,53 @@ export default class MapView extends HTMLElement {
         this.intersectionObserver.unobserve(this);
         return;
       }
+    }
+  }
+
+  mutationObserverCallback() {
+    this.markers.forEach((marker) => marker.remove());
+    this.updateMarkers();
+  }
+
+  updateMarkers() {
+    this.getMarkers().forEach((marker) => this.addMarker(marker));
+  }
+
+  private showLegend() {
+    if (this.legend) {
+      return;
+    }
+    this.legend = document.createElement("div");
+    this.legend.classList.add("legend");
+
+    const slot = document.createElement("slot");
+    slot.name = "legend";
+    this.legend.append(slot);
+    this.root.append(this.legend);
+  }
+
+  private hideLegend() {
+    this.legend?.remove();
+    this.legend = undefined;
+  }
+
+  flyToMarker(markerId: string) {
+    const marker = this.getMarkers().find((marker) => marker.id === markerId);
+    if (!marker) {
+      return;
+    }
+    if (marker.bounds) {
+      this.map?.fitBounds(marker.bounds, {
+        padding: 64,
+        animate: true,
+        duration: 500,
+      });
+    } else {
+      this.map?.flyTo({
+        center: [marker.long, marker.lat],
+        zoom: 13,
+        duration: 500,
+      });
     }
   }
 }

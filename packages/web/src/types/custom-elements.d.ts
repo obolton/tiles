@@ -6,14 +6,17 @@ type CustomElementAttributes = {
   style?: React.CSSProperties;
   tabindex?: string;
   children?: React.ReactNode;
+  slot?: string;
 };
 
 declare namespace JSX {
   interface IntrinsicElements {
     "map-view": CustomElementAttributes & {
       movable?: boolean;
+      legend?: boolean;
     };
     "map-view-marker": CustomElementAttributes & {
+      id: string;
       lat: number;
       long: number;
       bounds?: string;
