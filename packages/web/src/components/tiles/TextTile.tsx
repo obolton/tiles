@@ -2,7 +2,6 @@ import { useCallback, useState } from "react";
 import { serialize } from "@/utils/richText/serialize";
 import RichTextEditor from "@/components/inputs/RichTextEditor/RichTextEditor";
 import RichText from "@/components/text/RichText";
-import ColorPicker from "@/components/inputs/ColorPicker";
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
 import { updateTile } from "@/utils/edit";
@@ -75,24 +74,18 @@ export default function TextTile({ id, text, ...tile }: TextTileProps) {
       origin="top-left"
     >
       {isEditable ? (
-        <>
-          <RichTextEditor
-            className={classNames(styles.text, styles.editor)}
-            onBlur={onBlur}
-            onChange={setEditorState}
-            onPointerDownCapture={onPointerDown}
-            onClickCapture={onPointerDown}
-            placeholder="Write something"
-            value={content}
-            editable
-          />
-
-          <ColorPicker
-            className={styles["color-picker"]}
-            value={{ theme, hue: hue ?? undefined }}
-            onChange={onChangeColor}
-          />
-        </>
+        <RichTextEditor
+          className={classNames(styles.text, styles.editor)}
+          onBlur={onBlur}
+          onChange={setEditorState}
+          onChangeColor={onChangeColor}
+          onPointerDownCapture={onPointerDown}
+          onClickCapture={onPointerDown}
+          placeholder="Write something"
+          value={content}
+          color={{ theme, hue: hue ?? undefined }}
+          editable
+        />
       ) : (
         <div className={classNames(styles.text, styles.static)} tabIndex={0}>
           <RichText content={content} />

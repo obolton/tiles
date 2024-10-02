@@ -92,7 +92,6 @@ pop-out[expandable]:state(expanded) .static {
   overflow: auto;
 
   & [data-editor] {
-    position: relative;
     background: inherit;
     border-radius: inherit;
     padding: var(--padding);
@@ -106,21 +105,4 @@ pop-out[expandable]:state(expanded) .static {
 
 [data-font="MONOSPACE"] .text ol {
   margin-left: 2.2em;
-}
-
-.color-picker {
-  position: absolute;
-  display: none;
-  left: -22px;
-  bottom: -22px;
-  opacity: 0;
-  transition:
-    display var(--animation-duration) allow-discrete,
-    opacity var(--animation-duration) var(--easing);
-  z-index: 2;
-}
-
-.editor:focus-within ~ .color-picker {
-  display: block;
-  opacity: 1;
 }

@@ -15,6 +15,7 @@ import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
 import { useEffect, useRef } from "react";
 import { handleError } from "@/utils/errors";
 import styles from "./RichTextEditor.module.css";
+import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 
 export type { EditorState };
 
@@ -28,11 +29,13 @@ const theme: EditorThemeClasses = {
 };
 
 interface RichTextEditorProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "color"> {
   editable?: boolean;
   onChange: (editorState: EditorState) => void;
   value: RichText;
   placeholder?: string;
+  color: ColorPickerValue;
+  onChangeColor: (value: ColorPickerValue) => void;
 }
 
 export default function RichTextEditor({
@@ -42,6 +45,8 @@ export default function RichTextEditor({
   onChange,
   placeholder,
   value,
+  color,
+  onChangeColor,
   ...props
 }: RichTextEditorProps) {
   const ref = useRef<LexicalEditor>(null);
@@ -63,6 +68,7 @@ export default function RichTextEditor({
   return (
     <div className={className}>
       <LexicalComposer initialConfig={initialConfig.current}>
+        <Toolbar color={color} onChangeColor={onChangeColor} />
         <RichTextPlugin
           contentEditable={
             <ContentEditable
@@ -83,7 +89,6 @@ export default function RichTextEditor({
         <EditorRefPlugin editorRef={ref} />
         <ListPlugin />
         <TabIndentationPlugin />
-        <Toolbar />
         {children}
       </LexicalComposer>
     </div>

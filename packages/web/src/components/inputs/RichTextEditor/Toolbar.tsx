@@ -1,13 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import {
-  $getSelection,
-  $isRangeSelection,
-  BLUR_COMMAND,
-  FORMAT_TEXT_COMMAND,
-  SELECTION_CHANGE_COMMAND,
-  COMMAND_PRIORITY_EDITOR,
-} from "lexical";
+import ColorPicker from "@/components/inputs/ColorPicker";
+import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
+import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND } from "lexical";
 import {
   $isListNode,
   INSERT_ORDERED_LIST_COMMAND,
@@ -21,7 +16,6 @@ import underlineIcon from "@/icons/underline.svg";
 import strikethroughIcon from "@/icons/strikethrough.svg";
 import orderedListIcon from "@/icons/ordered-list.svg";
 import unorderedListIcon from "@/icons/unordered-list.svg";
-import { classNames } from "@/utils/css";
 import styles from "./Toolbar.module.css";
 
 type Format = {
@@ -53,10 +47,13 @@ function $getSelectionListType() {
   return null;
 }
 
-export default function Toolbar() {
+interface ToolbarProps {
+  color: ColorPickerValue;
+  onChangeColor: (value: ColorPickerValue) => void;
+}
+
+export default function Toolbar({ color, onChangeColor }: ToolbarProps) {
   const [editor] = useLexicalComposerContext();
-  const [position, setPosition] = useState<DOMPoint | null>(null);
-  const [visible, setVisible] = useState(false);
   const [format, setFormat] = useState<Format>({
     bold: false,
     italic: false,
@@ -67,67 +64,26 @@ export default function Toolbar() {
   });
 
   useEffect(() => {
-    const unsubscribeHandlers = [
-      editor.registerUpdateListener(({ editorState }) => {
-        editorState.read(() => {
-          const selection = $getSelection();
-          if (!$isRangeSelection(selection) || selection?.isCollapsed()) {
-            return;
-          }
+    const unsubscribe = editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection) || selection?.isCollapsed()) {
+          return;
+        }
 
-          const listType = $getSelectionListType();
+        const listType = $getSelectionListType();
 
-          setFormat({
-            bold: selection.hasFormat("bold"),
-            italic: selection.hasFormat("italic"),
-            underline: selection.hasFormat("underline"),
-            strikethrough: selection.hasFormat("strikethrough"),
-            orderedList: listType === "ordered",
-            unorderedList: listType === "unordered",
-          });
+        setFormat({
+          bold: selection.hasFormat("bold"),
+          italic: selection.hasFormat("italic"),
+          underline: selection.hasFormat("underline"),
+          strikethrough: selection.hasFormat("strikethrough"),
+          orderedList: listType === "ordered",
+          unorderedList: listType === "unordered",
         });
-      }),
-
-      editor.registerCommand(
-        SELECTION_CHANGE_COMMAND,
-        () => {
-          const selection = getSelection();
-          const range = selection?.getRangeAt(0);
-          const rootElement = editor.getRootElement();
-
-          if (!range || range.collapsed || !rootElement) {
-            setVisible(false);
-            return false;
-          }
-
-          const rect = range.getBoundingClientRect();
-          const containerRect = rootElement.getBoundingClientRect();
-
-          const position = new DOMPoint(
-            rect.left + rect.width / 2 - containerRect.left,
-            rect.top - containerRect.top,
-          );
-          setPosition(position);
-          setVisible(true);
-
-          return false;
-        },
-        COMMAND_PRIORITY_EDITOR,
-      ),
-
-      editor.registerCommand(
-        BLUR_COMMAND,
-        () => {
-          setVisible(false);
-          return false;
-        },
-        COMMAND_PRIORITY_EDITOR,
-      ),
-    ];
-
-    return () => {
-      unsubscribeHandlers.forEach((unsubscribe) => unsubscribe());
-    };
+      });
+    });
+    return () => unsubscribe();
   }, [editor]);
 
   const formatBold = useCallback(
@@ -170,22 +126,11 @@ export default function Toolbar() {
     });
   }, [editor]);
 
-  if (!position) {
-    return null;
-  }
-
   return (
-    <menu
-      className={classNames(styles.toolbar, visible ? null : styles.hidden)}
-      style={
-        {
-          "--left": `${position.x}px`,
-          "--top": `${position.y}px`,
-        } as React.CSSProperties
-      }
-    >
+    <menu className={styles.toolbar}>
       <li>
         <button
+          className="floating small"
           aria-label="Format as bold"
           type="button"
           aria-pressed={format.bold ? "true" : "false"}
@@ -196,6 +141,7 @@ export default function Toolbar() {
       </li>
       <li>
         <button
+          className="floating small"
           aria-label="Format as italic"
           type="button"
           aria-pressed={format.italic ? "true" : "false"}
@@ -206,6 +152,7 @@ export default function Toolbar() {
       </li>
       <li>
         <button
+          className="floating small"
           aria-label="Format as underlined"
           type="button"
           aria-pressed={format.underline ? "true" : "false"}
@@ -216,6 +163,7 @@ export default function Toolbar() {
       </li>
       <li>
         <button
+          className="floating small"
           aria-label="Format as strike-through"
           type="button"
           aria-pressed={format.strikethrough ? "true" : "false"}
@@ -226,6 +174,7 @@ export default function Toolbar() {
       </li>
       <li>
         <button
+          className="floating small"
           aria-label="Format as an ordered list"
           type="button"
           aria-pressed={format.orderedList ? "true" : "false"}
@@ -236,6 +185,7 @@ export default function Toolbar() {
       </li>
       <li>
         <button
+          className="floating small"
           aria-label="Format as an unordered list"
           type="button"
           aria-pressed={format.unorderedList ? "true" : "false"}
@@ -243,6 +193,9 @@ export default function Toolbar() {
         >
           <Icon src={unorderedListIcon.src} />
         </button>
+      </li>
+      <li>
+        <ColorPicker value={color} onChange={onChangeColor} />
       </li>
     </menu>
   );
