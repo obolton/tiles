@@ -88,8 +88,8 @@ popover-menu > menu {
     content: attr(aria-label);
     position: absolute;
     right: 100%;
-    top: 8px;
-    margin: 0 8px;
+    top: 0;
+    margin: 8px;
     padding: 4px 12px;
     font-size: 0.875rem;
     font-weight: 500;
