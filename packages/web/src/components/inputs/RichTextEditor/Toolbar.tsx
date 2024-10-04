@@ -16,6 +16,7 @@ import underlineIcon from "@/icons/underline.svg";
 import strikethroughIcon from "@/icons/strikethrough.svg";
 import orderedListIcon from "@/icons/ordered-list.svg";
 import unorderedListIcon from "@/icons/unordered-list.svg";
+import { classNames } from "@/utils/css";
 import styles from "./Toolbar.module.css";
 
 type Format = {
@@ -48,11 +49,16 @@ function $getSelectionListType() {
 }
 
 interface ToolbarProps {
+  className?: string;
   color: ColorPickerValue;
   onChangeColor: (value: ColorPickerValue) => void;
 }
 
-export default function Toolbar({ color, onChangeColor }: ToolbarProps) {
+export default function Toolbar({
+  className,
+  color,
+  onChangeColor,
+}: ToolbarProps) {
   const [editor] = useLexicalComposerContext();
   const [format, setFormat] = useState<Format>({
     bold: false,
@@ -127,7 +133,7 @@ export default function Toolbar({ color, onChangeColor }: ToolbarProps) {
   }, [editor]);
 
   return (
-    <menu className={styles.toolbar}>
+    <menu className={classNames(styles.toolbar, className)}>
       <li>
         <button
           className="floating small"
