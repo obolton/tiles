@@ -67,7 +67,7 @@ export default function Toolbar({ color, onChangeColor }: ToolbarProps) {
     const unsubscribe = editor.registerUpdateListener(({ editorState }) => {
       editorState.read(() => {
         const selection = $getSelection();
-        if (!$isRangeSelection(selection) || selection?.isCollapsed()) {
+        if (!$isRangeSelection(selection)) {
           return;
         }
 
