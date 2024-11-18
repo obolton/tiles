@@ -17,9 +17,9 @@
     "storybook": "npm run storybook --workspace=web"
   },
   "devDependencies": {
-    "@eslint/js": "^9.11.1",
+    "@eslint/js": "^9.15.0",
     "@vitest/coverage-v8": "^2.1.1",
-    "eslint": "^9.11.1",
+    "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.1.0",
     "globals": "^15.9.0",
     "prettier": "^3.3.3",
