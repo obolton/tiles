@@ -27,6 +27,10 @@ export function getProfilePageUrl(userId: string) {
 }
 
 export function invalidateCachedUrl(url: string) {
+  if (process.env.NODE_ENV !== "production") {
+    return;
+  }
+
   cloudflare.cache
     .purge({
       zone_id: CLOUDFLARE_ZONE_ID,
