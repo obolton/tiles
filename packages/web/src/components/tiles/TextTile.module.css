@@ -49,6 +49,23 @@
   outline: none;
 }
 
+.editor {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+
+  & [data-editor] {
+    background: inherit;
+    border-radius: inherit;
+    padding: var(--padding);
+    flex: 1;
+  }
+
+  & [data-placeholder] {
+    padding: var(--padding);
+  }
+}
+
 pop-out[expandable] .static {
   overflow: hidden;
 
@@ -73,33 +90,30 @@ pop-out[expandable] .static {
   }
 }
 
-pop-out[expandable]:not(:state(expanded)) .static {
-  cursor: pointer;
-}
+pop-out[expandable]:not(:state(expanded)) {
+  & .static {
+    cursor: pointer;
+  }
 
-pop-out[expandable]:state(expanded) .static {
-  overflow: auto;
-
-  &::after {
-    display: none;
+  & .editor {
+    overflow: hidden;
   }
 }
 
-.editor {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  overflow: auto;
-
-  & [data-editor] {
-    background: inherit;
-    border-radius: inherit;
-    padding: var(--padding);
-    flex: 1;
+pop-out[expandable]:state(expanded) {
+  & .toolbar {
+    position: absolute;
+    top: -64px;
+    margin: 0;
   }
 
-  & [data-placeholder] {
-    padding: var(--padding);
+  & .text,
+  & .editor {
+    overflow: auto;
+
+    &::after {
+      display: none;
+    }
   }
 }
 
