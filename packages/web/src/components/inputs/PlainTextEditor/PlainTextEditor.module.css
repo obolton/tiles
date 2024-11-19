@@ -1,0 +1,19 @@
+.editor {
+  position: relative;
+}
+
+.content {
+  display: block;
+  resize: none;
+  border: none;
+  outline: none;
+  cursor: text;
+}
+
+.placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: rgba(0 0 0 / 40%);
+  pointer-events: none;
+}
