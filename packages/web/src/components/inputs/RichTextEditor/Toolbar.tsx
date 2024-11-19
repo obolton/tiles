@@ -2,14 +2,22 @@ import { useCallback, useEffect, useState } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import ColorPicker from "@/components/inputs/ColorPicker";
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
-import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND } from "lexical";
+import {
+  $createParagraphNode,
+  $getSelection,
+  $isRangeSelection,
+  FORMAT_TEXT_COMMAND,
+} from "lexical";
+import { $setBlocksType } from "@lexical/selection";
 import {
   $isListNode,
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
   REMOVE_LIST_COMMAND,
 } from "@lexical/list";
+import { $createHeadingNode, $isHeadingNode } from "@lexical/rich-text";
 import Icon from "@/components/icons/Icon";
+import headingIcon from "@/icons/heading.svg";
 import boldIcon from "@/icons/bold.svg";
 import italicIcon from "@/icons/italic.svg";
 import underlineIcon from "@/icons/underline.svg";
@@ -20,6 +28,7 @@ import { classNames } from "@/utils/css";
 import styles from "./Toolbar.module.css";
 
 type Format = {
+  heading: boolean;
   bold: boolean;
   italic: boolean;
   underline: boolean;
@@ -61,6 +70,7 @@ export default function Toolbar({
 }: ToolbarProps) {
   const [editor] = useLexicalComposerContext();
   const [format, setFormat] = useState<Format>({
+    heading: false,
     bold: false,
     italic: false,
     underline: false,
@@ -77,9 +87,12 @@ export default function Toolbar({
           return;
         }
 
+        const anchor = selection.anchor.getNode().getTopLevelElement();
+
         const listType = $getSelectionListType();
 
         setFormat({
+          heading: $isHeadingNode(anchor),
           bold: selection.hasFormat("bold"),
           italic: selection.hasFormat("italic"),
           underline: selection.hasFormat("underline"),
@@ -90,6 +103,20 @@ export default function Toolbar({
       });
     });
     return () => unsubscribe();
+  }, [editor]);
+
+  const formatHeading = useCallback(() => {
+    editor.update(() => {
+      const selection = $getSelection();
+      const anchor = $isRangeSelection(selection)
+        ? selection?.anchor.getNode().getTopLevelElement()
+        : null;
+      if ($isHeadingNode(anchor)) {
+        $setBlocksType(selection, $createParagraphNode);
+      } else {
+        $setBlocksType(selection, () => $createHeadingNode("h2"));
+      }
+    });
   }, [editor]);
 
   const formatBold = useCallback(
@@ -134,6 +161,17 @@ export default function Toolbar({
 
   return (
     <menu className={classNames(styles.toolbar, className)}>
+      <li>
+        <button
+          className="floating small"
+          aria-label="Format as heading"
+          type="button"
+          aria-pressed={format.heading ? "true" : "false"}
+          onClick={formatHeading}
+        >
+          <Icon src={headingIcon.src} />
+        </button>
+      </li>
       <li>
         <button
           className="floating small"
