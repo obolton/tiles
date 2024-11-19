@@ -10,12 +10,10 @@ import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { ListNode, ListItemNode } from "@lexical/list";
-import Toolbar from "./Toolbar";
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
 import { useEffect, useRef } from "react";
 import { handleError } from "@/utils/errors";
 import styles from "./RichTextEditor.module.css";
-import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 
 export type { EditorState };
 
@@ -34,8 +32,6 @@ interface RichTextEditorProps
   onChange: (editorState: EditorState) => void;
   value: RichText;
   placeholder?: string;
-  color: ColorPickerValue;
-  onChangeColor: (value: ColorPickerValue) => void;
 }
 
 export default function RichTextEditor({
@@ -45,8 +41,6 @@ export default function RichTextEditor({
   onChange,
   placeholder,
   value,
-  color,
-  onChangeColor,
   ...props
 }: RichTextEditorProps) {
   const ref = useRef<LexicalEditor>(null);
@@ -68,7 +62,7 @@ export default function RichTextEditor({
   return (
     <div className={className}>
       <LexicalComposer initialConfig={initialConfig.current}>
-        <Toolbar color={color} onChangeColor={onChangeColor} />
+        {children}
         <RichTextPlugin
           contentEditable={
             <ContentEditable
@@ -89,7 +83,6 @@ export default function RichTextEditor({
         <EditorRefPlugin editorRef={ref} />
         <ListPlugin />
         <TabIndentationPlugin />
-        {children}
       </LexicalComposer>
     </div>
   );

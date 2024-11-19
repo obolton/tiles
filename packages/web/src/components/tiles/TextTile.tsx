@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { serialize } from "@/utils/richText/serialize";
 import RichTextEditor from "@/components/inputs/RichTextEditor/RichTextEditor";
 import RichText from "@/components/text/RichText";
+import Toolbar from "@/components/inputs/RichTextEditor/Toolbar";
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
 import { updateTile } from "@/utils/edit";
@@ -78,14 +79,18 @@ export default function TextTile({ id, text, ...tile }: TextTileProps) {
           className={classNames(styles.text, styles.editor)}
           onBlur={onBlur}
           onChange={setEditorState}
-          onChangeColor={onChangeColor}
           onPointerDownCapture={onPointerDown}
           onClickCapture={onPointerDown}
           placeholder="Write something"
           value={content}
-          color={{ theme, hue: hue ?? undefined }}
           editable
-        />
+        >
+          <Toolbar
+            className={styles.toolbar}
+            color={{ theme, hue: hue ?? undefined }}
+            onChangeColor={onChangeColor}
+          />
+        </RichTextEditor>
       ) : (
         <div className={classNames(styles.text, styles.static)} tabIndex={0}>
           <RichText content={content} />
