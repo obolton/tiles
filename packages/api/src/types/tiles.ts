@@ -59,6 +59,7 @@ export interface ClientLinkTile extends ClientTileBase {
 // Page link
 export type ClientPageLink = OmitMetadata<PageLinkTile> & {
   page: {
+    id: string;
     title: string;
     subtitle: string | null;
     author: { name: string; imageUrl: string | null };
