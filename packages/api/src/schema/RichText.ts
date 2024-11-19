@@ -11,6 +11,11 @@ const ParagraphNodeSchema = z.object({
   children: z.array(TextNodeSchema),
 });
 
+const HeadingNodeSchema = z.object({
+  type: z.literal("heading"),
+  children: z.array(TextNodeSchema),
+});
+
 const ListItemNodeSchema: z.AnyZodObject = z.object({
   type: z.literal("listitem"),
   value: z.number().int().gte(1),
@@ -25,6 +30,7 @@ const ListNodeSchema = z.object({
 
 const RootNodeSchema = z.discriminatedUnion("type", [
   ParagraphNodeSchema,
+  HeadingNodeSchema,
   ListNodeSchema,
 ]);
 
