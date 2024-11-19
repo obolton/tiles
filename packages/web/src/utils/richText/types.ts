@@ -26,6 +26,11 @@ export interface ParagraphNode extends BaseNode {
   children: TextNode[];
 }
 
+export interface HeadingNode extends BaseNode {
+  type: "heading";
+  children: TextNode[];
+}
+
 export interface ListNode extends BaseNode {
   type: "list";
   listType: ListType;
@@ -38,8 +43,13 @@ export interface ListItemNode extends BaseNode {
   children: (TextNode | ListNode)[];
 }
 
-export type Node = TextNode | ParagraphNode | ListNode | ListItemNode;
+export type Node =
+  | TextNode
+  | ParagraphNode
+  | HeadingNode
+  | ListNode
+  | ListItemNode;
 
-export type RootNode = ParagraphNode | ListNode;
+export type RootNode = ParagraphNode | ListNode | HeadingNode;
 
 export type RichText = RootNode[];
