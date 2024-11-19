@@ -1,10 +1,12 @@
 import { $createParagraphNode, $createTextNode, $getRoot } from "lexical";
 import { $createListNode, $createListItemNode } from "@lexical/list";
+import { $createHeadingNode } from "@lexical/rich-text";
 import type {
   ListNode,
   ListItemNode,
   ParagraphNode,
   TextNode,
+  HeadingNode,
   RichText,
   Node,
 } from "./types";
@@ -33,6 +35,12 @@ function createLexicalParagraphNode(paragraph: ParagraphNode) {
   return node;
 }
 
+function createLexicalHeadingNode(heading: HeadingNode) {
+  const node = $createHeadingNode("h2");
+  node.append(...heading.children.map(createLexicalTextNode));
+  return node;
+}
+
 function createLexicalListNode(list: ListNode) {
   const node = $createListNode(
     list.listType === ListType.ORDERED ? "number" : "bullet",
@@ -55,6 +63,8 @@ function createLexicalNode(node: Node) {
       return createLexicalTextNode(node);
     case "paragraph":
       return createLexicalParagraphNode(node);
+    case "heading":
+      return createLexicalHeadingNode(node);
     case "list":
       return createLexicalListNode(node);
     case "listitem":
