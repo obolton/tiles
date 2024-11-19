@@ -10,6 +10,7 @@ import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { ListNode, ListItemNode } from "@lexical/list";
+import { HeadingNode } from "@lexical/rich-text";
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
 import { useEffect, useRef } from "react";
 import { handleError } from "@/utils/errors";
@@ -53,7 +54,7 @@ export default function RichTextEditor({
       editable,
       editorState: () => importNodes(value),
       onError: handleError,
-      nodes: [ListNode, ListItemNode],
+      nodes: [ListNode, ListItemNode, HeadingNode],
     };
   }
 
