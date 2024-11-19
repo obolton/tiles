@@ -4,6 +4,7 @@ import type {
   RichText,
   TextNode,
   ParagraphNode,
+  HeadingNode,
   ListNode,
   ListItemNode,
 } from "@/utils/richText/types";
@@ -20,6 +21,8 @@ function RichText({ content }: RichTextProps) {
         switch (node.type) {
           case "paragraph":
             return <Paragraph key={index} node={node} />;
+          case "heading":
+            return <Heading key={index} node={node} />;
           case "list":
             return <List key={index} node={node} />;
           default:
@@ -50,6 +53,27 @@ function Paragraph({ node }: ParagraphProps) {
         <Text key={index} node={child} />
       ))}
     </p>
+  );
+}
+
+interface HeadingProps {
+  node: HeadingNode;
+}
+
+function Heading({ node }: HeadingProps) {
+  if (node.children.length === 0) {
+    return (
+      <h2>
+        <br />
+      </h2>
+    );
+  }
+  return (
+    <h2>
+      {node.children.map((child, index) => (
+        <Text key={index} node={child} />
+      ))}
+    </h2>
   );
 }
 
