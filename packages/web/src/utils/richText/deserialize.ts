@@ -73,3 +73,11 @@ export function importNodes(content: RichText) {
   const nodes = deserialize(content);
   root.append(...nodes);
 }
+
+export function importPlainText(content: string) {
+  const root = $getRoot();
+  const nodes = content
+    .split("\n")
+    .map((line) => $createParagraphNode().append($createTextNode(line)));
+  root.append(...nodes);
+}
