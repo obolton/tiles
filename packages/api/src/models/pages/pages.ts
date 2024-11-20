@@ -94,6 +94,7 @@ const TILES_FIELDS = {
 
 const PAGE_FIELDS = {
   id: true,
+  published: true,
   title: true,
   subtitle: true,
   updatedAt: true,
@@ -186,6 +187,7 @@ function formatTile({
           pageId: pageLink.pageId,
           page: page
             ? {
+                id: page.id,
                 title: page.title,
                 subtitle: page.subtitle,
                 theme: page.theme,
@@ -237,6 +239,7 @@ function formatAuthor({
 
 export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   id: string;
+  published: boolean;
   title: string;
   subtitle: string | null;
   updatedAt: Date;
@@ -347,6 +350,7 @@ export async function createPage(
   return prisma.page.create({
     data: {
       authorId,
+      published: false,
       title,
       tiles: {
         create: [
@@ -383,6 +387,7 @@ export async function createPage(
 
 export async function updatePage({
   id,
+  published,
   title,
   subtitle,
   theme,
@@ -391,12 +396,13 @@ export async function updatePage({
 }: UpdatePageSchema) {
   return prisma.page.update({
     where: { id },
-    data: { title, subtitle, theme, hue, font },
+    data: { published, title, subtitle, theme, hue, font },
     select: {
       id: true,
       createdAt: true,
       updatedAt: true,
       authorId: true,
+      published: true,
       title: true,
       subtitle: true,
       theme: true,
