@@ -36,6 +36,7 @@ export type CreatePageSchema = z.infer<typeof CreatePageSchema>;
 
 export const UpdatePageSchema = z.object({
   id: z.string().uuid(),
+  published: z.boolean().optional(),
   title: z.string().min(1).optional(),
   subtitle: z.string().optional(),
   theme: z.nativeEnum(Theme).optional(),
