@@ -90,17 +90,7 @@ pop-out[expandable] .static {
   }
 }
 
-pop-out[expandable]:not(:state(expanded)) {
-  & .static {
-    cursor: pointer;
-  }
-
-  & .editor {
-    overflow: hidden;
-  }
-}
-
-pop-out[expandable]:state(expanded) {
+pop-out[open] {
   & .toolbar {
     position: absolute;
     top: -64px;
@@ -114,6 +104,16 @@ pop-out[expandable]:state(expanded) {
     &::after {
       display: none;
     }
+  }
+}
+
+pop-out[expandable]:not([open]) {
+  & .static {
+    cursor: pointer;
+  }
+
+  & .editor {
+    overflow: hidden;
   }
 }
 

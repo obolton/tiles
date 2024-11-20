@@ -1,5 +1,5 @@
 import css from "./PopOut.css?inline";
-import { appearFrom, disappearTo } from "@/utils/animation/effects";
+import { viewTransition } from "@/utils/transitions";
 
 const PRIMARY_MOUSE_BUTTON = 0;
 
@@ -9,11 +9,8 @@ stylesheet.replaceSync(css);
 export default class PopOut extends HTMLElement {
   static observedAttributes = ["expandable", "origin"] as const;
 
-  private readonly internals: ElementInternals;
   private readonly dialog: HTMLDialogElement;
-  private readonly contents: HTMLElement;
-  private expanded = false;
-  private animating = false;
+  private transition?: ViewTransition;
 
   constructor() {
     super();
@@ -21,9 +18,8 @@ export default class PopOut extends HTMLElement {
     const shadow = this.attachShadow({ mode: "closed", delegatesFocus: true });
     shadow.adoptedStyleSheets = [stylesheet];
 
-    this.internals = this.attachInternals();
-
     const closeButton = document.createElement("button");
+    closeButton.setAttribute("part", "close");
     closeButton.setAttribute("type", "button");
     closeButton.setAttribute("aria-label", "Close");
     closeButton.setAttribute("id", "close");
@@ -32,13 +28,11 @@ export default class PopOut extends HTMLElement {
       this.hide();
     });
 
-    this.contents = document.createElement("section");
-    this.contents.append(document.createElement("slot"));
-
     this.dialog = document.createElement("dialog");
+    this.dialog.setAttribute("part", "dialog");
     this.dialog.setAttribute("role", "none");
     this.dialog.addEventListener("pointerdown", this);
-    this.dialog.append(closeButton, this.contents);
+    this.dialog.append(closeButton, document.createElement("slot"));
 
     shadow.append(this.dialog);
 
@@ -46,18 +40,12 @@ export default class PopOut extends HTMLElement {
     this.addEventListener("keydown", this);
   }
 
-  private isExpandable() {
-    return this.getAttribute("expandable") === "expandable";
+  private isOpen() {
+    return this.hasAttribute("open");
   }
 
-  private getTransformOrigin() {
-    switch (this.getAttribute("origin")) {
-      case "center":
-        return { x: 0.5, y: 0.5 };
-      case "top-left":
-      default:
-        return { x: 0, y: 0 };
-    }
+  private isExpandable() {
+    return this.getAttribute("expandable") === "expandable";
   }
 
   handleEvent(event: Event) {
@@ -76,18 +64,18 @@ export default class PopOut extends HTMLElement {
       return;
     }
 
-    if (this.expanded && event.target === this.dialog) {
+    if (this.isOpen() && event.target === this.dialog) {
       this.hide();
 
       // Prevent pointer events on overlay from bubbling up
       event.stopPropagation();
-    } else if (!this.expanded) {
+    } else if (!this.isOpen()) {
       this.show();
     }
   }
 
   private handleFocusIn(event: FocusEvent) {
-    if (!this.isExpandable() || this.expanded || this.animating) {
+    if (!this.isExpandable() || this.isOpen() || this.transition) {
       return;
     }
 
@@ -99,51 +87,48 @@ export default class PopOut extends HTMLElement {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    if (event.key === "Escape" && this.expanded) {
+    if (event.key === "Escape" && this.isOpen()) {
       event.preventDefault();
       this.hide();
-    } else if (event.key === "Enter" && !this.expanded && this.isExpandable()) {
+    } else if (event.key === "Enter" && !this.isOpen() && this.isExpandable()) {
       event.preventDefault();
       this.show();
     }
   }
 
   show() {
-    if (this.expanded || this.animating) {
+    if (this.isOpen() || this.transition) {
       return;
     }
 
-    this.expanded = true;
-    this.animating = true;
-    this.internals.states.add("expanded");
-    this.internals.states.add("overlay");
-    this.dialog.setAttribute("role", "dialog");
-    this.dialog.showModal();
+    this.setAttribute("opening", "");
 
-    appearFrom(this.contents, {
-      origin: this,
-      scaling: false,
-      transformOrigin: this.getTransformOrigin(),
-    }).finally(() => {
-      this.animating = false;
+    this.transition = viewTransition(() => {
+      this.setAttribute("open", "");
+      this.dialog.setAttribute("role", "dialog");
+      this.dialog.showModal();
+    });
+    this.transition.finished.then(() => {
+      delete this.transition;
+      this.removeAttribute("opening");
     });
   }
 
   hide() {
-    if (!this.expanded || this.animating) {
+    if (!this.isOpen() || this.transition) {
       return;
     }
 
-    this.animating = true;
-    this.internals.states.delete("expanded");
-    this.dialog.setAttribute("role", "none");
+    this.setAttribute("closing", "");
 
-    disappearTo(this.contents, {
-      destination: this,
-      scaling: false,
-      transformOrigin: this.getTransformOrigin(),
-    }).finally(() => {
+    this.transition = viewTransition(() => {
       this.dialog.close();
+      this.dialog.setAttribute("role", "none");
+      this.removeAttribute("open");
+    });
+    this.transition.finished.then(() => {
+      delete this.transition;
+      this.removeAttribute("closing");
 
       const activeElement = document.activeElement;
       if (
@@ -152,10 +137,6 @@ export default class PopOut extends HTMLElement {
       ) {
         activeElement.blur();
       }
-
-      this.internals.states.delete("overlay");
-      this.animating = false;
-      this.expanded = false;
     });
   }
 }
