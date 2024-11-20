@@ -7,8 +7,11 @@ import Grid from "@/components/grid/Grid";
 import EditTileModal from "@/components/modals/EditTileModal";
 import client from "@/api/client";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
+import { SESSION_COOKIE_NAME } from "api/src/constants/cookies";
 
 const { id: pageId } = Astro.params;
+
+const sessionId = Astro.cookies.get(SESSION_COOKIE_NAME)?.value;
 
 if (!pageId) {
   return new Response(null, {
@@ -17,7 +20,10 @@ if (!pageId) {
   });
 }
 
-const page = await client.pages.getById.query({ id: pageId });
+const page = await client.pages.getById.query(
+  { id: pageId },
+  { context: { sessionId } }
+);
 if (!page) {
   return new Response(null, {
     status: 404,
@@ -25,7 +31,9 @@ if (!page) {
   });
 }
 
-Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
+if (page.published) {
+  Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
+}
 ---
 
 <Page
