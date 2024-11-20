@@ -20,8 +20,8 @@ import {
 import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
-  getById: procedure.input(GetPageByIdSchema).query(async ({ input }) => {
-    const page = await getPageById(input);
+  getById: procedure.input(GetPageByIdSchema).query(async ({ ctx, input }) => {
+    const page = await getPageById(input, ctx.user?.id);
     return page;
   }),
 

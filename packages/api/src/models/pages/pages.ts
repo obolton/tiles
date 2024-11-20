@@ -237,7 +237,10 @@ function formatAuthor({
   };
 }
 
-export async function getPageById({ id }: GetPageByIdSchema): Promise<{
+export async function getPageById(
+  { id }: GetPageByIdSchema,
+  userId?: string,
+): Promise<{
   id: string;
   published: boolean;
   title: string;
@@ -259,6 +262,10 @@ export async function getPageById({ id }: GetPageByIdSchema): Promise<{
   });
 
   if (!page) {
+    return null;
+  }
+
+  if (!page.published && (!userId || page.author.id !== userId)) {
     return null;
   }
 
