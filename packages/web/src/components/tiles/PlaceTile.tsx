@@ -16,6 +16,7 @@ export default function PlaceTile({ id, place, ...props }: PlaceTileProps) {
     <Tile {...props} id={id} expandable onDrop={onDrop} origin="center">
       <map-view class={styles.map} movable={!isEditable}>
         <map-marker
+          id={`marker-${id}`}
           lat={lat}
           long={long}
           bounds={boundingBox.length === 4 ? boundingBox.join(",") : undefined}
