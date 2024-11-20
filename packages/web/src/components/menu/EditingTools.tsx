@@ -1,22 +1,41 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import useEditable from "@/hooks/useEditable";
 import TileButtons from "./TileButtons";
 import FormattingTools from "./FormattingTools";
+import privateIcon from "@/icons/private.svg";
+import publicIcon from "@/icons/public.svg";
 import moreIcon from "@/icons/more.svg";
 import trashIcon from "@/icons/trash.svg";
-import { redirectWithToast } from "@/utils/toasts";
+import { redirectWithToast, showToast } from "@/utils/toasts";
 import client from "@/api/client";
 
 interface EditingToolsProps {
   pageId: string;
+  isPublished: boolean;
+  allowPublish: boolean;
   allowDelete: boolean;
 }
 
 export default function EditingTools({
   pageId,
+  isPublished: initialIsPublished,
+  allowPublish,
   allowDelete,
 }: EditingToolsProps) {
   const isEditable = useEditable();
+  const [isPublished, setIsPublished] = useState(initialIsPublished);
+
+  const publishPage = useCallback(async () => {
+    await client.pages.update.mutate({ id: pageId, published: true });
+    setIsPublished(true);
+    showToast("The page was published.", "success");
+  }, [pageId]);
+
+  const unpublishPage = useCallback(async () => {
+    await client.pages.update.mutate({ id: pageId, published: false });
+    setIsPublished(false);
+    showToast("The page was unpublished.", "success");
+  }, [pageId]);
 
   const deletePage = useCallback(async () => {
     await client.pages.delete.mutate({ id: pageId });
@@ -29,6 +48,28 @@ export default function EditingTools({
 
   return (
     <>
+      <hr />
+      {isPublished ? (
+        <button
+          id="unpublish"
+          className="floating tooltip"
+          aria-label="Published"
+          disabled={allowPublish ? undefined : true}
+          onClick={unpublishPage}
+        >
+          <img className="icon" src={publicIcon.src} alt="Published" />
+        </button>
+      ) : (
+        <button
+          id="publish"
+          className="floating tooltip"
+          aria-label="Private"
+          disabled={allowPublish ? undefined : true}
+          onClick={publishPage}
+        >
+          <img className="icon" src={privateIcon.src} alt="Private" />
+        </button>
+      )}
       <hr />
       <TileButtons />
       <hr />

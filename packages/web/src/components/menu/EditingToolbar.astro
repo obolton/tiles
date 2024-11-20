@@ -4,10 +4,17 @@ import shareIcon from "@/icons/share.svg";
 
 interface Props {
   pageId: string;
+  isPublished: boolean;
   allowDelete?: boolean;
+  allowPublish?: boolean;
 }
 
-const { pageId, allowDelete = true } = Astro.props;
+const {
+  pageId,
+  isPublished,
+  allowDelete = true,
+  allowPublish = true,
+} = Astro.props;
 ---
 
 <div
@@ -25,7 +32,13 @@ const { pageId, allowDelete = true } = Astro.props;
     <img class="icon" src={shareIcon.src} alt="Share" />
   </button>
 
-  <EditingTools pageId={pageId} allowDelete={allowDelete} client:edit />
+  <EditingTools
+    pageId={pageId}
+    isPublished={isPublished}
+    allowPublish={allowPublish}
+    allowDelete={allowDelete}
+    client:edit
+  />
 </div>
 <style is:global>
   body:not([data-signed-in]) #editing-toolbar {

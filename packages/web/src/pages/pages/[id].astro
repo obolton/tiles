@@ -35,7 +35,7 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
   hue={page.hue}
   font={page.font}
 >
-  <EditingToolbar pageId={page.id} slot="menu" />
+  <EditingToolbar pageId={page.id} isPublished={page.published} slot="menu" />
 
   <PageHeader
     pageId={page.id}
