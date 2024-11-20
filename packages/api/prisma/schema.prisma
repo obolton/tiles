@@ -78,6 +78,7 @@ model Page {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   authorId  String   @map("author_id") @db.Uuid
+  published Boolean  @default(false)
   title     String
   subtitle  String?
   theme     Theme    @default(LIGHT) @map("theme")
