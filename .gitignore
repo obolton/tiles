@@ -16,6 +16,3 @@ coverage/
 
 # macOS files
 .DS_Store
-
-# IDE
-.vscode/
