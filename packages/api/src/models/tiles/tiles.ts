@@ -8,6 +8,7 @@ import { createHeadingTile, updateHeadingTile } from "./heading.ts";
 import { createPageLinkTile, updatePageLinkTile } from "./pageLink.ts";
 import { createEventTile, updateEventTile } from "./event.ts";
 import { createCollectionTile, updateCollectionTile } from "./collection.ts";
+import { createMapTile } from "./map.ts";
 import type {
   CreateTileSchema,
   UpdateTileSchema,
@@ -41,6 +42,8 @@ export async function createTile(userId: string, properties: CreateTileSchema) {
         return createEventTile(tx, pageId, tile, position);
       case "COLLECTION":
         return createCollectionTile(tx, userId, pageId, tile, position);
+      case "MAP":
+        return createMapTile(tx, pageId, tile, position);
     }
   });
 }
@@ -66,6 +69,8 @@ export async function updateTile(properties: UpdateTileSchema) {
       return updateEventTile(prisma, id, tile);
     case "COLLECTION":
       return updateCollectionTile(prisma, id, tile);
+    case "MAP":
+      throw new Error("Not allowed");
   }
 }
 
