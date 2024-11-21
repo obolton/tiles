@@ -2,7 +2,7 @@ import type { AppRouterOutputs } from "@/api/client";
 import client from "@/api/client";
 import useDebouncedCallback from "@/hooks/useDebouncedCallback";
 import type { ClientPlace } from "@/types/tiles";
-import { createTile, updateTile } from "@/utils/edit";
+import { createTile, updateTileData } from "@/utils/edit";
 import { useCallback, useEffect, useState } from "react";
 import styles from "./EditPlaceTileModal.module.css";
 import ModalBody from "./ModalBody";
@@ -50,13 +50,16 @@ export default function EditMapTileModal({
   const selectPlace = useCallback(
     async (place: Place) => {
       if (tileId) {
-        await updateTile(tileId, {
-          type: "PLACE",
+        const tile = await client.maps.addPlace.mutate({
+          id: tileId,
           place,
         });
+        if (tile.map?.places) {
+          updateTileData({ ...tile, type: "MAP", map: tile.map! });
+        }
       } else {
         await createTile({
-          type: "PLACE",
+          type: "MAP",
           place,
         });
       }
