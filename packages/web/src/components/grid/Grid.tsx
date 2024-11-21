@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import ImageTile from "@/components/tiles/ImageTile";
 import VideoTile from "@/components/tiles/VideoTile";
 import TextTile from "@/components/tiles/TextTile";
-import PlaceTile from "@/components/tiles/PlaceTile";
+import MapTile from "@/components/tiles/MapTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import HeadingTile from "@/components/tiles/HeadingTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
@@ -38,8 +38,8 @@ function getTileComponent(tile: ClientTile) {
       return <VideoTile {...props} key={tile.id} video={tile.video} />;
     case "TEXT":
       return <TextTile {...props} key={tile.id} text={tile.text} />;
-    case "PLACE":
-      return <PlaceTile {...props} key={tile.id} place={tile.place} />;
+    case "MAP":
+      return <MapTile {...props} key={tile.id} map={tile.map} />;
     case "LINK":
       return <LinkTile {...props} key={tile.id} link={tile.link} />;
     case "HEADING":
