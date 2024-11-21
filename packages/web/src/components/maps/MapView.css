@@ -47,6 +47,14 @@
   overflow: auto;
 }
 
+.toolbar {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  display: flex;
+  gap: 4px;
+}
+
 @media (width < 640px) {
   .marker {
     display: none;

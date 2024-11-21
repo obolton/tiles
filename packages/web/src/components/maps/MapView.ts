@@ -151,6 +151,13 @@ export default class MapView extends HTMLElement {
       this.showLegend();
     }
 
+    const toolbar = document.createElement("div");
+    const slot = document.createElement("slot");
+    slot.name = "toolbar";
+    toolbar.append(slot);
+    toolbar.classList.add("toolbar");
+    this.root.appendChild(toolbar);
+
     requestAnimationFrame(() => this.map?.resize());
   }
 
