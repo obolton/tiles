@@ -3,6 +3,7 @@ import { EDIT_START_EVENT, DELETE_TILE_EVENT } from "@/constants/edit";
 import client from "@/api/client";
 import type { AppRouterInputs } from "@/api/client";
 import type { TileType, ClientEntity } from "@/types/tiles";
+import { showModal } from "./modals";
 
 export function setEditMode(isEditing: boolean) {
   if (isEditing) {
@@ -22,29 +23,12 @@ export function isEditModeEnabled() {
 export function editTile(
   tileId: string,
   tileType: TileType,
-  data: ClientEntity,
+  tile: ClientEntity,
 ) {
   if (!isEditModeEnabled()) {
     throw new Error("Not in editing mode");
   }
-  set("editTileId", tileId);
-  set("editTileType", tileType);
-  set("editTileData", data);
-}
-
-export function openCreateTileModal(tileType: TileType) {
-  if (!isEditModeEnabled()) {
-    throw new Error("Not in editing mode");
-  }
-  set("editTileType", tileType);
-  remove("editTileId");
-  remove("editTileData");
-}
-
-export function finishEditingTile() {
-  remove("editTileType");
-  remove("editTileId");
-  remove("editTileData");
+  showModal(tileType, { tileId, tile });
 }
 
 export function deleteTile(id: string) {
