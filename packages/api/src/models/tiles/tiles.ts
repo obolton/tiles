@@ -2,7 +2,6 @@ import prisma from "../../database/prisma.ts";
 import { createImageTile, updateImageTile } from "./image.ts";
 import { createVideoTile, updateVideoTile } from "./video.ts";
 import { createTextTile, updateTextTile } from "./text.ts";
-import { createPlaceTile, updatePlaceTile } from "./place.ts";
 import { createLinkTile, updateLinkTile } from "./link.ts";
 import { createHeadingTile, updateHeadingTile } from "./heading.ts";
 import { createPageLinkTile, updatePageLinkTile } from "./pageLink.ts";
@@ -30,8 +29,6 @@ export async function createTile(userId: string, properties: CreateTileSchema) {
         return createVideoTile(tx, pageId, tile, position);
       case "TEXT":
         return createTextTile(tx, pageId, tile, position);
-      case "PLACE":
-        return createPlaceTile(tx, pageId, tile, position);
       case "LINK":
         return createLinkTile(tx, pageId, tile, position);
       case "HEADING":
@@ -57,8 +54,6 @@ export async function updateTile(properties: UpdateTileSchema) {
       return updateVideoTile(prisma, id, tile);
     case "TEXT":
       return updateTextTile(prisma, id, tile);
-    case "PLACE":
-      return updatePlaceTile(prisma, id, tile);
     case "LINK":
       return updateLinkTile(prisma, id, tile);
     case "HEADING":
