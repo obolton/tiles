@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
 import Tile, { type TileProps } from "./Tile";
 import Stack from "./collections/Stack";
-import Map from "./collections/Map";
 import client from "@/api/client";
 import type { ClientCollection } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
@@ -32,28 +31,22 @@ export default function CollectionTile({
     [collection.id],
   );
 
-  const onDelete = useCallback(
-    async (id: string) => {
-      await client.collections.removeFromCollection.mutate({
-        collectionId: collection.id,
-        id,
-      });
-      setItems((items) => items.filter((item) => item.id !== id));
-    },
-    [collection.id],
-  );
+  // const onDelete = useCallback(
+  //   async (id: string) => {
+  //     await client.collections.removeFromCollection.mutate({
+  //       collectionId: collection.id,
+  //       id,
+  //     });
+  //     setItems((items) => items.filter((item) => item.id !== id));
+  //   },
+  //   [collection.id],
+  // );
 
   switch (type) {
     case "STACK":
       return (
         <Tile {...props} id={id} showBorder={false} onDrop={onDrop}>
           <Stack items={items} />
-        </Tile>
-      );
-    case "MAP":
-      return (
-        <Tile {...props} id={id} onDrop={onDrop} expandable>
-          <Map items={items} onDelete={onDelete} />
         </Tile>
       );
   }
