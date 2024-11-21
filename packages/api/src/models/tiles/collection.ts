@@ -31,14 +31,19 @@ export const COLLECTION_TILE_FIELDS = {
           hue: true,
         },
       },
-      place: {
+      map: {
         select: {
-          name: true,
-          providerId: true,
-          lat: true,
-          long: true,
-          boundingBox: true,
-          address: true,
+          places: {
+            select: {
+              id: true,
+              name: true,
+              providerId: true,
+              lat: true,
+              long: true,
+              boundingBox: true,
+              address: true,
+            },
+          },
         },
       },
       link: {
@@ -77,7 +82,7 @@ export async function createCollectionTile(
       imageTileId: true,
       videoTileId: true,
       textTileId: true,
-      placeTileId: true,
+      mapTileId: true,
       linkTileId: true,
       pageLinkTileId: true,
       eventTileId: true,
@@ -106,7 +111,7 @@ export async function createCollectionTile(
       imageTileId: true,
       videoTileId: true,
       textTileId: true,
-      placeTileId: true,
+      mapTileId: true,
       linkTileId: true,
       pageLinkTileId: true,
       eventTileId: true,

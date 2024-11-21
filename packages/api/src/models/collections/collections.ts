@@ -50,10 +50,10 @@ export async function addToCollection({
         imageTileId: true,
         videoTileId: true,
         textTileId: true,
-        placeTileId: true,
         linkTileId: true,
         pageLinkTileId: true,
         eventTileId: true,
+        mapTileId: true,
       },
     });
     return await tx.collection.update({
