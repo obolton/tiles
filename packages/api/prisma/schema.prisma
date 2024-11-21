@@ -105,6 +105,7 @@ enum TileType {
   PAGE_LINK
   EVENT
   COLLECTION
+  MAP
 }
 
 model Tile {
@@ -119,6 +120,7 @@ model Tile {
   videoTileId    String?  @map("video_tile_id") @db.Uuid
   textTileId     String?  @map("text_tile_id") @db.Uuid
   placeTileId    String?  @map("place_tile_id") @db.Uuid
+  mapTileId      String?  @map("map_tile_id") @db.Uuid
   linkTileId     String?  @map("link_tile_id") @db.Uuid
   headingTileId  String?  @map("heading_tile_id") @db.Uuid
   pageLinkTileId String?  @map("page_link_tile_id") @db.Uuid
@@ -131,6 +133,7 @@ model Tile {
   video      VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
   text       TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
   place      PlaceTile?    @relation(fields: [placeTileId], references: [id], onDelete: SetNull)
+  map        MapTile?      @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
   link       LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
   heading    HeadingTile?  @relation(fields: [headingTileId], references: [id], onDelete: SetNull)
   pageLink   PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
@@ -199,11 +202,25 @@ model PlaceTile {
   boundingBox Float[]  @map("bounding_box")
   address     String?
   providerId  String?  @map("provider_id")
+  mapTileId   String?  @map("map_tile_id") @db.Uuid
 
   tiles       Tile[]
   collections CollectionItem[]
+  map         MapTile?         @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
 
   @@map("place_tiles")
+}
+
+model MapTile {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tiles       Tile[]
+  places      PlaceTile[]
+  collections CollectionItem[]
+
+  @@map("map_tiles")
 }
 
 model LinkTile {
@@ -294,6 +311,7 @@ model CollectionItem {
   videoTileId    String?  @map("video_tile_id") @db.Uuid
   textTileId     String?  @map("text_tile_id") @db.Uuid
   placeTileId    String?  @map("place_tile_id") @db.Uuid
+  mapTileId      String?  @map("map_tile_id") @db.Uuid
   linkTileId     String?  @map("link_tile_id") @db.Uuid
   pageLinkTileId String?  @map("page_link_tile_id") @db.Uuid
   eventTileId    String?  @map("event_tile_id") @db.Uuid
@@ -303,6 +321,7 @@ model CollectionItem {
   video      VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
   text       TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
   place      PlaceTile?    @relation(fields: [placeTileId], references: [id], onDelete: SetNull)
+  map        MapTile?      @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
   link       LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
   pageLink   PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
   event      EventTile?    @relation(fields: [eventTileId], references: [id], onDelete: SetNull)
