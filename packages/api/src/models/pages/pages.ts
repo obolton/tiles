@@ -48,12 +48,28 @@ const TILES_FIELDS = {
   },
   place: {
     select: {
+      id: true,
       name: true,
       providerId: true,
       lat: true,
       long: true,
       boundingBox: true,
       address: true,
+    },
+  },
+  map: {
+    select: {
+      places: {
+        select: {
+          id: true,
+          name: true,
+          providerId: true,
+          lat: true,
+          long: true,
+          boundingBox: true,
+          address: true,
+        },
+      },
     },
   },
   link: {
@@ -158,6 +174,12 @@ function formatTile({
         ...base,
         type,
         place: tile.place!,
+      };
+    case "MAP":
+      return {
+        ...base,
+        type,
+        map: tile.map!,
       };
     case "LINK":
       return {
