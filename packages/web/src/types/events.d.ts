@@ -8,6 +8,8 @@ declare global {
     "resize:cancel": ResizeEvent;
     "state:update": StorageEvent;
     "state:update-persistent": StorageEvent;
+    "modal:show": import("@/utils/modals").ModalEvent<unknown>;
+    "modal:remove": import("@/utils/modals").ModalEvent<unknown>;
   }
 
   interface HTMLElementEventMap {
