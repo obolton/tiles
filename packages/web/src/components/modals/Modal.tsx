@@ -5,20 +5,19 @@ import {
   useRef,
   useState,
 } from "react";
+import { ModalEvent } from "@/utils/modals";
 import styles from "./Modal.module.css";
 
 interface ModalProps {
   children: React.ReactNode;
   open: boolean;
   onClose: () => void;
-  onHide?: () => void;
   originRect?: DOMRect;
 }
 
 export default function Modal({
   children,
   onClose,
-  onHide,
   open,
   originRect,
 }: ModalProps) {
@@ -60,9 +59,11 @@ export default function Modal({
           .map((animation) => animation.finished),
       )
         .catch(console.error)
-        .finally(onHide);
+        .finally(() =>
+          dialogRef.current?.dispatchEvent(new ModalEvent("modal:remove")),
+        );
     }
-  }, [open, onHide]);
+  }, [open]);
 
   const keyDown = useCallback(
     (event: React.KeyboardEvent) => {
