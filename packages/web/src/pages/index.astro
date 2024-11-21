@@ -3,7 +3,6 @@ import Page from "@/layouts/Page.astro";
 import EditingToolbar from "@/components/menu/EditingToolbar.astro";
 import PageHeader from "@/components/header/PageHeader";
 import Grid from "@/components/grid/Grid";
-import EditTileModal from "@/components/modals/EditTileModal";
 import client from "@/api/client";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 
@@ -48,6 +47,4 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
   />
 
   <Grid tiles={page.tiles} client:edit />
-
-  <EditTileModal slot="end" client:edit />
 </Page>

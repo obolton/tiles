@@ -4,7 +4,6 @@ import EditingToolbar from "@/components/menu/EditingToolbar.astro";
 import PageHeader from "@/components/header/PageHeader";
 import PageMetadata from "@/components/header/PageMetadata";
 import Grid from "@/components/grid/Grid";
-import EditTileModal from "@/components/modals/EditTileModal";
 import client from "@/api/client";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import { SESSION_COOKIE_NAME } from "api/src/constants/cookies";
@@ -62,6 +61,4 @@ if (page.published) {
   />
 
   <Grid tiles={page.tiles} client:edit />
-
-  <EditTileModal slot="end" client:edit />
 </Page>
