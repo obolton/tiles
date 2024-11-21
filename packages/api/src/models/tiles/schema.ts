@@ -55,6 +55,20 @@ export const PlaceTileSchema = z.object({
 });
 export type PlaceTileSchema = z.infer<typeof PlaceTileSchema>;
 
+// Map
+export const MapTileSchema = z.object({
+  type: z.literal(TileType.MAP),
+  place: z.object({
+    name: z.string(),
+    providerId: z.string().nullable(),
+    lat: z.number().gte(MIN_LATITUDE).lte(MAX_LATITUDE),
+    long: z.number().gte(MIN_LONGITUDE).lte(MAX_LONGITUDE),
+    boundingBox: z.array(z.number()).length(4).nullable(),
+    address: z.string().nullable(),
+  }),
+});
+export type MapTileSchema = z.infer<typeof MapTileSchema>;
+
 // Link
 
 export const LinkTileSchema = z.object({
@@ -124,6 +138,7 @@ export const CreateTileSchema = z.object({
     PageLinkTileSchema,
     EventTileSchema,
     CollectionTileSchema,
+    MapTileSchema,
   ]),
 });
 export type CreateTileSchema = z.infer<typeof CreateTileSchema>;
@@ -142,6 +157,7 @@ export const UpdateTileSchema = z.object({
     PageLinkTileSchema,
     EventTileSchema,
     CollectionTileSchema,
+    MapTileSchema,
   ]),
 });
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
