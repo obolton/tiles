@@ -2,7 +2,7 @@ import { get, set, remove } from "./state";
 import { EDIT_START_EVENT, DELETE_TILE_EVENT } from "@/constants/edit";
 import client from "@/api/client";
 import type { AppRouterInputs } from "@/api/client";
-import type { TileType, ClientEntity } from "@/types/tiles";
+import type { TileType, ClientEntity, ClientTile } from "@/types/tiles";
 import { showModal } from "./modals";
 
 export function setEditMode(isEditing: boolean) {
@@ -51,4 +51,8 @@ type UpdateTileInput = AppRouterInputs["tiles"]["update"];
 export async function updateTile(id: string, tile: UpdateTileInput["tile"]) {
   const result = await client.tiles.update.mutate({ id, tile });
   window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
+}
+
+export async function updateTileData(tile: ClientTile) {
+  window.dispatchEvent(new CustomEvent("tile:update", { detail: tile }));
 }
