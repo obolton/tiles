@@ -3,6 +3,7 @@ import type {
   VideoTile,
   TextTile,
   PlaceTile,
+  MapTile,
   LinkTile,
   HeadingTile,
   PageLinkTile,
@@ -43,10 +44,21 @@ export interface ClientTextTile extends ClientTileBase {
 }
 
 // Place
-export type ClientPlace = OmitMetadata<PlaceTile>;
+export type ClientPlace = OmitMetadata<Omit<PlaceTile, "mapTileId">> & {
+  id: string;
+};
 export interface ClientPlaceTile extends ClientTileBase {
   type: "PLACE";
   place: ClientPlace;
+}
+
+// Map
+export type ClientMap = OmitMetadata<MapTile> & {
+  places: ClientPlace[];
+};
+export interface ClientMapTile extends ClientTileBase {
+  type: "MAP";
+  map: ClientMap;
 }
 
 // Link
@@ -98,7 +110,7 @@ export type ClientCollection = OmitMetadata<Omit<Collection, "userId">> & {
     image: ClientImage | null;
     video: ClientVideo | null;
     text: ClientText | null;
-    place: ClientPlace | null;
+    map: ClientMap | null;
     link: ClientLink | null;
   })[];
 };
@@ -112,6 +124,7 @@ export type ClientEntity =
   | ClientVideo
   | ClientText
   | ClientPlace
+  | ClientMap
   | ClientLink
   | ClientHeading
   | ClientPageLink
@@ -123,6 +136,7 @@ export type ClientTile =
   | ClientVideoTile
   | ClientTextTile
   | ClientPlaceTile
+  | ClientMapTile
   | ClientLinkTile
   | ClientHeadingTile
   | ClientPageLinkTile
