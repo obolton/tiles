@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import ImageTile from "@/components/tiles/ImageTile";
 import VideoTile from "@/components/tiles/VideoTile";
 import TextTile from "@/components/tiles/TextTile";
-import PlaceTile from "@/components/tiles/PlaceTile";
+import MapTile from "@/components/tiles/MapTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import styles from "./Stack.module.css";
 import type StackView from "@/components/collections/StackView";
@@ -37,8 +37,8 @@ function getTileComponent(
     return <LinkTile {...props} key={item.id} link={item.link} />;
   }
 
-  if (item.place) {
-    return <PlaceTile {...props} key={item.id} place={item.place} />;
+  if (item.map) {
+    return <MapTile {...props} key={item.id} map={item.map} />;
   }
 
   return null;
