@@ -4,11 +4,11 @@ import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import { createTile, updateTile } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
+import type { ModalProps } from "@/utils/modals";
 import type { ClientEvent } from "@/types/tiles";
 
-interface Props {
-  tileId: string | null;
-  close: () => void;
+interface EventTileModalProps extends ModalProps {
+  tileId?: string | null;
   tile?: ClientEvent | null;
 }
 
@@ -29,7 +29,11 @@ function getFormattedDateTime(input: string) {
   )}T${String(date.getUTCHours()).padStart(2, "0")}:${String(date.getUTCMinutes()).padStart(2, "0")}`;
 }
 
-export default function EditEventTileModal({ tileId, close, tile }: Props) {
+export default function EditEventTileModal({
+  tileId,
+  close,
+  tile,
+}: EventTileModalProps) {
   const [allDay, setAllDay] = useState(tile?.allDay ?? false);
   const [title, setTitle] = useState(tile?.title ?? "");
   const [start, setStart] = useState(tile?.start ?? "");

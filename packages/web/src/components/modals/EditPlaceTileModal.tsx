@@ -7,19 +7,19 @@ import { useCallback, useEffect, useState } from "react";
 import styles from "./EditPlaceTileModal.module.css";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
+import type { ModalProps } from "@/utils/modals";
 
 type Place = AppRouterOutputs["places"]["search"][number];
 
-interface EditPlaceTileModalProps {
-  tileId: string | null;
-  close: () => void;
+interface EditMapTileModalProps extends ModalProps {
+  tileId?: string | null;
   tile?: ClientPlace | null;
 }
 
-export default function EditPlaceTileModal({
+export default function EditMapTileModal({
   tileId,
   close,
-}: EditPlaceTileModalProps) {
+}: EditMapTileModalProps) {
   const [location, setLocation] = useState<GeolocationPosition | null>(null);
   const [results, setResults] = useState<Place[]>([]);
 

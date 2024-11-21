@@ -7,14 +7,18 @@ import { handleError } from "@/utils/errors";
 import client from "@/api/client";
 import type { ClientLink, ClientPageLink } from "@/types/tiles";
 import styles from "./EditLinkTileModal.module.css";
+import type { ModalProps } from "@/utils/modals";
 
-interface Props {
-  tileId: string | null;
-  close: () => void;
+interface EditLinkTileModalProps extends ModalProps {
+  tileId?: string | null;
   tile?: ClientLink | ClientPageLink | null;
 }
 
-export default function EditLinkTileModal({ tileId, close, tile }: Props) {
+export default function EditLinkTileModal({
+  tileId,
+  close,
+  tile,
+}: EditLinkTileModalProps) {
   const [url, setUrl] = useState<string>(tile && "url" in tile ? tile.url : "");
   const [recentPages, setRecentPages] = useState<
     { id: string; title: string }[]

@@ -5,16 +5,20 @@ import ModalFooter from "./ModalFooter";
 import { createTile, updateTile } from "@/utils/edit";
 import styles from "./EditImageTileModal.module.css";
 import type { ClientImage } from "@/types/tiles";
+import type { ModalProps } from "@/utils/modals";
 
 const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
 
-interface Props {
-  tileId: string | null;
-  close: () => void;
+interface EditImageTileModalProps extends ModalProps {
+  tileId?: string | null;
   tile?: ClientImage | null;
 }
 
-export default function EditImageTileModal({ tileId, close, tile }: Props) {
+export default function EditImageTileModal({
+  tileId,
+  close,
+  tile,
+}: EditImageTileModalProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(
     tile ? getImageUrl(tile.imageKey) : null,
