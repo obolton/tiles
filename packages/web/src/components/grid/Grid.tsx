@@ -19,6 +19,7 @@ import styles from "./Grid.module.css";
 import type { ClientTile } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
 import type { ResizeEvent } from "@/utils/resize";
+import { viewTransition } from "@/utils/transitions";
 
 interface GridProps {
   tiles: ClientTile[];
@@ -149,7 +150,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       }
 
       if (columns !== tile.columns || rows != tile.rows) {
-        startLayoutTransition(() => {
+        viewTransition(() => {
           setTiles((prevTiles) =>
             prevTiles.map((prevTile) =>
               prevTile.id === id ? { ...prevTile, columns, rows } : prevTile,
