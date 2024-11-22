@@ -79,11 +79,7 @@ export default class PopOut extends HTMLElement {
       return;
     }
 
-    this.show();
-
-    if (event.target instanceof HTMLElement) {
-      event.target.focus();
-    }
+    this.show(event.target instanceof HTMLElement ? event.target : undefined);
   }
 
   private handleKeyDown(event: KeyboardEvent) {
@@ -96,7 +92,7 @@ export default class PopOut extends HTMLElement {
     }
   }
 
-  show() {
+  show(focusTarget?: HTMLElement) {
     if (this.isOpen() || this.transition) {
       return;
     }
@@ -111,6 +107,7 @@ export default class PopOut extends HTMLElement {
     this.transition.finished.then(() => {
       delete this.transition;
       this.removeAttribute("opening");
+      focusTarget?.focus();
     });
   }
 
