@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import useEditable from "@/hooks/useEditable";
-import useDraggable from "@/hooks/useDraggable";
-import useResizable from "@/hooks/useResizable";
 import useScrollIntoView from "@/hooks/useScrollIntoView";
+import GridItem from "@/components/grid/GridItem";
 import { deleteTile } from "@/utils/edit";
 import client from "@/api/client";
-import DeleteButton from "./DeleteButton";
 import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
 import styles from "./Tile.module.css";
 import { classNames } from "@/utils/css";
@@ -45,25 +43,18 @@ export default function Tile({
 }: TileProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isEditable = useEditable() && allowEdit;
-  useDraggable(ref, isEditable);
-  useResizable(ref, isEditable);
   useScrollIntoView(ref);
 
-  const onDelete = useCallback(
-    async (event: React.MouseEvent) => {
-      if (!ref.current) {
-        return;
-      }
-      event.stopPropagation();
-      event.preventDefault();
-      await client.tiles.delete.mutate({ id });
-      await destroy(ref.current, {
-        timing: { ...DEFAULT_TIMING, fill: "forwards" },
-      });
-      deleteTile(id);
-    },
-    [id],
-  );
+  const onDelete = useCallback(async () => {
+    if (!ref.current) {
+      return;
+    }
+    await client.tiles.delete.mutate({ id });
+    await destroy(ref.current, {
+      timing: { ...DEFAULT_TIMING, fill: "forwards" },
+    });
+    deleteTile(id);
+  }, [id]);
 
   useEffect(() => {
     const element = ref.current;
@@ -74,32 +65,28 @@ export default function Tile({
     return () => element.removeEventListener("drag:drop-on", onDrop);
   }, [allowEdit, onDrop]);
 
+  const style = useMemo(
+    () =>
+      ({
+        "--hue": typeof hue === "number" ? `${hue.toFixed(2)}deg` : undefined,
+      }) as React.CSSProperties,
+    [hue],
+  );
+
   return (
-    <pop-out
-      expandable={expandable ? "expandable" : undefined}
+    <GridItem
+      className={styles.item}
       id={id}
-      ref={ref}
-      class={classNames(
-        styles.tile,
-        allowEdit && styles["allow-edit"],
-        variableHeight && styles["variable-height"],
-      )}
-      tabindex="0"
-      style={
-        {
-          "--columns": columns,
-          "--rows": rows,
-          "--hue": typeof hue === "number" ? `${hue.toFixed(2)}deg` : undefined,
-        } as React.CSSProperties
-      }
-      data-rows={rows}
-      data-columns={columns}
-      data-drop-target={isEditable ? "true" : undefined}
-      data-tile-id={id}
-      data-font={font}
-      origin={origin}
+      rows={rows}
+      columns={columns}
+      popOut={expandable}
+      popOutOrigin={origin}
+      isEditable={isEditable}
+      grow={variableHeight}
+      onDelete={onDelete}
     >
       <div
+        ref={ref}
         className={classNames(
           styles.contents,
           showBorder && styles.border,
@@ -108,17 +95,12 @@ export default function Tile({
             : theme === "DARK"
               ? styles.dark
               : styles.color,
-          variableHeight && styles["variable-height"],
         )}
+        data-font={font}
+        style={style}
       >
         {children}
-        {isEditable ? (
-          <>
-            <DeleteButton className={styles.delete} onPress={onDelete} />
-            <div className="resize-handle" data-resize="true" />
-          </>
-        ) : null}
       </div>
-    </pop-out>
+    </GridItem>
   );
 }
