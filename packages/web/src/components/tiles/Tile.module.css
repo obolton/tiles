@@ -89,7 +89,7 @@
   transition: box-shadow var(--animation-duration-short) var(--easing);
 }
 
-body:not([data-editing="true"]) .tile:not(:state(expanded)) .border:hover {
+body:not([data-editing="true"]) .tile:not([open]) .border:hover {
   box-shadow: 0 6px 4px -4px rgb(0 0 0 / 25%);
 
   &::after {
@@ -97,7 +97,7 @@ body:not([data-editing="true"]) .tile:not(:state(expanded)) .border:hover {
   }
 }
 
-body[data-editing]:not([data-drag]) .tile:not(:state(expanded)).allow-edit,
+body[data-editing]:not([data-drag]) .tile:not([open]).allow-edit,
 .tile[data-drag-preview] {
   &:hover {
     outline-color: transparent;
