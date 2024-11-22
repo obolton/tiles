@@ -120,7 +120,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
     const drop = async (event: DragDropEvent) => {
       const { dragSource, inside } = event;
       if (!inside && ref.current) {
-        const id = dragSource.dataset.tileId ?? "";
+        const id = dragSource.id ?? "";
         const position = Array.prototype.indexOf.call(
           ref.current.children,
           dragSource,
@@ -132,13 +132,13 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       const { target, size } = event;
       if (
         !(target instanceof HTMLElement) ||
-        !target.dataset.tileId ||
+        !target.id ||
         !sizeRef.current ||
         !size
       ) {
         return;
       }
-      const id = target.dataset.tileId;
+      const id = target.id;
       const columnWidth = sizeRef.current.width / 3;
       const columns = Math.round(size.width / columnWidth);
       const rows = Math.round(size.height / columnWidth);
@@ -164,11 +164,11 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
         !(target instanceof HTMLElement) ||
         !sizeRef.current ||
         !size ||
-        !target.dataset.tileId
+        !target.id
       ) {
         return;
       }
-      const id = target.dataset.tileId;
+      const id = target.id;
       const columnWidth = sizeRef.current.width / 3;
       const columns = Math.max(Math.round(size.width / columnWidth), 1);
       const rows = Math.max(Math.round(size.height / columnWidth), 1);
