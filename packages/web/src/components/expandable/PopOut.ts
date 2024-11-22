@@ -7,7 +7,7 @@ const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 export default class PopOut extends HTMLElement {
-  static observedAttributes = ["expandable", "origin"] as const;
+  static readonly observedAttributes = ["expandable", "origin"] as const;
 
   private readonly dialog: HTMLDialogElement;
   private transition?: ViewTransition;
@@ -16,7 +16,7 @@ export default class PopOut extends HTMLElement {
     super();
 
     const shadow = this.attachShadow({ mode: "closed", delegatesFocus: true });
-    shadow.adoptedStyleSheets = [stylesheet];
+    shadow.adoptedStyleSheets.push(stylesheet);
 
     const closeButton = document.createElement("button");
     closeButton.setAttribute("part", "close");
@@ -25,7 +25,7 @@ export default class PopOut extends HTMLElement {
     closeButton.setAttribute("id", "close");
     closeButton.addEventListener("click", (event) => {
       event.stopPropagation();
-      this.hide();
+      this.close();
     });
 
     this.dialog = document.createElement("dialog");
@@ -40,14 +40,6 @@ export default class PopOut extends HTMLElement {
     this.addEventListener("keydown", this);
   }
 
-  private isOpen() {
-    return this.hasAttribute("open");
-  }
-
-  private isExpandable() {
-    return this.getAttribute("expandable") === "expandable";
-  }
-
   handleEvent(event: Event) {
     switch (event.type) {
       case "pointerdown":
@@ -59,18 +51,26 @@ export default class PopOut extends HTMLElement {
     }
   }
 
+  private isExpandable() {
+    return this.getAttribute("expandable") === "expandable";
+  }
+
+  private isOpen() {
+    return this.hasAttribute("open");
+  }
+
   private handlePointerDown(event: PointerEvent) {
     if (!this.isExpandable() || event.button !== PRIMARY_MOUSE_BUTTON) {
       return;
     }
 
     if (this.isOpen() && event.target === this.dialog) {
-      this.hide();
+      this.close();
 
       // Prevent pointer events on overlay from bubbling up
       event.stopPropagation();
     } else if (!this.isOpen()) {
-      this.show();
+      this.open();
     }
   }
 
@@ -79,20 +79,20 @@ export default class PopOut extends HTMLElement {
       return;
     }
 
-    this.show(event.target instanceof HTMLElement ? event.target : undefined);
+    this.open(event.target instanceof HTMLElement ? event.target : undefined);
   }
 
   private handleKeyDown(event: KeyboardEvent) {
     if (event.key === "Escape" && this.isOpen()) {
       event.preventDefault();
-      this.hide();
+      this.close();
     } else if (event.key === "Enter" && !this.isOpen() && this.isExpandable()) {
       event.preventDefault();
-      this.show();
+      this.open();
     }
   }
 
-  show(focusTarget?: HTMLElement) {
+  open(focusTarget?: HTMLElement) {
     if (this.isOpen() || this.transition) {
       return;
     }
@@ -111,7 +111,7 @@ export default class PopOut extends HTMLElement {
     });
   }
 
-  hide() {
+  close() {
     if (!this.isOpen() || this.transition) {
       return;
     }
