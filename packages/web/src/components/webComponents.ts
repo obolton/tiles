@@ -14,6 +14,7 @@ import FilePicker from "./forms/FilePicker";
 import StackView from "./collections/StackView";
 import StackItem from "./collections/StackItem";
 import PopOut from "./expandable/PopOut";
+import ResizeItem from "./resize/ResizeItem";
 
 customElements.define("data-binding", DataBinding);
 customElements.define("popover-menu", PopoverMenu);
@@ -31,3 +32,4 @@ customElements.define("file-picker", FilePicker);
 customElements.define("stack-view", StackView);
 customElements.define("stack-item", StackItem);
 customElements.define("pop-out", PopOut);
+customElements.define("resize-item", ResizeItem);

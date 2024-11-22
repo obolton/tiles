@@ -54,5 +54,8 @@ declare namespace JSX {
       expandable?: string;
       origin?: "center" | "top-left";
     };
+    "resize-item": CustomElementAttributes & {
+      disabled?: "disabled";
+    };
   }
 }

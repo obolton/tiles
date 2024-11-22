@@ -1,0 +1,54 @@
+:host {
+  position: relative;
+}
+
+.handle {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  z-index: 1;
+  opacity: 1;
+  transition: opacity var(--animation-duration) var(--easing);
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background: var(--accent);
+    box-shadow:
+      inset 0 0 0 1px rgb(0 0 0 / 20%),
+      0 2px 1px -1px rgb(0 0 0 / 20%);
+    transition: transform var(--animation-duration-short) var(--easing);
+  }
+
+  &:hover::after {
+    transform: scale(1.2);
+  }
+}
+
+@media (any-pointer: coarse) {
+  .handle {
+    right: -22px;
+    bottom: -22px;
+    width: 48px;
+    height: 48px;
+    padding: 16px;
+  }
+}
+
+.outline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  outline: var(--focus-ring-color) solid 5px;
+  outline-offset: -1px;
+  z-index: 2;
+  border-radius: inherit;
+  min-width: inherit;
+  min-height: inherit;
+}
