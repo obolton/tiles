@@ -93,10 +93,11 @@ popover-menu > menu {
     padding: 4px 12px;
     font-size: 0.875rem;
     font-weight: 500;
-    color: rgba(0 0 0 / 70%);
-    background: rgb(0 0 0 / 10%);
+    color: rgba(0 0 0 / 80%);
+    background-color: rgb(255 255 255 / 85%);
+    box-shadow: 0 2px 3px -1px rgb(0 0 0 / 20%);
     border-radius: 32px;
-    text-shadow: 0 1px 1px rgb(255 255 255 / 10%);
+    text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
     align-content: center;
     pointer-events: none;
     z-index: 10;
