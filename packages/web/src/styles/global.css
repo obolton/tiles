@@ -104,6 +104,7 @@ h2 {
   font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 600;
   line-height: 2rlh;
+  margin: 1rem 0 0.5rem;
 }
 
 a {
