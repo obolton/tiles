@@ -1,4 +1,9 @@
-import { $createParagraphNode, $createTextNode, $getRoot } from "lexical";
+import {
+  $createParagraphNode,
+  $createTextNode,
+  $createLineBreakNode,
+  $getRoot,
+} from "lexical";
 import { $createListNode, $createListItemNode } from "@lexical/list";
 import { $createHeadingNode } from "@lexical/rich-text";
 import type {
@@ -86,8 +91,13 @@ export function importNodes(content: RichText) {
 
 export function importPlainText(content: string) {
   const root = $getRoot();
-  const nodes = content
-    .split("\n")
-    .map((line) => $createParagraphNode().append($createTextNode(line)));
-  root.append(...nodes);
+  const paragraph = $createParagraphNode();
+  const lines = content.split("\n");
+  lines.forEach((line, i) => {
+    paragraph.append($createTextNode(line));
+    if (i < lines.length - 1) {
+      paragraph.append($createLineBreakNode());
+    }
+  });
+  root.append(paragraph);
 }
