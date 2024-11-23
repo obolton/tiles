@@ -84,6 +84,19 @@ export default function RichTextEditor({
     };
   }
 
+  useEffect(() => {
+    const editor = ref.current;
+    if (editor) {
+      // Force all headings to h2
+      editor.registerNodeTransform(HeadingNode, (node) => {
+        if (node.getTag() !== "h2") {
+          const writable = node.getWritable();
+          writable.__tag = "h2";
+        }
+      });
+    }
+  }, []);
+
   useEffect(() => ref.current?.setEditable(editable ?? false), [editable]);
 
   return (
