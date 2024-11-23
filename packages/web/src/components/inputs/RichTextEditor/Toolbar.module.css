@@ -3,7 +3,6 @@
   top: 8px;
   background: rgb(255 255 255 / 95%);
   border-radius: 12px;
-  display: none;
   margin: -64px auto 8px 8px;
   padding: 8px;
   align-items: center;
@@ -11,8 +10,4 @@
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 30%),
     0 4px 4px -2px rgb(0 0 0 / 20%);
-}
-
-div:focus-within > .toolbar {
-  display: flex;
 }
