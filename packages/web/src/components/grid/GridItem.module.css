@@ -5,6 +5,7 @@
   min-width: var(--grid-size);
   min-height: var(--grid-size);
   display: flex;
+  isolation: isolate;
 
   &.grow {
     height: fit-content;
