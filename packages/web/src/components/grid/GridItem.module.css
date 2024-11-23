@@ -7,7 +7,7 @@
   display: flex;
 
   &.grow {
-    height: auto;
+    height: fit-content;
     min-height: 32px;
   }
 }
