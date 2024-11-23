@@ -1,19 +1,32 @@
+import { handleError } from "@/utils/errors";
 import { importNodes } from "@/utils/richText/deserialize";
 import type { RichText } from "@/utils/richText/types";
+import { ListItemNode, ListNode } from "@lexical/list";
+import {
+  HEADING,
+  ORDERED_LIST,
+  UNORDERED_LIST,
+  BOLD_STAR,
+  BOLD_UNDERSCORE,
+  ITALIC_STAR,
+  ITALIC_UNDERSCORE,
+  BOLD_ITALIC_STAR,
+  BOLD_ITALIC_UNDERSCORE,
+  STRIKETHROUGH,
+} from "@lexical/markdown";
 import type { InitialConfigType } from "@lexical/react/LexicalComposer";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { ListNode, ListItemNode } from "@lexical/list";
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
+import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { HeadingNode } from "@lexical/rich-text";
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
 import { useEffect, useRef } from "react";
-import { handleError } from "@/utils/errors";
 import styles from "./RichTextEditor.module.css";
 
 export type { EditorState };
@@ -26,6 +39,19 @@ const theme: EditorThemeClasses = {
     strikethrough: "strikethrough",
   },
 };
+
+const TRANSFORMERS = [
+  HEADING,
+  ORDERED_LIST,
+  UNORDERED_LIST,
+  BOLD_STAR,
+  BOLD_UNDERSCORE,
+  ITALIC_STAR,
+  ITALIC_UNDERSCORE,
+  BOLD_ITALIC_STAR,
+  BOLD_ITALIC_UNDERSCORE,
+  STRIKETHROUGH,
+];
 
 interface RichTextEditorProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "color"> {
@@ -84,6 +110,7 @@ export default function RichTextEditor({
         <EditorRefPlugin editorRef={ref} />
         <ListPlugin />
         <TabIndentationPlugin />
+        <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
       </LexicalComposer>
     </div>
   );
