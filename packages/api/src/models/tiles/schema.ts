@@ -11,23 +11,39 @@ import { RichTextSchema } from "@/schema/RichText.ts";
 // Tile types
 
 // Image
-export const ImageTileSchema = z.object({
+export const CreateImageTileSchema = z.object({
   type: z.literal(TileType.IMAGE),
   image: z.object({
-    imageKey: z.string().optional(),
+    imageKey: z.string(),
     caption: z.string().optional(),
   }),
 });
-export type ImageTileSchema = z.infer<typeof ImageTileSchema>;
+export type CreateImageTileSchema = z.infer<typeof CreateImageTileSchema>;
+
+export const UpdateImageTileSchema = z.object({
+  type: z.literal(TileType.IMAGE),
+  image: z.object({
+    caption: z.string().optional(),
+  }),
+});
+export type UpdateImageTileSchema = z.infer<typeof UpdateImageTileSchema>;
 
 // Video
-export const VideoTileSchema = z.object({
+export const CreateVideoTileSchema = z.object({
   type: z.literal(TileType.VIDEO),
   video: z.object({
     url: z.string().url(),
   }),
 });
-export type VideoTileSchema = z.infer<typeof VideoTileSchema>;
+export type CreateVideoTileSchema = z.infer<typeof CreateVideoTileSchema>;
+
+export const UpdateVideoTileSchema = z.object({
+  type: z.literal(TileType.VIDEO),
+  video: z.object({
+    title: z.string().optional(),
+  }),
+});
+export type UpdateVideoTileSchema = z.infer<typeof UpdateVideoTileSchema>;
 
 // Text
 
@@ -129,8 +145,8 @@ export type CollectionTileSchema = z.infer<typeof CollectionTileSchema>;
 export const CreateTileSchema = z.object({
   pageId: z.string().uuid(),
   tile: z.discriminatedUnion("type", [
-    ImageTileSchema,
-    VideoTileSchema,
+    UpdateImageTileSchema,
+    CreateVideoTileSchema,
     TextTileSchema,
     LinkTileSchema,
     HeadingTileSchema,
@@ -147,8 +163,8 @@ export type CreateTileSchema = z.infer<typeof CreateTileSchema>;
 export const UpdateTileSchema = z.object({
   id: z.string().uuid(),
   tile: z.discriminatedUnion("type", [
-    ImageTileSchema,
-    VideoTileSchema,
+    UpdateImageTileSchema,
+    UpdateVideoTileSchema,
     TextTileSchema,
     LinkTileSchema,
     HeadingTileSchema,
