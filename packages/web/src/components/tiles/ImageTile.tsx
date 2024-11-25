@@ -3,7 +3,8 @@ import useEditable from "@/hooks/useEditable";
 import type { ClientImage } from "@/types/tiles";
 import { updateTile } from "@/utils/edit";
 import { getImageUrl } from "@/utils/images";
-import { useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
+import MovableImage from "@/components/images/MovableImage";
 import Caption from "./Caption";
 import styles from "./ImageTile.module.css";
 import Tile, { type TileProps } from "./Tile";
@@ -17,6 +18,7 @@ export default function ImageTile({ id, image, ...props }: ImageTileProps) {
   const isEditable = useEditable();
   const src = getImageUrl(imageKey);
   const onDrop = useCreateCollection(id, "STACK");
+  const [origin, setOrigin] = useState({ x: image.originX, y: image.originY });
 
   const onUpdateCaption = useCallback(
     async (value: string) => {
@@ -28,6 +30,23 @@ export default function ImageTile({ id, image, ...props }: ImageTileProps) {
     [id],
   );
 
+  const onUpdateOrigin = useCallback(
+    async (origin: { x: number; y: number }) => {
+      await updateTile(id, {
+        type: "IMAGE",
+        image: { origin },
+      });
+    },
+    [id],
+  );
+
+  const style = useMemo(
+    () => ({
+      objectPosition: `${origin.x * 100}% ${origin.y * 100}%`,
+    }),
+    [origin],
+  );
+
   return (
     <Tile id={id} {...props} onDrop={onDrop}>
       <figure
@@ -35,7 +54,17 @@ export default function ImageTile({ id, image, ...props }: ImageTileProps) {
         className={styles.figure}
         data-show-in-lightbox="true"
       >
-        <img src={src} loading="lazy" alt="Image" draggable={!isEditable} />
+        <MovableImage
+          src={src}
+          style={style}
+          loading="lazy"
+          alt="Image"
+          movable={isEditable}
+          draggable={!isEditable}
+          origin={origin}
+          onMove={setOrigin}
+          onRelease={onUpdateOrigin}
+        />
         <Caption
           isEditable={isEditable}
           value={caption}
