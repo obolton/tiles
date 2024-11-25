@@ -28,6 +28,8 @@ const TILES_FIELDS = {
     select: {
       imageKey: true,
       caption: true,
+      originX: true,
+      originY: true,
     },
   },
   video: {

@@ -36,6 +36,8 @@ export async function createImageTile(
         select: {
           imageKey: true,
           caption: true,
+          originX: true,
+          originY: true,
         },
       },
     },
@@ -45,7 +47,7 @@ export async function createImageTile(
 export async function updateImageTile(
   tx: Prisma.TransactionClient,
   id: string,
-  { image: { caption } }: UpdateImageTileSchema,
+  { image: { caption, origin } }: UpdateImageTileSchema,
 ) {
   return tx.tile.update({
     where: {
@@ -54,7 +56,10 @@ export async function updateImageTile(
     data: {
       image: {
         update: {
-          caption: caption ? cleanUserInput(caption) : null,
+          caption:
+            typeof caption === "string" ? cleanUserInput(caption) : undefined,
+          originX: origin?.x,
+          originY: origin?.y,
         },
       },
     },
@@ -69,6 +74,8 @@ export async function updateImageTile(
         select: {
           imageKey: true,
           caption: true,
+          originX: true,
+          originY: true,
         },
       },
     },

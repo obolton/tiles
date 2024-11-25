@@ -13,6 +13,8 @@ export const COLLECTION_TILE_FIELDS = {
         select: {
           imageKey: true,
           caption: true,
+          originX: true,
+          originY: true,
         },
       },
       video: {
