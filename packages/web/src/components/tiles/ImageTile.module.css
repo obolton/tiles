@@ -13,22 +13,6 @@
   object-fit: cover;
 }
 
-.figure > figcaption {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  margin: 8px;
-  max-width: calc(100% - 16px);
-  font-size: 0.875rem;
-  font-weight: 500;
-  white-space: pre-line;
-  padding: 4px 8px;
-  border-radius: 4px;
-  text-shadow: 0 1px 0 rgb(255 255 255 / 15%);
-  background: rgb(255 255 255 / 40%);
-  backdrop-filter: blur(10px);
-}
-
 [data-lightbox] .figure {
   display: flex;
   flex-direction: column;
