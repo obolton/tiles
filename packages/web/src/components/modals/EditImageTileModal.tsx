@@ -1,32 +1,17 @@
 import { useCallback, useRef, useState } from "react";
 import { uploadMedia } from "@/utils/media";
-import { getImageUrl } from "@/utils/images";
 import ModalFooter from "./ModalFooter";
-import { createTile, updateTile } from "@/utils/edit";
+import { createTile } from "@/utils/edit";
 import styles from "./EditImageTileModal.module.css";
-import type { ClientImage } from "@/types/tiles";
 import type { ModalProps } from "@/utils/modals";
 
 const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
 
-interface EditImageTileModalProps extends ModalProps {
-  tileId?: string | null;
-  tile?: ClientImage | null;
-}
-
-export default function EditImageTileModal({
-  tileId,
-  close,
-  tile,
-}: EditImageTileModalProps) {
+export default function EditImageTileModal({ close }: ModalProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(
-    tile ? getImageUrl(tile.imageKey) : null,
-  );
-  const [imageKey, setImageKey] = useState<string | null>(
-    tile?.imageKey ?? null,
-  );
-  const [caption, setCaption] = useState<string>(tile?.caption ?? "");
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageKey, setImageKey] = useState<string | null>(null);
+  const [caption, setCaption] = useState<string>("");
   const [isDragOver, setDragOver] = useState<boolean>(false);
 
   const selectImage = useCallback(() => {
@@ -97,27 +82,17 @@ export default function EditImageTileModal({
         return;
       }
 
-      if (tileId) {
-        await updateTile(tileId, {
-          type: "IMAGE",
-          image: {
-            imageKey,
-            caption,
-          },
-        });
-      } else {
-        await createTile({
-          type: "IMAGE",
-          image: {
-            imageKey,
-            caption,
-          },
-        });
-      }
+      await createTile({
+        type: "IMAGE",
+        image: {
+          imageKey,
+          caption,
+        },
+      });
 
       close();
     },
-    [imageKey, tileId, close, caption],
+    [imageKey, close, caption],
   );
 
   return (
