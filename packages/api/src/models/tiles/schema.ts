@@ -14,7 +14,7 @@ import { RichTextSchema } from "@/schema/RichText.ts";
 export const ImageTileSchema = z.object({
   type: z.literal(TileType.IMAGE),
   image: z.object({
-    imageKey: z.string(),
+    imageKey: z.string().optional(),
     caption: z.string().optional(),
   }),
 });
