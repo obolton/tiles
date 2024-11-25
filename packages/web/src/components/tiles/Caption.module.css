@@ -1,0 +1,41 @@
+.caption {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  margin: 8px;
+  max-width: calc(100% - 16px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: pre-line;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 15%);
+  background: rgb(255 255 255 / 40%);
+  backdrop-filter: blur(10px);
+
+  &.editable {
+    padding: 0;
+  }
+}
+
+.textarea {
+  display: block;
+  font-family: inherit;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  text-shadow: inherit;
+  background: none;
+  border: none;
+  border-radius: inherit;
+  padding: 4px 8px;
+  margin: 0;
+  outline: transparent solid 3px;
+  outline-offset: 0;
+  transition: outline-color var(--animation-duration) var(--easing);
+
+  &:focus-visible {
+    outline-color: var(--focus-ring-color);
+  }
+}
