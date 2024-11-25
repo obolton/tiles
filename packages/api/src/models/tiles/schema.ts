@@ -24,6 +24,12 @@ export const UpdateImageTileSchema = z.object({
   type: z.literal(TileType.IMAGE),
   image: z.object({
     caption: z.string().optional(),
+    origin: z
+      .object({
+        x: z.number().gte(0).lte(1),
+        y: z.number().gte(0).lte(1),
+      })
+      .optional(),
   }),
 });
 export type UpdateImageTileSchema = z.infer<typeof UpdateImageTileSchema>;
