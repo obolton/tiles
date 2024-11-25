@@ -1,7 +1,11 @@
+import useCreateCollection from "@/hooks/useCreateCollection";
+import useEditable from "@/hooks/useEditable";
+import type { ClientVideo } from "@/types/tiles";
+import { updateTile } from "@/utils/edit";
+import { useCallback } from "react";
+import Caption from "./Caption";
 import Tile, { type TileProps } from "./Tile";
 import styles from "./VideoTile.module.css";
-import useCreateCollection from "@/hooks/useCreateCollection";
-import type { ClientVideo } from "@/types/tiles";
 
 function getEmbedUrl(videoType: ClientVideo["videoType"], videoId: string) {
   switch (videoType) {
@@ -18,9 +22,20 @@ interface VideoTileProps extends TileProps {
 }
 
 export default function VideoTile({ id, video, ...props }: VideoTileProps) {
-  const { videoType, videoId, imageUrl, title, description } = video;
+  const { videoType, videoId, imageUrl, title } = video;
+  const isEditable = useEditable();
   const embedUrl = getEmbedUrl(videoType, videoId);
   const onDrop = useCreateCollection(id, "STACK");
+
+  const onUpdateCaption = useCallback(
+    async (value: string) => {
+      await updateTile(id, {
+        type: "VIDEO",
+        video: { title: value },
+      });
+    },
+    [id],
+  );
 
   return (
     <Tile id={id} {...props} onDrop={onDrop}>
@@ -32,10 +47,12 @@ export default function VideoTile({ id, video, ...props }: VideoTileProps) {
           imagesrc={imageUrl ?? undefined}
           data-show-in-lightbox="true"
         />
-        <figcaption>
-          <p>{title}</p>
-          {description && <p className={styles.description}>{description}</p>}
-        </figcaption>
+        <Caption
+          isEditable={isEditable}
+          value={title}
+          onChange={onUpdateCaption}
+          placeholder="Add a caption"
+        />
       </figure>
     </Tile>
   );

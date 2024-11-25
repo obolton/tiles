@@ -6,25 +6,6 @@
   overflow: hidden;
 }
 
-.figure > figcaption {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  margin: 8px;
-  max-width: calc(100% - 16px);
-  font-size: 0.875rem;
-  font-weight: 500;
-  white-space: pre-line;
-  padding: 4px 8px;
-  border-radius: 4px;
-  text-shadow: 0 1px 0 rgb(255 255 255 / 15%);
-  background: rgb(255 255 255 / 40%);
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
 .video {
   position: absolute;
   inset: 0;
@@ -34,31 +15,15 @@
 
 body[data-editing] .figure {
   pointer-events: none;
+
+  & > figcaption {
+    pointer-events: all;
+  }
 }
 
 [data-lightbox] .video {
   position: relative;
   max-width: var(--max-width);
-}
-
-.figure > figcaption > p {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.description {
-  font-weight: 400;
-  font-size: 0.8rem;
-  color: rgba(0 0 0 / 60%);
-}
-
-.title {
-  font-size: 1rem;
-  line-height: 1rlh;
-  font-weight: 500;
-  margin: 0;
-  padding: 0;
 }
 
 @media (width < 640px) {
