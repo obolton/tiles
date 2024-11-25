@@ -31,13 +31,36 @@ export default class PopOut extends HTMLElement {
     this.dialog = document.createElement("dialog");
     this.dialog.setAttribute("part", "dialog");
     this.dialog.setAttribute("role", "none");
-    this.dialog.addEventListener("pointerdown", this);
     this.dialog.append(closeButton, document.createElement("slot"));
 
     shadow.append(this.dialog);
+  }
 
-    this.addEventListener("focusin", this);
-    this.addEventListener("keydown", this);
+  attributeChangedCallback(
+    name: (typeof PopOut.observedAttributes)[number],
+    _: string,
+    value: string,
+  ) {
+    switch (name) {
+      case "expandable":
+        if (value === "expandable") {
+          this.attachEventListeners();
+        } else {
+          this.removeEventListeners();
+        }
+    }
+  }
+
+  private attachEventListeners() {
+    this.dialog.addEventListener("pointerdown", this);
+    this.dialog.addEventListener("focusin", this);
+    this.dialog.addEventListener("keydown", this);
+  }
+
+  private removeEventListeners() {
+    this.dialog.removeEventListener("pointerdown", this);
+    this.dialog.removeEventListener("focusin", this);
+    this.dialog.removeEventListener("keydown", this);
   }
 
   handleEvent(event: Event) {
@@ -60,7 +83,7 @@ export default class PopOut extends HTMLElement {
   }
 
   private handlePointerDown(event: PointerEvent) {
-    if (!this.isExpandable() || event.button !== PRIMARY_MOUSE_BUTTON) {
+    if (event.button !== PRIMARY_MOUSE_BUTTON) {
       return;
     }
 
@@ -75,7 +98,7 @@ export default class PopOut extends HTMLElement {
   }
 
   private handleFocusIn(event: FocusEvent) {
-    if (!this.isExpandable() || this.isOpen() || this.transition) {
+    if (this.isOpen() || this.transition) {
       return;
     }
 
@@ -86,7 +109,7 @@ export default class PopOut extends HTMLElement {
     if (event.key === "Escape" && this.isOpen()) {
       event.preventDefault();
       this.close();
-    } else if (event.key === "Enter" && !this.isOpen() && this.isExpandable()) {
+    } else if (event.key === "Enter" && !this.isOpen()) {
       event.preventDefault();
       this.open();
     }
