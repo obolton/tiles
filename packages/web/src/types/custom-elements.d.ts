@@ -45,7 +45,6 @@ declare namespace JSX {
     "calendar-month": CustomElementAttributes & {
       date?: string;
     };
-    "stack-item": CustomElementAttributes;
     "popover-menu": CustomElementAttributes & {
       anchor: string;
     };
