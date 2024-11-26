@@ -1,72 +1,50 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import ImageTile from "@/components/tiles/ImageTile";
 import VideoTile from "@/components/tiles/VideoTile";
 import TextTile from "@/components/tiles/TextTile";
 import MapTile from "@/components/tiles/MapTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import styles from "./Stack.module.css";
-import type StackView from "@/components/collections/StackView";
 import type { ClientCollection } from "@/types/tiles";
 
 interface StackProps {
   items: ClientCollection["items"];
 }
 
-function getTileComponent(
-  item: ClientCollection["items"][number],
-  isExpanded: boolean,
-) {
+function getTileComponent(item: ClientCollection["items"][number]) {
   const props = {
     id: item.id,
-    allowEdit: isExpanded,
   };
 
   if (item.text) {
-    return <TextTile {...props} key={item.id} text={item.text} />;
+    return <TextTile {...props} columns={1} text={item.text} />;
   }
 
   if (item.image) {
-    return <ImageTile {...props} key={item.id} image={item.image} />;
+    return <ImageTile {...props} image={item.image} />;
   }
 
   if (item.video) {
-    return <VideoTile {...props} key={item.id} video={item.video} />;
+    return <VideoTile {...props} video={item.video} />;
   }
 
   if (item.link) {
-    return <LinkTile {...props} key={item.id} link={item.link} />;
+    return <LinkTile {...props} link={item.link} />;
   }
 
   if (item.map) {
-    return <MapTile {...props} key={item.id} map={item.map} />;
+    return <MapTile {...props} map={item.map} />;
   }
 
   return null;
 }
 
 export default function Stack({ items }: StackProps) {
-  const ref = useRef<StackView>(null);
-  const [isExpanded, setExpanded] = useState(false);
-
-  const onToggle = useCallback(
-    (event: ToggleEvent) => setExpanded(event.newState === "open"),
-    [],
-  );
-
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) {
-      return;
-    }
-    element.addEventListener("toggle", onToggle);
-    return () => element.removeEventListener("toggle", onToggle);
-  }, [onToggle]);
-
   return (
-    <stack-view class={styles.stack} ref={ref}>
+    <stack-view class={styles.stack} expandable="expandable">
       {items.map((item, i) => (
-        <stack-item
+        <div
           key={item.id}
+          className={styles.item}
           style={
             {
               "--index": i,
@@ -74,8 +52,8 @@ export default function Stack({ items }: StackProps) {
             } as React.CSSProperties
           }
         >
-          {getTileComponent(item, isExpanded)}
-        </stack-item>
+          {getTileComponent(item)}
+        </div>
       ))}
     </stack-view>
   );

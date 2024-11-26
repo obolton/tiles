@@ -1,31 +1,36 @@
-.stack {
-  position: absolute;
-  inset: 0;
-
-  & > stack-item {
-    position: absolute;
-    inset: 0;
-    rotate: z var(--angle);
-    scale: 0.9;
-    opacity: max(calc(1 - var(--index) * 0.2), 0);
-    z-index: calc(1000 - var(--index));
-    transition-property: rotate, scale, opacity;
-    transition-duration: var(--animation-duration);
-    transition-timing-function: var(--easing);
-  }
-
-  &:state(overlay) {
-    z-index: 1;
-  }
+.stack::part(dialog) {
+  width: var(--grid-size);
+  height: var(--grid-size);
 }
 
-.stack:state(expanded) > stack-item {
-  position: relative;
-  inset: unset;
-  rotate: none;
-  scale: none;
-  opacity: 1;
-  height: calc((var(--grid-size) + var(--gap)) * var(--rows) - var(--gap));
-  min-width: var(--grid-size);
-  min-height: var(--grid-size);
+.item {
+  position: absolute;
+  inset: 0;
+  rotate: z var(--angle);
+  scale: 0.9;
+  opacity: max(calc(1 - var(--index) * 0.2), 0);
+  z-index: calc(1000 - var(--index));
+  transition-property: rotate, scale, opacity;
+  transition-duration: var(--animation-duration);
+  transition-timing-function: var(--easing);
+}
+
+.stack[open] {
+  &::part(dialog) {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: fit-content(100%);
+    gap: var(--gap);
+    width: 100%;
+    height: 100%;
+  }
+
+  .item {
+    position: relative;
+    inset: unset;
+    rotate: none;
+    scale: none;
+    opacity: 1;
+    aspect-ratio: 1;
+  }
 }
