@@ -45,12 +45,14 @@ declare namespace JSX {
     "calendar-month": CustomElementAttributes & {
       date?: string;
     };
-    "stack-view": CustomElementAttributes;
     "stack-item": CustomElementAttributes;
     "popover-menu": CustomElementAttributes & {
       anchor: string;
     };
     "pop-out": CustomElementAttributes & {
+      expandable?: "expandable";
+    };
+    "stack-view": CustomElementAttributes & {
       expandable?: "expandable";
     };
     "resize-item": CustomElementAttributes & {
