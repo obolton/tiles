@@ -120,12 +120,20 @@ export default class PopOut extends HTMLElement {
       return;
     }
 
+    this.dispatchEvent(
+      new ToggleEvent("beforetoggle", { oldState: "closed", newState: "open" }),
+    );
+
     this.setAttribute("opening", "");
 
     this.transition = viewTransition(() => {
       this.setAttribute("open", "");
       this.dialog.setAttribute("role", "dialog");
       this.dialog.showModal();
+
+      this.dispatchEvent(
+        new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
+      );
     });
     this.transition.finished.then(() => {
       delete this.transition;
@@ -139,12 +147,20 @@ export default class PopOut extends HTMLElement {
       return;
     }
 
+    this.dispatchEvent(
+      new ToggleEvent("beforetoggle", { oldState: "open", newState: "closed" }),
+    );
+
     this.setAttribute("closing", "");
 
     this.transition = viewTransition(() => {
       this.dialog.close();
       this.dialog.setAttribute("role", "none");
       this.removeAttribute("open");
+
+      this.dispatchEvent(
+        new ToggleEvent("toggle", { oldState: "open", newState: "closed" }),
+      );
     });
     this.transition.finished.then(() => {
       delete this.transition;
