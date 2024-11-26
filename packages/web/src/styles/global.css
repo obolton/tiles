@@ -85,7 +85,7 @@ body[data-disable-transitions] * {
 }
 
 body:has(dialog[open]),
-body:has(pop-out:state(expanded)) {
+body:has(pop-out[open]) {
   overflow: hidden;
 }
 
