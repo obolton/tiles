@@ -1,6 +1,7 @@
 import type { AppRouterOutputs } from "@/api/client";
 import client from "@/api/client";
 import type InfiniteScroll from "@/components/InfiniteScroll";
+import PagesGridItem from "./PagesGridItem";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Grid.module.css";
@@ -53,13 +54,9 @@ export default function PagesGrid({ pages: initialPages }: PagesGridProps) {
     <section className={styles.grid}>
       <infinite-scroll ref={ref}>
         {pages.map((page) => (
-          <PageLinkTile
-            id={page.id}
-            key={page.id}
-            rows={1}
-            columns={1}
-            pageLink={{ pageId: page.id, page }}
-          />
+          <PagesGridItem key={page.id}>
+            <PageLinkTile id={page.id} pageLink={{ pageId: page.id, page }} />
+          </PagesGridItem>
         ))}
       </infinite-scroll>
     </section>
