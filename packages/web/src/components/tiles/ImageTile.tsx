@@ -10,10 +10,16 @@ import styles from "./ImageTile.module.css";
 import Tile, { type TileProps } from "./Tile";
 
 interface ImageTileProps extends TileProps {
+  movable?: boolean;
   image: ClientImage;
 }
 
-export default function ImageTile({ id, image, ...props }: ImageTileProps) {
+export default function ImageTile({
+  id,
+  image,
+  movable = true,
+  ...props
+}: ImageTileProps) {
   const { imageKey, caption } = image;
   const isEditable = useEditable();
   const src = getImageUrl(imageKey);
@@ -59,7 +65,7 @@ export default function ImageTile({ id, image, ...props }: ImageTileProps) {
           style={style}
           loading="lazy"
           alt="Image"
-          movable={isEditable}
+          movable={movable && isEditable}
           draggable={!isEditable}
           origin={origin}
           onMove={setOrigin}

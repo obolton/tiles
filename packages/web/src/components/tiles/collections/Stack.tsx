@@ -20,7 +20,7 @@ function getTileComponent(item: ClientCollection["items"][number]) {
   }
 
   if (item.image) {
-    return <ImageTile {...props} image={item.image} />;
+    return <ImageTile {...props} image={item.image} movable={false} />;
   }
 
   if (item.video) {
