@@ -48,47 +48,54 @@ export default function MapTile({ id, map, ...props }: MapTileProps) {
   }, [handleDelete]);
 
   return (
-    <Tile {...props} id={id} expandable origin="center">
-      <map-view
-        class={styles.map}
-        movable
-        legend={places.length > 1 ? "legend" : undefined}
-        ref={ref}
-      >
-        {places.map((place) => (
-          <Fragment key={place.id}>
-            <map-marker
-              id={place.id}
-              lat={place.lat}
-              long={place.long}
-              bounds={
-                place.boundingBox.length === 4
-                  ? place.boundingBox.join(",")
-                  : undefined
-              }
-              label={place.name}
-            />
-            <map-legend-item
-              slot="legend"
-              marker={place.id}
-              delete={isEditable}
+    <pop-out
+      class={styles["pop-out"]}
+      expandable="expandable"
+      tabindex="0"
+      origin="center"
+    >
+      <Tile {...props} id={id}>
+        <map-view
+          class={styles.map}
+          movable
+          legend={places.length > 1 ? "legend" : undefined}
+          ref={ref}
+        >
+          {places.map((place) => (
+            <Fragment key={place.id}>
+              <map-marker
+                id={place.id}
+                lat={place.lat}
+                long={place.long}
+                bounds={
+                  place.boundingBox.length === 4
+                    ? place.boundingBox.join(",")
+                    : undefined
+                }
+                label={place.name}
+              />
+              <map-legend-item
+                slot="legend"
+                marker={place.id}
+                delete={isEditable}
+              >
+                {place.name}
+              </map-legend-item>
+            </Fragment>
+          ))}
+          {isEditable ? (
+            <button
+              type="button"
+              className="floating tooltip tooltip-right"
+              aria-label="Add a place"
+              slot="toolbar"
+              onClick={addPlace}
             >
-              {place.name}
-            </map-legend-item>
-          </Fragment>
-        ))}
-        {isEditable ? (
-          <button
-            type="button"
-            className="floating tooltip tooltip-right"
-            aria-label="Add a place"
-            slot="toolbar"
-            onClick={addPlace}
-          >
-            <img src={addPlaceIcon.src} alt="Add a place" />
-          </button>
-        ) : null}
-      </map-view>
-    </Tile>
+              <img src={addPlaceIcon.src} alt="Add a place" />
+            </button>
+          ) : null}
+        </map-view>
+      </Tile>
+    </pop-out>
   );
 }
