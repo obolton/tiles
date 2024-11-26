@@ -52,7 +52,6 @@ declare namespace JSX {
     };
     "pop-out": CustomElementAttributes & {
       expandable?: "expandable";
-      origin?: "center" | "top-left";
     };
     "resize-item": CustomElementAttributes & {
       disabled?: "disabled";

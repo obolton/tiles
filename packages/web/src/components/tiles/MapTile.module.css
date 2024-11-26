@@ -11,3 +11,11 @@
   height: 100%;
   display: flex;
 }
+
+.pop-out[opening]::part(dialog) {
+  view-transition-name: grow-center;
+}
+
+.pop-out[closing]::part(dialog) {
+  view-transition-name: shrink-center;
+}

@@ -7,7 +7,7 @@ const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 export default class PopOut extends HTMLElement {
-  static readonly observedAttributes = ["expandable", "origin"] as const;
+  static readonly observedAttributes = ["expandable"] as const;
 
   private readonly dialog: HTMLDialogElement;
   private transition?: ViewTransition;

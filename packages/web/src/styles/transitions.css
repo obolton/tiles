@@ -33,26 +33,6 @@
   object-fit: cover;
 }
 
-/*
-View transitions for elements inside the shadow DOM need to be applied
-from outside the shadow DOM: https://issues.chromium.org/issues/349653208
-*/
-pop-out[opening]::part(dialog) {
-  view-transition-name: grow-center;
-}
-
-pop-out[closing]::part(dialog) {
-  view-transition-name: shrink-center;
-}
-
-pop-out[opening][origin="top-left"]::part(dialog) {
-  view-transition-name: grow-top-left;
-}
-
-pop-out[closing][origin="top-left"]::part(dialog) {
-  view-transition-name: shrink-top-left;
-}
-
 pop-out::part(close) {
   view-transition-name: close-button;
 }
