@@ -9,6 +9,7 @@ import { classNames } from "@/utils/css";
 import type { ClientEvent } from "@/types/tiles";
 
 interface EventTileProps extends TileProps {
+  columns: number;
   event: ClientEvent;
 }
 
@@ -68,7 +69,7 @@ export default function EventTile({
   const size = endDate ? (allDay ? "medium" : "small") : "large";
 
   return (
-    <Tile id={id} columns={columns} {...props}>
+    <Tile id={id} {...props}>
       <div className={styles.event} onClick={edit}>
         <header className={styles.header}>
           {yearFormatter.format(startDate)}
