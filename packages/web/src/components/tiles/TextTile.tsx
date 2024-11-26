@@ -14,10 +14,16 @@ import type { ClientText } from "@/types/tiles";
 import type { EditorState } from "@/components/inputs/RichTextEditor/RichTextEditor";
 
 interface TextTileProps extends TileProps {
+  columns: number;
   text: ClientText;
 }
 
-export default function TextTile({ id, text, ...tile }: TextTileProps) {
+export default function TextTile({
+  id,
+  columns,
+  text,
+  ...tile
+}: TextTileProps) {
   const { content, theme: initialTheme, hue: initialHue } = text;
   const isEditable = useEditable();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
@@ -63,39 +69,43 @@ export default function TextTile({ id, text, ...tile }: TextTileProps) {
   );
 
   return (
-    <Tile
-      {...tile}
-      id={id}
-      theme={theme}
-      hue={hue}
-      showBorder={isEditable || (!!tile.columns && tile.columns < 3)}
-      variableHeight={tile.columns === 3}
-      onDrop={onDrop}
-      expandable={tile.columns !== 3}
+    <pop-out
+      class={styles["pop-out"]}
+      tabindex="0"
+      expandable={columns === 3 ? undefined : "expandable"}
       origin="top-left"
     >
-      {isEditable ? (
-        <RichTextEditor
-          className={classNames(styles.text, styles.editor)}
-          onBlur={onBlur}
-          onChange={setEditorState}
-          onPointerDownCapture={onPointerDown}
-          onClickCapture={onPointerDown}
-          placeholder="Write something"
-          value={content}
-          editable
-        >
-          <Toolbar
-            className={styles.toolbar}
-            color={{ theme, hue: hue ?? undefined }}
-            onChangeColor={onChangeColor}
-          />
-        </RichTextEditor>
-      ) : (
-        <div className={classNames(styles.text, styles.static)} tabIndex={0}>
-          <RichText content={content} />
-        </div>
-      )}
-    </Tile>
+      <Tile
+        {...tile}
+        id={id}
+        theme={theme}
+        hue={hue}
+        showBorder={isEditable || columns < 3}
+        onDrop={onDrop}
+      >
+        {isEditable ? (
+          <RichTextEditor
+            className={classNames(styles.text, styles.editor)}
+            onBlur={onBlur}
+            onChange={setEditorState}
+            onPointerDownCapture={onPointerDown}
+            onClickCapture={onPointerDown}
+            placeholder="Write something"
+            value={content}
+            editable
+          >
+            <Toolbar
+              className={styles.toolbar}
+              color={{ theme, hue: hue ?? undefined }}
+              onChangeColor={onChangeColor}
+            />
+          </RichTextEditor>
+        ) : (
+          <div className={classNames(styles.text, styles.static)} tabIndex={0}>
+            <RichText content={content} />
+          </div>
+        )}
+      </Tile>
+    </pop-out>
   );
 }

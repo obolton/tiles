@@ -74,7 +74,14 @@
   transition-behavior: allow-discrete;
 }
 
-pop-out[expandable] {
+.pop-out {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.pop-out[expandable] {
   & .static {
     overflow: hidden;
 
@@ -108,7 +115,7 @@ pop-out[expandable] {
   }
 }
 
-pop-out[open] {
+.pop-out[open] {
   & .toolbar {
     opacity: 1;
   }
@@ -123,7 +130,7 @@ pop-out[open] {
   }
 }
 
-pop-out:not([expandable]) {
+.pop-out:not([expandable]) {
   & .toolbar {
     transition-property: opacity, display;
   }
@@ -140,7 +147,7 @@ pop-out:not([expandable]) {
   }
 }
 
-pop-out[expandable]:not([open]) {
+.pop-out[expandable]:not([open]) {
   & .static {
     cursor: pointer;
   }
