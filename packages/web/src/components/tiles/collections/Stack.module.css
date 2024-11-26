@@ -25,4 +25,7 @@
   rotate: none;
   scale: none;
   opacity: 1;
+  height: calc((var(--grid-size) + var(--gap)) * var(--rows) - var(--gap));
+  min-width: var(--grid-size);
+  min-height: var(--grid-size);
 }
