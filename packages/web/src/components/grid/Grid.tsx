@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ImageTile from "@/components/tiles/ImageTile";
 import VideoTile from "@/components/tiles/VideoTile";
 import TextTile from "@/components/tiles/TextTile";
@@ -20,6 +20,10 @@ import type { ClientTile } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
 import type { ResizeEvent } from "@/utils/resize";
 import { viewTransition } from "@/utils/transitions";
+import useEditable from "@/hooks/useEditable";
+import GridItem from "./GridItem";
+import { deleteTile } from "@/utils/edit";
+import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
 
 interface GridProps {
   tiles: ClientTile[];
@@ -34,25 +38,23 @@ function getTileComponent(tile: ClientTile) {
   };
   switch (type) {
     case "IMAGE":
-      return <ImageTile {...props} key={tile.id} image={tile.image} />;
+      return <ImageTile {...props} image={tile.image} />;
     case "VIDEO":
-      return <VideoTile {...props} key={tile.id} video={tile.video} />;
+      return <VideoTile {...props} video={tile.video} />;
     case "TEXT":
-      return <TextTile {...props} key={tile.id} text={tile.text} />;
+      return <TextTile {...props} text={tile.text} />;
     case "MAP":
-      return <MapTile {...props} key={tile.id} map={tile.map} />;
+      return <MapTile {...props} map={tile.map} />;
     case "LINK":
-      return <LinkTile {...props} key={tile.id} link={tile.link} />;
+      return <LinkTile {...props} link={tile.link} />;
     case "HEADING":
-      return <HeadingTile {...props} key={tile.id} heading={tile.heading} />;
+      return <HeadingTile {...props} heading={tile.heading} />;
     case "PAGE_LINK":
-      return <PageLinkTile {...props} key={tile.id} pageLink={tile.pageLink} />;
+      return <PageLinkTile {...props} pageLink={tile.pageLink} />;
     case "EVENT":
-      return <EventTile {...props} key={tile.id} event={tile.event} />;
+      return <EventTile {...props} event={tile.event} />;
     case "COLLECTION":
-      return (
-        <CollectionTile {...props} key={tile.id} collection={tile.collection} />
-      );
+      return <CollectionTile {...props} collection={tile.collection} />;
     default:
       throw new Error(`Unknown tile type: ${type}`);
   }
@@ -71,6 +73,21 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
     ref,
     LAYOUT_TRANSITION_OPTIONS,
   );
+  const isEditable = useEditable();
+
+  const onDelete = useCallback(async (id?: string) => {
+    if (!id) {
+      return;
+    }
+    await client.tiles.delete.mutate({ id });
+    const element = document.getElementById(id);
+    if (element) {
+      await destroy(element, {
+        timing: { ...DEFAULT_TIMING, fill: "forwards" },
+      });
+    }
+    deleteTile(id);
+  }, []);
 
   useEffect(() => {
     const create = (event: Event) => {
@@ -195,7 +212,19 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
 
   return (
     <section className={styles.grid} ref={ref}>
-      {tiles.map(getTileComponent)}
+      {tiles.map((tile) => (
+        <GridItem
+          key={tile.id}
+          id={tile.id}
+          rows={tile.rows}
+          columns={tile.columns}
+          isEditable={isEditable}
+          onDelete={onDelete}
+          grow={tile.type === "TEXT" && tile.columns === 3}
+        >
+          {getTileComponent(tile)}
+        </GridItem>
+      ))}
     </section>
   );
 }

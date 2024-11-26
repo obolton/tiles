@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { classNames } from "@/utils/css";
 import useDraggable from "@/hooks/useDraggable";
 import DeleteButton from "../tiles/DeleteButton";
@@ -10,10 +10,8 @@ interface GridItemProps {
   rows: number;
   columns: number;
   grow?: boolean;
-  popOut: boolean;
-  popOutOrigin?: "center" | "top-left";
   isEditable?: boolean;
-  onDelete: () => void;
+  onDelete: (id?: string) => void;
   children: React.ReactNode;
 }
 
@@ -23,14 +21,14 @@ export default function GridItem({
   rows,
   columns,
   grow = false,
-  popOut,
-  popOutOrigin,
   isEditable = false,
   onDelete,
   children,
 }: GridItemProps) {
   const ref = useRef<HTMLDivElement>(null);
   useDraggable(ref, isEditable);
+
+  const handleDelete = useCallback(() => onDelete(id), [id, onDelete]);
 
   const style = useMemo(
     () =>
@@ -52,17 +50,10 @@ export default function GridItem({
       data-columns={columns}
       data-drop-target={isEditable ? "true" : undefined}
     >
-      <pop-out
-        class={classNames(styles["pop-out"])}
-        tabindex="0"
-        expandable={popOut ? "expandable" : undefined}
-        origin={popOutOrigin}
-      >
-        {children}
-        {isEditable ? (
-          <DeleteButton className={styles.delete} onPress={onDelete} />
-        ) : null}
-      </pop-out>
+      {children}
+      {isEditable ? (
+        <DeleteButton className={styles.delete} onPress={handleDelete} />
+      ) : null}
     </resize-item>
   );
 }
