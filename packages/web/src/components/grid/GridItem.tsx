@@ -6,6 +6,7 @@ import styles from "./GridItem.module.css";
 
 interface GridItemProps {
   id?: string;
+  style?: React.CSSProperties;
   className?: string;
   rows: number;
   columns: number;
@@ -18,6 +19,7 @@ interface GridItemProps {
 export default function GridItem({
   id,
   className,
+  style,
   rows,
   columns,
   grow = false,
@@ -30,13 +32,14 @@ export default function GridItem({
 
   const handleDelete = useCallback(() => onDelete(id), [id, onDelete]);
 
-  const style = useMemo(
+  const combinedStyles = useMemo(
     () =>
       ({
+        ...style,
         "--columns": columns,
         "--rows": rows,
       }) as React.CSSProperties,
-    [columns, rows],
+    [style, columns, rows],
   );
 
   return (
@@ -45,7 +48,7 @@ export default function GridItem({
       ref={ref}
       disabled={!isEditable ? "disabled" : undefined}
       class={classNames(styles.item, grow && styles.grow, className)}
-      style={style}
+      style={combinedStyles}
       data-rows={rows}
       data-columns={columns}
       data-drop-target={isEditable ? "true" : undefined}

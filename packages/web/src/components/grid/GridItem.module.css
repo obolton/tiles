@@ -7,7 +7,6 @@
   display: flex;
   isolation: isolate;
   border-radius: 12px;
-  position: relative;
 
   &.grow {
     height: fit-content;

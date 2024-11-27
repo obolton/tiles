@@ -5,6 +5,7 @@ import MapTile from "@/components/tiles/MapTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import styles from "./Stack.module.css";
 import type { ClientCollection } from "@/types/tiles";
+import GridItem from "@/components/grid/GridItem";
 
 interface StackProps {
   items: ClientCollection["items"];
@@ -42,9 +43,15 @@ export default function Stack({ items }: StackProps) {
   return (
     <stack-view class={styles.stack} expandable="expandable">
       {items.map((item, i) => (
-        <div
-          key={item.id}
+        <GridItem
           className={styles.item}
+          key={item.id}
+          id={item.id}
+          rows={1}
+          columns={1}
+          isEditable={false}
+          onDelete={() => {}}
+          grow={false}
           style={
             {
               "--index": i,
@@ -53,7 +60,7 @@ export default function Stack({ items }: StackProps) {
           }
         >
           {getTileComponent(item)}
-        </div>
+        </GridItem>
       ))}
     </stack-view>
   );
