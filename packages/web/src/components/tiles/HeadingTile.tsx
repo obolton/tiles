@@ -73,7 +73,7 @@ export default function HeadingTile({ id, heading }: HeadingTileProps) {
       id={id}
       ref={ref}
       className={classNames(styles.heading, "editable")}
-      data-drop-target={isEditable ? "true" : undefined}
+      data-drop-group={isEditable ? "root" : undefined}
       data-tile-id={id}
     >
       {isEditable ? (

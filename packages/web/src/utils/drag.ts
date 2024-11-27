@@ -17,6 +17,7 @@ export class DragState {
   private readonly abortController = new AbortController();
 
   private isDragging = false;
+  private dropGroup: string;
   private dragElement: HTMLElement | null = null;
   private dropTarget: HTMLElement | null = null;
   private dropTargets: NodeListOf<HTMLElement> | null = null;
@@ -29,6 +30,7 @@ export class DragState {
 
   constructor(element: HTMLElement, fromPoint: DOMPoint) {
     this.element = element;
+    this.dropGroup = element.dataset.dropGroup || "root";
     this.container = element.offsetParent || document.body;
     this.elementRect = element.getBoundingClientRect();
     this.fromPoint = fromPoint;
@@ -226,7 +228,7 @@ export class DragState {
     document.body.dataset.drag = "true";
 
     this.dropTargets = document.querySelectorAll<HTMLElement>(
-      '[data-drop-target="true"]',
+      `[data-drop-group="${this.dropGroup}"]`,
     );
 
     this.dragElement = this.element.cloneNode(true) as HTMLElement;

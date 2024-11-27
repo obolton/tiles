@@ -222,6 +222,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
           isEditable={isEditable}
           onDelete={onDelete}
           grow={tile.type === "TEXT" && tile.columns === 3}
+          dropGroup={isEditable ? "root" : undefined}
         >
           {getTileComponent(tile)}
         </GridItem>

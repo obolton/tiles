@@ -12,6 +12,7 @@ interface GridItemProps {
   columns: number;
   grow?: boolean;
   isEditable?: boolean;
+  dropGroup?: string;
   onDelete: (id?: string) => void;
   children: React.ReactNode;
 }
@@ -24,11 +25,12 @@ export default function GridItem({
   columns,
   grow = false,
   isEditable = false,
+  dropGroup,
   onDelete,
   children,
 }: GridItemProps) {
   const ref = useRef<HTMLDivElement>(null);
-  useDraggable(ref, isEditable);
+  useDraggable(ref, isEditable && !!dropGroup);
 
   const handleDelete = useCallback(() => onDelete(id), [id, onDelete]);
 
@@ -51,7 +53,7 @@ export default function GridItem({
       style={combinedStyles}
       data-rows={rows}
       data-columns={columns}
-      data-drop-target={isEditable ? "true" : undefined}
+      data-drop-group={dropGroup}
     >
       {children}
       {isEditable ? (
