@@ -55,12 +55,18 @@ export default class PopOut extends HTMLElement {
     this.dialog.addEventListener("pointerdown", this);
     this.dialog.addEventListener("focusin", this);
     this.dialog.addEventListener("keydown", this);
+    this.addEventListener("drag:drag-over", this);
+    this.addEventListener("drag:drop-on", this);
+    this.addEventListener("drag:drop", this);
   }
 
   private removeEventListeners() {
     this.dialog.removeEventListener("pointerdown", this);
     this.dialog.removeEventListener("focusin", this);
     this.dialog.removeEventListener("keydown", this);
+    this.removeEventListener("drag:drag-over", this);
+    this.removeEventListener("drag:drop-on", this);
+    this.removeEventListener("drag:drop", this);
   }
 
   handleEvent(event: Event) {
@@ -71,11 +77,14 @@ export default class PopOut extends HTMLElement {
         return this.handleFocusIn(event as FocusEvent);
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
-    }
-  }
 
-  private isExpandable() {
-    return this.getAttribute("expandable") === "expandable";
+      // Prevent drag events on overlay from bubbling up
+      case "drag:drag-over":
+      case "drag:drop-on":
+      case "drag:drop":
+        event.stopPropagation();
+        return;
+    }
   }
 
   private isOpen() {
@@ -83,16 +92,20 @@ export default class PopOut extends HTMLElement {
   }
 
   private handlePointerDown(event: PointerEvent) {
+    // Prevent pointer events on overlay from bubbling up
+    if (this.isOpen()) {
+      event.stopPropagation();
+    }
+
     if (event.button !== PRIMARY_MOUSE_BUTTON) {
       return;
     }
 
-    if (this.isOpen() && event.target === this.dialog) {
-      this.close();
-
-      // Prevent pointer events on overlay from bubbling up
-      event.stopPropagation();
-    } else if (!this.isOpen()) {
+    if (this.isOpen()) {
+      if (event.target === this.dialog) {
+        this.close();
+      }
+    } else {
       this.open();
     }
   }
