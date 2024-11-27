@@ -192,19 +192,20 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       const rows = Math.max(Math.round(size.height / columnWidth), 1);
       await client.tiles.resize.mutate({ id, columns, rows });
     };
+    const element = ref.current;
     window.addEventListener("tile:create", create);
     window.addEventListener("tile:update", update);
     window.addEventListener("tile:delete", deleteTile);
-    window.addEventListener("drag:drag-over", dragOver);
-    window.addEventListener("drag:drop", drop);
+    element?.addEventListener("drag:drag-over", dragOver);
+    element?.addEventListener("drag:drop", drop);
     window.addEventListener("resize:resize", resize);
     window.addEventListener("resize:end", resizeEnd);
     return () => {
       window.removeEventListener("tile:create", create);
       window.removeEventListener("tile:update", update);
       window.removeEventListener("tile:delete", deleteTile);
-      window.removeEventListener("drag:drag-over", dragOver);
-      window.removeEventListener("drag:drop", drop);
+      element?.removeEventListener("drag:drag-over", dragOver);
+      element?.removeEventListener("drag:drop", drop);
       window.removeEventListener("resize:resize", resize);
       window.removeEventListener("resize:end", resizeEnd);
     };

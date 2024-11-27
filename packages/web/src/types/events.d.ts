@@ -1,7 +1,5 @@
 declare global {
   interface WindowEventHandlersEventMap {
-    "drag:drag-over": DragDropEvent;
-    "drag:drop": DragDropEvent;
     "resize:resize": ResizeEvent;
     "resize:end": ResizeEvent;
     "state:update": StorageEvent;
@@ -14,7 +12,9 @@ declare global {
     beforetoggle: ToggleEvent;
     toggle: ToggleEvent;
     upload: import("@/components/forms/FilePicker").FilePickerEvent;
-    "drag:drop-on": DragDropEvent;
+    "drag:drag-over": import("@/utils/drag").DragDropEvent;
+    "drag:drop-on": import("@/utils/drag").DragDropEvent;
+    "drag:drop": import("@/utils/drag").DragDropEvent;
   }
 }
 
