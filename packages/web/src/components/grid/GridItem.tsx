@@ -49,7 +49,12 @@ export default function GridItem({
       id={id}
       ref={ref}
       disabled={!isEditable ? "disabled" : undefined}
-      class={classNames(styles.item, grow && styles.grow, className)}
+      class={classNames(
+        styles.item,
+        isEditable && styles.editable,
+        grow && styles.grow,
+        className,
+      )}
       style={combinedStyles}
       data-rows={rows}
       data-columns={columns}

@@ -15,7 +15,7 @@
 }
 
 /* Drag handle */
-body[data-editing]:not([data-drag]) .item:not(:has([open])),
+.editable:not(:has([open])),
 .item[data-drag-preview] {
   &:hover {
     outline-color: transparent;
