@@ -234,6 +234,7 @@ export class DragState {
     this.dragElement = this.element.cloneNode(true) as HTMLElement;
     this.dragElement.dataset.dragPreview = "true";
     delete this.dragElement.dataset.dropTarget;
+    this.dragElement.setAttribute("popover", "");
 
     this.dragElement.style.setProperty("width", `${this.elementRect.width}px`);
     this.dragElement.style.setProperty(
@@ -264,6 +265,8 @@ export class DragState {
     this.dragElement.style.setProperty("--rotate-angle", `${rotateAngle}deg`);
 
     document.body.appendChild(this.dragElement);
+    this.dragElement.showPopover();
+
     document.body.style.setProperty("cursor", "move");
 
     this.element.dataset.dragging = "true";

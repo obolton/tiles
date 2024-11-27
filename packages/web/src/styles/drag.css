@@ -11,6 +11,8 @@
   left: var(--initial-x);
   margin: 0;
   z-index: 1;
+  border: none;
+  overflow: visible;
   pointer-events: none;
   transform: perspective(1000px);
   transform-origin: var(--transform-origin-x) var(--transform-origin-y);
