@@ -24,6 +24,7 @@ import useEditable from "@/hooks/useEditable";
 import GridItem from "./GridItem";
 import { deleteTile } from "@/utils/edit";
 import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
+import { handleError } from "@/utils/errors";
 
 interface GridProps {
   tiles: ClientTile[];
@@ -128,6 +129,9 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
           ref.current.children,
           target,
         );
+        if (fromPosition < 0 || toPosition < 0) {
+          return;
+        }
         startLayoutTransition(() => {
           setTiles((prevTiles) =>
             moveElement(prevTiles, fromPosition, toPosition),
@@ -143,7 +147,11 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
           ref.current.children,
           dragSource,
         );
-        await client.tiles.move.mutate({ id, position });
+        try {
+          await client.tiles.move.mutate({ id, position });
+        } catch (error) {
+          handleError(error);
+        }
       }
     };
     const resize = (event: ResizeEvent) => {
