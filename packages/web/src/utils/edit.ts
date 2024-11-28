@@ -1,5 +1,5 @@
 import { get, set, remove } from "./state";
-import { EDIT_START_EVENT, DELETE_TILE_EVENT } from "@/constants/edit";
+import { EDIT_START_EVENT } from "@/constants/edit";
 import client from "@/api/client";
 import type { AppRouterInputs } from "@/api/client";
 import type { TileType, ClientEntity, ClientTile } from "@/types/tiles";
@@ -29,10 +29,6 @@ export function editTile(
     throw new Error("Not in editing mode");
   }
   showModal(tileType, { tileId, tile });
-}
-
-export function deleteTile(id: string) {
-  window.dispatchEvent(new CustomEvent(DELETE_TILE_EVENT, { detail: { id } }));
 }
 
 type CreateTileInput = AppRouterInputs["tiles"]["create"];
