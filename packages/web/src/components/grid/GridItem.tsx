@@ -5,7 +5,7 @@ import DeleteButton from "../tiles/DeleteButton";
 import styles from "./GridItem.module.css";
 
 interface GridItemProps {
-  id?: string;
+  id: string;
   style?: React.CSSProperties;
   className?: string;
   rows: number;
@@ -13,7 +13,7 @@ interface GridItemProps {
   grow?: boolean;
   isEditable?: boolean;
   dropGroup?: string;
-  onDelete: (id?: string) => void;
+  onDelete: (id: string) => void;
   children: React.ReactNode;
 }
 
