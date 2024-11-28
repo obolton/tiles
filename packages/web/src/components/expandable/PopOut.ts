@@ -103,6 +103,7 @@ export default class PopOut extends HTMLElement {
 
     if (this.isOpen()) {
       if (event.target === this.dialog) {
+        event.preventDefault();
         this.close();
       }
     } else {
