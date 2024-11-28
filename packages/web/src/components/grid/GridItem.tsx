@@ -12,6 +12,7 @@ interface GridItemProps {
   columns: number;
   grow?: boolean;
   isEditable?: boolean;
+  resizable?: boolean;
   dropGroup?: string;
   onDelete: (id: string) => void;
   children: React.ReactNode;
@@ -25,6 +26,7 @@ export default function GridItem({
   columns,
   grow = false,
   isEditable = false,
+  resizable = false,
   dropGroup,
   onDelete,
   children,
@@ -48,7 +50,7 @@ export default function GridItem({
     <resize-item
       id={id}
       ref={ref}
-      disabled={!isEditable ? "disabled" : undefined}
+      disabled={!resizable ? "disabled" : undefined}
       class={classNames(
         styles.item,
         isEditable && styles.editable,
