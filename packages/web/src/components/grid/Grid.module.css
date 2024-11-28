@@ -19,3 +19,14 @@
     );
   }
 }
+
+.item {
+  transition: scale var(--animation-duration) var(--easing);
+
+  &[data-drag-over="true"] {
+    outline: solid var(--focus-ring-color) 3px !important;
+    outline-offset: 3px;
+    scale: 1.2;
+    z-index: 1;
+  }
+}

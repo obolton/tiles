@@ -218,6 +218,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
         <GridItem
           key={tile.id}
           id={tile.id}
+          className={styles.item}
           rows={tile.rows}
           columns={tile.columns}
           isEditable={isEditable}
