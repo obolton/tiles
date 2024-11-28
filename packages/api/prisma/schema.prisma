@@ -109,36 +109,38 @@ enum TileType {
 }
 
 model Tile {
-  id             String   @id @default(uuid()) @db.Uuid
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-  pageId         String   @map("page_id") @db.Uuid
-  position       Int
-  columns        Int      @default(1) @db.SmallInt
-  rows           Int      @default(1) @db.SmallInt
-  imageTileId    String?  @map("image_tile_id") @db.Uuid
-  videoTileId    String?  @map("video_tile_id") @db.Uuid
-  textTileId     String?  @map("text_tile_id") @db.Uuid
-  placeTileId    String?  @map("place_tile_id") @db.Uuid
-  mapTileId      String?  @map("map_tile_id") @db.Uuid
-  linkTileId     String?  @map("link_tile_id") @db.Uuid
-  headingTileId  String?  @map("heading_tile_id") @db.Uuid
-  pageLinkTileId String?  @map("page_link_tile_id") @db.Uuid
-  eventTileId    String?  @map("event_tile_id") @db.Uuid
-  collectionId   String?  @map("collection_id") @db.Uuid
+  id                 String   @id @default(uuid()) @db.Uuid
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+  pageId             String   @map("page_id") @db.Uuid
+  position           Int
+  columns            Int      @default(1) @db.SmallInt
+  rows               Int      @default(1) @db.SmallInt
+  imageTileId        String?  @map("image_tile_id") @db.Uuid
+  videoTileId        String?  @map("video_tile_id") @db.Uuid
+  textTileId         String?  @map("text_tile_id") @db.Uuid
+  placeTileId        String?  @map("place_tile_id") @db.Uuid
+  mapTileId          String?  @map("map_tile_id") @db.Uuid
+  linkTileId         String?  @map("link_tile_id") @db.Uuid
+  headingTileId      String?  @map("heading_tile_id") @db.Uuid
+  pageLinkTileId     String?  @map("page_link_tile_id") @db.Uuid
+  eventTileId        String?  @map("event_tile_id") @db.Uuid
+  collectionId       String?  @map("collection_id") @db.Uuid
+  parentCollectionId String?  @map("parent_collection_id") @db.Uuid
 
-  page       Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  type       TileType
-  image      ImageTile?    @relation(fields: [imageTileId], references: [id], onDelete: SetNull)
-  video      VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
-  text       TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
-  place      PlaceTile?    @relation(fields: [placeTileId], references: [id], onDelete: SetNull)
-  map        MapTile?      @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
-  link       LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
-  heading    HeadingTile?  @relation(fields: [headingTileId], references: [id], onDelete: SetNull)
-  pageLink   PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
-  event      EventTile?    @relation(fields: [eventTileId], references: [id], onDelete: SetNull)
-  collection Collection?   @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  page             Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  parentCollection Collection?   @relation("ParentCollection", fields: [parentCollectionId], references: [id], onDelete: SetNull)
+  type             TileType
+  image            ImageTile?    @relation(fields: [imageTileId], references: [id], onDelete: SetNull)
+  video            VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
+  text             TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
+  place            PlaceTile?    @relation(fields: [placeTileId], references: [id], onDelete: SetNull)
+  map              MapTile?      @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
+  link             LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
+  heading          HeadingTile?  @relation(fields: [headingTileId], references: [id], onDelete: SetNull)
+  pageLink         PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
+  event            EventTile?    @relation(fields: [eventTileId], references: [id], onDelete: SetNull)
+  collection       Collection?   @relation("CollectionTile", fields: [collectionId], references: [id], onDelete: SetNull)
 
   @@map("tiles")
 }
@@ -152,8 +154,7 @@ model ImageTile {
   originX   Float    @default(0.5) @map("origin_x") @db.Real
   originY   Float    @default(0.5) @map("origin_y") @db.Real
 
-  tiles       Tile[]
-  collections CollectionItem[]
+  tiles Tile[]
 
   @@map("image_tiles")
 }
@@ -172,8 +173,7 @@ model VideoTile {
   title       String
   description String?
 
-  tiles       Tile[]
-  collections CollectionItem[]
+  tiles Tile[]
 
   @@map("video_tiles")
 }
@@ -188,8 +188,7 @@ model TextTile {
   theme   Theme  @default(LIGHT) @map("theme")
   hue     Float? @db.Real
 
-  tiles       Tile[]
-  collections CollectionItem[]
+  tiles Tile[]
 
   @@map("text_tiles")
 }
@@ -206,9 +205,8 @@ model PlaceTile {
   providerId  String?  @map("provider_id")
   mapTileId   String?  @map("map_tile_id") @db.Uuid
 
-  tiles       Tile[]
-  collections CollectionItem[]
-  map         MapTile?         @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
+  tiles Tile[]
+  map   MapTile? @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
 
   @@map("place_tiles")
 }
@@ -218,9 +216,8 @@ model MapTile {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  tiles       Tile[]
-  places      PlaceTile[]
-  collections CollectionItem[]
+  tiles  Tile[]
+  places PlaceTile[]
 
   @@map("map_tiles")
 }
@@ -235,8 +232,7 @@ model LinkTile {
   siteName    String?  @map("site_name")
   imageUrl    String?  @map("image_url")
 
-  tiles       Tile[]
-  collections CollectionItem[]
+  tiles Tile[]
 
   @@map("link_tiles")
 }
@@ -258,9 +254,8 @@ model PageLinkTile {
   updatedAt DateTime @updatedAt @map("updated_at")
   pageId    String?  @map("page_id") @db.Uuid
 
-  page        Page?            @relation(fields: [pageId], references: [id], onDelete: SetNull)
-  tiles       Tile[]
-  collections CollectionItem[]
+  page  Page?  @relation(fields: [pageId], references: [id], onDelete: SetNull)
+  tiles Tile[]
 
   @@map("page_link_tiles")
 }
@@ -275,15 +270,13 @@ model EventTile {
   allDay    Boolean   @default(false) @map("all_day")
   timeZone  String?   @map("time_zone")
 
-  tiles       Tile[]
-  collections CollectionItem[]
+  tiles Tile[]
 
   @@map("event_tiles")
 }
 
 enum CollectionType {
   STACK
-  MAP
 }
 
 model Collection {
@@ -294,40 +287,11 @@ model Collection {
   title     String?
   type      CollectionType @default(STACK)
 
-  user  User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items CollectionItem[]
-  tiles Tile[]
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tiles Tile[] @relation("CollectionTile")
+  items Tile[] @relation("ParentCollection")
 
   @@index([userId])
   @@index([userId, updatedAt])
   @@map("collections")
-}
-
-model CollectionItem {
-  id             String   @id @default(uuid()) @db.Uuid
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
-  collectionId   String   @map("collection_id") @db.Uuid
-  position       Int
-  imageTileId    String?  @map("image_tile_id") @db.Uuid
-  videoTileId    String?  @map("video_tile_id") @db.Uuid
-  textTileId     String?  @map("text_tile_id") @db.Uuid
-  placeTileId    String?  @map("place_tile_id") @db.Uuid
-  mapTileId      String?  @map("map_tile_id") @db.Uuid
-  linkTileId     String?  @map("link_tile_id") @db.Uuid
-  pageLinkTileId String?  @map("page_link_tile_id") @db.Uuid
-  eventTileId    String?  @map("event_tile_id") @db.Uuid
-
-  collection Collection    @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  image      ImageTile?    @relation(fields: [imageTileId], references: [id], onDelete: SetNull)
-  video      VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
-  text       TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
-  place      PlaceTile?    @relation(fields: [placeTileId], references: [id], onDelete: SetNull)
-  map        MapTile?      @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
-  link       LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
-  pageLink   PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
-  event      EventTile?    @relation(fields: [eventTileId], references: [id], onDelete: SetNull)
-
-  @@index([collectionId])
-  @@map("collection_items")
 }
