@@ -151,7 +151,7 @@ export type CollectionTileSchema = z.infer<typeof CollectionTileSchema>;
 export const CreateTileSchema = z.object({
   pageId: z.string().uuid(),
   tile: z.discriminatedUnion("type", [
-    UpdateImageTileSchema,
+    CreateImageTileSchema,
     CreateVideoTileSchema,
     TextTileSchema,
     LinkTileSchema,
