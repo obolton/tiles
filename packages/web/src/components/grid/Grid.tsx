@@ -22,7 +22,6 @@ import type { ResizeEvent } from "@/utils/resize";
 import { viewTransition } from "@/utils/transitions";
 import useEditable from "@/hooks/useEditable";
 import GridItem from "./GridItem";
-import { deleteTile } from "@/utils/edit";
 import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
 import { handleError } from "@/utils/errors";
 
@@ -76,19 +75,29 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
   );
   const isEditable = useEditable();
 
-  const onDelete = useCallback(async (id?: string) => {
-    if (!id) {
-      return;
-    }
-    await client.tiles.delete.mutate({ id });
-    const element = document.getElementById(id);
-    if (element) {
-      await destroy(element, {
-        timing: { ...DEFAULT_TIMING, fill: "forwards" },
+  const onDelete = useCallback(
+    async (id: string) => {
+      await client.tiles.delete.mutate({ id });
+      const element = document.getElementById(id);
+      if (element) {
+        await destroy(element, {
+          timing: { ...DEFAULT_TIMING, fill: "forwards" },
+        });
+      }
+
+      const adjacentTileId =
+        element?.previousElementSibling?.id || element?.nextElementSibling?.id;
+      startLayoutTransition(() => {
+        setTiles((prevTiles) =>
+          prevTiles.filter((prevTile) => prevTile.id !== id),
+        );
+        if (adjacentTileId) {
+          scrollIntoView(adjacentTileId);
+        }
       });
-    }
-    deleteTile(id);
-  }, []);
+    },
+    [startLayoutTransition],
+  );
 
   useEffect(() => {
     const create = (event: Event) => {
@@ -103,20 +112,6 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
           prevTile.id === tile.id ? tile : prevTile,
         ),
       );
-    };
-    const deleteTile = (event: Event) => {
-      const { detail: tile } = event as CustomEvent<ClientTile>;
-      const element = document.getElementById(tile.id);
-      const adjacentTileId =
-        element?.previousElementSibling?.id || element?.nextElementSibling?.id;
-      startLayoutTransition(() => {
-        setTiles((prevTiles) =>
-          prevTiles.filter((prevTile) => prevTile.id !== tile.id),
-        );
-        if (adjacentTileId) {
-          scrollIntoView(adjacentTileId);
-        }
-      });
     };
     const dragOver = (event: DragDropEvent) => {
       const { target, dragSource, inside } = event;
@@ -203,7 +198,6 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
     const element = ref.current;
     window.addEventListener("tile:create", create);
     window.addEventListener("tile:update", update);
-    window.addEventListener("tile:delete", deleteTile);
     element?.addEventListener("drag:drag-over", dragOver);
     element?.addEventListener("drag:drop", drop);
     window.addEventListener("resize:resize", resize);
@@ -211,7 +205,6 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
     return () => {
       window.removeEventListener("tile:create", create);
       window.removeEventListener("tile:update", update);
-      window.removeEventListener("tile:delete", deleteTile);
       element?.removeEventListener("drag:drag-over", dragOver);
       element?.removeEventListener("drag:drop", drop);
       window.removeEventListener("resize:resize", resize);
