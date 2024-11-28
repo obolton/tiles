@@ -40,28 +40,15 @@ export async function addToCollection({
   tileId,
 }: AddToCollectionSchema) {
   return prisma.$transaction(async (tx) => {
-    const position = await tx.collectionItem.count({
-      where: { collectionId },
-    });
-    // TODO: Enforce tile types
-    const tile = await tx.tile.findUniqueOrThrow({
-      where: { id: tileId },
-      select: {
-        imageTileId: true,
-        videoTileId: true,
-        textTileId: true,
-        linkTileId: true,
-        pageLinkTileId: true,
-        eventTileId: true,
-        mapTileId: true,
-      },
+    const position = await tx.tile.count({
+      where: { parentCollectionId: collectionId },
     });
     return await tx.collection.update({
       where: { id: collectionId },
       data: {
         items: {
-          create: {
-            ...tile,
+          connect: {
+            id: tileId,
             position,
           },
         },
@@ -76,13 +63,14 @@ export async function removeFromCollection({
   collectionId,
 }: RemoveFromCollectionSchema) {
   return prisma.$transaction(async (tx) => {
-    const { position } = await tx.collectionItem.delete({
-      where: { id, collectionId },
+    const { position } = await tx.tile.update({
+      where: { id },
+      data: { parentCollectionId: null },
       select: { position: true },
     });
-    await tx.collectionItem.updateMany({
+    await tx.tile.updateMany({
       where: {
-        collectionId,
+        parentCollectionId: collectionId,
         position: { gt: position },
       },
       data: { position: { decrement: 1 } },

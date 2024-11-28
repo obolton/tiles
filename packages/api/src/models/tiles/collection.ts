@@ -58,6 +58,9 @@ export const COLLECTION_TILE_FIELDS = {
         },
       },
     },
+    orderBy: {
+      position: "asc",
+    },
   },
 } as const;
 
@@ -76,21 +79,6 @@ export async function createCollectionTile(
     select: { id: true, type: true, collection: { select: { id: true } } },
   });
 
-  const childTile = await tx.tile.findUnique({
-    where: {
-      id: tileIds[1],
-    },
-    select: {
-      imageTileId: true,
-      videoTileId: true,
-      textTileId: true,
-      mapTileId: true,
-      linkTileId: true,
-      pageLinkTileId: true,
-      eventTileId: true,
-    },
-  });
-
   if (parentTile.collection) {
     return tx.collection.update({
       where: {
@@ -98,9 +86,9 @@ export async function createCollectionTile(
       },
       data: {
         items: {
-          create: {
-            ...childTile,
-            position: 0,
+          connect: {
+            id: tileIds[1],
+            // TODO: Position
           },
         },
       },
@@ -108,35 +96,34 @@ export async function createCollectionTile(
     });
   }
 
-  const tiles = await tx.tile.findMany({
-    select: {
-      imageTileId: true,
-      videoTileId: true,
-      textTileId: true,
-      mapTileId: true,
-      linkTileId: true,
-      pageLinkTileId: true,
-      eventTileId: true,
-    },
-    where: {
-      id: {
-        in: tileIds,
-      },
-    },
-  });
   const collection = await tx.collection.create({
     data: {
       userId,
       type,
       title,
       items: {
-        create: tiles.map((tile, index) => ({ ...tile, position: index })),
+        connect: tileIds.map((id) => ({ id })),
       },
     },
     select: {
       id: true,
     },
   });
+
+  await Promise.all(
+    tileIds.map((id, index) =>
+      tx.tile.update({
+        where: {
+          id,
+        },
+        data: {
+          parentCollectionId: collection.id,
+          position: index,
+        },
+      }),
+    ),
+  );
+
   return tx.tile.create({
     data: {
       pageId,

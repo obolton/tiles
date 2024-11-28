@@ -71,9 +71,13 @@ export async function updateTile(properties: UpdateTileSchema) {
 
 export async function moveTile({ id, position }: MoveTileSchema) {
   return prisma.$transaction(async (tx) => {
-    const { pageId, position: oldPosition } = await tx.tile.findUniqueOrThrow({
+    const {
+      pageId,
+      parentCollectionId,
+      position: oldPosition,
+    } = await tx.tile.findUniqueOrThrow({
       where: { id },
-      select: { pageId: true, position: true },
+      select: { pageId: true, parentCollectionId: true, position: true },
     });
     if (oldPosition === position) {
       return { id, pageId, fromPosition: oldPosition, toPosition: position };
@@ -81,6 +85,7 @@ export async function moveTile({ id, position }: MoveTileSchema) {
       await prisma.tile.updateMany({
         where: {
           pageId,
+          parentCollectionId,
           id: { not: id },
           position: { gt: oldPosition, lte: position },
         },
@@ -90,6 +95,7 @@ export async function moveTile({ id, position }: MoveTileSchema) {
       await prisma.tile.updateMany({
         where: {
           pageId,
+          parentCollectionId,
           id: { not: id },
           position: { gte: position, lt: oldPosition },
         },
@@ -97,7 +103,7 @@ export async function moveTile({ id, position }: MoveTileSchema) {
       });
     }
     await prisma.tile.update({
-      where: { pageId, id },
+      where: { id },
       data: { position },
     });
     return {
@@ -127,13 +133,14 @@ export async function resizeTile({ id, columns, rows }: ResizeTileSchema) {
 
 export async function deleteTile({ id }: DeleteTileSchema) {
   return prisma.$transaction(async (tx) => {
-    const { pageId, position } = await tx.tile.delete({
+    const { pageId, parentCollectionId, position } = await tx.tile.delete({
       where: { id },
-      select: { pageId: true, position: true },
+      select: { pageId: true, parentCollectionId: true, position: true },
     });
     await tx.tile.updateMany({
       where: {
         pageId,
+        parentCollectionId,
         position: { gt: position },
       },
       data: { position: { decrement: 1 } },

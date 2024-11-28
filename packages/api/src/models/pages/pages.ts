@@ -128,6 +128,7 @@ const PAGE_FIELDS = {
   },
   tiles: {
     select: TILES_FIELDS,
+    where: { parentCollectionId: null },
     orderBy: {
       position: "asc",
     },
