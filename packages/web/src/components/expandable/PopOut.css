@@ -2,6 +2,14 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+:host([expandable][open]) {
+  cursor: auto;
+}
+
+:host([expandable]:not([open])) {
+  cursor: pointer;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -44,7 +52,6 @@ dialog {
   border: none;
   background: none;
   overflow: visible;
-  cursor: auto;
   border-radius: inherit;
   display: flex;
 
