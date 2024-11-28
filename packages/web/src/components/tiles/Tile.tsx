@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import useScrollIntoView from "@/hooks/useScrollIntoView";
 import styles from "./Tile.module.css";
 import { classNames } from "@/utils/css";
 import type { Theme } from "@/types/pages";
-import type { DragDropEvent } from "@/utils/drag";
 
 export type TileProps = {
   id: string;
@@ -12,7 +11,6 @@ export type TileProps = {
   theme?: Theme | null;
   hue?: number | null;
   font?: string | null;
-  onDrop?: (event: DragDropEvent) => void;
 };
 
 export default function Tile({
@@ -21,19 +19,9 @@ export default function Tile({
   hue,
   font,
   showBorder = true,
-  onDrop,
 }: TileProps) {
   const ref = useRef<HTMLDivElement>(null);
   useScrollIntoView(ref);
-
-  useEffect(() => {
-    const element = ref.current;
-    if (!element || !onDrop) {
-      return;
-    }
-    element.addEventListener("drag:drop-on", onDrop);
-    return () => element.removeEventListener("drag:drop-on", onDrop);
-  }, [onDrop]);
 
   const style = useMemo(
     () =>

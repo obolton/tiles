@@ -1,4 +1,3 @@
-import useCreateCollection from "@/hooks/useCreateCollection";
 import useEditable from "@/hooks/useEditable";
 import type { ClientImage } from "@/types/tiles";
 import { updateTile } from "@/utils/edit";
@@ -23,7 +22,6 @@ export default function ImageTile({
   const { imageKey, caption } = image;
   const isEditable = useEditable();
   const src = getImageUrl(imageKey);
-  const onDrop = useCreateCollection(id, "STACK");
   const [origin, setOrigin] = useState({ x: image.originX, y: image.originY });
 
   const onUpdateCaption = useCallback(
@@ -54,7 +52,7 @@ export default function ImageTile({
   );
 
   return (
-    <Tile id={id} {...props} onDrop={onDrop}>
+    <Tile id={id} {...props}>
       <figure
         id={`${id}-figure`}
         className={styles.figure}

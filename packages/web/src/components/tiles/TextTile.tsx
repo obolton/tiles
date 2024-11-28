@@ -9,7 +9,6 @@ import { updateTile } from "@/utils/edit";
 import Tile, { type TileProps } from "./Tile";
 import styles from "./TextTile.module.css";
 import { classNames } from "@/utils/css";
-import useCreateCollection from "@/hooks/useCreateCollection";
 import type { ClientText } from "@/types/tiles";
 import type { EditorState } from "@/components/inputs/RichTextEditor/RichTextEditor";
 
@@ -29,7 +28,6 @@ export default function TextTile({
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [theme, setTheme] = useState(initialTheme);
   const [hue, setHue] = useState(initialHue);
-  const onDrop = useCreateCollection(id, "STACK");
 
   const onBlur = useCallback(async () => {
     if (!editorState) {
@@ -81,7 +79,6 @@ export default function TextTile({
         theme={theme}
         hue={hue}
         showBorder={isEditable || columns < 3}
-        onDrop={onDrop}
       >
         {isEditable ? (
           <RichTextEditor

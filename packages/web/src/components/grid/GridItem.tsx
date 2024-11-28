@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { classNames } from "@/utils/css";
+import useCreateCollection from "@/hooks/useCreateCollection";
 import useDraggable from "@/hooks/useDraggable";
 import DeleteButton from "../tiles/DeleteButton";
 import styles from "./GridItem.module.css";
@@ -32,6 +33,7 @@ export default function GridItem({
   children,
 }: GridItemProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const onDrop = useCreateCollection(id ?? "", "STACK");
   useDraggable(ref, isEditable && !!dropGroup);
 
   const handleDelete = useCallback(() => onDelete(id), [id, onDelete]);
@@ -45,6 +47,15 @@ export default function GridItem({
       }) as React.CSSProperties,
     [style, columns, rows],
   );
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || !onDrop) {
+      return;
+    }
+    element.addEventListener("drag:drop-on", onDrop);
+    return () => element.removeEventListener("drag:drop-on", onDrop);
+  }, [onDrop]);
 
   return (
     <resize-item

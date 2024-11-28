@@ -1,4 +1,3 @@
-import useCreateCollection from "@/hooks/useCreateCollection";
 import useEditable from "@/hooks/useEditable";
 import type { ClientVideo } from "@/types/tiles";
 import { updateTile } from "@/utils/edit";
@@ -25,7 +24,6 @@ export default function VideoTile({ id, video, ...props }: VideoTileProps) {
   const { videoType, videoId, imageUrl, title } = video;
   const isEditable = useEditable();
   const embedUrl = getEmbedUrl(videoType, videoId);
-  const onDrop = useCreateCollection(id, "STACK");
 
   const onUpdateCaption = useCallback(
     async (value: string) => {
@@ -38,7 +36,7 @@ export default function VideoTile({ id, video, ...props }: VideoTileProps) {
   );
 
   return (
-    <Tile id={id} {...props} onDrop={onDrop}>
+    <Tile id={id} {...props}>
       <figure className={styles.figure}>
         <embedded-video
           id={`${id}-video`}

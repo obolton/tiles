@@ -3,7 +3,6 @@ import useEditable from "@/hooks/useEditable";
 import { editTile } from "@/utils/edit";
 import Tile, { type TileProps } from "./Tile";
 import styles from "./LinkTile.module.css";
-import useCreateCollection from "@/hooks/useCreateCollection";
 import type { ClientLink } from "@/types/tiles";
 
 interface LinkTileProps extends TileProps {
@@ -14,7 +13,6 @@ export default function LinkTile({ id, link, ...props }: LinkTileProps) {
   const { url, title, description, siteName, imageUrl } = link;
   const isEditable = useEditable();
   const edit = useCallback(() => editTile(id, "LINK", link), [id, link]);
-  const onDrop = useCreateCollection(id, "STACK");
 
   const contents = (
     <div className={styles.caption}>
@@ -25,7 +23,7 @@ export default function LinkTile({ id, link, ...props }: LinkTileProps) {
   );
 
   return (
-    <Tile id={id} {...props} onDrop={onDrop}>
+    <Tile id={id} {...props}>
       {isEditable ? (
         <div
           className={styles.link}
