@@ -234,7 +234,7 @@ export class DragState {
     this.dragElement = this.element.cloneNode(true) as HTMLElement;
     this.dragElement.dataset.dragPreview = "true";
     delete this.dragElement.dataset.dropTarget;
-    this.dragElement.setAttribute("popover", "");
+    this.dragElement.setAttribute("popover", "manual");
 
     this.dragElement.style.setProperty("width", `${this.elementRect.width}px`);
     this.dragElement.style.setProperty(
