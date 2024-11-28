@@ -220,11 +220,14 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
           id={tile.id}
           className={styles.item}
           rows={tile.rows}
-          columns={tile.columns}
+          columns={tile.type === "HEADING" ? 3 : tile.columns}
           isEditable={isEditable}
-          resizable={isEditable}
+          resizable={isEditable && tile.type !== "HEADING"}
           onDelete={onDelete}
-          grow={tile.type === "TEXT" && tile.columns === 3}
+          grow={
+            (tile.type === "TEXT" && tile.columns === 3) ||
+            tile.type === "HEADING"
+          }
           dropGroup={isEditable ? "root" : undefined}
         >
           {getTileComponent(tile)}

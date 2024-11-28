@@ -1,12 +1,11 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import useEditable from "@/hooks/useEditable";
-import useDraggable from "@/hooks/useDraggable";
-import useScrollIntoView from "@/hooks/useScrollIntoView";
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import { updateTile } from "@/utils/edit";
 import styles from "./HeadingTile.module.css";
 import { classNames } from "@/utils/css";
 import type { ClientHeading } from "@/types/tiles";
+import Tile from "./Tile";
 
 type HeadingTileProps = {
   id: string;
@@ -19,10 +18,7 @@ function stripLineBreaks(value: string) {
 
 export default function HeadingTile({ id, heading }: HeadingTileProps) {
   const { content } = heading;
-  const ref = useRef<HTMLHeadingElement>(null);
   const isEditable = useEditable();
-  useDraggable(ref, isEditable);
-  useScrollIntoView(ref);
   const [value, setValue] = useState(content);
 
   const onChange = useCallback(
@@ -50,15 +46,9 @@ export default function HeadingTile({ id, heading }: HeadingTileProps) {
   );
 
   return (
-    <header
-      id={id}
-      ref={ref}
-      className={classNames(styles.heading, "editable")}
-      data-drop-group={isEditable ? "root" : undefined}
-      data-tile-id={id}
-    >
-      {isEditable ? (
-        <>
+    <Tile id={id} showBorder={false}>
+      <header className={classNames(styles.heading, "editable")}>
+        {isEditable ? (
           <ResizingTextarea
             rows={1}
             placeholder="Heading"
@@ -68,10 +58,10 @@ export default function HeadingTile({ id, heading }: HeadingTileProps) {
             onChange={onChange}
             value={value}
           />
-        </>
-      ) : (
-        <h1>{value || "Heading"}</h1>
-      )}
-    </header>
+        ) : (
+          <h1>{value || "Heading"}</h1>
+        )}
+      </header>
+    </Tile>
   );
 }
