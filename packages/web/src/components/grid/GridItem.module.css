@@ -5,7 +5,6 @@
   min-width: var(--grid-size);
   min-height: var(--grid-size);
   display: flex;
-  isolation: isolate;
   border-radius: 12px;
 
   &.grow {
@@ -15,7 +14,7 @@
 }
 
 /* Drag handle */
-.editable:not(:has([open])),
+body:not([data-drag]) .editable:not(:has([open])),
 .item[data-drag-preview] {
   &:hover {
     outline-color: transparent;
