@@ -3,10 +3,7 @@ import useEditable from "@/hooks/useEditable";
 import useDraggable from "@/hooks/useDraggable";
 import useScrollIntoView from "@/hooks/useScrollIntoView";
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
-import DeleteButton from "./DeleteButton";
-import { updateTile, deleteTile } from "@/utils/edit";
-import client from "@/api/client";
-import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
+import { updateTile } from "@/utils/edit";
 import styles from "./HeadingTile.module.css";
 import { classNames } from "@/utils/css";
 import type { ClientHeading } from "@/types/tiles";
@@ -52,22 +49,6 @@ export default function HeadingTile({ id, heading }: HeadingTileProps) {
     [],
   );
 
-  const onDelete = useCallback(
-    async (event: React.MouseEvent) => {
-      if (!ref.current) {
-        return;
-      }
-      event.stopPropagation();
-      event.preventDefault();
-      await client.tiles.delete.mutate({ id });
-      await destroy(ref.current, {
-        timing: { ...DEFAULT_TIMING, fill: "forwards" },
-      });
-      deleteTile(id);
-    },
-    [id],
-  );
-
   return (
     <header
       id={id}
@@ -87,7 +68,6 @@ export default function HeadingTile({ id, heading }: HeadingTileProps) {
             onChange={onChange}
             value={value}
           />
-          <DeleteButton onPress={onDelete} />
         </>
       ) : (
         <h1>{value || "Heading"}</h1>
