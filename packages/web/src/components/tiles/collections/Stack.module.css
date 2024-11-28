@@ -1,3 +1,7 @@
+.stack {
+  isolation: isolate;
+}
+
 .stack::part(dialog) {
   width: var(--grid-size);
   height: var(--grid-size);
@@ -6,13 +10,20 @@
 .item {
   position: absolute;
   inset: 0;
-  rotate: z var(--angle);
-  scale: 0.9;
-  opacity: max(calc(1 - var(--index) * 0.2), 0);
+  aspect-ratio: 1;
   z-index: calc(1000 - var(--index));
   transition-property: rotate, scale, opacity;
   transition-duration: var(--animation-duration);
   transition-timing-function: var(--easing);
+}
+
+.stack:not([open]) {
+  & .item {
+    pointer-events: none;
+    opacity: max(calc(1 - var(--index) * 0.2), 0);
+    scale: 0.9;
+    rotate: z var(--angle);
+  }
 }
 
 .stack[open] {
@@ -25,12 +36,12 @@
     height: 100%;
   }
 
-  .item {
+  & .item {
     position: relative;
     inset: unset;
-    rotate: none;
-    scale: none;
-    opacity: 1;
-    aspect-ratio: 1;
   }
+}
+
+.stack[closing] {
+  z-index: 1;
 }
