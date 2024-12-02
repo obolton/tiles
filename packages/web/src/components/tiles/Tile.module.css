@@ -8,6 +8,8 @@
   font-family: var(--font);
   color: var(--tile-text-color);
   background: var(--tile-background);
+  background-size: cover;
+  background-position: center;
   outline-offset: -1px;
   transition:
     opacity var(--animation-duration-short) var(--easing),

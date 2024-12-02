@@ -11,6 +11,7 @@ export type TileProps = {
   theme?: Theme | null;
   hue?: number | null;
   font?: string | null;
+  backgroundImageUrl?: string;
 };
 
 export default function Tile({
@@ -19,6 +20,7 @@ export default function Tile({
   hue,
   font,
   showBorder = true,
+  backgroundImageUrl,
 }: TileProps) {
   const ref = useRef<HTMLDivElement>(null);
   useScrollIntoView(ref);
@@ -27,8 +29,11 @@ export default function Tile({
     () =>
       ({
         "--hue": typeof hue === "number" ? `${hue.toFixed(2)}deg` : undefined,
+        backgroundImage: backgroundImageUrl
+          ? `url(${backgroundImageUrl})`
+          : undefined,
       }) as React.CSSProperties,
-    [hue],
+    [hue, backgroundImageUrl],
   );
 
   return (
