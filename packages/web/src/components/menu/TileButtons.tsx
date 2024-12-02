@@ -32,7 +32,7 @@ registerModal(
 
 registerModal(
   "LINK",
-  lazy(() => import("@/components/modals/EditLinkTileModal")),
+  lazy(() => import("@/components/modals/LinkModal")),
 );
 
 registerModal(

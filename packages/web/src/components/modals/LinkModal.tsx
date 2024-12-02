@@ -5,7 +5,7 @@ import ModalFooter from "./ModalFooter";
 import { createTile, updateTile } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
 import type { ClientLink, ClientPageLink } from "@/types/tiles";
-import styles from "./EditLinkTileModal.module.css";
+import styles from "./LinkModal.module.css";
 import type { ModalProps } from "@/utils/modals";
 import useInputState from "@/hooks/useInputState";
 import PagesGrid from "@/components/grid/PagesGrid";
