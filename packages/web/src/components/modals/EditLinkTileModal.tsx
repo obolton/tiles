@@ -1,36 +1,24 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import { createTile, updateTile } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
-import client from "@/api/client";
 import type { ClientLink, ClientPageLink } from "@/types/tiles";
 import styles from "./EditLinkTileModal.module.css";
 import type { ModalProps } from "@/utils/modals";
+import useInputState from "@/hooks/useInputState";
+import PagesGrid from "@/components/grid/PagesGrid";
+import PageLinkTile from "@/components/tiles/PageLinkTile";
 
-interface EditLinkTileModalProps extends ModalProps {
+interface LinkModalProps extends ModalProps {
   tileId?: string | null;
   tile?: ClientLink | ClientPageLink | null;
 }
 
-export default function EditLinkTileModal({
-  tileId,
-  close,
-  tile,
-}: EditLinkTileModalProps) {
-  const [url, setUrl] = useState<string>(tile && "url" in tile ? tile.url : "");
-  const [recentPages, setRecentPages] = useState<
-    { id: string; title: string }[]
-  >([]);
-
-  useEffect(() => {
-    client.pages.getRecent.query().then(setRecentPages);
-  }, []);
-
-  const change = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => setUrl(event.target.value),
-    [],
+export default function LinkModal({ tileId, close, tile }: LinkModalProps) {
+  const [url, onChangeUrl] = useInputState(
+    tile && "url" in tile ? tile.url : "",
   );
 
   const selectPage = useCallback(
@@ -52,9 +40,7 @@ export default function EditLinkTileModal({
           });
         }
       } catch (error) {
-        if (error instanceof Error) {
-          handleError(error);
-        }
+        handleError(error);
       }
 
       close();
@@ -91,6 +77,8 @@ export default function EditLinkTileModal({
     [url, tileId, close],
   );
 
+  const pageId = document.body.dataset.pageId;
+
   return (
     <form onSubmit={submit}>
       <ModalHeader>Add a link</ModalHeader>
@@ -104,21 +92,28 @@ export default function EditLinkTileModal({
             name="content"
             placeholder="Enter a link URL"
             autoFocus
-            onChange={change}
+            onChange={onChangeUrl}
             value={url}
           />
         </label>
 
-        <div>
-          <label>Your recent pages</label>
+        <label>Recent pages</label>
 
-          <ol className={styles["page-select"]}>
-            {recentPages.map((page) => (
-              <li key={page.id} onClick={() => selectPage(page.id)}>
-                {page.title}
-              </li>
-            ))}
-          </ol>
+        <div className={styles.pages}>
+          <PagesGrid
+            render={(page) =>
+              page.id === pageId ? null : (
+                <PageLinkTile
+                  id={page.id}
+                  pageLink={{ pageId: page.id, page }}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    selectPage(page.id);
+                  }}
+                />
+              )
+            }
+          />
         </div>
       </ModalBody>
 
