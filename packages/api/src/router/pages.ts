@@ -11,7 +11,6 @@ import {
 import {
   getPageById,
   getProfilePageByUserId,
-  getRecentPages,
   getRecentPagesWithTiles,
   createPage,
   updatePage,
@@ -31,14 +30,6 @@ export default router({
       const page = await getProfilePageByUserId(input);
       return page;
     }),
-
-  getRecent: procedure.query(async ({ ctx }) => {
-    if (!ctx.user) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    const pages = await getRecentPages(ctx.user.id);
-    return pages;
-  }),
 
   getRecentWithTiles: procedure
     .input(GetRecentPagesWithTilesSchema)
