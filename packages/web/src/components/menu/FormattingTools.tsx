@@ -2,7 +2,8 @@ import { useCallback } from "react";
 import ColorPicker from "@/components/inputs/ColorPicker";
 import FontPicker from "@/components/inputs/FontPicker";
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
-import type { FontPickerValue } from "@/components/inputs/FontPicker";
+import type { FontId } from "@/config/fonts";
+import { getFontConfig } from "@/utils/fonts";
 import useEditable from "@/hooks/useEditable";
 import client from "@/api/client";
 import { viewTransition } from "@/utils/transitions";
@@ -15,9 +16,13 @@ export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
   const isEditable = useEditable();
 
   const setFont = useCallback(
-    async (font: FontPickerValue) => {
+    async (font: FontId) => {
+      const fontConfig = getFontConfig(font);
+      if (!fontConfig) {
+        throw new Error(`Invalid font ID: ${font}`);
+      }
       viewTransition(() => {
-        document.body.dataset.font = font;
+        document.body.style.setProperty("--font", fontConfig.family);
       });
       await client.pages.update.mutate({
         id: pageId,
