@@ -12,20 +12,30 @@ import "@/styles/popovers.css";
 import "@/styles/menus.css";
 import "@/styles/toasts.css";
 import "@/styles/images.css";
-import "@/styles/fonts.css";
 import "@/styles/transitions.css";
 import ModalLauncher from "@/components/modals/ModalLauncher";
 import type { Theme } from "@/types/pages";
+import { DEFAULT_FONT, type FontId } from "@/config/fonts";
+import { getGoogleFontUrl, getFontConfig } from "@/utils/fonts";
 
 interface Props {
   id?: string;
   title: string;
   theme?: Theme;
   hue?: number | null;
-  font?: "SANS_SERIF" | "SERIF" | "MONOSPACE";
+  font?: FontId;
+  allFonts?: Set<FontId>;
 }
 
-const { id, title, theme = "LIGHT", hue, font } = Astro.props;
+const {
+  id,
+  title,
+  theme = "LIGHT",
+  hue,
+  font = DEFAULT_FONT,
+  allFonts = new Set([DEFAULT_FONT]),
+} = Astro.props;
+const fontConfig = font ? getFontConfig(font) : undefined;
 ---
 
 <!doctype html>
@@ -35,10 +45,7 @@ const { id, title, theme = "LIGHT", hue, font } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
-      rel="stylesheet"
-    />
+    <link href={getGoogleFontUrl(allFonts)} rel="stylesheet" />
     <meta name="viewport" content="width=device-width" />
     <script src="@/components/webComponents.ts"></script>
     <title>{title}</title>
@@ -46,11 +53,13 @@ const { id, title, theme = "LIGHT", hue, font } = Astro.props;
   <body
     data-page-id={id}
     data-disable-transitions="true"
-    data-font={font}
     class={theme === "LIGHT" ? "light" : theme === "DARK" ? "dark" : "color"}
     style={theme === "COLOR" && typeof hue === "number"
       ? {
           "--page-hue": `${hue.toFixed(2)}deg`,
+          "--font": fontConfig
+            ? `"${fontConfig.family}", "${fontConfig.fallback}"`
+            : undefined,
         }
       : undefined}
   >
