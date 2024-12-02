@@ -68,9 +68,11 @@ enum Theme {
 }
 
 enum Font {
-  SANS_SERIF
-  SERIF
-  MONOSPACE
+  MODERN
+  CLASSIC
+  CODE
+  ROUNDED
+  BUBBLES
 }
 
 model Page {
@@ -83,7 +85,7 @@ model Page {
   subtitle  String?
   theme     Theme    @default(LIGHT) @map("theme")
   hue       Float?   @db.Real
-  font      Font     @default(SANS_SERIF)
+  font      Font     @default(MODERN)
 
   author        User           @relation("Pages", fields: [authorId], references: [id], onDelete: Cascade)
   profileUser   User?          @relation("ProfilePage")
