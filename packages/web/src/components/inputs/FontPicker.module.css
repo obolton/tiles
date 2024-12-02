@@ -1,15 +1,16 @@
 .font swatch-item {
   display: flex;
-  height: 44px;
+  height: 40px;
   align-items: center;
   justify-content: center;
   font-family: var(--font);
-  font-size: 18px;
+  font-size: 16px;
   line-height: 18px;
   font-weight: 500;
+  white-space: nowrap;
   color: var(--ui-color);
   text-shadow: 0 1px 0 rgb(0 0 0 / 10%);
-  padding: 0 24px;
+  padding: 0 16px;
   border-radius: 24px;
   background: linear-gradient(
     hsl(from var(--page-color) h s 100%),

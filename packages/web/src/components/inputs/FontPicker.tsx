@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useRef } from "react";
-import type SwatchSelect from "./SwatchSelect";
+import { FONTS, type FontFamily } from "@/config/fonts";
 import fontIcon from "@/icons/font.svg";
+import { getGoogleFontUrlAllFonts } from "@/utils/fonts";
+import { useCallback, useEffect, useRef } from "react";
 import styles from "./FontPicker.module.css";
-
-export type FontPickerValue = "SANS_SERIF" | "SERIF" | "MONOSPACE";
+import type SwatchSelect from "./SwatchSelect";
 
 interface FontPickerProps {
   direction?: "left" | "right";
-  value?: FontPickerValue;
-  onChange: (value: FontPickerValue) => void;
+  value?: FontFamily;
+  onChange: (value: FontFamily) => void;
 }
 
 export default function FontPicker({
@@ -20,7 +20,7 @@ export default function FontPicker({
 
   const setFont = useCallback(
     async (event: Event) => {
-      const value = (event.target as SwatchSelect).value as FontPickerValue;
+      const value = (event.target as SwatchSelect).value as FontFamily;
       onChange(value);
     },
     [onChange],
@@ -31,10 +31,27 @@ export default function FontPicker({
     if (!fontSelect) {
       return;
     }
-    fontSelect.addEventListener("change", setFont);
-    return () => {
-      fontSelect.removeEventListener("change", setFont);
-    };
+    const abortController = new AbortController();
+    fontSelect.addEventListener("change", setFont, {
+      signal: abortController.signal,
+    });
+    fontSelect.addEventListener(
+      "toggle",
+      () => {
+        if (document.getElementById("all-fonts")) {
+          return;
+        }
+        const link = document.createElement("link");
+        link.id = "all-fonts";
+        link.rel = "stylesheet";
+        link.href = getGoogleFontUrlAllFonts();
+        document.head.appendChild(link);
+      },
+      {
+        signal: abortController.signal,
+      },
+    );
+    return () => abortController.abort();
   }, [setFont]);
 
   return (
@@ -47,23 +64,15 @@ export default function FontPicker({
       value={value}
     >
       <img src={fontIcon.src} alt="Font" aria-hidden="true" slot="icon" />
-      <swatch-item
-        aria-label="Code font"
-        value="MONOSPACE"
-        data-font="MONOSPACE"
-      >
-        Code
-      </swatch-item>
-      <swatch-item aria-label="Classic font" value="SERIF" data-font="SERIF">
-        Classic
-      </swatch-item>
-      <swatch-item
-        aria-label="Modern font"
-        value="SANS_SERIF"
-        data-font="SANS_SERIF"
-      >
-        Modern
-      </swatch-item>
+      {FONTS.map((font) => (
+        <swatch-item
+          key={font.family}
+          style={{ fontFamily: font.family }}
+          value={font.family}
+        >
+          {font.name}
+        </swatch-item>
+      ))}
     </swatch-select>
   );
 }
