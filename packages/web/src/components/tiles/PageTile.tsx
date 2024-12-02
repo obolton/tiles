@@ -2,13 +2,14 @@ import Tile, { type TileProps } from "./Tile";
 import styles from "./PageTile.module.css";
 import { classNames } from "@/utils/css";
 import type { Theme } from "@/types/pages";
+import type { FontId } from "@/config/fonts";
 
 interface PageTileProps extends TileProps {
   id: string;
   title: string;
   subtitle?: string | null;
   hue?: number | null;
-  font?: string | null;
+  font?: FontId | null;
   theme?: Theme;
   imageUrl?: string;
   author?: {

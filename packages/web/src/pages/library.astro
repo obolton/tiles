@@ -20,9 +20,12 @@ const pages = await client.pages.getRecentWithTiles.query(
 if (!pages) {
   return Astro.redirect("/sign-in");
 }
+
+const fonts = new Set(pages.pages.map((page) => page.font));
+// TODO: Add fonts for pages that are loaded later
 ---
 
-<Page title="Library">
+<Page title="Library" allFonts={fonts}>
   <h1 slot="header">Library</h1>
 
   <PagesGrid pages={pages} client:load />
