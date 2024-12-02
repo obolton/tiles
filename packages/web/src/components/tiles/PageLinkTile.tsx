@@ -1,68 +1,47 @@
 import { getImageUrl } from "@/utils/images";
 import Tile, { type TileProps } from "./Tile";
 import styles from "./PageLinkTile.module.css";
-import { classNames } from "@/utils/css";
 import type { ClientPageLink } from "@/types/tiles";
+import PageTile from "./PageTile";
 
 interface PageLinkTileProps extends TileProps {
   pageLink: ClientPageLink;
+  onClick?: (event: React.MouseEvent) => void;
 }
 
 export default function PageLinkTile({
+  id,
   pageLink,
+  onClick,
   ...props
 }: PageLinkTileProps) {
   const { pageId, page } = pageLink;
 
   if (!page) {
     return (
-      <Tile {...props}>
-        <div className={`${styles.contents} ${styles.deleted}`}>
-          This page no longer exists.
-        </div>
+      <Tile id={id} {...props}>
+        <div className={styles.deleted}>This page no longer exists.</div>
       </Tile>
     );
   }
 
-  const { title, subtitle, author, imageKey } = page;
-
   return (
-    <Tile
-      {...props}
-      theme={page.theme as "LIGHT" | "DARK" | "COLOR"}
-      hue={page.hue}
-      font={page.font}
+    <a
+      className={styles.link}
+      href={`/pages/${pageId}`}
+      target="_blank"
+      onClick={onClick}
     >
-      <a
-        className={classNames(
-          styles.contents,
-          page.theme === "LIGHT"
-            ? styles.light
-            : page.theme === "DARK"
-              ? styles.dark
-              : styles.color,
-        )}
-        style={
-          imageKey
-            ? { backgroundImage: `url(${getImageUrl(imageKey)})` }
-            : undefined
-        }
-        href={`/pages/${pageId}`}
-        target="_blank"
-      >
-        <section
-          className={classNames(styles.text, imageKey && styles["with-image"])}
-        >
-          <h3>{title}</h3>
-
-          {subtitle ? <p>{subtitle}</p> : null}
-
-          <address>
-            <profile-image src={author.imageUrl} name={author.name} />
-            <span>{author.name}</span>
-          </address>
-        </section>
-      </a>
-    </Tile>
+      <PageTile
+        id={id}
+        title={page.title}
+        subtitle={page.subtitle}
+        author={page.author}
+        hue={page.hue}
+        font={page.font}
+        theme={page.theme}
+        imageUrl={page.imageKey ? getImageUrl(page.imageKey) : undefined}
+      />
+    </a>
   );
 }
