@@ -74,6 +74,10 @@ export default class SwatchSelect extends HTMLElement {
           timing: TIMING,
         }),
       );
+
+      this.dispatchEvent(
+        new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
+      );
     } else {
       this.removeAttribute("aria-pressed");
       this.button.removeAttribute("aria-pressed");
@@ -90,6 +94,10 @@ export default class SwatchSelect extends HTMLElement {
           }),
         ),
       ).then(() => this.items.classList.add("hidden"));
+
+      this.dispatchEvent(
+        new ToggleEvent("toggle", { oldState: "open", newState: "closed" }),
+      );
     }
   }
 
