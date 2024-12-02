@@ -1,14 +1,14 @@
 import {
   FONTS,
   DEFAULT_WEIGHTS,
-  type FontFamily,
+  type FontId,
   type FontConfig,
 } from "@/config/fonts";
 
 export const GOOGLE_FONTS_BASE_URL = "https://fonts.googleapis.com/css2";
 
-export function getFontConfig(family: FontFamily) {
-  return FONTS.find((font) => font.family === family);
+export function getFontConfig(id: FontId) {
+  return FONTS.find((font) => font.id === id);
 }
 
 function getFontConfigValue(font: FontConfig) {
@@ -17,7 +17,7 @@ function getFontConfigValue(font: FontConfig) {
   return `${family}:ital${font.opticalSizing ? ",opsz" : ""},wght@0,${weights};1,${weights}`;
 }
 
-export function getGoogleFontUrl(fonts: Set<FontFamily>) {
+export function getGoogleFontUrl(fonts: Set<FontId>) {
   if (fonts.size === 0) {
     throw new Error("No font families provided");
   }
