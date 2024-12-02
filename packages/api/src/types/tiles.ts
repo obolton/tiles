@@ -9,10 +9,10 @@ import type {
   PageLinkTile,
   EventTile,
   Collection,
-  CollectionItem,
   Tile,
   TileType,
   Theme,
+  Font,
 } from "@prisma/client";
 
 type OmitMetadata<T> = Omit<T, "id" | "createdAt" | "updatedAt">;
@@ -47,10 +47,6 @@ export interface ClientTextTile extends ClientTileBase {
 export type ClientPlace = OmitMetadata<Omit<PlaceTile, "mapTileId">> & {
   id: string;
 };
-export interface ClientPlaceTile extends ClientTileBase {
-  type: "PLACE";
-  place: ClientPlace;
-}
 
 // Map
 export type ClientMap = OmitMetadata<MapTile> & {
@@ -77,7 +73,7 @@ export type ClientPageLink = OmitMetadata<PageLinkTile> & {
     author: { name: string; imageUrl: string | null };
     theme: Theme;
     hue: number | null;
-    font: string | null;
+    font: Font | null;
     imageKey: string | null;
   } | null;
 };
@@ -105,14 +101,7 @@ export interface ClientEventTile extends ClientTileBase {
 
 // Collection
 export type ClientCollection = OmitMetadata<Omit<Collection, "userId">> & {
-  id: string;
-  items: (Pick<CollectionItem, "id" | "position"> & {
-    image: ClientImage | null;
-    video: ClientVideo | null;
-    text: ClientText | null;
-    map: ClientMap | null;
-    link: ClientLink | null;
-  })[];
+  items: Omit<ClientTile, "type" | "rows" | "columns">[];
 };
 export interface ClientCollectionTile extends ClientTileBase {
   type: "COLLECTION";
@@ -135,7 +124,6 @@ export type ClientTile =
   | ClientImageTile
   | ClientVideoTile
   | ClientTextTile
-  | ClientPlaceTile
   | ClientMapTile
   | ClientLinkTile
   | ClientHeadingTile
