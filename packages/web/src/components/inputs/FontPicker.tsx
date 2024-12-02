@@ -1,4 +1,4 @@
-import { FONTS, type FontFamily } from "@/config/fonts";
+import { FONTS, type FontId } from "@/config/fonts";
 import fontIcon from "@/icons/font.svg";
 import { getGoogleFontUrlAllFonts } from "@/utils/fonts";
 import { useCallback, useEffect, useRef } from "react";
@@ -7,8 +7,8 @@ import type SwatchSelect from "./SwatchSelect";
 
 interface FontPickerProps {
   direction?: "left" | "right";
-  value?: FontFamily;
-  onChange: (value: FontFamily) => void;
+  value?: FontId;
+  onChange: (value: FontId) => void;
 }
 
 export default function FontPicker({
@@ -20,7 +20,7 @@ export default function FontPicker({
 
   const setFont = useCallback(
     async (event: Event) => {
-      const value = (event.target as SwatchSelect).value as FontFamily;
+      const value = (event.target as SwatchSelect).value as FontId;
       onChange(value);
     },
     [onChange],
@@ -68,7 +68,7 @@ export default function FontPicker({
         <swatch-item
           key={font.family}
           style={{ fontFamily: font.family }}
-          value={font.family}
+          value={font.id}
         >
           {font.name}
         </swatch-item>
