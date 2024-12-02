@@ -29,11 +29,12 @@ export default function Tile({
     () =>
       ({
         "--hue": typeof hue === "number" ? `${hue.toFixed(2)}deg` : undefined,
+        "--font": typeof font === "string" ? font : undefined,
         backgroundImage: backgroundImageUrl
           ? `url(${backgroundImageUrl})`
           : undefined,
       }) as React.CSSProperties,
-    [hue, backgroundImageUrl],
+    [hue, font, backgroundImageUrl],
   );
 
   return (
@@ -48,7 +49,6 @@ export default function Tile({
             ? styles.dark
             : styles.color,
       )}
-      data-font={font}
       style={style}
     >
       {children}
