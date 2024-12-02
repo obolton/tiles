@@ -5,6 +5,7 @@ import ProfilePageHeader from "@/components/header/ProfilePageHeader";
 import Grid from "@/components/grid/Grid";
 import client from "@/api/client";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
+import { getTileFonts } from "@/utils/pageFonts";
 
 const { id: userId } = Astro.params;
 
@@ -24,6 +25,9 @@ if (!profile) {
 }
 
 Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
+
+const fonts = getTileFonts(profile.profilePage.tiles);
+fonts.add(profile.profilePage.font);
 ---
 
 <Page
@@ -32,6 +36,7 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
   theme={profile.profilePage.theme}
   hue={profile.profilePage.hue}
   font={profile.profilePage.font}
+  allFonts={fonts}
 >
   <EditingToolbar
     pageId={profile.profilePage.id}
