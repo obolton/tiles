@@ -48,17 +48,6 @@ const TILES_FIELDS = {
       hue: true,
     },
   },
-  place: {
-    select: {
-      id: true,
-      name: true,
-      providerId: true,
-      lat: true,
-      long: true,
-      boundingBox: true,
-      address: true,
-    },
-  },
   map: {
     select: {
       places: {
@@ -171,12 +160,6 @@ function formatTile({
         ...base,
         type,
         text: tile.text!,
-      };
-    case "PLACE":
-      return {
-        ...base,
-        type,
-        place: tile.place!,
       };
     case "MAP":
       return {
