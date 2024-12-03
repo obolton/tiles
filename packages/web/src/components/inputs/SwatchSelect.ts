@@ -1,6 +1,9 @@
-import stylesheet from "./SwatchSelect.css?url";
+import css from "./SwatchSelect.css?inline";
 import deleteIcon from "@/icons/delete.svg";
 import { move, fadeIn, fadeOut } from "@/utils/animation/effects";
+
+const stylesheet = new CSSStyleSheet();
+stylesheet.replaceSync(css);
 
 const TIMING: EffectTiming = {
   duration: 350,
@@ -24,9 +27,7 @@ export default class SwatchSelect extends HTMLElement {
     super();
 
     this.shadow = this.attachShadow({ mode: "closed" });
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = stylesheet;
+    this.shadow.adoptedStyleSheets = [stylesheet];
 
     this.button = document.createElement("button");
     this.button.setAttribute("type", "button");
@@ -51,7 +52,7 @@ export default class SwatchSelect extends HTMLElement {
     this.itemsSlot = document.createElement("slot");
     this.items.append(this.itemsSlot);
 
-    this.shadow.append(link, this.button, this.items);
+    this.shadow.append(this.button, this.items);
   }
 
   toggle() {
