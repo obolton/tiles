@@ -1,5 +1,4 @@
-import { TRPCError } from "@trpc/server";
-import { router, procedure } from "./trpc.ts";
+import { router, authenticatedProcedure } from "./trpc.ts";
 import {
   createTile,
   updateTile,
@@ -17,32 +16,39 @@ import {
 import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
-  create: procedure.input(CreateTileSchema).mutation(async ({ ctx, input }) => {
-    if (!ctx.user) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    const tile = await createTile(ctx.user.id, input);
-    invalidateCachedPage(input.pageId);
-    return tile;
-  }),
-  update: procedure.input(UpdateTileSchema).mutation(async ({ input }) => {
-    const tile = await updateTile(input);
-    invalidateCachedPage(tile.pageId);
-    return tile;
-  }),
-  move: procedure.input(MoveTileSchema).mutation(async ({ input }) => {
-    const result = await moveTile(input);
-    invalidateCachedPage(result.pageId);
-    return result;
-  }),
-  resize: procedure.input(ResizeTileSchema).mutation(async ({ input }) => {
-    const result = await resizeTile(input);
-    invalidateCachedPage(result.pageId);
-    return result;
-  }),
-  delete: procedure.input(DeleteTileSchema).mutation(async ({ input }) => {
-    const result = await deleteTile(input);
-    invalidateCachedPage(result.pageId);
-    return null;
-  }),
+  create: authenticatedProcedure
+    .input(CreateTileSchema)
+    .mutation(async ({ ctx, input }) => {
+      const tile = await createTile(ctx.user.id, input);
+      invalidateCachedPage(input.pageId);
+      return tile;
+    }),
+  update: authenticatedProcedure
+    .input(UpdateTileSchema)
+    .mutation(async ({ input }) => {
+      const tile = await updateTile(input);
+      invalidateCachedPage(tile.pageId);
+      return tile;
+    }),
+  move: authenticatedProcedure
+    .input(MoveTileSchema)
+    .mutation(async ({ input }) => {
+      const result = await moveTile(input);
+      invalidateCachedPage(result.pageId);
+      return result;
+    }),
+  resize: authenticatedProcedure
+    .input(ResizeTileSchema)
+    .mutation(async ({ input }) => {
+      const result = await resizeTile(input);
+      invalidateCachedPage(result.pageId);
+      return result;
+    }),
+  delete: authenticatedProcedure
+    .input(DeleteTileSchema)
+    .mutation(async ({ input }) => {
+      const result = await deleteTile(input);
+      invalidateCachedPage(result.pageId);
+      return null;
+    }),
 });
