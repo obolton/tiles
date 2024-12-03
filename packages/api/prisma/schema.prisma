@@ -121,7 +121,6 @@ model Tile {
   imageTileId        String?  @map("image_tile_id") @db.Uuid
   videoTileId        String?  @map("video_tile_id") @db.Uuid
   textTileId         String?  @map("text_tile_id") @db.Uuid
-  placeTileId        String?  @map("place_tile_id") @db.Uuid
   mapTileId          String?  @map("map_tile_id") @db.Uuid
   linkTileId         String?  @map("link_tile_id") @db.Uuid
   headingTileId      String?  @map("heading_tile_id") @db.Uuid
@@ -136,7 +135,6 @@ model Tile {
   image            ImageTile?    @relation(fields: [imageTileId], references: [id], onDelete: SetNull)
   video            VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
   text             TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
-  place            PlaceTile?    @relation(fields: [placeTileId], references: [id], onDelete: SetNull)
   map              MapTile?      @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
   link             LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
   heading          HeadingTile?  @relation(fields: [headingTileId], references: [id], onDelete: SetNull)
@@ -195,7 +193,7 @@ model TextTile {
   @@map("text_tiles")
 }
 
-model PlaceTile {
+model Place {
   id          String   @id @default(uuid()) @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -207,10 +205,9 @@ model PlaceTile {
   providerId  String?  @map("provider_id")
   mapTileId   String?  @map("map_tile_id") @db.Uuid
 
-  tiles Tile[]
-  map   MapTile? @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
+  map MapTile? @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
 
-  @@map("place_tiles")
+  @@map("places")
 }
 
 model MapTile {
@@ -219,7 +216,7 @@ model MapTile {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   tiles  Tile[]
-  places PlaceTile[]
+  places Place[]
 
   @@map("map_tiles")
 }

@@ -4,7 +4,7 @@ import { AddPlaceSchema, RemovePlaceSchema } from "./schema.ts";
 export async function addPlace({ id, place }: AddPlaceSchema) {
   const { name, providerId, lat, long, boundingBox, address } = place;
   return prisma.$transaction(async (tx) => {
-    const placeTile = await tx.placeTile.create({
+    const placeTile = await tx.place.create({
       data: {
         name,
         providerId,
@@ -58,7 +58,7 @@ export async function addPlace({ id, place }: AddPlaceSchema) {
 
 export async function removePlace({ id, placeId }: RemovePlaceSchema) {
   return prisma.$transaction(async (tx) => {
-    await tx.placeTile.delete({
+    await tx.place.delete({
       where: { id: placeId },
       select: {
         id: true,
