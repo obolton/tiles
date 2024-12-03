@@ -82,7 +82,10 @@ export async function updateTile(properties: UpdateTileSchema) {
   }
 }
 
-export async function moveTile({ id, position }: MoveTileSchema) {
+export async function moveTile(
+  { id, position }: MoveTileSchema,
+  context: AuthenticatedRequestContext,
+) {
   return prisma.$transaction(async (tx) => {
     const {
       pageId,
@@ -92,6 +95,9 @@ export async function moveTile({ id, position }: MoveTileSchema) {
       where: { id },
       select: { pageId: true, parentCollectionId: true, position: true },
     });
+
+    await checkPageAccess(tx, context, pageId);
+
     if (oldPosition === position) {
       return { id, pageId, fromPosition: oldPosition, toPosition: position };
     } else if (position > oldPosition) {

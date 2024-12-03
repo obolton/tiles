@@ -34,8 +34,8 @@ export default router({
 
   move: authenticatedProcedure
     .input(MoveTileSchema)
-    .mutation(async ({ input }) => {
-      const result = await moveTile(input);
+    .mutation(async ({ input, ctx }) => {
+      const result = await moveTile(input, ctx);
       invalidateCachedPage(result.pageId);
       return result;
     }),
