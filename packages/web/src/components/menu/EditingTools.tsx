@@ -39,7 +39,7 @@ export default function EditingTools({
 
   const deletePage = useCallback(async () => {
     await client.pages.delete.mutate({ id: pageId });
-    redirectWithToast("/", "The page was deleted.", "success");
+    redirectWithToast("/library", "The page was deleted.", "success");
   }, [pageId]);
 
   if (!isEditable) {
