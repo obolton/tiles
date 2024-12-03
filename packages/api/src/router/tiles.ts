@@ -19,10 +19,11 @@ export default router({
   create: authenticatedProcedure
     .input(CreateTileSchema)
     .mutation(async ({ ctx, input }) => {
-      const tile = await createTile(ctx.user.id, input);
+      const tile = await createTile(input, ctx);
       invalidateCachedPage(input.pageId);
       return tile;
     }),
+
   update: authenticatedProcedure
     .input(UpdateTileSchema)
     .mutation(async ({ input }) => {
@@ -30,6 +31,7 @@ export default router({
       invalidateCachedPage(tile.pageId);
       return tile;
     }),
+
   move: authenticatedProcedure
     .input(MoveTileSchema)
     .mutation(async ({ input }) => {
@@ -37,6 +39,7 @@ export default router({
       invalidateCachedPage(result.pageId);
       return result;
     }),
+
   resize: authenticatedProcedure
     .input(ResizeTileSchema)
     .mutation(async ({ input }) => {
@@ -44,6 +47,7 @@ export default router({
       invalidateCachedPage(result.pageId);
       return result;
     }),
+
   delete: authenticatedProcedure
     .input(DeleteTileSchema)
     .mutation(async ({ input }) => {

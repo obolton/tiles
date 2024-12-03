@@ -1,4 +1,4 @@
-import prisma from "../../database/prisma.ts";
+import prisma from "@/database/prisma.ts";
 import { createImageTile, updateImageTile } from "./image.ts";
 import { createVideoTile, updateVideoTile } from "./video.ts";
 import { createTextTile, updateTextTile } from "./text.ts";
@@ -15,9 +15,16 @@ import type {
   DeleteTileSchema,
   ResizeTileSchema,
 } from "./schema.ts";
+import type { AuthenticatedRequestContext } from "@/router/trpc.ts";
+import { checkPageAccess } from "@/utils/permissions.ts";
 
-export async function createTile(userId: string, properties: CreateTileSchema) {
+export async function createTile(
+  properties: CreateTileSchema,
+  context: AuthenticatedRequestContext,
+) {
   return prisma.$transaction(async (tx) => {
+    await checkPageAccess(tx, context, properties.pageId);
+
     const position = await tx.tile.count({
       where: { pageId: properties.pageId },
     });
@@ -38,7 +45,13 @@ export async function createTile(userId: string, properties: CreateTileSchema) {
       case "EVENT":
         return createEventTile(tx, pageId, tile, position);
       case "COLLECTION":
-        return createCollectionTile(tx, userId, pageId, tile, position);
+        return createCollectionTile(
+          tx,
+          context.user.id,
+          pageId,
+          tile,
+          position,
+        );
       case "MAP":
         return createMapTile(tx, pageId, tile, position);
     }
