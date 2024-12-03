@@ -9,7 +9,11 @@
 
   &.grow {
     height: fit-content;
-    min-height: 32px;
+    min-height: 0;
+
+    &::part(outline) {
+      min-height: 100%;
+    }
   }
 }
 

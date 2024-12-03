@@ -186,6 +186,7 @@ export default class ResizeItem extends HTMLElement {
 
     this.outline = document.createElement("div");
     this.outline.className = "outline";
+    this.outline.setAttribute("part", "outline");
     this.outline.style.setProperty("width", `${this.width}px`);
     this.outline.style.setProperty("height", `${this.height}px`);
     this.shadowRoot?.appendChild(this.outline);
