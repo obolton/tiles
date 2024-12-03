@@ -26,8 +26,8 @@ body:global(.dark) .event {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(0px, 3cqh, 8px);
-  font-size: clamp(0.875rem, 6cqh, 1.25rem);
+  padding: clamp(0px, 3cqw, 8px);
+  font-size: clamp(0.875rem, 6cqw, 1.25rem);
   line-height: 1.5;
   font-weight: 600;
   color: rgba(255 255 255 / 90%);
@@ -45,7 +45,7 @@ body:global(.dark) .event {
 .grid {
   display: grid;
   grid-template-columns: repeat(var(--columns), 1fr);
-  padding: 5cqh;
+  padding: 5cqw;
   flex: 1;
 }
 
@@ -57,7 +57,7 @@ body:global(.dark) .event {
   container: event-details / size;
 
   & h3 {
-    font-size: clamp(0.875rem, 10cqh, 1.25rem);
+    font-size: clamp(0.875rem, 10cqw, 1.25rem);
     line-height: 1.5;
     font-weight: 500;
     text-align: center;

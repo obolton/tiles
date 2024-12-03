@@ -4,7 +4,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 8px;
-  padding: 12cqh;
+  padding: 12cqw;
   font-family: var(--font);
   text-shadow: 0 1px 1px rgb(255 255 255 / 20%);
   text-wrap: balance;
@@ -12,14 +12,14 @@
   overflow: hidden;
 
   & h3 {
-    font-size: clamp(0.875rem, 8cqh, 1.75rem);
+    font-size: clamp(0.875rem, 8cqw, 1.75rem);
     line-height: 1.2;
     font-weight: 600;
     margin: 0;
   }
 
   & p {
-    font-size: clamp(0.875rem, 6cqh, 1rem);
+    font-size: clamp(0.875rem, 6cqw, 1rem);
     line-height: 1.2;
     font-weight: 500;
   }
