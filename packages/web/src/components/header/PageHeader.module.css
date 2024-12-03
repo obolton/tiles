@@ -24,12 +24,12 @@
 
 .header h1,
 .editor [data-placeholder="true"],
-.editor p::first-line {
+.editor p > span:first-child {
   font-size: clamp(1.5rem, 8vw, 2.8rem);
   font-weight: 600;
 }
 
 .header h1,
-.editor:not(:has([data-placeholder="true"])) p::first-line {
+.editor:not(:has([data-placeholder="true"])) p > span:first-child {
   color: var(--text-color);
 }
