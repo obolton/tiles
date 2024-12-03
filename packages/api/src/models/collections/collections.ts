@@ -1,39 +1,9 @@
 import prisma from "@/database/prisma.ts";
 import { COLLECTION_TILE_FIELDS } from "../tiles/collection.ts";
 import type {
-  CreateCollectionSchema,
-  DeleteCollectionSchema,
   AddToCollectionSchema,
   RemoveFromCollectionSchema,
 } from "./schema.ts";
-
-export async function createCollection(
-  userId: string,
-  { title, items = [] }: CreateCollectionSchema,
-) {
-  return await prisma.collection.create({
-    data: {
-      userId,
-      title,
-      items: {
-        connect: items.map((id) => ({ id })),
-      },
-    },
-    select: {
-      id: true,
-      title: true,
-    },
-  });
-}
-
-export async function deleteCollection({ id }: DeleteCollectionSchema) {
-  return await prisma.collection.delete({
-    where: { id },
-    select: {
-      id: true,
-    },
-  });
-}
 
 export async function addToCollection({
   collectionId,
