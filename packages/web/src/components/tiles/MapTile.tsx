@@ -48,12 +48,7 @@ export default function MapTile({ id, map, ...props }: MapTileProps) {
   }, [handleDelete]);
 
   return (
-    <pop-out
-      class={styles["pop-out"]}
-      expandable="expandable"
-      tabindex="0"
-      origin="center"
-    >
+    <pop-out class={styles["pop-out"]} expandable="expandable" tabindex="0">
       <Tile {...props} id={id}>
         <map-view
           class={styles.map}
