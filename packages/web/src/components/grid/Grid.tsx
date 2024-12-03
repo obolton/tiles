@@ -113,6 +113,14 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
         ),
       );
     };
+    const remove = (event: Event) => {
+      const { detail: tileIds } = event as CustomEvent<string[]>;
+      startLayoutTransition(() => {
+        setTiles((prevTiles) =>
+          prevTiles.filter((prevTile) => !tileIds.includes(prevTile.id)),
+        );
+      });
+    };
     const dragOver = (event: DragDropEvent) => {
       const { target, dragSource, inside } = event;
       if (ref.current && target instanceof HTMLElement && !inside) {
@@ -196,20 +204,16 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       await client.tiles.resize.mutate({ id, columns, rows });
     };
     const element = ref.current;
-    window.addEventListener("tile:create", create);
-    window.addEventListener("tile:update", update);
-    element?.addEventListener("drag:drag-over", dragOver);
-    element?.addEventListener("drag:drop", drop);
-    window.addEventListener("resize:resize", resize);
-    window.addEventListener("resize:end", resizeEnd);
-    return () => {
-      window.removeEventListener("tile:create", create);
-      window.removeEventListener("tile:update", update);
-      element?.removeEventListener("drag:drag-over", dragOver);
-      element?.removeEventListener("drag:drop", drop);
-      window.removeEventListener("resize:resize", resize);
-      window.removeEventListener("resize:end", resizeEnd);
-    };
+    const abortController = new AbortController();
+    const { signal } = abortController;
+    window.addEventListener("tile:create", create, { signal });
+    window.addEventListener("tile:update", update, { signal });
+    window.addEventListener("tile:remove", remove, { signal });
+    element?.addEventListener("drag:drag-over", dragOver, { signal });
+    element?.addEventListener("drag:drop", drop, { signal });
+    window.addEventListener("resize:resize", resize, { signal });
+    window.addEventListener("resize:end", resizeEnd, { signal });
+    return () => abortController.abort();
   }, [sizeRef, startLayoutTransition, tiles]);
 
   return (

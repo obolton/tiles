@@ -16,7 +16,13 @@ export default function useCreateCollection(tileId: string, type: "STACK") {
           type,
           tileIds: [tileId, id],
         },
-      }).catch(handleError);
+      })
+        .then(() => {
+          window.dispatchEvent(
+            new CustomEvent("tile:remove", { detail: [tileId, id] }),
+          );
+        })
+        .catch(handleError);
     },
     [tileId, type],
   );
