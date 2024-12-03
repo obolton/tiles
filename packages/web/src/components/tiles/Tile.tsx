@@ -1,5 +1,4 @@
-import { useMemo, useRef } from "react";
-import useScrollIntoView from "@/hooks/useScrollIntoView";
+import { useMemo } from "react";
 import styles from "./Tile.module.css";
 import { classNames } from "@/utils/css";
 import type { Theme } from "@/types/pages";
@@ -24,9 +23,6 @@ export default function Tile({
   showBorder = true,
   backgroundImageUrl,
 }: TileProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  useScrollIntoView(ref);
-
   const style = useMemo(() => {
     const fontConfig =
       typeof font === "string" ? getFontConfig(font) : undefined;
@@ -43,7 +39,6 @@ export default function Tile({
 
   return (
     <div
-      ref={ref}
       className={classNames(
         styles.tile,
         showBorder && styles.border,

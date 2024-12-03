@@ -2,8 +2,10 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { classNames } from "@/utils/css";
 import useCreateCollection from "@/hooks/useCreateCollection";
 import useDraggable from "@/hooks/useDraggable";
+import useScrollIntoView from "@/hooks/useScrollIntoView";
 import DeleteButton from "../tiles/DeleteButton";
 import styles from "./GridItem.module.css";
+import type ResizeItem from "@/components/resize/ResizeItem";
 
 interface GridItemProps {
   id: string;
@@ -32,9 +34,10 @@ export default function GridItem({
   onDelete,
   children,
 }: GridItemProps) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<ResizeItem>(null);
   const onDrop = useCreateCollection(id ?? "", "STACK");
   useDraggable(ref, isEditable && !!dropGroup);
+  useScrollIntoView(ref);
 
   const handleDelete = useCallback(() => onDelete(id), [id, onDelete]);
 
