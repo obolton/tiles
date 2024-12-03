@@ -2,11 +2,11 @@ import type {
   ImageTile,
   VideoTile,
   TextTile,
-  PlaceTile,
   MapTile,
   LinkTile,
   HeadingTile,
   PageLinkTile,
+  Place,
   EventTile,
   Collection,
   Tile,
@@ -44,7 +44,7 @@ export interface ClientTextTile extends ClientTileBase {
 }
 
 // Place
-export type ClientPlace = OmitMetadata<Omit<PlaceTile, "mapTileId">> & {
+export type ClientPlace = OmitMetadata<Omit<Place, "mapTileId">> & {
   id: string;
 };
 
