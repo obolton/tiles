@@ -203,9 +203,9 @@ model Place {
   boundingBox Float[]  @map("bounding_box")
   address     String?
   providerId  String?  @map("provider_id")
-  mapTileId   String?  @map("map_tile_id") @db.Uuid
+  mapTileId   String   @map("map_tile_id") @db.Uuid
 
-  map MapTile? @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
+  map MapTile @relation(fields: [mapTileId], references: [id], onDelete: Cascade)
 
   @@map("places")
 }

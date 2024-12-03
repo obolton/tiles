@@ -4,27 +4,19 @@ import { AddPlaceSchema, RemovePlaceSchema } from "./schema.ts";
 export async function addPlace({ id, place }: AddPlaceSchema) {
   const { name, providerId, lat, long, boundingBox, address } = place;
   return prisma.$transaction(async (tx) => {
-    const placeTile = await tx.place.create({
-      data: {
-        name,
-        providerId,
-        lat,
-        long,
-        boundingBox: boundingBox ?? [],
-        address,
-      },
-      select: {
-        id: true,
-      },
-    });
     return tx.tile.update({
       where: { id },
       data: {
         map: {
           update: {
             places: {
-              connect: {
-                id: placeTile.id,
+              create: {
+                name,
+                providerId,
+                lat,
+                long,
+                boundingBox: boundingBox ?? [],
+                address,
               },
             },
           },
