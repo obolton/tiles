@@ -57,4 +57,12 @@ export async function createContext({ req, res }: CreateHTTPContextOptions) {
 const trpc = initTRPC.context<typeof createContext>().create();
 
 export const router = trpc.router;
-export const procedure = trpc.procedure;
+export const publicProcedure = trpc.procedure;
+
+export const authenticatedProcedure = trpc.procedure.use(async (opts) => {
+  const { ctx } = opts;
+  if (!ctx.sessionId || !ctx.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return opts.next({ ctx });
+});
