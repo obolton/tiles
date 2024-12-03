@@ -2,19 +2,19 @@
   position: fixed;
   top: 0;
   left: 0;
+  width: 80px;
   height: 100%;
-  background-color: oklch(from var(--page-color) l c h / 90%);
-  backdrop-filter: blur(8px);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 16px;
+  padding: 20px 0;
   gap: 8px;
   z-index: 2;
 
   & hr {
-    width: 60%;
+    flex: 0 0 auto;
+    width: 50%;
     height: 3px;
     background: rgb(0 0 0 / 10%);
     border-radius: 2px;
@@ -38,6 +38,11 @@
 }
 
 @media (width < 640px) {
+  header,
+  main {
+    max-width: min(var(--max-width), calc(100vw - 32px));
+  }
+
   .toolbar {
     height: 64px;
     width: 100%;
@@ -48,6 +53,8 @@
     overflow: auto;
     border-top: 1px solid rgb(0 0 0 / 10%);
     padding: 0 8px;
+    background-color: oklch(from var(--page-color) l c h / 90%);
+    backdrop-filter: blur(8px);
 
     &.secondary {
       bottom: 64px;

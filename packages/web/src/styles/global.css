@@ -67,15 +67,15 @@ menu {
 header,
 main {
   margin: 0 auto;
-  max-width: var(--max-width);
+  max-width: min(var(--max-width), calc(100vw - 160px));
 }
 
 header {
-  padding: clamp(24px, 4vw, 64px) 1rem;
+  padding: clamp(24px, 4vw, 64px) 0;
 }
 
 main {
-  padding: 0 1rem 6rem;
+  padding: 0 0 6rem;
   container: main / inline-size;
 }
 
