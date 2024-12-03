@@ -16,7 +16,7 @@ export default class PopOut extends HTMLElement {
     super();
 
     const shadow = this.attachShadow({ mode: "closed", delegatesFocus: true });
-    shadow.adoptedStyleSheets.push(stylesheet);
+    shadow.adoptedStyleSheets = [stylesheet];
 
     const closeButton = document.createElement("button");
     closeButton.setAttribute("part", "close");
