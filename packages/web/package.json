@@ -48,7 +48,7 @@
     "jsdom": "^25.0.1",
     "postcss-html": "^1.7.0",
     "storybook": "^8.4.4",
-    "stylelint": "^16.10.0",
+    "stylelint": "^16.11.0",
     "stylelint-config-html": "^1.1.0",
     "stylelint-config-standard": "^36.0.1",
     "typescript-plugin-css-modules": "^5.1.0"
