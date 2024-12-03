@@ -17,6 +17,7 @@ import type {
   DeletePageSchema,
 } from "./schema.ts";
 import type { ClientTile } from "@/types/tiles.ts";
+import type { AuthenticatedRequestContext } from "@/router/trpc.ts";
 
 const TILES_FIELDS = {
   id: true,
@@ -315,12 +316,12 @@ export async function getProfilePageByUserId({
 }
 
 export async function getRecentPagesWithTiles(
-  userId: string,
   { offset }: GetRecentPagesWithTilesSchema,
+  { user }: AuthenticatedRequestContext,
 ) {
   const count = 15;
   const pages = await prisma.page.findMany({
-    where: { authorId: userId },
+    where: { authorId: user.id },
     select: PAGE_LINK_TILE_PAGE_FIELDS,
     orderBy: {
       updatedAt: "desc",
@@ -344,12 +345,12 @@ export async function getRecentPagesWithTiles(
 }
 
 export async function createPage(
-  authorId: string,
   { title }: CreatePageSchema,
+  { user }: AuthenticatedRequestContext,
 ) {
   return prisma.page.create({
     data: {
-      authorId,
+      authorId: user.id,
       published: false,
       title,
       tiles: {
@@ -385,17 +386,12 @@ export async function createPage(
   });
 }
 
-export async function updatePage({
-  id,
-  published,
-  title,
-  subtitle,
-  theme,
-  hue,
-  font,
-}: UpdatePageSchema) {
+export async function updatePage(
+  { id, published, title, subtitle, theme, hue, font }: UpdatePageSchema,
+  { user }: AuthenticatedRequestContext,
+) {
   return prisma.page.update({
-    where: { id },
+    where: { id, authorId: user.id },
     data: { published, title, subtitle, theme, hue, font },
     select: {
       id: true,
@@ -412,9 +408,12 @@ export async function updatePage({
   });
 }
 
-export async function deletePage({ id }: DeletePageSchema) {
+export async function deletePage(
+  { id }: DeletePageSchema,
+  { user }: AuthenticatedRequestContext,
+) {
   return prisma.page.delete({
-    where: { id },
+    where: { id, authorId: user.id },
     select: {
       id: true,
     },

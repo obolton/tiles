@@ -35,29 +35,29 @@ export default router({
   getRecentWithTiles: authenticatedProcedure
     .input(GetRecentPagesWithTilesSchema)
     .query(async ({ input, ctx }) => {
-      const pages = await getRecentPagesWithTiles(ctx.user.id, input);
+      const pages = await getRecentPagesWithTiles(input, ctx);
       return pages;
     }),
 
   create: authenticatedProcedure
     .input(CreatePageSchema)
     .mutation(async ({ input, ctx }) => {
-      const page = await createPage(ctx.user.id, input);
+      const page = await createPage(input, ctx);
       return page;
     }),
 
   update: authenticatedProcedure
     .input(UpdatePageSchema)
-    .mutation(async ({ input }) => {
-      const page = await updatePage(input);
+    .mutation(async ({ input, ctx }) => {
+      const page = await updatePage(input, ctx);
       invalidateCachedPage(page.id);
       return page;
     }),
 
   delete: authenticatedProcedure
     .input(DeletePageSchema)
-    .mutation(async ({ input }) => {
-      const page = await deletePage(input);
+    .mutation(async ({ input, ctx }) => {
+      const page = await deletePage(input, ctx);
       invalidateCachedPage(page.id);
       return page;
     }),
