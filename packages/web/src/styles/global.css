@@ -85,7 +85,8 @@ body[data-disable-transitions] * {
 }
 
 body:has(dialog[open]),
-body:has(pop-out[open]) {
+body:has(pop-out[open]),
+body:has(stack-view[open]) {
   overflow: hidden;
 }
 
