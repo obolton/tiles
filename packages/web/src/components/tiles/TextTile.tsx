@@ -71,7 +71,6 @@ export default function TextTile({
       class={styles["pop-out"]}
       tabindex="0"
       expandable={columns === 3 ? undefined : "expandable"}
-      origin="top-left"
     >
       <Tile
         {...tile}
