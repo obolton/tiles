@@ -103,7 +103,7 @@ export class DragState {
             ),
           );
 
-          if (this.dropTarget && this.dropTarget !== target) {
+          if (this.dropTarget && (target !== this.dropTarget || !inside)) {
             delete this.dropTarget.dataset.dragOver;
           }
 
