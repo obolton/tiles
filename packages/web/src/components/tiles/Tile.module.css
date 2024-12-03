@@ -11,7 +11,7 @@
   background-size: cover;
   background-position: center;
   outline-offset: -1px;
-  container: tile / size;
+  container: tile / inline-size;
   transition:
     opacity var(--animation-duration-short) var(--easing),
     box-shadow var(--animation-duration-short) var(--easing),
