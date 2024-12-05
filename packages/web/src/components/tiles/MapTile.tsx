@@ -4,18 +4,17 @@ import useEditable from "@/hooks/useEditable";
 import Tile, { type TileProps } from "./Tile";
 import addPlaceIcon from "@/icons/add-place.svg";
 import styles from "./MapTile.module.css";
-import type { ClientMap } from "@/types/tiles";
+import type { ClientPlace } from "@/types/tiles";
 import type MapView from "@/components/maps/MapView";
 import type MapEvent from "@/components/maps/MapEvent";
 import { showModal } from "@/utils/modals";
 import { updateTileData } from "@/utils/edit";
 
 interface MapTileProps extends TileProps {
-  map: ClientMap;
+  places: ClientPlace[];
 }
 
-export default function MapTile({ id, map, ...props }: MapTileProps) {
-  const { places } = map;
+export default function MapTile({ id, places, ...props }: MapTileProps) {
   const isEditable = useEditable();
   const ref = useRef<MapView>(null);
   const addPlace = useCallback(
@@ -30,9 +29,8 @@ export default function MapTile({ id, map, ...props }: MapTileProps) {
           placeId: markerId,
           id,
         });
-        if (tile.map?.places) {
-          updateTileData({ ...tile, type: "MAP", map: tile.map! });
-        }
+
+        updateTileData(tile);
       }
     },
     [id],

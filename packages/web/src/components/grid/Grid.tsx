@@ -44,7 +44,7 @@ function getTileComponent(tile: ClientTile) {
     case "TEXT":
       return <TextTile {...props} text={tile.text} />;
     case "MAP":
-      return <MapTile {...props} map={tile.map} />;
+      return <MapTile {...tile} />;
     case "LINK":
       return <LinkTile {...props} link={tile.link} />;
     case "HEADING":
