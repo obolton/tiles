@@ -84,6 +84,23 @@ export async function createMap(map: CreateMapInput) {
   window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
 }
 
+type CreateTextInput = Omit<AppRouterInputs["text"]["create"], "pageId">;
+
+export async function createText(text: CreateTextInput) {
+  const result = await client.text.create.mutate({
+    pageId: getPageId(),
+    ...text,
+  });
+  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+}
+
+type UpdateTextInput = AppRouterInputs["text"]["update"];
+
+export async function updateText(text: UpdateTextInput) {
+  const result = await client.text.update.mutate(text);
+  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
+}
+
 export async function updateTileData(tile: Partial<ClientTile>) {
   window.dispatchEvent(new CustomEvent("tile:update", { detail: tile }));
 }
