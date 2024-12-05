@@ -31,30 +31,12 @@ export function editTile(
   showModal(tileType, { tileId, tile });
 }
 
-type CreateTileInput = AppRouterInputs["tiles"]["create"];
-
-export async function createTile(tile: CreateTileInput["tile"]) {
-  const pageId = document.body.dataset.pageId;
-  if (!pageId) {
-    throw new Error("No page ID found");
-  }
-  const result = await client.tiles.create.mutate({ pageId, tile });
-  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
-}
-
 function getPageId() {
   const pageId = document.body.dataset.pageId;
   if (!pageId) {
     throw new Error("No page ID found");
   }
   return pageId;
-}
-
-type UpdateTileInput = AppRouterInputs["tiles"]["update"];
-
-export async function updateTile(id: string, tile: UpdateTileInput["tile"]) {
-  const result = await client.tiles.update.mutate({ id, tile });
-  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
 }
 
 type CreateImageInput = Omit<AppRouterInputs["images"]["create"], "pageId">;
