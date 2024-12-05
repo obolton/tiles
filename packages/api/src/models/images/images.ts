@@ -4,7 +4,7 @@ import type { CreateImageSchema, UpdateImageSchema } from "./schema.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import type { Prisma } from "@prisma/client";
 
-export const IMAGE_FIELDS: Prisma.ImageTileSelectScalar = {
+export const IMAGE_FIELDS: Prisma.ImageTileSelect = {
   id: true,
   imageKey: true,
   caption: true,
@@ -28,6 +28,7 @@ export async function createImage({
     const placement = await createTilePlacement(
       {
         pageId,
+        type: "IMAGE",
         imageTileId: image.id,
       },
       transaction,
