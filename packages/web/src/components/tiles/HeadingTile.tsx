@@ -1,23 +1,21 @@
 import { useCallback, useState } from "react";
 import useEditable from "@/hooks/useEditable";
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
-import { updateTile } from "@/utils/edit";
+import { updateHeading } from "@/utils/edit";
 import styles from "./HeadingTile.module.css";
 import { classNames } from "@/utils/css";
-import type { ClientHeading } from "@/types/tiles";
 import Tile from "./Tile";
 
 type HeadingTileProps = {
   id: string;
-  heading: ClientHeading;
+  content: string;
 };
 
 function stripLineBreaks(value: string) {
   return value.replace(/\n/g, "");
 }
 
-export default function HeadingTile({ id, heading }: HeadingTileProps) {
-  const { content } = heading;
+export default function HeadingTile({ id, content }: HeadingTileProps) {
   const isEditable = useEditable();
   const [value, setValue] = useState(content);
 
@@ -29,11 +27,9 @@ export default function HeadingTile({ id, heading }: HeadingTileProps) {
 
   const onBlur = useCallback(
     async () =>
-      updateTile(id, {
-        type: "HEADING",
-        heading: {
-          content: value,
-        },
+      updateHeading({
+        id,
+        content: value,
       }),
     [id, value],
   );
