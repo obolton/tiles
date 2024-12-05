@@ -11,6 +11,7 @@ import { COLLECTION_TILE_FIELDS } from "@/models/tiles/collection.ts";
 import { IMAGE_FIELDS } from "@/models/images/images.ts";
 import { MAP_FIELDS } from "@/models/maps/maps.ts";
 import { TEXT_FIELDS } from "@/models/text/text.ts";
+import { HEADING_FIELDS } from "@/models/headings/headings.ts";
 import type {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
@@ -56,9 +57,7 @@ const TILES_FIELDS = {
     },
   },
   heading: {
-    select: {
-      content: true,
-    },
+    select: HEADING_FIELDS,
   },
   pageLink: {
     select: {
@@ -163,7 +162,7 @@ function formatTile({
       return {
         ...base,
         type,
-        heading: tile.heading!,
+        ...tile.heading!,
       };
     case "PAGE_LINK": {
       const pageLink = tile.pageLink;
