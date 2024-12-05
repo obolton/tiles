@@ -60,20 +60,6 @@ export const PageLinkTileSchema = z.object({
 });
 export type PageLinkTileSchema = z.infer<typeof PageLinkTileSchema>;
 
-// Event
-
-export const EventTileSchema = z.object({
-  type: z.literal(TileType.EVENT),
-  event: z.object({
-    title: z.string().nullable(),
-    start: z.string().datetime(),
-    end: z.string().datetime().nullable(),
-    allDay: z.boolean().optional(),
-    timeZone: z.string().optional(),
-  }),
-});
-export type EventTileSchema = z.infer<typeof EventTileSchema>;
-
 // Collection
 
 export const CollectionTileSchema = z.object({
@@ -94,7 +80,6 @@ export const CreateTileSchema = z.object({
     CreateVideoTileSchema,
     LinkTileSchema,
     PageLinkTileSchema,
-    EventTileSchema,
     CollectionTileSchema,
   ]),
 });
@@ -108,7 +93,6 @@ export const UpdateTileSchema = z.object({
     UpdateVideoTileSchema,
     LinkTileSchema,
     PageLinkTileSchema,
-    EventTileSchema,
     CollectionTileSchema,
   ]),
 });

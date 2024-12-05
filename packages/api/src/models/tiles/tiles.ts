@@ -2,7 +2,6 @@ import prisma from "@/database/prisma.ts";
 import { createVideoTile, updateVideoTile } from "./video.ts";
 import { createLinkTile, updateLinkTile } from "./link.ts";
 import { createPageLinkTile, updatePageLinkTile } from "./pageLink.ts";
-import { createEventTile, updateEventTile } from "./event.ts";
 import { createCollectionTile, updateCollectionTile } from "./collection.ts";
 import type {
   CreateTileSchema,
@@ -33,8 +32,6 @@ export async function createTile(
         return createLinkTile(tx, pageId, tile, position);
       case "PAGE_LINK":
         return createPageLinkTile(tx, pageId, tile, position);
-      case "EVENT":
-        return createEventTile(tx, pageId, tile, position);
       case "COLLECTION":
         return createCollectionTile(
           tx,
@@ -56,8 +53,6 @@ export async function updateTile(properties: UpdateTileSchema) {
       return updateLinkTile(prisma, id, tile);
     case "PAGE_LINK":
       return updatePageLinkTile(prisma, id, tile);
-    case "EVENT":
-      return updateEventTile(prisma, id, tile);
     case "COLLECTION":
       return updateCollectionTile(prisma, id, tile);
   }
@@ -151,11 +146,12 @@ export async function deleteTile({ id }: DeleteTileSchema) {
 
 type CreateTilePlacement = {
   pageId: string;
-  type: "TEXT" | "HEADING" | "IMAGE" | "MAP";
+  type: "TEXT" | "HEADING" | "IMAGE" | "MAP" | "EVENT";
   imageTileId?: string;
   mapTileId?: string;
   textTileId?: string;
   headingTileId?: string;
+  eventTileId?: string;
 };
 
 export async function createTilePlacement(
@@ -166,6 +162,7 @@ export async function createTilePlacement(
     mapTileId,
     textTileId,
     headingTileId,
+    eventTileId,
   }: CreateTilePlacement,
   transaction: Prisma.TransactionClient,
 ) {
@@ -183,6 +180,7 @@ export async function createTilePlacement(
       mapTileId,
       textTileId,
       headingTileId,
+      eventTileId,
     },
     select: {
       position: true,
