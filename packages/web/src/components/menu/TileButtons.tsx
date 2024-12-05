@@ -6,7 +6,7 @@ import linkIcon from "@/icons/link.svg";
 import placeIcon from "@/icons/place.svg";
 import headingIcon from "@/icons/heading.svg";
 import eventIcon from "@/icons/event.svg";
-import { createTile } from "@/utils/edit";
+import { createTile, createText } from "@/utils/edit";
 import { registerModal, showModal } from "@/utils/modals";
 import type { TileType } from "@/types/tiles";
 
@@ -64,11 +64,8 @@ export default function TileButtons() {
           },
         });
       } else if (tileType === "TEXT") {
-        await createTile({
-          type: "TEXT",
-          text: {
-            content: [],
-          },
+        await createText({
+          content: [],
         });
       } else {
         showModal(tileType);

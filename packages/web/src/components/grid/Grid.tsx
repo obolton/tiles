@@ -42,7 +42,7 @@ function getTileComponent(tile: ClientTile) {
     case "VIDEO":
       return <VideoTile {...props} video={tile.video} />;
     case "TEXT":
-      return <TextTile {...props} text={tile.text} />;
+      return <TextTile {...tile} />;
     case "MAP":
       return <MapTile {...tile} />;
     case "LINK":

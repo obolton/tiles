@@ -5,25 +5,29 @@ import RichText from "@/components/text/RichText";
 import Toolbar from "@/components/inputs/RichTextEditor/Toolbar";
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
-import { updateTile } from "@/utils/edit";
+import { updateText } from "@/utils/edit";
 import Tile, { type TileProps } from "./Tile";
 import styles from "./TextTile.module.css";
 import { classNames } from "@/utils/css";
-import type { ClientText } from "@/types/tiles";
 import type { EditorState } from "@/components/inputs/RichTextEditor/RichTextEditor";
+import type { Theme } from "@/types/pages";
+import type { RichText as RichTextType } from "@/utils/richText/types";
 
 interface TextTileProps extends TileProps {
   columns: number;
-  text: ClientText;
+  content: RichTextType;
+  theme: Theme;
+  hue: number | null;
 }
 
 export default function TextTile({
   id,
   columns,
-  text,
+  content,
+  theme: initialTheme,
+  hue: initialHue,
   ...tile
 }: TextTileProps) {
-  const { content, theme: initialTheme, hue: initialHue } = text;
   const isEditable = useEditable();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [theme, setTheme] = useState(initialTheme);
@@ -34,11 +38,9 @@ export default function TextTile({
       return;
     }
     const content = serialize(editorState);
-    await updateTile(id, {
-      type: "TEXT",
-      text: {
-        content,
-      },
+    await updateText({
+      id,
+      content,
     });
   }, [editorState, id]);
 
@@ -48,12 +50,10 @@ export default function TextTile({
       if (typeof hue === "number") {
         setHue(hue);
       }
-      await updateTile(id, {
-        type: "TEXT",
-        text: {
-          theme,
-          hue,
-        },
+      await updateText({
+        id,
+        theme,
+        hue,
       });
     },
     [id],
