@@ -24,9 +24,8 @@ type ClientTileBase = Pick<
 
 // Image
 export type ClientImage = OmitMetadata<ImageTile>;
-export interface ClientImageTile extends ClientTileBase {
+export interface ClientImageTile extends ClientTileBase, ClientImage {
   type: "IMAGE";
-  image: ClientImage;
 }
 
 // Video
