@@ -89,11 +89,7 @@ const PAGE_FIELDS = {
   },
 } as const;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const tileWithDataValidator = Prisma.validator<Prisma.TileDefaultArgs>()({
-  select: TILES_FIELDS,
-});
-type TileWithData = Prisma.TileGetPayload<typeof tileWithDataValidator>;
+type TileWithData = Prisma.TileGetPayload<{ select: typeof TILES_FIELDS }>;
 
 function formatTile({
   id,
@@ -102,7 +98,7 @@ function formatTile({
   rows,
   columns,
   ...tile
-}: TileWithData) {
+}: TileWithData): ClientTile {
   const base = { id, position, rows, columns };
   switch (type) {
     case "IMAGE":
