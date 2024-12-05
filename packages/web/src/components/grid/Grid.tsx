@@ -55,7 +55,7 @@ function getTileComponent(tile: ClientTile) {
     case "EVENT":
       return <EventTile {...tile} />;
     case "COLLECTION":
-      return <CollectionTile {...props} collection={tile.collection} />;
+      return <CollectionTile {...tile} />;
     default:
       throw new Error(`Unknown tile type: ${type}`);
   }

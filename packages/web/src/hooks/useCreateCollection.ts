@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { createTile } from "@/utils/edit";
+import { createCollection } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
 import type { DragDropEvent } from "@/utils/drag";
 
@@ -10,12 +10,9 @@ export default function useCreateCollection(tileId: string, type: "STACK") {
       if (!id) {
         return;
       }
-      createTile({
-        type: "COLLECTION",
-        collection: {
-          type,
-          tileIds: [tileId, id],
-        },
+      createCollection({
+        type,
+        tileIds: [tileId, id],
       })
         .then(() => {
           window.dispatchEvent(

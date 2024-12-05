@@ -21,28 +21,25 @@ interface StackProps {
 }
 
 function getTileComponent(item: ClientCollection["items"][number]) {
-  const props = {
-    id: item.id,
-  };
-
-  if (item.text) {
-    return <TextTile {...props} columns={1} text={item.text} />;
+  if (item.type === "TEXT") {
+    // @ts-expect-error Rich text
+    return <TextTile {...item} />;
   }
 
-  if (item.image) {
-    return <ImageTile {...props} image={item.image} movable={false} />;
+  if (item.type === "IMAGE") {
+    return <ImageTile {...item} movable={false} />;
   }
 
-  if (item.video) {
-    return <VideoTile {...props} video={item.video} />;
+  if (item.type === "VIDEO") {
+    return <VideoTile {...item} />;
   }
 
-  if (item.link) {
-    return <LinkTile {...props} link={item.link} />;
+  if (item.type === "LINK") {
+    return <LinkTile {...item} />;
   }
 
-  if (item.map) {
-    return <MapTile {...props} map={item.map} />;
+  if (item.type === "MAP") {
+    return <MapTile {...item} />;
   }
 
   return null;
