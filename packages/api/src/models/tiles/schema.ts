@@ -9,23 +9,6 @@ import {
 
 // Tile types
 
-// Video
-export const CreateVideoTileSchema = z.object({
-  type: z.literal(TileType.VIDEO),
-  video: z.object({
-    url: z.string().url(),
-  }),
-});
-export type CreateVideoTileSchema = z.infer<typeof CreateVideoTileSchema>;
-
-export const UpdateVideoTileSchema = z.object({
-  type: z.literal(TileType.VIDEO),
-  video: z.object({
-    title: z.string().optional(),
-  }),
-});
-export type UpdateVideoTileSchema = z.infer<typeof UpdateVideoTileSchema>;
-
 // Place
 export const PlaceTileSchema = z.object({
   type: z.literal(TileType.PLACE),
@@ -39,16 +22,6 @@ export const PlaceTileSchema = z.object({
   }),
 });
 export type PlaceTileSchema = z.infer<typeof PlaceTileSchema>;
-
-// Link
-
-export const LinkTileSchema = z.object({
-  type: z.literal(TileType.LINK),
-  link: z.object({
-    url: z.string().url(),
-  }),
-});
-export type LinkTileSchema = z.infer<typeof LinkTileSchema>;
 
 // Collection
 
@@ -66,11 +39,7 @@ export type CollectionTileSchema = z.infer<typeof CollectionTileSchema>;
 
 export const CreateTileSchema = z.object({
   pageId: z.string().uuid(),
-  tile: z.discriminatedUnion("type", [
-    CreateVideoTileSchema,
-    LinkTileSchema,
-    CollectionTileSchema,
-  ]),
+  tile: z.discriminatedUnion("type", [CollectionTileSchema]),
 });
 export type CreateTileSchema = z.infer<typeof CreateTileSchema>;
 
@@ -78,11 +47,7 @@ export type CreateTileSchema = z.infer<typeof CreateTileSchema>;
 
 export const UpdateTileSchema = z.object({
   id: z.string().uuid(),
-  tile: z.discriminatedUnion("type", [
-    UpdateVideoTileSchema,
-    LinkTileSchema,
-    CollectionTileSchema,
-  ]),
+  tile: z.discriminatedUnion("type", [CollectionTileSchema]),
 });
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 

@@ -1,6 +1,4 @@
 import prisma from "@/database/prisma.ts";
-import { createVideoTile, updateVideoTile } from "./video.ts";
-import { createLinkTile, updateLinkTile } from "./link.ts";
 import { createCollectionTile, updateCollectionTile } from "./collection.ts";
 import type {
   CreateTileSchema,
@@ -11,7 +9,7 @@ import type {
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/router/trpc.ts";
 import { checkPageAccess } from "@/utils/permissions.ts";
-import type { Prisma } from "@prisma/client";
+import type { Prisma, TileType } from "@prisma/client";
 
 export async function createTile(
   properties: CreateTileSchema,
@@ -25,10 +23,6 @@ export async function createTile(
     });
     const { pageId, tile } = properties;
     switch (tile.type) {
-      case "VIDEO":
-        return createVideoTile(tx, pageId, tile, position);
-      case "LINK":
-        return createLinkTile(tx, pageId, tile, position);
       case "COLLECTION":
         return createCollectionTile(
           tx,
@@ -44,10 +38,6 @@ export async function createTile(
 export async function updateTile(properties: UpdateTileSchema) {
   const { id, tile } = properties;
   switch (tile.type) {
-    case "VIDEO":
-      return updateVideoTile(prisma, id, tile);
-    case "LINK":
-      return updateLinkTile(prisma, id, tile);
     case "COLLECTION":
       return updateCollectionTile(prisma, id, tile);
   }
@@ -141,13 +131,15 @@ export async function deleteTile({ id }: DeleteTileSchema) {
 
 type CreateTilePlacement = {
   pageId: string;
-  type: "TEXT" | "HEADING" | "IMAGE" | "MAP" | "EVENT" | "PAGE_LINK";
+  type: TileType;
   imageTileId?: string;
   mapTileId?: string;
   textTileId?: string;
   headingTileId?: string;
   eventTileId?: string;
   pageLinkTileId?: string;
+  linkTileId?: string;
+  videoTileId?: string;
 };
 
 export async function createTilePlacement(
@@ -160,6 +152,8 @@ export async function createTilePlacement(
     headingTileId,
     eventTileId,
     pageLinkTileId,
+    linkTileId,
+    videoTileId,
   }: CreateTilePlacement,
   transaction: Prisma.TransactionClient,
 ) {
@@ -179,6 +173,8 @@ export async function createTilePlacement(
       headingTileId,
       eventTileId,
       pageLinkTileId,
+      linkTileId,
+      videoTileId,
     },
     select: {
       position: true,

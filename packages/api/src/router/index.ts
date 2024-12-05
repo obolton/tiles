@@ -12,6 +12,8 @@ import textRouter from "./text.ts";
 import headingsRouter from "./headings.ts";
 import eventsRouter from "./events.ts";
 import pageLinksRouter from "./pageLinks.ts";
+import linksRouter from "./links.ts";
+import videosRouter from "./videos.ts";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 const appRouter = router({
@@ -28,6 +30,8 @@ const appRouter = router({
   headings: headingsRouter,
   events: eventsRouter,
   pageLinks: pageLinksRouter,
+  externalLinks: linksRouter,
+  videos: videosRouter,
 });
 
 export type AppRouter = typeof appRouter;
