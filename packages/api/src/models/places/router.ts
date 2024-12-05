@@ -1,6 +1,6 @@
-import { router, authenticatedProcedure } from "./trpc.ts";
-import { SearchPlacesSchema } from "@/utils/places/schema.ts";
-import { searchPlaces } from "@/utils/places/search.ts";
+import { router, authenticatedProcedure } from "@/router/trpc.ts";
+import { SearchPlacesSchema } from "./schema.ts";
+import { searchPlaces } from "./places.ts";
 
 export default router({
   search: authenticatedProcedure

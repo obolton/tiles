@@ -1,10 +1,10 @@
-import { router, authenticatedProcedure } from "./trpc.ts";
-import { createMap, addPlace, removePlace } from "@/models/maps/maps.ts";
+import { router, authenticatedProcedure } from "@/router/trpc.ts";
+import { createMap, addPlace, removePlace } from "./maps.ts";
 import {
   CreateMapSchema,
   AddPlaceSchema,
   RemovePlaceSchema,
-} from "@/models/maps/schema.ts";
+} from "./schema.ts";
 import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({

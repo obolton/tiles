@@ -1,10 +1,10 @@
-import { router, authenticatedProcedure } from "./trpc.ts";
-import { moveTile, resizeTile, deleteTile } from "@/models/tiles/tiles.ts";
+import { router, authenticatedProcedure } from "@/router/trpc.ts";
+import { moveTile, resizeTile, deleteTile } from "./tiles.ts";
 import {
   MoveTileSchema,
   ResizeTileSchema,
   DeleteTileSchema,
-} from "@/models/tiles/schema.ts";
+} from "./schema.ts";
 import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({

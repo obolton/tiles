@@ -1,9 +1,6 @@
-import { router, authenticatedProcedure } from "./trpc.ts";
-import { createVideo, updateVideo } from "@/models/videos/videos.ts";
-import {
-  CreateVideoSchema,
-  UpdateVideoSchema,
-} from "@/models/videos/schema.ts";
+import { router, authenticatedProcedure } from "@/router/trpc.ts";
+import { createVideo, updateVideo } from "./videos.ts";
+import { CreateVideoSchema, UpdateVideoSchema } from "./schema.ts";
 import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({

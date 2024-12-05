@@ -1,6 +1,6 @@
-import { UpdateUserSchema } from "@/models/users/schema.ts";
-import { updateUser } from "@/models/users/users.ts";
-import { router, authenticatedProcedure } from "./trpc.ts";
+import { router, authenticatedProcedure } from "@/router/trpc.ts";
+import { UpdateUserSchema } from "./schema.ts";
+import { updateUser } from "./users.ts";
 
 export default router({
   update: authenticatedProcedure

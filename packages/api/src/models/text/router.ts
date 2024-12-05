@@ -1,6 +1,6 @@
-import { router, authenticatedProcedure } from "./trpc.ts";
-import { createText, updateText } from "@/models/text/text.ts";
-import { CreateTextSchema, UpdateTextSchema } from "@/models/text/schema.ts";
+import { router, authenticatedProcedure } from "@/router/trpc.ts";
+import { createText, updateText } from "./text.ts";
+import { CreateTextSchema, UpdateTextSchema } from "./schema.ts";
 import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({

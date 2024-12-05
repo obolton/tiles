@@ -1,14 +1,14 @@
-import { router, authenticatedProcedure } from "./trpc.ts";
+import { router, authenticatedProcedure } from "@/router/trpc.ts";
 import {
   createCollection,
   addToCollection,
   removeFromCollection,
-} from "@/models/collections/collections.ts";
+} from "./collections.ts";
 import {
   CreateCollectionSchema,
   AddToCollectionSchema,
   RemoveFromCollectionSchema,
-} from "@/models/collections/schema.ts";
+} from "./schema.ts";
 import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({

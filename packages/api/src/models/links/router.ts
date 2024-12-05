@@ -1,6 +1,6 @@
-import { router, authenticatedProcedure } from "./trpc.ts";
-import { createLink, updateLink } from "@/models/links/links.ts";
-import { CreateLinkSchema, UpdateLinkSchema } from "@/models/links/schema.ts";
+import { router, authenticatedProcedure } from "@/router/trpc.ts";
+import { createLink, updateLink } from "./links.ts";
+import { CreateLinkSchema, UpdateLinkSchema } from "./schema.ts";
 import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({

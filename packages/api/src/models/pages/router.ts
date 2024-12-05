@@ -1,4 +1,8 @@
-import { router, publicProcedure, authenticatedProcedure } from "./trpc.ts";
+import {
+  router,
+  publicProcedure,
+  authenticatedProcedure,
+} from "@/router/trpc.ts";
 import {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
@@ -6,7 +10,7 @@ import {
   CreatePageSchema,
   UpdatePageSchema,
   DeletePageSchema,
-} from "@/models/pages/schema.ts";
+} from "./schema.ts";
 import {
   getPageById,
   getProfilePageByUserId,
@@ -14,7 +18,7 @@ import {
   createPage,
   updatePage,
   deletePage,
-} from "@/models/pages/pages.ts";
+} from "./pages.ts";
 import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
