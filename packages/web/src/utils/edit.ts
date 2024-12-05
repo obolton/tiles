@@ -135,6 +135,19 @@ export async function updateEvent(event: UpdateEventInput) {
   window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
 }
 
+type CreatePageLinkInput = Omit<
+  AppRouterInputs["pageLinks"]["create"],
+  "pageId"
+>;
+
+export async function createPageLink(pageLink: CreatePageLinkInput) {
+  const result = await client.pageLinks.create.mutate({
+    pageId: getPageId(),
+    ...pageLink,
+  });
+  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+}
+
 export async function updateTileData(tile: Partial<ClientTile>) {
   window.dispatchEvent(new CustomEvent("tile:update", { detail: tile }));
 }
