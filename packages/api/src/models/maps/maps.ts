@@ -4,7 +4,7 @@ import type { Prisma } from "@prisma/client";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import type { CreateMapSchema } from "./schema.ts";
 
-export const MAP_FIELDS: Prisma.MapTileSelect = {
+export const MAP_FIELDS = {
   id: true,
   places: {
     select: {
@@ -17,7 +17,7 @@ export const MAP_FIELDS: Prisma.MapTileSelect = {
       address: true,
     },
   },
-};
+} as const satisfies Prisma.MapTileSelect;
 
 export async function createMap({
   pageId,

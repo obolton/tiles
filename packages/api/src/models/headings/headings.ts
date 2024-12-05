@@ -3,10 +3,10 @@ import type { Prisma } from "@prisma/client";
 import type { CreateHeadingSchema, UpdateHeadingSchema } from "./schema.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 
-export const HEADING_FIELDS: Prisma.HeadingTileSelect = {
+export const HEADING_FIELDS = {
   id: true,
   content: true,
-};
+} as const satisfies Prisma.HeadingTileSelect;
 
 export async function createHeading({ pageId, content }: CreateHeadingSchema) {
   return prisma.$transaction(async (transaction) => {

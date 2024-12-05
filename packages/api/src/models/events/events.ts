@@ -3,14 +3,14 @@ import type { Prisma } from "@prisma/client";
 import type { CreateEventSchema, UpdateEventSchema } from "./schema.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 
-export const EVENT_FIELDS: Prisma.EventTileSelect = {
+export const EVENT_FIELDS = {
   id: true,
   title: true,
   start: true,
   end: true,
   allDay: true,
   timeZone: true,
-};
+} as const satisfies Prisma.EventTileSelect;
 
 export async function createEvent({
   pageId,

@@ -3,12 +3,12 @@ import type { CreateTextSchema, UpdateTextSchema } from "./schema.ts";
 import type { Prisma } from "@prisma/client";
 import { createTilePlacement } from "../tiles/tiles.ts";
 
-export const TEXT_FIELDS: Prisma.TextTileSelect = {
+export const TEXT_FIELDS = {
   id: true,
   content: true,
   theme: true,
   hue: true,
-};
+} as const satisfies Prisma.TextTileSelect;
 
 export async function createText({
   pageId,
