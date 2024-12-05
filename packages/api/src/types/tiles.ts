@@ -81,9 +81,8 @@ export interface ClientPageLinkTile extends ClientTileBase {
 
 // Heading
 export type ClientHeading = OmitMetadata<HeadingTile>;
-export interface ClientHeadingTile extends ClientTileBase {
+export interface ClientHeadingTile extends ClientTileBase, ClientHeading {
   type: "HEADING";
-  heading: ClientHeading;
 }
 
 // Event
