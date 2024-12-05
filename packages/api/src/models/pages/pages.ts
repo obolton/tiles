@@ -62,7 +62,7 @@ const TILES_FIELDS = {
   collection: {
     select: COLLECTION_FIELDS,
   },
-} as const;
+} as const satisfies Prisma.TileSelect;
 
 const PAGE_FIELDS = {
   id: true,
@@ -181,7 +181,9 @@ function formatTile({
       return {
         ...base,
         type,
-        collection: tile.collection!,
+        ...tile.collection!,
+        // @ts-expect-error Incompatibility due to collections missing
+        items: tile.collection!.items.map(formatTile),
       };
     default:
       throw new Error(`Unknown tile type: ${type}`);
