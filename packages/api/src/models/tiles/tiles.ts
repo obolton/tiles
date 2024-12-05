@@ -17,6 +17,8 @@ import type {
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/router/trpc.ts";
 import { checkPageAccess } from "@/utils/permissions.ts";
+import { TileType } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 export async function createTile(
   properties: CreateTileSchema,
@@ -165,5 +167,34 @@ export async function deleteTile({ id }: DeleteTileSchema) {
       data: { position: { decrement: 1 } },
     });
     return { id, pageId };
+  });
+}
+
+type CreateTilePlacement = {
+  pageId: string;
+  imageTileId: string;
+};
+
+export async function createTilePlacement(
+  { pageId, imageTileId }: CreateTilePlacement,
+  transaction: Prisma.TransactionClient,
+) {
+  const position = await transaction.tile.count({
+    where: { pageId },
+  });
+  return transaction.tile.create({
+    data: {
+      pageId,
+      type: TileType.IMAGE,
+      position,
+      columns: 1,
+      rows: 1,
+      imageTileId,
+    },
+    select: {
+      position: true,
+      columns: true,
+      rows: true,
+    },
   });
 }
