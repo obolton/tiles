@@ -101,6 +101,23 @@ export async function updateText(text: UpdateTextInput) {
   window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
 }
 
+type CreateHeadingInput = Omit<AppRouterInputs["headings"]["create"], "pageId">;
+
+export async function createHeading(heading: CreateHeadingInput) {
+  const result = await client.headings.create.mutate({
+    pageId: getPageId(),
+    ...heading,
+  });
+  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+}
+
+type UpdateHeadingInput = AppRouterInputs["headings"]["update"];
+
+export async function updateHeading(heading: UpdateHeadingInput) {
+  const result = await client.headings.update.mutate(heading);
+  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
+}
+
 export async function updateTileData(tile: Partial<ClientTile>) {
   window.dispatchEvent(new CustomEvent("tile:update", { detail: tile }));
 }
