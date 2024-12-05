@@ -1,12 +1,11 @@
 import { z } from "zod";
-import { CollectionType, TileType, Theme } from "@prisma/client";
+import { CollectionType, TileType } from "@prisma/client";
 import {
   MIN_LATITUDE,
   MAX_LATITUDE,
   MIN_LONGITUDE,
   MAX_LONGITUDE,
 } from "@/constants/geo.ts";
-import { RichTextSchema } from "@/schema/RichText.ts";
 
 // Tile types
 
@@ -26,18 +25,6 @@ export const UpdateVideoTileSchema = z.object({
   }),
 });
 export type UpdateVideoTileSchema = z.infer<typeof UpdateVideoTileSchema>;
-
-// Text
-
-export const TextTileSchema = z.object({
-  type: z.literal(TileType.TEXT),
-  text: z.object({
-    content: RichTextSchema.optional(),
-    theme: z.nativeEnum(Theme).optional(),
-    hue: z.number().gte(0).lte(360).optional(),
-  }),
-});
-export type TextTileSchema = z.infer<typeof TextTileSchema>;
 
 // Place
 export const PlaceTileSchema = z.object({
@@ -114,7 +101,6 @@ export const CreateTileSchema = z.object({
   pageId: z.string().uuid(),
   tile: z.discriminatedUnion("type", [
     CreateVideoTileSchema,
-    TextTileSchema,
     LinkTileSchema,
     HeadingTileSchema,
     PageLinkTileSchema,
@@ -130,7 +116,6 @@ export const UpdateTileSchema = z.object({
   id: z.string().uuid(),
   tile: z.discriminatedUnion("type", [
     UpdateVideoTileSchema,
-    TextTileSchema,
     LinkTileSchema,
     HeadingTileSchema,
     PageLinkTileSchema,

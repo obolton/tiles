@@ -8,6 +8,7 @@ import placesRouter from "./places.ts";
 import collectionsRouter from "./collections.ts";
 import mapsRouter from "./maps.ts";
 import imagesRouter from "./images.ts";
+import textRouter from "./text.ts";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 const appRouter = router({
@@ -20,6 +21,7 @@ const appRouter = router({
   collections: collectionsRouter,
   maps: mapsRouter,
   images: imagesRouter,
+  text: textRouter,
 });
 
 export type AppRouter = typeof appRouter;

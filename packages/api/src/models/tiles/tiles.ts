@@ -1,6 +1,5 @@
 import prisma from "@/database/prisma.ts";
 import { createVideoTile, updateVideoTile } from "./video.ts";
-import { createTextTile, updateTextTile } from "./text.ts";
 import { createLinkTile, updateLinkTile } from "./link.ts";
 import { createHeadingTile, updateHeadingTile } from "./heading.ts";
 import { createPageLinkTile, updatePageLinkTile } from "./pageLink.ts";
@@ -31,8 +30,6 @@ export async function createTile(
     switch (tile.type) {
       case "VIDEO":
         return createVideoTile(tx, pageId, tile, position);
-      case "TEXT":
-        return createTextTile(tx, pageId, tile, position);
       case "LINK":
         return createLinkTile(tx, pageId, tile, position);
       case "HEADING":
@@ -58,8 +55,6 @@ export async function updateTile(properties: UpdateTileSchema) {
   switch (tile.type) {
     case "VIDEO":
       return updateVideoTile(prisma, id, tile);
-    case "TEXT":
-      return updateTextTile(prisma, id, tile);
     case "LINK":
       return updateLinkTile(prisma, id, tile);
     case "HEADING":
@@ -160,12 +155,18 @@ export async function deleteTile({ id }: DeleteTileSchema) {
 }
 
 type CreateTilePlacement = { pageId: string } & (
-  | { type: "IMAGE"; imageTileId: string; mapTileId?: never }
-  | { type: "MAP"; imageTileId?: never; mapTileId: string }
+  | {
+      type: "IMAGE";
+      imageTileId: string;
+      mapTileId?: never;
+      textTileId?: never;
+    }
+  | { type: "MAP"; imageTileId?: never; mapTileId: string; textTileId?: never }
+  | { type: "TEXT"; imageTileId?: never; mapTileId?: never; textTileId: string }
 );
 
 export async function createTilePlacement(
-  { pageId, type, imageTileId, mapTileId }: CreateTilePlacement,
+  { pageId, type, imageTileId, mapTileId, textTileId }: CreateTilePlacement,
   transaction: Prisma.TransactionClient,
 ) {
   const position = await transaction.tile.count({
@@ -180,6 +181,7 @@ export async function createTilePlacement(
       rows: 1,
       imageTileId,
       mapTileId,
+      textTileId,
     },
     select: {
       position: true,
