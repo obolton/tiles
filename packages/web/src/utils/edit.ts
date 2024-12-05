@@ -148,6 +148,33 @@ export async function createPageLink(pageLink: CreatePageLinkInput) {
   window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
 }
 
+type CreateLinkInput = Omit<
+  AppRouterInputs["externalLinks"]["create"],
+  "pageId"
+>;
+
+export async function createLink(link: CreateLinkInput) {
+  const result = await client.externalLinks.create.mutate({
+    pageId: getPageId(),
+    ...link,
+  });
+  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+}
+
+type UpdateLinkInput = AppRouterInputs["externalLinks"]["update"];
+
+export async function updateLink(link: UpdateLinkInput) {
+  const result = await client.externalLinks.update.mutate(link);
+  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
+}
+
+type UpdateVideoInput = AppRouterInputs["videos"]["update"];
+
+export async function updateVideo(video: UpdateVideoInput) {
+  const result = await client.videos.update.mutate(video);
+  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
+}
+
 export async function updateTileData(tile: Partial<ClientTile>) {
   window.dispatchEvent(new CustomEvent("tile:update", { detail: tile }));
 }
