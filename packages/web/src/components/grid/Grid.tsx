@@ -109,7 +109,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       const { detail: tile } = event as CustomEvent<ClientTile>;
       setTiles((prevTiles) =>
         prevTiles.map((prevTile) =>
-          prevTile.id === tile.id ? tile : prevTile,
+          prevTile.id === tile.id ? { ...prevTile, ...tile } : prevTile,
         ),
       );
     };
