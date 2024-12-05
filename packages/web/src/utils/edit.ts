@@ -74,6 +74,16 @@ export async function updateImage(image: UpdateImageInput) {
   window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
 }
 
-export async function updateTileData(tile: ClientTile) {
+type CreateMapInput = Omit<AppRouterInputs["maps"]["create"], "pageId">;
+
+export async function createMap(map: CreateMapInput) {
+  const result = await client.maps.create.mutate({
+    pageId: getPageId(),
+    ...map,
+  });
+  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+}
+
+export async function updateTileData(tile: Partial<ClientTile>) {
   window.dispatchEvent(new CustomEvent("tile:update", { detail: tile }));
 }
