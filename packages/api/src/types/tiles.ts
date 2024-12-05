@@ -51,9 +51,8 @@ export type ClientPlace = OmitMetadata<Omit<Place, "mapTileId">> & {
 export type ClientMap = OmitMetadata<MapTile> & {
   places: ClientPlace[];
 };
-export interface ClientMapTile extends ClientTileBase {
+export interface ClientMapTile extends ClientTileBase, ClientMap {
   type: "MAP";
-  map: ClientMap;
 }
 
 // Link

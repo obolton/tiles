@@ -1,5 +1,4 @@
 import prisma from "@/database/prisma.ts";
-// import { createImageTile, updateImageTile } from "./image.ts";
 import { createVideoTile, updateVideoTile } from "./video.ts";
 import { createTextTile, updateTextTile } from "./text.ts";
 import { createLinkTile, updateLinkTile } from "./link.ts";
@@ -7,7 +6,6 @@ import { createHeadingTile, updateHeadingTile } from "./heading.ts";
 import { createPageLinkTile, updatePageLinkTile } from "./pageLink.ts";
 import { createEventTile, updateEventTile } from "./event.ts";
 import { createCollectionTile, updateCollectionTile } from "./collection.ts";
-import { createMapTile } from "./map.ts";
 import type {
   CreateTileSchema,
   UpdateTileSchema,
@@ -17,7 +15,6 @@ import type {
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/router/trpc.ts";
 import { checkPageAccess } from "@/utils/permissions.ts";
-import { TileType } from "@prisma/client";
 import type { Prisma } from "@prisma/client";
 
 export async function createTile(
@@ -52,8 +49,6 @@ export async function createTile(
           tile,
           position,
         );
-      case "MAP":
-        return createMapTile(tx, pageId, tile, position);
     }
   });
 }
@@ -75,8 +70,6 @@ export async function updateTile(properties: UpdateTileSchema) {
       return updateEventTile(prisma, id, tile);
     case "COLLECTION":
       return updateCollectionTile(prisma, id, tile);
-    case "MAP":
-      throw new Error("Not allowed");
   }
 }
 
@@ -166,13 +159,13 @@ export async function deleteTile({ id }: DeleteTileSchema) {
   });
 }
 
-type CreateTilePlacement = {
-  pageId: string;
-  imageTileId: string;
-};
+type CreateTilePlacement = { pageId: string } & (
+  | { type: "IMAGE"; imageTileId: string; mapTileId?: never }
+  | { type: "MAP"; imageTileId?: never; mapTileId: string }
+);
 
 export async function createTilePlacement(
-  { pageId, imageTileId }: CreateTilePlacement,
+  { pageId, type, imageTileId, mapTileId }: CreateTilePlacement,
   transaction: Prisma.TransactionClient,
 ) {
   const position = await transaction.tile.count({
@@ -181,11 +174,12 @@ export async function createTilePlacement(
   return transaction.tile.create({
     data: {
       pageId,
-      type: TileType.IMAGE,
+      type,
       position,
       columns: 1,
       rows: 1,
       imageTileId,
+      mapTileId,
     },
     select: {
       position: true,

@@ -6,6 +6,19 @@ import {
   MAX_LONGITUDE,
 } from "@/constants/geo.ts";
 
+export const CreateMapSchema = z.object({
+  pageId: z.string().uuid(),
+  place: z.object({
+    name: z.string(),
+    providerId: z.string().nullable(),
+    lat: z.number().gte(MIN_LATITUDE).lte(MAX_LATITUDE),
+    long: z.number().gte(MIN_LONGITUDE).lte(MAX_LONGITUDE),
+    boundingBox: z.array(z.number()).length(4).nullable(),
+    address: z.string().nullable(),
+  }),
+});
+export type CreateMapSchema = z.infer<typeof CreateMapSchema>;
+
 export const AddPlaceSchema = z.object({
   id: z.string().uuid(),
   place: z.object({
