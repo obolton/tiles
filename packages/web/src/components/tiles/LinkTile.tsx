@@ -5,14 +5,22 @@ import Tile, { type TileProps } from "./Tile";
 import styles from "./LinkTile.module.css";
 import type { ClientLink } from "@/types/tiles";
 
-interface LinkTileProps extends TileProps {
-  link: ClientLink;
-}
+interface LinkTileProps extends TileProps, ClientLink {}
 
-export default function LinkTile({ id, link, ...props }: LinkTileProps) {
-  const { url, title, description, siteName, imageUrl } = link;
+export default function LinkTile({
+  id,
+  url,
+  title,
+  description,
+  siteName,
+  imageUrl,
+  ...props
+}: LinkTileProps) {
   const isEditable = useEditable();
-  const edit = useCallback(() => editTile(id, "LINK", link), [id, link]);
+  const edit = useCallback(
+    () => editTile(id, "LINK", { url, title, description, siteName, imageUrl }),
+    [description, id, imageUrl, siteName, title, url],
+  );
 
   const contents = (
     <div className={styles.caption}>

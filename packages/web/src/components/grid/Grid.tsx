@@ -40,14 +40,14 @@ function getTileComponent(tile: ClientTile) {
     case "IMAGE":
       return <ImageTile {...tile} />;
     case "VIDEO":
-      return <VideoTile {...props} video={tile.video} />;
+      return <VideoTile {...tile} />;
     case "TEXT":
       // @ts-expect-error Rich text
       return <TextTile {...tile} />;
     case "MAP":
       return <MapTile {...tile} />;
     case "LINK":
-      return <LinkTile {...props} link={tile.link} />;
+      return <LinkTile {...tile} />;
     case "HEADING":
       return <HeadingTile {...tile} />;
     case "PAGE_LINK":

@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
-import { createTile, updateTile, createPageLink } from "@/utils/edit";
+import { createLink, updateLink, createPageLink } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
 import type { ClientLink, ClientPageLink } from "@/types/tiles";
 import styles from "./LinkModal.module.css";
@@ -45,18 +45,13 @@ export default function LinkModal({ tileId, close, tile }: LinkModalProps) {
       }
 
       if (tileId) {
-        await updateTile(tileId, {
-          type: "LINK",
-          link: {
-            url,
-          },
+        await updateLink({
+          id: tileId,
+          url,
         });
       } else {
-        await createTile({
-          type: "LINK",
-          link: {
-            url,
-          },
+        await createLink({
+          url,
         });
       }
 

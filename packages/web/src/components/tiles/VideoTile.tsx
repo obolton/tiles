@@ -1,6 +1,6 @@
 import useEditable from "@/hooks/useEditable";
 import type { ClientVideo } from "@/types/tiles";
-import { updateTile } from "@/utils/edit";
+import { updateVideo } from "@/utils/edit";
 import { useCallback } from "react";
 import Caption from "./Caption";
 import Tile, { type TileProps } from "./Tile";
@@ -16,20 +16,24 @@ function getEmbedUrl(videoType: ClientVideo["videoType"], videoId: string) {
   }
 }
 
-interface VideoTileProps extends TileProps {
-  video: ClientVideo;
-}
+interface VideoTileProps extends TileProps, ClientVideo {}
 
-export default function VideoTile({ id, video, ...props }: VideoTileProps) {
-  const { videoType, videoId, imageUrl, title } = video;
+export default function VideoTile({
+  id,
+  videoType,
+  videoId,
+  imageUrl,
+  title,
+  ...props
+}: VideoTileProps) {
   const isEditable = useEditable();
   const embedUrl = getEmbedUrl(videoType, videoId);
 
   const onUpdateCaption = useCallback(
     async (value: string) => {
-      await updateTile(id, {
-        type: "VIDEO",
-        video: { title: value },
+      await updateVideo({
+        id,
+        title: value,
       });
     },
     [id],

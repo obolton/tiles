@@ -10,7 +10,7 @@ type Pages = AppRouterOutputs["pages"]["getRecentWithTiles"];
 type Page = Pages["pages"][number];
 
 function defaultRender(page: Page) {
-  return <PageLinkTile id={page.id} pageLink={{ pageId: page.id, page }} />;
+  return <PageLinkTile id={page.id} pageId={page.id} page={page} />;
 }
 
 interface PagesGridProps {
