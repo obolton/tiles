@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
-import { createTile, updateTile } from "@/utils/edit";
+import { createTile, updateTile, createPageLink } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
 import type { ClientLink, ClientPageLink } from "@/types/tiles";
 import styles from "./LinkModal.module.css";
@@ -24,28 +24,16 @@ export default function LinkModal({ tileId, close, tile }: LinkModalProps) {
   const selectPage = useCallback(
     async (linkedPageId: string) => {
       try {
-        if (tileId) {
-          await updateTile(tileId, {
-            type: "PAGE_LINK",
-            pageLink: {
-              pageId: linkedPageId,
-            },
-          });
-        } else {
-          await createTile({
-            type: "PAGE_LINK",
-            pageLink: {
-              pageId: linkedPageId,
-            },
-          });
-        }
+        await createPageLink({
+          linkedPageId,
+        });
       } catch (error) {
         handleError(error);
       }
 
       close();
     },
-    [close, tileId],
+    [close],
   );
 
   const submit = useCallback(
@@ -105,7 +93,8 @@ export default function LinkModal({ tileId, close, tile }: LinkModalProps) {
               page.id === pageId ? null : (
                 <PageLinkTile
                   id={page.id}
-                  pageLink={{ pageId: page.id, page }}
+                  pageId={page.id}
+                  page={page}
                   onClick={(event) => {
                     event.preventDefault();
                     selectPage(page.id);

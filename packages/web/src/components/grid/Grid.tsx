@@ -51,7 +51,7 @@ function getTileComponent(tile: ClientTile) {
     case "HEADING":
       return <HeadingTile {...tile} />;
     case "PAGE_LINK":
-      return <PageLinkTile {...props} pageLink={tile.pageLink} />;
+      return <PageLinkTile {...tile} />;
     case "EVENT":
       return <EventTile {...tile} />;
     case "COLLECTION":

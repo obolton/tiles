@@ -4,19 +4,17 @@ import styles from "./PageLinkTile.module.css";
 import type { ClientPageLink } from "@/types/tiles";
 import PageTile from "./PageTile";
 
-interface PageLinkTileProps extends TileProps {
-  pageLink: ClientPageLink;
+interface PageLinkTileProps extends TileProps, ClientPageLink {
   onClick?: (event: React.MouseEvent) => void;
 }
 
 export default function PageLinkTile({
   id,
-  pageLink,
+  pageId,
+  page,
   onClick,
   ...props
 }: PageLinkTileProps) {
-  const { pageId, page } = pageLink;
-
   if (!page) {
     return (
       <Tile id={id} {...props}>
