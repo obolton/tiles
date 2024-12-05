@@ -20,7 +20,7 @@ type OmitMetadata<T> = Omit<T, "id" | "createdAt" | "updatedAt">;
 type ClientTileBase = Pick<
   Tile,
   "id" | "type" | "position" | "columns" | "rows"
->;
+> & { placementId: string };
 
 // Image
 export type ClientImage = OmitMetadata<ImageTile>;

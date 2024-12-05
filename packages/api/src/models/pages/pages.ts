@@ -99,7 +99,7 @@ function formatTile({
   columns,
   ...tile
 }: TileWithData): ClientTile {
-  const base = { id, position, rows, columns };
+  const base = { placementId: id, position, rows, columns };
   switch (type) {
     case "IMAGE":
       return {
