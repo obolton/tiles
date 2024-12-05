@@ -90,9 +90,8 @@ export type ClientEvent = OmitMetadata<Omit<EventTile, "start" | "end">> & {
   start: string;
   end: string | null;
 };
-export interface ClientEventTile extends ClientTileBase {
+export interface ClientEventTile extends ClientTileBase, ClientEvent {
   type: "EVENT";
-  event: ClientEvent;
 }
 
 // Collection
