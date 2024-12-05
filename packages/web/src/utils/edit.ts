@@ -42,10 +42,35 @@ export async function createTile(tile: CreateTileInput["tile"]) {
   window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
 }
 
+function getPageId() {
+  const pageId = document.body.dataset.pageId;
+  if (!pageId) {
+    throw new Error("No page ID found");
+  }
+  return pageId;
+}
+
 type UpdateTileInput = AppRouterInputs["tiles"]["update"];
 
 export async function updateTile(id: string, tile: UpdateTileInput["tile"]) {
   const result = await client.tiles.update.mutate({ id, tile });
+  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
+}
+
+type CreateImageInput = Omit<AppRouterInputs["images"]["create"], "pageId">;
+
+export async function createImage(image: CreateImageInput) {
+  const result = await client.images.create.mutate({
+    pageId: getPageId(),
+    ...image,
+  });
+  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+}
+
+type UpdateImageInput = AppRouterInputs["images"]["update"];
+
+export async function updateImage(image: UpdateImageInput) {
+  const result = await client.images.update.mutate(image);
   window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
 }
 
