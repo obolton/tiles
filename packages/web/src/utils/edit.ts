@@ -175,6 +175,19 @@ export async function updateVideo(video: UpdateVideoInput) {
   window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
 }
 
+type CreateCollectionInput = Omit<
+  AppRouterInputs["collections"]["create"],
+  "pageId"
+>;
+
+export async function createCollection(collection: CreateCollectionInput) {
+  const result = await client.collections.create.mutate({
+    pageId: getPageId(),
+    ...collection,
+  });
+  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+}
+
 export async function updateTileData(tile: Partial<ClientTile>) {
   window.dispatchEvent(new CustomEvent("tile:update", { detail: tile }));
 }
