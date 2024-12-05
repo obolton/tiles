@@ -6,7 +6,7 @@ import type { DragDropEvent } from "@/utils/drag";
 export default function useCreateCollection(tileId: string, type: "STACK") {
   return useCallback(
     (event: DragDropEvent) => {
-      const id = event.dragSource.id;
+      const id = event.dragSource.dataset.placementId;
       if (!id) {
         return;
       }

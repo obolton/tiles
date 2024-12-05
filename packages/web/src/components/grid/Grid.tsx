@@ -31,11 +31,6 @@ interface GridProps {
 
 function getTileComponent(tile: ClientTile) {
   const type = tile.type;
-  const props = {
-    id: tile.id,
-    rows: tile.rows,
-    columns: tile.columns,
-  };
   switch (type) {
     case "IMAGE":
       return <ImageTile {...tile} />;
@@ -146,7 +141,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
     const drop = async (event: DragDropEvent) => {
       const { dragSource, inside } = event;
       if (!inside && ref.current) {
-        const id = dragSource.id ?? "";
+        const id = dragSource.dataset.placementId ?? "";
         const position = Array.prototype.indexOf.call(
           ref.current.children,
           dragSource,
@@ -168,11 +163,11 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       ) {
         return;
       }
-      const id = target.id;
+      const id = target.dataset.placementId;
       const columnWidth = sizeRef.current.width / 3;
       const columns = Math.round(size.width / columnWidth);
       const rows = Math.round(size.height / columnWidth);
-      const tile = tiles.find((tile) => tile.id === id);
+      const tile = tiles.find((tile) => tile.placementId === id);
 
       if (!tile) {
         return;
@@ -182,7 +177,9 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
         viewTransition(() => {
           setTiles((prevTiles) =>
             prevTiles.map((prevTile) =>
-              prevTile.id === id ? { ...prevTile, columns, rows } : prevTile,
+              prevTile.placementId === id
+                ? { ...prevTile, columns, rows }
+                : prevTile,
             ),
           );
         });
@@ -198,7 +195,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       ) {
         return;
       }
-      const id = target.id;
+      const id = target.dataset.placementId ?? "";
       const columnWidth = sizeRef.current.width / 3;
       const columns = Math.max(Math.round(size.width / columnWidth), 1);
       const rows = Math.max(Math.round(size.height / columnWidth), 1);
@@ -223,6 +220,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
         <GridItem
           key={tile.id}
           id={tile.id}
+          placementId={tile.placementId}
           className={styles.item}
           rows={tile.rows}
           columns={tile.type === "HEADING" ? 3 : tile.columns}

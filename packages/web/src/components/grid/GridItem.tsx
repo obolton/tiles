@@ -9,6 +9,7 @@ import type ResizeItem from "@/components/resize/ResizeItem";
 
 interface GridItemProps {
   id: string;
+  placementId: string;
   style?: React.CSSProperties;
   className?: string;
   rows: number;
@@ -23,6 +24,7 @@ interface GridItemProps {
 
 export default function GridItem({
   id,
+  placementId,
   className,
   style,
   rows,
@@ -35,7 +37,7 @@ export default function GridItem({
   children,
 }: GridItemProps) {
   const ref = useRef<ResizeItem>(null);
-  const onDrop = useCreateCollection(id ?? "", "STACK");
+  const onDrop = useCreateCollection(placementId ?? "", "STACK");
   useDraggable(ref, isEditable && !!dropGroup);
   useScrollIntoView(ref);
 
@@ -75,6 +77,7 @@ export default function GridItem({
       data-rows={rows}
       data-columns={columns}
       data-drop-group={dropGroup}
+      data-placement-id={placementId}
     >
       {children}
       {isEditable ? (

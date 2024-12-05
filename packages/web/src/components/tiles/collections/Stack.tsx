@@ -131,6 +131,7 @@ export default function Stack({ items: initialItems }: StackProps) {
           className={styles.item}
           key={item.id}
           id={item.id}
+          placementId={item.placementId}
           rows={1}
           columns={1}
           isEditable={isEditable && open}
