@@ -1,8 +1,5 @@
 import prisma from "@/database/prisma.ts";
-import { createCollectionTile, updateCollectionTile } from "./collection.ts";
 import type {
-  CreateTileSchema,
-  UpdateTileSchema,
   MoveTileSchema,
   DeleteTileSchema,
   ResizeTileSchema,
@@ -10,38 +7,6 @@ import type {
 import type { AuthenticatedRequestContext } from "@/router/trpc.ts";
 import { checkPageAccess } from "@/utils/permissions.ts";
 import type { Prisma, TileType } from "@prisma/client";
-
-export async function createTile(
-  properties: CreateTileSchema,
-  context: AuthenticatedRequestContext,
-) {
-  return prisma.$transaction(async (tx) => {
-    await checkPageAccess(tx, context, properties.pageId);
-
-    const position = await tx.tile.count({
-      where: { pageId: properties.pageId },
-    });
-    const { pageId, tile } = properties;
-    switch (tile.type) {
-      case "COLLECTION":
-        return createCollectionTile(
-          tx,
-          context.user.id,
-          pageId,
-          tile,
-          position,
-        );
-    }
-  });
-}
-
-export async function updateTile(properties: UpdateTileSchema) {
-  const { id, tile } = properties;
-  switch (tile.type) {
-    case "COLLECTION":
-      return updateCollectionTile(prisma, id, tile);
-  }
-}
 
 export async function moveTile(
   { id, position }: MoveTileSchema,
