@@ -37,9 +37,8 @@ export interface ClientVideoTile extends ClientTileBase {
 
 // Text
 export type ClientText = OmitMetadata<TextTile>;
-export interface ClientTextTile extends ClientTileBase {
+export interface ClientTextTile extends ClientTileBase, ClientText {
   type: "TEXT";
-  text: ClientText;
 }
 
 // Place
