@@ -11,6 +11,7 @@ import imagesRouter from "./images.ts";
 import textRouter from "./text.ts";
 import headingsRouter from "./headings.ts";
 import eventsRouter from "./events.ts";
+import pageLinksRouter from "./pageLinks.ts";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 const appRouter = router({
@@ -26,6 +27,7 @@ const appRouter = router({
   text: textRouter,
   headings: headingsRouter,
   events: eventsRouter,
+  pageLinks: pageLinksRouter,
 });
 
 export type AppRouter = typeof appRouter;
