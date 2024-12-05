@@ -74,9 +74,8 @@ export type ClientPageLink = OmitMetadata<PageLinkTile> & {
     imageKey: string | null;
   } | null;
 };
-export interface ClientPageLinkTile extends ClientTileBase {
+export interface ClientPageLinkTile extends ClientTileBase, ClientPageLink {
   type: "PAGE_LINK";
-  pageLink: ClientPageLink;
 }
 
 // Heading
