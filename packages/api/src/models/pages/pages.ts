@@ -16,6 +16,8 @@ import { MAP_FIELDS } from "@/models/maps/maps.ts";
 import { TEXT_FIELDS } from "@/models/text/text.ts";
 import { HEADING_FIELDS } from "@/models/headings/headings.ts";
 import { EVENT_FIELDS } from "@/models/events/events.ts";
+import { LINK_FIELDS } from "@/models/links/links.ts";
+import { VIDEO_FIELDS } from "@/models/videos/videos.ts";
 import type {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
@@ -37,13 +39,7 @@ const TILES_FIELDS = {
     select: IMAGE_FIELDS,
   },
   video: {
-    select: {
-      videoType: true,
-      videoId: true,
-      imageUrl: true,
-      title: true,
-      description: true,
-    },
+    select: VIDEO_FIELDS,
   },
   text: {
     select: TEXT_FIELDS,
@@ -52,13 +48,7 @@ const TILES_FIELDS = {
     select: MAP_FIELDS,
   },
   link: {
-    select: {
-      url: true,
-      title: true,
-      description: true,
-      siteName: true,
-      imageUrl: true,
-    },
+    select: LINK_FIELDS,
   },
   heading: {
     select: HEADING_FIELDS,
@@ -125,10 +115,10 @@ function formatTile({
       return {
         ...base,
         type,
-        video: {
-          ...tile.video!,
-          imageUrl: tile.video!.imageUrl ? getVideoImageUrl(id) : null,
-        },
+        ...tile.video!,
+        imageUrl: tile.video!.imageUrl
+          ? getVideoImageUrl(tile.video!.id)
+          : null,
       };
     case "TEXT":
       return {
@@ -146,10 +136,8 @@ function formatTile({
       return {
         ...base,
         type,
-        link: {
-          ...tile.link!,
-          imageUrl: tile.link!.imageUrl ? getLinkImageUrl(id) : null,
-        },
+        ...tile.link!,
+        imageUrl: tile.link!.imageUrl ? getLinkImageUrl(tile.link!.id) : null,
       };
     case "HEADING":
       return {
