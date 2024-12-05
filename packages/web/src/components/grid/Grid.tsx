@@ -53,7 +53,7 @@ function getTileComponent(tile: ClientTile) {
     case "PAGE_LINK":
       return <PageLinkTile {...props} pageLink={tile.pageLink} />;
     case "EVENT":
-      return <EventTile {...props} event={tile.event} />;
+      return <EventTile {...tile} />;
     case "COLLECTION":
       return <CollectionTile {...props} collection={tile.collection} />;
     default:

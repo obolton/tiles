@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
-import { createTile, updateTile } from "@/utils/edit";
+import { createEvent, updateEvent } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
 import type { ModalProps } from "@/utils/modals";
 import type { ClientEvent } from "@/types/tiles";
@@ -69,24 +69,19 @@ export default function EditEventTileModal({
 
       try {
         if (tileId) {
-          await updateTile(tileId, {
-            type: "EVENT",
-            event: {
-              title,
-              start: new Date(start).toISOString(),
-              end: end ? new Date(end).toISOString() : null,
-              allDay,
-            },
+          await updateEvent({
+            id: tileId,
+            title,
+            start: new Date(start).toISOString(),
+            end: end ? new Date(end).toISOString() : null,
+            allDay,
           });
         } else {
-          await createTile({
-            type: "EVENT",
-            event: {
-              title,
-              start: new Date(start).toISOString(),
-              end: end ? new Date(end).toISOString() : null,
-              allDay,
-            },
+          await createEvent({
+            title,
+            start: new Date(start).toISOString(),
+            end: end ? new Date(end).toISOString() : null,
+            allDay,
           });
         }
         close();

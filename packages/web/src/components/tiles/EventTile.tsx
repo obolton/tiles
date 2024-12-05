@@ -8,9 +8,8 @@ import styles from "./EventTile.module.css";
 import { classNames } from "@/utils/css";
 import type { ClientEvent } from "@/types/tiles";
 
-interface EventTileProps extends TileProps {
+interface EventTileProps extends TileProps, ClientEvent {
   columns: number;
-  event: ClientEvent;
 }
 
 interface DateTimeProps {
@@ -58,11 +57,16 @@ function DateTime({ date, showTime = true, size }: DateTimeProps) {
 export default function EventTile({
   id,
   columns,
-  event,
+  title,
+  start,
+  end,
+  allDay,
   ...props
 }: EventTileProps) {
-  const { title, start, end, allDay } = event;
-  const edit = useCallback(() => editTile(id, "EVENT", event), [id, event]);
+  const edit = useCallback(
+    () => editTile(id, "EVENT", { title, start, end, allDay, timeZone: null }),
+    [id, title, start, end, allDay],
+  );
 
   const startDate = new Date(start);
   const endDate = end ? new Date(end) : null;
