@@ -10,7 +10,7 @@ import {
   PAGE_LINK_FIELDS,
   PAGE_LINK_TILE_PAGE_FIELDS,
 } from "@/models/pageLinks/pageLinks.ts";
-import { COLLECTION_TILE_FIELDS } from "@/models/tiles/collection.ts";
+import { COLLECTION_FIELDS } from "@/models/collections/collections.ts";
 import { IMAGE_FIELDS } from "@/models/images/images.ts";
 import { MAP_FIELDS } from "@/models/maps/maps.ts";
 import { TEXT_FIELDS } from "@/models/text/text.ts";
@@ -60,7 +60,7 @@ const TILES_FIELDS = {
     select: EVENT_FIELDS,
   },
   collection: {
-    select: COLLECTION_TILE_FIELDS,
+    select: COLLECTION_FIELDS,
   },
 } as const;
 

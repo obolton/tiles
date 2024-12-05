@@ -23,18 +23,6 @@ export const PlaceTileSchema = z.object({
 });
 export type PlaceTileSchema = z.infer<typeof PlaceTileSchema>;
 
-// Collection
-
-export const CollectionTileSchema = z.object({
-  type: z.literal(TileType.COLLECTION),
-  collection: z.object({
-    type: z.nativeEnum(CollectionType),
-    title: z.string().optional(),
-    tileIds: z.array(z.string().uuid()).optional(),
-  }),
-});
-export type CollectionTileSchema = z.infer<typeof CollectionTileSchema>;
-
 // Create
 
 export const CreateTileSchema = z.object({
