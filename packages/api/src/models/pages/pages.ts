@@ -9,6 +9,7 @@ import {
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/models/tiles/pageLink.ts";
 import { COLLECTION_TILE_FIELDS } from "@/models/tiles/collection.ts";
 import { IMAGE_FIELDS } from "@/models/images/images.ts";
+import { MAP_FIELDS } from "@/models/maps/maps.ts";
 import type {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
@@ -46,19 +47,7 @@ const TILES_FIELDS = {
     },
   },
   map: {
-    select: {
-      places: {
-        select: {
-          id: true,
-          name: true,
-          providerId: true,
-          lat: true,
-          long: true,
-          boundingBox: true,
-          address: true,
-        },
-      },
-    },
+    select: MAP_FIELDS,
   },
   link: {
     select: {
@@ -162,7 +151,7 @@ function formatTile({
       return {
         ...base,
         type,
-        map: tile.map!,
+        ...tile.map!,
       };
     case "LINK":
       return {
