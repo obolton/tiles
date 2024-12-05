@@ -10,6 +10,7 @@ import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/models/tiles/pageLink.ts";
 import { COLLECTION_TILE_FIELDS } from "@/models/tiles/collection.ts";
 import { IMAGE_FIELDS } from "@/models/images/images.ts";
 import { MAP_FIELDS } from "@/models/maps/maps.ts";
+import { TEXT_FIELDS } from "@/models/text/text.ts";
 import type {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
@@ -40,11 +41,7 @@ const TILES_FIELDS = {
     },
   },
   text: {
-    select: {
-      content: true,
-      theme: true,
-      hue: true,
-    },
+    select: TEXT_FIELDS,
   },
   map: {
     select: MAP_FIELDS,
@@ -145,7 +142,7 @@ function formatTile({
       return {
         ...base,
         type,
-        text: tile.text!,
+        ...tile.text!,
       };
     case "MAP":
       return {
