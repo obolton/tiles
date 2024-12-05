@@ -12,6 +12,7 @@ import { IMAGE_FIELDS } from "@/models/images/images.ts";
 import { MAP_FIELDS } from "@/models/maps/maps.ts";
 import { TEXT_FIELDS } from "@/models/text/text.ts";
 import { HEADING_FIELDS } from "@/models/headings/headings.ts";
+import { EVENT_FIELDS } from "@/models/events/events.ts";
 import type {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
@@ -68,13 +69,7 @@ const TILES_FIELDS = {
     },
   },
   event: {
-    select: {
-      title: true,
-      start: true,
-      end: true,
-      allDay: true,
-      timeZone: true,
-    },
+    select: EVENT_FIELDS,
   },
   collection: {
     select: COLLECTION_TILE_FIELDS,
@@ -194,11 +189,9 @@ function formatTile({
       return {
         ...base,
         type,
-        event: {
-          ...tile.event!,
-          start: tile.event!.start.toISOString(),
-          end: tile.event!.end?.toISOString() ?? null,
-        },
+        ...tile.event!,
+        start: tile.event!.start.toISOString(),
+        end: tile.event!.end?.toISOString() ?? null,
       };
     case "COLLECTION":
       return {
