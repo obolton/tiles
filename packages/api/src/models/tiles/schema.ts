@@ -10,30 +10,6 @@ import { RichTextSchema } from "@/schema/RichText.ts";
 
 // Tile types
 
-// Image
-export const CreateImageTileSchema = z.object({
-  type: z.literal(TileType.IMAGE),
-  image: z.object({
-    imageKey: z.string(),
-    caption: z.string().optional(),
-  }),
-});
-export type CreateImageTileSchema = z.infer<typeof CreateImageTileSchema>;
-
-export const UpdateImageTileSchema = z.object({
-  type: z.literal(TileType.IMAGE),
-  image: z.object({
-    caption: z.string().optional(),
-    origin: z
-      .object({
-        x: z.number().gte(0).lte(1),
-        y: z.number().gte(0).lte(1),
-      })
-      .optional(),
-  }),
-});
-export type UpdateImageTileSchema = z.infer<typeof UpdateImageTileSchema>;
-
 // Video
 export const CreateVideoTileSchema = z.object({
   type: z.literal(TileType.VIDEO),
@@ -151,7 +127,6 @@ export type CollectionTileSchema = z.infer<typeof CollectionTileSchema>;
 export const CreateTileSchema = z.object({
   pageId: z.string().uuid(),
   tile: z.discriminatedUnion("type", [
-    CreateImageTileSchema,
     CreateVideoTileSchema,
     TextTileSchema,
     LinkTileSchema,
@@ -169,7 +144,6 @@ export type CreateTileSchema = z.infer<typeof CreateTileSchema>;
 export const UpdateTileSchema = z.object({
   id: z.string().uuid(),
   tile: z.discriminatedUnion("type", [
-    UpdateImageTileSchema,
     UpdateVideoTileSchema,
     TextTileSchema,
     LinkTileSchema,

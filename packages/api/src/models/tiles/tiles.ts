@@ -1,5 +1,5 @@
 import prisma from "@/database/prisma.ts";
-import { createImageTile, updateImageTile } from "./image.ts";
+// import { createImageTile, updateImageTile } from "./image.ts";
 import { createVideoTile, updateVideoTile } from "./video.ts";
 import { createTextTile, updateTextTile } from "./text.ts";
 import { createLinkTile, updateLinkTile } from "./link.ts";
@@ -32,8 +32,6 @@ export async function createTile(
     });
     const { pageId, tile } = properties;
     switch (tile.type) {
-      case "IMAGE":
-        return createImageTile(tx, pageId, tile, position);
       case "VIDEO":
         return createVideoTile(tx, pageId, tile, position);
       case "TEXT":
@@ -63,8 +61,6 @@ export async function createTile(
 export async function updateTile(properties: UpdateTileSchema) {
   const { id, tile } = properties;
   switch (tile.type) {
-    case "IMAGE":
-      return updateImageTile(prisma, id, tile);
     case "VIDEO":
       return updateVideoTile(prisma, id, tile);
     case "TEXT":
