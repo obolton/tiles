@@ -118,6 +118,23 @@ export async function updateHeading(heading: UpdateHeadingInput) {
   window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
 }
 
+type CreateEventInput = Omit<AppRouterInputs["events"]["create"], "pageId">;
+
+export async function createEvent(event: CreateEventInput) {
+  const result = await client.events.create.mutate({
+    pageId: getPageId(),
+    ...event,
+  });
+  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+}
+
+type UpdateEventInput = AppRouterInputs["events"]["update"];
+
+export async function updateEvent(event: UpdateEventInput) {
+  const result = await client.events.update.mutate(event);
+  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
+}
+
 export async function updateTileData(tile: Partial<ClientTile>) {
   window.dispatchEvent(new CustomEvent("tile:update", { detail: tile }));
 }
