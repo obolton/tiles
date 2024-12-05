@@ -4,7 +4,7 @@ export function getTileFonts(tiles: ClientTile[]) {
   return new Set(
     tiles
       .filter((tile) => tile.type === "PAGE_LINK")
-      .map((tile) => tile.pageLink.page?.font)
+      .map((tile) => tile.page?.font)
       .filter((font) => typeof font === "string"),
   );
 }
