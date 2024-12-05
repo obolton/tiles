@@ -27,7 +27,7 @@ const BUTTONS: TileButton[] = [
 
 registerModal(
   "IMAGE",
-  lazy(() => import("@/components/modals/EditImageTileModal")),
+  lazy(() => import("@/components/modals/ImageModal")),
 );
 
 registerModal(

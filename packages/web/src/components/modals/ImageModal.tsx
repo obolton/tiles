@@ -1,13 +1,13 @@
 import { useCallback, useRef, useState } from "react";
 import { uploadMedia } from "@/utils/media";
 import ModalFooter from "./ModalFooter";
-import { createTile } from "@/utils/edit";
-import styles from "./EditImageTileModal.module.css";
+import { createImage } from "@/utils/edit";
+import styles from "./ImageModal.module.css";
 import type { ModalProps } from "@/utils/modals";
 
 const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
 
-export default function EditImageTileModal({ close }: ModalProps) {
+export default function ImageModal({ close }: ModalProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageKey, setImageKey] = useState<string | null>(null);
@@ -82,12 +82,9 @@ export default function EditImageTileModal({ close }: ModalProps) {
         return;
       }
 
-      await createTile({
-        type: "IMAGE",
-        image: {
-          imageKey,
-          caption,
-        },
+      await createImage({
+        imageKey,
+        caption,
       });
 
       close();

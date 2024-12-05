@@ -1,6 +1,6 @@
 import useEditable from "@/hooks/useEditable";
 import type { ClientImage } from "@/types/tiles";
-import { updateTile } from "@/utils/edit";
+import { updateImage } from "@/utils/edit";
 import { getImageUrl } from "@/utils/images";
 import { useCallback, useMemo, useState } from "react";
 import MovableImage from "@/components/images/MovableImage";
@@ -26,19 +26,16 @@ export default function ImageTile({
 
   const onUpdateCaption = useCallback(
     async (value: string) => {
-      await updateTile(id, {
-        type: "IMAGE",
-        image: { caption: value },
-      });
+      await updateImage({ id, caption: value });
     },
     [id],
   );
 
   const onUpdateOrigin = useCallback(
     async (origin: { x: number; y: number }) => {
-      await updateTile(id, {
-        type: "IMAGE",
-        image: { origin },
+      await updateImage({
+        id,
+        origin,
       });
     },
     [id],
