@@ -6,7 +6,10 @@ import {
   getLinkImageUrl,
   getVideoImageUrl,
 } from "@/utils/cdn.ts";
-import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/models/tiles/pageLink.ts";
+import {
+  PAGE_LINK_FIELDS,
+  PAGE_LINK_TILE_PAGE_FIELDS,
+} from "@/models/pageLinks/pageLinks.ts";
 import { COLLECTION_TILE_FIELDS } from "@/models/tiles/collection.ts";
 import { IMAGE_FIELDS } from "@/models/images/images.ts";
 import { MAP_FIELDS } from "@/models/maps/maps.ts";
@@ -61,12 +64,7 @@ const TILES_FIELDS = {
     select: HEADING_FIELDS,
   },
   pageLink: {
-    select: {
-      pageId: true,
-      page: {
-        select: PAGE_LINK_TILE_PAGE_FIELDS,
-      },
-    },
+    select: PAGE_LINK_FIELDS,
   },
   event: {
     select: EVENT_FIELDS,
@@ -168,21 +166,19 @@ function formatTile({
       return {
         ...base,
         type,
-        pageLink: {
-          pageId: pageLink.pageId,
-          page: page
-            ? {
-                id: page.id,
-                title: page.title,
-                subtitle: page.subtitle,
-                theme: page.theme,
-                hue: page.hue,
-                font: page.font,
-                author: formatAuthor(page.author),
-                imageKey: page.tiles[0]?.image?.imageKey ?? null,
-              }
-            : null,
-        },
+        ...pageLink,
+        page: page
+          ? {
+              id: page.id,
+              title: page.title,
+              subtitle: page.subtitle,
+              theme: page.theme,
+              hue: page.hue,
+              font: page.font,
+              author: formatAuthor(page.author),
+              imageKey: page.tiles[0]?.image?.imageKey ?? null,
+            }
+          : null,
       };
     }
     case "EVENT":
