@@ -38,7 +38,7 @@ function getTileComponent(tile: ClientTile) {
   };
   switch (type) {
     case "IMAGE":
-      return <ImageTile {...props} image={tile.image} />;
+      return <ImageTile {...tile} />;
     case "VIDEO":
       return <VideoTile {...props} video={tile.video} />;
     case "TEXT":
