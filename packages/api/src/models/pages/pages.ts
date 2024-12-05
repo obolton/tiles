@@ -8,6 +8,7 @@ import {
 } from "@/utils/cdn.ts";
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/models/tiles/pageLink.ts";
 import { COLLECTION_TILE_FIELDS } from "@/models/tiles/collection.ts";
+import { IMAGE_FIELDS } from "@/models/images/images.ts";
 import type {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
@@ -26,12 +27,7 @@ const TILES_FIELDS = {
   columns: true,
   rows: true,
   image: {
-    select: {
-      imageKey: true,
-      caption: true,
-      originX: true,
-      originY: true,
-    },
+    select: IMAGE_FIELDS,
   },
   video: {
     select: {
@@ -145,7 +141,7 @@ function formatTile({
       return {
         ...base,
         type,
-        image: tile.image!,
+        ...tile.image!,
       };
     case "VIDEO":
       return {
