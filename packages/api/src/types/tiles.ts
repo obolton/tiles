@@ -92,8 +92,10 @@ export interface ClientEventTile extends ClientTileBase, ClientEvent {
 }
 
 // Collection
-export type ClientCollection = OmitMetadata<Omit<Collection, "userId">> & {
-  items: Omit<ClientTile, "type" | "rows" | "columns">[];
+export type ClientCollection = OmitMetadata<
+  Omit<Collection, "userId" | "type">
+> & {
+  items: ClientTile[];
 };
 export interface ClientCollectionTile extends ClientTileBase, ClientCollection {
   type: "COLLECTION";
