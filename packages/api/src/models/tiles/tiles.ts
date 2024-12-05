@@ -1,7 +1,6 @@
 import prisma from "@/database/prisma.ts";
 import { createVideoTile, updateVideoTile } from "./video.ts";
 import { createLinkTile, updateLinkTile } from "./link.ts";
-import { createHeadingTile, updateHeadingTile } from "./heading.ts";
 import { createPageLinkTile, updatePageLinkTile } from "./pageLink.ts";
 import { createEventTile, updateEventTile } from "./event.ts";
 import { createCollectionTile, updateCollectionTile } from "./collection.ts";
@@ -32,8 +31,6 @@ export async function createTile(
         return createVideoTile(tx, pageId, tile, position);
       case "LINK":
         return createLinkTile(tx, pageId, tile, position);
-      case "HEADING":
-        return createHeadingTile(tx, pageId, tile, position);
       case "PAGE_LINK":
         return createPageLinkTile(tx, pageId, tile, position);
       case "EVENT":
@@ -57,8 +54,6 @@ export async function updateTile(properties: UpdateTileSchema) {
       return updateVideoTile(prisma, id, tile);
     case "LINK":
       return updateLinkTile(prisma, id, tile);
-    case "HEADING":
-      return updateHeadingTile(prisma, id, tile);
     case "PAGE_LINK":
       return updatePageLinkTile(prisma, id, tile);
     case "EVENT":
@@ -154,19 +149,24 @@ export async function deleteTile({ id }: DeleteTileSchema) {
   });
 }
 
-type CreateTilePlacement = { pageId: string } & (
-  | {
-      type: "IMAGE";
-      imageTileId: string;
-      mapTileId?: never;
-      textTileId?: never;
-    }
-  | { type: "MAP"; imageTileId?: never; mapTileId: string; textTileId?: never }
-  | { type: "TEXT"; imageTileId?: never; mapTileId?: never; textTileId: string }
-);
+type CreateTilePlacement = {
+  pageId: string;
+  type: "TEXT" | "HEADING" | "IMAGE" | "MAP";
+  imageTileId?: string;
+  mapTileId?: string;
+  textTileId?: string;
+  headingTileId?: string;
+};
 
 export async function createTilePlacement(
-  { pageId, type, imageTileId, mapTileId, textTileId }: CreateTilePlacement,
+  {
+    pageId,
+    type,
+    imageTileId,
+    mapTileId,
+    textTileId,
+    headingTileId,
+  }: CreateTilePlacement,
   transaction: Prisma.TransactionClient,
 ) {
   const position = await transaction.tile.count({
@@ -182,6 +182,7 @@ export async function createTilePlacement(
       imageTileId,
       mapTileId,
       textTileId,
+      headingTileId,
     },
     select: {
       position: true,

@@ -50,15 +50,6 @@ export const LinkTileSchema = z.object({
 });
 export type LinkTileSchema = z.infer<typeof LinkTileSchema>;
 
-// Heading
-export const HeadingTileSchema = z.object({
-  type: z.literal(TileType.HEADING),
-  heading: z.object({
-    content: z.string(),
-  }),
-});
-export type HeadingTileSchema = z.infer<typeof HeadingTileSchema>;
-
 // Page link
 
 export const PageLinkTileSchema = z.object({
@@ -102,7 +93,6 @@ export const CreateTileSchema = z.object({
   tile: z.discriminatedUnion("type", [
     CreateVideoTileSchema,
     LinkTileSchema,
-    HeadingTileSchema,
     PageLinkTileSchema,
     EventTileSchema,
     CollectionTileSchema,
@@ -117,7 +107,6 @@ export const UpdateTileSchema = z.object({
   tile: z.discriminatedUnion("type", [
     UpdateVideoTileSchema,
     LinkTileSchema,
-    HeadingTileSchema,
     PageLinkTileSchema,
     EventTileSchema,
     CollectionTileSchema,
