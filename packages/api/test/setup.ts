@@ -1,4 +1,5 @@
 import { vi } from "vitest";
+import { MOCK_PRISMA } from "./prisma.ts";
 
 // Environment variables
 vi.stubEnv("PROFILE_IMAGES_BASE_URL", "https://example.com/profile-images");
@@ -10,3 +11,6 @@ vi.stubEnv("AWS_REGION", "test");
 
 // Globals
 vi.stubGlobal("fetch", async () => new Response());
+
+// Database
+vi.mock("@/database/prisma.ts", () => ({ default: MOCK_PRISMA }));
