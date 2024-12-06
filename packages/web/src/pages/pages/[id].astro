@@ -8,6 +8,7 @@ import client from "@/api/client";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import { SESSION_COOKIE_NAME } from "api/src/constants/cookies";
 import { getTileFonts } from "@/utils/pageFonts";
+import { DEFAULT_FONT } from "@/config/fonts";
 
 const { id: pageId } = Astro.params;
 
@@ -37,6 +38,7 @@ if (page.published) {
 
 const fonts = getTileFonts(page.tiles);
 fonts.add(page.font);
+fonts.add(DEFAULT_FONT);
 ---
 
 <Page
