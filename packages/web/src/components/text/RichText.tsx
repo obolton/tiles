@@ -5,6 +5,7 @@ import type {
   TextNode,
   ParagraphNode,
   HeadingNode,
+  QuoteNode,
   ListNode,
   ListItemNode,
 } from "@/utils/richText/types";
@@ -23,6 +24,8 @@ function RichText({ content }: RichTextProps) {
             return <Paragraph key={index} node={node} />;
           case "heading":
             return <Heading key={index} node={node} />;
+          case "quote":
+            return <Quote key={index} node={node} />;
           case "list":
             return <List key={index} node={node} />;
           default:
@@ -74,6 +77,27 @@ function Heading({ node }: HeadingProps) {
         <Text key={index} node={child} />
       ))}
     </h2>
+  );
+}
+
+interface QuoteProps {
+  node: QuoteNode;
+}
+
+function Quote({ node }: QuoteProps) {
+  if (node.children.length === 0) {
+    return (
+      <blockquote>
+        <br />
+      </blockquote>
+    );
+  }
+  return (
+    <blockquote>
+      {node.children.map((child, index) => (
+        <Text key={index} node={child} />
+      ))}
+    </blockquote>
   );
 }
 

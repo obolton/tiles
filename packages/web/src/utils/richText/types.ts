@@ -31,6 +31,11 @@ export interface HeadingNode extends BaseNode {
   children: TextNode[];
 }
 
+export interface QuoteNode extends BaseNode {
+  type: "quote";
+  children: TextNode[];
+}
+
 export interface ListNode extends BaseNode {
   type: "list";
   listType: ListType;
@@ -47,9 +52,10 @@ export type Node =
   | TextNode
   | ParagraphNode
   | HeadingNode
+  | QuoteNode
   | ListNode
   | ListItemNode;
 
-export type RootNode = ParagraphNode | ListNode | HeadingNode;
+export type RootNode = ParagraphNode | ListNode | HeadingNode | QuoteNode;
 
 export type RichText = RootNode[];

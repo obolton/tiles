@@ -24,7 +24,7 @@ import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPl
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
-import { HeadingNode } from "@lexical/rich-text";
+import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
 import { useEffect, useRef } from "react";
 import styles from "./RichTextEditor.module.css";
@@ -80,7 +80,7 @@ export default function RichTextEditor({
       editable,
       editorState: () => importNodes(value),
       onError: handleError,
-      nodes: [ListNode, ListItemNode, HeadingNode],
+      nodes: [ListNode, ListItemNode, HeadingNode, QuoteNode],
     };
   }
 

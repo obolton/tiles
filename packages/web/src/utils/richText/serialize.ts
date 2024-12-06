@@ -12,6 +12,8 @@ import type {
 import {
   $isHeadingNode,
   HeadingNode as LexicalHeadingNode,
+  $isQuoteNode,
+  QuoteNode as LexicalQuoteNode,
 } from "@lexical/rich-text";
 import { $getRoot, $isTextNode, $isParagraphNode } from "lexical";
 import { $isListNode, $isListItemNode } from "@lexical/list";
@@ -22,6 +24,7 @@ import type {
   RichText,
   TextNode,
   HeadingNode,
+  QuoteNode,
 } from "./types";
 import { TextFormat, ListType } from "./types";
 
@@ -29,13 +32,15 @@ type SerializedNode<T extends LexicalNode> = T extends LexicalParagraphNode
   ? ParagraphNode
   : T extends LexicalHeadingNode
     ? HeadingNode
-    : T extends LexicalListNode
-      ? ListNode
-      : T extends LexicalListItemNode
-        ? ListItemNode
-        : T extends LexicalTextNode
-          ? TextNode
-          : null;
+    : T extends LexicalQuoteNode
+      ? QuoteNode
+      : T extends LexicalListNode
+        ? ListNode
+        : T extends LexicalListItemNode
+          ? ListItemNode
+          : T extends LexicalTextNode
+            ? TextNode
+            : null;
 
 function getTextFormat(node: LexicalTextNode) {
   return (
@@ -86,6 +91,13 @@ function serializeNode<T extends LexicalNode>(
   if ($isHeadingNode(node)) {
     return {
       type: "heading",
+      children: getChildren(node),
+    } as SerializedNode<T>;
+  }
+
+  if ($isQuoteNode(node)) {
+    return {
+      type: "quote",
       children: getChildren(node),
     } as SerializedNode<T>;
   }
