@@ -3,7 +3,7 @@ import type {
   AppRouter,
   AppRouterInputs,
   AppRouterOutputs,
-} from "api/src/router/index.ts";
+} from "api/src/routes/index.ts";
 
 // TODO: Split into browser and Node clients
 const client = createTRPCClient<AppRouter>({
