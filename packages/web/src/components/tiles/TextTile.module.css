@@ -9,6 +9,22 @@
   background: inherit;
   border-radius: inherit;
 
+  & blockquote {
+    position: relative;
+    padding: 0.25rem 0 0.25rem 0.75rem;
+    margin: 0.5rem 0;
+    color: oklch(from var(--text-color) 60% c h);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: oklch(from var(--text-color) 60% c h);
+      border-radius: 2px;
+    }
+  }
+
   & ol,
   & ul {
     margin-left: 1.5em;
