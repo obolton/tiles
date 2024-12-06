@@ -1,13 +1,17 @@
 import css from "./SwatchSelect.css?inline";
 import deleteIcon from "@/icons/delete.svg";
-import { move, fadeIn, fadeOut } from "@/utils/animation/effects";
+import {
+  move,
+  fadeIn,
+  fadeOut,
+  DEFAULT_TIMING,
+} from "@/utils/animation/effects";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 const TIMING: EffectTiming = {
-  duration: 350,
-  easing: "ease",
+  ...DEFAULT_TIMING,
   fill: "forwards",
 };
 const OVERLAP = 8;
