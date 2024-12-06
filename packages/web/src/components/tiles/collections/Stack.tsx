@@ -7,7 +7,7 @@ import LinkTile from "@/components/tiles/LinkTile";
 import styles from "./Stack.module.css";
 import type { ClientCollection } from "@/types/tiles";
 import GridItem from "@/components/grid/GridItem";
-import type StackView from "@/components/collections/StackView";
+import type StackView from "@/components/expandable/StackView";
 import useEditable from "@/hooks/useEditable";
 import type { DragDropEvent } from "@/utils/drag";
 import useLayoutTransition from "@/hooks/useLayoutTransition";

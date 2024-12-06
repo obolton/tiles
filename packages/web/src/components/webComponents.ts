@@ -12,7 +12,7 @@ import SwatchItem from "./inputs/SwatchItem";
 import CalendarMonth from "./dates/CalendarMonth";
 import FilePicker from "./forms/FilePicker";
 import PopOut from "./expandable/PopOut";
-import StackView from "./collections/StackView";
+import StackView from "./expandable/StackView";
 import ResizeItem from "./resize/ResizeItem";
 
 customElements.define("data-binding", DataBinding);

@@ -1,4 +1,4 @@
-import PopOut from "@/components/expandable/PopOut";
+import PopOut from "./PopOut";
 import { willAnimateLayout, animateChildren } from "@/utils/animation/layout";
 
 export default class StackView extends PopOut {
