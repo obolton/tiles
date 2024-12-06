@@ -52,7 +52,7 @@ export default function EditingTools({
       {isPublished ? (
         <button
           id="unpublish"
-          className="floating tooltip"
+          className="floating tooltip-left"
           aria-label="Published"
           disabled={allowPublish ? undefined : true}
           onClick={unpublishPage}
@@ -62,7 +62,7 @@ export default function EditingTools({
       ) : (
         <button
           id="publish"
-          className="floating tooltip"
+          className="floating tooltip-left"
           aria-label="Private"
           disabled={allowPublish ? undefined : true}
           onClick={publishPage}
@@ -78,7 +78,7 @@ export default function EditingTools({
       <button
         id="page-options-button"
         type="button"
-        className="floating tooltip"
+        className="floating tooltip-left"
         role="menuitem"
         // @ts-expect-error React is not yet aware of popovertarget
         popovertarget="page-options"

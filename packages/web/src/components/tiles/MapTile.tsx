@@ -79,7 +79,7 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
           {isEditable ? (
             <button
               type="button"
-              className="floating tooltip tooltip-right"
+              className="floating tooltip-right"
               aria-label="Add a place"
               slot="toolbar"
               onClick={addPlace}

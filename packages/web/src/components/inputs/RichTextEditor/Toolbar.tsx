@@ -186,7 +186,7 @@ export default function Toolbar({
     <menu className={classNames(styles.toolbar, className)}>
       <li>
         <button
-          className="floating small"
+          className="floating small tooltip-top"
           aria-label="Format as heading"
           type="button"
           aria-pressed={format.heading ? "true" : "false"}
@@ -197,7 +197,7 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small"
+          className="floating small tooltip-top"
           aria-label="Format as bold"
           type="button"
           aria-pressed={format.bold ? "true" : "false"}
@@ -208,7 +208,7 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small"
+          className="floating small tooltip-top"
           aria-label="Format as italic"
           type="button"
           aria-pressed={format.italic ? "true" : "false"}
@@ -219,7 +219,7 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small"
+          className="floating small tooltip-top"
           aria-label="Format as underlined"
           type="button"
           aria-pressed={format.underline ? "true" : "false"}
@@ -230,7 +230,7 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small"
+          className="floating small tooltip-top"
           aria-label="Format as strike-through"
           type="button"
           aria-pressed={format.strikethrough ? "true" : "false"}
@@ -241,7 +241,7 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small"
+          className="floating small tooltip-top"
           aria-label="Format as an ordered list"
           type="button"
           aria-pressed={format.orderedList ? "true" : "false"}
@@ -252,7 +252,7 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small"
+          className="floating small tooltip-top"
           aria-label="Format as an unordered list"
           type="button"
           aria-pressed={format.unorderedList ? "true" : "false"}
@@ -263,7 +263,7 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small"
+          className="floating small tooltip-top"
           aria-label="Format as a quote"
           type="button"
           aria-pressed={format.quote ? "true" : "false"}
@@ -273,7 +273,11 @@ export default function Toolbar({
         </button>
       </li>
       <li>
-        <ColorPicker value={color} onChange={onChangeColor} />
+        <ColorPicker
+          value={color}
+          onChange={onChangeColor}
+          tooltipPosition="top"
+        />
       </li>
     </menu>
   );

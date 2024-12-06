@@ -4,17 +4,20 @@ import { getGoogleFontUrlAllFonts } from "@/utils/fonts";
 import { useCallback, useEffect, useRef } from "react";
 import styles from "./FontPicker.module.css";
 import type SwatchSelect from "./SwatchSelect";
+import { classNames } from "@/utils/css";
 
 interface FontPickerProps {
   direction?: "left" | "right";
   value?: FontId;
   onChange: (value: FontId) => void;
+  tooltipPosition?: "top" | "right" | "bottom" | "left";
 }
 
 export default function FontPicker({
   direction,
   value,
   onChange,
+  tooltipPosition,
 }: FontPickerProps) {
   const fontSelectRef = useRef<SwatchSelect>(null);
 
@@ -56,7 +59,10 @@ export default function FontPicker({
 
   return (
     <swatch-select
-      class={`${styles.font} tooltip`}
+      class={classNames(
+        styles.font,
+        tooltipPosition ? `tooltip-${tooltipPosition}` : undefined,
+      )}
       ref={fontSelectRef}
       aria-label="Font"
       aria-orientation="horizontal"

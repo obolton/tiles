@@ -73,8 +73,12 @@ export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
 
   return (
     <>
-      <FontPicker direction="left" onChange={setFont} />
-      <ColorPicker direction="left" onChange={setColor} />
+      <FontPicker direction="left" onChange={setFont} tooltipPosition="left" />
+      <ColorPicker
+        direction="left"
+        onChange={setColor}
+        tooltipPosition="left"
+      />
     </>
   );
 }

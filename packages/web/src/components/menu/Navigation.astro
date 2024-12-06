@@ -12,7 +12,7 @@ import signOutIcon from "@/icons/sign-out.svg";
       <data-binding href="user.profile">
         <a
           href="/profiles"
-          class="floating tooltip tooltip-right"
+          class="floating tooltip-right"
           aria-label="Your profile"
         >
           <data-binding src="user.imageUrl" name="user.name">
@@ -22,14 +22,14 @@ import signOutIcon from "@/icons/sign-out.svg";
       </data-binding>
     </li>
     <li>
-      <a href="/" class="floating tooltip tooltip-right" aria-label="Home">
+      <a href="/" class="floating tooltip-right" aria-label="Home">
         <img class="icon" src={homeIcon.src} alt="Home" />
       </a>
     </li>
     <li>
       <button
         id="new-page-button"
-        class="floating tooltip tooltip-right"
+        class="floating tooltip-right"
         type="button"
         aria-label="Create a new page"
         data-pending-text=""
@@ -38,18 +38,14 @@ import signOutIcon from "@/icons/sign-out.svg";
       </button>
     </li>
     <li>
-      <a
-        href="/library"
-        class="floating tooltip tooltip-right"
-        aria-label="Library"
-      >
+      <a href="/library" class="floating tooltip-right" aria-label="Library">
         <img class="icon" src={libraryIcon.src} alt="Library" />
       </a>
     </li>
     <li>
       <button
         id="more-button"
-        class="floating tooltip tooltip-right"
+        class="floating tooltip-right"
         type="button"
         role="menuitem"
         popovertarget="navigation-overflow"

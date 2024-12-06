@@ -14,6 +14,7 @@ interface ColorPickerProps {
   direction?: "left" | "right";
   value?: ColorPickerValue;
   onChange: (value: ColorPickerValue) => void;
+  tooltipPosition?: "top" | "right" | "bottom" | "left";
 }
 
 const HUES: [number, string][] = [];
@@ -29,6 +30,7 @@ export default function ColorPicker({
   direction,
   value,
   onChange,
+  tooltipPosition,
 }: ColorPickerProps) {
   const ref = useRef<SwatchSelect>(null);
 
@@ -56,7 +58,11 @@ export default function ColorPicker({
 
   return (
     <swatch-select
-      class={classNames(styles.color, "tooltip", className)}
+      class={classNames(
+        styles.color,
+        tooltipPosition ? `tooltip-${tooltipPosition}` : undefined,
+        className,
+      )}
       ref={ref}
       aria-label="Color"
       aria-orientation="horizontal"

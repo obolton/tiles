@@ -80,7 +80,7 @@ export default function TileButtons() {
       {BUTTONS.map(({ label, type, icon }) => (
         <button
           key={type}
-          className="floating tooltip"
+          className="floating tooltip-left"
           type="button"
           aria-label={label}
           data-tile-type={type}
