@@ -5,7 +5,7 @@ import MapView from "./maps/MapView";
 import MapMarker from "./maps/MapMarker";
 import MapLegendItem from "./maps/MapLegendItem";
 import EmbeddedVideo from "./video/EmbeddedVideo";
-import ProfileImage from "./ProfileImage";
+import ProfileImage from "./images/ProfileImage";
 import InfiniteScroll from "./InfiniteScroll";
 import SwatchSelect from "./inputs/SwatchSelect";
 import SwatchItem from "./inputs/SwatchItem";
