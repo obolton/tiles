@@ -273,16 +273,11 @@ model EventTile {
   @@map("event_tiles")
 }
 
-enum CollectionType {
-  STACK
-}
-
 model Collection {
-  id        String         @id @default(uuid()) @db.Uuid
-  createdAt DateTime       @default(now()) @map("created_at")
-  updatedAt DateTime       @updatedAt @map("updated_at")
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
   title     String?
-  type      CollectionType @default(STACK)
 
   tiles Tile[] @relation("CollectionTile")
   items Tile[] @relation("ParentCollection")
