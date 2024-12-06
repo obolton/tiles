@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeAll } from "vitest";
 import prisma from "@/database/prisma.ts";
-import { createText } from "../text.ts";
+import { createText, updateText } from "../text.ts";
 import type { RichTextSchema } from "@/schema/RichText.ts";
-import { mockCreate } from "../../../../test/prisma.ts";
+import { mockCreate, mockUpdate } from "../../../../test/prisma.ts";
 
 describe("createText", () => {
   beforeAll(() => {
@@ -24,7 +24,7 @@ describe("createText", () => {
     const result = await createText({
       pageId: "1",
       content,
-      theme: "LIGHT" as const,
+      theme: "LIGHT",
       hue: 120,
     });
 
@@ -38,6 +38,38 @@ describe("createText", () => {
       type: "TEXT",
       theme: "LIGHT",
       hue: 120,
+    });
+  });
+});
+
+describe("updateText", () => {
+  beforeAll(() => {
+    vi.mocked(prisma.textTile.update).mockImplementation(
+      mockUpdate({ id: "1" }),
+    );
+  });
+
+  it("should update and return a text tile", async () => {
+    const content = [
+      {
+        type: "paragraph",
+        children: [{ type: "text", text: "Updated content", format: 0 }],
+      },
+    ] as RichTextSchema;
+
+    const result = await updateText({
+      id: "1",
+      content,
+      theme: "DARK",
+      hue: 60,
+    });
+
+    expect(result).toEqual({
+      id: "1",
+      content,
+      type: "TEXT",
+      theme: "DARK",
+      hue: 60,
     });
   });
 });
