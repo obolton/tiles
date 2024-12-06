@@ -5,6 +5,31 @@ import type { AppRouterInputs } from "@/api/client";
 import type { TileType, ClientEntity, ClientTile } from "@/types/tiles";
 import { showModal } from "./modals";
 
+type CreateImageInput = Omit<AppRouterInputs["images"]["create"], "pageId">;
+type CreateMapInput = Omit<AppRouterInputs["maps"]["create"], "pageId">;
+type CreateTextInput = Omit<AppRouterInputs["text"]["create"], "pageId">;
+type CreateHeadingInput = Omit<AppRouterInputs["headings"]["create"], "pageId">;
+type CreateEventInput = Omit<AppRouterInputs["events"]["create"], "pageId">;
+type CreateLinkInput = Omit<
+  AppRouterInputs["externalLinks"]["create"],
+  "pageId"
+>;
+type CreatePageLinkInput = Omit<
+  AppRouterInputs["pageLinks"]["create"],
+  "pageId"
+>;
+type CreateCollectionInput = Omit<
+  AppRouterInputs["collections"]["create"],
+  "pageId"
+>;
+
+type UpdateImageInput = AppRouterInputs["images"]["update"];
+type UpdateTextInput = AppRouterInputs["text"]["update"];
+type UpdateHeadingInput = AppRouterInputs["headings"]["update"];
+type UpdateEventInput = AppRouterInputs["events"]["update"];
+type UpdateLinkInput = AppRouterInputs["externalLinks"]["update"];
+type UpdateVideoInput = AppRouterInputs["videos"]["update"];
+
 export function setEditMode(isEditing: boolean) {
   if (isEditing) {
     set("edit", window.location.pathname);
@@ -39,137 +64,107 @@ function getPageId() {
   return pageId;
 }
 
-type CreateImageInput = Omit<AppRouterInputs["images"]["create"], "pageId">;
+export function createTileState(data: ClientTile) {
+  window.dispatchEvent(new CustomEvent("tile:create", { detail: data }));
+}
 
-export async function createImage(image: CreateImageInput) {
+export async function createImage(data: CreateImageInput) {
   const result = await client.images.create.mutate({
     pageId: getPageId(),
-    ...image,
+    ...data,
   });
-  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+  createTileState(result);
 }
 
-type UpdateImageInput = AppRouterInputs["images"]["update"];
-
-export async function updateImage(image: UpdateImageInput) {
-  const result = await client.images.update.mutate(image);
-  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
-}
-
-type CreateMapInput = Omit<AppRouterInputs["maps"]["create"], "pageId">;
-
-export async function createMap(map: CreateMapInput) {
+export async function createMap(data: CreateMapInput) {
   const result = await client.maps.create.mutate({
     pageId: getPageId(),
-    ...map,
+    ...data,
   });
-  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+  createTileState(result);
 }
 
-type CreateTextInput = Omit<AppRouterInputs["text"]["create"], "pageId">;
-
-export async function createText(text: CreateTextInput) {
+export async function createText(data: CreateTextInput) {
   const result = await client.text.create.mutate({
     pageId: getPageId(),
-    ...text,
+    ...data,
   });
-  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+  createTileState(result);
 }
 
-type UpdateTextInput = AppRouterInputs["text"]["update"];
-
-export async function updateText(text: UpdateTextInput) {
-  const result = await client.text.update.mutate(text);
-  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
-}
-
-type CreateHeadingInput = Omit<AppRouterInputs["headings"]["create"], "pageId">;
-
-export async function createHeading(heading: CreateHeadingInput) {
+export async function createHeading(data: CreateHeadingInput) {
   const result = await client.headings.create.mutate({
     pageId: getPageId(),
-    ...heading,
+    ...data,
   });
-  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+  createTileState(result);
 }
 
-type UpdateHeadingInput = AppRouterInputs["headings"]["update"];
-
-export async function updateHeading(heading: UpdateHeadingInput) {
-  const result = await client.headings.update.mutate(heading);
-  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
-}
-
-type CreateEventInput = Omit<AppRouterInputs["events"]["create"], "pageId">;
-
-export async function createEvent(event: CreateEventInput) {
+export async function createEvent(data: CreateEventInput) {
   const result = await client.events.create.mutate({
     pageId: getPageId(),
-    ...event,
+    ...data,
   });
-  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+  createTileState(result);
 }
 
-type UpdateEventInput = AppRouterInputs["events"]["update"];
-
-export async function updateEvent(event: UpdateEventInput) {
-  const result = await client.events.update.mutate(event);
-  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
-}
-
-type CreatePageLinkInput = Omit<
-  AppRouterInputs["pageLinks"]["create"],
-  "pageId"
->;
-
-export async function createPageLink(pageLink: CreatePageLinkInput) {
+export async function createPageLink(data: CreatePageLinkInput) {
   const result = await client.pageLinks.create.mutate({
     pageId: getPageId(),
-    ...pageLink,
+    ...data,
   });
-  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+  createTileState(result);
 }
 
-type CreateLinkInput = Omit<
-  AppRouterInputs["externalLinks"]["create"],
-  "pageId"
->;
-
-export async function createLink(link: CreateLinkInput) {
+export async function createLink(data: CreateLinkInput) {
   const result = await client.externalLinks.create.mutate({
     pageId: getPageId(),
-    ...link,
+    ...data,
   });
-  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+  createTileState(result);
 }
 
-type UpdateLinkInput = AppRouterInputs["externalLinks"]["update"];
-
-export async function updateLink(link: UpdateLinkInput) {
-  const result = await client.externalLinks.update.mutate(link);
-  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
-}
-
-type UpdateVideoInput = AppRouterInputs["videos"]["update"];
-
-export async function updateVideo(video: UpdateVideoInput) {
-  const result = await client.videos.update.mutate(video);
-  window.dispatchEvent(new CustomEvent("tile:update", { detail: result }));
-}
-
-type CreateCollectionInput = Omit<
-  AppRouterInputs["collections"]["create"],
-  "pageId"
->;
-
-export async function createCollection(collection: CreateCollectionInput) {
+export async function createCollection(data: CreateCollectionInput) {
   const result = await client.collections.create.mutate({
     pageId: getPageId(),
-    ...collection,
+    ...data,
   });
-  window.dispatchEvent(new CustomEvent("tile:create", { detail: result }));
+  // @ts-expect-error FIX: This is overloaded to both create and update
+  createTileState(result);
 }
 
-export async function updateTileData(tile: Partial<ClientTile>) {
-  window.dispatchEvent(new CustomEvent("tile:update", { detail: tile }));
+export function updateTileState(
+  data: Omit<ClientTile, "placementId" | "rows" | "columns" | "position">,
+) {
+  window.dispatchEvent(new CustomEvent("tile:update", { detail: data }));
+}
+
+export async function updateImage(data: UpdateImageInput) {
+  const result = await client.images.update.mutate(data);
+  updateTileState(result);
+}
+
+export async function updateText(data: UpdateTextInput) {
+  const result = await client.text.update.mutate(data);
+  updateTileState(result);
+}
+
+export async function updateHeading(data: UpdateHeadingInput) {
+  const result = await client.headings.update.mutate(data);
+  updateTileState(result);
+}
+
+export async function updateEvent(data: UpdateEventInput) {
+  const result = await client.events.update.mutate(data);
+  updateTileState(result);
+}
+
+export async function updateLink(data: UpdateLinkInput) {
+  const result = await client.externalLinks.update.mutate(data);
+  updateTileState(result);
+}
+
+export async function updateVideo(data: UpdateVideoInput) {
+  const result = await client.videos.update.mutate(data);
+  updateTileState(result);
 }

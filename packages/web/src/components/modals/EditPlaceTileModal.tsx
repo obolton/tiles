@@ -2,7 +2,7 @@ import type { AppRouterOutputs } from "@/api/client";
 import client from "@/api/client";
 import useDebouncedCallback from "@/hooks/useDebouncedCallback";
 import type { ClientPlace } from "@/types/tiles";
-import { createMap, updateTileData } from "@/utils/edit";
+import { createMap, updateTileState } from "@/utils/edit";
 import { useCallback, useEffect, useState } from "react";
 import styles from "./EditPlaceTileModal.module.css";
 import ModalBody from "./ModalBody";
@@ -54,7 +54,7 @@ export default function EditMapTileModal({
           id: tileId,
           place,
         });
-        updateTileData(tile);
+        updateTileState(tile);
       } else {
         await createMap({ place });
       }

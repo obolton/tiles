@@ -8,7 +8,7 @@ import type { ClientPlace } from "@/types/tiles";
 import type MapView from "@/components/maps/MapView";
 import type MapEvent from "@/components/maps/MapEvent";
 import { showModal } from "@/utils/modals";
-import { updateTileData } from "@/utils/edit";
+import { updateTileState } from "@/utils/edit";
 
 interface MapTileProps extends TileProps {
   places: ClientPlace[];
@@ -30,7 +30,7 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
           id,
         });
 
-        updateTileData(tile);
+        updateTileState(tile);
       }
     },
     [id],
