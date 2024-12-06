@@ -1,6 +1,6 @@
-import { router, publicProcedure } from "./trpc.ts";
-import { signIn, signOut } from "@/routes/users/auth.ts";
-import { SignInSchema } from "@/routes/users/schema.ts";
+import { router, publicProcedure } from "@/router/trpc.ts";
+import { signIn, signOut } from "./auth.ts";
+import { SignInSchema } from "./schema.ts";
 import { clearSessionCookie } from "@/utils/cookies.ts";
 
 export default router({

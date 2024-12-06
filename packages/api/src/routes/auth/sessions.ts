@@ -1,5 +1,5 @@
-import crypto from "crypto";
-import prisma from "../../database/prisma.ts";
+import crypto from "node:crypto";
+import prisma from "@/database/prisma.ts";
 import type { Prisma } from "@prisma/client";
 
 const SESSION_ID_BYTES = 64;
@@ -20,7 +20,7 @@ async function createSessionId() {
 
 export async function createSession(
   db: Prisma.TransactionClient,
-  userId: string
+  userId: string,
 ) {
   const id = await createSessionId();
   const expiresAt = new Date(Date.now() + SESSION_VALIDITY_PERIOD);

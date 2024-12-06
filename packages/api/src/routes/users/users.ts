@@ -9,7 +9,7 @@ import {
 import { getStream } from "@/utils/http.ts";
 import { getProfileImageUrl } from "@/utils/cdn.ts";
 import type { Prisma } from "@prisma/client";
-import type { UpdateUserSchema } from "@/routes/users/schema.ts";
+import type { UpdateUserSchema } from "./schema.ts";
 
 type CreateUserOptions = {
   name: string;

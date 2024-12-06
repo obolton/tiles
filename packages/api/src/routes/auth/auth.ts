@@ -1,5 +1,5 @@
 import prisma from "@/database/prisma.ts";
-import { createUser } from "./users.ts";
+import { createUser } from "../users/users.ts";
 import { createKey, getUserIdByProviderId } from "./keys.ts";
 import { createSession, deleteSession } from "./sessions.ts";
 import { sendEmail } from "@/utils/email.ts";

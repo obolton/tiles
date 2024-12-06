@@ -1,5 +1,5 @@
 import { router } from "./trpc.ts";
-import auth from "./auth.ts";
+import auth from "@/routes/auth/router.ts";
 import pages from "@/routes/pages/router.ts";
 import media from "@/routes/media/router.ts";
 import tiles from "@/routes/tiles/router.ts";
