@@ -5,7 +5,6 @@ import type {
 } from "./schema.ts";
 import type { Prisma } from "@prisma/client";
 import type { CreateCollectionSchema } from "./schema.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import { TEXT_FIELDS } from "../text/text.ts";
 import { IMAGE_FIELDS } from "../images/images.ts";
@@ -57,10 +56,12 @@ export const COLLECTION_FIELDS = {
   },
 } as const satisfies Prisma.CollectionSelect;
 
-export async function createCollection(
-  { pageId, type, title, tileIds }: CreateCollectionSchema,
-  { user }: AuthenticatedRequestContext,
-) {
+export async function createCollection({
+  pageId,
+  type,
+  title,
+  tileIds,
+}: CreateCollectionSchema) {
   if (!tileIds || tileIds.length < 2) {
     throw new Error("Collection must have at least two tiles");
   }
@@ -90,7 +91,6 @@ export async function createCollection(
 
     const collection = await transaction.collection.create({
       data: {
-        userId: user.id,
         type,
         title,
         items: {

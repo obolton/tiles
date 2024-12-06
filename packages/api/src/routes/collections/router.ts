@@ -14,8 +14,8 @@ import { invalidateCachedPage } from "@/utils/cdn.ts";
 export default router({
   create: authenticatedProcedure
     .input(CreateCollectionSchema)
-    .mutation(async ({ input, ctx }) => {
-      const collection = await createCollection(input, ctx);
+    .mutation(async ({ input }) => {
+      const collection = await createCollection(input);
       invalidateCachedPage(input.pageId);
       return collection;
     }),
