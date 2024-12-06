@@ -33,7 +33,7 @@ export async function createImage({
       },
       transaction,
     );
-    return { type: "IMAGE", ...image, ...placement };
+    return { type: "IMAGE" as const, ...image, ...placement };
   });
 }
 
@@ -50,5 +50,5 @@ export async function updateImage({ id, caption, origin }: UpdateImageSchema) {
     },
     select: IMAGE_FIELDS,
   });
-  return { type: "IMAGE", ...image };
+  return { type: "IMAGE" as const, ...image };
 }

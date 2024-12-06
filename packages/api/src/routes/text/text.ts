@@ -33,7 +33,7 @@ export async function createText({
       },
       transaction,
     );
-    return { type: "TEXT", ...text, ...placement };
+    return { type: "TEXT" as const, ...text, ...placement };
   });
 }
 
@@ -43,7 +43,7 @@ export async function updateText({
   theme,
   hue,
 }: UpdateTextSchema) {
-  const text = prisma.textTile.update({
+  const text = await prisma.textTile.update({
     where: {
       id,
     },
@@ -54,5 +54,5 @@ export async function updateText({
     },
     select: TEXT_FIELDS,
   });
-  return { type: "TEXT", ...text };
+  return { type: "TEXT" as const, ...text };
 }

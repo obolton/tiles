@@ -44,7 +44,7 @@ export async function createVideo({ pageId, url }: CreateVideoSchema) {
       transaction,
     );
     return {
-      type: "VIDEO",
+      type: "VIDEO" as const,
       ...video,
       imageUrl: video.imageUrl ? getVideoImageUrl(video.id) : null,
       ...placement,
@@ -63,7 +63,7 @@ export async function updateVideo({ id, title }: UpdateVideoSchema) {
     select: VIDEO_FIELDS,
   });
   return {
-    type: "VIDEO",
+    type: "VIDEO" as const,
     ...video,
     imageUrl: video.imageUrl ? getVideoImageUrl(video.id) : null,
   };

@@ -47,30 +47,30 @@ export async function createMap({
       },
       transaction,
     );
-    return { type: "MAP", ...map, ...placement };
+    return { type: "MAP" as const, ...map, ...placement };
   });
 }
 
 export async function addPlace({ id, place }: AddPlaceSchema) {
   const { name, providerId, lat, long, boundingBox, address } = place;
-  return prisma.$transaction(async (tx) => {
-    return tx.mapTile.update({
-      where: { id },
-      data: {
-        places: {
-          create: {
-            name,
-            providerId,
-            lat,
-            long,
-            boundingBox: boundingBox ?? [],
-            address,
-          },
+
+  const map = await prisma.mapTile.update({
+    where: { id },
+    data: {
+      places: {
+        create: {
+          name,
+          providerId,
+          lat,
+          long,
+          boundingBox: boundingBox ?? [],
+          address,
         },
       },
-      select: MAP_FIELDS,
-    });
+    },
+    select: MAP_FIELDS,
   });
+  return { type: "MAP" as const, ...map };
 }
 
 export async function removePlace({ id, placeId }: RemovePlaceSchema) {
@@ -81,9 +81,10 @@ export async function removePlace({ id, placeId }: RemovePlaceSchema) {
         id: true,
       },
     });
-    return tx.mapTile.findUniqueOrThrow({
+    const map = await tx.mapTile.findUniqueOrThrow({
       where: { id },
       select: MAP_FIELDS,
     });
+    return { type: "MAP" as const, ...map };
   });
 }

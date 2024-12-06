@@ -39,7 +39,7 @@ export async function createEvent({
       },
       transaction,
     );
-    return { type: "EVENT", ...event, ...placement };
+    return { type: "EVENT" as const, ...event, ...placement };
   });
 }
 
@@ -51,7 +51,7 @@ export async function updateEvent({
   allDay,
   timeZone,
 }: UpdateEventSchema) {
-  return prisma.eventTile.update({
+  const event = await prisma.eventTile.update({
     where: {
       id,
     },
@@ -64,4 +64,5 @@ export async function updateEvent({
     },
     select: EVENT_FIELDS,
   });
+  return { type: "EVENT" as const, ...event };
 }

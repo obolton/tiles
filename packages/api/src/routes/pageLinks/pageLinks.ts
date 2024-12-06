@@ -49,8 +49,9 @@ const pageValidator = Prisma.validator<Prisma.PageDefaultArgs>()({
 type Page = Prisma.PageGetPayload<typeof pageValidator>;
 
 function formatPage(page: Page) {
-  const { title, subtitle, theme, hue, font, author, tiles } = page;
+  const { id, title, subtitle, theme, hue, font, author, tiles } = page;
   return {
+    id,
     title,
     subtitle,
     theme,
@@ -89,7 +90,7 @@ export async function createPageLink({
       transaction,
     );
     return {
-      type: "PAGE_LINK",
+      type: "PAGE_LINK" as const,
       ...pageLink,
       page: pageLink.page ? formatPage(pageLink.page) : null,
       ...placement,

@@ -127,7 +127,7 @@ export async function createTilePlacement(
   const position = await transaction.tile.count({
     where: { pageId },
   });
-  return transaction.tile.create({
+  const placement = await transaction.tile.create({
     data: {
       pageId,
       type,
@@ -145,9 +145,16 @@ export async function createTilePlacement(
       collectionId,
     },
     select: {
+      id: true,
       position: true,
       columns: true,
       rows: true,
     },
   });
+  return {
+    placementId: placement.id,
+    position: placement.position,
+    columns: placement.columns,
+    rows: placement.rows,
+  };
 }

@@ -121,7 +121,7 @@ export async function createCollection({
       transaction,
     );
 
-    return { type: "COLLECTION", ...collection, ...placement };
+    return { type: "COLLECTION" as const, ...collection, ...placement };
   });
 }
 

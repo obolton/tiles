@@ -65,7 +65,7 @@ export type ClientPageLink = OmitMetadata<PageLinkTile> & {
     id: string;
     title: string;
     subtitle: string | null;
-    author: { name: string; imageUrl: string | null };
+    author: { id: string; name: string; imageUrl: string | null };
     theme: Theme;
     hue: number | null;
     font: Font | null;

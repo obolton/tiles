@@ -48,7 +48,7 @@ export async function createLink({ pageId, url }: CreateLinkSchema) {
       transaction,
     );
     return {
-      type: "LINK",
+      type: "LINK" as const,
       ...link,
       imageUrl: link.imageUrl ? getLinkImageUrl(link.id) : null,
       ...placement,
@@ -73,7 +73,7 @@ export async function updateLink({ id, url }: UpdateLinkSchema) {
     select: LINK_FIELDS,
   });
   return {
-    type: "LINK",
+    type: "LINK" as const,
     ...link,
     imageUrl: link.imageUrl ? getLinkImageUrl(link.id) : null,
   };

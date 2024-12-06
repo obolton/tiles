@@ -24,7 +24,7 @@ export async function createHeading({ pageId, content }: CreateHeadingSchema) {
       },
       transaction,
     );
-    return { type: "HEADING", ...heading, ...placement };
+    return { type: "HEADING" as const, ...heading, ...placement };
   });
 }
 
@@ -38,5 +38,5 @@ export async function updateHeading({ id, content }: UpdateHeadingSchema) {
     },
     select: HEADING_FIELDS,
   });
-  return { type: "HEADING", ...heading };
+  return { type: "HEADING" as const, ...heading };
 }
