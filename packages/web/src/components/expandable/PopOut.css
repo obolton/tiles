@@ -64,8 +64,8 @@ dialog {
     position: fixed;
     width: auto;
     height: auto;
-    max-width: min(80vw, 800px);
-    max-height: min(80vh, 600px);
+    max-width: clamp(100px, 80vw, var(--max-width));
+    max-height: clamp(100px, calc(100vh - 180px), 600px);
     margin: auto;
     display: flex;
     flex-direction: column;
