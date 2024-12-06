@@ -15,7 +15,12 @@ import {
   INSERT_UNORDERED_LIST_COMMAND,
   REMOVE_LIST_COMMAND,
 } from "@lexical/list";
-import { $createHeadingNode, $isHeadingNode } from "@lexical/rich-text";
+import {
+  $createHeadingNode,
+  $isHeadingNode,
+  $createQuoteNode,
+  $isQuoteNode,
+} from "@lexical/rich-text";
 import Icon from "@/components/icons/Icon";
 import headingIcon from "@/icons/heading.svg";
 import boldIcon from "@/icons/bold.svg";
@@ -24,11 +29,13 @@ import underlineIcon from "@/icons/underline.svg";
 import strikethroughIcon from "@/icons/strikethrough.svg";
 import orderedListIcon from "@/icons/ordered-list.svg";
 import unorderedListIcon from "@/icons/unordered-list.svg";
+import quoteIcon from "@/icons/quote.svg";
 import { classNames } from "@/utils/css";
 import styles from "./Toolbar.module.css";
 
 type Format = {
   heading: boolean;
+  quote: boolean;
   bold: boolean;
   italic: boolean;
   underline: boolean;
@@ -71,6 +78,7 @@ export default function Toolbar({
   const [editor] = useLexicalComposerContext();
   const [format, setFormat] = useState<Format>({
     heading: false,
+    quote: false,
     bold: false,
     italic: false,
     underline: false,
@@ -93,6 +101,7 @@ export default function Toolbar({
 
         setFormat({
           heading: $isHeadingNode(anchor),
+          quote: $isQuoteNode(anchor),
           bold: selection.hasFormat("bold"),
           italic: selection.hasFormat("italic"),
           underline: selection.hasFormat("underline"),
@@ -115,6 +124,20 @@ export default function Toolbar({
         $setBlocksType(selection, $createParagraphNode);
       } else {
         $setBlocksType(selection, () => $createHeadingNode("h2"));
+      }
+    });
+  }, [editor]);
+
+  const formatQuote = useCallback(() => {
+    editor.update(() => {
+      const selection = $getSelection();
+      const anchor = $isRangeSelection(selection)
+        ? selection?.anchor.getNode().getTopLevelElement()
+        : null;
+      if ($isQuoteNode(anchor)) {
+        $setBlocksType(selection, $createParagraphNode);
+      } else {
+        $setBlocksType(selection, $createQuoteNode);
       }
     });
   }, [editor]);
@@ -236,6 +259,17 @@ export default function Toolbar({
           onClick={formatUnorderedList}
         >
           <Icon src={unorderedListIcon.src} />
+        </button>
+      </li>
+      <li>
+        <button
+          className="floating small"
+          aria-label="Format as a quote"
+          type="button"
+          aria-pressed={format.quote ? "true" : "false"}
+          onClick={formatQuote}
+        >
+          <Icon src={quoteIcon.src} />
         </button>
       </li>
       <li>
