@@ -154,3 +154,7 @@ embedded-video {
   display: block;
   contain: strict;
 }
+
+map-legend-item:not(:defined) {
+  display: none;
+}
