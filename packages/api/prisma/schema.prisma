@@ -23,9 +23,8 @@ model User {
 
   sessions    Session[]
   keys        Key[]
-  profilePage Page         @relation("ProfilePage", fields: [profilePageId], references: [id], onDelete: Cascade)
-  pages       Page[]       @relation("Pages")
-  collections Collection[]
+  profilePage Page      @relation("ProfilePage", fields: [profilePageId], references: [id], onDelete: Cascade)
+  pages       Page[]    @relation("Pages")
 
   @@map("users")
 }
@@ -282,15 +281,11 @@ model Collection {
   id        String         @id @default(uuid()) @db.Uuid
   createdAt DateTime       @default(now()) @map("created_at")
   updatedAt DateTime       @updatedAt @map("updated_at")
-  userId    String         @map("user_id") @db.Uuid
   title     String?
   type      CollectionType @default(STACK)
 
-  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   tiles Tile[] @relation("CollectionTile")
   items Tile[] @relation("ParentCollection")
 
-  @@index([userId])
-  @@index([userId, updatedAt])
   @@map("collections")
 }
