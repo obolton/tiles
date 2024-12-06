@@ -41,7 +41,10 @@ export default function GridItem({
   useDraggable(ref, isEditable && !!dropGroup);
   useScrollIntoView(ref);
 
-  const handleDelete = useCallback(() => onDelete(id), [id, onDelete]);
+  const handleDelete = useCallback(
+    () => onDelete(placementId),
+    [placementId, onDelete],
+  );
 
   const combinedStyles = useMemo(
     () =>
