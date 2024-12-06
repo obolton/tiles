@@ -4,9 +4,9 @@ import http, { IncomingMessage, ServerResponse } from "node:http";
 import https from "node:https";
 import { createHTTPHandler } from "@trpc/server/adapters/standalone";
 import cors from "cors";
-import router from "./router/index.ts";
-import { createContext } from "./router/trpc.ts";
-import { resourcesHandler } from "./resources/index.ts";
+import router from "@/routes/index.ts";
+import { createContext } from "@/utils/trpc.ts";
+import { resourcesHandler } from "@/resources/index.ts";
 
 const HOST = process.env.HOST;
 const PORT = parseInt(process.env.PORT || "", 10);

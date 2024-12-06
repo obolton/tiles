@@ -1,4 +1,4 @@
-import { router, authenticatedProcedure } from "@/router/trpc.ts";
+import { router, authenticatedProcedure } from "@/utils/trpc.ts";
 import { createHeading, updateHeading } from "./headings.ts";
 import { CreateHeadingSchema, UpdateHeadingSchema } from "./schema.ts";
 import { invalidateCachedPage } from "@/utils/cdn.ts";

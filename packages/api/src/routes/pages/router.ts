@@ -2,7 +2,7 @@ import {
   router,
   publicProcedure,
   authenticatedProcedure,
-} from "@/router/trpc.ts";
+} from "@/utils/trpc.ts";
 import {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,

@@ -1,4 +1,4 @@
-import { router, authenticatedProcedure } from "@/router/trpc.ts";
+import { router, authenticatedProcedure } from "@/utils/trpc.ts";
 import { moveTile, resizeTile, deleteTile } from "./tiles.ts";
 import {
   MoveTileSchema,

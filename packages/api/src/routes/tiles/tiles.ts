@@ -4,7 +4,7 @@ import type {
   DeleteTileSchema,
   ResizeTileSchema,
 } from "./schema.ts";
-import type { AuthenticatedRequestContext } from "@/router/trpc.ts";
+import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 import { checkPageAccess } from "@/utils/permissions.ts";
 import type { Prisma, TileType } from "@prisma/client";
 

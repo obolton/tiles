@@ -27,7 +27,7 @@ import type {
   DeletePageSchema,
 } from "./schema.ts";
 import type { ClientTile } from "@/types/tiles.ts";
-import type { AuthenticatedRequestContext } from "@/router/trpc.ts";
+import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 
 const TILES_FIELDS = {
   id: true,

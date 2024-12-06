@@ -5,7 +5,7 @@ import type {
 } from "./schema.ts";
 import type { Prisma } from "@prisma/client";
 import type { CreateCollectionSchema } from "./schema.ts";
-import type { AuthenticatedRequestContext } from "@/router/trpc.ts";
+import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import { TEXT_FIELDS } from "../text/text.ts";
 import { IMAGE_FIELDS } from "../images/images.ts";

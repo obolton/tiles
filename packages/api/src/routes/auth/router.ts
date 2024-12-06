@@ -1,4 +1,4 @@
-import { router, publicProcedure } from "@/router/trpc.ts";
+import { router, publicProcedure } from "@/utils/trpc.ts";
 import { signIn, signOut } from "./auth.ts";
 import { SignInSchema } from "./schema.ts";
 import { clearSessionCookie } from "@/utils/cookies.ts";

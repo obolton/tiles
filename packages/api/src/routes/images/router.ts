@@ -1,4 +1,4 @@
-import { router, authenticatedProcedure } from "@/router/trpc.ts";
+import { router, authenticatedProcedure } from "@/utils/trpc.ts";
 import { createImage, updateImage } from "./images.ts";
 import { CreateImageSchema, UpdateImageSchema } from "./schema.ts";
 import { invalidateCachedPage } from "@/utils/cdn.ts";
