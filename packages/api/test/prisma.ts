@@ -72,3 +72,14 @@ export function mockCreate<
     return pick({ ...defaults, ...data }, selectColumns(select || {}));
   }) as PrismaModelClient);
 }
+
+export function mockUpdate<
+  UpdateArgs extends {
+    select?: Record<string, unknown> | null;
+    data: Record<string, unknown>;
+  },
+>(defaults = {}) {
+  return vi.fn((async ({ data, select }: UpdateArgs) => {
+    return pick({ ...defaults, ...data }, selectColumns(select || {}));
+  }) as PrismaModelClient);
+}
