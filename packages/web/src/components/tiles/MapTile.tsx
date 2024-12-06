@@ -82,6 +82,10 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
               className="floating tooltip-right"
               aria-label="Add a place"
               slot="toolbar"
+              onPointerDownCapture={(event) => {
+                event.stopPropagation();
+                event.preventDefault();
+              }}
               onClick={addPlace}
             >
               <img src={addPlaceIcon.src} alt="Add a place" />
