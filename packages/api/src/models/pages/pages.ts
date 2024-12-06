@@ -31,7 +31,6 @@ import type { AuthenticatedRequestContext } from "@/router/trpc.ts";
 
 const TILES_FIELDS = {
   id: true,
-  type: true,
   position: true,
   columns: true,
   rows: true,
@@ -87,103 +86,122 @@ const PAGE_FIELDS = {
       position: "asc",
     },
   },
-} as const;
+} as const satisfies Prisma.PageSelect;
 
 type TileWithData = Prisma.TileGetPayload<{ select: typeof TILES_FIELDS }>;
 
 function formatTile({
   id,
-  type,
   position,
   rows,
   columns,
   ...tile
 }: TileWithData): ClientTile {
   const base = { placementId: id, position, rows, columns };
-  switch (type) {
-    case "IMAGE":
-      return {
-        ...base,
-        type,
-        ...tile.image!,
-      };
-    case "VIDEO":
-      return {
-        ...base,
-        type,
-        ...tile.video!,
-        imageUrl: tile.video!.imageUrl
-          ? getVideoImageUrl(tile.video!.id)
-          : null,
-      };
-    case "TEXT":
-      return {
-        ...base,
-        type,
-        ...tile.text!,
-      };
-    case "MAP":
-      return {
-        ...base,
-        type,
-        ...tile.map!,
-      };
-    case "LINK":
-      return {
-        ...base,
-        type,
-        ...tile.link!,
-        imageUrl: tile.link!.imageUrl ? getLinkImageUrl(tile.link!.id) : null,
-      };
-    case "HEADING":
-      return {
-        ...base,
-        type,
-        ...tile.heading!,
-      };
-    case "PAGE_LINK": {
-      const pageLink = tile.pageLink;
-      const page = pageLink?.page;
-      if (!pageLink) {
-        throw new Error("Page link tile missing page info");
-      }
-      return {
-        ...base,
-        type,
-        ...pageLink,
-        page: page
-          ? {
-              id: page.id,
-              title: page.title,
-              subtitle: page.subtitle,
-              theme: page.theme,
-              hue: page.hue,
-              font: page.font,
-              author: formatAuthor(page.author),
-              imageKey: page.tiles[0]?.image?.imageKey ?? null,
-            }
-          : null,
-      };
-    }
-    case "EVENT":
-      return {
-        ...base,
-        type,
-        ...tile.event!,
-        start: tile.event!.start.toISOString(),
-        end: tile.event!.end?.toISOString() ?? null,
-      };
-    case "COLLECTION":
-      return {
-        ...base,
-        type,
-        ...tile.collection!,
-        // @ts-expect-error Incompatibility due to collections missing
-        items: tile.collection!.items.map(formatTile),
-      };
-    default:
-      throw new Error(`Unknown tile type: ${type}`);
+  const {
+    image,
+    video,
+    text,
+    map,
+    link,
+    pageLink,
+    heading,
+    event,
+    collection,
+  } = tile;
+
+  if (image) {
+    return {
+      type: "IMAGE",
+      ...base,
+      ...image,
+    };
   }
+
+  if (video) {
+    return {
+      type: "VIDEO",
+      ...base,
+      ...video,
+      imageUrl: video.imageUrl ? getVideoImageUrl(video.id) : null,
+    };
+  }
+
+  if (text) {
+    return {
+      type: "TEXT",
+      ...base,
+      ...text,
+    };
+  }
+
+  if (map) {
+    return {
+      type: "MAP",
+      ...base,
+      ...map,
+    };
+  }
+
+  if (link) {
+    return {
+      type: "LINK",
+      ...base,
+      ...link,
+      imageUrl: link.imageUrl ? getLinkImageUrl(link.id) : null,
+    };
+  }
+
+  if (heading) {
+    return {
+      type: "HEADING",
+      ...base,
+      ...heading,
+    };
+  }
+
+  if (pageLink) {
+    const page = pageLink.page;
+    return {
+      type: "PAGE_LINK",
+      ...base,
+      ...pageLink,
+      page: page
+        ? {
+            id: page.id,
+            title: page.title,
+            subtitle: page.subtitle,
+            theme: page.theme,
+            hue: page.hue,
+            font: page.font,
+            author: formatAuthor(page.author),
+            imageKey: page.tiles[0]?.image?.imageKey ?? null,
+          }
+        : null,
+    };
+  }
+
+  if (event) {
+    return {
+      type: "EVENT",
+      ...base,
+      ...event,
+      start: event.start.toISOString(),
+      end: event.end?.toISOString() ?? null,
+    };
+  }
+
+  if (collection) {
+    return {
+      type: "COLLECTION",
+      ...base,
+      ...collection,
+      // @ts-expect-error Incompatibility due to collections missing
+      items: collection.items.map(formatTile),
+    };
+  }
+
+  throw new Error(`Invalid tile: ${id}`);
 }
 
 function formatAuthor({
