@@ -9,15 +9,15 @@ import {
 import {
   PAGE_LINK_FIELDS,
   PAGE_LINK_TILE_PAGE_FIELDS,
-} from "@/models/pageLinks/pageLinks.ts";
-import { COLLECTION_FIELDS } from "@/models/collections/collections.ts";
-import { IMAGE_FIELDS } from "@/models/images/images.ts";
-import { MAP_FIELDS } from "@/models/maps/maps.ts";
-import { TEXT_FIELDS } from "@/models/text/text.ts";
-import { HEADING_FIELDS } from "@/models/headings/headings.ts";
-import { EVENT_FIELDS } from "@/models/events/events.ts";
-import { LINK_FIELDS } from "@/models/links/links.ts";
-import { VIDEO_FIELDS } from "@/models/videos/videos.ts";
+} from "@/routes/pageLinks/pageLinks.ts";
+import { COLLECTION_FIELDS } from "@/routes/collections/collections.ts";
+import { IMAGE_FIELDS } from "@/routes/images/images.ts";
+import { MAP_FIELDS } from "@/routes/maps/maps.ts";
+import { TEXT_FIELDS } from "@/routes/text/text.ts";
+import { HEADING_FIELDS } from "@/routes/headings/headings.ts";
+import { EVENT_FIELDS } from "@/routes/events/events.ts";
+import { LINK_FIELDS } from "@/routes/links/links.ts";
+import { VIDEO_FIELDS } from "@/routes/videos/videos.ts";
 import type {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,

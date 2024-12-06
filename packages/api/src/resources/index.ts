@@ -1,7 +1,7 @@
 import { ServerResponse } from "node:http";
 import { z } from "zod";
-import { getLinkTileImageUrl } from "@/models/links/links.ts";
-import { getVideoTileImageUrl } from "@/models/videos/videos.ts";
+import { getLinkTileImageUrl } from "@/routes/links/links.ts";
+import { getVideoTileImageUrl } from "@/routes/videos/videos.ts";
 
 const ResourceIdSchema = z.string().uuid();
 
