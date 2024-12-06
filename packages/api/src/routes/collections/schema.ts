@@ -1,9 +1,7 @@
 import { z } from "zod";
-import { CollectionType } from "@prisma/client";
 
 export const CreateCollectionSchema = z.object({
   pageId: z.string().uuid(),
-  type: z.nativeEnum(CollectionType),
   title: z.string().optional(),
   tileIds: z.array(z.string().uuid()).optional(),
 });

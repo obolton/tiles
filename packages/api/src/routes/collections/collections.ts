@@ -58,7 +58,6 @@ export const COLLECTION_FIELDS = {
 
 export async function createCollection({
   pageId,
-  type,
   title,
   tileIds,
 }: CreateCollectionSchema) {
@@ -91,7 +90,6 @@ export async function createCollection({
 
     const collection = await transaction.collection.create({
       data: {
-        type,
         title,
         items: {
           connect: tileIds.map((id) => ({ id })),
