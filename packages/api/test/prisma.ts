@@ -1,5 +1,6 @@
 import { vi } from "vitest";
 import type { Prisma } from "@prisma/client";
+import { pick } from "@/utils/objects.ts";
 
 function mockModel() {
   return {
@@ -48,38 +49,34 @@ export const MOCK_PRISMA = {
   videoTile: mockModel(),
 } as Prisma.TransactionClient;
 
-function pick(object: object, keys: string[]) {
-  return Object.fromEntries(
-    Object.entries(object).filter(([key]) => keys.includes(key)),
-  );
-}
-
 function selectColumns(object: { [k: string]: unknown }) {
   return Object.entries(object)
-    .filter(([, value]) => typeof value === "boolean" && value)
+    .filter(([, value]) => !!value)
     .map(([key]) => key);
 }
 
 type PrismaModelClient = (...args: unknown[]) => never;
 
-export function mockCreate<
-  CreateArgs extends {
-    select?: Record<string, unknown> | null;
+export function mockCreate<T>(defaults: Partial<T>) {
+  return vi.fn((async ({
+    data,
+    select,
+  }: {
+    select?: Record<keyof T, unknown> | null;
     data: Record<string, unknown>;
-  },
->(defaults = {}) {
-  return vi.fn((async ({ data, select }: CreateArgs) => {
+  }) => {
     return pick({ ...defaults, ...data }, selectColumns(select || {}));
   }) as PrismaModelClient);
 }
 
-export function mockUpdate<
-  UpdateArgs extends {
+export function mockUpdate<T>(defaults: Partial<T>) {
+  return vi.fn((async ({
+    data,
+    select,
+  }: {
     select?: Record<string, unknown> | null;
     data: Record<string, unknown>;
-  },
->(defaults = {}) {
-  return vi.fn((async ({ data, select }: UpdateArgs) => {
+  }) => {
     return pick({ ...defaults, ...data }, selectColumns(select || {}));
   }) as PrismaModelClient);
 }
