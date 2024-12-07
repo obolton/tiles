@@ -1,15 +1,18 @@
 import { describe, it, expect, vi, beforeAll } from "vitest";
 import prisma from "@/database/prisma.ts";
-import { createImage, updateImage } from "../images.ts";
+import { createImage, updateImage, type Image } from "../images.ts";
 import { mockCreate, mockUpdate } from "../../../../test/prisma.ts";
+import type { Tile } from "@prisma/client";
 
 describe("createImage", () => {
   beforeAll(() => {
     vi.mocked(prisma.imageTile.create).mockImplementation(
-      mockCreate({ id: "1", originX: 0.5, originY: 0.5 }),
+      mockCreate<Image>({ id: "1", originX: 0.5, originY: 0.5 }),
     );
     vi.mocked(prisma.tile.count).mockResolvedValue(2);
-    vi.mocked(prisma.tile.create).mockImplementation(mockCreate({ id: "2" }));
+    vi.mocked(prisma.tile.create).mockImplementation(
+      mockCreate<Tile>({ id: "2" }),
+    );
   });
 
   it("should return an image", async () => {
@@ -37,7 +40,7 @@ describe("createImage", () => {
 describe("updateImage", () => {
   beforeAll(() => {
     vi.mocked(prisma.imageTile.update).mockImplementation(
-      mockUpdate({
+      mockUpdate<Image>({
         id: "1",
         imageKey: "test-image-key",
         caption: "Test caption",
