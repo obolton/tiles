@@ -14,7 +14,7 @@ declare module "react" {
     interface IntrinsicElements {
       "map-view": CustomElementAttributes & {
         movable?: boolean;
-        legend?: string;
+        legend?: boolean;
       };
       "map-marker": CustomElementAttributes & {
         id: string;

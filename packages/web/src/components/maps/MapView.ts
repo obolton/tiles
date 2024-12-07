@@ -27,13 +27,13 @@ function parseBounds(value: string): [number, number, number, number] | null {
 export default class MapView extends HTMLElement {
   static observedAttributes = ["movable", "legend"] as const;
 
-  private root: HTMLElement;
-  private intersectionObserver: IntersectionObserver;
-  private mutationObserver: MutationObserver;
-  private map?: maplibregl.Map;
-  private labelElement?: HTMLDivElement;
-  private markers: maplibregl.Marker[] = [];
-  private legend?: HTMLElement;
+  #root: HTMLElement;
+  #intersectionObserver: IntersectionObserver;
+  #mutationObserver: MutationObserver;
+  #map?: maplibregl.Map;
+  #label?: HTMLDivElement;
+  #markers: maplibregl.Marker[] = [];
+  #legend?: HTMLElement;
 
   constructor() {
     super();
@@ -42,15 +42,15 @@ export default class MapView extends HTMLElement {
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = stylesheet;
-    this.root = document.createElement("figure");
-    this.root.id = "root";
-    shadow.append(link, this.root);
+    this.#root = document.createElement("figure");
+    this.#root.id = "root";
+    shadow.append(link, this.#root);
 
-    this.intersectionObserver = new IntersectionObserver(
+    this.#intersectionObserver = new IntersectionObserver(
       this.intersectionObserverCallback.bind(this),
       { rootMargin: "128px 128px 128px 128px", threshold: 0 },
     );
-    this.mutationObserver = new MutationObserver(
+    this.#mutationObserver = new MutationObserver(
       this.mutationObserverCallback.bind(this),
     );
   }
@@ -91,7 +91,7 @@ export default class MapView extends HTMLElement {
   }
 
   private addMarker({ lat, long, label }: Marker) {
-    if (!this.map) {
+    if (!this.#map) {
       throw new Error("Map is not initialized");
     }
 
@@ -100,41 +100,41 @@ export default class MapView extends HTMLElement {
       subpixelPositioning: true,
     })
       .setLngLat([long, lat])
-      .addTo(this.map);
-    this.markers.push(marker);
+      .addTo(this.#map);
+    this.#markers.push(marker);
 
     if (label) {
-      this.labelElement = document.createElement("div");
-      this.labelElement.classList.add("marker");
-      this.labelElement.textContent = label;
+      this.#label = document.createElement("div");
+      this.#label.classList.add("marker");
+      this.#label.textContent = label;
       const labelMarker = new maplibregl.Marker({
-        element: this.labelElement,
+        element: this.#label,
         offset: [0, -60],
         subpixelPositioning: true,
       })
         .setLngLat([long, lat])
-        .addTo(this.map);
-      this.markers.push(labelMarker);
+        .addTo(this.#map);
+      this.#markers.push(labelMarker);
     }
   }
 
   private initializeMap() {
-    if (this.map) {
+    if (this.#map) {
       throw new Error("Map is already initialized");
     }
 
-    const movable = this.getAttribute("movable");
+    const movable = this.hasAttribute("movable");
 
-    if (movable === "false") {
-      this.root.classList.add("static");
+    if (movable) {
+      this.#root.classList.remove("static");
     } else {
-      this.root.classList.remove("static");
+      this.#root.classList.add("static");
     }
 
     const markers = this.getMarkers();
 
-    this.map = new maplibregl.Map({
-      container: this.root,
+    this.#map = new maplibregl.Map({
+      container: this.#root,
       style: STYLE_URL,
       center:
         markers.length === 1 ? [markers[0]!.long, markers[0]!.lat] : undefined,
@@ -143,11 +143,11 @@ export default class MapView extends HTMLElement {
       attributionControl: { compact: true },
       fitBoundsOptions: { padding: 64 },
     });
-    this.map.addControl(new maplibregl.NavigationControl(), "bottom-right");
+    this.#map.addControl(new maplibregl.NavigationControl(), "bottom-right");
 
     this.updateMarkers();
 
-    if (this.getAttribute("legend")) {
+    if (this.hasAttribute("legend")) {
       this.showLegend();
     }
 
@@ -156,47 +156,47 @@ export default class MapView extends HTMLElement {
     slot.name = "toolbar";
     toolbar.append(slot);
     toolbar.classList.add("toolbar");
-    this.root.appendChild(toolbar);
+    this.#root.appendChild(toolbar);
 
-    requestAnimationFrame(() => this.map?.resize());
+    requestAnimationFrame(() => this.#map?.resize());
   }
 
   connectedCallback() {
-    this.intersectionObserver.observe(this);
-    this.mutationObserver.observe(this, { childList: true });
+    this.#intersectionObserver.observe(this);
+    this.#mutationObserver.observe(this, { childList: true });
   }
 
   disconnectedCallback() {
-    this.map?.remove();
-    this.map = undefined;
-    this.labelElement = undefined;
-    this.intersectionObserver.unobserve(this);
-    this.mutationObserver.disconnect();
+    this.#map?.remove();
+    this.#map = undefined;
+    this.#label = undefined;
+    this.#intersectionObserver.unobserve(this);
+    this.#mutationObserver.disconnect();
   }
 
   attributeChangedCallback(
     name: (typeof MapView.observedAttributes)[number],
     _: string,
-    value: string,
+    value: string | null,
   ) {
-    if (!this.map) {
+    if (!this.#map) {
       return;
     }
 
     switch (name) {
       case "movable":
-        if (value === "false") {
-          this.root.classList.add("static");
+        if (value === null) {
+          this.#root.classList.remove("static");
         } else {
-          this.root.classList.remove("static");
+          this.#root.classList.add("static");
         }
         break;
 
       case "legend":
-        if (value) {
-          this.showLegend();
-        } else {
+        if (value === null) {
           this.hideLegend();
+        } else {
+          this.showLegend();
         }
     }
   }
@@ -205,14 +205,14 @@ export default class MapView extends HTMLElement {
     for (const entry of entries) {
       if (entry.isIntersecting) {
         this.initializeMap();
-        this.intersectionObserver.unobserve(this);
+        this.#intersectionObserver.unobserve(this);
         return;
       }
     }
   }
 
   mutationObserverCallback() {
-    this.markers.forEach((marker) => marker.remove());
+    this.#markers.forEach((marker) => marker.remove());
     this.updateMarkers();
   }
 
@@ -221,21 +221,21 @@ export default class MapView extends HTMLElement {
   }
 
   private showLegend() {
-    if (this.legend) {
+    if (this.#legend) {
       return;
     }
-    this.legend = document.createElement("div");
-    this.legend.classList.add("legend");
+    this.#legend = document.createElement("div");
+    this.#legend.classList.add("legend");
 
     const slot = document.createElement("slot");
     slot.name = "legend";
-    this.legend.append(slot);
-    this.root.append(this.legend);
+    this.#legend.append(slot);
+    this.#root.append(this.#legend);
   }
 
   private hideLegend() {
-    this.legend?.remove();
-    this.legend = undefined;
+    this.#legend?.remove();
+    this.#legend = undefined;
   }
 
   flyToMarker(markerId: string) {
@@ -244,13 +244,13 @@ export default class MapView extends HTMLElement {
       return;
     }
     if (marker.bounds) {
-      this.map?.fitBounds(marker.bounds, {
+      this.#map?.fitBounds(marker.bounds, {
         padding: 64,
         animate: true,
         duration: 500,
       });
     } else {
-      this.map?.flyTo({
+      this.#map?.flyTo({
         center: [marker.long, marker.lat],
         zoom: 13,
         duration: 500,
