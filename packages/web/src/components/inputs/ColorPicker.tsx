@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback } from "react";
 import styles from "./ColorPicker.module.css";
 import { classNames } from "@/utils/css";
 import type SwatchSelect from "./SwatchSelect";
@@ -32,29 +32,15 @@ export default function ColorPicker({
   onChange,
   tooltipPosition,
 }: ColorPickerProps) {
-  const ref = useRef<SwatchSelect>(null);
-
   const setColor = useCallback(
-    async (event: Event) => {
-      const value = (event.target as SwatchSelect).value;
-      const [theme, hue] = value.split(":") as
+    (event: Event) => {
+      const [theme, hue] = (event.target as SwatchSelect).value.split(":") as
         | ["DARK" | "LIGHT"]
         | ["COLOR", string];
       onChange(theme === "COLOR" ? { theme, hue: parseFloat(hue) } : { theme });
     },
     [onChange],
   );
-
-  useEffect(() => {
-    const colorSelect = ref.current;
-    if (!colorSelect) {
-      return;
-    }
-    colorSelect.addEventListener("change", setColor);
-    return () => {
-      colorSelect.removeEventListener("change", setColor);
-    };
-  }, [setColor]);
 
   return (
     <swatch-select
@@ -63,10 +49,10 @@ export default function ColorPicker({
         tooltipPosition ? `tooltip-${tooltipPosition}` : undefined,
         className,
       )}
-      ref={ref}
       aria-label="Color"
       aria-orientation="horizontal"
       direction={direction}
+      onchange={setColor}
       value={
         value
           ? `${value.theme}${value.theme === "COLOR" ? `:${value.hue}` : ""}`

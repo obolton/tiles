@@ -39,6 +39,8 @@ declare module "react" {
       "swatch-select": CustomElementAttributes & {
         value?: string;
         direction?: "left" | "right";
+        onchange?: (event: globalThis.Event) => void;
+        ontoggle?: (event: globalThis.ToggleEvent) => void;
       };
       "swatch-item": CustomElementAttributes & {
         value: string;

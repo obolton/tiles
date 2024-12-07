@@ -1,7 +1,7 @@
 import { FONTS, type FontId } from "@/config/fonts";
 import fontIcon from "@/icons/font.svg";
 import { getGoogleFontUrlAllFonts } from "@/utils/fonts";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback } from "react";
 import styles from "./FontPicker.module.css";
 import type SwatchSelect from "./SwatchSelect";
 import { classNames } from "@/utils/css";
@@ -19,43 +19,22 @@ export default function FontPicker({
   onChange,
   tooltipPosition,
 }: FontPickerProps) {
-  const fontSelectRef = useRef<SwatchSelect>(null);
-
   const setFont = useCallback(
-    async (event: Event) => {
-      const value = (event.target as SwatchSelect).value as FontId;
-      onChange(value);
-    },
+    (event: Event) =>
+      void onChange((event.target as SwatchSelect).value as FontId),
     [onChange],
   );
 
-  useEffect(() => {
-    const fontSelect = fontSelectRef.current;
-    if (!fontSelect) {
+  const onToggle = useCallback(() => {
+    if (document.getElementById("all-fonts")) {
       return;
     }
-    const abortController = new AbortController();
-    fontSelect.addEventListener("change", setFont, {
-      signal: abortController.signal,
-    });
-    fontSelect.addEventListener(
-      "toggle",
-      () => {
-        if (document.getElementById("all-fonts")) {
-          return;
-        }
-        const link = document.createElement("link");
-        link.id = "all-fonts";
-        link.rel = "stylesheet";
-        link.href = getGoogleFontUrlAllFonts();
-        document.head.appendChild(link);
-      },
-      {
-        signal: abortController.signal,
-      },
-    );
-    return () => abortController.abort();
-  }, [setFont]);
+    const link = document.createElement("link");
+    link.id = "all-fonts";
+    link.rel = "stylesheet";
+    link.href = getGoogleFontUrlAllFonts();
+    document.head.appendChild(link);
+  }, []);
 
   return (
     <swatch-select
@@ -63,11 +42,12 @@ export default function FontPicker({
         styles.font,
         tooltipPosition ? `tooltip-${tooltipPosition}` : undefined,
       )}
-      ref={fontSelectRef}
       aria-label="Font"
       aria-orientation="horizontal"
       direction={direction}
       value={value}
+      onchange={setFont}
+      ontoggle={onToggle}
     >
       <img src={fontIcon.src} alt="Font" aria-hidden="true" slot="icon" />
       {FONTS.map((font) => (
