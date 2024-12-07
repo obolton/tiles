@@ -121,8 +121,8 @@
   gap: 4px;
 }
 
-@media (width < 640px) {
-  .marker {
+@container tile (max-width: 320px) {
+  .legend {
     display: none;
   }
 }
