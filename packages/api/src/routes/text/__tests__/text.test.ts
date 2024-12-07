@@ -29,13 +29,13 @@ describe("createText", () => {
     });
 
     expect(result).toEqual({
+      type: "TEXT",
       id: "1",
       placementId: "2",
       columns: 1,
       rows: 1,
       position: 2,
       content,
-      type: "TEXT",
       theme: "LIGHT",
       hue: 120,
     });
@@ -65,9 +65,9 @@ describe("updateText", () => {
     });
 
     expect(result).toEqual({
+      type: "TEXT",
       id: "1",
       content,
-      type: "TEXT",
       theme: "DARK",
       hue: 60,
     });
