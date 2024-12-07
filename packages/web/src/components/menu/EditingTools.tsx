@@ -80,8 +80,7 @@ export default function EditingTools({
         type="button"
         className="floating tooltip-left"
         role="menuitem"
-        // @ts-expect-error React is not yet aware of popovertarget
-        popovertarget="page-options"
+        popoverTarget="page-options"
         aria-label="More options"
         aria-haspopup="menu"
       >
