@@ -34,14 +34,13 @@ export default class MapView extends HTMLElement {
   #intersectionObserver: IntersectionObserver;
   #mutationObserver: MutationObserver;
   #map?: maplibregl.Map;
-  #label?: HTMLDivElement;
   #markers: maplibregl.Marker[] = [];
   #legend?: HTMLElement;
 
   constructor() {
     super();
 
-    const shadow = this.attachShadow({ mode: "closed" });
+    const shadow = this.attachShadow({ mode: "open" });
     shadow.adoptedStyleSheets = [stylesheet];
 
     this.#root = document.createElement("figure");
@@ -92,32 +91,37 @@ export default class MapView extends HTMLElement {
     return mapBounds;
   }
 
-  private addMarker({ lat, long, label }: Marker) {
+  private addMarker({ id, lat, long, label }: Marker) {
     if (!this.#map) {
       throw new Error("Map is not initialized");
     }
 
+    const element = document.createElement("div");
+    element.id = id;
+    element.setAttribute("aria-label", label ?? "Map marker");
+    element.setAttribute("tabindex", "0");
+    element.classList.add("marker");
+    element.addEventListener("click", () => element.focus());
+
+    const pin = document.createElement("div");
+    pin.classList.add("marker-pin");
+    element.appendChild(pin);
+
+    if (label) {
+      const labelElement = document.createElement("div");
+      labelElement.classList.add("marker-label");
+      labelElement.textContent = label;
+      element.appendChild(labelElement);
+    }
+
     const marker = new maplibregl.Marker({
-      color: `var(--marker-color)`,
+      element,
+      offset: [0, 0],
       subpixelPositioning: true,
     })
       .setLngLat([long, lat])
       .addTo(this.#map);
     this.#markers.push(marker);
-
-    if (label) {
-      this.#label = document.createElement("div");
-      this.#label.classList.add("marker");
-      this.#label.textContent = label;
-      const labelMarker = new maplibregl.Marker({
-        element: this.#label,
-        offset: [0, -60],
-        subpixelPositioning: true,
-      })
-        .setLngLat([long, lat])
-        .addTo(this.#map);
-      this.#markers.push(labelMarker);
-    }
   }
 
   private initializeMap() {
@@ -163,7 +167,6 @@ export default class MapView extends HTMLElement {
   disconnectedCallback() {
     this.#map?.remove();
     this.#map = undefined;
-    this.#label = undefined;
     this.#intersectionObserver.unobserve(this);
     this.#mutationObserver.disconnect();
   }
@@ -242,5 +245,6 @@ export default class MapView extends HTMLElement {
         duration: 500,
       });
     }
+    this.shadowRoot?.getElementById(markerId)?.focus();
   }
 }
