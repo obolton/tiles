@@ -57,8 +57,8 @@ export default class MapLegendItem extends HTMLElement {
     this.deleteButton.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
-      this.getMap()?.dispatchEvent(
-        new MapEvent("delete-marker", {
+      this.dispatchEvent(
+        new MapEvent("deletemarker", {
           markerId: this.getAttribute("marker") ?? "",
         }),
       );
@@ -74,14 +74,14 @@ export default class MapLegendItem extends HTMLElement {
   attributeChangedCallback(
     name: (typeof MapLegendItem.observedAttributes)[number],
     _: string,
-    value: string,
+    value: string | null,
   ) {
     switch (name) {
       case "delete":
-        if (value === "true") {
-          this.showDeleteButton();
-        } else {
+        if (value === null) {
           this.hideDeleteButton();
+        } else {
+          this.showDeleteButton();
         }
         break;
     }

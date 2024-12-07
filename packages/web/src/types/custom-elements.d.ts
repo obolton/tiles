@@ -26,6 +26,9 @@ declare module "react" {
       "map-legend-item": CustomElementAttributes & {
         marker: string;
         delete?: boolean;
+        ondeletemarker?: (
+          event: import("@/components/maps/MapEvent").default,
+        ) => void;
       };
       "embedded-video": CustomElementAttributes & {
         src: string;
