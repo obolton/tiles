@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { makeDraggable } from "@/utils/drag";
 
 export default function useDraggable(
-  ref: React.RefObject<HTMLElement>,
+  ref: React.RefObject<HTMLElement | null>,
   draggable: boolean,
 ) {
   useEffect(() => {
