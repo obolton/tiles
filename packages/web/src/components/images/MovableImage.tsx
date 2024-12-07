@@ -60,7 +60,7 @@ export default function MovableImage({
 
       window.addEventListener(
         "pointerup",
-        async () => {
+        () => {
           abortController.abort();
           onRelease({ x: originX, y: originY });
         },
