@@ -92,8 +92,6 @@ export default function Modal({
 
   return (
     <dialog
-      // @ts-expect-error React does not currently support the popover attribute
-      // https://github.com/facebook/react/pull/27981
       popover="auto"
       ref={dialogRef}
       style={style}
