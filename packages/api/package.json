@@ -34,7 +34,7 @@
   "devDependencies": {
     "@types/cookie": "^0.6.0",
     "@types/cors": "^2.8.17",
-    "@types/node": "^22.9.0",
+    "@types/node": "^22.10.1",
     "esbuild": "^0.24.0",
     "prisma": "^6.0.1",
     "prisma-json-types-generator": "^3.2.2",
