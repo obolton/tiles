@@ -1,5 +1,9 @@
 @import url("maplibre-gl/dist/maplibre-gl.css");
 
+:host(:not([movable])) {
+  pointer-events: none;
+}
+
 #root {
   position: absolute;
   inset: 0;
@@ -8,10 +12,6 @@
   font-family: var(--font);
 
   --marker-color: oklch(from var(--page-color) 60% 40% h);
-}
-
-.static {
-  pointer-events: none;
 }
 
 .marker {

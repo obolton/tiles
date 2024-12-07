@@ -1,5 +1,8 @@
 import maplibregl from "maplibre-gl";
-import stylesheet from "./MapView.css?url";
+import css from "./MapView.css?inline";
+
+const stylesheet = new CSSStyleSheet();
+stylesheet.replaceSync(css);
 
 const STYLE_URL = `https://api.maptiler.com/maps/streets-v2/style.json?key=${import.meta.env.PUBLIC_MAPTILER_API_KEY}`;
 
@@ -39,12 +42,11 @@ export default class MapView extends HTMLElement {
     super();
 
     const shadow = this.attachShadow({ mode: "closed" });
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = stylesheet;
+    shadow.adoptedStyleSheets = [stylesheet];
+
     this.#root = document.createElement("figure");
     this.#root.id = "root";
-    shadow.append(link, this.#root);
+    shadow.append(this.#root);
 
     this.#intersectionObserver = new IntersectionObserver(
       this.intersectionObserverCallback.bind(this),
@@ -123,14 +125,6 @@ export default class MapView extends HTMLElement {
       throw new Error("Map is already initialized");
     }
 
-    const movable = this.hasAttribute("movable");
-
-    if (movable) {
-      this.#root.classList.remove("static");
-    } else {
-      this.#root.classList.add("static");
-    }
-
     const markers = this.getMarkers();
 
     this.#map = new maplibregl.Map({
@@ -184,14 +178,6 @@ export default class MapView extends HTMLElement {
     }
 
     switch (name) {
-      case "movable":
-        if (value === null) {
-          this.#root.classList.remove("static");
-        } else {
-          this.#root.classList.add("static");
-        }
-        break;
-
       case "legend":
         if (value === null) {
           this.hideLegend();
