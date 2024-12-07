@@ -1,11 +1,10 @@
-import { Fragment, useCallback, useEffect, useRef } from "react";
+import { Fragment, useCallback } from "react";
 import client from "@/api/client";
 import useEditable from "@/hooks/useEditable";
 import Tile, { type TileProps } from "./Tile";
 import addPlaceIcon from "@/icons/add-place.svg";
 import styles from "./MapTile.module.css";
 import type { ClientPlace } from "@/types/tiles";
-import type MapView from "@/components/maps/MapView";
 import type MapEvent from "@/components/maps/MapEvent";
 import { showModal } from "@/utils/modals";
 import { updateTileState } from "@/utils/edit";
@@ -16,13 +15,12 @@ interface MapTileProps extends TileProps {
 
 export default function MapTile({ id, places, ...props }: MapTileProps) {
   const isEditable = useEditable();
-  const ref = useRef<MapView>(null);
   const addPlace = useCallback(
     async () => showModal("MAP", { tileId: id }),
     [id],
   );
 
-  const handleDelete = useCallback(
+  const deleteMarker = useCallback(
     async ({ markerId }: MapEvent) => {
       if (markerId) {
         const tile = await client.maps.removePlace.mutate({
@@ -36,24 +34,10 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
     [id],
   );
 
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) {
-      return;
-    }
-    element.addEventListener("delete-marker", handleDelete);
-    return () => element.removeEventListener("delete-marker", handleDelete);
-  }, [handleDelete]);
-
   return (
     <pop-out class={styles["pop-out"]} expandable="expandable" tabindex="0">
       <Tile {...props} id={id}>
-        <map-view
-          class={styles.map}
-          movable
-          legend={places.length > 1 ? "legend" : undefined}
-          ref={ref}
-        >
+        <map-view class={styles.map} movable legend={places.length > 1}>
           {places.map((place) => (
             <Fragment key={place.id}>
               <map-marker
@@ -71,6 +55,7 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
                 slot="legend"
                 marker={place.id}
                 delete={isEditable}
+                ondeletemarker={deleteMarker}
               >
                 {place.name}
               </map-legend-item>
