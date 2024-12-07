@@ -5,7 +5,7 @@ import type { AnimateLayoutOptions } from "@/utils/animation/layout";
 export type { AnimateLayoutOptions };
 
 export default function useLayoutTransition(
-  ref: React.RefObject<HTMLElement>,
+  ref: React.RefObject<HTMLElement | null>,
   options?: AnimateLayoutOptions,
 ) {
   useEffect(() => {
