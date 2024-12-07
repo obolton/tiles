@@ -34,6 +34,10 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
   },
 } as const satisfies Prisma.PageSelect;
 
+export type PageLinkPage = Prisma.PageGetPayload<{
+  select: typeof PAGE_LINK_TILE_PAGE_FIELDS;
+}>;
+
 export const PAGE_LINK_FIELDS = {
   id: true,
   pageId: true,
@@ -42,13 +46,11 @@ export const PAGE_LINK_FIELDS = {
   },
 } as const satisfies Prisma.PageLinkTileSelect;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const pageValidator = Prisma.validator<Prisma.PageDefaultArgs>()({
-  select: PAGE_LINK_TILE_PAGE_FIELDS,
-});
-type Page = Prisma.PageGetPayload<typeof pageValidator>;
+export type PageLink = Prisma.PageLinkTileGetPayload<{
+  select: typeof PAGE_LINK_FIELDS;
+}>;
 
-function formatPage(page: Page) {
+function formatPage(page: PageLinkPage) {
   const { id, title, subtitle, theme, hue, font, author, tiles } = page;
   return {
     id,

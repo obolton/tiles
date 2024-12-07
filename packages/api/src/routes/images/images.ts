@@ -12,6 +12,8 @@ export const IMAGE_FIELDS = {
   originY: true,
 } as const satisfies Prisma.ImageTileSelect;
 
+export type Image = Prisma.ImageTileGetPayload<{ select: typeof IMAGE_FIELDS }>;
+
 export async function createImage({
   pageId,
   imageKey,

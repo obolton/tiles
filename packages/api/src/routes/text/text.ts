@@ -10,6 +10,8 @@ export const TEXT_FIELDS = {
   hue: true,
 } as const satisfies Prisma.TextTileSelect;
 
+export type Text = Prisma.TextTileGetPayload<{ select: typeof TEXT_FIELDS }>;
+
 export async function createText({
   pageId,
   content,
