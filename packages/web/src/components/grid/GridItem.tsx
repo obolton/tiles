@@ -37,7 +37,7 @@ export default function GridItem({
   children,
 }: GridItemProps) {
   const ref = useRef<ResizeItem>(null);
-  const onDrop = useCreateCollection(placementId ?? "", "STACK");
+  const onDrop = useCreateCollection(placementId ?? "");
   useDraggable(ref, isEditable && !!dropGroup);
   useScrollIntoView(ref);
 
