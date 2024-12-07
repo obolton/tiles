@@ -15,6 +15,9 @@ declare module "react" {
       "map-view": CustomElementAttributes & {
         movable?: boolean;
         legend?: boolean;
+        ondeletemarker?: (
+          event: import("@/components/maps/MapEvent").default,
+        ) => void;
       };
       "map-marker": CustomElementAttributes & {
         id: string;
@@ -25,7 +28,7 @@ declare module "react" {
       };
       "map-legend-item": CustomElementAttributes & {
         marker: string;
-        delete?: boolean;
+        editable?: boolean;
         ondeletemarker?: (
           event: import("@/components/maps/MapEvent").default,
         ) => void;

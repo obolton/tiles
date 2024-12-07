@@ -20,24 +20,27 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
     [id],
   );
 
-  const deleteMarker = useCallback(
-    async ({ markerId }: MapEvent) => {
-      if (markerId) {
-        const tile = await client.maps.removePlace.mutate({
-          placeId: markerId,
-          id,
-        });
+  // TODO: This doesn't work properly when wrapped in useCallback
+  const deleteMarker = async ({ markerId }: MapEvent) => {
+    if (markerId) {
+      const tile = await client.maps.removePlace.mutate({
+        placeId: markerId,
+        id,
+      });
 
-        updateTileState(tile);
-      }
-    },
-    [id],
-  );
+      updateTileState(tile);
+    }
+  };
 
   return (
     <pop-out class={styles["pop-out"]} expandable="expandable" tabindex="0">
       <Tile {...props} id={id}>
-        <map-view class={styles.map} movable legend={places.length > 1}>
+        <map-view
+          class={styles.map}
+          movable
+          legend={places.length > 1}
+          ondeletemarker={deleteMarker}
+        >
           {places.map((place) => (
             <Fragment key={place.id}>
               <map-marker
@@ -54,8 +57,8 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
               <map-legend-item
                 slot="legend"
                 marker={place.id}
-                delete={isEditable}
-                ondeletemarker={deleteMarker}
+                editable={isEditable}
+                tabindex="0"
               >
                 {place.name}
               </map-legend-item>
