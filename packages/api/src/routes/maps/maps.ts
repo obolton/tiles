@@ -19,6 +19,8 @@ export const MAP_FIELDS = {
   },
 } as const satisfies Prisma.MapTileSelect;
 
+export type Map = Prisma.MapTileGetPayload<{ select: typeof MAP_FIELDS }>;
+
 export async function createMap({
   pageId,
   place: { name, providerId, lat, long, boundingBox, address },
