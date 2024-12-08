@@ -9,7 +9,7 @@
 
 ### Requirements
 
-- Node.js 21+
+- Node.js 22.11+
 - PostgreSQL 16
 
 ### Creating a local SSL certificate
