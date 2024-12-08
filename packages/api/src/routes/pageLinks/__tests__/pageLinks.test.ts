@@ -1,58 +1,61 @@
 import { describe, it, expect, vi, beforeAll } from "vitest";
 import prisma from "@/database/prisma.ts";
 import {
+  PAGE_LINK_FIELDS,
   createPageLink,
-  type PageLink,
   type PageLinkPage,
+  type PageLink,
 } from "../pageLinks.ts";
-import { mockCreate } from "../../../../test/prisma.ts";
-import type { Tile } from "@prisma/client";
+import type { CreateQuery } from "../../../../test/prisma.ts";
 import { omit } from "@/utils/objects.ts";
 
 const MOCK_PAGE: PageLinkPage = {
-  id: "2",
+  id: "test-page",
   title: "Test Page",
   subtitle: "Subtitle",
   theme: "LIGHT",
   hue: 120,
   font: "MODERN",
   author: {
-    id: "3",
+    id: "test-user",
     name: "Test User",
     imageKey: "test-image-key",
   },
   tiles: [],
 };
 
-const MOCK_PAGE_LINK = {
-  id: "1",
+const MOCK_PAGE_LINK: PageLink = {
+  id: "test-page-link",
   pageId: MOCK_PAGE.id,
   page: MOCK_PAGE,
 };
 
+const MOCK_PLACEMENT = {
+  placementId: "test-tile",
+  position: 2,
+  rows: 1,
+  columns: 1,
+};
+
 describe("createPageLink", () => {
   beforeAll(() => {
-    vi.mocked(prisma.pageLinkTile.create).mockImplementation(
-      mockCreate<PageLink>(MOCK_PAGE_LINK),
-    );
-    vi.mocked(prisma.tile.count).mockResolvedValue(2);
-    vi.mocked(prisma.tile.create).mockImplementation(
-      mockCreate<Tile>({ id: "2" }),
-    );
+    vi.mocked(
+      prisma.pageLinkTile.create<CreateQuery<typeof PAGE_LINK_FIELDS>>,
+    ).mockResolvedValue(MOCK_PAGE_LINK);
+    vi.mock("@/routes/tiles/tiles.ts", () => ({
+      createTilePlacement: async () => MOCK_PLACEMENT,
+    }));
   });
 
   it("should return a page link", async () => {
     const result = await createPageLink({
-      pageId: "1",
-      linkedPageId: "2",
+      pageId: "test-page-1",
+      linkedPageId: "test-page-2",
     });
 
     expect(result).toEqual({
       type: "PAGE_LINK",
-      placementId: "2",
-      position: 2,
-      rows: 1,
-      columns: 1,
+      ...MOCK_PLACEMENT,
       ...MOCK_PAGE_LINK,
       page: {
         ...omit(MOCK_PAGE, ["tiles"]),

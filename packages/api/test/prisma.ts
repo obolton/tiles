@@ -1,6 +1,5 @@
 import { vi } from "vitest";
 import type { Prisma } from "@prisma/client";
-import { pick } from "@/utils/objects.ts";
 
 function mockModel() {
   return {
@@ -49,34 +48,5 @@ export const MOCK_PRISMA = {
   videoTile: mockModel(),
 } as Prisma.TransactionClient;
 
-function selectColumns(object: { [k: string]: unknown }) {
-  return Object.entries(object)
-    .filter(([, value]) => !!value)
-    .map(([key]) => key);
-}
-
-type PrismaModelClient = (...args: unknown[]) => never;
-
-export function mockCreate<T>(defaults: Partial<T>) {
-  return vi.fn((async ({
-    data,
-    select,
-  }: {
-    select?: Record<keyof T, unknown> | null;
-    data: Record<string, unknown>;
-  }) => {
-    return pick({ ...defaults, ...data }, selectColumns(select || {}));
-  }) as PrismaModelClient);
-}
-
-export function mockUpdate<T>(defaults: Partial<T>) {
-  return vi.fn((async ({
-    data,
-    select,
-  }: {
-    select?: Record<string, unknown> | null;
-    data: Record<string, unknown>;
-  }) => {
-    return pick({ ...defaults, ...data }, selectColumns(select || {}));
-  }) as PrismaModelClient);
-}
+export type CreateQuery<T> = { select: T; data: never };
+export type UpdateQuery<T> = { select: T; where: never; data: never };
