@@ -14,7 +14,8 @@
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "lint": "npm run lint --workspaces",
-    "storybook": "npm run storybook --workspace=web"
+    "storybook": "npm run storybook --workspace=web",
+    "cdn:purge": "npm run cdn:purge --workspace=api"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
