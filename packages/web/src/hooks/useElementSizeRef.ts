@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "react";
 
-export default function useElementSizeRef(ref: React.RefObject<HTMLElement>) {
-  const sizeRef = useRef<{ width: number; height: number }>();
+export default function useElementSizeRef(
+  ref: React.RefObject<HTMLElement | null>,
+) {
+  const sizeRef = useRef<{ width: number; height: number }>(null);
 
   useEffect(() => {
     if (!ref.current) {
@@ -15,7 +17,7 @@ export default function useElementSizeRef(ref: React.RefObject<HTMLElement>) {
       const size = entries[0]?.contentBoxSize[0];
       sizeRef.current = size
         ? { width: size.inlineSize, height: size.blockSize }
-        : undefined;
+        : null;
     });
     resizeObserver.observe(ref.current);
 
