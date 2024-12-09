@@ -184,7 +184,7 @@ model TextTile {
 
   /// [RichText]
   content Json   @db.JsonB
-  theme   Theme  @default(LIGHT) @map("theme")
+  theme   Theme?
   hue     Float? @db.Real
 
   tiles Tile[]
