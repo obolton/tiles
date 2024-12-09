@@ -20,11 +20,13 @@ declare module "react" {
         ) => void;
       };
       "map-marker": CustomElementAttributes & {
+        editable?: boolean;
         id: string;
         lat: number;
         long: number;
         bounds?: string;
         label?: string;
+        onblur: (event: globalThis.FocusEvent) => void;
       };
       "map-legend-item": CustomElementAttributes & {
         marker: string;

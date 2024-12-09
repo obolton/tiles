@@ -4,10 +4,11 @@ import useEditable from "@/hooks/useEditable";
 import Tile, { type TileProps } from "./Tile";
 import addPlaceIcon from "@/icons/add-place.svg";
 import styles from "./MapTile.module.css";
-import type { ClientPlace } from "@/types/tiles";
+import type { ClientPlace, ClientMapTile } from "@/types/tiles";
 import type MapEvent from "@/components/maps/MapEvent";
 import { showModal } from "@/utils/modals";
 import { updateTileState } from "@/utils/edit";
+import type MapMarker from "../maps/MapMarker";
 
 interface MapTileProps extends TileProps {
   places: ClientPlace[];
@@ -32,18 +33,39 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
     }
   };
 
+  // TODO: This doesn't work properly when wrapped in useCallback
+  const updatePlace = async (event: FocusEvent) => {
+    const marker = event.target as MapMarker;
+    const markerId = marker.id;
+    const value = marker.value ?? "";
+    if (markerId) {
+      await client.maps.updatePlace.mutate({
+        id: markerId,
+        name: value,
+      });
+
+      updateTileState({
+        id,
+        places: places.map((place) =>
+          place.id === markerId ? { ...place, name: value } : place,
+        ),
+      } as ClientMapTile);
+    }
+  };
+
   return (
     <pop-out class={styles["pop-out"]} expandable="expandable" tabindex="0">
       <Tile {...props} id={id}>
         <map-view
           class={styles.map}
           movable
-          legend={places.length > 1}
+          legend
           ondeletemarker={deleteMarker}
         >
           {places.map((place) => (
             <Fragment key={place.id}>
               <map-marker
+                editable={isEditable}
                 id={place.id}
                 lat={place.lat}
                 long={place.long}
@@ -53,14 +75,15 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
                     : undefined
                 }
                 label={place.name}
+                tabindex="0"
+                onblur={updatePlace}
               />
               <map-legend-item
-                slot="legend"
                 marker={place.id}
-                editable={isEditable}
+                editable={isEditable && places.length > 1}
                 tabindex="0"
               >
-                {place.name}
+                {place.name || "Unnamed point"}
               </map-legend-item>
             </Fragment>
           ))}
@@ -69,7 +92,6 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
               type="button"
               className="floating tooltip-right"
               aria-label="Add a place"
-              slot="toolbar"
               onPointerDownCapture={(event) => {
                 event.stopPropagation();
                 event.preventDefault();
