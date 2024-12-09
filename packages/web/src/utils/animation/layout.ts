@@ -2,17 +2,12 @@ import { createAnimationPromise, SPRING } from "./effects";
 
 const rects = new WeakMap<HTMLElement, DOMRect>();
 const animations = new WeakMap<HTMLElement, Animation>();
-const transitionElements = new WeakMap<HTMLElement, HTMLElement>();
 
 export type AnimateLayoutOptions = {
   attributes?: string[];
-  size?: boolean;
 };
 
-async function animatePosition(
-  element: HTMLElement,
-  options?: AnimateLayoutOptions,
-) {
+async function animatePosition(element: HTMLElement) {
   const previousRect = rects.get(element);
   if (!previousRect) {
     return;
@@ -29,55 +24,9 @@ async function animatePosition(
 
   const deltaX = Math.round(previousRect.left - rect.left);
   const deltaY = Math.round(previousRect.top - rect.top);
-  const deltaWidth = Math.round(previousRect.width - rect.width);
-  const deltaHeight = Math.round(previousRect.height - rect.height);
 
-  if (deltaX === 0 && deltaY === 0 && deltaWidth === 0 && deltaHeight === 0) {
+  if (deltaX === 0 && deltaY === 0) {
     return;
-  }
-
-  // If performing a resize transition, animate a clone of the element to prevent layout thrashing
-  if (options?.size && (deltaWidth || deltaHeight)) {
-    let clone = transitionElements.get(element);
-
-    if (!clone) {
-      clone = element.cloneNode(true) as HTMLElement;
-      clone.setAttribute("inert", "");
-      clone.style.setProperty("top", `${rect.top + window.scrollY}px`);
-      clone.style.setProperty("left", `${rect.left + window.scrollX}px`);
-      clone.style.setProperty("width", `${previousRect.width}px`);
-      clone.style.setProperty("height", `${previousRect.height}px`);
-
-      delete clone.dataset.resizing;
-      clone.dataset.resizePreview = "true";
-
-      // If the transition completes, remove the clone and show the original element
-      clone.addEventListener(
-        "transitionend",
-        (event) => {
-          if (
-            event.propertyName === "width" ||
-            event.propertyName === "height"
-          ) {
-            (event.currentTarget as HTMLElement).remove();
-            transitionElements.delete(element);
-            element.style.removeProperty("visibility");
-          }
-        },
-        { passive: true },
-      );
-
-      transitionElements.set(element, clone);
-      document.body.appendChild(clone);
-
-      // Temporarily hide the original element
-      element.style.setProperty("visibility", "hidden");
-    }
-
-    requestAnimationFrame(() => {
-      clone.style.setProperty("width", `${rect.width}px`);
-      clone.style.setProperty("height", `${rect.height}px`);
-    });
   }
 
   // Prevent pointer events during the animation
@@ -107,14 +56,11 @@ export function willAnimateLayout(element: HTMLElement) {
   }
 }
 
-export async function animateChildren(
-  element: HTMLElement,
-  options?: AnimateLayoutOptions,
-) {
+export async function animateChildren(element: HTMLElement) {
   return Promise.all(
     Array.from(element.children).map((child) => {
       if (child instanceof HTMLElement) {
-        return animatePosition(child, options);
+        return animatePosition(child);
       }
     }),
   );
@@ -127,14 +73,14 @@ export function animateLayout(
   const observers: MutationObserver[] = [];
 
   const childListObserver = new MutationObserver(() =>
-    animateChildren(element, options),
+    animateChildren(element),
   );
   childListObserver.observe(element, { childList: true });
   observers.push(childListObserver);
 
   if (options?.attributes && options.attributes.length > 0) {
     const attributesObserver = new MutationObserver(() =>
-      animateChildren(element, options),
+      animateChildren(element),
     );
     attributesObserver.observe(element, {
       subtree: true,

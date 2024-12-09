@@ -58,7 +58,6 @@ function getTileComponent(tile: ClientTile) {
 
 const LAYOUT_TRANSITION_OPTIONS: AnimateLayoutOptions = {
   attributes: ["data-rows", "data-columns"],
-  size: true,
 };
 
 export default function Grid({ tiles: initialTiles }: GridProps) {
