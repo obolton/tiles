@@ -40,7 +40,7 @@ export const UpdatePageSchema = z.object({
   title: z.string().min(1).optional(),
   subtitle: z.string().optional(),
   theme: z.nativeEnum(Theme).optional(),
-  hue: z.number().gte(0).lte(360).optional(),
+  hue: z.number().gte(0).lte(360).nullable().optional(),
   font: z.nativeEnum(Font).optional(),
 });
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
