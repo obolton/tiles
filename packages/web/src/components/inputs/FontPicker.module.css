@@ -19,11 +19,10 @@
   box-shadow:
     0 0 0 1px rgba(0 0 0 / 20%),
     0 4px 4px -2px rgb(0 0 0 / 20%);
-}
 
-.font swatch-item:hover {
-  box-shadow:
-    0 4px 4px -2px rgb(0 0 0 / 20%),
-    inset 0 0 0 2px var(--focus-ring-color);
-  transform: scale(1.1);
+  &:hover {
+    box-shadow:
+      0 0 0 2px var(--focus-ring-color),
+      0 4px 4px -2px rgb(0 0 0 / 20%);
+  }
 }
