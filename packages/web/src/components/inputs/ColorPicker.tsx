@@ -3,10 +3,11 @@ import styles from "./ColorPicker.module.css";
 import { classNames } from "@/utils/css";
 import type SwatchSelect from "./SwatchSelect";
 import type { Theme } from "@/types/pages";
+import clearColorIcon from "@/icons/clear-color.svg";
 
 export type ColorPickerValue = {
-  theme: Theme;
-  hue?: number;
+  theme: Theme | null;
+  hue: number | null;
 };
 
 interface ColorPickerProps {
@@ -15,6 +16,7 @@ interface ColorPickerProps {
   value?: ColorPickerValue;
   onChange: (value: ColorPickerValue) => void;
   tooltipPosition?: "top" | "right" | "bottom" | "left";
+  showClear?: boolean;
 }
 
 const HUES: [number, string][] = [];
@@ -31,13 +33,24 @@ export default function ColorPicker({
   value,
   onChange,
   tooltipPosition,
+  showClear = false,
 }: ColorPickerProps) {
   const setColor = useCallback(
     (event: Event) => {
       const [theme, hue] = (event.target as SwatchSelect).value.split(":") as
-        | ["DARK" | "LIGHT"]
+        | ["DARK" | "LIGHT" | "CLEAR"]
         | ["COLOR", string];
-      onChange(theme === "COLOR" ? { theme, hue: parseFloat(hue) } : { theme });
+      switch (theme) {
+        case "CLEAR":
+          onChange({ theme: null, hue: null });
+          break;
+        case "COLOR":
+          onChange({ theme, hue: parseFloat(hue) });
+          break;
+        default:
+          onChange({ theme, hue: null });
+          break;
+      }
     },
     [onChange],
   );
@@ -45,25 +58,26 @@ export default function ColorPicker({
   return (
     <swatch-select
       class={classNames(
-        styles.color,
+        styles["color-picker"],
         tooltipPosition ? `tooltip-${tooltipPosition}` : undefined,
         className,
       )}
       aria-label="Color"
       aria-orientation="horizontal"
       direction={direction}
-      onchange={setColor}
       value={
         value
           ? `${value.theme}${value.theme === "COLOR" ? `:${value.hue}` : ""}`
           : undefined
       }
+      onchange={setColor}
     >
       <>
         {HUES.map(([hue, name]) => (
           <swatch-item
             key={`color-${hue}`}
             aria-label={name}
+            class={styles.color}
             style={
               {
                 "--hue": `${hue}deg`,
@@ -85,6 +99,16 @@ export default function ColorPicker({
         class={styles.light}
         value="LIGHT"
       ></swatch-item>
+      {showClear ? (
+        <swatch-item
+          key="CLEAR"
+          aria-label="Clear color"
+          class={styles.clear}
+          value="CLEAR"
+        >
+          <img src={clearColorIcon.src} alt="Clear color" />
+        </swatch-item>
+      ) : null}
     </swatch-select>
   );
 }

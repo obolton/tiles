@@ -1,52 +1,45 @@
-.color swatch-item {
+.color-picker swatch-item {
   --lightness: 90%;
   --chroma: 50%;
 
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(
-    oklch(var(--lightness) var(--chroma) var(--hue)),
-    oklch(calc(var(--lightness) - 10%) var(--chroma) var(--hue))
-  );
-  box-shadow:
-    1px 0 2px 0 oklch(20% var(--chroma) var(--hue) / 30%),
-    inset 0 0 0 1px rgba(0 0 0 / 30%);
+  border-radius: 18px;
+
+  &.color {
+    background: linear-gradient(
+      oklch(var(--lightness) var(--chroma) var(--hue)),
+      oklch(calc(var(--lightness) - 10%) var(--chroma) var(--hue))
+    );
+  }
 
   &.light {
     background: linear-gradient(#fff, #f0f0f0);
-    box-shadow:
-      1px 0 2px 0 rgb(0 0 0 / 30%),
-      inset 0 0 0 1px rgba(0 0 0 / 30%);
-
-    &:hover {
-      box-shadow:
-        1px 0 2px 0 rgb(0 0 0 / 30%),
-        inset 0 0 0 2px var(--focus-ring-color);
-    }
   }
 
   &.dark {
-    background: linear-gradient(#202020, #000);
-    box-shadow:
-      1px 0 2px 0 rgb(0 0 0 / 30%),
-      inset 0 0 0 1px rgba(255 255 255 / 30%);
+    background: linear-gradient(#404040, #303030);
+  }
 
-    &:hover {
-      box-shadow:
-        1px 0 2px 0 rgb(0 0 0 / 30%),
-        inset 0 0 0 2px var(--focus-ring-color);
+  &.clear {
+    align-content: center;
+    background: linear-gradient(
+      oklch(from var(--page-color) l c h / 80%),
+      oklch(from var(--page-color) 85% c h / 80%)
+    );
+
+    & img {
+      display: block;
+      margin: auto;
+      width: 18px;
+      height: 18px;
+      opacity: 0.8;
+      filter: drop-shadow(0 1px 1px rgb(0 0 0 / 20%));
     }
   }
 }
 
-.color swatch-item:hover {
-  box-shadow:
-    1px 0 2px 0 oklch(20% var(--chroma) var(--hue) / 30%),
-    inset 0 0 0 2px var(--focus-ring-color);
-}
-
-.color::part(button) {
+.color-picker::part(button) {
   width: 40px;
   height: 40px;
   background: radial-gradient(rgb(220 220 220) 5%, transparent 60%),
