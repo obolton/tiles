@@ -1,9 +1,10 @@
 import { router, authenticatedProcedure } from "@/utils/trpc.ts";
-import { createMap, addPlace, removePlace } from "./maps.ts";
+import { createMap, addPlace, removePlace, updatePlace } from "./maps.ts";
 import {
   CreateMapSchema,
   AddPlaceSchema,
   RemovePlaceSchema,
+  UpdatePlaceSchema,
 } from "./schema.ts";
 import { invalidateCachedPage } from "@/utils/cdn.ts";
 
@@ -27,6 +28,13 @@ export default router({
     .input(RemovePlaceSchema)
     .mutation(async ({ input }) => {
       const result = await removePlace(input);
+      return result;
+    }),
+
+  updatePlace: authenticatedProcedure
+    .input(UpdatePlaceSchema)
+    .mutation(async ({ input }) => {
+      const result = await updatePlace(input);
       return result;
     }),
 });

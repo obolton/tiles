@@ -37,3 +37,9 @@ export const RemovePlaceSchema = z.object({
   placeId: z.string().uuid(),
 });
 export type RemovePlaceSchema = z.infer<typeof RemovePlaceSchema>;
+
+export const UpdatePlaceSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+});
+export type UpdatePlaceSchema = z.infer<typeof UpdatePlaceSchema>;

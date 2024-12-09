@@ -1,21 +1,27 @@
 import prisma from "@/database/prisma.ts";
-import { AddPlaceSchema, RemovePlaceSchema } from "./schema.ts";
+import {
+  AddPlaceSchema,
+  RemovePlaceSchema,
+  UpdatePlaceSchema,
+} from "./schema.ts";
 import type { Prisma } from "@prisma/client";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import type { CreateMapSchema } from "./schema.ts";
 
+export const PLACE_FIELDS = {
+  id: true,
+  name: true,
+  providerId: true,
+  lat: true,
+  long: true,
+  boundingBox: true,
+  address: true,
+} as const satisfies Prisma.PlaceSelect;
+
 export const MAP_FIELDS = {
   id: true,
   places: {
-    select: {
-      id: true,
-      name: true,
-      providerId: true,
-      lat: true,
-      long: true,
-      boundingBox: true,
-      address: true,
-    },
+    select: PLACE_FIELDS,
   },
 } as const satisfies Prisma.MapTileSelect;
 
@@ -88,5 +94,13 @@ export async function removePlace({ id, placeId }: RemovePlaceSchema) {
       select: MAP_FIELDS,
     });
     return { type: "MAP" as const, ...map };
+  });
+}
+
+export async function updatePlace({ id, name }: UpdatePlaceSchema) {
+  return prisma.place.update({
+    where: { id },
+    data: { name },
+    select: PLACE_FIELDS,
   });
 }
