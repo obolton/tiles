@@ -31,7 +31,7 @@ export default function PlainTextEditor({
   value,
   ...props
 }: PlainTextEditorProps) {
-  const initialConfig = useRef<InitialConfigType>();
+  const initialConfig = useRef<InitialConfigType>(null);
   if (!initialConfig.current) {
     initialConfig.current = {
       namespace: "tiles",
