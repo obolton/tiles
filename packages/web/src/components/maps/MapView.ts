@@ -1,31 +1,12 @@
 import maplibregl from "maplibre-gl";
 import css from "./MapView.css?inline";
+import type MapMarker from "./MapMarker";
+import type MapLegendItem from "./MapLegendItem";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 const STYLE_URL = `https://api.maptiler.com/maps/streets-v2/style.json?key=${import.meta.env.PUBLIC_MAPTILER_API_KEY}`;
-
-type Marker = {
-  id: string;
-  lat: number;
-  long: number;
-  bounds: [number, number, number, number] | null;
-  label: string | null;
-};
-
-function parseBounds(value: string): [number, number, number, number] | null {
-  if (!value) {
-    return null;
-  }
-
-  const values = value.split(",", 4);
-  if (values.length !== 4) {
-    throw new Error("Invalid bounding box");
-  }
-
-  return values.map(parseFloat) as [number, number, number, number];
-}
 
 export default class MapView extends HTMLElement {
   static observedAttributes = ["movable", "legend"] as const;
@@ -36,11 +17,15 @@ export default class MapView extends HTMLElement {
   #map?: maplibregl.Map;
   #markers: maplibregl.Marker[] = [];
   #legend?: HTMLElement;
+  #toolbar?: HTMLElement;
 
   constructor() {
     super();
 
-    const shadow = this.attachShadow({ mode: "open" });
+    const shadow = this.attachShadow({
+      mode: "open",
+      slotAssignment: "manual",
+    });
     shadow.adoptedStyleSheets = [stylesheet];
 
     this.#root = document.createElement("figure");
@@ -57,71 +42,56 @@ export default class MapView extends HTMLElement {
   }
 
   private getMarkers() {
-    const markers: Marker[] = [];
-    for (const marker of this.querySelectorAll("map-marker")) {
-      const lat = marker.getAttribute("lat") ?? "0";
-      const long = marker.getAttribute("long") ?? "0";
-      const bounds = marker.getAttribute("bounds") ?? "";
-      markers.push({
-        id: marker.getAttribute("id") ?? "",
-        lat: parseFloat(lat),
-        long: parseFloat(long),
-        bounds: parseBounds(bounds),
-        label: marker.getAttribute("label"),
-      });
-    }
-    return markers;
+    return this.querySelectorAll<MapMarker>("map-marker");
+  }
+
+  private getLegendItems() {
+    return this.querySelectorAll<MapLegendItem>("map-legend-item");
+  }
+
+  private getToolbarItems() {
+    return this.querySelectorAll<HTMLButtonElement>("button");
   }
 
   private getBounds() {
     const markers = this.getMarkers();
 
     if (markers.length === 1) {
-      if (markers[0]?.bounds) {
-        return new maplibregl.LngLatBounds(markers[0].bounds);
+      const bounds = markers[0]?.getBounds();
+      if (bounds) {
+        return new maplibregl.LngLatBounds(bounds);
       } else {
         return undefined;
       }
     }
 
     const mapBounds = new maplibregl.LngLatBounds();
-    markers.forEach(({ bounds, lat, long }) =>
-      mapBounds.extend(bounds || [long, lat]),
+    markers.forEach((marker) =>
+      mapBounds.extend(marker.getBounds() || [marker.long, marker.lat]),
     );
     return mapBounds;
   }
 
-  private addMarker({ id, lat, long, label }: Marker) {
+  private addMarker(markerElement: MapMarker) {
     if (!this.#map) {
       throw new Error("Map is not initialized");
     }
 
     const element = document.createElement("div");
-    element.id = id;
-    element.setAttribute("aria-label", label ?? "Map marker");
-    element.setAttribute("tabindex", "0");
     element.classList.add("marker");
-    element.addEventListener("click", () => element.focus());
-
-    const pin = document.createElement("div");
-    pin.classList.add("marker-pin");
-    element.appendChild(pin);
-
-    if (label) {
-      const labelElement = document.createElement("div");
-      labelElement.classList.add("marker-label");
-      labelElement.textContent = label;
-      element.appendChild(labelElement);
-    }
+    const slot = document.createElement("slot");
+    element.appendChild(slot);
 
     const marker = new maplibregl.Marker({
       element,
       offset: [0, 0],
       subpixelPositioning: true,
     })
-      .setLngLat([long, lat])
+      .setLngLat([markerElement.long, markerElement.lat])
       .addTo(this.#map);
     this.#markers.push(marker);
+
+    slot.assign(markerElement);
   }
 
   private initializeMap() {
@@ -143,18 +113,16 @@ export default class MapView extends HTMLElement {
     });
     this.#map.addControl(new maplibregl.NavigationControl(), "bottom-right");
 
-    this.updateMarkers();
-
     if (this.hasAttribute("legend")) {
       this.showLegend();
     }
 
-    const toolbar = document.createElement("div");
-    const slot = document.createElement("slot");
-    slot.name = "toolbar";
-    toolbar.append(slot);
-    toolbar.classList.add("toolbar");
-    this.#root.appendChild(toolbar);
+    this.#toolbar = document.createElement("div");
+    this.#toolbar.classList.add("toolbar");
+    this.#toolbar.append(document.createElement("slot"));
+    this.#root.appendChild(this.#toolbar);
+
+    this.updateSlots();
 
     requestAnimationFrame(() => this.#map?.resize());
   }
@@ -187,6 +155,7 @@ export default class MapView extends HTMLElement {
         } else {
           this.showLegend();
         }
+        break;
     }
   }
 
@@ -201,12 +170,18 @@ export default class MapView extends HTMLElement {
   }
 
   mutationObserverCallback() {
-    this.#markers.forEach((marker) => marker.remove());
-    this.updateMarkers();
+    this.updateSlots();
   }
 
-  updateMarkers() {
+  private updateSlots() {
+    this.#markers.forEach((marker) => marker.remove());
     this.getMarkers().forEach((marker) => this.addMarker(marker));
+
+    const legendSlot = this.#legend?.children[0] as HTMLSlotElement | null;
+    legendSlot?.assign(...this.getLegendItems());
+
+    const toolbarSlot = this.#toolbar?.children[0] as HTMLSlotElement | null;
+    toolbarSlot?.assign(...this.getToolbarItems());
   }
 
   private showLegend() {
@@ -217,8 +192,9 @@ export default class MapView extends HTMLElement {
     this.#legend.classList.add("legend");
 
     const slot = document.createElement("slot");
-    slot.name = "legend";
+    slot.id = "legend-slot";
     this.#legend.append(slot);
+
     this.#root.append(this.#legend);
   }
 
@@ -228,12 +204,15 @@ export default class MapView extends HTMLElement {
   }
 
   flyToMarker(markerId: string) {
-    const marker = this.getMarkers().find((marker) => marker.id === markerId);
+    const marker = Array.from(this.getMarkers()).find(
+      (marker) => marker.id === markerId,
+    );
     if (!marker) {
       return;
     }
-    if (marker.bounds) {
-      this.#map?.fitBounds(marker.bounds, {
+    const bounds = marker.getBounds();
+    if (bounds) {
+      this.#map?.fitBounds(bounds, {
         padding: 64,
         animate: true,
         duration: 500,
@@ -245,6 +224,6 @@ export default class MapView extends HTMLElement {
         duration: 500,
       });
     }
-    this.shadowRoot?.getElementById(markerId)?.focus();
+    marker.focus();
   }
 }
