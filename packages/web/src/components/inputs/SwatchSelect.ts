@@ -109,13 +109,15 @@ export default class SwatchSelect extends HTMLElement {
 
   private itemClicked(event: MouseEvent) {
     const target = event.target;
-    if (!(target instanceof Element) || !target.hasAttribute("value")) {
+    if (!(target instanceof Element)) {
       return;
     }
-
-    this.value = target.getAttribute("value") ?? "";
-    const changeEvent = new Event("change", { bubbles: true });
-    this.dispatchEvent(changeEvent);
+    const item = target.closest("swatch-item");
+    if (!item || !item.hasAttribute("value")) {
+      return;
+    }
+    this.value = item.getAttribute("value") ?? "";
+    this.dispatchEvent(new Event("change", { bubbles: true }));
     this.toggle();
   }
 }
