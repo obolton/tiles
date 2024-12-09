@@ -6,8 +6,7 @@
   box-shadow:
     0 10px 10px -8px rgb(0 0 0 / 30%),
     0 0 0 1px rgb(0 0 0 / 20%);
-  margin: 0 auto;
-  top: 100px;
+  margin: auto;
   width: 520px;
   max-width: 520px;
   padding: 0;
@@ -19,6 +18,10 @@
   transition:
     overlay var(--animation-duration-short) allow-discrete,
     display var(--animation-duration-short) allow-discrete;
+
+  &:empty {
+    box-shadow: none;
+  }
 }
 
 .modal::backdrop {
