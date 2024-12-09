@@ -277,6 +277,7 @@ export default function Toolbar({
           value={color}
           onChange={onChangeColor}
           tooltipPosition="top"
+          showClear
         />
       </li>
     </menu>
