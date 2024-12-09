@@ -8,9 +8,6 @@
   --chroma: 20%;
   --ui-font: "Inter", system, sans-serif;
   --ui-color: rgba(0 0 0 / 80%);
-  --animation-duration: 350ms;
-  --animation-duration-short: 200ms;
-  --easing: ease;
   --max-width: 800px;
 }
 

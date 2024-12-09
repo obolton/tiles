@@ -1,6 +1,42 @@
+:root {
+  --animation-duration: 350ms;
+  --animation-duration-short: 200ms;
+  --easing: ease;
+  --spring: linear(
+    0,
+    0.0018,
+    0.0071 1.18%,
+    0.0267 2.37%,
+    0.0931,
+    0.1827 7.11%,
+    0.5325 15.4%,
+    0.6401,
+    0.7317,
+    0.8068,
+    0.8664,
+    0.9123,
+    0.9464,
+    0.9709 36.14%,
+    0.9905,
+    1.0022 43.25%,
+    1.0094 47.99%,
+    1.0109 54.51%,
+    1.0021,
+    0.9999 99.54%
+  );
+}
+
 ::view-transition-group(*) {
-  animation-duration: var(--animation-duration-short);
-  animation-timing-function: var(--easing);
+  animation-timing-function: var(--spring);
+  animation-duration: var(--animation-duration);
+}
+
+::view-transition-group(grow-center),
+::view-transition-group(grow-top-left),
+::view-transition-group(shrink-center),
+::view-transition-group(shrink-top-left) {
+  animation-timing-function: var(--spring);
+  animation-duration: var(--animation-duration);
 }
 
 ::view-transition-old(grow-center),
