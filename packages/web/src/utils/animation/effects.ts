@@ -3,6 +3,12 @@ export const DEFAULT_TIMING: EffectTiming = {
   easing: "ease",
 };
 
+export const SPRING: EffectTiming = {
+  duration: 350,
+  easing:
+    "linear(0, 0.0018, 0.0071 1.18%, 0.0267 2.37%, 0.0931, 0.1827 7.11%, 0.5325 15.4%, 0.6401, 0.7317, 0.8068, 0.8664, 0.9123, 0.9464, 0.9709 36.14%, 0.9905, 1.0022 43.25%, 1.0094 47.99%, 1.0109 54.51%, 1.0021, 0.9999 99.54%)",
+};
+
 export function createAnimationPromise(animation: Animation) {
   return new Promise((resolve, reject) => {
     animation.addEventListener("finish", resolve);
@@ -40,7 +46,7 @@ export function appearFrom(
     origin,
     scaling = true,
     transformOrigin = { x: 0.5, y: 0.5 },
-    timing = DEFAULT_TIMING,
+    timing = SPRING,
   }: {
     origin: Element;
     timing?: EffectTiming;
@@ -103,7 +109,7 @@ export function disappearTo(
     destination,
     scaling = true,
     transformOrigin = { x: 0.5, y: 0.5 },
-    timing = DEFAULT_TIMING,
+    timing = SPRING,
   }: {
     destination: Element;
     timing?: EffectTiming;
@@ -170,7 +176,7 @@ export function move(
     fromY = "0",
     toX = "0",
     toY = "0",
-    timing = DEFAULT_TIMING,
+    timing = SPRING,
   }: {
     fromX?: string;
     fromY?: string;
@@ -191,7 +197,7 @@ export function moveFrom(
   {
     x = "0",
     y = "0",
-    timing = DEFAULT_TIMING,
+    timing = SPRING,
   }: { x?: string; y?: string; timing?: EffectTiming },
 ) {
   const animation = element.animate(
@@ -206,7 +212,7 @@ export function moveTo(
   {
     x = "0",
     y = "0",
-    timing = DEFAULT_TIMING,
+    timing = SPRING,
   }: { x?: string; y?: string; timing?: EffectTiming },
 ) {
   const animation = element.animate(

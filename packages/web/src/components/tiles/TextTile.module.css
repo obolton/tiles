@@ -85,7 +85,7 @@
 .toolbar {
   display: none;
   opacity: 0;
-  transition-duration: var(--animation-duration-short);
+  transition-duration: var(--animation-duration);
   transition-timing-function: var(--easing);
   transition-behavior: allow-discrete;
 }

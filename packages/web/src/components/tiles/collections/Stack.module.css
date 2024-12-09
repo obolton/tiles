@@ -14,7 +14,7 @@
   z-index: calc(1000 - var(--index));
   transition-property: rotate, scale, opacity;
   transition-duration: var(--animation-duration);
-  transition-timing-function: var(--easing);
+  transition-timing-function: var(--spring);
 }
 
 .stack:not([open]) {

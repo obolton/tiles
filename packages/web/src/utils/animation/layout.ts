@@ -1,4 +1,4 @@
-import { createAnimationPromise } from "./effects";
+import { createAnimationPromise, SPRING } from "./effects";
 
 const rects = new WeakMap<HTMLElement, DOMRect>();
 const animations = new WeakMap<HTMLElement, Animation>();
@@ -85,10 +85,7 @@ async function animatePosition(
 
   const animation = element.animate(
     [{ translate: `${deltaX}px ${deltaY}px` }, { translate: "none" }],
-    {
-      duration: 350,
-      easing: "ease",
-    },
+    SPRING,
   );
   animation.addEventListener(
     "finish",

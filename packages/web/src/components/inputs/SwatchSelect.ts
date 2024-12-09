@@ -5,6 +5,7 @@ import {
   fadeIn,
   fadeOut,
   DEFAULT_TIMING,
+  SPRING,
 } from "@/utils/animation/effects";
 
 const stylesheet = new CSSStyleSheet();
@@ -76,7 +77,7 @@ export default class SwatchSelect extends HTMLElement {
         move(item, {
           fromX: `${(items.length - i) * -100 * direction}%`,
           toX: `${(items.length - i - 1) * -OVERLAP * direction + 20 * direction}px`,
-          timing: TIMING,
+          timing: { ...SPRING, fill: "both" },
         }),
       );
 
@@ -95,7 +96,7 @@ export default class SwatchSelect extends HTMLElement {
           move(item, {
             fromX: `${(elements.length - i - 1) * -OVERLAP * direction + 20 * direction}px`,
             toX: `${(elements.length - i) * -100 * direction}%`,
-            timing: TIMING,
+            timing: { ...SPRING, fill: "both" },
           }),
         ),
       ).then(() => this.items.classList.add("hidden"));
