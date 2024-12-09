@@ -61,6 +61,7 @@ declare module "react" {
       };
       "pop-out": CustomElementAttributes & {
         expandable?: "expandable";
+        onbeforetoggle?: (event: globalThis.ToggleEvent) => void;
       };
       "stack-view": CustomElementAttributes & {
         expandable?: "expandable";

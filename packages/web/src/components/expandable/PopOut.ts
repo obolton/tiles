@@ -134,9 +134,17 @@ export default class PopOut extends HTMLElement {
       return;
     }
 
-    this.dispatchEvent(
-      new ToggleEvent("beforetoggle", { oldState: "closed", newState: "open" }),
+    const allowToggle = this.dispatchEvent(
+      new ToggleEvent("beforetoggle", {
+        oldState: "closed",
+        newState: "open",
+        cancelable: true,
+      }),
     );
+
+    if (!allowToggle) {
+      return;
+    }
 
     this.setAttribute("opening", "");
 
@@ -161,9 +169,17 @@ export default class PopOut extends HTMLElement {
       return;
     }
 
-    this.dispatchEvent(
-      new ToggleEvent("beforetoggle", { oldState: "open", newState: "closed" }),
+    const allowToggle = this.dispatchEvent(
+      new ToggleEvent("beforetoggle", {
+        oldState: "open",
+        newState: "closed",
+        cancelable: true,
+      }),
     );
+
+    if (!allowToggle) {
+      return;
+    }
 
     this.setAttribute("closing", "");
 
