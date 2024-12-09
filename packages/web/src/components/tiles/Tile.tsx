@@ -15,6 +15,12 @@ export type TileProps = {
   backgroundImageUrl?: string;
 };
 
+const THEME_CLASSES = {
+  LIGHT: styles.light,
+  DARK: styles.dark,
+  COLOR: styles.color,
+} as const;
+
 export default function Tile({
   children,
   theme,
@@ -42,11 +48,7 @@ export default function Tile({
       className={classNames(
         styles.tile,
         showBorder && styles.border,
-        theme === "LIGHT"
-          ? styles.light
-          : theme === "DARK"
-            ? styles.dark
-            : styles.color,
+        theme ? THEME_CLASSES[theme] : undefined,
       )}
       style={style}
     >

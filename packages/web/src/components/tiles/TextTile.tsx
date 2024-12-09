@@ -16,7 +16,7 @@ import type { RichText as RichTextType } from "@/utils/richText/types";
 interface TextTileProps extends TileProps {
   columns: number;
   content: RichTextType;
-  theme: Theme;
+  theme: Theme | null;
   hue: number | null;
 }
 
@@ -45,11 +45,11 @@ export default function TextTile({
   }, [editorState, id]);
 
   const onChangeColor = useCallback(
-    async ({ theme, hue }: ColorPickerValue) => {
+    async (value: ColorPickerValue) => {
+      const theme = value?.theme ?? null;
+      const hue = value?.hue ?? null;
       setTheme(theme);
-      if (typeof hue === "number") {
-        setHue(hue);
-      }
+      setHue(hue);
       await updateText({
         id,
         theme,
@@ -77,7 +77,7 @@ export default function TextTile({
         id={id}
         theme={theme}
         hue={hue}
-        showBorder={isEditable || columns < 3}
+        showBorder={isEditable || !!theme}
       >
         {isEditable ? (
           <RichTextEditor
@@ -92,7 +92,7 @@ export default function TextTile({
           >
             <Toolbar
               className={styles.toolbar}
-              color={{ theme, hue: hue ?? undefined }}
+              color={{ theme, hue }}
               onChangeColor={onChangeColor}
             />
           </RichTextEditor>
