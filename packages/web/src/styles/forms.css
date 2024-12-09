@@ -55,7 +55,7 @@ form:invalid button[type="submit"] {
 
 input::placeholder,
 textarea::placeholder {
-  color: rgba(0 0 0 / 40%);
+  color: var(--placeholder-color);
 }
 
 swatch-item {

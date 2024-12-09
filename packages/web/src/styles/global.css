@@ -3,6 +3,7 @@
   --focus-ring-color: #0070f3;
   --success-color: rgba(0 255 0 / 80%);
   --destructive-color: rgba(255 0 0 / 80%);
+  --placeholder-color: rgba(0 0 0 / 40%);
   --lightness: 90%;
   --chroma: 20%;
   --ui-font: "Inter", system, sans-serif;
