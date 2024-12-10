@@ -6,7 +6,6 @@
   font-size: clamp(0.875rem, 2vw, 1rem);
   line-height: 1.8;
   white-space-collapse: preserve;
-  background: inherit;
   border-radius: inherit;
 
   & blockquote {
@@ -97,9 +96,15 @@
   display: flex;
 }
 
-.pop-out[opening]::part(dialog),
-.pop-out[closing]::part(dialog) {
-  view-transition-name: text-tile;
+.pop-out[opening],
+.pop-out[closing] {
+  &::part(dialog) {
+    view-transition-name: text-tile;
+  }
+
+  & .text {
+    view-transition-name: text-tile-text;
+  }
 }
 
 .pop-out[expandable] {
@@ -186,15 +191,25 @@
   margin-left: 2.2em;
 }
 
-::view-transition-group(text-tile) {
-  border-radius: 12px;
-  box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
+::view-transition-group(text-tile),
+::view-transition-group(text-tile-text) {
   overflow: clip;
+  border-radius: 12px;
+}
+
+::view-transition-group(text-tile) {
+  box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
 }
 
 ::view-transition-old(text-tile),
-::view-transition-new(text-tile) {
-  height: 100%;
+::view-transition-new(text-tile),
+::view-transition-old(text-tile-text),
+::view-transition-new(text-tile-text) {
+  block-size: 100%;
   object-position: left top;
+}
+
+::view-transition-old(text-tile-text),
+::view-transition-new(text-tile-text) {
   object-fit: none;
 }
