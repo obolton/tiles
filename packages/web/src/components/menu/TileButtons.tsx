@@ -9,6 +9,7 @@ import eventIcon from "@/icons/event.svg";
 import { createText, createHeading } from "@/utils/edit";
 import { registerModal, showModal } from "@/utils/modals";
 import type { TileType } from "@/types/tiles";
+import { classNames } from "@/utils/css";
 
 type TileButton = {
   label: string;
@@ -45,7 +46,13 @@ registerModal(
   lazy(() => import("@/components/modals/EditEventTileModal")),
 );
 
-export default function TileButtons() {
+interface TileButtonsProps {
+  tooltipPosition?: "top" | "right" | "bottom" | "left";
+}
+
+export default function TileButtons({
+  tooltipPosition = "left",
+}: TileButtonsProps) {
   const isEditable = useEditable();
 
   const onClick = useCallback(
@@ -80,7 +87,7 @@ export default function TileButtons() {
       {BUTTONS.map(({ label, type, icon }) => (
         <button
           key={type}
-          className="floating tooltip-left"
+          className={classNames("floating", `tooltip-${tooltipPosition}`)}
           type="button"
           aria-label={label}
           data-tile-type={type}
