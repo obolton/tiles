@@ -31,44 +31,6 @@
   animation-duration: var(--animation-duration);
 }
 
-::view-transition-group(grow-center),
-::view-transition-group(grow-top-left),
-::view-transition-group(shrink-center),
-::view-transition-group(shrink-top-left) {
-  animation-timing-function: var(--spring);
-  animation-duration: var(--animation-duration);
-}
-
-::view-transition-old(grow-center),
-::view-transition-new(grow-center),
-::view-transition-old(shrink-center),
-::view-transition-new(shrink-center) {
-  height: 100%;
-  object-position: center;
-}
-
-::view-transition-old(grow-top-left),
-::view-transition-new(grow-top-left),
-::view-transition-old(shrink-top-left),
-::view-transition-new(shrink-top-left) {
-  height: 100%;
-  object-position: left top;
-}
-
-::view-transition-old(grow-center),
-::view-transition-old(grow-top-left),
-::view-transition-new(shrink-center),
-::view-transition-new(shrink-top-left) {
-  object-fit: contain;
-}
-
-::view-transition-new(grow-center),
-::view-transition-new(grow-top-left),
-::view-transition-old(shrink-center),
-::view-transition-old(shrink-top-left) {
-  object-fit: cover;
-}
-
 pop-out::part(close) {
   view-transition-name: close-button;
 }

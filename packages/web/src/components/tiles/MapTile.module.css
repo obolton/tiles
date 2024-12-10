@@ -12,10 +12,20 @@
   display: flex;
 }
 
-.pop-out[opening]::part(dialog) {
-  view-transition-name: grow-center;
+.pop-out[opening]::part(dialog),
+.pop-out[closing]::part(dialog) {
+  view-transition-name: map-tile;
 }
 
-.pop-out[closing]::part(dialog) {
-  view-transition-name: shrink-center;
+::view-transition-group(map-tile) {
+  border-radius: 12px;
+  box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
+  overflow: clip;
+}
+
+::view-transition-old(map-tile),
+::view-transition-new(map-tile) {
+  height: 100%;
+  object-position: center;
+  object-fit: none;
 }

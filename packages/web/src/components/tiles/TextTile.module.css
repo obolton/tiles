@@ -97,12 +97,9 @@
   display: flex;
 }
 
-.pop-out[opening]::part(dialog) {
-  view-transition-name: grow-top-left;
-}
-
+.pop-out[opening]::part(dialog),
 .pop-out[closing]::part(dialog) {
-  view-transition-name: shrink-top-left;
+  view-transition-name: text-tile;
 }
 
 .pop-out[expandable] {
@@ -187,4 +184,17 @@
 
 [data-font="MONOSPACE"] .text ol {
   margin-left: 2.2em;
+}
+
+::view-transition-group(text-tile) {
+  border-radius: 12px;
+  box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
+  overflow: clip;
+}
+
+::view-transition-old(text-tile),
+::view-transition-new(text-tile) {
+  height: 100%;
+  object-position: left top;
+  object-fit: none;
 }
