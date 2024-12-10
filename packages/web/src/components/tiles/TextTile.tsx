@@ -6,14 +6,15 @@ import Toolbar from "@/components/inputs/RichTextEditor/Toolbar";
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
 import { updateText } from "@/utils/edit";
-import Tile, { type TileProps } from "./Tile";
+import Tile from "./Tile";
 import styles from "./TextTile.module.css";
 import { classNames } from "@/utils/css";
 import type { EditorState } from "@/components/inputs/RichTextEditor/RichTextEditor";
 import type { Theme } from "@/types/pages";
 import type { RichText as RichTextType } from "@/utils/richText/types";
 
-interface TextTileProps extends TileProps {
+interface TextTileProps {
+  id: string;
   columns: number;
   content: RichTextType;
   theme: Theme | null;
@@ -26,7 +27,6 @@ export default function TextTile({
   content,
   theme: initialTheme,
   hue: initialHue,
-  ...tile
 }: TextTileProps) {
   const isEditable = useEditable();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
@@ -72,13 +72,7 @@ export default function TextTile({
       tabindex="0"
       expandable={columns === 3 ? undefined : "expandable"}
     >
-      <Tile
-        {...tile}
-        id={id}
-        theme={theme}
-        hue={hue}
-        showBorder={isEditable || !!theme}
-      >
+      <Tile theme={theme} hue={hue} showBorder={isEditable || !!theme}>
         {isEditable ? (
           <RichTextEditor
             className={classNames(styles.text, styles.editor)}

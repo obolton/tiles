@@ -6,7 +6,6 @@ import { getFontConfig } from "@/utils/fonts";
 import type { FontId } from "@/config/fonts";
 
 export type TileProps = {
-  id: string;
   children?: React.ReactNode;
   showBorder?: boolean;
   theme?: Theme | null;
