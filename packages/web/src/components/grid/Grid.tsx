@@ -84,7 +84,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
         element?.previousElementSibling?.id || element?.nextElementSibling?.id;
       startLayoutTransition(() => {
         setTiles((prevTiles) =>
-          prevTiles.filter((prevTile) => prevTile.id !== id),
+          prevTiles.filter((prevTile) => prevTile.placementId !== id),
         );
         if (adjacentTileId) {
           scrollIntoView(adjacentTileId);
