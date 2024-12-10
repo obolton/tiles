@@ -24,6 +24,7 @@ import useEditable from "@/hooks/useEditable";
 import GridItem from "./GridItem";
 import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
 import { handleError } from "@/utils/errors";
+import TileButtons from "@/components/menu/TileButtons";
 
 interface GridProps {
   tiles: ClientTile[];
@@ -215,6 +216,23 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
 
   return (
     <section className={styles.grid} ref={ref}>
+      {tiles.length === 0 && (
+        <div className={styles.placeholder}>
+          {isEditable ? (
+            <>
+              <p>
+                There’s nothing here yet. Get starting by adding some content.
+              </p>
+              <div className={styles["placeholder-buttons"]}>
+                <TileButtons tooltipPosition="bottom" />
+              </div>
+            </>
+          ) : (
+            <p>This page is empty.</p>
+          )}
+        </div>
+      )}
+
       {tiles.map((tile) => (
         <GridItem
           key={tile.id}
