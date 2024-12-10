@@ -119,7 +119,7 @@ popover-menu > menu {
 .tooltip-bottom::after {
   top: 100%;
   left: 50%;
-  margin-bottom: 12px;
+  margin-top: 12px;
   translate: -50% 0;
 }
 
