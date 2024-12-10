@@ -327,32 +327,6 @@ export async function createPage(
       authorId: user.id,
       published: false,
       title,
-      tiles: {
-        create: [
-          {
-            type: "TEXT",
-            position: 0,
-            rows: 1,
-            columns: 3,
-            text: {
-              create: {
-                content: [
-                  {
-                    type: "paragraph",
-                    children: [
-                      {
-                        type: "text",
-                        text: "This is a new page. You can edit it however you like.",
-                        format: 0,
-                      },
-                    ],
-                  },
-                ],
-              },
-            },
-          },
-        ],
-      },
     },
     select: {
       id: true,
