@@ -5,6 +5,8 @@ import PagesGridItem from "./PagesGridItem";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Grid.module.css";
+import newIcon from "@/icons/new.svg";
+import { handleError } from "@/utils/errors";
 
 type Pages = AppRouterOutputs["pages"]["getRecentWithTiles"];
 type Page = Pages["pages"][number];
@@ -61,8 +63,33 @@ export default function PagesGrid({
     };
   }, [allowLoadMore, loadMore, pages?.length]);
 
+  const createNewPage = useCallback(() => {
+    client.pages.create
+      .mutate({ title: "New page" })
+      .then(({ id }) => {
+        window.open(`/pages/${id}?edit=true`);
+      })
+      .catch(handleError);
+  }, []);
+
   return (
     <section className={styles.grid}>
+      {pages?.length === 0 && (
+        <div className={styles.placeholder}>
+          <p>Get started by creating your first page.</p>
+          <div className={styles["placeholder-buttons"]}>
+            <button
+              className="floating tooltip-bottom"
+              type="button"
+              aria-label="Create a new page"
+              onClick={createNewPage}
+            >
+              <img src={newIcon.src} alt="Plus icon" />
+            </button>
+          </div>
+        </div>
+      )}
+
       <infinite-scroll ref={ref}>
         {pages?.map((page) => {
           const item = render(page);
