@@ -31,6 +31,7 @@ export const MOCK_PRISMA = {
   $executeRawUnsafe: vi.fn(),
   $queryRaw: vi.fn(),
   $queryRawUnsafe: vi.fn(),
+  bookmark: mockModel(),
   collection: mockModel(),
   eventTile: mockModel(),
   headingTile: mockModel(),

@@ -14,6 +14,7 @@ import events from "./events/router.ts";
 import pageLinks from "./pageLinks/router.ts";
 import externalLinks from "./links/router.ts";
 import videos from "./videos/router.ts";
+import bookmarks from "./bookmarks/router.ts";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 const appRouter = router({
@@ -32,6 +33,7 @@ const appRouter = router({
   pageLinks,
   externalLinks,
   videos,
+  bookmarks,
 });
 
 export type AppRouter = typeof appRouter;
