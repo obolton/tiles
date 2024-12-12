@@ -87,7 +87,6 @@ export default function LinkModal({ tileId, close, tile }: LinkModalProps) {
             render={(page) =>
               page.id === pageId ? null : (
                 <PageLinkTile
-                  id={page.id}
                   pageId={page.id}
                   page={page}
                   onClick={(event) => {
