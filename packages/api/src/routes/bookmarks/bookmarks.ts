@@ -24,8 +24,18 @@ export async function createBookmark(
 ) {
   return prisma.$transaction(async (transaction) => {
     await checkPageAccess(transaction, context, pageId);
-    return transaction.bookmark.create({
-      data: {
+    return transaction.bookmark.upsert({
+      where: {
+        bookmarkId: {
+          userId: context.user.id,
+          pageId,
+        },
+      },
+      create: {
+        userId: context.user.id,
+        pageId,
+      },
+      update: {
         userId: context.user.id,
         pageId,
       },
