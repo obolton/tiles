@@ -43,7 +43,9 @@ declare module "react" {
         src?: string | null;
         name?: string | null;
       };
-      "infinite-scroll": CustomElementAttributes;
+      "infinite-scroll": CustomElementAttributes & {
+        onloadmore?: (event: globalThis.Event) => void;
+      };
       "swatch-select": CustomElementAttributes & {
         value?: string;
         direction?: "left" | "right";

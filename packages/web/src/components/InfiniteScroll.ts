@@ -36,7 +36,7 @@ export default class InfiniteScroll extends HTMLElement {
     this.atEnd = entry.isIntersecting;
 
     if (this.atEnd) {
-      this.dispatchEvent(new Event("load-more"));
+      this.dispatchEvent(new Event("loadmore"));
     }
   }
 }

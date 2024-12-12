@@ -52,17 +52,6 @@ export default function PagesGrid({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const infiniteScroll = ref.current;
-    if (!infiniteScroll) {
-      return;
-    }
-    infiniteScroll.addEventListener("load-more", loadMore);
-    return () => {
-      infiniteScroll.removeEventListener("load-more", loadMore);
-    };
-  }, [allowLoadMore, loadMore, pages?.length]);
-
   const createNewPage = useCallback(() => {
     client.pages.create
       .mutate({ title: "New page" })
@@ -90,7 +79,7 @@ export default function PagesGrid({
         </div>
       )}
 
-      <infinite-scroll ref={ref}>
+      <infinite-scroll ref={ref} onloadmore={loadMore}>
         {pages?.map((page) => {
           const item = render(page);
           if (!item) {
