@@ -6,7 +6,7 @@ import react from "@astrojs/react";
 import cloudflare from "@astrojs/cloudflare";
 import editClientDirective from "./src/config/editClientDirective/register";
 
-const isProdEnvironment = import.meta.env.PROD === "true";
+// const isProdEnvironment = import.meta.env.PROD === "true";
 const isTestEnvironment = process.env.VITEST === "true";
 const packageRoot = path.dirname(import.meta.filename);
 const workspaceRoot = path.resolve(packageRoot, "../..");
@@ -37,9 +37,7 @@ export default defineConfig({
       alias: {
         "@": path.resolve(packageRoot, "./src"),
         // Patch to make the Cloudflare adapter compatible with React 19
-        ...(isProdEnvironment
-          ? { "react-dom/server": "react-dom/server.edge" }
-          : {}),
+        "react-dom/server": "react-dom/server.edge",
       },
     },
   },
