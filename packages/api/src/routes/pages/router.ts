@@ -6,7 +6,7 @@ import {
 import {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
-  GetRecentPagesWithTilesSchema,
+  ListPagesSchema,
   CreatePageSchema,
   UpdatePageSchema,
   DeletePageSchema,
@@ -14,7 +14,7 @@ import {
 import {
   getPageById,
   getProfilePageByUserId,
-  getRecentPagesWithTiles,
+  listPages,
   createPage,
   updatePage,
   deletePage,
@@ -36,10 +36,10 @@ export default router({
       return page;
     }),
 
-  getRecentWithTiles: authenticatedProcedure
-    .input(GetRecentPagesWithTilesSchema)
+  list: authenticatedProcedure
+    .input(ListPagesSchema)
     .query(async ({ input, ctx }) => {
-      const pages = await getRecentPagesWithTiles(input, ctx);
+      const pages = await listPages(input, ctx);
       return pages;
     }),
 

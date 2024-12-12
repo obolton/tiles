@@ -21,7 +21,7 @@ import { VIDEO_FIELDS } from "@/routes/videos/videos.ts";
 import type {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
-  GetRecentPagesWithTilesSchema,
+  ListPagesSchema,
   CreatePageSchema,
   UpdatePageSchema,
   DeletePageSchema,
@@ -272,8 +272,8 @@ export async function getProfilePageByUserId({
   };
 }
 
-export async function getRecentPagesWithTiles(
-  { offset }: GetRecentPagesWithTilesSchema,
+export async function listPages(
+  { offset }: ListPagesSchema,
   { user }: AuthenticatedRequestContext,
 ) {
   const count = 15;

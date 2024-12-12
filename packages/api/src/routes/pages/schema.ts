@@ -8,14 +8,12 @@ export const GetPageByIdSchema = z.object({
 });
 export type GetPageByIdSchema = z.infer<typeof GetPageByIdSchema>;
 
-// Get recent pages
+// List
 
-export const GetRecentPagesWithTilesSchema = z.object({
+export const ListPagesSchema = z.object({
   offset: z.number().int().gte(0).optional(), // TODO: Use cursors
 });
-export type GetRecentPagesWithTilesSchema = z.infer<
-  typeof GetRecentPagesWithTilesSchema
->;
+export type ListPagesSchema = z.infer<typeof ListPagesSchema>;
 
 // Get profile page by user ID
 
