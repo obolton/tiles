@@ -3,15 +3,17 @@ import Tile from "./Tile";
 import styles from "./PageLinkTile.module.css";
 import type { ClientPageLink } from "@/types/tiles";
 import PageTile from "./PageTile";
+import { classNames } from "@/utils/css";
 
 interface PageLinkTileProps extends ClientPageLink {
   onClick?: (event: React.MouseEvent) => void;
+  openInNewTab?: boolean;
 }
 
 export default function PageLinkTile({
-  pageId,
   page,
   onClick,
+  openInNewTab = true,
 }: PageLinkTileProps) {
   if (!page) {
     return (
@@ -23,9 +25,9 @@ export default function PageLinkTile({
 
   return (
     <a
-      className={styles.link}
-      href={`/pages/${pageId}`}
-      target="_blank"
+      className={classNames(styles.link, openInNewTab && styles["new-tab"])}
+      href={`/pages/${page.id}`}
+      target={openInNewTab ? "_blank" : undefined}
       onClick={onClick}
     >
       <PageTile

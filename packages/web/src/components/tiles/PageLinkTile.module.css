@@ -2,16 +2,16 @@
   position: relative;
   width: 100%;
   height: 100%;
+}
 
-  &::after {
-    content: url("@/icons/arrow-outward.svg");
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 18px;
-    height: 18px;
-    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 30%));
-  }
+.new-tab::after {
+  content: url("@/icons/arrow-outward.svg");
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 30%));
 }
 
 .deleted {

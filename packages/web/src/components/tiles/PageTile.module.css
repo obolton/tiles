@@ -12,14 +12,14 @@
   overflow: hidden;
 
   & h3 {
-    font-size: clamp(0.875rem, 8cqw, 1.75rem);
+    font-size: clamp(0.875rem, 12cqw, 1.5rem);
     line-height: 1.2;
     font-weight: 600;
     margin: 0;
   }
 
   & p {
-    font-size: clamp(0.875rem, 6cqw, 1rem);
+    font-size: clamp(0.875rem, 8cqw, 1rem);
     line-height: 1.2;
     font-weight: 500;
   }
@@ -35,11 +35,12 @@
   }
 
   & address {
+    margin-top: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-family: var(--ui-font);
     font-style: normal;
     font-weight: 500;
