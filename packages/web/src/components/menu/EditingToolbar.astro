@@ -1,6 +1,7 @@
 ---
 import EditingTools from "./EditingTools";
 import shareIcon from "@/icons/share.svg";
+import bookmarkIcon from "@/icons/bookmark.svg";
 
 interface Props {
   pageId: string;
@@ -32,6 +33,15 @@ const {
     <img class="icon" src={shareIcon.src} alt="Share" />
   </button>
 
+  <button
+    id="bookmark"
+    class="floating tooltip-left"
+    aria-label="Bookmark"
+    aria-pressed="false"
+  >
+    <img class="icon" src={bookmarkIcon.src} alt="Bookmark" />
+  </button>
+
   <EditingTools
     pageId={pageId}
     isPublished={isPublished}
@@ -41,8 +51,11 @@ const {
   />
 </div>
 <style is:global>
-  body:not([data-signed-in]) #editing-toolbar {
-    display: none;
+  body:not([data-signed-in]) {
+    #bookmark,
+    #editing-toolbar {
+      display: none;
+    }
   }
 </style>
 <style>
@@ -81,3 +94,4 @@ const {
   });
   document.getElementById("share")?.addEventListener("click", sharePage);
 </script>
+<script src="@/init.ts"></script>
