@@ -8,7 +8,7 @@ import styles from "./Grid.module.css";
 import newIcon from "@/icons/new.svg";
 import { handleError } from "@/utils/errors";
 
-type Pages = AppRouterOutputs["pages"]["getRecentWithTiles"];
+type Pages = AppRouterOutputs["pages"]["list"];
 type Page = Pages["pages"][number];
 
 function defaultRender(page: Page) {
@@ -36,10 +36,9 @@ export default function PagesGrid({
       return;
     }
     loadingRef.current = true;
-    const { pages: morePages, hasMore } =
-      await client.pages.getRecentWithTiles.query({
-        offset: pages?.length ?? 0,
-      });
+    const { pages: morePages, hasMore } = await client.pages.list.query({
+      offset: pages?.length ?? 0,
+    });
     loadingRef.current = false;
     setAllowLoadMore(hasMore);
     setPages((prevPages) => [...(prevPages ?? []), ...morePages]);
