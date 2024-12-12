@@ -18,6 +18,14 @@ export default tseslint.config(
     },
   },
   {
+    files: ["*.config.mjs", "*.config.ts"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+  {
     ...reactPlugin.configs.flat.recommended,
     settings: {
       react: {
