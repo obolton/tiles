@@ -1,0 +1,39 @@
+---
+import Page from "@/layouts/Page.astro";
+import PagesGrid from "@/components/grid/PagesGrid";
+import client from "@/api/client";
+import { SESSION_COOKIE_NAME } from "api/src/constants/cookies";
+import { DEFAULT_FONT } from "@/config/fonts";
+
+const sessionId = Astro.cookies.get(SESSION_COOKIE_NAME)?.value;
+
+if (!sessionId) {
+  return Astro.redirect("/sign-in");
+}
+
+const pages = await client.pages.list.query(
+  { offset: 0 },
+  { context: { sessionId } }
+);
+
+if (!pages) {
+  return Astro.redirect("/sign-in");
+}
+
+const fonts = new Set(pages.pages.map((page) => page.font));
+fonts.add(DEFAULT_FONT);
+// TODO: Add fonts for pages that are loaded later
+---
+
+<Page title="Library - Your pages" allFonts={fonts}>
+  <h1 slot="header">Library</h1>
+
+  <nav class="tabs">
+    <ol>
+      <li aria-selected="true"><a href="/library">Your pages</a></li>
+      <li><a href="/library/bookmarks">Bookmarks</a></li>
+    </ol>
+  </nav>
+
+  <PagesGrid pages={pages} client:load />
+</Page>

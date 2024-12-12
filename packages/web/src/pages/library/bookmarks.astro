@@ -1,6 +1,6 @@
 ---
 import Page from "@/layouts/Page.astro";
-import PagesGrid from "@/components/grid/PagesGrid";
+import BookmarksGrid from "@/components/grid/BookmarksGrid";
 import client from "@/api/client";
 import { SESSION_COOKIE_NAME } from "api/src/constants/cookies";
 import { DEFAULT_FONT } from "@/config/fonts";
@@ -11,7 +11,7 @@ if (!sessionId) {
   return Astro.redirect("/sign-in");
 }
 
-const pages = await client.pages.getRecentWithTiles.query(
+const pages = await client.bookmarks.list.query(
   { offset: 0 },
   { context: { sessionId } }
 );
@@ -25,8 +25,15 @@ fonts.add(DEFAULT_FONT);
 // TODO: Add fonts for pages that are loaded later
 ---
 
-<Page title="Library" allFonts={fonts}>
+<Page title="Library - Bookmarks" allFonts={fonts}>
   <h1 slot="header">Library</h1>
 
-  <PagesGrid pages={pages} client:load />
+  <nav class="tabs">
+    <ol>
+      <li><a href="/library">Your pages</a></li>
+      <li aria-selected="true"><a href="/library/bookmarks">Bookmarks</a></li>
+    </ol>
+  </nav>
+
+  <BookmarksGrid pages={pages} client:load />
 </Page>
