@@ -1,0 +1,35 @@
+nav.tabs {
+  margin: 0 0 32px;
+  font-size: 1.2rem;
+  font-weight: 400;
+
+  & ol {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  & li {
+    display: block;
+
+    & > a {
+      display: block;
+      padding: 14px 20px;
+      text-shadow: 0 1px 0 rgb(255 255 255 / 80%);
+      background: rgb(0 0 0 / 5%);
+      border-radius: 12px;
+      transition: background-color var(--animation-duration-short) var(--easing);
+
+      &:hover {
+        background: rgb(0 0 0 / 10%);
+      }
+    }
+
+    &[aria-selected="true"] > a {
+      font-weight: 500;
+      padding: 11px 17px;
+      border: 3px solid rgb(0 0 0 / 10%);
+      background: rgb(0 0 0 / 10%);
+    }
+  }
+}
