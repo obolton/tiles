@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
-import type { Prisma } from "@prisma/client";
+import type { PrismaTransactionClient } from "@/database/prisma.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 
 export async function checkPageAccess(
-  transaction: Prisma.TransactionClient,
+  transaction: PrismaTransactionClient,
   context: AuthenticatedRequestContext,
   pageId: string,
 ) {

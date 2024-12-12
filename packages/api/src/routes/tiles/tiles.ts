@@ -6,7 +6,8 @@ import type {
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 import { checkPageAccess } from "@/utils/permissions.ts";
-import type { Prisma, TileType } from "@prisma/client";
+import type { TileType } from "@prisma/client";
+import type { PrismaTransactionClient } from "@/database/prisma.ts";
 
 export async function moveTile(
   { id, position }: MoveTileSchema,
@@ -122,7 +123,7 @@ export async function createTilePlacement(
     videoTileId,
     collectionId,
   }: CreateTilePlacement,
-  transaction: Prisma.TransactionClient,
+  transaction: PrismaTransactionClient,
 ) {
   const position = await transaction.tile.count({
     where: { pageId },
