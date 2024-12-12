@@ -1,6 +1,5 @@
-import prisma from "@/database/prisma.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { Prisma } from "@prisma/client";
-import { getProfileImageUrl } from "@/utils/cdn.ts";
 import type { CreatePageLinkSchema } from "./schema.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 
@@ -15,7 +14,7 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
     select: {
       id: true,
       name: true,
-      imageKey: true,
+      imageUrl: true,
     },
   },
   tiles: {
@@ -32,7 +31,7 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
     },
     take: 1,
   },
-} as const satisfies Prisma.PageSelect;
+} as const satisfies Prisma.PageSelect<ExtensionArgs>;
 
 export type PageLinkPage = Prisma.PageGetPayload<{
   select: typeof PAGE_LINK_TILE_PAGE_FIELDS;
@@ -59,11 +58,7 @@ function formatPage(page: PageLinkPage) {
     theme,
     hue,
     font,
-    author: {
-      id: author.id,
-      name: author.name,
-      imageUrl: author.imageKey ? getProfileImageUrl(author.imageKey) : null,
-    },
+    author,
     imageKey: tiles[0]?.image?.imageKey ?? null,
   };
 }

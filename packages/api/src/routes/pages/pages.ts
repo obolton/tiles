@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import type { Theme, Font } from "@prisma/client";
-import prisma from "@/database/prisma.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import {
   getProfileImageUrl,
   getLinkImageUrl,
@@ -76,7 +76,7 @@ const PAGE_FIELDS = {
     select: {
       id: true,
       name: true,
-      imageKey: true,
+      imageUrl: true,
     },
   },
   tiles: {
@@ -86,7 +86,7 @@ const PAGE_FIELDS = {
       position: "asc",
     },
   },
-} as const satisfies Prisma.PageSelect;
+} as const satisfies Prisma.PageSelect<ExtensionArgs>;
 
 type TileWithData = Prisma.TileGetPayload<{ select: typeof TILES_FIELDS }>;
 
@@ -174,7 +174,7 @@ function formatTile({
             theme: page.theme,
             hue: page.hue,
             font: page.font,
-            author: formatAuthor(page.author),
+            author: page.author,
             imageKey: page.tiles[0]?.image?.imageKey ?? null,
           }
         : null,
@@ -202,22 +202,6 @@ function formatTile({
   }
 
   throw new Error(`Invalid tile: ${id}`);
-}
-
-function formatAuthor({
-  id,
-  name,
-  imageKey,
-}: {
-  id: string;
-  name: string;
-  imageKey: string | null;
-}) {
-  return {
-    id,
-    name,
-    imageUrl: imageKey ? getProfileImageUrl(imageKey) : null,
-  };
 }
 
 export async function getPageById(
@@ -254,7 +238,6 @@ export async function getPageById(
 
   return {
     ...page,
-    author: formatAuthor(page.author),
     tiles: page.tiles.map(formatTile),
   };
 }
@@ -311,7 +294,7 @@ export async function getRecentPagesWithTiles(
       theme: page.theme,
       hue: page.hue,
       font: page.font,
-      author: formatAuthor(page.author),
+      author: page.author,
       imageKey: page.tiles[0]?.image?.imageKey ?? null,
     })),
     hasMore: pages.length > count,
