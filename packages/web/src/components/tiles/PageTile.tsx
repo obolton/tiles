@@ -1,11 +1,10 @@
-import Tile, { type TileProps } from "./Tile";
+import Tile from "./Tile";
 import styles from "./PageTile.module.css";
 import { classNames } from "@/utils/css";
 import type { Theme } from "@/types/pages";
 import type { FontId } from "@/config/fonts";
 
-interface PageTileProps extends TileProps {
-  id: string;
+interface PageTileProps {
   title: string;
   subtitle?: string | null;
   hue?: number | null;
@@ -19,7 +18,6 @@ interface PageTileProps extends TileProps {
 }
 
 export default function PageTile({
-  id,
   title,
   subtitle,
   imageUrl,
@@ -29,13 +27,7 @@ export default function PageTile({
   theme,
 }: PageTileProps) {
   return (
-    <Tile
-      id={id}
-      theme={theme}
-      hue={hue}
-      font={font}
-      backgroundImageUrl={imageUrl}
-    >
+    <Tile theme={theme} hue={hue} font={font} backgroundImageUrl={imageUrl}>
       <section
         className={classNames(
           styles.text,

@@ -16,4 +16,8 @@
 
 .deleted {
   padding: 24px;
+  text-align: center;
+  align-content: center;
+  color: var(--placeholder-color);
+  background: rgb(0 0 0 / 2%);
 }

@@ -1,24 +1,22 @@
 import { getImageUrl } from "@/utils/images";
-import Tile, { type TileProps } from "./Tile";
+import Tile from "./Tile";
 import styles from "./PageLinkTile.module.css";
 import type { ClientPageLink } from "@/types/tiles";
 import PageTile from "./PageTile";
 
-interface PageLinkTileProps extends TileProps, ClientPageLink {
+interface PageLinkTileProps extends ClientPageLink {
   onClick?: (event: React.MouseEvent) => void;
 }
 
 export default function PageLinkTile({
-  id,
   pageId,
   page,
   onClick,
-  ...props
 }: PageLinkTileProps) {
   if (!page) {
     return (
-      <Tile id={id} {...props}>
-        <div className={styles.deleted}>This page no longer exists.</div>
+      <Tile>
+        <div className={styles.deleted}>This page has been deleted.</div>
       </Tile>
     );
   }
@@ -31,7 +29,6 @@ export default function PageLinkTile({
       onClick={onClick}
     >
       <PageTile
-        id={id}
         title={page.title}
         subtitle={page.subtitle}
         author={page.author}
