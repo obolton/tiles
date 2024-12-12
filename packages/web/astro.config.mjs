@@ -1,4 +1,3 @@
-/* eslint-env node */
 import fs from "node:fs";
 import path from "node:path";
 import { loadEnv } from "vite";
@@ -7,6 +6,7 @@ import react from "@astrojs/react";
 import cloudflare from "@astrojs/cloudflare";
 import editClientDirective from "./src/config/editClientDirective/register";
 
+const isProdEnvironment = import.meta.env.PROD === "true";
 const isTestEnvironment = process.env.VITEST === "true";
 const packageRoot = path.dirname(import.meta.filename);
 const workspaceRoot = path.resolve(packageRoot, "../..");
@@ -36,6 +36,10 @@ export default defineConfig({
     resolve: {
       alias: {
         "@": path.resolve(packageRoot, "./src"),
+        // Patch to make the Cloudflare adapter compatible with React 19
+        ...(isProdEnvironment
+          ? { "react-dom/server": "react-dom/server.edge" }
+          : {}),
       },
     },
   },
