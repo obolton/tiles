@@ -154,9 +154,4 @@ popover-menu > menu {
     display: flex;
     opacity: 1;
   }
-
-  &[aria-pressed="true"]::after {
-    display: none;
-    opacity: 0;
-  }
 }
