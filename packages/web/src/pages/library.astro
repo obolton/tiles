@@ -3,6 +3,7 @@ import Page from "@/layouts/Page.astro";
 import PagesGrid from "@/components/grid/PagesGrid";
 import client from "@/api/client";
 import { SESSION_COOKIE_NAME } from "api/src/constants/cookies";
+import { DEFAULT_FONT } from "@/config/fonts";
 
 const sessionId = Astro.cookies.get(SESSION_COOKIE_NAME)?.value;
 
@@ -12,9 +13,7 @@ if (!sessionId) {
 
 const pages = await client.pages.getRecentWithTiles.query(
   { offset: 0 },
-  {
-    context: { sessionId },
-  }
+  { context: { sessionId } }
 );
 
 if (!pages) {
@@ -22,6 +21,7 @@ if (!pages) {
 }
 
 const fonts = new Set(pages.pages.map((page) => page.font));
+fonts.add(DEFAULT_FONT);
 // TODO: Add fonts for pages that are loaded later
 ---
 
