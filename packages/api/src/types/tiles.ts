@@ -23,7 +23,7 @@ type ClientTileBase = Pick<
 
 // Image
 export type ClientImage = Omit<OmitMetadata<ImageTile>, "imageKey"> & {
-  imageUrl: string | null;
+  imageUrl: string;
 };
 export interface ClientImageTile extends ClientTileBase, ClientImage {
   type: "IMAGE";
