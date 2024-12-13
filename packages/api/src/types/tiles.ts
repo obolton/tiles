@@ -4,7 +4,6 @@ import type {
   TextTile,
   MapTile,
   LinkTile,
-  HeadingTile,
   PageLinkTile,
   Place,
   EventTile,
@@ -76,12 +75,6 @@ export interface ClientPageLinkTile extends ClientTileBase, ClientPageLink {
   type: "PAGE_LINK";
 }
 
-// Heading
-export type ClientHeading = OmitMetadata<HeadingTile>;
-export interface ClientHeadingTile extends ClientTileBase, ClientHeading {
-  type: "HEADING";
-}
-
 // Event
 export type ClientEvent = OmitMetadata<Omit<EventTile, "start" | "end">> & {
   start: string;
@@ -108,7 +101,6 @@ export type ClientEntity =
   | ClientPlace
   | ClientMap
   | ClientLink
-  | ClientHeading
   | ClientPageLink
   | ClientEvent
   | ClientCollection;
@@ -119,7 +111,6 @@ export type ClientTile =
   | ClientTextTile
   | ClientMapTile
   | ClientLinkTile
-  | ClientHeadingTile
   | ClientPageLinkTile
   | ClientEventTile
   | ClientCollectionTile;

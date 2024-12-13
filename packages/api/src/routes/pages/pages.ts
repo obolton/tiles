@@ -14,7 +14,6 @@ import { COLLECTION_FIELDS } from "@/routes/collections/collections.ts";
 import { IMAGE_FIELDS } from "@/routes/images/images.ts";
 import { MAP_FIELDS } from "@/routes/maps/maps.ts";
 import { TEXT_FIELDS } from "@/routes/text/text.ts";
-import { HEADING_FIELDS } from "@/routes/headings/headings.ts";
 import { EVENT_FIELDS } from "@/routes/events/events.ts";
 import { LINK_FIELDS } from "@/routes/links/links.ts";
 import { VIDEO_FIELDS } from "@/routes/videos/videos.ts";
@@ -48,9 +47,6 @@ const TILES_FIELDS = {
   },
   link: {
     select: LINK_FIELDS,
-  },
-  heading: {
-    select: HEADING_FIELDS,
   },
   pageLink: {
     select: PAGE_LINK_FIELDS,
@@ -98,17 +94,7 @@ function formatTile({
   ...tile
 }: TileWithData): ClientTile {
   const base = { placementId: id, position, rows, columns };
-  const {
-    image,
-    video,
-    text,
-    map,
-    link,
-    pageLink,
-    heading,
-    event,
-    collection,
-  } = tile;
+  const { image, video, text, map, link, pageLink, event, collection } = tile;
 
   if (image) {
     return {
@@ -149,14 +135,6 @@ function formatTile({
       ...base,
       ...link,
       imageUrl: link.imageUrl ? getLinkImageUrl(link.id) : null,
-    };
-  }
-
-  if (heading) {
-    return {
-      type: "HEADING",
-      ...base,
-      ...heading,
     };
   }
 

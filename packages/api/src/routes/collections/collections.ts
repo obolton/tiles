@@ -13,7 +13,6 @@ import { VIDEO_FIELDS } from "../videos/videos.ts";
 import { LINK_FIELDS } from "../links/links.ts";
 import { PAGE_LINK_FIELDS } from "../pageLinks/pageLinks.ts";
 import { EVENT_FIELDS } from "../events/events.ts";
-import { HEADING_FIELDS } from "../headings/headings.ts";
 
 export const COLLECTION_FIELDS = {
   id: true,
@@ -45,9 +44,6 @@ export const COLLECTION_FIELDS = {
       },
       event: {
         select: EVENT_FIELDS,
-      },
-      heading: {
-        select: HEADING_FIELDS,
       },
     },
     orderBy: {
