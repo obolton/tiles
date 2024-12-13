@@ -11,7 +11,14 @@ type Pages = AppRouterOutputs["pages"]["list"];
 type Page = Pages["pages"][number];
 
 function defaultRender(page: Page) {
-  return <PageLinkTile pageId={page.id} page={page} openInNewTab={false} />;
+  return (
+    <PageLinkTile
+      id={page.id}
+      pageId={page.id}
+      page={page}
+      openInNewTab={false}
+    />
+  );
 }
 
 interface PagesGridProps {
