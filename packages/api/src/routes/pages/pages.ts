@@ -57,7 +57,7 @@ const TILES_FIELDS = {
   collection: {
     select: COLLECTION_FIELDS,
   },
-} as const satisfies Prisma.TileSelect;
+} as const satisfies Prisma.TileSelect<ExtensionArgs>;
 
 const PAGE_FIELDS = {
   id: true,
@@ -84,7 +84,11 @@ const PAGE_FIELDS = {
   },
 } as const satisfies Prisma.PageSelect<ExtensionArgs>;
 
-type TileWithData = Prisma.TileGetPayload<{ select: typeof TILES_FIELDS }>;
+type TileWithData = Prisma.Result<
+  typeof prisma.tile,
+  { select: typeof TILES_FIELDS },
+  "findMany"
+>[number];
 
 function formatTile({
   id,
@@ -153,7 +157,7 @@ function formatTile({
             hue: page.hue,
             font: page.font,
             author: page.author,
-            imageKey: page.tiles[0]?.image?.imageKey ?? null,
+            imageUrl: page.tiles[0]?.image?.imageUrl ?? null,
           }
         : null,
     };
@@ -273,7 +277,7 @@ export async function listPages(
       hue: page.hue,
       font: page.font,
       author: page.author,
-      imageKey: page.tiles[0]?.image?.imageKey ?? null,
+      imageUrl: page.tiles[0]?.image?.imageUrl ?? null,
     })),
     hasMore: pages.length > count,
   };

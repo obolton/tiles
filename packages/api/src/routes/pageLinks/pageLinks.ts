@@ -2,6 +2,7 @@ import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { Prisma } from "@prisma/client";
 import type { CreatePageLinkSchema } from "./schema.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
+import { omit } from "@/utils/objects.ts";
 
 export const PAGE_LINK_TILE_PAGE_FIELDS = {
   id: true,
@@ -22,7 +23,7 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
     select: {
       image: {
         select: {
-          imageKey: true,
+          imageUrl: true,
         },
       },
     },
@@ -31,11 +32,7 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
     },
     take: 1,
   },
-} as const satisfies Prisma.PageSelect<ExtensionArgs>;
-
-export type PageLinkPage = Prisma.PageGetPayload<{
-  select: typeof PAGE_LINK_TILE_PAGE_FIELDS;
-}>;
+} satisfies Prisma.PageSelect<ExtensionArgs>;
 
 export const PAGE_LINK_FIELDS = {
   id: true,
@@ -43,25 +40,7 @@ export const PAGE_LINK_FIELDS = {
   page: {
     select: PAGE_LINK_TILE_PAGE_FIELDS,
   },
-} as const satisfies Prisma.PageLinkTileSelect;
-
-export type PageLink = Prisma.PageLinkTileGetPayload<{
-  select: typeof PAGE_LINK_FIELDS;
-}>;
-
-function formatPage(page: PageLinkPage) {
-  const { id, title, subtitle, theme, hue, font, author, tiles } = page;
-  return {
-    id,
-    title,
-    subtitle,
-    theme,
-    hue,
-    font,
-    author,
-    imageKey: tiles[0]?.image?.imageKey ?? null,
-  };
-}
+} as const satisfies Prisma.PageLinkTileSelect<ExtensionArgs>;
 
 export async function createPageLink({
   pageId,
@@ -89,7 +68,12 @@ export async function createPageLink({
     return {
       type: "PAGE_LINK" as const,
       ...pageLink,
-      page: pageLink.page ? formatPage(pageLink.page) : null,
+      page: pageLink.page
+        ? {
+            ...omit(pageLink.page, ["tiles"]),
+            imageUrl: pageLink.page.tiles[0]?.image?.imageUrl ?? null,
+          }
+        : null,
       ...placement,
     };
   });

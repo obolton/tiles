@@ -1,4 +1,4 @@
-import prisma from "@/database/prisma.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import type {
   CreateBookmarkSchema,
   DeleteBookmarkSchema,
@@ -12,11 +12,7 @@ import { checkPageAccess } from "@/utils/permissions.ts";
 
 export const BOOKMARK_FIELDS = {
   page: { select: PAGE_LINK_TILE_PAGE_FIELDS },
-} as const satisfies Prisma.BookmarkSelect;
-
-export type Bookmark = Prisma.BookmarkGetPayload<{
-  select: typeof BOOKMARK_FIELDS;
-}>;
+} as const satisfies Prisma.BookmarkSelect<ExtensionArgs>;
 
 export async function createBookmark(
   { pageId }: CreateBookmarkSchema,
@@ -82,7 +78,7 @@ export async function listBookmarks(
       hue: page.hue,
       font: page.font,
       author: page.author,
-      imageKey: page.tiles[0]?.image?.imageKey ?? null,
+      imageUrl: page.tiles[0]?.image?.imageUrl ?? null,
     })),
     hasMore: bookmarks.length > count,
   };

@@ -1,4 +1,4 @@
-import prisma from "@/database/prisma.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { cleanUserInput } from "@/utils/text.ts";
 import type { CreateImageSchema, UpdateImageSchema } from "./schema.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
@@ -6,11 +6,11 @@ import type { Prisma } from "@prisma/client";
 
 export const IMAGE_FIELDS = {
   id: true,
-  imageKey: true,
+  imageUrl: true,
   caption: true,
   originX: true,
   originY: true,
-} as const satisfies Prisma.ImageTileSelect;
+} as const satisfies Prisma.ImageTileSelect<ExtensionArgs>;
 
 export type Image = Prisma.ImageTileGetPayload<{ select: typeof IMAGE_FIELDS }>;
 

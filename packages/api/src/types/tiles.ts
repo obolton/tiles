@@ -22,7 +22,9 @@ type ClientTileBase = Pick<
 > & { placementId: string };
 
 // Image
-export type ClientImage = OmitMetadata<ImageTile>;
+export type ClientImage = Omit<OmitMetadata<ImageTile>, "imageKey"> & {
+  imageUrl: string | null;
+};
 export interface ClientImageTile extends ClientTileBase, ClientImage {
   type: "IMAGE";
 }
@@ -68,7 +70,7 @@ export type ClientPageLink = OmitMetadata<PageLinkTile> & {
     theme: Theme;
     hue: number | null;
     font: Font | null;
-    imageKey: string | null;
+    imageUrl: string | null;
   } | null;
 };
 export interface ClientPageLinkTile extends ClientTileBase, ClientPageLink {
