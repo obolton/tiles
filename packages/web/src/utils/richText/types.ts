@@ -23,17 +23,23 @@ export interface TextNode extends BaseNode {
 
 export interface ParagraphNode extends BaseNode {
   type: "paragraph";
-  children: TextNode[];
+  children: (TextNode | LinkNode)[];
 }
 
 export interface HeadingNode extends BaseNode {
   type: "heading";
+  children: (TextNode | LinkNode)[];
+}
+
+export interface LinkNode extends BaseNode {
+  type: "link";
+  url: string;
   children: TextNode[];
 }
 
 export interface QuoteNode extends BaseNode {
   type: "quote";
-  children: TextNode[];
+  children: (TextNode | LinkNode)[];
 }
 
 export interface ListNode extends BaseNode {
@@ -45,13 +51,14 @@ export interface ListNode extends BaseNode {
 export interface ListItemNode extends BaseNode {
   type: "listitem";
   value: number;
-  children: (TextNode | ListNode)[];
+  children: (TextNode | LinkNode | ListNode)[];
 }
 
 export type Node =
   | TextNode
   | ParagraphNode
   | HeadingNode
+  | LinkNode
   | QuoteNode
   | ListNode
   | ListItemNode;
