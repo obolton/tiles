@@ -4,7 +4,6 @@ import VideoTile from "@/components/tiles/VideoTile";
 import TextTile from "@/components/tiles/TextTile";
 import MapTile from "@/components/tiles/MapTile";
 import LinkTile from "@/components/tiles/LinkTile";
-import HeadingTile from "@/components/tiles/HeadingTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import EventTile from "@/components/tiles/EventTile";
 import CollectionTile from "@/components/tiles/CollectionTile";
@@ -44,8 +43,6 @@ function getTileComponent(tile: ClientTile) {
       return <MapTile {...tile} />;
     case "LINK":
       return <LinkTile {...tile} />;
-    case "HEADING":
-      return <HeadingTile {...tile} />;
     case "PAGE_LINK":
       return <PageLinkTile {...tile} />;
     case "EVENT":
@@ -240,14 +237,11 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
           placementId={tile.placementId}
           className={styles.item}
           rows={tile.rows}
-          columns={tile.type === "HEADING" ? 3 : tile.columns}
+          columns={tile.columns}
           isEditable={isEditable}
-          resizable={isEditable && tile.type !== "HEADING"}
+          resizable={isEditable}
           onDelete={onDelete}
-          grow={
-            (tile.type === "TEXT" && tile.columns === 3) ||
-            tile.type === "HEADING"
-          }
+          grow={tile.type === "TEXT" && tile.columns === 3}
           dropGroup={isEditable ? "root" : undefined}
         >
           {getTileComponent(tile)}
