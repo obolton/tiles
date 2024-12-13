@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import user from "./extensions/user.ts";
+import images from "./extensions/images.ts";
 
-const prisma = new PrismaClient().$extends(user);
+const prisma = new PrismaClient().$extends(images);
 
 export type ExtendedPrismaClient = typeof prisma;
 
@@ -13,6 +13,6 @@ type PrismaClientExtensionArgs<
   T extends (client: unknown) => { $extends: { extArgs: unknown } },
 > = ReturnType<T>["$extends"]["extArgs"];
 
-export type ExtensionArgs = PrismaClientExtensionArgs<typeof user>;
+export type ExtensionArgs = PrismaClientExtensionArgs<typeof images>;
 
 export default prisma;
