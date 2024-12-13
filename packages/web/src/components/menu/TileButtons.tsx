@@ -4,14 +4,8 @@ import textIcon from "@/icons/text.svg";
 import imageIcon from "@/icons/image.svg";
 import linkIcon from "@/icons/link.svg";
 import placeIcon from "@/icons/place.svg";
-import headingIcon from "@/icons/heading.svg";
 import eventIcon from "@/icons/event.svg";
-import {
-  createText,
-  createHeading,
-  createLink,
-  createPageLink,
-} from "@/utils/edit";
+import { createText, createLink, createPageLink } from "@/utils/edit";
 import { registerModal, showModal } from "@/utils/modals";
 import type { TileType } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
@@ -24,9 +18,8 @@ type TileButton = {
 };
 
 const BUTTONS: TileButton[] = [
-  { label: "Heading", type: "HEADING", icon: headingIcon.src },
-  { label: "Image", type: "IMAGE", icon: imageIcon.src },
   { label: "Text", type: "TEXT", icon: textIcon.src },
+  { label: "Image", type: "IMAGE", icon: imageIcon.src },
   { label: "Map", type: "MAP", icon: placeIcon.src },
   { label: "Link", type: "LINK", icon: linkIcon.src },
   { label: "Event", type: "EVENT", icon: eventIcon.src },
@@ -69,11 +62,7 @@ export default function TileButtons({
       if (!tileType) {
         return;
       }
-      if (tileType === "HEADING") {
-        await createHeading({
-          content: "",
-        });
-      } else if (tileType === "TEXT") {
+      if (tileType === "TEXT") {
         await createText({
           content: [],
         });
