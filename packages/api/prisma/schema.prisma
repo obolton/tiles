@@ -104,7 +104,6 @@ enum TileType {
   TEXT
   PLACE
   LINK
-  HEADING
   PAGE_LINK
   EVENT
   COLLECTION
@@ -124,7 +123,6 @@ model Tile {
   textTileId         String?  @map("text_tile_id") @db.Uuid
   mapTileId          String?  @map("map_tile_id") @db.Uuid
   linkTileId         String?  @map("link_tile_id") @db.Uuid
-  headingTileId      String?  @map("heading_tile_id") @db.Uuid
   pageLinkTileId     String?  @map("page_link_tile_id") @db.Uuid
   eventTileId        String?  @map("event_tile_id") @db.Uuid
   collectionId       String?  @map("collection_id") @db.Uuid
@@ -138,7 +136,6 @@ model Tile {
   text             TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
   map              MapTile?      @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
   link             LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
-  heading          HeadingTile?  @relation(fields: [headingTileId], references: [id], onDelete: SetNull)
   pageLink         PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
   event            EventTile?    @relation(fields: [eventTileId], references: [id], onDelete: SetNull)
   collection       Collection?   @relation("CollectionTile", fields: [collectionId], references: [id], onDelete: SetNull)
@@ -235,17 +232,6 @@ model LinkTile {
   tiles Tile[]
 
   @@map("link_tiles")
-}
-
-model HeadingTile {
-  id        String   @id @default(uuid()) @db.Uuid
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  content   String
-
-  tiles Tile[]
-
-  @@map("heading_tiles")
 }
 
 model PageLinkTile {

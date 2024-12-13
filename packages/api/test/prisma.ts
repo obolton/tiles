@@ -34,7 +34,6 @@ export const MOCK_PRISMA = {
   bookmark: mockModel(),
   collection: mockModel(),
   eventTile: mockModel(),
-  headingTile: mockModel(),
   imageTile: mockModel(),
   key: mockModel(),
   linkTile: mockModel(),
