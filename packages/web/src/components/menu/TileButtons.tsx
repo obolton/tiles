@@ -65,6 +65,7 @@ export default function TileButtons({
       if (tileType === "TEXT") {
         await createText({
           content: [],
+          columns: 3,
         });
       } else if (tileType === "LINK") {
         const link = await showModal<LinkModalResult>("LINK");
