@@ -15,7 +15,7 @@ import type {
   Font,
 } from "@prisma/client";
 
-type OmitMetadata<T> = Omit<T, "id" | "createdAt" | "updatedAt">;
+type OmitMetadata<T> = Omit<T, "createdAt" | "updatedAt">;
 
 type ClientTileBase = Pick<
   Tile,
