@@ -6,9 +6,15 @@ import linkIcon from "@/icons/link.svg";
 import placeIcon from "@/icons/place.svg";
 import headingIcon from "@/icons/heading.svg";
 import eventIcon from "@/icons/event.svg";
-import { createText, createHeading } from "@/utils/edit";
+import {
+  createText,
+  createHeading,
+  createLink,
+  createPageLink,
+} from "@/utils/edit";
 import { registerModal, showModal } from "@/utils/modals";
 import type { TileType } from "@/types/tiles";
+import type { LinkModalResult } from "@/components/modals/LinkModal";
 import { classNames } from "@/utils/css";
 
 type TileButton = {
@@ -71,6 +77,16 @@ export default function TileButtons({
         await createText({
           content: [],
         });
+      } else if (tileType === "LINK") {
+        const link = await showModal<LinkModalResult>("LINK");
+        if (!link) {
+          return;
+        }
+        if ("linkedPageId" in link) {
+          await createPageLink(link);
+        } else if (link.url) {
+          await createLink({ url: link.url });
+        }
       } else {
         showModal(tileType);
       }
