@@ -6,25 +6,33 @@ const TextNodeSchema = z.object({
   format: z.number().int().gte(0).lte(15),
 });
 
+const LinkNodeSchema = z.object({
+  type: z.literal("link"),
+  url: z.string().min(5),
+  children: z.array(TextNodeSchema),
+});
+
 const ParagraphNodeSchema = z.object({
   type: z.literal("paragraph"),
-  children: z.array(TextNodeSchema),
+  children: z.array(z.union([TextNodeSchema, LinkNodeSchema])),
 });
 
 const HeadingNodeSchema = z.object({
   type: z.literal("heading"),
-  children: z.array(TextNodeSchema),
+  children: z.array(z.union([TextNodeSchema, LinkNodeSchema])),
 });
 
 const QuoteNodeSchema = z.object({
   type: z.literal("quote"),
-  children: z.array(TextNodeSchema),
+  children: z.array(z.union([TextNodeSchema, LinkNodeSchema])),
 });
 
 const ListItemNodeSchema: z.AnyZodObject = z.object({
   type: z.literal("listitem"),
   value: z.number().int().gte(1),
-  children: z.lazy(() => z.array(z.union([TextNodeSchema, ListNodeSchema]))),
+  children: z.lazy(() =>
+    z.array(z.union([TextNodeSchema, LinkNodeSchema, ListNodeSchema])),
+  ),
 });
 
 const ListNodeSchema = z.object({
