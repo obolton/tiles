@@ -9,12 +9,13 @@ import type {
   ListNode as LexicalListNode,
   ListItemNode as LexicalListItemNode,
 } from "@lexical/list";
-import {
-  $isHeadingNode,
+import { $isHeadingNode, $isQuoteNode } from "@lexical/rich-text";
+import type {
   HeadingNode as LexicalHeadingNode,
-  $isQuoteNode,
   QuoteNode as LexicalQuoteNode,
 } from "@lexical/rich-text";
+import { $isLinkNode } from "@lexical/link";
+import type { LinkNode as LexicalLinkNode } from "@lexical/link";
 import { $getRoot, $isTextNode, $isParagraphNode } from "lexical";
 import { $isListNode, $isListItemNode } from "@lexical/list";
 import type {
@@ -25,6 +26,7 @@ import type {
   TextNode,
   HeadingNode,
   QuoteNode,
+  LinkNode,
 } from "./types";
 import { TextFormat, ListType } from "./types";
 
@@ -34,13 +36,15 @@ type SerializedNode<T extends LexicalNode> = T extends LexicalParagraphNode
     ? HeadingNode
     : T extends LexicalQuoteNode
       ? QuoteNode
-      : T extends LexicalListNode
-        ? ListNode
-        : T extends LexicalListItemNode
-          ? ListItemNode
-          : T extends LexicalTextNode
-            ? TextNode
-            : null;
+      : T extends LexicalLinkNode
+        ? LinkNode
+        : T extends LexicalListNode
+          ? ListNode
+          : T extends LexicalListItemNode
+            ? ListItemNode
+            : T extends LexicalTextNode
+              ? TextNode
+              : null;
 
 function getTextFormat(node: LexicalTextNode) {
   return (
@@ -58,9 +62,9 @@ function getListType(node: LexicalListNode) {
 }
 
 function getChildren(node: ElementNode) {
-  const spans: (TextNode | ListNode)[] = [];
+  const spans: (TextNode | LinkNode | ListNode)[] = [];
   for (const span of node.getChildren()) {
-    if ($isListNode(span) || $isTextNode(span)) {
+    if ($isListNode(span) || $isTextNode(span) || $isLinkNode(span)) {
       const serializedNode = serializeNode(span);
       if (serializedNode) {
         spans.push(serializedNode);
@@ -91,6 +95,14 @@ function serializeNode<T extends LexicalNode>(
   if ($isHeadingNode(node)) {
     return {
       type: "heading",
+      children: getChildren(node),
+    } as SerializedNode<T>;
+  }
+
+  if ($isLinkNode(node)) {
+    return {
+      type: "link",
+      url: node.getURL(),
       children: getChildren(node),
     } as SerializedNode<T>;
   }
