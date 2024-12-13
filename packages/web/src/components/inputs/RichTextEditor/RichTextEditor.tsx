@@ -20,11 +20,13 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
+import { LinkNode } from "@lexical/link";
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
 import { useEffect, useRef } from "react";
 import styles from "./RichTextEditor.module.css";
@@ -72,7 +74,7 @@ export default function RichTextEditor({
 }: RichTextEditorProps) {
   const ref = useRef<LexicalEditor>(null);
 
-  const initialConfig = useRef<InitialConfigType>();
+  const initialConfig = useRef<InitialConfigType>(null);
   if (!initialConfig.current) {
     initialConfig.current = {
       namespace: "tiles",
@@ -80,7 +82,7 @@ export default function RichTextEditor({
       editable,
       editorState: () => importNodes(value),
       onError: handleError,
-      nodes: [ListNode, ListItemNode, HeadingNode, QuoteNode],
+      nodes: [ListNode, ListItemNode, HeadingNode, QuoteNode, LinkNode],
     };
   }
 
@@ -122,6 +124,7 @@ export default function RichTextEditor({
         <OnChangePlugin onChange={onChange} />
         <EditorRefPlugin editorRef={ref} />
         <ListPlugin />
+        <LinkPlugin />
         <TabIndentationPlugin />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
       </LexicalComposer>
