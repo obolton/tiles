@@ -2,37 +2,30 @@ import { useCallback } from "react";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
-import { createLink, updateLink, createPageLink } from "@/utils/edit";
-import { handleError } from "@/utils/errors";
-import type { ClientLink, ClientPageLink } from "@/types/tiles";
 import styles from "./LinkModal.module.css";
 import type { ModalProps } from "@/utils/modals";
 import useInputState from "@/hooks/useInputState";
 import PagesGrid from "@/components/grid/PagesGrid";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 
-interface LinkModalProps extends ModalProps {
-  tileId?: string | null;
-  tile?: ClientLink | ClientPageLink | null;
+export type LinkModalResult = { linkedPageId: string } | { url: string | null };
+
+interface LinkModalProps extends ModalProps<LinkModalResult> {
+  url?: string;
+  showPages?: boolean;
+  showRemove?: boolean;
 }
 
-export default function LinkModal({ tileId, close, tile }: LinkModalProps) {
-  const [url, onChangeUrl] = useInputState(
-    tile && "url" in tile ? tile.url : "",
-  );
+export default function LinkModal({
+  close,
+  url: initialUrl = "",
+  showPages = true,
+  showRemove = false,
+}: LinkModalProps) {
+  const [url, onChangeUrl] = useInputState(initialUrl);
 
   const selectPage = useCallback(
-    async (linkedPageId: string) => {
-      try {
-        await createPageLink({
-          linkedPageId,
-        });
-      } catch (error) {
-        handleError(error);
-      }
-
-      close();
-    },
+    (linkedPageId: string) => close({ linkedPageId }),
     [close],
   );
 
@@ -44,21 +37,14 @@ export default function LinkModal({ tileId, close, tile }: LinkModalProps) {
         return;
       }
 
-      if (tileId) {
-        await updateLink({
-          id: tileId,
-          url,
-        });
-      } else {
-        await createLink({
-          url,
-        });
-      }
-
-      close();
+      close({ url });
     },
-    [url, tileId, close],
+    [url, close],
   );
+
+  const remove = useCallback(() => close({ url: null }), [close]);
+
+  const cancel = useCallback(() => close(), [close]);
 
   const pageId = document.body.dataset.pageId;
 
@@ -80,31 +66,41 @@ export default function LinkModal({ tileId, close, tile }: LinkModalProps) {
           />
         </label>
 
-        <label>Recent pages</label>
+        {showPages ? (
+          <>
+            <label>Recent pages</label>
 
-        <div className={styles.pages}>
-          <PagesGrid
-            render={(page) =>
-              page.id === pageId ? null : (
-                <PageLinkTile
-                  pageId={page.id}
-                  page={page}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    selectPage(page.id);
-                  }}
-                />
-              )
-            }
-          />
-        </div>
+            <div className={styles.pages}>
+              <PagesGrid
+                render={(page) =>
+                  page.id === pageId ? null : (
+                    <PageLinkTile
+                      id={page.id}
+                      pageId={page.id}
+                      page={page}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        selectPage(page.id);
+                      }}
+                    />
+                  )
+                }
+              />
+            </div>
+          </>
+        ) : null}
       </ModalBody>
 
       <ModalFooter>
         <button className="primary" type="submit" aria-disabled={!url}>
           Save
         </button>
-        <button className="secondary" type="button" onClick={close}>
+        {showRemove ? (
+          <button className="secondary" type="button" onClick={remove}>
+            Remove link
+          </button>
+        ) : null}
+        <button className="secondary" type="button" onClick={cancel}>
           Cancel
         </button>
       </ModalFooter>
