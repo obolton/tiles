@@ -6,12 +6,14 @@ import {
 } from "lexical";
 import { $createListNode, $createListItemNode } from "@lexical/list";
 import { $createHeadingNode, $createQuoteNode } from "@lexical/rich-text";
+import { $createLinkNode } from "@lexical/link";
 import type {
   ListNode,
   ListItemNode,
   ParagraphNode,
   TextNode,
   HeadingNode,
+  LinkNode,
   QuoteNode,
   RichText,
   Node,
@@ -37,19 +39,25 @@ function createLexicalTextNode(text: TextNode) {
 
 function createLexicalParagraphNode(paragraph: ParagraphNode) {
   const node = $createParagraphNode();
-  node.append(...paragraph.children.map(createLexicalTextNode));
+  node.append(...paragraph.children.map(createLexicalNode));
   return node;
 }
 
 function createLexicalHeadingNode(heading: HeadingNode) {
   const node = $createHeadingNode("h2");
-  node.append(...heading.children.map(createLexicalTextNode));
+  node.append(...heading.children.map(createLexicalNode));
+  return node;
+}
+
+function createLexicalLinkNode(link: LinkNode) {
+  const node = $createLinkNode(link.url);
+  node.append(...link.children.map(createLexicalTextNode));
   return node;
 }
 
 function createLexicalQuoteNode(quote: QuoteNode) {
   const node = $createQuoteNode();
-  node.append(...quote.children.map(createLexicalTextNode));
+  node.append(...quote.children.map(createLexicalNode));
   return node;
 }
 
@@ -77,6 +85,8 @@ function createLexicalNode(node: Node) {
       return createLexicalParagraphNode(node);
     case "heading":
       return createLexicalHeadingNode(node);
+    case "link":
+      return createLexicalLinkNode(node);
     case "quote":
       return createLexicalQuoteNode(node);
     case "list":
