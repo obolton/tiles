@@ -4,7 +4,8 @@
   flex-direction: column;
   justify-content: center;
   gap: 8px;
-  padding: 12cqw;
+  padding: 0 12cqw;
+  max-width: calc(100% - 32px);
   font-family: var(--font);
   text-shadow: 0 1px 1px rgb(255 255 255 / 20%);
   text-wrap: balance;
