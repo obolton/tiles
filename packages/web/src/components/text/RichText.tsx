@@ -5,9 +5,11 @@ import type {
   TextNode,
   ParagraphNode,
   HeadingNode,
+  LinkNode,
   QuoteNode,
   ListNode,
   ListItemNode,
+  Node,
 } from "@/utils/richText/types";
 import { ListType } from "@/utils/richText/types";
 
@@ -15,10 +17,10 @@ interface RichTextProps {
   content: RichText;
 }
 
-function RichText({ content }: RichTextProps) {
+function renderNodes(nodes: Node[]) {
   return (
     <>
-      {content.map((node, index) => {
+      {nodes.map((node, index) => {
         switch (node.type) {
           case "paragraph":
             return <Paragraph key={index} node={node} />;
@@ -28,12 +30,20 @@ function RichText({ content }: RichTextProps) {
             return <Quote key={index} node={node} />;
           case "list":
             return <List key={index} node={node} />;
+          case "text":
+            return <Text key={index} node={node} />;
+          case "link":
+            return <Link key={index} node={node} />;
           default:
             return null;
         }
       })}
     </>
   );
+}
+
+function RichText({ content }: RichTextProps) {
+  return renderNodes(content);
 }
 
 export default memo(RichText);
@@ -50,13 +60,7 @@ function Paragraph({ node }: ParagraphProps) {
       </p>
     );
   }
-  return (
-    <p>
-      {node.children.map((child, index) => (
-        <Text key={index} node={child} />
-      ))}
-    </p>
-  );
+  return <p>{renderNodes(node.children)}</p>;
 }
 
 interface HeadingProps {
@@ -71,12 +75,21 @@ function Heading({ node }: HeadingProps) {
       </h2>
     );
   }
+  return <h2>{renderNodes(node.children)}</h2>;
+}
+
+interface LinkProps {
+  node: LinkNode;
+}
+
+function Link({ node }: LinkProps) {
+  if (node.children.length === 0) {
+    return <span />;
+  }
   return (
-    <h2>
-      {node.children.map((child, index) => (
-        <Text key={index} node={child} />
-      ))}
-    </h2>
+    <a href={node.url} target="_blank" rel="noreferrer ugc">
+      {renderNodes(node.children)}
+    </a>
   );
 }
 
@@ -92,13 +105,7 @@ function Quote({ node }: QuoteProps) {
       </blockquote>
     );
   }
-  return (
-    <blockquote>
-      {node.children.map((child, index) => (
-        <Text key={index} node={child} />
-      ))}
-    </blockquote>
-  );
+  return <blockquote>{renderNodes(node.children)}</blockquote>;
 }
 
 interface ListItemProps {
@@ -113,18 +120,7 @@ function ListItem({ node }: ListItemProps) {
       </li>
     );
   }
-  return (
-    <li value={node.value}>
-      {node.children.map((child, index) => {
-        switch (child.type) {
-          case "text":
-            return <Text key={index} node={child} />;
-          case "list":
-            return <List key={index} node={child} />;
-        }
-      })}
-    </li>
-  );
+  return <li value={node.value}>{renderNodes(node.children)}</li>;
 }
 
 interface ListProps {

@@ -8,6 +8,10 @@
   white-space-collapse: preserve;
   border-radius: inherit;
 
+  & a {
+    text-decoration: underline;
+  }
+
   & blockquote {
     position: relative;
     padding: 0.25rem 0 0.25rem 0.75rem;
