@@ -1,9 +1,11 @@
 import { useCallback } from "react";
 import useEditable from "@/hooks/useEditable";
-import { editTile } from "@/utils/edit";
+import { showModal } from "@/utils/modals";
+import { updateLink } from "@/utils/edit";
 import Tile, { type TileProps } from "./Tile";
 import styles from "./LinkTile.module.css";
 import type { ClientLink } from "@/types/tiles";
+import type { LinkModalResult } from "@/components/modals/LinkModal";
 
 interface LinkTileProps extends TileProps, ClientLink {}
 
@@ -14,13 +16,17 @@ export default function LinkTile({
   description,
   siteName,
   imageUrl,
-  ...props
 }: LinkTileProps) {
   const isEditable = useEditable();
-  const edit = useCallback(
-    () => editTile(id, "LINK", { url, title, description, siteName, imageUrl }),
-    [description, id, imageUrl, siteName, title, url],
-  );
+  const edit = useCallback(async () => {
+    const result = await showModal<LinkModalResult>("LINK", {
+      url,
+      showPages: false,
+    });
+    if (result && "url" in result && result.url) {
+      await updateLink({ id, url: result.url });
+    }
+  }, [id, url]);
 
   const contents = (
     <div className={styles.caption}>
@@ -31,22 +37,17 @@ export default function LinkTile({
   );
 
   return (
-    <Tile id={id} {...props}>
+    <Tile backgroundImageUrl={imageUrl}>
       {isEditable ? (
-        <div
-          className={styles.link}
-          style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
-          onClick={edit}
-        >
+        <div className={styles.link} onClick={edit}>
           {contents}
         </div>
       ) : (
         <a
           className={styles.link}
-          style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
           href={url}
           target="_blank"
-          rel="noreferrer"
+          rel="noreferrer ugc"
         >
           {contents}
         </a>
