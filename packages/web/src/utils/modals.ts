@@ -13,7 +13,7 @@ export class ModalEvent<T extends object> extends Event {
   constructor(
     type: "modal:show" | "modal:remove",
     public readonly modal?: string,
-    public readonly callback?: (result: T) => void,
+    public readonly callback?: (result: T | undefined) => void,
     public readonly options?: ModalOptions,
   ) {
     super(type);
@@ -45,8 +45,8 @@ export function getModal(name: string) {
 export async function showModal<T extends object>(
   modal: string,
   options?: ModalOptions,
-): Promise<T> {
-  return new Promise((resolve, reject) => {
+) {
+  return new Promise<T | undefined>((resolve, reject) => {
     if (!registry.has(modal)) {
       return reject(new Error(`Unknown modal: ${modal}`));
     }
