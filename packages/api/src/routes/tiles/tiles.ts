@@ -98,6 +98,8 @@ export async function deleteTile({ id }: DeleteTileSchema) {
 type CreateTilePlacement = {
   pageId: string;
   type: TileType;
+  columns?: number;
+  rows?: number;
   imageTileId?: string;
   mapTileId?: string;
   textTileId?: string;
@@ -112,6 +114,8 @@ export async function createTilePlacement(
   {
     pageId,
     type,
+    columns = 1,
+    rows = 1,
     imageTileId,
     mapTileId,
     textTileId,
@@ -131,8 +135,8 @@ export async function createTilePlacement(
       pageId,
       type,
       position,
-      columns: 1,
-      rows: 1,
+      columns,
+      rows,
       imageTileId,
       mapTileId,
       textTileId,

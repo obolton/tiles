@@ -17,6 +17,8 @@ export async function createText({
   content,
   theme,
   hue,
+  columns,
+  rows,
 }: CreateTextSchema) {
   return prisma.$transaction(async (transaction) => {
     const text = await transaction.textTile.create({
@@ -32,6 +34,8 @@ export async function createText({
         pageId,
         type: "TEXT",
         textTileId: text.id,
+        columns,
+        rows,
       },
       transaction,
     );
