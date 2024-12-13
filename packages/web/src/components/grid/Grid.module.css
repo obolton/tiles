@@ -39,7 +39,7 @@
 }
 
 .item {
-  transition: scale var(--animation-duration) var(--easing);
+  transition: scale var(--animation-duration-short) var(--easing);
 
   &[data-drag-over="true"] {
     outline: solid var(--focus-ring-color) 3px !important;
