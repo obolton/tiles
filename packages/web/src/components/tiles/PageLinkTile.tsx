@@ -1,4 +1,3 @@
-import { getImageUrl } from "@/utils/images";
 import Tile from "./Tile";
 import styles from "./PageLinkTile.module.css";
 import type { ClientPageLink } from "@/types/tiles";
@@ -37,7 +36,7 @@ export default function PageLinkTile({
         hue={page.hue}
         font={page.font}
         theme={page.theme}
-        imageUrl={page.imageKey ? getImageUrl(page.imageKey) : undefined}
+        imageUrl={page.imageUrl}
       />
     </a>
   );

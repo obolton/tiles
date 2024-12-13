@@ -1,14 +1,14 @@
 import useEditable from "@/hooks/useEditable";
 import { updateImage } from "@/utils/edit";
-import { getImageUrl } from "@/utils/images";
 import { useCallback, useMemo, useState } from "react";
 import MovableImage from "@/components/images/MovableImage";
 import Caption from "./Caption";
 import styles from "./ImageTile.module.css";
-import Tile, { type TileProps } from "./Tile";
+import Tile from "./Tile";
 
-interface ImageTileProps extends TileProps {
-  imageKey: string;
+interface ImageTileProps {
+  id: string;
+  imageUrl: string;
   caption?: string | null;
   originX: number;
   originY: number;
@@ -18,14 +18,12 @@ interface ImageTileProps extends TileProps {
 export default function ImageTile({
   id,
   movable = true,
-  imageKey,
+  imageUrl,
   caption,
   originX,
   originY,
-  ...props
 }: ImageTileProps) {
   const isEditable = useEditable();
-  const src = getImageUrl(imageKey);
   const [origin, setOrigin] = useState({ x: originX, y: originY });
 
   const onUpdateCaption = useCallback(
@@ -53,14 +51,14 @@ export default function ImageTile({
   );
 
   return (
-    <Tile id={id} {...props}>
+    <Tile>
       <figure
         id={`${id}-figure`}
         className={styles.figure}
         data-show-in-lightbox="true"
       >
         <MovableImage
-          src={src}
+          src={imageUrl}
           style={style}
           loading="lazy"
           alt="Image"

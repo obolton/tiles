@@ -10,7 +10,7 @@ interface PageTileProps {
   hue?: number | null;
   font?: FontId | null;
   theme?: Theme;
-  imageUrl?: string;
+  imageUrl?: string | null;
   author?: {
     name: string;
     imageUrl?: string | null;
