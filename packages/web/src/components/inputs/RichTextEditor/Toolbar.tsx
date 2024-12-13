@@ -21,6 +21,7 @@ import {
   $createQuoteNode,
   $isQuoteNode,
 } from "@lexical/rich-text";
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import Icon from "@/components/icons/Icon";
 import headingIcon from "@/icons/heading.svg";
 import boldIcon from "@/icons/bold.svg";
@@ -30,8 +31,11 @@ import strikethroughIcon from "@/icons/strikethrough.svg";
 import orderedListIcon from "@/icons/ordered-list.svg";
 import unorderedListIcon from "@/icons/unordered-list.svg";
 import quoteIcon from "@/icons/quote.svg";
+import linkIcon from "@/icons/link.svg";
 import { classNames } from "@/utils/css";
 import styles from "./Toolbar.module.css";
+import { showModal } from "@/utils/modals";
+import type { LinkModalResult } from "@/components/modals/LinkModal";
 
 type Format = {
   heading: boolean;
@@ -42,6 +46,7 @@ type Format = {
   strikethrough: boolean;
   orderedList: boolean;
   unorderedList: boolean;
+  link: boolean;
 };
 
 function $getSelectionListType() {
@@ -85,6 +90,7 @@ export default function Toolbar({
     strikethrough: false,
     orderedList: false,
     unorderedList: false,
+    link: false,
   });
 
   useEffect(() => {
@@ -95,19 +101,21 @@ export default function Toolbar({
           return;
         }
 
-        const anchor = selection.anchor.getNode().getTopLevelElement();
+        const anchor = selection.anchor.getNode();
+        const topLevelElement = anchor.getTopLevelElement();
 
         const listType = $getSelectionListType();
 
         setFormat({
-          heading: $isHeadingNode(anchor),
-          quote: $isQuoteNode(anchor),
+          heading: $isHeadingNode(topLevelElement),
+          quote: $isQuoteNode(topLevelElement),
           bold: selection.hasFormat("bold"),
           italic: selection.hasFormat("italic"),
           underline: selection.hasFormat("underline"),
           strikethrough: selection.hasFormat("strikethrough"),
           orderedList: listType === "ordered",
           unorderedList: listType === "unordered",
+          link: $isLinkNode(anchor) || $isLinkNode(anchor.getParent()),
         });
       });
     });
@@ -139,6 +147,31 @@ export default function Toolbar({
       } else {
         $setBlocksType(selection, $createQuoteNode);
       }
+    });
+  }, [editor]);
+
+  const formatLink = useCallback(() => {
+    editor.read(() => {
+      const selection = $getSelection();
+      const anchor = $isRangeSelection(selection)
+        ? selection?.anchor.getNode()
+        : null;
+      const parent = anchor?.getParent();
+      const linkNode = $isLinkNode(anchor)
+        ? anchor
+        : $isLinkNode(parent)
+          ? parent
+          : null;
+
+      showModal<LinkModalResult>("LINK", {
+        url: linkNode?.getURL(),
+        showPages: false,
+        showRemove: !!linkNode,
+      }).then((result) => {
+        if (result && "url" in result) {
+          editor.dispatchCommand(TOGGLE_LINK_COMMAND, result.url);
+        }
+      });
     });
   }, [editor]);
 
@@ -270,6 +303,17 @@ export default function Toolbar({
           onClick={formatQuote}
         >
           <Icon src={quoteIcon.src} />
+        </button>
+      </li>
+      <li>
+        <button
+          className="floating small tooltip-top"
+          aria-label="Add a link"
+          type="button"
+          aria-pressed={format.link ? "true" : "false"}
+          onClick={formatLink}
+        >
+          <Icon src={linkIcon.src} />
         </button>
       </li>
       <li>
