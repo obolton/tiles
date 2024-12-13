@@ -8,7 +8,6 @@ import { showModal } from "./modals";
 type CreateImageInput = Omit<AppRouterInputs["images"]["create"], "pageId">;
 type CreateMapInput = Omit<AppRouterInputs["maps"]["create"], "pageId">;
 type CreateTextInput = Omit<AppRouterInputs["text"]["create"], "pageId">;
-type CreateHeadingInput = Omit<AppRouterInputs["headings"]["create"], "pageId">;
 type CreateEventInput = Omit<AppRouterInputs["events"]["create"], "pageId">;
 type CreateLinkInput = Omit<
   AppRouterInputs["externalLinks"]["create"],
@@ -25,7 +24,6 @@ type CreateCollectionInput = Omit<
 
 type UpdateImageInput = AppRouterInputs["images"]["update"];
 type UpdateTextInput = AppRouterInputs["text"]["update"];
-type UpdateHeadingInput = AppRouterInputs["headings"]["update"];
 type UpdateEventInput = AppRouterInputs["events"]["update"];
 type UpdateLinkInput = AppRouterInputs["externalLinks"]["update"];
 type UpdateVideoInput = AppRouterInputs["videos"]["update"];
@@ -92,14 +90,6 @@ export async function createText(data: CreateTextInput) {
   createTileState(result);
 }
 
-export async function createHeading(data: CreateHeadingInput) {
-  const result = await client.headings.create.mutate({
-    pageId: getPageId(),
-    ...data,
-  });
-  createTileState(result);
-}
-
 export async function createEvent(data: CreateEventInput) {
   const result = await client.events.create.mutate({
     pageId: getPageId(),
@@ -146,11 +136,6 @@ export async function updateImage(data: UpdateImageInput) {
 
 export async function updateText(data: UpdateTextInput) {
   const result = await client.text.update.mutate(data);
-  updateTileState(result);
-}
-
-export async function updateHeading(data: UpdateHeadingInput) {
-  const result = await client.headings.update.mutate(data);
   updateTileState(result);
 }
 
