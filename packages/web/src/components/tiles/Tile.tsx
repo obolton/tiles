@@ -11,7 +11,7 @@ export type TileProps = {
   theme?: Theme | null;
   hue?: number | null;
   font?: FontId | null;
-  backgroundImageUrl?: string;
+  backgroundImageUrl?: string | null;
 };
 
 const THEME_CLASSES = {
