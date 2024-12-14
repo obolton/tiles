@@ -23,7 +23,7 @@
 }
 
 .header h1,
-.editor [data-placeholder="true"],
+.editor:has([data-placeholder="true"]),
 .editor p > span:first-child {
   font-size: clamp(1.5rem, 8vw, 2.8rem);
   font-weight: 600;
