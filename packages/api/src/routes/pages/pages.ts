@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 import type { Theme, Font } from "@prisma/client";
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
-import { getProfileImageUrl } from "@/utils/cdn.ts";
 import {
   PAGE_LINK_FIELDS,
   PAGE_LINK_TILE_PAGE_FIELDS,
@@ -226,7 +225,7 @@ export async function getProfilePageByUserId({
     select: {
       id: true,
       name: true,
-      imageKey: true,
+      imageUrl: true,
       profilePage: {
         select: PAGE_FIELDS,
       },
@@ -240,7 +239,7 @@ export async function getProfilePageByUserId({
   return {
     id: user.name,
     name: user.name,
-    imageUrl: user.imageKey ? getProfileImageUrl(user.imageKey) : null,
+    imageUrl: user.imageUrl,
     profilePage: {
       ...user.profilePage,
       tiles: user.profilePage.tiles.map(formatTile),
