@@ -78,7 +78,16 @@ export default function LinkModal({
                       id={page.id}
                       pageId={page.id}
                       page={page}
+                      openInNewTab={false}
                       onClick={(event) => {
+                        if (
+                          event.ctrlKey ||
+                          event.shiftKey ||
+                          event.altKey ||
+                          event.metaKey
+                        ) {
+                          return;
+                        }
                         event.preventDefault();
                         selectPage(page.id);
                       }}
