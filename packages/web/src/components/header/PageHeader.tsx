@@ -4,6 +4,7 @@ import useEditable from "@/hooks/useEditable";
 import client from "@/api/client";
 import { classNames } from "@/utils/css";
 import styles from "./PageHeader.module.css";
+import { handleError } from "@/utils/errors";
 
 interface PageHeaderProps {
   pageId: string;
@@ -21,14 +22,21 @@ export default function PageHeader({
   );
   const isEditable = useEditable();
 
-  const commit = useCallback(() => {
+  const commit = useCallback(async () => {
     const [title = "", ...otherLines] = value.split("\n");
     const subtitle = otherLines.join("\n").trim() || "";
-    client.pages.update.mutate({
-      id: pageId,
-      title,
-      subtitle,
-    });
+    if (!title) {
+      return;
+    }
+    try {
+      await client.pages.update.mutate({
+        id: pageId,
+        title,
+        subtitle,
+      });
+    } catch (error) {
+      handleError(error);
+    }
   }, [pageId, value]);
 
   const [title, ...subtitle] = value.split("\n");
