@@ -29,6 +29,8 @@ export type Map = Prisma.MapTileGetPayload<{ select: typeof MAP_FIELDS }>;
 
 export async function createMap({
   pageId,
+  columns,
+  rows,
   place: { name, providerId, lat, long, boundingBox, address },
 }: CreateMapSchema) {
   return prisma.$transaction(async (transaction) => {
@@ -52,6 +54,8 @@ export async function createMap({
         pageId,
         type: "MAP",
         mapTileId: map.id,
+        columns,
+        rows,
       },
       transaction,
     );
