@@ -56,7 +56,7 @@ export default function EditMapTileModal({
         });
         updateTileState(tile);
       } else {
-        await createMap({ place });
+        await createMap({ place, columns: 3 });
       }
 
       close();
