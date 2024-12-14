@@ -69,14 +69,14 @@ export async function updateVideo({ id, title }: UpdateVideoSchema) {
   };
 }
 
-export async function getVideoTileImageUrl(id: string) {
+export async function getVideoTileOriginalImageUrl(id: string) {
   const video = await prisma.videoTile.findUnique({
     where: {
       id,
     },
     select: {
-      imageUrl: true,
+      originalImageUrl: true,
     },
   });
-  return video?.imageUrl;
+  return video?.originalImageUrl;
 }

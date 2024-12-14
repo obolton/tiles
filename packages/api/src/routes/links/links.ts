@@ -79,14 +79,14 @@ export async function updateLink({ id, url }: UpdateLinkSchema) {
   };
 }
 
-export async function getLinkTileImageUrl(id: string) {
+export async function getLinkTileOriginalImageUrl(id: string) {
   const link = await prisma.linkTile.findUnique({
     where: {
       id,
     },
     select: {
-      imageUrl: true,
+      originalImageUrl: true,
     },
   });
-  return link?.imageUrl;
+  return link?.originalImageUrl;
 }

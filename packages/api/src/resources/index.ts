@@ -1,7 +1,7 @@
 import { ServerResponse } from "node:http";
 import { z } from "zod";
-import { getLinkTileImageUrl } from "@/routes/links/links.ts";
-import { getVideoTileImageUrl } from "@/routes/videos/videos.ts";
+import { getLinkTileOriginalImageUrl } from "@/routes/links/links.ts";
+import { getVideoTileOriginalImageUrl } from "@/routes/videos/videos.ts";
 
 const ResourceIdSchema = z.string().uuid();
 
@@ -32,7 +32,7 @@ async function handleLinkTile(id: string, res: ServerResponse) {
   }
 
   try {
-    const imageUrl = await getLinkTileImageUrl(id);
+    const imageUrl = await getLinkTileOriginalImageUrl(id);
     if (imageUrl) {
       res.writeHead(301, {
         Location: imageUrl,
@@ -59,7 +59,7 @@ async function handleVideoTile(id: string, res: ServerResponse) {
   }
 
   try {
-    const imageUrl = await getVideoTileImageUrl(id);
+    const imageUrl = await getVideoTileOriginalImageUrl(id);
     if (imageUrl) {
       res.writeHead(301, {
         Location: imageUrl,
