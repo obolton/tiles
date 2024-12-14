@@ -1,6 +1,5 @@
-import prisma from "@/database/prisma.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { getLinkMetadata } from "@/utils/linkMetadata.ts";
-import { getLinkImageUrl } from "@/utils/cdn.ts";
 import { getVideoInfo } from "@/utils/videos.ts";
 import { createVideo } from "../videos/videos.ts";
 import type { Prisma } from "@prisma/client";
@@ -14,7 +13,7 @@ export const LINK_FIELDS = {
   description: true,
   siteName: true,
   imageUrl: true,
-} as const satisfies Prisma.LinkTileSelect;
+} as const satisfies Prisma.LinkTileSelect<ExtensionArgs>;
 
 export async function createLink({ pageId, url }: CreateLinkSchema) {
   // Convert links to video tiles if they are video links
@@ -35,7 +34,7 @@ export async function createLink({ pageId, url }: CreateLinkSchema) {
         title,
         description,
         siteName,
-        imageUrl,
+        originalImageUrl: imageUrl,
       },
       select: LINK_FIELDS,
     });
@@ -50,7 +49,6 @@ export async function createLink({ pageId, url }: CreateLinkSchema) {
     return {
       type: "LINK" as const,
       ...link,
-      imageUrl: link.imageUrl ? getLinkImageUrl(link.id) : null,
       ...placement,
     };
   });
@@ -68,14 +66,13 @@ export async function updateLink({ id, url }: UpdateLinkSchema) {
       title,
       description,
       siteName,
-      imageUrl,
+      originalImageUrl: imageUrl,
     },
     select: LINK_FIELDS,
   });
   return {
     type: "LINK" as const,
     ...link,
-    imageUrl: link.imageUrl ? getLinkImageUrl(link.id) : null,
   };
 }
 

@@ -30,7 +30,9 @@ export interface ClientImageTile extends ClientTileBase, ClientImage {
 }
 
 // Video
-export type ClientVideo = OmitMetadata<VideoTile>;
+export type ClientVideo = Omit<OmitMetadata<VideoTile>, "originalImageUrl"> & {
+  imageUrl: string | null;
+};
 export interface ClientVideoTile extends ClientTileBase, ClientVideo {
   type: "VIDEO";
 }
@@ -55,7 +57,9 @@ export interface ClientMapTile extends ClientTileBase, ClientMap {
 }
 
 // Link
-export type ClientLink = OmitMetadata<LinkTile>;
+export type ClientLink = Omit<OmitMetadata<LinkTile>, "originalImageUrl"> & {
+  imageUrl: string | null;
+};
 export interface ClientLinkTile extends ClientTileBase, ClientLink {
   type: "LINK";
 }

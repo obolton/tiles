@@ -1,11 +1,7 @@
 import { Prisma } from "@prisma/client";
 import type { Theme, Font } from "@prisma/client";
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
-import {
-  getProfileImageUrl,
-  getLinkImageUrl,
-  getVideoImageUrl,
-} from "@/utils/cdn.ts";
+import { getProfileImageUrl } from "@/utils/cdn.ts";
 import {
   PAGE_LINK_FIELDS,
   PAGE_LINK_TILE_PAGE_FIELDS,
@@ -113,7 +109,6 @@ function formatTile({
       type: "VIDEO",
       ...base,
       ...video,
-      imageUrl: video.imageUrl ? getVideoImageUrl(video.id) : null,
     };
   }
 
@@ -138,7 +133,6 @@ function formatTile({
       type: "LINK",
       ...base,
       ...link,
-      imageUrl: link.imageUrl ? getLinkImageUrl(link.id) : null,
     };
   }
 
