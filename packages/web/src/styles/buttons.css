@@ -145,6 +145,7 @@ form[data-pending] button[type="submit"] {
     inset: auto 0;
     min-width: 100%;
     min-height: 100%;
+    border-radius: 50%;
     aspect-ratio: 1;
     background: radial-gradient(
         closest-side,
@@ -167,9 +168,15 @@ form[data-pending] button[type="submit"] {
         oklch(80% 90% 360deg)
       );
     animation: 1s linear infinite rotate;
+    transition: opacity var(--animation-duration) var(--easing);
+
+    @starting-style {
+      opacity: 0;
+    }
   }
 
-  &::after {
+  &.primary::after,
+  &.secondary::after {
     content: "Saving\2026";
     position: absolute;
     inset: 0;
