@@ -36,7 +36,7 @@ export default defineConfig({
       alias: {
         "@": path.resolve(packageRoot, "./src"),
         // Patch to make the Cloudflare adapter compatible with React 19
-        ...(import.meta.env.CF_PAGES
+        ...(env.CF_PAGES
           ? { "react-dom/server": "react-dom/server.edge" }
           : {}),
       },
