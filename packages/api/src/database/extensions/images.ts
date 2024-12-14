@@ -1,5 +1,10 @@
 import { Prisma } from "@prisma/client";
-import { getProfileImageUrl, getImageUrl } from "@/utils/cdn.ts";
+import {
+  getProfileImageUrl,
+  getImageUrl,
+  getLinkImageUrl,
+  getVideoImageUrl,
+} from "@/utils/cdn.ts";
 
 export default Prisma.defineExtension({
   name: "images-extension",
@@ -17,6 +22,22 @@ export default Prisma.defineExtension({
         needs: { imageKey: true },
         compute({ imageKey }) {
           return getImageUrl(imageKey);
+        },
+      },
+    },
+    linkTile: {
+      imageUrl: {
+        needs: { id: true },
+        compute({ id }) {
+          return getLinkImageUrl(id);
+        },
+      },
+    },
+    videoTile: {
+      imageUrl: {
+        needs: { id: true },
+        compute({ id }) {
+          return getVideoImageUrl(id);
         },
       },
     },
