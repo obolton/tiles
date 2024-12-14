@@ -20,7 +20,7 @@ export async function setIsBookmarked(pageId: string, isBookmarked: boolean) {
   } else {
     await client.bookmarks.delete.mutate({ pageId });
   }
-  putRecord(BOOKMARKS_DB, BOOKMARKS_STORE_NAME, pageId, isBookmarked);
+  void putRecord(BOOKMARKS_DB, BOOKMARKS_STORE_NAME, pageId, isBookmarked);
 }
 
 export async function getIsBookmarked(pageId: string) {
@@ -33,5 +33,6 @@ export async function getIsBookmarked(pageId: string) {
     return bookmark;
   }
   const result = await client.bookmarks.isBookmarked.query({ pageId });
-  putRecord(BOOKMARKS_DB, BOOKMARKS_STORE_NAME, pageId, result);
+  void putRecord(BOOKMARKS_DB, BOOKMARKS_STORE_NAME, pageId, result);
+  return result;
 }
