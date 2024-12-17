@@ -22,7 +22,16 @@ export function destroy(
     timing: DEFAULT_TIMING,
   },
 ) {
-  const animation = element.animate(
+  const rect = element.getBoundingClientRect();
+  const clone = element.cloneNode(true) as HTMLElement;
+  clone.style.setProperty("position", "fixed");
+  clone.style.setProperty("top", `${rect.top}px`);
+  clone.style.setProperty("left", `${rect.left}px`);
+  clone.style.setProperty("width", `${rect.width}px`);
+  clone.style.setProperty("height", `${rect.height}px`);
+  clone.style.setProperty("z-index", "-1");
+  document.body.appendChild(clone);
+  const animation = clone.animate(
     [
       {
         opacity: 1,
@@ -37,7 +46,9 @@ export function destroy(
     ],
     timing,
   );
-  return createAnimationPromise(animation);
+  const promise = createAnimationPromise(animation);
+  promise.finally(() => clone.remove());
+  return promise;
 }
 
 export function appearFrom(
