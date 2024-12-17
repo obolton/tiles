@@ -1,16 +1,17 @@
 .header {
   --header-text-color: var(--text-color);
+  --subtitle-text-color: oklch(from var(--page-color) 50% 20% h);
 
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: end;
-  gap: 8px;
+  gap: 12px;
   margin: 48px auto;
   padding: 0;
 
   & .title {
-    padding: 16px 0;
+    padding: 4px 8px;
     border-radius: 8px;
     font-family: var(--font);
     width: fit-content;
@@ -56,32 +57,22 @@
 
 .subtitle,
 .editor {
-  color: oklch(from var(--page-color) 40% calc(c * 1.25) h);
+  color: var(--subtitle-text-color);
   font-size: 1.5rem;
   font-weight: 500;
+  -webkit-text-stroke: var(--subtitle-stroke, none);
 }
 
 .header h1,
 .editor:has([data-placeholder="true"]),
 .editor p > span:first-child {
+  color: var(--text-color);
   font-size: clamp(1.5rem, 8vw, 2.8rem);
   font-weight: 600;
-}
-
-.header h1,
-.editor:not(:has([data-placeholder="true"])) p > span:first-child {
-  color: var(--header-text-color);
-}
-
-.buttons {
-  position: absolute;
-  top: 12px;
-  right: 12px;
+  -webkit-text-stroke: var(--title-stroke, none);
 }
 
 .with-cover-image {
-  --header-text-color: oklch(from var(--text-color) l c h / 80%);
-
   min-height: 240px;
   margin-top: -1px;
   padding: 24px;
@@ -91,8 +82,11 @@
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 20%);
 
   & .title {
+    --title-stroke: 2px rgb(255 255 255 / 40%);
+    --subtitle-text-color: rgb(255 255 255 / 90%);
+    --subtitle-stroke: 2px rgb(0 0 0 / 40%);
+
     position: relative;
-    -webkit-text-stroke: 2px rgb(255 255 255 / 40%);
     paint-order: stroke fill;
     text-shadow: 0 0 12px rgb(255 255 255 / 20%);
   }

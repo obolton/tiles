@@ -7,7 +7,7 @@
 }
 
 body[data-editing] .editable {
-  outline-width: 4px;
+  outline-width: 3px;
   outline-color: rgb(0 0 0 / 10%);
 }
 

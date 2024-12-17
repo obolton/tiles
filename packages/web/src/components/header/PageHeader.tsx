@@ -100,7 +100,7 @@ export default function PageHeader({
       )}
       style={style}
     >
-      <div className={styles.title}>
+      <div className={classNames(styles.title, "editable")}>
         {isEditable ? (
           <PlainTextEditor
             id="page-title-textarea"
@@ -130,27 +130,26 @@ export default function PageHeader({
               <span>{author.name}</span>
             </address>
           </a>
+
           {updatedAt ? (
             <time dateTime={updatedAt}>
               {formatRelativeDate(new Date(updatedAt))}
             </time>
           ) : null}
-        </div>
-      ) : null}
 
-      {isEditable ? (
-        <div className={styles.buttons}>
-          <button
-            className="floating tooltip-bottom"
-            aria-label={
-              coverImageUrl ? "Remove cover image" : "Add a cover image"
-            }
-            type="button"
-            aria-pressed={coverImageUrl ? "true" : "false"}
-            onClick={coverImageUrl ? removeCoverImage : selectCoverImage}
-          >
-            <Icon src={imageIcon.src} />
-          </button>
+          {isEditable ? (
+            <button
+              className="floating tooltip-right"
+              aria-label={
+                coverImageUrl ? "Remove cover image" : "Add a cover image"
+              }
+              type="button"
+              aria-pressed={coverImageUrl ? "true" : "false"}
+              onClick={coverImageUrl ? removeCoverImage : selectCoverImage}
+            >
+              <Icon src={imageIcon.src} />
+            </button>
+          ) : null}
         </div>
       ) : null}
     </header>
