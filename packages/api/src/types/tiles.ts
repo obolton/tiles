@@ -74,7 +74,7 @@ export type ClientPageLink = OmitMetadata<PageLinkTile> & {
     theme: Theme;
     hue: number | null;
     font: Font | null;
-    imageUrl: string | null;
+    coverImageUrl: string | null;
   } | null;
 };
 export interface ClientPageLinkTile extends ClientTileBase, ClientPageLink {

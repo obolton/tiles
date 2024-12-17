@@ -70,16 +70,7 @@ export async function listBookmarks(
     skip: offset,
   });
   return {
-    pages: bookmarks.slice(0, count).map(({ page }) => ({
-      id: page.id,
-      title: page.title,
-      subtitle: page.subtitle,
-      theme: page.theme,
-      hue: page.hue,
-      font: page.font,
-      author: page.author,
-      imageUrl: page.tiles[0]?.image?.imageUrl ?? null,
-    })),
+    pages: bookmarks.slice(0, count).map(({ page }) => page),
     hasMore: bookmarks.length > count,
   };
 }

@@ -1,5 +1,4 @@
 import { Prisma } from "@prisma/client";
-import type { Theme, Font } from "@prisma/client";
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import {
   PAGE_LINK_FIELDS,
@@ -137,23 +136,10 @@ function formatTile({
   }
 
   if (pageLink) {
-    const page = pageLink.page;
     return {
       type: "PAGE_LINK",
       ...base,
       ...pageLink,
-      page: page
-        ? {
-            id: page.id,
-            title: page.title,
-            subtitle: page.subtitle,
-            theme: page.theme,
-            hue: page.hue,
-            font: page.font,
-            author: page.author,
-            imageUrl: page.tiles[0]?.image?.imageUrl ?? null,
-          }
-        : null,
     };
   }
 
@@ -245,16 +231,7 @@ export async function listPages(
     skip: offset,
   });
   return {
-    pages: pages.slice(0, count).map((page) => ({
-      id: page.id,
-      title: page.title,
-      subtitle: page.subtitle,
-      theme: page.theme,
-      hue: page.hue,
-      font: page.font,
-      author: page.author,
-      imageUrl: page.tiles[0]?.image?.imageUrl ?? null,
-    })),
+    pages: pages.slice(0, count),
     hasMore: pages.length > count,
   };
 }

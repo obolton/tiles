@@ -2,7 +2,6 @@ import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { Prisma } from "@prisma/client";
 import type { CreatePageLinkSchema } from "./schema.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
-import { omit } from "@/utils/objects.ts";
 
 export const PAGE_LINK_TILE_PAGE_FIELDS = {
   id: true,
@@ -11,26 +10,13 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
   theme: true,
   hue: true,
   font: true,
+  coverImageUrl: true,
   author: {
     select: {
       id: true,
       name: true,
       imageUrl: true,
     },
-  },
-  tiles: {
-    where: { type: "IMAGE" },
-    select: {
-      image: {
-        select: {
-          imageUrl: true,
-        },
-      },
-    },
-    orderBy: {
-      position: "asc",
-    },
-    take: 1,
   },
 } satisfies Prisma.PageSelect<ExtensionArgs>;
 
@@ -68,12 +54,6 @@ export async function createPageLink({
     return {
       type: "PAGE_LINK" as const,
       ...pageLink,
-      page: pageLink.page
-        ? {
-            ...omit(pageLink.page, ["tiles"]),
-            imageUrl: pageLink.page.tiles[0]?.image?.imageUrl ?? null,
-          }
-        : null,
       ...placement,
     };
   });
