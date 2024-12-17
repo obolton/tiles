@@ -2,12 +2,12 @@ import { useCallback } from "react";
 import useEditable from "@/hooks/useEditable";
 import { showModal } from "@/utils/modals";
 import { updateLink } from "@/utils/edit";
-import Tile, { type TileProps } from "./Tile";
+import Tile from "./Tile";
 import styles from "./LinkTile.module.css";
 import type { ClientLink } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 
-interface LinkTileProps extends TileProps, ClientLink {}
+type LinkTileProps = ClientLink;
 
 export default function LinkTile({
   id,
