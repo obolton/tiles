@@ -5,6 +5,7 @@ import type { ClientPlace } from "@/types/tiles";
 import { createMap, updateTileState } from "@/utils/edit";
 import { useCallback, useEffect, useState } from "react";
 import styles from "./PlaceModal.module.css";
+import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import type { ModalProps } from "@/utils/modals";
@@ -66,6 +67,7 @@ export default function EditMapTileModal({
 
   return (
     <>
+      <ModalHeader>Place</ModalHeader>
       <ModalBody>
         <label>
           Search for a place
