@@ -41,7 +41,7 @@ export default function ProfilePageHeader({
   );
 
   return (
-    <div className={styles.header}>
+    <header className={styles.header}>
       <profile-image class="large" src={imageUrl} name={name} />
 
       <div className={styles.text}>
@@ -62,6 +62,6 @@ export default function ProfilePageHeader({
           )}
         </p>
       </div>
-    </div>
+    </header>
   );
 }

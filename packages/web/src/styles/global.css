@@ -64,15 +64,15 @@ menu {
 
 header,
 main {
-  margin: 0 auto;
   max-width: min(var(--max-width), calc(100vw - 160px));
 }
 
 header {
-  margin-bottom: 32px;
+  margin: 64px auto;
 }
 
 main {
+  margin: 0 auto;
   padding: 0 0 6rem;
   container: main / inline-size;
 }

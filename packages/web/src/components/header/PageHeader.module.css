@@ -6,8 +6,8 @@
   flex-direction: column;
   justify-content: end;
   gap: 8px;
-  padding: 24px 0;
-  min-height: 240px;
+  margin: 48px auto;
+  padding: 0;
 
   & .title {
     padding: 16px 0;
@@ -82,6 +82,7 @@
 .with-cover-image {
   --header-text-color: oklch(from var(--text-color) l c h / 80%);
 
+  min-height: 240px;
   margin-top: -1px;
   padding: 24px;
   border-radius: 0 0 16px 16px;

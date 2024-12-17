@@ -64,12 +64,11 @@ const fontConfig = font ? getFontConfig(font) : undefined;
         }
       : undefined}
   >
-    <header>
-      <Navigation />
-      <SignIn />
-      <slot name="menu" />
-      <slot name="header" />
-    </header>
+    <Navigation />
+    <SignIn />
+    <slot name="menu" />
+    <slot name="header" />
+
     <main><slot /></main>
     <toast-container></toast-container>
     <ModalLauncher client:edit />

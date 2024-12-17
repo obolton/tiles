@@ -93,7 +93,7 @@ export default function PageHeader({
   );
 
   return (
-    <div
+    <header
       className={classNames(
         styles.header,
         coverImageUrl ? styles["with-cover-image"] : null,
@@ -153,6 +153,6 @@ export default function PageHeader({
           </button>
         </div>
       ) : null}
-    </div>
+    </header>
   );
 }
