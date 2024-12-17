@@ -43,7 +43,7 @@ registerModal(
 
 registerModal(
   "MAP",
-  lazy(() => import("@/components/modals/EditPlaceTileModal")),
+  lazy(() => import("@/components/modals/PlaceModal")),
 );
 
 registerModal(

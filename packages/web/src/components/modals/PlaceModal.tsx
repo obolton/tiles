@@ -4,7 +4,7 @@ import useDebouncedCallback from "@/hooks/useDebouncedCallback";
 import type { ClientPlace } from "@/types/tiles";
 import { createMap, updateTileState } from "@/utils/edit";
 import { useCallback, useEffect, useState } from "react";
-import styles from "./EditPlaceTileModal.module.css";
+import styles from "./PlaceModal.module.css";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import type { ModalProps } from "@/utils/modals";
