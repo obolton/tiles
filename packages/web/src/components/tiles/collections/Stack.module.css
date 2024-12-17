@@ -45,3 +45,12 @@
 .stack[closing] {
   z-index: 1;
 }
+
+.stack[opening]::part(dialog),
+.stack[closing]::part(dialog) {
+  view-transition-name: stack;
+}
+
+::view-transition-group(stack) {
+  animation-duration: 0s;
+}
