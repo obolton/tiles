@@ -55,16 +55,11 @@ fonts.add(DEFAULT_FONT);
     pageId={page.id}
     title={page.title}
     subtitle={page.subtitle}
-    slot="header"
-    client:edit
-  />
-
-  <PageMetadata
-    id={page.author.id}
-    name={page.author.name}
-    imageUrl={page.author.imageUrl}
+    coverImageUrl={page.coverImageUrl}
+    author={page.author}
     updatedAt={page.updatedAt}
     slot="header"
+    client:edit
   />
 
   <Grid tiles={page.tiles} client:edit />
