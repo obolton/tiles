@@ -16,7 +16,7 @@ export class ModalEvent<T extends object> extends Event {
     public readonly callback?: (result: T | undefined) => void,
     public readonly options?: ModalOptions,
   ) {
-    super(type);
+    super(type, { bubbles: true });
   }
 }
 
