@@ -73,7 +73,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       await client.tiles.delete.mutate({ id });
       const element = document.querySelector(`[data-placement-id="${id}"]`);
       if (element) {
-        await destroy(element, {
+        destroy(element, {
           timing: { ...DEFAULT_TIMING, fill: "forwards" },
         });
       }
