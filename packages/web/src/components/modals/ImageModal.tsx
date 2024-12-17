@@ -1,17 +1,19 @@
 import { useCallback, useRef, useState } from "react";
 import { uploadMedia } from "@/utils/media";
 import ModalFooter from "./ModalFooter";
-import { createImage } from "@/utils/edit";
 import styles from "./ImageModal.module.css";
 import type { ModalProps } from "@/utils/modals";
 
 const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
 
-export default function ImageModal({ close }: ModalProps) {
+export type ImageModalResult = {
+  imageKey: string;
+};
+
+export default function ImageModal({ close }: ModalProps<ImageModalResult>) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageKey, setImageKey] = useState<string | null>(null);
-  const [caption, setCaption] = useState<string>("");
   const [isDragOver, setDragOver] = useState<boolean>(false);
 
   const selectImage = useCallback(() => {
@@ -69,31 +71,21 @@ export default function ImageModal({ close }: ModalProps) {
     }
   }, [setFile]);
 
-  const captionChange = useCallback(
-    (event: React.ChangeEvent<HTMLTextAreaElement>) =>
-      setCaption(event.target.value),
-    [],
-  );
-
   const submit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       if (!imageKey) {
         return;
       }
-
-      await createImage({
-        imageKey,
-        caption,
-      });
-
-      close();
+      close({ imageKey });
     },
-    [imageKey, close, caption],
+    [imageKey, close],
   );
 
+  const cancel = useCallback(() => close(), [close]);
+
   return (
-    <form onSubmit={submit}>
+    <form className={styles.form} onSubmit={submit}>
       <section
         className={`${styles.placeholder} ${isDragOver ? styles["drag-over"] : ""}`}
         onClick={selectImage}
@@ -116,26 +108,15 @@ export default function ImageModal({ close }: ModalProps) {
             alt="The uploaded image preview"
           />
         ) : (
-          <>Select an image or drag and drop</>
+          <p>Select an image or drag and drop</p>
         )}
       </section>
 
-      {imageUrl && (
-        <textarea
-          className={styles.textarea}
-          name="caption"
-          placeholder="Add a caption"
-          autoFocus
-          onChange={captionChange}
-          value={caption}
-        />
-      )}
-
-      <ModalFooter>
+      <ModalFooter className={styles.footer}>
         <button className="primary" type="submit" aria-disabled={!imageKey}>
           Save
         </button>
-        <button className="secondary" type="button" onClick={close}>
+        <button className="secondary" type="button" onClick={cancel}>
           Cancel
         </button>
       </ModalFooter>

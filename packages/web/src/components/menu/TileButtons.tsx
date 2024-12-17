@@ -5,10 +5,16 @@ import imageIcon from "@/icons/image.svg";
 import linkIcon from "@/icons/link.svg";
 import placeIcon from "@/icons/place.svg";
 import eventIcon from "@/icons/event.svg";
-import { createText, createLink, createPageLink } from "@/utils/edit";
+import {
+  createText,
+  createLink,
+  createPageLink,
+  createImage,
+} from "@/utils/edit";
 import { registerModal, showModal } from "@/utils/modals";
 import type { TileType } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
+import type { ImageModalResult } from "@/components/modals/ImageModal";
 import { classNames } from "@/utils/css";
 
 type TileButton = {
@@ -67,6 +73,12 @@ export default function TileButtons({
           content: [],
           columns: 3,
         });
+      } else if (tileType === "IMAGE") {
+        const image = await showModal<ImageModalResult>("IMAGE");
+        if (!image) {
+          return;
+        }
+        await createImage(image);
       } else if (tileType === "LINK") {
         const link = await showModal<LinkModalResult>("LINK");
         if (!link) {

@@ -1,3 +1,10 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  max-height: 400px;
+}
+
 .input {
   position: absolute;
   opacity: 0;
@@ -7,12 +14,11 @@
 }
 
 .placeholder {
+  flex: 1 1 auto;
   cursor: pointer;
-  width: 100%;
   min-height: 200px;
   font-size: 1rem;
-  background: #fff;
-  border-radius: 24px 24px 0 0;
+  border-radius: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,6 +28,10 @@
   transition:
     outline var(--animation-duration) var(--easing),
     outline-offset var(--animation-duration) var(--easing);
+
+  & p {
+    margin-bottom: 48px;
+  }
 }
 
 .placeholder:focus-within,
@@ -31,30 +41,14 @@
 }
 
 .image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.textarea {
   display: block;
-  width: 100%;
-  margin: 0;
-  padding: 24px;
-  font-size: 16px;
-  border-radius: 0;
-  border: none;
-  min-height: 80px;
-  resize: vertical;
-  background: #fff;
-  outline: transparent solid 0;
-  outline-offset: 0;
-  transition:
-    outline var(--animation-duration) var(--easing),
-    outline-offset var(--animation-duration) var(--easing);
+  max-width: 100%;
+  object-fit: contain;
 }
 
-.textarea:focus-visible {
-  outline: var(--focus-ring-color) solid 3px;
-  outline-offset: -3px;
+.footer {
+  position: absolute;
+  inset: auto 0 0;
+  background: none;
+  border: none;
 }
