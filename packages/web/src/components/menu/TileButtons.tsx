@@ -48,7 +48,7 @@ registerModal(
 
 registerModal(
   "EVENT",
-  lazy(() => import("@/components/modals/EditEventTileModal")),
+  lazy(() => import("@/components/modals/EventModal")),
 );
 
 interface TileButtonsProps {
