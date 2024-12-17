@@ -55,7 +55,7 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
 
   return (
     <pop-out class={styles["pop-out"]} expandable="expandable" tabindex="0">
-      <Tile {...props} id={id}>
+      <Tile border="inside">
         <map-view
           class={styles.map}
           movable

@@ -38,7 +38,7 @@
   --tile-background: oklch(var(--lightness) var(--chroma) var(--hue));
 }
 
-.border {
+.border-inside {
   box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
 
   &::after {
@@ -50,6 +50,12 @@
     pointer-events: none;
     transition: box-shadow var(--animation-duration-short) var(--easing);
   }
+}
+
+.border-outside {
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 20%),
+    0 6px 4px -4px rgb(0 0 0 / 15%);
 }
 
 /* Hover effect */

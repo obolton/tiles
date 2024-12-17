@@ -72,7 +72,11 @@ export default function TextTile({
       tabindex="0"
       expandable={columns === 3 ? undefined : "expandable"}
     >
-      <Tile theme={theme} hue={hue} showBorder={isEditable || !!theme}>
+      <Tile
+        theme={theme}
+        hue={hue}
+        border={isEditable || !!theme ? "outside" : "none"}
+      >
         {isEditable ? (
           <RichTextEditor
             className={classNames(styles.text, styles.editor)}

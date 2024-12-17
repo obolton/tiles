@@ -51,7 +51,7 @@ export default function ImageTile({
   );
 
   return (
-    <Tile>
+    <Tile border="inside">
       <figure
         id={`${id}-figure`}
         className={styles.figure}

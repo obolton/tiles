@@ -6,7 +6,7 @@ type CollectionTileProps = ClientCollection;
 
 export default function CollectionTile({ items }: CollectionTileProps) {
   return (
-    <Tile showBorder={false}>
+    <Tile border="none">
       <Stack items={items} />
     </Tile>
   );

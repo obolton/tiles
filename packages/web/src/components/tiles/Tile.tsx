@@ -6,8 +6,9 @@ import { getFontConfig } from "@/utils/fonts";
 import type { FontId } from "@/config/fonts";
 
 export type TileProps = {
+  className?: string;
   children?: React.ReactNode;
-  showBorder?: boolean;
+  border?: "inside" | "outside" | "none";
   theme?: Theme | null;
   hue?: number | null;
   font?: FontId | null;
@@ -20,12 +21,19 @@ const THEME_CLASSES = {
   COLOR: styles.color,
 } as const;
 
+const BORDER_CLASSES = {
+  inside: styles["border-inside"],
+  outside: styles["border-outside"],
+  none: null,
+} as const;
+
 export default function Tile({
+  className,
   children,
   theme,
   hue,
   font,
-  showBorder = true,
+  border = "outside",
   backgroundImageUrl,
 }: TileProps) {
   const style = useMemo(() => {
@@ -46,8 +54,9 @@ export default function Tile({
     <div
       className={classNames(
         styles.tile,
-        showBorder && styles.border,
+        BORDER_CLASSES[border],
         theme ? THEME_CLASSES[theme] : undefined,
+        className,
       )}
       style={style}
     >

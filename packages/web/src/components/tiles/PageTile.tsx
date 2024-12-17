@@ -27,7 +27,13 @@ export default function PageTile({
   theme,
 }: PageTileProps) {
   return (
-    <Tile theme={theme} hue={hue} font={font} backgroundImageUrl={imageUrl}>
+    <Tile
+      theme={theme}
+      hue={hue}
+      font={font}
+      backgroundImageUrl={imageUrl}
+      border="inside"
+    >
       <section
         className={classNames(
           styles.text,
