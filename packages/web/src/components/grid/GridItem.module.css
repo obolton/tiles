@@ -38,6 +38,7 @@ body:not([data-drag]) .editable:not(:has([open])),
   }
 
   &:hover::before,
+  &:focus-within::before,
   &[data-drag-preview]::before {
     opacity: 0.6;
     inset: -24px -3px -3px;
