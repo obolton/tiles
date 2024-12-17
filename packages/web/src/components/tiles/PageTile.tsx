@@ -10,7 +10,7 @@ interface PageTileProps {
   hue?: number | null;
   font?: FontId | null;
   theme?: Theme;
-  imageUrl?: string | null;
+  coverImageUrl?: string | null;
   author?: {
     name: string;
     imageUrl?: string | null;
@@ -20,7 +20,7 @@ interface PageTileProps {
 export default function PageTile({
   title,
   subtitle,
-  imageUrl,
+  coverImageUrl,
   author,
   hue,
   font,
@@ -32,13 +32,13 @@ export default function PageTile({
       theme={theme}
       hue={hue}
       font={font}
-      backgroundImageUrl={imageUrl}
+      backgroundImageUrl={coverImageUrl}
       border="inside"
     >
       <section
         className={classNames(
           styles.text,
-          imageUrl && styles["with-image"],
+          coverImageUrl && styles["with-image"],
           theme === "LIGHT"
             ? styles.light
             : theme === "DARK"

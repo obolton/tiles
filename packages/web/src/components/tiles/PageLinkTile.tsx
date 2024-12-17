@@ -36,7 +36,7 @@ export default function PageLinkTile({
         hue={page.hue}
         font={page.font}
         theme={page.theme}
-        imageUrl={page.imageUrl}
+        coverImageUrl={page.coverImageUrl}
       />
     </a>
   );
