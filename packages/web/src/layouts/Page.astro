@@ -55,14 +55,15 @@ const fontConfig = font ? getFontConfig(font) : undefined;
     data-page-id={id}
     data-disable-transitions="true"
     class={theme === "LIGHT" ? "light" : theme === "DARK" ? "dark" : "color"}
-    style={theme === "COLOR" && typeof hue === "number"
-      ? {
-          "--page-hue": `${hue.toFixed(2)}deg`,
-          "--font": fontConfig
-            ? `"${fontConfig.family}", "${fontConfig.fallback}"`
-            : undefined,
-        }
-      : undefined}
+    style={{
+      "--page-hue":
+        theme === "COLOR" && typeof hue === "number"
+          ? `${hue.toFixed(2)}deg`
+          : undefined,
+      "--font": fontConfig
+        ? `"${fontConfig.family}", "${fontConfig.fallback}"`
+        : undefined,
+    }}
   >
     <Navigation />
     <SignIn />
