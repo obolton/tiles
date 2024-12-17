@@ -28,6 +28,7 @@ export default function PageTile({
 }: PageTileProps) {
   return (
     <Tile
+      className={styles.tile}
       theme={theme}
       hue={hue}
       font={font}
