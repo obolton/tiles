@@ -17,6 +17,14 @@ export default Prisma.defineExtension({
         },
       },
     },
+    page: {
+      coverImageUrl: {
+        needs: { coverImageKey: true },
+        compute({ coverImageKey }) {
+          return coverImageKey ? getImageUrl(coverImageKey) : null;
+        },
+      },
+    },
     imageTile: {
       imageUrl: {
         needs: { imageKey: true },
