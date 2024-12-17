@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { serialize } from "@/utils/richText/serialize";
 import RichTextEditor from "@/components/inputs/RichTextEditor/RichTextEditor";
 import RichText from "@/components/text/RichText";
-import Toolbar from "@/components/inputs/RichTextEditor/Toolbar";
+import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingToolbar";
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
 import { updateText } from "@/utils/edit";
@@ -84,7 +84,7 @@ export default function TextTile({
             value={content}
             editable
           >
-            <Toolbar
+            <FormattingToolbar
               className={styles.toolbar}
               color={{ theme, hue }}
               onChangeColor={onChangeColor}

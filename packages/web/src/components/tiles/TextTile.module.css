@@ -85,14 +85,6 @@
   }
 }
 
-.toolbar {
-  display: none;
-  opacity: 0;
-  transition-duration: var(--animation-duration);
-  transition-timing-function: var(--easing);
-  transition-behavior: allow-discrete;
-}
-
 .pop-out {
   position: relative;
   width: 100%;
@@ -156,23 +148,6 @@
 
     &::after {
       display: none;
-    }
-  }
-}
-
-.pop-out:not([expandable]) {
-  & .toolbar {
-    transition-property: opacity, display;
-  }
-}
-
-.editor:focus-within {
-  & > .toolbar {
-    display: flex;
-    opacity: 1;
-
-    @starting-style {
-      opacity: 0;
     }
   }
 }

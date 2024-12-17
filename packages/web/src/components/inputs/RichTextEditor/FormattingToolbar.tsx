@@ -32,10 +32,9 @@ import orderedListIcon from "@/icons/ordered-list.svg";
 import unorderedListIcon from "@/icons/unordered-list.svg";
 import quoteIcon from "@/icons/quote.svg";
 import linkIcon from "@/icons/link.svg";
-import { classNames } from "@/utils/css";
-import styles from "./Toolbar.module.css";
 import { showModal } from "@/utils/modals";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
+import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
 
 type Format = {
   heading: boolean;
@@ -216,7 +215,7 @@ export default function Toolbar({
   }, [editor]);
 
   return (
-    <menu className={classNames(styles.toolbar, className)}>
+    <FloatingToolbar className={className}>
       <li>
         <button
           className="floating small tooltip-top"
@@ -324,6 +323,6 @@ export default function Toolbar({
           showClear
         />
       </li>
-    </menu>
+    </FloatingToolbar>
   );
 }

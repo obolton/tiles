@@ -1,0 +1,29 @@
+.toolbar {
+  position: sticky;
+  display: none;
+  opacity: 0;
+  top: 8px;
+  background: rgb(255 255 255 / 95%);
+  border-radius: 12px;
+  margin: -64px auto 8px 0;
+  padding: 8px;
+  align-items: center;
+  gap: 8px;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 30%),
+    0 4px 4px -2px rgb(0 0 0 / 20%);
+  z-index: 1;
+  transition-duration: var(--animation-duration);
+  transition-timing-function: var(--easing);
+  transition-behavior: allow-discrete;
+  transition-property: display, opacity;
+}
+
+*:focus-within > .toolbar {
+  display: flex;
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
+}
