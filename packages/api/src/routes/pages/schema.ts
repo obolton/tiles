@@ -1,21 +1,12 @@
 import { z } from "zod";
 import { Theme, Font } from "@prisma/client";
 
-// Get by ID
+// Get
 
 export const GetPageByIdSchema = z.object({
   id: z.string().uuid(),
 });
 export type GetPageByIdSchema = z.infer<typeof GetPageByIdSchema>;
-
-// List
-
-export const ListPagesSchema = z.object({
-  offset: z.number().int().gte(0).optional(), // TODO: Use cursors
-});
-export type ListPagesSchema = z.infer<typeof ListPagesSchema>;
-
-// Get profile page by user ID
 
 export const GetProfilePageByUserIdSchema = z.object({
   userId: z.string().uuid(),
@@ -23,6 +14,13 @@ export const GetProfilePageByUserIdSchema = z.object({
 export type GetProfilePageByUserIdSchema = z.infer<
   typeof GetProfilePageByUserIdSchema
 >;
+
+// List
+
+export const ListPagesSchema = z.object({
+  offset: z.number().int().gte(0).optional(), // TODO: Use cursors
+});
+export type ListPagesSchema = z.infer<typeof ListPagesSchema>;
 
 // Create
 export const CreatePageSchema = z.object({
@@ -40,6 +38,7 @@ export const UpdatePageSchema = z.object({
   theme: z.nativeEnum(Theme).optional(),
   hue: z.number().gte(0).lte(360).nullable().optional(),
   font: z.nativeEnum(Font).optional(),
+  coverImageKey: z.string().nullable().optional(),
 });
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
 

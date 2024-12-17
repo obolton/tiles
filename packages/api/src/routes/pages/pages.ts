@@ -293,12 +293,21 @@ export async function createPage(
 }
 
 export async function updatePage(
-  { id, published, title, subtitle, theme, hue, font }: UpdatePageSchema,
+  {
+    id,
+    published,
+    title,
+    subtitle,
+    theme,
+    hue,
+    font,
+    coverImageKey,
+  }: UpdatePageSchema,
   { user }: AuthenticatedRequestContext,
 ) {
   return prisma.page.update({
     where: { id, authorId: user.id },
-    data: { published, title, subtitle, theme, hue, font },
+    data: { published, title, subtitle, theme, hue, font, coverImageKey },
     select: {
       id: true,
       createdAt: true,
@@ -310,6 +319,7 @@ export async function updatePage(
       theme: true,
       hue: true,
       font: true,
+      coverImageUrl: true,
     },
   });
 }
