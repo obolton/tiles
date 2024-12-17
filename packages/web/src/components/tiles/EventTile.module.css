@@ -1,17 +1,17 @@
 .event {
   position: absolute;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: stretch;
+  display: grid;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  padding: 5cqw;
+  gap: var(--gap);
   border-radius: inherit;
-  background: linear-gradient(
-    oklch(from var(--page-color) 100% 6% h),
-    oklch(from var(--page-color) 97% 12% h)
+  background: radial-gradient(
+    circle at bottom center,
+    oklch(from var(--page-color) 95% calc(c * 0.8) h) 20%,
+    oklch(from var(--page-color) l c h)
   );
-  overflow: hidden;
-  container: event / size;
+  container: event / inline-size;
 }
 
 body:global(.light) .event {
@@ -22,33 +22,6 @@ body:global(.dark) .event {
   background: linear-gradient(#404040, #606060);
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(0px, 3cqw, 8px);
-  font-size: clamp(0.875rem, 6cqw, 1.25rem);
-  line-height: 1.5;
-  font-weight: 600;
-  color: rgba(255 255 255 / 90%);
-  -webkit-font-smoothing: antialiased;
-  background: var(--accent);
-  border-radius: 12px 12px 0 0;
-  text-shadow: 0 1px 2px rgb(0 0 0 / 30%);
-  border-bottom: 1px solid rgb(0 0 0 / 30%);
-  background-clip: border-box;
-  box-shadow: 0 2px 4px 0 rgba(0 0 0 / 30%);
-  width: 100%;
-  flex: none;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(var(--columns), 1fr);
-  padding: 5cqw;
-  flex: 1;
-}
-
 .details {
   display: flex;
   flex-direction: column;
@@ -57,7 +30,7 @@ body:global(.dark) .event {
   container: event-details / size;
 
   & h3 {
-    font-size: clamp(0.875rem, 10cqw, 1.25rem);
+    font-size: clamp(0.875rem, 10cqw, 1.5rem);
     line-height: 1.5;
     font-weight: 500;
     text-align: center;
@@ -70,25 +43,12 @@ body:global(.dark) .event {
 
 .dates {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 4px;
   flex: 1;
   width: 100%;
-
-  &.all-day {
-    flex-direction: row;
-    gap: 4cqw;
-  }
-}
-
-.date-time {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  gap: 6cqw;
+  gap: 4cqw;
 }
 
 .date {
@@ -96,17 +56,24 @@ body:global(.dark) .event {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0.5em;
   flex: 1;
 }
 
+.date-time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  & .date {
+    flex-direction: row;
+  }
+}
+
 .time {
-  padding: 3cqw;
-  margin: 0;
-  font-size: 8cqw;
   font-weight: 500;
   text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
-  background-clip: padding-box;
   white-space: nowrap;
   flex: 1;
 }
@@ -121,29 +88,34 @@ body:global(.dark) .event {
 }
 
 .month {
-  color: transparent;
   text-align: center;
   font-weight: 700;
   line-height: 1;
   text-transform: uppercase;
-  background-image: linear-gradient(#303030, #000);
-  background-clip: text;
 }
 
-.small {
+.date.small {
+  font-size: 9cqw;
+
   & .date {
     flex-direction: row;
     justify-content: flex-end;
   }
+}
 
-  & .month,
-  & .day,
+.date-time.small {
+  font-size: 10cqw;
+
+  & .date {
+    gap: 8px;
+  }
+
   & .time {
-    font-size: 9cqw;
+    font-size: 8cqw;
   }
 }
 
-.medium {
+.date.medium {
   & .month {
     font-size: 10cqw;
   }
@@ -153,13 +125,25 @@ body:global(.dark) .event {
   }
 }
 
-.large {
+.date.large {
   & .month {
-    font-size: 11cqw;
+    font-size: 14cqw;
   }
 
   & .day {
-    font-size: 22cqw;
+    font-size: 24cqw;
+  }
+}
+
+.date-time.large {
+  font-size: 16cqw;
+
+  & .date {
+    gap: 12px;
+  }
+
+  & .time {
+    font-size: 12cqw;
   }
 }
 
