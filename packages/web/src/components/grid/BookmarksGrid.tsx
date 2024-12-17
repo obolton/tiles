@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Grid.module.css";
 import { handleError } from "@/utils/errors";
 
-type Pages = AppRouterOutputs["pages"]["list"];
+type Pages = AppRouterOutputs["bookmarks"]["list"];
 type Page = Pages["pages"][number];
 
 function defaultRender(page: Page) {
