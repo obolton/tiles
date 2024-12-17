@@ -63,6 +63,7 @@ const PAGE_FIELDS = {
   theme: true,
   hue: true,
   font: true,
+  coverImageUrl: true,
   author: {
     select: {
       id: true,
@@ -179,25 +180,7 @@ function formatTile({
   throw new Error(`Invalid tile: ${id}`);
 }
 
-export async function getPageById(
-  { id }: GetPageByIdSchema,
-  userId?: string,
-): Promise<{
-  id: string;
-  published: boolean;
-  title: string;
-  subtitle: string | null;
-  updatedAt: Date;
-  theme: Theme;
-  hue: number | null;
-  font: Font;
-  author: {
-    id: string;
-    name: string;
-    imageUrl: string | null;
-  };
-  tiles: ClientTile[];
-} | null> {
+export async function getPageById({ id }: GetPageByIdSchema, userId?: string) {
   const page = await prisma.page.findUnique({
     where: { id },
     select: PAGE_FIELDS,
