@@ -89,7 +89,7 @@ export default function Stack({ items: initialItems }: StackProps) {
     element?.addEventListener(
       "drag:drop",
       async ({ dragSource }: DragDropEvent) => {
-        const id = dragSource.id;
+        const id = dragSource.dataset.placementId ?? "";
         const position = Array.prototype.indexOf.call(
           element.children,
           dragSource,
