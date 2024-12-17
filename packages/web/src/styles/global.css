@@ -69,7 +69,7 @@ main {
 }
 
 header {
-  padding: clamp(24px, 4vw, 64px) 0;
+  margin-bottom: 32px;
 }
 
 main {
