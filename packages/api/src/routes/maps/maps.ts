@@ -36,6 +36,7 @@ export async function createMap({
   return prisma.$transaction(async (transaction) => {
     const map = await transaction.mapTile.create({
       data: {
+        pageId,
         places: {
           create: {
             name,

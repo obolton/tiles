@@ -23,6 +23,7 @@ export async function createEvent({
   return prisma.$transaction(async (transaction) => {
     const event = await transaction.eventTile.create({
       data: {
+        pageId,
         title,
         start,
         end,

@@ -22,8 +22,7 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
 
 export const PAGE_LINK_FIELDS = {
   id: true,
-  pageId: true,
-  page: {
+  linkedPage: {
     select: PAGE_LINK_TILE_PAGE_FIELDS,
   },
 } as const satisfies Prisma.PageLinkTileSelect<ExtensionArgs>;
@@ -38,7 +37,8 @@ export async function createPageLink({
   return prisma.$transaction(async (transaction) => {
     const pageLink = await transaction.pageLinkTile.create({
       data: {
-        pageId: linkedPageId,
+        pageId,
+        linkedPageId,
       },
       select: PAGE_LINK_FIELDS,
     });

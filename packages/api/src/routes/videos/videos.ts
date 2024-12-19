@@ -26,6 +26,7 @@ export async function createVideo({ pageId, url }: CreateVideoSchema) {
     const { title, description, imageUrl } = linkMetadata || {};
     const video = await transaction.videoTile.create({
       data: {
+        pageId,
         videoType,
         videoId,
         originalImageUrl: imageUrl,

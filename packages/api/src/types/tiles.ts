@@ -14,7 +14,7 @@ import type {
   Font,
 } from "@prisma/client";
 
-type OmitMetadata<T> = Omit<T, "createdAt" | "updatedAt">;
+type OmitMetadata<T> = Omit<T, "pageId" | "createdAt" | "updatedAt">;
 
 type ClientTileBase = Pick<
   Tile,
@@ -65,8 +65,11 @@ export interface ClientLinkTile extends ClientTileBase, ClientLink {
 }
 
 // Page link
-export type ClientPageLink = OmitMetadata<PageLinkTile> & {
-  page: {
+export type ClientPageLink = Omit<
+  OmitMetadata<PageLinkTile>,
+  "linkedPageId"
+> & {
+  linkedPage: {
     id: string;
     title: string;
     subtitle: string | null;

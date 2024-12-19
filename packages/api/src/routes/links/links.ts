@@ -30,6 +30,7 @@ export async function createLink({ pageId, url }: CreateLinkSchema) {
     const { title, description, siteName, imageUrl } = linkMetadata || {};
     const link = await transaction.linkTile.create({
       data: {
+        pageId,
         url,
         title,
         description,

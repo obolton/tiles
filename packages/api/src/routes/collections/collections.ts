@@ -86,6 +86,7 @@ export async function createCollection({
 
     const collection = await transaction.collection.create({
       data: {
+        pageId,
         title,
         items: {
           connect: tileIds.map((id) => ({ id })),

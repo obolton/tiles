@@ -22,6 +22,7 @@ export async function createImage({
   return prisma.$transaction(async (transaction) => {
     const image = await transaction.imageTile.create({
       data: {
+        pageId,
         imageKey,
         caption: caption ? cleanUserInput(caption) : null,
       },

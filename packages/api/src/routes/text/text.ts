@@ -23,6 +23,7 @@ export async function createText({
   return prisma.$transaction(async (transaction) => {
     const text = await transaction.textTile.create({
       data: {
+        pageId,
         content,
         theme,
         hue,
