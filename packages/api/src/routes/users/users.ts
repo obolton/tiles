@@ -7,9 +7,9 @@ import {
   IMAGE_FILE_EXTENSIONS,
 } from "@/constants/images.ts";
 import { getStream } from "@/utils/http.ts";
-import { getProfileImageUrl } from "@/utils/cdn.ts";
 import type { Prisma } from "@prisma/client";
 import type { UpdateUserSchema } from "./schema.ts";
+import type { AuthenticatedProcedureContext } from "@/utils/middleware.ts";
 
 type CreateUserOptions = {
   name: string;
@@ -71,7 +71,7 @@ export async function getUserBySessionId(sessionId: string) {
           id: true,
           name: true,
           email: true,
-          imageKey: true,
+          imageUrl: true,
         },
       },
     },
@@ -80,22 +80,15 @@ export async function getUserBySessionId(sessionId: string) {
   if (!user) {
     return null;
   }
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    imageUrl: user.imageKey ? getProfileImageUrl(user.imageKey) : null,
-  };
+  return user;
 }
 
-export async function updateUser({
-  id,
-  name,
-  email,
-  imageKey,
-}: UpdateUserSchema) {
-  const user = await prisma.user.update({
-    where: { id },
+export async function updateUser(
+  { name, email, imageKey }: UpdateUserSchema,
+  { user }: AuthenticatedProcedureContext,
+) {
+  return prisma.user.update({
+    where: { id: user.id },
     data: {
       name,
       email,
@@ -105,13 +98,7 @@ export async function updateUser({
       id: true,
       name: true,
       email: true,
-      imageKey: true,
+      imageUrl: true,
     },
   });
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    imageUrl: user.imageKey ? getProfileImageUrl(user.imageKey) : null,
-  };
 }

@@ -6,8 +6,5 @@ import { updateUser } from "./users.ts";
 export default router({
   update: authenticatedProcedure
     .input(UpdateUserSchema)
-    .mutation(async ({ input }) => {
-      const user = await updateUser(input);
-      return user;
-    }),
+    .mutation(({ input, ctx }) => updateUser(input, ctx)),
 });
