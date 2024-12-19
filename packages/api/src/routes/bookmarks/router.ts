@@ -1,4 +1,8 @@
-import { router, authenticatedProcedure } from "@/utils/trpc.ts";
+import { router } from "@/utils/trpc.ts";
+import {
+  authenticatedProcedure,
+  authenticatedPageProcedure,
+} from "@/utils/middleware.ts";
 import {
   createBookmark,
   deleteBookmark,
@@ -15,29 +19,17 @@ import {
 export default router({
   list: authenticatedProcedure
     .input(ListBookmarksSchema)
-    .query(async ({ input, ctx }) => {
-      const result = await listBookmarks(input, ctx);
-      return result;
-    }),
+    .query(async ({ input, ctx }) => listBookmarks(input, ctx)),
 
   isBookmarked: authenticatedProcedure
     .input(IsBookmarkedSchema)
-    .query(async ({ input, ctx }) => {
-      const result = await isBookmarked(input, ctx);
-      return result;
-    }),
+    .query(async ({ input, ctx }) => isBookmarked(input, ctx)),
 
-  create: authenticatedProcedure
+  create: authenticatedPageProcedure
     .input(CreateBookmarkSchema)
-    .mutation(async ({ input, ctx }) => {
-      const bookmark = await createBookmark(input, ctx);
-      return bookmark;
-    }),
+    .mutation(async ({ input, ctx }) => createBookmark(input, ctx)),
 
   delete: authenticatedProcedure
     .input(DeleteBookmarkSchema)
-    .mutation(async ({ input, ctx }) => {
-      const bookmark = deleteBookmark(input, ctx);
-      return bookmark;
-    }),
+    .mutation(({ input, ctx }) => deleteBookmark(input, ctx)),
 });

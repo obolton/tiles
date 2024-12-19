@@ -1,8 +1,8 @@
+import { router, publicProcedure } from "@/utils/trpc.ts";
 import {
-  router,
-  publicProcedure,
   authenticatedProcedure,
-} from "@/utils/trpc.ts";
+  pageUpdateProcedure,
+} from "@/utils/middleware.ts";
 import {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
@@ -50,7 +50,7 @@ export default router({
       return page;
     }),
 
-  update: authenticatedProcedure
+  update: pageUpdateProcedure
     .input(UpdatePageSchema)
     .mutation(async ({ input, ctx }) => {
       const page = await updatePage(input, ctx);
@@ -58,7 +58,7 @@ export default router({
       return page;
     }),
 
-  delete: authenticatedProcedure
+  delete: pageUpdateProcedure
     .input(DeletePageSchema)
     .mutation(async ({ input, ctx }) => {
       const page = await deletePage(input, ctx);

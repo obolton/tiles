@@ -4,26 +4,16 @@ import type {
   DeleteTileSchema,
   ResizeTileSchema,
 } from "./schema.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
-import { checkPageAccess } from "@/utils/permissions.ts";
 import type { TileType } from "@prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma.ts";
 
-export async function moveTile(
-  { id, position }: MoveTileSchema,
-  context: AuthenticatedRequestContext,
-) {
+export async function moveTile({ pageId, id, position }: MoveTileSchema) {
   return prisma.$transaction(async (tx) => {
-    const {
-      pageId,
-      parentCollectionId,
-      position: oldPosition,
-    } = await tx.tile.findUniqueOrThrow({
-      where: { id },
-      select: { pageId: true, parentCollectionId: true, position: true },
-    });
-
-    await checkPageAccess(tx, context, pageId);
+    const { parentCollectionId, position: oldPosition } =
+      await tx.tile.findUniqueOrThrow({
+        where: { pageId, id },
+        select: { parentCollectionId: true, position: true },
+      });
 
     if (oldPosition === position) {
       return { id, pageId, fromPosition: oldPosition, toPosition: position };
@@ -49,7 +39,7 @@ export async function moveTile(
       });
     }
     await prisma.tile.update({
-      where: { id },
+      where: { pageId, id },
       data: { position },
     });
     return {
@@ -61,9 +51,14 @@ export async function moveTile(
   });
 }
 
-export async function resizeTile({ id, columns, rows }: ResizeTileSchema) {
+export async function resizeTile({
+  pageId,
+  id,
+  columns,
+  rows,
+}: ResizeTileSchema) {
   return prisma.tile.update({
-    where: { id },
+    where: { pageId, id },
     data: {
       columns,
       rows,
@@ -77,13 +72,13 @@ export async function resizeTile({ id, columns, rows }: ResizeTileSchema) {
   });
 }
 
-export async function deleteTile({ id }: DeleteTileSchema) {
-  return prisma.$transaction(async (tx) => {
-    const { pageId, parentCollectionId, position } = await tx.tile.delete({
-      where: { id },
-      select: { pageId: true, parentCollectionId: true, position: true },
+export async function deleteTile({ pageId, id }: DeleteTileSchema) {
+  return prisma.$transaction(async (transaction) => {
+    const { parentCollectionId, position } = await transaction.tile.delete({
+      where: { pageId, id },
+      select: { parentCollectionId: true, position: true },
     });
-    await tx.tile.updateMany({
+    await transaction.tile.updateMany({
       where: {
         pageId,
         parentCollectionId,

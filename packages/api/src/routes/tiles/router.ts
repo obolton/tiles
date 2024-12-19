@@ -1,34 +1,22 @@
-import { router, authenticatedProcedure } from "@/utils/trpc.ts";
+import { router } from "@/utils/trpc.ts";
+import { pageUpdateProcedure } from "@/utils/middleware.ts";
 import { moveTile, resizeTile, deleteTile } from "./tiles.ts";
 import {
   MoveTileSchema,
   ResizeTileSchema,
   DeleteTileSchema,
 } from "./schema.ts";
-import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
-  move: authenticatedProcedure
+  move: pageUpdateProcedure
     .input(MoveTileSchema)
-    .mutation(async ({ input, ctx }) => {
-      const result = await moveTile(input, ctx);
-      invalidateCachedPage(result.pageId);
-      return result;
-    }),
+    .mutation(({ input }) => moveTile(input)),
 
-  resize: authenticatedProcedure
+  resize: pageUpdateProcedure
     .input(ResizeTileSchema)
-    .mutation(async ({ input }) => {
-      const result = await resizeTile(input);
-      invalidateCachedPage(result.pageId);
-      return result;
-    }),
+    .mutation(({ input }) => resizeTile(input)),
 
-  delete: authenticatedProcedure
+  delete: pageUpdateProcedure
     .input(DeleteTileSchema)
-    .mutation(async ({ input }) => {
-      const result = await deleteTile(input);
-      invalidateCachedPage(result.pageId);
-      return null;
-    }),
+    .mutation(({ input }) => deleteTile(input)),
 });

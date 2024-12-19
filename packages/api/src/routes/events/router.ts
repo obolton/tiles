@@ -1,22 +1,14 @@
-import { router, authenticatedProcedure } from "@/utils/trpc.ts";
+import { router } from "@/utils/trpc.ts";
+import { pageUpdateProcedure } from "@/utils/middleware.ts";
 import { createEvent, updateEvent } from "./events.ts";
 import { CreateEventSchema, UpdateEventSchema } from "./schema.ts";
-import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
-  create: authenticatedProcedure
+  create: pageUpdateProcedure
     .input(CreateEventSchema)
-    .mutation(async ({ input }) => {
-      const event = await createEvent(input);
-      invalidateCachedPage(input.pageId);
-      return event;
-    }),
+    .mutation(({ input }) => createEvent(input)),
 
-  update: authenticatedProcedure
+  update: pageUpdateProcedure
     .input(UpdateEventSchema)
-    .mutation(async ({ input }) => {
-      const event = updateEvent(input);
-      // invalidateCachedPage(input.pageId); TODO
-      return event;
-    }),
+    .mutation(({ input }) => updateEvent(input)),
 });

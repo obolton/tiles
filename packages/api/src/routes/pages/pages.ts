@@ -20,7 +20,7 @@ import type {
   DeletePageSchema,
 } from "./schema.ts";
 import type { ClientTile } from "@/types/tiles.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
+import type { AuthenticatedProcedureContext } from "@/utils/middleware.ts";
 
 const TILES_FIELDS = {
   id: true,
@@ -218,7 +218,7 @@ export async function getProfilePageByUserId({
 
 export async function listPages(
   { offset }: ListPagesSchema,
-  { user }: AuthenticatedRequestContext,
+  { user }: AuthenticatedProcedureContext,
 ) {
   const count = 15;
   const pages = await prisma.page.findMany({
@@ -238,7 +238,7 @@ export async function listPages(
 
 export async function createPage(
   { title }: CreatePageSchema,
-  { user }: AuthenticatedRequestContext,
+  { user }: AuthenticatedProcedureContext,
 ) {
   return prisma.page.create({
     data: {
@@ -254,7 +254,7 @@ export async function createPage(
 
 export async function updatePage(
   {
-    id,
+    pageId,
     published,
     title,
     subtitle,
@@ -263,10 +263,10 @@ export async function updatePage(
     font,
     coverImageKey,
   }: UpdatePageSchema,
-  { user }: AuthenticatedRequestContext,
+  { user }: AuthenticatedProcedureContext,
 ) {
   return prisma.page.update({
-    where: { id, authorId: user.id },
+    where: { id: pageId, authorId: user.id },
     data: { published, title, subtitle, theme, hue, font, coverImageKey },
     select: {
       id: true,
@@ -285,11 +285,11 @@ export async function updatePage(
 }
 
 export async function deletePage(
-  { id }: DeletePageSchema,
-  { user }: AuthenticatedRequestContext,
+  { pageId }: DeletePageSchema,
+  { user }: AuthenticatedProcedureContext,
 ) {
   return prisma.page.delete({
-    where: { id, authorId: user.id },
+    where: { id: pageId, authorId: user.id },
     select: {
       id: true,
     },

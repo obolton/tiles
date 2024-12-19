@@ -1,4 +1,5 @@
-import { router, authenticatedProcedure } from "@/utils/trpc.ts";
+import { router } from "@/utils/trpc.ts";
+import { pageUpdateProcedure } from "@/utils/middleware.ts";
 import { createMap, addPlace, removePlace, updatePlace } from "./maps.ts";
 import {
   CreateMapSchema,
@@ -6,35 +7,21 @@ import {
   RemovePlaceSchema,
   UpdatePlaceSchema,
 } from "./schema.ts";
-import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
-  create: authenticatedProcedure
+  create: pageUpdateProcedure
     .input(CreateMapSchema)
-    .mutation(async ({ input }) => {
-      const map = await createMap(input);
-      invalidateCachedPage(input.pageId);
-      return map;
-    }),
+    .mutation(({ input }) => createMap(input)),
 
-  addPlace: authenticatedProcedure
+  addPlace: pageUpdateProcedure
     .input(AddPlaceSchema)
-    .mutation(async ({ input }) => {
-      const result = await addPlace(input);
-      return result;
-    }),
+    .mutation(({ input }) => addPlace(input)),
 
-  removePlace: authenticatedProcedure
+  removePlace: pageUpdateProcedure
     .input(RemovePlaceSchema)
-    .mutation(async ({ input }) => {
-      const result = await removePlace(input);
-      return result;
-    }),
+    .mutation(({ input }) => removePlace(input)),
 
-  updatePlace: authenticatedProcedure
+  updatePlace: pageUpdateProcedure
     .input(UpdatePlaceSchema)
-    .mutation(async ({ input }) => {
-      const result = await updatePlace(input);
-      return result;
-    }),
+    .mutation(({ input }) => updatePlace(input)),
 });

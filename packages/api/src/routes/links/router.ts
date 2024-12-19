@@ -1,22 +1,14 @@
-import { router, authenticatedProcedure } from "@/utils/trpc.ts";
+import { router } from "@/utils/trpc.ts";
+import { pageUpdateProcedure } from "@/utils/middleware.ts";
 import { createLink, updateLink } from "./links.ts";
 import { CreateLinkSchema, UpdateLinkSchema } from "./schema.ts";
-import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
-  create: authenticatedProcedure
+  create: pageUpdateProcedure
     .input(CreateLinkSchema)
-    .mutation(async ({ input }) => {
-      const link = await createLink(input);
-      invalidateCachedPage(input.pageId);
-      return link;
-    }),
+    .mutation(({ input }) => createLink(input)),
 
-  update: authenticatedProcedure
+  update: pageUpdateProcedure
     .input(UpdateLinkSchema)
-    .mutation(async ({ input }) => {
-      const link = updateLink(input);
-      // invalidateCachedPage(input.pageId); TODO
-      return link;
-    }),
+    .mutation(({ input }) => updateLink(input)),
 });

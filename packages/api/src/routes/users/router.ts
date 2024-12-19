@@ -1,4 +1,5 @@
-import { router, authenticatedProcedure } from "@/utils/trpc.ts";
+import { router } from "@/utils/trpc.ts";
+import { authenticatedProcedure } from "@/utils/middleware.ts";
 import { UpdateUserSchema } from "./schema.ts";
 import { updateUser } from "./users.ts";
 

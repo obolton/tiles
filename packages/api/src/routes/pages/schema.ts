@@ -31,7 +31,7 @@ export type CreatePageSchema = z.infer<typeof CreatePageSchema>;
 // Update
 
 export const UpdatePageSchema = z.object({
-  id: z.string().uuid(),
+  pageId: z.string().uuid(),
   published: z.boolean().optional(),
   title: z.string().min(1).optional(),
   subtitle: z.string().optional(),
@@ -45,6 +45,6 @@ export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
 // Delete
 
 export const DeletePageSchema = z.object({
-  id: z.string().uuid(),
+  pageId: z.string().uuid(),
 });
 export type DeletePageSchema = z.infer<typeof DeletePageSchema>;

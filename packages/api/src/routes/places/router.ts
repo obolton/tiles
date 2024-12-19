@@ -1,12 +1,10 @@
-import { router, authenticatedProcedure } from "@/utils/trpc.ts";
+import { router } from "@/utils/trpc.ts";
+import { authenticatedProcedure } from "@/utils/middleware.ts";
 import { SearchPlacesSchema } from "./schema.ts";
 import { searchPlaces } from "./places.ts";
 
 export default router({
   search: authenticatedProcedure
     .input(SearchPlacesSchema)
-    .mutation(async ({ input }) => {
-      const results = await searchPlaces(input);
-      return results;
-    }),
+    .mutation(({ input }) => searchPlaces(input)),
 });

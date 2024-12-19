@@ -1,22 +1,14 @@
-import { router, authenticatedProcedure } from "@/utils/trpc.ts";
+import { router } from "@/utils/trpc.ts";
+import { pageUpdateProcedure } from "@/utils/middleware.ts";
 import { createVideo, updateVideo } from "./videos.ts";
 import { CreateVideoSchema, UpdateVideoSchema } from "./schema.ts";
-import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
-  create: authenticatedProcedure
+  create: pageUpdateProcedure
     .input(CreateVideoSchema)
-    .mutation(async ({ input }) => {
-      const video = await createVideo(input);
-      invalidateCachedPage(input.pageId);
-      return video;
-    }),
+    .mutation(({ input }) => createVideo(input)),
 
-  update: authenticatedProcedure
+  update: pageUpdateProcedure
     .input(UpdateVideoSchema)
-    .mutation(async ({ input }) => {
-      const video = updateVideo(input);
-      // invalidateCachedPage(input.pageId); TODO
-      return video;
-    }),
+    .mutation(({ input }) => updateVideo(input)),
 });

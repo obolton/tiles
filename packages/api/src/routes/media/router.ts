@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
-import { router, authenticatedProcedure } from "@/utils/trpc.ts";
+import { router } from "@/utils/trpc.ts";
+import { authenticatedProcedure } from "@/utils/middleware.ts";
 import { createSignedUploadUrl } from "@/utils/storage.ts";
 import { MediaTypeSchema } from "./schema.ts";
 

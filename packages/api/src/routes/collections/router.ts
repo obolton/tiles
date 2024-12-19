@@ -1,4 +1,5 @@
-import { router, authenticatedProcedure } from "@/utils/trpc.ts";
+import { router } from "@/utils/trpc.ts";
+import { pageUpdateProcedure } from "@/utils/middleware.ts";
 import {
   createCollection,
   addToCollection,
@@ -9,28 +10,17 @@ import {
   AddToCollectionSchema,
   RemoveFromCollectionSchema,
 } from "./schema.ts";
-import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
-  create: authenticatedProcedure
+  create: pageUpdateProcedure
     .input(CreateCollectionSchema)
-    .mutation(async ({ input }) => {
-      const collection = await createCollection(input);
-      invalidateCachedPage(input.pageId);
-      return collection;
-    }),
+    .mutation(({ input }) => createCollection(input)),
 
-  addToCollection: authenticatedProcedure
+  addToCollection: pageUpdateProcedure
     .input(AddToCollectionSchema)
-    .mutation(async ({ input }) => {
-      const result = await addToCollection(input);
-      return result;
-    }),
+    .mutation(({ input }) => addToCollection(input)),
 
-  removeFromCollection: authenticatedProcedure
+  removeFromCollection: pageUpdateProcedure
     .input(RemoveFromCollectionSchema)
-    .mutation(async ({ input }) => {
-      const result = await removeFromCollection(input);
-      return result;
-    }),
+    .mutation(({ input }) => removeFromCollection(input)),
 });
