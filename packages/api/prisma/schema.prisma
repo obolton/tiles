@@ -88,11 +88,19 @@ model Page {
   font          Font     @default(MODERN)
   coverImageKey String?  @map("cover_image_key")
 
-  author        User           @relation("Pages", fields: [authorId], references: [id], onDelete: Cascade)
-  profileUser   User?          @relation("ProfilePage")
-  tiles         Tile[]
-  pageLinkTiles PageLinkTile[]
-  bookmarks     Bookmark[]
+  author             User           @relation("Pages", fields: [authorId], references: [id], onDelete: Cascade)
+  profileUser        User?          @relation("ProfilePage")
+  tiles              Tile[]
+  referringPageLinks PageLinkTile[] @relation("LinkedPage")
+  bookmarks          Bookmark[]
+  images             ImageTile[]
+  videos             VideoTile[]
+  events             EventTile[]
+  text               TextTile[]
+  links              LinkTile[]
+  maps               MapTile[]
+  pageLinks          PageLinkTile[] @relation("Page")
+  collections        Collection[]
 
   @@index([authorId])
   @@index([authorId, updatedAt])
@@ -146,6 +154,7 @@ model Tile {
 
 model ImageTile {
   id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   imageKey  String   @map("image_key")
@@ -153,8 +162,10 @@ model ImageTile {
   originX   Float    @default(0.5) @map("origin_x") @db.Real
   originY   Float    @default(0.5) @map("origin_y") @db.Real
 
+  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[]
 
+  @@index([pageId])
   @@map("image_tiles")
 }
 
@@ -164,6 +175,7 @@ enum VideoType {
 
 model VideoTile {
   id               String    @id @default(uuid()) @db.Uuid
+  pageId           String    @map("page_id") @db.Uuid
   createdAt        DateTime  @default(now()) @map("created_at")
   updatedAt        DateTime  @updatedAt @map("updated_at")
   videoType        VideoType @map("video_type")
@@ -172,13 +184,16 @@ model VideoTile {
   title            String
   description      String?
 
+  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[]
 
+  @@index([pageId])
   @@map("video_tiles")
 }
 
 model TextTile {
   id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -187,8 +202,10 @@ model TextTile {
   theme   Theme?
   hue     Float? @db.Real
 
+  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[]
 
+  @@index([pageId])
   @@map("text_tiles")
 }
 
@@ -206,22 +223,27 @@ model Place {
 
   map MapTile @relation(fields: [mapTileId], references: [id], onDelete: Cascade)
 
+  @@index([mapTileId])
   @@map("places")
 }
 
 model MapTile {
   id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   tiles  Tile[]
   places Place[]
+  page   Page    @relation(fields: [pageId], references: [id], onDelete: Cascade)
 
+  @@index([pageId])
   @@map("map_tiles")
 }
 
 model LinkTile {
   id               String   @id @default(uuid()) @db.Uuid
+  pageId           String   @map("page_id") @db.Uuid
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
   url              String
@@ -230,25 +252,31 @@ model LinkTile {
   siteName         String?  @map("site_name")
   originalImageUrl String?  @map("original_image_url")
 
+  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[]
 
+  @@index([pageId])
   @@map("link_tiles")
 }
 
 model PageLinkTile {
-  id        String   @id @default(uuid()) @db.Uuid
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  pageId    String?  @map("page_id") @db.Uuid
+  id           String   @id @default(uuid()) @db.Uuid
+  pageId       String   @map("page_id") @db.Uuid
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  linkedPageId String?  @map("linked_page_id") @db.Uuid
 
-  page  Page?  @relation(fields: [pageId], references: [id], onDelete: SetNull)
-  tiles Tile[]
+  page       Page   @relation("Page", fields: [pageId], references: [id], onDelete: Cascade)
+  linkedPage Page?  @relation("LinkedPage", fields: [linkedPageId], references: [id], onDelete: SetNull)
+  tiles      Tile[]
 
+  @@index([pageId])
   @@map("page_link_tiles")
 }
 
 model EventTile {
   id        String    @id @default(uuid()) @db.Uuid
+  pageId    String    @map("page_id") @db.Uuid
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   title     String?
@@ -257,20 +285,25 @@ model EventTile {
   allDay    Boolean   @default(false) @map("all_day")
   timeZone  String?   @map("time_zone")
 
+  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[]
 
+  @@index([pageId])
   @@map("event_tiles")
 }
 
 model Collection {
   id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   title     String?
 
+  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[] @relation("CollectionTile")
   items Tile[] @relation("ParentCollection")
 
+  @@index([pageId])
   @@map("collections")
 }
 
