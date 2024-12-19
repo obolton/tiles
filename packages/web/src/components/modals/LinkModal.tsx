@@ -76,8 +76,7 @@ export default function LinkModal({
                   page.id === pageId ? null : (
                     <PageLinkTile
                       id={page.id}
-                      pageId={page.id}
-                      page={page}
+                      linkedPage={page}
                       openInNewTab={false}
                       onClick={(event) => {
                         if (

@@ -10,11 +10,11 @@ interface PageLinkTileProps extends ClientPageLink {
 }
 
 export default function PageLinkTile({
-  page,
+  linkedPage,
   onClick,
   openInNewTab = true,
 }: PageLinkTileProps) {
-  if (!page) {
+  if (!linkedPage) {
     return (
       <Tile>
         <div className={styles.deleted}>This page has been deleted.</div>
@@ -25,18 +25,18 @@ export default function PageLinkTile({
   return (
     <a
       className={classNames(styles.link, openInNewTab && styles["new-tab"])}
-      href={`/pages/${page.id}`}
+      href={`/pages/${linkedPage.id}`}
       target={openInNewTab ? "_blank" : undefined}
       onClick={onClick}
     >
       <PageTile
-        title={page.title}
-        subtitle={page.subtitle}
-        author={page.author}
-        hue={page.hue}
-        font={page.font}
-        theme={page.theme}
-        coverImageUrl={page.coverImageUrl}
+        title={linkedPage.title}
+        subtitle={linkedPage.subtitle}
+        author={linkedPage.author}
+        hue={linkedPage.hue}
+        font={linkedPage.font}
+        theme={linkedPage.theme}
+        coverImageUrl={linkedPage.coverImageUrl}
       />
     </a>
   );
