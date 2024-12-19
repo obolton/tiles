@@ -22,6 +22,7 @@ export const CreateMapSchema = z.object({
 export type CreateMapSchema = z.infer<typeof CreateMapSchema>;
 
 export const AddPlaceSchema = z.object({
+  pageId: z.string().uuid(),
   id: z.string().uuid(),
   place: z.object({
     name: z.string(),
@@ -35,12 +36,14 @@ export const AddPlaceSchema = z.object({
 export type AddPlaceSchema = z.infer<typeof AddPlaceSchema>;
 
 export const RemovePlaceSchema = z.object({
+  pageId: z.string().uuid(),
   id: z.string().uuid(),
   placeId: z.string().uuid(),
 });
 export type RemovePlaceSchema = z.infer<typeof RemovePlaceSchema>;
 
 export const UpdatePlaceSchema = z.object({
+  pageId: z.string().uuid(),
   id: z.string().uuid(),
   name: z.string(),
 });

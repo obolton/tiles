@@ -40,9 +40,15 @@ export async function createImage({
   });
 }
 
-export async function updateImage({ id, caption, origin }: UpdateImageSchema) {
+export async function updateImage({
+  pageId,
+  id,
+  caption,
+  origin,
+}: UpdateImageSchema) {
   const image = await prisma.imageTile.update({
     where: {
+      pageId,
       id,
     },
     data: {

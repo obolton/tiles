@@ -7,6 +7,7 @@ export const CreateVideoSchema = z.object({
 export type CreateVideoSchema = z.infer<typeof CreateVideoSchema>;
 
 export const UpdateVideoSchema = z.object({
+  pageId: z.string().uuid(),
   id: z.string().uuid(),
   title: z.string().nullable(),
 });

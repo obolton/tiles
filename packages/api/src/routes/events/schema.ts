@@ -11,6 +11,7 @@ export const CreateEventSchema = z.object({
 export type CreateEventSchema = z.infer<typeof CreateEventSchema>;
 
 export const UpdateEventSchema = z.object({
+  pageId: z.string().uuid(),
   id: z.string().uuid(),
   title: z.string().nullable(),
   start: z.string().datetime(),

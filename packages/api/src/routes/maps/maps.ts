@@ -64,11 +64,11 @@ export async function createMap({
   });
 }
 
-export async function addPlace({ id, place }: AddPlaceSchema) {
+export async function addPlace({ pageId, id, place }: AddPlaceSchema) {
   const { name, providerId, lat, long, boundingBox, address } = place;
 
   const map = await prisma.mapTile.update({
-    where: { id },
+    where: { pageId, id },
     data: {
       places: {
         create: {
@@ -86,25 +86,25 @@ export async function addPlace({ id, place }: AddPlaceSchema) {
   return { type: "MAP" as const, ...map };
 }
 
-export async function removePlace({ id, placeId }: RemovePlaceSchema) {
-  return prisma.$transaction(async (tx) => {
-    await tx.place.delete({
-      where: { id: placeId },
+export async function removePlace({ pageId, id, placeId }: RemovePlaceSchema) {
+  return prisma.$transaction(async (transaction) => {
+    await transaction.place.delete({
+      where: { id: placeId, map: { pageId, id } },
       select: {
         id: true,
       },
     });
-    const map = await tx.mapTile.findUniqueOrThrow({
-      where: { id },
+    const map = await transaction.mapTile.findUniqueOrThrow({
+      where: { pageId, id },
       select: MAP_FIELDS,
     });
     return { type: "MAP" as const, ...map };
   });
 }
 
-export async function updatePlace({ id, name }: UpdatePlaceSchema) {
+export async function updatePlace({ pageId, id, name }: UpdatePlaceSchema) {
   return prisma.place.update({
-    where: { id },
+    where: { id, map: { pageId, id } },
     data: { name },
     select: PLACE_FIELDS,
   });

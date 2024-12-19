@@ -55,11 +55,12 @@ export async function createLink({ pageId, url }: CreateLinkSchema) {
   });
 }
 
-export async function updateLink({ id, url }: UpdateLinkSchema) {
+export async function updateLink({ pageId, id, url }: UpdateLinkSchema) {
   const linkMetadata = await getLinkMetadata(url);
   const { title, description, siteName, imageUrl } = linkMetadata || {};
   const link = await prisma.linkTile.update({
     where: {
+      pageId,
       id,
     },
     data: {

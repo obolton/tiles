@@ -7,6 +7,7 @@ export const CreateLinkSchema = z.object({
 export type CreateLinkSchema = z.infer<typeof CreateLinkSchema>;
 
 export const UpdateLinkSchema = z.object({
+  pageId: z.string().uuid(),
   id: z.string().uuid(),
   url: z.string().url(),
 });

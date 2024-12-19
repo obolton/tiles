@@ -13,6 +13,7 @@ export const CreateTextSchema = z.object({
 export type CreateTextSchema = z.infer<typeof CreateTextSchema>;
 
 export const UpdateTextSchema = z.object({
+  pageId: z.string().uuid(),
   id: z.string().uuid(),
   content: RichTextSchema.optional(),
   theme: z.nativeEnum(Theme).nullable().optional(),

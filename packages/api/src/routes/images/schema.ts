@@ -8,6 +8,7 @@ export const CreateImageSchema = z.object({
 export type CreateImageSchema = z.infer<typeof CreateImageSchema>;
 
 export const UpdateImageSchema = z.object({
+  pageId: z.string().uuid(),
   id: z.string().uuid(),
   caption: z.string().optional(),
   origin: z

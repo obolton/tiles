@@ -51,9 +51,10 @@ export async function createVideo({ pageId, url }: CreateVideoSchema) {
   });
 }
 
-export async function updateVideo({ id, title }: UpdateVideoSchema) {
+export async function updateVideo({ pageId, id, title }: UpdateVideoSchema) {
   const video = await prisma.videoTile.update({
     where: {
+      pageId,
       id,
     },
     data: {

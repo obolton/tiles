@@ -8,12 +8,14 @@ export const CreateCollectionSchema = z.object({
 export type CreateCollectionSchema = z.infer<typeof CreateCollectionSchema>;
 
 export const AddToCollectionSchema = z.object({
+  pageId: z.string().uuid(),
   collectionId: z.string().uuid(),
   tileId: z.string().uuid(),
 });
 export type AddToCollectionSchema = z.infer<typeof AddToCollectionSchema>;
 
 export const RemoveFromCollectionSchema = z.object({
+  pageId: z.string().uuid(),
   id: z.string().uuid(),
   collectionId: z.string().uuid(),
 });

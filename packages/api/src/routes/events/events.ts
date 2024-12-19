@@ -45,6 +45,7 @@ export async function createEvent({
 }
 
 export async function updateEvent({
+  pageId,
   id,
   title,
   start,
@@ -54,6 +55,7 @@ export async function updateEvent({
 }: UpdateEventSchema) {
   const event = await prisma.eventTile.update({
     where: {
+      pageId,
       id,
     },
     data: {

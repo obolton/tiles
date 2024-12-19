@@ -45,6 +45,7 @@ export async function createText({
 }
 
 export async function updateText({
+  pageId,
   id,
   content,
   theme,
@@ -52,6 +53,7 @@ export async function updateText({
 }: UpdateTextSchema) {
   const text = await prisma.textTile.update({
     where: {
+      pageId,
       id,
     },
     data: {

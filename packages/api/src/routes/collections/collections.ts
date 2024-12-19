@@ -63,13 +63,14 @@ export async function createCollection({
 
   return prisma.$transaction(async (transaction) => {
     const parentTile = await transaction.tile.findUniqueOrThrow({
-      where: { id: tileIds[0] },
+      where: { pageId, id: tileIds[0] },
       select: { id: true, type: true, collection: { select: { id: true } } },
     });
 
     if (parentTile.collection) {
       return transaction.collection.update({
         where: {
+          pageId,
           id: parentTile.collection.id,
         },
         data: {
@@ -99,6 +100,7 @@ export async function createCollection({
       tileIds.map((id, index) =>
         transaction.tile.update({
           where: {
+            pageId,
             id,
           },
           data: {
@@ -123,18 +125,20 @@ export async function createCollection({
 }
 
 export async function addToCollection({
+  pageId,
   collectionId,
   tileId,
 }: AddToCollectionSchema) {
   return prisma.$transaction(async (tx) => {
     const position = await tx.tile.count({
-      where: { parentCollectionId: collectionId },
+      where: { pageId, parentCollectionId: collectionId },
     });
     return await tx.collection.update({
-      where: { id: collectionId },
+      where: { pageId, id: collectionId },
       data: {
         items: {
           connect: {
+            pageId,
             id: tileId,
             position,
           },
@@ -146,17 +150,19 @@ export async function addToCollection({
 }
 
 export async function removeFromCollection({
+  pageId,
   id,
   collectionId,
 }: RemoveFromCollectionSchema) {
   return prisma.$transaction(async (tx) => {
     const { position } = await tx.tile.update({
-      where: { id },
+      where: { pageId, id },
       data: { parentCollectionId: null },
       select: { position: true },
     });
     await tx.tile.updateMany({
       where: {
+        pageId,
         parentCollectionId: collectionId,
         position: { gt: position },
       },
