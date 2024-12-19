@@ -22,11 +22,14 @@ type CreateCollectionInput = Omit<
   "pageId"
 >;
 
-type UpdateImageInput = AppRouterInputs["images"]["update"];
-type UpdateTextInput = AppRouterInputs["text"]["update"];
-type UpdateEventInput = AppRouterInputs["events"]["update"];
-type UpdateLinkInput = AppRouterInputs["externalLinks"]["update"];
-type UpdateVideoInput = AppRouterInputs["videos"]["update"];
+type UpdateImageInput = Omit<AppRouterInputs["images"]["update"], "pageId">;
+type UpdateTextInput = Omit<AppRouterInputs["text"]["update"], "pageId">;
+type UpdateEventInput = Omit<AppRouterInputs["events"]["update"], "pageId">;
+type UpdateLinkInput = Omit<
+  AppRouterInputs["externalLinks"]["update"],
+  "pageId"
+>;
+type UpdateVideoInput = Omit<AppRouterInputs["videos"]["update"], "pageId">;
 
 export function setEditMode(isEditing: boolean) {
   if (isEditing) {
@@ -130,26 +133,41 @@ export function updateTileState(
 }
 
 export async function updateImage(data: UpdateImageInput) {
-  const result = await client.images.update.mutate(data);
+  const result = await client.images.update.mutate({
+    pageId: getPageId(),
+    ...data,
+  });
   updateTileState(result);
 }
 
 export async function updateText(data: UpdateTextInput) {
-  const result = await client.text.update.mutate(data);
+  const result = await client.text.update.mutate({
+    pageId: getPageId(),
+    ...data,
+  });
   updateTileState(result);
 }
 
 export async function updateEvent(data: UpdateEventInput) {
-  const result = await client.events.update.mutate(data);
+  const result = await client.events.update.mutate({
+    pageId: getPageId(),
+    ...data,
+  });
   updateTileState(result);
 }
 
 export async function updateLink(data: UpdateLinkInput) {
-  const result = await client.externalLinks.update.mutate(data);
+  const result = await client.externalLinks.update.mutate({
+    pageId: getPageId(),
+    ...data,
+  });
   updateTileState(result);
 }
 
 export async function updateVideo(data: UpdateVideoInput) {
-  const result = await client.videos.update.mutate(data);
+  const result = await client.videos.update.mutate({
+    pageId: getPageId(),
+    ...data,
+  });
   updateTileState(result);
 }

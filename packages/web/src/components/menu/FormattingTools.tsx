@@ -25,7 +25,7 @@ export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
         document.body.style.setProperty("--font", fontConfig.family);
       });
       await client.pages.update.mutate({
-        id: pageId,
+        pageId,
         font,
       });
     },
@@ -59,8 +59,8 @@ export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
         }
       });
       await client.pages.update.mutate({
-        id: pageId,
-        theme,
+        pageId,
+        theme: theme ?? "LIGHT",
         hue,
       });
     },

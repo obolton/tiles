@@ -70,7 +70,8 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
 
   const onDelete = useCallback(
     async (id: string) => {
-      await client.tiles.delete.mutate({ id });
+      const pageId = document.body.dataset.pageId ?? "";
+      await client.tiles.delete.mutate({ pageId, id });
       const element = document.querySelector(`[data-placement-id="${id}"]`);
       if (element) {
         destroy(element, {
@@ -144,7 +145,8 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
           dragSource,
         );
         try {
-          await client.tiles.move.mutate({ id, position });
+          const pageId = document.body.dataset.pageId ?? "";
+          await client.tiles.move.mutate({ pageId, id, position });
         } catch (error) {
           handleError(error);
         }
@@ -196,7 +198,8 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       const columnWidth = sizeRef.current.width / 3;
       const columns = Math.max(Math.round(size.width / columnWidth), 1);
       const rows = Math.max(Math.round(size.height / columnWidth), 1);
-      await client.tiles.resize.mutate({ id, columns, rows });
+      const pageId = document.body.dataset.pageId ?? "";
+      await client.tiles.resize.mutate({ pageId, id, columns, rows });
     };
     const element = ref.current;
     const abortController = new AbortController();

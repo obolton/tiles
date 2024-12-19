@@ -95,7 +95,8 @@ export default function Stack({ items: initialItems }: StackProps) {
           dragSource,
         );
         try {
-          await client.tiles.move.mutate({ id, position });
+          const pageId = document.body.dataset.pageId ?? "";
+          await client.tiles.move.mutate({ pageId, id, position });
         } catch (error) {
           handleError(error);
         }
@@ -108,7 +109,8 @@ export default function Stack({ items: initialItems }: StackProps) {
 
   const onDelete = useCallback(
     async (id: string) => {
-      await client.tiles.delete.mutate({ id });
+      const pageId = document.body.dataset.pageId ?? "";
+      await client.tiles.delete.mutate({ pageId, id });
       const element = document.getElementById(id);
       if (element) {
         await destroy(element, {

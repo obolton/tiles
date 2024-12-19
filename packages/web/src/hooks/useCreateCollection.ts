@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { createCollection } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
 import type { DragDropEvent } from "@/utils/drag";

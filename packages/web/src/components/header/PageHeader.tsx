@@ -46,7 +46,7 @@ export default function PageHeader({
     }
     try {
       await client.pages.update.mutate({
-        id: pageId,
+        pageId,
         title,
         subtitle,
       });
@@ -62,7 +62,7 @@ export default function PageHeader({
     }
     try {
       const page = await client.pages.update.mutate({
-        id: pageId,
+        pageId,
         coverImageKey: result.imageKey,
       });
       setCoverImageUrl(page.coverImageUrl);
@@ -74,7 +74,7 @@ export default function PageHeader({
   const removeCoverImage = useCallback(async () => {
     try {
       await client.pages.update.mutate({
-        id: pageId,
+        pageId,
         coverImageKey: null,
       });
       setCoverImageUrl(null);

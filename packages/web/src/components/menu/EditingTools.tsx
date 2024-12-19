@@ -26,19 +26,19 @@ export default function EditingTools({
   const [isPublished, setIsPublished] = useState(initialIsPublished);
 
   const publishPage = useCallback(async () => {
-    await client.pages.update.mutate({ id: pageId, published: true });
+    await client.pages.update.mutate({ pageId, published: true });
     setIsPublished(true);
     showToast("The page was published.", "success");
   }, [pageId]);
 
   const unpublishPage = useCallback(async () => {
-    await client.pages.update.mutate({ id: pageId, published: false });
+    await client.pages.update.mutate({ pageId, published: false });
     setIsPublished(false);
     showToast("The page was unpublished.", "success");
   }, [pageId]);
 
   const deletePage = useCallback(async () => {
-    await client.pages.delete.mutate({ id: pageId });
+    await client.pages.delete.mutate({ pageId });
     redirectWithToast("/library", "The page was deleted.", "success");
   }, [pageId]);
 
