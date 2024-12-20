@@ -10,6 +10,7 @@ import imageIcon from "@/icons/image.svg";
 import type { ImageModalResult } from "@/components/modals/ImageModal";
 import { formatRelativeDate } from "@/utils/dates";
 import editor from "@/editor";
+import { viewTransition } from "@/utils/transitions";
 
 interface PageHeaderProps {
   title: string;
@@ -56,7 +57,16 @@ export default function PageHeader({
         return;
       }
       const { coverImageUrl } = await editor.setCoverImage(result.imageKey);
-      setCoverImageUrl(coverImageUrl);
+      if (coverImageUrl) {
+        let image: HTMLImageElement | null = new Image();
+        image.onload = () => {
+          viewTransition(() => setCoverImageUrl(coverImageUrl));
+          image = null;
+        };
+        image.src = coverImageUrl;
+      } else {
+        viewTransition(() => setCoverImageUrl(null));
+      }
     } catch (error) {
       handleError(error);
     }
@@ -65,7 +75,7 @@ export default function PageHeader({
   const removeCoverImage = useCallback(async () => {
     try {
       await editor.setCoverImage(null);
-      setCoverImageUrl(null);
+      viewTransition(() => setCoverImageUrl(null));
     } catch (error) {
       handleError(error);
     }
