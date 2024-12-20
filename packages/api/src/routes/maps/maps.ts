@@ -22,6 +22,7 @@ export const MAP_FIELDS = {
   id: true,
   places: {
     select: PLACE_FIELDS,
+    orderBy: { name: "asc" },
   },
 } as const satisfies Prisma.MapTileSelect;
 
