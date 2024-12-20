@@ -16,18 +16,17 @@ const MOCK_PAGE: PageLinkPage = {
   theme: "LIGHT",
   hue: 120,
   font: "MODERN",
+  coverImageUrl: "https://example.com/cover.jpg",
   author: {
     id: "test-user",
     name: "Test User",
-    imageKey: "test-image-key",
+    imageUrl: "https://example.com/author.jpg",
   },
-  tiles: [],
 };
 
 const MOCK_PAGE_LINK: PageLink = {
   id: "test-page-link",
-  pageId: MOCK_PAGE.id,
-  page: MOCK_PAGE,
+  linkedPage: MOCK_PAGE,
 };
 
 const MOCK_PLACEMENT = {
@@ -57,13 +56,8 @@ describe("createPageLink", () => {
       type: "PAGE_LINK",
       ...MOCK_PLACEMENT,
       ...MOCK_PAGE_LINK,
-      page: {
+      linkedPage: {
         ...omit(MOCK_PAGE, ["tiles"]),
-        imageKey: null,
-        author: {
-          ...omit(MOCK_PAGE.author, ["imageKey"]),
-          imageUrl: "https://example.com/profile-images/test-image-key",
-        },
       },
     });
   });

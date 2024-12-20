@@ -20,12 +20,24 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
   },
 } satisfies Prisma.PageSelect<ExtensionArgs>;
 
+export type PageLinkPage = Prisma.Result<
+  typeof prisma.page,
+  { select: typeof PAGE_LINK_TILE_PAGE_FIELDS },
+  "findUniqueOrThrow"
+>;
+
 export const PAGE_LINK_FIELDS = {
   id: true,
   linkedPage: {
     select: PAGE_LINK_TILE_PAGE_FIELDS,
   },
 } as const satisfies Prisma.PageLinkTileSelect<ExtensionArgs>;
+
+export type PageLink = Prisma.Result<
+  typeof prisma.pageLinkTile,
+  { select: typeof PAGE_LINK_FIELDS },
+  "findUniqueOrThrow"
+>;
 
 export async function createPageLink({
   pageId,
