@@ -8,6 +8,7 @@ import type { FontId } from "@/config/fonts";
 export type TileProps = {
   className?: string;
   children?: React.ReactNode;
+  background?: boolean;
   border?: "inside" | "outside" | "none";
   theme?: Theme | null;
   hue?: number | null;
@@ -33,6 +34,7 @@ export default function Tile({
   theme,
   hue,
   font,
+  background = true,
   border = "outside",
   backgroundImageUrl,
 }: TileProps) {
@@ -55,6 +57,7 @@ export default function Tile({
       className={classNames(
         styles.tile,
         BORDER_CLASSES[border],
+        background ? styles.background : undefined,
         theme ? THEME_CLASSES[theme] : undefined,
         className,
       )}
