@@ -102,10 +102,22 @@ export async function removePlace({ pageId, id, placeId }: RemovePlaceSchema) {
   });
 }
 
-export async function updatePlace({ pageId, id, name }: UpdatePlaceSchema) {
-  return prisma.place.update({
-    where: { id, map: { pageId, id } },
-    data: { name },
-    select: PLACE_FIELDS,
+export async function updatePlace({
+  pageId,
+  id,
+  placeId,
+  name,
+}: UpdatePlaceSchema) {
+  return prisma.$transaction(async (transaction) => {
+    await prisma.place.update({
+      where: { id: placeId, map: { pageId, id } },
+      data: { name },
+      select: { id: true },
+    });
+    const map = await transaction.mapTile.findUniqueOrThrow({
+      where: { pageId, id },
+      select: MAP_FIELDS,
+    });
+    return { type: "MAP" as const, ...map };
   });
 }

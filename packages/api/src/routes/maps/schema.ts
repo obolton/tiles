@@ -45,6 +45,7 @@ export type RemovePlaceSchema = z.infer<typeof RemovePlaceSchema>;
 export const UpdatePlaceSchema = z.object({
   pageId: z.string().uuid(),
   id: z.string().uuid(),
+  placeId: z.string().uuid(),
   name: z.string(),
 });
 export type UpdatePlaceSchema = z.infer<typeof UpdatePlaceSchema>;
