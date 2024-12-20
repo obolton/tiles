@@ -14,7 +14,9 @@ function updateBookmarkButton(isBookmarked: boolean) {
   const button = document.getElementById("bookmark") as HTMLButtonElement;
   const image = button.firstElementChild as HTMLImageElement;
   button.ariaPressed = isBookmarked ? "true" : "false";
-  button.ariaLabel = isBookmarked ? "Remove bookmark" : "Add bookmark";
+  button.ariaLabel = isBookmarked
+    ? "Unbookmark this page"
+    : "Bookmark this page";
   image.src = isBookmarked ? bookmarkFilledIcon.src : bookmarkIcon.src;
 }
 
@@ -30,7 +32,9 @@ if (isSignedIn() && bookmark) {
       try {
         await setIsBookmarked(PAGE_ID, !isBookmarked);
         showToast(
-          isBookmarked ? "A bookmark was removed." : "A bookmark was added.",
+          isBookmarked
+            ? "The bookmark was removed."
+            : "The page was bookmarked.",
           "success",
         );
       } catch (error) {
