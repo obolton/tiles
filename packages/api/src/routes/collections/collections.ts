@@ -13,6 +13,7 @@ import { VIDEO_FIELDS } from "../videos/videos.ts";
 import { LINK_FIELDS } from "../links/links.ts";
 import { PAGE_LINK_FIELDS } from "../pageLinks/pageLinks.ts";
 import { EVENT_FIELDS } from "../events/events.ts";
+import { formatTile } from "../pages/pages.ts";
 
 export const COLLECTION_FIELDS = {
   id: true,
@@ -120,7 +121,13 @@ export async function createCollection({
       transaction,
     );
 
-    return { type: "COLLECTION" as const, ...collection, ...placement };
+    return {
+      type: "COLLECTION" as const,
+      ...collection,
+      // @ts-expect-error Incompatibility due to collections missing
+      items: collection.items.map(formatTile),
+      ...placement,
+    };
   });
 }
 

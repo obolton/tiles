@@ -85,7 +85,7 @@ type TileWithData = Prisma.Result<
   "findMany"
 >[number];
 
-function formatTile({
+export function formatTile({
   id,
   position,
   rows,
