@@ -4,18 +4,12 @@ import shareIcon from "@/icons/share.svg";
 import bookmarkIcon from "@/icons/bookmark.svg";
 
 interface Props {
-  pageId: string;
   isPublished: boolean;
   allowDelete?: boolean;
   allowPublish?: boolean;
 }
 
-const {
-  pageId,
-  isPublished,
-  allowDelete = true,
-  allowPublish = true,
-} = Astro.props;
+const { isPublished, allowDelete = true, allowPublish = true } = Astro.props;
 ---
 
 <div
@@ -43,7 +37,6 @@ const {
   </button>
 
   <EditingTools
-    pageId={pageId}
     isPublished={isPublished}
     allowPublish={allowPublish}
     allowDelete={allowDelete}

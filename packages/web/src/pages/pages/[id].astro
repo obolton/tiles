@@ -41,10 +41,9 @@ if (page.published) {
   hue={page.hue}
   font={page.font}
 >
-  <EditingToolbar pageId={page.id} isPublished={page.published} slot="menu" />
+  <EditingToolbar isPublished={page.published} slot="menu" />
 
   <PageHeader
-    pageId={page.id}
     title={page.title}
     subtitle={page.subtitle}
     coverImageUrl={page.coverImageUrl}

@@ -34,7 +34,6 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
   font={profile.profilePage.font}
 >
   <EditingToolbar
-    pageId={profile.profilePage.id}
     isPublished
     allowDelete={false}
     allowPublish={false}
@@ -42,7 +41,6 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
   />
 
   <ProfilePageHeader
-    pageId={profile.profilePage.id}
     name={profile.name}
     imageUrl={profile.imageUrl}
     subtitle={profile.profilePage.subtitle}
