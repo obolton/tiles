@@ -111,7 +111,9 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       const { detail: tileIds } = event as CustomEvent<string[]>;
       startLayoutTransition(() => {
         setTiles((prevTiles) =>
-          prevTiles.filter((prevTile) => !tileIds.includes(prevTile.id)),
+          prevTiles.filter(
+            (prevTile) => !tileIds.includes(prevTile.placementId),
+          ),
         );
       });
     };
