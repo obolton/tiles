@@ -83,6 +83,7 @@ export default function EditingTools({
         popoverTarget="page-options"
         aria-label="More options"
         aria-haspopup="menu"
+        aria-expanded="false"
       >
         <img src={moreIcon.src} alt="More options" aria-hidden="true" />
       </button>

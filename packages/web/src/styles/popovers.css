@@ -149,8 +149,8 @@ popover-menu > menu {
       opacity var(--animation-duration-short) var(--easing);
   }
 
-  &:hover::after,
-  &:focus-visible::after {
+  &:not([aria-expanded="true"]):hover::after,
+  &:not([aria-expanded="true"]):focus-visible::after {
     display: flex;
     opacity: 1;
   }

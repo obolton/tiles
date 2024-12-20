@@ -37,6 +37,7 @@ export default class SwatchSelect extends HTMLElement {
     this.button = document.createElement("button");
     this.button.setAttribute("type", "button");
     this.button.setAttribute("part", "button");
+    this.button.setAttribute("aria-pressed", "false");
     this.button.addEventListener("click", this.toggle.bind(this));
 
     const icon = document.createElement("img");
@@ -66,7 +67,7 @@ export default class SwatchSelect extends HTMLElement {
     const direction = this.getAttribute("direction") === "left" ? -1 : 1;
 
     if (this.open) {
-      this.setAttribute("aria-pressed", "true");
+      this.setAttribute("aria-expanded", "true");
       this.button.setAttribute("aria-pressed", "true");
       this.items.classList.remove("hidden");
 
@@ -85,8 +86,8 @@ export default class SwatchSelect extends HTMLElement {
         new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
       );
     } else {
-      this.removeAttribute("aria-pressed");
-      this.button.removeAttribute("aria-pressed");
+      this.setAttribute("aria-expanded", "false");
+      this.button.setAttribute("aria-pressed", "false");
 
       fadeOut(this.items, { timing: TIMING });
 

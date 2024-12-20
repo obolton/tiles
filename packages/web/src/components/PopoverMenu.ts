@@ -6,13 +6,19 @@ export default class PopoverMenu extends HTMLElement {
   constructor() {
     super();
 
-    this.addEventListener("beforetoggle", this.beforeToggle.bind(this), {
-      passive: true,
-    });
+    this.addEventListener("beforetoggle", this, { passive: true });
   }
 
   connectedCallback() {
     this.setAttribute("popover", "");
+  }
+
+  handleEvent(event: Event) {
+    switch (event.type) {
+      case "beforetoggle":
+        this.beforeToggle(event as ToggleEvent);
+        break;
+    }
   }
 
   private setPosition() {
@@ -49,9 +55,9 @@ export default class PopoverMenu extends HTMLElement {
 
     if (event.newState === "open") {
       this.setPosition();
-      trigger?.setAttribute("aria-pressed", "true");
+      trigger?.setAttribute("aria-expanded", "true");
     } else {
-      trigger?.setAttribute("aria-pressed", "false");
+      trigger?.setAttribute("aria-expanded", "false");
     }
   }
 
