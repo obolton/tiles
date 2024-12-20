@@ -1,22 +1,19 @@
 import { Fragment, useCallback } from "react";
-import client from "@/api/client";
 import useEditable from "@/hooks/useEditable";
-import Tile, { type TileProps } from "./Tile";
+import Tile from "./Tile";
 import addPlaceIcon from "@/icons/add-place.svg";
 import styles from "./MapTile.module.css";
-import type { ClientPlace, ClientMapTile } from "@/types/tiles";
+import type { ClientMapTile } from "@/types/tiles";
 import type MapEvent from "@/components/maps/MapEvent";
 import { showModal } from "@/utils/modals";
-import { updateTileState } from "@/utils/edit";
+import { updatePlace, removePlace } from "@/utils/edit";
 import type MapMarker from "../maps/MapMarker";
 
-interface MapTileProps extends TileProps {
-  places: ClientPlace[];
-}
+type MapTileProps = ClientMapTile;
 
-export default function MapTile({ id, places, ...props }: MapTileProps) {
+export default function MapTile({ id, places }: MapTileProps) {
   const isEditable = useEditable();
-  const addPlace = useCallback(
+  const handleAddPlace = useCallback(
     async () => showModal("MAP", { tileId: id }),
     [id],
   );
@@ -24,32 +21,25 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
   // TODO: This doesn't work properly when wrapped in useCallback
   const deleteMarker = async ({ markerId }: MapEvent) => {
     if (markerId) {
-      const tile = await client.maps.removePlace.mutate({
-        placeId: markerId,
+      await removePlace({
         id,
+        placeId: markerId,
       });
-
-      updateTileState(tile);
     }
   };
 
   // TODO: This doesn't work properly when wrapped in useCallback
-  const updatePlace = async (event: FocusEvent) => {
+  const handleUpdatePlace = async (event: FocusEvent) => {
     const marker = event.target as MapMarker;
     const markerId = marker.id;
     const value = marker.value ?? "";
+    // TODO: Only update if the value has changed
     if (markerId) {
-      await client.maps.updatePlace.mutate({
-        id: markerId,
+      await updatePlace({
+        id,
+        placeId: markerId,
         name: value,
       });
-
-      updateTileState({
-        id,
-        places: places.map((place) =>
-          place.id === markerId ? { ...place, name: value } : place,
-        ),
-      } as ClientMapTile);
     }
   };
 
@@ -76,7 +66,7 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
                 }
                 label={place.name}
                 tabindex="0"
-                onblur={updatePlace}
+                onblur={handleUpdatePlace}
               />
               <map-legend-item
                 marker={place.id}
@@ -96,7 +86,7 @@ export default function MapTile({ id, places, ...props }: MapTileProps) {
                 event.stopPropagation();
                 event.preventDefault();
               }}
-              onClick={addPlace}
+              onClick={handleAddPlace}
             >
               <img src={addPlaceIcon.src} alt="Add a place" />
             </button>
