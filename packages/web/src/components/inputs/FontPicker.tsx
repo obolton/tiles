@@ -1,6 +1,5 @@
 import { FONTS, type FontId } from "@/config/fonts";
 import fontIcon from "@/icons/font.svg";
-import { getGoogleFontUrlAllFonts } from "@/utils/fonts";
 import { useCallback } from "react";
 import styles from "./FontPicker.module.css";
 import type SwatchSelect from "./SwatchSelect";
@@ -25,17 +24,6 @@ export default function FontPicker({
     [onChange],
   );
 
-  const onToggle = useCallback(() => {
-    if (document.getElementById("all-fonts")) {
-      return;
-    }
-    const link = document.createElement("link");
-    link.id = "all-fonts";
-    link.rel = "stylesheet";
-    link.href = getGoogleFontUrlAllFonts();
-    document.head.appendChild(link);
-  }, []);
-
   return (
     <swatch-select
       class={classNames(
@@ -47,7 +35,6 @@ export default function FontPicker({
       direction={direction}
       value={value}
       onchange={setFont}
-      ontoggle={onToggle}
     >
       <img src={fontIcon.src} alt="Font" aria-hidden="true" slot="icon" />
       {FONTS.map((font) => (
