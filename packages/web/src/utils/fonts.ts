@@ -8,7 +8,11 @@ import {
 export const GOOGLE_FONTS_BASE_URL = "https://fonts.googleapis.com/css2";
 
 export function getFontConfig(id: FontId) {
-  return FONTS.find((font) => font.id === id);
+  const config = FONTS.find((font) => font.id === id);
+  if (!config) {
+    throw new Error(`Invalid font: ${id}`);
+  }
+  return config;
 }
 
 function getFontConfigValue(font: FontConfig) {
