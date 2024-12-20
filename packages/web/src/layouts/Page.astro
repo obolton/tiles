@@ -17,7 +17,7 @@ import "@/styles/tabs.css";
 import ModalLauncher from "@/components/modals/ModalLauncher";
 import type { Theme } from "@/types/pages";
 import { DEFAULT_FONT, type FontId } from "@/config/fonts";
-import { getGoogleFontUrl, getFontConfig } from "@/utils/fonts";
+import { getGoogleFontsUrl, getFontConfig } from "@/utils/fonts";
 
 interface Props {
   id?: string;
@@ -25,17 +25,9 @@ interface Props {
   theme?: Theme;
   hue?: number | null;
   font?: FontId;
-  allFonts?: Set<FontId>;
 }
 
-const {
-  id,
-  title,
-  theme = "LIGHT",
-  hue,
-  font = DEFAULT_FONT,
-  allFonts = new Set([DEFAULT_FONT]),
-} = Astro.props;
+const { id, title, theme = "LIGHT", hue, font = DEFAULT_FONT } = Astro.props;
 const fontConfig = font ? getFontConfig(font) : undefined;
 ---
 
@@ -46,7 +38,7 @@ const fontConfig = font ? getFontConfig(font) : undefined;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href={getGoogleFontUrl(allFonts)} rel="stylesheet" />
+    <link href={getGoogleFontsUrl()} rel="stylesheet" />
     <meta name="viewport" content="width=device-width" />
     <script src="@/components/webComponents.ts"></script>
     <title>{title}</title>

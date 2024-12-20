@@ -5,8 +5,6 @@ import PageHeader from "@/components/header/PageHeader";
 import Grid from "@/components/grid/Grid";
 import client from "@/api/client";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
-import { getTileFonts } from "@/utils/pageFonts";
-import { DEFAULT_FONT } from "@/config/fonts";
 
 const pageId = import.meta.env.PAGE_ID;
 if (!pageId) {
@@ -23,10 +21,6 @@ if (!page) {
 }
 
 Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
-
-const fonts = getTileFonts(page.tiles);
-fonts.add(page.font);
-fonts.add(DEFAULT_FONT);
 ---
 
 <Page
@@ -35,7 +29,6 @@ fonts.add(DEFAULT_FONT);
   theme={page.theme}
   hue={page.hue}
   font={page.font}
-  allFonts={fonts}
 >
   <EditingToolbar
     pageId={page.id}

@@ -3,7 +3,6 @@ import Page from "@/layouts/Page.astro";
 import BookmarksGrid from "@/components/grid/BookmarksGrid";
 import client from "@/api/client";
 import { SESSION_COOKIE_NAME } from "api/src/constants/cookies";
-import { DEFAULT_FONT } from "@/config/fonts";
 
 const sessionId = Astro.cookies.get(SESSION_COOKIE_NAME)?.value;
 
@@ -19,13 +18,9 @@ const pages = await client.bookmarks.list.query(
 if (!pages) {
   return Astro.redirect("/sign-in");
 }
-
-const fonts = new Set(pages.pages.map((page) => page.font));
-fonts.add(DEFAULT_FONT);
-// TODO: Add fonts for pages that are loaded later
 ---
 
-<Page title="Library - Bookmarks" allFonts={fonts}>
+<Page title="Library - Bookmarks">
   <header slot="header"><h1>Library</h1></header>
 
   <nav class="tabs">
