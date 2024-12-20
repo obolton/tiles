@@ -1,12 +1,12 @@
 import { useCallback, useState } from "react";
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import useEditable from "@/hooks/useEditable";
-import client from "@/api/client";
 import { classNames } from "@/utils/css";
 import styles from "./ProfilePageHeader.module.css";
+import editor from "@/editor";
+import { handleError } from "@/utils/errors";
 
 interface ProfilePageHeaderProps {
-  pageId: string;
   name: string;
   imageUrl: string | null;
   subtitle: string | null;
@@ -17,7 +17,6 @@ function stripLineBreaks(value: string) {
 }
 
 export default function ProfilePageHeader({
-  pageId,
   name,
   imageUrl,
   subtitle,
@@ -31,14 +30,13 @@ export default function ProfilePageHeader({
     [],
   );
 
-  const commit = useCallback(
-    () =>
-      client.pages.update.mutate({
-        id: pageId,
-        subtitle: subtitleValue,
-      }),
-    [pageId, subtitleValue],
-  );
+  const commit = useCallback(async () => {
+    try {
+      await editor.setPageTitle(undefined, subtitleValue);
+    } catch (error) {
+      handleError(error);
+    }
+  }, [subtitleValue]);
 
   return (
     <header className={styles.header}>

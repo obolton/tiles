@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import PlainTextEditor from "@/components/inputs/PlainTextEditor/PlainTextEditor";
 import useEditable from "@/hooks/useEditable";
-import client from "@/api/client";
 import { classNames } from "@/utils/css";
 import styles from "./PageHeader.module.css";
 import { handleError } from "@/utils/errors";
@@ -10,9 +9,9 @@ import Icon from "@/components/icons/Icon";
 import imageIcon from "@/icons/image.svg";
 import type { ImageModalResult } from "@/components/modals/ImageModal";
 import { formatRelativeDate } from "@/utils/dates";
+import editor from "@/editor";
 
 interface PageHeaderProps {
-  pageId: string;
   title: string;
   subtitle: string | null;
   coverImageUrl: string | null;
@@ -25,7 +24,6 @@ interface PageHeaderProps {
 }
 
 export default function PageHeader({
-  pageId,
   title: initialTitle,
   subtitle: initialSubtitle,
   coverImageUrl: initialCoverImageUrl,
@@ -39,49 +37,39 @@ export default function PageHeader({
   const isEditable = useEditable();
 
   const commit = useCallback(async () => {
-    const [title = "", ...otherLines] = value.split("\n");
-    const subtitle = otherLines.join("\n").trim() || "";
-    if (!title) {
-      return;
-    }
     try {
-      await client.pages.update.mutate({
-        pageId,
-        title,
-        subtitle,
-      });
+      const [title = "", ...otherLines] = value.split("\n");
+      const subtitle = otherLines.join("\n").trim() || "";
+      if (!title) {
+        return;
+      }
+      await editor.setPageTitle(title, subtitle);
     } catch (error) {
       handleError(error);
     }
-  }, [pageId, value]);
+  }, [value]);
 
   const selectCoverImage = useCallback(async () => {
-    const result = await showModal<ImageModalResult>("IMAGE");
-    if (!result) {
-      return;
-    }
     try {
-      const page = await client.pages.update.mutate({
-        pageId,
-        coverImageKey: result.imageKey,
-      });
-      setCoverImageUrl(page.coverImageUrl);
+      const result = await showModal<ImageModalResult>("IMAGE");
+      if (!result) {
+        return;
+      }
+      const { coverImageUrl } = await editor.setCoverImage(result.imageKey);
+      setCoverImageUrl(coverImageUrl);
     } catch (error) {
       handleError(error);
     }
-  }, [pageId]);
+  }, []);
 
   const removeCoverImage = useCallback(async () => {
     try {
-      await client.pages.update.mutate({
-        pageId,
-        coverImageKey: null,
-      });
+      await editor.setCoverImage(null);
       setCoverImageUrl(null);
     } catch (error) {
       handleError(error);
     }
-  }, [pageId]);
+  }, []);
 
   const [title, ...subtitle] = value.split("\n");
 

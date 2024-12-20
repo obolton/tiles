@@ -5,67 +5,55 @@ import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import type { FontId } from "@/config/fonts";
 import { getFontConfig } from "@/utils/fonts";
 import useEditable from "@/hooks/useEditable";
-import client from "@/api/client";
 import { viewTransition } from "@/utils/transitions";
+import editor from "@/editor";
+import { handleError } from "@/utils/errors";
 
-interface FormattingToolbarProps {
-  pageId: string;
-}
-
-export default function FormattingToolbar({ pageId }: FormattingToolbarProps) {
+export default function FormattingToolbar() {
   const isEditable = useEditable();
 
-  const setFont = useCallback(
-    async (font: FontId) => {
-      const fontConfig = getFontConfig(font);
-      if (!fontConfig) {
-        throw new Error(`Invalid font ID: ${font}`);
+  const setFont = useCallback(async (font: FontId) => {
+    try {
+      viewTransition(() => {
+        document.body.style.setProperty("--font", getFontConfig(font).family);
+      });
+      await editor.setFont(font);
+    } catch (error) {
+      handleError(error);
+    }
+  }, []);
+
+  const setColor = useCallback(async ({ theme, hue }: ColorPickerValue) => {
+    viewTransition(() => {
+      switch (theme) {
+        case "LIGHT":
+          document.body.classList.add("light");
+          document.body.classList.remove("dark");
+          document.body.classList.remove("color");
+          document.body.style.removeProperty("--page-hue");
+          break;
+
+        case "DARK":
+          document.body.classList.add("dark");
+          document.body.classList.remove("light");
+          document.body.classList.remove("color");
+          document.body.style.removeProperty("--page-hue");
+          break;
+
+        case "COLOR":
+          document.body.classList.add("color");
+          document.body.classList.remove("light");
+          document.body.classList.remove("dark");
+          document.body.style.setProperty("--page-hue", `${hue}deg`);
+          break;
       }
-      viewTransition(() => {
-        document.body.style.setProperty("--font", fontConfig.family);
-      });
-      await client.pages.update.mutate({
-        pageId,
-        font,
-      });
-    },
-    [pageId],
-  );
-
-  const setColor = useCallback(
-    async ({ theme, hue }: ColorPickerValue) => {
-      viewTransition(() => {
-        switch (theme) {
-          case "LIGHT":
-            document.body.classList.add("light");
-            document.body.classList.remove("dark");
-            document.body.classList.remove("color");
-            document.body.style.removeProperty("--page-hue");
-            break;
-
-          case "DARK":
-            document.body.classList.add("dark");
-            document.body.classList.remove("light");
-            document.body.classList.remove("color");
-            document.body.style.removeProperty("--page-hue");
-            break;
-
-          case "COLOR":
-            document.body.classList.add("color");
-            document.body.classList.remove("light");
-            document.body.classList.remove("dark");
-            document.body.style.setProperty("--page-hue", `${hue}deg`);
-            break;
-        }
-      });
-      await client.pages.update.mutate({
-        pageId,
-        theme: theme ?? "LIGHT",
-        hue,
-      });
-    },
-    [pageId],
-  );
+    });
+    try {
+      await editor.setTheme(theme ?? "LIGHT", hue);
+    } catch (error) {
+      handleError(error);
+    }
+  }, []);
 
   if (!isEditable) {
     return null;

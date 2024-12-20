@@ -7,17 +7,16 @@ import publicIcon from "@/icons/public.svg";
 import moreIcon from "@/icons/more.svg";
 import trashIcon from "@/icons/trash.svg";
 import { redirectWithToast, showToast } from "@/utils/toasts";
-import client from "@/api/client";
+import editor from "@/editor";
+import { handleError } from "@/utils/errors";
 
 interface EditingToolsProps {
-  pageId: string;
   isPublished: boolean;
   allowPublish: boolean;
   allowDelete: boolean;
 }
 
 export default function EditingTools({
-  pageId,
   isPublished: initialIsPublished,
   allowPublish,
   allowDelete,
@@ -26,21 +25,33 @@ export default function EditingTools({
   const [isPublished, setIsPublished] = useState(initialIsPublished);
 
   const publishPage = useCallback(async () => {
-    await client.pages.update.mutate({ pageId, published: true });
-    setIsPublished(true);
-    showToast("The page was published.", "success");
-  }, [pageId]);
+    try {
+      await editor.setPublished(true);
+      setIsPublished(true);
+      showToast("The page was published.", "success");
+    } catch (error) {
+      handleError(error);
+    }
+  }, []);
 
   const unpublishPage = useCallback(async () => {
-    await client.pages.update.mutate({ pageId, published: false });
-    setIsPublished(false);
-    showToast("The page was unpublished.", "success");
-  }, [pageId]);
+    try {
+      await editor.setPublished(false);
+      setIsPublished(false);
+      showToast("The page was unpublished.", "success");
+    } catch (error) {
+      handleError(error);
+    }
+  }, []);
 
   const deletePage = useCallback(async () => {
-    await client.pages.delete.mutate({ pageId });
-    redirectWithToast("/library", "The page was deleted.", "success");
-  }, [pageId]);
+    try {
+      await editor.deletePage();
+      redirectWithToast("/library", "The page was deleted.", "success");
+    } catch (error) {
+      handleError(error);
+    }
+  }, []);
 
   if (!isEditable) {
     return null;
@@ -73,7 +84,7 @@ export default function EditingTools({
       <hr />
       <TileButtons />
       <hr />
-      <FormattingTools pageId={pageId} />
+      <FormattingTools />
       <hr />
       <button
         id="page-options-button"

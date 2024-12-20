@@ -13,7 +13,6 @@ import useLayoutTransition, {
 import useElementSizeRef from "@/hooks/useElementSizeRef";
 import { scrollIntoView } from "@/hooks/useScrollIntoView";
 import { moveElement } from "@/utils/arrays";
-import client from "@/api/client";
 import styles from "./Grid.module.css";
 import type { ClientTile } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
@@ -24,6 +23,7 @@ import GridItem from "./GridItem";
 import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
 import { handleError } from "@/utils/errors";
 import TileButtons from "@/components/menu/TileButtons";
+import editor from "@/editor";
 
 interface GridProps {
   tiles: ClientTile[];
@@ -70,8 +70,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
 
   const onDelete = useCallback(
     async (id: string) => {
-      const pageId = document.body.dataset.pageId ?? "";
-      await client.tiles.delete.mutate({ pageId, id });
+      await editor.deleteTile(id);
       const element = document.querySelector(`[data-placement-id="${id}"]`);
       if (element) {
         destroy(element, {
@@ -147,8 +146,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
           dragSource,
         );
         try {
-          const pageId = document.body.dataset.pageId ?? "";
-          await client.tiles.move.mutate({ pageId, id, position });
+          await editor.moveTile(id, position);
         } catch (error) {
           handleError(error);
         }
@@ -200,8 +198,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       const columnWidth = sizeRef.current.width / 3;
       const columns = Math.max(Math.round(size.width / columnWidth), 1);
       const rows = Math.max(Math.round(size.height / columnWidth), 1);
-      const pageId = document.body.dataset.pageId ?? "";
-      await client.tiles.resize.mutate({ pageId, id, columns, rows });
+      await editor.resizeTile(id, columns, rows);
     };
     const element = ref.current;
     const abortController = new AbortController();
