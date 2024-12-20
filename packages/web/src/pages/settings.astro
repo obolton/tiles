@@ -94,7 +94,6 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
 
   filePicker.addEventListener("upload", async ({ uploadKey }) => {
     const userInfo = await client.users.update.mutate({
-      id: getFormData().id,
       imageKey: uploadKey,
     });
     setUserInfo(userInfo);
