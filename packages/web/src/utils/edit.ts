@@ -30,6 +30,9 @@ type UpdateLinkInput = Omit<
   "pageId"
 >;
 type UpdateVideoInput = Omit<AppRouterInputs["videos"]["update"], "pageId">;
+type AddPlaceInput = Omit<AppRouterInputs["maps"]["addPlace"], "pageId">;
+type UpdatePlaceInput = Omit<AppRouterInputs["maps"]["updatePlace"], "pageId">;
+type RemovePlaceInput = Omit<AppRouterInputs["maps"]["removePlace"], "pageId">;
 
 export function setEditMode(isEditing: boolean) {
   if (isEditing) {
@@ -166,6 +169,30 @@ export async function updateLink(data: UpdateLinkInput) {
 
 export async function updateVideo(data: UpdateVideoInput) {
   const result = await client.videos.update.mutate({
+    pageId: getPageId(),
+    ...data,
+  });
+  updateTileState(result);
+}
+
+export async function addPlace(data: AddPlaceInput) {
+  const result = await client.maps.addPlace.mutate({
+    pageId: getPageId(),
+    ...data,
+  });
+  updateTileState(result);
+}
+
+export async function updatePlace(data: UpdatePlaceInput) {
+  const result = await client.maps.updatePlace.mutate({
+    pageId: getPageId(),
+    ...data,
+  });
+  updateTileState(result);
+}
+
+export async function removePlace(data: RemovePlaceInput) {
+  const result = await client.maps.removePlace.mutate({
     pageId: getPageId(),
     ...data,
   });
