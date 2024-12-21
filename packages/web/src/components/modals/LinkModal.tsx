@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useTransition } from "react";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
@@ -7,6 +7,7 @@ import type { ModalProps } from "@/utils/modals";
 import useInputState from "@/hooks/useInputState";
 import PagesGrid from "@/components/grid/PagesGrid";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
+import { classNames } from "@/utils/css";
 
 export type LinkModalResult = { linkedPageId: string } | { url: string | null };
 
@@ -17,34 +18,45 @@ interface LinkModalProps extends ModalProps<LinkModalResult> {
 }
 
 export default function LinkModal({
-  close,
+  cancel,
+  confirm,
   url: initialUrl = "",
   showPages = true,
   showRemove = false,
 }: LinkModalProps) {
+  const [isPending, startTransition] = useTransition();
   const [url, onChangeUrl] = useInputState(initialUrl);
 
   const selectPage = useCallback(
-    (linkedPageId: string) => close({ linkedPageId }),
-    [close],
+    (linkedPageId: string) => {
+      if (isPending) {
+        return;
+      }
+      startTransition(async () => confirm({ linkedPageId }));
+    },
+    [isPending, confirm],
   );
 
   const submit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
-      if (!url) {
+      if (isPending || !url) {
         return;
       }
 
-      close({ url });
+      startTransition(async () => confirm({ url }));
     },
-    [url, close],
+    [isPending, url, confirm],
   );
 
-  const remove = useCallback(() => close({ url: null }), [close]);
+  const remove = useCallback(() => {
+    if (isPending) {
+      return;
+    }
 
-  const cancel = useCallback(() => close(), [close]);
+    startTransition(async () => confirm({ url: null }));
+  }, [isPending, confirm]);
 
   const pageId = document.body.dataset.pageId;
 
@@ -100,7 +112,11 @@ export default function LinkModal({
       </ModalBody>
 
       <ModalFooter>
-        <button className="primary" type="submit" aria-disabled={!url}>
+        <button
+          className={classNames("primary", isPending && "pending")}
+          type="submit"
+          aria-disabled={!url}
+        >
           Save
         </button>
         {showRemove ? (
