@@ -1,26 +1,26 @@
-import { useCallback, useRef, useState } from "react";
-import { uploadMedia } from "@/utils/media";
+import { useCallback, useRef, useState, useTransition } from "react";
 import ModalFooter from "./ModalFooter";
 import styles from "./ImageModal.module.css";
 import type { ModalProps } from "@/utils/modals";
+import { classNames } from "@/utils/css";
 
 const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
 
 export type ImageModalResult = {
-  imageKey: string;
+  image: File;
 };
 
-export default function ImageModal({ close }: ModalProps<ImageModalResult>) {
+export default function ImageModal({
+  cancel,
+  confirm,
+}: ModalProps<ImageModalResult>) {
+  const [isPending, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [imageKey, setImageKey] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
   const [isDragOver, setDragOver] = useState<boolean>(false);
 
-  const selectImage = useCallback(() => {
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
-  }, []);
+  const selectImage = useCallback(() => inputRef.current?.click(), []);
 
   const dragOver = useCallback((event: React.DragEvent) => {
     const { dataTransfer } = event;
@@ -38,11 +38,16 @@ export default function ImageModal({ close }: ModalProps<ImageModalResult>) {
 
   const dragLeave = useCallback(() => setDragOver(false), []);
 
-  const setFile = useCallback(async (file: File) => {
-    setImageUrl(URL.createObjectURL(file));
-    const key = await uploadMedia(file, "image");
-    setImageKey(key);
-  }, []);
+  const setFile = useCallback(
+    (file: File) => {
+      if (imageUrl) {
+        URL.revokeObjectURL(imageUrl);
+      }
+      setImageUrl(URL.createObjectURL(file));
+      setImage(file);
+    },
+    [imageUrl],
+  );
 
   const drop = useCallback(
     (event: React.DragEvent) => {
@@ -64,7 +69,7 @@ export default function ImageModal({ close }: ModalProps<ImageModalResult>) {
     [setFile],
   );
 
-  const uploadImage = useCallback(async () => {
+  const selectFile = useCallback(() => {
     const file = inputRef.current?.files?.[0];
     if (file) {
       setFile(file);
@@ -74,15 +79,13 @@ export default function ImageModal({ close }: ModalProps<ImageModalResult>) {
   const submit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      if (!imageKey) {
+      if (isPending || !image) {
         return;
       }
-      close({ imageKey });
+      startTransition(async () => confirm({ image }));
     },
-    [imageKey, close],
+    [isPending, confirm, image],
   );
-
-  const cancel = useCallback(() => close(), [close]);
 
   return (
     <form className={styles.form} onSubmit={submit}>
@@ -99,7 +102,7 @@ export default function ImageModal({ close }: ModalProps<ImageModalResult>) {
           type="file"
           accept={ACCEPT_CONTENT_TYPES.join(",")}
           ref={inputRef}
-          onChange={uploadImage}
+          onChange={selectFile}
         />
         {imageUrl ? (
           <img
@@ -108,12 +111,16 @@ export default function ImageModal({ close }: ModalProps<ImageModalResult>) {
             alt="The uploaded image preview"
           />
         ) : (
-          <p>Select an image or drag and drop</p>
+          <p>Select an image or drag and drop.</p>
         )}
       </section>
 
       <ModalFooter className={styles.footer}>
-        <button className="primary" type="submit" aria-disabled={!imageKey}>
+        <button
+          className={classNames("primary", isPending && "pending")}
+          type="submit"
+          aria-disabled={!image}
+        >
           Save
         </button>
         <button className="secondary" type="button" onClick={cancel}>
