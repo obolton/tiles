@@ -29,7 +29,12 @@ function getFormattedDateTime(input: string) {
   )}T${String(date.getUTCHours()).padStart(2, "0")}:${String(date.getUTCMinutes()).padStart(2, "0")}`;
 }
 
-export default function EventModal({ tileId, close, tile }: EventModalProps) {
+export default function EventModal({
+  tileId,
+  cancel,
+  confirm,
+  tile,
+}: EventModalProps) {
   const [allDay, setAllDay] = useState(tile?.allDay ?? false);
   const [title, setTitle] = useState(tile?.title ?? "");
   const [start, setStart] = useState(tile?.start ?? "");
@@ -65,29 +70,28 @@ export default function EventModal({ tileId, close, tile }: EventModalProps) {
 
       try {
         if (tileId) {
-          await updateEvent({
+          const event = await updateEvent({
             id: tileId,
             title,
             start: new Date(start).toISOString(),
             end: end ? new Date(end).toISOString() : null,
             allDay,
           });
+          confirm(event);
         } else {
-          await createEvent({
+          const event = await createEvent({
             title,
             start: new Date(start).toISOString(),
             end: end ? new Date(end).toISOString() : null,
             allDay,
           });
+          confirm(event);
         }
-        close();
       } catch (error) {
-        if (error instanceof Error) {
-          handleError(error);
-        }
+        handleError(error);
       }
     },
-    [allDay, close, end, start, tileId, title],
+    [allDay, confirm, end, start, tileId, title],
   );
 
   return (
@@ -165,7 +169,7 @@ export default function EventModal({ tileId, close, tile }: EventModalProps) {
         <button className="primary" type="submit">
           Save
         </button>
-        <button className="secondary" type="button" onClick={close}>
+        <button className="secondary" type="button" onClick={cancel}>
           Cancel
         </button>
       </ModalFooter>
