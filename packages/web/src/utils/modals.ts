@@ -1,12 +1,14 @@
 import type { LazyExoticComponent, ComponentType } from "react";
 
-export interface ModalOptions {
+export interface ModalOptions<T> {
   origin?: DOMRect;
+  onConfirm?: (result: T) => Promise<void>;
   [k: string]: unknown;
 }
 
-export interface ModalProps<T = unknown> extends ModalOptions {
-  close: (result?: T) => void;
+export interface ModalProps<T = unknown> extends ModalOptions<T> {
+  confirm: (result: T) => Promise<void>;
+  cancel: () => void;
 }
 
 export class ModalEvent<T extends object> extends Event {
@@ -14,7 +16,7 @@ export class ModalEvent<T extends object> extends Event {
     type: "modal:show" | "modal:remove",
     public readonly modal?: string,
     public readonly callback?: (result: T | undefined) => void,
-    public readonly options?: ModalOptions,
+    public readonly options?: ModalOptions<T>,
   ) {
     super(type, { bubbles: true });
   }
@@ -44,7 +46,7 @@ export function getModal(name: string) {
 
 export async function showModal<T extends object>(
   modal: string,
-  options?: ModalOptions,
+  options?: ModalOptions<T>,
 ) {
   return new Promise<T | undefined>((resolve, reject) => {
     if (!registry.has(modal)) {

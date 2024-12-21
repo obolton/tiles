@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import type { ModalOptions } from "@/utils/modals";
 
-export default function useModal() {
+export default function useModal<T>() {
   const [value, setValue] = useState<{
     modal: string;
-    options?: ModalOptions;
-    callback?: (result: unknown) => void;
+    options?: ModalOptions<T>;
+    callback?: (result?: T) => void;
   } | null>(null);
 
   useEffect(() => {

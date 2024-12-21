@@ -9,8 +9,14 @@ export default function ModalLauncher() {
 
   useEffect(() => setOpen(!!modal), [modal]);
 
-  const close = useCallback(
-    (result?: unknown) => {
+  const cancel = useCallback(() => {
+    setOpen(false);
+    modal?.callback?.();
+  }, [modal]);
+
+  const confirm = useCallback(
+    async (result: unknown) => {
+      await modal?.options?.onConfirm?.(result);
       setOpen(false);
       modal?.callback?.(result);
     },
@@ -24,9 +30,9 @@ export default function ModalLauncher() {
   const ModalComponent = getModal(modal.modal);
 
   return (
-    <Modal open={open} onClose={close} originRect={modal?.options?.origin}>
+    <Modal open={open} onClose={cancel} originRect={modal?.options?.origin}>
       <Suspense>
-        <ModalComponent close={close} {...modal.options} />
+        <ModalComponent cancel={cancel} confirm={confirm} {...modal.options} />
       </Suspense>
     </Modal>
   );
