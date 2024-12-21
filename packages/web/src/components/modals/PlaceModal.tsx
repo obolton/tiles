@@ -19,7 +19,8 @@ interface EditMapTileModalProps extends ModalProps {
 
 export default function EditMapTileModal({
   tileId,
-  close,
+  cancel,
+  confirm,
 }: EditMapTileModalProps) {
   const [location, setLocation] = useState<GeolocationPosition | null>(null);
   const [results, setResults] = useState<Place[]>([]);
@@ -51,17 +52,17 @@ export default function EditMapTileModal({
   const selectPlace = useCallback(
     async (place: Place) => {
       if (tileId) {
-        await addPlace({
+        const map = await addPlace({
           id: tileId,
           place,
         });
+        confirm(map);
       } else {
-        await createMap({ place, columns: 3 });
+        const map = await createMap({ place, columns: 3 });
+        confirm(map);
       }
-
-      close();
     },
-    [tileId, close],
+    [tileId, confirm],
   );
 
   return (
@@ -91,7 +92,7 @@ export default function EditMapTileModal({
       </ModalBody>
 
       <ModalFooter>
-        <button className="secondary" type="button" onClick={close}>
+        <button className="secondary" type="button" onClick={cancel}>
           Cancel
         </button>
       </ModalFooter>
