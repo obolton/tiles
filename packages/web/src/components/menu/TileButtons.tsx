@@ -16,6 +16,7 @@ import type { TileType } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { ImageModalResult } from "@/components/modals/ImageModal";
 import { classNames } from "@/utils/css";
+import { uploadMedia } from "@/utils/media";
 
 type TileButton = {
   label: string;
@@ -74,21 +75,25 @@ export default function TileButtons({
           columns: 3,
         });
       } else if (tileType === "IMAGE") {
-        const image = await showModal<ImageModalResult>("IMAGE");
-        if (!image) {
-          return;
-        }
-        await createImage(image);
+        showModal<ImageModalResult>("IMAGE", {
+          async onConfirm(result) {
+            if (!result) {
+              return;
+            }
+            const imageKey = await uploadMedia(result.image, "image");
+            await createImage({ imageKey });
+          },
+        });
       } else if (tileType === "LINK") {
-        const link = await showModal<LinkModalResult>("LINK");
-        if (!link) {
-          return;
-        }
-        if ("linkedPageId" in link) {
-          await createPageLink(link);
-        } else if (link.url) {
-          await createLink({ url: link.url });
-        }
+        showModal<LinkModalResult>("LINK", {
+          async onConfirm(result) {
+            if ("linkedPageId" in result) {
+              await createPageLink(result);
+            } else if (result.url) {
+              await createLink({ url: result.url });
+            }
+          },
+        });
       } else {
         showModal(tileType);
       }

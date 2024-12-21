@@ -10,6 +10,7 @@ import imageIcon from "@/icons/image.svg";
 import type { ImageModalResult } from "@/components/modals/ImageModal";
 import { formatRelativeDate } from "@/utils/dates";
 import editor from "@/editor";
+import { uploadMedia } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
 
 interface PageHeaderProps {
@@ -50,27 +51,30 @@ export default function PageHeader({
     }
   }, [value]);
 
-  const selectCoverImage = useCallback(async () => {
-    try {
-      const result = await showModal<ImageModalResult>("IMAGE");
-      if (!result) {
-        return;
-      }
-      const { coverImageUrl } = await editor.setCoverImage(result.imageKey);
-      if (coverImageUrl) {
-        let image: HTMLImageElement | null = new Image();
-        image.onload = () => {
-          viewTransition(() => setCoverImageUrl(coverImageUrl));
-          image = null;
-        };
-        image.src = coverImageUrl;
-      } else {
-        viewTransition(() => setCoverImageUrl(null));
-      }
-    } catch (error) {
-      handleError(error);
-    }
-  }, []);
+  const selectCoverImage = useCallback(
+    () =>
+      showModal<ImageModalResult>("IMAGE", {
+        async onConfirm(result) {
+          try {
+            const imageKey = await uploadMedia(result.image, "image");
+            const { coverImageUrl } = await editor.setCoverImage(imageKey);
+            if (coverImageUrl) {
+              let image: HTMLImageElement | null = new Image();
+              image.onload = () => {
+                viewTransition(() => setCoverImageUrl(coverImageUrl));
+                image = null;
+              };
+              image.src = coverImageUrl;
+            } else {
+              viewTransition(() => setCoverImageUrl(null));
+            }
+          } catch (error) {
+            handleError(error);
+          }
+        },
+      }),
+    [],
+  );
 
   const removeCoverImage = useCallback(async () => {
     try {
