@@ -4,7 +4,7 @@ export default function useDebouncedCallback<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends (...args: any) => ReturnType<T>,
 >(callback: T, delay: number, deps: React.DependencyList) {
-  const timeout = useRef<ReturnType<typeof setTimeout> | null>();
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   return useCallback(
     (...args: Parameters<T>) => {
