@@ -39,3 +39,13 @@ export function isImage(item: DataTransferItem) {
 export function isUriList(item: DataTransferItem) {
   return item.type === "text/uri-list";
 }
+
+export async function preloadImage(url: string) {
+  return new Promise<void>((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener("load", () => resolve());
+    image.addEventListener("error", reject);
+    image.fetchPriority = "high";
+    image.src = url;
+  });
+}
