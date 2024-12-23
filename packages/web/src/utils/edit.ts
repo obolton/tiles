@@ -4,6 +4,7 @@ import client from "@/api/client";
 import type { AppRouterInputs } from "@/api/client";
 import type { TileType, ClientEntity, ClientTile } from "@/types/tiles";
 import { showModal } from "./modals";
+import { preloadImage } from "./media";
 
 type CreateImageInput = Omit<AppRouterInputs["images"]["create"], "pageId">;
 type CreateMapInput = Omit<AppRouterInputs["maps"]["create"], "pageId">;
@@ -77,6 +78,7 @@ export async function createImage(data: CreateImageInput) {
     pageId: getPageId(),
     ...data,
   });
+  await preloadImage(result.imageUrl);
   createTileState(result);
 }
 
