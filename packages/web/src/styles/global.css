@@ -68,12 +68,12 @@ main {
 }
 
 header {
-  margin: 64px auto;
+  margin: 48px auto;
 }
 
 main {
   margin: 0 auto;
-  padding: 0 0 6rem;
+  padding: 0 0 96px;
   container: main / inline-size;
 }
 
