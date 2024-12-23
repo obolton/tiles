@@ -8,14 +8,16 @@
   justify-content: end;
   gap: 12px;
   margin: 0 auto 48px;
-  padding: 48px 0 0;
+  padding: 48px clamp(8px, 2vw, 16px) 0;
 
   & .title {
     padding: 4px 8px;
+    margin: -4px -8px;
     border-radius: 8px;
     font-family: var(--font);
     width: fit-content;
     min-width: 240px;
+    -webkit-font-smoothing: antialiased;
   }
 
   & .metadata {
@@ -23,7 +25,9 @@
     align-items: center;
     justify-content: flex-start;
     gap: 16px;
-    color: oklch(from var(--text-color) l c h / 70%);
+    font-size: 16px;
+    min-height: 44px;
+    color: oklch(from var(--text-color) l c h / 60%);
   }
 
   & address {
@@ -31,10 +35,8 @@
     align-items: center;
     gap: 8px;
     font-style: normal;
-    padding: 8px 16px 8px 8px;
-    border-radius: 8px;
-    background: rgb(255 255 255 / 20%);
-    box-shadow: 0 0 0 1px rgb(0 0 0 / 10%);
+    font-weight: 500;
+    padding: 0;
   }
 
   & > a {
@@ -92,6 +94,8 @@
   }
 
   & address {
+    padding: 8px 16px 8px 8px;
+    border-radius: 8px;
     background: oklch(
       from var(--page-color) calc(l * 1.2) calc(c * 0.8) h / 40%
     );
