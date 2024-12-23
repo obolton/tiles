@@ -1,12 +1,68 @@
 import client from "@/api/client";
 import type { FontId } from "@/config/fonts";
 import type { Theme } from "@/types/pages";
+import { showModal } from "@/utils/modals";
+import type { ImageModalResult } from "@/components/modals/ImageModal";
+import { uploadMedia } from "@/utils/media";
+import { isEditModeEnabled, createImage, createLink } from "@/utils/edit";
+import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
+
+const IS_SERVER = import.meta.env.SSR;
 
 export default class Editor {
   readonly pageId: string;
 
   constructor(pageId: string) {
     this.pageId = pageId;
+
+    if (!IS_SERVER) {
+      this.enableDragAndDrop();
+    }
+  }
+
+  enableDragAndDrop() {
+    document.addEventListener("dragover", this.dragOver.bind(this));
+    document.addEventListener("drop", this.drop.bind(this));
+  }
+
+  private dragOver(event: DragEvent) {
+    if (!isEditModeEnabled() || !event.dataTransfer) {
+      return;
+    }
+
+    const item = getAcceptableDragItem(event.dataTransfer);
+
+    if (item) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "copy";
+    }
+  }
+
+  private drop(event: DragEvent) {
+    if (!isEditModeEnabled() || !event.dataTransfer) {
+      return;
+    }
+
+    const item = getAcceptableDragItem(event.dataTransfer);
+    if (!item) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (isImage(item)) {
+      showModal<ImageModalResult>("IMAGE", {
+        file: item.getAsFile(),
+        async onConfirm(result) {
+          const imageKey = await uploadMedia(result.image, "image");
+          await createImage({ imageKey });
+        },
+      });
+    } else if (isUriList(item)) {
+      item.getAsString(async (url) => {
+        await createLink({ url });
+      });
+    }
   }
 
   async setPageTitle(title?: string, subtitle?: string) {
