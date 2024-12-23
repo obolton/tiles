@@ -7,6 +7,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Grid.module.css";
 import newIcon from "@/icons/new.svg";
 import { handleError } from "@/utils/errors";
+import useDebouncedCallback from "@/hooks/useDebouncedCallback";
+import { viewTransition } from "@/utils/transitions";
 
 type Pages = AppRouterOutputs["pages"]["list"];
 type Page = Pages["pages"][number];
@@ -25,24 +27,80 @@ export default function PagesGrid({
   render = defaultRender,
 }: PagesGridProps) {
   const ref = useRef<InfiniteScroll>(null);
-  const [pages, setPages] = useState(initialPages?.pages);
-  const loadingRef = useRef<boolean>(false);
+  const [isStale, setStale] = useState(false);
+  const [isPending, setPending] = useState(false);
+  const [query, setQuery] = useState("");
+  const [pages, setPages] = useState(initialPages?.pages ?? []);
   const [allowLoadMore, setAllowLoadMore] = useState(
     initialPages?.hasMore ?? true,
   );
 
+  const list = useDebouncedCallback(
+    async (offset: number = 0) => {
+      if (isPending) {
+        return;
+      }
+      setPending(true);
+      const { pages: resultPages, hasMore } = await client.pages.list.query({
+        offset,
+      });
+      viewTransition(() => {
+        setPages((prevPages) => [...(prevPages ?? []), ...resultPages]);
+        setAllowLoadMore(hasMore);
+        setPending(false);
+        setStale(false);
+      });
+    },
+    300,
+    [],
+  );
+
+  const search = useDebouncedCallback(
+    async (query: string, offset: number = 0) => {
+      if (isPending) {
+        return;
+      }
+      if (!query) {
+        list();
+        return;
+      }
+      setPending(true);
+      const { pages: resultPages, hasMore } = await client.pages.search.query({
+        query,
+        offset,
+      });
+      viewTransition(() => {
+        setPages((prevPages) => [...(prevPages ?? []), ...resultPages]);
+        setAllowLoadMore(hasMore);
+        setPending(false);
+        setStale(false);
+      });
+    },
+    300,
+    [],
+  );
+
+  const queryChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const query = event.target.value.trim();
+      setQuery(query);
+      setPages([]);
+      setStale(true);
+      search(query, 0);
+    },
+    [search],
+  );
+
   const loadMore = useCallback(async () => {
-    if (!allowLoadMore || loadingRef.current) {
+    if (!allowLoadMore || isPending) {
       return;
     }
-    loadingRef.current = true;
-    const { pages: morePages, hasMore } = await client.pages.list.query({
-      offset: pages?.length ?? 0,
-    });
-    loadingRef.current = false;
-    setAllowLoadMore(hasMore);
-    setPages((prevPages) => [...(prevPages ?? []), ...morePages]);
-  }, [allowLoadMore, pages?.length]);
+    if (query) {
+      search(query, pages?.length ?? 0);
+    } else {
+      list(pages?.length ?? 0);
+    }
+  }, [allowLoadMore, isPending, list, pages?.length, query, search]);
 
   useEffect(() => {
     if (ref.current?.atEnd) {
@@ -61,32 +119,53 @@ export default function PagesGrid({
   }, []);
 
   return (
-    <section className={styles.grid}>
-      {pages?.length === 0 && (
-        <div className={styles.placeholder}>
-          <p>Get started by creating your first page.</p>
-          <div className={styles["placeholder-buttons"]}>
-            <button
-              className="floating tooltip-bottom"
-              type="button"
-              aria-label="Create a new page"
-              onClick={createNewPage}
-            >
-              <img src={newIcon.src} alt="Plus icon" />
-            </button>
-          </div>
-        </div>
-      )}
+    <>
+      <input
+        id="search"
+        autoFocus
+        className={styles.search}
+        type="search"
+        placeholder="Search pages"
+        onChange={queryChange}
+      />
 
-      <infinite-scroll ref={ref} onloadmore={loadMore}>
-        {pages?.map((page) => {
-          const item = render(page);
-          if (!item) {
-            return null;
-          }
-          return <PagesGridItem key={page.id}>{item}</PagesGridItem>;
-        })}
-      </infinite-scroll>
-    </section>
+      <section className={styles.grid}>
+        {(isPending || isStale) && pages.length === 0 && (
+          <div className={styles.loading} />
+        )}
+
+        {!query && !isPending && !isStale && pages.length === 0 && (
+          <div className={styles.placeholder}>
+            <p>Get started by creating your first page.</p>
+            <div className={styles["placeholder-buttons"]}>
+              <button
+                className="floating tooltip-bottom"
+                type="button"
+                aria-label="Create a new page"
+                onClick={createNewPage}
+              >
+                <img src={newIcon.src} alt="Plus icon" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {query && !isPending && !isStale && pages.length === 0 && (
+          <div className={styles.placeholder}>
+            <p>There are no results.</p>
+          </div>
+        )}
+
+        <infinite-scroll ref={ref} onloadmore={loadMore}>
+          {pages?.map((page) => {
+            const item = render(page);
+            if (!item) {
+              return null;
+            }
+            return <PagesGridItem key={page.id}>{item}</PagesGridItem>;
+          })}
+        </infinite-scroll>
+      </section>
+    </>
   );
 }

@@ -58,7 +58,7 @@
   gap: 24px;
   text-align: center;
   font-family: var(--ui-font);
-  font-size: 1.2rem;
+  font-size: 18px;
   color: var(--placeholder-color);
   border: 1px solid rgb(0 0 0 / 15%);
   border-radius: var(--border-radius);
@@ -79,4 +79,40 @@
   justify-content: center;
   margin-bottom: -8px;
   gap: 8px;
+}
+
+input[type="search"].search {
+  margin-bottom: 24px;
+}
+
+@property --loading-progress {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+.loading {
+  --loading-progress: 0%;
+
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 20%),
+    0 6px 4px -4px rgb(0 0 0 / 15%);
+  border-radius: var(--border-radius);
+  background-image: radial-gradient(
+    circle at bottom center,
+    white 20%,
+    rgb(0 0 0 / calc(var(--loading-progress) * 0.1))
+  );
+  height: var(--grid-size);
+  animation: 0.75s ease-in-out infinite alternate loading;
+}
+
+@keyframes loading {
+  from {
+    --loading-progress: 0%;
+  }
+
+  to {
+    --loading-progress: 100%;
+  }
 }
