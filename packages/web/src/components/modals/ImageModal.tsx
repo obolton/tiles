@@ -3,35 +3,33 @@ import ModalFooter from "./ModalFooter";
 import styles from "./ImageModal.module.css";
 import type { ModalProps } from "@/utils/modals";
 import { classNames } from "@/utils/css";
-
-const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
+import { ACCEPT_IMAGE_TYPES, getAcceptableDragItem } from "@/utils/media";
 
 export type ImageModalResult = {
   image: File;
 };
 
-export default function ImageModal({
-  cancel,
-  confirm,
-}: ModalProps<ImageModalResult>) {
+interface ImageModalProps extends ModalProps<ImageModalResult> {
+  file?: File;
+}
+
+export default function ImageModal({ file, cancel, confirm }: ImageModalProps) {
   const [isPending, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [image, setImage] = useState<File | null>(null);
+  const [image, setImage] = useState<File | undefined>(file);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(
+    file ? URL.createObjectURL(file) : undefined,
+  );
   const [isDragOver, setDragOver] = useState<boolean>(false);
 
   const selectImage = useCallback(() => inputRef.current?.click(), []);
 
   const dragOver = useCallback((event: React.DragEvent) => {
-    const { dataTransfer } = event;
-    const { items } = dataTransfer;
-    if (
-      items.length === 1 &&
-      items[0] &&
-      ACCEPT_CONTENT_TYPES.includes(items[0].type)
-    ) {
+    const item = getAcceptableDragItem(event.dataTransfer, ACCEPT_IMAGE_TYPES);
+    if (item) {
+      event.stopPropagation();
       event.preventDefault();
-      dataTransfer.dropEffect = "move";
+      event.dataTransfer.dropEffect = "copy";
       setDragOver(true);
     }
   }, []);
@@ -51,19 +49,16 @@ export default function ImageModal({
 
   const drop = useCallback(
     (event: React.DragEvent) => {
-      const { dataTransfer } = event;
-      const { items } = dataTransfer;
-      event.preventDefault();
-      if (
-        items.length === 1 &&
-        items[0] &&
-        ACCEPT_CONTENT_TYPES.includes(items[0].type)
-      ) {
-        const file = items[0].getAsFile();
-        if (file) {
-          setFile(file);
-        }
+      const file = getAcceptableDragItem(
+        event.dataTransfer,
+        ACCEPT_IMAGE_TYPES,
+      )?.getAsFile();
+      if (file) {
+        event.stopPropagation();
+        event.preventDefault();
+        setFile(file);
       }
+
       setDragOver(false);
     },
     [setFile],
@@ -100,7 +95,7 @@ export default function ImageModal({
           className={styles.input}
           name="file"
           type="file"
-          accept={ACCEPT_CONTENT_TYPES.join(",")}
+          accept={Array.from(ACCEPT_IMAGE_TYPES).join(",")}
           ref={inputRef}
           onChange={selectFile}
         />

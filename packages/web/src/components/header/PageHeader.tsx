@@ -10,7 +10,7 @@ import imageIcon from "@/icons/image.svg";
 import type { ImageModalResult } from "@/components/modals/ImageModal";
 import { formatRelativeDate } from "@/utils/dates";
 import editor from "@/editor";
-import { uploadMedia } from "@/utils/media";
+import { uploadMedia, preloadImage } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
 
 interface PageHeaderProps {
@@ -59,15 +59,9 @@ export default function PageHeader({
             const imageKey = await uploadMedia(result.image, "image");
             const { coverImageUrl } = await editor.setCoverImage(imageKey);
             if (coverImageUrl) {
-              let image: HTMLImageElement | null = new Image();
-              image.onload = () => {
-                viewTransition(() => setCoverImageUrl(coverImageUrl));
-                image = null;
-              };
-              image.src = coverImageUrl;
-            } else {
-              viewTransition(() => setCoverImageUrl(null));
+              await preloadImage(coverImageUrl);
             }
+            viewTransition(() => setCoverImageUrl(coverImageUrl));
           } catch (error) {
             handleError(error);
           }
