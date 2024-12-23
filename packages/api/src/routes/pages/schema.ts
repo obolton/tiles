@@ -22,6 +22,12 @@ export const ListPagesSchema = z.object({
 });
 export type ListPagesSchema = z.infer<typeof ListPagesSchema>;
 
+export const SearchPagesSchema = z.object({
+  query: z.string().min(1),
+  offset: z.number().int().gte(0).optional(), // TODO: Use cursors
+});
+export type SearchPagesSchema = z.infer<typeof SearchPagesSchema>;
+
 // Create
 export const CreatePageSchema = z.object({
   title: z.string().min(1),

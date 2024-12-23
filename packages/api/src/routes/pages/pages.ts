@@ -15,6 +15,7 @@ import type {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
   ListPagesSchema,
+  SearchPagesSchema,
   CreatePageSchema,
   UpdatePageSchema,
   DeletePageSchema,
@@ -223,6 +224,29 @@ export async function listPages(
   const count = 15;
   const pages = await prisma.page.findMany({
     where: { authorId: user.id },
+    select: PAGE_LINK_TILE_PAGE_FIELDS,
+    orderBy: {
+      updatedAt: "desc",
+    },
+    take: count + 1,
+    skip: offset,
+  });
+  return {
+    pages: pages.slice(0, count),
+    hasMore: pages.length > count,
+  };
+}
+
+export async function searchPages(
+  { query, offset }: SearchPagesSchema,
+  { user }: AuthenticatedProcedureContext,
+) {
+  const count = 15;
+  const pages = await prisma.page.findMany({
+    where: {
+      authorId: user.id,
+      OR: [{ title: { search: query } }, { subtitle: { search: query } }],
+    },
     select: PAGE_LINK_TILE_PAGE_FIELDS,
     orderBy: {
       updatedAt: "desc",
