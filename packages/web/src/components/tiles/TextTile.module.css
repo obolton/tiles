@@ -3,10 +3,15 @@
 
   flex: 1;
   padding: var(--padding);
-  font-size: clamp(0.875rem, 2vw, 1rem);
+  font-size: clamp(14px, 2vw, 18px);
   line-height: 1.8;
   white-space-collapse: preserve;
+  -webkit-font-smoothing: antialiased;
   border-radius: inherit;
+
+  & p:not(:first-child) {
+    margin-top: 1rem;
+  }
 
   & a {
     text-decoration: underline;
@@ -30,7 +35,7 @@
 
   & ol,
   & ul {
-    margin-left: 1.5em;
+    margin: 0 0 1rem 1.5rem;
     list-style-position: outside;
   }
 

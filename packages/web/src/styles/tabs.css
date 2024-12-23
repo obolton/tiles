@@ -1,6 +1,6 @@
 nav.tabs {
-  margin: 0 0 32px;
-  font-size: 1.2rem;
+  margin: 0 0 24px;
+  font-size: 18px;
   font-weight: 400;
 
   & ol {

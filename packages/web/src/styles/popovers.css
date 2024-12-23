@@ -132,7 +132,7 @@ popover-menu > menu {
     content: attr(aria-label);
     position: absolute;
     padding: 4px 12px;
-    font-size: 0.875rem;
+    font-size: 14px;
     font-weight: 500;
     color: rgba(0 0 0 / 80%);
     background-color: rgb(255 255 255 / 85%);
