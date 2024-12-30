@@ -15,13 +15,14 @@ import type {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
   ListPagesSchema,
-  SearchPagesSchema,
   CreatePageSchema,
   UpdatePageSchema,
   DeletePageSchema,
 } from "./schema.ts";
 import type { ClientTile } from "@/types/tiles.ts";
 import type { AuthenticatedProcedureContext } from "@/utils/middleware.ts";
+
+const RESULTS_PER_PAGE = 15;
 
 const TILES_FIELDS = {
   id: true,
@@ -218,45 +219,32 @@ export async function getProfilePageByUserId({
 }
 
 export async function listPages(
-  { offset }: ListPagesSchema,
+  { query, offset }: ListPagesSchema,
   { user }: AuthenticatedProcedureContext,
 ) {
-  const count = 15;
-  const pages = await prisma.page.findMany({
-    where: { authorId: user.id },
-    select: PAGE_LINK_TILE_PAGE_FIELDS,
-    orderBy: {
-      updatedAt: "desc",
-    },
-    take: count + 1,
-    skip: offset,
-  });
-  return {
-    pages: pages.slice(0, count),
-    hasMore: pages.length > count,
-  };
-}
-
-export async function searchPages(
-  { query, offset }: SearchPagesSchema,
-  { user }: AuthenticatedProcedureContext,
-) {
-  const count = 15;
+  const filter: Prisma.PageWhereInput = query
+    ? {
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          { subtitle: { contains: query, mode: "insensitive" } },
+        ],
+      }
+    : {};
   const pages = await prisma.page.findMany({
     where: {
       authorId: user.id,
-      OR: [{ title: { search: query } }, { subtitle: { search: query } }],
+      ...filter,
     },
     select: PAGE_LINK_TILE_PAGE_FIELDS,
     orderBy: {
       updatedAt: "desc",
     },
-    take: count + 1,
+    take: RESULTS_PER_PAGE + 1,
     skip: offset,
   });
   return {
-    pages: pages.slice(0, count),
-    hasMore: pages.length > count,
+    pages: pages.slice(0, RESULTS_PER_PAGE),
+    hasMore: pages.length > RESULTS_PER_PAGE,
   };
 }
 

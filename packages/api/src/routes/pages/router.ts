@@ -7,7 +7,6 @@ import {
   GetPageByIdSchema,
   GetProfilePageByUserIdSchema,
   ListPagesSchema,
-  SearchPagesSchema,
   CreatePageSchema,
   UpdatePageSchema,
   DeletePageSchema,
@@ -16,7 +15,6 @@ import {
   getPageById,
   getProfilePageByUserId,
   listPages,
-  searchPages,
   createPage,
   updatePage,
   deletePage,
@@ -42,13 +40,6 @@ export default router({
     .input(ListPagesSchema)
     .query(async ({ input, ctx }) => {
       const pages = await listPages(input, ctx);
-      return pages;
-    }),
-
-  search: authenticatedProcedure
-    .input(SearchPagesSchema)
-    .query(async ({ input, ctx }) => {
-      const pages = await searchPages(input, ctx);
       return pages;
     }),
 

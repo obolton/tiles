@@ -18,15 +18,10 @@ export type GetProfilePageByUserIdSchema = z.infer<
 // List
 
 export const ListPagesSchema = z.object({
+  query: z.string().min(1).optional(),
   offset: z.number().int().gte(0).optional(), // TODO: Use cursors
 });
 export type ListPagesSchema = z.infer<typeof ListPagesSchema>;
-
-export const SearchPagesSchema = z.object({
-  query: z.string().min(1),
-  offset: z.number().int().gte(0).optional(), // TODO: Use cursors
-});
-export type SearchPagesSchema = z.infer<typeof SearchPagesSchema>;
 
 // Create
 export const CreatePageSchema = z.object({
