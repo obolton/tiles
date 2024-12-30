@@ -1,14 +1,20 @@
-import { useCallback, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import styles from "./LinkModal.module.css";
 import type { ModalProps } from "@/utils/modals";
 import useInputState from "@/hooks/useInputState";
-import PagesGrid from "@/components/grid/PagesGrid";
+import PagesGridItem from "@/components/grid/PagesGridItem";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import { classNames } from "@/utils/css";
+import Search from "@/components/search/Search";
+import useDebouncedCallback from "@/hooks/useDebouncedCallback";
+import client from "@/api/client";
+import type { AppRouterOutputs } from "@/api/client";
+import { handleError } from "@/utils/errors";
 
+type Pages = AppRouterOutputs["pages"]["list"];
 export type LinkModalResult = { linkedPageId: string } | { url: string | null };
 
 interface LinkModalProps extends ModalProps<LinkModalResult> {
@@ -26,6 +32,29 @@ export default function LinkModal({
 }: LinkModalProps) {
   const [isPending, startTransition] = useTransition();
   const [url, onChangeUrl] = useInputState(initialUrl);
+  const [pages, setPages] = useState<Pages["pages"] | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+
+  const search = useDebouncedCallback(
+    async (query: string, offset: number = 0) => {
+      try {
+        const { pages: resultPages, hasMore } = await client.pages.list.query({
+          query: query || undefined,
+          offset,
+        });
+        if (offset === 0) {
+          setPages(resultPages);
+        } else {
+          setPages((prevPages) => [...(prevPages ?? []), ...resultPages]);
+        }
+        setHasMore(hasMore);
+      } catch (error) {
+        handleError(error);
+      }
+    },
+    300,
+    [],
+  );
 
   const selectPage = useCallback(
     (linkedPageId: string) => {
@@ -82,10 +111,15 @@ export default function LinkModal({
           <>
             <label>Recent pages</label>
 
-            <div className={styles.pages}>
-              <PagesGrid
-                render={(page) =>
-                  page.id === pageId ? null : (
+            <Search
+              itemsClassName={styles.pages}
+              search={search}
+              results={pages}
+              hasMore={hasMore}
+              placeholder="Search pages"
+              render={(page) =>
+                page.id === pageId ? null : (
+                  <PagesGridItem key={page.id}>
                     <PageLinkTile
                       id={page.id}
                       linkedPage={page}
@@ -103,10 +137,11 @@ export default function LinkModal({
                         selectPage(page.id);
                       }}
                     />
-                  )
-                }
-              />
-            </div>
+                  </PagesGridItem>
+                )
+              }
+              renderPlaceholder={() => <p>There are no results.</p>}
+            />
           </>
         ) : null}
       </ModalBody>
