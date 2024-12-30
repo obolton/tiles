@@ -10,9 +10,9 @@ export const SPRING: EffectTiming = {
 };
 
 export function createAnimationPromise(animation: Animation) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     animation.addEventListener("finish", resolve);
-    animation.addEventListener("cancel", reject);
+    animation.addEventListener("cancel", resolve);
   });
 }
 
