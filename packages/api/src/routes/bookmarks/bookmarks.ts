@@ -9,6 +9,8 @@ import type { Prisma } from "@prisma/client";
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "../pageLinks/pageLinks.ts";
 import type { AuthenticatedProcedureContext } from "@/utils/middleware.ts";
 
+const RESULTS_PER_PAGE = 15;
+
 export const BOOKMARK_FIELDS = {
   page: { select: PAGE_LINK_TILE_PAGE_FIELDS },
 } as const satisfies Prisma.BookmarkSelect<ExtensionArgs>;
@@ -52,22 +54,34 @@ export async function deleteBookmark(
 }
 
 export async function listBookmarks(
-  { offset }: ListBookmarksSchema,
+  { query, offset }: ListBookmarksSchema,
   { user }: AuthenticatedProcedureContext,
 ) {
-  const count = 15;
+  const filter: Prisma.BookmarkWhereInput = query
+    ? {
+        page: {
+          OR: [
+            { title: { contains: query, mode: "insensitive" } },
+            { subtitle: { contains: query, mode: "insensitive" } },
+          ],
+        },
+      }
+    : {};
   const bookmarks = await prisma.bookmark.findMany({
-    where: { userId: user.id },
+    where: {
+      userId: user.id,
+      ...filter,
+    },
     select: BOOKMARK_FIELDS,
     orderBy: {
       createdAt: "desc",
     },
-    take: count + 1,
+    take: RESULTS_PER_PAGE + 1,
     skip: offset,
   });
   return {
-    pages: bookmarks.slice(0, count).map(({ page }) => page),
-    hasMore: bookmarks.length > count,
+    pages: bookmarks.slice(0, RESULTS_PER_PAGE).map(({ page }) => page),
+    hasMore: bookmarks.length > RESULTS_PER_PAGE,
   };
 }
 

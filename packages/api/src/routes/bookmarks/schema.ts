@@ -11,6 +11,7 @@ export const DeleteBookmarkSchema = z.object({
 export type DeleteBookmarkSchema = z.infer<typeof DeleteBookmarkSchema>;
 
 export const ListBookmarksSchema = z.object({
+  query: z.string().min(1).optional(),
   offset: z.number().int().gte(0).optional(), // TODO: Use cursors
 });
 export type ListBookmarksSchema = z.infer<typeof ListBookmarksSchema>;
