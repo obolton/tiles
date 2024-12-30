@@ -3,32 +3,21 @@
   width: 100%;
   height: 100%;
   border-radius: inherit;
+  overflow: clip;
   cursor: pointer;
-  overflow: hidden;
-}
 
-.figure > img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  & > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 [data-lightbox] .figure {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   width: auto;
 
   & > img {
-    width: unset;
-    height: unset;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: scale-down;
-  }
-
-  & > figcaption {
-    display: none;
+    width: auto;
   }
 }
 

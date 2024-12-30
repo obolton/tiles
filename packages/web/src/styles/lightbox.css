@@ -1,3 +1,35 @@
+#close-lightbox {
+  position: absolute;
+  display: block;
+  top: 12px;
+  left: 12px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  background-color: rgb(160 160 160 / 50%);
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity var(--animation-duration) var(--easing);
+
+  &::after {
+    content: url("@/icons/delete.svg");
+    position: absolute;
+    inset: 10px;
+    width: 24px;
+    height: 24px;
+  }
+
+  &:active {
+    background-color: rgb(120 120 120 / 50%);
+  }
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
 .lightbox {
   position: fixed;
   inset: 0;
@@ -11,22 +43,27 @@
   border: none;
   outline: none;
   contain: strict;
-
-  /* Enable transitions */
   transition:
     overlay var(--animation-duration) allow-discrete,
     display var(--animation-duration) allow-discrete;
 
   &::backdrop {
-    background: oklch(from var(--page-color) 7% c h / 95%);
+    transition: opacity var(--animation-duration) var(--easing);
+    background-color: oklch(from var(--page-color) 7% c h / 95%);
   }
 
-  &[open]::backdrop {
-    animation: var(--animation-duration) var(--easing) lightbox-appear;
+  &[open] {
+    &::backdrop,
+    #close-lightbox {
+      opacity: 1;
+    }
   }
 
-  &:not([open])::backdrop {
-    animation: var(--animation-duration) var(--easing) lightbox-disappear;
+  &:not([open]) {
+    &::backdrop,
+    #close-lightbox {
+      opacity: 0;
+    }
   }
 
   & > ol {
@@ -44,10 +81,8 @@
 
     & > li {
       flex: 1 0 auto;
-      display: flex;
-      justify-content: center;
-      width: 100%;
       height: 70vh;
+      align-content: center;
       scroll-snap-align: center;
       scroll-snap-stop: always;
       opacity: 0.5;
@@ -96,49 +131,35 @@
   }
 }
 
-#close-lightbox {
-  position: absolute;
-  display: block;
-  top: 12px;
-  left: 12px;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border-radius: 50%;
-  border: none;
-  outline: none;
-  background-color: rgb(160 160 160 / 50%);
-  -webkit-tap-highlight-color: transparent;
-
-  &::after {
-    content: url("@/icons/delete.svg");
-    position: absolute;
-    inset: 10px;
-    width: 24px;
-    height: 24px;
-  }
-
-  &:active {
-    background-color: rgb(120 120 120 / 50%);
-  }
+::view-transition-group(lightbox) {
+  overflow: clip;
 }
 
-@keyframes lightbox-appear {
+::view-transition-old(lightbox),
+::view-transition-new(lightbox) {
+  height: 100%;
+  object-position: var(--view-transition-object-position, center);
+  mix-blend-mode: normal;
+  animation-name: lightbox-border-radius;
+  animation-timing-function: var(--easing);
+  animation-duration: var(--animation-duration-short);
+  animation-direction: var(--view-transition-animation-direction, normal);
+}
+
+::view-transition-old(lightbox) {
+  object-fit: var(--view-transition-old-object-fit);
+}
+
+::view-transition-new(lightbox) {
+  object-fit: var(--view-transition-new-object-fit);
+}
+
+@keyframes lightbox-border-radius {
   from {
-    opacity: 0;
+    clip-path: inset(0 round 12px);
   }
 
   to {
-    opacity: 1;
-  }
-}
-
-@keyframes lightbox-disappear {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
+    clip-path: inset(0 round 0);
   }
 }

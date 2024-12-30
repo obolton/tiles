@@ -1,11 +1,9 @@
-import {
-  appearFrom,
-  disappearTo,
-  moveFrom,
-  moveTo,
-  fadeOut,
-} from "./animation/effects";
+import { viewTransition } from "./transitions";
 import { scrollIntoViewIfNeeded } from "./scroll";
+import { moveTo, moveFrom } from "./animation/effects";
+
+const TRANSITION = "lightbox";
+const CAPTION_TRANSITION = "lightbox-caption";
 
 let lightbox: HTMLDialogElement | null = null;
 let currentIndex = 0;
@@ -42,7 +40,7 @@ function intersectionObserverCallback(entries: IntersectionObserverEntry[]) {
   }
 }
 
-function openLightbox(element: Element) {
+function openLightbox(element: HTMLElement) {
   if (lightbox) {
     throw new Error("Lightbox is already open");
   }
@@ -97,69 +95,147 @@ function openLightbox(element: Element) {
       observer.disconnect();
 
       // Animate out the visible items
-      const visible = list.children[currentIndex]?.firstElementChild;
-      const previous = list.children[currentIndex - 1];
-      const next = list.children[currentIndex + 1];
+      const element = list.children[currentIndex]
+        ?.firstElementChild as HTMLElement;
 
-      if (visible) {
-        const relatedId = visible.getAttribute("data-related");
-        const related = relatedId ? document.getElementById(relatedId) : null;
-        if (related) {
-          scrollIntoViewIfNeeded(related, {
-            behavior: "instant",
-            block: "center",
-          });
-          requestAnimationFrame(() => {
-            disappearTo(visible, {
-              destination: related,
-            });
-          });
-        } else {
-          fadeOut(visible);
-        }
-      }
+      const previous = list.children[currentIndex - 1]?.firstElementChild as
+        | HTMLElement
+        | undefined;
+      const next = list.children[currentIndex + 1]?.firstElementChild as
+        | HTMLElement
+        | undefined;
+
       if (previous) {
         moveTo(previous, { y: "-6vh" });
       }
       if (next) {
         moveTo(next, { y: "6vh" });
       }
-      fadeOut(closeButton);
 
-      Promise.all(
-        lightbox?.getAnimations().map((animation) => animation.finished) ?? [],
-      ).finally(() => {
-        lightbox?.remove();
-        lightbox = null;
+      const relatedId = element.getAttribute("data-related");
+      const relatedElement = relatedId
+        ? document.getElementById(relatedId)
+        : null;
+
+      const image = element.querySelector("img");
+      const caption = element.querySelector("figcaption");
+      const relatedImage = relatedElement?.querySelector("img");
+      const relatedCaption = relatedElement?.querySelector("figcaption");
+
+      if (relatedElement) {
+        scrollIntoViewIfNeeded(relatedElement, {
+          behavior: "instant",
+          block: "center",
+        });
+      }
+
+      requestAnimationFrame(() => {
+        if (image) {
+          image.style.viewTransitionName = TRANSITION;
+        }
+        if (caption) {
+          caption.style.viewTransitionName = CAPTION_TRANSITION;
+        }
+
+        const rootStyle = document.documentElement.style;
+        rootStyle.setProperty(
+          "--view-transition-object-position",
+          originalImage?.style.objectPosition || "center",
+        );
+        rootStyle.setProperty("--view-transition-new-object-fit", "contain");
+        rootStyle.setProperty("--view-transition-old-object-fit", "cover");
+        rootStyle.setProperty(
+          "--view-transition-animation-direction",
+          "reverse",
+        );
+
+        const transition = viewTransition(() => {
+          image?.remove();
+          if (relatedImage) {
+            relatedImage.style.viewTransitionName = TRANSITION;
+          }
+
+          caption?.remove();
+          if (relatedCaption) {
+            relatedCaption.style.viewTransitionName = CAPTION_TRANSITION;
+          }
+
+          lightbox?.close();
+        });
+        transition.finished.finally(() => {
+          relatedImage?.style.removeProperty("view-transition-name");
+          relatedCaption?.style.removeProperty("view-transition-name");
+          rootStyle.removeProperty("--view-transition-object-position");
+          rootStyle.removeProperty("--view-transition-new-object-fit");
+          rootStyle.removeProperty("--view-transition-old-object-fit");
+          rootStyle.removeProperty("--view-transition-animation-direction");
+          lightbox?.remove();
+          lightbox = null;
+        });
       });
     },
     { once: true },
   );
 
-  // Add the lightbox to the document
-  document.body.appendChild(lightbox);
-  lightbox.showModal();
-  list.children[currentIndex]?.scrollIntoView({
-    behavior: "instant",
-    block: "center",
-  });
-
-  // Animate in the visible items
-  const visible = list.children[currentIndex];
-  const previous = list.children[currentIndex - 1];
-  const next = list.children[currentIndex + 1];
-
-  if (visible?.firstElementChild) {
-    appearFrom(visible.firstElementChild, {
-      origin: element,
-    });
+  const originalImage = element.querySelector("img");
+  if (originalImage) {
+    originalImage.style.viewTransitionName = TRANSITION;
   }
-  if (previous) {
+
+  const originalCaption = element.querySelector("figcaption");
+  if (originalCaption) {
+    originalCaption.style.viewTransitionName = CAPTION_TRANSITION;
+  }
+
+  const rootStyle = document.documentElement.style;
+  rootStyle.setProperty(
+    "--view-transition-object-position",
+    originalImage?.style.objectPosition || "center",
+  );
+  rootStyle.setProperty("--view-transition-new-object-fit", "cover");
+  rootStyle.setProperty("--view-transition-old-object-fit", "contain");
+
+  const visibleItem = list.children[currentIndex];
+  const image = visibleItem?.querySelector("img");
+  const caption = visibleItem?.querySelector("figcaption");
+
+  const previous = visibleItem?.previousElementSibling;
+  const next = visibleItem?.nextElementSibling;
+
+  if (previous instanceof HTMLElement) {
     moveFrom(previous, { y: "-6vh" });
   }
-  if (next) {
+  if (next instanceof HTMLElement) {
     moveFrom(next, { y: "6vh" });
   }
+
+  // Add the lightbox to the document
+  const transition = viewTransition(() => {
+    originalImage?.style.removeProperty("view-transition-name");
+    originalCaption?.style.removeProperty("view-transition-name");
+
+    if (image) {
+      image.style.viewTransitionName = TRANSITION;
+    }
+    if (caption) {
+      caption.style.viewTransitionName = CAPTION_TRANSITION;
+    }
+
+    document.body.appendChild(lightbox!);
+    lightbox?.showModal();
+
+    visibleItem?.scrollIntoView({
+      behavior: "instant",
+      block: "center",
+    });
+  });
+  transition.finished.finally(() => {
+    image?.style.removeProperty("view-transition-name");
+    caption?.style.removeProperty("view-transition-name");
+    rootStyle.removeProperty("--view-transition-object-position");
+    rootStyle.removeProperty("--view-transition-new-object-fit");
+    rootStyle.removeProperty("--view-transition-old-object-fit");
+  });
 }
 
 function createItem(element: Element) {
@@ -225,10 +301,10 @@ function keyDown(event: KeyboardEvent) {
 }
 
 function click(event: MouseEvent) {
-  if (!(event.target instanceof Element) || document.body.dataset.editing) {
+  if (!(event.target instanceof HTMLElement) || document.body.dataset.editing) {
     return;
   }
-  const element = event.target.closest("[data-show-in-lightbox]");
+  const element = event.target.closest<HTMLElement>("[data-show-in-lightbox]");
   if (element) {
     event.preventDefault();
     event.stopPropagation();
