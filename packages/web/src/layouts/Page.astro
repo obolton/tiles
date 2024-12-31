@@ -18,6 +18,7 @@ import ModalLauncher from "@/components/modals/ModalLauncher";
 import type { Theme } from "@/types/pages";
 import { DEFAULT_FONT, type FontId } from "@/config/fonts";
 import { getGoogleFontsUrl, getFontConfig } from "@/utils/fonts";
+import SpeculationRules from "@/components/resources/SpeculationRules.astro";
 
 interface Props {
   id?: string;
@@ -66,6 +67,7 @@ const fontConfig = font ? getFontConfig(font) : undefined;
     <toast-container></toast-container>
     <ModalLauncher client:edit />
     <slot name="end" />
+
     <script is:inline>
       window.addEventListener(
         "DOMContentLoaded",
@@ -83,5 +85,6 @@ const fontConfig = font ? getFontConfig(font) : undefined;
       }
       initialize();
     </script>
+    <SpeculationRules />
   </body>
 </html>
