@@ -20,7 +20,7 @@ export default class FilePicker extends HTMLElement {
   constructor() {
     super();
 
-    const shadow = this.attachShadow({ mode: "closed" });
+    const shadow = this.attachShadow({ mode: "open" });
     shadow.adoptedStyleSheets = [stylesheet];
 
     const label = document.createElement("label");
