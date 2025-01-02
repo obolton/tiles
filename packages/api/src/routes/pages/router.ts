@@ -5,7 +5,7 @@ import {
 } from "@/utils/middleware.ts";
 import {
   GetPageByIdSchema,
-  GetProfilePageByUserIdSchema,
+  GetProfilePageSchema,
   ListPagesSchema,
   CreatePageSchema,
   UpdatePageSchema,
@@ -13,56 +13,36 @@ import {
 } from "./schema.ts";
 import {
   getPageById,
-  getProfilePageByUserId,
+  getProfilePage,
   listPages,
   createPage,
   updatePage,
   deletePage,
 } from "./pages.ts";
-import { invalidateCachedPage } from "@/utils/cdn.ts";
 
 export default router({
+  // TODO: Support server-only procedures
   getById: publicProcedure
     .input(GetPageByIdSchema)
-    .query(async ({ ctx, input }) => {
-      const page = await getPageById(input, ctx.user?.id);
-      return page;
-    }),
+    .query(async ({ ctx, input }) => getPageById(input, ctx.user?.id)),
 
-  getProfilePageByUserId: publicProcedure
-    .input(GetProfilePageByUserIdSchema)
-    .query(async ({ input }) => {
-      const page = await getProfilePageByUserId(input);
-      return page;
-    }),
+  getProfilePage: publicProcedure
+    .input(GetProfilePageSchema)
+    .query(async ({ input }) => getProfilePage(input)),
 
   list: authenticatedProcedure
     .input(ListPagesSchema)
-    .query(async ({ input, ctx }) => {
-      const pages = await listPages(input, ctx);
-      return pages;
-    }),
+    .query(async ({ input, ctx }) => listPages(input, ctx)),
 
   create: authenticatedProcedure
     .input(CreatePageSchema)
-    .mutation(async ({ input, ctx }) => {
-      const page = await createPage(input, ctx);
-      return page;
-    }),
+    .mutation(async ({ input, ctx }) => createPage(input, ctx)),
 
   update: pageUpdateProcedure
     .input(UpdatePageSchema)
-    .mutation(async ({ input, ctx }) => {
-      const page = await updatePage(input, ctx);
-      invalidateCachedPage(page.id);
-      return page;
-    }),
+    .mutation(async ({ input, ctx }) => updatePage(input, ctx)),
 
   delete: pageUpdateProcedure
     .input(DeletePageSchema)
-    .mutation(async ({ input, ctx }) => {
-      const page = await deletePage(input, ctx);
-      invalidateCachedPage(page.id);
-      return page;
-    }),
+    .mutation(async ({ input, ctx }) => deletePage(input, ctx)),
 });

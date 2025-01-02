@@ -13,7 +13,7 @@ import { LINK_FIELDS } from "@/routes/links/links.ts";
 import { VIDEO_FIELDS } from "@/routes/videos/videos.ts";
 import type {
   GetPageByIdSchema,
-  GetProfilePageByUserIdSchema,
+  GetProfilePageSchema,
   ListPagesSchema,
   CreatePageSchema,
   UpdatePageSchema,
@@ -68,6 +68,7 @@ const PAGE_FIELDS = {
   author: {
     select: {
       id: true,
+      username: true,
       name: true,
       imageUrl: true,
     },
@@ -188,13 +189,15 @@ export async function getPageById({ id }: GetPageByIdSchema, userId?: string) {
   };
 }
 
-export async function getProfilePageByUserId({
-  userId,
-}: GetProfilePageByUserIdSchema) {
+export async function getProfilePage(input: GetProfilePageSchema) {
+  const where =
+    "userId" in input ? { id: input.userId } : { username: input.username };
+
   const user = await prisma.user.findUnique({
-    where: { id: userId },
+    where,
     select: {
       id: true,
+      username: true,
       name: true,
       imageUrl: true,
       profilePage: {
@@ -209,6 +212,7 @@ export async function getProfilePageByUserId({
 
   return {
     id: user.name,
+    username: user.username,
     name: user.name,
     imageUrl: user.imageUrl,
     profilePage: {
