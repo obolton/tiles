@@ -49,6 +49,20 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
     </label>
 
     <label>
+      Username
+      <input
+        id="username"
+        type="text"
+        name="username"
+        value={user.username ?? ""}
+        placeholder="Username"
+        minlength="2"
+        maxlength="30"
+        pattern="[a-zA-Z0-9\\-]{2,30}"
+      />
+    </label>
+
+    <label>
       Email address
       <input
         type="email"
@@ -78,11 +92,13 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
   )! as FilePicker;
   const image = filePicker.querySelector("profile-image")!;
   const form = document.getElementById("settings-form")! as HTMLFormElement;
+  const username = document.getElementById("username")! as HTMLInputElement;
 
   function getFormData() {
     const formData = new FormData(form);
     return Object.fromEntries(formData.entries()) as {
       id: string;
+      username: string;
       name: string;
       email: string;
     };
@@ -99,6 +115,33 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
     setUserInfo(userInfo);
   });
 
+  username.addEventListener("input", async () => {
+    const value = username.value;
+    const validity = username.validity;
+
+    if (validity.tooShort) {
+      username.setCustomValidity("Usernames must be at least 2 characters.");
+    } else if (validity.tooLong) {
+      username.setCustomValidity(
+        "Usernames must be no more than 30 characters."
+      );
+    } else if (validity.patternMismatch) {
+      username.setCustomValidity(
+        "Usernames can contain only letters, numbers and dashes."
+      );
+    } else if (validity.valid && value.length > 0) {
+      const isAvailable = await client.users.isUsernameAvailable.query({
+        username: value,
+      });
+      username.setCustomValidity(
+        isAvailable ? "" : "This username is already taken."
+      );
+    } else {
+      username.setCustomValidity("");
+    }
+    username.reportValidity();
+  });
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -106,7 +149,11 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
     delete form.dataset.error;
 
     try {
-      const userInfo = await client.users.update.mutate(getFormData());
+      const formData = getFormData();
+      const userInfo = await client.users.update.mutate({
+        ...formData,
+        username: formData.username || null,
+      });
       setUserInfo(userInfo);
       redirectWithToast(
         getPersistent("user.profile") ?? "/",
@@ -116,9 +163,7 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
     } catch (error) {
       delete form.dataset.pending;
       form.dataset.error = "true";
-      if (error instanceof Error) {
-        handleError(error);
-      }
+      handleError(error);
     }
   });
 </script>
