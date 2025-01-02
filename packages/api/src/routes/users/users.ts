@@ -65,6 +65,7 @@ export async function getUserBySessionId(sessionId: string) {
       user: {
         select: {
           id: true,
+          username: true,
           name: true,
           email: true,
           imageUrl: true,
@@ -80,18 +81,20 @@ export async function getUserBySessionId(sessionId: string) {
 }
 
 export async function updateUser(
-  { name, email, imageKey }: UpdateUserSchema,
+  { username, name, email, imageKey }: UpdateUserSchema,
   { user }: AuthenticatedProcedureContext,
 ) {
   return prisma.user.update({
     where: { id: user.id },
     data: {
+      username,
       name,
       email,
       imageKey,
     },
     select: {
       id: true,
+      username: true,
       name: true,
       email: true,
       imageUrl: true,
