@@ -20,16 +20,23 @@ export async function getUserInfo() {
 
 export function setUserInfo(user: {
   id: string;
+  username: string | null;
   name: string;
   email: string;
   imageUrl: string | null;
 }) {
-  setPersistent("user", { ...user, profile: `/profiles/${user.id}` });
+  setPersistent("user", {
+    ...user,
+    profile: user.username
+      ? `/profiles/@${user.username}`
+      : `/profiles/${user.id}`,
+  });
 }
 
 export function getCachedUserInfo() {
   return getPersistent<{
     id: string;
+    username: string | null;
     name: string;
     imageUrl: string;
     profile: string;

@@ -20,6 +20,7 @@ interface PageHeaderProps {
   updatedAt: string | null;
   author: {
     id: string;
+    username: string | null;
     name: string;
     imageUrl: string | null;
   } | null;
@@ -120,7 +121,9 @@ export default function PageHeader({
 
       {author ? (
         <div className={styles.metadata}>
-          <a href={`/profiles/${author.id}`}>
+          <a
+            href={`/profiles/${author.username ? `@${author.username}` : author.id}`}
+          >
             <address>
               <profile-image src={author.imageUrl} name={author.name} />
               <span>{author.name}</span>
