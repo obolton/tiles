@@ -49,6 +49,31 @@
   }
 }
 
+.placeholder {
+  grid-column: span 3;
+  height: var(--grid-size);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  text-align: center;
+  font-family: var(--ui-font);
+  font-size: 18px;
+  color: var(--placeholder-color);
+  border: 1px solid rgb(0 0 0 / 15%);
+  border-radius: var(--border-radius);
+  background: rgb(0 0 0 / 2%);
+  transition-duration: var(--animation-duration);
+  transition-timing-function: var(--easing);
+  transition-property: opacity, scale, filter;
+
+  @starting-style {
+    opacity: 0;
+    scale: 0.9;
+    filter: blur(3px);
+  }
+}
+
 .placeholder-buttons {
   display: flex;
   justify-content: center;
