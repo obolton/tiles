@@ -1,6 +1,5 @@
 import crypto from "node:crypto";
-import prisma from "@/database/prisma.ts";
-import type { Prisma } from "@prisma/client";
+import prisma, { type PrismaTransactionClient } from "@/database/prisma.ts";
 
 const SESSION_ID_BYTES = 64;
 const SESSION_VALIDITY_PERIOD = 1000 * 60 * 60 * 24 * 14; // 2 weeks
@@ -19,7 +18,7 @@ async function createSessionId() {
 }
 
 export async function createSession(
-  db: Prisma.TransactionClient,
+  db: PrismaTransactionClient,
   userId: string,
 ) {
   const id = await createSessionId();

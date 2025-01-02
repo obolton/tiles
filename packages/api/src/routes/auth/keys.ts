@@ -1,4 +1,5 @@
-import type { AuthenticationProvider, Prisma } from "@prisma/client";
+import type { AuthenticationProvider } from "@prisma/client";
+import type { PrismaTransactionClient } from "@/database/prisma.ts";
 
 type CreateKeyOptions = {
   provider: AuthenticationProvider;
@@ -7,8 +8,8 @@ type CreateKeyOptions = {
 };
 
 export async function createKey(
-  db: Prisma.TransactionClient,
-  { provider, providerId, userId }: CreateKeyOptions
+  db: PrismaTransactionClient,
+  { provider, providerId, userId }: CreateKeyOptions,
 ) {
   await db.key.create({
     data: {
@@ -25,8 +26,8 @@ type GetUserIdByProviderIdOptions = {
 };
 
 export async function getUserIdByProviderId(
-  db: Prisma.TransactionClient,
-  { provider, providerId }: GetUserIdByProviderIdOptions
+  db: PrismaTransactionClient,
+  { provider, providerId }: GetUserIdByProviderIdOptions,
 ) {
   const key = await db.key.findUnique({
     where: {
