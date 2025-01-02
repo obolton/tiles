@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { Theme, Font } from "@prisma/client";
+import { UsernameSchema } from "../users/schema.ts";
 
 // Get
 
@@ -8,12 +9,11 @@ export const GetPageByIdSchema = z.object({
 });
 export type GetPageByIdSchema = z.infer<typeof GetPageByIdSchema>;
 
-export const GetProfilePageByUserIdSchema = z.object({
-  userId: z.string().uuid(),
-});
-export type GetProfilePageByUserIdSchema = z.infer<
-  typeof GetProfilePageByUserIdSchema
->;
+export const GetProfilePageSchema = z.union([
+  z.object({ userId: z.string().uuid() }),
+  z.object({ username: UsernameSchema }),
+]);
+export type GetProfilePageSchema = z.infer<typeof GetProfilePageSchema>;
 
 // List
 
