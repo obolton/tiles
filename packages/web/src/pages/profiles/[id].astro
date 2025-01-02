@@ -6,16 +6,20 @@ import Grid from "@/components/grid/Grid";
 import client from "@/api/client";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 
-const { id: userId } = Astro.params;
+const { id } = Astro.params;
 
-if (!userId) {
+if (!id) {
   return new Response(null, {
     status: 404,
     statusText: "Page not found",
   });
 }
 
-const profile = await client.pages.getProfilePageByUserId.query({ userId });
+const username = id.startsWith("@") ? id.slice(1) : null;
+const profile = await client.pages.getProfilePage.query(
+  username ? { username } : { userId: id }
+);
+
 if (!profile) {
   return new Response(null, {
     status: 404,
