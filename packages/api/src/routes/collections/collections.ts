@@ -63,38 +63,20 @@ export async function createCollection({
   }
 
   return prisma.$transaction(async (transaction) => {
-    const parentTile = await transaction.tile.findUniqueOrThrow({
-      where: { pageId, id: tileIds[0] },
-      select: { id: true, type: true, collection: { select: { id: true } } },
+    const validTiles = await transaction.tile.count({
+      where: { pageId, id: { in: tileIds }, type: { not: "COLLECTION" } },
     });
 
-    if (parentTile.collection) {
-      return transaction.collection.update({
-        where: {
-          pageId,
-          id: parentTile.collection.id,
-        },
-        data: {
-          items: {
-            connect: {
-              id: tileIds[1],
-              // TODO: Position
-            },
-          },
-        },
-        select: COLLECTION_FIELDS,
-      });
+    if (validTiles !== tileIds.length) {
+      throw new Error("Invalid tiles");
     }
 
-    const collection = await transaction.collection.create({
+    const { id: collectionId } = await transaction.collection.create({
       data: {
         pageId,
         title,
-        items: {
-          connect: tileIds.map((id) => ({ id })),
-        },
       },
-      select: COLLECTION_FIELDS,
+      select: { id: true },
     });
 
     await Promise.all(
@@ -105,7 +87,7 @@ export async function createCollection({
             id,
           },
           data: {
-            parentCollectionId: collection.id,
+            parentCollectionId: collectionId,
             position: index,
           },
         }),
@@ -116,10 +98,15 @@ export async function createCollection({
       {
         pageId,
         type: "COLLECTION",
-        collectionId: collection.id,
+        collectionId,
       },
       transaction,
     );
+
+    const collection = await transaction.collection.findUniqueOrThrow({
+      where: { id: collectionId },
+      select: COLLECTION_FIELDS,
+    });
 
     return {
       type: "COLLECTION" as const,
@@ -135,24 +122,74 @@ export async function addToCollection({
   pageId,
   collectionId,
   tileId,
+  position,
 }: AddToCollectionSchema) {
-  return prisma.$transaction(async (tx) => {
-    const position = await tx.tile.count({
+  return prisma.$transaction(async (transaction) => {
+    const { parentCollectionId: oldCollectionId, position: oldPosition } =
+      await transaction.tile.findUniqueOrThrow({
+        where: { pageId, id: tileId },
+        select: { parentCollectionId: true, position: true },
+      });
+
+    if (oldCollectionId === collectionId) {
+      throw new Error("Tile is already in collection");
+    }
+
+    const collectionSize = await transaction.tile.count({
       where: { pageId, parentCollectionId: collectionId },
     });
-    return await tx.collection.update({
-      where: { pageId, id: collectionId },
-      data: {
-        items: {
-          connect: {
-            pageId,
-            id: tileId,
-            position,
-          },
+
+    if (position > collectionSize) {
+      throw new Error(`Invalid position: ${position}`);
+    }
+
+    await Promise.all([
+      // Remove position from old collection
+      transaction.tile.updateMany({
+        where: {
+          id: { not: tileId },
+          pageId,
+          parentCollectionId: oldCollectionId,
+          position: { gt: oldPosition },
         },
-      },
+        data: { position: { decrement: 1 } },
+      }),
+
+      // Create space in new collection
+      transaction.tile.updateMany({
+        where: {
+          id: { not: tileId },
+          pageId,
+          parentCollectionId: collectionId,
+          position: { gte: position },
+        },
+        data: { position: { increment: 1 } },
+      }),
+
+      // Move item to collection
+      transaction.tile.update({
+        where: {
+          pageId,
+          id: tileId,
+        },
+        data: {
+          parentCollectionId: collectionId,
+          position,
+        },
+      }),
+    ]);
+
+    const collection = await transaction.collection.findUniqueOrThrow({
+      where: { pageId, id: collectionId },
       select: COLLECTION_FIELDS,
     });
+
+    return {
+      type: "COLLECTION" as const,
+      ...collection,
+      // @ts-expect-error Incompatibility due to collections missing
+      items: collection.items.map(formatTile),
+    };
   });
 }
 
@@ -160,20 +197,60 @@ export async function removeFromCollection({
   pageId,
   id,
   collectionId,
+  position,
 }: RemoveFromCollectionSchema) {
-  return prisma.$transaction(async (tx) => {
-    const { position } = await tx.tile.update({
+  return prisma.$transaction(async (transaction) => {
+    const rootSize = await transaction.tile.count({
+      where: { pageId, parentCollectionId: null },
+    });
+    if (position >= rootSize) {
+      throw new Error(`Invalid position: ${position}`);
+    }
+    const { position: oldPosition } = await transaction.tile.findUniqueOrThrow({
       where: { pageId, id },
-      data: { parentCollectionId: null },
       select: { position: true },
     });
-    await tx.tile.updateMany({
-      where: {
-        pageId,
-        parentCollectionId: collectionId,
-        position: { gt: position },
-      },
-      data: { position: { decrement: 1 } },
+    await Promise.all([
+      // Remove position from old collection
+      transaction.tile.updateMany({
+        where: {
+          id: { not: id },
+          pageId,
+          parentCollectionId: collectionId,
+          position: { gt: oldPosition },
+        },
+        data: { position: { decrement: 1 } },
+      }),
+
+      // Create space in root
+      transaction.tile.updateMany({
+        where: {
+          id: { not: id },
+          pageId,
+          parentCollectionId: null,
+          position: { gte: position },
+        },
+        data: { position: { increment: 1 } },
+      }),
+
+      // Move item to collection
+      transaction.tile.update({
+        where: { pageId, id },
+        data: { parentCollectionId: null, position },
+        select: { id: true },
+      }),
+    ]);
+
+    const collection = await transaction.collection.findUniqueOrThrow({
+      where: { pageId, id: collectionId },
+      select: COLLECTION_FIELDS,
     });
+
+    return {
+      type: "COLLECTION" as const,
+      ...collection,
+      // @ts-expect-error Incompatibility due to collections missing
+      items: collection.items.map(formatTile),
+    };
   });
 }
