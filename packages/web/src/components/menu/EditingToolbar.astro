@@ -60,31 +60,4 @@ const { isPublished, allowDelete = true, allowPublish = true } = Astro.props;
     font-weight: 600;
   }
 </style>
-<script is:inline>
-  const url = new URL(window.location);
-  const editSearchParam = url.searchParams.get("edit");
-
-  const editPath = JSON.parse(sessionStorage.getItem("edit") ?? "null");
-  const isEditing = editPath === url.pathname || editSearchParam;
-
-  if (editSearchParam) {
-    url.searchParams.delete("edit");
-    sessionStorage.setItem("edit", JSON.stringify(url.pathname));
-    history.replaceState(null, "", url);
-  }
-
-  if (isEditing) {
-    document.body.dataset.editing = "true";
-    document.getElementById("edit-switch").checked = true;
-  }
-</script>
-<script>
-  import { setEditMode } from "@/utils/edit";
-  import { sharePage } from "@/utils/sharing";
-  const editSwitch = document.getElementById("edit-switch") as HTMLInputElement;
-  editSwitch.addEventListener("change", () => setEditMode(editSwitch.checked), {
-    passive: true,
-  });
-  document.getElementById("share")?.addEventListener("click", sharePage);
-</script>
 <script src="@/init.ts"></script>

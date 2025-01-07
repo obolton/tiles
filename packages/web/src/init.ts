@@ -1,6 +1,8 @@
 import { handleError } from "@/utils/errors";
 import { isSignedIn } from "@/utils/sessions";
 import { getIsBookmarked, setIsBookmarked } from "@/utils/bookmarks";
+import { setEditMode } from "@/utils/edit";
+import { sharePage } from "@/utils/sharing";
 import { showToast } from "@/utils/toasts";
 import bookmarkIcon from "@/icons/bookmark.svg";
 import bookmarkFilledIcon from "@/icons/bookmark-filled.svg";
@@ -8,6 +10,25 @@ import bookmarkFilledIcon from "@/icons/bookmark-filled.svg";
 const PAGE_ID = document.body.dataset.pageId;
 if (!PAGE_ID) {
   throw new Error("Page ID is not defined");
+}
+
+const url = new URL(window.location.href);
+const editSearchParam = url.searchParams.get("edit");
+
+const editPath = JSON.parse(sessionStorage.getItem("edit") ?? "null");
+const isEditing = editPath === url.pathname || editSearchParam;
+
+const editSwitch = document.getElementById("edit-switch") as HTMLInputElement;
+
+if (editSearchParam) {
+  url.searchParams.delete("edit");
+  sessionStorage.setItem("edit", JSON.stringify(url.pathname));
+  history.replaceState(null, "", url);
+}
+
+if (isEditing) {
+  document.body.dataset.editing = "true";
+  editSwitch?.setAttribute("checked", "");
 }
 
 function updateBookmarkButton(isBookmarked: boolean) {
@@ -47,3 +68,8 @@ if (isSignedIn() && bookmark) {
     { passive: true },
   );
 }
+
+editSwitch.addEventListener("change", () => setEditMode(editSwitch.checked), {
+  passive: true,
+});
+document.getElementById("share")?.addEventListener("click", sharePage);
