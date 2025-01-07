@@ -1,16 +1,17 @@
 .stack {
   isolation: isolate;
+  width: 100%;
+  height: 100%;
 }
 
 .stack::part(dialog) {
-  width: var(--grid-size);
-  height: var(--grid-size);
+  width: 100%;
+  height: 100%;
 }
 
 .item {
   position: absolute;
   inset: 0;
-  aspect-ratio: 1;
   z-index: calc(1000 - var(--index));
   transition-property: rotate, scale, opacity;
   transition-duration: var(--animation-duration);
