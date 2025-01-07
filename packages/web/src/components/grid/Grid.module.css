@@ -38,17 +38,6 @@
   }
 }
 
-.item {
-  transition: scale var(--animation-duration-short) var(--easing);
-
-  &[data-drag-over="true"] {
-    outline: solid var(--focus-ring-color) 3px !important;
-    outline-offset: 3px;
-    scale: 1.2;
-    z-index: 1;
-  }
-}
-
 .placeholder {
   grid-column: span 3;
   height: var(--grid-size);

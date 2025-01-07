@@ -205,7 +205,6 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
           key={tile.id}
           id={tile.id}
           placementId={tile.placementId}
-          className={styles.item}
           rows={tile.rows}
           columns={tile.columns}
           isEditable={isEditable}
