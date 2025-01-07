@@ -1,6 +1,6 @@
 ---
 import Page from "@/layouts/Page.astro";
-import EditingToolbar from "@/components/menu/EditingToolbar.astro";
+import EditingToolbar from "@/components/menu/EditingToolbar";
 import ProfilePageHeader from "@/components/header/ProfilePageHeader";
 import Grid from "@/components/grid/Grid";
 import client from "@/api/client";
@@ -42,6 +42,7 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
     allowDelete={false}
     allowPublish={false}
     slot="menu"
+    client:edit
   />
 
   <ProfilePageHeader
@@ -53,4 +54,6 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
   />
 
   <Grid tiles={profile.profilePage.tiles} client:edit />
+
+  <script src="@/init.ts"></script>
 </Page>

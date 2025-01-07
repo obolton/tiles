@@ -1,6 +1,6 @@
 ---
 import Page from "@/layouts/Page.astro";
-import EditingToolbar from "@/components/menu/EditingToolbar.astro";
+import EditingToolbar from "@/components/menu/EditingToolbar";
 import PageHeader from "@/components/header/PageHeader";
 import Grid from "@/components/grid/Grid";
 import client from "@/api/client";
@@ -41,7 +41,7 @@ if (page.published) {
   hue={page.hue}
   font={page.font}
 >
-  <EditingToolbar isPublished={page.published} slot="menu" />
+  <EditingToolbar isPublished={page.published} slot="menu" client:edit />
 
   <PageHeader
     title={page.title}
@@ -54,4 +54,6 @@ if (page.published) {
   />
 
   <Grid tiles={page.tiles} client:edit />
+
+  <script src="@/init.ts"></script>
 </Page>

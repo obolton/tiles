@@ -1,0 +1,14 @@
+body:not([data-signed-in]) {
+  :global(#bookmark),
+  :global(#editing-toolbar) {
+    display: none;
+  }
+}
+
+:global(#edit-label) {
+  flex-direction: column;
+  font-size: 1rem;
+  gap: 4px;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
+}
