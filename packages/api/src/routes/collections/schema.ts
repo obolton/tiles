@@ -11,6 +11,7 @@ export const AddToCollectionSchema = z.object({
   pageId: z.string().uuid(),
   collectionId: z.string().uuid(),
   tileId: z.string().uuid(),
+  position: z.number().int().gte(0),
 });
 export type AddToCollectionSchema = z.infer<typeof AddToCollectionSchema>;
 
@@ -18,6 +19,7 @@ export const RemoveFromCollectionSchema = z.object({
   pageId: z.string().uuid(),
   id: z.string().uuid(),
   collectionId: z.string().uuid(),
+  position: z.number().int().gte(0),
 });
 export type RemoveFromCollectionSchema = z.infer<
   typeof RemoveFromCollectionSchema
