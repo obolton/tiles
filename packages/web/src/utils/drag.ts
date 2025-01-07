@@ -1,15 +1,68 @@
-import { getCenter, getDistance, getOffsetCenter } from "./geometry";
+import { getCenter } from "./geometry";
+import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
+import { SPRING } from "./animation/effects";
 
 const DRAG_THRESHOLD = 10; // px
 const SCROLL_MARGIN = 50; // px from viewport edge
 const SCROLL_INTERVAL = 16; // ms
 const MOVE_DEBOUNCE_INTERVAL = 100; // ms
 const MAX_SCROLL_SPEED = 20; // px per scroll
-const PRIMARY_MOUSE_BUTTON = 0;
 const LONG_PRESS_DURATION = 500; // ms
+
+type DragDropEventType =
+  | "dnd-dragstart"
+  | "dnd-dragend"
+  | "dnd-dragenter"
+  | "dnd-dragleave"
+  | "dnd-drag"
+  | "dnd-drop";
+
+interface DragDropEventInit extends EventInit {
+  state: DragState;
+  dragSource: HTMLElement;
+  dropTarget?: HTMLElement;
+  clientX?: number;
+  clientY?: number;
+  hitX: number;
+  hitY: number;
+}
+
+export class DragDropEvent extends Event {
+  readonly state: DragState;
+  readonly dragSource: HTMLElement;
+  readonly dropTarget?: HTMLElement;
+  readonly clientX?: number;
+  readonly clientY?: number;
+  readonly hitX: number;
+  readonly hitY: number;
+
+  constructor(type: DragDropEventType, options: DragDropEventInit) {
+    const {
+      state,
+      dragSource,
+      dropTarget,
+      clientX,
+      clientY,
+      hitX,
+      hitY,
+      ...init
+    } = options || {};
+    super(type, init);
+
+    this.state = state;
+    this.dragSource = dragSource;
+    this.dropTarget = dropTarget;
+    this.clientX = clientX;
+    this.clientY = clientY;
+    this.hitX = hitX;
+    this.hitY = hitY;
+  }
+}
 
 export class DragState {
   readonly element: HTMLElement;
+
+  public data: object = {};
 
   private readonly container: Element;
   private readonly elementRect: DOMRect;
@@ -18,15 +71,16 @@ export class DragState {
 
   private isDragging = false;
   private dropGroup: string;
-  private dragElement: HTMLElement | null = null;
-  private dropTarget: HTMLElement | null = null;
-  private dropTargets: NodeListOf<HTMLElement> | null = null;
+  private dragElement?: HTMLElement;
+  private dropTarget?: HTMLElement;
   private longPressTimeout: ReturnType<typeof setTimeout> | null = null;
   private moveTimeout: ReturnType<typeof setTimeout> | null = null;
   private scrollInterval: ReturnType<typeof setInterval> | null = null;
   private scrollSpeed = 0;
   private centerOffsetX = 0;
   private centerOffsetY = 0;
+  private hitX = 0;
+  private hitY = 0;
 
   constructor(element: HTMLElement, fromPoint: DOMPoint) {
     this.element = element;
@@ -56,6 +110,20 @@ export class DragState {
     );
   }
 
+  private createDragDropEvent(
+    type: DragDropEventType,
+    options: Partial<DragDropEventInit> = {},
+  ) {
+    return new DragDropEvent(type, {
+      state: this,
+      dragSource: this.element,
+      dropTarget: this.dropTarget,
+      hitX: this.hitX,
+      hitY: this.hitY,
+      ...options,
+    });
+  }
+
   private cancelLongPress() {
     if (this.longPressTimeout !== null) {
       clearTimeout(this.longPressTimeout);
@@ -69,58 +137,74 @@ export class DragState {
     this.startDrag();
 
     // Disable scrolling while dragging with touch
-    addEventListener("touchmove", this.touchMove.bind(this), {
+    addEventListener("touchmove", (event) => event.preventDefault(), {
       passive: false,
       signal: this.abortController.signal,
     });
   }
 
-  private touchMove(event: TouchEvent) {
-    event.preventDefault();
+  private dragMove(event: PointerEvent) {
+    requestAnimationFrame(() => {
+      const deltaX = event.clientX - this.fromPoint.x;
+      const deltaY = event.clientY - this.fromPoint.y;
+      this.dragElement?.style.setProperty("--translate-x", `${deltaX}px`);
+      this.dragElement?.style.setProperty("--translate-y", `${deltaY}px`);
+    });
+
+    if (this.moveTimeout !== null) {
+      clearTimeout(this.moveTimeout);
+    }
+
+    this.moveTimeout = setTimeout(() => {
+      this.element.dispatchEvent(
+        this.createDragDropEvent("dnd-drag", {
+          bubbles: true,
+          cancelable: false,
+          clientX: event.clientX,
+          clientY: event.clientY,
+        }),
+      );
+
+      this.hitX = event.clientX - this.centerOffsetX;
+      this.hitY = event.clientY - this.centerOffsetY;
+      const target = this.findDropTarget(event.clientX, event.clientY);
+
+      if (this.dropTarget && this.dropTarget !== target) {
+        this.dropTarget.dispatchEvent(
+          this.createDragDropEvent("dnd-dragleave", {
+            bubbles: true,
+            cancelable: false,
+            clientX: event.clientX,
+            clientY: event.clientY,
+          }),
+        );
+      }
+
+      const allowDrop =
+        target?.dispatchEvent(
+          this.createDragDropEvent("dnd-dragenter", {
+            bubbles: true,
+            cancelable: true,
+            clientX: event.clientX,
+            clientY: event.clientY,
+          }),
+        ) ?? false;
+
+      this.dropTarget = allowDrop ? target : undefined;
+
+      this.moveTimeout = null;
+    }, MOVE_DEBOUNCE_INTERVAL);
   }
 
   private pointerMove(event: PointerEvent) {
     this.cancelLongPress();
 
-    const deltaX = event.clientX - this.fromPoint.x;
-    const deltaY = event.clientY - this.fromPoint.y;
-
     if (this.isDragging) {
-      requestAnimationFrame(() => {
-        if (this.dragElement) {
-          this.dragElement.style.setProperty("--translate-x", `${deltaX}px`);
-          this.dragElement.style.setProperty("--translate-y", `${deltaY}px`);
-        }
-
-        if (this.moveTimeout !== null) {
-          clearTimeout(this.moveTimeout);
-        }
-        this.moveTimeout = setTimeout(() => {
-          const { target, inside } = this.findDropTarget(
-            new DOMPoint(
-              event.clientX - this.centerOffsetX,
-              event.clientY - this.centerOffsetY,
-            ),
-          );
-
-          if (this.dropTarget && (target !== this.dropTarget || !inside)) {
-            delete this.dropTarget.dataset.dragOver;
-          }
-
-          if (inside && target && target !== this.element) {
-            target.dataset.dragOver = "true";
-            this.dropTarget = target;
-          } else {
-            this.dropTarget = null;
-          }
-
-          target?.dispatchEvent(
-            new DragDropEvent("drag:drag-over", this.element, inside),
-          );
-          this.moveTimeout = null;
-        }, MOVE_DEBOUNCE_INTERVAL);
-      });
+      this.dragMove(event);
     } else if (event.pointerType !== "touch") {
+      const deltaX = event.clientX - this.fromPoint.x;
+      const deltaY = event.clientY - this.fromPoint.y;
+
       if (Math.hypot(deltaX, deltaY) >= DRAG_THRESHOLD) {
         this.startDrag(deltaX, deltaY);
       }
@@ -145,39 +229,55 @@ export class DragState {
     }
   }
 
+  private cancel() {
+    this.cancelLongPress();
+
+    this.abortController.abort();
+
+    if (this.scrollInterval) {
+      clearInterval(this.scrollInterval);
+      this.scrollInterval = null;
+    }
+
+    if (this.moveTimeout) {
+      clearTimeout(this.moveTimeout);
+      this.moveTimeout = null;
+    }
+
+    if (this.isDragging) {
+      this.dropTarget?.dispatchEvent(
+        this.createDragDropEvent("dnd-dragleave", {
+          bubbles: true,
+          cancelable: false,
+        }),
+      );
+
+      this.element.dispatchEvent(
+        this.createDragDropEvent("dnd-dragend", {
+          bubbles: true,
+          cancelable: false,
+        }),
+      );
+    }
+
+    this.isDragging = false;
+    this.dropTarget = undefined;
+  }
+
   private pointerUp(event: PointerEvent) {
     if (event.button !== PRIMARY_MOUSE_BUTTON) {
       return;
     }
 
-    this.cancelLongPress();
-
-    // Remove all event listeners
-    this.abortController.abort();
-
-    if (this.scrollInterval !== null) {
-      clearInterval(this.scrollInterval);
-      this.scrollInterval = null;
-    }
-
-    if (this.moveTimeout !== null) {
-      clearTimeout(this.moveTimeout);
-      this.moveTimeout = null;
-    }
-
     if (!this.isDragging) {
+      this.cancel();
       return;
     }
 
-    this.isDragging = false;
-
     delete document.body.dataset.drag;
     delete this.element.dataset.dragging;
-    if (this.dropTarget) {
-      delete this.dropTarget.dataset.dragOver;
-    }
 
-    // Animate the drag element image to its final position
+    // Animate the drag element to its final position
     if (this.dragElement) {
       const containerRect = this.container.getBoundingClientRect();
       const deltaX =
@@ -187,36 +287,26 @@ export class DragState {
       const animation = this.dragElement.animate(
         [
           {
-            transform: `translate(${deltaX}px, ${deltaY}px)`,
+            translate: `${deltaX}px ${deltaY}px`,
             boxShadow: "inherit",
           },
         ],
-        {
-          duration: 200,
-          easing: "ease",
-        },
+        SPRING,
       );
-      animation.addEventListener(
-        "finish",
-        () => {
-          this.dragElement?.remove();
-          this.dragElement = null;
-        },
-        { once: true },
-      );
+      animation.finished.then(() => {
+        this.dragElement?.remove();
+        this.dragElement = undefined;
+      });
     }
 
-    document.body.style.removeProperty("cursor");
-
-    this.element.dispatchEvent(
-      new DragDropEvent("drag:drop", this.element, !!this.dropTarget),
-    );
     this.dropTarget?.dispatchEvent(
-      new DragDropEvent("drag:drop-on", this.element),
+      this.createDragDropEvent("dnd-drop", {
+        bubbles: true,
+        cancelable: false,
+      }),
     );
 
-    this.dropTarget = null;
-    this.dropTargets = null;
+    this.cancel();
   }
 
   private startDrag(translateX: number = 0, translateY: number = 0) {
@@ -224,33 +314,25 @@ export class DragState {
       return;
     }
 
+    const allowDrag = this.element.dispatchEvent(
+      this.createDragDropEvent("dnd-dragstart", {
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+
+    if (!allowDrag) {
+      this.cancel();
+      return;
+    }
+
     this.isDragging = true;
     document.body.dataset.drag = "true";
-
-    this.dropTargets = document.querySelectorAll<HTMLElement>(
-      `[data-drop-group="${this.dropGroup}"]`,
-    );
 
     this.dragElement = this.element.cloneNode(true) as HTMLElement;
     this.dragElement.dataset.dragPreview = "true";
     delete this.dragElement.dataset.dropTarget;
-    this.dragElement.setAttribute("popover", "manual");
-
-    this.dragElement.style.setProperty("width", `${this.elementRect.width}px`);
-    this.dragElement.style.setProperty(
-      "height",
-      `${this.elementRect.height}px`,
-    );
-    this.dragElement.style.setProperty(
-      "--initial-x",
-      `${this.elementRect.left}px`,
-    );
-    this.dragElement.style.setProperty(
-      "--initial-y",
-      `${this.elementRect.top}px`,
-    );
-    this.dragElement.style.setProperty("--translate-x", `${translateX}px`);
-    this.dragElement.style.setProperty("--translate-y", `${translateY}px`);
+    this.dragElement.popover = "manual";
 
     const offsetX = this.fromPoint.x - this.elementRect.left;
     const offsetY = this.fromPoint.y - this.elementRect.top;
@@ -258,71 +340,36 @@ export class DragState {
     const rotateY = (offsetY / this.elementRect.height - 0.5) * 2;
     const rotateAngle = 5 * Math.hypot(rotateX, rotateY);
 
-    this.dragElement.style.setProperty("--transform-origin-x", `${offsetX}px`);
-    this.dragElement.style.setProperty("--transform-origin-y", `${offsetY}px`);
-    this.dragElement.style.setProperty("--rotate-x", `${rotateX}`);
-    this.dragElement.style.setProperty("--rotate-y", `${rotateY}`);
-    this.dragElement.style.setProperty("--rotate-angle", `${rotateAngle}deg`);
+    const dragElementStyle = this.dragElement.style;
+    dragElementStyle.setProperty("width", `${this.elementRect.width}px`);
+    dragElementStyle.setProperty("height", `${this.elementRect.height}px`);
+    dragElementStyle.setProperty("--initial-x", `${this.elementRect.left}px`);
+    dragElementStyle.setProperty("--initial-y", `${this.elementRect.top}px`);
+    dragElementStyle.setProperty("--translate-x", `${translateX}px`);
+    dragElementStyle.setProperty("--translate-y", `${translateY}px`);
+    dragElementStyle.setProperty(
+      "--transform-origin",
+      `${offsetX}px ${offsetY}px`,
+    );
+    dragElementStyle.setProperty("--rotate-x", `${rotateX}`);
+    dragElementStyle.setProperty("--rotate-y", `${rotateY}`);
+    dragElementStyle.setProperty("--rotate-angle", `${rotateAngle}deg`);
 
     document.body.appendChild(this.dragElement);
     this.dragElement.showPopover();
 
-    document.body.style.setProperty("cursor", "move");
-
     this.element.dataset.dragging = "true";
   }
 
-  private findDropTarget(point: DOMPoint) {
-    if (!this.dragElement || !this.dropTargets) {
-      return { target: null, inside: false };
-    }
-
-    const containerRect = this.container.getBoundingClientRect();
-
-    // Find the drop target with the center closest to the drag element center
-
-    let minDistance = Infinity;
-    let targetIndex = -1;
-
-    for (let i = 0; i < this.dropTargets.length; i++) {
-      const target = this.dropTargets[i];
-      if (!target) {
-        continue;
-      }
-      const targetCenter = getOffsetCenter(target);
-      targetCenter.x += containerRect.left;
-      targetCenter.y += containerRect.top;
-
-      const distance = getDistance(point, targetCenter);
-      if (distance < minDistance) {
-        targetIndex = i;
-        minDistance = distance;
-      }
-    }
-
-    if (minDistance < 80) {
-      return { target: this.dropTargets[targetIndex], inside: true };
-    }
-
-    // Look backwards for a target that can accommodate the drag element width
-
-    if (targetIndex >= 0) {
-      const dragWidth = this.element.clientWidth;
-      const containerWidth = containerRect.width;
-
-      while (targetIndex >= 0) {
-        const target = this.dropTargets[targetIndex];
-        if (target) {
-          const space = containerWidth - target.offsetLeft;
-          if (space >= dragWidth) {
-            return { target, inside: false };
-          }
-        }
-        targetIndex--;
-      }
-    }
-
-    return { target: null, inside: false };
+  private findDropTarget(x: number, y: number) {
+    return document
+      .elementsFromPoint(x, y)
+      .find(
+        (element): element is HTMLElement =>
+          element instanceof HTMLElement &&
+          element.dataset.dropGroup === this.dropGroup &&
+          element !== this.element,
+      );
   }
 
   private scroll() {
@@ -333,16 +380,6 @@ export class DragState {
       top: (this.scrollSpeed / SCROLL_MARGIN) * MAX_SCROLL_SPEED,
       behavior: "instant",
     });
-  }
-}
-
-export class DragDropEvent extends Event {
-  constructor(
-    type: "drag:drag-over" | "drag:drop" | "drag:drop-on",
-    readonly dragSource: HTMLElement,
-    readonly inside: boolean = false,
-  ) {
-    super(type, { bubbles: true, cancelable: false });
   }
 }
 
@@ -370,13 +407,19 @@ function contextMenu(event: PointerEvent | MouseEvent) {
 }
 
 export function makeDraggable(element: HTMLElement) {
-  element.addEventListener("pointerdown", pointerDown, { passive: false });
-  element.addEventListener("contextmenu", contextMenu, { passive: false });
+  const abortController = new AbortController();
+  element.addEventListener("pointerdown", pointerDown, {
+    passive: false,
+    signal: abortController.signal,
+  });
+  element.addEventListener("contextmenu", contextMenu, {
+    passive: false,
+    signal: abortController.signal,
+  });
   element.dataset.draggable = "true";
 
   return () => {
-    element.removeEventListener("pointerdown", pointerDown);
-    element.removeEventListener("contextmenu", contextMenu);
+    abortController.abort();
     delete element.dataset.draggable;
   };
 }

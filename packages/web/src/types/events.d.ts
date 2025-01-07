@@ -12,9 +12,12 @@ declare global {
     beforetoggle: ToggleEvent;
     toggle: ToggleEvent;
     upload: import("@/components/forms/FilePicker").FilePickerEvent;
-    "drag:drag-over": import("@/utils/drag").DragDropEvent;
-    "drag:drop-on": import("@/utils/drag").DragDropEvent;
-    "drag:drop": import("@/utils/drag").DragDropEvent;
+    "dnd-dragstart": import("@/utils/drag").DragDropEvent;
+    "dnd-dragend": import("@/utils/drag").DragDropEvent;
+    "dnd-dragenter": import("@/utils/drag").DragDropEvent;
+    "dnd-dragleave": import("@/utils/drag").DragDropEvent;
+    "dnd-drag": import("@/utils/drag").DragDropEvent;
+    "dnd-drop": import("@/utils/drag").DragDropEvent;
   }
 }
 
