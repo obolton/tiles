@@ -8,9 +8,9 @@ import type { TileType } from "@prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma.ts";
 
 export async function moveTile({ pageId, id, position }: MoveTileSchema) {
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (transaction) => {
     const { parentCollectionId, position: oldPosition } =
-      await tx.tile.findUniqueOrThrow({
+      await transaction.tile.findUniqueOrThrow({
         where: { pageId, id },
         select: { parentCollectionId: true, position: true },
       });
@@ -18,7 +18,7 @@ export async function moveTile({ pageId, id, position }: MoveTileSchema) {
     if (oldPosition === position) {
       return { id, pageId, fromPosition: oldPosition, toPosition: position };
     } else if (position > oldPosition) {
-      await prisma.tile.updateMany({
+      await transaction.tile.updateMany({
         where: {
           pageId,
           parentCollectionId,
@@ -28,7 +28,7 @@ export async function moveTile({ pageId, id, position }: MoveTileSchema) {
         data: { position: { decrement: 1 } },
       });
     } else {
-      await prisma.tile.updateMany({
+      await transaction.tile.updateMany({
         where: {
           pageId,
           parentCollectionId,
@@ -38,10 +38,12 @@ export async function moveTile({ pageId, id, position }: MoveTileSchema) {
         data: { position: { increment: 1 } },
       });
     }
-    await prisma.tile.update({
+
+    await transaction.tile.update({
       where: { pageId, id },
       data: { position },
     });
+
     return {
       id,
       pageId,
