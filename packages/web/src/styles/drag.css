@@ -1,3 +1,15 @@
+@property --translate-x {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --translate-y {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+
 [data-draggable] {
   cursor: move;
   user-select: none;
@@ -15,45 +27,36 @@
   overflow: visible;
   padding: 0;
   pointer-events: none;
-  transform: perspective(1000px);
-  transform-origin: var(--transform-origin-x) var(--transform-origin-y);
-  animation-name: drag, lift;
-  animation-duration: 0.25s, 0.75s;
+  transform-origin: var(--transform-origin);
+  animation-name: lift;
+  animation-duration: 0.75s;
   animation-timing-function: ease;
-  animation-composition: add;
+  transform: perspective(1000px);
   animation-fill-mode: forwards;
-}
-
-[data-dragging] {
-  opacity: 0.3;
-  filter: blur(1px);
-  z-index: -1;
-}
-
-@keyframes drag {
-  0% {
-    transform: translate(0, 0);
-  }
-
-  100% {
-    transform: translate(var(--translate-x), var(--translate-y));
-  }
+  translate: var(--translate-x, 0) var(--translate-y, 0) 40px;
+  rotate: none;
 }
 
 @keyframes lift {
   0% {
-    box-shadow: unset;
-    transform: translateZ(0) rotate3d(0, 0, 0, 0);
+    translate: var(--translate-x, 0) var(--translate-y, 0) 0;
+    rotate: 0 0 0 0deg;
+    box-shadow: none;
   }
 
   33% {
+    translate: var(--translate-x, 0) var(--translate-y, 0) 40px;
+    rotate: var(--rotate-y) var(--rotate-x) 0 var(--rotate-angle);
     box-shadow: 0 10px 10px -2px rgb(0 0 0 / 20%);
-    transform: translateZ(40px)
-      rotate3d(var(--rotate-y), var(--rotate-x), 0, var(--rotate-angle));
   }
 
   100% {
+    translate: var(--translate-x, 0) var(--translate-y, 0) 40px;
+    rotate: var(--rotate-y) var(--rotate-x) 0 0deg;
     box-shadow: 0 10px 10px -5px rgb(0 0 0 / 40%);
-    transform: translateZ(40px) rotate3d(var(--rotate-y), var(--rotate-x), 0, 0);
   }
+}
+
+body[data-drag] {
+  cursor: move;
 }
