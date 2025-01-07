@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { classNames } from "@/utils/css";
 import useCreateCollection from "@/hooks/useCreateCollection";
 import useDraggable from "@/hooks/useDraggable";
@@ -15,6 +15,9 @@ import PageLinkTile from "@/components/tiles/PageLinkTile";
 import EventTile from "@/components/tiles/EventTile";
 import CollectionTile from "@/components/tiles/CollectionTile";
 import type { ClientTile } from "@/types/tiles";
+import type { DragDropEvent } from "@/utils/drag";
+import { createCollection } from "@/utils/edit";
+import { handleError } from "@/utils/errors";
 
 interface GridItemProps {
   id: string;
@@ -71,14 +74,74 @@ export default function GridItem({
   tile,
 }: GridItemProps) {
   const ref = useRef<ResizeItem>(null);
-  const onDrop = useCreateCollection(placementId ?? "");
-  useDraggable(ref, isEditable && !!dropGroup);
+  useDraggable(ref, isEditable);
   useScrollIntoView(ref);
+  const [isDragging, setDragging] = useState(false);
+  const [isDragOver, setDragOver] = useState(false);
 
   const handleDelete = useCallback(
     () => void onDelete(placementId),
     [placementId, onDelete],
   );
+
+  const onDragStart = (event: DragDropEvent) => {
+    if (event.target === ref.current) {
+      if (event.state) {
+        event.state.data = tile;
+      }
+      setDragging(true);
+    }
+  };
+
+  const onDragEnd = (event: DragDropEvent) => {
+    if (event.target === ref.current) {
+      setDragging(false);
+    }
+  };
+
+  const onDragEnter = (event: DragDropEvent) => {
+    const {
+      state: { data },
+    } = event;
+    if ("type" in data && data.type === "COLLECTION") {
+      event.preventDefault();
+      return;
+    }
+    setDragOver(true);
+  };
+
+  const onDragLeave = () => setDragOver(false);
+
+  const onDrop = async (event: DragDropEvent) => {
+    const {
+      target,
+      state: { data },
+    } = event;
+
+    if (!("placementId" in data) || typeof data.placementId !== "string") {
+      return;
+    }
+
+    if (
+      (target instanceof HTMLElement && target.dataset.type === "COLLECTION") ||
+      ("type" in data && data.type === "COLLECTION")
+    ) {
+      return;
+    }
+
+    try {
+      await createCollection({
+        tileIds: [placementId, data.placementId],
+      });
+      window.dispatchEvent(
+        new CustomEvent("tile:remove", {
+          detail: [placementId, data.placementId],
+        }),
+      );
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   const combinedStyles = useMemo(
     () =>
@@ -99,6 +162,8 @@ export default function GridItem({
         styles.item,
         isEditable && styles.editable,
         grow && styles.grow,
+        isDragOver && styles["drag-over"],
+        isDragging && styles.dragging,
         className,
       )}
       style={combinedStyles}
@@ -106,7 +171,11 @@ export default function GridItem({
       data-columns={columns}
       data-drop-group={dropGroup}
       data-placement-id={placementId}
-      ondrag:drop-on={onDrop}
+      ondnd-dragstart={onDragStart}
+      ondnd-dragend={onDragEnd}
+      ondnd-dragenter={onDragEnter}
+      ondnd-dragleave={onDragLeave}
+      ondnd-drop={onDrop}
     >
       {getTileComponent(tile)}
       {isEditable ? (
