@@ -1,8 +1,6 @@
 ---
 import Page from "@/layouts/Page.astro";
-import EditingToolbar from "@/components/menu/EditingToolbar";
-import ProfilePageHeader from "@/components/header/ProfilePageHeader";
-import Grid from "@/components/grid/Grid";
+import EditableProfilePage from "@/components/pages/EditableProfilePage";
 import client from "@/api/client";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 
@@ -16,11 +14,11 @@ if (!id) {
 }
 
 const username = id.startsWith("@") ? id.slice(1) : null;
-const profile = await client.pages.getProfilePage.query(
+const user = await client.pages.getProfilePage.query(
   username ? { username } : { userId: id }
 );
 
-if (!profile) {
+if (!user) {
   return new Response(null, {
     status: 404,
     statusText: "Page not found",
@@ -31,29 +29,12 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
 ---
 
 <Page
-  id={profile.profilePage.id}
-  title={profile.name}
-  theme={profile.profilePage.theme}
-  hue={profile.profilePage.hue}
-  font={profile.profilePage.font}
+  id={user.profilePage.id}
+  title={user.name}
+  theme={user.profilePage.theme}
+  hue={user.profilePage.hue}
+  font={user.profilePage.font}
 >
-  <EditingToolbar
-    isPublished
-    allowDelete={false}
-    allowPublish={false}
-    slot="menu"
-    client:edit
-  />
-
-  <ProfilePageHeader
-    name={profile.name}
-    imageUrl={profile.imageUrl}
-    subtitle={profile.profilePage.subtitle}
-    slot="header"
-    client:edit
-  />
-
-  <Grid tiles={profile.profilePage.tiles} client:edit />
-
+  <EditableProfilePage user={user} client:edit />
   <script src="@/init.ts"></script>
 </Page>
