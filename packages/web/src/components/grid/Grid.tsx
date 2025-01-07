@@ -1,12 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import ImageTile from "@/components/tiles/ImageTile";
-import VideoTile from "@/components/tiles/VideoTile";
-import TextTile from "@/components/tiles/TextTile";
-import MapTile from "@/components/tiles/MapTile";
-import LinkTile from "@/components/tiles/LinkTile";
-import PageLinkTile from "@/components/tiles/PageLinkTile";
-import EventTile from "@/components/tiles/EventTile";
-import CollectionTile from "@/components/tiles/CollectionTile";
 import useLayoutTransition, {
   type AnimateLayoutOptions,
 } from "@/hooks/useLayoutTransition";
@@ -27,31 +19,6 @@ import { useEditor } from "@/context/editor";
 
 interface GridProps {
   tiles: ClientTile[];
-}
-
-function getTileComponent(tile: ClientTile) {
-  const type = tile.type;
-  switch (type) {
-    case "IMAGE":
-      return <ImageTile {...tile} />;
-    case "VIDEO":
-      return <VideoTile {...tile} />;
-    case "TEXT":
-      // @ts-expect-error Rich text
-      return <TextTile {...tile} />;
-    case "MAP":
-      return <MapTile {...tile} />;
-    case "LINK":
-      return <LinkTile {...tile} />;
-    case "PAGE_LINK":
-      return <PageLinkTile {...tile} />;
-    case "EVENT":
-      return <EventTile {...tile} />;
-    case "COLLECTION":
-      return <CollectionTile {...tile} />;
-    default:
-      throw new Error(`Unknown tile type: ${type}`);
-  }
 }
 
 const LAYOUT_TRANSITION_OPTIONS: AnimateLayoutOptions = {
@@ -246,9 +213,8 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
           onDelete={onDelete}
           grow={tile.type === "TEXT" && tile.columns === 3}
           dropGroup={isEditable ? "root" : undefined}
-        >
-          {getTileComponent(tile)}
-        </GridItem>
+          tile={tile}
+        />
       ))}
     </section>
   );

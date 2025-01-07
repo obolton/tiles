@@ -6,6 +6,15 @@ import useScrollIntoView from "@/hooks/useScrollIntoView";
 import DeleteButton from "../tiles/DeleteButton";
 import styles from "./GridItem.module.css";
 import type ResizeItem from "@/components/resize/ResizeItem";
+import ImageTile from "@/components/tiles/ImageTile";
+import VideoTile from "@/components/tiles/VideoTile";
+import TextTile from "@/components/tiles/TextTile";
+import MapTile from "@/components/tiles/MapTile";
+import LinkTile from "@/components/tiles/LinkTile";
+import PageLinkTile from "@/components/tiles/PageLinkTile";
+import EventTile from "@/components/tiles/EventTile";
+import CollectionTile from "@/components/tiles/CollectionTile";
+import type { ClientTile } from "@/types/tiles";
 
 interface GridItemProps {
   id: string;
@@ -19,7 +28,32 @@ interface GridItemProps {
   resizable?: boolean;
   dropGroup?: string;
   onDelete: (id: string) => void;
-  children: React.ReactNode;
+  tile: ClientTile;
+}
+
+function getTileComponent(tile: ClientTile) {
+  const type = tile.type;
+  switch (type) {
+    case "IMAGE":
+      return <ImageTile {...tile} />;
+    case "VIDEO":
+      return <VideoTile {...tile} />;
+    case "TEXT":
+      // @ts-expect-error Rich text
+      return <TextTile {...tile} />;
+    case "MAP":
+      return <MapTile {...tile} />;
+    case "LINK":
+      return <LinkTile {...tile} />;
+    case "PAGE_LINK":
+      return <PageLinkTile {...tile} />;
+    case "EVENT":
+      return <EventTile {...tile} />;
+    case "COLLECTION":
+      return <CollectionTile {...tile} />;
+    default:
+      throw new Error(`Unknown tile type: ${type}`);
+  }
 }
 
 export default function GridItem({
@@ -34,7 +68,7 @@ export default function GridItem({
   resizable = false,
   dropGroup,
   onDelete,
-  children,
+  tile,
 }: GridItemProps) {
   const ref = useRef<ResizeItem>(null);
   const onDrop = useCreateCollection(placementId ?? "");
@@ -74,7 +108,7 @@ export default function GridItem({
       data-placement-id={placementId}
       ondrag:drop-on={onDrop}
     >
-      {children}
+      {getTileComponent(tile)}
       {isEditable ? (
         <DeleteButton className={styles.delete} onPress={handleDelete} />
       ) : null}

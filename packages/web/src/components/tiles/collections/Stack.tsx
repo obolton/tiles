@@ -1,9 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import ImageTile from "@/components/tiles/ImageTile";
-import VideoTile from "@/components/tiles/VideoTile";
-import TextTile from "@/components/tiles/TextTile";
-import MapTile from "@/components/tiles/MapTile";
-import LinkTile from "@/components/tiles/LinkTile";
 import styles from "./Stack.module.css";
 import type { ClientCollection } from "@/types/tiles";
 import GridItem from "@/components/grid/GridItem";
@@ -18,31 +13,6 @@ import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
 
 interface StackProps {
   items: ClientCollection["items"];
-}
-
-function getTileComponent(item: ClientCollection["items"][number]) {
-  if (item.type === "TEXT") {
-    // @ts-expect-error Rich text
-    return <TextTile {...item} />;
-  }
-
-  if (item.type === "IMAGE") {
-    return <ImageTile {...item} movable={false} />;
-  }
-
-  if (item.type === "VIDEO") {
-    return <VideoTile {...item} />;
-  }
-
-  if (item.type === "LINK") {
-    return <LinkTile {...item} />;
-  }
-
-  if (item.type === "MAP") {
-    return <MapTile {...item} />;
-  }
-
-  return null;
 }
 
 export default function Stack({ items: initialItems }: StackProps) {
@@ -147,9 +117,8 @@ export default function Stack({ items: initialItems }: StackProps) {
               "--angle": i === 0 ? 0 : `${((i * 123) % 20) - 10}deg`,
             } as React.CSSProperties
           }
-        >
-          {getTileComponent(item)}
-        </GridItem>
+          tile={item}
+        />
       ))}
     </stack-view>
   );
