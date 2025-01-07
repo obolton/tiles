@@ -182,7 +182,7 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
   }, [sizeRef, startLayoutTransition, tiles]);
 
   return (
-    <section className={styles.grid} ref={ref}>
+    <section className={styles.grid} ref={ref} data-drop-group="root">
       {tiles.length === 0 && (
         <div className={styles.placeholder}>
           {isEditable ? (
