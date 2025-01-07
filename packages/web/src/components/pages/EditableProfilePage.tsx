@@ -1,6 +1,9 @@
+import { useRef } from "react";
 import EditingToolbar from "@/components/menu/EditingToolbar";
 import ProfilePageHeader from "@/components/header/ProfilePageHeader";
 import Grid from "@/components/grid/Grid";
+import Editor from "@/editor/editor";
+import { EditorContext } from "@/context/editor";
 import type { AppRouterOutputs } from "@/api/client";
 
 interface EditableProfilePageProps {
@@ -10,8 +13,11 @@ interface EditableProfilePageProps {
 export default function EditableProfilePage({
   user,
 }: EditableProfilePageProps) {
+  const editorRef = useRef<Editor>(null);
+  editorRef.current ??= new Editor(user.profilePage.id);
+
   return (
-    <>
+    <EditorContext value={editorRef.current}>
       <EditingToolbar isPublished allowDelete={false} allowPublish={false} />
 
       <ProfilePageHeader
@@ -21,6 +27,6 @@ export default function EditableProfilePage({
       />
 
       <Grid tiles={user.profilePage.tiles} />
-    </>
+    </EditorContext>
   );
 }

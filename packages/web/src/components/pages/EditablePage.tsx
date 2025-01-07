@@ -1,6 +1,9 @@
+import { useRef } from "react";
 import EditingToolbar from "@/components/menu/EditingToolbar";
 import PageHeader from "@/components/header/PageHeader";
 import Grid from "@/components/grid/Grid";
+import Editor from "@/editor/editor";
+import { EditorContext } from "@/context/editor";
 import type { AppRouterOutputs } from "@/api/client";
 
 interface EditablePage {
@@ -8,8 +11,11 @@ interface EditablePage {
 }
 
 export default function EditablePage({ page }: EditablePage) {
+  const editorRef = useRef<Editor>(null);
+  editorRef.current ??= new Editor(page.id);
+
   return (
-    <>
+    <EditorContext value={editorRef.current}>
       <EditingToolbar isPublished={page.published} />
 
       <PageHeader
@@ -21,6 +27,6 @@ export default function EditablePage({ page }: EditablePage) {
       />
 
       <Grid tiles={page.tiles} />
-    </>
+    </EditorContext>
   );
 }
