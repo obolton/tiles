@@ -12,10 +12,11 @@ import { handleError } from "@/utils/errors";
 import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
 
 interface StackProps {
+  id: string;
   items: ClientCollection["items"];
 }
 
-export default function Stack({ items: initialItems }: StackProps) {
+export default function Stack({ id, items: initialItems }: StackProps) {
   const ref = useRef<StackView>(null);
   const [open, setOpen] = useState(false);
   const isEditable = useEditable();
