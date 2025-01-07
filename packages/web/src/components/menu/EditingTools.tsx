@@ -7,8 +7,8 @@ import publicIcon from "@/icons/public.svg";
 import moreIcon from "@/icons/more.svg";
 import trashIcon from "@/icons/trash.svg";
 import { redirectWithToast, showToast } from "@/utils/toasts";
-import editor from "@/editor";
 import { handleError } from "@/utils/errors";
+import { useEditor } from "@/context/editor";
 
 interface EditingToolsProps {
   isPublished: boolean;
@@ -21,6 +21,7 @@ export default function EditingTools({
   allowPublish,
   allowDelete,
 }: EditingToolsProps) {
+  const editor = useEditor();
   const isEditable = useEditable();
   const [isPublished, setIsPublished] = useState(initialIsPublished);
 
@@ -32,7 +33,7 @@ export default function EditingTools({
     } catch (error) {
       handleError(error);
     }
-  }, []);
+  }, [editor]);
 
   const unpublishPage = useCallback(async () => {
     try {
@@ -42,7 +43,7 @@ export default function EditingTools({
     } catch (error) {
       handleError(error);
     }
-  }, []);
+  }, [editor]);
 
   const deletePage = useCallback(async () => {
     try {
@@ -51,7 +52,7 @@ export default function EditingTools({
     } catch (error) {
       handleError(error);
     }
-  }, []);
+  }, [editor]);
 
   if (!isEditable) {
     return null;

@@ -23,7 +23,7 @@ import GridItem from "./GridItem";
 import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
 import { handleError } from "@/utils/errors";
 import TileButtons from "@/components/menu/TileButtons";
-import editor from "@/editor";
+import { useEditor } from "@/context/editor";
 
 interface GridProps {
   tiles: ClientTile[];
@@ -59,6 +59,7 @@ const LAYOUT_TRANSITION_OPTIONS: AnimateLayoutOptions = {
 };
 
 export default function Grid({ tiles: initialTiles }: GridProps) {
+  const editor = useEditor();
   const ref = useRef<HTMLElement>(null);
   const sizeRef = useElementSizeRef(ref);
   const [tiles, setTiles] = useState(initialTiles);

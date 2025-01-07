@@ -3,8 +3,8 @@ import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import useEditable from "@/hooks/useEditable";
 import { classNames } from "@/utils/css";
 import styles from "./ProfilePageHeader.module.css";
-import editor from "@/editor";
 import { handleError } from "@/utils/errors";
+import { useEditor } from "@/context/editor";
 
 interface ProfilePageHeaderProps {
   name: string;
@@ -21,6 +21,7 @@ export default function ProfilePageHeader({
   imageUrl,
   subtitle,
 }: ProfilePageHeaderProps) {
+  const editor = useEditor();
   const [subtitleValue, setSubtitleValue] = useState(subtitle ?? "");
   const isEditable = useEditable();
 
@@ -36,7 +37,7 @@ export default function ProfilePageHeader({
     } catch (error) {
       handleError(error);
     }
-  }, [subtitleValue]);
+  }, [editor, subtitleValue]);
 
   return (
     <header className={styles.header}>

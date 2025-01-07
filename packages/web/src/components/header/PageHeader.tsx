@@ -9,9 +9,9 @@ import Icon from "@/components/icons/Icon";
 import imageIcon from "@/icons/image.svg";
 import type { ImageModalResult } from "@/components/modals/ImageModal";
 import { formatRelativeDate } from "@/utils/dates";
-import editor from "@/editor";
 import { uploadMedia, preloadImage } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
+import { useEditor } from "@/context/editor";
 
 interface PageHeaderProps {
   title: string;
@@ -33,6 +33,7 @@ export default function PageHeader({
   author,
   updatedAt,
 }: PageHeaderProps) {
+  const editor = useEditor();
   const [value, setValue] = useState(
     `${initialTitle}${initialSubtitle ? `\n${initialSubtitle}` : ""}`,
   );
@@ -50,7 +51,7 @@ export default function PageHeader({
     } catch (error) {
       handleError(error);
     }
-  }, [value]);
+  }, [editor, value]);
 
   const selectCoverImage = useCallback(
     () =>
@@ -68,7 +69,7 @@ export default function PageHeader({
           }
         },
       }),
-    [],
+    [editor],
   );
 
   const removeCoverImage = useCallback(async () => {
@@ -78,7 +79,7 @@ export default function PageHeader({
     } catch (error) {
       handleError(error);
     }
-  }, []);
+  }, [editor]);
 
   const [title, ...subtitle] = value.split("\n");
 
