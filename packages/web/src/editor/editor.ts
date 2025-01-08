@@ -6,14 +6,21 @@ import type { ImageModalResult } from "@/components/modals/ImageModal";
 import { uploadMedia } from "@/utils/media";
 import { isEditModeEnabled, createImage, createLink } from "@/utils/edit";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
+import type { ClientTile } from "@/types/tiles";
+import { Store } from "@/utils/stores";
+import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
+
+type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
 const IS_SERVER = import.meta.env.SSR;
 
 export default class Editor {
   readonly pageId: string;
+  readonly tiles: Store<ClientTile[]>;
 
-  constructor(pageId: string) {
-    this.pageId = pageId;
+  constructor(page: Page) {
+    this.pageId = page.id;
+    this.tiles = new Store(page.tiles);
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();
