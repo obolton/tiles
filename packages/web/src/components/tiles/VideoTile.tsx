@@ -1,10 +1,10 @@
 import useEditable from "@/hooks/useEditable";
 import type { ClientVideo } from "@/types/tiles";
-import { updateVideo } from "@/utils/edit";
 import { useCallback } from "react";
 import Caption from "./Caption";
 import Tile, { type TileProps } from "./Tile";
 import styles from "./VideoTile.module.css";
+import { useEditor } from "@/context/editor";
 
 function getEmbedUrl(videoType: ClientVideo["videoType"], videoId: string) {
   switch (videoType) {
@@ -26,21 +26,22 @@ export default function VideoTile({
   title,
   ...props
 }: VideoTileProps) {
+  const editor = useEditor();
   const isEditable = useEditable();
   const embedUrl = getEmbedUrl(videoType, videoId);
 
   const onUpdateCaption = useCallback(
     async (value: string) => {
-      await updateVideo({
+      await editor.updateVideo({
         id,
         title: value,
       });
     },
-    [id],
+    [editor, id],
   );
 
   return (
-    <Tile id={id} {...props}>
+    <Tile {...props}>
       <figure className={styles.figure}>
         <embedded-video
           id={`${id}-video`}

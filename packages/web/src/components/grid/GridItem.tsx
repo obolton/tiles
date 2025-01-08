@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { classNames } from "@/utils/css";
-import useCreateCollection from "@/hooks/useCreateCollection";
 import useDraggable from "@/hooks/useDraggable";
 import useScrollIntoView from "@/hooks/useScrollIntoView";
 import DeleteButton from "../tiles/DeleteButton";
@@ -16,8 +15,8 @@ import EventTile from "@/components/tiles/EventTile";
 import CollectionTile from "@/components/tiles/CollectionTile";
 import type { ClientTile } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
-import { createCollection } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
+import { useEditor } from "@/context/editor";
 
 interface GridItemProps {
   id: string;
@@ -74,6 +73,7 @@ export default function GridItem({
   tile,
 }: GridItemProps) {
   const ref = useRef<ResizeItem>(null);
+  const editor = useEditor();
   useDraggable(ref, isEditable);
   useScrollIntoView(ref);
   const [isDragging, setDragging] = useState(false);
@@ -130,14 +130,9 @@ export default function GridItem({
     }
 
     try {
-      await createCollection({
+      await editor.createCollection({
         tileIds: [placementId, data.placementId],
       });
-      window.dispatchEvent(
-        new CustomEvent("tile:remove", {
-          detail: [placementId, data.placementId],
-        }),
-      );
     } catch (error) {
       handleError(error);
     }

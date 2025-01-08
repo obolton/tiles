@@ -2,8 +2,8 @@ import { useCallback, useState } from "react";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
-import { createEvent, updateEvent } from "@/utils/edit";
 import { handleError } from "@/utils/errors";
+import { useEditor } from "@/context/editor";
 import type { ModalProps } from "@/utils/modals";
 import type { ClientEvent } from "@/types/tiles";
 
@@ -35,6 +35,7 @@ export default function EventModal({
   confirm,
   tile,
 }: EventModalProps) {
+  const editor = useEditor();
   const [allDay, setAllDay] = useState(tile?.allDay ?? false);
   const [title, setTitle] = useState(tile?.title ?? "");
   const [start, setStart] = useState(tile?.start ?? "");
@@ -70,7 +71,7 @@ export default function EventModal({
 
       try {
         if (tileId) {
-          const event = await updateEvent({
+          const event = await editor.updateEvent({
             id: tileId,
             title,
             start: new Date(start).toISOString(),
@@ -79,7 +80,7 @@ export default function EventModal({
           });
           confirm(event);
         } else {
-          const event = await createEvent({
+          const event = await editor.createEvent({
             title,
             start: new Date(start).toISOString(),
             end: end ? new Date(end).toISOString() : null,
@@ -91,7 +92,7 @@ export default function EventModal({
         handleError(error);
       }
     },
-    [allDay, confirm, end, start, tileId, title],
+    [allDay, confirm, editor, end, start, tileId, title],
   );
 
   return (

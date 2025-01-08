@@ -5,13 +5,13 @@ import RichText from "@/components/text/RichText";
 import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingToolbar";
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
-import { updateText } from "@/utils/edit";
 import Tile from "./Tile";
 import styles from "./TextTile.module.css";
 import { classNames } from "@/utils/css";
 import type { EditorState } from "@/components/inputs/RichTextEditor/RichTextEditor";
 import type { Theme } from "@/types/pages";
 import type { RichText as RichTextType } from "@/utils/richText/types";
+import { useEditor } from "@/context/editor";
 
 interface TextTileProps {
   id: string;
@@ -28,6 +28,7 @@ export default function TextTile({
   theme: initialTheme,
   hue: initialHue,
 }: TextTileProps) {
+  const editor = useEditor();
   const isEditable = useEditable();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [theme, setTheme] = useState(initialTheme);
@@ -38,11 +39,11 @@ export default function TextTile({
       return;
     }
     const content = serialize(editorState);
-    await updateText({
+    await editor.updateText({
       id,
       content,
     });
-  }, [editorState, id]);
+  }, [editor, editorState, id]);
 
   const onChangeColor = useCallback(
     async (value: ColorPickerValue) => {
@@ -50,13 +51,13 @@ export default function TextTile({
       const hue = value?.hue ?? null;
       setTheme(theme);
       setHue(hue);
-      await updateText({
+      await editor.updateText({
         id,
         theme,
         hue,
       });
     },
-    [id],
+    [editor, id],
   );
 
   const onPointerDown = useCallback(

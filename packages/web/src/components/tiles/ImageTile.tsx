@@ -1,10 +1,10 @@
 import useEditable from "@/hooks/useEditable";
-import { updateImage } from "@/utils/edit";
 import { useCallback, useMemo, useState } from "react";
 import MovableImage from "@/components/images/MovableImage";
 import Caption from "./Caption";
 import styles from "./ImageTile.module.css";
 import Tile from "./Tile";
+import { useEditor } from "@/context/editor";
 
 interface ImageTileProps {
   id: string;
@@ -23,24 +23,25 @@ export default function ImageTile({
   originX,
   originY,
 }: ImageTileProps) {
+  const editor = useEditor();
   const isEditable = useEditable();
   const [origin, setOrigin] = useState({ x: originX, y: originY });
 
   const onUpdateCaption = useCallback(
     async (value: string) => {
-      await updateImage({ id, caption: value });
+      await editor.updateImage({ id, caption: value });
     },
-    [id],
+    [editor, id],
   );
 
   const onUpdateOrigin = useCallback(
     async (origin: { x: number; y: number }) => {
-      await updateImage({
+      await editor.updateImage({
         id,
         origin,
       });
     },
-    [id],
+    [editor, id],
   );
 
   const style = useMemo(

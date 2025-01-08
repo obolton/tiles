@@ -5,18 +5,13 @@ import imageIcon from "@/icons/image.svg";
 import linkIcon from "@/icons/link.svg";
 import placeIcon from "@/icons/place.svg";
 import eventIcon from "@/icons/event.svg";
-import {
-  createText,
-  createLink,
-  createPageLink,
-  createImage,
-} from "@/utils/edit";
 import { registerModal, showModal } from "@/utils/modals";
 import type { TileType } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { ImageModalResult } from "@/components/modals/ImageModal";
 import { classNames } from "@/utils/css";
 import { uploadMedia } from "@/utils/media";
+import { useEditor } from "@/context/editor";
 
 type TileButton = {
   label: string;
@@ -59,6 +54,7 @@ interface TileButtonsProps {
 export default function TileButtons({
   tooltipPosition = "left",
 }: TileButtonsProps) {
+  const editor = useEditor();
   const isEditable = useEditable();
 
   const onClick = useCallback(
@@ -70,7 +66,7 @@ export default function TileButtons({
         return;
       }
       if (tileType === "TEXT") {
-        await createText({
+        await editor.createText({
           content: [],
           columns: 3,
         });
@@ -81,16 +77,16 @@ export default function TileButtons({
               return;
             }
             const imageKey = await uploadMedia(result.image, "image");
-            await createImage({ imageKey });
+            await editor.createImage({ imageKey });
           },
         });
       } else if (tileType === "LINK") {
         showModal<LinkModalResult>("LINK", {
           async onConfirm(result) {
             if ("linkedPageId" in result) {
-              await createPageLink(result);
+              await editor.createPageLink(result);
             } else if (result.url) {
-              await createLink({ url: result.url });
+              await editor.createLink({ url: result.url });
             }
           },
         });
@@ -98,7 +94,7 @@ export default function TileButtons({
         showModal(tileType);
       }
     },
-    [],
+    [editor],
   );
 
   if (!isEditable) {

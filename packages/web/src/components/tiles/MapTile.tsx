@@ -6,12 +6,13 @@ import styles from "./MapTile.module.css";
 import type { ClientMapTile } from "@/types/tiles";
 import type MapEvent from "@/components/maps/MapEvent";
 import { showModal } from "@/utils/modals";
-import { updatePlace, removePlace } from "@/utils/edit";
+import { useEditor } from "@/context/editor";
 import type MapMarker from "../maps/MapMarker";
 
 type MapTileProps = ClientMapTile;
 
 export default function MapTile({ id, places }: MapTileProps) {
+  const editor = useEditor();
   const isEditable = useEditable();
   const handleAddPlace = useCallback(
     async () => showModal("MAP", { tileId: id }),
@@ -21,7 +22,7 @@ export default function MapTile({ id, places }: MapTileProps) {
   // TODO: This doesn't work properly when wrapped in useCallback
   const deleteMarker = async ({ markerId }: MapEvent) => {
     if (markerId) {
-      await removePlace({
+      await editor.removePlace({
         id,
         placeId: markerId,
       });
@@ -35,7 +36,7 @@ export default function MapTile({ id, places }: MapTileProps) {
     const value = marker.value ?? "";
     // TODO: Only update if the value has changed
     if (markerId) {
-      await updatePlace({
+      await editor.updatePlace({
         id,
         placeId: markerId,
         name: value,

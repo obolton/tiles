@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import useEditable from "@/hooks/useEditable";
 import { showModal } from "@/utils/modals";
-import { updateLink } from "@/utils/edit";
 import Tile from "./Tile";
 import styles from "./LinkTile.module.css";
+import { useEditor } from "@/context/editor";
 import type { ClientLink } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 
@@ -17,6 +17,7 @@ export default function LinkTile({
   siteName,
   imageUrl,
 }: LinkTileProps) {
+  const editor = useEditor();
   const isEditable = useEditable();
   const edit = useCallback(async () => {
     const result = await showModal<LinkModalResult>("LINK", {
@@ -24,9 +25,9 @@ export default function LinkTile({
       showPages: false,
     });
     if (result && "url" in result && result.url) {
-      await updateLink({ id, url: result.url });
+      await editor.updateLink({ id, url: result.url });
     }
-  }, [id, url]);
+  }, [editor, id, url]);
 
   const contents = (
     <div className={styles.caption}>
