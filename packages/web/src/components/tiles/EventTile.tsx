@@ -1,10 +1,10 @@
 import { useCallback } from "react";
-import { editTile } from "@/utils/edit";
 import Tile from "./Tile";
 import Icon from "@/components/icons/Icon";
 import arrowRightIcon from "@/icons/arrow-right.svg";
 import styles from "./EventTile.module.css";
 import { classNames } from "@/utils/css";
+import { showModal } from "@/utils/modals";
 import type { ClientEvent } from "@/types/tiles";
 
 interface EventTileProps extends ClientEvent {
@@ -67,8 +67,7 @@ export default function EventTile({
   allDay,
 }: EventTileProps) {
   const edit = useCallback(
-    () =>
-      editTile(id, "EVENT", { id, title, start, end, allDay, timeZone: null }),
+    () => showModal("EVENT", { id, title, start, end, allDay, timeZone: null }),
     [id, title, start, end, allDay],
   );
 
