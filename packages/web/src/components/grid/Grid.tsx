@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import useLayoutTransition, {
   type AnimateLayoutOptions,
 } from "@/hooks/useLayoutTransition";
@@ -25,67 +25,44 @@ const LAYOUT_TRANSITION_OPTIONS: AnimateLayoutOptions = {
   attributes: ["data-rows", "data-columns"],
 };
 
-export default function Grid({ tiles: initialTiles }: GridProps) {
+export default function Grid({ tiles }: GridProps) {
   const editor = useEditor();
+  const isEditable = useEditable();
   const ref = useRef<HTMLElement>(null);
   const sizeRef = useElementSizeRef(ref);
-  const [tiles, setTiles] = useState(initialTiles);
+
   const { startLayoutTransition } = useLayoutTransition(
     ref,
     LAYOUT_TRANSITION_OPTIONS,
   );
-  const isEditable = useEditable();
 
   const onDelete = useCallback(
     async (id: string) => {
-      await editor.deleteTile(id);
       const element = document.querySelector<HTMLElement>(
         `[data-placement-id="${id}"]`,
       );
-      if (element) {
-        destroy(element, {
-          timing: { ...DEFAULT_TIMING, fill: "forwards" },
-        });
-      }
-
       const adjacentTileId =
         element?.previousElementSibling?.id || element?.nextElementSibling?.id;
-      startLayoutTransition(() => {
-        setTiles((prevTiles) =>
-          prevTiles.filter((prevTile) => prevTile.placementId !== id),
-        );
-        if (adjacentTileId) {
-          scrollIntoView(adjacentTileId);
+
+      await editor.deleteTile(id, (commit) => {
+        if (element) {
+          destroy(element, {
+            timing: { ...DEFAULT_TIMING, fill: "forwards" },
+          });
+          startLayoutTransition(commit);
+        } else {
+          commit();
         }
       });
+
+      if (adjacentTileId) {
+        scrollIntoView(adjacentTileId);
+      }
     },
-    [startLayoutTransition],
+    [editor, startLayoutTransition],
   );
 
   useEffect(() => {
-    const create = (event: Event) => {
-      const { detail: tile } = event as CustomEvent<ClientTile>;
-      setTiles((prevTiles) => [...prevTiles, tile]);
-      scrollIntoView(tile.id);
-    };
-    const update = (event: Event) => {
-      const { detail: tile } = event as CustomEvent<ClientTile>;
-      setTiles((prevTiles) =>
-        prevTiles.map((prevTile) =>
-          prevTile.id === tile.id ? { ...prevTile, ...tile } : prevTile,
-        ),
-      );
-    };
-    const remove = (event: Event) => {
-      const { detail: tileIds } = event as CustomEvent<string[]>;
-      startLayoutTransition(() => {
-        setTiles((prevTiles) =>
-          prevTiles.filter(
-            (prevTile) => !tileIds.includes(prevTile.placementId),
-          ),
-        );
-      });
-    };
     const drop = async (event: DragDropEvent) => {
       const {
         dragSource,
@@ -117,11 +94,11 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       ) {
         return;
       }
-      const id = target.dataset.placementId;
+      const id = target.id;
       const columnWidth = sizeRef.current.width / 3;
       const columns = Math.round(size.width / columnWidth);
       const rows = Math.round(size.height / columnWidth);
-      const tile = tiles.find((tile) => tile.placementId === id);
+      const tile = editor.tiles.value.find((tile) => tile.id === id);
 
       if (!tile) {
         return;
@@ -129,12 +106,8 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
 
       if (columns !== tile.columns || rows != tile.rows) {
         viewTransition(() => {
-          setTiles((prevTiles) =>
-            prevTiles.map((prevTile) =>
-              prevTile.placementId === id
-                ? { ...prevTile, columns, rows }
-                : prevTile,
-            ),
+          editor.tiles.value = editor.tiles.value.map((prevTile) =>
+            prevTile.id === id ? { ...prevTile, columns, rows } : prevTile,
           );
         });
       }
@@ -183,8 +156,10 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
           event.dragSource,
         );
         startLayoutTransition(() => {
-          setTiles((prevTiles) =>
-            moveElement(prevTiles, fromPosition, position),
+          editor.tiles.value = moveElement(
+            editor.tiles.value,
+            fromPosition,
+            position,
           );
         });
       }
@@ -193,15 +168,12 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
     const element = ref.current;
     const abortController = new AbortController();
     const { signal } = abortController;
-    window.addEventListener("tile:create", create, { signal });
-    window.addEventListener("tile:update", update, { signal });
-    window.addEventListener("tile:remove", remove, { signal });
     element?.addEventListener("dnd-drop", drop, { signal });
     element?.addEventListener("dnd-drag", dragMove, { signal });
     window.addEventListener("resize:resize", resize, { signal });
     window.addEventListener("resize:end", resizeEnd, { signal });
     return () => abortController.abort();
-  }, [sizeRef, startLayoutTransition, tiles]);
+  }, [editor, sizeRef, startLayoutTransition, tiles]);
 
   return (
     <section className={styles.grid} ref={ref} data-drop-group="root">
