@@ -68,6 +68,7 @@ declare module "react" {
       "stack-view": CustomElementAttributes & {
         expandable?: "expandable";
       };
+      "carousel-view": CustomElementAttributes;
       "resize-item": CustomElementAttributes & {
         disabled?: "disabled";
       };

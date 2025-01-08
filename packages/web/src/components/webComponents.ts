@@ -14,6 +14,7 @@ import FilePicker from "./forms/FilePicker";
 import PopOut from "./expandable/PopOut";
 import StackView from "./expandable/StackView";
 import ResizeItem from "./resize/ResizeItem";
+import CarouselView from "./carousel/CarouselView";
 
 customElements.define("data-binding", DataBinding);
 customElements.define("popover-menu", PopoverMenu);
@@ -31,3 +32,4 @@ customElements.define("file-picker", FilePicker);
 customElements.define("pop-out", PopOut);
 customElements.define("stack-view", StackView);
 customElements.define("resize-item", ResizeItem);
+customElements.define("carousel-view", CarouselView);
