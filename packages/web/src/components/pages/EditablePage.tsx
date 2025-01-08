@@ -2,6 +2,7 @@ import { useRef } from "react";
 import EditingToolbar from "@/components/menu/EditingToolbar";
 import PageHeader from "@/components/header/PageHeader";
 import Grid from "@/components/grid/Grid";
+import ModalLauncher from "@/components/modals/ModalLauncher";
 import Editor from "@/editor/editor";
 import { EditorContext } from "@/context/editor";
 import useStore from "@/hooks/useStore";
@@ -29,6 +30,8 @@ export default function EditablePage({ page }: EditablePage) {
       />
 
       <Grid tiles={tiles} />
+
+      <ModalLauncher />
     </EditorContext>
   );
 }

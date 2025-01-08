@@ -15,7 +15,6 @@ import "@/styles/images.css";
 import "@/styles/animation.css";
 import "@/styles/tabs.css";
 import "@/styles/carousels.css";
-import ModalLauncher from "@/components/modals/ModalLauncher";
 import type { Theme } from "@/types/pages";
 import { DEFAULT_FONT, type FontId } from "@/config/fonts";
 import { getGoogleFontsUrl, getFontConfig } from "@/utils/fonts";
@@ -66,7 +65,6 @@ const fontConfig = font ? getFontConfig(font) : undefined;
 
     <main><slot /></main>
     <toast-container></toast-container>
-    <ModalLauncher client:edit />
     <slot name="end" />
 
     <script is:inline>
