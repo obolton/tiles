@@ -1,0 +1,19 @@
+carousel-view:not(:defined) {
+  isolation: isolate;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+
+  & > * {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    height: 100%;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-color) solid 3px;
+  }
+}
