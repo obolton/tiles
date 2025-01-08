@@ -4,6 +4,7 @@ import ProfilePageHeader from "@/components/header/ProfilePageHeader";
 import Grid from "@/components/grid/Grid";
 import Editor from "@/editor/editor";
 import { EditorContext } from "@/context/editor";
+import useStore from "@/hooks/useStore";
 import type { AppRouterOutputs } from "@/api/client";
 
 interface EditableProfilePageProps {
@@ -14,7 +15,8 @@ export default function EditableProfilePage({
   user,
 }: EditableProfilePageProps) {
   const editorRef = useRef<Editor>(null);
-  editorRef.current ??= new Editor(user.profilePage.id);
+  editorRef.current ??= new Editor(user.profilePage);
+  const tiles = useStore(editorRef.current.tiles);
 
   return (
     <EditorContext value={editorRef.current}>
@@ -26,7 +28,7 @@ export default function EditableProfilePage({
         subtitle={user.profilePage.subtitle}
       />
 
-      <Grid tiles={user.profilePage.tiles} />
+      <Grid tiles={tiles} />
     </EditorContext>
   );
 }

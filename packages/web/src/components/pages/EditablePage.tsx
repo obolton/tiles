@@ -4,6 +4,7 @@ import PageHeader from "@/components/header/PageHeader";
 import Grid from "@/components/grid/Grid";
 import Editor from "@/editor/editor";
 import { EditorContext } from "@/context/editor";
+import useStore from "@/hooks/useStore";
 import type { AppRouterOutputs } from "@/api/client";
 
 interface EditablePage {
@@ -12,7 +13,8 @@ interface EditablePage {
 
 export default function EditablePage({ page }: EditablePage) {
   const editorRef = useRef<Editor>(null);
-  editorRef.current ??= new Editor(page.id);
+  editorRef.current ??= new Editor(page);
+  const tiles = useStore(editorRef.current.tiles);
 
   return (
     <EditorContext value={editorRef.current}>
@@ -26,7 +28,7 @@ export default function EditablePage({ page }: EditablePage) {
         updatedAt={page.updatedAt}
       />
 
-      <Grid tiles={page.tiles} />
+      <Grid tiles={tiles} />
     </EditorContext>
   );
 }
