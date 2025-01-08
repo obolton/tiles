@@ -39,7 +39,9 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
   const onDelete = useCallback(
     async (id: string) => {
       await editor.deleteTile(id);
-      const element = document.querySelector(`[data-placement-id="${id}"]`);
+      const element = document.querySelector<HTMLElement>(
+        `[data-placement-id="${id}"]`,
+      );
       if (element) {
         destroy(element, {
           timing: { ...DEFAULT_TIMING, fill: "forwards" },
@@ -84,37 +86,22 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
         );
       });
     };
-    const dragOver = (event: DragDropEvent) => {
-      const { target, dragSource, inside } = event;
-      if (ref.current && target instanceof HTMLElement && !inside) {
-        const fromPosition = Array.prototype.indexOf.call(
-          ref.current.children,
-          dragSource,
-        );
-        const toPosition = Array.prototype.indexOf.call(
-          ref.current.children,
-          target,
-        );
-        if (fromPosition < 0 || toPosition < 0) {
-          return;
-        }
-        startLayoutTransition(() => {
-          setTiles((prevTiles) =>
-            moveElement(prevTiles, fromPosition, toPosition),
-          );
-        });
-      }
-    };
     const drop = async (event: DragDropEvent) => {
-      const { dragSource, inside } = event;
-      if (!inside && ref.current) {
-        const id = dragSource.dataset.placementId ?? "";
+      const {
+        dragSource,
+        state: { data },
+      } = event;
+      if (
+        ref.current &&
+        "placementId" in data &&
+        typeof data.placementId === "string"
+      ) {
         const position = Array.prototype.indexOf.call(
           ref.current.children,
           dragSource,
         );
         try {
-          await editor.moveTile(id, position);
+          await editor.moveTile(data.placementId, position);
         } catch (error) {
           handleError(error);
         }
@@ -168,14 +155,49 @@ export default function Grid({ tiles: initialTiles }: GridProps) {
       const rows = Math.max(Math.round(size.height / columnWidth), 1);
       await editor.resizeTile(id, columns, rows);
     };
+
+    const dragMove = (event: DragDropEvent) => {
+      if (!ref.current || event.dropTarget) {
+        return;
+      }
+      const children = ref.current.children;
+      let position = children.length - 1;
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i]!;
+        // TODO: cache rects
+        const bounds = child.getBoundingClientRect();
+        if (
+          event.hitY < bounds.top ||
+          (event.hitY <= bounds.bottom && event.hitX <= bounds.right)
+        ) {
+          if (child === event.dragSource) {
+            return;
+          }
+          position = i;
+          break;
+        }
+      }
+      if (position >= 0) {
+        const fromPosition = Array.prototype.indexOf.call(
+          ref.current.children,
+          event.dragSource,
+        );
+        startLayoutTransition(() => {
+          setTiles((prevTiles) =>
+            moveElement(prevTiles, fromPosition, position),
+          );
+        });
+      }
+    };
+
     const element = ref.current;
     const abortController = new AbortController();
     const { signal } = abortController;
     window.addEventListener("tile:create", create, { signal });
     window.addEventListener("tile:update", update, { signal });
     window.addEventListener("tile:remove", remove, { signal });
-    element?.addEventListener("drag:drag-over", dragOver, { signal });
-    element?.addEventListener("drag:drop", drop, { signal });
+    element?.addEventListener("dnd-drop", drop, { signal });
+    element?.addEventListener("dnd-drag", dragMove, { signal });
     window.addEventListener("resize:resize", resize, { signal });
     window.addEventListener("resize:end", resizeEnd, { signal });
     return () => abortController.abort();
