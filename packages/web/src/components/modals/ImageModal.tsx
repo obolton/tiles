@@ -77,7 +77,7 @@ export default function ImageModal({ file, cancel, confirm }: ImageModalProps) {
       if (isPending || !image) {
         return;
       }
-      startTransition(async () => confirm({ image }));
+      startTransition(() => confirm({ image }));
     },
     [isPending, confirm, image],
   );

@@ -84,7 +84,7 @@ export default function LinkModal({
       return;
     }
 
-    startTransition(async () => confirm({ url: null }));
+    startTransition(() => confirm({ url: null }));
   }, [isPending, confirm]);
 
   const pageId = document.body.dataset.pageId;

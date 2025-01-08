@@ -8,6 +8,7 @@ import type MapEvent from "@/components/maps/MapEvent";
 import { showModal } from "@/utils/modals";
 import { useEditor } from "@/context/editor";
 import type MapMarker from "../maps/MapMarker";
+import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 
 type MapTileProps = ClientMapTile;
 
@@ -15,8 +16,13 @@ export default function MapTile({ id, places }: MapTileProps) {
   const editor = useEditor();
   const isEditable = useEditable();
   const handleAddPlace = useCallback(
-    async () => showModal("MAP", { tileId: id }),
-    [id],
+    () =>
+      showModal<PlaceModalResult>("MAP", {
+        async onConfirm({ place }) {
+          await editor.addPlace({ id, place });
+        },
+      }),
+    [editor, id],
   );
 
   // TODO: This doesn't work properly when wrapped in useCallback

@@ -9,6 +9,8 @@ import { registerModal, showModal } from "@/utils/modals";
 import type { TileType } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { ImageModalResult } from "@/components/modals/ImageModal";
+import type { EventModalResult } from "@/components/modals/EventModal";
+import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import { classNames } from "@/utils/css";
 import { uploadMedia } from "@/utils/media";
 import { useEditor } from "@/context/editor";
@@ -65,33 +67,54 @@ export default function TileButtons({
       if (!tileType) {
         return;
       }
-      if (tileType === "TEXT") {
-        await editor.createText({
-          content: [],
-          columns: 3,
-        });
-      } else if (tileType === "IMAGE") {
-        showModal<ImageModalResult>("IMAGE", {
-          async onConfirm(result) {
-            if (!result) {
-              return;
-            }
-            const imageKey = await uploadMedia(result.image, "image");
-            await editor.createImage({ imageKey });
-          },
-        });
-      } else if (tileType === "LINK") {
-        showModal<LinkModalResult>("LINK", {
-          async onConfirm(result) {
-            if ("linkedPageId" in result) {
-              await editor.createPageLink(result);
-            } else if (result.url) {
-              await editor.createLink({ url: result.url });
-            }
-          },
-        });
-      } else {
-        showModal(tileType);
+
+      switch (tileType) {
+        case "TEXT":
+          await editor.createText({
+            content: [],
+            columns: 3,
+          });
+          break;
+
+        case "IMAGE":
+          showModal<ImageModalResult>("IMAGE", {
+            async onConfirm(result) {
+              if (!result) {
+                return;
+              }
+              const imageKey = await uploadMedia(result.image, "image");
+              await editor.createImage({ imageKey });
+            },
+          });
+          break;
+
+        case "LINK":
+          showModal<LinkModalResult>("LINK", {
+            async onConfirm(result) {
+              if ("linkedPageId" in result) {
+                await editor.createPageLink(result);
+              } else if (result.url) {
+                await editor.createLink({ url: result.url });
+              }
+            },
+          });
+          break;
+
+        case "EVENT":
+          showModal<EventModalResult>("EVENT", {
+            async onConfirm(result) {
+              await editor.createEvent(result);
+            },
+          });
+          break;
+
+        case "MAP":
+          showModal<PlaceModalResult>("MAP", {
+            async onConfirm({ place }) {
+              await editor.createMap({ place, columns: 3 });
+            },
+          });
+          break;
       }
     },
     [editor],

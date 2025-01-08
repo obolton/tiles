@@ -5,7 +5,9 @@ import arrowRightIcon from "@/icons/arrow-right.svg";
 import styles from "./EventTile.module.css";
 import { classNames } from "@/utils/css";
 import { showModal } from "@/utils/modals";
+import { useEditor } from "@/context/editor";
 import type { ClientEvent } from "@/types/tiles";
+import type { EventModalResult } from "@/components/modals/EventModal";
 
 interface EventTileProps extends ClientEvent {
   columns: number;
@@ -66,9 +68,19 @@ export default function EventTile({
   end,
   allDay,
 }: EventTileProps) {
+  const editor = useEditor();
   const edit = useCallback(
-    () => showModal("EVENT", { id, title, start, end, allDay, timeZone: null }),
-    [id, title, start, end, allDay],
+    () =>
+      showModal<EventModalResult>("EVENT", {
+        title,
+        start,
+        end,
+        allDay,
+        async onConfirm(event) {
+          await editor.updateEvent({ id, ...event });
+        },
+      }),
+    [id, title, start, end, allDay, editor],
   );
 
   const startDate = new Date(start);
