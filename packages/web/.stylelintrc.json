@@ -13,6 +13,7 @@
         "ignore": ["custom-elements"],
         "ignoreTypes": ["expanded", "overlay", "resizing", "scrollable"]
       }
-    ]
+    ],
+    "no-descending-specificity": null
   }
 }
