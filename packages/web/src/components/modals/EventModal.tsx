@@ -1,15 +1,22 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useTransition } from "react";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
-import { handleError } from "@/utils/errors";
-import { useEditor } from "@/context/editor";
 import type { ModalProps } from "@/utils/modals";
-import type { ClientEvent } from "@/types/tiles";
+import { classNames } from "@/utils/css";
 
-interface EventModalProps extends ModalProps {
-  tileId?: string | null;
-  tile?: ClientEvent | null;
+export type EventModalResult = {
+  title: string;
+  start: string;
+  end: string | null;
+  allDay: boolean;
+};
+
+interface EventModalProps extends ModalProps<EventModalResult> {
+  title?: string;
+  start?: string;
+  end?: string | null;
+  allDay?: boolean;
 }
 
 function getFormattedDate(input: string) {
@@ -30,16 +37,15 @@ function getFormattedDateTime(input: string) {
 }
 
 export default function EventModal({
-  tileId,
   cancel,
   confirm,
-  tile,
+  ...props
 }: EventModalProps) {
-  const editor = useEditor();
-  const [allDay, setAllDay] = useState(tile?.allDay ?? false);
-  const [title, setTitle] = useState(tile?.title ?? "");
-  const [start, setStart] = useState(tile?.start ?? "");
-  const [end, setEnd] = useState(tile?.end ?? "");
+  const [isPending, startTransition] = useTransition();
+  const [allDay, setAllDay] = useState(props.allDay ?? false);
+  const [title, setTitle] = useState(props.title ?? "");
+  const [start, setStart] = useState(props.start ?? "");
+  const [end, setEnd] = useState(props.end ?? "");
 
   const changeTitle = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -69,30 +75,20 @@ export default function EventModal({
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
-      try {
-        if (tileId) {
-          const event = await editor.updateEvent({
-            id: tileId,
-            title,
-            start: new Date(start).toISOString(),
-            end: end ? new Date(end).toISOString() : null,
-            allDay,
-          });
-          confirm(event);
-        } else {
-          const event = await editor.createEvent({
-            title,
-            start: new Date(start).toISOString(),
-            end: end ? new Date(end).toISOString() : null,
-            allDay,
-          });
-          confirm(event);
-        }
-      } catch (error) {
-        handleError(error);
+      if (isPending) {
+        return;
       }
+
+      startTransition(() =>
+        confirm({
+          title,
+          start: new Date(start).toISOString(),
+          end: end ? new Date(end).toISOString() : null,
+          allDay,
+        }),
+      );
     },
-    [allDay, confirm, editor, end, start, tileId, title],
+    [allDay, confirm, end, isPending, start, title],
   );
 
   return (
@@ -107,8 +103,9 @@ export default function EventModal({
             type="text"
             placeholder="Event title"
             autoFocus
-            onChange={changeTitle}
+            required
             value={title}
+            onChange={changeTitle}
           />
         </label>
 
@@ -130,6 +127,7 @@ export default function EventModal({
               type="date"
               name="start"
               aria-label="Start date"
+              required
               value={start ? getFormattedDate(start) : ""}
               onChange={changeStart}
             />
@@ -167,7 +165,10 @@ export default function EventModal({
       </ModalBody>
 
       <ModalFooter>
-        <button className="primary" type="submit">
+        <button
+          className={classNames("primary", isPending && "pending")}
+          type="submit"
+        >
           Save
         </button>
         <button className="secondary" type="button" onClick={cancel}>
