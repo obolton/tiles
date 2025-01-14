@@ -76,7 +76,7 @@ export default function TextTile({
       <Tile
         theme={theme}
         hue={hue}
-        border={isEditable || !!theme ? "outside" : "none"}
+        border={isEditable || !!theme || columns === 1 ? "outside" : "none"}
       >
         {isEditable ? (
           <RichTextEditor
