@@ -1,4 +1,5 @@
 import type { ResizeItemAttributes } from "@/components/resize/ResizeItem";
+import type { ProfileImageAttributes } from "@/components/images/ProfileImage";
 
 type CustomElementAttributes = {
   key?: string;
@@ -41,10 +42,7 @@ declare module "react" {
         src: string;
         imagesrc?: string;
       };
-      "profile-image": CustomElementAttributes & {
-        src?: string | null;
-        name?: string | null;
-      };
+      "profile-image": CustomElementAttributes & ProfileImageAttributes;
       "infinite-scroll": CustomElementAttributes & {
         onloadmore?: (event: globalThis.Event) => void;
       };
