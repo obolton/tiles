@@ -57,3 +57,8 @@
 ::view-transition-group(stack) {
   animation-duration: 0s;
 }
+
+.dragging {
+  opacity: 0.3;
+  z-index: -1;
+}
