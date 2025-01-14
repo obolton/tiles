@@ -60,12 +60,10 @@ const fontConfig = font ? getFontConfig(font) : undefined;
   >
     <Navigation />
     <SignIn />
-    <slot name="menu" />
-    <slot name="header" />
 
-    <main><slot /></main>
+    <slot />
+
     <toast-container></toast-container>
-    <slot name="end" />
 
     <script is:inline>
       window.addEventListener(
