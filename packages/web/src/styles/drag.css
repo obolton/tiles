@@ -19,15 +19,14 @@
 [data-draggable][data-drag-preview] {
   position: fixed;
   contain: size layout style;
-  top: var(--initial-y);
-  left: var(--initial-x);
+  top: 0;
+  left: 0;
   margin: 0;
   z-index: 1;
   border: none;
   overflow: visible;
   padding: 0;
   pointer-events: none;
-  transform-origin: var(--transform-origin);
   animation-name: lift;
   animation-duration: 0.75s;
   animation-timing-function: ease;
@@ -59,4 +58,8 @@
 
 body[data-drag] {
   cursor: move;
+
+  & * {
+    cursor: inherit;
+  }
 }
