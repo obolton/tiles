@@ -1,7 +1,6 @@
 ---
 import Page from "@/layouts/Page.astro";
-import PageHeader from "@/components/header/PageHeader";
-import Grid from "@/components/grid/Grid";
+import EditablePage from "@/components/pages/EditablePage";
 import client from "@/api/client";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 
@@ -29,14 +28,5 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
   hue={page.hue}
   font={page.font}
 >
-  <PageHeader
-    title={page.title}
-    subtitle={page.subtitle}
-    coverImageUrl={page.coverImageUrl}
-    author={null}
-    updatedAt={null}
-    slot="header"
-  />
-
-  <Grid tiles={page.tiles} />
+  <EditablePage page={page} showToolbar={false} />
 </Page>
