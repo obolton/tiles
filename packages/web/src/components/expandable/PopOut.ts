@@ -1,21 +1,26 @@
 import css from "./PopOut.css?inline";
 import { viewTransition } from "@/utils/transitions";
-
-const PRIMARY_MOUSE_BUTTON = 0;
+import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export default class PopOut extends HTMLElement {
-  static readonly observedAttributes = ["expandable"] as const;
+export interface PopOutAttributes {
+  expandable?: "" | "expandable";
+}
 
-  private readonly dialog: HTMLDialogElement;
+export default class PopOut extends HTMLElement {
+  static readonly observedAttributes: (keyof PopOutAttributes)[] = [
+    "expandable",
+  ] as const;
+
+  protected readonly dialog: HTMLDialogElement;
   private transition?: ViewTransition;
 
   constructor() {
     super();
 
-    const shadow = this.attachShadow({ mode: "closed", delegatesFocus: true });
+    const shadow = this.attachShadow({ mode: "open", delegatesFocus: true });
     shadow.adoptedStyleSheets = [stylesheet];
 
     const closeButton = document.createElement("button");
@@ -37,36 +42,32 @@ export default class PopOut extends HTMLElement {
   }
 
   attributeChangedCallback(
-    name: (typeof PopOut.observedAttributes)[number],
+    name: keyof PopOutAttributes,
     _: string,
-    value: string,
+    value: string | null,
   ) {
     switch (name) {
       case "expandable":
-        if (value === "expandable") {
-          this.attachEventListeners();
-        } else {
+        if (value === null) {
           this.removeEventListeners();
+        } else {
+          this.attachEventListeners();
         }
     }
   }
 
   private attachEventListeners() {
+    this.addEventListener("pointerdown", this);
     this.dialog.addEventListener("pointerdown", this);
     this.dialog.addEventListener("focusin", this);
     this.dialog.addEventListener("keydown", this);
-    this.addEventListener("drag:drag-over", this);
-    this.addEventListener("drag:drop-on", this);
-    this.addEventListener("drag:drop", this);
   }
 
   private removeEventListeners() {
+    this.removeEventListener("pointerdown", this);
     this.dialog.removeEventListener("pointerdown", this);
     this.dialog.removeEventListener("focusin", this);
     this.dialog.removeEventListener("keydown", this);
-    this.removeEventListener("drag:drag-over", this);
-    this.removeEventListener("drag:drop-on", this);
-    this.removeEventListener("drag:drop", this);
   }
 
   handleEvent(event: Event) {
@@ -77,17 +78,10 @@ export default class PopOut extends HTMLElement {
         return this.handleFocusIn(event as FocusEvent);
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
-
-      // Prevent drag events on overlay from bubbling up
-      case "drag:drag-over":
-      case "drag:drop-on":
-      case "drag:drop":
-        event.stopPropagation();
-        return;
     }
   }
 
-  private isOpen() {
+  protected isOpen() {
     return this.hasAttribute("open");
   }
 
@@ -148,6 +142,8 @@ export default class PopOut extends HTMLElement {
 
     this.setAttribute("opening", "");
 
+    this.prepareViewTransition();
+
     this.transition = viewTransition(() => {
       this.setAttribute("open", "");
       this.dialog.setAttribute("role", "dialog");
@@ -157,7 +153,8 @@ export default class PopOut extends HTMLElement {
         new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
       );
     });
-    this.transition.finished.then(() => {
+    this.transition.finished.finally(() => {
+      this.cleanUpViewTransition();
       delete this.transition;
       this.removeAttribute("opening");
       focusTarget?.focus();
@@ -183,6 +180,8 @@ export default class PopOut extends HTMLElement {
 
     this.setAttribute("closing", "");
 
+    this.prepareViewTransition();
+
     this.transition = viewTransition(() => {
       this.dialog.close();
       this.dialog.setAttribute("role", "none");
@@ -193,6 +192,7 @@ export default class PopOut extends HTMLElement {
       );
     });
     this.transition.finished.then(() => {
+      this.cleanUpViewTransition();
       delete this.transition;
       this.removeAttribute("closing");
 
@@ -204,5 +204,21 @@ export default class PopOut extends HTMLElement {
         activeElement.blur();
       }
     });
+  }
+
+  private prepareViewTransition() {
+    for (const child of this.children) {
+      if (child instanceof HTMLElement && child.id) {
+        child.style.viewTransitionName = `popout-item-${child.id}`;
+      }
+    }
+  }
+
+  private cleanUpViewTransition() {
+    for (const child of this.children) {
+      if (child instanceof HTMLElement && child.id) {
+        child.style.viewTransitionName = "";
+      }
+    }
   }
 }
