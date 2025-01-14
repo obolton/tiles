@@ -2,7 +2,7 @@
   position: relative;
 }
 
-.handle {
+#handle {
   position: absolute;
   right: -6px;
   bottom: -6px;
@@ -32,7 +32,7 @@
 }
 
 @media (any-pointer: coarse) {
-  .handle {
+  #handle {
     right: -22px;
     bottom: -22px;
     width: 48px;
@@ -41,7 +41,7 @@
   }
 }
 
-.outline {
+#outline {
   position: absolute;
   top: 0;
   left: 0;
