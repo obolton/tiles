@@ -1,3 +1,5 @@
+import type { ResizeItemAttributes } from "@/components/resize/ResizeItem";
+
 type CustomElementAttributes = {
   key?: string;
   ref?: React.RefObject;
@@ -63,15 +65,16 @@ declare module "react" {
       };
       "pop-out": CustomElementAttributes & {
         expandable?: "expandable";
+        ontoggle?: (event: globalThis.ToggleEvent) => void;
         onbeforetoggle?: (event: globalThis.ToggleEvent) => void;
       };
       "stack-view": CustomElementAttributes & {
         expandable?: "expandable";
+        ontoggle?: (event: globalThis.ToggleEvent) => void;
+        onbeforetoggle?: (event: globalThis.ToggleEvent) => void;
       };
       "carousel-view": CustomElementAttributes;
-      "resize-item": CustomElementAttributes & {
-        disabled?: "disabled";
-      };
+      "resize-item": CustomElementAttributes & ResizeItemAttributes;
     }
   }
 }
