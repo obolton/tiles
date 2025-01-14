@@ -6,21 +6,3 @@ export const CreateCollectionSchema = z.object({
   tileIds: z.array(z.string().uuid()).min(2).max(20),
 });
 export type CreateCollectionSchema = z.infer<typeof CreateCollectionSchema>;
-
-export const AddToCollectionSchema = z.object({
-  pageId: z.string().uuid(),
-  collectionId: z.string().uuid(),
-  tileId: z.string().uuid(),
-  position: z.number().int().gte(0),
-});
-export type AddToCollectionSchema = z.infer<typeof AddToCollectionSchema>;
-
-export const RemoveFromCollectionSchema = z.object({
-  pageId: z.string().uuid(),
-  id: z.string().uuid(),
-  collectionId: z.string().uuid(),
-  position: z.number().int().gte(0),
-});
-export type RemoveFromCollectionSchema = z.infer<
-  typeof RemoveFromCollectionSchema
->;
