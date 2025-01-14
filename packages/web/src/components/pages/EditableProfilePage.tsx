@@ -3,7 +3,7 @@ import EditingToolbar from "@/components/menu/EditingToolbar";
 import ProfilePageHeader from "@/components/header/ProfilePageHeader";
 import Grid from "@/components/grid/Grid";
 import ModalLauncher from "@/components/modals/ModalLauncher";
-import Editor from "@/editor/editor";
+import Editor from "@/editor/Editor";
 import { EditorContext } from "@/context/editor";
 import useStore from "@/hooks/useStore";
 import type { AppRouterOutputs } from "@/api/client";
