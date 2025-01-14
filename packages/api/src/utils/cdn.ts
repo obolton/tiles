@@ -3,7 +3,7 @@ import cloudflare, { CLOUDFLARE_ZONE_ID } from "./cloudflare.ts";
 const HOME_PAGE_ID = process.env.PAGE_ID;
 
 export function getProfileImageUrl(imageKey: string) {
-  return `${process.env.PROFILE_IMAGES_BASE_URL}/${imageKey}`;
+  return `${process.env.PROFILE_IMAGES_BASE_URL}/${imageKey}?optimizer=image&class=small`;
 }
 
 export function getImageUrl(imageKey: string) {
