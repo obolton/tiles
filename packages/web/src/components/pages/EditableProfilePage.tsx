@@ -5,7 +5,9 @@ import Grid from "@/components/grid/Grid";
 import ModalLauncher from "@/components/modals/ModalLauncher";
 import Editor from "@/editor/Editor";
 import { EditorContext } from "@/context/editor";
+import { DragIdContext } from "@/context/drag";
 import useStore from "@/hooks/useStore";
+import useDragListener from "@/hooks/useDragListener";
 import type { AppRouterOutputs } from "@/api/client";
 
 interface EditableProfilePageProps {
@@ -18,20 +20,25 @@ export default function EditableProfilePage({
   const editorRef = useRef<Editor>(null);
   editorRef.current ??= new Editor(user.profilePage);
   const tiles = useStore(editorRef.current.tiles);
+  const dragId = useDragListener();
 
   return (
     <EditorContext value={editorRef.current}>
-      <EditingToolbar isPublished allowDelete={false} allowPublish={false} />
+      <DragIdContext value={dragId}>
+        <EditingToolbar isPublished allowDelete={false} allowPublish={false} />
 
-      <ProfilePageHeader
-        name={user.name}
-        imageUrl={user.imageUrl}
-        subtitle={user.profilePage.subtitle}
-      />
+        <ProfilePageHeader
+          name={user.name}
+          imageUrl={user.imageUrl}
+          subtitle={user.profilePage.subtitle}
+        />
 
-      <Grid tiles={tiles} />
+        <main>
+          <Grid tiles={tiles} />
+        </main>
 
-      <ModalLauncher />
+        <ModalLauncher />
+      </DragIdContext>
     </EditorContext>
   );
 }
