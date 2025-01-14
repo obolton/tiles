@@ -43,7 +43,7 @@ async function handleLinkTile(id: string, res: ServerResponse) {
       res.end();
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.writeHead(500);
     res.end();
   }
@@ -70,7 +70,7 @@ async function handleVideoTile(id: string, res: ServerResponse) {
       res.end();
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.writeHead(500);
     res.end();
   }
