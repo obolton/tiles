@@ -18,9 +18,9 @@
     "cdn:purge": "npm run cdn:purge --workspace=api"
   },
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
+    "@eslint/js": "^9.18.0",
     "@vitest/coverage-v8": "^2.1.8",
-    "eslint": "^9.17.0",
+    "eslint": "^9.18.0",
     "eslint-config-prettier": "^9.1.0",
     "globals": "^15.13.0",
     "prettier": "^3.4.2",
