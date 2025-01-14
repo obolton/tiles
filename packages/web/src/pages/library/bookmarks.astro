@@ -21,14 +21,16 @@ if (!pages) {
 ---
 
 <Page title="Library - Bookmarks">
-  <header slot="header"><h1>Library</h1></header>
+  <header><h1>Library</h1></header>
 
-  <nav class="tabs">
-    <ol>
-      <li><a href="/library">Your pages</a></li>
-      <li aria-selected="true"><a href="/library/bookmarks">Bookmarks</a></li>
-    </ol>
-  </nav>
+  <main>
+    <nav class="tabs">
+      <ol>
+        <li><a href="/library">Your pages</a></li>
+        <li aria-selected="true"><a href="/library/bookmarks">Bookmarks</a></li>
+      </ol>
+    </nav>
 
-  <BookmarksGrid pages={pages} client:load />
+    <BookmarksGrid pages={pages} client:load />
+  </main>
 </Page>
