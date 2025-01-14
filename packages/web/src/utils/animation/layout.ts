@@ -1,98 +1,59 @@
+import { flushSync } from "react-dom";
 import { createAnimationPromise, SPRING } from "./effects";
 
-const rects = new WeakMap<HTMLElement, DOMRect>();
-const animations = new WeakMap<HTMLElement, Animation>();
+interface LayoutTransitionEntry {
+  id: string;
+  beforeRect: DOMRect;
+}
 
-export type AnimateLayoutOptions = {
-  attributes?: string[];
-};
+const pendingAnimations = new Set<Animation>();
 
-async function animatePosition(element: HTMLElement) {
-  const previousRect = rects.get(element);
-  if (!previousRect) {
-    return;
-  }
-
-  const existingAnimation = animations.get(element);
-  if (existingAnimation) {
-    existingAnimation.cancel();
-    animations.delete(element);
+async function animateEntry({ id, beforeRect }: LayoutTransitionEntry) {
+  const element = document.querySelector<HTMLElement>(
+    `[data-animate-layout-id="${id}"]`,
+  );
+  if (!element) {
+    return Promise.resolve();
   }
 
   const rect = element.getBoundingClientRect();
-  rects.set(element, rect);
-
-  const deltaX = Math.round(previousRect.left - rect.left);
-  const deltaY = Math.round(previousRect.top - rect.top);
+  const deltaX = Math.round(beforeRect.left - rect.left);
+  const deltaY = Math.round(beforeRect.top - rect.top);
 
   if (deltaX === 0 && deltaY === 0) {
     return;
   }
 
-  // Prevent pointer events during the animation
-  element.style.setProperty("pointer-events", "none");
-
   const animation = element.animate(
     [{ translate: `${deltaX}px ${deltaY}px` }, { translate: "none" }],
     SPRING,
   );
-  animation.addEventListener(
-    "finish",
-    () => {
-      element.style.removeProperty("pointer-events");
-      animations.delete(element);
-    },
-    { once: true },
-  );
-  animations.set(element, animation);
-  return createAnimationPromise(animation);
+  const promise = createAnimationPromise(animation);
+  promise.finally(() => pendingAnimations.delete(animation));
+  pendingAnimations.add(animation);
+  return promise;
 }
 
-export function willAnimateLayout(element: HTMLElement) {
-  for (const child of element.children) {
-    if (child instanceof HTMLElement) {
-      rects.set(child, child.getBoundingClientRect());
+function getEntries() {
+  const elements = document.querySelectorAll("[data-animate-layout-id]");
+  const entries: LayoutTransitionEntry[] = [];
+  for (const element of elements) {
+    if (element instanceof HTMLElement && element.dataset.animateLayoutId) {
+      entries.push({
+        id: element.dataset.animateLayoutId,
+        beforeRect: element.getBoundingClientRect(),
+      });
     }
   }
+  return entries;
 }
 
-export async function animateChildren(element: HTMLElement) {
-  return Promise.all(
-    Array.from(element.children).map((child) => {
-      if (child instanceof HTMLElement) {
-        return animatePosition(child);
-      }
-    }),
-  );
-}
-
-export function animateLayout(
-  element: HTMLElement,
-  options?: AnimateLayoutOptions,
-) {
-  const observers: MutationObserver[] = [];
-
-  const childListObserver = new MutationObserver(() =>
-    animateChildren(element),
-  );
-  childListObserver.observe(element, { childList: true });
-  observers.push(childListObserver);
-
-  if (options?.attributes && options.attributes.length > 0) {
-    const attributesObserver = new MutationObserver(() =>
-      animateChildren(element),
-    );
-    attributesObserver.observe(element, {
-      subtree: true,
-      attributes: true,
-      attributeFilter: options.attributes,
-    });
-    observers.push(attributesObserver);
-  }
-
-  return () => {
-    for (const observer of observers) {
-      observer.disconnect();
-    }
-  };
+export function layoutTransition(updateLayout: () => void) {
+  const entries = getEntries();
+  flushSync(() => {
+    updateLayout();
+  });
+  pendingAnimations.forEach((animation) => animation.cancel());
+  pendingAnimations.clear();
+  return Promise.all(entries.map(animateEntry));
 }
