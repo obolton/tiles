@@ -1,5 +1,5 @@
 import { Readable } from "node:stream";
-import { WritableStream } from "htmlparser2/lib/WritableStream";
+import { WritableStream } from "htmlparser2/WritableStream";
 
 type LinkMetadata = {
   title: string | null;
