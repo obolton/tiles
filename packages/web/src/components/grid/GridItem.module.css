@@ -55,8 +55,3 @@ body:not([data-drag]) .editable:not(:has([open])),
 .drag-over {
   box-shadow: 0 0 0 3px var(--focus-ring-color);
 }
-
-.dragging {
-  opacity: 0.3;
-  z-index: -1;
-}
