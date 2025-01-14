@@ -1,13 +1,13 @@
 import client from "@/api/client";
-import type { FontId } from "@/config/fonts";
-import type { Theme } from "@/types/pages";
 import { showModal } from "@/utils/modals";
-import type { ImageModalResult } from "@/components/modals/ImageModal";
 import { preloadImage, uploadMedia } from "@/utils/media";
 import { isEditModeEnabled } from "@/utils/edit";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import type { ClientTile } from "@/types/tiles";
-import { Store } from "@/utils/stores";
+import { Store, DerivedStore } from "@/utils/stores";
+import type { FontId } from "@/config/fonts";
+import type { Theme } from "@/types/pages";
+import type { ImageModalResult } from "@/components/modals/ImageModal";
+import type { ClientTile, ClientCollectionTile } from "@/types/tiles";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 
 type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
@@ -16,13 +16,30 @@ type OmitPageId<T extends { pageId: string }> = Omit<T, "pageId">;
 
 const IS_SERVER = import.meta.env.SSR;
 
+function getTilesByPlacementId(tiles: ClientTile[]) {
+  return tiles.reduce((map, tile) => {
+    map.set(tile.placementId, tile);
+    if (tile.type === "COLLECTION") {
+      tile.items.forEach((childItem) =>
+        map.set(childItem.placementId, childItem),
+      );
+    }
+    return map;
+  }, new Map<string, ClientTile>());
+}
+
 export default class Editor {
   readonly pageId: string;
   readonly tiles: Store<ClientTile[]>;
+  readonly tilesByPlacementId: DerivedStore<
+    ClientTile[],
+    Map<string, ClientTile>
+  >;
 
   constructor(page: Page) {
     this.pageId = page.id;
     this.tiles = new Store(page.tiles);
+    this.tilesByPlacementId = this.tiles.derive(getTilesByPlacementId);
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();
@@ -118,8 +135,17 @@ export default class Editor {
     return result;
   }
 
-  async moveTile(id: string, position: number) {
-    return client.tiles.move.mutate({ pageId: this.pageId, id, position });
+  async moveTile({
+    id,
+    collectionId,
+    afterId,
+  }: OmitPageId<AppRouterInputs["tiles"]["move"]>) {
+    return client.tiles.move.mutate({
+      pageId: this.pageId,
+      id,
+      collectionId,
+      afterId,
+    });
   }
 
   async resizeTile(id: string, columns: number, rows: number) {
@@ -135,16 +161,31 @@ export default class Editor {
     this.tiles.value = this.tiles.value.concat(tile);
   }
 
-  private removeTile(placementId: string) {
-    this.tiles.value = this.tiles.value.filter(
-      (tile) => tile.placementId !== placementId,
-    );
+  removeTile(placementId: string) {
+    this.tiles.value = this.tiles.value
+      .filter((tile) => tile.placementId !== placementId)
+      .map((tile) => {
+        if (tile.type === "COLLECTION") {
+          return {
+            ...tile,
+            items: tile.items.filter(
+              (item) => item.placementId !== placementId,
+            ),
+          };
+        }
+        return tile;
+      });
   }
 
   private updateTileData(
     tile: Omit<
       ClientTile,
-      "type" | "placementId" | "rows" | "columns" | "position"
+      | "type"
+      | "placementId"
+      | "rows"
+      | "columns"
+      | "position"
+      | "parentCollectionId"
     >,
   ) {
     this.tiles.value = this.tiles.value.map((entry) =>
@@ -310,5 +351,66 @@ export default class Editor {
       .filter((item) => !data.tileIds.includes(item.placementId))
       .concat(item);
     return item;
+  }
+
+  async moveTilePreview({
+    id,
+    collectionId,
+    afterId,
+  }: OmitPageId<AppRouterInputs["tiles"]["move"]>) {
+    const tile = this.tilesByPlacementId.value.get(id);
+
+    if (!tile) {
+      throw new Error(`Invalid tile ID: ${id}`);
+    }
+
+    const fromCollectionId = tile.parentCollectionId;
+    const tiles = Array.from(this.tiles.value);
+
+    // Remove tile from old collection
+    if (fromCollectionId) {
+      const index = tiles.findIndex((t) => t.id === fromCollectionId);
+      const collection = tiles[index] as ClientCollectionTile;
+      tiles[index] = {
+        ...collection,
+        items: collection.items.filter((t) => t.id !== tile.id),
+      };
+    } else {
+      const index = tiles.indexOf(tile);
+      tiles.splice(index, 1);
+    }
+
+    // Add tile to new collection
+    if (collectionId) {
+      const index = tiles.findIndex((t) => t.id === collectionId);
+      const collection = tiles[index] as ClientCollectionTile;
+      const childIndex = afterId
+        ? collection.items.findIndex((t) => t.placementId === afterId) + 1
+        : 0;
+      tiles[index] = {
+        ...collection,
+        items: collection.items.toSpliced(childIndex, 0, {
+          ...tile,
+          parentCollectionId: collectionId,
+        }),
+      };
+    } else {
+      const index = afterId
+        ? tiles.findIndex((t) => t.placementId === afterId) + 1
+        : 0;
+      tiles.splice(index, 0, { ...tile, parentCollectionId: null });
+    }
+
+    this.tiles.value = tiles;
+  }
+
+  async resizeTilePreview({
+    id,
+    rows,
+    columns,
+  }: OmitPageId<AppRouterInputs["tiles"]["resize"]>) {
+    this.tiles.value = this.tiles.value.map((t) =>
+      t.id === id ? { ...t, columns, rows } : t,
+    );
   }
 }
