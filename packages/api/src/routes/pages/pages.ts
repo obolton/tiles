@@ -29,6 +29,7 @@ const TILES_FIELDS = {
   position: true,
   columns: true,
   rows: true,
+  parentCollectionId: true,
   image: {
     select: IMAGE_FIELDS,
   },
@@ -93,9 +94,10 @@ export function formatTile({
   position,
   rows,
   columns,
+  parentCollectionId,
   ...tile
 }: TileWithData): ClientTile {
-  const base = { placementId: id, position, rows, columns };
+  const base = { placementId: id, position, rows, columns, parentCollectionId };
   const { image, video, text, map, link, pageLink, event, collection } = tile;
 
   if (image) {
