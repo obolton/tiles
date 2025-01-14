@@ -1,8 +1,7 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { classNames } from "@/utils/css";
 import useDraggable from "@/hooks/useDraggable";
 import useScrollIntoView from "@/hooks/useScrollIntoView";
-import DeleteButton from "../tiles/DeleteButton";
 import styles from "./GridItem.module.css";
 import type ResizeItem from "@/components/resize/ResizeItem";
 import ImageTile from "@/components/tiles/ImageTile";
@@ -28,8 +27,7 @@ interface GridItemProps {
   grow?: boolean;
   isEditable?: boolean;
   resizable?: boolean;
-  dropGroup?: string;
-  onDelete: (id: string) => void;
+  allowDrop?: boolean;
   tile: ClientTile;
 }
 
@@ -68,70 +66,46 @@ export default function GridItem({
   grow = false,
   isEditable = false,
   resizable = false,
-  dropGroup,
-  onDelete,
+  allowDrop = false,
   tile,
 }: GridItemProps) {
   const ref = useRef<ResizeItem>(null);
   const editor = useEditor();
   useDraggable(ref, isEditable);
   useScrollIntoView(ref);
-  const [isDragging, setDragging] = useState(false);
   const [isDragOver, setDragOver] = useState(false);
 
-  const handleDelete = useCallback(
-    () => void onDelete(placementId),
-    [placementId, onDelete],
-  );
-
-  const onDragStart = (event: DragDropEvent) => {
+  const onDragStart = (event: DragDropEvent<ClientTile>) => {
     if (event.target === ref.current) {
-      if (event.state) {
-        event.state.data = tile;
-      }
-      setDragging(true);
+      event.state.data = structuredClone(tile);
     }
   };
 
-  const onDragEnd = (event: DragDropEvent) => {
-    if (event.target === ref.current) {
-      setDragging(false);
-    }
-  };
+  const onDragEnter = (event: DragDropEvent<ClientTile>) => {
+    const { state } = event;
 
-  const onDragEnter = (event: DragDropEvent) => {
-    const {
-      state: { data },
-    } = event;
-    if ("type" in data && data.type === "COLLECTION") {
-      event.preventDefault();
-      return;
+    // Don't allow collections to be dropped on tiles
+    if (state.data && state.data.type !== "COLLECTION") {
+      setDragOver(true);
     }
-    setDragOver(true);
   };
 
   const onDragLeave = () => setDragOver(false);
 
-  const onDrop = async (event: DragDropEvent) => {
-    const {
-      target,
-      state: { data },
-    } = event;
+  const onDrop = async (event: DragDropEvent<ClientTile>) => {
+    const { state } = event;
 
-    if (!("placementId" in data) || typeof data.placementId !== "string") {
+    // Don't add to collections here
+    if (tile.type === "COLLECTION" || !state.data?.placementId) {
       return;
     }
 
-    if (
-      (target instanceof HTMLElement && target.dataset.type === "COLLECTION") ||
-      ("type" in data && data.type === "COLLECTION")
-    ) {
-      return;
-    }
+    event.preventDefault();
+    event.stopPropagation();
 
     try {
       await editor.createCollection({
-        tileIds: [placementId, data.placementId],
+        tileIds: [placementId, state.data.placementId],
       });
     } catch (error) {
       handleError(error);
@@ -152,30 +126,24 @@ export default function GridItem({
     <resize-item
       id={id}
       ref={ref}
-      disabled={!resizable ? "disabled" : undefined}
+      allowresize={resizable ? "allowresize" : undefined}
+      allowdelete={isEditable ? "allowdelete" : undefined}
       class={classNames(
         styles.item,
         isEditable && styles.editable,
         grow && styles.grow,
         isDragOver && styles["drag-over"],
-        isDragging && styles.dragging,
         className,
       )}
       style={combinedStyles}
-      data-rows={rows}
-      data-columns={columns}
-      data-drop-group={dropGroup}
       data-placement-id={placementId}
+      data-animate-layout-id={placementId}
       ondnd-dragstart={onDragStart}
-      ondnd-dragend={onDragEnd}
-      ondnd-dragenter={onDragEnter}
-      ondnd-dragleave={onDragLeave}
-      ondnd-drop={onDrop}
+      ondnd-dragenter={allowDrop ? onDragEnter : undefined}
+      ondnd-dragleave={allowDrop ? onDragLeave : undefined}
+      ondnd-drop={allowDrop ? onDrop : undefined}
     >
       {getTileComponent(tile)}
-      {isEditable ? (
-        <DeleteButton className={styles.delete} onPress={handleDelete} />
-      ) : null}
     </resize-item>
   );
 }
