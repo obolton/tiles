@@ -1,24 +1,32 @@
 import css from "./ResizeItem.css?inline";
-import { ResizeEvent } from "@/utils/resize";
+import { TileResizeEvent, TileEvent } from "@/utils/events";
+import { DEFAULT_TIMING } from "@/utils/animation/effects";
 
 const DRAG_THRESHOLD = 10;
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
+export interface ResizeItemAttributes {
+  allowresize?: "" | "allowresize";
+}
+
 export default class ResizeItem extends HTMLElement {
-  static readonly observedAttributes = ["disabled"] as const;
+  static readonly observedAttributes: (keyof ResizeItemAttributes)[] = [
+    "allowresize",
+  ] as const;
 
-  protected readonly internals: ElementInternals;
+  private readonly internals: ElementInternals;
 
-  private handle: HTMLElement | null = null;
-  private outline: HTMLElement | null = null;
-  private origin: DOMPoint | null = null;
-  private initialPointerLocation: { x: number; y: number } | null = null;
-  private abortController: AbortController | null = null;
+  private resizeHandle?: HTMLElement;
+  private outline?: HTMLElement;
+
   private isResizing = false;
+  private resizeAbortController?: AbortController;
   private width = 0;
   private height = 0;
+  private initialPointerX = 0;
+  private initialPointerY = 0;
 
   constructor() {
     super();
@@ -30,25 +38,20 @@ export default class ResizeItem extends HTMLElement {
     shadow.append(document.createElement("slot"));
   }
 
-  connectedCallback() {
-    if (!this.hasAttribute("disabled")) {
-      this.showHandle();
-    }
-  }
-
   attributeChangedCallback(
-    name: (typeof ResizeItem.observedAttributes)[number],
+    name: keyof ResizeItemAttributes,
     _: string,
-    value: string,
+    value: string | null,
   ) {
     switch (name) {
-      case "disabled":
-        if (value) {
+      case "allowresize":
+        if (value === null) {
           this.endResizing();
           this.hideHandle();
         } else {
           this.showHandle();
         }
+        break;
     }
   }
 
@@ -57,69 +60,74 @@ export default class ResizeItem extends HTMLElement {
   }
 
   private showHandle() {
-    if (this.handle) {
+    if (this.resizeHandle) {
       return;
     }
 
-    this.handle = document.createElement("div");
-    this.handle.classList.add("handle");
-    this.handle.addEventListener("pointerdown", this.pointerDown.bind(this), {
-      passive: false,
-    });
-    this.shadowRoot?.append(this.handle);
+    this.resizeHandle = document.createElement("div");
+    this.resizeHandle.id = "handle";
+    this.resizeHandle.addEventListener(
+      "pointerdown",
+      this.pointerDown.bind(this),
+      {
+        passive: false,
+      },
+    );
+    this.shadowRoot?.append(this.resizeHandle);
   }
 
   private hideHandle() {
-    this.handle?.remove();
-    this.handle = null;
+    this.resizeHandle?.remove();
+    this.resizeHandle = undefined;
   }
 
   private pointerDown(event: PointerEvent) {
     event.preventDefault();
     event.stopPropagation();
 
-    this.initialPointerLocation = { x: event.pageX, y: event.pageY };
-
-    this.abortController = new AbortController();
+    this.resizeAbortController = new AbortController();
+    const signal = this.resizeAbortController.signal;
 
     window.addEventListener("pointermove", this.pointerMove.bind(this), {
       passive: true,
-      signal: this.abortController.signal,
+      signal,
     });
     window.addEventListener("pointerup", this.pointerUp.bind(this), {
       passive: true,
-      signal: this.abortController.signal,
+      signal,
     });
     window.addEventListener("keydown", this.keyDown.bind(this), {
       passive: false,
-      signal: this.abortController.signal,
+      signal,
     });
     window.addEventListener("touchmove", this.touchMove.bind(this), {
       passive: false,
-      signal: this.abortController.signal,
+      signal,
     });
   }
 
   private pointerMove(event: PointerEvent) {
     if (this.isResizing) {
-      this.width = event.pageX - (this.origin?.x ?? 0);
-      this.height = event.pageY - (this.origin?.y ?? 0);
+      this.width = event.pageX - this.initialPointerX;
+      this.height = event.pageY - this.initialPointerY;
 
       this.dispatchEvent(
-        new ResizeEvent("resize:resize", {
+        new TileResizeEvent("tileresize", {
+          bubbles: true,
+          cancelable: true,
           width: this.width,
           height: this.height,
         }),
       );
 
-      this.resizeOutline();
+      this.updateOutlineSize();
     } else {
-      const deltaX = event.pageX - (this.initialPointerLocation?.x ?? 0);
-      const deltaY = event.pageY - (this.initialPointerLocation?.y ?? 0);
+      const deltaX = event.pageX - this.initialPointerX;
+      const deltaY = event.pageY - this.initialPointerY;
       const distance = Math.hypot(deltaX, deltaY);
 
       if (distance >= DRAG_THRESHOLD) {
-        this.startResizing(event.pageX, event.pageY);
+        this.startResizing(event);
       }
     }
   }
@@ -127,7 +135,9 @@ export default class ResizeItem extends HTMLElement {
   private pointerUp() {
     if (this.isResizing) {
       this.dispatchEvent(
-        new ResizeEvent("resize:end", {
+        new TileResizeEvent("tileresizeend", {
+          bubbles: true,
+          cancelable: false,
           width: this.width,
           height: this.height,
         }),
@@ -150,31 +160,39 @@ export default class ResizeItem extends HTMLElement {
     event.preventDefault();
   }
 
-  private startResizing(pageX: number, pageY: number) {
+  private startResizing(event: PointerEvent) {
     if (this.isResizing) {
-      throw new Error("Resize already in progress");
+      throw new Error("Already resizing");
+    }
+
+    const bounds = this.getBoundingClientRect();
+    this.initialPointerX = bounds.x + window.scrollX;
+    this.initialPointerY = bounds.y + window.scrollY;
+    this.width = event.pageX - this.initialPointerX;
+    this.height = event.pageY - this.initialPointerY;
+
+    const allowResize = this.dispatchEvent(
+      new TileResizeEvent("tileresizestart", {
+        bubbles: true,
+        cancelable: true,
+        width: this.width,
+        height: this.height,
+      }),
+    );
+
+    if (!allowResize) {
+      return;
     }
 
     this.isResizing = true;
     this.internals.states.add("resizing");
-
-    const bounds = this.getBoundingClientRect();
-    this.origin = new DOMPoint(
-      bounds.x + window.scrollX,
-      bounds.y + window.scrollY,
-    );
-    this.width = pageX - this.origin.x;
-    this.height = pageY - this.origin.y;
-
     this.showOutline();
   }
 
   private endResizing() {
-    this.abortController?.abort();
-    this.abortController = null;
     this.isResizing = false;
-    this.origin = null;
-    this.initialPointerLocation = null;
+    this.resizeAbortController?.abort();
+    this.resizeAbortController = undefined;
     this.internals.states.delete("resizing");
     this.removeOutline();
   }
@@ -185,35 +203,34 @@ export default class ResizeItem extends HTMLElement {
     }
 
     this.outline = document.createElement("div");
-    this.outline.className = "outline";
+    this.outline.id = "outline";
     this.outline.setAttribute("part", "outline");
-    this.outline.style.setProperty("width", `${this.width}px`);
-    this.outline.style.setProperty("height", `${this.height}px`);
+    this.outline.style.width = `${this.width}px`;
+    this.outline.style.height = `${this.height}px`;
     this.shadowRoot?.appendChild(this.outline);
+
     this.outline.animate([{ opacity: 0 }, { opacity: 0.8 }], {
-      duration: 200,
-      easing: "ease",
+      ...DEFAULT_TIMING,
       fill: "forwards",
     });
+  }
+
+  private updateOutlineSize() {
+    if (this.outline) {
+      this.outline.style.width = `${this.width}px`;
+      this.outline.style.height = `${this.height}px`;
+    }
   }
 
   private removeOutline() {
     this.outline
       ?.animate([{ opacity: 0 }], {
-        duration: 200,
-        easing: "ease",
+        ...DEFAULT_TIMING,
         fill: "forwards",
       })
       .addEventListener("finish", () => {
         this.outline?.remove();
-        this.outline = null;
+        this.outline = undefined;
       });
-  }
-
-  private resizeOutline() {
-    requestAnimationFrame(() => {
-      this.outline?.style.setProperty("width", `${this.width}px`);
-      this.outline?.style.setProperty("height", `${this.height}px`);
-    });
   }
 }
