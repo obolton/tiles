@@ -3,7 +3,8 @@ import { z } from "zod";
 export const MoveTileSchema = z.object({
   pageId: z.string().uuid(),
   id: z.string().uuid(),
-  position: z.number().int().gte(0),
+  collectionId: z.string().uuid().nullable(),
+  afterId: z.string().uuid().optional(),
 });
 export type MoveTileSchema = z.infer<typeof MoveTileSchema>;
 

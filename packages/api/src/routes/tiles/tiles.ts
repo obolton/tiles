@@ -7,48 +7,108 @@ import type {
 import type { TileType } from "@prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma.ts";
 
-export async function moveTile({ pageId, id, position }: MoveTileSchema) {
+export async function moveTile({
+  pageId,
+  id,
+  collectionId,
+  afterId,
+}: MoveTileSchema) {
   return prisma.$transaction(async (transaction) => {
-    const { parentCollectionId, position: oldPosition } =
-      await transaction.tile.findUniqueOrThrow({
-        where: { pageId, id },
-        select: { parentCollectionId: true, position: true },
-      });
-
-    if (oldPosition === position) {
-      return { id, pageId, fromPosition: oldPosition, toPosition: position };
-    } else if (position > oldPosition) {
-      await transaction.tile.updateMany({
-        where: {
-          pageId,
-          parentCollectionId,
-          id: { not: id },
-          position: { gt: oldPosition, lte: position },
-        },
-        data: { position: { decrement: 1 } },
-      });
-    } else {
-      await transaction.tile.updateMany({
-        where: {
-          pageId,
-          parentCollectionId,
-          id: { not: id },
-          position: { gte: position, lt: oldPosition },
-        },
-        data: { position: { increment: 1 } },
-      });
-    }
-
-    await transaction.tile.update({
+    const {
+      parentCollectionId: previousCollectionId,
+      position: previousPosition,
+    } = await transaction.tile.findUniqueOrThrow({
       where: { pageId, id },
-      data: { position },
+      select: { parentCollectionId: true, position: true },
     });
+
+    const afterTile = afterId
+      ? await transaction.tile.findUniqueOrThrow({
+          where: { pageId, id: afterId, parentCollectionId: collectionId },
+          select: { position: true },
+        })
+      : null;
+
+    const position = afterTile ? afterTile.position + 1 : 0;
+
+    // Move within same collection
+    if (collectionId === previousCollectionId) {
+      // Move down collection
+      if (position > previousPosition) {
+        await Promise.all([
+          transaction.tile.updateMany({
+            where: {
+              pageId,
+              parentCollectionId: collectionId,
+              id: { not: id },
+              position: { gt: previousPosition, lte: position },
+            },
+            data: { position: { decrement: 1 } },
+          }),
+          transaction.tile.update({
+            where: { pageId, id },
+            data: { position },
+          }),
+        ]);
+        // Move up collection
+      } else {
+        await Promise.all([
+          transaction.tile.updateMany({
+            where: {
+              pageId,
+              parentCollectionId: collectionId,
+              id: { not: id },
+              position: { gte: position, lt: previousPosition },
+            },
+            data: { position: { increment: 1 } },
+          }),
+          transaction.tile.update({
+            where: { pageId, id },
+            data: { position },
+          }),
+        ]);
+      }
+
+      // Move to new collection
+    } else {
+      await Promise.all([
+        // Remove position from old collection
+        transaction.tile.updateMany({
+          where: {
+            pageId,
+            parentCollectionId: previousCollectionId,
+            id: { not: id },
+            position: { gt: previousPosition },
+          },
+          data: { position: { decrement: 1 } },
+        }),
+
+        // Create space in new collection
+        transaction.tile.updateMany({
+          where: {
+            pageId,
+            parentCollectionId: null,
+            id: { not: id },
+            position: { gte: position },
+          },
+          data: { position: { increment: 1 } },
+        }),
+
+        // Move item to collection
+        transaction.tile.update({
+          where: { pageId, id },
+          data: { parentCollectionId: collectionId, position },
+          select: { id: true },
+        }),
+      ]);
+    }
 
     return {
       id,
       pageId,
-      fromPosition: oldPosition,
+      fromPosition: previousPosition,
       toPosition: position,
+      collectionId: collectionId,
     };
   });
 }
@@ -148,6 +208,7 @@ export async function createTilePlacement(
       position: true,
       columns: true,
       rows: true,
+      parentCollectionId: true,
     },
   });
   return {
@@ -155,5 +216,6 @@ export async function createTilePlacement(
     position: placement.position,
     columns: placement.columns,
     rows: placement.rows,
+    parentCollectionId: placement.parentCollectionId,
   };
 }
