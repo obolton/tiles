@@ -1,66 +1,102 @@
-export default class ProfileImage extends HTMLElement {
-  static observedAttributes = ["src", "name"] as const;
+import { setSearchParams } from "@/utils/urls";
 
-  private shadow: ShadowRoot;
-  private image?: HTMLImageElement;
-  private placeholder?: HTMLElement;
+export interface ProfileImageAttributes {
+  name: string;
+  src?: string;
+  size?: "small" | "large";
+}
+
+export default class ProfileImage extends HTMLElement {
+  static readonly observedAttributes: (keyof ProfileImageAttributes)[] = [
+    "src",
+    "name",
+    "size",
+  ] as const;
 
   constructor() {
     super();
-
-    this.shadow = this.attachShadow({ mode: "closed" });
+    this.attachShadow({ mode: "open" });
   }
 
-  connectedCallback() {
+  attributeChangedCallback() {
     this.update();
   }
 
-  attributeChangedCallback(
-    name: (typeof ProfileImage.observedAttributes)[number],
-  ) {
-    switch (name) {
-      case "src":
-      case "name":
-        this.update();
-        break;
+  get src() {
+    return this.getAttribute("src");
+  }
+
+  set src(value: string | null) {
+    if (value) {
+      this.setAttribute("src", value);
+    } else {
+      this.removeAttribute("src");
+    }
+  }
+
+  get name() {
+    return this.getAttribute("name") ?? "";
+  }
+
+  set name(value: string) {
+    this.setAttribute("name", value);
+  }
+
+  get size() {
+    const value = this.getAttribute("size");
+    switch (value) {
+      case "small":
+      case "large":
+        return value;
+      default:
+        return "small";
+    }
+  }
+
+  set size(value: NonNullable<ProfileImageAttributes["size"]>) {
+    if (value) {
+      this.setAttribute("size", value);
+    } else {
+      this.removeAttribute("size");
     }
   }
 
   private update() {
-    const src = this.getAttribute("src");
-    const name = this.getAttribute("name") ?? "";
+    const src = this.src;
+    const name = this.name;
+    const size = this.size;
 
     if (src) {
-      this.placeholder?.remove();
-      this.placeholder = undefined;
+      this.shadowRoot?.querySelector("abbr")?.remove();
 
-      if (this.image) {
-        this.image.setAttribute("src", src);
-        this.image.setAttribute("alt", `Profile image for ${name}`);
-        this.image.setAttribute("title", name);
+      const image = this.shadowRoot?.querySelector("img");
+      if (image) {
+        image.src = setSearchParams(src, { class: size });
+        image.alt = `Profile image for ${name}`;
+        image.title = name;
       } else {
-        this.image = document.createElement("img");
-        this.image.setAttribute("part", "image");
-        this.image.setAttribute("src", src);
-        this.image.setAttribute("alt", `Profile image for ${name}`);
-        this.image.setAttribute("title", name);
-        this.image.addEventListener("load", () =>
+        const image = document.createElement("img");
+        image.setAttribute("part", "image");
+        image.src = setSearchParams(src, { class: size });
+        image.alt = `Profile image for ${name}`;
+        image.title = name;
+        image.addEventListener("load", () =>
           this.dispatchEvent(new Event("load", { bubbles: false })),
         );
-        this.shadow.append(this.image);
+        this.shadowRoot?.append(image);
       }
     } else {
-      this.image?.remove();
-      this.image = undefined;
+      this.shadowRoot?.querySelector("img")?.remove();
+      const placeholder = this.shadowRoot?.querySelector("abbr");
 
-      if (this.placeholder) {
-        this.placeholder.textContent = name.charAt(0);
+      if (placeholder) {
+        placeholder.textContent = name.charAt(0);
       } else {
-        this.placeholder = document.createElement("abbr");
-        this.placeholder.setAttribute("part", "placeholder");
-        this.placeholder.setAttribute("title", name);
-        this.placeholder.textContent = name.charAt(0);
-        this.shadow.append(this.placeholder);
+        const placeholder = document.createElement("abbr");
+        placeholder.setAttribute("part", "placeholder");
+        placeholder.title = name;
+        placeholder.textContent = name.charAt(0);
+        this.shadowRoot?.append(placeholder);
       }
     }
   }
