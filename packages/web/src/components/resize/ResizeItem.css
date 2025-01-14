@@ -52,3 +52,41 @@
   min-width: inherit;
   min-height: inherit;
 }
+
+#delete {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow:
+    0 2px 3px 0 rgb(0 0 0 / 30%),
+    inset 0 0 0 1px rgb(0 0 0 / 20%);
+  opacity: 1;
+  transition:
+    transform var(--animation-duration-short) var(--easing),
+    box-shadow var(--animation-duration-short) var(--easing);
+  animation: var(--animation-duration-short) var(--easing) button-appear;
+
+  &::after {
+    content: url("@/icons/delete.svg");
+    position: absolute;
+    inset: 0;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+#delete:active {
+  transform: scale(0.95) translateY(1px);
+  box-shadow:
+    0 2px 4px 0 rgb(0 0 0 / 30%),
+    inset 0 0 0 1px rgb(0 0 0 / 20%);
+}

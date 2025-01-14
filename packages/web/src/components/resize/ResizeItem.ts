@@ -9,11 +9,13 @@ stylesheet.replaceSync(css);
 
 export interface ResizeItemAttributes {
   allowresize?: "" | "allowresize";
+  allowdelete?: "" | "allowdelete";
 }
 
 export default class ResizeItem extends HTMLElement {
   static readonly observedAttributes: (keyof ResizeItemAttributes)[] = [
     "allowresize",
+    "allowdelete",
   ] as const;
 
   private readonly internals: ElementInternals;
@@ -52,6 +54,14 @@ export default class ResizeItem extends HTMLElement {
           this.showHandle();
         }
         break;
+
+      case "allowdelete":
+        if (value === null) {
+          this.hideDeleteButton();
+        } else {
+          this.showDeleteButton();
+        }
+        break;
     }
   }
 
@@ -79,6 +89,23 @@ export default class ResizeItem extends HTMLElement {
   private hideHandle() {
     this.resizeHandle?.remove();
     this.resizeHandle = undefined;
+  }
+
+  private showDeleteButton() {
+    if (this.shadowRoot?.getElementById("delete")) {
+      return;
+    }
+
+    const deleteButton = document.createElement("button");
+    deleteButton.id = "delete";
+    deleteButton.type = "button";
+    deleteButton.ariaLabel = "Delete";
+    deleteButton.addEventListener("click", this.delete.bind(this));
+    this.shadowRoot?.append(deleteButton);
+  }
+
+  private hideDeleteButton() {
+    this.shadowRoot?.getElementById("delete")?.remove();
   }
 
   private pointerDown(event: PointerEvent) {
@@ -232,5 +259,17 @@ export default class ResizeItem extends HTMLElement {
         this.outline?.remove();
         this.outline = undefined;
       });
+  }
+
+  private delete(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.dispatchEvent(
+      new TileEvent("tiledelete", {
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
   }
 }
