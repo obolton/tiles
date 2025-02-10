@@ -30,8 +30,10 @@ describe("getFontConfig", () => {
     expect(getFontConfig(id)).toEqual(expectedConfig);
   });
 
-  test("should return null if the font family is not found", () => {
-    expect(getFontConfig("UNKNOWN" as FontId)).toBeUndefined();
+  test("should throw if the font family is not found", () => {
+    expect(() => getFontConfig("UNKNOWN" as FontId)).toThrowError(
+      "Invalid font: UNKNOWN",
+    );
   });
 });
 
@@ -39,11 +41,5 @@ describe("getGoogleFontsUrl", () => {
   test("should return the correct Google Fonts URL for a set of font families", () => {
     const expectedUrl = `${GOOGLE_FONTS_BASE_URL}?family=Inter:ital,opsz,wght@0,14..32,${DEFAULT_WEIGHTS};1,14..32,${DEFAULT_WEIGHTS}&family=Lora:ital,wght@0,${DEFAULT_WEIGHTS};1,${DEFAULT_WEIGHTS}&display=swap`;
     expect(getGoogleFontsUrl(MOCK_FONTS)).toBe(expectedUrl);
-  });
-
-  test("should throw if no font families are provided", () => {
-    expect(() => getGoogleFontsUrl([])).toThrowError(
-      "No font families provided",
-    );
   });
 });

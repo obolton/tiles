@@ -8,7 +8,7 @@ describe("scrollIntoViewIfNeeded", () => {
   test("scrolls the element into view if it is clipped by the top of the viewport", () => {
     const element = document.createElement("div");
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue(
-      new DOMRect(0, -10, 100, 100),
+      new DOMRect(0, -100, 100, 50),
     );
     const scrollIntoView = vi.spyOn(element, "scrollIntoView");
     scrollIntoViewIfNeeded(element, options);
@@ -18,7 +18,7 @@ describe("scrollIntoViewIfNeeded", () => {
   test("scrolls the element into view if it is clipped by the bottom of the viewport", () => {
     const element = document.createElement("div");
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue(
-      new DOMRect(0, 510, 100, 100),
+      new DOMRect(0, 650, 100, 50),
     );
     const scrollIntoView = vi.spyOn(element, "scrollIntoView");
     scrollIntoViewIfNeeded(element, options);

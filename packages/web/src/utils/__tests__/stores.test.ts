@@ -56,6 +56,7 @@ describe("Store", () => {
   test("does not notify subscribers after they have been removed", () => {
     const store = new Store(1);
     const subscriber = vi.fn();
+    store.subscribe(subscriber);
     store.value = 2;
     expect(subscriber).toHaveBeenCalledTimes(1);
     store.unsubscribe(subscriber);
@@ -88,7 +89,7 @@ describe("DerivedStore", () => {
     const derived = new DerivedStore(store, transform);
     expect(transform).toHaveBeenCalledTimes(0);
     const results = [derived.value, derived.value, derived.value];
-    expect(results).toBe([2, 2, 2]);
+    expect(results).toStrictEqual([2, 2, 2]);
     expect(transform).toHaveBeenCalledTimes(1);
   });
 });
