@@ -18,6 +18,7 @@ function mockModel() {
     groupBy: vi.fn(),
     update: vi.fn(),
     updateMany: vi.fn(),
+    updateManyAndReturn: vi.fn(),
     upsert: vi.fn(),
     fields: {} as never,
   };
