@@ -55,6 +55,7 @@ describe("updateText", () => {
 
   it("should update and return a text tile", async () => {
     const result = await updateText({
+      pageId: "1",
       id: "1",
       content: MOCK_TEXT.content,
     });
