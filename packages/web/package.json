@@ -33,7 +33,7 @@
     "@trpc/client": "^11.0.0-rc.374",
     "astro": "^5.2.5",
     "lexical": "^0.24.0",
-    "maplibre-gl": "^5.0.1",
+    "maplibre-gl": "^5.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
