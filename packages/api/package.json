@@ -36,7 +36,7 @@
     "@types/cookie": "^0.6.0",
     "@types/cors": "^2.8.17",
     "@types/node": "^22.10.6",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.25.0",
     "prisma": "^6.2.1",
     "prisma-json-types-generator": "^3.2.2",
     "tsx": "^4.19.2"
