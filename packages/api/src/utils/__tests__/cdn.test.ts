@@ -8,7 +8,9 @@ import {
 describe("getProfileImageUrl", () => {
   test("returns the profile image URL", () => {
     const result = getProfileImageUrl("image-key");
-    expect(result).toEqual("https://example.com/profile-images/image-key");
+    expect(result).toEqual(
+      "https://example.com/profile-images/image-key?optimizer=image&class=small",
+    );
   });
 });
 
