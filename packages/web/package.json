@@ -38,9 +38,9 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^8.4.7",
-    "@storybook/react": "^8.4.7",
-    "@storybook/react-vite": "^8.4.7",
+    "@storybook/addon-essentials": "^8.5.3",
+    "@storybook/react": "^8.5.3",
+    "@storybook/react-vite": "^8.5.3",
     "@types/react": "^19.0.6",
     "@types/react-dom": "^19.0.3",
     "autoprefixer": "^10.4.20",
@@ -48,7 +48,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "jsdom": "^26.0.0",
     "postcss-html": "^1.7.0",
-    "storybook": "^8.4.7",
+    "storybook": "^8.5.3",
     "stylelint": "^16.14.1",
     "stylelint-config-html": "^1.1.0",
     "stylelint-config-standard": "^37.0.0",
