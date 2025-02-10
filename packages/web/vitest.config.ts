@@ -1,17 +1,21 @@
-/// <reference types="vitest" />
+import path from "node:path";
+import { defineConfig } from "vitest/config";
 
-import { getViteConfig } from "astro/config";
+const packageRoot = path.dirname(import.meta.filename);
 
-export default getViteConfig(
-  {
-    test: {
-      environment: "jsdom",
-      setupFiles: ["test/setup.ts"],
-      coverage: {
-        include: ["src/**"],
-        extension: [".ts", ".tsx", ".astro"],
-      },
+export default defineConfig({
+  root: import.meta.dirname,
+  resolve: {
+    alias: {
+      "@": path.resolve(packageRoot, "./src"),
     },
   },
-  { root: import.meta.dirname },
-);
+  test: {
+    environment: "jsdom",
+    setupFiles: ["test/setup.ts"],
+    coverage: {
+      include: ["src/**"],
+      extension: [".ts", ".tsx", ".astro"],
+    },
+  },
+});
