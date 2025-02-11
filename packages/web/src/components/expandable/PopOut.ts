@@ -25,9 +25,9 @@ export default class PopOut extends HTMLElement {
 
     const closeButton = document.createElement("button");
     closeButton.setAttribute("part", "close");
-    closeButton.setAttribute("type", "button");
-    closeButton.setAttribute("aria-label", "Close");
-    closeButton.setAttribute("id", "close");
+    closeButton.id = "close";
+    closeButton.type = "button";
+    closeButton.ariaLabel = "Close";
     closeButton.addEventListener("click", (event) => {
       event.stopPropagation();
       this.close();
@@ -35,7 +35,7 @@ export default class PopOut extends HTMLElement {
 
     this.dialog = document.createElement("dialog");
     this.dialog.setAttribute("part", "dialog");
-    this.dialog.setAttribute("role", "none");
+    this.dialog.role = "none";
     this.dialog.append(closeButton, document.createElement("slot"));
 
     shadow.append(this.dialog);
@@ -146,7 +146,7 @@ export default class PopOut extends HTMLElement {
 
     this.transition = viewTransition(() => {
       this.setAttribute("open", "");
-      this.dialog.setAttribute("role", "dialog");
+      this.dialog.role = "dialog";
       this.dialog.showModal();
 
       this.dispatchEvent(
@@ -184,7 +184,7 @@ export default class PopOut extends HTMLElement {
 
     this.transition = viewTransition(() => {
       this.dialog.close();
-      this.dialog.setAttribute("role", "none");
+      this.dialog.role = "none";
       this.removeAttribute("open");
 
       this.dispatchEvent(
