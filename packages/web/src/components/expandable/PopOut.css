@@ -61,6 +61,8 @@ dialog {
   }
 
   &[open] {
+    --border-radius: 12px;
+
     position: fixed;
     width: auto;
     height: auto;
