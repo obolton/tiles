@@ -22,12 +22,15 @@
 
   position: relative;
   display: grid;
-  margin: -160px;
-  padding: 160px;
   font-family: var(--font);
   grid-template-columns: repeat(var(--columns), 1fr);
   grid-auto-rows: max-content;
   gap: var(--gap);
+}
+
+body[data-drag] .grid {
+  margin: -160px;
+  padding: 160px;
 }
 
 @container main (min-width: 100px) {
