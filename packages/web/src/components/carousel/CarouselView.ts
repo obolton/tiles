@@ -30,7 +30,7 @@ export default class CarouselView extends HTMLElement {
     this.#contents = document.createElement("div");
     this.#contents.id = "contents";
     this.#contents.part.add("contents");
-    this.#contents.addEventListener("scroll", this);
+    this.#contents.addEventListener("scroll", this, { passive: true });
     this.#contents.append(document.createElement("slot"));
 
     this.#previousButton = document.createElement("button");
