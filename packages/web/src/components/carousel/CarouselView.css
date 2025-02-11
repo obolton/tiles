@@ -21,11 +21,6 @@
   scrollbar-width: none;
   scroll-padding: 16px;
 
-  & > * {
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-  }
-
   &.scrolling {
     scroll-snap-type: none;
   }
@@ -103,4 +98,9 @@
       opacity: 0;
     }
   }
+}
+
+::slotted(*) {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
