@@ -64,6 +64,7 @@ export default class CarouselView extends HTMLElement {
 
   connectedCallback() {
     this.#resizeObserver.observe(this);
+    this.updateButtons();
   }
 
   disconnectedCallback() {
@@ -146,11 +147,15 @@ export default class CarouselView extends HTMLElement {
     }
   }
 
-  private handleScroll() {
+  private updateButtons() {
     this.#previousButton.disabled = this.#contents.scrollLeft < 10;
     this.#nextButton.disabled =
       this.#contents.scrollLeft >
       this.#contents.scrollWidth - this.#contents.clientWidth - 10;
+  }
+
+  private handleScroll() {
+    this.updateButtons();
   }
 
   private handleDrag({ clientX }: DragDropEvent) {
