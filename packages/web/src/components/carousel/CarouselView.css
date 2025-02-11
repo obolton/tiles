@@ -82,16 +82,21 @@
   #previous,
   #next {
     display: block;
-    opacity: 0.8;
+    opacity: 0.9;
 
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.3;
       cursor: auto;
     }
 
     &:enabled:hover {
       opacity: 1;
       scale: 1.1;
+    }
+
+    &:enabled:active {
+      opacity: 1;
+      scale: 1.05;
     }
 
     @starting-style {
