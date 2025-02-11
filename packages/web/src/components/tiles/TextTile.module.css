@@ -193,6 +193,11 @@
   object-position: left top;
 }
 
+::view-transition-old(text-tile),
+::view-transition-new(text-tile) {
+  animation: none;
+}
+
 ::view-transition-old(text-tile-text),
 ::view-transition-new(text-tile-text) {
   object-fit: none;
