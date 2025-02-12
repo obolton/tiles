@@ -1,0 +1,31 @@
+#tooltip {
+  position: fixed;
+  margin: 0;
+  padding: 6px 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: rgba(0 0 0 / 80%);
+  text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
+  background-color: rgb(255 255 255 / 85%);
+  box-shadow: 0 2px 3px -1px rgb(0 0 0 / 20%);
+  border-radius: 32px;
+  pointer-events: none;
+  opacity: 0;
+  scale: 0.95;
+  transition:
+    display var(--animation-duration-short) allow-discrete,
+    opacity var(--animation-duration-short) var(--easing),
+    scale var(--animation-duration-short) var(--easing);
+
+  &:popover-open {
+    opacity: 1;
+    scale: 1;
+
+    @starting-style {
+      opacity: 0;
+      scale: 0.95;
+    }
+  }
+}
