@@ -24,8 +24,8 @@ class TooltipController {
       case "focusin":
         if (
           target instanceof HTMLElement &&
-          target.dataset.tooltip &&
-          target !== this.target
+          target !== this.target &&
+          target.dataset.tooltip
         ) {
           this.triggerShow(target);
         }
@@ -36,6 +36,7 @@ class TooltipController {
         if (target === this.target) {
           this.triggerHide();
         }
+        break;
     }
   }
 
@@ -74,7 +75,7 @@ class TooltipController {
   }
 
   show() {
-    if (!this.target) {
+    if (!this.target || this.target.ariaExpanded === "true") {
       return;
     }
 
