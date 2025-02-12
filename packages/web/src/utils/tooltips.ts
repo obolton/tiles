@@ -27,20 +27,20 @@ class TooltipController {
           target !== this.target &&
           target.dataset.tooltip
         ) {
-          this.triggerShow(target);
+          this.enter(target);
         }
         break;
 
       case "pointerleave":
       case "blur":
-        if (target === this.target) {
-          this.triggerHide();
+        if (target instanceof HTMLElement) {
+          this.leave(target);
         }
         break;
     }
   }
 
-  triggerShow(element: HTMLElement) {
+  enter(element: HTMLElement) {
     clearTimeout(this.activeTimeout);
 
     this.hide();
@@ -54,9 +54,16 @@ class TooltipController {
         this.show();
       }, TOOLTIP_DELAY);
     }
+
+    element.addEventListener("pointerleave", this, {
+      passive: true,
+    });
+    element.addEventListener("blur", this, {
+      passive: true,
+    });
   }
 
-  triggerHide() {
+  leave(element: HTMLElement) {
     clearTimeout(this.activeTimeout);
 
     this.hide();
@@ -64,6 +71,9 @@ class TooltipController {
     this.activeTimeout = setTimeout(() => {
       this.active = false;
     }, TOOLTIP_DELAY);
+
+    element.removeEventListener("pointerleave", this);
+    element.removeEventListener("blur", this);
   }
 
   getPosition() {
@@ -116,18 +126,10 @@ class TooltipController {
         throw new Error(`Invalid tooltip position: ${position}`);
     }
 
-    this.target.addEventListener("pointerleave", this, {
-      passive: true,
-    });
-    this.target.addEventListener("blur", this, {
-      passive: true,
-    });
     this.target.setAttribute("aria-describedby", this.tooltip.id);
   }
 
   hide() {
-    this.target?.removeEventListener("pointerleave", this);
-    this.target?.removeEventListener("blur", this);
     this.target?.removeAttribute("aria-describedby");
     this.target = undefined;
     this.tooltip.hidePopover();
