@@ -32,9 +32,13 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
         type="profile-image"
         accept={ACCEPT_CONTENT_TYPES.join(",")}
       >
-        <data-binding src="user.imageUrl" name="user.name">
-          <profile-image size="large" class="large" data-pending-text=""
-          ></profile-image>
+        <data-binding src="user.imageUrl" alt="user.name">
+          <img
+            class="large-profile-image"
+            data-pending-text=""
+            data-tooltip="Select a new profile image"
+            data-tooltip-position="right"
+          />
         </data-binding>
       </file-picker>
 

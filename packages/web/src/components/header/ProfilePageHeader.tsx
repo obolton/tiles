@@ -5,6 +5,7 @@ import { classNames } from "@/utils/css";
 import styles from "./ProfilePageHeader.module.css";
 import { handleError } from "@/utils/errors";
 import { useEditor } from "@/context/editor";
+import { setSearchParams } from "@/utils/urls";
 
 interface ProfilePageHeaderProps {
   name: string;
@@ -41,7 +42,13 @@ export default function ProfilePageHeader({
 
   return (
     <header className={styles.header}>
-      <profile-image class="large" src={imageUrl} name={name} />
+      {imageUrl ? (
+        <img
+          className="large-profile-image"
+          src={setSearchParams(imageUrl, { class: "large" })}
+          alt={name}
+        />
+      ) : null}
 
       <div className={styles.text}>
         <h1>{name}</h1>

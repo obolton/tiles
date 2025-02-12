@@ -52,7 +52,13 @@ export default function PageTile({
 
         {author ? (
           <address>
-            <profile-image src={author.imageUrl} name={author.name} />
+            {author.imageUrl ? (
+              <img
+                className="profile-image"
+                src={author.imageUrl}
+                alt={author.name}
+              />
+            ) : null}
             <span>{author.name}</span>
           </address>
         ) : null}

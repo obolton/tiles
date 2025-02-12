@@ -126,7 +126,13 @@ export default function PageHeader({
             href={`/profiles/${author.username ? `@${author.username}` : author.id}`}
           >
             <address>
-              <profile-image src={author.imageUrl} name={author.name} />
+              {author.imageUrl ? (
+                <img
+                  className="profile-image"
+                  src={author.imageUrl}
+                  alt={author.name}
+                />
+              ) : null}
               <span>{author.name}</span>
             </address>
           </a>
