@@ -68,11 +68,17 @@ export default function FormattingToolbar() {
 
   return (
     <>
-      <FontPicker direction="left" onChange={setFont} tooltipPosition="left" />
+      <FontPicker
+        direction="left"
+        onChange={setFont}
+        aria-label="Font"
+        data-tooltip="Select font"
+      />
       <ColorPicker
         direction="left"
         onChange={setColor}
-        tooltipPosition="left"
+        aria-label="Color"
+        data-tooltip="Select page color"
       />
     </>
   );

@@ -20,21 +20,28 @@ export default function EditingToolbar({
       className="toolbar secondary"
       role="toolbar"
       aria-label="Editing toolbar"
+      data-tooltip-position="left"
     >
       <label id="edit-label">
         Edit
         <input id="edit-switch" type="checkbox" role="switch" />
       </label>
 
-      <button id="share" className="floating tooltip-left" aria-label="Share">
+      <button
+        id="share"
+        className="floating"
+        aria-label="Share"
+        data-tooltip="Share this page"
+      >
         <img className="icon" src={shareIcon.src} alt="Share" />
       </button>
 
       <button
         id="bookmark"
-        className="floating tooltip-left"
+        className="floating"
         aria-label="Bookmark"
         aria-pressed="false"
+        data-tooltip="Bookmark this page"
       >
         <img className="icon" src={bookmarkIcon.src} alt="Bookmark" />
       </button>

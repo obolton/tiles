@@ -11,7 +11,6 @@ import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { ImageModalResult } from "@/components/modals/ImageModal";
 import type { EventModalResult } from "@/components/modals/EventModal";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
-import { classNames } from "@/utils/css";
 import { uploadMedia } from "@/utils/media";
 import { useEditor } from "@/context/editor";
 
@@ -49,13 +48,7 @@ registerModal(
   lazy(() => import("@/components/modals/EventModal")),
 );
 
-interface TileButtonsProps {
-  tooltipPosition?: "top" | "right" | "bottom" | "left";
-}
-
-export default function TileButtons({
-  tooltipPosition = "left",
-}: TileButtonsProps) {
+export default function TileButtons() {
   const editor = useEditor();
   const isEditable = useEditable();
 
@@ -129,9 +122,10 @@ export default function TileButtons({
       {BUTTONS.map(({ label, type, icon }) => (
         <button
           key={type}
-          className={classNames("floating", `tooltip-${tooltipPosition}`)}
+          className="floating"
           type="button"
           aria-label={label}
+          data-tooltip={label}
           data-tile-type={type}
           onClick={onClick}
         >

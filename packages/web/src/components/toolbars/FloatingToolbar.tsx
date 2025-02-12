@@ -11,6 +11,11 @@ export default function FloatingToolbar({
   children,
 }: FloatingToolbarProps) {
   return (
-    <menu className={classNames(styles.toolbar, className)}>{children}</menu>
+    <menu
+      className={classNames(styles.toolbar, className)}
+      data-tooltip-position="top"
+    >
+      {children}
+    </menu>
   );
 }

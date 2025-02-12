@@ -7,14 +7,10 @@ import signOutIcon from "@/icons/sign-out.svg";
 ---
 
 <nav id="navigation" class="toolbar">
-  <menu>
+  <menu data-tooltip-position="right">
     <li>
       <data-binding href="user.profile">
-        <a
-          href="/profiles"
-          class="floating tooltip-right"
-          aria-label="Your profile"
-        >
+        <a href="/profiles" class="floating" data-tooltip="Your profile">
           <data-binding src="user.imageUrl" name="user.name">
             <profile-image></profile-image>
           </data-binding>
@@ -22,34 +18,39 @@ import signOutIcon from "@/icons/sign-out.svg";
       </data-binding>
     </li>
     <li>
-      <a href="/" class="floating tooltip-right" aria-label="Home">
+      <a href="/" class="floating" aria-label="Home" data-tooltip="Home">
         <img class="icon" src={homeIcon.src} alt="Home" />
       </a>
     </li>
     <li>
       <button
         id="new-page-button"
-        class="floating tooltip-right"
+        class="floating"
         type="button"
-        aria-label="Create a new page"
+        data-tooltip="Create a new page"
         data-pending-text=""
       >
         <img src={newIcon.src} alt="Plus icon" />
       </button>
     </li>
     <li>
-      <a href="/library" class="floating tooltip-right" aria-label="Library">
+      <a
+        href="/library"
+        class="floating"
+        aria-label="Library"
+        data-tooltip="Library"
+      >
         <img class="icon" src={libraryIcon.src} alt="Library" />
       </a>
     </li>
     <li>
       <button
         id="more-button"
-        class="floating tooltip-right"
+        class="floating"
         type="button"
         role="menuitem"
         popovertarget="navigation-overflow"
-        aria-label="More options"
+        data-tooltip="More options"
         aria-haspopup="menu"
         aria-expanded="false"
       >

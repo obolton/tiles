@@ -218,8 +218,9 @@ export default function Toolbar({
     <FloatingToolbar className={className}>
       <li>
         <button
-          className="floating small tooltip-top"
-          aria-label="Format as heading"
+          className="floating small"
+          aria-label="Heading"
+          data-tooltip="Format as a heading"
           type="button"
           aria-pressed={format.heading ? "true" : "false"}
           onClick={formatHeading}
@@ -229,8 +230,9 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small tooltip-top"
-          aria-label="Format as bold"
+          className="floating small"
+          aria-label="Bold"
+          data-tooltip="Format as bold"
           type="button"
           aria-pressed={format.bold ? "true" : "false"}
           onClick={formatBold}
@@ -240,8 +242,9 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small tooltip-top"
-          aria-label="Format as italic"
+          className="floating small"
+          aria-label="Italic"
+          data-tooltip="Format as italic"
           type="button"
           aria-pressed={format.italic ? "true" : "false"}
           onClick={formatItalic}
@@ -251,8 +254,9 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small tooltip-top"
-          aria-label="Format as underlined"
+          className="floating small"
+          aria-label="Underlined"
+          data-tooltip="Format as underlined"
           type="button"
           aria-pressed={format.underline ? "true" : "false"}
           onClick={formatUnderline}
@@ -262,8 +266,9 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small tooltip-top"
-          aria-label="Format as strike-through"
+          className="floating small"
+          aria-label="Strike-through"
+          data-tooltip="Format as strike-through"
           type="button"
           aria-pressed={format.strikethrough ? "true" : "false"}
           onClick={formatStrikethrough}
@@ -273,8 +278,9 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small tooltip-top"
-          aria-label="Format as an ordered list"
+          className="floating small"
+          aria-label="Ordered list"
+          data-tooltip="Format as an ordered list"
           type="button"
           aria-pressed={format.orderedList ? "true" : "false"}
           onClick={formatOrderedList}
@@ -284,8 +290,9 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small tooltip-top"
-          aria-label="Format as an unordered list"
+          className="floating small"
+          aria-label="Unordered list"
+          data-tooltip="Format as an unordered list"
           type="button"
           aria-pressed={format.unorderedList ? "true" : "false"}
           onClick={formatUnorderedList}
@@ -295,8 +302,9 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small tooltip-top"
-          aria-label="Format as a quote"
+          className="floating small"
+          aria-label="Quote"
+          data-tooltip="Format as a quote"
           type="button"
           aria-pressed={format.quote ? "true" : "false"}
           onClick={formatQuote}
@@ -306,8 +314,9 @@ export default function Toolbar({
       </li>
       <li>
         <button
-          className="floating small tooltip-top"
-          aria-label="Add a link"
+          className="floating small"
+          aria-label="Link"
+          data-tooltip="Add a link"
           type="button"
           aria-pressed={format.link ? "true" : "false"}
           onClick={formatLink}
@@ -319,7 +328,8 @@ export default function Toolbar({
         <ColorPicker
           value={color}
           onChange={onChangeColor}
-          tooltipPosition="top"
+          aria-label="Color"
+          data-tooltip="Select color"
           showClear
         />
       </li>

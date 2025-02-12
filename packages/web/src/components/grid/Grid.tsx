@@ -27,7 +27,7 @@ export default function Grid({ tiles }: GridProps) {
                 There’s nothing here yet. Get starting by adding some content.
               </p>
               <div className={styles["placeholder-buttons"]}>
-                <TileButtons tooltipPosition="bottom" />
+                <TileButtons />
               </div>
             </>
           ) : (

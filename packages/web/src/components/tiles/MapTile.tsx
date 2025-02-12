@@ -87,8 +87,9 @@ export default function MapTile({ id, places }: MapTileProps) {
           {isEditable ? (
             <button
               type="button"
-              className="floating tooltip-right"
-              aria-label="Add a place"
+              className="floating"
+              aria-label="Add place"
+              data-tooltip="Add a place"
               onPointerDownCapture={(event) => {
                 event.stopPropagation();
                 event.preventDefault();

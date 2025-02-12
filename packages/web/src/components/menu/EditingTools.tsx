@@ -64,8 +64,9 @@ export default function EditingTools({
       {isPublished ? (
         <button
           id="unpublish"
-          className="floating tooltip-left"
+          className="floating"
           aria-label="Published"
+          data-tooltip="This page is published"
           disabled={allowPublish ? undefined : true}
           onClick={unpublishPage}
         >
@@ -74,8 +75,9 @@ export default function EditingTools({
       ) : (
         <button
           id="publish"
-          className="floating tooltip-left"
+          className="floating"
           aria-label="Private"
+          data-tooltip="This page is private"
           disabled={allowPublish ? undefined : true}
           onClick={publishPage}
         >
@@ -90,12 +92,13 @@ export default function EditingTools({
       <button
         id="page-options-button"
         type="button"
-        className="floating tooltip-left"
+        className="floating"
         role="menuitem"
         popoverTarget="page-options"
         aria-label="More options"
         aria-haspopup="menu"
         aria-expanded="false"
+        data-tooltip="More options"
       >
         <img src={moreIcon.src} alt="More options" aria-hidden="true" />
       </button>

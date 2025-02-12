@@ -1,21 +1,21 @@
 import { useCallback } from "react";
+import clearColorIcon from "@/icons/clear-color.svg";
 import styles from "./ColorPicker.module.css";
 import { classNames } from "@/utils/css";
 import type SwatchSelect from "./SwatchSelect";
 import type { Theme } from "@/types/pages";
-import clearColorIcon from "@/icons/clear-color.svg";
 
 export type ColorPickerValue = {
   theme: Theme | null;
   hue: number | null;
 };
 
-interface ColorPickerProps {
+interface ColorPickerProps
+  extends Omit<React.HTMLAttributes<HTMLElement>, "value" | "onChange"> {
   className?: string;
   direction?: "left" | "right";
   value?: ColorPickerValue;
   onChange: (value: ColorPickerValue) => void;
-  tooltipPosition?: "top" | "right" | "bottom" | "left";
   showClear?: boolean;
 }
 
@@ -32,8 +32,8 @@ export default function ColorPicker({
   direction,
   value,
   onChange,
-  tooltipPosition,
   showClear = false,
+  ...props
 }: ColorPickerProps) {
   const setColor = useCallback(
     (event: Event) => {
@@ -57,12 +57,8 @@ export default function ColorPicker({
 
   return (
     <swatch-select
-      class={classNames(
-        styles["color-picker"],
-        tooltipPosition ? `tooltip-${tooltipPosition}` : undefined,
-        className,
-      )}
-      aria-label="Color"
+      {...props}
+      class={classNames(styles["color-picker"], className)}
       aria-orientation="horizontal"
       direction={direction}
       value={

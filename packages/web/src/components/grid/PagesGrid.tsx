@@ -57,9 +57,10 @@ export default function PagesGrid({ pages: initialPages }: PagesGridProps) {
           <p>Get started by creating your first page.</p>
           <div className={styles["placeholder-buttons"]}>
             <button
-              className="floating tooltip-bottom"
+              className="floating"
               type="button"
-              aria-label="Create a new page"
+              aria-label="New page"
+              data-tooltip="Create a new page"
               onClick={createNewPage}
             >
               <img src={newIcon.src} alt="Plus icon" />

@@ -3,20 +3,19 @@ import fontIcon from "@/icons/font.svg";
 import { useCallback } from "react";
 import styles from "./FontPicker.module.css";
 import type SwatchSelect from "./SwatchSelect";
-import { classNames } from "@/utils/css";
 
-interface FontPickerProps {
+interface FontPickerProps
+  extends Omit<React.HTMLAttributes<HTMLElement>, "value" | "onChange"> {
   direction?: "left" | "right";
   value?: FontId;
   onChange: (value: FontId) => void;
-  tooltipPosition?: "top" | "right" | "bottom" | "left";
 }
 
 export default function FontPicker({
   direction,
   value,
   onChange,
-  tooltipPosition,
+  ...props
 }: FontPickerProps) {
   const setFont = useCallback(
     (event: Event) =>
@@ -26,11 +25,8 @@ export default function FontPicker({
 
   return (
     <swatch-select
-      class={classNames(
-        styles.font,
-        tooltipPosition ? `tooltip-${tooltipPosition}` : undefined,
-      )}
-      aria-label="Font"
+      {...props}
+      class={styles.font}
       aria-orientation="horizontal"
       direction={direction}
       value={value}

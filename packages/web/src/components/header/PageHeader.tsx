@@ -139,10 +139,14 @@ export default function PageHeader({
 
           {isEditable ? (
             <button
-              className="floating tooltip-right"
+              className="floating"
               aria-label={
+                coverImageUrl ? "Remove cover image" : "Add cover image"
+              }
+              data-tooltip={
                 coverImageUrl ? "Remove cover image" : "Add a cover image"
               }
+              data-tooltip-position="right"
               type="button"
               aria-pressed={coverImageUrl ? "true" : "false"}
               onClick={coverImageUrl ? removeCoverImage : selectCoverImage}
