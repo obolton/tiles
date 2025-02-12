@@ -15,6 +15,7 @@ import "@/styles/images.css";
 import "@/styles/animation.css";
 import "@/styles/tabs.css";
 import "@/styles/carousels.css";
+import "@/styles/tooltips.css";
 import type { Theme } from "@/types/pages";
 import { DEFAULT_FONT, type FontId } from "@/config/fonts";
 import { getGoogleFontsUrl, getFontConfig } from "@/utils/fonts";
@@ -41,6 +42,7 @@ const fontConfig = font ? getFontConfig(font) : undefined;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href={getGoogleFontsUrl()} rel="stylesheet" />
     <meta name="viewport" content="width=device-width" />
+    <script src="@/global.ts"></script>
     <script src="@/components/webComponents.ts"></script>
     <title>{title}</title>
   </head>
