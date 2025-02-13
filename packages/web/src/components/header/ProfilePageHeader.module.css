@@ -18,7 +18,7 @@
   border-radius: 1rem;
   font-size: 1.5rem;
   font-weight: 500;
-  color: oklch(from var(--page-color) 50% calc(c * 0.75) h);
+  color: var(--secondary-text-color);
   padding: 0.25rem 0.5rem;
   margin: 0 -0.5rem;
 }
