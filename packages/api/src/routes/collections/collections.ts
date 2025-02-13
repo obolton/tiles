@@ -15,6 +15,7 @@ import { cleanSingleLineInput } from "@/utils/text.ts";
 export const COLLECTION_FIELDS = {
   id: true,
   title: true,
+  block: true,
   items: {
     select: {
       id: true,
@@ -54,6 +55,7 @@ export const COLLECTION_FIELDS = {
 export async function createCollection({
   pageId,
   title,
+  block,
   tileIds,
 }: CreateCollectionSchema) {
   if (!tileIds || tileIds.length < 2) {
@@ -74,6 +76,7 @@ export async function createCollection({
         pageId,
         title:
           typeof title === "string" ? cleanSingleLineInput(title) : undefined,
+        block,
       },
       select: { id: true },
     });
