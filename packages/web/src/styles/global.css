@@ -1,5 +1,16 @@
+@property --text-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 0 0 / 80%);
+}
+
+@property --secondary-text-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(96 96 96);
+}
+
 :root {
-  --text-color: rgba(0 0 0 / 80%);
   --focus-ring-color: #0070f3;
   --success-color: rgba(0 255 0 / 80%);
   --destructive-color: rgba(255 0 0 / 80%);
@@ -35,12 +46,13 @@ body.light {
 
 body.dark {
   --page-color: #202020;
-  --text-color: rgba(255 255 255 / 80%);
+  --text-color: rgb(255 255 255 / 80%);
   --accent: linear-gradient(oklch(60% 5% 180deg), oklch(50% 5% 180deg));
 }
 
 body.color {
   --page-color: oklch(var(--lightness) var(--chroma) var(--page-hue));
+  --secondary-text-color: oklch(50% 20% var(--page-hue));
   --accent: linear-gradient(
     oklch(from var(--page-color) 60% 50% h),
     oklch(from var(--page-color) 50% 50% h)
