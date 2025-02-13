@@ -3,7 +3,6 @@
   inset: 0;
   display: grid;
   grid-template-columns: repeat(var(--columns), 1fr);
-  padding: 5cqw;
   gap: var(--gap);
   border-radius: inherit;
   background: radial-gradient(
@@ -12,6 +11,10 @@
     oklch(from var(--page-color) l c h)
   );
   container: event / inline-size;
+
+  & > calendar-month {
+    padding: 16px 0;
+  }
 }
 
 body:global(.light) .event {
@@ -28,6 +31,7 @@ body:global(.dark) .event {
   align-items: center;
   justify-content: stretch;
   container: event-details / size;
+  padding: 8px;
 
   & h3 {
     font-size: clamp(0.875rem, 10cqw, 1.5rem);
@@ -48,7 +52,7 @@ body:global(.dark) .event {
   justify-content: center;
   flex: 1;
   width: 100%;
-  gap: 4cqw;
+  gap: 12px;
 }
 
 .date {
