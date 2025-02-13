@@ -10,11 +10,16 @@
   initial-value: rgb(96 96 96);
 }
 
+@property --placeholder-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 0 0 / 40%);
+}
+
 :root {
   --focus-ring-color: #0070f3;
   --success-color: rgba(0 255 0 / 80%);
   --destructive-color: rgba(255 0 0 / 80%);
-  --placeholder-color: rgba(0 0 0 / 40%);
   --lightness: 90%;
   --chroma: 25%;
   --ui-font: "Inter", system, sans-serif;
