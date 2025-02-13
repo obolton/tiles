@@ -1,0 +1,21 @@
+model User {
+  id            String   @id @default(uuid()) @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  username      String?  @unique @db.VarChar(30)
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false) @map("email_verified")
+  imageKey      String?  @map("image_key")
+  profilePageId String   @unique @map("profile_page_id") @db.Uuid
+
+  sessions    Session[]
+  keys        Key[]
+  profilePage Page       @relation("ProfilePage", fields: [profilePageId], references: [id], onDelete: Cascade)
+  pages       Page[]     @relation("Pages")
+  bookmarks   Bookmark[]
+
+  @@index([username])
+  @@index([email])
+  @@map("users")
+}

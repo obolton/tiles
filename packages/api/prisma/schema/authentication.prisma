@@ -1,0 +1,30 @@
+enum AuthenticationProvider {
+  GOOGLE
+  APPLE
+}
+
+model Key {
+  createdAt  DateTime               @default(now()) @map("created_at")
+  provider   AuthenticationProvider
+  providerId String                 @map("provider_id")
+  userId     String                 @map("user_id") @db.Uuid
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id(name: "id", [provider, providerId])
+  @@index([userId])
+  @@map("keys")
+}
+
+model Session {
+  id        String   @id @db.VarChar(88)
+  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt DateTime @map("expires_at")
+  userId    String   @map("user_id") @db.Uuid
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
