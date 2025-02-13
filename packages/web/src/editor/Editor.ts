@@ -353,6 +353,17 @@ export default class Editor {
     return item;
   }
 
+  async updateCollection(
+    data: OmitPageId<AppRouterInputs["collections"]["update"]>,
+  ) {
+    const item = await client.collections.update.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+    this.updateTileData(item);
+    return item;
+  }
+
   async moveTilePreview({
     id,
     collectionId,
