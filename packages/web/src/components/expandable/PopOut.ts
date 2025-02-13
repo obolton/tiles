@@ -87,7 +87,7 @@ export default class PopOut extends HTMLElement {
 
   private handlePointerDown(event: PointerEvent) {
     // Prevent pointer events on overlay from bubbling up
-    if (this.isOpen()) {
+    if (event.target === this && this.isOpen()) {
       event.stopPropagation();
     }
 
