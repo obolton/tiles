@@ -235,6 +235,7 @@ model Collection {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   title     String?
+  block     Boolean  @default(false)
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[] @relation("CollectionTile")
