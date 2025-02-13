@@ -7,3 +7,11 @@ export const CreateCollectionSchema = z.object({
   tileIds: z.array(z.string().uuid()).min(2).max(20),
 });
 export type CreateCollectionSchema = z.infer<typeof CreateCollectionSchema>;
+
+export const UpdateCollectionSchema = z.object({
+  pageId: z.string().uuid(),
+  id: z.string().uuid(),
+  title: z.string().optional(),
+  block: z.boolean().optional(),
+});
+export type UpdateCollectionSchema = z.infer<typeof UpdateCollectionSchema>;
