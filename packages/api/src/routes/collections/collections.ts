@@ -10,6 +10,7 @@ import { LINK_FIELDS } from "../links/links.ts";
 import { PAGE_LINK_FIELDS } from "../pageLinks/pageLinks.ts";
 import { EVENT_FIELDS } from "../events/events.ts";
 import { formatTile } from "../pages/pages.ts";
+import { cleanSingleLineInput } from "@/utils/text.ts";
 
 export const COLLECTION_FIELDS = {
   id: true,
@@ -71,7 +72,8 @@ export async function createCollection({
     const { id: collectionId } = await transaction.collection.create({
       data: {
         pageId,
-        title,
+        title:
+          typeof title === "string" ? cleanSingleLineInput(title) : undefined,
       },
       select: { id: true },
     });
