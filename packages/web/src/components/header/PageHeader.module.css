@@ -1,6 +1,6 @@
 .header {
   --header-text-color: var(--text-color);
-  --subtitle-text-color: oklch(from var(--page-color) 50% 20% h);
+  --subtitle-text-color: var(--secondary-text-color);
 
   position: relative;
   display: flex;
@@ -27,7 +27,7 @@
     gap: 16px;
     font-size: 16px;
     min-height: 44px;
-    color: oklch(from var(--text-color) l c h / 60%);
+    color: var(--secondary-text-color);
   }
 
   & address {
@@ -120,11 +120,8 @@
       inset: -24px;
       z-index: -1;
       backdrop-filter: blur(5px);
-      mask-image: radial-gradient(
-          farthest-side at 100% 50%,
-          black,
-          transparent
-        ),
+      mask-image:
+        radial-gradient(farthest-side at 100% 50%, black, transparent),
         linear-gradient(transparent, black, transparent),
         radial-gradient(farthest-side at 0% 50%, black, transparent);
       mask-size:
