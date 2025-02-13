@@ -20,6 +20,7 @@ export default class LayoutEditor {
   private readonly elementRef: WeakRef<HTMLElement>;
 
   private gridSize = 0;
+  private gridColumns = 0;
   private columns = 0;
   private rows = 0;
 
@@ -171,9 +172,9 @@ export default class LayoutEditor {
 
     event.stopPropagation();
 
-    this.gridSize = parseFloat(
-      getComputedStyle(this.element).getPropertyValue("--grid-size"),
-    );
+    const style = getComputedStyle(this.element);
+    this.gridSize = parseFloat(style.getPropertyValue("--grid-size"));
+    this.gridColumns = parseInt(style.getPropertyValue("--columns"), 10);
     this.columns = Math.max(Math.round(width / this.gridSize), 1);
     this.rows = Math.max(Math.round(height / this.gridSize), 1);
   }
@@ -188,7 +189,10 @@ export default class LayoutEditor {
     event.stopPropagation();
 
     const id = target.id;
-    const columns = Math.max(Math.round(width / this.gridSize), 1);
+    const columns = Math.min(
+      Math.max(Math.round(width / this.gridSize), 1),
+      this.gridColumns,
+    );
     const rows = Math.max(Math.round(height / this.gridSize), 1);
 
     if (columns !== this.columns || rows != this.rows) {
