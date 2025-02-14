@@ -36,7 +36,8 @@ export default function Carousel({ id, items }: CarouselProps) {
           placementId={item.placementId}
           rows={1}
           columns={1}
-          isEditable={isEditable}
+          deletable={isEditable}
+          draggable={isEditable}
           resizable={false}
           grow={false}
           tile={item}

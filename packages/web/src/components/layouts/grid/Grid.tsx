@@ -27,7 +27,8 @@ export default function Grid({ id, items }: GridProps) {
           placementId={tile.placementId}
           rows={tile.rows}
           columns={tile.columns}
-          isEditable={isEditable}
+          deletable={isEditable}
+          draggable={isEditable}
           resizable={isEditable}
           allowDrop
           grow={tile.type === "TEXT" && tile.columns === 3}

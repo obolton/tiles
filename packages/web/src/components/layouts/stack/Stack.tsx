@@ -40,7 +40,8 @@ export default function Stack({ id, items }: StackProps) {
           placementId={item.placementId}
           rows={1}
           columns={1}
-          isEditable={isEditable && open}
+          deletable={isEditable && open}
+          draggable={isEditable && open}
           resizable={false}
           grow={false}
           style={

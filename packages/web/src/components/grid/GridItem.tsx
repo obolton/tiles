@@ -25,7 +25,8 @@ interface GridItemProps {
   rows?: number;
   columns?: number;
   grow?: boolean;
-  isEditable?: boolean;
+  deletable?: boolean;
+  draggable?: boolean;
   resizable?: boolean;
   allowDrop?: boolean;
   tile: ClientTile;
@@ -64,14 +65,15 @@ export default function GridItem({
   rows,
   columns,
   grow = false,
-  isEditable = false,
+  deletable = false,
+  draggable = false,
   resizable = false,
   allowDrop = false,
   tile,
 }: GridItemProps) {
   const ref = useRef<ResizeItem>(null);
   const editor = useEditor();
-  useDraggable(ref, isEditable);
+  useDraggable(ref, draggable);
   useScrollIntoView(ref);
   const [isDragOver, setDragOver] = useState(false);
 
@@ -127,10 +129,10 @@ export default function GridItem({
       id={id}
       ref={ref}
       allowresize={resizable ? "allowresize" : undefined}
-      allowdelete={isEditable ? "allowdelete" : undefined}
+      allowdelete={deletable ? "allowdelete" : undefined}
       class={classNames(
         styles.item,
-        isEditable && styles.editable,
+        draggable && styles.draggable,
         grow && styles.grow,
         isDragOver && styles["drag-over"],
         className,
