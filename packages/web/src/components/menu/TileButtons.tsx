@@ -5,6 +5,7 @@ import imageIcon from "@/icons/image.svg";
 import linkIcon from "@/icons/link.svg";
 import placeIcon from "@/icons/place.svg";
 import eventIcon from "@/icons/event.svg";
+import sectionIcon from "@/icons/section.svg";
 import { registerModal, showModal } from "@/utils/modals";
 import type { TileType } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
@@ -26,6 +27,7 @@ const BUTTONS: TileButton[] = [
   { label: "Map", type: "MAP", icon: placeIcon.src },
   { label: "Link", type: "LINK", icon: linkIcon.src },
   { label: "Event", type: "EVENT", icon: eventIcon.src },
+  { label: "Section", type: "COLLECTION", icon: sectionIcon.src },
 ];
 
 registerModal(
@@ -114,6 +116,13 @@ export default function TileButtons({ collectionId }: TileButtonsProps) {
             async onConfirm({ place }) {
               await editor.createMap({ collectionId, place, columns: 3 });
             },
+          });
+          break;
+
+        case "COLLECTION":
+          await editor.createCollection({
+            block: true,
+            tileIds: [],
           });
           break;
       }
