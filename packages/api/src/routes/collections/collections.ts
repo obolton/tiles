@@ -59,19 +59,17 @@ export async function createCollection({
   pageId,
   title,
   block,
-  tileIds,
+  tileIds = [],
 }: CreateCollectionSchema) {
-  if (!tileIds || tileIds.length < 2) {
-    throw new Error("Collection must have at least two tiles");
-  }
-
   return prisma.$transaction(async (transaction) => {
-    const validTiles = await transaction.tile.count({
-      where: { pageId, id: { in: tileIds }, type: { not: "COLLECTION" } },
-    });
+    if (tileIds.length > 0) {
+      const validTiles = await transaction.tile.count({
+        where: { pageId, id: { in: tileIds }, type: { not: "COLLECTION" } },
+      });
 
-    if (validTiles !== tileIds.length) {
-      throw new Error("Invalid tiles");
+      if (validTiles !== tileIds.length) {
+        throw new Error("Invalid tiles");
+      }
     }
 
     const { id: collectionId } = await transaction.collection.create({

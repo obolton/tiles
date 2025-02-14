@@ -4,7 +4,7 @@ export const CreateCollectionSchema = z.object({
   pageId: z.string().uuid(),
   title: z.string().optional(),
   block: z.boolean().optional(),
-  tileIds: z.array(z.string().uuid()).min(2).max(20),
+  tileIds: z.array(z.string().uuid()).max(20).optional(),
 });
 export type CreateCollectionSchema = z.infer<typeof CreateCollectionSchema>;
 
