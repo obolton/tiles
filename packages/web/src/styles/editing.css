@@ -1,18 +1,15 @@
 .editable {
   outline: 0 solid transparent;
   outline-offset: 0;
-  transition:
-    outline-color var(--animation-duration) var(--easing),
-    outline-width var(--animation-duration) var(--easing);
+  transition: outline-color var(--animation-duration) var(--easing);
 }
 
 body[data-editing] .editable {
-  outline-width: 3px;
-  outline-color: rgb(0 0 0 / 10%);
+  outline: 3px solid rgb(0 0 0 / 10%);
 }
 
 body[data-editing] .editable:focus-within {
-  outline-color: var(--focus-ring-color);
+  outline: 3px solid var(--focus-ring-color);
 }
 
 .editable[data-drag-preview] {
