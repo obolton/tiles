@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import TileButtons from "@/components/menu/TileButtons";
-import GridItem from "./GridItem";
+import GridItem from "@/components/grid/GridItem";
 import useEditable from "@/hooks/useEditable";
 import useLayoutEditor from "@/hooks/useLayoutEditor";
 import { useDragId } from "@/context/drag";
