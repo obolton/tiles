@@ -10,6 +10,10 @@
     opacity var(--animation-duration) var(--easing),
     box-shadow var(--animation-duration) var(--easing);
 
+  &::part(outline) {
+    view-transition-name: outline;
+  }
+
   &.grow {
     height: fit-content;
     min-height: 0;
@@ -59,4 +63,8 @@ body:not([data-drag]) .draggable:not(:has([open])),
 
 .drag-over {
   box-shadow: 0 0 0 3px var(--focus-ring-color);
+}
+
+::view-transition-group(outline) {
+  animation-duration: 0s;
 }
