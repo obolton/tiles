@@ -41,7 +41,7 @@
   font-size: 0.875rem;
   font-weight: 500;
   text-shadow: 0 1px 1px rgb(255 255 255 / 60%);
-  background: oklch(from var(--page-color) 100% 20% h / 50%);
+  background: oklch(from var(--page-color) 100% calc(c * 0.5) h / 50%);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   border: 1px solid rgba(0 0 0 / 30%);
