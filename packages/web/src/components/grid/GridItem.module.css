@@ -46,6 +46,11 @@ body:not([data-drag]) .editable:not(:has([open])),
     opacity: 0.6;
     inset: -24px -3px -3px;
   }
+
+  &:has(.editable:hover, .editable:focus-within)::before {
+    inset: 0;
+    opacity: 0;
+  }
 }
 
 .item:has(pop-out[open]) .delete {
