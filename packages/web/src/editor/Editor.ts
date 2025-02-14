@@ -158,7 +158,15 @@ export default class Editor {
   }
 
   private addTile(tile: ClientTile) {
-    this.tiles.value = this.tiles.value.concat(tile);
+    if (tile.parentCollectionId) {
+      this.tiles.value = this.tiles.value.map((t) =>
+        t.type === "COLLECTION" && t.id === tile.parentCollectionId
+          ? { ...t, items: t.items.concat(tile) }
+          : t,
+      );
+    } else {
+      this.tiles.value = this.tiles.value.concat(tile);
+    }
   }
 
   removeTile(placementId: string) {
@@ -348,7 +356,7 @@ export default class Editor {
       ...data,
     });
     this.tiles.value = this.tiles.value
-      .filter((item) => !data.tileIds.includes(item.placementId))
+      .filter((item) => !data.tileIds?.includes(item.placementId))
       .concat(item);
     return item;
   }
