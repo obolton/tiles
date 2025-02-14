@@ -22,8 +22,8 @@ interface GridItemProps {
   placementId: string;
   style?: React.CSSProperties;
   className?: string;
-  rows: number;
-  columns: number;
+  rows?: number;
+  columns?: number;
   grow?: boolean;
   isEditable?: boolean;
   resizable?: boolean;
