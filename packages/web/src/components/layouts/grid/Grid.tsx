@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import TileButtons from "@/components/menu/TileButtons";
 import GridItem from "@/components/grid/GridItem";
 import useEditable from "@/hooks/useEditable";
 import useLayoutEditor from "@/hooks/useLayoutEditor";
@@ -19,23 +18,6 @@ export default function Grid({ tiles }: GridProps) {
 
   return (
     <section ref={ref} className={styles.grid}>
-      {tiles.length === 0 && (
-        <div className={styles.placeholder}>
-          {isEditable ? (
-            <>
-              <p>
-                There’s nothing here yet. Get starting by adding some content.
-              </p>
-              <div className={styles["placeholder-buttons"]}>
-                <TileButtons />
-              </div>
-            </>
-          ) : (
-            <p>This page is empty.</p>
-          )}
-        </div>
-      )}
-
       {tiles.map((tile) => (
         <GridItem
           key={tile.id}
