@@ -12,3 +12,11 @@ body:not([data-signed-in]) {
   font-variant-caps: all-small-caps;
   font-weight: 600;
 }
+
+:global(#edit-switch) {
+  view-transition-name: edit-switch;
+}
+
+::view-transition-group(edit-switch) {
+  animation-duration: 0s;
+}
