@@ -77,7 +77,7 @@
   animation: var(--animation-duration-short) var(--easing) button-appear;
 
   &::after {
-    content: url("@/icons/delete.svg");
+    content: url("@/icons/remove-light.svg");
     position: absolute;
     inset: 0;
     width: 20px;

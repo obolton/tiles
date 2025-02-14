@@ -59,11 +59,11 @@ button.delete {
     position: absolute;
     opacity: 0.8;
     inset: 0;
-    background-image: url("@/icons/delete.svg");
+    background-image: url("@/icons/remove.svg");
     background-size: 14px 14px;
     background-position: center;
     background-repeat: no-repeat;
-    filter: invert() drop-shadow(0 1px 1px rgb(0 0 0 / 30%));
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 30%));
   }
 
   &:hover {

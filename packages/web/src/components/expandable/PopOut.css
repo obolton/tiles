@@ -30,7 +30,7 @@
   cursor: pointer;
 
   &::after {
-    content: url("@/icons/delete.svg");
+    content: url("@/icons/close.svg");
     position: absolute;
     inset: 10px;
     width: 24px;

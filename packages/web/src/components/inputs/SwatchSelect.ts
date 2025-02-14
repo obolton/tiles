@@ -1,5 +1,5 @@
 import css from "./SwatchSelect.css?inline";
-import deleteIcon from "@/icons/delete.svg";
+import closeIcon from "@/icons/close.svg";
 import {
   move,
   fadeIn,
@@ -41,7 +41,7 @@ export default class SwatchSelect extends HTMLElement {
     this.button.addEventListener("click", this.toggle.bind(this));
 
     const icon = document.createElement("img");
-    icon.src = deleteIcon.src;
+    icon.src = closeIcon.src;
     icon.alt = "Close";
     this.button.append(icon);
 
