@@ -30,6 +30,7 @@ export type Map = Prisma.MapTileGetPayload<{ select: typeof MAP_FIELDS }>;
 
 export async function createMap({
   pageId,
+  collectionId,
   columns,
   rows,
   place: { name, providerId, lat, long, boundingBox, address },
@@ -54,6 +55,7 @@ export async function createMap({
     const placement = await createTilePlacement(
       {
         pageId,
+        parentCollectionId: collectionId,
         type: "MAP",
         mapTileId: map.id,
         columns,

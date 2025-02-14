@@ -15,7 +15,11 @@ export const LINK_FIELDS = {
   imageUrl: true,
 } as const satisfies Prisma.LinkTileSelect<ExtensionArgs>;
 
-export async function createLink({ pageId, url }: CreateLinkSchema) {
+export async function createLink({
+  pageId,
+  collectionId,
+  url,
+}: CreateLinkSchema) {
   // Convert links to video tiles if they are video links
   const videoInfo = getVideoInfo(url);
   if (videoInfo) {
@@ -42,6 +46,7 @@ export async function createLink({ pageId, url }: CreateLinkSchema) {
     const placement = await createTilePlacement(
       {
         pageId,
+        parentCollectionId: collectionId,
         type: "LINK",
         linkTileId: link.id,
       },

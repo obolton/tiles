@@ -14,6 +14,7 @@ export const EVENT_FIELDS = {
 
 export async function createEvent({
   pageId,
+  collectionId,
   title,
   start,
   end,
@@ -35,6 +36,7 @@ export async function createEvent({
     const placement = await createTilePlacement(
       {
         pageId,
+        parentCollectionId: collectionId,
         type: "EVENT",
         eventTileId: event.id,
       },

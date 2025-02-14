@@ -154,6 +154,7 @@ export async function deleteTile({ pageId, id }: DeleteTileSchema) {
 
 type CreateTilePlacement = {
   pageId: string;
+  parentCollectionId?: string;
   type: TileType;
   columns?: number;
   rows?: number;
@@ -170,6 +171,7 @@ type CreateTilePlacement = {
 export async function createTilePlacement(
   {
     pageId,
+    parentCollectionId,
     type,
     columns = 1,
     rows = 1,
@@ -190,6 +192,7 @@ export async function createTilePlacement(
   const placement = await transaction.tile.create({
     data: {
       pageId,
+      parentCollectionId,
       type,
       position,
       columns,

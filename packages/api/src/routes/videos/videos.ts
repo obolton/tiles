@@ -15,7 +15,11 @@ export const VIDEO_FIELDS = {
   description: true,
 } as const satisfies Prisma.VideoTileSelect<ExtensionArgs>;
 
-export async function createVideo({ pageId, url }: CreateVideoSchema) {
+export async function createVideo({
+  pageId,
+  collectionId,
+  url,
+}: CreateVideoSchema) {
   return prisma.$transaction(async (transaction) => {
     const videoInfo = getVideoInfo(url);
     if (!videoInfo) {
@@ -38,6 +42,7 @@ export async function createVideo({ pageId, url }: CreateVideoSchema) {
     const placement = await createTilePlacement(
       {
         pageId,
+        parentCollectionId: collectionId,
         type: "VIDEO",
         videoTileId: video.id,
       },

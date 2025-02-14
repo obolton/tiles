@@ -14,6 +14,7 @@ export type Text = Prisma.TextTileGetPayload<{ select: typeof TEXT_FIELDS }>;
 
 export async function createText({
   pageId,
+  collectionId,
   content,
   theme,
   hue,
@@ -33,6 +34,7 @@ export async function createText({
     const placement = await createTilePlacement(
       {
         pageId,
+        parentCollectionId: collectionId,
         type: "TEXT",
         textTileId: text.id,
         columns,

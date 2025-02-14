@@ -16,6 +16,7 @@ export type Image = Prisma.ImageTileGetPayload<{ select: typeof IMAGE_FIELDS }>;
 
 export async function createImage({
   pageId,
+  collectionId,
   imageKey,
   caption,
 }: CreateImageSchema) {
@@ -31,6 +32,7 @@ export async function createImage({
     const placement = await createTilePlacement(
       {
         pageId,
+        parentCollectionId: collectionId,
         type: "IMAGE",
         imageTileId: image.id,
       },
