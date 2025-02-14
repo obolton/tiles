@@ -101,6 +101,9 @@ export default class ResizeItem extends HTMLElement {
     deleteButton.type = "button";
     deleteButton.ariaLabel = "Delete";
     deleteButton.addEventListener("click", this.delete.bind(this));
+    deleteButton.addEventListener("pointerdown", (event) =>
+      event.stopPropagation(),
+    );
     this.shadowRoot?.append(deleteButton);
   }
 
