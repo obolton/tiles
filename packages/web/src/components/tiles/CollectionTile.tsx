@@ -1,6 +1,6 @@
 import Tile from "./Tile";
-import Stack from "./collections/Stack";
-import Carousel from "./collections/Carousel";
+import Stack from "@/components/layouts/stack/Stack";
+import Carousel from "@/components/layouts/carousel/Carousel";
 import type { ClientCollectionTile } from "@/types/tiles";
 
 export default function CollectionTile({
