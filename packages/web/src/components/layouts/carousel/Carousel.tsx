@@ -5,12 +5,12 @@ import useLayoutEditor from "@/hooks/useLayoutEditor";
 import { classNames } from "@/utils/css";
 import styles from "./Carousel.module.css";
 import type StackView from "@/components/expandable/StackView";
-import type { ClientCollection } from "@/types/tiles";
+import type { ClientTile } from "@/types/tiles";
 import { useDragId } from "@/context/drag";
 
 interface CarouselProps {
-  id: string;
-  items: ClientCollection["items"];
+  id?: string;
+  items: ClientTile[];
 }
 
 export default function Carousel({ id, items }: CarouselProps) {

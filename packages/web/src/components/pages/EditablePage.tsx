@@ -43,7 +43,7 @@ export default function EditablePage({
 
         <main>
           {tiles.length > 0 ? (
-            <Grid tiles={tiles} />
+            <Grid items={tiles} />
           ) : (
             <Placeholder actions={isEditable ? <TileButtons /> : undefined}>
               {isEditable

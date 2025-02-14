@@ -6,11 +6,11 @@ import useLayoutEditor from "@/hooks/useLayoutEditor";
 import { useDragId } from "@/context/drag";
 import { classNames } from "@/utils/css";
 import type StackView from "@/components/expandable/StackView";
-import type { ClientCollection } from "@/types/tiles";
+import type { ClientTile } from "@/types/tiles";
 
 interface StackProps {
-  id: string;
-  items: ClientCollection["items"];
+  id?: string;
+  items: ClientTile[];
 }
 
 export default function Stack({ id, items }: StackProps) {

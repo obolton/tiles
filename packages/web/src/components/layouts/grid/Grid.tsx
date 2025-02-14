@@ -7,18 +7,19 @@ import styles from "./Grid.module.css";
 import type { ClientTile } from "@/types/tiles";
 
 interface GridProps {
-  tiles: ClientTile[];
+  id?: string;
+  items: ClientTile[];
 }
 
-export default function Grid({ tiles }: GridProps) {
+export default function Grid({ id, items }: GridProps) {
   const isEditable = useEditable();
   const ref = useRef<HTMLElement>(null);
-  useLayoutEditor(ref, null);
+  useLayoutEditor(ref, id);
   const dragId = useDragId();
 
   return (
     <section ref={ref} className={styles.grid}>
-      {tiles.map((tile) => (
+      {items.map((tile) => (
         <GridItem
           key={tile.id}
           className={dragId === tile.placementId ? styles.dragging : undefined}
