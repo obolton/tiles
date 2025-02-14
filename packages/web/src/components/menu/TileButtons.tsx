@@ -48,7 +48,11 @@ registerModal(
   lazy(() => import("@/components/modals/EventModal")),
 );
 
-export default function TileButtons() {
+interface TileButtonsProps {
+  collectionId?: string;
+}
+
+export default function TileButtons({ collectionId }: TileButtonsProps) {
   const editor = useEditor();
   const isEditable = useEditable();
 
@@ -64,6 +68,7 @@ export default function TileButtons() {
       switch (tileType) {
         case "TEXT":
           await editor.createText({
+            collectionId,
             content: [],
             columns: 3,
           });
@@ -76,7 +81,7 @@ export default function TileButtons() {
                 return;
               }
               const imageKey = await uploadMedia(result.image, "image");
-              await editor.createImage({ imageKey });
+              await editor.createImage({ collectionId, imageKey });
             },
           });
           break;
@@ -85,9 +90,12 @@ export default function TileButtons() {
           showModal<LinkModalResult>("LINK", {
             async onConfirm(result) {
               if ("linkedPageId" in result) {
-                await editor.createPageLink(result);
+                await editor.createPageLink({
+                  collectionId,
+                  linkedPageId: result.linkedPageId,
+                });
               } else if (result.url) {
-                await editor.createLink({ url: result.url });
+                await editor.createLink({ collectionId, url: result.url });
               }
             },
           });
@@ -96,7 +104,7 @@ export default function TileButtons() {
         case "EVENT":
           showModal<EventModalResult>("EVENT", {
             async onConfirm(result) {
-              await editor.createEvent(result);
+              await editor.createEvent({ collectionId, ...result });
             },
           });
           break;
@@ -104,13 +112,13 @@ export default function TileButtons() {
         case "MAP":
           showModal<PlaceModalResult>("MAP", {
             async onConfirm({ place }) {
-              await editor.createMap({ place, columns: 3 });
+              await editor.createMap({ collectionId, place, columns: 3 });
             },
           });
           break;
       }
     },
-    [editor],
+    [collectionId, editor],
   );
 
   if (!isEditable) {
