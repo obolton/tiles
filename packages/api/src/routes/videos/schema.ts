@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const CreateVideoSchema = z.object({
   pageId: z.string().uuid(),
+  collectionId: z.string().uuid().optional(),
   url: z.string().url(),
 });
 export type CreateVideoSchema = z.infer<typeof CreateVideoSchema>;

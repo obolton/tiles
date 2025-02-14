@@ -4,6 +4,7 @@ import { Theme } from "@prisma/client";
 
 export const CreateTextSchema = z.object({
   pageId: z.string().uuid(),
+  collectionId: z.string().uuid().optional(),
   content: RichTextSchema.optional(),
   theme: z.nativeEnum(Theme).nullable().optional(),
   hue: z.number().gte(0).lte(360).nullable().optional(),

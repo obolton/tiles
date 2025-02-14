@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const CreateImageSchema = z.object({
   pageId: z.string().uuid(),
+  collectionId: z.string().uuid().optional(),
   imageKey: z.string(),
   caption: z.string().optional(),
 });
