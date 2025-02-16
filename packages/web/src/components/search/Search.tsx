@@ -74,9 +74,9 @@ export default function Search<T>({
         ref={ref}
         onloadmore={onLoadMore}
       >
-        {!isPending && results && results.length === 0 ? (
-          <div className={styles.placeholder}>{renderPlaceholder(query)}</div>
-        ) : null}
+        {!isPending && results && results.length === 0
+          ? renderPlaceholder(query)
+          : null}
 
         {isPending ? <div className={styles.loading} /> : results?.map(render)}
       </infinite-scroll>
