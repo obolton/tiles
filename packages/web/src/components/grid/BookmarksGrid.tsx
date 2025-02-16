@@ -2,6 +2,7 @@ import type { AppRouterOutputs } from "@/api/client";
 import client from "@/api/client";
 import PagesGridItem from "./PagesGridItem";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
+import Placeholder from "@/components/placeholder/Placeholder";
 import { useState } from "react";
 import { handleError } from "@/utils/errors";
 import useDebouncedCallback from "@/hooks/useDebouncedCallback";
@@ -48,13 +49,11 @@ export default function PagesGrid({ pages: initialPages }: PagesGridProps) {
           <PageLinkTile id={page.id} linkedPage={page} openInNewTab={false} />
         </PagesGridItem>
       )}
-      renderPlaceholder={(query: string) =>
-        query ? (
-          <p>There are no results.</p>
-        ) : (
-          <p>You don’t have any bookmarks.</p>
-        )
-      }
+      renderPlaceholder={(query: string) => (
+        <Placeholder>
+          {query ? "There are no results." : "You don’t have any bookmarks."}
+        </Placeholder>
+      )}
     />
   );
 }

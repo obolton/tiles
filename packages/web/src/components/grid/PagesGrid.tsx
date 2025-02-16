@@ -2,12 +2,12 @@ import type { AppRouterOutputs } from "@/api/client";
 import client from "@/api/client";
 import PagesGridItem from "./PagesGridItem";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
+import Placeholder from "@/components/placeholder/Placeholder";
+import Search from "@/components/search/Search";
 import { useCallback, useState } from "react";
-import styles from "./Grid.module.css";
 import newIcon from "@/icons/new.svg";
 import { handleError } from "@/utils/errors";
 import useDebouncedCallback from "@/hooks/useDebouncedCallback";
-import Search from "@/components/search/Search";
 
 interface PagesGridProps {
   pages?: AppRouterOutputs["pages"]["list"];
@@ -48,14 +48,10 @@ export default function PagesGrid({ pages: initialPages }: PagesGridProps) {
   }, []);
 
   const renderPlaceholder = useCallback(
-    (query: string) => {
-      if (query) {
-        return <p>There are no results.</p>;
-      }
-      return (
-        <>
-          <p>Get started by creating your first page.</p>
-          <div className={styles["placeholder-buttons"]}>
+    (query: string) => (
+      <Placeholder
+        actions={
+          query ? undefined : (
             <button
               className="floating"
               type="button"
@@ -65,10 +61,14 @@ export default function PagesGrid({ pages: initialPages }: PagesGridProps) {
             >
               <img src={newIcon.src} alt="Plus icon" />
             </button>
-          </div>
-        </>
-      );
-    },
+          )
+        }
+      >
+        {query
+          ? "There are no results."
+          : "Get started by creating your first page."}
+      </Placeholder>
+    ),
     [createNewPage],
   );
 
