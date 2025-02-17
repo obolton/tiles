@@ -52,9 +52,13 @@ registerModal(
 
 interface TileButtonsProps {
   collectionId?: string;
+  exclude?: TileType[];
 }
 
-export default function TileButtons({ collectionId }: TileButtonsProps) {
+export default function TileButtons({
+  collectionId,
+  exclude,
+}: TileButtonsProps) {
   const editor = useEditor();
   const isEditable = useEditable();
 
@@ -136,19 +140,21 @@ export default function TileButtons({ collectionId }: TileButtonsProps) {
 
   return (
     <>
-      {BUTTONS.map(({ label, type, icon }) => (
-        <button
-          key={type}
-          className="floating"
-          type="button"
-          aria-label={label}
-          data-tooltip={label}
-          data-tile-type={type}
-          onClick={onClick}
-        >
-          <img src={icon} alt={label} />
-        </button>
-      ))}
+      {BUTTONS.filter(({ type }) => !exclude?.includes(type)).map(
+        ({ label, type, icon }) => (
+          <button
+            key={type}
+            className="floating"
+            type="button"
+            aria-label={label}
+            data-tooltip={label}
+            data-tile-type={type}
+            onClick={onClick}
+          >
+            <img src={icon} alt={label} />
+          </button>
+        ),
+      )}
     </>
   );
 }
