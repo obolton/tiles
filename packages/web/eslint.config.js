@@ -26,6 +26,11 @@ export default tseslint.config(
     },
   },
   {
+    rules: {
+      "@typescript-eslint/no-namespace": "off",
+    },
+  },
+  {
     ...reactPlugin.configs.flat.recommended,
     settings: {
       react: {
