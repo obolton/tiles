@@ -2,6 +2,7 @@
 import Page from "@/layouts/Page.astro";
 import client from "@/api/client";
 import { SESSION_COOKIE_NAME } from "api/src/constants/cookies";
+import { setSearchParams } from "@/utils/urls";
 
 const sessionId = Astro.cookies.get(SESSION_COOKIE_NAME)?.value;
 
@@ -32,14 +33,14 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
         type="profile-image"
         accept={ACCEPT_CONTENT_TYPES.join(",")}
       >
-        <data-binding src="user.imageUrl" alt="user.name">
-          <img
-            class="large-profile-image"
-            data-pending-text=""
-            data-tooltip="Select a new profile image"
-            data-tooltip-position="right"
-          />
-        </data-binding>
+        <img
+          id="profile-image"
+          class="large-profile-image"
+          src={setSearchParams(user.imageUrl!, { class: "large" })}
+          alt={user.name}
+          data-tooltip="Select a new profile image"
+          data-tooltip-position="right"
+        />
       </file-picker>
 
       <label>
@@ -92,12 +93,13 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
   import { redirectWithToast } from "@/utils/toasts";
   import { getPersistent } from "@/utils/state";
   import { handleError } from "@/utils/errors";
+  import { setSearchParams } from "@/utils/urls";
   import type FilePicker from "@/components/forms/FilePicker";
 
   const filePicker = document.getElementById(
     "profile-image-picker"
   )! as FilePicker;
-  const image = filePicker.querySelector("profile-image")!;
+  const image = document.getElementById("profile-image")! as HTMLImageElement;
   const form = document.getElementById("settings-form")! as HTMLFormElement;
   const username = document.getElementById("username")! as HTMLInputElement;
 
@@ -111,15 +113,24 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
     };
   }
 
-  filePicker.addEventListener("change", () => image.classList.add("pending"));
-  filePicker.addEventListener("error", () => image.classList.remove("pending"));
-  image.addEventListener("load", () => image.classList.remove("pending"));
-
+  filePicker.addEventListener("change", () => {
+    const file = filePicker.files?.item(0);
+    if (!file) {
+      return;
+    }
+    image.src = URL.createObjectURL(file);
+  });
+  filePicker.addEventListener("error", (event) => {
+    handleError(event.error);
+  });
   filePicker.addEventListener("upload", async ({ uploadKey }) => {
     const userInfo = await client.users.update.mutate({
       imageKey: uploadKey,
     });
     setUserInfo(userInfo);
+    const previousUrl = image.src;
+    image.src = setSearchParams(userInfo.imageUrl!, { class: "large" })!;
+    URL.revokeObjectURL(previousUrl);
   });
 
   username.addEventListener("input", async () => {
