@@ -1,6 +1,7 @@
 img.profile-image,
 img.large-profile-image {
   box-sizing: content-box;
+  object-fit: cover;
   border: 1px solid rgb(0 0 0 / 20%);
   border-radius: 50%;
 }
