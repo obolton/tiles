@@ -93,7 +93,9 @@ export default function EventModal({
 
   return (
     <form onSubmit={submit}>
-      <ModalHeader>Event</ModalHeader>
+      <ModalHeader>
+        <h2>Event</h2>
+      </ModalHeader>
 
       <ModalBody>
         <label>

@@ -6,11 +6,7 @@ interface ModalHeaderProps {
 }
 
 function ModalHeader({ children }: ModalHeaderProps) {
-  return (
-    <header className={styles.header}>
-      <h2>{children}</h2>
-    </header>
-  );
+  return <header className={styles.header}>{children}</header>;
 }
 
 export default memo(ModalHeader);

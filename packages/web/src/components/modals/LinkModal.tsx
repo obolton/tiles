@@ -91,7 +91,9 @@ export default function LinkModal({
 
   return (
     <form onSubmit={submit}>
-      <ModalHeader>Add a link</ModalHeader>
+      <ModalHeader>
+        <h2>Add a link</h2>
+      </ModalHeader>
 
       <ModalBody>
         <label>

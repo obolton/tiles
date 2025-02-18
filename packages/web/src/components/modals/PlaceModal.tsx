@@ -57,7 +57,10 @@ export default function PlaceModal({ cancel, confirm }: PlaceModalProps) {
 
   return (
     <>
-      <ModalHeader>Place</ModalHeader>
+      <ModalHeader>
+        <h2>Place</h2>
+      </ModalHeader>
+
       <ModalBody>
         <label>
           Search for a place
