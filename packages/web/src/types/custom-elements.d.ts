@@ -1,4 +1,6 @@
 import type { ResizeItemAttributes } from "@/components/resize/ResizeItem";
+import type { TabItemAttributes } from "@/elements/tabs/TabItem";
+import type { TabPanelAttributes } from "@/elements/tabs/TabPanel";
 
 type CustomElementAttributes = {
   key?: string;
@@ -71,6 +73,9 @@ declare module "react" {
       };
       "carousel-view": CustomElementAttributes;
       "resize-item": CustomElementAttributes & ResizeItemAttributes;
+      "tab-bar": CustomElementAttributes;
+      "tab-item": TabItemAttributes & CustomElementAttributes;
+      "tab-panel": TabPanelAttributes & CustomElementAttributes;
     }
   }
 }

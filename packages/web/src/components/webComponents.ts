@@ -14,6 +14,9 @@ import PopOut from "./expandable/PopOut";
 import StackView from "./expandable/StackView";
 import ResizeItem from "./resize/ResizeItem";
 import CarouselView from "./carousel/CarouselView";
+import TabBar from "@/elements/tabs/TabBar";
+import TabItem from "@/elements/tabs/TabItem";
+import TabPanel from "@/elements/tabs/TabPanel";
 
 customElements.define("data-binding", DataBinding);
 customElements.define("popover-menu", PopoverMenu);
@@ -31,3 +34,6 @@ customElements.define("pop-out", PopOut);
 customElements.define("stack-view", StackView);
 customElements.define("resize-item", ResizeItem);
 customElements.define("carousel-view", CarouselView);
+customElements.define("tab-bar", TabBar);
+customElements.define("tab-item", TabItem);
+customElements.define("tab-panel", TabPanel);
