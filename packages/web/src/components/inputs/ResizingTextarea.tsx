@@ -8,13 +8,6 @@ type ResizingTextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 const SUPPORTS_FIELD_SIZING =
   typeof window !== "undefined" && CSS.supports("field-sizing", "content");
 
-function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-  if (event.key === "Enter" || event.key === "Escape") {
-    event.currentTarget.blur();
-    event.preventDefault();
-  }
-}
-
 export default function ResizingTextarea({
   className,
   value,
@@ -36,7 +29,6 @@ export default function ResizingTextarea({
       className={classNames(styles.textarea, className)}
       ref={ref}
       value={value}
-      onKeyDown={onKeyDown}
     />
   );
 }
