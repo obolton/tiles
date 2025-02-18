@@ -1,15 +1,16 @@
 import PageHeader from "../PageHeader";
 import type { Meta, StoryObj } from "@storybook/react";
+import { EditorDecorator } from "../../../../test/storybook/decorators";
 
 const meta = {
   title: "Page Header",
   component: PageHeader,
+  decorators: [EditorDecorator],
 } satisfies Meta<typeof PageHeader>;
 export default meta;
 
 export const WithSubtitle = {
   args: {
-    pageId: "id",
     title: "Page title",
     subtitle: "Subtitle",
   },
@@ -17,7 +18,6 @@ export const WithSubtitle = {
 
 export const WithoutSubtitle = {
   args: {
-    pageId: "id",
     title: "Page title",
   },
 } satisfies StoryObj<typeof PageHeader>;
