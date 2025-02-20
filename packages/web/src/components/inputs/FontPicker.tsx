@@ -2,7 +2,7 @@ import { FONTS, type FontId } from "@/config/fonts";
 import fontIcon from "@/icons/font.svg";
 import { useCallback } from "react";
 import styles from "./FontPicker.module.css";
-import type SwatchSelect from "./SwatchSelect";
+import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 
 interface FontPickerProps
   extends Omit<React.HTMLAttributes<HTMLElement>, "value" | "onChange"> {

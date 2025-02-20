@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import clearColorIcon from "@/icons/clear-color.svg";
 import styles from "./ColorPicker.module.css";
 import { classNames } from "@/utils/css";
-import type SwatchSelect from "./SwatchSelect";
+import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { Theme } from "@/types/pages";
 
 export type ColorPickerValue = {
