@@ -7,7 +7,7 @@ import { handleError } from "@/utils/errors";
 import { showModal } from "@/utils/modals";
 import Icon from "@/components/icons/Icon";
 import imageIcon from "@/icons/image.svg";
-import type { ImageModalResult } from "@/components/modals/ImageModal";
+import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import { formatRelativeDate } from "@/utils/dates";
 import { uploadMedia, preloadImage } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
