@@ -1,4 +1,4 @@
-import PopOut from "./PopOut";
+import PopOut from "@/elements/popOut/PopOut";
 import type { DragDropEvent } from "@/utils/drag";
 
 const TOGGLE_DELAY = 1000;

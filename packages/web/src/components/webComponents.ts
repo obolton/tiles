@@ -10,7 +10,7 @@ import SwatchSelect from "@/elements/swatch/SwatchSelect";
 import SwatchItem from "@/elements/swatch/SwatchItem";
 import CalendarMonth from "@/elements/calendar/CalendarMonth";
 import FilePicker from "@/elements/filePicker/FilePicker";
-import PopOut from "./expandable/PopOut";
+import PopOut from "@/elements/popOut/PopOut";
 import StackView from "./expandable/StackView";
 import ResizeItem from "./resize/ResizeItem";
 import CarouselView from "@/elements/carousel/CarouselView";
