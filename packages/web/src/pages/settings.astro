@@ -94,6 +94,7 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
   import { getPersistent } from "@/utils/state";
   import { handleError } from "@/utils/errors";
   import { setSearchParams } from "@/utils/urls";
+  import { uploadMedia } from "@/utils/media";
   import type FilePicker from "@/components/forms/FilePicker";
 
   const filePicker = document.getElementById(
@@ -113,24 +114,22 @@ const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
     };
   }
 
-  filePicker.addEventListener("change", () => {
-    const file = filePicker.files?.item(0);
-    if (!file) {
-      return;
+  filePicker.addEventListener("change", async () => {
+    try {
+      const file = filePicker.file;
+      if (!file) {
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      image.src = url;
+      const imageKey = await uploadMedia(file, "profile-image");
+      const userInfo = await client.users.update.mutate({ imageKey });
+      setUserInfo(userInfo);
+      image.src = setSearchParams(userInfo.imageUrl!, { class: "large" })!;
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      handleError(error);
     }
-    image.src = URL.createObjectURL(file);
-  });
-  filePicker.addEventListener("error", (event) => {
-    handleError(event.error);
-  });
-  filePicker.addEventListener("upload", async ({ uploadKey }) => {
-    const userInfo = await client.users.update.mutate({
-      imageKey: uploadKey,
-    });
-    setUserInfo(userInfo);
-    const previousUrl = image.src;
-    image.src = setSearchParams(userInfo.imageUrl!, { class: "large" })!;
-    URL.revokeObjectURL(previousUrl);
   });
 
   username.addEventListener("input", async () => {
