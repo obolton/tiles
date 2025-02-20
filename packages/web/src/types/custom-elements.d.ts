@@ -1,6 +1,7 @@
 import type { ResizeItemAttributes } from "@/components/resize/ResizeItem";
 import type { TabItemAttributes } from "@/elements/tabs/TabItem";
 import type { TabPanelAttributes } from "@/elements/tabs/TabPanel";
+import type { FilePickerAttributes } from "@/components/forms/FilePicker";
 
 type CustomElementAttributes = {
   key?: string;
@@ -76,6 +77,7 @@ declare module "react" {
       "tab-bar": CustomElementAttributes;
       "tab-item": TabItemAttributes & CustomElementAttributes;
       "tab-panel": TabPanelAttributes & CustomElementAttributes;
+      "file-picker": FilePickerAttributes & CustomElementAttributes;
     }
   }
 }

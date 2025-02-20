@@ -1,29 +1,12 @@
-import { uploadMedia } from "@/utils/media";
 import css from "./FilePicker.css?inline";
+import { getAcceptableDragItem } from "@/utils/media";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export interface FilePickerEventInit extends EventInit {
-  file?: File;
-  uploadKey?: string;
-}
-
-export class FilePickerEvent extends Event {
-  file?: File;
-  uploadKey?: string;
-
-  constructor(type: "change" | "upload", options: FilePickerEventInit) {
-    const { file, uploadKey, ...init } = options;
-    super(type, init);
-
-    this.file = file;
-    this.uploadKey = uploadKey;
-  }
-}
-
 export interface FilePickerAttributes {
   accept?: string;
+  onchange?: (event: Event) => void;
 }
 
 export default class FilePicker extends HTMLElement {
@@ -31,24 +14,37 @@ export default class FilePicker extends HTMLElement {
     "accept",
   ] as const;
 
+  private internals: ElementInternals;
+
+  acceptContentTypes?: Set<string>;
+  file?: File;
+
   constructor() {
     super();
 
-    const shadow = this.attachShadow({ mode: "open" });
+    this.internals = this.attachInternals();
+
+    const shadow = this.attachShadow({ mode: "open", delegatesFocus: true });
     shadow.adoptedStyleSheets = [stylesheet];
 
     const label = document.createElement("label");
+    label.tabIndex = 0;
 
     const input = document.createElement("input");
     input.name = "file";
     input.type = "file";
     input.hidden = true;
-    input.addEventListener("change", this.handleChange.bind(this));
+    input.addEventListener("change", this);
 
     const slot = document.createElement("slot");
     label.append(input, slot);
 
     shadow.appendChild(label);
+
+    this.addEventListener("keydown", this);
+    this.addEventListener("dragover", this);
+    this.addEventListener("dragleave", this);
+    this.addEventListener("drop", this);
   }
 
   attributeChangedCallback(
@@ -60,28 +56,92 @@ export default class FilePicker extends HTMLElement {
       case "accept":
         if (value === null) {
           this.shadowRoot?.querySelector("input")?.removeAttribute("accept");
+          this.acceptContentTypes = undefined;
         } else {
           this.shadowRoot
             ?.querySelector("input")
             ?.setAttribute("accept", value);
+          this.acceptContentTypes = new Set(
+            value.split(",").map((type) => type.trim()),
+          );
         }
         break;
     }
   }
 
-  get files() {
-    return this.shadowRoot?.querySelector("input")?.files;
-  }
-
-  private getMediaType() {
-    const type = this.getAttribute("type");
-    if (type !== "image" && type !== "profile-image") {
-      throw new Error(`Invalid media type: ${type}`);
+  handleEvent(event: Event) {
+    switch (event.type) {
+      case "keydown":
+        return this.handleKeyDown(event as KeyboardEvent);
+      case "change":
+        return this.handleChange(event);
+      case "dragover":
+        return this.handleDragOver(event as DragEvent);
+      case "dragleave":
+        return this.handleDragLeave();
+      case "drop":
+        return this.handleDrop(event as DragEvent);
     }
-    return type;
   }
 
-  async handleChange(event: Event) {
+  private handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      event.stopPropagation();
+      this.shadowRoot?.querySelector("input")?.click();
+    }
+  }
+
+  private handleDragOver(event: DragEvent) {
+    if (!event.dataTransfer) {
+      return;
+    }
+
+    const item = getAcceptableDragItem(
+      event.dataTransfer,
+      this.acceptContentTypes,
+    );
+
+    if (!item) {
+      return;
+    }
+
+    event.stopPropagation();
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+    this.internals.states.add("dragover");
+  }
+
+  private handleDragLeave() {
+    this.internals.states.delete("dragover");
+  }
+
+  private handleDrop(event: DragEvent) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    this.internals.states.delete("dragover");
+
+    if (!event.dataTransfer) {
+      return;
+    }
+
+    const file = getAcceptableDragItem(
+      event.dataTransfer,
+      this.acceptContentTypes,
+    )?.getAsFile();
+
+    if (!file) {
+      return;
+    }
+
+    this.file = file;
+    this.dispatchEvent(new Event("change"));
+  }
+
+  private handleChange(event: Event) {
+    event.stopPropagation();
+
     const input = event.currentTarget as HTMLInputElement;
     const file = input.files?.item(0);
 
@@ -89,31 +149,7 @@ export default class FilePicker extends HTMLElement {
       return;
     }
 
-    const allowUpload = this.dispatchEvent(
-      new FilePickerEvent("change", { bubbles: true, cancelable: true, file }),
-    );
-    if (!allowUpload) {
-      return;
-    }
-
-    try {
-      const key = await uploadMedia(file, this.getMediaType());
-      this.dispatchEvent(
-        new FilePickerEvent("upload", {
-          bubbles: true,
-          cancelable: false,
-          file,
-          uploadKey: key,
-        }),
-      );
-    } catch (error) {
-      this.dispatchEvent(
-        new ErrorEvent("error", {
-          bubbles: true,
-          cancelable: false,
-          error,
-        }),
-      );
-    }
+    this.file = file;
+    this.dispatchEvent(new Event("change"));
   }
 }

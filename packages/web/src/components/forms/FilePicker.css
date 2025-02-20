@@ -4,4 +4,5 @@
 
 label {
   cursor: pointer;
+  outline: none;
 }
