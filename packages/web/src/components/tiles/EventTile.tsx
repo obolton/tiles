@@ -6,6 +6,7 @@ import styles from "./EventTile.module.css";
 import { classNames } from "@/utils/css";
 import { showModal } from "@/utils/modals";
 import { useEditor } from "@/context/editor";
+import useEditable from "@/hooks/useEditable";
 import type { ClientEvent } from "@/types/tiles";
 import type { EventModalResult } from "@/components/modals/EventModal";
 
@@ -69,6 +70,8 @@ export default function EventTile({
   allDay,
 }: EventTileProps) {
   const editor = useEditor();
+  const isEditable = useEditable();
+
   const edit = useCallback(
     () =>
       showModal<EventModalResult>("EVENT", {
@@ -89,7 +92,7 @@ export default function EventTile({
 
   return (
     <Tile>
-      <div className={styles.event} onClick={edit}>
+      <div className={styles.event} onClick={isEditable ? edit : undefined}>
         <section className={styles.details}>
           <h3>{title}</h3>
 
