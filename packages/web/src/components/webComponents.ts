@@ -9,7 +9,7 @@ import InfiniteScroll from "@/elements/infiniteScroll/InfiniteScroll";
 import SwatchSelect from "./inputs/SwatchSelect";
 import SwatchItem from "./inputs/SwatchItem";
 import CalendarMonth from "@/elements/calendar/CalendarMonth";
-import FilePicker from "./forms/FilePicker";
+import FilePicker from "@/elements/filePicker/FilePicker";
 import PopOut from "./expandable/PopOut";
 import StackView from "./expandable/StackView";
 import ResizeItem from "./resize/ResizeItem";

@@ -23,7 +23,7 @@ declare global {
   interface HTMLElementEventMap {
     beforetoggle: ToggleEvent;
     toggle: ToggleEvent;
-    upload: import("@/components/forms/FilePicker").FilePickerEvent;
+    upload: import("@/elements/filePicker/FilePicker").FilePickerEvent;
     "dnd-dragstart": DragDropEvent;
     "dnd-dragend": DragDropEvent;
     "dnd-dragenter": DragDropEvent;

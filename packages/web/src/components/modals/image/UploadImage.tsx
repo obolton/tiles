@@ -5,7 +5,7 @@ import ModalBody from "../ModalBody";
 import ModalFooter from "../ModalFooter";
 import Placeholder from "@/components/placeholder/Placeholder";
 import styles from "./UploadImage.module.css";
-import type FilePicker from "@/components/forms/FilePicker";
+import type FilePicker from "@/elements/filePicker/FilePicker";
 
 interface UploadImageProps {
   file?: File;

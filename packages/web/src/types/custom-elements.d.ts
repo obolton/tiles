@@ -1,7 +1,7 @@
 import type { ResizeItemAttributes } from "@/components/resize/ResizeItem";
 import type { TabItemAttributes } from "@/elements/tabs/TabItem";
 import type { TabPanelAttributes } from "@/elements/tabs/TabPanel";
-import type { FilePickerAttributes } from "@/components/forms/FilePicker";
+import type { FilePickerAttributes } from "@/elements/filePicker/FilePicker";
 import type { PopoverMenuAttributes } from "@/elements/menu/PopoverMenu";
 import type { InfiniteScrollAttributes } from "@/elements/infiniteScroll/InfiniteScroll";
 import type { EmbeddedVideoAttributes } from "@/elements/video/EmbeddedVideo";
