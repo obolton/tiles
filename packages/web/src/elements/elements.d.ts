@@ -1,18 +1,18 @@
-import type { ResizeItemAttributes } from "@/elements/resize/ResizeItem";
-import type { TabItemAttributes } from "@/elements/tabs/TabItem";
-import type { TabPanelAttributes } from "@/elements/tabs/TabPanel";
-import type { FilePickerAttributes } from "@/elements/filePicker/FilePicker";
-import type { PopoverMenuAttributes } from "@/elements/menu/PopoverMenu";
-import type { InfiniteScrollAttributes } from "@/elements/infiniteScroll/InfiniteScroll";
-import type { EmbeddedVideoAttributes } from "@/elements/video/EmbeddedVideo";
-import type { SwatchSelectAttributes } from "@/elements/swatch/SwatchSelect";
-import type { SwatchItemAttributes } from "@/elements/swatch/SwatchItem";
-import type { PopOutAttributes } from "@/elements/popOut/PopOut";
-import type { StackViewAttributes } from "@/elements/stack/StackView";
-import type { CalendarMonthAttributes } from "@/elements/calendar/CalendarMonth";
-import type { MapViewAttributes } from "@/elements/maps/MapView";
-import type { MapMarkerAttributes } from "@/elements/maps/MapMarker";
-import type { MapLegendItemAttributes } from "@/elements/maps/MapLegendItem";
+import type { ResizeItemAttributes } from "./resize/ResizeItem";
+import type { TabItemAttributes } from "./tabs/TabItem";
+import type { TabPanelAttributes } from "./tabs/TabPanel";
+import type { FilePickerAttributes } from "./filePicker/FilePicker";
+import type { PopoverMenuAttributes } from "./menu/PopoverMenu";
+import type { InfiniteScrollAttributes } from "./infiniteScroll/InfiniteScroll";
+import type { EmbeddedVideoAttributes } from "./video/EmbeddedVideo";
+import type { SwatchSelectAttributes } from "./swatch/SwatchSelect";
+import type { SwatchItemAttributes } from "./swatch/SwatchItem";
+import type { PopOutAttributes } from "./popOut/PopOut";
+import type { StackViewAttributes } from "./stack/StackView";
+import type { CalendarMonthAttributes } from "./calendar/CalendarMonth";
+import type { MapViewAttributes } from "./maps/MapView";
+import type { MapMarkerAttributes } from "./maps/MapMarker";
+import type { MapLegendItemAttributes } from "./maps/MapLegendItem";
 
 type CustomElementAttributes = {
   key?: string;
