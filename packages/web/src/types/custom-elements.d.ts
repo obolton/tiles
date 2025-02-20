@@ -42,9 +42,9 @@ declare module "react" {
       "carousel-view": CustomElementAttributes;
       "resize-item": CustomElementAttributes & ResizeItemAttributes;
       "tab-bar": CustomElementAttributes;
-      "tab-item": TabItemAttributes & CustomElementAttributes;
-      "tab-panel": TabPanelAttributes & CustomElementAttributes;
-      "file-picker": FilePickerAttributes & CustomElementAttributes;
+      "tab-item": CustomElementAttributes & TabItemAttributes;
+      "tab-panel": CustomElementAttributes & TabPanelAttributes;
+      "file-picker": CustomElementAttributes & FilePickerAttributes;
       "toast-container": CustomElementAttributes;
     }
   }
