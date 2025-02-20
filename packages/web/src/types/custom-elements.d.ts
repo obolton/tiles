@@ -8,6 +8,7 @@ import type { EmbeddedVideoAttributes } from "@/elements/video/EmbeddedVideo";
 import type { SwatchSelectAttributes } from "@/elements/swatch/SwatchSelect";
 import type { SwatchItemAttributes } from "@/elements/swatch/SwatchItem";
 import type { PopOutAttributes } from "@/elements/popOut/PopOut";
+import type { StackViewAttributes } from "@/elements/stack/StackView";
 
 type CustomElementAttributes = {
   key?: string;
@@ -55,11 +56,7 @@ declare module "react" {
       };
       "popover-menu": CustomElementAttributes & PopoverMenuAttributes;
       "pop-out": CustomElementAttributes & PopOutAttributes;
-      "stack-view": CustomElementAttributes & {
-        expandable?: "expandable";
-        ontoggle?: (event: globalThis.ToggleEvent) => void;
-        onbeforetoggle?: (event: globalThis.ToggleEvent) => void;
-      };
+      "stack-view": CustomElementAttributes & StackViewAttributes;
       "carousel-view": CustomElementAttributes;
       "resize-item": CustomElementAttributes & ResizeItemAttributes;
       "tab-bar": CustomElementAttributes;
