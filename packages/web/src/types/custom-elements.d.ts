@@ -2,6 +2,7 @@ import type { ResizeItemAttributes } from "@/components/resize/ResizeItem";
 import type { TabItemAttributes } from "@/elements/tabs/TabItem";
 import type { TabPanelAttributes } from "@/elements/tabs/TabPanel";
 import type { FilePickerAttributes } from "@/components/forms/FilePicker";
+import type { PopoverMenuAttributes } from "@/elements/menu/PopoverMenu";
 
 type CustomElementAttributes = {
   key?: string;
@@ -59,9 +60,7 @@ declare module "react" {
       "calendar-month": CustomElementAttributes & {
         date?: string;
       };
-      "popover-menu": CustomElementAttributes & {
-        anchor: string;
-      };
+      "popover-menu": CustomElementAttributes & PopoverMenuAttributes;
       "pop-out": CustomElementAttributes & {
         expandable?: "expandable";
         ontoggle?: (event: globalThis.ToggleEvent) => void;
