@@ -7,6 +7,7 @@ import type { InfiniteScrollAttributes } from "@/elements/infiniteScroll/Infinit
 import type { EmbeddedVideoAttributes } from "@/elements/video/EmbeddedVideo";
 import type { SwatchSelectAttributes } from "@/elements/swatch/SwatchSelect";
 import type { SwatchItemAttributes } from "@/elements/swatch/SwatchItem";
+import type { PopOutAttributes } from "@/elements/popOut/PopOut";
 
 type CustomElementAttributes = {
   key?: string;
@@ -53,11 +54,7 @@ declare module "react" {
         date?: string;
       };
       "popover-menu": CustomElementAttributes & PopoverMenuAttributes;
-      "pop-out": CustomElementAttributes & {
-        expandable?: "expandable";
-        ontoggle?: (event: globalThis.ToggleEvent) => void;
-        onbeforetoggle?: (event: globalThis.ToggleEvent) => void;
-      };
+      "pop-out": CustomElementAttributes & PopOutAttributes;
       "stack-view": CustomElementAttributes & {
         expandable?: "expandable";
         ontoggle?: (event: globalThis.ToggleEvent) => void;

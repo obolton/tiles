@@ -7,6 +7,8 @@ stylesheet.replaceSync(css);
 
 export interface PopOutAttributes {
   expandable?: "" | "expandable";
+  ontoggle?: (event: globalThis.ToggleEvent) => void;
+  onbeforetoggle?: (event: globalThis.ToggleEvent) => void;
 }
 
 export default class PopOut extends HTMLElement {
