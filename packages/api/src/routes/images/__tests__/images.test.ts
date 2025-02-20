@@ -6,7 +6,7 @@ import {
   updateImage,
   type Image,
 } from "../images.ts";
-import type { CreateQuery, UpdateQuery } from "../../../../test/prisma.ts";
+import type { CreateQuery, UpdateQuery } from "@/test/prisma.ts";
 
 const MOCK_IMAGE: Image = {
   id: "test-image",

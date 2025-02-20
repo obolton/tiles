@@ -6,7 +6,7 @@ import {
   type PageLinkPage,
   type PageLink,
 } from "../pageLinks.ts";
-import type { CreateQuery } from "../../../../test/prisma.ts";
+import type { CreateQuery } from "@/test/prisma.ts";
 import { omit } from "@/utils/objects.ts";
 
 const MOCK_PAGE: PageLinkPage = {

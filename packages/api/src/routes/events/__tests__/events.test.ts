@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeAll } from "vitest";
 import prisma from "@/database/prisma.ts";
 import { createEvent, updateEvent, EVENT_FIELDS } from "../events.ts";
-import type { CreateQuery, UpdateQuery } from "../../../../test/prisma.ts";
+import type { CreateQuery, UpdateQuery } from "@/test/prisma.ts";
 
 const MOCK_EVENT = {
   id: "test-event",
