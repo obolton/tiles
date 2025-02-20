@@ -4,10 +4,10 @@ import Tile from "./Tile";
 import addPlaceIcon from "@/icons/add-place.svg";
 import styles from "./MapTile.module.css";
 import type { ClientMapTile } from "@/types/tiles";
-import type MapEvent from "@/components/maps/MapEvent";
+import type MapEvent from "@/elements/maps/MapEvent";
 import { showModal } from "@/utils/modals";
 import { useEditor } from "@/context/editor";
-import type MapMarker from "../maps/MapMarker";
+import type MapMarker from "@/elements/maps/MapMarker";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 
 type MapTileProps = ClientMapTile;

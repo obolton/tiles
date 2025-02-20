@@ -24,7 +24,7 @@ declare module "react" {
         movable?: boolean;
         legend?: boolean;
         ondeletemarker?: (
-          event: import("@/components/maps/MapEvent").default,
+          event: import("@/elements/maps/MapEvent").default,
         ) => void;
       };
       "map-marker": CustomElementAttributes & {
@@ -40,7 +40,7 @@ declare module "react" {
         marker: string;
         editable?: boolean;
         ondeletemarker?: (
-          event: import("@/components/maps/MapEvent").default,
+          event: import("@/elements/maps/MapEvent").default,
         ) => void;
       };
       "embedded-video": CustomElementAttributes & EmbeddedVideoAttributes;
