@@ -8,7 +8,8 @@
     },
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "noUncheckedIndexedAccess": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "skipLibCheck": false
   },
   "include": ["./src/**/*"],
   "references": [{ "path": "../api" }]
