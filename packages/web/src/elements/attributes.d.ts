@@ -16,7 +16,7 @@ import type { MapLegendItemAttributes } from "./maps/MapLegendItem";
 
 type CustomElementAttributes = {
   key?: string;
-  ref?: React.RefObject;
+  ref?: React.RefObject<HTMLElement>;
   id?: string;
   class?: string;
   style?: React.CSSProperties;
