@@ -13,7 +13,7 @@ import FilePicker from "./forms/FilePicker";
 import PopOut from "./expandable/PopOut";
 import StackView from "./expandable/StackView";
 import ResizeItem from "./resize/ResizeItem";
-import CarouselView from "./carousel/CarouselView";
+import CarouselView from "@/elements/carousel/CarouselView";
 import TabBar from "@/elements/tabs/TabBar";
 import TabItem from "@/elements/tabs/TabItem";
 import TabPanel from "@/elements/tabs/TabPanel";
