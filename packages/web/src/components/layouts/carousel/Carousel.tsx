@@ -4,7 +4,7 @@ import useEditable from "@/hooks/useEditable";
 import useLayoutEditor from "@/hooks/useLayoutEditor";
 import { classNames } from "@/utils/css";
 import styles from "./Carousel.module.css";
-import type StackView from "@/components/expandable/StackView";
+import type CarouselView from "@/elements/carousel/CarouselView";
 import type { ClientTile } from "@/types/tiles";
 import { useDragId } from "@/context/drag";
 
@@ -14,7 +14,7 @@ interface CarouselProps {
 }
 
 export default function Carousel({ id, items }: CarouselProps) {
-  const ref = useRef<StackView>(null);
+  const ref = useRef<CarouselView>(null);
   const isEditable = useEditable();
   useLayoutEditor(ref, id);
   const dragId = useDragId();
