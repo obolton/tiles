@@ -3,10 +3,17 @@ import css from "./EmbeddedVideo.css?inline";
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export default class EmbeddedVideo extends HTMLElement {
-  static observedAttributes = ["src", "imagesrc"] as const;
+export interface EmbeddedVideoAttributes {
+  src: string;
+  imagesrc?: string;
+}
 
-  private shadow: ShadowRoot;
+export default class EmbeddedVideo extends HTMLElement {
+  static readonly observedAttributes: (keyof EmbeddedVideoAttributes)[] = [
+    "src",
+    "imagesrc",
+  ] as const;
+
   private placeholder?: HTMLElement;
   private iframe?: HTMLIFrameElement;
   private intersectionObserver?: IntersectionObserver;
@@ -14,8 +21,8 @@ export default class EmbeddedVideo extends HTMLElement {
   constructor() {
     super();
 
-    this.shadow = this.attachShadow({ mode: "closed" });
-    this.shadow.adoptedStyleSheets = [stylesheet];
+    const shadow = this.attachShadow({ mode: "open" });
+    shadow.adoptedStyleSheets = [stylesheet];
   }
 
   connectedCallback() {
@@ -44,7 +51,7 @@ export default class EmbeddedVideo extends HTMLElement {
   }
 
   attributeChangedCallback(
-    name: (typeof EmbeddedVideo.observedAttributes)[number],
+    name: keyof EmbeddedVideoAttributes,
     _: string,
     value: string,
   ) {
@@ -91,7 +98,7 @@ export default class EmbeddedVideo extends HTMLElement {
       this.placeholder.append(image);
     }
 
-    this.shadow.append(this.placeholder);
+    this.shadowRoot?.append(this.placeholder);
   }
 
   private play() {
@@ -116,7 +123,7 @@ export default class EmbeddedVideo extends HTMLElement {
       },
       { once: true },
     );
-    this.shadow.append(this.iframe);
+    this.shadowRoot?.append(this.iframe);
   }
 
   private stop() {

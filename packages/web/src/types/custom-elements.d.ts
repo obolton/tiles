@@ -4,6 +4,7 @@ import type { TabPanelAttributes } from "@/elements/tabs/TabPanel";
 import type { FilePickerAttributes } from "@/components/forms/FilePicker";
 import type { PopoverMenuAttributes } from "@/elements/menu/PopoverMenu";
 import type { InfiniteScrollAttributes } from "@/elements/infiniteScroll/InfiniteScroll";
+import type { EmbeddedVideoAttributes } from "@/elements/video/EmbeddedVideo";
 
 type CustomElementAttributes = {
   key?: string;
@@ -42,10 +43,7 @@ declare module "react" {
           event: import("@/components/maps/MapEvent").default,
         ) => void;
       };
-      "embedded-video": CustomElementAttributes & {
-        src: string;
-        imagesrc?: string;
-      };
+      "embedded-video": CustomElementAttributes & EmbeddedVideoAttributes;
       "infinite-scroll": CustomElementAttributes & InfiniteScrollAttributes;
       "swatch-select": CustomElementAttributes & {
         value?: string;
