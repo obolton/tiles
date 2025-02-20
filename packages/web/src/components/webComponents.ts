@@ -12,7 +12,7 @@ import CalendarMonth from "@/elements/calendar/CalendarMonth";
 import FilePicker from "@/elements/filePicker/FilePicker";
 import PopOut from "@/elements/popOut/PopOut";
 import StackView from "@/elements/stack/StackView";
-import ResizeItem from "./resize/ResizeItem";
+import ResizeItem from "@/elements/resize/ResizeItem";
 import CarouselView from "@/elements/carousel/CarouselView";
 import TabBar from "@/elements/tabs/TabBar";
 import TabItem from "@/elements/tabs/TabItem";

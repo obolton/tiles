@@ -1,4 +1,4 @@
-import type { ResizeItemAttributes } from "@/components/resize/ResizeItem";
+import type { ResizeItemAttributes } from "@/elements/resize/ResizeItem";
 import type { TabItemAttributes } from "@/elements/tabs/TabItem";
 import type { TabPanelAttributes } from "@/elements/tabs/TabPanel";
 import type { FilePickerAttributes } from "@/elements/filePicker/FilePicker";

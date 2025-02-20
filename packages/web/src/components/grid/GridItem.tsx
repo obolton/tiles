@@ -3,7 +3,7 @@ import { classNames } from "@/utils/css";
 import useDraggable from "@/hooks/useDraggable";
 import useScrollIntoView from "@/hooks/useScrollIntoView";
 import styles from "./GridItem.module.css";
-import type ResizeItem from "@/components/resize/ResizeItem";
+import type ResizeItem from "@/elements/resize/ResizeItem";
 import ImageTile from "@/components/tiles/ImageTile";
 import VideoTile from "@/components/tiles/VideoTile";
 import TextTile from "@/components/tiles/TextTile";
