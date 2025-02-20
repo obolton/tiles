@@ -10,6 +10,10 @@ import useStore from "@/hooks/useStore";
 import useDragListener from "@/hooks/useDragListener";
 import type { AppRouterOutputs } from "@/api/client";
 
+if (!import.meta.env.SSR) {
+  import("@/elements/editor");
+}
+
 interface EditableProfilePageProps {
   user: NonNullable<AppRouterOutputs["pages"]["getProfilePage"]>;
 }
