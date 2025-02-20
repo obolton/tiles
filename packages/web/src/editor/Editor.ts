@@ -6,7 +6,7 @@ import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
 import { Store, DerivedStore } from "@/utils/stores";
 import type { FontId } from "@/config/fonts";
 import type { Theme } from "@/types/pages";
-import type { ImageModalResult } from "@/components/modals/ImageModal";
+import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type { ClientTile, ClientCollectionTile } from "@/types/tiles";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 
