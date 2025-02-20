@@ -9,6 +9,7 @@ import type { SwatchSelectAttributes } from "@/elements/swatch/SwatchSelect";
 import type { SwatchItemAttributes } from "@/elements/swatch/SwatchItem";
 import type { PopOutAttributes } from "@/elements/popOut/PopOut";
 import type { StackViewAttributes } from "@/elements/stack/StackView";
+import type { CalendarMonthAttributes } from "@/elements/calendar/CalendarMonth";
 
 type CustomElementAttributes = {
   key?: string;
@@ -51,9 +52,7 @@ declare module "react" {
       "infinite-scroll": CustomElementAttributes & InfiniteScrollAttributes;
       "swatch-select": CustomElementAttributes & SwatchSelectAttributes;
       "swatch-item": CustomElementAttributes & SwatchItemAttributes;
-      "calendar-month": CustomElementAttributes & {
-        date?: string;
-      };
+      "calendar-month": CustomElementAttributes & CalendarMonthAttributes;
       "popover-menu": CustomElementAttributes & PopoverMenuAttributes;
       "pop-out": CustomElementAttributes & PopOutAttributes;
       "stack-view": CustomElementAttributes & StackViewAttributes;

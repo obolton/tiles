@@ -4,8 +4,14 @@ import { getFirstDayOfWeek, getDaysInMonth } from "@/utils/dates";
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
+export interface CalendarMonthAttributes {
+  date?: string;
+}
+
 export default class CalendarMonth extends HTMLElement {
-  static observedAttributes = ["date"] as const;
+  static readonly observedAttributes: (keyof CalendarMonthAttributes)[] = [
+    "date",
+  ] as const;
 
   // Date formatters
   private static monthFormatter = new Intl.DateTimeFormat(navigator.language, {
@@ -42,9 +48,7 @@ export default class CalendarMonth extends HTMLElement {
     this.render();
   }
 
-  attributeChangedCallback(
-    name: (typeof CalendarMonth.observedAttributes)[number],
-  ) {
+  attributeChangedCallback(name: keyof CalendarMonthAttributes) {
     switch (name) {
       case "date":
         this.render();
