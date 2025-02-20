@@ -128,3 +128,13 @@ label:has(> input[type="checkbox"][role="switch"]) {
   align-items: center;
   gap: 16px;
 }
+
+file-picker {
+  outline: 2px solid transparent;
+  transition: outline-color var(--animation-duration) var(--easing);
+
+  &:focus,
+  &:state(dragover) {
+    outline-color: var(--focus-ring-color);
+  }
+}
