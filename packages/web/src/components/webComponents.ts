@@ -1,4 +1,4 @@
-import DataBinding from "./DataBinding";
+import DataBinding from "@/elements/dataBinding/DataBinding";
 import PopoverMenu from "@/elements/menu/PopoverMenu";
 import ToastContainer from "./ToastContainer";
 import MapView from "./maps/MapView";
