@@ -75,6 +75,10 @@
 }
 
 .with-cover-image {
+  --title-stroke: 2px rgb(255 255 255 / 40%);
+  --subtitle-text-color: rgb(255 255 255 / 90%);
+  --subtitle-stroke: 2px rgb(0 0 0 / 40%);
+
   min-height: 240px;
   margin-top: -1px;
   padding: 24px;
@@ -84,10 +88,6 @@
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 20%);
 
   & .title {
-    --title-stroke: 2px rgb(255 255 255 / 40%);
-    --subtitle-text-color: rgb(255 255 255 / 90%);
-    --subtitle-stroke: 2px rgb(0 0 0 / 40%);
-
     position: relative;
     paint-order: stroke fill;
     text-shadow: 0 0 12px rgb(255 255 255 / 20%);
