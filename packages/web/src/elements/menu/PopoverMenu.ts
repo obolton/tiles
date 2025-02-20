@@ -77,3 +77,5 @@ export default class PopoverMenu extends HTMLElement {
     this.style.inset = `${top} ${right} ${bottom} ${left}`;
   }
 }
+
+customElements.define("popover-menu", PopoverMenu);

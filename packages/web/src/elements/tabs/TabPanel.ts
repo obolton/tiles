@@ -15,3 +15,5 @@ export default class TabPanel extends HTMLElement {
     this.removeAttribute("open");
   }
 }
+
+customElements.define("tab-panel", TabPanel);

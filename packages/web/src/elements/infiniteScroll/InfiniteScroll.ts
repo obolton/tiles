@@ -44,3 +44,5 @@ export default class InfiniteScroll extends HTMLElement {
     }
   }
 }
+
+customElements.define("infinite-scroll", InfiniteScroll);

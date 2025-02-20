@@ -276,3 +276,5 @@ export default class ResizeItem extends HTMLElement {
     );
   }
 }
+
+customElements.define("resize-item", ResizeItem);

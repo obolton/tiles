@@ -113,3 +113,5 @@ export default class MapLegendItem extends HTMLElement {
     }
   }
 }
+
+customElements.define("map-legend-item", MapLegendItem);

@@ -224,3 +224,5 @@ export default class PopOut extends HTMLElement {
     }
   }
 }
+
+customElements.define("pop-out", PopOut);

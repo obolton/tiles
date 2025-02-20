@@ -86,3 +86,5 @@ export default class StackView extends PopOut {
     }
   }
 }
+
+customElements.define("stack-view", StackView);

@@ -111,3 +111,5 @@ export default class CalendarMonth extends HTMLElement {
     this.dates.replaceChildren(items);
   }
 }
+
+customElements.define("calendar-month", CalendarMonth);

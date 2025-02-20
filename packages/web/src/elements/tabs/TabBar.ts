@@ -45,3 +45,5 @@ export default class TabBar extends HTMLElement {
     });
   }
 }
+
+customElements.define("tab-bar", TabBar);

@@ -70,3 +70,5 @@ export default class TabItem extends HTMLElement {
     return panel;
   }
 }
+
+customElements.define("tab-item", TabItem);

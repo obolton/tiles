@@ -53,3 +53,5 @@ export default class DataBinding extends HTMLElement {
     window.removeEventListener("state:update-persistent", this.stateChanged);
   }
 }
+
+customElements.define("data-binding", DataBinding);

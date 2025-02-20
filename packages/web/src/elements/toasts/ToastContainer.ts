@@ -116,3 +116,5 @@ export default class ToastContainer extends HTMLElement {
     }
   }
 }
+
+customElements.define("toast-container", ToastContainer);

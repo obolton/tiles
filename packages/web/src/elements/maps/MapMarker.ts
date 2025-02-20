@@ -146,3 +146,5 @@ export default class MapMarker extends HTMLElement {
     this.label.removeEventListener("input", this);
   }
 }
+
+customElements.define("map-marker", MapMarker);

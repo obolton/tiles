@@ -126,3 +126,5 @@ export default class SwatchSelect extends HTMLElement {
     this.toggle();
   }
 }
+
+customElements.define("swatch-select", SwatchSelect);

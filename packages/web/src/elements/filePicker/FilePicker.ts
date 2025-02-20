@@ -153,3 +153,5 @@ export default class FilePicker extends HTMLElement {
     this.dispatchEvent(new Event("change"));
   }
 }
+
+customElements.define("file-picker", FilePicker);

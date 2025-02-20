@@ -5,7 +5,6 @@ import "@/styles/popovers.css";
 import "@/styles/menus.css";
 import "@/styles/toasts.css";
 import type { Preview } from "@storybook/react";
-import "@/components/webComponents";
 
 const preview = {
   parameters: {

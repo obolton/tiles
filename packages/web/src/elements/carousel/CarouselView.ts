@@ -225,3 +225,5 @@ export default class CarouselView extends HTMLElement {
     requestAnimationFrame(this.scrollFrame.bind(this));
   }
 }
+
+customElements.define("carousel-view", CarouselView);

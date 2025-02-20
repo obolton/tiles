@@ -236,3 +236,5 @@ export default class MapView extends HTMLElement {
     marker.focus();
   }
 }
+
+customElements.define("map-view", MapView);

@@ -132,3 +132,5 @@ export default class EmbeddedVideo extends HTMLElement {
     this.showPlaceholder();
   }
 }
+
+customElements.define("embedded-video", EmbeddedVideo);

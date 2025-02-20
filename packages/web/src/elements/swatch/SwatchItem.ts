@@ -11,3 +11,5 @@ export default class SwatchItem extends HTMLElement {
     this.role = "option";
   }
 }
+
+customElements.define("swatch-item", SwatchItem);
