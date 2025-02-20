@@ -1,0 +1,10 @@
+.file {
+  border-radius: var(--border-radius);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  object-fit: contain;
+  border-radius: var(--border-radius);
+}
