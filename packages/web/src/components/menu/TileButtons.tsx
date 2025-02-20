@@ -9,7 +9,7 @@ import sectionIcon from "@/icons/section.svg";
 import { registerModal, showModal } from "@/utils/modals";
 import type { TileType } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
-import type { ImageModalResult } from "@/components/modals/ImageModal";
+import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type { EventModalResult } from "@/components/modals/EventModal";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import { uploadMedia } from "@/utils/media";
@@ -32,7 +32,7 @@ const BUTTONS: TileButton[] = [
 
 registerModal(
   "IMAGE",
-  lazy(() => import("@/components/modals/ImageModal")),
+  lazy(() => import("@/components/modals/image/ImageModal")),
 );
 
 registerModal(
