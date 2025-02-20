@@ -164,6 +164,10 @@ infinite-scroll {
   display: contents;
 }
 
+resize-item {
+  position: relative;
+}
+
 map-view,
 embedded-video {
   display: block;
