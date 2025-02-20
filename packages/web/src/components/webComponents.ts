@@ -8,7 +8,7 @@ import EmbeddedVideo from "@/elements/video/EmbeddedVideo";
 import InfiniteScroll from "@/elements/infiniteScroll/InfiniteScroll";
 import SwatchSelect from "./inputs/SwatchSelect";
 import SwatchItem from "./inputs/SwatchItem";
-import CalendarMonth from "./dates/CalendarMonth";
+import CalendarMonth from "@/elements/calendar/CalendarMonth";
 import FilePicker from "./forms/FilePicker";
 import PopOut from "./expandable/PopOut";
 import StackView from "./expandable/StackView";
