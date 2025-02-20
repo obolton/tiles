@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type InfiniteScroll from "@/components/InfiniteScroll";
+import type InfiniteScroll from "@/elements/infiniteScroll/InfiniteScroll";
 import styles from "./Search.module.css";
 import { classNames } from "@/utils/css";
 
