@@ -3,6 +3,7 @@ import type { TabItemAttributes } from "@/elements/tabs/TabItem";
 import type { TabPanelAttributes } from "@/elements/tabs/TabPanel";
 import type { FilePickerAttributes } from "@/components/forms/FilePicker";
 import type { PopoverMenuAttributes } from "@/elements/menu/PopoverMenu";
+import type { InfiniteScrollAttributes } from "@/elements/infiniteScroll/InfiniteScroll";
 
 type CustomElementAttributes = {
   key?: string;
@@ -45,9 +46,7 @@ declare module "react" {
         src: string;
         imagesrc?: string;
       };
-      "infinite-scroll": CustomElementAttributes & {
-        onloadmore?: (event: globalThis.Event) => void;
-      };
+      "infinite-scroll": CustomElementAttributes & InfiniteScrollAttributes;
       "swatch-select": CustomElementAttributes & {
         value?: string;
         direction?: "left" | "right";

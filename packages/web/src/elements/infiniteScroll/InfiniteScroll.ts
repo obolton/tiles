@@ -1,3 +1,7 @@
+export interface InfiniteScrollAttributes {
+  onloadmore: (event: globalThis.Event) => void;
+}
+
 export default class InfiniteScroll extends HTMLElement {
   public atEnd = false;
   private sentinel: HTMLElement;
@@ -9,7 +13,7 @@ export default class InfiniteScroll extends HTMLElement {
     const shadow = this.attachShadow({ mode: "closed" });
     const slot = document.createElement("slot");
     this.sentinel = document.createElement("div");
-    this.sentinel.setAttribute("aria-hidden", "true");
+    this.sentinel.ariaHidden = "true";
 
     shadow.append(slot, this.sentinel);
   }
@@ -27,7 +31,7 @@ export default class InfiniteScroll extends HTMLElement {
     this.intersectionObserver = null;
   }
 
-  intersectionObserverCallback(entries: IntersectionObserverEntry[]) {
+  private intersectionObserverCallback(entries: IntersectionObserverEntry[]) {
     const [entry] = entries;
     if (!entry) {
       return;
