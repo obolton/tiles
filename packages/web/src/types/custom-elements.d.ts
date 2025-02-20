@@ -5,6 +5,8 @@ import type { FilePickerAttributes } from "@/elements/filePicker/FilePicker";
 import type { PopoverMenuAttributes } from "@/elements/menu/PopoverMenu";
 import type { InfiniteScrollAttributes } from "@/elements/infiniteScroll/InfiniteScroll";
 import type { EmbeddedVideoAttributes } from "@/elements/video/EmbeddedVideo";
+import type { SwatchSelectAttributes } from "@/elements/swatch/SwatchSelect";
+import type { SwatchItemAttributes } from "@/elements/swatch/SwatchItem";
 
 type CustomElementAttributes = {
   key?: string;
@@ -45,15 +47,8 @@ declare module "react" {
       };
       "embedded-video": CustomElementAttributes & EmbeddedVideoAttributes;
       "infinite-scroll": CustomElementAttributes & InfiniteScrollAttributes;
-      "swatch-select": CustomElementAttributes & {
-        value?: string;
-        direction?: "left" | "right";
-        onchange?: (event: globalThis.Event) => void;
-        ontoggle?: (event: globalThis.ToggleEvent) => void;
-      };
-      "swatch-item": CustomElementAttributes & {
-        value: string;
-      };
+      "swatch-select": CustomElementAttributes & SwatchSelectAttributes;
+      "swatch-item": CustomElementAttributes & SwatchItemAttributes;
       "calendar-month": CustomElementAttributes & {
         date?: string;
       };

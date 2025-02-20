@@ -17,13 +17,17 @@ const TIMING: EffectTiming = {
 };
 const OVERLAP = 8;
 
-export default class SwatchSelect extends HTMLElement {
-  static observedAttributes = ["direction"] as const;
+export interface SwatchSelectAttributes {
+  value?: string;
+  direction?: "left" | "right";
+  onchange?: (event: globalThis.Event) => void;
+  ontoggle?: (event: globalThis.ToggleEvent) => void;
+}
 
+export default class SwatchSelect extends HTMLElement {
   public value: string = "";
 
   private open = false;
-  private shadow: ShadowRoot;
   private button: HTMLButtonElement;
   private items: HTMLElement;
   private itemsSlot: HTMLSlotElement;
@@ -31,13 +35,13 @@ export default class SwatchSelect extends HTMLElement {
   constructor() {
     super();
 
-    this.shadow = this.attachShadow({ mode: "closed" });
-    this.shadow.adoptedStyleSheets = [stylesheet];
+    const shadow = this.attachShadow({ mode: "closed" });
+    shadow.adoptedStyleSheets = [stylesheet];
 
     this.button = document.createElement("button");
-    this.button.setAttribute("type", "button");
     this.button.setAttribute("part", "button");
-    this.button.setAttribute("aria-pressed", "false");
+    this.button.type = "button";
+    this.button.ariaPressed = "false";
     this.button.addEventListener("click", this.toggle.bind(this));
 
     const icon = document.createElement("img");
@@ -46,7 +50,7 @@ export default class SwatchSelect extends HTMLElement {
     this.button.append(icon);
 
     const iconSlot = document.createElement("slot");
-    iconSlot.setAttribute("name", "icon");
+    iconSlot.name = "icon";
     this.button.append(iconSlot);
 
     this.items = document.createElement("div");
@@ -58,7 +62,7 @@ export default class SwatchSelect extends HTMLElement {
     this.itemsSlot = document.createElement("slot");
     this.items.append(this.itemsSlot);
 
-    this.shadow.append(this.button, this.items);
+    shadow.append(this.button, this.items);
   }
 
   toggle() {
@@ -67,8 +71,8 @@ export default class SwatchSelect extends HTMLElement {
     const direction = this.getAttribute("direction") === "left" ? -1 : 1;
 
     if (this.open) {
-      this.setAttribute("aria-expanded", "true");
-      this.button.setAttribute("aria-pressed", "true");
+      this.ariaExpanded = "true";
+      this.button.ariaPressed = "true";
       this.items.classList.remove("hidden");
 
       fadeIn(this.items, { timing: TIMING });
@@ -86,8 +90,8 @@ export default class SwatchSelect extends HTMLElement {
         new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
       );
     } else {
-      this.setAttribute("aria-expanded", "false");
-      this.button.setAttribute("aria-pressed", "false");
+      this.ariaExpanded = "false";
+      this.button.ariaPressed = "false";
 
       fadeOut(this.items, { timing: TIMING });
 
