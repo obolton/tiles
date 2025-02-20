@@ -1,6 +1,6 @@
 import { set } from "./state";
-import type ToastContainer from "@/components/ToastContainer";
-import type { ToastType } from "@/components/ToastContainer";
+import type ToastContainer from "@/elements/toasts/ToastContainer";
+import type { ToastType } from "@/elements/toasts/ToastContainer";
 
 export function showToast(message: string, type?: ToastType) {
   return (
