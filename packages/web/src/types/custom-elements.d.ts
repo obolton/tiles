@@ -77,6 +77,7 @@ declare module "react" {
       "tab-item": TabItemAttributes & CustomElementAttributes;
       "tab-panel": TabPanelAttributes & CustomElementAttributes;
       "file-picker": FilePickerAttributes & CustomElementAttributes;
+      "toast-container": CustomElementAttributes;
     }
   }
 }
