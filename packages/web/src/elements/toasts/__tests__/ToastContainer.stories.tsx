@@ -1,0 +1,40 @@
+import { showToast } from "@/utils/toasts";
+import type { Meta, StoryObj } from "@storybook/react";
+
+const meta = {
+  title: "Toasts",
+} satisfies Meta;
+export default meta;
+
+export const Info = {
+  render: () => (
+    <>
+      <button onClick={() => showToast("This is an info toast", "info")}>
+        Show toast
+      </button>
+      <toast-container />
+    </>
+  ),
+} satisfies StoryObj;
+
+export const Success = {
+  render: () => (
+    <>
+      <button onClick={() => showToast("This is an info toast", "success")}>
+        Show toast
+      </button>
+      <toast-container />
+    </>
+  ),
+} satisfies StoryObj;
+
+export const Error = {
+  render: () => (
+    <>
+      <button onClick={() => showToast("This is an error toast", "error")}>
+        Show toast
+      </button>
+      <toast-container />
+    </>
+  ),
+} satisfies StoryObj;
