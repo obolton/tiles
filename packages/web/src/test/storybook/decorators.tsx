@@ -1,6 +1,6 @@
 import type { Decorator } from "@storybook/react";
-import Editor from "../../src/editor/Editor";
-import { EditorContext } from "../../src/context/editor";
+import Editor from "@/editor/Editor";
+import { EditorContext } from "@/context/editor";
 
 const PAGE = {
   id: "test",
