@@ -88,10 +88,10 @@ export default class ToastContainer extends HTMLElement {
 
     const toast = document.createElement("output");
     toast.classList.add(type);
-    toast.setAttribute("role", "status");
+    toast.role = "status";
 
     const icon = document.createElement("img");
-    icon.setAttribute("aria-hidden", "true");
+    icon.ariaHidden = "true";
     switch (type) {
       case "success":
         icon.src = successIcon.src;
