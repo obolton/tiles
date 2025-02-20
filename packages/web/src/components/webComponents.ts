@@ -1,5 +1,5 @@
 import DataBinding from "./DataBinding";
-import PopoverMenu from "./PopoverMenu";
+import PopoverMenu from "@/elements/menu/PopoverMenu";
 import ToastContainer from "./ToastContainer";
 import MapView from "./maps/MapView";
 import MapMarker from "./maps/MapMarker";
