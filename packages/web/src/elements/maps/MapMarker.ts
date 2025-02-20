@@ -3,11 +3,24 @@ import css from "./MapMarker.css?inline";
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export default class MapMarker extends HTMLElement {
-  static observedAttributes = ["label", "editable"] as const;
+export interface MapMarkerAttributes {
+  editable?: boolean;
+  id: string;
+  lat: number;
+  long: number;
+  bounds?: string;
+  label?: string;
+  onblur: (event: globalThis.FocusEvent) => void;
+}
 
-  #pin: HTMLDivElement;
-  #label: HTMLSpanElement;
+export default class MapMarker extends HTMLElement {
+  static readonly observedAttributes: (keyof MapMarkerAttributes)[] = [
+    "label",
+    "editable",
+  ] as const;
+
+  private pin: HTMLDivElement;
+  private label: HTMLSpanElement;
 
   constructor() {
     super();
@@ -15,20 +28,20 @@ export default class MapMarker extends HTMLElement {
     const shadow = this.attachShadow({ mode: "open" });
     shadow.adoptedStyleSheets = [stylesheet];
 
-    this.#pin = document.createElement("div");
-    this.#pin.id = "pin";
-    this.#pin.addEventListener("pointerdown", this);
-    this.#pin.addEventListener("click", () => this.focus());
-    shadow.appendChild(this.#pin);
+    this.pin = document.createElement("div");
+    this.pin.id = "pin";
+    this.pin.addEventListener("pointerdown", this);
+    this.pin.addEventListener("click", () => this.focus());
+    shadow.appendChild(this.pin);
 
-    this.#label = document.createElement("span");
-    this.#label.id = "label";
-    this.#label.setAttribute("tabindex", "0");
-    shadow.appendChild(this.#label);
+    this.label = document.createElement("span");
+    this.label.id = "label";
+    this.label.tabIndex = 0;
+    shadow.appendChild(this.label);
   }
 
   attributeChangedCallback(
-    name: (typeof MapMarker.observedAttributes)[number],
+    name: keyof MapMarkerAttributes,
     _: string,
     value: string | null,
   ) {
@@ -81,19 +94,19 @@ export default class MapMarker extends HTMLElement {
   }
 
   get value() {
-    return this.#label.textContent;
+    return this.label.textContent;
   }
 
   set value(value: string | null) {
-    this.#label.textContent = value;
+    this.label.textContent = value;
   }
 
   private handleLabelInput() {
     if (
-      this.#label.childElementCount === 1 &&
-      this.#label.children[0]?.tagName === "BR"
+      this.label.childElementCount === 1 &&
+      this.label.children[0]?.tagName === "BR"
     ) {
-      this.#label.children[0].remove();
+      this.label.children[0].remove();
     }
   }
 
@@ -113,23 +126,23 @@ export default class MapMarker extends HTMLElement {
   }
 
   private startEditing() {
-    this.#label.setAttribute("contenteditable", "plaintext-only");
-    this.#label.setAttribute("data-placeholder", "Add a label");
-    this.#label.addEventListener("pointerdown", this);
-    this.#label.addEventListener("mousedown", this);
-    this.#label.addEventListener("click", this);
-    this.#label.addEventListener("dblclick", this);
-    this.#label.addEventListener("keydown", this);
-    this.#label.addEventListener("input", this);
+    this.label.contentEditable = "plaintext-only";
+    this.label.setAttribute("data-placeholder", "Add a label");
+    this.label.addEventListener("pointerdown", this);
+    this.label.addEventListener("mousedown", this);
+    this.label.addEventListener("click", this);
+    this.label.addEventListener("dblclick", this);
+    this.label.addEventListener("keydown", this);
+    this.label.addEventListener("input", this);
   }
 
   private stopEditing() {
-    this.#label.removeAttribute("contenteditable");
-    this.#label.removeEventListener("pointerdown", this);
-    this.#label.removeEventListener("mousedown", this);
-    this.#label.removeEventListener("click", this);
-    this.#label.removeEventListener("dblclick", this);
-    this.#label.removeEventListener("keydown", this);
-    this.#label.removeEventListener("input", this);
+    this.label.removeAttribute("contenteditable");
+    this.label.removeEventListener("pointerdown", this);
+    this.label.removeEventListener("mousedown", this);
+    this.label.removeEventListener("click", this);
+    this.label.removeEventListener("dblclick", this);
+    this.label.removeEventListener("keydown", this);
+    this.label.removeEventListener("input", this);
   }
 }

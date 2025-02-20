@@ -6,8 +6,17 @@ import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
+export interface MapLegendItemAttributes {
+  marker: string;
+  editable?: boolean;
+  ondeletemarker?: (event: MapEvent) => void;
+}
+
 export default class MapLegendItem extends HTMLElement {
-  static observedAttributes = ["marker", "editable"] as const;
+  static readonly observedAttributes: (keyof MapLegendItemAttributes)[] = [
+    "marker",
+    "editable",
+  ] as const;
 
   constructor() {
     super();
@@ -24,7 +33,7 @@ export default class MapLegendItem extends HTMLElement {
   }
 
   attributeChangedCallback(
-    name: (typeof MapLegendItem.observedAttributes)[number],
+    name: keyof MapLegendItemAttributes,
     _: string,
     value: string | null,
   ) {
@@ -77,9 +86,9 @@ export default class MapLegendItem extends HTMLElement {
     const button = document.createElement("button");
     button.id = "delete";
     button.classList.add("delete");
-    button.setAttribute("title", "Delete");
-    button.setAttribute("type", "button");
-    button.setAttribute("aria-label", "Delete");
+    button.title = "Delete";
+    button.type = "button";
+    button.ariaLabel = "Delete";
     button.addEventListener("pointerdown", (event) => event.stopPropagation());
     button.addEventListener("click", (event) => {
       event.preventDefault();

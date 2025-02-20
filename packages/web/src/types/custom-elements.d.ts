@@ -10,6 +10,9 @@ import type { SwatchItemAttributes } from "@/elements/swatch/SwatchItem";
 import type { PopOutAttributes } from "@/elements/popOut/PopOut";
 import type { StackViewAttributes } from "@/elements/stack/StackView";
 import type { CalendarMonthAttributes } from "@/elements/calendar/CalendarMonth";
+import type { MapViewAttributes } from "@/elements/maps/MapView";
+import type { MapMarkerAttributes } from "@/elements/maps/MapMarker";
+import type { MapLegendItemAttributes } from "@/elements/maps/MapLegendItem";
 
 type CustomElementAttributes = {
   key?: string;
@@ -25,29 +28,9 @@ type CustomElementAttributes = {
 declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      "map-view": CustomElementAttributes & {
-        movable?: boolean;
-        legend?: boolean;
-        ondeletemarker?: (
-          event: import("@/elements/maps/MapEvent").default,
-        ) => void;
-      };
-      "map-marker": CustomElementAttributes & {
-        editable?: boolean;
-        id: string;
-        lat: number;
-        long: number;
-        bounds?: string;
-        label?: string;
-        onblur: (event: globalThis.FocusEvent) => void;
-      };
-      "map-legend-item": CustomElementAttributes & {
-        marker: string;
-        editable?: boolean;
-        ondeletemarker?: (
-          event: import("@/elements/maps/MapEvent").default,
-        ) => void;
-      };
+      "map-view": CustomElementAttributes & MapViewAttributes;
+      "map-marker": CustomElementAttributes & MapMarkerAttributes;
+      "map-legend-item": CustomElementAttributes & MapLegendItemAttributes;
       "embedded-video": CustomElementAttributes & EmbeddedVideoAttributes;
       "infinite-scroll": CustomElementAttributes & InfiniteScrollAttributes;
       "swatch-select": CustomElementAttributes & SwatchSelectAttributes;
