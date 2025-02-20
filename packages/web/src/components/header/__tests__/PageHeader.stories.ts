@@ -1,6 +1,6 @@
 import PageHeader from "../PageHeader";
 import type { Meta, StoryObj } from "@storybook/react";
-import { EditorDecorator } from "../../../../test/storybook/decorators";
+import { EditorDecorator } from "@/test/storybook/decorators";
 
 const meta = {
   title: "Page Header",
