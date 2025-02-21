@@ -7,7 +7,7 @@ describe("getStream", () => {
     vi.stubGlobal(
       "fetch",
       async () =>
-        new Response(new ReadableStream() as BodyInit, {
+        new Response(new ReadableStream(), {
           headers: {
             "Content-Type": "image/jpeg",
           },
@@ -25,7 +25,7 @@ describe("getStream", () => {
     vi.stubGlobal(
       "fetch",
       async () =>
-        new Response(new ReadableStream() as BodyInit, {
+        new Response(new ReadableStream(), {
           headers: {},
         }),
     );
@@ -38,7 +38,7 @@ describe("getStream", () => {
     vi.stubGlobal(
       "fetch",
       async () =>
-        new Response(new ReadableStream() as BodyInit, {
+        new Response(new ReadableStream(), {
           headers: {
             "Content-Type": "text/plain",
           },
