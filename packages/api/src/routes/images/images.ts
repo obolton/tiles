@@ -12,7 +12,11 @@ export const IMAGE_FIELDS = {
   originY: true,
 } as const satisfies Prisma.ImageTileSelect<ExtensionArgs>;
 
-export type Image = Prisma.ImageTileGetPayload<{ select: typeof IMAGE_FIELDS }>;
+export type Image = Prisma.Result<
+  typeof prisma.imageTile,
+  { select: typeof IMAGE_FIELDS },
+  "findUniqueOrThrow"
+>;
 
 export async function createImage({
   pageId,
