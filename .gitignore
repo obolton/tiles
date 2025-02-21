@@ -16,3 +16,6 @@ coverage/
 
 # macOS files
 .DS_Store
+
+# TypeScript build information
+*.tsbuildinfo
