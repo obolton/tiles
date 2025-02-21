@@ -93,7 +93,6 @@ async function parseDocument(url: string, language: string) {
       },
       onerror: reject,
     });
-    // @ts-expect-error Type incompatibility between Node and browser ReadableStream interfaces
     Readable.fromWeb(body).pipe(parserStream);
   });
 }
