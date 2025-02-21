@@ -10,7 +10,7 @@ import type { CreateQuery, UpdateQuery } from "@/test/prisma.ts";
 
 const MOCK_IMAGE: Image = {
   id: "test-image",
-  imageKey: "test-image-key",
+  imageUrl: "https://example.com/test-image-key",
   caption: "Test caption",
   originX: 0.5,
   originY: 0.5,
@@ -57,6 +57,7 @@ describe("updateImage", () => {
 
   it("should update and return an image", async () => {
     const result = await updateImage({
+      pageId: "1",
       id: "1",
       caption: "New caption",
     });
