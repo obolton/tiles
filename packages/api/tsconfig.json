@@ -2,6 +2,8 @@
   "compilerOptions": {
     "target": "es2022",
     "lib": ["es2023"],
+    "outDir": "dist",
+    "rootDir": "src",
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolveJsonModule": true,
@@ -19,5 +21,6 @@
       "@/*": ["./src/*"]
     },
     "composite": true
-  }
+  },
+  "include": ["./src/**/*"]
 }
