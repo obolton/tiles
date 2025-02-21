@@ -1,5 +1,6 @@
 import { showToast } from "@/utils/toasts";
 import type { Meta, StoryObj } from "@storybook/react";
+import "../ToastContainer";
 
 const meta = {
   title: "Toasts",
