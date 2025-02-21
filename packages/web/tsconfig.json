@@ -9,7 +9,7 @@
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "noUncheckedIndexedAccess": true,
     "noUncheckedSideEffectImports": true,
-    "skipLibCheck": false
+    "skipLibCheck": true
   },
   "include": ["./src/**/*"],
   "references": [{ "path": "../api" }]

@@ -14,7 +14,7 @@
     "noUncheckedIndexedAccess": true,
     "noUncheckedSideEffectImports": true,
     "strict": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"]
     },
