@@ -14,7 +14,8 @@
     "db:generate-client": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
-    "cdn:purge": "tsx --env-file=\"../../.env\" scripts/purge-cdn.ts"
+    "cdn:purge": "tsx --env-file=\"../../.env\" scripts/purge-cdn.ts",
+    "tsc": "tsc --build"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

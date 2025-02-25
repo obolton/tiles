@@ -18,7 +18,8 @@
     "lint:css": "stylelint \"src/**/*.{css,astro}\"",
     "lint": "npm run lint:ts && npm run lint:css",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build"
+    "storybook:build": "storybook build",
+    "tsc": "tsc --build"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
