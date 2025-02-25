@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const CreateEventSchema = z.object({
   pageId: z.string().uuid(),
-  collectionId: z.string().uuid().optional(),
+  collectionId: z.string().uuid(),
   title: z.string().nullable(),
   start: z.string().datetime(),
   end: z.string().datetime().nullable(),

@@ -8,7 +8,7 @@ import {
 
 export const CreateMapSchema = z.object({
   pageId: z.string().uuid(),
-  collectionId: z.string().uuid().optional(),
+  collectionId: z.string().uuid(),
   columns: z.number().int().gte(1).lte(3).optional(),
   rows: z.number().int().gte(1).lte(3).optional(),
   place: z.object({
