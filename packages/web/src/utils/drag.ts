@@ -81,19 +81,34 @@ export class DragState<T> {
 
     const signal = this.abortController.signal;
 
-    addEventListener("pointermove", this.pointerMove.bind(this), {
+    addEventListener("pointerover", this, {
       passive: true,
       signal,
     });
-    addEventListener("pointerup", this.pointerUp.bind(this), {
+    addEventListener("pointermove", this, {
+      passive: true,
+      signal,
+    });
+    addEventListener("pointerup", this, {
       passive: true,
       signal,
     });
 
     this.longPressTimeout = setTimeout(
-      this.longPress.bind(this),
+      () => this.longPress(fromPoint.x, fromPoint.y),
       LONG_PRESS_DURATION,
     );
+  }
+
+  handleEvent(event: Event) {
+    switch (event.type) {
+      case "pointerover":
+        return this.pointerOver(event as PointerEvent);
+      case "pointermove":
+        return this.pointerMove(event as PointerEvent);
+      case "pointerup":
+        return this.pointerUp(event as PointerEvent);
+    }
   }
 
   private createDragDropEvent(
@@ -112,8 +127,8 @@ export class DragState<T> {
     clearTimeout(this.longPressTimeout);
   }
 
-  private longPress() {
-    this.startDrag();
+  private longPress(clientX: number, clientY: number) {
+    this.startDrag(clientX, clientY);
 
     // Disable scrolling while dragging with touch
     addEventListener("touchmove", (event) => event.preventDefault(), {
@@ -131,8 +146,6 @@ export class DragState<T> {
     clearTimeout(this.moveTimeout);
 
     this.moveTimeout = setTimeout(() => {
-      const target = this.findDropTarget(event.clientX, event.clientY);
-
       this.element.dispatchEvent(
         this.createDragDropEvent("dnd-drag", {
           bubbles: true,
@@ -141,28 +154,6 @@ export class DragState<T> {
           clientY: event.clientY,
         }),
       );
-
-      if (this.dropTarget !== target) {
-        this.dropTarget?.dispatchEvent(
-          this.createDragDropEvent("dnd-dragleave", {
-            bubbles: true,
-            cancelable: false,
-            clientX: event.clientX,
-            clientY: event.clientY,
-          }),
-        );
-
-        target?.dispatchEvent(
-          this.createDragDropEvent("dnd-dragenter", {
-            bubbles: true,
-            cancelable: false,
-            clientX: event.clientX,
-            clientY: event.clientY,
-          }),
-        );
-      }
-
-      this.dropTarget = target;
 
       this.dropTarget?.dispatchEvent(
         this.createDragDropEvent("dnd-dragover", {
@@ -173,6 +164,47 @@ export class DragState<T> {
         }),
       );
     }, MOVE_DEBOUNCE_INTERVAL);
+  }
+
+  private pointerOver(event: PointerEvent) {
+    const { target } = event;
+
+    if (!(target instanceof HTMLElement) || this.dropTarget === target) {
+      return;
+    }
+
+    const preventDrop = target.dispatchEvent(
+      this.createDragDropEvent("dnd-dragenter", {
+        bubbles: true,
+        cancelable: true,
+        clientX: event.clientX,
+        clientY: event.clientY,
+      }),
+    );
+
+    this.dropTarget?.dispatchEvent(
+      this.createDragDropEvent("dnd-dragleave", {
+        bubbles: true,
+        cancelable: false,
+        clientX: event.clientX,
+        clientY: event.clientY,
+      }),
+    );
+
+    if (preventDrop) {
+      this.dropTarget = undefined;
+    } else {
+      this.dropTarget = target;
+
+      this.dropTarget.dispatchEvent(
+        this.createDragDropEvent("dnd-dragover", {
+          bubbles: true,
+          cancelable: false,
+          clientX: event.clientX,
+          clientY: event.clientY,
+        }),
+      );
+    }
   }
 
   private pointerMove(event: PointerEvent) {
@@ -208,7 +240,20 @@ export class DragState<T> {
     }
   }
 
-  private cancel() {
+  private drop(event: PointerEvent) {
+    this.dropTarget?.dispatchEvent(
+      this.createDragDropEvent("dnd-drop", {
+        bubbles: true,
+        cancelable: false,
+        clientX: event.clientX,
+        clientY: event.clientY,
+      }),
+    );
+
+    this.finish();
+  }
+
+  private finish() {
     this.cancelLongPress();
 
     this.abortController.abort();
@@ -226,16 +271,48 @@ export class DragState<T> {
         }),
       );
 
-      this.dropTarget?.dispatchEvent(
-        this.createDragDropEvent("dnd-dragend", {
-          bubbles: true,
-          cancelable: false,
-        }),
-      );
+      if (this.element.isConnected) {
+        this.element.dispatchEvent(
+          this.createDragDropEvent("dnd-dragend", {
+            bubbles: true,
+            cancelable: false,
+          }),
+        );
+      } else {
+        document.body.dispatchEvent(
+          this.createDragDropEvent("dnd-dragend", {
+            bubbles: true,
+            cancelable: false,
+          }),
+        );
+      }
     }
+
+    delete document.body.dataset.drag;
 
     this.isDragging = false;
     this.dropTarget = undefined;
+
+    // Animate the drag element to its final position
+    if (this.dragElement) {
+      if (this.destination) {
+        this.dragElement.style.viewTransitionName = "drop";
+      }
+
+      viewTransition(() => {
+        this.dragElement?.remove();
+        this.dragElement = undefined;
+
+        if (this.destination) {
+          this.destination.style.viewTransitionName = "drop";
+        }
+      }).finished.finally(() => {
+        if (this.destination) {
+          this.destination.style.viewTransitionName = "";
+          this.destination = undefined;
+        }
+      });
+    }
   }
 
   private pointerUp(event: PointerEvent) {
@@ -243,43 +320,14 @@ export class DragState<T> {
       return;
     }
 
-    if (!this.isDragging) {
-      this.cancel();
-      return;
+    if (this.isDragging) {
+      this.drop(event);
+    } else {
+      this.finish();
     }
-
-    delete document.body.dataset.drag;
-    delete this.element.dataset.dragging;
-
-    this.dropTarget?.dispatchEvent(
-      this.createDragDropEvent("dnd-drop", {
-        bubbles: true,
-        cancelable: false,
-        clientX: event.clientX,
-        clientY: event.clientY,
-      }),
-    );
-
-    // Animate the drag element to its final position
-    if (this.dragElement) {
-      this.dragElement.style.viewTransitionName = "drop";
-    }
-
-    viewTransition(() => {
-      this.dragElement?.remove();
-      if (this.destination) {
-        this.destination.style.viewTransitionName = "drop";
-      }
-    }).finished.finally(() => {
-      if (this.destination) {
-        this.destination.style.viewTransitionName = "";
-      }
-    });
-
-    this.cancel();
   }
 
-  private startDrag(clientX: number = 0, clientY: number = 0) {
+  private startDrag(clientX: number, clientY: number) {
     if (this.isDragging) {
       return;
     }
@@ -294,7 +342,7 @@ export class DragState<T> {
     );
 
     if (!allowDrag) {
-      this.cancel();
+      this.finish();
       return;
     }
 
@@ -323,19 +371,6 @@ export class DragState<T> {
 
     document.body.appendChild(this.dragElement);
     this.dragElement.showPopover();
-
-    this.element.dataset.dragging = "true";
-  }
-
-  private findDropTarget(x: number, y: number) {
-    return document
-      .elementsFromPoint(x, y)
-      .find(
-        (element): element is HTMLElement =>
-          element instanceof HTMLElement &&
-          element !== this.element &&
-          element !== this.dragElement,
-      );
   }
 
   private scroll() {
