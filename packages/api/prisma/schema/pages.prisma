@@ -77,10 +77,10 @@ model Tile {
   pageLinkTileId     String?  @map("page_link_tile_id") @db.Uuid
   eventTileId        String?  @map("event_tile_id") @db.Uuid
   collectionId       String?  @map("collection_id") @db.Uuid
-  parentCollectionId String?  @map("parent_collection_id") @db.Uuid
+  parentCollectionId String   @map("parent_collection_id") @db.Uuid
 
   page             Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  parentCollection Collection?   @relation("ParentCollection", fields: [parentCollectionId], references: [id], onDelete: SetNull)
+  parentCollection Collection    @relation("ParentCollection", fields: [parentCollectionId], references: [id], onDelete: Cascade)
   type             TileType
   image            ImageTile?    @relation(fields: [imageTileId], references: [id], onDelete: SetNull)
   video            VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
