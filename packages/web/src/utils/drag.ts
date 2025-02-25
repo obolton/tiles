@@ -93,6 +93,10 @@ export class DragState<T> {
       passive: true,
       signal,
     });
+    addEventListener("keydown", this, {
+      passive: false,
+      signal,
+    });
 
     this.longPressTimeout = setTimeout(
       () => this.longPress(fromPoint.x, fromPoint.y),
@@ -108,6 +112,8 @@ export class DragState<T> {
         return this.pointerMove(event as PointerEvent);
       case "pointerup":
         return this.pointerUp(event as PointerEvent);
+      case "keydown":
+        return this.keyDown(event as KeyboardEvent);
     }
   }
 
@@ -323,6 +329,13 @@ export class DragState<T> {
     if (this.isDragging) {
       this.drop(event);
     } else {
+      this.finish();
+    }
+  }
+
+  private keyDown(event: KeyboardEvent) {
+    if (event.key === "Escape") {
+      event.preventDefault();
       this.finish();
     }
   }
