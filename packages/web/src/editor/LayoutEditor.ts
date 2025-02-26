@@ -79,7 +79,7 @@ export default class LayoutEditor {
 
     event.stopPropagation();
 
-    const id = state.data?.placementId;
+    const id = state.data?.id;
     if (!id) {
       return;
     }
