@@ -54,7 +54,7 @@ export default class CarouselView extends HTMLElement {
     this.resizeObserver = new ResizeObserver(this.onResize.bind(this));
 
     this.addEventListener("keydown", this);
-    this.addEventListener("dnd-drag", this, { passive: true });
+    this.addEventListener("dnd-dragover", this, { passive: true });
     this.addEventListener("dnd-dragleave", this, { passive: true });
 
     this.internals.role = "group";
@@ -79,8 +79,8 @@ export default class CarouselView extends HTMLElement {
         return this.handleKeyDown(event as KeyboardEvent);
       case "scroll":
         return this.handleScroll();
-      case "dnd-drag":
-        return this.handleDrag(event as DragDropEvent);
+      case "dnd-dragover":
+        return this.handleDragOver(event as DragDropEvent);
       case "dnd-dragleave":
         return this.handleDragLeave();
     }
@@ -158,7 +158,7 @@ export default class CarouselView extends HTMLElement {
     this.updateButtons();
   }
 
-  private handleDrag({ clientX }: DragDropEvent) {
+  private handleDragOver({ clientX }: DragDropEvent) {
     const rect = this.getBoundingClientRect();
     const previousScrollSpeed = this.scrollSpeed;
 
