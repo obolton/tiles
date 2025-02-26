@@ -28,6 +28,7 @@ export default function Stack({ id, items }: StackProps) {
       class={styles.stack}
       expandable="expandable"
       ontoggle={onToggle}
+      data-drop={isEditable ? "true" : undefined}
     >
       {items.map((item, i) => (
         <GridItem

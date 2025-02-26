@@ -20,7 +20,11 @@ export default function Grid({ id, className, items }: GridProps) {
   const dragId = useDragId();
 
   return (
-    <section ref={ref} className={classNames(styles.grid, className)}>
+    <section
+      ref={ref}
+      className={styles.grid}
+      data-drop={isEditable ? "true" : undefined}
+    >
       {items.map((tile) => (
         <GridItem
           key={tile.id}

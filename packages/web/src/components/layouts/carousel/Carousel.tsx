@@ -24,6 +24,7 @@ export default function Carousel({ id, items }: CarouselProps) {
       ref={ref}
       class={classNames(styles.carousel, isEditable && styles.editable)}
       tabindex="0"
+      data-drop={isEditable ? "true" : undefined}
     >
       {items.map((item) => (
         <GridItem

@@ -87,9 +87,12 @@ export default function GridItem({
     const { state } = event;
 
     // Don't allow collections to be dropped on tiles
-    if (state.data && state.data.type !== "COLLECTION") {
-      setDragOver(true);
+    if (!state.data || state.data.type === "COLLECTION") {
+      event.preventDefault();
+      return;
     }
+
+    setDragOver(true);
   };
 
   const onDragLeave = () => setDragOver(false);
@@ -144,6 +147,7 @@ export default function GridItem({
       ondnd-dragenter={allowDrop ? onDragEnter : undefined}
       ondnd-dragleave={allowDrop ? onDragLeave : undefined}
       ondnd-drop={allowDrop ? onDrop : undefined}
+      data-drop={allowDrop ? "true" : undefined}
     >
       {getTileComponent(tile)}
     </resize-item>
