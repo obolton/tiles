@@ -1,7 +1,6 @@
 import type { LazyExoticComponent, ComponentType } from "react";
 
 export interface ModalOptions<T> {
-  origin?: DOMRect;
   onConfirm?: (result: T) => Promise<void>;
   [k: string]: unknown;
 }

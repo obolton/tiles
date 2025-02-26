@@ -27,7 +27,7 @@ export default function ModalLauncher() {
 
   return (
     <Suspense>
-      <Modal open={open} onClose={cancel} originRect={modal?.options?.origin}>
+      <Modal open={open} onClose={cancel}>
         <ModalComponent cancel={cancel} confirm={confirm} {...modal.options} />
       </Modal>
     </Suspense>
