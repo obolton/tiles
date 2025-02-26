@@ -9,16 +9,12 @@ export default function ModalLauncher() {
 
   useEffect(() => setOpen(!!modal), [modal]);
 
-  const cancel = useCallback(() => {
-    setOpen(false);
-    modal?.callback?.();
-  }, [modal]);
+  const cancel = useCallback(() => setOpen(false), []);
 
   const confirm = useCallback(
     async (result: unknown) => {
       await modal?.options?.onConfirm?.(result);
       setOpen(false);
-      modal?.callback?.(result);
     },
     [modal],
   );
