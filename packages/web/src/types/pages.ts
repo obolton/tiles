@@ -1,1 +1,1 @@
-export type { Theme, Font } from "api/src/types/pages.ts";
+export type * from "api/src/types/pages.ts";
