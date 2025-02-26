@@ -19,14 +19,16 @@ export default function LinkTile({
 }: LinkTileProps) {
   const editor = useEditor();
   const isEditable = useEditable();
-  const edit = useCallback(async () => {
-    const result = await showModal<LinkModalResult>("LINK", {
+  const edit = useCallback(() => {
+    showModal<LinkModalResult>("LINK", {
       url,
       showPages: false,
+      async onConfirm(result) {
+        if (result && "url" in result && result.url) {
+          await editor.updateLink({ id, url: result.url });
+        }
+      },
     });
-    if (result && "url" in result && result.url) {
-      await editor.updateLink({ id, url: result.url });
-    }
   }, [editor, id, url]);
 
   const contents = (

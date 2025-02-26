@@ -166,10 +166,11 @@ export default function Toolbar({
         url: linkNode?.getURL(),
         showPages: false,
         showRemove: !!linkNode,
-      }).then((result) => {
-        if (result && "url" in result) {
-          editor.dispatchCommand(TOGGLE_LINK_COMMAND, result.url);
-        }
+        async onConfirm(result) {
+          if (result && "url" in result) {
+            editor.dispatchCommand(TOGGLE_LINK_COMMAND, result.url);
+          }
+        },
       });
     });
   }, [editor]);
