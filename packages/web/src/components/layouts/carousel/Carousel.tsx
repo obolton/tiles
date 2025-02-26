@@ -5,18 +5,23 @@ import useLayoutEditor from "@/hooks/useLayoutEditor";
 import { classNames } from "@/utils/css";
 import styles from "./Carousel.module.css";
 import type CarouselView from "@/elements/carousel/CarouselView";
-import type { ClientTile } from "@/types/tiles";
+import type { Tile } from "@/types/layout";
 import { useDragId } from "@/context/drag";
 
 interface CarouselProps {
-  id?: string;
-  items: ClientTile[];
+  collectionId: string;
+  items: Tile[];
+  Placeholder?: React.ComponentType<Pick<CarouselProps, "collectionId">>;
 }
 
-export default function Carousel({ id, items }: CarouselProps) {
+export default function Carousel({
+  collectionId,
+  items,
+  Placeholder,
+}: CarouselProps) {
   const ref = useRef<CarouselView>(null);
   const isEditable = useEditable();
-  useLayoutEditor(ref, id);
+  useLayoutEditor(ref, collectionId);
   const dragId = useDragId();
 
   return (
@@ -26,6 +31,10 @@ export default function Carousel({ id, items }: CarouselProps) {
       tabindex="0"
       data-drop={isEditable ? "true" : undefined}
     >
+      {items.length === 0 && Placeholder ? (
+        <Placeholder collectionId={collectionId} />
+      ) : null}
+
       {items.map((item) => (
         <GridItem
           className={classNames(
@@ -34,6 +43,7 @@ export default function Carousel({ id, items }: CarouselProps) {
           )}
           key={item.id}
           id={item.id}
+          collectionId={collectionId}
           placementId={item.placementId}
           rows={1}
           columns={1}

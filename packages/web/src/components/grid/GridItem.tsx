@@ -12,13 +12,14 @@ import LinkTile from "@/components/tiles/LinkTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import EventTile from "@/components/tiles/EventTile";
 import CollectionTile from "@/components/tiles/CollectionTile";
-import type { ClientTile } from "@/types/tiles";
+import type { Tile } from "@/types/layout";
 import type { DragDropEvent } from "@/utils/drag";
 import { handleError } from "@/utils/errors";
 import { useEditor } from "@/context/editor";
 
 interface GridItemProps {
   id: string;
+  collectionId: string;
   placementId: string;
   style?: React.CSSProperties;
   className?: string;
@@ -29,10 +30,10 @@ interface GridItemProps {
   draggable?: boolean;
   resizable?: boolean;
   allowDrop?: boolean;
-  tile: ClientTile;
+  tile: Tile;
 }
 
-function getTileComponent(tile: ClientTile) {
+function getTileComponent(tile: Tile) {
   const type = tile.type;
   switch (type) {
     case "IMAGE":
@@ -59,6 +60,7 @@ function getTileComponent(tile: ClientTile) {
 
 export default function GridItem({
   id,
+  collectionId,
   placementId,
   className,
   style,
@@ -77,13 +79,13 @@ export default function GridItem({
   useScrollIntoView(ref);
   const [isDragOver, setDragOver] = useState(false);
 
-  const onDragStart = (event: DragDropEvent<ClientTile>) => {
+  const onDragStart = (event: DragDropEvent<Tile>) => {
     if (event.target === ref.current) {
       event.state.data = structuredClone(tile);
     }
   };
 
-  const onDragEnter = (event: DragDropEvent<ClientTile>) => {
+  const onDragEnter = (event: DragDropEvent<Tile>) => {
     const { state } = event;
 
     // Don't allow collections to be dropped on tiles
@@ -97,7 +99,7 @@ export default function GridItem({
 
   const onDragLeave = () => setDragOver(false);
 
-  const onDrop = async (event: DragDropEvent<ClientTile>) => {
+  const onDrop = async (event: DragDropEvent<Tile>) => {
     const { state } = event;
 
     // Don't add to collections here
@@ -110,6 +112,7 @@ export default function GridItem({
 
     try {
       await editor.createCollection({
+        collectionId,
         tileIds: [placementId, state.data.placementId],
       });
     } catch (error) {

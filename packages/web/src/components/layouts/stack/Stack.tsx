@@ -6,18 +6,23 @@ import useLayoutEditor from "@/hooks/useLayoutEditor";
 import { useDragId } from "@/context/drag";
 import { classNames } from "@/utils/css";
 import type StackView from "@/elements/stack/StackView";
-import type { ClientTile } from "@/types/tiles";
+import type { Tile } from "@/types/layout";
 
 interface StackProps {
-  id?: string;
-  items: ClientTile[];
+  collectionId: string;
+  items: Tile[];
+  Placeholder?: React.ComponentType<Pick<StackProps, "collectionId">>;
 }
 
-export default function Stack({ id, items }: StackProps) {
+export default function Stack({
+  collectionId,
+  items,
+  Placeholder,
+}: StackProps) {
   const ref = useRef<StackView>(null);
   const [open, setOpen] = useState(false);
   const isEditable = useEditable();
-  useLayoutEditor(ref, id);
+  useLayoutEditor(ref, collectionId);
   const dragId = useDragId();
 
   const onToggle = ({ newState }: ToggleEvent) => setOpen(newState === "open");
@@ -30,6 +35,10 @@ export default function Stack({ id, items }: StackProps) {
       ontoggle={onToggle}
       data-drop={isEditable ? "true" : undefined}
     >
+      {items.length === 0 && Placeholder ? (
+        <Placeholder collectionId={collectionId} />
+      ) : null}
+
       {items.map((item, i) => (
         <GridItem
           className={classNames(
@@ -38,6 +47,7 @@ export default function Stack({ id, items }: StackProps) {
           )}
           key={item.id}
           id={item.id}
+          collectionId={collectionId}
           placementId={item.placementId}
           rows={1}
           columns={1}
