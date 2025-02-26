@@ -20,11 +20,12 @@
   grid-template-columns: repeat(var(--columns), 1fr);
   grid-auto-rows: max-content;
   gap: var(--gap);
+  min-height: var(--grid-size);
 }
 
 body[data-drag] .grid {
-  margin: -160px;
-  padding: 160px;
+  margin: 0 -160px;
+  padding: 0 160px;
 }
 
 @container main (min-width: 100px) {
