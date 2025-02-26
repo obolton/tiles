@@ -1,104 +1,112 @@
-export type SubscribeCallback<Value> = (store: BaseStore<Value>) => void;
-export type UnsubscribeCallback = () => boolean;
-export type Transform<Input, Value> = (input: Input) => Value;
-
-export interface StoreInterface<Value> {
-  value: Value;
-  subscribe(callback: SubscribeCallback<Value>): UnsubscribeCallback;
-  unsubscribe(callback: SubscribeCallback<Value>): void;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface StoreInterface<T = any> {
+  value: T;
+  subscribe(callback: SubscribeCallback<T>): UnsubscribeCallback;
+  unsubscribe(callback: SubscribeCallback<T>): void;
   disconnect(): void;
 }
 
+export type SubscribeCallback<T> = (store: StoreInterface<T>) => void;
+export type UnsubscribeCallback = () => boolean;
+
+export type StoreValue<T extends StoreInterface> = T["value"];
+export type StoreValues<T extends StoreInterface[]> = {
+  [K in keyof T]: StoreValue<T[K]>;
+};
+
 export abstract class BaseStore<Value> implements StoreInterface<Value> {
-  readonly #subscribers: Set<SubscribeCallback<Value>>;
+  protected readonly subscribers = new Set<(store: this) => void>();
 
-  constructor() {
-    this.#subscribers = new Set<SubscribeCallback<Value>>();
-  }
-
-  subscribe(callback: SubscribeCallback<Value>): UnsubscribeCallback {
-    this.#subscribers.add(callback);
+  subscribe(callback: (store: this) => void) {
+    this.subscribers.add(callback);
     return () => this.unsubscribe(callback);
   }
 
-  unsubscribe(callback: SubscribeCallback<Value>) {
-    return this.#subscribers.delete(callback);
+  unsubscribe(callback: (store: this) => void) {
+    return this.subscribers.delete(callback);
   }
 
   disconnect() {
-    this.#subscribers.clear();
+    this.subscribers.clear();
   }
 
   protected notify() {
-    for (const subscriber of this.#subscribers) {
+    for (const subscriber of this.subscribers) {
       subscriber(this);
     }
   }
 
   abstract get value(): Value;
 
-  derive<DerivedValue>(transform: Transform<[typeof this], DerivedValue>) {
-    return new DerivedStore([this], transform);
+  derive<DerivedValue>(transform: (input: Value) => DerivedValue) {
+    return new DerivedStore<[this], DerivedValue>([this], transform);
   }
 }
 
 export class Store<Value> extends BaseStore<Value> {
-  #value: Value;
+  private cachedValue: Value;
 
   constructor(value: Value) {
     super();
-    this.#value = value;
+    this.cachedValue = value;
   }
 
   get value() {
-    return this.#value;
+    return this.cachedValue;
   }
 
   set value(value: Value) {
-    if (value === this.#value) {
+    if (value === this.cachedValue) {
       return;
     }
-    this.#value = value;
+    this.cachedValue = value;
     this.notify();
   }
 }
 
+type Transform<Input extends StoreInterface[], Value> = (
+  ...values: StoreValues<Input>
+) => Value;
+
 export class DerivedStore<
-  Input extends StoreInterface<any>[],
+  Input extends StoreInterface[],
   Value,
 > extends BaseStore<Value> {
-  readonly #input: Input;
-  readonly #transform: Transform<Input, Value>;
-  readonly #unsubscribeFromInput: UnsubscribeCallback[];
+  private readonly input: Input;
+  private readonly transform: Transform<Input, Value>;
+  private readonly unsubscribeCallbacks: UnsubscribeCallback[];
 
-  #value?: Value;
-  #stale: boolean;
+  private cachedValue?: Value;
+  private stale: boolean;
 
   constructor(input: Input, transform: Transform<Input, Value>) {
     super();
-    this.#input = input;
-    this.#transform = transform;
-    this.#stale = true;
-    this.#unsubscribeFromInput = this.#input.map((input) =>
-      input.subscribe(() => this.#markAsStale()),
+    this.input = input;
+    this.transform = transform;
+    this.stale = true;
+    this.unsubscribeCallbacks = this.input.map((store) =>
+      store.subscribe(() => this.markAsStale()),
     );
   }
 
-  #markAsStale() {
-    this.#stale = true;
+  private markAsStale() {
+    this.stale = true;
     this.notify();
   }
 
   get value() {
-    if (this.#stale) {
-      this.#value = this.#transform(this.#input);
-      this.#stale = false;
+    if (this.stale) {
+      const values = this.input.map(
+        (input) => input.value,
+      ) as StoreValues<Input>;
+      this.cachedValue = this.transform(...values);
+      this.stale = false;
     }
-    return this.#value as Value;
+    return this.cachedValue as Value;
   }
 
   disconnect() {
     super.disconnect();
-    this.#unsubscribeFromInput.forEach((unsubscribe) => unsubscribe());
+    this.unsubscribeCallbacks.forEach((unsubscribe) => unsubscribe());
   }
 }
