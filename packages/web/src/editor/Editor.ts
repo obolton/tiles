@@ -7,7 +7,8 @@ import { Store, DerivedStore } from "@/utils/stores";
 import type { FontId } from "@/config/fonts";
 import type { Theme } from "@/types/pages";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
-import type { ClientTile, ClientCollectionTile } from "@/types/tiles";
+import type { ClientTile, ClientCollection } from "@/types/tiles";
+import type { Layout, LeafTile } from "@/types/layout";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 
 type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
@@ -16,30 +17,42 @@ type OmitPageId<T extends { pageId: string }> = Omit<T, "pageId">;
 
 const IS_SERVER = import.meta.env.SSR;
 
-function getTilesByPlacementId(tiles: ClientTile[]) {
-  return tiles.reduce((map, tile) => {
-    map.set(tile.placementId, tile);
-    if (tile.type === "COLLECTION") {
-      tile.items.forEach((childItem) =>
-        map.set(childItem.placementId, childItem),
-      );
-    }
-    return map;
-  }, new Map<string, ClientTile>());
+function getLayout([sections, tiles]: [
+  Store<ClientCollection[]>,
+  Store<ClientTile[]>,
+]): Layout {
+  return sections.value.map((section) => ({
+    ...section,
+    tiles: tiles.value
+      .filter((tile) => tile.parentCollectionId === section.id)
+      .map((tile) =>
+        tile.type === "COLLECTION"
+          ? {
+              ...tile,
+              tiles: tiles.value.filter(
+                (t): t is LeafTile =>
+                  t.type !== "COLLECTION" && t.parentCollectionId === tile.id,
+              ),
+            }
+          : tile,
+      ),
+  }));
 }
 
 export default class Editor {
   readonly pageId: string;
+  readonly sections: Store<ClientCollection[]>;
   readonly tiles: Store<ClientTile[]>;
-  readonly tilesByPlacementId: DerivedStore<
-    ClientTile[],
-    Map<string, ClientTile>
+  readonly layout: DerivedStore<
+    [typeof this.sections, typeof this.tiles],
+    Layout
   >;
 
   constructor(page: Page) {
     this.pageId = page.id;
+    this.sections = new Store(page.collections);
     this.tiles = new Store(page.tiles);
-    this.tilesByPlacementId = this.tiles.derive(getTilesByPlacementId);
+    this.layout = new DerivedStore([this.sections, this.tiles], getLayout);
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();
@@ -122,6 +135,14 @@ export default class Editor {
     return client.pages.delete.mutate({ pageId: this.pageId });
   }
 
+  getCurrentCollectionId() {
+    const section = this.sections.value[0];
+    if (!section) {
+      throw new Error("Page has no sections");
+    }
+    return section.id;
+  }
+
   async deleteTile(id: string, transition?: (commit: () => void) => void) {
     const result = await client.tiles.delete.mutate({
       pageId: this.pageId,
@@ -158,46 +179,21 @@ export default class Editor {
   }
 
   private addTile(tile: ClientTile) {
-    if (tile.parentCollectionId) {
-      this.tiles.value = this.tiles.value.map((t) =>
-        t.type === "COLLECTION" && t.id === tile.parentCollectionId
-          ? { ...t, items: t.items.concat(tile) }
-          : t,
-      );
-    } else {
-      this.tiles.value = this.tiles.value.concat(tile);
-    }
+    this.tiles.value = this.tiles.value.concat(tile);
   }
 
   removeTile(placementId: string) {
-    this.tiles.value = this.tiles.value
-      .filter((tile) => tile.placementId !== placementId)
-      .map((tile) => {
-        if (tile.type === "COLLECTION") {
-          return {
-            ...tile,
-            items: tile.items.filter(
-              (item) => item.placementId !== placementId,
-            ),
-          };
-        }
-        return tile;
-      });
+    this.tiles.value = this.tiles.value.filter(
+      (tile) => tile.placementId !== placementId,
+    );
   }
 
-  private updateTileData(
-    tile: Omit<
-      ClientTile,
-      | "type"
-      | "placementId"
-      | "rows"
-      | "columns"
-      | "position"
-      | "parentCollectionId"
-    >,
-  ) {
+  private updateTileData(tile: Partial<Omit<ClientTile, "type">>) {
     this.tiles.value = this.tiles.value.map((entry) =>
-      entry.id === tile.id ? { ...entry, ...tile } : entry,
+      (tile.id && entry.id === tile.id) ||
+      (tile.placementId && entry.placementId === tile.placementId)
+        ? { ...entry, ...tile }
+        : entry,
     );
   }
 
@@ -377,47 +373,27 @@ export default class Editor {
     collectionId,
     afterId,
   }: OmitPageId<AppRouterInputs["tiles"]["move"]>) {
-    const tile = this.tilesByPlacementId.value.get(id);
-
+    const tile = this.tiles.value.find((tile) => tile.id === id);
     if (!tile) {
-      throw new Error(`Invalid tile ID: ${id}`);
+      throw new Error(`Tile not found: ${id}`);
     }
 
-    const fromCollectionId = tile.parentCollectionId;
-    const tiles = Array.from(this.tiles.value);
+    const index = this.tiles.value.indexOf(tile);
+    const tiles = this.tiles.value.toSpliced(index, 1);
 
-    // Remove tile from old collection
-    if (fromCollectionId) {
-      const index = tiles.findIndex((t) => t.id === fromCollectionId);
-      const collection = tiles[index] as ClientCollectionTile;
-      tiles[index] = {
-        ...collection,
-        items: collection.items.filter((t) => t.id !== tile.id),
-      };
+    if (afterId) {
+      const afterIndex = tiles.findIndex(
+        (tile) => tile.placementId === afterId,
+      );
+      if (afterIndex < 0) {
+        throw new Error(`Tile not found: ${afterId}`);
+      }
+      tiles.splice(afterIndex + 1, 0, {
+        ...tile,
+        parentCollectionId: collectionId,
+      });
     } else {
-      const index = tiles.indexOf(tile);
-      tiles.splice(index, 1);
-    }
-
-    // Add tile to new collection
-    if (collectionId) {
-      const index = tiles.findIndex((t) => t.id === collectionId);
-      const collection = tiles[index] as ClientCollectionTile;
-      const childIndex = afterId
-        ? collection.items.findIndex((t) => t.placementId === afterId) + 1
-        : 0;
-      tiles[index] = {
-        ...collection,
-        items: collection.items.toSpliced(childIndex, 0, {
-          ...tile,
-          parentCollectionId: collectionId,
-        }),
-      };
-    } else {
-      const index = afterId
-        ? tiles.findIndex((t) => t.placementId === afterId) + 1
-        : 0;
-      tiles.splice(index, 0, { ...tile, parentCollectionId: null });
+      tiles.splice(0, 0, { ...tile, parentCollectionId: collectionId });
     }
 
     this.tiles.value = tiles;
@@ -428,8 +404,8 @@ export default class Editor {
     rows,
     columns,
   }: OmitPageId<AppRouterInputs["tiles"]["resize"]>) {
-    this.tiles.value = this.tiles.value.map((t) =>
-      t.id === id ? { ...t, columns, rows } : t,
+    this.tiles.value = this.tiles.value.map((entry) =>
+      entry.id === id ? { ...entry, rows, columns } : entry,
     );
   }
 }
