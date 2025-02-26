@@ -13,9 +13,9 @@ export default function Placeholder({
   actions,
 }: PlaceholderProps) {
   return (
-    <section className={classNames(styles.placeholder, className)}>
+    <div className={classNames(styles.placeholder, className)}>
       {children ? <p>{children}</p> : null}
       {actions ? <div className={styles.actions}>{actions}</div> : null}
-    </section>
+    </div>
   );
 }
