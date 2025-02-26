@@ -25,7 +25,7 @@ export default function EditablePage({
 }: EditablePage) {
   const editorRef = useRef<Editor>(null);
   editorRef.current ??= new Editor(page);
-  const tiles = useStore(editorRef.current.tiles);
+  const layout = useStore(editorRef.current.layout);
   const dragId = useDragListener();
 
   return (
@@ -42,7 +42,7 @@ export default function EditablePage({
         />
 
         <main>
-          <PageContents items={tiles} />
+          <PageContents layout={layout} />
         </main>
 
         <ModalLauncher />

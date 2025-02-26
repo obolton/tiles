@@ -23,7 +23,7 @@ export default function EditableProfilePage({
 }: EditableProfilePageProps) {
   const editorRef = useRef<Editor>(null);
   editorRef.current ??= new Editor(user.profilePage);
-  const tiles = useStore(editorRef.current.tiles);
+  const layout = useStore(editorRef.current.layout);
   const dragId = useDragListener();
 
   return (
@@ -38,7 +38,7 @@ export default function EditableProfilePage({
         />
 
         <main>
-          <PageContents items={tiles} />
+          <PageContents layout={layout} />
         </main>
 
         <ModalLauncher />
