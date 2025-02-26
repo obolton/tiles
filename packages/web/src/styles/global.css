@@ -165,6 +165,7 @@ infinite-scroll {
 }
 
 resize-item {
+  display: block;
   position: relative;
 }
 
