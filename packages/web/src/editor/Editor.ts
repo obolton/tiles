@@ -94,12 +94,18 @@ export default class Editor {
         file: item.getAsFile(),
         onConfirm: async (result) => {
           const imageKey = await uploadMedia(result.image, "image");
-          await this.createImage({ imageKey });
+          await this.createImage({
+            collectionId: this.getCurrentCollectionId(),
+            imageKey,
+          });
         },
       });
     } else if (isUriList(item)) {
       item.getAsString(async (url) => {
-        await this.createLink({ url });
+        await this.createLink({
+          collectionId: this.getCurrentCollectionId(),
+          url,
+        });
       });
     }
   }
