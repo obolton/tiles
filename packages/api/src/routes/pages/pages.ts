@@ -273,6 +273,11 @@ export async function createPage(
       authorId: user.id,
       published: false,
       title,
+      collections: {
+        create: {
+          type: "SECTION",
+        },
+      },
     },
     select: {
       id: true,
