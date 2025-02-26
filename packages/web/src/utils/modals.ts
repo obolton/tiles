@@ -13,7 +13,7 @@ export interface ModalProps<T = unknown> extends ModalOptions<T> {
 
 export class ModalEvent<T extends object> extends Event {
   constructor(
-    type: "modal:show" | "modal:remove",
+    type: "showmodal" | "hidemodal",
     public readonly modal?: string,
     public readonly callback?: (result: T | undefined) => void,
     public readonly options?: ModalOptions<T>,
@@ -52,7 +52,7 @@ export async function showModal<T extends object>(
     if (!registry.has(modal)) {
       return reject(new Error(`Unknown modal: ${modal}`));
     }
-    const event = new ModalEvent<T>("modal:show", modal, resolve, options);
+    const event = new ModalEvent<T>("showmodal", modal, resolve, options);
     window.dispatchEvent(event);
   });
 }

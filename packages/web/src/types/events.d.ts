@@ -1,12 +1,13 @@
 import type { DragDropEvent } from "@/utils/drag";
 import type { TileResizeEvent, TileEvent } from "@/utils/events";
+import type { ModalEvent } from "@/utils/modals";
 
 declare global {
   interface WindowEventHandlersEventMap {
     "state:update": StorageEvent;
     "state:update-persistent": StorageEvent;
-    "modal:show": import("@/utils/modals").ModalEvent<unknown>;
-    "modal:remove": import("@/utils/modals").ModalEvent<unknown>;
+    showmodal: ModalEvent<unknown>;
+    hidemodal: ModalEvent<unknown>;
     "dnd-dragstart": DragDropEvent;
     "dnd-dragend": DragDropEvent;
     "dnd-dragenter": DragDropEvent;

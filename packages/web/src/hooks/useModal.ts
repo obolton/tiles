@@ -10,16 +10,16 @@ export default function useModal<T>() {
 
   useEffect(() => {
     const abort = new AbortController();
-    window.addEventListener(
-      "modal:show",
       ({ modal, options, callback }) => {
+    addEventListener(
+      "showmodal",
         if (modal) {
           setValue({ modal, options, callback });
         }
       },
       { signal: abort.signal },
     );
-    window.addEventListener("modal:remove", () => setValue(null), {
+    addEventListener("hidemodal", () => setValue(null), {
       signal: abort.signal,
     });
     return () => abort.abort();

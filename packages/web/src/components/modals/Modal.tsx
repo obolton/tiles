@@ -60,7 +60,7 @@ export default function Modal({
       )
         .catch(console.error)
         .finally(() =>
-          dialogRef.current?.dispatchEvent(new ModalEvent("modal:remove")),
+          dialogRef.current?.dispatchEvent(new ModalEvent("hidemodal")),
         );
     }
   }, [open]);
@@ -75,7 +75,7 @@ export default function Modal({
     [onClose],
   );
 
-  const click = useCallback(
+  const onClick = useCallback(
     (event: React.MouseEvent) => {
       if (event.currentTarget === dialogRef.current && mouseDownOutside) {
         onClose();
@@ -84,7 +84,7 @@ export default function Modal({
     [mouseDownOutside, onClose],
   );
 
-  const mouseDown = useCallback(
+  const onMouseDown = useCallback(
     (event: React.MouseEvent) =>
       setMouseDownOutside(event.target === dialogRef.current),
     [],
@@ -97,8 +97,8 @@ export default function Modal({
       style={style}
       className={styles.modal}
       onKeyDown={keyDown}
-      onClick={click}
-      onMouseDown={mouseDown}
+      onClick={onClick}
+      onMouseDown={onMouseDown}
     >
       {children}
     </dialog>
