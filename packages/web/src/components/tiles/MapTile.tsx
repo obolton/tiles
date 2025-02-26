@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from "react";
+import { Fragment, useCallback, useRef } from "react";
 import useEditable from "@/hooks/useEditable";
 import Tile from "./Tile";
 import addPlaceIcon from "@/icons/add-place.svg";
@@ -7,17 +7,20 @@ import type { ClientMapTile } from "@/types/tiles";
 import type MapEvent from "@/elements/maps/MapEvent";
 import { showModal } from "@/utils/modals";
 import { useEditor } from "@/context/editor";
+import type MapView from "@/elements/maps/MapView";
 import type MapMarker from "@/elements/maps/MapMarker";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 
 type MapTileProps = ClientMapTile;
 
 export default function MapTile({ id, places }: MapTileProps) {
+  const ref = useRef<MapView>(null);
   const editor = useEditor();
   const isEditable = useEditable();
   const handleAddPlace = useCallback(
     () =>
       showModal<PlaceModalResult>("MAP", {
+        boundingBox: ref.current?.getBoundingBox(),
         async onConfirm({ place }) {
           await editor.addPlace({ id, place });
         },
@@ -54,6 +57,7 @@ export default function MapTile({ id, places }: MapTileProps) {
     <pop-out class={styles["pop-out"]} expandable="expandable" tabindex="0">
       <Tile border="inside">
         <map-view
+          ref={ref}
           class={styles.map}
           movable
           legend

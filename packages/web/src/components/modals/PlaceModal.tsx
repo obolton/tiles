@@ -14,18 +14,26 @@ export type PlaceModalResult = {
   place: Place;
 };
 
-type PlaceModalProps = ModalProps<PlaceModalResult>;
+interface PlaceModalProps extends ModalProps<PlaceModalResult> {
+  boundingBox?: [number, number, number, number];
+}
 
-export default function PlaceModal({ cancel, confirm }: PlaceModalProps) {
+export default function PlaceModal({
+  boundingBox,
+  cancel,
+  confirm,
+}: PlaceModalProps) {
   const [isPending, startTransition] = useTransition();
   const [location, setLocation] = useState<GeolocationPosition | null>(null);
   const [results, setResults] = useState<Place[]>([]);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(setLocation, (error) =>
-      console.error(error),
-    );
-  }, []);
+    if (!boundingBox) {
+      navigator.geolocation.getCurrentPosition(setLocation, (error) =>
+        console.error(error),
+      );
+    }
+  }, [boundingBox]);
 
   const search = useDebouncedCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,11 +42,18 @@ export default function PlaceModal({ cancel, confirm }: PlaceModalProps) {
         setResults([]);
         return;
       }
-      const results = await client.places.search.mutate({
-        query,
-        lat: location?.coords.latitude ?? 0,
-        long: location?.coords.longitude ?? 0,
-      });
+      const results = await client.places.search.mutate(
+        boundingBox
+          ? {
+              query,
+              boundingBox,
+            }
+          : {
+              query,
+              lat: location?.coords.latitude ?? 0,
+              long: location?.coords.longitude ?? 0,
+            },
+      );
       setResults(results);
     },
     500,
