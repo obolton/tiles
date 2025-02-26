@@ -74,6 +74,13 @@ const PAGE_FIELDS = {
       imageUrl: true,
     },
   },
+  collections: {
+    select: COLLECTION_FIELDS,
+    where: { type: "SECTION" },
+    orderBy: {
+      createdAt: "asc",
+    },
+  },
   tiles: {
     select: TILES_FIELDS,
     where: { parentCollectionId: null },
