@@ -30,10 +30,10 @@ export default function ModalLauncher() {
   const ModalComponent = getModal(modal.modal);
 
   return (
-    <Modal open={open} onClose={cancel} originRect={modal?.options?.origin}>
-      <Suspense>
+    <Suspense>
+      <Modal open={open} onClose={cancel} originRect={modal?.options?.origin}>
         <ModalComponent cancel={cancel} confirm={confirm} {...modal.options} />
-      </Suspense>
-    </Modal>
+      </Modal>
+    </Suspense>
   );
 }
