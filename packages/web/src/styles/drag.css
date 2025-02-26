@@ -10,13 +10,7 @@
   initial-value: 0;
 }
 
-[data-draggable] {
-  cursor: move;
-  user-select: none;
-  -webkit-touch-callout: none;
-}
-
-[data-draggable][data-drag-preview] {
+#drag-preview {
   position: fixed;
   contain: size layout style;
   top: 0;

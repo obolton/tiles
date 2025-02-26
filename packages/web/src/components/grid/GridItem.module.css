@@ -24,9 +24,15 @@
   }
 }
 
+.draggable {
+  cursor: move;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
 /* Drag handle */
 body:not([data-drag]) .draggable:not(:has([open])),
-.item[data-drag-preview] {
+:global(#drag-preview).item {
   &:hover {
     outline-color: transparent;
   }
@@ -46,7 +52,7 @@ body:not([data-drag]) .draggable:not(:has([open])),
 
   &:hover::before,
   &:focus-within::before,
-  &[data-drag-preview]::before {
+  &:global(#drag-preview)::before {
     opacity: 0.6;
     inset: -24px -3px -3px;
   }
