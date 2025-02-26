@@ -1,7 +1,7 @@
 import { useCallback, useSyncExternalStore } from "react";
-import type { BaseStore, SubscribeCallback } from "@/utils/stores";
+import type { StoreInterface, SubscribeCallback } from "@/utils/stores";
 
-export default function useStore<Value>(store: BaseStore<Value>) {
+export default function useStore<Value>(store: StoreInterface<Value>) {
   const subscribe = useCallback(
     (callback: SubscribeCallback<Value>) => store.subscribe(callback),
     [store],
