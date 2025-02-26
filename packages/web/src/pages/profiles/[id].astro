@@ -35,6 +35,6 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
   hue={user.profilePage.hue}
   font={user.profilePage.font}
 >
-  <EditableProfilePage user={user} client:edit />
   <script src="@/init.ts"></script>
+  <EditableProfilePage user={user} client:edit />
 </Page>
