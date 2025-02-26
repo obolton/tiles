@@ -56,7 +56,7 @@ export default function PlaceModal({
       );
       setResults(results);
     },
-    500,
+    300,
     [location],
   );
 
