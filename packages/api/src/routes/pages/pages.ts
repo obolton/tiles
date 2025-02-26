@@ -83,7 +83,6 @@ const PAGE_FIELDS = {
   },
   tiles: {
     select: TILES_FIELDS,
-    where: { parentCollectionId: null },
     orderBy: {
       position: "asc",
     },
@@ -104,7 +103,13 @@ export function formatTile({
   parentCollectionId,
   ...tile
 }: TileWithData): ClientTile {
-  const base = { placementId: id, position, rows, columns, parentCollectionId };
+  const base = {
+    placementId: id,
+    position,
+    rows,
+    columns,
+    parentCollectionId,
+  };
   const { image, video, text, map, link, pageLink, event, collection } = tile;
 
   if (image) {
@@ -167,11 +172,9 @@ export function formatTile({
 
   if (collection) {
     return {
-      type: "COLLECTION",
       ...base,
       ...collection,
-      // @ts-expect-error Incompatibility due to collections missing
-      items: collection.items.map(formatTile),
+      type: "COLLECTION",
     };
   }
 

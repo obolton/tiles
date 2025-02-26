@@ -87,7 +87,7 @@ export async function moveTile({
         transaction.tile.updateMany({
           where: {
             pageId,
-            parentCollectionId: null,
+            parentCollectionId: collectionId,
             id: { not: id },
             position: { gte: position },
           },
@@ -154,7 +154,7 @@ export async function deleteTile({ pageId, id }: DeleteTileSchema) {
 
 type CreateTilePlacement = {
   pageId: string;
-  parentCollectionId?: string;
+  parentCollectionId: string;
   type: TileType;
   columns?: number;
   rows?: number;
@@ -189,7 +189,8 @@ export async function createTilePlacement(
   const position = await transaction.tile.count({
     where: { pageId },
   });
-  const placement = await transaction.tile.create({
+
+  const { id: placementId, ...tile } = await transaction.tile.create({
     data: {
       pageId,
       parentCollectionId,
@@ -214,11 +215,5 @@ export async function createTilePlacement(
       parentCollectionId: true,
     },
   });
-  return {
-    placementId: placement.id,
-    position: placement.position,
-    columns: placement.columns,
-    rows: placement.rows,
-    parentCollectionId: placement.parentCollectionId,
-  };
+  return { ...tile, placementId };
 }

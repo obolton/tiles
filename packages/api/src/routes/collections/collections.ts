@@ -1,13 +1,5 @@
-import prisma from "@/database/prisma.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
-import { TEXT_FIELDS } from "../text/text.ts";
-import { IMAGE_FIELDS } from "../images/images.ts";
-import { MAP_FIELDS } from "../maps/maps.ts";
-import { VIDEO_FIELDS } from "../videos/videos.ts";
-import { LINK_FIELDS } from "../links/links.ts";
-import { PAGE_LINK_FIELDS } from "../pageLinks/pageLinks.ts";
-import { EVENT_FIELDS } from "../events/events.ts";
-import { formatTile } from "../pages/pages.ts";
 import type { Prisma } from "@prisma/client";
 import type {
   CreateCollectionSchema,
@@ -18,47 +10,14 @@ import { cleanSingleLineInput } from "@/utils/text.ts";
 export const COLLECTION_FIELDS = {
   id: true,
   title: true,
-  block: true,
-  items: {
-    select: {
-      id: true,
-      type: true,
-      columns: true,
-      rows: true,
-      position: true,
-      parentCollectionId: true,
-      image: {
-        select: IMAGE_FIELDS,
-      },
-      video: {
-        select: VIDEO_FIELDS,
-      },
-      text: {
-        select: TEXT_FIELDS,
-      },
-      map: {
-        select: MAP_FIELDS,
-      },
-      link: {
-        select: LINK_FIELDS,
-      },
-      pageLink: {
-        select: PAGE_LINK_FIELDS,
-      },
-      event: {
-        select: EVENT_FIELDS,
-      },
-    },
-    orderBy: {
-      position: "asc",
-    },
-  },
-} as const satisfies Prisma.CollectionSelect;
+  type: true,
+} as const satisfies Prisma.CollectionSelect<ExtensionArgs>;
 
 export async function createCollection({
   pageId,
+  collectionId: parentCollectionId,
+  type,
   title,
-  block,
   tileIds = [],
 }: CreateCollectionSchema) {
   return prisma.$transaction(async (transaction) => {
@@ -75,9 +34,9 @@ export async function createCollection({
     const { id: collectionId } = await transaction.collection.create({
       data: {
         pageId,
+        type,
         title:
           typeof title === "string" ? cleanSingleLineInput(title) : undefined,
-        block,
       },
       select: { id: true },
     });
@@ -101,6 +60,7 @@ export async function createCollection({
       {
         pageId,
         type: "COLLECTION",
+        parentCollectionId,
         collectionId,
       },
       transaction,
@@ -112,11 +72,9 @@ export async function createCollection({
     });
 
     return {
-      type: "COLLECTION" as const,
       ...collection,
-      // @ts-expect-error Incompatibility due to collections missing
-      items: collection.items.map(formatTile),
       ...placement,
+      type: "COLLECTION" as const,
     };
   });
 }
@@ -125,7 +83,6 @@ export async function updateCollection({
   pageId,
   id,
   title,
-  block,
 }: UpdateCollectionSchema) {
   const collection = await prisma.collection.update({
     where: {
@@ -135,14 +92,11 @@ export async function updateCollection({
     data: {
       title:
         typeof title === "string" ? cleanSingleLineInput(title) : undefined,
-      block,
     },
     select: COLLECTION_FIELDS,
   });
   return {
-    type: "COLLECTION" as const,
     ...collection,
-    // @ts-expect-error Incompatibility due to collections missing
-    items: collection.items.map(formatTile),
+    type: "COLLECTION" as const,
   };
 }
