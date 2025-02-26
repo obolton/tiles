@@ -17,19 +17,16 @@ type OmitPageId<T extends { pageId: string }> = Omit<T, "pageId">;
 
 const IS_SERVER = import.meta.env.SSR;
 
-function getLayout([sections, tiles]: [
-  Store<ClientCollection[]>,
-  Store<ClientTile[]>,
-]): Layout {
-  return sections.value.map((section) => ({
+function getLayout(sections: ClientCollection[], tiles: ClientTile[]): Layout {
+  return sections.map((section) => ({
     ...section,
-    tiles: tiles.value
+    tiles: tiles
       .filter((tile) => tile.parentCollectionId === section.id)
       .map((tile) =>
         tile.type === "COLLECTION"
           ? {
               ...tile,
-              tiles: tiles.value.filter(
+              tiles: tiles.filter(
                 (t): t is LeafTile =>
                   t.type !== "COLLECTION" && t.parentCollectionId === tile.id,
               ),
