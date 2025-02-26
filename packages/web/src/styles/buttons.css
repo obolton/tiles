@@ -79,7 +79,6 @@ a.secondary {
 
 button.floating,
 a.floating {
-  position: relative;
   width: 44px;
   height: 44px;
   display: flex;
@@ -151,11 +150,8 @@ form[data-pending] button[type="submit"] {
     min-height: 100%;
     border-radius: 50%;
     aspect-ratio: 1;
-    background: radial-gradient(
-        closest-side,
-        rgb(255 255 255) 0%,
-        transparent 60%
-      ),
+    background:
+      radial-gradient(closest-side, rgb(255 255 255) 0%, transparent 60%),
       conic-gradient(
         oklch(80% 90% 0deg),
         oklch(80% 90% 30deg),
