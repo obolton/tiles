@@ -1,0 +1,52 @@
+.section {
+  position: relative;
+  width: 100%;
+  grid-column: 1 / -1;
+  margin: 64px 0;
+  container: section / inline-size;
+}
+
+.title {
+  font-family: var(--font);
+  padding: 4px 8px;
+  margin: 0 0 16px;
+  min-width: 200px;
+  overflow-wrap: break-word;
+}
+
+.textarea {
+  display: block;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 600;
+  line-height: 2rlh;
+  color: var(--text-color);
+  background: none;
+  border: none;
+  border-radius: var(--border-radius);
+}
+
+.placeholder {
+  grid-column: 1 / -1;
+  min-height: var(--grid-size);
+}
+
+.options {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+@media (width >= 1200px) {
+  .title {
+    position: absolute;
+    top: 0;
+    right: 100%;
+    margin: 0 16px 0 0;
+    max-width: 300px;
+    text-align: right;
+  }
+
+  .options {
+    right: -56px;
+  }
+}
