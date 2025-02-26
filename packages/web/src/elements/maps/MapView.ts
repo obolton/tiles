@@ -235,6 +235,16 @@ export default class MapView extends HTMLElement {
     }
     marker.focus();
   }
+
+  getBoundingBox(): [number, number, number, number] {
+    if (!this.map) {
+      throw new Error("Map is not initialized");
+    }
+    const bounds = this.map.getBounds();
+    const sw = bounds.getSouthWest();
+    const ne = bounds.getNorthEast();
+    return [sw.lng, sw.lat, ne.lng, ne.lat];
+  }
 }
 
 customElements.define("map-view", MapView);
