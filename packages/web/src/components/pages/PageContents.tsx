@@ -1,25 +1,30 @@
-import Grid from "@/components/layouts/grid/Grid";
+import Section from "@/components/layouts/section/Section";
 import Placeholder from "@/components/placeholder/Placeholder";
-import TileButtons from "@/components/menu/TileButtons";
 import useEditable from "@/hooks/useEditable";
-import styles from "./PageContents.module.css";
-import type { ClientTile } from "@/types/tiles";
+import type { Layout } from "@/types/layout";
 
 interface PageContentsProps {
-  items: ClientTile[];
+  layout: Layout;
 }
 
-export default function PageContents({ items }: PageContentsProps) {
+export default function PageContents({ layout }: PageContentsProps) {
   const isEditable = useEditable();
 
-  if (items.length === 0) {
+  if (layout.length === 0) {
     return (
-      <Placeholder actions={isEditable ? <TileButtons /> : undefined}>
+      <Placeholder>
         {isEditable
-          ? "There’s nothing here yet. Get starting by adding some content."
+          ? "There’s nothing here yet. Get starting by adding a section."
           : "This page is empty."}
       </Placeholder>
     );
   }
-  return <Grid className={styles.grid} items={items} />;
+
+  return (
+    <>
+      {layout.map((section) => (
+        <Section key={section.id} section={section} />
+      ))}
+    </>
+  );
 }
