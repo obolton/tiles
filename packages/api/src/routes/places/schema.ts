@@ -1,10 +1,16 @@
 import { z } from "zod";
 
-export const SearchPlacesSchema = z.object({
-  query: z.string().min(1),
-  lat: z.number(),
-  long: z.number(),
-});
+export const SearchPlacesSchema = z.union([
+  z.object({
+    query: z.string().min(1),
+    lat: z.number(),
+    long: z.number(),
+  }),
+  z.object({
+    query: z.string().min(1),
+    boundingBox: z.array(z.number()).length(4),
+  }),
+]);
 export type SearchPlacesSchema = z.infer<typeof SearchPlacesSchema>;
 
 export const HereAutosuggestQueryResults = z.object({
