@@ -7,13 +7,13 @@ export default function useDragListener() {
 
   useEffect(() => {
     const abortController = new AbortController();
-    window.addEventListener(
+    addEventListener(
       "dnd-dragstart",
       (event: DragDropEvent<ClientTile>) =>
         setDragId(event.state.data?.placementId ?? null),
-      { signal: abortController.signal },
+      { signal: abortController.signal, passive: true },
     );
-    window.addEventListener("dnd-dragend", () => setDragId(null), {
+    addEventListener("dnd-dragend", () => setDragId(null), {
       signal: abortController.signal,
     });
     return () => abortController.abort();
