@@ -4,7 +4,7 @@ import { viewTransition } from "./transitions";
 const DRAG_THRESHOLD = 10; // px
 const SCROLL_MARGIN = 50; // px from viewport edge
 const SCROLL_INTERVAL = 16; // ms
-const MOVE_DEBOUNCE_INTERVAL = 100; // ms
+const DRAG_EVENT_INTERVAL = 300; // ms
 const MAX_SCROLL_SPEED = 20; // px per scroll
 const LONG_PRESS_DURATION = 500; // ms
 
@@ -54,30 +54,32 @@ export class DragDropEvent<T = never> extends Event {
 export class DragState<T> {
   readonly element: HTMLElement;
 
-  public data?: T;
-  public destination?: HTMLElement | null;
+  data?: T;
+  destination?: HTMLElement | null;
 
-  private readonly elementRect: DOMRect;
-  private readonly fromPoint: DOMPoint;
+  private readonly startX: number;
+  private readonly startY: number;
+  private readonly originX: number;
+  private readonly originY: number;
   private readonly abortController = new AbortController();
 
   private isDragging = false;
   private dragElement?: HTMLElement;
   private dropTarget?: HTMLElement;
   private longPressTimeout?: ReturnType<typeof setTimeout>;
-  private moveTimeout?: ReturnType<typeof setTimeout>;
+  private dragInterval?: ReturnType<typeof setInterval>;
   private scrollInterval?: ReturnType<typeof setInterval>;
   private scrollSpeed = 0;
-  private pointerOffsetX = 0;
-  private pointerOffsetY = 0;
+  private pendingDragEvent: { x: number; y: number } | null = null;
 
-  constructor(element: HTMLElement, fromPoint: DOMPoint) {
+  constructor(element: HTMLElement, startX: number, startY: number) {
     this.element = element;
-    this.elementRect = element.getBoundingClientRect();
-    this.fromPoint = fromPoint;
+    this.startX = startX;
+    this.startY = startY;
 
-    this.pointerOffsetX = this.fromPoint.x - this.elementRect.x;
-    this.pointerOffsetY = this.fromPoint.y - this.elementRect.y;
+    const rect = element.getBoundingClientRect();
+    this.originX = startX - rect.x;
+    this.originY = startY - rect.y;
 
     const signal = this.abortController.signal;
 
@@ -99,7 +101,7 @@ export class DragState<T> {
     });
 
     this.longPressTimeout = setTimeout(
-      () => this.longPress(fromPoint.x, fromPoint.y),
+      () => this.longPress(),
       LONG_PRESS_DURATION,
     );
   }
@@ -129,12 +131,10 @@ export class DragState<T> {
     });
   }
 
-  private cancelLongPress() {
-    clearTimeout(this.longPressTimeout);
-  }
+  // Long press
 
-  private longPress(clientX: number, clientY: number) {
-    this.startDrag(clientX, clientY);
+  private longPress() {
+    this.startDrag(this.startX, this.startY);
 
     // Disable scrolling while dragging with touch
     addEventListener("touchmove", (event) => event.preventDefault(), {
@@ -143,43 +143,23 @@ export class DragState<T> {
     });
   }
 
-  private dragMove(event: PointerEvent) {
-    const x = event.clientX - this.pointerOffsetX;
-    const y = event.clientY - this.pointerOffsetY;
-    this.dragElement?.style.setProperty("--translate-x", `${x}px`);
-    this.dragElement?.style.setProperty("--translate-y", `${y}px`);
-
-    clearTimeout(this.moveTimeout);
-
-    this.moveTimeout = setTimeout(() => {
-      this.element.dispatchEvent(
-        this.createDragDropEvent("dnd-drag", {
-          bubbles: true,
-          cancelable: false,
-          clientX: event.clientX,
-          clientY: event.clientY,
-        }),
-      );
-
-      this.dropTarget?.dispatchEvent(
-        this.createDragDropEvent("dnd-dragover", {
-          bubbles: true,
-          cancelable: false,
-          clientX: event.clientX,
-          clientY: event.clientY,
-        }),
-      );
-    }, MOVE_DEBOUNCE_INTERVAL);
+  private cancelLongPress() {
+    clearTimeout(this.longPressTimeout);
   }
 
-  private pointerOver(event: PointerEvent) {
-    const { target } = event;
+  // Pointer events
 
-    if (!(target instanceof HTMLElement) || this.dropTarget === target) {
+  private pointerOver(event: PointerEvent) {
+    if (!(event.target instanceof HTMLElement)) {
       return;
     }
 
-    const preventDrop = target.dispatchEvent(
+    const target = event.target.closest<HTMLElement>('[data-drop="true"]');
+    if (!target || target === this.dropTarget) {
+      return;
+    }
+
+    const allowDrop = target.dispatchEvent(
       this.createDragDropEvent("dnd-dragenter", {
         bubbles: true,
         cancelable: true,
@@ -197,19 +177,11 @@ export class DragState<T> {
       }),
     );
 
-    if (preventDrop) {
-      this.dropTarget = undefined;
-    } else {
+    if (allowDrop) {
       this.dropTarget = target;
-
-      this.dropTarget.dispatchEvent(
-        this.createDragDropEvent("dnd-dragover", {
-          bubbles: true,
-          cancelable: false,
-          clientX: event.clientX,
-          clientY: event.clientY,
-        }),
-      );
+      this.scheduleDragEvent(event.clientX, event.clientY);
+    } else {
+      this.dropTarget = undefined;
     }
   }
 
@@ -217,10 +189,17 @@ export class DragState<T> {
     this.cancelLongPress();
 
     if (this.isDragging) {
-      this.dragMove(event);
+      this.scheduleDragEvent(event.clientX, event.clientY);
+
+      requestAnimationFrame(() => {
+        const x = event.clientX - this.originX;
+        const y = event.clientY - this.originY;
+        this.dragElement?.style.setProperty("--translate-x", `${x}px`);
+        this.dragElement?.style.setProperty("--translate-y", `${y}px`);
+      });
     } else if (event.pointerType !== "touch") {
-      const deltaX = event.clientX - this.fromPoint.x;
-      const deltaY = event.clientY - this.fromPoint.y;
+      const deltaX = event.clientX - this.startX;
+      const deltaY = event.clientY - this.startY;
 
       if (Math.hypot(deltaX, deltaY) >= DRAG_THRESHOLD) {
         this.startDrag(event.clientX, event.clientY);
@@ -239,11 +218,86 @@ export class DragState<T> {
         this.scroll.bind(this),
         SCROLL_INTERVAL,
       );
-    } else if (this.scrollInterval) {
+    } else if (typeof this.scrollInterval !== "undefined") {
       clearInterval(this.scrollInterval);
       this.scrollInterval = undefined;
       this.scrollSpeed = 0;
     }
+  }
+
+  private pointerUp(event: PointerEvent) {
+    if (event.button !== PRIMARY_MOUSE_BUTTON) {
+      return;
+    }
+
+    if (this.isDragging) {
+      this.drop(event);
+    } else {
+      this.finish();
+    }
+  }
+
+  // Keyboard events
+
+  private keyDown(event: KeyboardEvent) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      this.finish();
+    }
+  }
+
+  // Drag lifecycle
+
+  private startDrag(clientX: number, clientY: number) {
+    if (this.isDragging) {
+      return;
+    }
+
+    const allowDrag = this.element.dispatchEvent(
+      this.createDragDropEvent("dnd-dragstart", {
+        bubbles: true,
+        cancelable: true,
+        clientX,
+        clientY,
+      }),
+    );
+
+    if (!allowDrag) {
+      this.finish();
+      return;
+    }
+
+    this.isDragging = true;
+    document.body.dataset.drag = "true";
+
+    this.dragElement = this.element.cloneNode(true) as HTMLElement;
+    this.dragElement.id = "drag-preview";
+    this.dragElement.popover = "manual";
+    delete this.dragElement.dataset.animateLayoutId;
+
+    const rect = this.element.getBoundingClientRect();
+
+    const rotateX = (this.originX / rect.width - 0.5) * -2;
+    const rotateY = (this.originY / rect.height - 0.5) * 2;
+    const rotateAngle = 5 * Math.hypot(rotateX, rotateY);
+
+    const style = this.dragElement.style;
+    style.width = `${rect.width}px`;
+    style.height = `${rect.height}px`;
+    style.transformOrigin = `${this.originX}px ${this.originY}px`;
+    style.setProperty("--translate-x", `${clientX - this.originX}px`);
+    style.setProperty("--translate-y", `${clientY - this.originY}px`);
+    style.setProperty("--rotate-x", `${rotateX}`);
+    style.setProperty("--rotate-y", `${rotateY}`);
+    style.setProperty("--rotate-angle", `${rotateAngle}deg`);
+
+    document.body.appendChild(this.dragElement);
+    this.dragElement.showPopover();
+
+    this.dragInterval = setInterval(
+      this.processPendingDragEvent.bind(this),
+      DRAG_EVENT_INTERVAL,
+    );
   }
 
   private drop(event: PointerEvent) {
@@ -260,14 +314,11 @@ export class DragState<T> {
   }
 
   private finish() {
-    this.cancelLongPress();
-
     this.abortController.abort();
 
+    this.cancelLongPress();
     clearInterval(this.scrollInterval);
-    this.scrollInterval = undefined;
-    clearTimeout(this.moveTimeout);
-    this.moveTimeout = undefined;
+    clearInterval(this.dragInterval);
 
     if (this.isDragging) {
       this.dropTarget?.dispatchEvent(
@@ -277,21 +328,16 @@ export class DragState<T> {
         }),
       );
 
-      if (this.element.isConnected) {
-        this.element.dispatchEvent(
-          this.createDragDropEvent("dnd-dragend", {
-            bubbles: true,
-            cancelable: false,
-          }),
-        );
-      } else {
-        document.body.dispatchEvent(
-          this.createDragDropEvent("dnd-dragend", {
-            bubbles: true,
-            cancelable: false,
-          }),
-        );
-      }
+      const dragEndTarget = this.element.isConnected
+        ? this.element
+        : document.body;
+
+      dragEndTarget.dispatchEvent(
+        this.createDragDropEvent("dnd-dragend", {
+          bubbles: true,
+          cancelable: false,
+        }),
+      );
     }
 
     delete document.body.dataset.drag;
@@ -321,70 +367,39 @@ export class DragState<T> {
     }
   }
 
-  private pointerUp(event: PointerEvent) {
-    if (event.button !== PRIMARY_MOUSE_BUTTON) {
+  private scheduleDragEvent(x: number, y: number) {
+    this.pendingDragEvent = { x, y };
+  }
+
+  private processPendingDragEvent() {
+    if (!this.pendingDragEvent) {
       return;
     }
 
-    if (this.isDragging) {
-      this.drop(event);
-    } else {
-      this.finish();
-    }
-  }
+    const { x, y } = this.pendingDragEvent;
 
-  private keyDown(event: KeyboardEvent) {
-    if (event.key === "Escape") {
-      event.preventDefault();
-      this.finish();
-    }
-  }
-
-  private startDrag(clientX: number, clientY: number) {
-    if (this.isDragging) {
-      return;
-    }
-
-    const allowDrag = this.element.dispatchEvent(
-      this.createDragDropEvent("dnd-dragstart", {
+    this.element.dispatchEvent(
+      this.createDragDropEvent("dnd-drag", {
         bubbles: true,
-        cancelable: true,
-        clientX,
-        clientY,
+        cancelable: false,
+        clientX: x,
+        clientY: y,
       }),
     );
 
-    if (!allowDrag) {
-      this.finish();
-      return;
-    }
+    this.dropTarget?.dispatchEvent(
+      this.createDragDropEvent("dnd-dragover", {
+        bubbles: true,
+        cancelable: false,
+        clientX: x,
+        clientY: y,
+      }),
+    );
 
-    this.isDragging = true;
-    document.body.dataset.drag = "true";
-
-    this.dragElement = this.element.cloneNode(true) as HTMLElement;
-    this.dragElement.id = "drag-preview";
-    this.dragElement.dataset.dragPreview = "true";
-    this.dragElement.popover = "manual";
-    delete this.dragElement.dataset.animateLayoutId;
-
-    const rotateX = (this.pointerOffsetX / this.elementRect.width - 0.5) * -2;
-    const rotateY = (this.pointerOffsetY / this.elementRect.height - 0.5) * 2;
-    const rotateAngle = 5 * Math.hypot(rotateX, rotateY);
-
-    const style = this.dragElement.style;
-    style.width = `${this.elementRect.width}px`;
-    style.height = `${this.elementRect.height}px`;
-    style.transformOrigin = `${this.pointerOffsetX}px ${this.pointerOffsetY}px`;
-    style.setProperty("--translate-x", `${clientX - this.pointerOffsetX}px`);
-    style.setProperty("--translate-y", `${clientY - this.pointerOffsetY}px`);
-    style.setProperty("--rotate-x", `${rotateX}`);
-    style.setProperty("--rotate-y", `${rotateY}`);
-    style.setProperty("--rotate-angle", `${rotateAngle}deg`);
-
-    document.body.appendChild(this.dragElement);
-    this.dragElement.showPopover();
+    this.pendingDragEvent = null;
   }
+
+  // Scrolling
 
   private scroll() {
     if (this.scrollSpeed === 0) {
@@ -408,10 +423,7 @@ function pointerDown(event: PointerEvent) {
   event.preventDefault();
   event.stopPropagation();
 
-  new DragState(
-    event.currentTarget,
-    new DOMPoint(event.clientX, event.clientY),
-  );
+  new DragState(event.currentTarget, event.clientX, event.clientY);
 }
 
 function contextMenu(event: PointerEvent | MouseEvent) {
@@ -430,10 +442,6 @@ export function makeDraggable(element: HTMLElement) {
     passive: false,
     signal: abortController.signal,
   });
-  element.dataset.draggable = "true";
 
-  return () => {
-    abortController.abort();
-    delete element.dataset.draggable;
-  };
+  return () => abortController.abort();
 }
