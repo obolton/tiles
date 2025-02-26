@@ -380,9 +380,12 @@ export default class Editor {
       pageId: this.pageId,
       ...data,
     });
-    this.tiles.value = this.tiles.value
-      .filter((item) => !data.tileIds?.includes(item.placementId))
-      .concat(item);
+    this.addTile(item);
+    if (data.tileIds) {
+      for (const placementId of data.tileIds) {
+        this.updateTileData({ placementId, parentCollectionId: item.id });
+      }
+    }
     return item;
   }
 
