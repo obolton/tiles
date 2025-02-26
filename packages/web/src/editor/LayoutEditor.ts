@@ -10,12 +10,12 @@ import type { ClientTile } from "@/types/tiles";
 export interface LayoutEditorOptions {
   element: HTMLElement;
   editor: Editor;
-  collectionId: string | null;
+  collectionId: string;
 }
 
 export default class LayoutEditor {
   editor: Editor;
-  collectionId: string | null;
+  collectionId: string;
 
   private readonly elementRef: WeakRef<HTMLElement>;
 

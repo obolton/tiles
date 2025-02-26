@@ -4,7 +4,7 @@ import { useEditor } from "@/context/editor";
 
 export default function useLayoutEditor(
   ref: React.RefObject<HTMLElement | null>,
-  collectionId: string | null = null,
+  collectionId: string,
 ) {
   const layoutEditorRef = useRef<LayoutEditor>(null);
   const editor = useEditor();
