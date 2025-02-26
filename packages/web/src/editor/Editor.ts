@@ -143,6 +143,29 @@ export default class Editor {
     return section.id;
   }
 
+  // Sections
+
+  async createSection() {
+    const section = await client.sections.create.mutate({
+      pageId: this.pageId,
+    });
+    this.sections.value = this.sections.value.concat(section);
+    return section;
+  }
+
+  async deleteSection({
+    id,
+  }: OmitPageId<AppRouterInputs["sections"]["delete"]>) {
+    const section = await client.sections.delete.mutate({
+      pageId: this.pageId,
+      id,
+    });
+    this.sections.value = this.sections.value.filter(
+      (section) => section.id !== id,
+    );
+    return section;
+  }
+
   async deleteTile(id: string, transition?: (commit: () => void) => void) {
     const result = await client.tiles.delete.mutate({
       pageId: this.pageId,
