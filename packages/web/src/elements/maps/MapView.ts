@@ -29,7 +29,6 @@ export default class MapView extends HTMLElement {
   private mutationObserver: MutationObserver;
   private map?: maplibregl.Map;
   private markers: maplibregl.Marker[] = [];
-  private legend?: HTMLElement;
   private toolbar?: HTMLElement;
 
   constructor() {
@@ -193,30 +192,34 @@ export default class MapView extends HTMLElement {
     this.markers.forEach((marker) => marker.remove());
     this.getMarkers().forEach((marker) => this.addMarker(marker));
 
-    const legendSlot = this.legend?.children[0] as HTMLSlotElement | null;
+    const legendSlot = this.shadowRoot?.getElementById(
+      "legend-slot",
+    ) as HTMLSlotElement | null;
     legendSlot?.assign(...this.getLegendItems());
 
-    const toolbarSlot = this.toolbar?.children[0] as HTMLSlotElement | null;
+    const toolbarSlot = this.toolbar?.firstElementChild as
+      | HTMLSlotElement
+      | undefined
+      | null;
     toolbarSlot?.assign(...this.getToolbarItems());
   }
 
   private showLegend() {
-    if (this.legend) {
+    if (this.shadowRoot?.getElementById("legend")) {
       return;
     }
-    this.legend = document.createElement("div");
-    this.legend.classList.add("legend");
+    const legend = document.createElement("div");
+    legend.id = "legend";
 
     const slot = document.createElement("slot");
     slot.id = "legend-slot";
-    this.legend.append(slot);
+    legend.append(slot);
 
-    this.root.append(this.legend);
+    this.root.append(legend);
   }
 
   private hideLegend() {
-    this.legend?.remove();
-    this.legend = undefined;
+    this.shadowRoot?.getElementById("legend")?.remove();
   }
 
   flyToMarker(markerId: string) {

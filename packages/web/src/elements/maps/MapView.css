@@ -18,7 +18,7 @@
   height: 22px;
 }
 
-.legend {
+#legend {
   position: absolute;
   top: 0;
   right: 0;
