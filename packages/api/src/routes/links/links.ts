@@ -25,6 +25,7 @@ export async function createLink({
   if (videoInfo) {
     return createVideo({
       pageId,
+      collectionId,
       url,
     });
   }
