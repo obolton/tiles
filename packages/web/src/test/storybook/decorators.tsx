@@ -19,6 +19,7 @@ const PAGE = {
     imageUrl: null,
   },
   tiles: [],
+  collections: [],
 };
 
 export const EditorDecorator: Decorator = (story) => {
