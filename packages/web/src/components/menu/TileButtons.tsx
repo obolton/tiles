@@ -7,7 +7,6 @@ import placeIcon from "@/icons/place.svg";
 import eventIcon from "@/icons/event.svg";
 import sectionIcon from "@/icons/section.svg";
 import { registerModal, showModal } from "@/utils/modals";
-import type { TileType } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type { EventModalResult } from "@/components/modals/EventModal";
@@ -15,9 +14,11 @@ import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import { uploadMedia } from "@/utils/media";
 import { useEditor } from "@/context/editor";
 
+type ItemType = "TEXT" | "IMAGE" | "MAP" | "LINK" | "EVENT" | "SECTION";
+
 type TileButton = {
   label: string;
-  type: TileType;
+  type: ItemType;
   icon: string;
 };
 
@@ -27,7 +28,7 @@ const BUTTONS: TileButton[] = [
   { label: "Map", type: "MAP", icon: placeIcon.src },
   { label: "Link", type: "LINK", icon: linkIcon.src },
   { label: "Event", type: "EVENT", icon: eventIcon.src },
-  { label: "Section", type: "COLLECTION", icon: sectionIcon.src },
+  { label: "Section", type: "SECTION", icon: sectionIcon.src },
 ];
 
 registerModal(
@@ -52,7 +53,7 @@ registerModal(
 
 interface TileButtonsProps {
   collectionId?: string;
-  exclude?: TileType[];
+  exclude?: ItemType[];
 }
 
 export default function TileButtons({
@@ -64,9 +65,7 @@ export default function TileButtons({
 
   const onClick = useCallback(
     async (event: React.MouseEvent<HTMLButtonElement>) => {
-      const tileType = event.currentTarget.dataset.tileType as
-        | TileType
-        | undefined;
+      const tileType = event.currentTarget.dataset.tileType as ItemType;
       if (!tileType) {
         return;
       }
@@ -74,7 +73,7 @@ export default function TileButtons({
       switch (tileType) {
         case "TEXT":
           await editor.createText({
-            collectionId,
+            collectionId: collectionId ?? editor.getCurrentCollectionId(),
             content: [],
             columns: 3,
           });
@@ -87,7 +86,10 @@ export default function TileButtons({
                 return;
               }
               const imageKey = await uploadMedia(result.image, "image");
-              await editor.createImage({ collectionId, imageKey });
+              await editor.createImage({
+                collectionId: collectionId ?? editor.getCurrentCollectionId(),
+                imageKey,
+              });
             },
           });
           break;
@@ -97,11 +99,14 @@ export default function TileButtons({
             async onConfirm(result) {
               if ("linkedPageId" in result) {
                 await editor.createPageLink({
-                  collectionId,
+                  collectionId: collectionId ?? editor.getCurrentCollectionId(),
                   linkedPageId: result.linkedPageId,
                 });
               } else if (result.url) {
-                await editor.createLink({ collectionId, url: result.url });
+                await editor.createLink({
+                  collectionId: collectionId ?? editor.getCurrentCollectionId(),
+                  url: result.url,
+                });
               }
             },
           });
@@ -110,7 +115,10 @@ export default function TileButtons({
         case "EVENT":
           showModal<EventModalResult>("EVENT", {
             async onConfirm(result) {
-              await editor.createEvent({ collectionId, ...result });
+              await editor.createEvent({
+                collectionId: collectionId ?? editor.getCurrentCollectionId(),
+                ...result,
+              });
             },
           });
           break;
@@ -118,16 +126,17 @@ export default function TileButtons({
         case "MAP":
           showModal<PlaceModalResult>("MAP", {
             async onConfirm({ place }) {
-              await editor.createMap({ collectionId, place, columns: 3 });
+              await editor.createMap({
+                collectionId: collectionId ?? editor.getCurrentCollectionId(),
+                place,
+                columns: 3,
+              });
             },
           });
           break;
 
-        case "COLLECTION":
-          await editor.createCollection({
-            block: true,
-            tileIds: [],
-          });
+        case "SECTION":
+          await editor.createSection();
           break;
       }
     },
