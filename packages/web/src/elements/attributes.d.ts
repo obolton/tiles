@@ -1,4 +1,4 @@
-import type { ResizeItemAttributes } from "./resize/ResizeItem";
+import type ResizeItem, { ResizeItemAttributes } from "./resize/ResizeItem";
 import type { TabItemAttributes } from "./tabs/TabItem";
 import type { TabPanelAttributes } from "./tabs/TabPanel";
 import type { FilePickerAttributes } from "./filePicker/FilePicker";
@@ -14,9 +14,9 @@ import type { MapViewAttributes } from "./maps/MapView";
 import type { MapMarkerAttributes } from "./maps/MapMarker";
 import type { MapLegendItemAttributes } from "./maps/MapLegendItem";
 
-type CustomElementAttributes = {
+type CustomElementAttributes<T extends HTMLElement = unknown> = {
   key?: string;
-  ref?: React.RefObject<HTMLElement>;
+  ref?: React.RefObject<T | null>;
   id?: string;
   class?: string;
   style?: React.CSSProperties;
@@ -40,7 +40,7 @@ declare module "react" {
       "pop-out": CustomElementAttributes & PopOutAttributes;
       "stack-view": CustomElementAttributes & StackViewAttributes;
       "carousel-view": CustomElementAttributes;
-      "resize-item": CustomElementAttributes & ResizeItemAttributes;
+      "resize-item": CustomElementAttributes<ResizeItem> & ResizeItemAttributes;
       "tab-bar": CustomElementAttributes;
       "tab-item": CustomElementAttributes & TabItemAttributes;
       "tab-panel": CustomElementAttributes & TabPanelAttributes;
