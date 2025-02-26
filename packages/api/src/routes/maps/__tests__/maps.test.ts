@@ -38,6 +38,7 @@ describe("createMap", () => {
   it("should return a map", async () => {
     const result = await createMap({
       pageId: "1",
+      collectionId: "test-collection",
       place: {
         name: "Test place",
         providerId: "test-provider-id",

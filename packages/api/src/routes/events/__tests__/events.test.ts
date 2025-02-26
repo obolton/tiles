@@ -32,6 +32,7 @@ describe("createEvent", () => {
   it("should return an event", async () => {
     const result = await createEvent({
       pageId: "1",
+      collectionId: "test-collection",
       start: "2024-01-01T00:00:00Z",
       end: "2024-01-02T00:00:00Z",
       allDay: true,

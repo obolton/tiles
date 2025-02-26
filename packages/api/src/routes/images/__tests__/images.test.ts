@@ -36,6 +36,7 @@ describe("createImage", () => {
   it("should return an image", async () => {
     const result = await createImage({
       pageId: "1",
+      collectionId: "test-collection",
       imageKey: "test-image-key",
       caption: "Test caption",
     });

@@ -35,6 +35,7 @@ describe("createText", () => {
   it("should return a text tile", async () => {
     const result = await createText({
       pageId: "1",
+      collectionId: "test-collection",
       content: MOCK_TEXT.content,
     });
 
