@@ -66,18 +66,27 @@ describe("Store", () => {
 });
 
 describe("DerivedStore", () => {
-  test("derives a value from an input store", () => {
+  test("derives a value from a single input store", () => {
     const store = new Store(1);
-    const derived = new DerivedStore(store, (value) => value + 1);
+    const derived = new DerivedStore([store], (value) => value + 1);
     expect(derived.value).toBe(2);
     store.value = 3;
     expect(derived.value).toBe(4);
   });
 
+  test("derives a value from multiple input stores", () => {
+    const storeA = new Store(1);
+    const storeB = new Store(2);
+    const derived = new DerivedStore([storeA, storeB], (a, b) => a + b);
+    expect(derived.value).toBe(3);
+    storeA.value = 3;
+    expect(derived.value).toBe(5);
+  });
+
   test("defers the transformation until the derived value is read", () => {
     const store = new Store(1);
     const transform = vi.fn((value) => value + 1);
-    const derived = new DerivedStore(store, transform);
+    const derived = new DerivedStore([store], transform);
     expect(transform).toHaveBeenCalledTimes(0);
     expect(derived.value).toBe(2);
     expect(transform).toHaveBeenCalledTimes(1);
@@ -86,7 +95,7 @@ describe("DerivedStore", () => {
   test("caches the derived value", () => {
     const store = new Store(1);
     const transform = vi.fn((value) => value + 1);
-    const derived = new DerivedStore(store, transform);
+    const derived = new DerivedStore([store], transform);
     expect(transform).toHaveBeenCalledTimes(0);
     const results = [derived.value, derived.value, derived.value];
     expect(results).toStrictEqual([2, 2, 2]);
