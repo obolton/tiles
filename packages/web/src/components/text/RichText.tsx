@@ -67,15 +67,26 @@ interface HeadingProps {
   node: HeadingNode;
 }
 
-function Heading({ node }: HeadingProps) {
-  if (node.children.length === 0) {
-    return (
-      <h2>
-        <br />
-      </h2>
-    );
+function getHeadingTag(level: number) {
+  switch (level) {
+    case 1:
+      return "h1";
+    case 2:
+      return "h2";
+    case 3:
+      return "h3";
+    default:
+      return "h1";
   }
-  return <h2>{renderNodes(node.children)}</h2>;
+}
+
+function Heading({ node }: HeadingProps) {
+  const Tag = getHeadingTag(node.level);
+  return (
+    <Tag>
+      {node.children.length === 0 ? <br /> : renderNodes(node.children)}
+    </Tag>
+  );
 }
 
 interface LinkProps {
