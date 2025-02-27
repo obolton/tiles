@@ -27,9 +27,19 @@ interface Props {
   theme?: Theme;
   hue?: number | null;
   font?: FontId;
+  author?: string | null;
+  description?: string | null;
 }
 
-const { id, title, theme = "LIGHT", hue, font = DEFAULT_FONT } = Astro.props;
+const {
+  id,
+  title,
+  theme = "LIGHT",
+  hue,
+  font = DEFAULT_FONT,
+  author,
+  description,
+} = Astro.props;
 const fontConfig = font ? getFontConfig(font) : undefined;
 ---
 
@@ -42,6 +52,8 @@ const fontConfig = font ? getFontConfig(font) : undefined;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href={getGoogleFontsUrl()} rel="stylesheet" />
     <meta name="viewport" content="width=device-width" />
+    {author ? <meta name="author" content={author} /> : null}
+    {description ? <meta name="description" content={description} /> : null}
     <script src="@/global.ts"></script>
     <title>{title}</title>
   </head>
