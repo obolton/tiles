@@ -44,7 +44,7 @@ function createLexicalParagraphNode(paragraph: ParagraphNode) {
 }
 
 function createLexicalHeadingNode(heading: HeadingNode) {
-  const node = $createHeadingNode("h2");
+  const node = $createHeadingNode(`h${heading.level}`);
   node.append(...heading.children.map(createLexicalNode));
   return node;
 }

@@ -95,6 +95,7 @@ function serializeNode<T extends LexicalNode>(
   if ($isHeadingNode(node)) {
     return {
       type: "heading",
+      level: parseInt(node.getTag().slice(1), 10),
       children: getChildren(node),
     } as SerializedNode<T>;
   }

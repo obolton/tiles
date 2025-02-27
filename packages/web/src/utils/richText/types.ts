@@ -28,6 +28,7 @@ export interface ParagraphNode extends BaseNode {
 
 export interface HeadingNode extends BaseNode {
   type: "heading";
+  level: 1 | 2 | 3;
   children: (TextNode | LinkNode)[];
 }
 
