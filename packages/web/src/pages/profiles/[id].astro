@@ -34,6 +34,9 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
   theme={user.profilePage.theme}
   hue={user.profilePage.hue}
   font={user.profilePage.font}
+  author={user.name}
+  description={user.profilePage.subtitle ||
+    `${user.name}’s profile page - Tiles`}
 >
   <script src="@/init.ts"></script>
   <EditableProfilePage user={user} client:edit />

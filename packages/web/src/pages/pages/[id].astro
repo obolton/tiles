@@ -38,6 +38,10 @@ if (page.published) {
   theme={page.theme}
   hue={page.hue}
   font={page.font}
+  author={page.author.name}
+  description={page.subtitle
+    ? `${page.subtitle} - Tiles`
+    : `A page by ${page.author.name} - Tiles`}
 >
   <script src="@/init.ts"></script>
   <EditablePage page={page} client:edit />
