@@ -19,6 +19,7 @@ const ParagraphNodeSchema = z.object({
 
 const HeadingNodeSchema = z.object({
   type: z.literal("heading"),
+  level: z.number().int().gte(1).lte(3),
   children: z.array(z.union([TextNodeSchema, LinkNodeSchema])),
 });
 
