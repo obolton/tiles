@@ -21,9 +21,12 @@ import {
   $createQuoteNode,
   $isQuoteNode,
 } from "@lexical/rich-text";
+import type { HeadingTagType } from "@lexical/rich-text";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import Icon from "@/components/icons/Icon";
-import headingIcon from "@/icons/heading.svg";
+import h1Icon from "@/icons/h1.svg";
+import h2Icon from "@/icons/h2.svg";
+import h3Icon from "@/icons/h3.svg";
 import boldIcon from "@/icons/bold.svg";
 import italicIcon from "@/icons/italic.svg";
 import underlineIcon from "@/icons/underline.svg";
@@ -37,7 +40,9 @@ import type { LinkModalResult } from "@/components/modals/LinkModal";
 import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
 
 type Format = {
-  heading: boolean;
+  h1: boolean;
+  h2: boolean;
+  h3: boolean;
   quote: boolean;
   bold: boolean;
   italic: boolean;
@@ -81,7 +86,9 @@ export default function Toolbar({
 }: ToolbarProps) {
   const [editor] = useLexicalComposerContext();
   const [format, setFormat] = useState<Format>({
-    heading: false,
+    h1: false,
+    h2: false,
+    h3: false,
     quote: false,
     bold: false,
     italic: false,
@@ -104,9 +111,12 @@ export default function Toolbar({
         const topLevelElement = anchor.getTopLevelElement();
 
         const listType = $getSelectionListType();
+        const isHeading = $isHeadingNode(topLevelElement);
 
         setFormat({
-          heading: $isHeadingNode(topLevelElement),
+          h1: isHeading && topLevelElement.getTag() === "h1",
+          h2: isHeading && topLevelElement.getTag() === "h2",
+          h3: isHeading && topLevelElement.getTag() === "h3",
           quote: $isQuoteNode(topLevelElement),
           bold: selection.hasFormat("bold"),
           italic: selection.hasFormat("italic"),
@@ -121,19 +131,26 @@ export default function Toolbar({
     return () => unsubscribe();
   }, [editor]);
 
-  const formatHeading = useCallback(() => {
-    editor.update(() => {
-      const selection = $getSelection();
-      const anchor = $isRangeSelection(selection)
-        ? selection?.anchor.getNode().getTopLevelElement()
-        : null;
-      if ($isHeadingNode(anchor)) {
-        $setBlocksType(selection, $createParagraphNode);
-      } else {
-        $setBlocksType(selection, () => $createHeadingNode("h2"));
-      }
-    });
-  }, [editor]);
+  const formatHeading = useCallback(
+    (tag: HeadingTagType) => {
+      editor.update(() => {
+        const selection = $getSelection();
+        const anchor = $isRangeSelection(selection)
+          ? selection?.anchor.getNode().getTopLevelElement()
+          : null;
+        if ($isHeadingNode(anchor) && anchor.getTag() === tag) {
+          $setBlocksType(selection, $createParagraphNode);
+        } else {
+          $setBlocksType(selection, () => $createHeadingNode(tag));
+        }
+      });
+    },
+    [editor],
+  );
+
+  const formatH1 = useCallback(() => formatHeading("h1"), [formatHeading]);
+  const formatH2 = useCallback(() => formatHeading("h2"), [formatHeading]);
+  const formatH3 = useCallback(() => formatHeading("h3"), [formatHeading]);
 
   const formatQuote = useCallback(() => {
     editor.update(() => {
@@ -220,13 +237,37 @@ export default function Toolbar({
       <li>
         <button
           className="floating small"
-          aria-label="Heading"
-          data-tooltip="Format as a heading"
+          aria-label="Heading level 1"
+          data-tooltip="Format as heading level 1"
           type="button"
-          aria-pressed={format.heading ? "true" : "false"}
-          onClick={formatHeading}
+          aria-pressed={format.h1 ? "true" : "false"}
+          onClick={formatH1}
         >
-          <Icon src={headingIcon.src} />
+          <Icon src={h1Icon.src} />
+        </button>
+      </li>
+      <li>
+        <button
+          className="floating small"
+          aria-label="Heading level 2"
+          data-tooltip="Format as heading level 2"
+          type="button"
+          aria-pressed={format.h2 ? "true" : "false"}
+          onClick={formatH2}
+        >
+          <Icon src={h2Icon.src} />
+        </button>
+      </li>
+      <li>
+        <button
+          className="floating small"
+          aria-label="Heading level 3"
+          data-tooltip="Format as heading level 3"
+          type="button"
+          aria-pressed={format.h3 ? "true" : "false"}
+          onClick={formatH3}
+        >
+          <Icon src={h3Icon.src} />
         </button>
       </li>
       <li>
