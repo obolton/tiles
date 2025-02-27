@@ -89,11 +89,11 @@ export default function RichTextEditor({
   useEffect(() => {
     const editor = ref.current;
     if (editor) {
-      // Force all headings to h2
+      // Force invalid headings to h1
       editor.registerNodeTransform(HeadingNode, (node) => {
-        if (node.getTag() !== "h2") {
+        if (!["h1", "h2", "h3"].includes(node.getTag())) {
           const writable = node.getWritable();
-          writable.__tag = "h2";
+          writable.__tag = "h1";
         }
       });
     }
