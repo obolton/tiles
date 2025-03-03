@@ -11,6 +11,7 @@ import { classNames } from "@/utils/css";
 import type { Section } from "@/types/layout";
 import moreIcon from "@/icons/more.svg";
 import trashIcon from "@/icons/trash.svg";
+import { layoutTransition } from "@/utils/animation/layout";
 
 function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
   if (event.key === "Enter" || event.key === "Escape") {
@@ -58,7 +59,7 @@ export default function Section({ section }: SectionProps) {
 
   const deleteSection = useCallback(async () => {
     try {
-      await editor.deleteSection({ id: section.id });
+      await editor.deleteSection({ id: section.id }, layoutTransition);
     } catch (error) {
       handleError(error);
     }
