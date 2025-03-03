@@ -112,9 +112,11 @@ body:has(stack-view[open]) {
 }
 
 h1,
-h2 {
+h2,
+h3 {
   display: block;
   padding: 0;
+  scroll-margin: 24px;
 }
 
 h1 {
