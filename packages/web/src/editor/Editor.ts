@@ -15,6 +15,12 @@ type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
 type OmitPageId<T extends { pageId: string }> = Omit<T, "pageId">;
 
+type TransitionFunction = (commit: () => void) => void;
+
+function immediateTransition(commit: () => void) {
+  commit();
+}
+
 const IS_SERVER = import.meta.env.SSR;
 
 function getLayout(sections: ClientCollection[], tiles: ClientTile[]): Layout {
@@ -148,24 +154,29 @@ export default class Editor {
 
   // Sections
 
-  async createSection() {
+  async createSection(transition: TransitionFunction = immediateTransition) {
     const section = await client.sections.create.mutate({
       pageId: this.pageId,
     });
-    this.sections.value = this.sections.value.concat(section);
+    transition(() => {
+      this.sections.value = this.sections.value.concat(section);
+    });
     return section;
   }
 
-  async deleteSection({
-    id,
-  }: OmitPageId<AppRouterInputs["sections"]["delete"]>) {
+  async deleteSection(
+    { id }: OmitPageId<AppRouterInputs["sections"]["delete"]>,
+    transition: TransitionFunction = immediateTransition,
+  ) {
     const section = await client.sections.delete.mutate({
       pageId: this.pageId,
       id,
     });
-    this.sections.value = this.sections.value.filter(
-      (section) => section.id !== id,
-    );
+    transition(() => {
+      this.sections.value = this.sections.value.filter(
+        (section) => section.id !== id,
+      );
+    });
     return section;
   }
 
