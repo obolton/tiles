@@ -6,6 +6,7 @@ import {
   HEADING,
   ORDERED_LIST,
   UNORDERED_LIST,
+  CHECK_LIST,
   BOLD_STAR,
   BOLD_UNDERSCORE,
   ITALIC_STAR,
@@ -20,6 +21,7 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
@@ -40,12 +42,16 @@ const theme: EditorThemeClasses = {
     underline: "underline",
     strikethrough: "strikethrough",
   },
+  list: {
+    checklist: "checklist",
+  },
 };
 
 const TRANSFORMERS = [
   HEADING,
   ORDERED_LIST,
   UNORDERED_LIST,
+  CHECK_LIST,
   BOLD_STAR,
   BOLD_UNDERSCORE,
   ITALIC_STAR,
@@ -124,6 +130,7 @@ export default function RichTextEditor({
         <OnChangePlugin onChange={onChange} />
         <EditorRefPlugin editorRef={ref} />
         <ListPlugin />
+        <CheckListPlugin />
         <LinkPlugin />
         <TabIndentationPlugin />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
