@@ -31,6 +31,7 @@ const QuoteNodeSchema = z.object({
 const ListItemNodeSchema: z.AnyZodObject = z.object({
   type: z.literal("listitem"),
   value: z.number().int().gte(1),
+  checked: z.boolean().optional(),
   children: z.lazy(() =>
     z.array(z.union([TextNodeSchema, LinkNodeSchema, ListNodeSchema])),
   ),
@@ -38,7 +39,7 @@ const ListItemNodeSchema: z.AnyZodObject = z.object({
 
 const ListNodeSchema = z.object({
   type: z.literal("list"),
-  listType: z.number().int().gte(0).lte(1),
+  listType: z.union([z.literal(0), z.literal(1), z.literal(2)]),
   children: z.array(ListItemNodeSchema),
 });
 
