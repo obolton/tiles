@@ -70,16 +70,19 @@ export default function Section({ section }: SectionProps) {
     <section className={styles.section} data-animate-layout-id={section.id}>
       {isEditable ? (
         <ResizingTextarea
-          id={`${section.id}-title-editor`}
+          id={`${section.id}-heading`}
           className={classNames("editable", styles.title, styles.textarea)}
           placeholder="Heading"
           onChange={onChangeTitle}
           onBlur={saveTitle}
           onKeyDown={onKeyDown}
           value={title}
+          data-heading="true"
         />
       ) : title ? (
-        <h2 className={styles.title}>{title}</h2>
+        <h2 id={`${section.id}-heading`} className={styles.title}>
+          {title}
+        </h2>
       ) : null}
 
       <Grid
