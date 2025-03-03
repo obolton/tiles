@@ -60,13 +60,6 @@ export default function TextTile({
     [editor, id],
   );
 
-  const onPointerDown = useCallback(
-    (event: React.PointerEvent | React.MouseEvent) => {
-      event.stopPropagation();
-    },
-    [],
-  );
-
   return (
     <pop-out
       class={styles["pop-out"]}
@@ -83,8 +76,6 @@ export default function TextTile({
             className={classNames(styles.text, styles.editor)}
             onBlur={onBlur}
             onChange={setEditorState}
-            onPointerDownCapture={onPointerDown}
-            onClickCapture={onPointerDown}
             placeholder="Write something"
             value={content}
             editable

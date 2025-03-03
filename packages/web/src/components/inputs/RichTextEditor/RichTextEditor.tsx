@@ -30,7 +30,7 @@ import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { LinkNode } from "@lexical/link";
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import styles from "./RichTextEditor.module.css";
 
 export type { EditorState };
@@ -107,8 +107,16 @@ export default function RichTextEditor({
 
   useEffect(() => ref.current?.setEditable(editable ?? false), [editable]);
 
+  const refCallback = useCallback(
+    (element: HTMLDivElement | null) =>
+      element?.addEventListener("pointerdown", (event) =>
+        event.stopPropagation(),
+      ),
+    [],
+  );
+
   return (
-    <div className={className}>
+    <div className={className} ref={refCallback}>
       <LexicalComposer initialConfig={initialConfig.current}>
         {children}
         <RichTextPlugin
