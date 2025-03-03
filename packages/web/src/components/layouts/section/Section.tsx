@@ -25,9 +25,7 @@ function GridPlaceholder({ collectionId }: { collectionId: string }) {
     <Placeholder
       className={styles.placeholder}
       actions={
-        isEditable ? (
-          <TileButtons collectionId={collectionId} exclude={["SECTION"]} />
-        ) : undefined
+        isEditable ? <TileButtons collectionId={collectionId} /> : undefined
       }
     >
       There’s nothing here.

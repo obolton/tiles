@@ -10,9 +10,7 @@ function CollectionTilePlaceholder({ collectionId }: { collectionId: string }) {
   return (
     <Placeholder
       actions={
-        isEditable ? (
-          <TileButtons collectionId={collectionId} exclude={["SECTION"]} />
-        ) : undefined
+        isEditable ? <TileButtons collectionId={collectionId} /> : undefined
       }
     >
       There’s nothing here.

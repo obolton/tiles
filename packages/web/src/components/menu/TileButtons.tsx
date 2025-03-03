@@ -5,7 +5,6 @@ import imageIcon from "@/icons/image.svg";
 import linkIcon from "@/icons/link.svg";
 import placeIcon from "@/icons/place.svg";
 import eventIcon from "@/icons/event.svg";
-import sectionIcon from "@/icons/section.svg";
 import { registerModal, showModal } from "@/utils/modals";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
@@ -13,12 +12,11 @@ import type { EventModalResult } from "@/components/modals/EventModal";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import { uploadMedia } from "@/utils/media";
 import { useEditor } from "@/context/editor";
-
-type ItemType = "TEXT" | "IMAGE" | "MAP" | "LINK" | "EVENT" | "SECTION";
+import type { TileType } from "@/types/tiles";
 
 type TileButton = {
   label: string;
-  type: ItemType;
+  type: TileType;
   icon: string;
 };
 
@@ -28,7 +26,6 @@ const BUTTONS: TileButton[] = [
   { label: "Map", type: "MAP", icon: placeIcon.src },
   { label: "Link", type: "LINK", icon: linkIcon.src },
   { label: "Event", type: "EVENT", icon: eventIcon.src },
-  { label: "Section", type: "SECTION", icon: sectionIcon.src },
 ];
 
 registerModal(
@@ -53,19 +50,15 @@ registerModal(
 
 interface TileButtonsProps {
   collectionId?: string;
-  exclude?: ItemType[];
 }
 
-export default function TileButtons({
-  collectionId,
-  exclude,
-}: TileButtonsProps) {
+export default function TileButtons({ collectionId }: TileButtonsProps) {
   const editor = useEditor();
   const isEditable = useEditable();
 
   const onClick = useCallback(
     async (event: React.MouseEvent<HTMLButtonElement>) => {
-      const tileType = event.currentTarget.dataset.tileType as ItemType;
+      const tileType = event.currentTarget.dataset.tileType as TileType;
       if (!tileType) {
         return;
       }
@@ -134,10 +127,6 @@ export default function TileButtons({
             },
           });
           break;
-
-        case "SECTION":
-          await editor.createSection();
-          break;
       }
     },
     [collectionId, editor],
@@ -149,21 +138,19 @@ export default function TileButtons({
 
   return (
     <>
-      {BUTTONS.filter(({ type }) => !exclude?.includes(type)).map(
-        ({ label, type, icon }) => (
-          <button
-            key={type}
-            className="floating"
-            type="button"
-            aria-label={label}
-            data-tooltip={label}
-            data-tile-type={type}
-            onClick={onClick}
-          >
-            <img src={icon} alt={label} />
-          </button>
-        ),
-      )}
+      {BUTTONS.map(({ label, type, icon }) => (
+        <button
+          key={type}
+          className="floating"
+          type="button"
+          aria-label={label}
+          data-tooltip={label}
+          data-tile-type={type}
+          onClick={onClick}
+        >
+          <img src={icon} alt={label} />
+        </button>
+      ))}
     </>
   );
 }
