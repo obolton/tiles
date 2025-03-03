@@ -56,9 +56,14 @@ function getTextFormat(node: LexicalTextNode) {
 }
 
 function getListType(node: LexicalListNode) {
-  return node.getListType() === "number"
-    ? ListType.ORDERED
-    : ListType.UNORDERED;
+  switch (node.getListType()) {
+    case "number":
+      return ListType.ORDERED;
+    case "bullet":
+      return ListType.UNORDERED;
+    case "check":
+      return ListType.CHECK;
+  }
 }
 
 function getChildren(node: ElementNode) {
@@ -119,6 +124,7 @@ function serializeNode<T extends LexicalNode>(
     return {
       type: "listitem",
       value: node.getValue(),
+      checked: node.getChecked(),
       children: getChildren(node),
     } as SerializedNode<T>;
   }

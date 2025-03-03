@@ -61,10 +61,21 @@ function createLexicalQuoteNode(quote: QuoteNode) {
   return node;
 }
 
+function getLexicalListType(listType: ListType) {
+  switch (listType) {
+    case ListType.ORDERED:
+      return "number";
+    case ListType.UNORDERED:
+      return "bullet";
+    case ListType.CHECK:
+      return "check";
+    default:
+      throw new Error(`Unsupported list type: ${listType}`);
+  }
+}
+
 function createLexicalListNode(list: ListNode) {
-  const node = $createListNode(
-    list.listType === ListType.ORDERED ? "number" : "bullet",
-  );
+  const node = $createListNode(getLexicalListType(list.listType));
   node.append(...list.children.map(createLexicalListItemNode));
   return node;
 }
@@ -72,6 +83,7 @@ function createLexicalListNode(list: ListNode) {
 function createLexicalListItemNode(listItem: ListItemNode) {
   const node = $createListItemNode();
   node.setValue(listItem.value);
+  node.setChecked(listItem.checked);
   node.append(...listItem.children.map(createLexicalNode));
   return node;
 }
