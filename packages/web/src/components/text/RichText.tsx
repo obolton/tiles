@@ -119,19 +119,23 @@ function Quote({ node }: QuoteProps) {
   return <blockquote>{renderNodes(node.children)}</blockquote>;
 }
 
-interface ListItemProps {
+interface ListItemProps extends React.HTMLAttributes<HTMLLIElement> {
   node: ListItemNode;
 }
 
-function ListItem({ node }: ListItemProps) {
+function ListItem({ node, ...props }: ListItemProps) {
   if (node.children.length === 0) {
     return (
-      <li value={node.value}>
+      <li value={node.value} {...props}>
         <br />
       </li>
     );
   }
-  return <li value={node.value}>{renderNodes(node.children)}</li>;
+  return (
+    <li value={node.value} {...props}>
+      {renderNodes(node.children)}
+    </li>
+  );
 }
 
 interface ListProps {
@@ -139,22 +143,38 @@ interface ListProps {
 }
 
 function List({ node }: ListProps) {
-  if (node.listType === ListType.ORDERED) {
-    return (
-      <ol>
-        {node.children.map((child, index) => (
-          <ListItem key={index} node={child} />
-        ))}
-      </ol>
-    );
-  } else {
-    return (
-      <ul>
-        {node.children.map((child, index) => (
-          <ListItem key={index} node={child} />
-        ))}
-      </ul>
-    );
+  switch (node.listType) {
+    case ListType.ORDERED:
+      return (
+        <ol>
+          {node.children.map((child, index) => (
+            <ListItem key={index} node={child} />
+          ))}
+        </ol>
+      );
+    case ListType.UNORDERED:
+      return (
+        <ul>
+          {node.children.map((child, index) => (
+            <ListItem key={index} node={child} />
+          ))}
+        </ul>
+      );
+    case ListType.CHECK:
+      return (
+        <ul className="checklist">
+          {node.children.map((child, index) => (
+            <ListItem
+              key={index}
+              node={child}
+              role={child.children[0]?.type === "list" ? undefined : "checkbox"}
+              aria-checked={
+                child.children[0]?.type === "list" ? undefined : child.checked
+              }
+            />
+          ))}
+        </ul>
+      );
   }
 }
 
