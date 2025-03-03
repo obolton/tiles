@@ -4,6 +4,7 @@ import newIcon from "@/icons/new.svg";
 import libraryIcon from "@/icons/library.svg";
 import settingsIcon from "@/icons/settings.svg";
 import signOutIcon from "@/icons/sign-out.svg";
+import menuIcon from "@/icons/menu.svg";
 ---
 
 <nav id="navigation" class="toolbar">
@@ -85,6 +86,27 @@ import signOutIcon from "@/icons/sign-out.svg";
           </li>
         </menu>
       </popover-menu>
+    </li>
+    <li>
+      <button
+        id="toc-button"
+        class="floating"
+        type="button"
+        role="menuitem"
+        popovertarget="toc"
+        data-tooltip="Table of contents"
+        aria-haspopup="menu"
+        aria-expanded="false"
+      >
+        <img
+          class="icon"
+          src={menuIcon.src}
+          alt="Table of contents"
+          aria-hidden="true"
+        />
+      </button>
+      <table-of-contents id="toc" anchor="toc-button" role="navigation"
+      ></table-of-contents>
     </li>
   </menu>
 </nav>
