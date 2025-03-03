@@ -39,6 +39,15 @@
     list-style-position: outside;
   }
 
+  & :global(.checklist) {
+    list-style: none;
+    margin: 0 0 1rem;
+
+    & > li:not([role="checkbox"]) {
+      margin-left: 32px;
+    }
+  }
+
   & ol {
     list-style-type: decimal;
   }
@@ -67,6 +76,53 @@
   & li:has(> ul) {
     list-style: none;
   }
+
+  & li[role="checkbox"] {
+    position: relative;
+    padding-left: 32px;
+    outline: none;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      box-sizing: border-box;
+      width: 24px;
+      height: 24px;
+      inset: 5px auto auto 0;
+      transition-duration: var(--animation-duration-short);
+      transition-timing-function: var(--easing);
+    }
+
+    &::before {
+      border: 2px solid rgb(0 0 0 / 15%);
+      border-radius: 6px;
+      background-color: rgb(255 255 255 / 20%);
+      background-clip: padding-box;
+      transition-property: border-color;
+    }
+
+    &::after {
+      background-image: url("@/icons/check.svg");
+      background-size: 22px 22px;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0;
+      scale: 0.7;
+      transition-property: opacity, scale;
+    }
+
+    &[aria-checked="true"] {
+      &::before {
+        border-color: rgb(0 0 0 / 40%);
+      }
+
+      &::after {
+        opacity: 0.7;
+        scale: 1;
+      }
+    }
+  }
 }
 
 .static {
@@ -87,6 +143,10 @@
 
   & [data-placeholder] {
     padding: var(--padding);
+  }
+
+  & li[role="checkbox"]::after {
+    cursor: pointer;
   }
 }
 
