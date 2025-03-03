@@ -1,6 +1,9 @@
-popover-menu {
+popover-menu,
+table-of-contents {
   position: fixed;
   inset: auto;
+  max-height: 320px;
+  overflow: auto;
   border: none;
   margin: 8px 0;
   padding: 0;
@@ -34,7 +37,8 @@ popover-menu {
   }
 }
 
-popover-menu > menu {
+popover-menu > menu,
+table-of-contents > menu {
   display: flex;
   flex-direction: column;
   border-radius: inherit;
@@ -70,7 +74,8 @@ popover-menu > menu {
     }
 
     & button,
-    & a {
+    & a,
+    & span {
       display: flex;
       align-items: center;
       justify-content: flex-start;
@@ -92,5 +97,23 @@ popover-menu > menu {
       background: none;
       border: none;
     }
+  }
+}
+
+table-of-contents {
+  & .link {
+    cursor: pointer;
+  }
+
+  & .h1 {
+    font-weight: 600;
+  }
+
+  & .h2 {
+    padding-left: 24px;
+  }
+
+  & .h3 {
+    padding-left: 32px;
   }
 }
