@@ -9,6 +9,7 @@ export enum TextFormat {
 export enum ListType {
   ORDERED = 0,
   UNORDERED = 1,
+  CHECK = 2,
 }
 
 export interface BaseNode {
@@ -52,6 +53,7 @@ export interface ListNode extends BaseNode {
 export interface ListItemNode extends BaseNode {
   type: "listitem";
   value: number;
+  checked?: boolean;
   children: (TextNode | LinkNode | ListNode)[];
 }
 
