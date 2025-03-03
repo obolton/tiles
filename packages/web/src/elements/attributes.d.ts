@@ -13,6 +13,7 @@ import type { CalendarMonthAttributes } from "./calendar/CalendarMonth";
 import type { MapViewAttributes } from "./maps/MapView";
 import type { MapMarkerAttributes } from "./maps/MapMarker";
 import type { MapLegendItemAttributes } from "./maps/MapLegendItem";
+import type { TableOfContentsAttributes } from "./tableOfContents/TableOfContents";
 
 type CustomElementAttributes<T extends HTMLElement = unknown> = {
   key?: string;
@@ -46,6 +47,7 @@ declare module "react" {
       "tab-panel": CustomElementAttributes & TabPanelAttributes;
       "file-picker": CustomElementAttributes & FilePickerAttributes;
       "toast-container": CustomElementAttributes;
+      "table-of-contents": CustomElementAttributes & TableOfContentsAttributes;
     }
   }
 }

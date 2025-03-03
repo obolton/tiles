@@ -14,3 +14,4 @@ import "./carousel/CarouselView";
 import "./tabs/TabBar";
 import "./tabs/TabItem";
 import "./tabs/TabPanel";
+import "./tableOfContents/TableOfContents";
