@@ -16,6 +16,12 @@
   initial-value: rgb(0 0 0 / 30%);
 }
 
+@property --highlight-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 112 243 / 70%);
+}
+
 :root {
   --focus-ring-color: #0070f3;
   --success-color: rgba(0 255 0 / 80%);
