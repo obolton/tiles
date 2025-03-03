@@ -13,6 +13,7 @@ import {
   $isListNode,
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
+  INSERT_CHECK_LIST_COMMAND,
   REMOVE_LIST_COMMAND,
 } from "@lexical/list";
 import {
@@ -33,6 +34,7 @@ import underlineIcon from "@/icons/underline.svg";
 import strikethroughIcon from "@/icons/strikethrough.svg";
 import orderedListIcon from "@/icons/ordered-list.svg";
 import unorderedListIcon from "@/icons/unordered-list.svg";
+import checkListIcon from "@/icons/check-list.svg";
 import quoteIcon from "@/icons/quote.svg";
 import linkIcon from "@/icons/link.svg";
 import { showModal } from "@/utils/modals";
@@ -50,6 +52,7 @@ type Format = {
   strikethrough: boolean;
   orderedList: boolean;
   unorderedList: boolean;
+  checkList: boolean;
   link: boolean;
 };
 
@@ -69,6 +72,9 @@ function $getSelectionListType() {
   }
   if (listTypes.every((type) => type === "bullet")) {
     return "unordered";
+  }
+  if (listTypes.every((type) => type === "check")) {
+    return "check";
   }
   return null;
 }
@@ -96,6 +102,7 @@ export default function Toolbar({
     strikethrough: false,
     orderedList: false,
     unorderedList: false,
+    checkList: false,
     link: false,
   });
 
@@ -124,6 +131,7 @@ export default function Toolbar({
           strikethrough: selection.hasFormat("strikethrough"),
           orderedList: listType === "ordered",
           unorderedList: listType === "unordered",
+          checkList: listType === "check",
           link: $isLinkNode(anchor) || $isLinkNode(anchor.getParent()),
         });
       });
@@ -226,6 +234,16 @@ export default function Toolbar({
     editor.getEditorState().read(() => {
       if ($getSelectionListType() !== "unordered") {
         editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+      } else {
+        editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+      }
+    });
+  }, [editor]);
+
+  const formatCheckList = useCallback(() => {
+    editor.getEditorState().read(() => {
+      if ($getSelectionListType() !== "check") {
+        editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
       } else {
         editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
       }
@@ -340,6 +358,18 @@ export default function Toolbar({
           onClick={formatUnorderedList}
         >
           <Icon src={unorderedListIcon.src} />
+        </button>
+      </li>
+      <li>
+        <button
+          className="floating small"
+          aria-label="Check list"
+          data-tooltip="Format as a check list"
+          type="button"
+          aria-pressed={format.checkList ? "true" : "false"}
+          onClick={formatCheckList}
+        >
+          <Icon src={checkListIcon.src} />
         </button>
       </li>
       <li>
