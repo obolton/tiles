@@ -1,12 +1,11 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import useEditable from "@/hooks/useEditable";
+import CollaborationButtons from "./CollaborationButtons";
 import TileButtons from "./TileButtons";
 import FormattingTools from "./FormattingTools";
-import privateIcon from "@/icons/private.svg";
-import publicIcon from "@/icons/public.svg";
 import moreIcon from "@/icons/more.svg";
 import trashIcon from "@/icons/trash.svg";
-import { redirectWithToast, showToast } from "@/utils/toasts";
+import { redirectWithToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
 import { useEditor } from "@/context/editor";
 
@@ -17,33 +16,12 @@ interface EditingToolsProps {
 }
 
 export default function EditingTools({
-  isPublished: initialIsPublished,
+  isPublished,
   allowPublish,
   allowDelete,
 }: EditingToolsProps) {
   const editor = useEditor();
   const isEditable = useEditable();
-  const [isPublished, setIsPublished] = useState(initialIsPublished);
-
-  const publishPage = useCallback(async () => {
-    try {
-      await editor.setPublished(true);
-      setIsPublished(true);
-      showToast("The page was published.", "success");
-    } catch (error) {
-      handleError(error);
-    }
-  }, [editor]);
-
-  const unpublishPage = useCallback(async () => {
-    try {
-      await editor.setPublished(false);
-      setIsPublished(false);
-      showToast("The page was unpublished.", "success");
-    } catch (error) {
-      handleError(error);
-    }
-  }, [editor]);
 
   const deletePage = useCallback(async () => {
     try {
@@ -61,29 +39,10 @@ export default function EditingTools({
   return (
     <>
       <hr />
-      {isPublished ? (
-        <button
-          id="unpublish"
-          className="floating"
-          aria-label="Published"
-          data-tooltip="This page is published"
-          disabled={allowPublish ? undefined : true}
-          onClick={unpublishPage}
-        >
-          <img className="icon" src={publicIcon.src} alt="Published" />
-        </button>
-      ) : (
-        <button
-          id="publish"
-          className="floating"
-          aria-label="Private"
-          data-tooltip="This page is private"
-          disabled={allowPublish ? undefined : true}
-          onClick={publishPage}
-        >
-          <img className="icon" src={privateIcon.src} alt="Private" />
-        </button>
-      )}
+      <CollaborationButtons
+        isPublished={isPublished}
+        allowPublish={allowPublish}
+      />
       <hr />
       <TileButtons />
       <hr />
