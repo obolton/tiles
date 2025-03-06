@@ -6,11 +6,11 @@ interface SignUpEmailOptions {
   name: string;
 }
 
+assert(process.env.CLIENT_ORIGIN, "CLIENT_ORIGIN is required");
+const BASE_URL = process.env.CLIENT_ORIGIN;
+
 // TODO: Escaping
 export function signUpEmail({ id, name }: SignUpEmailOptions): Email {
-  assert(process.env.CLIENT_ORIGIN, "CLIENT_ORIGIN is required");
-  const BASE_URL = process.env.CLIENT_ORIGIN;
-
   return {
     subject: "Welcome to Tiles",
     body: `<p>Hi ${name},</p>
