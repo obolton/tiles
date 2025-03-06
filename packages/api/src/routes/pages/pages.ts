@@ -193,15 +193,20 @@ export function formatTile({
 
 export async function getPageById({ id }: GetPageByIdSchema, userId?: string) {
   const page = await prisma.page.findUnique({
-    where: { id },
+    where: userId
+      ? {
+          id,
+          OR: [
+            { published: true },
+            { authorId: userId },
+            { access: { some: { userId } } },
+          ],
+        }
+      : { id, published: true },
     select: PAGE_FIELDS,
   });
 
   if (!page) {
-    return null;
-  }
-
-  if (!page.published && (!userId || page.author.id !== userId)) {
     return null;
   }
 

@@ -28,7 +28,13 @@ export const authenticatedPageProcedure = authenticatedProcedure
     const { pageId } = input;
 
     const page = await prisma.page.findUnique({
-      where: { id: pageId, authorId: ctx.user.id },
+      where: {
+        id: pageId,
+        OR: [
+          { authorId: ctx.user.id },
+          { access: { some: { userId: ctx.user.id } } },
+        ],
+      },
       select: { id: true },
     });
 
