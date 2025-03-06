@@ -6,6 +6,7 @@
 :host {
   position: relative;
   contain: strict;
+  display: block;
 }
 
 #contents {
