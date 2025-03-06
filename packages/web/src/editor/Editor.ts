@@ -10,6 +10,7 @@ import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type { ClientTile, ClientCollection } from "@/types/tiles";
 import type { Layout, LeafTile } from "@/types/layout";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
+import type { PageInvite, PageAccess, User } from "@/types/collaboration";
 
 type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
@@ -50,12 +51,18 @@ export default class Editor {
     [typeof this.sections, typeof this.tiles],
     Layout
   >;
+  readonly access: Store<PageAccess[]>;
+  readonly invites: Store<PageInvite[]>;
+  readonly author: User;
 
   constructor(page: Page) {
     this.pageId = page.id;
     this.sections = new Store(page.collections);
     this.tiles = new Store(page.tiles);
     this.layout = new DerivedStore([this.sections, this.tiles], getLayout);
+    this.access = new Store(page.access);
+    this.invites = new Store(page.invites);
+    this.author = page.author;
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();
@@ -447,5 +454,45 @@ export default class Editor {
     this.tiles.value = this.tiles.value.map((entry) =>
       entry.id === id ? { ...entry, rows, columns } : entry,
     );
+  }
+
+  // Collaboration
+
+  async sendInvite(email: string) {
+    const invite = await client.collaboration.inviteToPage.mutate({
+      pageId: this.pageId,
+      email,
+    });
+    this.invites.value = this.invites.value.concat(invite);
+  }
+
+  async deleteInvite(
+    id: string,
+    transition: TransitionFunction = immediateTransition,
+  ) {
+    await client.collaboration.deletePageInvite.mutate({
+      pageId: this.pageId,
+      id,
+    });
+    transition(() => {
+      this.invites.value = this.invites.value.filter(
+        (invite) => invite.id !== id,
+      );
+    });
+  }
+
+  async revokeAccess(
+    userId: string,
+    transition: TransitionFunction = immediateTransition,
+  ) {
+    await client.collaboration.revokePageAccess.mutate({
+      pageId: this.pageId,
+      userId,
+    });
+    transition(() => {
+      this.access.value = this.access.value.filter(
+        (access) => access.user.id !== userId,
+      );
+    });
   }
 }
