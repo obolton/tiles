@@ -14,7 +14,7 @@ export function clearSessionCookie(res: ServerResponse<IncomingMessage>) {
       path: "/",
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: "lax",
       maxAge: 0,
     }),
   );
