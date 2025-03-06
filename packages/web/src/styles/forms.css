@@ -41,7 +41,7 @@ textarea {
     outline-color: var(--focus-ring-color);
   }
 
-  &:invalid {
+  &:user-invalid {
     outline-color: var(--destructive-color);
   }
 }
