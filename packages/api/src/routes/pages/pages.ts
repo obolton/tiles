@@ -11,6 +11,10 @@ import { TEXT_FIELDS } from "@/routes/text/text.ts";
 import { EVENT_FIELDS } from "@/routes/events/events.ts";
 import { LINK_FIELDS } from "@/routes/links/links.ts";
 import { VIDEO_FIELDS } from "@/routes/videos/videos.ts";
+import {
+  PAGE_ACCESS_FIELDS,
+  PAGE_INVITE_FIELDS,
+} from "@/routes/collaboration/collaboration.ts";
 import type {
   GetPageByIdSchema,
   GetProfilePageSchema,
@@ -73,6 +77,12 @@ const PAGE_FIELDS = {
       name: true,
       imageUrl: true,
     },
+  },
+  access: {
+    select: PAGE_ACCESS_FIELDS,
+  },
+  invites: {
+    select: PAGE_INVITE_FIELDS,
   },
   collections: {
     select: COLLECTION_FIELDS,
