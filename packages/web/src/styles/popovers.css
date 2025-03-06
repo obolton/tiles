@@ -73,20 +73,21 @@ table-of-contents > menu {
       background: rgba(0 0 0 / 10%);
     }
 
-    & button,
-    & a,
-    & span {
+    & > button,
+    & > a,
+    & > span {
       display: flex;
       align-items: center;
       justify-content: flex-start;
       gap: 12px;
       width: 100%;
-      padding: 12px 18px;
+      height: 48px;
+      padding: 0 16px;
       outline: none;
       white-space: nowrap;
     }
 
-    & button {
+    & > button {
       font-family: inherit;
       font-size: inherit;
       line-height: inherit;
