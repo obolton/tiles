@@ -279,6 +279,36 @@ export async function listPages(
   };
 }
 
+export async function listSharedPages(
+  { query, offset }: ListPagesSchema,
+  { user }: AuthenticatedProcedureContext,
+) {
+  const filter: Prisma.PageWhereInput = query
+    ? {
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          { subtitle: { contains: query, mode: "insensitive" } },
+        ],
+      }
+    : {};
+  const pages = await prisma.page.findMany({
+    where: {
+      access: { some: { userId: user.id } },
+      ...filter,
+    },
+    select: PAGE_LINK_TILE_PAGE_FIELDS,
+    orderBy: {
+      updatedAt: "desc",
+    },
+    take: RESULTS_PER_PAGE + 1,
+    skip: offset,
+  });
+  return {
+    pages: pages.slice(0, RESULTS_PER_PAGE),
+    hasMore: pages.length > RESULTS_PER_PAGE,
+  };
+}
+
 export async function createPage(
   { title }: CreatePageSchema,
   { user }: AuthenticatedProcedureContext,

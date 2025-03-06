@@ -15,6 +15,7 @@ import {
   getPageById,
   getProfilePage,
   listPages,
+  listSharedPages,
   createPage,
   updatePage,
   deletePage,
@@ -33,6 +34,10 @@ export default router({
   list: authenticatedProcedure
     .input(ListPagesSchema)
     .query(async ({ input, ctx }) => listPages(input, ctx)),
+
+  listShared: authenticatedProcedure
+    .input(ListPagesSchema)
+    .query(async ({ input, ctx }) => listSharedPages(input, ctx)),
 
   create: authenticatedProcedure
     .input(CreatePageSchema)
