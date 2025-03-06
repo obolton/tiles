@@ -1,0 +1,16 @@
+.details {
+  display: flex;
+  flex-direction: column;
+}
+
+.name,
+.description {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.description {
+  font-size: 12px;
+  opacity: 0.5;
+}
