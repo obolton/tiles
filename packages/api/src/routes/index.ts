@@ -16,6 +16,7 @@ import videos from "./videos/router.ts";
 import bookmarks from "./bookmarks/router.ts";
 import ai from "./ai/router.ts";
 import sections from "./sections/router.ts";
+import collaboration from "./collaboration/router.ts";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 const appRouter = router({
@@ -36,6 +37,7 @@ const appRouter = router({
   bookmarks,
   ai,
   sections,
+  collaboration,
 });
 
 export type AppRouter = typeof appRouter;
