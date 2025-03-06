@@ -1,0 +1,29 @@
+model PageInvite {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  creatorId String   @map("creator_id") @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
+  email     String
+  key       String   @unique
+
+  creator User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  page    Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, email])
+  @@index([pageId])
+  @@index([key])
+  @@map("page_invites")
+}
+
+model PageAccess {
+  createdAt DateTime @default(now()) @map("created_at")
+  userId    String   @map("user_id") @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@id(name: "id", [userId, pageId])
+  @@index([pageId])
+  @@map("page_access")
+}

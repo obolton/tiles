@@ -11,9 +11,11 @@ model User {
 
   sessions    Session[]
   keys        Key[]
-  profilePage Page       @relation("ProfilePage", fields: [profilePageId], references: [id], onDelete: Cascade)
-  pages       Page[]     @relation("Pages")
+  profilePage Page         @relation("ProfilePage", fields: [profilePageId], references: [id], onDelete: Cascade)
+  pages       Page[]       @relation("Pages")
   bookmarks   Bookmark[]
+  pageAccess  PageAccess[]
+  pageInvites PageInvite[]
 
   @@index([username])
   @@index([email])

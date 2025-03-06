@@ -43,6 +43,8 @@ model Page {
   maps               MapTile[]
   pageLinks          PageLinkTile[] @relation("Page")
   collections        Collection[]
+  access             PageAccess[]
+  invites            PageInvite[]
 
   @@index([authorId])
   @@index([authorId, updatedAt])
