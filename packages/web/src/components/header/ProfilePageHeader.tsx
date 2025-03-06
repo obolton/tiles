@@ -44,7 +44,7 @@ export default function ProfilePageHeader({
     <header className={styles.header}>
       {imageUrl ? (
         <img
-          className="large-profile-image"
+          className="profile-image large"
           src={setSearchParams(imageUrl, { class: "large" })}
           alt={name}
         />

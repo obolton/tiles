@@ -1,19 +1,21 @@
-img.profile-image,
-img.large-profile-image {
+img.profile-image {
   box-sizing: content-box;
   object-fit: cover;
   border: 1px solid rgb(0 0 0 / 20%);
   border-radius: 50%;
-}
-
-img.profile-image {
   width: 32px;
   height: 32px;
-}
 
-img.large-profile-image {
-  width: 80px;
-  height: 80px;
+  &.small {
+    width: 20px;
+    height: 20px;
+    border: none;
+  }
+
+  &.large {
+    width: 80px;
+    height: 80px;
+  }
 }
 
 img.icon {
