@@ -1,0 +1,12 @@
+.carousel {
+  width: 500px;
+  height: 200px;
+  border: 1px solid black;
+
+  & > div {
+    width: 200px;
+    border: 1px solid blue;
+    background: lightblue;
+    padding: 16px;
+  }
+}
