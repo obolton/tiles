@@ -12,7 +12,7 @@ const SESSION_COOKIE_OPTIONS: AstroCookieSetOptions = {
   httpOnly: true,
   secure: true,
   path: "/",
-  sameSite: "strict",
+  sameSite: "lax",
   domain: import.meta.env.SESSION_COOKIE_DOMAIN,
 };
 
@@ -20,7 +20,7 @@ const SIGNED_IN_FLAG_COOKIE_OPTIONS: AstroCookieSetOptions = {
   httpOnly: false,
   secure: true,
   path: "/",
-  sameSite: "strict",
+  sameSite: "lax",
 };
 
 type SignInOptions = AppRouterInputs["auth"]["signIn"];

@@ -44,7 +44,7 @@ export function getCachedUserInfo() {
 }
 
 export function clearAuthenticationCookies() {
-  document.cookie = `${SIGNED_IN_FLAG_COOKIE_NAME}=; Path=/; Secure; SameSite=Strict; Max-Age=0`;
+  document.cookie = `${SIGNED_IN_FLAG_COOKIE_NAME}=; Path=/; Secure; SameSite=Lax; Max-Age=0`;
 }
 
 export async function signOut() {
