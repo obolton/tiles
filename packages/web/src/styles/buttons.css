@@ -100,6 +100,14 @@ a.floating {
     filter: drop-shadow(0 1px 1px rgb(0 0 0 / 10%));
   }
 
+  & > svg {
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    fill: var(--icon-color);
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 10%));
+  }
+
   &.pending,
   &:hover:not(:disabled) {
     scale: 1.1;
@@ -128,7 +136,7 @@ a.floating {
     width: 36px;
     height: 36px;
 
-    & > img {
+    & > svg {
       width: 18px;
       height: 18px;
     }
@@ -138,7 +146,7 @@ a.floating {
     width: 32px;
     height: 32px;
 
-    & > img {
+    & > svg {
       width: 20px;
       height: 20px;
     }

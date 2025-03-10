@@ -2,6 +2,10 @@
   position: relative;
 }
 
+::slotted(svg) {
+  fill: var(--icon-color);
+}
+
 button {
   position: relative;
   width: 44px;
@@ -22,7 +26,7 @@ button {
     rotate var(--animation-duration) var(--spring);
 
   & > img,
-  & ::slotted(img) {
+  & ::slotted(svg) {
     position: absolute;
     top: calc(50% - 12px);
     left: calc(50% - 12px);
@@ -38,10 +42,6 @@ button {
     opacity: 0;
     scale: 0.7;
     rotate: z -45deg;
-  }
-
-  & ::slotted(img) {
-    opacity: 0.8;
   }
 
   &:hover {
@@ -60,7 +60,7 @@ button {
       rotate: z -45deg;
     }
 
-    & ::slotted(img) {
+    & ::slotted(svg) {
       opacity: 0;
       scale: 0.7;
     }
