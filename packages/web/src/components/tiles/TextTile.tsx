@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { serialize } from "@/utils/richText/serialize";
 import RichTextEditor from "@/components/inputs/RichTextEditor/RichTextEditor";
 import RichText from "@/components/text/RichText";
@@ -28,22 +28,33 @@ export default function TextTile({
   theme: initialTheme,
   hue: initialHue,
 }: TextTileProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const editor = useEditor();
   const isEditable = useEditable();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [theme, setTheme] = useState(initialTheme);
   const [hue, setHue] = useState(initialHue);
+  const [showToolbar, setShowToolbar] = useState(false);
 
-  const onBlur = useCallback(async () => {
-    if (!editorState) {
-      return;
-    }
-    const content = serialize(editorState);
-    await editor.updateText({
-      id,
-      content,
-    });
-  }, [editor, editorState, id]);
+  const onFocus = useCallback(() => setShowToolbar(true), []);
+
+  const onBlur = useCallback(
+    async (event: React.FocusEvent) => {
+      if (!ref.current?.contains(event.relatedTarget)) {
+        setShowToolbar(false);
+      }
+
+      if (!editorState) {
+        return;
+      }
+      const content = serialize(editorState);
+      await editor.updateText({
+        id,
+        content,
+      });
+    },
+    [editor, editorState, id],
+  );
 
   const onChangeColor = useCallback(
     async (value: ColorPickerValue) => {
@@ -73,21 +84,26 @@ export default function TextTile({
       >
         {isEditable ? (
           <RichTextEditor
+            ref={ref}
             className={classNames(styles.text, styles.editor)}
+            onFocus={onFocus}
             onBlur={onBlur}
             onChange={setEditorState}
             placeholder="Write something"
             value={content}
             editable
+            tabIndex={-1}
           >
-            <FormattingToolbar
-              className={styles.toolbar}
-              color={{ theme, hue }}
-              onChangeColor={onChangeColor}
-            />
+            {showToolbar ? (
+              <FormattingToolbar
+                className={styles.toolbar}
+                color={{ theme, hue }}
+                onChangeColor={onChangeColor}
+              />
+            ) : null}
           </RichTextEditor>
         ) : (
-          <div className={classNames(styles.text, styles.static)} tabIndex={0}>
+          <div className={classNames(styles.text, styles.static)}>
             <RichText content={content} />
           </div>
         )}

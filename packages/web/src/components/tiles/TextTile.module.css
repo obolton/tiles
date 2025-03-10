@@ -198,15 +198,10 @@
     top: -64px;
     margin: 0;
     view-transition-name: toolbar;
-    transition-property: display;
   }
 }
 
 .pop-out[open] {
-  & .toolbar {
-    opacity: 1;
-  }
-
   & .text,
   & .editor {
     overflow: auto;
@@ -224,10 +219,6 @@
 
   & .editor {
     overflow: hidden;
-  }
-
-  & .toolbar {
-    opacity: 0;
   }
 }
 
