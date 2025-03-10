@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import removeIcon from "@/icons/remove.svg";
+import RemoveIcon from "@/icons/remove.svg?jsx";
 import type { User } from "@/types/collaboration";
 import styles from "./PageAccessRow.module.css";
 
@@ -45,12 +45,7 @@ export default function PageAccessRow({
             aria-label="Delete"
             onClick={handleDelete}
           >
-            <img
-              className="icon"
-              src={removeIcon.src}
-              alt="Remove"
-              aria-hidden="true"
-            />
+            <RemoveIcon aria-hidden="true" />
           </button>
         ) : null}
       </a>

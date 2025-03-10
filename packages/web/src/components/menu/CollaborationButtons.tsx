@@ -2,10 +2,10 @@ import { lazy, useCallback, useState } from "react";
 import { registerModal, showModal } from "@/utils/modals";
 import PageAccessRow from "./PageAccessRow";
 import PageInviteRow from "./PageInviteRow";
-import privateIcon from "@/icons/private.svg";
-import publicIcon from "@/icons/public.svg";
-import peopleIcon from "@/icons/people.svg";
-import newIcon from "@/icons/new.svg";
+import PrivateIcon from "@/icons/private.svg?jsx";
+import PublicIcon from "@/icons/public.svg?jsx";
+import PeopleIcon from "@/icons/people.svg?jsx";
+import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { useEditor } from "@/context/editor";
 import { showToast } from "@/utils/toasts";
@@ -103,7 +103,7 @@ export default function CollaborationButtons({
           disabled={allowPublish ? undefined : true}
           onClick={unpublishPage}
         >
-          <img className="icon" src={publicIcon.src} alt="Published" />
+          <PublicIcon aria-hidden="true" />
         </button>
       ) : (
         <button
@@ -115,7 +115,7 @@ export default function CollaborationButtons({
           disabled={allowPublish ? undefined : true}
           onClick={publishPage}
         >
-          <img className="icon" src={privateIcon.src} alt="Private" />
+          <PrivateIcon aria-hidden="true" />
         </button>
       )}
 
@@ -129,7 +129,7 @@ export default function CollaborationButtons({
         aria-haspopup="menu"
         aria-expanded="false"
       >
-        <img className="icon" src={peopleIcon.src} alt="Page access" />
+        <PeopleIcon />
       </button>
 
       <popover-menu id="access-popover" anchor="access-button">
@@ -161,12 +161,7 @@ export default function CollaborationButtons({
 
           <li>
             <button type="button" onClick={showInviteModal}>
-              <img
-                className="icon"
-                src={newIcon.src}
-                alt="Invite to page"
-                aria-hidden="true"
-              />
+              <NewIcon aria-hidden="true" />
               Invite to page
             </button>
           </li>

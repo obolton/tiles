@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import clearColorIcon from "@/icons/clear-color.svg";
+import ClearColorIcon from "@/icons/clear-color.svg?jsx";
 import styles from "./ColorPicker.module.css";
 import { classNames } from "@/utils/css";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
@@ -102,7 +102,7 @@ export default function ColorPicker({
           class={styles.clear}
           value="CLEAR"
         >
-          <img src={clearColorIcon.src} alt="Clear color" />
+          <ClearColorIcon aria-hidden="true" />
         </swatch-item>
       ) : null}
     </swatch-select>

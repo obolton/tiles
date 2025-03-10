@@ -24,19 +24,18 @@ import {
 } from "@lexical/rich-text";
 import type { HeadingTagType } from "@lexical/rich-text";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
-import Icon from "@/components/icons/Icon";
-import h1Icon from "@/icons/h1.svg";
-import h2Icon from "@/icons/h2.svg";
-import h3Icon from "@/icons/h3.svg";
-import boldIcon from "@/icons/bold.svg";
-import italicIcon from "@/icons/italic.svg";
-import underlineIcon from "@/icons/underline.svg";
-import strikethroughIcon from "@/icons/strikethrough.svg";
-import orderedListIcon from "@/icons/ordered-list.svg";
-import unorderedListIcon from "@/icons/unordered-list.svg";
-import checkListIcon from "@/icons/check-list.svg";
-import quoteIcon from "@/icons/quote.svg";
-import linkIcon from "@/icons/link.svg";
+import H1Icon from "@/icons/h1.svg?jsx";
+import H2Icon from "@/icons/h2.svg?jsx";
+import H3Icon from "@/icons/h3.svg?jsx";
+import BoldIcon from "@/icons/bold.svg?jsx";
+import ItalicIcon from "@/icons/italic.svg?jsx";
+import UnderlineIcon from "@/icons/underline.svg?jsx";
+import StrikethroughIcon from "@/icons/strikethrough.svg?jsx";
+import OrderedListIcon from "@/icons/ordered-list.svg?jsx";
+import UnorderedListIcon from "@/icons/unordered-list.svg?jsx";
+import CheckListIcon from "@/icons/check-list.svg?jsx";
+import QuoteIcon from "@/icons/quote.svg?jsx";
+import LinkIcon from "@/icons/link.svg?jsx";
 import { showModal } from "@/utils/modals";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
@@ -261,7 +260,7 @@ export default function Toolbar({
           aria-pressed={format.h1 ? "true" : "false"}
           onClick={formatH1}
         >
-          <Icon src={h1Icon.src} />
+          <H1Icon aria-hidden="true" />
         </button>
       </li>
       <li>
@@ -273,7 +272,7 @@ export default function Toolbar({
           aria-pressed={format.h2 ? "true" : "false"}
           onClick={formatH2}
         >
-          <Icon src={h2Icon.src} />
+          <H2Icon aria-hidden="true" />
         </button>
       </li>
       <li>
@@ -285,7 +284,7 @@ export default function Toolbar({
           aria-pressed={format.h3 ? "true" : "false"}
           onClick={formatH3}
         >
-          <Icon src={h3Icon.src} />
+          <H3Icon aria-hidden="true" />
         </button>
       </li>
       <li>
@@ -297,7 +296,7 @@ export default function Toolbar({
           aria-pressed={format.bold ? "true" : "false"}
           onClick={formatBold}
         >
-          <Icon src={boldIcon.src} />
+          <BoldIcon aria-hidden="true" />
         </button>
       </li>
       <li>
@@ -309,7 +308,7 @@ export default function Toolbar({
           aria-pressed={format.italic ? "true" : "false"}
           onClick={formatItalic}
         >
-          <Icon src={italicIcon.src} />
+          <ItalicIcon aria-hidden="true" />
         </button>
       </li>
       <li>
@@ -321,7 +320,7 @@ export default function Toolbar({
           aria-pressed={format.underline ? "true" : "false"}
           onClick={formatUnderline}
         >
-          <Icon src={underlineIcon.src} />
+          <UnderlineIcon aria-hidden="true" />
         </button>
       </li>
       <li>
@@ -333,7 +332,7 @@ export default function Toolbar({
           aria-pressed={format.strikethrough ? "true" : "false"}
           onClick={formatStrikethrough}
         >
-          <Icon src={strikethroughIcon.src} />
+          <StrikethroughIcon aria-hidden="true" />
         </button>
       </li>
       <li>
@@ -345,7 +344,7 @@ export default function Toolbar({
           aria-pressed={format.orderedList ? "true" : "false"}
           onClick={formatOrderedList}
         >
-          <Icon src={orderedListIcon.src} />
+          <OrderedListIcon aria-hidden="true" />
         </button>
       </li>
       <li>
@@ -357,7 +356,7 @@ export default function Toolbar({
           aria-pressed={format.unorderedList ? "true" : "false"}
           onClick={formatUnorderedList}
         >
-          <Icon src={unorderedListIcon.src} />
+          <UnorderedListIcon aria-hidden="true" />
         </button>
       </li>
       <li>
@@ -369,7 +368,7 @@ export default function Toolbar({
           aria-pressed={format.checkList ? "true" : "false"}
           onClick={formatCheckList}
         >
-          <Icon src={checkListIcon.src} />
+          <CheckListIcon aria-hidden="true" />
         </button>
       </li>
       <li>
@@ -381,7 +380,7 @@ export default function Toolbar({
           aria-pressed={format.quote ? "true" : "false"}
           onClick={formatQuote}
         >
-          <Icon src={quoteIcon.src} />
+          <QuoteIcon aria-hidden="true" />
         </button>
       </li>
       <li>
@@ -393,7 +392,7 @@ export default function Toolbar({
           aria-pressed={format.link ? "true" : "false"}
           onClick={formatLink}
         >
-          <Icon src={linkIcon.src} />
+          <LinkIcon aria-hidden="true" />
         </button>
       </li>
       <li>

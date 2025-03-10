@@ -9,8 +9,8 @@ import { handleError } from "@/utils/errors";
 import styles from "./Section.module.css";
 import { classNames } from "@/utils/css";
 import type { Section } from "@/types/layout";
-import moreIcon from "@/icons/more.svg";
-import trashIcon from "@/icons/trash.svg";
+import MoreIcon from "@/icons/more.svg?jsx";
+import TrashIcon from "@/icons/trash.svg?jsx";
 import { layoutTransition } from "@/utils/animation/layout";
 
 function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -102,7 +102,7 @@ export default function Section({ section }: SectionProps) {
             aria-expanded="false"
             data-tooltip="Section options"
           >
-            <img src={moreIcon.src} alt="Options" aria-hidden="true" />
+            <MoreIcon aria-hidden="true" />
           </button>
 
           <popover-menu
@@ -116,12 +116,7 @@ export default function Section({ section }: SectionProps) {
                   type="button"
                   onClick={deleteSection}
                 >
-                  <img
-                    className="icon"
-                    src={trashIcon.src}
-                    alt="Delete"
-                    aria-hidden="true"
-                  />
+                  <TrashIcon aria-hidden="true" />
                   Delete section
                 </button>
               </li>

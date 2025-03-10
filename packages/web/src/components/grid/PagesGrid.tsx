@@ -5,7 +5,7 @@ import PageLinkTile from "@/components/tiles/PageLinkTile";
 import Placeholder from "@/components/placeholder/Placeholder";
 import Search from "@/components/search/Search";
 import { useCallback, useState } from "react";
-import newIcon from "@/icons/new.svg";
+import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
 import useDebouncedCallback from "@/hooks/useDebouncedCallback";
 
@@ -59,7 +59,7 @@ export default function PagesGrid({ pages: initialPages }: PagesGridProps) {
               data-tooltip="Create a new page"
               onClick={createNewPage}
             >
-              <img src={newIcon.src} alt="Plus icon" />
+              <NewIcon aria-hidden="true" />
             </button>
           )
         }

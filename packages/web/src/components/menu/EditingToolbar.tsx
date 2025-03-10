@@ -1,6 +1,6 @@
 import EditingTools from "./EditingTools";
-import shareIcon from "@/icons/share.svg";
-import bookmarkIcon from "@/icons/bookmark.svg";
+import ShareIcon from "@/icons/share.svg?jsx";
+import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import "./EditingToolbar.module.css";
 
 interface EditingToolbarProps {
@@ -33,7 +33,7 @@ export default function EditingToolbar({
         aria-label="Share"
         data-tooltip="Share this page"
       >
-        <img className="icon" src={shareIcon.src} alt="Share" />
+        <ShareIcon aria-hidden="true" />
       </button>
 
       <button
@@ -43,7 +43,7 @@ export default function EditingToolbar({
         aria-pressed="false"
         data-tooltip="Bookmark this page"
       >
-        <img className="icon" src={bookmarkIcon.src} alt="Bookmark" />
+        <BookmarkIcon aria-hidden="true" />
       </button>
 
       <EditingTools

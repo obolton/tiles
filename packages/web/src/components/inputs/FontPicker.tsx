@@ -1,5 +1,5 @@
 import { FONTS, type FontId } from "@/config/fonts";
-import fontIcon from "@/icons/font.svg";
+import FontIcon from "@/icons/font.svg?jsx";
 import { useCallback } from "react";
 import styles from "./FontPicker.module.css";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
@@ -32,7 +32,7 @@ export default function FontPicker({
       value={value}
       onchange={setFont}
     >
-      <img src={fontIcon.src} alt="Font" aria-hidden="true" slot="icon" />
+      <FontIcon aria-hidden="true" slot="icon" />
       {FONTS.map((font) => (
         <swatch-item
           key={font.family}

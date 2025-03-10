@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import Tile from "./Tile";
-import Icon from "@/components/icons/Icon";
-import arrowRightIcon from "@/icons/arrow-right.svg";
+import ArrowRightIcon from "@/icons/arrow-right.svg?jsx";
 import styles from "./EventTile.module.css";
 import { classNames } from "@/utils/css";
 import { showModal } from "@/utils/modals";
@@ -105,7 +104,7 @@ export default function EventTile({
 
             {endDate ? (
               <>
-                <Icon src={arrowRightIcon.src} />
+                <ArrowRightIcon aria-hidden="true" />
                 {allDay ? (
                   <DateDetails date={endDate} size={size} />
                 ) : (

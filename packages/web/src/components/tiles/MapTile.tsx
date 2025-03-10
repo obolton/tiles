@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useRef } from "react";
 import useEditable from "@/hooks/useEditable";
 import Tile from "./Tile";
-import addPlaceIcon from "@/icons/add-place.svg";
+import AddPlaceIcon from "@/icons/add-place.svg?jsx";
 import styles from "./MapTile.module.css";
 import type { ClientMapTile } from "@/types/tiles";
 import type MapEvent from "@/elements/maps/MapEvent";
@@ -100,7 +100,7 @@ export default function MapTile({ id, places }: MapTileProps) {
               }}
               onClick={handleAddPlace}
             >
-              <img src={addPlaceIcon.src} alt="Add a place" />
+              <AddPlaceIcon aria-hidden="true" />
             </button>
           ) : null}
         </map-view>

@@ -5,8 +5,7 @@ import { classNames } from "@/utils/css";
 import styles from "./PageHeader.module.css";
 import { handleError } from "@/utils/errors";
 import { showModal } from "@/utils/modals";
-import Icon from "@/components/icons/Icon";
-import imageIcon from "@/icons/image.svg";
+import ImageIcon from "@/icons/image.svg?jsx";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import { formatRelativeDate } from "@/utils/dates";
 import { uploadMedia, preloadImage } from "@/utils/media";
@@ -157,7 +156,7 @@ export default function PageHeader({
               aria-pressed={coverImageUrl ? "true" : "false"}
               onClick={coverImageUrl ? removeCoverImage : selectCoverImage}
             >
-              <Icon src={imageIcon.src} />
+              <ImageIcon aria-hidden="true" />
             </button>
           ) : null}
         </div>

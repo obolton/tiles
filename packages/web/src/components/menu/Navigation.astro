@@ -1,10 +1,10 @@
 ---
-import homeIcon from "@/icons/home.svg";
-import newIcon from "@/icons/new.svg";
-import libraryIcon from "@/icons/library.svg";
-import settingsIcon from "@/icons/settings.svg";
-import signOutIcon from "@/icons/sign-out.svg";
-import menuIcon from "@/icons/menu.svg";
+import HomeIcon from "@/icons/home.svg?jsx";
+import NewIcon from "@/icons/new.svg?jsx";
+import LibraryIcon from "@/icons/library.svg?jsx";
+import SettingsIcon from "@/icons/settings.svg?jsx";
+import SignOutIcon from "@/icons/sign-out.svg?jsx";
+import MenuIcon from "@/icons/menu.svg?jsx";
 ---
 
 <nav id="navigation" class="toolbar">
@@ -20,7 +20,7 @@ import menuIcon from "@/icons/menu.svg";
     </li>
     <li>
       <a href="/" class="floating" aria-label="Home" data-tooltip="Home">
-        <img class="icon" src={homeIcon.src} alt="Home" />
+        <HomeIcon />
       </a>
     </li>
     <li>
@@ -31,7 +31,7 @@ import menuIcon from "@/icons/menu.svg";
         data-tooltip="Create a new page"
         data-pending-text=""
       >
-        <img src={newIcon.src} alt="Plus icon" />
+        <NewIcon />
       </button>
     </li>
     <li>
@@ -41,7 +41,7 @@ import menuIcon from "@/icons/menu.svg";
         aria-label="Library"
         data-tooltip="Library"
       >
-        <img class="icon" src={libraryIcon.src} alt="Library" />
+        <LibraryIcon />
       </a>
     </li>
     <li>
@@ -55,33 +55,18 @@ import menuIcon from "@/icons/menu.svg";
         aria-haspopup="menu"
         aria-expanded="false"
       >
-        <img
-          class="icon"
-          src={settingsIcon.src}
-          alt="Settings"
-          aria-hidden="true"
-        />
+        <SettingsIcon />
       </button>
       <popover-menu id="navigation-overflow" anchor="more-button">
         <menu>
           <li>
             <a href="/settings">
-              <img
-                class="icon"
-                src={settingsIcon.src}
-                alt="Settings"
-                aria-hidden="true"
-              />Account settings
+              <SettingsIcon />Account settings
             </a>
           </li>
           <li>
             <button id="sign-out" type="button"
-              ><img
-                class="icon"
-                src={signOutIcon.src}
-                alt="Sign out"
-                aria-hidden="true"
-              />Sign out
+              ><SignOutIcon />Sign out
             </button>
           </li>
         </menu>
@@ -98,12 +83,7 @@ import menuIcon from "@/icons/menu.svg";
         aria-haspopup="menu"
         aria-expanded="false"
       >
-        <img
-          class="icon"
-          src={menuIcon.src}
-          alt="Table of contents"
-          aria-hidden="true"
-        />
+        <MenuIcon />
       </button>
       <table-of-contents id="toc" anchor="toc-button" role="navigation"
       ></table-of-contents>

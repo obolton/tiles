@@ -3,8 +3,8 @@ import useEditable from "@/hooks/useEditable";
 import CollaborationButtons from "./CollaborationButtons";
 import TileButtons from "./TileButtons";
 import FormattingTools from "./FormattingTools";
-import moreIcon from "@/icons/more.svg";
-import trashIcon from "@/icons/trash.svg";
+import MoreIcon from "@/icons/more.svg?jsx";
+import TrashIcon from "@/icons/trash.svg?jsx";
 import { redirectWithToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
 import { useEditor } from "@/context/editor";
@@ -59,7 +59,7 @@ export default function EditingTools({
         aria-expanded="false"
         data-tooltip="More options"
       >
-        <img src={moreIcon.src} alt="More options" aria-hidden="true" />
+        <MoreIcon aria-hidden="true" />
       </button>
       <popover-menu id="page-options" anchor="page-options-button">
         <menu>
@@ -70,12 +70,7 @@ export default function EditingTools({
               disabled={allowDelete ? undefined : true}
               onClick={deletePage}
             >
-              <img
-                className="icon"
-                src={trashIcon.src}
-                alt="Delete"
-                aria-hidden="true"
-              />
+              <TrashIcon aria-hidden="true" />
               Delete page
             </button>
           </li>

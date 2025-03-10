@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import mailIcon from "@/icons/mail.svg";
-import removeIcon from "@/icons/remove.svg";
+import MailIcon from "@/icons/mail.svg?jsx";
+import RemoveIcon from "@/icons/remove.svg?jsx";
 import styles from "./PageInviteRow.module.css";
 import type { PageInvite } from "@/types/collaboration";
 
@@ -24,12 +24,7 @@ export default function PageInviteRow({
   return (
     <li className={styles.row}>
       <span>
-        <img
-          className="icon"
-          src={mailIcon.src}
-          alt="Invitation"
-          aria-hidden="true"
-        />
+        <MailIcon aria-hidden="true" />
 
         <div className={styles.details}>
           <span className={styles.email}>{invite.email}</span>
@@ -42,12 +37,7 @@ export default function PageInviteRow({
           aria-label="Delete"
           onClick={handleDelete}
         >
-          <img
-            className="icon"
-            src={removeIcon.src}
-            alt="Remove"
-            aria-hidden="true"
-          />
+          <RemoveIcon aria-hidden="true" />
         </button>
       </span>
     </li>

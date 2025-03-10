@@ -1,10 +1,10 @@
 import { useCallback, lazy } from "react";
 import useEditable from "@/hooks/useEditable";
-import textIcon from "@/icons/text.svg";
-import imageIcon from "@/icons/image.svg";
-import linkIcon from "@/icons/link.svg";
-import placeIcon from "@/icons/place.svg";
-import eventIcon from "@/icons/event.svg";
+import TextIcon from "@/icons/text.svg?jsx";
+import ImageIcon from "@/icons/image.svg?jsx";
+import LinkIcon from "@/icons/link.svg?jsx";
+import PlaceIcon from "@/icons/place.svg?jsx";
+import EventIcon from "@/icons/event.svg?jsx";
 import { registerModal, showModal } from "@/utils/modals";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
@@ -17,15 +17,15 @@ import type { TileType } from "@/types/tiles";
 type TileButton = {
   label: string;
   type: TileType;
-  icon: string;
+  Icon: React.ComponentType<React.SVGAttributes<SVGElement>>;
 };
 
 const BUTTONS: TileButton[] = [
-  { label: "Text", type: "TEXT", icon: textIcon.src },
-  { label: "Image", type: "IMAGE", icon: imageIcon.src },
-  { label: "Map", type: "MAP", icon: placeIcon.src },
-  { label: "Link", type: "LINK", icon: linkIcon.src },
-  { label: "Event", type: "EVENT", icon: eventIcon.src },
+  { label: "Text", type: "TEXT", Icon: TextIcon },
+  { label: "Image", type: "IMAGE", Icon: ImageIcon },
+  { label: "Map", type: "MAP", Icon: PlaceIcon },
+  { label: "Link", type: "LINK", Icon: LinkIcon },
+  { label: "Event", type: "EVENT", Icon: EventIcon },
 ];
 
 registerModal(
@@ -138,7 +138,7 @@ export default function TileButtons({ collectionId }: TileButtonsProps) {
 
   return (
     <>
-      {BUTTONS.map(({ label, type, icon }) => (
+      {BUTTONS.map(({ label, type, Icon }) => (
         <button
           key={type}
           className="floating"
@@ -148,7 +148,7 @@ export default function TileButtons({ collectionId }: TileButtonsProps) {
           data-tile-type={type}
           onClick={onClick}
         >
-          <img src={icon} alt={label} />
+          <Icon aria-hidden="true" />
         </button>
       ))}
     </>

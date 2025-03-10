@@ -3,7 +3,7 @@ import Section from "@/components/layouts/section/Section";
 import Placeholder from "@/components/placeholder/Placeholder";
 import useEditable from "@/hooks/useEditable";
 import type { Layout } from "@/types/layout";
-import newIcon from "@/icons/new.svg";
+import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { useEditor } from "@/context/editor";
 import styles from "./PageContents.module.css";
@@ -46,9 +46,10 @@ export default function PageContents({ layout }: PageContentsProps) {
           type="button"
           className={styles.add}
           onClick={addSection}
+          aria-label="Add a section"
           data-tooltip="Add a section"
         >
-          <img src={newIcon.src} alt="Add section" />
+          <NewIcon aria-hidden="true" />
         </button>
       ) : null}
     </>
