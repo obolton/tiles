@@ -6,12 +6,6 @@ img.profile-image {
   width: 32px;
   height: 32px;
 
-  &.small {
-    width: 20px;
-    height: 20px;
-    border: none;
-  }
-
   &.large {
     width: 80px;
     height: 80px;
