@@ -5,6 +5,7 @@ import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import cloudflare from "@astrojs/cloudflare";
 import editClientDirective from "./src/config/editClientDirective/register";
+import svgPlugin from "./src/vite/svg";
 
 const isTestEnvironment = process.env.VITEST === "true";
 const packageRoot = path.dirname(import.meta.filename);
@@ -41,6 +42,7 @@ export default defineConfig({
           : {}),
       },
     },
+    plugins: [svgPlugin()],
   },
   adapter: !isTestEnvironment ? cloudflare() : undefined,
 });
