@@ -76,7 +76,7 @@ export default function Section({ section }: SectionProps) {
           onBlur={saveTitle}
           onKeyDown={onKeyDown}
           value={title}
-          data-heading="true"
+          data-heading="h2"
         />
       ) : title ? (
         <h2 id={`${section.id}-heading`} className={styles.title}>
