@@ -1,3 +1,7 @@
+.row {
+  cursor: default;
+}
+
 .details {
   display: flex;
   flex-direction: column;

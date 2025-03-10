@@ -22,7 +22,7 @@ export default function PageInviteRow({
   );
 
   return (
-    <li>
+    <li className={styles.row}>
       <span>
         <img
           className="icon"
