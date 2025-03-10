@@ -15,6 +15,6 @@ carousel-view:not(:defined) {
   }
 
   &:focus-visible {
-    outline: var(--focus-ring-color) solid 3px;
+    outline: var(--focus-outline);
   }
 }

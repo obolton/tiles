@@ -70,10 +70,13 @@
     0 2px 3px 0 rgb(0 0 0 / 30%),
     inset 0 0 0 1px rgb(0 0 0 / 20%);
   cursor: pointer;
+  outline: transparent none 0;
+  outline-offset: -1px;
   transition:
     scale var(--animation-duration-short) var(--easing),
     translate var(--animation-duration-short) var(--easing),
-    box-shadow var(--animation-duration-short) var(--easing);
+    box-shadow var(--animation-duration-short) var(--easing),
+    outline-color var(--animation-duration) var(--easing);
 
   &::after {
     content: url("@/icons/remove-light.svg");
@@ -81,6 +84,10 @@
     inset: 0;
     width: 20px;
     height: 20px;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline);
   }
 }
 
