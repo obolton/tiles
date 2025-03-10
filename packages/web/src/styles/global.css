@@ -24,6 +24,7 @@
 
 :root {
   --focus-ring-color: #0070f3;
+  --focus-outline: 3px solid var(--focus-ring-color);
   --success-color: rgba(0 255 0 / 80%);
   --destructive-color: rgba(255 0 0 / 80%);
   --lightness: 90%;
