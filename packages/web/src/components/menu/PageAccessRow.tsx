@@ -28,11 +28,7 @@ export default function PageAccessRow({
     <li>
       <a href={`/profiles/${user.id}`} target="_blank">
         {user.imageUrl ? (
-          <img
-            className="profile-image small"
-            src={user.imageUrl}
-            alt={user.name}
-          />
+          <img className="profile-image" src={user.imageUrl} alt={user.name} />
         ) : null}
 
         <div className={styles.details}>
