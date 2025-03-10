@@ -1,5 +1,8 @@
 :host {
   -webkit-tap-highlight-color: transparent;
+  outline: transparent none 0;
+  border-radius: var(--border-radius);
+  transition: outline-color var(--animation-duration) var(--easing);
 }
 
 :host([expandable][open]) {
@@ -8,6 +11,10 @@
 
 :host([expandable]:not([open])) {
   cursor: pointer;
+}
+
+:host(:focus-visible) {
+  outline: var(--focus-outline);
 }
 
 * {
