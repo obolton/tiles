@@ -18,11 +18,12 @@ export default class PopOut extends HTMLElement {
 
   protected readonly dialog: HTMLDialogElement;
   private transition?: ViewTransition;
+  private focusTarget: HTMLElement | null = null;
 
   constructor() {
     super();
 
-    const shadow = this.attachShadow({ mode: "open", delegatesFocus: true });
+    const shadow = this.attachShadow({ mode: "open" });
     shadow.adoptedStyleSheets = [stylesheet];
 
     const closeButton = document.createElement("button");
@@ -60,16 +61,14 @@ export default class PopOut extends HTMLElement {
 
   private attachEventListeners() {
     this.addEventListener("pointerdown", this);
-    this.dialog.addEventListener("pointerdown", this);
+    this.addEventListener("keydown", this);
     this.dialog.addEventListener("focusin", this);
-    this.dialog.addEventListener("keydown", this);
   }
 
   private removeEventListeners() {
     this.removeEventListener("pointerdown", this);
-    this.dialog.removeEventListener("pointerdown", this);
+    this.removeEventListener("keydown", this);
     this.dialog.removeEventListener("focusin", this);
-    this.dialog.removeEventListener("keydown", this);
   }
 
   handleEvent(event: Event) {
@@ -88,31 +87,26 @@ export default class PopOut extends HTMLElement {
   }
 
   private handlePointerDown(event: PointerEvent) {
-    // Prevent pointer events on overlay from bubbling up
-    if (event.target === this && this.isOpen()) {
-      event.stopPropagation();
-    }
-
     if (event.button !== PRIMARY_MOUSE_BUTTON) {
       return;
     }
 
+    event.stopPropagation();
+
     if (this.isOpen()) {
-      if (event.target === this.dialog) {
+      if (event.target === this) {
         event.preventDefault();
         this.close();
       }
     } else {
-      this.open();
+      setTimeout(() => this.open(), 0);
     }
   }
 
   private handleFocusIn(event: FocusEvent) {
-    if (this.isOpen() || this.transition) {
-      return;
+    if (!this.transition && event.target instanceof HTMLElement) {
+      this.focusTarget = event.target;
     }
-
-    this.open(event.target instanceof HTMLElement ? event.target : undefined);
   }
 
   private handleKeyDown(event: KeyboardEvent) {
@@ -125,7 +119,7 @@ export default class PopOut extends HTMLElement {
     }
   }
 
-  open(focusTarget?: HTMLElement) {
+  open() {
     if (this.isOpen() || this.transition) {
       return;
     }
@@ -151,6 +145,13 @@ export default class PopOut extends HTMLElement {
       this.dialog.role = "dialog";
       this.dialog.showModal();
 
+      if (this.focusTarget) {
+        this.focusTarget?.focus();
+        this.focusTarget = null;
+      } else {
+        this.querySelector<HTMLElement>("[tabindex]")?.focus();
+      }
+
       this.dispatchEvent(
         new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
       );
@@ -159,7 +160,6 @@ export default class PopOut extends HTMLElement {
       this.cleanUpViewTransition();
       delete this.transition;
       this.removeAttribute("opening");
-      focusTarget?.focus();
     });
   }
 
@@ -198,12 +198,8 @@ export default class PopOut extends HTMLElement {
       delete this.transition;
       this.removeAttribute("closing");
 
-      const activeElement = document.activeElement;
-      if (
-        activeElement instanceof HTMLElement &&
-        this.contains(activeElement)
-      ) {
-        activeElement.blur();
+      if (document.activeElement && this.contains(document.activeElement)) {
+        this.focus();
       }
     });
   }
