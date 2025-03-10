@@ -30,7 +30,7 @@ import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { LinkNode } from "@lexical/link";
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import styles from "./RichTextEditor.module.css";
 
 export type { EditorState };
@@ -67,6 +67,7 @@ interface RichTextEditorProps
   onChange: (editorState: EditorState) => void;
   value: RichText;
   placeholder?: string;
+  ref?: React.Ref<HTMLDivElement>;
 }
 
 export default function RichTextEditor({
@@ -76,9 +77,10 @@ export default function RichTextEditor({
   onChange,
   placeholder,
   value,
+  ref,
   ...props
 }: RichTextEditorProps) {
-  const ref = useRef<LexicalEditor>(null);
+  const editorRef = useRef<LexicalEditor>(null);
 
   const initialConfig = useRef<InitialConfigType>(null);
   if (!initialConfig.current) {
@@ -93,7 +95,7 @@ export default function RichTextEditor({
   }
 
   useEffect(() => {
-    const editor = ref.current;
+    const editor = editorRef.current;
     if (editor) {
       // Force invalid headings to h1
       editor.registerNodeTransform(HeadingNode, (node) => {
@@ -105,18 +107,13 @@ export default function RichTextEditor({
     }
   }, []);
 
-  useEffect(() => ref.current?.setEditable(editable ?? false), [editable]);
-
-  const refCallback = useCallback(
-    (element: HTMLDivElement | null) =>
-      element?.addEventListener("pointerdown", (event) =>
-        event.stopPropagation(),
-      ),
-    [],
+  useEffect(
+    () => editorRef.current?.setEditable(editable ?? false),
+    [editable],
   );
 
   return (
-    <div className={className} ref={refCallback}>
+    <div ref={ref} className={className}>
       <LexicalComposer initialConfig={initialConfig.current}>
         {children}
         <RichTextPlugin
@@ -136,7 +133,7 @@ export default function RichTextEditor({
           ErrorBoundary={LexicalErrorBoundary}
         />
         <OnChangePlugin onChange={onChange} />
-        <EditorRefPlugin editorRef={ref} />
+        <EditorRefPlugin editorRef={editorRef} />
         <ListPlugin />
         <CheckListPlugin />
         <LinkPlugin />
