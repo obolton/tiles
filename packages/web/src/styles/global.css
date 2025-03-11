@@ -66,6 +66,7 @@ body.dark {
   --page-color: #202020;
   --text-color: rgb(255 255 255 / 80%);
   --icon-color: rgb(255 255 255 / 90%);
+  --placeholder-color: rgb(255 255 255 / 20%);
   --accent: linear-gradient(oklch(60% 5% 180deg), oklch(50% 5% 180deg));
 }
 
