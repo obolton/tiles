@@ -3,7 +3,7 @@ import { z } from "zod";
 const TextNodeSchema = z.object({
   type: z.literal("text"),
   text: z.string(),
-  format: z.number().int().gte(0).lte(15),
+  format: z.number().int().gte(0).lte(31),
 });
 
 const LinkNodeSchema = z.object({
