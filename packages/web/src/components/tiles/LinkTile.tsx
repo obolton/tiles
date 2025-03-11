@@ -34,7 +34,7 @@ export default function LinkTile({
 
   const contents = (
     <div className={styles.caption}>
-      <h3 className={styles.title}>{title || "Unnamed page"}</h3>
+      <p className={styles.title}>{title || "Untitled page"}</p>
       {description && <p>{description}</p>}
       <p>{siteName || url}</p>
     </div>
