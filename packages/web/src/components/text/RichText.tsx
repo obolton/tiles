@@ -196,5 +196,8 @@ function Text({ node }: TextProps) {
   if (node.format & TextFormat.UNDERLINE) {
     content = <span className="underline">{content}</span>;
   }
+  if (node.format & TextFormat.HIGHLIGHT) {
+    content = <mark>{content}</mark>;
+  }
   return content;
 }
