@@ -14,6 +14,7 @@ import {
   BOLD_ITALIC_STAR,
   BOLD_ITALIC_UNDERSCORE,
   STRIKETHROUGH,
+  HIGHLIGHT,
 } from "@lexical/markdown";
 import type { InitialConfigType } from "@lexical/react/LexicalComposer";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
@@ -59,6 +60,7 @@ const TRANSFORMERS = [
   BOLD_ITALIC_STAR,
   BOLD_ITALIC_UNDERSCORE,
   STRIKETHROUGH,
+  HIGHLIGHT,
 ];
 
 interface RichTextEditorProps
