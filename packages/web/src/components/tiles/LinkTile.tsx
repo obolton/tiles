@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import useEditable from "@/hooks/useEditable";
 import { showModal } from "@/utils/modals";
 import Tile from "./Tile";
+import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import styles from "./LinkTile.module.css";
 import { useEditor } from "@/context/editor";
 import type { ClientLink } from "@/types/tiles";
@@ -53,6 +54,7 @@ export default function LinkTile({
           rel="noreferrer ugc"
         >
           {contents}
+          <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
         </a>
       )}
     </Tile>

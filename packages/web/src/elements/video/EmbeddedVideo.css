@@ -15,16 +15,6 @@
     height: 100%;
     object-fit: cover;
   }
-
-  &::after {
-    content: url("@/icons/video.svg");
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    width: 24px;
-    height: 24px;
-    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 30%));
-  }
 }
 
 iframe {

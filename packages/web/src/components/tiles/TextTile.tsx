@@ -6,6 +6,7 @@ import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingTool
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
 import Tile from "./Tile";
+import ExpandIcon from "@/icons/expand.svg?jsx";
 import styles from "./TextTile.module.css";
 import { classNames } from "@/utils/css";
 import type { EditorState } from "@/components/inputs/RichTextEditor/RichTextEditor";
@@ -71,11 +72,13 @@ export default function TextTile({
     [editor, id],
   );
 
+  const expandable = columns !== 3;
+
   return (
     <pop-out
       class={styles["pop-out"]}
       tabindex="0"
-      expandable={columns === 3 ? undefined : "expandable"}
+      expandable={expandable ? "expandable" : undefined}
     >
       <Tile
         theme={theme}
@@ -107,6 +110,12 @@ export default function TextTile({
             <RichText content={content} />
           </div>
         )}
+        {expandable ? (
+          <ExpandIcon
+            className={classNames(styles.icon, theme === "DARK" && styles.dark)}
+            aria-hidden="true"
+          />
+        ) : null}
       </Tile>
     </pop-out>
   );

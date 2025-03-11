@@ -3,6 +3,7 @@ import type { ClientVideo } from "@/types/tiles";
 import { useCallback } from "react";
 import Caption from "./Caption";
 import Tile, { type TileProps } from "./Tile";
+import VideoIcon from "@/icons/video.svg?jsx";
 import styles from "./VideoTile.module.css";
 import { useEditor } from "@/context/editor";
 
@@ -57,6 +58,7 @@ export default function VideoTile({
           placeholder="Add a caption"
         />
       </figure>
+      <VideoIcon className={styles.icon} aria-hidden="true" />
     </Tile>
   );
 }

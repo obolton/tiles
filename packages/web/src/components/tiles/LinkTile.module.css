@@ -9,16 +9,6 @@
   text-decoration: none;
   border-radius: inherit;
   overflow: hidden;
-
-  &::after {
-    content: url("@/icons/arrow-outward.svg");
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 18px;
-    height: 18px;
-    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 30%));
-  }
 }
 
 .caption {
@@ -63,9 +53,9 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 18px;
-  height: 18px;
-  opacity: 0.9;
+  width: 20px;
+  height: 20px;
+  fill: rgb(0 0 0 / 50%);
   filter: drop-shadow(0 1px 1px rgb(0 0 0 / 30%));
 }
 
