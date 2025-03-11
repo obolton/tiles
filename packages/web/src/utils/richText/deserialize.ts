@@ -34,6 +34,9 @@ function createLexicalTextNode(text: TextNode) {
   if (text.format & TextFormat.UNDERLINE) {
     textNode.toggleFormat("underline");
   }
+  if (text.format & TextFormat.HIGHLIGHT) {
+    textNode.toggleFormat("highlight");
+  }
   return textNode;
 }
 

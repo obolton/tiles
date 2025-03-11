@@ -51,7 +51,8 @@ function getTextFormat(node: LexicalTextNode) {
     (node.hasFormat("bold") ? TextFormat.BOLD : 0) |
     (node.hasFormat("italic") ? TextFormat.ITALIC : 0) |
     (node.hasFormat("strikethrough") ? TextFormat.STRIKETHROUGH : 0) |
-    (node.hasFormat("underline") ? TextFormat.UNDERLINE : 0)
+    (node.hasFormat("underline") ? TextFormat.UNDERLINE : 0) |
+    (node.hasFormat("highlight") ? TextFormat.HIGHLIGHT : 0)
   );
 }
 

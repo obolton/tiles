@@ -4,6 +4,7 @@ export enum TextFormat {
   ITALIC = 1 << 1,
   STRIKETHROUGH = 1 << 2,
   UNDERLINE = 1 << 3,
+  HIGHLIGHT = 1 << 4,
 }
 
 export enum ListType {
