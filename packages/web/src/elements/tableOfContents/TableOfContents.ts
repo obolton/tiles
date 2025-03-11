@@ -55,13 +55,10 @@ export default class TableOfContents extends PopoverMenu {
     for (const heading of headings) {
       const item = document.createElement("li");
 
-      const link = document.createElement(heading.id ? "a" : "span");
-      link.classList.add("link");
+      const link = document.createElement("a");
       link.classList.add(this.getHeadingLevel(heading));
       link.textContent = heading.textContent || "Untitled section";
-      if (link instanceof HTMLLinkElement) {
-        link.href = `#${heading.id}`;
-      }
+      link.href = `#${heading.id || heading.closest("[id]")?.id || ""}`;
 
       item.appendChild(link);
       item.addEventListener("click", (event) => {
