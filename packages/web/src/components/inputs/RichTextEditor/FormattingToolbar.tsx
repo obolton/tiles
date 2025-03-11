@@ -31,6 +31,7 @@ import BoldIcon from "@/icons/bold.svg?jsx";
 import ItalicIcon from "@/icons/italic.svg?jsx";
 import UnderlineIcon from "@/icons/underline.svg?jsx";
 import StrikethroughIcon from "@/icons/strikethrough.svg?jsx";
+import HighlightIcon from "@/icons/highlight.svg?jsx";
 import OrderedListIcon from "@/icons/ordered-list.svg?jsx";
 import UnorderedListIcon from "@/icons/unordered-list.svg?jsx";
 import CheckListIcon from "@/icons/check-list.svg?jsx";
@@ -49,6 +50,7 @@ type Format = {
   italic: boolean;
   underline: boolean;
   strikethrough: boolean;
+  highlight?: boolean;
   orderedList: boolean;
   unorderedList: boolean;
   checkList: boolean;
@@ -99,6 +101,7 @@ export default function Toolbar({
     italic: false,
     underline: false,
     strikethrough: false,
+    highlight: false,
     orderedList: false,
     unorderedList: false,
     checkList: false,
@@ -128,6 +131,7 @@ export default function Toolbar({
           italic: selection.hasFormat("italic"),
           underline: selection.hasFormat("underline"),
           strikethrough: selection.hasFormat("strikethrough"),
+          highlight: selection.hasFormat("highlight"),
           orderedList: listType === "ordered",
           unorderedList: listType === "unordered",
           checkList: listType === "check",
@@ -216,6 +220,11 @@ export default function Toolbar({
 
   const formatStrikethrough = useCallback(
     () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough"),
+    [editor],
+  );
+
+  const formatHighlight = useCallback(
+    () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "highlight"),
     [editor],
   );
 
@@ -333,6 +342,18 @@ export default function Toolbar({
           onClick={formatStrikethrough}
         >
           <StrikethroughIcon aria-hidden="true" />
+        </button>
+      </li>
+      <li>
+        <button
+          className="floating small"
+          aria-label="Highlight"
+          data-tooltip="Format as highlighted"
+          type="button"
+          aria-pressed={format.highlight ? "true" : "false"}
+          onClick={formatHighlight}
+        >
+          <HighlightIcon aria-hidden="true" />
         </button>
       </li>
       <li>
