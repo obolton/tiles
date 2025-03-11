@@ -14,21 +14,21 @@
   text-align: center;
   overflow: hidden;
 
-  & h3 {
+  & .title {
     font-size: clamp(0.875rem, 12cqw, 1.5rem);
     line-height: 1.2;
     font-weight: 600;
     margin: 0;
   }
 
-  & p {
+  & .subtitle {
     font-size: clamp(0.875rem, 8cqw, 1rem);
     line-height: 1.2;
     font-weight: 500;
   }
 
-  & h3,
-  & p {
+  & .title,
+  & .subtitle {
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -87,7 +87,7 @@
     text-shadow: 0 1px 1px rgb(0 0 0 / 20%);
   }
 
-  & p,
+  & .subtitle,
   & address {
     color: rgb(255 255 255 / 60%);
   }
@@ -100,7 +100,7 @@
     );
   }
 
-  & p,
+  & .subtitle,
   & address {
     color: oklch(40% calc(var(--chroma) * 0.75) var(--hue));
   }
@@ -113,7 +113,7 @@
       box-shadow: none;
     }
 
-    & p,
+    & .subtitle,
     & address {
       display: none;
     }

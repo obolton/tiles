@@ -46,9 +46,9 @@ export default function PageTile({
               : styles.color,
         )}
       >
-        <h3>{title}</h3>
+        <p className={styles.title}>{title}</p>
 
-        {subtitle ? <p>{subtitle}</p> : null}
+        {subtitle ? <p className={styles.subtitle}>{subtitle}</p> : null}
 
         {author ? (
           <address>
