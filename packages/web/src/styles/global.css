@@ -125,27 +125,22 @@ h2,
 h3 {
   display: block;
   padding: 0;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0 0 1rem;
   scroll-margin: 24px;
 }
 
 h1 {
   font-size: clamp(1.5rem, 8vw, 2.8rem);
-  font-weight: 600;
 }
 
 h2 {
   font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 600;
-  line-height: 2rlh;
-  margin: 1rem 0 0.5rem;
+}
 
-  &:first-child {
-    margin-top: 0;
-  }
-
-  &:last-child {
-    margin-bottom: 0;
-  }
+h3 {
+  font-size: clamp(1rem, 2vw, 1.25rem);
 }
 
 a {
