@@ -1,8 +1,9 @@
 import Tile from "./Tile";
-import styles from "./PageLinkTile.module.css";
-import type { ClientPageLink } from "@/types/tiles";
 import PageTile from "./PageTile";
+import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
+import styles from "./PageLinkTile.module.css";
 import { classNames } from "@/utils/css";
+import type { ClientPageLink } from "@/types/tiles";
 
 interface PageLinkTileProps extends ClientPageLink {
   onClick?: (event: React.MouseEvent) => void;
@@ -24,7 +25,7 @@ export default function PageLinkTile({
 
   return (
     <a
-      className={classNames(styles.link, openInNewTab && styles["new-tab"])}
+      className={styles.link}
       href={`/pages/${linkedPage.id}`}
       target={openInNewTab ? "_blank" : undefined}
       onClick={onClick}
@@ -38,6 +39,15 @@ export default function PageLinkTile({
         theme={linkedPage.theme}
         coverImageUrl={linkedPage.coverImageUrl}
       />
+      {openInNewTab ? (
+        <ArrowOutwardIcon
+          className={classNames(
+            styles.icon,
+            linkedPage.theme === "DARK" && styles.dark,
+          )}
+          aria-hidden="true"
+        />
+      ) : null}
     </a>
   );
 }
