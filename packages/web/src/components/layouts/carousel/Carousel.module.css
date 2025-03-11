@@ -5,6 +5,13 @@
   border: 1px solid rgb(0 0 0 / 20%);
   border-radius: var(--border-radius);
   box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
+  outline: transparent 0 none;
+  outline-offset: -1px;
+  transition: outline-color var(--animation-duration) var(--easing);
+
+  &:focus-visible {
+    outline: var(--focus-outline);
+  }
 
   &::part(contents) {
     padding: 0;
