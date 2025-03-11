@@ -10,7 +10,7 @@
   font-family: var(--font);
   padding: 4px 8px;
   margin: 0 0 16px;
-  min-width: 200px;
+  min-width: 240px;
   overflow-wrap: break-word;
 }
 
@@ -42,7 +42,7 @@
     top: 0;
     right: 100%;
     margin: 0 16px 0 0;
-    max-width: 300px;
+    max-width: 340px;
     text-align: right;
   }
 
