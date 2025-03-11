@@ -71,7 +71,7 @@ export default function Section({ section }: SectionProps) {
         <ResizingTextarea
           id={`${section.id}-heading`}
           className={classNames("editable", styles.title, styles.textarea)}
-          placeholder="Heading"
+          placeholder="Add a heading"
           onChange={onChangeTitle}
           onBlur={saveTitle}
           onKeyDown={onKeyDown}
