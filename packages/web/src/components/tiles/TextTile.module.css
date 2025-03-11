@@ -17,6 +17,10 @@
     text-decoration: underline;
   }
 
+  mark {
+    background: oklch(from var(--tile-background) 85% calc(c * 2.5) h);
+  }
+
   & blockquote {
     position: relative;
     padding: 0.25rem 0 0.25rem 0.75rem;
