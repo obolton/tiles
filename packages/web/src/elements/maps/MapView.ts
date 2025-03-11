@@ -139,12 +139,13 @@ export default class MapView extends HTMLElement {
 
     this.updateSlots();
 
+    this.mutationObserver.observe(this, { childList: true });
+
     requestAnimationFrame(() => this.map?.resize());
   }
 
   connectedCallback() {
     this.intersectionObserver.observe(this);
-    this.mutationObserver.observe(this, { childList: true });
   }
 
   disconnectedCallback() {
