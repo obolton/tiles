@@ -6,6 +6,10 @@ interface FloatingToolbarProps {
   children: React.ReactNode;
 }
 
+function preventDefault(event: React.PointerEvent) {
+  event.preventDefault();
+}
+
 export default function FloatingToolbar({
   className,
   children,
@@ -14,6 +18,8 @@ export default function FloatingToolbar({
     <menu
       className={classNames(styles.toolbar, className)}
       data-tooltip-position="top"
+      // Prevent the toolbar items from stealing focus on pointer down
+      onPointerDownCapture={preventDefault}
     >
       {children}
     </menu>
