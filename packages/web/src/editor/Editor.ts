@@ -4,6 +4,7 @@ import { preloadImage, uploadMedia } from "@/utils/media";
 import { isEditModeEnabled } from "@/utils/edit";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
 import { Store, DerivedStore } from "@/utils/stores";
+import { scrollIntoView } from "@/hooks/useScrollIntoView";
 import type { FontId } from "@/config/fonts";
 import type { Theme } from "@/types/pages";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
@@ -224,6 +225,7 @@ export default class Editor {
 
   private addTile(tile: ClientTile) {
     this.tiles.value = this.tiles.value.concat(tile);
+    scrollIntoView(tile.id);
   }
 
   removeTile(placementId: string) {
