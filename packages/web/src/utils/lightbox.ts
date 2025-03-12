@@ -87,7 +87,7 @@ function openLightbox(element: HTMLElement) {
   list.children[currentIndex]?.classList.add("visible");
 
   // Handle interactions
-  lightbox.addEventListener("click", () => lightbox?.close());
+  lightbox.addEventListener("pointerdown", () => lightbox?.close());
   lightbox.addEventListener("keydown", keyDown);
   lightbox.addEventListener(
     "close",
@@ -300,18 +300,21 @@ function keyDown(event: KeyboardEvent) {
   }
 }
 
-function click(event: MouseEvent) {
-  if (!(event.target instanceof HTMLElement) || document.body.dataset.editing) {
+function pointerDown(event: PointerEvent) {
+  if (
+    event.defaultPrevented ||
+    !(event.target instanceof HTMLElement) ||
+    document.body.dataset.editing
+  ) {
     return;
   }
   const element = event.target.closest<HTMLElement>("[data-show-in-lightbox]");
   if (element) {
     event.preventDefault();
-    event.stopPropagation();
     openLightbox(element);
   }
 }
 
 export function initialize() {
-  document.body.addEventListener("click", click);
+  document.body.addEventListener("pointerdown", pointerDown);
 }
