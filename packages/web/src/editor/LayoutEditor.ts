@@ -19,7 +19,8 @@ export default class LayoutEditor {
 
   private readonly elementRef: WeakRef<HTMLElement>;
 
-  private gridSize = 0;
+  private gridColumnWidth = 0;
+  private gridRowHeight = 0;
   private gridColumns = 0;
   private columns = 0;
   private rows = 0;
@@ -173,10 +174,14 @@ export default class LayoutEditor {
     event.stopPropagation();
 
     const style = getComputedStyle(this.element);
-    this.gridSize = parseFloat(style.getPropertyValue("--grid-size"));
     this.gridColumns = parseInt(style.getPropertyValue("--columns"), 10);
-    this.columns = Math.max(Math.round(width / this.gridSize), 1);
-    this.rows = Math.max(Math.round(height / this.gridSize), 1);
+    this.gridRowHeight = parseInt(
+      style.getPropertyValue("--grid-row-height"),
+      10,
+    );
+    this.gridColumnWidth = this.element.clientWidth / this.gridColumns;
+    this.columns = Math.max(Math.round(width / this.gridColumnWidth), 1);
+    this.rows = Math.max(Math.round(height / this.gridRowHeight), 1);
   }
 
   private handleResize(event: TileResizeEvent) {
@@ -190,10 +195,10 @@ export default class LayoutEditor {
 
     const id = target.id;
     const columns = Math.min(
-      Math.max(Math.round(width / this.gridSize), 1),
+      Math.max(Math.round(width / this.gridColumnWidth), 1),
       this.gridColumns,
     );
-    const rows = Math.max(Math.round(height / this.gridSize), 1);
+    const rows = Math.max(Math.round(height / this.gridRowHeight), 1);
 
     if (columns !== this.columns || rows != this.rows) {
       viewTransition(() => {
