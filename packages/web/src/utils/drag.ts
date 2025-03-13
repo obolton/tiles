@@ -412,36 +412,34 @@ export class DragState<T> {
   }
 }
 
-function pointerDown(event: PointerEvent) {
-  if (
-    event.button !== PRIMARY_MOUSE_BUTTON ||
-    !(event.currentTarget instanceof HTMLElement)
-  ) {
-    return;
-  }
-
-  event.preventDefault();
-  event.stopPropagation();
-
-  new DragState(event.currentTarget, event.clientX, event.clientY);
-}
-
-function contextMenu(event: PointerEvent | MouseEvent) {
+function cancelContextMenu(event: PointerEvent | MouseEvent) {
   if (event instanceof PointerEvent && event.pointerType === "touch") {
     event.preventDefault();
   }
 }
 
-export function makeDraggable(element: HTMLElement) {
-  const abortController = new AbortController();
-  element.addEventListener("pointerdown", pointerDown, {
-    passive: false,
-    signal: abortController.signal,
-  });
-  element.addEventListener("contextmenu", contextMenu, {
-    passive: false,
-    signal: abortController.signal,
-  });
+export interface DragOptions {
+  handle?: HTMLElement;
+  signal?: AbortSignal;
+}
 
-  return () => abortController.abort();
+export function makeDraggable(element: HTMLElement, options?: DragOptions) {
+  const { handle, signal } = options ?? {};
+  const pointerElement = handle ?? element;
+  pointerElement.addEventListener(
+    "pointerdown",
+    (event: PointerEvent) => {
+      if (event.button === PRIMARY_MOUSE_BUTTON) {
+        new DragState(element, event.clientX, event.clientY);
+      }
+    },
+    {
+      passive: true,
+      signal,
+    },
+  );
+  element.addEventListener("contextmenu", cancelContextMenu, {
+    passive: false,
+    signal,
+  });
 }
