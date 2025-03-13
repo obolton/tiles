@@ -32,8 +32,8 @@
 }
 
 body[data-drag] .grid {
-  margin: 0 -160px;
-  padding: 0 160px;
+  margin: -32px -160px;
+  padding: 32px 160px;
 }
 
 @container main (min-width: 100px) {
