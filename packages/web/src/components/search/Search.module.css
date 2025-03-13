@@ -11,9 +11,6 @@
 @container main (min-width: 100px) {
   .items {
     --gap: clamp(8px, 2cqw, 32px);
-    --grid-size: calc(
-      (100cqw - ((var(--columns) - 1) * var(--gap))) / var(--columns)
-    );
   }
 }
 
@@ -27,7 +24,6 @@
   --loading-progress: 0%;
 
   grid-column: span 1;
-  height: var(--grid-size);
   border-radius: var(--border-radius);
   background-image: radial-gradient(
     circle at bottom center,

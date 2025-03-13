@@ -1,9 +1,6 @@
 .item {
   grid-column: span var(--columns, 1);
   grid-row: span var(--rows, 1);
-  height: calc((var(--grid-size) + var(--gap)) * var(--rows) - var(--gap));
-  min-width: var(--grid-size);
-  min-height: var(--grid-size);
   display: flex;
   border-radius: 12px;
   scroll-margin: 24px;

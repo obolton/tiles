@@ -27,7 +27,6 @@
 
 .placeholder {
   grid-column: 1 / -1;
-  min-height: var(--grid-size);
 }
 
 .options {
