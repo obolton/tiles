@@ -2,7 +2,6 @@
   --tile-text-color: var(--text-color);
   --tile-background: var(--page-color);
 
-  position: relative;
   width: 100%;
   height: 100%;
   min-height: 128px;
@@ -14,7 +13,7 @@
   background-size: cover;
   background-position: center;
   outline-offset: -1px;
-  container: tile / inline-size;
+  z-index: 0;
   transition:
     opacity var(--animation-duration-short) var(--easing),
     box-shadow var(--animation-duration-short) var(--easing),
