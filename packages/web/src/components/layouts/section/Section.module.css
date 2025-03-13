@@ -2,8 +2,17 @@
   position: relative;
   width: 100%;
   grid-column: 1 / -1;
-  margin: 64px 0;
+  margin: 0 0 64px;
   container: section / inline-size;
+
+  &:not(:last-of-type)::after {
+    content: "";
+    position: absolute;
+    inset: auto 48px -32px;
+    height: 3px;
+    border-radius: 3px;
+    background: rgb(0 0 0 / 5%);
+  }
 }
 
 .title {
