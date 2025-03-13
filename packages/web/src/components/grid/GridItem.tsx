@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState } from "react";
 import { classNames } from "@/utils/css";
-import useDraggable from "@/hooks/useDraggable";
 import useScrollIntoView from "@/hooks/useScrollIntoView";
 import styles from "./GridItem.module.css";
 import type ResizeItem from "@/elements/resize/ResizeItem";
@@ -75,7 +74,6 @@ export default function GridItem({
 }: GridItemProps) {
   const ref = useRef<ResizeItem>(null);
   const editor = useEditor();
-  useDraggable(ref, draggable);
   useScrollIntoView(ref);
   const [isDragOver, setDragOver] = useState(false);
 
@@ -134,8 +132,9 @@ export default function GridItem({
     <resize-item
       id={id}
       ref={ref}
-      allowresize={resizable ? "allowresize" : undefined}
-      allowdelete={deletable ? "allowdelete" : undefined}
+      allowdrag={draggable}
+      allowresize={resizable}
+      allowdelete={deletable}
       class={classNames(
         styles.item,
         draggable && styles.draggable,

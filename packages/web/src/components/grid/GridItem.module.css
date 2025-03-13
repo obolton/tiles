@@ -25,42 +25,8 @@
 }
 
 .draggable {
-  cursor: move;
   user-select: none;
   -webkit-touch-callout: none;
-}
-
-/* Drag handle */
-body:not([data-drag]) .draggable:not(:has([open])),
-:global(#drag-preview).item {
-  &:hover {
-    outline-color: transparent;
-  }
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 15px;
-    background: var(--accent);
-    cursor: move;
-    opacity: 0;
-    transition:
-      opacity var(--animation-duration-short) var(--easing),
-      inset var(--animation-duration-short) var(--easing);
-  }
-
-  &:hover::before,
-  &:focus-within::before,
-  &:global(#drag-preview)::before {
-    opacity: 0.6;
-    inset: -24px -3px -3px;
-  }
-
-  &:has(.draggable:hover, .draggable:focus-within)::before {
-    inset: 0;
-    opacity: 0;
-  }
 }
 
 .item:has(pop-out[open]) .delete {
