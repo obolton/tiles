@@ -1,6 +1,7 @@
 import css from "./ResizeItem.css?inline";
 import { TileResizeEvent, TileEvent } from "@/utils/events";
 import { DEFAULT_TIMING } from "@/utils/animation/effects";
+import { makeDraggable } from "@/utils/drag";
 
 const DRAG_THRESHOLD = 10;
 
@@ -8,19 +9,21 @@ const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 export interface ResizeItemAttributes {
-  allowresize?: "" | "allowresize";
-  allowdelete?: "" | "allowdelete";
+  allowdrag?: boolean;
+  allowresize?: boolean;
+  allowdelete?: boolean;
 }
 
 export default class ResizeItem extends HTMLElement {
   static readonly observedAttributes: (keyof ResizeItemAttributes)[] = [
+    "allowdrag",
     "allowresize",
     "allowdelete",
   ] as const;
 
   private readonly internals: ElementInternals;
 
-  private resizeHandle?: HTMLElement;
+  private dragAbortController: AbortController | null = null;
   private outline?: HTMLElement;
 
   private isResizing = false;
@@ -49,9 +52,9 @@ export default class ResizeItem extends HTMLElement {
       case "allowresize":
         if (value === null) {
           this.endResizing();
-          this.hideHandle();
+          this.hideResizeHandle();
         } else {
-          this.showHandle();
+          this.showResizeHandle();
         }
         break;
 
@@ -62,6 +65,14 @@ export default class ResizeItem extends HTMLElement {
           this.showDeleteButton();
         }
         break;
+
+      case "allowdrag":
+        if (value === null) {
+          this.hideDragHandle();
+        } else {
+          this.showDragHandle();
+        }
+        break;
     }
   }
 
@@ -69,26 +80,40 @@ export default class ResizeItem extends HTMLElement {
     this.endResizing();
   }
 
-  private showHandle() {
-    if (this.resizeHandle) {
+  private showDragHandle() {
+    if (this.shadowRoot?.getElementById("drag")) {
       return;
     }
 
-    this.resizeHandle = document.createElement("div");
-    this.resizeHandle.id = "handle";
-    this.resizeHandle.addEventListener(
-      "pointerdown",
-      this.pointerDown.bind(this),
-      {
-        passive: false,
-      },
-    );
-    this.shadowRoot?.append(this.resizeHandle);
+    const handle = document.createElement("div");
+    handle.id = "drag";
+    this.shadowRoot?.prepend(handle);
+    this.dragAbortController = new AbortController();
+    makeDraggable(this, { handle, signal: this.dragAbortController.signal });
   }
 
-  private hideHandle() {
-    this.resizeHandle?.remove();
-    this.resizeHandle = undefined;
+  private hideDragHandle() {
+    this.shadowRoot?.getElementById("drag")?.remove();
+    this.dragAbortController?.abort();
+    this.dragAbortController = null;
+  }
+
+  private showResizeHandle() {
+    if (this.shadowRoot?.getElementById("resize")) {
+      return;
+    }
+
+    const handle = document.createElement("div");
+    handle.id = "resize";
+    handle.tabIndex = 0;
+    handle.addEventListener("pointerdown", this.pointerDown.bind(this), {
+      passive: false,
+    });
+    this.shadowRoot?.append(handle);
+  }
+
+  private hideResizeHandle() {
+    this.shadowRoot?.getElementById("resize")?.remove();
   }
 
   private showDeleteButton() {

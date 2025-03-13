@@ -1,17 +1,52 @@
 :host {
   position: relative;
+  background: none;
 }
 
-#handle {
+#drag {
+  position: absolute;
+  inset: 0 auto auto -24px;
+  width: 32px;
+  height: 128px;
+  cursor: move;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    opacity: 0;
+    clip-path: inset(
+      0 0 0 24px round var(--border-radius) 0 0 var(--border-radius)
+    );
+    transition:
+      opacity var(--animation-duration-short) var(--easing),
+      clip-path var(--animation-duration-short) var(--easing);
+  }
+
+  :host(:hover) &::before,
+  :host(:focus-within) &::before,
+  :host(#drag-preview) &::before,
+  &:hover::before {
+    opacity: 0.9;
+    clip-path: inset(0 round var(--border-radius) 0 0 var(--border-radius));
+  }
+}
+
+#resize {
   position: absolute;
   right: -6px;
   bottom: -6px;
   width: 16px;
   height: 16px;
+  border-radius: 8px;
   cursor: nwse-resize;
   z-index: 1;
-  opacity: 1;
-  transition: opacity var(--animation-duration) var(--easing);
+  opacity: 0;
+  outline: transparent none 0;
+  transition:
+    opacity var(--animation-duration) var(--easing),
+    outline-color var(--animation-duration) var(--easing);
 
   &::after {
     content: "";
@@ -23,16 +58,28 @@
     box-shadow:
       inset 0 0 0 1px rgb(0 0 0 / 20%),
       0 2px 1px -1px rgb(0 0 0 / 20%);
-    transition: transform var(--animation-duration-short) var(--easing);
+    transition: scale var(--animation-duration-short) var(--easing);
   }
 
   &:hover::after {
-    transform: scale(1.2);
+    scale: 1.2;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline);
+  }
+}
+
+:host(:hover),
+:host(:focus-within) {
+  #resize,
+  #delete {
+    opacity: 1;
   }
 }
 
 @media (any-pointer: coarse) {
-  #handle {
+  #resize {
     right: -22px;
     bottom: -22px;
     width: 48px;
@@ -69,10 +116,12 @@
   box-shadow:
     0 2px 3px 0 rgb(0 0 0 / 30%),
     inset 0 0 0 1px rgb(0 0 0 / 20%);
+  opacity: 0;
   cursor: pointer;
   outline: transparent none 0;
   outline-offset: -1px;
   transition:
+    opacity var(--animation-duration-short) var(--easing),
     scale var(--animation-duration-short) var(--easing),
     translate var(--animation-duration-short) var(--easing),
     box-shadow var(--animation-duration-short) var(--easing),
