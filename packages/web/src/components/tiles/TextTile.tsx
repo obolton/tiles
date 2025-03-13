@@ -37,6 +37,9 @@ export default function TextTile({
   const [hue, setHue] = useState(initialHue);
   const [showToolbar, setShowToolbar] = useState(false);
 
+  const onToggle = (event: ToggleEvent) =>
+    setShowToolbar(event.newState === "open");
+
   const onFocus = useCallback(() => setShowToolbar(true), []);
 
   const onBlur = useCallback(
@@ -79,6 +82,7 @@ export default function TextTile({
       class={styles["pop-out"]}
       tabindex="0"
       expandable={expandable ? "expandable" : undefined}
+      ontoggle={onToggle}
     >
       <Tile
         theme={theme}
