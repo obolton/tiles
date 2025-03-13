@@ -8,10 +8,6 @@ stylesheet.replaceSync(css);
 
 const STYLE_URL = `https://api.maptiler.com/maps/streets-v2/style.json?key=${import.meta.env.PUBLIC_MAPTILER_API_KEY}`;
 
-function stopPropagation(event: Event) {
-  event.stopPropagation();
-}
-
 export interface MapViewAttributes {
   movable?: boolean;
   legend?: boolean;
@@ -51,9 +47,6 @@ export default class MapView extends HTMLElement {
     this.mutationObserver = new MutationObserver(
       this.mutationObserverCallback.bind(this),
     );
-
-    this.addEventListener("pointerdown", stopPropagation);
-    this.addEventListener("pointerup", stopPropagation);
   }
 
   private getMarkers() {
