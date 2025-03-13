@@ -22,7 +22,7 @@
 }
 
 .background {
-  background: var(--tile-background);
+  background-color: var(--tile-background);
 }
 
 .light {
