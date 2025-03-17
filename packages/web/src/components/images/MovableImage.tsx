@@ -27,7 +27,6 @@ export default function MovableImage({
         return;
       }
 
-      event.stopPropagation();
       event.preventDefault();
 
       const initialPointerX = event.pageX;
