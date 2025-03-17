@@ -49,7 +49,7 @@ export default function Stack({
           id={item.id}
           collectionId={collectionId}
           placementId={item.placementId}
-          rows={1}
+          rows={2}
           columns={1}
           deletable={isEditable && open}
           draggable={isEditable && open}

@@ -46,7 +46,7 @@ export default function Carousel({
           collectionId={collectionId}
           placementId={item.placementId}
           rows={1}
-          columns={1}
+          columns={2}
           deletable={isEditable}
           draggable={isEditable}
           resizable={false}

@@ -12,9 +12,10 @@ type CollectionTileProps = Extract<Tile, { type: "COLLECTION" }>;
 export default function CollectionTile({
   id,
   columns,
+  rows,
   tiles,
 }: CollectionTileProps) {
-  if (columns === 1) {
+  if (columns <= 2 && rows <= 2) {
     return (
       <Stack
         collectionId={id}
