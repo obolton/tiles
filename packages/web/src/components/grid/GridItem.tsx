@@ -30,6 +30,7 @@ interface GridItemProps {
   resizable?: boolean;
   allowDrop?: boolean;
   tile: Tile;
+  tabIndex?: number;
 }
 
 function getTileComponent(tile: Tile) {
@@ -71,6 +72,7 @@ export default function GridItem({
   resizable = false,
   allowDrop = false,
   tile,
+  tabIndex,
 }: GridItemProps) {
   const ref = useRef<ResizeItem>(null);
   const editor = useEditor();
@@ -150,6 +152,7 @@ export default function GridItem({
       ondnd-dragleave={allowDrop ? onDragLeave : undefined}
       ondnd-drop={allowDrop ? onDrop : undefined}
       data-drop={allowDrop ? "true" : undefined}
+      tabIndex={tabIndex}
     >
       {getTileComponent(tile)}
     </resize-item>
