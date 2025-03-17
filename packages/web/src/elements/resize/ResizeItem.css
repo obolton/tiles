@@ -3,17 +3,27 @@
   background: none;
 }
 
+:host(:hover) {
+  z-index: 1;
+}
+
+:host(:focus-within) {
+  z-index: 2;
+}
+
 #drag {
   position: absolute;
   inset: 0 auto auto -24px;
   width: 32px;
   height: 128px;
+  max-height: 100%;
   cursor: move;
 
   &::before {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: -1;
     background: var(--accent);
     opacity: 0;
     clip-path: inset(
@@ -43,10 +53,8 @@
   cursor: nwse-resize;
   z-index: 1;
   opacity: 0;
-  outline: transparent none 0;
-  transition:
-    opacity var(--animation-duration) var(--easing),
-    outline-color var(--animation-duration) var(--easing);
+  outline: none;
+  transition: opacity var(--animation-duration) var(--easing);
 
   &::after {
     content: "";
@@ -61,12 +69,13 @@
     transition: scale var(--animation-duration-short) var(--easing);
   }
 
-  &:hover::after {
+  &:hover::after,
+  &:focus-visible::after {
     scale: 1.2;
   }
 
-  &:focus-visible {
-    outline: var(--focus-outline);
+  &:focus-visible::after {
+    background: var(--focus-ring-color);
   }
 }
 
@@ -91,7 +100,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  outline: var(--focus-ring-color) solid 5px;
+  outline: var(--focus-ring-color) solid 4px;
   outline-offset: -1px;
   z-index: 2;
   border-radius: inherit;
