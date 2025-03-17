@@ -28,7 +28,7 @@ export default function Carousel({
     <carousel-view
       ref={ref}
       class={classNames(styles.carousel, isEditable && styles.editable)}
-      tabindex="0"
+      tabIndex={0}
       data-drop={isEditable ? "true" : undefined}
     >
       {items.length === 0 && Placeholder ? (
