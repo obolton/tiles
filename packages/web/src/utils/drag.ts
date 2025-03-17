@@ -343,8 +343,6 @@ export class DragState<T> {
       );
     }
 
-    delete document.body.dataset.drag;
-
     this.isDragging = false;
     this.dropTarget = undefined;
 
@@ -355,6 +353,7 @@ export class DragState<T> {
       }
 
       viewTransition(() => {
+        delete document.body.dataset.drag;
         this.dragElement?.remove();
         this.dragElement = undefined;
 
