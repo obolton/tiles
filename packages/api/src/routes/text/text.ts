@@ -8,6 +8,7 @@ export const TEXT_FIELDS = {
   content: true,
   theme: true,
   hue: true,
+  expand: true,
 } as const satisfies Prisma.TextTileSelect;
 
 export type Text = Prisma.TextTileGetPayload<{ select: typeof TEXT_FIELDS }>;
@@ -20,6 +21,7 @@ export async function createText({
   hue,
   columns,
   rows,
+  expand,
 }: CreateTextSchema) {
   return prisma.$transaction(async (transaction) => {
     const text = await transaction.textTile.create({
@@ -28,6 +30,7 @@ export async function createText({
         content,
         theme,
         hue,
+        expand,
       },
       select: TEXT_FIELDS,
     });
@@ -52,6 +55,7 @@ export async function updateText({
   content,
   theme,
   hue,
+  expand,
 }: UpdateTextSchema) {
   const text = await prisma.textTile.update({
     where: {
@@ -62,6 +66,7 @@ export async function updateText({
       content,
       theme,
       hue,
+      expand,
     },
     select: TEXT_FIELDS,
   });

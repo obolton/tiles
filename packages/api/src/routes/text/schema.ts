@@ -10,6 +10,7 @@ export const CreateTextSchema = z.object({
   hue: z.number().gte(0).lte(360).nullable().optional(),
   columns: z.number().int().gte(1).lte(3).optional(),
   rows: z.number().int().gte(1).lte(3).optional(),
+  expand: z.boolean().optional(),
 });
 export type CreateTextSchema = z.infer<typeof CreateTextSchema>;
 
@@ -19,5 +20,6 @@ export const UpdateTextSchema = z.object({
   content: RichTextSchema.optional(),
   theme: z.nativeEnum(Theme).nullable().optional(),
   hue: z.number().gte(0).lte(360).nullable().optional(),
+  expand: z.boolean().optional(),
 });
 export type UpdateTextSchema = z.infer<typeof UpdateTextSchema>;
