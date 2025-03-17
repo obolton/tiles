@@ -53,6 +53,9 @@ export default class PopOut extends HTMLElement {
       case "expandable":
         if (value === null) {
           this.removeEventListeners();
+          if (this.isOpen()) {
+            this.close();
+          }
         } else {
           this.attachEventListeners();
         }
@@ -86,19 +89,22 @@ export default class PopOut extends HTMLElement {
     return this.hasAttribute("open");
   }
 
+  protected get isOverflowing() {
+    return this.dialog.scrollHeight > this.dialog.clientHeight;
+  }
+
   private handlePointerDown(event: PointerEvent) {
     if (event.button !== PRIMARY_MOUSE_BUTTON) {
       return;
     }
 
-    event.stopPropagation();
-
-    if (this.isOpen()) {
-      if (event.target === this) {
-        event.preventDefault();
-        this.close();
-      }
-    } else {
+    if (this.isOpen() && event.target === this) {
+      event.stopPropagation();
+      event.preventDefault();
+      this.close();
+    } else if (!this.isOpen() && this.isOverflowing) {
+      event.stopPropagation();
+      event.preventDefault();
       setTimeout(() => this.open(), 0);
     }
   }
