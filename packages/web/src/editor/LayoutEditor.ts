@@ -24,6 +24,7 @@ export default class LayoutEditor {
   private gridColumns = 0;
   private columns = 0;
   private rows = 0;
+  private elementForPoint?: HTMLElement;
 
   constructor({ element, editor, collectionId }: LayoutEditorOptions) {
     this.elementRef = new WeakRef(element);
@@ -32,6 +33,7 @@ export default class LayoutEditor {
 
     element.addEventListener("dnd-dragover", this);
     element.addEventListener("dnd-drop", this);
+    element.addEventListener("dnd-dragend", this, { passive: true });
     element.addEventListener("tileresizestart", this);
     element.addEventListener("tileresize", this);
     element.addEventListener("tileresizeend", this);
@@ -42,6 +44,7 @@ export default class LayoutEditor {
     const element = this.elementRef.deref();
     element?.removeEventListener("dnd-dragover", this);
     element?.removeEventListener("dnd-drop", this);
+    element?.removeEventListener("dnd-dragend", this);
     element?.removeEventListener("tileresizestart", this);
     element?.removeEventListener("tileresize", this);
     element?.removeEventListener("tileresizeend", this);
@@ -62,6 +65,8 @@ export default class LayoutEditor {
         return this.handleDragOver(event as DragDropEvent<ClientTile>);
       case "dnd-drop":
         return this.handleDrop(event as DragDropEvent<ClientTile>);
+      case "dnd-dragend":
+        return this.handleDragEnd();
       case "tileresizestart":
         return this.handleResizeStart(event as TileResizeEvent);
       case "tileresize":
@@ -87,13 +92,16 @@ export default class LayoutEditor {
 
     const after = this.findElementForPoint(event);
 
-    layoutTransition(() => {
-      this.editor.moveTilePreview({
-        id,
-        collectionId: this.collectionId,
-        afterId: after?.dataset.placementId,
+    if (after !== this.elementForPoint) {
+      layoutTransition(() => {
+        this.editor.moveTilePreview({
+          id,
+          collectionId: this.collectionId,
+          afterId: after?.dataset.placementId,
+        });
       });
-    });
+    }
+    this.elementForPoint = after;
   }
 
   private async handleDrop(event: DragDropEvent<ClientTile>) {
@@ -122,6 +130,10 @@ export default class LayoutEditor {
     } catch (error) {
       handleError(error);
     }
+  }
+
+  private handleDragEnd() {
+    this.elementForPoint = undefined;
   }
 
   private findElementForPoint(event: DragDropEvent<ClientTile>) {
