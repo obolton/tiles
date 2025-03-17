@@ -20,6 +20,7 @@ interface TextTileProps {
   content: RichTextType;
   theme: Theme | null;
   hue: number | null;
+  expand: boolean;
 }
 
 export default function TextTile({
@@ -28,6 +29,7 @@ export default function TextTile({
   content,
   theme: initialTheme,
   hue: initialHue,
+  expand: initialExpand,
 }: TextTileProps) {
   const ref = useRef<HTMLDivElement>(null);
   const editor = useEditor();
@@ -36,6 +38,7 @@ export default function TextTile({
   const [theme, setTheme] = useState(initialTheme);
   const [hue, setHue] = useState(initialHue);
   const [showToolbar, setShowToolbar] = useState(false);
+  const [expand, setExpand] = useState(initialExpand);
 
   const onToggle = (event: ToggleEvent) =>
     setShowToolbar(event.newState === "open");
@@ -76,6 +79,13 @@ export default function TextTile({
   );
 
   const expandable = columns !== 3;
+  const onToggleExpand = useCallback(async () => {
+    setExpand(!expand);
+    await editor.updateText({
+      id,
+      expand: !expand,
+    });
+  }, [editor, id, expand]);
 
   return (
     <pop-out
@@ -106,6 +116,8 @@ export default function TextTile({
                 className={styles.toolbar}
                 color={{ theme, hue }}
                 onChangeColor={onChangeColor}
+                expand={expand}
+                onToggleExpand={onToggleExpand}
               />
             ) : null}
           </RichTextEditor>
