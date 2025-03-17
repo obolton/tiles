@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { classNames } from "@/utils/css";
 import useScrollIntoView from "@/hooks/useScrollIntoView";
 import styles from "./GridItem.module.css";
@@ -33,7 +33,7 @@ interface GridItemProps {
   tabIndex?: number;
 }
 
-function getTileComponent(tile: Tile) {
+function getTileComponent(tile: Tile, hasFocus: boolean) {
   const type = tile.type;
   switch (type) {
     case "IMAGE":
@@ -42,7 +42,7 @@ function getTileComponent(tile: Tile) {
       return <VideoTile {...tile} />;
     case "TEXT":
       // @ts-expect-error Rich text
-      return <TextTile {...tile} />;
+      return <TextTile {...tile} hasFocus={hasFocus} />;
     case "MAP":
       return <MapTile {...tile} />;
     case "LINK":
@@ -77,8 +77,16 @@ export default function GridItem({
   const ref = useRef<ResizeItem>(null);
   const editor = useEditor();
   useScrollIntoView(ref);
-  const [isDragOver, setDragOver] = useState(false);
 
+  const [hasFocus, setHasFocus] = useState(false);
+  const onFocus = useCallback(() => setHasFocus(true), []);
+  const onBlur = useCallback((event: React.FocusEvent<ResizeItem>) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setHasFocus(false);
+    }
+  }, []);
+
+  const [isDragOver, setDragOver] = useState(false);
   const onDragStart = (event: DragDropEvent<Tile>) => {
     if (event.target === ref.current) {
       event.state.data = structuredClone(tile);
@@ -152,9 +160,11 @@ export default function GridItem({
       ondnd-dragleave={allowDrop ? onDragLeave : undefined}
       ondnd-drop={allowDrop ? onDrop : undefined}
       data-drop={allowDrop ? "true" : undefined}
+      onFocus={onFocus}
+      onBlur={onBlur}
       tabIndex={tabIndex}
     >
-      {getTileComponent(tile)}
+      {getTileComponent(tile, hasFocus)}
     </resize-item>
   );
 }
