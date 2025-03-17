@@ -4,7 +4,6 @@ import useEditable from "@/hooks/useEditable";
 import useLayoutEditor from "@/hooks/useLayoutEditor";
 import { useDragId } from "@/context/drag";
 import styles from "./Grid.module.css";
-import { classNames } from "@/utils/css";
 import type { Tile } from "@/types/layout";
 
 export interface GridProps {
@@ -40,10 +39,7 @@ export default function Grid({
   return (
     <section
       ref={ref}
-      className={classNames(
-        styles.grid,
-        columns === 1 && styles["auto-height"],
-      )}
+      className={styles.grid}
       style={style}
       data-drop={isEditable ? "true" : undefined}
     >
@@ -58,13 +54,17 @@ export default function Grid({
           id={tile.id}
           collectionId={collectionId}
           placementId={tile.placementId}
-          rows={Math.min(Math.max(tile.rows, minRowSpan), columns)}
+          rows={
+            tile.type === "TEXT" && tile.expand
+              ? 2
+              : Math.min(Math.max(tile.rows, minRowSpan), columns)
+          }
           columns={Math.min(Math.max(tile.columns, minColumnSpan), columns)}
           deletable={isEditable}
           draggable={isEditable}
           resizable={isEditable}
           allowDrop
-          grow={tile.type === "TEXT" && columns === 1}
+          grow={tile.type === "TEXT" && tile.expand}
           tile={tile}
           tabIndex={0}
         />

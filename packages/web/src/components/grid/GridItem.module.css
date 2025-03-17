@@ -1,6 +1,7 @@
 .item {
   grid-column: span var(--columns, 1);
   grid-row: span var(--rows, 1);
+  height: calc(var(--rows) * var(--grid-row-height));
   display: flex;
   border-radius: 12px;
   scroll-margin: 24px;
@@ -14,7 +15,6 @@
 
   &.grow {
     height: fit-content;
-    min-height: 0;
 
     &::part(outline) {
       min-height: 100%;

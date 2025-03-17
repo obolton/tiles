@@ -23,12 +23,8 @@
   display: grid;
   font-family: var(--font);
   grid-template-columns: repeat(var(--columns), 1fr);
-  grid-auto-rows: var(--grid-row-height);
+  grid-auto-rows: auto;
   gap: var(--gap);
-
-  &.auto-height {
-    grid-auto-rows: max-content;
-  }
 }
 
 body[data-drag] .grid {
