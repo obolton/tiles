@@ -6,7 +6,6 @@ import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingTool
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
 import Tile from "./Tile";
-import ExpandIcon from "@/icons/expand.svg?jsx";
 import styles from "./TextTile.module.css";
 import { classNames } from "@/utils/css";
 import type { EditorState } from "@/components/inputs/RichTextEditor/RichTextEditor";
@@ -16,7 +15,6 @@ import { useEditor } from "@/context/editor";
 
 interface TextTileProps {
   id: string;
-  columns: number;
   content: RichTextType;
   theme: Theme | null;
   hue: number | null;
@@ -26,7 +24,6 @@ interface TextTileProps {
 
 export default function TextTile({
   id,
-  columns,
   content,
   theme: initialTheme,
   hue: initialHue,
@@ -67,7 +64,6 @@ export default function TextTile({
     [editor, id],
   );
 
-  const expandable = columns !== 3;
   const onToggleExpand = useCallback(async () => {
     setExpand(!expand);
     await editor.updateText({
@@ -77,15 +73,10 @@ export default function TextTile({
   }, [editor, id, expand]);
 
   return (
-    <pop-out
-      class={styles["pop-out"]}
-      tabindex="0"
-      expandable={expandable ? "expandable" : undefined}
-    >
-      <Tile
-        theme={theme}
-        hue={hue}
-        border={isEditable || !!theme || columns === 1 ? "outside" : "none"}
+    <Tile theme={theme} hue={hue} border={theme ? "outside" : "none"}>
+      <pop-out
+        class={styles["pop-out"]}
+        expandable={!expand ? "expandable" : undefined}
       >
         {isEditable ? (
           <RichTextEditor
@@ -100,7 +91,6 @@ export default function TextTile({
           >
             {hasFocus ? (
               <FormattingToolbar
-                className={styles.toolbar}
                 color={{ theme, hue }}
                 onChangeColor={onChangeColor}
                 expand={expand}
@@ -113,13 +103,7 @@ export default function TextTile({
             <RichText content={content} />
           </div>
         )}
-        {expandable ? (
-          <ExpandIcon
-            className={classNames(styles.icon, theme === "DARK" && styles.dark)}
-            aria-hidden="true"
-          />
-        ) : null}
-      </Tile>
-    </pop-out>
+      </pop-out>
+    </Tile>
   );
 }
