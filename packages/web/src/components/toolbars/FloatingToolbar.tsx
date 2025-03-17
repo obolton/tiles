@@ -15,13 +15,15 @@ export default function FloatingToolbar({
   children,
 }: FloatingToolbarProps) {
   return (
-    <menu
-      className={classNames(styles.toolbar, className)}
-      data-tooltip-position="top"
-      // Prevent the toolbar items from stealing focus on pointer down
-      onPointerDownCapture={preventDefault}
-    >
-      {children}
-    </menu>
+    <div className={styles.container}>
+      <menu
+        className={classNames(styles.toolbar, className)}
+        data-tooltip-position="top"
+        // Prevent the toolbar items from stealing focus on pointer down
+        onPointerDownCapture={preventDefault}
+      >
+        {children}
+      </menu>
+    </div>
   );
 }
