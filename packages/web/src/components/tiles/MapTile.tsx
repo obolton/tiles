@@ -1,6 +1,7 @@
 import { Fragment, useCallback, useRef } from "react";
 import useEditable from "@/hooks/useEditable";
 import Tile from "./Tile";
+import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
 import AddPlaceIcon from "@/icons/add-place.svg?jsx";
 import styles from "./MapTile.module.css";
 import type { ClientMapTile } from "@/types/tiles";
@@ -11,12 +12,15 @@ import type MapView from "@/elements/maps/MapView";
 import type MapMarker from "@/elements/maps/MapMarker";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 
-type MapTileProps = ClientMapTile;
+interface MapTileProps extends ClientMapTile {
+  hasFocus: boolean;
+}
 
-export default function MapTile({ id, places }: MapTileProps) {
+export default function MapTile({ id, places, hasFocus }: MapTileProps) {
   const ref = useRef<MapView>(null);
   const editor = useEditor();
   const isEditable = useEditable();
+
   const handleAddPlace = useCallback(
     () =>
       showModal<PlaceModalResult>("MAP", {
@@ -54,8 +58,8 @@ export default function MapTile({ id, places }: MapTileProps) {
   };
 
   return (
-    <pop-out class={styles["pop-out"]} expandable="expandable" tabindex="0">
-      <Tile border="inside">
+    <Tile border="inside">
+      <pop-out class={styles["pop-out"]} expandable="expandable">
         <map-view
           ref={ref}
           class={styles.map}
@@ -76,35 +80,34 @@ export default function MapTile({ id, places }: MapTileProps) {
                     : undefined
                 }
                 label={place.name}
-                tabindex="0"
+                tabIndex={0}
                 onblur={handleUpdatePlace}
               />
               <map-legend-item
                 marker={place.id}
                 editable={isEditable && places.length > 1}
-                tabindex="0"
+                tabIndex={0}
               >
                 {place.name || "Unnamed point"}
               </map-legend-item>
             </Fragment>
           ))}
-          {isEditable ? (
+        </map-view>
+
+        {hasFocus ? (
+          <FloatingToolbar>
             <button
               type="button"
-              className="floating"
+              className="floating small"
               aria-label="Add place"
               data-tooltip="Add a place"
-              onPointerDownCapture={(event) => {
-                event.stopPropagation();
-                event.preventDefault();
-              }}
               onClick={handleAddPlace}
             >
               <AddPlaceIcon aria-hidden="true" />
             </button>
-          ) : null}
-        </map-view>
-      </Tile>
-    </pop-out>
+          </FloatingToolbar>
+        ) : null}
+      </pop-out>
+    </Tile>
   );
 }

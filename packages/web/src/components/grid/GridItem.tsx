@@ -44,7 +44,7 @@ function getTileComponent(tile: Tile, hasFocus: boolean) {
       // @ts-expect-error Rich text
       return <TextTile {...tile} hasFocus={hasFocus} />;
     case "MAP":
-      return <MapTile {...tile} />;
+      return <MapTile {...tile} hasFocus={hasFocus} />;
     case "LINK":
       return <LinkTile {...tile} />;
     case "PAGE_LINK":
