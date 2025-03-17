@@ -21,6 +21,7 @@ interface TextTileProps {
   theme: Theme | null;
   hue: number | null;
   expand: boolean;
+  hasFocus: boolean;
 }
 
 export default function TextTile({
@@ -30,6 +31,7 @@ export default function TextTile({
   theme: initialTheme,
   hue: initialHue,
   expand: initialExpand,
+  hasFocus,
 }: TextTileProps) {
   const ref = useRef<HTMLDivElement>(null);
   const editor = useEditor();
@@ -37,31 +39,18 @@ export default function TextTile({
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [theme, setTheme] = useState(initialTheme);
   const [hue, setHue] = useState(initialHue);
-  const [showToolbar, setShowToolbar] = useState(false);
   const [expand, setExpand] = useState(initialExpand);
 
-  const onToggle = (event: ToggleEvent) =>
-    setShowToolbar(event.newState === "open");
-
-  const onFocus = useCallback(() => setShowToolbar(true), []);
-
-  const onBlur = useCallback(
-    async (event: React.FocusEvent) => {
-      if (!ref.current?.contains(event.relatedTarget)) {
-        setShowToolbar(false);
-      }
-
-      if (!editorState) {
-        return;
-      }
-      const content = serialize(editorState);
-      await editor.updateText({
-        id,
-        content,
-      });
-    },
-    [editor, editorState, id],
-  );
+  const onBlur = useCallback(async () => {
+    if (!editorState) {
+      return;
+    }
+    const content = serialize(editorState);
+    await editor.updateText({
+      id,
+      content,
+    });
+  }, [editor, editorState, id]);
 
   const onChangeColor = useCallback(
     async (value: ColorPickerValue) => {
@@ -92,7 +81,6 @@ export default function TextTile({
       class={styles["pop-out"]}
       tabindex="0"
       expandable={expandable ? "expandable" : undefined}
-      ontoggle={onToggle}
     >
       <Tile
         theme={theme}
@@ -103,7 +91,6 @@ export default function TextTile({
           <RichTextEditor
             ref={ref}
             className={classNames(styles.text, styles.editor)}
-            onFocus={onFocus}
             onBlur={onBlur}
             onChange={setEditorState}
             placeholder="Write something"
@@ -111,7 +98,7 @@ export default function TextTile({
             editable
             tabIndex={-1}
           >
-            {showToolbar ? (
+            {hasFocus ? (
               <FormattingToolbar
                 className={styles.toolbar}
                 color={{ theme, hue }}
