@@ -122,6 +122,7 @@ export default function TileButtons({ collectionId }: TileButtonsProps) {
               await editor.createMap({
                 collectionId: collectionId ?? editor.getCurrentCollectionId(),
                 place,
+                rows: 2,
                 columns: 3,
               });
             },
