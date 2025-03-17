@@ -15,16 +15,12 @@ import type { MapMarkerAttributes } from "./maps/MapMarker";
 import type { MapLegendItemAttributes } from "./maps/MapLegendItem";
 import type { TableOfContentsAttributes } from "./tableOfContents/TableOfContents";
 
-type CustomElementAttributes<T extends HTMLElement = unknown> = {
+interface CustomElementAttributes<T extends HTMLElement = unknown>
+  extends React.HTMLAttributes<T> {
   key?: string;
   ref?: React.RefObject<T | null>;
-  id?: string;
   class?: string;
-  style?: React.CSSProperties;
-  tabindex?: string;
-  children?: React.ReactNode;
-  slot?: string;
-};
+}
 
 declare module "react" {
   namespace JSX {
