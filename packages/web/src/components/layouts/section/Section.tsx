@@ -2,7 +2,6 @@ import { useCallback, useState } from "react";
 import Grid from "@/components/layouts/grid/Grid";
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import Placeholder from "@/components/placeholder/Placeholder";
-import TileButtons from "@/components/menu/TileButtons";
 import useEditable from "@/hooks/useEditable";
 import { useEditor } from "@/context/editor";
 import { handleError } from "@/utils/errors";
@@ -20,18 +19,8 @@ function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
   }
 }
 
-function GridPlaceholder({ collectionId }: { collectionId: string }) {
-  const isEditable = useEditable();
-  return (
-    <Placeholder
-      className={styles.placeholder}
-      actions={
-        isEditable ? <TileButtons collectionId={collectionId} /> : undefined
-      }
-    >
-      There’s nothing here.
-    </Placeholder>
-  );
+function GridPlaceholder() {
+  return <Placeholder className={styles.placeholder} />;
 }
 
 export interface SectionProps {
