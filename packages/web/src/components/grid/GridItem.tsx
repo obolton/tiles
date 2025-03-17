@@ -46,7 +46,7 @@ function getTileComponent(tile: Tile, hasFocus: boolean) {
     case "MAP":
       return <MapTile {...tile} hasFocus={hasFocus} />;
     case "LINK":
-      return <LinkTile {...tile} />;
+      return <LinkTile {...tile} hasFocus={hasFocus} />;
     case "PAGE_LINK":
       return <PageLinkTile {...tile} />;
     case "EVENT":
