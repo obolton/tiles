@@ -2,7 +2,7 @@
   position: absolute;
   inset: 0;
   display: grid;
-  grid-template-columns: repeat(var(--columns), 1fr);
+  grid-template-columns: repeat(round(down, calc(var(--columns) / 2), 1), 1fr);
   gap: var(--gap);
   border-radius: inherit;
   background: radial-gradient(

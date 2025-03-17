@@ -115,7 +115,7 @@ export default function EventTile({
           </div>
         </section>
 
-        {columns && columns > 1 ? (
+        {columns && columns > 3 ? (
           <calendar-month date={startDate.toISOString()} />
         ) : null}
       </div>
