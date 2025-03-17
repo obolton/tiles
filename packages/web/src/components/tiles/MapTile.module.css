@@ -1,7 +1,7 @@
 .map {
   position: absolute;
   inset: 0;
-  border-radius: inherit;
+  border-radius: var(--border-radius);
   overflow: hidden;
 }
 
@@ -10,6 +10,7 @@
   width: 100%;
   height: 100%;
   display: flex;
+  overflow: hidden;
 }
 
 .pop-out[opening]::part(dialog),
