@@ -62,6 +62,7 @@ export default function Stack({
             } as React.CSSProperties
           }
           tile={item}
+          tabIndex={open ? 0 : undefined}
         />
       ))}
     </stack-view>
