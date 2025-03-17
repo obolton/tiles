@@ -87,6 +87,9 @@ export default function Section({ section }: SectionProps) {
       <Grid
         collectionId={section.id}
         items={section.tiles}
+        columns={6}
+        minColumnSpan={2}
+        minRowSpan={1}
         Placeholder={GridPlaceholder}
       />
 
