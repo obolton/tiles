@@ -13,7 +13,7 @@ export type ColorPickerValue = {
 interface ColorPickerProps
   extends Omit<React.HTMLAttributes<HTMLElement>, "value" | "onChange"> {
   className?: string;
-  direction?: "left" | "right";
+  direction?: "left" | "right" | "up";
   value?: ColorPickerValue;
   onChange: (value: ColorPickerValue) => void;
   showClear?: boolean;
