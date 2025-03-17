@@ -427,6 +427,7 @@ export default function Toolbar({
           onChange={onChangeColor}
           aria-label="Color"
           data-tooltip="Select color"
+          direction="up"
           showClear
         />
       </li>
