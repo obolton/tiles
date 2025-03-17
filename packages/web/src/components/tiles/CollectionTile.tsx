@@ -1,21 +1,10 @@
 import Stack from "@/components/layouts/stack/Stack";
 import Carousel from "@/components/layouts/carousel/Carousel";
 import Placeholder from "@/components/placeholder/Placeholder";
-import TileButtons from "@/components/menu/TileButtons";
-import useEditable from "@/hooks/useEditable";
 import type { Tile } from "@/types/layout";
 
-function CollectionTilePlaceholder({ collectionId }: { collectionId: string }) {
-  const isEditable = useEditable();
-  return (
-    <Placeholder
-      actions={
-        isEditable ? <TileButtons collectionId={collectionId} /> : undefined
-      }
-    >
-      There’s nothing here.
-    </Placeholder>
-  );
+function CollectionTilePlaceholder() {
+  return <Placeholder>Empty</Placeholder>;
 }
 
 type CollectionTileProps = Extract<Tile, { type: "COLLECTION" }>;
