@@ -31,6 +31,7 @@ export default class ResizeItem extends HTMLElement {
   private height = 0;
   private initialPointerX = 0;
   private initialPointerY = 0;
+  private maxX = 0;
 
   constructor() {
     super();
@@ -159,7 +160,7 @@ export default class ResizeItem extends HTMLElement {
 
   private pointerMove(event: PointerEvent) {
     if (this.isResizing) {
-      this.width = event.pageX - this.initialPointerX;
+      this.width = Math.min(event.pageX, this.maxX) - this.initialPointerX;
       this.height = event.pageY - this.initialPointerY;
 
       this.dispatchEvent(
@@ -222,6 +223,9 @@ export default class ResizeItem extends HTMLElement {
     this.width = event.pageX - this.initialPointerX;
     this.height = event.pageY - this.initialPointerY;
 
+    const parentBounds = this.offsetParent?.getBoundingClientRect();
+    this.maxX = parentBounds?.right ?? Infinity;
+
     const allowResize = this.dispatchEvent(
       new TileResizeEvent("tileresizestart", {
         bubbles: true,
@@ -260,7 +264,7 @@ export default class ResizeItem extends HTMLElement {
     this.outline.style.height = `${this.height}px`;
     this.shadowRoot?.appendChild(this.outline);
 
-    this.outline.animate([{ opacity: 0 }, { opacity: 0.8 }], {
+    this.outline.animate([{ opacity: 0 }, { opacity: 1 }], {
       ...DEFAULT_TIMING,
       fill: "forwards",
     });
