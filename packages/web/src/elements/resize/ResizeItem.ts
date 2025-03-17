@@ -18,7 +18,6 @@ export default class ResizeItem extends HTMLElement {
   static readonly observedAttributes: (keyof ResizeItemAttributes)[] = [
     "allowdrag",
     "allowresize",
-    "allowdelete",
   ] as const;
 
   private readonly internals: ElementInternals;
@@ -41,6 +40,8 @@ export default class ResizeItem extends HTMLElement {
     const shadow = this.attachShadow({ mode: "open", delegatesFocus: true });
     shadow.adoptedStyleSheets = [stylesheet];
     shadow.append(document.createElement("slot"));
+
+    this.addEventListener("keydown", this);
   }
 
   attributeChangedCallback(
@@ -58,14 +59,6 @@ export default class ResizeItem extends HTMLElement {
         }
         break;
 
-      case "allowdelete":
-        if (value === null) {
-          this.hideDeleteButton();
-        } else {
-          this.showDeleteButton();
-        }
-        break;
-
       case "allowdrag":
         if (value === null) {
           this.hideDragHandle();
@@ -78,6 +71,29 @@ export default class ResizeItem extends HTMLElement {
 
   disconnectedCallback() {
     this.endResizing();
+  }
+
+  handleEvent(event: Event) {
+    switch (event.type) {
+      case "keydown":
+        return this.handleKeyDown(event as KeyboardEvent);
+    }
+  }
+
+  private handleKeyDown(event: KeyboardEvent) {
+    const { target, key } = event;
+    if (
+      (key === "Backspace" || key === "Delete") &&
+      target instanceof HTMLElement &&
+      target.tagName !== "INPUT" &&
+      target.tagName !== "TEXTAREA" &&
+      !target.isContentEditable &&
+      this.hasAttribute("allowdelete")
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.delete();
+    }
   }
 
   private showDragHandle() {
@@ -114,26 +130,6 @@ export default class ResizeItem extends HTMLElement {
 
   private hideResizeHandle() {
     this.shadowRoot?.getElementById("resize")?.remove();
-  }
-
-  private showDeleteButton() {
-    if (this.shadowRoot?.getElementById("delete")) {
-      return;
-    }
-
-    const deleteButton = document.createElement("button");
-    deleteButton.id = "delete";
-    deleteButton.type = "button";
-    deleteButton.ariaLabel = "Delete";
-    deleteButton.addEventListener("click", this.delete.bind(this));
-    deleteButton.addEventListener("pointerdown", (event) =>
-      event.stopPropagation(),
-    );
-    this.shadowRoot?.append(deleteButton);
-  }
-
-  private hideDeleteButton() {
-    this.shadowRoot?.getElementById("delete")?.remove();
   }
 
   private pointerDown(event: PointerEvent) {
@@ -289,10 +285,7 @@ export default class ResizeItem extends HTMLElement {
       });
   }
 
-  private delete(event: MouseEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-
+  private delete() {
     this.dispatchEvent(
       new TileEvent("tiledelete", {
         bubbles: true,
