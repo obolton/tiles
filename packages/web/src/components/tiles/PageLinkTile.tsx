@@ -1,6 +1,7 @@
 import Tile from "./Tile";
 import PageTile from "./PageTile";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
+import useEditable from "@/hooks/useEditable";
 import styles from "./PageLinkTile.module.css";
 import { classNames } from "@/utils/css";
 import type { ClientPageLink } from "@/types/tiles";
@@ -10,11 +11,20 @@ interface PageLinkTileProps extends ClientPageLink {
   openInNewTab?: boolean;
 }
 
+function preventDefault(event: React.MouseEvent) {
+  if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+    return;
+  }
+  event.preventDefault();
+}
+
 export default function PageLinkTile({
   linkedPage,
   onClick,
   openInNewTab = true,
 }: PageLinkTileProps) {
+  const isEditable = useEditable();
+
   if (!linkedPage) {
     return (
       <Tile>
@@ -28,7 +38,7 @@ export default function PageLinkTile({
       className={styles.link}
       href={`/pages/${linkedPage.id}`}
       target={openInNewTab ? "_blank" : undefined}
-      onClick={onClick}
+      onClick={onClick ?? (isEditable ? preventDefault : undefined)}
     >
       <PageTile
         title={linkedPage.title}
