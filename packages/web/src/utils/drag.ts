@@ -273,7 +273,10 @@ export class DragState<T> {
     this.dragElement = this.element.cloneNode(true) as HTMLElement;
     this.dragElement.id = "drag-preview";
     this.dragElement.popover = "manual";
-    delete this.dragElement.dataset.animateLayoutId;
+    this.dragElement.removeAttribute("data-animate-layout-id");
+    this.dragElement
+      .querySelectorAll("[data-animate-layout-id]")
+      .forEach((element) => element.removeAttribute("data-animate-layout-id"));
 
     const rect = this.element.getBoundingClientRect();
 
