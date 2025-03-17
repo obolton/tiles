@@ -15,25 +15,6 @@
   }
 }
 
-.title {
-  font-family: var(--font);
-  padding: 4px 8px;
-  margin: 0 0 16px;
-  min-width: 240px;
-  overflow-wrap: break-word;
-}
-
-.textarea {
-  display: block;
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 600;
-  line-height: 2rlh;
-  color: var(--text-color);
-  background: none;
-  border: none;
-  border-radius: var(--border-radius);
-}
-
 .placeholder {
   grid-column: 1 / -1;
 }
@@ -41,20 +22,5 @@
 .options {
   position: absolute;
   top: 0;
-  right: 0;
-}
-
-@media (width >= 1200px) {
-  .title {
-    position: absolute;
-    top: 0;
-    right: 100%;
-    margin: 0 16px 0 0;
-    max-width: 340px;
-    text-align: right;
-  }
-
-  .options {
-    right: -56px;
-  }
+  left: calc(100% + 16px);
 }

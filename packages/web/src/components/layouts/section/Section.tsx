@@ -1,6 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import Grid from "@/components/layouts/grid/Grid";
-import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import Placeholder from "@/components/placeholder/Placeholder";
 import useEditable from "@/hooks/useEditable";
 import { useEditor } from "@/context/editor";
@@ -11,13 +10,6 @@ import type { Section } from "@/types/layout";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { layoutTransition } from "@/utils/animation/layout";
-
-function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-  if (event.key === "Enter" || event.key === "Escape") {
-    event.currentTarget.blur();
-    event.preventDefault();
-  }
-}
 
 function GridPlaceholder() {
   return <Placeholder className={styles.placeholder} />;
@@ -30,21 +22,6 @@ export interface SectionProps {
 export default function Section({ section }: SectionProps) {
   const editor = useEditor();
   const isEditable = useEditable();
-  const [title, setTitle] = useState(section.title ?? "");
-
-  const onChangeTitle = useCallback(
-    (event: React.ChangeEvent<HTMLTextAreaElement>) =>
-      setTitle(event.currentTarget.value.replace(/[\r\n]/g, "")),
-    [],
-  );
-
-  const saveTitle = useCallback(async () => {
-    try {
-      await editor.updateCollection({ id: section.id, title });
-    } catch (error) {
-      handleError(error);
-    }
-  }, [editor, section.id, title]);
 
   const deleteSection = useCallback(async () => {
     try {
@@ -56,23 +33,6 @@ export default function Section({ section }: SectionProps) {
 
   return (
     <section className={styles.section} data-animate-layout-id={section.id}>
-      {isEditable ? (
-        <ResizingTextarea
-          id={`${section.id}-heading`}
-          className={classNames("editable", styles.title, styles.textarea)}
-          placeholder="Add a heading"
-          onChange={onChangeTitle}
-          onBlur={saveTitle}
-          onKeyDown={onKeyDown}
-          value={title}
-          data-heading="h2"
-        />
-      ) : title ? (
-        <h2 id={`${section.id}-heading`} className={styles.title}>
-          {title}
-        </h2>
-      ) : null}
-
       <Grid
         collectionId={section.id}
         items={section.tiles}
