@@ -66,7 +66,7 @@ export default function Grid({
           allowDrop
           grow={tile.type === "TEXT" && tile.expand}
           tile={tile}
-          tabIndex={0}
+          tabIndex={isEditable ? 0 : undefined}
         />
       ))}
     </section>

@@ -11,17 +11,10 @@
   color: var(--tile-text-color);
   background-size: cover;
   background-position: center;
-  outline: transparent none 0;
   transition:
     opacity var(--animation-duration-short) var(--easing),
     box-shadow var(--animation-duration-short) var(--easing),
-    transform var(--animation-duration-short) var(--easing),
-    outline-color var(--animation-duration) var(--easing);
-
-  &:focus-within,
-  &:hover:focus-within {
-    outline: var(--focus-outline);
-  }
+    transform var(--animation-duration-short) var(--easing);
 }
 
 .background {

@@ -15,17 +15,24 @@
     view-transition-name: outline;
   }
 
-  &:hover,
-  &:state(resizing) {
-    outline: 2px solid rgb(0 0 0 / 10%);
-  }
-
   &.grow {
     height: fit-content;
 
     &::part(outline) {
       min-height: 100%;
     }
+  }
+}
+
+body[data-editing] .item {
+  &:hover,
+  &:state(resizing) {
+    outline: 2px solid rgb(0 0 0 / 10%);
+  }
+
+  &:focus-within,
+  &:hover:focus-within {
+    outline: var(--focus-outline);
   }
 }
 

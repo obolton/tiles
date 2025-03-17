@@ -58,6 +58,12 @@ function getTileComponent(tile: Tile, hasFocus: boolean) {
   }
 }
 
+function handlePointerDown(event: React.PointerEvent<ResizeItem>) {
+  if (!event.currentTarget.contains(document.activeElement)) {
+    event.currentTarget.focus();
+  }
+}
+
 export default function GridItem({
   id,
   collectionId,
@@ -163,6 +169,7 @@ export default function GridItem({
       onFocus={onFocus}
       onBlur={onBlur}
       tabIndex={tabIndex}
+      onPointerDown={handlePointerDown}
     >
       {getTileComponent(tile, hasFocus)}
     </resize-item>

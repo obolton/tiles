@@ -8,6 +8,7 @@ interface FloatingToolbarProps {
 
 function preventDefault(event: React.PointerEvent) {
   event.preventDefault();
+  event.stopPropagation();
 }
 
 export default function FloatingToolbar({
