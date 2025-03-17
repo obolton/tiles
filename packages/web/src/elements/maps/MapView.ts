@@ -112,7 +112,7 @@ export default class MapView extends HTMLElement {
       bounds: this.getBounds(),
       zoom: 13,
       attributionControl: { compact: true },
-      fitBoundsOptions: { padding: 64 },
+      fitBoundsOptions: { padding: 32 },
     });
     this.map.addControl(new maplibregl.NavigationControl(), "bottom-right");
 
