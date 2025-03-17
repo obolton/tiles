@@ -25,7 +25,6 @@ export default class MapView extends HTMLElement {
   private mutationObserver: MutationObserver;
   private map?: maplibregl.Map;
   private markers: maplibregl.Marker[] = [];
-  private toolbar?: HTMLElement;
 
   constructor() {
     super();
@@ -55,10 +54,6 @@ export default class MapView extends HTMLElement {
 
   private getLegendItems() {
     return this.querySelectorAll<MapLegendItem>("map-legend-item");
-  }
-
-  private getToolbarItems() {
-    return this.querySelectorAll<HTMLButtonElement>("button");
   }
 
   private getBounds() {
@@ -125,11 +120,6 @@ export default class MapView extends HTMLElement {
       this.showLegend();
     }
 
-    this.toolbar = document.createElement("div");
-    this.toolbar.classList.add("toolbar");
-    this.toolbar.append(document.createElement("slot"));
-    this.root.appendChild(this.toolbar);
-
     this.updateSlots();
 
     this.mutationObserver.observe(this, { childList: true });
@@ -190,12 +180,6 @@ export default class MapView extends HTMLElement {
       "legend-slot",
     ) as HTMLSlotElement | null;
     legendSlot?.assign(...this.getLegendItems());
-
-    const toolbarSlot = this.toolbar?.firstElementChild as
-      | HTMLSlotElement
-      | undefined
-      | null;
-    toolbarSlot?.assign(...this.getToolbarItems());
   }
 
   private showLegend() {

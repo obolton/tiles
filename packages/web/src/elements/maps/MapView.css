@@ -37,14 +37,6 @@
   overflow: auto;
 }
 
-.toolbar {
-  position: absolute;
-  left: 8px;
-  top: 8px;
-  display: flex;
-  gap: 4px;
-}
-
 @container tile (max-width: 320px) {
   .legend {
     display: none;
