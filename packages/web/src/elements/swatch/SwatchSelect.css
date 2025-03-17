@@ -92,8 +92,7 @@ button {
 :host([direction="left"]) {
   #items {
     flex-direction: row;
-    left: unset;
-    right: 32px;
+    inset: 0 32px 0 auto;
     clip-path: inset(-20px 0 -20px -20px);
   }
 
@@ -105,5 +104,15 @@ button {
     &[aria-pressed="true"] {
       rotate: z -45deg;
     }
+  }
+}
+
+:host([direction="up"]) {
+  #items {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    inset: auto 0 32px;
+    clip-path: inset(-20px -20px 0 -20px);
   }
 }

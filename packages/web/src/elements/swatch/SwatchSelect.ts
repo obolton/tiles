@@ -19,7 +19,7 @@ const OVERLAP = 8;
 
 export interface SwatchSelectAttributes {
   value?: string;
-  direction?: "left" | "right";
+  direction?: "left" | "right" | "up";
   onchange?: (event: globalThis.Event) => void;
   ontoggle?: (event: globalThis.ToggleEvent) => void;
 }
@@ -68,7 +68,10 @@ export default class SwatchSelect extends HTMLElement {
   toggle() {
     this.open = !this.open;
 
-    const direction = this.getAttribute("direction") === "left" ? -1 : 1;
+    const direction = this.getAttribute("direction") || "right";
+    const horizontal = direction === "left" || direction === "right";
+    const directionMultiplier =
+      direction === "left" || direction === "up" ? -1 : 1;
 
     if (this.open) {
       this.ariaExpanded = "true";
@@ -78,13 +81,24 @@ export default class SwatchSelect extends HTMLElement {
       fadeIn(this.items, { timing: TIMING });
 
       const items = this.itemsSlot.assignedElements();
-      items.forEach((item, i) =>
-        move(item, {
-          fromX: `${(items.length - i) * -100 * direction}%`,
-          toX: `${(items.length - i - 1) * -OVERLAP * direction + 20 * direction}px`,
-          timing: { ...SPRING, fill: "both" },
-        }),
-      );
+
+      if (horizontal) {
+        items.forEach((item, i) =>
+          move(item, {
+            fromX: `${(items.length - i) * -100 * directionMultiplier}%`,
+            toX: `${(items.length - i - 1) * -OVERLAP * directionMultiplier + 20 * directionMultiplier}px`,
+            timing: { ...SPRING, fill: "both" },
+          }),
+        );
+      } else {
+        items.forEach((item, i) =>
+          move(item, {
+            fromY: `${(items.length - i) * -100 * directionMultiplier}%`,
+            toY: `${(items.length - i - 1) * -OVERLAP * directionMultiplier + 20 * directionMultiplier}px`,
+            timing: { ...SPRING, fill: "both" },
+          }),
+        );
+      }
 
       this.dispatchEvent(
         new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
@@ -96,15 +110,27 @@ export default class SwatchSelect extends HTMLElement {
       fadeOut(this.items, { timing: TIMING });
 
       const elements = this.itemsSlot.assignedElements();
-      Promise.all(
-        elements.map((item, i) =>
-          move(item, {
-            fromX: `${(elements.length - i - 1) * -OVERLAP * direction + 20 * direction}px`,
-            toX: `${(elements.length - i) * -100 * direction}%`,
-            timing: { ...SPRING, fill: "both" },
-          }),
-        ),
-      ).then(() => this.items.classList.add("hidden"));
+      if (horizontal) {
+        Promise.all(
+          elements.map((item, i) =>
+            move(item, {
+              fromX: `${(elements.length - i - 1) * -OVERLAP * directionMultiplier + 20 * directionMultiplier}px`,
+              toX: `${(elements.length - i) * -100 * directionMultiplier}%`,
+              timing: { ...SPRING, fill: "both" },
+            }),
+          ),
+        ).then(() => this.items.classList.add("hidden"));
+      } else {
+        Promise.all(
+          elements.map((item, i) =>
+            move(item, {
+              fromY: `${(elements.length - i - 1) * -OVERLAP * directionMultiplier + 20 * directionMultiplier}px`,
+              toY: `${(elements.length - i) * -100 * directionMultiplier}%`,
+              timing: { ...SPRING, fill: "both" },
+            }),
+          ),
+        ).then(() => this.items.classList.add("hidden"));
+      }
 
       this.dispatchEvent(
         new ToggleEvent("toggle", { oldState: "open", newState: "closed" }),
