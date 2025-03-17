@@ -28,6 +28,12 @@ const BORDER_CLASSES = {
   none: null,
 } as const;
 
+function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
+  if (!event.currentTarget.contains(document.activeElement)) {
+    event.currentTarget.focus();
+  }
+}
+
 export default function Tile({
   className,
   children,
@@ -62,6 +68,7 @@ export default function Tile({
         className,
       )}
       style={style}
+      onPointerDown={handlePointerDown}
     >
       {children}
     </div>
