@@ -142,9 +142,10 @@ model TextTile {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   /// [RichText]
-  content Json   @db.JsonB
+  content Json    @db.JsonB
   theme   Theme?
-  hue     Float? @db.Real
+  hue     Float?  @db.Real
+  expand  Boolean @default(false)
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[]
