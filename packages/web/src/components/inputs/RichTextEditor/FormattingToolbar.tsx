@@ -37,6 +37,7 @@ import UnorderedListIcon from "@/icons/unordered-list.svg?jsx";
 import CheckListIcon from "@/icons/check-list.svg?jsx";
 import QuoteIcon from "@/icons/quote.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
+import ExpandIcon from "@/icons/expand.svg?jsx";
 import { showModal } from "@/utils/modals";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
@@ -84,12 +85,16 @@ interface ToolbarProps {
   className?: string;
   color: ColorPickerValue;
   onChangeColor: (value: ColorPickerValue) => void;
+  expand: boolean;
+  onToggleExpand: () => void;
 }
 
 export default function Toolbar({
   className,
   color,
   onChangeColor,
+  expand,
+  onToggleExpand,
 }: ToolbarProps) {
   const [editor] = useLexicalComposerContext();
   const [format, setFormat] = useState<Format>({
@@ -424,6 +429,18 @@ export default function Toolbar({
           data-tooltip="Select color"
           showClear
         />
+      </li>
+      <li>
+        <button
+          className="floating small"
+          aria-label="Fit contents"
+          data-tooltip="Fit contents"
+          type="button"
+          aria-pressed={expand ? "true" : "false"}
+          onClick={onToggleExpand}
+        >
+          <ExpandIcon aria-hidden="true" />
+        </button>
       </li>
     </FloatingToolbar>
   );
