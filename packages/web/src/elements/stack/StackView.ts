@@ -17,6 +17,10 @@ export default class StackView extends PopOut {
     this.addEventListener("dnd-dragover", this);
   }
 
+  protected get isOverflowing() {
+    return true;
+  }
+
   handleEvent(event: Event) {
     super.handleEvent(event);
 
