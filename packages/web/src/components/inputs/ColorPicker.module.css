@@ -28,7 +28,7 @@
       oklch(from var(--page-color) 85% c h / 80%)
     );
 
-    & img {
+    & svg {
       display: block;
       margin: auto;
       width: 18px;
