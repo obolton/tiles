@@ -66,6 +66,7 @@ export default function LinkTile({
       {hasFocus ? (
         <FloatingToolbar>
           <button
+            role="menuitem"
             type="button"
             className="floating small"
             aria-label="Edit link"

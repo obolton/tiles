@@ -97,6 +97,7 @@ export default function MapTile({ id, places, hasFocus }: MapTileProps) {
         {hasFocus ? (
           <FloatingToolbar>
             <button
+              role="menuitem"
               type="button"
               className="floating small"
               aria-label="Add place"
