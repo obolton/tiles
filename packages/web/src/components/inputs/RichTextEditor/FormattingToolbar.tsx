@@ -81,21 +81,19 @@ function $getSelectionListType() {
   return null;
 }
 
-interface ToolbarProps {
-  className?: string;
+interface FormattingToolbarProps {
   color: ColorPickerValue;
   onChangeColor: (value: ColorPickerValue) => void;
   expand: boolean;
   onToggleExpand: () => void;
 }
 
-export default function Toolbar({
-  className,
+export default function FormattingToolbar({
   color,
   onChangeColor,
   expand,
   onToggleExpand,
-}: ToolbarProps) {
+}: FormattingToolbarProps) {
   const [editor] = useLexicalComposerContext();
   const [format, setFormat] = useState<Format>({
     h1: false,
@@ -264,7 +262,7 @@ export default function Toolbar({
   }, [editor]);
 
   return (
-    <FloatingToolbar className={className}>
+    <FloatingToolbar>
       <li>
         <button
           className="floating small"
