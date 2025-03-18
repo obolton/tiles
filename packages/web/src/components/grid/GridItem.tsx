@@ -15,7 +15,6 @@ import type { Tile } from "@/types/layout";
 import type { DragDropEvent } from "@/utils/drag";
 import { handleError } from "@/utils/errors";
 import { useEditor } from "@/context/editor";
-import { viewTransition } from "@/utils/transitions";
 import useEditable from "@/hooks/useEditable";
 
 interface GridItemProps {
