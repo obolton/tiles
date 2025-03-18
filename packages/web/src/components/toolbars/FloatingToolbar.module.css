@@ -1,27 +1,22 @@
-.container {
+.toolbar {
   position: fixed;
   inset: auto 80px 80px;
-  display: flex;
-  justify-content: center;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.toolbar {
-  display: flex;
+  overflow: visible;
+  contain: layout;
   background: rgb(255 255 255 / 95%);
+  border: none;
   border-radius: 28px;
-  margin: 0;
+  margin: auto;
   padding: 8px;
+  display: flex;
   align-items: center;
   gap: 8px;
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 20%),
     0 4px 4px -2px rgb(0 0 0 / 20%);
-  pointer-events: all;
   view-transition-name: toolbar;
 }
 
-body[data-drag] .container {
+body[data-drag] .toolbar {
   display: none;
 }
