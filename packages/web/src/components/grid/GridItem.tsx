@@ -15,6 +15,8 @@ import type { Tile } from "@/types/layout";
 import type { DragDropEvent } from "@/utils/drag";
 import { handleError } from "@/utils/errors";
 import { useEditor } from "@/context/editor";
+import { viewTransition } from "@/utils/transitions";
+import useEditable from "@/hooks/useEditable";
 
 interface GridItemProps {
   id: string;
@@ -82,15 +84,24 @@ export default function GridItem({
 }: GridItemProps) {
   const ref = useRef<ResizeItem>(null);
   const editor = useEditor();
+  const isEditable = useEditable();
   useScrollIntoView(ref);
 
   const [hasFocus, setHasFocus] = useState(false);
-  const onFocus = useCallback(() => setHasFocus(true), []);
-  const onBlur = useCallback((event: React.FocusEvent<ResizeItem>) => {
-    if (!event.currentTarget.contains(event.relatedTarget)) {
-      setHasFocus(false);
-    }
-  }, []);
+  const onFocus = useCallback(() => {
+    setHasFocus(true);
+    editor.focusedTile.value = id;
+  }, [id, editor]);
+
+  const onBlur = useCallback(
+    (event: React.FocusEvent<ResizeItem>) => {
+      if (!event.currentTarget.contains(event.relatedTarget)) {
+        setHasFocus(false);
+        editor.focusedTile.value = null;
+      }
+    },
+    [editor],
+  );
 
   const [isDragOver, setDragOver] = useState(false);
   const onDragStart = (event: DragDropEvent<Tile>) => {
@@ -168,8 +179,8 @@ export default function GridItem({
       ondnd-dragleave={allowDrop ? onDragLeave : undefined}
       ondnd-drop={allowDrop ? onDrop : undefined}
       data-drop={allowDrop ? "true" : undefined}
-      onFocus={onFocus}
-      onBlur={onBlur}
+      onFocus={isEditable ? onFocus : undefined}
+      onBlur={isEditable ? onBlur : undefined}
       tabIndex={tabIndex}
       onPointerDown={handlePointerDown}
     >
