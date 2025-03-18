@@ -134,8 +134,6 @@
 }
 
 .editor {
-  padding: 0;
-
   & [data-editor] {
     background: inherit;
     border-radius: inherit;

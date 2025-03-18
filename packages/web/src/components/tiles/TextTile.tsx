@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { serialize } from "@/utils/richText/serialize";
 import RichTextEditor from "@/components/inputs/RichTextEditor/RichTextEditor";
 import RichText from "@/components/text/RichText";
@@ -30,7 +30,6 @@ export default function TextTile({
   expand: initialExpand,
   hasFocus,
 }: TextTileProps) {
-  const ref = useRef<HTMLDivElement>(null);
   const editor = useEditor();
   const isEditable = useEditable();
   const [editorState, setEditorState] = useState<EditorState | null>(null);
@@ -80,7 +79,6 @@ export default function TextTile({
       >
         {isEditable ? (
           <RichTextEditor
-            ref={ref}
             className={classNames(styles.text, styles.editor)}
             onBlur={onBlur}
             onChange={setEditorState}

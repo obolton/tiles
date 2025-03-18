@@ -33,6 +33,7 @@ import { LinkNode } from "@lexical/link";
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
 import { useEffect, useRef } from "react";
 import styles from "./RichTextEditor.module.css";
+import { classNames } from "@/utils/css";
 
 export type { EditorState };
 
@@ -69,7 +70,6 @@ interface RichTextEditorProps
   onChange: (editorState: EditorState) => void;
   value: RichText;
   placeholder?: string;
-  ref?: React.Ref<HTMLDivElement>;
 }
 
 export default function RichTextEditor({
@@ -79,7 +79,6 @@ export default function RichTextEditor({
   onChange,
   placeholder,
   value,
-  ref,
   ...props
 }: RichTextEditorProps) {
   const editorRef = useRef<LexicalEditor>(null);
@@ -115,33 +114,34 @@ export default function RichTextEditor({
   );
 
   return (
-    <div ref={ref} className={className}>
-      <LexicalComposer initialConfig={initialConfig.current}>
-        {children}
-        <RichTextPlugin
-          contentEditable={
-            <ContentEditable
-              {...props}
-              data-editor="true"
-              className={styles.editor}
-              aria-placeholder={placeholder || ""}
-              placeholder={
-                <p data-placeholder="true" className={styles.placeholder}>
-                  {placeholder}
-                </p>
-              }
-            />
-          }
-          ErrorBoundary={LexicalErrorBoundary}
-        />
-        <OnChangePlugin onChange={onChange} />
-        <EditorRefPlugin editorRef={editorRef} />
-        <ListPlugin />
-        <CheckListPlugin />
-        <LinkPlugin />
-        <TabIndentationPlugin />
-        <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-      </LexicalComposer>
-    </div>
+    <LexicalComposer initialConfig={initialConfig.current}>
+      {children}
+      <RichTextPlugin
+        contentEditable={
+          <ContentEditable
+            {...props}
+            data-editor="true"
+            className={classNames(styles.editor, className)}
+            aria-placeholder={placeholder || ""}
+            placeholder={
+              <p
+                data-placeholder="true"
+                className={classNames(styles.placeholder, className)}
+              >
+                {placeholder}
+              </p>
+            }
+          />
+        }
+        ErrorBoundary={LexicalErrorBoundary}
+      />
+      <OnChangePlugin onChange={onChange} />
+      <EditorRefPlugin editorRef={editorRef} />
+      <ListPlugin />
+      <CheckListPlugin />
+      <LinkPlugin />
+      <TabIndentationPlugin />
+      <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+    </LexicalComposer>
   );
 }
