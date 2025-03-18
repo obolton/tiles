@@ -33,7 +33,7 @@ interface GridItemProps {
   tabIndex?: number;
 }
 
-function getTileComponent(tile: Tile, hasFocus: boolean) {
+function getTileComponent(tile: Tile, hasFocus: boolean, onDelete: () => void) {
   const type = tile.type;
   switch (type) {
     case "IMAGE":
@@ -42,7 +42,7 @@ function getTileComponent(tile: Tile, hasFocus: boolean) {
       return <VideoTile {...tile} />;
     case "TEXT":
       // @ts-expect-error Rich text
-      return <TextTile {...tile} hasFocus={hasFocus} />;
+      return <TextTile {...tile} hasFocus={hasFocus} onDelete={onDelete} />;
     case "MAP":
       return <MapTile {...tile} hasFocus={hasFocus} />;
     case "LINK":
@@ -134,6 +134,8 @@ export default function GridItem({
     }
   };
 
+  const onDelete = () => ref.current?.delete();
+
   const combinedStyles = useMemo(
     () =>
       ({
@@ -171,7 +173,7 @@ export default function GridItem({
       tabIndex={tabIndex}
       onPointerDown={handlePointerDown}
     >
-      {getTileComponent(tile, hasFocus)}
+      {getTileComponent(tile, hasFocus, onDelete)}
     </resize-item>
   );
 }

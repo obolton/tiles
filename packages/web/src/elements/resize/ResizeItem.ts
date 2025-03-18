@@ -289,7 +289,7 @@ export default class ResizeItem extends HTMLElement {
       });
   }
 
-  private delete() {
+  delete() {
     this.dispatchEvent(
       new TileEvent("tiledelete", {
         bubbles: true,

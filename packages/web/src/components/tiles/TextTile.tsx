@@ -20,6 +20,7 @@ interface TextTileProps {
   hue: number | null;
   expand: boolean;
   hasFocus: boolean;
+  onDelete?: () => void;
 }
 
 export default function TextTile({
@@ -29,6 +30,7 @@ export default function TextTile({
   hue: initialHue,
   expand: initialExpand,
   hasFocus,
+  onDelete,
 }: TextTileProps) {
   const editor = useEditor();
   const isEditable = useEditable();
@@ -71,6 +73,23 @@ export default function TextTile({
     });
   }, [editor, id, expand]);
 
+  const onKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (
+        (event.key === "Delete" || event.key === "Backspace") &&
+        !event.repeat &&
+        !event.shiftKey &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        !event.metaKey &&
+        event.currentTarget.textContent === ""
+      ) {
+        onDelete?.();
+      }
+    },
+    [onDelete],
+  );
+
   return (
     <Tile theme={theme} hue={hue} border={theme ? "outside" : "none"}>
       <pop-out
@@ -82,6 +101,7 @@ export default function TextTile({
             className={classNames(styles.text, styles.editor)}
             onBlur={onBlur}
             onChange={setEditorState}
+            onKeyDownCapture={onDelete ? onKeyDown : undefined}
             placeholder="Write something"
             value={content}
             editable
