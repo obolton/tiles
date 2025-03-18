@@ -6,7 +6,7 @@ import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 
 interface FontPickerProps
   extends Omit<React.HTMLAttributes<HTMLElement>, "value" | "onChange"> {
-  direction?: "left" | "right";
+  direction?: "left" | "right" | "up";
   value?: FontId;
   onChange: (value: FontId) => void;
 }
@@ -27,7 +27,7 @@ export default function FontPicker({
     <swatch-select
       {...props}
       class={styles.font}
-      aria-orientation="horizontal"
+      aria-orientation={direction === "up" ? "vertical" : "horizontal"}
       direction={direction}
       value={value}
       onchange={setFont}

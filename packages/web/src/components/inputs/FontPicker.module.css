@@ -1,4 +1,4 @@
-.font swatch-item {
+.font swatch-item:defined {
   display: flex;
   height: 40px;
   align-items: center;
