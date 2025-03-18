@@ -5,6 +5,8 @@ import { classNames } from "@/utils/css";
 import styles from "./PageHeader.module.css";
 import { handleError } from "@/utils/errors";
 import { showModal } from "@/utils/modals";
+import ShareIcon from "@/icons/share.svg?jsx";
+import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import { formatRelativeDate } from "@/utils/dates";
@@ -142,9 +144,28 @@ export default function PageHeader({
             </time>
           ) : null}
 
+          <button
+            id="share"
+            className="floating small"
+            aria-label="Share"
+            data-tooltip="Share this page"
+          >
+            <ShareIcon aria-hidden="true" />
+          </button>
+
+          <button
+            id="bookmark"
+            className="floating small"
+            aria-label="Bookmark"
+            aria-pressed="false"
+            data-tooltip="Bookmark this page"
+          >
+            <BookmarkIcon aria-hidden="true" />
+          </button>
+
           {isEditable ? (
             <button
-              className="floating"
+              className="floating small"
               aria-label={
                 coverImageUrl ? "Remove cover image" : "Add cover image"
               }
