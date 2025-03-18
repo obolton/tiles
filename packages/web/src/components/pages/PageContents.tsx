@@ -25,21 +25,17 @@ export default function PageContents({ layout }: PageContentsProps) {
     }
   }, [editor]);
 
-  if (layout.length === 0) {
-    return (
-      <Placeholder>
-        {isEditable
-          ? "There’s nothing here yet. Get starting by adding a section."
-          : "This page is empty."}
-      </Placeholder>
-    );
-  }
-
   return (
     <>
-      {layout.map((section) => (
-        <Section key={section.id} section={section} />
-      ))}
+      {layout.length === 0 ? (
+        <Placeholder>
+          {isEditable
+            ? "There’s nothing here yet. Get starting by adding a section."
+            : "This page is empty."}
+        </Placeholder>
+      ) : (
+        layout.map((section) => <Section key={section.id} section={section} />)
+      )}
 
       {isEditable ? (
         <button
