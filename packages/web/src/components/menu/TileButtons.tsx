@@ -138,20 +138,22 @@ export default function TileButtons({ collectionId }: TileButtonsProps) {
   }
 
   return (
-    <>
+    <ul role="group">
       {BUTTONS.map(({ label, type, Icon }) => (
-        <button
-          key={type}
-          className="floating"
-          type="button"
-          aria-label={label}
-          data-tooltip={label}
-          data-tile-type={type}
-          onClick={onClick}
-        >
-          <Icon aria-hidden="true" />
-        </button>
+        <li key={type} role="presentation">
+          <button
+            role="menuitem"
+            type="button"
+            className="floating small"
+            aria-label={label}
+            data-tooltip={label}
+            data-tile-type={type}
+            onClick={onClick}
+          >
+            <Icon aria-hidden="true" />
+          </button>
+        </li>
       ))}
-    </>
+    </ul>
   );
 }

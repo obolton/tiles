@@ -92,81 +92,85 @@ export default function CollaborationButtons({
   );
 
   return (
-    <>
-      {isPublished ? (
+    <ul role="group">
+      <li role="presentation">
+        {isPublished ? (
+          <button
+            role="menuitem"
+            id="unpublish"
+            className="floating small"
+            aria-label="Published"
+            data-tooltip="This page is published"
+            disabled={allowPublish ? undefined : true}
+            onClick={unpublishPage}
+          >
+            <PublicIcon aria-hidden="true" />
+          </button>
+        ) : (
+          <button
+            role="menuitem"
+            id="publish"
+            className="floating small"
+            aria-label="Private"
+            data-tooltip="This page is private"
+            disabled={allowPublish ? undefined : true}
+            onClick={publishPage}
+          >
+            <PrivateIcon aria-hidden="true" />
+          </button>
+        )}
+      </li>
+
+      <li role="presentation">
         <button
-          id="unpublish"
-          className="floating"
           role="menuitem"
-          aria-label="Published"
-          data-tooltip="This page is published"
-          disabled={allowPublish ? undefined : true}
-          onClick={unpublishPage}
+          id="access-button"
+          className="floating small"
+          aria-label="Page access"
+          data-tooltip="Page access"
+          popoverTarget="access-popover"
+          aria-haspopup="menu"
+          aria-expanded="false"
         >
-          <PublicIcon aria-hidden="true" />
+          <PeopleIcon aria-hidden="true" />
         </button>
-      ) : (
-        <button
-          id="publish"
-          className="floating"
-          role="menuitem"
-          aria-label="Private"
-          data-tooltip="This page is private"
-          disabled={allowPublish ? undefined : true}
-          onClick={publishPage}
-        >
-          <PrivateIcon aria-hidden="true" />
-        </button>
-      )}
 
-      <button
-        id="access-button"
-        className="floating"
-        role="menuitem"
-        aria-label="Page access"
-        data-tooltip="Page access"
-        popoverTarget="access-popover"
-        aria-haspopup="menu"
-        aria-expanded="false"
-      >
-        <PeopleIcon />
-      </button>
-
-      <popover-menu id="access-popover" anchor="access-button">
-        <menu>
-          <PageAccessRow
-            user={editor.author}
-            description="Owner"
-            showRemove={false}
-            onRemove={revokeAccess}
-          />
-
-          {access.map((access) => (
+        <popover-menu id="access-popover" anchor="access-button">
+          <menu>
             <PageAccessRow
-              key={access.user.id}
-              user={access.user}
-              description="Editor"
-              showRemove
+              user={editor.author}
+              description="Owner"
+              showRemove={false}
               onRemove={revokeAccess}
             />
-          ))}
 
-          {invites.map((invite) => (
-            <PageInviteRow
-              key={invite.id}
-              invite={invite}
-              onRemove={deleteInvite}
-            />
-          ))}
+            {access.map((access) => (
+              <PageAccessRow
+                key={access.user.id}
+                user={access.user}
+                description="Editor"
+                showRemove
+                onRemove={revokeAccess}
+              />
+            ))}
 
-          <li>
-            <button type="button" onClick={showInviteModal}>
-              <NewIcon aria-hidden="true" />
-              Invite to page
-            </button>
-          </li>
-        </menu>
-      </popover-menu>
-    </>
+            {invites.map((invite) => (
+              <PageInviteRow
+                key={invite.id}
+                invite={invite}
+                onRemove={deleteInvite}
+              />
+            ))}
+
+            <li>
+              <button type="button" onClick={showInviteModal}>
+                <NewIcon aria-hidden="true" />
+                Invite to page
+              </button>
+            </li>
+          </menu>
+        </popover-menu>
+      </li>
+    </ul>
   );
 }

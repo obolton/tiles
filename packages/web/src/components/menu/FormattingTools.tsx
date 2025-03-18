@@ -4,14 +4,12 @@ import FontPicker from "@/components/inputs/FontPicker";
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import type { FontId } from "@/config/fonts";
 import { getFontConfig } from "@/utils/fonts";
-import useEditable from "@/hooks/useEditable";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
 import { useEditor } from "@/context/editor";
 
 export default function FormattingToolbar() {
   const editor = useEditor();
-  const isEditable = useEditable();
 
   const setFont = useCallback(
     async (font: FontId) => {
@@ -62,24 +60,27 @@ export default function FormattingToolbar() {
     [editor],
   );
 
-  if (!isEditable) {
-    return null;
-  }
-
   return (
-    <>
-      <FontPicker
-        direction="left"
-        onChange={setFont}
-        aria-label="Font"
-        data-tooltip="Select font"
-      />
-      <ColorPicker
-        direction="left"
-        onChange={setColor}
-        aria-label="Color"
-        data-tooltip="Select page color"
-      />
-    </>
+    <ul role="group">
+      <li role="presentation">
+        <FontPicker
+          role="menuitem"
+          direction="up"
+          onChange={setFont}
+          aria-label="Font"
+          data-tooltip="Select font"
+        />
+      </li>
+
+      <li role="presentation">
+        <ColorPicker
+          role="menuitem"
+          direction="up"
+          onChange={setColor}
+          aria-label="Color"
+          data-tooltip="Select page color"
+        />
+      </li>
+    </ul>
   );
 }

@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import useEditable from "@/hooks/useEditable";
 import CollaborationButtons from "./CollaborationButtons";
 import TileButtons from "./TileButtons";
 import FormattingTools from "./FormattingTools";
@@ -21,7 +20,6 @@ export default function EditingTools({
   allowDelete,
 }: EditingToolsProps) {
   const editor = useEditor();
-  const isEditable = useEditable();
 
   const deletePage = useCallback(async () => {
     try {
@@ -32,50 +30,49 @@ export default function EditingTools({
     }
   }, [editor]);
 
-  if (!isEditable) {
-    return null;
-  }
-
   return (
     <>
-      <hr />
       <CollaborationButtons
         isPublished={isPublished}
         allowPublish={allowPublish}
       />
-      <hr />
+
       <TileButtons />
-      <hr />
+
       <FormattingTools />
-      <hr />
-      <button
-        id="page-options-button"
-        type="button"
-        className="floating"
-        role="menuitem"
-        popoverTarget="page-options"
-        aria-label="More options"
-        aria-haspopup="menu"
-        aria-expanded="false"
-        data-tooltip="More options"
-      >
-        <MoreIcon aria-hidden="true" />
-      </button>
-      <popover-menu id="page-options" anchor="page-options-button">
-        <menu>
-          <li>
-            <button
-              className="destructive"
-              type="button"
-              disabled={allowDelete ? undefined : true}
-              onClick={deletePage}
-            >
-              <TrashIcon aria-hidden="true" />
-              Delete page
-            </button>
-          </li>
-        </menu>
-      </popover-menu>
+
+      <ul role="group">
+        <li role="presentation">
+          <button
+            id="page-options-button"
+            type="button"
+            className="floating small"
+            role="menuitem"
+            popoverTarget="page-options"
+            aria-label="More options"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            data-tooltip="More options"
+          >
+            <MoreIcon aria-hidden="true" />
+          </button>
+          <popover-menu id="page-options" anchor="page-options-button">
+            <menu>
+              <li>
+                <button
+                  className="destructive"
+                  type="button"
+                  disabled={allowDelete ? undefined : true}
+                  onClick={deletePage}
+                >
+                  <TrashIcon aria-hidden="true" />
+                  Delete page
+                </button>
+              </li>
+            </menu>
+          </popover-menu>
+        </li>
+      </ul>
     </>
   );
 }
