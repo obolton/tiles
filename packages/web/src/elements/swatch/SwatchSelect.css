@@ -8,8 +8,8 @@
 
 button {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -113,6 +113,6 @@ button {
     height: auto;
     flex-direction: column;
     inset: auto 0 32px;
-    clip-path: inset(-20px -20px 0 -20px);
+    clip-path: inset(-20px -40px 0 -40px);
   }
 }
