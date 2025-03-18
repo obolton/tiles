@@ -18,6 +18,10 @@
     width: fit-content;
     min-width: 240px;
     -webkit-font-smoothing: antialiased;
+
+    & h1 {
+      margin: 0;
+    }
   }
 
   & .metadata {
