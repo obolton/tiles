@@ -25,12 +25,11 @@ export default function EditableProfilePage({
   editorRef.current ??= new Editor(user.profilePage);
   const layout = useStore(editorRef.current.layout);
   const dragId = useDragListener();
+  const focusedTile = useStore(editorRef.current.focusedTile);
 
   return (
     <EditorContext value={editorRef.current}>
       <DragIdContext value={dragId}>
-        <EditingToolbar isPublished allowDelete={false} allowPublish={false} />
-
         <ProfilePageHeader
           name={user.name}
           imageUrl={user.imageUrl}
@@ -41,6 +40,13 @@ export default function EditableProfilePage({
           <PageContents layout={layout} />
         </main>
 
+        {!focusedTile ? (
+          <EditingToolbar
+            isPublished
+            allowDelete={false}
+            allowPublish={false}
+          />
+        ) : null}
         <ModalLauncher />
       </DragIdContext>
     </EditorContext>
