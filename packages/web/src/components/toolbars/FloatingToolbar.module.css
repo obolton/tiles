@@ -10,11 +10,31 @@
   padding: 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 20%),
     0 4px 4px -2px rgb(0 0 0 / 20%);
   view-transition-name: toolbar;
+
+  & > ul {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &:not(:last-child) {
+      padding-right: 16px;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 4px 0 4px auto;
+        width: 3px;
+        border-radius: 3px;
+        background: rgb(0 0 0 / 5%);
+      }
+    }
+  }
 }
 
 body[data-drag] .toolbar {
