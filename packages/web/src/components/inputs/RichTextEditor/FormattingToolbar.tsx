@@ -263,184 +263,210 @@ export default function FormattingToolbar({
 
   return (
     <FloatingToolbar>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Heading level 1"
-          data-tooltip="Format as heading level 1"
-          type="button"
-          aria-pressed={format.h1 ? "true" : "false"}
-          onClick={formatH1}
-        >
-          <H1Icon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Heading level 2"
-          data-tooltip="Format as heading level 2"
-          type="button"
-          aria-pressed={format.h2 ? "true" : "false"}
-          onClick={formatH2}
-        >
-          <H2Icon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Heading level 3"
-          data-tooltip="Format as heading level 3"
-          type="button"
-          aria-pressed={format.h3 ? "true" : "false"}
-          onClick={formatH3}
-        >
-          <H3Icon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Bold"
-          data-tooltip="Format as bold"
-          type="button"
-          aria-pressed={format.bold ? "true" : "false"}
-          onClick={formatBold}
-        >
-          <BoldIcon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Italic"
-          data-tooltip="Format as italic"
-          type="button"
-          aria-pressed={format.italic ? "true" : "false"}
-          onClick={formatItalic}
-        >
-          <ItalicIcon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Underlined"
-          data-tooltip="Format as underlined"
-          type="button"
-          aria-pressed={format.underline ? "true" : "false"}
-          onClick={formatUnderline}
-        >
-          <UnderlineIcon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Strike-through"
-          data-tooltip="Format as strike-through"
-          type="button"
-          aria-pressed={format.strikethrough ? "true" : "false"}
-          onClick={formatStrikethrough}
-        >
-          <StrikethroughIcon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Highlight"
-          data-tooltip="Format as highlighted"
-          type="button"
-          aria-pressed={format.highlight ? "true" : "false"}
-          onClick={formatHighlight}
-        >
-          <HighlightIcon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Ordered list"
-          data-tooltip="Format as an ordered list"
-          type="button"
-          aria-pressed={format.orderedList ? "true" : "false"}
-          onClick={formatOrderedList}
-        >
-          <OrderedListIcon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Unordered list"
-          data-tooltip="Format as an unordered list"
-          type="button"
-          aria-pressed={format.unorderedList ? "true" : "false"}
-          onClick={formatUnorderedList}
-        >
-          <UnorderedListIcon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Check list"
-          data-tooltip="Format as a check list"
-          type="button"
-          aria-pressed={format.checkList ? "true" : "false"}
-          onClick={formatCheckList}
-        >
-          <CheckListIcon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Quote"
-          data-tooltip="Format as a quote"
-          type="button"
-          aria-pressed={format.quote ? "true" : "false"}
-          onClick={formatQuote}
-        >
-          <QuoteIcon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Link"
-          data-tooltip="Add a link"
-          type="button"
-          aria-pressed={format.link ? "true" : "false"}
-          onClick={formatLink}
-        >
-          <LinkIcon aria-hidden="true" />
-        </button>
-      </li>
-      <li>
-        <ColorPicker
-          value={color}
-          onChange={onChangeColor}
-          aria-label="Color"
-          data-tooltip="Select color"
-          direction="up"
-          showClear
-        />
-      </li>
-      <li>
-        <button
-          className="floating small"
-          aria-label="Fit contents"
-          data-tooltip="Fit contents"
-          type="button"
-          aria-pressed={expand ? "true" : "false"}
-          onClick={onToggleExpand}
-        >
-          <ExpandIcon aria-hidden="true" />
-        </button>
-      </li>
+      <ul role="group">
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Heading level 1"
+            data-tooltip="Format as heading level 1"
+            type="button"
+            aria-pressed={format.h1 ? "true" : "false"}
+            onClick={formatH1}
+          >
+            <H1Icon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Heading level 2"
+            data-tooltip="Format as heading level 2"
+            type="button"
+            aria-pressed={format.h2 ? "true" : "false"}
+            onClick={formatH2}
+          >
+            <H2Icon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Heading level 3"
+            data-tooltip="Format as heading level 3"
+            type="button"
+            aria-pressed={format.h3 ? "true" : "false"}
+            onClick={formatH3}
+          >
+            <H3Icon aria-hidden="true" />
+          </button>
+        </li>
+      </ul>
+
+      <ul role="group">
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Bold"
+            data-tooltip="Format as bold"
+            type="button"
+            aria-pressed={format.bold ? "true" : "false"}
+            onClick={formatBold}
+          >
+            <BoldIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Italic"
+            data-tooltip="Format as italic"
+            type="button"
+            aria-pressed={format.italic ? "true" : "false"}
+            onClick={formatItalic}
+          >
+            <ItalicIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Underlined"
+            data-tooltip="Format as underlined"
+            type="button"
+            aria-pressed={format.underline ? "true" : "false"}
+            onClick={formatUnderline}
+          >
+            <UnderlineIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Strike-through"
+            data-tooltip="Format as strike-through"
+            type="button"
+            aria-pressed={format.strikethrough ? "true" : "false"}
+            onClick={formatStrikethrough}
+          >
+            <StrikethroughIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Highlight"
+            data-tooltip="Format as highlighted"
+            type="button"
+            aria-pressed={format.highlight ? "true" : "false"}
+            onClick={formatHighlight}
+          >
+            <HighlightIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Quote"
+            data-tooltip="Format as a quote"
+            type="button"
+            aria-pressed={format.quote ? "true" : "false"}
+            onClick={formatQuote}
+          >
+            <QuoteIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Link"
+            data-tooltip="Add a link"
+            type="button"
+            aria-pressed={format.link ? "true" : "false"}
+            onClick={formatLink}
+          >
+            <LinkIcon aria-hidden="true" />
+          </button>
+        </li>
+      </ul>
+
+      <ul role="group">
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Ordered list"
+            data-tooltip="Format as an ordered list"
+            type="button"
+            aria-pressed={format.orderedList ? "true" : "false"}
+            onClick={formatOrderedList}
+          >
+            <OrderedListIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Unordered list"
+            data-tooltip="Format as an unordered list"
+            type="button"
+            aria-pressed={format.unorderedList ? "true" : "false"}
+            onClick={formatUnorderedList}
+          >
+            <UnorderedListIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Check list"
+            data-tooltip="Format as a check list"
+            type="button"
+            aria-pressed={format.checkList ? "true" : "false"}
+            onClick={formatCheckList}
+          >
+            <CheckListIcon aria-hidden="true" />
+          </button>
+        </li>
+      </ul>
+
+      <ul role="group">
+        <li role="presentation">
+          <ColorPicker
+            role="menuitem"
+            value={color}
+            onChange={onChangeColor}
+            aria-label="Color"
+            data-tooltip="Select color"
+            direction="up"
+            showClear
+          />
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating small"
+            aria-label="Fit contents"
+            data-tooltip="Fit contents"
+            type="button"
+            aria-pressed={expand ? "true" : "false"}
+            onClick={onToggleExpand}
+          >
+            <ExpandIcon aria-hidden="true" />
+          </button>
+        </li>
+      </ul>
     </FloatingToolbar>
   );
 }
