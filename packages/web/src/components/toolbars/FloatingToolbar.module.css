@@ -40,3 +40,17 @@
 body[data-drag] .toolbar {
   display: none;
 }
+
+::view-transition-group(toolbar) {
+  overflow: clip;
+  border-radius: 28px;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 20%),
+    0 4px 4px -2px rgb(0 0 0 / 20%);
+}
+
+::view-transition-new(toolbar),
+::view-transition-old(toolbar) {
+  object-fit: none;
+  object-position: left top;
+}
