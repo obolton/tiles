@@ -55,6 +55,7 @@ export default class Editor {
   readonly access: Store<PageAccess[]>;
   readonly invites: Store<PageInvite[]>;
   readonly author: User;
+  readonly focusedTile: Store<string | null>;
 
   constructor(page: Page) {
     this.pageId = page.id;
@@ -64,6 +65,7 @@ export default class Editor {
     this.access = new Store(page.access);
     this.invites = new Store(page.invites);
     this.author = page.author;
+    this.focusedTile = new Store<string | null>(null);
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();
