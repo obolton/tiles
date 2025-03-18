@@ -30,11 +30,13 @@ function onDOMContentLoaded() {
   if (isEditing) {
     document.body.dataset.editing = "true";
     editSwitch.checked = true;
+  } else {
+    editSwitch.addEventListener("change", () => setEditMode(true), {
+      passive: true,
+      once: true,
+    });
   }
 
-  editSwitch.addEventListener("change", () => setEditMode(editSwitch.checked), {
-    passive: true,
-  });
   document.getElementById("share")?.addEventListener("click", sharePage);
 
   const bookmark = document.getElementById("bookmark") as HTMLButtonElement;
