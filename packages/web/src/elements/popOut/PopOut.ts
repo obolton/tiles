@@ -151,6 +151,15 @@ export default class PopOut extends HTMLElement {
       this.dialog.role = "dialog";
       this.dialog.showModal();
 
+      // Fix popover ordering
+      const popovers = document.querySelectorAll<HTMLElement>(
+        "[popover]:popover-open",
+      );
+      popovers.forEach((popover) => {
+        popover.hidePopover();
+        popover.showPopover();
+      });
+
       if (this.focusTarget) {
         this.focusTarget?.focus();
         this.focusTarget = null;
