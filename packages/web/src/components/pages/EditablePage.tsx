@@ -16,23 +16,18 @@ if (!import.meta.env.SSR) {
 
 interface EditablePage {
   page: NonNullable<AppRouterOutputs["pages"]["getById"]>;
-  showToolbar?: boolean;
 }
 
-export default function EditablePage({
-  page,
-  showToolbar = true,
-}: EditablePage) {
+export default function EditablePage({ page }: EditablePage) {
   const editorRef = useRef<Editor>(null);
   editorRef.current ??= new Editor(page);
   const layout = useStore(editorRef.current.layout);
   const dragId = useDragListener();
+  const focusedTile = useStore(editorRef.current.focusedTile);
 
   return (
     <EditorContext value={editorRef.current}>
       <DragIdContext value={dragId}>
-        {showToolbar ? <EditingToolbar isPublished={page.published} /> : null}
-
         <PageHeader
           title={page.title}
           subtitle={page.subtitle}
@@ -45,6 +40,7 @@ export default function EditablePage({
           <PageContents layout={layout} />
         </main>
 
+        {!focusedTile ? <EditingToolbar isPublished={page.published} /> : null}
         <ModalLauncher />
       </DragIdContext>
     </EditorContext>
