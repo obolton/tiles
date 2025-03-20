@@ -1,5 +1,4 @@
 ---
-import HomeIcon from "@/icons/home.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
 import LibraryIcon from "@/icons/library.svg?jsx";
 import SettingsIcon from "@/icons/settings.svg?jsx";
@@ -23,8 +22,13 @@ import MenuIcon from "@/icons/menu.svg?jsx";
       </data-binding>
     </li>
     <li>
-      <a href="/" class="floating" aria-label="Home" data-tooltip="Home">
-        <HomeIcon />
+      <a
+        href="/library"
+        class="floating"
+        aria-label="Library"
+        data-tooltip="Library"
+      >
+        <LibraryIcon />
       </a>
     </li>
     <li>
@@ -37,16 +41,6 @@ import MenuIcon from "@/icons/menu.svg?jsx";
       >
         <NewIcon />
       </button>
-    </li>
-    <li>
-      <a
-        href="/library"
-        class="floating"
-        aria-label="Library"
-        data-tooltip="Library"
-      >
-        <LibraryIcon />
-      </a>
     </li>
     <li>
       <button
