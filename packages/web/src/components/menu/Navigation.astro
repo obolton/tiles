@@ -7,8 +7,12 @@ import SignOutIcon from "@/icons/sign-out.svg?jsx";
 import MenuIcon from "@/icons/menu.svg?jsx";
 ---
 
-<nav id="navigation" class="toolbar">
-  <menu data-tooltip-position="right">
+<nav
+  id="navigation"
+  aria-label="Main navigation links"
+  data-tooltip-position="right"
+>
+  <ul>
     <li>
       <data-binding href="user.profile">
         <a href="/profiles" class="floating" data-tooltip="Your profile">
@@ -88,7 +92,7 @@ import MenuIcon from "@/icons/menu.svg?jsx";
       <table-of-contents id="toc" anchor="toc-button" role="navigation"
       ></table-of-contents>
     </li>
-  </menu>
+  </ul>
 </nav>
 <style>
   body:not([data-signed-in]) #navigation {

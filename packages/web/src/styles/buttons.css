@@ -79,25 +79,30 @@ a.secondary {
 
 button.floating,
 a.floating {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
   border: none;
   background-color: transparent;
+  outline-color: transparent;
   border-radius: 50%;
   transition:
     scale var(--animation-duration-short) var(--easing),
-    background-color var(--animation-duration-short) var(--easing);
+    background-color var(--animation-duration-short) var(--easing),
+    outline-color var(--animation-duration) var(--easing);
 
   & > svg {
-    z-index: 1;
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     fill: var(--icon-color);
     filter: drop-shadow(0 1px 1px rgb(0 0 0 / 10%));
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline);
   }
 
   &.pending,
