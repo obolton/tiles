@@ -1,3 +1,5 @@
+const VIEWPORT_MARGIN = 64;
+
 export interface PopoverMenuAttributes {
   anchor: string;
 }
@@ -45,14 +47,14 @@ export default class PopoverMenu extends HTMLElement {
     }
   }
 
-  private handleToggle(event: ToggleEvent) {
-    const trigger = document.querySelector(`[popovertarget="${this.id}"]`);
-
+  protected handleToggle(event: ToggleEvent) {
     if (event.newState === "open") {
       this.setPosition();
-      trigger?.setAttribute("aria-expanded", "true");
-    } else {
-      trigger?.setAttribute("aria-expanded", "false");
+    }
+
+    const trigger = document.querySelector(`[popovertarget="${this.id}"]`);
+    if (trigger) {
+      trigger.ariaExpanded = event.newState === "open" ? "true" : "false";
     }
   }
 
@@ -61,8 +63,10 @@ export default class PopoverMenu extends HTMLElement {
     const height = this.offsetHeight;
     const anchorBounds = this.anchorElement.getBoundingClientRect();
 
-    const alignLeft = anchorBounds.right + width < window.innerWidth;
-    const alignBottom = anchorBounds.bottom + height < window.innerHeight;
+    const alignLeft =
+      anchorBounds.right + width + VIEWPORT_MARGIN < window.innerWidth;
+    const alignBottom =
+      anchorBounds.bottom + height + VIEWPORT_MARGIN < window.innerHeight;
 
     const left = alignLeft ? `${anchorBounds.left}px` : "auto";
     const right = alignLeft
