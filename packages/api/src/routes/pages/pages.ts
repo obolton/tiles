@@ -271,7 +271,10 @@ export async function listPages(
       deletedAt: null,
       ...filter,
     },
-    select: PAGE_LINK_TILE_PAGE_FIELDS,
+    select: {
+      ...PAGE_LINK_TILE_PAGE_FIELDS,
+      author: false,
+    },
     orderBy: {
       updatedAt: "desc",
     },
