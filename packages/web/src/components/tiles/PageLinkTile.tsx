@@ -39,6 +39,7 @@ export default function PageLinkTile({
       href={`/pages/${linkedPage.id}`}
       target={openInNewTab ? "_blank" : undefined}
       onClick={onClick ?? (isEditable ? preventDefault : undefined)}
+      draggable={isEditable ? false : undefined}
     >
       <PageTile
         title={linkedPage.title}
@@ -49,6 +50,7 @@ export default function PageLinkTile({
         theme={linkedPage.theme}
         coverImageUrl={linkedPage.coverImageUrl}
       />
+
       {openInNewTab ? (
         <ArrowOutwardIcon
           className={classNames(
