@@ -50,26 +50,27 @@ export default function PlainTextEditor({
   );
 
   return (
-    <div className={classNames(styles.editor, className)}>
-      <LexicalComposer initialConfig={initialConfig.current}>
-        {children}
-        <PlainTextPlugin
-          contentEditable={
-            <ContentEditable
-              {...props}
-              className={styles.content}
-              aria-placeholder={placeholder || ""}
-              placeholder={
-                <p data-placeholder="true" className={styles.placeholder}>
-                  {placeholder}
-                </p>
-              }
-            />
-          }
-          ErrorBoundary={LexicalErrorBoundary}
-        />
-        <OnChangePlugin onChange={handleChange} />
-      </LexicalComposer>
-    </div>
+    <LexicalComposer initialConfig={initialConfig.current}>
+      {children}
+      <PlainTextPlugin
+        contentEditable={
+          <ContentEditable
+            {...props}
+            className={classNames(styles.content, className)}
+            aria-placeholder={placeholder || ""}
+            placeholder={
+              <p
+                data-placeholder="true"
+                className={classNames(styles.placeholder, className)}
+              >
+                {placeholder}
+              </p>
+            }
+          />
+        }
+        ErrorBoundary={LexicalErrorBoundary}
+      />
+      <OnChangePlugin onChange={handleChange} />
+    </LexicalComposer>
   );
 }
