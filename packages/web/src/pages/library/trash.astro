@@ -1,0 +1,39 @@
+---
+import Page from "@/layouts/Page.astro";
+import DeletedPagesGrid from "@/components/grid/DeletedPagesGrid";
+import client from "@/api/client";
+import { SESSION_COOKIE_NAME } from "api/src/constants/cookies";
+
+const sessionId = Astro.cookies.get(SESSION_COOKIE_NAME)?.value;
+
+if (!sessionId) {
+  return Astro.redirect("/sign-in");
+}
+
+const pages = await client.pages.listDeleted.query(
+  { offset: 0 },
+  { context: { sessionId } }
+);
+
+if (!pages) {
+  return Astro.redirect("/sign-in");
+}
+---
+
+<Page
+  title="Library - Trash"
+  description="A list of recently deleted pages in Tiles"
+>
+  <header><h1>Library</h1></header>
+
+  <main>
+    <ul class="tabs" role="navigation">
+      <li><a href="/library">Your pages</a></li>
+      <li><a href="/library/shared">Shared with you</a></li>
+      <li><a href="/library/bookmarks">Bookmarks</a></li>
+      <li aria-selected="true"><a href="/library/trash">Trash</a></li>
+    </ul>
+
+    <DeletedPagesGrid pages={pages} client:load />
+  </main>
+</Page>
