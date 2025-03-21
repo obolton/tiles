@@ -9,7 +9,6 @@
   white-space: pre-line;
   padding: 4px 8px;
   border-radius: 4px;
-  text-shadow: 0 1px 0 rgb(255 255 255 / 15%);
   background: rgb(255 255 255 / 40%);
   backdrop-filter: blur(10px);
 
@@ -25,7 +24,6 @@
   font-size: inherit;
   font-weight: inherit;
   line-height: inherit;
-  text-shadow: inherit;
   background: none;
   border: none;
   border-radius: inherit;
