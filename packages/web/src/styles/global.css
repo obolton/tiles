@@ -181,6 +181,13 @@ mark {
   color: var(--destructive-color);
 }
 
+aside {
+  padding: 16px;
+  color: var(--ui-color);
+  background: rgb(0 0 0 / 5%);
+  border-radius: var(--border-radius);
+}
+
 data-binding,
 infinite-scroll {
   display: contents;
