@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
-import { setOAuth2StateCookie } from "../../auth/oauth2";
-import { getGoogleAuthorizationUrl } from "../../auth/google";
+import { setOAuth2StateCookie } from "@/auth/oauth2";
+import { getGoogleAuthorizationUrl } from "@/auth/google";
 
 export const GET: APIRoute = ({ cookies, redirect }) => {
   const { url, state } = getGoogleAuthorizationUrl();
