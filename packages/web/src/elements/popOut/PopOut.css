@@ -7,7 +7,7 @@
   cursor: auto;
 }
 
-:host([expandable]:not([open])) {
+:host(:not([open]):state(overflowing)) {
   cursor: pointer;
 }
 

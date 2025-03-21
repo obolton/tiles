@@ -16,12 +16,16 @@ export default class PopOut extends HTMLElement {
     "expandable",
   ] as const;
 
+  protected readonly internals: ElementInternals;
   protected readonly dialog: HTMLDialogElement;
   private transition?: ViewTransition;
   private focusTarget: HTMLElement | null = null;
+  private resizeObserver?: ResizeObserver;
 
   constructor() {
     super();
+
+    this.internals = this.attachInternals();
 
     const shadow = this.attachShadow({ mode: "open" });
     shadow.adoptedStyleSheets = [stylesheet];
@@ -66,12 +70,26 @@ export default class PopOut extends HTMLElement {
     this.addEventListener("pointerdown", this);
     this.addEventListener("keydown", this);
     this.dialog.addEventListener("focusin", this);
+    this.resizeObserver = new ResizeObserver(
+      this.resizeObserverCallback.bind(this),
+    );
+    this.resizeObserver.observe(this);
   }
 
   private removeEventListeners() {
     this.removeEventListener("pointerdown", this);
     this.removeEventListener("keydown", this);
     this.dialog.removeEventListener("focusin", this);
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = undefined;
+  }
+
+  private resizeObserverCallback() {
+    if (this.isOverflowing) {
+      this.internals.states.add("overflowing");
+    } else {
+      this.internals.states.delete("overflowing");
+    }
   }
 
   handleEvent(event: Event) {
