@@ -1,14 +1,15 @@
 import crypto from "node:crypto";
 import type { AstroCookies, AstroCookieSetOptions } from "astro";
 
-const OAUTH2_STATE_BYTES = 64;
-const OAUTH2_STATE_COOKIE_NAME = "oauth_state";
-const OAUTH2_STATE_COOKIE_OPTIONS: AstroCookieSetOptions = {
+const OAUTH2_COOKIE_OPTIONS: AstroCookieSetOptions = {
   httpOnly: true,
   secure: true,
   path: "/",
 };
-const OAUTH2_STATE_COOKIE_MAX_AGE = 60 * 10;
+const OAUTH2_STATE_COOKIE_NAME = "__Host-oauth_state";
+const OAUTH2_DESTINATION_COOKIE_NAME = "__Host-oauth_dest";
+const OAUTH2_COOKIE_MAX_AGE = 60 * 10;
+const OAUTH2_STATE_BYTES = 64;
 
 type OAuth2AuthorizationUrlConfig = {
   endpoint: string;
@@ -48,13 +49,28 @@ export function getOAuth2StateCookie(cookies: AstroCookies) {
 
 export function setOAuth2StateCookie(cookies: AstroCookies, state: string) {
   cookies.set(OAUTH2_STATE_COOKIE_NAME, state, {
-    ...OAUTH2_STATE_COOKIE_OPTIONS,
-    maxAge: OAUTH2_STATE_COOKIE_MAX_AGE,
+    ...OAUTH2_COOKIE_OPTIONS,
+    maxAge: OAUTH2_COOKIE_MAX_AGE,
   });
 }
 
-export function clearOAuth2StateCookie(cookies: AstroCookies) {
-  cookies.delete(OAUTH2_STATE_COOKIE_NAME, OAUTH2_STATE_COOKIE_OPTIONS);
+export function getOAuth2DestinationCookie(cookies: AstroCookies) {
+  return cookies.get(OAUTH2_DESTINATION_COOKIE_NAME)?.value;
+}
+
+export function setOAuth2DestinationCookie(
+  cookies: AstroCookies,
+  destination: string,
+) {
+  cookies.set(OAUTH2_DESTINATION_COOKIE_NAME, destination, {
+    ...OAUTH2_COOKIE_OPTIONS,
+    maxAge: OAUTH2_COOKIE_MAX_AGE,
+  });
+}
+
+export function clearOAuth2Cookies(cookies: AstroCookies) {
+  cookies.delete(OAUTH2_STATE_COOKIE_NAME, OAUTH2_COOKIE_OPTIONS);
+  cookies.delete(OAUTH2_DESTINATION_COOKIE_NAME, OAUTH2_COOKIE_OPTIONS);
 }
 
 type OAuth2GetAccessTokenOptions = {
