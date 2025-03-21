@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import useEditable from "@/hooks/useEditable";
-import { classNames } from "@/utils/css";
 import styles from "./ProfilePageHeader.module.css";
 import { handleError } from "@/utils/errors";
 import { useEditor } from "@/context/editor";
@@ -53,10 +52,11 @@ export default function ProfilePageHeader({
       <div className={styles.text}>
         <h1>{name}</h1>
 
-        <p className={classNames(styles.subtitle, "editable")}>
+        <p className={styles.subtitle}>
           {isEditable ? (
             <ResizingTextarea
               id="page-subtitle-textarea"
+              className={styles.editor}
               placeholder="Subtitle"
               rows={1}
               onChange={changeSubtitle}

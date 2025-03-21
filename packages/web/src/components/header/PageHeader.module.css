@@ -2,7 +2,6 @@
   --header-text-color: var(--text-color);
   --subtitle-text-color: var(--secondary-text-color);
 
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: end;
@@ -11,12 +10,11 @@
   padding: 48px 8px 0;
 
   & .title {
-    padding: 4px 8px;
-    margin: -4px -8px;
+    position: relative;
     border-radius: var(--border-radius);
     font-family: var(--font);
     width: fit-content;
-    min-width: 240px;
+    min-width: 400px;
     -webkit-font-smoothing: antialiased;
 
     & h1 {
@@ -54,7 +52,6 @@
   display: block;
   width: 100%;
   padding: 8px;
-  margin: -8px;
   line-height: inherit;
   font-family: inherit;
   border: none;
@@ -82,7 +79,8 @@
 }
 
 .header h1,
-.editor:has([data-placeholder="true"]),
+.editor[data-placeholder="true"],
+.editor:has(+ * > [data-placeholder="true"]),
 .editor p > span:first-child {
   color: var(--text-color);
   font-size: clamp(1.5rem, 8vw, 2.8rem);
