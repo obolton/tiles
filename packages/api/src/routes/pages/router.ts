@@ -16,9 +16,11 @@ import {
   getProfilePage,
   listPages,
   listSharedPages,
+  listDeletedPages,
   createPage,
   updatePage,
   deletePage,
+  emptyTrash,
 } from "./pages.ts";
 
 export default router({
@@ -39,6 +41,10 @@ export default router({
     .input(ListPagesSchema)
     .query(async ({ input, ctx }) => listSharedPages(input, ctx)),
 
+  listDeleted: authenticatedProcedure
+    .input(ListPagesSchema)
+    .query(async ({ input, ctx }) => listDeletedPages(input, ctx)),
+
   create: authenticatedProcedure
     .input(CreatePageSchema)
     .mutation(async ({ input, ctx }) => createPage(input, ctx)),
@@ -50,4 +56,8 @@ export default router({
   delete: pageUpdateProcedure
     .input(DeletePageSchema)
     .mutation(async ({ input, ctx }) => deletePage(input, ctx)),
+
+  emptyTrash: authenticatedProcedure.mutation(async ({ ctx }) =>
+    emptyTrash(ctx),
+  ),
 });
