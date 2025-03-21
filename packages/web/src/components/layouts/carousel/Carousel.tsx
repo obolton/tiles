@@ -46,12 +46,13 @@ export default function Carousel({
           collectionId={collectionId}
           placementId={item.placementId}
           rows={1}
-          columns={2}
+          columns={item.columns}
           deletable={isEditable}
           draggable={isEditable}
-          resizable={false}
+          resizable={isEditable}
           grow={false}
           tile={item}
+          tabIndex={isEditable ? 0 : undefined}
         />
       ))}
     </carousel-view>
