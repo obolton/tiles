@@ -28,6 +28,8 @@ import type { AuthenticatedProcedureContext } from "@/utils/middleware.ts";
 
 const RESULTS_PER_PAGE = 15;
 
+const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
+
 const TILES_FIELDS = {
   id: true,
   position: true,
@@ -196,13 +198,14 @@ export async function getPageById({ id }: GetPageByIdSchema, userId?: string) {
     where: userId
       ? {
           id,
+          deletedAt: null,
           OR: [
             { published: true },
             { authorId: userId },
             { access: { some: { userId } } },
           ],
         }
-      : { id, published: true },
+      : { id, deletedAt: null, published: true },
     select: PAGE_FIELDS,
   });
 
@@ -264,6 +267,7 @@ export async function listPages(
   const pages = await prisma.page.findMany({
     where: {
       authorId: user.id,
+      deletedAt: null,
       ...filter,
     },
     select: PAGE_LINK_TILE_PAGE_FIELDS,
@@ -294,6 +298,7 @@ export async function listSharedPages(
   const pages = await prisma.page.findMany({
     where: {
       access: { some: { userId: user.id } },
+      deletedAt: null,
       ...filter,
     },
     select: PAGE_LINK_TILE_PAGE_FIELDS,
@@ -344,7 +349,7 @@ export async function updatePage(
   { user }: AuthenticatedProcedureContext,
 ) {
   return prisma.page.update({
-    where: { id: pageId, authorId: user.id },
+    where: { id: pageId, authorId: user.id, deletedAt: null },
     data: { published, title, subtitle, theme, hue, font, coverImageKey },
     select: {
       id: true,
@@ -366,8 +371,11 @@ export async function deletePage(
   { pageId }: DeletePageSchema,
   { user }: AuthenticatedProcedureContext,
 ) {
-  return prisma.page.delete({
-    where: { id: pageId, authorId: user.id },
+  return prisma.page.update({
+    data: {
+      deletedAt: new Date(),
+    },
+    where: { id: pageId, authorId: user.id, deletedAt: null },
     select: {
       id: true,
     },

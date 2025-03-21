@@ -30,6 +30,7 @@ export const authenticatedPageProcedure = authenticatedProcedure
     const page = await prisma.page.findUnique({
       where: {
         id: pageId,
+        deletedAt: null,
         OR: [
           { authorId: ctx.user.id },
           { access: { some: { userId: ctx.user.id } } },
