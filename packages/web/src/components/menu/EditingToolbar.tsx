@@ -18,9 +18,11 @@ export default function EditingToolbar({
 }: EditingToolbarProps) {
   const isEditable = useEditable();
 
-  const onChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setEditMode(event.currentTarget.checked),
+  const onClickEdit = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const edit = event.currentTarget.ariaPressed !== "true";
+      setEditMode(edit);
+    },
     [],
   );
 
@@ -28,16 +30,16 @@ export default function EditingToolbar({
     <FloatingToolbar>
       <ul role="group">
         <li role="presentation">
-          <label id="edit-label">
-            <span>Edit</span>
-            <input
-              id="edit-switch"
-              type="checkbox"
-              role="switch"
-              checked={isEditable}
-              onChange={onChange}
-            />
-          </label>
+          <button
+            role="menuitem"
+            id="edit-button"
+            type="button"
+            className="primary"
+            aria-pressed={isEditable ? "true" : "false"}
+            onClick={onClickEdit}
+          >
+            {isEditable ? "Done" : "Edit"}
+          </button>
         </li>
       </ul>
 

@@ -25,16 +25,18 @@ if (editSearchParam) {
 }
 
 function onDOMContentLoaded() {
-  const editSwitch = document.getElementById("edit-switch") as HTMLInputElement;
-
   if (isEditing) {
     document.body.dataset.editing = "true";
-    editSwitch.checked = true;
+    document
+      .getElementById("edit-button")
+      ?.setAttribute("aria-pressed", "true");
   } else {
-    editSwitch.addEventListener("change", () => setEditMode(true), {
-      passive: true,
-      once: true,
-    });
+    document
+      .getElementById("edit-button")
+      ?.addEventListener("click", () => setEditMode(true), {
+        passive: true,
+        once: true,
+      });
   }
 
   document.getElementById("share")?.addEventListener("click", sharePage);
