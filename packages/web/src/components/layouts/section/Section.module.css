@@ -3,7 +3,6 @@
   width: 100%;
   grid-column: 1 / -1;
   margin: 0 0 64px;
-  container: section / inline-size;
 
   &:not(:last-of-type)::after {
     content: "";
