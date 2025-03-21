@@ -9,9 +9,7 @@ import useEditable from "@/hooks/useEditable";
 import type { ClientEvent } from "@/types/tiles";
 import type { EventModalResult } from "@/components/modals/EventModal";
 
-interface EventTileProps extends ClientEvent {
-  columns: number;
-}
+type EventTileProps = ClientEvent;
 
 interface DateTimeDetailsProps {
   date: Date;
@@ -40,6 +38,7 @@ function DateTimeDetails({ date, size }: DateTimeDetailsProps) {
     >
       <div className={styles.date}>
         <span className={styles.month}>{monthFormatter.format(date)}</span>
+        &nbsp;
         <span className={styles.day}>{dayFormatter.format(date)}</span>
       </div>
 
@@ -62,7 +61,6 @@ function DateDetails({ date, size }: DateTimeDetailsProps) {
 
 export default function EventTile({
   id,
-  columns,
   title,
   start,
   end,
@@ -92,32 +90,26 @@ export default function EventTile({
   return (
     <Tile>
       <div className={styles.event} onClick={isEditable ? edit : undefined}>
-        <section className={styles.details}>
-          <h3>{title}</h3>
+        <p className={styles.title}>{title}</p>
 
-          <div className={styles.dates}>
-            {allDay ? (
-              <DateDetails date={startDate} size={size} />
-            ) : (
-              <DateTimeDetails date={startDate} size={size} />
-            )}
+        <div className={styles.dates}>
+          {allDay ? (
+            <DateDetails date={startDate} size={size} />
+          ) : (
+            <DateTimeDetails date={startDate} size={size} />
+          )}
 
-            {endDate ? (
-              <>
-                <ArrowRightIcon aria-hidden="true" />
-                {allDay ? (
-                  <DateDetails date={endDate} size={size} />
-                ) : (
-                  <DateTimeDetails date={endDate} size={size} />
-                )}
-              </>
-            ) : null}
-          </div>
-        </section>
-
-        {columns && columns > 3 ? (
-          <calendar-month date={startDate.toISOString()} />
-        ) : null}
+          {endDate ? (
+            <>
+              <ArrowRightIcon aria-hidden="true" />
+              {allDay ? (
+                <DateDetails date={endDate} size={size} />
+              ) : (
+                <DateTimeDetails date={endDate} size={size} />
+              )}
+            </>
+          ) : null}
+        </div>
       </div>
     </Tile>
   );

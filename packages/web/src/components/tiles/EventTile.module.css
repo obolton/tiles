@@ -1,20 +1,18 @@
 .event {
   position: absolute;
   inset: 0;
-  display: grid;
-  grid-template-columns: repeat(round(down, calc(var(--columns) / 2), 1), 1fr);
-  gap: var(--gap);
   border-radius: inherit;
   background: radial-gradient(
     circle at bottom center,
     oklch(from var(--page-color) 95% calc(c * 0.8) h) 20%,
     oklch(from var(--page-color) l c h)
   );
-  container: event / inline-size;
-
-  & > calendar-month {
-    padding: 16px 0;
-  }
+  container: event / size;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: stretch;
+  padding: 8px;
 }
 
 body:global(.light) .event {
@@ -25,24 +23,16 @@ body:global(.dark) .event {
   background: linear-gradient(#404040, #606060);
 }
 
-.details {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: stretch;
-  container: event-details / size;
-  padding: 8px;
-
-  & h3 {
-    font-size: clamp(0.875rem, 10cqw, 1.5rem);
-    line-height: 1.5;
-    font-weight: 500;
-    text-align: center;
-    text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
-    align-content: center;
-    width: 100%;
-    flex: 1;
-  }
+.title {
+  font-size: clamp(1rem, 10cqmin, 2rem);
+  line-height: 1;
+  font-weight: 500;
+  text-align: center;
+  text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
+  align-content: center;
+  width: 100%;
+  margin: 0;
+  flex: 1;
 }
 
 .dates {
@@ -53,6 +43,11 @@ body:global(.dark) .event {
   flex: 1;
   width: 100%;
   gap: 12px;
+
+  & svg {
+    width: max(24px, 12cqmin);
+    height: max(24px, 12cqmin);
+  }
 }
 
 .date {
@@ -62,17 +57,6 @@ body:global(.dark) .event {
   justify-content: center;
   gap: 0.5em;
   flex: 1;
-}
-
-.date-time {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  & .date {
-    flex-direction: row;
-  }
 }
 
 .time {
@@ -99,7 +83,7 @@ body:global(.dark) .event {
 }
 
 .date.small {
-  font-size: 9cqw;
+  font-size: max(1rem, 9cqmin);
 
   & .date {
     flex-direction: row;
@@ -107,52 +91,56 @@ body:global(.dark) .event {
   }
 }
 
-.date-time.small {
-  font-size: 10cqw;
-
-  & .date {
-    gap: 8px;
-  }
-
-  & .time {
-    font-size: 8cqw;
-  }
-}
-
 .date.medium {
   & .month {
-    font-size: 10cqw;
+    font-size: clamp(1rem, 12cqmin, 2rem);
   }
 
   & .day {
-    font-size: 20cqw;
+    font-size: clamp(1rem, 22cqmin, 3.5rem);
   }
 }
 
 .date.large {
   & .month {
-    font-size: 14cqw;
+    font-size: clamp(1rem, 14cqmin, 3rem);
   }
 
   & .day {
-    font-size: 24cqw;
+    font-size: clamp(1rem, 24cqmin, 5rem);
+  }
+}
+
+.date-time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  & .date {
+    flex-direction: row;
+    gap: 0;
+  }
+}
+
+.date-time.small {
+  font-size: clamp(1rem, 10cqmin, 2rem);
+
+  & .time {
+    font-size: clamp(1rem, 8cqmin, 1.8rem);
   }
 }
 
 .date-time.large {
-  font-size: 16cqw;
-
-  & .date {
-    gap: 12px;
-  }
+  font-size: max(1rem, 16cqmin);
 
   & .time {
-    font-size: 12cqw;
+    font-size: max(1rem, 12cqmin);
   }
 }
 
 @media (width < 640px) {
-  .details h3 {
+  .title {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
