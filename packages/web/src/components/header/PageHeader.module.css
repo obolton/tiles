@@ -51,6 +51,7 @@
 .editor {
   display: block;
   width: 100%;
+  margin: -8px;
   padding: 8px;
   line-height: inherit;
   font-family: inherit;
@@ -82,9 +83,14 @@
 .editor[data-placeholder="true"],
 .editor:has(+ * > [data-placeholder="true"]),
 .editor p > span:first-child {
-  color: var(--text-color);
   font-size: clamp(1.5rem, 8vw, 2.8rem);
   font-weight: 600;
+}
+
+.header h1,
+.editor:has(+ * > [data-placeholder="true"]),
+.editor p > span:first-child {
+  color: var(--text-color);
   -webkit-text-stroke: var(--title-stroke, none);
 }
 
