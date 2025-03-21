@@ -4,7 +4,7 @@ import { classNames } from "@/utils/css";
 import type { Theme } from "@/types/pages";
 import type { FontId } from "@/config/fonts";
 
-interface PageTileProps {
+export interface PageTileProps {
   title: string;
   subtitle?: string | null;
   hue?: number | null;
@@ -15,6 +15,7 @@ interface PageTileProps {
     name: string;
     imageUrl?: string | null;
   } | null;
+  children?: React.ReactNode;
 }
 
 export default function PageTile({
@@ -25,6 +26,7 @@ export default function PageTile({
   hue,
   font,
   theme,
+  children,
 }: PageTileProps) {
   return (
     <Tile
@@ -63,6 +65,7 @@ export default function PageTile({
           </address>
         ) : null}
       </section>
+      {children}
     </Tile>
   );
 }
