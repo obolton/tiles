@@ -47,7 +47,6 @@
   & .item {
     position: relative;
     inset: unset;
-    height: 100%;
   }
 }
 

@@ -31,7 +31,7 @@ export default function Stack({
     <stack-view
       ref={ref}
       class={styles.stack}
-      expandable="expandable"
+      expandable={items.length > 0 ? "expandable" : undefined}
       ontoggle={onToggle}
       data-drop={isEditable ? "true" : undefined}
     >
