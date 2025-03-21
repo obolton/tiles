@@ -1,3 +1,7 @@
+.search {
+  padding: 24px 0;
+}
+
 .items {
   --columns: 3;
 

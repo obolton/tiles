@@ -60,7 +60,7 @@ export default function Search<T>({
   }, []);
 
   return (
-    <section>
+    <section className={styles.search}>
       <input
         id="search"
         autoFocus
