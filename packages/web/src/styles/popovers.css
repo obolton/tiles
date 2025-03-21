@@ -75,7 +75,8 @@ table-of-contents > menu {
     }
 
     & > button,
-    & > a {
+    & > a,
+    & > span {
       display: flex;
       align-items: center;
       justify-content: flex-start;
