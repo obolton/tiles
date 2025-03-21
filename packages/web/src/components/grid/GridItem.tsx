@@ -61,7 +61,7 @@ function getTileComponent(tile: Tile, hasFocus: boolean, onDelete: () => void) {
 
 function handlePointerDown(event: React.PointerEvent<PageItem>) {
   if (!event.currentTarget.contains(document.activeElement)) {
-    event.currentTarget.focus();
+    event.currentTarget.focus({ preventScroll: true });
   }
 }
 
