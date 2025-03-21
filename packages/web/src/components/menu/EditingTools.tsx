@@ -24,7 +24,7 @@ export default function EditingTools({
   const deletePage = useCallback(async () => {
     try {
       await editor.deletePage();
-      redirectWithToast("/library", "The page was deleted.", "success");
+      redirectWithToast("/library/trash", "The page was deleted.", "success");
     } catch (error) {
       handleError(error);
     }
