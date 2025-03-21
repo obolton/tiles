@@ -205,7 +205,7 @@ infinite-scroll {
   display: contents;
 }
 
-resize-item {
+page-item {
   display: block;
   position: relative;
 }

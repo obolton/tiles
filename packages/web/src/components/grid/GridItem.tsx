@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { classNames } from "@/utils/css";
 import useScrollIntoView from "@/hooks/useScrollIntoView";
 import styles from "./GridItem.module.css";
-import type ResizeItem from "@/elements/resize/ResizeItem";
+import type PageItem from "@/elements/item/PageItem";
 import ImageTile from "@/components/tiles/ImageTile";
 import VideoTile from "@/components/tiles/VideoTile";
 import TextTile from "@/components/tiles/TextTile";
@@ -59,7 +59,7 @@ function getTileComponent(tile: Tile, hasFocus: boolean, onDelete: () => void) {
   }
 }
 
-function handlePointerDown(event: React.PointerEvent<ResizeItem>) {
+function handlePointerDown(event: React.PointerEvent<PageItem>) {
   if (!event.currentTarget.contains(document.activeElement)) {
     event.currentTarget.focus();
   }
@@ -81,7 +81,7 @@ export default function GridItem({
   tile,
   tabIndex,
 }: GridItemProps) {
-  const ref = useRef<ResizeItem>(null);
+  const ref = useRef<PageItem>(null);
   const editor = useEditor();
   const isEditable = useEditable();
   useScrollIntoView(ref);
@@ -93,7 +93,7 @@ export default function GridItem({
   }, [id, editor]);
 
   const onBlur = useCallback(
-    (event: React.FocusEvent<ResizeItem>) => {
+    (event: React.FocusEvent<PageItem>) => {
       if (!event.currentTarget.contains(event.relatedTarget)) {
         setHasFocus(false);
         editor.focusedTile.value = null;
@@ -157,7 +157,7 @@ export default function GridItem({
   );
 
   return (
-    <resize-item
+    <page-item
       id={id}
       ref={ref}
       allowdrag={draggable}
@@ -184,6 +184,6 @@ export default function GridItem({
       onPointerDown={handlePointerDown}
     >
       {getTileComponent(tile, hasFocus, onDelete)}
-    </resize-item>
+    </page-item>
   );
 }

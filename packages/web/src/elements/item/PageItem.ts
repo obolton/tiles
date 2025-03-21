@@ -1,4 +1,4 @@
-import css from "./ResizeItem.css?inline";
+import css from "./PageItem.css?inline";
 import { TileResizeEvent, TileEvent } from "@/utils/events";
 import { DEFAULT_TIMING } from "@/utils/animation/effects";
 import { makeDraggable } from "@/utils/drag";
@@ -8,14 +8,14 @@ const DRAG_THRESHOLD = 10;
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export interface ResizeItemAttributes {
+export interface PageItemAttributes {
   allowdrag?: boolean;
   allowresize?: boolean;
   allowdelete?: boolean;
 }
 
-export default class ResizeItem extends HTMLElement {
-  static readonly observedAttributes: (keyof ResizeItemAttributes)[] = [
+export default class PageItem extends HTMLElement {
+  static readonly observedAttributes: (keyof PageItemAttributes)[] = [
     "allowdrag",
     "allowresize",
   ] as const;
@@ -46,7 +46,7 @@ export default class ResizeItem extends HTMLElement {
   }
 
   attributeChangedCallback(
-    name: keyof ResizeItemAttributes,
+    name: keyof PageItemAttributes,
     _: string,
     value: string | null,
   ) {
@@ -299,4 +299,4 @@ export default class ResizeItem extends HTMLElement {
   }
 }
 
-customElements.define("resize-item", ResizeItem);
+customElements.define("page-item", PageItem);

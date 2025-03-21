@@ -1,4 +1,4 @@
-import type ResizeItem, { ResizeItemAttributes } from "./resize/ResizeItem";
+import type PageItem, { PageItemAttributes } from "./item/PageItem";
 import type { TabItemAttributes } from "./tabs/TabItem";
 import type { TabPanelAttributes } from "./tabs/TabPanel";
 import type { FilePickerAttributes } from "./filePicker/FilePicker";
@@ -37,7 +37,7 @@ declare module "react" {
       "pop-out": CustomElementAttributes & PopOutAttributes;
       "stack-view": CustomElementAttributes & StackViewAttributes;
       "carousel-view": CustomElementAttributes;
-      "resize-item": CustomElementAttributes<ResizeItem> & ResizeItemAttributes;
+      "page-item": CustomElementAttributes<PageItem> & PageItemAttributes;
       "tab-bar": CustomElementAttributes;
       "tab-item": CustomElementAttributes & TabItemAttributes;
       "tab-panel": CustomElementAttributes & TabPanelAttributes;
