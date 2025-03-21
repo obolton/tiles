@@ -29,6 +29,7 @@ interface Props {
   font?: FontId;
   author?: string | null;
   description?: string | null;
+  showSignIn?: boolean;
 }
 
 const {
@@ -39,6 +40,7 @@ const {
   font = DEFAULT_FONT,
   author,
   description,
+  showSignIn = true,
 } = Astro.props;
 const fontConfig = font ? getFontConfig(font) : undefined;
 ---
@@ -72,7 +74,7 @@ const fontConfig = font ? getFontConfig(font) : undefined;
     }}
   >
     <Navigation />
-    <SignIn />
+    {showSignIn ? <SignIn /> : null}
 
     <slot />
 
