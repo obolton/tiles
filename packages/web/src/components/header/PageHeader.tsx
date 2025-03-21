@@ -99,7 +99,7 @@ export default function PageHeader({
       )}
       style={style}
     >
-      <div className={classNames(styles.title, "editable")}>
+      <div className={styles.title}>
         {isEditable ? (
           <PlainTextEditor
             id="page-title-textarea"
