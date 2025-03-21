@@ -200,12 +200,6 @@
   }
 }
 
-.pop-out[expandable]:not([open]) {
-  & .static {
-    cursor: pointer;
-  }
-}
-
 .icon {
   position: absolute;
   top: 8px;

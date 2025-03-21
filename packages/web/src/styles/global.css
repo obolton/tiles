@@ -37,7 +37,7 @@
 @property --ui-background-color {
   syntax: "<color>";
   inherits: true;
-  initial-value: rgb(255 255 255 / 90%);
+  initial-value: rgb(255 255 255 / 95%);
 }
 
 :root {
@@ -193,6 +193,7 @@ mark {
 }
 
 aside {
+  margin: 24px 0;
   padding: 16px;
   color: var(--ui-color);
   background: rgb(0 0 0 / 5%);
