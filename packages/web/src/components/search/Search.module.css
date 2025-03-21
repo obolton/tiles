@@ -1,5 +1,5 @@
 .search {
-  margin: 24px 0;
+  margin: 16px 0;
 }
 
 .items {
@@ -9,7 +9,7 @@
   grid-template-columns: repeat(var(--columns), 1fr);
   grid-auto-rows: max-content;
   gap: var(--gap);
-  padding-top: 24px;
+  padding-top: 16px;
 }
 
 @container main (min-width: 100px) {
