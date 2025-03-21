@@ -31,7 +31,7 @@ export function getGoogleAuthorizationUrl() {
 
 export async function googleApiRequest<T extends object>(
   url: string,
-  accessToken: string
+  accessToken: string,
 ): Promise<T> {
   const response = await fetch(url, {
     headers: new Headers({
@@ -41,7 +41,7 @@ export async function googleApiRequest<T extends object>(
   });
   if (!response.ok) {
     throw new Error(
-      `Google API request error: [${response.status}] ${response.statusText}`
+      `Google API request error: [${response.status}] ${response.statusText}`,
     );
   }
   return response.json() as Promise<T>;

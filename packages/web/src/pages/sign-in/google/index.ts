@@ -1,9 +1,14 @@
 import type { APIRoute } from "astro";
-import { setOAuth2StateCookie } from "@/auth/oauth2";
+import {
+  setOAuth2StateCookie,
+  setOAuth2DestinationCookie,
+} from "@/auth/oauth2";
 import { getGoogleAuthorizationUrl } from "@/auth/google";
 
-export const GET: APIRoute = ({ cookies, redirect }) => {
-  const { url, state } = getGoogleAuthorizationUrl();
+export const GET: APIRoute = ({ cookies, url, redirect }) => {
+  const destination = url.searchParams.get("destination");
+  const { url: redirectUrl, state } = getGoogleAuthorizationUrl();
   setOAuth2StateCookie(cookies, state);
-  return redirect(url, 302);
+  setOAuth2DestinationCookie(cookies, destination || "");
+  return redirect(redirectUrl, 302);
 };
