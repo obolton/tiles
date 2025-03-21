@@ -15,7 +15,7 @@
   isolation: isolate;
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: calc(100% / var(--columns));
+  grid-auto-columns: 128px;
   grid-template-rows: 100%;
   overflow-x: auto;
   scroll-snap-type: x proximity;
@@ -86,8 +86,8 @@
     opacity: 0.9;
 
     &:disabled {
-      opacity: 0.3;
-      cursor: auto;
+      display: none;
+      opacity: 0;
     }
 
     &:enabled:hover {

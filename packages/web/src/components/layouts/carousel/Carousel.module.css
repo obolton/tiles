@@ -30,7 +30,7 @@
 
   &.editable {
     &::part(contents) {
-      padding: 16px 16px 16px 32px;
+      padding: 16px 144px 16px 32px;
       gap: 8px;
     }
 
