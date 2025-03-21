@@ -28,6 +28,18 @@
   initial-value: rgb(0 0 0 / 70%);
 }
 
+@property --ui-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 0 0 / 80%);
+}
+
+@property --ui-background-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(255 255 255 / 90%);
+}
+
 :root {
   --focus-ring-color: #0070f3;
   --focus-outline: 3px solid var(--focus-ring-color);
@@ -36,7 +48,6 @@
   --lightness: 90%;
   --chroma: 25%;
   --ui-font: "Inter", system, sans-serif;
-  --ui-color: rgba(0 0 0 / 80%);
   --max-width: 800px;
 }
 
