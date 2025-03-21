@@ -22,6 +22,7 @@ import type {
   CreatePageSchema,
   UpdatePageSchema,
   DeletePageSchema,
+  RestorePageSchema,
 } from "./schema.ts";
 import type { ClientTile } from "@/types/tiles.ts";
 import type { AuthenticatedProcedureContext } from "@/utils/middleware.ts";
@@ -335,7 +336,10 @@ export async function listDeletedPages(
       },
       ...filter,
     },
-    select: PAGE_LINK_TILE_PAGE_FIELDS,
+    select: {
+      ...PAGE_LINK_TILE_PAGE_FIELDS,
+      author: false,
+    },
     orderBy: {
       updatedAt: "desc",
     },
@@ -406,13 +410,20 @@ export async function deletePage(
   { user }: AuthenticatedProcedureContext,
 ) {
   return prisma.page.update({
-    data: {
-      deletedAt: new Date(),
-    },
+    data: { deletedAt: new Date() },
     where: { id: pageId, authorId: user.id, deletedAt: null },
-    select: {
-      id: true,
-    },
+    select: { id: true },
+  });
+}
+
+export async function restorePage(
+  { pageId }: RestorePageSchema,
+  { user }: AuthenticatedProcedureContext,
+) {
+  return prisma.page.update({
+    data: { deletedAt: null },
+    where: { id: pageId, authorId: user.id, deletedAt: { not: null } },
+    select: { id: true },
   });
 }
 

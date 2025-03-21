@@ -49,3 +49,8 @@ export const DeletePageSchema = z.object({
   pageId: z.string().uuid(),
 });
 export type DeletePageSchema = z.infer<typeof DeletePageSchema>;
+
+export const RestorePageSchema = z.object({
+  pageId: z.string().uuid(),
+});
+export type RestorePageSchema = z.infer<typeof RestorePageSchema>;
