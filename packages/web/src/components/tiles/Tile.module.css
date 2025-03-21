@@ -2,6 +2,7 @@
   --tile-text-color: var(--text-color);
   --tile-background: var(--page-color);
 
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
