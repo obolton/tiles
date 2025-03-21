@@ -40,8 +40,8 @@
 }
 
 .color-picker::part(button) {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   background:
     radial-gradient(rgb(220 220 220) 5%, transparent 60%),
     conic-gradient(
