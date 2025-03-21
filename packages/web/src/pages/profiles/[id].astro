@@ -37,6 +37,7 @@ Astro.response.headers.set("Cache-Control", CACHE_CONTROL_VALUE);
   author={user.name}
   description={user.profilePage.subtitle ||
     `${user.name}’s profile page - Tiles`}
+  showTableOfContents
 >
   <script src="@/init.ts"></script>
   <EditableProfilePage user={user} client:edit />

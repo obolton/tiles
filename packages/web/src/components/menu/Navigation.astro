@@ -4,6 +4,12 @@ import LibraryIcon from "@/icons/library.svg?jsx";
 import SettingsIcon from "@/icons/settings.svg?jsx";
 import SignOutIcon from "@/icons/sign-out.svg?jsx";
 import MenuIcon from "@/icons/menu.svg?jsx";
+
+interface Props {
+  showTableOfContents?: boolean;
+}
+
+const { showTableOfContents } = Astro.props;
 ---
 
 <nav
@@ -70,22 +76,25 @@ import MenuIcon from "@/icons/menu.svg?jsx";
         </menu>
       </popover-menu>
     </li>
-    <li>
-      <button
-        id="toc-button"
-        class="floating"
-        type="button"
-        role="menuitem"
-        popovertarget="toc"
-        data-tooltip="Table of contents"
-        aria-haspopup="menu"
-        aria-expanded="false"
-      >
-        <MenuIcon />
-      </button>
-      <table-of-contents id="toc" anchor="toc-button" role="navigation"
-      ></table-of-contents>
-    </li>
+    {
+      showTableOfContents ? (
+        <li>
+          <button
+            id="toc-button"
+            class="floating"
+            type="button"
+            role="menuitem"
+            popovertarget="toc"
+            data-tooltip="Table of contents"
+            aria-haspopup="menu"
+            aria-expanded="false"
+          >
+            <MenuIcon />
+          </button>
+          <table-of-contents id="toc" anchor="toc-button" role="navigation" />
+        </li>
+      ) : null
+    }
   </ul>
 </nav>
 <style>

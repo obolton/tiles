@@ -42,6 +42,7 @@ if (page.published) {
   description={page.subtitle
     ? `${page.subtitle} - Tiles`
     : `A page by ${page.author.name} - Tiles`}
+  showTableOfContents
 >
   <script src="@/init.ts"></script>
   <EditablePage page={page} client:edit />
