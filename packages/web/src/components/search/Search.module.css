@@ -3,7 +3,7 @@
 }
 
 .items {
-  --columns: 3;
+  --columns: 4;
 
   display: grid;
   grid-template-columns: repeat(var(--columns), 1fr);
