@@ -1,5 +1,6 @@
 .tile {
   padding: 16px;
+  container: page-tile / size;
 }
 
 .text {
@@ -106,13 +107,8 @@
   }
 }
 
-@container tile (max-width: 160px) {
+@container page-tile (width < 160px) or (height < 160px) {
   .text {
-    &.with-image {
-      border-radius: inherit;
-      box-shadow: none;
-    }
-
     & .subtitle,
     & address {
       display: none;
