@@ -18,17 +18,18 @@ enum CollectionType {
 }
 
 model Page {
-  id            String   @id @default(uuid()) @db.Uuid
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
-  authorId      String   @map("author_id") @db.Uuid
-  published     Boolean  @default(false)
+  id            String    @id @default(uuid()) @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+  authorId      String    @map("author_id") @db.Uuid
+  published     Boolean   @default(false)
   title         String
   subtitle      String?
-  theme         Theme    @default(LIGHT) @map("theme")
-  hue           Float?   @db.Real
-  font          Font     @default(MODERN)
-  coverImageKey String?  @map("cover_image_key")
+  theme         Theme     @default(LIGHT) @map("theme")
+  hue           Float?    @db.Real
+  font          Font      @default(MODERN)
+  coverImageKey String?   @map("cover_image_key")
 
   author             User           @relation("Pages", fields: [authorId], references: [id], onDelete: Cascade)
   profileUser        User?          @relation("ProfilePage")
