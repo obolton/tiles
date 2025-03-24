@@ -33,6 +33,7 @@
     "@lexical/selection": "^0.24.0",
     "@trpc/client": "^11.0.0",
     "astro": "^5.5.4",
+    "entities": "^6.0.0",
     "lexical": "^0.24.0",
     "maplibre-gl": "^5.2.0",
     "react": "^19.0.0",
