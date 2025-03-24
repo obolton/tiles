@@ -40,6 +40,8 @@ export const MOCK_PRISMA = {
   linkTile: mockModel(),
   mapTile: mockModel(),
   page: mockModel(),
+  pageAccess: mockModel(),
+  pageInvite: mockModel(),
   pageLinkTile: mockModel(),
   place: mockModel(),
   session: mockModel(),

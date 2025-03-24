@@ -13,6 +13,7 @@ const MOCK_TEXT: Text = {
   ],
   theme: "LIGHT",
   hue: 120,
+  expand: false,
 };
 
 const MOCK_PLACEMENT = {
