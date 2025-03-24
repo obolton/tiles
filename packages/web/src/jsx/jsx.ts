@@ -1,5 +1,5 @@
 export namespace JSX {
-  export type Element<P = unknown> = {
+  export type Element<P extends object = object> = {
     type: string;
     properties: P;
     children?: JSX.Node;
