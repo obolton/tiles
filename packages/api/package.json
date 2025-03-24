@@ -27,7 +27,7 @@
     "@aws-sdk/s3-request-presigner": "^3.744.0",
     "@prisma/client": "^6.3.1",
     "@trpc/server": "^11.0.0-rc.374",
-    "cloudflare": "^4.0.0",
+    "cloudflare": "^4.2.0",
     "cookie": "^1.0.2",
     "cors": "^2.8.5",
     "htmlparser2": "^10.0.0",
