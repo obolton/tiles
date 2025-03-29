@@ -18,6 +18,12 @@
   }
 }
 
+@media (width < 640px) {
+  .items {
+    --columns: 2;
+  }
+}
+
 @property --loading-progress {
   syntax: "<percentage>";
   inherits: false;
