@@ -1,0 +1,21 @@
+import { toggleMark } from "prosemirror-commands";
+import {
+  splitListItem,
+  liftListItem,
+  sinkListItem,
+} from "prosemirror-schema-list";
+import type { Command } from "prosemirror-state";
+import { schema } from "./schema";
+
+interface Keymap {
+  [k: string]: Command;
+}
+
+export const keys = {
+  "Mod-b": toggleMark(schema.marks.bold),
+  "Mod-i": toggleMark(schema.marks.italic),
+  "Mod-u": toggleMark(schema.marks.underline),
+  Enter: splitListItem(schema.nodes.list_item),
+  Tab: sinkListItem(schema.nodes.list_item),
+  "Shift-Tab": liftListItem(schema.nodes.list_item),
+} satisfies Keymap;
