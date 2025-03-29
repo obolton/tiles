@@ -1,6 +1,7 @@
 .toolbar {
   position: fixed;
-  inset: auto 80px 80px;
+  inset: auto 8px 80px;
+  max-width: calc(100vw - 16px);
   overflow: visible;
   contain: layout;
   background: var(--ui-background-color);
