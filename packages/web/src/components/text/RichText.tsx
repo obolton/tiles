@@ -5,7 +5,6 @@ import type {
   TextNode,
   ParagraphNode,
   HeadingNode,
-  LinkNode,
   QuoteNode,
   ListNode,
   ListItemNode,
@@ -32,8 +31,6 @@ function renderNodes(nodes: Node[]) {
             return <List key={index} node={node} />;
           case "text":
             return <Text key={index} node={node} />;
-          case "link":
-            return <Link key={index} node={node} />;
           default:
             return null;
         }
@@ -89,21 +86,6 @@ function Heading({ node }: HeadingProps) {
   );
 }
 
-interface LinkProps {
-  node: LinkNode;
-}
-
-function Link({ node }: LinkProps) {
-  if (node.children.length === 0) {
-    return <span />;
-  }
-  return (
-    <a href={node.url} target="_blank" rel="noreferrer ugc">
-      {renderNodes(node.children)}
-    </a>
-  );
-}
-
 interface QuoteProps {
   node: QuoteNode;
 }
@@ -126,16 +108,12 @@ interface ListItemProps extends React.HTMLAttributes<HTMLLIElement> {
 function ListItem({ node, ...props }: ListItemProps) {
   if (node.children.length === 0) {
     return (
-      <li value={node.value} {...props}>
+      <li {...props}>
         <br />
       </li>
     );
   }
-  return (
-    <li value={node.value} {...props}>
-      {renderNodes(node.children)}
-    </li>
-  );
+  return <li {...props}>{renderNodes(node.children)}</li>;
 }
 
 interface ListProps {
@@ -198,6 +176,13 @@ function Text({ node }: TextProps) {
   }
   if (node.format & TextFormat.HIGHLIGHT) {
     content = <mark>{content}</mark>;
+  }
+  if (node.link) {
+    content = (
+      <a href={node.link} target="_blank" rel="noreferrer ugc">
+        {content}
+      </a>
+    );
   }
   return content;
 }
