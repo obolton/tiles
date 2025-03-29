@@ -5,6 +5,8 @@ tab-bar,
   align-items: flex-start;
   gap: 16px;
   border-radius: var(--border-radius);
+  overflow: auto;
+  scrollbar-width: none;
 }
 
 .tabs > li {
@@ -18,12 +20,12 @@ tab-item,
   align-items: center;
   justify-content: center;
   gap: 8px;
-  flex: 1;
   color: hsl(from var(--ui-color) h s l / 60%);
   font-size: 16px;
   font-weight: 400;
+  white-space: nowrap;
   user-select: none;
-  padding: 12px;
+  padding: 12px 24px;
   border: none;
   border-radius: inherit;
   outline-color: transparent;
