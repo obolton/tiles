@@ -21,28 +21,23 @@ export interface TextNode extends BaseNode {
   type: "text";
   text: string;
   format: number;
+  link?: string;
 }
 
 export interface ParagraphNode extends BaseNode {
   type: "paragraph";
-  children: (TextNode | LinkNode)[];
+  children: TextNode[];
 }
 
 export interface HeadingNode extends BaseNode {
   type: "heading";
   level: 1 | 2 | 3;
-  children: (TextNode | LinkNode)[];
-}
-
-export interface LinkNode extends BaseNode {
-  type: "link";
-  url: string;
   children: TextNode[];
 }
 
 export interface QuoteNode extends BaseNode {
   type: "quote";
-  children: (TextNode | LinkNode)[];
+  children: (ParagraphNode | HeadingNode | ListNode)[];
 }
 
 export interface ListNode extends BaseNode {
@@ -53,20 +48,18 @@ export interface ListNode extends BaseNode {
 
 export interface ListItemNode extends BaseNode {
   type: "listitem";
-  value: number;
   checked?: boolean;
-  children: (TextNode | LinkNode | ListNode)[];
+  children: BlockNode[];
 }
+
+export type BlockNode = ParagraphNode | ListNode | HeadingNode | QuoteNode;
 
 export type Node =
   | TextNode
   | ParagraphNode
   | HeadingNode
-  | LinkNode
   | QuoteNode
   | ListNode
   | ListItemNode;
 
-export type RootNode = ParagraphNode | ListNode | HeadingNode | QuoteNode;
-
-export type RichText = RootNode[];
+export type RichText = BlockNode[];

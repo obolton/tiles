@@ -1,137 +1,104 @@
-import {
-  $createParagraphNode,
-  $createTextNode,
-  $createLineBreakNode,
-  $getRoot,
-} from "lexical";
-import { $createListNode, $createListItemNode } from "@lexical/list";
-import { $createHeadingNode, $createQuoteNode } from "@lexical/rich-text";
-import { $createLinkNode } from "@lexical/link";
+import type { Node } from "prosemirror-model";
 import type {
   ListNode,
   ListItemNode,
   ParagraphNode,
   TextNode,
   HeadingNode,
-  LinkNode,
   QuoteNode,
   RichText,
-  Node,
+  Node as SerializedNode,
 } from "./types";
 import { TextFormat, ListType } from "./types";
+import { schema } from "./schema";
 
-function createLexicalTextNode(text: TextNode) {
-  const textNode = $createTextNode(text.text);
+function createTextNode(text: TextNode) {
+  const marks = [];
+
   if (text.format & TextFormat.BOLD) {
-    textNode.toggleFormat("bold");
+    marks.push(schema.marks.bold.create());
   }
   if (text.format & TextFormat.ITALIC) {
-    textNode.toggleFormat("italic");
+    marks.push(schema.marks.italic.create());
   }
   if (text.format & TextFormat.STRIKETHROUGH) {
-    textNode.toggleFormat("strikethrough");
+    marks.push(schema.marks.strikethrough.create());
   }
   if (text.format & TextFormat.UNDERLINE) {
-    textNode.toggleFormat("underline");
+    marks.push(schema.marks.underline.create());
   }
   if (text.format & TextFormat.HIGHLIGHT) {
-    textNode.toggleFormat("highlight");
+    marks.push(schema.marks.highlight.create());
   }
+  if (text.link) {
+    marks.push(schema.marks.link.create({ href: text.link }));
+  }
+  const textNode = schema.text(text.text, marks);
   return textNode;
 }
 
-function createLexicalParagraphNode(paragraph: ParagraphNode) {
-  const node = $createParagraphNode();
-  node.append(...paragraph.children.map(createLexicalNode));
-  return node;
+function createParagraphNode(paragraph: ParagraphNode): Node {
+  return schema.nodes.paragraph.create(
+    null,
+    paragraph.children.map(createNode),
+  );
 }
 
-function createLexicalHeadingNode(heading: HeadingNode) {
-  const node = $createHeadingNode(`h${heading.level}`);
-  node.append(...heading.children.map(createLexicalNode));
-  return node;
+function createHeadingNode(heading: HeadingNode): Node {
+  return schema.nodes.heading.create(
+    { level: heading.level },
+    heading.children.map(createNode),
+  );
 }
 
-function createLexicalLinkNode(link: LinkNode) {
-  const node = $createLinkNode(link.url);
-  node.append(...link.children.map(createLexicalTextNode));
-  return node;
+function createQuoteNode(quote: QuoteNode): Node {
+  return schema.nodes.quote.create(null, quote.children.map(createNode));
 }
 
-function createLexicalQuoteNode(quote: QuoteNode) {
-  const node = $createQuoteNode();
-  node.append(...quote.children.map(createLexicalNode));
-  return node;
-}
-
-function getLexicalListType(listType: ListType) {
+function getListType(listType: ListType) {
   switch (listType) {
     case ListType.ORDERED:
-      return "number";
+      return schema.nodes.ordered_list;
     case ListType.UNORDERED:
-      return "bullet";
+      return schema.nodes.unordered_list;
     case ListType.CHECK:
-      return "check";
+      return schema.nodes.check_list;
     default:
       throw new Error(`Unsupported list type: ${listType}`);
   }
 }
 
-function createLexicalListNode(list: ListNode) {
-  const node = $createListNode(getLexicalListType(list.listType));
-  node.append(...list.children.map(createLexicalListItemNode));
-  return node;
+function createListNode(list: ListNode): Node {
+  return getListType(list.listType).create(null, list.children.map(createNode));
 }
 
-function createLexicalListItemNode(listItem: ListItemNode) {
-  const node = $createListItemNode();
-  node.setValue(listItem.value);
-  node.setChecked(listItem.checked);
-  node.append(...listItem.children.map(createLexicalNode));
-  return node;
+function createListItemNode(listItem: ListItemNode): Node {
+  return schema.nodes.list_item.create(
+    { checked: listItem.checked },
+    listItem.children.map(createNode),
+  );
 }
 
-function createLexicalNode(node: Node) {
+function createNode(node: SerializedNode) {
   const type = node.type;
   switch (type) {
     case "text":
-      return createLexicalTextNode(node);
+      return createTextNode(node);
     case "paragraph":
-      return createLexicalParagraphNode(node);
+      return createParagraphNode(node);
     case "heading":
-      return createLexicalHeadingNode(node);
-    case "link":
-      return createLexicalLinkNode(node);
+      return createHeadingNode(node);
     case "quote":
-      return createLexicalQuoteNode(node);
+      return createQuoteNode(node);
     case "list":
-      return createLexicalListNode(node);
+      return createListNode(node);
     case "listitem":
-      return createLexicalListItemNode(node);
+      return createListItemNode(node);
     default:
       throw new Error(`Unsupported node type: ${type}`);
   }
 }
 
 export function deserialize(content: RichText) {
-  return content.map((node) => createLexicalNode(node));
-}
-
-export function importNodes(content: RichText) {
-  const root = $getRoot();
-  const nodes = deserialize(content);
-  root.append(...nodes);
-}
-
-export function importPlainText(content: string) {
-  const root = $getRoot();
-  const paragraph = $createParagraphNode();
-  const lines = content.split("\n");
-  lines.forEach((line, i) => {
-    paragraph.append($createTextNode(line));
-    if (i < lines.length - 1) {
-      paragraph.append($createLineBreakNode());
-    }
-  });
-  root.append(paragraph);
+  return schema.nodes.doc.create(null, content.map(createNode));
 }

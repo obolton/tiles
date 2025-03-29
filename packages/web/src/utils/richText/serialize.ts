@@ -1,161 +1,106 @@
-import type {
-  EditorState,
-  TextNode as LexicalTextNode,
-  ParagraphNode as LexicalParagraphNode,
-  LexicalNode,
-  ElementNode,
-} from "lexical";
-import type {
-  ListNode as LexicalListNode,
-  ListItemNode as LexicalListItemNode,
-} from "@lexical/list";
-import { $isHeadingNode, $isQuoteNode } from "@lexical/rich-text";
-import type {
-  HeadingNode as LexicalHeadingNode,
-  QuoteNode as LexicalQuoteNode,
-} from "@lexical/rich-text";
-import { $isLinkNode } from "@lexical/link";
-import type { LinkNode as LexicalLinkNode } from "@lexical/link";
-import { $getRoot, $isTextNode, $isParagraphNode } from "lexical";
-import { $isListNode, $isListItemNode } from "@lexical/list";
+import type { EditorState } from "prosemirror-state";
+import type { Node } from "prosemirror-model";
 import type {
   ListNode,
   ListItemNode,
   ParagraphNode,
-  RichText,
   TextNode,
   HeadingNode,
   QuoteNode,
-  LinkNode,
+  BlockNode,
+  Node as SerializedNode,
 } from "./types";
 import { TextFormat, ListType } from "./types";
+import { schema } from "./schema";
 
-type SerializedNode<T extends LexicalNode> = T extends LexicalParagraphNode
-  ? ParagraphNode
-  : T extends LexicalHeadingNode
-    ? HeadingNode
-    : T extends LexicalQuoteNode
-      ? QuoteNode
-      : T extends LexicalLinkNode
-        ? LinkNode
-        : T extends LexicalListNode
-          ? ListNode
-          : T extends LexicalListItemNode
-            ? ListItemNode
-            : T extends LexicalTextNode
-              ? TextNode
-              : null;
+const { nodes, marks } = schema;
 
-function getTextFormat(node: LexicalTextNode) {
-  return (
-    (node.hasFormat("bold") ? TextFormat.BOLD : 0) |
-    (node.hasFormat("italic") ? TextFormat.ITALIC : 0) |
-    (node.hasFormat("strikethrough") ? TextFormat.STRIKETHROUGH : 0) |
-    (node.hasFormat("underline") ? TextFormat.UNDERLINE : 0) |
-    (node.hasFormat("highlight") ? TextFormat.HIGHLIGHT : 0)
-  );
-}
-
-function getListType(node: LexicalListNode) {
-  switch (node.getListType()) {
-    case "number":
-      return ListType.ORDERED;
-    case "bullet":
-      return ListType.UNORDERED;
-    case "check":
-      return ListType.CHECK;
-  }
-}
-
-function getChildren(node: ElementNode) {
-  const spans: (TextNode | LinkNode | ListNode)[] = [];
-  for (const span of node.getChildren()) {
-    if ($isListNode(span) || $isTextNode(span) || $isLinkNode(span)) {
-      const serializedNode = serializeNode(span);
-      if (serializedNode) {
-        spans.push(serializedNode);
-      }
+function getTextFormat(node: Node) {
+  return node.marks.reduce((format, mark) => {
+    switch (mark.type) {
+      case marks.bold:
+        return format | TextFormat.BOLD;
+      case marks.italic:
+        return format | TextFormat.ITALIC;
+      case marks.strikethrough:
+        return format | TextFormat.STRIKETHROUGH;
+      case marks.underline:
+        return format | TextFormat.UNDERLINE;
+      case marks.highlight:
+        return format | TextFormat.HIGHLIGHT;
+      default:
+        return format;
     }
-  }
-  return spans;
+  }, 0);
 }
 
-function serializeNode<T extends LexicalNode>(
-  node: T,
-): SerializedNode<T> | null {
-  if ($isTextNode(node)) {
+function serializeNode(node: Node): SerializedNode {
+  if (node.isText) {
     return {
       type: "text",
-      text: node.getTextContent(),
+      text: node.text ?? "",
       format: getTextFormat(node),
-    } as SerializedNode<T>;
+      link: node.marks.find((mark) => mark.type === marks.link)?.attrs.href,
+    } as TextNode;
   }
 
-  if ($isParagraphNode(node)) {
+  if (node.type === nodes.paragraph) {
     return {
       type: "paragraph",
-      children: getChildren(node),
-    } as SerializedNode<T>;
+      children: node.children.map(serializeNode),
+    } as ParagraphNode;
   }
 
-  if ($isHeadingNode(node)) {
+  if (node.type === nodes.heading) {
     return {
       type: "heading",
-      level: parseInt(node.getTag().slice(1), 10),
-      children: getChildren(node),
-    } as SerializedNode<T>;
+      level: node.attrs.level,
+      children: node.children.map(serializeNode),
+    } as HeadingNode;
   }
 
-  if ($isLinkNode(node)) {
-    return {
-      type: "link",
-      url: node.getURL(),
-      children: getChildren(node),
-    } as SerializedNode<T>;
-  }
-
-  if ($isQuoteNode(node)) {
+  if (node.type === nodes.quote) {
     return {
       type: "quote",
-      children: getChildren(node),
-    } as SerializedNode<T>;
+      children: node.children.map(serializeNode),
+    } as QuoteNode;
   }
 
-  if ($isListItemNode(node)) {
+  if (node.type === nodes.list_item) {
     return {
       type: "listitem",
-      value: node.getValue(),
-      checked: node.getChecked(),
-      children: getChildren(node),
-    } as SerializedNode<T>;
+      checked: node.attrs.checked,
+      children: node.children.map(serializeNode),
+    } as ListItemNode;
   }
 
-  if ($isListNode(node)) {
-    const children: ListItemNode[] = [];
-    const listType = getListType(node);
-    for (const child of node.getChildren()) {
-      if ($isListItemNode(child)) {
-        const serializedNode = serializeNode(child);
-        if (serializedNode) {
-          children.push(serializedNode);
-        }
-      }
-    }
-    return { type: "list", listType, children } as SerializedNode<T>;
+  if (node.type === nodes.ordered_list) {
+    return {
+      type: "list",
+      listType: ListType.ORDERED,
+      children: node.children.map(serializeNode),
+    } as ListNode;
   }
 
-  throw new Error(`Unsupported node type: ${node.getType()}`);
+  if (node.type === nodes.unordered_list) {
+    return {
+      type: "list",
+      listType: ListType.UNORDERED,
+      children: node.children.map(serializeNode),
+    } as ListNode;
+  }
+
+  if (node.type === nodes.check_list) {
+    return {
+      type: "list",
+      listType: ListType.CHECK,
+      children: node.children.map(serializeNode),
+    } as ListNode;
+  }
+
+  throw new Error(`Unsupported node type: ${node.type.name}`);
 }
 
 export function serialize(editorState: EditorState) {
-  const serialized: RichText = [];
-  editorState.read(() => {
-    for (const node of $getRoot().getChildren()) {
-      const serializedNode = serializeNode(node);
-      if (serializedNode) {
-        serialized.push(serializedNode);
-      }
-    }
-  });
-  return serialized;
+  return editorState.doc.children.map(serializeNode) as BlockNode[];
 }
