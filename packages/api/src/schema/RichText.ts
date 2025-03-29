@@ -4,36 +4,32 @@ const TextNodeSchema = z.object({
   type: z.literal("text"),
   text: z.string(),
   format: z.number().int().gte(0).lte(31),
-});
-
-const LinkNodeSchema = z.object({
-  type: z.literal("link"),
-  url: z.string().min(5),
-  children: z.array(TextNodeSchema),
+  link: z.string().min(5).optional(),
 });
 
 const ParagraphNodeSchema = z.object({
   type: z.literal("paragraph"),
-  children: z.array(z.union([TextNodeSchema, LinkNodeSchema])),
+  children: z.array(TextNodeSchema),
 });
 
 const HeadingNodeSchema = z.object({
   type: z.literal("heading"),
   level: z.number().int().gte(1).lte(3),
-  children: z.array(z.union([TextNodeSchema, LinkNodeSchema])),
-});
-
-const QuoteNodeSchema = z.object({
-  type: z.literal("quote"),
-  children: z.array(z.union([TextNodeSchema, LinkNodeSchema])),
+  children: z.array(TextNodeSchema),
 });
 
 const ListItemNodeSchema: z.AnyZodObject = z.object({
   type: z.literal("listitem"),
-  value: z.number().int().gte(1),
   checked: z.boolean().optional(),
   children: z.lazy(() =>
-    z.array(z.union([TextNodeSchema, LinkNodeSchema, ListNodeSchema])),
+    z.array(
+      z.union([
+        ParagraphNodeSchema,
+        HeadingNodeSchema,
+        QuoteNodeSchema,
+        ListNodeSchema,
+      ]),
+    ),
   ),
 });
 
@@ -41,6 +37,13 @@ const ListNodeSchema = z.object({
   type: z.literal("list"),
   listType: z.union([z.literal(0), z.literal(1), z.literal(2)]),
   children: z.array(ListItemNodeSchema),
+});
+
+const QuoteNodeSchema = z.object({
+  type: z.literal("quote"),
+  children: z.array(
+    z.union([ParagraphNodeSchema, HeadingNodeSchema, ListNodeSchema]),
+  ),
 });
 
 const RootNodeSchema = z.discriminatedUnion("type", [
