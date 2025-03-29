@@ -9,19 +9,6 @@
   margin: 0 auto 48px;
   padding: 48px 8px 0;
 
-  & .title {
-    position: relative;
-    border-radius: var(--border-radius);
-    font-family: var(--font);
-    width: fit-content;
-    min-width: 400px;
-    -webkit-font-smoothing: antialiased;
-
-    & h1 {
-      margin: 0;
-    }
-  }
-
   & .metadata {
     display: flex;
     align-items: center;
@@ -39,6 +26,11 @@
     font-style: normal;
     font-weight: 500;
     padding: 0;
+    white-space: nowrap;
+  }
+
+  & time {
+    white-space: nowrap;
   }
 
   & > a {
@@ -48,16 +40,30 @@
   }
 }
 
+.title,
 .editor {
-  display: block;
-  width: 100%;
+  border-radius: var(--border-radius);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+
+  & h1 {
+    color: var(--text-color);
+    -webkit-text-stroke: var(--title-stroke, none);
+    margin: 0;
+  }
+
+  & p {
+    color: var(--subtitle-text-color);
+    font-size: 1.5rem;
+    font-weight: 500;
+    -webkit-text-stroke: var(--subtitle-stroke, none);
+  }
+}
+
+.editor {
+  white-space: pre-wrap;
   margin: -8px;
   padding: 8px;
-  line-height: inherit;
-  font-family: inherit;
-  border: none;
-  border-radius: var(--border-radius);
-  background: none;
   outline: 3px solid transparent;
   transition: outline-color var(--animation-duration) var(--easing);
 
@@ -69,29 +75,6 @@
   &:hover:focus-visible {
     outline: var(--focus-outline);
   }
-}
-
-.subtitle,
-.editor {
-  color: var(--subtitle-text-color);
-  font-size: 1.5rem;
-  font-weight: 500;
-  -webkit-text-stroke: var(--subtitle-stroke, none);
-}
-
-.header h1,
-.editor[data-placeholder="true"],
-.editor:has(+ * > [data-placeholder="true"]),
-.editor p > span:first-child {
-  font-size: clamp(1.5rem, 8vw, 2.8rem);
-  font-weight: 600;
-}
-
-.header h1,
-.editor:has(+ * > [data-placeholder="true"]),
-.editor p > span:first-child {
-  color: var(--text-color);
-  -webkit-text-stroke: var(--title-stroke, none);
 }
 
 .with-cover-image {
@@ -113,9 +96,11 @@
     text-shadow: 0 0 12px rgb(255 255 255 / 20%);
   }
 
-  & address {
-    padding: 8px 16px 8px 8px;
-    border-radius: 8px;
+  & .metadata {
+    color: var(--text-color);
+    width: fit-content;
+    padding: 8px;
+    border-radius: 24px;
     background: oklch(
       from var(--page-color) calc(l * 1.2) calc(c * 0.8) h / 40%
     );
@@ -128,7 +113,7 @@
 
   & .title > h1,
   & .title > p,
-  & .editor p > span,
+  & .editor p,
   & time {
     position: relative;
     z-index: 0;

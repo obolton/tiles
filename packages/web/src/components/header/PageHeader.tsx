@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import PlainTextEditor from "@/components/inputs/PlainTextEditor/PlainTextEditor";
+import PageHeaderEditor from "./PageHeaderEditor";
 import useEditable from "@/hooks/useEditable";
 import { classNames } from "@/utils/css";
 import styles from "./PageHeader.module.css";
@@ -35,24 +35,23 @@ export default function PageHeader({
   updatedAt,
 }: PageHeaderProps) {
   const editor = useEditor();
-  const [value, setValue] = useState(
-    `${initialTitle}${initialSubtitle ? `\n${initialSubtitle}` : ""}`,
-  );
+  const [title, setTitle] = useState(initialTitle);
+  const [subtitle, setSubtitle] = useState(initialSubtitle);
   const [coverImageUrl, setCoverImageUrl] = useState(initialCoverImageUrl);
   const isEditable = useEditable();
 
-  const commit = useCallback(async () => {
-    try {
-      const [title = "", ...otherLines] = value.split("\n");
-      const subtitle = otherLines.join("\n").trim() || "";
-      if (!title) {
-        return;
+  const onBlur = useCallback(
+    async (newTitle: string, newSubtitle?: string) => {
+      try {
+        setTitle(newTitle);
+        setSubtitle(newSubtitle || null);
+        await editor.setPageTitle(newTitle, newSubtitle || "");
+      } catch (error) {
+        handleError(error);
       }
-      await editor.setPageTitle(title, subtitle);
-    } catch (error) {
-      handleError(error);
-    }
-  }, [editor, value]);
+    },
+    [editor],
+  );
 
   const selectCoverImage = useCallback(
     () =>
@@ -82,8 +81,6 @@ export default function PageHeader({
     }
   }, [editor]);
 
-  const [title, ...subtitle] = value.split("\n");
-
   const style = useMemo(
     () => ({
       backgroundImage: coverImageUrl ? `url(${coverImageUrl})` : undefined,
@@ -99,27 +96,19 @@ export default function PageHeader({
       )}
       style={style}
     >
-      <div className={styles.title}>
-        {isEditable ? (
-          <PlainTextEditor
-            id="page-title-textarea"
-            className={styles.editor}
-            placeholder="Page title"
-            onChange={setValue}
-            onBlur={commit}
-            value={value}
-          />
-        ) : (
-          <>
-            <h1>{title || "Page title"}</h1>
-            {subtitle.map((line, index) => (
-              <p key={index} className={styles.subtitle}>
-                {line || <>&nbsp;</>}
-              </p>
-            ))}
-          </>
-        )}
-      </div>
+      {isEditable ? (
+        <PageHeaderEditor
+          className={styles.editor}
+          title={title}
+          subtitle={subtitle}
+          onBlur={onBlur}
+        />
+      ) : (
+        <div className={styles.title}>
+          <h1>{title || "Page title"}</h1>
+          {subtitle ? <p>{subtitle}</p> : null}
+        </div>
+      )}
 
       {author ? (
         <div className={styles.metadata}>
@@ -146,7 +135,7 @@ export default function PageHeader({
 
           <button
             id="share"
-            className="floating small"
+            className="floating xsmall"
             aria-label="Share"
             data-tooltip="Share this page"
           >
@@ -155,7 +144,7 @@ export default function PageHeader({
 
           <button
             id="bookmark"
-            className="floating small"
+            className="floating xsmall"
             aria-label="Bookmark"
             aria-pressed="false"
             data-tooltip="Bookmark this page"
@@ -165,7 +154,7 @@ export default function PageHeader({
 
           {isEditable ? (
             <button
-              className="floating small"
+              className="floating xsmall"
               aria-label={
                 coverImageUrl ? "Remove cover image" : "Add cover image"
               }
