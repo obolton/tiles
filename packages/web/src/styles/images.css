@@ -1,8 +1,9 @@
 img.profile-image {
   box-sizing: content-box;
   object-fit: cover;
-  border: 1px solid rgb(0 0 0 / 20%);
+  border: none;
   border-radius: 50%;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 20%);
   width: 32px;
   height: 32px;
 
