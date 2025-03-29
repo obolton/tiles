@@ -1,17 +1,18 @@
 import { useCallback, useState } from "react";
 import { serialize } from "@/utils/richText/serialize";
-import RichTextEditor from "@/components/inputs/RichTextEditor/RichTextEditor";
 import RichText from "@/components/text/RichText";
-import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingToolbar";
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
 import Tile from "./Tile";
 import styles from "./TextTile.module.css";
 import { classNames } from "@/utils/css";
-import type { EditorState } from "@/components/inputs/RichTextEditor/RichTextEditor";
 import type { Theme } from "@/types/pages";
 import type { RichText as RichTextType } from "@/utils/richText/types";
 import { useEditor } from "@/context/editor";
+import type { EditorState } from "prosemirror-state";
+import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
+import ColorPicker from "@/components/inputs/ColorPicker";
+import ExpandIcon from "@/icons/expand.svg?jsx";
 
 interface TextTileProps {
   id: string;
@@ -34,21 +35,20 @@ export default function TextTile({
 }: TextTileProps) {
   const editor = useEditor();
   const isEditable = useEditable();
-  const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [theme, setTheme] = useState(initialTheme);
   const [hue, setHue] = useState(initialHue);
   const [expand, setExpand] = useState(initialExpand);
 
-  const onBlur = useCallback(async () => {
-    if (!editorState) {
-      return;
-    }
-    const content = serialize(editorState);
-    await editor.updateText({
-      id,
-      content,
-    });
-  }, [editor, editorState, id]);
+  const onBlur = useCallback(
+    async (state: EditorState) => {
+      const content = serialize(state);
+      await editor.updateText({
+        id,
+        content,
+      });
+    },
+    [editor, id],
+  );
 
   const onChangeColor = useCallback(
     async (value: ColorPickerValue) => {
@@ -97,27 +97,43 @@ export default function TextTile({
         expandable={!expand ? "expandable" : undefined}
       >
         {isEditable ? (
-          <RichTextEditor
+          <TextEditor
             className={classNames(styles.text, styles.editor)}
-            onBlur={onBlur}
-            onChange={setEditorState}
+            initialValue={content}
             onKeyDownCapture={onDelete ? onKeyDown : undefined}
-            placeholder="Write something"
-            value={content}
-            editable
-            tabIndex={-1}
-          >
-            {hasFocus ? (
-              <FormattingToolbar
-                color={{ theme, hue }}
-                onChangeColor={onChangeColor}
-                expand={expand}
-                onToggleExpand={onToggleExpand}
-              />
-            ) : null}
-          </RichTextEditor>
+            onBlur={onBlur}
+            showToolbar={hasFocus}
+            extraToolbarItems={
+              <ul role="group">
+                <li role="presentation">
+                  <ColorPicker
+                    role="menuitem"
+                    value={{ theme, hue }}
+                    onChange={onChangeColor}
+                    aria-label="Color"
+                    data-tooltip="Select color"
+                    direction="up"
+                    showClear
+                  />
+                </li>
+                <li role="presentation">
+                  <button
+                    role="menuitem"
+                    className="floating small"
+                    aria-label="Fit contents"
+                    data-tooltip="Fit contents"
+                    type="button"
+                    aria-pressed={expand ? "true" : "false"}
+                    onClick={onToggleExpand}
+                  >
+                    <ExpandIcon aria-hidden="true" />
+                  </button>
+                </li>
+              </ul>
+            }
+          />
         ) : (
-          <div className={classNames(styles.text, styles.static)}>
+          <div className={styles.text}>
             <RichText content={content} />
           </div>
         )}

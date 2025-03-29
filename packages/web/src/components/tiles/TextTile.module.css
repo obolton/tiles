@@ -76,12 +76,7 @@
     list-style-type: circle;
   }
 
-  & li:has(> ol),
-  & li:has(> ul) {
-    list-style: none;
-  }
-
-  & li[role="checkbox"] {
+  & ul:global(.checklist) > li {
     position: relative;
     padding-left: 32px;
     outline: none;
@@ -129,11 +124,9 @@
   }
 }
 
-.static {
-  outline: none;
-}
-
 .editor {
+  outline: none;
+
   & [data-editor] {
     background: inherit;
     border-radius: inherit;

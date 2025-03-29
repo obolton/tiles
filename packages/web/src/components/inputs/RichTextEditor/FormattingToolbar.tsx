@@ -1,29 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import ColorPicker from "@/components/inputs/ColorPicker";
-import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
-import {
-  $createParagraphNode,
-  $getSelection,
-  $isRangeSelection,
-  FORMAT_TEXT_COMMAND,
-} from "lexical";
-import { $setBlocksType } from "@lexical/selection";
-import {
-  $isListNode,
-  INSERT_ORDERED_LIST_COMMAND,
-  INSERT_UNORDERED_LIST_COMMAND,
-  INSERT_CHECK_LIST_COMMAND,
-  REMOVE_LIST_COMMAND,
-} from "@lexical/list";
-import {
-  $createHeadingNode,
-  $isHeadingNode,
-  $createQuoteNode,
-  $isQuoteNode,
-} from "@lexical/rich-text";
-import type { HeadingTagType } from "@lexical/rich-text";
-import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
+import { useCallback } from "react";
 import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
 import H3Icon from "@/icons/h3.svg?jsx";
@@ -37,229 +12,119 @@ import UnorderedListIcon from "@/icons/unordered-list.svg?jsx";
 import CheckListIcon from "@/icons/check-list.svg?jsx";
 import QuoteIcon from "@/icons/quote.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
-import ExpandIcon from "@/icons/expand.svg?jsx";
 import { showModal } from "@/utils/modals";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
-
-type Format = {
-  h1: boolean;
-  h2: boolean;
-  h3: boolean;
-  quote: boolean;
-  bold: boolean;
-  italic: boolean;
-  underline: boolean;
-  strikethrough: boolean;
-  highlight?: boolean;
-  orderedList: boolean;
-  unorderedList: boolean;
-  checkList: boolean;
-  link: boolean;
-};
-
-function $getSelectionListType() {
-  const selectedNodes = $getSelection()?.getNodes();
-  if (!selectedNodes) {
-    return null;
-  }
-
-  const listTypes = selectedNodes.map((node) => {
-    const top = node.getTopLevelElement();
-    return $isListNode(top) ? top.getListType() : null;
-  });
-
-  if (listTypes.every((type) => type === "number")) {
-    return "ordered";
-  }
-  if (listTypes.every((type) => type === "bullet")) {
-    return "unordered";
-  }
-  if (listTypes.every((type) => type === "check")) {
-    return "check";
-  }
-  return null;
-}
+import type { EditorState } from "prosemirror-state";
+import type { Command } from "prosemirror-state";
+import {
+  toggleBold,
+  toggleItalic,
+  toggleUnderline,
+  toggleStrikethrough,
+  toggleHighlight,
+  toggleQuote,
+  toggleHeading,
+  toggleOrderedList,
+  toggleUnorderedList,
+  toggleCheckList,
+  toggleLink,
+  removeLink,
+} from "@/utils/richText/commands";
+import type { Format } from "@/utils/richText/format";
 
 interface FormattingToolbarProps {
-  color: ColorPickerValue;
-  onChangeColor: (value: ColorPickerValue) => void;
-  expand: boolean;
-  onToggleExpand: () => void;
+  format: Format;
+  getEditorState: () => EditorState | undefined;
+  performCommand: (command: Command) => void;
+  children: React.ReactNode;
 }
 
 export default function FormattingToolbar({
-  color,
-  onChangeColor,
-  expand,
-  onToggleExpand,
+  getEditorState,
+  performCommand,
+  format,
+  children,
 }: FormattingToolbarProps) {
-  const [editor] = useLexicalComposerContext();
-  const [format, setFormat] = useState<Format>({
-    h1: false,
-    h2: false,
-    h3: false,
-    quote: false,
-    bold: false,
-    italic: false,
-    underline: false,
-    strikethrough: false,
-    highlight: false,
-    orderedList: false,
-    unorderedList: false,
-    checkList: false,
-    link: false,
-  });
-
-  useEffect(() => {
-    const unsubscribe = editor.registerUpdateListener(({ editorState }) => {
-      editorState.read(() => {
-        const selection = $getSelection();
-        if (!$isRangeSelection(selection)) {
-          return;
-        }
-
-        const anchor = selection.anchor.getNode();
-        const topLevelElement = anchor.getTopLevelElement();
-
-        const listType = $getSelectionListType();
-        const isHeading = $isHeadingNode(topLevelElement);
-
-        setFormat({
-          h1: isHeading && topLevelElement.getTag() === "h1",
-          h2: isHeading && topLevelElement.getTag() === "h2",
-          h3: isHeading && topLevelElement.getTag() === "h3",
-          quote: $isQuoteNode(topLevelElement),
-          bold: selection.hasFormat("bold"),
-          italic: selection.hasFormat("italic"),
-          underline: selection.hasFormat("underline"),
-          strikethrough: selection.hasFormat("strikethrough"),
-          highlight: selection.hasFormat("highlight"),
-          orderedList: listType === "ordered",
-          unorderedList: listType === "unordered",
-          checkList: listType === "check",
-          link: $isLinkNode(anchor) || $isLinkNode(anchor.getParent()),
-        });
-      });
-    });
-    return () => unsubscribe();
-  }, [editor]);
-
-  const formatHeading = useCallback(
-    (tag: HeadingTagType) => {
-      editor.update(() => {
-        const selection = $getSelection();
-        const anchor = $isRangeSelection(selection)
-          ? selection?.anchor.getNode().getTopLevelElement()
-          : null;
-        if ($isHeadingNode(anchor) && anchor.getTag() === tag) {
-          $setBlocksType(selection, $createParagraphNode);
-        } else {
-          $setBlocksType(selection, () => $createHeadingNode(tag));
-        }
-      });
-    },
-    [editor],
+  const formatH1 = useCallback(
+    () => performCommand(toggleHeading(1)),
+    [performCommand],
+  );
+  const formatH2 = useCallback(
+    () => performCommand(toggleHeading(2)),
+    [performCommand],
+  );
+  const formatH3 = useCallback(
+    () => performCommand(toggleHeading(3)),
+    [performCommand],
   );
 
-  const formatH1 = useCallback(() => formatHeading("h1"), [formatHeading]);
-  const formatH2 = useCallback(() => formatHeading("h2"), [formatHeading]);
-  const formatH3 = useCallback(() => formatHeading("h3"), [formatHeading]);
-
-  const formatQuote = useCallback(() => {
-    editor.update(() => {
-      const selection = $getSelection();
-      const anchor = $isRangeSelection(selection)
-        ? selection?.anchor.getNode().getTopLevelElement()
-        : null;
-      if ($isQuoteNode(anchor)) {
-        $setBlocksType(selection, $createParagraphNode);
-      } else {
-        $setBlocksType(selection, $createQuoteNode);
-      }
-    });
-  }, [editor]);
+  const formatQuote = useCallback(
+    () => performCommand(toggleQuote),
+    [performCommand],
+  );
 
   const formatLink = useCallback(() => {
-    editor.read(() => {
-      const selection = $getSelection();
-      const anchor = $isRangeSelection(selection)
-        ? selection?.anchor.getNode()
-        : null;
-      const parent = anchor?.getParent();
-      const linkNode = $isLinkNode(anchor)
-        ? anchor
-        : $isLinkNode(parent)
-          ? parent
-          : null;
+    const state = getEditorState();
+    if (!state) {
+      return;
+    }
 
-      showModal<LinkModalResult>("LINK", {
-        url: linkNode?.getURL(),
-        showPages: false,
-        showRemove: !!linkNode,
-        async onConfirm(result) {
-          if (result && "url" in result) {
-            editor.dispatchCommand(TOGGLE_LINK_COMMAND, result.url);
-          }
-        },
-      });
+    const link = state.selection.$from
+      .marks()
+      .find((mark) => mark.type.name === "link");
+
+    showModal<LinkModalResult>("LINK", {
+      url: link?.attrs.href,
+      showPages: false,
+      showRemove: !!link,
+      async onConfirm(result) {
+        if (result && "url" in result) {
+          performCommand(result.url ? toggleLink(result.url) : removeLink);
+        }
+      },
     });
-  }, [editor]);
+  }, [getEditorState, performCommand]);
 
   const formatBold = useCallback(
-    () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold"),
-    [editor],
+    () => performCommand(toggleBold),
+    [performCommand],
   );
 
   const formatItalic = useCallback(
-    () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic"),
-    [editor],
+    () => performCommand(toggleItalic),
+    [performCommand],
   );
 
   const formatUnderline = useCallback(
-    () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline"),
-    [editor],
+    () => performCommand(toggleUnderline),
+    [performCommand],
   );
 
   const formatStrikethrough = useCallback(
-    () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough"),
-    [editor],
+    () => performCommand(toggleStrikethrough),
+    [performCommand],
   );
 
   const formatHighlight = useCallback(
-    () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "highlight"),
-    [editor],
+    () => performCommand(toggleHighlight),
+    [performCommand],
   );
 
-  const formatOrderedList = useCallback(() => {
-    editor.getEditorState().read(() => {
-      if ($getSelectionListType() !== "ordered") {
-        editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
-      } else {
-        editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
-      }
-    });
-  }, [editor]);
+  const formatOrderedList = useCallback(
+    () => performCommand(toggleOrderedList),
+    [performCommand],
+  );
 
-  const formatUnorderedList = useCallback(() => {
-    editor.getEditorState().read(() => {
-      if ($getSelectionListType() !== "unordered") {
-        editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
-      } else {
-        editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
-      }
-    });
-  }, [editor]);
+  const formatUnorderedList = useCallback(
+    () => performCommand(toggleUnorderedList),
+    [performCommand],
+  );
 
-  const formatCheckList = useCallback(() => {
-    editor.getEditorState().read(() => {
-      if ($getSelectionListType() !== "check") {
-        editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
-      } else {
-        editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
-      }
-    });
-  }, [editor]);
+  const formatCheckList = useCallback(
+    () => performCommand(toggleCheckList),
+    [performCommand],
+  );
 
   return (
     <FloatingToolbar>
@@ -441,32 +306,7 @@ export default function FormattingToolbar({
         </li>
       </ul>
 
-      <ul role="group">
-        <li role="presentation">
-          <ColorPicker
-            role="menuitem"
-            value={color}
-            onChange={onChangeColor}
-            aria-label="Color"
-            data-tooltip="Select color"
-            direction="up"
-            showClear
-          />
-        </li>
-        <li role="presentation">
-          <button
-            role="menuitem"
-            className="floating small"
-            aria-label="Fit contents"
-            data-tooltip="Fit contents"
-            type="button"
-            aria-pressed={expand ? "true" : "false"}
-            onClick={onToggleExpand}
-          >
-            <ExpandIcon aria-hidden="true" />
-          </button>
-        </li>
-      </ul>
+      {children}
     </FloatingToolbar>
   );
 }
