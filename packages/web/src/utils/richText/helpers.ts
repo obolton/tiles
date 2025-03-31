@@ -1,12 +1,18 @@
 import type { Node, NodeType, MarkType, ResolvedPos } from "prosemirror-model";
 import type { EditorState } from "prosemirror-state";
 import { TextSelection } from "prosemirror-state";
-import { schema } from "./schema";
+import { schema, type TextAlignment } from "./schema";
+
+interface ResolvedNode {
+  node: Node;
+  pos: number;
+  depth: number;
+}
 
 export function closest(
   $pos: ResolvedPos,
   predicate: (node: Node) => boolean,
-): { node: Node; pos: number; depth: number } | null {
+): ResolvedNode | null {
   for (let depth = $pos.depth; depth > 0; depth--) {
     const node = $pos.node(depth);
     if (predicate(node)) {
@@ -121,4 +127,11 @@ export function findLinkRange($pos: ResolvedPos) {
   }
 
   return { from, to };
+}
+
+export function getSelectionAlignment(
+  state: EditorState,
+): TextAlignment | undefined {
+  const textBlock = closest(state.selection.$from, (node) => node.isTextblock);
+  return textBlock ? textBlock.node.attrs.align : undefined;
 }

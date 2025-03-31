@@ -3,8 +3,11 @@ import {
   getSelectionMarks,
   getSelectionHeadingLevel,
   getSelectionBlockNodeTypes,
+  getSelectionAlignment,
 } from "./helpers";
-import { schema } from "./schema";
+import { schema, type TextAlignment } from "./schema";
+
+export type { TextAlignment };
 
 export interface Format {
   h1: boolean;
@@ -20,6 +23,7 @@ export interface Format {
   strikethrough: boolean;
   highlight: boolean;
   link: boolean;
+  align?: TextAlignment;
 }
 
 export function selectionFormat(callback: (format: Format) => void) {
@@ -34,6 +38,7 @@ export function selectionFormat(callback: (format: Format) => void) {
         const marks = getSelectionMarks(state);
         const headingLevel = getSelectionHeadingLevel(state);
         const blockNodeTypes = getSelectionBlockNodeTypes(state);
+        const align = getSelectionAlignment(state);
 
         const format = {
           bold: marks.has(schema.marks.bold),
@@ -49,6 +54,7 @@ export function selectionFormat(callback: (format: Format) => void) {
           orderedList: blockNodeTypes.has(schema.nodes.ordered_list),
           unorderedList: blockNodeTypes.has(schema.nodes.unordered_list),
           checkList: blockNodeTypes.has(schema.nodes.check_list),
+          align,
         };
         callback(format);
       },
