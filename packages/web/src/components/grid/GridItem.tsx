@@ -89,8 +89,8 @@ export default function GridItem({
   const [hasFocus, setHasFocus] = useState(false);
   const onFocus = useCallback(() => {
     setHasFocus(true);
-    editor.focusedTile.value = id;
-  }, [id, editor]);
+    editor.focusedTile.value = placementId;
+  }, [placementId, editor]);
 
   const onBlur = useCallback(
     (event: React.FocusEvent<PageItem>) => {

@@ -234,6 +234,9 @@ export default class Editor {
     this.tiles.value = this.tiles.value.filter(
       (tile) => tile.placementId !== placementId,
     );
+    if (this.focusedTile.value === placementId) {
+      this.focusedTile.value = null;
+    }
   }
 
   private updateTileData(tile: Partial<Omit<ClientTile, "type">>) {
