@@ -9,12 +9,14 @@ const TextNodeSchema = z.object({
 
 const ParagraphNodeSchema = z.object({
   type: z.literal("paragraph"),
+  align: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
   children: z.array(TextNodeSchema),
 });
 
 const HeadingNodeSchema = z.object({
   type: z.literal("heading"),
   level: z.number().int().gte(1).lte(3),
+  align: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
   children: z.array(TextNodeSchema),
 });
 
