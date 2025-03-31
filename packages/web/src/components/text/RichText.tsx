@@ -9,6 +9,7 @@ import type {
   ListNode,
   ListItemNode,
   Node,
+  TextAlignment,
 } from "@/utils/richText/types";
 import { ListType } from "@/utils/richText/types";
 
@@ -45,6 +46,19 @@ function RichText({ content }: RichTextProps) {
 
 export default memo(RichText);
 
+function getTextAlignment(align?: TextAlignment) {
+  switch (align) {
+    case 0:
+      return "left";
+    case 1:
+      return "center";
+    case 2:
+      return "right";
+    default:
+      return undefined;
+  }
+}
+
 interface ParagraphProps {
   node: ParagraphNode;
 }
@@ -57,7 +71,9 @@ function Paragraph({ node }: ParagraphProps) {
       </p>
     );
   }
-  return <p>{renderNodes(node.children)}</p>;
+  return (
+    <p className={getTextAlignment(node.align)}>{renderNodes(node.children)}</p>
+  );
 }
 
 interface HeadingProps {
@@ -80,7 +96,7 @@ function getHeadingTag(level: number) {
 function Heading({ node }: HeadingProps) {
   const Tag = getHeadingTag(node.level);
   return (
-    <Tag>
+    <Tag className={getTextAlignment(node.align)}>
       {node.children.length === 0 ? <br /> : renderNodes(node.children)}
     </Tag>
   );

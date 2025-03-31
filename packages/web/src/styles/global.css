@@ -188,6 +188,18 @@ mark {
   box-decoration-break: clone;
 }
 
+.left {
+  text-align: left;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
 .destructive {
   color: var(--destructive-color);
 }
