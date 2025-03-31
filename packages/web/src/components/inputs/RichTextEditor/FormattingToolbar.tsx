@@ -12,6 +12,9 @@ import UnorderedListIcon from "@/icons/unordered-list.svg?jsx";
 import CheckListIcon from "@/icons/check-list.svg?jsx";
 import QuoteIcon from "@/icons/quote.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
+import AlignLeftIcon from "@/icons/align-left.svg?jsx";
+import AlignCenterIcon from "@/icons/align-center.svg?jsx";
+import AlignRightIcon from "@/icons/align-right.svg?jsx";
 import { showModal } from "@/utils/modals";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
@@ -30,8 +33,16 @@ import {
   toggleCheckList,
   toggleLink,
   removeLink,
+  setAlignment,
 } from "@/utils/richText/commands";
-import type { Format } from "@/utils/richText/format";
+import type { Format, TextAlignment } from "@/utils/richText/format";
+import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+
+const ALIGN_ICON = {
+  left: <AlignLeftIcon aria-hidden="true" slot="icon" />,
+  center: <AlignCenterIcon aria-hidden="true" slot="icon" />,
+  right: <AlignRightIcon aria-hidden="true" slot="icon" />,
+};
 
 interface FormattingToolbarProps {
   format: Format;
@@ -123,6 +134,16 @@ export default function FormattingToolbar({
 
   const formatCheckList = useCallback(
     () => performCommand(toggleCheckList),
+    [performCommand],
+  );
+
+  const formatAlignment = useCallback(
+    (event: Event) =>
+      performCommand(
+        setAlignment(
+          (event.currentTarget as SwatchSelect).value as TextAlignment,
+        ),
+      ),
     [performCommand],
   );
 
@@ -261,6 +282,34 @@ export default function FormattingToolbar({
           >
             <LinkIcon aria-hidden="true" />
           </button>
+        </li>
+        <li role="presentation">
+          <swatch-select
+            role="menuitem"
+            aria-label="Text alignment"
+            data-tooltip="Text alignment"
+            aria-orientation="vertical"
+            orientation="horizontal"
+            direction="up"
+            value={format.align}
+            onchange={formatAlignment}
+          >
+            {format.align ? (
+              ALIGN_ICON[format.align]
+            ) : (
+              <AlignLeftIcon aria-hidden="true" slot="icon" />
+            )}
+
+            <swatch-item value="left" data-tooltip="Align left">
+              <AlignLeftIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="center" data-tooltip="Align center">
+              <AlignCenterIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="right" data-tooltip="Align right">
+              <AlignRightIcon aria-hidden="true" />
+            </swatch-item>
+          </swatch-select>
         </li>
       </ul>
 
