@@ -11,14 +11,9 @@ import {
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-const TIMING: EffectTiming = {
-  ...DEFAULT_TIMING,
-  fill: "forwards",
-};
-const OVERLAP = 8;
-
 export interface SwatchSelectAttributes {
   value?: string;
+  orientation?: "horizontal" | "vertical";
   direction?: "left" | "right" | "up";
   onchange?: (event: globalThis.Event) => void;
   ontoggle?: (event: globalThis.ToggleEvent) => void;
@@ -68,37 +63,28 @@ export default class SwatchSelect extends HTMLElement {
   toggle() {
     this.open = !this.open;
 
-    const direction = this.getAttribute("direction") || "right";
-    const horizontal = direction === "left" || direction === "right";
-    const directionMultiplier =
-      direction === "left" || direction === "up" ? -1 : 1;
+    const buttonRect = this.button.getBoundingClientRect();
+    const items = this.itemsSlot.assignedElements();
 
     if (this.open) {
       this.ariaExpanded = "true";
       this.button.ariaPressed = "true";
       this.items.classList.remove("hidden");
 
-      fadeIn(this.items, { timing: TIMING });
+      fadeIn(this.items, { timing: DEFAULT_TIMING });
 
-      const items = this.itemsSlot.assignedElements();
-
-      if (horizontal) {
-        items.forEach((item, i) =>
-          move(item, {
-            fromX: `${(items.length - i) * -100 * directionMultiplier}%`,
-            toX: `${(items.length - i - 1) * -OVERLAP * directionMultiplier + 20 * directionMultiplier}px`,
-            timing: { ...SPRING, fill: "both" },
-          }),
-        );
-      } else {
-        items.forEach((item, i) =>
-          move(item, {
-            fromY: `${(items.length - i) * -100 * directionMultiplier}%`,
-            toY: `${(items.length - i - 1) * -OVERLAP * directionMultiplier + 20 * directionMultiplier}px`,
-            timing: { ...SPRING, fill: "both" },
-          }),
-        );
-      }
+      items.forEach((item) => {
+        const rect = item.getBoundingClientRect();
+        const deltaX =
+          buttonRect.x + (buttonRect.width - rect.width) / 2 - rect.x;
+        const deltaY =
+          buttonRect.y + (buttonRect.height - rect.height) / 2 - rect.y;
+        move(item, {
+          fromX: `${deltaX}px`,
+          fromY: `${deltaY}px`,
+          timing: SPRING,
+        });
+      });
 
       this.dispatchEvent(
         new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
@@ -107,30 +93,22 @@ export default class SwatchSelect extends HTMLElement {
       this.ariaExpanded = "false";
       this.button.ariaPressed = "false";
 
-      fadeOut(this.items, { timing: TIMING });
+      fadeOut(this.items, { timing: { duration: 300, easing: "ease" } });
 
-      const elements = this.itemsSlot.assignedElements();
-      if (horizontal) {
-        Promise.all(
-          elements.map((item, i) =>
-            move(item, {
-              fromX: `${(elements.length - i - 1) * -OVERLAP * directionMultiplier + 20 * directionMultiplier}px`,
-              toX: `${(elements.length - i) * -100 * directionMultiplier}%`,
-              timing: { ...SPRING, fill: "both" },
-            }),
-          ),
-        ).then(() => this.items.classList.add("hidden"));
-      } else {
-        Promise.all(
-          elements.map((item, i) =>
-            move(item, {
-              fromY: `${(elements.length - i - 1) * -OVERLAP * directionMultiplier + 20 * directionMultiplier}px`,
-              toY: `${(elements.length - i) * -100 * directionMultiplier}%`,
-              timing: { ...SPRING, fill: "both" },
-            }),
-          ),
-        ).then(() => this.items.classList.add("hidden"));
-      }
+      Promise.all(
+        items.map((item) => {
+          const rect = item.getBoundingClientRect();
+          const deltaX =
+            buttonRect.x + (buttonRect.width - rect.width) / 2 - rect.x;
+          const deltaY =
+            buttonRect.y + (buttonRect.height - rect.height) / 2 - rect.y;
+          return move(item, {
+            toX: `${deltaX}px`,
+            toY: `${deltaY}px`,
+            timing: { duration: 300, easing: "ease" },
+          });
+        }),
+      ).then(() => this.items.classList.add("hidden"));
 
       this.dispatchEvent(
         new ToggleEvent("toggle", { oldState: "open", newState: "closed" }),

@@ -74,15 +74,11 @@ button {
 
 #items {
   position: absolute;
-  top: 0;
-  left: 32px;
-  height: 100%;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   align-items: center;
   margin: 0;
   padding: 0;
-  clip-path: inset(-20px -20px -20px 0);
 
   &.hidden {
     display: none;
@@ -91,9 +87,9 @@ button {
 
 :host([direction="left"]) {
   #items {
-    flex-direction: row;
-    inset: 0 32px 0 auto;
-    clip-path: inset(-20px 0 -20px -20px);
+    inset: 50% 100% auto auto;
+    translate: 0 -50%;
+    margin: 0 0 16px;
   }
 
   button {
@@ -109,10 +105,22 @@ button {
 
 :host([direction="up"]) {
   #items {
-    width: 100%;
-    height: auto;
+    inset: auto auto 100% 50%;
+    translate: -50% 0;
+    margin: 0 0 16px;
+  }
+}
+
+:host([orientation="horizontal"]) {
+  #items {
+    height: 48px;
+    flex-direction: row;
+  }
+}
+
+:host([orientation="vertical"]) {
+  #items {
+    width: 48px;
     flex-direction: column;
-    inset: auto 0 32px;
-    clip-path: inset(-20px -40px 0 -40px);
   }
 }
