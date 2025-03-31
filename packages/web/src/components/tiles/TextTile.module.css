@@ -9,8 +9,8 @@
   white-space-collapse: preserve;
   -webkit-font-smoothing: antialiased;
 
-  & p:not(:first-child) {
-    margin-top: 1rem;
+  & p:not(:last-child) {
+    margin: 0 0 1rem;
   }
 
   & a {
