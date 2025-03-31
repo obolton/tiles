@@ -30,6 +30,7 @@ export function destroy(
   clone.style.setProperty("width", `${rect.width}px`);
   clone.style.setProperty("height", `${rect.height}px`);
   clone.style.setProperty("z-index", "-1");
+  clone.querySelectorAll("[popover]").forEach((popover) => popover.remove());
   document.body.appendChild(clone);
   const animation = clone.animate(
     [
