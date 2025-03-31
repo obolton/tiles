@@ -2,7 +2,7 @@ import { toggleMark, setBlockType, wrapIn, lift } from "prosemirror-commands";
 import { liftListItem, wrapInList } from "prosemirror-schema-list";
 import type { NodeType } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
-import { schema } from "./schema";
+import { schema, type TextAlignment } from "./schema";
 import {
   closest,
   getSelectionHeadingLevel,
@@ -92,3 +92,16 @@ export const removeLink: Command = (state, dispatch) => {
   }
   return false;
 };
+
+export function setAlignment(align: TextAlignment): Command {
+  return function (state, dispatch) {
+    const node = closest(state.selection.$from, (node) => node.isTextblock);
+    if (!node) {
+      return false;
+    }
+    if (dispatch) {
+      dispatch(state.tr.setNodeAttribute(node.pos, "align", align));
+    }
+    return true;
+  };
+}
