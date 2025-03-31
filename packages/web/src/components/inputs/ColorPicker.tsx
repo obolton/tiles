@@ -25,7 +25,6 @@ const HUE_ROTATION = 20;
 for (let i = 0; i < NUM_HUES; i++) {
   HUES.push([HUE_ROTATION + (i / NUM_HUES) * 360, "TODO: color name " + i]);
 }
-HUES.reverse();
 
 export default function ColorPicker({
   className,
@@ -68,6 +67,28 @@ export default function ColorPicker({
       }
       onchange={setColor}
     >
+      {showClear ? (
+        <swatch-item
+          key="CLEAR"
+          aria-label="Clear color"
+          class={styles.clear}
+          value="CLEAR"
+        >
+          <ClearColorIcon aria-hidden="true" />
+        </swatch-item>
+      ) : null}
+      <swatch-item
+        key="LIGHT"
+        aria-label="Light"
+        class={styles.light}
+        value="LIGHT"
+      ></swatch-item>
+      <swatch-item
+        key="DARK"
+        aria-label="Dark"
+        class={styles.dark}
+        value="DARK"
+      ></swatch-item>
       <>
         {HUES.map(([hue, name]) => (
           <swatch-item
@@ -83,28 +104,6 @@ export default function ColorPicker({
           ></swatch-item>
         ))}
       </>
-      <swatch-item
-        key="DARK"
-        aria-label="Dark"
-        class={styles.dark}
-        value="DARK"
-      ></swatch-item>
-      <swatch-item
-        key="LIGHT"
-        aria-label="Light"
-        class={styles.light}
-        value="LIGHT"
-      ></swatch-item>
-      {showClear ? (
-        <swatch-item
-          key="CLEAR"
-          aria-label="Clear color"
-          class={styles.clear}
-          value="CLEAR"
-        >
-          <ClearColorIcon aria-hidden="true" />
-        </swatch-item>
-      ) : null}
     </swatch-select>
   );
 }
