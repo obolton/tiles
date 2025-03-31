@@ -108,13 +108,7 @@ export function fadeIn(
   element: Element,
   { timing = DEFAULT_TIMING } = { timing: DEFAULT_TIMING },
 ) {
-  const animation = element.animate(
-    [
-      { opacity: 0, filter: "blur(3px)" },
-      { opacity: 1, filter: "blur(0)" },
-    ],
-    timing,
-  );
+  const animation = element.animate([{ opacity: 0 }, { opacity: 1 }], timing);
   return createAnimationPromise(animation);
 }
 
@@ -122,12 +116,6 @@ export function fadeOut(
   element: Element,
   { timing = DEFAULT_TIMING } = { timing: DEFAULT_TIMING },
 ) {
-  const animation = element.animate(
-    [
-      { opacity: 1, filter: "blur(0)" },
-      { opacity: 0, filter: "blur(3px)" },
-    ],
-    timing,
-  );
+  const animation = element.animate([{ opacity: 1 }, { opacity: 0 }], timing);
   return createAnimationPromise(animation);
 }
