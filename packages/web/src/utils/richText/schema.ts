@@ -1,5 +1,10 @@
 import { Schema } from "prosemirror-model";
-import type { NodeSpec, MarkSpec, DOMOutputSpec } from "prosemirror-model";
+import type {
+  AttributeSpec,
+  NodeSpec,
+  MarkSpec,
+  DOMOutputSpec,
+} from "prosemirror-model";
 
 const DOMOutput = {
   paragraph: ["p", 0],
@@ -20,6 +25,31 @@ const DOMOutput = {
   highlight: ["mark", 0],
 } as const satisfies Record<string, DOMOutputSpec>;
 
+export type TextAlignment = "left" | "center" | "right";
+
+function getTextAttributes(element: HTMLElement): { align: TextAlignment } {
+  const align = element.style.textAlign;
+  switch (align) {
+    case "left":
+    case "center":
+    case "right":
+      return { align };
+    default:
+      return { align: "left" };
+  }
+}
+
+const attributesSpec = {
+  align: {
+    default: "left",
+    validate(value) {
+      if (!(value === "left" || value === "center" || value === "right")) {
+        throw new RangeError(`Invalid paragraph alignment: ${value}`);
+      }
+    },
+  },
+} as const satisfies Record<string, AttributeSpec>;
+
 const nodesSpec = {
   doc: {
     content: "block+",
@@ -30,11 +60,19 @@ const nodesSpec = {
   },
 
   paragraph: {
+    attrs: {
+      align: attributesSpec.align,
+    },
     content: "inline*",
     group: "block",
-    parseDOM: [{ tag: "p" }],
-    toDOM() {
-      return DOMOutput.paragraph;
+    parseDOM: [
+      {
+        tag: "p",
+        getAttrs: getTextAttributes,
+      },
+    ],
+    toDOM(node) {
+      return ["p", { class: node.attrs.align }, 0];
     },
   },
 
@@ -59,26 +97,27 @@ const nodesSpec = {
           }
         },
       },
+      align: attributesSpec.align,
     },
     content: "inline*",
     group: "block",
     defining: true,
     parseDOM: [
-      { tag: "h1", attrs: { level: 1 } },
-      { tag: "h2", attrs: { level: 2 } },
-      { tag: "h3", attrs: { level: 3 } },
+      {
+        tag: "h1",
+        getAttrs: (element) => ({ ...getTextAttributes(element), level: 1 }),
+      },
+      {
+        tag: "h2",
+        getAttrs: (element) => ({ ...getTextAttributes(element), level: 2 }),
+      },
+      {
+        tag: "h3",
+        getAttrs: (element) => ({ ...getTextAttributes(element), level: 3 }),
+      },
     ],
     toDOM(node) {
-      switch (node.attrs.level) {
-        case 1:
-          return DOMOutput.h1;
-        case 2:
-          return DOMOutput.h2;
-        case 3:
-          return DOMOutput.h3;
-        default:
-          throw new RangeError("Invalid heading level");
-      }
+      return ["h" + node.attrs.level, { class: node.attrs.align }, 0];
     },
   },
 
