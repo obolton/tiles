@@ -359,20 +359,45 @@ export async function createPage(
   { title }: CreatePageSchema,
   { user }: AuthenticatedProcedureContext,
 ) {
-  return prisma.page.create({
-    data: {
-      authorId: user.id,
-      published: false,
-      title,
-      collections: {
-        create: {
-          type: "SECTION",
+  return prisma.$transaction(async (transaction) => {
+    const page = await transaction.page.create({
+      data: {
+        authorId: user.id,
+        published: false,
+        title,
+      },
+      select: {
+        id: true,
+      },
+    });
+    await transaction.collection.create({
+      data: {
+        pageId: page.id,
+        type: "SECTION",
+        items: {
+          create: {
+            page: {
+              connect: { id: page.id },
+            },
+            type: "TEXT",
+            position: 0,
+            rows: 1,
+            columns: 6,
+            text: {
+              create: {
+                pageId: page.id,
+                expand: true,
+                content: [{ type: "paragraph", children: [] }],
+              },
+            },
+          },
         },
       },
-    },
-    select: {
-      id: true,
-    },
+      select: {
+        id: true,
+      },
+    });
+    return page;
   });
 }
 
