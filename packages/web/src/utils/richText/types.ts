@@ -13,6 +13,12 @@ export enum ListType {
   CHECK = 2,
 }
 
+export enum TextAlignment {
+  LEFT = 0,
+  CENTER = 1,
+  RIGHT = 2,
+}
+
 export interface BaseNode {
   type: string;
 }
@@ -26,12 +32,14 @@ export interface TextNode extends BaseNode {
 
 export interface ParagraphNode extends BaseNode {
   type: "paragraph";
+  align?: TextAlignment;
   children: TextNode[];
 }
 
 export interface HeadingNode extends BaseNode {
   type: "heading";
   level: 1 | 2 | 3;
+  align?: TextAlignment;
   children: TextNode[];
 }
 

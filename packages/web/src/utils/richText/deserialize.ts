@@ -9,7 +9,7 @@ import type {
   RichText,
   Node as SerializedNode,
 } from "./types";
-import { TextFormat, ListType } from "./types";
+import { TextFormat, ListType, TextAlignment } from "./types";
 import { schema } from "./schema";
 
 function createTextNode(text: TextNode) {
@@ -37,16 +37,29 @@ function createTextNode(text: TextNode) {
   return textNode;
 }
 
+function getTextAlignment(align?: TextAlignment) {
+  switch (align) {
+    case TextAlignment.LEFT:
+      return "left";
+    case TextAlignment.CENTER:
+      return "center";
+    case TextAlignment.RIGHT:
+      return "right";
+    default:
+      return undefined;
+  }
+}
+
 function createParagraphNode(paragraph: ParagraphNode): Node {
   return schema.nodes.paragraph.create(
-    null,
+    { align: getTextAlignment(paragraph.align) },
     paragraph.children.map(createNode),
   );
 }
 
 function createHeadingNode(heading: HeadingNode): Node {
   return schema.nodes.heading.create(
-    { level: heading.level },
+    { level: heading.level, align: getTextAlignment(heading.align) },
     heading.children.map(createNode),
   );
 }

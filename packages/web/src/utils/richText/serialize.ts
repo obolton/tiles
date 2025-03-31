@@ -1,16 +1,13 @@
 import type { EditorState } from "prosemirror-state";
 import type { Node } from "prosemirror-model";
 import type {
-  ListNode,
   ListItemNode,
-  ParagraphNode,
   TextNode,
-  HeadingNode,
   QuoteNode,
   BlockNode,
   Node as SerializedNode,
 } from "./types";
-import { TextFormat, ListType } from "./types";
+import { TextFormat, ListType, TextAlignment } from "./types";
 import { schema } from "./schema";
 
 const { nodes, marks } = schema;
@@ -34,6 +31,19 @@ function getTextFormat(node: Node) {
   }, 0);
 }
 
+function getTextAlignment(node: Node) {
+  switch (node.attrs.align) {
+    case "left":
+      return TextAlignment.LEFT;
+    case "center":
+      return TextAlignment.CENTER;
+    case "right":
+      return TextAlignment.RIGHT;
+    default:
+      return undefined;
+  }
+}
+
 function serializeNode(node: Node): SerializedNode {
   if (node.isText) {
     return {
@@ -41,22 +51,24 @@ function serializeNode(node: Node): SerializedNode {
       text: node.text ?? "",
       format: getTextFormat(node),
       link: node.marks.find((mark) => mark.type === marks.link)?.attrs.href,
-    } as TextNode;
+    };
   }
 
   if (node.type === nodes.paragraph) {
     return {
       type: "paragraph",
-      children: node.children.map(serializeNode),
-    } as ParagraphNode;
+      align: getTextAlignment(node),
+      children: node.children.map(serializeNode) as TextNode[],
+    };
   }
 
   if (node.type === nodes.heading) {
     return {
       type: "heading",
       level: node.attrs.level,
-      children: node.children.map(serializeNode),
-    } as HeadingNode;
+      align: getTextAlignment(node),
+      children: node.children.map(serializeNode) as TextNode[],
+    };
   }
 
   if (node.type === nodes.quote) {
@@ -78,24 +90,24 @@ function serializeNode(node: Node): SerializedNode {
     return {
       type: "list",
       listType: ListType.ORDERED,
-      children: node.children.map(serializeNode),
-    } as ListNode;
+      children: node.children.map(serializeNode) as ListItemNode[],
+    };
   }
 
   if (node.type === nodes.unordered_list) {
     return {
       type: "list",
       listType: ListType.UNORDERED,
-      children: node.children.map(serializeNode),
-    } as ListNode;
+      children: node.children.map(serializeNode) as ListItemNode[],
+    };
   }
 
   if (node.type === nodes.check_list) {
     return {
       type: "list",
       listType: ListType.CHECK,
-      children: node.children.map(serializeNode),
-    } as ListNode;
+      children: node.children.map(serializeNode) as ListItemNode[],
+    };
   }
 
   throw new Error(`Unsupported node type: ${node.type.name}`);
