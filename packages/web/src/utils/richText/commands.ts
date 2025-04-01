@@ -95,13 +95,31 @@ export const removeLink: Command = (state, dispatch) => {
 
 export function setAlignment(align: TextAlignment): Command {
   return function (state, dispatch) {
-    const node = closest(state.selection.$from, (node) => node.isTextblock);
-    if (!node) {
-      return false;
+    const { selection, tr } = state;
+
+    if (selection.empty) {
+      const node = closest(selection.$from, (node) => node.isTextblock);
+      if (!node) {
+        return false;
+      }
+
+      if (dispatch) {
+        dispatch(tr.setNodeAttribute(node.pos, "align", align));
+      }
+
+      return true;
     }
+
     if (dispatch) {
-      dispatch(state.tr.setNodeAttribute(node.pos, "align", align));
+      state.doc.nodesBetween(selection.from, selection.to, (node, pos) => {
+        if (node.isTextblock) {
+          tr.setNodeAttribute(pos, "align", align);
+        }
+      });
+
+      dispatch(tr);
     }
+
     return true;
   };
 }
