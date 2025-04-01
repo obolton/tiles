@@ -1,10 +1,10 @@
 import { useCallback, lazy } from "react";
-import useEditable from "@/hooks/useEditable";
 import TextIcon from "@/icons/text.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import PlaceIcon from "@/icons/place.svg?jsx";
 import EventIcon from "@/icons/event.svg?jsx";
+import AddSectionIcon from "@/icons/add-section.svg?jsx";
 import { registerModal, showModal } from "@/utils/modals";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
@@ -12,6 +12,7 @@ import type { EventModalResult } from "@/components/modals/EventModal";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import { uploadMedia } from "@/utils/media";
 import { useEditor } from "@/context/editor";
+import { viewTransition } from "@/utils/transitions";
 import type { TileType } from "@/types/tiles";
 
 type TileButton = {
@@ -54,7 +55,6 @@ interface TileButtonsProps {
 
 export default function TileButtons({ collectionId }: TileButtonsProps) {
   const editor = useEditor();
-  const isEditable = useEditable();
 
   const onClick = useCallback(
     async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -133,27 +133,41 @@ export default function TileButtons({ collectionId }: TileButtonsProps) {
     [collectionId, editor],
   );
 
-  if (!isEditable) {
-    return null;
-  }
+  const createSection = useCallback(() => {
+    editor.createSection(viewTransition);
+  }, [editor]);
 
   return (
     <ul role="group">
-      {BUTTONS.map(({ label, type, Icon }) => (
-        <li key={type} role="presentation">
-          <button
-            role="menuitem"
-            type="button"
-            className="floating small"
-            aria-label={label}
-            data-tooltip={label}
-            data-tile-type={type}
-            onClick={onClick}
-          >
-            <Icon aria-hidden="true" />
-          </button>
-        </li>
-      ))}
+      <>
+        {BUTTONS.map(({ label, type, Icon }) => (
+          <li key={type} role="presentation">
+            <button
+              role="menuitem"
+              type="button"
+              className="floating small"
+              aria-label={label}
+              data-tooltip={label}
+              data-tile-type={type}
+              onClick={onClick}
+            >
+              <Icon aria-hidden="true" />
+            </button>
+          </li>
+        ))}
+      </>
+      <li role="presentation">
+        <button
+          role="menuitem"
+          type="button"
+          className="floating small"
+          aria-label="Add a section"
+          data-tooltip="Add a section"
+          onClick={createSection}
+        >
+          <AddSectionIcon aria-hidden="true" />
+        </button>
+      </li>
     </ul>
   );
 }
