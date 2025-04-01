@@ -13,6 +13,10 @@
   }
 }
 
+body[data-editing] .figure {
+  cursor: auto;
+}
+
 [data-lightbox] .figure {
   width: auto;
 
@@ -29,4 +33,11 @@
   .figure > figcaption {
     display: none;
   }
+}
+
+.text {
+  position: absolute;
+  inset: 0;
+  padding: clamp(8px, 2vw, 16px);
+  text-shadow: 0 1px 0 oklch(from var(--text-color) calc(1 - l) 0 0 / 30%);
 }

@@ -1,20 +1,21 @@
 import useEditable from "@/hooks/useEditable";
 import { useCallback, useMemo, useState } from "react";
 import MovableImage from "@/components/images/MovableImage";
-import Caption from "./Caption";
+import RichText from "@/components/text/RichText";
 import styles from "./ImageTile.module.css";
 import Tile from "./Tile";
+import TextEditor, {
+  type EditorState,
+} from "@/components/inputs/RichTextEditor/TextEditor";
 import { useEditor } from "@/context/editor";
 import { setSearchParams } from "@/utils/urls";
+import { serialize } from "@/utils/richText/serialize";
+import type { ClientImageTile } from "@/types/tiles";
 
-interface ImageTileProps {
-  id: string;
-  columns: number;
-  imageUrl: string;
-  caption?: string | null;
-  originX: number;
-  originY: number;
+interface ImageTileProps extends ClientImageTile {
   movable?: boolean;
+  hasFocus: boolean;
+  onDelete?: () => void;
 }
 
 interface ImageVariant {
@@ -59,17 +60,23 @@ export default function ImageTile({
   columns,
   movable = true,
   imageUrl,
-  caption,
+  text,
   originX,
   originY,
+  hasFocus,
+  onDelete,
 }: ImageTileProps) {
   const editor = useEditor();
   const isEditable = useEditable();
   const [origin, setOrigin] = useState({ x: originX, y: originY });
 
-  const onUpdateCaption = useCallback(
-    async (value: string) => {
-      await editor.updateImage({ id, caption: value });
+  const onBlur = useCallback(
+    async (state: EditorState) => {
+      const updatedText = serialize(state);
+      await editor.updateImage({
+        id,
+        text: updatedText,
+      });
     },
     [editor, id],
   );
@@ -82,6 +89,23 @@ export default function ImageTile({
       });
     },
     [editor, id],
+  );
+
+  const onKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (
+        (event.key === "Delete" || event.key === "Backspace") &&
+        !event.repeat &&
+        !event.shiftKey &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        !event.metaKey &&
+        event.currentTarget.textContent === ""
+      ) {
+        onDelete?.();
+      }
+    },
+    [onDelete],
   );
 
   const srcSet = useMemo(() => getImageSrcSet(imageUrl, VARIANTS), [imageUrl]);
@@ -115,12 +139,17 @@ export default function ImageTile({
           onMove={setOrigin}
           onRelease={onUpdateOrigin}
         />
-        <Caption
-          isEditable={isEditable}
-          value={caption}
-          onChange={onUpdateCaption}
-          placeholder="Add a caption"
-        />
+        {isEditable ? (
+          <TextEditor
+            className={styles.text}
+            initialValue={text}
+            onKeyDownCapture={onDelete ? onKeyDown : undefined}
+            onBlur={onBlur}
+            showToolbar={hasFocus}
+          />
+        ) : text ? (
+          <RichText className={styles.text} content={text} />
+        ) : null}
       </figure>
     </Tile>
   );

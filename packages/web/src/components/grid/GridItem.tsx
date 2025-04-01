@@ -38,11 +38,10 @@ function getTileComponent(tile: Tile, hasFocus: boolean, onDelete: () => void) {
   const type = tile.type;
   switch (type) {
     case "IMAGE":
-      return <ImageTile {...tile} />;
+      return <ImageTile {...tile} hasFocus={hasFocus} onDelete={onDelete} />;
     case "VIDEO":
       return <VideoTile {...tile} />;
     case "TEXT":
-      // @ts-expect-error Rich text
       return <TextTile {...tile} hasFocus={hasFocus} onDelete={onDelete} />;
     case "MAP":
       return <MapTile {...tile} hasFocus={hasFocus} />;
