@@ -1,6 +1,5 @@
 import type { Node, NodeType, MarkType, ResolvedPos } from "prosemirror-model";
 import type { EditorState } from "prosemirror-state";
-import { TextSelection } from "prosemirror-state";
 import { schema, type TextAlignment } from "./schema";
 
 interface ResolvedNode {
@@ -39,14 +38,17 @@ export function findInSelection(
 }
 
 export function getSelectionMarks(state: EditorState) {
-  if (!(state.selection instanceof TextSelection)) {
-    return new Set<MarkType>();
-  }
+  const {
+    selection: { empty, $from },
+  } = state;
 
-  const { $cursor, $from } = state.selection;
+  if (empty) {
+    const storedMarks = state.storedMarks ?? [];
+    const marks = $from.marks();
 
-  if ($cursor) {
-    return new Set<MarkType>($cursor.marks().map((mark) => mark.type));
+    return new Set<MarkType>(
+      storedMarks.concat(marks).map((mark) => mark.type),
+    );
   }
 
   const marks = new Set<MarkType>($from.marks().map((mark) => mark.type));
