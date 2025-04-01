@@ -80,7 +80,12 @@ export default function TextEditor({
 
   return (
     <>
-      <div ref={refCallback} {...props} onBlur={handleBlur} />
+      <div
+        ref={refCallback}
+        role="textbox"
+        {...props}
+        onBlur={handleBlur}
+      />
 
       {showToolbar ? (
         <FormattingToolbar

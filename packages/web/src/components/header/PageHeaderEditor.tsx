@@ -60,5 +60,7 @@ export default function PageHeaderEditor({
     }
   }, [onBlur]);
 
-  return <div ref={refCallback} {...props} onBlur={handleBlur} />;
+  return (
+    <div ref={refCallback} role="textbox" {...props} onBlur={handleBlur} />
+  );
 }
