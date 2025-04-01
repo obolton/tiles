@@ -4,7 +4,7 @@ export function lists() {
   return new Plugin({
     props: {
       nodeViews: {
-        list_item: (node, view, pos) => {
+        list_item: (node, view, getPos) => {
           const { attrs } = node;
           const li = document.createElement("li");
           if (typeof attrs.checked === "boolean") {
@@ -20,13 +20,13 @@ export function lists() {
             ) {
               return;
             }
-            const atPos = pos();
-            if (!atPos) {
+            const pos = getPos();
+            if (!pos) {
               return;
             }
             const checked = li.ariaChecked === "true";
             view.dispatch(
-              view.state.tr.setNodeAttribute(atPos, "checked", !checked),
+              view.state.tr.setNodeAttribute(pos, "checked", !checked),
             );
             event.preventDefault();
           });
