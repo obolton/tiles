@@ -31,7 +31,10 @@ export function selectionFormat(callback: (format: Format) => void) {
     view: () => ({
       update: (view, prevState) => {
         const state = view.state;
-        if (state.selection === prevState.selection) {
+        if (
+          state.selection === prevState.selection &&
+          state.storedMarks === prevState.storedMarks
+        ) {
           return;
         }
 
