@@ -12,8 +12,10 @@ import type {
   TextAlignment,
 } from "@/utils/richText/types";
 import { ListType } from "@/utils/richText/types";
+import { classNames } from "@/utils/css";
 
-interface RichTextProps {
+interface RichTextProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "content"> {
   content: RichText;
 }
 
@@ -40,8 +42,12 @@ function renderNodes(nodes: Node[]) {
   );
 }
 
-function RichText({ content }: RichTextProps) {
-  return renderNodes(content);
+function RichText({ content, className, ...props }: RichTextProps) {
+  return (
+    <div className={classNames("rich-text", className)} {...props}>
+      {renderNodes(content)}
+    </div>
+  );
 }
 
 export default memo(RichText);

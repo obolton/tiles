@@ -6,19 +6,23 @@ import { selectionFormat } from "@/utils/richText/format";
 import { deserialize } from "@/utils/richText/deserialize";
 import { schema } from "@/utils/richText/schema";
 import { getPlugins } from "@/utils/richText/plugins";
+import { classNames } from "@/utils/css";
 import type { Format } from "@/utils/richText/format";
 import type { RichText } from "@/utils/richText/types";
 import type { Command } from "prosemirror-state";
 
+export type { EditorState };
+
 interface TextEditorProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "onBlur"> {
-  initialValue?: RichText;
+  initialValue?: RichText | null;
   showToolbar?: boolean;
   extraToolbarItems?: React.ReactNode;
   onBlur?: (state: EditorState) => void;
 }
 
 export default function TextEditor({
+  className,
   initialValue,
   onBlur,
   showToolbar = false,
@@ -82,6 +86,7 @@ export default function TextEditor({
     <>
       <div
         ref={refCallback}
+        className={classNames("rich-text", className)}
         role="textbox"
         {...props}
         onBlur={handleBlur}

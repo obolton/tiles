@@ -5,12 +5,12 @@ import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
 import useEditable from "@/hooks/useEditable";
 import Tile from "./Tile";
 import styles from "./TextTile.module.css";
-import { classNames } from "@/utils/css";
 import type { Theme } from "@/types/pages";
 import type { RichText as RichTextType } from "@/utils/richText/types";
 import { useEditor } from "@/context/editor";
-import type { EditorState } from "prosemirror-state";
-import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
+import TextEditor, {
+  type EditorState,
+} from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/inputs/ColorPicker";
 import ExpandIcon from "@/icons/expand.svg?jsx";
 
@@ -98,7 +98,7 @@ export default function TextTile({
       >
         {isEditable ? (
           <TextEditor
-            className={classNames(styles.text, styles.editor)}
+            className={styles.editor}
             initialValue={content}
             onKeyDownCapture={onDelete ? onKeyDown : undefined}
             onBlur={onBlur}
@@ -133,9 +133,7 @@ export default function TextTile({
             }
           />
         ) : (
-          <div className={styles.text}>
-            <RichText content={content} />
-          </div>
+          <RichText className={styles.text} content={content} />
         )}
       </pop-out>
     </Tile>
