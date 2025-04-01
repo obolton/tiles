@@ -15,12 +15,21 @@ const ParagraphNodeSchema = z.object({
 
 const HeadingNodeSchema = z.object({
   type: z.literal("heading"),
-  level: z.number().int().gte(1).lte(3),
+  level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
   align: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
   children: z.array(TextNodeSchema),
 });
 
-const ListItemNodeSchema: z.AnyZodObject = z.object({
+const ListItemNodeSchema: z.ZodType<{
+  type: "listitem";
+  checked?: boolean;
+  children: (
+    | z.infer<typeof ParagraphNodeSchema>
+    | z.infer<typeof HeadingNodeSchema>
+    | z.infer<typeof QuoteNodeSchema>
+    | z.infer<typeof ListNodeSchema>
+  )[];
+}> = z.object({
   type: z.literal("listitem"),
   checked: z.boolean().optional(),
   children: z.lazy(() =>
