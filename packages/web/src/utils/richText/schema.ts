@@ -153,7 +153,7 @@ const nodesSpec = {
     attrs: {
       checked: { default: false, validate: "boolean" },
     },
-    content: "(paragraph | heading) block*",
+    content: "paragraph block*",
     defining: true,
     parseDOM: [
       {
