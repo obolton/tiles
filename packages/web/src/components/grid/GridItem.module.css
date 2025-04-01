@@ -1,7 +1,9 @@
 .item {
   grid-column: span var(--columns, 1);
   grid-row: span var(--rows, 1);
-  height: calc(var(--rows) * var(--grid-row-height));
+  height: calc(
+    var(--rows) * var(--grid-row-height) + var(--gap) * (var(--rows) - 1)
+  );
   display: flex;
   border-radius: 12px;
   scroll-margin: 24px;
@@ -25,6 +27,8 @@
 }
 
 body[data-editing] .item {
+  outline: 2px solid rgb(0 0 0 / 5%);
+
   &:hover,
   &:state(resizing) {
     outline: 2px solid rgb(0 0 0 / 10%);
