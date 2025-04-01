@@ -93,7 +93,7 @@ export default class SwatchSelect extends HTMLElement {
       this.ariaExpanded = "false";
       this.button.ariaPressed = "false";
 
-      fadeOut(this.items, { timing: { duration: 300, easing: "ease" } });
+      fadeOut(this.items, { timing: DEFAULT_TIMING });
 
       Promise.all(
         items.map((item) => {
@@ -105,7 +105,7 @@ export default class SwatchSelect extends HTMLElement {
           return move(item, {
             toX: `${deltaX}px`,
             toY: `${deltaY}px`,
-            timing: { duration: 300, easing: "ease" },
+            timing: SPRING,
           });
         }),
       ).then(() => this.items.classList.add("hidden"));
