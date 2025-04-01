@@ -6,6 +6,7 @@ import { selectionFormat } from "@/utils/richText/format";
 import { deserialize } from "@/utils/richText/deserialize";
 import { schema } from "@/utils/richText/schema";
 import { getPlugins } from "@/utils/richText/plugins";
+import { handleError } from "@/utils/errors";
 import { classNames } from "@/utils/css";
 import type { Format } from "@/utils/richText/format";
 import type { RichText } from "@/utils/richText/types";
@@ -34,19 +35,23 @@ export default function TextEditor({
   const refCallback = useCallback((element: HTMLElement | null) => {
     if (element) {
       const plugins = getPlugins().concat(selectionFormat(setFormat));
-      editorViewRef.current = new EditorView(
-        { mount: element },
-        {
-          state: EditorState.create(
-            initialValue
-              ? {
-                  doc: deserialize(initialValue),
-                  plugins,
-                }
-              : { schema, plugins },
-          ),
-        },
-      );
+      try {
+        editorViewRef.current = new EditorView(
+          { mount: element },
+          {
+            state: EditorState.create(
+              initialValue
+                ? {
+                    doc: deserialize(initialValue),
+                    plugins,
+                  }
+                : { schema, plugins },
+            ),
+          },
+        );
+      } catch (error) {
+        handleError(error);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
