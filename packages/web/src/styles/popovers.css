@@ -10,7 +10,6 @@ table-of-contents {
   margin: 16px 0;
   padding: 0;
   background: var(--ui-background-color);
-  backdrop-filter: blur(5px);
   border-radius: 16px;
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 15%),
@@ -18,24 +17,21 @@ table-of-contents {
   transition-duration: var(--animation-duration-short);
   transition-timing-function: var(--easing);
   transition-behavior: allow-discrete;
-  transition-property: display, overlay, scale, opacity, filter;
+  transition-property: display, overlay, scale, opacity;
 
   &:popover-open {
     scale: 1;
     opacity: 1;
-    filter: blur(0);
 
     @starting-style {
       scale: 0.8;
       opacity: 0;
-      filter: blur(2px);
     }
   }
 
   &:not(:popover-open) {
     scale: 0.8;
     opacity: 0;
-    filter: blur(2px);
   }
 }
 
