@@ -218,6 +218,13 @@ const marksSpec = {
     },
   },
 
+  highlight: {
+    parseDOM: [{ tag: "mark" }],
+    toDOM() {
+      return DOMOutput.highlight;
+    },
+  },
+
   bold: {
     parseDOM: [{ tag: "strong" }, { tag: "b" }],
     toDOM() {
@@ -247,13 +254,6 @@ const marksSpec = {
     parseDOM: [{ tag: "del" }, { style: "text-decoration=line-through" }],
     toDOM() {
       return DOMOutput.strikethrough;
-    },
-  },
-
-  highlight: {
-    parseDOM: [{ tag: "mark" }],
-    toDOM() {
-      return DOMOutput.highlight;
     },
   },
 } as const satisfies Record<string, MarkSpec>;
