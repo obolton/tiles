@@ -1,5 +1,4 @@
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
-import { cleanUserInput } from "@/utils/text.ts";
 import type { CreateImageSchema, UpdateImageSchema } from "./schema.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import type { Prisma } from "@prisma/client";
@@ -7,7 +6,7 @@ import type { Prisma } from "@prisma/client";
 export const IMAGE_FIELDS = {
   id: true,
   imageUrl: true,
-  caption: true,
+  text: true,
   originX: true,
   originY: true,
 } as const satisfies Prisma.ImageTileSelect<ExtensionArgs>;
@@ -22,14 +21,14 @@ export async function createImage({
   pageId,
   collectionId,
   imageKey,
-  caption,
+  text,
 }: CreateImageSchema) {
   return prisma.$transaction(async (transaction) => {
     const image = await transaction.imageTile.create({
       data: {
         pageId,
         imageKey,
-        caption: caption ? cleanUserInput(caption) : null,
+        text,
       },
       select: IMAGE_FIELDS,
     });
@@ -49,7 +48,7 @@ export async function createImage({
 export async function updateImage({
   pageId,
   id,
-  caption,
+  text,
   origin,
 }: UpdateImageSchema) {
   const image = await prisma.imageTile.update({
@@ -58,8 +57,7 @@ export async function updateImage({
       id,
     },
     data: {
-      caption:
-        typeof caption === "string" ? cleanUserInput(caption) : undefined,
+      text,
       originX: origin?.x,
       originY: origin?.y,
     },
