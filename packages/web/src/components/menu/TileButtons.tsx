@@ -67,8 +67,9 @@ export default function TileButtons({ collectionId }: TileButtonsProps) {
         case "TEXT":
           await editor.createText({
             collectionId: collectionId ?? editor.getCurrentCollectionId(),
-            content: [],
-            columns: 3,
+            columns: 6,
+            expand: true,
+            content: [{ type: "paragraph", children: [] }],
           });
           break;
 
@@ -123,7 +124,7 @@ export default function TileButtons({ collectionId }: TileButtonsProps) {
                 collectionId: collectionId ?? editor.getCurrentCollectionId(),
                 place,
                 rows: 2,
-                columns: 3,
+                columns: 6,
               });
             },
           });
