@@ -4,6 +4,8 @@ tab-bar,
   flex-direction: row;
   align-items: flex-start;
   gap: 16px;
+  padding: 4px;
+  margin: -4px;
   border-radius: var(--border-radius);
   overflow: auto;
   scrollbar-width: none;
