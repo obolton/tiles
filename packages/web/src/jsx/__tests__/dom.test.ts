@@ -24,17 +24,28 @@ describe("render", () => {
     expect(onclick).toHaveBeenCalled();
   });
 
-  test("adds an element child", () => {
+  test("adds a child element", () => {
     const element = render(
-      jsx("div", { children: jsx("span") }),
+      jsx("div", { children: jsx("span", {}) }),
     ) as HTMLElement;
     expect(element.childNodes.length).toBe(1);
     expect(element.children[0]?.tagName).toBe("SPAN");
   });
 
+  test("adds a child component", () => {
+    const Component = ({ name }: { name: string }) =>
+      jsx("span", { children: `Hello ${name}` });
+    const element = render(
+      jsx("div", { children: jsx(Component, { name: "Test" }) }),
+    ) as HTMLElement;
+    expect(element.childNodes.length).toBe(1);
+    expect(element.children[0]?.tagName).toBe("SPAN");
+    expect(element.children[0]?.textContent).toBe("Hello Test");
+  });
+
   test("adds multiple children", () => {
     const element = render(
-      jsx("div", { children: [jsx("span"), jsx("p")] }),
+      jsx("div", { children: [jsx("span", {}), jsx("p", {})] }),
     ) as HTMLElement;
     expect(element.childNodes.length).toBe(2);
     expect(element.children[0]?.tagName).toBe("SPAN");
@@ -82,7 +93,6 @@ describe("render", () => {
   });
 
   test("throws for an invalid child node", () => {
-    // @ts-expect-error Testing passing an invalid type at runtime
     expect(() => render(jsx("div", { children: { foo: "bar" } }))).toThrowError(
       "Invalid node: [object Object]",
     );

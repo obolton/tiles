@@ -64,6 +64,16 @@ describe("renderToString", () => {
     expect(renderToString(element)).toBe("<p><span>Hello world</span></p>");
   });
 
+  test("renders a child component", () => {
+    const Component = ({ name }: { name: string }) =>
+      jsx("span", { children: `Hello ${name}` });
+
+    const element = jsx("p", {
+      children: jsx(Component, { name: "Test" }),
+    });
+    expect(renderToString(element)).toBe("<p><span>Hello Test</span></p>");
+  });
+
   test("renders multiple child nodes", () => {
     const element = jsx("p", {
       children: [

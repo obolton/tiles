@@ -26,7 +26,7 @@ describe("jsx", () => {
   });
 
   test("adds a child element", () => {
-    const element = jsx("div", { children: jsx("span") });
+    const element = jsx("div", { children: jsx("span", {}) });
     expect(element).toEqual({
       type: "div",
       properties: {},
@@ -41,7 +41,7 @@ describe("jsx", () => {
   });
 
   test("adds multiple children", () => {
-    const element = jsx("div", { children: [jsx("span"), jsx("p")] });
+    const element = jsx("div", { children: [jsx("span", {}), jsx("p", {})] });
     expect(element).toEqual({
       type: "div",
       properties: {},
