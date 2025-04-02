@@ -8,6 +8,7 @@ import { schema } from "@/utils/richText/schema";
 import { getPlugins } from "@/utils/richText/plugins";
 import { handleError } from "@/utils/errors";
 import { classNames } from "@/utils/css";
+import styles from "./TextEditor.module.css";
 import type { Format } from "@/utils/richText/format";
 import type { RichText } from "@/utils/richText/types";
 import type { Command } from "prosemirror-state";
@@ -91,7 +92,7 @@ export default function TextEditor({
     <>
       <div
         ref={refCallback}
-        className={classNames("rich-text", className)}
+        className={classNames("rich-text", styles.editor, className)}
         role="textbox"
         {...props}
         onBlur={handleBlur}
