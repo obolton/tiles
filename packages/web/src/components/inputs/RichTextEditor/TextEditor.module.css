@@ -1,4 +1,4 @@
-.editor {
+.editor:focus {
   & [data-placeholder] {
     position: relative;
 
