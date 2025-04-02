@@ -24,7 +24,7 @@ export default class LayoutEditor {
   private gridColumns = 0;
   private columns = 0;
   private rows = 0;
-  private elementForPoint?: HTMLElement;
+  private elementForPoint?: HTMLElement | null;
 
   constructor({ element, editor, collectionId }: LayoutEditorOptions) {
     this.elementRef = new WeakRef(element);
@@ -141,7 +141,7 @@ export default class LayoutEditor {
     const dragPlacementId = state.data?.placementId;
 
     // Look for an element under the pointer
-    let element: HTMLElement | undefined = document
+    let element = document
       .elementsFromPoint(clientX, clientY)
       .find(
         (element): element is HTMLElement =>
@@ -175,7 +175,7 @@ export default class LayoutEditor {
 
       element = child;
     }
-    return element;
+    return element ?? null;
   }
 
   // Resize
