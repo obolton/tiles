@@ -17,6 +17,8 @@ tab-bar,
 tab-item,
 .tabs > li > a {
   display: flex;
+  box-sizing: content-box;
+  height: 48px;
   align-items: center;
   justify-content: center;
   gap: 8px;
@@ -25,7 +27,7 @@ tab-item,
   font-weight: 400;
   white-space: nowrap;
   user-select: none;
-  padding: 12px 24px;
+  padding: 0 24px;
   border: none;
   border-radius: inherit;
   outline-color: transparent;
