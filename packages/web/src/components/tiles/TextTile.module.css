@@ -1,5 +1,4 @@
-.text,
-.editor {
+.text {
   width: 100%;
   height: 100%;
   padding: clamp(8px, 2vw, 16px);

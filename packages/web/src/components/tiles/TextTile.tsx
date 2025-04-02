@@ -13,6 +13,7 @@ import TextEditor, {
 } from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/inputs/ColorPicker";
 import ExpandIcon from "@/icons/expand.svg?jsx";
+import { classNames } from "@/utils/css";
 
 interface TextTileProps {
   id: string;
@@ -98,7 +99,7 @@ export default function TextTile({
       >
         {isEditable ? (
           <TextEditor
-            className={styles.editor}
+            className={classNames(styles.text, styles.editor)}
             initialValue={content}
             onKeyDownCapture={onDelete ? onKeyDown : undefined}
             onBlur={onBlur}
