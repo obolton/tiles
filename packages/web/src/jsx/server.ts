@@ -33,23 +33,34 @@ function renderFragment(nodes: JSX.Node[]) {
   return nodes.map(renderToString).join("");
 }
 
-function renderElement(element: JSX.Element) {
-  const { type, children } = element;
-  const attributes = getDOMAttributes(element).join(" ");
+function renderHTMLElement<P extends JSX.Properties>(
+  tagName: string,
+  properties: P,
+) {
+  const attributes = getDOMAttributes(properties).join(" ");
+  const children = properties.children;
 
-  if (typeof children === "undefined" || children === null) {
-    return "<" + type + (attributes ? " " + attributes : "") + " />";
+  if (children === null || typeof children === "undefined") {
+    return "<" + tagName + (attributes ? " " + attributes : "") + " />";
   } else {
     return (
       "<" +
-      type +
+      tagName +
       (attributes ? " " + attributes : "") +
       ">" +
       renderToString(children) +
       "</" +
-      type +
+      tagName +
       ">"
     );
+  }
+}
+
+function renderElement<P>({ type, properties }: JSX.Element<P>) {
+  if (typeof type === "string") {
+    return renderHTMLElement(type, properties);
+  } else {
+    return renderToString(type(properties));
   }
 }
 
@@ -62,10 +73,11 @@ function mapAttributeName(name: string) {
   }
 }
 
-function getDOMAttributes(element: JSX.Element) {
+function getDOMAttributes(properties: Record<string, unknown>) {
   const attributes = [];
-  for (const [name, value] of Object.entries(element.properties)) {
+  for (const [name, value] of Object.entries(properties)) {
     if (
+      name === "children" ||
       typeof value === "function" ||
       typeof value === "undefined" ||
       value === false ||
