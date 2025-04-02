@@ -101,6 +101,7 @@ export default function TextTile({
           <TextEditor
             className={classNames(styles.text, styles.editor)}
             initialValue={content}
+            tabIndex={-1}
             onKeyDownCapture={onDelete ? onKeyDown : undefined}
             onBlur={onBlur}
             showToolbar={hasFocus}
