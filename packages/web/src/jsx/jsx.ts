@@ -1,12 +1,16 @@
 export namespace JSX {
-  export type Element<P extends object = object> = {
-    type: string;
-    properties: P;
+  export type Properties<T = unknown> = T & {
     children?: JSX.Node;
+  };
+
+  export type Element<P = unknown> = {
+    type: JSX.ElementType;
+    properties: Properties<P>;
     key?: string | null;
   };
 
-  export type ElementType = keyof IntrinsicElements;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export type ElementType = keyof IntrinsicElements | JSX.Component<any>;
 
   export type Node =
     | JSX.Element
@@ -18,21 +22,25 @@ export namespace JSX {
     | undefined
     | JSX.Node[];
 
+  export type Component<P> = (props: P) => JSX.Node;
+
+  export interface ElementChildrenAttribute {
+    children?: JSX.Node;
+  }
+
   export type HTMLAttributes<T extends keyof HTMLElementTagNameMap> = Partial<
     Omit<HTMLElementTagNameMap[T], "children">
-  > & {
-    children?: JSX.Node;
-  };
+  > & { children?: JSX.Node };
 
   export type IntrinsicElements = {
     [T in keyof HTMLElementTagNameMap]: HTMLAttributes<T>;
   };
 }
 
-export function jsx<T extends JSX.ElementType>(
-  type: T,
-  { children, ...properties }: JSX.HTMLAttributes<T> = {},
+export function jsx<P extends object>(
+  type: JSX.ElementType,
+  properties: P,
   key?: string,
-): JSX.Element {
-  return { type, properties, children, key };
+): JSX.Element<P> {
+  return { type, properties, key };
 }
