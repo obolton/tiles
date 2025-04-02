@@ -75,6 +75,7 @@ body.light {
 
 body.dark {
   --page-color: #202020;
+  --ui-background-color: rgb(48 48 48 / 95%);
   --text-color: rgb(255 255 255 / 80%);
   --icon-color: rgb(255 255 255 / 90%);
   --placeholder-color: rgb(255 255 255 / 20%);
