@@ -1,29 +1,39 @@
 import type { JSX } from "./jsx";
 
-function renderElement<P>({ type, properties, children }: JSX.Element<P>) {
-  const element = document.createElement(type);
+function renderElement<P>({ type, properties }: JSX.Element<P>) {
+  if (typeof type === "string") {
+    return renderHTMLElement(type, properties);
+  } else {
+    return render(type(properties));
+  }
+}
 
-  if (properties) {
-    for (const [key, value] of Object.entries<JSX.Node>(properties)) {
-      if (key.startsWith("on") && typeof value === "function") {
-        element.addEventListener(
-          key.slice(2).toLowerCase(),
-          value as EventListener,
-        );
-      } else if (value !== null && typeof value !== "undefined") {
-        switch (key) {
-          case "className":
-            element.setAttribute("class", value.toString());
-            break;
-          default:
-            element.setAttribute(key, value.toString());
-            break;
-        }
+function renderHTMLElement(tagName: string, properties: JSX.Properties) {
+  const element = document.createElement(tagName);
+
+  for (const [name, value] of Object.entries(properties)) {
+    if (name === "children") {
+      continue;
+    }
+    if (name.startsWith("on") && typeof value === "function") {
+      element.addEventListener(
+        name.slice(2).toLowerCase(),
+        value as EventListener,
+      );
+    } else if (value !== null && typeof value !== "undefined") {
+      switch (name) {
+        case "className":
+          element.setAttribute("class", value.toString());
+          break;
+        default:
+          element.setAttribute(name, value.toString());
+          break;
       }
     }
   }
 
-  if (!(children === null || typeof children === "undefined")) {
+  const children = properties.children;
+  if (children !== null && typeof children !== "undefined") {
     const childNode = render(children);
     if (childNode) {
       element.appendChild(childNode);
