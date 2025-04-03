@@ -34,8 +34,8 @@ body[data-editing] .item {
     outline: 2px solid rgb(0 0 0 / 10%);
   }
 
-  &:focus-within,
-  &:hover:focus-within {
+  &:focus-within:not(:state(resizing)),
+  &:hover:focus-within:not(:state(resizing)) {
     outline: var(--focus-outline);
   }
 }

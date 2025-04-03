@@ -101,8 +101,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  outline: var(--focus-ring-color) solid 4px;
-  outline-offset: -1px;
+  outline: var(--focus-outline);
   z-index: 2;
   border-radius: inherit;
   min-width: inherit;
