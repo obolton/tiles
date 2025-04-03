@@ -12,7 +12,7 @@ class TooltipController {
     this.tooltip.id = "tooltip";
     this.tooltip.role = "tooltip";
     this.tooltip.ariaLive = "polite";
-    this.tooltip.popover = "auto";
+    this.tooltip.popover = "manual";
 
     addEventListener("pointerover", this, { passive: true });
     addEventListener("focusin", this, { passive: true });
@@ -25,7 +25,8 @@ class TooltipController {
         if (
           target instanceof HTMLElement &&
           target !== this.target &&
-          target.dataset.tooltip
+          target.dataset.tooltip &&
+          target.ariaExpanded !== "true"
         ) {
           this.enter(target);
         }
@@ -33,17 +34,24 @@ class TooltipController {
 
       case "pointerleave":
       case "blur":
-        if (target instanceof HTMLElement) {
-          this.leave(target);
-        }
-        break;
+      case "click":
+        return this.close();
+
+      case "keydown":
+        return this.handleKeyDown(event as KeyboardEvent);
     }
   }
 
-  enter(element: HTMLElement) {
+  private handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  }
+
+  private enter(element: HTMLElement) {
     clearTimeout(this.activeTimeout);
 
-    this.hide();
+    this.resetTarget();
     this.target = element;
 
     if (this.active) {
@@ -61,22 +69,21 @@ class TooltipController {
     element.addEventListener("blur", this, {
       passive: true,
     });
+    addEventListener("click", this, { passive: true });
+    addEventListener("keydown", this, { passive: true });
   }
 
-  leave(element: HTMLElement) {
+  private close() {
+    this.resetTarget();
+    this.tooltip.hidePopover();
+
     clearTimeout(this.activeTimeout);
-
-    this.hide();
-
     this.activeTimeout = setTimeout(() => {
       this.active = false;
     }, TOOLTIP_DELAY);
-
-    element.removeEventListener("pointerleave", this);
-    element.removeEventListener("blur", this);
   }
 
-  getPosition() {
+  private getPosition() {
     return (
       this.target
         ?.closest("[data-tooltip-position]")
@@ -84,8 +91,8 @@ class TooltipController {
     );
   }
 
-  show() {
-    if (!this.target || this.target.ariaExpanded === "true") {
+  private show() {
+    if (!this.target) {
       return;
     }
 
@@ -129,10 +136,13 @@ class TooltipController {
     this.target.setAttribute("aria-describedby", this.tooltip.id);
   }
 
-  hide() {
+  private resetTarget() {
     this.target?.removeAttribute("aria-describedby");
+    this.target?.removeEventListener("pointerleave", this);
+    this.target?.removeEventListener("blur", this);
     this.target = undefined;
-    this.tooltip.hidePopover();
+    removeEventListener("click", this);
+    removeEventListener("keydown", this);
   }
 }
 
