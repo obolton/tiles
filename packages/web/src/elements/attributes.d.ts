@@ -18,7 +18,7 @@ import type { TableOfContentsAttributes } from "./tableOfContents/TableOfContent
 interface CustomElementAttributes<T extends HTMLElement = unknown>
   extends React.HTMLAttributes<T> {
   key?: string;
-  ref?: React.RefObject<T | null>;
+  ref?: React.Ref<T>;
   class?: string;
 }
 
