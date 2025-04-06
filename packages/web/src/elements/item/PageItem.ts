@@ -137,6 +137,8 @@ export default class PageItem extends HTMLElement {
     event.preventDefault();
     event.stopPropagation();
 
+    this.focus();
+
     this.resizeAbortController = new AbortController();
     const signal = this.resizeAbortController.signal;
 
