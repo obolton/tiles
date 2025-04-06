@@ -16,19 +16,23 @@
 }
 
 #close {
-  position: fixed;
+  position: absolute;
   display: none;
-  top: 12px;
-  left: 12px;
+  top: -22px;
+  left: -22px;
   width: 44px;
   height: 44px;
   padding: 0;
   border-radius: 50%;
   border: none;
   outline: none;
-  background-color: rgb(160 160 160 / 50%);
+  background-color: rgb(0 0 0 / 30%);
+  box-shadow: 0 2px 4px -2px rgb(0 0 0 / 40%);
   -webkit-tap-highlight-color: transparent;
   cursor: pointer;
+  transition:
+    background-color var(--animation-duration-short) var(--easing),
+    scale var(--animation-duration-short) var(--easing);
 
   &::after {
     content: url("@/icons/close.svg");
@@ -38,8 +42,11 @@
     height: 24px;
   }
 
-  &:active {
-    background-color: rgb(120 120 120 / 50%);
+  &:hover,
+  &:active,
+  &:focus-visible {
+    background-color: rgb(0 0 0 / 40%);
+    scale: 1.1;
   }
 }
 
@@ -57,7 +64,7 @@ dialog {
   border-radius: inherit;
 
   &::backdrop {
-    background-color: rgb(0 0 0 / 70%);
+    background-color: rgb(0 0 0 / 50%);
     backdrop-filter: blur(8px);
   }
 
