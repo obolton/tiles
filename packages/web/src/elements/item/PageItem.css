@@ -3,10 +3,7 @@
   background: none;
 }
 
-:host(:hover) {
-  z-index: 1;
-}
-
+:host(:hover),
 :host(:focus-within) {
   z-index: 2;
 }
