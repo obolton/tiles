@@ -1,6 +1,7 @@
 .toolbar {
   position: fixed;
   inset: auto 8px 80px;
+  height: 64px;
   max-width: calc(100vw - 16px);
   overflow: visible;
   contain: layout;
