@@ -6,6 +6,10 @@
 :host(:hover),
 :host(:focus-within) {
   z-index: 2;
+
+  #resize {
+    opacity: 1;
+  }
 }
 
 #drag {
@@ -74,13 +78,6 @@
 
   &:focus-visible::after {
     background: var(--focus-ring-color);
-  }
-}
-
-:host(:hover),
-:host(:focus-within) {
-  #resize {
-    opacity: 1;
   }
 }
 
