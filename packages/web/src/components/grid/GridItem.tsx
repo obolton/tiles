@@ -24,7 +24,9 @@ interface GridItemProps {
   style?: React.CSSProperties;
   className?: string;
   rows?: number;
+  minRows?: number;
   columns?: number;
+  minColumns?: number;
   grow?: boolean;
   deletable?: boolean;
   draggable?: boolean;
@@ -70,8 +72,10 @@ export default function GridItem({
   placementId,
   className,
   style,
-  rows,
-  columns,
+  rows = 1,
+  minRows = 1,
+  columns = 1,
+  minColumns = 1,
   grow = false,
   deletable = false,
   draggable = false,
@@ -149,10 +153,12 @@ export default function GridItem({
     () =>
       ({
         ...style,
-        "--columns": columns,
-        "--rows": rows,
+        "--columns": Math.max(columns, minColumns),
+        "--min-columns": minColumns,
+        "--rows": Math.max(rows, minRows),
+        "--min-rows": minRows,
       }) as React.CSSProperties,
-    [style, columns, rows],
+    [style, columns, rows, minColumns, minRows],
   );
 
   return (

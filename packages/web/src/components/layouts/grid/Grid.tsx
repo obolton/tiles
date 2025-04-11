@@ -57,9 +57,11 @@ export default function Grid({
           rows={
             tile.type === "TEXT" && tile.expand
               ? 2
-              : Math.min(Math.max(tile.rows, minRowSpan), columns)
+              : Math.min(tile.rows, columns)
           }
-          columns={Math.min(Math.max(tile.columns, minColumnSpan), columns)}
+          minRows={minRowSpan}
+          columns={Math.min(tile.columns, columns)}
+          minColumns={minColumnSpan}
           deletable={isEditable}
           draggable={isEditable}
           resizable={isEditable}

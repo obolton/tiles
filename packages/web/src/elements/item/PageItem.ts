@@ -219,14 +219,14 @@ export default class PageItem extends HTMLElement {
       throw new Error("Already resizing");
     }
 
+    const parentBounds = this.offsetParent?.getBoundingClientRect();
+    this.maxX = parentBounds?.right ?? Infinity;
+
     const bounds = this.getBoundingClientRect();
     this.initialPointerX = bounds.x + window.scrollX;
     this.initialPointerY = bounds.y + window.scrollY;
-    this.width = event.pageX - this.initialPointerX;
+    this.width = Math.min(event.pageX, this.maxX) - this.initialPointerX;
     this.height = event.pageY - this.initialPointerY;
-
-    const parentBounds = this.offsetParent?.getBoundingClientRect();
-    this.maxX = parentBounds?.right ?? Infinity;
 
     const allowResize = this.dispatchEvent(
       new TileResizeEvent("tileresizestart", {

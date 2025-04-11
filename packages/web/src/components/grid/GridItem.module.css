@@ -1,9 +1,23 @@
+@property --min-columns {
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --min-rows {
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 1;
+}
+
 .item {
   grid-column: span var(--columns, 1);
   grid-row: span var(--rows, 1);
   height: calc(
     var(--rows) * var(--grid-row-height) + var(--gap) * (var(--rows) - 1)
   );
+  min-width: calc(var(--min-columns) * var(--grid-column-width));
+  min-height: calc(var(--min-rows) * var(--grid-row-height));
   display: flex;
   border-radius: 12px;
   scroll-margin: 24px;
