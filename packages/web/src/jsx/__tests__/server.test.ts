@@ -23,7 +23,7 @@ describe("renderToString", () => {
     "source",
     "track",
     "wbr",
-  ])("renders %i as a void element", (tag) => {
+  ])("renders %s as a void element", (tag) => {
     const element = jsx(tag as JSX.ElementType, {});
     expect(renderToString(element)).toBe(`<${tag}>`);
   });
