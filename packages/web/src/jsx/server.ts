@@ -106,7 +106,7 @@ function serializeStyles(styles: object) {
 }
 
 function getDOMAttributes(properties: Record<string, unknown>) {
-  const attributes = [];
+  const attributes: string[] = [];
   for (const [name, value] of Object.entries(properties)) {
     if (
       name === "children" ||

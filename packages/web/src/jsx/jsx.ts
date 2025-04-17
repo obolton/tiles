@@ -40,7 +40,7 @@ export namespace JSX {
   export interface IntrinsicElements extends HTMLElements {}
 }
 
-export function jsx<P extends object>(
+export function jsx<P extends JSX.Properties>(
   type: JSX.ElementType,
   properties: P,
   key?: string,
