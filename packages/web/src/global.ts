@@ -11,6 +11,7 @@ import "@/elements/global";
 import "@/utils/tooltips";
 
 if (isSignedIn()) {
+  document.body.dataset.signedIn = "true";
   const userInfo = getCachedUserInfo();
 
   if (!userInfo) {
@@ -37,3 +38,11 @@ signOutButton?.addEventListener("click", async () => {
   delete document.body.dataset.signedIn;
   window.location.href = "/";
 });
+
+addEventListener(
+  "DOMContentLoaded",
+  () => {
+    delete document.body.dataset.disableTransitions;
+  },
+  { once: true },
+);

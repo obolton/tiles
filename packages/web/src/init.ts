@@ -6,6 +6,7 @@ import { sharePage } from "@/utils/sharing";
 import { showToast } from "@/utils/toasts";
 import bookmarkIcon from "@/icons/bookmark.svg";
 import bookmarkFilledIcon from "@/icons/bookmark-filled.svg";
+import { initialize } from "@/utils/lightbox";
 
 const PAGE_ID = document.body.dataset.pageId || "";
 if (!PAGE_ID) {
@@ -48,6 +49,8 @@ function onDOMContentLoaded() {
     );
     bookmark.addEventListener("click", updateBookmark, { passive: true });
   }
+
+  initialize();
 }
 
 if (document.readyState === "loading") {

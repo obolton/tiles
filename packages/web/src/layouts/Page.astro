@@ -83,23 +83,6 @@ const fontConfig = font ? getFontConfig(font) : undefined;
 
     <toast-container></toast-container>
 
-    <script is:inline>
-      window.addEventListener(
-        "DOMContentLoaded",
-        () => {
-          delete document.body.dataset.disableTransitions;
-        },
-        { once: true }
-      );
-    </script>
-    <script>
-      import { isSignedIn } from "@/utils/sessions";
-      import { initialize } from "@/utils/lightbox";
-      if (isSignedIn()) {
-        document.body.dataset.signedIn = "true";
-      }
-      initialize();
-    </script>
     <SpeculationRules />
   </body>
 </html>
