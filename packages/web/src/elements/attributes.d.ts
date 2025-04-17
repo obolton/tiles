@@ -14,6 +14,7 @@ import type { MapViewAttributes } from "./maps/MapView";
 import type { MapMarkerAttributes } from "./maps/MapMarker";
 import type { MapLegendItemAttributes } from "./maps/MapLegendItem";
 import type { TableOfContentsAttributes } from "./tableOfContents/TableOfContents";
+import type { DataBindingAttributes } from "./dataBinding/DataBinding";
 
 interface CustomElementAttributes<T extends HTMLElement = unknown>
   extends React.HTMLAttributes<T> {
@@ -44,6 +45,7 @@ declare module "react" {
       "file-picker": CustomElementAttributes & FilePickerAttributes;
       "toast-container": CustomElementAttributes;
       "table-of-contents": CustomElementAttributes & TableOfContentsAttributes;
+      "data-binding": CustomElementAttributes & DataBindingAttributes;
     }
   }
 }

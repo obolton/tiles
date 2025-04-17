@@ -1,5 +1,11 @@
 import { getPersistent } from "@/utils/state";
 
+export interface DataBindingAttributes {
+  href?: string;
+  src?: string;
+  alt?: string;
+}
+
 export default class DataBinding extends HTMLElement {
   constructor() {
     super();
