@@ -32,9 +32,12 @@ export namespace JSX {
     Omit<HTMLElementTagNameMap[T], "children">
   > & { children?: JSX.Node };
 
-  export type IntrinsicElements = {
+  export type HTMLElements = {
     [T in keyof HTMLElementTagNameMap]: HTMLAttributes<T>;
   };
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface IntrinsicElements extends HTMLElements {}
 }
 
 export function jsx<P extends object>(
