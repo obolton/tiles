@@ -90,6 +90,21 @@ function mapAttributeName(name: string) {
   }
 }
 
+function transformCSSProperty(name: string) {
+  return name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+}
+
+function serializeStyles(styles: object) {
+  const rules: string[] = [];
+  for (const [name, value] of Object.entries(styles)) {
+    if (!(typeof value === "string" || typeof value === "number")) {
+      continue;
+    }
+    rules.push(transformCSSProperty(name) + ":" + value);
+  }
+  return rules.join(";");
+}
+
 function getDOMAttributes(properties: Record<string, unknown>) {
   const attributes = [];
   for (const [name, value] of Object.entries(properties)) {
@@ -103,12 +118,18 @@ function getDOMAttributes(properties: Record<string, unknown>) {
       continue;
     }
     const attributeName = mapAttributeName(name);
-    if (value === true) {
+    if (attributeName === "style" && typeof value === "object") {
+      attributes.push(
+        attributeName + '="' + escapeUTF8(serializeStyles(value)) + '"',
+      );
+    } else if (value === true) {
       attributes.push(attributeName);
     } else if (typeof value === "number" || typeof value === "bigint") {
-      attributes.push(`${attributeName}="${value}"`);
+      attributes.push(attributeName + '="' + value + '"');
     } else {
-      attributes.push(`${attributeName}="${escapeUTF8(value.toString())}"`);
+      attributes.push(
+        attributeName + '="' + escapeUTF8(value.toString()) + '"',
+      );
     }
   }
   return attributes;

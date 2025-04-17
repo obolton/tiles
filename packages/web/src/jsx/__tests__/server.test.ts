@@ -108,4 +108,17 @@ describe("renderToString", () => {
       "<p><span>Foo</span>Bar<span>Baz</span></p>",
     );
   });
+
+  test("renders a style attribute", () => {
+    const element = jsx("div", {
+      style: {
+        color: "#000",
+        backgroundColor: "red",
+        padding: 0,
+      },
+    });
+    expect(renderToString(element)).toBe(
+      '<div style="color:#000;background-color:red;padding:0"></div>',
+    );
+  });
 });
