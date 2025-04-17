@@ -1,6 +1,23 @@
 import { escapeUTF8 } from "entities";
 import type { JSX } from "./jsx";
 
+// https://developer.mozilla.org/en-US/docs/Glossary/Void_element
+const VOID_ELEMENTS = new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "source",
+  "track",
+  "wbr",
+]);
+
 export function renderToString(node: JSX.Node): string {
   if (
     typeof node === "string" ||
@@ -40,8 +57,8 @@ function renderHTMLElement<P extends JSX.Properties>(
   const attributes = getDOMAttributes(properties).join(" ");
   const children = properties.children;
 
-  if (children === null || typeof children === "undefined") {
-    return "<" + tagName + (attributes ? " " + attributes : "") + " />";
+  if (VOID_ELEMENTS.has(tagName)) {
+    return "<" + tagName + (attributes ? " " + attributes : "") + ">";
   } else {
     return (
       "<" +

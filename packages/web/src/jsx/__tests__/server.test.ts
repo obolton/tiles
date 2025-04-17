@@ -1,53 +1,75 @@
 import { describe, expect, test } from "vitest";
 import { jsx } from "../jsx";
 import { renderToString } from "../server";
+import type { JSX } from "../jsx";
 
 describe("renderToString", () => {
   test("renders an element to a string", () => {
     const element = jsx("div", {});
-    expect(renderToString(element)).toBe("<div />");
+    expect(renderToString(element)).toBe("<div></div>");
+  });
+
+  test.for([
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "link",
+    "meta",
+    "source",
+    "track",
+    "wbr",
+  ])("renders %i as a void element", (tag) => {
+    const element = jsx(tag as JSX.ElementType, {});
+    expect(renderToString(element)).toBe(`<${tag}>`);
   });
 
   test("renders a string attribute", () => {
     const element = jsx("div", {
       title: "test",
     });
-    expect(renderToString(element)).toBe('<div title="test" />');
+    expect(renderToString(element)).toBe('<div title="test"></div>');
   });
 
   test("escapes the string attribute", () => {
     const element = jsx("div", {
       title: '"test<>',
     });
-    expect(renderToString(element)).toBe('<div title="&quot;test&lt;&gt;" />');
+    expect(renderToString(element)).toBe(
+      '<div title="&quot;test&lt;&gt;"></div>',
+    );
   });
 
   test("renders a numeric attribute", () => {
     const element = jsx("div", {
       tabIndex: 0,
     });
-    expect(renderToString(element)).toBe('<div tabindex="0" />');
+    expect(renderToString(element)).toBe('<div tabindex="0"></div>');
   });
 
   test("renders a true boolean attribute", () => {
     const element = jsx("input", {
       checked: true,
     });
-    expect(renderToString(element)).toBe("<input checked />");
+    expect(renderToString(element)).toBe("<input checked>");
   });
 
   test("ignores a false boolean attribute", () => {
     const element = jsx("input", {
       checked: false,
     });
-    expect(renderToString(element)).toBe("<input />");
+    expect(renderToString(element)).toBe("<input>");
   });
 
   test("ignores an undefined attribute", () => {
     const element = jsx("div", {
       id: undefined,
     });
-    expect(renderToString(element)).toBe("<div />");
+    expect(renderToString(element)).toBe("<div></div>");
   });
 
   test("renders a child text node", () => {
