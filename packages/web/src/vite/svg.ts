@@ -6,7 +6,13 @@ import type { Plugin } from "vite";
 
 const FILTER = "**/*.svg?jsx";
 
-export default function svgPlugin(): Plugin {
+interface SVGPluginOptions {
+  jsxImportSource?: string;
+}
+
+export default function svgPlugin({
+  jsxImportSource,
+}: SVGPluginOptions = {}): Plugin {
   const filter = createFilter(FILTER);
   return {
     name: "svg-plugin",
@@ -17,9 +23,14 @@ export default function svgPlugin(): Plugin {
       }
       const path = id.replace(/\?jsx$/, "");
       const data = await fs.readFile(path, "utf-8");
-      const component = await transform(data, { plugins: [jsx] });
+      const component = await transform(data, {
+        plugins: [jsx],
+        jsxRuntime: "automatic",
+      });
       return transformWithEsbuild(component, id, {
         loader: "jsx",
+        jsx: "automatic",
+        jsxImportSource,
       });
     },
   };
