@@ -50,9 +50,9 @@ function renderFragment(nodes: JSX.Node[]) {
   return nodes.map(renderToString).join("");
 }
 
-function renderHTMLElement<P extends JSX.Properties>(
-  tagName: string,
-  properties: P,
+function renderHTMLElement<T extends keyof JSX.IntrinsicElements>(
+  tagName: T,
+  properties: JSX.Properties<T>,
 ) {
   const attributes = getDOMAttributes(properties).join(" ");
   const children = properties.children;
@@ -73,7 +73,10 @@ function renderHTMLElement<P extends JSX.Properties>(
   }
 }
 
-function renderElement<P>({ type, properties }: JSX.Element<P>) {
+function renderElement<T extends JSX.ElementType>({
+  type,
+  properties,
+}: JSX.Element<T>) {
   if (typeof type === "string") {
     return renderHTMLElement(type, properties);
   } else {

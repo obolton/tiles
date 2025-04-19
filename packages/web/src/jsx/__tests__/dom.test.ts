@@ -109,6 +109,7 @@ describe("render", () => {
   });
 
   test("throws for an invalid child node", () => {
+    // @ts-expect-error Intentionally invalid children
     expect(() => render(jsx("div", { children: { foo: "bar" } }))).toThrowError(
       "Invalid node: [object Object]",
     );

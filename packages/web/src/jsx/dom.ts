@@ -1,6 +1,9 @@
 import type { JSX } from "./jsx";
 
-function renderElement<P>({ type, properties }: JSX.Element<P>) {
+function renderElement<P extends JSX.ElementType>({
+  type,
+  properties,
+}: JSX.Element<P>) {
   if (typeof type === "string") {
     return renderHTMLElement(type, properties);
   } else {
@@ -8,7 +11,10 @@ function renderElement<P>({ type, properties }: JSX.Element<P>) {
   }
 }
 
-function renderHTMLElement(tagName: string, properties: JSX.Properties) {
+function renderHTMLElement<T extends keyof JSX.IntrinsicElements>(
+  tagName: T,
+  properties: JSX.Properties<T>,
+) {
   const element = document.createElement(tagName);
 
   for (const [name, value] of Object.entries(properties)) {
@@ -67,7 +73,9 @@ function renderTextNode(node: string | number | bigint) {
   return document.createTextNode(node.toString());
 }
 
-export function render<P>(node: JSX.Element<P>): HTMLElement;
+export function render<T extends JSX.ElementType>(
+  node: JSX.Element<T>,
+): HTMLElement;
 export function render(node: JSX.Node[]): DocumentFragment;
 export function render(node: string | number | bigint): Text;
 export function render(node: boolean | null | undefined): null;

@@ -114,7 +114,7 @@ describe("renderToString", () => {
       style: {
         color: "#000",
         backgroundColor: "red",
-        padding: 0,
+        padding: "0",
       },
     });
     expect(renderToString(element)).toBe(
