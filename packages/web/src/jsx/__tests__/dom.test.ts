@@ -17,6 +17,22 @@ describe("render", () => {
     expect(element.className).toBe("test-class");
   });
 
+  test("sets the style attribute from an object", () => {
+    const element = render(
+      jsx("div", { style: { backgroundColor: "red", padding: "0" } }),
+    ) as HTMLElement;
+    expect(element.style.backgroundColor).toBe("red");
+    expect(element.style.padding).toBe("0px");
+  });
+
+  test("sets the style attribute from a string", () => {
+    const element = render(
+      jsx("div", { style: "background-color: red; padding: 0" }),
+    ) as HTMLElement;
+    expect(element.style.backgroundColor).toBe("red");
+    expect(element.style.padding).toBe("0px");
+  });
+
   test("sets an event listener", () => {
     const onclick = vi.fn();
     const element = render(jsx("div", { onclick })) as HTMLElement;

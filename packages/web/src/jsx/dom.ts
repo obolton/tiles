@@ -25,6 +25,13 @@ function renderHTMLElement(tagName: string, properties: JSX.Properties) {
         case "className":
           element.setAttribute("class", value.toString());
           break;
+        case "style":
+          if (typeof value === "string") {
+            element.setAttribute("style", value);
+          } else {
+            Object.assign(element.style, value);
+          }
+          break;
         default:
           element.setAttribute(name, value.toString());
           break;
