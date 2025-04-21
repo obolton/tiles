@@ -15,7 +15,7 @@ export type RouteLoader = () => Promise<Route>;
 
 export interface RouteConfig {
   loader: RouteLoader;
-  moduleId: string;
+  moduleUrl: string;
 }
 
 export interface RouteNode {
@@ -25,7 +25,7 @@ export interface RouteNode {
 }
 
 export default class Router {
-  private root: RouteNode = {};
+  readonly root: RouteNode = {};
 
   getPathSegments(path: string) {
     return path.split("/").filter((segment) => segment.length > 0);

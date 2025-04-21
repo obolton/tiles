@@ -1,10 +1,10 @@
 import { describe, expect, test, vi } from "vitest";
 import Router from "../router";
 
-function mockRoute(id: string) {
+function mockRoute(moduleUrl: string) {
   return {
     loader: vi.fn(),
-    moduleId: id,
+    moduleUrl,
   };
 }
 
