@@ -1,63 +1,80 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
+import type { IncomingHttpHeaders } from "node:http";
+import type { JSX } from "@/jsx/jsx";
 
-export type RouteHandler = (req: IncomingMessage, res: ServerResponse) => void;
-
-export interface Routes {
-  [name: string]: Router | RouteHandler;
+export interface RouteComponentProps {
+  path: string;
+  headers: IncomingHttpHeaders;
 }
 
-export interface RouterConfig {
-  index?: RouteHandler;
-  resolve?: Router | RouteHandler;
-  routes?: Routes;
+export interface Route {
+  component: (props: RouteComponentProps) => Promise<JSX.Node>;
+  title?: string;
 }
 
-export type Path = string[];
+export type RouteLoader = () => Promise<Route>;
+
+export interface RouteConfig {
+  loader: RouteLoader;
+  moduleId: string;
+}
+
+export interface RouteNode {
+  route?: RouteConfig;
+  wildcard?: RouteNode;
+  children?: Map<string, RouteNode>;
+}
 
 export default class Router {
-  index?: RouteHandler;
-  routes?: Routes;
-  resolve?: Router | RouteHandler;
+  private root: RouteNode = {};
 
-  constructor({ index, routes, resolve }: RouterConfig) {
-    this.index = index;
-    this.routes = routes;
-    this.resolve = resolve;
+  getPathSegments(path: string) {
+    return path.split("/").filter((segment) => segment.length > 0);
   }
 
-  match(path: Path): RouteHandler | null {
-    if (path.length === 0 || !path[0]) {
-      return this.index ?? null;
+  add(path: string, route: RouteConfig) {
+    const segments = this.getPathSegments(path);
+
+    let node = this.root;
+
+    for (const segment of segments) {
+      if (segment === "*") {
+        if (!node.wildcard) {
+          node.wildcard = {};
+        }
+        node = node.wildcard;
+      } else {
+        if (!node.children) {
+          node.children = new Map();
+          node.children.set(segment, {});
+        } else if (!node.children.has(segment)) {
+          node.children.set(segment, {});
+        }
+        node = node.children.get(segment)!;
+      }
+    }
+    node.route = route;
+  }
+
+  match(path: string): RouteConfig | null {
+    const segments = this.getPathSegments(path);
+
+    if (segments.length === 0) {
+      return this.root.route ?? null;
     }
 
-    const segment = path[0];
+    let route = this.root;
 
-    if (
-      this.routes &&
-      Object.prototype.hasOwnProperty.call(this.routes, segment)
-    ) {
-      const route = this.routes[segment];
-      if (!route) {
-        return null;
-      } else if (route instanceof Router) {
-        return route.match(path.slice(1));
-      } else if (path.length === 1) {
-        return route;
+    for (const segment of segments) {
+      const childRoute = route.children?.get(segment);
+      if (childRoute) {
+        route = childRoute;
+      } else if (route.wildcard) {
+        route = route.wildcard;
       } else {
         return null;
       }
     }
 
-    if (this.resolve) {
-      if (this.resolve instanceof Router) {
-        return this.resolve.match(path.slice(1));
-      } else if (path.length === 1) {
-        return this.resolve;
-      } else {
-        return null;
-      }
-    }
-
-    return null;
+    return route.route ?? null;
   }
 }
