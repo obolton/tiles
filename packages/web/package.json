@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
+    "dev:next": "tsx watch --env-file=\"../../.env\" --clear-screen=false scripts/dev.ts",
     "start": "astro dev",
     "check": "astro check",
     "build": "astro build",
