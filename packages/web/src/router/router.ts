@@ -1,20 +1,31 @@
 import type { IncomingHttpHeaders } from "node:http";
 import type { JSX } from "@/jsx/jsx";
 
-export interface RouteComponentProps {
+export interface RequestProperties {
   path: string;
   headers: IncomingHttpHeaders;
 }
 
-export interface Route {
-  component: (props: RouteComponentProps) => Promise<JSX.Node>;
+export interface RouteData<T> {
   title?: string;
+  data: T;
 }
 
-export type RouteLoader = () => Promise<Route>;
+export type RouteLoaderResult<T> = Promise<RouteData<T>>;
+
+export type RouteLoader<T> = (
+  request: RequestProperties,
+) => RouteLoaderResult<T>;
+
+export interface Route<T> {
+  loader?: RouteLoader<T>;
+  component: (data: T) => Promise<JSX.Node>;
+}
+
+export type RouteImporter<T> = () => Promise<Route<T>>;
 
 export interface RouteConfig {
-  loader: RouteLoader;
+  import: RouteImporter<unknown>;
   moduleUrl: string;
 }
 
