@@ -1,32 +1,15 @@
 import { getRouter } from "./routes";
 import { escapeUTF8 } from "entities";
 import { renderToString } from "@/jsx/server";
-import type { IncomingMessage } from "node:http";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import type { ModuleNode, ViteDevServer } from "vite";
-import type { RouteConfig } from "@/router/router";
+import type { RouteConfig, RouteData, RouteMetadata } from "@/router/router";
 
 const router = getRouter();
 
-interface HTMLResponse {
-  statusCode?: number;
-  html: {
-    head?: string;
-    body: string;
-  };
-}
-
-interface TextResponse {
-  statusCode?: number;
-  text: string;
-}
-
-type Response = HTMLResponse | TextResponse;
-
-function notFound(): Response {
-  return {
-    statusCode: 404,
-    text: "Not Found",
-  };
+function notFound(response: ServerResponse) {
+  response.writeHead(404);
+  response.end("Not Found");
 }
 
 function inspectModuleStylesheets(
@@ -61,68 +44,105 @@ async function collectStylesheets(
   return stylesheets;
 }
 
-async function renderRoute(request: IncomingMessage, routeConfig: RouteConfig) {
-  const { title, component } = await routeConfig.loader();
-  const body = renderToString(
-    await component({
-      path: request.url ?? "",
-      headers: request.headers,
-    }),
-  );
-  return { title, body };
-}
-
-interface CreateHeadOptions {
-  title?: string;
-  stylesheets?: string[];
-}
-
-function createHead({ title, stylesheets }: CreateHeadOptions) {
-  let head = "";
-  if (title) {
-    head += "<title>" + escapeUTF8(title) + "</title>";
-  }
-  if (stylesheets) {
-    for (const stylesheet of stylesheets) {
-      head += '<link rel="stylesheet" href="' + escapeUTF8(stylesheet) + '">';
-    }
-  }
-  return head;
-}
-
-async function serveRoute(
-  request: IncomingMessage,
+async function getEarlyHeadChunk(
   routeConfig: RouteConfig,
+  metadata: RouteMetadata,
   viteDevServer: ViteDevServer,
-): Promise<Response> {
-  const { title, body } = await renderRoute(request, routeConfig);
+) {
   const stylesheets = await collectStylesheets(
     routeConfig.moduleUrl,
     viteDevServer,
   );
 
-  return {
-    statusCode: 200,
-    html: {
-      head: createHead({
-        title,
-        stylesheets,
-      }),
-      body,
-    },
-  };
+  let chunk = '<!doctype html><html><head><meta charset="utf-8">';
+  for (const stylesheet of stylesheets) {
+    chunk += '<link rel="stylesheet" href="' + escapeUTF8(stylesheet) + '">';
+  }
+
+  if (metadata.links) {
+    for (const link of metadata.links) {
+      chunk +=
+        '<link rel="' +
+        escapeUTF8(link.rel) +
+        '" href="' +
+        escapeUTF8(link.href) +
+        '">';
+    }
+  }
+
+  if (metadata.scripts) {
+    for (const script of metadata.scripts) {
+      chunk +=
+        '<script type="module" src="' + escapeUTF8(script.src) + '"></script>';
+    }
+  }
+
+  chunk += '<script type="module" src="/src/server/hydrate"></script>';
+  chunk += '<script type="module" src="/@vite/client"></script>';
+  return chunk;
+}
+
+function getLateHeadChunk(data?: RouteData) {
+  let chunk = "";
+  if (typeof data?.title === "string") {
+    chunk += "<title>" + escapeUTF8(data.title) + "</title>";
+  }
+  chunk += "</head><body>";
+  return chunk;
+}
+
+function getPageEndChunk(routeConfig: RouteConfig, data?: RouteData) {
+  let chunk = "";
+  if (typeof data?.data !== "undefined") {
+    chunk +=
+      '<script id="page-data" type="application/json">' +
+      JSON.stringify({ module: routeConfig.moduleUrl, data: data.data }) +
+      "</script>";
+  }
+  chunk += "</body></html>";
+  return chunk;
+}
+
+async function renderRoute(
+  request: IncomingMessage,
+  response: ServerResponse,
+  routeConfig: RouteConfig,
+  viteDevServer: ViteDevServer,
+) {
+  const { loader, component, metadata = {} } = await routeConfig.import();
+
+  response.writeHead(200);
+  response.write(await getEarlyHeadChunk(routeConfig, metadata, viteDevServer));
+
+  const data = loader
+    ? await loader({
+        path: request.url ?? "",
+        headers: request.headers,
+      })
+    : undefined;
+
+  response.write(getLateHeadChunk(data));
+
+  const body = renderToString(component(data?.data));
+
+  response.write(body);
+  response.write(getPageEndChunk(routeConfig, data));
+  response.end();
 }
 
 export default async function respond(
   request: IncomingMessage,
+  response: ServerResponse,
   viteDevServer: ViteDevServer,
-): Promise<Response> {
+) {
   const route = router.match(request.url ?? "/");
 
   if (!route) {
-    return notFound();
+    notFound(response);
+    return;
   }
-  return serveRoute(request, route, viteDevServer);
+
+  renderRoute(request, response, route, viteDevServer);
 }
 
 export type Respond = typeof respond;
