@@ -49,7 +49,7 @@ function toNodeArray(node: JSX.Node) {
 }
 
 function hydrateFragment(fragment: JSX.Node[], domElement: Element) {
-  const elements = fragment.filter(isElementNode);
+  const elements = fragment.flat().filter(isElementNode);
 
   if (elements.length !== domElement.childElementCount) {
     throw new Error("Hydration error: element count mismatch");
