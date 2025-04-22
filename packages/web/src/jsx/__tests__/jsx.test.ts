@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { jsx } from "../jsx";
+import { jsx, Fragment } from "../jsx";
 
 describe("jsx", () => {
   test("creates an element with the given type", () => {
@@ -71,5 +71,13 @@ describe("jsx", () => {
       children: "Hello World",
       key: undefined,
     });
+  });
+});
+
+describe("Fragment", () => {
+  test("returns the fragment's children", () => {
+    const children = [jsx("div", {}), jsx("div", {})];
+    const fragment = Fragment({ children });
+    expect(fragment).toEqual(children);
   });
 });

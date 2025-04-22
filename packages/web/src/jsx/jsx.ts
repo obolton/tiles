@@ -51,3 +51,11 @@ export function jsx<T extends JSX.ElementType>(
 ): JSX.Element<T> {
   return { type, properties, key };
 }
+
+interface FragmentProperties {
+  children?: JSX.Node;
+}
+
+export function Fragment({ children }: FragmentProperties) {
+  return children;
+}
