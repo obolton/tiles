@@ -29,12 +29,13 @@ describe("jsx", () => {
     const element = jsx("div", { children: jsx("span", {}) });
     expect(element).toEqual({
       type: "div",
-      properties: {},
-      children: {
-        type: "span",
-        properties: {},
-        children: undefined,
-        key: undefined,
+      properties: {
+        children: {
+          type: "span",
+          properties: {},
+          children: undefined,
+          key: undefined,
+        },
       },
       key: undefined,
     });
@@ -44,21 +45,22 @@ describe("jsx", () => {
     const element = jsx("div", { children: [jsx("span", {}), jsx("p", {})] });
     expect(element).toEqual({
       type: "div",
-      properties: {},
-      children: [
-        {
-          type: "span",
-          properties: {},
-          children: undefined,
-          key: undefined,
-        },
-        {
-          type: "p",
-          properties: {},
-          children: undefined,
-          key: undefined,
-        },
-      ],
+      properties: {
+        children: [
+          {
+            type: "span",
+            properties: {},
+            children: undefined,
+            key: undefined,
+          },
+          {
+            type: "p",
+            properties: {},
+            children: undefined,
+            key: undefined,
+          },
+        ],
+      },
       key: undefined,
     });
   });
@@ -67,8 +69,7 @@ describe("jsx", () => {
     const element = jsx("div", { children: "Hello World" });
     expect(element).toEqual({
       type: "div",
-      properties: {},
-      children: "Hello World",
+      properties: { children: "Hello World" },
       key: undefined,
     });
   });
