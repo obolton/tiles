@@ -4,9 +4,6 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { ServerOptions } from "node:https";
 import type { Respond } from "@/server/server";
 
-const HTML_TEMPLATE =
-  "<!doctype html><html><head><!--head--></head><body><!--body--></body></html>";
-
 export interface DevServerOptions extends ServerOptions {
   hostname: string;
   port: number;
@@ -39,22 +36,7 @@ export default async function createDevServer(options: DevServerOptions) {
       )) as { default: Respond };
 
       try {
-        const result = await respond(request, vite);
-        response.writeHead(result.statusCode ?? 200);
-
-        if ("html" in result) {
-          const template = await vite.transformIndexHtml(
-            request.url ?? "/",
-            HTML_TEMPLATE,
-          );
-          const output = template
-            .replace("<!--head-->", result.html.head ?? "")
-            .replace("<!--body-->", result.html.body);
-          response.write(output);
-        } else {
-          response.write(result.text);
-        }
-        response.end();
+        await respond(request, response, vite);
       } catch (error) {
         if (error instanceof Error) {
           vite.ssrFixStacktrace(error);
