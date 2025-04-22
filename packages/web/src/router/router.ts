@@ -6,7 +6,21 @@ export interface RequestProperties {
   headers: IncomingHttpHeaders;
 }
 
-export interface RouteData<T> {
+export interface Link {
+  rel: string;
+  href: string;
+}
+
+export interface Script {
+  src: string;
+}
+
+export interface RouteMetadata {
+  links?: Link[];
+  scripts?: Script[];
+}
+
+export interface RouteData<T = unknown> {
   title?: string;
   data: T;
 }
@@ -19,7 +33,8 @@ export type RouteLoader<T> = (
 
 export interface Route<T> {
   loader?: RouteLoader<T>;
-  component: (data: T) => Promise<JSX.Node>;
+  component: JSX.Component<T>;
+  metadata?: RouteMetadata;
 }
 
 export type RouteImporter<T> = () => Promise<Route<T>>;
