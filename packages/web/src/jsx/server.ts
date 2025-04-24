@@ -1,4 +1,5 @@
 import { escapeUTF8 } from "entities";
+import { BaseStore } from "@/utils/stores";
 import type { JSX } from "./jsx";
 
 // https://developer.mozilla.org/en-US/docs/Glossary/Void_element
@@ -19,6 +20,10 @@ const VOID_ELEMENTS = new Set([
 ]);
 
 export function renderToString(node: JSX.Node): string {
+  if (node instanceof BaseStore) {
+    return renderToString(node.value);
+  }
+
   if (
     typeof node === "string" ||
     typeof node === "number" ||
@@ -110,7 +115,9 @@ function serializeStyles(styles: object) {
 
 function getDOMAttributes(properties: Record<string, unknown>) {
   const attributes: string[] = [];
-  for (const [name, value] of Object.entries(properties)) {
+  for (const [name, valueOrStore] of Object.entries(properties)) {
+    const value =
+      valueOrStore instanceof BaseStore ? valueOrStore.value : valueOrStore;
     if (
       name === "children" ||
       typeof value === "function" ||
