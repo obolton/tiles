@@ -1,3 +1,9 @@
+import type { StoreInterface } from "@/utils/stores";
+
+export type WithStores<T> = {
+  [K in keyof T]: T[K] | StoreInterface<T[K]>;
+};
+
 export namespace JSX {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export type Element<T extends ElementType = any> = {
@@ -24,7 +30,8 @@ export namespace JSX {
     | boolean
     | null
     | undefined
-    | Node[];
+    | Node[]
+    | StoreInterface<Node>;
 
   export type Component<P> = (props: P) => Node;
 
@@ -32,9 +39,13 @@ export namespace JSX {
     children?: Node;
   }
 
-  export type HTMLAttributes<T extends keyof HTMLElementTagNameMap> = Partial<
-    Omit<HTMLElementTagNameMap[T], "children" | "style">
-  > & { children?: Node; style?: Partial<CSSStyleDeclaration> };
+  export type HTMLAttributes<T extends keyof HTMLElementTagNameMap> =
+    WithStores<
+      Partial<Omit<HTMLElementTagNameMap[T], "children" | "style">> & {
+        children?: Node;
+        style?: Partial<CSSStyleDeclaration>;
+      }
+    >;
 
   export type HTMLElements = {
     [T in keyof HTMLElementTagNameMap]: HTMLAttributes<T>;
