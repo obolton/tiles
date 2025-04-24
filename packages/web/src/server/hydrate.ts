@@ -1,4 +1,4 @@
-import { hydrate } from "@/jsx/hydrate";
+import { hydrate } from "@/jsx/dom";
 
 const pageData = document.getElementById("page-data")?.textContent;
 
