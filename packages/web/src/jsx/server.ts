@@ -1,5 +1,6 @@
 import { escapeUTF8 } from "entities";
 import { BaseStore } from "@/utils/stores";
+import { serializeStyles } from "@/utils/css";
 import type { JSX } from "./jsx";
 
 // https://developer.mozilla.org/en-US/docs/Glossary/Void_element
@@ -96,21 +97,6 @@ function mapAttributeName(name: string) {
     default:
       return name.toLowerCase();
   }
-}
-
-function transformCSSProperty(name: string) {
-  return name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-}
-
-function serializeStyles(styles: object) {
-  const rules: string[] = [];
-  for (const [name, value] of Object.entries(styles)) {
-    if (!(typeof value === "string" || typeof value === "number")) {
-      continue;
-    }
-    rules.push(transformCSSProperty(name) + ":" + value);
-  }
-  return rules.join(";");
 }
 
 function getDOMAttributes(properties: Record<string, unknown>) {
