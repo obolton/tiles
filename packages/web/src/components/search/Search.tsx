@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import type InfiniteScroll from "@/elements/infiniteScroll/InfiniteScroll";
-import styles from "./Search.module.css";
 import { classNames } from "@/utils/css";
+import { Store } from "@/utils/stores";
+import styles from "./Search.module.css";
+import type { JSX } from "@/jsx/jsx";
 
-interface SearchProps<T> {
+export interface SearchProps<T> {
   itemsClassName?: string;
   search: (query: string, offset: number) => void;
-  results: T[] | null;
-  hasMore: boolean;
+  results: Store<T[]>;
+  hasMore: Store<boolean>;
   placeholder?: string;
-  render: (result: T) => React.ReactNode;
-  renderPlaceholder: (query: string) => React.ReactNode;
+  render: (result: T) => JSX.Node;
+  renderPlaceholder: (query: string) => JSX.Node;
 }
 
 export default function Search<T>({
@@ -22,63 +22,41 @@ export default function Search<T>({
   render,
   renderPlaceholder,
 }: SearchProps<T>) {
-  const ref = useRef<InfiniteScroll>(null);
-  const [query, setQuery] = useState("");
-  const [isPending, setPending] = useState(false);
+  const query = new Store("");
 
-  const onLoadMore = useCallback(async () => {
-    if (!hasMore || isPending) {
+  async function onLoadMore() {
+    if (!hasMore.value) {
       return;
     }
-    search(query, results?.length ?? 0);
-  }, [hasMore, isPending, search, results?.length, query]);
+    search(query.value, results.value.length);
+  }
 
-  const onChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const query = event.target.value.trim();
-      setQuery(query);
-      setPending(true);
-      search(query, 0);
-    },
-    [search],
-  );
-
-  useEffect(() => {
-    if (results) {
-      setPending(false);
-    }
-  }, [results]);
-
-  useEffect(() => {
-    if (results === null) {
-      setPending(true);
-    }
-    if (results === null || ref.current?.atEnd) {
-      onLoadMore();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  function onInput(event: Event) {
+    const input = event.currentTarget as HTMLInputElement;
+    const queryString = input.value.trim();
+    query.value = queryString;
+    search(queryString, 0);
+  }
 
   return (
     <section className={styles.search}>
       <input
         id="search"
-        autoFocus
         type="search"
+        autoFocus
         placeholder={placeholder}
-        onChange={onChange}
+        oninput={onInput}
       />
 
       <infinite-scroll
         class={classNames(styles.items, itemsClassName)}
-        ref={ref}
         onloadmore={onLoadMore}
       >
-        {!isPending && results && results.length === 0
-          ? renderPlaceholder(query)
-          : null}
-
-        {isPending ? <div className={styles.loading} /> : results?.map(render)}
+        {results.derive((items) =>
+          items.length === 0
+            ? renderPlaceholder(query.value)
+            : items.map(render),
+        )}
       </infinite-scroll>
     </section>
   );
