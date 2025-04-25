@@ -1,96 +1,76 @@
-import type { AppRouterOutputs } from "@/api/client";
 import client from "@/api/client";
-import DeletedPage from "./DeletedPage";
-import Placeholder from "@/components/placeholder/Placeholder";
+import PagesGridItem from "./PagesGridItem";
+import PageLinkTile from "@/components/tiles/PageLinkTile";
 import Search from "@/components/search/Search";
-import { useCallback, useState, useTransition } from "react";
 import { handleError } from "@/utils/errors";
-import useDebouncedCallback from "@/hooks/useDebouncedCallback";
+import { Store } from "@/utils/stores";
 import { showToast } from "@/utils/toasts";
 import styles from "./DeletedPagesGrid.module.css";
-import { classNames } from "@/utils/css";
+import type { ClientPageLink } from "@/types/tiles";
+import type { JSX } from "@/jsx/jsx";
+
+interface PagesSearchResults {
+  pages: NonNullable<ClientPageLink["linkedPage"]>[];
+  hasMore: boolean;
+}
 
 interface DeletedPagesGridProps {
-  pages?: AppRouterOutputs["pages"]["listDeleted"];
+  inputPlaceholder?: string;
+  search: (query: string, offset: number) => Promise<PagesSearchResults>;
+  pages?: PagesSearchResults;
+  renderPlaceholder: (query: string) => JSX.Node;
 }
 
 export default function DeletedPagesGrid({
+  inputPlaceholder,
+  search,
   pages: initialPages,
+  renderPlaceholder,
 }: DeletedPagesGridProps) {
-  const [isPending, startTransition] = useTransition();
-  const [pages, setPages] = useState(initialPages?.pages ?? []);
-  const [hasMore, setHasMore] = useState(initialPages?.hasMore ?? false);
-  const [hasQuery, setHasQuery] = useState(false);
+  const pages = new Store(initialPages?.pages ?? []);
+  const hasMore = new Store(initialPages?.hasMore ?? false);
 
-  const search = useDebouncedCallback(
-    async (query: string, offset: number = 0) => {
-      try {
-        const { pages: resultPages, hasMore } =
-          await client.pages.listDeleted.query({
-            query: query || undefined,
-            offset,
-          });
-        if (offset === 0) {
-          setPages(resultPages);
-        } else {
-          setPages((prevPages) => [...(prevPages ?? []), ...resultPages]);
-        }
-        setHasQuery(!!query);
-        setHasMore(hasMore);
-      } catch (error) {
-        handleError(error);
+  const onSearch = async (query: string, offset: number = 0) => {
+    try {
+      const results = await search(query, offset);
+      if (offset === 0) {
+        pages.value = results.pages;
+      } else {
+        pages.value = [...pages.value, ...results.pages];
       }
-    },
-    300,
-    [],
-  );
+      hasMore.value = results.hasMore;
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
-  const renderPlaceholder = useCallback(
-    (query: string) => (
-      <Placeholder>
-        {query ? "There are no results." : "There are no pages in the trash."}
-      </Placeholder>
-    ),
-    [],
-  );
-
-  const emptyTrash = useCallback(() => {
-    startTransition(async () => {
-      await client.pages.emptyTrash.mutate();
-      setPages([]);
-      showToast("The trash was emptied.", "success");
-    });
-  }, []);
+  const emptyTrash = async () => {
+    await client.pages.emptyTrash.mutate();
+    pages.value = [];
+    showToast("The trash was emptied.", "success");
+  };
 
   return (
     <>
-      {!hasQuery && pages.length > 0 ? (
-        <>
-          <aside className={styles.aside}>
-            <p>Pages in the trash will be permanently deleted after 30 days.</p>
+      <aside className={styles.aside}>
+        <p>Pages in the trash will be permanently deleted after 30 days.</p>
+        <button type="button" className="secondary" onclick={emptyTrash}>
+          Empty trash
+        </button>
+      </aside>
 
-            <button
-              type="button"
-              className={classNames("secondary", isPending && "pending")}
-              onClick={emptyTrash}
-            >
-              Empty trash
-            </button>
-          </aside>
-          <Search
-            search={search}
-            results={pages}
-            hasMore={hasMore}
-            placeholder="Search trash"
-            render={(page) => <DeletedPage key={page.id} {...page} />}
-            renderPlaceholder={renderPlaceholder}
-          />
-        </>
-      ) : (
-        <aside>
-          <p>The trash is empty.</p>
-        </aside>
-      )}
+      <Search
+        search={onSearch}
+        results={pages}
+        hasMore={hasMore}
+        placeholder={inputPlaceholder}
+        render={(page) => (
+          <PagesGridItem>
+            <PageLinkTile id={page.id} linkedPage={page} openInNewTab={false} />
+          </PagesGridItem>
+        )}
+        renderPlaceholder={renderPlaceholder}
+      />
     </>
   );
 }
