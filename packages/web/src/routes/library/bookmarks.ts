@@ -1,8 +1,6 @@
 import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
-import BookmarksPage, {
-  type BookmarksPageProps,
-} from "@/pages/library/BookmarksPage";
+import Bookmarks, { type BookmarksProps } from "@/pages/library/Bookmarks";
 import type {
   Route,
   RequestProperties,
@@ -11,7 +9,7 @@ import type {
 
 async function loader({
   headers,
-}: RequestProperties): RouteLoaderResult<BookmarksPageProps> {
+}: RequestProperties): RouteLoaderResult<BookmarksProps> {
   const sessionId = getSessionId(headers);
   if (!sessionId) {
     throw new Error("Unauthorized");
@@ -30,5 +28,5 @@ async function loader({
 
 export default {
   loader: import.meta.env.SSR ? loader : undefined,
-  component: BookmarksPage,
-} satisfies Route<BookmarksPageProps>;
+  component: Bookmarks,
+} satisfies Route<BookmarksProps>;

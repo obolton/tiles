@@ -1,8 +1,6 @@
 import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
-import LibraryPage, {
-  type LibraryPageProps,
-} from "@/pages/library/LibraryPage";
+import Library, { type LibraryProps } from "@/pages/library/Library";
 import type {
   Route,
   RequestProperties,
@@ -11,7 +9,7 @@ import type {
 
 async function loader({
   headers,
-}: RequestProperties): RouteLoaderResult<LibraryPageProps> {
+}: RequestProperties): RouteLoaderResult<LibraryProps> {
   const sessionId = getSessionId(headers);
   if (!sessionId) {
     throw new Error("Unauthorized");
@@ -30,5 +28,5 @@ async function loader({
 
 export default {
   loader: import.meta.env.SSR ? loader : undefined,
-  component: LibraryPage,
-} satisfies Route<LibraryPageProps>;
+  component: Library,
+} satisfies Route<LibraryProps>;

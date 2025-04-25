@@ -6,21 +6,48 @@ import PeopleIcon from "@/icons/people.svg?jsx";
 import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import PagesGrid from "@/components/grid/PagesGrid";
+import NewIcon from "@/icons/new.svg?jsx";
+import { handleError } from "@/utils/errors";
 import type { AppRouterOutputs } from "@/api/client";
 
-export interface BookmarksPageProps {
-  pages: AppRouterOutputs["bookmarks"]["list"];
+export interface LibraryProps {
+  pages: AppRouterOutputs["pages"]["list"];
+}
+
+async function createNewPage() {
+  try {
+    const { id } = await client.pages.create.mutate({ title: "New page" });
+    window.open(`/pages/${id}?edit=true`);
+  } catch (error) {
+    handleError(error);
+  }
 }
 
 function renderPlaceholder(query: string) {
   return (
-    <Placeholder>
-      {query ? "There are no results." : "You don’t have any bookmarks."}
+    <Placeholder
+      actions={
+        query ? undefined : (
+          <button
+            className="floating"
+            type="button"
+            aria-label="New page"
+            data-tooltip="Create a new page"
+            onclick={createNewPage}
+          >
+            <NewIcon aria-hidden="true" />
+          </button>
+        )
+      }
+    >
+      {query
+        ? "There are no results."
+        : "Get started by creating your first page."}
     </Placeholder>
   );
 }
 
-export default function BookmarksPage({ pages }: BookmarksPageProps) {
+export default function Library({ pages }: LibraryProps) {
   return (
     <PageLayout>
       <header>
@@ -29,7 +56,7 @@ export default function BookmarksPage({ pages }: BookmarksPageProps) {
 
       <main>
         <ul class="tabs" role="navigation">
-          <li>
+          <li aria-selected="true">
             <a href="/library">
               <LibraryIcon aria-hidden="true" />
               Your pages
@@ -41,7 +68,7 @@ export default function BookmarksPage({ pages }: BookmarksPageProps) {
               Shared with you
             </a>
           </li>
-          <li aria-selected="true">
+          <li>
             <a href="/library/bookmarks">
               <BookmarkIcon aria-hidden="true" />
               Bookmarks
@@ -56,11 +83,9 @@ export default function BookmarksPage({ pages }: BookmarksPageProps) {
         </ul>
 
         <PagesGrid
-          inputPlaceholder="Search bookmarks"
+          inputPlaceholder="Search pages"
           pages={pages}
-          search={(query, offset) =>
-            client.bookmarks.list.query({ query, offset })
-          }
+          search={(query, offset) => client.pages.list.query({ query, offset })}
           renderPlaceholder={renderPlaceholder}
         />
       </main>
