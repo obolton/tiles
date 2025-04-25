@@ -1,36 +1,35 @@
-import client from "@/api/client";
 import PagesGridItem from "./PagesGridItem";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
-import Placeholder from "@/components/placeholder/Placeholder";
 import Search from "@/components/search/Search";
-import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { Store } from "@/utils/stores";
-import type { AppRouterOutputs } from "@/api/client";
+import type { ClientPageLink } from "@/types/tiles";
+import type { JSX } from "@/jsx/jsx";
+
+interface PagesSearchResults {
+  pages: NonNullable<ClientPageLink["linkedPage"]>[];
+  hasMore: boolean;
+}
 
 interface PagesGridProps {
-  pages?: AppRouterOutputs["pages"]["list"];
+  inputPlaceholder?: string;
+  search: (query: string, offset: number) => Promise<PagesSearchResults>;
+  pages?: PagesSearchResults;
+  renderPlaceholder: (query: string) => JSX.Node;
 }
 
-async function createNewPage() {
-  try {
-    const { id } = await client.pages.create.mutate({ title: "New page" });
-    window.open(`/pages/${id}?edit=true`);
-  } catch (error) {
-    handleError(error);
-  }
-}
-
-export default function PagesGrid({ pages: initialPages }: PagesGridProps) {
+export default function PagesGrid({
+  inputPlaceholder,
+  search,
+  pages: initialPages,
+  renderPlaceholder,
+}: PagesGridProps) {
   const pages = new Store(initialPages?.pages ?? []);
   const hasMore = new Store(initialPages?.hasMore ?? false);
 
-  const search = async (query: string, offset: number = 0) => {
+  const onSearch = async (query: string, offset: number = 0) => {
     try {
-      const results = await client.pages.list.query({
-        query: query || undefined,
-        offset,
-      });
+      const results = await search(query, offset);
       if (offset === 0) {
         pages.value = results.pages;
       } else {
@@ -42,34 +41,12 @@ export default function PagesGrid({ pages: initialPages }: PagesGridProps) {
     }
   };
 
-  const renderPlaceholder = (query: string) => (
-    <Placeholder
-      actions={
-        query ? undefined : (
-          <button
-            className="floating"
-            type="button"
-            aria-label="New page"
-            data-tooltip="Create a new page"
-            onclick={createNewPage}
-          >
-            <NewIcon aria-hidden="true" />
-          </button>
-        )
-      }
-    >
-      {query
-        ? "There are no results."
-        : "Get started by creating your first page."}
-    </Placeholder>
-  );
-
   return (
     <Search
-      search={search}
+      search={onSearch}
       results={pages}
       hasMore={hasMore}
-      placeholder="Search pages"
+      placeholder={inputPlaceholder}
       render={(page) => (
         <PagesGridItem>
           <PageLinkTile id={page.id} linkedPage={page} openInNewTab={false} />
