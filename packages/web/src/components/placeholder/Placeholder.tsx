@@ -1,10 +1,11 @@
 import styles from "./Placeholder.module.css";
 import { classNames } from "@/utils/css";
+import type { JSX } from "@/jsx/jsx";
 
 interface PlaceholderProps {
   className?: string;
-  children?: React.ReactNode;
-  actions?: React.ReactNode;
+  children?: JSX.Node;
+  actions?: JSX.Node;
 }
 
 export default function Placeholder({
