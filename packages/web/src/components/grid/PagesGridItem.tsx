@@ -1,7 +1,8 @@
 import styles from "./PagesGridItem.module.css";
+import type { JSX } from "@/jsx/jsx";
 
 interface PagesGridItemProps {
-  children: React.ReactNode;
+  children: JSX.Node;
 }
 
 export default function PagesGridItem({ children }: PagesGridItemProps) {
