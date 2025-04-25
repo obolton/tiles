@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { jsx } from "../jsx";
 import { renderToString } from "../server";
+import { Store } from "@/utils/stores";
 import type { JSX } from "../jsx";
 
 describe("renderToString", () => {
@@ -55,6 +56,16 @@ describe("renderToString", () => {
     const element = jsx("input", {
       checked: true,
     });
+    expect(renderToString(element)).toBe("<input checked>");
+  });
+
+  test("renders an attribute from a store", () => {
+    const store = new Store(false);
+    const element = jsx("input", {
+      checked: store,
+    });
+    expect(renderToString(element)).toBe("<input>");
+    store.value = true;
     expect(renderToString(element)).toBe("<input checked>");
   });
 
