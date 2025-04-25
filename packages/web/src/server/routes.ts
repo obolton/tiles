@@ -5,10 +5,22 @@ const routeModules = import.meta.glob("@/routes/**/*.ts", {
   import: "default",
 });
 
+function getPathFromModuleUrl(url: string) {
+  const matches = url.match(/^\/src\/routes(.*)\.ts$/);
+  if (!matches || !matches[1]) {
+    return null;
+  }
+  const path = matches[1];
+  if (path.endsWith("/index")) {
+    return path.slice(0, -6);
+  }
+  return path;
+}
+
 export function getRouter() {
   const router = new Router();
   for (const [moduleUrl, importer] of Object.entries(routeModules)) {
-    const path = moduleUrl.match(/^\/src\/routes(.*)\.ts$/)?.[1];
+    const path = getPathFromModuleUrl(moduleUrl);
     if (path) {
       router.add(path, {
         moduleUrl,
