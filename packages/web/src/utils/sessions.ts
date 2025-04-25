@@ -1,7 +1,15 @@
-import { SIGNED_IN_FLAG_COOKIE_NAME } from "api/src/constants/cookies";
+import {
+  SIGNED_IN_FLAG_COOKIE_NAME,
+  SESSION_COOKIE_NAME,
+} from "api/src/constants/cookies";
 import client from "@/api/client";
 import { getCookie } from "./cookies";
 import { clear, setPersistent, removePersistent, getPersistent } from "./state";
+import type { IncomingHttpHeaders } from "node:http";
+
+export function getSessionId(headers: IncomingHttpHeaders) {
+  return getCookie(headers.cookie ?? "", SESSION_COOKIE_NAME);
+}
 
 export function isSignedIn() {
   return getCookie(document.cookie, SIGNED_IN_FLAG_COOKIE_NAME) === "1";
