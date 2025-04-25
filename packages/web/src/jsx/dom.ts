@@ -1,4 +1,5 @@
 import { BaseStore } from "@/utils/stores";
+import { serializeStyles } from "@/utils/css";
 import type { StoreInterface } from "@/utils/stores";
 import type { JSX } from "./jsx";
 
@@ -86,7 +87,7 @@ function setAttribute(element: Element, name: string, value: unknown) {
     typeof value === "object" &&
     element instanceof HTMLElement
   ) {
-    Object.assign(element.style, value);
+    element.setAttribute(mappedName, serializeStyles(value));
   } else if (value === true) {
     element.setAttribute(mappedName, "");
   } else if (
