@@ -3,17 +3,17 @@ import { getCookie } from "../cookies";
 
 describe("getCookie", () => {
   test("returns the value of the cookie", () => {
-    document.cookie = "test=123; abc=def";
-    expect(getCookie("test")).toBe("123");
+    const cookies = "test=123; abc=def";
+    expect(getCookie(cookies, "test")).toBe("123");
   });
 
   test("returns null if the cookie does not exist", () => {
-    document.cookie = "test=123; abc=def";
-    expect(getCookie("nonexistent")).toBe(null);
+    const cookies = "test=123; abc=def";
+    expect(getCookie(cookies, "nonexistent")).toBe(null);
   });
 
   test("returns an empty value", () => {
-    document.cookie = "test=; abc=def";
-    expect(getCookie("test")).toBe("");
+    const cookies = "test=; abc=def";
+    expect(getCookie(cookies, "test")).toBe("");
   });
 });

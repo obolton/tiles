@@ -4,7 +4,7 @@ import { getCookie } from "./cookies";
 import { clear, setPersistent, removePersistent, getPersistent } from "./state";
 
 export function isSignedIn() {
-  return getCookie(SIGNED_IN_FLAG_COOKIE_NAME) === "1";
+  return getCookie(document.cookie, SIGNED_IN_FLAG_COOKIE_NAME) === "1";
 }
 
 export async function getUserInfo() {
