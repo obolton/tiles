@@ -1,6 +1,7 @@
 import { getRouter } from "./routes";
 import { escapeUTF8 } from "entities";
 import { renderToString } from "@/jsx/server";
+import globalMetadata from "@/routes/metadata";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { RouteConfig, RouteData, RouteMetadata } from "@/router/router";
@@ -103,6 +104,19 @@ function getPageEndChunk(routeConfig: RouteConfig, data?: RouteData) {
   return chunk;
 }
 
+function mergeRouteMetadata(...metadata: RouteMetadata[]) {
+  const merged: RouteMetadata = {};
+  for (const entry of metadata) {
+    if (entry.links) {
+      merged.links = (merged.links ?? []).concat(entry.links);
+    }
+    if (entry.scripts) {
+      merged.scripts = (merged.scripts ?? []).concat(entry.scripts);
+    }
+  }
+  return merged;
+}
+
 async function renderRoute(
   request: IncomingMessage,
   response: ServerResponse,
@@ -111,8 +125,12 @@ async function renderRoute(
 ) {
   const { loader, component, metadata = {} } = await routeConfig.import();
 
+  const mergedMetadata = mergeRouteMetadata(globalMetadata, metadata);
+
   response.writeHead(200);
-  response.write(await getEarlyHeadChunk(routeConfig, metadata, viteDevServer));
+  response.write(
+    await getEarlyHeadChunk(routeConfig, mergedMetadata, viteDevServer),
+  );
 
   const data = loader
     ? await loader({
