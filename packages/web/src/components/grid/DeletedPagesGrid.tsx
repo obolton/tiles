@@ -1,6 +1,5 @@
 import client from "@/api/client";
-import PagesGridItem from "./PagesGridItem";
-import PageLinkTile from "@/components/tiles/PageLinkTile";
+import DeletedPage from "./DeletedPage";
 import Search from "@/components/search/Search";
 import { handleError } from "@/utils/errors";
 import { Store } from "@/utils/stores";
@@ -64,11 +63,7 @@ export default function DeletedPagesGrid({
         results={pages}
         hasMore={hasMore}
         placeholder={inputPlaceholder}
-        render={(page) => (
-          <PagesGridItem>
-            <PageLinkTile id={page.id} linkedPage={page} openInNewTab={false} />
-          </PagesGridItem>
-        )}
+        render={(page) => <DeletedPage {...page} />}
         renderPlaceholder={renderPlaceholder}
       />
     </>

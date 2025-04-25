@@ -1,4 +1,3 @@
-import { useCallback, useTransition } from "react";
 import PagesGridItem from "./PagesGridItem";
 import PageTile from "@/components/tiles/PageTile";
 import client from "@/api/client";
@@ -12,30 +11,22 @@ interface DeletedPageProps extends Omit<PageTileProps, "actions"> {
 }
 
 export default function DeletedPage({ id, ...props }: DeletedPageProps) {
-  const [isPending, startTransition] = useTransition();
-
-  const restorePage = useCallback(() => {
-    startTransition(async () => {
-      await client.pages.restore.mutate({ pageId: id });
-      redirectWithToast(
-        `/pages/${id}`,
-        "The page was moved out of the trash.",
-        "success",
-      );
-    });
-  }, [id]);
+  const restorePage = async () => {
+    await client.pages.restore.mutate({ pageId: id });
+    redirectWithToast(
+      `/pages/${id}`,
+      "The page was moved out of the trash.",
+      "success",
+    );
+  };
 
   return (
     <PagesGridItem>
       <PageTile {...props}>
         <button
           type="button"
-          className={classNames(
-            "secondary",
-            isPending && "pending",
-            styles.restore,
-          )}
-          onClick={restorePage}
+          className={classNames("secondary", styles.restore)}
+          onclick={restorePage}
         >
           Restore
         </button>
