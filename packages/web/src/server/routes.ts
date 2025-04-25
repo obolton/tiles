@@ -1,14 +1,14 @@
 import Router from "@/router/router";
 import type { RouteImporter } from "@/router/router";
 
-const routeModules = import.meta.glob("@/routes/**/*.tsx", {
+const routeModules = import.meta.glob("@/routes/**/*.ts", {
   import: "default",
 });
 
 export function getRouter() {
   const router = new Router();
   for (const [moduleUrl, importer] of Object.entries(routeModules)) {
-    const path = moduleUrl.match(/^\/src\/routes(.*)\.tsx$/)?.[1];
+    const path = moduleUrl.match(/^\/src\/routes(.*)\.ts$/)?.[1];
     if (path) {
       router.add(path, {
         moduleUrl,
