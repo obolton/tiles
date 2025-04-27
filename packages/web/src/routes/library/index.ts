@@ -1,5 +1,6 @@
 import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
+import { authenticatedRoute } from "@/utils/middleware";
 import Library, { type LibraryProps } from "@/pages/library/Library";
 import type {
   Route,
@@ -27,6 +28,7 @@ async function loader({
 }
 
 export default {
+  middleware: import.meta.env.SSR ? authenticatedRoute : undefined,
   loader: import.meta.env.SSR ? loader : undefined,
   component: Library,
 } satisfies Route<LibraryProps>;
