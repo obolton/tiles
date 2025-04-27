@@ -1,4 +1,4 @@
-import type { IncomingHttpHeaders } from "node:http";
+import type { IncomingMessage, IncomingHttpHeaders } from "node:http";
 import type { JSX } from "@/jsx/jsx";
 
 export interface RequestProperties {
@@ -25,6 +25,19 @@ export interface RouteData<T = unknown> {
   data: T;
 }
 
+export type RedirectStatusCode = 301 | 302 | 307 | 308;
+
+export interface Redirect {
+  statusCode: RedirectStatusCode;
+  location: string;
+}
+
+export type RouteMiddlewareResult = Redirect;
+
+export type RouteMiddleware = (
+  request: IncomingMessage,
+) => RouteMiddlewareResult | undefined;
+
 export type RouteLoaderResult<T> = Promise<RouteData<T>>;
 
 export type RouteLoader<T> = (
@@ -32,6 +45,7 @@ export type RouteLoader<T> = (
 ) => RouteLoaderResult<T>;
 
 export interface Route<T> {
+  middleware?: RouteMiddleware;
   loader?: RouteLoader<T>;
   component: JSX.Component<T>;
   metadata?: RouteMetadata;
@@ -48,6 +62,13 @@ export interface RouteNode {
   route?: RouteConfig;
   wildcard?: RouteNode;
   children?: Map<string, RouteNode>;
+}
+
+export function redirect(
+  location: string,
+  statusCode: RedirectStatusCode = 301,
+): Redirect {
+  return { statusCode, location };
 }
 
 export default class Router {

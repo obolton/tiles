@@ -4,7 +4,12 @@ import { renderToString } from "@/jsx/server";
 import globalMetadata from "@/routes/metadata";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { ModuleNode, ViteDevServer } from "vite";
-import type { RouteConfig, RouteData, RouteMetadata } from "@/router/router";
+import type {
+  RouteConfig,
+  RouteData,
+  RouteMetadata,
+  RouteMiddlewareResult,
+} from "@/router/router";
 
 const router = getRouter();
 
@@ -117,13 +122,38 @@ function mergeRouteMetadata(...metadata: RouteMetadata[]) {
   return merged;
 }
 
+function handleMiddlewareResult(
+  result: RouteMiddlewareResult,
+  response: ServerResponse,
+) {
+  if ("location" in result) {
+    response.writeHead(result.statusCode, {
+      location: result.location,
+    });
+    response.end();
+  }
+}
+
 async function renderRoute(
   request: IncomingMessage,
   response: ServerResponse,
   routeConfig: RouteConfig,
   viteDevServer: ViteDevServer,
 ) {
-  const { loader, component, metadata = {} } = await routeConfig.import();
+  const {
+    middleware,
+    loader,
+    component,
+    metadata = {},
+  } = await routeConfig.import();
+
+  if (middleware) {
+    const middlewareResult = middleware(request);
+    if (middlewareResult) {
+      handleMiddlewareResult(middlewareResult, response);
+      return;
+    }
+  }
 
   const mergedMetadata = mergeRouteMetadata(globalMetadata, metadata);
 
