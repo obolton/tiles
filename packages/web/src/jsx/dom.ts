@@ -5,7 +5,6 @@ import type { JSX } from "./jsx";
 
 interface MutableRange {
   store: StoreInterface<JSX.Node>;
-  container: Element;
   anchor: Node;
   length: number;
 }
@@ -200,7 +199,6 @@ function hydrateStoreNode(
   }
   const range: MutableRange = {
     store,
-    container,
     anchor,
     length,
   };
@@ -249,24 +247,25 @@ function updateRange(range: MutableRange) {
 
   const nextNode = existingNodes[existingNodes.length - 1]?.nextSibling ?? null;
 
+  const container = range.anchor.parentNode;
   for (const existingNode of existingNodes) {
-    range.container.removeChild(existingNode);
+    container?.removeChild(existingNode);
   }
 
   const node = render(range.store.value);
   if (node instanceof Element || node instanceof Text) {
     range.anchor = node;
     range.length = 1;
-    range.container.insertBefore(node, nextNode);
+    container?.insertBefore(node, nextNode);
   } else if (node instanceof DocumentFragment && node.firstChild) {
     range.anchor = node.firstChild;
     range.length = node.childNodes.length;
-    range.container.insertBefore(node, nextNode);
+    container?.insertBefore(node, nextNode);
   } else {
     const anchor = createPlaceholderNode();
     range.anchor = anchor;
     range.length = 1;
-    range.container.insertBefore(anchor, nextNode);
+    container?.insertBefore(anchor, nextNode);
   }
 }
 
@@ -313,6 +312,21 @@ function renderFragment(nodes: JSX.Node[]) {
   return fragment;
 }
 
+function renderStoreNode(store: StoreInterface<JSX.Node>) {
+  const container = document.createDocumentFragment();
+  const node = render(store.value);
+  const anchor = node ? node : createPlaceholderNode();
+  container.appendChild(anchor);
+
+  const range: MutableRange = {
+    store,
+    anchor,
+    length,
+  };
+  store.subscribe(() => updateRange(range));
+  return container;
+}
+
 export function render(node: JSX.Node): Node | null {
   if (isEmptyNode(node)) {
     return null;
@@ -328,6 +342,10 @@ export function render(node: JSX.Node): Node | null {
 
   if (Array.isArray(node)) {
     return renderFragment(node);
+  }
+
+  if (node instanceof BaseStore) {
+    return renderStoreNode(node);
   }
 
   throw new Error("Invalid node");
