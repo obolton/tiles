@@ -55,7 +55,7 @@ function setAttributes<T extends keyof JSX.IntrinsicElements>(
   properties: JSX.Properties<T>,
 ) {
   for (const [name, value] of Object.entries(properties)) {
-    if (name === "children") {
+    if (name === "children" || name === "ref") {
       continue;
     }
     if (name.startsWith("on") && typeof value === "function") {
@@ -151,7 +151,7 @@ function hydrateElementNode(
 
 function hydrateDOMElement(
   tagName: string,
-  attributes: { children?: JSX.Node },
+  attributes: { children?: JSX.Node; ref?: JSX.Ref<unknown> },
   container: Element,
   index: number,
 ) {
@@ -161,12 +161,18 @@ function hydrateDOMElement(
     const element = ensureElementNode(node, tagName);
     setAttributes(element, attributes);
     hydrateFragment(toNodeArray(attributes.children), element, 0);
+    if (attributes.ref) {
+      attributes.ref(element);
+    }
   } else {
     const element = document.createElement(tagName);
     setAttributes(element, attributes);
     const childNode = renderFragment(toNodeArray(attributes.children));
     if (childNode) {
       element.appendChild(childNode);
+    }
+    if (attributes.ref) {
+      attributes.ref(element);
     }
     container.appendChild(element);
   }
@@ -274,12 +280,18 @@ function renderDOMElement(node: JSX.Element<keyof JSX.IntrinsicElements>) {
 
   setAttributes(element, node.properties);
 
-  const children = node.properties.children;
+  const { children, ref } = node.properties;
+
   if (children !== null && typeof children !== "undefined") {
     const childNode = render(children);
     if (childNode) {
       element.appendChild(childNode);
     }
+  }
+
+  if (ref) {
+    // @ts-expect-error Improve types
+    ref(element);
   }
 
   return element;

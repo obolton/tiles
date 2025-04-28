@@ -39,16 +39,19 @@ export namespace JSX {
     children?: Node;
   }
 
-  export type HTMLAttributes<T extends keyof HTMLElementTagNameMap> =
-    WithStores<
-      Partial<Omit<HTMLElementTagNameMap[T], "children" | "style">> & {
-        children?: Node;
-        style?: Partial<CSSStyleDeclaration>;
-      }
-    >;
+  export type Ref<T> = (element: T) => void;
+
+  export type HTMLAttributes<T> = WithStores<
+    Partial<Omit<T, "children" | "style">> & {
+      children?: Node;
+      style?: Partial<CSSStyleDeclaration>;
+    }
+  > & { ref?: Ref<T> };
 
   export type HTMLElements = {
-    [T in keyof HTMLElementTagNameMap]: HTMLAttributes<T>;
+    [T in keyof HTMLElementTagNameMap]: HTMLAttributes<
+      HTMLElementTagNameMap[T]
+    >;
   };
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
