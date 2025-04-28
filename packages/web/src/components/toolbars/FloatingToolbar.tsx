@@ -1,10 +1,11 @@
 import styles from "./FloatingToolbar.module.css";
+import type { JSX } from "@/jsx/jsx";
 
 interface FloatingToolbarProps {
-  children: React.ReactNode;
+  children: JSX.Node;
 }
 
-function preventDefault(event: React.PointerEvent) {
+function preventDefault(event: PointerEvent) {
   event.preventDefault();
   event.stopPropagation();
 }
@@ -24,7 +25,7 @@ export default function FloatingToolbar({ children }: FloatingToolbarProps) {
       popover="manual"
       data-tooltip-position="top"
       // Prevent the toolbar items from stealing focus on pointer down
-      onPointerDownCapture={preventDefault}
+      onpointerdown={preventDefault}
     >
       {children}
     </div>
