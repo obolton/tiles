@@ -1,6 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
 import PageHeaderEditor from "./PageHeaderEditor";
-import useEditable from "@/hooks/useEditable";
 import { classNames } from "@/utils/css";
 import styles from "./PageHeader.module.css";
 import { handleError } from "@/utils/errors";
@@ -8,16 +6,19 @@ import { showModal } from "@/utils/modals";
 import ShareIcon from "@/icons/share.svg?jsx";
 import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
-import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import { formatRelativeDate } from "@/utils/dates";
 import { uploadMedia, preloadImage } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
-import { useEditor } from "@/context/editor";
+import type { ImageModalResult } from "@/components/modals/image/ImageModal";
+import type Editor from "@/editor/Editor";
+import type { Store } from "@/utils/stores";
 
 interface PageHeaderProps {
-  title: string;
-  subtitle: string | null;
-  coverImageUrl: string | null;
+  editor: Editor;
+  isEditable: Store<boolean>;
+  title: Store<string>;
+  subtitle: Store<string | null>;
+  coverImageUrl: Store<string | null>;
   updatedAt: string | null;
   author: {
     id: string;
@@ -28,88 +29,63 @@ interface PageHeaderProps {
 }
 
 export default function PageHeader({
-  title: initialTitle,
-  subtitle: initialSubtitle,
-  coverImageUrl: initialCoverImageUrl,
+  editor,
+  isEditable,
+  title,
+  subtitle,
+  coverImageUrl,
   author,
   updatedAt,
 }: PageHeaderProps) {
-  const editor = useEditor();
-  const [title, setTitle] = useState(initialTitle);
-  const [subtitle, setSubtitle] = useState(initialSubtitle);
-  const [coverImageUrl, setCoverImageUrl] = useState(initialCoverImageUrl);
-  const isEditable = useEditable();
+  const onBlur = async (newTitle: string, newSubtitle?: string) => {
+    try {
+      await editor.setPageTitle(newTitle, newSubtitle || "");
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
-  const onBlur = useCallback(
-    async (newTitle: string, newSubtitle?: string) => {
+  const toggleCoverImage = async () => {
+    if (coverImageUrl.value) {
       try {
-        setTitle(newTitle);
-        setSubtitle(newSubtitle || null);
-        await editor.setPageTitle(newTitle, newSubtitle || "");
+        await editor.setCoverImage(null);
+        viewTransition(() => {
+          coverImageUrl.value = null;
+        });
       } catch (error) {
         handleError(error);
       }
-    },
-    [editor],
-  );
-
-  const selectCoverImage = useCallback(
-    () =>
+    } else {
       showModal<ImageModalResult>("IMAGE", {
         async onConfirm(result) {
           try {
             const imageKey = await uploadMedia(result.image, "image");
-            const { coverImageUrl } = await editor.setCoverImage(imageKey);
-            if (coverImageUrl) {
-              await preloadImage(coverImageUrl);
+            const { coverImageUrl: url } = await editor.setCoverImage(imageKey);
+            if (url) {
+              await preloadImage(url);
             }
-            viewTransition(() => setCoverImageUrl(coverImageUrl));
+            viewTransition(() => {
+              coverImageUrl.value = url;
+            });
           } catch (error) {
             handleError(error);
           }
         },
-      }),
-    [editor],
-  );
-
-  const removeCoverImage = useCallback(async () => {
-    try {
-      await editor.setCoverImage(null);
-      viewTransition(() => setCoverImageUrl(null));
-    } catch (error) {
-      handleError(error);
+      });
     }
-  }, [editor]);
+  };
 
-  const style = useMemo(
-    () => ({
-      backgroundImage: coverImageUrl ? `url(${coverImageUrl})` : undefined,
-    }),
-    [coverImageUrl],
-  );
+  const style = {
+    backgroundImage: coverImageUrl ? `url(${coverImageUrl})` : undefined,
+  };
 
   return (
     <header
-      className={classNames(
-        styles.header,
-        coverImageUrl ? styles["with-cover-image"] : null,
+      className={coverImageUrl.derive((url) =>
+        classNames(styles.header, url ? styles["with-cover-image"] : null),
       )}
       style={style}
     >
-      {isEditable ? (
-        <PageHeaderEditor
-          className={styles.editor}
-          title={title}
-          subtitle={subtitle}
-          onBlur={onBlur}
-        />
-      ) : (
-        <div className={styles.title}>
-          <h1>{title || "Page title"}</h1>
-          {subtitle ? <p>{subtitle}</p> : null}
-        </div>
-      )}
-
       {author ? (
         <div className={styles.metadata}>
           <a
@@ -152,24 +128,44 @@ export default function PageHeader({
             <BookmarkIcon aria-hidden="true" />
           </button>
 
-          {isEditable ? (
-            <button
-              className="floating xsmall"
-              aria-label={
-                coverImageUrl ? "Remove cover image" : "Add cover image"
-              }
-              data-tooltip={
-                coverImageUrl ? "Remove cover image" : "Add a cover image"
-              }
-              type="button"
-              aria-pressed={coverImageUrl ? "true" : "false"}
-              onClick={coverImageUrl ? removeCoverImage : selectCoverImage}
-            >
-              <ImageIcon aria-hidden="true" />
-            </button>
-          ) : null}
+          {isEditable.derive((editable) =>
+            editable ? (
+              <button
+                className="floating xsmall"
+                aria-label={coverImageUrl.derive((url) =>
+                  url ? "Remove cover image" : "Add cover image",
+                )}
+                data-tooltip={coverImageUrl.derive((url) =>
+                  url ? "Remove cover image" : "Add a cover image",
+                )}
+                type="button"
+                aria-pressed={coverImageUrl.derive((url) =>
+                  url ? "true" : "false",
+                )}
+                onclick={toggleCoverImage}
+              >
+                <ImageIcon aria-hidden="true" />
+              </button>
+            ) : null,
+          )}
         </div>
       ) : null}
+
+      {isEditable.derive((editable) =>
+        editable ? (
+          <PageHeaderEditor
+            className={styles.editor}
+            title={title}
+            subtitle={subtitle}
+            onBlur={onBlur}
+          />
+        ) : (
+          <div className={styles.title}>
+            <h1>{title}</h1>
+            {subtitle.derive((value) => (value ? <p>{value}</p> : null))}
+          </div>
+        ),
+      )}
     </header>
   );
 }
