@@ -1,7 +1,5 @@
 declare module "*.svg?jsx" {
-  import type { FunctionComponent, SVGAttributes } from "react";
-  const Component: FunctionComponent<
-    SVGAttributes<SVGElement> & { slot?: string | null }
-  >;
+  import type { JSX } from "@/jsx/jsx";
+  const Component: JSX.Component<Partial<SVGElementTagNameMap["svg"]>>;
   export default Component;
 }
