@@ -9,6 +9,7 @@ import type {
   RouteData,
   RouteMetadata,
   RouteMiddlewareResult,
+  RouteMatch,
 } from "@/router/router";
 
 const router = getRouter();
@@ -137,15 +138,11 @@ function handleMiddlewareResult(
 async function renderRoute(
   request: IncomingMessage,
   response: ServerResponse,
-  routeConfig: RouteConfig,
+  routeMatch: RouteMatch,
   viteDevServer: ViteDevServer,
 ) {
-  const {
-    middleware,
-    loader,
-    component,
-    metadata = {},
-  } = await routeConfig.import();
+  const { route, parameters } = routeMatch;
+  const { middleware, loader, component, metadata = {} } = await route.import();
 
   if (middleware) {
     const middlewareResult = middleware(request);
@@ -158,14 +155,13 @@ async function renderRoute(
   const mergedMetadata = mergeRouteMetadata(globalMetadata, metadata);
 
   response.writeHead(200);
-  response.write(
-    await getEarlyHeadChunk(routeConfig, mergedMetadata, viteDevServer),
-  );
+  response.write(await getEarlyHeadChunk(route, mergedMetadata, viteDevServer));
 
   const data = loader
     ? await loader({
         path: request.url ?? "",
         headers: request.headers,
+        parameters,
       })
     : undefined;
 
@@ -174,7 +170,7 @@ async function renderRoute(
   const body = renderToString(component(data?.data));
 
   response.write(body);
-  response.write(getPageEndChunk(routeConfig, data));
+  response.write(getPageEndChunk(route, data));
   response.end();
 }
 

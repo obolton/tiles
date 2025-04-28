@@ -10,7 +10,7 @@ function getPathFromModuleUrl(url: string) {
   if (!matches || !matches[1]) {
     return null;
   }
-  const path = matches[1];
+  const path = matches[1].replace(/\[(\w+)\]/g, ":$1");
   if (path.endsWith("/index")) {
     return path.slice(0, -6);
   }

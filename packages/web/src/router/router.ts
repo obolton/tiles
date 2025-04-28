@@ -4,6 +4,7 @@ import type { JSX } from "@/jsx/jsx";
 export interface RequestProperties {
   path: string;
   headers: IncomingHttpHeaders;
+  parameters: RouteParameters;
 }
 
 export interface Link {
@@ -58,9 +59,17 @@ export interface RouteConfig {
   moduleUrl: string;
 }
 
+export type RouteParameters = Record<string, string>;
+
+export interface RouteMatch {
+  route: RouteConfig;
+  parameters: RouteParameters;
+}
+
 export interface RouteNode {
   route?: RouteConfig;
-  wildcard?: RouteNode;
+  parameter?: string;
+  dynamic?: RouteNode;
   children?: Map<string, RouteNode>;
 }
 
@@ -84,11 +93,19 @@ export default class Router {
     let node = this.root;
 
     for (const segment of segments) {
-      if (segment === "*") {
-        if (!node.wildcard) {
-          node.wildcard = {};
+      if (segment.startsWith(":")) {
+        const parameter = segment.slice(1);
+
+        if (parameter.length === 0) {
+          throw new Error(`Invalid path: ${path}`);
         }
-        node = node.wildcard;
+
+        if (!node.dynamic) {
+          node.dynamic = {
+            parameter,
+          };
+        }
+        node = node.dynamic;
       } else {
         if (!node.children) {
           node.children = new Map();
@@ -102,26 +119,31 @@ export default class Router {
     node.route = route;
   }
 
-  match(path: string): RouteConfig | null {
+  match(path: string): RouteMatch | null {
     const segments = this.getPathSegments(path);
+    const parameters: RouteParameters = {};
 
     if (segments.length === 0) {
-      return this.root.route ?? null;
+      return this.root.route ? { route: this.root.route, parameters } : null;
     }
 
-    let route = this.root;
+    let node = this.root;
 
     for (const segment of segments) {
-      const childRoute = route.children?.get(segment);
-      if (childRoute) {
-        route = childRoute;
-      } else if (route.wildcard) {
-        route = route.wildcard;
+      const staticRoute = node.children?.get(segment);
+      if (staticRoute) {
+        node = staticRoute;
+      } else if (node.dynamic) {
+        node = node.dynamic;
+
+        if (node.parameter) {
+          parameters[node.parameter] = segment;
+        }
       } else {
         return null;
       }
     }
 
-    return route.route ?? null;
+    return node.route ? { route: node.route, parameters } : null;
   }
 }

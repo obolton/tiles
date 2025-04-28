@@ -3,14 +3,14 @@ import Router from "../router";
 
 function mockRoute(moduleUrl: string) {
   return {
-    loader: vi.fn(),
+    import: vi.fn(),
     moduleUrl,
   };
 }
 
 const INDEX = mockRoute("index");
-const INDEX_WILDCARD = mockRoute("index-wildcard");
-const FOO_WILDCARD = mockRoute("foo-wildcard");
+const INDEX_DYNAMIC = mockRoute("index-dynamic");
+const FOO_DYNAMIC = mockRoute("foo-dynamic");
 const FOO = mockRoute("foo");
 const BAR = mockRoute("bar");
 const ABC = mockRoute("abc");
@@ -19,35 +19,41 @@ const GHI = mockRoute("ghi");
 const router = new Router();
 router.add("/", INDEX);
 router.add("/foo", FOO);
-router.add("/foo/*", FOO_WILDCARD);
+router.add("/:id", INDEX_DYNAMIC);
+router.add("/:id/nested/:name", FOO_DYNAMIC);
 router.add("/bar", BAR);
 router.add("/bar/abc", ABC);
 router.add("/bar/def/ghi", GHI);
-router.add("/*", INDEX_WILDCARD);
 
 describe("Router", () => {
   test("matches the index for an empty path", () => {
-    expect(router.match("/")).toBe(INDEX);
+    expect(router.match("/")).toEqual({ route: INDEX, parameters: {} });
   });
 
   test("matches the index for an empty string", () => {
-    expect(router.match("")).toBe(INDEX);
+    expect(router.match("")).toEqual({ route: INDEX, parameters: {} });
   });
 
   test("matches a named route", () => {
-    expect(router.match("/foo")).toBe(FOO);
+    expect(router.match("/foo")).toEqual({ route: FOO, parameters: {} });
   });
 
-  test("matches a root wildcard route", () => {
-    expect(router.match("/other")).toBe(INDEX_WILDCARD);
+  test("matches a dynamic route", () => {
+    expect(router.match("/other")).toEqual({
+      route: INDEX_DYNAMIC,
+      parameters: { id: "other" },
+    });
   });
 
-  test("matches a nested wildcard route", () => {
-    expect(router.match("/foo/other")).toBe(FOO_WILDCARD);
+  test("matches a nested dynamic route", () => {
+    expect(router.match("/123/nested/other")).toEqual({
+      route: FOO_DYNAMIC,
+      parameters: { id: "123", name: "other" },
+    });
   });
 
   test("matches a child route index", () => {
-    expect(router.match("/bar")).toBe(BAR);
+    expect(router.match("/bar")).toEqual({ route: BAR, parameters: {} });
   });
 
   test("returns null if the path does not match a route", () => {
@@ -55,11 +61,14 @@ describe("Router", () => {
   });
 
   test("matches a nested route", () => {
-    expect(router.match("/bar/abc")).toBe(ABC);
+    expect(router.match("/bar/abc")).toEqual({ route: ABC, parameters: {} });
   });
 
   test("matches a deeply nested route", () => {
-    expect(router.match("/bar/def/ghi")).toBe(GHI);
+    expect(router.match("/bar/def/ghi")).toEqual({
+      route: GHI,
+      parameters: {},
+    });
   });
 
   test("returns null if the path does not match a deeply nested subroute", () => {
