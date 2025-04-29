@@ -41,7 +41,7 @@ export namespace JSX {
 
   export type Ref<T> = (element: T) => void;
 
-  export type HTMLAttributes<T> = WithStores<
+  export type Attributes<T> = WithStores<
     Partial<Omit<T, "children" | "style">> & {
       children?: Node;
       style?: Partial<CSSStyleDeclaration>;
@@ -49,13 +49,26 @@ export namespace JSX {
   > & { ref?: Ref<T> };
 
   export type HTMLElements = {
-    [T in keyof HTMLElementTagNameMap]: HTMLAttributes<
-      HTMLElementTagNameMap[T]
+    [T in keyof HTMLElementTagNameMap]: Attributes<HTMLElementTagNameMap[T]>;
+  };
+
+  export type SVGElements = {
+    [T in keyof Omit<
+      SVGElementTagNameMap,
+      "a" | "script" | "style" | "title"
+    >]: Attributes<SVGElementTagNameMap[T]>;
+  };
+
+  export type MathMLElements = {
+    [T in keyof MathMLElementTagNameMap]: Attributes<
+      MathMLElementTagNameMap[T]
     >;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  export interface IntrinsicElements extends HTMLElements {}
+  export interface IntrinsicElements
+    extends HTMLElements,
+      SVGElements,
+      MathMLElements {}
 }
 
 export function jsx<T extends JSX.ElementType>(

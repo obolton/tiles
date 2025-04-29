@@ -3,6 +3,10 @@ import { serializeStyles } from "@/utils/css";
 import type { StoreInterface } from "@/utils/stores";
 import type { JSX } from "./jsx";
 
+const XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+const MATHML_NAMESPACE = "http://www.w3.org/1998/Math/MathML";
+
 interface MutableRange {
   store: StoreInterface<JSX.Node>;
   anchor: Node;
@@ -245,7 +249,7 @@ function createPlaceholderNode() {
   return document.createComment("");
 }
 
-function updateRange(range: MutableRange) {
+function updateRange(range: MutableRange, namespace?: string) {
   const existingNodes = [
     range.anchor,
     ...getNextSiblings(range.anchor, range.length - 1),
@@ -258,7 +262,7 @@ function updateRange(range: MutableRange) {
     container?.removeChild(existingNode);
   }
 
-  const node = render(range.store.value);
+  const node = render(range.store.value, namespace);
   if (node instanceof Element || node instanceof Text) {
     range.anchor = node;
     range.length = 1;
@@ -275,15 +279,34 @@ function updateRange(range: MutableRange) {
   }
 }
 
-function renderDOMElement(node: JSX.Element<keyof JSX.IntrinsicElements>) {
-  const element = document.createElement(node.type);
+function renderDOMElement(
+  node: JSX.Element<keyof JSX.IntrinsicElements>,
+  namespace?: string,
+) {
+  switch (node.type) {
+    case "svg":
+      namespace = SVG_NAMESPACE;
+      break;
+    case "math":
+      namespace = MATHML_NAMESPACE;
+      break;
+  }
+
+  const element = namespace
+    ? document.createElementNS(namespace, node.type)
+    : document.createElement(node.type);
 
   setAttributes(element, node.properties);
 
   const { children, ref } = node.properties;
 
+  // Included content from a different namespace
+  if (node.type === "foreignObject") {
+    namespace = XHTML_NAMESPACE;
+  }
+
   if (children !== null && typeof children !== "undefined") {
-    const childNode = render(children);
+    const childNode = render(children, namespace);
     if (childNode) {
       element.appendChild(childNode);
     }
@@ -301,22 +324,22 @@ function renderTextNode(value: string) {
   return document.createTextNode(value);
 }
 
-function renderElement(node: JSX.Element) {
+function renderElement(node: JSX.Element, namespace?: string) {
   if (typeof node.type === "string") {
-    return renderDOMElement(node);
+    return renderDOMElement(node, namespace);
   } else {
-    return render(node.type(node.properties));
+    return render(node.type(node.properties), namespace);
   }
 }
 
-function renderFragment(nodes: JSX.Node[]) {
+function renderFragment(nodes: JSX.Node[], namespace?: string) {
   if (nodes.length === 0) {
     return null;
   }
 
   const fragment = document.createDocumentFragment();
   for (const node of nodes) {
-    const renderedNode = render(node);
+    const renderedNode = render(node, namespace);
     if (renderedNode) {
       fragment.appendChild(renderedNode);
     }
@@ -324,9 +347,9 @@ function renderFragment(nodes: JSX.Node[]) {
   return fragment;
 }
 
-function renderStoreNode(store: StoreInterface<JSX.Node>) {
+function renderStoreNode(store: StoreInterface<JSX.Node>, namespace?: string) {
   const container = document.createDocumentFragment();
-  const node = render(store.value);
+  const node = render(store.value, namespace);
   const anchor = node ? node : createPlaceholderNode();
   container.appendChild(anchor);
 
@@ -335,11 +358,11 @@ function renderStoreNode(store: StoreInterface<JSX.Node>) {
     anchor,
     length,
   };
-  store.subscribe(() => updateRange(range));
+  store.subscribe(() => updateRange(range, namespace));
   return container;
 }
 
-export function render(node: JSX.Node): Node | null {
+export function render(node: JSX.Node, namespace?: string): Node | null {
   if (isEmptyNode(node)) {
     return null;
   }
@@ -349,15 +372,15 @@ export function render(node: JSX.Node): Node | null {
   }
 
   if (isElementNode(node)) {
-    return renderElement(node);
+    return renderElement(node, namespace);
   }
 
   if (Array.isArray(node)) {
-    return renderFragment(node);
+    return renderFragment(node, namespace);
   }
 
   if (node instanceof BaseStore) {
-    return renderStoreNode(node);
+    return renderStoreNode(node, namespace);
   }
 
   throw new Error("Invalid node");
