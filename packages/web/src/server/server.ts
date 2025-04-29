@@ -15,8 +15,21 @@ import type {
 const router = getRouter();
 
 function notFound(response: ServerResponse) {
-  response.writeHead(404);
-  response.end("Not Found");
+  if (!response.headersSent) {
+    response.writeHead(404);
+    response.end("Not Found");
+  } else {
+    response.end();
+  }
+}
+
+function internalError(response: ServerResponse) {
+  if (!response.headersSent) {
+    response.writeHead(500);
+    response.end("Internal Error");
+  } else {
+    response.end();
+  }
 }
 
 function inspectModuleStylesheets(
@@ -145,9 +158,15 @@ async function renderRoute(
   const { middleware, loader, component, metadata = {} } = await route.import();
 
   if (middleware) {
-    const middlewareResult = middleware(request);
-    if (middlewareResult) {
-      handleMiddlewareResult(middlewareResult, response);
+    try {
+      const middlewareResult = middleware(request);
+      if (middlewareResult) {
+        handleMiddlewareResult(middlewareResult, response);
+        return;
+      }
+    } catch (error) {
+      console.error("Middleware error:", error);
+      internalError(response);
       return;
     }
   }
@@ -186,7 +205,12 @@ export default async function respond(
     return;
   }
 
-  renderRoute(request, response, route, viteDevServer);
+  try {
+    await renderRoute(request, response, route, viteDevServer);
+  } catch (error) {
+    response.end();
+    console.error(request.url, error);
+  }
 }
 
 export type Respond = typeof respond;
