@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
-import { Store, DerivedStore } from "../stores";
+import { Store, DerivedStore, isStore } from "../stores";
 
 describe("Store", () => {
   describe("constructor", () => {
@@ -100,5 +100,15 @@ describe("DerivedStore", () => {
     const results = [derived.value, derived.value, derived.value];
     expect(results).toStrictEqual([2, 2, 2]);
     expect(transform).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("isStore", () => {
+  test("returns true if the value passed is a store", () => {
+    expect(isStore(new Store(0))).toBe(true);
+  });
+
+  test("returns false if the value passed is not a store", () => {
+    expect(isStore(2)).toBe(false);
   });
 });

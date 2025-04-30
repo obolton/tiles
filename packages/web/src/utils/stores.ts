@@ -113,3 +113,9 @@ export class DerivedStore<
     this.unsubscribeCallbacks.forEach((unsubscribe) => unsubscribe());
   }
 }
+
+export function isStore<T>(
+  value: StoreInterface<T> | unknown,
+): value is StoreInterface<T> {
+  return value instanceof BaseStore;
+}
