@@ -350,14 +350,31 @@ function renderFragment(nodes: JSX.Node[], namespace?: string) {
 function renderStoreNode(store: StoreInterface<JSX.Node>, namespace?: string) {
   const container = document.createDocumentFragment();
   const node = render(store.value, namespace);
-  const anchor = node ? node : createPlaceholderNode();
-  container.appendChild(anchor);
 
-  const range: MutableRange = {
-    store,
-    anchor,
-    length,
-  };
+  let range: MutableRange;
+  if (node instanceof Element || node instanceof Text) {
+    range = {
+      store,
+      anchor: node,
+      length: 1,
+    };
+    container.appendChild(node);
+  } else if (node instanceof DocumentFragment && node.firstChild) {
+    range = {
+      store,
+      anchor: node.firstChild,
+      length: node.childNodes.length,
+    };
+    container.appendChild(node);
+  } else {
+    range = {
+      store,
+      anchor: createPlaceholderNode(),
+      length: 1,
+    };
+    container.appendChild(range.anchor);
+  }
+
   store.subscribe(() => updateRange(range, namespace));
   return container;
 }
