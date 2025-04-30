@@ -113,7 +113,21 @@ function getDOMAttributes(properties: Record<string, unknown>) {
       continue;
     }
     const attributeName = mapAttributeName(name);
-    if (attributeName === "style" && typeof value === "object") {
+    if (attributeName === "classlist") {
+      if (Array.isArray(value)) {
+        const classNames = value
+          .map((value) => (isStore(value) ? value.value : value))
+          .filter((value) => typeof value === "string" && value.length > 0)
+          .join(" ");
+        attributes.push('class="' + escapeUTF8(classNames) + '"');
+      } else if (typeof value === "object" && value !== null) {
+        const classNames = Object.entries(value)
+          .filter(([, enabled]) => (isStore(enabled) ? enabled.value : enabled))
+          .map(([name]) => name)
+          .join(" ");
+        attributes.push('class="' + escapeUTF8(classNames) + '"');
+      }
+    } else if (attributeName === "style" && typeof value === "object") {
       attributes.push(
         attributeName + '="' + escapeUTF8(serializeStyles(value)) + '"',
       );
