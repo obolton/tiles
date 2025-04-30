@@ -41,12 +41,27 @@ export namespace JSX {
 
   export type Ref<T> = (element: T) => void;
 
-  export type Attributes<T> = WithStores<
-    Partial<Omit<T, "children" | "style">> & {
-      children?: Node;
-      style?: Partial<CSSStyleDeclaration>;
+  export type CustomCSSProperty = `--${string}`;
+
+  export type StyleDeclaration = Partial<CSSStyleDeclaration> &
+    Record<CustomCSSProperty, string | undefined>;
+
+  export type Attributes<T extends globalThis.Element> = WithStores<
+    Partial<Omit<T, "children" | "classList" | "style">> & {
+      style?: StyleDeclaration;
     }
-  > & { ref?: Ref<T> };
+  > & {
+    ref?: Ref<T>;
+    classList?:
+      | (
+          | string
+          | null
+          | undefined
+          | StoreInterface<string | null | undefined>
+        )[]
+      | { [k: string]: boolean | StoreInterface<boolean> };
+    children?: Node;
+  };
 
   export type HTMLElements = {
     [T in keyof HTMLElementTagNameMap]: Attributes<HTMLElementTagNameMap[T]>;

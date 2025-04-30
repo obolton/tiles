@@ -85,11 +85,57 @@ function setAttribute(element: Element, name: string, value: unknown) {
     value === false
   ) {
     element.removeAttribute(mappedName);
-  } else if (
-    mappedName === "style" &&
-    typeof value === "object" &&
-    element instanceof HTMLElement
-  ) {
+  } else if (mappedName === "classList" && Array.isArray(value)) {
+    for (const className of element.classList.values()) {
+      if (!value.includes(className)) {
+        element.classList.remove(className);
+      }
+    }
+    for (const className of value) {
+      if (className instanceof BaseStore) {
+        let value = className.value;
+        if (typeof value === "string") {
+          element.classList.add(value);
+        }
+        className.subscribe(() => {
+          element.classList.remove(value);
+          if (typeof className.value === "string") {
+            element.classList.add(className.value);
+          }
+          value = className.value;
+        });
+      } else if (typeof className === "string") {
+        element.classList.add(className);
+      }
+    }
+  } else if (mappedName === "classList" && typeof value === "object") {
+    for (const className of element.classList.values()) {
+      if (
+        !(className in value) ||
+        !(value as Record<string, unknown>)[className]
+      ) {
+        element.classList.remove(className);
+      }
+    }
+    for (const [className, enabled] of Object.entries(value)) {
+      if (enabled instanceof BaseStore) {
+        if (enabled.value) {
+          element.classList.add(className);
+        }
+        enabled.subscribe(() => {
+          if (enabled.value) {
+            element.classList.add(className);
+          } else {
+            element.classList.remove(className);
+          }
+        });
+      } else if (enabled) {
+        element.classList.add(className);
+      } else {
+        element.classList.remove(className);
+      }
+    }
+  } else if (mappedName === "style" && typeof value === "object") {
     element.setAttribute(mappedName, serializeStyles(value));
   } else if (value === true) {
     element.setAttribute(mappedName, "");
