@@ -4,6 +4,7 @@ export interface StoreInterface<T = any> {
   subscribe(callback: SubscribeCallback<T>): UnsubscribeCallback;
   unsubscribe(callback: SubscribeCallback<T>): void;
   disconnect(): void;
+  derive<V>(transform: (input: T) => V): StoreInterface<V>;
 }
 
 export type SubscribeCallback<T> = (store: StoreInterface<T>) => void;
@@ -38,7 +39,9 @@ export abstract class BaseStore<Value> implements StoreInterface<Value> {
 
   abstract get value(): Value;
 
-  derive<DerivedValue>(transform: (input: Value) => DerivedValue) {
+  derive<DerivedValue>(
+    transform: (input: Value) => DerivedValue,
+  ): StoreInterface<DerivedValue> {
     return new DerivedStore<[this], DerivedValue>([this], transform);
   }
 }
