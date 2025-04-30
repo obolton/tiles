@@ -1,5 +1,5 @@
 import { escapeUTF8 } from "entities";
-import { BaseStore } from "@/utils/stores";
+import { isStore } from "@/utils/stores";
 import { serializeStyles } from "@/utils/css";
 import type { JSX } from "./jsx";
 
@@ -21,7 +21,7 @@ const VOID_ELEMENTS = new Set([
 ]);
 
 export function renderToString(node: JSX.Node): string {
-  if (node instanceof BaseStore) {
+  if (isStore(node)) {
     return renderToString(node.value);
   }
 
@@ -102,8 +102,7 @@ function mapAttributeName(name: string) {
 function getDOMAttributes(properties: Record<string, unknown>) {
   const attributes: string[] = [];
   for (const [name, valueOrStore] of Object.entries(properties)) {
-    const value =
-      valueOrStore instanceof BaseStore ? valueOrStore.value : valueOrStore;
+    const value = isStore(valueOrStore) ? valueOrStore.value : valueOrStore;
     if (
       name === "children" ||
       typeof value === "function" ||

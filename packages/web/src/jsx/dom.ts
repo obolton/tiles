@@ -1,4 +1,4 @@
-import { BaseStore } from "@/utils/stores";
+import { isStore } from "@/utils/stores";
 import { serializeStyles } from "@/utils/css";
 import type { StoreInterface } from "@/utils/stores";
 import type { JSX } from "./jsx";
@@ -76,7 +76,7 @@ function setAttributes<T extends keyof JSX.IntrinsicElements>(
 function setAttribute(element: Element, name: string, value: unknown) {
   const mappedName = name === "className" ? "class" : name;
 
-  if (value instanceof BaseStore) {
+  if (isStore(value)) {
     setAttribute(element, name, value.value);
     value.subscribe(() => setAttribute(element, name, value.value));
   } else if (
@@ -92,17 +92,19 @@ function setAttribute(element: Element, name: string, value: unknown) {
       }
     }
     for (const className of value) {
-      if (className instanceof BaseStore) {
+      if (isStore(className)) {
         let value = className.value;
         if (typeof value === "string") {
           element.classList.add(value);
         }
         className.subscribe(() => {
-          element.classList.remove(value);
-          if (typeof className.value === "string") {
-            element.classList.add(className.value);
+          if (typeof value === "string") {
+            element.classList.remove(value);
           }
           value = className.value;
+          if (typeof value === "string") {
+            element.classList.add(value);
+          }
         });
       } else if (typeof className === "string") {
         element.classList.add(className);
@@ -118,7 +120,7 @@ function setAttribute(element: Element, name: string, value: unknown) {
       }
     }
     for (const [className, enabled] of Object.entries(value)) {
-      if (enabled instanceof BaseStore) {
+      if (isStore(enabled)) {
         if (enabled.value) {
           element.classList.add(className);
         }
@@ -284,7 +286,7 @@ function hydrateNode(
     return hydrateFragment(node, container, index);
   }
 
-  if (node instanceof BaseStore) {
+  if (isStore(node)) {
     return hydrateStoreNode(node, container, index);
   }
 
@@ -442,7 +444,7 @@ export function render(node: JSX.Node, namespace?: string): Node | null {
     return renderFragment(node, namespace);
   }
 
-  if (node instanceof BaseStore) {
+  if (isStore(node)) {
     return renderStoreNode(node, namespace);
   }
 
