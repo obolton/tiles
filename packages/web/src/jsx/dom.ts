@@ -179,7 +179,7 @@ function hydrateTextNode(value: string, container: Element, index: number) {
 
     if (content.length > value.length && content.startsWith(value)) {
       textNode.splitText(value.length);
-    } else {
+    } else if (content !== value) {
       textNode.data = value;
     }
   } else {
