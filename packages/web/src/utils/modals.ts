@@ -1,4 +1,4 @@
-import type { LazyExoticComponent, ComponentType } from "react";
+import type { JSX } from "@/jsx/jsx";
 
 export interface ModalOptions<T> {
   onConfirm?: (result: T) => Promise<void>;
@@ -20,15 +20,15 @@ export class ModalEvent<T extends object> extends Event {
   }
 }
 
-const registry = new Map<
-  string,
-  LazyExoticComponent<ComponentType<ModalProps<unknown>>>
->();
+export type ModalComponent<T = unknown> = JSX.Component<ModalProps<T>>;
 
-export function registerModal(
-  name: string,
-  component: LazyExoticComponent<ComponentType<ModalProps<unknown>>>,
-) {
+export type ModalLoader<T = unknown> = () => Promise<{
+  default: ModalComponent<T>;
+}>;
+
+const registry = new Map<string, ModalLoader>();
+
+export function registerModal(name: string, component: ModalLoader) {
   registry.set(name, component);
 }
 
