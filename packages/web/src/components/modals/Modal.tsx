@@ -1,67 +1,54 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import { ModalEvent } from "@/utils/modals";
 import styles from "./Modal.module.css";
+import type { StoreInterface } from "@/utils/stores";
+import type { JSX } from "@/jsx/jsx";
 
 interface ModalProps {
-  children: React.ReactNode;
-  open: boolean;
+  children: JSX.Node;
+  open: StoreInterface<boolean>;
   onClose: () => void;
 }
 
 export default function Modal({ children, onClose, open }: ModalProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const [mouseDownOutside, setMouseDownOutside] = useState(false);
+  let dialog: HTMLDialogElement | undefined;
+  const ref = (element: HTMLDialogElement) => {
+    dialog = element;
+  };
 
-  useEffect(() => {
-    const element = dialogRef.current;
-    if (!element) {
+  open.subscribe(() => {
+    if (!dialog) {
       return;
     }
-    if (open && !element.open) {
-      element.showModal();
-    } else if (!open && element.open) {
-      element.close();
-      Promise.all(
-        element.getAnimations().map((animation) => animation.finished),
-      )
+    if (open.value && !dialog.open) {
+      dialog.showModal();
+    } else if (!open.value && dialog.open) {
+      dialog.close();
+      Promise.all(dialog.getAnimations().map((animation) => animation.finished))
         .catch(() => {})
-        .finally(() => element.dispatchEvent(new ModalEvent("hidemodal")));
+        .finally(() => dialog?.dispatchEvent(new ModalEvent("hidemodal")));
     }
-  }, [open]);
+  });
 
-  const keyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onClose();
-      }
-    },
-    [onClose],
-  );
+  const keyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      onClose();
+    }
+  };
 
-  const onClick = useCallback(
-    (event: React.MouseEvent) => {
-      if (event.currentTarget === dialogRef.current && mouseDownOutside) {
-        onClose();
-      }
-    },
-    [mouseDownOutside, onClose],
-  );
-
-  const onMouseDown = useCallback(
-    (event: React.MouseEvent) =>
-      setMouseDownOutside(event.target === dialogRef.current),
-    [],
-  );
+  const onClick = (event: MouseEvent) => {
+    if (event.target === dialog) {
+      onClose();
+    }
+  };
 
   return (
     <dialog
       popover="auto"
-      ref={dialogRef}
+      ref={ref}
       className={styles.modal}
-      onKeyDown={keyDown}
-      onClick={onClick}
-      onMouseDown={onMouseDown}
+      onkeydown={keyDown}
+      onclick={onClick}
     >
       {children}
     </dialog>
