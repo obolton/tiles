@@ -63,6 +63,7 @@ html {
 
 body {
   --page-color: #fff;
+  --accent: linear-gradient(oklch(60% 5% 180deg), oklch(50% 5% 180deg));
 
   color: var(--text-color);
   background: var(--page-color);
@@ -70,7 +71,6 @@ body {
 
 body.light {
   --page-color: #fff;
-  --accent: linear-gradient(oklch(60% 5% 180deg), oklch(50% 5% 180deg));
 }
 
 body.dark {
