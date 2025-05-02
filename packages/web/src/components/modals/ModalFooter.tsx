@@ -1,16 +1,14 @@
-import { memo } from "react";
 import styles from "./ModalFooter.module.css";
 import { classNames } from "@/utils/css";
+import type { JSX } from "@/jsx/jsx";
 
 interface ModalFooterProps {
   className?: string;
-  children: React.ReactNode;
+  children: JSX.Node;
 }
 
-function ModalFooter({ className, children }: ModalFooterProps) {
+export default function ModalFooter({ className, children }: ModalFooterProps) {
   return (
     <footer className={classNames(styles.footer, className)}>{children}</footer>
   );
 }
-
-export default memo(ModalFooter);

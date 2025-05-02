@@ -1,7 +1,8 @@
 import styles from "./ModalBody.module.css";
+import type { JSX } from "@/jsx/jsx";
 
 interface ModalBodyProps {
-  children: React.ReactNode;
+  children: JSX.Node;
 }
 
 export default function ModalBody({ children }: ModalBodyProps) {

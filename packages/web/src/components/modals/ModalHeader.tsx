@@ -1,12 +1,10 @@
-import { memo } from "react";
 import styles from "./ModalHeader.module.css";
+import type { JSX } from "@/jsx/jsx";
 
 interface ModalHeaderProps {
-  children: React.ReactNode;
+  children: JSX.Node;
 }
 
-function ModalHeader({ children }: ModalHeaderProps) {
+export default function ModalHeader({ children }: ModalHeaderProps) {
   return <header className={styles.header}>{children}</header>;
 }
-
-export default memo(ModalHeader);
