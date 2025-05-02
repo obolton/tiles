@@ -1,4 +1,3 @@
-import { flushSync } from "react-dom";
 import { createAnimationPromise, SPRING } from "./effects";
 
 interface LayoutTransitionEntry {
@@ -50,9 +49,7 @@ function getEntries() {
 
 export function layoutTransition(updateLayout: () => void) {
   const entries = getEntries();
-  flushSync(() => {
-    updateLayout();
-  });
+  updateLayout();
   pendingAnimations.forEach((animation) => animation.cancel());
   pendingAnimations.clear();
   return Promise.all(entries.map(animateEntry));
