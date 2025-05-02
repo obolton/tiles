@@ -2,7 +2,7 @@ import type { IncomingMessage, IncomingHttpHeaders } from "node:http";
 import type { JSX } from "@/jsx/jsx";
 
 export interface RequestProperties {
-  path: string;
+  url: URL;
   headers: IncomingHttpHeaders;
   parameters: RouteParameters;
 }

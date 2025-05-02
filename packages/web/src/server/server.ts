@@ -178,7 +178,7 @@ async function renderRoute(
 
   const data = loader
     ? await loader({
-        path: request.url ?? "",
+        url: new URL(request.url ?? "", import.meta.env.PUBLIC_WEB_BASE_URL),
         headers: request.headers,
         parameters,
       })
