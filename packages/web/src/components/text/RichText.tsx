@@ -1,4 +1,3 @@
-import { memo } from "react";
 import { TextFormat } from "@/utils/richText/types";
 import type {
   RichText,
@@ -13,27 +12,28 @@ import type {
 } from "@/utils/richText/types";
 import { ListType } from "@/utils/richText/types";
 import { classNames } from "@/utils/css";
+import type { JSX } from "@/jsx/jsx";
 
 interface RichTextProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "content"> {
+  extends Omit<JSX.Attributes<HTMLDivElement>, "content"> {
   content: RichText;
 }
 
 function renderNodes(nodes: Node[]) {
   return (
     <>
-      {nodes.map((node, index) => {
+      {nodes.map((node) => {
         switch (node.type) {
           case "paragraph":
-            return <Paragraph key={index} node={node} />;
+            return <Paragraph node={node} />;
           case "heading":
-            return <Heading key={index} node={node} />;
+            return <Heading node={node} />;
           case "quote":
-            return <Quote key={index} node={node} />;
+            return <Quote node={node} />;
           case "list":
-            return <List key={index} node={node} />;
+            return <List node={node} />;
           case "text":
-            return <Text key={index} node={node} />;
+            return <Text node={node} />;
           default:
             return null;
         }
@@ -42,7 +42,7 @@ function renderNodes(nodes: Node[]) {
   );
 }
 
-function RichText({ content, className, ...props }: RichTextProps) {
+function RichTextRoot({ content, className, ...props }: RichTextProps) {
   return (
     <div className={classNames("rich-text", className)} {...props}>
       {renderNodes(content)}
@@ -50,7 +50,7 @@ function RichText({ content, className, ...props }: RichTextProps) {
   );
 }
 
-export default memo(RichText);
+export default RichTextRoot;
 
 function getTextAlignment(align?: TextAlignment) {
   switch (align) {
@@ -123,7 +123,7 @@ function Quote({ node }: QuoteProps) {
   return <blockquote>{renderNodes(node.children)}</blockquote>;
 }
 
-interface ListItemProps extends React.HTMLAttributes<HTMLLIElement> {
+interface ListItemProps extends JSX.Attributes<HTMLLIElement> {
   node: ListItemNode;
 }
 
@@ -147,25 +147,24 @@ function List({ node }: ListProps) {
     case ListType.ORDERED:
       return (
         <ol>
-          {node.children.map((child, index) => (
-            <ListItem key={index} node={child} />
+          {node.children.map((child) => (
+            <ListItem node={child} />
           ))}
         </ol>
       );
     case ListType.UNORDERED:
       return (
         <ul>
-          {node.children.map((child, index) => (
-            <ListItem key={index} node={child} />
+          {node.children.map((child) => (
+            <ListItem node={child} />
           ))}
         </ul>
       );
     case ListType.CHECK:
       return (
         <ul className="checklist">
-          {node.children.map((child, index) => (
+          {node.children.map((child) => (
             <ListItem
-              key={index}
               node={child}
               role={child.children[0]?.type === "list" ? undefined : "checkbox"}
               aria-checked={
