@@ -1,34 +1,30 @@
-import { useLayoutEffect, useRef } from "react";
-import { classNames } from "@/utils/css";
 import styles from "./ResizingTextarea.module.css";
+import type { JSX } from "@/jsx/jsx";
 
-type ResizingTextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+type ResizingTextareaProps = JSX.Attributes<HTMLTextAreaElement>;
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/field-sizing
 const SUPPORTS_FIELD_SIZING =
-  typeof window !== "undefined" && CSS.supports("field-sizing", "content");
+  !import.meta.env.SSR && CSS.supports("field-sizing", "content");
+
+function onInput(event: Event) {
+  const element = event.currentTarget as HTMLTextAreaElement;
+  element.style.setProperty("height", "auto");
+  element.style.setProperty("height", `${element.scrollHeight}px`);
+}
 
 export default function ResizingTextarea({
   className,
   value,
   ...props
 }: ResizingTextareaProps) {
-  const ref = useRef<HTMLTextAreaElement>(null);
-
-  useLayoutEffect(() => {
-    if (SUPPORTS_FIELD_SIZING || !ref.current) {
-      return;
-    }
-    ref.current.style.setProperty("height", "auto");
-    ref.current.style.setProperty("height", `${ref.current.scrollHeight}px`);
-  }, [value]);
-
   return (
     <textarea
       {...props}
-      className={classNames(styles.textarea, className)}
-      ref={ref}
-      value={value}
-    />
+      classList={[styles.textarea, className]}
+      oninput={SUPPORTS_FIELD_SIZING ? undefined : onInput}
+    >
+      {value}
+    </textarea>
   );
 }
