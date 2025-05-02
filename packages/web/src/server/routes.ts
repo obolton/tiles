@@ -21,7 +21,7 @@ export function getRouter() {
   const router = new Router();
   for (const [moduleUrl, importer] of Object.entries(routeModules)) {
     const path = getPathFromModuleUrl(moduleUrl);
-    if (path) {
+    if (typeof path === "string") {
       router.add(path, {
         moduleUrl,
         import: importer as RouteImporter<unknown>,
