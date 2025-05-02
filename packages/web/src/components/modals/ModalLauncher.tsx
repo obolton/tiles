@@ -1,35 +1,42 @@
-import { Suspense, useCallback, useEffect, useState } from "react";
 import Modal from "./Modal";
-import useModal from "@/hooks/useModal";
 import { getModal } from "@/utils/modals";
+import { Store } from "@/utils/stores";
+import type { JSX } from "@/jsx/jsx";
 
 export default function ModalLauncher() {
-  const modal = useModal();
-  const [open, setOpen] = useState(false);
+  const modalElement = new Store<JSX.Element | null>(null);
+  const isOpen = new Store(false);
 
-  useEffect(() => setOpen(!!modal), [modal]);
-
-  const cancel = useCallback(() => setOpen(false), []);
-
-  const confirm = useCallback(
-    async (result: unknown) => {
-      await modal?.options?.onConfirm?.(result);
-      setOpen(false);
-    },
-    [modal],
-  );
-
-  if (!modal) {
-    return null;
+  function cancel() {
+    isOpen.value = false;
   }
 
-  const ModalComponent = getModal(modal.modal);
+  if (!import.meta.env.SSR) {
+    addEventListener("showmodal", ({ modal, options }) => {
+      if (!modal) {
+        return;
+      }
+      const loader = getModal(modal);
+      loader().then(({ default: Component }) => {
+        modalElement.value = (
+          <Component
+            cancel={cancel}
+            confirm={async (result: unknown) => {
+              await options?.onConfirm?.(result);
+              isOpen.value = false;
+            }}
+            {...options}
+          />
+        );
+        isOpen.value = true;
+      });
+    });
+    addEventListener("hidemodal", () => (modalElement.value = null));
+  }
 
   return (
-    <Suspense>
-      <Modal open={open} onClose={cancel}>
-        <ModalComponent cancel={cancel} confirm={confirm} {...modal.options} />
-      </Modal>
-    </Suspense>
+    <Modal open={isOpen} onClose={cancel}>
+      {modalElement}
+    </Modal>
   );
 }
