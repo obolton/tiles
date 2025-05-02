@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import MailIcon from "@/icons/mail.svg?jsx";
 import RemoveIcon from "@/icons/remove.svg?jsx";
 import styles from "./PageInviteRow.module.css";
@@ -13,13 +12,10 @@ export default function PageInviteRow({
   invite,
   onRemove,
 }: PageInviteRowProps) {
-  const handleDelete = useCallback(
-    (event: React.MouseEvent) => {
-      event.preventDefault();
-      onRemove(invite);
-    },
-    [invite, onRemove],
-  );
+  const handleDelete = (event: MouseEvent) => {
+    event.preventDefault();
+    onRemove(invite);
+  };
 
   return (
     <li className={styles.row}>
@@ -35,7 +31,7 @@ export default function PageInviteRow({
           className="floating xsmall"
           type="button"
           aria-label="Delete"
-          onClick={handleDelete}
+          onclick={handleDelete}
         >
           <RemoveIcon aria-hidden="true" />
         </button>

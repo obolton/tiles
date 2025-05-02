@@ -1,7 +1,6 @@
-import { useCallback } from "react";
 import RemoveIcon from "@/icons/remove.svg?jsx";
-import type { User } from "@/types/collaboration";
 import styles from "./PageAccessRow.module.css";
+import type { User } from "@/types/collaboration";
 
 interface PageAccessRowProps {
   user: User;
@@ -16,13 +15,10 @@ export default function PageAccessRow({
   showRemove = false,
   onRemove,
 }: PageAccessRowProps) {
-  const handleDelete = useCallback(
-    (event: React.MouseEvent) => {
-      event.preventDefault();
-      onRemove(user);
-    },
-    [user, onRemove],
-  );
+  const handleDelete = (event: MouseEvent) => {
+    event.preventDefault();
+    onRemove(user);
+  };
 
   return (
     <li>
