@@ -1,60 +1,76 @@
-import { useRef } from "react";
 import GridItem from "@/components/grid/GridItem";
-import useEditable from "@/hooks/useEditable";
-import useLayoutEditor from "@/hooks/useLayoutEditor";
-import { classNames } from "@/utils/css";
 import styles from "./Carousel.module.css";
-import type CarouselView from "@/elements/carousel/CarouselView";
 import type { Tile } from "@/types/layout";
-import { useDragId } from "@/context/drag";
+import { Store } from "@/utils/stores";
+import type Editor from "@/editor/Editor";
+import type { JSX } from "@/jsx/jsx";
+import LayoutEditor from "@/editor/LayoutEditor";
 
 interface CarouselProps {
+  editor: Editor;
   collectionId: string;
-  items: Tile[];
-  Placeholder?: React.ComponentType<Pick<CarouselProps, "collectionId">>;
+  items: Store<Tile[]>;
+  Placeholder?: JSX.Component<Pick<CarouselProps, "collectionId">>;
 }
 
 export default function Carousel({
+  editor,
   collectionId,
   items,
   Placeholder,
 }: CarouselProps) {
-  const ref = useRef<CarouselView>(null);
-  const isEditable = useEditable();
-  useLayoutEditor(ref, collectionId);
-  const dragId = useDragId();
+  const { isEditable, dragId } = editor;
+
+  const ref = (element: HTMLElement) => {
+    // TODO: Remove editor at end
+    new LayoutEditor({
+      element,
+      editor,
+      collectionId,
+    });
+  };
 
   return (
     <carousel-view
       ref={ref}
-      class={classNames(styles.carousel, isEditable && styles.editable)}
+      classList={{ [styles.carousel]: true, [styles.editable]: isEditable }}
       tabIndex={0}
-      data-drop={isEditable ? "true" : undefined}
+      data-drop={isEditable.derive((editable) =>
+        editable ? "true" : undefined,
+      )}
     >
-      {items.length === 0 && Placeholder ? (
-        <Placeholder collectionId={collectionId} />
-      ) : null}
-
-      {items.map((item) => (
-        <GridItem
-          className={classNames(
-            styles.item,
-            dragId === item.placementId && styles.dragging,
-          )}
-          key={item.id}
-          id={item.id}
-          collectionId={collectionId}
-          placementId={item.placementId}
-          rows={1}
-          columns={item.columns}
-          deletable={isEditable}
-          draggable={isEditable}
-          resizable={isEditable}
-          grow={false}
-          tile={item}
-          tabIndex={isEditable ? 0 : undefined}
-        />
-      ))}
+      {items.derive((value) =>
+        value.length === 0 ? (
+          Placeholder ? (
+            <Placeholder collectionId={collectionId} />
+          ) : null
+        ) : (
+          value.map((item) => (
+            <GridItem
+              editor={editor}
+              classList={{
+                [styles.item]: true,
+                [styles.dragging]: dragId.derive(
+                  (id) => id === item.placementId,
+                ),
+              }}
+              id={item.id}
+              collectionId={collectionId}
+              placementId={item.placementId}
+              rows={new Store(1)}
+              columns={item.columns}
+              deletable={isEditable}
+              draggable={isEditable}
+              resizable={isEditable}
+              grow={false}
+              tile={item}
+              tabIndex={isEditable.derive((editable) =>
+                editable ? 0 : undefined,
+              )}
+            />
+          ))
+        ),
+      )}
     </carousel-view>
   );
 }
