@@ -2,10 +2,10 @@ import { getRouter } from "./routes";
 import { escapeUTF8 } from "entities";
 import { renderToString } from "@/jsx/server";
 import globalMetadata from "@/routes/metadata";
+import Body from "./Body";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type {
-  RouteConfig,
   RouteData,
   RouteMetadata,
   RouteMiddlewareResult,
@@ -116,19 +116,7 @@ function getPageStartChunk(
   if (typeof data?.title === "string") {
     chunk += "<title>" + escapeUTF8(data.title) + "</title>";
   }
-  chunk += "</head><body>";
-  return chunk;
-}
-
-function getPageEndChunk(routeConfig: RouteConfig, data?: RouteData) {
-  let chunk = "";
-  if (typeof data?.data !== "undefined") {
-    chunk +=
-      '<script id="page-data" type="application/json">' +
-      JSON.stringify({ module: routeConfig.moduleUrl, data: data.data }) +
-      "</script>";
-  }
-  chunk += "</body></html>";
+  chunk += "</head>";
   return chunk;
 }
 
@@ -198,10 +186,16 @@ async function renderRoute(
   response.writeHead(200);
   response.write(getPageStartChunk(stylesheets, mergedMetadata, data));
 
-  const body = renderToString(component(data?.data));
-  response.write(body);
-
-  response.write(getPageEndChunk(route, data));
+  const body = renderToString(
+    Body({
+      children: component(data?.data),
+      hydrate:
+        typeof data?.data !== "undefined"
+          ? { module: route.moduleUrl, data: data.data }
+          : undefined,
+    }),
+  );
+  response.write(body + "</html>");
   response.end();
 }
 
