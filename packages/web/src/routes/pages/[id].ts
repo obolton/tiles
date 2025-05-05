@@ -1,5 +1,6 @@
 import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
+import { getFontConfig } from "@/utils/fonts";
 import Page, { type PageProps } from "@/pages/Page";
 import type {
   Route,
@@ -30,9 +31,24 @@ async function loader({
     throw new Error("Not Found");
   }
 
-  // TODO: Theme, hue, description, author etc
+  const theme = page.theme;
+  const hue = page.hue;
+  const font = page.font ? getFontConfig(page.font) : undefined;
+
   return {
     title: page.title,
+    bodyAttributes: {
+      "data-page-id": page.id,
+      className:
+        theme === "LIGHT" ? "light" : theme === "DARK" ? "dark" : "color",
+      style: {
+        "--page-hue":
+          theme === "COLOR" && typeof hue === "number"
+            ? `${hue.toFixed(2)}deg`
+            : undefined,
+        "--font": font ? `"${font.family}", "${font.fallback}"` : undefined,
+      },
+    },
     data: { page },
   };
 }
