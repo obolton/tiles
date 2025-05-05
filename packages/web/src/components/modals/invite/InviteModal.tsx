@@ -1,9 +1,9 @@
-import { useCallback, useTransition } from "react";
 import ModalHeader from "../ModalHeader";
 import ModalBody from "../ModalBody";
 import ModalFooter from "../ModalFooter";
-import { classNames } from "@/utils/css";
 import type { ModalProps } from "@/utils/modals";
+import { Store } from "@/utils/stores";
+import { handleError } from "@/utils/errors";
 
 export interface InviteModalResult {
   email: string;
@@ -12,22 +12,27 @@ export interface InviteModalResult {
 type InviteModalProps = ModalProps<InviteModalResult>;
 
 export default function InviteModal({ cancel, confirm }: InviteModalProps) {
-  const [isPending, startTransition] = useTransition();
+  const isPending = new Store(false);
 
-  const submit = useCallback(
-    async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
+  const submit = async (event: Event) => {
+    const form = event.currentTarget as HTMLFormElement;
+    event.preventDefault();
 
-      if (isPending) {
-        return;
-      }
+    if (isPending.value) {
+      return;
+    }
 
-      const formData = new FormData(event.currentTarget);
-      const email = formData.get("email") as string;
-      startTransition(() => confirm({ email }));
-    },
-    [confirm, isPending],
-  );
+    const formData = new FormData(form);
+    const email = formData.get("email") as string;
+    isPending.value = true;
+    try {
+      await confirm({ email });
+    } catch (error) {
+      handleError(error);
+    } finally {
+      isPending.value = false;
+    }
+  };
 
   return (
     <form onSubmit={submit}>
@@ -48,13 +53,10 @@ export default function InviteModal({ cancel, confirm }: InviteModalProps) {
       </ModalBody>
 
       <ModalFooter>
-        <button
-          className={classNames("primary", isPending && "pending")}
-          type="submit"
-        >
+        <button classList={{ primary: true, pending: isPending }} type="submit">
           Save
         </button>
-        <button className="secondary" type="button" onClick={cancel}>
+        <button className="secondary" type="button" onclick={cancel}>
           Cancel
         </button>
       </ModalFooter>
