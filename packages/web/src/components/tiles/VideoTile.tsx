@@ -1,11 +1,9 @@
-import useEditable from "@/hooks/useEditable";
-import type { ClientVideo } from "@/types/tiles";
-import { useCallback } from "react";
 import Caption from "./Caption";
 import Tile, { type TileProps } from "./Tile";
 import VideoIcon from "@/icons/video.svg?jsx";
 import styles from "./VideoTile.module.css";
-import { useEditor } from "@/context/editor";
+import type { ClientVideo } from "@/types/tiles";
+import type Editor from "@/editor/Editor";
 
 function getEmbedUrl(videoType: ClientVideo["videoType"], videoId: string) {
   switch (videoType) {
@@ -17,9 +15,12 @@ function getEmbedUrl(videoType: ClientVideo["videoType"], videoId: string) {
   }
 }
 
-interface VideoTileProps extends TileProps, ClientVideo {}
+interface VideoTileProps extends TileProps, ClientVideo {
+  editor: Editor;
+}
 
 export default function VideoTile({
+  editor,
   id,
   videoType,
   videoId,
@@ -27,26 +28,22 @@ export default function VideoTile({
   title,
   ...props
 }: VideoTileProps) {
-  const editor = useEditor();
-  const isEditable = useEditable();
+  const { isEditable } = editor;
   const embedUrl = getEmbedUrl(videoType, videoId);
 
-  const onUpdateCaption = useCallback(
-    async (value: string) => {
-      await editor.updateVideo({
-        id,
-        title: value,
-      });
-    },
-    [editor, id],
-  );
+  const onUpdateCaption = async (value: string) => {
+    await editor.updateVideo({
+      id,
+      title: value,
+    });
+  };
 
   return (
     <Tile {...props}>
       <figure className={styles.figure}>
         <embedded-video
           id={`${id}-video`}
-          class={styles.video}
+          className={styles.video}
           src={embedUrl}
           imagesrc={imageUrl ?? undefined}
           data-show-in-lightbox="true"
