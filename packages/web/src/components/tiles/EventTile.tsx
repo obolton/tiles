@@ -1,15 +1,15 @@
-import { useCallback } from "react";
 import Tile from "./Tile";
 import ArrowRightIcon from "@/icons/arrow-right.svg?jsx";
 import styles from "./EventTile.module.css";
 import { classNames } from "@/utils/css";
 import { showModal } from "@/utils/modals";
-import { useEditor } from "@/context/editor";
-import useEditable from "@/hooks/useEditable";
 import type { ClientEvent } from "@/types/tiles";
 import type { EventModalResult } from "@/components/modals/EventModal";
+import type Editor from "@/editor/Editor";
 
-type EventTileProps = ClientEvent;
+interface EventTileProps extends ClientEvent {
+  editor: Editor;
+}
 
 interface DateTimeDetailsProps {
   date: Date;
@@ -60,17 +60,17 @@ function DateDetails({ date, size }: DateTimeDetailsProps) {
 }
 
 export default function EventTile({
+  editor,
   id,
   title,
   start,
   end,
   allDay,
 }: EventTileProps) {
-  const editor = useEditor();
-  const isEditable = useEditable();
+  const { isEditable } = editor;
 
-  const edit = useCallback(
-    () =>
+  const edit = () => {
+    if (isEditable.value) {
       showModal<EventModalResult>("EVENT", {
         title,
         start,
@@ -79,9 +79,9 @@ export default function EventTile({
         async onConfirm(event) {
           await editor.updateEvent({ id, ...event });
         },
-      }),
-    [id, title, start, end, allDay, editor],
-  );
+      });
+    }
+  };
 
   const startDate = new Date(start);
   const endDate = end ? new Date(end) : null;
@@ -89,7 +89,7 @@ export default function EventTile({
 
   return (
     <Tile>
-      <div className={styles.event} onClick={isEditable ? edit : undefined}>
+      <div className={styles.event} onclick={edit}>
         <p className={styles.title}>{title}</p>
 
         <div className={styles.dates}>
