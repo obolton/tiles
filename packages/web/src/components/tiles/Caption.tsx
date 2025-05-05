@@ -1,38 +1,34 @@
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import { classNames } from "@/utils/css";
-import { useCallback, useState, type ChangeEvent } from "react";
 import styles from "./Caption.module.css";
+import { Store } from "@/utils/stores";
 
 interface CaptionProps {
-  isEditable?: boolean;
+  isEditable: Store<boolean>;
   value?: string | null;
   onChange: (value: string) => void;
   placeholder?: string;
 }
 
 export default function Caption({
-  isEditable = false,
+  isEditable,
   value: initialValue,
   onChange,
   placeholder,
 }: CaptionProps) {
-  const [value, setValue] = useState(initialValue ?? "");
+  const value = new Store(initialValue ?? "");
 
-  const handleChange = useCallback(
-    (event: ChangeEvent<HTMLTextAreaElement>) => setValue(event.target.value),
-    [],
-  );
-  const handlePointerDown = useCallback(
-    (event: React.PointerEvent) => event.stopPropagation(),
-    [],
-  );
-  const commit = useCallback(() => onChange(value), [onChange, value]);
+  const handleChange = (event: Event) => {
+    value.value = event.currentTarget.value;
+  };
+  const handlePointerDown = (event: PointerEvent) => event.stopPropagation();
+  const commit = () => onChange(value.value);
 
-  if (isEditable) {
-    return (
+  return isEditable.derive((editable) =>
+    editable ? (
       <figcaption
         className={classNames(styles.caption, styles.editable)}
-        onPointerDownCapture={handlePointerDown}
+        onpointerdown={handlePointerDown}
       >
         <ResizingTextarea
           className={styles.textarea}
@@ -40,15 +36,15 @@ export default function Caption({
           onBlur={commit}
           onChange={handleChange}
           rows={1}
-          value={value}
+          value={value.value}
         />
       </figcaption>
-    );
-  }
-
-  if (!value) {
-    return null;
-  }
-
-  return <figcaption className={styles.caption}>{value}</figcaption>;
+    ) : (
+      value.derive((val) =>
+        val ? (
+          <figcaption className={styles.caption}>{value}</figcaption>
+        ) : null,
+      )
+    ),
+  );
 }
