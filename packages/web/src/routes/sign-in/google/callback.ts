@@ -3,32 +3,36 @@ import {
   getOAuth2DestinationCookie,
   clearOAuth2Cookies,
 } from "@/auth/oauth2";
+import { redirect, forbidden, serverError } from "@/router/router";
 import { getAccessToken, getGoogleUser } from "@/auth/google";
 import { validateDestination } from "@/auth/destinations";
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
-import type { APIRoute } from "astro";
+import type { APIRoute, APIRequestHandler } from "@/router/router";
 
-export const GET: APIRoute = async ({ cookies, redirect, request }) => {
+export const GET: APIRequestHandler = async ({ url, headers }, response) => {
+  const cookies = headers.cookie ?? "";
   const stateCookieValue = getOAuth2StateCookie(cookies);
   const destinationCookieValue = getOAuth2DestinationCookie(cookies);
-  clearOAuth2Cookies(cookies);
+  const cookiesToSet = clearOAuth2Cookies();
+
+  response.setHeader("Set-Cookie", cookiesToSet);
 
   if (destinationCookieValue && !validateDestination(destinationCookieValue)) {
-    return new Response(null, { status: 403, statusText: "Forbidden" });
+    return forbidden();
   }
 
-  const searchParams = new URL(request.url).searchParams;
+  const searchParams = url.searchParams;
 
   const state = searchParams.get("state");
   const code = searchParams.get("code");
   const error = searchParams.get("error");
 
   if (error) {
-    return new Response(`Error: ${error}`, { status: 500 });
+    return serverError(error);
   }
 
   if (!stateCookieValue || !state || stateCookieValue !== state || !code) {
-    return new Response(null, { status: 403, statusText: "Forbidden" });
+    return forbidden();
   }
 
   const accessToken = await getAccessToken(code);
@@ -41,7 +45,15 @@ export const GET: APIRoute = async ({ cookies, redirect, request }) => {
     emailVerified: googleUser.emailVerified,
     imageUrl: googleUser.imageUrl,
   });
-  setAuthenticationCookies(cookies, session.id, new Date(session.expiresAt));
+
+  cookiesToSet.push(
+    ...setAuthenticationCookies(session.id, new Date(session.expiresAt)),
+  );
+  response.setHeader("Set-Cookie", cookiesToSet);
 
   return redirect(`/${destinationCookieValue || ""}`, 302);
 };
+
+export default {
+  get: GET,
+} satisfies APIRoute;

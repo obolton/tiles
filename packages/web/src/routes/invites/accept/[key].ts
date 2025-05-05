@@ -1,0 +1,27 @@
+import client from "@/api/client";
+import { getSessionId } from "@/utils/sessions";
+import { redirect, notFound } from "@/router/router";
+import type { APIRoute, APIRequestHandler } from "@/router/router";
+
+const GET: APIRequestHandler = async ({ headers, parameters }) => {
+  const key = parameters.key;
+  if (!key) {
+    return notFound();
+  }
+  const sessionId = getSessionId(headers);
+  if (!sessionId) {
+    return redirect(
+      `/sign-in?destination=${encodeURIComponent(`invites/accept/${key}`)}`,
+      302,
+    );
+  }
+  const { pageId } = await client.collaboration.acceptPageInvite.mutate(
+    { key },
+    { context: { sessionId } },
+  );
+  return redirect(`/pages/${pageId}`, 302);
+};
+
+export default {
+  get: GET,
+} satisfies APIRoute;
