@@ -1,6 +1,3 @@
-import { useCallback, useMemo, useRef, useState } from "react";
-import { classNames } from "@/utils/css";
-import useScrollIntoView from "@/hooks/useScrollIntoView";
 import styles from "./GridItem.module.css";
 import type PageItem from "@/elements/item/PageItem";
 import ImageTile from "@/components/tiles/ImageTile";
@@ -14,67 +11,91 @@ import CollectionTile from "@/components/tiles/CollectionTile";
 import type { Tile } from "@/types/layout";
 import type { DragDropEvent } from "@/utils/drag";
 import { handleError } from "@/utils/errors";
-import { useEditor } from "@/context/editor";
-import useEditable from "@/hooks/useEditable";
+import { Store, DerivedStore } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/stores";
+import type Editor from "@/editor/Editor";
+import type { JSX } from "@/jsx/jsx";
 
 interface GridItemProps {
+  editor: Editor;
   id: string;
   collectionId: string;
   placementId: string;
-  style?: React.CSSProperties;
-  className?: string;
-  rows?: number;
+  style?: JSX.StyleDeclaration;
+  classList?: { [k: string]: boolean | StoreInterface<boolean> };
+  rows: StoreInterface<number>;
   minRows?: number;
-  columns?: number;
+  columns: StoreInterface<number>;
   minColumns?: number;
   grow?: boolean;
-  deletable?: boolean;
-  draggable?: boolean;
-  resizable?: boolean;
+  deletable?: boolean | StoreInterface<boolean>;
+  draggable?: boolean | StoreInterface<boolean>;
+  resizable?: boolean | StoreInterface<boolean>;
   allowDrop?: boolean;
   tile: Tile;
-  tabIndex?: number;
+  tabIndex?: number | StoreInterface<number | undefined>;
 }
 
-function getTileComponent(tile: Tile, hasFocus: boolean, onDelete: () => void) {
+function getTileComponent(
+  tile: Tile,
+  hasFocus: StoreInterface<boolean>,
+  onDelete: () => void,
+  editor: Editor,
+) {
   const type = tile.type;
   switch (type) {
     case "IMAGE":
-      return <ImageTile {...tile} hasFocus={hasFocus} onDelete={onDelete} />;
+      return (
+        <ImageTile
+          {...tile}
+          editor={editor}
+          hasFocus={hasFocus}
+          onDelete={onDelete}
+        />
+      );
     case "VIDEO":
-      return <VideoTile {...tile} />;
+      return <VideoTile {...tile} editor={editor} />;
     case "TEXT":
-      return <TextTile {...tile} hasFocus={hasFocus} onDelete={onDelete} />;
+      return (
+        <TextTile
+          {...tile}
+          editor={editor}
+          hasFocus={hasFocus}
+          onDelete={onDelete}
+        />
+      );
     case "MAP":
-      return <MapTile {...tile} hasFocus={hasFocus} />;
+      return <MapTile {...tile} editor={editor} hasFocus={hasFocus} />;
     case "LINK":
-      return <LinkTile {...tile} hasFocus={hasFocus} />;
+      return <LinkTile {...tile} editor={editor} hasFocus={hasFocus} />;
     case "PAGE_LINK":
-      return <PageLinkTile {...tile} />;
+      return <PageLinkTile {...tile} editor={editor} />;
     case "EVENT":
-      return <EventTile {...tile} />;
+      return <EventTile {...tile} editor={editor} />;
     case "COLLECTION":
-      return <CollectionTile {...tile} />;
+      return <CollectionTile {...tile} editor={editor} />;
     default:
       throw new Error(`Unknown tile type: ${type}`);
   }
 }
 
-function handlePointerDown(event: React.PointerEvent<PageItem>) {
-  if (!event.currentTarget.contains(document.activeElement)) {
-    event.currentTarget.focus({ preventScroll: true });
+function handlePointerDown(event: PointerEvent) {
+  const item = event.currentTarget as HTMLElement;
+  if (!item.contains(document.activeElement)) {
+    item.focus({ preventScroll: true });
   }
 }
 
 export default function GridItem({
+  editor,
   id,
   collectionId,
   placementId,
-  className,
+  classList,
   style,
-  rows = 1,
+  rows,
   minRows = 1,
-  columns = 1,
+  columns,
   minColumns = 1,
   grow = false,
   deletable = false,
@@ -84,31 +105,35 @@ export default function GridItem({
   tile,
   tabIndex,
 }: GridItemProps) {
-  const ref = useRef<PageItem>(null);
-  const editor = useEditor();
-  const isEditable = useEditable();
-  useScrollIntoView(ref);
+  let item: PageItem;
+  const ref = (element: PageItem) => {
+    item = element;
+  };
 
-  const [hasFocus, setHasFocus] = useState(false);
-  const onFocus = useCallback(() => {
-    setHasFocus(true);
-    editor.focusedTile.value = placementId;
-  }, [placementId, editor]);
+  const hasFocus = new Store(false);
+  const isDragOver = new Store(false);
+  const onFocus = () => {
+    if (editor.isEditable.value) {
+      hasFocus.value = true;
+      editor.focusedTile.value = placementId;
+    }
+  };
 
-  const onBlur = useCallback(
-    (event: React.FocusEvent<PageItem>) => {
-      if (!event.currentTarget.contains(event.relatedTarget)) {
-        setHasFocus(false);
-        editor.focusedTile.value = null;
-      }
-    },
-    [editor],
-  );
+  const onBlur = (event: FocusEvent) => {
+    const element = event.currentTarget as HTMLElement;
+    if (
+      editor.isEditable.value &&
+      (!(event.relatedTarget instanceof Element) ||
+        !element.contains(event.relatedTarget))
+    ) {
+      hasFocus.value = false;
+      editor.focusedTile.value = null;
+    }
+  };
 
-  const [isDragOver, setDragOver] = useState(false);
   const onDragStart = (event: DragDropEvent<Tile>) => {
-    if (event.target === ref.current) {
-      event.state.data = structuredClone(tile);
+    if (event.target === item) {
+      event.state.data = tile;
     }
   };
 
@@ -121,10 +146,12 @@ export default function GridItem({
       return;
     }
 
-    setDragOver(true);
+    isDragOver.value = true;
   };
 
-  const onDragLeave = () => setDragOver(false);
+  const onDragLeave = () => {
+    isDragOver.value = false;
+  };
 
   const onDrop = async (event: DragDropEvent<Tile>) => {
     const { state } = event;
@@ -147,19 +174,15 @@ export default function GridItem({
     }
   };
 
-  const onDelete = () => ref.current?.delete();
+  const onDelete = () => item?.delete();
 
-  const combinedStyles = useMemo(
-    () =>
-      ({
-        ...style,
-        "--columns": Math.max(columns, minColumns),
-        "--min-columns": minColumns,
-        "--rows": Math.max(rows, minRows),
-        "--min-rows": minRows,
-      }) as React.CSSProperties,
-    [style, columns, rows, minColumns, minRows],
-  );
+  const combinedStyles = new DerivedStore([columns, rows], (columns, rows) => ({
+    ...style,
+    "--columns": Math.max(columns, minColumns).toString(),
+    "--min-columns": minColumns.toString(),
+    "--rows": Math.max(rows, minRows).toString(),
+    "--min-rows": minRows.toString(),
+  }));
 
   return (
     <page-item
@@ -168,13 +191,13 @@ export default function GridItem({
       allowdrag={draggable}
       allowresize={resizable}
       allowdelete={deletable}
-      class={classNames(
-        styles.item,
-        draggable && styles.draggable,
-        grow && styles.grow,
-        isDragOver && styles["drag-over"],
-        className,
-      )}
+      classList={{
+        [styles.item]: true,
+        [styles.draggable]: draggable,
+        [styles.grow]: grow,
+        [styles["drag-over"]]: isDragOver,
+        ...classList,
+      }}
       style={combinedStyles}
       data-placement-id={placementId}
       data-animate-layout-id={placementId}
@@ -183,12 +206,12 @@ export default function GridItem({
       ondnd-dragleave={allowDrop ? onDragLeave : undefined}
       ondnd-drop={allowDrop ? onDrop : undefined}
       data-drop={allowDrop ? "true" : undefined}
-      onFocus={isEditable ? onFocus : undefined}
-      onBlur={isEditable ? onBlur : undefined}
+      onfocus={onFocus}
+      onfocusout={onBlur}
       tabIndex={tabIndex}
-      onPointerDown={handlePointerDown}
+      onpointerdown={handlePointerDown}
     >
-      {getTileComponent(tile, hasFocus, onDelete)}
+      {getTileComponent(tile, hasFocus, onDelete, editor)}
     </page-item>
   );
 }
