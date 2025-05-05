@@ -64,17 +64,31 @@ async function collectStylesheets(
   return stylesheets;
 }
 
-async function getEarlyHeadChunk(
-  routeConfig: RouteConfig,
-  metadata: RouteMetadata,
-  viteDevServer: ViteDevServer,
-) {
-  const stylesheets = await collectStylesheets(
-    routeConfig.moduleUrl,
-    viteDevServer,
-  );
+function getEarlyHintsLinks(stylesheets: string[], metadata: RouteMetadata) {
+  const hints: string[] = [];
 
+  hints.push("</src/server/hydrate>; rel=preload; as=script");
+
+  for (const stylesheet of stylesheets) {
+    hints.push("<" + stylesheet + ">; rel=preload; as=style");
+  }
+
+  if (metadata.scripts) {
+    for (const script of metadata.scripts) {
+      hints.push("<" + script.src + ">; rel=preload; as=script");
+    }
+  }
+
+  return hints;
+}
+
+function getPageStartChunk(
+  stylesheets: string[],
+  metadata: RouteMetadata,
+  data?: RouteData,
+) {
   let chunk = '<!doctype html><html><head><meta charset="utf-8">';
+
   for (const stylesheet of stylesheets) {
     chunk += '<link rel="stylesheet" href="' + escapeUTF8(stylesheet) + '">';
   }
@@ -99,11 +113,6 @@ async function getEarlyHeadChunk(
 
   chunk += '<script type="module" src="/src/server/hydrate"></script>';
   chunk += '<script type="module" src="/@vite/client"></script>';
-  return chunk;
-}
-
-function getLateHeadChunk(data?: RouteData) {
-  let chunk = "";
   if (typeof data?.title === "string") {
     chunk += "<title>" + escapeUTF8(data.title) + "</title>";
   }
@@ -173,8 +182,10 @@ async function renderRoute(
 
   const mergedMetadata = mergeRouteMetadata(globalMetadata, metadata);
 
-  response.writeHead(200);
-  response.write(await getEarlyHeadChunk(route, mergedMetadata, viteDevServer));
+  const stylesheets = await collectStylesheets(route.moduleUrl, viteDevServer);
+
+  const earlyHintLinks = getEarlyHintsLinks(stylesheets, mergedMetadata);
+  response.writeEarlyHints({ link: earlyHintLinks });
 
   const data = loader
     ? await loader({
@@ -184,11 +195,12 @@ async function renderRoute(
       })
     : undefined;
 
-  response.write(getLateHeadChunk(data));
+  response.writeHead(200);
+  response.write(getPageStartChunk(stylesheets, mergedMetadata, data));
 
   const body = renderToString(component(data?.data));
-
   response.write(body);
+
   response.write(getPageEndChunk(route, data));
   response.end();
 }
