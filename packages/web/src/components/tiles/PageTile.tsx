@@ -3,6 +3,8 @@ import styles from "./PageTile.module.css";
 import { classNames } from "@/utils/css";
 import type { Theme } from "@/types/pages";
 import type { FontId } from "@/config/fonts";
+import type { JSX } from "@/jsx/jsx";
+import { Store } from "@/utils/stores";
 
 export interface PageTileProps {
   title: string;
@@ -15,7 +17,7 @@ export interface PageTileProps {
     name: string;
     imageUrl?: string | null;
   } | null;
-  children?: React.ReactNode;
+  children?: JSX.Node;
 }
 
 export default function PageTile({
@@ -31,8 +33,8 @@ export default function PageTile({
   return (
     <Tile
       className={styles.tile}
-      theme={theme}
-      hue={hue}
+      theme={new Store(theme)}
+      hue={new Store(hue)}
       font={font}
       backgroundImageUrl={coverImageUrl}
       border="inside"
