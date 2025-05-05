@@ -1,24 +1,21 @@
-import { useCallback } from "react";
-import useEditable from "@/hooks/useEditable";
 import { showModal } from "@/utils/modals";
 import Tile from "./Tile";
 import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import styles from "./LinkTile.module.css";
-import { useEditor } from "@/context/editor";
+import type { StoreInterface } from "@/utils/stores";
 import type { ClientLink } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
+import type Editor from "@/editor/Editor";
 
 interface LinkTileProps extends ClientLink {
-  hasFocus: boolean;
-}
-
-function preventDefault(event: React.MouseEvent) {
-  event.preventDefault();
+  editor: Editor;
+  hasFocus: StoreInterface<boolean>;
 }
 
 export default function LinkTile({
+  editor,
   id,
   url,
   title,
@@ -27,10 +24,9 @@ export default function LinkTile({
   imageUrl,
   hasFocus,
 }: LinkTileProps) {
-  const editor = useEditor();
-  const isEditable = useEditable();
+  const { isEditable } = editor;
 
-  const editLink = useCallback(() => {
+  const editLink = () => {
     showModal<LinkModalResult>("LINK", {
       url,
       showPages: false,
@@ -40,7 +36,7 @@ export default function LinkTile({
         }
       },
     });
-  }, [editor, id, url]);
+  };
 
   const contents = (
     <div className={styles.caption}>
@@ -50,6 +46,12 @@ export default function LinkTile({
     </div>
   );
 
+  const onClick = (event: Event) => {
+    if (isEditable.value) {
+      event.preventDefault();
+    }
+  };
+
   return (
     <Tile backgroundImageUrl={imageUrl}>
       <a
@@ -57,26 +59,28 @@ export default function LinkTile({
         href={url}
         target="_blank"
         rel="noreferrer ugc"
-        onClick={isEditable ? preventDefault : undefined}
+        onclick={onClick}
       >
         {contents}
         <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
       </a>
 
-      {hasFocus ? (
-        <FloatingToolbar>
-          <button
-            role="menuitem"
-            type="button"
-            className="floating small"
-            aria-label="Edit link"
-            data-tooltip="Edit link"
-            onClick={editLink}
-          >
-            <LinkIcon aria-hidden="true" />
-          </button>
-        </FloatingToolbar>
-      ) : null}
+      {hasFocus.derive((value) =>
+        value ? (
+          <FloatingToolbar>
+            <button
+              role="menuitem"
+              type="button"
+              className="floating small"
+              aria-label="Edit link"
+              data-tooltip="Edit link"
+              onclick={editLink}
+            >
+              <LinkIcon aria-hidden="true" />
+            </button>
+          </FloatingToolbar>
+        ) : null,
+      )}
     </Tile>
   );
 }
