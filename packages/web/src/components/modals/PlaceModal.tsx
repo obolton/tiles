@@ -1,12 +1,12 @@
 import type { AppRouterOutputs } from "@/api/client";
 import client from "@/api/client";
-import useDebouncedCallback from "@/hooks/useDebouncedCallback";
-import { useCallback, useEffect, useState, useTransition } from "react";
 import styles from "./PlaceModal.module.css";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import type { ModalProps } from "@/utils/modals";
+import { Store } from "@/utils/stores";
+import { handleError } from "@/utils/errors";
 
 type Place = AppRouterOutputs["places"]["search"][number];
 
@@ -23,52 +23,53 @@ export default function PlaceModal({
   cancel,
   confirm,
 }: PlaceModalProps) {
-  const [isPending, startTransition] = useTransition();
-  const [location, setLocation] = useState<GeolocationPosition | null>(null);
-  const [results, setResults] = useState<Place[]>([]);
+  const isPending = new Store(false);
+  const location = new Store<GeolocationPosition | null>(null);
+  const results = new Store<Place[]>([]);
 
-  useEffect(() => {
-    if (!boundingBox) {
-      navigator.geolocation.getCurrentPosition(setLocation, (error) =>
-        console.error(error),
-      );
+  if (!import.meta.env.SSR && !boundingBox) {
+    navigator.geolocation.getCurrentPosition(
+      (currentLocation) => (location.value = currentLocation),
+      (error) => console.error(error),
+    );
+  }
+
+  // TODO: Debounce
+  const search = async (event: Event) => {
+    const input = event.currentTarget as HTMLInputElement;
+    const query = input.value;
+    if (!query) {
+      results.value = [];
+      return;
     }
-  }, [boundingBox]);
+    const newResults = await client.places.search.mutate(
+      boundingBox
+        ? {
+            query,
+            boundingBox,
+          }
+        : {
+            query,
+            lat: location.value?.coords.latitude ?? 0,
+            long: location.value?.coords.longitude ?? 0,
+          },
+    );
+    results.value = newResults;
+  };
 
-  const search = useDebouncedCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
-      const query = event.target.value;
-      if (!query) {
-        setResults([]);
-        return;
-      }
-      const results = await client.places.search.mutate(
-        boundingBox
-          ? {
-              query,
-              boundingBox,
-            }
-          : {
-              query,
-              lat: location?.coords.latitude ?? 0,
-              long: location?.coords.longitude ?? 0,
-            },
-      );
-      setResults(results);
-    },
-    300,
-    [location],
-  );
-
-  const selectPlace = useCallback(
-    (place: Place) => {
-      if (isPending) {
-        return;
-      }
-      startTransition(() => confirm({ place }));
-    },
-    [isPending, confirm],
-  );
+  const selectPlace = async (place: Place) => {
+    if (isPending.value) {
+      return;
+    }
+    isPending.value = true;
+    try {
+      await confirm({ place });
+    } catch (error) {
+      handleError(error);
+    } finally {
+      isPending.value = false;
+    }
+  };
 
   return (
     <>
@@ -84,23 +85,25 @@ export default function PlaceModal({
             name="search"
             type="search"
             placeholder="Address or name"
-            autoFocus
-            onChange={search}
+            autofocus
+            oninput={search}
           />
         </label>
 
         <ol className={styles["place-select"]}>
-          {results.map((result) => (
-            <li key={result.providerId} onClick={() => selectPlace(result)}>
-              <div>{result.name}</div>
-              <div className={styles.description}>{result.address}</div>
-            </li>
-          ))}
+          {results.derive((items) =>
+            items.map((result) => (
+              <li onclick={() => selectPlace(result)}>
+                <div>{result.name}</div>
+                <div className={styles.description}>{result.address}</div>
+              </li>
+            )),
+          )}
         </ol>
       </ModalBody>
 
       <ModalFooter>
-        <button className="secondary" type="button" onClick={cancel}>
+        <button className="secondary" type="button" onclick={cancel}>
           Cancel
         </button>
       </ModalFooter>
