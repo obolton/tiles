@@ -1,36 +1,41 @@
-import { Fragment, useCallback, useRef } from "react";
-import useEditable from "@/hooks/useEditable";
 import Tile from "./Tile";
 import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
 import AddPlaceIcon from "@/icons/add-place.svg?jsx";
 import styles from "./MapTile.module.css";
+import { showModal } from "@/utils/modals";
 import type { ClientMapTile } from "@/types/tiles";
 import type MapEvent from "@/elements/maps/MapEvent";
-import { showModal } from "@/utils/modals";
-import { useEditor } from "@/context/editor";
 import type MapView from "@/elements/maps/MapView";
 import type MapMarker from "@/elements/maps/MapMarker";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
+import type Editor from "@/editor/Editor";
+import type { StoreInterface } from "@/utils/stores";
 
 interface MapTileProps extends ClientMapTile {
-  hasFocus: boolean;
+  editor: Editor;
+  hasFocus: StoreInterface<boolean>;
 }
 
-export default function MapTile({ id, places, hasFocus }: MapTileProps) {
-  const ref = useRef<MapView>(null);
-  const editor = useEditor();
-  const isEditable = useEditable();
+export default function MapTile({
+  editor,
+  id,
+  places,
+  hasFocus,
+}: MapTileProps) {
+  let mapView: MapView | undefined;
+  const { isEditable } = editor;
 
-  const handleAddPlace = useCallback(
-    () =>
-      showModal<PlaceModalResult>("MAP", {
-        boundingBox: ref.current?.getBoundingBox(),
-        async onConfirm({ place }) {
-          await editor.addPlace({ id, place });
-        },
-      }),
-    [editor, id],
-  );
+  const ref = (element: MapView) => {
+    mapView = element;
+  };
+
+  const handleAddPlace = () =>
+    showModal<PlaceModalResult>("MAP", {
+      boundingBox: mapView?.getBoundingBox(),
+      async onConfirm({ place }) {
+        await editor.addPlace({ id, place });
+      },
+    });
 
   // TODO: This doesn't work properly when wrapped in useCallback
   const deleteMarker = async ({ markerId }: MapEvent) => {
@@ -59,16 +64,16 @@ export default function MapTile({ id, places, hasFocus }: MapTileProps) {
 
   return (
     <Tile border="inside">
-      <pop-out class={styles["pop-out"]} expandable="expandable">
+      <pop-out className={styles["pop-out"]} expandable="expandable">
         <map-view
           ref={ref}
-          class={styles.map}
+          className={styles.map}
           movable
           legend
           ondeletemarker={deleteMarker}
         >
           {places.map((place) => (
-            <Fragment key={place.id}>
+            <>
               <map-marker
                 editable={isEditable}
                 id={place.id}
@@ -90,24 +95,26 @@ export default function MapTile({ id, places, hasFocus }: MapTileProps) {
               >
                 {place.name || "Unnamed point"}
               </map-legend-item>
-            </Fragment>
+            </>
           ))}
         </map-view>
 
-        {hasFocus ? (
-          <FloatingToolbar>
-            <button
-              role="menuitem"
-              type="button"
-              className="floating small"
-              aria-label="Add place"
-              data-tooltip="Add a place"
-              onClick={handleAddPlace}
-            >
-              <AddPlaceIcon aria-hidden="true" />
-            </button>
-          </FloatingToolbar>
-        ) : null}
+        {hasFocus.derive((value) =>
+          value ? (
+            <FloatingToolbar>
+              <button
+                role="menuitem"
+                type="button"
+                className="floating small"
+                aria-label="Add place"
+                data-tooltip="Add a place"
+                onclick={handleAddPlace}
+              >
+                <AddPlaceIcon aria-hidden="true" />
+              </button>
+            </FloatingToolbar>
+          ) : null,
+        )}
       </pop-out>
     </Tile>
   );
