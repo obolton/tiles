@@ -46,6 +46,8 @@ export namespace JSX {
   export type StyleDeclaration = Partial<CSSStyleDeclaration> &
     Record<CustomCSSProperty, string | undefined>;
 
+  export type DataAttribute = `data-${string}`;
+
   export type Attributes<T extends globalThis.Element> = WithStores<
     Partial<Omit<T, "children" | "classList" | "style">> & {
       style?: StyleDeclaration;
@@ -61,6 +63,7 @@ export namespace JSX {
         )[]
       | { [k: string]: boolean | StoreInterface<boolean> };
     children?: Node;
+    [k: DataAttribute]: string | null | undefined;
   };
 
   export type HTMLElements = {
