@@ -1,17 +1,22 @@
-import { useMemo } from "react";
 import styles from "./Tile.module.css";
-import { classNames } from "@/utils/css";
-import type { Theme } from "@/types/pages";
 import { getFontConfig } from "@/utils/fonts";
+import { isStore } from "@/utils/stores";
+import type { Theme } from "@/types/pages";
 import type { FontId } from "@/config/fonts";
+import type { JSX } from "@/jsx/jsx";
+import type { StoreInterface } from "@/utils/stores";
 
 export type TileProps = {
   className?: string;
-  children?: React.ReactNode;
+  children?: JSX.Node;
   background?: boolean;
-  border?: "inside" | "outside" | "none";
-  theme?: Theme | null;
-  hue?: number | null;
+  border?:
+    | StoreInterface<"inside" | "outside" | "none">
+    | "inside"
+    | "outside"
+    | "none";
+  theme?: StoreInterface<Theme | null | undefined>;
+  hue?: StoreInterface<number | null | undefined>;
   font?: FontId | null;
   backgroundImageUrl?: string | null;
 };
@@ -38,29 +43,31 @@ export default function Tile({
   border = "outside",
   backgroundImageUrl,
 }: TileProps) {
-  const style = useMemo(() => {
-    const fontConfig =
-      typeof font === "string" ? getFontConfig(font) : undefined;
-    return {
-      "--hue": typeof hue === "number" ? `${hue.toFixed(2)}deg` : undefined,
-      "--font": fontConfig
-        ? `"${fontConfig.family}", "${fontConfig.fallback}"`
-        : undefined,
-      backgroundImage: backgroundImageUrl
-        ? `url(${backgroundImageUrl})`
-        : undefined,
-    } as React.CSSProperties;
-  }, [hue, font, backgroundImageUrl]);
+  const fontConfig = typeof font === "string" ? getFontConfig(font) : undefined;
+  const style = {
+    "--hue":
+      typeof hue?.value === "number" ? `${hue.value.toFixed(2)}deg` : undefined,
+    "--font": fontConfig
+      ? `"${fontConfig.family}", "${fontConfig.fallback}"`
+      : undefined,
+    backgroundImage: backgroundImageUrl
+      ? `url(${backgroundImageUrl})`
+      : undefined,
+  };
 
   return (
     <div
-      className={classNames(
+      classList={[
         styles.tile,
-        BORDER_CLASSES[border],
+        isStore(border)
+          ? border.derive((value) => BORDER_CLASSES[value])
+          : BORDER_CLASSES[border],
         background ? styles.background : undefined,
-        theme ? THEME_CLASSES[theme] : undefined,
+        isStore(theme)
+          ? theme.derive((value) => (value ? THEME_CLASSES[value] : undefined))
+          : undefined,
         className,
-      )}
+      ]}
       style={style}
     >
       {children}
