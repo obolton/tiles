@@ -1,9 +1,9 @@
-import { useCallback, useState, useTransition } from "react";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
+import { Store } from "@/utils/stores";
+import { handleError } from "@/utils/errors";
 import type { ModalProps } from "@/utils/modals";
-import { classNames } from "@/utils/css";
 
 export type EventModalResult = {
   title: string;
@@ -41,55 +41,43 @@ export default function EventModal({
   confirm,
   ...props
 }: EventModalProps) {
-  const [isPending, startTransition] = useTransition();
-  const [allDay, setAllDay] = useState(props.allDay ?? false);
-  const [title, setTitle] = useState(props.title ?? "");
-  const [start, setStart] = useState(props.start ?? "");
-  const [end, setEnd] = useState(props.end ?? "");
+  const isPending = new Store(false);
+  const allDay = new Store(props.allDay ?? false);
 
-  const changeTitle = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setTitle(event.target.value),
-    [],
-  );
+  const changeAllDay = (event: Event) => {
+    const input = event.target as HTMLInputElement;
+    allDay.value = input.checked;
+  };
 
-  const changeStart = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setStart(event.target.value ? `${event.target.value}Z` : ""),
-    [],
-  );
+  const submit = async (event: Event) => {
+    const form = event.currentTarget as HTMLFormElement;
+    event.preventDefault();
 
-  const changeEnd = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setEnd(event.target.value ? `${event.target.value}Z` : ""),
-    [],
-  );
+    if (isPending.value) {
+      return;
+    }
 
-  const changeAllDay = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) =>
-      setAllDay(event.target.checked),
-    [],
-  );
+    isPending.value = true;
 
-  const submit = useCallback(
-    async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
+    const formData = new FormData(form);
 
-      if (isPending) {
-        return;
-      }
+    const title = formData.get("title") as string;
+    const start = formData.get("start") as string;
+    const end = formData.get("end") as string;
 
-      startTransition(() =>
-        confirm({
-          title,
-          start: new Date(start).toISOString(),
-          end: end ? new Date(end).toISOString() : null,
-          allDay,
-        }),
-      );
-    },
-    [allDay, confirm, end, isPending, start, title],
-  );
+    try {
+      await confirm({
+        title,
+        start: new Date(start).toISOString(),
+        end: end ? new Date(end).toISOString() : null,
+        allDay: allDay.value,
+      });
+    } catch (error) {
+      handleError(error);
+    } finally {
+      isPending.value = false;
+    }
+  };
 
   return (
     <form onSubmit={submit}>
@@ -104,10 +92,9 @@ export default function EventModal({
             name="title"
             type="text"
             placeholder="Event title"
-            autoFocus
+            autofocus
             required
-            value={title}
-            onChange={changeTitle}
+            value={props.title ?? ""}
           />
         </label>
 
@@ -117,63 +104,60 @@ export default function EventModal({
             name="allDay"
             type="checkbox"
             role="switch"
-            onChange={changeAllDay}
-            checked={allDay}
+            onchange={changeAllDay}
+            checked={props.allDay ?? false}
           />
         </label>
 
         <label>
           Start
-          {allDay ? (
-            <input
-              type="date"
-              name="start"
-              aria-label="Start date"
-              required
-              value={start ? getFormattedDate(start) : ""}
-              onChange={changeStart}
-            />
-          ) : (
-            <input
-              type="datetime-local"
-              name="start"
-              aria-label="Start date and time"
-              value={start ? getFormattedDateTime(start) : ""}
-              onChange={changeStart}
-            />
+          {allDay.derive((value) =>
+            value ? (
+              <input
+                type="date"
+                name="start"
+                aria-label="Start date"
+                required
+                value={props.start ? getFormattedDate(props.start) : ""}
+              />
+            ) : (
+              <input
+                type="datetime-local"
+                name="start"
+                aria-label="Start date and time"
+                value={props.start ? getFormattedDateTime(props.start) : ""}
+              />
+            ),
           )}
         </label>
 
         <label>
           End
-          {allDay ? (
-            <input
-              type="date"
-              name="end"
-              aria-label="End date"
-              value={end ? getFormattedDate(end) : ""}
-              onChange={changeEnd}
-            />
-          ) : (
-            <input
-              type="datetime-local"
-              name="end"
-              aria-label="End date and time"
-              value={end ? getFormattedDateTime(end) : ""}
-              onChange={changeEnd}
-            />
+          {allDay.derive((value) =>
+            value ? (
+              <input
+                type="date"
+                name="end"
+                aria-label="End date"
+                value={props.end ? getFormattedDate(props.end) : ""}
+              />
+            ) : (
+              <input
+                type="datetime-local"
+                name="end"
+                aria-label="End date and time"
+                value={props.end ? getFormattedDateTime(props.end) : ""}
+              />
+            ),
           )}
         </label>
       </ModalBody>
 
       <ModalFooter>
-        <button
-          className={classNames("primary", isPending && "pending")}
-          type="submit"
-        >
+        <button classList={{ primary: true, pending: isPending }} type="submit">
           Save
         </button>
-        <button className="secondary" type="button" onClick={cancel}>
+        <button className="secondary" type="button" onclick={cancel}>
           Cancel
         </button>
       </ModalFooter>
