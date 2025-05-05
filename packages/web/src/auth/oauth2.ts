@@ -1,7 +1,8 @@
 import crypto from "node:crypto";
-import type { AstroCookies, AstroCookieSetOptions } from "astro";
+import * as cookie from "cookie";
+import type { SerializeOptions } from "cookie";
 
-const OAUTH2_COOKIE_OPTIONS: AstroCookieSetOptions = {
+const OAUTH2_COOKIE_OPTIONS: SerializeOptions = {
   httpOnly: true,
   secure: true,
   path: "/",
@@ -43,34 +44,33 @@ function createOAuth2State() {
   return crypto.randomBytes(OAUTH2_STATE_BYTES).toString("base64url");
 }
 
-export function getOAuth2StateCookie(cookies: AstroCookies) {
-  return cookies.get(OAUTH2_STATE_COOKIE_NAME)?.value;
+export function getOAuth2StateCookie(cookies: string) {
+  return cookie.parse(cookies)[OAUTH2_STATE_COOKIE_NAME];
 }
 
-export function setOAuth2StateCookie(cookies: AstroCookies, state: string) {
-  cookies.set(OAUTH2_STATE_COOKIE_NAME, state, {
+export function setOAuth2StateCookie(state: string) {
+  return cookie.serialize(OAUTH2_STATE_COOKIE_NAME, state, {
     ...OAUTH2_COOKIE_OPTIONS,
     maxAge: OAUTH2_COOKIE_MAX_AGE,
   });
 }
 
-export function getOAuth2DestinationCookie(cookies: AstroCookies) {
-  return cookies.get(OAUTH2_DESTINATION_COOKIE_NAME)?.value;
+export function getOAuth2DestinationCookie(cookies: string) {
+  return cookie.parse(cookies)[OAUTH2_DESTINATION_COOKIE_NAME];
 }
 
-export function setOAuth2DestinationCookie(
-  cookies: AstroCookies,
-  destination: string,
-) {
-  cookies.set(OAUTH2_DESTINATION_COOKIE_NAME, destination, {
+export function setOAuth2DestinationCookie(destination: string) {
+  return cookie.serialize(OAUTH2_DESTINATION_COOKIE_NAME, destination, {
     ...OAUTH2_COOKIE_OPTIONS,
     maxAge: OAUTH2_COOKIE_MAX_AGE,
   });
 }
 
-export function clearOAuth2Cookies(cookies: AstroCookies) {
-  cookies.delete(OAUTH2_STATE_COOKIE_NAME, OAUTH2_COOKIE_OPTIONS);
-  cookies.delete(OAUTH2_DESTINATION_COOKIE_NAME, OAUTH2_COOKIE_OPTIONS);
+export function clearOAuth2Cookies() {
+  return [
+    cookie.serialize(OAUTH2_STATE_COOKIE_NAME, "", OAUTH2_COOKIE_OPTIONS),
+    cookie.serialize(OAUTH2_DESTINATION_COOKIE_NAME, "", OAUTH2_COOKIE_OPTIONS),
+  ];
 }
 
 type OAuth2GetAccessTokenOptions = {

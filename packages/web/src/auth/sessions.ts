@@ -1,22 +1,23 @@
 import assert from "node:assert";
+import * as cookie from "cookie";
 import client, { type AppRouterInputs } from "../api/client";
 import {
   SESSION_COOKIE_NAME,
   SIGNED_IN_FLAG_COOKIE_NAME,
 } from "api/src/constants/cookies";
-import type { AstroCookies, AstroCookieSetOptions } from "astro";
+import type { SerializeOptions } from "cookie";
 
-assert(import.meta.env.SESSION_COOKIE_DOMAIN);
+assert(process.env.SESSION_COOKIE_DOMAIN);
 
-const SESSION_COOKIE_OPTIONS: AstroCookieSetOptions = {
+const SESSION_COOKIE_OPTIONS: SerializeOptions = {
   httpOnly: true,
   secure: true,
   path: "/",
   sameSite: "lax",
-  domain: import.meta.env.SESSION_COOKIE_DOMAIN,
+  domain: process.env.SESSION_COOKIE_DOMAIN,
 };
 
-const SIGNED_IN_FLAG_COOKIE_OPTIONS: AstroCookieSetOptions = {
+const SIGNED_IN_FLAG_COOKIE_OPTIONS: SerializeOptions = {
   httpOnly: false,
   secure: true,
   path: "/",
@@ -43,22 +44,15 @@ export async function signIn({
   });
 }
 
-export function setAuthenticationCookies(
-  cookies: AstroCookies,
-  sessionId: string,
-  expiresAt: Date,
-) {
-  cookies.set(SESSION_COOKIE_NAME, sessionId, {
-    ...SESSION_COOKIE_OPTIONS,
-    expires: expiresAt,
-  });
-  cookies.set(SIGNED_IN_FLAG_COOKIE_NAME, "1", {
-    ...SIGNED_IN_FLAG_COOKIE_OPTIONS,
-    expires: expiresAt,
-  });
-}
-
-export function clearSessionCookies(cookies: AstroCookies) {
-  cookies.delete(SESSION_COOKIE_NAME, SESSION_COOKIE_OPTIONS);
-  cookies.delete(SIGNED_IN_FLAG_COOKIE_NAME, SIGNED_IN_FLAG_COOKIE_OPTIONS);
+export function setAuthenticationCookies(sessionId: string, expiresAt: Date) {
+  return [
+    cookie.serialize(SESSION_COOKIE_NAME, sessionId, {
+      ...SESSION_COOKIE_OPTIONS,
+      expires: expiresAt,
+    }),
+    cookie.serialize(SIGNED_IN_FLAG_COOKIE_NAME, "1", {
+      ...SIGNED_IN_FLAG_COOKIE_OPTIONS,
+      expires: expiresAt,
+    }),
+  ];
 }

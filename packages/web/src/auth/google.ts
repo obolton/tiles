@@ -9,12 +9,13 @@ const SCOPES = [
   "https://www.googleapis.com/auth/userinfo.email",
 ];
 
-const GOOGLE_CLIENT_ID: string = import.meta.env.GOOGLE_CLIENT_ID;
-const GOOGLE_CLIENT_SECRET: string = import.meta.env.GOOGLE_CLIENT_SECRET;
-const GOOGLE_REDIRECT_URI: string = import.meta.env.GOOGLE_REDIRECT_URI;
-assert(GOOGLE_CLIENT_ID);
-assert(GOOGLE_CLIENT_SECRET);
-assert(GOOGLE_REDIRECT_URI);
+assert(process.env.GOOGLE_CLIENT_ID);
+assert(process.env.GOOGLE_CLIENT_SECRET);
+assert(process.env.GOOGLE_REDIRECT_URI);
+
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
 
 export function getGoogleAuthorizationUrl() {
   return getOAuth2AuthorizationUrl({
