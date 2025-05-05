@@ -1,11 +1,11 @@
 import { FONTS, type FontId } from "@/config/fonts";
 import FontIcon from "@/icons/font.svg?jsx";
-import { useCallback } from "react";
 import styles from "./FontPicker.module.css";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type { JSX } from "@/jsx/jsx";
 
 interface FontPickerProps
-  extends Omit<React.HTMLAttributes<HTMLElement>, "value" | "onChange"> {
+  extends Omit<JSX.Attributes<HTMLElement>, "value" | "onChange"> {
   direction?: "left" | "right" | "up";
   value?: FontId;
   onChange: (value: FontId) => void;
@@ -17,16 +17,13 @@ export default function FontPicker({
   onChange,
   ...props
 }: FontPickerProps) {
-  const setFont = useCallback(
-    (event: Event) =>
-      void onChange((event.target as SwatchSelect).value as FontId),
-    [onChange],
-  );
+  const setFont = (event: Event) =>
+    void onChange((event.target as SwatchSelect).value as FontId);
 
   return (
     <swatch-select
       {...props}
-      class={styles.font}
+      className={styles.font}
       aria-orientation={direction === "up" ? "vertical" : "horizontal"}
       direction={direction}
       value={value}
@@ -34,11 +31,7 @@ export default function FontPicker({
     >
       <FontIcon aria-hidden="true" slot="icon" />
       {FONTS.map((font) => (
-        <swatch-item
-          key={font.family}
-          style={{ fontFamily: font.family }}
-          value={font.id}
-        >
+        <swatch-item style={{ fontFamily: font.family }} value={font.id}>
           {font.name}
         </swatch-item>
       ))}
