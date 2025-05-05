@@ -1,13 +1,9 @@
-import { useRef } from "react";
 import EditingToolbar from "@/components/menu/EditingToolbar";
 import ProfilePageHeader from "@/components/header/ProfilePageHeader";
 import PageContents from "@/components/pages/PageContents";
 import ModalLauncher from "@/components/modals/ModalLauncher";
 import Editor from "@/editor/Editor";
-import { EditorContext } from "@/context/editor";
-import { DragIdContext } from "@/context/drag";
-import useStore from "@/hooks/useStore";
-import useDragListener from "@/hooks/useDragListener";
+import { Store } from "@/utils/stores";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {
@@ -21,34 +17,35 @@ interface EditableProfilePageProps {
 export default function EditableProfilePage({
   user,
 }: EditableProfilePageProps) {
-  const editorRef = useRef<Editor>(null);
-  editorRef.current ??= new Editor(user.profilePage);
-  const layout = useStore(editorRef.current.layout);
-  const dragId = useDragListener();
-  const focusedTile = useStore(editorRef.current.focusedTile);
+  const editor = new Editor(user.profilePage);
+  const { isEditable, subtitle, layout, focusedTile } = editor;
 
   return (
-    <EditorContext value={editorRef.current}>
-      <DragIdContext value={dragId}>
-        <ProfilePageHeader
-          name={user.name}
-          imageUrl={user.imageUrl}
-          subtitle={user.profilePage.subtitle}
-        />
+    <>
+      <ProfilePageHeader
+        editor={editor}
+        name={user.name}
+        imageUrl={user.imageUrl}
+        subtitle={subtitle}
+      />
 
-        <main>
-          <PageContents layout={layout} />
-        </main>
+      <main>
+        <PageContents editor={editor} isEditable={isEditable} layout={layout} />
+      </main>
 
-        {!focusedTile ? (
+      {focusedTile.derive((id) =>
+        id ? null : (
           <EditingToolbar
-            isPublished
+            editor={editor}
+            isEditable={isEditable}
+            isPublished={new Store(true)}
             allowDelete={false}
             allowPublish={false}
           />
-        ) : null}
-        <ModalLauncher />
-      </DragIdContext>
-    </EditorContext>
+        ),
+      )}
+
+      <ModalLauncher />
+    </>
   );
 }

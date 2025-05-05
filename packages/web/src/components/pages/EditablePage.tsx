@@ -1,13 +1,8 @@
-import { useRef } from "react";
 import EditingToolbar from "@/components/menu/EditingToolbar";
 import PageHeader from "@/components/header/PageHeader";
 import PageContents from "@/components/pages/PageContents";
 import ModalLauncher from "@/components/modals/ModalLauncher";
 import Editor from "@/editor/Editor";
-import { EditorContext } from "@/context/editor";
-import { DragIdContext } from "@/context/drag";
-import useStore from "@/hooks/useStore";
-import useDragListener from "@/hooks/useDragListener";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {
@@ -19,30 +14,44 @@ interface EditablePage {
 }
 
 export default function EditablePage({ page }: EditablePage) {
-  const editorRef = useRef<Editor>(null);
-  editorRef.current ??= new Editor(page);
-  const layout = useStore(editorRef.current.layout);
-  const dragId = useDragListener();
-  const focusedTile = useStore(editorRef.current.focusedTile);
+  const editor = new Editor(page);
+  const {
+    isEditable,
+    title,
+    subtitle,
+    coverImageUrl,
+    layout,
+    isPublished,
+    focusedTile,
+  } = editor;
 
   return (
-    <EditorContext value={editorRef.current}>
-      <DragIdContext value={dragId}>
-        <PageHeader
-          title={page.title}
-          subtitle={page.subtitle}
-          coverImageUrl={page.coverImageUrl}
-          author={page.author}
-          updatedAt={page.updatedAt}
-        />
+    <>
+      <PageHeader
+        editor={editor}
+        isEditable={isEditable}
+        title={title}
+        subtitle={subtitle}
+        coverImageUrl={coverImageUrl}
+        author={page.author}
+        updatedAt={page.updatedAt}
+      />
 
-        <main>
-          <PageContents layout={layout} />
-        </main>
+      <main>
+        <PageContents editor={editor} isEditable={isEditable} layout={layout} />
+      </main>
 
-        {!focusedTile ? <EditingToolbar isPublished={page.published} /> : null}
-        <ModalLauncher />
-      </DragIdContext>
-    </EditorContext>
+      {focusedTile.derive((id) =>
+        id ? null : (
+          <EditingToolbar
+            editor={editor}
+            isEditable={isEditable}
+            isPublished={isPublished}
+          />
+        ),
+      )}
+
+      <ModalLauncher />
+    </>
   );
 }
