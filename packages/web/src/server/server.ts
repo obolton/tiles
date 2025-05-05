@@ -10,6 +10,8 @@ import type {
   RouteMetadata,
   RouteMiddlewareResult,
   RouteMatch,
+  APIRoute,
+  APIRequestResult,
 } from "@/router/router";
 
 const router = getRouter();
@@ -145,14 +147,72 @@ function handleMiddlewareResult(
   }
 }
 
+function handleAPIRequestResult(
+  result: APIRequestResult,
+  response: ServerResponse,
+) {
+  if ("location" in result) {
+    response.writeHead(result.statusCode, {
+      location: result.location,
+    });
+    response.end();
+  }
+}
+
+function getRequestHandler(method: string, routeConfig: APIRoute) {
+  switch (method) {
+    case "GET":
+      return routeConfig.get;
+    case "POST":
+      return routeConfig.post;
+    case "PUT":
+      return routeConfig.put;
+    case "PATCH":
+      return routeConfig.patch;
+    case "DELETE":
+      return routeConfig.delete;
+    default:
+      return undefined;
+  }
+}
+
 async function renderRoute(
+  url: URL,
   request: IncomingMessage,
   response: ServerResponse,
   routeMatch: RouteMatch,
   viteDevServer: ViteDevServer,
 ) {
+  const method = request.method ?? "GET";
   const { route, parameters } = routeMatch;
-  const { middleware, loader, component, metadata = {} } = await route.import();
+  const routeConfig = await route.import();
+
+  if (!("component" in routeConfig)) {
+    try {
+      const handler = getRequestHandler(method, routeConfig);
+      if (handler) {
+        const routeResult = await handler(
+          {
+            url,
+            headers: request.headers,
+            parameters,
+          },
+          response,
+        );
+        if (routeResult) {
+          await handleAPIRequestResult(routeResult, response);
+        }
+      } else {
+        notFound(response);
+      }
+    } catch (error) {
+      console.error("Route error:", error);
+      internalError(response);
+    }
+    return;
+  }
+
+  const { middleware, loader, component, metadata = {} } = routeConfig;
 
   if (middleware) {
     try {
@@ -177,7 +237,7 @@ async function renderRoute(
 
   const data = loader
     ? await loader({
-        url: new URL(request.url ?? "", import.meta.env.PUBLIC_WEB_BASE_URL),
+        url,
         headers: request.headers,
         parameters,
       })
@@ -205,7 +265,8 @@ export default async function respond(
   response: ServerResponse,
   viteDevServer: ViteDevServer,
 ) {
-  const route = router.match(request.url ?? "/");
+  const url = new URL(request.url ?? "", import.meta.env.PUBLIC_WEB_BASE_URL);
+  const route = router.match(url.pathname);
 
   if (!route) {
     notFound(response);
@@ -213,7 +274,7 @@ export default async function respond(
   }
 
   try {
-    await renderRoute(request, response, route, viteDevServer);
+    await renderRoute(url, request, response, route, viteDevServer);
   } catch (error) {
     response.end();
     console.error(request.url, error);

@@ -1,4 +1,8 @@
-import type { IncomingMessage, IncomingHttpHeaders } from "node:http";
+import type {
+  IncomingMessage,
+  IncomingHttpHeaders,
+  ServerResponse,
+} from "node:http";
 import type { JSX } from "@/jsx/jsx";
 
 export interface RequestProperties {
@@ -34,6 +38,11 @@ export interface Redirect {
   location: string;
 }
 
+export interface RequestError {
+  statusCode: number;
+  message: string;
+}
+
 export type RouteMiddlewareResult = Redirect;
 
 export type RouteMiddleware = (
@@ -46,12 +55,29 @@ export type RouteLoader<T> = (
   request: RequestProperties,
 ) => RouteLoaderResult<T>;
 
-export interface Route<T> {
+export interface ComponentRoute<T> {
   middleware?: RouteMiddleware;
   loader?: RouteLoader<T>;
   component: JSX.Component<T>;
   metadata?: RouteMetadata;
 }
+
+export type APIRequestResult = Redirect | RequestError;
+
+export type APIRequestHandler = (
+  request: RequestProperties,
+  response: ServerResponse,
+) => Promise<APIRequestResult> | APIRequestResult;
+
+export type APIRoute = {
+  get?: APIRequestHandler;
+  post?: APIRequestHandler;
+  put?: APIRequestHandler;
+  patch?: APIRequestHandler;
+  delete?: APIRequestHandler;
+};
+
+export type Route<T> = ComponentRoute<T> | APIRoute;
 
 export type RouteImporter<T> = () => Promise<Route<T>>;
 
@@ -79,6 +105,18 @@ export function redirect(
   statusCode: RedirectStatusCode = 301,
 ): Redirect {
   return { statusCode, location };
+}
+
+export function serverError(message: string): RequestError {
+  return { statusCode: 500, message };
+}
+
+export function forbidden(): RequestError {
+  return { statusCode: 403, message: "Forbidden" };
+}
+
+export function notFound(): RequestError {
+  return { statusCode: 404, message: "Not Found" };
 }
 
 export default class Router {
