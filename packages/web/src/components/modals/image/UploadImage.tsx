@@ -1,10 +1,10 @@
-import { useCallback, useState, useTransition } from "react";
 import { ACCEPT_IMAGE_TYPES } from "@/utils/media";
-import { classNames } from "@/utils/css";
 import ModalBody from "../ModalBody";
 import ModalFooter from "../ModalFooter";
 import Placeholder from "@/components/placeholder/Placeholder";
 import styles from "./UploadImage.module.css";
+import { Store } from "@/utils/stores";
+import { handleError } from "@/utils/errors";
 import type FilePicker from "@/elements/filePicker/FilePicker";
 
 interface UploadImageProps {
@@ -18,64 +18,71 @@ export default function UploadImage({
   confirm,
   cancel,
 }: UploadImageProps) {
-  const [isPending, startTransition] = useTransition();
-  const [file, setFile] = useState<File | undefined>(initialFile);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(
+  const isPending = new Store(false);
+  const file = new Store(initialFile);
+  const imageUrl = new Store(
     initialFile ? URL.createObjectURL(initialFile) : undefined,
   );
 
-  const onChange = useCallback(
-    (event: Event) => {
-      const file = (event.target as FilePicker).file;
-      if (!file) {
-        return;
-      }
-      if (imageUrl) {
-        URL.revokeObjectURL(imageUrl);
-      }
-      setImageUrl(URL.createObjectURL(file));
-      setFile(file);
-    },
-    [imageUrl],
-  );
+  const onChange = (event: Event) => {
+    const newFile = (event.target as FilePicker).file;
+    if (!newFile) {
+      return;
+    }
+    if (imageUrl.value) {
+      URL.revokeObjectURL(imageUrl.value);
+    }
+    imageUrl.value = URL.createObjectURL(newFile);
+    file.value = newFile;
+  };
 
-  const onSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      if (isPending || !file) {
-        return;
-      }
-      startTransition(() => confirm({ image: file }));
-    },
-    [isPending, confirm, file],
-  );
+  const onSubmit = async (event: Event) => {
+    event.preventDefault();
+    if (isPending.value || !file.value) {
+      return;
+    }
+    isPending.value = true;
+    try {
+      confirm({ image: file.value });
+    } catch (error) {
+      handleError(error);
+    } finally {
+      isPending.value = false;
+    }
+  };
 
   return (
     <form onSubmit={onSubmit}>
       <ModalBody>
         <file-picker
-          class={styles.file}
+          className={styles.file}
           accept={Array.from(ACCEPT_IMAGE_TYPES).join(",")}
           onchange={onChange}
         >
-          {file && imageUrl ? (
-            <img className={styles.image} src={imageUrl} alt={file.name} />
-          ) : (
-            <Placeholder>Select an image or drag and drop</Placeholder>
+          {imageUrl.derive((url) =>
+            url ? (
+              <img
+                className={styles.image}
+                src={imageUrl}
+                alt={file.value?.name ?? ""}
+              />
+            ) : (
+              <Placeholder>Select an image or drag and drop</Placeholder>
+            ),
           )}
         </file-picker>
       </ModalBody>
 
       <ModalFooter>
         <button
-          className={classNames("primary", isPending && "pending")}
+          classList={{ primary: true, pending: isPending }}
           type="submit"
           aria-disabled={!file}
         >
           Save
         </button>
 
-        <button className="secondary" type="button" onClick={cancel}>
+        <button className="secondary" type="button" onclick={cancel}>
           Cancel
         </button>
       </ModalFooter>

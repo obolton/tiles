@@ -1,11 +1,11 @@
-import { useCallback, useState, useTransition } from "react";
 import ModalBody from "../ModalBody";
 import ModalFooter from "../ModalFooter";
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import Placeholder from "@/components/placeholder/Placeholder";
-import { classNames } from "@/utils/css";
 import client from "@/api/client";
 import styles from "./GenerateImage.module.css";
+import { Store } from "@/utils/stores";
+import { handleError } from "@/utils/errors";
 
 interface GenerateImageProps {
   confirm: ({ image }: { image: File }) => void;
@@ -13,41 +13,51 @@ interface GenerateImageProps {
 }
 
 export default function GenerateImage({ confirm, cancel }: GenerateImageProps) {
-  const [isPending, startTransition] = useTransition();
-  const [isGenerationPending, startGenerationTransition] = useTransition();
-  const [file, setFile] = useState<File | undefined>();
-  const [imageUrl, setImageUrl] = useState<string | undefined>();
+  const isPending = new Store(false);
+  const isGenerationPending = new Store(false);
+  const file = new Store<File | undefined>(undefined);
+  const imageUrl = new Store<string | undefined>(undefined);
 
-  const generate = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    const form = event.currentTarget.form;
-    if (!form) {
-      throw new Error("Cannot find form element");
-    }
-    const formData = new FormData(form);
-    const prompt = formData.get("prompt") as string;
-    startGenerationTransition(async () => {
+  const generate = async (event: MouseEvent) => {
+    try {
+      const button = event.currentTarget as HTMLButtonElement;
+      const form = button.form;
+      if (!form) {
+        throw new Error("Cannot find form element");
+      }
+      const formData = new FormData(form);
+      const prompt = formData.get("prompt") as string;
+      isGenerationPending.value = true;
       const { data, type } = await client.ai.generateImage.mutate({
         prompt,
       });
       const url = `data:${type};base64,${data}`;
       const response = await fetch(url);
       const blob = await response.blob();
-      const file = new File([blob], "generated-image.png", { type });
-      setFile(file);
-      setImageUrl(url);
-    });
-  }, []);
+      const newFile = new File([blob], "generated-image.png", { type });
+      file.value = newFile;
+      imageUrl.value = url;
+    } catch (error) {
+      handleError(error);
+    } finally {
+      isGenerationPending.value = false;
+    }
+  };
 
-  const onSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      if (isPending || !file) {
-        return;
-      }
-      startTransition(() => confirm({ image: file }));
-    },
-    [isPending, confirm, file],
-  );
+  const onSubmit = async (event: Event) => {
+    event.preventDefault();
+    if (isPending.value || !file.value) {
+      return;
+    }
+    isPending.value = true;
+    try {
+      await confirm({ image: file.value });
+    } catch (error) {
+      handleError(error);
+    } finally {
+      isPending.value = false;
+    }
+  };
 
   return (
     <form onSubmit={onSubmit}>
@@ -56,7 +66,7 @@ export default function GenerateImage({ confirm, cancel }: GenerateImageProps) {
           <div>
             <ResizingTextarea
               className={styles.textarea}
-              autoFocus
+              autofocus
               name="prompt"
               placeholder="Describe an image"
               rows={3}
@@ -64,11 +74,11 @@ export default function GenerateImage({ confirm, cancel }: GenerateImageProps) {
 
             <button
               type="button"
-              className={classNames(
-                "secondary",
-                isGenerationPending && "pending",
-              )}
-              onClick={generate}
+              classList={{
+                secondary: true,
+                pending: isGenerationPending,
+              }}
+              onclick={generate}
               data-pending-text="Generating&hellip;"
             >
               Generate
@@ -76,14 +86,16 @@ export default function GenerateImage({ confirm, cancel }: GenerateImageProps) {
           </div>
 
           <div>
-            {imageUrl ? (
-              <img
-                className={styles.image}
-                src={imageUrl}
-                alt="The generated image"
-              />
-            ) : (
-              <Placeholder className={styles.placeholder} />
+            {imageUrl.derive((url) =>
+              url ? (
+                <img
+                  className={styles.image}
+                  src={imageUrl}
+                  alt="The generated image"
+                />
+              ) : (
+                <Placeholder className={styles.placeholder} />
+              ),
             )}
           </div>
         </section>
@@ -91,14 +103,14 @@ export default function GenerateImage({ confirm, cancel }: GenerateImageProps) {
 
       <ModalFooter>
         <button
-          className={classNames("primary", isPending && "pending")}
+          classList={{ primary: true, pending: isPending }}
           type="submit"
           aria-disabled={!file}
         >
           Save
         </button>
 
-        <button className="secondary" type="button" onClick={cancel}>
+        <button className="secondary" type="button" onclick={cancel}>
           Cancel
         </button>
       </ModalFooter>
