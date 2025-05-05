@@ -1,4 +1,3 @@
-import { useCallback, lazy } from "react";
 import TextIcon from "@/icons/text.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
@@ -11,14 +10,15 @@ import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type { EventModalResult } from "@/components/modals/EventModal";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import { uploadMedia } from "@/utils/media";
-import { useEditor } from "@/context/editor";
 import { viewTransition } from "@/utils/transitions";
 import type { TileType } from "@/types/tiles";
+import type { JSX } from "@/jsx/jsx";
+import type Editor from "@/editor/Editor";
 
 type TileButton = {
   label: string;
   type: TileType;
-  Icon: React.ComponentType<React.SVGAttributes<SVGElement>>;
+  Icon: JSX.Component<Partial<SVGSVGElement>>;
 };
 
 const BUTTONS: TileButton[] = [
@@ -29,120 +29,108 @@ const BUTTONS: TileButton[] = [
   { label: "Event", type: "EVENT", Icon: EventIcon },
 ];
 
-registerModal(
-  "IMAGE",
-  lazy(() => import("@/components/modals/image/ImageModal")),
-);
+registerModal("IMAGE", () => import("@/components/modals/image/ImageModal"));
 
-registerModal(
-  "LINK",
-  lazy(() => import("@/components/modals/LinkModal")),
-);
+registerModal("LINK", () => import("@/components/modals/LinkModal"));
 
-registerModal(
-  "MAP",
-  lazy(() => import("@/components/modals/PlaceModal")),
-);
+registerModal("MAP", () => import("@/components/modals/PlaceModal"));
 
-registerModal(
-  "EVENT",
-  lazy(() => import("@/components/modals/EventModal")),
-);
+registerModal("EVENT", () => import("@/components/modals/EventModal"));
 
 interface TileButtonsProps {
+  editor: Editor;
   collectionId?: string;
 }
 
-export default function TileButtons({ collectionId }: TileButtonsProps) {
-  const editor = useEditor();
+export default function TileButtons({
+  editor,
+  collectionId,
+}: TileButtonsProps) {
+  const onClick = async (event: MouseEvent) => {
+    const button = event.currentTarget as HTMLButtonElement;
+    const tileType = button.dataset.tileType as TileType;
+    if (!tileType) {
+      return;
+    }
 
-  const onClick = useCallback(
-    async (event: React.MouseEvent<HTMLButtonElement>) => {
-      const tileType = event.currentTarget.dataset.tileType as TileType;
-      if (!tileType) {
-        return;
-      }
+    switch (tileType) {
+      case "TEXT":
+        await editor.createText({
+          collectionId: collectionId ?? editor.getCurrentCollectionId(),
+          columns: 6,
+          expand: true,
+          content: [{ type: "paragraph", children: [] }],
+        });
+        break;
 
-      switch (tileType) {
-        case "TEXT":
-          await editor.createText({
-            collectionId: collectionId ?? editor.getCurrentCollectionId(),
-            columns: 6,
-            expand: true,
-            content: [{ type: "paragraph", children: [] }],
-          });
-          break;
+      case "IMAGE":
+        showModal<ImageModalResult>("IMAGE", {
+          async onConfirm(result) {
+            if (!result) {
+              return;
+            }
+            const imageKey = await uploadMedia(result.image, "image");
+            await editor.createImage({
+              collectionId: collectionId ?? editor.getCurrentCollectionId(),
+              imageKey,
+            });
+          },
+        });
+        break;
 
-        case "IMAGE":
-          showModal<ImageModalResult>("IMAGE", {
-            async onConfirm(result) {
-              if (!result) {
-                return;
-              }
-              const imageKey = await uploadMedia(result.image, "image");
-              await editor.createImage({
+      case "LINK":
+        showModal<LinkModalResult>("LINK", {
+          async onConfirm(result) {
+            if ("linkedPageId" in result) {
+              await editor.createPageLink({
                 collectionId: collectionId ?? editor.getCurrentCollectionId(),
-                imageKey,
+                linkedPageId: result.linkedPageId,
               });
-            },
-          });
-          break;
-
-        case "LINK":
-          showModal<LinkModalResult>("LINK", {
-            async onConfirm(result) {
-              if ("linkedPageId" in result) {
-                await editor.createPageLink({
-                  collectionId: collectionId ?? editor.getCurrentCollectionId(),
-                  linkedPageId: result.linkedPageId,
-                });
-              } else if (result.url) {
-                await editor.createLink({
-                  collectionId: collectionId ?? editor.getCurrentCollectionId(),
-                  url: result.url,
-                });
-              }
-            },
-          });
-          break;
-
-        case "EVENT":
-          showModal<EventModalResult>("EVENT", {
-            async onConfirm(result) {
-              await editor.createEvent({
+            } else if (result.url) {
+              await editor.createLink({
                 collectionId: collectionId ?? editor.getCurrentCollectionId(),
-                ...result,
+                url: result.url,
               });
-            },
-          });
-          break;
+            }
+          },
+        });
+        break;
 
-        case "MAP":
-          showModal<PlaceModalResult>("MAP", {
-            async onConfirm({ place }) {
-              await editor.createMap({
-                collectionId: collectionId ?? editor.getCurrentCollectionId(),
-                place,
-                rows: 2,
-                columns: 6,
-              });
-            },
-          });
-          break;
-      }
-    },
-    [collectionId, editor],
-  );
+      case "EVENT":
+        showModal<EventModalResult>("EVENT", {
+          async onConfirm(result) {
+            await editor.createEvent({
+              collectionId: collectionId ?? editor.getCurrentCollectionId(),
+              ...result,
+            });
+          },
+        });
+        break;
 
-  const createSection = useCallback(() => {
+      case "MAP":
+        showModal<PlaceModalResult>("MAP", {
+          async onConfirm({ place }) {
+            await editor.createMap({
+              collectionId: collectionId ?? editor.getCurrentCollectionId(),
+              place,
+              rows: 2,
+              columns: 6,
+            });
+          },
+        });
+        break;
+    }
+  };
+
+  const createSection = () => {
     editor.createSection(viewTransition);
-  }, [editor]);
+  };
 
   return (
     <ul role="group">
       <>
         {BUTTONS.map(({ label, type, Icon }) => (
-          <li key={type} role="presentation">
+          <li role="presentation">
             <button
               role="menuitem"
               type="button"
@@ -150,7 +138,7 @@ export default function TileButtons({ collectionId }: TileButtonsProps) {
               aria-label={label}
               data-tooltip={label}
               data-tile-type={type}
-              onClick={onClick}
+              onclick={onClick}
             >
               <Icon aria-hidden="true" />
             </button>
@@ -164,7 +152,7 @@ export default function TileButtons({ collectionId }: TileButtonsProps) {
           className="floating small"
           aria-label="Add a section"
           data-tooltip="Add a section"
-          onClick={createSection}
+          onclick={createSection}
         >
           <AddSectionIcon aria-hidden="true" />
         </button>
