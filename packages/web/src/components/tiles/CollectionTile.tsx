@@ -3,14 +3,18 @@ import Carousel from "@/components/layouts/carousel/Carousel";
 import Placeholder from "@/components/placeholder/Placeholder";
 import styles from "./CollectionTile.module.css";
 import type { Tile } from "@/types/layout";
+import type Editor from "@/editor/Editor";
 
 function CollectionTilePlaceholder() {
   return <Placeholder className={styles.placeholder}>Empty</Placeholder>;
 }
 
-type CollectionTileProps = Extract<Tile, { type: "COLLECTION" }>;
+interface CollectionTileProps extends Extract<Tile, { type: "COLLECTION" }> {
+  editor: Editor;
+}
 
 export default function CollectionTile({
+  editor,
   id,
   columns,
   rows,
@@ -19,6 +23,7 @@ export default function CollectionTile({
   if (columns <= 2 && rows <= 2) {
     return (
       <Stack
+        editor={editor}
         collectionId={id}
         items={tiles}
         Placeholder={CollectionTilePlaceholder}
@@ -27,6 +32,7 @@ export default function CollectionTile({
   } else {
     return (
       <Carousel
+        editor={editor}
         collectionId={id}
         items={tiles}
         Placeholder={CollectionTilePlaceholder}
