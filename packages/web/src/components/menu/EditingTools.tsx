@@ -1,45 +1,46 @@
-import { useCallback } from "react";
 import CollaborationButtons from "./CollaborationButtons";
 import TileButtons from "./TileButtons";
 import FormattingTools from "./FormattingTools";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
+import type Editor from "@/editor/Editor";
 import { redirectWithToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
-import { useEditor } from "@/context/editor";
+import type { StoreInterface } from "@/utils/stores";
 
 interface EditingToolsProps {
-  isPublished: boolean;
+  editor: Editor;
+  isPublished: StoreInterface<boolean>;
   allowPublish: boolean;
   allowDelete: boolean;
 }
 
 export default function EditingTools({
+  editor,
   isPublished,
   allowPublish,
   allowDelete,
 }: EditingToolsProps) {
-  const editor = useEditor();
-
-  const deletePage = useCallback(async () => {
+  const deletePage = async () => {
     try {
       await editor.deletePage();
       redirectWithToast("/library/trash", "The page was deleted.", "success");
     } catch (error) {
       handleError(error);
     }
-  }, [editor]);
+  };
 
   return (
     <>
       <CollaborationButtons
+        editor={editor}
         isPublished={isPublished}
         allowPublish={allowPublish}
       />
 
-      <TileButtons />
+      <TileButtons editor={editor} />
 
-      <FormattingTools />
+      <FormattingTools editor={editor} />
 
       <ul role="group">
         <li role="presentation">
