@@ -1,70 +1,97 @@
-import { useRef, useState } from "react";
 import styles from "./Stack.module.css";
 import GridItem from "@/components/grid/GridItem";
-import useEditable from "@/hooks/useEditable";
-import useLayoutEditor from "@/hooks/useLayoutEditor";
-import { useDragId } from "@/context/drag";
-import { classNames } from "@/utils/css";
-import type StackView from "@/elements/stack/StackView";
+import { Store, DerivedStore } from "@/utils/stores";
+import LayoutEditor from "@/editor/LayoutEditor";
+import type { JSX } from "@/jsx/jsx";
 import type { Tile } from "@/types/layout";
+import type Editor from "@/editor/Editor";
 
 interface StackProps {
+  editor: Editor;
   collectionId: string;
-  items: Tile[];
-  Placeholder?: React.ComponentType<Pick<StackProps, "collectionId">>;
+  items: Store<Tile[]>;
+  Placeholder?: JSX.Component<Pick<StackProps, "collectionId">>;
 }
 
 export default function Stack({
+  editor,
   collectionId,
   items,
   Placeholder,
 }: StackProps) {
-  const ref = useRef<StackView>(null);
-  const [open, setOpen] = useState(false);
-  const isEditable = useEditable();
-  useLayoutEditor(ref, collectionId);
-  const dragId = useDragId();
+  const open = new Store(false);
+  const { isEditable, dragId } = editor;
 
-  const onToggle = ({ newState }: ToggleEvent) => setOpen(newState === "open");
+  const ref = (element: HTMLElement) => {
+    // TODO: Remove editor at end
+    new LayoutEditor({
+      element,
+      editor,
+      collectionId,
+    });
+  };
+
+  const onToggle = ({ newState }: ToggleEvent) => {
+    open.value = newState === "open";
+  };
 
   return (
     <stack-view
       ref={ref}
-      class={styles.stack}
-      expandable={items.length > 0 ? "expandable" : undefined}
+      className={styles.stack}
+      expandable={items.derive((value) =>
+        value.length > 0 ? "expandable" : undefined,
+      )}
+      // @ts-expect-error Incorrect event type
       ontoggle={onToggle}
-      data-drop={isEditable ? "true" : undefined}
+      data-drop={isEditable.derive((editable) =>
+        editable ? "true" : undefined,
+      )}
     >
-      {items.length === 0 && Placeholder ? (
-        <Placeholder collectionId={collectionId} />
-      ) : null}
-
-      {items.map((item, i) => (
-        <GridItem
-          className={classNames(
-            styles.item,
-            dragId === item.placementId ? styles.dragging : undefined,
-          )}
-          key={item.id}
-          id={item.id}
-          collectionId={collectionId}
-          placementId={item.placementId}
-          rows={2}
-          columns={1}
-          deletable={isEditable && open}
-          draggable={isEditable && open}
-          resizable={false}
-          grow={false}
-          style={
-            {
-              "--index": i,
-              "--angle": i === 0 ? 0 : `${((i * 123) % 20) - 10}deg`,
-            } as React.CSSProperties
-          }
-          tile={item}
-          tabIndex={open ? 0 : undefined}
-        />
-      ))}
+      {items.derive((value) =>
+        value.length === 0 ? (
+          Placeholder ? (
+            <Placeholder collectionId={collectionId} />
+          ) : null
+        ) : (
+          value.map((item, i) => (
+            <GridItem
+              editor={editor}
+              classList={{
+                [styles.item]: true,
+                [styles.dragging]: dragId.derive(
+                  (id) => id === item.placementId,
+                ),
+              }}
+              id={item.id}
+              collectionId={collectionId}
+              placementId={item.placementId}
+              rows={new Store(2)}
+              columns={new Store(1)}
+              deletable={
+                new DerivedStore(
+                  [isEditable, open],
+                  (editable, open) => editable && open,
+                )
+              }
+              draggable={
+                new DerivedStore(
+                  [isEditable, open],
+                  (editable, open) => editable && open,
+                )
+              }
+              resizable={false}
+              grow={false}
+              style={{
+                "--index": i.toString(),
+                "--angle": i === 0 ? "0" : `${((i * 123) % 20) - 10}deg`,
+              }}
+              tile={item}
+              tabIndex={open.derive((value) => (value ? 0 : undefined))}
+            />
+          ))
+        ),
+      )}
     </stack-view>
   );
 }
