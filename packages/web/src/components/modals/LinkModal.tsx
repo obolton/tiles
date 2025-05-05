@@ -1,18 +1,15 @@
-import { useCallback, useState, useTransition } from "react";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import styles from "./LinkModal.module.css";
-import type { ModalProps } from "@/utils/modals";
-import useInputState from "@/hooks/useInputState";
 import PagesGridItem from "@/components/grid/PagesGridItem";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
-import { classNames } from "@/utils/css";
 import Search from "@/components/search/Search";
-import useDebouncedCallback from "@/hooks/useDebouncedCallback";
 import client from "@/api/client";
-import type { AppRouterOutputs } from "@/api/client";
 import { handleError } from "@/utils/errors";
+import { Store } from "@/utils/stores";
+import type { AppRouterOutputs } from "@/api/client";
+import type { ModalProps } from "@/utils/modals";
 
 type Pages = AppRouterOutputs["pages"]["list"];
 export type LinkModalResult = { linkedPageId: string } | { url: string | null };
@@ -30,62 +27,78 @@ export default function LinkModal({
   showPages = true,
   showRemove = false,
 }: LinkModalProps) {
-  const [isPending, startTransition] = useTransition();
-  const [url, onChangeUrl] = useInputState(initialUrl);
-  const [pages, setPages] = useState<Pages["pages"] | null>(null);
-  const [hasMore, setHasMore] = useState(true);
+  const isPending = new Store(false);
+  const pages = new Store<Pages["pages"]>([]);
+  const hasMore = new Store(true);
 
-  const search = useDebouncedCallback(
-    async (query: string, offset: number = 0) => {
-      try {
-        const { pages: resultPages, hasMore } = await client.pages.list.query({
+  const search = async (query: string, offset: number = 0) => {
+    try {
+      const { pages: resultPages, hasMore: resultHasMore } =
+        await client.pages.list.query({
           query: query || undefined,
           offset,
         });
-        if (offset === 0) {
-          setPages(resultPages);
-        } else {
-          setPages((prevPages) => [...(prevPages ?? []), ...resultPages]);
-        }
-        setHasMore(hasMore);
-      } catch (error) {
-        handleError(error);
+      if (offset === 0) {
+        pages.value = resultPages;
+      } else {
+        pages.value = [...(pages.value ?? []), ...resultPages];
       }
-    },
-    300,
-    [],
-  );
+      hasMore.value = resultHasMore;
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
-  const selectPage = useCallback(
-    (linkedPageId: string) => {
-      if (isPending) {
-        return;
-      }
-      startTransition(async () => confirm({ linkedPageId }));
-    },
-    [isPending, confirm],
-  );
+  const selectPage = async (linkedPageId: string) => {
+    if (isPending.value) {
+      return;
+    }
+    isPending.value = true;
+    try {
+      await confirm({ linkedPageId });
+    } catch (error) {
+      handleError(error);
+    } finally {
+      isPending.value = false;
+    }
+  };
 
-  const submit = useCallback(
-    async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
+  const submit = async (event: Event) => {
+    const form = event.currentTarget as HTMLFormElement;
+    event.preventDefault();
 
-      if (isPending || !url) {
-        return;
-      }
+    const formData = new FormData(form);
+    const url = formData.get("url") as string;
 
-      startTransition(async () => confirm({ url }));
-    },
-    [isPending, url, confirm],
-  );
-
-  const remove = useCallback(() => {
-    if (isPending) {
+    if (isPending.value || !url) {
       return;
     }
 
-    startTransition(() => confirm({ url: null }));
-  }, [isPending, confirm]);
+    isPending.value = true;
+    try {
+      await confirm({ url });
+    } catch (error) {
+      handleError(error);
+    } finally {
+      isPending.value = false;
+    }
+  };
+
+  const remove = async () => {
+    if (isPending.value) {
+      return;
+    }
+
+    isPending.value = true;
+
+    try {
+      await confirm({ url: null });
+    } catch (error) {
+      handleError(error);
+    } finally {
+      isPending.value = false;
+    }
+  };
 
   const pageId = document.body.dataset.pageId;
 
@@ -101,11 +114,11 @@ export default function LinkModal({
           <input
             className={styles.input}
             type="url"
-            name="content"
+            name="url"
             placeholder="Enter a link URL"
-            autoFocus
-            onChange={onChangeUrl}
-            value={url}
+            autofocus
+            required
+            value={initialUrl}
           />
         </label>
 
@@ -121,7 +134,7 @@ export default function LinkModal({
               placeholder="Search pages"
               render={(page) =>
                 page.id === pageId ? null : (
-                  <PagesGridItem key={page.id}>
+                  <PagesGridItem>
                     <PageLinkTile
                       id={page.id}
                       linkedPage={page}
@@ -149,19 +162,15 @@ export default function LinkModal({
       </ModalBody>
 
       <ModalFooter>
-        <button
-          className={classNames("primary", isPending && "pending")}
-          type="submit"
-          aria-disabled={!url}
-        >
+        <button classList={{ primary: true, pending: isPending }} type="submit">
           Save
         </button>
         {showRemove ? (
-          <button className="secondary" type="button" onClick={remove}>
+          <button className="secondary" type="button" onclick={remove}>
             Remove link
           </button>
         ) : null}
-        <button className="secondary" type="button" onClick={cancel}>
+        <button className="secondary" type="button" onclick={cancel}>
           Cancel
         </button>
       </ModalFooter>
