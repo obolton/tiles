@@ -188,6 +188,7 @@ async function renderRoute(
 
   const body = renderToString(
     Body({
+      ...data?.bodyAttributes,
       children: component(data?.data),
       hydrate:
         typeof data?.data !== "undefined"

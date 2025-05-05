@@ -1,6 +1,6 @@
 import type { JSX } from "@/jsx/jsx";
 
-export interface BodyProps {
+export interface BodyProps extends JSX.Attributes<HTMLBodyElement> {
   children: JSX.Node;
   hydrate?: {
     module: string;
@@ -8,9 +8,9 @@ export interface BodyProps {
   };
 }
 
-export default function Body({ children, hydrate }: BodyProps) {
+export default function Body({ children, hydrate, ...props }: BodyProps) {
   return (
-    <body>
+    <body {...props}>
       {children}
       {hydrate ? (
         <script id="page-data" type="application/json">
