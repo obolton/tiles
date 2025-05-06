@@ -1,4 +1,3 @@
-import { useCallback, useRef, useState } from "react";
 import { EditorView } from "prosemirror-view";
 import { EditorState } from "prosemirror-state";
 import FormattingToolbar from "./FormattingToolbar";
@@ -7,72 +6,80 @@ import { deserialize } from "@/utils/richText/deserialize";
 import { schema } from "@/utils/richText/schema";
 import { getPlugins } from "@/utils/richText/plugins";
 import { handleError } from "@/utils/errors";
-import { classNames } from "@/utils/css";
 import styles from "./TextEditor.module.css";
+import { Store } from "@/utils/stores";
 import type { Format } from "@/utils/richText/format";
 import type { RichText } from "@/utils/richText/types";
 import type { Command } from "prosemirror-state";
+import type { JSX } from "@/jsx/jsx";
+import type { StoreInterface } from "@/utils/stores";
 
 export type { EditorState };
 
 interface TextEditorProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onBlur"> {
+  extends Omit<JSX.Attributes<HTMLDivElement>, "onBlur"> {
   initialValue?: RichText | null;
-  showToolbar?: boolean;
-  extraToolbarItems?: React.ReactNode;
+  showToolbar: StoreInterface<boolean>;
+  extraToolbarItems?: JSX.Node;
   onBlur?: (state: EditorState) => void;
+  signal?: AbortSignal;
 }
 
 export default function TextEditor({
-  className,
+  classList = [],
   initialValue,
   onBlur,
-  showToolbar = false,
+  showToolbar,
   extraToolbarItems,
+  signal,
   ...props
 }: TextEditorProps) {
-  const editorViewRef = useRef<EditorView>(null);
+  let editorView: EditorView | undefined;
 
-  const refCallback = useCallback((element: HTMLElement | null) => {
-    if (element) {
-      const plugins = getPlugins().concat(selectionFormat(setFormat));
-      try {
-        editorViewRef.current = new EditorView(
-          { mount: element },
-          {
-            state: EditorState.create(
-              initialValue
-                ? {
-                    doc: deserialize(initialValue),
-                    plugins,
-                  }
-                : { schema, plugins },
-            ),
-          },
-        );
-      } catch (error) {
-        handleError(error);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  signal?.addEventListener("abort", () => editorView?.destroy(), {
+    once: true,
+  });
 
-  const getEditorState = useCallback(() => editorViewRef.current?.state, []);
-
-  const performCommand = (command: Command) => {
-    const view = editorViewRef.current;
-    if (view) {
-      command(view.state, view.dispatch, view);
+  const refCallback = (element: HTMLElement) => {
+    const plugins = getPlugins().concat(
+      selectionFormat((newFormat) => {
+        format.value = newFormat;
+      }),
+    );
+    try {
+      editorView = new EditorView(
+        { mount: element },
+        {
+          state: EditorState.create(
+            initialValue
+              ? {
+                  doc: deserialize(initialValue),
+                  plugins,
+                }
+              : { schema, plugins },
+          ),
+        },
+      );
+    } catch (error) {
+      handleError(error);
     }
   };
 
-  const handleBlur = useCallback(() => {
-    if (editorViewRef.current && onBlur) {
-      onBlur(editorViewRef.current?.state);
-    }
-  }, [onBlur]);
+  const getEditorState = () => editorView?.state;
 
-  const [format, setFormat] = useState<Format>({
+  const performCommand = (command: Command) => {
+    if (editorView) {
+      command(editorView.state, editorView.dispatch, editorView);
+    }
+  };
+
+  const handleBlur = () => {
+    if (editorView && onBlur) {
+      onBlur(editorView.state);
+    }
+  };
+
+  const format = new Store<Format>({
     bold: false,
     italic: false,
     underline: false,
@@ -92,21 +99,23 @@ export default function TextEditor({
     <>
       <div
         ref={refCallback}
-        className={classNames("rich-text", styles.editor, className)}
+        classList={["rich-text", styles.editor, ...classList]}
         role="textbox"
         {...props}
-        onBlur={handleBlur}
+        onblur={handleBlur}
       />
 
-      {showToolbar ? (
-        <FormattingToolbar
-          format={format}
-          getEditorState={getEditorState}
-          performCommand={performCommand}
-        >
-          {extraToolbarItems}
-        </FormattingToolbar>
-      ) : null}
+      {showToolbar.derive((value) =>
+        value ? (
+          <FormattingToolbar
+            format={format}
+            getEditorState={getEditorState}
+            performCommand={performCommand}
+          >
+            {extraToolbarItems}
+          </FormattingToolbar>
+        ) : null,
+      )}
     </>
   );
 }
