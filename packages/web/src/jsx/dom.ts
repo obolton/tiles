@@ -11,6 +11,7 @@ interface MutableRange {
   store: StoreInterface<JSX.Node>;
   anchor: Node;
   length: number;
+  abort: AbortController;
 }
 
 function isEmptyNode(node: JSX.Node) {
@@ -57,6 +58,7 @@ function getNextSiblings(node: Node, count: number) {
 function setAttributes<T extends keyof JSX.IntrinsicElements>(
   element: Element,
   properties: JSX.Properties<T>,
+  signal?: AbortSignal,
 ) {
   for (const [name, value] of Object.entries(properties)) {
     if (name === "children" || name === "ref") {
@@ -66,19 +68,28 @@ function setAttributes<T extends keyof JSX.IntrinsicElements>(
       element.addEventListener(
         name.slice(2).toLowerCase(),
         value as EventListener,
+        { signal },
       );
     } else {
-      setAttribute(element, name, value);
+      setAttribute(element, name, value, signal);
     }
   }
 }
 
-function setAttribute(element: Element, name: string, value: unknown) {
+function setAttribute(
+  element: Element,
+  name: string,
+  value: unknown,
+  signal?: AbortSignal,
+) {
+  if (name === "signal") {
+    return;
+  }
   const mappedName = name === "className" ? "class" : name;
 
   if (isStore(value)) {
     setAttribute(element, name, value.value);
-    value.subscribe(() => setAttribute(element, name, value.value));
+    value.subscribe(() => setAttribute(element, name, value.value), signal);
   } else if (
     value === null ||
     typeof value === "undefined" ||
@@ -105,7 +116,7 @@ function setAttribute(element: Element, name: string, value: unknown) {
           if (typeof value === "string") {
             element.classList.add(value);
           }
-        });
+        }, signal);
       } else if (typeof className === "string") {
         element.classList.add(className);
       }
@@ -130,7 +141,7 @@ function setAttribute(element: Element, name: string, value: unknown) {
           } else {
             element.classList.remove(className);
           }
-        });
+        }, signal);
       } else if (enabled) {
         element.classList.add(className);
       } else {
@@ -194,11 +205,23 @@ function hydrateElementNode(
   node: JSX.Element,
   container: Element,
   index: number,
+  signal?: AbortSignal,
 ) {
   if (typeof node.type === "string") {
-    return hydrateDOMElement(node.type, node.properties, container, index);
+    return hydrateDOMElement(
+      node.type,
+      node.properties,
+      container,
+      index,
+      signal,
+    );
   }
-  return hydrateNode(node.type(node.properties), container, index);
+  return hydrateNode(
+    node.type({ ...node.properties, signal }),
+    container,
+    index,
+    signal,
+  );
 }
 
 function hydrateDOMElement(
@@ -206,20 +229,25 @@ function hydrateDOMElement(
   attributes: { children?: JSX.Node; ref?: JSX.Ref<unknown> },
   container: Element,
   index: number,
+  signal?: AbortSignal,
 ) {
   const node = container.childNodes[index];
 
   if (node) {
     const element = ensureElementNode(node, tagName);
-    setAttributes(element, attributes);
-    hydrateFragment(toNodeArray(attributes.children), element, 0);
+    setAttributes(element, attributes, signal);
+    hydrateFragment(toNodeArray(attributes.children), element, 0, signal);
     if (attributes.ref) {
       attributes.ref(element);
     }
   } else {
     const element = document.createElement(tagName);
-    setAttributes(element, attributes);
-    const childNode = renderFragment(toNodeArray(attributes.children));
+    setAttributes(element, attributes, signal);
+    const childNode = renderFragment(
+      toNodeArray(attributes.children),
+      undefined,
+      signal,
+    );
     if (childNode) {
       element.appendChild(childNode);
     }
@@ -232,11 +260,16 @@ function hydrateDOMElement(
   return 1;
 }
 
-function hydrateFragment(nodes: JSX.Node[], container: Element, start: number) {
+function hydrateFragment(
+  nodes: JSX.Node[],
+  container: Element,
+  start: number,
+  signal?: AbortSignal,
+) {
   let length = 0;
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i]!;
-    length += hydrateNode(node, container, start + length);
+    length += hydrateNode(node, container, start + length, signal);
   }
   return length;
 }
@@ -245,8 +278,14 @@ function hydrateStoreNode(
   store: StoreInterface<JSX.Node>,
   container: Element,
   index: number,
+  signal?: AbortSignal,
 ) {
-  let length = hydrateNode(store.value, container, index);
+  const abort = new AbortController();
+  const storeSignal = abort.signal;
+  const combinedSignal = signal
+    ? AbortSignal.any([signal, storeSignal])
+    : storeSignal;
+  let length = hydrateNode(store.value, container, index, combinedSignal);
   let anchor;
   if (length === 0) {
     anchor = createPlaceholderNode();
@@ -259,8 +298,9 @@ function hydrateStoreNode(
     store,
     anchor,
     length,
+    abort,
   };
-  store.subscribe(() => updateRange(range));
+  store.subscribe(() => updateRange(range, undefined, signal));
   return length;
 }
 
@@ -269,6 +309,7 @@ function hydrateNode(
   node: JSX.Node,
   container: Element,
   index: number,
+  signal?: AbortSignal,
 ): number {
   if (isEmptyNode(node)) {
     return 0;
@@ -279,15 +320,15 @@ function hydrateNode(
   }
 
   if (isElementNode(node)) {
-    return hydrateElementNode(node, container, index);
+    return hydrateElementNode(node, container, index, signal);
   }
 
   if (Array.isArray(node)) {
-    return hydrateFragment(node, container, index);
+    return hydrateFragment(node, container, index, signal);
   }
 
   if (isStore(node)) {
-    return hydrateStoreNode(node, container, index);
+    return hydrateStoreNode(node, container, index, signal);
   }
 
   throw new Error("Hydration error: invalid node");
@@ -297,7 +338,17 @@ function createPlaceholderNode() {
   return document.createComment("");
 }
 
-function updateRange(range: MutableRange, namespace?: string) {
+function updateRange(
+  range: MutableRange,
+  namespace?: string,
+  signal?: AbortSignal,
+) {
+  range.abort.abort(null);
+  range.abort = new AbortController();
+  const combinedSignal = signal
+    ? AbortSignal.any([signal, range.abort.signal])
+    : range.abort.signal;
+
   const existingNodes = [
     range.anchor,
     ...getNextSiblings(range.anchor, range.length - 1),
@@ -310,7 +361,7 @@ function updateRange(range: MutableRange, namespace?: string) {
     container?.removeChild(existingNode);
   }
 
-  const node = render(range.store.value, namespace);
+  const node = render(range.store.value, namespace, combinedSignal);
   if (node instanceof Element || node instanceof Text) {
     range.anchor = node;
     range.length = 1;
@@ -330,6 +381,7 @@ function updateRange(range: MutableRange, namespace?: string) {
 function renderDOMElement(
   node: JSX.Element<keyof JSX.IntrinsicElements>,
   namespace?: string,
+  signal?: AbortSignal,
 ) {
   switch (node.type) {
     case "svg":
@@ -344,7 +396,7 @@ function renderDOMElement(
     ? document.createElementNS(namespace, node.type)
     : document.createElement(node.type);
 
-  setAttributes(element, node.properties);
+  setAttributes(element, node.properties, signal);
 
   const { children, ref } = node.properties;
 
@@ -354,7 +406,7 @@ function renderDOMElement(
   }
 
   if (children !== null && typeof children !== "undefined") {
-    const childNode = render(children, namespace);
+    const childNode = render(children, namespace, signal);
     if (childNode) {
       element.appendChild(childNode);
     }
@@ -372,22 +424,30 @@ function renderTextNode(value: string) {
   return document.createTextNode(value);
 }
 
-function renderElement(node: JSX.Element, namespace?: string) {
+function renderElement(
+  node: JSX.Element,
+  namespace?: string,
+  signal?: AbortSignal,
+) {
   if (typeof node.type === "string") {
-    return renderDOMElement(node, namespace);
+    return renderDOMElement(node, namespace, signal);
   } else {
-    return render(node.type(node.properties), namespace);
+    return render(node.type({ ...node.properties, signal }), namespace, signal);
   }
 }
 
-function renderFragment(nodes: JSX.Node[], namespace?: string) {
+function renderFragment(
+  nodes: JSX.Node[],
+  namespace?: string,
+  signal?: AbortSignal,
+) {
   if (nodes.length === 0) {
     return null;
   }
 
   const fragment = document.createDocumentFragment();
   for (const node of nodes) {
-    const renderedNode = render(node, namespace);
+    const renderedNode = render(node, namespace, signal);
     if (renderedNode) {
       fragment.appendChild(renderedNode);
     }
@@ -395,9 +455,18 @@ function renderFragment(nodes: JSX.Node[], namespace?: string) {
   return fragment;
 }
 
-function renderStoreNode(store: StoreInterface<JSX.Node>, namespace?: string) {
+function renderStoreNode(
+  store: StoreInterface<JSX.Node>,
+  namespace?: string,
+  signal?: AbortSignal,
+) {
+  const abort = new AbortController();
+  const combinedSignal = signal
+    ? AbortSignal.any([signal, abort.signal])
+    : abort.signal;
+
   const container = document.createDocumentFragment();
-  const node = render(store.value, namespace);
+  const node = render(store.value, namespace, combinedSignal);
 
   let range: MutableRange;
   if (node instanceof Element || node instanceof Text) {
@@ -405,6 +474,7 @@ function renderStoreNode(store: StoreInterface<JSX.Node>, namespace?: string) {
       store,
       anchor: node,
       length: 1,
+      abort,
     };
     container.appendChild(node);
   } else if (node instanceof DocumentFragment && node.firstChild) {
@@ -412,6 +482,7 @@ function renderStoreNode(store: StoreInterface<JSX.Node>, namespace?: string) {
       store,
       anchor: node.firstChild,
       length: node.childNodes.length,
+      abort,
     };
     container.appendChild(node);
   } else {
@@ -419,15 +490,20 @@ function renderStoreNode(store: StoreInterface<JSX.Node>, namespace?: string) {
       store,
       anchor: createPlaceholderNode(),
       length: 1,
+      abort,
     };
     container.appendChild(range.anchor);
   }
 
-  store.subscribe(() => updateRange(range, namespace));
+  store.subscribe(() => updateRange(range, namespace, signal));
   return container;
 }
 
-export function render(node: JSX.Node, namespace?: string): Node | null {
+export function render(
+  node: JSX.Node,
+  namespace?: string,
+  signal?: AbortSignal,
+): Node | null {
   if (isEmptyNode(node)) {
     return null;
   }
@@ -437,15 +513,15 @@ export function render(node: JSX.Node, namespace?: string): Node | null {
   }
 
   if (isElementNode(node)) {
-    return renderElement(node, namespace);
+    return renderElement(node, namespace, signal);
   }
 
   if (Array.isArray(node)) {
-    return renderFragment(node, namespace);
+    return renderFragment(node, namespace, signal);
   }
 
   if (isStore(node)) {
-    return renderStoreNode(node, namespace);
+    return renderStoreNode(node, namespace, signal);
   }
 
   throw new Error("Invalid node");
