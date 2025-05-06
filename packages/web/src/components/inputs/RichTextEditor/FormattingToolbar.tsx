@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
 import H3Icon from "@/icons/h3.svg?jsx";
@@ -37,6 +36,8 @@ import {
 } from "@/utils/richText/commands";
 import type { Format, TextAlignment } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type { JSX } from "@/jsx/jsx";
+import type { StoreInterface } from "@/utils/stores";
 
 const ALIGN_ICON = {
   left: <AlignLeftIcon aria-hidden="true" slot="icon" />,
@@ -45,10 +46,10 @@ const ALIGN_ICON = {
 };
 
 interface FormattingToolbarProps {
-  format: Format;
+  format: StoreInterface<Format>;
   getEditorState: () => EditorState | undefined;
   performCommand: (command: Command) => void;
-  children: React.ReactNode;
+  children?: JSX.Node;
 }
 
 export default function FormattingToolbar({
@@ -57,25 +58,13 @@ export default function FormattingToolbar({
   format,
   children,
 }: FormattingToolbarProps) {
-  const formatH1 = useCallback(
-    () => performCommand(toggleHeading(1)),
-    [performCommand],
-  );
-  const formatH2 = useCallback(
-    () => performCommand(toggleHeading(2)),
-    [performCommand],
-  );
-  const formatH3 = useCallback(
-    () => performCommand(toggleHeading(3)),
-    [performCommand],
-  );
+  const formatH1 = () => performCommand(toggleHeading(1));
+  const formatH2 = () => performCommand(toggleHeading(2));
+  const formatH3 = () => performCommand(toggleHeading(3));
 
-  const formatQuote = useCallback(
-    () => performCommand(toggleQuote),
-    [performCommand],
-  );
+  const formatQuote = () => performCommand(toggleQuote);
 
-  const formatLink = useCallback(() => {
+  const formatLink = () => {
     const state = getEditorState();
     if (!state) {
       return;
@@ -95,57 +84,30 @@ export default function FormattingToolbar({
         }
       },
     });
-  }, [getEditorState, performCommand]);
+  };
 
-  const formatBold = useCallback(
-    () => performCommand(toggleBold),
-    [performCommand],
-  );
+  const formatBold = () => performCommand(toggleBold);
 
-  const formatItalic = useCallback(
-    () => performCommand(toggleItalic),
-    [performCommand],
-  );
+  const formatItalic = () => performCommand(toggleItalic);
 
-  const formatUnderline = useCallback(
-    () => performCommand(toggleUnderline),
-    [performCommand],
-  );
+  const formatUnderline = () => performCommand(toggleUnderline);
 
-  const formatStrikethrough = useCallback(
-    () => performCommand(toggleStrikethrough),
-    [performCommand],
-  );
+  const formatStrikethrough = () => performCommand(toggleStrikethrough);
 
-  const formatHighlight = useCallback(
-    () => performCommand(toggleHighlight),
-    [performCommand],
-  );
+  const formatHighlight = () => performCommand(toggleHighlight);
 
-  const formatOrderedList = useCallback(
-    () => performCommand(toggleOrderedList),
-    [performCommand],
-  );
+  const formatOrderedList = () => performCommand(toggleOrderedList);
 
-  const formatUnorderedList = useCallback(
-    () => performCommand(toggleUnorderedList),
-    [performCommand],
-  );
+  const formatUnorderedList = () => performCommand(toggleUnorderedList);
 
-  const formatCheckList = useCallback(
-    () => performCommand(toggleCheckList),
-    [performCommand],
-  );
+  const formatCheckList = () => performCommand(toggleCheckList);
 
-  const formatAlignment = useCallback(
-    (event: Event) =>
-      performCommand(
-        setAlignment(
-          (event.currentTarget as SwatchSelect).value as TextAlignment,
-        ),
+  const formatAlignment = (event: Event) =>
+    performCommand(
+      setAlignment(
+        (event.currentTarget as SwatchSelect).value as TextAlignment,
       ),
-    [performCommand],
-  );
+    );
 
   return (
     <FloatingToolbar>
@@ -157,8 +119,10 @@ export default function FormattingToolbar({
             aria-label="Heading level 1"
             data-tooltip="Format as heading level 1"
             type="button"
-            aria-pressed={format.h1 ? "true" : "false"}
-            onClick={formatH1}
+            aria-pressed={format.derive((value) =>
+              value.h1 ? "true" : "false",
+            )}
+            onclick={formatH1}
           >
             <H1Icon aria-hidden="true" />
           </button>
@@ -170,8 +134,10 @@ export default function FormattingToolbar({
             aria-label="Heading level 2"
             data-tooltip="Format as heading level 2"
             type="button"
-            aria-pressed={format.h2 ? "true" : "false"}
-            onClick={formatH2}
+            aria-pressed={format.derive((value) =>
+              value.h2 ? "true" : "false",
+            )}
+            onclick={formatH2}
           >
             <H2Icon aria-hidden="true" />
           </button>
@@ -183,8 +149,10 @@ export default function FormattingToolbar({
             aria-label="Heading level 3"
             data-tooltip="Format as heading level 3"
             type="button"
-            aria-pressed={format.h3 ? "true" : "false"}
-            onClick={formatH3}
+            aria-pressed={format.derive((value) =>
+              value.h3 ? "true" : "false",
+            )}
+            onclick={formatH3}
           >
             <H3Icon aria-hidden="true" />
           </button>
@@ -199,8 +167,10 @@ export default function FormattingToolbar({
             aria-label="Bold"
             data-tooltip="Format as bold"
             type="button"
-            aria-pressed={format.bold ? "true" : "false"}
-            onClick={formatBold}
+            aria-pressed={format.derive((value) =>
+              value.bold ? "true" : "false",
+            )}
+            onclick={formatBold}
           >
             <BoldIcon aria-hidden="true" />
           </button>
@@ -212,8 +182,10 @@ export default function FormattingToolbar({
             aria-label="Italic"
             data-tooltip="Format as italic"
             type="button"
-            aria-pressed={format.italic ? "true" : "false"}
-            onClick={formatItalic}
+            aria-pressed={format.derive((value) =>
+              value.italic ? "true" : "false",
+            )}
+            onclick={formatItalic}
           >
             <ItalicIcon aria-hidden="true" />
           </button>
@@ -225,8 +197,10 @@ export default function FormattingToolbar({
             aria-label="Underlined"
             data-tooltip="Format as underlined"
             type="button"
-            aria-pressed={format.underline ? "true" : "false"}
-            onClick={formatUnderline}
+            aria-pressed={format.derive((value) =>
+              value.underline ? "true" : "false",
+            )}
+            onclick={formatUnderline}
           >
             <UnderlineIcon aria-hidden="true" />
           </button>
@@ -238,8 +212,10 @@ export default function FormattingToolbar({
             aria-label="Strike-through"
             data-tooltip="Format as strike-through"
             type="button"
-            aria-pressed={format.strikethrough ? "true" : "false"}
-            onClick={formatStrikethrough}
+            aria-pressed={format.derive((value) =>
+              value.strikethrough ? "true" : "false",
+            )}
+            onclick={formatStrikethrough}
           >
             <StrikethroughIcon aria-hidden="true" />
           </button>
@@ -251,8 +227,10 @@ export default function FormattingToolbar({
             aria-label="Highlight"
             data-tooltip="Format as highlighted"
             type="button"
-            aria-pressed={format.highlight ? "true" : "false"}
-            onClick={formatHighlight}
+            aria-pressed={format.derive((value) =>
+              value.highlight ? "true" : "false",
+            )}
+            onclick={formatHighlight}
           >
             <HighlightIcon aria-hidden="true" />
           </button>
@@ -264,8 +242,10 @@ export default function FormattingToolbar({
             aria-label="Quote"
             data-tooltip="Format as a quote"
             type="button"
-            aria-pressed={format.quote ? "true" : "false"}
-            onClick={formatQuote}
+            aria-pressed={format.derive((value) =>
+              value.quote ? "true" : "false",
+            )}
+            onclick={formatQuote}
           >
             <QuoteIcon aria-hidden="true" />
           </button>
@@ -277,8 +257,10 @@ export default function FormattingToolbar({
             aria-label="Link"
             data-tooltip="Add a link"
             type="button"
-            aria-pressed={format.link ? "true" : "false"}
-            onClick={formatLink}
+            aria-pressed={format.derive((value) =>
+              value.link ? "true" : "false",
+            )}
+            onclick={formatLink}
           >
             <LinkIcon aria-hidden="true" />
           </button>
@@ -291,13 +273,15 @@ export default function FormattingToolbar({
             aria-orientation="vertical"
             orientation="horizontal"
             direction="up"
-            value={format.align}
+            value={format.derive((value) => value.align)}
             onchange={formatAlignment}
           >
-            {format.align ? (
-              ALIGN_ICON[format.align]
-            ) : (
-              <AlignLeftIcon aria-hidden="true" slot="icon" />
+            {format.derive((value) =>
+              value.align ? (
+                ALIGN_ICON[value.align]
+              ) : (
+                <AlignLeftIcon aria-hidden="true" slot="icon" />
+              ),
             )}
 
             <swatch-item value="left" data-tooltip="Align left">
@@ -321,8 +305,10 @@ export default function FormattingToolbar({
             aria-label="Ordered list"
             data-tooltip="Format as an ordered list"
             type="button"
-            aria-pressed={format.orderedList ? "true" : "false"}
-            onClick={formatOrderedList}
+            aria-pressed={format.derive((value) =>
+              value.orderedList ? "true" : "false",
+            )}
+            onclick={formatOrderedList}
           >
             <OrderedListIcon aria-hidden="true" />
           </button>
@@ -334,8 +320,10 @@ export default function FormattingToolbar({
             aria-label="Unordered list"
             data-tooltip="Format as an unordered list"
             type="button"
-            aria-pressed={format.unorderedList ? "true" : "false"}
-            onClick={formatUnorderedList}
+            aria-pressed={format.derive((value) =>
+              value.unorderedList ? "true" : "false",
+            )}
+            onclick={formatUnorderedList}
           >
             <UnorderedListIcon aria-hidden="true" />
           </button>
@@ -347,8 +335,10 @@ export default function FormattingToolbar({
             aria-label="Check list"
             data-tooltip="Format as a check list"
             type="button"
-            aria-pressed={format.checkList ? "true" : "false"}
-            onClick={formatCheckList}
+            aria-pressed={format.derive((value) =>
+              value.checkList ? "true" : "false",
+            )}
+            onclick={formatCheckList}
           >
             <CheckListIcon aria-hidden="true" />
           </button>
