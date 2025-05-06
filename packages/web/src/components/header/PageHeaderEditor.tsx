@@ -1,15 +1,17 @@
-import { useCallback, useRef } from "react";
 import { EditorView } from "prosemirror-view";
 import { keymap } from "prosemirror-keymap";
 import { baseKeymap } from "prosemirror-commands";
 import { EditorState } from "prosemirror-state";
 import { headerSchema } from "@/utils/richText/schema";
+import type { StoreInterface } from "@/utils/stores";
+import type { JSX } from "@/jsx/jsx";
 
 interface PageHeaderEditorProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "onBlur"> {
-  title: string;
-  subtitle: string | null;
+  extends Omit<JSX.Attributes<HTMLDivElement>, "onBlur" | "title"> {
+  title: StoreInterface<string>;
+  subtitle: StoreInterface<string | null>;
   onBlur?: (title: string, subtitle?: string) => void;
+  signal?: AbortSignal;
 }
 
 function createDocument(title: string, subtitle: string | null) {
@@ -28,39 +30,35 @@ export default function PageHeaderEditor({
   title,
   subtitle,
   onBlur,
+  signal,
   ...props
 }: PageHeaderEditorProps) {
-  const editorViewRef = useRef<EditorView>(null);
+  let editorView: EditorView | undefined;
 
-  const refCallback = useCallback((element: HTMLElement | null) => {
-    if (element) {
-      editorViewRef.current = new EditorView(
-        { mount: element },
-        {
-          state: EditorState.create({
-            doc: createDocument(title, subtitle),
-          }),
-          plugins: [keymap(baseKeymap)],
-        },
-      );
-    } else {
-      handleBlur();
-      editorViewRef.current?.destroy();
-      editorViewRef.current = null;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  signal?.addEventListener("abort", () => editorView?.destroy(), {
+    once: true,
+  });
 
-  const handleBlur = useCallback(() => {
-    const state = editorViewRef.current?.state;
+  const ref = (element: HTMLElement) => {
+    editorView = new EditorView(
+      { mount: element },
+      {
+        state: EditorState.create({
+          doc: createDocument(title.value, subtitle.value),
+        }),
+        plugins: [keymap(baseKeymap)],
+      },
+    );
+  };
+
+  const handleBlur = () => {
+    const state = editorView?.state;
     if (state && onBlur) {
       const title = state.doc.firstChild?.textContent || "";
       const subtitle = state.doc.maybeChild(1)?.textContent;
       onBlur(title, subtitle);
     }
-  }, [onBlur]);
+  };
 
-  return (
-    <div ref={refCallback} role="textbox" {...props} onBlur={handleBlur} />
-  );
+  return <div ref={ref} role="textbox" {...props} onblur={handleBlur} />;
 }
