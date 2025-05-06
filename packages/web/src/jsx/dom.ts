@@ -300,7 +300,7 @@ function hydrateStoreNode(
     length,
     abort,
   };
-  store.subscribe(() => updateRange(range, undefined, signal));
+  store.subscribe(() => updateRange(range, undefined, signal), signal);
   return length;
 }
 
@@ -495,7 +495,7 @@ function renderStoreNode(
     container.appendChild(range.anchor);
   }
 
-  store.subscribe(() => updateRange(range, namespace, signal));
+  store.subscribe(() => updateRange(range, namespace, signal), signal);
   return container;
 }
 
