@@ -64,7 +64,7 @@ export default function EditingTools({
                   className="destructive"
                   type="button"
                   disabled={allowDelete ? undefined : true}
-                  onClick={deletePage}
+                  onclick={deletePage}
                 >
                   <TrashIcon aria-hidden="true" />
                   Delete page
