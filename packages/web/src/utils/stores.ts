@@ -52,9 +52,8 @@ export abstract class BaseStore<Value> implements StoreInterface<Value> {
 
   derive<DerivedValue>(
     transform: (input: Value) => DerivedValue,
-    signal?: AbortSignal,
   ): StoreInterface<DerivedValue> {
-    return new DerivedStore<[this], DerivedValue>([this], transform, signal);
+    return new DerivedStore<[this], DerivedValue>([this], transform);
   }
 }
 
@@ -89,23 +88,34 @@ export class DerivedStore<
 > extends BaseStore<Value> {
   private readonly input: Input;
   private readonly transform: Transform<Input, Value>;
-  private readonly unsubscribeCallbacks: UnsubscribeCallback[];
+  private unsubscribeCallbacks?: UnsubscribeCallback[];
 
   private cachedValue?: Value;
   private stale: boolean;
 
-  constructor(
-    input: Input,
-    transform: Transform<Input, Value>,
-    signal?: AbortSignal,
-  ) {
+  constructor(input: Input, transform: Transform<Input, Value>) {
     super();
     this.input = input;
     this.transform = transform;
     this.stale = true;
-    this.unsubscribeCallbacks = this.input.map((store) =>
-      store.subscribe(() => this.markAsStale(), signal),
-    );
+  }
+
+  subscribe(callback: (store: this) => void, signal?: AbortSignal) {
+    const result = super.subscribe(callback, signal);
+    if (!this.unsubscribeCallbacks && this.subscribers.size > 0) {
+      this.unsubscribeCallbacks = this.input.map((store) =>
+        store.subscribe(() => this.markAsStale()),
+      );
+    }
+    return result;
+  }
+
+  unsubscribe(callback: (store: this) => void) {
+    const result = super.unsubscribe(callback);
+    if (this.subscribers.size === 0) {
+      this.disconnect();
+    }
+    return result;
   }
 
   private markAsStale() {
@@ -126,7 +136,8 @@ export class DerivedStore<
 
   disconnect() {
     super.disconnect();
-    this.unsubscribeCallbacks.forEach((unsubscribe) => unsubscribe());
+    this.unsubscribeCallbacks?.forEach((unsubscribe) => unsubscribe());
+    this.unsubscribeCallbacks = undefined;
   }
 }
 
