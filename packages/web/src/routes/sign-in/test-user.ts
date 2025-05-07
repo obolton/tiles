@@ -2,7 +2,7 @@ import { signIn, setAuthenticationCookies } from "@/auth/sessions";
 import { redirect } from "@/router/router";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
 
-const GET: APIRequestHandler = async (request, response) => {
+const GET: APIRequestHandler = async () => {
   const session = await signIn({
     provider: "GOOGLE",
     providerId: "test-user",
@@ -10,12 +10,11 @@ const GET: APIRequestHandler = async (request, response) => {
     email: "test@test.com",
     emailVerified: true,
   });
-  response.setHeader(
-    "Set-Cookie",
+  return redirect(
+    "/",
+    302,
     setAuthenticationCookies(session.id, new Date(session.expiresAt)),
   );
-
-  return redirect("/", 302);
 };
 
 export default {

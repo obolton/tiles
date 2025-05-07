@@ -9,16 +9,14 @@ import { validateDestination } from "@/auth/destinations";
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
 
-export const GET: APIRequestHandler = async ({ url, headers }, response) => {
-  const cookies = headers.cookie ?? "";
+export const GET: APIRequestHandler = async ({ url, headers }) => {
+  const cookies = headers.get("cookie") ?? "";
   const stateCookieValue = getOAuth2StateCookie(cookies);
   const destinationCookieValue = getOAuth2DestinationCookie(cookies);
   const cookiesToSet = clearOAuth2Cookies();
 
-  response.setHeader("Set-Cookie", cookiesToSet);
-
   if (destinationCookieValue && !validateDestination(destinationCookieValue)) {
-    return forbidden();
+    return forbidden(cookiesToSet);
   }
 
   const searchParams = url.searchParams;
@@ -28,11 +26,11 @@ export const GET: APIRequestHandler = async ({ url, headers }, response) => {
   const error = searchParams.get("error");
 
   if (error) {
-    return serverError(error);
+    return serverError(error, cookiesToSet);
   }
 
   if (!stateCookieValue || !state || stateCookieValue !== state || !code) {
-    return forbidden();
+    return forbidden(cookiesToSet);
   }
 
   const accessToken = await getAccessToken(code);
@@ -46,12 +44,15 @@ export const GET: APIRequestHandler = async ({ url, headers }, response) => {
     imageUrl: googleUser.imageUrl,
   });
 
-  cookiesToSet.push(
-    ...setAuthenticationCookies(session.id, new Date(session.expiresAt)),
+  const authenticationCookies = setAuthenticationCookies(
+    session.id,
+    new Date(session.expiresAt),
   );
-  response.setHeader("Set-Cookie", cookiesToSet);
 
-  return redirect(`/${destinationCookieValue || ""}`, 302);
+  return redirect(`/${destinationCookieValue || ""}`, 302, [
+    ...cookiesToSet,
+    ...authenticationCookies,
+  ]);
 };
 
 export default {

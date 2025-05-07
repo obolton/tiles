@@ -1,14 +1,13 @@
 import SignIn, { type SignInProps } from "@/pages/SignIn";
 import { getSessionId } from "@/utils/sessions";
 import { redirect } from "@/router/router";
-import type { IncomingMessage } from "node:http";
 import type {
   Route,
   RequestProperties,
   RouteLoaderResult,
 } from "@/router/router";
 
-export function signedOutRoute(request: IncomingMessage) {
+export function signedOutRoute(request: Request) {
   const sessionId = getSessionId(request.headers);
   if (sessionId) {
     return redirect("/library", 302);

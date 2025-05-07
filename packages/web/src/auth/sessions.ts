@@ -45,14 +45,20 @@ export async function signIn({
 }
 
 export function setAuthenticationCookies(sessionId: string, expiresAt: Date) {
-  return [
-    cookie.serialize(SESSION_COOKIE_NAME, sessionId, {
-      ...SESSION_COOKIE_OPTIONS,
-      expires: expiresAt,
-    }),
-    cookie.serialize(SIGNED_IN_FLAG_COOKIE_NAME, "1", {
-      ...SIGNED_IN_FLAG_COOKIE_OPTIONS,
-      expires: expiresAt,
-    }),
-  ];
+  return new Headers([
+    [
+      "Set-Cookie",
+      cookie.serialize(SESSION_COOKIE_NAME, sessionId, {
+        ...SESSION_COOKIE_OPTIONS,
+        expires: expiresAt,
+      }),
+    ],
+    [
+      "Set-Cookie",
+      cookie.serialize(SIGNED_IN_FLAG_COOKIE_NAME, "1", {
+        ...SIGNED_IN_FLAG_COOKIE_OPTIONS,
+        expires: expiresAt,
+      }),
+    ],
+  ]);
 }
