@@ -5,10 +5,9 @@ import {
 import client from "@/api/client";
 import { getCookie } from "./cookies";
 import { clear, setPersistent, removePersistent, getPersistent } from "./state";
-import type { IncomingHttpHeaders } from "node:http";
 
-export function getSessionId(headers: IncomingHttpHeaders) {
-  return getCookie(headers.cookie ?? "", SESSION_COOKIE_NAME);
+export function getSessionId(headers: Headers) {
+  return getCookie(headers.get("cookie") ?? "", SESSION_COOKIE_NAME);
 }
 
 export function isSignedIn() {
