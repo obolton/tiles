@@ -1,13 +1,8 @@
-import type {
-  IncomingMessage,
-  IncomingHttpHeaders,
-  ServerResponse,
-} from "node:http";
 import type { JSX } from "@/jsx/jsx";
 
 export interface RequestProperties {
   url: URL;
-  headers: IncomingHttpHeaders;
+  headers: Headers;
   parameters: RouteParameters;
 }
 
@@ -43,11 +38,7 @@ export interface RequestError {
   message: string;
 }
 
-export type RouteMiddlewareResult = Redirect;
-
-export type RouteMiddleware = (
-  request: IncomingMessage,
-) => RouteMiddlewareResult | undefined;
+export type RouteMiddleware = (request: Request) => Response | undefined;
 
 export type RouteLoaderResult<T> = Promise<RouteData<T>>;
 
@@ -62,12 +53,9 @@ export interface ComponentRoute<T> {
   metadata?: RouteMetadata;
 }
 
-export type APIRequestResult = Redirect | RequestError;
-
 export type APIRequestHandler = (
   request: RequestProperties,
-  response: ServerResponse,
-) => Promise<APIRequestResult> | APIRequestResult;
+) => Promise<Response> | Response;
 
 export type APIRoute = {
   get?: APIRequestHandler;
@@ -102,21 +90,46 @@ export interface RouteNode {
 
 export function redirect(
   location: string,
-  statusCode: RedirectStatusCode = 301,
-): Redirect {
-  return { statusCode, location };
+  status: RedirectStatusCode = 301,
+  additionalHeaders?: HeadersInit,
+) {
+  const headers = new Headers(additionalHeaders);
+  headers.set("Location", location);
+  return new Response(null, {
+    status,
+    headers,
+  });
 }
 
-export function serverError(message: string): RequestError {
-  return { statusCode: 500, message };
+export function serverError(body: string, headers?: HeadersInit) {
+  return new Response(body, {
+    status: 500,
+    headers,
+  });
 }
 
-export function forbidden(): RequestError {
-  return { statusCode: 403, message: "Forbidden" };
+export function forbidden(headers?: HeadersInit) {
+  return new Response(null, {
+    status: 403,
+    statusText: "Forbidden",
+    headers,
+  });
 }
 
-export function notFound(): RequestError {
-  return { statusCode: 404, message: "Not Found" };
+export function notFound(headers?: HeadersInit) {
+  return new Response("Not Found", {
+    status: 404,
+    statusText: "Not Found",
+    headers,
+  });
+}
+
+export function internalError(headers?: HeadersInit) {
+  return new Response("Internal Server Error", {
+    status: 500,
+    statusText: "Internal Server Error",
+    headers,
+  });
 }
 
 export default class Router {

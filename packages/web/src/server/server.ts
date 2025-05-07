@@ -3,36 +3,16 @@ import { escapeUTF8 } from "entities";
 import { renderToString } from "@/jsx/server";
 import globalMetadata from "@/routes/metadata";
 import Body from "./Body";
-import type { IncomingMessage, ServerResponse } from "node:http";
+import { internalError, notFound } from "@/router/router";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type {
   RouteData,
   RouteMetadata,
-  RouteMiddlewareResult,
   RouteMatch,
   APIRoute,
-  APIRequestResult,
 } from "@/router/router";
 
 const router = getRouter();
-
-function notFound(response: ServerResponse) {
-  if (!response.headersSent) {
-    response.writeHead(404);
-    response.end("Not Found");
-  } else {
-    response.end();
-  }
-}
-
-function internalError(response: ServerResponse) {
-  if (!response.headersSent) {
-    response.writeHead(500);
-    response.end("Internal Error");
-  } else {
-    response.end();
-  }
-}
 
 function inspectModuleStylesheets(
   module: ModuleNode,
@@ -66,7 +46,7 @@ async function collectStylesheets(
   return stylesheets;
 }
 
-function getEarlyHintsLinks(stylesheets: string[], metadata: RouteMetadata) {
+function getLinks(stylesheets: string[], metadata: RouteMetadata) {
   const hints: string[] = [];
 
   hints.push("</src/server/hydrate>; rel=preload; as=script");
@@ -135,30 +115,6 @@ function mergeRouteMetadata(...metadata: RouteMetadata[]) {
   return merged;
 }
 
-function handleMiddlewareResult(
-  result: RouteMiddlewareResult,
-  response: ServerResponse,
-) {
-  if ("location" in result) {
-    response.writeHead(result.statusCode, {
-      location: result.location,
-    });
-    response.end();
-  }
-}
-
-function handleAPIRequestResult(
-  result: APIRequestResult,
-  response: ServerResponse,
-) {
-  if ("location" in result) {
-    response.writeHead(result.statusCode, {
-      location: result.location,
-    });
-    response.end();
-  }
-}
-
 function getRequestHandler(method: string, routeConfig: APIRoute) {
   switch (method) {
     case "GET":
@@ -178,8 +134,7 @@ function getRequestHandler(method: string, routeConfig: APIRoute) {
 
 async function renderRoute(
   url: URL,
-  request: IncomingMessage,
-  response: ServerResponse,
+  request: Request,
   routeMatch: RouteMatch,
   viteDevServer: ViteDevServer,
 ) {
@@ -190,41 +145,32 @@ async function renderRoute(
   if (!("component" in routeConfig)) {
     try {
       const handler = getRequestHandler(method, routeConfig);
-      if (handler) {
-        const routeResult = await handler(
-          {
-            url,
-            headers: request.headers,
-            parameters,
-          },
-          response,
-        );
-        if (routeResult) {
-          await handleAPIRequestResult(routeResult, response);
-        }
-      } else {
-        notFound(response);
+      if (!handler) {
+        return notFound();
       }
+      const response = await handler({
+        url,
+        headers: request.headers,
+        parameters,
+      });
+      return response;
     } catch (error) {
       console.error("Route error:", error);
-      internalError(response);
+      return internalError();
     }
-    return;
   }
 
   const { middleware, loader, component, metadata = {} } = routeConfig;
 
   if (middleware) {
     try {
-      const middlewareResult = middleware(request);
-      if (middlewareResult) {
-        handleMiddlewareResult(middlewareResult, response);
-        return;
+      const response = middleware(request);
+      if (response) {
+        return response;
       }
     } catch (error) {
       console.error("Middleware error:", error);
-      internalError(response);
-      return;
+      return internalError();
     }
   }
 
@@ -232,8 +178,7 @@ async function renderRoute(
 
   const stylesheets = await collectStylesheets(route.moduleUrl, viteDevServer);
 
-  const earlyHintLinks = getEarlyHintsLinks(stylesheets, mergedMetadata);
-  response.writeEarlyHints({ link: earlyHintLinks });
+  const links = getLinks(stylesheets, mergedMetadata);
 
   const data = loader
     ? await loader({
@@ -243,41 +188,46 @@ async function renderRoute(
       })
     : undefined;
 
-  response.writeHead(200);
-  response.write(getPageStartChunk(stylesheets, mergedMetadata, data));
+  const body =
+    getPageStartChunk(stylesheets, mergedMetadata, data) +
+    renderToString(
+      Body({
+        ...data?.bodyAttributes,
+        children: component(data?.data),
+        hydrate:
+          typeof data?.data !== "undefined"
+            ? { module: route.moduleUrl, data: data.data }
+            : undefined,
+      }),
+    ) +
+    "</html>";
 
-  const body = renderToString(
-    Body({
-      ...data?.bodyAttributes,
-      children: component(data?.data),
-      hydrate:
-        typeof data?.data !== "undefined"
-          ? { module: route.moduleUrl, data: data.data }
-          : undefined,
-    }),
-  );
-  response.write(body + "</html>");
-  response.end();
+  return new Response(body, {
+    status: 200,
+    headers: {
+      "Content-Type": "text/html",
+      Link: links.join(", "),
+    },
+  });
 }
 
 export default async function respond(
-  request: IncomingMessage,
-  response: ServerResponse,
+  request: Request,
   viteDevServer: ViteDevServer,
 ) {
-  const url = new URL(request.url ?? "", import.meta.env.PUBLIC_WEB_BASE_URL);
+  const url = new URL(request.url);
   const route = router.match(url.pathname);
 
   if (!route) {
-    notFound(response);
-    return;
+    return notFound();
   }
 
   try {
-    await renderRoute(url, request, response, route, viteDevServer);
+    const response = await renderRoute(url, request, route, viteDevServer);
+    return response;
   } catch (error) {
-    response.end();
     console.error(request.url, error);
+    return internalError();
   }
 }
 
