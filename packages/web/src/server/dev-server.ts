@@ -1,12 +1,41 @@
 import { createServer as createHttpsServer } from "node:https";
 import { createServer as createViteServer } from "vite";
-import type { IncomingMessage, ServerResponse } from "node:http";
+import { Readable } from "node:stream";
+import type { ReadableStream } from "node:stream/web";
+import type {
+  IncomingMessage,
+  IncomingHttpHeaders,
+  OutgoingHttpHeader,
+  ServerResponse,
+} from "node:http";
 import type { ServerOptions } from "node:https";
 import type { Respond } from "@/server/server";
 
 export interface DevServerOptions extends ServerOptions {
   hostname: string;
   port: number;
+}
+
+function toWebHeaders(headers: IncomingHttpHeaders) {
+  const webHeaders = new Headers();
+  for (const [key, value] of Object.entries(headers)) {
+    if (Array.isArray(value)) {
+      for (const valueItem of value) {
+        webHeaders.append(key, valueItem);
+      }
+    } else if (value) {
+      webHeaders.append(key, value);
+    }
+  }
+  return webHeaders;
+}
+
+function fromWebHeaders(webHeaders: Headers) {
+  const headers: OutgoingHttpHeader[] = [];
+  for (const [key, value] of webHeaders.entries()) {
+    headers.push(key, value);
+  }
+  return headers;
 }
 
 export default async function createDevServer(options: DevServerOptions) {
@@ -36,7 +65,26 @@ export default async function createDevServer(options: DevServerOptions) {
       )) as { default: Respond };
 
       try {
-        await respond(request, response, vite);
+        const webRequest = new Request(
+          new URL(request.url ?? "", process.env.PUBLIC_WEB_BASE_URL),
+          {
+            method: request.method,
+            headers: toWebHeaders(request.headers),
+          },
+        );
+        const webResponse = await respond(webRequest, vite);
+        response.writeHead(
+          webResponse.status,
+          webResponse.statusText,
+          fromWebHeaders(webResponse.headers),
+        );
+        if (webResponse.body) {
+          Readable.fromWeb(webResponse.body as ReadableStream<Uint8Array>).pipe(
+            response,
+          );
+        } else {
+          response.end();
+        }
       } catch (error) {
         if (error instanceof Error) {
           vite.ssrFixStacktrace(error);
