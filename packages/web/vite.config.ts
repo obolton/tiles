@@ -17,10 +17,11 @@ export default {
   plugins: [svgPlugin({ jsxImportSource: "@/jsx" }), routeManifestPlugin()],
   build: {
     target: "esnext",
+    assetsDir: "",
     rollupOptions: {
       treeshake: "recommended",
       input: {
-        _worker: "@/server/worker",
+        index: "@/server/worker",
         hydrate: "@/server/hydrate",
         global: "@/global",
         init: "@/init",
