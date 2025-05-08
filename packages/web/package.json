@@ -20,7 +20,8 @@
     "lint": "npm run lint:ts && npm run lint:css",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
-    "tsc": "tsc --build"
+    "tsc": "tsc --build",
+    "generate-worker-types": "wrangler types src/types/worker.d.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
