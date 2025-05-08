@@ -4,6 +4,7 @@ import routeManifestPlugin from "./src/vite/routeManifest";
 import type { UserConfig } from "vite";
 
 export default {
+  envDir: "../..",
   envPrefix: "PUBLIC_",
   ssr: {
     external: ["node:assert", "node:crypto"],
@@ -14,4 +15,16 @@ export default {
     },
   },
   plugins: [svgPlugin({ jsxImportSource: "@/jsx" }), routeManifestPlugin()],
+  build: {
+    target: "esnext",
+    rollupOptions: {
+      treeshake: "recommended",
+      input: {
+        _worker: "@/server/worker",
+        hydrate: "@/server/hydrate",
+        global: "@/global",
+        init: "@/init",
+      },
+    },
+  },
 } satisfies UserConfig;
