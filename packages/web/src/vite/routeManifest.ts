@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import type { Plugin, Manifest } from "vite";
 
 type RouteManifest = Record<string, string[]>;
@@ -55,7 +55,7 @@ export default function routeManifestPlugin(): Plugin {
       outDir = config.build.outDir;
     },
 
-    async buildEnd() {
+    async closeBundle() {
       if (isSSR) {
         return;
       }
@@ -75,11 +75,11 @@ export default function routeManifestPlugin(): Plugin {
         routeManifest[path] = getStylesheets(path, viteManifest);
       }
 
-      this.emitFile({
-        type: "asset",
-        fileName: "route-manifest.json",
-        source: JSON.stringify(routeManifest, null, 2),
-      });
+      await writeFile(
+        resolve(outDir, "./route-manifest.json"),
+        JSON.stringify(routeManifest, null, 2),
+        "utf-8",
+      );
     },
   };
 }
