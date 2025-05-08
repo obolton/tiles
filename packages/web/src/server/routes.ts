@@ -6,11 +6,14 @@ const routeModules = import.meta.glob("@/routes/**/*.ts", {
 });
 
 function getPathFromModuleUrl(url: string) {
-  const matches = url.match(/^\/src\/routes(.*)\.ts$/);
+  const matches = url.match(/^\/src\/routes\/(.*)\.ts$/);
   if (!matches || !matches[1]) {
     return null;
   }
   const path = matches[1].replace(/\[(\w+)\]/g, ":$1");
+  if (path === "index") {
+    return "";
+  }
   if (path.endsWith("/index")) {
     return path.slice(0, -6);
   }
