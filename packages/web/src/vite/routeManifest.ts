@@ -1,0 +1,84 @@
+import { resolve } from "node:path";
+import { readFile } from "node:fs/promises";
+import type { Plugin, Manifest } from "vite";
+
+type RouteManifest = Record<string, string[]>;
+
+function recursivelyCollectStylesheets(
+  path: string,
+  manifest: Manifest,
+  seen: Set<string>,
+  stylesheets: string[],
+) {
+  if (seen.has(path)) {
+    return;
+  }
+  seen.add(path);
+  const chunk = manifest[path];
+  if (!chunk) {
+    return;
+  }
+
+  if (chunk.css) {
+    for (const stylesheet of chunk.css) {
+      if (!stylesheets.includes(stylesheet)) {
+        stylesheets.push(stylesheet);
+      }
+    }
+  }
+
+  if (chunk.imports) {
+    for (const importPath of chunk.imports) {
+      recursivelyCollectStylesheets(importPath, manifest, seen, stylesheets);
+    }
+  }
+}
+
+function getStylesheets(path: string, manifest: Manifest) {
+  const stylesheets: string[] = [];
+  const seen = new Set<string>();
+  recursivelyCollectStylesheets(path, manifest, seen, stylesheets);
+  return stylesheets;
+}
+
+export default function routeManifestPlugin(): Plugin {
+  let isSSR = false;
+  let outDir = "";
+
+  return {
+    name: "route-manifest-plugin",
+    enforce: "post",
+
+    configResolved(config) {
+      isSSR = !!config.build.ssr;
+      outDir = config.build.outDir;
+    },
+
+    async buildEnd() {
+      if (isSSR) {
+        return;
+      }
+
+      const viteManifestPath = resolve(outDir, "./.vite/manifest.json");
+      const viteManifest = JSON.parse(
+        await readFile(viteManifestPath, "utf-8"),
+      ) as Manifest;
+
+      const routeModules = Object.keys(viteManifest).filter((path) =>
+        path.startsWith("src/routes/"),
+      );
+
+      const routeManifest: RouteManifest = {};
+
+      for (const path of routeModules) {
+        routeManifest[path] = getStylesheets(path, viteManifest);
+      }
+
+      this.emitFile({
+        type: "asset",
+        fileName: "route-manifest.json",
+        source: JSON.stringify(routeManifest, null, 2),
+      });
+    },
+  };
+}
