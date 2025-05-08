@@ -1,10 +1,10 @@
 import client from "@/api/client";
 import { showModal } from "@/utils/modals";
 import { preloadImage, uploadMedia } from "@/utils/media";
-import { isEditModeEnabled } from "@/utils/edit";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
 import { Store, DerivedStore } from "@/utils/stores";
-import { scrollIntoView } from "@/hooks/useScrollIntoView";
+import { scrollIntoView } from "@/utils/scroll";
+import { isEditMode } from "@/utils/edit";
 import type { FontId } from "@/config/fonts";
 import type { Theme } from "@/types/pages";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
@@ -12,6 +12,7 @@ import type { ClientTile, ClientCollection } from "@/types/tiles";
 import type { Layout, LeafTile } from "@/types/layout";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { PageInvite, PageAccess, User } from "@/types/collaboration";
+import type { DragDropEvent } from "@/utils/drag";
 
 type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
@@ -25,27 +26,45 @@ function immediateTransition(commit: () => void) {
 
 const IS_SERVER = import.meta.env.SSR;
 
+function getTile(tile: ClientTile) {
+  return {
+    ...tile,
+    columns: new Store(tile.columns),
+    rows: new Store(tile.rows),
+  };
+}
+
 function getLayout(sections: ClientCollection[], tiles: ClientTile[]): Layout {
   return sections.map((section) => ({
     ...section,
-    tiles: tiles
-      .filter((tile) => tile.parentCollectionId === section.id)
-      .map((tile) =>
-        tile.type === "COLLECTION"
-          ? {
-              ...tile,
-              tiles: tiles.filter(
-                (t): t is LeafTile =>
-                  t.type !== "COLLECTION" && t.parentCollectionId === tile.id,
-              ),
-            }
-          : tile,
-      ),
+    tiles: new Store(
+      tiles
+        .filter((tile) => tile.parentCollectionId === section.id)
+        .map((tile) =>
+          tile.type === "COLLECTION"
+            ? {
+                ...tile,
+                tiles: new Store(
+                  tiles.filter(
+                    (t): t is LeafTile =>
+                      t.type !== "COLLECTION" &&
+                      t.parentCollectionId === tile.id,
+                  ),
+                ),
+              }
+            : tile,
+        ),
+    ),
   }));
 }
 
 export default class Editor {
   readonly pageId: string;
+  readonly isEditable: Store<boolean>;
+  readonly title: Store<string>;
+  readonly subtitle: Store<string | null>;
+  readonly coverImageUrl: Store<string | null>;
+  readonly isPublished: Store<boolean>;
   readonly sections: Store<ClientCollection[]>;
   readonly tiles: Store<ClientTile[]>;
   readonly layout: DerivedStore<
@@ -56,16 +75,23 @@ export default class Editor {
   readonly invites: Store<PageInvite[]>;
   readonly author: User;
   readonly focusedTile: Store<string | null>;
+  readonly dragId: Store<string | null>;
 
   constructor(page: Page) {
     this.pageId = page.id;
+    this.isEditable = new Store(isEditMode());
+    this.title = new Store(page.title);
+    this.subtitle = new Store(page.subtitle);
+    this.coverImageUrl = new Store(page.coverImageUrl);
+    this.isPublished = new Store(page.published);
     this.sections = new Store(page.collections);
-    this.tiles = new Store(page.tiles);
+    this.tiles = new Store(page.tiles.map((tile) => getTile(tile)));
     this.layout = new DerivedStore([this.sections, this.tiles], getLayout);
     this.access = new Store(page.access);
     this.invites = new Store(page.invites);
     this.author = page.author;
     this.focusedTile = new Store<string | null>(null);
+    this.dragId = new Store<string | null>(null);
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();
@@ -75,10 +101,18 @@ export default class Editor {
   enableDragAndDrop() {
     document.addEventListener("dragover", this.dragOver.bind(this));
     document.addEventListener("drop", this.drop.bind(this));
+
+    addEventListener(
+      "dnd-dragstart",
+      (event: DragDropEvent<ClientTile>) =>
+        (this.dragId.value = event.state.data?.placementId ?? null),
+      { passive: true },
+    );
+    addEventListener("dnd-dragend", () => (this.dragId.value = null));
   }
 
   private dragOver(event: DragEvent) {
-    if (!isEditModeEnabled() || !event.dataTransfer) {
+    if (!this.isEditable.value || !event.dataTransfer) {
       return;
     }
 
@@ -91,7 +125,7 @@ export default class Editor {
   }
 
   private drop(event: DragEvent) {
-    if (!isEditModeEnabled() || !event.dataTransfer) {
+    if (!this.isEditable.value || !event.dataTransfer) {
       return;
     }
 
@@ -124,6 +158,12 @@ export default class Editor {
   }
 
   async setPageTitle(title?: string, subtitle?: string) {
+    if (typeof title === "string") {
+      this.title.value = title;
+    }
+    if (typeof subtitle === "string") {
+      this.subtitle.value = subtitle;
+    }
     return client.pages.update.mutate({
       pageId: this.pageId,
       title,
@@ -147,6 +187,7 @@ export default class Editor {
   }
 
   async setPublished(published: boolean) {
+    this.isPublished.value = published;
     return client.pages.update.mutate({ pageId: this.pageId, published });
   }
 
@@ -226,7 +267,7 @@ export default class Editor {
   }
 
   private addTile(tile: ClientTile) {
-    this.tiles.value = this.tiles.value.concat(tile);
+    this.tiles.value = this.tiles.value.concat(getTile(tile));
     scrollIntoView(tile.id);
   }
 
@@ -458,9 +499,11 @@ export default class Editor {
     rows,
     columns,
   }: OmitPageId<AppRouterInputs["tiles"]["resize"]>) {
-    this.tiles.value = this.tiles.value.map((entry) =>
-      entry.id === id ? { ...entry, rows, columns } : entry,
-    );
+    const tile = this.tiles.value.find((entry) => entry.id === id);
+    if (tile) {
+      tile.rows.value = rows;
+      tile.columns.value = columns;
+    }
   }
 
   // Collaboration
