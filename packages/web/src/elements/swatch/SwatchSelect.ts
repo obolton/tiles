@@ -40,7 +40,7 @@ export default class SwatchSelect extends HTMLElement {
     this.button.addEventListener("click", this.toggle.bind(this));
 
     const icon = document.createElement("img");
-    icon.src = closeIcon.src;
+    icon.src = closeIcon;
     icon.alt = "Close";
     this.button.append(icon);
 
