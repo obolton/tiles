@@ -50,6 +50,14 @@ export default function routeManifestPlugin(): Plugin {
     name: "route-manifest-plugin",
     enforce: "post",
 
+    config() {
+      return {
+        build: {
+          manifest: true,
+        },
+      };
+    },
+
     configResolved(config) {
       isSSR = !!config.build.ssr;
       outDir = config.build.outDir;
