@@ -1,31 +1,33 @@
-import { useCallback, useState } from "react";
 import { serialize } from "@/utils/richText/serialize";
 import RichText from "@/components/text/RichText";
 import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
-import useEditable from "@/hooks/useEditable";
 import Tile from "./Tile";
 import styles from "./TextTile.module.css";
 import type { Theme } from "@/types/pages";
 import type { RichText as RichTextType } from "@/utils/richText/types";
-import { useEditor } from "@/context/editor";
 import TextEditor, {
   type EditorState,
 } from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/inputs/ColorPicker";
 import ExpandIcon from "@/icons/expand.svg?jsx";
 import { classNames } from "@/utils/css";
+import { Store } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/stores";
+import type Editor from "@/editor/Editor";
 
 interface TextTileProps {
+  editor: Editor;
   id: string;
   content: RichTextType;
   theme: Theme | null;
   hue: number | null;
   expand: boolean;
-  hasFocus: boolean;
+  hasFocus: StoreInterface<boolean>;
   onDelete?: () => void;
 }
 
 export default function TextTile({
+  editor,
   id,
   content,
   theme: initialTheme,
@@ -34,108 +36,105 @@ export default function TextTile({
   hasFocus,
   onDelete,
 }: TextTileProps) {
-  const editor = useEditor();
-  const isEditable = useEditable();
-  const [theme, setTheme] = useState(initialTheme);
-  const [hue, setHue] = useState(initialHue);
-  const [expand, setExpand] = useState(initialExpand);
+  const { isEditable } = editor;
+  const theme = new Store(initialTheme);
+  const hue = new Store(initialHue);
+  const expand = new Store(initialExpand);
 
-  const onBlur = useCallback(
-    async (state: EditorState) => {
-      const content = serialize(state);
-      await editor.updateText({
-        id,
-        content,
-      });
-    },
-    [editor, id],
-  );
+  const onBlur = async (state: EditorState) => {
+    const content = serialize(state);
+    await editor.updateText({
+      id,
+      content,
+    });
+  };
 
-  const onChangeColor = useCallback(
-    async (value: ColorPickerValue) => {
-      const theme = value?.theme ?? null;
-      const hue = value?.hue ?? null;
-      setTheme(theme);
-      setHue(hue);
-      await editor.updateText({
-        id,
-        theme,
-        hue,
-      });
-    },
-    [editor, id],
-  );
+  const onChangeColor = async (value: ColorPickerValue) => {
+    const newTheme = value?.theme ?? null;
+    const newHue = value?.hue ?? null;
+    theme.value = newTheme;
+    hue.value = newHue;
+    await editor.updateText({
+      id,
+      theme: newTheme,
+      hue: newHue,
+    });
+  };
 
-  const onToggleExpand = useCallback(async () => {
-    setExpand(!expand);
+  const onToggleExpand = async () => {
+    expand.value = !expand.value;
     await editor.updateText({
       id,
       expand: !expand,
     });
-  }, [editor, id, expand]);
+  };
 
-  const onKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (
-        (event.key === "Delete" || event.key === "Backspace") &&
-        !event.repeat &&
-        !event.shiftKey &&
-        !event.ctrlKey &&
-        !event.altKey &&
-        !event.metaKey &&
-        event.currentTarget.textContent === ""
-      ) {
-        onDelete?.();
-      }
-    },
-    [onDelete],
-  );
+  const onKeyDown = (event: KeyboardEvent) => {
+    const editor = event.currentTarget as HTMLElement;
+    if (
+      (event.key === "Delete" || event.key === "Backspace") &&
+      !event.repeat &&
+      !event.shiftKey &&
+      !event.ctrlKey &&
+      !event.altKey &&
+      !event.metaKey &&
+      editor.textContent === ""
+    ) {
+      onDelete?.();
+    }
+  };
 
   return (
-    <Tile theme={theme} hue={hue} border={theme ? "outside" : "none"}>
+    <Tile
+      theme={theme}
+      hue={hue}
+      border={theme.derive((value) => (value ? "outside" : "none"))}
+    >
       <pop-out
-        class={styles["pop-out"]}
+        className={styles["pop-out"]}
         expandable={!expand ? "expandable" : undefined}
       >
-        {isEditable ? (
-          <TextEditor
-            className={classNames(styles.text, styles.editor)}
-            initialValue={content}
-            tabIndex={-1}
-            onKeyDownCapture={onDelete ? onKeyDown : undefined}
-            onBlur={onBlur}
-            showToolbar={hasFocus}
-            extraToolbarItems={
-              <ul role="group">
-                <li role="presentation">
-                  <ColorPicker
-                    role="menuitem"
-                    value={{ theme, hue }}
-                    onChange={onChangeColor}
-                    aria-label="Color"
-                    data-tooltip="Select color"
-                    direction="up"
-                    showClear
-                  />
-                </li>
-                <li role="presentation">
-                  <button
-                    role="menuitem"
-                    className="floating small"
-                    aria-label="Fit contents"
-                    data-tooltip="Fit contents"
-                    type="button"
-                    aria-pressed={expand ? "true" : "false"}
-                    onClick={onToggleExpand}
-                  >
-                    <ExpandIcon aria-hidden="true" />
-                  </button>
-                </li>
-              </ul>
-            }
-          />
-        ) : (
-          <RichText className={styles.text} content={content} />
+        {isEditable.derive((value) =>
+          value ? (
+            <TextEditor
+              classList={[styles.text, styles.editor]}
+              initialValue={content}
+              tabIndex={-1}
+              onkeydown={onDelete ? onKeyDown : undefined}
+              onBlur={onBlur}
+              showToolbar={hasFocus}
+              extraToolbarItems={
+                <ul role="group">
+                  <li role="presentation">
+                    <ColorPicker
+                      role="menuitem"
+                      value={{ theme: theme.value, hue: hue.value }}
+                      onChange={onChangeColor}
+                      aria-label="Color"
+                      data-tooltip="Select color"
+                      direction="up"
+                      showClear
+                    />
+                  </li>
+                  <li role="presentation">
+                    <button
+                      role="menuitem"
+                      className="floating small"
+                      aria-label="Fit contents"
+                      data-tooltip="Fit contents"
+                      type="button"
+                      aria-pressed={expand ? "true" : "false"}
+                      onclick={onToggleExpand}
+                    >
+                      <ExpandIcon aria-hidden="true" />
+                    </button>
+                  </li>
+                </ul>
+              }
+            />
+          ) : (
+            <RichText className={styles.text} content={content} />
+          ),
         )}
       </pop-out>
     </Tile>
