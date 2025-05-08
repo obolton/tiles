@@ -27,7 +27,7 @@ export function resolveImport(path: string) {
   if (!chunk) {
     throw new Error(`Cannot resolve chunk for import path: ${path}`);
   }
-  return "/" + chunk.file;
+  return import.meta.env.BASE_URL + chunk.file;
 }
 
 export function getStylesheetsForRouteModule(path: string) {

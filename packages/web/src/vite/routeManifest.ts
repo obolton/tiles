@@ -7,6 +7,7 @@ type RouteManifest = Record<string, string[]>;
 function recursivelyCollectStylesheets(
   path: string,
   manifest: Manifest,
+  basePath: string,
   seen: Set<string>,
   stylesheets: string[],
 ) {
@@ -21,7 +22,7 @@ function recursivelyCollectStylesheets(
 
   if (chunk.css) {
     for (const stylesheet of chunk.css) {
-      const path = "/" + stylesheet;
+      const path = basePath + stylesheet;
       if (!stylesheets.includes(path)) {
         stylesheets.push(path);
       }
@@ -30,21 +31,28 @@ function recursivelyCollectStylesheets(
 
   if (chunk.imports) {
     for (const importPath of chunk.imports) {
-      recursivelyCollectStylesheets(importPath, manifest, seen, stylesheets);
+      recursivelyCollectStylesheets(
+        importPath,
+        manifest,
+        basePath,
+        seen,
+        stylesheets,
+      );
     }
   }
 }
 
-function getStylesheets(path: string, manifest: Manifest) {
+function getStylesheets(path: string, basePath: string, manifest: Manifest) {
   const stylesheets: string[] = [];
   const seen = new Set<string>();
-  recursivelyCollectStylesheets(path, manifest, seen, stylesheets);
+  recursivelyCollectStylesheets(path, manifest, basePath, seen, stylesheets);
   return stylesheets;
 }
 
 export default function routeManifestPlugin(): Plugin {
   let isSSR = false;
   let outDir = "";
+  let basePath = "/";
 
   return {
     name: "route-manifest-plugin",
@@ -61,6 +69,7 @@ export default function routeManifestPlugin(): Plugin {
     configResolved(config) {
       isSSR = !!config.build.ssr;
       outDir = config.build.outDir;
+      basePath = config.base;
     },
 
     async closeBundle() {
@@ -80,7 +89,7 @@ export default function routeManifestPlugin(): Plugin {
       const routeManifest: RouteManifest = {};
 
       for (const path of routeModules) {
-        routeManifest[path] = getStylesheets(path, viteManifest);
+        routeManifest[path] = getStylesheets(path, basePath, viteManifest);
       }
 
       await writeFile(

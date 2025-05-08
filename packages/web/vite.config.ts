@@ -6,6 +6,7 @@ import type { UserConfig } from "vite";
 export default {
   envDir: "../..",
   envPrefix: "PUBLIC_",
+  base: "/assets/",
   ssr: {
     noExternal: true,
     external: ["node:assert", "node:crypto"],
