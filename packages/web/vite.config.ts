@@ -1,5 +1,6 @@
 import { resolve } from "node:path";
 import svgPlugin from "./src/vite/svg";
+import routeManifestPlugin from "./src/vite/routeManifest";
 import type { UserConfig } from "vite";
 
 export default {
@@ -12,5 +13,5 @@ export default {
       "@": resolve(__dirname, "./src"),
     },
   },
-  plugins: [svgPlugin({ jsxImportSource: "@/jsx" })],
+  plugins: [svgPlugin({ jsxImportSource: "@/jsx" }), routeManifestPlugin()],
 } satisfies UserConfig;
