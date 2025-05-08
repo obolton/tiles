@@ -1,51 +1,90 @@
+import type { JSX } from "@/jsx/jsx";
 import type PageItem, { PageItemAttributes } from "./item/PageItem";
-import type { TabItemAttributes } from "./tabs/TabItem";
-import type { TabPanelAttributes } from "./tabs/TabPanel";
-import type { FilePickerAttributes } from "./filePicker/FilePicker";
-import type { PopoverMenuAttributes } from "./menu/PopoverMenu";
-import type { InfiniteScrollAttributes } from "./infiniteScroll/InfiniteScroll";
-import type { EmbeddedVideoAttributes } from "./video/EmbeddedVideo";
-import type { SwatchSelectAttributes } from "./swatch/SwatchSelect";
-import type { SwatchItemAttributes } from "./swatch/SwatchItem";
-import type { PopOutAttributes } from "./popOut/PopOut";
-import type { StackViewAttributes } from "./stack/StackView";
-import type { CalendarMonthAttributes } from "./calendar/CalendarMonth";
-import type { MapViewAttributes } from "./maps/MapView";
-import type { MapMarkerAttributes } from "./maps/MapMarker";
-import type { MapLegendItemAttributes } from "./maps/MapLegendItem";
-import type { TableOfContentsAttributes } from "./tableOfContents/TableOfContents";
-import type { DataBindingAttributes } from "./dataBinding/DataBinding";
+import type TabItem, { TabItemAttributes } from "./tabs/TabItem";
+import type TabPanel, { TabPanelAttributes } from "./tabs/TabPanel";
+import type FilePicker, { FilePickerAttributes } from "./filePicker/FilePicker";
+import type PopoverMenu, { PopoverMenuAttributes } from "./menu/PopoverMenu";
+import type InfiniteScroll, {
+  InfiniteScrollAttributes,
+} from "./infiniteScroll/InfiniteScroll";
+import type EmbeddedVideo, {
+  EmbeddedVideoAttributes,
+} from "./video/EmbeddedVideo";
+import type SwatchSelect, {
+  SwatchSelectAttributes,
+} from "./swatch/SwatchSelect";
+import type SwatchItem, { SwatchItemAttributes } from "./swatch/SwatchItem";
+import type PopOut, { PopOutAttributes } from "./popOut/PopOut";
+import type StackView, { StackViewAttributes } from "./stack/StackView";
+import type CalendarMonth, {
+  CalendarMonthAttributes,
+} from "./calendar/CalendarMonth";
+import type MapView, { MapViewAttributes } from "./maps/MapView";
+import type MapMarker, { MapMarkerAttributes } from "./maps/MapMarker";
+import type MapLegendItem, {
+  MapLegendItemAttributes,
+} from "./maps/MapLegendItem";
+import type TableOfContents, {
+  TableOfContentsAttributes,
+} from "./tableOfContents/TableOfContents";
+import type TableView, { TableViewAttributes } from "./table/TableView";
+import type DataBinding, {
+  DataBindingAttributes,
+} from "./dataBinding/DataBinding";
 
-interface CustomElementAttributes<T extends HTMLElement = unknown>
-  extends React.HTMLAttributes<T> {
-  key?: string;
-  ref?: React.Ref<T>;
-  class?: string;
-}
+type CustomElementAttributes<
+  T extends HTMLElement,
+  Attributes = {},
+> = JSX.Attributes<T & Attributes>;
 
-declare module "react" {
+declare module "@/jsx/jsx" {
   namespace JSX {
     interface IntrinsicElements {
-      "map-view": CustomElementAttributes & MapViewAttributes;
-      "map-marker": CustomElementAttributes & MapMarkerAttributes;
-      "map-legend-item": CustomElementAttributes & MapLegendItemAttributes;
-      "embedded-video": CustomElementAttributes & EmbeddedVideoAttributes;
-      "infinite-scroll": CustomElementAttributes & InfiniteScrollAttributes;
-      "swatch-select": CustomElementAttributes & SwatchSelectAttributes;
-      "swatch-item": CustomElementAttributes & SwatchItemAttributes;
-      "calendar-month": CustomElementAttributes & CalendarMonthAttributes;
-      "popover-menu": CustomElementAttributes & PopoverMenuAttributes;
-      "pop-out": CustomElementAttributes & PopOutAttributes;
-      "stack-view": CustomElementAttributes & StackViewAttributes;
+      "map-view": CustomElementAttributes<MapView, MapViewAttributes>;
+      "map-marker": CustomElementAttributes<MapMarker, MapMarkerAttributes>;
+      "map-legend-item": CustomElementAttributes<
+        MapLegendItem,
+        MapLegendItemAttributes
+      >;
+      "embedded-video": CustomElementAttributes<
+        EmbeddedVideo,
+        EmbeddedVideoAttributes
+      >;
+      "infinite-scroll": CustomElementAttributes<
+        InfiniteScroll,
+        InfiniteScrollAttributes
+      >;
+      "swatch-select": CustomElementAttributes<
+        SwatchSelect,
+        SwatchSelectAttributes
+      >;
+      "swatch-item": CustomElementAttributes<SwatchItem, SwatchItemAttributes>;
+      "calendar-month": CustomElementAttributes<
+        CalendarMonth,
+        CalendarMonthAttributes
+      >;
+      "popover-menu": CustomElementAttributes<
+        PopoverMenu,
+        PopoverMenuAttributes
+      >;
+      "pop-out": CustomElementAttributes<PopOut, PopOutAttributes>;
+      "stack-view": CustomElementAttributes<StackView, StackViewAttributes>;
       "carousel-view": CustomElementAttributes;
-      "page-item": CustomElementAttributes<PageItem> & PageItemAttributes;
+      "page-item": CustomElementAttributes<PageItem, PageItemAttributes>;
       "tab-bar": CustomElementAttributes;
-      "tab-item": CustomElementAttributes & TabItemAttributes;
-      "tab-panel": CustomElementAttributes & TabPanelAttributes;
-      "file-picker": CustomElementAttributes & FilePickerAttributes;
+      "tab-item": CustomElementAttributes<TabItem, TabItemAttributes>;
+      "tab-panel": CustomElementAttributes<TabPanel, TabPanelAttributes>;
+      "file-picker": CustomElementAttributes<FilePicker, FilePickerAttributes>;
       "toast-container": CustomElementAttributes;
-      "table-of-contents": CustomElementAttributes & TableOfContentsAttributes;
-      "data-binding": CustomElementAttributes & DataBindingAttributes;
+      "table-of-contents": CustomElementAttributes<
+        TableOfContents,
+        TableOfContentsAttributes
+      >;
+      "table-view": CustomElementAttributes<TableView, TableViewAttributes>;
+      "data-binding": CustomElementAttributes<
+        DataBinding,
+        DataBindingAttributes
+      >;
     }
   }
 }
