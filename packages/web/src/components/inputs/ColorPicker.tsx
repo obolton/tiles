@@ -1,9 +1,9 @@
-import { useCallback } from "react";
 import ClearColorIcon from "@/icons/clear-color.svg?jsx";
 import styles from "./ColorPicker.module.css";
 import { classNames } from "@/utils/css";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { Theme } from "@/types/pages";
+import type { JSX } from "@/jsx/jsx";
 
 export type ColorPickerValue = {
   theme: Theme | null;
@@ -11,7 +11,7 @@ export type ColorPickerValue = {
 };
 
 interface ColorPickerProps
-  extends Omit<React.HTMLAttributes<HTMLElement>, "value" | "onChange"> {
+  extends Omit<JSX.Attributes<HTMLElement>, "value" | "onChange"> {
   className?: string;
   direction?: "left" | "right" | "up";
   value?: ColorPickerValue;
@@ -34,30 +34,27 @@ export default function ColorPicker({
   showClear = false,
   ...props
 }: ColorPickerProps) {
-  const setColor = useCallback(
-    (event: Event) => {
-      const [theme, hue] = (event.target as SwatchSelect).value.split(":") as
-        | ["DARK" | "LIGHT" | "CLEAR"]
-        | ["COLOR", string];
-      switch (theme) {
-        case "CLEAR":
-          onChange({ theme: null, hue: null });
-          break;
-        case "COLOR":
-          onChange({ theme, hue: parseFloat(hue) });
-          break;
-        default:
-          onChange({ theme, hue: null });
-          break;
-      }
-    },
-    [onChange],
-  );
+  const setColor = (event: Event) => {
+    const [theme, hue] = (event.target as SwatchSelect).value.split(":") as
+      | ["DARK" | "LIGHT" | "CLEAR"]
+      | ["COLOR", string];
+    switch (theme) {
+      case "CLEAR":
+        onChange({ theme: null, hue: null });
+        break;
+      case "COLOR":
+        onChange({ theme, hue: parseFloat(hue) });
+        break;
+      default:
+        onChange({ theme, hue: null });
+        break;
+    }
+  };
 
   return (
     <swatch-select
       {...props}
-      class={classNames(styles["color-picker"], className)}
+      className={classNames(styles["color-picker"], className)}
       aria-orientation="horizontal"
       direction={direction}
       value={
@@ -69,37 +66,31 @@ export default function ColorPicker({
     >
       {showClear ? (
         <swatch-item
-          key="CLEAR"
           aria-label="Clear color"
-          class={styles.clear}
+          className={styles.clear}
           value="CLEAR"
         >
           <ClearColorIcon aria-hidden="true" />
         </swatch-item>
       ) : null}
       <swatch-item
-        key="LIGHT"
         aria-label="Light"
-        class={styles.light}
+        className={styles.light}
         value="LIGHT"
       ></swatch-item>
       <swatch-item
-        key="DARK"
         aria-label="Dark"
-        class={styles.dark}
+        className={styles.dark}
         value="DARK"
       ></swatch-item>
       <>
         {HUES.map(([hue, name]) => (
           <swatch-item
-            key={`color-${hue}`}
             aria-label={name}
-            class={styles.color}
-            style={
-              {
-                "--hue": `${hue}deg`,
-              } as React.CSSProperties
-            }
+            className={styles.color}
+            style={{
+              "--hue": `${hue}deg`,
+            }}
             value={`COLOR:${hue}`}
           ></swatch-item>
         ))}
