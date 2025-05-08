@@ -27,6 +27,11 @@ export default {
         global: "@/global",
         init: "@/init",
       },
+      output: {
+        manualChunks: {
+          server: ["@/server/server"],
+        },
+      },
     },
   },
 } satisfies UserConfig;
