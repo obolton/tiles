@@ -58,7 +58,7 @@ async function loader({
 }
 
 const metadata = {
-  scripts: [{ src: "/src/init" }],
+  scripts: [{ src: "/src/init.ts" }],
 } satisfies RouteMetadata;
 
 export default {

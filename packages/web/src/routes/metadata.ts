@@ -3,5 +3,5 @@ import type { RouteMetadata } from "@/router/router";
 
 export default {
   links: [{ rel: "stylesheet", href: getGoogleFontsUrl() }],
-  scripts: [{ src: "/src/global" }],
+  scripts: [{ src: "/src/global.ts" }],
 } satisfies RouteMetadata;
