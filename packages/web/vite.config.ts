@@ -7,6 +7,9 @@ export default {
   envDir: "../..",
   envPrefix: "PUBLIC_",
   base: "/assets/",
+  define: {
+    "process.env": process.env,
+  },
   ssr: {
     noExternal: true,
     external: ["node:assert", "node:crypto"],
