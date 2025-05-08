@@ -1,5 +1,3 @@
-import useEditable from "@/hooks/useEditable";
-import { useCallback, useMemo, useState } from "react";
 import MovableImage from "@/components/images/MovableImage";
 import RichText from "@/components/text/RichText";
 import styles from "./ImageTile.module.css";
@@ -7,14 +5,16 @@ import Tile from "./Tile";
 import TextEditor, {
   type EditorState,
 } from "@/components/inputs/RichTextEditor/TextEditor";
-import { useEditor } from "@/context/editor";
 import { setSearchParams } from "@/utils/urls";
 import { serialize } from "@/utils/richText/serialize";
+import { Store } from "@/utils/stores";
 import type { ClientImageTile } from "@/types/tiles";
+import type Editor from "@/editor/Editor";
+import type { StoreInterface } from "@/utils/stores";
 
 interface ImageTileProps extends ClientImageTile {
-  movable?: boolean;
-  hasFocus: boolean;
+  editor: Editor;
+  hasFocus: StoreInterface<boolean>;
   onDelete?: () => void;
 }
 
@@ -56,9 +56,9 @@ function getMaxWidth(columns: number) {
 }
 
 export default function ImageTile({
+  editor,
   id,
   columns,
-  movable = true,
   imageUrl,
   text,
   originX,
@@ -66,58 +66,46 @@ export default function ImageTile({
   hasFocus,
   onDelete,
 }: ImageTileProps) {
-  const editor = useEditor();
-  const isEditable = useEditable();
-  const [origin, setOrigin] = useState({ x: originX, y: originY });
+  const { isEditable } = editor;
+  const origin = new Store({ x: originX, y: originY });
 
-  const onBlur = useCallback(
-    async (state: EditorState) => {
-      const updatedText = serialize(state);
-      await editor.updateImage({
-        id,
-        text: updatedText,
-      });
-    },
-    [editor, id],
-  );
+  const onBlur = async (state: EditorState) => {
+    const updatedText = serialize(state);
+    await editor.updateImage({
+      id,
+      text: updatedText,
+    });
+  };
 
-  const onUpdateOrigin = useCallback(
-    async (origin: { x: number; y: number }) => {
-      await editor.updateImage({
-        id,
-        origin,
-      });
-    },
-    [editor, id],
-  );
+  const onUpdateOrigin = async (origin: { x: number; y: number }) => {
+    await editor.updateImage({
+      id,
+      origin,
+    });
+  };
 
-  const onKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (
-        (event.key === "Delete" || event.key === "Backspace") &&
-        !event.repeat &&
-        !event.shiftKey &&
-        !event.ctrlKey &&
-        !event.altKey &&
-        !event.metaKey &&
-        event.currentTarget.textContent === ""
-      ) {
-        onDelete?.();
-      }
-    },
-    [onDelete],
-  );
+  const onKeyDown = (event: KeyboardEvent) => {
+    const element = event.currentTarget as HTMLElement;
+    if (
+      (event.key === "Delete" || event.key === "Backspace") &&
+      !event.repeat &&
+      !event.shiftKey &&
+      !event.ctrlKey &&
+      !event.altKey &&
+      !event.metaKey &&
+      element.textContent === ""
+    ) {
+      onDelete?.();
+    }
+  };
 
-  const srcSet = useMemo(() => getImageSrcSet(imageUrl, VARIANTS), [imageUrl]);
+  const srcSet = getImageSrcSet(imageUrl, VARIANTS);
 
   const sizes = `(max-width: 800px) ${((columns / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(columns)}px`;
 
-  const style = useMemo(
-    () => ({
-      objectPosition: `${origin.x * 100}% ${origin.y * 100}%`,
-    }),
-    [origin],
-  );
+  const style = origin.derive((value) => ({
+    objectPosition: `${value.x * 100}% ${value.y * 100}%`,
+  }));
 
   return (
     <Tile border="inside">
@@ -128,28 +116,32 @@ export default function ImageTile({
       >
         <MovableImage
           src={imageUrl}
-          srcSet={srcSet}
+          srcset={srcSet}
           sizes={sizes}
           style={style}
           loading="lazy"
           alt="Image"
-          movable={movable && isEditable}
+          movable={isEditable}
           draggable={!isEditable}
           origin={origin}
-          onMove={setOrigin}
+          onMove={(newOrigin) => {
+            origin.value = newOrigin;
+          }}
           onRelease={onUpdateOrigin}
         />
-        {isEditable ? (
-          <TextEditor
-            className={styles.text}
-            initialValue={text}
-            onKeyDownCapture={onDelete ? onKeyDown : undefined}
-            onBlur={onBlur}
-            showToolbar={hasFocus}
-          />
-        ) : text ? (
-          <RichText className={styles.text} content={text} />
-        ) : null}
+        {isEditable.derive((editable) =>
+          editable ? (
+            <TextEditor
+              className={styles.text}
+              initialValue={text}
+              onkeydown={onDelete ? onKeyDown : undefined}
+              onBlur={onBlur}
+              showToolbar={hasFocus}
+            />
+          ) : text ? (
+            <RichText className={styles.text} content={text} />
+          ) : null,
+        )}
       </figure>
     </Tile>
   );
