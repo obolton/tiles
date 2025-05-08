@@ -4,6 +4,7 @@ import { renderToString } from "@/jsx/server";
 import globalMetadata from "@/routes/metadata";
 import Body from "./Body";
 import { internalError, notFound } from "@/router/router";
+import { resolveImport, getStylesheetsForRouteModule } from "./assets";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type {
   RouteData,
@@ -34,11 +35,11 @@ function inspectModuleStylesheets(
 
 async function collectStylesheets(
   moduleUrl: string,
-  viteDevServer: ViteDevServer,
+  viteDevServer?: ViteDevServer,
 ) {
   const stylesheets: string[] = [];
   const seen = new Set<string>();
-  const module = await viteDevServer.moduleGraph.getModuleByUrl(moduleUrl);
+  const module = await viteDevServer?.moduleGraph.getModuleByUrl(moduleUrl);
   if (!module) {
     return stylesheets;
   }
@@ -49,7 +50,9 @@ async function collectStylesheets(
 function getLinks(stylesheets: string[], metadata: RouteMetadata) {
   const hints: string[] = [];
 
-  hints.push("</src/server/hydrate>; rel=preload; as=script");
+  hints.push(
+    "<" + resolveImport("/src/server/hydrate.ts") + ">; rel=preload; as=script",
+  );
 
   for (const stylesheet of stylesheets) {
     hints.push("<" + stylesheet + ">; rel=preload; as=style");
@@ -57,7 +60,7 @@ function getLinks(stylesheets: string[], metadata: RouteMetadata) {
 
   if (metadata.scripts) {
     for (const script of metadata.scripts) {
-      hints.push("<" + script.src + ">; rel=preload; as=script");
+      hints.push("<" + resolveImport(script.src) + ">; rel=preload; as=script");
     }
   }
 
@@ -89,12 +92,21 @@ function getPageStartChunk(
   if (metadata.scripts) {
     for (const script of metadata.scripts) {
       chunk +=
-        '<script type="module" src="' + escapeUTF8(script.src) + '"></script>';
+        '<script type="module" src="' +
+        escapeUTF8(resolveImport(script.src)) +
+        '"></script>';
     }
   }
 
-  chunk += '<script type="module" src="/src/server/hydrate"></script>';
-  chunk += '<script type="module" src="/@vite/client"></script>';
+  chunk +=
+    '<script type="module" src="' +
+    resolveImport("/src/server/hydrate.ts") +
+    '"></script>';
+
+  if (import.meta.env.DEV) {
+    chunk += '<script type="module" src="/@vite/client"></script>';
+  }
+
   if (typeof data?.title === "string") {
     chunk += "<title>" + escapeUTF8(data.title) + "</title>";
   }
@@ -136,7 +148,7 @@ async function renderRoute(
   url: URL,
   request: Request,
   routeMatch: RouteMatch,
-  viteDevServer: ViteDevServer,
+  viteDevServer?: ViteDevServer,
 ) {
   const method = request.method ?? "GET";
   const { route, parameters } = routeMatch;
@@ -176,7 +188,9 @@ async function renderRoute(
 
   const mergedMetadata = mergeRouteMetadata(globalMetadata, metadata);
 
-  const stylesheets = await collectStylesheets(route.moduleUrl, viteDevServer);
+  const stylesheets = import.meta.env.PROD
+    ? getStylesheetsForRouteModule(route.moduleUrl)
+    : await collectStylesheets(route.moduleUrl, viteDevServer);
 
   const links = getLinks(stylesheets, mergedMetadata);
 
@@ -196,7 +210,7 @@ async function renderRoute(
         children: component(data?.data),
         hydrate:
           typeof data?.data !== "undefined"
-            ? { module: route.moduleUrl, data: data.data }
+            ? { module: resolveImport(route.moduleUrl), data: data.data }
             : undefined,
       }),
     ) +
@@ -213,7 +227,7 @@ async function renderRoute(
 
 export default async function respond(
   request: Request,
-  viteDevServer: ViteDevServer,
+  viteDevServer?: ViteDevServer,
 ) {
   const url = new URL(request.url);
   const route = router.match(url.pathname);
