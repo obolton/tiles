@@ -7,6 +7,7 @@ export default {
   envDir: "../..",
   envPrefix: "PUBLIC_",
   ssr: {
+    noExternal: true,
     external: ["node:assert", "node:crypto"],
   },
   resolve: {
