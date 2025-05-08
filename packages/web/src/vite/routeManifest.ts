@@ -21,8 +21,9 @@ function recursivelyCollectStylesheets(
 
   if (chunk.css) {
     for (const stylesheet of chunk.css) {
-      if (!stylesheets.includes(stylesheet)) {
-        stylesheets.push(stylesheet);
+      const path = "/" + stylesheet;
+      if (!stylesheets.includes(path)) {
+        stylesheets.push(path);
       }
     }
   }
