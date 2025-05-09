@@ -41,7 +41,7 @@
     "@types/node": "^22.13.13",
     "esbuild": "^0.25.1",
     "prisma": "^6.7.0",
-    "prisma-json-types-generator": "^3.2.2",
+    "prisma-json-types-generator": "^3.4.1",
     "tsx": "^4.19.3"
   },
   "engines": {
