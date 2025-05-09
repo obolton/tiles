@@ -94,16 +94,16 @@ export default class ToastContainer extends HTMLElement {
     icon.ariaHidden = "true";
     switch (type) {
       case "success":
-        icon.src = successIcon.src;
+        icon.src = successIcon;
         icon.alt = "Success";
         break;
       case "error":
-        icon.src = errorIcon.src;
+        icon.src = errorIcon;
         icon.alt = "Error";
         break;
       case "info":
       default:
-        icon.src = infoIcon.src;
+        icon.src = infoIcon;
         icon.alt = "Info";
         break;
     }
