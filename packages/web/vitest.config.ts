@@ -15,7 +15,7 @@ export default defineConfig({
     setupFiles: ["src/test/setup.ts"],
     coverage: {
       include: ["src/**"],
-      extension: [".ts", ".tsx", ".astro"],
+      extension: [".ts", ".tsx"],
     },
   },
 });

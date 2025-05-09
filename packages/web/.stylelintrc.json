@@ -1,5 +1,5 @@
 {
-  "extends": ["stylelint-config-standard", "stylelint-config-html/astro"],
+  "extends": ["stylelint-config-standard"],
   "rules": {
     "selector-pseudo-class-no-unknown": [
       true,
