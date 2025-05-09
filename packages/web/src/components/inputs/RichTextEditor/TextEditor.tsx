@@ -36,9 +36,11 @@ export default function TextEditor({
 }: TextEditorProps) {
   let editorView: EditorView | undefined;
 
-  signal?.addEventListener("abort", () => editorView?.destroy(), {
-    once: true,
-  });
+  signal?.addEventListener(
+    "abort",
+    () => requestAnimationFrame(() => editorView?.destroy()),
+    { once: true },
+  );
 
   const refCallback = (element: HTMLElement) => {
     const plugins = getPlugins().concat(

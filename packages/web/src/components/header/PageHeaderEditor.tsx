@@ -35,9 +35,11 @@ export default function PageHeaderEditor({
 }: PageHeaderEditorProps) {
   let editorView: EditorView | undefined;
 
-  signal?.addEventListener("abort", () => editorView?.destroy(), {
-    once: true,
-  });
+  signal?.addEventListener(
+    "abort",
+    () => requestAnimationFrame(() => editorView?.destroy()),
+    { once: true },
+  );
 
   const ref = (element: HTMLElement) => {
     editorView = new EditorView(
