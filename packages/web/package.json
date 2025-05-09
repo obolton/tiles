@@ -44,8 +44,6 @@
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
     "autoprefixer": "^10.4.21",
-    "eslint-plugin-react": "^7.37.4",
-    "eslint-plugin-react-hooks": "^5.2.0",
     "jsdom": "^26.0.0",
     "postcss-html": "^1.8.0",
     "storybook": "^8.6.8",
