@@ -5,6 +5,18 @@ import {
 import client from "@/api/client";
 import { getCookie } from "./cookies";
 import { clear, setPersistent, removePersistent, getPersistent } from "./state";
+import { Store } from "./stores";
+
+export interface User {
+  id: string;
+  username: string | null;
+  name: string;
+  imageUrl: string | null;
+}
+
+export const user = new Store<User | null>(
+  import.meta.env.SSR ? null : getCachedUserInfo(),
+);
 
 export function getSessionId(headers: Headers) {
   return getCookie(headers.get("cookie") ?? "", SESSION_COOKIE_NAME);
@@ -15,9 +27,9 @@ export function isSignedIn() {
 }
 
 export async function getUserInfo() {
-  const user = await client.auth.getUserInfo.query();
-  if (user) {
-    setUserInfo(user);
+  const userInfo = await client.auth.getUserInfo.query();
+  if (userInfo) {
+    setUserInfo(userInfo);
   } else {
     removePersistent("user");
     throw new Error("User not found");
@@ -25,18 +37,13 @@ export async function getUserInfo() {
   return user;
 }
 
-export function setUserInfo(user: {
-  id: string;
-  username: string | null;
-  name: string;
-  email: string;
-  imageUrl: string | null;
-}) {
+export function setUserInfo(userInfo: User) {
+  user.value = userInfo;
   setPersistent("user", {
     ...user,
-    profile: user.username
-      ? `/profiles/@${user.username}`
-      : `/profiles/${user.id}`,
+    profile: userInfo.username
+      ? `/profiles/@${userInfo.username}`
+      : `/profiles/${userInfo.id}`,
   });
 }
 
