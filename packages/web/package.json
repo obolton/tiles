@@ -35,9 +35,7 @@
     "prosemirror-model": "^1.25.0",
     "prosemirror-schema-list": "^1.5.1",
     "prosemirror-state": "^1.4.3",
-    "prosemirror-view": "^1.38.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "prosemirror-view": "^1.38.1"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.6.8",
@@ -45,8 +43,6 @@
     "@storybook/react-vite": "^8.6.8",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
-    "@types/react": "^19.0.12",
-    "@types/react-dom": "^19.0.4",
     "autoprefixer": "^10.4.21",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.2.0",
