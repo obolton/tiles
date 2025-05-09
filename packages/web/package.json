@@ -26,11 +26,7 @@
     "generate-worker-types": "wrangler types src/types/worker.d.ts"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/cloudflare": "^12.4.0",
-    "@astrojs/react": "^4.2.3",
     "@trpc/client": "^11.1.2",
-    "astro": "^5.6.1",
     "entities": "^6.0.0",
     "maplibre-gl": "^5.2.0",
     "prosemirror-commands": "^1.7.0",
