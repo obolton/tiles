@@ -4,6 +4,7 @@ import { setSearchParams } from "@/utils/urls";
 import { redirectWithToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
 import { uploadMedia } from "@/utils/media";
+import { user } from "@/utils/sessions";
 import type { AppRouterOutputs } from "@/api/client";
 import type FilePicker from "@/elements/filePicker/FilePicker";
 
@@ -28,6 +29,7 @@ async function onChangeProfileImage(event: Event) {
     image.src = url;
     const imageKey = await uploadMedia(file, "profile-image");
     const userInfo = await client.users.update.mutate({ imageKey });
+    user.value = userInfo;
     image.src = setSearchParams(userInfo.imageUrl!, { class: "large" })!;
     URL.revokeObjectURL(url);
   } catch (error) {
@@ -76,6 +78,7 @@ async function onSubmit(event: SubmitEvent) {
       username: (formData.get("username") as string | null) || null,
       email: (formData.get("email") as string | null) ?? "",
     });
+    user.value = userInfo;
     redirectWithToast(
       userInfo.username
         ? `/profiles/@${userInfo.username}`
@@ -100,12 +103,11 @@ export default function SettingsPage({ user }: SettingsPageProps) {
       <main>
         <form class="vertical" onsubmit={onSubmit}>
           <file-picker
-            type="profile-image"
             accept={ACCEPT_CONTENT_TYPES.join(",")}
             onchange={onChangeProfileImage}
           >
             <img
-              class="profile-image large"
+              className="profile-image large"
               src={setSearchParams(user.imageUrl!, { class: "large" })}
               alt={user.name}
               data-tooltip="Select a new profile image"
@@ -152,7 +154,7 @@ export default function SettingsPage({ user }: SettingsPageProps) {
           </label>
 
           <footer>
-            <button class="primary" type="submit">
+            <button className="primary" type="submit">
               Save
             </button>
           </footer>
