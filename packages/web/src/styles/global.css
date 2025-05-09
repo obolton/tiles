@@ -213,7 +213,6 @@ aside {
   border-radius: var(--border-radius);
 }
 
-data-binding,
 infinite-scroll {
   display: contents;
 }

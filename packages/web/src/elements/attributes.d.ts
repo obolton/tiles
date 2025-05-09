@@ -28,9 +28,6 @@ import type TableOfContents, {
   TableOfContentsAttributes,
 } from "./tableOfContents/TableOfContents";
 import type TableView, { TableViewAttributes } from "./table/TableView";
-import type DataBinding, {
-  DataBindingAttributes,
-} from "./dataBinding/DataBinding";
 
 type CustomElementAttributes<
   T extends HTMLElement,
@@ -81,10 +78,6 @@ declare module "@/jsx/jsx" {
         TableOfContentsAttributes
       >;
       "table-view": CustomElementAttributes<TableView, TableViewAttributes>;
-      "data-binding": CustomElementAttributes<
-        DataBinding,
-        DataBindingAttributes
-      >;
     }
   }
 }
