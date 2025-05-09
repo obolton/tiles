@@ -37,8 +37,8 @@
   },
   "devDependencies": {
     "@types/cookie": "^0.6.0",
-    "@types/cors": "^2.8.17",
-    "@types/node": "^22.13.13",
+    "@types/cors": "^2.8.18",
+    "@types/node": "^22.15.17",
     "esbuild": "^0.25.1",
     "prisma": "^6.7.0",
     "prisma-json-types-generator": "^3.4.1",
