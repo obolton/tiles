@@ -51,7 +51,9 @@ function getLinks(stylesheets: string[], metadata: RouteMetadata) {
   const hints: string[] = [];
 
   hints.push(
-    "<" + resolveImport("/src/server/hydrate.ts") + ">; rel=preload; as=script",
+    "<" +
+      resolveImport("/src/server/hydrate.ts") +
+      ">; rel=preload; as=script; crossorigin",
   );
 
   for (const stylesheet of stylesheets) {
@@ -60,7 +62,11 @@ function getLinks(stylesheets: string[], metadata: RouteMetadata) {
 
   if (metadata.scripts) {
     for (const script of metadata.scripts) {
-      hints.push("<" + resolveImport(script.src) + ">; rel=preload; as=script");
+      hints.push(
+        "<" +
+          resolveImport(script.src) +
+          ">; rel=preload; as=script; crossorigin",
+      );
     }
   }
 
