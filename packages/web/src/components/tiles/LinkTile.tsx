@@ -1,6 +1,5 @@
 import { showModal } from "@/utils/modals";
 import Tile from "./Tile";
-import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import styles from "./LinkTile.module.css";
@@ -67,7 +66,10 @@ export default function LinkTile({
 
       {hasFocus.derive((value) =>
         value ? (
-          <FloatingToolbar>
+          <floating-toolbar
+            data-tooltip-position="top"
+            aria-label="Link toolbar"
+          >
             <button
               role="menuitem"
               type="button"
@@ -78,7 +80,7 @@ export default function LinkTile({
             >
               <LinkIcon aria-hidden="true" />
             </button>
-          </FloatingToolbar>
+          </floating-toolbar>
         ) : null,
       )}
     </Tile>

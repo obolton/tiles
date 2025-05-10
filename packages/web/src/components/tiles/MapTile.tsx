@@ -1,5 +1,4 @@
 import Tile from "./Tile";
-import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
 import AddPlaceIcon from "@/icons/add-place.svg?jsx";
 import styles from "./MapTile.module.css";
 import { showModal } from "@/utils/modals";
@@ -101,7 +100,10 @@ export default function MapTile({
 
         {hasFocus.derive((value) =>
           value ? (
-            <FloatingToolbar>
+            <floating-toolbar
+              data-tooltip-position="top"
+              aria-label="Map toolbar"
+            >
               <button
                 role="menuitem"
                 type="button"
@@ -112,7 +114,7 @@ export default function MapTile({
               >
                 <AddPlaceIcon aria-hidden="true" />
               </button>
-            </FloatingToolbar>
+            </floating-toolbar>
           ) : null,
         )}
       </pop-out>

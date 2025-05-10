@@ -16,7 +16,6 @@ import AlignCenterIcon from "@/icons/align-center.svg?jsx";
 import AlignRightIcon from "@/icons/align-right.svg?jsx";
 import { showModal } from "@/utils/modals";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
-import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
 import type { EditorState } from "prosemirror-state";
 import type { Command } from "prosemirror-state";
 import {
@@ -110,7 +109,10 @@ export default function FormattingToolbar({
     );
 
   return (
-    <FloatingToolbar>
+    <floating-toolbar
+      data-tooltip-position="top"
+      aria-label="Formatting toolbar"
+    >
       <ul role="group">
         <li role="presentation">
           <button
@@ -346,6 +348,6 @@ export default function FormattingToolbar({
       </ul>
 
       {children}
-    </FloatingToolbar>
+    </floating-toolbar>
   );
 }

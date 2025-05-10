@@ -42,7 +42,7 @@ export default function EditingTools({
 
       <FormattingTools editor={editor} />
 
-      <ul role="group">
+      <ul role="group" aria-label="More tools">
         <li role="presentation">
           <button
             id="page-options-button"

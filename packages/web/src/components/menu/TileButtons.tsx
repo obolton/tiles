@@ -127,7 +127,7 @@ export default function TileButtons({
   };
 
   return (
-    <ul role="group">
+    <ul role="group" aria-label="Create items">
       <>
         {BUTTONS.map(({ label, type, Icon }) => (
           <li role="presentation">

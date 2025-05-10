@@ -1,4 +1,3 @@
-import FloatingToolbar from "@/components/toolbars/FloatingToolbar";
 import EditingTools from "./EditingTools";
 import "./EditingToolbar.module.css";
 import { viewTransition } from "@/utils/transitions";
@@ -31,8 +30,8 @@ export default function EditingToolbar({
   };
 
   return (
-    <FloatingToolbar>
-      <ul role="group">
+    <floating-toolbar aria-label="Editing toolbar" data-tooltip-position="top">
+      <ul role="group" aria-label="Editing mode">
         <li role="presentation">
           <button
             role="menuitem"
@@ -59,6 +58,6 @@ export default function EditingToolbar({
           />
         ) : null,
       )}
-    </FloatingToolbar>
+    </floating-toolbar>
   );
 }

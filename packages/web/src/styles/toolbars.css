@@ -1,6 +1,7 @@
-.toolbar {
+floating-toolbar {
   position: fixed;
   inset: auto 8px 80px;
+  width: fit-content;
   height: 64px;
   max-width: calc(100vw - 16px);
   overflow: visible;
@@ -38,7 +39,7 @@
   }
 }
 
-body[data-drag] .toolbar {
+body[data-drag] floating-toolbar {
   display: none;
 }
 

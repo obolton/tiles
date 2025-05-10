@@ -27,6 +27,7 @@ import type MapLegendItem, {
 import type TableOfContents, {
   TableOfContentsAttributes,
 } from "./tableOfContents/TableOfContents";
+import FloatingToolbar from "./floatingToolbar/FloatingToolbar";
 import type TableView, { TableViewAttributes } from "./table/TableView";
 
 type CustomElementAttributes<
@@ -77,6 +78,7 @@ declare module "@/jsx/jsx" {
         TableOfContents,
         TableOfContentsAttributes
       >;
+      "floating-toolbar": CustomElementAttributes<FloatingToolbar>;
       "table-view": CustomElementAttributes<TableView, TableViewAttributes>;
     }
   }

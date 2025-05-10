@@ -56,7 +56,7 @@ export default function FormattingToolbar({ editor }: FormattingToolbarProps) {
   };
 
   return (
-    <ul role="group">
+    <ul role="group" aria-label="Formatting tools">
       <li role="presentation">
         <FontPicker
           role="menuitem"

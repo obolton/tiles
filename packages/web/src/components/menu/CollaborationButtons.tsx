@@ -76,7 +76,7 @@ export default function CollaborationButtons({
   };
 
   return (
-    <ul role="group">
+    <ul role="group" aria-label="Collaboration tools">
       <li role="presentation">
         {isPublished.derive((published) =>
           published ? (
