@@ -1,23 +1,8 @@
-import {
-  isSignedIn,
-  getUserInfo,
-  getCachedUserInfo,
-  signOut,
-} from "@/utils/sessions";
 import { handleError } from "@/utils/errors";
 import client from "@/api/client";
 
 import "@/elements/global";
 import "@/utils/tooltips";
-
-if (isSignedIn()) {
-  document.body.dataset.signedIn = "true";
-  const userInfo = getCachedUserInfo();
-
-  if (!userInfo) {
-    getUserInfo().catch((error) => handleError(error));
-  }
-}
 
 const newPageButton = document.getElementById("new-page-button");
 const signOutButton = document.getElementById("sign-out");

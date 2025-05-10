@@ -4,12 +4,29 @@ import SettingsIcon from "@/icons/settings.svg?jsx";
 import SignOutIcon from "@/icons/sign-out.svg?jsx";
 import MenuIcon from "@/icons/menu.svg?jsx";
 import { user } from "@/utils/sessions";
+import { isSignedIn, getUserInfo, getCachedUserInfo } from "@/utils/sessions";
+import { handleError } from "@/utils/errors";
 
 interface NavigationProps {
   showTableOfContents?: boolean;
 }
 
 export default function Navigation({ showTableOfContents }: NavigationProps) {
+  if (!import.meta.env.SSR) {
+    queueMicrotask(() => {
+      if (isSignedIn()) {
+        document.body.dataset.signedIn = "true";
+        const userInfo = getCachedUserInfo();
+
+        if (!userInfo) {
+          getUserInfo().catch((error) => handleError(error));
+        } else {
+          user.value = userInfo;
+        }
+      }
+    });
+  }
+
   return user.derive((value) =>
     value ? (
       <nav

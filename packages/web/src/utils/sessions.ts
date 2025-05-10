@@ -14,9 +14,7 @@ export interface User {
   imageUrl: string | null;
 }
 
-export const user = new Store<User | null>(
-  import.meta.env.SSR ? null : getCachedUserInfo(),
-);
+export const user = new Store<User | null>(null);
 
 export function getSessionId(headers: Headers) {
   return getCookie(headers.get("cookie") ?? "", SESSION_COOKIE_NAME);
