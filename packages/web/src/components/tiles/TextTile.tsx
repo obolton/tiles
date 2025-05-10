@@ -10,7 +10,6 @@ import TextEditor, {
 } from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/inputs/ColorPicker";
 import ExpandIcon from "@/icons/expand.svg?jsx";
-import { classNames } from "@/utils/css";
 import { Store } from "@/utils/stores";
 import type { StoreInterface } from "@/utils/stores";
 import type Editor from "@/editor/Editor";

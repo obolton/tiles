@@ -132,7 +132,7 @@ export default function ImageTile({
         {isEditable.derive((editable) =>
           editable ? (
             <TextEditor
-              className={styles.text}
+              classList={[styles.text]}
               initialValue={text}
               onkeydown={onDelete ? onKeyDown : undefined}
               onBlur={onBlur}

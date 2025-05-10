@@ -42,26 +42,22 @@ export default function TextEditor({
     { once: true },
   );
 
-  const refCallback = (element: HTMLElement) => {
+  const ref = (element: HTMLElement) => {
     const plugins = getPlugins().concat(
       selectionFormat((newFormat) => {
         format.value = newFormat;
       }),
     );
     try {
-      editorView = new EditorView(
-        { mount: element },
-        {
-          state: EditorState.create(
-            initialValue
-              ? {
-                  doc: deserialize(initialValue),
-                  plugins,
-                }
-              : { schema, plugins },
-          ),
-        },
+      const state = EditorState.create(
+        initialValue
+          ? {
+              doc: deserialize(initialValue),
+              plugins,
+            }
+          : { schema, plugins },
       );
+      editorView = new EditorView({ mount: element }, { state });
     } catch (error) {
       handleError(error);
     }
@@ -100,10 +96,10 @@ export default function TextEditor({
   return (
     <>
       <div
-        ref={refCallback}
+        {...props}
+        ref={ref}
         classList={["rich-text", styles.editor, ...classList]}
         role="textbox"
-        {...props}
         onblur={handleBlur}
       />
 
