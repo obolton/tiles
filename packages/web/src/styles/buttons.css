@@ -1,7 +1,6 @@
 /* Shared */
 
 button {
-  display: block;
   font-size: 18px;
   line-height: 1;
   text-align: center;
@@ -26,7 +25,9 @@ button.primary,
 button.secondary,
 a.primary,
 a.secondary {
+  display: inline-block;
   height: 48px;
+  align-content: center;
   font-weight: 600;
   border: none;
   border-radius: 24px;
@@ -156,11 +157,12 @@ form[data-pending] button[type="submit"] {
   &::before {
     content: "";
     position: absolute;
-    inset: auto 0;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    aspect-ratio: 1;
     min-width: 100%;
     min-height: 100%;
-    border-radius: 50%;
-    aspect-ratio: 1;
     background:
       radial-gradient(closest-side, rgb(255 255 255) 0%, transparent 60%),
       conic-gradient(
@@ -191,12 +193,10 @@ form[data-pending] button[type="submit"] {
     content: "Saving\2026";
     position: absolute;
     inset: 0;
-    display: inherit;
-    align-items: inherit;
-    justify-content: inherit;
+    align-content: center;
     border-radius: inherit;
     background: inherit;
-    color: rgba(from currentcolor r g b / 70%);
+    color: rgb(from currentcolor r g b / 70%);
     animation: var(--animation-duration) var(--easing) forwards reveal-border;
   }
 
