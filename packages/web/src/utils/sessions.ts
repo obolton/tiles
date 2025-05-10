@@ -63,4 +63,6 @@ export async function signOut() {
   await client.auth.signOut.mutate();
   clearAuthenticationCookies();
   clear();
+  delete document.body.dataset.signedIn;
+  window.location.href = "/";
 }

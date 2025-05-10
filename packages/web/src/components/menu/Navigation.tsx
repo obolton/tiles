@@ -6,9 +6,24 @@ import MenuIcon from "@/icons/menu.svg?jsx";
 import { user } from "@/utils/sessions";
 import { isSignedIn, getUserInfo, getCachedUserInfo } from "@/utils/sessions";
 import { handleError } from "@/utils/errors";
+import client from "@/api/client";
+import { signOut } from "@/utils/sessions";
 
 interface NavigationProps {
   showTableOfContents?: boolean;
+}
+
+async function createNewPage(event: Event) {
+  const button = event.currentTarget as HTMLButtonElement;
+  button.classList.add("pending");
+  try {
+    const { id } = await client.pages.create.mutate({ title: "New page" });
+    window.open(`/pages/${id}?edit=true`, "_blank");
+  } catch (error) {
+    handleError(error);
+  } finally {
+    button.classList.remove("pending");
+  }
 }
 
 export default function Navigation({ showTableOfContents }: NavigationProps) {
@@ -61,6 +76,7 @@ export default function Navigation({ showTableOfContents }: NavigationProps) {
               type="button"
               data-tooltip="Create a new page"
               data-pending-text=""
+              onclick={createNewPage}
             >
               <NewIcon />
             </button>
@@ -87,7 +103,7 @@ export default function Navigation({ showTableOfContents }: NavigationProps) {
                   </a>
                 </li>
                 <li>
-                  <button id="sign-out" type="button">
+                  <button id="sign-out" type="button" onclick={signOut}>
                     <SignOutIcon />
                     Sign out
                   </button>
