@@ -38,7 +38,7 @@ export async function getUserInfo() {
 export function setUserInfo(userInfo: User) {
   user.value = userInfo;
   setPersistent("user", {
-    ...user,
+    ...userInfo,
     profile: userInfo.username
       ? `/profiles/@${userInfo.username}`
       : `/profiles/${userInfo.id}`,
