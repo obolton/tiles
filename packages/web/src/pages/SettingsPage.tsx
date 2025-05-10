@@ -5,6 +5,7 @@ import { redirectWithToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
 import { uploadMedia } from "@/utils/media";
 import { user } from "@/utils/sessions";
+import styles from "./SettingsPage.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type FilePicker from "@/elements/filePicker/FilePicker";
 
@@ -103,6 +104,7 @@ export default function SettingsPage({ user }: SettingsPageProps) {
       <main>
         <form class="vertical" onsubmit={onSubmit}>
           <file-picker
+            className={styles.file}
             accept={ACCEPT_CONTENT_TYPES.join(",")}
             onchange={onChangeProfileImage}
           >

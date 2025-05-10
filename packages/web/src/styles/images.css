@@ -1,4 +1,5 @@
 img.profile-image {
+  display: block;
   box-sizing: content-box;
   object-fit: cover;
   border: none;
