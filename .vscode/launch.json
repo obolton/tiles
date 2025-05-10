@@ -8,7 +8,7 @@
       "command": "npm run dev",
       "skipFiles": ["<node_internals>/**"],
       "serverReadyAction": {
-        "pattern": "Local.+(https://.+)",
+        "pattern": "Development server: (https://.+)",
         "uriFormat": "%s",
         "action": "openExternally"
       }
@@ -21,7 +21,7 @@
       "skipFiles": ["<node_internals>/**"],
       "serverReadyAction": {
         "action": "debugWithChrome",
-        "pattern": "Local.+(https://.+)",
+        "pattern": "Development server: (https://.+)",
         "uriFormat": "%s",
         "webRoot": "${workspaceFolder}/packages/web/src",
         "killOnServerStop": true

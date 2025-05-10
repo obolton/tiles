@@ -52,7 +52,7 @@ export default async function createDevServer(options: DevServerOptions) {
   });
 
   server.listen(port, hostname, () =>
-    console.log(`Development server: listening at https://${hostname}:${port}`),
+    console.log(`Development server: https://${hostname}:${port}`),
   );
 
   async function handleRequest(
