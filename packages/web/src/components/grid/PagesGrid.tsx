@@ -29,6 +29,12 @@ export default function PagesGrid({
 
   const onSearch = async (query: string, offset: number = 0) => {
     try {
+      if (!query) {
+        pages.value = initialPages?.pages ?? [];
+        hasMore.value = initialPages?.hasMore ?? false;
+        return;
+      }
+
       const results = await search(query, offset);
       if (offset === 0) {
         pages.value = results.pages;

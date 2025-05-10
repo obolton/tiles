@@ -28,7 +28,7 @@ export default function Trash({ pages }: TrashProps) {
       </header>
 
       <main>
-        <ul class="tabs" role="navigation">
+        <ul className="tabs" role="navigation">
           <li>
             <a href="/library">
               <LibraryIcon aria-hidden="true" />
