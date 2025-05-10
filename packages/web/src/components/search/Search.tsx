@@ -1,5 +1,6 @@
 import { classNames } from "@/utils/css";
 import { Store } from "@/utils/stores";
+import debounce from "@/utils/debounce";
 import styles from "./Search.module.css";
 import type { JSX } from "@/jsx/jsx";
 
@@ -31,11 +32,13 @@ export default function Search<T>({
     search(query.value, results.value.length);
   }
 
+  const debouncedSearch = debounce(search, 250);
+
   function onInput(event: Event) {
     const input = event.currentTarget as HTMLInputElement;
     const queryString = input.value.trim();
     query.value = queryString;
-    search(queryString, 0);
+    debouncedSearch(queryString, 0);
   }
 
   return (
@@ -43,13 +46,13 @@ export default function Search<T>({
       <input
         id="search"
         type="search"
-        autoFocus
+        autofocus
         placeholder={placeholder}
         oninput={onInput}
       />
 
       <infinite-scroll
-        class={classNames(styles.items, itemsClassName)}
+        className={classNames(styles.items, itemsClassName)}
         onloadmore={onLoadMore}
       >
         {results.derive((items) =>

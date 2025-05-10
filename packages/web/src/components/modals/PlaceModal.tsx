@@ -7,6 +7,7 @@ import ModalFooter from "./ModalFooter";
 import type { ModalProps } from "@/utils/modals";
 import { Store } from "@/utils/stores";
 import { handleError } from "@/utils/errors";
+import debounce from "@/utils/debounce";
 
 type Place = AppRouterOutputs["places"]["search"][number];
 
@@ -34,10 +35,7 @@ export default function PlaceModal({
     );
   }
 
-  // TODO: Debounce
-  const search = async (event: Event) => {
-    const input = event.currentTarget as HTMLInputElement;
-    const query = input.value;
+  const search = debounce(async (query: string) => {
     if (!query) {
       results.value = [];
       return;
@@ -55,6 +53,11 @@ export default function PlaceModal({
           },
     );
     results.value = newResults;
+  }, 250);
+
+  const onInput = (event: Event) => {
+    const input = event.currentTarget as HTMLInputElement;
+    search(input.value);
   };
 
   const selectPlace = async (place: Place) => {
@@ -86,7 +89,7 @@ export default function PlaceModal({
             type="search"
             placeholder="Address or name"
             autofocus
-            oninput={search}
+            oninput={onInput}
           />
         </label>
 
