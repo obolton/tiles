@@ -11,7 +11,6 @@ import type {
   TextAlignment,
 } from "@/utils/richText/types";
 import { ListType } from "@/utils/richText/types";
-import { classNames } from "@/utils/css";
 import type { JSX } from "@/jsx/jsx";
 
 interface RichTextProps
@@ -44,7 +43,7 @@ function renderNodes(nodes: Node[]) {
 
 function RichTextRoot({ content, className, ...props }: RichTextProps) {
   return (
-    <div className={classNames("rich-text", className)} {...props}>
+    <div classList={["rich-text", className]} {...props}>
       {renderNodes(content)}
     </div>
   );
@@ -168,7 +167,11 @@ function List({ node }: ListProps) {
               node={child}
               role={child.children[0]?.type === "list" ? undefined : "checkbox"}
               aria-checked={
-                child.children[0]?.type === "list" ? undefined : child.checked
+                child.children[0]?.type === "list"
+                  ? undefined
+                  : child.checked
+                    ? "true"
+                    : "false"
               }
             />
           ))}
