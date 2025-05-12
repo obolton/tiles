@@ -1,7 +1,7 @@
 import type { JSX } from "@/jsx/jsx";
 
 export interface ModalOptions<T> {
-  onConfirm?: (result: T) => Promise<void>;
+  onConfirm?: (result: T) => Promise<void> | void;
   [k: string]: unknown;
 }
 
