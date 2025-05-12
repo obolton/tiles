@@ -30,17 +30,23 @@ export interface TextNode extends BaseNode {
   link?: string;
 }
 
+export interface DateNode extends BaseNode {
+  type: "date";
+  value: string;
+  format: number;
+}
+
 export interface ParagraphNode extends BaseNode {
   type: "paragraph";
   align?: TextAlignment;
-  children: TextNode[];
+  children: InlineNode[];
 }
 
 export interface HeadingNode extends BaseNode {
   type: "heading";
   level: 1 | 2 | 3;
   align?: TextAlignment;
-  children: TextNode[];
+  children: InlineNode[];
 }
 
 export interface QuoteNode extends BaseNode {
@@ -60,6 +66,7 @@ export interface ListItemNode extends BaseNode {
   children: BlockNode[];
 }
 
+export type InlineNode = TextNode | DateNode;
 export type BlockNode = ParagraphNode | ListNode | HeadingNode | QuoteNode;
 
 export type Node =
@@ -68,6 +75,7 @@ export type Node =
   | HeadingNode
   | QuoteNode
   | ListNode
-  | ListItemNode;
+  | ListItemNode
+  | DateNode;
 
 export type RichText = BlockNode[];

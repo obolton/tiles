@@ -1,5 +1,6 @@
 import type { Node } from "prosemirror-model";
 import type {
+  DateNode,
   ListNode,
   ListItemNode,
   ParagraphNode,
@@ -12,24 +13,30 @@ import type {
 import { TextFormat, ListType, TextAlignment } from "./types";
 import { schema } from "./schema";
 
-function createTextNode(text: TextNode) {
+function getMarks(format: number) {
   const marks = [];
 
-  if (text.format & TextFormat.BOLD) {
+  if (format & TextFormat.BOLD) {
     marks.push(schema.marks.bold.create());
   }
-  if (text.format & TextFormat.ITALIC) {
+  if (format & TextFormat.ITALIC) {
     marks.push(schema.marks.italic.create());
   }
-  if (text.format & TextFormat.STRIKETHROUGH) {
+  if (format & TextFormat.STRIKETHROUGH) {
     marks.push(schema.marks.strikethrough.create());
   }
-  if (text.format & TextFormat.UNDERLINE) {
+  if (format & TextFormat.UNDERLINE) {
     marks.push(schema.marks.underline.create());
   }
-  if (text.format & TextFormat.HIGHLIGHT) {
+  if (format & TextFormat.HIGHLIGHT) {
     marks.push(schema.marks.highlight.create());
   }
+
+  return marks;
+}
+
+function createTextNode(text: TextNode) {
+  const marks = getMarks(text.format);
   if (text.link) {
     marks.push(schema.marks.link.create({ href: text.link }));
   }
@@ -92,6 +99,15 @@ function createListItemNode(listItem: ListItemNode): Node {
   );
 }
 
+function createDateNode(date: DateNode): Node {
+  const marks = getMarks(date.format);
+  return schema.nodes.date.create(
+    { value: new Date(date.value), time: date.value.length > 10 },
+    null,
+    marks,
+  );
+}
+
 function createNode(node: SerializedNode) {
   const type = node.type;
   switch (type) {
@@ -107,6 +123,8 @@ function createNode(node: SerializedNode) {
       return createListNode(node);
     case "listitem":
       return createListItemNode(node);
+    case "date":
+      return createDateNode(node);
     default:
       throw new Error(`Unsupported node type: ${type}`);
   }

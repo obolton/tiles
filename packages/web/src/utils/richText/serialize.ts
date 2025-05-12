@@ -110,6 +110,16 @@ function serializeNode(node: Node): SerializedNode {
     };
   }
 
+  if (node.type === nodes.date) {
+    const value = node.attrs.value as Date;
+    const time = node.attrs.time as boolean;
+    return {
+      type: "date",
+      value: time ? value.toISOString() : value.toISOString().slice(0, 10),
+      format: getTextFormat(node),
+    };
+  }
+
   throw new Error(`Unsupported node type: ${node.type.name}`);
 }
 
