@@ -6,7 +6,6 @@ import TextTile from "@/components/tiles/TextTile";
 import MapTile from "@/components/tiles/MapTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
-import EventTile from "@/components/tiles/EventTile";
 import CollectionTile from "@/components/tiles/CollectionTile";
 import type { Tile } from "@/types/layout";
 import type { DragDropEvent } from "@/utils/drag";
@@ -70,8 +69,6 @@ function getTileComponent(
       return <LinkTile {...tile} editor={editor} hasFocus={hasFocus} />;
     case "PAGE_LINK":
       return <PageLinkTile {...tile} editor={editor} />;
-    case "EVENT":
-      return <EventTile {...tile} editor={editor} />;
     case "COLLECTION":
       return <CollectionTile {...tile} editor={editor} />;
     default:
