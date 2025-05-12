@@ -2,12 +2,10 @@ import TextIcon from "@/icons/text.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import PlaceIcon from "@/icons/place.svg?jsx";
-import EventIcon from "@/icons/event.svg?jsx";
 import AddSectionIcon from "@/icons/add-section.svg?jsx";
 import { registerModal, showModal } from "@/utils/modals";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
-import type { EventModalResult } from "@/components/modals/EventModal";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import { uploadMedia } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
@@ -26,7 +24,6 @@ const BUTTONS: TileButton[] = [
   { label: "Image", type: "IMAGE", Icon: ImageIcon },
   { label: "Map", type: "MAP", Icon: PlaceIcon },
   { label: "Link", type: "LINK", Icon: LinkIcon },
-  { label: "Event", type: "EVENT", Icon: EventIcon },
 ];
 
 registerModal("IMAGE", () => import("@/components/modals/image/ImageModal"));
@@ -34,8 +31,6 @@ registerModal("IMAGE", () => import("@/components/modals/image/ImageModal"));
 registerModal("LINK", () => import("@/components/modals/LinkModal"));
 
 registerModal("MAP", () => import("@/components/modals/PlaceModal"));
-
-registerModal("EVENT", () => import("@/components/modals/EventModal"));
 
 interface TileButtonsProps {
   editor: Editor;
@@ -92,17 +87,6 @@ export default function TileButtons({
                 url: result.url,
               });
             }
-          },
-        });
-        break;
-
-      case "EVENT":
-        showModal<EventModalResult>("EVENT", {
-          async onConfirm(result) {
-            await editor.createEvent({
-              collectionId: collectionId ?? editor.getCurrentCollectionId(),
-              ...result,
-            });
           },
         });
         break;
