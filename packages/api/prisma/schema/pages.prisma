@@ -38,7 +38,6 @@ model Page {
   bookmarks          Bookmark[]
   images             ImageTile[]
   videos             VideoTile[]
-  events             EventTile[]
   text               TextTile[]
   links              LinkTile[]
   maps               MapTile[]
@@ -59,7 +58,6 @@ enum TileType {
   PLACE
   LINK
   PAGE_LINK
-  EVENT
   COLLECTION
   MAP
 }
@@ -78,7 +76,6 @@ model Tile {
   mapTileId          String?  @map("map_tile_id") @db.Uuid
   linkTileId         String?  @map("link_tile_id") @db.Uuid
   pageLinkTileId     String?  @map("page_link_tile_id") @db.Uuid
-  eventTileId        String?  @map("event_tile_id") @db.Uuid
   collectionId       String?  @map("collection_id") @db.Uuid
   parentCollectionId String   @map("parent_collection_id") @db.Uuid
 
@@ -91,7 +88,6 @@ model Tile {
   map              MapTile?      @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
   link             LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
   pageLink         PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
-  event            EventTile?    @relation(fields: [eventTileId], references: [id], onDelete: SetNull)
   collection       Collection?   @relation("CollectionTile", fields: [collectionId], references: [id], onDelete: SetNull)
 
   @@map("tiles")
@@ -219,24 +215,6 @@ model PageLinkTile {
 
   @@index([pageId])
   @@map("page_link_tiles")
-}
-
-model EventTile {
-  id        String    @id @default(uuid()) @db.Uuid
-  pageId    String    @map("page_id") @db.Uuid
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  title     String?
-  start     DateTime  @db.Timestamp(0)
-  end       DateTime? @db.Timestamp(0)
-  allDay    Boolean   @default(false) @map("all_day")
-  timeZone  String?   @map("time_zone")
-
-  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tiles Tile[]
-
-  @@index([pageId])
-  @@map("event_tiles")
 }
 
 model Collection {
