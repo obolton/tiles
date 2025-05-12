@@ -403,25 +403,6 @@ export default class Editor {
     return result;
   }
 
-  // Events
-
-  async createEvent(data: OmitPageId<AppRouterInputs["events"]["create"]>) {
-    const item = await client.events.create.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.addTile(item);
-    return item;
-  }
-
-  async updateEvent(data: OmitPageId<AppRouterInputs["events"]["update"]>) {
-    const item = await client.events.update.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.updateTileData(item);
-    return item;
-  }
 
   // Videos
 
