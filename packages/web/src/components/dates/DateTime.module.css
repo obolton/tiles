@@ -1,0 +1,19 @@
+.datetime {
+  user-select: auto;
+  white-space: nowrap;
+}
+
+.day {
+  font-weight: 700;
+  color: transparent;
+  background-image: var(--accent);
+  background-clip: text;
+}
+
+.month {
+  font-weight: 700;
+}
+
+.time {
+  font-weight: 500;
+}
