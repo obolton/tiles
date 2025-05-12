@@ -187,6 +187,33 @@ const nodesSpec = {
       return DOMOutput.checkList;
     },
   },
+
+  date: {
+    attrs: {
+      value: {
+        validate(value) {
+          if (!(value instanceof Date)) {
+            throw new RangeError("Invalid date");
+          }
+        },
+      },
+      time: { default: true, validate: "boolean" },
+    },
+    inline: true,
+    group: "inline",
+    parseDOM: [
+      {
+        tag: "time",
+        getAttrs(node) {
+          const dateTime = node.getAttribute("datetime") ?? "";
+          return {
+            value: new Date(dateTime),
+            time: dateTime.length > 10,
+          };
+        },
+      },
+    ],
+  },
 } as const satisfies Record<string, NodeSpec>;
 
 type KeysWithProperty<T, Key, Value> = {
