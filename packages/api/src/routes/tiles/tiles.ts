@@ -161,7 +161,6 @@ type CreateTilePlacement = {
   imageTileId?: string;
   mapTileId?: string;
   textTileId?: string;
-  eventTileId?: string;
   pageLinkTileId?: string;
   linkTileId?: string;
   videoTileId?: string;
@@ -178,7 +177,6 @@ export async function createTilePlacement(
     imageTileId,
     mapTileId,
     textTileId,
-    eventTileId,
     pageLinkTileId,
     linkTileId,
     videoTileId,
@@ -201,7 +199,6 @@ export async function createTilePlacement(
       imageTileId,
       mapTileId,
       textTileId,
-      eventTileId,
       pageLinkTileId,
       linkTileId,
       videoTileId,

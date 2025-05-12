@@ -6,7 +6,6 @@ import type {
   LinkTile,
   PageLinkTile,
   Place,
-  EventTile,
   Collection,
   Tile,
   TileType,
@@ -84,14 +83,6 @@ export interface ClientPageLinkTile extends ClientTileBase, ClientPageLink {
   type: "PAGE_LINK";
 }
 
-// Event
-export type ClientEvent = OmitMetadata<Omit<EventTile, "start" | "end">> & {
-  start: string;
-  end: string | null;
-};
-export interface ClientEventTile extends ClientTileBase, ClientEvent {
-  type: "EVENT";
-}
 
 // Collection
 export type ClientCollection = OmitMetadata<Omit<Collection, "userId">>;
@@ -109,7 +100,6 @@ export type ClientEntity =
   | ClientMap
   | ClientLink
   | ClientPageLink
-  | ClientEvent
   | ClientCollection;
 
 export type ClientTile =
@@ -119,7 +109,6 @@ export type ClientTile =
   | ClientMapTile
   | ClientLinkTile
   | ClientPageLinkTile
-  | ClientEventTile
   | ClientCollectionTile;
 
 export type { TileType };
