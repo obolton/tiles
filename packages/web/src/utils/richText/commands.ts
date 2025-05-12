@@ -123,3 +123,16 @@ export function setAlignment(align: TextAlignment): Command {
     return true;
   };
 }
+
+export function insertDateTime(value: Date, time?: boolean): Command {
+  return function (state, dispatch) {
+    if (dispatch) {
+      dispatch(
+        state.tr.replaceSelectionWith(
+          schema.nodes.date.create({ value, time }),
+        ),
+      );
+    }
+    return true;
+  };
+}
