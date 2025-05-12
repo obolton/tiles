@@ -15,9 +15,6 @@ const DOMOutput = {
   orderedList: ["ol", 0],
   unorderedList: ["ul", 0],
   checkList: ["ul", { class: "checklist" }, 0],
-  li: ["li", 0],
-  liChecked: ["li", { role: "checkbox", "aria-checked": "true" }, 0],
-  liUnchecked: ["li", { role: "checkbox", "aria-checked": "false" }, 0],
   bold: ["strong", 0],
   italic: ["em", 0],
   underline: ["span", { class: "underline" }, 0],
@@ -167,16 +164,6 @@ const nodesSpec = {
         },
       },
     ],
-    toDOM(node) {
-      switch (node.attrs.checked) {
-        case true:
-          return DOMOutput.liChecked;
-        case false:
-          return DOMOutput.liUnchecked;
-        default:
-          return DOMOutput.li;
-      }
-    },
   },
 
   check_list: {
