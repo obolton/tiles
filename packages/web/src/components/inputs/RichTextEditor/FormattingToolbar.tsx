@@ -14,7 +14,10 @@ import LinkIcon from "@/icons/link.svg?jsx";
 import AlignLeftIcon from "@/icons/align-left.svg?jsx";
 import AlignCenterIcon from "@/icons/align-center.svg?jsx";
 import AlignRightIcon from "@/icons/align-right.svg?jsx";
-import { showModal } from "@/utils/modals";
+import NewIcon from "@/icons/new.svg?jsx";
+import EventIcon from "@/icons/event.svg?jsx";
+import { registerModal, showModal } from "@/utils/modals";
+import type { DateTimeModalResult } from "@/components/modals/DateTimeModal";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { EditorState } from "prosemirror-state";
 import type { Command } from "prosemirror-state";
@@ -32,11 +35,14 @@ import {
   toggleLink,
   removeLink,
   setAlignment,
+  insertDateTime,
 } from "@/utils/richText/commands";
 import type { Format, TextAlignment } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
 import type { StoreInterface } from "@/utils/stores";
+
+registerModal("DATE_TIME", () => import("@/components/modals/DateTimeModal"));
 
 const ALIGN_ICON = {
   left: <AlignLeftIcon aria-hidden="true" slot="icon" />,
@@ -57,6 +63,14 @@ export default function FormattingToolbar({
   format,
   children,
 }: FormattingToolbarProps) {
+  const insertNewDate = () => {
+    showModal<DateTimeModalResult>("DATE_TIME", {
+      onConfirm({ value, time }) {
+        performCommand(insertDateTime(value, time));
+      },
+    });
+  };
+
   const formatH1 = () => performCommand(toggleHeading(1));
   const formatH2 = () => performCommand(toggleHeading(2));
   const formatH3 = () => performCommand(toggleHeading(3));
@@ -110,10 +124,39 @@ export default function FormattingToolbar({
 
   return (
     <floating-toolbar
-      data-tooltip-position="top"
       aria-label="Formatting toolbar"
+      data-tooltip-position="top"
     >
-      <ul role="group">
+      <ul role="group" aria-label="Insert">
+        <li role="presentation">
+          <button
+            id="insert-content-button"
+            role="menuitem"
+            className="floating small"
+            popoverTarget="insert-content-menu"
+            aria-label="Insert content"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            data-tooltip="Insert content"
+            type="button"
+          >
+            <NewIcon aria-hidden="true" />
+          </button>
+
+          <popover-menu id="insert-content-menu" anchor="insert-content-button">
+            <menu>
+              <li>
+                <button type="button" onclick={insertNewDate}>
+                  <EventIcon aria-hidden="true" />
+                  Date
+                </button>
+              </li>
+            </menu>
+          </popover-menu>
+        </li>
+      </ul>
+
+      <ul role="group" aria-label="Headings">
         <li role="presentation">
           <button
             role="menuitem"
@@ -161,7 +204,7 @@ export default function FormattingToolbar({
         </li>
       </ul>
 
-      <ul role="group">
+      <ul role="group" aria-label="Text style">
         <li role="presentation">
           <button
             role="menuitem"
@@ -299,7 +342,7 @@ export default function FormattingToolbar({
         </li>
       </ul>
 
-      <ul role="group">
+      <ul role="group" aria-label="Lists">
         <li role="presentation">
           <button
             role="menuitem"
