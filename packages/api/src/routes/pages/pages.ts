@@ -8,7 +8,6 @@ import { COLLECTION_FIELDS } from "@/routes/collections/collections.ts";
 import { IMAGE_FIELDS } from "@/routes/images/images.ts";
 import { MAP_FIELDS } from "@/routes/maps/maps.ts";
 import { TEXT_FIELDS } from "@/routes/text/text.ts";
-import { EVENT_FIELDS } from "@/routes/events/events.ts";
 import { LINK_FIELDS } from "@/routes/links/links.ts";
 import { VIDEO_FIELDS } from "@/routes/videos/videos.ts";
 import {
@@ -54,9 +53,6 @@ const TILES_FIELDS = {
   },
   pageLink: {
     select: PAGE_LINK_FIELDS,
-  },
-  event: {
-    select: EVENT_FIELDS,
   },
   collection: {
     select: COLLECTION_FIELDS,
@@ -123,7 +119,7 @@ export function formatTile({
     columns,
     parentCollectionId,
   };
-  const { image, video, text, map, link, pageLink, event, collection } = tile;
+  const { image, video, text, map, link, pageLink, collection } = tile;
 
   if (image) {
     return {
@@ -170,16 +166,6 @@ export function formatTile({
       type: "PAGE_LINK",
       ...base,
       ...pageLink,
-    };
-  }
-
-  if (event) {
-    return {
-      type: "EVENT",
-      ...base,
-      ...event,
-      start: event.start.toISOString(),
-      end: event.end?.toISOString() ?? null,
     };
   }
 
