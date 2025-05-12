@@ -7,17 +7,28 @@ const TextNodeSchema = z.object({
   link: z.string().min(5).optional(),
 });
 
+const DateNodeSchema = z.object({
+  type: z.literal("date"),
+  value: z.union([z.string().datetime(), z.string().date()]),
+  format: z.number().int().gte(0).lte(31),
+});
+
+const InlineNodeSchema = z.discriminatedUnion("type", [
+  TextNodeSchema,
+  DateNodeSchema,
+]);
+
 const ParagraphNodeSchema = z.object({
   type: z.literal("paragraph"),
   align: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
-  children: z.array(TextNodeSchema),
+  children: z.array(InlineNodeSchema),
 });
 
 const HeadingNodeSchema = z.object({
   type: z.literal("heading"),
   level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
   align: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
-  children: z.array(TextNodeSchema),
+  children: z.array(InlineNodeSchema),
 });
 
 const ListItemNodeSchema: z.ZodType<{
