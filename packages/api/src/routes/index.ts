@@ -9,7 +9,6 @@ import collections from "./collections/router.ts";
 import maps from "./maps/router.ts";
 import images from "./images/router.ts";
 import text from "./text/router.ts";
-import events from "./events/router.ts";
 import pageLinks from "./pageLinks/router.ts";
 import externalLinks from "./links/router.ts";
 import videos from "./videos/router.ts";
@@ -30,7 +29,6 @@ const appRouter = router({
   maps,
   images,
   text,
-  events,
   pageLinks,
   externalLinks,
   videos,
