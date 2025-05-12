@@ -4,6 +4,7 @@ import { keys } from "./keymap";
 import { lists } from "./lists";
 import { createInputRules } from "./inputRules";
 import { placeholders } from "./placeholders";
+import { dates } from "./dates";
 
 export function getPlugins() {
   return [
@@ -12,5 +13,6 @@ export function getPlugins() {
     lists(),
     createInputRules(),
     placeholders(),
+    dates(),
   ];
 }
