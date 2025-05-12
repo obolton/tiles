@@ -1,7 +1,6 @@
 import { TextFormat } from "@/utils/richText/types";
 import type {
   RichText,
-  TextNode,
   ParagraphNode,
   HeadingNode,
   QuoteNode,
@@ -11,6 +10,8 @@ import type {
   TextAlignment,
 } from "@/utils/richText/types";
 import { ListType } from "@/utils/richText/types";
+import DateTime from "@/components/dates/DateTime";
+import { Store } from "@/utils/stores";
 import type { JSX } from "@/jsx/jsx";
 
 interface RichTextProps
@@ -32,7 +33,20 @@ function renderNodes(nodes: Node[]) {
           case "list":
             return <List node={node} />;
           case "text":
-            return <Text node={node} />;
+            return (
+              <FormattedText format={node.format} link={node.link}>
+                {node.text}
+              </FormattedText>
+            );
+          case "date":
+            return (
+              <FormattedText format={node.format}>
+                <DateTime
+                  value={new Store(new Date(node.value))}
+                  time={new Store(node.value.length > 10)}
+                />
+              </FormattedText>
+            );
           default:
             return null;
         }
@@ -180,30 +194,32 @@ function List({ node }: ListProps) {
   }
 }
 
-interface TextProps {
-  node: TextNode;
+interface FormattedTextProps {
+  format: TextFormat;
+  link?: string;
+  children: JSX.Node;
 }
 
-function Text({ node }: TextProps) {
-  let content = <>{node.text}</>;
-  if (node.format & TextFormat.BOLD) {
+function FormattedText({ format, link, children }: FormattedTextProps) {
+  let content = children;
+  if (format & TextFormat.BOLD) {
     content = <strong>{content}</strong>;
   }
-  if (node.format & TextFormat.ITALIC) {
+  if (format & TextFormat.ITALIC) {
     content = <em>{content}</em>;
   }
-  if (node.format & TextFormat.STRIKETHROUGH) {
+  if (format & TextFormat.STRIKETHROUGH) {
     content = <del>{content}</del>;
   }
-  if (node.format & TextFormat.UNDERLINE) {
+  if (format & TextFormat.UNDERLINE) {
     content = <span className="underline">{content}</span>;
   }
-  if (node.format & TextFormat.HIGHLIGHT) {
+  if (format & TextFormat.HIGHLIGHT) {
     content = <mark>{content}</mark>;
   }
-  if (node.link) {
+  if (link) {
     content = (
-      <a href={node.link} target="_blank" rel="noreferrer ugc">
+      <a href={link} target="_blank" rel="noreferrer ugc">
         {content}
       </a>
     );
