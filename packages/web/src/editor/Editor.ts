@@ -403,6 +403,49 @@ export default class Editor {
     return result;
   }
 
+  // Tables
+
+  async createTable(data: OmitPageId<AppRouterInputs["tables"]["create"]>) {
+    const item = await client.tables.create.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+    this.addTile(item);
+    return item;
+  }
+
+  async appendTableRow(
+    data: OmitPageId<AppRouterInputs["tables"]["appendRow"]>,
+  ) {
+    const item = await client.tables.appendRow.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+    // TODO: Update tile data
+    return item;
+  }
+
+  async deleteTableRow(
+    data: OmitPageId<AppRouterInputs["tables"]["deleteRow"]>,
+  ) {
+    const item = await client.tables.deleteRow.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+    // TODO: Update tile data
+    return item;
+  }
+
+  async updateTableCell(
+    data: OmitPageId<AppRouterInputs["tables"]["updateCell"]>,
+  ) {
+    const item = await client.tables.updateCell.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+    // TODO: Update tile data
+    return item;
+  }
 
   // Videos
 
