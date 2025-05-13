@@ -1,4 +1,5 @@
 .datetime {
+  display: inline-block;
   user-select: auto;
   white-space: nowrap;
 }
