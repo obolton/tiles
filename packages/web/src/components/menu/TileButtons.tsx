@@ -2,13 +2,14 @@ import TextIcon from "@/icons/text.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import PlaceIcon from "@/icons/place.svg?jsx";
+import TableIcon from "@/icons/table.svg?jsx";
 import AddSectionIcon from "@/icons/add-section.svg?jsx";
 import { registerModal, showModal } from "@/utils/modals";
+import { uploadMedia } from "@/utils/media";
+import { viewTransition } from "@/utils/transitions";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
-import { uploadMedia } from "@/utils/media";
-import { viewTransition } from "@/utils/transitions";
 import type { TileType } from "@/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 import type Editor from "@/editor/Editor";
@@ -24,6 +25,7 @@ const BUTTONS: TileButton[] = [
   { label: "Image", type: "IMAGE", Icon: ImageIcon },
   { label: "Map", type: "MAP", Icon: PlaceIcon },
   { label: "Link", type: "LINK", Icon: LinkIcon },
+  { label: "Table", type: "TABLE", Icon: TableIcon },
 ];
 
 registerModal("IMAGE", () => import("@/components/modals/image/ImageModal"));
@@ -101,6 +103,14 @@ export default function TileButtons({
               columns: 6,
             });
           },
+        });
+        break;
+
+      case "TABLE":
+        await editor.createTable({
+          collectionId: collectionId ?? editor.getCurrentCollectionId(),
+          numColumns: 3,
+          numRows: 5,
         });
         break;
     }
