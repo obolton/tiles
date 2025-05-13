@@ -11,6 +11,8 @@ import type {
   TileType,
   Theme,
   Font,
+  Table,
+  TableRow,
 } from "@prisma/client";
 
 type OmitMetadata<T> = Omit<T, "pageId" | "createdAt" | "updatedAt">;
@@ -83,6 +85,13 @@ export interface ClientPageLinkTile extends ClientTileBase, ClientPageLink {
   type: "PAGE_LINK";
 }
 
+// Table
+export type ClientTable = OmitMetadata<Table> & {
+  data: Pick<TableRow, "id" | "data">[];
+};
+export interface ClientTableTile extends ClientTileBase, ClientTable {
+  type: "TABLE";
+}
 
 // Collection
 export type ClientCollection = OmitMetadata<Omit<Collection, "userId">>;
@@ -100,7 +109,8 @@ export type ClientEntity =
   | ClientMap
   | ClientLink
   | ClientPageLink
-  | ClientCollection;
+  | ClientCollection
+  | ClientTable;
 
 export type ClientTile =
   | ClientImageTile
@@ -109,6 +119,7 @@ export type ClientTile =
   | ClientMapTile
   | ClientLinkTile
   | ClientPageLinkTile
-  | ClientCollectionTile;
+  | ClientCollectionTile
+  | ClientTableTile;
 
 export type { TileType };

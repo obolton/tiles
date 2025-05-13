@@ -14,6 +14,7 @@ import {
   PAGE_ACCESS_FIELDS,
   PAGE_INVITE_FIELDS,
 } from "@/routes/collaboration/collaboration.ts";
+import { TABLE_WITH_DATA_FIELDS } from "@/routes/tables/tables.ts";
 import type {
   GetPageByIdSchema,
   GetProfilePageSchema,
@@ -56,6 +57,9 @@ const TILES_FIELDS = {
   },
   collection: {
     select: COLLECTION_FIELDS,
+  },
+  table: {
+    select: TABLE_WITH_DATA_FIELDS,
   },
 } as const satisfies Prisma.TileSelect<ExtensionArgs>;
 
@@ -119,7 +123,7 @@ export function formatTile({
     columns,
     parentCollectionId,
   };
-  const { image, video, text, map, link, pageLink, collection } = tile;
+  const { image, video, text, map, link, pageLink, collection, table } = tile;
 
   if (image) {
     return {
@@ -174,6 +178,14 @@ export function formatTile({
       ...base,
       ...collection,
       type: "COLLECTION",
+    };
+  }
+
+  if (table) {
+    return {
+      ...base,
+      ...table,
+      type: "TABLE",
     };
   }
 
