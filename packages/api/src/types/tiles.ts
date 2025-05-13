@@ -87,6 +87,7 @@ export interface ClientPageLinkTile extends ClientTileBase, ClientPageLink {
 
 // Table
 export type ClientTable = OmitMetadata<Table> & {
+  numRows: number;
   data: Pick<TableRow, "id" | "data">[];
 };
 export interface ClientTableTile extends ClientTileBase, ClientTable {

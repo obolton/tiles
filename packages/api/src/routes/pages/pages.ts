@@ -182,9 +182,11 @@ export function formatTile({
   }
 
   if (table) {
+    const { _count, ...tableData } = table;
     return {
       ...base,
-      ...table,
+      ...tableData,
+      numRows: _count.data,
       type: "TABLE",
     };
   }

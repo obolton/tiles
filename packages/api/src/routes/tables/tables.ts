@@ -21,6 +21,11 @@ export const TABLE_FIELDS = {
 
 export const TABLE_WITH_DATA_FIELDS = {
   ...TABLE_FIELDS,
+  _count: {
+    select: {
+      data: true,
+    },
+  },
   data: {
     select: TABLE_ROW_FIELDS,
     take: 10,
@@ -60,14 +65,16 @@ export async function createTable({
       transaction,
     );
 
-    const tableWithData = await transaction.table.findUniqueOrThrow({
-      where: { id: table.id, pageId },
-      select: TABLE_WITH_DATA_FIELDS,
-    });
+    const { _count, ...tableWithData } =
+      await transaction.table.findUniqueOrThrow({
+        where: { id: table.id, pageId },
+        select: TABLE_WITH_DATA_FIELDS,
+      });
 
     return {
       type: "TABLE" as const,
       ...tableWithData,
+      numRows: _count.data,
       ...placement,
     };
   });
