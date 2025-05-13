@@ -43,6 +43,7 @@ model Page {
   maps               MapTile[]
   pageLinks          PageLinkTile[] @relation("Page")
   collections        Collection[]
+  tables             Table[]
   access             PageAccess[]
   invites            PageInvite[]
 
@@ -60,6 +61,7 @@ enum TileType {
   PAGE_LINK
   COLLECTION
   MAP
+  TABLE
 }
 
 model Tile {
@@ -76,6 +78,7 @@ model Tile {
   mapTileId          String?  @map("map_tile_id") @db.Uuid
   linkTileId         String?  @map("link_tile_id") @db.Uuid
   pageLinkTileId     String?  @map("page_link_tile_id") @db.Uuid
+  tableId            String?  @map("table_id") @db.Uuid
   collectionId       String?  @map("collection_id") @db.Uuid
   parentCollectionId String   @map("parent_collection_id") @db.Uuid
 
@@ -89,6 +92,7 @@ model Tile {
   link             LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
   pageLink         PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
   collection       Collection?   @relation("CollectionTile", fields: [collectionId], references: [id], onDelete: SetNull)
+  table            Table?        @relation(fields: [tableId], references: [id], onDelete: SetNull)
 
   @@map("tiles")
 }
@@ -231,4 +235,30 @@ model Collection {
 
   @@index([pageId])
   @@map("collections")
+}
+
+model Table {
+  id         String   @id @default(uuid()) @db.Uuid
+  pageId     String   @map("page_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  numColumns Int      @default(1) @db.SmallInt
+
+  page  Page       @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tiles Tile[]
+  data  TableRow[]
+
+  @@index([pageId])
+  @@map("table_tiles")
+}
+
+model TableRow {
+  id      String @id @default(uuid()) @db.Uuid
+  tableId String @map("table_id") @db.Uuid
+  data    Json   @db.JsonB
+
+  table Table @relation(fields: [tableId], references: [id], onDelete: Cascade)
+
+  @@index([tableId])
+  @@map("table_rows")
 }
