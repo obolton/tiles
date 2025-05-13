@@ -47,6 +47,8 @@ export function dates() {
                 time={time}
                 onclick={edit}
                 onkeydown={onKeyDown}
+                data-tooltip="Edit date"
+                data-tooltip-position="top"
               />,
             ) as HTMLTimeElement,
           };
