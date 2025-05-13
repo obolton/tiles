@@ -39,7 +39,7 @@ export async function createTable({
         pageId,
         numColumns,
       },
-      select: TABLE_FIELDS,
+      select: { id: true },
     });
 
     const rowData: Prisma.TableRowCreateManyInput[] = [];
@@ -59,9 +59,15 @@ export async function createTable({
       },
       transaction,
     );
+
+    const tableWithData = await transaction.table.findUniqueOrThrow({
+      where: { id: table.id, pageId },
+      select: TABLE_WITH_DATA_FIELDS,
+    });
+
     return {
       type: "TABLE" as const,
-      ...table,
+      ...tableWithData,
       ...placement,
     };
   });
