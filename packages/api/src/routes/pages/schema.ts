@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Theme, Font } from "@prisma/client";
+import { Font } from "@prisma/client";
 import { UsernameSchema } from "../users/schema.ts";
 
 // Get
@@ -36,8 +36,13 @@ export const UpdatePageSchema = z.object({
   published: z.boolean().optional(),
   title: z.string().min(1).optional(),
   subtitle: z.string().optional(),
-  theme: z.nativeEnum(Theme).optional(),
-  hue: z.number().gte(0).lte(360).nullable().optional(),
+  color: z
+    .object({
+      l: z.number().gte(0).lte(1),
+      c: z.number().gte(0).lte(0.4),
+      h: z.number().gte(0).lte(360),
+    })
+    .optional(),
   font: z.nativeEnum(Font).optional(),
   coverImageKey: z.string().nullable().optional(),
 });
