@@ -2,6 +2,7 @@ import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
 import { getFontConfig } from "@/utils/fonts";
 import Page, { type PageProps } from "@/pages/Page";
+import { toCSSColor, isDark, type Color } from "@/utils/color";
 import type {
   Route,
   RequestProperties,
@@ -31,21 +32,16 @@ async function loader({
     throw new Error("Not Found");
   }
 
-  const theme = page.theme;
-  const hue = page.hue;
+  const color: Color = { l: page.lightness, c: page.chroma, h: page.hue };
   const font = page.font ? getFontConfig(page.font) : undefined;
 
   return {
     title: page.title,
     bodyAttributes: {
       "data-page-id": page.id,
-      className:
-        theme === "LIGHT" ? "light" : theme === "DARK" ? "dark" : "color",
+      className: isDark(color) ? "dark" : undefined,
       style: {
-        "--page-hue":
-          theme === "COLOR" && typeof hue === "number"
-            ? `${hue.toFixed(2)}deg`
-            : undefined,
+        "--page-color": toCSSColor(color),
         "--font": font ? `"${font.family}", "${font.fallback}"` : undefined,
       },
     },

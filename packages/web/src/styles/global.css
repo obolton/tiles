@@ -1,3 +1,9 @@
+@property --page-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(255 255 255);
+}
+
 @property --text-color {
   syntax: "<color>";
   inherits: true;
@@ -43,8 +49,8 @@
 :root {
   --focus-ring-color: #0070f3;
   --focus-outline: 3px solid var(--focus-ring-color);
-  --success-color: rgba(0 255 0 / 80%);
-  --destructive-color: rgba(255 0 0 / 80%);
+  --success-color: rgb(0 255 0 / 80%);
+  --destructive-color: rgb(255 0 0 / 80%);
   --lightness: 90%;
   --chroma: 25%;
   --ui-font: "Inter", system, sans-serif;
@@ -62,33 +68,21 @@ html {
 }
 
 body {
-  --page-color: #fff;
-  --accent: linear-gradient(oklch(60% 5% 180deg), oklch(50% 5% 180deg));
-
-  color: var(--text-color);
-  background: var(--page-color);
-}
-
-body.light {
-  --page-color: #fff;
-}
-
-body.dark {
-  --page-color: #202020;
-  --ui-background-color: rgb(48 48 48 / 95%);
-  --text-color: rgb(255 255 255 / 80%);
-  --icon-color: rgb(255 255 255 / 90%);
-  --placeholder-color: rgb(255 255 255 / 20%);
-  --accent: linear-gradient(oklch(60% 5% 180deg), oklch(50% 5% 180deg));
-}
-
-body.color {
-  --page-color: oklch(var(--lightness) var(--chroma) var(--page-hue));
   --secondary-text-color: oklch(50% 20% var(--page-hue));
   --accent: linear-gradient(
     oklch(from var(--page-color) 60% 50% h),
     oklch(from var(--page-color) 50% 50% h)
   );
+
+  color: var(--text-color);
+  background: var(--page-color);
+}
+
+body.dark {
+  --ui-background-color: rgb(48 48 48 / 95%);
+  --text-color: rgb(255 255 255 / 80%);
+  --icon-color: rgb(255 255 255 / 90%);
+  --placeholder-color: rgb(255 255 255 / 20%);
 }
 
 html,
