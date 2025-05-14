@@ -69,7 +69,8 @@ const PAGE_FIELDS = {
   title: true,
   subtitle: true,
   updatedAt: true,
-  theme: true,
+  lightness: true,
+  chroma: true,
   hue: true,
   font: true,
   coverImageUrl: true,
@@ -407,8 +408,7 @@ export async function updatePage(
     published,
     title,
     subtitle,
-    theme,
-    hue,
+    color,
     font,
     coverImageKey,
   }: UpdatePageSchema,
@@ -416,20 +416,17 @@ export async function updatePage(
 ) {
   return prisma.page.update({
     where: { id: pageId, authorId: user.id, deletedAt: null },
-    data: { published, title, subtitle, theme, hue, font, coverImageKey },
-    select: {
-      id: true,
-      createdAt: true,
-      updatedAt: true,
-      authorId: true,
-      published: true,
-      title: true,
-      subtitle: true,
-      theme: true,
-      hue: true,
-      font: true,
-      coverImageUrl: true,
+    data: {
+      published,
+      title,
+      subtitle,
+      lightness: color ? color.l : undefined,
+      chroma: color ? color.c : undefined,
+      hue: color ? color.h : undefined,
+      font,
+      coverImageKey,
     },
+    select: PAGE_FIELDS,
   });
 }
 

@@ -6,7 +6,8 @@ import { createTilePlacement } from "../tiles/tiles.ts";
 export const TEXT_FIELDS = {
   id: true,
   content: true,
-  theme: true,
+  lightness: true,
+  chroma: true,
   hue: true,
   expand: true,
 } as const satisfies Prisma.TextTileSelect;
@@ -17,8 +18,7 @@ export async function createText({
   pageId,
   collectionId,
   content,
-  theme,
-  hue,
+  color,
   columns,
   rows,
   expand,
@@ -28,8 +28,9 @@ export async function createText({
       data: {
         pageId,
         content,
-        theme,
-        hue,
+        lightness: color ? color.l : undefined,
+        chroma: color ? color.c : undefined,
+        hue: color ? color.h : undefined,
         expand,
       },
       select: TEXT_FIELDS,
@@ -53,8 +54,7 @@ export async function updateText({
   pageId,
   id,
   content,
-  theme,
-  hue,
+  color,
   expand,
 }: UpdateTextSchema) {
   const text = await prisma.textTile.update({
@@ -64,8 +64,9 @@ export async function updateText({
     },
     data: {
       content,
-      theme,
-      hue,
+      lightness: color ? color.l : undefined,
+      chroma: color ? color.c : undefined,
+      hue: color ? color.h : undefined,
       expand,
     },
     select: TEXT_FIELDS,
