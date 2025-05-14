@@ -6,13 +6,13 @@ import { Store, DerivedStore } from "@/utils/stores";
 import { scrollIntoView } from "@/utils/scroll";
 import { isEditMode } from "@/utils/edit";
 import type { FontId } from "@/config/fonts";
-import type { Theme } from "@/types/pages";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type { ClientTile, ClientCollection } from "@/types/tiles";
 import type { Layout, LeafTile } from "@/types/layout";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { PageInvite, PageAccess, User } from "@/types/collaboration";
 import type { DragDropEvent } from "@/utils/drag";
+import type { Color } from "@/utils/color";
 
 type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
@@ -182,8 +182,11 @@ export default class Editor {
     return client.pages.update.mutate({ pageId: this.pageId, font });
   }
 
-  async setTheme(theme: Theme, hue?: number | null) {
-    return client.pages.update.mutate({ pageId: this.pageId, theme, hue });
+  async setColor(color: Color) {
+    return client.pages.update.mutate({
+      pageId: this.pageId,
+      color,
+    });
   }
 
   async setPublished(published: boolean) {
