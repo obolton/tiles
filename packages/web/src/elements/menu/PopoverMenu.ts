@@ -1,7 +1,7 @@
 const VIEWPORT_MARGIN = 64;
 
 export interface PopoverMenuAttributes {
-  anchor: string;
+  anchor?: string;
 }
 
 export default class PopoverMenu extends HTMLElement {
@@ -9,21 +9,28 @@ export default class PopoverMenu extends HTMLElement {
     "anchor",
   ] as const;
 
-  constructor() {
-    super();
-    this.addEventListener("toggle", this, { passive: true });
-  }
+  #anchorElement: HTMLElement | null = null;
 
   get anchorElement() {
+    if (this.#anchorElement) {
+      return this.#anchorElement;
+    }
+
     const id = this.getAttribute("anchor");
     if (!id) {
-      throw new Error("Missing anchor attribute");
+      return null;
     }
-    const element = document.getElementById(id);
-    if (!element) {
-      throw new Error(`Anchor element with ID "${id}" not found`);
-    }
-    return element;
+    return document.getElementById(id);
+  }
+
+  set anchorElement(element: HTMLElement | null) {
+    this.#anchorElement = element;
+  }
+
+  constructor() {
+    super();
+    this.addEventListener("beforetoggle", this, { passive: true });
+    this.addEventListener("toggle", this, { passive: true });
   }
 
   connectedCallback() {
@@ -42,14 +49,26 @@ export default class PopoverMenu extends HTMLElement {
 
   handleEvent(event: Event) {
     switch (event.type) {
+      case "beforetoggle":
+        return this.handleBeforeToggle(event as ToggleEvent);
       case "toggle":
         return this.handleToggle(event as ToggleEvent);
     }
   }
 
+  protected handleBeforeToggle(event: ToggleEvent) {
+    // Hide the element until we have moved it into position
+    if (event.newState === "open") {
+      this.style.setProperty("visibility", "hidden");
+    }
+  }
+
   protected handleToggle(event: ToggleEvent) {
     if (event.newState === "open") {
-      this.setPosition();
+      requestAnimationFrame(() => {
+        this.setPosition();
+        this.style.removeProperty("visibility");
+      });
     }
 
     const trigger = document.querySelector(`[popovertarget="${this.id}"]`);
@@ -59,9 +78,14 @@ export default class PopoverMenu extends HTMLElement {
   }
 
   private setPosition() {
+    const anchor = this.anchorElement;
+    if (!anchor) {
+      return;
+    }
+
     const width = this.offsetWidth;
     const height = this.offsetHeight;
-    const anchorBounds = this.anchorElement.getBoundingClientRect();
+    const anchorBounds = anchor.getBoundingClientRect();
 
     const alignLeft =
       anchorBounds.right + width + VIEWPORT_MARGIN < window.innerWidth;
