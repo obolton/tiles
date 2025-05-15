@@ -1,12 +1,6 @@
 import css from "./SwatchSelect.css?inline";
 import closeIcon from "@/icons/close.svg";
-import {
-  move,
-  fadeIn,
-  fadeOut,
-  DEFAULT_TIMING,
-  SPRING,
-} from "@/utils/animation/effects";
+import PopoverMenu from "@/elements/menu/PopoverMenu";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -14,18 +8,16 @@ stylesheet.replaceSync(css);
 export interface SwatchSelectAttributes {
   value?: string;
   orientation?: "horizontal" | "vertical";
-  direction?: "left" | "right" | "up";
   onchange?: (event: globalThis.Event) => void;
   ontoggle?: (event: globalThis.ToggleEvent) => void;
 }
 
 export default class SwatchSelect extends HTMLElement {
-  public value: string = "";
+  value: string = "";
 
   private open = false;
   private button: HTMLButtonElement;
-  private items: HTMLElement;
-  private itemsSlot: HTMLSlotElement;
+  private items: PopoverMenu;
 
   constructor() {
     super();
@@ -34,10 +26,10 @@ export default class SwatchSelect extends HTMLElement {
     shadow.adoptedStyleSheets = [stylesheet];
 
     this.button = document.createElement("button");
-    this.button.setAttribute("part", "button");
+    this.button.part = "button";
     this.button.type = "button";
     this.button.ariaPressed = "false";
-    this.button.addEventListener("click", this.toggle.bind(this));
+    this.button.addEventListener("click", this);
 
     const icon = document.createElement("img");
     icon.src = closeIcon;
@@ -48,75 +40,51 @@ export default class SwatchSelect extends HTMLElement {
     iconSlot.name = "icon";
     this.button.append(iconSlot);
 
-    this.items = document.createElement("div");
+    this.items = document.createElement("popover-menu") as PopoverMenu;
     this.items.id = "items";
-    this.items.setAttribute("part", "items");
-    this.items.classList.add("hidden");
-    this.items.addEventListener("click", this.itemClicked.bind(this));
+    this.items.part = "items";
+    this.items.anchorElement = this.button;
+    this.items.addEventListener("click", this);
 
-    this.itemsSlot = document.createElement("slot");
-    this.items.append(this.itemsSlot);
+    const slot = document.createElement("slot");
+    this.items.append(slot);
 
     shadow.append(this.button, this.items);
+  }
+
+  handleEvent(event: Event) {
+    switch (event.type) {
+      case "click":
+        return this.handleClick(event as MouseEvent);
+    }
   }
 
   toggle() {
     this.open = !this.open;
 
-    const buttonRect = this.button.getBoundingClientRect();
-    const items = this.itemsSlot.assignedElements();
-
     if (this.open) {
       this.ariaExpanded = "true";
       this.button.ariaPressed = "true";
-      this.items.classList.remove("hidden");
-
-      fadeIn(this.items, { timing: DEFAULT_TIMING });
-
-      items.forEach((item) => {
-        const rect = item.getBoundingClientRect();
-        const deltaX =
-          buttonRect.x + (buttonRect.width - rect.width) / 2 - rect.x;
-        const deltaY =
-          buttonRect.y + (buttonRect.height - rect.height) / 2 - rect.y;
-        move(item, {
-          fromX: `${deltaX}px`,
-          fromY: `${deltaY}px`,
-          timing: SPRING,
-        });
-      });
-
+      this.items.showPopover();
       this.dispatchEvent(
         new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
       );
     } else {
       this.ariaExpanded = "false";
       this.button.ariaPressed = "false";
-
-      fadeOut(this.items, { timing: DEFAULT_TIMING });
-
-      Promise.all(
-        items.map((item) => {
-          const rect = item.getBoundingClientRect();
-          const deltaX =
-            buttonRect.x + (buttonRect.width - rect.width) / 2 - rect.x;
-          const deltaY =
-            buttonRect.y + (buttonRect.height - rect.height) / 2 - rect.y;
-          return move(item, {
-            toX: `${deltaX}px`,
-            toY: `${deltaY}px`,
-            timing: SPRING,
-          });
-        }),
-      ).then(() => this.items.classList.add("hidden"));
-
+      this.items.hidePopover();
       this.dispatchEvent(
         new ToggleEvent("toggle", { oldState: "open", newState: "closed" }),
       );
     }
   }
 
-  private itemClicked(event: MouseEvent) {
+  private handleClick(event: MouseEvent) {
+    if (event.currentTarget === this.button) {
+      this.toggle();
+      return;
+    }
+
     const target = event.target;
     if (!(target instanceof Element)) {
       return;
