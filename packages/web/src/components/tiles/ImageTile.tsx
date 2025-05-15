@@ -139,7 +139,9 @@ export default function ImageTile({
               showToolbar={hasFocus}
             />
           ) : text ? (
-            <RichText className={styles.text} content={text} />
+            <div classList={["rich-text", styles.text]}>
+              <RichText content={text} />
+            </div>
           ) : null,
         )}
       </figure>

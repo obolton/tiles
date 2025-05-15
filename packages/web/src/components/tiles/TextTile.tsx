@@ -130,7 +130,9 @@ export default function TextTile({
               }
             />
           ) : (
-            <RichText className={styles.text} content={content} />
+            <div classList={["rich-text", styles.text]}>
+              <RichText content={content} />
+            </div>
           ),
         )}
       </pop-out>

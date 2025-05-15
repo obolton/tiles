@@ -1,4 +1,7 @@
 import { TextFormat } from "@/utils/richText/types";
+import { ListType } from "@/utils/richText/types";
+import DateTime from "@/components/dates/DateTime";
+import { Store } from "@/utils/stores";
 import type {
   RichText,
   ParagraphNode,
@@ -9,13 +12,9 @@ import type {
   Node,
   TextAlignment,
 } from "@/utils/richText/types";
-import { ListType } from "@/utils/richText/types";
-import DateTime from "@/components/dates/DateTime";
-import { Store } from "@/utils/stores";
 import type { JSX } from "@/jsx/jsx";
 
-interface RichTextProps
-  extends Omit<JSX.Attributes<HTMLDivElement>, "content"> {
+interface RichTextProps {
   content: RichText;
 }
 
@@ -55,12 +54,8 @@ function renderNodes(nodes: Node[]) {
   );
 }
 
-function RichTextRoot({ content, className, ...props }: RichTextProps) {
-  return (
-    <div classList={["rich-text", className]} {...props}>
-      {renderNodes(content)}
-    </div>
-  );
+function RichTextRoot({ content }: RichTextProps) {
+  return renderNodes(content);
 }
 
 export default RichTextRoot;
