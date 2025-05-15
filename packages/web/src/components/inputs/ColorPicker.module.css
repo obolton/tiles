@@ -1,37 +1,30 @@
-.color-picker swatch-item {
-  --lightness: 90%;
-  --chroma: 50%;
+.color-picker::part(items) {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  gap: 4px;
+  border-radius: 26px;
+}
 
-  width: 40px;
-  min-width: 40px;
-  height: 40px;
+.color-picker swatch-item {
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
   padding: 8px;
-  border-radius: 20px;
+  border-radius: 18px;
   box-shadow:
-    inset 0 0 0 1px rgba(0 0 0 / 10%),
+    inset 0 0 0 1px rgb(0 0 0 / 10%),
     0 2px 4px -2px rgb(0 0 0 / 40%);
   outline-offset: -1px;
-
-  &.color {
-    background: linear-gradient(
-      oklch(var(--lightness) var(--chroma) var(--hue)),
-      oklch(calc(var(--lightness) - 10%) var(--chroma) var(--hue))
-    );
-  }
-
-  &.light {
-    background: linear-gradient(#fff, #f0f0f0);
-  }
-
-  &.dark {
-    background: linear-gradient(#404040, #303030);
-  }
+  background: linear-gradient(
+    oklch(var(--lightness) var(--chroma) var(--hue)),
+    oklch(calc(var(--lightness) - 0.1) var(--chroma) var(--hue))
+  );
 
   &.clear {
     align-content: center;
     background: linear-gradient(
-      oklch(from var(--page-color) l c h / 80%),
-      oklch(from var(--page-color) 85% c h / 80%)
+      var(--page-color),
+      oklch(from var(--page-color) calc(l - 0.1) c h)
     );
 
     & svg {
@@ -62,6 +55,6 @@
       oklch(80% 50% 360deg)
     );
   box-shadow:
-    inset 0 0 0 1px rgba(0 0 0 / 20%),
+    inset 0 0 0 1px rgb(0 0 0 / 20%),
     0 4px 4px -2px rgb(0 0 0 / 20%);
 }
