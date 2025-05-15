@@ -109,23 +109,26 @@ export default function GridItem({
 
   const hasFocus = new Store(false);
   const isDragOver = new Store(false);
-  const onFocus = () => {
+
+  const onFocusIn = () => {
     if (editor.isEditable.value) {
       hasFocus.value = true;
       editor.focusedTile.value = placementId;
     }
   };
 
-  const onBlur = (event: FocusEvent) => {
+  const onFocusOut = (event: FocusEvent) => {
     const element = event.currentTarget as HTMLElement;
+
     if (
-      editor.isEditable.value &&
-      (!(event.relatedTarget instanceof Element) ||
-        !element.contains(event.relatedTarget))
+      event.relatedTarget instanceof Element &&
+      element.contains(event.relatedTarget)
     ) {
-      hasFocus.value = false;
-      editor.focusedTile.value = null;
+      return;
     }
+
+    hasFocus.value = false;
+    editor.focusedTile.value = null;
   };
 
   const onDragStart = (event: DragDropEvent<Tile>) => {
@@ -203,8 +206,8 @@ export default function GridItem({
       ondnd-dragleave={allowDrop ? onDragLeave : undefined}
       ondnd-drop={allowDrop ? onDrop : undefined}
       data-drop={allowDrop ? "true" : undefined}
-      onfocus={onFocus}
-      onfocusout={onBlur}
+      onfocusin={onFocusIn}
+      onfocusout={onFocusOut}
       tabIndex={tabIndex}
       onpointerdown={handlePointerDown}
     >
