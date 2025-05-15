@@ -3,6 +3,7 @@ import PageTile from "./PageTile";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import styles from "./PageLinkTile.module.css";
 import { classNames } from "@/utils/css";
+import { isDark } from "@/utils/color";
 import type { ClientPageLink } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
 
@@ -40,6 +41,12 @@ export default function PageLinkTile({
     }
   }
 
+  const color = {
+    l: linkedPage.lightness,
+    c: linkedPage.chroma,
+    h: linkedPage.hue,
+  };
+
   return (
     <a
       className={styles.link}
@@ -56,16 +63,13 @@ export default function PageLinkTile({
         author={linkedPage.author}
         hue={linkedPage.hue}
         font={linkedPage.font}
-        theme={linkedPage.theme}
+        color={color}
         coverImageUrl={linkedPage.coverImageUrl}
       />
 
       {openInNewTab ? (
         <ArrowOutwardIcon
-          className={classNames(
-            styles.icon,
-            linkedPage.theme === "DARK" && styles.dark,
-          )}
+          className={classNames(styles.icon, isDark(color) && styles.dark)}
           aria-hidden="true"
         />
       ) : null}

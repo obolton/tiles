@@ -57,11 +57,12 @@
   }
 
   &.with-image {
+    background: var(--tile-background);
     padding: clamp(8px, 6cqw, 24px);
     border-radius: 8px;
     backdrop-filter: blur(8px) contrast(80%);
     box-shadow:
-      0 0 0 1px rgba(0 0 0 / 30%),
+      0 0 0 1px rgb(0 0 0 / 30%),
       0 4px 3px -2px rgb(0 0 0 / 25%);
   }
 
@@ -71,10 +72,6 @@
 }
 
 .light {
-  &.with-image {
-    background: rgb(255 255 255 / 70%);
-  }
-
   & p,
   & address {
     color: rgb(0 0 0 / 60%);
@@ -82,28 +79,9 @@
 }
 
 .dark {
-  &.with-image {
-    -webkit-font-smoothing: antialiased;
-    background: rgb(24 24 24 / 70%);
-    text-shadow: 0 1px 1px rgb(0 0 0 / 20%);
-  }
-
   & .subtitle,
   & address {
     color: rgb(255 255 255 / 60%);
-  }
-}
-
-.color {
-  &.with-image {
-    background: oklch(
-      calc(var(--lightness) * 1.2) var(--chroma) var(--hue) / 70%
-    );
-  }
-
-  & .subtitle,
-  & address {
-    color: oklch(40% calc(var(--chroma) * 0.75) var(--hue));
   }
 }
 

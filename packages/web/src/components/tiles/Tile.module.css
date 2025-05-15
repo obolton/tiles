@@ -23,20 +23,13 @@
 }
 
 .light {
-  --tile-text-color: rgba(0 0 0 / 80%);
-  --tile-background: #fff;
+  --tile-text-color: rgb(0 0 0 / 80%);
 }
 
 .dark {
-  --tile-text-color: rgba(255 255 255 / 80%);
-  --tile-background: #202020;
+  --tile-text-color: rgb(255 255 255 / 80%);
 
   -webkit-font-smoothing: antialiased;
-}
-
-.color {
-  --tile-text-color: rgba(0 0 0 / 80%);
-  --tile-background: oklch(var(--lightness) var(--chroma) var(--hue));
 }
 
 .border-inside {
