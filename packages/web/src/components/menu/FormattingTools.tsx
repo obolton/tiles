@@ -1,11 +1,11 @@
 import ColorPicker from "@/components/inputs/ColorPicker";
 import FontPicker from "@/components/inputs/FontPicker";
-import type { ColorPickerValue } from "@/components/inputs/ColorPicker";
-import type { FontId } from "@/config/fonts";
 import { getFontConfig } from "@/utils/fonts";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
+import { toCSSColor, isDark, type Color } from "@/utils/color";
 import type Editor from "@/editor/Editor";
+import type { FontId } from "@/config/fonts";
 
 interface FormattingToolbarProps {
   editor: Editor;
@@ -23,33 +23,20 @@ export default function FormattingToolbar({ editor }: FormattingToolbarProps) {
     }
   };
 
-  const setColor = async ({ theme, hue }: ColorPickerValue) => {
+  const setColor = async (color: Color | null) => {
+    if (!color) {
+      return;
+    }
     viewTransition(() => {
-      switch (theme) {
-        case "LIGHT":
-          document.body.classList.add("light");
-          document.body.classList.remove("dark");
-          document.body.classList.remove("color");
-          document.body.style.removeProperty("--page-hue");
-          break;
-
-        case "DARK":
-          document.body.classList.add("dark");
-          document.body.classList.remove("light");
-          document.body.classList.remove("color");
-          document.body.style.removeProperty("--page-hue");
-          break;
-
-        case "COLOR":
-          document.body.classList.add("color");
-          document.body.classList.remove("light");
-          document.body.classList.remove("dark");
-          document.body.style.setProperty("--page-hue", `${hue}deg`);
-          break;
+      if (isDark(color)) {
+        document.body.classList.add("dark");
+      } else {
+        document.body.classList.remove("dark");
       }
+      document.body.style.setProperty("--page-color", toCSSColor(color));
     });
     try {
-      await editor.setTheme(theme ?? "LIGHT", hue);
+      await editor.setColor(color);
     } catch (error) {
       handleError(error);
     }
