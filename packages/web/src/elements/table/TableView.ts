@@ -121,6 +121,7 @@ export default class TableView extends HTMLElement {
 
     this.contents = this;
 
+    this.addEventListener("keydown", this);
     this.addEventListener("pointerup", this, { passive: true });
     this.addEventListener("focusin", this, { passive: true });
     this.addEventListener("focusout", this, { passive: true });
@@ -210,6 +211,8 @@ export default class TableView extends HTMLElement {
     switch (event.type) {
       case "scroll":
         return this.handleScroll();
+      case "keydown":
+        return this.handleKeyDown(event as KeyboardEvent);
       case "pointerup":
         return this.handlePointerUp(event as PointerEvent);
       case "pointerover":
@@ -225,6 +228,19 @@ export default class TableView extends HTMLElement {
     const scrollTop = this.scrollTop;
     this.update();
     this.scrollTop = scrollTop;
+  }
+
+  private handleKeyDown(event: KeyboardEvent) {
+    const activeElement = document.activeElement;
+    if (
+      event.key === "Escape" &&
+      activeElement instanceof HTMLElement &&
+      this.contains(activeElement)
+    ) {
+      event.preventDefault();
+      activeElement.blur();
+      this.closest<HTMLElement>("[tabindex]")?.focus({ preventScroll: true });
+    }
   }
 
   private handlePointerUp(event: PointerEvent) {
