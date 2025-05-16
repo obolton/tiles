@@ -30,7 +30,7 @@
   position: relative;
   width: var(--scroll-width);
   height: var(--scroll-height);
-  contain: content;
+  contain: size layout style;
 }
 
 #contents {
@@ -40,7 +40,7 @@
   border-spacing: 0;
   border-collapse: separate;
   translate: var(--translate-x) var(--translate-y);
-  contain: content;
+  contain: size layout style;
 }
 
 :host(:hover),
