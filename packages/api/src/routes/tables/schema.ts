@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { RichTextSchema } from "@/schema/RichText.ts";
 
 export const CreateTableSchema = z.object({
   pageId: z.string().uuid(),
@@ -33,6 +34,6 @@ export const UpdateCellSchema = z.object({
   tableId: z.string().uuid(),
   rowId: z.string().uuid(),
   column: z.number().int().min(0),
-  value: z.string().nullable(),
+  value: z.union([z.string(), RichTextSchema]).nullable(),
 });
 export type UpdateCellSchema = z.infer<typeof UpdateCellSchema>;
