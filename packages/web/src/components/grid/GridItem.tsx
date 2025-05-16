@@ -7,6 +7,7 @@ import MapTile from "@/components/tiles/MapTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import CollectionTile from "@/components/tiles/CollectionTile";
+import TableTile from "@/components/tiles/TableTile";
 import type { Tile } from "@/types/layout";
 import type { DragDropEvent } from "@/utils/drag";
 import { handleError } from "@/utils/errors";
@@ -71,6 +72,8 @@ function getTileComponent(
       return <PageLinkTile {...tile} editor={editor} />;
     case "COLLECTION":
       return <CollectionTile {...tile} editor={editor} />;
+    case "TABLE":
+      return <TableTile {...tile} editor={editor} hasFocus={hasFocus} />;
     default:
       throw new Error(`Unknown tile type: ${type}`);
   }
