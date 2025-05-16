@@ -76,7 +76,6 @@ export default class TableView extends HTMLElement {
   private rowBuffer: HTMLElement[] = [];
   private horizontalBufferSize = 0;
   private verticalBufferSize = 0;
-  private focusedCell: VisibleCell | null = null;
   private isSelecting = false;
   private virtualize = false;
   private updateCell?: (row: number, column: number, element: Element) => void;
@@ -99,8 +98,15 @@ export default class TableView extends HTMLElement {
   set allowSelection(value: boolean) {
     this.#allowSelection = value;
 
-    if (!value) {
+    if (value) {
+      this.querySelectorAll('div[role="cell"]').forEach((cell) =>
+        cell.setAttribute("tabindex", "-1"),
+      );
+    } else {
       this.clearSelection();
+      this.querySelectorAll('div[role="cell"][tabindex]').forEach((cell) =>
+        cell.removeAttribute("tabindex"),
+      );
     }
   }
 
@@ -115,8 +121,8 @@ export default class TableView extends HTMLElement {
 
     this.contents = this;
 
-    this.addEventListener("pointerdown", this, { passive: true });
     this.addEventListener("pointerup", this, { passive: true });
+    this.addEventListener("focusin", this, { passive: true });
     this.addEventListener("focusout", this, { passive: true });
   }
 
@@ -204,14 +210,14 @@ export default class TableView extends HTMLElement {
     switch (event.type) {
       case "scroll":
         return this.handleScroll();
-      case "pointerdown":
-        return this.handlePointerDown(event as PointerEvent);
       case "pointerup":
         return this.handlePointerUp(event as PointerEvent);
       case "pointerover":
         return this.handlePointerOver(event as PointerEvent);
+      case "focusin":
+        return this.handleFocusIn(event as FocusEvent);
       case "focusout":
-        return this.handleFocusOut();
+        return this.handleFocusOut(event as FocusEvent);
     }
   }
 
@@ -219,29 +225,6 @@ export default class TableView extends HTMLElement {
     const scrollTop = this.scrollTop;
     this.update();
     this.scrollTop = scrollTop;
-  }
-
-  private handlePointerDown(event: PointerEvent) {
-    if (event.button !== PRIMARY_MOUSE_BUTTON || !this.allowSelection) {
-      return;
-    }
-
-    const element =
-      event.target instanceof HTMLElement
-        ? event.target.closest<HTMLElement>('div[role="cell"]')
-        : null;
-
-    if (!element) {
-      return;
-    }
-
-    this.isSelecting = true;
-    const row = parseInt(element.dataset.row ?? "0", 10);
-    const column = parseInt(element.dataset.column ?? "0", 10);
-    this.setFocusedCell({ row, column, element });
-    const cell = { row, column };
-    this.selection = { anchor: cell, focus: cell };
-    this.redrawSelection();
   }
 
   private handlePointerUp(event: PointerEvent) {
@@ -270,45 +253,45 @@ export default class TableView extends HTMLElement {
     }
   }
 
-  private handleFocusOut() {
-    if (!this.focusedCell) {
+  private handleFocusIn(event: FocusEvent) {
+    const target = event.target;
+
+    if (
+      !(target instanceof HTMLElement) ||
+      target.role !== "cell" ||
+      !target.dataset.row ||
+      !target.dataset.column
+    ) {
       return;
     }
 
-    this.dispatchEvent(
-      new TableCellEvent("cellblur", { cell: this.focusedCell }),
-    );
-    this.focusedCell = null;
+    const row = parseInt(target.dataset.row, 10);
+    const column = parseInt(target.dataset.column, 10);
+    const cell = { row, column, element: target };
+
+    this.dispatchEvent(new TableCellEvent("cellfocus", { cell }));
+  }
+
+  private handleFocusOut(event: FocusEvent) {
+    const target = event.target;
+
+    if (
+      !(target instanceof HTMLElement) ||
+      target.role !== "cell" ||
+      !target.dataset.row ||
+      !target.dataset.column
+    ) {
+      return;
+    }
+
+    const row = parseInt(target.dataset.row, 10);
+    const column = parseInt(target.dataset.column, 10);
+    const cell = { row, column, element: target };
+
+    this.dispatchEvent(new TableCellEvent("cellblur", { cell }));
   }
 
   // Focus and selection
-
-  private setFocusedCell(cell: VisibleCell | null) {
-    if (this.focusedCell) {
-      if (
-        cell &&
-        this.focusedCell.row === cell.row &&
-        this.focusedCell.column === cell.column
-      ) {
-        return;
-      }
-
-      this.dispatchEvent(
-        new TableCellEvent("cellblur", { cell: this.focusedCell }),
-      );
-    }
-
-    if (!cell) {
-      this.focusedCell = null;
-      return;
-    }
-
-    const allowFocus = this.dispatchEvent(
-      new TableCellEvent("cellfocus", { cancelable: true, cell }),
-    );
-
-    this.focusedCell = allowFocus ? cell : null;
-  }
 
   private clearSelection() {
     this.querySelectorAll(".selected").forEach((cell) =>
@@ -316,8 +299,6 @@ export default class TableView extends HTMLElement {
     );
     this.selection = null;
     this.isSelecting = false;
-
-    this.setFocusedCell(null);
   }
 
   private redrawSelection() {
@@ -459,7 +440,6 @@ export default class TableView extends HTMLElement {
   private createCell() {
     const cell = document.createElement("div");
     cell.role = "cell";
-    cell.tabIndex = -1;
     cell.addEventListener("pointerover", this, { passive: true });
     return cell;
   }
@@ -473,24 +453,22 @@ export default class TableView extends HTMLElement {
     cell.style.width = this.getColumnWidth(column) + "px";
     cell.dataset.row = row.toString();
     cell.dataset.column = column.toString();
+    if (this.allowSelection) {
+      cell.setAttribute("tabindex", "-1");
+    }
     this.updateCell?.(row, column, cell);
 
     return cell;
   }
 
   private recycleCell(cell: HTMLElement) {
-    if (this.focusedCell?.element === cell) {
-      cell.classList.add("offscreen");
-    } else {
-      cell.remove();
-      cell.replaceChildren();
-      cell.classList.remove("focused");
-      cell.classList.remove("selected");
-      cell.classList.remove("offscreen");
-      delete cell.dataset.row;
-      delete cell.dataset.column;
-      this.buffer.push(cell);
-    }
+    cell.remove();
+    cell.replaceChildren();
+    cell.classList.remove("selected");
+    cell.removeAttribute("tabindex");
+    delete cell.dataset.row;
+    delete cell.dataset.column;
+    this.buffer.push(cell);
   }
 
   private getRow() {
