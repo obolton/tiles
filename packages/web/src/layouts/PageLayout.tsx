@@ -18,6 +18,7 @@ import "@/styles/tabs.css";
 import "@/styles/carousels.css";
 import "@/styles/tooltips.css";
 import "@/styles/richText.css";
+import "@/styles/tables.css";
 import type { JSX } from "@/jsx/jsx";
 
 export interface PageLayoutProps {

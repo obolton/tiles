@@ -1,0 +1,48 @@
+table-view {
+  display: block;
+  overflow: auto;
+  contain: strict;
+
+  & div[role="row"] {
+    display: table-row;
+    height: 32px;
+    min-height: 32px;
+  }
+
+  & div[role="cell"] {
+    display: table-cell;
+    position: relative;
+    align-content: start;
+    overflow-wrap: anywhere;
+    padding: 8px;
+    border-right: 1px solid rgb(0 0 0 / 10%);
+    border-bottom: 1px solid rgb(0 0 0 / 10%);
+
+    &:focus {
+      outline: none;
+      z-index: 1;
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: -4px;
+        z-index: -1;
+        background: oklch(from var(--focus-ring-color) l c h / 10%);
+        border-radius: var(--border-radius);
+        outline: var(--focus-outline);
+        pointer-events: none;
+        transition:
+          display var(--animation-duration-short) allow-discrete,
+          opacity var(--animation-duration-short) var(--easing);
+
+        @starting-style {
+          opacity: 0;
+        }
+      }
+    }
+
+    &:not(:focus).selected {
+      background: oklch(from var(--focus-ring-color) l c h / 10%);
+    }
+  }
+}
