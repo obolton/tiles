@@ -3,6 +3,8 @@ import svgPlugin from "./src/vite/svg";
 import routeManifestPlugin from "./src/vite/routeManifest";
 import type { UserConfig } from "vite";
 
+const IS_CLOUDFLARE_WORKER = process.env.CF_PAGES === "1";
+
 export default {
   envDir: "../..",
   envPrefix: "PUBLIC_",
@@ -11,7 +13,7 @@ export default {
     "process.env": process.env,
   },
   ssr: {
-    noExternal: true,
+    noExternal: IS_CLOUDFLARE_WORKER ? true : undefined,
     external: ["node:assert", "node:crypto"],
   },
   resolve: {
