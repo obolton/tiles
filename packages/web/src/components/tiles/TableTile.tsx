@@ -115,8 +115,8 @@ export default function TableTile({
       return;
     }
 
-    const rowId = data[row]?.id;
-    if (!rowId) {
+    const rowData = data[row];
+    if (!rowData) {
       return;
     }
 
@@ -131,9 +131,10 @@ export default function TableTile({
       element.replaceChildren();
     }
 
+    rowData.data[column] = value;
     await editor.updateTableCell({
       tableId: id,
-      rowId,
+      rowId: rowData.id,
       column,
       value,
     });
