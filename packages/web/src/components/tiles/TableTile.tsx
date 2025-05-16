@@ -14,7 +14,6 @@ import { deserialize } from "@/utils/richText/deserialize";
 import { render } from "@/jsx/dom";
 import type { ClientTableTile } from "@/types/tiles";
 import type TableView from "@/elements/table/TableView";
-import type { TableCellEvent } from "@/elements/table/TableView";
 import type { Format } from "@/utils/richText/format";
 import type { Command } from "prosemirror-state";
 import type Editor from "@/editor/Editor";
@@ -70,18 +69,28 @@ export default function TableTile({
     }
   };
 
-  const onCellFocus = (event: TableCellEvent) => {
-    const {
-      cell: { row, column },
-    } = event;
-
+  const onFocusIn = (event: FocusEvent) => {
     if (!isEditable.value) {
-      event.preventDefault();
+      return;
+    }
+
+    const target = event.target;
+
+    if (
+      !(target instanceof HTMLElement) ||
+      target.role !== "cell" ||
+      !target.dataset.row ||
+      !target.dataset.column ||
+      editorView?.dom === target
+    ) {
       return;
     }
 
     try {
       editorView?.destroy();
+
+      const row = parseInt(target.dataset.row, 10);
+      const column = parseInt(target.dataset.column, 10);
 
       const value = data[row]?.data[column];
       const doc = !value
@@ -99,21 +108,39 @@ export default function TableTile({
         doc,
         plugins,
       });
-      event.cell.element.replaceChildren();
-      editorView = new EditorView({ mount: event.cell.element }, { state });
+      target.replaceChildren();
+      editorView = new EditorView({ mount: target }, { state });
     } catch (error) {
       handleError(error);
     }
   };
 
-  const onCellBlur = async (event: TableCellEvent) => {
-    const {
-      cell: { row, column, element },
-    } = event;
-
+  const onFocusOut = async (event: FocusEvent) => {
     if (!editorView) {
       return;
     }
+
+    const { target, relatedTarget } = event;
+
+    if (
+      !(target instanceof HTMLElement) ||
+      target.role !== "cell" ||
+      !target.dataset.row ||
+      !target.dataset.column
+    ) {
+      return;
+    }
+
+    // Focus moved to a modal
+    if (
+      relatedTarget instanceof HTMLElement &&
+      relatedTarget.closest("dialog[open]") !== null
+    ) {
+      return;
+    }
+
+    const row = parseInt(target.dataset.row, 10);
+    const column = parseInt(target.dataset.column, 10);
 
     const rowData = data[row];
     if (!rowData) {
@@ -126,9 +153,9 @@ export default function TableTile({
 
     const contents = render(<RichText content={value} />);
     if (contents) {
-      element.replaceChildren(contents);
+      target.replaceChildren(contents);
     } else {
-      element.replaceChildren();
+      target.replaceChildren();
     }
 
     rowData.data[column] = value;
@@ -172,8 +199,8 @@ export default function TableTile({
         columns={numColumns}
         rows={numRows}
         allowselection={isEditable}
-        oncellfocus={onCellFocus}
-        oncellblur={onCellBlur}
+        onfocusin={onFocusIn}
+        onfocusout={onFocusOut}
       >
         {data.map(({ data: rowData }, row) => {
           const cells = [];

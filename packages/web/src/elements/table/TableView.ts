@@ -10,8 +10,6 @@ export interface TableViewAttributes {
   columns: number;
   rows: number;
   allowselection?: boolean;
-  oncellfocus?: (event: TableCellEvent) => void;
-  oncellblur?: (event: TableCellEvent) => void;
 }
 
 export interface Cell {
@@ -27,22 +25,6 @@ export type Selection = {
   anchor: Cell;
   focus: Cell;
 };
-
-export type TableCellEventType = "cellfocus" | "cellblur";
-
-export interface TableCellEventInit extends EventInit {
-  cell: VisibleCell;
-}
-
-export class TableCellEvent extends Event {
-  cell: VisibleCell;
-
-  constructor(type: TableCellEventType, options: TableCellEventInit) {
-    const { cell, ...init } = options;
-    super(type, init);
-    this.cell = cell;
-  }
-}
 
 export default class TableView extends HTMLElement {
   static readonly observedAttributes: (keyof TableViewAttributes)[] = [
@@ -123,8 +105,6 @@ export default class TableView extends HTMLElement {
 
     this.addEventListener("keydown", this);
     this.addEventListener("pointerup", this, { passive: true });
-    this.addEventListener("focusin", this, { passive: true });
-    this.addEventListener("focusout", this, { passive: true });
   }
 
   enableVirtualization(
@@ -217,10 +197,6 @@ export default class TableView extends HTMLElement {
         return this.handlePointerUp(event as PointerEvent);
       case "pointerover":
         return this.handlePointerOver(event as PointerEvent);
-      case "focusin":
-        return this.handleFocusIn(event as FocusEvent);
-      case "focusout":
-        return this.handleFocusOut(event as FocusEvent);
     }
   }
 
@@ -267,44 +243,6 @@ export default class TableView extends HTMLElement {
       this.selection.focus = { row, column };
       this.redrawSelection();
     }
-  }
-
-  private handleFocusIn(event: FocusEvent) {
-    const target = event.target;
-
-    if (
-      !(target instanceof HTMLElement) ||
-      target.role !== "cell" ||
-      !target.dataset.row ||
-      !target.dataset.column
-    ) {
-      return;
-    }
-
-    const row = parseInt(target.dataset.row, 10);
-    const column = parseInt(target.dataset.column, 10);
-    const cell = { row, column, element: target };
-
-    this.dispatchEvent(new TableCellEvent("cellfocus", { cell }));
-  }
-
-  private handleFocusOut(event: FocusEvent) {
-    const target = event.target;
-
-    if (
-      !(target instanceof HTMLElement) ||
-      target.role !== "cell" ||
-      !target.dataset.row ||
-      !target.dataset.column
-    ) {
-      return;
-    }
-
-    const row = parseInt(target.dataset.row, 10);
-    const column = parseInt(target.dataset.column, 10);
-    const cell = { row, column, element: target };
-
-    this.dispatchEvent(new TableCellEvent("cellblur", { cell }));
   }
 
   // Focus and selection
