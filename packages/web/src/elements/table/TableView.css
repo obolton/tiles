@@ -1,0 +1,51 @@
+@property --scroll-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --scroll-height {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --translate-x {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --translate-y {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#scroll-container {
+  position: relative;
+  width: var(--scroll-width);
+  height: var(--scroll-height);
+  contain: content;
+}
+
+#contents {
+  display: table;
+  position: absolute;
+  border: none;
+  border-spacing: 0;
+  border-collapse: separate;
+  translate: var(--translate-x) var(--translate-y);
+  contain: content;
+}
+
+:host(:hover),
+:host(:focus-within) {
+  #contents {
+    will-change: translate;
+  }
+}
