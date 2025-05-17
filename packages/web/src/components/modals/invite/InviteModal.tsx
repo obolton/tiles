@@ -2,7 +2,7 @@ import ModalHeader from "../ModalHeader";
 import ModalBody from "../ModalBody";
 import ModalFooter from "../ModalFooter";
 import type { ModalProps } from "@/utils/modals";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 
 export interface InviteModalResult {
@@ -12,7 +12,7 @@ export interface InviteModalResult {
 type InviteModalProps = ModalProps<InviteModalResult>;
 
 export default function InviteModal({ cancel, confirm }: InviteModalProps) {
-  const isPending = new Store(false);
+  const isPending = new ReactiveValue(false);
 
   const submit = async (event: Event) => {
     const form = event.currentTarget as HTMLFormElement;

@@ -3,7 +3,7 @@ import ModalBody from "../ModalBody";
 import ModalFooter from "../ModalFooter";
 import Placeholder from "@/components/placeholder/Placeholder";
 import styles from "./UploadImage.module.css";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import type FilePicker from "@/elements/filePicker/FilePicker";
 
@@ -18,9 +18,9 @@ export default function UploadImage({
   confirm,
   cancel,
 }: UploadImageProps) {
-  const isPending = new Store(false);
-  const file = new Store(initialFile);
-  const imageUrl = new Store(
+  const isPending = new ReactiveValue(false);
+  const file = new ReactiveValue(initialFile);
+  const imageUrl = new ReactiveValue(
     initialFile ? URL.createObjectURL(initialFile) : undefined,
   );
 

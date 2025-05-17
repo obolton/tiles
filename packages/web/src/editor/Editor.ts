@@ -2,7 +2,7 @@ import client from "@/api/client";
 import { showModal } from "@/utils/modals";
 import { preloadImage, uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { Store, DerivedStore } from "@/utils/reactivity";
+import { ReactiveValue, Computed } from "@/utils/reactivity";
 import { scrollIntoView } from "@/utils/scroll";
 import { isEditMode } from "@/utils/edit";
 import type { FontId } from "@/config/fonts";
@@ -29,22 +29,22 @@ const IS_SERVER = import.meta.env.SSR;
 function getTile(tile: ClientTile) {
   return {
     ...tile,
-    columns: new Store(tile.columns),
-    rows: new Store(tile.rows),
+    columns: new ReactiveValue(tile.columns),
+    rows: new ReactiveValue(tile.rows),
   };
 }
 
 function getLayout(sections: ClientCollection[], tiles: ClientTile[]): Layout {
   return sections.map((section) => ({
     ...section,
-    tiles: new Store(
+    tiles: new ReactiveValue(
       tiles
         .filter((tile) => tile.parentCollectionId === section.id)
         .map((tile) =>
           tile.type === "COLLECTION"
             ? {
                 ...tile,
-                tiles: new Store(
+                tiles: new ReactiveValue(
                   tiles.filter(
                     (t): t is LeafTile =>
                       t.type !== "COLLECTION" &&
@@ -60,38 +60,35 @@ function getLayout(sections: ClientCollection[], tiles: ClientTile[]): Layout {
 
 export default class Editor {
   readonly pageId: string;
-  readonly isEditable: Store<boolean>;
-  readonly title: Store<string>;
-  readonly subtitle: Store<string | null>;
-  readonly coverImageUrl: Store<string | null>;
-  readonly isPublished: Store<boolean>;
-  readonly sections: Store<ClientCollection[]>;
-  readonly tiles: Store<ClientTile[]>;
-  readonly layout: DerivedStore<
-    [typeof this.sections, typeof this.tiles],
-    Layout
-  >;
-  readonly access: Store<PageAccess[]>;
-  readonly invites: Store<PageInvite[]>;
+  readonly isEditable: ReactiveValue<boolean>;
+  readonly title: ReactiveValue<string>;
+  readonly subtitle: ReactiveValue<string | null>;
+  readonly coverImageUrl: ReactiveValue<string | null>;
+  readonly isPublished: ReactiveValue<boolean>;
+  readonly sections: ReactiveValue<ClientCollection[]>;
+  readonly tiles: ReactiveValue<ClientTile[]>;
+  readonly layout: Computed<[typeof this.sections, typeof this.tiles], Layout>;
+  readonly access: ReactiveValue<PageAccess[]>;
+  readonly invites: ReactiveValue<PageInvite[]>;
   readonly author: User;
-  readonly focusedTile: Store<string | null>;
-  readonly dragId: Store<string | null>;
+  readonly focusedTile: ReactiveValue<string | null>;
+  readonly dragId: ReactiveValue<string | null>;
 
   constructor(page: Page) {
     this.pageId = page.id;
-    this.isEditable = new Store(isEditMode());
-    this.title = new Store(page.title);
-    this.subtitle = new Store(page.subtitle);
-    this.coverImageUrl = new Store(page.coverImageUrl);
-    this.isPublished = new Store(page.published);
-    this.sections = new Store(page.collections);
-    this.tiles = new Store(page.tiles.map((tile) => getTile(tile)));
-    this.layout = new DerivedStore([this.sections, this.tiles], getLayout);
-    this.access = new Store(page.access);
-    this.invites = new Store(page.invites);
+    this.isEditable = new ReactiveValue(isEditMode());
+    this.title = new ReactiveValue(page.title);
+    this.subtitle = new ReactiveValue(page.subtitle);
+    this.coverImageUrl = new ReactiveValue(page.coverImageUrl);
+    this.isPublished = new ReactiveValue(page.published);
+    this.sections = new ReactiveValue(page.collections);
+    this.tiles = new ReactiveValue(page.tiles.map((tile) => getTile(tile)));
+    this.layout = new Computed([this.sections, this.tiles], getLayout);
+    this.access = new ReactiveValue(page.access);
+    this.invites = new ReactiveValue(page.invites);
     this.author = page.author;
-    this.focusedTile = new Store<string | null>(null);
-    this.dragId = new Store<string | null>(null);
+    this.focusedTile = new ReactiveValue<string | null>(null);
+    this.dragId = new ReactiveValue<string | null>(null);
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();

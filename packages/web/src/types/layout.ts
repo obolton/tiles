@@ -3,7 +3,7 @@ import type {
   ClientCollection,
   ClientCollectionTile,
 } from "@/types/tiles";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 
 export type LeafTile = Exclude<ClientTile, ClientCollectionTile>;
 
@@ -12,7 +12,7 @@ export type CollectionTile = ClientCollectionTile & { tiles: LeafTile[] };
 export type Tile = LeafTile | CollectionTile;
 
 export type Section = ClientCollection & {
-  tiles: StoreInterface<Tile[]>;
+  tiles: Reactive<Tile[]>;
 };
 
 export type Layout = Section[];

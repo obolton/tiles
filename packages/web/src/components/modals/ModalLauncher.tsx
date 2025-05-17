@@ -1,11 +1,11 @@
 import Modal from "./Modal";
 import { getModal } from "@/utils/modals";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 export default function ModalLauncher() {
-  const modalElement = new Store<JSX.Element | null>(null);
-  const isOpen = new Store(false);
+  const modalElement = new ReactiveValue<JSX.Element | null>(null);
+  const isOpen = new ReactiveValue(false);
 
   function cancel() {
     isOpen.value = false;

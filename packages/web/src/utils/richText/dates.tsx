@@ -2,7 +2,7 @@ import { Plugin } from "prosemirror-state";
 import DateTime from "@/components/dates/DateTime";
 import { render } from "@/jsx/dom";
 import { showModal } from "@/utils/modals";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import type { DateTimeModalResult } from "@/components/modals/DateTimeModal";
 
 export function dates() {
@@ -10,8 +10,8 @@ export function dates() {
     props: {
       nodeViews: {
         date(node, view, getPos) {
-          const value = new Store(node.attrs.value as Date);
-          const time = new Store(node.attrs.time as boolean);
+          const value = new ReactiveValue(node.attrs.value as Date);
+          const time = new ReactiveValue(node.attrs.time as boolean);
 
           function edit() {
             showModal<DateTimeModalResult>("DATE_TIME", {

@@ -11,8 +11,8 @@ import TableTile from "@/components/tiles/TableTile";
 import type { Tile } from "@/types/layout";
 import type { DragDropEvent } from "@/utils/drag";
 import { handleError } from "@/utils/errors";
-import { Store, DerivedStore } from "@/utils/reactivity";
-import type { StoreInterface } from "@/utils/reactivity";
+import { ReactiveValue, Computed } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
 
@@ -22,23 +22,23 @@ interface GridItemProps {
   collectionId: string;
   placementId: string;
   style?: JSX.StyleDeclaration;
-  classList?: { [k: string]: boolean | StoreInterface<boolean> };
-  rows: StoreInterface<number>;
+  classList?: { [k: string]: boolean | Reactive<boolean> };
+  rows: Reactive<number>;
   minRows?: number;
-  columns: StoreInterface<number>;
+  columns: Reactive<number>;
   minColumns?: number;
   grow?: boolean;
-  deletable?: boolean | StoreInterface<boolean>;
-  draggable?: boolean | StoreInterface<boolean>;
-  resizable?: boolean | StoreInterface<boolean>;
+  deletable?: boolean | Reactive<boolean>;
+  draggable?: boolean | Reactive<boolean>;
+  resizable?: boolean | Reactive<boolean>;
   allowDrop?: boolean;
   tile: Tile;
-  tabIndex?: number | StoreInterface<number | undefined>;
+  tabIndex?: number | Reactive<number | undefined>;
 }
 
 function getTileComponent(
   tile: Tile,
-  hasFocus: StoreInterface<boolean>,
+  hasFocus: Reactive<boolean>,
   onDelete: () => void,
   editor: Editor,
 ) {
@@ -110,8 +110,8 @@ export default function GridItem({
     item = element;
   };
 
-  const hasFocus = new Store(false);
-  const isDragOver = new Store(false);
+  const hasFocus = new ReactiveValue(false);
+  const isDragOver = new ReactiveValue(false);
 
   const onFocusIn = () => {
     if (editor.isEditable.value) {
@@ -179,7 +179,7 @@ export default function GridItem({
 
   const onDelete = () => item?.delete();
 
-  const combinedStyles = new DerivedStore([columns, rows], (columns, rows) => ({
+  const combinedStyles = new Computed([columns, rows], (columns, rows) => ({
     ...style,
     "--columns": Math.max(columns, minColumns).toString(),
     "--min-columns": minColumns.toString(),

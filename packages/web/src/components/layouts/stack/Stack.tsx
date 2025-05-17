@@ -1,6 +1,6 @@
 import styles from "./Stack.module.css";
 import GridItem from "@/components/grid/GridItem";
-import { Store, DerivedStore } from "@/utils/reactivity";
+import { ReactiveValue, Computed } from "@/utils/reactivity";
 import LayoutEditor from "@/editor/LayoutEditor";
 import type { JSX } from "@/jsx/jsx";
 import type { Tile } from "@/types/layout";
@@ -9,7 +9,7 @@ import type Editor from "@/editor/Editor";
 interface StackProps {
   editor: Editor;
   collectionId: string;
-  items: Store<Tile[]>;
+  items: ReactiveValue<Tile[]>;
   Placeholder?: JSX.Component<Pick<StackProps, "collectionId">>;
 }
 
@@ -19,7 +19,7 @@ export default function Stack({
   items,
   Placeholder,
 }: StackProps) {
-  const open = new Store(false);
+  const open = new ReactiveValue(false);
   const { isEditable, dragId } = editor;
 
   const ref = (element: HTMLElement) => {
@@ -66,16 +66,16 @@ export default function Stack({
               id={item.id}
               collectionId={collectionId}
               placementId={item.placementId}
-              rows={new Store(2)}
-              columns={new Store(1)}
+              rows={new ReactiveValue(2)}
+              columns={new ReactiveValue(1)}
               deletable={
-                new DerivedStore(
+                new Computed(
                   [isEditable, open],
                   (editable, open) => editable && open,
                 )
               }
               draggable={
-                new DerivedStore(
+                new Computed(
                   [isEditable, open],
                   (editable, open) => editable && open,
                 )

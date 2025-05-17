@@ -5,7 +5,7 @@ import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import type { ModalProps } from "@/utils/modals";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import debounce from "@/utils/debounce";
 
@@ -24,9 +24,9 @@ export default function PlaceModal({
   cancel,
   confirm,
 }: PlaceModalProps) {
-  const isPending = new Store(false);
-  const location = new Store<GeolocationPosition | null>(null);
-  const results = new Store<Place[]>([]);
+  const isPending = new ReactiveValue(false);
+  const location = new ReactiveValue<GeolocationPosition | null>(null);
+  const results = new ReactiveValue<Place[]>([]);
 
   if (!import.meta.env.SSR && !boundingBox) {
     navigator.geolocation.getCurrentPosition(

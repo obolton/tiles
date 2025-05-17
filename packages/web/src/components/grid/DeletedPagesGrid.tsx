@@ -2,7 +2,7 @@ import client from "@/api/client";
 import DeletedPage from "./DeletedPage";
 import Search from "@/components/search/Search";
 import { handleError } from "@/utils/errors";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import { showToast } from "@/utils/toasts";
 import styles from "./DeletedPagesGrid.module.css";
 import type { ClientPageLink } from "@/types/tiles";
@@ -26,8 +26,8 @@ export default function DeletedPagesGrid({
   pages: initialPages,
   renderPlaceholder,
 }: DeletedPagesGridProps) {
-  const pages = new Store(initialPages?.pages ?? []);
-  const hasMore = new Store(initialPages?.hasMore ?? false);
+  const pages = new ReactiveValue(initialPages?.pages ?? []);
+  const hasMore = new ReactiveValue(initialPages?.hasMore ?? false);
 
   const onSearch = async (query: string, offset: number = 0) => {
     try {

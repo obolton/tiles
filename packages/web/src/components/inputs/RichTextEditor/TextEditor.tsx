@@ -7,19 +7,19 @@ import { schema } from "@/utils/richText/schema";
 import { getPlugins } from "@/utils/richText/plugins";
 import { handleError } from "@/utils/errors";
 import styles from "./TextEditor.module.css";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import type { Format } from "@/utils/richText/format";
 import type { RichText } from "@/utils/richText/types";
 import type { Command } from "prosemirror-state";
 import type { JSX } from "@/jsx/jsx";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 
 export type { EditorState };
 
 interface TextEditorProps
   extends Omit<JSX.Attributes<HTMLDivElement>, "onBlur"> {
   initialValue?: RichText | null;
-  showToolbar: StoreInterface<boolean>;
+  showToolbar: Reactive<boolean>;
   extraToolbarItems?: JSX.Node;
   onBlur?: (state: EditorState) => void;
   signal?: AbortSignal;
@@ -77,7 +77,7 @@ export default function TextEditor({
     }
   };
 
-  const format = new Store<Format>({
+  const format = new ReactiveValue<Format>({
     bold: false,
     italic: false,
     underline: false,

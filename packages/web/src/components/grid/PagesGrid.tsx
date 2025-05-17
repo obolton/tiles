@@ -2,7 +2,7 @@ import PagesGridItem from "./PagesGridItem";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import Search from "@/components/search/Search";
 import { handleError } from "@/utils/errors";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import type { ClientPageLink } from "@/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 
@@ -24,8 +24,8 @@ export default function PagesGrid({
   pages: initialPages,
   renderPlaceholder,
 }: PagesGridProps) {
-  const pages = new Store(initialPages?.pages ?? []);
-  const hasMore = new Store(initialPages?.hasMore ?? false);
+  const pages = new ReactiveValue(initialPages?.pages ?? []);
+  const hasMore = new ReactiveValue(initialPages?.hasMore ?? false);
 
   const onSearch = async (query: string, offset: number = 0) => {
     try {

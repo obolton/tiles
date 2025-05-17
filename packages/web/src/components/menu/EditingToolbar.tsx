@@ -1,14 +1,14 @@
 import EditingTools from "./EditingTools";
 import "./EditingToolbar.module.css";
 import { viewTransition } from "@/utils/transitions";
-import type { Store } from "@/utils/reactivity";
+import type { ReactiveValue } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import { setEditMode } from "@/utils/edit";
 
 interface EditingToolbarProps {
   editor: Editor;
-  isEditable: Store<boolean>;
-  isPublished: Store<boolean>;
+  isEditable: ReactiveValue<boolean>;
+  isPublished: ReactiveValue<boolean>;
   allowDelete?: boolean;
   allowPublish?: boolean;
 }

@@ -1,13 +1,13 @@
 import Section from "@/components/layouts/section/Section";
 import Placeholder from "@/components/placeholder/Placeholder";
 import type { Layout } from "@/types/layout";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 
 interface PageContentsProps {
   editor: Editor;
-  isEditable: StoreInterface<boolean>;
-  layout: StoreInterface<Layout>;
+  isEditable: Reactive<boolean>;
+  layout: Reactive<Layout>;
 }
 
 export default function PageContents({

@@ -7,7 +7,7 @@ import type { Section } from "@/types/layout";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { layoutTransition } from "@/utils/animation/layout";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 
 function GridPlaceholder() {
@@ -16,7 +16,7 @@ function GridPlaceholder() {
 
 export interface SectionProps {
   editor: Editor;
-  isEditable: StoreInterface<boolean>;
+  isEditable: Reactive<boolean>;
   section: Section;
 }
 

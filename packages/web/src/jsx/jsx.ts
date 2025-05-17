@@ -1,7 +1,7 @@
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 
-export type WithStores<T> = {
-  [K in keyof T]: T[K] | StoreInterface<T[K]>;
+export type WithReactiveProperties<T> = {
+  [K in keyof T]: T[K] | Reactive<T[K]>;
 };
 
 export namespace JSX {
@@ -31,7 +31,7 @@ export namespace JSX {
     | null
     | undefined
     | Node[]
-    | StoreInterface<Node>;
+    | Reactive<Node>;
 
   export type Component<P> = (props: P) => Node;
 
@@ -48,20 +48,15 @@ export namespace JSX {
 
   export type DataAttribute = `data-${string}`;
 
-  export type Attributes<T extends globalThis.Element> = WithStores<
+  export type Attributes<T extends globalThis.Element> = WithReactiveProperties<
     Partial<Omit<T, "children" | "classList" | "style">> & {
       style?: StyleDeclaration;
     }
   > & {
     ref?: Ref<T>;
     classList?:
-      | (
-          | string
-          | null
-          | undefined
-          | StoreInterface<string | null | undefined>
-        )[]
-      | { [k: string]: boolean | StoreInterface<boolean> };
+      | (string | null | undefined | Reactive<string | null | undefined>)[]
+      | { [k: string]: boolean | Reactive<boolean> };
     children?: Node;
     [k: DataAttribute]: string | null | undefined;
   };

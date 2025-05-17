@@ -1,12 +1,12 @@
 import styles from "./DateTime.module.css";
 import type { JSX } from "@/jsx/jsx";
-import type { StoreInterface } from "@/utils/reactivity";
-import { DerivedStore } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
+import { Computed } from "@/utils/reactivity";
 
 export interface DateTimeProps
   extends Omit<JSX.Attributes<HTMLTimeElement>, "dateTime" | "className"> {
-  value: StoreInterface<Date>;
-  time: StoreInterface<boolean>;
+  value: Reactive<Date>;
+  time: Reactive<boolean>;
 }
 
 const monthFormatter = new Intl.DateTimeFormat(undefined, {
@@ -29,7 +29,7 @@ export default function DateTime({ value, time, ...props }: DateTimeProps) {
       {...props}
       className={styles.datetime}
       dateTime={
-        new DerivedStore([value, time] as const, (date, showTime) =>
+        new Computed([value, time] as const, (date, showTime) =>
           showTime ? date.toISOString() : date.toISOString().slice(0, 10),
         )
       }

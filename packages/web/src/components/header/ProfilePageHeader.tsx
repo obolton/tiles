@@ -2,14 +2,14 @@ import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import styles from "./ProfilePageHeader.module.css";
 import { handleError } from "@/utils/errors";
 import { setSearchParams } from "@/utils/urls";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 
 interface ProfilePageHeaderProps {
   editor: Editor;
   name: string;
   imageUrl: string | null;
-  subtitle: StoreInterface<string | null>;
+  subtitle: Reactive<string | null>;
 }
 
 function stripLineBreaks(value: string) {

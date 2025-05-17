@@ -6,11 +6,11 @@ import TrashIcon from "@/icons/trash.svg?jsx";
 import type Editor from "@/editor/Editor";
 import { redirectWithToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 
 interface EditingToolsProps {
   editor: Editor;
-  isPublished: StoreInterface<boolean>;
+  isPublished: Reactive<boolean>;
   allowPublish: boolean;
   allowDelete: boolean;
 }

@@ -3,7 +3,7 @@ import ProfilePageHeader from "@/components/header/ProfilePageHeader";
 import PageContents from "@/components/pages/PageContents";
 import ModalLauncher from "@/components/modals/ModalLauncher";
 import Editor from "@/editor/Editor";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {
@@ -38,7 +38,7 @@ export default function EditableProfilePage({
           <EditingToolbar
             editor={editor}
             isEditable={isEditable}
-            isPublished={new Store(true)}
+            isPublished={new ReactiveValue(true)}
             allowDelete={false}
             allowPublish={false}
           />

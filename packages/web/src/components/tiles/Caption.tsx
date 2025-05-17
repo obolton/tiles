@@ -1,10 +1,10 @@
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import { classNames } from "@/utils/css";
 import styles from "./Caption.module.css";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 
 interface CaptionProps {
-  isEditable: Store<boolean>;
+  isEditable: ReactiveValue<boolean>;
   value?: string | null;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -16,7 +16,7 @@ export default function Caption({
   onChange,
   placeholder,
 }: CaptionProps) {
-  const value = new Store(initialValue ?? "");
+  const value = new ReactiveValue(initialValue ?? "");
 
   const handleChange = (event: Event) => {
     value.value = event.currentTarget.value;

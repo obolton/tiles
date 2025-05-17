@@ -7,7 +7,7 @@ import PageLinkTile from "@/components/tiles/PageLinkTile";
 import Search from "@/components/search/Search";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 import type { ModalProps } from "@/utils/modals";
 
@@ -27,9 +27,9 @@ export default function LinkModal({
   showPages = true,
   showRemove = false,
 }: LinkModalProps) {
-  const isPending = new Store(false);
-  const pages = new Store<Pages["pages"]>([]);
-  const hasMore = new Store(true);
+  const isPending = new ReactiveValue(false);
+  const pages = new ReactiveValue<Pages["pages"]>([]);
+  const hasMore = new ReactiveValue(true);
 
   const search = async (query: string, offset: number = 0) => {
     try {

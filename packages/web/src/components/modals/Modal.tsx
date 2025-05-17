@@ -1,11 +1,11 @@
 import { ModalEvent } from "@/utils/modals";
 import styles from "./Modal.module.css";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 interface ModalProps {
   children: JSX.Node;
-  open: StoreInterface<boolean>;
+  open: Reactive<boolean>;
   onClose: () => void;
 }
 

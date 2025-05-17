@@ -1,7 +1,7 @@
 import styles from "./Tile.module.css";
 import { getFontConfig } from "@/utils/fonts";
-import { isStore } from "@/utils/reactivity";
-import { Store, DerivedStore, type StoreInterface } from "@/utils/reactivity";
+import { isReactive } from "@/utils/reactivity";
+import { ReactiveValue, Computed, type Reactive } from "@/utils/reactivity";
 import { toCSSColor, isDark, type Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
@@ -11,11 +11,11 @@ export type TileProps = {
   children?: JSX.Node;
   background?: boolean;
   border?:
-    | StoreInterface<"inside" | "outside" | "none">
+    | Reactive<"inside" | "outside" | "none">
     | "inside"
     | "outside"
     | "none";
-  color?: StoreInterface<Color | null>;
+  color?: Reactive<Color | null>;
   font?: FontId | null;
   backgroundImageUrl?: string | null;
 };
@@ -29,14 +29,14 @@ const BORDER_CLASSES = {
 export default function Tile({
   className,
   children,
-  color = new Store(null),
+  color = new ReactiveValue(null),
   font,
   background = true,
   border = "outside",
   backgroundImageUrl,
 }: TileProps) {
   const fontConfig = typeof font === "string" ? getFontConfig(font) : undefined;
-  const style = new DerivedStore([color], (colorValue) => ({
+  const style = new Computed([color], (colorValue) => ({
     "--tile-background": colorValue ? toCSSColor(colorValue) : undefined,
     "--font": fontConfig
       ? `"${fontConfig.family}", "${fontConfig.fallback}"`
@@ -50,7 +50,7 @@ export default function Tile({
     <div
       classList={[
         styles.tile,
-        isStore(border)
+        isReactive(border)
           ? border.derive((value) => BORDER_CLASSES[value])
           : BORDER_CLASSES[border],
         background ? styles.background : undefined,

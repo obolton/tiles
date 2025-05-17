@@ -3,13 +3,13 @@ import { keymap } from "prosemirror-keymap";
 import { baseKeymap } from "prosemirror-commands";
 import { EditorState } from "prosemirror-state";
 import { headerSchema } from "@/utils/richText/schema";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 interface PageHeaderEditorProps
   extends Omit<JSX.Attributes<HTMLDivElement>, "onBlur" | "title"> {
-  title: StoreInterface<string>;
-  subtitle: StoreInterface<string | null>;
+  title: Reactive<string>;
+  subtitle: Reactive<string | null>;
   onBlur?: (title: string, subtitle?: string) => void;
   signal?: AbortSignal;
 }

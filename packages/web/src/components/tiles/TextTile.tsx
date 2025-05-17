@@ -7,16 +7,16 @@ import TextEditor, {
 } from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/inputs/ColorPicker";
 import ExpandIcon from "@/icons/expand.svg?jsx";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import { viewTransition } from "@/utils/transitions";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { ClientTextTile } from "@/types/tiles";
 import type { Color } from "@/utils/color";
 
 interface TextTileProps extends ClientTextTile {
   editor: Editor;
-  hasFocus: StoreInterface<boolean>;
+  hasFocus: Reactive<boolean>;
   onDelete?: () => void;
 }
 
@@ -32,14 +32,14 @@ export default function TextTile({
   onDelete,
 }: TextTileProps) {
   const { isEditable } = editor;
-  const color = new Store<Color | null>(
+  const color = new ReactiveValue<Color | null>(
     typeof lightness === "number" &&
     typeof chroma === "number" &&
     typeof hue === "number"
       ? { l: lightness, c: chroma, h: hue }
       : null,
   );
-  const expand = new Store(initialExpand);
+  const expand = new ReactiveValue(initialExpand);
 
   const onBlur = async (state: EditorState) => {
     const content = serialize(state);

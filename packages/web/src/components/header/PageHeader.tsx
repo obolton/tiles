@@ -11,14 +11,14 @@ import { uploadMedia, preloadImage } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type Editor from "@/editor/Editor";
-import type { Store } from "@/utils/reactivity";
+import type { ReactiveValue } from "@/utils/reactivity";
 
 interface PageHeaderProps {
   editor: Editor;
-  isEditable: Store<boolean>;
-  title: Store<string>;
-  subtitle: Store<string | null>;
-  coverImageUrl: Store<string | null>;
+  isEditable: ReactiveValue<boolean>;
+  title: ReactiveValue<string>;
+  subtitle: ReactiveValue<string | null>;
+  coverImageUrl: ReactiveValue<string | null>;
   updatedAt: string | null;
   author: {
     id: string;

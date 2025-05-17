@@ -40,7 +40,7 @@ import {
 import type { Format, TextAlignment } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 
 registerModal("DATE_TIME", () => import("@/components/modals/DateTimeModal"));
 
@@ -51,7 +51,7 @@ const ALIGN_ICON = {
 };
 
 interface FormattingToolbarProps {
-  format: StoreInterface<Format>;
+  format: Reactive<Format>;
   getEditorState: () => EditorState | undefined;
   performCommand: (command: Command) => void;
   children?: JSX.Node;

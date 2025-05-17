@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface StoreInterface<T = any> {
+export interface Reactive<T = any> {
   value: T;
   subscribe(
     callback: SubscribeCallback<T>,
@@ -7,24 +7,21 @@ export interface StoreInterface<T = any> {
   ): UnsubscribeCallback;
   unsubscribe(callback: SubscribeCallback<T>): void;
   disconnect(): void;
-  derive<V>(
-    transform: (input: T) => V,
-    signal?: AbortSignal,
-  ): StoreInterface<V>;
+  derive<V>(transform: (input: T) => V, signal?: AbortSignal): Reactive<V>;
 }
 
-export type SubscribeCallback<T> = (store: StoreInterface<T>) => void;
+export type SubscribeCallback<T> = (reactive: Reactive<T>) => void;
 export type UnsubscribeCallback = () => boolean;
 
-export type StoreValue<T extends StoreInterface> = T["value"];
-export type StoreValues<T extends StoreInterface[]> = {
-  [K in keyof T]: StoreValue<T[K]>;
+export type ReactiveType<T extends Reactive> = T["value"];
+export type ReactiveTypes<T extends Reactive[]> = {
+  [K in keyof T]: ReactiveType<T[K]>;
 };
 
-export abstract class BaseStore<Value> implements StoreInterface<Value> {
-  protected readonly subscribers = new Set<(store: this) => void>();
+export abstract class BaseReactive<Value> implements Reactive<Value> {
+  protected readonly subscribers = new Set<(reactive: this) => void>();
 
-  subscribe(callback: (store: this) => void, signal?: AbortSignal) {
+  subscribe(callback: (reactive: this) => void, signal?: AbortSignal) {
     this.subscribers.add(callback);
     const unsubscriber = () => this.unsubscribe(callback);
     signal?.addEventListener("abort", unsubscriber, {
@@ -34,7 +31,7 @@ export abstract class BaseStore<Value> implements StoreInterface<Value> {
     return unsubscriber;
   }
 
-  unsubscribe(callback: (store: this) => void) {
+  unsubscribe(callback: (reactive: this) => void) {
     return this.subscribers.delete(callback);
   }
 
@@ -52,12 +49,12 @@ export abstract class BaseStore<Value> implements StoreInterface<Value> {
 
   derive<DerivedValue>(
     transform: (input: Value) => DerivedValue,
-  ): StoreInterface<DerivedValue> {
-    return new DerivedStore<[this], DerivedValue>([this], transform);
+  ): Reactive<DerivedValue> {
+    return new Computed<[this], DerivedValue>([this], transform);
   }
 }
 
-export class Store<Value> extends BaseStore<Value> {
+export class ReactiveValue<Value> extends BaseReactive<Value> {
   private cachedValue: Value;
 
   constructor(value: Value) {
@@ -78,14 +75,14 @@ export class Store<Value> extends BaseStore<Value> {
   }
 }
 
-type Transform<Input extends StoreInterface[], Value> = (
-  ...values: StoreValues<Input>
+type Transform<Input extends Reactive[], Value> = (
+  ...values: ReactiveTypes<Input>
 ) => Value;
 
-export class DerivedStore<
-  Input extends StoreInterface[],
+export class Computed<
+  Input extends Reactive[],
   Value,
-> extends BaseStore<Value> {
+> extends BaseReactive<Value> {
   private readonly input: Input;
   private readonly transform: Transform<Input, Value>;
   private unsubscribeCallbacks?: UnsubscribeCallback[];
@@ -100,17 +97,17 @@ export class DerivedStore<
     this.stale = true;
   }
 
-  subscribe(callback: (store: this) => void, signal?: AbortSignal) {
+  subscribe(callback: (reactive: this) => void, signal?: AbortSignal) {
     const result = super.subscribe(callback, signal);
     if (!this.unsubscribeCallbacks && this.subscribers.size > 0) {
-      this.unsubscribeCallbacks = this.input.map((store) =>
-        store.subscribe(() => this.markAsStale()),
+      this.unsubscribeCallbacks = this.input.map((reactive) =>
+        reactive.subscribe(() => this.markAsStale()),
       );
     }
     return result;
   }
 
-  unsubscribe(callback: (store: this) => void) {
+  unsubscribe(callback: (reactive: this) => void) {
     const result = super.unsubscribe(callback);
     if (this.subscribers.size === 0) {
       this.disconnect();
@@ -127,7 +124,7 @@ export class DerivedStore<
     if (this.stale) {
       const values = this.input.map(
         (input) => input.value,
-      ) as StoreValues<Input>;
+      ) as ReactiveTypes<Input>;
       this.cachedValue = this.transform(...values);
       this.stale = false;
     }
@@ -141,8 +138,8 @@ export class DerivedStore<
   }
 }
 
-export function isStore<T>(
-  value: StoreInterface<T> | unknown,
-): value is StoreInterface<T> {
-  return value instanceof BaseStore;
+export function isReactive<T>(
+  value: Reactive<T> | unknown,
+): value is Reactive<T> {
+  return value instanceof BaseReactive;
 }

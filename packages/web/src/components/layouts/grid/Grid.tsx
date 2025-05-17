@@ -2,15 +2,15 @@ import GridItem from "@/components/grid/GridItem";
 import styles from "./Grid.module.css";
 import type { Tile } from "@/types/layout";
 import type { JSX } from "@/jsx/jsx";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import LayoutEditor from "@/editor/LayoutEditor";
 
 export interface GridProps {
   editor: Editor;
-  isEditable: StoreInterface<boolean>;
+  isEditable: Reactive<boolean>;
   collectionId: string;
-  items: StoreInterface<Tile[]>;
+  items: Reactive<Tile[]>;
   columns?: number;
   minColumnSpan?: number;
   minRowSpan?: number;

@@ -5,7 +5,7 @@ import {
 import client from "@/api/client";
 import { getCookie } from "./cookies";
 import { clear, setPersistent, removePersistent, getPersistent } from "./state";
-import { Store } from "./reactivity";
+import { ReactiveValue } from "./reactivity";
 
 export interface User {
   id: string;
@@ -14,7 +14,7 @@ export interface User {
   imageUrl: string | null;
 }
 
-export const user = new Store<User | null>(null);
+export const user = new ReactiveValue<User | null>(null);
 
 export function getSessionId(headers: Headers) {
   return getCookie(headers.get("cookie") ?? "", SESSION_COOKIE_NAME);

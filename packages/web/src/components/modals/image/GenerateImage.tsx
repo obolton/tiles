@@ -4,7 +4,7 @@ import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import Placeholder from "@/components/placeholder/Placeholder";
 import client from "@/api/client";
 import styles from "./GenerateImage.module.css";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 
 interface GenerateImageProps {
@@ -13,10 +13,10 @@ interface GenerateImageProps {
 }
 
 export default function GenerateImage({ confirm, cancel }: GenerateImageProps) {
-  const isPending = new Store(false);
-  const isGenerationPending = new Store(false);
-  const file = new Store<File | undefined>(undefined);
-  const imageUrl = new Store<string | undefined>(undefined);
+  const isPending = new ReactiveValue(false);
+  const isGenerationPending = new ReactiveValue(false);
+  const file = new ReactiveValue<File | undefined>(undefined);
+  const imageUrl = new ReactiveValue<string | undefined>(undefined);
 
   const generate = async (event: MouseEvent) => {
     try {

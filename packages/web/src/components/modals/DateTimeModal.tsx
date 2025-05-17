@@ -1,7 +1,7 @@
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import type { ModalProps } from "@/utils/modals";
 
@@ -36,9 +36,9 @@ export default function DateTimeModal({
   cancel,
   confirm,
 }: DateTimeModalProps) {
-  const date = new Store(value);
-  const hasTime = new Store(time);
-  const isPending = new Store(false);
+  const date = new ReactiveValue(value);
+  const hasTime = new ReactiveValue(time);
+  const isPending = new ReactiveValue(false);
 
   const onChangeDate = (event: Event) => {
     const input = event.target as HTMLInputElement;

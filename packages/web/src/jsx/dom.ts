@@ -1,6 +1,6 @@
-import { isStore } from "@/utils/reactivity";
+import { isReactive } from "@/utils/reactivity";
 import { serializeStyles } from "@/utils/css";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "./jsx";
 
 const XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
@@ -8,7 +8,7 @@ const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 const MATHML_NAMESPACE = "http://www.w3.org/1998/Math/MathML";
 
 interface MutableRange {
-  store: StoreInterface<JSX.Node>;
+  store: Reactive<JSX.Node>;
   anchor: Node;
   length: number;
   abort: AbortController;
@@ -87,7 +87,7 @@ function setAttribute(
   }
   const mappedName = name === "className" ? "class" : name;
 
-  if (isStore(value)) {
+  if (isReactive(value)) {
     setAttribute(element, name, value.value);
     value.subscribe(() => setAttribute(element, name, value.value), signal);
   } else if (
@@ -103,7 +103,7 @@ function setAttribute(
       }
     }
     for (const className of value) {
-      if (isStore(className)) {
+      if (isReactive(className)) {
         let value = className.value;
         if (typeof value === "string") {
           element.classList.add(value);
@@ -131,7 +131,7 @@ function setAttribute(
       }
     }
     for (const [className, enabled] of Object.entries(value)) {
-      if (isStore(enabled)) {
+      if (isReactive(enabled)) {
         if (enabled.value) {
           element.classList.add(className);
         }
@@ -275,7 +275,7 @@ function hydrateFragment(
 }
 
 function hydrateStoreNode(
-  store: StoreInterface<JSX.Node>,
+  store: Reactive<JSX.Node>,
   container: Element,
   index: number,
   signal?: AbortSignal,
@@ -327,7 +327,7 @@ function hydrateNode(
     return hydrateFragment(node, container, index, signal);
   }
 
-  if (isStore(node)) {
+  if (isReactive(node)) {
     return hydrateStoreNode(node, container, index, signal);
   }
 
@@ -456,7 +456,7 @@ function renderFragment(
 }
 
 function renderStoreNode(
-  store: StoreInterface<JSX.Node>,
+  store: Reactive<JSX.Node>,
   namespace?: string,
   signal?: AbortSignal,
 ) {
@@ -520,7 +520,7 @@ export function render(
     return renderFragment(node, namespace, signal);
   }
 
-  if (isStore(node)) {
+  if (isReactive(node)) {
     return renderStoreNode(node, namespace, signal);
   }
 

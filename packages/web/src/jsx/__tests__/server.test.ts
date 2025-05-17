@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { jsx } from "../jsx";
 import { renderToString } from "../server";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import type { JSX } from "../jsx";
 
 describe("renderToString", () => {
@@ -60,7 +60,7 @@ describe("renderToString", () => {
   });
 
   test("renders an attribute from a store", () => {
-    const store = new Store(false);
+    const store = new ReactiveValue(false);
     const element = jsx("input", {
       checked: store,
     });

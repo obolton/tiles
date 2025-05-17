@@ -7,14 +7,14 @@ import TextEditor, {
 } from "@/components/inputs/RichTextEditor/TextEditor";
 import { setSearchParams } from "@/utils/urls";
 import { serialize } from "@/utils/richText/serialize";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import type { ClientImageTile } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 
 interface ImageTileProps extends ClientImageTile {
   editor: Editor;
-  hasFocus: StoreInterface<boolean>;
+  hasFocus: Reactive<boolean>;
   onDelete?: () => void;
 }
 
@@ -67,7 +67,7 @@ export default function ImageTile({
   onDelete,
 }: ImageTileProps) {
   const { isEditable } = editor;
-  const origin = new Store({ x: originX, y: originY });
+  const origin = new ReactiveValue({ x: originX, y: originY });
 
   const onBlur = async (state: EditorState) => {
     const updatedText = serialize(state);

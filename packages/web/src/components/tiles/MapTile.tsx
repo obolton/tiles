@@ -8,11 +8,11 @@ import type MapView from "@/elements/maps/MapView";
 import type MapMarker from "@/elements/maps/MapMarker";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import type Editor from "@/editor/Editor";
-import type { StoreInterface } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 
 interface MapTileProps extends ClientMapTile {
   editor: Editor;
-  hasFocus: StoreInterface<boolean>;
+  hasFocus: Reactive<boolean>;
 }
 
 export default function MapTile({

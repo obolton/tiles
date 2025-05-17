@@ -1,5 +1,5 @@
 import { escapeUTF8 } from "entities";
-import { isStore } from "@/utils/reactivity";
+import { isReactive } from "@/utils/reactivity";
 import { serializeStyles } from "@/utils/css";
 import type { JSX } from "./jsx";
 
@@ -21,7 +21,7 @@ const VOID_ELEMENTS = new Set([
 ]);
 
 export function renderToString(node: JSX.Node): string {
-  if (isStore(node)) {
+  if (isReactive(node)) {
     return renderToString(node.value);
   }
 
@@ -102,7 +102,7 @@ function mapAttributeName(name: string) {
 function getDOMAttributes(properties: Record<string, unknown>) {
   const attributes: string[] = [];
   for (const [name, valueOrStore] of Object.entries(properties)) {
-    const value = isStore(valueOrStore) ? valueOrStore.value : valueOrStore;
+    const value = isReactive(valueOrStore) ? valueOrStore.value : valueOrStore;
     if (
       name === "children" ||
       typeof value === "function" ||
@@ -116,13 +116,15 @@ function getDOMAttributes(properties: Record<string, unknown>) {
     if (attributeName === "classlist") {
       if (Array.isArray(value)) {
         const classNames = value
-          .map((value) => (isStore(value) ? value.value : value))
+          .map((value) => (isReactive(value) ? value.value : value))
           .filter((value) => typeof value === "string" && value.length > 0)
           .join(" ");
         attributes.push('class="' + escapeUTF8(classNames) + '"');
       } else if (typeof value === "object" && value !== null) {
         const classNames = Object.entries(value)
-          .filter(([, enabled]) => (isStore(enabled) ? enabled.value : enabled))
+          .filter(([, enabled]) =>
+            isReactive(enabled) ? enabled.value : enabled,
+          )
           .map(([name]) => name)
           .join(" ");
         attributes.push('class="' + escapeUTF8(classNames) + '"');

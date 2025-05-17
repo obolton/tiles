@@ -1,7 +1,7 @@
 import Tile from "./Tile";
 import styles from "./PageTile.module.css";
 import { classNames } from "@/utils/css";
-import { Store } from "@/utils/reactivity";
+import { ReactiveValue } from "@/utils/reactivity";
 import { isDark, type Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
@@ -32,7 +32,7 @@ export default function PageTile({
   return (
     <Tile
       className={styles.tile}
-      color={new Store(color)}
+      color={new ReactiveValue(color)}
       font={font}
       backgroundImageUrl={coverImageUrl}
       border="inside"
