@@ -1,17 +1,17 @@
 import { describe, expect, test, vi } from "vitest";
-import { Store, DerivedStore, isStore } from "../reactivity";
+import { ReactiveValue, Computed, isReactive } from "../reactivity";
 
-describe("Store", () => {
+describe("Reactive", () => {
   describe("constructor", () => {
     test("sets the value", () => {
-      const store = new Store(1);
+      const store = new ReactiveValue(1);
       expect(store.value).toBe(1);
     });
   });
 
   describe("subscribe", () => {
     test("returns an unsubscribe function", () => {
-      const store = new Store(1);
+      const store = new ReactiveValue(1);
       const unsubscribe = store.subscribe(vi.fn());
       expect(unsubscribe).toBeInstanceOf(Function);
     });
@@ -19,21 +19,21 @@ describe("Store", () => {
 
   describe("unsubscribe", () => {
     test("returns true if the subscriber was removed", () => {
-      const store = new Store(1);
+      const store = new ReactiveValue(1);
       const subscriber = vi.fn();
       store.subscribe(subscriber);
       expect(store.unsubscribe(subscriber)).toBe(true);
     });
 
     test("returns false if the subscriber was not removed", () => {
-      const store = new Store(1);
+      const store = new ReactiveValue(1);
       const subscriber = vi.fn();
       expect(store.unsubscribe(subscriber)).toBe(false);
     });
   });
 
   test("notifies subscribers if the value is set", () => {
-    const store = new Store(1);
+    const store = new ReactiveValue(1);
     const subscribers = [vi.fn(), vi.fn()] as const;
     store.subscribe(subscribers[0]);
     store.value = 2;
@@ -46,7 +46,7 @@ describe("Store", () => {
   });
 
   test("does not notify subscribers if the value is set but unchanged", () => {
-    const store = new Store(1);
+    const store = new ReactiveValue(1);
     const subscriber = vi.fn();
     store.subscribe(subscriber);
     store.value = 1;
@@ -54,7 +54,7 @@ describe("Store", () => {
   });
 
   test("does not notify subscribers after they have been removed", () => {
-    const store = new Store(1);
+    const store = new ReactiveValue(1);
     const subscriber = vi.fn();
     store.subscribe(subscriber);
     store.value = 2;
@@ -65,37 +65,37 @@ describe("Store", () => {
   });
 });
 
-describe("DerivedStore", () => {
-  test("derives a value from a single input store", () => {
-    const store = new Store(1);
-    const derived = new DerivedStore([store], (value) => value + 1);
+describe("Computed", () => {
+  test("derives a value from a single input", () => {
+    const store = new ReactiveValue(1);
+    const derived = new Computed([store], (value) => value + 1);
     expect(derived.value).toBe(2);
     store.value = 3;
     expect(derived.value).toBe(4);
   });
 
-  test("derives a value from multiple input stores", () => {
-    const storeA = new Store(1);
-    const storeB = new Store(2);
-    const derived = new DerivedStore([storeA, storeB], (a, b) => a + b);
+  test("derives a value from multiple inputs", () => {
+    const storeA = new ReactiveValue(1);
+    const storeB = new ReactiveValue(2);
+    const derived = new Computed([storeA, storeB], (a, b) => a + b);
     expect(derived.value).toBe(3);
     storeA.value = 3;
     expect(derived.value).toBe(5);
   });
 
-  test("defers the transformation until the derived value is read", () => {
-    const store = new Store(1);
+  test("defers the transformation until the computed value is read", () => {
+    const store = new ReactiveValue(1);
     const transform = vi.fn((value) => value + 1);
-    const derived = new DerivedStore([store], transform);
+    const derived = new Computed([store], transform);
     expect(transform).toHaveBeenCalledTimes(0);
     expect(derived.value).toBe(2);
     expect(transform).toHaveBeenCalledTimes(1);
   });
 
-  test("caches the derived value", () => {
-    const store = new Store(1);
+  test("caches the computed value", () => {
+    const store = new ReactiveValue(1);
     const transform = vi.fn((value) => value + 1);
-    const derived = new DerivedStore([store], transform);
+    const derived = new Computed([store], transform);
     expect(transform).toHaveBeenCalledTimes(0);
     const results = [derived.value, derived.value, derived.value];
     expect(results).toStrictEqual([2, 2, 2]);
@@ -103,12 +103,12 @@ describe("DerivedStore", () => {
   });
 });
 
-describe("isStore", () => {
-  test("returns true if the value passed is a store", () => {
-    expect(isStore(new Store(0))).toBe(true);
+describe("isReactive", () => {
+  test("returns true if the value passed is reactive", () => {
+    expect(isReactive(new ReactiveValue(0))).toBe(true);
   });
 
-  test("returns false if the value passed is not a store", () => {
-    expect(isStore(2)).toBe(false);
+  test("returns false if the value passed is not reactive", () => {
+    expect(isReactive(2)).toBe(false);
   });
 });
