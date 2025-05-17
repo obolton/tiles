@@ -1,5 +1,5 @@
 import { classNames } from "@/utils/css";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import debounce from "@/utils/debounce";
 import styles from "./Search.module.css";
 import type { JSX } from "@/jsx/jsx";

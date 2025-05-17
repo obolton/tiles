@@ -2,7 +2,7 @@ import { Plugin } from "prosemirror-state";
 import DateTime from "@/components/dates/DateTime";
 import { render } from "@/jsx/dom";
 import { showModal } from "@/utils/modals";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import type { DateTimeModalResult } from "@/components/modals/DateTimeModal";
 
 export function dates() {

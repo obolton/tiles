@@ -2,7 +2,7 @@ import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import styles from "./ProfilePageHeader.module.css";
 import { handleError } from "@/utils/errors";
 import { setSearchParams } from "@/utils/urls";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 
 interface ProfilePageHeaderProps {

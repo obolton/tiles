@@ -1,5 +1,5 @@
 import { escapeUTF8 } from "entities";
-import { isStore } from "@/utils/stores";
+import { isStore } from "@/utils/reactivity";
 import { serializeStyles } from "@/utils/css";
 import type { JSX } from "./jsx";
 

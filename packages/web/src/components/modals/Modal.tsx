@@ -1,6 +1,6 @@
 import { ModalEvent } from "@/utils/modals";
 import styles from "./Modal.module.css";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 interface ModalProps {

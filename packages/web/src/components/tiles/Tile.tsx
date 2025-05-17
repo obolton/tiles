@@ -1,7 +1,7 @@
 import styles from "./Tile.module.css";
 import { getFontConfig } from "@/utils/fonts";
-import { isStore } from "@/utils/stores";
-import { Store, DerivedStore, type StoreInterface } from "@/utils/stores";
+import { isStore } from "@/utils/reactivity";
+import { Store, DerivedStore, type StoreInterface } from "@/utils/reactivity";
 import { toCSSColor, isDark, type Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";

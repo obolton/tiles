@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { jsx } from "../jsx";
 import { renderToString } from "../server";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import type { JSX } from "../jsx";
 
 describe("renderToString", () => {

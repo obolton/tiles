@@ -4,7 +4,7 @@ import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import Placeholder from "@/components/placeholder/Placeholder";
 import client from "@/api/client";
 import styles from "./GenerateImage.module.css";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 
 interface GenerateImageProps {

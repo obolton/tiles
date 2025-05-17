@@ -3,7 +3,7 @@ import Tile from "./Tile";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import styles from "./LinkTile.module.css";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 import type { ClientLink } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type Editor from "@/editor/Editor";

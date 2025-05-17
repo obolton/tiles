@@ -7,7 +7,7 @@ import PageLinkTile from "@/components/tiles/PageLinkTile";
 import Search from "@/components/search/Search";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 import type { ModalProps } from "@/utils/modals";
 

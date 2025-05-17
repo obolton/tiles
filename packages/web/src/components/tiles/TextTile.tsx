@@ -7,9 +7,9 @@ import TextEditor, {
 } from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/inputs/ColorPicker";
 import ExpandIcon from "@/icons/expand.svg?jsx";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import { viewTransition } from "@/utils/transitions";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { ClientTextTile } from "@/types/tiles";
 import type { Color } from "@/utils/color";

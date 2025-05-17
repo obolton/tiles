@@ -40,7 +40,7 @@ import {
 import type { Format, TextAlignment } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 
 registerModal("DATE_TIME", () => import("@/components/modals/DateTimeModal"));
 

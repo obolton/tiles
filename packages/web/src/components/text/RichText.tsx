@@ -1,7 +1,7 @@
 import { TextFormat } from "@/utils/richText/types";
 import { ListType } from "@/utils/richText/types";
 import DateTime from "@/components/dates/DateTime";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import type {
   RichText,
   ParagraphNode,

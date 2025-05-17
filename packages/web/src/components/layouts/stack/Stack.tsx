@@ -1,6 +1,6 @@
 import styles from "./Stack.module.css";
 import GridItem from "@/components/grid/GridItem";
-import { Store, DerivedStore } from "@/utils/stores";
+import { Store, DerivedStore } from "@/utils/reactivity";
 import LayoutEditor from "@/editor/LayoutEditor";
 import type { JSX } from "@/jsx/jsx";
 import type { Tile } from "@/types/layout";

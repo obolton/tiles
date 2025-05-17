@@ -1,6 +1,6 @@
 import Modal from "./Modal";
 import { getModal } from "@/utils/modals";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 export default function ModalLauncher() {

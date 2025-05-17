@@ -8,7 +8,7 @@ import type MapView from "@/elements/maps/MapView";
 import type MapMarker from "@/elements/maps/MapMarker";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import type Editor from "@/editor/Editor";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 
 interface MapTileProps extends ClientMapTile {
   editor: Editor;

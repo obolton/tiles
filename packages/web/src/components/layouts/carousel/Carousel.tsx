@@ -1,7 +1,7 @@
 import GridItem from "@/components/grid/GridItem";
 import styles from "./Carousel.module.css";
 import type { Tile } from "@/types/layout";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
 import LayoutEditor from "@/editor/LayoutEditor";

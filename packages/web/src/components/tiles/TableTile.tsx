@@ -8,7 +8,7 @@ import { EditorState } from "prosemirror-state";
 import { getPlugins } from "@/utils/richText/plugins";
 import { schema } from "@/utils/richText/schema";
 import { handleError } from "@/utils/errors";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { deserialize } from "@/utils/richText/deserialize";
 import { render } from "@/jsx/dom";
@@ -17,7 +17,7 @@ import type TableView from "@/elements/table/TableView";
 import type { Format } from "@/utils/richText/format";
 import type { Command } from "prosemirror-state";
 import type Editor from "@/editor/Editor";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 
 export interface TableTileProps extends ClientTableTile {
   editor: Editor;

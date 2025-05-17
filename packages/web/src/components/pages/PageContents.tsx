@@ -1,7 +1,7 @@
 import Section from "@/components/layouts/section/Section";
 import Placeholder from "@/components/placeholder/Placeholder";
 import type { Layout } from "@/types/layout";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 
 interface PageContentsProps {

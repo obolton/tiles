@@ -3,7 +3,7 @@ import ModalBody from "../ModalBody";
 import ModalFooter from "../ModalFooter";
 import Placeholder from "@/components/placeholder/Placeholder";
 import styles from "./UploadImage.module.css";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import type FilePicker from "@/elements/filePicker/FilePicker";
 

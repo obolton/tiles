@@ -2,7 +2,7 @@ import client from "@/api/client";
 import DeletedPage from "./DeletedPage";
 import Search from "@/components/search/Search";
 import { handleError } from "@/utils/errors";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import { showToast } from "@/utils/toasts";
 import styles from "./DeletedPagesGrid.module.css";
 import type { ClientPageLink } from "@/types/tiles";

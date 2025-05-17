@@ -5,7 +5,7 @@ import {
 import client from "@/api/client";
 import { getCookie } from "./cookies";
 import { clear, setPersistent, removePersistent, getPersistent } from "./state";
-import { Store } from "./stores";
+import { Store } from "./reactivity";
 
 export interface User {
   id: string;

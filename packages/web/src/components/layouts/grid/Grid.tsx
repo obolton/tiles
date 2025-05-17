@@ -2,7 +2,7 @@ import GridItem from "@/components/grid/GridItem";
 import styles from "./Grid.module.css";
 import type { Tile } from "@/types/layout";
 import type { JSX } from "@/jsx/jsx";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import LayoutEditor from "@/editor/LayoutEditor";
 

@@ -7,7 +7,7 @@ import type { Section } from "@/types/layout";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { layoutTransition } from "@/utils/animation/layout";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 
 function GridPlaceholder() {

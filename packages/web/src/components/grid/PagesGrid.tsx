@@ -2,7 +2,7 @@ import PagesGridItem from "./PagesGridItem";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import Search from "@/components/search/Search";
 import { handleError } from "@/utils/errors";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import type { ClientPageLink } from "@/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 

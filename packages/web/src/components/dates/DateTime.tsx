@@ -1,7 +1,7 @@
 import styles from "./DateTime.module.css";
 import type { JSX } from "@/jsx/jsx";
-import type { StoreInterface } from "@/utils/stores";
-import { DerivedStore } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
+import { DerivedStore } from "@/utils/reactivity";
 
 export interface DateTimeProps
   extends Omit<JSX.Attributes<HTMLTimeElement>, "dateTime" | "className"> {

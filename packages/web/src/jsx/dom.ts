@@ -1,6 +1,6 @@
-import { isStore } from "@/utils/stores";
+import { isStore } from "@/utils/reactivity";
 import { serializeStyles } from "@/utils/css";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 import type { JSX } from "./jsx";
 
 const XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";

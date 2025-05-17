@@ -3,7 +3,7 @@ import type {
   ClientCollection,
   ClientCollectionTile,
 } from "@/types/tiles";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 
 export type LeafTile = Exclude<ClientTile, ClientCollectionTile>;
 

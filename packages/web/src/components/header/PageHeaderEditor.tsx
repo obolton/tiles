@@ -3,7 +3,7 @@ import { keymap } from "prosemirror-keymap";
 import { baseKeymap } from "prosemirror-commands";
 import { EditorState } from "prosemirror-state";
 import { headerSchema } from "@/utils/richText/schema";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 interface PageHeaderEditorProps

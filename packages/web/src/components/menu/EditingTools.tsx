@@ -6,7 +6,7 @@ import TrashIcon from "@/icons/trash.svg?jsx";
 import type Editor from "@/editor/Editor";
 import { redirectWithToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 
 interface EditingToolsProps {
   editor: Editor;

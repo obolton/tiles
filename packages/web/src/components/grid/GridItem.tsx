@@ -11,8 +11,8 @@ import TableTile from "@/components/tiles/TableTile";
 import type { Tile } from "@/types/layout";
 import type { DragDropEvent } from "@/utils/drag";
 import { handleError } from "@/utils/errors";
-import { Store, DerivedStore } from "@/utils/stores";
-import type { StoreInterface } from "@/utils/stores";
+import { Store, DerivedStore } from "@/utils/reactivity";
+import type { StoreInterface } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
 

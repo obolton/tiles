@@ -7,10 +7,10 @@ import TextEditor, {
 } from "@/components/inputs/RichTextEditor/TextEditor";
 import { setSearchParams } from "@/utils/urls";
 import { serialize } from "@/utils/richText/serialize";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import type { ClientImageTile } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 
 interface ImageTileProps extends ClientImageTile {
   editor: Editor;

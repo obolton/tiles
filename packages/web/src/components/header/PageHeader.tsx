@@ -11,7 +11,7 @@ import { uploadMedia, preloadImage } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type Editor from "@/editor/Editor";
-import type { Store } from "@/utils/stores";
+import type { Store } from "@/utils/reactivity";
 
 interface PageHeaderProps {
   editor: Editor;

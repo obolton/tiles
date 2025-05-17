@@ -3,7 +3,7 @@ import ProfilePageHeader from "@/components/header/ProfilePageHeader";
 import PageContents from "@/components/pages/PageContents";
 import ModalLauncher from "@/components/modals/ModalLauncher";
 import Editor from "@/editor/Editor";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {

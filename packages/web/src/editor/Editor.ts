@@ -2,7 +2,7 @@ import client from "@/api/client";
 import { showModal } from "@/utils/modals";
 import { preloadImage, uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { Store, DerivedStore } from "@/utils/stores";
+import { Store, DerivedStore } from "@/utils/reactivity";
 import { scrollIntoView } from "@/utils/scroll";
 import { isEditMode } from "@/utils/edit";
 import type { FontId } from "@/config/fonts";

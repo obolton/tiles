@@ -10,7 +10,7 @@ import { showToast } from "@/utils/toasts";
 import type { InviteModalResult } from "@/components/modals/invite/InviteModal";
 import type { PageInvite, User } from "@/types/collaboration";
 import type Editor from "@/editor/Editor";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 
 registerModal("INVITE", () => import("@/components/modals/invite/InviteModal"));
 

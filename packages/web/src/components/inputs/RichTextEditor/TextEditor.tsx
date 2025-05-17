@@ -7,12 +7,12 @@ import { schema } from "@/utils/richText/schema";
 import { getPlugins } from "@/utils/richText/plugins";
 import { handleError } from "@/utils/errors";
 import styles from "./TextEditor.module.css";
-import { Store } from "@/utils/stores";
+import { Store } from "@/utils/reactivity";
 import type { Format } from "@/utils/richText/format";
 import type { RichText } from "@/utils/richText/types";
 import type { Command } from "prosemirror-state";
 import type { JSX } from "@/jsx/jsx";
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 
 export type { EditorState };
 

@@ -1,4 +1,4 @@
-import type { StoreInterface } from "@/utils/stores";
+import type { StoreInterface } from "@/utils/reactivity";
 
 export type WithStores<T> = {
   [K in keyof T]: T[K] | StoreInterface<T[K]>;

@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
-import { Store, DerivedStore, isStore } from "../stores";
+import { Store, DerivedStore, isStore } from "../reactivity";
 
 describe("Store", () => {
   describe("constructor", () => {

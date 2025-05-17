@@ -1,7 +1,7 @@
 import { classNames } from "@/utils/css";
 import styles from "./MovableImage.module.css";
 import type { JSX } from "@/jsx/jsx";
-import type { Store } from "@/utils/stores";
+import type { Store } from "@/utils/reactivity";
 
 type Origin = { x: number; y: number };
 
