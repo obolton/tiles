@@ -75,6 +75,10 @@ export class ReactiveValue<Value> extends BaseReactive<Value> {
   }
 }
 
+export function value<Value>(initialValue: Value) {
+  return new ReactiveValue(initialValue);
+}
+
 type Transform<Input extends Reactive[], Value> = (
   ...values: ReactiveTypes<Input>
 ) => Value;
