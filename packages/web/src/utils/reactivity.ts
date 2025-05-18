@@ -87,6 +87,7 @@ export class Computed<
   private readonly transform: Transform<Input, Value>;
   private unsubscribeCallbacks?: UnsubscribeCallback[];
 
+  private inputValues?: ReactiveTypes<Input>; // Used for lazy evaluation when disconnected
   private cachedValue?: Value;
   private stale: boolean;
 
@@ -103,6 +104,7 @@ export class Computed<
       this.unsubscribeCallbacks = this.input.map((reactive) =>
         reactive.subscribe(() => this.markAsStale()),
       );
+      this.inputValues = undefined;
     }
     return result;
   }
@@ -121,7 +123,19 @@ export class Computed<
   }
 
   get value() {
-    if (this.stale) {
+    if (!this.unsubscribeCallbacks) {
+      const values = this.input.map(
+        (input) => input.value,
+      ) as ReactiveTypes<Input>;
+      const previousValues = this.inputValues;
+      const stale = previousValues
+        ? previousValues.some((value, i) => values[i] !== value)
+        : true;
+      if (stale) {
+        this.inputValues = values;
+        this.cachedValue = this.transform(...values);
+      }
+    } else if (this.stale) {
       const values = this.input.map(
         (input) => input.value,
       ) as ReactiveTypes<Input>;
