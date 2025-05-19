@@ -156,6 +156,7 @@ export class Computed<
       if (stale) {
         this.inputValues = values;
         this.cachedValue = this.transform(...values);
+        this.stale = false;
       }
     } else if (this.stale) {
       const values = this.input.map(
