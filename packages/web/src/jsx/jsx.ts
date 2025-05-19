@@ -56,7 +56,7 @@ export namespace JSX {
     ref?: Ref<T>;
     classList?:
       | (string | null | undefined | Reactive<string | null | undefined>)[]
-      | { [k: string]: boolean | Reactive<boolean> };
+      | { [k: string]: boolean | Reactive<boolean> | null | undefined };
     children?: Node;
     [k: DataAttribute]: string | null | undefined;
   };
