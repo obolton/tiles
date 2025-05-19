@@ -9,6 +9,9 @@ table-of-contents {
   border: none;
   margin: 16px 0;
   padding: 0;
+  font-family: var(--ui-font);
+  font-size: 1rem;
+  color: var(--ui-color);
   background: var(--ui-background-color);
   border-radius: 16px;
   box-shadow:
@@ -42,8 +45,6 @@ table-of-contents > menu {
   border-radius: inherit;
 
   & > li {
-    color: var(--ui-color);
-    font-size: 1rem;
     outline: 0 solid transparent;
     outline-offset: -3px;
     transition:
