@@ -10,7 +10,7 @@ import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
 import type { MapProperties } from "@/types/tiles";
 
-interface MapTileProps extends MapProperties {
+export interface MapTileProps extends MapProperties {
   editor: Editor;
   hasFocus: Reactive<boolean>;
 }
@@ -32,32 +32,33 @@ export default function MapTile({
     showModal<PlaceModalResult>("MAP", {
       boundingBox: mapView?.getBoundingBox(),
       async onConfirm({ place }) {
-        await editor.addPlace({ id, place });
+        const result = await editor.addPlace({ id, place });
+        places.value = result.places;
       },
     });
 
-  // TODO: This doesn't work properly when wrapped in useCallback
   const deleteMarker = async ({ markerId }: MapEvent) => {
     if (markerId) {
-      await editor.removePlace({
+      const result = await editor.removePlace({
         id,
         placeId: markerId,
       });
+      places.value = result.places;
     }
   };
 
-  // TODO: This doesn't work properly when wrapped in useCallback
   const handleUpdatePlace = async (event: FocusEvent) => {
     const marker = event.target as MapMarker;
     const markerId = marker.id;
     const value = marker.value ?? "";
     // TODO: Only update if the value has changed
     if (markerId) {
-      await editor.updatePlace({
+      const result = await editor.updatePlace({
         id,
         placeId: markerId,
         name: value,
       });
+      places.value = result.places;
     }
   };
 

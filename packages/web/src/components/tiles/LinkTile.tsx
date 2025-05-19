@@ -31,7 +31,12 @@ export default function LinkTile({
       showPages: false,
       async onConfirm(result) {
         if (result && "url" in result && result.url) {
-          await editor.updateLink({ id, url: result.url });
+          const link = await editor.updateLink({ id, url: result.url });
+          url.value = link.url;
+          title.value = link.title;
+          description.value = link.description;
+          siteName.value = link.siteName;
+          imageUrl.value = link.imageUrl;
         }
       },
     });

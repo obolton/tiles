@@ -308,12 +308,10 @@ export default class Editor {
   }
 
   async updateText(data: OmitPageId<AppRouterInputs["text"]["update"]>) {
-    const item = await client.text.update.mutate({
+    return await client.text.update.mutate({
       pageId: this.pageId,
       ...data,
     });
-    this.updateTileData(item);
-    return item;
   }
 
   // Images
@@ -329,12 +327,10 @@ export default class Editor {
   }
 
   async updateImage(data: OmitPageId<AppRouterInputs["images"]["update"]>) {
-    const item = await client.images.update.mutate({
+    return await client.images.update.mutate({
       pageId: this.pageId,
       ...data,
     });
-    this.updateTileData(item);
-    return item;
   }
 
   // Links
@@ -364,12 +360,10 @@ export default class Editor {
   async updateLink(
     data: OmitPageId<AppRouterInputs["externalLinks"]["update"]>,
   ) {
-    const item = await client.externalLinks.update.mutate({
+    return await client.externalLinks.update.mutate({
       pageId: this.pageId,
       ...data,
     });
-    this.updateTileData(item);
-    return item;
   }
 
   // Maps
@@ -384,30 +378,24 @@ export default class Editor {
   }
 
   async addPlace(data: OmitPageId<AppRouterInputs["maps"]["addPlace"]>) {
-    const result = await client.maps.addPlace.mutate({
+    return await client.maps.addPlace.mutate({
       pageId: this.pageId,
       ...data,
     });
-    this.updateTileData(result);
-    return result;
   }
 
   async updatePlace(data: OmitPageId<AppRouterInputs["maps"]["updatePlace"]>) {
-    const result = await client.maps.updatePlace.mutate({
+    return await client.maps.updatePlace.mutate({
       pageId: this.pageId,
       ...data,
     });
-    this.updateTileData(result);
-    return result;
   }
 
   async removePlace(data: OmitPageId<AppRouterInputs["maps"]["removePlace"]>) {
-    const result = await client.maps.removePlace.mutate({
+    return await client.maps.removePlace.mutate({
       pageId: this.pageId,
       ...data,
     });
-    this.updateTileData(result);
-    return result;
   }
 
   // Tables
@@ -457,12 +445,10 @@ export default class Editor {
   // Videos
 
   async updateVideo(data: OmitPageId<AppRouterInputs["videos"]["update"]>) {
-    const item = await client.videos.update.mutate({
+    return await client.videos.update.mutate({
       pageId: this.pageId,
       ...data,
     });
-    this.updateTileData(item);
-    return item;
   }
 
   // Collections
@@ -480,17 +466,6 @@ export default class Editor {
         this.updateTileData({ placementId, parentCollectionId: item.id });
       }
     }
-    return item;
-  }
-
-  async updateCollection(
-    data: OmitPageId<AppRouterInputs["collections"]["update"]>,
-  ) {
-    const item = await client.collections.update.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.updateTileData(item);
     return item;
   }
 

@@ -36,6 +36,7 @@ export default function VideoTile({
   const embedUrl = getEmbedUrl(videoType.value, videoId.value);
 
   const onUpdateCaption = async (value: string) => {
+    title.value = value;
     await editor.updateVideo({
       id,
       title: value,

@@ -32,6 +32,7 @@ export default function TextTile({
   onDelete,
 }: TextTileProps) {
   const { isEditable } = editor;
+
   const color = new Computed([lightness, chroma, hue], () =>
     typeof lightness.value === "number" &&
     typeof chroma.value === "number" &&
@@ -45,10 +46,12 @@ export default function TextTile({
   );
 
   const onBlur = async (state: EditorState) => {
-    const content = serialize(state);
+    const newContent = serialize(state);
+    content.value = newContent;
+
     await editor.updateText({
       id,
-      content,
+      content: newContent,
     });
   };
 
@@ -136,7 +139,9 @@ export default function TextTile({
             />
           ) : (
             <div classList={["rich-text", styles.text]}>
-              <RichText content={content.value} />
+              {content.derive((value) => (
+                <RichText content={value} />
+              ))}
             </div>
           ),
         )}

@@ -69,10 +69,11 @@ export default function ImageTile({
   const { isEditable } = editor;
 
   const onBlur = async (state: EditorState) => {
-    const updatedText = serialize(state);
+    const newText = serialize(state);
+    text.value = newText;
     await editor.updateImage({
       id,
-      text: updatedText,
+      text: newText,
     });
   };
 
@@ -140,11 +141,15 @@ export default function ImageTile({
               onBlur={onBlur}
               showToolbar={hasFocus}
             />
-          ) : text.value ? (
-            <div classList={["rich-text", styles.text]}>
-              <RichText content={text.value} />
-            </div>
-          ) : null,
+          ) : (
+            text.derive((value) =>
+              value ? (
+                <div classList={["rich-text", styles.text]}>
+                  <RichText content={value} />
+                </div>
+              ) : null,
+            )
+          ),
         )}
       </figure>
     </Tile>
