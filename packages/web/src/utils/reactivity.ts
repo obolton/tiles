@@ -179,3 +179,15 @@ export function isReactive<T>(
 ): value is Reactive<T> {
   return value instanceof BaseReactive;
 }
+
+export type ReactiveRecord<T> = {
+  [K in keyof T]: Reactive<T[K]>;
+};
+
+export function record<T extends Record<string, unknown>>(initialValues: T) {
+  const properties: Record<string, Reactive<unknown>> = {};
+  for (const [k, v] of Object.entries(initialValues)) {
+    properties[k] = value(v);
+  }
+  return properties as ReactiveRecord<T>;
+}
