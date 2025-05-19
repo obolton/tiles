@@ -115,11 +115,10 @@ export default function TextTile({
                   <li role="presentation">
                     <ColorPicker
                       role="menuitem"
-                      value={color.value}
+                      value={color}
                       onChange={onChangeColor}
                       aria-label="Color"
                       data-tooltip="Select color"
-                      direction="up"
                       showClear
                     />
                   </li>

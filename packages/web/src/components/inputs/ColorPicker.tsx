@@ -4,12 +4,12 @@ import { classNames } from "@/utils/css";
 import { getColorName, isSameColor, type Color } from "@/utils/color";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
+import type { Reactive } from "@/utils/reactivity";
 
 export interface ColorPickerProps
   extends Omit<JSX.Attributes<HTMLElement>, "value" | "onChange"> {
   className?: string;
-  direction?: "left" | "right" | "up";
-  value?: Color | null;
+  value?: Reactive<Color | null>;
   onChange: (value: Color | null) => void;
   showClear?: boolean;
 }
@@ -42,9 +42,18 @@ for (let l = LIGHTNESS_LEVELS - 1; l >= 0; l--) {
   });
 }
 
+function getColorIndex(color: Color | null) {
+  if (!color) {
+    return null;
+  }
+  const index = COLORS.findIndex((compareColor) =>
+    isSameColor(compareColor, color),
+  );
+  return index >= 0 ? index.toString() : null;
+}
+
 export default function ColorPicker({
   className,
-  direction,
   value,
   onChange,
   showClear = false,
@@ -57,7 +66,7 @@ export default function ColorPicker({
       onChange(null);
       return;
     }
-    const index = parseInt(element.value, 10);
+    const index = parseInt(value, 10);
     const color = COLORS[index] ?? null;
     onChange(color);
   }
@@ -67,13 +76,7 @@ export default function ColorPicker({
       {...props}
       className={classNames(styles["color-picker"], className)}
       aria-orientation="horizontal"
-      direction={direction}
-      rows={LIGHTNESS_LEVELS}
-      value={
-        value
-          ? COLORS.findIndex((color) => isSameColor(color, value))?.toString()
-          : undefined
-      }
+      value={value?.derive(getColorIndex)}
       onchange={setColor}
     >
       {COLORS.map((color, i) => (
@@ -82,7 +85,7 @@ export default function ColorPicker({
           style={{
             "--lightness": `${color.l.toFixed(2)}`,
             "--chroma": color.c.toFixed(2),
-            "--hue": `${color.h.toFixed(5)}deg`,
+            "--hue": `${color.h.toFixed(2)}deg`,
           }}
           value={i.toString()}
         ></swatch-item>
