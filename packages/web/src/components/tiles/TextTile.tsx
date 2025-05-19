@@ -14,7 +14,7 @@ import type Editor from "@/editor/Editor";
 import type { Color } from "@/utils/color";
 import type { TextProperties } from "@/types/tiles";
 
-interface TextTileProps extends TextProperties {
+export interface TextTileProps extends TextProperties {
   editor: Editor;
   hasFocus: Reactive<boolean>;
   onDelete?: () => void;
@@ -71,7 +71,7 @@ export default function TextTile({
     expand.value = !expand.value;
     await editor.updateText({
       id,
-      expand: !expand,
+      expand: expand.value,
     });
   };
 
@@ -97,7 +97,9 @@ export default function TextTile({
     >
       <pop-out
         className={styles["pop-out"]}
-        expandable={!expand ? "expandable" : undefined}
+        expandable={expand.derive((value) =>
+          value ? undefined : "expandable",
+        )}
       >
         {isEditable.derive((value) =>
           value ? (
@@ -128,7 +130,9 @@ export default function TextTile({
                       aria-label="Fit contents"
                       data-tooltip="Fit contents"
                       type="button"
-                      aria-pressed={expand ? "true" : "false"}
+                      aria-pressed={expand.derive((value) =>
+                        value ? "true" : "false",
+                      )}
                       onclick={onToggleExpand}
                     >
                       <ExpandIcon aria-hidden="true" />

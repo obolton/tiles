@@ -27,7 +27,7 @@ interface GridItemProps {
   minRows?: number;
   columns: Reactive<number>;
   minColumns?: number;
-  grow?: boolean;
+  grow?: Reactive<boolean>;
   deletable?: boolean | Reactive<boolean>;
   draggable?: boolean | Reactive<boolean>;
   resizable?: boolean | Reactive<boolean>;
@@ -97,7 +97,7 @@ export default function GridItem({
   minRows = 1,
   columns,
   minColumns = 1,
-  grow = false,
+  grow,
   deletable = false,
   draggable = false,
   resizable = false,

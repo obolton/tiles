@@ -76,7 +76,7 @@ export default function Grid({
               draggable={isEditable}
               resizable={isEditable}
               allowDrop
-              grow={tile.type === "TEXT" && tile.expand.value}
+              grow={tile.type === "TEXT" ? tile.expand : undefined}
               tile={tile}
               tabIndex={isEditable.derive((editable) =>
                 editable ? 0 : undefined,

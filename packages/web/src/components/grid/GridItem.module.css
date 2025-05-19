@@ -33,6 +33,7 @@
 
   &.grow {
     height: fit-content;
+    min-height: unset;
 
     &::part(outline) {
       min-height: 100%;
