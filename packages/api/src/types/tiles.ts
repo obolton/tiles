@@ -9,7 +9,6 @@ import type {
   Collection,
   Tile,
   TileType,
-  Theme,
   Font,
   Table,
   TableRow,
