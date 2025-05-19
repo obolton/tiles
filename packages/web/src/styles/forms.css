@@ -67,14 +67,15 @@ swatch-item {
   -webkit-tap-highlight-color: transparent;
   scale: 1;
   box-shadow:
-    0 0 0 1px rgba(0 0 0 / 10%),
+    0 0 0 1px rgb(0 0 0 / 10%),
     0 2px 4px -2px rgb(0 0 0 / 40%);
   outline: 2px solid transparent;
   transition:
     scale var(--animation-duration-short) var(--easing),
     outline-color var(--animation-duration-short) var(--easing);
 
-  &:hover {
+  &:hover,
+  &[selected] {
     scale: 1.1;
     outline: 2px solid var(--focus-ring-color);
   }

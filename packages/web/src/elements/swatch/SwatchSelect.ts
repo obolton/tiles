@@ -1,19 +1,24 @@
 import css from "./SwatchSelect.css?inline";
 import closeIcon from "@/icons/close.svg";
 import PopoverMenu from "@/elements/menu/PopoverMenu";
+import { escapeUTF8 } from "entities";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 export interface SwatchSelectAttributes {
-  value?: string;
+  value?: string | null;
   orientation?: "horizontal" | "vertical";
   onchange?: (event: globalThis.Event) => void;
   ontoggle?: (event: globalThis.ToggleEvent) => void;
 }
 
 export default class SwatchSelect extends HTMLElement {
-  value: string = "";
+  static readonly observedAttributes: (keyof SwatchSelectAttributes)[] = [
+    "value",
+  ] as const;
+
+  value: string | null = "";
 
   private open = false;
   private button: HTMLButtonElement;
@@ -44,6 +49,7 @@ export default class SwatchSelect extends HTMLElement {
     this.items.id = "items";
     this.items.part = "items";
     this.items.anchorElement = this.button;
+    this.items.addEventListener("beforetoggle", this, { passive: true });
     this.items.addEventListener("click", this);
 
     const slot = document.createElement("slot");
@@ -52,10 +58,36 @@ export default class SwatchSelect extends HTMLElement {
     shadow.append(this.button, this.items);
   }
 
+  attributeChangedCallback(
+    name: keyof SwatchSelectAttributes,
+    _: string,
+    value: string | null,
+  ) {
+    switch (name) {
+      case "value":
+        this.value = value;
+        break;
+    }
+  }
+
   handleEvent(event: Event) {
     switch (event.type) {
+      case "beforetoggle":
+        return this.handleBeforeToggle(event as ToggleEvent);
       case "click":
         return this.handleClick(event as MouseEvent);
+    }
+  }
+
+  handleBeforeToggle(event: ToggleEvent) {
+    if (event.newState === "open") {
+      if (this.value) {
+        this.querySelector(
+          `swatch-item[value="${escapeUTF8(this.value)}"]`,
+        )?.setAttribute("selected", "");
+      }
+    } else {
+      this.querySelector("swatch-item[selected]")?.removeAttribute("selected");
     }
   }
 
