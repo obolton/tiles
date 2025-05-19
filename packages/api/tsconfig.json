@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2022",
-    "lib": ["es2023"],
+    "target": "ESNext",
+    "lib": ["ESNext"],
     "outDir": "dist",
     "rootDir": "src",
     "module": "nodenext",
