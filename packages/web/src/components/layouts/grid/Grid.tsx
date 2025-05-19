@@ -1,6 +1,6 @@
 import GridItem from "@/components/grid/GridItem";
 import styles from "./Grid.module.css";
-import type { Tile } from "@/types/layout";
+import type { Tile } from "@/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
@@ -76,7 +76,7 @@ export default function Grid({
               draggable={isEditable}
               resizable={isEditable}
               allowDrop
-              grow={tile.type === "TEXT" && tile.expand}
+              grow={tile.type === "TEXT" && tile.expand.value}
               tile={tile}
               tabIndex={isEditable.derive((editable) =>
                 editable ? 0 : undefined,

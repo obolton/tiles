@@ -2,13 +2,18 @@ import client from "@/api/client";
 import { showModal } from "@/utils/modals";
 import { preloadImage, uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { ReactiveValue, Computed } from "@/utils/reactivity";
+import { ReactiveValue, Computed, record } from "@/utils/reactivity";
 import { scrollIntoView } from "@/utils/scroll";
 import { isEditMode } from "@/utils/edit";
 import type { FontId } from "@/config/fonts";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
-import type { ClientTile, ClientCollection } from "@/types/tiles";
-import type { Layout, LeafTile } from "@/types/layout";
+import type {
+  ClientTile,
+  ClientCollection,
+  Layout,
+  LeafTile,
+  Tile,
+} from "@/types/tiles";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { PageInvite, PageAccess, User } from "@/types/collaboration";
 import type { DragDropEvent } from "@/utils/drag";
@@ -26,20 +31,22 @@ function immediateTransition(commit: () => void) {
 
 const IS_SERVER = import.meta.env.SSR;
 
-function getTile(tile: ClientTile) {
+export function getTile(tile: ClientTile): Tile {
+  const { id, placementId, type, ...properties } = tile;
   return {
-    ...tile,
-    columns: new ReactiveValue(tile.columns),
-    rows: new ReactiveValue(tile.rows),
-  };
+    id,
+    placementId,
+    type,
+    ...record(properties),
+  } as Tile;
 }
 
-function getLayout(sections: ClientCollection[], tiles: ClientTile[]): Layout {
+function getLayout(sections: ClientCollection[], tiles: Tile[]): Layout {
   return sections.map((section) => ({
     ...section,
     tiles: new ReactiveValue(
       tiles
-        .filter((tile) => tile.parentCollectionId === section.id)
+        .filter((tile) => tile.parentCollectionId.value === section.id)
         .map((tile) =>
           tile.type === "COLLECTION"
             ? {
@@ -48,7 +55,7 @@ function getLayout(sections: ClientCollection[], tiles: ClientTile[]): Layout {
                   tiles.filter(
                     (t): t is LeafTile =>
                       t.type !== "COLLECTION" &&
-                      t.parentCollectionId === tile.id,
+                      t.parentCollectionId.value === tile.id,
                   ),
                 ),
               }
@@ -66,7 +73,7 @@ export default class Editor {
   readonly coverImageUrl: ReactiveValue<string | null>;
   readonly isPublished: ReactiveValue<boolean>;
   readonly sections: ReactiveValue<ClientCollection[]>;
-  readonly tiles: ReactiveValue<ClientTile[]>;
+  readonly tiles: ReactiveValue<Tile[]>;
   readonly layout: Computed<[typeof this.sections, typeof this.tiles], Layout>;
   readonly access: ReactiveValue<PageAccess[]>;
   readonly invites: ReactiveValue<PageInvite[]>;
@@ -82,7 +89,7 @@ export default class Editor {
     this.coverImageUrl = new ReactiveValue(page.coverImageUrl);
     this.isPublished = new ReactiveValue(page.published);
     this.sections = new ReactiveValue(page.collections);
-    this.tiles = new ReactiveValue(page.tiles.map((tile) => getTile(tile)));
+    this.tiles = new ReactiveValue(page.tiles.map(getTile));
     this.layout = new Computed([this.sections, this.tiles], getLayout);
     this.access = new ReactiveValue(page.access);
     this.invites = new ReactiveValue(page.invites);
@@ -101,7 +108,7 @@ export default class Editor {
 
     addEventListener(
       "dnd-dragstart",
-      (event: DragDropEvent<ClientTile>) =>
+      (event: DragDropEvent<Tile>) =>
         (this.dragId.value = event.state.data?.placementId ?? null),
       { passive: true },
     );

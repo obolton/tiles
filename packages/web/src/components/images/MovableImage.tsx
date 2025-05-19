@@ -1,13 +1,13 @@
 import { classNames } from "@/utils/css";
 import styles from "./MovableImage.module.css";
 import type { JSX } from "@/jsx/jsx";
-import type { ReactiveValue } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 
 type Origin = { x: number; y: number };
 
 interface MovableImageProps extends JSX.Attributes<HTMLImageElement> {
-  movable?: ReactiveValue<boolean>;
-  origin: ReactiveValue<Origin>;
+  movable?: Reactive<boolean>;
+  origin: Reactive<Origin>;
   onMove: (origin: Origin) => void;
   onRelease: (origin: Origin) => void;
 }

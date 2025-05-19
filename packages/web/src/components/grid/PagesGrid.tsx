@@ -3,11 +3,11 @@ import PageLinkTile from "@/components/tiles/PageLinkTile";
 import Search from "@/components/search/Search";
 import { handleError } from "@/utils/errors";
 import { ReactiveValue } from "@/utils/reactivity";
-import type { ClientPageLink } from "@/types/tiles";
+import type { PageLinkProperties } from "@/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 
 interface PagesSearchResults {
-  pages: NonNullable<ClientPageLink["linkedPage"]>[];
+  pages: NonNullable<PageLinkProperties["linkedPage"]>[];
   hasMore: boolean;
 }
 

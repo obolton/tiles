@@ -3,7 +3,7 @@ import Placeholder from "@/components/placeholder/Placeholder";
 import { handleError } from "@/utils/errors";
 import styles from "./Section.module.css";
 import { classNames } from "@/utils/css";
-import type { Section } from "@/types/layout";
+import type { Section } from "@/types/tiles";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { layoutTransition } from "@/utils/animation/layout";

@@ -3,7 +3,7 @@ import GridItem from "@/components/grid/GridItem";
 import { ReactiveValue, Computed } from "@/utils/reactivity";
 import LayoutEditor from "@/editor/LayoutEditor";
 import type { JSX } from "@/jsx/jsx";
-import type { Tile } from "@/types/layout";
+import type { Tile } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
 
 interface StackProps {
