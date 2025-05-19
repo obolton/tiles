@@ -1,11 +1,15 @@
 import Caption from "./Caption";
-import Tile, { type TileProps } from "./Tile";
+import Tile from "./Tile";
 import VideoIcon from "@/icons/video.svg?jsx";
 import styles from "./VideoTile.module.css";
-import type { ClientVideo } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
+import type { VideoProperties } from "@/types/tiles";
+import type { ReactiveType } from "@/utils/reactivity";
 
-function getEmbedUrl(videoType: ClientVideo["videoType"], videoId: string) {
+function getEmbedUrl(
+  videoType: ReactiveType<VideoProperties["videoType"]>,
+  videoId: string,
+) {
   switch (videoType) {
     case "YOUTUBE":
       return `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`;
@@ -15,7 +19,7 @@ function getEmbedUrl(videoType: ClientVideo["videoType"], videoId: string) {
   }
 }
 
-interface VideoTileProps extends TileProps, ClientVideo {
+interface VideoTileProps extends VideoProperties {
   editor: Editor;
 }
 
@@ -29,7 +33,7 @@ export default function VideoTile({
   ...props
 }: VideoTileProps) {
   const { isEditable } = editor;
-  const embedUrl = getEmbedUrl(videoType, videoId);
+  const embedUrl = getEmbedUrl(videoType.value, videoId.value);
 
   const onUpdateCaption = async (value: string) => {
     await editor.updateVideo({
@@ -45,12 +49,12 @@ export default function VideoTile({
           id={`${id}-video`}
           className={styles.video}
           src={embedUrl}
-          imagesrc={imageUrl ?? undefined}
+          imagesrc={imageUrl.value ?? undefined}
           data-show-in-lightbox="true"
         />
         <Caption
           isEditable={isEditable}
-          value={title}
+          value={title.value}
           onChange={onUpdateCaption}
           placeholder="Add a caption"
         />

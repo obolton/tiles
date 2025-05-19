@@ -7,12 +7,12 @@ import TextEditor, {
 } from "@/components/inputs/RichTextEditor/TextEditor";
 import { setSearchParams } from "@/utils/urls";
 import { serialize } from "@/utils/richText/serialize";
-import { ReactiveValue } from "@/utils/reactivity";
-import type { ClientImageTile } from "@/types/tiles";
+import { Computed } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
+import type { ImageProperties } from "@/types/tiles";
 
-interface ImageTileProps extends ClientImageTile {
+interface ImageTileProps extends ImageProperties {
   editor: Editor;
   hasFocus: Reactive<boolean>;
   onDelete?: () => void;
@@ -67,7 +67,6 @@ export default function ImageTile({
   onDelete,
 }: ImageTileProps) {
   const { isEditable } = editor;
-  const origin = new ReactiveValue({ x: originX, y: originY });
 
   const onBlur = async (state: EditorState) => {
     const updatedText = serialize(state);
@@ -99,12 +98,14 @@ export default function ImageTile({
     }
   };
 
-  const srcSet = getImageSrcSet(imageUrl, VARIANTS);
+  const srcSet = getImageSrcSet(imageUrl.value, VARIANTS);
 
-  const sizes = `(max-width: 800px) ${((columns / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(columns)}px`;
+  const sizes = `(max-width: 800px) ${((columns.value / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(columns.value)}px`;
 
-  const style = origin.derive((value) => ({
-    objectPosition: `${value.x * 100}% ${value.y * 100}%`,
+  const origin = new Computed([originX, originY], (x, y) => ({ x, y }));
+
+  const style = new Computed([originX, originY], (x, y) => ({
+    objectPosition: `${x * 100}% ${y * 100}%`,
   }));
 
   return (
@@ -125,7 +126,8 @@ export default function ImageTile({
           draggable={!isEditable}
           origin={origin}
           onMove={(newOrigin) => {
-            origin.value = newOrigin;
+            originX.value = newOrigin.x;
+            originY.value = newOrigin.y;
           }}
           onRelease={onUpdateOrigin}
         />
@@ -133,14 +135,14 @@ export default function ImageTile({
           editable ? (
             <TextEditor
               classList={[styles.text]}
-              initialValue={text}
+              initialValue={text.value}
               onkeydown={onDelete ? onKeyDown : undefined}
               onBlur={onBlur}
               showToolbar={hasFocus}
             />
-          ) : text ? (
+          ) : text.value ? (
             <div classList={["rich-text", styles.text]}>
-              <RichText content={text} />
+              <RichText content={text.value} />
             </div>
           ) : null,
         )}

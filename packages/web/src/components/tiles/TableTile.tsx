@@ -12,14 +12,14 @@ import { ReactiveValue } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { deserialize } from "@/utils/richText/deserialize";
 import { render } from "@/jsx/dom";
-import type { ClientTableTile } from "@/types/tiles";
 import type TableView from "@/elements/table/TableView";
 import type { Format } from "@/utils/richText/format";
 import type { Command } from "prosemirror-state";
 import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
+import type { TableProperties } from "@/types/tiles";
 
-export interface TableTileProps extends ClientTableTile {
+export interface TableTileProps extends TableProperties {
   editor: Editor;
   hasFocus: Reactive<boolean>;
   signal?: AbortSignal;
@@ -55,7 +55,7 @@ export default function TableTile({
   }
 
   const updateCell = (row: number, column: number, cell: Element) => {
-    const value = data[row]?.data[column];
+    const value = data.value[row]?.data[column];
     if (!value) {
       return;
     }
@@ -92,7 +92,7 @@ export default function TableTile({
       const row = parseInt(target.dataset.row, 10);
       const column = parseInt(target.dataset.column, 10);
 
-      const value = data[row]?.data[column];
+      const value = data.value[row]?.data[column];
       const doc = !value
         ? createDocument("")
         : typeof value === "string"
@@ -142,7 +142,7 @@ export default function TableTile({
     const row = parseInt(target.dataset.row, 10);
     const column = parseInt(target.dataset.column, 10);
 
-    const rowData = data[row];
+    const rowData = data.value[row];
     if (!rowData) {
       return;
     }
@@ -202,9 +202,9 @@ export default function TableTile({
         onfocusin={onFocusIn}
         onfocusout={onFocusOut}
       >
-        {data.map(({ data: rowData }, row) => {
+        {data.value.map(({ data: rowData }, row) => {
           const cells = [];
-          for (let col = 0; col < numColumns; col++) {
+          for (let col = 0; col < numColumns.value; col++) {
             const value = rowData[col];
             if (!value) {
               cells.push(

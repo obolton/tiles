@@ -4,11 +4,11 @@ import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import styles from "./LinkTile.module.css";
 import type { Reactive } from "@/utils/reactivity";
-import type { ClientLink } from "@/types/tiles";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type Editor from "@/editor/Editor";
+import type { LinkProperties } from "@/types/tiles";
 
-interface LinkTileProps extends ClientLink {
+interface LinkTileProps extends LinkProperties {
   editor: Editor;
   hasFocus: Reactive<boolean>;
 }
@@ -52,7 +52,7 @@ export default function LinkTile({
   };
 
   return (
-    <Tile backgroundImageUrl={imageUrl}>
+    <Tile backgroundImageUrl={imageUrl.value}>
       <a
         className={styles.link}
         href={url}

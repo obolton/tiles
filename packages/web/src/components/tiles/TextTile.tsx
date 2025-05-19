@@ -7,14 +7,14 @@ import TextEditor, {
 } from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/inputs/ColorPicker";
 import ExpandIcon from "@/icons/expand.svg?jsx";
-import { ReactiveValue } from "@/utils/reactivity";
+import { Computed } from "@/utils/reactivity";
 import { viewTransition } from "@/utils/transitions";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
-import type { ClientTextTile } from "@/types/tiles";
 import type { Color } from "@/utils/color";
+import type { TextProperties } from "@/types/tiles";
 
-interface TextTileProps extends ClientTextTile {
+interface TextTileProps extends TextProperties {
   editor: Editor;
   hasFocus: Reactive<boolean>;
   onDelete?: () => void;
@@ -27,19 +27,22 @@ export default function TextTile({
   lightness,
   chroma,
   hue,
-  expand: initialExpand,
+  expand,
   hasFocus,
   onDelete,
 }: TextTileProps) {
   const { isEditable } = editor;
-  const color = new ReactiveValue<Color | null>(
-    typeof lightness === "number" &&
-    typeof chroma === "number" &&
-    typeof hue === "number"
-      ? { l: lightness, c: chroma, h: hue }
+  const color = new Computed([lightness, chroma, hue], () =>
+    typeof lightness.value === "number" &&
+    typeof chroma.value === "number" &&
+    typeof hue.value == "number"
+      ? {
+          l: lightness.value,
+          c: chroma.value,
+          h: hue.value,
+        }
       : null,
   );
-  const expand = new ReactiveValue(initialExpand);
 
   const onBlur = async (state: EditorState) => {
     const content = serialize(state);
@@ -51,7 +54,9 @@ export default function TextTile({
 
   const onChangeColor = async (value: Color | null) => {
     viewTransition(() => {
-      color.value = value;
+      lightness.value = value ? value.l : null;
+      chroma.value = value ? value.c : null;
+      hue.value = value ? value.h : null;
     });
     await editor.updateText({
       id,
@@ -95,7 +100,7 @@ export default function TextTile({
           value ? (
             <TextEditor
               classList={[styles.text, styles.editor]}
-              initialValue={content}
+              initialValue={content.value}
               tabIndex={-1}
               onkeydown={onDelete ? onKeyDown : undefined}
               onBlur={onBlur}
@@ -131,7 +136,7 @@ export default function TextTile({
             />
           ) : (
             <div classList={["rich-text", styles.text]}>
-              <RichText content={content} />
+              <RichText content={content.value} />
             </div>
           ),
         )}

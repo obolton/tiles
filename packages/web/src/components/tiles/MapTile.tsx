@@ -2,15 +2,15 @@ import Tile from "./Tile";
 import AddPlaceIcon from "@/icons/add-place.svg?jsx";
 import styles from "./MapTile.module.css";
 import { showModal } from "@/utils/modals";
-import type { ClientMapTile } from "@/types/tiles";
 import type MapEvent from "@/elements/maps/MapEvent";
 import type MapView from "@/elements/maps/MapView";
 import type MapMarker from "@/elements/maps/MapMarker";
 import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
+import type { MapProperties } from "@/types/tiles";
 
-interface MapTileProps extends ClientMapTile {
+interface MapTileProps extends MapProperties {
   editor: Editor;
   hasFocus: Reactive<boolean>;
 }
@@ -71,7 +71,7 @@ export default function MapTile({
           legend
           ondeletemarker={deleteMarker}
         >
-          {places.map((place) => (
+          {places.value.map((place) => (
             <>
               <map-marker
                 editable={isEditable}
@@ -89,7 +89,7 @@ export default function MapTile({
               />
               <map-legend-item
                 marker={place.id}
-                editable={isEditable && places.length > 1}
+                editable={isEditable && places.value.length > 1}
                 tabIndex={0}
               >
                 {place.name || "Unnamed point"}

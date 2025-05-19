@@ -4,10 +4,10 @@ import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import styles from "./PageLinkTile.module.css";
 import { classNames } from "@/utils/css";
 import { isDark } from "@/utils/color";
-import type { ClientPageLink } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
+import type { PageLinkProperties } from "@/types/tiles";
 
-interface PageLinkTileProps extends ClientPageLink {
+interface PageLinkTileProps extends PageLinkProperties {
   editor?: Editor;
   onClick?: (event: MouseEvent) => void;
   openInNewTab?: boolean;
@@ -19,7 +19,7 @@ export default function PageLinkTile({
   onClick,
   openInNewTab = true,
 }: PageLinkTileProps) {
-  if (!linkedPage) {
+  if (!linkedPage.value) {
     return (
       <Tile>
         <div className={styles.deleted}>This page has been deleted.</div>
@@ -41,16 +41,21 @@ export default function PageLinkTile({
     }
   }
 
-  const color = {
-    l: linkedPage.lightness,
-    c: linkedPage.chroma,
-    h: linkedPage.hue,
-  };
+  const color =
+    typeof linkedPage.value.lightness === "number" &&
+    typeof linkedPage.value.chroma === "number" &&
+    typeof linkedPage.value.hue === "number"
+      ? {
+          l: linkedPage.value.lightness,
+          c: linkedPage.value.chroma,
+          h: linkedPage.value.hue,
+        }
+      : null;
 
   return (
     <a
       className={styles.link}
-      href={`/pages/${linkedPage.id}`}
+      href={`/pages/${linkedPage.value.id}`}
       target={openInNewTab ? "_blank" : undefined}
       onclick={handleClick}
       draggable={editor?.isEditable.derive((value) =>
@@ -58,18 +63,21 @@ export default function PageLinkTile({
       )}
     >
       <PageTile
-        title={linkedPage.title}
-        subtitle={linkedPage.subtitle}
-        author={linkedPage.author}
-        hue={linkedPage.hue}
-        font={linkedPage.font}
+        title={linkedPage.value.title}
+        subtitle={linkedPage.value.subtitle}
+        author={linkedPage.value.author}
+        hue={linkedPage.value.hue}
+        font={linkedPage.value.font}
         color={color}
-        coverImageUrl={linkedPage.coverImageUrl}
+        coverImageUrl={linkedPage.value.coverImageUrl}
       />
 
       {openInNewTab ? (
         <ArrowOutwardIcon
-          className={classNames(styles.icon, isDark(color) && styles.dark)}
+          className={classNames(
+            styles.icon,
+            color && isDark(color) && styles.dark,
+          )}
           aria-hidden="true"
         />
       ) : null}

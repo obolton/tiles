@@ -11,7 +11,7 @@ export interface PageTileProps {
   subtitle?: string | null;
   hue?: number | null;
   font?: FontId | null;
-  color: Color;
+  color: Color | null;
   coverImageUrl?: string | null;
   author?: {
     name: string;
@@ -41,7 +41,7 @@ export default function PageTile({
         className={classNames(
           styles.text,
           coverImageUrl && styles["with-image"],
-          isDark(color) ? styles.dark : styles.light,
+          color && isDark(color) ? styles.dark : styles.light,
         )}
       >
         <p className={styles.title}>{title}</p>
