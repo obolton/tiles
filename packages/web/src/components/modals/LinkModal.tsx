@@ -7,7 +7,7 @@ import PageLinkTile from "@/components/tiles/PageLinkTile";
 import Search from "@/components/search/Search";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
-import { ReactiveValue } from "@/utils/reactivity";
+import { flag, value } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 import type { ModalProps } from "@/utils/modals";
 
@@ -27,9 +27,9 @@ export default function LinkModal({
   showPages = true,
   showRemove = false,
 }: LinkModalProps) {
-  const isPending = new ReactiveValue(false);
-  const pages = new ReactiveValue<Pages["pages"]>([]);
-  const hasMore = new ReactiveValue(true);
+  const isPending = flag(false);
+  const pages = value<Pages["pages"]>([]);
+  const hasMore = flag(true);
 
   const search = async (query: string, offset: number = 0) => {
     try {
@@ -53,13 +53,13 @@ export default function LinkModal({
     if (isPending.value) {
       return;
     }
-    isPending.value = true;
+    isPending.on();
     try {
       await confirm({ linkedPageId });
     } catch (error) {
       handleError(error);
     } finally {
-      isPending.value = false;
+      isPending.off();
     }
   };
 
@@ -74,13 +74,13 @@ export default function LinkModal({
       return;
     }
 
-    isPending.value = true;
+    isPending.on();
     try {
       await confirm({ url });
     } catch (error) {
       handleError(error);
     } finally {
-      isPending.value = false;
+      isPending.off();
     }
   };
 
@@ -89,14 +89,14 @@ export default function LinkModal({
       return;
     }
 
-    isPending.value = true;
+    isPending.on();
 
     try {
       await confirm({ url: null });
     } catch (error) {
       handleError(error);
     } finally {
-      isPending.value = false;
+      isPending.off();
     }
   };
 
@@ -108,7 +108,7 @@ export default function LinkModal({
         <h2>Add a link</h2>
       </ModalHeader>
 
-      <ModalBody>
+      <ModalBody className={styles.body}>
         <label>
           Link URL
           <input
@@ -137,7 +137,7 @@ export default function LinkModal({
                   <PagesGridItem>
                     <PageLinkTile
                       id={page.id}
-                      linkedPage={page}
+                      linkedPage={value(page)}
                       openInNewTab={false}
                       onClick={(event) => {
                         if (

@@ -2,8 +2,12 @@
   width: 100%;
 }
 
+.body {
+  padding: 0 24px;
+}
+
 .pages {
-  margin: 0 -24px -16px;
+  margin: 0 -24px;
   padding: 24px;
   overflow: auto;
   height: 300px;

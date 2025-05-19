@@ -1,14 +1,15 @@
 import { classNames } from "@/utils/css";
-import { ReactiveValue } from "@/utils/reactivity";
 import debounce from "@/utils/debounce";
 import styles from "./Search.module.css";
+import { value } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
+import type { Reactive } from "@/utils/reactivity";
 
 export interface SearchProps<T> {
   itemsClassName?: string;
   search: (query: string, offset: number) => void;
-  results: ReactiveValue<T[]>;
-  hasMore: ReactiveValue<boolean>;
+  results: Reactive<T[]>;
+  hasMore: Reactive<boolean>;
   placeholder?: string;
   render: (result: T) => JSX.Node;
   renderPlaceholder: (query: string) => JSX.Node;
@@ -23,7 +24,7 @@ export default function Search<T>({
   render,
   renderPlaceholder,
 }: SearchProps<T>) {
-  const query = new ReactiveValue("");
+  const query = value("");
 
   async function onLoadMore() {
     if (!hasMore.value) {
@@ -42,7 +43,7 @@ export default function Search<T>({
   }
 
   return (
-    <section className={styles.search}>
+    <section>
       <input
         id="search"
         type="search"
