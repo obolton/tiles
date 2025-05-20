@@ -40,9 +40,13 @@ export function toggleHeading(level: 1 | 2 | 3): Command {
     if (getSelectionHeadingLevel(state) === level) {
       return setBlockType(schema.nodes.paragraph, null)(state, dispatch, view);
     } else {
+      if (!view) {
+        return false;
+      }
+      liftListItem(schema.nodes.list_item)(state, dispatch, view);
       return setBlockType(schema.nodes.heading, {
         level,
-      })(state, dispatch, view);
+      })(view.state, view.dispatch, view);
     }
   };
 }
