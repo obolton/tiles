@@ -285,14 +285,14 @@ export class DragState<T> {
     const rotateAngle = 5 * Math.hypot(rotateX, rotateY);
 
     const style = this.dragElement.style;
-    style.width = `${rect.width}px`;
-    style.height = `${rect.height}px`;
+    style.width = rect.width + "px";
+    style.height = rect.height + "px";
     style.transformOrigin = `${this.originX}px ${this.originY}px`;
-    style.setProperty("--translate-x", `${clientX - this.originX}px`);
-    style.setProperty("--translate-y", `${clientY - this.originY}px`);
-    style.setProperty("--rotate-x", `${rotateX}`);
-    style.setProperty("--rotate-y", `${rotateY}`);
-    style.setProperty("--rotate-angle", `${rotateAngle}deg`);
+    style.setProperty("--translate-x", clientX - this.originX + "px");
+    style.setProperty("--translate-y", clientY - this.originY + "px");
+    style.setProperty("--rotate-x", rotateX.toFixed(3));
+    style.setProperty("--rotate-y", rotateY.toFixed(3));
+    style.setProperty("--rotate-angle", rotateAngle.toFixed(3) + "deg");
 
     document.body.appendChild(this.dragElement);
     this.dragElement.showPopover();

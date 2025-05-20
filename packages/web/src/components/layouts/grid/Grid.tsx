@@ -61,7 +61,7 @@ export default function Grid({
             <GridItem
               editor={editor}
               classList={{
-                [styles.dragging]: dragId.derive(
+                [styles["drag-placeholder"]]: dragId.derive(
                   (id) => id === tile.placementId,
                 ),
               }}

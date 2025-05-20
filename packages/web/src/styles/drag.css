@@ -27,6 +27,7 @@
   transform: perspective(1000px);
   animation-fill-mode: forwards;
   translate: var(--translate-x, 0) var(--translate-y, 0) 40px;
+  opacity: 1;
   rotate: none;
 }
 
