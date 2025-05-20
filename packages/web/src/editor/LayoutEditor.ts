@@ -24,7 +24,7 @@ export default class LayoutEditor {
   private gridColumns = 0;
   private columns = 0;
   private rows = 0;
-  private elementForPoint?: HTMLElement | null;
+  private idForPoint?: string;
 
   constructor({ element, editor, collectionId }: LayoutEditorOptions) {
     this.elementRef = new WeakRef(element);
@@ -90,18 +90,18 @@ export default class LayoutEditor {
       return;
     }
 
-    const after = this.findElementForPoint(event);
+    const afterId = this.findIdForPoint(event);
 
-    if (after !== this.elementForPoint) {
+    if (afterId !== this.idForPoint) {
       layoutTransition(() => {
         this.editor.moveTilePreview({
           id,
           collectionId: this.collectionId,
-          afterId: after?.dataset.placementId,
+          afterId,
         });
       });
     }
-    this.elementForPoint = after;
+    this.idForPoint = afterId;
   }
 
   private async handleDrop(event: DragDropEvent<ClientTile>) {
@@ -119,13 +119,13 @@ export default class LayoutEditor {
       `[data-placement-id="${id}"]`,
     );
 
-    const after = this.findElementForPoint(event);
+    const afterId = this.findIdForPoint(event);
 
     try {
       await this.editor.moveTile({
         id,
         collectionId: this.collectionId,
-        afterId: after?.dataset.placementId,
+        afterId,
       });
     } catch (error) {
       handleError(error);
@@ -133,10 +133,10 @@ export default class LayoutEditor {
   }
 
   private handleDragEnd() {
-    this.elementForPoint = undefined;
+    this.idForPoint = undefined;
   }
 
-  private findElementForPoint(event: DragDropEvent<ClientTile>) {
+  private findIdForPoint(event: DragDropEvent<ClientTile>) {
     const { clientX, clientY, state } = event;
     const dragPlacementId = state.data?.placementId;
 
@@ -151,7 +151,7 @@ export default class LayoutEditor {
       );
 
     if (element) {
-      return element;
+      return element.dataset.placementId;
     }
 
     // If no element was found, look for the previous element in the grid
@@ -175,7 +175,8 @@ export default class LayoutEditor {
 
       element = child;
     }
-    return element ?? null;
+
+    return element?.dataset.placementId;
   }
 
   // Resize
