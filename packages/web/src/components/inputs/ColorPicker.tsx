@@ -76,6 +76,7 @@ export default function ColorPicker({
       {...props}
       className={classNames(styles["color-picker"], className)}
       aria-orientation="horizontal"
+      align="center"
       value={value?.derive(getColorIndex)}
       onchange={setColor}
     >

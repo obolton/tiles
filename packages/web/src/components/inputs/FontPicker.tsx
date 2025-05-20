@@ -6,13 +6,11 @@ import type { JSX } from "@/jsx/jsx";
 
 interface FontPickerProps
   extends Omit<JSX.Attributes<HTMLElement>, "value" | "onChange"> {
-  direction?: "left" | "right" | "up";
   value?: FontId;
   onChange: (value: FontId) => void;
 }
 
 export default function FontPicker({
-  direction,
   value,
   onChange,
   ...props
@@ -24,8 +22,8 @@ export default function FontPicker({
     <swatch-select
       {...props}
       className={styles.font}
-      aria-orientation={direction === "up" ? "vertical" : "horizontal"}
-      direction={direction}
+      aria-orientation="horizontal"
+      align="center"
       value={value}
       onchange={setFont}
     >

@@ -317,7 +317,7 @@ export default function FormattingToolbar({
             data-tooltip="Text alignment"
             aria-orientation="vertical"
             orientation="horizontal"
-            direction="up"
+            align="center"
             value={format.derive((value) => value.align)}
             onchange={formatAlignment}
           >
