@@ -1,13 +1,19 @@
 const VIEWPORT_MARGIN = 64;
 
+type Alignment = "left" | "center" | "right" | "auto";
+
 export interface PopoverMenuAttributes {
   anchor?: string;
+  align?: Alignment;
 }
 
 export default class PopoverMenu extends HTMLElement {
   static readonly observedAttributes: (keyof PopoverMenuAttributes)[] = [
     "anchor",
+    "align",
   ] as const;
+
+  align: Alignment = "auto";
 
   #anchorElement: HTMLElement | null = null;
 
@@ -37,13 +43,24 @@ export default class PopoverMenu extends HTMLElement {
     this.popover = "auto";
   }
 
-  attributeChangedCallback(name: keyof PopoverMenuAttributes) {
+  attributeChangedCallback(
+    name: keyof PopoverMenuAttributes,
+    _: string | null,
+    value: string | null,
+  ) {
     switch (name) {
       case "anchor":
         if (this.hasAttribute("open")) {
           this.setPosition();
         }
         return;
+      case "align":
+        if (value === "left" || value === "center" || value === "right") {
+          this.align = value;
+        } else {
+          this.align = "auto";
+        }
+        break;
     }
   }
 
@@ -77,6 +94,15 @@ export default class PopoverMenu extends HTMLElement {
     }
   }
 
+  private getHorizontalAlignment(anchorBounds: DOMRect, width: number) {
+    if (this.align === "auto") {
+      return anchorBounds.right + width + VIEWPORT_MARGIN < window.innerWidth
+        ? "left"
+        : "right";
+    }
+    return this.align;
+  }
+
   private setPosition() {
     const anchor = this.anchorElement;
     if (!anchor) {
@@ -87,21 +113,47 @@ export default class PopoverMenu extends HTMLElement {
     const height = this.offsetHeight;
     const anchorBounds = anchor.getBoundingClientRect();
 
-    const alignLeft =
-      anchorBounds.right + width + VIEWPORT_MARGIN < window.innerWidth;
-    const alignBottom =
-      anchorBounds.bottom + height + VIEWPORT_MARGIN < window.innerHeight;
+    const horizontalAlignment = this.getHorizontalAlignment(
+      anchorBounds,
+      width,
+    );
 
-    const left = alignLeft ? `${anchorBounds.left}px` : "auto";
-    const right = alignLeft
-      ? "auto"
-      : `${window.innerWidth - (anchorBounds.left + anchorBounds.width)}px`;
-    const top = alignBottom ? `${anchorBounds.bottom}px` : "auto";
-    const bottom = alignBottom
-      ? "auto"
-      : `${window.innerHeight - anchorBounds.top}px`;
+    const verticalPosition =
+      anchorBounds.bottom + height + VIEWPORT_MARGIN < window.innerHeight
+        ? "bottom"
+        : "top";
 
-    this.style.transformOrigin = `${alignBottom ? "top" : "bottom"} ${alignLeft ? "left" : "right"}`;
+    let left = "auto";
+    let right = "auto";
+    let top = "auto";
+    let bottom = "auto";
+    let verticalOrigin = "top";
+
+    switch (horizontalAlignment) {
+      case "left":
+        left = anchorBounds.left + "px";
+        break;
+      case "right":
+        right =
+          window.innerWidth - (anchorBounds.left + anchorBounds.width) + "px";
+        break;
+      case "center":
+        left = anchorBounds.left + (anchorBounds.width - width) / 2 + "px";
+        break;
+    }
+
+    switch (verticalPosition) {
+      case "top":
+        bottom = window.innerHeight - anchorBounds.top + "px";
+        verticalOrigin = "bottom";
+        break;
+      case "bottom":
+        top = anchorBounds.bottom + "px";
+        verticalOrigin = "top";
+        break;
+    }
+
+    this.style.transformOrigin = `${horizontalAlignment} ${verticalOrigin}`;
     this.style.inset = `${top} ${right} ${bottom} ${left}`;
   }
 }

@@ -9,6 +9,7 @@ stylesheet.replaceSync(css);
 export interface SwatchSelectAttributes {
   value?: string | null;
   orientation?: "horizontal" | "vertical";
+  align?: "left" | "center" | "right" | "auto";
   onchange?: (event: globalThis.Event) => void;
   ontoggle?: (event: globalThis.ToggleEvent) => void;
 }
@@ -16,6 +17,7 @@ export interface SwatchSelectAttributes {
 export default class SwatchSelect extends HTMLElement {
   static readonly observedAttributes: (keyof SwatchSelectAttributes)[] = [
     "value",
+    "align",
   ] as const;
 
   value: string | null = "";
@@ -66,6 +68,13 @@ export default class SwatchSelect extends HTMLElement {
     switch (name) {
       case "value":
         this.value = value;
+        break;
+      case "align":
+        if (value === "left" || value === "center" || value === "right") {
+          this.items.align = value;
+        } else {
+          this.items.align = "auto";
+        }
         break;
     }
   }
