@@ -221,7 +221,7 @@ export default class MapView extends HTMLElement {
         duration: 500,
       });
     }
-    marker.focus();
+    marker.focus({ preventScroll: true });
   }
 
   getBoundingBox(): [number, number, number, number] {
