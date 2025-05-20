@@ -72,31 +72,33 @@ export default function MapTile({
           legend
           ondeletemarker={deleteMarker}
         >
-          {places.value.map((place) => (
-            <>
-              <map-marker
-                editable={isEditable}
-                id={place.id}
-                lat={place.lat}
-                long={place.long}
-                bounds={
-                  place.boundingBox.length === 4
-                    ? place.boundingBox.join(",")
-                    : undefined
-                }
-                label={place.name}
-                tabIndex={0}
-                onblur={handleUpdatePlace}
-              />
-              <map-legend-item
-                marker={place.id}
-                editable={isEditable && places.value.length > 1}
-                tabIndex={0}
-              >
-                {place.name || "Unnamed point"}
-              </map-legend-item>
-            </>
-          ))}
+          {places.derive((items) =>
+            items.map((place) => (
+              <>
+                <map-marker
+                  editable={isEditable}
+                  id={place.id}
+                  lat={place.lat}
+                  long={place.long}
+                  bounds={
+                    place.boundingBox.length === 4
+                      ? place.boundingBox.join(",")
+                      : undefined
+                  }
+                  label={place.name}
+                  tabIndex={0}
+                  onblur={handleUpdatePlace}
+                />
+                <map-legend-item
+                  marker={place.id}
+                  editable={isEditable}
+                  tabIndex={0}
+                >
+                  {place.name || "Unnamed point"}
+                </map-legend-item>
+              </>
+            )),
+          )}
         </map-view>
 
         {hasFocus.derive((value) =>
