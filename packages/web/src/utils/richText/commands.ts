@@ -1,5 +1,5 @@
 import { toggleMark, setBlockType, wrapIn, lift } from "prosemirror-commands";
-import { liftListItem, wrapInList } from "prosemirror-schema-list";
+import { liftListItem, wrapRangeInList } from "prosemirror-schema-list";
 import type { NodeType } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
 import { schema, type TextAlignment } from "./schema";
@@ -38,9 +38,7 @@ export const toggleQuote = toggleWrap(schema.nodes.quote);
 export function toggleHeading(level: 1 | 2 | 3): Command {
   return function (state, dispatch, view) {
     if (getSelectionHeadingLevel(state) === level) {
-      return setBlockType(schema.nodes.paragraph, {
-        level,
-      })(state, dispatch, view);
+      return setBlockType(schema.nodes.paragraph, null)(state, dispatch, view);
     } else {
       return setBlockType(schema.nodes.heading, {
         level,
@@ -65,13 +63,32 @@ export function toggleList(nodeType: NodeType): Command {
       if (list.node.type === nodeType) {
         return liftListItem(schema.nodes.list_item)(state, dispatch, view);
       } else {
-        if (dispatch) {
-          dispatch(state.tr.setNodeMarkup(list.pos, nodeType));
-        }
+        dispatch?.(state.tr.setNodeMarkup(list.pos, nodeType));
         return true;
       }
     } else {
-      return wrapInList(nodeType)(state, dispatch, view);
+      const tr = state.tr;
+      tr.setBlockType(
+        tr.selection.from,
+        tr.selection.to,
+        schema.nodes.paragraph,
+        null,
+      );
+      const range = tr.selection.$from.blockRange(tr.selection.$to);
+      if (!range) {
+        return false;
+      }
+      const canWrap = wrapRangeInList(
+        dispatch ? tr : null,
+        range,
+        nodeType,
+        null,
+      );
+      if (!canWrap) {
+        return false;
+      }
+      dispatch?.(tr);
+      return true;
     }
   };
 }
