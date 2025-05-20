@@ -12,6 +12,8 @@ interface FormattingToolbarProps {
 }
 
 export default function FormattingToolbar({ editor }: FormattingToolbarProps) {
+  const { color } = editor;
+
   const setFont = async (font: FontId) => {
     try {
       viewTransition(() => {
@@ -23,20 +25,21 @@ export default function FormattingToolbar({ editor }: FormattingToolbarProps) {
     }
   };
 
-  const setColor = async (color: Color | null) => {
-    if (!color) {
+  const setColor = async (value: Color | null) => {
+    if (!value) {
       return;
     }
+    color.value = value;
     viewTransition(() => {
-      if (isDark(color)) {
+      if (isDark(value)) {
         document.body.classList.add("dark");
       } else {
         document.body.classList.remove("dark");
       }
-      document.body.style.setProperty("--page-color", toCSSColor(color));
+      document.body.style.setProperty("--page-color", toCSSColor(value));
     });
     try {
-      await editor.setColor(color);
+      await editor.setColor(value);
     } catch (error) {
       handleError(error);
     }
@@ -47,20 +50,19 @@ export default function FormattingToolbar({ editor }: FormattingToolbarProps) {
       <li role="presentation">
         <FontPicker
           role="menuitem"
-          direction="up"
           onChange={setFont}
           aria-label="Font"
-          data-tooltip="Select font"
+          data-tooltip="Font"
         />
       </li>
 
       <li role="presentation">
         <ColorPicker
           role="menuitem"
-          direction="up"
+          value={color}
           onChange={setColor}
           aria-label="Color"
-          data-tooltip="Select page color"
+          data-tooltip="Page background color"
         />
       </li>
     </ul>

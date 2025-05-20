@@ -70,6 +70,7 @@ export default class Editor {
   readonly isEditable: ReactiveValue<boolean>;
   readonly title: ReactiveValue<string>;
   readonly subtitle: ReactiveValue<string | null>;
+  readonly color: ReactiveValue<Color>;
   readonly coverImageUrl: ReactiveValue<string | null>;
   readonly isPublished: ReactiveValue<boolean>;
   readonly sections: ReactiveValue<ClientCollection[]>;
@@ -86,6 +87,11 @@ export default class Editor {
     this.isEditable = new ReactiveValue(isEditMode());
     this.title = new ReactiveValue(page.title);
     this.subtitle = new ReactiveValue(page.subtitle);
+    this.color = new ReactiveValue({
+      l: page.lightness,
+      c: page.chroma,
+      h: page.hue,
+    });
     this.coverImageUrl = new ReactiveValue(page.coverImageUrl);
     this.isPublished = new ReactiveValue(page.published);
     this.sections = new ReactiveValue(page.collections);
