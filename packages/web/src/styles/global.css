@@ -70,8 +70,8 @@ html {
 body {
   --secondary-text-color: oklch(50% 20% var(--page-hue));
   --accent: linear-gradient(
-    oklch(from var(--page-color) 60% 50% h),
-    oklch(from var(--page-color) 50% 50% h)
+    oklch(from var(--page-color) 55% c h),
+    oklch(from var(--page-color) 45% c h)
   );
 
   color: var(--text-color);
