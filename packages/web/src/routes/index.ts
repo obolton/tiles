@@ -1,5 +1,6 @@
 import client from "@/api/client";
 import { getFontConfig } from "@/utils/fonts";
+import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import Page, { type PageProps } from "@/pages/Page";
 import { toCSSColor, isDark, type Color } from "@/utils/color";
 import type { Route, RouteLoaderResult, RouteMetadata } from "@/router/router";
@@ -22,6 +23,7 @@ async function loader(): RouteLoaderResult<PageProps> {
   const font = page.font ? getFontConfig(page.font) : undefined;
 
   return {
+    headers: { "Cache-Control": CACHE_CONTROL_VALUE },
     title: page.title,
     bodyAttributes: {
       "data-page-id": page.id,

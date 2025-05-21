@@ -1,6 +1,7 @@
 import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
 import { getFontConfig } from "@/utils/fonts";
+import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import Page, { type PageProps } from "@/pages/Page";
 import { toCSSColor, isDark, type Color } from "@/utils/color";
 import type {
@@ -36,6 +37,9 @@ async function loader({
   const font = page.font ? getFontConfig(page.font) : undefined;
 
   return {
+    headers: page.published
+      ? { "Cache-Control": CACHE_CONTROL_VALUE }
+      : undefined,
     title: page.title,
     bodyAttributes: {
       "data-page-id": page.id,
