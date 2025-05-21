@@ -21,7 +21,7 @@ model Page {
   title         String
   subtitle      String?
   lightness     Float     @default(1) @db.Real
-  chroma        Float     @default(0.2) @db.Real
+  chroma        Float     @default(0) @db.Real
   hue           Float     @default(0) @db.Real
   font          Font      @default(MODERN)
   coverImageKey String?   @map("cover_image_key")
