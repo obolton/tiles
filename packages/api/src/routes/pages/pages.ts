@@ -90,7 +90,6 @@ const PAGE_FIELDS = {
   },
   collections: {
     select: COLLECTION_FIELDS,
-    where: { type: "SECTION" },
     orderBy: {
       createdAt: "asc",
     },
