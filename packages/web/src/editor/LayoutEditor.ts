@@ -24,7 +24,7 @@ export default class LayoutEditor {
   private gridColumns = 0;
   private columns = 0;
   private rows = 0;
-  private idForPoint?: string;
+  private idForPoint?: string | null;
 
   constructor({ element, editor, collectionId }: LayoutEditorOptions) {
     this.elementRef = new WeakRef(element);
@@ -151,7 +151,7 @@ export default class LayoutEditor {
       );
 
     if (element) {
-      return element.dataset.placementId;
+      return element.dataset.placementId || null;
     }
 
     // If no element was found, look for the previous element in the grid
@@ -176,7 +176,7 @@ export default class LayoutEditor {
       element = child;
     }
 
-    return element?.dataset.placementId;
+    return element?.dataset.placementId || null;
   }
 
   // Resize
