@@ -58,12 +58,10 @@ export default function routeManifestPlugin(): Plugin {
     name: "route-manifest-plugin",
     enforce: "post",
 
-    config() {
-      return {
-        build: {
-          manifest: true,
-        },
-      };
+    config(_, env) {
+      if (!env.isSsrBuild) {
+        return { build: { manifest: true } };
+      }
     },
 
     configResolved(config) {

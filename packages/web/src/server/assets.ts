@@ -7,10 +7,10 @@ let routeManifest: RouteManifest | null = null;
 
 if (import.meta.env.PROD && import.meta.env.SSR) {
   // @ts-ignore File is present in production builds
-  manifest = (await import("../../dist/assets/.vite/manifest.json"))
+  manifest = (await import("../../dist/.vite/manifest.json"))
     .default as Manifest;
   // @ts-ignore File is present in production builds
-  routeManifest = (await import("../../dist/assets/route-manifest.json"))
+  routeManifest = (await import("../../dist/route-manifest.json"))
     .default as RouteManifest;
 }
 

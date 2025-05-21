@@ -1,14 +1,15 @@
 import { resolve } from "node:path";
 import svgPlugin from "./src/vite/svg";
 import routeManifestPlugin from "./src/vite/routeManifest";
-import type { UserConfig } from "vite";
+import cloudflarePlugin from "./src/vite/cloudflare";
+import { defineConfig } from "vite";
 
 const IS_CLOUDFLARE_WORKER = process.env.CF_PAGES === "1";
 
-export default {
+export default defineConfig(({ isSsrBuild }) => ({
   envDir: "../..",
   envPrefix: "PUBLIC_",
-  base: "/assets/",
+  base: "/",
   define: {
     "process.env": process.env,
   },
@@ -21,10 +22,15 @@ export default {
       "@": resolve(__dirname, "./src"),
     },
   },
-  plugins: [svgPlugin({ jsxImportSource: "@/jsx" }), routeManifestPlugin()],
+  plugins: [
+    svgPlugin({ jsxImportSource: "@/jsx" }),
+    routeManifestPlugin(),
+    cloudflarePlugin(),
+  ],
   build: {
     target: "esnext",
-    assetsDir: "",
+    assetsDir: isSsrBuild ? "" : "assets",
+    copyPublicDir: !isSsrBuild,
     rollupOptions: {
       treeshake: "recommended",
       input: {
@@ -40,4 +46,4 @@ export default {
       },
     },
   },
-} satisfies UserConfig;
+}));
