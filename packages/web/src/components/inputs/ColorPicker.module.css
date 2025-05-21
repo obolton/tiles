@@ -1,22 +1,24 @@
 .color-picker::part(items) {
   display: grid;
-  grid-template-columns: repeat(11, 1fr);
+  grid-template-columns: repeat(11, 36px);
+  grid-auto-rows: 36px;
   gap: 4px;
   border-radius: 26px;
 }
 
 .color-picker swatch-item {
+  --color: oklch(var(--lightness) var(--chroma) var(--hue));
+
   width: 36px;
   min-width: 36px;
   height: 36px;
-  padding: 8px;
   border-radius: 18px;
   box-shadow:
     inset 0 0 0 1px rgb(0 0 0 / 10%),
     0 2px 4px -2px rgb(0 0 0 / 40%);
   background: linear-gradient(
-    oklch(var(--lightness) var(--chroma) var(--hue)),
-    oklch(calc(var(--lightness) - 0.1) var(--chroma) var(--hue))
+    var(--color),
+    oklch(from var(--color) calc(l - 0.1) c h)
   );
   transition:
     scale var(--animation-duration-short) var(--easing),
@@ -27,7 +29,7 @@
   &[selected],
   &:active {
     box-shadow:
-      inset 0 0 0 3px oklch(calc(1 - var(--lightness)) 0 var(--hue) / 50%),
+      inset 0 0 0 3px oklch(from var(--color) calc(1 - l) 0 h / 50%),
       0 2px 4px -2px rgb(0 0 0 / 40%);
   }
 
