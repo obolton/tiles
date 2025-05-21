@@ -200,7 +200,7 @@ async function renderRoute(
 
   const links = getLinks(stylesheets, mergedMetadata);
 
-  const data = loader
+  const routeData = loader
     ? await loader({
         url,
         headers: request.headers,
@@ -208,15 +208,17 @@ async function renderRoute(
       })
     : undefined;
 
+  const { headers = {}, bodyAttributes = {}, data } = routeData ?? {};
+
   const body =
-    getPageStartChunk(stylesheets, mergedMetadata, data) +
+    getPageStartChunk(stylesheets, mergedMetadata, routeData) +
     renderToString(
       Body({
-        ...data?.bodyAttributes,
-        children: component(data?.data),
+        ...bodyAttributes,
+        children: component(data),
         hydrate:
-          typeof data?.data !== "undefined"
-            ? { module: resolveImport(route.moduleUrl), data: data.data }
+          typeof data !== "undefined"
+            ? { module: resolveImport(route.moduleUrl), data }
             : undefined,
       }),
     ) +
@@ -227,6 +229,7 @@ async function renderRoute(
     headers: {
       "Content-Type": "text/html",
       Link: links.join(", "),
+      ...headers,
     },
   });
 }
