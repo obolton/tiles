@@ -4,7 +4,7 @@ export const MoveTileSchema = z.object({
   pageId: z.string().uuid(),
   id: z.string().uuid(),
   collectionId: z.string().uuid(),
-  afterId: z.string().uuid().optional(),
+  afterId: z.string().uuid().nullable().optional(),
 });
 export type MoveTileSchema = z.infer<typeof MoveTileSchema>;
 
