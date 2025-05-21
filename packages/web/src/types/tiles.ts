@@ -21,9 +21,7 @@ export type ReactiveTile<T extends ClientTile = ClientTile> =
         ReactiveRecord<Omit<T, "id" | "placementId" | "type">>
     : never;
 
-export type CollectionProperties = ReactiveTile<ClientCollectionTile> & {
-  tiles: Reactive<LeafTile[]>;
-};
+export type CollectionProperties = ReactiveTile<ClientCollectionTile>;
 export type ImageProperties = ReactiveTile<ClientImageTile>;
 export type LinkProperties = ReactiveTile<ClientLinkTile>;
 export type MapProperties = ReactiveTile<ClientMapTile>;
@@ -41,10 +39,6 @@ export type Tile =
   | TableProperties
   | TextProperties
   | VideoProperties;
-
-export type TableTile = ReactiveTile<ClientTableTile>;
-
-export type LeafTile = Exclude<Tile, CollectionProperties>;
 
 export type Section = ClientCollection & {
   tiles: Reactive<Tile[]>;

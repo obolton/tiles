@@ -2,22 +2,17 @@ import client from "@/api/client";
 import { showModal } from "@/utils/modals";
 import { preloadImage, uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { ReactiveValue, Computed, record } from "@/utils/reactivity";
+import { Computed, value, flag, record } from "@/utils/reactivity";
 import { scrollIntoView } from "@/utils/scroll";
 import { isEditMode } from "@/utils/edit";
 import type { FontId } from "@/config/fonts";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
-import type {
-  ClientTile,
-  ClientCollection,
-  Layout,
-  LeafTile,
-  Tile,
-} from "@/types/tiles";
+import type { ClientTile, ClientCollection, Layout, Tile } from "@/types/tiles";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { PageInvite, PageAccess, User } from "@/types/collaboration";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Color } from "@/utils/color";
+import type { Reactive } from "@/utils/reactivity";
 
 type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
@@ -44,64 +39,52 @@ export function getTile(tile: ClientTile): Tile {
 function getLayout(sections: ClientCollection[], tiles: Tile[]): Layout {
   return sections.map((section) => ({
     ...section,
-    tiles: new ReactiveValue(
-      tiles
-        .filter((tile) => tile.parentCollectionId.value === section.id)
-        .map((tile) =>
-          tile.type === "COLLECTION"
-            ? {
-                ...tile,
-                tiles: new ReactiveValue(
-                  tiles.filter(
-                    (t): t is LeafTile =>
-                      t.type !== "COLLECTION" &&
-                      t.parentCollectionId.value === tile.id,
-                  ),
-                ),
-              }
-            : tile,
-        ),
+    tiles: value(
+      tiles.filter((tile) => tile.parentCollectionId.value === section.id),
     ),
   }));
 }
 
 export default class Editor {
   readonly pageId: string;
-  readonly isEditable: ReactiveValue<boolean>;
-  readonly title: ReactiveValue<string>;
-  readonly subtitle: ReactiveValue<string | null>;
-  readonly color: ReactiveValue<Color>;
-  readonly coverImageUrl: ReactiveValue<string | null>;
-  readonly isPublished: ReactiveValue<boolean>;
-  readonly sections: ReactiveValue<ClientCollection[]>;
-  readonly tiles: ReactiveValue<Tile[]>;
-  readonly layout: Computed<[typeof this.sections, typeof this.tiles], Layout>;
-  readonly access: ReactiveValue<PageAccess[]>;
-  readonly invites: ReactiveValue<PageInvite[]>;
+  readonly isEditable: Reactive<boolean>;
+  readonly title: Reactive<string>;
+  readonly subtitle: Reactive<string | null>;
+  readonly color: Reactive<Color>;
+  readonly coverImageUrl: Reactive<string | null>;
+  readonly isPublished: Reactive<boolean>;
+  readonly collections: Reactive<ClientCollection[]>;
+  readonly tiles: Reactive<Tile[]>;
+  readonly layout: Computed<
+    [typeof this.collections, typeof this.tiles],
+    Layout
+  >;
+  readonly access: Reactive<PageAccess[]>;
+  readonly invites: Reactive<PageInvite[]>;
   readonly author: User;
-  readonly focusedTile: ReactiveValue<string | null>;
-  readonly dragId: ReactiveValue<string | null>;
+  readonly focusedTile: Reactive<string | null>;
+  readonly dragId: Reactive<string | null>;
 
   constructor(page: Page) {
     this.pageId = page.id;
-    this.isEditable = new ReactiveValue(isEditMode());
-    this.title = new ReactiveValue(page.title);
-    this.subtitle = new ReactiveValue(page.subtitle);
-    this.color = new ReactiveValue({
+    this.isEditable = flag(isEditMode());
+    this.title = value(page.title);
+    this.subtitle = value(page.subtitle);
+    this.color = value({
       l: page.lightness,
       c: page.chroma,
       h: page.hue,
     });
-    this.coverImageUrl = new ReactiveValue(page.coverImageUrl);
-    this.isPublished = new ReactiveValue(page.published);
-    this.sections = new ReactiveValue(page.collections);
-    this.tiles = new ReactiveValue(page.tiles.map(getTile));
-    this.layout = new Computed([this.sections, this.tiles], getLayout);
-    this.access = new ReactiveValue(page.access);
-    this.invites = new ReactiveValue(page.invites);
+    this.coverImageUrl = value(page.coverImageUrl);
+    this.isPublished = value(page.published);
+    this.collections = value(page.collections);
+    this.tiles = value(page.tiles.map(getTile));
+    this.layout = new Computed([this.collections, this.tiles], getLayout);
+    this.access = value(page.access);
+    this.invites = value(page.invites);
     this.author = page.author;
-    this.focusedTile = new ReactiveValue<string | null>(null);
-    this.dragId = new ReactiveValue<string | null>(null);
+    this.focusedTile = value<string | null>(null);
+    this.dragId = value<string | null>(null);
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();
@@ -209,7 +192,7 @@ export default class Editor {
   }
 
   getCurrentCollectionId() {
-    const section = this.sections.value[0];
+    const section = this.collections.value[0];
     if (!section) {
       throw new Error("Page has no sections");
     }
@@ -223,7 +206,7 @@ export default class Editor {
       pageId: this.pageId,
     });
     transition(() => {
-      this.sections.value = this.sections.value.concat(section);
+      this.collections.value = this.collections.value.concat(section);
     });
     return section;
   }
@@ -237,7 +220,7 @@ export default class Editor {
       id,
     });
     transition(() => {
-      this.sections.value = this.sections.value.filter(
+      this.collections.value = this.collections.value.filter(
         (section) => section.id !== id,
       );
     });
