@@ -1,15 +1,16 @@
 import GridItem from "@/components/grid/GridItem";
 import styles from "./Carousel.module.css";
+import { ReactiveValue, flag } from "@/utils/reactivity";
+import LayoutEditor from "@/editor/LayoutEditor";
 import type { Tile } from "@/types/tiles";
-import { ReactiveValue } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
-import LayoutEditor from "@/editor/LayoutEditor";
+import type { Reactive } from "@/utils/reactivity";
 
 interface CarouselProps {
   editor: Editor;
   collectionId: string;
-  items: ReactiveValue<Tile[]>;
+  items: Reactive<Tile[]>;
   Placeholder?: JSX.Component<Pick<CarouselProps, "collectionId">>;
 }
 
@@ -62,7 +63,7 @@ export default function Carousel({
               deletable={isEditable}
               draggable={isEditable}
               resizable={isEditable}
-              grow={false}
+              grow={flag(false)}
               tile={item}
               tabIndex={isEditable.derive((editable) =>
                 editable ? 0 : undefined,

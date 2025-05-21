@@ -18,14 +18,21 @@ export default function CollectionTile({
   id,
   columns,
   rows,
-  tiles,
 }: CollectionTileProps) {
+  const collection = editor.layout.value.find(
+    (collection) => collection.id === id,
+  );
+
+  if (!collection) {
+    throw new Error(`Invalid collection ID: ${id}`);
+  }
+
   if (columns.value <= 2 && rows.value <= 2) {
     return (
       <Stack
         editor={editor}
         collectionId={id}
-        items={tiles}
+        items={collection.tiles}
         Placeholder={CollectionTilePlaceholder}
       />
     );
@@ -34,7 +41,7 @@ export default function CollectionTile({
       <Carousel
         editor={editor}
         collectionId={id}
-        items={tiles}
+        items={collection.tiles}
         Placeholder={CollectionTilePlaceholder}
       />
     );

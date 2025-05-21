@@ -1,15 +1,16 @@
 import styles from "./Stack.module.css";
 import GridItem from "@/components/grid/GridItem";
-import { ReactiveValue, Computed } from "@/utils/reactivity";
+import { ReactiveValue, Computed, flag } from "@/utils/reactivity";
 import LayoutEditor from "@/editor/LayoutEditor";
 import type { JSX } from "@/jsx/jsx";
 import type { Tile } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
+import type { Reactive } from "@/utils/reactivity";
 
 interface StackProps {
   editor: Editor;
   collectionId: string;
-  items: ReactiveValue<Tile[]>;
+  items: Reactive<Tile[]>;
   Placeholder?: JSX.Component<Pick<StackProps, "collectionId">>;
 }
 
@@ -19,7 +20,7 @@ export default function Stack({
   items,
   Placeholder,
 }: StackProps) {
-  const open = new ReactiveValue(false);
+  const open = flag(false);
   const { isEditable, dragId } = editor;
 
   const ref = (element: HTMLElement) => {
@@ -81,7 +82,7 @@ export default function Stack({
                 )
               }
               resizable={false}
-              grow={false}
+              grow={flag(false)}
               style={{
                 "--index": i.toString(),
                 "--angle": i === 0 ? "0" : `${((i * 123) % 20) - 10}deg`,
