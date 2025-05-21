@@ -55,7 +55,7 @@ export default function Library({ pages }: LibraryProps) {
       </header>
 
       <main>
-        <ul class="tabs" role="navigation">
+        <ul className="tabs" role="navigation">
           <li aria-selected="true">
             <a href="/library">
               <LibraryIcon aria-hidden="true" />

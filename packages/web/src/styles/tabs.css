@@ -3,10 +3,12 @@ tab-bar,
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 16px;
-  padding: 4px;
-  margin: -4px;
-  border-radius: var(--border-radius);
+  gap: 8px;
+  padding: 8px;
+  margin: 0 0 16px;
+  border: 1px solid rgb(0 0 0 / 30%);
+  box-shadow: 0 2px 4px -2px rgb(0 0 0 / 40%);
+  border-radius: 32px;
   overflow: auto;
   scrollbar-width: none;
 }
@@ -22,11 +24,11 @@ tab-item,
   box-sizing: content-box;
   height: 48px;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   gap: 8px;
   color: hsl(from var(--ui-color) h s l / 60%);
   font-size: 16px;
-  font-weight: 400;
+  font-weight: 500;
   white-space: nowrap;
   user-select: none;
   padding: 0 24px;
@@ -44,17 +46,15 @@ tab-item,
   }
 
   &:hover,
-  &:focus {
-    color: var(--ui-color);
-    background-color: rgb(0 0 0 / 8%);
-  }
-
+  &:focus,
   &[selected],
   li[aria-selected="true"] & {
     color: var(--ui-color);
-    background-color: rgb(0 0 0 / 8%);
-    font-weight: 600;
-    border-bottom: 2px solid rgb(0 0 0 / 15%);
+    background-color: rgb(0 0 0 / 15%);
+  }
+
+  &:active:not(:disabled) {
+    background-color: rgb(0 0 0 / 25%);
   }
 
   & > svg {

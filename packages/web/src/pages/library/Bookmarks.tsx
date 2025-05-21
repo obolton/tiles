@@ -28,7 +28,7 @@ export default function Bookmarks({ pages }: BookmarksProps) {
       </header>
 
       <main>
-        <ul class="tabs" role="navigation">
+        <ul className="tabs" role="navigation">
           <li>
             <a href="/library">
               <LibraryIcon aria-hidden="true" />
