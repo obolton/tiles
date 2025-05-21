@@ -276,13 +276,16 @@ export default class Editor {
     }
   }
 
-  private updateTileData(tile: Partial<Omit<ClientTile, "type">>) {
-    this.tiles.value = this.tiles.value.map((entry) =>
-      (tile.id && entry.id === tile.id) ||
-      (tile.placementId && entry.placementId === tile.placementId)
-        ? { ...entry, ...tile }
-        : entry,
+  private updateParentCollection(
+    placementId: string,
+    parentCollectionId: string,
+  ) {
+    const tile = this.tiles.value.find(
+      (tile) => tile.placementId === placementId,
     );
+    if (tile) {
+      tile.parentCollectionId.value = parentCollectionId;
+    }
   }
 
   // Text
@@ -452,7 +455,7 @@ export default class Editor {
     this.addTile(item);
     if (data.tileIds) {
       for (const placementId of data.tileIds) {
-        this.updateTileData({ placementId, parentCollectionId: item.id });
+        this.updateParentCollection(placementId, item.id);
       }
     }
     return item;
@@ -468,25 +471,43 @@ export default class Editor {
       throw new Error(`Tile not found: ${id}`);
     }
 
-    const index = this.tiles.value.indexOf(tile);
-    const tiles = this.tiles.value.toSpliced(index, 1);
+    const previousCollectionId = tile.parentCollectionId.value;
 
-    if (afterId) {
-      const afterIndex = tiles.findIndex(
-        (tile) => tile.placementId === afterId,
-      );
-      if (afterIndex < 0) {
-        throw new Error(`Tile not found: ${afterId}`);
-      }
-      tiles.splice(afterIndex + 1, 0, {
-        ...tile,
-        parentCollectionId: collectionId,
-      });
-    } else {
-      tiles.splice(0, 0, { ...tile, parentCollectionId: collectionId });
+    const previousCollection = this.layout.value.find(
+      (collection) => collection.id === previousCollectionId,
+    );
+    if (!previousCollection) {
+      throw new Error(`Invalid collection ID: ${previousCollectionId}`);
     }
 
-    this.tiles.value = tiles;
+    const collection = this.layout.value.find((s) => s.id === collectionId);
+    if (!collection) {
+      throw new Error(`Invalid collection ID: ${collectionId}`);
+    }
+
+    // Remove tile from old position
+    const previousIndex = previousCollection.tiles.value.indexOf(tile);
+    if (previousIndex >= 0) {
+      previousCollection.tiles.value = previousCollection.tiles.value.toSpliced(
+        previousIndex,
+        1,
+      );
+    }
+
+    // Insert tile into new position
+    const insertIndex = afterId
+      ? collection.tiles.value.findIndex(
+          (tile) => tile.placementId === afterId,
+        ) + 1
+      : 0;
+    collection.tiles.value = collection.tiles.value.toSpliced(
+      insertIndex,
+      0,
+      tile,
+    );
+
+    // Update reference to parent
+    tile.parentCollectionId.value = collectionId;
   }
 
   async resizeTilePreview({
