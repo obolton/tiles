@@ -127,6 +127,9 @@ export default class LayoutEditor {
         collectionId: this.collectionId,
         afterId,
       });
+      this.element
+        .querySelector<HTMLElement>(`[data-placement-id="${id}"]`)
+        ?.focus({ preventScroll: true });
     } catch (error) {
       handleError(error);
     }
