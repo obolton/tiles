@@ -3,6 +3,14 @@
   width: 100%;
   grid-column: 1 / -1;
   margin: 0 0 64px;
+  border-radius: var(--border-radius);
+  outline: 3px solid transparent;
+  outline-offset: 16px;
+  transition: outline-color var(--animation-duration) var(--easing);
+
+  &:focus {
+    outline: var(--focus-outline);
+  }
 
   &:not(:last-of-type)::after {
     content: "";

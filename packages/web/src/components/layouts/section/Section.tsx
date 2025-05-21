@@ -30,7 +30,11 @@ export default function Section({ editor, isEditable, section }: SectionProps) {
   };
 
   return (
-    <section className={styles.section} data-animate-layout-id={section.id}>
+    <section
+      className={styles.section}
+      tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
+      data-animate-layout-id={section.id}
+    >
       <Grid
         editor={editor}
         isEditable={isEditable}
