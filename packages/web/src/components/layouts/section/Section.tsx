@@ -2,11 +2,11 @@ import Grid from "@/components/layouts/grid/Grid";
 import Placeholder from "@/components/placeholder/Placeholder";
 import { handleError } from "@/utils/errors";
 import styles from "./Section.module.css";
-import { classNames } from "@/utils/css";
-import type { Section } from "@/types/tiles";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { layoutTransition } from "@/utils/animation/layout";
+import { flag } from "@/utils/reactivity";
+import type { Section } from "@/types/tiles";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 
@@ -21,6 +21,8 @@ export interface SectionProps {
 }
 
 export default function Section({ editor, isEditable, section }: SectionProps) {
+  const hasFocus = flag(false);
+
   const deleteSection = async () => {
     try {
       await editor.deleteSection({ id: section.id }, layoutTransition);
@@ -29,11 +31,23 @@ export default function Section({ editor, isEditable, section }: SectionProps) {
     }
   };
 
+  const onFocus = () => {
+    hasFocus.on();
+    editor.focusedTile.value = section.id;
+  };
+
+  const onBlur = () => {
+    hasFocus.off();
+    editor.focusedTile.value = null;
+  };
+
   return (
     <section
       className={styles.section}
       tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
       data-animate-layout-id={section.id}
+      onfocus={onFocus}
+      onblur={onBlur}
     >
       <Grid
         editor={editor}
@@ -46,22 +60,25 @@ export default function Section({ editor, isEditable, section }: SectionProps) {
         Placeholder={GridPlaceholder}
       />
 
-      {isEditable.derive((editable) =>
-        editable ? (
-          <>
+      {hasFocus.derive((value) =>
+        value ? (
+          <floating-toolbar
+            data-tooltip-position="top"
+            aria-label="Section toolbar"
+          >
             <button
-              id={`${section.id}-options-button`}
-              className={classNames("floating", styles.options)}
+              role="menuitem"
               type="button"
+              id={`${section.id}-options-button`}
+              className="floating small"
               popoverTarget={`${section.id}-options`}
-              aria-label="Section options"
+              aria-label="More options"
+              data-tooltip="More options"
               aria-haspopup="menu"
               aria-expanded="false"
-              data-tooltip="Section options"
             >
               <MoreIcon aria-hidden="true" />
             </button>
-
             <popover-menu
               id={`${section.id}-options`}
               anchor={`${section.id}-options-button`}
@@ -79,7 +96,7 @@ export default function Section({ editor, isEditable, section }: SectionProps) {
                 </li>
               </menu>
             </popover-menu>
-          </>
+          </floating-toolbar>
         ) : null,
       )}
     </section>
