@@ -44,11 +44,18 @@ import type { Reactive } from "@/utils/reactivity";
 
 registerModal("DATE_TIME", () => import("@/components/modals/DateTimeModal"));
 
+const HEADING_ICON = [
+  null,
+  <H1Icon aria-hidden="true" slot="icon" />,
+  <H2Icon aria-hidden="true" slot="icon" />,
+  <H3Icon aria-hidden="true" slot="icon" />,
+] as const;
+
 const ALIGN_ICON = {
   left: <AlignLeftIcon aria-hidden="true" slot="icon" />,
   center: <AlignCenterIcon aria-hidden="true" slot="icon" />,
   right: <AlignRightIcon aria-hidden="true" slot="icon" />,
-};
+} as const;
 
 interface FormattingToolbarProps {
   format: Reactive<Format>;
@@ -71,9 +78,17 @@ export default function FormattingToolbar({
     });
   };
 
-  const formatH1 = () => performCommand(toggleHeading(1));
-  const formatH2 = () => performCommand(toggleHeading(2));
-  const formatH3 = () => performCommand(toggleHeading(3));
+  const formatHeading = (event: Event) => {
+    switch ((event.currentTarget as SwatchSelect).value) {
+      default:
+      case "1":
+        return performCommand(toggleHeading(1));
+      case "2":
+        return performCommand(toggleHeading(2));
+      case "3":
+        return performCommand(toggleHeading(3));
+    }
+  };
 
   const formatQuote = () => performCommand(toggleQuote);
 
@@ -156,51 +171,33 @@ export default function FormattingToolbar({
         </li>
       </ul>
 
-      <ul role="group" aria-label="Headings">
+      <ul role="group" aria-label="Heading">
         <li role="presentation">
-          <button
+          <swatch-select
             role="menuitem"
-            className="floating small"
-            aria-label="Heading level 1"
-            data-tooltip="Format as heading level 1"
-            type="button"
-            aria-pressed={format.derive((value) =>
-              value.h1 ? "true" : "false",
+            aria-label="Heading"
+            data-tooltip="Heading"
+            orientation="horizontal"
+            align="center"
+            value={format.derive((value) =>
+              typeof value.headingLevel === "number"
+                ? value.headingLevel.toString()
+                : undefined,
             )}
-            onclick={formatH1}
+            onchange={formatHeading}
           >
-            <H1Icon aria-hidden="true" />
-          </button>
-        </li>
-        <li role="presentation">
-          <button
-            role="menuitem"
-            className="floating small"
-            aria-label="Heading level 2"
-            data-tooltip="Format as heading level 2"
-            type="button"
-            aria-pressed={format.derive((value) =>
-              value.h2 ? "true" : "false",
-            )}
-            onclick={formatH2}
-          >
-            <H2Icon aria-hidden="true" />
-          </button>
-        </li>
-        <li role="presentation">
-          <button
-            role="menuitem"
-            className="floating small"
-            aria-label="Heading level 3"
-            data-tooltip="Format as heading level 3"
-            type="button"
-            aria-pressed={format.derive((value) =>
-              value.h3 ? "true" : "false",
-            )}
-            onclick={formatH3}
-          >
-            <H3Icon aria-hidden="true" />
-          </button>
+            {format.derive((value) => HEADING_ICON[value.headingLevel ?? 1])}
+
+            <swatch-item value="1" data-tooltip="Heading level 1">
+              <H1Icon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="2" data-tooltip="Heading level 2">
+              <H2Icon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="3" data-tooltip="Heading level 3">
+              <H3Icon aria-hidden="true" />
+            </swatch-item>
+          </swatch-select>
         </li>
       </ul>
 

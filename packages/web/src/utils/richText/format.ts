@@ -10,9 +10,7 @@ import { schema, type TextAlignment } from "./schema";
 export type { TextAlignment };
 
 export interface Format {
-  h1: boolean;
-  h2: boolean;
-  h3: boolean;
+  headingLevel: number | null;
   quote: boolean;
   orderedList: boolean;
   unorderedList: boolean;
@@ -50,9 +48,7 @@ export function selectionFormat(callback: (format: Format) => void) {
           strikethrough: marks.has(schema.marks.strikethrough),
           highlight: marks.has(schema.marks.highlight),
           link: marks.has(schema.marks.link),
-          h1: headingLevel === 1,
-          h2: headingLevel === 2,
-          h3: headingLevel === 3,
+          headingLevel,
           quote: blockNodeTypes.has(schema.nodes.quote),
           orderedList: blockNodeTypes.has(schema.nodes.ordered_list),
           unorderedList: blockNodeTypes.has(schema.nodes.unordered_list),
