@@ -10,7 +10,7 @@ export interface PageProps {
 
 export default function Page({ page }: PageProps) {
   return (
-    <PageLayout showTableOfContents>
+    <PageLayout showBookmark showTableOfContents>
       <EditablePage page={page} />
     </PageLayout>
   );

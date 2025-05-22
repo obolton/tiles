@@ -4,7 +4,6 @@ import styles from "./PageHeader.module.css";
 import { handleError } from "@/utils/errors";
 import { showModal } from "@/utils/modals";
 import ShareIcon from "@/icons/share.svg?jsx";
-import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import { formatRelativeDate } from "@/utils/dates";
 import { uploadMedia, preloadImage } from "@/utils/media";
@@ -116,16 +115,6 @@ export default function PageHeader({
             data-tooltip="Share this page"
           >
             <ShareIcon aria-hidden="true" />
-          </button>
-
-          <button
-            id="bookmark"
-            className="floating xsmall"
-            aria-label="Bookmark"
-            aria-pressed="false"
-            data-tooltip="Bookmark this page"
-          >
-            <BookmarkIcon aria-hidden="true" />
           </button>
 
           {isEditable.derive((editable) =>

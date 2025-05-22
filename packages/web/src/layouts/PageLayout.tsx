@@ -22,17 +22,22 @@ import "@/styles/tables.css";
 import type { JSX } from "@/jsx/jsx";
 
 export interface PageLayoutProps {
+  showBookmark?: boolean;
   showTableOfContents?: boolean;
   children: JSX.Node;
 }
 
 export default function PageLayout({
-  showTableOfContents = false,
+  showBookmark,
+  showTableOfContents,
   children,
 }: PageLayoutProps) {
   return (
     <>
-      <Navigation showTableOfContents={showTableOfContents} />
+      <Navigation
+        showBookmark={showBookmark}
+        showTableOfContents={showTableOfContents}
+      />
       <SignIn />
 
       {children}

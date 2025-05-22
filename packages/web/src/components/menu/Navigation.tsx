@@ -2,14 +2,20 @@ import NewIcon from "@/icons/new.svg?jsx";
 import LibraryIcon from "@/icons/library.svg?jsx";
 import SettingsIcon from "@/icons/settings.svg?jsx";
 import SignOutIcon from "@/icons/sign-out.svg?jsx";
+import BookmarkIcon from "@/icons/bookmark.svg?jsx";
+import BookmarkFilledIcon from "@/icons/bookmark-filled.svg?jsx";
 import MenuIcon from "@/icons/menu.svg?jsx";
 import { user } from "@/utils/sessions";
 import { isSignedIn, getUserInfo, getCachedUserInfo } from "@/utils/sessions";
 import { handleError } from "@/utils/errors";
 import client from "@/api/client";
 import { signOut } from "@/utils/sessions";
+import { getIsBookmarked, setIsBookmarked } from "@/utils/bookmarks";
+import { flag } from "@/utils/reactivity";
+import { showToast } from "@/utils/toasts";
 
-interface NavigationProps {
+export interface NavigationProps {
+  showBookmark?: boolean;
   showTableOfContents?: boolean;
 }
 
@@ -26,7 +32,13 @@ async function createNewPage(event: Event) {
   }
 }
 
-export default function Navigation({ showTableOfContents }: NavigationProps) {
+export default function Navigation({
+  showBookmark = false,
+  showTableOfContents = false,
+}: NavigationProps) {
+  const isBookmarked = flag(false);
+  const bookmarkPending = flag(false);
+
   if (!import.meta.env.SSR) {
     queueMicrotask(() => {
       if (isSignedIn()) {
@@ -38,9 +50,39 @@ export default function Navigation({ showTableOfContents }: NavigationProps) {
         } else {
           user.value = userInfo;
         }
+
+        const pageId = document.body.dataset.pageId;
+        if (pageId) {
+          getIsBookmarked(pageId).then(
+            (bookmarked) => (isBookmarked.value = bookmarked),
+          );
+        }
       }
     });
   }
+
+  const onClickBookmark = async () => {
+    const pageId = document.body.dataset.pageId;
+    if (!pageId) {
+      return;
+    }
+
+    try {
+      isBookmarked.toggle();
+      bookmarkPending.on();
+      await setIsBookmarked(pageId, isBookmarked.value);
+      showToast(
+        isBookmarked.value
+          ? "The page was bookmarked."
+          : "The bookmark was removed.",
+        "success",
+      );
+    } catch (error) {
+      handleError(error);
+    } finally {
+      bookmarkPending.off();
+    }
+  };
 
   return user.derive((value) =>
     value ? (
@@ -66,7 +108,7 @@ export default function Navigation({ showTableOfContents }: NavigationProps) {
               aria-label="Library"
               data-tooltip="Library"
             >
-              <LibraryIcon />
+              <LibraryIcon aria-hidden="true" />
             </a>
           </li>
           <li>
@@ -78,7 +120,7 @@ export default function Navigation({ showTableOfContents }: NavigationProps) {
               data-pending-text=""
               onclick={createNewPage}
             >
-              <NewIcon />
+              <NewIcon aria-hidden="true" />
             </button>
           </li>
           <li>
@@ -92,25 +134,57 @@ export default function Navigation({ showTableOfContents }: NavigationProps) {
               aria-haspopup="menu"
               aria-expanded="false"
             >
-              <SettingsIcon />
+              <SettingsIcon aria-hidden="true" />
             </button>
             <popover-menu id="navigation-overflow" anchor="more-button">
               <menu>
                 <li>
                   <a href="/settings">
-                    <SettingsIcon />
+                    <SettingsIcon aria-hidden="true" />
                     Account settings
                   </a>
                 </li>
                 <li>
                   <button id="sign-out" type="button" onclick={signOut}>
-                    <SignOutIcon />
+                    <SignOutIcon aria-hidden="true" />
                     Sign out
                   </button>
                 </li>
               </menu>
             </popover-menu>
           </li>
+
+          {showBookmark ? (
+            <li>
+              <button
+                classList={{
+                  floating: true,
+                  pending: bookmarkPending,
+                }}
+                type="button"
+                role="menuitem"
+                aria-label={isBookmarked.derive((value) =>
+                  value ? "Bookmarked" : "Not bookmarked",
+                )}
+                data-tooltip={isBookmarked.derive((value) =>
+                  value ? "Bookmarked" : "Not bookmarked",
+                )}
+                aria-pressed={isBookmarked.derive((value) =>
+                  value ? "true" : "false",
+                )}
+                onclick={onClickBookmark}
+              >
+                {isBookmarked.derive((value) =>
+                  value ? (
+                    <BookmarkFilledIcon aria-hidden="true" />
+                  ) : (
+                    <BookmarkIcon aria-hidden="true" />
+                  ),
+                )}
+              </button>
+            </li>
+          ) : null}
+
           {showTableOfContents ? (
             <li>
               <button
@@ -119,11 +193,12 @@ export default function Navigation({ showTableOfContents }: NavigationProps) {
                 type="button"
                 role="menuitem"
                 popoverTarget="toc"
+                aria-label="Table of contents"
                 data-tooltip="Table of contents"
                 aria-haspopup="menu"
                 aria-expanded="false"
               >
-                <MenuIcon />
+                <MenuIcon aria-hidden="true" />
               </button>
               <table-of-contents
                 id="toc"
