@@ -78,17 +78,16 @@ export default class TableView extends HTMLElement {
   }
 
   set allowSelection(value: boolean) {
+    if (value === this.#allowSelection) {
+      return;
+    }
+
     this.#allowSelection = value;
 
-    if (value) {
-      this.querySelectorAll('div[role="cell"]').forEach((cell) =>
-        cell.setAttribute("tabindex", "-1"),
-      );
-    } else {
+    this.updateCellTabIndex();
+
+    if (!value) {
       this.clearSelection();
-      this.querySelectorAll('div[role="cell"][tabindex]').forEach((cell) =>
-        cell.removeAttribute("tabindex"),
-      );
     }
   }
 
@@ -141,6 +140,10 @@ export default class TableView extends HTMLElement {
       this.resizeObserverCallback.bind(this),
     );
     this.resizeObserver.observe(this, { box: "border-box" });
+  }
+
+  connectedCallback() {
+    this.updateCellTabIndex();
   }
 
   disconnectedCallback() {
@@ -246,6 +249,18 @@ export default class TableView extends HTMLElement {
   }
 
   // Focus and selection
+
+  private updateCellTabIndex() {
+    if (this.allowSelection) {
+      this.querySelectorAll('div[role="cell"]').forEach((cell) =>
+        cell.setAttribute("tabindex", "-1"),
+      );
+    } else {
+      this.querySelectorAll('div[role="cell"][tabindex]').forEach((cell) =>
+        cell.removeAttribute("tabindex"),
+      );
+    }
+  }
 
   private clearSelection() {
     this.querySelectorAll(".selected").forEach((cell) =>
