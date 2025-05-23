@@ -49,7 +49,7 @@ export async function createTable({
 
     const rowData: Prisma.TableRowCreateManyInput[] = [];
     for (let i = 0; i < numRows; i++) {
-      rowData.push({ tableId: table.id, data: [] });
+      rowData.push({ tableId: table.id, data: {} });
     }
     await transaction.tableRow.createMany({
       data: rowData,
@@ -109,7 +109,7 @@ export async function appendRow({ pageId, tableId }: AppendRowSchema) {
     return transaction.tableRow.create({
       data: {
         tableId,
-        data: [],
+        data: {},
       },
       select: TABLE_ROW_FIELDS,
     });
@@ -148,23 +148,11 @@ export async function updateCell({
       select: { id: true },
     });
 
-    const { data } = await transaction.tableRow.findUniqueOrThrow({
-      where: { id: rowId, tableId },
-      select: { data: true },
-    });
+    const property = column.toString();
+    const stringValue = JSON.stringify(value);
 
-    const rowData = Array.isArray(data) ? data : [];
-    rowData[column] = value;
-
-    // TODO: Update column value directly
-    // https://github.com/prisma/prisma/issues/5057
-    return transaction.tableRow.update({
-      where: { id: rowId, tableId },
-      data: {
-        tableId,
-        data: rowData,
-      },
-      select: TABLE_ROW_FIELDS,
-    });
+    return transaction.$executeRaw`UPDATE "table_rows"
+    SET "data" = jsonb_set("data", ARRAY[${property}], ${stringValue}::jsonb, true)
+    WHERE "id" = ${rowId}::uuid AND "table_id" = ${tableId}::uuid;`;
   });
 }
