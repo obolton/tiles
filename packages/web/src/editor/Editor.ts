@@ -3,7 +3,7 @@ import { showModal } from "@/utils/modals";
 import { preloadImage, uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
 import { Computed, reactive, flag, record } from "@/utils/reactivity";
-import { scrollIntoView } from "@/utils/scroll";
+import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { isEditMode } from "@/utils/edit";
 import type { FontId } from "@/config/fonts";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
@@ -264,7 +264,12 @@ export default class Editor {
 
   private addTile(tile: ClientTile) {
     this.tiles.value = this.tiles.value.concat(getTile(tile));
-    scrollIntoView(tile.id);
+
+    const element = document.getElementById(tile.id);
+    if (element) {
+      element.focus({ preventScroll: true });
+      scrollIntoViewIfNeeded(element, { behavior: "smooth" });
+    }
   }
 
   removeTile(placementId: string) {

@@ -7,8 +7,3 @@ export function scrollIntoViewIfNeeded(
     element.scrollIntoView(options);
   }
 }
-
-export function scrollIntoView(elementId: string) {
-  const element = document.getElementById(elementId);
-  element?.scrollIntoView({ behavior: "smooth" });
-}
