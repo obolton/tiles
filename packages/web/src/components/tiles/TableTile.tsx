@@ -1,6 +1,8 @@
 import Tile from "./Tile";
 import RichText from "@/components/text/RichText";
 import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingToolbar";
+import AddRowIcon from "@/icons/add-row.svg?jsx";
+import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import { selectionFormat } from "@/utils/richText/format";
 import styles from "./TableTile.module.css";
 import { EditorView } from "prosemirror-view";
@@ -247,7 +249,32 @@ export default function TableTile({
             format={format}
             getEditorState={getEditorState}
             performCommand={performCommand}
-          />
+          >
+            <ul role="group">
+              <li role="presentation">
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="floating small"
+                  aria-label="Add row"
+                  data-tooltip="Add row"
+                >
+                  <AddRowIcon aria-hidden="true" />
+                </button>
+              </li>
+              <li role="presentation">
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="floating small"
+                  aria-label="Add column"
+                  data-tooltip="Add column"
+                >
+                  <AddColumnIcon aria-hidden="true" />
+                </button>
+              </li>
+            </ul>
+          </FormattingToolbar>
         ) : null,
       )}
     </Tile>
