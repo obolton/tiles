@@ -1,7 +1,11 @@
 import type { Reactive } from "@/utils/reactivity";
 
+export type WithProperties<T> = {
+  [K in keyof T as `$${Extract<K, string>}`]?: T[K];
+};
+
 export type WithReactiveProperties<T> = {
-  [K in keyof T]: T[K] | Reactive<T[K]>;
+  [K in keyof T]?: T[K] | Reactive<T[K]>;
 };
 
 export namespace JSX {
@@ -49,17 +53,19 @@ export namespace JSX {
   export type DataAttribute = `data-${string}`;
 
   export type Attributes<T extends globalThis.Element> = WithReactiveProperties<
-    Partial<Omit<T, "children" | "classList" | "style">> & {
-      style?: StyleDeclaration;
+    Omit<T, "classList" | "style" | "children"> & {
+      style?: StyleDeclaration | string | null;
     }
-  > & {
-    ref?: Ref<T>;
-    classList?:
-      | (string | null | undefined | Reactive<string | null | undefined>)[]
-      | { [k: string]: boolean | Reactive<boolean> | null | undefined };
-    children?: Node;
-    [k: DataAttribute]: string | null | undefined;
-  };
+  > &
+    WithProperties<T> & {
+      ref?: Ref<T>;
+      classList?:
+        | (string | null | undefined | Reactive<string | null | undefined>)[]
+        | { [k: string]: boolean | Reactive<boolean> | null | undefined };
+
+      children?: Node;
+      [k: DataAttribute]: string | null | undefined;
+    };
 
   export type HTMLElements = {
     [T in keyof HTMLElementTagNameMap]: Attributes<HTMLElementTagNameMap[T]>;

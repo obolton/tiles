@@ -83,6 +83,13 @@ describe("renderToString", () => {
     expect(renderToString(element)).toBe("<div></div>");
   });
 
+  test("ignores a property", () => {
+    const element = jsx("div", {
+      $className: "foo",
+    });
+    expect(renderToString(element)).toBe("<div></div>");
+  });
+
   test("renders a child text node", () => {
     const element = jsx("p", {
       children: "Hello world",

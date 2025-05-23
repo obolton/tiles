@@ -105,6 +105,7 @@ function getDOMAttributes(properties: Record<string, unknown>) {
     const value = isReactive(valueOrStore) ? valueOrStore.value : valueOrStore;
     if (
       name === "children" ||
+      name.startsWith("$") ||
       typeof value === "function" ||
       typeof value === "undefined" ||
       value === false ||

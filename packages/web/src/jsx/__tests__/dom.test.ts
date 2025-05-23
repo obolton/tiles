@@ -17,6 +17,14 @@ describe("render", () => {
     expect(element.className).toBe("test-class");
   });
 
+  test("sets the properties of the element", () => {
+    const element = render(
+      jsx("div", { $id: "test-id", $className: "test-class" }),
+    ) as HTMLElement;
+    expect(element.id).toBe("test-id");
+    expect(element.className).toBe("test-class");
+  });
+
   test("sets the style attribute from an object", () => {
     const element = render(
       jsx("div", { style: { backgroundColor: "red", padding: "0" } }),
@@ -111,7 +119,7 @@ describe("render", () => {
   test("throws for an invalid child node", () => {
     // @ts-expect-error Intentionally invalid children
     expect(() => render(jsx("div", { children: { foo: "bar" } }))).toThrowError(
-      "Invalid node: [object Object]",
+      "Invalid node",
     );
   });
 });

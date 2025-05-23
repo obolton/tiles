@@ -55,9 +55,9 @@ function getNextSiblings(node: Node, count: number) {
   return nodes;
 }
 
-function setAttributes<T extends keyof JSX.IntrinsicElements>(
-  element: Element,
-  properties: JSX.Properties<T>,
+function setAttributes<T extends Element>(
+  element: T,
+  properties: JSX.Attributes<T>,
   signal?: AbortSignal,
 ) {
   for (const [name, value] of Object.entries(properties)) {
@@ -70,6 +70,11 @@ function setAttributes<T extends keyof JSX.IntrinsicElements>(
         value as EventListener,
         { signal },
       );
+    } else if (name.startsWith("$")) {
+      const property = name.slice(1) as keyof T;
+      if (property in element) {
+        element[property] = value as T[typeof property];
+      }
     } else {
       setAttribute(element, name, value, signal);
     }
