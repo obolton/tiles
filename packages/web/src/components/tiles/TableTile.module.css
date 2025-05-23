@@ -2,4 +2,17 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
+
+  & [data-placeholder] {
+    position: relative;
+
+    &::before {
+      content: attr(data-placeholder);
+      position: absolute;
+      inset: 0;
+      color: var(--placeholder-color);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+  }
 }
