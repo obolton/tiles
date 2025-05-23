@@ -3,7 +3,6 @@ import { classNames } from "@/utils/css";
 import styles from "./PageHeader.module.css";
 import { handleError } from "@/utils/errors";
 import { showModal } from "@/utils/modals";
-import ShareIcon from "@/icons/share.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import { formatRelativeDate } from "@/utils/dates";
 import { uploadMedia, preloadImage } from "@/utils/media";
@@ -107,15 +106,6 @@ export default function PageHeader({
               {formatRelativeDate(new Date(updatedAt))}
             </time>
           ) : null}
-
-          <button
-            id="share"
-            className="floating xsmall"
-            aria-label="Share"
-            data-tooltip="Share this page"
-          >
-            <ShareIcon aria-hidden="true" />
-          </button>
 
           {isEditable.derive((editable) =>
             editable ? (

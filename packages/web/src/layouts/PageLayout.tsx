@@ -24,12 +24,14 @@ import type { JSX } from "@/jsx/jsx";
 export interface PageLayoutProps {
   showBookmark?: boolean;
   showTableOfContents?: boolean;
+  showShare?: boolean;
   children: JSX.Node;
 }
 
 export default function PageLayout({
   showBookmark,
   showTableOfContents,
+  showShare,
   children,
 }: PageLayoutProps) {
   return (
@@ -37,6 +39,7 @@ export default function PageLayout({
       <Navigation
         showBookmark={showBookmark}
         showTableOfContents={showTableOfContents}
+        showShare={showShare}
       />
       <SignIn />
 
