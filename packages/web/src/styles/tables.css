@@ -6,15 +6,14 @@ table-view {
   & div[role="row"] {
     display: table-row;
     height: 32px;
-    min-height: 32px;
   }
 
   & div[role="cell"] {
     display: table-cell;
     position: relative;
-    align-content: start;
+    align-content: center;
     overflow-wrap: anywhere;
-    padding: 8px;
+    padding: 0 8px;
     border-right: 1px solid rgb(0 0 0 / 10%);
     border-bottom: 1px solid rgb(0 0 0 / 10%);
 
