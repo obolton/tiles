@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 import {
   ReactiveValue,
-  value,
+  reactive,
   ReactiveFlag,
   flag,
   Computed,
@@ -11,120 +11,120 @@ import {
 describe("ReactiveValue", () => {
   describe("constructor", () => {
     test("sets the initial value", () => {
-      const reactive = new ReactiveValue(1);
-      expect(reactive.value).toBe(1);
+      const r = new ReactiveValue(1);
+      expect(r.value).toBe(1);
     });
   });
 
   describe("subscribe", () => {
     test("returns an unsubscribe callback", () => {
-      const reactive = new ReactiveValue(1);
-      const unsubscribe = reactive.subscribe(vi.fn());
+      const r = new ReactiveValue(1);
+      const unsubscribe = r.subscribe(vi.fn());
       expect(unsubscribe).toBeInstanceOf(Function);
     });
   });
 
   describe("unsubscribe", () => {
     test("returns true if the subscriber was removed", () => {
-      const reactive = new ReactiveValue(1);
+      const r = new ReactiveValue(1);
       const subscriber = vi.fn();
-      reactive.subscribe(subscriber);
-      expect(reactive.unsubscribe(subscriber)).toBe(true);
+      r.subscribe(subscriber);
+      expect(r.unsubscribe(subscriber)).toBe(true);
     });
 
     test("returns false if the subscriber was not removed", () => {
-      const reactive = new ReactiveValue(1);
+      const r = new ReactiveValue(1);
       const subscriber = vi.fn();
-      expect(reactive.unsubscribe(subscriber)).toBe(false);
+      expect(r.unsubscribe(subscriber)).toBe(false);
     });
   });
 
   test("notifies subscribers when the value is updated", () => {
-    const reactive = new ReactiveValue(1);
+    const r = new ReactiveValue(1);
     const subscribers = [vi.fn(), vi.fn()] as const;
-    reactive.subscribe(subscribers[0]);
-    reactive.value = 2;
+    r.subscribe(subscribers[0]);
+    r.value = 2;
     expect(subscribers[0]).toHaveBeenCalledTimes(1);
     expect(subscribers[1]).toHaveBeenCalledTimes(0);
-    reactive.subscribe(subscribers[1]);
-    reactive.value = 3;
+    r.subscribe(subscribers[1]);
+    r.value = 3;
     expect(subscribers[0]).toHaveBeenCalledTimes(2);
     expect(subscribers[1]).toHaveBeenCalledTimes(1);
   });
 
   test("does not notify subscribers if the value is set but unchanged", () => {
-    const reactive = new ReactiveValue(1);
+    const r = new ReactiveValue(1);
     const subscriber = vi.fn();
-    reactive.subscribe(subscriber);
-    reactive.value = 1;
+    r.subscribe(subscriber);
+    r.value = 1;
     expect(subscriber).toHaveBeenCalledTimes(0);
   });
 
   test("does not notify subscribers after they have been removed", () => {
-    const reactive = new ReactiveValue(1);
+    const r = new ReactiveValue(1);
     const subscriber = vi.fn();
-    reactive.subscribe(subscriber);
-    reactive.value = 2;
+    r.subscribe(subscriber);
+    r.value = 2;
     expect(subscriber).toHaveBeenCalledTimes(1);
-    reactive.unsubscribe(subscriber);
-    reactive.value = 3;
+    r.unsubscribe(subscriber);
+    r.value = 3;
     expect(subscriber).toHaveBeenCalledTimes(1);
   });
 });
 
-describe("value", () => {
+describe("reactive", () => {
   test("returns a ReactiveValue", () => {
-    const reactive = value(1);
-    expect(reactive).toBeInstanceOf(ReactiveValue);
-    expect(reactive.value).toBe(1);
+    const r = reactive(1);
+    expect(r).toBeInstanceOf(ReactiveValue);
+    expect(r.value).toBe(1);
   });
 });
 
 describe("ReactiveFlag", () => {
   test("sets the initial value", () => {
-    const reactive = new ReactiveFlag(true);
-    expect(reactive.value).toBe(true);
+    const r = new ReactiveFlag(true);
+    expect(r.value).toBe(true);
   });
 
   test("turns on", () => {
-    const reactive = new ReactiveFlag(false);
-    reactive.on();
-    expect(reactive.value).toBe(true);
+    const r = new ReactiveFlag(false);
+    r.on();
+    expect(r.value).toBe(true);
   });
 
   test("turns off", () => {
-    const reactive = new ReactiveFlag(true);
-    reactive.off();
-    expect(reactive.value).toBe(false);
+    const r = new ReactiveFlag(true);
+    r.off();
+    expect(r.value).toBe(false);
   });
 
   test("toggles on", () => {
-    const reactive = new ReactiveFlag(false);
-    reactive.toggle();
-    expect(reactive.value).toBe(true);
+    const r = new ReactiveFlag(false);
+    r.toggle();
+    expect(r.value).toBe(true);
   });
 
   test("toggles off", () => {
-    const reactive = new ReactiveFlag(true);
-    reactive.toggle();
-    expect(reactive.value).toBe(false);
+    const r = new ReactiveFlag(true);
+    r.toggle();
+    expect(r.value).toBe(false);
   });
 });
 
 describe("flag", () => {
   test("returns a ReactiveFlag", () => {
-    const reactive = flag(false);
-    expect(reactive).toBeInstanceOf(ReactiveFlag);
-    expect(reactive.value).toBe(false);
+    const r = flag(false);
+    expect(r).toBeInstanceOf(ReactiveFlag);
+    expect(r.value).toBe(false);
   });
 });
 
 describe("Computed", () => {
   test("computes a value from a single input", () => {
-    const reactive = new ReactiveValue(1);
-    const computed = new Computed([reactive], (input) => input + 1);
+    const r = new ReactiveValue(1);
+    const computed = new Computed([r], (input) => input + 1);
     expect(computed.value).toBe(2);
-    reactive.value = 3;
+    r.value = 3;
     expect(computed.value).toBe(4);
   });
 
@@ -138,27 +138,27 @@ describe("Computed", () => {
   });
 
   test("subscribes to a computed value", () => {
-    const reactive = new ReactiveValue(1);
-    const computed = new Computed([reactive], (input) => input % 2);
+    const r = new ReactiveValue(1);
+    const computed = new Computed([r], (input) => input % 2);
     const subscriber = vi.fn();
     computed.subscribe(subscriber);
-    reactive.value = 3;
+    r.value = 3;
     expect(subscriber).toHaveBeenCalledTimes(1);
   });
 
   test("defers the computation until the computed value is read", () => {
-    const reactive = new ReactiveValue(1);
+    const r = new ReactiveValue(1);
     const transform = vi.fn((value) => value + 1);
-    const computed = new Computed([reactive], transform);
+    const computed = new Computed([r], transform);
     expect(transform).toHaveBeenCalledTimes(0);
     expect(computed.value).toBe(2);
     expect(transform).toHaveBeenCalledTimes(1);
   });
 
   test("caches the computed value", () => {
-    const reactive = new ReactiveValue(1);
+    const r = new ReactiveValue(1);
     const transform = vi.fn((value) => value + 1);
-    const computed = new Computed([reactive], transform);
+    const computed = new Computed([r], transform);
     expect(transform).toHaveBeenCalledTimes(0);
     const results = [computed.value, computed.value, computed.value];
     expect(results).toStrictEqual([2, 2, 2]);

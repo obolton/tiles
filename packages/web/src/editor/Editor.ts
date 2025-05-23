@@ -2,7 +2,7 @@ import client from "@/api/client";
 import { showModal } from "@/utils/modals";
 import { preloadImage, uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { Computed, value, flag, record } from "@/utils/reactivity";
+import { Computed, reactive, flag, record } from "@/utils/reactivity";
 import { scrollIntoView } from "@/utils/scroll";
 import { isEditMode } from "@/utils/edit";
 import type { FontId } from "@/config/fonts";
@@ -39,7 +39,7 @@ export function getTile(tile: ClientTile): Tile {
 function getLayout(sections: ClientCollection[], tiles: Tile[]): Layout {
   return sections.map((section) => ({
     ...section,
-    tiles: value(
+    tiles: reactive(
       tiles.filter((tile) => tile.parentCollectionId.value === section.id),
     ),
   }));
@@ -68,23 +68,23 @@ export default class Editor {
   constructor(page: Page) {
     this.pageId = page.id;
     this.isEditable = flag(isEditMode());
-    this.title = value(page.title);
-    this.subtitle = value(page.subtitle);
-    this.color = value({
+    this.title = reactive(page.title);
+    this.subtitle = reactive(page.subtitle);
+    this.color = reactive({
       l: page.lightness,
       c: page.chroma,
       h: page.hue,
     });
-    this.coverImageUrl = value(page.coverImageUrl);
-    this.isPublished = value(page.published);
-    this.collections = value(page.collections);
-    this.tiles = value(page.tiles.map(getTile));
+    this.coverImageUrl = reactive(page.coverImageUrl);
+    this.isPublished = reactive(page.published);
+    this.collections = reactive(page.collections);
+    this.tiles = reactive(page.tiles.map(getTile));
     this.layout = new Computed([this.collections, this.tiles], getLayout);
-    this.access = value(page.access);
-    this.invites = value(page.invites);
+    this.access = reactive(page.access);
+    this.invites = reactive(page.invites);
     this.author = page.author;
-    this.focusedTile = value<string | null>(null);
-    this.dragId = value<string | null>(null);
+    this.focusedTile = reactive<string | null>(null);
+    this.dragId = reactive<string | null>(null);
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();

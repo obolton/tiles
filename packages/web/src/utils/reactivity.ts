@@ -75,7 +75,7 @@ export class ReactiveValue<Value> extends BaseReactive<Value> {
   }
 }
 
-export function value<Value>(initialValue: Value) {
+export function reactive<Value>(initialValue: Value) {
   return new ReactiveValue(initialValue);
 }
 
@@ -188,7 +188,7 @@ export type ReactiveRecord<T> = {
 export function record<T extends Record<string, unknown>>(initialValues: T) {
   const properties: Record<string, Reactive<unknown>> = {};
   for (const [k, v] of Object.entries(initialValues)) {
-    properties[k] = value(v);
+    properties[k] = reactive(v);
   }
   return properties as ReactiveRecord<T>;
 }

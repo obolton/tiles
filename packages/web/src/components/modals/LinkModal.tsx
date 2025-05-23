@@ -7,7 +7,7 @@ import PageLinkTile from "@/components/tiles/PageLinkTile";
 import Search from "@/components/search/Search";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
-import { flag, value } from "@/utils/reactivity";
+import { flag, reactive } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 import type { ModalProps } from "@/utils/modals";
 
@@ -28,7 +28,7 @@ export default function LinkModal({
   showRemove = false,
 }: LinkModalProps) {
   const isPending = flag(false);
-  const pages = value<Pages["pages"]>([]);
+  const pages = reactive<Pages["pages"]>([]);
   const hasMore = flag(true);
 
   const search = async (query: string, offset: number = 0) => {
@@ -137,7 +137,7 @@ export default function LinkModal({
                   <PagesGridItem>
                     <PageLinkTile
                       id={page.id}
-                      linkedPage={value(page)}
+                      linkedPage={reactive(page)}
                       openInNewTab={false}
                       onClick={(event) => {
                         if (

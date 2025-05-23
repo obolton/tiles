@@ -1,7 +1,7 @@
 import { classNames } from "@/utils/css";
 import debounce from "@/utils/debounce";
 import styles from "./Search.module.css";
-import { value } from "@/utils/reactivity";
+import { reactive } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
 
@@ -24,7 +24,7 @@ export default function Search<T>({
   render,
   renderPlaceholder,
 }: SearchProps<T>) {
-  const query = value("");
+  const query = reactive("");
 
   async function onLoadMore() {
     if (!hasMore.value) {
