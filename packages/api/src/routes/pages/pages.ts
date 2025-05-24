@@ -387,7 +387,13 @@ export async function createPage(
               create: {
                 pageId: page.id,
                 expand: true,
-                content: [{ type: "paragraph", children: [] }],
+                content: [
+                  {
+                    type: "heading",
+                    level: 1,
+                    children: [],
+                  },
+                ],
               },
             },
           },
