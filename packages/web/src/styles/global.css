@@ -74,6 +74,7 @@ body {
     oklch(from var(--page-color) 45% c h)
   );
 
+  padding: 64px 0;
   color: var(--text-color);
   background: var(--page-color);
 }
@@ -106,12 +107,12 @@ main {
 }
 
 header {
-  margin: 48px auto;
+  margin: 0 auto 48px;
 }
 
 main {
   margin: 0 auto;
-  padding: 0 0 96px;
+  padding: 0;
   container: main / inline-size;
 }
 
