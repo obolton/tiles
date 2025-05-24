@@ -279,34 +279,3 @@ export const schema = new Schema<
   nodes: nodesSpec,
   marks: marksSpec,
 });
-
-const headerNodesSpec = {
-  doc: {
-    content: "heading paragraph?",
-  },
-
-  text: {
-    group: "inline",
-  },
-
-  heading: {
-    content: "inline*",
-    defining: true,
-    parseDOM: [{ tag: "h1" }],
-    toDOM() {
-      return DOMOutput.h1;
-    },
-  },
-
-  paragraph: {
-    content: "inline*",
-    parseDOM: [{ tag: "p" }],
-    toDOM() {
-      return DOMOutput.paragraph;
-    },
-  },
-};
-
-export const headerSchema = new Schema<keyof typeof headerNodesSpec>({
-  nodes: headerNodesSpec,
-});
