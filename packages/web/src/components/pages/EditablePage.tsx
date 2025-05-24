@@ -1,5 +1,4 @@
 import EditingToolbar from "@/components/menu/EditingToolbar";
-import PageHeader from "@/components/header/PageHeader";
 import PageContents from "@/components/pages/PageContents";
 import ModalLauncher from "@/components/modals/ModalLauncher";
 import Editor from "@/editor/Editor";
@@ -15,28 +14,10 @@ interface EditablePage {
 
 export default function EditablePage({ page }: EditablePage) {
   const editor = new Editor(page);
-  const {
-    isEditable,
-    title,
-    subtitle,
-    coverImageUrl,
-    layout,
-    isPublished,
-    focusedTile,
-  } = editor;
+  const { isEditable, layout, isPublished, focusedTile } = editor;
 
   return (
     <>
-      <PageHeader
-        editor={editor}
-        isEditable={isEditable}
-        title={title}
-        subtitle={subtitle}
-        coverImageUrl={coverImageUrl}
-        author={page.author}
-        updatedAt={page.updatedAt}
-      />
-
       <main>
         <PageContents editor={editor} isEditable={isEditable} layout={layout} />
       </main>
