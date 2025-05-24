@@ -305,6 +305,30 @@ export default class Editor {
   }
 
   async updateText(data: OmitPageId<AppRouterInputs["text"]["update"]>) {
+    // Update the page title
+    if (data.content) {
+      const firstTextTileId = this.layout.value[0]?.tiles.value.find(
+        (tile) => tile.type === "TEXT",
+      )?.id;
+      if (firstTextTileId && data.id === firstTextTileId) {
+        const block = data.content.find(
+          (node) =>
+            (node.type === "heading" || node.type === "paragraph") &&
+            node.children.length > 0,
+        );
+        const title = block?.children
+          .filter((node) => node.type === "text")
+          .map((node) => node.text)
+          .join()
+          .trim();
+
+        if (title) {
+          this.title.value = title;
+          await this.setPageTitle(title);
+        }
+      }
+    }
+
     return await client.text.update.mutate({
       pageId: this.pageId,
       ...data,
