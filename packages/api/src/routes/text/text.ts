@@ -64,9 +64,9 @@ export async function updateText({
     },
     data: {
       content,
-      lightness: color ? color.l : undefined,
-      chroma: color ? color.c : undefined,
-      hue: color ? color.h : undefined,
+      lightness: color ? color.l : color === null ? null : undefined,
+      chroma: color ? color.c : color === null ? null : undefined,
+      hue: color ? color.h : color === null ? null : undefined,
       expand,
     },
     select: TEXT_FIELDS,
