@@ -15,3 +15,4 @@ import "./tabs/TabItem";
 import "./tabs/TabPanel";
 import "./tableOfContents/TableOfContents";
 import "./table/TableView";
+import "./swipe/SwipeView";

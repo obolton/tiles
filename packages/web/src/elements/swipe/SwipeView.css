@@ -1,0 +1,49 @@
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  position: relative;
+}
+
+#carousel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto clip;
+  scrollbar-width: none;
+  contain: strict;
+
+  &.snap {
+    scroll-snap-type: inline mandatory;
+  }
+}
+
+#items {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  grid-template-rows: 100%;
+  gap: 24px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & > li {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    scroll-snap-stop: always;
+    scroll-snap-align: start;
+    pointer-events: none;
+  }
+}
+
+.sentinel {
+  width: 0;
+  height: 100%;
+}
