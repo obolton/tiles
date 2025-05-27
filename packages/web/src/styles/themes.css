@@ -1,0 +1,22 @@
+theme-selector {
+  display: contents;
+
+  &:state(open) > *:first-child {
+    opacity: 0.25;
+  }
+
+  & swipe-view {
+    margin: 0;
+    padding: 0;
+    background: none;
+    backdrop-filter: blur(16px);
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow:
+      inset 0 0 0 2px rgb(0 0 0 / 20%),
+      0 6px 4px -4px rgb(0 0 0 / 15%);
+    transition:
+      width var(--animation-duration) var(--spring),
+      height var(--animation-duration) var(--spring);
+  }
+}
