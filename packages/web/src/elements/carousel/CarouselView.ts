@@ -26,6 +26,9 @@ export default class CarouselView extends HTMLElement {
     shadow.adoptedStyleSheets = [stylesheet];
 
     this.internals = this.attachInternals();
+    this.internals.role = "group";
+    this.internals.ariaRoleDescription = "carousel";
+    this.internals.ariaOrientation = "horizontal";
 
     this.contents = document.createElement("div");
     this.contents.id = "contents";
@@ -56,10 +59,6 @@ export default class CarouselView extends HTMLElement {
     this.addEventListener("keydown", this);
     this.addEventListener("dnd-dragover", this, { passive: true });
     this.addEventListener("dnd-dragleave", this, { passive: true });
-
-    this.internals.role = "group";
-    this.internals.ariaRoleDescription = "carousel";
-    this.internals.ariaOrientation = "horizontal";
   }
 
   connectedCallback() {
@@ -103,6 +102,16 @@ export default class CarouselView extends HTMLElement {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
+    if (
+      event.repeat ||
+      event.shiftKey ||
+      event.ctrlKey ||
+      event.altKey ||
+      event.metaKey
+    ) {
+      return;
+    }
+
     if (event.key === "ArrowLeft") {
       event.preventDefault();
       event.stopPropagation();
