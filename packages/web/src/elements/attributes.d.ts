@@ -31,6 +31,8 @@ import FloatingToolbar from "./floatingToolbar/FloatingToolbar";
 import type TableView, { TableViewAttributes } from "./table/TableView";
 import type SwipeView from "./swipe/SwipeView";
 import type { SwipeViewAttributes } from "./swipe/SwipeView";
+import type ThemeSelector from "./themes/ThemeSelector";
+import type { ThemeSelectorAttributes } from "./themes/ThemeSelector";
 
 type CustomElementAttributes<
   T extends HTMLElement,
@@ -83,6 +85,10 @@ declare module "@/jsx/jsx" {
       "floating-toolbar": CustomElementAttributes<FloatingToolbar>;
       "table-view": CustomElementAttributes<TableView, TableViewAttributes>;
       "swipe-view": CustomElementAttributes<SwipeView, SwipeViewAttributes>;
+      "theme-selector": CustomElementAttributes<
+        ThemeSelector,
+        ThemeSelectorAttributes
+      >;
     }
   }
 }

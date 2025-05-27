@@ -16,3 +16,4 @@ import "./tabs/TabPanel";
 import "./tableOfContents/TableOfContents";
 import "./table/TableView";
 import "./swipe/SwipeView";
+import "./themes/ThemeSelector";
