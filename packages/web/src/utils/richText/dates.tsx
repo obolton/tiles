@@ -1,8 +1,14 @@
 import { Plugin } from "prosemirror-state";
-import DateTime from "@/components/dates/DateTime";
+import Themeable from "@/components/themes/Themeable";
 import { render } from "@/jsx/dom";
 import { showModal } from "@/utils/modals";
-import { ReactiveValue } from "@/utils/reactivity";
+import { reactive } from "@/utils/reactivity";
+import {
+  DATE_THEMES,
+  DATE_THEME_OPTIONS,
+  DEFAULT_DATE_THEME,
+  type DateTimeThemeProps,
+} from "@/components/dates/themes";
 import type { DateTimeModalResult } from "@/components/modals/DateTimeModal";
 
 export function dates() {
@@ -10,8 +16,11 @@ export function dates() {
     props: {
       nodeViews: {
         date(node, view, getPos) {
-          const value = new ReactiveValue(node.attrs.value as Date);
-          const time = new ReactiveValue(node.attrs.time as boolean);
+          const theme = reactive<string>(
+            node.attrs.theme || DEFAULT_DATE_THEME,
+          );
+          const value = reactive(node.attrs.value as Date);
+          const time = reactive(node.attrs.time as boolean);
 
           function edit() {
             showModal<DateTimeModalResult>("DATE_TIME", {
@@ -40,17 +49,36 @@ export function dates() {
             }
           }
 
+          function onChange(value: string) {
+            const pos = getPos();
+            if (typeof pos === "undefined") {
+              return;
+            }
+            theme.value = value;
+            view.dispatch(view.state.tr.setNodeAttribute(pos, "theme", value));
+          }
+
           return {
             dom: render(
-              <DateTime
-                value={value}
-                time={time}
+              <Themeable<DateTimeThemeProps>
+                theme={theme}
+                item={{
+                  value,
+                  time,
+                }}
+                options={DATE_THEME_OPTIONS}
+                registry={DATE_THEMES}
+                onChange={onChange}
                 onclick={edit}
                 onkeydown={onKeyDown}
                 data-tooltip="Edit date"
                 data-tooltip-position="top"
               />,
-            ) as HTMLTimeElement,
+            ) as HTMLElement,
+
+            update() {
+              return true;
+            },
           };
         },
       },

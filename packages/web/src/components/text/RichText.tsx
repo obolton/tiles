@@ -1,7 +1,8 @@
 import { TextFormat } from "@/utils/richText/types";
 import { ListType } from "@/utils/richText/types";
-import DateTime from "@/components/dates/DateTime";
-import { ReactiveValue } from "@/utils/reactivity";
+import ThemeVariant from "@/components/themes/ThemeVariant";
+import { DATE_THEMES, DEFAULT_DATE_THEME } from "@/components/dates/themes";
+import { reactive } from "@/utils/reactivity";
 import type {
   RichText,
   ParagraphNode,
@@ -40,9 +41,11 @@ function renderNodes(nodes: Node[]) {
           case "date":
             return (
               <FormattedText format={node.format}>
-                <DateTime
-                  value={new ReactiveValue(new Date(node.value))}
-                  time={new ReactiveValue(node.value.length > 10)}
+                <ThemeVariant
+                  theme={node.theme ?? DEFAULT_DATE_THEME}
+                  registry={DATE_THEMES}
+                  value={reactive(new Date(node.value))}
+                  time={reactive(node.value.length > 10)}
                 />
               </FormattedText>
             );
