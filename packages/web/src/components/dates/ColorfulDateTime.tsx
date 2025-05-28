@@ -1,33 +1,24 @@
-import styles from "./DateTime.module.css";
-import type { JSX } from "@/jsx/jsx";
-import type { Reactive } from "@/utils/reactivity";
+import styles from "./ColorfulDateTime.module.css";
 import { Computed } from "@/utils/reactivity";
+import type { DateTimeThemeProps } from "./themes";
 
-export interface DateTimeProps
-  extends Omit<JSX.Attributes<HTMLTimeElement>, "dateTime" | "className"> {
-  value: Reactive<Date>;
-  time: Reactive<boolean>;
-}
+export default function ColorfulDateTime({ value, time }: DateTimeThemeProps) {
+  const monthFormatter = new Intl.DateTimeFormat(undefined, {
+    month: "short",
+    timeZone: "UTC",
+  });
+  const dayFormatter = new Intl.DateTimeFormat(undefined, {
+    day: "numeric",
+    timeZone: "UTC",
+  });
+  const timeFormatter = new Intl.DateTimeFormat(undefined, {
+    hour: "numeric",
+    minute: "numeric",
+    timeZone: "UTC",
+  });
 
-const monthFormatter = new Intl.DateTimeFormat(undefined, {
-  month: "short",
-  timeZone: "UTC",
-});
-const dayFormatter = new Intl.DateTimeFormat(undefined, {
-  day: "numeric",
-  timeZone: "UTC",
-});
-const timeFormatter = new Intl.DateTimeFormat(undefined, {
-  hour: "numeric",
-  minute: "numeric",
-  timeZone: "UTC",
-});
-
-export default function DateTime({ value, time, ...props }: DateTimeProps) {
   return (
     <time
-      {...props}
-      className={styles.datetime}
       dateTime={
         new Computed([value, time] as const, (date, showTime) =>
           showTime ? date.toISOString() : date.toISOString().slice(0, 10),
