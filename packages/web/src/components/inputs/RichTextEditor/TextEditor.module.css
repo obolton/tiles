@@ -15,8 +15,6 @@
 .editor {
   time {
     cursor: pointer;
-    padding: 2px;
-    margin: -2px;
     border-radius: 8px;
     transition:
       box-shadow var(--animation-duration-short) var(--easing),

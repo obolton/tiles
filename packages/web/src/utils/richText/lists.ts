@@ -21,7 +21,7 @@ export function lists() {
               return;
             }
             const pos = getPos();
-            if (!pos) {
+            if (typeof pos === "undefined") {
               return;
             }
             const checked = li.ariaChecked === "true";
