@@ -16,6 +16,7 @@
   overflow: auto clip;
   scrollbar-width: none;
   contain: strict;
+  container: carousel / inline-size;
 
   &.snap {
     scroll-snap-type: inline mandatory;
@@ -23,11 +24,13 @@
 }
 
 #items {
+  position: absolute;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: max-content;
-  grid-template-rows: 100%;
-  gap: 24px;
+  grid-template-rows: auto;
+  align-items: start;
+  gap: 32px;
   height: 100%;
   margin: 0;
   padding: 0;
@@ -40,6 +43,10 @@
     scroll-snap-stop: always;
     scroll-snap-align: start;
     pointer-events: none;
+
+    &:last-child {
+      margin-right: 100cqi;
+    }
   }
 }
 

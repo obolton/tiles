@@ -170,7 +170,7 @@ export default class SwipeView extends HTMLElement {
     this.items.prepend(item);
     item.querySelector("slot")!.assign(element);
     const rect = item.getBoundingClientRect();
-    this.carousel.scrollLeft = scrollLeft + rect.width + 24;
+    this.carousel.scrollLeft = scrollLeft + rect.width + 32;
     this.carousel.classList.add("snap");
 
     return item;
@@ -208,6 +208,11 @@ export default class SwipeView extends HTMLElement {
     const { width, height } = element.getBoundingClientRect();
     this.style.width = width + "px";
     this.style.height = height + "px";
+
+    this.items
+      .querySelector('li[aria-selected="true"]')
+      ?.setAttribute("aria-selected", "false");
+    element.setAttribute("aria-selected", "true");
 
     if (this.value !== element.value) {
       this.value = element.value;
