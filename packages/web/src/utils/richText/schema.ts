@@ -185,6 +185,7 @@ const nodesSpec = {
         },
       },
       time: { default: true, validate: "boolean" },
+      theme: { default: null, validate: "string|null" },
     },
     inline: true,
     group: "inline",

@@ -117,6 +117,7 @@ function serializeNode(node: Node): SerializedNode {
       type: "date",
       value: time ? value.toISOString() : value.toISOString().slice(0, 10),
       format: getTextFormat(node),
+      theme: node.attrs.theme,
     };
   }
 

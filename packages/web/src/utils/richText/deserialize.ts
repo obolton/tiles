@@ -102,7 +102,11 @@ function createListItemNode(listItem: ListItemNode): Node {
 function createDateNode(date: DateNode): Node {
   const marks = getMarks(date.format);
   return schema.nodes.date.create(
-    { value: new Date(date.value), time: date.value.length > 10 },
+    {
+      value: new Date(date.value),
+      time: date.value.length > 10,
+      theme: date.theme,
+    },
     null,
     marks,
   );

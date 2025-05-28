@@ -34,6 +34,7 @@ export interface DateNode extends BaseNode {
   type: "date";
   value: string;
   format: number;
+  theme?: string | null;
 }
 
 export interface ParagraphNode extends BaseNode {
