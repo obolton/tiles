@@ -6,6 +6,8 @@ import type {
   UpdateTableSchema,
   AppendRowSchema,
   DeleteRowSchema,
+  AppendColumnSchema,
+  DeleteColumnSchema,
   UpdateCellSchema,
 } from "./schema.ts";
 
@@ -131,6 +133,47 @@ export async function deleteRow({ pageId, tableId, rowId }: DeleteRowSchema) {
       },
       select: { id: true },
     });
+  });
+}
+
+export async function appendColumn({ pageId, tableId }: AppendColumnSchema) {
+  return prisma.table.update({
+    where: { id: tableId, pageId },
+    data: {
+      numColumns: {
+        increment: 1,
+      },
+    },
+    select: { id: true },
+  });
+}
+
+export async function deleteColumn({
+  pageId,
+  tableId,
+  index,
+}: DeleteColumnSchema) {
+  return prisma.$transaction(async (transaction) => {
+    // Verify access to the table
+    await transaction.table.findUniqueOrThrow({
+      where: { id: tableId, pageId },
+      select: { id: true },
+    });
+
+    await transaction.table.update({
+      where: { id: tableId, pageId },
+      data: {
+        numColumns: {
+          decrement: 1,
+        },
+      },
+      select: { id: true },
+    });
+
+    // Remove the column data
+    await transaction.$executeRaw`UPDATE "table_rows"
+    SET "data" = data - ${index.toString()}::text
+    WHERE "table_id" = ${tableId}::uuid;`;
   });
 }
 

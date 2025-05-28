@@ -5,6 +5,8 @@ import {
   updateTable,
   appendRow,
   deleteRow,
+  appendColumn,
+  deleteColumn,
   updateCell,
 } from "./tables.ts";
 import {
@@ -12,6 +14,8 @@ import {
   UpdateTableSchema,
   AppendRowSchema,
   DeleteRowSchema,
+  AppendColumnSchema,
+  DeleteColumnSchema,
   UpdateCellSchema,
 } from "./schema.ts";
 
@@ -31,6 +35,14 @@ export default router({
   deleteRow: pageUpdateProcedure
     .input(DeleteRowSchema)
     .mutation(({ input }) => deleteRow(input)),
+
+  appendColumn: pageUpdateProcedure
+    .input(AppendColumnSchema)
+    .mutation(({ input }) => appendColumn(input)),
+
+  deleteColumn: pageUpdateProcedure
+    .input(DeleteColumnSchema)
+    .mutation(({ input }) => deleteColumn(input)),
 
   updateCell: pageUpdateProcedure
     .input(UpdateCellSchema)
