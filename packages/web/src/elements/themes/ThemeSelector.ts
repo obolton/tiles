@@ -141,10 +141,9 @@ export default class ThemeSelector extends HTMLElement {
 
     this.appendChild(swipe);
 
-    swipe.showPopover();
-    swipe.animate([{ opacity: 0.5 }, { opacity: 1 }], DEFAULT_TIMING);
-
     this.internals.states.add("open");
+
+    swipe.showPopover();
   }
 
   private hide() {
