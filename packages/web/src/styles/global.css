@@ -208,6 +208,12 @@ aside {
   border-radius: var(--border-radius);
 }
 
+time {
+  display: inline-block;
+  user-select: auto;
+  white-space: nowrap;
+}
+
 infinite-scroll {
   display: contents;
 }
