@@ -2,23 +2,18 @@
   position: relative;
   width: 100%;
   grid-column: 1 / -1;
-  margin: 0 0 64px;
+  margin: -24px -24px 40px;
+  padding: 24px;
   border-radius: var(--border-radius);
   outline: 3px solid transparent;
-  outline-offset: 16px;
   transition: outline-color var(--animation-duration) var(--easing);
+
+  &:focus-within:not(:focus) {
+    outline: 3px solid rgb(0 0 0 / 10%);
+  }
 
   &:focus {
     outline: var(--focus-outline);
-  }
-
-  &:not(:last-of-type)::after {
-    content: "";
-    position: absolute;
-    inset: auto 48px -32px;
-    height: 3px;
-    border-radius: 3px;
-    background: rgb(0 0 0 / 5%);
   }
 }
 
