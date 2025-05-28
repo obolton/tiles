@@ -32,6 +32,7 @@ export default class LayoutEditor {
     this.collectionId = collectionId;
 
     element.addEventListener("dnd-dragover", this);
+    element.addEventListener("dnd-dragleave", this);
     element.addEventListener("dnd-drop", this);
     element.addEventListener("dnd-dragend", this, { passive: true });
     element.addEventListener("tileresizestart", this);
@@ -43,6 +44,7 @@ export default class LayoutEditor {
   disconnect() {
     const element = this.elementRef.deref();
     element?.removeEventListener("dnd-dragover", this);
+    element?.removeEventListener("dnd-dragleave", this);
     element?.removeEventListener("dnd-drop", this);
     element?.removeEventListener("dnd-dragend", this);
     element?.removeEventListener("tileresizestart", this);
@@ -63,6 +65,8 @@ export default class LayoutEditor {
     switch (event.type) {
       case "dnd-dragover":
         return this.handleDragOver(event as DragDropEvent<ClientTile>);
+      case "dnd-dragleave":
+        return this.handleDragLeave();
       case "dnd-drop":
         return this.handleDrop(event as DragDropEvent<ClientTile>);
       case "dnd-dragend":
@@ -102,6 +106,10 @@ export default class LayoutEditor {
       });
     }
     this.idForPoint = afterId;
+  }
+
+  private handleDragLeave() {
+    this.idForPoint = undefined;
   }
 
   private async handleDrop(event: DragDropEvent<ClientTile>) {
