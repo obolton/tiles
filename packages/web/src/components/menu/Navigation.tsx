@@ -1,5 +1,4 @@
 import NewIcon from "@/icons/new.svg?jsx";
-import LibraryIcon from "@/icons/library.svg?jsx";
 import SettingsIcon from "@/icons/settings.svg?jsx";
 import SignOutIcon from "@/icons/sign-out.svg?jsx";
 import BookmarkIcon from "@/icons/bookmark.svg?jsx";
@@ -97,22 +96,12 @@ export default function Navigation({
       >
         <ul>
           <li>
-            <a href={value.id} className="floating" data-tooltip="Your profile">
+            <a href="/library" className="floating" data-tooltip="Your library">
               <img
                 className="profile-image"
                 src={value.imageUrl}
-                alt="Profile image"
+                alt={value.name}
               />
-            </a>
-          </li>
-          <li>
-            <a
-              href="/library"
-              className="floating"
-              aria-label="Library"
-              data-tooltip="Library"
-            >
-              <LibraryIcon aria-hidden="true" />
             </a>
           </li>
           <li>
@@ -132,7 +121,6 @@ export default function Navigation({
               id="more-button"
               className="floating"
               type="button"
-              role="menuitem"
               popoverTarget="navigation-overflow"
               data-tooltip="More options"
               aria-haspopup="menu"
@@ -166,7 +154,6 @@ export default function Navigation({
                   pending: bookmarkPending,
                 }}
                 type="button"
-                role="menuitem"
                 aria-label={isBookmarked.derive((value) =>
                   value ? "Bookmarked" : "Not bookmarked",
                 )}
@@ -195,7 +182,6 @@ export default function Navigation({
                 id="toc-button"
                 className="floating"
                 type="button"
-                role="menuitem"
                 popoverTarget="toc"
                 aria-label="Table of contents"
                 data-tooltip="Table of contents"
@@ -218,7 +204,6 @@ export default function Navigation({
                 id="share-button"
                 className="floating"
                 type="button"
-                role="menuitem"
                 aria-label="Share this page"
                 data-tooltip="Share this page"
                 onclick={sharePage}

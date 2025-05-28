@@ -18,10 +18,6 @@
   }
 }
 
-body:not([data-signed-in]) #navigation {
-  display: none;
-}
-
 @media (width < 640px) {
   header,
   main {
