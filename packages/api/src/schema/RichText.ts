@@ -11,6 +11,7 @@ const DateNodeSchema = z.object({
   type: z.literal("date"),
   value: z.union([z.string().datetime(), z.string().date()]),
   format: z.number().int().gte(0).lte(31),
+  theme: z.string().nullable(),
 });
 
 const InlineNodeSchema = z.discriminatedUnion("type", [
