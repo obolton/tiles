@@ -162,12 +162,14 @@ export default class TableView extends HTMLElement {
           throw new RangeError("columns attribute is required");
         }
         this.#columns = parseInt(value, 10);
+        this.update();
         break;
       case "rows":
         if (value === null) {
           throw new RangeError("rows attribute is required");
         }
         this.#rows = parseInt(value, 10);
+        this.update();
         break;
       case "allowselection":
         this.allowSelection = value !== null;

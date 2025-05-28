@@ -56,6 +56,16 @@ export default function TableTile({
     element.enableVirtualization(updateCell);
   }
 
+  const addRow = async () => {
+    await editor.appendTableRow({ tableId: id });
+    numRows.value++;
+  };
+
+  const addColumn = async () => {
+    await editor.appendTableColumn({ tableId: id });
+    numColumns.value++;
+  };
+
   const updateCell = (row: number, column: number, cell: Element) => {
     const value = data.value[row]?.data[column];
     if (!value) {
@@ -258,6 +268,7 @@ export default function TableTile({
                   className="floating small"
                   aria-label="Add row"
                   data-tooltip="Add row"
+                  onclick={addRow}
                 >
                   <AddRowIcon aria-hidden="true" />
                 </button>
@@ -269,6 +280,7 @@ export default function TableTile({
                   className="floating small"
                   aria-label="Add column"
                   data-tooltip="Add column"
+                  onclick={addColumn}
                 >
                   <AddColumnIcon aria-hidden="true" />
                 </button>

@@ -433,34 +433,46 @@ export default class Editor {
   async appendTableRow(
     data: OmitPageId<AppRouterInputs["tables"]["appendRow"]>,
   ) {
-    const item = await client.tables.appendRow.mutate({
+    return await client.tables.appendRow.mutate({
       pageId: this.pageId,
       ...data,
     });
-    // TODO: Update tile data
-    return item;
   }
 
   async deleteTableRow(
     data: OmitPageId<AppRouterInputs["tables"]["deleteRow"]>,
   ) {
-    const item = await client.tables.deleteRow.mutate({
+    return await client.tables.deleteRow.mutate({
       pageId: this.pageId,
       ...data,
     });
-    // TODO: Update tile data
-    return item;
+  }
+
+  async appendTableColumn(
+    data: OmitPageId<AppRouterInputs["tables"]["appendColumn"]>,
+  ) {
+    return await client.tables.appendColumn.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+  }
+
+  async deleteTableColumn(
+    data: OmitPageId<AppRouterInputs["tables"]["deleteColumn"]>,
+  ) {
+    return await client.tables.deleteColumn.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
   }
 
   async updateTableCell(
     data: OmitPageId<AppRouterInputs["tables"]["updateCell"]>,
   ) {
-    const item = await client.tables.updateCell.mutate({
+    return await client.tables.updateCell.mutate({
       pageId: this.pageId,
       ...data,
     });
-    // TODO: Update tile data
-    return item;
   }
 
   // Videos
