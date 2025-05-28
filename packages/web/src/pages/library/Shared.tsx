@@ -61,7 +61,7 @@ export default function Shared({ pages }: SharedProps) {
           inputPlaceholder="Search pages shared with you"
           pages={pages}
           search={(query, offset) =>
-            client.pages.listShared.query({ query, offset })
+            client.pages.listShared.query({ query: query || undefined, offset })
           }
           renderPlaceholder={renderPlaceholder}
         />

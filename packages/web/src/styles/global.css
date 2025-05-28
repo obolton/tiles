@@ -216,6 +216,7 @@ time {
 
 infinite-scroll {
   display: contents;
+  overflow-anchor: none;
 }
 
 page-item {

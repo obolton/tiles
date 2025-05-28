@@ -59,7 +59,7 @@ export default function Bookmarks({ pages }: BookmarksProps) {
           inputPlaceholder="Search bookmarks"
           pages={pages}
           search={(query, offset) =>
-            client.bookmarks.list.query({ query, offset })
+            client.bookmarks.list.query({ query: query || undefined, offset })
           }
           renderPlaceholder={renderPlaceholder}
         />

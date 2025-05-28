@@ -85,7 +85,9 @@ export default function Library({ pages }: LibraryProps) {
         <PagesGrid
           inputPlaceholder="Search pages"
           pages={pages}
-          search={(query, offset) => client.pages.list.query({ query, offset })}
+          search={(query, offset) =>
+            client.pages.list.query({ query: query || undefined, offset })
+          }
           renderPlaceholder={renderPlaceholder}
         />
       </main>

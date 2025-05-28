@@ -59,7 +59,10 @@ export default function Trash({ pages }: TrashProps) {
           inputPlaceholder="Search trash"
           pages={pages}
           search={(query, offset) =>
-            client.pages.listDeleted.query({ query, offset })
+            client.pages.listDeleted.query({
+              query: query || undefined,
+              offset,
+            })
           }
           renderPlaceholder={renderPlaceholder}
         />
