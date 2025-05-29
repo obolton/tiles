@@ -1,6 +1,5 @@
 .section {
   position: relative;
-  width: 100%;
   grid-column: 1 / -1;
   margin: -24px -24px 40px;
   padding: 24px;
