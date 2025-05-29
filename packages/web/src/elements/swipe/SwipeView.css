@@ -37,6 +37,7 @@
   list-style: none;
 
   & > li {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: start;
@@ -51,6 +52,7 @@
 }
 
 .sentinel {
+  position: absolute;
   width: 0;
-  height: 100%;
+  inset: 0 auto 0 0;
 }
