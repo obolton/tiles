@@ -26,10 +26,17 @@
   box-sizing: border-box;
 }
 
+:host {
+  position: relative;
+  container: table / size;
+}
+
 #scroll-container {
   position: relative;
   width: var(--scroll-width);
   height: var(--scroll-height);
+  min-width: 100%;
+  min-height: 100%;
   contain: size layout style;
 }
 
@@ -40,6 +47,7 @@
   top: 0;
   left: 0;
   width: 100%;
+  min-height: 100cqh;
   border: none;
   border-spacing: 0;
   border-collapse: separate;
