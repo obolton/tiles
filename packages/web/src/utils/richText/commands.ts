@@ -1,7 +1,5 @@
-import { toggleMark, setBlockType, wrapIn, lift } from "prosemirror-commands";
+import { toggleMark, wrapIn, lift } from "prosemirror-commands";
 import { liftListItem, wrapRangeInList } from "prosemirror-schema-list";
-import type { NodeType } from "prosemirror-model";
-import type { Command } from "prosemirror-state";
 import { schema, type TextAlignment } from "./schema";
 import {
   closest,
@@ -9,6 +7,8 @@ import {
   getSelectionBlockNodeTypes,
   findLinkRange,
 } from "./helpers";
+import type { NodeType } from "prosemirror-model";
+import type { Command } from "prosemirror-state";
 
 export const toggleBold = toggleMark(schema.marks.bold);
 
@@ -38,15 +38,44 @@ export const toggleQuote = toggleWrap(schema.nodes.quote);
 export function toggleHeading(level: 1 | 2 | 3): Command {
   return function (state, dispatch, view) {
     if (getSelectionHeadingLevel(state) === level) {
-      return setBlockType(schema.nodes.paragraph, null)(state, dispatch, view);
+      const tr = state.tr;
+      const selection = tr.selection;
+      for (const range of selection.ranges) {
+        tr.setBlockType(
+          range.$from.pos,
+          range.$to.pos,
+          schema.nodes.paragraph,
+          (oldNode) => ({
+            align: oldNode.attrs.align,
+          }),
+        );
+      }
+      if (dispatch) {
+        dispatch(tr);
+      }
+      return true;
     } else {
       if (!view) {
         return false;
       }
       liftListItem(schema.nodes.list_item)(state, dispatch, view);
-      return setBlockType(schema.nodes.heading, {
-        level,
-      })(view.state, view.dispatch, view);
+      const tr = view.state.tr;
+      const selection = tr.selection;
+      for (const range of selection.ranges) {
+        tr.setBlockType(
+          range.$from.pos,
+          range.$to.pos,
+          schema.nodes.heading,
+          (oldNode) => ({
+            align: oldNode.attrs.align,
+            level,
+          }),
+        );
+      }
+      if (dispatch) {
+        dispatch(tr);
+      }
+      return true;
     }
   };
 }
