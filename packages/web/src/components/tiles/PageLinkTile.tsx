@@ -65,7 +65,6 @@ export default function PageLinkTile({
       <PageTile
         title={linkedPage.value.title}
         subtitle={linkedPage.value.subtitle}
-        author={linkedPage.value.author}
         hue={linkedPage.value.hue}
         font={linkedPage.value.font}
         color={color}

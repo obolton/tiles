@@ -38,24 +38,6 @@
     padding: 2px 0;
   }
 
-  & address {
-    margin-top: 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-family: var(--ui-font);
-    font-style: normal;
-    font-weight: 500;
-
-    & > span {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-
   &.with-image {
     background: var(--tile-background);
     padding: clamp(8px, 6cqw, 24px);
@@ -72,23 +54,20 @@
 }
 
 .light {
-  & p,
-  & address {
+  & p {
     color: rgb(0 0 0 / 60%);
   }
 }
 
 .dark {
-  & .subtitle,
-  & address {
+  & .subtitle {
     color: rgb(255 255 255 / 60%);
   }
 }
 
 @container page-tile (width < 160px) or (height < 160px) {
   .text {
-    & .subtitle,
-    & address {
+    & .subtitle {
       display: none;
     }
   }
