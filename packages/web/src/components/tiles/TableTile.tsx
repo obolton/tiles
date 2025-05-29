@@ -37,9 +37,9 @@ function createDocument(value: string) {
 export default function TableTile({
   editor,
   id,
-  numColumns,
+  tableColumns,
+  tableRows,
   numRows,
-  data,
   hasFocus,
   signal,
 }: TableTileProps) {
@@ -62,12 +62,16 @@ export default function TableTile({
   };
 
   const addColumn = async () => {
-    await editor.appendTableColumn({ tableId: id });
-    numColumns.value++;
+    const column = await editor.appendTableColumn({ tableId: id });
+    tableColumns.value = tableColumns.value.concat(column);
   };
 
   const updateCell = (row: number, column: number, cell: Element) => {
-    const value = data.value[row]?.data[column];
+    const columnId = tableColumns.value[column]?.id;
+    if (!columnId) {
+      return;
+    }
+    const value = tableRows.value[row]?.data[columnId];
     if (!value) {
       return;
     }
@@ -103,8 +107,9 @@ export default function TableTile({
 
       const row = parseInt(target.dataset.row, 10);
       const column = parseInt(target.dataset.column, 10);
+      const columnId = tableColumns.value[column]?.id;
 
-      const value = data.value[row]?.data[column];
+      const value = columnId ? tableRows.value[row]?.data[columnId] : null;
       const doc = !value
         ? createDocument("")
         : typeof value === "string"
@@ -153,8 +158,13 @@ export default function TableTile({
 
     const row = parseInt(target.dataset.row, 10);
     const column = parseInt(target.dataset.column, 10);
+    const columnId = tableColumns.value[column]?.id;
 
-    const rowData = data.value[row];
+    if (!columnId) {
+      return;
+    }
+
+    const rowData = tableRows.value[row];
     if (!rowData) {
       return;
     }
@@ -170,11 +180,11 @@ export default function TableTile({
       target.replaceChildren();
     }
 
-    rowData.data[column] = value;
+    rowData.data[columnId] = value;
     await editor.updateTableCell({
       tableId: id,
       rowId: rowData.id,
-      column,
+      columnId,
       value,
     });
   };
@@ -206,32 +216,37 @@ export default function TableTile({
       <table-view
         ref={ref}
         classList={["rich-text", styles.table]}
-        columns={numColumns}
+        columns={tableColumns.derive((columns) => columns.length)}
         rows={numRows}
         allowselection={isEditable}
         onfocusin={onFocusIn}
         onfocusout={onFocusOut}
       >
-        {data.value.map(({ data: rowData }, row) => {
+        {tableRows.value.map(({ data: rowData }, row) => {
           const cells = [];
-          for (let col = 0; col < numColumns.value; col++) {
-            const value = rowData[col];
+          for (
+            let columnIndex = 0;
+            columnIndex < tableColumns.value.length;
+            columnIndex++
+          ) {
+            const column = tableColumns.value[columnIndex]!;
+            const value = rowData[column.id];
             if (!value) {
               cells.push(
                 <div
                   role="cell"
-                  style={{ width: "160px" }}
+                  style={{ width: `${column.width}px` }}
                   data-row={row}
-                  data-column={col}
+                  data-column={columnIndex}
                 ></div>,
               );
             } else if (typeof value === "string") {
               cells.push(
                 <div
                   role="cell"
-                  style={{ width: "160px" }}
+                  style={{ width: `${column.width}px` }}
                   data-row={row}
-                  data-column={col}
+                  data-column={columnIndex}
                 >
                   {value}
                 </div>,
@@ -240,9 +255,9 @@ export default function TableTile({
               cells.push(
                 <div
                   role="cell"
-                  style={{ width: "160px" }}
+                  style={{ width: `${column.width}px` }}
                   data-row={row}
-                  data-column={col}
+                  data-column={columnIndex}
                 >
                   <RichText content={value} />
                 </div>,
