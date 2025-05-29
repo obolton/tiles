@@ -6,38 +6,28 @@ table-view {
   & div[role="row"] {
     display: table-row;
     height: 32px;
+    contain: strict;
   }
 
   & div[role="cell"] {
     display: table-cell;
-    position: relative;
     align-content: center;
-    overflow-wrap: anywhere;
     padding: 0 8px;
     border-right: 1px solid rgb(0 0 0 / 10%);
     border-bottom: 1px solid rgb(0 0 0 / 10%);
+    overflow: clip;
+    overflow-wrap: anywhere;
+    outline-color: transparent;
+    transition: outline-color var(--animation-duration-short) var(--easing);
 
     &:focus {
-      outline: none;
-      z-index: 1;
-
-      &::before {
-        content: "";
-        position: absolute;
-        inset: -4px;
-        z-index: -1;
-        background: oklch(from var(--focus-ring-color) l c h / 10%);
-        border-radius: var(--border-radius);
-        outline: var(--focus-outline);
-        pointer-events: none;
-        transition:
-          display var(--animation-duration-short) allow-discrete,
-          opacity var(--animation-duration-short) var(--easing);
-
-        @starting-style {
-          opacity: 0;
-        }
-      }
+      border: none;
+      border-radius: var(--border-radius);
+      background: var(--tile-background);
+      box-shadow: 0 0 0 4px var(--tile-background);
+      outline-offset: 4px;
+      outline: var(--focus-outline);
+      overflow: visible;
     }
 
     &:not(:focus).selected {
