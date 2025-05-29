@@ -11,6 +11,7 @@ import type {
   TileType,
   Font,
   Table,
+  TableColumn,
   TableRow,
 } from "@prisma/client";
 
@@ -87,8 +88,9 @@ export interface ClientPageLinkTile extends ClientTileBase, ClientPageLink {
 
 // Table
 export type ClientTable = OmitMetadata<Table> & {
+  tableColumns: Pick<TableColumn, "id" | "width">[];
+  tableRows: Pick<TableRow, "id" | "data">[];
   numRows: number;
-  data: Pick<TableRow, "id" | "data">[];
 };
 export interface ClientTableTile extends ClientTileBase, ClientTable {
   type: "TABLE";

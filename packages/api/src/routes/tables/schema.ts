@@ -9,13 +9,6 @@ export const CreateTableSchema = z.object({
 });
 export type CreateTableSchema = z.infer<typeof CreateTableSchema>;
 
-export const UpdateTableSchema = z.object({
-  pageId: z.string().uuid(),
-  id: z.string().uuid(),
-  numColumns: z.number().int().min(1).max(100),
-});
-export type UpdateTableSchema = z.infer<typeof UpdateTableSchema>;
-
 export const AppendRowSchema = z.object({
   pageId: z.string().uuid(),
   tableId: z.string().uuid(),
@@ -38,7 +31,7 @@ export type AppendColumnSchema = z.infer<typeof AppendColumnSchema>;
 export const DeleteColumnSchema = z.object({
   pageId: z.string().uuid(),
   tableId: z.string().uuid(),
-  index: z.number(),
+  columnId: z.string().uuid(),
 });
 export type DeleteColumnSchema = z.infer<typeof DeleteColumnSchema>;
 
@@ -46,7 +39,7 @@ export const UpdateCellSchema = z.object({
   pageId: z.string().uuid(),
   tableId: z.string().uuid(),
   rowId: z.string().uuid(),
-  column: z.number().int().min(0),
+  columnId: z.string().uuid(),
   value: z.union([z.string(), RichTextSchema]).nullable(),
 });
 export type UpdateCellSchema = z.infer<typeof UpdateCellSchema>;

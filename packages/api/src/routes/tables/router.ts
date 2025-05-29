@@ -2,7 +2,6 @@ import { router } from "@/utils/trpc.ts";
 import { pageUpdateProcedure } from "@/utils/middleware.ts";
 import {
   createTable,
-  updateTable,
   appendRow,
   deleteRow,
   appendColumn,
@@ -11,7 +10,6 @@ import {
 } from "./tables.ts";
 import {
   CreateTableSchema,
-  UpdateTableSchema,
   AppendRowSchema,
   DeleteRowSchema,
   AppendColumnSchema,
@@ -23,10 +21,6 @@ export default router({
   create: pageUpdateProcedure
     .input(CreateTableSchema)
     .mutation(({ input }) => createTable(input)),
-
-  update: pageUpdateProcedure
-    .input(UpdateTableSchema)
-    .mutation(({ input }) => updateTable(input)),
 
   appendRow: pageUpdateProcedure
     .input(AppendRowSchema)

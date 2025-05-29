@@ -186,7 +186,7 @@ export function formatTile({
     return {
       ...base,
       ...tableData,
-      numRows: _count.data,
+      numRows: _count.tableRows,
       type: "TABLE",
     };
   }

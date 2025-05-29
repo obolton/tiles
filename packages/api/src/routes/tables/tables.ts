@@ -3,13 +3,17 @@ import { createTilePlacement } from "../tiles/tiles.ts";
 import type { Prisma } from "@prisma/client";
 import type {
   CreateTableSchema,
-  UpdateTableSchema,
   AppendRowSchema,
   DeleteRowSchema,
   AppendColumnSchema,
   DeleteColumnSchema,
   UpdateCellSchema,
 } from "./schema.ts";
+
+export const TABLE_COLUMN_FIELDS = {
+  id: true,
+  width: true,
+} as const satisfies Prisma.TableColumnSelect<ExtensionArgs>;
 
 export const TABLE_ROW_FIELDS = {
   id: true,
@@ -18,17 +22,19 @@ export const TABLE_ROW_FIELDS = {
 
 export const TABLE_FIELDS = {
   id: true,
-  numColumns: true,
 } as const satisfies Prisma.TableSelect<ExtensionArgs>;
 
 export const TABLE_WITH_DATA_FIELDS = {
   ...TABLE_FIELDS,
   _count: {
     select: {
-      data: true,
+      tableRows: true,
     },
   },
-  data: {
+  tableColumns: {
+    select: TABLE_COLUMN_FIELDS,
+  },
+  tableRows: {
     select: TABLE_ROW_FIELDS,
     take: 10,
   },
@@ -44,9 +50,16 @@ export async function createTable({
     const table = await transaction.table.create({
       data: {
         pageId,
-        numColumns,
       },
       select: { id: true },
+    });
+
+    const columnData: Prisma.TableColumnCreateManyInput[] = [];
+    for (let i = 0; i < numColumns; i++) {
+      columnData.push({ tableId: table.id });
+    }
+    await transaction.tableColumn.createMany({
+      data: columnData,
     });
 
     const rowData: Prisma.TableRowCreateManyInput[] = [];
@@ -76,28 +89,10 @@ export async function createTable({
     return {
       type: "TABLE" as const,
       ...tableWithData,
-      numRows: _count.data,
+      numRows: _count.tableRows,
       ...placement,
     };
   });
-}
-
-export async function updateTable({
-  pageId,
-  id,
-  numColumns,
-}: UpdateTableSchema) {
-  const text = await prisma.table.update({
-    where: {
-      pageId,
-      id,
-    },
-    data: {
-      numColumns,
-    },
-    select: TABLE_FIELDS,
-  });
-  return { type: "TABLE" as const, ...text };
 }
 
 export async function appendRow({ pageId, tableId }: AppendRowSchema) {
@@ -137,21 +132,26 @@ export async function deleteRow({ pageId, tableId, rowId }: DeleteRowSchema) {
 }
 
 export async function appendColumn({ pageId, tableId }: AppendColumnSchema) {
-  return prisma.table.update({
-    where: { id: tableId, pageId },
-    data: {
-      numColumns: {
-        increment: 1,
+  return prisma.$transaction(async (transaction) => {
+    // Verify access to the table
+    await transaction.table.findUniqueOrThrow({
+      where: { id: tableId, pageId },
+      select: { id: true },
+    });
+
+    return transaction.tableColumn.create({
+      data: {
+        tableId,
       },
-    },
-    select: { id: true },
+      select: TABLE_COLUMN_FIELDS,
+    });
   });
 }
 
 export async function deleteColumn({
   pageId,
   tableId,
-  index,
+  columnId,
 }: DeleteColumnSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the table
@@ -160,19 +160,17 @@ export async function deleteColumn({
       select: { id: true },
     });
 
-    await transaction.table.update({
-      where: { id: tableId, pageId },
-      data: {
-        numColumns: {
-          decrement: 1,
-        },
+    await transaction.tableColumn.delete({
+      where: {
+        tableId,
+        id: columnId,
       },
       select: { id: true },
     });
 
     // Remove the column data
     await transaction.$executeRaw`UPDATE "table_rows"
-    SET "data" = data - ${index.toString()}::text
+    SET "data" = data - ${columnId}::text
     WHERE "table_id" = ${tableId}::uuid;`;
   });
 }
@@ -181,7 +179,7 @@ export async function updateCell({
   pageId,
   tableId,
   rowId,
-  column,
+  columnId,
   value,
 }: UpdateCellSchema) {
   return prisma.$transaction(async (transaction) => {
@@ -191,11 +189,16 @@ export async function updateCell({
       select: { id: true },
     });
 
-    const property = column.toString();
+    // Verify existence of column
+    await transaction.tableColumn.findUniqueOrThrow({
+      where: { tableId, id: columnId },
+      select: { id: true },
+    });
+
     const stringValue = JSON.stringify(value);
 
     return transaction.$executeRaw`UPDATE "table_rows"
-    SET "data" = jsonb_set("data", ARRAY[${property}], ${stringValue}::jsonb, true)
+    SET "data" = jsonb_set("data", ARRAY[${columnId}], ${stringValue}::jsonb, true)
     WHERE "id" = ${rowId}::uuid AND "table_id" = ${tableId}::uuid;`;
   });
 }
