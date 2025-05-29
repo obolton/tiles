@@ -3,12 +3,14 @@
   grid-column: 1 / -1;
   margin: -24px -24px 40px;
   padding: 24px;
-  border-radius: var(--border-radius);
+  border-radius: calc(var(--border-radius) + 24px);
   outline: 3px solid transparent;
-  transition: outline-color var(--animation-duration) var(--easing);
+  transition:
+    background-color var(--animation-duration) var(--easing),
+    outline-color var(--animation-duration) var(--easing);
 
-  &:focus-within:not(:focus) {
-    outline: 3px solid rgb(0 0 0 / 10%);
+  &:focus-within {
+    background-color: rgb(0 0 0 / 5%);
   }
 
   &:focus {
