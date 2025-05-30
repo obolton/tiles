@@ -1,7 +1,7 @@
-import prisma from "@/database/prisma.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
+import { createTilePlacement } from "../tiles/tiles.ts";
 import type { CreateTextSchema, UpdateTextSchema } from "./schema.ts";
 import type { Prisma } from "@prisma/client";
-import { createTilePlacement } from "../tiles/tiles.ts";
 
 export const TEXT_FIELDS = {
   id: true,
@@ -9,16 +9,22 @@ export const TEXT_FIELDS = {
   lightness: true,
   chroma: true,
   hue: true,
+  imageUrl: true,
   expand: true,
-} as const satisfies Prisma.TextTileSelect;
+} as const satisfies Prisma.TextTileSelect<ExtensionArgs>;
 
-export type Text = Prisma.TextTileGetPayload<{ select: typeof TEXT_FIELDS }>;
+export type Text = Prisma.Result<
+  typeof prisma.textTile,
+  { select: typeof TEXT_FIELDS },
+  "findUniqueOrThrow"
+>;
 
 export async function createText({
   pageId,
   collectionId,
   content,
   color,
+  imageKey,
   columns,
   rows,
   expand,
@@ -31,6 +37,7 @@ export async function createText({
         lightness: color ? color.l : undefined,
         chroma: color ? color.c : undefined,
         hue: color ? color.h : undefined,
+        imageKey,
         expand,
       },
       select: TEXT_FIELDS,
@@ -55,6 +62,7 @@ export async function updateText({
   id,
   content,
   color,
+  imageKey,
   expand,
 }: UpdateTextSchema) {
   const text = await prisma.textTile.update({
@@ -67,6 +75,7 @@ export async function updateText({
       lightness: color ? color.l : color === null ? null : undefined,
       chroma: color ? color.c : color === null ? null : undefined,
       hue: color ? color.h : color === null ? null : undefined,
+      imageKey,
       expand,
     },
     select: TEXT_FIELDS,

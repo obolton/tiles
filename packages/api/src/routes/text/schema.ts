@@ -12,6 +12,7 @@ export const CreateTextSchema = z.object({
       h: z.number().gte(0).lte(360),
     })
     .optional(),
+  imageKey: z.string().nullable().optional(),
   columns: z.number().int().gte(1).lte(6).optional(),
   rows: z.number().int().gte(1).lte(6).optional(),
   expand: z.boolean().optional(),
@@ -30,6 +31,7 @@ export const UpdateTextSchema = z.object({
     })
     .nullable()
     .optional(),
+  imageKey: z.string().nullable().optional(),
   expand: z.boolean().optional(),
 });
 export type UpdateTextSchema = z.infer<typeof UpdateTextSchema>;

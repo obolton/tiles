@@ -1,7 +1,6 @@
 import type {
   ImageTile,
   VideoTile,
-  TextTile,
   MapTile,
   LinkTile,
   PageLinkTile,
@@ -14,6 +13,7 @@ import type {
   TableColumn,
   TableRow,
 } from "@prisma/client";
+import type { Text } from "@/routes/text/text.ts";
 
 type OmitMetadata<T> = Omit<T, "pageId" | "createdAt" | "updatedAt">;
 
@@ -39,7 +39,7 @@ export interface ClientVideoTile extends ClientTileBase, ClientVideo {
 }
 
 // Text
-export type ClientText = OmitMetadata<TextTile>;
+export type ClientText = Text;
 export interface ClientTextTile extends ClientTileBase, ClientText {
   type: "TEXT";
 }

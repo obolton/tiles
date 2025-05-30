@@ -33,6 +33,14 @@ export default Prisma.defineExtension({
         },
       },
     },
+    textTile: {
+      imageUrl: {
+        needs: { imageKey: true },
+        compute({ imageKey }) {
+          return imageKey ? getImageUrl(imageKey) : null;
+        },
+      },
+    },
     linkTile: {
       imageUrl: {
         needs: { id: true },
