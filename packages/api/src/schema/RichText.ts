@@ -4,18 +4,25 @@ const TextNodeSchema = z.object({
   type: z.literal("text"),
   text: z.string(),
   format: z.number().int().gte(0).lte(31),
-  link: z.string().min(5).optional(),
+});
+
+const LinkNodeSchema = z.object({
+  type: z.literal("link"),
+  href: z.string(),
+  theme: z.string().optional(),
+  children: z.array(TextNodeSchema),
 });
 
 const DateNodeSchema = z.object({
   type: z.literal("date"),
   value: z.union([z.string().datetime(), z.string().date()]),
   format: z.number().int().gte(0).lte(31),
-  theme: z.string().nullable(),
+  theme: z.string().nullable().optional(),
 });
 
 const InlineNodeSchema = z.discriminatedUnion("type", [
   TextNodeSchema,
+  LinkNodeSchema,
   DateNodeSchema,
 ]);
 
