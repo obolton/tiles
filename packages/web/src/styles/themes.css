@@ -2,7 +2,7 @@ theme-selector {
   display: contents;
 
   &:state(open) > *:first-child {
-    visibility: hidden;
+    opacity: 0;
   }
 
   & swipe-view {

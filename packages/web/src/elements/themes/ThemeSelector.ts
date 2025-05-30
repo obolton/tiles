@@ -26,7 +26,6 @@ export default class ThemeSelector extends HTMLElement {
   getItem: GetItem | null = null;
 
   private internals: ElementInternals;
-  private open = false;
   private swipe: SwipeView | null = null;
 
   constructor() {
@@ -36,6 +35,18 @@ export default class ThemeSelector extends HTMLElement {
 
     this.addEventListener("pointerenter", this, { passive: true });
     this.addEventListener("pointerleave", this, { passive: true });
+  }
+
+  get open() {
+    return this.internals.states.has("open");
+  }
+
+  set open(value: boolean) {
+    if (value) {
+      this.internals.states.add("open");
+    } else {
+      this.internals.states.delete("open");
+    }
   }
 
   attributeChangedCallback(
@@ -79,8 +90,6 @@ export default class ThemeSelector extends HTMLElement {
         return this.handlePointerLeave(event as PointerEvent);
       case "change":
         return this.handleChange();
-      case "toggle":
-        return this.handleToggle(event as ToggleEvent);
     }
   }
 
@@ -104,20 +113,12 @@ export default class ThemeSelector extends HTMLElement {
     this.dispatchEvent(new Event("change"));
   }
 
-  private handleToggle(event: ToggleEvent) {
-    this.open = event.newState === "open";
-    this.dispatchEvent(
-      new ToggleEvent("toggle", {
-        newState: event.newState,
-        oldState: event.oldState,
-      }),
-    );
-  }
-
   private show() {
     if (this.open || this.swipe) {
       return;
     }
+
+    this.open = true;
 
     const swipe = document.createElement("swipe-view") as SwipeView;
     this.swipe = swipe;
@@ -128,7 +129,6 @@ export default class ThemeSelector extends HTMLElement {
     swipe.max = this.max;
     swipe.getItem = this.getItem;
     swipe.addEventListener("change", this);
-    swipe.addEventListener("toggle", this);
 
     if (this.firstElementChild) {
       const rect = this.firstElementChild.getBoundingClientRect();
@@ -141,8 +141,6 @@ export default class ThemeSelector extends HTMLElement {
 
     this.appendChild(swipe);
 
-    this.internals.states.add("open");
-
     swipe.showPopover();
   }
 
@@ -151,7 +149,7 @@ export default class ThemeSelector extends HTMLElement {
       return;
     }
 
-    this.internals.states.delete("open");
+    this.open = false;
 
     this.swipe
       .animate([{ opacity: 1 }, { opacity: 0 }], DEFAULT_TIMING)

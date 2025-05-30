@@ -1,4 +1,3 @@
-import ThemeVariant from "./ThemeVariant";
 import { render } from "@/jsx/dom";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
@@ -11,6 +10,7 @@ export interface ThemeableProps<T> extends JSX.Attributes<ThemeSelector> {
   options: string[];
   registry: ThemeRegistry<T>;
   onChange: (theme: string) => void;
+  children?: JSX.Node;
 }
 
 export default function Themeable<T>({
@@ -19,6 +19,7 @@ export default function Themeable<T>({
   options,
   registry,
   onChange,
+  children,
   ...props
 }: ThemeableProps<T>) {
   function getItem(index: number) {
@@ -52,9 +53,7 @@ export default function Themeable<T>({
       max={options.length.toString()}
       $getItem={getItem}
     >
-      {theme.derive((value) => (
-        <ThemeVariant theme={value} registry={registry} {...item} />
-      ))}
+      {children}
     </theme-selector>
   );
 }

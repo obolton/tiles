@@ -1,5 +1,6 @@
 import { Plugin } from "prosemirror-state";
 import Themeable from "@/components/themes/Themeable";
+import ThemeVariant from "@/components/themes/ThemeVariant";
 import { render } from "@/jsx/dom";
 import { showModal } from "@/utils/modals";
 import { reactive } from "@/utils/reactivity";
@@ -73,7 +74,16 @@ export function dates() {
                 onkeydown={onKeyDown}
                 data-tooltip="Edit date"
                 data-tooltip-position="top"
-              />,
+              >
+                {theme.derive((themeValue) => (
+                  <ThemeVariant
+                    theme={themeValue}
+                    registry={DATE_THEMES}
+                    value={value}
+                    time={time}
+                  />
+                ))}
+              </Themeable>,
             ) as HTMLElement,
 
             update() {
