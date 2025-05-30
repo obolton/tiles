@@ -57,7 +57,7 @@ export default function LinkTile({
   };
 
   return (
-    <Tile backgroundImageUrl={imageUrl.value}>
+    <Tile backgroundImageUrl={imageUrl}>
       <a
         className={styles.link}
         href={url}

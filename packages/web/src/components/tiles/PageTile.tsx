@@ -29,7 +29,9 @@ export default function PageTile({
       className={styles.tile}
       color={new ReactiveValue(color)}
       font={font}
-      backgroundImageUrl={coverImageUrl}
+      backgroundImageUrl={
+        coverImageUrl ? new ReactiveValue(coverImageUrl) : undefined
+      }
       border="inside"
     >
       <section
