@@ -32,11 +32,12 @@ import {
   toggleOrderedList,
   toggleUnorderedList,
   toggleCheckList,
-  toggleLink,
+  addLink,
   removeLink,
   setAlignment,
   insertDateTime,
 } from "@/utils/richText/commands";
+import { getLink } from "@/utils/richText/helpers";
 import type { Format, TextAlignment } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
@@ -98,17 +99,15 @@ export default function FormattingToolbar({
       return;
     }
 
-    const link = state.selection.$from
-      .marks()
-      .find((mark) => mark.type.name === "link");
+    const link = getLink(state);
 
     showModal<LinkModalResult>("LINK", {
-      url: link?.attrs.href,
+      url: link?.node.attrs.href,
       showPages: false,
       showRemove: !!link,
       async onConfirm(result) {
         if (result && "url" in result) {
-          performCommand(result.url ? toggleLink(result.url) : removeLink);
+          performCommand(result.url ? addLink(result.url) : removeLink);
         }
       },
     });
