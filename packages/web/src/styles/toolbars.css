@@ -1,4 +1,6 @@
 floating-toolbar {
+  --icon-color: rgb(0 0 0 / 70%);
+
   position: fixed;
   inset: auto 8px 80px;
   width: fit-content;
