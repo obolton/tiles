@@ -1,7 +1,11 @@
 import styles from "./Tile.module.css";
 import { getFontConfig } from "@/utils/fonts";
-import { isReactive } from "@/utils/reactivity";
-import { ReactiveValue, Computed, type Reactive } from "@/utils/reactivity";
+import {
+  reactive,
+  isReactive,
+  Computed,
+  type Reactive,
+} from "@/utils/reactivity";
 import { toCSSColor, isDark, type Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
@@ -17,7 +21,7 @@ export type TileProps = {
     | "none";
   color?: Reactive<Color | null>;
   font?: FontId | null;
-  backgroundImageUrl?: string | null;
+  backgroundImageUrl?: Reactive<string | null>;
 };
 
 const BORDER_CLASSES = {
@@ -29,22 +33,23 @@ const BORDER_CLASSES = {
 export default function Tile({
   className,
   children,
-  color = new ReactiveValue(null),
+  color = reactive(null),
   font,
   background = true,
   border = "outside",
-  backgroundImageUrl,
+  backgroundImageUrl = reactive(null),
 }: TileProps) {
   const fontConfig = typeof font === "string" ? getFontConfig(font) : undefined;
-  const style = new Computed([color], (colorValue) => ({
-    "--tile-background": colorValue ? toCSSColor(colorValue) : undefined,
-    "--font": fontConfig
-      ? `"${fontConfig.family}", "${fontConfig.fallback}"`
-      : undefined,
-    backgroundImage: backgroundImageUrl
-      ? `url(${backgroundImageUrl})`
-      : undefined,
-  }));
+  const style = new Computed(
+    [color, backgroundImageUrl] as const,
+    (colorValue, url) => ({
+      "--tile-background": colorValue ? toCSSColor(colorValue) : undefined,
+      "--font": fontConfig
+        ? `"${fontConfig.family}", "${fontConfig.fallback}"`
+        : undefined,
+      backgroundImage: url ? `url(${url})` : undefined,
+    }),
+  );
 
   return (
     <div

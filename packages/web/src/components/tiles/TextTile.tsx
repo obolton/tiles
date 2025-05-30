@@ -6,9 +6,13 @@ import TextEditor, {
   type EditorState,
 } from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/inputs/ColorPicker";
+import ImageIcon from "@/icons/image.svg?jsx";
 import ExpandIcon from "@/icons/expand.svg?jsx";
 import { Computed } from "@/utils/reactivity";
+import { showModal } from "@/utils/modals";
+import { uploadMedia } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
+import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { Color } from "@/utils/color";
@@ -27,6 +31,7 @@ export default function TextTile({
   lightness,
   chroma,
   hue,
+  imageUrl,
   expand,
   hasFocus,
   onDelete,
@@ -67,6 +72,30 @@ export default function TextTile({
     });
   };
 
+  const onSelectImage = async () => {
+    if (imageUrl.value) {
+      imageUrl.value = null;
+      await editor.updateText({
+        id,
+        imageKey: null,
+      });
+    } else {
+      showModal<ImageModalResult>("IMAGE", {
+        async onConfirm(result) {
+          if (!result) {
+            return;
+          }
+          const imageKey = await uploadMedia(result.image, "image");
+          const { imageUrl: newImageUrl } = await editor.updateText({
+            id,
+            imageKey,
+          });
+          imageUrl.value = newImageUrl;
+        },
+      });
+    }
+  };
+
   const onToggleExpand = async () => {
     expand.value = !expand.value;
     await editor.updateText({
@@ -93,6 +122,7 @@ export default function TextTile({
   return (
     <Tile
       color={color}
+      backgroundImageUrl={imageUrl}
       border={color.derive((value) => (value ? "outside" : "none"))}
     >
       <pop-out
@@ -126,6 +156,21 @@ export default function TextTile({
                     <button
                       role="menuitem"
                       className="floating small"
+                      aria-label="Background image"
+                      data-tooltip="Background image"
+                      type="button"
+                      aria-pressed={imageUrl.derive((value) =>
+                        value ? "true" : "false",
+                      )}
+                      onclick={onSelectImage}
+                    >
+                      <ImageIcon aria-hidden="true" />
+                    </button>
+                  </li>
+                  <li role="presentation">
+                    <button
+                      role="menuitem"
+                      className="floating small"
                       aria-label="Fit contents"
                       data-tooltip="Fit contents"
                       type="button"
@@ -146,6 +191,11 @@ export default function TextTile({
                 <RichText content={value} />
               ))}
             </div>
+          ),
+        )}
+        {expand.derive((value) =>
+          value ? null : (
+            <ExpandIcon className={styles.icon} aria-hidden="true" />
           ),
         )}
       </pop-out>
