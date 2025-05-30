@@ -5,7 +5,6 @@ import {
   closest,
   getSelectionHeadingLevel,
   getSelectionBlockNodeTypes,
-  findLinkRange,
 } from "./helpers";
 import type { NodeType } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
@@ -20,8 +19,26 @@ export const toggleStrikethrough = toggleMark(schema.marks.strikethrough);
 
 export const toggleHighlight = toggleMark(schema.marks.highlight);
 
-export function toggleLink(href: string | null): Command {
-  return toggleMark(schema.marks.link, { href });
+export function addLink(href: string): Command {
+  return function (state, dispatch) {
+    if (!href) {
+      return false;
+    }
+
+    const { from, to, empty } = state.selection;
+    if (empty) {
+      return false;
+    }
+
+    if (dispatch) {
+      const content = state.doc.slice(from, to).content;
+      const link = schema.nodes.link.create({ href }, content);
+      const tr = state.tr.replaceWith(from, to, link);
+      dispatch(tr);
+    }
+
+    return true;
+  };
 }
 
 export function toggleWrap(nodeType: NodeType): Command {
@@ -133,14 +150,23 @@ export const toggleUnorderedList = toggleList(schema.nodes.unordered_list);
 export const toggleCheckList = toggleList(schema.nodes.check_list);
 
 export const removeLink: Command = (state, dispatch) => {
-  const range = findLinkRange(state.selection.$from);
-  if (range) {
-    if (dispatch) {
-      dispatch(state.tr.removeMark(range.from, range.to, schema.marks.link));
-    }
-    return true;
+  const link = closest(
+    state.selection.$from,
+    (node) => node.type === schema.nodes.link,
+  );
+
+  if (!link) {
+    return false;
   }
-  return false;
+
+  if (dispatch) {
+    const tr = state.tr;
+    const { pos, node } = link;
+    tr.replaceWith(pos, pos + node.nodeSize, node.content);
+    dispatch(tr);
+  }
+
+  return true;
 };
 
 export function setAlignment(align: TextAlignment): Command {

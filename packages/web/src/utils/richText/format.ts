@@ -4,6 +4,7 @@ import {
   getSelectionHeadingLevel,
   getSelectionBlockNodeTypes,
   getSelectionAlignment,
+  getLink,
 } from "./helpers";
 import { schema, type TextAlignment } from "./schema";
 
@@ -40,6 +41,7 @@ export function selectionFormat(callback: (format: Format) => void) {
         const headingLevel = getSelectionHeadingLevel(state);
         const blockNodeTypes = getSelectionBlockNodeTypes(state);
         const align = getSelectionAlignment(state);
+        const link = !!getLink(state);
 
         const format = {
           bold: marks.has(schema.marks.bold),
@@ -47,7 +49,7 @@ export function selectionFormat(callback: (format: Format) => void) {
           underline: marks.has(schema.marks.underline),
           strikethrough: marks.has(schema.marks.strikethrough),
           highlight: marks.has(schema.marks.highlight),
-          link: marks.has(schema.marks.link),
+          link,
           headingLevel,
           quote: blockNodeTypes.has(schema.nodes.quote),
           orderedList: blockNodeTypes.has(schema.nodes.ordered_list),

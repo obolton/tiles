@@ -91,44 +91,11 @@ export function findMark(node: Node, markType: MarkType) {
   return node.marks.find((mark) => mark.type === markType);
 }
 
-export function findLinkRange($pos: ResolvedPos) {
-  const link = schema.marks.link;
-  const parentNode = $pos.parent;
-
-  const { node, index, offset } = parentNode.childAfter($pos.parentOffset);
-
-  if (!node) {
-    return null;
-  }
-
-  const mark = findMark(node, link);
-  if (!mark) {
-    return;
-  }
-
-  let from = $pos.start() + offset;
-  let to = from + node.nodeSize;
-  let fromIndex = index;
-  let toIndex = fromIndex + 1;
-
-  while (
-    fromIndex > 0 &&
-    findMark(parentNode.child(fromIndex - 1), link)?.attrs.href ===
-      mark.attrs.href
-  ) {
-    from -= parentNode.child(fromIndex - 1).nodeSize;
-    fromIndex--;
-  }
-
-  while (
-    toIndex < parentNode.childCount &&
-    findMark(parentNode.child(toIndex), link)?.attrs.href === mark.attrs.href
-  ) {
-    to += parentNode.child(toIndex).nodeSize;
-    toIndex++;
-  }
-
-  return { from, to };
+export function getLink(state: EditorState) {
+  return closest(
+    state.selection.$from,
+    (node) => node.type === schema.nodes.link,
+  );
 }
 
 export function getSelectionAlignment(
