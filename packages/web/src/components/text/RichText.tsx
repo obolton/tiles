@@ -12,6 +12,7 @@ import type {
   ListItemNode,
   Node,
   TextAlignment,
+  LinkNode,
 } from "@/utils/richText/types";
 import type { JSX } from "@/jsx/jsx";
 
@@ -34,10 +35,10 @@ function renderNodes(nodes: Node[]) {
             return <List node={node} />;
           case "text":
             return (
-              <FormattedText format={node.format} link={node.link}>
-                {node.text}
-              </FormattedText>
+              <FormattedText format={node.format}>{node.text}</FormattedText>
             );
+          case "link":
+            return <Link node={node} />;
           case "date":
             return (
               <FormattedText format={node.format}>
@@ -192,13 +193,24 @@ function List({ node }: ListProps) {
   }
 }
 
+interface LinkProps {
+  node: LinkNode;
+}
+
+function Link({ node }: LinkProps) {
+  return (
+    <a href={node.href} target="_blank" rel="noreferrer ugc">
+      {renderNodes(node.children)}
+    </a>
+  );
+}
+
 interface FormattedTextProps {
   format: TextFormat;
-  link?: string;
   children: JSX.Node;
 }
 
-function FormattedText({ format, link, children }: FormattedTextProps) {
+function FormattedText({ format, children }: FormattedTextProps) {
   let content = children;
   if (format & TextFormat.BOLD) {
     content = <strong>{content}</strong>;
@@ -214,13 +226,6 @@ function FormattedText({ format, link, children }: FormattedTextProps) {
   }
   if (format & TextFormat.HIGHLIGHT) {
     content = <mark>{content}</mark>;
-  }
-  if (link) {
-    content = (
-      <a href={link} target="_blank" rel="noreferrer ugc">
-        {content}
-      </a>
-    );
   }
   return content;
 }
