@@ -5,6 +5,7 @@ import type {
   TextNode,
   QuoteNode,
   BlockNode,
+  InlineNode,
   Node as SerializedNode,
 } from "./types";
 import { TextFormat, ListType, TextAlignment } from "./types";
@@ -50,7 +51,15 @@ function serializeNode(node: Node): SerializedNode {
       type: "text",
       text: node.text ?? "",
       format: getTextFormat(node),
-      link: node.marks.find((mark) => mark.type === marks.link)?.attrs.href,
+    };
+  }
+
+  if (node.type === nodes.link) {
+    return {
+      type: "link",
+      href: node.attrs.href,
+      theme: node.attrs.theme,
+      children: node.children.map(serializeNode) as TextNode[],
     };
   }
 
@@ -58,7 +67,7 @@ function serializeNode(node: Node): SerializedNode {
     return {
       type: "paragraph",
       align: getTextAlignment(node),
-      children: node.children.map(serializeNode) as TextNode[],
+      children: node.children.map(serializeNode) as InlineNode[],
     };
   }
 
@@ -67,7 +76,7 @@ function serializeNode(node: Node): SerializedNode {
       type: "heading",
       level: node.attrs.level,
       align: getTextAlignment(node),
-      children: node.children.map(serializeNode) as TextNode[],
+      children: node.children.map(serializeNode) as InlineNode[],
     };
   }
 

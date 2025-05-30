@@ -1,6 +1,7 @@
 import type { Node } from "prosemirror-model";
 import type {
   DateNode,
+  LinkNode,
   ListNode,
   ListItemNode,
   ParagraphNode,
@@ -37,9 +38,6 @@ function getMarks(format: number) {
 
 function createTextNode(text: TextNode) {
   const marks = getMarks(text.format);
-  if (text.link) {
-    marks.push(schema.marks.link.create({ href: text.link }));
-  }
   const textNode = schema.text(text.text, marks);
   return textNode;
 }
@@ -99,6 +97,13 @@ function createListItemNode(listItem: ListItemNode): Node {
   );
 }
 
+function createLinkNode(link: LinkNode): Node {
+  return schema.nodes.link.create(
+    { href: link.href, theme: link.theme },
+    link.children.map(createNode),
+  );
+}
+
 function createDateNode(date: DateNode): Node {
   const marks = getMarks(date.format);
   return schema.nodes.date.create(
@@ -127,6 +132,8 @@ function createNode(node: SerializedNode) {
       return createListNode(node);
     case "listitem":
       return createListItemNode(node);
+    case "link":
+      return createLinkNode(node);
     case "date":
       return createDateNode(node);
     default:

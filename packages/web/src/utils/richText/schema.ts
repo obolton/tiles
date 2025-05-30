@@ -175,6 +175,27 @@ const nodesSpec = {
     },
   },
 
+  link: {
+    attrs: {
+      href: { validate: "string" },
+      theme: { default: undefined, validate: "string|undefined" },
+    },
+    content: "text*",
+    group: "inline",
+    inline: true,
+    parseDOM: [
+      {
+        tag: "a[href]",
+        getAttrs(node) {
+          return { href: node.getAttribute("href") };
+        },
+      },
+    ],
+    toDOM(mark) {
+      return ["a", { href: mark.attrs.href }, 0];
+    },
+  },
+
   date: {
     attrs: {
       value: {
@@ -215,24 +236,6 @@ type KeysWithProperty<T, Key, Value> = {
 export type BlockNode = KeysWithProperty<typeof nodesSpec, "group", "block">;
 
 const marksSpec = {
-  link: {
-    attrs: {
-      href: { validate: "string" },
-    },
-    inclusive: false,
-    parseDOM: [
-      {
-        tag: "a[href]",
-        getAttrs(node) {
-          return { href: node.getAttribute("href") };
-        },
-      },
-    ],
-    toDOM(mark) {
-      return ["a", { href: mark.attrs.href }, 0];
-    },
-  },
-
   highlight: {
     parseDOM: [{ tag: "mark" }],
     toDOM() {
