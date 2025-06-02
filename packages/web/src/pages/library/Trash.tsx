@@ -23,11 +23,11 @@ function renderPlaceholder(query: string) {
 export default function Trash({ pages }: TrashProps) {
   return (
     <PageLayout>
-      <header>
+      <header className="default-width">
         <h1>Library</h1>
       </header>
 
-      <main>
+      <main className="default-width">
         <ul className="tabs" role="navigation">
           <li>
             <a href="/library">

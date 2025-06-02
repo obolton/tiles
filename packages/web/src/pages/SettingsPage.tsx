@@ -97,11 +97,11 @@ async function onSubmit(event: SubmitEvent) {
 export default function SettingsPage({ user }: SettingsPageProps) {
   return (
     <PageLayout>
-      <header>
+      <header className="default-width">
         <h1>Settings</h1>
       </header>
 
-      <main>
+      <main className="default-width">
         <form class="vertical" onsubmit={onSubmit}>
           <file-picker
             className={styles.file}

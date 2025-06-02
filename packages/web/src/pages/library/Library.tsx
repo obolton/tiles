@@ -50,11 +50,11 @@ function renderPlaceholder(query: string) {
 export default function Library({ pages }: LibraryProps) {
   return (
     <PageLayout>
-      <header>
+      <header className="default-width">
         <h1>Library</h1>
       </header>
 
-      <main>
+      <main className="default-width">
         <ul className="tabs" role="navigation">
           <li aria-selected="true">
             <a href="/library">

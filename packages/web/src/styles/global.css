@@ -208,6 +208,10 @@ time {
   white-space: nowrap;
 }
 
+.default-width {
+  width: min(var(--max-width), calc(100vw - 160px));
+}
+
 infinite-scroll {
   display: contents;
   overflow-anchor: none;
