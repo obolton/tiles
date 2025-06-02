@@ -35,7 +35,8 @@ export namespace JSX {
     | null
     | undefined
     | Node[]
-    | Reactive<Node>;
+    | Reactive<Node>
+    | globalThis.Node;
 
   export type Component<P> = (props: P) => Node;
 

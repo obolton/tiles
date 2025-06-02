@@ -418,7 +418,7 @@ function renderDOMElement(
   }
 
   if (ref) {
-    // @ts-expect-error Improve types
+    // TODO: Improve types
     ref(element);
   }
 
@@ -527,6 +527,10 @@ export function render(
 
   if (isReactive(node)) {
     return renderStoreNode(node, namespace, signal);
+  }
+
+  if (node instanceof Node) {
+    return node;
   }
 
   throw new Error("Invalid node");
