@@ -2,6 +2,7 @@ import Grid from "@/components/layouts/grid/Grid";
 import Placeholder from "@/components/placeholder/Placeholder";
 import { handleError } from "@/utils/errors";
 import styles from "./Section.module.css";
+import FullWidthIcon from "@/icons/full-width.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { layoutTransition } from "@/utils/animation/layout";
@@ -9,6 +10,7 @@ import { flag } from "@/utils/reactivity";
 import type { Section } from "@/types/tiles";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
+import { viewTransition } from "@/utils/transitions";
 
 function GridPlaceholder() {
   return <Placeholder className={styles.placeholder} />;
@@ -21,7 +23,22 @@ export interface SectionProps {
 }
 
 export default function Section({ editor, isEditable, section }: SectionProps) {
+  const fullWidth = flag(section.width === "VIEWPORT");
   const hasFocus = flag(false);
+
+  const toggleFullWidth = async () => {
+    try {
+      await editor.updateCollection({
+        id: section.id,
+        width: fullWidth.value ? "DEFAULT" : "VIEWPORT",
+      });
+      viewTransition(() => {
+        fullWidth.toggle();
+      });
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   const deleteSection = async () => {
     try {
@@ -43,7 +60,10 @@ export default function Section({ editor, isEditable, section }: SectionProps) {
 
   return (
     <section
-      className={styles.section}
+      classList={{
+        [styles.section]: true,
+        [styles["full-width"]]: fullWidth,
+      }}
       tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
       data-animate-layout-id={section.id}
       onfocus={onFocus}
@@ -66,36 +86,58 @@ export default function Section({ editor, isEditable, section }: SectionProps) {
             data-tooltip-position="top"
             aria-label="Section toolbar"
           >
-            <button
-              role="menuitem"
-              type="button"
-              id={`${section.id}-options-button`}
-              className="floating small"
-              popoverTarget={`${section.id}-options`}
-              aria-label="More options"
-              data-tooltip="More options"
-              aria-haspopup="menu"
-              aria-expanded="false"
-            >
-              <MoreIcon aria-hidden="true" />
-            </button>
-            <popover-menu
-              id={`${section.id}-options`}
-              anchor={`${section.id}-options-button`}
-            >
-              <menu>
-                <li>
-                  <button
-                    className="destructive"
-                    type="button"
-                    onclick={deleteSection}
-                  >
-                    <TrashIcon aria-hidden="true" />
-                    Delete section
-                  </button>
-                </li>
-              </menu>
-            </popover-menu>
+            <ul role="group" aria-label="Size">
+              <li role="presentation">
+                <button
+                  role="menuitem"
+                  className="floating small"
+                  aria-label="Full-width"
+                  data-tooltip="Full-width"
+                  type="button"
+                  aria-pressed={fullWidth.derive((value) =>
+                    value ? "true" : "false",
+                  )}
+                  onclick={toggleFullWidth}
+                >
+                  <FullWidthIcon aria-hidden="true" />
+                </button>
+              </li>
+            </ul>
+
+            <ul role="group" aria-label="Text style">
+              <li role="presentation">
+                <button
+                  role="menuitem"
+                  type="button"
+                  id={`${section.id}-options-button`}
+                  className="floating small"
+                  popoverTarget={`${section.id}-options`}
+                  aria-label="More options"
+                  data-tooltip="More options"
+                  aria-haspopup="menu"
+                  aria-expanded="false"
+                >
+                  <MoreIcon aria-hidden="true" />
+                </button>
+                <popover-menu
+                  id={`${section.id}-options`}
+                  anchor={`${section.id}-options-button`}
+                >
+                  <menu>
+                    <li>
+                      <button
+                        className="destructive"
+                        type="button"
+                        onclick={deleteSection}
+                      >
+                        <TrashIcon aria-hidden="true" />
+                        Delete section
+                      </button>
+                    </li>
+                  </menu>
+                </popover-menu>
+              </li>
+            </ul>
           </floating-toolbar>
         ) : null,
       )}

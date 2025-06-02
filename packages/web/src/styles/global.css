@@ -74,7 +74,7 @@ body {
     oklch(from var(--page-color) 45% c h)
   );
 
-  padding: 64px 0;
+  padding: 24px;
   color: var(--text-color);
   background: var(--page-color);
 }
@@ -100,13 +100,8 @@ menu {
   padding: 0;
 }
 
-header,
-main {
-  max-width: min(var(--max-width), calc(100vw - 160px));
-}
-
 header {
-  margin: 0 auto 48px;
+  margin: 48px auto;
 }
 
 main {
