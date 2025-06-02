@@ -5,19 +5,19 @@ import type ThemeSelector from "@/elements/themes/ThemeSelector";
 import type { ThemeRegistry } from "@/types/themes";
 
 export interface ThemeableProps<T> extends JSX.Attributes<ThemeSelector> {
-  item: T;
   theme: Reactive<string>;
   options: string[];
   registry: ThemeRegistry<T>;
+  getProps: () => T;
   onChange: (theme: string) => void;
   children?: JSX.Node;
 }
 
 export default function Themeable<T>({
-  item,
   theme,
   options,
   registry,
+  getProps,
   onChange,
   children,
   ...props
@@ -28,7 +28,7 @@ export default function Themeable<T>({
     if (!Component) {
       return null;
     }
-    return render(<Component {...item} />) as HTMLElement;
+    return render(<Component {...getProps()} />) as HTMLElement;
   }
 
   function onThemeChange(event: Event) {

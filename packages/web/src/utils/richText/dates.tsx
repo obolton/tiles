@@ -50,6 +50,13 @@ export function dates() {
             }
           }
 
+          function getProps() {
+            return {
+              value,
+              time,
+            };
+          }
+
           function onChange(value: string) {
             const pos = getPos();
             if (typeof pos === "undefined") {
@@ -63,12 +70,9 @@ export function dates() {
             dom: render(
               <Themeable<DateTimeThemeProps>
                 theme={theme}
-                item={{
-                  value,
-                  time,
-                }}
                 options={DATE_THEME_OPTIONS}
                 registry={DATE_THEMES}
+                getProps={getProps}
                 onChange={onChange}
                 onclick={edit}
                 onkeydown={onKeyDown}
