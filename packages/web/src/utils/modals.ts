@@ -10,7 +10,7 @@ export interface ModalProps<T = unknown> extends ModalOptions<T> {
   cancel: () => void;
 }
 
-export class ModalEvent<T extends object> extends Event {
+export class ModalEvent<T> extends Event {
   constructor(
     type: "showmodal" | "hidemodal",
     public readonly modal?: string,
@@ -42,10 +42,7 @@ export function getModal(name: string) {
   return component;
 }
 
-export function showModal<T extends object>(
-  modal: string,
-  options?: ModalOptions<T>,
-) {
+export function showModal<T>(modal: string, options?: ModalOptions<T>) {
   if (!registry.has(modal)) {
     throw new Error(`Unknown modal: ${modal}`);
   }
