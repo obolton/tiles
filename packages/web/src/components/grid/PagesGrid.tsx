@@ -3,11 +3,12 @@ import PageLinkTile from "@/components/tiles/PageLinkTile";
 import Search from "@/components/search/Search";
 import { handleError } from "@/utils/errors";
 import { reactive } from "@/utils/reactivity";
-import type { PageLinkProperties } from "@/types/tiles";
+import type { ClientPageLinkTile } from "@/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 
 interface PagesSearchResults {
-  pages: NonNullable<PageLinkProperties["linkedPage"]>[];
+  // TODO: Use a different type
+  pages: NonNullable<ClientPageLinkTile["linkedPage"]>[];
   hasMore: boolean;
 }
 
@@ -16,6 +17,7 @@ interface PagesGridProps {
   search: (query: string, offset: number) => Promise<PagesSearchResults>;
   pages?: PagesSearchResults;
   renderPlaceholder: (query: string) => JSX.Node;
+  draggable?: boolean;
 }
 
 export default function PagesGrid({
@@ -23,7 +25,9 @@ export default function PagesGrid({
   search,
   pages: initialPages,
   renderPlaceholder,
+  draggable,
 }: PagesGridProps) {
+  // TODO: Lift reactive pages list out of component
   const pages = reactive(initialPages?.pages ?? []);
   const hasMore = reactive(initialPages?.hasMore ?? false);
 
@@ -54,7 +58,7 @@ export default function PagesGrid({
       hasMore={hasMore}
       placeholder={inputPlaceholder}
       render={(page) => (
-        <PagesGridItem>
+        <PagesGridItem id={page.id} draggable={draggable}>
           <PageLinkTile
             id={page.id}
             linkedPage={reactive(page)}

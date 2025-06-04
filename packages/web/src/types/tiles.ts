@@ -13,7 +13,7 @@ import type {
 } from "api/src/types/tiles.ts";
 import type { Reactive, ReactiveRecord } from "@/utils/reactivity";
 
-export type { ClientCollection, ClientTile, TileType };
+export type { ClientCollection, ClientPageLinkTile, ClientTile, TileType };
 
 export type ReactiveTile<T extends ClientTile = ClientTile> =
   T extends ClientTile
