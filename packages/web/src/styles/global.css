@@ -100,7 +100,7 @@ menu {
   padding: 0;
 }
 
-header {
+body > header {
   margin: 48px auto;
 }
 
