@@ -16,14 +16,14 @@ async function loader({
     throw new Error("Unauthorized");
   }
 
-  const pages = await client.pages.listDeleted.query(
-    { offset: 0 },
-    { context: { sessionId } },
-  );
+  const [folders, pages] = await Promise.all([
+    client.folders.list.query({ offset: 0 }, { context: { sessionId } }),
+    client.pages.listDeleted.query({ offset: 0 }, { context: { sessionId } }),
+  ]);
 
   return {
     title: "Library - Trash",
-    data: { pages },
+    data: { folders, pages },
   };
 }
 

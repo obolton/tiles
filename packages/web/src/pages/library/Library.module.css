@@ -1,0 +1,24 @@
+.contents {
+  display: flex;
+  width: min(var(--max-width), calc(100vw - 160px));
+  gap: 80px;
+}
+
+.pages {
+  flex: 1;
+
+  & > header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+
+    & h2 {
+      margin: 0;
+      flex: 1;
+    }
+
+    & button {
+      flex: none;
+    }
+  }
+}

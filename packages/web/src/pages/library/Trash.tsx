@@ -1,14 +1,13 @@
 import client from "@/api/client";
 import PageLayout from "@/layouts/PageLayout";
+import Folders from "@/components/folders/Folders";
 import Placeholder from "@/components/placeholder/Placeholder";
-import LibraryIcon from "@/icons/library.svg?jsx";
-import PeopleIcon from "@/icons/people.svg?jsx";
-import BookmarkIcon from "@/icons/bookmark.svg?jsx";
-import TrashIcon from "@/icons/trash.svg?jsx";
 import DeletedPagesGrid from "@/components/grid/DeletedPagesGrid";
+import styles from "./Library.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 
 export interface TrashProps {
+  folders: AppRouterOutputs["folders"]["list"];
   pages: AppRouterOutputs["pages"]["listDeleted"];
 }
 
@@ -20,52 +19,33 @@ function renderPlaceholder(query: string) {
   );
 }
 
-export default function Trash({ pages }: TrashProps) {
+export default function Trash({ folders, pages }: TrashProps) {
   return (
     <PageLayout>
       <header className="default-width">
         <h1>Library</h1>
       </header>
 
-      <main className="default-width">
-        <ul className="tabs" role="navigation">
-          <li>
-            <a href="/library">
-              <LibraryIcon aria-hidden="true" />
-              Your pages
-            </a>
-          </li>
-          <li>
-            <a href="/library/shared">
-              <PeopleIcon aria-hidden="true" />
-              Shared with you
-            </a>
-          </li>
-          <li>
-            <a href="/library/bookmarks">
-              <BookmarkIcon aria-hidden="true" />
-              Bookmarks
-            </a>
-          </li>
-          <li aria-selected="true">
-            <a href="/library/trash">
-              <TrashIcon aria-hidden="true" />
-              Trash
-            </a>
-          </li>
-        </ul>
+      <main className={styles.contents}>
+        <Folders selectedId="TRASH" folders={folders} />
 
-        <DeletedPagesGrid
-          inputPlaceholder="Search trash"
-          pages={pages}
-          search={(query, offset) =>
-            client.pages.listDeleted.query({
-              query: query || undefined,
-              offset,
-            })
-          }
-          renderPlaceholder={renderPlaceholder}
-        />
+        <section className={styles.pages}>
+          <header>
+            <h2>Trash</h2>
+          </header>
+
+          <DeletedPagesGrid
+            inputPlaceholder="Search trash"
+            pages={pages}
+            search={(query, offset) =>
+              client.pages.listDeleted.query({
+                query: query || undefined,
+                offset,
+              })
+            }
+            renderPlaceholder={renderPlaceholder}
+          />
+        </section>
       </main>
     </PageLayout>
   );
