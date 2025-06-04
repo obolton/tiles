@@ -3,6 +3,7 @@
   flex-direction: column;
   justify-content: center;
   width: 100%;
+  grid-column: 1 / -1;
   padding: 48px;
   gap: 24px;
   text-align: center;
