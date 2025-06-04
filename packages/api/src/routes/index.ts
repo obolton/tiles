@@ -17,6 +17,7 @@ import ai from "./ai/router.ts";
 import sections from "./sections/router.ts";
 import collaboration from "./collaboration/router.ts";
 import tables from "./tables/router.ts";
+import folders from "./folders/router.ts";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 const appRouter = router({
@@ -38,6 +39,7 @@ const appRouter = router({
   sections,
   collaboration,
   tables,
+  folders,
 });
 
 export type AppRouter = typeof appRouter;
