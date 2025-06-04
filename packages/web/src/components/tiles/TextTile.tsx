@@ -144,11 +144,8 @@ export default function TextTile({
                 <ul role="group">
                   <li role="presentation">
                     <ColorPicker
-                      role="menuitem"
                       value={color}
                       onChange={onChangeColor}
-                      aria-label="Color"
-                      data-tooltip="Select color"
                       showClear
                     />
                   </li>

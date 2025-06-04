@@ -57,13 +57,7 @@ export default function FormattingToolbar({ editor }: FormattingToolbarProps) {
       </li>
 
       <li role="presentation">
-        <ColorPicker
-          role="menuitem"
-          value={color}
-          onChange={setColor}
-          aria-label="Color"
-          data-tooltip="Page background color"
-        />
+        <ColorPicker value={color} onChange={setColor} />
       </li>
     </ul>
   );
