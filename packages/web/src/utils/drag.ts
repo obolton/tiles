@@ -114,6 +114,10 @@ export class DragState<T> {
         return this.pointerMove(event as PointerEvent);
       case "pointerup":
         return this.pointerUp(event as PointerEvent);
+      case "pointerleave":
+        return this.pointerLeave(event as PointerEvent);
+      case "click":
+        return this.click(event as MouseEvent);
       case "keydown":
         return this.keyDown(event as KeyboardEvent);
     }
@@ -168,21 +172,17 @@ export class DragState<T> {
       }),
     );
 
-    this.dropTarget?.dispatchEvent(
-      this.createDragDropEvent("dnd-dragleave", {
-        bubbles: true,
-        cancelable: false,
-        clientX: event.clientX,
-        clientY: event.clientY,
-      }),
-    );
-
     if (allowDrop) {
       this.dropTarget = target;
       this.scheduleDragEvent(event.clientX, event.clientY);
     } else {
       this.dropTarget = undefined;
     }
+
+    target.addEventListener("pointerleave", this, {
+      once: true,
+      signal: this.abortController.signal,
+    });
   }
 
   private pointerMove(event: PointerEvent) {
@@ -235,6 +235,22 @@ export class DragState<T> {
     } else {
       this.finish();
     }
+  }
+
+  private pointerLeave(event: PointerEvent) {
+    event.currentTarget?.dispatchEvent(
+      this.createDragDropEvent("dnd-dragleave", {
+        bubbles: true,
+        cancelable: false,
+        clientX: event.clientX,
+        clientY: event.clientY,
+      }),
+    );
+    this.dropTarget = undefined;
+  }
+
+  private click(event: MouseEvent) {
+    event.preventDefault();
   }
 
   // Keyboard events
@@ -301,6 +317,12 @@ export class DragState<T> {
       this.processPendingDragEvent.bind(this),
       DRAG_EVENT_INTERVAL,
     );
+
+    // Suppress click events
+    addEventListener("click", this, {
+      passive: false,
+      signal: this.abortController.signal,
+    });
   }
 
   private drop(event: PointerEvent) {
@@ -317,7 +339,8 @@ export class DragState<T> {
   }
 
   private finish() {
-    this.abortController.abort();
+    // Allow remaining event listeners to fire
+    setTimeout(() => this.abortController.abort(), 0);
 
     this.cancelLongPress();
     clearInterval(this.scrollInterval);
@@ -420,12 +443,15 @@ function cancelContextMenu(event: PointerEvent | MouseEvent) {
   }
 }
 
-export interface DragOptions {
+export interface MakeDraggableOptions {
   handle?: HTMLElement;
   signal?: AbortSignal;
 }
 
-export function makeDraggable(element: HTMLElement, options?: DragOptions) {
+export function makeDraggable(
+  element: HTMLElement,
+  options?: MakeDraggableOptions,
+) {
   const { handle, signal } = options ?? {};
   const pointerElement = handle ?? element;
   pointerElement.addEventListener(
