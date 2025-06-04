@@ -37,6 +37,7 @@ export default class PopoverMenu extends HTMLElement {
     super();
     this.addEventListener("beforetoggle", this, { passive: true });
     this.addEventListener("toggle", this, { passive: true });
+    this.addEventListener("click", this);
   }
 
   connectedCallback() {
@@ -70,6 +71,8 @@ export default class PopoverMenu extends HTMLElement {
         return this.handleBeforeToggle(event as ToggleEvent);
       case "toggle":
         return this.handleToggle(event as ToggleEvent);
+      case "click":
+        return this.handleClick();
     }
   }
 
@@ -92,6 +95,10 @@ export default class PopoverMenu extends HTMLElement {
     if (trigger) {
       trigger.ariaExpanded = event.newState === "open" ? "true" : "false";
     }
+  }
+
+  protected handleClick() {
+    this.hidePopover();
   }
 
   private getHorizontalAlignment(anchorBounds: DOMRect, width: number) {

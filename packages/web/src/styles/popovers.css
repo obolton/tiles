@@ -2,9 +2,6 @@ popover-menu,
 table-of-contents {
   position: fixed;
   inset: auto;
-  min-width: 200px;
-  max-width: 320px;
-  max-height: 320px;
   overflow: auto;
   border: none;
   margin: 16px 0;
@@ -17,23 +14,25 @@ table-of-contents {
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 15%),
     0 4px 4px -2px rgb(0 0 0 / 20%);
-  transition-duration: var(--animation-duration-short);
-  transition-timing-function: var(--easing);
-  transition-behavior: allow-discrete;
-  transition-property: display, overlay, scale, opacity;
+  transition:
+    display var(--animation-duration) allow-discrete,
+    overlay var(--animation-duration) allow-discrete,
+    scale var(--animation-duration) var(--spring),
+    opacity var(--animation-duration) var(--spring);
 
   &:popover-open {
     scale: 1;
     opacity: 1;
 
     @starting-style {
-      scale: 0.8;
+      scale: 0.7;
       opacity: 0;
     }
   }
 
   &:not(:popover-open) {
-    scale: 0.8;
+    display: none;
+    scale: 0.7;
     opacity: 0;
   }
 }
@@ -106,6 +105,9 @@ table-of-contents > menu {
 }
 
 table-of-contents {
+  max-width: 320px;
+  max-height: 320px;
+
   & .h1 {
     font-weight: 600;
   }
