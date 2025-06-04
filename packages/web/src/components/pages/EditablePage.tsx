@@ -1,6 +1,5 @@
 import EditingToolbar from "@/components/menu/EditingToolbar";
 import PageContents from "@/components/pages/PageContents";
-import ModalLauncher from "@/components/modals/ModalLauncher";
 import Editor from "@/editor/Editor";
 import type { AppRouterOutputs } from "@/api/client";
 
@@ -31,8 +30,6 @@ export default function EditablePage({ page }: EditablePage) {
           />
         ),
       )}
-
-      <ModalLauncher />
     </>
   );
 }

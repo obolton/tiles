@@ -1,7 +1,6 @@
 import EditingToolbar from "@/components/menu/EditingToolbar";
 import ProfilePageHeader from "@/components/header/ProfilePageHeader";
 import PageContents from "@/components/pages/PageContents";
-import ModalLauncher from "@/components/modals/ModalLauncher";
 import Editor from "@/editor/Editor";
 import { ReactiveValue } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
@@ -44,8 +43,6 @@ export default function EditableProfilePage({
           />
         ),
       )}
-
-      <ModalLauncher />
     </>
   );
 }
