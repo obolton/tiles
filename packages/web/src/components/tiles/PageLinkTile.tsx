@@ -58,9 +58,6 @@ export default function PageLinkTile({
       href={`/pages/${linkedPage.value.id}`}
       target={openInNewTab ? "_blank" : undefined}
       onclick={handleClick}
-      draggable={editor?.isEditable.derive((value) =>
-        value ? false : undefined,
-      )}
     >
       <PageTile
         title={linkedPage.value.title}

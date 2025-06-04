@@ -443,6 +443,10 @@ function cancelContextMenu(event: PointerEvent | MouseEvent) {
   }
 }
 
+function preventDefault(event: Event) {
+  event.preventDefault();
+}
+
 export interface MakeDraggableOptions {
   handle?: HTMLElement;
   signal?: AbortSignal;
@@ -466,8 +470,8 @@ export function makeDraggable(
       signal,
     },
   );
+  element.addEventListener("dragstart", preventDefault, { signal });
   element.addEventListener("contextmenu", cancelContextMenu, {
-    passive: false,
     signal,
   });
 }
