@@ -1,0 +1,12 @@
+model Folder {
+  id        String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  userId    String   @map("user_id") @db.Uuid
+  name      String
+
+  pages Page[]
+
+  @@index([userId])
+  @@index([userId, name])
+  @@map("folders")
+}
