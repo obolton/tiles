@@ -18,7 +18,7 @@ export function inviteToPageEmail({
   return {
     subject: `${inviter.name} has invited you to collaborate on "${title}"`,
     body: `<p>Hi,</p>
-<p><a href="${BASE_URL}/profiles/${inviter.id}" target="_blank">${inviter.name}</a> has invited you to collaborate on "${title}"</p>
+<p><strong>${inviter.name}</strong> has invited you to collaborate on "${title}"</p>
 <p><a href="${BASE_URL}/invites/accept/${key}" target="_blank">Accept the invite</a>.</p>
 <p>-- Tiles</p>`,
   };
