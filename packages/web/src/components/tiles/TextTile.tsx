@@ -8,7 +8,6 @@ import TextEditor, {
 import ColorPicker from "@/components/inputs/ColorPicker";
 import ImageIcon from "@/icons/image.svg?jsx";
 import ExpandIcon from "@/icons/expand.svg?jsx";
-import { Computed } from "@/utils/reactivity";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
@@ -28,27 +27,13 @@ export default function TextTile({
   editor,
   id,
   content,
-  lightness,
-  chroma,
-  hue,
+  color,
   imageUrl,
   expand,
   hasFocus,
   onDelete,
 }: TextTileProps) {
   const { isEditable } = editor;
-
-  const color = new Computed([lightness, chroma, hue], () =>
-    typeof lightness.value === "number" &&
-    typeof chroma.value === "number" &&
-    typeof hue.value == "number"
-      ? {
-          l: lightness.value,
-          c: chroma.value,
-          h: hue.value,
-        }
-      : null,
-  );
 
   const onBlur = async (state: EditorState) => {
     const newContent = serialize(state);
@@ -62,9 +47,7 @@ export default function TextTile({
 
   const onChangeColor = async (value: Color | null) => {
     viewTransition(() => {
-      lightness.value = value ? value.l : null;
-      chroma.value = value ? value.c : null;
-      hue.value = value ? value.h : null;
+      color.value = value;
     });
     await editor.updateText({
       id,

@@ -41,17 +41,6 @@ export default function PageLinkTile({
     }
   }
 
-  const color =
-    typeof linkedPage.value.lightness === "number" &&
-    typeof linkedPage.value.chroma === "number" &&
-    typeof linkedPage.value.hue === "number"
-      ? {
-          l: linkedPage.value.lightness,
-          c: linkedPage.value.chroma,
-          h: linkedPage.value.hue,
-        }
-      : null;
-
   return (
     <a
       className={styles.link}
@@ -62,9 +51,8 @@ export default function PageLinkTile({
       <PageTile
         title={linkedPage.value.title}
         subtitle={linkedPage.value.subtitle}
-        hue={linkedPage.value.hue}
         font={linkedPage.value.font}
-        color={color}
+        color={linkedPage.value.color}
         coverImageUrl={linkedPage.value.coverImageUrl}
       />
 
@@ -72,7 +60,7 @@ export default function PageLinkTile({
         <ArrowOutwardIcon
           className={classNames(
             styles.icon,
-            color && isDark(color) && styles.dark,
+            isDark(linkedPage.value.color) && styles.dark,
           )}
           aria-hidden="true"
         />

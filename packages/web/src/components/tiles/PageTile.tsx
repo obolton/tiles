@@ -9,7 +9,6 @@ import type { JSX } from "@/jsx/jsx";
 export interface PageTileProps {
   title: string;
   subtitle?: string | null;
-  hue?: number | null;
   font?: FontId | null;
   color: Color | null;
   coverImageUrl?: string | null;

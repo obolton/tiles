@@ -3,7 +3,7 @@ import { getSessionId } from "@/utils/sessions";
 import { getFontConfig } from "@/utils/fonts";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import Page, { type PageProps } from "@/pages/Page";
-import { toCSSColor, isDark, type Color } from "@/utils/color";
+import { toCSSColor, isDark } from "@/utils/color";
 import type {
   Route,
   RequestProperties,
@@ -11,7 +11,6 @@ import type {
   RouteMetadata,
 } from "@/router/router";
 
-// TODO: Add cache headers
 async function loader({
   headers,
   parameters,
@@ -33,7 +32,6 @@ async function loader({
     throw new Error("Not Found");
   }
 
-  const color: Color = { l: page.lightness, c: page.chroma, h: page.hue };
   const font = page.font ? getFontConfig(page.font) : undefined;
 
   return {
@@ -43,9 +41,9 @@ async function loader({
     title: page.title,
     bodyAttributes: {
       "data-page-id": page.id,
-      className: isDark(color) ? "dark" : undefined,
+      className: isDark(page.color) ? "dark" : undefined,
       style: {
-        "--page-color": toCSSColor(color),
+        "--page-color": toCSSColor(page.color),
         "--font": font ? `"${font.family}", "${font.fallback}"` : undefined,
       },
     },
