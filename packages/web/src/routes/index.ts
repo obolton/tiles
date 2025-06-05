@@ -19,7 +19,6 @@ async function loader(): RouteLoaderResult<PageProps> {
     throw new Error("Not Found");
   }
 
-  const color: Color = { l: page.lightness, c: page.chroma, h: page.hue };
   const font = page.font ? getFontConfig(page.font) : undefined;
 
   return {
@@ -27,9 +26,9 @@ async function loader(): RouteLoaderResult<PageProps> {
     title: page.title,
     bodyAttributes: {
       "data-page-id": page.id,
-      className: isDark(color) ? "dark" : undefined,
+      className: isDark(page.color) ? "dark" : undefined,
       style: {
-        "--page-color": toCSSColor(color),
+        "--page-color": toCSSColor(page.color),
         "--font": font ? `"${font.family}", "${font.fallback}"` : undefined,
       },
     },
