@@ -31,7 +31,6 @@
   grid-template-columns: repeat(var(--columns), 1fr);
   grid-auto-rows: min-content;
   gap: var(--gap);
-  container: grid / inline-size;
 }
 
 body[data-drag] .grid {
@@ -45,7 +44,7 @@ body[data-drag] .grid {
   }
 }
 
-@container grid (min-width: 100px) {
+@container section (min-width: 100px) {
   .grid {
     --grid-column-width: calc(
       (100cqw - (var(--gap) * (var(--columns) - 1))) / var(--columns)
