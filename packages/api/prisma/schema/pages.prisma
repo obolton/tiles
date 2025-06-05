@@ -32,9 +32,8 @@ model Page {
   font          Font      @default(MODERN)
   coverImageKey String?   @map("cover_image_key")
 
-  author             User           @relation("Pages", fields: [authorId], references: [id], onDelete: Cascade)
+  author             User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   folder             Folder?        @relation(fields: [folderId], references: [id], onDelete: SetNull)
-  profileUser        User?          @relation("ProfilePage")
   tiles              Tile[]
   referringPageLinks PageLinkTile[] @relation("LinkedPage")
   bookmarks          Bookmark[]
