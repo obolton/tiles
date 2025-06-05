@@ -5,7 +5,6 @@ import {
 } from "@/utils/middleware.ts";
 import {
   GetPageByIdSchema,
-  GetProfilePageSchema,
   ListPagesSchema,
   CreatePageSchema,
   UpdatePageSchema,
@@ -14,7 +13,6 @@ import {
 } from "./schema.ts";
 import {
   getPageById,
-  getProfilePage,
   listPages,
   listSharedPages,
   listDeletedPages,
@@ -30,10 +28,6 @@ export default router({
   getById: publicProcedure
     .input(GetPageByIdSchema)
     .query(async ({ ctx, input }) => getPageById(input, ctx.user?.id)),
-
-  getProfilePage: publicProcedure
-    .input(GetProfilePageSchema)
-    .query(async ({ input }) => getProfilePage(input)),
 
   list: authenticatedProcedure
     .input(ListPagesSchema)

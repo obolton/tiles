@@ -17,7 +17,6 @@ import {
 import { TABLE_WITH_DATA_FIELDS } from "@/routes/tables/tables.ts";
 import type {
   GetPageByIdSchema,
-  GetProfilePageSchema,
   ListPagesSchema,
   CreatePageSchema,
   UpdatePageSchema,
@@ -217,39 +216,6 @@ export async function getPageById({ id }: GetPageByIdSchema, userId?: string) {
   return {
     ...page,
     tiles: page.tiles.map(formatTile),
-  };
-}
-
-export async function getProfilePage(input: GetProfilePageSchema) {
-  const where =
-    "userId" in input ? { id: input.userId } : { username: input.username };
-
-  const user = await prisma.user.findUnique({
-    where,
-    select: {
-      id: true,
-      username: true,
-      name: true,
-      imageUrl: true,
-      profilePage: {
-        select: PAGE_FIELDS,
-      },
-    },
-  });
-
-  if (!user || !user.profilePage) {
-    return null;
-  }
-
-  return {
-    id: user.name,
-    username: user.username,
-    name: user.name,
-    imageUrl: user.imageUrl,
-    profilePage: {
-      ...user.profilePage,
-      tiles: user.profilePage.tiles.map(formatTile),
-    },
   };
 }
 
