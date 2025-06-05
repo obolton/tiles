@@ -68,9 +68,7 @@ const PAGE_FIELDS = {
   title: true,
   subtitle: true,
   updatedAt: true,
-  lightness: true,
-  chroma: true,
-  hue: true,
+  color: true,
   font: true,
   coverImageUrl: true,
   author: {
@@ -99,7 +97,7 @@ const PAGE_FIELDS = {
       position: "asc",
     },
   },
-} as const satisfies Prisma.PageSelect<ExtensionArgs>;
+} as const satisfies Prisma.Args<typeof prisma.page, "findMany">["select"];
 
 type TileWithData = Prisma.Result<
   typeof prisma.tile,

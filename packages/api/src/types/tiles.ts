@@ -75,9 +75,7 @@ export type ClientPageLink = Omit<
     title: string;
     subtitle: string | null;
     author?: { id: string; name: string; imageUrl: string | null };
-    lightness: number;
-    chroma: number;
-    hue: number;
+    color: { l: number; c: number; h: number };
     font: Font | null;
     coverImageUrl: string | null;
   } | null;

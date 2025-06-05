@@ -1,4 +1,4 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
+import prisma from "@/database/prisma.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import type { CreateTextSchema, UpdateTextSchema } from "./schema.ts";
 import type { Prisma } from "@prisma/client";
@@ -6,12 +6,10 @@ import type { Prisma } from "@prisma/client";
 export const TEXT_FIELDS = {
   id: true,
   content: true,
-  lightness: true,
-  chroma: true,
-  hue: true,
+  color: true,
   imageUrl: true,
   expand: true,
-} as const satisfies Prisma.TextTileSelect<ExtensionArgs>;
+} as const satisfies Prisma.Args<typeof prisma.textTile, "findMany">["select"];
 
 export type Text = Prisma.Result<
   typeof prisma.textTile,
