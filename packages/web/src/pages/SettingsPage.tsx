@@ -80,13 +80,7 @@ async function onSubmit(event: SubmitEvent) {
       email: (formData.get("email") as string | null) ?? "",
     });
     user.value = userInfo;
-    redirectWithToast(
-      userInfo.username
-        ? `/profiles/@${userInfo.username}`
-        : `/profiles/${userInfo.id}`,
-      "Your settings were saved.",
-      "success",
-    );
+    redirectWithToast("/library", "Your settings were saved.", "success");
   } catch (error) {
     delete form.dataset.pending;
     form.dataset.error = "true";

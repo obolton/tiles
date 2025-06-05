@@ -10,7 +10,6 @@ const SPECULATION_RULES = {
               "/library/bookmarks",
               "/settings",
               "/pages/:id",
-              "/profiles/:id",
             ],
           },
           {

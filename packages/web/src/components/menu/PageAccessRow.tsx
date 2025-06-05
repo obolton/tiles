@@ -22,7 +22,7 @@ export default function PageAccessRow({
 
   return (
     <li>
-      <a href={`/profiles/${user.id}`} target="_blank">
+      <span>
         {user.imageUrl ? (
           <img className="profile-image" src={user.imageUrl} alt={user.name} />
         ) : null}
@@ -44,7 +44,7 @@ export default function PageAccessRow({
             <RemoveIcon aria-hidden="true" />
           </button>
         ) : null}
-      </a>
+      </span>
     </li>
   );
 }
