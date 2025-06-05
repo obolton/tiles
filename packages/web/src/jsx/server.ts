@@ -106,6 +106,7 @@ function getDOMAttributes(properties: Record<string, unknown>) {
     if (
       name === "children" ||
       name.startsWith("$") ||
+      name.startsWith("on:") ||
       typeof value === "function" ||
       typeof value === "undefined" ||
       value === false ||

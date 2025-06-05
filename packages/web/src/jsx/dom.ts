@@ -64,7 +64,13 @@ function setAttributes<T extends Element>(
     if (name === "children" || name === "ref") {
       continue;
     }
-    if (name.startsWith("on") && typeof value === "function") {
+    if (name.startsWith("on:") && typeof value === "function") {
+      element.addEventListener(
+        name.slice(3).toLowerCase(),
+        value as EventListener,
+        { signal },
+      );
+    } else if (name.startsWith("on") && typeof value === "function") {
       element.addEventListener(
         name.slice(2).toLowerCase(),
         value as EventListener,
