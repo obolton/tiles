@@ -69,16 +69,7 @@ export default function DeletedPagesGrid({
         results={pages}
         hasMore={hasMore}
         placeholder={inputPlaceholder}
-        render={({ lightness, chroma, hue, ...page }) => (
-          <DeletedPage
-            {...page}
-            color={{
-              l: lightness,
-              c: chroma,
-              h: hue,
-            }}
-          />
-        )}
+        render={(page) => <DeletedPage {...page} />}
         renderPlaceholder={renderPlaceholder}
       />
     </>
