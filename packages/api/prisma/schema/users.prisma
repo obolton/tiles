@@ -8,12 +8,13 @@ model User {
   emailVerified Boolean  @default(false) @map("email_verified")
   imageKey      String?  @map("image_key")
 
-  sessions    Session[]
-  keys        Key[]
-  pages       Page[]
-  bookmarks   Bookmark[]
-  pageAccess  PageAccess[]
-  pageInvites PageInvite[]
+  workspaceMemberships WorkspaceMembership[]
+  sessions             Session[]
+  keys                 Key[]
+  pages                Page[]
+  bookmarks            Bookmark[]
+  pageAccess           PageAccess[]
+  pageInvites          PageInvite[]
 
   @@index([username])
   @@index([email])

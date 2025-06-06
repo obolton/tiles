@@ -21,6 +21,7 @@ model Page {
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
   deletedAt     DateTime? @map("deleted_at")
+  workspaceId   String    @map("workspace_id") @db.Uuid
   authorId      String    @map("author_id") @db.Uuid
   folderId      String?   @map("folder_id") @db.Uuid
   published     Boolean   @default(false)
@@ -32,6 +33,7 @@ model Page {
   font          Font      @default(MODERN)
   coverImageKey String?   @map("cover_image_key")
 
+  workspace          Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   author             User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   folder             Folder?        @relation(fields: [folderId], references: [id], onDelete: SetNull)
   tiles              Tile[]
