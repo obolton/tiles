@@ -45,12 +45,6 @@ export async function createUser(
       email,
       emailVerified,
       imageKey,
-      profilePage: {
-        create: {
-          authorId: id,
-          title: name,
-        },
-      },
     },
     select: {
       id: true,
@@ -58,26 +52,18 @@ export async function createUser(
   });
 }
 
-export async function getUserBySessionId(sessionId: string) {
+export async function getSessionContext(sessionId: string) {
   const session = await prisma.session.findUnique({
     where: { id: sessionId, expiresAt: { gt: new Date() } },
     select: {
-      user: {
-        select: {
-          id: true,
-          username: true,
-          name: true,
-          email: true,
-          imageUrl: true,
-        },
-      },
+      workspaceId: true,
+      userId: true,
     },
   });
-  const user = session?.user;
-  if (!user) {
+  if (!session) {
     return null;
   }
-  return user;
+  return { workspaceId: session.workspaceId, user: { id: session.userId } };
 }
 
 export async function updateUser(

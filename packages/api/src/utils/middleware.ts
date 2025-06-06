@@ -6,7 +6,7 @@ import { publicProcedure, type RequestContext } from "@/utils/trpc.ts";
 
 export type AuthenticatedProcedureContext = Extract<
   RequestContext,
-  { sessionId: string; user: { id: string } }
+  { sessionId: string; workspaceId: string; user: { id: string } }
 >;
 
 export const authenticatedProcedure = publicProcedure.use(async (opts) => {

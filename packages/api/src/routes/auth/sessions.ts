@@ -7,6 +7,7 @@ const SESSION_VALIDITY_PERIOD = 1000 * 60 * 60 * 24 * 14; // 2 weeks
 export async function createSession(
   db: PrismaTransactionClient,
   userId: string,
+  workspaceId: string,
 ) {
   const id = await createKey(SESSION_ID_BYTES);
   const expiresAt = new Date(Date.now() + SESSION_VALIDITY_PERIOD);
@@ -14,6 +15,7 @@ export async function createSession(
     data: {
       id,
       userId,
+      workspaceId,
       expiresAt,
     },
     select: {
