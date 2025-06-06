@@ -21,10 +21,11 @@ export const FOLDER_FIELDS = {
 
 export async function createFolder(
   { name }: CreateFolderSchema,
-  { user }: AuthenticatedProcedureContext,
+  { user, workspaceId }: AuthenticatedProcedureContext,
 ) {
   return prisma.folder.create({
     data: {
+      workspaceId,
       userId: user.id,
       name,
     },
@@ -34,12 +35,12 @@ export async function createFolder(
 
 export async function getFolder(
   { id }: GetFolderSchema,
-  { user }: AuthenticatedProcedureContext,
+  { workspaceId }: AuthenticatedProcedureContext,
 ) {
   return prisma.folder.findUniqueOrThrow({
     where: {
       id,
-      userId: user.id,
+      workspaceId,
     },
     select: FOLDER_FIELDS,
   });
@@ -47,12 +48,12 @@ export async function getFolder(
 
 export async function updateFolder(
   { id, name }: UpdateFolderSchema,
-  { user }: AuthenticatedProcedureContext,
+  { workspaceId }: AuthenticatedProcedureContext,
 ) {
   return prisma.folder.update({
     where: {
       id,
-      userId: user.id,
+      workspaceId,
     },
     data: {
       name,
@@ -63,12 +64,12 @@ export async function updateFolder(
 
 export async function deleteFolder(
   { id }: DeleteFolderSchema,
-  { user }: AuthenticatedProcedureContext,
+  { workspaceId }: AuthenticatedProcedureContext,
 ) {
   return prisma.folder.delete({
     where: {
       id,
-      userId: user.id,
+      workspaceId,
     },
     select: { id: true },
   });
@@ -76,14 +77,14 @@ export async function deleteFolder(
 
 export async function listFolders(
   { query, offset }: ListFoldersSchema,
-  { user }: AuthenticatedProcedureContext,
+  { workspaceId }: AuthenticatedProcedureContext,
 ) {
   const filter: Prisma.FolderWhereInput = query
     ? { name: { contains: query, mode: "insensitive" } }
     : {};
   const folders = await prisma.folder.findMany({
     where: {
-      userId: user.id,
+      workspaceId,
       ...filter,
     },
     select: FOLDER_FIELDS,
@@ -101,15 +102,14 @@ export async function listFolders(
 
 export async function listPages(
   { id, query, offset }: ListPagesSchema,
-  { user }: AuthenticatedProcedureContext,
+  { workspaceId }: AuthenticatedProcedureContext,
 ) {
-  console.log("LISTING PAGES IN FOLDER", id);
   return prisma.$transaction(async (transaction) => {
     // Verify access to folder
     await transaction.folder.findUniqueOrThrow({
       where: {
         id,
-        userId: user.id,
+        workspaceId,
       },
     });
 
@@ -124,6 +124,7 @@ export async function listPages(
 
     const pages = await prisma.page.findMany({
       where: {
+        workspaceId,
         folderId: id,
         ...filter,
       },
@@ -143,12 +144,12 @@ export async function listPages(
 
 export async function movePageToFolder(
   { id, pageId }: MovePageToFolderSchema,
-  { user }: AuthenticatedProcedureContext,
+  { workspaceId }: AuthenticatedProcedureContext,
 ) {
   return prisma.folder.update({
     where: {
       id,
-      userId: user.id,
+      workspaceId,
     },
     data: {
       pages: {

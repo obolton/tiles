@@ -219,7 +219,7 @@ export async function getPageById({ id }: GetPageByIdSchema, userId?: string) {
 
 export async function listPages(
   { query, offset }: ListPagesSchema,
-  { user }: AuthenticatedProcedureContext,
+  { user, workspaceId }: AuthenticatedProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
     ? {
@@ -231,6 +231,7 @@ export async function listPages(
     : {};
   const pages = await prisma.page.findMany({
     where: {
+      workspaceId,
       authorId: user.id,
       deletedAt: null,
       ...filter,
@@ -284,7 +285,7 @@ export async function listSharedPages(
 
 export async function listDeletedPages(
   { query, offset }: ListPagesSchema,
-  { user }: AuthenticatedProcedureContext,
+  { user, workspaceId }: AuthenticatedProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
     ? {
@@ -296,6 +297,7 @@ export async function listDeletedPages(
     : {};
   const pages = await prisma.page.findMany({
     where: {
+      workspaceId,
       authorId: user.id,
       deletedAt: {
         not: null,
@@ -321,11 +323,12 @@ export async function listDeletedPages(
 
 export async function createPage(
   { title }: CreatePageSchema,
-  { user }: AuthenticatedProcedureContext,
+  { user, workspaceId }: AuthenticatedProcedureContext,
 ) {
   return prisma.$transaction(async (transaction) => {
     const page = await transaction.page.create({
       data: {
+        workspaceId,
         authorId: user.id,
         published: false,
         title,
@@ -381,10 +384,10 @@ export async function updatePage(
     font,
     coverImageKey,
   }: UpdatePageSchema,
-  { user }: AuthenticatedProcedureContext,
+  { user, workspaceId }: AuthenticatedProcedureContext,
 ) {
   return prisma.page.update({
-    where: { id: pageId, authorId: user.id, deletedAt: null },
+    where: { workspaceId, id: pageId, authorId: user.id, deletedAt: null },
     data: {
       published,
       title,
@@ -401,28 +404,36 @@ export async function updatePage(
 
 export async function deletePage(
   { pageId }: DeletePageSchema,
-  { user }: AuthenticatedProcedureContext,
+  { user, workspaceId }: AuthenticatedProcedureContext,
 ) {
   return prisma.page.update({
+    where: { workspaceId, id: pageId, authorId: user.id, deletedAt: null },
     data: { deletedAt: new Date() },
-    where: { id: pageId, authorId: user.id, deletedAt: null },
     select: { id: true },
   });
 }
 
 export async function restorePage(
   { pageId }: RestorePageSchema,
-  { user }: AuthenticatedProcedureContext,
+  { user, workspaceId }: AuthenticatedProcedureContext,
 ) {
   return prisma.page.update({
+    where: {
+      workspaceId,
+      id: pageId,
+      authorId: user.id,
+      deletedAt: { not: null },
+    },
     data: { deletedAt: null },
-    where: { id: pageId, authorId: user.id, deletedAt: { not: null } },
     select: { id: true },
   });
 }
 
-export async function emptyTrash({ user }: AuthenticatedProcedureContext) {
+export async function emptyTrash({
+  user,
+  workspaceId,
+}: AuthenticatedProcedureContext) {
   return prisma.page.deleteMany({
-    where: { authorId: user.id, deletedAt: { not: null } },
+    where: { workspaceId, authorId: user.id, deletedAt: { not: null } },
   });
 }
