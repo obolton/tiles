@@ -74,27 +74,27 @@ export default function Folders({
   }
 
   return (
-    <nav className={styles.folders}>
-      <ul ref={ref}>
-        <li aria-selected={selectedId === "RECENT" ? "true" : "false"}>
+    <nav>
+      <ul ref={ref} className="navigation-menu">
+        <li aria-current={selectedId === "RECENT" ? "page" : "false"}>
           <a href="/library">
             <LibraryIcon aria-hidden="true" />
             <span>Your pages</span>
           </a>
         </li>
-        <li aria-selected={selectedId === "SHARED" ? "true" : "false"}>
+        <li aria-current={selectedId === "SHARED" ? "page" : "false"}>
           <a href="/library/shared">
             <PeopleIcon aria-hidden="true" />
             Shared with you
           </a>
         </li>
-        <li aria-selected={selectedId === "BOOKMARKS" ? "true" : "false"}>
+        <li aria-current={selectedId === "BOOKMARKS" ? "page" : "false"}>
           <a href="/library/bookmarks">
             <BookmarkIcon aria-hidden="true" />
             <span>Bookmarks</span>
           </a>
         </li>
-        <li aria-selected={selectedId === "TRASH" ? "true" : "false"}>
+        <li aria-current={selectedId === "TRASH" ? "page" : "false"}>
           <a href="/library/trash">
             <TrashIcon aria-hidden="true" />
             <span>Trash</span>
@@ -104,7 +104,7 @@ export default function Folders({
         {folders.derive((value) =>
           value.folders.map((folder) => (
             <li
-              aria-selected={selectedId === folder.id ? "true" : "false"}
+              aria-current={selectedId === folder.id ? "page" : "false"}
               data-id={folder.id}
               data-drop="true"
             >
@@ -116,7 +116,7 @@ export default function Folders({
           )),
         )}
 
-        <li className={styles.new}>
+        <li className="muted">
           <button type="button" onclick={createFolder}>
             <NewIcon aria-hidden="true" />
             <span>New folder</span>
