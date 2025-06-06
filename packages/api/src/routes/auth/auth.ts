@@ -21,7 +21,14 @@ export async function signIn({
     });
 
     if (existingUserId) {
-      return createSession(transaction, existingUserId);
+      const { workspaceId } = await prisma.workspaceMembership.findFirstOrThrow(
+        {
+          where: { userId: existingUserId },
+          select: { workspaceId: true },
+          orderBy: { createdAt: "asc" },
+        },
+      );
+      return createSession(transaction, existingUserId, workspaceId);
     } else {
       const user = await createUser(transaction, {
         name,
@@ -41,7 +48,7 @@ export async function signIn({
       });
       const [, session] = await Promise.all([
         createKey(transaction, { provider, providerId, userId: user.id }),
-        createSession(transaction, user.id),
+        createSession(transaction, user.id, workspace.id),
         async () => {
           try {
             sendEmail(email, signUpEmail({ id: user.id, name }));
