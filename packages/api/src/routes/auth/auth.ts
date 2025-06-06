@@ -29,6 +29,16 @@ export async function signIn({
         emailVerified,
         imageUrl,
       });
+      const workspace = await transaction.workspace.create({
+        data: {
+          name: `${name}'s Workspace`,
+          memberships: {
+            create: {
+              userId: user.id,
+            },
+          },
+        },
+      });
       const [, session] = await Promise.all([
         createKey(transaction, { provider, providerId, userId: user.id }),
         createSession(transaction, user.id),
