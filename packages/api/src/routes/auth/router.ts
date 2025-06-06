@@ -1,7 +1,9 @@
 import { router, publicProcedure } from "@/utils/trpc.ts";
+import { authenticatedProcedure } from "@/utils/middleware.ts";
 import { signIn, signOut } from "./auth.ts";
 import { SignInSchema } from "./schema.ts";
 import { clearSessionCookie } from "@/utils/cookies.ts";
+import { getCurrentUser } from "@/routes/users/users.ts";
 
 export default router({
   signIn: publicProcedure.input(SignInSchema).mutation(async ({ input }) => {
@@ -15,7 +17,5 @@ export default router({
     }
     return null;
   }),
-  getUserInfo: publicProcedure.query(async ({ ctx }) => {
-    return ctx.user;
-  }),
+  getUserInfo: authenticatedProcedure.query(({ ctx }) => getCurrentUser(ctx)),
 });

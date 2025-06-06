@@ -66,6 +66,19 @@ export async function getSessionContext(sessionId: string) {
   return { workspaceId: session.workspaceId, user: { id: session.userId } };
 }
 
+export async function getCurrentUser({ user }: AuthenticatedProcedureContext) {
+  return prisma.user.findUniqueOrThrow({
+    where: { id: user.id },
+    select: {
+      id: true,
+      username: true,
+      name: true,
+      email: true,
+      imageUrl: true,
+    },
+  });
+}
+
 export async function updateUser(
   { username, name, email, imageKey }: UpdateUserSchema,
   { user }: AuthenticatedProcedureContext,
