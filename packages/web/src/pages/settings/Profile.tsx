@@ -1,17 +1,19 @@
 import PageLayout from "@/layouts/PageLayout";
+import SidebarLayout from "@/layouts/SidebarLayout";
+import Sidebar from "./Sidebar";
 import client from "@/api/client";
 import { setSearchParams } from "@/utils/urls";
 import { redirectWithToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
 import { uploadMedia } from "@/utils/media";
 import { user } from "@/utils/sessions";
-import styles from "./SettingsPage.module.css";
+import styles from "./Profile.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type FilePicker from "@/elements/filePicker/FilePicker";
 
 type User = NonNullable<AppRouterOutputs["auth"]["getUserInfo"]>;
 
-export interface SettingsPageProps {
+export interface ProfileProps {
   user: User;
 }
 
@@ -80,7 +82,11 @@ async function onSubmit(event: SubmitEvent) {
       email: (formData.get("email") as string | null) ?? "",
     });
     user.value = userInfo;
-    redirectWithToast("/library", "Your settings were saved.", "success");
+    redirectWithToast(
+      "/settings/profile",
+      "Your settings were saved.",
+      "success",
+    );
   } catch (error) {
     delete form.dataset.pending;
     form.dataset.error = "true";
@@ -88,14 +94,14 @@ async function onSubmit(event: SubmitEvent) {
   }
 }
 
-export default function SettingsPage({ user }: SettingsPageProps) {
+export default function Profile({ user }: ProfileProps) {
   return (
     <PageLayout>
-      <header className="default-width">
-        <h1>Settings</h1>
-      </header>
+      <SidebarLayout sidebar={<Sidebar page="PROFILE" />}>
+        <header>
+          <h2>Profile</h2>
+        </header>
 
-      <main className="default-width">
         <form class="vertical" onsubmit={onSubmit}>
           <file-picker
             className={styles.file}
@@ -155,7 +161,7 @@ export default function SettingsPage({ user }: SettingsPageProps) {
             </button>
           </footer>
         </form>
-      </main>
+      </SidebarLayout>
     </PageLayout>
   );
 }

@@ -1,6 +1,6 @@
 import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
-import SettingsPage, { type SettingsPageProps } from "@/pages/SettingsPage";
+import Profile, { type ProfileProps } from "@/pages/settings/Profile";
 import { authenticatedRoute } from "@/utils/middleware";
 import type {
   Route,
@@ -10,7 +10,7 @@ import type {
 
 async function loader({
   headers,
-}: RequestProperties): RouteLoaderResult<SettingsPageProps> {
+}: RequestProperties): RouteLoaderResult<ProfileProps> {
   const sessionId = getSessionId(headers);
   if (!sessionId) {
     throw new Error("Unauthorized");
@@ -25,7 +25,7 @@ async function loader({
   }
 
   return {
-    title: "Settings",
+    title: "Settings - Profile",
     data: { user },
   };
 }
@@ -33,5 +33,5 @@ async function loader({
 export default {
   middleware: import.meta.env.SSR ? authenticatedRoute : undefined,
   loader: import.meta.env.SSR ? loader : undefined,
-  component: SettingsPage,
-} satisfies Route<SettingsPageProps>;
+  component: Profile,
+} satisfies Route<ProfileProps>;
