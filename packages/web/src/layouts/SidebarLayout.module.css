@@ -1,0 +1,33 @@
+.sidebar {
+  position: fixed;
+  top: 24px;
+  width: 240px;
+  height: 100vh;
+  padding-top: 40px;
+
+  & > header {
+    height: 64px;
+    margin-bottom: 40px;
+  }
+}
+
+.content {
+  margin-left: 304px;
+  padding-top: 144px;
+
+  & > header {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    margin-bottom: 24px;
+
+    & h2 {
+      margin: 0;
+      flex: 1;
+    }
+
+    & button {
+      flex: none;
+    }
+  }
+}
