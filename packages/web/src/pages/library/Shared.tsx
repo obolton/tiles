@@ -24,12 +24,14 @@ function renderPlaceholder(query: string) {
 export default function Shared({ folders, pages }: SharedProps) {
   return (
     <PageLayout>
-      <header className="default-width">
-        <h1>Library</h1>
-      </header>
+      <main className="default-width">
+        <section className={styles.sidebar}>
+          <header>
+            <h1>Library</h1>
+          </header>
 
-      <main className={styles.contents}>
-        <Folders selectedId="SHARED" folders={folders} />
+          <Folders selectedId="SHARED" folders={folders} />
+        </section>
 
         <section className={styles.pages}>
           <header>

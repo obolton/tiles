@@ -22,12 +22,14 @@ function renderPlaceholder(query: string) {
 export default function Trash({ folders, pages }: TrashProps) {
   return (
     <PageLayout>
-      <header className="default-width">
-        <h1>Library</h1>
-      </header>
+      <main className="default-width">
+        <section className={styles.sidebar}>
+          <header>
+            <h1>Library</h1>
+          </header>
 
-      <main className={styles.contents}>
-        <Folders selectedId="TRASH" folders={folders} />
+          <Folders selectedId="TRASH" folders={folders} />
+        </section>
 
         <section className={styles.pages}>
           <header>

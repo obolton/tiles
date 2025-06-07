@@ -1,15 +1,24 @@
-.contents {
-  display: flex;
-  width: min(var(--max-width), calc(100vw - 160px));
-  gap: 80px;
+.sidebar {
+  position: fixed;
+  top: 24px;
+  width: 240px;
+  height: 100vh;
+  padding-top: 40px;
+
+  & > header {
+    height: 64px;
+    margin-bottom: 40px;
+  }
 }
 
 .pages {
-  flex: 1;
+  margin-left: 304px;
+  padding-top: 144px;
 
   & > header {
     display: flex;
     align-items: center;
+    height: 44px;
     margin-bottom: 24px;
 
     & h2 {

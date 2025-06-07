@@ -48,12 +48,14 @@ export default function Folder({ id, name, folders, pages }: FolderProps) {
 
   return (
     <PageLayout>
-      <header className="default-width">
-        <h1>Library</h1>
-      </header>
+      <main className="default-width">
+        <section className={styles.sidebar}>
+          <header>
+            <h1>Library</h1>
+          </header>
 
-      <main className={styles.contents}>
-        <Folders selectedId={id} folders={folders} />
+          <Folders selectedId={id} folders={folders} />
+        </section>
 
         <section className={styles.pages}>
           <header>

@@ -49,12 +49,14 @@ function renderPlaceholder(query: string) {
 export default function Library({ folders, pages }: LibraryProps) {
   return (
     <PageLayout>
-      <header className="default-width">
-        <h1>Library</h1>
-      </header>
+      <main className="default-width">
+        <section className={styles.sidebar}>
+          <header>
+            <h1>Library</h1>
+          </header>
 
-      <main className={styles.contents}>
-        <Folders selectedId="RECENT" folders={folders} />
+          <Folders selectedId="RECENT" folders={folders} />
+        </section>
 
         <section className={styles.pages}>
           <header>
