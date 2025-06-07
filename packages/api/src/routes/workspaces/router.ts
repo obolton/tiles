@@ -7,6 +7,7 @@ import {
   ListWorkspaceUsersSchema,
 } from "./schema.ts";
 import {
+  getCurrentWorkspace,
   updateWorkspace,
   inviteToWorkspace,
   removeFromWorkspace,
@@ -14,6 +15,8 @@ import {
 } from "./workspaces.ts";
 
 export default router({
+  get: authenticatedProcedure.query(({ ctx }) => getCurrentWorkspace(ctx)),
+
   update: authenticatedProcedure
     .input(UpdateWorkspaceSchema)
     .mutation(({ input, ctx }) => updateWorkspace(input, ctx)),

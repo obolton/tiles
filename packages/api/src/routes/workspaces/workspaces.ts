@@ -21,6 +21,17 @@ export const WORKSPACE_USER_FIELDS = {
   email: true,
 } as const satisfies Prisma.UserSelect<ExtensionArgs>;
 
+export async function getCurrentWorkspace({
+  workspaceId,
+}: AuthenticatedProcedureContext) {
+  return prisma.workspace.findUniqueOrThrow({
+    where: {
+      id: workspaceId,
+    },
+    select: WORKSPACE_FIELDS,
+  });
+}
+
 export async function updateWorkspace(
   { name }: UpdateWorkspaceSchema,
   { workspaceId }: AuthenticatedProcedureContext,
