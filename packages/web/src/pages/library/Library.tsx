@@ -1,11 +1,11 @@
 import client from "@/api/client";
 import PageLayout from "@/layouts/PageLayout";
-import Folders from "@/components/folders/Folders";
+import SidebarLayout from "@/layouts/SidebarLayout";
+import Sidebar from "./Sidebar";
 import Placeholder from "@/components/placeholder/Placeholder";
 import PagesGrid from "@/components/grid/PagesGrid";
 import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
-import styles from "./Library.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 
 export interface LibraryProps {
@@ -49,31 +49,23 @@ function renderPlaceholder(query: string) {
 export default function Library({ folders, pages }: LibraryProps) {
   return (
     <PageLayout>
-      <main className="default-width">
-        <section className={styles.sidebar}>
-          <header>
-            <h1>Library</h1>
-          </header>
+      <SidebarLayout
+        sidebar={<Sidebar folders={folders} selectedFolderId="RECENT" />}
+      >
+        <header>
+          <h2>Your pages</h2>
+        </header>
 
-          <Folders selectedId="RECENT" folders={folders} />
-        </section>
-
-        <section className={styles.pages}>
-          <header>
-            <h2>Your pages</h2>
-          </header>
-
-          <PagesGrid
-            inputPlaceholder="Search pages"
-            pages={pages}
-            search={(query, offset) =>
-              client.pages.list.query({ query: query || undefined, offset })
-            }
-            renderPlaceholder={renderPlaceholder}
-            draggable
-          />
-        </section>
-      </main>
+        <PagesGrid
+          inputPlaceholder="Search pages"
+          pages={pages}
+          search={(query, offset) =>
+            client.pages.list.query({ query: query || undefined, offset })
+          }
+          renderPlaceholder={renderPlaceholder}
+          draggable
+        />
+      </SidebarLayout>
     </PageLayout>
   );
 }

@@ -1,9 +1,9 @@
 import client from "@/api/client";
 import PageLayout from "@/layouts/PageLayout";
-import Folders from "@/components/folders/Folders";
+import SidebarLayout from "@/layouts/SidebarLayout";
+import Sidebar from "./Sidebar";
 import Placeholder from "@/components/placeholder/Placeholder";
 import PagesGrid from "@/components/grid/PagesGrid";
-import styles from "./Library.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 
 export interface SharedProps {
@@ -24,34 +24,26 @@ function renderPlaceholder(query: string) {
 export default function Shared({ folders, pages }: SharedProps) {
   return (
     <PageLayout>
-      <main className="default-width">
-        <section className={styles.sidebar}>
-          <header>
-            <h1>Library</h1>
-          </header>
+      <SidebarLayout
+        sidebar={<Sidebar folders={folders} selectedFolderId="SHARED" />}
+      >
+        <header>
+          <h2>Shared with you</h2>
+        </header>
 
-          <Folders selectedId="SHARED" folders={folders} />
-        </section>
-
-        <section className={styles.pages}>
-          <header>
-            <h2>Shared with you</h2>
-          </header>
-
-          <PagesGrid
-            inputPlaceholder="Search pages shared with you"
-            pages={pages}
-            search={(query, offset) =>
-              client.pages.listShared.query({
-                query: query || undefined,
-                offset,
-              })
-            }
-            renderPlaceholder={renderPlaceholder}
-            draggable
-          />
-        </section>
-      </main>
+        <PagesGrid
+          inputPlaceholder="Search pages shared with you"
+          pages={pages}
+          search={(query, offset) =>
+            client.pages.listShared.query({
+              query: query || undefined,
+              offset,
+            })
+          }
+          renderPlaceholder={renderPlaceholder}
+          draggable
+        />
+      </SidebarLayout>
     </PageLayout>
   );
 }
