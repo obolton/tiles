@@ -174,6 +174,7 @@ export class DragState<T> {
 
     if (allowDrop) {
       this.dropTarget = target;
+      target.dataset.dropTarget = "true";
       this.scheduleDragEvent(event.clientX, event.clientY);
     } else {
       this.dropTarget = undefined;
@@ -238,7 +239,10 @@ export class DragState<T> {
   }
 
   private pointerLeave(event: PointerEvent) {
-    event.currentTarget?.dispatchEvent(
+    const target = event.currentTarget as HTMLElement;
+
+    delete target.dataset.dropTarget;
+    target.dispatchEvent(
       this.createDragDropEvent("dnd-dragleave", {
         bubbles: true,
         cancelable: false,
@@ -246,6 +250,7 @@ export class DragState<T> {
         clientY: event.clientY,
       }),
     );
+
     this.dropTarget = undefined;
   }
 
@@ -347,12 +352,15 @@ export class DragState<T> {
     clearInterval(this.dragInterval);
 
     if (this.isDragging) {
-      this.dropTarget?.dispatchEvent(
-        this.createDragDropEvent("dnd-dragleave", {
-          bubbles: true,
-          cancelable: false,
-        }),
-      );
+      if (this.dropTarget) {
+        delete this.dropTarget.dataset.dropTarget;
+        this.dropTarget.dispatchEvent(
+          this.createDragDropEvent("dnd-dragleave", {
+            bubbles: true,
+            cancelable: false,
+          }),
+        );
+      }
 
       const dragEndTarget = this.element.isConnected
         ? this.element
