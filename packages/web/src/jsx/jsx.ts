@@ -8,10 +8,6 @@ export type WithReactiveProperties<T> = {
   [K in keyof T]?: T[K] | Reactive<T[K]>;
 };
 
-export interface EventHandlersEventMap extends GlobalEventHandlersEventMap {
-  toggle: ToggleEvent; // Defined as Event in the DOM lib
-}
-
 export namespace JSX {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export type Element<T extends ElementType = any> = {
@@ -58,8 +54,8 @@ export namespace JSX {
   export type DataAttribute = `data-${string}`;
 
   export type EventHandlers = {
-    [K in keyof EventHandlersEventMap as `on:${K}`]?: (
-      event: EventHandlersEventMap[K],
+    [K in keyof HTMLElementEventMap as `on:${K}`]?: (
+      event: HTMLElementEventMap[K],
     ) => void;
   };
 
