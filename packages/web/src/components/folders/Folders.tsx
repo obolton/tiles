@@ -8,7 +8,7 @@ import NewIcon from "@/icons/new.svg?jsx";
 import { registerModal, showModal } from "@/utils/modals";
 import { reactive } from "@/utils/reactivity";
 import type { FolderModalResult } from "./FolderModal";
-import styles from "./Folders.module.css";
+import type { DragDropEvent } from "@/utils/drag";
 
 export type SYSTEM_FOLDER = "RECENT" | "SHARED" | "BOOKMARKS" | "TRASH";
 
@@ -53,29 +53,19 @@ export default function Folders({
     });
   }
 
-  function ref(element: HTMLElement) {
-    element.addEventListener("dnd-dragenter", (event) => {
-      const item = event.target as HTMLElement;
-      item.classList.add(styles["drag-over"]);
-    });
-    element.addEventListener("dnd-dragleave", (event) => {
-      const item = event.target as HTMLElement;
-      item.classList.remove(styles["drag-over"]);
-    });
-    element.addEventListener("dnd-drop", async (event) => {
-      const item = event.target as HTMLElement;
-      const id = item.dataset.id;
-      const pageId = event.dragSource.dataset.id;
-      if (!id || !pageId) {
-        return;
-      }
-      await client.folders.movePage.mutate({ id, pageId });
-    });
+  async function onDrop(event: DragDropEvent) {
+    const item = event.target as HTMLElement;
+    const id = item.dataset.id;
+    const pageId = event.dragSource.dataset.id;
+    if (!id || !pageId) {
+      return;
+    }
+    await client.folders.movePage.mutate({ id, pageId });
   }
 
   return (
     <nav>
-      <ul ref={ref} className="navigation-menu">
+      <ul className="navigation-menu" on:dnd-drop={onDrop}>
         <li aria-current={selectedId === "RECENT" ? "page" : "false"}>
           <a href="/library">
             <LibraryIcon aria-hidden="true" />

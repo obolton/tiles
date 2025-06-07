@@ -73,6 +73,12 @@ ul.navigation-menu {
       box-shadow: 0 0 0 2px var(--ui-color);
     }
 
+    &[data-drop-target] {
+      outline: var(--focus-outline);
+      color: var(--ui-color);
+      background-color: rgb(0 0 0 / 5%);
+    }
+
     &.muted:not(:hover, :active) {
       color: rgb(0 0 0 / 50%);
     }
