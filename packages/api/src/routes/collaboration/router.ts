@@ -11,8 +11,8 @@ import {
 } from "./collaboration.ts";
 import {
   InviteToPageSchema,
-  AcceptInviteSchema,
-  DeleteInviteSchema,
+  AcceptPageInviteSchema,
+  DeletePageInviteSchema,
   RevokePageAccessSchema,
 } from "./schema.ts";
 
@@ -22,11 +22,11 @@ export default router({
     .mutation(async ({ input, ctx }) => inviteToPage(input, ctx)),
 
   acceptPageInvite: authenticatedProcedure
-    .input(AcceptInviteSchema)
+    .input(AcceptPageInviteSchema)
     .mutation(async ({ input, ctx }) => acceptPageInvite(input, ctx)),
 
   deletePageInvite: authenticatedPageProcedure
-    .input(DeleteInviteSchema)
+    .input(DeletePageInviteSchema)
     .mutation(async ({ input }) => deletePageInvite(input)),
 
   revokePageAccess: authenticatedPageProcedure

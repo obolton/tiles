@@ -6,16 +6,16 @@ export const InviteToPageSchema = z.object({
 });
 export type InviteToPageSchema = z.infer<typeof InviteToPageSchema>;
 
-export const AcceptInviteSchema = z.object({
+export const AcceptPageInviteSchema = z.object({
   key: z.string(),
 });
-export type AcceptInviteSchema = z.infer<typeof AcceptInviteSchema>;
+export type AcceptPageInviteSchema = z.infer<typeof AcceptPageInviteSchema>;
 
-export const DeleteInviteSchema = z.object({
+export const DeletePageInviteSchema = z.object({
   pageId: z.string().uuid(),
   id: z.string().uuid(),
 });
-export type DeleteInviteSchema = z.infer<typeof DeleteInviteSchema>;
+export type DeletePageInviteSchema = z.infer<typeof DeletePageInviteSchema>;
 
 export const RevokePageAccessSchema = z.object({
   pageId: z.string().uuid(),
