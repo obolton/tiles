@@ -33,15 +33,12 @@
     "prosemirror-view": "^1.38.1"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^8.6.8",
-    "@storybook/react": "^8.6.8",
-    "@storybook/react-vite": "^8.6.8",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
     "autoprefixer": "^10.4.21",
     "jsdom": "^26.0.0",
     "postcss-html": "^1.8.0",
-    "storybook": "^8.6.8",
+    "storybook": "^9.0.6",
     "stylelint": "^16.19.1",
     "stylelint-config-standard": "^38.0.0",
     "typescript-plugin-css-modules": "^5.1.0",
