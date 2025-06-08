@@ -15,6 +15,7 @@ model User {
   bookmarks            Bookmark[]
   pageAccess           PageAccess[]
   pageInvites          PageInvite[]
+  workspaceInvites     WorkspaceInvite[]
 
   @@index([username])
   @@index([email])
