@@ -33,24 +33,32 @@ export async function inviteToPage(
   { user }: AuthenticatedProcedureContext,
 ) {
   const key = await createKey(INVITE_KEY_BYTES);
-  const { title } = await prisma.page.findUniqueOrThrow({
-    where: { id: pageId },
+  return prisma.$transaction(async (transaction) => {
+    const [page, inviter, invite] = await Promise.all([
+      transaction.page.findUniqueOrThrow({
+        where: { id: pageId },
+      }),
+      transaction.user.findUniqueOrThrow({
+        where: { id: user.id },
+        select: { id: true, name: true },
+      }),
+      transaction.pageInvite.create({
+        data: {
+          creatorId: user.id,
+          pageId,
+          email,
+          key,
+        },
+        select: PAGE_INVITE_FIELDS,
+      }),
+    ]);
+    try {
+      sendEmail(email, inviteToPageEmail({ inviter, title: page.title, key }));
+    } catch (error) {
+      console.error(error);
+    }
+    return invite;
   });
-  const invite = await prisma.pageInvite.create({
-    data: {
-      creatorId: user.id,
-      pageId,
-      email,
-      key,
-    },
-    select: PAGE_INVITE_FIELDS,
-  });
-  try {
-    sendEmail(email, inviteToPageEmail({ inviter: user, title, key }));
-  } catch (error) {
-    console.error(error);
-  }
-  return invite;
 }
 
 export async function acceptPageInvite(
