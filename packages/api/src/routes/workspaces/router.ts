@@ -3,6 +3,8 @@ import { authenticatedProcedure } from "@/utils/middleware.ts";
 import {
   UpdateWorkspaceSchema,
   InviteToWorkspaceSchema,
+  AcceptWorkspaceInviteSchema,
+  DeleteWorkspaceInviteSchema,
   RemoveFromWorkspaceSchema,
   ListWorkspaceUsersSchema,
 } from "./schema.ts";
@@ -10,6 +12,8 @@ import {
   getCurrentWorkspace,
   updateWorkspace,
   inviteToWorkspace,
+  acceptWorkspaceInvite,
+  deleteWorkspaceInvite,
   removeFromWorkspace,
   listWorkspaceUsers,
 } from "./workspaces.ts";
@@ -24,6 +28,14 @@ export default router({
   invite: authenticatedProcedure
     .input(InviteToWorkspaceSchema)
     .mutation(({ input, ctx }) => inviteToWorkspace(input, ctx)),
+
+  acceptInvite: authenticatedProcedure
+    .input(AcceptWorkspaceInviteSchema)
+    .mutation(async ({ input, ctx }) => acceptWorkspaceInvite(input, ctx)),
+
+  deleteInvite: authenticatedProcedure
+    .input(DeleteWorkspaceInviteSchema)
+    .mutation(async ({ input, ctx }) => deleteWorkspaceInvite(input, ctx)),
 
   remove: authenticatedProcedure
     .input(RemoveFromWorkspaceSchema)

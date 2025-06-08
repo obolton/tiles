@@ -10,6 +10,20 @@ export const InviteToWorkspaceSchema = z.object({
 });
 export type InviteToWorkspaceSchema = z.infer<typeof InviteToWorkspaceSchema>;
 
+export const AcceptWorkspaceInviteSchema = z.object({
+  key: z.string(),
+});
+export type AcceptWorkspaceInviteSchema = z.infer<
+  typeof AcceptWorkspaceInviteSchema
+>;
+
+export const DeleteWorkspaceInviteSchema = z.object({
+  id: z.string().uuid(),
+});
+export type DeleteWorkspaceInviteSchema = z.infer<
+  typeof DeleteWorkspaceInviteSchema
+>;
+
 export const RemoveFromWorkspaceSchema = z.object({
   userId: z.string().uuid(),
 });
