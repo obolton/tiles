@@ -7,6 +7,7 @@ import type {
   InviteToWorkspaceSchema,
   AcceptWorkspaceInviteSchema,
   DeleteWorkspaceInviteSchema,
+  ListWorkspaceInvitesSchema,
   RemoveFromWorkspaceSchema,
   UpdateWorkspaceSchema,
   ListWorkspaceUsersSchema,
@@ -131,6 +132,31 @@ export async function deleteWorkspaceInvite(
     where: { workspaceId, id },
     select: { id: true },
   });
+}
+
+export async function listWorkspaceInvites(
+  { query, offset }: ListWorkspaceInvitesSchema,
+  { workspaceId }: AuthenticatedProcedureContext,
+) {
+  const filter: Prisma.WorkspaceInviteWhereInput = query
+    ? { email: { contains: query, mode: "insensitive" } }
+    : {};
+  const results = await prisma.workspaceInvite.findMany({
+    where: {
+      workspaceId,
+      ...filter,
+    },
+    select: WORKSPACE_INVITE_FIELDS,
+    orderBy: {
+      createdAt: "asc",
+    },
+    take: RESULTS_PER_PAGE + 1,
+    skip: offset,
+  });
+  return {
+    invites: results.slice(0, RESULTS_PER_PAGE),
+    hasMore: results.length > RESULTS_PER_PAGE,
+  };
 }
 
 export async function removeFromWorkspace(

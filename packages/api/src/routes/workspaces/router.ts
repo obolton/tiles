@@ -5,6 +5,7 @@ import {
   InviteToWorkspaceSchema,
   AcceptWorkspaceInviteSchema,
   DeleteWorkspaceInviteSchema,
+  ListWorkspaceInvitesSchema,
   RemoveFromWorkspaceSchema,
   ListWorkspaceUsersSchema,
 } from "./schema.ts";
@@ -14,6 +15,7 @@ import {
   inviteToWorkspace,
   acceptWorkspaceInvite,
   deleteWorkspaceInvite,
+  listWorkspaceInvites,
   removeFromWorkspace,
   listWorkspaceUsers,
 } from "./workspaces.ts";
@@ -36,6 +38,10 @@ export default router({
   deleteInvite: authenticatedProcedure
     .input(DeleteWorkspaceInviteSchema)
     .mutation(async ({ input, ctx }) => deleteWorkspaceInvite(input, ctx)),
+
+  listInvites: authenticatedProcedure
+    .input(ListWorkspaceInvitesSchema)
+    .query(async ({ input, ctx }) => listWorkspaceInvites(input, ctx)),
 
   remove: authenticatedProcedure
     .input(RemoveFromWorkspaceSchema)

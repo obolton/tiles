@@ -24,6 +24,14 @@ export type DeleteWorkspaceInviteSchema = z.infer<
   typeof DeleteWorkspaceInviteSchema
 >;
 
+export const ListWorkspaceInvitesSchema = z.object({
+  query: z.string().min(1).optional(),
+  offset: z.number().int().gte(0).optional(), // TODO: Use cursors
+});
+export type ListWorkspaceInvitesSchema = z.infer<
+  typeof ListWorkspaceInvitesSchema
+>;
+
 export const RemoveFromWorkspaceSchema = z.object({
   userId: z.string().uuid(),
 });
