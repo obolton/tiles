@@ -25,6 +25,7 @@ export const WORKSPACE_USER_FIELDS = {
   id: true,
   name: true,
   email: true,
+  imageUrl: true,
 } as const satisfies Prisma.UserSelect<ExtensionArgs>;
 
 export const WORKSPACE_INVITE_FIELDS = {
