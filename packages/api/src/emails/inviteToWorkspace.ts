@@ -19,7 +19,7 @@ export function inviteToWorkspaceEmail({
     subject: `${inviter.name} has invited you to ${workspaceName} on Tiles`,
     body: `<p>Hi,</p>
 <p><strong>${inviter.name}</strong> has invited you to join the ${workspaceName} workspace on Tiles.</p>
-<p><a href="${BASE_URL}/join-workspace/${key}" target="_blank">Accept the invite</a>.</p>
+<p><a href="${BASE_URL}/invites/join-workspace/${key}" target="_blank">Accept the invite</a>.</p>
 <p>-- Tiles</p>`,
   };
 }
