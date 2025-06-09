@@ -3,6 +3,7 @@ import PageLinkTile from "@/components/tiles/PageLinkTile";
 import Search from "@/components/search/Search";
 import { handleError } from "@/utils/errors";
 import { reactive } from "@/utils/reactivity";
+import styles from "./PagesGrid.module.css";
 import type { ClientPageLinkTile } from "@/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 
@@ -53,6 +54,8 @@ export default function PagesGrid({
 
   return (
     <Search
+      id="search-pages"
+      itemsClassName={styles.pages}
       search={onSearch}
       results={pages}
       hasMore={hasMore}

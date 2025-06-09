@@ -1,11 +1,11 @@
-import { classNames } from "@/utils/css";
 import debounce from "@/utils/debounce";
-import styles from "./Search.module.css";
 import { reactive } from "@/utils/reactivity";
+import styles from "./Search.module.css";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
 
 export interface SearchProps<T> {
+  id: string;
   itemsClassName?: string;
   search: (query: string, offset: number) => void;
   results: Reactive<T[]>;
@@ -16,6 +16,7 @@ export interface SearchProps<T> {
 }
 
 export default function Search<T>({
+  id,
   itemsClassName,
   search,
   results,
@@ -45,17 +46,15 @@ export default function Search<T>({
   return (
     <section>
       <input
-        id="search"
+        id={id}
         type="search"
+        className={styles.search}
         autofocus
         placeholder={placeholder}
-        oninput={onInput}
+        on:input={onInput}
       />
 
-      <infinite-scroll
-        className={classNames(styles.items, itemsClassName)}
-        onloadmore={onLoadMore}
-      >
+      <infinite-scroll className={itemsClassName} onloadmore={onLoadMore}>
         {results.derive((items) =>
           items.length === 0
             ? renderPlaceholder(query.value)

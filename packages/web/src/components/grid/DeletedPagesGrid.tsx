@@ -65,6 +65,8 @@ export default function DeletedPagesGrid({
       </aside>
 
       <Search
+        id="search-pages"
+        itemsClassName={styles.pages}
         search={onSearch}
         results={pages}
         hasMore={hasMore}

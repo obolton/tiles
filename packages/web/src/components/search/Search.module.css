@@ -1,23 +1,5 @@
-.items {
-  --columns: 3;
-
-  display: grid;
-  grid-template-columns: repeat(var(--columns), 1fr);
-  grid-auto-rows: max-content;
-  gap: var(--gap);
-  padding-top: 16px;
-}
-
-@container main (min-width: 100px) {
-  .items {
-    --gap: clamp(8px, 2cqw, 32px);
-  }
-}
-
-@media (width < 640px) {
-  .items {
-    --columns: 2;
-  }
+input[type="search"].search {
+  margin-bottom: 16px;
 }
 
 @property --loading-progress {
