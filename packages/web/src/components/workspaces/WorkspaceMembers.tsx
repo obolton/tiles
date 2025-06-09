@@ -5,6 +5,7 @@ import client from "@/api/client";
 import { reactive, flag } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
+import styles from "./WorkspaceMembers.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type { User } from "@/types/collaboration";
 
@@ -56,6 +57,7 @@ export default function WorkspaceMembers({
       <h3>Members</h3>
 
       <Search
+        itemsClassName={styles.members}
         id="search-members"
         search={onSearch}
         results={members}
