@@ -31,6 +31,7 @@ export const WORKSPACE_USER_FIELDS = {
 export const WORKSPACE_INVITE_FIELDS = {
   id: true,
   email: true,
+  createdAt: true,
 } as const satisfies Prisma.WorkspaceInviteSelect<ExtensionArgs>;
 
 const INVITE_KEY_BYTES = 32;
