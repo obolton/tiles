@@ -1,5 +1,5 @@
 import { registerModal, showModal } from "@/utils/modals";
-import PageAccessRow from "./PageAccessRow";
+import UserRow from "./UserRow";
 import PageInviteRow from "./PageInviteRow";
 import PrivateIcon from "@/icons/private.svg?jsx";
 import PublicIcon from "@/icons/public.svg?jsx";
@@ -47,6 +47,7 @@ export default function CollaborationButtons({
 
   const showInviteModal = () =>
     showModal<InviteModalResult>("INVITE", {
+      title: "Invite to page",
       async onConfirm({ email }) {
         try {
           await editor.sendInvite(email);
@@ -123,7 +124,7 @@ export default function CollaborationButtons({
 
         <popover-menu id="access-popover" anchor="access-button">
           <menu>
-            <PageAccessRow
+            <UserRow
               user={editor.author}
               description="Owner"
               showRemove={false}
@@ -132,7 +133,7 @@ export default function CollaborationButtons({
 
             {access.derive((items) =>
               items.map((access) => (
-                <PageAccessRow
+                <UserRow
                   user={access.user}
                   description="Editor"
                   showRemove

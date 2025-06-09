@@ -1,6 +1,18 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  & > img,
+  & > button {
+    flex: none;
+  }
+}
+
 .details {
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 .name,
