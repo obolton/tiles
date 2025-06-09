@@ -26,6 +26,10 @@ export type Selection = {
   focus: Cell;
 };
 
+function defaultGetColumnWidth() {
+  return 160;
+}
+
 export default class TableView extends HTMLElement {
   static readonly observedAttributes: (keyof TableViewAttributes)[] = [
     "columns",
@@ -37,8 +41,8 @@ export default class TableView extends HTMLElement {
   #rows = 1;
   #allowSelection = false;
 
-  columnWidths: number[] = [];
   selection: Selection | null = null;
+  getColumnWidth: (index: number) => number = defaultGetColumnWidth;
 
   private scrollContainer?: HTMLElement;
   private contents: HTMLElement;
@@ -134,6 +138,8 @@ export default class TableView extends HTMLElement {
     this.fillCellBuffer();
     this.fillRowBuffer();
 
+    this.updateColumnResizeHandles();
+
     this.addEventListener("scroll", this, { passive: true });
 
     this.resizeObserver = new ResizeObserver(
@@ -163,6 +169,7 @@ export default class TableView extends HTMLElement {
         }
         this.#columns = parseInt(value, 10);
         this.update();
+        this.updateColumnResizeHandles();
         break;
       case "rows":
         if (value === null) {
@@ -187,6 +194,8 @@ export default class TableView extends HTMLElement {
       this.height = size.blockSize;
       this.horizontalBufferSize = this.width / 4;
       this.verticalBufferSize = this.height / 2;
+
+      this.updateColumnResizeHandles();
     }
   }
 
@@ -323,10 +332,6 @@ export default class TableView extends HTMLElement {
   }
 
   // Column sizing
-
-  private getColumnWidth(column: number) {
-    return this.columnWidths[column] ?? 160;
-  }
 
   private getColumnSpan(start: number, columns: number) {
     let width = 0;
@@ -746,6 +751,22 @@ export default class TableView extends HTMLElement {
     this.scrollContainer.style.setProperty("--scroll-height", height + "px");
     this.contents.style.setProperty("--translate-x", this.translateX + "px");
     this.contents.style.setProperty("--translate-y", this.translateY + "px");
+  }
+
+  private updateColumnResizeHandles() {
+    this.shadowRoot!.querySelectorAll(".column-resize").forEach((element) =>
+      element.remove(),
+    );
+    let x = 0;
+    const handles = document.createDocumentFragment();
+    for (let i = 0; i < this.columns; i++) {
+      x += this.getColumnWidth(i);
+      const handle = document.createElement("div");
+      handle.className = "column-resize";
+      handle.style.setProperty("--x", `${x}px`);
+      handles.appendChild(handle);
+    }
+    this.shadowRoot!.appendChild(handles);
   }
 }
 

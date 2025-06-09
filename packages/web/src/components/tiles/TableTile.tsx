@@ -221,6 +221,7 @@ export default function TableTile({
         allowselection={isEditable}
         onfocusin={onFocusIn}
         onfocusout={onFocusOut}
+        $getColumnWidth={(index) => tableColumns.value[index]?.width ?? 200}
       >
         {tableRows.value.map(({ data: rowData }, row) => {
           const cells = [];

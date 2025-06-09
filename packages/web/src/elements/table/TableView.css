@@ -46,7 +46,6 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
   min-height: 100cqh;
   border: none;
   border-spacing: 0;
@@ -59,5 +58,21 @@
 :host(:focus-within) {
   #contents {
     will-change: translate;
+  }
+}
+
+.column-resize {
+  position: absolute;
+  width: 5px;
+  height: 100%;
+  top: 0;
+  left: 0;
+  translate: calc(var(--x) - 3px) 0;
+  cursor: col-resize;
+  background: none;
+  transition: background-color var(--animation-duration-short) var(--easing);
+
+  &:hover {
+    background-color: var(--focus-ring-color);
   }
 }
