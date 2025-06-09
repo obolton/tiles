@@ -1,8 +1,3 @@
-export interface PageInvite {
-  id: string;
-  email: string;
-}
-
 export interface User {
   id: string;
   name: string;
@@ -11,4 +6,10 @@ export interface User {
 
 export interface PageAccess {
   user: User;
+}
+
+export interface Invite {
+  id: string;
+  email: string;
+  createdAt: string;
 }

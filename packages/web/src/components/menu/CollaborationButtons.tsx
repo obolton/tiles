@@ -1,6 +1,6 @@
 import { registerModal, showModal } from "@/utils/modals";
 import UserRow from "./UserRow";
-import PageInviteRow from "./PageInviteRow";
+import InviteRow from "./InviteRow";
 import PrivateIcon from "@/icons/private.svg?jsx";
 import PublicIcon from "@/icons/public.svg?jsx";
 import PeopleIcon from "@/icons/people.svg?jsx";
@@ -8,7 +8,7 @@ import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import type { InviteModalResult } from "@/components/modals/invite/InviteModal";
-import type { PageInvite, User } from "@/types/collaboration";
+import type { Invite, User } from "@/types/collaboration";
 import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
 
@@ -67,7 +67,7 @@ export default function CollaborationButtons({
     }
   };
 
-  const deleteInvite = async (invite: PageInvite) => {
+  const deleteInvite = async (invite: Invite) => {
     try {
       await editor.deleteInvite(invite.id);
       showToast(`The invite for ${invite.email} was cancelled.`, "success");
@@ -144,7 +144,7 @@ export default function CollaborationButtons({
 
             {invites.derive((items) =>
               items.map((invite) => (
-                <PageInviteRow invite={invite} onRemove={deleteInvite} />
+                <InviteRow invite={invite} showRemove onRemove={deleteInvite} />
               )),
             )}
 

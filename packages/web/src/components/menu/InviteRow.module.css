@@ -1,10 +1,17 @@
 .row {
-  cursor: default;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  & > button {
+    flex: none;
+  }
 }
 
 .details {
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 .email,
