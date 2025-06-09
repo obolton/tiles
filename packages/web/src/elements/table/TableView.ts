@@ -132,7 +132,7 @@ export default class TableView extends HTMLElement {
     const rect = this.getBoundingClientRect();
     this.width = rect.width;
     this.height = rect.height;
-    this.horizontalBufferSize = this.width / 2;
+    this.horizontalBufferSize = this.width / 4;
     this.verticalBufferSize = this.height / 2;
     this.createCells();
     this.fillCellBuffer();
@@ -456,7 +456,7 @@ export default class TableView extends HTMLElement {
 
   private prependColumn() {
     for (let i = 0; i < this.renderedRows; i++) {
-      const row = this.contents.children[i] as HTMLElement;
+      const row = this.children[i] as HTMLElement;
       const cell = this.getCell(
         this.firstVisibleRow + i,
         this.firstVisibleColumn - 1,
