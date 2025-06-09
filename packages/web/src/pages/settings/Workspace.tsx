@@ -1,0 +1,78 @@
+import PageLayout from "@/layouts/PageLayout";
+import SidebarLayout from "@/layouts/SidebarLayout";
+import Sidebar from "./Sidebar";
+import WorkspaceMembers from "@/components/workspaces/WorkspaceMembers";
+import WorkspaceInvites from "@/components/workspaces/WorkspaceInvites";
+import client from "@/api/client";
+import { showToast } from "@/utils/toasts";
+import { handleError } from "@/utils/errors";
+import styles from "./Workspace.module.css";
+import type { AppRouterOutputs } from "@/api/client";
+
+export interface WorkspaceProps {
+  workspace: AppRouterOutputs["workspaces"]["get"];
+  users: AppRouterOutputs["workspaces"]["listUsers"];
+  invites: AppRouterOutputs["workspaces"]["listInvites"];
+}
+
+async function onSubmit(event: SubmitEvent) {
+  const form = event.currentTarget as HTMLFormElement;
+  event.preventDefault();
+
+  form.dataset.pending = "true";
+  delete form.dataset.error;
+
+  try {
+    const formData = new FormData(form);
+    await client.workspaces.update.mutate({
+      name: (formData.get("name") as string | null) ?? "",
+    });
+    showToast("Your workspace settings were saved.", "success");
+  } catch (error) {
+    form.dataset.error = "true";
+    handleError(error);
+  } finally {
+    delete form.dataset.pending;
+  }
+}
+
+export default function Workspace({
+  workspace,
+  users,
+  invites,
+}: WorkspaceProps) {
+  return (
+    <PageLayout>
+      <SidebarLayout sidebar={<Sidebar page="WORKSPACE" />}>
+        <header>
+          <h2>Workspace</h2>
+        </header>
+
+        <div className={styles.sections}>
+          <form class="vertical" onsubmit={onSubmit}>
+            <label>
+              Name
+              <input
+                type="text"
+                name="name"
+                value={workspace.name}
+                placeholder="Name"
+                required
+                maxlength="64"
+              />
+            </label>
+            <footer>
+              <button className="primary" type="submit">
+                Save
+              </button>
+            </footer>
+          </form>
+
+          <WorkspaceMembers members={users} />
+
+          <WorkspaceInvites workspaceName={workspace.name} invites={invites} />
+        </div>
+      </SidebarLayout>
+    </PageLayout>
+  );
+}
