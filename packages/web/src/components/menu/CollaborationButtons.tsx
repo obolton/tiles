@@ -124,27 +124,37 @@ export default function CollaborationButtons({
 
         <popover-menu id="access-popover" anchor="access-button">
           <menu>
-            <UserRow
-              user={editor.author}
-              description="Owner"
-              showRemove={false}
-              onRemove={revokeAccess}
-            />
+            <li>
+              <UserRow
+                user={editor.author}
+                description="Owner"
+                showRemove={false}
+                onRemove={revokeAccess}
+              />
+            </li>
 
             {access.derive((items) =>
               items.map((access) => (
-                <UserRow
-                  user={access.user}
-                  description="Editor"
-                  showRemove
-                  onRemove={revokeAccess}
-                />
+                <li>
+                  <UserRow
+                    user={access.user}
+                    description="Editor"
+                    showRemove
+                    onRemove={revokeAccess}
+                  />
+                </li>
               )),
             )}
 
             {invites.derive((items) =>
               items.map((invite) => (
-                <InviteRow invite={invite} showRemove onRemove={deleteInvite} />
+                <li>
+                  <InviteRow
+                    invite={invite}
+                    showRemove
+                    onRemove={deleteInvite}
+                  />
+                </li>
               )),
             )}
 
