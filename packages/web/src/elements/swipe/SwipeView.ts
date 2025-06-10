@@ -11,6 +11,8 @@ export interface SwipeViewAttributes {
   max?: string;
 }
 
+const ITEM_GAP = 8;
+
 export default class SwipeView extends HTMLElement {
   static readonly observedAttributes: (keyof SwipeViewAttributes)[] = [
     "value",
@@ -25,8 +27,8 @@ export default class SwipeView extends HTMLElement {
 
   private carousel: HTMLElement;
   private items: HTMLUListElement;
+  private height = 0;
   private intersectionObserver: IntersectionObserver;
-  private sentinelIntersectionObserver: IntersectionObserver;
 
   constructor() {
     super();
@@ -54,21 +56,10 @@ export default class SwipeView extends HTMLElement {
       this.intersectionObserverCallback.bind(this),
       {
         root: this.carousel,
-        rootMargin: "8px 8px 8px 8px",
-        threshold: 0.5,
-      },
-    );
-
-    this.sentinelIntersectionObserver = new IntersectionObserver(
-      this.sentinelIntersectionObserverCallback.bind(this),
-      {
-        root: this.carousel,
-        rootMargin: "0px -70% 0px 30%",
+        rootMargin: "-16px 0px -16px 0px",
         threshold: 0,
       },
     );
-
-    this.addEventListener("keydown", this);
   }
 
   connectedCallback() {
@@ -82,13 +73,16 @@ export default class SwipeView extends HTMLElement {
     if (item) {
       this.carousel.scrollLeft = item.offsetLeft;
     }
-    this.carousel.classList.add("snap");
+
+    addEventListener("keydown", this);
   }
 
   disconnectedCallback() {
     this.intersectionObserver.disconnect();
     this.items.replaceChildren();
     this.replaceChildren();
+
+    removeEventListener("keydown", this);
   }
 
   attributeChangedCallback(
@@ -119,6 +113,8 @@ export default class SwipeView extends HTMLElement {
     for (const entry of entries) {
       if (entry.isIntersecting && entry.target instanceof HTMLLIElement) {
         const value = entry.target.value;
+        this.select(entry.target);
+
         if (entry.target === this.items.firstElementChild && value > this.min) {
           this.prependItem(value - 1);
         } else if (
@@ -132,26 +128,12 @@ export default class SwipeView extends HTMLElement {
     }
   }
 
-  sentinelIntersectionObserverCallback(entries: IntersectionObserverEntry[]) {
-    for (const entry of entries) {
-      if (
-        entry.isIntersecting &&
-        entry.target.parentElement instanceof HTMLLIElement
-      ) {
-        this.select(entry.target.parentElement);
-        return;
-      }
-    }
-  }
-
   private createItem(index: number) {
     const li = document.createElement("li");
     li.value = index;
-    const sentinel = document.createElement("div");
-    sentinel.className = "sentinel";
     const slot = document.createElement("slot");
-    li.append(sentinel, slot);
-    this.sentinelIntersectionObserver.observe(sentinel);
+    li.append(slot);
+    li.ariaSelected = index === this.value ? "true" : "false";
     return li;
   }
 
@@ -164,14 +146,29 @@ export default class SwipeView extends HTMLElement {
     this.appendChild(element);
 
     const item = this.createItem(index);
-
-    const scrollLeft = this.carousel.scrollLeft;
-    this.carousel.classList.remove("snap");
+    item.style.setProperty("--top", "0");
     this.items.prepend(item);
     item.querySelector("slot")!.assign(element);
-    const rect = item.getBoundingClientRect();
-    this.carousel.scrollLeft = scrollLeft + rect.width + 32;
-    this.carousel.classList.add("snap");
+
+    const itemHeight = item.offsetHeight + 8;
+
+    for (const child of this.items.children) {
+      if (child instanceof HTMLElement && child !== item) {
+        child.style.setProperty(
+          "--top",
+          parseFloat(child.style.getPropertyValue("--top")) + itemHeight + "px",
+        );
+      }
+    }
+
+    if (index === this.value) {
+      this.carousel.scrollTop = this.height;
+    } else {
+      this.carousel.scrollTop += itemHeight;
+    }
+
+    this.height += itemHeight;
+    this.intersectionObserver?.observe(item);
 
     return item;
   }
@@ -185,30 +182,46 @@ export default class SwipeView extends HTMLElement {
     this.appendChild(element);
 
     const item = this.createItem(index);
+    item.style.setProperty("--top", this.height + "px");
     this.items.appendChild(item);
     item.querySelector("slot")!.assign(element);
+
+    if (index === this.value) {
+      this.carousel.scrollTop = this.height;
+    }
+
+    // TODO: Re-layout when size changes
+    this.height += item.offsetHeight + ITEM_GAP;
     this.intersectionObserver?.observe(item);
 
     return item;
   }
 
   previous() {
-    this.items.querySelector(`li[value="${this.value - 1}"]`)?.scrollIntoView({
-      behavior: "smooth",
-    });
+    const item = this.items.querySelector<HTMLLIElement>(
+      `li[value="${this.value - 1}"]`,
+    );
+    if (item) {
+      this.carousel.scroll({
+        top: parseFloat(item.style.getPropertyValue("--top")),
+        behavior: "smooth",
+      });
+    }
   }
 
   next() {
-    this.items.querySelector(`li[value="${this.value + 1}"]`)?.scrollIntoView({
-      behavior: "smooth",
-    });
+    const item = this.items.querySelector<HTMLLIElement>(
+      `li[value="${this.value + 1}"]`,
+    );
+    if (item) {
+      this.carousel.scroll({
+        top: parseFloat(item.style.getPropertyValue("--top")),
+        behavior: "smooth",
+      });
+    }
   }
 
   private select(element: HTMLLIElement) {
-    const { width, height } = element.getBoundingClientRect();
-    this.style.width = width + "px";
-    this.style.height = height + "px";
-
     this.items
       .querySelector('li[aria-selected="true"]')
       ?.setAttribute("aria-selected", "false");
@@ -238,11 +251,11 @@ export default class SwipeView extends HTMLElement {
       return;
     }
 
-    if (event.key === "ArrowLeft") {
+    if (event.key === "ArrowUp") {
       event.preventDefault();
       event.stopPropagation();
       this.previous();
-    } else if (event.key === "ArrowRight") {
+    } else if (event.key === "ArrowDown") {
       event.preventDefault();
       event.stopPropagation();
       this.next();

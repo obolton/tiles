@@ -1,11 +1,6 @@
-import css from "./ThemeSelector.css?inline";
 import type SwipeView from "@/elements/swipe/SwipeView";
-import { DEFAULT_TIMING } from "@/utils/animation/effects";
 
-const stylesheet = new CSSStyleSheet();
-stylesheet.replaceSync(css);
-
-type GetItem = (index: number) => HTMLElement | null;
+export type GetItem = (index: number, contents: Node) => HTMLElement;
 
 export interface ThemeSelectorAttributes {
   value?: string;
@@ -25,6 +20,8 @@ export default class ThemeSelector extends HTMLElement {
   max = Infinity;
   getItem: GetItem | null = null;
 
+  readonly contents: HTMLElement;
+
   private internals: ElementInternals;
   private swipe: SwipeView | null = null;
 
@@ -33,8 +30,10 @@ export default class ThemeSelector extends HTMLElement {
 
     this.internals = this.attachInternals();
 
-    this.addEventListener("pointerenter", this, { passive: true });
-    this.addEventListener("pointerleave", this, { passive: true });
+    this.contents = document.createElement("span");
+    this.contents.classList.add("theme-selector-contents");
+
+    this.addEventListener("pointerdown", this, { passive: true });
   }
 
   get open() {
@@ -46,6 +45,12 @@ export default class ThemeSelector extends HTMLElement {
       this.internals.states.add("open");
     } else {
       this.internals.states.delete("open");
+    }
+  }
+
+  connectedCallback() {
+    if (this.getItem) {
+      this.appendChild(this.getItem(this.value, this.contents));
     }
   }
 
@@ -84,24 +89,37 @@ export default class ThemeSelector extends HTMLElement {
 
   handleEvent(event: Event) {
     switch (event.type) {
-      case "pointerenter":
-        return this.handlePointerEnter(event as PointerEvent);
-      case "pointerleave":
-        return this.handlePointerLeave(event as PointerEvent);
+      case "pointerdown":
+        return this.handlePointerDown();
+      case "click":
+        return this.handleClick(event as MouseEvent);
+      case "keydown":
+        return this.handleKeyDown(event as KeyboardEvent);
       case "change":
         return this.handleChange();
     }
   }
 
-  private async handlePointerEnter(event: PointerEvent) {
-    if (event.currentTarget === this && !this.open) {
+  private handlePointerDown() {
+    if (!this.open) {
       this.show();
     }
   }
 
-  private async handlePointerLeave(event: PointerEvent) {
-    if (event.currentTarget === this && this.open) {
+  private handleClick(event: MouseEvent) {
+    if (
+      this.open &&
+      event.target instanceof Element &&
+      !this.contains(event.target)
+    ) {
       this.hide();
+    }
+  }
+
+  private handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "Escape" && this.open) {
+      this.hide();
+      event.preventDefault();
     }
   }
 
@@ -109,8 +127,39 @@ export default class ThemeSelector extends HTMLElement {
     if (!this.swipe) {
       return;
     }
+
+    const previousValue = this.value;
     this.value = this.swipe.value;
+
+    // TODO: Merge SwipeView into this element to simplify this
+    const newPreviousItem = this.getLiveItem(previousValue);
+    const previousSlot = this.swipe.shadowRoot?.querySelector(
+      `li[value="${previousValue}"]`,
+    )?.firstElementChild as HTMLSlotElement | undefined;
+    this.swipe.appendChild(newPreviousItem);
+    previousSlot?.assignedElements().forEach((element) => element.remove());
+    previousSlot?.assign(newPreviousItem);
+
+    const item = this.getLiveItem(this.swipe.value);
+    const slot = this.swipe.shadowRoot?.querySelector(
+      `li[value="${this.swipe.value}"]`,
+    )?.firstElementChild as HTMLSlotElement | undefined;
+    this.swipe.appendChild(item);
+    slot?.assignedElements().forEach((element) => element.remove());
+    slot?.assign(item);
+
     this.dispatchEvent(new Event("change"));
+  }
+
+  private getLiveItem(index: number) {
+    if (!this.getItem) {
+      throw new Error("getItem is not provided");
+    }
+
+    return this.getItem(
+      index,
+      index === this.value ? this.contents : this.contents.cloneNode(true),
+    );
   }
 
   private show() {
@@ -122,42 +171,30 @@ export default class ThemeSelector extends HTMLElement {
 
     const swipe = document.createElement("swipe-view") as SwipeView;
     this.swipe = swipe;
-    swipe.id = "swipe";
-    swipe.popover = "manual";
     swipe.value = this.value;
     swipe.min = this.min;
     swipe.max = this.max;
-    swipe.getItem = this.getItem;
+    swipe.getItem = this.getLiveItem.bind(this);
     swipe.addEventListener("change", this);
 
-    if (this.firstElementChild) {
-      const rect = this.firstElementChild.getBoundingClientRect();
-      const { width, height, left, top } = rect;
-      swipe.style.width = width + "px";
-      swipe.style.height = height + "px";
-      swipe.style.left = left + "px";
-      swipe.style.top = top + "px";
-    }
+    this.replaceChildren(swipe);
 
-    this.appendChild(swipe);
-
-    swipe.showPopover();
+    addEventListener("click", this, { passive: true });
+    addEventListener("keydown", this);
   }
 
   private hide() {
-    if (!this.open || !this.swipe) {
+    if (!this.open) {
       return;
     }
 
     this.open = false;
+    this.swipe = null;
 
-    this.swipe
-      .animate([{ opacity: 1 }, { opacity: 0 }], DEFAULT_TIMING)
-      .finished.then(() => {
-        this.swipe?.hidePopover();
-        this.swipe?.remove();
-        this.swipe = null;
-      });
+    this.replaceChildren(this.getLiveItem(this.value));
+
+    removeEventListener("click", this);
+    removeEventListener("keydown", this);
   }
 }
 

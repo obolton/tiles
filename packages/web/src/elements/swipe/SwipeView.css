@@ -1,58 +1,40 @@
-* {
-  box-sizing: border-box;
+@property --top {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
 }
 
 :host {
-  display: block;
-  position: relative;
+  display: contents;
 }
 
 #carousel {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: auto clip;
+  width: fit-content;
+  overflow: clip auto;
   scrollbar-width: none;
-  contain: strict;
-  container: carousel / inline-size;
-
-  &.snap {
-    scroll-snap-type: inline mandatory;
-  }
+  contain: layout style paint;
+  scroll-snap-type: block mandatory;
 }
 
 #items {
-  position: absolute;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: max-content;
-  grid-template-rows: auto;
-  align-items: start;
-  gap: 32px;
-  height: 100%;
+  position: relative;
   margin: 0;
   padding: 0;
   list-style: none;
 
   & > li {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: start;
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    translate: 0 var(--top);
+    user-select: none;
     scroll-snap-stop: always;
-    scroll-snap-align: start;
-    pointer-events: none;
+    scroll-snap-align: center;
 
-    &:last-child {
-      margin-right: 100cqi;
+    &[aria-selected="true"] {
+      position: static;
+      user-select: auto;
     }
   }
-}
-
-.sentinel {
-  position: absolute;
-  width: 0;
-  inset: 0 auto 0 0;
 }

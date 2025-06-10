@@ -22,13 +22,15 @@ export default function Themeable<T>({
   children,
   ...props
 }: ThemeableProps<T>) {
-  function getItem(index: number) {
+  function getItem(index: number, contents: Element) {
     const key = options[index];
     const Component = key ? registry[key] : null;
     if (!Component) {
-      return null;
+      throw new Error(`Invalid theme index: ${index}`);
     }
-    return render(<Component {...getProps()} />) as HTMLElement;
+    return render(
+      <Component {...getProps()}>{contents}</Component>,
+    ) as HTMLElement;
   }
 
   function onThemeChange(event: Event) {
@@ -48,9 +50,9 @@ export default function Themeable<T>({
   return (
     <theme-selector
       {...props}
-      value={value}
-      onchange={onThemeChange}
-      max={options.length.toString()}
+      value={value.toString()}
+      on:change={onThemeChange}
+      max={(options.length - 1).toString()}
       $getItem={getItem}
     >
       {children}
