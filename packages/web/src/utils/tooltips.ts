@@ -18,17 +18,22 @@ class TooltipController {
     addEventListener("focusin", this, { passive: true });
   }
 
-  handleEvent({ target, type }: Event) {
-    switch (type) {
+  handleEvent(event: Event) {
+    switch (event.type) {
       case "pointerover":
       case "focusin":
-        if (
-          target instanceof HTMLElement &&
-          target !== this.target &&
-          target.dataset.tooltip &&
-          target.ariaExpanded !== "true"
-        ) {
-          this.enter(target);
+        {
+          if (!(event.target instanceof Element)) {
+            return;
+          }
+          const target = event.target.closest<HTMLElement>("[data-tooltip]");
+          if (
+            target &&
+            target !== this.target &&
+            target.ariaExpanded !== "true"
+          ) {
+            this.enter(target);
+          }
         }
         break;
 
