@@ -15,14 +15,5 @@
 .editor {
   time {
     cursor: pointer;
-    border-radius: 8px;
-    transition:
-      box-shadow var(--animation-duration-short) var(--easing),
-      background-color var(--animation-duration-short) var(--easing);
-
-    &:hover {
-      box-shadow: 0 0 0 1px rgb(0 0 0 / 20%);
-      background-color: rgb(0 0 0 / 5%);
-    }
   }
 }
