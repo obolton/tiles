@@ -2,6 +2,7 @@ import { TextFormat } from "@/utils/richText/types";
 import { ListType } from "@/utils/richText/types";
 import ThemeVariant from "@/components/themes/ThemeVariant";
 import { DATE_THEMES, DEFAULT_DATE_THEME } from "@/components/dates/themes";
+import { LINK_THEMES, DEFAULT_LINK_THEME } from "@/components/links/themes";
 import { reactive } from "@/utils/reactivity";
 import type {
   RichText,
@@ -199,9 +200,13 @@ interface LinkProps {
 
 function Link({ node }: LinkProps) {
   return (
-    <a href={node.href} target="_blank" rel="noreferrer ugc">
+    <ThemeVariant
+      theme={node.theme ?? DEFAULT_LINK_THEME}
+      registry={LINK_THEMES}
+      href={reactive(node.href)}
+    >
       {renderNodes(node.children)}
-    </a>
+    </ThemeVariant>
   );
 }
 
