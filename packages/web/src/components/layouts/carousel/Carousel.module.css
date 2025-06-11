@@ -1,10 +1,7 @@
 .carousel {
   width: 100%;
   height: 256px;
-  background: var(--page-color);
-  border: 1px solid rgb(0 0 0 / 20%);
   border-radius: var(--border-radius);
-  box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
   outline: transparent 0 none;
   outline-offset: -1px;
   transition: outline-color var(--animation-duration) var(--easing);
@@ -14,29 +11,22 @@
   }
 
   &::part(contents) {
-    padding: 0;
-    gap: 0;
-    transition:
-      padding var(--animation-duration) var(--spring),
-      gap var(--animation-duration) var(--spring);
+    padding: 8px;
+    gap: 8px;
+    transition: padding var(--animation-duration) var(--spring);
   }
 
   & .item {
-    --border-radius: 0;
-
     height: 100%;
     min-height: unset;
   }
 
   &.editable {
     &::part(contents) {
-      padding: 16px 16px 16px 32px;
-      gap: 8px;
+      padding-left: 32px;
     }
 
     & .item {
-      --border-radius: 12px;
-
       scroll-margin: 16px;
     }
   }
