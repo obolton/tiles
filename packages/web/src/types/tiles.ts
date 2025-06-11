@@ -40,7 +40,8 @@ export type Tile =
   | TextProperties
   | VideoProperties;
 
-export type Section = ClientCollection & {
+export type Section = Omit<ClientCollection, "layout"> & {
+  layout: Reactive<ClientCollection["layout"]>;
   tiles: Reactive<Tile[]>;
 };
 

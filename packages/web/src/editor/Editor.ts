@@ -37,8 +37,9 @@ export function getTile(tile: ClientTile): Tile {
 }
 
 function getLayout(sections: ClientCollection[], tiles: Tile[]): Layout {
-  return sections.map((section) => ({
+  return sections.map(({ layout, ...section }) => ({
     ...section,
+    layout: reactive(layout),
     tiles: reactive(
       tiles.filter((tile) => tile.parentCollectionId.value === section.id),
     ),
