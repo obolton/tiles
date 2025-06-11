@@ -72,6 +72,7 @@ export default function Grid({
               minRows={minRowSpan}
               columns={tile.columns}
               minColumns={minColumnSpan}
+              maxColumns={columns}
               deletable={isEditable}
               draggable={isEditable}
               resizable={isEditable}

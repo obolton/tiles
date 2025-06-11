@@ -27,6 +27,7 @@ interface GridItemProps {
   minRows?: number;
   columns: Reactive<number>;
   minColumns?: number;
+  maxColumns?: number;
   grow?: Reactive<boolean>;
   deletable?: boolean | Reactive<boolean>;
   draggable?: boolean | Reactive<boolean>;
@@ -97,6 +98,7 @@ export default function GridItem({
   minRows = 1,
   columns,
   minColumns = 1,
+  maxColumns = 12,
   grow,
   deletable = false,
   draggable = false,
@@ -181,7 +183,7 @@ export default function GridItem({
 
   const combinedStyles = new Computed([columns, rows], (columns, rows) => ({
     ...style,
-    "--columns": Math.max(columns, minColumns).toString(),
+    "--columns": Math.min(Math.max(columns, minColumns), maxColumns).toString(),
     "--min-columns": minColumns.toString(),
     "--rows": Math.max(rows, minRows).toString(),
     "--min-rows": minRows.toString(),
