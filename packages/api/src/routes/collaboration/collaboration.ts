@@ -14,6 +14,7 @@ import type { AuthenticatedProcedureContext } from "@/utils/middleware.ts";
 export const PAGE_INVITE_FIELDS = {
   id: true,
   email: true,
+  createdAt: true,
 } as const satisfies Prisma.PageInviteSelect<ExtensionArgs>;
 
 export const PAGE_ACCESS_FIELDS = {
