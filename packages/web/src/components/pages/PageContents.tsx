@@ -29,9 +29,7 @@ export default function PageContents({
           )}
         </Placeholder>
       ) : (
-        sections.map((section) => (
-          <Section editor={editor} isEditable={isEditable} section={section} />
-        ))
+        sections.map((section) => <Section editor={editor} section={section} />)
       ),
     );
 }

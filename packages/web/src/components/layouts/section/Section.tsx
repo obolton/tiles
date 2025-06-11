@@ -1,30 +1,45 @@
-import Grid from "@/components/layouts/grid/Grid";
-import Placeholder from "@/components/placeholder/Placeholder";
+import SectionLayout from "./SectionLayout";
 import { handleError } from "@/utils/errors";
 import styles from "./Section.module.css";
+import GridIcon from "@/icons/grid.svg?jsx";
+import ColumnIcon from "@/icons/column.svg?jsx";
+import CarouselIcon from "@/icons/carousel.svg?jsx";
 import FullWidthIcon from "@/icons/full-width.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { layoutTransition } from "@/utils/animation/layout";
 import { flag } from "@/utils/reactivity";
-import type { Section } from "@/types/tiles";
-import type { Reactive } from "@/utils/reactivity";
-import type Editor from "@/editor/Editor";
 import { viewTransition } from "@/utils/transitions";
-
-function GridPlaceholder() {
-  return <Placeholder className={styles.placeholder} />;
-}
+import type { Section, ClientCollection } from "@/types/tiles";
+import type Editor from "@/editor/Editor";
 
 export interface SectionProps {
   editor: Editor;
-  isEditable: Reactive<boolean>;
   section: Section;
 }
 
-export default function Section({ editor, isEditable, section }: SectionProps) {
+export default function Section({ editor, section }: SectionProps) {
   const fullWidth = flag(section.width === "VIEWPORT");
   const hasFocus = flag(false);
+  const { layout } = section;
+  const { isEditable } = editor;
+
+  const setLayout = async (value: ClientCollection["layout"]) => {
+    if (value === layout.value) {
+      return;
+    }
+    try {
+      await editor.updateCollection({
+        id: section.id,
+        layout: value,
+      });
+      viewTransition(() => {
+        layout.value = value;
+      });
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   const toggleFullWidth = async () => {
     try {
@@ -32,9 +47,7 @@ export default function Section({ editor, isEditable, section }: SectionProps) {
         id: section.id,
         width: fullWidth.value ? "DEFAULT" : "VIEWPORT",
       });
-      viewTransition(() => {
-        fullWidth.toggle();
-      });
+      viewTransition(() => fullWidth.toggle());
     } catch (error) {
       handleError(error);
     }
@@ -66,19 +79,10 @@ export default function Section({ editor, isEditable, section }: SectionProps) {
       }}
       tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
       data-animate-layout-id={section.id}
-      onfocus={onFocus}
-      onblur={onBlur}
+      on:focus={onFocus}
+      on:blur={onBlur}
     >
-      <Grid
-        editor={editor}
-        isEditable={isEditable}
-        collectionId={section.id}
-        items={section.tiles}
-        columns={6}
-        minColumnSpan={2}
-        minRowSpan={1}
-        Placeholder={GridPlaceholder}
-      />
+      <SectionLayout editor={editor} section={section} />
 
       {hasFocus.derive((value) =>
         value ? (
@@ -86,29 +90,79 @@ export default function Section({ editor, isEditable, section }: SectionProps) {
             data-tooltip-position="top"
             aria-label="Section toolbar"
           >
+            <ul role="group" aria-label="Layout">
+              <li role="presentation">
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="floating small"
+                  aria-label="Grid"
+                  data-tooltip="Grid"
+                  aria-pressed={layout.derive((value) =>
+                    value === "GRID" ? "true" : "false",
+                  )}
+                  on:click={() => setLayout("GRID")}
+                >
+                  <GridIcon aria-hidden="true" />
+                </button>
+              </li>
+
+              <li role="presentation">
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="floating small"
+                  aria-label="Column"
+                  data-tooltip="Column"
+                  aria-pressed={layout.derive((value) =>
+                    value === "COLUMN" ? "true" : "false",
+                  )}
+                  on:click={() => setLayout("COLUMN")}
+                >
+                  <ColumnIcon aria-hidden="true" />
+                </button>
+              </li>
+
+              <li role="presentation">
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="floating small"
+                  aria-label="Carousel"
+                  data-tooltip="Carousel"
+                  aria-pressed={layout.derive((value) =>
+                    value === "CAROUSEL" ? "true" : "false",
+                  )}
+                  on:click={() => setLayout("CAROUSEL")}
+                >
+                  <CarouselIcon aria-hidden="true" />
+                </button>
+              </li>
+            </ul>
+
             <ul role="group" aria-label="Size">
               <li role="presentation">
                 <button
+                  type="button"
                   role="menuitem"
                   className="floating small"
-                  aria-label="Full-width"
-                  data-tooltip="Full-width"
-                  type="button"
+                  aria-label="Full width"
+                  data-tooltip="Full width"
                   aria-pressed={fullWidth.derive((value) =>
                     value ? "true" : "false",
                   )}
-                  onclick={toggleFullWidth}
+                  on:click={toggleFullWidth}
                 >
                   <FullWidthIcon aria-hidden="true" />
                 </button>
               </li>
             </ul>
 
-            <ul role="group" aria-label="Text style">
+            <ul role="group" aria-label="More options">
               <li role="presentation">
                 <button
-                  role="menuitem"
                   type="button"
+                  role="menuitem"
                   id={`${section.id}-options-button`}
                   className="floating small"
                   popoverTarget={`${section.id}-options`}
@@ -126,9 +180,9 @@ export default function Section({ editor, isEditable, section }: SectionProps) {
                   <menu>
                     <li>
                       <button
-                        className="destructive"
                         type="button"
-                        onclick={deleteSection}
+                        className="destructive"
+                        on:click={deleteSection}
                       >
                         <TrashIcon aria-hidden="true" />
                         Delete section
