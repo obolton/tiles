@@ -61,3 +61,7 @@ body[data-drag] {
     cursor: inherit;
   }
 }
+
+::view-transition-old(drop) {
+  height: 100%;
+}
