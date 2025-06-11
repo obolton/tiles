@@ -16,19 +16,17 @@
   top: 0;
   left: 0;
   margin: 0;
-  z-index: 1;
-  border: none;
-  overflow: visible;
   padding: 0;
+  border: none;
+  box-shadow: 0 10px 10px -5px rgb(0 0 0 / 40%);
+  overflow: visible;
+  z-index: 1;
   pointer-events: none;
-  animation-name: lift;
-  animation-duration: 0.75s;
-  animation-timing-function: ease;
+  animation: 0.75s var(--easing) lift;
   transform: perspective(1000px);
-  animation-fill-mode: forwards;
-  translate: var(--translate-x, 0) var(--translate-y, 0) 40px;
-  opacity: 1;
-  rotate: none;
+  translate: var(--translate-x) var(--translate-y) 40px;
+  opacity: 0.75;
+  scale: 0.75;
 }
 
 @keyframes lift {
@@ -36,18 +34,23 @@
     translate: var(--translate-x, 0) var(--translate-y, 0) 0;
     rotate: 0 0 0 0deg;
     box-shadow: none;
+    opacity: 1;
+    scale: 1;
   }
 
   33% {
     translate: var(--translate-x, 0) var(--translate-y, 0) 40px;
     rotate: var(--rotate-y) var(--rotate-x) 0 var(--rotate-angle);
     box-shadow: 0 10px 10px -2px rgb(0 0 0 / 20%);
+    scale: 0.75;
   }
 
   100% {
     translate: var(--translate-x, 0) var(--translate-y, 0) 40px;
     rotate: var(--rotate-y) var(--rotate-x) 0 0deg;
     box-shadow: 0 10px 10px -5px rgb(0 0 0 / 40%);
+    opacity: 0.75;
+    scale: 0.75;
   }
 }
 
