@@ -9,15 +9,17 @@ import { cleanSingleLineInput } from "@/utils/text.ts";
 
 export const COLLECTION_FIELDS = {
   id: true,
+  type: true,
+  layout: true,
   width: true,
   title: true,
-  type: true,
 } as const satisfies Prisma.CollectionSelect<ExtensionArgs>;
 
 export async function createCollection({
   pageId,
   collectionId: parentCollectionId,
   type,
+  layout,
   width,
   title,
   tileIds = [],
@@ -37,6 +39,7 @@ export async function createCollection({
       data: {
         pageId,
         type,
+        layout,
         width,
         title:
           typeof title === "string" ? cleanSingleLineInput(title) : undefined,
@@ -85,6 +88,7 @@ export async function createCollection({
 export async function updateCollection({
   pageId,
   id,
+  layout,
   width,
   title,
 }: UpdateCollectionSchema) {
@@ -94,6 +98,7 @@ export async function updateCollection({
       id,
     },
     data: {
+      layout,
       width,
       title:
         typeof title === "string" ? cleanSingleLineInput(title) : undefined,
