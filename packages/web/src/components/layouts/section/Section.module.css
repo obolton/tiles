@@ -20,11 +20,12 @@
     outline: var(--focus-outline);
   }
 
+  &:has(> [data-drop-target]) {
+    background-color: rgb(0 0 0 / 5%);
+    outline: var(--focus-outline);
+  }
+
   &.full-width {
     width: 100%;
   }
-}
-
-.placeholder {
-  grid-column: 1 / -1;
 }
