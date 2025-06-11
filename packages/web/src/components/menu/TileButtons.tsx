@@ -54,8 +54,8 @@ export default function TileButtons({
       case "TEXT":
         await editor.createText({
           collectionId: collectionId ?? editor.getCurrentCollectionId(),
-          columns: 6,
-          expand: true,
+          columns: 2,
+          expand: false,
           content: [{ type: "paragraph", children: [] }],
         });
         break;
