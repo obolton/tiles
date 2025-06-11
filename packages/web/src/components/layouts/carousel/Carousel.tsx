@@ -1,17 +1,18 @@
 import GridItem from "@/components/grid/GridItem";
 import styles from "./Carousel.module.css";
-import { ReactiveValue, flag } from "@/utils/reactivity";
+import { reactive, flag } from "@/utils/reactivity";
 import LayoutEditor from "@/editor/LayoutEditor";
 import type { Tile } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
 
-interface CarouselProps {
+export interface CarouselProps {
   editor: Editor;
   collectionId: string;
   items: Reactive<Tile[]>;
   Placeholder?: JSX.Component<Pick<CarouselProps, "collectionId">>;
+  signal?: AbortSignal;
 }
 
 export default function Carousel({
@@ -19,23 +20,23 @@ export default function Carousel({
   collectionId,
   items,
   Placeholder,
+  signal,
 }: CarouselProps) {
   const { isEditable, dragId } = editor;
 
   const ref = (element: HTMLElement) => {
-    // TODO: Remove editor at end
-    new LayoutEditor({
+    const layoutEditor = new LayoutEditor({
       element,
       editor,
       collectionId,
     });
+    signal?.addEventListener("abort", () => layoutEditor.disconnect());
   };
 
   return (
     <carousel-view
       ref={ref}
       classList={{ [styles.carousel]: true, [styles.editable]: isEditable }}
-      tabIndex={0}
       data-drop={isEditable.derive((editable) =>
         editable ? "true" : undefined,
       )}
@@ -58,7 +59,7 @@ export default function Carousel({
               id={item.id}
               collectionId={collectionId}
               placementId={item.placementId}
-              rows={new ReactiveValue(1)}
+              rows={reactive(1)}
               columns={item.columns}
               deletable={isEditable}
               draggable={isEditable}
