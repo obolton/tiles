@@ -199,11 +199,12 @@ export default class LayoutEditor {
 
     const style = getComputedStyle(this.element);
     this.gridColumns = parseInt(style.getPropertyValue("--columns"), 10);
-    this.gridRowHeight = parseInt(
-      style.getPropertyValue("--grid-row-height"),
-      10,
+    this.gridColumnWidth = parseFloat(
+      style.getPropertyValue("--grid-column-width"),
     );
-    this.gridColumnWidth = this.element.clientWidth / this.gridColumns;
+    this.gridRowHeight = parseFloat(
+      style.getPropertyValue("--grid-row-height"),
+    );
     this.columns = Math.max(Math.round(width / this.gridColumnWidth), 1);
     this.rows = Math.max(Math.round(height / this.gridRowHeight), 1);
   }
