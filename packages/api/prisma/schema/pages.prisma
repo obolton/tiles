@@ -11,6 +11,12 @@ enum CollectionType {
   TILE
 }
 
+enum CollectionLayout {
+  GRID
+  COLUMN
+  CAROUSEL
+}
+
 enum CollectionWidth {
   DEFAULT
   VIEWPORT
@@ -227,13 +233,14 @@ model PageLinkTile {
 }
 
 model Collection {
-  id        String          @id @default(uuid()) @db.Uuid
-  pageId    String          @map("page_id") @db.Uuid
-  createdAt DateTime        @default(now()) @map("created_at")
-  updatedAt DateTime        @updatedAt @map("updated_at")
+  id        String           @id @default(uuid()) @db.Uuid
+  pageId    String           @map("page_id") @db.Uuid
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
   title     String?
-  type      CollectionType  @default(TILE)
-  width     CollectionWidth @default(DEFAULT)
+  type      CollectionType   @default(TILE)
+  layout    CollectionLayout @default(GRID)
+  width     CollectionWidth  @default(DEFAULT)
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[] @relation("CollectionTile")
