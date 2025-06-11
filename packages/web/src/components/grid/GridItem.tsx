@@ -8,7 +8,6 @@ import LinkTile from "@/components/tiles/LinkTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import CollectionTile from "@/components/tiles/CollectionTile";
 import TableTile from "@/components/tiles/TableTile";
-import { handleError } from "@/utils/errors";
 import { ReactiveValue, Computed } from "@/utils/reactivity";
 import type { Tile } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
@@ -16,10 +15,9 @@ import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
 
-interface GridItemProps {
+export interface GridItemProps {
   editor: Editor;
   id: string;
-  collectionId: string;
   placementId: string;
   style?: JSX.StyleDeclaration;
   classList?: { [k: string]: boolean | Reactive<boolean> };
@@ -32,7 +30,6 @@ interface GridItemProps {
   deletable?: boolean | Reactive<boolean>;
   draggable?: boolean | Reactive<boolean>;
   resizable?: boolean | Reactive<boolean>;
-  allowDrop?: boolean;
   tile: Tile;
   tabIndex?: number | Reactive<number | undefined>;
 }
@@ -90,7 +87,6 @@ function handlePointerDown(event: PointerEvent) {
 export default function GridItem({
   editor,
   id,
-  collectionId,
   placementId,
   classList,
   style,
@@ -103,7 +99,6 @@ export default function GridItem({
   deletable = false,
   draggable = false,
   resizable = false,
-  allowDrop = false,
   tile,
   tabIndex,
 }: GridItemProps) {
@@ -113,7 +108,6 @@ export default function GridItem({
   };
 
   const hasFocus = new ReactiveValue(false);
-  const isDragOver = new ReactiveValue(false);
 
   const onFocusIn = () => {
     if (editor.isEditable.value) {
@@ -142,43 +136,6 @@ export default function GridItem({
     }
   };
 
-  const onDragEnter = (event: DragDropEvent<Tile>) => {
-    const { state } = event;
-
-    // Don't allow collections to be dropped on tiles
-    if (!state.data || state.data.type === "COLLECTION") {
-      event.preventDefault();
-      return;
-    }
-
-    isDragOver.value = true;
-  };
-
-  const onDragLeave = () => {
-    isDragOver.value = false;
-  };
-
-  const onDrop = async (event: DragDropEvent<Tile>) => {
-    const { state } = event;
-
-    // Don't add to collections here
-    if (tile.type === "COLLECTION" || !state.data?.placementId) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    try {
-      await editor.createCollection({
-        collectionId,
-        tileIds: [placementId, state.data.placementId],
-      });
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
   const onDelete = () => item?.delete();
 
   const combinedStyles = new Computed([columns, rows], (columns, rows) => ({
@@ -200,21 +157,16 @@ export default function GridItem({
         [styles.item]: true,
         [styles.draggable]: draggable,
         [styles.grow]: grow,
-        [styles["drag-over"]]: isDragOver,
         ...classList,
       }}
       style={combinedStyles}
       data-placement-id={placementId}
       data-animate-layout-id={placementId}
-      ondnd-dragstart={onDragStart}
-      ondnd-dragenter={allowDrop ? onDragEnter : undefined}
-      ondnd-dragleave={allowDrop ? onDragLeave : undefined}
-      ondnd-drop={allowDrop ? onDrop : undefined}
-      data-drop={allowDrop ? "true" : undefined}
-      onfocusin={onFocusIn}
-      onfocusout={onFocusOut}
       tabIndex={tabIndex}
-      onpointerdown={handlePointerDown}
+      on:dnd-dragstart={onDragStart}
+      on:focusin={onFocusIn}
+      on:focusout={onFocusOut}
+      on:pointerdown={handlePointerDown}
     >
       {getTileComponent(tile, hasFocus, onDelete, editor)}
     </page-item>

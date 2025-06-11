@@ -57,7 +57,6 @@ export default function Carousel({
                 ),
               }}
               id={item.id}
-              collectionId={collectionId}
               placementId={item.placementId}
               rows={reactive(1)}
               columns={item.columns}

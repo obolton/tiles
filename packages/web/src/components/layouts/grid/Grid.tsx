@@ -66,7 +66,6 @@ export default function Grid({
                 ),
               }}
               id={tile.id}
-              collectionId={collectionId}
               placementId={tile.placementId}
               rows={tile.rows}
               minRows={minRowSpan}
@@ -76,7 +75,6 @@ export default function Grid({
               deletable={isEditable}
               draggable={isEditable}
               resizable={isEditable}
-              allowDrop
               grow={tile.type === "TEXT" ? tile.expand : undefined}
               tile={tile}
               tabIndex={isEditable.derive((editable) =>

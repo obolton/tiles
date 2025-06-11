@@ -60,14 +60,6 @@ body[data-editing] .item {
   -webkit-touch-callout: none;
 }
 
-.item:has(pop-out[open]) .delete {
-  display: none;
-}
-
-.drag-over {
-  box-shadow: 0 0 0 3px var(--focus-ring-color);
-}
-
 ::view-transition-group(outline) {
   animation-duration: 0s;
 }
