@@ -12,7 +12,7 @@
     background-color var(--animation-duration) var(--easing),
     outline-color var(--animation-duration) var(--easing);
 
-  &:focus-within {
+  body[data-editing] &:focus-within {
     background-color: rgb(0 0 0 / 5%);
   }
 
