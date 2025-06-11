@@ -6,6 +6,8 @@ export const SECTION_FIELDS = {
   id: true,
   title: true,
   type: true,
+  layout: true,
+  width: true,
 } as const satisfies Prisma.CollectionSelect<ExtensionArgs>;
 
 export async function createSection({ pageId, title }: CreateSectionSchema) {
