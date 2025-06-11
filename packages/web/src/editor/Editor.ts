@@ -9,7 +9,7 @@ import type { FontId } from "@/config/fonts";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type { ClientTile, ClientCollection, Layout, Tile } from "@/types/tiles";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
-import type { PageInvite, PageAccess, User } from "@/types/collaboration";
+import type { Invite, PageAccess, User } from "@/types/collaboration";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Color } from "@/utils/color";
 import type { Reactive } from "@/utils/reactivity";
@@ -61,7 +61,7 @@ export default class Editor {
     Layout
   >;
   readonly access: Reactive<PageAccess[]>;
-  readonly invites: Reactive<PageInvite[]>;
+  readonly invites: Reactive<Invite[]>;
   readonly author: User;
   readonly focusedTile: Reactive<string | null>;
   readonly dragId: Reactive<string | null>;
@@ -71,11 +71,7 @@ export default class Editor {
     this.isEditable = flag(isEditMode());
     this.title = reactive(page.title);
     this.subtitle = reactive(page.subtitle);
-    this.color = reactive({
-      l: page.lightness,
-      c: page.chroma,
-      h: page.hue,
-    });
+    this.color = reactive(page.color);
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
     this.collections = reactive(page.collections);
