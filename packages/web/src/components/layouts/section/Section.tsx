@@ -19,9 +19,9 @@ export interface SectionProps {
 }
 
 export default function Section({ editor, section }: SectionProps) {
-  const fullWidth = flag(section.width === "VIEWPORT");
+  const { layout, width } = section;
+  const fullWidth = width.derive((value) => value === "VIEWPORT");
   const hasFocus = flag(false);
-  const { layout } = section;
   const { isEditable } = editor;
 
   const setLayout = async (value: ClientCollection["layout"]) => {
@@ -47,7 +47,10 @@ export default function Section({ editor, section }: SectionProps) {
         id: section.id,
         width: fullWidth.value ? "DEFAULT" : "VIEWPORT",
       });
-      viewTransition(() => fullWidth.toggle());
+      viewTransition(
+        () =>
+          (width.value = width.value === "VIEWPORT" ? "DEFAULT" : "VIEWPORT"),
+      );
     } catch (error) {
       handleError(error);
     }

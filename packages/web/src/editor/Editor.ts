@@ -7,7 +7,13 @@ import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { isEditMode } from "@/utils/edit";
 import type { FontId } from "@/config/fonts";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
-import type { ClientTile, ClientCollection, Layout, Tile } from "@/types/tiles";
+import type {
+  ClientTile,
+  ClientCollection,
+  Layout,
+  Tile,
+  Section,
+} from "@/types/tiles";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
 import type { DragDropEvent } from "@/utils/drag";
@@ -26,7 +32,7 @@ function immediateTransition(commit: () => void) {
 
 const IS_SERVER = import.meta.env.SSR;
 
-export function getTile(tile: ClientTile): Tile {
+function getReactiveTile(tile: ClientTile): Tile {
   const { id, placementId, type, ...properties } = tile;
   return {
     id,
@@ -36,10 +42,18 @@ export function getTile(tile: ClientTile): Tile {
   } as Tile;
 }
 
-function getLayout(sections: ClientCollection[], tiles: Tile[]): Layout {
-  return sections.map(({ layout, ...section }) => ({
+function getReactiveSection(section: ClientCollection): Section {
+  const { id, type, ...properties } = section;
+  return {
+    id,
+    type,
+    ...record(properties),
+  };
+}
+
+function getLayout(sections: Section[], tiles: Tile[]): Layout {
+  return sections.map((section) => ({
     ...section,
-    layout: reactive(layout),
     tiles: reactive(
       tiles.filter((tile) => tile.parentCollectionId.value === section.id),
     ),
@@ -54,7 +68,7 @@ export default class Editor {
   readonly color: Reactive<Color>;
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
-  readonly collections: Reactive<ClientCollection[]>;
+  readonly collections: Reactive<Section[]>;
   readonly tiles: Reactive<Tile[]>;
   readonly layout: Computed<
     [typeof this.collections, typeof this.tiles],
@@ -74,8 +88,8 @@ export default class Editor {
     this.color = reactive(page.color);
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
-    this.collections = reactive(page.collections);
-    this.tiles = reactive(page.tiles.map(getTile));
+    this.collections = reactive(page.collections.map(getReactiveSection));
+    this.tiles = reactive(page.tiles.map(getReactiveTile));
     this.layout = new Computed([this.collections, this.tiles], getLayout);
     this.access = reactive(page.access);
     this.invites = reactive(page.invites);
@@ -203,7 +217,9 @@ export default class Editor {
       pageId: this.pageId,
     });
     transition(() => {
-      this.collections.value = this.collections.value.concat(section);
+      this.collections.value = this.collections.value.concat(
+        getReactiveSection(section),
+      );
     });
     return section;
   }
@@ -260,7 +276,7 @@ export default class Editor {
   }
 
   private addTile(tile: ClientTile) {
-    this.tiles.value = this.tiles.value.concat(getTile(tile));
+    this.tiles.value = this.tiles.value.concat(getReactiveTile(tile));
 
     const element = document.getElementById(tile.id);
     if (element) {
