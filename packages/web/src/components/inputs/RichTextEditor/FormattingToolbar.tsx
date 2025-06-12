@@ -160,7 +160,7 @@ export default function FormattingToolbar({
           <popover-menu id="insert-content-menu" anchor="insert-content-button">
             <menu>
               <li>
-                <button type="button" onclick={insertNewDate}>
+                <button type="button" on:click={insertNewDate}>
                   <EventIcon aria-hidden="true" />
                   Date
                 </button>
@@ -175,6 +175,9 @@ export default function FormattingToolbar({
           <swatch-select
             role="menuitem"
             aria-label="Heading"
+            aria-selected={format.derive((value) =>
+              typeof value.headingLevel === "number" ? "true" : undefined,
+            )}
             data-tooltip="Heading"
             orientation="horizontal"
             align="center"
@@ -183,7 +186,7 @@ export default function FormattingToolbar({
                 ? value.headingLevel.toString()
                 : undefined,
             )}
-            onchange={formatHeading}
+            on:change={formatHeading}
           >
             {format.derive((value) => HEADING_ICON[value.headingLevel ?? 1])}
 
@@ -211,7 +214,7 @@ export default function FormattingToolbar({
             aria-pressed={format.derive((value) =>
               value.bold ? "true" : "false",
             )}
-            onclick={formatBold}
+            on:click={formatBold}
           >
             <BoldIcon aria-hidden="true" />
           </button>
@@ -226,7 +229,7 @@ export default function FormattingToolbar({
             aria-pressed={format.derive((value) =>
               value.italic ? "true" : "false",
             )}
-            onclick={formatItalic}
+            on:click={formatItalic}
           >
             <ItalicIcon aria-hidden="true" />
           </button>
@@ -241,7 +244,7 @@ export default function FormattingToolbar({
             aria-pressed={format.derive((value) =>
               value.underline ? "true" : "false",
             )}
-            onclick={formatUnderline}
+            on:click={formatUnderline}
           >
             <UnderlineIcon aria-hidden="true" />
           </button>
@@ -256,7 +259,7 @@ export default function FormattingToolbar({
             aria-pressed={format.derive((value) =>
               value.strikethrough ? "true" : "false",
             )}
-            onclick={formatStrikethrough}
+            on:click={formatStrikethrough}
           >
             <StrikethroughIcon aria-hidden="true" />
           </button>
@@ -271,7 +274,7 @@ export default function FormattingToolbar({
             aria-pressed={format.derive((value) =>
               value.highlight ? "true" : "false",
             )}
-            onclick={formatHighlight}
+            on:click={formatHighlight}
           >
             <HighlightIcon aria-hidden="true" />
           </button>
@@ -286,7 +289,7 @@ export default function FormattingToolbar({
             aria-pressed={format.derive((value) =>
               value.quote ? "true" : "false",
             )}
-            onclick={formatQuote}
+            on:click={formatQuote}
           >
             <QuoteIcon aria-hidden="true" />
           </button>
@@ -301,7 +304,7 @@ export default function FormattingToolbar({
             aria-pressed={format.derive((value) =>
               value.link ? "true" : "false",
             )}
-            onclick={formatLink}
+            on:click={formatLink}
           >
             <LinkIcon aria-hidden="true" />
           </button>
@@ -315,7 +318,7 @@ export default function FormattingToolbar({
             orientation="horizontal"
             align="center"
             value={format.derive((value) => value.align)}
-            onchange={formatAlignment}
+            on:change={formatAlignment}
           >
             {format.derive((value) =>
               value.align ? (
@@ -349,7 +352,7 @@ export default function FormattingToolbar({
             aria-pressed={format.derive((value) =>
               value.orderedList ? "true" : "false",
             )}
-            onclick={formatOrderedList}
+            on:click={formatOrderedList}
           >
             <OrderedListIcon aria-hidden="true" />
           </button>
@@ -364,7 +367,7 @@ export default function FormattingToolbar({
             aria-pressed={format.derive((value) =>
               value.unorderedList ? "true" : "false",
             )}
-            onclick={formatUnorderedList}
+            on:click={formatUnorderedList}
           >
             <UnorderedListIcon aria-hidden="true" />
           </button>
@@ -379,7 +382,7 @@ export default function FormattingToolbar({
             aria-pressed={format.derive((value) =>
               value.checkList ? "true" : "false",
             )}
-            onclick={formatCheckList}
+            on:click={formatCheckList}
           >
             <CheckListIcon aria-hidden="true" />
           </button>
