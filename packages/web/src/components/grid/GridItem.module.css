@@ -39,19 +39,23 @@
       min-height: 100%;
     }
   }
-}
 
-body[data-editing] .item {
-  outline: 2px solid rgb(0 0 0 / 5%);
+  body[data-editing] & {
+    outline: 2px solid rgb(0 0 0 / 5%);
 
-  &:hover,
-  &:state(resizing) {
-    outline: 2px solid rgb(0 0 0 / 10%);
+    &:hover,
+    &:state(resizing) {
+      outline: 2px solid rgb(0 0 0 / 10%);
+    }
+
+    &:focus-within:not(:state(resizing)),
+    &:hover:focus-within:not(:state(resizing)) {
+      outline: var(--focus-outline);
+    }
   }
 
-  &:focus-within:not(:state(resizing)),
-  &:hover:focus-within:not(:state(resizing)) {
-    outline: var(--focus-outline);
+  body[data-drag] & {
+    pointer-events: none;
   }
 }
 
