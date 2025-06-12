@@ -21,6 +21,7 @@ export default class LayoutEditor {
 
   private gridColumnWidth = 0;
   private gridRowHeight = 0;
+  private gridGap = 0;
   private gridColumns = 0;
   private columns = 0;
   private rows = 0;
@@ -205,8 +206,17 @@ export default class LayoutEditor {
     this.gridRowHeight = parseFloat(
       style.getPropertyValue("--grid-row-height"),
     );
-    this.columns = Math.max(Math.round(width / this.gridColumnWidth), 1);
-    this.rows = Math.max(Math.round(height / this.gridRowHeight), 1);
+    this.gridGap = parseFloat(style.getPropertyValue("--gap"));
+    this.columns = Math.max(
+      Math.round(
+        (width + this.gridGap) / (this.gridColumnWidth + this.gridGap),
+      ),
+      1,
+    );
+    this.rows = Math.max(
+      Math.round((height + this.gridGap) / (this.gridRowHeight + this.gridGap)),
+      1,
+    );
   }
 
   private handleResize(event: TileResizeEvent) {
@@ -220,10 +230,18 @@ export default class LayoutEditor {
 
     const id = target.id;
     const columns = Math.min(
-      Math.max(Math.round(width / this.gridColumnWidth), 1),
+      Math.max(
+        Math.round(
+          (width + this.gridGap) / (this.gridColumnWidth + this.gridGap),
+        ),
+        1,
+      ),
       this.gridColumns,
     );
-    const rows = Math.max(Math.round(height / this.gridRowHeight), 1);
+    const rows = Math.max(
+      Math.round((height + this.gridGap) / (this.gridRowHeight + this.gridGap)),
+      1,
+    );
 
     if (columns !== this.columns || rows != this.rows) {
       viewTransition(() => {
@@ -245,7 +263,11 @@ export default class LayoutEditor {
     event.stopPropagation();
 
     const id = target.dataset.placementId ?? "";
-    await this.editor.resizeTile(id, this.columns, this.rows);
+    try {
+      await this.editor.resizeTile(id, this.columns, this.rows);
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   // Delete
