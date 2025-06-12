@@ -173,11 +173,8 @@ export default function TextTile({
             </div>
           ),
         )}
-        {expand.derive((value) =>
-          value ? null : (
-            <ExpandIcon className={styles.icon} aria-hidden="true" />
-          ),
-        )}
+
+        <ExpandIcon className={styles["expand-icon"]} aria-hidden="true" />
       </pop-out>
     </Tile>
   );
