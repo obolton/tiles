@@ -14,7 +14,6 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
   background-color: transparent;
   border: none;
   border-radius: 50%;
@@ -22,10 +21,10 @@ button {
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   transition:
-    scale var(--animation-duration-short) var(--easing),
-    rotate var(--animation-duration) var(--spring);
+    background-color var(--animation-duration-short) var(--easing),
+    scale var(--animation-duration-short) var(--easing);
 
-  & > img,
+  & > svg,
   & ::slotted(svg) {
     position: absolute;
     top: calc(50% - 12px);
@@ -38,10 +37,15 @@ button {
     transition-property: opacity, scale, rotate;
   }
 
-  & > img {
+  & > svg {
+    fill: var(--icon-color);
     opacity: 0;
     scale: 0.7;
     rotate: z -45deg;
+  }
+
+  :host([aria-selected="true"]) & {
+    background-color: rgb(0 0 0 / 15%);
   }
 
   &:hover {
@@ -52,17 +56,17 @@ button {
   &[aria-pressed="true"] {
     scale: 1.1;
     background-color: rgb(0 0 0 / 25%);
-    rotate: z 45deg;
 
-    & > img {
-      opacity: 0.9;
+    & > svg {
+      opacity: 1;
       scale: 1;
-      rotate: z -45deg;
+      rotate: none;
     }
 
     & ::slotted(svg) {
       opacity: 0;
       scale: 0.7;
+      rotate: z 45deg;
     }
   }
 

@@ -1,5 +1,5 @@
 import css from "./SwatchSelect.css?inline";
-import closeIcon from "@/icons/close.svg";
+import closeIcon from "@/icons/close.svg?raw";
 import PopoverMenu from "@/elements/menu/PopoverMenu";
 import { escapeUTF8 } from "entities";
 
@@ -7,10 +7,9 @@ const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 export interface SwatchSelectAttributes {
-  value?: string | null;
+  value?: string;
   orientation?: "horizontal" | "vertical";
   align?: "left" | "center" | "right" | "auto";
-  onchange?: (event: globalThis.Event) => void;
 }
 
 export default class SwatchSelect extends HTMLElement {
@@ -34,13 +33,10 @@ export default class SwatchSelect extends HTMLElement {
     this.button = document.createElement("button");
     this.button.part = "button";
     this.button.type = "button";
+    this.button.ariaLabel = "Close";
     this.button.ariaPressed = "false";
     this.button.addEventListener("click", this);
-
-    const icon = document.createElement("img");
-    icon.src = closeIcon;
-    icon.alt = "Close";
-    this.button.append(icon);
+    this.button.innerHTML = closeIcon;
 
     const iconSlot = document.createElement("slot");
     iconSlot.name = "icon";
