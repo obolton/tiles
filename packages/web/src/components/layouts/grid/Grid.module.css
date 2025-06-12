@@ -13,7 +13,7 @@
 @property --grid-row-height {
   syntax: "<length>";
   inherits: true;
-  initial-value: 128px;
+  initial-value: 32px;
 }
 
 @property --gap {
@@ -40,7 +40,7 @@ body[data-drag] .grid {
 
 @container main (min-width: 100px) {
   .grid {
-    --gap: clamp(8px, 2cqw, 32px);
+    --gap: clamp(8px, 2cqw, 16px);
   }
 }
 

@@ -1,12 +1,12 @@
 import Grid from "@/components/layouts/grid/Grid";
 import Carousel from "@/components/layouts/carousel/Carousel";
 import Placeholder from "@/components/placeholder/Placeholder";
-import type { Section } from "@/types/tiles";
+import type { SectionWithTiles } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
 
 export interface SectionLayoutProps {
   editor: Editor;
-  section: Section;
+  section: SectionWithTiles;
 }
 
 function SectionPlaceholder() {
@@ -27,9 +27,9 @@ export default function SectionLayout({ editor, section }: SectionLayoutProps) {
             isEditable={isEditable}
             collectionId={section.id}
             items={section.tiles}
-            columns={6}
+            columns={12}
             minColumnSpan={2}
-            minRowSpan={1}
+            minRowSpan={3}
             Placeholder={SectionPlaceholder}
           />
         );
@@ -43,7 +43,7 @@ export default function SectionLayout({ editor, section }: SectionLayoutProps) {
             items={section.tiles}
             columns={1}
             minColumnSpan={1}
-            minRowSpan={1}
+            minRowSpan={3}
             Placeholder={SectionPlaceholder}
           />
         );
