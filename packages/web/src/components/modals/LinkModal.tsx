@@ -112,9 +112,9 @@ export default function LinkModal({
         <label>
           Link URL
           <input
-            className={styles.input}
             type="url"
             name="url"
+            className={styles.input}
             placeholder="Enter a link URL"
             autofocus
             required
@@ -123,11 +123,12 @@ export default function LinkModal({
         </label>
 
         {showPages ? (
-          <>
-            <label>Recent pages</label>
+          <section>
+            <h3>Recent pages</h3>
 
             <Search
               itemsClassName={styles.pages}
+              id="search-pages"
               search={search}
               results={pages}
               hasMore={hasMore}
@@ -157,20 +158,20 @@ export default function LinkModal({
               }
               renderPlaceholder={() => <p>There are no results.</p>}
             />
-          </>
+          </section>
         ) : null}
       </ModalBody>
 
       <ModalFooter>
-        <button classList={{ primary: true, pending: isPending }} type="submit">
+        <button type="submit" classList={{ primary: true, pending: isPending }}>
           Save
         </button>
         {showRemove ? (
-          <button className="secondary" type="button" onclick={remove}>
+          <button type="button" className="secondary" on:click={remove}>
             Remove link
           </button>
         ) : null}
-        <button className="secondary" type="button" onclick={cancel}>
+        <button type="button" className="secondary" on:click={cancel}>
           Cancel
         </button>
       </ModalFooter>
