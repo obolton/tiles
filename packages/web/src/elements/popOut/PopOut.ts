@@ -7,8 +7,6 @@ stylesheet.replaceSync(css);
 
 export interface PopOutAttributes {
   expandable?: "" | "expandable";
-  ontoggle?: (event: globalThis.ToggleEvent) => void;
-  onbeforetoggle?: (event: globalThis.ToggleEvent) => void;
 }
 
 export default class PopOut extends HTMLElement {
@@ -21,6 +19,20 @@ export default class PopOut extends HTMLElement {
   private transition?: ViewTransition;
   private focusTarget: HTMLElement | null = null;
   private resizeObserver?: ResizeObserver;
+
+  #expandable = false;
+
+  get expandable() {
+    return this.#expandable;
+  }
+
+  set expandable(value: boolean) {
+    if (value) {
+      this.enableExpanding();
+    } else {
+      this.disableExpanding();
+    }
+  }
 
   constructor() {
     super();
@@ -55,33 +67,41 @@ export default class PopOut extends HTMLElement {
   ) {
     switch (name) {
       case "expandable":
-        if (value === null) {
-          this.removeEventListeners();
-          if (this.isOpen()) {
-            this.close();
-          }
-        } else {
-          this.attachEventListeners();
-        }
+        this.expandable = value !== null;
+        break;
     }
   }
 
-  private attachEventListeners() {
+  private enableExpanding() {
+    if (this.#expandable) {
+      return;
+    }
+
+    this.#expandable = true;
     this.addEventListener("pointerdown", this);
     this.addEventListener("keydown", this);
     this.dialog.addEventListener("focusin", this);
     this.resizeObserver = new ResizeObserver(
       this.resizeObserverCallback.bind(this),
     );
-    this.resizeObserver.observe(this);
+    this.resizeObserver.observe(this.dialog);
   }
 
-  private removeEventListeners() {
+  private disableExpanding() {
+    if (!this.#expandable) {
+      return;
+    }
+
+    this.#expandable = false;
     this.removeEventListener("pointerdown", this);
     this.removeEventListener("keydown", this);
     this.dialog.removeEventListener("focusin", this);
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
+
+    if (this.isOpen()) {
+      this.close();
+    }
   }
 
   private resizeObserverCallback() {
