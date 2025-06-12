@@ -1,6 +1,5 @@
 import SectionLayout from "./SectionLayout";
-import { handleError } from "@/utils/errors";
-import styles from "./Section.module.css";
+import TileButtons from "@/components/menu/TileButtons";
 import GridIcon from "@/icons/grid.svg?jsx";
 import ColumnIcon from "@/icons/column.svg?jsx";
 import CarouselIcon from "@/icons/carousel.svg?jsx";
@@ -10,12 +9,14 @@ import TrashIcon from "@/icons/trash.svg?jsx";
 import { layoutTransition } from "@/utils/animation/layout";
 import { flag } from "@/utils/reactivity";
 import { viewTransition } from "@/utils/transitions";
-import type { Section, ClientCollection } from "@/types/tiles";
+import { handleError } from "@/utils/errors";
+import styles from "./Section.module.css";
+import type { SectionWithTiles, ClientCollection } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
 
 export interface SectionProps {
   editor: Editor;
-  section: Section;
+  section: SectionWithTiles;
 }
 
 export default function Section({ editor, section }: SectionProps) {
@@ -93,6 +94,8 @@ export default function Section({ editor, section }: SectionProps) {
             data-tooltip-position="top"
             aria-label="Section toolbar"
           >
+            <TileButtons editor={editor} collectionId={section.id} />
+
             <ul role="group" aria-label="Layout">
               <li role="presentation">
                 <button
