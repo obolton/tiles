@@ -23,7 +23,8 @@ export default class PageItem extends HTMLElement {
   private readonly internals: ElementInternals;
 
   private dragAbortController: AbortController | null = null;
-  private outline?: HTMLElement;
+  private resizeHandle: HTMLElement | null = null;
+  private outline: HTMLElement | null = null;
 
   private isResizing = false;
   private resizeAbortController?: AbortController;
@@ -116,21 +117,26 @@ export default class PageItem extends HTMLElement {
   }
 
   private showResizeHandle() {
-    if (this.shadowRoot?.getElementById("resize")) {
+    if (this.resizeHandle) {
       return;
     }
 
-    const handle = document.createElement("div");
-    handle.id = "resize";
-    handle.tabIndex = 0;
-    handle.addEventListener("pointerdown", this.pointerDown.bind(this), {
-      passive: false,
-    });
-    this.shadowRoot?.append(handle);
+    this.resizeHandle = document.createElement("div");
+    this.resizeHandle.id = "resize";
+    this.resizeHandle.tabIndex = 0;
+    this.resizeHandle.addEventListener(
+      "pointerdown",
+      this.pointerDown.bind(this),
+      {
+        passive: false,
+      },
+    );
+    this.shadowRoot?.append(this.resizeHandle);
   }
 
   private hideResizeHandle() {
-    this.shadowRoot?.getElementById("resize")?.remove();
+    this.resizeHandle?.remove();
+    this.resizeHandle = null;
   }
 
   private pointerDown(event: PointerEvent) {
@@ -262,32 +268,33 @@ export default class PageItem extends HTMLElement {
     this.outline = document.createElement("div");
     this.outline.id = "outline";
     this.outline.setAttribute("part", "outline");
-    this.outline.style.width = `${this.width}px`;
-    this.outline.style.height = `${this.height}px`;
+    this.outline.style.width = this.width + "px";
+    this.outline.style.height = this.height + "px";
+    if (this.resizeHandle) {
+      this.outline.appendChild(this.resizeHandle);
+    }
     this.shadowRoot?.appendChild(this.outline);
-
-    this.outline.animate([{ opacity: 0 }, { opacity: 1 }], {
-      ...DEFAULT_TIMING,
-      fill: "forwards",
-    });
   }
 
   private updateOutlineSize() {
     if (this.outline) {
-      this.outline.style.width = `${this.width}px`;
-      this.outline.style.height = `${this.height}px`;
+      this.outline.style.width = this.width + "px";
+      this.outline.style.height = this.height + "px";
     }
   }
 
   private removeOutline() {
+    if (this.resizeHandle) {
+      this.shadowRoot?.appendChild(this.resizeHandle);
+    }
     this.outline
       ?.animate([{ opacity: 0 }], {
         ...DEFAULT_TIMING,
         fill: "forwards",
       })
-      .addEventListener("finish", () => {
+      .finished.finally(() => {
         this.outline?.remove();
-        this.outline = undefined;
+        this.outline = null;
       });
   }
 

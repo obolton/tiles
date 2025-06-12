@@ -4,7 +4,8 @@
 }
 
 :host(:hover),
-:host(:focus-within) {
+:host(:focus-within),
+:host(:state(resizing)) {
   z-index: 2;
 
   #resize {
@@ -72,11 +73,13 @@
   }
 
   &:hover::after,
-  &:focus-visible::after {
+  &:focus::after,
+  :host(:state(resizing)) &::after {
     scale: 1.2;
   }
 
-  &:focus-visible::after {
+  &:focus::after,
+  :host(:state(resizing)) &::after {
     background: var(--focus-ring-color);
   }
 }
