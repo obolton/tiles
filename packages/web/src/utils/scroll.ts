@@ -3,7 +3,26 @@ export function scrollIntoViewIfNeeded(
   options?: ScrollIntoViewOptions,
 ) {
   const rect = element.getBoundingClientRect();
-  if (rect.bottom < 0 || rect.top > window.innerHeight) {
+
+  // Element is outside the viewport
+  if (
+    rect.bottom < 0 ||
+    rect.top > window.innerHeight ||
+    rect.right < 0 ||
+    rect.left > window.innerWidth
+  ) {
+    element.scrollIntoView(options);
+    return;
+  }
+
+  // Element is outside the parent (assumes parent is a scroll container)
+  const parentRect = element.parentElement!.getBoundingClientRect();
+  if (
+    rect.bottom < parentRect.top ||
+    rect.top > parentRect.bottom ||
+    rect.right < parentRect.left ||
+    rect.left > parentRect.right
+  ) {
     element.scrollIntoView(options);
   }
 }
