@@ -27,8 +27,10 @@ export default class SwipeView extends HTMLElement {
 
   private carousel: HTMLElement;
   private items: HTMLUListElement;
+  private itemHeights: number[] = [];
   private height = 0;
   private intersectionObserver: IntersectionObserver;
+  private resizeObserver: ResizeObserver;
 
   constructor() {
     super();
@@ -60,18 +62,19 @@ export default class SwipeView extends HTMLElement {
         threshold: 0,
       },
     );
+
+    this.resizeObserver = new ResizeObserver(
+      this.resizeObserverCallback.bind(this),
+    );
   }
 
   connectedCallback() {
     if (this.value > this.min) {
       this.appendItem(this.value - 1);
     }
-    const item = this.appendItem(this.value);
+    this.appendItem(this.value);
     if (this.value < this.max) {
       this.appendItem(this.value + 1);
-    }
-    if (item) {
-      this.carousel.scrollLeft = item.offsetLeft;
     }
 
     addEventListener("keydown", this);
@@ -79,6 +82,7 @@ export default class SwipeView extends HTMLElement {
 
   disconnectedCallback() {
     this.intersectionObserver.disconnect();
+    this.resizeObserver.disconnect();
     this.items.replaceChildren();
     this.replaceChildren();
 
@@ -109,7 +113,7 @@ export default class SwipeView extends HTMLElement {
     }
   }
 
-  intersectionObserverCallback(entries: IntersectionObserverEntry[]) {
+  private intersectionObserverCallback(entries: IntersectionObserverEntry[]) {
     for (const entry of entries) {
       if (entry.isIntersecting && entry.target instanceof HTMLLIElement) {
         const value = entry.target.value;
@@ -117,15 +121,31 @@ export default class SwipeView extends HTMLElement {
 
         if (entry.target === this.items.firstElementChild && value > this.min) {
           this.prependItem(value - 1);
-        } else if (
-          entry.target === this.items.lastElementChild &&
-          value < this.max
-        ) {
+        }
+        if (entry.target === this.items.lastElementChild && value < this.max) {
           this.appendItem(value + 1);
         }
         return;
       }
     }
+  }
+
+  private resizeObserverCallback(entries: ResizeObserverEntry[]) {
+    for (const entry of entries) {
+      const {
+        target,
+        borderBoxSize: [size],
+      } = entry;
+      if (!(target instanceof HTMLLIElement) || !size) {
+        continue;
+      }
+
+      const index = target.value;
+      const height = size.blockSize + ITEM_GAP;
+      this.itemHeights[index] = height;
+    }
+
+    this.updateLayout();
   }
 
   private createItem(index: number) {
@@ -150,25 +170,19 @@ export default class SwipeView extends HTMLElement {
     this.items.prepend(item);
     item.querySelector("slot")!.assign(element);
 
-    const itemHeight = item.offsetHeight + 8;
-
-    for (const child of this.items.children) {
-      if (child instanceof HTMLElement && child !== item) {
-        child.style.setProperty(
-          "--top",
-          parseFloat(child.style.getPropertyValue("--top")) + itemHeight + "px",
-        );
-      }
-    }
+    const rect = item.getBoundingClientRect();
+    const itemHeight = rect.height + ITEM_GAP;
+    this.itemHeights[index] = itemHeight;
+    this.height += itemHeight;
+    this.updateLayout();
+    this.intersectionObserver.observe(item);
+    this.resizeObserver.observe(item);
 
     if (index === this.value) {
-      this.carousel.scrollTop = this.height;
-    } else {
-      this.carousel.scrollTop += itemHeight;
+      this.updateScrollPosition(this.height);
+    } else if (index < this.value) {
+      this.updateScrollPosition(this.carousel.scrollTop + itemHeight);
     }
-
-    this.height += itemHeight;
-    this.intersectionObserver?.observe(item);
 
     return item;
   }
@@ -186,15 +200,43 @@ export default class SwipeView extends HTMLElement {
     this.items.appendChild(item);
     item.querySelector("slot")!.assign(element);
 
+    const rect = item.getBoundingClientRect();
+    const itemHeight = rect.height + ITEM_GAP;
+    this.itemHeights[index] = itemHeight;
+    this.height += itemHeight;
+    this.intersectionObserver.observe(item);
+    this.resizeObserver.observe(item);
+
     if (index === this.value) {
-      this.carousel.scrollTop = this.height;
+      this.updateScrollPosition(this.height - itemHeight);
     }
 
-    // TODO: Re-layout when size changes
-    this.height += item.offsetHeight + ITEM_GAP;
-    this.intersectionObserver?.observe(item);
-
     return item;
+  }
+
+  private updateLayout() {
+    let top = 0;
+
+    this.itemHeights.forEach((height, index) => {
+      const element = this.items.querySelector<HTMLLIElement>(
+        `li[value="${index}"]`,
+      );
+      element?.style.setProperty("--top", top + "px");
+
+      if (index === this.value) {
+        this.updateScrollPosition(top);
+      }
+
+      top += height;
+    });
+
+    this.height = top;
+  }
+
+  private updateScrollPosition(top: number) {
+    this.carousel.style.scrollSnapType = "none";
+    this.carousel.scrollTop = top;
+    this.carousel.style.scrollSnapType = "";
   }
 
   previous() {

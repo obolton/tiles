@@ -30,7 +30,7 @@
     translate: 0 var(--top);
     user-select: none;
     scroll-snap-stop: always;
-    scroll-snap-align: center;
+    scroll-snap-align: start;
 
     &[aria-selected="true"] {
       position: static;
