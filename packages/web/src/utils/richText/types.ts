@@ -53,6 +53,7 @@ export interface HeadingNode extends BaseNode {
   type: "heading";
   level: 1 | 2 | 3;
   align?: TextAlignment;
+  theme?: string;
   children: InlineNode[];
 }
 

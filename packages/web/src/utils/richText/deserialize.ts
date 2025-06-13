@@ -64,7 +64,11 @@ function createParagraphNode(paragraph: ParagraphNode): Node {
 
 function createHeadingNode(heading: HeadingNode): Node {
   return schema.nodes.heading.create(
-    { level: heading.level, align: getTextAlignment(heading.align) },
+    {
+      level: heading.level,
+      align: getTextAlignment(heading.align),
+      theme: heading.theme,
+    },
     heading.children.map(createNode),
   );
 }

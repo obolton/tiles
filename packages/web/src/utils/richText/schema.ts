@@ -95,6 +95,7 @@ const nodesSpec = {
         },
       },
       align: attributesSpec.align,
+      theme: { default: undefined, validate: "string|undefined" },
     },
     content: "inline*",
     group: "block",

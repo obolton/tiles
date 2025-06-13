@@ -76,6 +76,7 @@ function serializeNode(node: Node): SerializedNode {
       type: "heading",
       level: node.attrs.level,
       align: getTextAlignment(node),
+      theme: node.attrs.theme,
       children: node.children.map(serializeNode) as InlineNode[],
     };
   }
