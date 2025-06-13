@@ -36,6 +36,7 @@ const HeadingNodeSchema = z.object({
   type: z.literal("heading"),
   level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
   align: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
+  theme: z.string().optional(),
   children: z.array(InlineNodeSchema),
 });
 
