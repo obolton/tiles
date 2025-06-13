@@ -3,6 +3,10 @@ import { ListType } from "@/utils/richText/types";
 import ThemeVariant from "@/components/themes/ThemeVariant";
 import { DATE_THEMES, DEFAULT_DATE_THEME } from "@/components/dates/themes";
 import { LINK_THEMES, DEFAULT_LINK_THEME } from "@/components/links/themes";
+import {
+  HEADING_THEMES,
+  DEFAULT_HEADING_THEME,
+} from "@/components/headings/themes";
 import { reactive } from "@/utils/reactivity";
 import type {
   RichText,
@@ -99,25 +103,16 @@ interface HeadingProps {
   node: HeadingNode;
 }
 
-function getHeadingTag(level: number) {
-  switch (level) {
-    case 1:
-      return "h1";
-    case 2:
-      return "h2";
-    case 3:
-      return "h3";
-    default:
-      return "h1";
-  }
-}
-
 function Heading({ node }: HeadingProps) {
-  const Tag = getHeadingTag(node.level);
   return (
-    <Tag className={getTextAlignment(node.align)}>
-      {node.children.length === 0 ? <br /> : renderNodes(node.children)}
-    </Tag>
+    <ThemeVariant
+      theme={node.theme ?? DEFAULT_HEADING_THEME}
+      registry={HEADING_THEMES}
+      level={node.level}
+      align={getTextAlignment(node.align)}
+    >
+      {renderNodes(node.children)}
+    </ThemeVariant>
   );
 }
 
