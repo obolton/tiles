@@ -1,7 +1,11 @@
 theme-selector {
   position: relative;
+  display: block;
+
+  &.inline {
   display: inline-block;
   vertical-align: top;
+  }
 
   &::before {
     content: "";

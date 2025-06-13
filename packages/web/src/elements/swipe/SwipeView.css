@@ -9,7 +9,6 @@
 }
 
 #carousel {
-  width: fit-content;
   overflow: clip auto;
   scrollbar-width: none;
   contain: layout style paint;
@@ -27,6 +26,7 @@
     display: block;
     top: 0;
     left: 0;
+    width: 100%;
     translate: 0 var(--top);
     user-select: none;
     scroll-snap-stop: always;
@@ -37,4 +37,8 @@
       user-select: auto;
     }
   }
+}
+
+::slotted(*) {
+  margin: 0 !important;
 }

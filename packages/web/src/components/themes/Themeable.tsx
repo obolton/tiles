@@ -10,6 +10,7 @@ export interface ThemeableProps<T> extends JSX.Attributes<ThemeSelector> {
   registry: ThemeRegistry<T>;
   getProps: () => T;
   onChange: (theme: string) => void;
+  inline?: boolean;
   children?: JSX.Node;
 }
 
@@ -19,6 +20,7 @@ export default function Themeable<T>({
   registry,
   getProps,
   onChange,
+  inline,
   children,
   ...props
 }: ThemeableProps<T>) {
@@ -50,6 +52,7 @@ export default function Themeable<T>({
   return (
     <theme-selector
       {...props}
+      className={inline ? "inline" : undefined}
       value={value.toString()}
       on:change={onThemeChange}
       max={(options.length - 1).toString()}
