@@ -131,6 +131,8 @@ export default class SwipeView extends HTMLElement {
   }
 
   private resizeObserverCallback(entries: ResizeObserverEntry[]) {
+    let heightChanged = false;
+
     for (const entry of entries) {
       const {
         target,
@@ -142,10 +144,16 @@ export default class SwipeView extends HTMLElement {
 
       const index = target.value;
       const height = size.blockSize + ITEM_GAP;
-      this.itemHeights[index] = height;
+
+      if (height !== this.itemHeights[index]) {
+        this.itemHeights[index] = height;
+        heightChanged = true;
+      }
     }
 
-    this.updateLayout();
+    if (heightChanged) {
+      this.updateLayout();
+    }
   }
 
   private createItem(index: number) {
