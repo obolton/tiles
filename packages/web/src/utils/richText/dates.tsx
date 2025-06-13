@@ -76,6 +76,7 @@ export function dates() {
                 onclick={edit}
                 onkeydown={onKeyDown}
                 data-tooltip="Date"
+                inline
               />,
             ) as HTMLElement,
 

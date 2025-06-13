@@ -43,6 +43,7 @@ export function links() {
               getProps={getProps}
               onChange={onChange}
               data-tooltip="Link"
+              inline
             />,
           ) as ThemeSelector;
 
