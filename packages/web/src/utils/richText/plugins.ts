@@ -6,6 +6,7 @@ import { createInputRules } from "./inputRules";
 import { placeholders } from "./placeholders";
 import { dates } from "./dates";
 import { links } from "./links";
+import { headings } from "./headings";
 
 export function getPlugins() {
   return [
@@ -16,5 +17,6 @@ export function getPlugins() {
     placeholders(),
     dates(),
     links(),
+    headings(),
   ];
 }
