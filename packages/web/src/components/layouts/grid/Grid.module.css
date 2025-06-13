@@ -1,7 +1,7 @@
 @property --columns {
   syntax: "<integer>";
   inherits: true;
-  initial-value: 3;
+  initial-value: 12;
 }
 
 @property --grid-column-width {
