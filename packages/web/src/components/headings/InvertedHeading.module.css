@@ -1,0 +1,5 @@
+.heading {
+  padding: 0.15em;
+  color: var(--tile-background);
+  background: var(--tile-text-color);
+}
