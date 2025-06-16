@@ -7,6 +7,9 @@ import TextEditor, {
 } from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/inputs/ColorPicker";
 import ImageIcon from "@/icons/image.svg?jsx";
+import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
+import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
+import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
 import ExpandIcon from "@/icons/expand.svg?jsx";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
@@ -146,6 +149,40 @@ export default function TextTile({
                     >
                       <ImageIcon aria-hidden="true" />
                     </button>
+                  </li>
+                  <li role="presentation">
+                    <swatch-select
+                      role="menuitem"
+                      aria-label="Vertical position"
+                      data-tooltip="Vertical position"
+                      aria-orientation="vertical"
+                      orientation="vertical"
+                      align="center"
+                    >
+                      <VerticalAlignTopIcon aria-hidden="true" slot="icon" />
+
+                      <swatch-item
+                        value="top"
+                        data-tooltip="Top"
+                        data-tooltip-position="right"
+                      >
+                        <VerticalAlignTopIcon aria-hidden="true" />
+                      </swatch-item>
+                      <swatch-item
+                        value="center"
+                        data-tooltip="Center"
+                        data-tooltip-position="right"
+                      >
+                        <VerticalAlignCenterIcon aria-hidden="true" />
+                      </swatch-item>
+                      <swatch-item
+                        value="bottom"
+                        data-tooltip="Bottom"
+                        data-tooltip-position="right"
+                      >
+                        <VerticalAlignBottomIcon aria-hidden="true" />
+                      </swatch-item>
+                    </swatch-select>
                   </li>
                   <li role="presentation">
                     <button
