@@ -10,9 +10,6 @@ export default defineConfig(({ isSsrBuild }) => ({
   envDir: "../..",
   envPrefix: "PUBLIC_",
   base: "/",
-  define: {
-    "process.env": process.env,
-  },
   ssr: {
     noExternal: IS_CLOUDFLARE_WORKER ? true : undefined,
     external: ["node:assert", "node:crypto"],
