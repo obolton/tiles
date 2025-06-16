@@ -6,6 +6,7 @@ export interface ThemeSelectorAttributes {
   value?: string;
   min?: string;
   max?: string;
+  placeholder?: string;
 }
 
 export default class ThemeSelector extends HTMLElement {
@@ -13,6 +14,7 @@ export default class ThemeSelector extends HTMLElement {
     "value",
     "min",
     "max",
+    "placeholder",
   ] as const;
 
   value = 0;
@@ -67,7 +69,7 @@ export default class ThemeSelector extends HTMLElement {
             this.swipe.value = this.value;
           }
         }
-        return;
+        break;
       case "min":
         if (value) {
           this.min = parseInt(value, 10);
@@ -75,7 +77,7 @@ export default class ThemeSelector extends HTMLElement {
             this.swipe.min = this.min;
           }
         }
-        return;
+        break;
       case "max":
         if (value) {
           this.max = parseInt(value, 10);
@@ -83,7 +85,14 @@ export default class ThemeSelector extends HTMLElement {
             this.swipe.max = this.max;
           }
         }
-        return;
+        break;
+      case "placeholder":
+        if (value) {
+          this.contents.setAttribute("data-placeholder", value);
+        } else {
+          this.contents.removeAttribute("data-placeholder");
+        }
+        break;
     }
   }
 

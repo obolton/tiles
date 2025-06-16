@@ -17,7 +17,7 @@ export function placeholders() {
           $from.parent.content.size === 0
         ) {
           const decoration = Decoration.node($from.before(), $from.after(), {
-            "data-placeholder": "Heading",
+            placeholder: "Heading",
           });
           return DecorationSet.create(doc, [decoration]);
         }
