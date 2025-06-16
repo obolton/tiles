@@ -62,8 +62,8 @@ export function headings() {
               return true;
             },
 
-            ignoreMutation() {
-              return true;
+            ignoreMutation(entry) {
+              return !dom.contents.contains(entry.target);
             },
           };
         },

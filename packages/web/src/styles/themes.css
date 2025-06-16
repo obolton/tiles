@@ -23,5 +23,5 @@ theme-selector {
 }
 
 .theme-selector-contents {
-  display: contents;
+  display: block;
 }
