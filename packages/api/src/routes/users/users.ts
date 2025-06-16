@@ -13,6 +13,7 @@ import type {
   IsUsernameAvailableSchema,
 } from "./schema.ts";
 import type { AuthenticatedProcedureContext } from "@/utils/middleware.ts";
+import { WORKSPACE_FIELDS } from "@/routes/workspaces/workspaces.ts";
 
 const PROFILE_IMAGES_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
 
@@ -67,16 +68,28 @@ export async function getSessionContext(sessionId: string) {
 }
 
 export async function getUserInfo({ user }: AuthenticatedProcedureContext) {
-  return prisma.user.findUniqueOrThrow({
-    where: { id: user.id },
-    select: {
-      id: true,
-      username: true,
-      name: true,
-      email: true,
-      imageUrl: true,
-    },
-  });
+  const { workspaceMemberships, ...userProperties } =
+    await prisma.user.findUniqueOrThrow({
+      where: { id: user.id },
+      select: {
+        id: true,
+        username: true,
+        name: true,
+        email: true,
+        imageUrl: true,
+        workspaceMemberships: {
+          select: {
+            workspace: {
+              select: WORKSPACE_FIELDS,
+            },
+          },
+        },
+      },
+    });
+  return {
+    ...userProperties,
+    workspaces: workspaceMemberships.map((membership) => membership.workspace),
+  };
 }
 
 export async function updateUser(
