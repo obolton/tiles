@@ -36,8 +36,8 @@ const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
 const TILES_FIELDS = {
   id: true,
   position: true,
-  columns: true,
-  rows: true,
+  width: true,
+  height: true,
   parentCollectionId: true,
   image: {
     select: IMAGE_FIELDS,
@@ -111,16 +111,16 @@ type TileWithData = Prisma.Result<
 export function formatTile({
   id,
   position,
-  rows,
-  columns,
+  width,
+  height,
   parentCollectionId,
   ...tile
 }: TileWithData): ClientTile {
   const base = {
     placementId: id,
     position,
-    rows,
-    columns,
+    width,
+    height,
     parentCollectionId,
   };
   const { image, video, text, map, link, pageLink, collection, table } = tile;
@@ -354,8 +354,8 @@ export async function createPage(
             },
             type: "TEXT",
             position: 0,
-            rows: 1,
-            columns: 6,
+            width: 12,
+            height: 4,
             text: {
               create: {
                 pageId: page.id,

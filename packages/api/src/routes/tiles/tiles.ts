@@ -116,20 +116,20 @@ export async function moveTile({
 export async function resizeTile({
   pageId,
   id,
-  columns,
-  rows,
+  width,
+  height,
 }: ResizeTileSchema) {
   return prisma.tile.update({
     where: { pageId, id },
     data: {
-      columns,
-      rows,
+      width,
+      height,
     },
     select: {
       id: true,
       pageId: true,
-      columns: true,
-      rows: true,
+      width: true,
+      height: true,
     },
   });
 }
@@ -156,8 +156,8 @@ type CreateTilePlacement = {
   pageId: string;
   parentCollectionId: string;
   type: TileType;
-  columns?: number;
-  rows?: number;
+  width?: number;
+  height?: number;
   imageTileId?: string;
   mapTileId?: string;
   textTileId?: string;
@@ -173,8 +173,8 @@ export async function createTilePlacement(
     pageId,
     parentCollectionId,
     type,
-    columns = 1,
-    rows = 1,
+    width = 1,
+    height = 1,
     imageTileId,
     mapTileId,
     textTileId,
@@ -196,8 +196,8 @@ export async function createTilePlacement(
       parentCollectionId,
       type,
       position,
-      columns,
-      rows,
+      width,
+      height,
       imageTileId,
       mapTileId,
       textTileId,
@@ -210,8 +210,8 @@ export async function createTilePlacement(
     select: {
       id: true,
       position: true,
-      columns: true,
-      rows: true,
+      width: true,
+      height: true,
       parentCollectionId: true,
     },
   });

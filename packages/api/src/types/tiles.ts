@@ -19,7 +19,7 @@ type OmitMetadata<T> = Omit<T, "pageId" | "createdAt" | "updatedAt">;
 
 type ClientTileBase = Pick<
   Tile,
-  "id" | "type" | "position" | "columns" | "rows" | "parentCollectionId"
+  "id" | "type" | "position" | "width" | "height" | "parentCollectionId"
 > & { placementId: string };
 
 // Image

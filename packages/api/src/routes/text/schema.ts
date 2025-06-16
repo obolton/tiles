@@ -13,8 +13,8 @@ export const CreateTextSchema = z.object({
     })
     .optional(),
   imageKey: z.string().nullable().optional(),
-  columns: z.number().int().gte(1).lte(12).optional(),
-  rows: z.number().int().gte(1).lte(24).optional(),
+  width: z.number().int().gte(1).lte(12).optional(),
+  height: z.number().int().gte(1).lte(24).optional(),
   expand: z.boolean().optional(),
 });
 export type CreateTextSchema = z.infer<typeof CreateTextSchema>;

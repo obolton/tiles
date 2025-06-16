@@ -23,8 +23,8 @@ export async function createText({
   content,
   color,
   imageKey,
-  columns,
-  rows,
+  width,
+  height,
   expand,
 }: CreateTextSchema) {
   return prisma.$transaction(async (transaction) => {
@@ -46,8 +46,8 @@ export async function createText({
         parentCollectionId: collectionId,
         type: "TEXT",
         textTileId: text.id,
-        columns,
-        rows,
+        width,
+        height,
       },
       transaction,
     );
