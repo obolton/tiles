@@ -1,32 +1,33 @@
-import { classNames } from "@/utils/css";
 import styles from "./MovableImage.module.css";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
 
-type Origin = { x: number; y: number };
+export type Origin = { x: number; y: number };
 
-interface MovableImageProps extends JSX.Attributes<HTMLImageElement> {
+export interface MovableImageProps extends JSX.Attributes<HTMLImageElement> {
   movable?: Reactive<boolean>;
   origin: Reactive<Origin>;
   onMove: (origin: Origin) => void;
   onRelease: (origin: Origin) => void;
+  signal?: AbortSignal;
 }
 
 export default function MovableImage({
-  className,
   movable,
+  origin,
   onMove,
   onRelease,
-  origin,
+  signal,
   ...props
 }: MovableImageProps) {
   const onPointerDown = (event: PointerEvent) => {
-    const image = event.currentTarget as HTMLImageElement;
-    if (!image) {
+    if (!movable || !movable.value) {
       return;
     }
 
     event.preventDefault();
+
+    const image = event.currentTarget as HTMLImageElement;
 
     const initialPointerX = event.pageX;
     const initialPointerY = event.pageY;
@@ -43,6 +44,9 @@ export default function MovableImage({
     let originY = initialY;
 
     const abortController = new AbortController();
+    const abortSignal = signal
+      ? AbortSignal.any([signal, abortController.signal])
+      : abortController.signal;
 
     addEventListener(
       "pointermove",
@@ -53,7 +57,7 @@ export default function MovableImage({
         originY = Math.min(Math.max(initialY - deltaY, 0), 1);
         onMove({ x: originX, y: originY });
       },
-      { passive: true, signal: abortController.signal },
+      { passive: true, signal: abortSignal },
     );
 
     addEventListener(
@@ -62,14 +66,14 @@ export default function MovableImage({
         abortController.abort();
         onRelease({ x: originX, y: originY });
       },
-      { once: true },
+      { once: true, signal: abortSignal },
     );
   };
 
   return (
     <img
-      className={classNames(movable && styles.movable, className)}
-      onpointerdown={onPointerDown}
+      classList={{ [styles.movable]: movable }}
+      on:pointerdown={movable ? onPointerDown : undefined}
       {...props}
     />
   );
