@@ -8,6 +8,7 @@ import TextEditor, {
 import { setSearchParams } from "@/utils/urls";
 import { serialize } from "@/utils/richText/serialize";
 import { Computed } from "@/utils/reactivity";
+import { handleError } from "@/utils/errors";
 import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
 import type { ImageProperties } from "@/types/tiles";
@@ -69,19 +70,28 @@ export default function ImageTile({
   const { isEditable } = editor;
 
   const onBlur = async (state: EditorState) => {
-    const newText = serialize(state);
+    const newText = state.doc.textContent ? serialize(state) : null;
     text.value = newText;
-    await editor.updateImage({
-      id,
-      text: newText,
-    });
+
+    try {
+      await editor.updateImage({
+        id,
+        text: newText,
+      });
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   const onUpdateOrigin = async (origin: { x: number; y: number }) => {
-    await editor.updateImage({
-      id,
-      origin,
-    });
+    try {
+      await editor.updateImage({
+        id,
+        origin,
+      });
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
@@ -124,7 +134,6 @@ export default function ImageTile({
           loading="lazy"
           alt="Image"
           movable={isEditable}
-          draggable={!isEditable}
           origin={origin}
           onMove={(newOrigin) => {
             originX.value = newOrigin.x;
@@ -132,21 +141,22 @@ export default function ImageTile({
           }}
           onRelease={onUpdateOrigin}
         />
+
         {isEditable.derive((editable) =>
           editable ? (
             <TextEditor
-              classList={[styles.text]}
+              classList={[styles.caption]}
               initialValue={text.value}
-              onkeydown={onDelete ? onKeyDown : undefined}
               onBlur={onBlur}
               showToolbar={hasFocus}
+              on:keydown={onDelete ? onKeyDown : undefined}
             />
           ) : (
             text.derive((value) =>
               value ? (
-                <div classList={["rich-text", styles.text]}>
+                <figcaption classList={["rich-text", styles.caption]}>
                   <RichText content={value} />
-                </div>
+                </figcaption>
               ) : null,
             )
           ),

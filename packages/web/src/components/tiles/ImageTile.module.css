@@ -29,15 +29,25 @@ body[data-editing] .figure {
   cursor: auto;
 }
 
-@media (width < 640px) {
-  .figure > figcaption {
-    display: none;
+.caption {
+  position: absolute;
+  inset: auto auto 0 0;
+  min-width: 200px;
+  padding: 4px 12px;
+  margin: 8px;
+  background: rgb(255 255 255 / 50%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border-radius: calc(var(--border-radius) - 8px);
+  outline: 2px solid transparent;
+  transition: outline-color var(--animation-duration) var(--easing);
+
+  &:focus-visible {
+    outline: var(--focus-outline);
   }
 }
 
-.text {
-  position: absolute;
-  inset: 0;
-  padding: clamp(8px, 2vw, 16px);
-  text-shadow: 0 1px 0 oklch(from var(--text-color) calc(1 - l) 0 0 / 30%);
+@media (width < 640px) {
+  .caption {
+    display: none;
+  }
 }
