@@ -245,7 +245,7 @@ export default class LayoutEditor {
 
     if (columns !== this.columns || rows != this.rows) {
       viewTransition(() => {
-        this.editor.resizeTilePreview({ id, columns, rows });
+        this.editor.resizeTilePreview({ id, width: columns, height: rows });
       });
     }
 

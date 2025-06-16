@@ -266,12 +266,12 @@ export default class Editor {
     });
   }
 
-  async resizeTile(id: string, columns: number, rows: number) {
+  async resizeTile(id: string, width: number, height: number) {
     return client.tiles.resize.mutate({
       pageId: this.pageId,
       id,
-      columns,
-      rows,
+      width,
+      height,
     });
   }
 
@@ -575,13 +575,13 @@ export default class Editor {
 
   async resizeTilePreview({
     id,
-    rows,
-    columns,
+    width,
+    height,
   }: OmitPageId<AppRouterInputs["tiles"]["resize"]>) {
     const tile = this.tiles.value.find((entry) => entry.id === id);
     if (tile) {
-      tile.rows.value = rows;
-      tile.columns.value = columns;
+      tile.width.value = width;
+      tile.height.value = height;
     }
   }
 

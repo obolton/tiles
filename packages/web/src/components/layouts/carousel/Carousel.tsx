@@ -59,7 +59,7 @@ export default function Carousel({
               id={item.id}
               placementId={item.placementId}
               rows={reactive(1)}
-              columns={item.columns}
+              columns={item.width}
               maxColumns={6}
               deletable={isEditable}
               draggable={isEditable}

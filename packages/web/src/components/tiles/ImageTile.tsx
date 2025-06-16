@@ -59,7 +59,7 @@ function getMaxWidth(columns: number) {
 export default function ImageTile({
   editor,
   id,
-  columns,
+  width,
   imageUrl,
   text,
   originX,
@@ -111,7 +111,7 @@ export default function ImageTile({
 
   const srcSet = getImageSrcSet(imageUrl.value, VARIANTS);
 
-  const sizes = `(max-width: 800px) ${((columns.value / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(columns.value)}px`;
+  const sizes = `(max-width: 800px) ${((width.value / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(width.value)}px`;
 
   const origin = new Computed([originX, originY], (x, y) => ({ x, y }));
 

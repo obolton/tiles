@@ -67,9 +67,9 @@ export default function Grid({
               }}
               id={tile.id}
               placementId={tile.placementId}
-              rows={tile.rows}
+              rows={tile.height}
               minRows={minRowSpan}
-              columns={tile.columns}
+              columns={tile.width}
               minColumns={minColumnSpan}
               maxColumns={columns}
               deletable={isEditable}
