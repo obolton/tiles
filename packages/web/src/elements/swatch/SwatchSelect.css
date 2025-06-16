@@ -91,6 +91,10 @@ button {
     scale var(--animation-duration) var(--spring),
     opacity var(--animation-duration) var(--spring);
 
+  :host([orientation="vertical"]) & {
+    flex-direction: column;
+  }
+
   &:popover-open {
     @starting-style {
       scale: 0.5;
