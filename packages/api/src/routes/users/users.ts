@@ -66,7 +66,7 @@ export async function getSessionContext(sessionId: string) {
   return { workspaceId: session.workspaceId, user: { id: session.userId } };
 }
 
-export async function getCurrentUser({ user }: AuthenticatedProcedureContext) {
+export async function getUserInfo({ user }: AuthenticatedProcedureContext) {
   return prisma.user.findUniqueOrThrow({
     where: { id: user.id },
     select: {
