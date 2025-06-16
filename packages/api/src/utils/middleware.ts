@@ -2,16 +2,11 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import prisma from "@/database/prisma.ts";
 import { invalidateCachedPage } from "@/utils/cdn.ts";
-import { publicProcedure, type RequestContext } from "@/utils/trpc.ts";
-
-export type AuthenticatedProcedureContext = Extract<
-  RequestContext,
-  { sessionId: string; workspaceId: string; user: { id: string } }
->;
+import { publicProcedure } from "@/utils/trpc.ts";
 
 export const authenticatedProcedure = publicProcedure.use(async (opts) => {
   const { ctx } = opts;
-  if (!ctx.sessionId || !ctx.user) {
+  if (!ctx.sessionId || !ctx.userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return opts.next({ ctx });
@@ -32,8 +27,8 @@ export const authenticatedPageProcedure = authenticatedProcedure
         id: pageId,
         deletedAt: null,
         OR: [
-          { authorId: ctx.user.id },
-          { access: { some: { userId: ctx.user.id } } },
+          { authorId: ctx.userId },
+          { access: { some: { userId: ctx.userId } } },
         ],
       },
       select: { id: true },

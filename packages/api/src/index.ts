@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import fs from "node:fs";
-import http, { IncomingMessage, ServerResponse } from "node:http";
+import http, { type IncomingMessage, type ServerResponse } from "node:http";
 import https from "node:https";
 import { createHTTPHandler } from "@trpc/server/adapters/standalone";
 import cors from "cors";

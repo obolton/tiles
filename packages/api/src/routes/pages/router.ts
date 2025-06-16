@@ -27,7 +27,7 @@ export default router({
   // TODO: Support server-only procedures
   getById: publicProcedure
     .input(GetPageByIdSchema)
-    .query(async ({ ctx, input }) => getPageById(input, ctx.user?.id)),
+    .query(async ({ ctx, input }) => getPageById(input, ctx)),
 
   list: authenticatedProcedure
     .input(ListPagesSchema)

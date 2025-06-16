@@ -9,7 +9,7 @@ import type {
   DeletePageInviteSchema,
   RevokePageAccessSchema,
 } from "./schema.ts";
-import type { AuthenticatedProcedureContext } from "@/utils/middleware.ts";
+import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 
 export const PAGE_INVITE_FIELDS = {
   id: true,
@@ -31,7 +31,7 @@ const INVITE_KEY_BYTES = 32;
 
 export async function inviteToPage(
   { pageId, email }: InviteToPageSchema,
-  { user }: AuthenticatedProcedureContext,
+  { userId }: AuthenticatedRequestContext,
 ) {
   const key = await createKey(INVITE_KEY_BYTES);
   const [page, inviter, invite] = await prisma.$transaction(
@@ -42,12 +42,12 @@ export async function inviteToPage(
           select: { title: true },
         }),
         transaction.user.findUniqueOrThrow({
-          where: { id: user.id },
+          where: { id: userId },
           select: { id: true, name: true },
         }),
         transaction.pageInvite.create({
           data: {
-            creatorId: user.id,
+            creatorId: userId,
             pageId,
             email,
             key,
@@ -68,7 +68,7 @@ export async function inviteToPage(
 
 export async function acceptPageInvite(
   { key }: AcceptPageInviteSchema,
-  { user }: AuthenticatedProcedureContext,
+  { userId }: AuthenticatedRequestContext,
 ) {
   return prisma.$transaction(async (transaction) => {
     const {
@@ -86,7 +86,7 @@ export async function acceptPageInvite(
       },
     });
 
-    if (authorId === user.id) {
+    if (authorId === userId) {
       throw new Error("You already have access to this page.");
     }
 
@@ -94,7 +94,7 @@ export async function acceptPageInvite(
       transaction.pageAccess.create({
         data: {
           pageId,
-          userId: user.id,
+          userId,
         },
         select: { userId: true },
       }),

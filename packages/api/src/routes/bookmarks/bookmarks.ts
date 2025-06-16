@@ -7,7 +7,7 @@ import type {
 } from "./schema.ts";
 import type { Prisma } from "@prisma/client";
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "../pageLinks/pageLinks.ts";
-import type { AuthenticatedProcedureContext } from "@/utils/middleware.ts";
+import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 
 const RESULTS_PER_PAGE = 15;
 
@@ -17,21 +17,21 @@ export const BOOKMARK_FIELDS = {
 
 export async function createBookmark(
   { pageId }: CreateBookmarkSchema,
-  context: AuthenticatedProcedureContext,
+  { userId }: AuthenticatedRequestContext,
 ) {
   return prisma.bookmark.upsert({
     where: {
       bookmarkId: {
-        userId: context.user.id,
+        userId,
         pageId,
       },
     },
     create: {
-      userId: context.user.id,
+      userId,
       pageId,
     },
     update: {
-      userId: context.user.id,
+      userId,
       pageId,
     },
     select: BOOKMARK_FIELDS,
@@ -40,12 +40,12 @@ export async function createBookmark(
 
 export async function deleteBookmark(
   { pageId }: DeleteBookmarkSchema,
-  context: AuthenticatedProcedureContext,
+  { userId }: AuthenticatedRequestContext,
 ) {
   return prisma.bookmark.delete({
     where: {
       bookmarkId: {
-        userId: context.user.id,
+        userId,
         pageId,
       },
     },
@@ -55,7 +55,7 @@ export async function deleteBookmark(
 
 export async function listBookmarks(
   { query, offset }: ListBookmarksSchema,
-  { user }: AuthenticatedProcedureContext,
+  { userId }: AuthenticatedRequestContext,
 ) {
   const filter: Prisma.BookmarkWhereInput = query
     ? {
@@ -69,7 +69,7 @@ export async function listBookmarks(
     : {};
   const bookmarks = await prisma.bookmark.findMany({
     where: {
-      userId: user.id,
+      userId,
       ...filter,
     },
     select: BOOKMARK_FIELDS,
@@ -87,11 +87,11 @@ export async function listBookmarks(
 
 export async function isBookmarked(
   { pageId }: IsBookmarkedSchema,
-  context: AuthenticatedProcedureContext,
+  { userId }: AuthenticatedRequestContext,
 ) {
   const count = await prisma.bookmark.count({
     where: {
-      userId: context.user.id,
+      userId,
       pageId,
     },
   });

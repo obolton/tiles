@@ -12,7 +12,7 @@ import type {
   UpdateUserSchema,
   IsUsernameAvailableSchema,
 } from "./schema.ts";
-import type { AuthenticatedProcedureContext } from "@/utils/middleware.ts";
+import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 import { WORKSPACE_FIELDS } from "@/routes/workspaces/workspaces.ts";
 
 const PROFILE_IMAGES_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
@@ -64,13 +64,13 @@ export async function getSessionContext(sessionId: string) {
   if (!session) {
     return null;
   }
-  return { workspaceId: session.workspaceId, user: { id: session.userId } };
+  return session;
 }
 
-export async function getUserInfo({ user }: AuthenticatedProcedureContext) {
+export async function getUserInfo({ userId }: AuthenticatedRequestContext) {
   const { workspaceMemberships, ...userProperties } =
     await prisma.user.findUniqueOrThrow({
-      where: { id: user.id },
+      where: { id: userId },
       select: {
         id: true,
         username: true,
@@ -94,10 +94,10 @@ export async function getUserInfo({ user }: AuthenticatedProcedureContext) {
 
 export async function updateUser(
   { username, name, email, imageKey }: UpdateUserSchema,
-  { user }: AuthenticatedProcedureContext,
+  { userId }: AuthenticatedRequestContext,
 ) {
   return prisma.user.update({
-    where: { id: user.id },
+    where: { id: userId },
     data: {
       username,
       name,
@@ -116,11 +116,11 @@ export async function updateUser(
 
 export async function isUsernameAvailable(
   { username }: IsUsernameAvailableSchema,
-  { user }: AuthenticatedProcedureContext,
+  { userId }: AuthenticatedRequestContext,
 ) {
   const foundUser = await prisma.user.findUnique({
     where: { username },
     select: { id: true },
   });
-  return !foundUser || foundUser.id === user.id;
+  return !foundUser || foundUser.id === userId;
 }

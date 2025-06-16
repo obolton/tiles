@@ -12,7 +12,7 @@ import type {
   UpdateWorkspaceSchema,
   ListWorkspaceUsersSchema,
 } from "./schema.ts";
-import type { AuthenticatedProcedureContext } from "@/utils/middleware.ts";
+import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 
 const RESULTS_PER_PAGE = 15;
 
@@ -38,7 +38,7 @@ const INVITE_KEY_BYTES = 32;
 
 export async function getCurrentWorkspace({
   workspaceId,
-}: AuthenticatedProcedureContext) {
+}: AuthenticatedRequestContext) {
   return prisma.workspace.findUniqueOrThrow({
     where: {
       id: workspaceId,
@@ -49,7 +49,7 @@ export async function getCurrentWorkspace({
 
 export async function updateWorkspace(
   { name }: UpdateWorkspaceSchema,
-  { workspaceId }: AuthenticatedProcedureContext,
+  { workspaceId }: AuthenticatedRequestContext,
 ) {
   return prisma.workspace.update({
     where: {
@@ -64,7 +64,7 @@ export async function updateWorkspace(
 
 export async function inviteToWorkspace(
   { email }: InviteToWorkspaceSchema,
-  { user, workspaceId }: AuthenticatedProcedureContext,
+  { userId, workspaceId }: AuthenticatedRequestContext,
 ) {
   const key = await createKey(INVITE_KEY_BYTES);
   const [workspace, inviter, invite] = await prisma.$transaction(
@@ -75,12 +75,12 @@ export async function inviteToWorkspace(
           select: { id: true, name: true },
         }),
         transaction.user.findUniqueOrThrow({
-          where: { id: user.id },
+          where: { id: userId },
           select: { id: true, name: true },
         }),
         transaction.workspaceInvite.create({
           data: {
-            creatorId: user.id,
+            creatorId: userId,
             workspaceId,
             email,
             key,
@@ -101,7 +101,7 @@ export async function inviteToWorkspace(
 
 export async function acceptWorkspaceInvite(
   { key }: AcceptWorkspaceInviteSchema,
-  { user }: AuthenticatedProcedureContext,
+  { userId }: AuthenticatedRequestContext,
 ) {
   return prisma.$transaction(async (transaction) => {
     const { workspaceId } = await transaction.workspaceInvite.findUniqueOrThrow(
@@ -115,7 +115,7 @@ export async function acceptWorkspaceInvite(
       transaction.workspaceMembership.create({
         data: {
           workspaceId,
-          userId: user.id,
+          userId,
         },
         select: { userId: true },
       }),
@@ -128,7 +128,7 @@ export async function acceptWorkspaceInvite(
 
 export async function deleteWorkspaceInvite(
   { id }: DeleteWorkspaceInviteSchema,
-  { workspaceId }: AuthenticatedProcedureContext,
+  { workspaceId }: AuthenticatedRequestContext,
 ) {
   return prisma.workspaceInvite.delete({
     where: { workspaceId, id },
@@ -138,7 +138,7 @@ export async function deleteWorkspaceInvite(
 
 export async function listWorkspaceInvites(
   { query, offset }: ListWorkspaceInvitesSchema,
-  { workspaceId }: AuthenticatedProcedureContext,
+  { workspaceId }: AuthenticatedRequestContext,
 ) {
   const filter: Prisma.WorkspaceInviteWhereInput = query
     ? { email: { contains: query, mode: "insensitive" } }
@@ -163,7 +163,7 @@ export async function listWorkspaceInvites(
 
 export async function removeFromWorkspace(
   { userId }: RemoveFromWorkspaceSchema,
-  { workspaceId }: AuthenticatedProcedureContext,
+  { workspaceId }: AuthenticatedRequestContext,
 ) {
   return prisma.$transaction(async (transaction) => {
     await Promise.all([
@@ -188,7 +188,7 @@ export async function removeFromWorkspace(
 
 export async function listWorkspaceUsers(
   { query, offset }: ListWorkspaceUsersSchema,
-  { workspaceId }: AuthenticatedProcedureContext,
+  { workspaceId }: AuthenticatedRequestContext,
 ) {
   const filter: Prisma.WorkspaceMembershipWhereInput = query
     ? { user: { name: { contains: query, mode: "insensitive" } } }

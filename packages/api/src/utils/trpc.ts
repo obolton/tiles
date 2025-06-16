@@ -4,7 +4,25 @@ import { getSessionContext } from "@/routes/users/users.ts";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies.ts";
 import { clearSessionCookie } from "@/utils/cookies.ts";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
-import type { IncomingMessage } from "node:http";
+import type { IncomingMessage, ServerResponse } from "node:http";
+
+export interface UnauthenticatedRequestContext {
+  res: ServerResponse<IncomingMessage>;
+  sessionId: null;
+  workspaceId: null;
+  userId: null;
+}
+
+export interface AuthenticatedRequestContext {
+  res: ServerResponse<IncomingMessage>;
+  sessionId: string;
+  workspaceId: string;
+  userId: string;
+}
+
+export type RequestContext =
+  | UnauthenticatedRequestContext
+  | AuthenticatedRequestContext;
 
 function parseAuthorizationHeader(value: string) {
   const [type, token] = value.split(" ");
@@ -31,14 +49,17 @@ function getSessionId(req: IncomingMessage) {
   return null;
 }
 
-export async function createContext({ req, res }: CreateHTTPContextOptions) {
+export async function createContext({
+  req,
+  res,
+}: CreateHTTPContextOptions): Promise<RequestContext> {
   const sessionId = getSessionId(req);
 
   if (sessionId) {
-    const context = await getSessionContext(sessionId);
-    if (context) {
+    const session = await getSessionContext(sessionId);
+    if (session) {
       return {
-        ...context,
+        ...session,
         res,
         sessionId,
       };
@@ -51,7 +72,7 @@ export async function createContext({ req, res }: CreateHTTPContextOptions) {
     res,
     sessionId: null,
     workspaceId: null,
-    user: null,
+    userId: null,
   };
 }
 
@@ -59,5 +80,3 @@ const trpc = initTRPC.context<typeof createContext>().create();
 
 export const router = trpc.router;
 export const publicProcedure = trpc.procedure;
-
-export type RequestContext = Awaited<ReturnType<typeof createContext>>;
