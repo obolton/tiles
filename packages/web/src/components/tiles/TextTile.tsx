@@ -14,6 +14,7 @@ import ExpandIcon from "@/icons/expand.svg?jsx";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
+import { handleError } from "@/utils/errors";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
@@ -39,55 +40,74 @@ export default function TextTile({
   const { isEditable } = editor;
 
   const onBlur = async (state: EditorState) => {
-    const newContent = serialize(state);
-    content.value = newContent;
-
-    await editor.updateText({
-      id,
-      content: newContent,
-    });
+    try {
+      const newContent = serialize(state);
+      content.value = newContent;
+      await editor.updateText({
+        id,
+        content: newContent,
+      });
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   const onChangeColor = async (value: Color | null) => {
-    viewTransition(() => {
-      color.value = value;
-    });
-    await editor.updateText({
-      id,
-      color: value,
-    });
+    try {
+      viewTransition(() => {
+        color.value = value;
+      });
+      await editor.updateText({
+        id,
+        color: value,
+      });
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   const onSelectImage = async () => {
     if (imageUrl.value) {
-      imageUrl.value = null;
-      await editor.updateText({
-        id,
-        imageKey: null,
-      });
+      try {
+        imageUrl.value = null;
+        await editor.updateText({
+          id,
+          imageKey: null,
+        });
+      } catch (error) {
+        handleError(error);
+      }
     } else {
       showModal<ImageModalResult>("IMAGE", {
         async onConfirm(result) {
           if (!result) {
             return;
           }
-          const imageKey = await uploadMedia(result.image, "image");
-          const { imageUrl: newImageUrl } = await editor.updateText({
-            id,
-            imageKey,
-          });
-          imageUrl.value = newImageUrl;
+          try {
+            const imageKey = await uploadMedia(result.image, "image");
+            const { imageUrl: newImageUrl } = await editor.updateText({
+              id,
+              imageKey,
+            });
+            imageUrl.value = newImageUrl;
+          } catch (error) {
+            handleError(error);
+          }
         },
       });
     }
   };
 
   const onToggleExpand = async () => {
-    expand.value = !expand.value;
-    await editor.updateText({
-      id,
-      expand: expand.value,
-    });
+    try {
+      expand.value = !expand.value;
+      await editor.updateText({
+        id,
+        expand: expand.value,
+      });
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
@@ -145,7 +165,7 @@ export default function TextTile({
                       aria-pressed={imageUrl.derive((value) =>
                         value ? "true" : "false",
                       )}
-                      onclick={onSelectImage}
+                      on:click={onSelectImage}
                     >
                       <ImageIcon aria-hidden="true" />
                     </button>
@@ -194,7 +214,7 @@ export default function TextTile({
                       aria-pressed={expand.derive((value) =>
                         value ? "true" : "false",
                       )}
-                      onclick={onToggleExpand}
+                      on:click={onToggleExpand}
                     >
                       <ExpandIcon aria-hidden="true" />
                     </button>
