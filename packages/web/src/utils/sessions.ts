@@ -25,7 +25,7 @@ export function isSignedIn() {
 }
 
 export async function getUserInfo() {
-  const userInfo = await client.auth.getUserInfo.query();
+  const userInfo = await client.users.getUserInfo.query();
   if (userInfo) {
     setUserInfo(userInfo);
   } else {

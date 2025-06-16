@@ -11,7 +11,7 @@ import styles from "./Profile.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type FilePicker from "@/elements/filePicker/FilePicker";
 
-type User = NonNullable<AppRouterOutputs["auth"]["getUserInfo"]>;
+type User = NonNullable<AppRouterOutputs["users"]["getUserInfo"]>;
 
 export interface ProfileProps {
   user: User;

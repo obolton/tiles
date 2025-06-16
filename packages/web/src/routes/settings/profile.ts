@@ -16,7 +16,7 @@ async function loader({
     throw new Error("Unauthorized");
   }
 
-  const user = await client.auth.getUserInfo.query(undefined, {
+  const user = await client.users.getUserInfo.query(undefined, {
     context: { sessionId },
   });
 
