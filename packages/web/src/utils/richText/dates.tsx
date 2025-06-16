@@ -73,10 +73,10 @@ export function dates() {
                 registry={DATE_THEMES}
                 getProps={getProps}
                 onChange={onChange}
-                onclick={edit}
-                onkeydown={onKeyDown}
                 data-tooltip="Date"
                 inline
+                on:click={edit}
+                on:keydown={onKeyDown}
               />,
             ) as HTMLElement,
 
@@ -85,7 +85,12 @@ export function dates() {
             },
 
             stopEvent(event) {
-              return event.type === "mousedown";
+              if (event.type === "mousedown" || event.type === "pointerdown") {
+                event.preventDefault();
+                return true;
+              }
+
+              return false;
             },
           };
         },
