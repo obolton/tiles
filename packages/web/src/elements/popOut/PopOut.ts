@@ -157,7 +157,7 @@ export default class PopOut extends HTMLElement {
     if (event.key === "Escape" && this.isOpen()) {
       event.preventDefault();
       this.close();
-    } else if (event.key === "Enter" && !this.isOpen()) {
+    } else if (event.key === "Enter" && !this.isOpen() && this.isOverflowing) {
       event.preventDefault();
       this.open();
     }
