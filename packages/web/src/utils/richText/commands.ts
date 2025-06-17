@@ -84,7 +84,7 @@ export function toggleHeading(level: 1 | 2 | 3): Command {
           range.$to.pos,
           schema.nodes.heading,
           (oldNode) => ({
-            align: oldNode.attrs.align,
+            ...oldNode.attrs,
             level,
           }),
         );
