@@ -470,6 +470,15 @@ export default class Editor {
     });
   }
 
+  async updateTableColumn(
+    data: OmitPageId<AppRouterInputs["tables"]["updateColumn"]>,
+  ) {
+    return await client.tables.updateColumn.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+  }
+
   async deleteTableColumn(
     data: OmitPageId<AppRouterInputs["tables"]["deleteColumn"]>,
   ) {

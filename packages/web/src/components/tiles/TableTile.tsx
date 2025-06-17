@@ -20,6 +20,7 @@ import type { Command } from "prosemirror-state";
 import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
 import type { TableProperties } from "@/types/tiles";
+import type { TableEvent } from "@/elements/table/events";
 
 export interface TableTileProps extends TableProperties {
   editor: Editor;
@@ -189,6 +190,27 @@ export default function TableTile({
     });
   };
 
+  const onResizeColumn = async (event: TableEvent) => {
+    const { column, width } = event;
+    if (typeof column !== "number" || typeof width !== "number") {
+      return;
+    }
+    const columnInfo = tableColumns.value[column];
+    if (!columnInfo) {
+      return;
+    }
+    try {
+      columnInfo.width = width;
+      await editor.updateTableColumn({
+        tableId: id,
+        columnId: columnInfo.id,
+        width,
+      });
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const getEditorState = () => editorView?.state;
 
   const performCommand = (command: Command) => {
@@ -219,8 +241,9 @@ export default function TableTile({
         columns={tableColumns.derive((columns) => columns.length)}
         rows={numRows}
         allowselection={isEditable}
-        onfocusin={onFocusIn}
-        onfocusout={onFocusOut}
+        on:focusin={onFocusIn}
+        on:focusout={onFocusOut}
+        on:resizetablecolumn={onResizeColumn}
         $getColumnWidth={(index) => tableColumns.value[index]?.width ?? 200}
       >
         {tableRows.value.map(({ data: rowData }, row) => {
