@@ -1,5 +1,7 @@
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import css from "./TableView.css?inline";
+import { TableEvent } from "./events";
+import type { ResizeEvent } from "@/elements/resize/events";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -211,6 +213,8 @@ export default class TableView extends HTMLElement {
         return this.handlePointerUp(event as PointerEvent);
       case "pointerover":
         return this.handlePointerOver(event as PointerEvent);
+      case "resizeend":
+        return this.handleResizeEnd(event as ResizeEvent);
     }
   }
 
@@ -257,6 +261,22 @@ export default class TableView extends HTMLElement {
       this.selection.focus = { row, column };
       this.redrawSelection();
     }
+  }
+
+  private handleResizeEnd(event: ResizeEvent) {
+    const target = event.currentTarget as HTMLElement;
+    if (!target.dataset.column || !target.dataset.width) {
+      return;
+    }
+    const column = parseInt(target.dataset.column, 10);
+    const width = parseFloat(target.dataset.width) + event.x;
+    this.dispatchEvent(new TableEvent("resizetablecolumn", { column, width }));
+
+    this.querySelectorAll<HTMLElement>(
+      `div[role="cell"][data-column="${column}"]`,
+    ).forEach((cell) => (cell.style.width = width + "px"));
+    this.update();
+    this.updateColumnResizeHandles();
   }
 
   // Focus and selection
@@ -757,16 +777,27 @@ export default class TableView extends HTMLElement {
     this.shadowRoot!.querySelectorAll(".column-resize").forEach((element) =>
       element.remove(),
     );
+
     let x = 0;
     const handles = document.createDocumentFragment();
     for (let i = 0; i < this.columns; i++) {
-      x += this.getColumnWidth(i);
-      const handle = document.createElement("div");
-      handle.className = "column-resize";
-      handle.style.setProperty("--x", `${x}px`);
+      const width = this.getColumnWidth(i);
+      x += width;
+      const handle = this.createResizeHandle(i, x, width);
       handles.appendChild(handle);
     }
     this.shadowRoot!.appendChild(handles);
+  }
+
+  private createResizeHandle(index: number, x: number, width: number) {
+    const handle = document.createElement("resize-handle");
+    handle.className = "column-resize";
+    handle.style.setProperty("--x", x - 3 + "px");
+    handle.dataset.column = index.toString();
+    handle.dataset.width = width.toString();
+    handle.addEventListener("resizeend", this);
+
+    return handle;
   }
 }
 

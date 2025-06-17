@@ -1,6 +1,7 @@
 import type { DragDropEvent } from "@/utils/drag";
 import type { TileResizeEvent, TileEvent } from "@/utils/events";
 import type { ModalEvent } from "@/utils/modals";
+import type { TableEvent } from "@/elements/table/events";
 
 declare global {
   interface WindowEventHandlersEventMap {
@@ -36,6 +37,7 @@ declare global {
     tileresize: TileResizeEvent;
     tileresizeend: TileResizeEvent;
     tiledelete: TileEvent;
+    resizetablecolumn: TableEvent;
   }
 }
 
