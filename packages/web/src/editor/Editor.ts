@@ -294,18 +294,6 @@ export default class Editor {
     }
   }
 
-  private updateParentCollection(
-    placementId: string,
-    parentCollectionId: string,
-  ) {
-    const tile = this.tiles.value.find(
-      (tile) => tile.placementId === placementId,
-    );
-    if (tile) {
-      tile.parentCollectionId.value = parentCollectionId;
-    }
-  }
-
   // Text
 
   async createText(data: OmitPageId<AppRouterInputs["text"]["create"]>) {
@@ -507,22 +495,6 @@ export default class Editor {
   }
 
   // Collections
-
-  async createCollection(
-    data: OmitPageId<AppRouterInputs["collections"]["create"]>,
-  ) {
-    const item = await client.collections.create.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.addTile(item);
-    if (data.tileIds) {
-      for (const placementId of data.tileIds) {
-        this.updateParentCollection(placementId, item.id);
-      }
-    }
-    return item;
-  }
 
   async updateCollection(
     data: OmitPageId<AppRouterInputs["collections"]["update"]>,
