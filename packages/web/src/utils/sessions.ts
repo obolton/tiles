@@ -5,16 +5,12 @@ import {
 import client from "@/api/client";
 import { getCookie } from "./cookies";
 import { clear, setPersistent, removePersistent, getPersistent } from "./state";
-import { ReactiveValue } from "./reactivity";
+import { reactive } from "./reactivity";
+import type { AppRouterOutputs } from "@/api/client";
 
-export interface User {
-  id: string;
-  username: string | null;
-  name: string;
-  imageUrl: string | null;
-}
+export type User = AppRouterOutputs["users"]["getUserInfo"];
 
-export const user = new ReactiveValue<User | null>(null);
+export const user = reactive<User | null>(null);
 
 export function getSessionId(headers: Headers) {
   return getCookie(headers.get("cookie") ?? "", SESSION_COOKIE_NAME);
@@ -25,34 +21,20 @@ export function isSignedIn() {
 }
 
 export async function getUserInfo() {
-  const userInfo = await client.users.getUserInfo.query();
-  if (userInfo) {
-    setUserInfo(userInfo);
-  } else {
+  try {
+    const userInfo = await client.users.getUserInfo.query();
+    user.value = userInfo;
+    setPersistent("user", userInfo);
+    return user;
+  } catch (error) {
+    user.value = null;
     removePersistent("user");
-    throw new Error("User not found");
+    throw error;
   }
-  return user;
-}
-
-export function setUserInfo(userInfo: User) {
-  user.value = userInfo;
-  setPersistent("user", {
-    ...userInfo,
-    profile: userInfo.username
-      ? `/profiles/@${userInfo.username}`
-      : `/profiles/${userInfo.id}`,
-  });
 }
 
 export function getCachedUserInfo() {
-  return getPersistent<{
-    id: string;
-    username: string | null;
-    name: string;
-    imageUrl: string;
-    profile: string;
-  }>("user");
+  return getPersistent<User>("user");
 }
 
 export function clearAuthenticationCookies() {
