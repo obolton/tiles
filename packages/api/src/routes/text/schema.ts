@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { RichTextSchema } from "@/schema/RichText.ts";
+import { VerticalAlignment } from "@prisma/client";
 
 export const CreateTextSchema = z.object({
   pageId: z.string().uuid(),
@@ -16,6 +17,7 @@ export const CreateTextSchema = z.object({
   width: z.number().int().gte(1).lte(12).optional(),
   height: z.number().int().gte(1).lte(24).optional(),
   expand: z.boolean().optional(),
+  align: z.nativeEnum(VerticalAlignment).optional(),
 });
 export type CreateTextSchema = z.infer<typeof CreateTextSchema>;
 
@@ -33,5 +35,6 @@ export const UpdateTextSchema = z.object({
     .optional(),
   imageKey: z.string().nullable().optional(),
   expand: z.boolean().optional(),
+  align: z.nativeEnum(VerticalAlignment).optional(),
 });
 export type UpdateTextSchema = z.infer<typeof UpdateTextSchema>;
