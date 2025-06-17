@@ -116,6 +116,7 @@ model ImageTile {
   originY   Float    @default(0.5) @map("origin_y") @db.Real
   /// [RichText]
   text      Json?    @db.JsonB
+  theme     String?
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[]
