@@ -15,6 +15,7 @@ enum CollectionLayout {
   GRID
   COLUMN
   CAROUSEL
+  CANVAS
 }
 
 enum CollectionWidth {
