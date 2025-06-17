@@ -6,6 +6,7 @@ import type {
   AppendRowSchema,
   DeleteRowSchema,
   AppendColumnSchema,
+  UpdateColumnSchema,
   DeleteColumnSchema,
   UpdateCellSchema,
 } from "./schema.ts";
@@ -131,7 +132,11 @@ export async function deleteRow({ pageId, tableId, rowId }: DeleteRowSchema) {
   });
 }
 
-export async function appendColumn({ pageId, tableId }: AppendColumnSchema) {
+export async function appendColumn({
+  pageId,
+  tableId,
+  width,
+}: AppendColumnSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the table
     await transaction.table.findUniqueOrThrow({
@@ -142,6 +147,33 @@ export async function appendColumn({ pageId, tableId }: AppendColumnSchema) {
     return transaction.tableColumn.create({
       data: {
         tableId,
+        width,
+      },
+      select: TABLE_COLUMN_FIELDS,
+    });
+  });
+}
+
+export async function updateColumn({
+  pageId,
+  tableId,
+  columnId,
+  width,
+}: UpdateColumnSchema) {
+  return prisma.$transaction(async (transaction) => {
+    // Verify access to the table
+    await transaction.table.findUniqueOrThrow({
+      where: { id: tableId, pageId },
+      select: { id: true },
+    });
+
+    return transaction.tableColumn.update({
+      where: {
+        id: columnId,
+        tableId,
+      },
+      data: {
+        width,
       },
       select: TABLE_COLUMN_FIELDS,
     });
