@@ -1,4 +1,6 @@
+import LibraryIcon from "@/icons/library.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
+import WorkspaceIcon from "@/icons/workspace.svg?jsx";
 import SettingsIcon from "@/icons/settings.svg?jsx";
 import SignOutIcon from "@/icons/sign-out.svg?jsx";
 import BookmarkIcon from "@/icons/bookmark.svg?jsx";
@@ -96,48 +98,39 @@ export default function Navigation({
       >
         <ul>
           <li>
-            <a href="/library" className="floating" data-tooltip="Your library">
+            <button
+              type="button"
+              id="account-button"
+              className="floating"
+              popoverTarget="account-menu"
+              data-tooltip={`Signed in as ${value.name}`}
+              aria-haspopup="menu"
+              aria-expanded="false"
+            >
               <img
                 className="profile-image"
                 src={value.imageUrl}
                 alt={value.name}
               />
-            </a>
-          </li>
-          <li>
-            <button
-              id="new-page-button"
-              className="floating"
-              type="button"
-              data-tooltip="Create a new page"
-              data-pending-text=""
-              onclick={createNewPage}
-            >
-              <NewIcon aria-hidden="true" />
             </button>
-          </li>
-          <li>
-            <button
-              id="more-button"
-              className="floating"
-              type="button"
-              popoverTarget="navigation-overflow"
-              data-tooltip="More options"
-              aria-haspopup="menu"
-              aria-expanded="false"
-            >
-              <SettingsIcon aria-hidden="true" />
-            </button>
-            <popover-menu id="navigation-overflow" anchor="more-button">
+            <popover-menu id="account-menu" anchor="account-button">
               <menu>
+                {value.workspaces.map((workspace) => (
+                  <li>
+                    <a href={`/workspaces/${workspace.id}`} target="_blank">
+                      <WorkspaceIcon aria-hidden="true" />
+                      {workspace.name}
+                    </a>
+                  </li>
+                ))}
                 <li>
                   <a href="/settings">
                     <SettingsIcon aria-hidden="true" />
-                    Account settings
+                    Settings
                   </a>
                 </li>
                 <li>
-                  <button id="sign-out" type="button" onclick={signOut}>
+                  <button type="button" on:click={signOut}>
                     <SignOutIcon aria-hidden="true" />
                     Sign out
                   </button>
@@ -145,15 +138,31 @@ export default function Navigation({
               </menu>
             </popover-menu>
           </li>
+          <li>
+            <a href="/library" className="floating" data-tooltip="Your library">
+              <LibraryIcon aria-hidden="true" />
+            </a>
+          </li>
+          <li>
+            <button
+              type="button"
+              className="floating"
+              data-tooltip="Create a new page"
+              data-pending-text=""
+              on:click={createNewPage}
+            >
+              <NewIcon aria-hidden="true" />
+            </button>
+          </li>
 
           {showBookmark ? (
             <li>
               <button
+                type="button"
                 classList={{
                   floating: true,
                   pending: bookmarkPending,
                 }}
-                type="button"
                 aria-label={isBookmarked.derive((value) =>
                   value ? "Bookmarked" : "Not bookmarked",
                 )}
@@ -163,7 +172,7 @@ export default function Navigation({
                 aria-pressed={isBookmarked.derive((value) =>
                   value ? "true" : "false",
                 )}
-                onclick={onClickBookmark}
+                on:click={onClickBookmark}
               >
                 {isBookmarked.derive((value) =>
                   value ? (
@@ -201,12 +210,11 @@ export default function Navigation({
           {showShare ? (
             <li>
               <button
-                id="share-button"
-                className="floating"
                 type="button"
+                className="floating"
                 aria-label="Share this page"
                 data-tooltip="Share this page"
-                onclick={sharePage}
+                on:click={sharePage}
               >
                 <ShareIcon aria-hidden="true" />
               </button>
