@@ -38,7 +38,7 @@ async function loader({
     headers: page.published
       ? { "Cache-Control": CACHE_CONTROL_VALUE }
       : undefined,
-    title: page.title,
+    title: `${page.title} - Tiles`,
     bodyAttributes: {
       "data-page-id": page.id,
       className: isDark(page.color) ? "dark" : undefined,

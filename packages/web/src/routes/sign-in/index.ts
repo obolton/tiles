@@ -18,7 +18,7 @@ async function loader({
   url,
 }: RequestProperties): RouteLoaderResult<SignInProps> {
   const destination = url.searchParams.get("destination");
-  return { data: { destination } };
+  return { title: "Sign in - Tiles", data: { destination } };
 }
 
 export default {

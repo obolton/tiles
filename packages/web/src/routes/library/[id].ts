@@ -32,7 +32,7 @@ async function loader({
   ]);
 
   return {
-    title: `Library - ${folder.name}`,
+    title: `${folder.name} - Tiles`,
     data: { id: folder.id, name: folder.name, folders, pages },
   };
 }

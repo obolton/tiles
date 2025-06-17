@@ -22,7 +22,7 @@ async function loader({
   ]);
 
   return {
-    title: "Library - Bookmarks",
+    title: "Bookmarks - Tiles",
     data: { folders, pages },
   };
 }

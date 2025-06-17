@@ -35,7 +35,7 @@ async function loader({
   }
 
   return {
-    title: "Settings - Workspace",
+    title: "Workspace - Tiles",
     data: { workspace, users, invites },
   };
 }

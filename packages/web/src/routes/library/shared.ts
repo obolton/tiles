@@ -22,7 +22,7 @@ async function loader({
   ]);
 
   return {
-    title: "Library - Shared with you",
+    title: "Shared with you - Tiles",
     data: { folders, pages },
   };
 }

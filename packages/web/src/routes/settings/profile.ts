@@ -25,7 +25,7 @@ async function loader({
   }
 
   return {
-    title: "Settings - Profile",
+    title: "Profile - Tiles",
     data: { user },
   };
 }

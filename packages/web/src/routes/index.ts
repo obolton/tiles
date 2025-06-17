@@ -2,10 +2,9 @@ import client from "@/api/client";
 import { getFontConfig } from "@/utils/fonts";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import Page, { type PageProps } from "@/pages/Page";
-import { toCSSColor, isDark, type Color } from "@/utils/color";
+import { toCSSColor, isDark } from "@/utils/color";
 import type { Route, RouteLoaderResult, RouteMetadata } from "@/router/router";
 
-// TODO: Add cache headers
 async function loader(): RouteLoaderResult<PageProps> {
   const pageId = import.meta.env.PUBLIC_PAGE_ID;
 

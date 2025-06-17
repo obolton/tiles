@@ -22,7 +22,7 @@ async function loader({
   ]);
 
   return {
-    title: "Library - Trash",
+    title: "Trash - Tiles",
     data: { folders, pages },
   };
 }
