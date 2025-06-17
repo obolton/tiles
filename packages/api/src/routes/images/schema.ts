@@ -6,6 +6,7 @@ export const CreateImageSchema = z.object({
   collectionId: z.string().uuid(),
   imageKey: z.string(),
   text: RichTextSchema.nullable().optional(),
+  theme: z.string().nullable().optional(),
 });
 export type CreateImageSchema = z.infer<typeof CreateImageSchema>;
 
@@ -19,5 +20,6 @@ export const UpdateImageSchema = z.object({
       y: z.number().gte(0).lte(1),
     })
     .optional(),
+  theme: z.string().nullable().optional(),
 });
 export type UpdateImageSchema = z.infer<typeof UpdateImageSchema>;
