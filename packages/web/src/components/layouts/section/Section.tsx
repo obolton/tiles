@@ -3,6 +3,7 @@ import TileButtons from "@/components/menu/TileButtons";
 import GridIcon from "@/icons/grid.svg?jsx";
 import ColumnIcon from "@/icons/column.svg?jsx";
 import CarouselIcon from "@/icons/carousel.svg?jsx";
+import CanvasIcon from "@/icons/canvas.svg?jsx";
 import FullWidthIcon from "@/icons/full-width.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
@@ -142,6 +143,22 @@ export default function Section({ editor, section }: SectionProps) {
                   on:click={() => setLayout("CAROUSEL")}
                 >
                   <CarouselIcon aria-hidden="true" />
+                </button>
+              </li>
+
+              <li role="presentation">
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="floating small"
+                  aria-label="Canvas"
+                  data-tooltip="Canvas"
+                  aria-pressed={layout.derive((value) =>
+                    value === "CANVAS" ? "true" : "false",
+                  )}
+                  on:click={() => setLayout("CANVAS")}
+                >
+                  <CanvasIcon aria-hidden="true" />
                 </button>
               </li>
             </ul>
