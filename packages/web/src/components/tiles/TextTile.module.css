@@ -12,6 +12,18 @@
   }
 }
 
+.align-top {
+  align-content: start;
+}
+
+.align-center {
+  align-content: center;
+}
+
+.align-bottom {
+  align-content: end;
+}
+
 .pop-out {
   display: contents;
   background: inherit;
