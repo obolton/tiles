@@ -22,6 +22,12 @@ enum CollectionWidth {
   VIEWPORT
 }
 
+enum VerticalAlignment {
+  TOP
+  CENTER
+  BOTTOM
+}
+
 model Page {
   id            String    @id @default(uuid()) @db.Uuid
   createdAt     DateTime  @default(now()) @map("created_at")
@@ -154,12 +160,13 @@ model TextTile {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   /// [RichText]
-  content   Json    @db.JsonB
-  lightness Float?  @db.Real
-  chroma    Float?  @db.Real
-  hue       Float?  @db.Real
-  imageKey  String? @map("image_key")
-  expand    Boolean @default(false)
+  content   Json              @db.JsonB
+  lightness Float?            @db.Real
+  chroma    Float?            @db.Real
+  hue       Float?            @db.Real
+  imageKey  String?           @map("image_key")
+  expand    Boolean           @default(false)
+  align     VerticalAlignment @default(TOP)
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[]
