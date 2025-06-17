@@ -3,12 +3,13 @@
   margin: 0;
   padding: 6px 12px;
   border: none;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 500;
   white-space: nowrap;
-  color: rgba(0 0 0 / 80%);
+  color: var(--ui-color);
   text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
   background-color: rgb(255 255 255 / 85%);
+  backdrop-filter: blur(4px);
   box-shadow: 0 2px 3px -1px rgb(0 0 0 / 20%);
   border-radius: 32px;
   pointer-events: none;

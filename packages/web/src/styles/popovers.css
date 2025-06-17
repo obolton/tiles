@@ -10,10 +10,11 @@ table-of-contents {
   font-size: 1rem;
   color: var(--ui-color);
   background: var(--ui-background-color);
-  border-radius: 16px;
+  backdrop-filter: blur(4px);
+  border-radius: var(--border-radius);
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 15%),
-    0 4px 4px -2px rgb(0 0 0 / 20%);
+    0 4px 12px -4px rgb(0 0 0 / 30%);
   transition:
     display var(--animation-duration) allow-discrete,
     overlay var(--animation-duration) allow-discrete,

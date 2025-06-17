@@ -9,7 +9,7 @@ floating-toolbar {
   overflow: visible;
   contain: layout;
   background: var(--ui-background-color);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(4px);
   border: none;
   border-radius: 32px;
   margin: auto;
@@ -17,7 +17,9 @@ floating-toolbar {
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 2px 4px -2px rgb(0 0 0 / 40%);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
   view-transition-name: toolbar;
 
   & > ul {
@@ -47,8 +49,10 @@ body[data-drag] floating-toolbar {
 
 ::view-transition-group(toolbar) {
   overflow: clip;
-  border-radius: 30px;
-  box-shadow: 0 2px 4px -2px rgb(0 0 0 / 40%);
+  border-radius: 32px;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
 }
 
 ::view-transition-new(toolbar),

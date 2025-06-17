@@ -84,7 +84,10 @@ button {
   border: none;
   border-radius: 32px;
   background: var(--ui-background-color);
-  box-shadow: 0 2px 4px -2px rgb(0 0 0 / 40%);
+  backdrop-filter: blur(4px);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
   transition:
     display var(--animation-duration) allow-discrete,
     overlay var(--animation-duration) allow-discrete,
