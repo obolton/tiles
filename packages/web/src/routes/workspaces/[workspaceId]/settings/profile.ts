@@ -10,7 +10,13 @@ import type {
 
 async function loader({
   headers,
+  parameters,
 }: RequestProperties): RouteLoaderResult<ProfileProps> {
+  const { workspaceId } = parameters;
+  if (!workspaceId) {
+    throw new Error("Not Found");
+  }
+
   const sessionId = getSessionId(headers);
   if (!sessionId) {
     throw new Error("Unauthorized");
@@ -25,8 +31,8 @@ async function loader({
   }
 
   return {
-    title: "Profile - Tiles",
-    data: { user },
+    title: "Profile settings - Tiles",
+    data: { workspaceId, user },
   };
 }
 

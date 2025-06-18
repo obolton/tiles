@@ -42,8 +42,10 @@ export default function Workspace({
   invites,
 }: WorkspaceProps) {
   return (
-    <PageLayout>
-      <SidebarLayout sidebar={<Sidebar page="WORKSPACE" />}>
+    <PageLayout workspaceId={workspace.id}>
+      <SidebarLayout
+        sidebar={<Sidebar workspaceId={workspace.id} page="WORKSPACE" />}
+      >
         <header>
           <h2>Workspace</h2>
         </header>

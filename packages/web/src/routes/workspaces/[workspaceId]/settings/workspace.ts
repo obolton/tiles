@@ -10,24 +10,24 @@ import type {
 
 async function loader({
   headers,
+  parameters,
 }: RequestProperties): RouteLoaderResult<WorkspaceProps> {
+  const { workspaceId } = parameters;
+  if (!workspaceId) {
+    throw new Error("Not Found");
+  }
+
   const sessionId = getSessionId(headers);
   if (!sessionId) {
     throw new Error("Unauthorized");
   }
 
+  const options = { context: { sessionId } };
+
   const [workspace, users, invites] = await Promise.all([
-    client.workspaces.get.query(undefined, {
-      context: { sessionId },
-    }),
-    client.workspaces.listUsers.query(
-      { offset: 0 },
-      { context: { sessionId } },
-    ),
-    client.workspaces.listInvites.query(
-      { offset: 0 },
-      { context: { sessionId } },
-    ),
+    client.workspaces.get.query({ id: workspaceId }, options),
+    client.workspaces.listUsers.query({ offset: 0 }, options),
+    client.workspaces.listInvites.query({ offset: 0 }, options),
   ]);
 
   if (!workspace) {
@@ -35,7 +35,7 @@ async function loader({
   }
 
   return {
-    title: "Workspace - Tiles",
+    title: "Workspace settings - Tiles",
     data: { workspace, users, invites },
   };
 }

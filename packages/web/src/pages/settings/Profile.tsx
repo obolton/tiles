@@ -3,7 +3,7 @@ import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
 import client from "@/api/client";
 import { setSearchParams } from "@/utils/urls";
-import { redirectWithToast } from "@/utils/toasts";
+import { showToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
 import { uploadMedia } from "@/utils/media";
 import { user } from "@/utils/sessions";
@@ -14,6 +14,7 @@ import type FilePicker from "@/elements/filePicker/FilePicker";
 type User = NonNullable<AppRouterOutputs["users"]["getUserInfo"]>;
 
 export interface ProfileProps {
+  workspaceId: string;
   user: User;
 }
 
@@ -82,22 +83,21 @@ async function onSubmit(event: SubmitEvent) {
       email: (formData.get("email") as string | null) ?? "",
     });
     user.value = userInfo;
-    redirectWithToast(
-      "/settings/profile",
-      "Your settings were saved.",
-      "success",
-    );
+    showToast("Your settings were saved.", "success");
   } catch (error) {
-    delete form.dataset.pending;
     form.dataset.error = "true";
     handleError(error);
+  } finally {
+    delete form.dataset.pending;
   }
 }
 
-export default function Profile({ user }: ProfileProps) {
+export default function Profile({ workspaceId, user }: ProfileProps) {
   return (
-    <PageLayout>
-      <SidebarLayout sidebar={<Sidebar page="PROFILE" />}>
+    <PageLayout workspaceId={user.workspaces[0]?.id}>
+      <SidebarLayout
+        sidebar={<Sidebar workspaceId={workspaceId} page="PROFILE" />}
+      >
         <header>
           <h2>Profile</h2>
         </header>
