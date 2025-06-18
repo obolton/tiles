@@ -4,6 +4,7 @@ import { sendEmail } from "@/utils/email.ts";
 import { inviteToWorkspaceEmail } from "@/emails/inviteToWorkspace.ts";
 import type { Prisma } from "@prisma/client";
 import type {
+  GetWorkspaceSchema,
   InviteToWorkspaceSchema,
   AcceptWorkspaceInviteSchema,
   DeleteWorkspaceInviteSchema,
@@ -36,12 +37,18 @@ export const WORKSPACE_INVITE_FIELDS = {
 
 const INVITE_KEY_BYTES = 32;
 
-export async function getCurrentWorkspace({
-  workspaceId,
-}: AuthenticatedRequestContext) {
+export async function getWorkspace(
+  { id }: GetWorkspaceSchema,
+  { userId }: AuthenticatedRequestContext,
+) {
   return prisma.workspace.findUniqueOrThrow({
     where: {
-      id: workspaceId,
+      id,
+      memberships: {
+        some: {
+          userId,
+        },
+      },
     },
     select: WORKSPACE_FIELDS,
   });

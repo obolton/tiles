@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+export const GetWorkspaceSchema = z.object({
+  id: z.string().uuid(),
+});
+export type GetWorkspaceSchema = z.infer<typeof GetWorkspaceSchema>;
+
 export const UpdateWorkspaceSchema = z.object({
   name: z.string().min(1),
 });

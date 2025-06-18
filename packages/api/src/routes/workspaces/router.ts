@@ -1,6 +1,7 @@
 import { router } from "@/utils/trpc.ts";
 import { authenticatedProcedure } from "@/utils/middleware.ts";
 import {
+  GetWorkspaceSchema,
   UpdateWorkspaceSchema,
   InviteToWorkspaceSchema,
   AcceptWorkspaceInviteSchema,
@@ -10,7 +11,7 @@ import {
   ListWorkspaceUsersSchema,
 } from "./schema.ts";
 import {
-  getCurrentWorkspace,
+  getWorkspace,
   updateWorkspace,
   inviteToWorkspace,
   acceptWorkspaceInvite,
@@ -21,7 +22,9 @@ import {
 } from "./workspaces.ts";
 
 export default router({
-  get: authenticatedProcedure.query(({ ctx }) => getCurrentWorkspace(ctx)),
+  get: authenticatedProcedure
+    .input(GetWorkspaceSchema)
+    .query(({ input, ctx }) => getWorkspace(input, ctx)),
 
   update: authenticatedProcedure
     .input(UpdateWorkspaceSchema)
