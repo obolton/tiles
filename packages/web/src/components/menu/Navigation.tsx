@@ -126,7 +126,7 @@ export default function Navigation({
                   </li>
                 ))}
                 <li>
-                  <a href="/settings">
+                  <a href={`/workspaces/${workspaceId}/settings`}>
                     <SettingsIcon aria-hidden="true" />
                     Settings
                   </a>
