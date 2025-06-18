@@ -2,18 +2,27 @@ import Folders from "@/components/folders/Folders";
 import type { FoldersProps } from "@/components/folders/Folders";
 
 export interface SidebarProps {
+  workspace: { id: string; name: string };
   folders: FoldersProps["folders"];
   selectedFolderId: FoldersProps["selectedId"];
 }
 
-export default function Sidebar({ folders, selectedFolderId }: SidebarProps) {
+export default function Sidebar({
+  workspace,
+  folders,
+  selectedFolderId,
+}: SidebarProps) {
   return (
     <>
       <header>
-        <h1>Library</h1>
+        <h2>{workspace.name}</h2>
       </header>
 
-      <Folders selectedId={selectedFolderId} folders={folders} />
+      <Folders
+        workspaceId={workspace.id}
+        selectedId={selectedFolderId}
+        folders={folders}
+      />
     </>
   );
 }
