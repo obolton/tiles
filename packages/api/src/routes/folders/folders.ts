@@ -10,7 +10,7 @@ import type {
 } from "./schema.ts";
 import type { Prisma } from "@prisma/client";
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "../pageLinks/pageLinks.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
+import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
 
 const RESULTS_PER_PAGE = 15;
 
@@ -21,7 +21,7 @@ export const FOLDER_FIELDS = {
 
 export async function createFolder(
   { name }: CreateFolderSchema,
-  { userId, workspaceId }: AuthenticatedRequestContext,
+  { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.folder.create({
     data: {
@@ -35,7 +35,7 @@ export async function createFolder(
 
 export async function getFolder(
   { id }: GetFolderSchema,
-  { workspaceId }: AuthenticatedRequestContext,
+  { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.folder.findUniqueOrThrow({
     where: {
@@ -48,7 +48,7 @@ export async function getFolder(
 
 export async function updateFolder(
   { id, name }: UpdateFolderSchema,
-  { workspaceId }: AuthenticatedRequestContext,
+  { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.folder.update({
     where: {
@@ -64,7 +64,7 @@ export async function updateFolder(
 
 export async function deleteFolder(
   { id }: DeleteFolderSchema,
-  { workspaceId }: AuthenticatedRequestContext,
+  { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.folder.delete({
     where: {
@@ -77,7 +77,7 @@ export async function deleteFolder(
 
 export async function listFolders(
   { query, offset }: ListFoldersSchema,
-  { workspaceId }: AuthenticatedRequestContext,
+  { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.FolderWhereInput = query
     ? { name: { contains: query, mode: "insensitive" } }
@@ -102,7 +102,7 @@ export async function listFolders(
 
 export async function listPages(
   { id, query, offset }: ListPagesSchema,
-  { workspaceId }: AuthenticatedRequestContext,
+  { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to folder
@@ -144,7 +144,7 @@ export async function listPages(
 
 export async function movePageToFolder(
   { id, pageId }: MovePageToFolderSchema,
-  { workspaceId }: AuthenticatedRequestContext,
+  { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.folder.update({
     where: {
