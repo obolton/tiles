@@ -9,14 +9,12 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 export interface UnauthenticatedRequestContext {
   res: ServerResponse<IncomingMessage>;
   sessionId: null;
-  workspaceId: null;
   userId: null;
 }
 
 export interface AuthenticatedRequestContext {
   res: ServerResponse<IncomingMessage>;
   sessionId: string;
-  workspaceId: string;
   userId: string;
 }
 
@@ -71,7 +69,6 @@ export async function createContext({
   return {
     res,
     sessionId: null,
-    workspaceId: null,
     userId: null,
   };
 }

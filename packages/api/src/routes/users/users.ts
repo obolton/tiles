@@ -76,7 +76,6 @@ export async function getSessionContext(sessionId: string) {
   const session = await prisma.session.findUnique({
     where: { id: sessionId, expiresAt: { gt: new Date() } },
     select: {
-      workspaceId: true,
       userId: true,
     },
   });
