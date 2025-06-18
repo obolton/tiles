@@ -67,6 +67,7 @@ const TILES_FIELDS = {
 
 const PAGE_FIELDS = {
   id: true,
+  workspaceId: true,
   published: true,
   title: true,
   subtitle: true,
