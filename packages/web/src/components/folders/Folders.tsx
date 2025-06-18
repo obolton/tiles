@@ -43,6 +43,7 @@ export default function Folders({
           return;
         }
         const folder = await client.folders.create.mutate({
+          workspaceId,
           name: result.name,
         });
         folders.value = {
@@ -62,7 +63,7 @@ export default function Folders({
     if (!id || !pageId) {
       return;
     }
-    await client.folders.movePage.mutate({ id, pageId });
+    await client.folders.movePage.mutate({ workspaceId, id, pageId });
   }
 
   const basePath = `/workspaces/${workspaceId}`;
