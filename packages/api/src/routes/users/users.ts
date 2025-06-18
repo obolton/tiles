@@ -1,6 +1,9 @@
 import assert from "node:assert";
 import crypto from "node:crypto";
-import prisma, { type PrismaTransactionClient } from "@/database/prisma.ts";
+import prisma, {
+  type PrismaTransactionClient,
+  type ExtensionArgs,
+} from "@/database/prisma.ts";
 import { upload } from "@/utils/storage.ts";
 import {
   IMAGE_CONTENT_TYPES,
@@ -14,6 +17,22 @@ import type {
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 import { WORKSPACE_FIELDS } from "@/routes/workspaces/workspaces.ts";
+import type { Prisma } from "@prisma/client";
+
+export const USER_FIELDS = {
+  id: true,
+  username: true,
+  name: true,
+  email: true,
+  imageUrl: true,
+  workspaceMemberships: {
+    select: {
+      workspace: {
+        select: WORKSPACE_FIELDS,
+      },
+    },
+  },
+} as const satisfies Prisma.UserSelect<ExtensionArgs>;
 
 const PROFILE_IMAGES_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
 
@@ -71,20 +90,7 @@ export async function getUserInfo({ userId }: AuthenticatedRequestContext) {
   const { workspaceMemberships, ...userProperties } =
     await prisma.user.findUniqueOrThrow({
       where: { id: userId },
-      select: {
-        id: true,
-        username: true,
-        name: true,
-        email: true,
-        imageUrl: true,
-        workspaceMemberships: {
-          select: {
-            workspace: {
-              select: WORKSPACE_FIELDS,
-            },
-          },
-        },
-      },
+      select: USER_FIELDS,
     });
   return {
     ...userProperties,
@@ -96,7 +102,7 @@ export async function updateUser(
   { username, name, email, imageKey }: UpdateUserSchema,
   { userId }: AuthenticatedRequestContext,
 ) {
-  return prisma.user.update({
+  const { workspaceMemberships, ...userProperties } = await prisma.user.update({
     where: { id: userId },
     data: {
       username,
@@ -104,14 +110,12 @@ export async function updateUser(
       email,
       imageKey,
     },
-    select: {
-      id: true,
-      username: true,
-      name: true,
-      email: true,
-      imageUrl: true,
-    },
+    select: USER_FIELDS,
   });
+  return {
+    ...userProperties,
+    workspaces: workspaceMemberships.map((membership) => membership.workspace),
+  };
 }
 
 export async function isUsernameAvailable(
