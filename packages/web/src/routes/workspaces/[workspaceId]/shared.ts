@@ -10,20 +10,29 @@ import type {
 
 async function loader({
   headers,
+  parameters,
 }: RequestProperties): RouteLoaderResult<SharedProps> {
+  const { workspaceId } = parameters;
+  if (!workspaceId) {
+    throw new Error("Not Found");
+  }
+
   const sessionId = getSessionId(headers);
   if (!sessionId) {
     throw new Error("Unauthorized");
   }
 
-  const [folders, pages] = await Promise.all([
-    client.folders.list.query({ offset: 0 }, { context: { sessionId } }),
-    client.pages.listShared.query({ offset: 0 }, { context: { sessionId } }),
+  const options = { context: { sessionId } };
+
+  const [workspace, folders, pages] = await Promise.all([
+    client.workspaces.get.query({ id: workspaceId }, options),
+    client.folders.list.query({ offset: 0 }, options),
+    client.pages.listShared.query({ offset: 0 }, options),
   ]);
 
   return {
     title: "Shared with you - Tiles",
-    data: { folders, pages },
+    data: { workspace, folders, pages },
   };
 }
 

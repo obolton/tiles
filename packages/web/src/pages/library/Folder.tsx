@@ -11,6 +11,7 @@ import type { AppRouterOutputs } from "@/api/client";
 import type { FolderModalResult } from "@/components/folders/FolderModal";
 
 export interface FolderProps {
+  workspace: AppRouterOutputs["workspaces"]["get"];
   id: string;
   name: string;
   folders: AppRouterOutputs["folders"]["list"];
@@ -25,7 +26,13 @@ function renderPlaceholder(query: string) {
   );
 }
 
-export default function Folder({ id, name, folders, pages }: FolderProps) {
+export default function Folder({
+  workspace,
+  id,
+  name,
+  folders,
+  pages,
+}: FolderProps) {
   function editFolder() {
     showModal<FolderModalResult>("FOLDER", {
       showDelete: true,
@@ -47,9 +54,15 @@ export default function Folder({ id, name, folders, pages }: FolderProps) {
   }
 
   return (
-    <PageLayout>
+    <PageLayout workspaceId={workspace.id}>
       <SidebarLayout
-        sidebar={<Sidebar folders={folders} selectedFolderId={id} />}
+        sidebar={
+          <Sidebar
+            workspace={workspace}
+            folders={folders}
+            selectedFolderId={id}
+          />
+        }
       >
         <header>
           <h2>{name}</h2>

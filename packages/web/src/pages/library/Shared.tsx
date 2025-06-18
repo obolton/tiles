@@ -7,6 +7,7 @@ import PagesGrid from "@/components/grid/PagesGrid";
 import type { AppRouterOutputs } from "@/api/client";
 
 export interface SharedProps {
+  workspace: AppRouterOutputs["workspaces"]["get"];
   folders: AppRouterOutputs["folders"]["list"];
   pages: AppRouterOutputs["pages"]["listShared"];
 }
@@ -21,11 +22,17 @@ function renderPlaceholder(query: string) {
   );
 }
 
-export default function Shared({ folders, pages }: SharedProps) {
+export default function Shared({ workspace, folders, pages }: SharedProps) {
   return (
-    <PageLayout>
+    <PageLayout workspaceId={workspace.id}>
       <SidebarLayout
-        sidebar={<Sidebar folders={folders} selectedFolderId="SHARED" />}
+        sidebar={
+          <Sidebar
+            workspace={workspace}
+            folders={folders}
+            selectedFolderId="SHARED"
+          />
+        }
       >
         <header>
           <h2>Shared with you</h2>

@@ -7,6 +7,7 @@ import PagesGrid from "@/components/grid/PagesGrid";
 import type { AppRouterOutputs } from "@/api/client";
 
 export interface BookmarksProps {
+  workspace: AppRouterOutputs["workspaces"]["get"];
   folders: AppRouterOutputs["folders"]["list"];
   pages: AppRouterOutputs["bookmarks"]["list"];
 }
@@ -19,11 +20,21 @@ function renderPlaceholder(query: string) {
   );
 }
 
-export default function Bookmarks({ folders, pages }: BookmarksProps) {
+export default function Bookmarks({
+  workspace,
+  folders,
+  pages,
+}: BookmarksProps) {
   return (
-    <PageLayout>
+    <PageLayout workspaceId={workspace.id}>
       <SidebarLayout
-        sidebar={<Sidebar folders={folders} selectedFolderId="BOOKMARKS" />}
+        sidebar={
+          <Sidebar
+            workspace={workspace}
+            folders={folders}
+            selectedFolderId="BOOKMARKS"
+          />
+        }
       >
         <header>
           <h2>Bookmarks</h2>

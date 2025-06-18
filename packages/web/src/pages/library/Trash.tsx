@@ -7,6 +7,7 @@ import DeletedPagesGrid from "@/components/grid/DeletedPagesGrid";
 import type { AppRouterOutputs } from "@/api/client";
 
 export interface TrashProps {
+  workspace: AppRouterOutputs["workspaces"]["get"];
   folders: AppRouterOutputs["folders"]["list"];
   pages: AppRouterOutputs["pages"]["listDeleted"];
 }
@@ -19,11 +20,17 @@ function renderPlaceholder(query: string) {
   );
 }
 
-export default function Trash({ folders, pages }: TrashProps) {
+export default function Trash({ workspace, folders, pages }: TrashProps) {
   return (
-    <PageLayout>
+    <PageLayout workspaceId={workspace.id}>
       <SidebarLayout
-        sidebar={<Sidebar folders={folders} selectedFolderId="TRASH" />}
+        sidebar={
+          <Sidebar
+            workspace={workspace}
+            folders={folders}
+            selectedFolderId="TRASH"
+          />
+        }
       >
         <header>
           <h2>Trash</h2>

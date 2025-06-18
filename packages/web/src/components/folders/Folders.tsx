@@ -18,6 +18,7 @@ export interface Folder {
 }
 
 export interface FoldersProps {
+  workspaceId: string;
   selectedId?: SYSTEM_FOLDER | (string & {});
   folders: {
     folders: Folder[];
@@ -28,6 +29,7 @@ export interface FoldersProps {
 registerModal("FOLDER", () => import("./FolderModal"));
 
 export default function Folders({
+  workspaceId,
   selectedId = "RECENT",
   folders: initialFolders,
 }: FoldersProps) {
@@ -63,29 +65,31 @@ export default function Folders({
     await client.folders.movePage.mutate({ id, pageId });
   }
 
+  const basePath = `/workspaces/${workspaceId}`;
+
   return (
     <nav>
       <ul className="navigation-menu" on:dnd-drop={onDrop}>
         <li aria-current={selectedId === "RECENT" ? "page" : "false"}>
-          <a href="/library">
+          <a href={basePath}>
             <LibraryIcon aria-hidden="true" />
             <span>Your pages</span>
           </a>
         </li>
         <li aria-current={selectedId === "SHARED" ? "page" : "false"}>
-          <a href="/library/shared">
+          <a href={`${basePath}/shared`}>
             <PeopleIcon aria-hidden="true" />
             Shared with you
           </a>
         </li>
         <li aria-current={selectedId === "BOOKMARKS" ? "page" : "false"}>
-          <a href="/library/bookmarks">
+          <a href={`${basePath}/bookmarks`}>
             <BookmarkIcon aria-hidden="true" />
             <span>Bookmarks</span>
           </a>
         </li>
         <li aria-current={selectedId === "TRASH" ? "page" : "false"}>
-          <a href="/library/trash">
+          <a href={`${basePath}/trash`}>
             <TrashIcon aria-hidden="true" />
             <span>Trash</span>
           </a>
@@ -98,7 +102,7 @@ export default function Folders({
               data-id={folder.id}
               data-drop="true"
             >
-              <a href={`/library/${folder.id}`}>
+              <a href={`${basePath}/folders/${folder.id}`}>
                 <FolderIcon aria-hidden="true" />
                 <span>{folder.name}</span>
               </a>

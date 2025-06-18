@@ -9,6 +9,7 @@ import { handleError } from "@/utils/errors";
 import type { AppRouterOutputs } from "@/api/client";
 
 export interface LibraryProps {
+  workspace: AppRouterOutputs["workspaces"]["get"];
   folders: AppRouterOutputs["folders"]["list"];
   pages: AppRouterOutputs["pages"]["list"];
 }
@@ -46,11 +47,17 @@ function renderPlaceholder(query: string) {
   );
 }
 
-export default function Library({ folders, pages }: LibraryProps) {
+export default function Library({ workspace, folders, pages }: LibraryProps) {
   return (
-    <PageLayout>
+    <PageLayout workspaceId={workspace.id}>
       <SidebarLayout
-        sidebar={<Sidebar folders={folders} selectedFolderId="RECENT" />}
+        sidebar={
+          <Sidebar
+            workspace={workspace}
+            folders={folders}
+            selectedFolderId="RECENT"
+          />
+        }
       >
         <header>
           <h2>Your pages</h2>

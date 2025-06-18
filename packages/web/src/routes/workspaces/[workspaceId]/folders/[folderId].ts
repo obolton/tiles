@@ -12,28 +12,28 @@ async function loader({
   headers,
   parameters,
 }: RequestProperties): RouteLoaderResult<FolderProps> {
+  const { workspaceId, folderId } = parameters;
+  if (!workspaceId || !folderId) {
+    throw new Error("Not Found");
+  }
+
   const sessionId = getSessionId(headers);
   if (!sessionId) {
     throw new Error("Unauthorized");
   }
 
-  const id = parameters.id;
-  if (!id) {
-    throw new Error("Not Found");
-  }
+  const options = { context: { sessionId } };
 
-  const [folder, folders, pages] = await Promise.all([
-    client.folders.get.query({ id }, { context: { sessionId } }),
-    client.folders.list.query({ offset: 0 }, { context: { sessionId } }),
-    client.folders.listPages.query(
-      { id, offset: 0 },
-      { context: { sessionId } },
-    ),
+  const [workspace, folder, folders, pages] = await Promise.all([
+    client.workspaces.get.query({ id: workspaceId }, options),
+    client.folders.get.query({ id: folderId }, options),
+    client.folders.list.query({ offset: 0 }, options),
+    client.folders.listPages.query({ id: folderId, offset: 0 }, options),
   ]);
 
   return {
     title: `${folder.name} - Tiles`,
-    data: { id: folder.id, name: folder.name, folders, pages },
+    data: { workspace, id: folder.id, name: folder.name, folders, pages },
   };
 }
 
