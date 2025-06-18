@@ -18,6 +18,7 @@ import { showToast } from "@/utils/toasts";
 import { sharePage } from "@/utils/sharing";
 
 export interface NavigationProps {
+  workspaceId: string;
   showBookmark?: boolean;
   showTableOfContents?: boolean;
   showShare?: boolean;
@@ -37,6 +38,7 @@ async function createNewPage(event: Event) {
 }
 
 export default function Navigation({
+  workspaceId,
   showBookmark = false,
   showTableOfContents = false,
   showShare = false,
@@ -139,7 +141,11 @@ export default function Navigation({
             </popover-menu>
           </li>
           <li>
-            <a href="/library" className="floating" data-tooltip="Your library">
+            <a
+              href={`/workspaces/${workspaceId}`}
+              className="floating"
+              data-tooltip="Your library"
+            >
               <LibraryIcon aria-hidden="true" />
             </a>
           </li>

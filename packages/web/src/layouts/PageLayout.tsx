@@ -24,6 +24,7 @@ import "@/styles/themes.css";
 import type { JSX } from "@/jsx/jsx";
 
 export interface PageLayoutProps {
+  workspaceId?: string;
   showBookmark?: boolean;
   showTableOfContents?: boolean;
   showShare?: boolean;
@@ -31,6 +32,7 @@ export interface PageLayoutProps {
 }
 
 export default function PageLayout({
+  workspaceId,
   showBookmark,
   showTableOfContents,
   showShare,
@@ -38,12 +40,16 @@ export default function PageLayout({
 }: PageLayoutProps) {
   return (
     <>
-      <Navigation
-        showBookmark={showBookmark}
-        showTableOfContents={showTableOfContents}
-        showShare={showShare}
-      />
-      <SignIn />
+      {workspaceId ? (
+        <Navigation
+          workspaceId={workspaceId}
+          showBookmark={showBookmark}
+          showTableOfContents={showTableOfContents}
+          showShare={showShare}
+        />
+      ) : (
+        <SignIn />
+      )}
 
       {children}
 
