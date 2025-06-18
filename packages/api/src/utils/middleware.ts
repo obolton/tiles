@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import prisma from "@/database/prisma.ts";
 import { invalidateCachedPage } from "@/utils/cdn.ts";
 import { publicProcedure } from "@/utils/trpc.ts";
+import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 
 export const authenticatedProcedure = publicProcedure.use(async (opts) => {
   const { ctx } = opts;
@@ -54,3 +55,41 @@ export const pageUpdateProcedure = authenticatedPageProcedure.use(
     return result;
   },
 );
+
+const AuthenticatedWorkspaceProcedureSchema = z.object({
+  workspaceId: z.string().uuid(),
+});
+
+export interface AuthenticatedWorkspaceProcedureContext
+  extends AuthenticatedRequestContext {
+  workspaceId: string;
+}
+
+export const authenticatedWorkspaceProcedure = authenticatedProcedure
+  .input(AuthenticatedWorkspaceProcedureSchema)
+  .use(async (opts) => {
+    const { ctx, input } = opts;
+    const { workspaceId } = input;
+
+    const membership = await prisma.workspaceMembership.findUnique({
+      where: {
+        id: {
+          userId: ctx.userId,
+          workspaceId,
+        },
+      },
+      select: { workspaceId: true },
+    });
+
+    if (!membership) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    return opts.next<AuthenticatedWorkspaceProcedureContext>({
+      ctx: {
+        ...ctx,
+        workspaceId: membership.workspaceId,
+      },
+      input,
+    });
+  });
