@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const GetWorkspaceSchema = z.object({
-  id: z.string().uuid(),
+  workspaceId: z.string().uuid(),
 });
 export type GetWorkspaceSchema = z.infer<typeof GetWorkspaceSchema>;
 

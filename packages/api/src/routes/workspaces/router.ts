@@ -1,5 +1,8 @@
 import { router } from "@/utils/trpc.ts";
-import { authenticatedProcedure } from "@/utils/middleware.ts";
+import {
+  authenticatedProcedure,
+  authenticatedWorkspaceProcedure,
+} from "@/utils/middleware.ts";
 import {
   GetWorkspaceSchema,
   UpdateWorkspaceSchema,
@@ -22,15 +25,15 @@ import {
 } from "./workspaces.ts";
 
 export default router({
-  get: authenticatedProcedure
+  get: authenticatedWorkspaceProcedure
     .input(GetWorkspaceSchema)
-    .query(({ input, ctx }) => getWorkspace(input, ctx)),
+    .query(({ input }) => getWorkspace(input)),
 
-  update: authenticatedProcedure
+  update: authenticatedWorkspaceProcedure
     .input(UpdateWorkspaceSchema)
     .mutation(({ input, ctx }) => updateWorkspace(input, ctx)),
 
-  invite: authenticatedProcedure
+  invite: authenticatedWorkspaceProcedure
     .input(InviteToWorkspaceSchema)
     .mutation(({ input, ctx }) => inviteToWorkspace(input, ctx)),
 
@@ -38,19 +41,19 @@ export default router({
     .input(AcceptWorkspaceInviteSchema)
     .mutation(async ({ input, ctx }) => acceptWorkspaceInvite(input, ctx)),
 
-  deleteInvite: authenticatedProcedure
+  deleteInvite: authenticatedWorkspaceProcedure
     .input(DeleteWorkspaceInviteSchema)
     .mutation(async ({ input, ctx }) => deleteWorkspaceInvite(input, ctx)),
 
-  listInvites: authenticatedProcedure
+  listInvites: authenticatedWorkspaceProcedure
     .input(ListWorkspaceInvitesSchema)
     .query(async ({ input, ctx }) => listWorkspaceInvites(input, ctx)),
 
-  remove: authenticatedProcedure
+  remove: authenticatedWorkspaceProcedure
     .input(RemoveFromWorkspaceSchema)
     .mutation(({ input, ctx }) => removeFromWorkspace(input, ctx)),
 
-  listUsers: authenticatedProcedure
+  listUsers: authenticatedWorkspaceProcedure
     .input(ListWorkspaceUsersSchema)
     .query(async ({ input, ctx }) => listWorkspaceUsers(input, ctx)),
 });
