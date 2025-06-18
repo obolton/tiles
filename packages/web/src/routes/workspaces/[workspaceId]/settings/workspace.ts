@@ -25,9 +25,9 @@ async function loader({
   const options = { context: { sessionId } };
 
   const [workspace, users, invites] = await Promise.all([
-    client.workspaces.get.query({ id: workspaceId }, options),
-    client.workspaces.listUsers.query({ offset: 0 }, options),
-    client.workspaces.listInvites.query({ offset: 0 }, options),
+    client.workspaces.get.query({ workspaceId }, options),
+    client.workspaces.listUsers.query({ workspaceId, offset: 0 }, options),
+    client.workspaces.listInvites.query({ workspaceId, offset: 0 }, options),
   ]);
 
   if (!workspace) {

@@ -25,7 +25,7 @@ async function loader({
   const options = { context: { sessionId } };
 
   const [workspace, folders, pages] = await Promise.all([
-    client.workspaces.get.query({ id: workspaceId }, options),
+    client.workspaces.get.query({ workspaceId }, options),
     client.folders.list.query({ workspaceId, offset: 0 }, options),
     client.pages.listDeleted.query({ offset: 0 }, options),
   ]);
