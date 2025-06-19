@@ -41,6 +41,7 @@ export default function Trash({ workspace, folders, pages }: TrashProps) {
           pages={pages}
           search={(query, offset) =>
             client.pages.listDeleted.query({
+              workspaceId: workspace.id,
               query: query || undefined,
               offset,
             })

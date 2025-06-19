@@ -40,12 +40,14 @@ export default function Folder({
       async onConfirm(result) {
         if (result === "DELETE") {
           await client.folders.delete.mutate({
+            workspaceId: workspace.id,
             id,
           });
           redirectWithToast("/library", "The folder was deleted.", "success");
           return;
         }
         await client.folders.update.mutate({
+          workspaceId: workspace.id,
           id,
           name: result.name,
         });
@@ -82,6 +84,7 @@ export default function Folder({
           pages={pages}
           search={(query, offset) =>
             client.folders.listPages.query({
+              workspaceId: workspace.id,
               id,
               query: query || undefined,
               offset,

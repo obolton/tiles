@@ -24,19 +24,6 @@ export interface NavigationProps {
   showShare?: boolean;
 }
 
-async function createNewPage(event: Event) {
-  const button = event.currentTarget as HTMLButtonElement;
-  button.classList.add("pending");
-  try {
-    const { id } = await client.pages.create.mutate({ title: "New page" });
-    window.open(`/pages/${id}?edit=true`, "_blank");
-  } catch (error) {
-    handleError(error);
-  } finally {
-    button.classList.remove("pending");
-  }
-}
-
 export default function Navigation({
   workspaceId,
   showBookmark = false,
@@ -66,6 +53,22 @@ export default function Navigation({
         }
       }
     });
+  }
+
+  async function createNewPage(event: Event) {
+    const button = event.currentTarget as HTMLButtonElement;
+    button.classList.add("pending");
+    try {
+      const { id } = await client.pages.create.mutate({
+        workspaceId,
+        title: "New page",
+      });
+      window.open(`/pages/${id}?edit=true`, "_blank");
+    } catch (error) {
+      handleError(error);
+    } finally {
+      button.classList.remove("pending");
+    }
   }
 
   const onClickBookmark = async () => {

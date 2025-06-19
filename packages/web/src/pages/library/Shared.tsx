@@ -43,6 +43,7 @@ export default function Shared({ workspace, folders, pages }: SharedProps) {
           pages={pages}
           search={(query, offset) =>
             client.pages.listShared.query({
+              workspaceId: workspace.id,
               query: query || undefined,
               offset,
             })

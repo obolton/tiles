@@ -14,40 +14,43 @@ export interface LibraryProps {
   pages: AppRouterOutputs["pages"]["list"];
 }
 
-async function createNewPage() {
-  try {
-    const { id } = await client.pages.create.mutate({ title: "New page" });
-    window.open(`/pages/${id}?edit=true`);
-  } catch (error) {
-    handleError(error);
-  }
-}
-
-function renderPlaceholder(query: string) {
-  return (
-    <Placeholder
-      actions={
-        query ? undefined : (
-          <button
-            className="floating"
-            type="button"
-            aria-label="New page"
-            data-tooltip="Create a new page"
-            onclick={createNewPage}
-          >
-            <NewIcon aria-hidden="true" />
-          </button>
-        )
-      }
-    >
-      {query
-        ? "There are no results."
-        : "Get started by creating your first page."}
-    </Placeholder>
-  );
-}
-
 export default function Library({ workspace, folders, pages }: LibraryProps) {
+  async function createNewPage() {
+    try {
+      const { id } = await client.pages.create.mutate({
+        workspaceId: workspace.id,
+        title: "New page",
+      });
+      window.open(`/pages/${id}?edit=true`);
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  function renderPlaceholder(query: string) {
+    return (
+      <Placeholder
+        actions={
+          query ? undefined : (
+            <button
+              className="floating"
+              type="button"
+              aria-label="New page"
+              data-tooltip="Create a new page"
+              on:click={createNewPage}
+            >
+              <NewIcon aria-hidden="true" />
+            </button>
+          )
+        }
+      >
+        {query
+          ? "There are no results."
+          : "Get started by creating your first page."}
+      </Placeholder>
+    );
+  }
+
   return (
     <PageLayout workspaceId={workspace.id}>
       <SidebarLayout
@@ -67,7 +70,11 @@ export default function Library({ workspace, folders, pages }: LibraryProps) {
           inputPlaceholder="Search pages"
           pages={pages}
           search={(query, offset) =>
-            client.pages.list.query({ query: query || undefined, offset })
+            client.pages.list.query({
+              workspaceId: workspace.id,
+              query: query || undefined,
+              offset,
+            })
           }
           renderPlaceholder={renderPlaceholder}
           draggable
