@@ -1,6 +1,5 @@
 import type {
   ClientCollection,
-  ClientCollectionTile,
   ClientImageTile,
   ClientLinkTile,
   ClientMapTile,
@@ -21,7 +20,6 @@ export type ReactiveTile<T extends ClientTile = ClientTile> =
         ReactiveRecord<Omit<T, "id" | "placementId" | "type">>
     : never;
 
-export type CollectionProperties = ReactiveTile<ClientCollectionTile>;
 export type ImageProperties = ReactiveTile<ClientImageTile>;
 export type LinkProperties = ReactiveTile<ClientLinkTile>;
 export type MapProperties = ReactiveTile<ClientMapTile>;
@@ -31,7 +29,6 @@ export type TextProperties = ReactiveTile<ClientTextTile>;
 export type VideoProperties = ReactiveTile<ClientVideoTile>;
 
 export type Tile =
-  | CollectionProperties
   | ImageProperties
   | LinkProperties
   | MapProperties

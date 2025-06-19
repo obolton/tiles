@@ -6,7 +6,6 @@ import TextTile from "@/components/tiles/TextTile";
 import MapTile from "@/components/tiles/MapTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
-import CollectionTile from "@/components/tiles/CollectionTile";
 import TableTile from "@/components/tiles/TableTile";
 import { ReactiveValue, Computed } from "@/utils/reactivity";
 import type { Tile } from "@/types/tiles";
@@ -68,8 +67,6 @@ function getTileComponent(
       return <LinkTile {...tile} editor={editor} hasFocus={hasFocus} />;
     case "PAGE_LINK":
       return <PageLinkTile {...tile} editor={editor} />;
-    case "COLLECTION":
-      return <CollectionTile {...tile} editor={editor} />;
     case "TABLE":
       return <TableTile {...tile} editor={editor} hasFocus={hasFocus} />;
     default:
