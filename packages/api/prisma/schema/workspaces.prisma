@@ -5,7 +5,6 @@ model Workspace {
   name      String
 
   memberships WorkspaceMembership[]
-  sessions    Session[]
   pages       Page[]
   folders     Folder[]
   invites     WorkspaceInvite[]

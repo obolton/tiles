@@ -17,17 +17,14 @@ model Key {
 }
 
 model Session {
-  id          String   @id @db.VarChar(88)
-  createdAt   DateTime @default(now()) @map("created_at")
-  expiresAt   DateTime @map("expires_at")
-  userId      String   @map("user_id") @db.Uuid
-  workspaceId String   @map("workspace_id") @db.Uuid
+  id        String   @id @db.VarChar(88)
+  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt DateTime @map("expires_at")
+  userId    String   @map("user_id") @db.Uuid
 
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@index([workspaceId])
   @@index([expiresAt])
   @@map("sessions")
 }
