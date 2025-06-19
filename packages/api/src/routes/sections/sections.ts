@@ -1,6 +1,10 @@
 import { Prisma } from "@prisma/client";
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
-import type { CreateSectionSchema, DeleteSectionSchema } from "./schema.ts";
+import type {
+  CreateSectionSchema,
+  UpdateSectionSchema,
+  DeleteSectionSchema,
+} from "./schema.ts";
 
 export const SECTION_FIELDS = {
   id: true,
@@ -13,6 +17,25 @@ export const SECTION_FIELDS = {
 export async function createSection({ pageId, title }: CreateSectionSchema) {
   return prisma.collection.create({
     data: { pageId, type: "SECTION", title },
+    select: SECTION_FIELDS,
+  });
+}
+
+export async function updateSection({
+  pageId,
+  id,
+  layout,
+  width,
+}: UpdateSectionSchema) {
+  return prisma.collection.update({
+    where: {
+      pageId,
+      id,
+    },
+    data: {
+      layout,
+      width,
+    },
     select: SECTION_FIELDS,
   });
 }
