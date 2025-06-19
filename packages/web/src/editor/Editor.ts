@@ -224,6 +224,13 @@ export default class Editor {
     return section;
   }
 
+  async updateSection(data: OmitPageId<AppRouterInputs["sections"]["update"]>) {
+    return await client.sections.update.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+  }
+
   async deleteSection(
     { id }: OmitPageId<AppRouterInputs["sections"]["delete"]>,
     transition: TransitionFunction = immediateTransition,
@@ -489,17 +496,6 @@ export default class Editor {
 
   async updateVideo(data: OmitPageId<AppRouterInputs["videos"]["update"]>) {
     return await client.videos.update.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  // Collections
-
-  async updateCollection(
-    data: OmitPageId<AppRouterInputs["collections"]["update"]>,
-  ) {
-    return await client.collections.update.mutate({
       pageId: this.pageId,
       ...data,
     });

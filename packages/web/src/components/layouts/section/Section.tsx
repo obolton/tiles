@@ -31,7 +31,7 @@ export default function Section({ editor, section }: SectionProps) {
       return;
     }
     try {
-      await editor.updateCollection({
+      await editor.updateSection({
         id: section.id,
         layout: value,
       });
@@ -45,7 +45,7 @@ export default function Section({ editor, section }: SectionProps) {
 
   const toggleFullWidth = async () => {
     try {
-      await editor.updateCollection({
+      await editor.updateSection({
         id: section.id,
         width: fullWidth.value ? "DEFAULT" : "VIEWPORT",
       });
