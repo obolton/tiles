@@ -28,6 +28,7 @@ import type {
   RequestContext,
   AuthenticatedRequestContext,
 } from "@/utils/trpc.ts";
+import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
 
 const RESULTS_PER_PAGE = 15;
 
@@ -226,7 +227,7 @@ export async function getPageById(
 
 export async function listPages(
   { query, offset }: ListPagesSchema,
-  { userId, workspaceId }: AuthenticatedRequestContext,
+  { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
     ? {
@@ -261,7 +262,7 @@ export async function listPages(
 
 export async function listSharedPages(
   { query, offset }: ListPagesSchema,
-  { userId }: AuthenticatedRequestContext,
+  { userId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
     ? {
@@ -292,7 +293,7 @@ export async function listSharedPages(
 
 export async function listDeletedPages(
   { query, offset }: ListPagesSchema,
-  { userId, workspaceId }: AuthenticatedRequestContext,
+  { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
     ? {
@@ -330,7 +331,7 @@ export async function listDeletedPages(
 
 export async function createPage(
   { title }: CreatePageSchema,
-  { userId, workspaceId }: AuthenticatedRequestContext,
+  { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.$transaction(async (transaction) => {
     const page = await transaction.page.create({
@@ -391,10 +392,10 @@ export async function updatePage(
     font,
     coverImageKey,
   }: UpdatePageSchema,
-  { userId, workspaceId }: AuthenticatedRequestContext,
+  { userId }: AuthenticatedRequestContext,
 ) {
   return prisma.page.update({
-    where: { workspaceId, id: pageId, authorId: userId, deletedAt: null },
+    where: { id: pageId, authorId: userId, deletedAt: null },
     data: {
       published,
       title,
@@ -411,10 +412,10 @@ export async function updatePage(
 
 export async function deletePage(
   { pageId }: DeletePageSchema,
-  { userId, workspaceId }: AuthenticatedRequestContext,
+  { userId }: AuthenticatedRequestContext,
 ) {
   return prisma.page.update({
-    where: { workspaceId, id: pageId, authorId: userId, deletedAt: null },
+    where: { id: pageId, authorId: userId, deletedAt: null },
     data: { deletedAt: new Date() },
     select: { id: true },
   });
@@ -422,7 +423,7 @@ export async function deletePage(
 
 export async function restorePage(
   { pageId }: RestorePageSchema,
-  { userId, workspaceId }: AuthenticatedRequestContext,
+  { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.page.update({
     where: {
@@ -439,7 +440,7 @@ export async function restorePage(
 export async function emptyTrash({
   userId,
   workspaceId,
-}: AuthenticatedRequestContext) {
+}: AuthenticatedWorkspaceProcedureContext) {
   return prisma.page.deleteMany({
     where: { workspaceId, authorId: userId, deletedAt: { not: null } },
   });

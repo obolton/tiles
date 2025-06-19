@@ -1,6 +1,6 @@
 import { router, publicProcedure } from "@/utils/trpc.ts";
 import {
-  authenticatedProcedure,
+  authenticatedWorkspaceProcedure,
   pageUpdateProcedure,
 } from "@/utils/middleware.ts";
 import {
@@ -29,19 +29,19 @@ export default router({
     .input(GetPageByIdSchema)
     .query(async ({ ctx, input }) => getPageById(input, ctx)),
 
-  list: authenticatedProcedure
+  list: authenticatedWorkspaceProcedure
     .input(ListPagesSchema)
     .query(async ({ input, ctx }) => listPages(input, ctx)),
 
-  listShared: authenticatedProcedure
+  listShared: authenticatedWorkspaceProcedure
     .input(ListPagesSchema)
     .query(async ({ input, ctx }) => listSharedPages(input, ctx)),
 
-  listDeleted: authenticatedProcedure
+  listDeleted: authenticatedWorkspaceProcedure
     .input(ListPagesSchema)
     .query(async ({ input, ctx }) => listDeletedPages(input, ctx)),
 
-  create: authenticatedProcedure
+  create: authenticatedWorkspaceProcedure
     .input(CreatePageSchema)
     .mutation(async ({ input, ctx }) => createPage(input, ctx)),
 
@@ -53,11 +53,11 @@ export default router({
     .input(DeletePageSchema)
     .mutation(async ({ input, ctx }) => deletePage(input, ctx)),
 
-  restore: authenticatedProcedure
+  restore: authenticatedWorkspaceProcedure
     .input(RestorePageSchema)
     .mutation(async ({ input, ctx }) => restorePage(input, ctx)),
 
-  emptyTrash: authenticatedProcedure.mutation(async ({ ctx }) =>
+  emptyTrash: authenticatedWorkspaceProcedure.mutation(async ({ ctx }) =>
     emptyTrash(ctx),
   ),
 });
