@@ -5,6 +5,10 @@ theme-selector {
   &.inline {
     display: inline-block;
     vertical-align: top;
+
+    & swipe-view::part(buttons) {
+      left: -28px;
+    }
   }
 
   &::before {

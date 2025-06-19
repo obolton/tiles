@@ -1,4 +1,6 @@
 import css from "./SwipeView.css?inline";
+import upIcon from "@/icons/arrow-up.svg?raw";
+import downIcon from "@/icons/arrow-down.svg?raw";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -27,6 +29,8 @@ export default class SwipeView extends HTMLElement {
 
   private carousel: HTMLElement;
   private items: HTMLUListElement;
+  private previousButton: HTMLButtonElement;
+  private nextButton: HTMLButtonElement;
   private itemHeights: number[] = [];
   private height = 0;
   private intersectionObserver: IntersectionObserver;
@@ -52,7 +56,28 @@ export default class SwipeView extends HTMLElement {
     this.items.id = "items";
     this.carousel.appendChild(this.items);
 
-    shadow.append(this.carousel);
+    this.previousButton = document.createElement("button");
+    this.previousButton.type = "button";
+    this.previousButton.ariaLabel = "Previous theme";
+    this.previousButton.disabled = true;
+    this.previousButton.innerHTML = upIcon;
+    this.previousButton.addEventListener("pointerdown", this);
+    this.previousButton.addEventListener("click", this);
+
+    this.nextButton = document.createElement("button");
+    this.nextButton.type = "button";
+    this.previousButton.ariaLabel = "Next theme";
+    this.nextButton.disabled = true;
+    this.nextButton.innerHTML = downIcon;
+    this.nextButton.addEventListener("pointerdown", this);
+    this.nextButton.addEventListener("click", this);
+
+    const buttons = document.createElement("div");
+    buttons.id = "buttons";
+    buttons.part = "buttons";
+    buttons.append(this.previousButton, this.nextButton);
+
+    shadow.append(this.carousel, buttons);
 
     this.intersectionObserver = new IntersectionObserver(
       this.intersectionObserverCallback.bind(this),
@@ -76,6 +101,9 @@ export default class SwipeView extends HTMLElement {
     if (this.value < this.max) {
       this.appendItem(this.value + 1);
     }
+
+    this.previousButton.disabled = this.value === 0;
+    this.nextButton.disabled = this.value === this.max;
 
     addEventListener("keydown", this);
   }
@@ -280,14 +308,39 @@ export default class SwipeView extends HTMLElement {
     if (this.value !== element.value) {
       this.value = element.value;
       this.dispatchEvent(new Event("change"));
+
+      this.previousButton.disabled = element.value === 0;
+      this.nextButton.disabled = element.value === this.max;
     }
   }
 
   handleEvent(event: Event) {
     switch (event.type) {
+      case "pointerdown":
+        return this.handlePointerDown(event as PointerEvent);
+      case "click":
+        return this.handleClick(event as MouseEvent);
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
     }
+  }
+
+  private handlePointerDown(event: PointerEvent) {
+    if (event.currentTarget === this.previousButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.previous();
+    }
+    if (event.currentTarget === this.nextButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.next();
+    }
+  }
+
+  private handleClick(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
   }
 
   private handleKeyDown(event: KeyboardEvent) {

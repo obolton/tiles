@@ -42,3 +42,63 @@
 ::slotted(*) {
   margin: 0 !important;
 }
+
+#buttons {
+  position: absolute;
+  top: calc(50% - 24px);
+  left: -12px;
+  width: 16px;
+  height: 48px;
+  display: flex;
+  flex-direction: column;
+  transition:
+    opacity var(--animation-duration-short) var(--easing),
+    scale var(--animation-duration-short) var(--easing);
+  backdrop-filter: saturate(200%) brightness(120%) blur(12px);
+  border-radius: 8px;
+  overflow: hidden;
+  opacity: 0.5;
+
+  &:hover {
+    opacity: 1;
+    scale: 1.1;
+  }
+
+  & > button {
+    padding: 0;
+    margin: 0;
+    flex: 1;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    appearance: none;
+    border: none;
+    background: rgb(255 255 255 / 60%);
+    transition: background-color var(--animation-duration-short) var(--easing);
+
+    & > svg {
+      width: 100%;
+      height: 100%;
+      fill: var(--icon-color);
+      transition: opacity var(--animation-duration) var(--easing);
+    }
+
+    &:enabled {
+      cursor: pointer;
+    }
+
+    &:enabled:hover {
+      background-color: rgb(255 255 255 / 70%);
+    }
+
+    &:enabled:active {
+      background-color: rgb(255 255 255 / 50%);
+    }
+
+    &:disabled {
+      & > svg {
+        opacity: 0.25;
+      }
+    }
+  }
+}
