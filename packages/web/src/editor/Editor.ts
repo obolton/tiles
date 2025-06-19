@@ -64,7 +64,6 @@ export default class Editor {
   readonly pageId: string;
   readonly isEditable: Reactive<boolean>;
   readonly title: Reactive<string>;
-  readonly subtitle: Reactive<string | null>;
   readonly color: Reactive<Color>;
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
@@ -84,7 +83,6 @@ export default class Editor {
     this.pageId = page.id;
     this.isEditable = flag(isEditMode());
     this.title = reactive(page.title);
-    this.subtitle = reactive(page.subtitle);
     this.color = reactive(page.color);
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
@@ -161,17 +159,12 @@ export default class Editor {
     }
   }
 
-  async setPageTitle(title?: string, subtitle?: string) {
-    if (typeof title === "string") {
-      this.title.value = title;
-    }
-    if (typeof subtitle === "string") {
-      this.subtitle.value = subtitle;
-    }
+  async setPageTitle(title: string) {
+    this.title.value = title;
+    document.title = `${title} - Tiles`;
     return client.pages.update.mutate({
       pageId: this.pageId,
       title,
-      subtitle,
     });
   }
 
@@ -327,7 +320,7 @@ export default class Editor {
         const title = block?.children
           .filter((node) => node.type === "text")
           .map((node) => node.text)
-          .join()
+          .join("")
           .trim();
 
         if (title) {
