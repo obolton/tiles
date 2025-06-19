@@ -58,9 +58,6 @@ const TILES_FIELDS = {
   pageLink: {
     select: PAGE_LINK_FIELDS,
   },
-  collection: {
-    select: COLLECTION_FIELDS,
-  },
   table: {
     select: TABLE_WITH_DATA_FIELDS,
   },
@@ -125,7 +122,7 @@ export function formatTile({
     height,
     parentCollectionId,
   };
-  const { image, video, text, map, link, pageLink, collection, table } = tile;
+  const { image, video, text, map, link, pageLink, table } = tile;
 
   if (image) {
     return {
@@ -172,14 +169,6 @@ export function formatTile({
       type: "PAGE_LINK",
       ...base,
       ...pageLink,
-    };
-  }
-
-  if (collection) {
-    return {
-      ...base,
-      ...collection,
-      type: "COLLECTION",
     };
   }
 

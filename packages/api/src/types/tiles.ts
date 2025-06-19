@@ -96,11 +96,6 @@ export interface ClientTableTile extends ClientTileBase, ClientTable {
 
 // Collection
 export type ClientCollection = OmitMetadata<Omit<Collection, "userId">>;
-export interface ClientCollectionTile
-  extends ClientTileBase,
-    Omit<ClientCollection, "type"> {
-  type: "COLLECTION";
-}
 
 export type ClientEntity =
   | ClientImage
@@ -120,7 +115,6 @@ export type ClientTile =
   | ClientMapTile
   | ClientLinkTile
   | ClientPageLinkTile
-  | ClientCollectionTile
   | ClientTableTile;
 
 export type { TileType };
