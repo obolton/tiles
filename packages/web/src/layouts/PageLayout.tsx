@@ -47,9 +47,9 @@ export default function PageLayout({
           showTableOfContents={showTableOfContents}
           showShare={showShare}
         />
-      ) : (
-        <SignIn />
-      )}
+      ) : null}
+
+      <SignIn />
 
       {children}
 

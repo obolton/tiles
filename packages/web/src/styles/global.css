@@ -237,13 +237,3 @@ map-legend-item:not(:defined) {
   inherits: true;
   initial-value: 12px;
 }
-
-#sign-in {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-}
-
-body[data-signed-in] #sign-in {
-  display: none;
-}

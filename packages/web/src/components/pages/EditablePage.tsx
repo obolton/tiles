@@ -1,6 +1,7 @@
 import EditingToolbar from "@/components/menu/EditingToolbar";
 import PageContents from "@/components/pages/PageContents";
 import Editor from "@/editor/Editor";
+import { isSignedIn } from "@/utils/sessions";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {
@@ -14,6 +15,7 @@ interface EditablePage {
 export default function EditablePage({ page }: EditablePage) {
   const editor = new Editor(page);
   const { isEditable, layout, isPublished, focusedTile } = editor;
+  const showToolbar = !import.meta.env.SSR && isSignedIn();
 
   return (
     <>
@@ -21,15 +23,17 @@ export default function EditablePage({ page }: EditablePage) {
         <PageContents editor={editor} isEditable={isEditable} layout={layout} />
       </main>
 
-      {focusedTile.derive((id) =>
-        id ? null : (
-          <EditingToolbar
-            editor={editor}
-            isEditable={isEditable}
-            isPublished={isPublished}
-          />
-        ),
-      )}
+      {showToolbar
+        ? focusedTile.derive((id) =>
+            id ? null : (
+              <EditingToolbar
+                editor={editor}
+                isEditable={isEditable}
+                isPublished={isPublished}
+              />
+            ),
+          )
+        : null}
     </>
   );
 }
