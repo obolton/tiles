@@ -1,11 +1,11 @@
 .rich-text {
-  font-size: clamp(14px, 2vw, 18px);
-  line-height: 1.8;
+  font-size: 18px;
+  line-height: 1.6;
   white-space-collapse: preserve;
   -webkit-font-smoothing: antialiased;
 
-  & p:not(:last-child) {
-    margin: 0 0 1rem;
+  & > *:not(:last-child) {
+    margin-bottom: 18px;
   }
 
   & a {
