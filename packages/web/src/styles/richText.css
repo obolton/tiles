@@ -84,7 +84,7 @@
       box-sizing: border-box;
       width: 24px;
       height: 24px;
-      inset: 5px auto auto 0;
+      inset: 2px auto auto 0;
       transition-duration: var(--animation-duration-short);
       transition-timing-function: var(--easing);
     }
