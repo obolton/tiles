@@ -4,10 +4,14 @@ theme-selector {
 
   &.inline {
     display: inline-block;
-    vertical-align: bottom;
 
-    & swipe-view::part(buttons) {
-      left: -28px;
+    & > swipe-view {
+      display: inline-block;
+      vertical-align: bottom;
+
+      &::part(buttons) {
+        left: -28px;
+      }
     }
   }
 

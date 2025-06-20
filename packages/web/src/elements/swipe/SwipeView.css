@@ -29,6 +29,7 @@
     width: 100%;
     translate: 0 var(--top);
     user-select: none;
+    overflow: hidden;
     scroll-snap-stop: always;
     scroll-snap-align: start;
 
