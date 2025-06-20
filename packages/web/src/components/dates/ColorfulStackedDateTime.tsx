@@ -39,9 +39,12 @@ export default function ColorfulStackedDateTime({
       </span>
       {time.derive((showTime) =>
         showTime ? (
-          <span className={styles.time}>
-            {value.derive((date) => timeFormatter.format(date))}
-          </span>
+          <>
+            &nbsp;
+            <span className={styles.time}>
+              {value.derive((date) => timeFormatter.format(date))}
+            </span>
+          </>
         ) : null,
       )}
     </time>
