@@ -1,14 +1,12 @@
 import Tile from "./Tile";
 import styles from "./PageTile.module.css";
-import { classNames } from "@/utils/css";
-import { ReactiveValue } from "@/utils/reactivity";
-import { isDark, type Color } from "@/utils/color";
+import { reactive } from "@/utils/reactivity";
+import type { Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
 
 export interface PageTileProps {
   title: string;
-  subtitle?: string | null;
   font?: FontId | null;
   color: Color | null;
   coverImageUrl?: string | null;
@@ -17,7 +15,6 @@ export interface PageTileProps {
 
 export default function PageTile({
   title,
-  subtitle,
   coverImageUrl,
   font,
   color,
@@ -26,24 +23,19 @@ export default function PageTile({
   return (
     <Tile
       className={styles.tile}
-      color={new ReactiveValue(color)}
+      color={reactive(color)}
       font={font}
-      backgroundImageUrl={
-        coverImageUrl ? new ReactiveValue(coverImageUrl) : undefined
-      }
+      backgroundImageUrl={coverImageUrl ? reactive(coverImageUrl) : undefined}
       border="inside"
     >
-      <section
-        className={classNames(
-          styles.text,
-          coverImageUrl && styles["with-image"],
-          color && isDark(color) ? styles.dark : styles.light,
-        )}
+      <p
+        classList={{
+          [styles.text]: true,
+          [styles["with-image"]]: !!coverImageUrl,
+        }}
       >
-        <p className={styles.title}>{title}</p>
-
-        {subtitle ? <p className={styles.subtitle}>{subtitle}</p> : null}
-      </section>
+        {title}
+      </p>
       {children}
     </Tile>
   );

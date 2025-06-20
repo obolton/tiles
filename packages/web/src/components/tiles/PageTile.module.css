@@ -1,42 +1,22 @@
 .tile {
   padding: 16px;
-  container: page-tile / size;
+  container: page-tile / inline-size;
 }
 
 .text {
   margin: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 8px;
+  padding: 0;
   font-family: var(--font);
-  text-shadow: 0 1px 1px rgb(255 255 255 / 20%);
+  font-size: clamp(1rem, 12cqw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.2;
   text-wrap: balance;
   text-align: center;
   overflow: hidden;
-
-  & .title {
-    font-size: clamp(0.875rem, 12cqw, 1.5rem);
-    line-height: 1.2;
-    font-weight: 600;
-    margin: 0;
-  }
-
-  & .subtitle {
-    font-size: clamp(0.875rem, 8cqw, 1rem);
-    line-height: 1.2;
-    font-weight: 500;
-  }
-
-  & .title,
-  & .subtitle {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    word-wrap: break-word;
-    padding: 2px 0;
-  }
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
 
   &.with-image {
     background: var(--tile-background);
@@ -46,29 +26,5 @@
     box-shadow:
       0 0 0 1px rgb(0 0 0 / 30%),
       0 4px 3px -2px rgb(0 0 0 / 25%);
-  }
-
-  & > * {
-    flex: none;
-  }
-}
-
-.light {
-  & p {
-    color: rgb(0 0 0 / 60%);
-  }
-}
-
-.dark {
-  & .subtitle {
-    color: rgb(255 255 255 / 60%);
-  }
-}
-
-@container page-tile (width < 160px) or (height < 160px) {
-  .text {
-    & .subtitle {
-      display: none;
-    }
   }
 }
