@@ -122,7 +122,13 @@ export default function Navigation({
               <menu>
                 {value.workspaces.map((workspace) => (
                   <li>
-                    <a href={`/workspaces/${workspace.id}`} target="_blank">
+                    <a
+                      href={`/workspaces/${workspace.id}`}
+                      target="_blank"
+                      aria-current={
+                        workspace.id === workspaceId ? "true" : "false"
+                      }
+                    >
                       <WorkspaceIcon aria-hidden="true" />
                       {workspace.name}
                     </a>
