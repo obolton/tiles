@@ -52,7 +52,7 @@ export default class ThemeSelector extends HTMLElement {
 
   connectedCallback() {
     if (this.getItem) {
-      this.appendChild(this.getItem(this.value, this.contents));
+      this.replaceChildren(this.getItem(this.value, this.contents));
     }
   }
 
