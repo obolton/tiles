@@ -25,7 +25,7 @@ export interface GridItemProps {
   columns: Reactive<number>;
   minColumns?: number;
   maxColumns?: number;
-  grow?: Reactive<boolean>;
+  grow?: boolean;
   deletable?: boolean | Reactive<boolean>;
   draggable?: boolean | Reactive<boolean>;
   resizable?: boolean | Reactive<boolean>;

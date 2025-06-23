@@ -40,7 +40,6 @@ export default function TextTile({
   content,
   color,
   imageUrl,
-  expand,
   align,
   hasFocus,
   onDelete,
@@ -106,18 +105,6 @@ export default function TextTile({
     }
   };
 
-  const onToggleExpand = async () => {
-    try {
-      expand.value = !expand.value;
-      await editor.updateText({
-        id,
-        expand: expand.value,
-      });
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
   const onKeyDown = (event: KeyboardEvent) => {
     const editor = event.currentTarget as HTMLElement;
     if (
@@ -167,12 +154,7 @@ export default function TextTile({
       backgroundImageUrl={imageUrl}
       border={color.derive((value) => (value ? "outside" : "none"))}
     >
-      <pop-out
-        className={styles["pop-out"]}
-        expandable={expand.derive((value) =>
-          value ? undefined : "expandable",
-        )}
-      >
+      <pop-out className={styles["pop-out"]} expandable>
         {isEditable.derive((value) =>
           value ? (
             <TextEditor
@@ -242,21 +224,6 @@ export default function TextTile({
                         <VerticalAlignBottomIcon aria-hidden="true" />
                       </swatch-item>
                     </swatch-select>
-                  </li>
-                  <li role="presentation">
-                    <button
-                      role="menuitem"
-                      className="floating small"
-                      aria-label="Fit contents"
-                      data-tooltip="Fit contents"
-                      type="button"
-                      aria-pressed={expand.derive((value) =>
-                        value ? "true" : "false",
-                      )}
-                      on:click={onToggleExpand}
-                    >
-                      <ExpandIcon aria-hidden="true" />
-                    </button>
                   </li>
                 </ul>
               }
