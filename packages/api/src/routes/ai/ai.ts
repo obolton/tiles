@@ -1,6 +1,6 @@
 import replicate from "@/utils/replicate.ts";
-import { TEXT_TO_IMAGE_MODEL } from "./constants.ts";
-import type { GenerateImageSchema } from "./schema.ts";
+import { TEXT_TO_IMAGE_MODEL, TEXT_MODEL } from "./constants.ts";
+import type { GenerateImageSchema, WriteSchema } from "./schema.ts";
 import { streamToBase64String } from "@/utils/streams.ts";
 
 export async function generateImage({ prompt }: GenerateImageSchema) {
@@ -26,4 +26,20 @@ export async function generateImage({ prompt }: GenerateImageSchema) {
     type: "image/webp",
     data,
   };
+}
+
+export async function* write({ prompt }: WriteSchema, signal?: AbortSignal) {
+  const stream = replicate.stream(TEXT_MODEL, {
+    input: {
+      system_prompt: "You are a helpful assistant.",
+      prompt,
+    },
+    signal,
+  });
+
+  for await (const message of stream) {
+    if (message.event === "output") {
+      yield message.data;
+    }
+  }
 }
