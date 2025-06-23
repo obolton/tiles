@@ -336,6 +336,16 @@ export default class Editor {
     });
   }
 
+  async write(data: OmitPageId<AppRouterInputs["ai"]["write"]>) {
+    return client.ai.write.mutate(
+      {
+        pageId: this.pageId,
+        ...data,
+      },
+      { context: { stream: true } },
+    );
+  }
+
   // Images
 
   async createImage(data: OmitPageId<AppRouterInputs["images"]["create"]>) {
