@@ -176,6 +176,7 @@ export default function TextTile({
         {isEditable.derive((value) =>
           value ? (
             <TextEditor
+              editor={editor}
               classList={[styles.text, styles.editor, alignClass]}
               initialValue={content.value}
               tabIndex={-1}

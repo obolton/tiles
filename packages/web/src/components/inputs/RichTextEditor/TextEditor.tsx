@@ -13,11 +13,13 @@ import type { RichText } from "@/utils/richText/types";
 import type { Command } from "prosemirror-state";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
+import type Editor from "@/editor/Editor";
 
 export type { EditorState };
 
 interface TextEditorProps
   extends Omit<JSX.Attributes<HTMLDivElement>, "onBlur"> {
+  editor: Editor;
   initialValue?: RichText | null;
   showToolbar: Reactive<boolean>;
   extraToolbarItems?: JSX.Node;
@@ -26,6 +28,7 @@ interface TextEditorProps
 }
 
 export default function TextEditor({
+  editor,
   classList = [],
   initialValue,
   onBlur,
@@ -63,7 +66,7 @@ export default function TextEditor({
     }
   };
 
-  const getEditorState = () => editorView?.state;
+  const getEditorView = () => editorView;
 
   const performCommand = (command: Command) => {
     if (editorView) {
@@ -104,8 +107,9 @@ export default function TextEditor({
       {showToolbar.derive((value) =>
         value ? (
           <FormattingToolbar
+            editor={editor}
             format={format}
-            getEditorState={getEditorState}
+            getEditorView={getEditorView}
             performCommand={performCommand}
           >
             {extraToolbarItems}

@@ -19,7 +19,7 @@ import EventIcon from "@/icons/event.svg?jsx";
 import { registerModal, showModal } from "@/utils/modals";
 import type { DateTimeModalResult } from "@/components/modals/DateTimeModal";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
-import type { EditorState } from "prosemirror-state";
+import type { EditorView } from "prosemirror-view";
 import type { Command } from "prosemirror-state";
 import {
   toggleBold,
@@ -42,6 +42,7 @@ import type { Format, TextAlignment } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
+import type Editor from "@/editor/Editor";
 
 registerModal("DATE_TIME", () => import("@/components/modals/DateTimeModal"));
 
@@ -59,14 +60,16 @@ const ALIGN_ICON = {
 } as const;
 
 interface FormattingToolbarProps {
+  editor: Editor;
   format: Reactive<Format>;
-  getEditorState: () => EditorState | undefined;
+  getEditorView: () => EditorView | undefined;
   performCommand: (command: Command) => void;
   children?: JSX.Node;
 }
 
 export default function FormattingToolbar({
-  getEditorState,
+  editor,
+  getEditorView,
   performCommand,
   format,
   children,
@@ -94,7 +97,7 @@ export default function FormattingToolbar({
   const formatQuote = () => performCommand(toggleQuote);
 
   const formatLink = () => {
-    const state = getEditorState();
+    const state = getEditorView()?.state;
     if (!state) {
       return;
     }

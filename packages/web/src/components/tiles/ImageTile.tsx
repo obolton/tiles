@@ -145,6 +145,7 @@ export default function ImageTile({
         {isEditable.derive((editable) =>
           editable ? (
             <TextEditor
+              editor={editor}
               classList={[styles.caption]}
               initialValue={text.value}
               onBlur={onBlur}

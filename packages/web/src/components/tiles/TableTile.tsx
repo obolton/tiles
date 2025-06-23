@@ -211,7 +211,7 @@ export default function TableTile({
     }
   };
 
-  const getEditorState = () => editorView?.state;
+  const getEditorView = () => editorView;
 
   const performCommand = (command: Command) => {
     if (editorView) {
@@ -295,8 +295,9 @@ export default function TableTile({
       {hasFocus.derive((value) =>
         value ? (
           <FormattingToolbar
+            editor={editor}
             format={format}
-            getEditorState={getEditorState}
+            getEditorView={getEditorView}
             performCommand={performCommand}
           >
             <ul role="group">
