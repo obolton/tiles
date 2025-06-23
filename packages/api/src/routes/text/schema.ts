@@ -16,7 +16,6 @@ export const CreateTextSchema = z.object({
   imageKey: z.string().nullable().optional(),
   width: z.number().int().gte(1).lte(12).optional(),
   height: z.number().int().gte(1).lte(24).optional(),
-  expand: z.boolean().optional(),
   align: z.nativeEnum(VerticalAlignment).optional(),
 });
 export type CreateTextSchema = z.infer<typeof CreateTextSchema>;
@@ -34,7 +33,6 @@ export const UpdateTextSchema = z.object({
     .nullable()
     .optional(),
   imageKey: z.string().nullable().optional(),
-  expand: z.boolean().optional(),
   align: z.nativeEnum(VerticalAlignment).optional(),
 });
 export type UpdateTextSchema = z.infer<typeof UpdateTextSchema>;

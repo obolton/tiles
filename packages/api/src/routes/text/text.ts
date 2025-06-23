@@ -8,7 +8,6 @@ export const TEXT_FIELDS = {
   content: true,
   color: true,
   imageUrl: true,
-  expand: true,
   align: true,
 } as const satisfies Prisma.Args<typeof prisma.textTile, "findMany">["select"];
 
@@ -26,7 +25,6 @@ export async function createText({
   imageKey,
   width,
   height,
-  expand,
   align,
 }: CreateTextSchema) {
   return prisma.$transaction(async (transaction) => {
@@ -38,7 +36,6 @@ export async function createText({
         chroma: color ? color.c : undefined,
         hue: color ? color.h : undefined,
         imageKey,
-        expand,
         align,
       },
       select: TEXT_FIELDS,
@@ -64,7 +61,6 @@ export async function updateText({
   content,
   color,
   imageKey,
-  expand,
   align,
 }: UpdateTextSchema) {
   const text = await prisma.textTile.update({
@@ -78,7 +74,6 @@ export async function updateText({
       chroma: color ? color.c : color === null ? null : undefined,
       hue: color ? color.h : color === null ? null : undefined,
       imageKey,
-      expand,
       align,
     },
     select: TEXT_FIELDS,
