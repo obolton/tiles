@@ -1,4 +1,9 @@
-import { createTRPCClient, httpLink } from "@trpc/client";
+import {
+  createTRPCClient,
+  httpBatchLink,
+  httpBatchStreamLink,
+  splitLink,
+} from "@trpc/client";
 import type {
   AppRouter,
   AppRouterInputs,
@@ -8,23 +13,45 @@ import type {
 // TODO: Split into browser and Node clients
 const client = createTRPCClient<AppRouter>({
   links: [
-    httpLink({
-      url: import.meta.env.PUBLIC_API_BASE_URL,
-      fetch(url, options) {
-        return fetch(url, {
-          ...options,
-          credentials: typeof window !== "undefined" ? "include" : undefined,
-        });
+    splitLink({
+      condition(op) {
+        return !!op.context.stream;
       },
-      headers({ op: { context } }) {
-        const { sessionId } = context;
-        // TODO: Validate session ID before sending
-        return sessionId
-          ? {
-              Authorization: `Bearer ${sessionId}`,
-            }
-          : {};
-      },
+      true: httpBatchStreamLink({
+        url: import.meta.env.PUBLIC_API_BASE_URL,
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            credentials: typeof window !== "undefined" ? "include" : undefined,
+          });
+        },
+        headers({ opList }) {
+          const sessionId = opList[0].context.sessionId;
+          return sessionId
+            ? {
+                Authorization: `Bearer ${sessionId}`,
+              }
+            : {};
+        },
+      }),
+      false: httpBatchLink({
+        url: import.meta.env.PUBLIC_API_BASE_URL,
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            credentials: typeof window !== "undefined" ? "include" : undefined,
+          });
+        },
+        headers({ opList }) {
+          const sessionId = opList[0].context.sessionId;
+          // TODO: Validate session ID before sending
+          return sessionId
+            ? {
+                Authorization: `Bearer ${sessionId}`,
+              }
+            : {};
+        },
+      }),
     }),
   ],
 });
