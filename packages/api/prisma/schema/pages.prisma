@@ -163,7 +163,6 @@ model TextTile {
   chroma    Float?            @db.Real
   hue       Float?            @db.Real
   imageKey  String?           @map("image_key")
-  expand    Boolean           @default(false)
   align     VerticalAlignment @default(TOP)
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
