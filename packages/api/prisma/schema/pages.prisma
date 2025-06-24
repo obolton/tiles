@@ -87,6 +87,8 @@ model Tile {
   position           Int
   width              Int      @default(1) @db.SmallInt
   height             Int      @default(1) @db.SmallInt
+  x                  Int      @default(0) @db.SmallInt
+  y                  Int      @default(0) @db.SmallInt
   imageTileId        String?  @map("image_tile_id") @db.Uuid
   videoTileId        String?  @map("video_tile_id") @db.Uuid
   textTileId         String?  @map("text_tile_id") @db.Uuid
