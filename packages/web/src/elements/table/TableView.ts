@@ -51,6 +51,7 @@ export default class TableView extends HTMLElement {
   private contentsSlot: HTMLSlotElement;
   private table: HTMLTableElement | null = null;
   private colGroup: HTMLTableColElement | null = null;
+  private tableHead: HTMLTableSectionElement | null = null;
   private tableBody: HTMLTableSectionElement | null = null;
   private firstVisibleRow = 0;
   private firstVisibleColumn = 0;
@@ -167,6 +168,8 @@ export default class TableView extends HTMLElement {
       this.table.prepend(this.colGroup);
     }
 
+    this.tableHead = this.table.createTHead();
+
     this.tableBody = this.table.tBodies[0] ?? null;
     if (!this.tableBody) {
       this.tableBody = this.table.createTBody();
@@ -217,8 +220,6 @@ export default class TableView extends HTMLElement {
       this.height = size.blockSize;
       this.horizontalBufferSize = this.width / 4;
       this.verticalBufferSize = this.height / 2;
-
-      this.updateColumnResizeHandles();
     }
   }
 
@@ -286,22 +287,26 @@ export default class TableView extends HTMLElement {
 
   private handleResizeEnd(event: ResizeEvent) {
     const target = event.currentTarget as HTMLElement;
-    if (!target.dataset.column || !target.dataset.width) {
+    const column = parseInt(target.closest("th")?.ariaColIndex ?? "", 10);
+    if (Number.isNaN(column)) {
       return;
     }
-    const column = parseInt(target.dataset.column, 10);
-    const width = parseFloat(target.dataset.width) + event.x;
-    this.dispatchEvent(new TableEvent("resizetablecolumn", { column, width }));
 
     const col = this.querySelector<HTMLTableColElement>(
       `col[data-index="${column}"]`,
     );
+    if (!col) {
+      return;
+    }
+
+    const width = parseFloat(col.style.width) + event.x;
+    this.dispatchEvent(new TableEvent("resizetablecolumn", { column, width }));
+
     if (col) {
       col.style.width = width + "px";
     }
 
     this.update();
-    this.updateColumnResizeHandles();
   }
 
   // Focus and selection
@@ -497,7 +502,7 @@ export default class TableView extends HTMLElement {
   }
 
   private prependColumn() {
-    if (!this.tableBody) {
+    if (!this.tableBody || !this.tableHead) {
       return;
     }
 
@@ -507,6 +512,10 @@ export default class TableView extends HTMLElement {
     col.dataset.index = index.toString();
     col.style.width = this.getColumnWidth(index) + "px";
     this.colGroup?.prepend(col);
+
+    const th = document.createElement("th");
+    th.ariaColIndex = index.toString();
+    this.tableHead.rows.item(0)?.prepend(th);
 
     for (let i = 0; i < this.renderedRows; i++) {
       const row = this.tableBody.children[i] as HTMLElement;
@@ -519,7 +528,7 @@ export default class TableView extends HTMLElement {
   }
 
   private appendColumn() {
-    if (!this.tableBody) {
+    if (!this.tableBody || !this.tableHead) {
       return;
     }
 
@@ -529,6 +538,10 @@ export default class TableView extends HTMLElement {
     col.dataset.index = index.toString();
     col.style.width = this.getColumnWidth(index) + "px";
     this.colGroup?.append(col);
+
+    const th = document.createElement("th");
+    th.ariaColIndex = index.toString();
+    this.tableHead.rows.item(0)?.append(th);
 
     for (let i = 0; i < this.renderedRows; i++) {
       const row = this.tableBody.children[i] as HTMLTableRowElement;
@@ -823,29 +836,23 @@ export default class TableView extends HTMLElement {
   }
 
   private updateColumnResizeHandles() {
-    this.shadowRoot!.querySelectorAll(".column-resize").forEach((element) =>
-      element.remove(),
-    );
+    const headers = this.tableHead?.rows.item(0)?.cells;
 
-    let x = 0;
-    const handles = document.createDocumentFragment();
-    for (let i = 0; i < this.columns; i++) {
-      const width = this.getColumnWidth(i);
-      x += width;
-      const handle = this.createResizeHandle(i, x, width);
-      handles.appendChild(handle);
+    if (!headers) {
+      return;
     }
-    this.shadowRoot!.appendChild(handles);
+
+    for (const th of headers) {
+      const handle = th.querySelector("resize-handle");
+      if (!handle) {
+        th.appendChild(this.createResizeHandle());
+      }
+    }
   }
 
-  private createResizeHandle(index: number, x: number, width: number) {
+  private createResizeHandle() {
     const handle = document.createElement("resize-handle");
-    handle.className = "column-resize";
-    handle.style.setProperty("--x", x - 3 + "px");
-    handle.dataset.column = index.toString();
-    handle.dataset.width = width.toString();
     handle.addEventListener("resizeend", this);
-
     return handle;
   }
 }

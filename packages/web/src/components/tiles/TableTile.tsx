@@ -255,6 +255,14 @@ export default function TableTile({
             ))}
           </colgroup>
 
+          <thead>
+            <tr>
+              {tableColumns.value.map((_, index) => (
+                <th aria-colindex={index} />
+              ))}
+            </tr>
+          </thead>
+
           <tbody>
             {tableRows.value.map(({ data: rowData }, row) => {
               const cells = [];

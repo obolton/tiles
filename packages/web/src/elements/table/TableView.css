@@ -54,19 +54,3 @@
     will-change: translate;
   }
 }
-
-.column-resize {
-  position: absolute;
-  width: 5px;
-  height: 100%;
-  top: 0;
-  left: var(--x);
-  cursor: col-resize;
-  background: none;
-  transition: background-color var(--animation-duration-short) var(--easing);
-
-  &:hover,
-  &:state(resizing) {
-    background-color: var(--focus-ring-color);
-  }
-}

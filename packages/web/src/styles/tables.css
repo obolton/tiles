@@ -14,6 +14,31 @@ table-view {
     contain: strict;
   }
 
+  & th {
+    position: relative;
+    padding: 0;
+    background: rgb(0 0 0 / 10%);
+    border-right: 1px solid rgb(0 0 0 / 10%);
+    border-bottom: 1px solid rgb(0 0 0 / 10%);
+
+    & > resize-handle {
+      position: absolute;
+      width: 7px;
+      height: 100cqh;
+      top: 0;
+      right: -4px;
+      background: none;
+      z-index: 1;
+      cursor: col-resize;
+      transition: background-color var(--animation-duration-short) var(--easing);
+
+      &:hover,
+      &:state(resizing) {
+        background-color: var(--focus-ring-color);
+      }
+    }
+  }
+
   & td {
     align-content: center;
     padding: 0 8px;
