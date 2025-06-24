@@ -70,7 +70,6 @@ const PAGE_FIELDS = {
   workspaceId: true,
   published: true,
   title: true,
-  subtitle: true,
   updatedAt: true,
   color: true,
   font: true,
@@ -221,12 +220,7 @@ export async function listPages(
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
-    ? {
-        OR: [
-          { title: { contains: query, mode: "insensitive" } },
-          { subtitle: { contains: query, mode: "insensitive" } },
-        ],
-      }
+    ? { title: { contains: query, mode: "insensitive" } }
     : {};
   const pages = await prisma.page.findMany({
     where: {
@@ -256,12 +250,7 @@ export async function listSharedPages(
   { userId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
-    ? {
-        OR: [
-          { title: { contains: query, mode: "insensitive" } },
-          { subtitle: { contains: query, mode: "insensitive" } },
-        ],
-      }
+    ? { title: { contains: query, mode: "insensitive" } }
     : {};
   const pages = await prisma.page.findMany({
     where: {
@@ -287,12 +276,7 @@ export async function listDeletedPages(
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
-    ? {
-        OR: [
-          { title: { contains: query, mode: "insensitive" } },
-          { subtitle: { contains: query, mode: "insensitive" } },
-        ],
-      }
+    ? { title: { contains: query, mode: "insensitive" } }
     : {};
   const pages = await prisma.page.findMany({
     where: {
@@ -352,7 +336,6 @@ export async function createPage(
             text: {
               create: {
                 pageId: page.id,
-                expand: true,
                 content: [
                   {
                     type: "heading",
@@ -374,15 +357,7 @@ export async function createPage(
 }
 
 export async function updatePage(
-  {
-    pageId,
-    published,
-    title,
-    subtitle,
-    color,
-    font,
-    coverImageKey,
-  }: UpdatePageSchema,
+  { pageId, published, title, color, font, coverImageKey }: UpdatePageSchema,
   { userId }: AuthenticatedRequestContext,
 ) {
   return prisma.page.update({
@@ -390,7 +365,6 @@ export async function updatePage(
     data: {
       published,
       title,
-      subtitle,
       lightness: color ? color.l : undefined,
       chroma: color ? color.c : undefined,
       hue: color ? color.h : undefined,

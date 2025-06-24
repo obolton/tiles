@@ -60,10 +60,7 @@ export async function listBookmarks(
   const filter: Prisma.BookmarkWhereInput = query
     ? {
         page: {
-          OR: [
-            { title: { contains: query, mode: "insensitive" } },
-            { subtitle: { contains: query, mode: "insensitive" } },
-          ],
+          title: { contains: query, mode: "insensitive" },
         },
       }
     : {};

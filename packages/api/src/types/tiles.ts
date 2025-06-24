@@ -73,7 +73,6 @@ export type ClientPageLink = Omit<
   linkedPage: {
     id: string;
     title: string;
-    subtitle: string | null;
     author?: { id: string; name: string; imageUrl: string | null };
     color: { l: number; c: number; h: number };
     font: Font | null;

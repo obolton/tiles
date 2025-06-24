@@ -114,12 +114,7 @@ export async function listPages(
     });
 
     const filter: Prisma.PageWhereInput = query
-      ? {
-          OR: [
-            { title: { contains: query, mode: "insensitive" } },
-            { subtitle: { contains: query, mode: "insensitive" } },
-          ],
-        }
+      ? { title: { contains: query, mode: "insensitive" } }
       : {};
 
     const pages = await prisma.page.findMany({

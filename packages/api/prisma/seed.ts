@@ -19,7 +19,6 @@ async function seed() {
         create: {
           id: SEED_PAGE_ID,
           title: "Hello World",
-          subtitle: "Welcome to your first page",
         },
       },
     },

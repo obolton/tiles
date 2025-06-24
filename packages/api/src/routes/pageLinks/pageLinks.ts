@@ -6,7 +6,6 @@ import { createTilePlacement } from "../tiles/tiles.ts";
 export const PAGE_LINK_TILE_PAGE_FIELDS = {
   id: true,
   title: true,
-  subtitle: true,
   color: true,
   font: true,
   coverImageUrl: true,

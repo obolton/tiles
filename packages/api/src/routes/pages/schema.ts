@@ -21,7 +21,6 @@ export const UpdatePageSchema = z.object({
   pageId: z.string().uuid(),
   published: z.boolean().optional(),
   title: z.string().min(1).optional(),
-  subtitle: z.string().optional(),
   color: z
     .object({
       l: z.number().gte(0).lte(1),

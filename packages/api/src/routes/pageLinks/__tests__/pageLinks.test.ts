@@ -12,9 +12,7 @@ import { omit } from "@/utils/objects.ts";
 const MOCK_PAGE: PageLinkPage = {
   id: "test-page",
   title: "Test Page",
-  subtitle: "Subtitle",
-  theme: "LIGHT",
-  hue: 120,
+  color: { h: 120, c: 0.2, l: 1 },
   font: "MODERN",
   coverImageUrl: "https://example.com/cover.jpg",
   author: {
