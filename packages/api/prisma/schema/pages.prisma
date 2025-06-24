@@ -38,7 +38,7 @@ model Page {
   authorId      String    @map("author_id") @db.Uuid
   folderId      String?   @map("folder_id") @db.Uuid
   published     Boolean   @default(false)
-  title         String
+  title         String    @db.VarChar(100)
   subtitle      String?
   lightness     Float     @default(1) @db.Real
   chroma        Float     @default(0) @db.Real
