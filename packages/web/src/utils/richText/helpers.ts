@@ -1,6 +1,7 @@
 import type { Node, NodeType, MarkType, ResolvedPos } from "prosemirror-model";
 import type { EditorState } from "prosemirror-state";
 import { schema, type TextAlignment } from "./schema";
+import type { ListType } from "./format";
 
 interface ResolvedNode {
   node: Node;
@@ -103,4 +104,18 @@ export function getSelectionAlignment(
 ): TextAlignment | undefined {
   const textBlock = closest(state.selection.$from, (node) => node.isTextblock);
   return textBlock ? textBlock.node.attrs.align : undefined;
+}
+
+export function getSelectionList(state: EditorState): ListType | null {
+  const blockNodeTypes = getSelectionBlockNodeTypes(state);
+  if (blockNodeTypes.has(schema.nodes.unordered_list)) {
+    return "unordered";
+  }
+  if (blockNodeTypes.has(schema.nodes.ordered_list)) {
+    return "ordered";
+  }
+  if (blockNodeTypes.has(schema.nodes.check_list)) {
+    return "check";
+  }
+  return null;
 }
