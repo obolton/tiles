@@ -243,47 +243,43 @@ export default function TableTile({
         $getColumnWidth={(index) => tableColumns.value[index]?.width ?? 200}
       >
         <table>
-          {tableRows.value.map(({ data: rowData }, row) => {
-            const cells = [];
-            for (
-              let columnIndex = 0;
-              columnIndex < tableColumns.value.length;
-              columnIndex++
-            ) {
-              const column = tableColumns.value[columnIndex]!;
-              const value = rowData[column.id];
-              if (!value) {
-                cells.push(
-                  <td
-                    style={{ width: `${column.width}px` }}
-                    data-row={row}
-                    data-column={columnIndex}
-                  ></td>,
-                );
-              } else if (typeof value === "string") {
-                cells.push(
-                  <td
-                    style={{ width: `${column.width}px` }}
-                    data-row={row}
-                    data-column={columnIndex}
-                  >
-                    {value}
-                  </td>,
-                );
-              } else {
-                cells.push(
-                  <td
-                    style={{ width: `${column.width}px` }}
-                    data-row={row}
-                    data-column={columnIndex}
-                  >
-                    <RichText content={value} />
-                  </td>,
-                );
+          <colgroup>
+            {tableColumns.value.map((column, index) => (
+              <col data-index={index} style={{ width: column.width + "px" }} />
+            ))}
+          </colgroup>
+
+          <tbody>
+            {tableRows.value.map(({ data: rowData }, row) => {
+              const cells = [];
+              for (
+                let columnIndex = 0;
+                columnIndex < tableColumns.value.length;
+                columnIndex++
+              ) {
+                const column = tableColumns.value[columnIndex]!;
+                const value = rowData[column.id];
+                if (!value) {
+                  cells.push(
+                    <td data-row={row} data-column={columnIndex}></td>,
+                  );
+                } else if (typeof value === "string") {
+                  cells.push(
+                    <td data-row={row} data-column={columnIndex}>
+                      {value}
+                    </td>,
+                  );
+                } else {
+                  cells.push(
+                    <td data-row={row} data-column={columnIndex}>
+                      <RichText content={value} />
+                    </td>,
+                  );
+                }
               }
-            }
-            return <tr>{cells}</tr>;
-          })}
+              return <tr>{cells}</tr>;
+            })}
+          </tbody>
         </table>
       </table-view>
 
