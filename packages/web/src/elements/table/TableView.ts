@@ -277,8 +277,8 @@ export default class TableView extends HTMLElement {
     }
 
     if (this.isSelecting && this.selection) {
-      const row = parseInt(target.dataset.row ?? "0", 10);
-      const column = parseInt(target.dataset.column ?? "0", 10);
+      const row = parseInt(target.parentElement!.ariaRowIndex ?? "0", 10);
+      const column = parseInt(target.ariaColIndex ?? "0", 10);
       this.selection.focus = { row, column };
       this.redrawSelection();
     }
@@ -370,7 +370,7 @@ export default class TableView extends HTMLElement {
         column++
       ) {
         this.querySelector(
-          `[data-row="${row}"][data-column="${column}"]`,
+          `tr[aria-rowindex="${row}"] > td[aria-colindex="${column}"]`,
         )?.classList.add("selected");
       }
     }
@@ -416,12 +416,12 @@ export default class TableView extends HTMLElement {
       this.contents.offsetHeight < rect.height + this.verticalBufferSize * 2
     ) {
       const row = this.createRow();
+      row.ariaRowIndex = rowIndex.toString();
 
       for (let i = 0; i < this.renderedColumns; i++) {
         const cell = this.createCell();
         this.updateCell?.(rowIndex, i, cell);
-        cell.dataset.row = rowIndex.toString();
-        cell.dataset.column = i.toString();
+        cell.ariaColIndex = i.toString();
         row.appendChild(cell);
       }
       this.tableBody.appendChild(row);
@@ -471,8 +471,7 @@ export default class TableView extends HTMLElement {
     }
 
     const cell = this.buffer.pop()!;
-    cell.dataset.row = row.toString();
-    cell.dataset.column = column.toString();
+    cell.ariaColIndex = column.toString();
     if (this.allowSelection) {
       cell.setAttribute("tabindex", "-1");
     }
@@ -486,8 +485,7 @@ export default class TableView extends HTMLElement {
     cell.replaceChildren();
     cell.classList.remove("selected");
     cell.removeAttribute("tabindex");
-    delete cell.dataset.row;
-    delete cell.dataset.column;
+    cell.ariaColIndex = null;
     this.buffer.push(cell);
   }
 
@@ -546,17 +544,17 @@ export default class TableView extends HTMLElement {
       return;
     }
 
-    const row = this.getRow();
+    const rowIndex = this.firstVisibleRow - 1;
 
-    const elements = [];
+    const cells = [];
     for (let i = 0; i < this.renderedColumns; i++) {
-      const cell = this.getCell(
-        this.firstVisibleRow - 1,
-        this.firstVisibleColumn + i,
-      );
-      elements.push(cell);
+      const cell = this.getCell(rowIndex, this.firstVisibleColumn + i);
+      cells.push(cell);
     }
-    row.replaceChildren(...elements);
+
+    const row = this.getRow();
+    row.ariaRowIndex = rowIndex.toString();
+    row.replaceChildren(...cells);
     this.tableBody.prepend(row);
 
     this.firstVisibleRow--;
@@ -570,13 +568,15 @@ export default class TableView extends HTMLElement {
 
     const rowIndex = this.firstVisibleRow + this.renderedRows;
 
-    const elements = [];
+    const cells = [];
     for (let i = 0; i < this.renderedColumns; i++) {
       const cell = this.getCell(rowIndex, this.firstVisibleColumn + i);
-      elements.push(cell);
+      cells.push(cell);
     }
+
     const row = this.getRow();
-    row.replaceChildren(...elements);
+    row.ariaRowIndex = rowIndex.toString();
+    row.replaceChildren(...cells);
     this.tableBody.append(row);
 
     this.renderedRows++;

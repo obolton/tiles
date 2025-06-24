@@ -95,18 +95,22 @@ export default function TableTile({
 
     if (
       !(target instanceof HTMLTableCellElement) ||
-      !target.dataset.row ||
-      !target.dataset.column ||
       editorView?.dom === target
     ) {
+      return;
+    }
+
+    const rowElement = target.parentElement as HTMLTableRowElement;
+
+    if (!rowElement.ariaRowIndex || !target.ariaColIndex) {
       return;
     }
 
     try {
       editorView?.destroy();
 
-      const row = parseInt(target.dataset.row, 10);
-      const column = parseInt(target.dataset.column, 10);
+      const row = parseInt(rowElement.ariaRowIndex, 10);
+      const column = parseInt(target.ariaColIndex, 10);
       const columnId = tableColumns.value[column]?.id;
 
       const value = columnId ? tableRows.value[row]?.data[columnId] : null;
@@ -139,11 +143,13 @@ export default function TableTile({
 
     const { target, relatedTarget } = event;
 
-    if (
-      !(target instanceof HTMLTableCellElement) ||
-      !target.dataset.row ||
-      !target.dataset.column
-    ) {
+    if (!(target instanceof HTMLTableCellElement)) {
+      return;
+    }
+
+    const rowElement = target.parentElement as HTMLTableRowElement;
+
+    if (!rowElement.ariaRowIndex || !target.ariaColIndex) {
       return;
     }
 
@@ -155,8 +161,8 @@ export default function TableTile({
       return;
     }
 
-    const row = parseInt(target.dataset.row, 10);
-    const column = parseInt(target.dataset.column, 10);
+    const row = parseInt(rowElement.ariaRowIndex, 10);
+    const column = parseInt(target.ariaColIndex, 10);
     const columnId = tableColumns.value[column]?.id;
 
     if (!columnId) {
@@ -260,24 +266,18 @@ export default function TableTile({
                 const column = tableColumns.value[columnIndex]!;
                 const value = rowData[column.id];
                 if (!value) {
-                  cells.push(
-                    <td data-row={row} data-column={columnIndex}></td>,
-                  );
+                  cells.push(<td aria-colindex={columnIndex}></td>);
                 } else if (typeof value === "string") {
-                  cells.push(
-                    <td data-row={row} data-column={columnIndex}>
-                      {value}
-                    </td>,
-                  );
+                  cells.push(<td aria-colindex={columnIndex}>{value}</td>);
                 } else {
                   cells.push(
-                    <td data-row={row} data-column={columnIndex}>
+                    <td aria-colindex={columnIndex}>
                       <RichText content={value} />
                     </td>,
                   );
                 }
               }
-              return <tr>{cells}</tr>;
+              return <tr aria-rowindex={row}>{cells}</tr>;
             })}
           </tbody>
         </table>
