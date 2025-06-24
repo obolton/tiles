@@ -118,18 +118,24 @@ export async function resizeTile({
   id,
   width,
   height,
+  x,
+  y,
 }: ResizeTileSchema) {
   return prisma.tile.update({
     where: { pageId, id },
     data: {
       width,
       height,
+      x,
+      y,
     },
     select: {
       id: true,
       pageId: true,
       width: true,
       height: true,
+      x: true,
+      y: true,
     },
   });
 }
@@ -158,6 +164,8 @@ type CreateTilePlacement = {
   type: TileType;
   width?: number;
   height?: number;
+  x?: number;
+  y?: number;
   imageTileId?: string;
   mapTileId?: string;
   textTileId?: string;
@@ -175,6 +183,8 @@ export async function createTilePlacement(
     type,
     width = 1,
     height = 1,
+    x,
+    y,
     imageTileId,
     mapTileId,
     textTileId,
@@ -197,6 +207,8 @@ export async function createTilePlacement(
       position,
       width,
       height,
+      x,
+      y,
       imageTileId,
       mapTileId,
       textTileId,
@@ -210,6 +222,8 @@ export async function createTilePlacement(
       position: true,
       width: true,
       height: true,
+      x: true,
+      y: true,
       parentCollectionId: true,
     },
   });

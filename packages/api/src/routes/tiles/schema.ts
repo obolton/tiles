@@ -11,8 +11,10 @@ export type MoveTileSchema = z.infer<typeof MoveTileSchema>;
 export const ResizeTileSchema = z.object({
   pageId: z.string().uuid(),
   id: z.string().uuid(),
-  width: z.number().int().gte(1).lte(12),
-  height: z.number().int().gte(1).lte(24),
+  width: z.number().int().gte(1).lte(12).optional(),
+  height: z.number().int().gte(1).lte(24).optional(),
+  x: z.number().int().gte(1).lte(12).optional(),
+  y: z.number().int().gte(1).lte(24).optional(),
 });
 export type ResizeTileSchema = z.infer<typeof ResizeTileSchema>;
 

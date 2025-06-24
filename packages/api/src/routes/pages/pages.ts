@@ -39,6 +39,8 @@ const TILES_FIELDS = {
   position: true,
   width: true,
   height: true,
+  x: true,
+  y: true,
   parentCollectionId: true,
   image: {
     select: IMAGE_FIELDS,
