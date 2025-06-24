@@ -43,7 +43,7 @@ import {
   insertDateTime,
 } from "@/utils/richText/commands";
 import { getLink } from "@/utils/richText/helpers";
-import type { Format, TextAlignment } from "@/utils/richText/format";
+import type { Format, TextAlignment, ListType } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
@@ -62,6 +62,12 @@ const ALIGN_ICON = {
   left: <AlignLeftIcon aria-hidden="true" slot="icon" />,
   center: <AlignCenterIcon aria-hidden="true" slot="icon" />,
   right: <AlignRightIcon aria-hidden="true" slot="icon" />,
+} as const;
+
+const LIST_ICON = {
+  unordered: <UnorderedListIcon aria-hidden="true" slot="icon" />,
+  ordered: <OrderedListIcon aria-hidden="true" slot="icon" />,
+  check: <CheckListIcon aria-hidden="true" slot="icon" />,
 } as const;
 
 interface FormattingToolbarProps {
@@ -133,11 +139,17 @@ export default function FormattingToolbar({
 
   const formatHighlight = () => performCommand(toggleHighlight);
 
-  const formatOrderedList = () => performCommand(toggleOrderedList);
-
-  const formatUnorderedList = () => performCommand(toggleUnorderedList);
-
-  const formatCheckList = () => performCommand(toggleCheckList);
+  const formatList = (event: Event) => {
+    const listType = (event.currentTarget as SwatchSelect).value as ListType;
+    switch (listType) {
+      case "unordered":
+        return performCommand(toggleUnorderedList);
+      case "ordered":
+        return performCommand(toggleOrderedList);
+      case "check":
+        return performCommand(toggleCheckList);
+    }
+  };
 
   const formatAlignment = (event: Event) =>
     performCommand(
@@ -278,6 +290,36 @@ export default function FormattingToolbar({
                   </swatch-item>
                 </swatch-select>
               </li>
+
+              <li role="presentation">
+                <swatch-select
+                  role="menuitem"
+                  aria-label="List"
+                  data-tooltip="List"
+                  orientation="horizontal"
+                  align="center"
+                  value={format.derive((value) => value.list ?? "")}
+                  on:change={formatList}
+                >
+                  {format.derive((value) =>
+                    value.list ? (
+                      LIST_ICON[value.list]
+                    ) : (
+                      <UnorderedListIcon aria-hidden="true" slot="icon" />
+                    ),
+                  )}
+
+                  <swatch-item value="unordered" data-tooltip="Unordered list">
+                    <UnorderedListIcon aria-hidden="true" />
+                  </swatch-item>
+                  <swatch-item value="ordered" data-tooltip="Ordered list">
+                    <OrderedListIcon aria-hidden="true" />
+                  </swatch-item>
+                  <swatch-item value="check" data-tooltip="Check list">
+                    <CheckListIcon aria-hidden="true" />
+                  </swatch-item>
+                </swatch-select>
+              </li>
             </ul>
 
             <ul role="group" aria-label="Text style">
@@ -415,54 +457,6 @@ export default function FormattingToolbar({
                     <AlignRightIcon aria-hidden="true" />
                   </swatch-item>
                 </swatch-select>
-              </li>
-            </ul>
-
-            <ul role="group" aria-label="Lists">
-              <li role="presentation">
-                <button
-                  role="menuitem"
-                  className="floating small"
-                  aria-label="Ordered list"
-                  data-tooltip="Format as an ordered list"
-                  type="button"
-                  aria-pressed={format.derive((value) =>
-                    value.orderedList ? "true" : "false",
-                  )}
-                  on:click={formatOrderedList}
-                >
-                  <OrderedListIcon aria-hidden="true" />
-                </button>
-              </li>
-              <li role="presentation">
-                <button
-                  role="menuitem"
-                  className="floating small"
-                  aria-label="Unordered list"
-                  data-tooltip="Format as an unordered list"
-                  type="button"
-                  aria-pressed={format.derive((value) =>
-                    value.unorderedList ? "true" : "false",
-                  )}
-                  on:click={formatUnorderedList}
-                >
-                  <UnorderedListIcon aria-hidden="true" />
-                </button>
-              </li>
-              <li role="presentation">
-                <button
-                  role="menuitem"
-                  className="floating small"
-                  aria-label="Check list"
-                  data-tooltip="Format as a check list"
-                  type="button"
-                  aria-pressed={format.derive((value) =>
-                    value.checkList ? "true" : "false",
-                  )}
-                  on:click={formatCheckList}
-                >
-                  <CheckListIcon aria-hidden="true" />
-                </button>
               </li>
             </ul>
 

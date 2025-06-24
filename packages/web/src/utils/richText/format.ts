@@ -4,18 +4,19 @@ import {
   getSelectionHeadingLevel,
   getSelectionBlockNodeTypes,
   getSelectionAlignment,
+  getSelectionList,
   getLink,
 } from "./helpers";
 import { schema, type TextAlignment } from "./schema";
 
 export type { TextAlignment };
 
+export type ListType = "unordered" | "ordered" | "check";
+
 export interface Format {
   headingLevel: number | null;
   quote: boolean;
-  orderedList: boolean;
-  unorderedList: boolean;
-  checkList: boolean;
+  list: ListType | null;
   bold: boolean;
   italic: boolean;
   underline: boolean;
@@ -41,6 +42,7 @@ export function selectionFormat(callback: (format: Format) => void) {
         const headingLevel = getSelectionHeadingLevel(state);
         const blockNodeTypes = getSelectionBlockNodeTypes(state);
         const align = getSelectionAlignment(state);
+        const list = getSelectionList(state);
         const link = !!getLink(state);
 
         const format = {
@@ -52,9 +54,7 @@ export function selectionFormat(callback: (format: Format) => void) {
           link,
           headingLevel,
           quote: blockNodeTypes.has(schema.nodes.quote),
-          orderedList: blockNodeTypes.has(schema.nodes.ordered_list),
-          unorderedList: blockNodeTypes.has(schema.nodes.unordered_list),
-          checkList: blockNodeTypes.has(schema.nodes.check_list),
+          list,
           align,
         };
         callback(format);
