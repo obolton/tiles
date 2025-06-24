@@ -50,7 +50,6 @@ export default function PageLinkTile({
     >
       <PageTile
         title={linkedPage.value.title}
-        subtitle={linkedPage.value.subtitle}
         font={linkedPage.value.font}
         color={linkedPage.value.color}
         coverImageUrl={linkedPage.value.coverImageUrl}
