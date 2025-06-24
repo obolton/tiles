@@ -1,5 +1,5 @@
 .heading {
   padding: 0.15em;
   color: var(--tile-background);
-  background: oklch(from var(--tile-text-color) l c h / 100%);
+  background: oklch(from var(--text-color) l c h / 100%);
 }

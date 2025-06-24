@@ -13,7 +13,6 @@ import type { JSX } from "@/jsx/jsx";
 export type TileProps = {
   className?: string;
   children?: JSX.Node;
-  background?: boolean;
   border?:
     | Reactive<"inside" | "outside" | "none">
     | "inside"
@@ -35,7 +34,6 @@ export default function Tile({
   children,
   color = reactive(null),
   font,
-  background = true,
   border = "outside",
   backgroundImageUrl = reactive(null),
 }: TileProps) {
@@ -58,7 +56,6 @@ export default function Tile({
         isReactive(border)
           ? border.derive((value) => BORDER_CLASSES[value])
           : BORDER_CLASSES[border],
-        background ? styles.background : undefined,
         color
           ? color.derive((colorValue) =>
               colorValue

@@ -1,5 +1,4 @@
 .tile {
-  --tile-text-color: var(--text-color);
   --tile-background: var(--page-color);
 
   position: relative;
@@ -9,7 +8,8 @@
   justify-content: stretch;
   border-radius: var(--border-radius);
   font-family: var(--font);
-  color: var(--tile-text-color);
+  color: var(--text-color);
+  background-color: var(--tile-background);
   background-size: cover;
   background-position: center;
   overflow: clip;
@@ -19,18 +19,12 @@
     transform var(--animation-duration-short) var(--easing);
 }
 
-.background {
-  background-color: var(--tile-background);
-}
-
 .light {
-  --tile-text-color: rgb(0 0 0 / 80%);
+  --text-color: rgb(0 0 0 / 80%);
 }
 
 .dark {
-  --tile-text-color: rgb(255 255 255 / 80%);
-
-  -webkit-font-smoothing: antialiased;
+  --text-color: rgb(255 255 255 / 80%);
 }
 
 .border-inside {
@@ -51,13 +45,4 @@
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 20%),
     0 6px 4px -4px rgb(0 0 0 / 15%);
-}
-
-/* Hover effect */
-body:not([data-editing="true"]) .border:not(pop-out[open] > *):hover {
-  box-shadow: 0 6px 4px -4px rgb(0 0 0 / 25%);
-
-  &::after {
-    box-shadow: inset 0 0 0 2px rgb(0 0 0 / 20%);
-  }
 }
