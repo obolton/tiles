@@ -94,8 +94,7 @@ export default function TableTile({
     const target = event.target;
 
     if (
-      !(target instanceof HTMLElement) ||
-      target.role !== "cell" ||
+      !(target instanceof HTMLTableCellElement) ||
       !target.dataset.row ||
       !target.dataset.column ||
       editorView?.dom === target
@@ -141,8 +140,7 @@ export default function TableTile({
     const { target, relatedTarget } = event;
 
     if (
-      !(target instanceof HTMLElement) ||
-      target.role !== "cell" ||
+      !(target instanceof HTMLTableCellElement) ||
       !target.dataset.row ||
       !target.dataset.column
     ) {
@@ -227,9 +225,7 @@ export default function TableTile({
     highlight: false,
     headingLevel: null,
     quote: false,
-    orderedList: false,
-    unorderedList: false,
-    checkList: false,
+    list: null,
     link: false,
   });
 
@@ -246,50 +242,49 @@ export default function TableTile({
         on:resizetablecolumn={onResizeColumn}
         $getColumnWidth={(index) => tableColumns.value[index]?.width ?? 200}
       >
-        {tableRows.value.map(({ data: rowData }, row) => {
-          const cells = [];
-          for (
-            let columnIndex = 0;
-            columnIndex < tableColumns.value.length;
-            columnIndex++
-          ) {
-            const column = tableColumns.value[columnIndex]!;
-            const value = rowData[column.id];
-            if (!value) {
-              cells.push(
-                <div
-                  role="cell"
-                  style={{ width: `${column.width}px` }}
-                  data-row={row}
-                  data-column={columnIndex}
-                ></div>,
-              );
-            } else if (typeof value === "string") {
-              cells.push(
-                <div
-                  role="cell"
-                  style={{ width: `${column.width}px` }}
-                  data-row={row}
-                  data-column={columnIndex}
-                >
-                  {value}
-                </div>,
-              );
-            } else {
-              cells.push(
-                <div
-                  role="cell"
-                  style={{ width: `${column.width}px` }}
-                  data-row={row}
-                  data-column={columnIndex}
-                >
-                  <RichText content={value} />
-                </div>,
-              );
+        <table>
+          {tableRows.value.map(({ data: rowData }, row) => {
+            const cells = [];
+            for (
+              let columnIndex = 0;
+              columnIndex < tableColumns.value.length;
+              columnIndex++
+            ) {
+              const column = tableColumns.value[columnIndex]!;
+              const value = rowData[column.id];
+              if (!value) {
+                cells.push(
+                  <td
+                    style={{ width: `${column.width}px` }}
+                    data-row={row}
+                    data-column={columnIndex}
+                  ></td>,
+                );
+              } else if (typeof value === "string") {
+                cells.push(
+                  <td
+                    style={{ width: `${column.width}px` }}
+                    data-row={row}
+                    data-column={columnIndex}
+                  >
+                    {value}
+                  </td>,
+                );
+              } else {
+                cells.push(
+                  <td
+                    style={{ width: `${column.width}px` }}
+                    data-row={row}
+                    data-column={columnIndex}
+                  >
+                    <RichText content={value} />
+                  </td>,
+                );
+              }
             }
-          }
-          return <div role="row">{cells}</div>;
-        })}
+            return <tr>{cells}</tr>;
+          })}
+        </table>
       </table-view>
 
       {hasFocus.derive((value) =>

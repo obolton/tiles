@@ -3,14 +3,18 @@ table-view {
   overflow: auto;
   contain: strict;
 
-  & div[role="row"] {
-    display: table-row;
+  & table {
+    border: none;
+    border-spacing: 0;
+    border-collapse: separate;
+  }
+
+  & tr {
     height: 32px;
     contain: strict;
   }
 
-  & div[role="cell"] {
-    display: table-cell;
+  & td {
     align-content: center;
     padding: 0 8px;
     border-right: 1px solid rgb(0 0 0 / 10%);

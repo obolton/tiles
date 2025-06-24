@@ -49,6 +49,7 @@ export default class TableView extends HTMLElement {
   private scrollContainer?: HTMLElement;
   private contents: HTMLElement;
   private contentsSlot: HTMLSlotElement;
+  private table: HTMLTableElement | null = null;
   private firstVisibleRow = 0;
   private firstVisibleColumn = 0;
   private renderedRows = 0;
@@ -140,6 +141,7 @@ export default class TableView extends HTMLElement {
     this.fillCellBuffer();
     this.fillRowBuffer();
 
+    this.updateCellTabIndex();
     this.updateColumnResizeHandles();
 
     this.addEventListener("scroll", this, { passive: true });
@@ -151,6 +153,12 @@ export default class TableView extends HTMLElement {
   }
 
   connectedCallback() {
+    this.table = this.querySelector<HTMLTableElement>("table");
+    if (!this.table) {
+      this.table = document.createElement("table");
+      this.appendChild(this.table);
+    }
+
     this.updateCellTabIndex();
   }
 
@@ -272,9 +280,9 @@ export default class TableView extends HTMLElement {
     const width = parseFloat(target.dataset.width) + event.x;
     this.dispatchEvent(new TableEvent("resizetablecolumn", { column, width }));
 
-    this.querySelectorAll<HTMLElement>(
-      `div[role="cell"][data-column="${column}"]`,
-    ).forEach((cell) => (cell.style.width = width + "px"));
+    this.querySelectorAll<HTMLElement>(`td[data-column="${column}"]`).forEach(
+      (cell) => (cell.style.width = width + "px"),
+    );
     this.update();
     this.updateColumnResizeHandles();
   }
@@ -283,13 +291,13 @@ export default class TableView extends HTMLElement {
 
   private updateCellTabIndex() {
     if (this.allowSelection) {
-      this.querySelectorAll('div[role="cell"]').forEach((cell) =>
-        cell.setAttribute("tabindex", "-1"),
-      );
+      this.table?.querySelectorAll("td").forEach((cell) => {
+        cell.setAttribute("tabindex", "-1");
+      });
     } else {
-      this.querySelectorAll('div[role="cell"][tabindex]').forEach((cell) =>
-        cell.removeAttribute("tabindex"),
-      );
+      this.table
+        ?.querySelectorAll("td[tabindex]")
+        .forEach((cell) => cell.removeAttribute("tabindex"));
     }
   }
 
@@ -374,6 +382,10 @@ export default class TableView extends HTMLElement {
   // Virtualization
 
   private createCells() {
+    if (!this.table) {
+      return;
+    }
+
     const rect = this.getBoundingClientRect();
     let rowIndex = this.childElementCount;
 
@@ -394,9 +406,9 @@ export default class TableView extends HTMLElement {
         cell.style.width = `${this.getColumnWidth(i)}px`;
         cell.dataset.row = rowIndex.toString();
         cell.dataset.column = i.toString();
-        row.append(cell);
+        row.appendChild(cell);
       }
-      this.appendChild(row);
+      this.table.appendChild(row);
 
       rowIndex++;
 
@@ -428,14 +440,11 @@ export default class TableView extends HTMLElement {
   }
 
   private createRow() {
-    const row = document.createElement("div");
-    row.role = "row";
-    return row;
+    return document.createElement("tr");
   }
 
   private createCell() {
-    const cell = document.createElement("div");
-    cell.role = "cell";
+    const cell = document.createElement("td");
     cell.addEventListener("pointerover", this, { passive: true });
     return cell;
   }
@@ -501,6 +510,10 @@ export default class TableView extends HTMLElement {
   }
 
   private prependRow() {
+    if (!this.table) {
+      return;
+    }
+
     const row = this.getRow();
 
     const elements = [];
@@ -512,13 +525,17 @@ export default class TableView extends HTMLElement {
       elements.push(cell);
     }
     row.replaceChildren(...elements);
-    this.prepend(row);
+    this.table.prepend(row);
 
     this.firstVisibleRow--;
     this.renderedRows++;
   }
 
   private appendRow() {
+    if (!this.table) {
+      return;
+    }
+
     const rowIndex = this.firstVisibleRow + this.renderedRows;
 
     const elements = [];
@@ -528,7 +545,7 @@ export default class TableView extends HTMLElement {
     }
     const row = this.getRow();
     row.replaceChildren(...elements);
-    this.append(row);
+    this.table.append(row);
 
     this.renderedRows++;
   }

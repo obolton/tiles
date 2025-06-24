@@ -41,17 +41,11 @@
 }
 
 #contents {
-  display: table;
-  table-layout: fixed;
   position: absolute;
   top: 0;
   left: 0;
   min-height: 100cqh;
-  border: none;
-  border-spacing: 0;
-  border-collapse: separate;
   translate: var(--translate-x) var(--translate-y);
-  contain: size layout style;
 }
 
 :host(:hover),
