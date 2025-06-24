@@ -257,8 +257,8 @@ export default class Editor {
     id,
     collectionId,
     afterId,
-  }: OmitPageId<AppRouterInputs["tiles"]["move"]>) {
-    return client.tiles.move.mutate({
+  }: OmitPageId<AppRouterInputs["tiles"]["reorder"]>) {
+    return client.tiles.reorder.mutate({
       pageId: this.pageId,
       id,
       collectionId,
@@ -266,7 +266,11 @@ export default class Editor {
     });
   }
 
-  async resizeTile(id: string, width: number, height: number) {
+  async resizeTile({
+    id,
+    width,
+    height,
+  }: OmitPageId<AppRouterInputs["tiles"]["resize"]>) {
     return client.tiles.resize.mutate({
       pageId: this.pageId,
       id,
@@ -508,7 +512,7 @@ export default class Editor {
     id,
     collectionId,
     afterId,
-  }: OmitPageId<AppRouterInputs["tiles"]["move"]>) {
+  }: OmitPageId<AppRouterInputs["tiles"]["reorder"]>) {
     const tile = this.tiles.value.find((tile) => tile.id === id);
     if (!tile) {
       throw new Error(`Tile not found: ${id}`);
@@ -560,8 +564,12 @@ export default class Editor {
   }: OmitPageId<AppRouterInputs["tiles"]["resize"]>) {
     const tile = this.tiles.value.find((entry) => entry.id === id);
     if (tile) {
-      tile.width.value = width;
-      tile.height.value = height;
+      if (typeof width === "number") {
+        tile.width.value = width;
+      }
+      if (typeof height === "number") {
+        tile.height.value = height;
+      }
     }
   }
 

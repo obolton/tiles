@@ -264,7 +264,11 @@ export default class LayoutEditor {
 
     const id = target.dataset.placementId ?? "";
     try {
-      await this.editor.resizeTile(id, this.columns, this.rows);
+      await this.editor.resizeTile({
+        id,
+        width: this.columns,
+        height: this.rows,
+      });
     } catch (error) {
       handleError(error);
     }
