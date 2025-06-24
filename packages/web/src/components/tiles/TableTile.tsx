@@ -258,7 +258,7 @@ export default function TableTile({
           <thead>
             <tr>
               {tableColumns.value.map((_, index) => (
-                <th aria-colindex={index} />
+                <th scope="col" aria-colindex={index} />
               ))}
             </tr>
           </thead>
