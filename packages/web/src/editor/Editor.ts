@@ -325,10 +325,10 @@ export default class Editor {
           .filter((node) => node.type === "text")
           .map((node) => node.text)
           .join("")
+          .slice(0, 100)
           .trim();
 
         if (title) {
-          this.title.value = title;
           await this.setPageTitle(title);
         }
       }
