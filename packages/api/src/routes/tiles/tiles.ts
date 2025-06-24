@@ -1,18 +1,18 @@
 import prisma from "@/database/prisma.ts";
 import type {
-  MoveTileSchema,
+  ReorderTileSchema,
   DeleteTileSchema,
   ResizeTileSchema,
 } from "./schema.ts";
 import type { TileType } from "@prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma.ts";
 
-export async function moveTile({
+export async function reorderTile({
   pageId,
   id,
   collectionId,
   afterId,
-}: MoveTileSchema) {
+}: ReorderTileSchema) {
   return prisma.$transaction(async (transaction) => {
     const {
       parentCollectionId: previousCollectionId,

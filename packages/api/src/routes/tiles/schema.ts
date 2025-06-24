@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-export const MoveTileSchema = z.object({
+export const ReorderTileSchema = z.object({
   pageId: z.string().uuid(),
   id: z.string().uuid(),
   collectionId: z.string().uuid(),
   afterId: z.string().uuid().nullable().optional(),
 });
-export type MoveTileSchema = z.infer<typeof MoveTileSchema>;
+export type ReorderTileSchema = z.infer<typeof ReorderTileSchema>;
 
 export const ResizeTileSchema = z.object({
   pageId: z.string().uuid(),
