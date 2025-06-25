@@ -12,7 +12,7 @@ table-view {
   & thead {
     position: sticky;
     top: 0;
-    background: oklch(from var(--tile-background) 90% c h);
+    z-index: 2;
   }
 
   & tr {
@@ -23,9 +23,15 @@ table-view {
   & th {
     position: relative;
     padding: 0;
-    background: none;
+    background: oklch(from var(--tile-background) 90% c h);
     border-right: 1px solid rgb(0 0 0 / 10%);
     border-bottom: 1px solid rgb(0 0 0 / 10%);
+
+    &[scope="row"] {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+    }
 
     & > resize-handle {
       position: absolute;

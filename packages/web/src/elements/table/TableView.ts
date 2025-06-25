@@ -168,7 +168,23 @@ export default class TableView extends HTMLElement {
       this.table.prepend(this.colGroup);
     }
 
+    if (this.colGroup.childElementCount === 0) {
+      const col = document.createElement("col");
+      col.style.width = "32px";
+      this.colGroup.appendChild(col);
+    }
+
     this.tableHead = this.table.createTHead();
+
+    if (this.tableHead.rows.length === 0) {
+      this.tableHead.insertRow();
+    }
+
+    if (this.tableHead.rows[0]!.childElementCount === 0) {
+      const th = document.createElement("th");
+      th.scope = "colgroup";
+      this.tableHead.rows[0]!.appendChild(th);
+    }
 
     this.tableBody = this.table.tBodies[0] ?? null;
     if (!this.tableBody) {
@@ -461,7 +477,11 @@ export default class TableView extends HTMLElement {
   }
 
   private createRow() {
-    return document.createElement("tr");
+    const tr = document.createElement("tr");
+    const th = document.createElement("th");
+    th.scope = "row";
+    tr.appendChild(th);
+    return tr;
   }
 
   private createCell() {
@@ -485,7 +505,7 @@ export default class TableView extends HTMLElement {
     return cell;
   }
 
-  private recycleCell(cell: HTMLElement) {
+  private recycleCell(cell: HTMLTableCellElement) {
     cell.remove();
     cell.replaceChildren();
     cell.classList.remove("selected");
@@ -501,63 +521,39 @@ export default class TableView extends HTMLElement {
     return this.rowBuffer.pop()!;
   }
 
-  private prependColumn() {
-    if (!this.tableBody || !this.tableHead) {
+  private insertColumn(position: number, columnIndex: number) {
+    if (!this.colGroup || !this.tableHead || !this.tableBody) {
       return;
     }
 
-    const index = this.firstVisibleColumn - 1;
-
     const col = document.createElement("col");
-    col.dataset.index = index.toString();
-    col.style.width = this.getColumnWidth(index) + "px";
-    this.colGroup?.prepend(col);
+    col.dataset.index = columnIndex.toString();
+    col.style.width = this.getColumnWidth(columnIndex) + "px";
+    this.colGroup.insertBefore(
+      col,
+      this.colGroup.children[position + 1] ?? null,
+    );
 
     const th = document.createElement("th");
-    th.ariaColIndex = index.toString();
-    this.tableHead.rows.item(0)?.prepend(th);
+    th.ariaColIndex = columnIndex.toString();
+    const headerRow = this.tableHead.rows[0]!;
+    headerRow.insertBefore(th, headerRow.children[position + 1] ?? null);
+
+    const rows = this.tableBody.rows;
 
     for (let i = 0; i < this.renderedRows; i++) {
-      const row = this.tableBody.children[i] as HTMLElement;
-      const cell = this.getCell(this.firstVisibleRow + i, index);
-      row.prepend(cell);
-    }
-
-    this.firstVisibleColumn--;
-    this.renderedColumns++;
-  }
-
-  private appendColumn() {
-    if (!this.tableBody || !this.tableHead) {
-      return;
-    }
-
-    const index = this.firstVisibleColumn + this.renderedColumns;
-
-    const col = document.createElement("col");
-    col.dataset.index = index.toString();
-    col.style.width = this.getColumnWidth(index) + "px";
-    this.colGroup?.append(col);
-
-    const th = document.createElement("th");
-    th.ariaColIndex = index.toString();
-    this.tableHead.rows.item(0)?.append(th);
-
-    for (let i = 0; i < this.renderedRows; i++) {
-      const row = this.tableBody.children[i] as HTMLTableRowElement;
-      const cell = this.getCell(this.firstVisibleRow + i, index);
-      row.appendChild(cell);
+      const row = rows[i]!;
+      const cell = this.getCell(this.firstVisibleRow + i, columnIndex);
+      row.insertBefore(cell, row.children[position + 1] ?? null);
     }
 
     this.renderedColumns++;
   }
 
-  private prependRow() {
+  private insertRow(position: number, rowIndex: number) {
     if (!this.tableBody) {
       return;
     }
-
-    const rowIndex = this.firstVisibleRow - 1;
 
     const cells = [];
     for (let i = 0; i < this.renderedColumns; i++) {
@@ -567,30 +563,8 @@ export default class TableView extends HTMLElement {
 
     const row = this.getRow();
     row.ariaRowIndex = rowIndex.toString();
-    row.replaceChildren(...cells);
-    this.tableBody.prepend(row);
-
-    this.firstVisibleRow--;
-    this.renderedRows++;
-  }
-
-  private appendRow() {
-    if (!this.tableBody) {
-      return;
-    }
-
-    const rowIndex = this.firstVisibleRow + this.renderedRows;
-
-    const cells = [];
-    for (let i = 0; i < this.renderedColumns; i++) {
-      const cell = this.getCell(rowIndex, this.firstVisibleColumn + i);
-      cells.push(cell);
-    }
-
-    const row = this.getRow();
-    row.ariaRowIndex = rowIndex.toString();
-    row.replaceChildren(...cells);
-    this.tableBody.append(row);
+    row.append(...cells);
+    this.tableBody.insertBefore(row, this.tableBody.children[position] ?? null);
 
     this.renderedRows++;
   }
@@ -603,7 +577,8 @@ export default class TableView extends HTMLElement {
       this.firstVisibleRow > 0 &&
       this.contents.offsetHeight < targetHeight
     ) {
-      this.prependRow();
+      this.insertRow(0, this.firstVisibleRow - 1);
+      this.firstVisibleRow--;
     }
 
     const newHeight = this.contents.offsetHeight;
@@ -621,7 +596,10 @@ export default class TableView extends HTMLElement {
       this.firstVisibleRow + this.renderedRows < this.#rows &&
       this.contents.offsetHeight < targetHeight
     ) {
-      this.appendRow();
+      this.insertRow(
+        this.renderedRows,
+        this.firstVisibleRow + this.renderedRows,
+      );
     }
 
     this.contentHeight = this.contents.offsetHeight;
@@ -635,7 +613,8 @@ export default class TableView extends HTMLElement {
       this.firstVisibleColumn > 0 &&
       this.contents.offsetWidth < targetWidth
     ) {
-      this.prependColumn();
+      this.insertColumn(0, this.firstVisibleColumn - 1);
+      this.firstVisibleColumn--;
     }
 
     const newWidth = this.contents.offsetWidth;
@@ -653,35 +632,50 @@ export default class TableView extends HTMLElement {
       this.firstVisibleColumn + this.renderedColumns < this.#columns &&
       this.contents.offsetWidth < targetWidth
     ) {
-      this.appendColumn();
+      this.insertColumn(
+        this.renderedColumns,
+        this.firstVisibleColumn + this.renderedColumns,
+      );
     }
 
     this.contentWidth = this.contents.offsetWidth;
   }
 
   private drainTop(height: number) {
-    const startHeight = this.contentHeight;
-    const targetHeight = startHeight - height;
-    let rows = 0;
-    while (
-      rows < this.renderedRows &&
-      this.contents.offsetHeight > targetHeight
-    ) {
-      const row = this.firstElementChild as HTMLElement | undefined;
-      if (row) {
-        row.remove();
-        this.rowBuffer.push(row);
-        for (const child of row.children) {
-          this.recycleCell(child as HTMLElement);
-        }
-      }
-      rows++;
+    if (!this.tableBody) {
+      return;
     }
 
-    if (rows > 0) {
+    const rows = this.tableBody.rows;
+    const startHeight = this.contentHeight;
+    const targetHeight = startHeight - height;
+    let removedRows = 0;
+
+    while (
+      removedRows < this.renderedRows &&
+      this.contents.offsetHeight > targetHeight
+    ) {
+      const row = rows[0];
+      if (!row) {
+        break;
+      }
+
+      row.remove();
+      this.rowBuffer.push(row);
+
+      for (const cell of row.cells) {
+        if (cell.tagName === "TD") {
+          this.recycleCell(cell);
+        }
+      }
+
+      removedRows++;
+    }
+
+    if (removedRows > 0) {
       const endHeight = this.contents.offsetHeight;
-      this.firstVisibleRow += rows;
-      this.renderedRows -= rows;
+      this.firstVisibleRow += removedRows;
+      this.renderedRows -= removedRows;
       this.contentHeight = endHeight;
       const delta = startHeight - endHeight;
       this.translateY += delta;
@@ -690,14 +684,20 @@ export default class TableView extends HTMLElement {
   }
 
   private drainBottom(height: number) {
+    if (!this.tableBody) {
+      return;
+    }
+
+    const rows = this.tableBody.rows;
     const startHeight = this.contentHeight;
     const targetHeight = startHeight - height;
     let removedRows = 0;
+
     while (
       removedRows < this.renderedRows &&
       this.contents.offsetHeight > targetHeight
     ) {
-      const row = this.lastElementChild as HTMLElement | undefined;
+      const row = rows[rows.length - 1];
       if (!row) {
         break;
       }
@@ -705,9 +705,10 @@ export default class TableView extends HTMLElement {
       row.remove();
       this.rowBuffer.push(row);
 
-      for (const cell of row.children) {
-        cell.remove();
-        this.buffer.push(cell as HTMLElement);
+      for (const cell of row.cells) {
+        if (cell.tagName === "TD") {
+          this.recycleCell(cell);
+        }
       }
 
       removedRows++;
@@ -718,37 +719,11 @@ export default class TableView extends HTMLElement {
   }
 
   private drainLeft(width: number) {
-    const startWidth = this.contentWidth;
-    const targetWidth = startWidth - width;
-    let columns = 0;
-    while (
-      columns < this.renderedColumns &&
-      this.contents.offsetWidth > targetWidth
-    ) {
-      for (let i = 0; i < this.renderedRows; i++) {
-        const row = this.children[i]!;
-        const cell = row.firstElementChild as HTMLElement | undefined;
-        if (cell) {
-          cell.remove();
-          this.buffer.push(cell);
-        }
-      }
-
-      columns++;
+    if (!this.colGroup || !this.tableHead || !this.tableBody) {
+      return;
     }
 
-    if (columns > 0) {
-      const endWidth = this.contents.offsetWidth;
-      this.firstVisibleColumn += columns;
-      this.renderedColumns -= columns;
-      this.contentWidth = endWidth;
-      const delta = startWidth - endWidth;
-      this.translateX += delta;
-      this.reposition();
-    }
-  }
-
-  private drainRight(width: number) {
+    const rows = this.tableBody.rows;
     const startWidth = this.contentWidth;
     const targetWidth = startWidth - width;
     let removedColumns = 0;
@@ -757,11 +732,51 @@ export default class TableView extends HTMLElement {
       removedColumns < this.renderedColumns &&
       this.contents.offsetWidth > targetWidth
     ) {
-      for (const row of this.children) {
-        const cell = row.lastElementChild as HTMLElement | undefined;
+      this.colGroup.children[1]?.remove();
+      this.tableHead.rows[0]?.cells[1]?.remove();
+
+      for (const row of rows) {
+        const cell = row.cells[1];
         if (cell) {
-          cell.remove();
-          this.buffer.push(cell);
+          this.recycleCell(cell);
+        }
+      }
+
+      removedColumns++;
+    }
+
+    if (removedColumns > 0) {
+      const endWidth = this.contents.offsetWidth;
+      this.firstVisibleColumn += removedColumns;
+      this.renderedColumns -= removedColumns;
+      this.contentWidth = endWidth;
+      const delta = startWidth - endWidth;
+      this.translateX += delta;
+      this.reposition();
+    }
+  }
+
+  private drainRight(width: number) {
+    if (!this.colGroup || !this.tableHead || !this.tableBody) {
+      return;
+    }
+
+    const rows = this.tableBody.rows;
+    const startWidth = this.contentWidth;
+    const targetWidth = startWidth - width;
+    let removedColumns = 0;
+
+    while (
+      removedColumns < this.renderedColumns &&
+      this.contents.offsetWidth > targetWidth
+    ) {
+      this.colGroup.lastElementChild?.remove();
+      this.tableHead.rows[0]?.lastElementChild?.remove();
+
+      for (const row of rows) {
+        const cell = row.cells[row.cells.length - 1];
+        if (cell) {
+          this.recycleCell(cell);
         }
       }
       removedColumns++;
@@ -836,16 +851,18 @@ export default class TableView extends HTMLElement {
   }
 
   private updateColumnResizeHandles() {
-    const headers = this.tableHead?.rows.item(0)?.cells;
+    const headers = this.tableHead?.rows[0]?.cells;
 
     if (!headers) {
       return;
     }
 
     for (const th of headers) {
-      const handle = th.querySelector("resize-handle");
-      if (!handle) {
-        th.appendChild(this.createResizeHandle());
+      if (th.ariaColIndex) {
+        const handle = th.querySelector("resize-handle");
+        if (!handle) {
+          th.appendChild(this.createResizeHandle());
+        }
       }
     }
   }

@@ -250,6 +250,7 @@ export default function TableTile({
       >
         <table>
           <colgroup>
+            <col style={{ width: "32px" }} />
             {tableColumns.value.map((column, index) => (
               <col data-index={index} style={{ width: column.width + "px" }} />
             ))}
@@ -257,6 +258,7 @@ export default function TableTile({
 
           <thead>
             <tr>
+              <th scope="colgroup" />
               {tableColumns.value.map((_, index) => (
                 <th scope="col" aria-colindex={index} />
               ))}
@@ -285,7 +287,12 @@ export default function TableTile({
                   );
                 }
               }
-              return <tr aria-rowindex={row}>{cells}</tr>;
+              return (
+                <tr aria-rowindex={row}>
+                  <th scope="row" />
+                  {cells}
+                </tr>
+              );
             })}
           </tbody>
         </table>
