@@ -42,15 +42,14 @@
 
 #contents {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: var(--translate-y);
+  left: var(--translate-x);
   min-height: 100cqh;
-  translate: var(--translate-x) var(--translate-y);
 }
 
 :host(:hover),
 :host(:focus-within) {
   #contents {
-    will-change: translate;
+    will-change: top, left;
   }
 }

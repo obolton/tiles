@@ -4,6 +4,7 @@ table-view {
   contain: strict;
 
   & table {
+    width: max-content;
     border: none;
     border-spacing: 0;
     border-collapse: separate;
