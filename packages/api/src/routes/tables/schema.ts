@@ -4,8 +4,8 @@ import { RichTextSchema } from "@/schema/RichText.ts";
 export const CreateTableSchema = z.object({
   pageId: z.string().uuid(),
   collectionId: z.string().uuid(),
-  numColumns: z.number().int().min(1).max(100),
-  numRows: z.number().int().max(10),
+  columns: z.number().int().min(1).max(100),
+  rows: z.number().int().max(10),
 });
 export type CreateTableSchema = z.infer<typeof CreateTableSchema>;
 

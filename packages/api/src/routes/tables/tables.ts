@@ -29,14 +29,20 @@ export const TABLE_WITH_DATA_FIELDS = {
   ...TABLE_FIELDS,
   _count: {
     select: {
-      tableRows: true,
+      rows: true,
     },
   },
-  tableColumns: {
+  columns: {
     select: TABLE_COLUMN_FIELDS,
+    orderBy: {
+      order: "asc",
+    },
   },
-  tableRows: {
+  rows: {
     select: TABLE_ROW_FIELDS,
+    orderBy: {
+      order: "asc",
+    },
     take: 10,
   },
 } as const satisfies Prisma.TableSelect<ExtensionArgs>;
@@ -44,8 +50,8 @@ export const TABLE_WITH_DATA_FIELDS = {
 export async function createTable({
   pageId,
   collectionId,
-  numColumns,
-  numRows,
+  columns,
+  rows,
 }: CreateTableSchema) {
   return prisma.$transaction(async (transaction) => {
     const table = await transaction.table.create({
@@ -56,16 +62,16 @@ export async function createTable({
     });
 
     const columnData: Prisma.TableColumnCreateManyInput[] = [];
-    for (let i = 0; i < numColumns; i++) {
-      columnData.push({ tableId: table.id });
+    for (let i = 0; i < columns; i++) {
+      columnData.push({ tableId: table.id, order: i.toString() });
     }
     await transaction.tableColumn.createMany({
       data: columnData,
     });
 
     const rowData: Prisma.TableRowCreateManyInput[] = [];
-    for (let i = 0; i < numRows; i++) {
-      rowData.push({ tableId: table.id, data: {} });
+    for (let i = 0; i < rows; i++) {
+      rowData.push({ tableId: table.id, order: i.toString(), data: {} });
     }
     await transaction.tableRow.createMany({
       data: rowData,
@@ -90,7 +96,7 @@ export async function createTable({
     return {
       type: "TABLE" as const,
       ...tableWithData,
-      numRows: _count.tableRows,
+      numRows: _count.rows,
       ...placement,
     };
   });
