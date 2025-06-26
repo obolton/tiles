@@ -62,6 +62,7 @@ function getLayout(sections: Section[], tiles: Tile[]): Layout {
 
 export default class Editor {
   readonly pageId: string;
+  readonly workspaceId: string;
   readonly isEditable: Reactive<boolean>;
   readonly title: Reactive<string>;
   readonly color: Reactive<Color>;
@@ -81,6 +82,7 @@ export default class Editor {
 
   constructor(page: Page) {
     this.pageId = page.id;
+    this.workspaceId = page.workspaceId;
     this.isEditable = flag(isEditMode());
     this.title = reactive(page.title);
     this.color = reactive(page.color);
