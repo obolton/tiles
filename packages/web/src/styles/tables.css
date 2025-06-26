@@ -27,6 +27,7 @@ table-view {
     background: oklch(from var(--tile-background) 90% c h);
     border-right: 1px solid rgb(0 0 0 / 10%);
     border-bottom: 1px solid rgb(0 0 0 / 10%);
+    cursor: grab;
 
     &[scope="row"] {
       position: sticky;
