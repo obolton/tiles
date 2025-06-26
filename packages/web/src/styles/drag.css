@@ -57,7 +57,7 @@
 }
 
 body[data-drag] {
-  cursor: move;
+  cursor: grabbing;
 
   & * {
     cursor: inherit;
