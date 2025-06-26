@@ -24,10 +24,20 @@ export interface VisibleCell extends Cell {
   element: HTMLElement;
 }
 
-export type Selection = {
+export type RangeSelection = {
   anchor: Cell;
   focus: Cell;
 };
+
+export type ColumnSelection = {
+  column: number;
+};
+
+export type RowSelection = {
+  row: number;
+};
+
+export type Selection = RangeSelection | ColumnSelection | RowSelection;
 
 function defaultGetColumnWidth() {
   return 160;
@@ -44,7 +54,7 @@ export default class TableView extends HTMLElement {
   #rows = 0;
   #allowSelection = false;
 
-  selection: Selection | null = null;
+  readonly selection = new Set<Selection>();
   getColumnWidth: (index: number) => number = defaultGetColumnWidth;
 
   private scrollContainer?: HTMLElement;
@@ -115,6 +125,7 @@ export default class TableView extends HTMLElement {
     this.contents = this;
 
     this.addEventListener("keydown", this);
+    this.addEventListener("pointerdown", this);
     this.addEventListener("pointerup", this, { passive: true });
   }
 
@@ -274,6 +285,8 @@ export default class TableView extends HTMLElement {
         return this.handleScroll();
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
+      case "pointerdown":
+        return this.handlePointerDown(event as PointerEvent);
       case "pointerup":
         return this.handlePointerUp(event as PointerEvent);
       case "pointerover":
@@ -302,6 +315,50 @@ export default class TableView extends HTMLElement {
     }
   }
 
+  private handlePointerDown(event: PointerEvent) {
+    if (event.button !== PRIMARY_MOUSE_BUTTON) {
+      return;
+    }
+
+    const { target } = event;
+
+    if (
+      target instanceof HTMLTableCellElement &&
+      target.tagName === "TH" &&
+      target.scope === "col" &&
+      target.ariaColIndex
+    ) {
+      event.preventDefault();
+      const selection = { column: parseInt(target.ariaColIndex, 10) };
+      if (event.shiftKey) {
+        this.addSelection(selection);
+      } else {
+        this.setSelection(selection);
+      }
+      return;
+    }
+
+    if (
+      target instanceof HTMLTableCellElement &&
+      target.tagName === "TH" &&
+      target.scope === "row" &&
+      target.parentElement?.ariaRowIndex
+    ) {
+      event.preventDefault();
+      const selection = {
+        row: parseInt(target.parentElement.ariaRowIndex, 10),
+      };
+      if (event.shiftKey) {
+        this.addSelection(selection);
+      } else {
+        this.setSelection(selection);
+      }
+      return;
+    }
+
+    this.clearSelection();
+  }
+
   private handlePointerUp(event: PointerEvent) {
     if (event.button !== PRIMARY_MOUSE_BUTTON) {
       return;
@@ -323,7 +380,7 @@ export default class TableView extends HTMLElement {
     if (this.isSelecting && this.selection) {
       const row = parseInt(target.parentElement!.ariaRowIndex ?? "0", 10);
       const column = parseInt(target.ariaColIndex ?? "0", 10);
-      this.selection.focus = { row, column };
+      // this.selection.focus = { row, column };
       this.redrawSelection();
     }
   }
@@ -377,39 +434,49 @@ export default class TableView extends HTMLElement {
     }
   }
 
+  private setSelection(selection: Selection) {
+    this.selection.clear();
+    this.selection.add(selection);
+    this.redrawSelection();
+  }
+
+  private addSelection(selection: Selection) {
+    this.selection.add(selection);
+    this.redrawSelection();
+  }
+
   private clearSelection() {
     this.querySelectorAll(".selected").forEach((cell) =>
       cell.classList.remove("selected"),
     );
-    this.selection = null;
+    this.selection.clear();
     this.isSelecting = false;
   }
 
   private redrawSelection() {
-    this.querySelectorAll(".selected").forEach((cell) =>
-      cell.classList.remove("selected"),
+    this.querySelectorAll(".selected").forEach((element) =>
+      element.classList.remove("selected"),
     );
 
-    if (!this.selection) {
-      return;
+    for (const selection of this.selection) {
+      if ("anchor" in selection) {
+        this.drawRangeSelection(selection);
+      } else if ("column" in selection) {
+        this.drawColumnSelection(selection);
+      } else if ("row" in selection) {
+        this.drawRowSelection(selection);
+      }
     }
+  }
 
-    const startRow = Math.min(
-      this.selection.anchor.row,
-      this.selection.focus.row,
-    );
-    const endRow = Math.max(
-      this.selection.anchor.row,
-      this.selection.focus.row,
-    );
+  private drawRangeSelection(selection: RangeSelection) {
+    const startRow = Math.min(selection.anchor.row, selection.focus.row);
+    const endRow = Math.max(selection.anchor.row, selection.focus.row);
     const startColumn = Math.min(
-      this.selection.anchor.column,
-      this.selection.focus.column,
+      selection.anchor.column,
+      selection.focus.column,
     );
-    const endColumn = Math.max(
-      this.selection.anchor.column,
-      this.selection.focus.column,
-    );
+    const endColumn = Math.max(selection.anchor.column, selection.focus.column);
 
     const startVisibleRow = Math.max(startRow, this.firstVisibleRow);
     const endVisibleRow = Math.min(
@@ -433,6 +500,24 @@ export default class TableView extends HTMLElement {
         )?.classList.add("selected");
       }
     }
+  }
+
+  private drawColumnSelection(selection: ColumnSelection) {
+    const { column } = selection;
+    this.querySelector(`col[data-index="${column}"]`)?.classList.add(
+      "selected",
+    );
+    this.querySelector(`th[aria-colindex="${column}"]`)?.classList.add(
+      "selected",
+    );
+  }
+
+  private drawRowSelection(selection: RowSelection) {
+    const { row } = selection;
+    this.querySelector(`tr[aria-rowindex="${row}"]`)?.classList.add("selected");
+    this.querySelector(`tr[aria-rowindex="${row}"] > th`)?.classList.add(
+      "selected",
+    );
   }
 
   // Column sizing
@@ -521,6 +606,7 @@ export default class TableView extends HTMLElement {
     );
 
     const th = document.createElement("th");
+    th.scope = "col";
     th.ariaColIndex = columnIndex.toString();
     th.appendChild(this.createResizeHandle());
     makeDraggable(th, { constrain: "horizontal" });
@@ -826,11 +912,8 @@ export default class TableView extends HTMLElement {
 
     for (const th of this.tableHead.rows[0]!.cells) {
       if (th.ariaColIndex) {
-        const handle = th.querySelector("resize-handle");
-        if (!handle) {
-          makeDraggable(th, { constrain: "horizontal" });
-          th.appendChild(this.createResizeHandle());
-        }
+        makeDraggable(th, { constrain: "horizontal" });
+        th.appendChild(this.createResizeHandle());
       }
     }
 
