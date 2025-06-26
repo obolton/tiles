@@ -482,7 +482,7 @@ export function makeDraggable(
   pointerElement.addEventListener(
     "pointerdown",
     (event: PointerEvent) => {
-      if (event.button === PRIMARY_MOUSE_BUTTON) {
+      if (event.button === PRIMARY_MOUSE_BUTTON && !event.defaultPrevented) {
         new DragState(element, event.clientX, event.clientY, constrain);
       }
     },
