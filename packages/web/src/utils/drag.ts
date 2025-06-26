@@ -8,6 +8,8 @@ const DRAG_EVENT_INTERVAL = 300; // ms
 const MAX_SCROLL_SPEED = 20; // px per scroll
 const LONG_PRESS_DURATION = 500; // ms
 
+type ConstrainDragOptions = "horizontal" | "vertical";
+
 type DragDropEventType =
   | "dnd-dragstart"
   | "dnd-dragend"
@@ -61,6 +63,7 @@ export class DragState<T> {
   private readonly startY: number;
   private readonly originX: number;
   private readonly originY: number;
+  private readonly constrain?: ConstrainDragOptions;
   private readonly abortController = new AbortController();
 
   private isDragging = false;
@@ -72,10 +75,16 @@ export class DragState<T> {
   private scrollSpeed = 0;
   private pendingDragEvent: { x: number; y: number } | null = null;
 
-  constructor(element: HTMLElement, startX: number, startY: number) {
+  constructor(
+    element: HTMLElement,
+    startX: number,
+    startY: number,
+    constrain?: ConstrainDragOptions,
+  ) {
     this.element = element;
     this.startX = startX;
     this.startY = startY;
+    this.constrain = constrain;
 
     const rect = element.getBoundingClientRect();
     this.originX = startX - rect.x;
@@ -189,32 +198,35 @@ export class DragState<T> {
   private pointerMove(event: PointerEvent) {
     this.cancelLongPress();
 
+    const x = this.constrain === "vertical" ? this.startX : event.clientX;
+    const y = this.constrain === "horizontal" ? this.startY : event.clientY;
+
     if (this.isDragging) {
-      this.scheduleDragEvent(event.clientX, event.clientY);
+      this.scheduleDragEvent(x, y);
 
       requestAnimationFrame(() => {
-        const x = event.clientX - this.originX;
-        const y = event.clientY - this.originY;
-        this.dragElement?.style.setProperty("--translate-x", `${x}px`);
-        this.dragElement?.style.setProperty("--translate-y", `${y}px`);
+        const deltaX = x - this.originX;
+        const deltaY = y - this.originY;
+        this.dragElement?.style.setProperty("--translate-x", `${deltaX}px`);
+        this.dragElement?.style.setProperty("--translate-y", `${deltaY}px`);
       });
     } else if (event.pointerType !== "touch") {
-      const deltaX = event.clientX - this.startX;
-      const deltaY = event.clientY - this.startY;
+      const deltaX = x - this.startX;
+      const deltaY = y - this.startY;
 
       if (Math.hypot(deltaX, deltaY) >= DRAG_THRESHOLD) {
-        this.startDrag(event.clientX, event.clientY);
+        this.startDrag(x, y);
       }
     }
 
-    if (event.clientY <= SCROLL_MARGIN) {
-      this.scrollSpeed = -(SCROLL_MARGIN - event.clientY);
+    if (y <= SCROLL_MARGIN) {
+      this.scrollSpeed = -(SCROLL_MARGIN - y);
       this.scrollInterval ??= setInterval(
         this.scroll.bind(this),
         SCROLL_INTERVAL,
       );
-    } else if (window.innerHeight - event.clientY <= SCROLL_MARGIN) {
-      this.scrollSpeed = SCROLL_MARGIN - (window.innerHeight - event.clientY);
+    } else if (window.innerHeight - y <= SCROLL_MARGIN) {
+      this.scrollSpeed = SCROLL_MARGIN - (window.innerHeight - y);
       this.scrollInterval ??= setInterval(
         this.scroll.bind(this),
         SCROLL_INTERVAL,
@@ -457,6 +469,7 @@ function preventDefault(event: Event) {
 
 export interface MakeDraggableOptions {
   handle?: HTMLElement;
+  constrain?: ConstrainDragOptions;
   signal?: AbortSignal;
 }
 
@@ -464,13 +477,13 @@ export function makeDraggable(
   element: HTMLElement,
   options?: MakeDraggableOptions,
 ) {
-  const { handle, signal } = options ?? {};
+  const { handle, signal, constrain } = options ?? {};
   const pointerElement = handle ?? element;
   pointerElement.addEventListener(
     "pointerdown",
     (event: PointerEvent) => {
       if (event.button === PRIMARY_MOUSE_BUTTON) {
-        new DragState(element, event.clientX, event.clientY);
+        new DragState(element, event.clientX, event.clientY, constrain);
       }
     },
     {
