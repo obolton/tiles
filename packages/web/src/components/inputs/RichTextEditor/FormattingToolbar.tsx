@@ -118,6 +118,7 @@ export default function FormattingToolbar({
     const link = getLink(state);
 
     showModal<LinkModalResult>("LINK", {
+      workspaceId: editor.workspaceId,
       url: link?.node.attrs.href,
       showPages: false,
       showRemove: !!link,

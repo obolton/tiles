@@ -27,6 +27,7 @@ export default function LinkTile({
 
   const editLink = () => {
     showModal<LinkModalResult>("LINK", {
+      workspaceId: editor.workspaceId,
       url,
       showPages: false,
       async onConfirm(result) {

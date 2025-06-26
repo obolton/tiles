@@ -14,7 +14,8 @@ import type { ModalProps } from "@/utils/modals";
 type Pages = AppRouterOutputs["pages"]["list"];
 export type LinkModalResult = { linkedPageId: string } | { url: string | null };
 
-interface LinkModalProps extends ModalProps<LinkModalResult> {
+export interface LinkModalProps extends ModalProps<LinkModalResult> {
+  workspaceId: string;
   url?: string;
   showPages?: boolean;
   showRemove?: boolean;
@@ -23,6 +24,7 @@ interface LinkModalProps extends ModalProps<LinkModalResult> {
 export default function LinkModal({
   cancel,
   confirm,
+  workspaceId,
   url: initialUrl = "",
   showPages = true,
   showRemove = false,
@@ -35,6 +37,7 @@ export default function LinkModal({
     try {
       const { pages: resultPages, hasMore: resultHasMore } =
         await client.pages.list.query({
+          workspaceId,
           query: query || undefined,
           offset,
         });

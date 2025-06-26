@@ -77,6 +77,7 @@ export default function TileButtons({
 
       case "LINK":
         showModal<LinkModalResult>("LINK", {
+          workspaceId: editor.workspaceId,
           async onConfirm(result) {
             if ("linkedPageId" in result) {
               await editor.createPageLink({
