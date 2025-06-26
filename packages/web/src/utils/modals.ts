@@ -5,7 +5,7 @@ export interface ModalOptions<T> {
   [k: string]: unknown;
 }
 
-export interface ModalProps<T = unknown> extends ModalOptions<T> {
+export interface ModalProps<T = never> extends ModalOptions<T> {
   confirm: (result: T) => Promise<void>;
   cancel: () => void;
 }
@@ -20,16 +20,19 @@ export class ModalEvent<T> extends Event {
   }
 }
 
-export type ModalComponent<T = unknown> = JSX.Component<ModalProps<T>>;
+export type ModalComponent<T extends ModalProps> = JSX.Component<T>;
 
-export type ModalLoader<T = unknown> = () => Promise<{
+export type ModalLoader<T extends ModalProps> = () => Promise<{
   default: ModalComponent<T>;
 }>;
 
-const registry = new Map<string, ModalLoader>();
+const registry = new Map<string, ModalLoader<never>>();
 
-export function registerModal(name: string, component: ModalLoader) {
-  registry.set(name, component);
+export function registerModal<T extends ModalProps>(
+  name: string,
+  loader: ModalLoader<T>,
+) {
+  registry.set(name, loader);
 }
 
 export function getModal(name: string) {
