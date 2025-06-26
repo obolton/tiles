@@ -27,7 +27,6 @@ export interface PageLayoutProps {
   workspaceId?: string;
   showBookmark?: boolean;
   showTableOfContents?: boolean;
-  showShare?: boolean;
   children: JSX.Node;
 }
 
@@ -35,7 +34,6 @@ export default function PageLayout({
   workspaceId,
   showBookmark,
   showTableOfContents,
-  showShare,
   children,
 }: PageLayoutProps) {
   return (
@@ -45,7 +43,6 @@ export default function PageLayout({
           workspaceId={workspaceId}
           showBookmark={showBookmark}
           showTableOfContents={showTableOfContents}
-          showShare={showShare}
         />
       ) : null}
 

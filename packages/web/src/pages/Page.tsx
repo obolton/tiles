@@ -10,12 +10,7 @@ export interface PageProps {
 
 export default function Page({ page }: PageProps) {
   return (
-    <PageLayout
-      workspaceId={page.workspaceId}
-      showBookmark
-      showTableOfContents
-      showShare
-    >
+    <PageLayout workspaceId={page.workspaceId} showBookmark showTableOfContents>
       <EditablePage page={page} />
     </PageLayout>
   );

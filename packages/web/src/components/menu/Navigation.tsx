@@ -5,7 +5,6 @@ import SettingsIcon from "@/icons/settings.svg?jsx";
 import SignOutIcon from "@/icons/sign-out.svg?jsx";
 import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import BookmarkFilledIcon from "@/icons/bookmark-filled.svg?jsx";
-import ShareIcon from "@/icons/share.svg?jsx";
 import MenuIcon from "@/icons/menu.svg?jsx";
 import { user } from "@/utils/sessions";
 import { isSignedIn, getUserInfo, getCachedUserInfo } from "@/utils/sessions";
@@ -15,20 +14,17 @@ import { signOut } from "@/utils/sessions";
 import { getIsBookmarked, setIsBookmarked } from "@/utils/bookmarks";
 import { flag } from "@/utils/reactivity";
 import { showToast } from "@/utils/toasts";
-import { sharePage } from "@/utils/sharing";
 
 export interface NavigationProps {
   workspaceId: string;
   showBookmark?: boolean;
   showTableOfContents?: boolean;
-  showShare?: boolean;
 }
 
 export default function Navigation({
   workspaceId,
   showBookmark = false,
   showTableOfContents = false,
-  showShare = false,
 }: NavigationProps) {
   const isBookmarked = flag(false);
   const bookmarkPending = flag(false);
@@ -219,20 +215,6 @@ export default function Navigation({
                 anchor="toc-button"
                 role="navigation"
               />
-            </li>
-          ) : null}
-
-          {showShare ? (
-            <li>
-              <button
-                type="button"
-                className="floating"
-                aria-label="Share this page"
-                data-tooltip="Share this page"
-                on:click={sharePage}
-              >
-                <ShareIcon aria-hidden="true" />
-              </button>
             </li>
           ) : null}
         </ul>
