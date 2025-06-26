@@ -38,8 +38,8 @@ function createDocument(value: string) {
 export default function TableTile({
   editor,
   id,
-  tableColumns,
-  tableRows,
+  columns,
+  rows,
   numRows,
   hasFocus,
   signal,
@@ -64,15 +64,15 @@ export default function TableTile({
 
   const addColumn = async () => {
     const column = await editor.appendTableColumn({ tableId: id });
-    tableColumns.value = tableColumns.value.concat(column);
+    columns.value = columns.value.concat(column);
   };
 
   const updateCell = (row: number, column: number, cell: Element) => {
-    const columnId = tableColumns.value[column]?.id;
+    const columnId = columns.value[column]?.id;
     if (!columnId) {
       return;
     }
-    const value = tableRows.value[row]?.data[columnId];
+    const value = rows.value[row]?.data[columnId];
     if (!value) {
       return;
     }
@@ -111,9 +111,9 @@ export default function TableTile({
 
       const row = parseInt(rowElement.ariaRowIndex, 10);
       const column = parseInt(target.ariaColIndex, 10);
-      const columnId = tableColumns.value[column]?.id;
+      const columnId = columns.value[column]?.id;
 
-      const value = columnId ? tableRows.value[row]?.data[columnId] : null;
+      const value = columnId ? rows.value[row]?.data[columnId] : null;
       const doc = !value
         ? createDocument("")
         : typeof value === "string"
@@ -163,13 +163,13 @@ export default function TableTile({
 
     const row = parseInt(rowElement.ariaRowIndex, 10);
     const column = parseInt(target.ariaColIndex, 10);
-    const columnId = tableColumns.value[column]?.id;
+    const columnId = columns.value[column]?.id;
 
     if (!columnId) {
       return;
     }
 
-    const rowData = tableRows.value[row];
+    const rowData = rows.value[row];
     if (!rowData) {
       return;
     }
@@ -199,7 +199,7 @@ export default function TableTile({
     if (typeof column !== "number" || typeof width !== "number") {
       return;
     }
-    const columnInfo = tableColumns.value[column];
+    const columnInfo = columns.value[column];
     if (!columnInfo) {
       return;
     }
@@ -240,18 +240,18 @@ export default function TableTile({
       <table-view
         ref={ref}
         classList={["rich-text", styles.table]}
-        columns={tableColumns.derive((columns) => columns.length)}
+        columns={columns.derive((value) => value.length)}
         rows={numRows}
         allowselection={isEditable}
         on:focusin={onFocusIn}
         on:focusout={onFocusOut}
         on:resizetablecolumn={onResizeColumn}
-        $getColumnWidth={(index) => tableColumns.value[index]?.width ?? 200}
+        $getColumnWidth={(index) => columns.value[index]?.width ?? 200}
       >
         <table>
           <colgroup>
             <col style={{ width: "32px" }} />
-            {tableColumns.value.map((column, index) => (
+            {columns.value.map((column, index) => (
               <col data-index={index} style={{ width: column.width + "px" }} />
             ))}
           </colgroup>
@@ -259,21 +259,21 @@ export default function TableTile({
           <thead>
             <tr>
               <th scope="colgroup" />
-              {tableColumns.value.map((_, index) => (
+              {columns.value.map((_, index) => (
                 <th scope="col" aria-colindex={index} />
               ))}
             </tr>
           </thead>
 
           <tbody>
-            {tableRows.value.map(({ data: rowData }, row) => {
+            {rows.value.map(({ data: rowData }, row) => {
               const cells = [];
               for (
                 let columnIndex = 0;
-                columnIndex < tableColumns.value.length;
+                columnIndex < columns.value.length;
                 columnIndex++
               ) {
-                const column = tableColumns.value[columnIndex]!;
+                const column = columns.value[columnIndex]!;
                 const value = rowData[column.id];
                 if (!value) {
                   cells.push(<td aria-colindex={columnIndex}></td>);

@@ -56,7 +56,6 @@ export default function TileButtons({
           collectionId: collectionId ?? editor.getCurrentCollectionId(),
           width: 4,
           height: 4,
-          expand: false,
           content: [{ type: "paragraph", children: [] }],
         });
         break;
@@ -110,8 +109,8 @@ export default function TileButtons({
       case "TABLE":
         await editor.createTable({
           collectionId: collectionId ?? editor.getCurrentCollectionId(),
-          numColumns: 3,
-          numRows: 5,
+          columns: 3,
+          rows: 5,
         });
         break;
     }
