@@ -50,6 +50,21 @@ table-view {
         background-color: var(--focus-ring-color);
       }
     }
+
+    &#drag-preview {
+      animation: none;
+      scale: 1;
+      opacity: 1;
+      background: rgb(0 0 0 / 30%);
+
+      &[scope="col"] {
+        height: 100cqh !important;
+      }
+
+      &[scope="row"] {
+        width: 100cqw !important;
+      }
+    }
   }
 
   & td {
