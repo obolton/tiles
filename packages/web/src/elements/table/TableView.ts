@@ -1,6 +1,7 @@
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import css from "./TableView.css?inline";
 import { TableEvent } from "./events";
+import { makeDraggable } from "@/utils/drag";
 import type { ResizeEvent } from "@/elements/resize/events";
 
 const stylesheet = new CSSStyleSheet();
@@ -176,7 +177,7 @@ export default class TableView extends HTMLElement {
     this.fillRowBuffer();
 
     this.updateCellTabIndex();
-    this.updateColumnResizeHandles();
+    this.updateHeaders();
 
     this.reposition();
 
@@ -244,7 +245,7 @@ export default class TableView extends HTMLElement {
         }
         this.#columns = parseInt(value, 10);
         this.update();
-        this.updateColumnResizeHandles();
+        this.updateHeaders();
         break;
       case "rows":
         if (value === null) {
@@ -471,6 +472,7 @@ export default class TableView extends HTMLElement {
     const tr = document.createElement("tr");
     const th = document.createElement("th");
     th.scope = "row";
+    makeDraggable(th, { constrain: "vertical" });
     tr.appendChild(th);
     return tr;
   }
@@ -528,6 +530,7 @@ export default class TableView extends HTMLElement {
     const th = document.createElement("th");
     th.ariaColIndex = columnIndex.toString();
     th.appendChild(this.createResizeHandle());
+    makeDraggable(th, { constrain: "horizontal" });
     const headerRow = this.tableHead.rows[0]!;
     headerRow.insertBefore(th, headerRow.children[position + 1] ?? null);
 
@@ -823,19 +826,25 @@ export default class TableView extends HTMLElement {
     this.contents.style.setProperty("--translate-y", this.translateY + "px");
   }
 
-  private updateColumnResizeHandles() {
-    const headers = this.tableHead?.rows[0]?.cells;
-
-    if (!headers) {
+  private updateHeaders() {
+    if (!this.tableHead || !this.tableBody) {
       return;
     }
 
-    for (const th of headers) {
+    for (const th of this.tableHead.rows[0]!.cells) {
       if (th.ariaColIndex) {
         const handle = th.querySelector("resize-handle");
         if (!handle) {
+          makeDraggable(th, { constrain: "horizontal" });
           th.appendChild(this.createResizeHandle());
         }
+      }
+    }
+
+    for (const row of this.tableBody.rows) {
+      const th = row.querySelector("th");
+      if (th) {
+        makeDraggable(th, { constrain: "vertical" });
       }
     }
   }
