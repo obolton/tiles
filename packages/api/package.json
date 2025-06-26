@@ -42,7 +42,7 @@
     "esbuild": "^0.25.1",
     "prisma": "^6.10.1",
     "prisma-json-types-generator": "^3.4.2",
-    "tsx": "^4.19.3"
+    "tsx": "^4.20.3"
   },
   "engines": {
     "node": ">=24.3.0"
