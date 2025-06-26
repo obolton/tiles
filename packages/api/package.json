@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch --env-file=\"../../.env\" --clear-screen=false src/index.ts",
-    "build": "prisma generate && esbuild src/index.ts --bundle --outdir=dist --platform=node --target=node22 --packages=external --format=esm",
+    "build": "prisma generate && esbuild src/index.ts --bundle --outdir=dist --platform=node --target=node24 --packages=external --format=esm",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
@@ -45,6 +45,6 @@
     "tsx": "^4.19.3"
   },
   "engines": {
-    "node": ">=22.11.0"
+    "node": ">=24.3.0"
   }
 }
