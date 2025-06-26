@@ -235,23 +235,16 @@ export default class TableView extends HTMLElement {
 
   attributeChangedCallback(
     name: keyof TableViewAttributes,
-    _: string,
+    _: string | null,
     value: string | null,
   ) {
     switch (name) {
       case "columns":
-        if (value === null) {
-          throw new RangeError("columns attribute is required");
-        }
-        this.#columns = parseInt(value, 10);
+        this.#columns = value === null ? 0 : parseInt(value, 10);
         this.update();
-        this.updateHeaders();
         break;
       case "rows":
-        if (value === null) {
-          throw new RangeError("rows attribute is required");
-        }
-        this.#rows = parseInt(value, 10);
+        this.#rows = value === null ? 0 : parseInt(value, 10);
         this.update();
         break;
       case "allowselection":
