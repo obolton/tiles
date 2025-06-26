@@ -327,7 +327,7 @@ export class DragState<T> {
     style.setProperty("--rotate-y", rotateY.toFixed(3));
     style.setProperty("--rotate-angle", rotateAngle.toFixed(3) + "deg");
 
-    document.body.appendChild(this.dragElement);
+    this.element.parentElement!.appendChild(this.dragElement);
     this.dragElement.showPopover();
 
     this.dragInterval = setInterval(
