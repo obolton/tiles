@@ -21,7 +21,7 @@
     "generate-worker-types": "wrangler types src/types/worker.d.ts --include-runtime=false"
   },
   "dependencies": {
-    "@trpc/client": "^11.1.2",
+    "@trpc/client": "^11.4.3",
     "entities": "^6.0.0",
     "maplibre-gl": "^5.6.0",
     "prosemirror-commands": "^1.7.1",
