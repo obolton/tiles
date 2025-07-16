@@ -5,7 +5,7 @@ import type {
   LinkTile,
   PageLinkTile,
   Place,
-  Collection,
+  Section,
   Tile,
   TileType,
   Font,
@@ -19,14 +19,7 @@ type OmitMetadata<T> = Omit<T, "pageId" | "createdAt" | "updatedAt">;
 
 type ClientTileBase = Pick<
   Tile,
-  | "id"
-  | "type"
-  | "position"
-  | "x"
-  | "y"
-  | "width"
-  | "height"
-  | "parentCollectionId"
+  "id" | "type" | "position" | "x" | "y" | "width" | "height" | "sectionId"
 > & { placementId: string };
 
 // Image
@@ -101,7 +94,7 @@ export interface ClientTableTile extends ClientTileBase, ClientTable {
 }
 
 // Collection
-export type ClientCollection = OmitMetadata<Omit<Collection, "userId">>;
+export type ClientCollection = OmitMetadata<Omit<Section, "userId">>;
 
 export type ClientEntity =
   | ClientImage

@@ -4,7 +4,7 @@ import { VerticalAlignment } from "@prisma/client";
 
 export const CreateTextSchema = z.object({
   pageId: z.string().uuid(),
-  collectionId: z.string().uuid(),
+  sectionId: z.string().uuid(),
   content: RichTextSchema.optional(),
   color: z
     .object({

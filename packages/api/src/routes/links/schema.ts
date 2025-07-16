@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const CreateLinkSchema = z.object({
   pageId: z.string().uuid(),
-  collectionId: z.string().uuid(),
+  sectionId: z.string().uuid(),
   url: z.string().url(),
 });
 export type CreateLinkSchema = z.infer<typeof CreateLinkSchema>;

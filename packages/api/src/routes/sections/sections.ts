@@ -8,15 +8,13 @@ import type {
 
 export const SECTION_FIELDS = {
   id: true,
-  title: true,
-  type: true,
   layout: true,
   width: true,
-} as const satisfies Prisma.CollectionSelect<ExtensionArgs>;
+} as const satisfies Prisma.SectionSelect<ExtensionArgs>;
 
-export async function createSection({ pageId, title }: CreateSectionSchema) {
-  return prisma.collection.create({
-    data: { pageId, type: "SECTION", title },
+export async function createSection({ pageId }: CreateSectionSchema) {
+  return prisma.section.create({
+    data: { pageId },
     select: SECTION_FIELDS,
   });
 }
@@ -27,7 +25,7 @@ export async function updateSection({
   layout,
   width,
 }: UpdateSectionSchema) {
-  return prisma.collection.update({
+  return prisma.section.update({
     where: {
       pageId,
       id,
@@ -41,8 +39,8 @@ export async function updateSection({
 }
 
 export async function deleteSection({ pageId, id }: DeleteSectionSchema) {
-  return prisma.collection.delete({
-    where: { pageId, id, type: "SECTION" },
+  return prisma.section.delete({
+    where: { pageId, id },
     select: { id: true },
   });
 }

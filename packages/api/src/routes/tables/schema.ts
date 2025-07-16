@@ -3,7 +3,7 @@ import { RichTextSchema } from "@/schema/RichText.ts";
 
 export const CreateTableSchema = z.object({
   pageId: z.string().uuid(),
-  collectionId: z.string().uuid(),
+  sectionId: z.string().uuid(),
   columns: z.number().int().min(1).max(100),
   rows: z.number().int().max(10),
 });

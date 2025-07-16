@@ -19,7 +19,7 @@ export type Text = Prisma.Result<
 
 export async function createText({
   pageId,
-  collectionId,
+  sectionId,
   content,
   color,
   imageKey,
@@ -43,7 +43,7 @@ export async function createText({
     const placement = await createTilePlacement(
       {
         pageId,
-        parentCollectionId: collectionId,
+        sectionId,
         type: "TEXT",
         textTileId: text.id,
         width,

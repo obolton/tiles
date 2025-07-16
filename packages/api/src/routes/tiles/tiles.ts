@@ -10,21 +10,19 @@ import type { PrismaTransactionClient } from "@/database/prisma.ts";
 export async function reorderTile({
   pageId,
   id,
-  collectionId,
+  sectionId,
   afterId,
 }: ReorderTileSchema) {
   return prisma.$transaction(async (transaction) => {
-    const {
-      parentCollectionId: previousCollectionId,
-      position: previousPosition,
-    } = await transaction.tile.findUniqueOrThrow({
-      where: { pageId, id },
-      select: { parentCollectionId: true, position: true },
-    });
+    const { sectionId: previousSectionId, position: previousPosition } =
+      await transaction.tile.findUniqueOrThrow({
+        where: { pageId, id },
+        select: { sectionId: true, position: true },
+      });
 
     const afterTile = afterId
       ? await transaction.tile.findUniqueOrThrow({
-          where: { pageId, id: afterId, parentCollectionId: collectionId },
+          where: { pageId, id: afterId, sectionId },
           select: { position: true },
         })
       : null;
@@ -32,14 +30,14 @@ export async function reorderTile({
     const position = afterTile ? afterTile.position + 1 : 0;
 
     // Move within same collection
-    if (collectionId === previousCollectionId) {
+    if (sectionId === previousSectionId) {
       // Move down collection
       if (position > previousPosition) {
         await Promise.all([
           transaction.tile.updateMany({
             where: {
               pageId,
-              parentCollectionId: collectionId,
+              sectionId,
               id: { not: id },
               position: { gt: previousPosition, lte: position },
             },
@@ -56,7 +54,7 @@ export async function reorderTile({
           transaction.tile.updateMany({
             where: {
               pageId,
-              parentCollectionId: collectionId,
+              sectionId,
               id: { not: id },
               position: { gte: position, lt: previousPosition },
             },
@@ -76,7 +74,7 @@ export async function reorderTile({
         transaction.tile.updateMany({
           where: {
             pageId,
-            parentCollectionId: previousCollectionId,
+            sectionId: previousSectionId,
             id: { not: id },
             position: { gt: previousPosition },
           },
@@ -87,7 +85,7 @@ export async function reorderTile({
         transaction.tile.updateMany({
           where: {
             pageId,
-            parentCollectionId: collectionId,
+            sectionId,
             id: { not: id },
             position: { gte: position },
           },
@@ -97,7 +95,7 @@ export async function reorderTile({
         // Move item to collection
         transaction.tile.update({
           where: { pageId, id },
-          data: { parentCollectionId: collectionId, position },
+          data: { sectionId, position },
           select: { id: true },
         }),
       ]);
@@ -108,7 +106,7 @@ export async function reorderTile({
       pageId,
       fromPosition: previousPosition,
       toPosition: position,
-      collectionId: collectionId,
+      sectionId,
     };
   });
 }
@@ -142,14 +140,14 @@ export async function resizeTile({
 
 export async function deleteTile({ pageId, id }: DeleteTileSchema) {
   return prisma.$transaction(async (transaction) => {
-    const { parentCollectionId, position } = await transaction.tile.delete({
+    const { sectionId, position } = await transaction.tile.delete({
       where: { pageId, id },
-      select: { parentCollectionId: true, position: true },
+      select: { sectionId: true, position: true },
     });
     await transaction.tile.updateMany({
       where: {
         pageId,
-        parentCollectionId,
+        sectionId,
         position: { gt: position },
       },
       data: { position: { decrement: 1 } },
@@ -160,7 +158,7 @@ export async function deleteTile({ pageId, id }: DeleteTileSchema) {
 
 type CreateTilePlacement = {
   pageId: string;
-  parentCollectionId: string;
+  sectionId: string;
   type: TileType;
   width?: number;
   height?: number;
@@ -172,14 +170,13 @@ type CreateTilePlacement = {
   pageLinkTileId?: string;
   linkTileId?: string;
   videoTileId?: string;
-  collectionId?: string;
   tableId?: string;
 };
 
 export async function createTilePlacement(
   {
     pageId,
-    parentCollectionId,
+    sectionId,
     type,
     width = 1,
     height = 1,
@@ -202,7 +199,7 @@ export async function createTilePlacement(
   const { id: placementId, ...tile } = await transaction.tile.create({
     data: {
       pageId,
-      parentCollectionId,
+      sectionId,
       type,
       position,
       width,
@@ -224,7 +221,7 @@ export async function createTilePlacement(
       height: true,
       x: true,
       y: true,
-      parentCollectionId: true,
+      sectionId: true,
     },
   });
   return { ...tile, placementId };

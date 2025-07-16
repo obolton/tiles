@@ -49,7 +49,7 @@ export const TABLE_WITH_DATA_FIELDS = {
 
 export async function createTable({
   pageId,
-  collectionId,
+  sectionId,
   columns,
   rows,
 }: CreateTableSchema) {
@@ -80,7 +80,7 @@ export async function createTable({
     const placement = await createTilePlacement(
       {
         pageId,
-        parentCollectionId: collectionId,
+        sectionId,
         type: "TABLE",
         tableId: table.id,
       },

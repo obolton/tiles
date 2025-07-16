@@ -17,7 +17,7 @@ export const VIDEO_FIELDS = {
 
 export async function createVideo({
   pageId,
-  collectionId,
+  sectionId,
   url,
 }: CreateVideoSchema) {
   return prisma.$transaction(async (transaction) => {
@@ -42,7 +42,7 @@ export async function createVideo({
     const placement = await createTilePlacement(
       {
         pageId,
-        parentCollectionId: collectionId,
+        sectionId,
         type: "VIDEO",
         videoTileId: video.id,
       },

@@ -4,7 +4,7 @@ import {
   PAGE_LINK_FIELDS,
   PAGE_LINK_TILE_PAGE_FIELDS,
 } from "@/routes/pageLinks/pageLinks.ts";
-import { COLLECTION_FIELDS } from "@/routes/collections/collections.ts";
+import { SECTION_FIELDS } from "@/routes/sections/sections.ts";
 import { IMAGE_FIELDS } from "@/routes/images/images.ts";
 import { MAP_FIELDS } from "@/routes/maps/maps.ts";
 import { TEXT_FIELDS } from "@/routes/text/text.ts";
@@ -41,7 +41,7 @@ const TILES_FIELDS = {
   height: true,
   x: true,
   y: true,
-  parentCollectionId: true,
+  sectionId: true,
   image: {
     select: IMAGE_FIELDS,
   },
@@ -88,8 +88,8 @@ const PAGE_FIELDS = {
   invites: {
     select: PAGE_INVITE_FIELDS,
   },
-  collections: {
-    select: COLLECTION_FIELDS,
+  sections: {
+    select: SECTION_FIELDS,
     orderBy: {
       createdAt: "asc",
     },
@@ -113,7 +113,7 @@ export function formatTile({
   position,
   width,
   height,
-  parentCollectionId,
+  sectionId,
   ...tile
 }: TileWithData): ClientTile {
   const base = {
@@ -121,7 +121,7 @@ export function formatTile({
     position,
     width,
     height,
-    parentCollectionId,
+    sectionId,
   };
   const { image, video, text, map, link, pageLink, table } = tile;
 
@@ -320,10 +320,9 @@ export async function createPage(
         id: true,
       },
     });
-    await transaction.collection.create({
+    await transaction.section.create({
       data: {
         pageId: page.id,
-        type: "SECTION",
         items: {
           create: {
             page: {

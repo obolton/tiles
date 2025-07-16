@@ -3,7 +3,7 @@ import { RichTextSchema } from "@/schema/RichText.ts";
 
 export const CreateImageSchema = z.object({
   pageId: z.string().uuid(),
-  collectionId: z.string().uuid(),
+  sectionId: z.string().uuid(),
   imageKey: z.string(),
   text: RichTextSchema.nullable().optional(),
   theme: z.string().nullable().optional(),

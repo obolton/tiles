@@ -20,7 +20,7 @@ export type Image = Prisma.Result<
 
 export async function createImage({
   pageId,
-  collectionId,
+  sectionId,
   imageKey,
   text,
   theme,
@@ -38,7 +38,7 @@ export async function createImage({
     const placement = await createTilePlacement(
       {
         pageId,
-        parentCollectionId: collectionId,
+        sectionId,
         type: "IMAGE",
         imageTileId: image.id,
       },

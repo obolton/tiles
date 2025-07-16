@@ -3,7 +3,7 @@ import { z } from "zod";
 export const ReorderTileSchema = z.object({
   pageId: z.string().uuid(),
   id: z.string().uuid(),
-  collectionId: z.string().uuid(),
+  sectionId: z.string().uuid(),
   afterId: z.string().uuid().nullable().optional(),
 });
 export type ReorderTileSchema = z.infer<typeof ReorderTileSchema>;
