@@ -9,14 +9,14 @@ import type { Reactive } from "@/utils/reactivity";
 
 interface StackProps {
   editor: Editor;
-  collectionId: string;
+  sectionId: string;
   items: Reactive<Tile[]>;
-  Placeholder?: JSX.Component<Pick<StackProps, "collectionId">>;
+  Placeholder?: JSX.Component<Pick<StackProps, "sectionId">>;
 }
 
 export default function Stack({
   editor,
-  collectionId,
+  sectionId,
   items,
   Placeholder,
 }: StackProps) {
@@ -28,7 +28,7 @@ export default function Stack({
     new LayoutEditor({
       element,
       editor,
-      collectionId,
+      sectionId,
     });
   };
 
@@ -52,7 +52,7 @@ export default function Stack({
       {items.derive((value) =>
         value.length === 0 ? (
           Placeholder ? (
-            <Placeholder collectionId={collectionId} />
+            <Placeholder sectionId={sectionId} />
           ) : null
         ) : (
           value.map((item, i) => (
@@ -65,7 +65,7 @@ export default function Stack({
                 ),
               }}
               id={item.id}
-              collectionId={collectionId}
+              sectionId={sectionId}
               placementId={item.placementId}
               rows={new ReactiveValue(2)}
               columns={new ReactiveValue(1)}

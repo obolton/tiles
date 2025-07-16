@@ -9,15 +9,15 @@ import type { Reactive } from "@/utils/reactivity";
 
 export interface CarouselProps {
   editor: Editor;
-  collectionId: string;
+  sectionId: string;
   items: Reactive<Tile[]>;
-  Placeholder?: JSX.Component<Pick<CarouselProps, "collectionId">>;
+  Placeholder?: JSX.Component<Pick<CarouselProps, "sectionId">>;
   signal?: AbortSignal;
 }
 
 export default function Carousel({
   editor,
-  collectionId,
+  sectionId,
   items,
   Placeholder,
   signal,
@@ -28,7 +28,7 @@ export default function Carousel({
     const layoutEditor = new LayoutEditor({
       element,
       editor,
-      collectionId,
+      sectionId,
     });
     signal?.addEventListener("abort", () => layoutEditor.disconnect());
   };
@@ -44,7 +44,7 @@ export default function Carousel({
       {items.derive((value) =>
         value.length === 0 ? (
           Placeholder ? (
-            <Placeholder collectionId={collectionId} />
+            <Placeholder sectionId={sectionId} />
           ) : null
         ) : (
           value.map((item) => (

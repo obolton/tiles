@@ -10,12 +10,12 @@ import type { ClientTile } from "@/types/tiles";
 export interface LayoutEditorOptions {
   element: HTMLElement;
   editor: Editor;
-  collectionId: string;
+  sectionId: string;
 }
 
 export default class LayoutEditor {
   editor: Editor;
-  collectionId: string;
+  sectionId: string;
 
   private readonly elementRef: WeakRef<HTMLElement>;
 
@@ -27,10 +27,10 @@ export default class LayoutEditor {
   private rows = 0;
   private idForPoint?: string | null;
 
-  constructor({ element, editor, collectionId }: LayoutEditorOptions) {
+  constructor({ element, editor, sectionId }: LayoutEditorOptions) {
     this.elementRef = new WeakRef(element);
     this.editor = editor;
-    this.collectionId = collectionId;
+    this.sectionId = sectionId;
 
     element.addEventListener("dnd-dragover", this);
     element.addEventListener("dnd-dragleave", this);
@@ -101,7 +101,7 @@ export default class LayoutEditor {
       layoutTransition(() => {
         this.editor.moveTilePreview({
           id,
-          collectionId: this.collectionId,
+          sectionId: this.sectionId,
           afterId,
         });
       });
@@ -133,7 +133,7 @@ export default class LayoutEditor {
     try {
       await this.editor.moveTile({
         id,
-        collectionId: this.collectionId,
+        sectionId: this.sectionId,
         afterId,
       });
       this.element

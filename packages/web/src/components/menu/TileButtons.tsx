@@ -36,13 +36,10 @@ registerModal("MAP", () => import("@/components/modals/PlaceModal"));
 
 interface TileButtonsProps {
   editor: Editor;
-  collectionId?: string;
+  sectionId?: string;
 }
 
-export default function TileButtons({
-  editor,
-  collectionId,
-}: TileButtonsProps) {
+export default function TileButtons({ editor, sectionId }: TileButtonsProps) {
   const onClick = async (event: MouseEvent) => {
     const button = event.currentTarget as HTMLButtonElement;
     const tileType = button.dataset.tileType as TileType;
@@ -53,7 +50,7 @@ export default function TileButtons({
     switch (tileType) {
       case "TEXT":
         await editor.createText({
-          collectionId: collectionId ?? editor.getCurrentCollectionId(),
+          sectionId: sectionId ?? editor.getCurrentSectionId(),
           width: 4,
           height: 4,
           content: [{ type: "paragraph", children: [] }],
@@ -68,7 +65,7 @@ export default function TileButtons({
             }
             const imageKey = await uploadMedia(result.image, "image");
             await editor.createImage({
-              collectionId: collectionId ?? editor.getCurrentCollectionId(),
+              sectionId: sectionId ?? editor.getCurrentSectionId(),
               imageKey,
             });
           },
@@ -81,12 +78,12 @@ export default function TileButtons({
           async onConfirm(result) {
             if ("linkedPageId" in result) {
               await editor.createPageLink({
-                collectionId: collectionId ?? editor.getCurrentCollectionId(),
+                sectionId: sectionId ?? editor.getCurrentSectionId(),
                 linkedPageId: result.linkedPageId,
               });
             } else if (result.url) {
               await editor.createLink({
-                collectionId: collectionId ?? editor.getCurrentCollectionId(),
+                sectionId: sectionId ?? editor.getCurrentSectionId(),
                 url: result.url,
               });
             }
@@ -98,7 +95,7 @@ export default function TileButtons({
         showModal<PlaceModalResult>("MAP", {
           async onConfirm({ place }) {
             await editor.createMap({
-              collectionId: collectionId ?? editor.getCurrentCollectionId(),
+              sectionId: sectionId ?? editor.getCurrentSectionId(),
               place,
               width: 6,
               height: 6,
@@ -109,7 +106,7 @@ export default function TileButtons({
 
       case "TABLE":
         await editor.createTable({
-          collectionId: collectionId ?? editor.getCurrentCollectionId(),
+          sectionId: sectionId ?? editor.getCurrentSectionId(),
           columns: 3,
           rows: 5,
         });

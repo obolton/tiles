@@ -95,7 +95,7 @@ export default function Section({ editor, section }: SectionProps) {
             data-tooltip-position="top"
             aria-label="Section toolbar"
           >
-            <TileButtons editor={editor} collectionId={section.id} />
+            <TileButtons editor={editor} sectionId={section.id} />
 
             <ul role="group" aria-label="Layout">
               <li role="presentation">

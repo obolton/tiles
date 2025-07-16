@@ -9,18 +9,18 @@ import LayoutEditor from "@/editor/LayoutEditor";
 export interface GridProps {
   editor: Editor;
   isEditable: Reactive<boolean>;
-  collectionId: string;
+  sectionId: string;
   items: Reactive<Tile[]>;
   columns?: number;
   minColumnSpan?: number;
   minRowSpan?: number;
-  Placeholder?: JSX.Component<Pick<GridProps, "collectionId">>;
+  Placeholder?: JSX.Component<Pick<GridProps, "sectionId">>;
 }
 
 export default function Grid({
   editor,
   isEditable,
-  collectionId,
+  sectionId,
   items,
   columns = 3,
   minColumnSpan = 1,
@@ -38,7 +38,7 @@ export default function Grid({
     new LayoutEditor({
       element,
       editor,
-      collectionId,
+      sectionId,
     });
   };
 
@@ -54,7 +54,7 @@ export default function Grid({
       {items.derive((entries) =>
         entries.length === 0 ? (
           Placeholder ? (
-            <Placeholder collectionId={collectionId} />
+            <Placeholder sectionId={sectionId} />
           ) : null
         ) : (
           entries.map((tile) => (

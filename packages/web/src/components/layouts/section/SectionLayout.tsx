@@ -26,7 +26,7 @@ export default function SectionLayout({ editor, section }: SectionLayoutProps) {
           <Grid
             editor={editor}
             isEditable={isEditable}
-            collectionId={section.id}
+            sectionId={section.id}
             items={section.tiles}
             columns={12}
             minColumnSpan={2}
@@ -40,7 +40,7 @@ export default function SectionLayout({ editor, section }: SectionLayoutProps) {
           <Canvas
             editor={editor}
             isEditable={isEditable}
-            collectionId={section.id}
+            sectionId={section.id}
             items={section.tiles}
             columns={12}
             minColumnSpan={2}
@@ -54,7 +54,7 @@ export default function SectionLayout({ editor, section }: SectionLayoutProps) {
           <Grid
             editor={editor}
             isEditable={isEditable}
-            collectionId={section.id}
+            sectionId={section.id}
             items={section.tiles}
             columns={1}
             minColumnSpan={1}
@@ -67,7 +67,7 @@ export default function SectionLayout({ editor, section }: SectionLayoutProps) {
         return (
           <Carousel
             editor={editor}
-            collectionId={section.id}
+            sectionId={section.id}
             items={section.tiles}
             Placeholder={SectionPlaceholder}
           />

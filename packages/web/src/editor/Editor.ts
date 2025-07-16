@@ -43,10 +43,9 @@ function getReactiveTile(tile: ClientTile): Tile {
 }
 
 function getReactiveSection(section: ClientCollection): Section {
-  const { id, type, ...properties } = section;
+  const { id, ...properties } = section;
   return {
     id,
-    type,
     ...record(properties),
   };
 }
@@ -55,7 +54,7 @@ function getLayout(sections: Section[], tiles: Tile[]): Layout {
   return sections.map((section) => ({
     ...section,
     tiles: reactive(
-      tiles.filter((tile) => tile.parentCollectionId.value === section.id),
+      tiles.filter((tile) => tile.sectionId.value === section.id),
     ),
   }));
 }
@@ -68,12 +67,9 @@ export default class Editor {
   readonly color: Reactive<Color>;
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
-  readonly collections: Reactive<Section[]>;
+  readonly sections: Reactive<Section[]>;
   readonly tiles: Reactive<Tile[]>;
-  readonly layout: Computed<
-    [typeof this.collections, typeof this.tiles],
-    Layout
-  >;
+  readonly layout: Computed<[typeof this.sections, typeof this.tiles], Layout>;
   readonly access: Reactive<PageAccess[]>;
   readonly invites: Reactive<Invite[]>;
   readonly author: User;
@@ -88,9 +84,9 @@ export default class Editor {
     this.color = reactive(page.color);
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
-    this.collections = reactive(page.collections.map(getReactiveSection));
+    this.sections = reactive(page.sections.map(getReactiveSection));
     this.tiles = reactive(page.tiles.map(getReactiveTile));
-    this.layout = new Computed([this.collections, this.tiles], getLayout);
+    this.layout = new Computed([this.sections, this.tiles], getLayout);
     this.access = reactive(page.access);
     this.invites = reactive(page.invites);
     this.author = page.author;
@@ -146,7 +142,7 @@ export default class Editor {
         onConfirm: async (result) => {
           const imageKey = await uploadMedia(result.image, "image");
           await this.createImage({
-            collectionId: this.getCurrentCollectionId(),
+            sectionId: this.getCurrentSectionId(),
             imageKey,
           });
         },
@@ -154,7 +150,7 @@ export default class Editor {
     } else if (isUriList(item)) {
       item.getAsString(async (url) => {
         await this.createLink({
-          collectionId: this.getCurrentCollectionId(),
+          sectionId: this.getCurrentSectionId(),
           url,
         });
       });
@@ -197,8 +193,8 @@ export default class Editor {
     return client.pages.delete.mutate({ pageId: this.pageId });
   }
 
-  getCurrentCollectionId() {
-    const section = this.collections.value[0];
+  getCurrentSectionId() {
+    const section = this.sections.value[0];
     if (!section) {
       throw new Error("Page has no sections");
     }
@@ -212,7 +208,7 @@ export default class Editor {
       pageId: this.pageId,
     });
     transition(() => {
-      this.collections.value = this.collections.value.concat(
+      this.sections.value = this.sections.value.concat(
         getReactiveSection(section),
       );
     });
@@ -235,7 +231,7 @@ export default class Editor {
       id,
     });
     transition(() => {
-      this.collections.value = this.collections.value.filter(
+      this.sections.value = this.sections.value.filter(
         (section) => section.id !== id,
       );
     });
@@ -257,13 +253,13 @@ export default class Editor {
 
   async moveTile({
     id,
-    collectionId,
+    sectionId,
     afterId,
   }: OmitPageId<AppRouterInputs["tiles"]["reorder"]>) {
     return client.tiles.reorder.mutate({
       pageId: this.pageId,
       id,
-      collectionId,
+      sectionId,
       afterId,
     });
   }
@@ -510,9 +506,9 @@ export default class Editor {
     });
   }
 
-  async moveTilePreview({
+  moveTilePreview({
     id,
-    collectionId,
+    sectionId,
     afterId,
   }: OmitPageId<AppRouterInputs["tiles"]["reorder"]>) {
     const tile = this.tiles.value.find((tile) => tile.id === id);
@@ -520,18 +516,18 @@ export default class Editor {
       throw new Error(`Tile not found: ${id}`);
     }
 
-    const previousCollectionId = tile.parentCollectionId.value;
+    const previousSectionId = tile.sectionId.value;
 
     const previousCollection = this.layout.value.find(
-      (collection) => collection.id === previousCollectionId,
+      (collection) => collection.id === previousSectionId,
     );
     if (!previousCollection) {
-      throw new Error(`Invalid collection ID: ${previousCollectionId}`);
+      throw new Error(`Invalid section ID: ${previousSectionId}`);
     }
 
-    const collection = this.layout.value.find((s) => s.id === collectionId);
+    const collection = this.layout.value.find((s) => s.id === sectionId);
     if (!collection) {
-      throw new Error(`Invalid collection ID: ${collectionId}`);
+      throw new Error(`Invalid section ID: ${sectionId}`);
     }
 
     // Remove tile from old position
@@ -556,10 +552,10 @@ export default class Editor {
     );
 
     // Update reference to parent
-    tile.parentCollectionId.value = collectionId;
+    tile.sectionId.value = sectionId;
   }
 
-  async resizeTilePreview({
+  resizeTilePreview({
     id,
     width,
     height,
