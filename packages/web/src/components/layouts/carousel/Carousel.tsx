@@ -1,4 +1,4 @@
-import GridItem from "@/components/grid/GridItem";
+import Item from "@/components/item/Item";
 import styles from "./Carousel.module.css";
 import { reactive, flag } from "@/utils/reactivity";
 import LayoutEditor from "@/editor/LayoutEditor";
@@ -48,7 +48,7 @@ export default function Carousel({
           ) : null
         ) : (
           value.map((item) => (
-            <GridItem
+            <Item
               editor={editor}
               classList={{
                 [styles.item]: true,

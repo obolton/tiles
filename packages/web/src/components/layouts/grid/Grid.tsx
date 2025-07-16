@@ -1,4 +1,4 @@
-import GridItem from "@/components/grid/GridItem";
+import Item from "@/components/item/Item";
 import styles from "./Grid.module.css";
 import type { Tile } from "@/types/tiles";
 import type { JSX } from "@/jsx/jsx";
@@ -58,7 +58,7 @@ export default function Grid({
           ) : null
         ) : (
           entries.map((tile) => (
-            <GridItem
+            <Item
               editor={editor}
               classList={{
                 [styles["drag-placeholder"]]: dragId.derive(

@@ -1,5 +1,5 @@
 import styles from "./Stack.module.css";
-import GridItem from "@/components/grid/GridItem";
+import Item from "@/components/item/Item";
 import { ReactiveValue, Computed, flag } from "@/utils/reactivity";
 import LayoutEditor from "@/editor/LayoutEditor";
 import type { JSX } from "@/jsx/jsx";
@@ -56,7 +56,7 @@ export default function Stack({
           ) : null
         ) : (
           value.map((item, i) => (
-            <GridItem
+            <Item
               editor={editor}
               classList={{
                 [styles.item]: true,

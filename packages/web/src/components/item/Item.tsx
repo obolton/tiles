@@ -1,4 +1,4 @@
-import styles from "./GridItem.module.css";
+import styles from "./Item.module.css";
 import type PageItem from "@/elements/item/PageItem";
 import ImageTile from "@/components/tiles/ImageTile";
 import VideoTile from "@/components/tiles/VideoTile";
@@ -14,7 +14,7 @@ import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
 
-export interface GridItemProps {
+export interface ItemProps {
   editor: Editor;
   id: string;
   placementId: string;
@@ -81,7 +81,7 @@ function handlePointerDown(event: PointerEvent) {
   }
 }
 
-export default function GridItem({
+export default function Item({
   editor,
   id,
   placementId,
@@ -98,7 +98,7 @@ export default function GridItem({
   resizable = false,
   tile,
   tabIndex,
-}: GridItemProps) {
+}: ItemProps) {
   let item: PageItem;
   const ref = (element: PageItem) => {
     item = element;
