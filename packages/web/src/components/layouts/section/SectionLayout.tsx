@@ -1,4 +1,5 @@
 import Grid from "@/components/layouts/grid/Grid";
+import Canvas from "@/components/layouts/canvas/Canvas";
 import Carousel from "@/components/layouts/carousel/Carousel";
 import Placeholder from "@/components/placeholder/Placeholder";
 import type { SectionWithTiles } from "@/types/tiles";
@@ -23,6 +24,20 @@ export default function SectionLayout({ editor, section }: SectionLayoutProps) {
       case "GRID":
         return (
           <Grid
+            editor={editor}
+            isEditable={isEditable}
+            collectionId={section.id}
+            items={section.tiles}
+            columns={12}
+            minColumnSpan={2}
+            minRowSpan={3}
+            Placeholder={SectionPlaceholder}
+          />
+        );
+
+      case "CANVAS":
+        return (
+          <Canvas
             editor={editor}
             isEditable={isEditable}
             collectionId={section.id}
