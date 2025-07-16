@@ -15,21 +15,17 @@ export default function PageContents({
   isEditable,
   layout,
 }: PageContentsProps) {
-  return layout
-    .derive((collections) =>
-      collections.filter((collection) => collection.type === "SECTION"),
-    )
-    .derive((sections) =>
-      sections.length === 0 ? (
-        <Placeholder>
-          {isEditable.derive((editable) =>
-            editable
-              ? "There’s nothing here yet. Get starting by adding a section."
-              : "This page is empty.",
-          )}
-        </Placeholder>
-      ) : (
-        sections.map((section) => <Section editor={editor} section={section} />)
-      ),
-    );
+  return layout.derive((sections) =>
+    sections.length === 0 ? (
+      <Placeholder>
+        {isEditable.derive((editable) =>
+          editable
+            ? "There’s nothing here yet. Get starting by adding a section."
+            : "This page is empty.",
+        )}
+      </Placeholder>
+    ) : (
+      sections.map((section) => <Section editor={editor} section={section} />)
+    ),
+  );
 }

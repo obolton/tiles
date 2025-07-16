@@ -37,8 +37,8 @@ export type Tile =
   | TextProperties
   | VideoProperties;
 
-export type Section = Pick<ClientCollection, "id" | "type"> &
-  ReactiveRecord<Omit<ClientCollection, "id" | "type">>;
+export type Section = Pick<ClientCollection, "id"> &
+  ReactiveRecord<Omit<ClientCollection, "id">>;
 
 export interface SectionWithTiles extends Section {
   tiles: Reactive<Tile[]>;
