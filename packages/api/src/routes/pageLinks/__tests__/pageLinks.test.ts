@@ -47,7 +47,7 @@ describe("createPageLink", () => {
   it("should return a page link", async () => {
     const result = await createPageLink({
       pageId: "test-page-1",
-      collectionId: "test-collection",
+      sectionId: "test-collection",
       linkedPageId: "test-page-2",
     });
 

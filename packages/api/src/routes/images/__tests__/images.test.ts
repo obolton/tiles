@@ -11,7 +11,13 @@ import type { CreateQuery, UpdateQuery } from "@/test/prisma.ts";
 const MOCK_IMAGE: Image = {
   id: "test-image",
   imageUrl: "https://example.com/test-image-key",
-  caption: "Test caption",
+  theme: null,
+  text: [
+    {
+      type: "paragraph",
+      children: [{ type: "text", format: 0, text: "Test caption" }],
+    },
+  ],
   originX: 0.5,
   originY: 0.5,
 };
@@ -36,9 +42,14 @@ describe("createImage", () => {
   it("should return an image", async () => {
     const result = await createImage({
       pageId: "1",
-      collectionId: "test-collection",
+      sectionId: "test-collection",
       imageKey: "test-image-key",
-      caption: "Test caption",
+      text: [
+        {
+          type: "paragraph",
+          children: [{ type: "text", format: 0, text: "Test caption" }],
+        },
+      ],
     });
 
     expect(result).toEqual({
@@ -60,7 +71,12 @@ describe("updateImage", () => {
     const result = await updateImage({
       pageId: "1",
       id: "1",
-      caption: "New caption",
+      text: [
+        {
+          type: "paragraph",
+          children: [{ type: "text", format: 0, text: "New caption" }],
+        },
+      ],
     });
 
     expect(result).toEqual({

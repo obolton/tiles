@@ -11,9 +11,9 @@ const MOCK_TEXT: Text = {
       children: [{ type: "text", text: "Test content", format: 0 }],
     },
   ],
-  theme: "LIGHT",
-  hue: 120,
-  expand: false,
+  color: { l: 0, c: 0.2, h: 120 },
+  imageUrl: null,
+  align: "TOP",
 };
 
 const MOCK_PLACEMENT = {
@@ -36,7 +36,7 @@ describe("createText", () => {
   it("should return a text tile", async () => {
     const result = await createText({
       pageId: "1",
-      collectionId: "test-collection",
+      sectionId: "test-collection",
       content: MOCK_TEXT.content,
     });
 
