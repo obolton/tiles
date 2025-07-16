@@ -6,23 +6,6 @@ enum Font {
   BUBBLES
 }
 
-enum CollectionType {
-  SECTION
-  TILE
-}
-
-enum CollectionLayout {
-  GRID
-  COLUMN
-  CAROUSEL
-  CANVAS
-}
-
-enum CollectionWidth {
-  DEFAULT
-  VIEWPORT
-}
-
 enum VerticalAlignment {
   TOP
   CENTER
@@ -48,6 +31,7 @@ model Page {
   workspace          Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   author             User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   folder             Folder?        @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  sections           Section[]
   tiles              Tile[]
   referringPageLinks PageLinkTile[] @relation("LinkedPage")
   bookmarks          Bookmark[]
@@ -57,7 +41,6 @@ model Page {
   links              LinkTile[]
   maps               MapTile[]
   pageLinks          PageLinkTile[] @relation("Page")
-  collections        Collection[]
   tables             Table[]
   access             PageAccess[]
   invites            PageInvite[]
@@ -79,34 +62,34 @@ enum TileType {
 }
 
 model Tile {
-  id                 String   @id @default(uuid()) @db.Uuid
-  createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
-  pageId             String   @map("page_id") @db.Uuid
-  position           Int
-  width              Int      @default(1) @db.SmallInt
-  height             Int      @default(1) @db.SmallInt
-  x                  Int      @default(0) @db.SmallInt
-  y                  Int      @default(0) @db.SmallInt
-  imageTileId        String?  @map("image_tile_id") @db.Uuid
-  videoTileId        String?  @map("video_tile_id") @db.Uuid
-  textTileId         String?  @map("text_tile_id") @db.Uuid
-  mapTileId          String?  @map("map_tile_id") @db.Uuid
-  linkTileId         String?  @map("link_tile_id") @db.Uuid
-  pageLinkTileId     String?  @map("page_link_tile_id") @db.Uuid
-  tableId            String?  @map("table_id") @db.Uuid
-  parentCollectionId String   @map("parent_collection_id") @db.Uuid
+  id             String   @id @default(uuid()) @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  pageId         String   @map("page_id") @db.Uuid
+  sectionId      String   @map("section_id") @db.Uuid
+  position       Int
+  width          Int      @default(1) @db.SmallInt
+  height         Int      @default(1) @db.SmallInt
+  x              Int      @default(0) @db.SmallInt
+  y              Int      @default(0) @db.SmallInt
+  imageTileId    String?  @map("image_tile_id") @db.Uuid
+  videoTileId    String?  @map("video_tile_id") @db.Uuid
+  textTileId     String?  @map("text_tile_id") @db.Uuid
+  mapTileId      String?  @map("map_tile_id") @db.Uuid
+  linkTileId     String?  @map("link_tile_id") @db.Uuid
+  pageLinkTileId String?  @map("page_link_tile_id") @db.Uuid
+  tableId        String?  @map("table_id") @db.Uuid
+  type           TileType
 
-  page             Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  parentCollection Collection    @relation("ParentCollection", fields: [parentCollectionId], references: [id], onDelete: Cascade)
-  type             TileType
-  image            ImageTile?    @relation(fields: [imageTileId], references: [id], onDelete: SetNull)
-  video            VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
-  text             TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
-  map              MapTile?      @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
-  link             LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
-  pageLink         PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
-  table            Table?        @relation(fields: [tableId], references: [id], onDelete: SetNull)
+  page     Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  section  Section       @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  image    ImageTile?    @relation(fields: [imageTileId], references: [id], onDelete: SetNull)
+  video    VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
+  text     TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
+  map      MapTile?      @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
+  link     LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
+  pageLink PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
+  table    Table?        @relation(fields: [tableId], references: [id], onDelete: SetNull)
 
   @@map("tiles")
 }
@@ -236,23 +219,6 @@ model PageLinkTile {
 
   @@index([pageId])
   @@map("page_link_tiles")
-}
-
-model Collection {
-  id        String           @id @default(uuid()) @db.Uuid
-  pageId    String           @map("page_id") @db.Uuid
-  createdAt DateTime         @default(now()) @map("created_at")
-  updatedAt DateTime         @updatedAt @map("updated_at")
-  title     String?
-  type      CollectionType   @default(TILE)
-  layout    CollectionLayout @default(GRID)
-  width     CollectionWidth  @default(DEFAULT)
-
-  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  items Tile[] @relation("ParentCollection")
-
-  @@index([pageId])
-  @@map("collections")
 }
 
 model Table {
