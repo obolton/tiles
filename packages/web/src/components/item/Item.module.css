@@ -10,9 +10,21 @@
   initial-value: 1;
 }
 
+@property --column {
+  syntax: "<integer> | auto";
+  inherits: false;
+  initial-value: auto;
+}
+
+@property --row {
+  syntax: "<integer> | auto";
+  inherits: false;
+  initial-value: auto;
+}
+
 .item {
-  grid-column: span var(--columns, 1);
-  grid-row: span var(--rows, 1);
+  grid-column: var(--column, auto) / span var(--columns, 1);
+  grid-row: var(--row, auto) / span var(--rows, 1);
   height: calc(
     var(--rows) * var(--grid-row-height) + var(--gap) * (var(--rows) - 1)
   );

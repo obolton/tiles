@@ -7,7 +7,7 @@ import MapTile from "@/components/tiles/MapTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import TableTile from "@/components/tiles/TableTile";
-import { ReactiveValue, Computed } from "@/utils/reactivity";
+import { flag, reactive, Computed } from "@/utils/reactivity";
 import type { Tile } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
@@ -20,6 +20,8 @@ export interface ItemProps {
   placementId: string;
   style?: JSX.StyleDeclaration;
   classList?: { [k: string]: boolean | Reactive<boolean> };
+  x?: Reactive<number>;
+  y?: Reactive<number>;
   rows: Reactive<number>;
   minRows?: number;
   columns: Reactive<number>;
@@ -87,6 +89,8 @@ export default function Item({
   placementId,
   classList,
   style,
+  x,
+  y,
   rows,
   minRows = 1,
   columns,
@@ -104,7 +108,7 @@ export default function Item({
     item = element;
   };
 
-  const hasFocus = new ReactiveValue(false);
+  const hasFocus = flag(false);
 
   const onFocusIn = () => {
     if (editor.isEditable.value) {
@@ -135,13 +139,28 @@ export default function Item({
 
   const onDelete = () => item?.delete();
 
-  const combinedStyles = new Computed([columns, rows], (columns, rows) => ({
-    ...style,
-    "--columns": Math.min(Math.max(columns, minColumns), maxColumns).toString(),
-    "--min-columns": minColumns.toString(),
-    "--rows": Math.max(rows, minRows).toString(),
-    "--min-rows": minRows.toString(),
-  }));
+  const position =
+    x && y
+      ? new Computed([x, y], (xValue, yValue) => ({
+          "--column": (xValue + 1).toString(),
+          "--row": (yValue + 1).toString(),
+        }))
+      : reactive({});
+
+  const combinedStyles = new Computed(
+    [columns, rows, position] as const,
+    (columns, rows, positionValue) => ({
+      ...style,
+      ...positionValue,
+      "--columns": Math.min(
+        Math.max(columns, minColumns),
+        maxColumns,
+      ).toString(),
+      "--min-columns": minColumns.toString(),
+      "--rows": Math.max(rows, minRows).toString(),
+      "--min-rows": minRows.toString(),
+    }),
+  );
 
   return (
     <page-item
