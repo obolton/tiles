@@ -22,7 +22,7 @@
   initial-value: 16px;
 }
 
-.grid {
+.canvas {
   --border-radius: 12px;
 
   position: relative;
@@ -33,19 +33,19 @@
   gap: var(--gap);
 }
 
-body[data-drag] .grid {
+body[data-drag] .canvas {
   margin: -32px -160px;
   padding: 32px 160px;
 }
 
 @container main (min-width: 100px) {
-  .grid {
+  .canvas {
     --gap: clamp(8px, 2cqw, 16px);
   }
 }
 
 @container section (min-width: 100px) {
-  .grid {
+  .canvas {
     --grid-column-width: calc(
       (100cqw - (var(--gap) * (var(--columns) - 1))) / var(--columns)
     );

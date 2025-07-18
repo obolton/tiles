@@ -15,6 +15,7 @@ export interface CanvasProps {
   minColumnSpan?: number;
   minRowSpan?: number;
   Placeholder?: JSX.Component<Pick<CanvasProps, "sectionId">>;
+  signal?: AbortSignal;
 }
 
 export default function Canvas({
@@ -26,6 +27,7 @@ export default function Canvas({
   minColumnSpan = 1,
   minRowSpan = 1,
   Placeholder,
+  signal,
 }: CanvasProps) {
   const { dragId } = editor;
 
@@ -34,18 +36,19 @@ export default function Canvas({
   };
 
   const ref = (element: HTMLElement) => {
-    // TODO: Remove editor at end
-    new LayoutEditor({
+    const layoutEditor = new LayoutEditor({
       element,
       editor,
       sectionId,
+      ordered: false,
     });
+    signal?.addEventListener("abort", () => layoutEditor.disconnect());
   };
 
   return (
     <section
       ref={ref}
-      className={styles.grid}
+      className={styles.canvas}
       style={style}
       data-drop={isEditable.derive((editable) =>
         editable ? "true" : undefined,
