@@ -4,7 +4,7 @@ import { viewTransition } from "./transitions";
 const DRAG_THRESHOLD = 10; // px
 const SCROLL_MARGIN = 50; // px from viewport edge
 const SCROLL_INTERVAL = 16; // ms
-const DRAG_EVENT_INTERVAL = 300; // ms
+const DRAG_EVENT_INTERVAL = 100; // ms
 const MAX_SCROLL_SPEED = 20; // px per scroll
 const LONG_PRESS_DURATION = 500; // ms
 
