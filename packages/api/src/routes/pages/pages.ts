@@ -111,6 +111,8 @@ type TileWithData = Prisma.Result<
 export function formatTile({
   id,
   position,
+  x,
+  y,
   width,
   height,
   sectionId,
@@ -119,6 +121,8 @@ export function formatTile({
   const base = {
     placementId: id,
     position,
+    x,
+    y,
     width,
     height,
     sectionId,
