@@ -187,6 +187,18 @@ describe("parseMarkdown", () => {
       const output = await toArray(parseMarkdown(stream));
       expect(output).toEqual(["abc ### hello world"]);
     });
+
+    test("supports heading markers split over multiple chunks", async () => {
+      const stream = toAsync(["##", "# hello world"]);
+      const output = await toArray(parseMarkdown(stream));
+      expect(output).toEqual([{ block: "H3" }, "hello world"]);
+    });
+
+    test("supports heading split over multiple chunks", async () => {
+      const stream = toAsync(["###", " hello world"]);
+      const output = await toArray(parseMarkdown(stream));
+      expect(output).toEqual([{ block: "H3" }, "hello world"]);
+    });
   });
 
   describe("unordered list item", () => {
@@ -204,6 +216,12 @@ describe("parseMarkdown", () => {
 
     test("supports + item syntax", async () => {
       const stream = toAsync(["+ hello world"]);
+      const output = await toArray(parseMarkdown(stream));
+      expect(output).toEqual([{ block: "UL" }, "hello world"]);
+    });
+
+    test("supports item split over multiple chunks", async () => {
+      const stream = toAsync(["- ", "hello world"]);
       const output = await toArray(parseMarkdown(stream));
       expect(output).toEqual([{ block: "UL" }, "hello world"]);
     });
@@ -236,6 +254,12 @@ describe("parseMarkdown", () => {
   describe("ordered list item", () => {
     test("supports 1. item syntax", async () => {
       const stream = toAsync(["1. hello world"]);
+      const output = await toArray(parseMarkdown(stream));
+      expect(output).toEqual([{ block: "OL" }, "hello world"]);
+    });
+
+    test("supports item split over multiple chunks", async () => {
+      const stream = toAsync(["1", ". hello world"]);
       const output = await toArray(parseMarkdown(stream));
       expect(output).toEqual([{ block: "OL" }, "hello world"]);
     });
