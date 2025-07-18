@@ -11,28 +11,36 @@ export interface LayoutEditorOptions {
   element: HTMLElement;
   editor: Editor;
   sectionId: string;
+  ordered?: boolean;
 }
 
 export default class LayoutEditor {
-  editor: Editor;
-  sectionId: string;
+  readonly editor: Editor;
+  readonly sectionId: string;
+  readonly ordered: boolean;
 
   private readonly elementRef: WeakRef<HTMLElement>;
 
+  private pageX = 0;
+  private pageY = 0;
   private gridColumnWidth = 0;
   private gridRowHeight = 0;
   private gridGap = 0;
   private gridColumns = 0;
+  private x = 0;
+  private y = 0;
   private columns = 0;
   private rows = 0;
   private idForPoint?: string | null;
 
-  constructor({ element, editor, sectionId }: LayoutEditorOptions) {
+  constructor({ element, editor, sectionId, ordered }: LayoutEditorOptions) {
     this.elementRef = new WeakRef(element);
     this.editor = editor;
     this.sectionId = sectionId;
+    this.ordered = ordered ?? true;
 
     element.addEventListener("dnd-dragover", this);
+    element.addEventListener("dnd-dragenter", this, { passive: true });
     element.addEventListener("dnd-dragleave", this);
     element.addEventListener("dnd-drop", this);
     element.addEventListener("dnd-dragend", this, { passive: true });
@@ -45,6 +53,7 @@ export default class LayoutEditor {
   disconnect() {
     const element = this.elementRef.deref();
     element?.removeEventListener("dnd-dragover", this);
+    element?.removeEventListener("dnd-dragenter", this);
     element?.removeEventListener("dnd-dragleave", this);
     element?.removeEventListener("dnd-drop", this);
     element?.removeEventListener("dnd-dragend", this);
@@ -66,6 +75,8 @@ export default class LayoutEditor {
     switch (event.type) {
       case "dnd-dragover":
         return this.handleDragOver(event as DragDropEvent<ClientTile>);
+      case "dnd-dragenter":
+        return this.handleDragEnter();
       case "dnd-dragleave":
         return this.handleDragLeave();
       case "dnd-drop":
@@ -83,6 +94,22 @@ export default class LayoutEditor {
     }
   }
 
+  private updateLayoutInfo() {
+    const style = getComputedStyle(this.element);
+    this.gridColumns = parseInt(style.getPropertyValue("--columns"), 10);
+    this.gridColumnWidth = parseFloat(
+      style.getPropertyValue("--grid-column-width"),
+    );
+    this.gridRowHeight = parseFloat(
+      style.getPropertyValue("--grid-row-height"),
+    );
+    this.gridGap = parseFloat(style.getPropertyValue("--gap"));
+
+    const rect = this.element.getBoundingClientRect();
+    this.pageX = rect.x + window.scrollX + parseFloat(style.paddingLeft);
+    this.pageY = rect.y + window.scrollY + parseFloat(style.paddingTop);
+  }
+
   // Drag and drop
 
   private handleDragOver(event: DragDropEvent<ClientTile>) {
@@ -95,18 +122,50 @@ export default class LayoutEditor {
       return;
     }
 
-    const afterId = this.findIdForPoint(event);
+    if (this.ordered) {
+      const afterId = this.findIdForPoint(event);
 
-    if (afterId !== this.idForPoint) {
-      layoutTransition(() => {
-        this.editor.moveTilePreview({
-          id,
-          sectionId: this.sectionId,
-          afterId,
+      if (afterId !== this.idForPoint) {
+        void layoutTransition(() => {
+          this.editor.reorderTilePreview({
+            id,
+            sectionId: this.sectionId,
+            afterId,
+          });
         });
-      });
+      }
+      this.idForPoint = afterId;
+    } else {
+      const offsetX = event.clientX + window.scrollX - this.pageX;
+      const offsetY = event.clientY + window.scrollY - this.pageY;
+      const x = Math.max(
+        Math.round(offsetX / (this.gridColumnWidth + this.gridGap)),
+        0,
+      );
+      const y = Math.max(
+        Math.round(offsetY / (this.gridRowHeight + this.gridGap)),
+        0,
+      );
+
+      if (x !== this.x || y !== this.y) {
+        this.x = x;
+        this.y = y;
+
+        void layoutTransition(() => {
+          this.editor.positionTilePreview({
+            id,
+            x: this.x,
+            y: this.y,
+          });
+        });
+      }
     }
-    this.idForPoint = afterId;
+  }
+
+  private handleDragEnter() {
+    if (!this.ordered) {
+      this.updateLayoutInfo();
+    }
   }
 
   private handleDragLeave() {
@@ -128,19 +187,34 @@ export default class LayoutEditor {
       `[data-placement-id="${id}"]`,
     );
 
-    const afterId = this.findIdForPoint(event);
+    if (this.ordered) {
+      const afterId = this.findIdForPoint(event);
 
-    try {
-      await this.editor.moveTile({
-        id,
-        sectionId: this.sectionId,
-        afterId,
-      });
-      this.element
-        .querySelector<HTMLElement>(`[data-placement-id="${id}"]`)
-        ?.focus({ preventScroll: true });
-    } catch (error) {
-      handleError(error);
+      try {
+        await this.editor.moveTile({
+          id,
+          sectionId: this.sectionId,
+          afterId,
+        });
+        this.element
+          .querySelector<HTMLElement>(`[data-placement-id="${id}"]`)
+          ?.focus({ preventScroll: true });
+      } catch (error) {
+        handleError(error);
+      }
+    } else {
+      try {
+        await this.editor.positionTile({
+          id,
+          x: this.x,
+          y: this.y,
+        });
+        this.element
+          .querySelector<HTMLElement>(`[data-placement-id="${id}"]`)
+          ?.focus({ preventScroll: true });
+      } catch (error) {
+        handleError(error);
+      }
     }
   }
 
@@ -198,15 +272,8 @@ export default class LayoutEditor {
 
     event.stopPropagation();
 
-    const style = getComputedStyle(this.element);
-    this.gridColumns = parseInt(style.getPropertyValue("--columns"), 10);
-    this.gridColumnWidth = parseFloat(
-      style.getPropertyValue("--grid-column-width"),
-    );
-    this.gridRowHeight = parseFloat(
-      style.getPropertyValue("--grid-row-height"),
-    );
-    this.gridGap = parseFloat(style.getPropertyValue("--gap"));
+    this.updateLayoutInfo();
+
     this.columns = Math.max(
       Math.round(
         (width + this.gridGap) / (this.gridColumnWidth + this.gridGap),
@@ -245,7 +312,7 @@ export default class LayoutEditor {
 
     if (columns !== this.columns || rows != this.rows) {
       viewTransition(() => {
-        this.editor.resizeTilePreview({ id, width: columns, height: rows });
+        this.editor.positionTilePreview({ id, width: columns, height: rows });
       });
     }
 
@@ -264,7 +331,7 @@ export default class LayoutEditor {
 
     const id = target.dataset.placementId ?? "";
     try {
-      await this.editor.resizeTile({
+      await this.editor.positionTile({
         id,
         width: this.columns,
         height: this.rows,
@@ -291,10 +358,10 @@ export default class LayoutEditor {
     try {
       await this.editor.deleteTile(id, (commit) => {
         if (target) {
-          destroy(target, {
+          void destroy(target, {
             timing: { ...DEFAULT_TIMING, fill: "forwards" },
           });
-          layoutTransition(commit);
+          void layoutTransition(commit);
         } else {
           commit();
         }
