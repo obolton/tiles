@@ -264,14 +264,18 @@ export default class Editor {
     });
   }
 
-  async resizeTile({
+  async positionTile({
     id,
+    x,
+    y,
     width,
     height,
   }: OmitPageId<AppRouterInputs["tiles"]["resize"]>) {
     return client.tiles.resize.mutate({
       pageId: this.pageId,
       id,
+      x,
+      y,
       width,
       height,
     });
@@ -506,7 +510,7 @@ export default class Editor {
     });
   }
 
-  moveTilePreview({
+  reorderTilePreview({
     id,
     sectionId,
     afterId,
@@ -555,13 +559,21 @@ export default class Editor {
     tile.sectionId.value = sectionId;
   }
 
-  resizeTilePreview({
+  positionTilePreview({
     id,
+    x,
+    y,
     width,
     height,
   }: OmitPageId<AppRouterInputs["tiles"]["resize"]>) {
     const tile = this.tiles.value.find((entry) => entry.id === id);
     if (tile) {
+      if (typeof x === "number") {
+        tile.x.value = x;
+      }
+      if (typeof y === "number") {
+        tile.y.value = y;
+      }
       if (typeof width === "number") {
         tile.width.value = width;
       }
