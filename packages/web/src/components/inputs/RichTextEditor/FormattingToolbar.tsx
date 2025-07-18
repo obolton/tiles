@@ -43,6 +43,7 @@ import {
   insertDateTime,
 } from "@/utils/richText/commands";
 import { getLink } from "@/utils/richText/helpers";
+import { insertFromStream } from "@/utils/richText/stream";
 import type { Format, TextAlignment, ListType } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
@@ -122,7 +123,7 @@ export default function FormattingToolbar({
       url: link?.node.attrs.href,
       showPages: false,
       showRemove: !!link,
-      async onConfirm(result) {
+      onConfirm(result) {
         if (result && "url" in result) {
           performCommand(result.url ? addLink(result.url) : removeLink);
         }
@@ -170,22 +171,19 @@ export default function FormattingToolbar({
 
   const onSubmitPrompt = async (prompt: string) => {
     try {
+      const view = getEditorView();
+      if (!view) {
+        return;
+      }
+
       viewTransition(() => {
         showPrompt.off();
-        getEditorView()?.focus();
+        view.focus();
       });
 
-      const stream = await editor.write({
-        prompt,
-      });
-      for await (const event of stream) {
-        const view = getEditorView();
-        if (!view) {
-          return;
-        }
-        const { state, dispatch } = view;
-        dispatch(state.tr.insertText(event, state.doc.content.size - 1));
-      }
+      const stream = await editor.write({ prompt });
+      const insertPos = view.state.doc.content.size - 1;
+      await insertFromStream(view, stream, insertPos);
     } catch (error) {
       handleError(error);
     }
