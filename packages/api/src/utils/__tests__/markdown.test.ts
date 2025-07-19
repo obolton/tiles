@@ -1,32 +1,23 @@
 import { describe, expect, test } from "vitest";
 import { parseMarkdown } from "../markdown.ts";
 
-async function* toAsync(chunks: string[]) {
+async function* toAsync<T>(chunks: T[]): AsyncGenerator<T> {
   for (const chunk of chunks) {
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    yield chunk;
+    yield Promise.resolve(chunk);
   }
-}
-
-async function toArray(input: AsyncGenerator) {
-  const output = [];
-  for await (const chunk of input) {
-    output.push(chunk);
-  }
-  return output;
 }
 
 describe("parseMarkdown", () => {
   test("generates a stream of events", async () => {
     const stream = toAsync(["hello ", "world"]);
-    const output = await toArray(parseMarkdown(stream));
+    const output = await Array.fromAsync(parseMarkdown(stream));
     expect(output).toEqual(["hello ", "world"]);
   });
 
   describe("bold", () => {
     test("supports **bold** syntax", async () => {
       const stream = toAsync(["hello **world**"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         "hello ",
         { bold: true },
@@ -37,7 +28,7 @@ describe("parseMarkdown", () => {
 
     test("supports __bold__ syntax", async () => {
       const stream = toAsync(["hello __world__"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         "hello ",
         { bold: true },
@@ -48,7 +39,7 @@ describe("parseMarkdown", () => {
 
     test("handles delimeters at the end of a chunk", async () => {
       const stream = toAsync(["hello **", "world", "**"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         "hello ",
         { bold: true },
@@ -59,7 +50,7 @@ describe("parseMarkdown", () => {
 
     test("handles delimiters split over two chunks", async () => {
       const stream = toAsync(["hello *", "*world*", "*"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         "hello ",
         { bold: true },
@@ -70,7 +61,7 @@ describe("parseMarkdown", () => {
 
     test("treats a start delimiter followed by whitespace as text", async () => {
       const stream = toAsync(["hello ** world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual(["hello ", "** world"]);
     });
   });
@@ -78,7 +69,7 @@ describe("parseMarkdown", () => {
   describe("italic", () => {
     test("supports *italic* syntax", async () => {
       const stream = toAsync(["hello *world*"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         "hello ",
         { italic: true },
@@ -89,7 +80,7 @@ describe("parseMarkdown", () => {
 
     test("supports _italic_ syntax", async () => {
       const stream = toAsync(["hello _world_"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         "hello ",
         { italic: true },
@@ -100,7 +91,7 @@ describe("parseMarkdown", () => {
 
     test("handles delimeters at the end of a chunk", async () => {
       const stream = toAsync(["hello *", "world", "*"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         "hello ",
         { italic: true },
@@ -111,7 +102,7 @@ describe("parseMarkdown", () => {
 
     test("treats a start delimiter followed by whitespace as text", async () => {
       const stream = toAsync(["hello * world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual(["hello ", "* world"]);
     });
   });
@@ -119,7 +110,7 @@ describe("parseMarkdown", () => {
   describe("bold and italic", () => {
     test("handles combined bold and italic", async () => {
       const stream = toAsync(["*hello **world***"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         { italic: true },
         "hello ",
@@ -134,13 +125,13 @@ describe("parseMarkdown", () => {
   describe("line break", () => {
     test("treats two sequential line breaks as a paragraph break", async () => {
       const stream = toAsync(["hello\n\nworld"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual(["hello", { block: "P" }, "world"]);
     });
 
     test("treats more than two sequential line breaks as a paragraph break", async () => {
       const stream = toAsync(["hello\n\n\n\nworld"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual(["hello", { block: "P" }, "world"]);
     });
   });
@@ -148,55 +139,55 @@ describe("parseMarkdown", () => {
   describe("heading", () => {
     test("returns heading level 1", async () => {
       const stream = toAsync(["# hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([{ block: "H1" }, "hello world"]);
     });
 
     test("returns heading level 2", async () => {
       const stream = toAsync(["## hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([{ block: "H2" }, "hello world"]);
     });
 
     test("returns heading level 3", async () => {
       const stream = toAsync(["### hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([{ block: "H3" }, "hello world"]);
     });
 
     test("requires whitespace between the delimeter and heading text", async () => {
       const stream = toAsync(["#hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual(["#hello world"]);
     });
 
     test("returns a heading following a line break", async () => {
       const stream = toAsync(["\n", "### hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([{ block: "H3" }, "hello world"]);
     });
 
     test("returns a heading following a paragraph", async () => {
       const stream = toAsync(["foo\n\n", "### hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual(["foo", { block: "H3" }, "hello world"]);
     });
 
     test("requires the heading to be at the start of the line", async () => {
       const stream = toAsync(["abc ### hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual(["abc ### hello world"]);
     });
 
     test("supports heading markers split over multiple chunks", async () => {
       const stream = toAsync(["##", "# hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([{ block: "H3" }, "hello world"]);
     });
 
     test("supports heading split over multiple chunks", async () => {
       const stream = toAsync(["###", " hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([{ block: "H3" }, "hello world"]);
     });
   });
@@ -204,31 +195,31 @@ describe("parseMarkdown", () => {
   describe("unordered list item", () => {
     test("supports - item syntax", async () => {
       const stream = toAsync(["- hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([{ block: "UL" }, "hello world"]);
     });
 
     test("supports * item syntax", async () => {
       const stream = toAsync(["* hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([{ block: "UL" }, "hello world"]);
     });
 
     test("supports + item syntax", async () => {
       const stream = toAsync(["+ hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([{ block: "UL" }, "hello world"]);
     });
 
     test("supports item split over multiple chunks", async () => {
       const stream = toAsync(["- ", "hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([{ block: "UL" }, "hello world"]);
     });
 
     test("supports formatted list items", async () => {
       const stream = toAsync(["* **hello world**"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         { block: "UL" },
         { bold: true },
@@ -239,7 +230,7 @@ describe("parseMarkdown", () => {
 
     test("returns a series of list items", async () => {
       const stream = toAsync(["- hello world\n", "- foo", "\n", "- bar\n"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         { block: "UL" },
         "hello world",
@@ -254,19 +245,19 @@ describe("parseMarkdown", () => {
   describe("ordered list item", () => {
     test("supports 1. item syntax", async () => {
       const stream = toAsync(["1. hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([{ block: "OL" }, "hello world"]);
     });
 
     test("supports item split over multiple chunks", async () => {
       const stream = toAsync(["1", ". hello world"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([{ block: "OL" }, "hello world"]);
     });
 
     test("supports formatted list items", async () => {
       const stream = toAsync(["1. **hello world**"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         { block: "OL" },
         { bold: true },
@@ -277,7 +268,7 @@ describe("parseMarkdown", () => {
 
     test("returns a series of list items", async () => {
       const stream = toAsync(["1. hello world\n", "2. foo", "\n", "3. bar\n"]);
-      const output = await toArray(parseMarkdown(stream));
+      const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         { block: "OL" },
         "hello world",
