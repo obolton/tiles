@@ -310,6 +310,9 @@ export class DragState<T> {
     this.dragElement
       .querySelectorAll("[data-animate-layout-id]")
       .forEach((element) => element.removeAttribute("data-animate-layout-id"));
+    this.dragElement
+      .querySelectorAll("[popover]")
+      .forEach((element) => element.remove());
 
     const rect = this.element.getBoundingClientRect();
 
