@@ -32,7 +32,6 @@ export default class PageItem extends HTMLElement {
   private height = 0;
   private initialPointerX = 0;
   private initialPointerY = 0;
-  private maxX = 0;
 
   constructor() {
     super();
@@ -168,7 +167,7 @@ export default class PageItem extends HTMLElement {
 
   private pointerMove(event: PointerEvent) {
     if (this.isResizing) {
-      this.width = Math.min(event.pageX, this.maxX) - this.initialPointerX;
+      this.width = event.pageX - this.initialPointerX;
       this.height = event.pageY - this.initialPointerY;
 
       this.dispatchEvent(
@@ -225,13 +224,10 @@ export default class PageItem extends HTMLElement {
       throw new Error("Already resizing");
     }
 
-    const parentBounds = this.offsetParent?.getBoundingClientRect();
-    this.maxX = parentBounds?.right ?? Infinity;
-
     const bounds = this.getBoundingClientRect();
     this.initialPointerX = bounds.x + window.scrollX;
     this.initialPointerY = bounds.y + window.scrollY;
-    this.width = Math.min(event.pageX, this.maxX) - this.initialPointerX;
+    this.width = event.pageX - this.initialPointerX;
     this.height = event.pageY - this.initialPointerY;
 
     const allowResize = this.dispatchEvent(
@@ -287,7 +283,7 @@ export default class PageItem extends HTMLElement {
     if (this.resizeHandle) {
       this.shadowRoot?.appendChild(this.resizeHandle);
     }
-    this.outline
+    void this.outline
       ?.animate([{ opacity: 0 }], {
         ...DEFAULT_TIMING,
         fill: "forwards",

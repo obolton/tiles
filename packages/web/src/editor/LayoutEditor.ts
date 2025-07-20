@@ -26,7 +26,6 @@ export default class LayoutEditor {
   private gridColumnWidth = 0;
   private gridRowHeight = 0;
   private gridGap = 0;
-  private gridColumns = 0;
   private x = 0;
   private y = 0;
   private columns = 0;
@@ -96,7 +95,6 @@ export default class LayoutEditor {
 
   private updateLayoutInfo() {
     const style = getComputedStyle(this.element);
-    this.gridColumns = parseInt(style.getPropertyValue("--columns"), 10);
     this.gridColumnWidth = parseFloat(
       style.getPropertyValue("--grid-column-width"),
     );
@@ -296,14 +294,11 @@ export default class LayoutEditor {
     event.stopPropagation();
 
     const id = target.id;
-    const columns = Math.min(
-      Math.max(
-        Math.round(
-          (width + this.gridGap) / (this.gridColumnWidth + this.gridGap),
-        ),
-        1,
+    const columns = Math.max(
+      Math.round(
+        (width + this.gridGap) / (this.gridColumnWidth + this.gridGap),
       ),
-      this.gridColumns,
+      1,
     );
     const rows = Math.max(
       Math.round((height + this.gridGap) / (this.gridRowHeight + this.gridGap)),
