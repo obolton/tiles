@@ -356,8 +356,7 @@ export class DragState<T> {
   }
 
   private finish() {
-    // Allow remaining event listeners to fire
-    setTimeout(() => this.abortController.abort(), 0);
+    this.abortController.abort();
 
     this.cancelLongPress();
     clearInterval(this.scrollInterval);
@@ -395,7 +394,7 @@ export class DragState<T> {
         this.dragElement.style.viewTransitionName = "drop";
       }
 
-      viewTransition(() => {
+      void viewTransition(() => {
         delete document.body.dataset.drag;
         this.dragElement?.remove();
         this.dragElement = undefined;
@@ -403,7 +402,7 @@ export class DragState<T> {
         if (this.destination) {
           this.destination.style.viewTransitionName = "drop";
         }
-      }).finished.finally(() => {
+      }).updateCallbackDone.then(() => {
         if (this.destination) {
           this.destination.style.viewTransitionName = "";
           this.destination = undefined;
