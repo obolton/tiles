@@ -11,7 +11,6 @@ export interface CanvasProps {
   isEditable: Reactive<boolean>;
   sectionId: string;
   items: Reactive<Tile[]>;
-  columns?: number;
   minColumnSpan?: number;
   minRowSpan?: number;
   Placeholder?: JSX.Component<Pick<CanvasProps, "sectionId">>;
@@ -23,17 +22,12 @@ export default function Canvas({
   isEditable,
   sectionId,
   items,
-  columns = 3,
   minColumnSpan = 1,
   minRowSpan = 1,
   Placeholder,
   signal,
 }: CanvasProps) {
   const { dragId } = editor;
-
-  const style = {
-    "--columns": columns.toString(),
-  };
 
   const ref = (element: HTMLElement) => {
     const layoutEditor = new LayoutEditor({
@@ -49,7 +43,6 @@ export default function Canvas({
     <section
       ref={ref}
       className={styles.canvas}
-      style={style}
       data-drop={isEditable.derive((editable) =>
         editable ? "true" : undefined,
       )}
@@ -76,11 +69,9 @@ export default function Canvas({
               minRows={minRowSpan}
               columns={tile.width}
               minColumns={minColumnSpan}
-              maxColumns={columns}
               deletable={isEditable}
               draggable={isEditable}
               resizable={isEditable}
-              grow={columns === 1}
               tile={tile}
               tabIndex={isEditable.derive((editable) =>
                 editable ? 0 : undefined,

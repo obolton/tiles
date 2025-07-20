@@ -95,7 +95,7 @@ export default function Item({
   minRows = 1,
   columns,
   minColumns = 1,
-  maxColumns = 12,
+  maxColumns = 32,
   grow,
   deletable = false,
   draggable = false,

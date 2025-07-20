@@ -42,9 +42,8 @@ export default function SectionLayout({ editor, section }: SectionLayoutProps) {
             isEditable={isEditable}
             sectionId={section.id}
             items={section.tiles}
-            columns={12}
             minColumnSpan={2}
-            minRowSpan={3}
+            minRowSpan={1}
             Placeholder={SectionPlaceholder}
           />
         );
