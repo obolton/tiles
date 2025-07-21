@@ -3,8 +3,8 @@ import { RichTextSchema } from "@/schema/RichText.ts";
 import { VerticalAlignment } from "@prisma/client";
 
 export const CreateTextSchema = z.object({
-  pageId: z.string().uuid(),
-  sectionId: z.string().uuid(),
+  pageId: z.uuid(),
+  sectionId: z.uuid(),
   content: RichTextSchema.optional(),
   color: z
     .object({
@@ -16,13 +16,13 @@ export const CreateTextSchema = z.object({
   imageKey: z.string().nullable().optional(),
   width: z.number().int().gte(1).lte(12).optional(),
   height: z.number().int().gte(1).lte(24).optional(),
-  align: z.nativeEnum(VerticalAlignment).optional(),
+  align: z.enum(VerticalAlignment).optional(),
 });
 export type CreateTextSchema = z.infer<typeof CreateTextSchema>;
 
 export const UpdateTextSchema = z.object({
-  pageId: z.string().uuid(),
-  id: z.string().uuid(),
+  pageId: z.uuid(),
+  id: z.uuid(),
   content: RichTextSchema.optional(),
   color: z
     .object({
@@ -33,6 +33,6 @@ export const UpdateTextSchema = z.object({
     .nullable()
     .optional(),
   imageKey: z.string().nullable().optional(),
-  align: z.nativeEnum(VerticalAlignment).optional(),
+  align: z.enum(VerticalAlignment).optional(),
 });
 export type UpdateTextSchema = z.infer<typeof UpdateTextSchema>;

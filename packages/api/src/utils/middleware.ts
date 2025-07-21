@@ -14,7 +14,7 @@ export const authenticatedProcedure = publicProcedure.use(async (opts) => {
 });
 
 const AuthenticatedPageProcedureSchema = z.object({
-  pageId: z.string().uuid(),
+  pageId: z.uuid(),
 });
 
 export const authenticatedPageProcedure = authenticatedProcedure
@@ -57,7 +57,7 @@ export const pageUpdateProcedure = authenticatedPageProcedure.use(
 );
 
 const AuthenticatedWorkspaceProcedureSchema = z.object({
-  workspaceId: z.string().uuid(),
+  workspaceId: z.uuid(),
 });
 
 export interface AuthenticatedWorkspaceProcedureContext

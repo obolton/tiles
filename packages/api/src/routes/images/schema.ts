@@ -2,8 +2,8 @@ import { z } from "zod";
 import { RichTextSchema } from "@/schema/RichText.ts";
 
 export const CreateImageSchema = z.object({
-  pageId: z.string().uuid(),
-  sectionId: z.string().uuid(),
+  pageId: z.uuid(),
+  sectionId: z.uuid(),
   imageKey: z.string(),
   text: RichTextSchema.nullable().optional(),
   theme: z.string().nullable().optional(),
@@ -11,8 +11,8 @@ export const CreateImageSchema = z.object({
 export type CreateImageSchema = z.infer<typeof CreateImageSchema>;
 
 export const UpdateImageSchema = z.object({
-  pageId: z.string().uuid(),
-  id: z.string().uuid(),
+  pageId: z.uuid(),
+  id: z.uuid(),
   text: RichTextSchema.nullable().optional(),
   origin: z
     .object({

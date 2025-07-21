@@ -2,7 +2,7 @@ import { z } from "zod";
 import { Font } from "@prisma/client";
 
 export const GetPageByIdSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 });
 export type GetPageByIdSchema = z.infer<typeof GetPageByIdSchema>;
 
@@ -18,7 +18,7 @@ export const CreatePageSchema = z.object({
 export type CreatePageSchema = z.infer<typeof CreatePageSchema>;
 
 export const UpdatePageSchema = z.object({
-  pageId: z.string().uuid(),
+  pageId: z.uuid(),
   published: z.boolean().optional(),
   title: z.string().min(1).optional(),
   color: z
@@ -34,11 +34,11 @@ export const UpdatePageSchema = z.object({
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
 
 export const DeletePageSchema = z.object({
-  pageId: z.string().uuid(),
+  pageId: z.uuid(),
 });
 export type DeletePageSchema = z.infer<typeof DeletePageSchema>;
 
 export const RestorePageSchema = z.object({
-  pageId: z.string().uuid(),
+  pageId: z.uuid(),
 });
 export type RestorePageSchema = z.infer<typeof RestorePageSchema>;

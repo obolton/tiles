@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const CreatePageLinkSchema = z.object({
-  pageId: z.string().uuid(),
-  sectionId: z.string().uuid(),
-  linkedPageId: z.string().uuid(),
+  pageId: z.uuid(),
+  sectionId: z.uuid(),
+  linkedPageId: z.uuid(),
 });
 export type CreatePageLinkSchema = z.infer<typeof CreatePageLinkSchema>;

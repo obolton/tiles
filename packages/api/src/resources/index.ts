@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getLinkTileOriginalImageUrl } from "@/routes/links/links.ts";
 import { getVideoTileOriginalImageUrl } from "@/routes/videos/videos.ts";
 
-const ResourceIdSchema = z.string().uuid();
+const ResourceIdSchema = z.uuid();
 
 export async function resourcesHandler(
   type: string,

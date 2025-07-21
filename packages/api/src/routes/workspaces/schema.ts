@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const GetWorkspaceSchema = z.object({
-  workspaceId: z.string().uuid(),
+  workspaceId: z.uuid(),
 });
 export type GetWorkspaceSchema = z.infer<typeof GetWorkspaceSchema>;
 
@@ -11,7 +11,7 @@ export const UpdateWorkspaceSchema = z.object({
 export type UpdateWorkspaceSchema = z.infer<typeof UpdateWorkspaceSchema>;
 
 export const InviteToWorkspaceSchema = z.object({
-  email: z.string().email().max(254),
+  email: z.email().max(254),
 });
 export type InviteToWorkspaceSchema = z.infer<typeof InviteToWorkspaceSchema>;
 
@@ -23,7 +23,7 @@ export type AcceptWorkspaceInviteSchema = z.infer<
 >;
 
 export const DeleteWorkspaceInviteSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 });
 export type DeleteWorkspaceInviteSchema = z.infer<
   typeof DeleteWorkspaceInviteSchema
@@ -38,7 +38,7 @@ export type ListWorkspaceInvitesSchema = z.infer<
 >;
 
 export const RemoveFromWorkspaceSchema = z.object({
-  userId: z.string().uuid(),
+  userId: z.uuid(),
 });
 export type RemoveFromWorkspaceSchema = z.infer<
   typeof RemoveFromWorkspaceSchema
