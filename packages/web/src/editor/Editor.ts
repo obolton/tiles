@@ -74,7 +74,7 @@ export default class Editor {
   readonly invites: Reactive<Invite[]>;
   readonly author: User;
   readonly focusedTile: Reactive<string | null>;
-  readonly dragId: Reactive<string | null>;
+  readonly dragTile: Reactive<Tile | null>;
 
   constructor(page: Page) {
     this.pageId = page.id;
@@ -91,7 +91,7 @@ export default class Editor {
     this.invites = reactive(page.invites);
     this.author = page.author;
     this.focusedTile = reactive<string | null>(null);
-    this.dragId = reactive<string | null>(null);
+    this.dragTile = reactive<Tile | null>(null);
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();
@@ -105,10 +105,9 @@ export default class Editor {
     addEventListener(
       "dnd-dragstart",
       (event: DragDropEvent<Tile>) =>
-        (this.dragId.value = event.state.data?.placementId ?? null),
+        (this.dragTile.value = event.state.data ?? null),
       { passive: true },
     );
-    addEventListener("dnd-dragend", () => (this.dragId.value = null));
   }
 
   private dragOver(event: DragEvent) {

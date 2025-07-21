@@ -5,7 +5,7 @@ import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
 import type Editor from "@/editor/Editor";
 import type { DragDropEvent } from "@/utils/drag";
 import type { TileResizeEvent, TileEvent } from "@/utils/events";
-import type { ClientTile } from "@/types/tiles";
+import type { Tile } from "@/types/tiles";
 
 export interface LayoutEditorOptions {
   element: HTMLElement;
@@ -73,13 +73,13 @@ export default class LayoutEditor {
   handleEvent(event: Event) {
     switch (event.type) {
       case "dnd-dragover":
-        return this.handleDragOver(event as DragDropEvent<ClientTile>);
+        return this.handleDragOver(event as DragDropEvent<Tile>);
       case "dnd-dragenter":
-        return this.handleDragEnter();
+        return this.handleDragEnter(event as DragDropEvent<Tile>);
       case "dnd-dragleave":
         return this.handleDragLeave();
       case "dnd-drop":
-        return this.handleDrop(event as DragDropEvent<ClientTile>);
+        return this.handleDrop(event as DragDropEvent<Tile>);
       case "dnd-dragend":
         return this.handleDragEnd();
       case "tileresizestart":
@@ -110,12 +110,14 @@ export default class LayoutEditor {
 
   // Drag and drop
 
-  private handleDragOver(event: DragDropEvent<ClientTile>) {
-    const { state } = event;
+  private handleDragOver(event: DragDropEvent<Tile>) {
+    const {
+      state: { data },
+    } = event;
 
     event.stopPropagation();
 
-    const id = state.data?.id;
+    const id = data?.id;
     if (!id) {
       return;
     }
@@ -150,19 +152,24 @@ export default class LayoutEditor {
         this.y = y;
 
         void layoutTransition(() => {
-          this.editor.positionTilePreview({
-            id,
-            x: this.x,
-            y: this.y,
-          });
+          data.x.value = this.x;
+          data.y.value = this.y;
         });
       }
     }
   }
 
-  private handleDragEnter() {
+  private handleDragEnter(event: DragDropEvent<Tile>) {
     if (!this.ordered) {
+      const {
+        state: { data },
+      } = event;
+
       this.updateLayoutInfo();
+
+      if (data) {
+        data.sectionId.value = this.sectionId;
+      }
     }
   }
 
@@ -170,7 +177,7 @@ export default class LayoutEditor {
     this.idForPoint = undefined;
   }
 
-  private async handleDrop(event: DragDropEvent<ClientTile>) {
+  private async handleDrop(event: DragDropEvent<Tile>) {
     const { state } = event;
 
     event.preventDefault();
@@ -214,13 +221,15 @@ export default class LayoutEditor {
         handleError(error);
       }
     }
+
+    this.editor.dragTile.value = null;
   }
 
   private handleDragEnd() {
     this.idForPoint = undefined;
   }
 
-  private findIdForPoint(event: DragDropEvent<ClientTile>) {
+  private findIdForPoint(event: DragDropEvent<Tile>) {
     const { clientX, clientY, state } = event;
     const dragPlacementId = state.data?.placementId;
 
