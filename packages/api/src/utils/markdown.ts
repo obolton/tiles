@@ -23,6 +23,17 @@ export async function* parseMarkdown(
   let bold = false;
   let italic = false;
   let newLine = true;
+  let block: RichTextBlockType | null = null;
+
+  function* flush(text?: string) {
+    if (block) {
+      yield { block };
+      block = null;
+    }
+    if (text) {
+      yield text;
+    }
+  }
 
   for await (const chunk of input) {
     buffer += chunk;
@@ -32,8 +43,7 @@ export async function* parseMarkdown(
         const headingMatch = buffer.match(HEADING_MATCH);
         if (headingMatch) {
           const level = headingMatch[1]!.length;
-          const block = level === 1 ? "H1" : level === 2 ? "H2" : "H3";
-          yield { block };
+          block = level === 1 ? "H1" : level === 2 ? "H2" : "H3";
           buffer = buffer.slice(headingMatch[0].length);
           newLine = false;
           continue;
@@ -41,7 +51,7 @@ export async function* parseMarkdown(
 
         const unorderedListItemMatch = buffer.match(UNORDERED_LIST_ITEM_MATCH);
         if (unorderedListItemMatch) {
-          yield { block: "UL" };
+          block = "UL";
           buffer = buffer.slice(unorderedListItemMatch[0].length);
           newLine = false;
           continue;
@@ -49,7 +59,7 @@ export async function* parseMarkdown(
 
         const orderedListItemMatch = buffer.match(ORDERED_LIST_ITEM_MATCH);
         if (orderedListItemMatch) {
-          yield { block: "OL" };
+          block = "OL";
           buffer = buffer.slice(orderedListItemMatch[0].length);
           newLine = false;
           continue;
@@ -58,6 +68,7 @@ export async function* parseMarkdown(
 
       if (!bold && buffer.match(BOLD_START_MATCH)) {
         bold = true;
+        yield* flush();
         yield { bold };
         buffer = buffer.slice(2);
         newLine = false;
@@ -74,6 +85,7 @@ export async function* parseMarkdown(
 
       if (!italic && buffer.match(ITALIC_START_MATCH)) {
         italic = true;
+        yield* flush();
         yield { italic };
         buffer = buffer.slice(1);
         newLine = false;
@@ -91,10 +103,8 @@ export async function* parseMarkdown(
       const paragraphMatch = buffer.match(PARAGRAPH_MATCH);
       if (paragraphMatch) {
         const text = paragraphMatch[0].trimEnd();
-        if (text) {
-          yield text;
-        }
-        yield { block: "P" };
+        yield* flush(text);
+        block = "P";
         buffer = buffer.slice(paragraphMatch[0].length);
         newLine = true;
         continue;
@@ -102,10 +112,6 @@ export async function* parseMarkdown(
 
       const newLineMatch = buffer.match(NEW_LINE_MATCH);
       if (newLineMatch) {
-        const text = newLineMatch[0].replace(/\n/, "");
-        if (text) {
-          yield text;
-        }
         buffer = buffer.slice(newLineMatch[0].length);
         newLine = true;
         continue;
@@ -119,21 +125,19 @@ export async function* parseMarkdown(
         }
 
         const text = buffer.slice(0, index);
-        yield text;
+        yield* flush(text);
         buffer = buffer.slice(index);
         newLine = false;
         continue;
       }
 
       if (buffer) {
-        yield buffer;
+        yield* flush(buffer);
         buffer = "";
         newLine = false;
       }
     }
   }
 
-  if (buffer) {
-    yield buffer;
-  }
+  yield* flush(buffer);
 }

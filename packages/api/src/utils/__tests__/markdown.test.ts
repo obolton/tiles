@@ -122,7 +122,7 @@ describe("parseMarkdown", () => {
     });
   });
 
-  describe("line break", () => {
+  describe("paragraph", () => {
     test("treats two sequential line breaks as a paragraph break", async () => {
       const stream = toAsync(["hello\n\nworld"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
@@ -133,6 +133,12 @@ describe("parseMarkdown", () => {
       const stream = toAsync(["hello\n\n\n\nworld"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual(["hello", { block: "P" }, "world"]);
+    });
+
+    test("does not treat two sequential line breaks before a heading as a paragraph break", async () => {
+      const stream = toAsync(["hello\n\n# world"]);
+      const output = await Array.fromAsync(parseMarkdown(stream));
+      expect(output).toEqual(["hello", { block: "H1" }, "world"]);
     });
   });
 
