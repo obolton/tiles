@@ -10,7 +10,7 @@
   initial-value: 0;
 }
 
-#drag-preview {
+.drag-preview {
   position: fixed;
   contain: size layout style;
   top: 0;
