@@ -15,10 +15,7 @@
 
 #drag {
   position: absolute;
-  inset: 0 auto auto -24px;
-  width: 32px;
-  height: 128px;
-  max-height: 100%;
+  inset: -12px;
   cursor: move;
 
   &::before {
@@ -28,20 +25,17 @@
     z-index: -1;
     background: var(--accent);
     opacity: 0;
-    clip-path: inset(
-      0 0 0 24px round var(--border-radius) 0 0 var(--border-radius)
-    );
+    clip-path: inset(12px round var(--border-radius));
     transition:
       opacity var(--animation-duration-short) var(--easing),
       clip-path var(--animation-duration-short) var(--easing);
   }
 
   :host(:hover) &::before,
-  :host(:focus-within) &::before,
   :host(#drag-preview) &::before,
   &:hover::before {
-    opacity: 0.9;
-    clip-path: inset(0 round var(--border-radius) 0 0 var(--border-radius));
+    opacity: 0.4;
+    clip-path: inset(0 round calc(var(--border-radius) + 12px));
   }
 }
 
