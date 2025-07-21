@@ -32,7 +32,7 @@
   }
 
   :host(:hover) &::before,
-  :host(#drag-preview) &::before,
+  :host(.drag-preview) &::before,
   &:hover::before {
     opacity: 0.4;
     clip-path: inset(0 round calc(var(--border-radius) + 12px));

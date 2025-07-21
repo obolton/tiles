@@ -37,8 +37,3 @@
     --gap: clamp(8px, 2cqw, 16px);
   }
 }
-
-.drag-placeholder {
-  opacity: 0.3;
-  z-index: -1;
-}

@@ -25,16 +25,11 @@
 .item {
   grid-column: var(--column, auto) / span var(--columns, 1);
   grid-row: var(--row, auto) / span var(--rows, 1);
-  height: calc(
-    var(--rows) * var(--grid-row-height) + var(--gap) * (var(--rows) - 1)
-  );
   min-width: calc(
-    var(--min-columns) * var(--grid-column-width) + var(--gap) *
-      (var(--min-columns) - 1)
+    var(--min-columns) * (var(--grid-column-width) + var(--gap)) - var(--gap)
   );
   min-height: calc(
-    var(--min-rows) * var(--grid-row-height) + var(--gap) *
-      (var(--min-rows) - 1)
+    var(--min-rows) * (var(--grid-row-height) + var(--gap)) - var(--gap)
   );
   display: flex;
   border-radius: 12px;
@@ -56,6 +51,15 @@
     &::part(outline) {
       min-height: 100%;
     }
+  }
+
+  &:global(.drag-preview) {
+    width: calc(
+      var(--columns) * (var(--grid-column-width) + var(--gap)) - var(--gap)
+    );
+    height: calc(
+      var(--rows) * (var(--grid-row-height) + var(--gap)) - var(--gap)
+    );
   }
 
   body[data-editing] & {

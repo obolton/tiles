@@ -15,8 +15,6 @@
   contain: size layout style;
   top: 0;
   left: 0;
-  min-width: 0;
-  min-height: 0;
   margin: 0;
   padding: 0;
   border: none;
@@ -28,7 +26,7 @@
   transform: perspective(1000px);
   translate: var(--translate-x) var(--translate-y) 40px;
   opacity: 0.75;
-  scale: 0.75;
+  scale: 0.5;
 }
 
 @keyframes lift {
@@ -44,7 +42,7 @@
     translate: var(--translate-x, 0) var(--translate-y, 0) 40px;
     rotate: var(--rotate-y) var(--rotate-x) 0 var(--rotate-angle);
     box-shadow: 0 10px 10px -2px rgb(0 0 0 / 20%);
-    scale: 0.75;
+    scale: 0.5;
   }
 
   100% {
@@ -52,7 +50,7 @@
     rotate: var(--rotate-y) var(--rotate-x) 0 0deg;
     box-shadow: 0 10px 10px -5px rgb(0 0 0 / 40%);
     opacity: 0.75;
-    scale: 0.75;
+    scale: 0.5;
   }
 }
 

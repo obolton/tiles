@@ -1,5 +1,6 @@
 import Item from "@/components/item/Item";
 import LayoutEditor from "@/editor/LayoutEditor";
+import DragPlaceholder from "@/components/drag/DragPlaceholder";
 import styles from "./Canvas.module.css";
 import type { Tile } from "@/types/tiles";
 import type { JSX } from "@/jsx/jsx";
@@ -27,7 +28,7 @@ export default function Canvas({
   Placeholder,
   signal,
 }: CanvasProps) {
-  const { dragId } = editor;
+  const { dragTile } = editor;
 
   const ref = (element: HTMLElement) => {
     const layoutEditor = new LayoutEditor({
@@ -56,11 +57,6 @@ export default function Canvas({
           entries.map((tile) => (
             <Item
               editor={editor}
-              classList={{
-                [styles["drag-placeholder"]]: dragId.derive(
-                  (id) => id === tile.placementId,
-                ),
-              }}
               id={tile.id}
               placementId={tile.placementId}
               x={tile.x}
@@ -78,6 +74,19 @@ export default function Canvas({
               )}
             />
           ))
+        ),
+      )}
+
+      {dragTile.derive((tile) =>
+        tile?.sectionId.derive((value) =>
+          value === sectionId ? (
+            <DragPlaceholder
+              x={tile.x}
+              y={tile.y}
+              width={tile.width}
+              height={tile.height}
+            />
+          ) : null,
         ),
       )}
     </section>
