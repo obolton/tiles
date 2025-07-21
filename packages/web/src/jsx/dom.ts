@@ -1,5 +1,5 @@
 import { isReactive } from "@/utils/reactivity";
-import { serializeStyles } from "@/utils/css";
+import { transformCSSProperty } from "@/utils/css";
 import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "./jsx";
 
@@ -159,8 +159,21 @@ function setAttribute(
         element.classList.remove(className);
       }
     }
-  } else if (mappedName === "style" && typeof value === "object") {
-    element.setAttribute(mappedName, serializeStyles(value));
+  } else if (
+    mappedName === "style" &&
+    element instanceof HTMLElement &&
+    typeof value === "object"
+  ) {
+    for (const [property, style] of Object.entries(value)) {
+      if (typeof style === "string" || typeof style === "number") {
+        element.style.setProperty(
+          transformCSSProperty(property),
+          style.toString(),
+        );
+      } else {
+        element.style.removeProperty(property);
+      }
+    }
   } else if (value === true) {
     element.setAttribute(mappedName, "");
   } else if (
