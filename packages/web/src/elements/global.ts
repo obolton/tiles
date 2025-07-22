@@ -9,7 +9,7 @@ import "./calendar/CalendarMonth";
 import "./filePicker/FilePicker";
 import "./popOut/PopOut";
 import "./stack/StackView";
-import "./carousel/CarouselView";
+import "./scroll-view/ScrollView";
 import "./tabs/TabBar";
 import "./tabs/TabItem";
 import "./tabs/TabPanel";

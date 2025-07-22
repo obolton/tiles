@@ -71,7 +71,7 @@ declare module "@/jsx/jsx" {
       >;
       "pop-out": CustomElementAttributes<PopOut, PopOutAttributes>;
       "stack-view": CustomElementAttributes<StackView, StackViewAttributes>;
-      "carousel-view": CustomElementAttributes;
+      "scroll-view": CustomElementAttributes;
       "page-item": CustomElementAttributes<PageItem, PageItemAttributes>;
       "tab-bar": CustomElementAttributes;
       "tab-item": CustomElementAttributes<TabItem, TabItemAttributes>;

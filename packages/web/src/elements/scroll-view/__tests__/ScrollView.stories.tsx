@@ -1,15 +1,15 @@
-import "../CarouselView";
+import "../ScrollView";
 import "./stories.css";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "CarouselView",
+  title: "ScrollView",
 } satisfies Meta;
 export default meta;
 
 export const Default = {
   render: () => (
-    <carousel-view class="carousel">
+    <scroll-view class="carousel">
       <div>Item 1</div>
       <div>Item 2</div>
       <div>Item 3</div>
@@ -20,6 +20,6 @@ export const Default = {
       <div>Item 8</div>
       <div>Item 9</div>
       <div>Item 10</div>
-    </carousel-view>
+    </scroll-view>
   ),
 } satisfies StoryObj;

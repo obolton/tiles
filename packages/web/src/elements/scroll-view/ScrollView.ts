@@ -1,4 +1,4 @@
-import css from "./CarouselView.css?inline";
+import css from "./ScrollView.css?inline";
 import arrowLeftIcon from "@/icons/arrow-left.svg?raw";
 import arrowRightIcon from "@/icons/arrow-right.svg?raw";
 import type { DragDropEvent } from "@/utils/drag";
@@ -8,11 +8,11 @@ stylesheet.replaceSync(css);
 
 const SCROLL_MARGIN = 50;
 
-enum CarouselViewStates {
+enum ScrollViewStates {
   SCROLLABLE = "scrollable",
 }
 
-export default class CarouselView extends HTMLElement {
+export default class ScrollView extends HTMLElement {
   private readonly internals: ElementInternals;
   private readonly contents: HTMLDivElement;
   private readonly previousButton: HTMLButtonElement;
@@ -244,9 +244,9 @@ export default class CarouselView extends HTMLElement {
 
   private onResize() {
     if (this.scrollable) {
-      this.internals.states.add(CarouselViewStates.SCROLLABLE);
+      this.internals.states.add(ScrollViewStates.SCROLLABLE);
     } else {
-      this.internals.states.delete(CarouselViewStates.SCROLLABLE);
+      this.internals.states.delete(ScrollViewStates.SCROLLABLE);
     }
   }
 
@@ -278,4 +278,4 @@ export default class CarouselView extends HTMLElement {
   }
 }
 
-customElements.define("carousel-view", CarouselView);
+customElements.define("scroll-view", ScrollView);
