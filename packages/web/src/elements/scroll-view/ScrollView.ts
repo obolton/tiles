@@ -276,6 +276,24 @@ export default class ScrollView extends HTMLElement {
 
     requestAnimationFrame(this.scrollFrame.bind(this));
   }
+
+  // Scroll properties
+
+  get scrollLeft() {
+    return this.contents.scrollLeft;
+  }
+
+  set scrollLeft(value: number) {
+    this.contents.scrollLeft = value;
+  }
+
+  get scrollTop() {
+    return this.contents.scrollTop;
+  }
+
+  set scrollTop(value: number) {
+    this.contents.scrollTop = value;
+  }
 }
 
 customElements.define("scroll-view", ScrollView);
