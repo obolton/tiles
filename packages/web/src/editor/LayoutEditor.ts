@@ -136,8 +136,10 @@ export default class LayoutEditor {
       }
       this.idForPoint = afterId;
     } else {
-      const offsetX = event.clientX + window.scrollX - this.pageX;
-      const offsetY = event.clientY + window.scrollY - this.pageY;
+      const offsetX =
+        event.clientX + window.scrollX + this.element.scrollLeft - this.pageX;
+      const offsetY =
+        event.clientY + window.scrollY + this.element.scrollTop - this.pageY;
       const x = Math.max(
         Math.round(offsetX / (this.gridColumnWidth + this.gridGap)),
         0,
