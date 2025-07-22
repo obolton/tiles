@@ -41,7 +41,7 @@ export default function Canvas({
   };
 
   return (
-    <section
+    <carousel-view
       ref={ref}
       className={styles.canvas}
       data-drop={isEditable.derive((editable) =>
@@ -89,6 +89,6 @@ export default function Canvas({
           ) : null,
         ),
       )}
-    </section>
+    </carousel-view>
   );
 }

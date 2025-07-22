@@ -17,18 +17,23 @@
 }
 
 .canvas {
-  --border-radius: 12px;
-
-  position: relative;
-  display: grid;
-  font-family: var(--font);
-  grid-auto-columns: var(--grid-column-width);
-  grid-auto-rows: var(--grid-row-height);
-  gap: var(--gap);
+  &:not(:defined),
+  &::part(contents) {
+    display: grid;
+    grid-auto-columns: var(--grid-column-width);
+    grid-auto-rows: var(--grid-row-height);
+    gap: var(--gap);
+    padding: 24px;
+    scroll-snap-type: x proximity;
+  }
 
   body[data-drag] & {
     margin: -80px;
     padding: 80px;
+  }
+
+  & > * {
+    scroll-snap-align: start;
   }
 }
 

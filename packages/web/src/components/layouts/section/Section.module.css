@@ -4,7 +4,7 @@
   width: min(var(--max-width), calc(100vw - 160px));
   justify-self: center;
   margin: 0 0 24px;
-  padding: 24px;
+  padding: 0;
   border-radius: calc(var(--border-radius) + 24px);
   outline: 3px solid transparent;
   container: section / inline-size;
