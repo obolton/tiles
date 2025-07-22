@@ -15,7 +15,6 @@
 #contents {
   position: relative;
   overflow: auto;
-  scroll-padding: 24px;
   isolation: isolate;
 
   &.scrolling {

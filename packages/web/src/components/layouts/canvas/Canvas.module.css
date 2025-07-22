@@ -24,6 +24,7 @@
     grid-auto-rows: var(--grid-row-height);
     gap: var(--gap);
     padding: 24px;
+    scroll-padding: 24px;
     scroll-snap-type: x proximity;
   }
 
