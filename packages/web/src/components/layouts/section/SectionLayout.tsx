@@ -1,6 +1,4 @@
-import Grid from "@/components/layouts/grid/Grid";
 import Canvas from "@/components/layouts/canvas/Canvas";
-import Carousel from "@/components/layouts/carousel/Carousel";
 import Placeholder from "@/components/placeholder/Placeholder";
 import type { SectionWithTiles } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
@@ -16,61 +14,16 @@ function SectionPlaceholder() {
 
 export default function SectionLayout({ editor, section }: SectionLayoutProps) {
   const { isEditable } = editor;
-  const { layout } = section;
 
-  return layout.derive((value) => {
-    switch (value) {
-      default:
-      case "GRID":
-        return (
-          <Grid
-            editor={editor}
-            isEditable={isEditable}
-            sectionId={section.id}
-            items={section.tiles}
-            columns={12}
-            minColumnSpan={2}
-            minRowSpan={3}
-            Placeholder={SectionPlaceholder}
-          />
-        );
-
-      case "CANVAS":
-        return (
-          <Canvas
-            editor={editor}
-            isEditable={isEditable}
-            sectionId={section.id}
-            items={section.tiles}
-            minColumnSpan={2}
-            minRowSpan={1}
-            Placeholder={SectionPlaceholder}
-          />
-        );
-
-      case "COLUMN":
-        return (
-          <Grid
-            editor={editor}
-            isEditable={isEditable}
-            sectionId={section.id}
-            items={section.tiles}
-            columns={1}
-            minColumnSpan={1}
-            minRowSpan={3}
-            Placeholder={SectionPlaceholder}
-          />
-        );
-
-      case "CAROUSEL":
-        return (
-          <Carousel
-            editor={editor}
-            sectionId={section.id}
-            items={section.tiles}
-            Placeholder={SectionPlaceholder}
-          />
-        );
-    }
-  });
+  return (
+    <Canvas
+      editor={editor}
+      isEditable={isEditable}
+      sectionId={section.id}
+      items={section.tiles}
+      minColumnSpan={2}
+      minRowSpan={1}
+      Placeholder={SectionPlaceholder}
+    />
+  );
 }
