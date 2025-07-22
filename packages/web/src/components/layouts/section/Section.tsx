@@ -1,9 +1,5 @@
 import SectionLayout from "./SectionLayout";
 import TileButtons from "@/components/menu/TileButtons";
-import GridIcon from "@/icons/grid.svg?jsx";
-import ColumnIcon from "@/icons/column.svg?jsx";
-import CarouselIcon from "@/icons/carousel.svg?jsx";
-import CanvasIcon from "@/icons/canvas.svg?jsx";
 import FullWidthIcon from "@/icons/full-width.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
@@ -12,7 +8,7 @@ import { flag } from "@/utils/reactivity";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
 import styles from "./Section.module.css";
-import type { SectionWithTiles, ClientCollection } from "@/types/tiles";
+import type { SectionWithTiles } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
 
 export interface SectionProps {
@@ -21,27 +17,10 @@ export interface SectionProps {
 }
 
 export default function Section({ editor, section }: SectionProps) {
-  const { layout, width } = section;
+  const { width } = section;
   const fullWidth = width.derive((value) => value === "VIEWPORT");
   const hasFocus = flag(false);
   const { isEditable } = editor;
-
-  const setLayout = async (value: ClientCollection["layout"]) => {
-    if (value === layout.value) {
-      return;
-    }
-    try {
-      await editor.updateSection({
-        id: section.id,
-        layout: value,
-      });
-      viewTransition(() => {
-        layout.value = value;
-      });
-    } catch (error) {
-      handleError(error);
-    }
-  };
 
   const toggleFullWidth = async () => {
     try {
@@ -96,72 +75,6 @@ export default function Section({ editor, section }: SectionProps) {
             aria-label="Section toolbar"
           >
             <TileButtons editor={editor} sectionId={section.id} />
-
-            <ul role="group" aria-label="Layout">
-              <li role="presentation">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="floating small"
-                  aria-label="Grid"
-                  data-tooltip="Grid"
-                  aria-pressed={layout.derive((value) =>
-                    value === "GRID" ? "true" : "false",
-                  )}
-                  on:click={() => setLayout("GRID")}
-                >
-                  <GridIcon aria-hidden="true" />
-                </button>
-              </li>
-
-              <li role="presentation">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="floating small"
-                  aria-label="Column"
-                  data-tooltip="Column"
-                  aria-pressed={layout.derive((value) =>
-                    value === "COLUMN" ? "true" : "false",
-                  )}
-                  on:click={() => setLayout("COLUMN")}
-                >
-                  <ColumnIcon aria-hidden="true" />
-                </button>
-              </li>
-
-              <li role="presentation">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="floating small"
-                  aria-label="Carousel"
-                  data-tooltip="Carousel"
-                  aria-pressed={layout.derive((value) =>
-                    value === "CAROUSEL" ? "true" : "false",
-                  )}
-                  on:click={() => setLayout("CAROUSEL")}
-                >
-                  <CarouselIcon aria-hidden="true" />
-                </button>
-              </li>
-
-              <li role="presentation">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="floating small"
-                  aria-label="Canvas"
-                  data-tooltip="Canvas"
-                  aria-pressed={layout.derive((value) =>
-                    value === "CANVAS" ? "true" : "false",
-                  )}
-                  on:click={() => setLayout("CANVAS")}
-                >
-                  <CanvasIcon aria-hidden="true" />
-                </button>
-              </li>
-            </ul>
 
             <ul role="group" aria-label="Size">
               <li role="presentation">
