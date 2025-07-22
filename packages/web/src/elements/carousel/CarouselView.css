@@ -13,12 +13,22 @@
 }
 
 #contents {
+  position: relative;
   overflow: auto;
   scroll-padding: 24px;
   isolation: isolate;
 
   &.scrolling {
     scroll-snap-type: none;
+  }
+
+  /* Always treat the left edge as a scroll snap point */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0;
+    scroll-snap-align: start;
   }
 }
 

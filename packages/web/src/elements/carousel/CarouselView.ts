@@ -43,7 +43,7 @@ export default class CarouselView extends HTMLElement {
     this.previousButton.id = "previous";
     this.previousButton.part.add("navigation");
     this.previousButton.type = "button";
-    this.previousButton.ariaLabel = "Go to previous item";
+    this.previousButton.ariaLabel = "Scroll to the previous item";
     this.previousButton.tabIndex = 0;
     this.previousButton.innerHTML = arrowLeftIcon;
     this.previousButton.addEventListener("click", this);
@@ -52,7 +52,7 @@ export default class CarouselView extends HTMLElement {
     this.nextButton.id = "next";
     this.nextButton.part.add("navigation");
     this.nextButton.type = "button";
-    this.nextButton.ariaLabel = "Go to next item";
+    this.nextButton.ariaLabel = "Scroll to the next item";
     this.nextButton.tabIndex = 0;
     this.nextButton.innerHTML = arrowRightIcon;
     this.nextButton.addEventListener("click", this);
@@ -130,44 +130,80 @@ export default class CarouselView extends HTMLElement {
     }
   }
 
-  private getFirstVisibleElement() {
-    const left = this.contents.scrollLeft;
+  private getPreviousElement() {
+    const style = getComputedStyle(this.contents);
+    const scrollPaddingLeft = parseFloat(style.scrollPaddingLeft);
+    const left = this.contents.scrollLeft + scrollPaddingLeft;
+
+    let element: HTMLElement | null = null;
     for (const child of this.children) {
-      if (child instanceof HTMLElement && child.offsetLeft >= left) {
-        return child;
+      if (
+        child instanceof HTMLElement &&
+        child.offsetLeft < left &&
+        (!element || child.offsetLeft > element.offsetLeft)
+      ) {
+        element = child;
       }
     }
-    return null;
+    return element;
+  }
+
+  private getNextElement() {
+    const scrollLeft = this.contents.scrollLeft;
+    const style = getComputedStyle(this.contents);
+    const scrollPaddingLeft = parseFloat(style.scrollPaddingLeft);
+    const scrollPaddingRight = parseFloat(style.scrollPaddingRight);
+    const left = scrollLeft + scrollPaddingLeft;
+    const right = scrollLeft + this.contents.clientWidth - scrollPaddingRight;
+
+    let element: HTMLElement | null = null;
+    for (const child of this.children) {
+      if (
+        child instanceof HTMLElement &&
+        child.offsetLeft > left &&
+        child.offsetLeft + child.clientWidth > right &&
+        (!element || child.offsetLeft < element.offsetLeft)
+      ) {
+        element = child;
+      }
+    }
+    return element;
   }
 
   private scrollToElement(element: HTMLElement) {
     const style = getComputedStyle(this.contents);
-    const scrollPadding = parseFloat(style.scrollPaddingInlineStart);
+    const scrollPadding = parseFloat(style.scrollPaddingLeft);
     this.contents.scroll({
       left: element.offsetLeft - scrollPadding,
       behavior: "smooth",
     });
   }
 
+  private scrollToStart() {
+    this.contents.scroll({ left: 0, behavior: "smooth" });
+  }
+
   previous() {
-    const element = this.getFirstVisibleElement()?.previousElementSibling;
-    if (element instanceof HTMLElement) {
+    const element = this.getPreviousElement();
+    if (element) {
       this.scrollToElement(element);
+    } else {
+      this.scrollToStart();
     }
   }
 
   next() {
-    const element = this.getFirstVisibleElement()?.nextElementSibling;
-    if (element instanceof HTMLElement) {
+    const element = this.getNextElement();
+    if (element) {
       this.scrollToElement(element);
     }
   }
 
   private updateButtons() {
-    this.previousButton.disabled = this.contents.scrollLeft < 10;
+    this.previousButton.disabled = this.contents.scrollLeft < 16;
     this.nextButton.disabled =
       this.contents.scrollLeft >
-      this.contents.scrollWidth - this.contents.clientWidth - 10;
+      this.contents.scrollWidth - this.contents.clientWidth - 16;
   }
 
   private handleScroll() {
