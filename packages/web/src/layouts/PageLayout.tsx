@@ -16,7 +16,6 @@ import "@/styles/toasts.css";
 import "@/styles/images.css";
 import "@/styles/animation.css";
 import "@/styles/tabs.css";
-import "@/styles/carousels.css";
 import "@/styles/tooltips.css";
 import "@/styles/richText.css";
 import "@/styles/tables.css";

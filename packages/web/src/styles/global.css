@@ -232,6 +232,11 @@ map-legend-item:not(:defined) {
   display: none;
 }
 
+scroll-view:not(:defined) {
+  display: block;
+  overflow-x: auto;
+}
+
 @property --border-radius {
   syntax: "<length>";
   inherits: true;
