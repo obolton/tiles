@@ -1,4 +1,5 @@
-import SectionLayout from "./SectionLayout";
+import Canvas from "@/components/layouts/canvas/Canvas";
+import Placeholder from "@/components/placeholder/Placeholder";
 import TileButtons from "@/components/menu/TileButtons";
 import FullWidthIcon from "@/icons/full-width.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
@@ -10,6 +11,10 @@ import { handleError } from "@/utils/errors";
 import styles from "./Section.module.css";
 import type { SectionWithTiles } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
+
+function SectionPlaceholder() {
+  return <Placeholder />;
+}
 
 export interface SectionProps {
   editor: Editor;
@@ -66,7 +71,15 @@ export default function Section({ editor, section }: SectionProps) {
       on:focus={onFocus}
       on:blur={onBlur}
     >
-      <SectionLayout editor={editor} section={section} />
+      <Canvas
+        editor={editor}
+        isEditable={isEditable}
+        sectionId={section.id}
+        items={section.tiles}
+        minColumnSpan={2}
+        minRowSpan={1}
+        Placeholder={SectionPlaceholder}
+      />
 
       {hasFocus.derive((value) =>
         value ? (
