@@ -1,4 +1,6 @@
 import css from "./CarouselView.css?inline";
+import arrowLeftIcon from "@/icons/arrow-left.svg?raw";
+import arrowRightIcon from "@/icons/arrow-right.svg?raw";
 import type { DragDropEvent } from "@/utils/drag";
 
 const stylesheet = new CSSStyleSheet();
@@ -11,11 +13,12 @@ enum CarouselViewStates {
 }
 
 export default class CarouselView extends HTMLElement {
-  private internals: ElementInternals;
-  private contents: HTMLDivElement;
-  private previousButton: HTMLButtonElement;
-  private nextButton: HTMLButtonElement;
-  private resizeObserver: ResizeObserver;
+  private readonly internals: ElementInternals;
+  private readonly contents: HTMLDivElement;
+  private readonly previousButton: HTMLButtonElement;
+  private readonly nextButton: HTMLButtonElement;
+  private readonly resizeObserver: ResizeObserver;
+
   private scrollSpeed = 0;
   private lastScrollFrame: DOMHighResTimeStamp = 0;
 
@@ -42,6 +45,7 @@ export default class CarouselView extends HTMLElement {
     this.previousButton.type = "button";
     this.previousButton.ariaLabel = "Go to previous item";
     this.previousButton.tabIndex = 0;
+    this.previousButton.innerHTML = arrowLeftIcon;
     this.previousButton.addEventListener("click", this);
 
     this.nextButton = document.createElement("button");
@@ -50,23 +54,26 @@ export default class CarouselView extends HTMLElement {
     this.nextButton.type = "button";
     this.nextButton.ariaLabel = "Go to next item";
     this.nextButton.tabIndex = 0;
+    this.nextButton.innerHTML = arrowRightIcon;
     this.nextButton.addEventListener("click", this);
 
     shadow.append(this.previousButton, this.nextButton, this.contents);
 
     this.resizeObserver = new ResizeObserver(this.onResize.bind(this));
-
-    this.addEventListener("keydown", this);
-    this.addEventListener("dnd-dragover", this, { passive: true });
-    this.addEventListener("dnd-dragleave", this, { passive: true });
   }
 
   connectedCallback() {
+    this.addEventListener("keydown", this);
+    this.addEventListener("dnd-dragover", this, { passive: true });
+    this.addEventListener("dnd-dragleave", this, { passive: true });
     this.resizeObserver.observe(this);
     this.updateButtons();
   }
 
   disconnectedCallback() {
+    this.removeEventListener("keydown", this);
+    this.removeEventListener("dnd-dragover", this);
+    this.removeEventListener("dnd-dragleave", this);
     this.resizeObserver.disconnect();
   }
 
