@@ -2,11 +2,11 @@ const BOLD_START_MATCH = /^(\*\*|__)(?=\w)/;
 const BOLD_END_MATCH = /^(\*\*|__)/;
 const ITALIC_START_MATCH = /^(\*|_)(?=\w)/;
 const ITALIC_END_MATCH = /^(\*|_)/;
-const NEW_LINE_MATCH = /^\n/;
-const PARAGRAPH_MATCH = /^[^\n]*\n{2,}(?=\S)/;
+const NEW_LINE_MATCH = /^\n+/;
 const HEADING_MATCH = /^(#{1,6})\s+(?=\S)/;
 const UNORDERED_LIST_ITEM_MATCH = /^( *)(-|\*|\+)\s+(?=\S)/;
 const ORDERED_LIST_ITEM_MATCH = /^( *)[0-9]+\.\s+(?=\S)/;
+const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *))$/;
 
 export interface ParagraphNode {
   type: "paragraph";
@@ -25,138 +25,147 @@ export interface ListItemNode {
 
 export type RichTextNode = ParagraphNode | HeadingNode | ListItemNode;
 
-export type RichTextStreamEvent =
-  | string
-  | { bold: boolean }
-  | { italic: boolean }
-  | RichTextNode;
+export type RichTextFormat = { bold?: boolean; italic?: boolean };
+
+export type RichTextStreamEvent = string | RichTextFormat | RichTextNode;
 
 export async function* parseMarkdown(
   input: AsyncGenerator<string>,
 ): AsyncGenerator<RichTextStreamEvent> {
   let buffer = "";
-  let bold = false;
-  let italic = false;
-  let newLine = true;
+  let pos = 0;
+  const format: RichTextFormat = {};
   let node: RichTextNode | null = null;
 
-  function* flush(text?: string) {
-    if (node) {
-      yield node;
-      node = null;
+  function* flush(skip: number = 0) {
+    if (pos > 0) {
+      if (!node) {
+        node = { type: "paragraph" };
+        yield node;
+      }
+      yield buffer.slice(0, pos);
     }
-    if (text) {
-      yield text;
+    buffer = buffer.slice(pos + skip);
+    pos = 0;
+  }
+
+  function* set(
+    state: {
+      node?: RichTextNode | null;
+      format?: RichTextFormat;
+    },
+    skip: number,
+  ) {
+    yield* flush(skip);
+
+    if (typeof state.node !== "undefined") {
+      node = state.node;
+      if (node) {
+        yield node;
+      }
+    }
+
+    if (state.format) {
+      if (!node) {
+        node = { type: "paragraph" };
+        yield node;
+      }
+      yield state.format;
+      Object.assign(format, state.format);
     }
   }
 
   for await (const chunk of input) {
     buffer += chunk;
+    pos = 0;
 
-    while (buffer.length > 0) {
-      if (newLine) {
-        const headingMatch = buffer.match(HEADING_MATCH);
-        if (headingMatch) {
-          const level = headingMatch[1]!.length;
-          node = { type: "heading", level: Math.min(level, 3) };
-          buffer = buffer.slice(headingMatch[0].length);
-          newLine = false;
-          continue;
-        }
+    while (pos < buffer.length) {
+      const rest = buffer.slice(pos);
 
-        const unorderedListItemMatch = buffer.match(UNORDERED_LIST_ITEM_MATCH);
-        if (unorderedListItemMatch) {
-          const depth = Math.floor(
-            (unorderedListItemMatch[1] ?? "").length / 2,
-          );
-          node = { type: "listitem", listType: "unordered", depth };
-          buffer = buffer.slice(unorderedListItemMatch[0].length);
-          newLine = false;
-          continue;
-        }
-
-        const orderedListItemMatch = buffer.match(ORDERED_LIST_ITEM_MATCH);
-        if (orderedListItemMatch) {
-          const depth = Math.floor((orderedListItemMatch[1] ?? "").length / 2);
-          node = { type: "listitem", listType: "ordered", depth };
-          buffer = buffer.slice(orderedListItemMatch[0].length);
-          newLine = false;
-          continue;
-        }
-      }
-
-      if (!bold && buffer.match(BOLD_START_MATCH)) {
-        bold = true;
-        yield* flush();
-        yield { bold };
-        buffer = buffer.slice(2);
-        newLine = false;
+      const headingMatch = buffer.match(HEADING_MATCH);
+      if (headingMatch) {
+        const [match, hashes] = headingMatch;
+        const level = Math.min(hashes!.length, 3);
+        yield* set(
+          {
+            node: {
+              type: "heading",
+              level,
+            },
+          },
+          match.length,
+        );
         continue;
       }
 
-      if (bold && buffer.match(BOLD_END_MATCH)) {
-        bold = false;
-        yield { bold };
-        buffer = buffer.slice(2);
-        newLine = false;
+      const ulMatch = buffer.match(UNORDERED_LIST_ITEM_MATCH);
+      if (ulMatch) {
+        const [match, whitespace] = ulMatch;
+        const depth = Math.floor((whitespace ?? "").length / 2);
+        yield* set(
+          {
+            node: {
+              type: "listitem",
+              listType: "unordered",
+              depth,
+            },
+          },
+          match.length,
+        );
         continue;
       }
 
-      if (!italic && buffer.match(ITALIC_START_MATCH)) {
-        italic = true;
-        yield* flush();
-        yield { italic };
-        buffer = buffer.slice(1);
-        newLine = false;
+      const olMatch = buffer.match(ORDERED_LIST_ITEM_MATCH);
+      if (olMatch) {
+        const [match, whitespace] = olMatch;
+        const depth = Math.floor((whitespace ?? "").length / 2);
+        yield* set(
+          {
+            node: {
+              type: "listitem",
+              listType: "ordered",
+              depth,
+            },
+          },
+          match.length,
+        );
         continue;
       }
 
-      if (italic && buffer.match(ITALIC_END_MATCH)) {
-        italic = false;
-        yield { italic };
-        buffer = buffer.slice(1);
-        newLine = false;
+      if (!format.bold && rest.match(BOLD_START_MATCH)) {
+        yield* set({ format: { bold: true } }, 2);
         continue;
       }
 
-      const paragraphMatch = buffer.match(PARAGRAPH_MATCH);
-      if (paragraphMatch) {
-        const text = paragraphMatch[0].trimEnd();
-        yield* flush(text);
-        node = { type: "paragraph" };
-        buffer = buffer.slice(paragraphMatch[0].length);
-        newLine = true;
+      if (format.bold && rest.match(BOLD_END_MATCH)) {
+        yield* set({ format: { bold: false } }, 2);
         continue;
       }
 
-      const newLineMatch = buffer.match(NEW_LINE_MATCH);
+      if (!format.italic && rest.match(ITALIC_START_MATCH)) {
+        yield* set({ format: { italic: true } }, 1);
+        continue;
+      }
+
+      if (format.italic && rest.match(ITALIC_END_MATCH)) {
+        yield* set({ format: { italic: false } }, 1);
+        continue;
+      }
+
+      const newLineMatch = rest.match(NEW_LINE_MATCH);
       if (newLineMatch) {
-        buffer = buffer.slice(newLineMatch[0].length);
-        newLine = true;
+        yield* set({ node: null }, newLineMatch[0].length);
         continue;
       }
 
-      const delimiterMatch = buffer.match(/\*|_|^-|^[0-9]+|^#|\n/);
-      if (delimiterMatch) {
-        const index = delimiterMatch.index ?? 0;
-        if (index === 0) {
-          break;
-        }
+      pos += 1;
+    }
 
-        const text = buffer.slice(0, index);
-        yield* flush(text);
-        buffer = buffer.slice(index);
-        newLine = false;
-        continue;
-      }
-
-      if (buffer) {
-        yield* flush(buffer);
-        buffer = "";
-        newLine = false;
-      }
+    const delimiterMatch = buffer.match(DELIMITER_MATCH);
+    if (!delimiterMatch) {
+      yield* flush();
     }
   }
 
-  yield* flush(buffer);
+  yield* flush();
 }
