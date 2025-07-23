@@ -8,13 +8,28 @@ const HEADING_MATCH = /^(#{1,6})\s+(?=\S)/;
 const UNORDERED_LIST_ITEM_MATCH = /^(-|\*|\+)\s+(?=\S)/;
 const ORDERED_LIST_ITEM_MATCH = /^[0-9]+\.\s+(?=\S)/;
 
-export type RichTextBlockType = "P" | "H1" | "H2" | "H3" | "UL" | "OL";
+export interface ParagraphNode {
+  type: "paragraph";
+}
+
+export interface HeadingNode {
+  type: "heading";
+  level: number;
+}
+
+export interface ListItemNode {
+  type: "listitem";
+  listType: "ordered" | "unordered";
+  depth: number;
+}
+
+export type RichTextNode = ParagraphNode | HeadingNode | ListItemNode;
 
 export type RichTextStreamEvent =
   | string
   | { bold: boolean }
   | { italic: boolean }
-  | { block: RichTextBlockType };
+  | RichTextNode;
 
 export async function* parseMarkdown(
   input: AsyncGenerator<string>,
@@ -23,12 +38,12 @@ export async function* parseMarkdown(
   let bold = false;
   let italic = false;
   let newLine = true;
-  let block: RichTextBlockType | null = null;
+  let node: RichTextNode | null = null;
 
   function* flush(text?: string) {
-    if (block) {
-      yield { block };
-      block = null;
+    if (node) {
+      yield node;
+      node = null;
     }
     if (text) {
       yield text;
@@ -43,7 +58,7 @@ export async function* parseMarkdown(
         const headingMatch = buffer.match(HEADING_MATCH);
         if (headingMatch) {
           const level = headingMatch[1]!.length;
-          block = level === 1 ? "H1" : level === 2 ? "H2" : "H3";
+          node = { type: "heading", level: Math.min(level, 3) };
           buffer = buffer.slice(headingMatch[0].length);
           newLine = false;
           continue;
@@ -51,7 +66,7 @@ export async function* parseMarkdown(
 
         const unorderedListItemMatch = buffer.match(UNORDERED_LIST_ITEM_MATCH);
         if (unorderedListItemMatch) {
-          block = "UL";
+          node = { type: "listitem", listType: "unordered", depth: 0 };
           buffer = buffer.slice(unorderedListItemMatch[0].length);
           newLine = false;
           continue;
@@ -59,7 +74,7 @@ export async function* parseMarkdown(
 
         const orderedListItemMatch = buffer.match(ORDERED_LIST_ITEM_MATCH);
         if (orderedListItemMatch) {
-          block = "OL";
+          node = { type: "listitem", listType: "ordered", depth: 0 };
           buffer = buffer.slice(orderedListItemMatch[0].length);
           newLine = false;
           continue;
@@ -104,7 +119,7 @@ export async function* parseMarkdown(
       if (paragraphMatch) {
         const text = paragraphMatch[0].trimEnd();
         yield* flush(text);
-        block = "P";
+        node = { type: "paragraph" };
         buffer = buffer.slice(paragraphMatch[0].length);
         newLine = true;
         continue;
