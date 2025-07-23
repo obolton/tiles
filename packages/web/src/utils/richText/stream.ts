@@ -3,13 +3,28 @@ import { closest } from "./helpers";
 import type { EditorView } from "prosemirror-view";
 import type { Mark } from "prosemirror-model";
 
-export type RichTextBlockType = "P" | "H1" | "H2" | "H3" | "UL" | "OL";
+export interface ParagraphNode {
+  type: "paragraph";
+}
+
+export interface HeadingNode {
+  type: "heading";
+  level: number;
+}
+
+export interface ListItemNode {
+  type: "listitem";
+  listType: "ordered" | "unordered";
+  depth: number;
+}
+
+export type RichTextNode = ParagraphNode | HeadingNode | ListItemNode;
 
 export type RichTextStreamEvent =
   | string
   | { bold: boolean }
   | { italic: boolean }
-  | { block: RichTextBlockType };
+  | RichTextNode;
 
 export async function insertFromStream(
   view: EditorView,
@@ -46,12 +61,12 @@ export async function insertFromStream(
         italic = event.italic;
       }
 
-      if ("block" in event) {
+      if ("type" in event) {
         const $pos = tr.doc.resolve(pos);
         pos = $pos.after(1);
 
-        switch (event.block) {
-          case "P":
+        switch (event.type) {
+          case "paragraph":
             {
               const node = schema.nodes.paragraph.create();
               tr.insert(pos, node);
@@ -59,36 +74,21 @@ export async function insertFromStream(
             }
             break;
 
-          case "H1":
+          case "heading":
             {
-              const node = schema.nodes.heading.create({ level: 1 });
+              const node = schema.nodes.heading.create({ level: event.level });
               tr.insert(pos, node);
               pos += node.nodeSize - 1;
             }
             break;
 
-          case "H2":
+          case "listitem":
             {
-              const node = schema.nodes.heading.create({ level: 2 });
-              tr.insert(pos, node);
-              pos += node.nodeSize - 1;
-            }
-            break;
-
-          case "H3":
-            {
-              const node = schema.nodes.heading.create({ level: 3 });
-              tr.insert(pos, node);
-              pos += node.nodeSize - 1;
-            }
-            break;
-
-          case "UL":
-            {
-              const list = closest(
-                $pos,
-                (node) => node.type === schema.nodes.unordered_list,
-              );
+              const listNodeType =
+                event.listType === "ordered"
+                  ? schema.nodes.ordered_list
+                  : schema.nodes.unordered_list;
+              const list = closest($pos, (node) => node.type === listNodeType);
               if (list) {
                 pos = list.pos + list.node.nodeSize - 1;
                 const node = schema.nodes.list_item.create(
@@ -98,35 +98,7 @@ export async function insertFromStream(
                 tr.insert(pos, node);
                 pos += node.nodeSize - 2;
               } else {
-                const node = schema.nodes.unordered_list.create(
-                  null,
-                  schema.nodes.list_item.create(
-                    null,
-                    schema.nodes.paragraph.create(),
-                  ),
-                );
-                tr.insert(pos, node);
-                pos += node.nodeSize - 3;
-              }
-            }
-            break;
-
-          case "OL":
-            {
-              const list = closest(
-                $pos,
-                (node) => node.type === schema.nodes.ordered_list,
-              );
-              if (list) {
-                pos = list.pos + list.node.nodeSize - 1;
-                const node = schema.nodes.list_item.create(
-                  null,
-                  schema.nodes.paragraph.create(),
-                );
-                tr.insert(pos, node);
-                pos += node.nodeSize - 2;
-              } else {
-                const node = schema.nodes.ordered_list.create(
+                const node = listNodeType.create(
                   null,
                   schema.nodes.list_item.create(
                     null,
