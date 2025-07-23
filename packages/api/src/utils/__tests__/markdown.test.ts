@@ -11,7 +11,7 @@ describe("parseMarkdown", () => {
   test("generates a stream of events", async () => {
     const stream = toAsync(["hello ", "world"]);
     const output = await Array.fromAsync(parseMarkdown(stream));
-    expect(output).toEqual(["hello ", "world"]);
+    expect(output).toEqual([{ type: "paragraph" }, "hello ", "world"]);
   });
 
   describe("bold", () => {
@@ -19,6 +19,7 @@ describe("parseMarkdown", () => {
       const stream = toAsync(["hello **world**"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
+        { type: "paragraph" },
         "hello ",
         { bold: true },
         "world",
@@ -30,6 +31,7 @@ describe("parseMarkdown", () => {
       const stream = toAsync(["hello __world__"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
+        { type: "paragraph" },
         "hello ",
         { bold: true },
         "world",
@@ -41,6 +43,7 @@ describe("parseMarkdown", () => {
       const stream = toAsync(["hello **", "world", "**"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
+        { type: "paragraph" },
         "hello ",
         { bold: true },
         "world",
@@ -52,6 +55,7 @@ describe("parseMarkdown", () => {
       const stream = toAsync(["hello *", "*world*", "*"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
+        { type: "paragraph" },
         "hello ",
         { bold: true },
         "world",
@@ -62,7 +66,7 @@ describe("parseMarkdown", () => {
     test("treats a start delimiter followed by whitespace as text", async () => {
       const stream = toAsync(["hello ** world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual(["hello ", "** world"]);
+      expect(output).toEqual([{ type: "paragraph" }, "hello ** world"]);
     });
   });
 
@@ -71,6 +75,7 @@ describe("parseMarkdown", () => {
       const stream = toAsync(["hello *world*"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
+        { type: "paragraph" },
         "hello ",
         { italic: true },
         "world",
@@ -82,6 +87,7 @@ describe("parseMarkdown", () => {
       const stream = toAsync(["hello _world_"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
+        { type: "paragraph" },
         "hello ",
         { italic: true },
         "world",
@@ -93,6 +99,7 @@ describe("parseMarkdown", () => {
       const stream = toAsync(["hello *", "world", "*"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
+        { type: "paragraph" },
         "hello ",
         { italic: true },
         "world",
@@ -103,7 +110,7 @@ describe("parseMarkdown", () => {
     test("treats a start delimiter followed by whitespace as text", async () => {
       const stream = toAsync(["hello * world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual(["hello ", "* world"]);
+      expect(output).toEqual([{ type: "paragraph" }, "hello * world"]);
     });
   });
 
@@ -112,6 +119,7 @@ describe("parseMarkdown", () => {
       const stream = toAsync(["*hello **world***"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
+        { type: "paragraph" },
         { italic: true },
         "hello ",
         { bold: true },
@@ -126,19 +134,34 @@ describe("parseMarkdown", () => {
     test("treats two sequential line breaks as a paragraph break", async () => {
       const stream = toAsync(["hello\n\nworld"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual(["hello", { type: "paragraph" }, "world"]);
+      expect(output).toEqual([
+        { type: "paragraph" },
+        "hello",
+        { type: "paragraph" },
+        "world",
+      ]);
     });
 
     test("treats more than two sequential line breaks as a paragraph break", async () => {
       const stream = toAsync(["hello\n\n\n\nworld"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual(["hello", { type: "paragraph" }, "world"]);
+      expect(output).toEqual([
+        { type: "paragraph" },
+        "hello",
+        { type: "paragraph" },
+        "world",
+      ]);
     });
 
     test("does not treat two sequential line breaks before a heading as a paragraph break", async () => {
       const stream = toAsync(["hello\n\n# world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual(["hello", { type: "heading", level: 1 }, "world"]);
+      expect(output).toEqual([
+        { type: "paragraph" },
+        "hello",
+        { type: "heading", level: 1 },
+        "world",
+      ]);
     });
   });
 
@@ -170,7 +193,7 @@ describe("parseMarkdown", () => {
     test("requires whitespace between the delimeter and heading text", async () => {
       const stream = toAsync(["#hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual(["#hello world"]);
+      expect(output).toEqual([{ type: "paragraph" }, "#hello world"]);
     });
 
     test("returns a heading following a line break", async () => {
@@ -183,6 +206,7 @@ describe("parseMarkdown", () => {
       const stream = toAsync(["foo\n\n", "### hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
+        { type: "paragraph" },
         "foo",
         { type: "heading", level: 3 },
         "hello world",
@@ -192,7 +216,7 @@ describe("parseMarkdown", () => {
     test("requires the heading to be at the start of the line", async () => {
       const stream = toAsync(["abc ### hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual(["abc ### hello world"]);
+      expect(output).toEqual([{ type: "paragraph" }, "abc ### hello world"]);
     });
 
     test("supports heading markers split over multiple chunks", async () => {
