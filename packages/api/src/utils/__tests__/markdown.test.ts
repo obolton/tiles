@@ -126,19 +126,19 @@ describe("parseMarkdown", () => {
     test("treats two sequential line breaks as a paragraph break", async () => {
       const stream = toAsync(["hello\n\nworld"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual(["hello", { block: "P" }, "world"]);
+      expect(output).toEqual(["hello", { type: "paragraph" }, "world"]);
     });
 
     test("treats more than two sequential line breaks as a paragraph break", async () => {
       const stream = toAsync(["hello\n\n\n\nworld"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual(["hello", { block: "P" }, "world"]);
+      expect(output).toEqual(["hello", { type: "paragraph" }, "world"]);
     });
 
     test("does not treat two sequential line breaks before a heading as a paragraph break", async () => {
       const stream = toAsync(["hello\n\n# world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual(["hello", { block: "H1" }, "world"]);
+      expect(output).toEqual(["hello", { type: "heading", level: 1 }, "world"]);
     });
   });
 
@@ -146,19 +146,25 @@ describe("parseMarkdown", () => {
     test("returns heading level 1", async () => {
       const stream = toAsync(["# hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual([{ block: "H1" }, "hello world"]);
+      expect(output).toEqual([{ type: "heading", level: 1 }, "hello world"]);
     });
 
     test("returns heading level 2", async () => {
       const stream = toAsync(["## hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual([{ block: "H2" }, "hello world"]);
+      expect(output).toEqual([{ type: "heading", level: 2 }, "hello world"]);
     });
 
     test("returns heading level 3", async () => {
       const stream = toAsync(["### hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual([{ block: "H3" }, "hello world"]);
+      expect(output).toEqual([{ type: "heading", level: 3 }, "hello world"]);
+    });
+
+    test("treats other headings as level 3", async () => {
+      const stream = toAsync(["#### hello world"]);
+      const output = await Array.fromAsync(parseMarkdown(stream));
+      expect(output).toEqual([{ type: "heading", level: 3 }, "hello world"]);
     });
 
     test("requires whitespace between the delimeter and heading text", async () => {
@@ -170,13 +176,17 @@ describe("parseMarkdown", () => {
     test("returns a heading following a line break", async () => {
       const stream = toAsync(["\n", "### hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual([{ block: "H3" }, "hello world"]);
+      expect(output).toEqual([{ type: "heading", level: 3 }, "hello world"]);
     });
 
     test("returns a heading following a paragraph", async () => {
       const stream = toAsync(["foo\n\n", "### hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual(["foo", { block: "H3" }, "hello world"]);
+      expect(output).toEqual([
+        "foo",
+        { type: "heading", level: 3 },
+        "hello world",
+      ]);
     });
 
     test("requires the heading to be at the start of the line", async () => {
@@ -188,13 +198,13 @@ describe("parseMarkdown", () => {
     test("supports heading markers split over multiple chunks", async () => {
       const stream = toAsync(["##", "# hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual([{ block: "H3" }, "hello world"]);
+      expect(output).toEqual([{ type: "heading", level: 3 }, "hello world"]);
     });
 
     test("supports heading split over multiple chunks", async () => {
       const stream = toAsync(["###", " hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual([{ block: "H3" }, "hello world"]);
+      expect(output).toEqual([{ type: "heading", level: 3 }, "hello world"]);
     });
   });
 
@@ -202,32 +212,44 @@ describe("parseMarkdown", () => {
     test("supports - item syntax", async () => {
       const stream = toAsync(["- hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual([{ block: "UL" }, "hello world"]);
+      expect(output).toEqual([
+        { type: "listitem", listType: "unordered", depth: 0 },
+        "hello world",
+      ]);
     });
 
     test("supports * item syntax", async () => {
       const stream = toAsync(["* hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual([{ block: "UL" }, "hello world"]);
+      expect(output).toEqual([
+        { type: "listitem", listType: "unordered", depth: 0 },
+        "hello world",
+      ]);
     });
 
     test("supports + item syntax", async () => {
       const stream = toAsync(["+ hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual([{ block: "UL" }, "hello world"]);
+      expect(output).toEqual([
+        { type: "listitem", listType: "unordered", depth: 0 },
+        "hello world",
+      ]);
     });
 
     test("supports item split over multiple chunks", async () => {
       const stream = toAsync(["- ", "hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual([{ block: "UL" }, "hello world"]);
+      expect(output).toEqual([
+        { type: "listitem", listType: "unordered", depth: 0 },
+        "hello world",
+      ]);
     });
 
     test("supports formatted list items", async () => {
       const stream = toAsync(["* **hello world**"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
-        { block: "UL" },
+        { type: "listitem", listType: "unordered", depth: 0 },
         { bold: true },
         "hello world",
         { bold: false },
@@ -238,12 +260,27 @@ describe("parseMarkdown", () => {
       const stream = toAsync(["- hello world\n", "- foo", "\n", "- bar\n"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
-        { block: "UL" },
+        { type: "listitem", listType: "unordered", depth: 0 },
         "hello world",
-        { block: "UL" },
+        { type: "listitem", listType: "unordered", depth: 0 },
         "foo",
-        { block: "UL" },
+        { type: "listitem", listType: "unordered", depth: 0 },
         "bar",
+      ]);
+    });
+
+    test("supports nested list items", async () => {
+      const stream = toAsync([
+        "* hello world\n  * nested item 1\n  * nested item 2",
+      ]);
+      const output = await Array.fromAsync(parseMarkdown(stream));
+      expect(output).toEqual([
+        { type: "listitem", listType: "unordered", depth: 0 },
+        "hello world",
+        { type: "listitem", listType: "unordered", depth: 1 },
+        "nested item 1",
+        { type: "listitem", listType: "unordered", depth: 1 },
+        "nested item 2",
       ]);
     });
   });
@@ -252,20 +289,26 @@ describe("parseMarkdown", () => {
     test("supports 1. item syntax", async () => {
       const stream = toAsync(["1. hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual([{ block: "OL" }, "hello world"]);
+      expect(output).toEqual([
+        { type: "listitem", listType: "ordered", depth: 0 },
+        "hello world",
+      ]);
     });
 
     test("supports item split over multiple chunks", async () => {
       const stream = toAsync(["1", ". hello world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
-      expect(output).toEqual([{ block: "OL" }, "hello world"]);
+      expect(output).toEqual([
+        { type: "listitem", listType: "ordered", depth: 0 },
+        "hello world",
+      ]);
     });
 
     test("supports formatted list items", async () => {
       const stream = toAsync(["1. **hello world**"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
-        { block: "OL" },
+        { type: "listitem", listType: "ordered", depth: 0 },
         { bold: true },
         "hello world",
         { bold: false },
@@ -276,12 +319,27 @@ describe("parseMarkdown", () => {
       const stream = toAsync(["1. hello world\n", "2. foo", "\n", "3. bar\n"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
-        { block: "OL" },
+        { type: "listitem", listType: "ordered", depth: 0 },
         "hello world",
-        { block: "OL" },
+        { type: "listitem", listType: "ordered", depth: 0 },
         "foo",
-        { block: "OL" },
+        { type: "listitem", listType: "ordered", depth: 0 },
         "bar",
+      ]);
+    });
+
+    test("supports nested list items", async () => {
+      const stream = toAsync([
+        "1. hello world\n  1. nested item 1\n  2. nested item 2",
+      ]);
+      const output = await Array.fromAsync(parseMarkdown(stream));
+      expect(output).toEqual([
+        { type: "listitem", listType: "ordered", depth: 0 },
+        "hello world",
+        { type: "listitem", listType: "ordered", depth: 1 },
+        "nested item 1",
+        { type: "listitem", listType: "ordered", depth: 1 },
+        "nested item 2",
       ]);
     });
   });
