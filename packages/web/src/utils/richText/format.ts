@@ -24,6 +24,7 @@ export interface Format {
   highlight: boolean;
   link: boolean;
   align?: TextAlignment;
+  pending: boolean;
 }
 
 export function selectionFormat(callback: (format: Format) => void) {
@@ -56,6 +57,7 @@ export function selectionFormat(callback: (format: Format) => void) {
           quote: blockNodeTypes.has(schema.nodes.quote),
           list,
           align,
+          pending: marks.has(schema.marks.pending),
         };
         callback(format);
       },
