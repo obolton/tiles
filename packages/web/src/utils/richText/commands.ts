@@ -5,6 +5,8 @@ import {
   closest,
   getSelectionHeadingLevel,
   getSelectionBlockNodeTypes,
+  getMarkRange,
+  findMark,
 } from "./helpers";
 import type { NodeType } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
@@ -63,7 +65,7 @@ export function toggleHeading(level: 1 | 2 | 3): Command {
           range.$to.pos,
           schema.nodes.paragraph,
           (oldNode) => ({
-            align: oldNode.attrs.align,
+            align: oldNode.attrs.align as TextAlignment | undefined,
           }),
         );
       }
@@ -209,6 +211,61 @@ export function insertDateTime(value: Date, time?: boolean): Command {
         ),
       );
     }
+    return true;
+  };
+}
+
+export function approve(): Command {
+  return function (state, dispatch) {
+    const { selection } = state;
+    const range = selection.empty
+      ? getMarkRange(state, selection.from, schema.marks.pending)
+      : { from: selection.from, to: selection.to };
+
+    if (!range) {
+      return false;
+    }
+
+    if (dispatch) {
+      const { from, to } = range;
+      const tr = state.tr.removeMark(from, to, schema.marks.pending);
+      dispatch(tr);
+    }
+
+    return true;
+  };
+}
+
+export function reject(): Command {
+  return function (state, dispatch) {
+    const { selection } = state;
+    const tr = state.tr;
+
+    if (selection.empty) {
+      const range = getMarkRange(state, selection.from, schema.marks.pending);
+      if (!range) {
+        return false;
+      }
+      tr.deleteRange(range.from, range.to);
+    } else {
+      const ranges: { from: number; to: number }[] = [];
+      state.doc.nodesBetween(selection.from, selection.to, (node, pos) => {
+        if (findMark(node, schema.marks.pending)) {
+          ranges.push({ from: pos, to: pos + node.nodeSize });
+        }
+      });
+      if (ranges.length === 0) {
+        return false;
+      }
+      for (const range of ranges.reverse()) {
+        tr.deleteRange(range.from, range.to);
+      }
+    }
+
+    if (dispatch) {
+      dispatch(tr);
+    }
+
     return true;
   };
 }
