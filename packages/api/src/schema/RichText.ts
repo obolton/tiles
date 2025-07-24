@@ -4,6 +4,7 @@ const TextNodeSchema = z.object({
   type: z.literal("text"),
   text: z.string(),
   format: z.number().int().gte(0).lte(31),
+  pending: z.literal(true).optional(),
 });
 
 const LinkNodeSchema = z.object({
