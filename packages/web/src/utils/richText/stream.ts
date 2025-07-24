@@ -20,11 +20,9 @@ export interface ListItemNode {
 
 export type RichTextNode = ParagraphNode | HeadingNode | ListItemNode;
 
-export type RichTextStreamEvent =
-  | string
-  | { bold: boolean }
-  | { italic: boolean }
-  | RichTextNode;
+export type RichTextFormat = { bold?: boolean; italic?: boolean };
+
+export type RichTextStreamEvent = string | RichTextFormat | RichTextNode;
 
 export async function insertFromStream(
   view: EditorView,
@@ -36,13 +34,15 @@ export async function insertFromStream(
   let bold = false;
   let italic = false;
 
+  const pendingMark = schema.marks.pending.create();
+
   for await (const event of stream) {
     const {
       state: { tr },
     } = view;
 
     if (typeof event === "string") {
-      const marks: Mark[] = [schema.marks.pending.create()];
+      const marks: Mark[] = [pendingMark];
       if (bold) {
         marks.push(schema.marks.bold.create());
       }
@@ -53,11 +53,11 @@ export async function insertFromStream(
       tr.insertText(event, pos);
       pos += event.length;
     } else {
-      if ("bold" in event) {
+      if ("bold" in event && typeof event.bold === "boolean") {
         bold = event.bold;
       }
 
-      if ("italic" in event) {
+      if ("italic" in event && typeof event.italic === "boolean") {
         italic = event.italic;
       }
 
