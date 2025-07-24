@@ -38,6 +38,9 @@ function getMarks(format: number) {
 
 function createTextNode(text: TextNode) {
   const marks = getMarks(text.format);
+  if (text.pending) {
+    marks.push(schema.marks.pending.create());
+  }
   const textNode = schema.text(text.text, marks);
   return textNode;
 }

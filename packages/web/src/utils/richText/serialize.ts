@@ -51,14 +51,17 @@ function serializeNode(node: Node): SerializedNode {
       type: "text",
       text: node.text ?? "",
       format: getTextFormat(node),
+      pending: node.marks.find((mark) => mark.type === schema.marks.pending)
+        ? true
+        : undefined,
     };
   }
 
   if (node.type === nodes.link) {
     return {
       type: "link",
-      href: node.attrs.href,
-      theme: node.attrs.theme,
+      href: node.attrs.href as string,
+      theme: node.attrs.theme as string | undefined,
       children: node.children.map(serializeNode) as TextNode[],
     };
   }
@@ -74,9 +77,9 @@ function serializeNode(node: Node): SerializedNode {
   if (node.type === nodes.heading) {
     return {
       type: "heading",
-      level: node.attrs.level,
+      level: node.attrs.level as 1 | 2 | 3,
       align: getTextAlignment(node),
-      theme: node.attrs.theme,
+      theme: node.attrs.theme as string | undefined,
       children: node.children.map(serializeNode) as InlineNode[],
     };
   }
@@ -91,7 +94,7 @@ function serializeNode(node: Node): SerializedNode {
   if (node.type === nodes.list_item) {
     return {
       type: "listitem",
-      checked: node.attrs.checked,
+      checked: node.attrs.checked as boolean | undefined,
       children: node.children.map(serializeNode),
     } as ListItemNode;
   }
@@ -127,7 +130,7 @@ function serializeNode(node: Node): SerializedNode {
       type: "date",
       value: time ? value.toISOString() : value.toISOString().slice(0, 10),
       format: getTextFormat(node),
-      theme: node.attrs.theme,
+      theme: node.attrs.theme as string | undefined,
     };
   }
 

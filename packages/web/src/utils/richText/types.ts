@@ -27,6 +27,7 @@ export interface TextNode extends BaseNode {
   type: "text";
   text: string;
   format: number;
+  pending?: boolean;
 }
 
 export interface LinkNode extends BaseNode {
