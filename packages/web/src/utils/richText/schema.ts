@@ -20,6 +20,7 @@ const DOMOutput = {
   underline: ["span", { class: "underline" }, 0],
   strikethrough: ["del", 0],
   highlight: ["mark", 0],
+  pending: ["ins", 0],
 } as const satisfies Record<string, DOMOutputSpec>;
 
 export type TextAlignment = "left" | "center" | "right";
@@ -69,7 +70,7 @@ const nodesSpec = {
       },
     ],
     toDOM(node) {
-      return ["p", { class: node.attrs.align }, 0];
+      return ["p", { class: node.attrs.align as TextAlignment | undefined }, 0];
     },
   },
 
@@ -115,7 +116,11 @@ const nodesSpec = {
       },
     ],
     toDOM(node) {
-      return ["h" + node.attrs.level, { class: node.attrs.align }, 0];
+      return [
+        "h" + node.attrs.level,
+        { class: node.attrs.align as TextAlignment | undefined },
+        0,
+      ];
     },
   },
 
@@ -134,7 +139,7 @@ const nodesSpec = {
     toDOM(node) {
       return node.attrs.order === 1
         ? DOMOutput.orderedList
-        : ["ol", { start: node.attrs.order }, 0];
+        : ["ol", { start: node.attrs.order as number }, 0];
     },
   },
 
@@ -193,7 +198,7 @@ const nodesSpec = {
       },
     ],
     toDOM(mark) {
-      return ["a", { href: mark.attrs.href }, 0];
+      return ["a", { href: mark.attrs.href as string }, 0];
     },
   },
 
@@ -237,6 +242,12 @@ type KeysWithProperty<T, Key, Value> = {
 export type BlockNode = KeysWithProperty<typeof nodesSpec, "group", "block">;
 
 const marksSpec = {
+  pending: {
+    toDOM() {
+      return DOMOutput.pending;
+    },
+  },
+
   highlight: {
     parseDOM: [{ tag: "mark" }],
     toDOM() {

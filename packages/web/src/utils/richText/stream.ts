@@ -42,7 +42,7 @@ export async function insertFromStream(
     } = view;
 
     if (typeof event === "string") {
-      const marks: Mark[] = [];
+      const marks: Mark[] = [schema.marks.pending.create()];
       if (bold) {
         marks.push(schema.marks.bold.create());
       }
