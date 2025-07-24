@@ -39,7 +39,7 @@ function renderNodes(nodes: Node[]) {
           case "list":
             return <List node={node} />;
           case "text":
-            return (
+            return node.pending ? null : (
               <FormattedText format={node.format}>{node.text}</FormattedText>
             );
           case "link":
