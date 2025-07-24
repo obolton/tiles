@@ -18,6 +18,8 @@ import AlignRightIcon from "@/icons/align-right.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
 import EventIcon from "@/icons/event.svg?jsx";
 import AIIcon from "@/icons/ai.svg?jsx";
+import ApproveIcon from "@/icons/approve.svg?jsx";
+import RejectIcon from "@/icons/reject.svg?jsx";
 import { registerModal, showModal } from "@/utils/modals";
 import { flag } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
@@ -41,6 +43,8 @@ import {
   removeLink,
   setAlignment,
   insertDateTime,
+  approve,
+  reject,
 } from "@/utils/richText/commands";
 import { getLink } from "@/utils/richText/helpers";
 import { insertFromStream } from "@/utils/richText/stream";
@@ -141,6 +145,10 @@ export default function FormattingToolbar({
 
   const formatHighlight = () => performCommand(toggleHighlight);
 
+  const approveSelection = () => performCommand(approve());
+
+  const rejectSelection = () => performCommand(reject());
+
   const formatList = (event: Event) => {
     const listType = (event.currentTarget as SwatchSelect).value as ListType;
     switch (listType) {
@@ -217,6 +225,38 @@ export default function FormattingToolbar({
             <AIIcon aria-hidden="true" />
           </button>
         </li>
+
+        {format.derive((value) =>
+          value.pending ? (
+            <>
+              <li role="presentation">
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="floating small"
+                  aria-label="Approve"
+                  data-tooltip="Approve"
+                  on:click={approveSelection}
+                >
+                  <ApproveIcon aria-hidden="true" />
+                </button>
+              </li>
+
+              <li role="presentation">
+                <button
+                  type="button"
+                  role="menuitem"
+                  className="floating small"
+                  aria-label="Reject"
+                  data-tooltip="Reject"
+                  on:click={rejectSelection}
+                >
+                  <RejectIcon aria-hidden="true" />
+                </button>
+              </li>
+            </>
+          ) : null,
+        )}
       </ul>
 
       {showPrompt.derive((value) =>
