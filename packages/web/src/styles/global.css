@@ -172,7 +172,8 @@ del,
   text-decoration: underline;
 }
 
-mark {
+mark,
+ins {
   color: var(--text-color);
   border-radius: 4px;
   box-decoration-break: clone;

@@ -16,6 +16,25 @@
     background: oklch(from var(--tile-background) 85% calc(c * 2.5) h);
   }
 
+  ins {
+    position: relative;
+    text-decoration: none;
+    color: oklch(from currentcolor l c h / 60%);
+    background: rgb(0 0 0 / 5%);
+    padding: 8px;
+    margin: -8px;
+    animation: 0.5s var(--easing) ins-appear;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 4px;
+      background: rgb(0 0 0 / 10%);
+      border-radius: 4px;
+    }
+  }
+
   & blockquote {
     position: relative;
     padding: 0.25rem 0 0.25rem 1rem;
@@ -117,5 +136,11 @@
         scale: 1;
       }
     }
+  }
+}
+
+@keyframes ins-appear {
+  from {
+    opacity: 0;
   }
 }
