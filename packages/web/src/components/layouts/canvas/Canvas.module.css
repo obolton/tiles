@@ -22,15 +22,17 @@
     display: grid;
     grid-auto-columns: var(--grid-column-width);
     grid-auto-rows: var(--grid-row-height);
+    min-height: calc(48px + var(--grid-row-height));
     gap: var(--gap);
     padding: 24px;
     scroll-padding: 24px;
     scroll-snap-type: x proximity;
   }
 
+  /* Grow drop area */
   body[data-drag] & {
-    margin: -80px;
-    padding: 80px;
+    margin: -24px -80px;
+    padding: 24px 80px;
   }
 
   & > * {
