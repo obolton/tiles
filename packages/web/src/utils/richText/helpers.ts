@@ -79,7 +79,7 @@ export function getSelectionBlockNodeTypes(state: EditorState): Set<NodeType> {
 
 export function getSelectionHeadingLevel(state: EditorState): number | null {
   const nodes = findInSelection(state, (node) => node.isTextblock);
-  const level = nodes[0]?.attrs.level ?? null;
+  const level = (nodes[0]?.attrs.level as number | undefined) ?? null;
   for (const node of nodes) {
     if (node.type.name !== "heading" || node.attrs.level !== level) {
       return null;
@@ -103,7 +103,9 @@ export function getSelectionAlignment(
   state: EditorState,
 ): TextAlignment | undefined {
   const textBlock = closest(state.selection.$from, (node) => node.isTextblock);
-  return textBlock ? textBlock.node.attrs.align : undefined;
+  return textBlock
+    ? (textBlock.node.attrs.align as TextAlignment | undefined)
+    : undefined;
 }
 
 export function getSelectionList(state: EditorState): ListType | null {
@@ -118,4 +120,50 @@ export function getSelectionList(state: EditorState): ListType | null {
     return "check";
   }
   return null;
+}
+
+export function getMarkRange(
+  state: EditorState,
+  pos: number,
+  markType: MarkType,
+) {
+  const doc = state.doc;
+  let from = pos;
+  let to = pos;
+
+  while (from > 0) {
+    const $pos = doc.resolve(from);
+    const node = $pos.nodeBefore;
+    if (!node) {
+      from = $pos.before();
+      continue;
+    }
+    if (!node.isText) {
+      from--;
+      continue;
+    }
+    if (!findMark(node, markType)) {
+      break;
+    }
+    from -= node.nodeSize;
+  }
+
+  while (to < doc.content.size) {
+    const $pos = doc.resolve(to);
+    const node = $pos.nodeAfter;
+    if (!node) {
+      to = $pos.after();
+      continue;
+    }
+    if (!node.isText) {
+      to++;
+      continue;
+    }
+    if (!findMark(node, markType)) {
+      break;
+    }
+    to += node.nodeSize;
+  }
+
+  return from === to ? null : { from, to };
 }
