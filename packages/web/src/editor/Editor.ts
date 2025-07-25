@@ -16,7 +16,6 @@ import type {
 } from "@/types/tiles";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
-import type { DragDropEvent } from "@/utils/drag";
 import type { Color } from "@/utils/color";
 import type { Reactive } from "@/utils/reactivity";
 
@@ -74,7 +73,6 @@ export default class Editor {
   readonly invites: Reactive<Invite[]>;
   readonly author: User;
   readonly focusedTile: Reactive<string | null>;
-  readonly dragTile: Reactive<Tile | null>;
 
   constructor(page: Page) {
     this.pageId = page.id;
@@ -91,7 +89,6 @@ export default class Editor {
     this.invites = reactive(page.invites);
     this.author = page.author;
     this.focusedTile = reactive<string | null>(null);
-    this.dragTile = reactive<Tile | null>(null);
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();
@@ -101,13 +98,6 @@ export default class Editor {
   enableDragAndDrop() {
     document.addEventListener("dragover", this.dragOver.bind(this));
     document.addEventListener("drop", this.drop.bind(this));
-
-    addEventListener(
-      "dnd-dragstart",
-      (event: DragDropEvent<Tile>) =>
-        (this.dragTile.value = event.state.data ?? null),
-      { passive: true },
-    );
   }
 
   private dragOver(event: DragEvent) {
@@ -265,14 +255,55 @@ export default class Editor {
 
   async positionTile({
     id,
+    sectionId,
     x,
     y,
     width,
     height,
-  }: OmitPageId<AppRouterInputs["tiles"]["resize"]>) {
-    return client.tiles.resize.mutate({
+  }: OmitPageId<AppRouterInputs["tiles"]["update"]>) {
+    const tile = this.tiles.value.find((tile) => tile.placementId === id);
+    if (!tile) {
+      throw new Error(`Tile not found: ${id}`);
+    }
+
+    // Move tile to new section
+    if (sectionId) {
+      const section = this.layout.value.find((s) => s.id === sectionId);
+      if (!section) {
+        throw new Error(`Invalid section ID: ${sectionId}`);
+      }
+
+      const previousSection = this.layout.value.find(
+        (s) => s.id === tile.sectionId.value,
+      );
+      if (!previousSection) {
+        throw new Error(`Invalid section ID: ${tile.sectionId.value}`);
+      }
+
+      previousSection.tiles.value = previousSection.tiles.value.filter(
+        (tile) => tile.placementId !== id,
+      );
+      section.tiles.value = section.tiles.value.concat(tile);
+      tile.sectionId.value = sectionId;
+    }
+
+    if (typeof x === "number") {
+      tile.x.value = x;
+    }
+    if (typeof y === "number") {
+      tile.y.value = y;
+    }
+    if (typeof width === "number") {
+      tile.width.value = width;
+    }
+    if (typeof height === "number") {
+      tile.height.value = height;
+    }
+
+    await client.tiles.update.mutate({
       pageId: this.pageId,
       id,
+      sectionId,
       x,
       y,
       width,
@@ -509,62 +540,13 @@ export default class Editor {
     });
   }
 
-  reorderTilePreview({
-    id,
-    sectionId,
-    afterId,
-  }: OmitPageId<AppRouterInputs["tiles"]["reorder"]>) {
-    const tile = this.tiles.value.find((tile) => tile.id === id);
-    if (!tile) {
-      throw new Error(`Tile not found: ${id}`);
-    }
-
-    const previousSectionId = tile.sectionId.value;
-
-    const previousCollection = this.layout.value.find(
-      (collection) => collection.id === previousSectionId,
-    );
-    if (!previousCollection) {
-      throw new Error(`Invalid section ID: ${previousSectionId}`);
-    }
-
-    const collection = this.layout.value.find((s) => s.id === sectionId);
-    if (!collection) {
-      throw new Error(`Invalid section ID: ${sectionId}`);
-    }
-
-    // Remove tile from old position
-    const previousIndex = previousCollection.tiles.value.indexOf(tile);
-    if (previousIndex >= 0) {
-      previousCollection.tiles.value = previousCollection.tiles.value.toSpliced(
-        previousIndex,
-        1,
-      );
-    }
-
-    // Insert tile into new position
-    const insertIndex = afterId
-      ? collection.tiles.value.findIndex(
-          (tile) => tile.placementId === afterId,
-        ) + 1
-      : 0;
-    collection.tiles.value = collection.tiles.value.toSpliced(
-      insertIndex,
-      0,
-      tile,
-    );
-
-    // Update reference to parent
-    tile.sectionId.value = sectionId;
-  }
-
   positionTilePreview({
     id,
     x,
     y,
     width,
     height,
-  }: OmitPageId<AppRouterInputs["tiles"]["resize"]>) {
+  }: OmitPageId<AppRouterInputs["tiles"]["update"]>) {
     const tile = this.tiles.value.find((entry) => entry.id === id);
     if (tile) {
       if (typeof x === "number") {
