@@ -13,6 +13,7 @@ import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
+import type { DragData } from "@/editor/LayoutEditor";
 
 export interface ItemProps {
   editor: Editor;
@@ -127,9 +128,9 @@ export default function Item({
     editor.focusedTile.value = null;
   };
 
-  const onDragStart = (event: DragDropEvent<Tile>) => {
+  const onDragStart = (event: DragDropEvent<DragData>) => {
     if (event.target === item) {
-      event.state.data = tile;
+      event.state.data = { tile };
     }
   };
 
