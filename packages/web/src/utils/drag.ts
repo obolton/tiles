@@ -93,10 +93,6 @@ export class DragState<T> {
 
     const signal = this.abortController.signal;
 
-    addEventListener("pointerover", this, {
-      passive: true,
-      signal,
-    });
     addEventListener("pointermove", this, {
       passive: true,
       signal,
@@ -161,14 +157,8 @@ export class DragState<T> {
     clearTimeout(this.longPressTimeout);
   }
 
-  // Pointer events
-
-  private pointerOver(event: PointerEvent) {
-    if (!(event.target instanceof HTMLElement)) {
-      return;
-    }
-
-    const target = event.target.closest<HTMLElement>('[data-drop="true"]');
+  private findDropTarget(child: HTMLElement, clientX: number, clientY: number) {
+    const target = child.closest<HTMLElement>('[data-drop="true"]');
     if (!target || target === this.dropTarget) {
       return;
     }
@@ -177,15 +167,15 @@ export class DragState<T> {
       this.createDragDropEvent("dnd-dragenter", {
         bubbles: true,
         cancelable: true,
-        clientX: event.clientX,
-        clientY: event.clientY,
+        clientX,
+        clientY,
       }),
     );
 
     if (allowDrop) {
       this.dropTarget = target;
       target.dataset.dropTarget = "true";
-      this.scheduleDragEvent(event.clientX, event.clientY);
+      this.scheduleDragEvent(clientX, clientY);
     } else {
       this.dropTarget = undefined;
     }
@@ -194,6 +184,14 @@ export class DragState<T> {
       once: true,
       signal: this.abortController.signal,
     });
+  }
+
+  // Pointer events
+
+  private pointerOver(event: PointerEvent) {
+    if (event.target instanceof HTMLElement) {
+      this.findDropTarget(event.target, event.clientX, event.clientY);
+    }
   }
 
   private pointerMove(event: PointerEvent) {
@@ -305,6 +303,8 @@ export class DragState<T> {
     this.isDragging = true;
     document.body.dataset.drag = "true";
 
+    this.findDropTarget(this.element, clientX, clientY);
+
     this.element.classList.add("drag-preview");
     this.element.popover = "manual";
 
@@ -331,6 +331,11 @@ export class DragState<T> {
     // Suppress click events
     addEventListener("click", this, {
       passive: false,
+      signal: this.abortController.signal,
+    });
+
+    addEventListener("pointerover", this, {
+      passive: true,
       signal: this.abortController.signal,
     });
   }
