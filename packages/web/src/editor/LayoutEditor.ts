@@ -11,13 +11,15 @@ export interface LayoutEditorOptions {
   element: HTMLElement;
   editor: Editor;
   sectionId: string;
-  ordered?: boolean;
+}
+
+export interface DragData {
+  tile: Tile;
 }
 
 export default class LayoutEditor {
   readonly editor: Editor;
   readonly sectionId: string;
-  readonly ordered: boolean;
 
   private readonly elementRef: WeakRef<HTMLElement>;
 
@@ -31,12 +33,12 @@ export default class LayoutEditor {
   private columns = 0;
   private rows = 0;
   private idForPoint?: string | null;
+  private dragPlaceholder: HTMLElement | null = null;
 
-  constructor({ element, editor, sectionId, ordered }: LayoutEditorOptions) {
+  constructor({ element, editor, sectionId }: LayoutEditorOptions) {
     this.elementRef = new WeakRef(element);
     this.editor = editor;
     this.sectionId = sectionId;
-    this.ordered = ordered ?? true;
 
     element.addEventListener("dnd-dragover", this);
     element.addEventListener("dnd-dragenter", this, { passive: true });
@@ -73,13 +75,13 @@ export default class LayoutEditor {
   handleEvent(event: Event) {
     switch (event.type) {
       case "dnd-dragover":
-        return this.handleDragOver(event as DragDropEvent<Tile>);
+        return this.handleDragOver(event as DragDropEvent<DragData>);
       case "dnd-dragenter":
-        return this.handleDragEnter(event as DragDropEvent<Tile>);
+        return this.handleDragEnter(event as DragDropEvent<DragData>);
       case "dnd-dragleave":
         return this.handleDragLeave();
       case "dnd-drop":
-        return this.handleDrop(event as DragDropEvent<Tile>);
+        return this.handleDrop(event as DragDropEvent<DragData>);
       case "dnd-dragend":
         return this.handleDragEnd();
       case "tileresizestart":
@@ -108,131 +110,136 @@ export default class LayoutEditor {
     this.pageY = rect.y + window.scrollY + parseFloat(style.paddingTop);
   }
 
+  private getGridPosition(event: DragDropEvent) {
+    const offsetX =
+      event.clientX +
+      window.scrollX +
+      this.element.scrollLeft -
+      this.pageX -
+      24;
+    const offsetY =
+      event.clientY + window.scrollY + this.element.scrollTop - this.pageY - 24;
+    const x = Math.max(
+      Math.round(offsetX / (this.gridColumnWidth + this.gridGap)),
+      0,
+    );
+    const y = Math.max(
+      Math.round(offsetY / (this.gridRowHeight + this.gridGap)),
+      0,
+    );
+    return { x, y };
+  }
+
   // Drag and drop
 
-  private handleDragOver(event: DragDropEvent<Tile>) {
+  private handleDragOver(event: DragDropEvent<DragData>) {
     const {
       state: { data },
     } = event;
 
     event.stopPropagation();
 
-    const id = data?.id;
+    const id = data?.tile.id;
     if (!id) {
       return;
     }
 
-    if (this.ordered) {
-      const afterId = this.findIdForPoint(event);
+    const { x, y } = this.getGridPosition(event);
 
-      if (afterId !== this.idForPoint) {
-        void layoutTransition(() => {
-          this.editor.reorderTilePreview({
-            id,
-            sectionId: this.sectionId,
-            afterId,
-          });
-        });
-      }
-      this.idForPoint = afterId;
-    } else {
-      const offsetX =
-        event.clientX +
-        window.scrollX +
-        this.element.scrollLeft -
-        this.pageX -
-        24;
-      const offsetY =
-        event.clientY +
-        window.scrollY +
-        this.element.scrollTop -
-        this.pageY -
-        24;
-      const x = Math.max(
-        Math.round(offsetX / (this.gridColumnWidth + this.gridGap)),
-        0,
-      );
-      const y = Math.max(
-        Math.round(offsetY / (this.gridRowHeight + this.gridGap)),
-        0,
-      );
+    if (x !== this.x || y !== this.y) {
+      this.x = x;
+      this.y = y;
 
-      if (x !== this.x || y !== this.y) {
-        this.x = x;
-        this.y = y;
-
-        void layoutTransition(() => {
-          data.x.value = this.x;
-          data.y.value = this.y;
-        });
-      }
+      void layoutTransition(() => {
+        this.dragPlaceholder?.style.setProperty("--x", x.toString());
+        this.dragPlaceholder?.style.setProperty("--y", y.toString());
+      });
     }
   }
 
-  private handleDragEnter(event: DragDropEvent<Tile>) {
-    if (!this.ordered) {
-      const {
-        state: { data },
-      } = event;
-
-      this.updateLayoutInfo();
-
-      if (data) {
-        data.sectionId.value = this.sectionId;
-      }
+  private showDragPlaceholder({
+    x,
+    y,
+    width,
+    height,
+  }: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) {
+    if (this.dragPlaceholder) {
+      return;
     }
+
+    const placeholder = document.createElement("div");
+    placeholder.classList.add("drag-placeholder");
+    placeholder.style.setProperty("--x", x.toString());
+    placeholder.style.setProperty("--y", y.toString());
+    placeholder.style.setProperty("--width", width.toString());
+    placeholder.style.setProperty("--height", height.toString());
+    placeholder.dataset.animateLayoutId = "drag-placeholder-" + this.sectionId;
+    this.element.appendChild(placeholder);
+    this.dragPlaceholder = placeholder;
+  }
+
+  private hideDragPlaceholder() {
+    this.dragPlaceholder?.remove();
+    this.dragPlaceholder = null;
+  }
+
+  private handleDragEnter(event: DragDropEvent<DragData>) {
+    const tile = event.state?.data?.tile;
+    if (!tile) {
+      return;
+    }
+
+    this.updateLayoutInfo();
+
+    const { x, y } = this.getGridPosition(event);
+
+    this.x = x;
+    this.y = y;
+
+    this.showDragPlaceholder({
+      x,
+      y,
+      width: tile.width.value,
+      height: tile.height.value,
+    });
   }
 
   private handleDragLeave() {
     this.idForPoint = undefined;
+    this.hideDragPlaceholder();
   }
 
-  private async handleDrop(event: DragDropEvent<Tile>) {
+  private async handleDrop(event: DragDropEvent<DragData>) {
     const { state } = event;
 
     event.preventDefault();
     event.stopPropagation();
 
-    const id = state.data?.placementId;
-    if (!id) {
+    const tile = state.data?.tile;
+    if (!tile) {
       return;
     }
 
-    state.destination = this.element.querySelector<HTMLElement>(
-      `[data-placement-id="${id}"]`,
-    );
+    state.destination = this.dragPlaceholder;
 
-    if (this.ordered) {
-      const afterId = this.findIdForPoint(event);
-
-      try {
-        await this.editor.moveTile({
-          id,
-          sectionId: this.sectionId,
-          afterId,
-        });
-        this.element
-          .querySelector<HTMLElement>(`[data-placement-id="${id}"]`)
-          ?.focus({ preventScroll: true });
-      } catch (error) {
-        handleError(error);
-      }
-    } else {
-      try {
-        await this.editor.positionTile({
-          id,
-          x: this.x,
-          y: this.y,
-        });
-        this.element
-          .querySelector<HTMLElement>(`[data-placement-id="${id}"]`)
-          ?.focus({ preventScroll: true });
-      } catch (error) {
-        handleError(error);
-      }
+    try {
+      await this.editor.positionTile({
+        id: tile.placementId,
+        sectionId: this.sectionId,
+        x: this.x,
+        y: this.y,
+      });
+      this.element
+        .querySelector<HTMLElement>(`[data-placement-id="${tile.placementId}"]`)
+        ?.focus({ preventScroll: true });
+    } catch (error) {
+      handleError(error);
     }
-
-    this.editor.dragTile.value = null;
   }
 
   private handleDragEnd() {
