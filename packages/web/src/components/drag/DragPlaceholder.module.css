@@ -1,7 +1,0 @@
-.placeholder {
-  grid-column: calc(var(--x) + 1) / span var(--width);
-  grid-row: calc(var(--y) + 1) / span var(--height);
-  background: rgb(0 0 0 / 10%);
-  border-radius: var(--border-radius);
-  z-index: 2;
-}

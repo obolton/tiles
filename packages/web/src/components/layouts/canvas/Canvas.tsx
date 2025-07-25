@@ -1,6 +1,5 @@
 import Item from "@/components/item/Item";
 import LayoutEditor from "@/editor/LayoutEditor";
-import DragPlaceholder from "@/components/drag/DragPlaceholder";
 import styles from "./Canvas.module.css";
 import type { Tile } from "@/types/tiles";
 import type { Reactive } from "@/utils/reactivity";
@@ -25,14 +24,11 @@ export default function Canvas({
   minRowSpan = 1,
   signal,
 }: CanvasProps) {
-  const { dragTile } = editor;
-
   const ref = (element: HTMLElement) => {
     const layoutEditor = new LayoutEditor({
       element,
       editor,
       sectionId,
-      ordered: false,
     });
     signal?.addEventListener("abort", () => layoutEditor.disconnect());
   };
@@ -64,19 +60,6 @@ export default function Canvas({
             )}
           />
         )),
-      )}
-
-      {dragTile.derive((tile) =>
-        tile?.sectionId.derive((value) =>
-          value === sectionId ? (
-            <DragPlaceholder
-              x={tile.x}
-              y={tile.y}
-              width={tile.width}
-              height={tile.height}
-            />
-          ) : null,
-        ),
       )}
     </scroll-view>
   );
