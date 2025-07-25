@@ -1,4 +1,4 @@
-import ColorPalette from "./ColorPalette";
+import ColorPalette from "@/components/colors/ColorPalette";
 import CloseIcon from "@/icons/close.svg?jsx";
 import ClearColorIcon from "@/icons/clear-color.svg?jsx";
 import styles from "./ColorPicker.module.css";
