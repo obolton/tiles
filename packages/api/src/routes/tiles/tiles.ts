@@ -2,7 +2,7 @@ import prisma from "@/database/prisma.ts";
 import type {
   ReorderTileSchema,
   DeleteTileSchema,
-  ResizeTileSchema,
+  UpdateTileSchema,
 } from "./schema.ts";
 import type { TileType } from "@prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma.ts";
@@ -111,30 +111,43 @@ export async function reorderTile({
   });
 }
 
-export async function resizeTile({
+export async function updateTile({
   pageId,
   id,
+  sectionId,
   width,
   height,
   x,
   y,
-}: ResizeTileSchema) {
-  return prisma.tile.update({
-    where: { pageId, id },
-    data: {
-      width,
-      height,
-      x,
-      y,
-    },
-    select: {
-      id: true,
-      pageId: true,
-      width: true,
-      height: true,
-      x: true,
-      y: true,
-    },
+}: UpdateTileSchema) {
+  return prisma.$transaction(async (transaction) => {
+    // Validate section ID
+    if (sectionId) {
+      await transaction.section.findUniqueOrThrow({
+        where: { pageId, id: sectionId },
+        select: { id: true },
+      });
+    }
+
+    return transaction.tile.update({
+      where: { pageId, id },
+      data: {
+        sectionId,
+        width,
+        height,
+        x,
+        y,
+      },
+      select: {
+        id: true,
+        pageId: true,
+        sectionId: true,
+        width: true,
+        height: true,
+        x: true,
+        y: true,
+      },
+    });
   });
 }
 

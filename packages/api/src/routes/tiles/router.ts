@@ -1,9 +1,9 @@
 import { router } from "@/utils/trpc.ts";
 import { pageUpdateProcedure } from "@/utils/middleware.ts";
-import { reorderTile, resizeTile, deleteTile } from "./tiles.ts";
+import { reorderTile, updateTile, deleteTile } from "./tiles.ts";
 import {
   ReorderTileSchema,
-  ResizeTileSchema,
+  UpdateTileSchema,
   DeleteTileSchema,
 } from "./schema.ts";
 
@@ -12,9 +12,9 @@ export default router({
     .input(ReorderTileSchema)
     .mutation(({ input }) => reorderTile(input)),
 
-  resize: pageUpdateProcedure
-    .input(ResizeTileSchema)
-    .mutation(({ input }) => resizeTile(input)),
+  update: pageUpdateProcedure
+    .input(UpdateTileSchema)
+    .mutation(({ input }) => updateTile(input)),
 
   delete: pageUpdateProcedure
     .input(DeleteTileSchema)
