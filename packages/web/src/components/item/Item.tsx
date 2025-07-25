@@ -1,5 +1,3 @@
-import styles from "./Item.module.css";
-import type PageItem from "@/elements/item/PageItem";
 import ImageTile from "@/components/tiles/ImageTile";
 import VideoTile from "@/components/tiles/VideoTile";
 import TextTile from "@/components/tiles/TextTile";
@@ -8,6 +6,8 @@ import LinkTile from "@/components/tiles/LinkTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import TableTile from "@/components/tiles/TableTile";
 import { flag, reactive, Computed } from "@/utils/reactivity";
+import styles from "./Item.module.css";
+import type PageItem from "@/elements/item/PageItem";
 import type { Tile } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
@@ -20,6 +20,7 @@ export interface ItemProps {
   placementId: string;
   style?: JSX.StyleDeclaration;
   classList?: { [k: string]: boolean | Reactive<boolean> };
+  editable?: boolean | Reactive<boolean>;
   x?: Reactive<number>;
   y?: Reactive<number>;
   rows: Reactive<number>;
@@ -28,9 +29,6 @@ export interface ItemProps {
   minColumns?: number;
   maxColumns?: number;
   grow?: boolean;
-  deletable?: boolean | Reactive<boolean>;
-  draggable?: boolean | Reactive<boolean>;
-  resizable?: boolean | Reactive<boolean>;
   tile: Tile;
   tabIndex?: number | Reactive<number | undefined>;
 }
@@ -89,6 +87,7 @@ export default function Item({
   placementId,
   classList,
   style,
+  editable = false,
   x,
   y,
   rows,
@@ -97,9 +96,6 @@ export default function Item({
   minColumns = 1,
   maxColumns = 32,
   grow,
-  deletable = false,
-  draggable = false,
-  resizable = false,
   tile,
   tabIndex,
 }: ItemProps) {
@@ -166,12 +162,12 @@ export default function Item({
     <page-item
       id={id}
       ref={ref}
-      allowdrag={draggable}
-      allowresize={resizable}
-      allowdelete={deletable}
+      allowdrag={editable}
+      allowresize={editable}
+      allowdelete={editable}
       classList={{
         [styles.item]: true,
-        [styles.draggable]: draggable,
+        [styles.draggable]: editable,
         [styles.grow]: grow,
         ...classList,
       }}

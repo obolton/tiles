@@ -51,15 +51,13 @@ export default function Canvas({
             editor={editor}
             id={tile.id}
             placementId={tile.placementId}
+            editable={isEditable}
             x={tile.x}
             y={tile.y}
             rows={tile.height}
             minRows={minRowSpan}
             columns={tile.width}
             minColumns={minColumnSpan}
-            deletable={isEditable}
-            draggable={isEditable}
-            resizable={isEditable}
             tile={tile}
             tabIndex={isEditable.derive((editable) =>
               editable ? 0 : undefined,
