@@ -5,7 +5,7 @@ import styles from "./TextTile.module.css";
 import TextEditor, {
   type EditorState,
 } from "@/components/inputs/RichTextEditor/TextEditor";
-import ColorPicker from "@/components/inputs/ColorPicker";
+import ColorPicker from "@/components/colors/ColorPicker";
 import ImageIcon from "@/icons/image.svg?jsx";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";

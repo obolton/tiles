@@ -1,4 +1,4 @@
-import ColorPicker from "@/components/inputs/ColorPicker";
+import ColorPicker from "@/components/colors/ColorPicker";
 import FontPicker from "@/components/inputs/FontPicker";
 import { getFontConfig } from "@/utils/fonts";
 import { viewTransition } from "@/utils/transitions";
