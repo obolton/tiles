@@ -27,7 +27,7 @@ interface DragDropEventInit<T> extends EventInit {
   clientY?: number;
 }
 
-export class DragDropEvent<T = never> extends Event {
+export class DragDropEvent<T = unknown> extends Event {
   readonly state: DragState<T>;
   readonly dragSource: HTMLElement;
   readonly dropTarget?: HTMLElement;
@@ -53,6 +53,13 @@ export class DragDropEvent<T = never> extends Event {
   }
 }
 
+export interface DragStateOptions {
+  element: HTMLElement;
+  startX: number;
+  startY: number;
+  constrain?: ConstrainDragOptions;
+}
+
 export class DragState<T> {
   readonly element: HTMLElement;
 
@@ -74,12 +81,7 @@ export class DragState<T> {
   private scrollSpeed = 0;
   private pendingDragEvent: { x: number; y: number } | null = null;
 
-  constructor(
-    element: HTMLElement,
-    startX: number,
-    startY: number,
-    constrain?: ConstrainDragOptions,
-  ) {
+  constructor({ element, startX, startY, constrain }: DragStateOptions) {
     this.element = element;
     this.startX = startX;
     this.startY = startY;
@@ -472,7 +474,12 @@ export function makeDraggable(
     "pointerdown",
     (event: PointerEvent) => {
       if (event.button === PRIMARY_MOUSE_BUTTON && !event.defaultPrevented) {
-        new DragState(element, event.clientX, event.clientY, constrain);
+        new DragState({
+          element,
+          startX: event.clientX,
+          startY: event.clientY,
+          constrain,
+        });
       }
     },
     {
