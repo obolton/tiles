@@ -14,6 +14,7 @@ enum ScrollViewStates {
 
 export default class ScrollView extends HTMLElement {
   private readonly internals: ElementInternals;
+  private readonly container: HTMLDivElement;
   private readonly contents: HTMLDivElement;
   private readonly previousButton: HTMLButtonElement;
   private readonly nextButton: HTMLButtonElement;
@@ -33,11 +34,16 @@ export default class ScrollView extends HTMLElement {
     this.internals.ariaRoleDescription = "carousel";
     this.internals.ariaOrientation = "horizontal";
 
+    this.container = document.createElement("div");
+    this.container.id = "container";
+    this.container.part.add("container");
+    this.container.addEventListener("scroll", this, { passive: true });
+
     this.contents = document.createElement("div");
     this.contents.id = "contents";
     this.contents.part.add("contents");
-    this.contents.addEventListener("scroll", this, { passive: true });
     this.contents.append(document.createElement("slot"));
+    this.container.append(this.contents);
 
     this.previousButton = document.createElement("button");
     this.previousButton.id = "previous";
@@ -57,7 +63,7 @@ export default class ScrollView extends HTMLElement {
     this.nextButton.innerHTML = arrowRightIcon;
     this.nextButton.addEventListener("click", this);
 
-    shadow.append(this.previousButton, this.nextButton, this.contents);
+    shadow.append(this.previousButton, this.nextButton, this.container);
 
     this.resizeObserver = new ResizeObserver(this.onResize.bind(this));
   }
@@ -67,6 +73,7 @@ export default class ScrollView extends HTMLElement {
     this.addEventListener("dnd-dragover", this, { passive: true });
     this.addEventListener("dnd-dragleave", this, { passive: true });
     this.resizeObserver.observe(this);
+    this.resizeObserver.observe(this.contents);
     this.updateButtons();
   }
 
@@ -131,9 +138,9 @@ export default class ScrollView extends HTMLElement {
   }
 
   private getPreviousElement() {
-    const style = getComputedStyle(this.contents);
+    const style = getComputedStyle(this.container);
     const scrollPaddingLeft = parseFloat(style.scrollPaddingLeft);
-    const left = this.contents.scrollLeft + scrollPaddingLeft;
+    const left = this.container.scrollLeft + scrollPaddingLeft;
 
     let element: HTMLElement | null = null;
     for (const child of this.children) {
@@ -149,12 +156,12 @@ export default class ScrollView extends HTMLElement {
   }
 
   private getNextElement() {
-    const scrollLeft = this.contents.scrollLeft;
-    const style = getComputedStyle(this.contents);
+    const scrollLeft = this.container.scrollLeft;
+    const style = getComputedStyle(this.container);
     const scrollPaddingLeft = parseFloat(style.scrollPaddingLeft);
     const scrollPaddingRight = parseFloat(style.scrollPaddingRight);
     const left = scrollLeft + scrollPaddingLeft;
-    const right = scrollLeft + this.contents.clientWidth - scrollPaddingRight;
+    const right = scrollLeft + this.container.clientWidth - scrollPaddingRight;
 
     let element: HTMLElement | null = null;
     for (const child of this.children) {
@@ -171,16 +178,16 @@ export default class ScrollView extends HTMLElement {
   }
 
   private scrollToElement(element: HTMLElement) {
-    const style = getComputedStyle(this.contents);
+    const style = getComputedStyle(this.container);
     const scrollPadding = parseFloat(style.scrollPaddingLeft);
-    this.contents.scroll({
+    this.container.scroll({
       left: element.offsetLeft - scrollPadding,
       behavior: "smooth",
     });
   }
 
   private scrollToStart() {
-    this.contents.scroll({ left: 0, behavior: "smooth" });
+    this.container.scroll({ left: 0, behavior: "smooth" });
   }
 
   previous() {
@@ -200,10 +207,10 @@ export default class ScrollView extends HTMLElement {
   }
 
   private updateButtons() {
-    this.previousButton.disabled = this.contents.scrollLeft < 16;
+    this.previousButton.disabled = this.container.scrollLeft < 16;
     this.nextButton.disabled =
-      this.contents.scrollLeft >
-      this.contents.scrollWidth - this.contents.clientWidth - 16;
+      this.container.scrollLeft >
+      this.container.scrollWidth - this.container.clientWidth - 16;
   }
 
   private handleScroll() {
@@ -233,7 +240,7 @@ export default class ScrollView extends HTMLElement {
     }
 
     if (previousScrollSpeed === 0 && this.scrollSpeed !== 0) {
-      this.contents.classList.add("scrolling");
+      this.container.classList.add("scrolling");
       requestAnimationFrame(this.scrollFrame.bind(this));
     }
   }
@@ -248,15 +255,16 @@ export default class ScrollView extends HTMLElement {
     } else {
       this.internals.states.delete(ScrollViewStates.SCROLLABLE);
     }
+    this.updateButtons();
   }
 
   get scrollable() {
-    return this.contents.scrollWidth > this.contents.clientWidth;
+    return this.container.scrollWidth > this.container.clientWidth;
   }
 
   private scrollFrame(timestamp: DOMHighResTimeStamp) {
     if (this.scrollSpeed === 0) {
-      this.contents.classList.remove("scrolling");
+      this.container.classList.remove("scrolling");
       return;
     }
 
@@ -267,7 +275,7 @@ export default class ScrollView extends HTMLElement {
     const elapsed = timestamp - this.lastScrollFrame;
     const distance = this.scrollSpeed * (elapsed / 1000) * 200;
     if (Math.abs(distance) > 1) {
-      this.contents.scrollBy({
+      this.container.scrollBy({
         left: distance,
         behavior: "instant",
       });
@@ -280,19 +288,19 @@ export default class ScrollView extends HTMLElement {
   // Scroll properties
 
   get scrollLeft() {
-    return this.contents.scrollLeft;
+    return this.container.scrollLeft;
   }
 
   set scrollLeft(value: number) {
-    this.contents.scrollLeft = value;
+    this.container.scrollLeft = value;
   }
 
   get scrollTop() {
-    return this.contents.scrollTop;
+    return this.container.scrollTop;
   }
 
   set scrollTop(value: number) {
-    this.contents.scrollTop = value;
+    this.container.scrollTop = value;
   }
 }
 
