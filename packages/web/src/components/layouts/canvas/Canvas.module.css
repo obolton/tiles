@@ -1,13 +1,13 @@
 @property --grid-column-width {
   syntax: "<length>";
   inherits: true;
-  initial-value: 48px;
+  initial-value: 24px;
 }
 
 @property --grid-row-height {
   syntax: "<length>";
   inherits: true;
-  initial-value: 48px;
+  initial-value: 24px;
 }
 
 @property --gap {
