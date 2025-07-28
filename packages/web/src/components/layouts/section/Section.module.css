@@ -12,17 +12,16 @@
     background-color var(--animation-duration) var(--easing),
     outline-color var(--animation-duration) var(--easing);
 
-  body[data-editing] &:focus-within {
-    background-color: rgb(0 0 0 / 5%);
-  }
+  body[data-editing] & {
+    outline: 3px solid rgb(0 0 0 / 5%);
 
-  &:focus {
-    outline: var(--focus-outline);
-  }
+    &:focus {
+      outline: var(--focus-outline);
+    }
 
-  &:has(> [data-drop-target]) {
-    background-color: rgb(0 0 0 / 5%);
-    outline: var(--focus-outline);
+    &:has(> [data-drop-target]) {
+      background-color: rgb(0 0 0 / 3%);
+    }
   }
 
   &.full-width {
