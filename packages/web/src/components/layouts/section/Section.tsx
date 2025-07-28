@@ -1,12 +1,6 @@
 import Canvas from "@/components/layouts/canvas/Canvas";
-import TileButtons from "@/components/menu/TileButtons";
-import FullWidthIcon from "@/icons/full-width.svg?jsx";
-import MoreIcon from "@/icons/more.svg?jsx";
-import TrashIcon from "@/icons/trash.svg?jsx";
-import { layoutTransition } from "@/utils/animation/layout";
 import { flag } from "@/utils/reactivity";
-import { viewTransition } from "@/utils/transitions";
-import { handleError } from "@/utils/errors";
+import SectionToolbar from "./SectionToolbar";
 import styles from "./Section.module.css";
 import type { SectionWithTiles } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
@@ -21,29 +15,6 @@ export default function Section({ editor, section }: SectionProps) {
   const fullWidth = width.derive((value) => value === "VIEWPORT");
   const hasFocus = flag(false);
   const { isEditable } = editor;
-
-  const toggleFullWidth = async () => {
-    try {
-      await editor.updateSection({
-        id: section.id,
-        width: fullWidth.value ? "DEFAULT" : "VIEWPORT",
-      });
-      viewTransition(
-        () =>
-          (width.value = width.value === "VIEWPORT" ? "DEFAULT" : "VIEWPORT"),
-      );
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const deleteSection = async () => {
-    try {
-      await editor.deleteSection({ id: section.id }, layoutTransition);
-    } catch (error) {
-      handleError(error);
-    }
-  };
 
   const onFocus = () => {
     hasFocus.on();
@@ -76,67 +47,7 @@ export default function Section({ editor, section }: SectionProps) {
       />
 
       {hasFocus.derive((value) =>
-        value ? (
-          <floating-toolbar
-            data-tooltip-position="top"
-            aria-label="Section toolbar"
-          >
-            <TileButtons editor={editor} sectionId={section.id} />
-
-            <ul role="group" aria-label="Size">
-              <li role="presentation">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="floating small"
-                  aria-label="Full width"
-                  data-tooltip="Full width"
-                  aria-pressed={fullWidth.derive((value) =>
-                    value ? "true" : "false",
-                  )}
-                  on:click={toggleFullWidth}
-                >
-                  <FullWidthIcon aria-hidden="true" />
-                </button>
-              </li>
-            </ul>
-
-            <ul role="group" aria-label="More options">
-              <li role="presentation">
-                <button
-                  type="button"
-                  role="menuitem"
-                  id={`${section.id}-options-button`}
-                  className="floating small"
-                  popoverTarget={`${section.id}-options`}
-                  aria-label="More options"
-                  data-tooltip="More options"
-                  aria-haspopup="menu"
-                  aria-expanded="false"
-                >
-                  <MoreIcon aria-hidden="true" />
-                </button>
-                <popover-menu
-                  id={`${section.id}-options`}
-                  anchor={`${section.id}-options-button`}
-                >
-                  <menu>
-                    <li>
-                      <button
-                        type="button"
-                        className="destructive"
-                        on:click={deleteSection}
-                      >
-                        <TrashIcon aria-hidden="true" />
-                        Delete section
-                      </button>
-                    </li>
-                  </menu>
-                </popover-menu>
-              </li>
-            </ul>
-          </floating-toolbar>
-        ) : null,
+        value ? <SectionToolbar section={section} editor={editor} /> : null,
       )}
     </section>
   );
