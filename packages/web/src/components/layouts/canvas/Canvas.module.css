@@ -18,15 +18,19 @@
 
 .canvas {
   &:not(:defined),
+  &::part(container) {
+    scroll-padding: 24px;
+    scroll-snap-type: x proximity;
+    padding: 24px;
+  }
+
+  &:not(:defined),
   &::part(contents) {
     display: grid;
     grid-auto-columns: var(--grid-column-width);
     grid-auto-rows: var(--grid-row-height);
     min-height: calc(48px + var(--grid-row-height));
     gap: var(--gap);
-    padding: 24px;
-    scroll-padding: 24px;
-    scroll-snap-type: x proximity;
   }
 
   /* Grow drop area */
