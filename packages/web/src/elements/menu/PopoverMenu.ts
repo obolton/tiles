@@ -72,7 +72,7 @@ export default class PopoverMenu extends HTMLElement {
       case "toggle":
         return this.handleToggle(event as ToggleEvent);
       case "click":
-        return this.handleClick();
+        return this.handleClick(event as PointerEvent);
     }
   }
 
@@ -97,8 +97,10 @@ export default class PopoverMenu extends HTMLElement {
     }
   }
 
-  protected handleClick() {
-    this.hidePopover();
+  protected handleClick(event: PointerEvent) {
+    if (!event.defaultPrevented) {
+      this.hidePopover();
+    }
   }
 
   private getHorizontalAlignment(anchorBounds: DOMRect, width: number) {
