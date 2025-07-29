@@ -31,6 +31,7 @@
     "cloudflare": "^4.4.1",
     "cookie": "^1.0.2",
     "cors": "^2.8.5",
+    "fractional-indexing": "^3.2.0",
     "htmlparser2": "^10.0.0",
     "replicate": "^1.0.1",
     "zod": "^4.0.5"
