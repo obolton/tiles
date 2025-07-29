@@ -1,11 +1,12 @@
+import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import type { Prisma } from "@prisma/client";
 import type {
   CreateTableSchema,
-  AppendRowSchema,
+  InsertRowSchema,
   DeleteRowSchema,
-  AppendColumnSchema,
+  InsertColumnSchema,
   UpdateColumnSchema,
   DeleteColumnSchema,
   UpdateCellSchema,
@@ -62,16 +63,18 @@ export async function createTable({
     });
 
     const columnData: Prisma.TableColumnCreateManyInput[] = [];
+    const columnOrderKeys = generateNKeysBetween(null, null, columns);
     for (let i = 0; i < columns; i++) {
-      columnData.push({ tableId: table.id, order: i.toString() });
+      columnData.push({ tableId: table.id, order: columnOrderKeys[i]! });
     }
     await transaction.tableColumn.createMany({
       data: columnData,
     });
 
     const rowData: Prisma.TableRowCreateManyInput[] = [];
+    const rowOrderKeys = generateNKeysBetween(null, null, rows);
     for (let i = 0; i < rows; i++) {
-      rowData.push({ tableId: table.id, order: i.toString(), data: {} });
+      rowData.push({ tableId: table.id, order: rowOrderKeys[i]!, data: {} });
     }
     await transaction.tableRow.createMany({
       data: rowData,
@@ -102,7 +105,36 @@ export async function createTable({
   });
 }
 
-export async function appendRow({ pageId, tableId }: AppendRowSchema) {
+export async function getRowOrderKeys(
+  tableId: string,
+  rowId: string | null,
+): Promise<[string | null, string | null]> {
+  if (rowId === null) {
+    const [row] = await prisma.$queryRaw<
+      { order: string }[]
+    >`SELECT "order" FROM table_rows WHERE table_id = ${tableId}::uuid ORDER BY "order" ASC LIMIT 1;`;
+    return [null, row?.order ?? null];
+  }
+
+  const [result] = await prisma.$queryRaw<
+    { a: string; b: string | null }[]
+  >`SELECT row_a."order" AS a, row_b."order" AS b
+  FROM table_rows AS row_a
+  LEFT JOIN LATERAL (
+    SELECT "order" FROM table_rows
+    WHERE table_id = ${tableId}::uuid AND "order" > row_a."order"
+    ORDER BY "order" ASC
+    LIMIT 1
+  ) AS row_b ON true
+  WHERE row_a.table_id = ${tableId}::uuid AND row_a.id = ${rowId}::uuid;`;
+  return [result?.a ?? null, result?.b ?? null];
+}
+
+export async function insertRow({
+  pageId,
+  tableId,
+  afterRowId,
+}: InsertRowSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the table
     await transaction.table.findUniqueOrThrow({
@@ -110,9 +142,13 @@ export async function appendRow({ pageId, tableId }: AppendRowSchema) {
       select: { id: true },
     });
 
+    const [keyA, keyB] = await getRowOrderKeys(tableId, afterRowId);
+    const order = generateKeyBetween(keyA, keyB);
+
     return transaction.tableRow.create({
       data: {
         tableId,
+        order,
         data: {},
       },
       select: TABLE_ROW_FIELDS,
@@ -138,11 +174,37 @@ export async function deleteRow({ pageId, tableId, rowId }: DeleteRowSchema) {
   });
 }
 
-export async function appendColumn({
+export async function getColumnOrderKeys(
+  tableId: string,
+  columnId: string | null,
+): Promise<[string | null, string | null]> {
+  if (columnId === null) {
+    const [column] = await prisma.$queryRaw<
+      [{ order: string | null }]
+    >`SELECT "order" FROM table_columns WHERE table_id = ${tableId}::uuid ORDER BY "order" ASC LIMIT 1;`;
+    return [null, column?.order ?? null];
+  }
+
+  const [result] = await prisma.$queryRaw<
+    { a: string; b: string | null }[]
+  >`SELECT column_a."order" AS a, column_b."order" AS b
+  FROM table_columns AS column_a
+  LEFT JOIN LATERAL (
+    SELECT "order" FROM table_columns
+    WHERE table_id = ${tableId}::uuid AND "order" > column_a."order"
+    ORDER BY "order" ASC
+    LIMIT 1
+  ) AS column_b ON true
+  WHERE column_a.table_id = ${tableId}::uuid AND column_a.id = ${columnId}::uuid;`;
+  return [result?.a ?? null, result?.b ?? null];
+}
+
+export async function insertColumn({
   pageId,
   tableId,
   width,
-}: AppendColumnSchema) {
+  afterColumnId,
+}: InsertColumnSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the table
     await transaction.table.findUniqueOrThrow({
@@ -150,9 +212,13 @@ export async function appendColumn({
       select: { id: true },
     });
 
+    const [keyA, keyB] = await getColumnOrderKeys(tableId, afterColumnId);
+    const order = generateKeyBetween(keyA, keyB);
+
     return transaction.tableColumn.create({
       data: {
         tableId,
+        order,
         width,
       },
       select: TABLE_COLUMN_FIELDS,
