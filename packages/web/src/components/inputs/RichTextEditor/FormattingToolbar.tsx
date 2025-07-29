@@ -1,4 +1,4 @@
-import Prompt from "./Prompt";
+import Prompt from "@/components/prompt/Prompt";
 import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
 import H3Icon from "@/icons/h3.svg?jsx";
