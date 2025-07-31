@@ -229,6 +229,14 @@ const nodesSpec = {
       },
     ],
   },
+
+  pending: {
+    content: "block+",
+    group: "block",
+    toDOM() {
+      return DOMOutput.pending;
+    },
+  },
 } as const satisfies Record<string, NodeSpec>;
 
 type KeysWithProperty<T, Key, Value> = {
@@ -242,12 +250,6 @@ type KeysWithProperty<T, Key, Value> = {
 export type BlockNode = KeysWithProperty<typeof nodesSpec, "group", "block">;
 
 const marksSpec = {
-  pending: {
-    toDOM() {
-      return DOMOutput.pending;
-    },
-  },
-
   highlight: {
     parseDOM: [{ tag: "mark" }],
     toDOM() {
