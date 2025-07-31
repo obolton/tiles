@@ -57,6 +57,16 @@ function serializeNode(node: Node): SerializedNode {
     };
   }
 
+  if (node.type === nodes.pending) {
+    return {
+      type: "pending",
+      children: node.children.map(serializeNode) as Exclude<
+        BlockNode,
+        { type: "pending" }
+      >[],
+    };
+  }
+
   if (node.type === nodes.link) {
     return {
       type: "link",

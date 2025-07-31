@@ -9,6 +9,7 @@ import type {
   HeadingNode,
   QuoteNode,
   RichText,
+  PendingNode,
   Node as SerializedNode,
 } from "./types";
 import { TextFormat, ListType, TextAlignment } from "./types";
@@ -37,11 +38,7 @@ function getMarks(format: number) {
 }
 
 function createTextNode(text: TextNode) {
-  const marks = getMarks(text.format);
-  if (text.pending) {
-    marks.push(schema.marks.pending.create());
-  }
-  const textNode = schema.text(text.text, marks);
+  const textNode = schema.text(text.text, getMarks(text.format));
   return textNode;
 }
 
@@ -124,6 +121,10 @@ function createDateNode(date: DateNode): Node {
   );
 }
 
+function createPendingNode(pending: PendingNode): Node {
+  return schema.nodes.pending.create(null, pending.children.map(createNode));
+}
+
 function createNode(node: SerializedNode) {
   const type = node.type;
   switch (type) {
@@ -143,6 +144,8 @@ function createNode(node: SerializedNode) {
       return createLinkNode(node);
     case "date":
       return createDateNode(node);
+    case "pending":
+      return createPendingNode(node);
     default:
       throw new Error(`Unsupported node type: ${type}`);
   }

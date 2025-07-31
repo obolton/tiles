@@ -44,6 +44,11 @@ export interface DateNode extends BaseNode {
   theme?: string | null;
 }
 
+export interface PendingNode extends BaseNode {
+  type: "pending";
+  children: Exclude<BlockNode, { type: "pending" }>[];
+}
+
 export interface ParagraphNode extends BaseNode {
   type: "paragraph";
   align?: TextAlignment;
@@ -76,7 +81,12 @@ export interface ListItemNode extends BaseNode {
 }
 
 export type InlineNode = TextNode | LinkNode | DateNode;
-export type BlockNode = ParagraphNode | ListNode | HeadingNode | QuoteNode;
+export type BlockNode =
+  | PendingNode
+  | ParagraphNode
+  | ListNode
+  | HeadingNode
+  | QuoteNode;
 
 export type Node =
   | TextNode
@@ -86,6 +96,7 @@ export type Node =
   | HeadingNode
   | QuoteNode
   | ListNode
-  | ListItemNode;
+  | ListItemNode
+  | PendingNode;
 
 export type RichText = BlockNode[];
