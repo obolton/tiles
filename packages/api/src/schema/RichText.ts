@@ -78,11 +78,24 @@ const QuoteNodeSchema = z.object({
   ),
 });
 
+const PendingNodeSchema = z.object({
+  type: z.literal("pending"),
+  children: z.array(
+    z.union([
+      ParagraphNodeSchema,
+      HeadingNodeSchema,
+      ListNodeSchema,
+      QuoteNodeSchema,
+    ]),
+  ),
+});
+
 const RootNodeSchema = z.discriminatedUnion("type", [
   ParagraphNodeSchema,
   HeadingNodeSchema,
   QuoteNodeSchema,
   ListNodeSchema,
+  PendingNodeSchema,
 ]);
 
 export const RichTextSchema = z.array(RootNodeSchema);
