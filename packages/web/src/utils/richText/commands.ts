@@ -5,8 +5,6 @@ import {
   closest,
   getSelectionHeadingLevel,
   getSelectionBlockNodeTypes,
-  getMarkRange,
-  findMark,
 } from "./helpers";
 import type { NodeType } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
@@ -151,25 +149,49 @@ export const toggleUnorderedList = toggleList(schema.nodes.unordered_list);
 
 export const toggleCheckList = toggleList(schema.nodes.check_list);
 
-export const removeLink: Command = (state, dispatch) => {
-  const link = closest(
-    state.selection.$from,
-    (node) => node.type === schema.nodes.link,
-  );
+export function unwrap(nodeType: NodeType): Command {
+  return function (state, dispatch) {
+    const resolved = closest(
+      state.selection.$from,
+      (node) => node.type === nodeType,
+    );
 
-  if (!link) {
-    return false;
-  }
+    if (!resolved) {
+      return false;
+    }
 
-  if (dispatch) {
-    const tr = state.tr;
-    const { pos, node } = link;
-    tr.replaceWith(pos, pos + node.nodeSize, node.content);
-    dispatch(tr);
-  }
+    if (dispatch) {
+      const { pos, node } = resolved;
+      const tr = state.tr.replaceWith(pos, pos + node.nodeSize, node.content);
+      dispatch(tr);
+    }
 
-  return true;
-};
+    return true;
+  };
+}
+
+export function deleteNode(nodeType: NodeType): Command {
+  return function (state, dispatch) {
+    const resolved = closest(
+      state.selection.$from,
+      (node) => node.type === nodeType,
+    );
+
+    if (!resolved) {
+      return false;
+    }
+
+    if (dispatch) {
+      const { pos, node } = resolved;
+      const tr = state.tr.delete(pos, pos + node.nodeSize);
+      dispatch(tr);
+    }
+
+    return true;
+  };
+}
+
+export const removeLink = unwrap(schema.nodes.link);
 
 export function setAlignment(align: TextAlignment): Command {
   return function (state, dispatch) {
@@ -215,57 +237,6 @@ export function insertDateTime(value: Date, time?: boolean): Command {
   };
 }
 
-export function approve(): Command {
-  return function (state, dispatch) {
-    const { selection } = state;
-    const range = selection.empty
-      ? getMarkRange(state, selection.from, schema.marks.pending)
-      : { from: selection.from, to: selection.to };
+export const approve = unwrap(schema.nodes.pending);
 
-    if (!range) {
-      return false;
-    }
-
-    if (dispatch) {
-      const { from, to } = range;
-      const tr = state.tr.removeMark(from, to, schema.marks.pending);
-      dispatch(tr);
-    }
-
-    return true;
-  };
-}
-
-export function reject(): Command {
-  return function (state, dispatch) {
-    const { selection } = state;
-    const tr = state.tr;
-
-    if (selection.empty) {
-      const range = getMarkRange(state, selection.from, schema.marks.pending);
-      if (!range) {
-        return false;
-      }
-      tr.deleteRange(range.from, range.to);
-    } else {
-      const ranges: { from: number; to: number }[] = [];
-      state.doc.nodesBetween(selection.from, selection.to, (node, pos) => {
-        if (findMark(node, schema.marks.pending)) {
-          ranges.push({ from: pos, to: pos + node.nodeSize });
-        }
-      });
-      if (ranges.length === 0) {
-        return false;
-      }
-      for (const range of ranges.reverse()) {
-        tr.deleteRange(range.from, range.to);
-      }
-    }
-
-    if (dispatch) {
-      dispatch(tr);
-    }
-
-    return true;
-  };
-}
+export const reject = deleteNode(schema.nodes.pending);
