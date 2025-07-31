@@ -27,14 +27,30 @@ export type RichTextStreamEvent = string | RichTextFormat | RichTextNode;
 export async function insertFromStream(
   view: EditorView,
   stream: AsyncIterable<RichTextStreamEvent>,
-  atPos: number,
 ) {
   const { dispatch } = view;
-  let pos = atPos;
+  const { $from } = view.state.selection;
+  let startPos: number;
+
+  if ($from.parent.isTextblock && $from.parent.content.size === 0) {
+    const from = $from.before();
+    dispatch(
+      view.state.tr.replaceWith(
+        from,
+        $from.after(),
+        schema.nodes.pending.create(),
+      ),
+    );
+    startPos = from + 1;
+  } else {
+    const from = $from.after();
+    dispatch(view.state.tr.insert(from, schema.nodes.pending.create()));
+    startPos = from + 1;
+  }
+
+  let pos = startPos;
   let bold = false;
   let italic = false;
-
-  const pendingMark = schema.marks.pending.create();
 
   for await (const event of stream) {
     const {
@@ -42,7 +58,7 @@ export async function insertFromStream(
     } = view;
 
     if (typeof event === "string") {
-      const marks: Mark[] = [pendingMark];
+      const marks: Mark[] = [];
       if (bold) {
         marks.push(schema.marks.bold.create());
       }
@@ -62,12 +78,10 @@ export async function insertFromStream(
       }
 
       if ("type" in event) {
-        const $pos = tr.doc.resolve(pos);
-        pos = $pos.after(1);
-
         switch (event.type) {
           case "paragraph":
             {
+              pos = tr.doc.resolve(startPos).end();
               const node = schema.nodes.paragraph.create();
               tr.insert(pos, node);
               pos += node.nodeSize - 1;
@@ -76,6 +90,7 @@ export async function insertFromStream(
 
           case "heading":
             {
+              pos = tr.doc.resolve(startPos).end();
               const node = schema.nodes.heading.create({ level: event.level });
               tr.insert(pos, node);
               pos += node.nodeSize - 1;
@@ -84,6 +99,7 @@ export async function insertFromStream(
 
           case "listitem":
             {
+              const $pos = tr.doc.resolve(pos);
               const listNodeType =
                 event.listType === "ordered"
                   ? schema.nodes.ordered_list
@@ -98,6 +114,7 @@ export async function insertFromStream(
                 tr.insert(pos, node);
                 pos += node.nodeSize - 2;
               } else {
+                pos = tr.doc.resolve(startPos).end();
                 const node = listNodeType.create(
                   null,
                   schema.nodes.list_item.create(
