@@ -145,9 +145,9 @@ export default function FormattingToolbar({
 
   const formatHighlight = () => performCommand(toggleHighlight);
 
-  const approveSelection = () => performCommand(approve());
+  const approveSelection = () => performCommand(approve);
 
-  const rejectSelection = () => performCommand(reject());
+  const rejectSelection = () => performCommand(reject);
 
   const formatList = (event: Event) => {
     const listType = (event.currentTarget as SwatchSelect).value as ListType;
@@ -190,8 +190,7 @@ export default function FormattingToolbar({
       });
 
       const stream = await editor.write({ prompt });
-      const insertPos = view.state.doc.content.size - 1;
-      await insertFromStream(view, stream, insertPos);
+      await insertFromStream(view, stream);
     } catch (error) {
       handleError(error);
     }
