@@ -58,6 +58,7 @@ export interface DragStateOptions {
   startX: number;
   startY: number;
   constrain?: ConstrainDragOptions;
+  clone?: boolean;
 }
 
 export class DragState<T> {
@@ -71,9 +72,11 @@ export class DragState<T> {
   private readonly originX: number;
   private readonly originY: number;
   private readonly constrain?: ConstrainDragOptions;
+  private readonly clone: boolean;
   private readonly abortController = new AbortController();
 
   private isDragging = false;
+  private dragPreview?: HTMLElement;
   private dropTarget?: HTMLElement;
   private longPressTimeout?: ReturnType<typeof setTimeout>;
   private dragInterval?: ReturnType<typeof setInterval>;
@@ -81,11 +84,18 @@ export class DragState<T> {
   private scrollSpeed = 0;
   private pendingDragEvent: { x: number; y: number } | null = null;
 
-  constructor({ element, startX, startY, constrain }: DragStateOptions) {
+  constructor({
+    element,
+    startX,
+    startY,
+    constrain,
+    clone = false,
+  }: DragStateOptions) {
     this.element = element;
     this.startX = startX;
     this.startY = startY;
     this.constrain = constrain;
+    this.clone = clone;
 
     const rect = element.getBoundingClientRect();
     this.originX = startX - rect.x;
@@ -207,8 +217,8 @@ export class DragState<T> {
       this.scheduleDragEvent(deltaX, deltaY);
 
       requestAnimationFrame(() => {
-        this.element.style.setProperty("--translate-x", deltaX + "px");
-        this.element.style.setProperty("--translate-y", deltaY + "px");
+        this.dragPreview?.style.setProperty("--translate-x", deltaX + "px");
+        this.dragPreview?.style.setProperty("--translate-y", deltaY + "px");
       });
     } else if (event.pointerType !== "touch") {
       const deltaX = x - this.startX;
@@ -305,15 +315,18 @@ export class DragState<T> {
 
     this.findDropTarget(this.element, clientX, clientY);
 
-    this.element.classList.add("drag-preview");
-    this.element.popover = "manual";
-
     const rect = this.element.getBoundingClientRect();
+    this.dragPreview = this.clone
+      ? (this.element.cloneNode(true) as HTMLElement)
+      : this.element;
+    this.dragPreview.classList.add("drag-preview");
+    this.dragPreview.popover = "manual";
+
     const rotateX = (this.originX / rect.width - 0.5) * -2;
     const rotateY = (this.originY / rect.height - 0.5) * 2;
     const rotateAngle = 5 * Math.hypot(rotateX, rotateY);
 
-    const style = this.element.style;
+    const style = this.dragPreview.style;
     style.transformOrigin = `${this.originX}px ${this.originY}px`;
     style.setProperty("--translate-x", clientX - this.originX + "px");
     style.setProperty("--translate-y", clientY - this.originY + "px");
@@ -321,7 +334,11 @@ export class DragState<T> {
     style.setProperty("--rotate-y", rotateY.toFixed(3));
     style.setProperty("--rotate-angle", rotateAngle.toFixed(3) + "deg");
 
-    this.element.showPopover();
+    if (this.clone) {
+      this.element.parentElement?.appendChild(this.dragPreview);
+    }
+
+    this.dragPreview.showPopover();
 
     this.dragInterval = setInterval(
       this.processPendingDragEvent.bind(this),
@@ -387,15 +404,21 @@ export class DragState<T> {
     this.dropTarget = undefined;
 
     // Animate the drag element to its final position
-    if (this.destination) {
-      this.element.style.viewTransitionName = "drop";
+    if (this.destination && this.dragPreview) {
+      this.dragPreview.style.viewTransitionName = "drop";
     }
 
     void viewTransition(() => {
       delete document.body.dataset.drag;
-      this.element.classList.remove("drag-preview");
-      this.element.hidePopover();
-      this.element.popover = null;
+      if (this.dragPreview) {
+        this.dragPreview.classList.remove("drag-preview");
+        this.dragPreview.hidePopover();
+        this.dragPreview.popover = null;
+
+        if (this.clone) {
+          this.dragPreview.remove();
+        }
+      }
 
       if (this.destination) {
         this.destination.style.viewTransitionName = "drop";
@@ -405,6 +428,7 @@ export class DragState<T> {
         this.destination.style.viewTransitionName = "";
         this.destination = null;
       }
+      this.dragPreview = undefined;
     });
   }
 
@@ -466,6 +490,7 @@ function preventDefault(event: Event) {
 export interface MakeDraggableOptions {
   handle?: HTMLElement;
   constrain?: ConstrainDragOptions;
+  clone?: boolean;
   signal?: AbortSignal;
 }
 
@@ -473,7 +498,7 @@ export function makeDraggable(
   element: HTMLElement,
   options?: MakeDraggableOptions,
 ) {
-  const { handle, signal, constrain } = options ?? {};
+  const { handle, signal, constrain, clone } = options ?? {};
   const pointerElement = handle ?? element;
   pointerElement.addEventListener(
     "pointerdown",
@@ -484,6 +509,7 @@ export function makeDraggable(
           startX: event.clientX,
           startY: event.clientY,
           constrain,
+          clone,
         });
       }
     },
