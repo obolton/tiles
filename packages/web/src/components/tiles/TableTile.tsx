@@ -44,6 +44,7 @@ export default function TableTile({
   hasFocus,
   signal,
 }: TableTileProps) {
+  let tableView: TableView | undefined;
   let editorView: EditorView | undefined;
   const { isEditable } = editor;
 
@@ -54,7 +55,8 @@ export default function TableTile({
   );
 
   function ref(element: TableView) {
-    element.enableVirtualization(updateCell);
+    tableView = element;
+    tableView.updateCell = updateCell;
   }
 
   const addRow = async () => {

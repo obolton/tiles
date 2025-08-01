@@ -55,6 +55,7 @@ export default class TableView extends HTMLElement {
 
   readonly selection = new Set<Selection>();
   getColumnWidth: (index: number) => number = defaultGetColumnWidth;
+  updateCell?: (row: number, column: number, element: Element) => void;
 
   private scrollContainer?: HTMLElement;
   private contents: HTMLElement;
@@ -81,7 +82,6 @@ export default class TableView extends HTMLElement {
   private verticalBufferSize = 0;
   private isSelecting = false;
   private virtualize = false;
-  private updateCell?: (row: number, column: number, element: Element) => void;
 
   get columns() {
     return this.#columns;
@@ -130,9 +130,7 @@ export default class TableView extends HTMLElement {
     this.addEventListener("dnd-drop", this);
   }
 
-  enableVirtualization(
-    update: (row: number, column: number, element: Element) => void,
-  ) {
+  enableVirtualization() {
     if (this.virtualize) {
       throw new Error("Virtualization is already enabled");
     }
@@ -142,7 +140,6 @@ export default class TableView extends HTMLElement {
     }
 
     this.virtualize = true;
-    this.updateCell = update;
 
     this.scrollContainer = document.createElement("div");
     this.scrollContainer.id = "scroll-container";
@@ -240,6 +237,8 @@ export default class TableView extends HTMLElement {
     this.updateCellTabIndex();
 
     this.dataset.drop = "true";
+
+    this.enableVirtualization();
   }
 
   disconnectedCallback() {
