@@ -5,8 +5,10 @@ import type { Prisma } from "@prisma/client";
 import type {
   CreateTableSchema,
   InsertRowSchema,
+  MoveRowSchema,
   DeleteRowSchema,
   InsertColumnSchema,
+  MoveColumnSchema,
   UpdateColumnSchema,
   DeleteColumnSchema,
   UpdateCellSchema,
@@ -156,6 +158,35 @@ export async function insertRow({
   });
 }
 
+export async function moveRow({
+  pageId,
+  tableId,
+  rowId,
+  afterRowId,
+}: MoveRowSchema) {
+  return prisma.$transaction(async (transaction) => {
+    // Verify access to the table
+    await transaction.table.findUniqueOrThrow({
+      where: { id: tableId, pageId },
+      select: { id: true },
+    });
+
+    const [keyA, keyB] = await getRowOrderKeys(tableId, afterRowId);
+    const order = generateKeyBetween(keyA, keyB);
+
+    return transaction.tableRow.update({
+      where: {
+        id: rowId,
+        tableId,
+      },
+      data: {
+        order,
+      },
+      select: TABLE_ROW_FIELDS,
+    });
+  });
+}
+
 export async function deleteRow({ pageId, tableId, rowId }: DeleteRowSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the table
@@ -220,6 +251,35 @@ export async function insertColumn({
         tableId,
         order,
         width,
+      },
+      select: TABLE_COLUMN_FIELDS,
+    });
+  });
+}
+
+export async function moveColumn({
+  pageId,
+  tableId,
+  columnId,
+  afterColumnId,
+}: MoveColumnSchema) {
+  return prisma.$transaction(async (transaction) => {
+    // Verify access to the table
+    await transaction.table.findUniqueOrThrow({
+      where: { id: tableId, pageId },
+      select: { id: true },
+    });
+
+    const [keyA, keyB] = await getColumnOrderKeys(tableId, afterColumnId);
+    const order = generateKeyBetween(keyA, keyB);
+
+    return transaction.tableColumn.update({
+      where: {
+        id: columnId,
+        tableId,
+      },
+      data: {
+        order,
       },
       select: TABLE_COLUMN_FIELDS,
     });

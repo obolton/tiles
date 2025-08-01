@@ -16,6 +16,14 @@ export const InsertRowSchema = z.object({
 });
 export type InsertRowSchema = z.infer<typeof InsertRowSchema>;
 
+export const MoveRowSchema = z.object({
+  pageId: z.uuid(),
+  tableId: z.uuid(),
+  rowId: z.uuid(),
+  afterRowId: z.uuid().nullable(),
+});
+export type MoveRowSchema = z.infer<typeof MoveRowSchema>;
+
 export const DeleteRowSchema = z.object({
   pageId: z.uuid(),
   tableId: z.uuid(),
@@ -30,6 +38,14 @@ export const InsertColumnSchema = z.object({
   afterColumnId: z.uuid().nullable(),
 });
 export type InsertColumnSchema = z.infer<typeof InsertColumnSchema>;
+
+export const MoveColumnSchema = z.object({
+  pageId: z.uuid(),
+  tableId: z.uuid(),
+  columnId: z.uuid(),
+  afterColumnId: z.uuid().nullable(),
+});
+export type MoveColumnSchema = z.infer<typeof MoveColumnSchema>;
 
 export const UpdateColumnSchema = z.object({
   pageId: z.uuid(),

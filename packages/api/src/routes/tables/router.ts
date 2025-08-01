@@ -3,8 +3,10 @@ import { pageUpdateProcedure } from "@/utils/middleware.ts";
 import {
   createTable,
   insertRow,
+  moveRow,
   deleteRow,
   insertColumn,
+  moveColumn,
   updateColumn,
   deleteColumn,
   updateCell,
@@ -12,8 +14,10 @@ import {
 import {
   CreateTableSchema,
   InsertRowSchema,
+  MoveRowSchema,
   DeleteRowSchema,
   InsertColumnSchema,
+  MoveColumnSchema,
   UpdateColumnSchema,
   DeleteColumnSchema,
   UpdateCellSchema,
@@ -28,6 +32,10 @@ export default router({
     .input(InsertRowSchema)
     .mutation(({ input }) => insertRow(input)),
 
+  moveRow: pageUpdateProcedure
+    .input(MoveRowSchema)
+    .mutation(({ input }) => moveRow(input)),
+
   deleteRow: pageUpdateProcedure
     .input(DeleteRowSchema)
     .mutation(({ input }) => deleteRow(input)),
@@ -35,6 +43,10 @@ export default router({
   insertColumn: pageUpdateProcedure
     .input(InsertColumnSchema)
     .mutation(({ input }) => insertColumn(input)),
+
+  moveColumn: pageUpdateProcedure
+    .input(MoveColumnSchema)
+    .mutation(({ input }) => moveColumn(input)),
 
   updateColumn: pageUpdateProcedure
     .input(UpdateColumnSchema)
