@@ -3,11 +3,10 @@ import css from "./TableView.css?inline";
 import { TableEvent } from "./events";
 import { makeDraggable } from "@/utils/drag";
 import type { ResizeEvent } from "@/elements/resize/events";
+import type { DragDropEvent } from "@/utils/drag";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
-
-const MAX_VISIBLE_ROWS = 50;
 
 export interface TableViewAttributes {
   columns: number;
@@ -127,6 +126,8 @@ export default class TableView extends HTMLElement {
     this.addEventListener("keydown", this);
     this.addEventListener("pointerdown", this);
     this.addEventListener("pointerup", this, { passive: true });
+    this.addEventListener("dnd-dragenter", this);
+    this.addEventListener("dnd-drop", this);
   }
 
   enableVirtualization(
@@ -237,6 +238,8 @@ export default class TableView extends HTMLElement {
     }
 
     this.updateCellTabIndex();
+
+    this.dataset.drop = "true";
   }
 
   disconnectedCallback() {
@@ -293,6 +296,10 @@ export default class TableView extends HTMLElement {
         return this.handlePointerOver(event as PointerEvent);
       case "resizeend":
         return this.handleResizeEnd(event as ResizeEvent);
+      case "dnd-dragenter":
+        return this.handleDragEnter(event as DragDropEvent);
+      case "dnd-drop":
+        return this.handleDrop(event as DragDropEvent);
     }
   }
 
@@ -418,6 +425,49 @@ export default class TableView extends HTMLElement {
     }
 
     this.update();
+  }
+
+  private handleDragEnter(event: DragDropEvent) {
+    const element = event.state.element;
+
+    if (element.tagName !== "TH" || !this.contains(element)) {
+      event.preventDefault();
+    }
+  }
+
+  private handleDrop(event: DragDropEvent) {
+    const element = event.state.element;
+
+    if (
+      !this.colGroup ||
+      element.tagName !== "TH" ||
+      !element.ariaColIndex ||
+      !this.contains(element)
+    ) {
+      return;
+    }
+
+    const column = parseInt(element.ariaColIndex, 10);
+
+    let newIndex = 0;
+    for (const col of this.colGroup.children as Iterable<HTMLTableColElement>) {
+      if (!col.dataset.index) {
+        continue;
+      }
+
+      if (col.getBoundingClientRect().left > event.clientX) {
+        break;
+      }
+
+      newIndex = parseInt(col.dataset.index, 10);
+    }
+
+    this.dispatchEvent(
+      new TableEvent("reordertablecolumn", {
+        column,
+        newIndex,
+      }),
+    );
   }
 
   // Focus and selection
