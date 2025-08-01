@@ -57,8 +57,13 @@
 body[data-drag] {
   cursor: grabbing;
 
-  & * {
-    cursor: inherit;
+  /* Disable pointer events on elements that are not drop targets during the drag operation */
+  & :not([data-drop]) {
+    pointer-events: none;
+  }
+
+  & [data-drop] {
+    pointer-events: all;
   }
 }
 
