@@ -14,6 +14,7 @@ import { ReactiveValue } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { deserialize } from "@/utils/richText/deserialize";
 import { render } from "@/jsx/dom";
+import { moveElement } from "@/utils/arrays";
 import type TableView from "@/elements/table/TableView";
 import type { Format } from "@/utils/richText/format";
 import type { Command } from "prosemirror-state";
@@ -234,6 +235,50 @@ export default function TableTile({
     }
   };
 
+  const onMoveColumn = async (event: TableEvent) => {
+    try {
+      const { column, afterIndex } = event;
+      if (typeof column !== "number" || typeof afterIndex !== "number") {
+        return;
+      }
+      const columnId = columns.value[column]?.id;
+      if (!columnId) {
+        throw new Error(`Invalid column index: ${column}`);
+      }
+      const afterColumnId = columns.value[afterIndex]?.id ?? null;
+      columns.value = moveElement(columns.value, column, afterIndex + 1);
+      await editor.moveTableColumn({
+        tableId: id,
+        columnId,
+        afterColumnId,
+      });
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const onMoveRow = async (event: TableEvent) => {
+    try {
+      const { row, afterIndex } = event;
+      if (typeof row !== "number" || typeof afterIndex !== "number") {
+        return;
+      }
+      const rowId = rows.value[row]?.id;
+      if (!rowId) {
+        throw new Error(`Invalid row index: ${row}`);
+      }
+      const afterRowId = rows.value[afterIndex]?.id ?? null;
+      rows.value = moveElement(rows.value, row, afterIndex + 1);
+      await editor.moveTableRow({
+        tableId: id,
+        rowId,
+        afterRowId,
+      });
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const getEditorView = () => editorView;
 
   const performCommand = (command: Command) => {
@@ -252,6 +297,7 @@ export default function TableTile({
     quote: false,
     list: null,
     link: false,
+    pending: false,
   });
 
   return (
@@ -265,6 +311,8 @@ export default function TableTile({
         on:focusin={onFocusIn}
         on:focusout={onFocusOut}
         on:resizetablecolumn={onResizeColumn}
+        on:movetablecolumn={onMoveColumn}
+        on:movetablerow={onMoveRow}
         $getColumnWidth={(index) => columns.value[index]?.width ?? 200}
       >
         <table>
