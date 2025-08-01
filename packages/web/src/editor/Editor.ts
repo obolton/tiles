@@ -477,10 +477,17 @@ export default class Editor {
     return item;
   }
 
-  async appendTableRow(
-    data: OmitPageId<AppRouterInputs["tables"]["appendRow"]>,
+  async insertTableRow(
+    data: OmitPageId<AppRouterInputs["tables"]["insertRow"]>,
   ) {
-    return await client.tables.appendRow.mutate({
+    return await client.tables.insertRow.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+  }
+
+  async moveTableRow(data: OmitPageId<AppRouterInputs["tables"]["moveRow"]>) {
+    return await client.tables.moveRow.mutate({
       pageId: this.pageId,
       ...data,
     });
@@ -495,10 +502,19 @@ export default class Editor {
     });
   }
 
-  async appendTableColumn(
-    data: OmitPageId<AppRouterInputs["tables"]["appendColumn"]>,
+  async insertTableColumn(
+    data: OmitPageId<AppRouterInputs["tables"]["insertColumn"]>,
   ) {
-    return await client.tables.appendColumn.mutate({
+    return await client.tables.insertColumn.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+  }
+
+  async moveTableColumn(
+    data: OmitPageId<AppRouterInputs["tables"]["moveColumn"]>,
+  ) {
+    return await client.tables.moveColumn.mutate({
       pageId: this.pageId,
       ...data,
     });
