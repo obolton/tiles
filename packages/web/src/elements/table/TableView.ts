@@ -599,7 +599,7 @@ export default class TableView extends HTMLElement {
     const tr = document.createElement("tr");
     const th = document.createElement("th");
     th.scope = "row";
-    makeDraggable(th, { constrain: "vertical" });
+    makeDraggable(th, { constrain: "vertical", clone: true });
     tr.appendChild(th);
     return tr;
   }
@@ -658,7 +658,7 @@ export default class TableView extends HTMLElement {
     th.scope = "col";
     th.ariaColIndex = columnIndex.toString();
     th.appendChild(this.createResizeHandle());
-    makeDraggable(th, { constrain: "horizontal" });
+    makeDraggable(th, { constrain: "horizontal", clone: true });
     const headerRow = this.tableHead.rows[0]!;
     headerRow.insertBefore(th, headerRow.children[position + 1] ?? null);
 
@@ -961,7 +961,7 @@ export default class TableView extends HTMLElement {
 
     for (const th of this.tableHead.rows[0]!.cells) {
       if (th.ariaColIndex) {
-        makeDraggable(th, { constrain: "horizontal" });
+        makeDraggable(th, { constrain: "horizontal", clone: true });
         th.appendChild(this.createResizeHandle());
       }
     }
@@ -969,7 +969,7 @@ export default class TableView extends HTMLElement {
     for (const row of this.tableBody.rows) {
       const th = row.querySelector("th");
       if (th) {
-        makeDraggable(th, { constrain: "vertical" });
+        makeDraggable(th, { constrain: "vertical", clone: true });
       }
     }
   }
