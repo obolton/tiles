@@ -60,12 +60,29 @@ export default function TableTile({
   }
 
   const addRow = async () => {
-    await editor.appendTableRow({ tableId: id });
+    const selection = tableView?.selection;
+    if (!selection) {
+      return;
+    }
+    const first = Array.from(selection)[0];
+    const index = first && "row" in first ? first.row : null;
+    const afterRowId = index ? (rows.value[index]?.id ?? null) : null;
+    await editor.insertTableRow({ tableId: id, afterRowId });
     numRows.value++;
   };
 
   const addColumn = async () => {
-    const column = await editor.appendTableColumn({ tableId: id });
+    const selection = tableView?.selection;
+    if (!selection) {
+      return;
+    }
+    const first = Array.from(selection)[0];
+    const index = first && "column" in first ? first.column : null;
+    const afterColumnId = index ? (columns.value[index]?.id ?? null) : null;
+    const column = await editor.insertTableColumn({
+      tableId: id,
+      afterColumnId,
+    });
     columns.value = columns.value.concat(column);
   };
 
