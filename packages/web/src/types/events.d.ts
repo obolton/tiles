@@ -38,6 +38,8 @@ declare global {
     tileresizeend: TileResizeEvent;
     tiledelete: TileEvent;
     resizetablecolumn: TableEvent;
+    movetablecolumn: TableEvent;
+    movetablerow: TableEvent;
   }
 }
 
