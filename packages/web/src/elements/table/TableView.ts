@@ -439,34 +439,67 @@ export default class TableView extends HTMLElement {
 
     if (
       !this.colGroup ||
+      !this.tableBody ||
+      !(element instanceof HTMLTableCellElement) ||
       element.tagName !== "TH" ||
-      !element.ariaColIndex ||
       !this.contains(element)
     ) {
       return;
     }
 
-    const column = parseInt(element.ariaColIndex, 10);
+    if (element.scope === "col" && element.ariaColIndex) {
+      const column = parseInt(element.ariaColIndex, 10);
 
-    let newIndex = 0;
-    for (const col of this.colGroup.children as Iterable<HTMLTableColElement>) {
-      if (!col.dataset.index) {
-        continue;
+      let afterIndex = -1;
+      for (const col of this.colGroup
+        .children as Iterable<HTMLTableColElement>) {
+        if (!col.dataset.index) {
+          continue;
+        }
+
+        const rect = col.getBoundingClientRect();
+        const midpoint = rect.left + rect.width / 2;
+        if (event.clientX < midpoint) {
+          break;
+        }
+
+        afterIndex = parseInt(col.dataset.index, 10);
       }
 
-      if (col.getBoundingClientRect().left > event.clientX) {
-        break;
-      }
-
-      newIndex = parseInt(col.dataset.index, 10);
+      this.dispatchEvent(
+        new TableEvent("movetablecolumn", {
+          column,
+          afterIndex,
+        }),
+      );
+      return;
     }
 
-    this.dispatchEvent(
-      new TableEvent("reordertablecolumn", {
-        column,
-        newIndex,
-      }),
-    );
+    if (element.scope === "row" && element.parentElement?.ariaRowIndex) {
+      const row = parseInt(element.parentElement?.ariaRowIndex, 10);
+
+      let afterIndex = -1;
+      for (const row of this.tableBody.rows) {
+        if (!row.ariaRowIndex) {
+          continue;
+        }
+
+        const rect = row.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        if (event.clientY < midpoint) {
+          break;
+        }
+
+        afterIndex = parseInt(row.ariaRowIndex, 10);
+      }
+
+      this.dispatchEvent(
+        new TableEvent("movetablerow", {
+          row,
+          afterIndex,
+        }),
+      );
+    }
   }
 
   // Focus and selection
