@@ -52,7 +52,7 @@ table-view {
       }
     }
 
-    &#drag-preview {
+    &.drag-preview {
       animation: none;
       scale: 1;
       opacity: 1;
