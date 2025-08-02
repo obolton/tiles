@@ -28,8 +28,12 @@ export default class FloatingToolbar extends HTMLElement {
     }
   }
 
-  handlePointerDown(event: PointerEvent) {
-    event.preventDefault();
+  private handlePointerDown(event: PointerEvent) {
+    // Prevent toolbar buttons from stealing focus
+    if (event.target instanceof HTMLButtonElement) {
+      event.preventDefault();
+    }
+
     event.stopPropagation();
   }
 }

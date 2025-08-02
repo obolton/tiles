@@ -7,6 +7,11 @@ button {
   cursor: pointer;
   user-select: none;
   appearance: none;
+
+  /* Prevent icons from being the target of pointer events */
+  & > svg {
+    pointer-events: none;
+  }
 }
 
 button:focus-visible,
