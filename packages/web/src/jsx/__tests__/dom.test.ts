@@ -1,6 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 import { jsx } from "../jsx";
 import { render } from "../dom";
+import { reactive } from "@/utils/reactivity";
 
 describe("render", () => {
   test("creates an element with the given type", () => {
@@ -25,12 +26,36 @@ describe("render", () => {
     expect(element.className).toBe("test-class");
   });
 
-  test("sets the style attribute from an object", () => {
-    const element = render(
-      jsx("div", { style: { backgroundColor: "red", padding: "0" } }),
-    ) as HTMLElement;
-    expect(element.style.backgroundColor).toBe("red");
-    expect(element.style.padding).toBe("0px");
+  describe("styles", () => {
+    test("sets styles from an object", () => {
+      const style = { backgroundColor: "red", padding: "0" };
+      const element = render(jsx("div", { style })) as HTMLElement;
+      expect(element.style.backgroundColor).toBe("red");
+      expect(element.style.padding).toBe("0px");
+    });
+
+    test("sets and updates styles from a reactive object", () => {
+      const style = reactive({ backgroundColor: "red", padding: "0" });
+      const element = render(jsx("div", { style })) as HTMLElement;
+      expect(element.style.backgroundColor).toBe("red");
+      expect(element.style.padding).toBe("0px");
+      style.value = { backgroundColor: "blue", padding: "0" };
+      expect(element.style.backgroundColor).toBe("blue");
+      expect(element.style.padding).toBe("0px");
+    });
+
+    test("clears styles with a reactive object", () => {
+      const style = reactive<Record<string, string | undefined>>({
+        backgroundColor: "red",
+        padding: "0",
+      });
+      const element = render(jsx("div", { style })) as HTMLElement;
+      expect(element.style.backgroundColor).toBe("red");
+      expect(element.style.padding).toBe("0px");
+      style.value = { backgroundColor: undefined, padding: "0" };
+      expect(element.style.backgroundColor).toBe("");
+      expect(element.style.padding).toBe("0px");
+    });
   });
 
   test("sets the style attribute from a string", () => {

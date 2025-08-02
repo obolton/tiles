@@ -164,14 +164,12 @@ function setAttribute(
     element instanceof HTMLElement &&
     typeof value === "object"
   ) {
-    for (const [property, style] of Object.entries(value)) {
-      if (typeof style === "string" || typeof style === "number") {
-        element.style.setProperty(
-          transformCSSProperty(property),
-          style.toString(),
-        );
+    for (const [styleProperty, styleValue] of Object.entries(value)) {
+      const transformedProperty = transformCSSProperty(styleProperty);
+      if (typeof styleValue === "string" || typeof styleValue === "number") {
+        element.style.setProperty(transformedProperty, styleValue.toString());
       } else {
-        element.style.removeProperty(property);
+        element.style.removeProperty(transformedProperty);
       }
     }
   } else if (value === true) {
