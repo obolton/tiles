@@ -1,20 +1,21 @@
 .prompt {
+  position: relative;
   display: flex;
-  width: 700px;
+  flex: 1;
+  border-radius: inherit;
 
-  & > input {
+  & > textarea {
     flex: 1;
-    padding: 0;
+    padding: 16px;
     background: none;
     border: none;
-    outline: none;
-
-    &:focus {
-      outline: none;
-    }
+    border-radius: inherit;
+    resize: none;
   }
 
   & > button {
-    flex: none;
+    position: absolute;
+    inset: auto 0 0 auto;
+    margin: 8px;
   }
 }

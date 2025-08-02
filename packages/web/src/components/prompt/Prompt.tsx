@@ -1,22 +1,33 @@
 import CheckIcon from "@/icons/check.svg?jsx";
+import { flag } from "@/utils/reactivity";
+import { handleError } from "@/utils/errors";
 import styles from "./Prompt.module.css";
 
 export interface PromptProps {
-  onSubmit: (prompt: string) => void;
-  onCancel: () => void;
+  placeholder?: string;
+  submitTooltip?: string;
+  onSubmit: (prompt: string) => Promise<void>;
+  onCancel?: () => void;
 }
 
-export default function Prompt({ onSubmit, onCancel }: PromptProps) {
-  function ref(element: HTMLInputElement) {
-    requestAnimationFrame(() => element.focus());
-  }
-
-  function handlePointerDown(event: PointerEvent) {
-    event.stopPropagation();
-  }
+export default function Prompt({
+  placeholder,
+  submitTooltip = "Done",
+  onSubmit,
+  onCancel,
+}: PromptProps) {
+  const pending = flag(false);
 
   function handleKeyDown(event: KeyboardEvent) {
-    if (event.key === "Escape") {
+    const element = event.currentTarget as HTMLTextAreaElement;
+
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      event.stopPropagation();
+      element.form?.requestSubmit();
+    }
+
+    if (event.key === "Escape" && onCancel) {
       event.preventDefault();
       event.stopPropagation();
       onCancel();
@@ -25,33 +36,41 @@ export default function Prompt({ onSubmit, onCancel }: PromptProps) {
 
   function handleSubmit(event: Event) {
     event.preventDefault();
+
+    if (pending.value) {
+      return;
+    }
+
     const form = event.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
-    const prompt = formData.get("prompt") as string;
-    if (prompt) {
-      onSubmit(prompt);
-    } else {
-      onCancel();
+    const prompt = (formData.get("prompt") as string).trim();
+
+    if (!prompt) {
+      return;
     }
+
+    pending.on();
+    onSubmit(prompt)
+      .catch(handleError)
+      .finally(() => pending.off());
   }
 
   return (
-    <form
-      className={styles.prompt}
-      on:pointerdown={handlePointerDown}
-      on:keydown={handleKeyDown}
-      on:submit={handleSubmit}
-    >
-      <input
-        ref={ref}
-        id="prompt"
-        type="text"
+    <form className={styles.prompt} on:submit={handleSubmit}>
+      <textarea
         name="prompt"
-        placeholder="Ask anything"
-        autofocus
+        placeholder={placeholder}
+        required
+        disabled={pending}
+        on:keydown={handleKeyDown}
       />
 
-      <button type="submit" className="floating small">
+      <button
+        type="submit"
+        classList={{ floating: true, small: true, pending }}
+        disabled={pending}
+        data-tooltip={submitTooltip}
+      >
         <CheckIcon aria-hidden="true" />
       </button>
     </form>
