@@ -9,8 +9,8 @@ export interface ColorPaletteProps {
   chroma?: number;
   hues?: number;
   startHue?: number;
-  value?: Reactive<Color | null>;
-  onChange?: (value: Color) => void;
+  value?: Reactive<Color | null | undefined>;
+  onChange: (value: Color) => void;
 }
 
 export default function ColorPalette({
