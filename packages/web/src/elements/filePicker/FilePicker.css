@@ -1,9 +1,7 @@
-:host {
-  display: block;
-}
-
 label {
   display: block;
+  width: 100%;
+  align-content: center;
   cursor: pointer;
   outline: none;
 }
