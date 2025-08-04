@@ -1,6 +1,4 @@
 floating-toolbar {
-  --icon-color: rgb(0 0 0 / 70%);
-
   position: fixed;
   inset: auto 8px 80px;
   width: fit-content;
@@ -9,7 +7,7 @@ floating-toolbar {
   overflow: visible;
   contain: layout;
   background: var(--ui-background-color);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(24px);
   border: none;
   border-radius: 32px;
   margin: auto;
