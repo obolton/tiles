@@ -1,0 +1,7 @@
+.popover {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 32px;
+}
