@@ -79,13 +79,9 @@ table-view {
     transition: outline-color var(--animation-duration-short) var(--easing);
 
     &:focus {
-      border: none;
-      border-radius: var(--border-radius);
-      background: var(--tile-background);
-      box-shadow: 0 0 0 4px var(--tile-background);
-      outline-offset: 4px;
+      border-color: transparent;
+      border-radius: 4px;
       outline: var(--focus-outline);
-      overflow: visible;
     }
   }
 
