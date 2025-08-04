@@ -27,11 +27,14 @@
       clip-path var(--animation-duration-short) var(--easing);
   }
 
-  :host(:hover) &::before,
-  :host(.drag-preview) &::before,
-  &:hover::before {
-    opacity: 0.4;
-    clip-path: inset(0 round calc(var(--border-radius) + 12px));
+  :host(:hover) &,
+  :host(:focus-within) &,
+  :host(.drag-preview) &,
+  &:hover {
+    &::before {
+      opacity: 0.4;
+      clip-path: inset(0 round calc(var(--border-radius) + 12px));
+    }
   }
 }
 
