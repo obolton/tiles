@@ -112,13 +112,19 @@ export default class LayoutEditor {
 
   private getGridPosition(event: DragDropEvent) {
     const offsetX =
-      event.clientX +
+      event.clientX -
+      event.state.offsetX +
       window.scrollX +
       this.element.scrollLeft -
       this.pageX -
       24;
     const offsetY =
-      event.clientY + window.scrollY + this.element.scrollTop - this.pageY - 24;
+      event.clientY -
+      event.state.offsetY +
+      window.scrollY +
+      this.element.scrollTop -
+      this.pageY -
+      24;
     const x = Math.max(
       Math.round(offsetX / (this.gridColumnWidth + this.gridGap)),
       0,

@@ -63,14 +63,14 @@ export interface DragStateOptions {
 
 export class DragState<T> {
   readonly element: HTMLElement;
+  readonly offsetX: number;
+  readonly offsetY: number;
 
   data?: T;
   destination: HTMLElement | null = null;
 
   private readonly startX: number;
   private readonly startY: number;
-  private readonly originX: number;
-  private readonly originY: number;
   private readonly constrain?: ConstrainDragOptions;
   private readonly clone: boolean;
   private readonly abortController = new AbortController();
@@ -98,8 +98,8 @@ export class DragState<T> {
     this.clone = clone;
 
     const rect = element.getBoundingClientRect();
-    this.originX = startX - rect.x;
-    this.originY = startY - rect.y;
+    this.offsetX = startX - rect.x;
+    this.offsetY = startY - rect.y;
 
     const signal = this.abortController.signal;
 
@@ -207,36 +207,37 @@ export class DragState<T> {
   private pointerMove(event: PointerEvent) {
     this.cancelLongPress();
 
-    const x = this.constrain === "vertical" ? this.startX : event.clientX;
-    const y = this.constrain === "horizontal" ? this.startY : event.clientY;
+    const { clientX, clientY } = event;
+    const x = this.constrain === "vertical" ? this.startX : clientX;
+    const y = this.constrain === "horizontal" ? this.startY : clientY;
 
     if (this.isDragging) {
-      const deltaX = x - this.originX;
-      const deltaY = y - this.originY;
+      const originX = x - this.offsetX;
+      const originY = y - this.offsetY;
 
-      this.scheduleDragEvent(deltaX, deltaY);
+      this.scheduleDragEvent(clientX, clientY);
 
       requestAnimationFrame(() => {
-        this.dragPreview?.style.setProperty("--drag-x", deltaX + "px");
-        this.dragPreview?.style.setProperty("--drag-y", deltaY + "px");
+        this.dragPreview?.style.setProperty("--drag-x", originX + "px");
+        this.dragPreview?.style.setProperty("--drag-y", originY + "px");
       });
     } else if (event.pointerType !== "touch") {
       const deltaX = x - this.startX;
       const deltaY = y - this.startY;
 
       if (Math.hypot(deltaX, deltaY) >= DRAG_THRESHOLD) {
-        this.startDrag(x, y);
+        this.startDrag(clientX, clientY);
       }
     }
 
-    if (y <= SCROLL_MARGIN) {
-      this.scrollSpeed = -(SCROLL_MARGIN - y);
+    if (clientY <= SCROLL_MARGIN) {
+      this.scrollSpeed = -(SCROLL_MARGIN - clientY);
       this.scrollInterval ??= setInterval(
         this.scroll.bind(this),
         SCROLL_INTERVAL,
       );
-    } else if (window.innerHeight - y <= SCROLL_MARGIN) {
-      this.scrollSpeed = SCROLL_MARGIN - (window.innerHeight - y);
+    } else if (window.innerHeight - clientY <= SCROLL_MARGIN) {
+      this.scrollSpeed = SCROLL_MARGIN - (window.innerHeight - clientY);
       this.scrollInterval ??= setInterval(
         this.scroll.bind(this),
         SCROLL_INTERVAL,
@@ -323,10 +324,10 @@ export class DragState<T> {
     this.dragPreview.popover = "manual";
 
     const style = this.dragPreview.style;
-    style.setProperty("--drag-origin-x", this.originX + "px");
-    style.setProperty("--drag-origin-y", this.originY + "px");
-    style.setProperty("--drag-x", clientX - this.originX + "px");
-    style.setProperty("--drag-y", clientY - this.originY + "px");
+    style.setProperty("--drag-origin-x", this.offsetX + "px");
+    style.setProperty("--drag-origin-y", this.offsetY + "px");
+    style.setProperty("--drag-x", clientX - this.offsetX + "px");
+    style.setProperty("--drag-y", clientY - this.offsetY + "px");
     style.setProperty("--drag-width", rect.width + "px");
     style.setProperty("--drag-height", rect.height + "px");
 
