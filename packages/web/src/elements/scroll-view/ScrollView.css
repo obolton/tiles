@@ -49,16 +49,13 @@
   margin: 0;
   border: none;
   border-radius: 22px;
-  background: var(--ui-background-color);
-  backdrop-filter: blur(4px);
-  opacity: 0;
+  background-color: rgb(0 0 0 / 15%);
+  opacity: 0.5;
   cursor: pointer;
   z-index: 1;
-  box-shadow:
-    0 0 0 1px rgb(0 0 0 / 15%),
-    0 4px 12px -4px rgb(0 0 0 / 30%);
   transition:
     display var(--animation-duration) allow-discrete,
+    background-color var(--animation-duration-short) var(--easing),
     opacity var(--animation-duration) var(--easing),
     scale var(--animation-duration-short) var(--easing);
 
@@ -66,10 +63,34 @@
     outline: var(--focus-outline);
   }
 
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+    scale: 1.1;
+  }
+
+  &:active {
+    opacity: 1;
+    scale: 1.05;
+    background-color: rgb(0 0 0 / 25%);
+  }
+
+  &:disabled,
+  :host(:not(:focus, :hover)) &,
+  :host(:not(:state(scrollable))) & {
+    display: none;
+    opacity: 0;
+  }
+
   & > svg {
     width: 24px;
     height: 24px;
     fill: var(--icon-color);
+    pointer-events: none;
+  }
+
+  @starting-style {
+    opacity: 0;
   }
 }
 
@@ -79,31 +100,4 @@
 
 #next {
   right: 16px;
-}
-
-:host(:state(scrollable):hover),
-:host(:state(scrollable):focus) {
-  #previous,
-  #next {
-    opacity: 0.6;
-
-    &:disabled {
-      display: none;
-      opacity: 0;
-    }
-
-    &:enabled:hover {
-      opacity: 1;
-      scale: 1.1;
-    }
-
-    &:enabled:active {
-      opacity: 1;
-      scale: 1.05;
-    }
-
-    @starting-style {
-      opacity: 0;
-    }
-  }
 }
