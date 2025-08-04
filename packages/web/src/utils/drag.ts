@@ -217,8 +217,8 @@ export class DragState<T> {
       this.scheduleDragEvent(deltaX, deltaY);
 
       requestAnimationFrame(() => {
-        this.dragPreview?.style.setProperty("--translate-x", deltaX + "px");
-        this.dragPreview?.style.setProperty("--translate-y", deltaY + "px");
+        this.dragPreview?.style.setProperty("--drag-x", deltaX + "px");
+        this.dragPreview?.style.setProperty("--drag-y", deltaY + "px");
       });
     } else if (event.pointerType !== "touch") {
       const deltaX = x - this.startX;
@@ -322,17 +322,13 @@ export class DragState<T> {
     this.dragPreview.classList.add("drag-preview");
     this.dragPreview.popover = "manual";
 
-    const rotateX = (this.originX / rect.width - 0.5) * -2;
-    const rotateY = (this.originY / rect.height - 0.5) * 2;
-    const rotateAngle = 5 * Math.hypot(rotateX, rotateY);
-
     const style = this.dragPreview.style;
-    style.transformOrigin = `${this.originX}px ${this.originY}px`;
-    style.setProperty("--translate-x", clientX - this.originX + "px");
-    style.setProperty("--translate-y", clientY - this.originY + "px");
-    style.setProperty("--rotate-x", rotateX.toFixed(3));
-    style.setProperty("--rotate-y", rotateY.toFixed(3));
-    style.setProperty("--rotate-angle", rotateAngle.toFixed(3) + "deg");
+    style.setProperty("--drag-origin-x", this.originX + "px");
+    style.setProperty("--drag-origin-y", this.originY + "px");
+    style.setProperty("--drag-x", clientX - this.originX + "px");
+    style.setProperty("--drag-y", clientY - this.originY + "px");
+    style.setProperty("--drag-width", rect.width + "px");
+    style.setProperty("--drag-height", rect.height + "px");
 
     if (this.clone) {
       this.element.parentElement?.appendChild(this.dragPreview);
@@ -410,6 +406,7 @@ export class DragState<T> {
 
     void viewTransition(() => {
       delete document.body.dataset.drag;
+
       if (this.dragPreview) {
         this.dragPreview.classList.remove("drag-preview");
         this.dragPreview.hidePopover();
@@ -417,6 +414,13 @@ export class DragState<T> {
 
         if (this.clone) {
           this.dragPreview.remove();
+        } else {
+          this.dragPreview.style.removeProperty("--drag-origin-x");
+          this.dragPreview.style.removeProperty("--drag-origin-y");
+          this.dragPreview.style.removeProperty("--drag-x");
+          this.dragPreview.style.removeProperty("--drag-y");
+          this.dragPreview.style.removeProperty("--drag-width");
+          this.dragPreview.style.removeProperty("--drag-height");
         }
       }
 
