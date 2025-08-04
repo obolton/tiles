@@ -1,7 +1,7 @@
 import TabPanel from "./TabPanel";
 
 export interface TabItemAttributes {
-  selected?: boolean;
+  selected?: "selected" | "";
   for?: string;
 }
 
@@ -22,6 +22,12 @@ export default class TabItem extends HTMLElement {
   connectedCallback() {
     if (!this.hasAttribute("tabindex")) {
       this.tabIndex = 0;
+    }
+
+    if (this.selected) {
+      this.select();
+    } else {
+      this.deselect();
     }
   }
 
@@ -46,13 +52,9 @@ export default class TabItem extends HTMLElement {
 
   set selected(value: boolean) {
     if (value) {
-      this.setAttribute("selected", "");
-      this.internals.ariaSelected = "true";
-      this.panel?.show();
+      this.select();
     } else {
-      this.removeAttribute("selected");
-      this.internals.ariaSelected = "false";
-      this.panel?.hide();
+      this.deselect();
     }
   }
 
@@ -68,6 +70,18 @@ export default class TabItem extends HTMLElement {
     }
 
     return panel;
+  }
+
+  select() {
+    this.setAttribute("selected", "");
+    this.internals.ariaSelected = "true";
+    this.panel?.show();
+  }
+
+  deselect() {
+    this.removeAttribute("selected");
+    this.internals.ariaSelected = "false";
+    this.panel?.hide();
   }
 }
 

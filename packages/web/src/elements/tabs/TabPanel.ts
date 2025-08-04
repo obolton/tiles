@@ -1,7 +1,7 @@
 import { focusInside } from "@/utils/focus";
 
 export interface TabPanelAttributes {
-  open?: boolean;
+  open?: "open" | "";
 }
 
 export default class TabPanel extends HTMLElement {
@@ -10,8 +10,10 @@ export default class TabPanel extends HTMLElement {
   }
 
   show() {
-    this.setAttribute("open", "");
-    focusInside(this);
+    if (!this.hasAttribute("open")) {
+      this.setAttribute("open", "");
+      focusInside(this);
+    }
   }
 
   hide() {
