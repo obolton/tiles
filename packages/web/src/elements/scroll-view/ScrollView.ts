@@ -186,8 +186,15 @@ export default class ScrollView extends HTMLElement {
     });
   }
 
-  private scrollToStart() {
+  scrollToStart() {
     this.container.scroll({ left: 0, behavior: "smooth" });
+  }
+
+  scrollToEnd() {
+    this.container.scroll({
+      left: this.container.scrollWidth - this.container.clientWidth,
+      behavior: "smooth",
+    });
   }
 
   previous() {
@@ -203,6 +210,8 @@ export default class ScrollView extends HTMLElement {
     const element = this.getNextElement();
     if (element) {
       this.scrollToElement(element);
+    } else {
+      this.scrollToEnd();
     }
   }
 
