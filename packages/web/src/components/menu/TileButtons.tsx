@@ -126,7 +126,7 @@ export default function TileButtons({ editor, sectionId }: TileButtonsProps) {
             <button
               role="menuitem"
               type="button"
-              className="floating small"
+              className="floating"
               aria-label={label}
               data-tooltip={label}
               data-tile-type={type}
@@ -141,7 +141,7 @@ export default function TileButtons({ editor, sectionId }: TileButtonsProps) {
         <button
           role="menuitem"
           type="button"
-          className="floating small"
+          className="floating"
           aria-label="Add a section"
           data-tooltip="Add a section"
           onclick={createSection}

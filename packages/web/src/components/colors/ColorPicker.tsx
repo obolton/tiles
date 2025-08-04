@@ -32,7 +32,7 @@ export default function ColorPicker({
     <>
       <button
         id="color-picker-button"
-        className={classNames("floating", "small", styles.button)}
+        className={classNames("floating", styles.button)}
         type="button"
         popovertarget="color-picker"
         aria-label="Color"

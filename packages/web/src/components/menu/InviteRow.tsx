@@ -36,7 +36,7 @@ export default function InviteRow({
       {showRemove ? (
         <button
           type="button"
-          className="floating xsmall"
+          className="floating small"
           aria-label="Revoke invite"
           data-tooltip="Revoke invite"
           on:click={onClickRemove}

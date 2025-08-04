@@ -90,8 +90,8 @@ a.secondary {
 
 button.floating,
 a.floating {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,8 +106,8 @@ a.floating {
     outline-color var(--animation-duration) var(--easing);
 
   & > svg {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     fill: var(--icon-color);
     filter: drop-shadow(0 1px 1px rgb(0 0 0 / 10%));
   }
@@ -140,17 +140,17 @@ a.floating {
     opacity: 0.4;
   }
 
-  &.small {
-    width: 44px;
-    height: 44px;
+  &.large {
+    width: 52px;
+    height: 52px;
 
     & > svg {
-      width: 24px;
-      height: 24px;
+      width: 32px;
+      height: 32px;
     }
   }
 
-  &.xsmall {
+  &.small {
     width: 32px;
     height: 32px;
 

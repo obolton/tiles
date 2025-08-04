@@ -79,7 +79,7 @@ export default function LinkTile({
             <button
               role="menuitem"
               type="button"
-              className="floating small"
+              className="floating"
               aria-label="Edit link"
               data-tooltip="Edit link"
               onclick={editLink}

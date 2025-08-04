@@ -378,7 +378,7 @@ export default function TableTile({
                 <button
                   type="button"
                   role="menuitem"
-                  className="floating small"
+                  className="floating"
                   aria-label="Add row"
                   data-tooltip="Add row"
                   onclick={addRow}
@@ -390,7 +390,7 @@ export default function TableTile({
                 <button
                   type="button"
                   role="menuitem"
-                  className="floating small"
+                  className="floating"
                   aria-label="Add column"
                   data-tooltip="Add column"
                   onclick={addColumn}

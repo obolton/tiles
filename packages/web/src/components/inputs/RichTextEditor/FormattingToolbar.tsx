@@ -213,7 +213,7 @@ export default function FormattingToolbar({
           <button
             type="button"
             role="menuitem"
-            className="floating small"
+            className="floating"
             aria-label="Write with AI"
             data-tooltip="Write with AI"
             on:click={togglePrompt}
@@ -232,7 +232,7 @@ export default function FormattingToolbar({
                 <button
                   type="button"
                   role="menuitem"
-                  className="floating small"
+                  className="floating"
                   aria-label="Approve"
                   data-tooltip="Approve"
                   on:click={approveSelection}
@@ -245,7 +245,7 @@ export default function FormattingToolbar({
                 <button
                   type="button"
                   role="menuitem"
-                  className="floating small"
+                  className="floating"
                   aria-label="Reject"
                   data-tooltip="Reject"
                   on:click={rejectSelection}
@@ -268,7 +268,7 @@ export default function FormattingToolbar({
                 <button
                   id="insert-content-button"
                   role="menuitem"
-                  className="floating small"
+                  className="floating"
                   popoverTarget="insert-content-menu"
                   aria-label="Insert content"
                   aria-haspopup="menu"
@@ -364,7 +364,7 @@ export default function FormattingToolbar({
               <li role="presentation">
                 <button
                   role="menuitem"
-                  className="floating small"
+                  className="floating"
                   aria-label="Bold"
                   data-tooltip="Format as bold"
                   type="button"
@@ -379,7 +379,7 @@ export default function FormattingToolbar({
               <li role="presentation">
                 <button
                   role="menuitem"
-                  className="floating small"
+                  className="floating"
                   aria-label="Italic"
                   data-tooltip="Format as italic"
                   type="button"
@@ -394,7 +394,7 @@ export default function FormattingToolbar({
               <li role="presentation">
                 <button
                   role="menuitem"
-                  className="floating small"
+                  className="floating"
                   aria-label="Underlined"
                   data-tooltip="Format as underlined"
                   type="button"
@@ -409,7 +409,7 @@ export default function FormattingToolbar({
               <li role="presentation">
                 <button
                   role="menuitem"
-                  className="floating small"
+                  className="floating"
                   aria-label="Strike-through"
                   data-tooltip="Format as strike-through"
                   type="button"
@@ -424,7 +424,7 @@ export default function FormattingToolbar({
               <li role="presentation">
                 <button
                   role="menuitem"
-                  className="floating small"
+                  className="floating"
                   aria-label="Highlight"
                   data-tooltip="Format as highlighted"
                   type="button"
@@ -439,7 +439,7 @@ export default function FormattingToolbar({
               <li role="presentation">
                 <button
                   role="menuitem"
-                  className="floating small"
+                  className="floating"
                   aria-label="Quote"
                   data-tooltip="Format as a quote"
                   type="button"
@@ -454,7 +454,7 @@ export default function FormattingToolbar({
               <li role="presentation">
                 <button
                   role="menuitem"
-                  className="floating small"
+                  className="floating"
                   aria-label="Link"
                   data-tooltip="Add a link"
                   type="button"

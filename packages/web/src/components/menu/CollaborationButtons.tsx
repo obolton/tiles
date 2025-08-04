@@ -84,7 +84,7 @@ export default function CollaborationButtons({
             <button
               role="menuitem"
               id="unpublish"
-              className="floating small"
+              className="floating"
               aria-label="Published"
               data-tooltip="This page is published"
               disabled={allowPublish ? undefined : true}
@@ -96,7 +96,7 @@ export default function CollaborationButtons({
             <button
               role="menuitem"
               id="publish"
-              className="floating small"
+              className="floating"
               aria-label="Private"
               data-tooltip="This page is private"
               disabled={allowPublish ? undefined : true}
@@ -112,7 +112,7 @@ export default function CollaborationButtons({
         <button
           role="menuitem"
           id="access-button"
-          className="floating small"
+          className="floating"
           aria-label="Page access"
           data-tooltip="Page access"
           popoverTarget="access-popover"

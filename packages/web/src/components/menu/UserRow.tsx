@@ -35,7 +35,7 @@ export default function UserRow({
       {showRemove ? (
         <button
           type="button"
-          className="floating xsmall"
+          className="floating small"
           aria-label="Remove user"
           on:click={onClickRemove}
         >

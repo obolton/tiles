@@ -47,7 +47,7 @@ export default function EditingTools({
           <button
             id="page-options-button"
             type="button"
-            className="floating small"
+            className="floating"
             role="menuitem"
             popoverTarget="page-options"
             aria-label="More options"

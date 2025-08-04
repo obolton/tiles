@@ -110,7 +110,7 @@ export default function MapTile({
               <button
                 role="menuitem"
                 type="button"
-                className="floating small"
+                className="floating"
                 aria-label="Add place"
                 data-tooltip="Add a place"
                 onclick={handleAddPlace}

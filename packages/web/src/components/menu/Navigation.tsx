@@ -43,9 +43,9 @@ export default function Navigation({
 
         const pageId = document.body.dataset.pageId;
         if (pageId) {
-          getIsBookmarked(pageId).then(
-            (bookmarked) => (isBookmarked.value = bookmarked),
-          );
+          getIsBookmarked(pageId)
+            .then((bookmarked) => (isBookmarked.value = bookmarked))
+            .catch(handleError);
         }
       }
     });
@@ -102,7 +102,7 @@ export default function Navigation({
             <button
               type="button"
               id="account-button"
-              className="floating"
+              className="floating large"
               popoverTarget="account-menu"
               data-tooltip={`Signed in as ${value.name}`}
               aria-haspopup="menu"
@@ -148,7 +148,7 @@ export default function Navigation({
           <li>
             <a
               href={`/workspaces/${workspaceId}`}
-              className="floating"
+              className="floating large"
               data-tooltip="Your library"
             >
               <LibraryIcon aria-hidden="true" />
@@ -157,7 +157,7 @@ export default function Navigation({
           <li>
             <button
               type="button"
-              className="floating"
+              className="floating large"
               data-tooltip="Create a new page"
               data-pending-text=""
               on:click={createNewPage}
@@ -172,6 +172,7 @@ export default function Navigation({
                 type="button"
                 classList={{
                   floating: true,
+                  large: true,
                   pending: bookmarkPending,
                 }}
                 aria-label={isBookmarked.derive((value) =>
@@ -200,7 +201,7 @@ export default function Navigation({
             <li>
               <button
                 id="toc-button"
-                className="floating"
+                className="floating large"
                 type="button"
                 popoverTarget="toc"
                 aria-label="Table of contents"

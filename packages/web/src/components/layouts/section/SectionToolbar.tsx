@@ -45,7 +45,7 @@ export default function SectionToolbar({
           <button
             type="button"
             role="menuitem"
-            className="floating small"
+            className="floating"
             aria-label="Full width"
             data-tooltip="Full width"
             aria-pressed={section.width.derive((value) =>
@@ -64,7 +64,7 @@ export default function SectionToolbar({
             type="button"
             role="menuitem"
             id={`${section.id}-options-button`}
-            className="floating small"
+            className="floating"
             popoverTarget={`${section.id}-options`}
             aria-label="More options"
             data-tooltip="More options"

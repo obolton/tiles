@@ -17,7 +17,7 @@ export default function BackgroundPicker({
       <button
         type="button"
         id="background-picker-button"
-        className="floating small"
+        className="floating"
         popovertarget="background-picker"
         aria-label="Background"
         aria-haspopup="menu"

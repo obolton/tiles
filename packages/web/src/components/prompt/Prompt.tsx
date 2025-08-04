@@ -67,7 +67,7 @@ export default function Prompt({
 
       <button
         type="submit"
-        classList={{ floating: true, small: true, pending }}
+        classList={{ floating: true, pending }}
         disabled={pending}
         data-tooltip={submitTooltip}
       >

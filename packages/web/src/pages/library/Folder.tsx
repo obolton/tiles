@@ -70,7 +70,7 @@ export default function Folder({
           <h2>{name}</h2>
           <button
             type="button"
-            className="floating small"
+            className="floating"
             aria-label="Folder settings"
             data-tooltip="Folder settings"
             onclick={editFolder}
