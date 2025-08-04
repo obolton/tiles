@@ -7,10 +7,6 @@
 :host(:focus-within),
 :host(:state(resizing)) {
   z-index: 2;
-
-  #resize {
-    opacity: 1;
-  }
 }
 
 #drag {
@@ -40,51 +36,63 @@
 }
 
 #resize {
+  --resize-handle-color: rgb(0 0 0 / 40%);
+
   position: absolute;
   box-sizing: border-box;
-  right: -6px;
-  bottom: -6px;
-  width: 16px;
-  height: 16px;
-  border-radius: 8px;
+  right: -12px;
+  bottom: -12px;
+  width: 24px;
+  height: 24px;
+  border-right: 12px solid var(--resize-handle-color);
+  border-bottom: 12px solid var(--resize-handle-color);
+  border-bottom-right-radius: calc(var(--border-radius) + 12px);
   cursor: nwse-resize;
   z-index: 1;
   opacity: 0;
   outline: none;
-  transition: opacity var(--animation-duration) var(--easing);
+  transition:
+    opacity var(--animation-duration-short) var(--easing),
+    border-color var(--animation-duration-short) var(--easing);
 
+  &::before,
   &::after {
     content: "";
     position: absolute;
-    width: 16px;
-    height: 16px;
-    border-radius: 8px;
-    background: var(--accent);
-    box-shadow:
-      inset 0 0 0 1px rgb(0 0 0 / 20%),
-      0 2px 1px -1px rgb(0 0 0 / 20%);
-    transition: scale var(--animation-duration-short) var(--easing);
+    background: var(--resize-handle-color);
+    transition: background-color var(--animation-duration-short) var(--easing);
   }
 
-  &:hover::after,
-  &:focus::after,
-  :host(:state(resizing)) &::after {
-    scale: 1.2;
+  &::before {
+    bottom: -12px;
+    left: -6px;
+    width: 6px;
+    height: 12px;
+    border-radius: 6px 0 0 6px;
   }
 
-  &:focus::after,
-  :host(:state(resizing)) &::after {
-    background: var(--focus-ring-color);
+  &::after {
+    top: -6px;
+    right: -12px;
+    width: 12px;
+    height: 6px;
+    border-radius: 6px 6px 0 0;
   }
-}
 
-@media (any-pointer: coarse) {
-  #resize {
-    right: -22px;
-    bottom: -22px;
-    width: 48px;
-    height: 48px;
-    padding: 16px;
+  :host(:hover) &,
+  :host(:focus-within) & {
+    opacity: 0.5;
+  }
+
+  &:hover,
+  &:focus,
+  :host(:state(resizing)) & {
+    opacity: 1 !important;
+  }
+
+  &:focus,
+  :host(:state(resizing)) & {
+    --resize-handle-color: var(--focus-ring-color);
   }
 }
 
