@@ -24,7 +24,7 @@ export default function BackgroundPopover({
   return (
     <popover-menu {...props} className={styles.popover}>
       <tab-bar>
-        <tab-item id="color-tab" for="color-tab-panel">
+        <tab-item id="color-tab" for="color-tab-panel" selected>
           <SolidColorIcon aria-hidden="true" />
           Color
         </tab-item>

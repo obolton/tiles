@@ -5,22 +5,19 @@ import styles from "./TextTile.module.css";
 import TextEditor, {
   type EditorState,
 } from "@/components/inputs/RichTextEditor/TextEditor";
-import ColorPicker from "@/components/colors/ColorPicker";
-import ImageIcon from "@/icons/image.svg?jsx";
+import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
 import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
 import ExpandIcon from "@/icons/expand.svg?jsx";
-import { showModal } from "@/utils/modals";
-import { uploadMedia } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
-import type { ImageModalResult } from "@/components/modals/image/ImageModal";
+import { Computed } from "@/utils/reactivity";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
-import type { Color } from "@/utils/color";
 import type { TextProperties } from "@/types/tiles";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type { Background } from "@/components/backgrounds/types";
 
 const ALIGN_ICON = {
   TOP: <VerticalAlignTopIcon aria-hidden="true" slot="icon" />,
@@ -45,6 +42,15 @@ export default function TextTile({
   onDelete,
 }: TextTileProps) {
   const { isEditable } = editor;
+  const background = new Computed(
+    [color, imageUrl] as const,
+    (colorValue, imageUrlValue) =>
+      imageUrlValue
+        ? ({ type: "image", imageUrl: imageUrlValue } as const)
+        : colorValue
+          ? ({ type: "color", color: colorValue } as const)
+          : null,
+  );
 
   const onBlur = async (state: EditorState) => {
     try {
@@ -59,49 +65,40 @@ export default function TextTile({
     }
   };
 
-  const onChangeColor = async (value: Color | null) => {
+  const onChangeBackground = async (value: Background | null) => {
     try {
-      viewTransition(() => {
-        color.value = value;
-      });
-      await editor.updateText({
-        id,
-        color: value,
-      });
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const onSelectImage = async () => {
-    if (imageUrl.value) {
-      try {
-        imageUrl.value = null;
+      if (!value) {
+        viewTransition(() => {
+          color.value = null;
+          imageUrl.value = null;
+        });
         await editor.updateText({
           id,
+          color: null,
           imageKey: null,
         });
-      } catch (error) {
-        handleError(error);
+      } else if (value.type === "image") {
+        const { imageUrl: newImageUrl } = await editor.updateText({
+          id,
+          imageKey: value.imageKey,
+        });
+        viewTransition(() => {
+          color.value = null;
+          imageUrl.value = newImageUrl;
+        });
+      } else {
+        viewTransition(() => {
+          color.value = value.color;
+          imageUrl.value = null;
+        });
+        await editor.updateText({
+          id,
+          color: value.color,
+          imageKey: null,
+        });
       }
-    } else {
-      showModal<ImageModalResult>("IMAGE", {
-        async onConfirm(result) {
-          if (!result) {
-            return;
-          }
-          try {
-            const imageKey = await uploadMedia(result.image, "image");
-            const { imageUrl: newImageUrl } = await editor.updateText({
-              id,
-              imageKey,
-            });
-            imageUrl.value = newImageUrl;
-          } catch (error) {
-            handleError(error);
-          }
-        },
-      });
+    } catch (error) {
+      handleError(error);
     }
   };
 
@@ -168,27 +165,12 @@ export default function TextTile({
               extraToolbarItems={
                 <ul role="group">
                   <li role="presentation">
-                    <ColorPicker
-                      value={color}
-                      onChange={onChangeColor}
-                      showClear
+                    <BackgroundPicker
+                      value={background}
+                      onChange={onChangeBackground}
                     />
                   </li>
-                  <li role="presentation">
-                    <button
-                      role="menuitem"
-                      className="floating small"
-                      aria-label="Background image"
-                      data-tooltip="Background image"
-                      type="button"
-                      aria-pressed={imageUrl.derive((value) =>
-                        value ? "true" : "false",
-                      )}
-                      on:click={onSelectImage}
-                    >
-                      <ImageIcon aria-hidden="true" />
-                    </button>
-                  </li>
+
                   <li role="presentation">
                     <swatch-select
                       role="menuitem"
