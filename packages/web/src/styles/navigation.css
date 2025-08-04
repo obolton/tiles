@@ -1,13 +1,18 @@
 #navigation {
   position: fixed;
   inset: 0 auto 0 0;
-  width: 80px;
-  height: 100%;
+  width: 88px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: -24px 0;
   padding: 8px 0;
+  background: var(--ui-background-color);
+  backdrop-filter: blur(24px);
+  background-clip: padding-box;
+  border-right: 1px solid rgb(0 0 0 / 20%);
+  box-shadow: 8px 0 24px 0 rgb(0 0 0 / 10%);
   overflow: auto;
   z-index: 2;
 
