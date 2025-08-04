@@ -31,7 +31,7 @@
 @property --icon-color {
   syntax: "<color>";
   inherits: true;
-  initial-value: rgb(0 0 0 / 70%);
+  initial-value: rgb(0 0 0 / 80%);
 }
 
 @property --ui-color {
@@ -81,7 +81,6 @@ body {
 
 body.dark {
   --text-color: rgb(255 255 255 / 80%);
-  --icon-color: rgb(255 255 255 / 90%);
   --placeholder-color: rgb(255 255 255 / 20%);
 }
 
