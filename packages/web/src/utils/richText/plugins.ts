@@ -7,6 +7,7 @@ import { placeholders } from "./placeholders";
 import { dates } from "./dates";
 import { links } from "./links";
 import { headings } from "./headings";
+import { prompt } from "./prompt";
 
 export function getPlugins() {
   return [
@@ -18,5 +19,6 @@ export function getPlugins() {
     dates(),
     links(),
     headings(),
+    prompt(),
   ];
 }
