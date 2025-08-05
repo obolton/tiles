@@ -326,10 +326,17 @@ export default class TableView extends HTMLElement {
       return;
     }
 
-    const { target } = event;
+    const target =
+      event.target instanceof HTMLElement
+        ? event.target.closest<HTMLTableCellElement>("th, td")
+        : null;
 
+    if (!target) {
+      return;
+    }
+
+    // Column selection
     if (
-      target instanceof HTMLTableCellElement &&
       target.tagName === "TH" &&
       target.scope === "col" &&
       target.ariaColIndex
@@ -344,8 +351,8 @@ export default class TableView extends HTMLElement {
       return;
     }
 
+    // Row selection
     if (
-      target instanceof HTMLTableCellElement &&
       target.tagName === "TH" &&
       target.scope === "row" &&
       target.parentElement?.ariaRowIndex
@@ -353,6 +360,28 @@ export default class TableView extends HTMLElement {
       event.preventDefault();
       const selection = {
         row: parseInt(target.parentElement.ariaRowIndex, 10),
+      };
+      if (event.shiftKey) {
+        this.addSelection(selection);
+      } else {
+        this.setSelection(selection);
+      }
+      return;
+    }
+
+    // Cell selection
+    if (
+      target.tagName === "TD" &&
+      target.ariaColIndex &&
+      target.parentElement?.ariaRowIndex
+    ) {
+      const anchor = {
+        column: parseInt(target.ariaColIndex, 10),
+        row: parseInt(target.parentElement.ariaRowIndex, 10),
+      };
+      const selection = {
+        anchor,
+        focus: anchor,
       };
       if (event.shiftKey) {
         this.addSelection(selection);
