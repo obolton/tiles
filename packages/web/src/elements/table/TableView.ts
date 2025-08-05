@@ -310,23 +310,49 @@ export default class TableView extends HTMLElement {
 
   private handleKeyDown(event: KeyboardEvent) {
     const activeElement = document.activeElement;
-    if (
-      event.key === "Escape" &&
-      activeElement instanceof HTMLElement &&
-      this.contains(activeElement)
-    ) {
-      event.preventDefault();
-      activeElement.blur();
-      this.closest<HTMLElement>("[tabindex]")?.focus({ preventScroll: true });
-    }
 
-    if (event.key === "Tab") {
-      event.preventDefault();
-      if (event.shiftKey) {
-        this.focusPreviousCell();
-      } else {
-        this.focusNextCell();
-      }
+    switch (event.key) {
+      case "Escape":
+        if (
+          activeElement instanceof HTMLElement &&
+          this.contains(activeElement)
+        ) {
+          event.preventDefault();
+          activeElement.blur();
+          this.closest<HTMLElement>("[tabindex]")?.focus({
+            preventScroll: true,
+          });
+        }
+        break;
+
+      case "Tab":
+        event.preventDefault();
+        if (event.shiftKey) {
+          this.focusCellBefore();
+        } else {
+          this.focusCellAfter();
+        }
+        break;
+
+      case "ArrowLeft":
+        event.preventDefault();
+        this.focusCellBefore();
+        break;
+
+      case "ArrowRight":
+        event.preventDefault();
+        this.focusCellAfter();
+        break;
+
+      case "ArrowUp":
+        event.preventDefault();
+        this.focusCellAbove();
+        break;
+
+      case "ArrowDown":
+        event.preventDefault();
+        this.focusCellBelow();
+        break;
     }
   }
 
@@ -640,42 +666,57 @@ export default class TableView extends HTMLElement {
     );
   }
 
-  private focusNextCell() {
+  private getSelectionAnchor() {
     const selection = Array.from(this.selection)[0];
-    if (selection && "anchor" in selection) {
-      this.selectCell(this.getNextCell(selection.anchor));
-    }
+    return selection && "anchor" in selection ? selection.anchor : null;
   }
 
-  private focusPreviousCell() {
-    const selection = Array.from(this.selection)[0];
-    if (selection && "anchor" in selection) {
-      this.selectCell(this.getPreviousCell(selection.anchor));
+  private focusCellBefore() {
+    const anchor = this.getSelectionAnchor();
+    if (!anchor) {
+      return;
     }
+    const { row, column } = anchor;
+    this.selectCell({
+      row,
+      column: Math.max(column - 1, 0),
+    });
   }
 
-  private getNextCell(cell: Cell) {
-    const next = {
-      column: cell.column + 1,
-      row: cell.row,
-    };
-    if (next.column >= this.#columns) {
-      next.column = 0;
-      next.row = (next.row + 1) % this.#rows;
+  private focusCellAfter() {
+    const anchor = this.getSelectionAnchor();
+    if (!anchor) {
+      return;
     }
-    return next;
+    const { row, column } = anchor;
+    this.selectCell({
+      row,
+      column: Math.min(column + 1, this.#columns - 1),
+    });
   }
 
-  private getPreviousCell(cell: Cell) {
-    const previous = {
-      column: cell.column - 1,
-      row: cell.row,
-    };
-    if (previous.column < 0) {
-      previous.column = this.#columns - 1;
-      previous.row = (previous.row - 1) % this.#rows;
+  private focusCellAbove() {
+    const anchor = this.getSelectionAnchor();
+    if (!anchor) {
+      return;
     }
-    return previous;
+    const { row, column } = anchor;
+    this.selectCell({
+      row: Math.max(row - 1, 0),
+      column,
+    });
+  }
+
+  private focusCellBelow() {
+    const anchor = this.getSelectionAnchor();
+    if (!anchor) {
+      return;
+    }
+    const { row, column } = anchor;
+    this.selectCell({
+      row: Math.min(row + 1, this.#rows - 1),
+      column,
+    });
   }
 
   private selectCell(cell: Cell) {
