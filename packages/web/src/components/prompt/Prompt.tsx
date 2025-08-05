@@ -1,3 +1,4 @@
+import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import CheckIcon from "@/icons/check.svg?jsx";
 import { flag } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
@@ -57,8 +58,9 @@ export default function Prompt({
 
   return (
     <form className={styles.prompt} on:submit={handleSubmit}>
-      <textarea
+      <ResizingTextarea
         name="prompt"
+        rows="1"
         placeholder={placeholder}
         required
         disabled={pending}
