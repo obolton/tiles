@@ -6,6 +6,7 @@ import {
   getSelectionHeadingLevel,
   getSelectionBlockNodeTypes,
 } from "./helpers";
+import { PROMPT_PLUGIN_KEY, type PromptMeta } from "./prompt";
 import type { NodeType } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
 
@@ -240,3 +241,24 @@ export function insertDateTime(value: Date, time?: boolean): Command {
 export const approve = unwrap(schema.nodes.pending);
 
 export const reject = deleteNode(schema.nodes.pending);
+
+export const showPrompt: Command = (state, dispatch) => {
+  if (dispatch) {
+    const pos = state.selection.from;
+    const tr = state.tr.setMeta(PROMPT_PLUGIN_KEY, {
+      pos,
+    } as PromptMeta);
+    dispatch(tr);
+  }
+  return true;
+};
+
+export const hidePrompt: Command = (state, dispatch) => {
+  if (dispatch) {
+    const tr = state.tr.setMeta(PROMPT_PLUGIN_KEY, {
+      pos: null,
+    } as PromptMeta);
+    dispatch(tr);
+  }
+  return true;
+};
