@@ -1,4 +1,3 @@
-import TileButtons from "@/components/menu/TileButtons";
 import FullWidthIcon from "@/icons/full-width.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
@@ -38,8 +37,6 @@ export default function SectionToolbar({
 
   return (
     <floating-toolbar data-tooltip-position="top" aria-label="Section toolbar">
-      <TileButtons editor={editor} sectionId={section.id} />
-
       <ul role="group" aria-label="Size">
         <li role="presentation">
           <button

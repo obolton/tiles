@@ -1,5 +1,4 @@
 import CollaborationButtons from "./CollaborationButtons";
-import TileButtons from "./TileButtons";
 import FormattingTools from "./FormattingTools";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
@@ -37,8 +36,6 @@ export default function EditingTools({
         isPublished={isPublished}
         allowPublish={allowPublish}
       />
-
-      <TileButtons editor={editor} />
 
       <FormattingTools editor={editor} />
 
