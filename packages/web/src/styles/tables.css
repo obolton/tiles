@@ -1,4 +1,18 @@
+@property --header-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(255 255 255 / 90%);
+}
+
+@property --cell-border-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 0 0 / 10%);
+}
+
 table-view {
+  --header-color: oklch(from var(--tile-background) 90% c h / 80%);
+
   display: block;
   overflow: auto;
   contain: strict;
@@ -24,9 +38,10 @@ table-view {
   & th {
     position: relative;
     padding: 0;
-    background: oklch(from var(--tile-background) 90% c h);
-    border-right: 1px solid rgb(0 0 0 / 10%);
-    border-bottom: 1px solid rgb(0 0 0 / 10%);
+    background: var(--header-color);
+    backdrop-filter: blur(4px);
+    border-right: 1px solid var(--cell-border-color);
+    border-bottom: 1px solid var(--cell-border-color);
     cursor: grab;
 
     &[scope="row"] {
@@ -35,9 +50,17 @@ table-view {
       z-index: 1;
     }
 
+    &.selected {
+      background: color-mix(
+        in lch,
+        var(--header-color) 80%,
+        var(--focus-ring-color) 20%
+      );
+    }
+
     & > resize-handle {
       position: absolute;
-      width: 7px;
+      width: 5px;
       height: 100cqh;
       top: 0;
       right: -4px;
@@ -57,6 +80,7 @@ table-view {
       scale: 1;
       opacity: 1;
       background: rgb(0 0 0 / 30%);
+      backdrop-filter: none;
 
       &[scope="col"] {
         height: 100cqh !important;
@@ -70,18 +94,18 @@ table-view {
 
   & td {
     align-content: center;
-    padding: 0 8px;
-    border-right: 1px solid rgb(0 0 0 / 10%);
-    border-bottom: 1px solid rgb(0 0 0 / 10%);
+    padding: 0 0.5em;
+    border-right: 1px solid var(--cell-border-color);
+    border-bottom: 1px solid var(--cell-border-color);
+    outline: 2px solid transparent;
+    outline-offset: -2px;
     overflow: clip;
     overflow-wrap: anywhere;
-    outline-color: transparent;
     transition: outline-color var(--animation-duration-short) var(--easing);
 
     &:focus {
-      border-color: transparent;
       border-radius: 4px;
-      outline: var(--focus-outline);
+      outline-color: var(--focus-ring-color);
     }
   }
 
