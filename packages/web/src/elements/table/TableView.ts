@@ -319,6 +319,15 @@ export default class TableView extends HTMLElement {
       activeElement.blur();
       this.closest<HTMLElement>("[tabindex]")?.focus({ preventScroll: true });
     }
+
+    if (event.key === "Tab") {
+      event.preventDefault();
+      if (event.shiftKey) {
+        this.focusPreviousCell();
+      } else {
+        this.focusNextCell();
+      }
+    }
   }
 
   private handlePointerDown(event: PointerEvent) {
@@ -629,6 +638,51 @@ export default class TableView extends HTMLElement {
     this.querySelector(`tr[aria-rowindex="${row}"] > th`)?.classList.add(
       "selected",
     );
+  }
+
+  private focusNextCell() {
+    const selection = Array.from(this.selection)[0];
+    if (selection && "anchor" in selection) {
+      this.selectCell(this.getNextCell(selection.anchor));
+    }
+  }
+
+  private focusPreviousCell() {
+    const selection = Array.from(this.selection)[0];
+    if (selection && "anchor" in selection) {
+      this.selectCell(this.getPreviousCell(selection.anchor));
+    }
+  }
+
+  private getNextCell(cell: Cell) {
+    const next = {
+      column: cell.column + 1,
+      row: cell.row,
+    };
+    if (next.column >= this.#columns) {
+      next.column = 0;
+      next.row = (next.row + 1) % this.#rows;
+    }
+    return next;
+  }
+
+  private getPreviousCell(cell: Cell) {
+    const previous = {
+      column: cell.column - 1,
+      row: cell.row,
+    };
+    if (previous.column < 0) {
+      previous.column = this.#columns - 1;
+      previous.row = (previous.row - 1) % this.#rows;
+    }
+    return previous;
+  }
+
+  private selectCell(cell: Cell) {
+    this.setSelection({ anchor: cell, focus: cell });
+    this.querySelector<HTMLTableCellElement>(
+      `tr[aria-rowindex="${cell.row}"] > td[aria-colindex="${cell.column}"]`,
+    )?.focus();
   }
 
   // Column sizing
