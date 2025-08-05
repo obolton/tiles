@@ -1,6 +1,7 @@
 import EditingToolbar from "@/components/menu/EditingToolbar";
 import PageContents from "@/components/pages/PageContents";
 import Editor from "@/editor/Editor";
+import InsertToolbar from "@/components/toolbars/insert/InsertToolbar";
 import { isSignedIn } from "@/utils/sessions";
 import type { AppRouterOutputs } from "@/api/client";
 
@@ -34,6 +35,10 @@ export default function EditablePage({ page }: EditablePage) {
             ),
           )
         : null}
+
+      {isEditable.derive((value) =>
+        value ? <InsertToolbar editor={editor} /> : null,
+      )}
     </>
   );
 }
