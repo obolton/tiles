@@ -62,6 +62,7 @@ export default function Prompt({
         name="prompt"
         rows="1"
         placeholder={placeholder}
+        title={placeholder}
         required
         disabled={pending}
         on:keydown={handleKeyDown}
