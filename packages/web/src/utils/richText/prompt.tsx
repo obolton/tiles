@@ -1,6 +1,6 @@
 import { Plugin, PluginKey } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
-import Prompt from "@/components/prompt/Prompt";
+import InlinePrompt from "@/components/prompt/InlinePrompt";
 import { render } from "@/jsx/dom";
 import { insertFromStream } from "@/utils/richText/stream";
 import client from "@/api/client";
@@ -13,6 +13,11 @@ export interface PromptMeta {
 }
 
 function getElement(view: EditorView) {
+  function removePrompt() {
+    view.dispatch(view.state.tr.setMeta(PROMPT_PLUGIN_KEY, { pos: null }));
+    view.focus();
+  }
+
   async function onSubmit(prompt: string) {
     const pageId = document.body.dataset.pageId;
     if (!pageId) {
@@ -22,12 +27,16 @@ function getElement(view: EditorView) {
       { pageId, prompt },
       { context: { stream: true } },
     );
-    view.dispatch(view.state.tr.setMeta(PROMPT_PLUGIN_KEY, { pos: null }));
+    removePrompt();
     await insertFromStream(view, stream);
   }
 
   const element = render(
-    <Prompt placeholder="Ask anything" onSubmit={onSubmit} />,
+    <InlinePrompt
+      placeholder="Ask anything"
+      onSubmit={onSubmit}
+      onCancel={removePrompt}
+    />,
   ) as HTMLElement;
 
   requestAnimationFrame(() => element.querySelector("textarea")?.focus());
