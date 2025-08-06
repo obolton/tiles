@@ -104,16 +104,33 @@ export default function TextTile({
 
   const onKeyDown = (event: KeyboardEvent) => {
     const editor = event.currentTarget as HTMLElement;
+
+    if (
+      event.defaultPrevented ||
+      event.repeat ||
+      event.shiftKey ||
+      event.ctrlKey ||
+      event.altKey ||
+      event.metaKey
+    ) {
+      return;
+    }
+
     if (
       (event.key === "Delete" || event.key === "Backspace") &&
-      !event.repeat &&
-      !event.shiftKey &&
-      !event.ctrlKey &&
-      !event.altKey &&
-      !event.metaKey &&
       editor.textContent === ""
     ) {
       onDelete?.();
+    }
+
+    // Prevent ancestors from acting on keyboard navigation
+    if (
+      event.key === "ArrowLeft" ||
+      event.key === "ArrowRight" ||
+      event.key === "ArrowUp" ||
+      event.key === "ArrowDown"
+    ) {
+      event.stopPropagation();
     }
   };
 

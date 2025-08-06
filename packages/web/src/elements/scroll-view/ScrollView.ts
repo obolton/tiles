@@ -117,6 +117,7 @@ export default class ScrollView extends HTMLElement {
 
   private handleKeyDown(event: KeyboardEvent) {
     if (
+      event.defaultPrevented ||
       event.repeat ||
       event.shiftKey ||
       event.ctrlKey ||
