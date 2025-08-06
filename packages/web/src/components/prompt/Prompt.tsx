@@ -2,9 +2,11 @@ import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import CheckIcon from "@/icons/check.svg?jsx";
 import { flag } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
+import { classNames } from "@/utils/css";
 import styles from "./Prompt.module.css";
 
 export interface PromptProps {
+  className?: string;
   placeholder?: string;
   submitTooltip?: string;
   onSubmit: (prompt: string) => Promise<void>;
@@ -12,6 +14,7 @@ export interface PromptProps {
 }
 
 export default function Prompt({
+  className,
   placeholder,
   submitTooltip = "Done",
   onSubmit,
@@ -57,7 +60,10 @@ export default function Prompt({
   }
 
   return (
-    <form className={styles.prompt} on:submit={handleSubmit}>
+    <form
+      className={classNames(styles.prompt, className)}
+      on:submit={handleSubmit}
+    >
       <ResizingTextarea
         name="prompt"
         rows="1"
@@ -70,7 +76,7 @@ export default function Prompt({
 
       <button
         type="submit"
-        classList={{ floating: true, pending }}
+        classList={{ floating: true, small: true, pending }}
         disabled={pending}
         data-tooltip={submitTooltip}
       >
