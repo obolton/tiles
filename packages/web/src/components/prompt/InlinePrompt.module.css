@@ -1,0 +1,36 @@
+.container {
+  position: absolute;
+  display: inline-block;
+  translate: 1px -8px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 8px auto auto -2px;
+    width: 3px;
+    height: 1lh;
+    border-radius: 1.5px;
+    background: currentcolor;
+    opacity: 0.9;
+    z-index: 1;
+  }
+}
+
+.prompt {
+  background: rgb(255 255 255 / 80%);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 40%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
+
+  & > textarea {
+    font-size: 18px;
+    outline: none;
+  }
+
+  & > button {
+    inset: 0 0 auto auto;
+    margin: 6px;
+  }
+}
