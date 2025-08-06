@@ -6,7 +6,9 @@ import { insertFromStream } from "@/utils/richText/stream";
 import client from "@/api/client";
 import type { EditorView } from "prosemirror-view";
 
-export const PROMPT_PLUGIN_KEY = new PluginKey("prompt-plugin");
+export const PROMPT_PLUGIN_KEY = new PluginKey<DecorationSet | null>(
+  "prompt-plugin",
+);
 
 export interface PromptMeta {
   pos: number | null;
@@ -44,24 +46,25 @@ function getElement(view: EditorView) {
   return element;
 }
 
-export function prompt() {
-  return new Plugin({
+export function prompt(callback?: (isOpen: boolean) => void) {
+  return new Plugin<DecorationSet | null>({
     key: PROMPT_PLUGIN_KEY,
 
     state: {
       init() {
-        return DecorationSet.empty;
+        return null;
       },
 
       apply(tr, decorations) {
         const meta = tr.getMeta(PROMPT_PLUGIN_KEY) as PromptMeta | undefined;
 
         if (!meta) {
-          return decorations.map(tr.mapping, tr.doc);
+          return decorations?.map(tr.mapping, tr.doc) ?? null;
         }
 
         if (meta.pos === null) {
-          return DecorationSet.empty;
+          callback?.(false);
+          return null;
         } else {
           const decoration = Decoration.widget(meta.pos, getElement, {
             ignoreSelection: true,
@@ -71,6 +74,7 @@ export function prompt() {
               return true;
             },
           });
+          callback?.(true);
           return DecorationSet.create(tr.doc, [decoration]);
         }
       },
