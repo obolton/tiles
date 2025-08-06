@@ -6,7 +6,7 @@ import {
 } from "prosemirror-schema-list";
 import type { Command } from "prosemirror-state";
 import { schema } from "./schema";
-import { showPrompt } from "./commands";
+import { togglePrompt } from "./commands";
 
 interface Keymap {
   [k: string]: Command;
@@ -19,5 +19,5 @@ export const keys = {
   Enter: splitListItem(schema.nodes.list_item),
   Tab: sinkListItem(schema.nodes.list_item),
   "Shift-Tab": liftListItem(schema.nodes.list_item),
-  "Mod-/": showPrompt,
+  "Mod-/": togglePrompt,
 } satisfies Keymap;
