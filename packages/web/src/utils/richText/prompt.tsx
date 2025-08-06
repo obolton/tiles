@@ -65,6 +65,11 @@ export function prompt() {
         } else {
           const decoration = Decoration.widget(meta.pos, getElement, {
             ignoreSelection: true,
+
+            // Prevent the editor from handling events from the prompt
+            stopEvent() {
+              return true;
+            },
           });
           return DecorationSet.create(tr.doc, [decoration]);
         }
