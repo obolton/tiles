@@ -1,4 +1,3 @@
-import Prompt from "@/components/prompt/Prompt";
 import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
 import H3Icon from "@/icons/h3.svg?jsx";
@@ -21,9 +20,6 @@ import AIIcon from "@/icons/ai.svg?jsx";
 import ApproveIcon from "@/icons/approve.svg?jsx";
 import RejectIcon from "@/icons/reject.svg?jsx";
 import { registerModal, showModal } from "@/utils/modals";
-import { flag } from "@/utils/reactivity";
-import { handleError } from "@/utils/errors";
-import { viewTransition } from "@/utils/transitions";
 import type { DateTimeModalResult } from "@/components/modals/DateTimeModal";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { EditorView } from "prosemirror-view";
@@ -45,9 +41,9 @@ import {
   insertDateTime,
   approve,
   reject,
+  togglePrompt,
 } from "@/utils/richText/commands";
 import { getLink } from "@/utils/richText/helpers";
-import { insertFromStream } from "@/utils/richText/stream";
 import type { Format, TextAlignment, ListType } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
@@ -78,6 +74,7 @@ const LIST_ICON = {
 interface FormattingToolbarProps {
   editor: Editor;
   format: Reactive<Format>;
+  prompting: Reactive<boolean>;
   getEditorView: () => EditorView | undefined;
   performCommand: (command: Command) => void;
   children?: JSX.Node;
@@ -88,10 +85,9 @@ export default function FormattingToolbar({
   getEditorView,
   performCommand,
   format,
+  prompting,
   children,
 }: FormattingToolbarProps) {
-  const showPrompt = flag(false);
-
   const insertNewDate = () => {
     showModal<DateTimeModalResult>("DATE_TIME", {
       onConfirm({ value, time }) {
@@ -168,40 +164,7 @@ export default function FormattingToolbar({
       ),
     );
 
-  const togglePrompt = () => {
-    viewTransition(() => {
-      showPrompt.toggle();
-      if (!showPrompt.value) {
-        getEditorView()?.focus();
-      }
-    });
-  };
-
-  const onSubmitPrompt = async (prompt: string) => {
-    try {
-      const view = getEditorView();
-      if (!view) {
-        return;
-      }
-
-      viewTransition(() => {
-        showPrompt.off();
-        view.focus();
-      });
-
-      const stream = await editor.write({ prompt });
-      await insertFromStream(view, stream);
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const onCancelPrompt = () => {
-    viewTransition(() => {
-      showPrompt.off();
-      getEditorView()?.focus();
-    });
-  };
+  const onTogglePrompt = () => performCommand(togglePrompt);
 
   return (
     <floating-toolbar
@@ -216,10 +179,10 @@ export default function FormattingToolbar({
             className="floating"
             aria-label="Write with AI"
             data-tooltip="Write with AI"
-            on:click={togglePrompt}
-            aria-pressed={showPrompt.derive((value) =>
+            aria-pressed={prompting.derive((value) =>
               value ? "true" : "false",
             )}
+            on:click={onTogglePrompt}
           >
             <AIIcon aria-hidden="true" />
           </button>
@@ -258,250 +221,237 @@ export default function FormattingToolbar({
         )}
       </ul>
 
-      {showPrompt.derive((value) =>
-        value ? (
-          <Prompt onSubmit={onSubmitPrompt} onCancel={onCancelPrompt} />
-        ) : (
-          <>
-            <ul role="group" aria-label="Tools">
-              <li role="presentation">
-                <button
-                  id="insert-content-button"
-                  role="menuitem"
-                  className="floating"
-                  popoverTarget="insert-content-menu"
-                  aria-label="Insert content"
-                  aria-haspopup="menu"
-                  aria-expanded="false"
-                  data-tooltip="Insert content"
-                  type="button"
-                >
-                  <NewIcon aria-hidden="true" />
-                </button>
+      <ul role="group" aria-label="Tools">
+        <li role="presentation">
+          <button
+            id="insert-content-button"
+            role="menuitem"
+            className="floating"
+            popoverTarget="insert-content-menu"
+            aria-label="Insert content"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            data-tooltip="Insert content"
+            type="button"
+          >
+            <NewIcon aria-hidden="true" />
+          </button>
 
-                <popover-menu
-                  id="insert-content-menu"
-                  anchor="insert-content-button"
-                >
-                  <menu>
-                    <li>
-                      <button type="button" on:click={insertNewDate}>
-                        <EventIcon aria-hidden="true" />
-                        Date
-                      </button>
-                    </li>
-                  </menu>
-                </popover-menu>
-              </li>
-            </ul>
-
-            <ul role="group" aria-label="Heading">
-              <li role="presentation">
-                <swatch-select
-                  role="menuitem"
-                  aria-label="Heading"
-                  aria-selected={format.derive((value) =>
-                    typeof value.headingLevel === "number" ? "true" : undefined,
-                  )}
-                  data-tooltip="Heading"
-                  orientation="horizontal"
-                  align="center"
-                  value={format.derive((value) =>
-                    typeof value.headingLevel === "number"
-                      ? value.headingLevel.toString()
-                      : undefined,
-                  )}
-                  on:change={formatHeading}
-                >
-                  {format.derive(
-                    (value) => HEADING_ICON[value.headingLevel ?? 1],
-                  )}
-
-                  <swatch-item value="1" data-tooltip="Heading level 1">
-                    <H1Icon aria-hidden="true" />
-                  </swatch-item>
-                  <swatch-item value="2" data-tooltip="Heading level 2">
-                    <H2Icon aria-hidden="true" />
-                  </swatch-item>
-                  <swatch-item value="3" data-tooltip="Heading level 3">
-                    <H3Icon aria-hidden="true" />
-                  </swatch-item>
-                </swatch-select>
-              </li>
-
-              <li role="presentation">
-                <swatch-select
-                  role="menuitem"
-                  aria-label="List"
-                  data-tooltip="List"
-                  orientation="horizontal"
-                  align="center"
-                  value={format.derive((value) => value.list ?? "")}
-                  on:change={formatList}
-                >
-                  {format.derive((value) =>
-                    value.list ? (
-                      LIST_ICON[value.list]
-                    ) : (
-                      <UnorderedListIcon aria-hidden="true" slot="icon" />
-                    ),
-                  )}
-
-                  <swatch-item value="unordered" data-tooltip="Unordered list">
-                    <UnorderedListIcon aria-hidden="true" />
-                  </swatch-item>
-                  <swatch-item value="ordered" data-tooltip="Ordered list">
-                    <OrderedListIcon aria-hidden="true" />
-                  </swatch-item>
-                  <swatch-item value="check" data-tooltip="Check list">
-                    <CheckListIcon aria-hidden="true" />
-                  </swatch-item>
-                </swatch-select>
-              </li>
-            </ul>
-
-            <ul role="group" aria-label="Text style">
-              <li role="presentation">
-                <button
-                  role="menuitem"
-                  className="floating"
-                  aria-label="Bold"
-                  data-tooltip="Format as bold"
-                  type="button"
-                  aria-pressed={format.derive((value) =>
-                    value.bold ? "true" : "false",
-                  )}
-                  on:click={formatBold}
-                >
-                  <BoldIcon aria-hidden="true" />
+          <popover-menu id="insert-content-menu" anchor="insert-content-button">
+            <menu>
+              <li>
+                <button type="button" on:click={insertNewDate}>
+                  <EventIcon aria-hidden="true" />
+                  Date
                 </button>
               </li>
-              <li role="presentation">
-                <button
-                  role="menuitem"
-                  className="floating"
-                  aria-label="Italic"
-                  data-tooltip="Format as italic"
-                  type="button"
-                  aria-pressed={format.derive((value) =>
-                    value.italic ? "true" : "false",
-                  )}
-                  on:click={formatItalic}
-                >
-                  <ItalicIcon aria-hidden="true" />
-                </button>
-              </li>
-              <li role="presentation">
-                <button
-                  role="menuitem"
-                  className="floating"
-                  aria-label="Underlined"
-                  data-tooltip="Format as underlined"
-                  type="button"
-                  aria-pressed={format.derive((value) =>
-                    value.underline ? "true" : "false",
-                  )}
-                  on:click={formatUnderline}
-                >
-                  <UnderlineIcon aria-hidden="true" />
-                </button>
-              </li>
-              <li role="presentation">
-                <button
-                  role="menuitem"
-                  className="floating"
-                  aria-label="Strike-through"
-                  data-tooltip="Format as strike-through"
-                  type="button"
-                  aria-pressed={format.derive((value) =>
-                    value.strikethrough ? "true" : "false",
-                  )}
-                  on:click={formatStrikethrough}
-                >
-                  <StrikethroughIcon aria-hidden="true" />
-                </button>
-              </li>
-              <li role="presentation">
-                <button
-                  role="menuitem"
-                  className="floating"
-                  aria-label="Highlight"
-                  data-tooltip="Format as highlighted"
-                  type="button"
-                  aria-pressed={format.derive((value) =>
-                    value.highlight ? "true" : "false",
-                  )}
-                  on:click={formatHighlight}
-                >
-                  <HighlightIcon aria-hidden="true" />
-                </button>
-              </li>
-              <li role="presentation">
-                <button
-                  role="menuitem"
-                  className="floating"
-                  aria-label="Quote"
-                  data-tooltip="Format as a quote"
-                  type="button"
-                  aria-pressed={format.derive((value) =>
-                    value.quote ? "true" : "false",
-                  )}
-                  on:click={formatQuote}
-                >
-                  <QuoteIcon aria-hidden="true" />
-                </button>
-              </li>
-              <li role="presentation">
-                <button
-                  role="menuitem"
-                  className="floating"
-                  aria-label="Link"
-                  data-tooltip="Add a link"
-                  type="button"
-                  aria-pressed={format.derive((value) =>
-                    value.link ? "true" : "false",
-                  )}
-                  on:click={formatLink}
-                >
-                  <LinkIcon aria-hidden="true" />
-                </button>
-              </li>
-              <li role="presentation">
-                <swatch-select
-                  role="menuitem"
-                  aria-label="Text alignment"
-                  data-tooltip="Text alignment"
-                  aria-orientation="vertical"
-                  orientation="horizontal"
-                  align="center"
-                  value={format.derive((value) => value.align)}
-                  on:change={formatAlignment}
-                >
-                  {format.derive((value) =>
-                    value.align ? (
-                      ALIGN_ICON[value.align]
-                    ) : (
-                      <AlignLeftIcon aria-hidden="true" slot="icon" />
-                    ),
-                  )}
+            </menu>
+          </popover-menu>
+        </li>
+      </ul>
 
-                  <swatch-item value="left" data-tooltip="Align left">
-                    <AlignLeftIcon aria-hidden="true" />
-                  </swatch-item>
-                  <swatch-item value="center" data-tooltip="Align center">
-                    <AlignCenterIcon aria-hidden="true" />
-                  </swatch-item>
-                  <swatch-item value="right" data-tooltip="Align right">
-                    <AlignRightIcon aria-hidden="true" />
-                  </swatch-item>
-                </swatch-select>
-              </li>
-            </ul>
+      <ul role="group" aria-label="Heading">
+        <li role="presentation">
+          <swatch-select
+            role="menuitem"
+            aria-label="Heading"
+            aria-selected={format.derive((value) =>
+              typeof value.headingLevel === "number" ? "true" : undefined,
+            )}
+            data-tooltip="Heading"
+            orientation="horizontal"
+            align="center"
+            value={format.derive((value) =>
+              typeof value.headingLevel === "number"
+                ? value.headingLevel.toString()
+                : undefined,
+            )}
+            on:change={formatHeading}
+          >
+            {format.derive((value) => HEADING_ICON[value.headingLevel ?? 1])}
 
-            {children}
-          </>
-        ),
-      )}
+            <swatch-item value="1" data-tooltip="Heading level 1">
+              <H1Icon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="2" data-tooltip="Heading level 2">
+              <H2Icon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="3" data-tooltip="Heading level 3">
+              <H3Icon aria-hidden="true" />
+            </swatch-item>
+          </swatch-select>
+        </li>
+
+        <li role="presentation">
+          <swatch-select
+            role="menuitem"
+            aria-label="List"
+            data-tooltip="List"
+            orientation="horizontal"
+            align="center"
+            value={format.derive((value) => value.list ?? "")}
+            on:change={formatList}
+          >
+            {format.derive((value) =>
+              value.list ? (
+                LIST_ICON[value.list]
+              ) : (
+                <UnorderedListIcon aria-hidden="true" slot="icon" />
+              ),
+            )}
+
+            <swatch-item value="unordered" data-tooltip="Unordered list">
+              <UnorderedListIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="ordered" data-tooltip="Ordered list">
+              <OrderedListIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="check" data-tooltip="Check list">
+              <CheckListIcon aria-hidden="true" />
+            </swatch-item>
+          </swatch-select>
+        </li>
+      </ul>
+
+      <ul role="group" aria-label="Text style">
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating"
+            aria-label="Bold"
+            data-tooltip="Format as bold"
+            type="button"
+            aria-pressed={format.derive((value) =>
+              value.bold ? "true" : "false",
+            )}
+            on:click={formatBold}
+          >
+            <BoldIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating"
+            aria-label="Italic"
+            data-tooltip="Format as italic"
+            type="button"
+            aria-pressed={format.derive((value) =>
+              value.italic ? "true" : "false",
+            )}
+            on:click={formatItalic}
+          >
+            <ItalicIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating"
+            aria-label="Underlined"
+            data-tooltip="Format as underlined"
+            type="button"
+            aria-pressed={format.derive((value) =>
+              value.underline ? "true" : "false",
+            )}
+            on:click={formatUnderline}
+          >
+            <UnderlineIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating"
+            aria-label="Strike-through"
+            data-tooltip="Format as strike-through"
+            type="button"
+            aria-pressed={format.derive((value) =>
+              value.strikethrough ? "true" : "false",
+            )}
+            on:click={formatStrikethrough}
+          >
+            <StrikethroughIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating"
+            aria-label="Highlight"
+            data-tooltip="Format as highlighted"
+            type="button"
+            aria-pressed={format.derive((value) =>
+              value.highlight ? "true" : "false",
+            )}
+            on:click={formatHighlight}
+          >
+            <HighlightIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating"
+            aria-label="Quote"
+            data-tooltip="Format as a quote"
+            type="button"
+            aria-pressed={format.derive((value) =>
+              value.quote ? "true" : "false",
+            )}
+            on:click={formatQuote}
+          >
+            <QuoteIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <button
+            role="menuitem"
+            className="floating"
+            aria-label="Link"
+            data-tooltip="Add a link"
+            type="button"
+            aria-pressed={format.derive((value) =>
+              value.link ? "true" : "false",
+            )}
+            on:click={formatLink}
+          >
+            <LinkIcon aria-hidden="true" />
+          </button>
+        </li>
+        <li role="presentation">
+          <swatch-select
+            role="menuitem"
+            aria-label="Text alignment"
+            data-tooltip="Text alignment"
+            aria-orientation="vertical"
+            orientation="horizontal"
+            align="center"
+            value={format.derive((value) => value.align)}
+            on:change={formatAlignment}
+          >
+            {format.derive((value) =>
+              value.align ? (
+                ALIGN_ICON[value.align]
+              ) : (
+                <AlignLeftIcon aria-hidden="true" slot="icon" />
+              ),
+            )}
+
+            <swatch-item value="left" data-tooltip="Align left">
+              <AlignLeftIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="center" data-tooltip="Align center">
+              <AlignCenterIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="right" data-tooltip="Align right">
+              <AlignRightIcon aria-hidden="true" />
+            </swatch-item>
+          </swatch-select>
+        </li>
+      </ul>
+
+      {children}
     </floating-toolbar>
   );
 }
