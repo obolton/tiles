@@ -242,23 +242,19 @@ export const approve = unwrap(schema.nodes.pending);
 
 export const reject = deleteNode(schema.nodes.pending);
 
-export const showPrompt: Command = (state, dispatch) => {
+export const togglePrompt: Command = (state, dispatch, view) => {
   if (dispatch) {
-    const pos = state.selection.from;
+    const pos = state.selection.to;
+    const isOpen = !!PROMPT_PLUGIN_KEY.getState(state);
     const tr = state.tr.setMeta(PROMPT_PLUGIN_KEY, {
-      pos,
+      pos: isOpen ? null : pos,
     } as PromptMeta);
     dispatch(tr);
-  }
-  return true;
-};
 
-export const hidePrompt: Command = (state, dispatch) => {
-  if (dispatch) {
-    const tr = state.tr.setMeta(PROMPT_PLUGIN_KEY, {
-      pos: null,
-    } as PromptMeta);
-    dispatch(tr);
+    // Restore focus to the editor
+    if (isOpen) {
+      view?.focus();
+    }
   }
   return true;
 };
