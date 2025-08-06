@@ -59,10 +59,28 @@ export default function Prompt({
       .finally(() => pending.off());
   }
 
+  function handleFocusOut(event: FocusEvent) {
+    const form = event.currentTarget as HTMLFormElement;
+
+    if (
+      !onCancel ||
+      !(event.relatedTarget instanceof Element) ||
+      form.contains(event.relatedTarget)
+    ) {
+      return;
+    }
+
+    const prompt = (new FormData(form).get("prompt") as string).trim();
+    if (!prompt) {
+      onCancel();
+    }
+  }
+
   return (
     <form
       className={classNames(styles.prompt, className)}
       on:submit={handleSubmit}
+      on:focusout={handleFocusOut}
     >
       <ResizingTextarea
         name="prompt"
