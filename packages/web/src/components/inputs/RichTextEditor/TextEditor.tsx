@@ -2,12 +2,13 @@ import { EditorView } from "prosemirror-view";
 import { EditorState } from "prosemirror-state";
 import FormattingToolbar from "./FormattingToolbar";
 import { selectionFormat } from "@/utils/richText/format";
+import { prompt } from "@/utils/richText/prompt";
 import { deserialize } from "@/utils/richText/deserialize";
 import { schema } from "@/utils/richText/schema";
 import { getPlugins } from "@/utils/richText/plugins";
 import { handleError } from "@/utils/errors";
 import styles from "./TextEditor.module.css";
-import { ReactiveValue } from "@/utils/reactivity";
+import { reactive, flag } from "@/utils/reactivity";
 import type { Format } from "@/utils/richText/format";
 import type { RichText } from "@/utils/richText/types";
 import type { Command } from "prosemirror-state";
@@ -50,6 +51,7 @@ export default function TextEditor({
       selectionFormat((newFormat) => {
         format.value = newFormat;
       }),
+      prompt((open) => (prompting.value = open)),
     );
     try {
       const state = EditorState.create(
@@ -80,7 +82,7 @@ export default function TextEditor({
     }
   };
 
-  const format = new ReactiveValue<Format>({
+  const format = reactive<Format>({
     bold: false,
     italic: false,
     underline: false,
@@ -88,11 +90,11 @@ export default function TextEditor({
     highlight: false,
     headingLevel: null,
     quote: false,
-    orderedList: false,
-    unorderedList: false,
-    checkList: false,
+    list: null,
     link: false,
+    pending: false,
   });
+  const prompting = flag(false);
 
   return (
     <>
@@ -109,6 +111,7 @@ export default function TextEditor({
           <FormattingToolbar
             editor={editor}
             format={format}
+            prompting={prompting}
             getEditorView={getEditorView}
             performCommand={performCommand}
           >
