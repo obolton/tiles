@@ -31,7 +31,10 @@ export default function Prompt({
       element.form?.requestSubmit();
     }
 
-    if (event.key === "Escape" && onCancel) {
+    if (
+      (event.key === "Escape" || (event.key === "/" && event.metaKey)) &&
+      onCancel
+    ) {
       event.preventDefault();
       event.stopPropagation();
       onCancel();
