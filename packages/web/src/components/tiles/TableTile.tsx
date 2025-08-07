@@ -165,7 +165,10 @@ export default function TableTile({
 
     const { target, relatedTarget } = event;
 
-    if (!(target instanceof HTMLTableCellElement)) {
+    if (
+      !(target instanceof HTMLTableCellElement) ||
+      (relatedTarget instanceof Element && target.contains(relatedTarget))
+    ) {
       return;
     }
 
