@@ -1164,12 +1164,11 @@ export default class TableView extends HTMLElement {
             `col[data-index="${afterIndex + 1}"]`,
           );
     moveBefore(this.colGroup, col, beforeCol);
-    this.colGroup
-      .querySelectorAll<HTMLTableColElement>("col[data-index]")
-      .forEach(
-        (col, i) =>
-          (col.dataset.index = (this.firstVisibleColumn + i).toString()),
-      );
+    const columns = this.colGroup.getElementsByTagName("col");
+    // Skip first column
+    for (let i = 1; i < columns.length; i++) {
+      columns[i]!.dataset.index = (this.firstVisibleColumn + i - 1).toString();
+    }
 
     // Re-order cells
     for (const row of this.tableBody.rows) {
@@ -1186,12 +1185,14 @@ export default class TableView extends HTMLElement {
               `td[aria-colindex="${afterIndex + 1}"]`,
             );
       moveBefore(row, moveCell, beforeCell);
-      row
-        .querySelectorAll("td")
-        .forEach(
-          (cell, i) =>
-            (cell.ariaColIndex = (this.firstVisibleColumn + i).toString()),
-        );
+      // Skip row header
+      for (let i = 1; i < row.cells.length; i++) {
+        row.cells[i]!.ariaColIndex = (
+          this.firstVisibleColumn +
+          i -
+          1
+        ).toString();
+      }
     }
   }
 }
