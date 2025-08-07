@@ -4,6 +4,7 @@ import { createTilePlacement } from "../tiles/tiles.ts";
 import type { Prisma } from "@prisma/client";
 import type {
   CreateTableSchema,
+  UpdateTableSchema,
   InsertRowSchema,
   MoveRowSchema,
   DeleteRowSchema,
@@ -26,6 +27,7 @@ export const TABLE_ROW_FIELDS = {
 
 export const TABLE_FIELDS = {
   id: true,
+  color: true,
 } as const satisfies Prisma.TableSelect<ExtensionArgs>;
 
 export const TABLE_WITH_DATA_FIELDS = {
@@ -105,6 +107,28 @@ export async function createTable({
       ...placement,
     };
   });
+}
+
+export async function updateTable({
+  pageId,
+  id,
+  color,
+  imageKey,
+}: UpdateTableSchema) {
+  const table = await prisma.table.update({
+    where: {
+      pageId,
+      id,
+    },
+    data: {
+      lightness: color ? color.l : color === null ? null : undefined,
+      chroma: color ? color.c : color === null ? null : undefined,
+      hue: color ? color.h : color === null ? null : undefined,
+      imageKey,
+    },
+    select: TABLE_FIELDS,
+  });
+  return { type: "TABLE" as const, ...table };
 }
 
 export async function getRowOrderKeys(

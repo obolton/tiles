@@ -14,6 +14,7 @@ type PrismaClientExtensionArgs<
   T extends (client: unknown) => { $extends: { extArgs: unknown } },
 > = ReturnType<T>["$extends"]["extArgs"];
 
-export type ExtensionArgs = PrismaClientExtensionArgs<typeof images>;
+export type ExtensionArgs = PrismaClientExtensionArgs<typeof images> &
+  PrismaClientExtensionArgs<typeof colors>;
 
 export default prisma;
