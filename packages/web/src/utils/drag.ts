@@ -364,42 +364,6 @@ export class DragState<T> {
       }),
     );
 
-    this.finish();
-  }
-
-  private finish() {
-    this.abortController.abort();
-
-    this.cancelLongPress();
-    clearInterval(this.scrollInterval);
-    clearInterval(this.dragInterval);
-
-    if (this.isDragging) {
-      if (this.dropTarget) {
-        delete this.dropTarget.dataset.dropTarget;
-        this.dropTarget.dispatchEvent(
-          this.createDragDropEvent("dnd-dragleave", {
-            bubbles: true,
-            cancelable: false,
-          }),
-        );
-      }
-
-      const dragEndTarget = this.element.isConnected
-        ? this.element
-        : document.body;
-
-      dragEndTarget.dispatchEvent(
-        this.createDragDropEvent("dnd-dragend", {
-          bubbles: true,
-          cancelable: false,
-        }),
-      );
-    }
-
-    this.isDragging = false;
-    this.dropTarget = undefined;
-
     // Animate the drag element to its final position
     if (this.destination && this.dragPreview) {
       this.dragPreview.style.viewTransitionName = "drop";
@@ -435,6 +399,42 @@ export class DragState<T> {
       }
       this.dragPreview = undefined;
     });
+
+    this.finish();
+  }
+
+  private finish() {
+    this.abortController.abort();
+
+    this.cancelLongPress();
+    clearInterval(this.scrollInterval);
+    clearInterval(this.dragInterval);
+
+    if (this.isDragging) {
+      if (this.dropTarget) {
+        delete this.dropTarget.dataset.dropTarget;
+        this.dropTarget.dispatchEvent(
+          this.createDragDropEvent("dnd-dragleave", {
+            bubbles: true,
+            cancelable: false,
+          }),
+        );
+      }
+
+      const dragEndTarget = this.element.isConnected
+        ? this.element
+        : document.body;
+
+      dragEndTarget.dispatchEvent(
+        this.createDragDropEvent("dnd-dragend", {
+          bubbles: true,
+          cancelable: false,
+        }),
+      );
+    }
+
+    this.isDragging = false;
+    this.dropTarget = undefined;
   }
 
   private scheduleDragEvent(x: number, y: number) {
