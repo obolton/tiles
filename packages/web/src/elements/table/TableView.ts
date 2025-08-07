@@ -2,6 +2,7 @@ import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import css from "./TableView.css?inline";
 import { TableEvent } from "./events";
 import { makeDraggable } from "@/utils/drag";
+import { moveBefore } from "@/utils/dom";
 import type { ResizeEvent } from "@/elements/resize/events";
 import type { DragDropEvent } from "@/utils/drag";
 
@@ -530,12 +531,18 @@ export default class TableView extends HTMLElement {
         afterIndex = parseInt(col.dataset.index, 10);
       }
 
-      this.dispatchEvent(
+      const allowMove = this.dispatchEvent(
         new TableEvent("movetablecolumn", {
           column,
           afterIndex,
+          cancelable: true,
         }),
       );
+
+      if (allowMove) {
+        this.moveColumn(column, afterIndex);
+      }
+
       return;
     }
 
@@ -1135,6 +1142,57 @@ export default class TableView extends HTMLElement {
     const handle = document.createElement("resize-handle");
     handle.addEventListener("resizeend", this);
     return handle;
+  }
+
+  moveColumn(index: number, afterIndex: number | null) {
+    if (!this.colGroup || !this.tableBody) {
+      throw new Error("Table is not initialized");
+    }
+
+    // Re-order column elements
+    // Note: No need to re-order column header cells as they hold no data
+    const col = this.colGroup.querySelector<HTMLTableColElement>(
+      `col[data-index="${index}"]`,
+    );
+    if (!col) {
+      throw new Error(`Invalid column index: ${index}`);
+    }
+    const beforeCol =
+      afterIndex === null
+        ? null
+        : this.colGroup.querySelector<HTMLTableColElement>(
+            `col[data-index="${afterIndex + 1}"]`,
+          );
+    moveBefore(this.colGroup, col, beforeCol);
+    this.colGroup
+      .querySelectorAll<HTMLTableColElement>("col[data-index]")
+      .forEach(
+        (col, i) =>
+          (col.dataset.index = (this.firstVisibleColumn + i).toString()),
+      );
+
+    // Re-order cells
+    for (const row of this.tableBody.rows) {
+      const moveCell = row.querySelector<HTMLTableCellElement>(
+        `td[aria-colindex="${index}"]`,
+      );
+      if (!moveCell) {
+        continue;
+      }
+      const beforeCell =
+        afterIndex === null
+          ? null
+          : row.querySelector<HTMLTableCellElement>(
+              `td[aria-colindex="${afterIndex + 1}"]`,
+            );
+      moveBefore(row, moveCell, beforeCell);
+      row
+        .querySelectorAll("td")
+        .forEach(
+          (cell, i) =>
+            (cell.ariaColIndex = (this.firstVisibleColumn + i).toString()),
+        );
+    }
   }
 }
 
