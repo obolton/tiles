@@ -35,7 +35,7 @@
 }
 
 .drag-preview {
-  position: fixed;
+  position: fixed !important;
   contain: size layout style;
   top: 0;
   left: 0;
