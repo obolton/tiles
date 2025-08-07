@@ -6,3 +6,9 @@ export function focusInside(element: Element, options?: FocusOptions) {
     )
     ?.focus(options);
 }
+
+export function getFocusedElementWithin(element: Element) {
+  return element.contains(document.activeElement)
+    ? document.activeElement
+    : null;
+}
