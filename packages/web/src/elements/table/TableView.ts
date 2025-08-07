@@ -3,6 +3,7 @@ import css from "./TableView.css?inline";
 import { TableEvent } from "./events";
 import { makeDraggable } from "@/utils/drag";
 import { moveBefore } from "@/utils/dom";
+import { getFocusedElementWithin } from "@/utils/focus";
 import type { ResizeEvent } from "@/elements/resize/events";
 import type { DragDropEvent } from "@/utils/drag";
 
@@ -608,6 +609,11 @@ export default class TableView extends HTMLElement {
     this.selection.clear();
     this.isSelecting = false;
     this.redrawSelection();
+
+    const focused = getFocusedElementWithin(this);
+    if (focused instanceof HTMLElement) {
+      focused.blur();
+    }
   }
 
   private redrawSelection() {
