@@ -1,9 +1,8 @@
 floating-toolbar {
   position: fixed;
   inset: auto 8px 48px;
-  width: fit-content;
-  height: 64px;
-  max-width: calc(100vw - 16px);
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px);
   overflow: visible;
   contain: layout;
   background: var(--ui-background-color);
@@ -23,11 +22,12 @@ floating-toolbar {
   & > ul {
     position: relative;
     display: flex;
+    flex-direction: inherit;
     align-items: center;
     gap: 6px;
 
     &:not(:last-child) {
-      padding-right: 16px;
+      padding: 0 16px 0 0;
 
       &::after {
         content: "";
@@ -36,6 +36,20 @@ floating-toolbar {
         width: 3px;
         border-radius: 3px;
         background: rgb(0 0 0 / 5%);
+      }
+    }
+  }
+
+  &.vertical {
+    flex-direction: column;
+
+    & > ul:not(:last-child) {
+      padding: 0 0 16px;
+
+      &::after {
+        inset: auto 4px 0;
+        width: auto;
+        height: 3px;
       }
     }
   }
