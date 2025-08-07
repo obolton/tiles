@@ -564,12 +564,17 @@ export default class TableView extends HTMLElement {
         afterIndex = parseInt(row.ariaRowIndex, 10);
       }
 
-      this.dispatchEvent(
+      const allowMove = this.dispatchEvent(
         new TableEvent("movetablerow", {
           row,
           afterIndex,
+          cancelable: true,
         }),
       );
+
+      if (allowMove) {
+        this.moveRow(row, afterIndex);
+      }
     }
   }
 
@@ -1172,10 +1177,10 @@ export default class TableView extends HTMLElement {
 
     // Re-order cells
     for (const row of this.tableBody.rows) {
-      const moveCell = row.querySelector<HTMLTableCellElement>(
+      const cell = row.querySelector<HTMLTableCellElement>(
         `td[aria-colindex="${index}"]`,
       );
-      if (!moveCell) {
+      if (!cell) {
         continue;
       }
       const beforeCell =
@@ -1184,7 +1189,7 @@ export default class TableView extends HTMLElement {
           : row.querySelector<HTMLTableCellElement>(
               `td[aria-colindex="${afterIndex + 1}"]`,
             );
-      moveBefore(row, moveCell, beforeCell);
+      moveBefore(row, cell, beforeCell);
       // Skip row header
       for (let i = 1; i < row.cells.length; i++) {
         row.cells[i]!.ariaColIndex = (
@@ -1193,6 +1198,31 @@ export default class TableView extends HTMLElement {
           1
         ).toString();
       }
+    }
+  }
+
+  moveRow(index: number, afterIndex: number | null) {
+    if (!this.tableBody) {
+      throw new Error("Table is not initialized");
+    }
+    const row = this.tableBody.querySelector<HTMLTableRowElement>(
+      `tr[aria-rowindex="${index}"]`,
+    );
+    if (!row) {
+      throw new Error(`Invalid row index: ${index}`);
+    }
+    const beforeRow =
+      afterIndex === null
+        ? null
+        : this.tableBody.querySelector<HTMLTableRowElement>(
+            `tr[aria-rowindex="${afterIndex + 1}"]`,
+          );
+    moveBefore(this.tableBody, row, beforeRow);
+
+    for (let i = 0; i < this.tableBody.rows.length; i++) {
+      this.tableBody.rows[i]!.ariaRowIndex = (
+        this.firstVisibleRow + i
+      ).toString();
     }
   }
 }
