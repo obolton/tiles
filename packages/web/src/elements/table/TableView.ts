@@ -368,6 +368,7 @@ export default class TableView extends HTMLElement {
         : null;
 
     if (!target) {
+      this.clearSelection();
       return;
     }
 
@@ -604,17 +605,17 @@ export default class TableView extends HTMLElement {
   }
 
   private clearSelection() {
-    this.querySelectorAll(".selected").forEach((cell) =>
-      cell.classList.remove("selected"),
-    );
     this.selection.clear();
     this.isSelecting = false;
+    this.redrawSelection();
   }
 
   private redrawSelection() {
-    this.querySelectorAll(".selected").forEach((element) =>
-      element.classList.remove("selected"),
-    );
+    for (const selected of Array.from(
+      this.getElementsByClassName("selected"),
+    )) {
+      selected.classList.remove("selected");
+    }
 
     for (const selection of this.selection) {
       if ("anchor" in selection) {
