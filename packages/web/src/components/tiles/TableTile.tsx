@@ -4,13 +4,14 @@ import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingTool
 import AddRowIcon from "@/icons/add-row.svg?jsx";
 import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import { selectionFormat } from "@/utils/richText/format";
+import { prompt } from "@/utils/richText/prompt";
 import styles from "./TableTile.module.css";
 import { EditorView } from "prosemirror-view";
 import { EditorState } from "prosemirror-state";
 import { getPlugins } from "@/utils/richText/plugins";
 import { schema } from "@/utils/richText/schema";
 import { handleError } from "@/utils/errors";
-import { ReactiveValue } from "@/utils/reactivity";
+import { reactive, flag } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { deserialize } from "@/utils/richText/deserialize";
 import { render } from "@/jsx/dom";
@@ -144,6 +145,7 @@ export default function TableTile({
         selectionFormat((newFormat) => {
           format.value = newFormat;
         }),
+        prompt((open) => (prompting.value = open)),
       );
       const state = EditorState.create({
         doc,
@@ -287,7 +289,7 @@ export default function TableTile({
     }
   };
 
-  const format = new ReactiveValue<Format>({
+  const format = reactive<Format>({
     bold: false,
     italic: false,
     underline: false,
@@ -299,6 +301,7 @@ export default function TableTile({
     link: false,
     pending: false,
   });
+  const prompting = flag(false);
 
   return (
     <Tile>
@@ -370,6 +373,7 @@ export default function TableTile({
           <FormattingToolbar
             editor={editor}
             format={format}
+            prompting={prompting}
             getEditorView={getEditorView}
             performCommand={performCommand}
           >
