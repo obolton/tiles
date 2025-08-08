@@ -52,6 +52,12 @@ export const TABLE_WITH_DATA_FIELDS = {
   },
 } as const satisfies Prisma.TableSelect<ExtensionArgs>;
 
+export type TableWithData = Prisma.Result<
+  typeof prisma.table,
+  { select: typeof TABLE_WITH_DATA_FIELDS },
+  "findUniqueOrThrow"
+>;
+
 export async function createTable({
   pageId,
   sectionId,

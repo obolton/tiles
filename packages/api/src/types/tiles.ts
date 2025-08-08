@@ -8,12 +8,10 @@ import type {
   Section,
   Tile,
   TileType,
-  Font,
-  Table,
-  TableColumn,
-  TableRow,
 } from "@prisma/client";
 import type { Text } from "@/routes/text/text.ts";
+import type { TableWithData } from "@/routes/tables/tables.ts";
+import type { PageLinkPage } from "@/routes/pageLinks/pageLinks.ts";
 
 type OmitMetadata<T> = Omit<T, "pageId" | "createdAt" | "updatedAt">;
 
@@ -70,23 +68,14 @@ export type ClientPageLink = Omit<
   OmitMetadata<PageLinkTile>,
   "linkedPageId"
 > & {
-  linkedPage: {
-    id: string;
-    title: string;
-    author?: { id: string; name: string; imageUrl: string | null };
-    color: { l: number; c: number; h: number };
-    font: Font | null;
-    coverImageUrl: string | null;
-  } | null;
+  linkedPage: PageLinkPage | null;
 };
 export interface ClientPageLinkTile extends ClientTileBase, ClientPageLink {
   type: "PAGE_LINK";
 }
 
 // Table
-export type ClientTable = OmitMetadata<Table> & {
-  columns: Pick<TableColumn, "id" | "width">[];
-  rows: Pick<TableRow, "id" | "data">[];
+export type ClientTable = OmitMetadata<TableWithData> & {
   numRows: number;
 };
 export interface ClientTableTile extends ClientTileBase, ClientTable {
