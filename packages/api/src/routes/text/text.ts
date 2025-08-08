@@ -6,8 +6,7 @@ import type { Prisma } from "@prisma/client";
 export const TEXT_FIELDS = {
   id: true,
   content: true,
-  color: true,
-  imageUrl: true,
+  background: true,
   align: true,
 } as const satisfies Prisma.Args<typeof prisma.textTile, "findMany">["select"];
 
@@ -21,20 +20,23 @@ export async function createText({
   pageId,
   sectionId,
   content,
-  color,
-  imageKey,
+  background,
   width,
   height,
   align,
 }: CreateTextSchema) {
+  const color = background && "color" in background ? background.color : null;
+  const imageKey =
+    background && "imageKey" in background ? background.imageKey : null;
+
   return prisma.$transaction(async (transaction) => {
     const text = await transaction.textTile.create({
       data: {
         pageId,
         content,
-        lightness: color ? color.l : undefined,
-        chroma: color ? color.c : undefined,
-        hue: color ? color.h : undefined,
+        lightness: color?.l,
+        chroma: color?.c,
+        hue: color?.h,
         imageKey,
         align,
       },
@@ -59,10 +61,14 @@ export async function updateText({
   pageId,
   id,
   content,
-  color,
-  imageKey,
+  background,
   align,
 }: UpdateTextSchema) {
+  // TODO: This can be simplified by sharing the same color schema between frontend and backend
+  const color = background && "color" in background ? background.color : null;
+  const imageKey =
+    background && "imageKey" in background ? background.imageKey : null;
+
   const text = await prisma.textTile.update({
     where: {
       pageId,
@@ -70,10 +76,25 @@ export async function updateText({
     },
     data: {
       content,
-      lightness: color ? color.l : color === null ? null : undefined,
-      chroma: color ? color.c : color === null ? null : undefined,
-      hue: color ? color.h : color === null ? null : undefined,
-      imageKey,
+      lightness:
+        typeof background !== "undefined"
+          ? color
+            ? color.l
+            : null
+          : undefined,
+      chroma:
+        typeof background !== "undefined"
+          ? color
+            ? color.c
+            : null
+          : undefined,
+      hue:
+        typeof background !== "undefined"
+          ? color
+            ? color.h
+            : null
+          : undefined,
+      imageKey: typeof background !== "undefined" ? imageKey : undefined,
       align,
     },
     select: TEXT_FIELDS,

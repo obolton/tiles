@@ -27,7 +27,7 @@ export const TABLE_ROW_FIELDS = {
 
 export const TABLE_FIELDS = {
   id: true,
-  color: true,
+  background: true,
 } as const satisfies Prisma.TableSelect<ExtensionArgs>;
 
 export const TABLE_WITH_DATA_FIELDS = {
@@ -57,11 +57,20 @@ export async function createTable({
   sectionId,
   columns,
   rows,
+  background,
 }: CreateTableSchema) {
+  const color = background && "color" in background ? background.color : null;
+  const imageKey =
+    background && "imageKey" in background ? background.imageKey : null;
+
   return prisma.$transaction(async (transaction) => {
     const table = await transaction.table.create({
       data: {
         pageId,
+        lightness: color?.l,
+        chroma: color?.c,
+        hue: color?.h,
+        imageKey,
       },
       select: { id: true },
     });
@@ -112,19 +121,37 @@ export async function createTable({
 export async function updateTable({
   pageId,
   id,
-  color,
-  imageKey,
+  background,
 }: UpdateTableSchema) {
+  const color = background && "color" in background ? background.color : null;
+  const imageKey =
+    background && "imageKey" in background ? background.imageKey : null;
+
   const table = await prisma.table.update({
     where: {
       pageId,
       id,
     },
     data: {
-      lightness: color ? color.l : color === null ? null : undefined,
-      chroma: color ? color.c : color === null ? null : undefined,
-      hue: color ? color.h : color === null ? null : undefined,
-      imageKey,
+      lightness:
+        typeof background !== "undefined"
+          ? color
+            ? color.l
+            : null
+          : undefined,
+      chroma:
+        typeof background !== "undefined"
+          ? color
+            ? color.c
+            : null
+          : undefined,
+      hue:
+        typeof background !== "undefined"
+          ? color
+            ? color.h
+            : null
+          : undefined,
+      imageKey: typeof background !== "undefined" ? imageKey : undefined,
     },
     select: TABLE_FIELDS,
   });
