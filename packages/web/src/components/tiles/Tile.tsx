@@ -10,6 +10,8 @@ import { toCSSColor, isDark, type Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
 
+export type TileBackground = { imageUrl: string } | { color: Color } | null;
+
 export type TileProps = {
   className?: string;
   children?: JSX.Node;
@@ -18,9 +20,8 @@ export type TileProps = {
     | "inside"
     | "outside"
     | "none";
-  color?: Reactive<Color | null>;
+  background?: Reactive<TileBackground>;
   font?: FontId | null;
-  backgroundImageUrl?: Reactive<string | null>;
 };
 
 const BORDER_CLASSES = {
@@ -32,22 +33,20 @@ const BORDER_CLASSES = {
 export default function Tile({
   className,
   children,
-  color = reactive(null),
+  background = reactive(null),
   font,
   border = "outside",
-  backgroundImageUrl = reactive(null),
 }: TileProps) {
   const fontConfig = typeof font === "string" ? getFontConfig(font) : undefined;
-  const style = new Computed(
-    [color, backgroundImageUrl] as const,
-    (colorValue, url) => ({
-      "--tile-background": colorValue ? toCSSColor(colorValue) : undefined,
-      "--font": fontConfig
-        ? `"${fontConfig.family}", "${fontConfig.fallback}"`
-        : undefined,
-      backgroundImage: url ? `url(${url})` : undefined,
-    }),
-  );
+  const style = new Computed([background] as const, (value) => ({
+    "--tile-background":
+      value && "color" in value ? toCSSColor(value.color) : undefined,
+    "--font": fontConfig
+      ? `"${fontConfig.family}", "${fontConfig.fallback}"`
+      : undefined,
+    backgroundImage:
+      value && "imageUrl" in value ? `url(${value.imageUrl})` : undefined,
+  }));
 
   return (
     <div
@@ -56,10 +55,10 @@ export default function Tile({
         isReactive(border)
           ? border.derive((value) => BORDER_CLASSES[value])
           : BORDER_CLASSES[border],
-        color
-          ? color.derive((colorValue) =>
-              colorValue
-                ? isDark(colorValue)
+        background
+          ? background.derive((value) =>
+              value && "color" in value
+                ? isDark(value.color)
                   ? styles.dark
                   : styles.light
                 : undefined,

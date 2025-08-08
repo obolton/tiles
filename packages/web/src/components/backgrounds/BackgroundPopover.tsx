@@ -12,8 +12,8 @@ import type PopoverMenu from "@/elements/menu/PopoverMenu";
 import type { JSX } from "@/jsx/jsx";
 
 export interface BackgroundPopoverProps extends JSX.Attributes<PopoverMenu> {
-  value?: Reactive<Background | null>;
-  onChange: (value: Background | null) => void;
+  value?: Reactive<Background>;
+  onChange: (value: Background) => void;
 }
 
 export default function BackgroundPopover({

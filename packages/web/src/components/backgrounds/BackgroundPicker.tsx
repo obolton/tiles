@@ -4,8 +4,8 @@ import type { Reactive } from "@/utils/reactivity";
 import type { Background } from "./types";
 
 export interface BackgroundPickerProps {
-  value?: Reactive<Background | null>;
-  onChange: (value: Background | null) => void;
+  value?: Reactive<Background>;
+  onChange: (value: Background) => void;
 }
 
 export default function BackgroundPicker({

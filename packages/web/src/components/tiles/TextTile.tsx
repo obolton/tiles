@@ -12,7 +12,6 @@ import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
 import ExpandIcon from "@/icons/expand.svg?jsx";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
-import { Computed } from "@/utils/reactivity";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { TextProperties } from "@/types/tiles";
@@ -35,22 +34,12 @@ export default function TextTile({
   editor,
   id,
   content,
-  color,
-  imageUrl,
+  background,
   align,
   hasFocus,
   onDelete,
 }: TextTileProps) {
   const { isEditable } = editor;
-  const background = new Computed(
-    [color, imageUrl] as const,
-    (colorValue, imageUrlValue) =>
-      imageUrlValue
-        ? ({ type: "image", imageUrl: imageUrlValue } as const)
-        : colorValue
-          ? ({ type: "color", color: colorValue } as const)
-          : null,
-  );
 
   const onBlur = async (state: EditorState) => {
     try {
@@ -65,38 +54,13 @@ export default function TextTile({
     }
   };
 
-  const onChangeBackground = async (value: Background | null) => {
+  const onChangeBackground = async (value: Background) => {
     try {
-      if (!value) {
-        viewTransition(() => {
-          color.value = null;
-          imageUrl.value = null;
-        });
-        await editor.updateText({
-          id,
-          color: null,
-          imageKey: null,
-        });
-      } else if (value.type === "image") {
-        const { imageUrl: newImageUrl } = await editor.updateText({
-          id,
-          imageKey: value.imageKey,
-        });
-        viewTransition(() => {
-          color.value = null;
-          imageUrl.value = newImageUrl;
-        });
-      } else {
-        viewTransition(() => {
-          color.value = value.color;
-          imageUrl.value = null;
-        });
-        await editor.updateText({
-          id,
-          color: value.color,
-          imageKey: null,
-        });
-      }
+      const { background: newBackground } = await editor.updateText({
+        id,
+        background: value,
+      });
+      viewTransition(() => (background.value = newBackground));
     } catch (error) {
       handleError(error);
     }
@@ -164,9 +128,8 @@ export default function TextTile({
 
   return (
     <Tile
-      color={color}
-      backgroundImageUrl={imageUrl}
-      border={color.derive((value) => (value ? "outside" : "none"))}
+      background={background}
+      border={background.derive((value) => (value ? "outside" : "none"))}
     >
       <pop-out className={styles["pop-out"]} expandable>
         {isEditable.derive((value) =>

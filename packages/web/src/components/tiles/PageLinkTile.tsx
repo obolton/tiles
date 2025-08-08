@@ -41,25 +41,29 @@ export default function PageLinkTile({
     }
   }
 
+  const page = linkedPage.value;
+
   return (
     <a
       className={styles.link}
-      href={`/pages/${linkedPage.value.id}`}
+      href={`/pages/${page.id}`}
       target={openInNewTab ? "_blank" : undefined}
       onclick={handleClick}
     >
       <PageTile
-        title={linkedPage.value.title}
-        font={linkedPage.value.font}
-        color={linkedPage.value.color}
-        coverImageUrl={linkedPage.value.coverImageUrl}
+        title={page.title}
+        font={page.font}
+        background={page.background}
       />
 
       {openInNewTab ? (
         <ArrowOutwardIcon
           className={classNames(
             styles.icon,
-            isDark(linkedPage.value.color) && styles.dark,
+            page.background &&
+              !("imageUrl" in page.background) &&
+              isDark(page.background) &&
+              styles.dark,
           )}
           aria-hidden="true"
         />

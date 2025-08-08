@@ -10,4 +10,4 @@ export interface ImageBackground {
   imageKey: string;
 }
 
-export type Background = ColorBackground | ImageBackground;
+export type Background = ColorBackground | ImageBackground | null;

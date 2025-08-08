@@ -1,37 +1,33 @@
-import Tile from "./Tile";
+import Tile, { type TileBackground } from "./Tile";
 import styles from "./PageTile.module.css";
 import { reactive } from "@/utils/reactivity";
-import type { Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
 
 export interface PageTileProps {
   title: string;
+  background: TileBackground;
   font?: FontId | null;
-  color: Color | null;
-  coverImageUrl?: string | null;
   children?: JSX.Node;
 }
 
 export default function PageTile({
   title,
-  coverImageUrl,
+  background,
   font,
-  color,
   children,
 }: PageTileProps) {
   return (
     <Tile
       className={styles.tile}
-      color={reactive(color)}
+      background={reactive(background)}
       font={font}
-      backgroundImageUrl={coverImageUrl ? reactive(coverImageUrl) : undefined}
       border="inside"
     >
       <p
         classList={{
           [styles.text]: true,
-          [styles["with-image"]]: !!coverImageUrl,
+          [styles["with-image"]]: background && "imageUrl" in background,
         }}
       >
         {title}
