@@ -15,11 +15,11 @@
     text-decoration: underline;
   }
 
-  mark {
+  & mark {
     background: oklch(from var(--tile-background) 85% calc(c * 2.5) h);
   }
 
-  ins {
+  & ins {
     display: block;
     padding: 8px;
     margin: -8px -16px;
@@ -130,5 +130,11 @@
         scale: 1;
       }
     }
+  }
+
+  & .context {
+    background: oklch(from currentcolor l c h / 10%);
+    text-decoration: underline solid oklch(from currentcolor l c h / 50%) 2px;
+    text-underline-position: under;
   }
 }

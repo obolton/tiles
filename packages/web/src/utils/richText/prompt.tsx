@@ -66,7 +66,15 @@ export function prompt(callback?: (isOpen: boolean) => void) {
           callback?.(false);
           return null;
         } else {
-          const decoration = Decoration.widget(meta.pos, getElement, {
+          const { selection } = tr;
+          const contextDecoration = Decoration.inline(
+            selection.from,
+            selection.to,
+            {
+              class: "context",
+            },
+          );
+          const promptDecoration = Decoration.widget(meta.pos, getElement, {
             ignoreSelection: true,
 
             // Prevent the editor from handling events from the prompt
@@ -75,7 +83,10 @@ export function prompt(callback?: (isOpen: boolean) => void) {
             },
           });
           callback?.(true);
-          return DecorationSet.create(tr.doc, [decoration]);
+          return DecorationSet.create(tr.doc, [
+            contextDecoration,
+            promptDecoration,
+          ]);
         }
       },
     },
