@@ -159,6 +159,42 @@ a.floating {
       height: 20px;
     }
   }
+
+  &[aria-expanded] {
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url("@/icons/close.svg?inline") no-repeat center / 24px 24px;
+      filter: drop-shadow(0 1px 1px rgb(0 0 0 / 10%));
+      opacity: 0;
+      scale: 0.7;
+      rotate: z -45deg;
+    }
+
+    & > svg,
+    &::after {
+      transition-property: opacity, scale, rotate;
+      transition-duration: var(--animation-duration);
+      transition-timing-function: var(--spring);
+    }
+
+    &[aria-expanded="true"] {
+      & > svg {
+        opacity: 0;
+        scale: 0.7;
+        rotate: z 45deg;
+      }
+
+      &::after {
+        opacity: 0.8;
+        scale: 1;
+        rotate: none;
+      }
+    }
+  }
 }
 
 /* Pending states */
