@@ -39,11 +39,16 @@ export async function* parseMarkdown(
 
   function* flush(skip: number = 0) {
     if (pos > 0) {
-      if (!node) {
-        node = { type: "paragraph" };
-        yield node;
+      const text = buffer.slice(0, pos);
+
+      // Ignore whitespace-only chunks
+      if (text.trim().length > 0) {
+        if (!node) {
+          node = { type: "paragraph" };
+          yield node;
+        }
+        yield text;
       }
-      yield buffer.slice(0, pos);
     }
     buffer = buffer.slice(pos + skip);
     pos = 0;

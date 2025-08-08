@@ -130,8 +130,8 @@ describe("parseMarkdown", () => {
     });
   });
 
-  describe("paragraph", () => {
-    test("treats two sequential line breaks as a paragraph break", async () => {
+  describe("line breaks", () => {
+    test("treats an empty line as a paragraph break", async () => {
       const stream = toAsync(["hello\n\nworld"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
@@ -142,7 +142,7 @@ describe("parseMarkdown", () => {
       ]);
     });
 
-    test("treats more than two sequential line breaks as a paragraph break", async () => {
+    test("treats multiple empty lines as one paragraph break", async () => {
       const stream = toAsync(["hello\n\n\n\nworld"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
@@ -153,13 +153,24 @@ describe("parseMarkdown", () => {
       ]);
     });
 
-    test("does not treat two sequential line breaks before a heading as a paragraph break", async () => {
+    test("does not treat an empty line before a heading as a paragraph break", async () => {
       const stream = toAsync(["hello\n\n# world"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
         { type: "paragraph" },
         "hello",
         { type: "heading", level: 1 },
+        "world",
+      ]);
+    });
+
+    test("treats a line containing only whitespace as an empty line", async () => {
+      const stream = toAsync(["hello\n  \nworld"]);
+      const output = await Array.fromAsync(parseMarkdown(stream));
+      expect(output).toEqual([
+        { type: "paragraph" },
+        "hello",
+        { type: "paragraph" },
         "world",
       ]);
     });
