@@ -477,6 +477,13 @@ export default class Editor {
     return item;
   }
 
+  async updateTable(data: OmitPageId<AppRouterInputs["tables"]["update"]>) {
+    return await client.tables.update.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+  }
+
   async insertTableRow(
     data: OmitPageId<AppRouterInputs["tables"]["insertRow"]>,
   ) {

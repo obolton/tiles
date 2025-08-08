@@ -1,6 +1,7 @@
 import Tile from "./Tile";
 import RichText from "@/components/text/RichText";
 import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingToolbar";
+import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import AddRowIcon from "@/icons/add-row.svg?jsx";
 import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import { selectionFormat } from "@/utils/richText/format";
@@ -16,6 +17,7 @@ import { serialize } from "@/utils/richText/serialize";
 import { deserialize } from "@/utils/richText/deserialize";
 import { render } from "@/jsx/dom";
 import { moveElement } from "@/utils/arrays";
+import { viewTransition } from "@/utils/transitions";
 import type TableView from "@/elements/table/TableView";
 import type { Format } from "@/utils/richText/format";
 import type { Command } from "prosemirror-state";
@@ -23,6 +25,7 @@ import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
 import type { TableProperties } from "@/types/tiles";
 import type { TableEvent } from "@/elements/table/events";
+import type { Background } from "@/components/backgrounds/types";
 
 export interface TableTileProps extends TableProperties {
   editor: Editor;
@@ -40,6 +43,7 @@ function createDocument(value: string) {
 export default function TableTile({
   editor,
   id,
+  background,
   columns,
   rows,
   numRows,
@@ -284,6 +288,18 @@ export default function TableTile({
     }
   };
 
+  const onChangeBackground = async (value: Background) => {
+    try {
+      const { background: newBackground } = await editor.updateTable({
+        id,
+        background: value,
+      });
+      viewTransition(() => (background.value = newBackground));
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const getEditorView = () => editorView;
 
   const performCommand = (command: Command) => {
@@ -307,7 +323,7 @@ export default function TableTile({
   const prompting = flag(false);
 
   return (
-    <Tile>
+    <Tile background={background}>
       <table-view
         ref={ref}
         classList={["rich-text", styles.table]}
@@ -404,6 +420,12 @@ export default function TableTile({
                 >
                   <AddColumnIcon aria-hidden="true" />
                 </button>
+              </li>
+              <li role="presentation">
+                <BackgroundPicker
+                  value={background}
+                  onChange={onChangeBackground}
+                />
               </li>
             </ul>
           </FormattingToolbar>
