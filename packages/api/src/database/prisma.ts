@@ -1,8 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import images from "./extensions/images.ts";
 import colors from "./extensions/colors.ts";
+import backgrounds from "./extensions/backgrounds.ts";
 
-const prisma = new PrismaClient().$extends(images).$extends(colors);
+const prisma = new PrismaClient()
+  .$extends(images)
+  .$extends(colors)
+  .$extends(backgrounds);
 
 export type ExtendedPrismaClient = typeof prisma;
 
@@ -15,6 +19,7 @@ type PrismaClientExtensionArgs<
 > = ReturnType<T>["$extends"]["extArgs"];
 
 export type ExtensionArgs = PrismaClientExtensionArgs<typeof images> &
-  PrismaClientExtensionArgs<typeof colors>;
+  PrismaClientExtensionArgs<typeof colors> &
+  PrismaClientExtensionArgs<typeof backgrounds>;
 
 export default prisma;
