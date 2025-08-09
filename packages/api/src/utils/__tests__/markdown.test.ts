@@ -131,6 +131,24 @@ describe("parseMarkdown", () => {
   });
 
   describe("line breaks", () => {
+    test("treats a single line break as a space", async () => {
+      const stream = toAsync(["hello\nworld"]);
+      const output = await Array.fromAsync(parseMarkdown(stream));
+      expect(output).toEqual([{ type: "paragraph" }, "hello", " world"]);
+    });
+
+    test("treats a line break preceded by one space as a space", async () => {
+      const stream = toAsync(["hello \nworld"]);
+      const output = await Array.fromAsync(parseMarkdown(stream));
+      expect(output).toEqual([{ type: "paragraph" }, "hello", " world"]);
+    });
+
+    test("treats a line break preceded by one tab as a space", async () => {
+      const stream = toAsync(["hello\t\nworld"]);
+      const output = await Array.fromAsync(parseMarkdown(stream));
+      expect(output).toEqual([{ type: "paragraph" }, "hello", " world"]);
+    });
+
     test("treats an empty line as a paragraph break", async () => {
       const stream = toAsync(["hello\n\nworld"]);
       const output = await Array.fromAsync(parseMarkdown(stream));
@@ -174,6 +192,24 @@ describe("parseMarkdown", () => {
         "world",
       ]);
     });
+
+    test.for([2, 3, 4])(
+      "treats %i spaces at the end of a line as a hard line break",
+      async (i) => {
+        const stream = toAsync([`hello${" ".repeat(i)}\nworld`]);
+        const output = await Array.fromAsync(parseMarkdown(stream));
+        expect(output).toEqual([{ type: "paragraph" }, "hello", "\nworld"]);
+      },
+    );
+
+    test.for([2, 3, 4])(
+      "treats %i tabs at the end of a line as a hard line break",
+      async (i) => {
+        const stream = toAsync([`hello${"\t".repeat(i)}\nworld`]);
+        const output = await Array.fromAsync(parseMarkdown(stream));
+        expect(output).toEqual([{ type: "paragraph" }, "hello", "\nworld"]);
+      },
+    );
   });
 
   describe("heading", () => {

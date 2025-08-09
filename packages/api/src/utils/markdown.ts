@@ -2,11 +2,13 @@ const BOLD_START_MATCH = /^(\*\*|__)(?=\w)/;
 const BOLD_END_MATCH = /^(\*\*|__)/;
 const ITALIC_START_MATCH = /^(\*|_)(?=\w)/;
 const ITALIC_END_MATCH = /^(\*|_)/;
-const NEW_LINE_MATCH = /^\n+/;
+const HARD_LINE_BREAK_MATCH = /^[ \t]{2,}\n/;
+const LINE_BREAK_MATCH = /^(\s*\n)+/;
 const HEADING_MATCH = /^(#{1,6})\s+(?=\S)/;
 const UNORDERED_LIST_ITEM_MATCH = /^( *)(-|\*|\+)\s+(?=\S)/;
 const ORDERED_LIST_ITEM_MATCH = /^( *)[0-9]+\.\s+(?=\S)/;
 const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *))$/;
+const ALL_NEW_LINES_MATCH = /\n/g;
 
 export interface ParagraphNode {
   type: "paragraph";
@@ -29,6 +31,11 @@ export type RichTextFormat = { bold?: boolean; italic?: boolean };
 
 export type RichTextStreamEvent = string | RichTextFormat | RichTextNode;
 
+enum LineBreak {
+  HARD,
+  SOFT,
+}
+
 export async function* parseMarkdown(
   input: AsyncGenerator<string>,
 ): AsyncGenerator<RichTextStreamEvent> {
@@ -36,6 +43,7 @@ export async function* parseMarkdown(
   let pos = 0;
   const format: RichTextFormat = {};
   let node: RichTextNode | null = null;
+  let lineBreak: LineBreak | null = null;
 
   function* flush(skip: number = 0) {
     if (pos > 0) {
@@ -47,7 +55,20 @@ export async function* parseMarkdown(
           node = { type: "paragraph" };
           yield node;
         }
-        yield text;
+
+        if (lineBreak !== null) {
+          switch (lineBreak) {
+            case LineBreak.HARD:
+              yield "\n" + text;
+              break;
+            case LineBreak.SOFT:
+              yield " " + text;
+              break;
+          }
+          lineBreak = null;
+        } else {
+          yield text;
+        }
       }
     }
     buffer = buffer.slice(pos + skip);
@@ -58,6 +79,7 @@ export async function* parseMarkdown(
     state: {
       node?: RichTextNode | null;
       format?: RichTextFormat;
+      lineBreak?: LineBreak | null;
     },
     skip: number,
   ) {
@@ -65,6 +87,7 @@ export async function* parseMarkdown(
 
     if (typeof state.node !== "undefined") {
       node = state.node;
+      lineBreak = null;
       if (node) {
         yield node;
       }
@@ -77,6 +100,10 @@ export async function* parseMarkdown(
       }
       yield state.format;
       Object.assign(format, state.format);
+    }
+
+    if (typeof state.lineBreak !== "undefined") {
+      lineBreak = state.lineBreak;
     }
   }
 
@@ -157,9 +184,19 @@ export async function* parseMarkdown(
         continue;
       }
 
-      const newLineMatch = rest.match(NEW_LINE_MATCH);
+      const hardLineBreakMatch = rest.match(HARD_LINE_BREAK_MATCH);
+      if (hardLineBreakMatch) {
+        yield* set({ lineBreak: LineBreak.HARD }, hardLineBreakMatch[0].length);
+        continue;
+      }
+
+      const newLineMatch = rest.match(LINE_BREAK_MATCH);
       if (newLineMatch) {
-        yield* set({ node: null }, newLineMatch[0].length);
+        if (newLineMatch[0].match(ALL_NEW_LINES_MATCH)?.length === 1) {
+          yield* set({ lineBreak: LineBreak.SOFT }, newLineMatch[0].length);
+        } else {
+          yield* set({ node: null }, newLineMatch[0].length);
+        }
         continue;
       }
 
