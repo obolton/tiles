@@ -1,6 +1,6 @@
 import type { Node, NodeType, MarkType, ResolvedPos } from "prosemirror-model";
 import type { EditorState } from "prosemirror-state";
-import { schema, type TextAlignment } from "./schema";
+import { schema, LIST_NODES, type TextAlignment } from "./schema";
 import type { ListType } from "./format";
 
 interface ResolvedNode {
@@ -166,4 +166,16 @@ export function getMarkRange(
   }
 
   return from === to ? null : { from, to };
+}
+
+export function getListDepth($pos: ResolvedPos) {
+  let depth = -1;
+
+  for (let d = $pos.depth; d > 0; d--) {
+    if (LIST_NODES.has($pos.node(d).type)) {
+      depth++;
+    }
+  }
+
+  return depth;
 }

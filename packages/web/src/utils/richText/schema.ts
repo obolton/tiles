@@ -297,3 +297,9 @@ export const schema = new Schema<
   nodes: nodesSpec,
   marks: marksSpec,
 });
+
+export const LIST_NODES = new Set([
+  schema.nodes.ordered_list,
+  schema.nodes.unordered_list,
+  schema.nodes.check_list,
+]);
