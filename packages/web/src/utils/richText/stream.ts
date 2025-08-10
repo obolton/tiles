@@ -1,5 +1,5 @@
 import { schema } from "./schema";
-import { closest } from "./helpers";
+import { closest, getListDepth } from "./helpers";
 import type { EditorView } from "prosemirror-view";
 import type { Mark } from "prosemirror-model";
 
@@ -23,6 +23,10 @@ export type RichTextNode = ParagraphNode | HeadingNode | ListItemNode;
 export type RichTextFormat = { bold?: boolean; italic?: boolean };
 
 export type RichTextStreamEvent = string | RichTextFormat | RichTextNode;
+
+function createListItem() {
+  return schema.nodes.list_item.create(null, schema.nodes.paragraph.create());
+}
 
 export async function insertFromStream(
   view: EditorView,
@@ -104,24 +108,48 @@ export async function insertFromStream(
                 event.listType === "ordered"
                   ? schema.nodes.ordered_list
                   : schema.nodes.unordered_list;
-              const list = closest($pos, (node) => node.type === listNodeType);
-              if (list) {
-                pos = list.pos + list.node.nodeSize - 1;
-                const node = schema.nodes.list_item.create(
-                  null,
-                  schema.nodes.paragraph.create(),
-                );
+
+              const listItem = closest(
+                $pos,
+                (node) => node.type === schema.nodes.list_item,
+              );
+
+              if (!listItem) {
+                pos = tr.doc.resolve(startPos).end();
+                const node = listNodeType.create(null, createListItem());
+                tr.insert(pos, node);
+                pos += node.nodeSize - 3;
+                break;
+              }
+
+              const depth = getListDepth($pos);
+              const afterPos = listItem.pos + listItem.node.nodeSize;
+
+              // Insert item at same depth
+              if (event.depth === depth) {
+                pos = afterPos;
+                const node = createListItem();
                 tr.insert(pos, node);
                 pos += node.nodeSize - 2;
+
+                // Increase depth
+              } else if (event.depth > depth) {
+                pos = afterPos - 1;
+                const node = listNodeType.create(null, createListItem());
+                tr.insert(pos, node);
+                pos += node.nodeSize - 3;
+
+                // Decrease depth
+              } else if (event.depth > 0) {
+                pos = afterPos + 2;
+                const node = createListItem();
+                tr.insert(pos, node);
+                pos += node.nodeSize - 2;
+
+                // If the top level is reached, insert a new list
               } else {
-                pos = tr.doc.resolve(startPos).end();
-                const node = listNodeType.create(
-                  null,
-                  schema.nodes.list_item.create(
-                    null,
-                    schema.nodes.paragraph.create(),
-                  ),
-                );
+                pos = afterPos + 3;
+                const node = listNodeType.create(null, createListItem());
                 tr.insert(pos, node);
                 pos += node.nodeSize - 3;
               }
