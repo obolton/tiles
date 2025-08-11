@@ -1,6 +1,13 @@
 .container {
   position: absolute;
   display: inline-block;
+  width: 400px;
+  background: rgb(255 255 255 / 80%);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 30%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
   translate: 1px -8px;
 
   &::before {
@@ -17,13 +24,6 @@
 }
 
 .prompt {
-  background: rgb(255 255 255 / 80%);
-  backdrop-filter: blur(8px);
-  border-radius: 8px;
-  box-shadow:
-    0 0 0 1px rgb(0 0 0 / 40%),
-    0 4px 12px -4px rgb(0 0 0 / 30%);
-
   & > textarea {
     font-size: 18px;
     outline: none;
