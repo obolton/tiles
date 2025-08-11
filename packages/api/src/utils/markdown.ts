@@ -46,31 +46,37 @@ export async function* parseMarkdown(
   let lineBreak: LineBreak | null = null;
 
   function* flush(skip: number = 0) {
-    if (pos > 0) {
-      const text = buffer.slice(0, pos);
-
-      // Ignore whitespace-only chunks
-      if (text.trim().length > 0) {
-        if (!node) {
-          node = { type: "paragraph" };
-          yield node;
-        }
-
-        if (lineBreak !== null) {
-          switch (lineBreak) {
-            case LineBreak.HARD:
-              yield "\n" + text;
-              break;
-            case LineBreak.SOFT:
-              yield " " + text;
-              break;
-          }
-          lineBreak = null;
-        } else {
-          yield text;
-        }
-      }
+    if (pos === 0) {
+      buffer = buffer.slice(skip);
+      return;
     }
+
+    const text = buffer.slice(0, pos);
+
+    // Buffer until we have a non-empty chunk
+    if (text.trim().length === 0) {
+      return;
+    }
+
+    if (!node) {
+      node = { type: "paragraph" };
+      yield node;
+    }
+
+    if (lineBreak !== null) {
+      switch (lineBreak) {
+        case LineBreak.HARD:
+          yield "\n" + text;
+          break;
+        case LineBreak.SOFT:
+          yield " " + text;
+          break;
+      }
+      lineBreak = null;
+    } else {
+      yield text;
+    }
+
     buffer = buffer.slice(pos + skip);
     pos = 0;
   }

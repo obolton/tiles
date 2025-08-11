@@ -340,9 +340,9 @@ describe("parseMarkdown", () => {
       ]);
     });
 
-    test("supports nested list items", async () => {
+    test("supports list item depth based on indentation", async () => {
       const stream = toAsync([
-        "* hello world\n  * nested item 1\n  * nested item 2",
+        "* hello world\n  * nested item 1\n    * nested item 2",
       ]);
       const output = await Array.fromAsync(parseMarkdown(stream));
       expect(output).toEqual([
@@ -350,7 +350,24 @@ describe("parseMarkdown", () => {
         "hello world",
         { type: "listitem", listType: "unordered", depth: 1 },
         "nested item 1",
+        { type: "listitem", listType: "unordered", depth: 2 },
+        "nested item 2",
+      ]);
+    });
+
+    test("supports indentation split over chunks", async () => {
+      const stream = toAsync([
+        "* hello world\n ",
+        " * nested item 1\n   ",
+        " * nested item 2",
+      ]);
+      const output = await Array.fromAsync(parseMarkdown(stream));
+      expect(output).toEqual([
+        { type: "listitem", listType: "unordered", depth: 0 },
+        "hello world",
         { type: "listitem", listType: "unordered", depth: 1 },
+        "nested item 1",
+        { type: "listitem", listType: "unordered", depth: 2 },
         "nested item 2",
       ]);
     });
