@@ -4,6 +4,7 @@ import InlinePrompt from "@/components/prompt/InlinePrompt";
 import { render } from "@/jsx/dom";
 import { insertFromStream } from "@/utils/richText/stream";
 import client from "@/api/client";
+import { SPRING } from "@/utils/animation/effects";
 import type { EditorView } from "prosemirror-view";
 
 export const PROMPT_PLUGIN_KEY = new PluginKey<DecorationSet | null>(
@@ -16,7 +17,12 @@ export interface PromptMeta {
 
 function getElement(view: EditorView) {
   function removePrompt() {
-    view.dispatch(view.state.tr.setMeta(PROMPT_PLUGIN_KEY, { pos: null }));
+    void element
+      .animate([{ opacity: 0 }], SPRING)
+      .finished.finally(() =>
+        view.dispatch(view.state.tr.setMeta(PROMPT_PLUGIN_KEY, { pos: null })),
+      );
+
     view.focus();
   }
 
@@ -41,7 +47,18 @@ function getElement(view: EditorView) {
     />,
   ) as HTMLElement;
 
-  requestAnimationFrame(() => element.querySelector("textarea")?.focus());
+  requestAnimationFrame(() => {
+    element.querySelector("textarea")?.focus();
+
+    const style = getComputedStyle(element);
+    element.animate(
+      [
+        { width: 0, opacity: 0 },
+        { width: style.width, opacity: 1 },
+      ],
+      SPRING,
+    );
+  });
 
   return element;
 }
