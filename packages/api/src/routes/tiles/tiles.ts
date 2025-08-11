@@ -1,11 +1,22 @@
-import prisma from "@/database/prisma.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import type {
   ReorderTileSchema,
   DeleteTileSchema,
   UpdateTileSchema,
 } from "./schema.ts";
-import type { TileType } from "@prisma/client";
+import type { Prisma, TileType } from "@prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma.ts";
+
+export const TILE_FIELDS = {
+  id: true,
+  sectionId: true,
+  position: true,
+  width: true,
+  height: true,
+  x: true,
+  y: true,
+  block: true,
+} as const satisfies Prisma.TileSelect<ExtensionArgs>;
 
 export async function reorderTile({
   pageId,
@@ -119,6 +130,7 @@ export async function updateTile({
   height,
   x,
   y,
+  block,
 }: UpdateTileSchema) {
   return prisma.$transaction(async (transaction) => {
     // Validate section ID
@@ -137,6 +149,7 @@ export async function updateTile({
         height,
         x,
         y,
+        block,
       },
       select: {
         id: true,
@@ -177,6 +190,7 @@ type CreateTilePlacement = {
   height?: number;
   x?: number;
   y?: number;
+  block?: boolean;
   imageTileId?: string;
   mapTileId?: string;
   textTileId?: string;
@@ -195,6 +209,7 @@ export async function createTilePlacement(
     height = 1,
     x,
     y,
+    block,
     imageTileId,
     mapTileId,
     textTileId,
@@ -219,6 +234,7 @@ export async function createTilePlacement(
       height,
       x,
       y,
+      block,
       imageTileId,
       mapTileId,
       textTileId,
@@ -227,15 +243,7 @@ export async function createTilePlacement(
       videoTileId,
       tableId,
     },
-    select: {
-      id: true,
-      position: true,
-      width: true,
-      height: true,
-      x: true,
-      y: true,
-      sectionId: true,
-    },
+    select: TILE_FIELDS,
   });
   return { ...tile, placementId };
 }

@@ -36,12 +36,13 @@ const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
 
 const TILES_FIELDS = {
   id: true,
+  sectionId: true,
   position: true,
   width: true,
   height: true,
   x: true,
   y: true,
-  sectionId: true,
+  block: true,
   image: {
     select: IMAGE_FIELDS,
   },

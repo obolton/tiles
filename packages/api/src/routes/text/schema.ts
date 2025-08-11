@@ -10,6 +10,7 @@ export const CreateTextSchema = z.object({
   background: BackgroundSchema.optional(),
   width: z.number().int().gte(1).lte(12).optional(),
   height: z.number().int().gte(1).lte(24).optional(),
+  block: z.boolean().optional(),
   align: z.enum(VerticalAlignment).optional(),
 });
 export type CreateTextSchema = z.infer<typeof CreateTextSchema>;

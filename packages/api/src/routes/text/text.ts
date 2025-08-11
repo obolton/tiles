@@ -23,6 +23,7 @@ export async function createText({
   background,
   width,
   height,
+  block,
   align,
 }: CreateTextSchema) {
   const color = background && "color" in background ? background.color : null;
@@ -50,6 +51,7 @@ export async function createText({
         textTileId: text.id,
         width,
         height,
+        block,
       },
       transaction,
     );
