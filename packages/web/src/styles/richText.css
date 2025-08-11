@@ -4,11 +4,21 @@
   white-space-collapse: preserve;
   -webkit-font-smoothing: antialiased;
 
-  & > *:not(:last-child),
-  & ins > *:not(:last-child),
-  & blockquote > *:not(:last-child),
-  & li > *:not(:last-child) {
-    margin-bottom: 18px;
+  & h1,
+  & h2,
+  & h3,
+  & p,
+  & ol,
+  & ul,
+  & blockquote,
+  & ins {
+    margin-bottom: 1rlh;
+  }
+
+  & > :last-child,
+  & blockquote > :last-child,
+  & ins > :last-child {
+    margin-bottom: 0;
   }
 
   & a {
@@ -32,7 +42,6 @@
   & blockquote {
     position: relative;
     padding: 0.25rem 0 0.25rem 1rem;
-    margin: 0.5rem 0;
     font-weight: 500;
     color: oklch(from var(--tile-background) 50% calc(c * 2.5) h);
 
@@ -48,10 +57,15 @@
 
   & ol,
   & ul {
-    margin: 0 0 1rem 2rem;
+    margin: 0 0 1rlh 2rem;
     list-style-position: outside;
 
-    &:last-child {
+    & ol,
+    & ul {
+      margin-top: 0.5rlh;
+    }
+
+    & p {
       margin-bottom: 0;
     }
   }
