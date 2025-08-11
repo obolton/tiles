@@ -103,6 +103,7 @@ a.floating {
   transition:
     scale var(--animation-duration-short) var(--easing),
     background-color var(--animation-duration-short) var(--easing),
+    opacity var(--animation-duration-short) var(--easing),
     outline-color var(--animation-duration) var(--easing);
 
   & > svg {
