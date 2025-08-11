@@ -140,7 +140,7 @@ export async function insertFromStream(
                 pos += node.nodeSize - 3;
 
                 // Decrease depth
-              } else if (event.depth > 0) {
+              } else if (event.depth >= 0) {
                 pos = afterPos + 2;
                 const node = createListItem();
                 tr.insert(pos, node);
