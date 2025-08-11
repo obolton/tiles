@@ -116,17 +116,19 @@ export function formatTile({
   y,
   width,
   height,
+  block,
   sectionId,
   ...tile
 }: TileWithData): ClientTile {
   const base = {
+    sectionId,
     placementId: id,
     position,
     x,
     y,
     width,
     height,
-    sectionId,
+    block,
   };
   const { image, video, text, map, link, pageLink, table } = tile;
 
