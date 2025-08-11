@@ -66,8 +66,8 @@ export default function TextTile({
     }
   };
 
-  const onKeyDown = (event: KeyboardEvent) => {
-    const editor = event.currentTarget as HTMLElement;
+  function onKeyDown(event: KeyboardEvent) {
+    const { currentTarget, target, key } = event;
 
     if (
       event.defaultPrevented ||
@@ -80,23 +80,29 @@ export default function TextTile({
       return;
     }
 
+    // Delete the tile if it is empty
     if (
-      (event.key === "Delete" || event.key === "Backspace") &&
-      editor.textContent === ""
+      (key === "Delete" || key === "Backspace") &&
+      target === currentTarget &&
+      (currentTarget as HTMLElement).textContent === ""
     ) {
+      event.stopPropagation();
+      event.preventDefault();
       onDelete?.();
     }
 
     // Prevent ancestors from acting on keyboard navigation
     if (
-      event.key === "ArrowLeft" ||
-      event.key === "ArrowRight" ||
-      event.key === "ArrowUp" ||
-      event.key === "ArrowDown"
+      key === "ArrowLeft" ||
+      key === "ArrowRight" ||
+      key === "ArrowUp" ||
+      key === "ArrowDown" ||
+      key === "Home" ||
+      key === "End"
     ) {
       event.stopPropagation();
     }
-  };
+  }
 
   const onChangeVerticalAlignment = async (event: Event) => {
     try {
@@ -139,7 +145,7 @@ export default function TextTile({
               classList={[styles.text, styles.editor, alignClass]}
               initialValue={content.value}
               tabIndex={-1}
-              onkeydown={onDelete ? onKeyDown : undefined}
+              on:keydown={onKeyDown}
               onBlur={onBlur}
               showToolbar={hasFocus}
               extraToolbarItems={
