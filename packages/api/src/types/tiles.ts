@@ -75,9 +75,7 @@ export interface ClientPageLinkTile extends ClientTileBase, ClientPageLink {
 }
 
 // Table
-export type ClientTable = OmitMetadata<TableWithData> & {
-  numRows: number;
-};
+export type ClientTable = OmitMetadata<TableWithData>;
 export interface ClientTableTile extends ClientTileBase, ClientTable {
   type: "TABLE";
 }

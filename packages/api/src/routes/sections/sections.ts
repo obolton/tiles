@@ -1,5 +1,5 @@
-import { Prisma } from "@prisma/client";
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
+import type { Prisma } from "@prisma/client";
 import type {
   CreateSectionSchema,
   UpdateSectionSchema,

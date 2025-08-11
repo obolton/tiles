@@ -52,11 +52,14 @@ export const TABLE_WITH_DATA_FIELDS = {
   },
 } as const satisfies Prisma.TableSelect<ExtensionArgs>;
 
-export type TableWithData = Prisma.Result<
-  typeof prisma.table,
-  { select: typeof TABLE_WITH_DATA_FIELDS },
-  "findUniqueOrThrow"
->;
+export type TableWithData = Omit<
+  Prisma.Result<
+    typeof prisma.table,
+    { select: typeof TABLE_WITH_DATA_FIELDS },
+    "findUniqueOrThrow"
+  >,
+  "_count"
+> & { numRows: number };
 
 export async function createTable({
   pageId,
@@ -64,7 +67,7 @@ export async function createTable({
   columns,
   rows,
   background,
-}: CreateTableSchema) {
+}: CreateTableSchema): Promise<TableWithData> {
   const color = background && "color" in background ? background.color : null;
   const imageKey =
     background && "imageKey" in background ? background.imageKey : null;
