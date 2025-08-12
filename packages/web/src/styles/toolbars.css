@@ -1,8 +1,8 @@
 floating-toolbar {
   position: fixed;
-  inset: auto 8px 48px;
-  max-width: calc(100vw - 24px);
-  max-height: calc(100vh - 24px);
+  inset: auto 48px 48px;
+  width: fit-content;
+  height: fit-content;
   overflow: visible;
   contain: layout;
   background: var(--ui-background-color);
@@ -17,7 +17,6 @@ floating-toolbar {
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 15%),
     0 4px 12px -4px rgb(0 0 0 / 30%);
-  view-transition-name: toolbar;
 
   & > ul {
     position: relative;
@@ -53,22 +52,13 @@ floating-toolbar {
       }
     }
   }
+
+  &.anchored {
+    position: absolute;
+    inset: 0 auto auto calc(100% + 24px);
+  }
 }
 
 body[data-drag] floating-toolbar {
   display: none;
-}
-
-::view-transition-group(toolbar) {
-  overflow: clip;
-  border-radius: 32px;
-  box-shadow:
-    0 0 0 1px rgb(0 0 0 / 15%),
-    0 4px 12px -4px rgb(0 0 0 / 30%);
-}
-
-::view-transition-new(toolbar),
-::view-transition-old(toolbar) {
-  object-fit: none;
-  object-position: left top;
 }

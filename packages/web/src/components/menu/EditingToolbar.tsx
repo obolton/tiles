@@ -1,9 +1,9 @@
 import EditingTools from "./EditingTools";
-import "./EditingToolbar.module.css";
 import { viewTransition } from "@/utils/transitions";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import { setEditMode } from "@/utils/edit";
+import styles from "./EditingToolbar.module.css";
 
 interface EditingToolbarProps {
   editor: Editor;
@@ -30,7 +30,11 @@ export default function EditingToolbar({
   };
 
   return (
-    <floating-toolbar aria-label="Editing toolbar" data-tooltip-position="top">
+    <floating-toolbar
+      className={styles.toolbar}
+      aria-label="Editing toolbar"
+      data-tooltip-position="top"
+    >
       <ul role="group" aria-label="Editing mode">
         <li role="presentation">
           <button

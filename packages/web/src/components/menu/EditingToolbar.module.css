@@ -1,17 +1,17 @@
-body:not([data-signed-in]) {
-  :global(#bookmark),
-  :global(#editing-toolbar) {
-    display: none;
-  }
+.toolbar {
+  view-transition-name: editing-toolbar;
 }
 
-:global(#edit-label) {
-  height: 40px;
-  padding-left: 12px;
-  color: var(--icon-color);
-  gap: 12px;
+::view-transition-group(editing-toolbar) {
+  overflow: clip;
+  border-radius: 32px;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
+}
 
-  & span {
-    text-box: trim-both cap alphabetic;
-  }
+::view-transition-new(editing-toolbar),
+::view-transition-old(editing-toolbar) {
+  object-fit: none;
+  object-position: left top;
 }
