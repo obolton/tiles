@@ -2,7 +2,7 @@
   isolation: isolate;
   width: 100%;
   height: 100%;
-  background: var(--page-color);
+  background: var(--background-color);
 }
 
 .stack::part(dialog) {

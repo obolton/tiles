@@ -36,7 +36,7 @@ export default function FormattingToolbar({ editor }: FormattingToolbarProps) {
       } else {
         document.body.classList.remove("dark");
       }
-      document.body.style.setProperty("--page-color", toCSSColor(value));
+      document.body.style.setProperty("--background-color", toCSSColor(value));
     });
     try {
       await editor.setColor(value);

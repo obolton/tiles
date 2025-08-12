@@ -1,5 +1,5 @@
 .tile {
-  --tile-background: var(--page-color);
+  --tile-background: var(--background-color);
 
   position: relative;
   width: 100%;

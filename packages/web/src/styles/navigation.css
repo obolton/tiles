@@ -36,7 +36,7 @@
     flex-direction: row;
     border-top: 1px solid rgb(0 0 0 / 10%);
     padding: 0 8px;
-    background-color: oklch(from var(--page-color) l c h / 90%);
+    background-color: oklch(from var(--background-color) l c h / 90%);
     backdrop-filter: blur(3px);
 
     & > ul {

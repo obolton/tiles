@@ -27,7 +27,7 @@ async function loader(): RouteLoaderResult<PageProps> {
       "data-page-id": page.id,
       className: isDark(page.color) ? "dark" : undefined,
       style: {
-        "--page-color": toCSSColor(page.color),
+        "--background-color": toCSSColor(page.color),
         "--font": font ? `"${font.family}", "${font.fallback}"` : undefined,
       },
     },

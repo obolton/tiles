@@ -54,8 +54,8 @@ button.button {
   top: 80px;
   right: calc(100% + 12px);
   background: linear-gradient(
-    var(--page-color),
-    oklch(from var(--page-color) calc(l - 0.1) c h)
+    var(--background-color),
+    oklch(from var(--background-color) calc(l - 0.1) c h)
   );
   box-shadow:
     inset 0 0 0 1px rgb(0 0 0 / 20%),

@@ -1,4 +1,4 @@
-@property --page-color {
+@property --background-color {
   syntax: "<color>";
   inherits: true;
   initial-value: rgb(255 255 255);
@@ -70,13 +70,13 @@ html {
 body {
   --secondary-text-color: oklch(50% 20% var(--page-hue));
   --accent: linear-gradient(
-    oklch(from var(--page-color) 55% c h),
-    oklch(from var(--page-color) 45% c h)
+    oklch(from var(--background-color) 55% c h),
+    oklch(from var(--background-color) 45% c h)
   );
 
   padding: 24px;
   color: var(--text-color);
-  background: var(--page-color);
+  background: var(--background-color);
 }
 
 body.dark {
