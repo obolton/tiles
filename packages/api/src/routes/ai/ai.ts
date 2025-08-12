@@ -38,11 +38,13 @@ async function* getStreamOutput(input: AsyncGenerator<ServerSentEvent>) {
   }
 }
 
-export function write({ prompt }: WriteSchema, signal?: AbortSignal) {
+export function write({ prompt, context }: WriteSchema, signal?: AbortSignal) {
+  const fullPrompt =
+    (context ? `### Context:\n${context}\n\n` : "") + `### Task:\n${prompt}`;
   const stream = replicate.stream(TEXT_MODEL, {
     input: {
       system_prompt: "You are a helpful assistant.",
-      prompt,
+      prompt: fullPrompt,
     },
     signal,
   });
