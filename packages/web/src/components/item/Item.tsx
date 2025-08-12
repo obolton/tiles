@@ -29,6 +29,7 @@ export interface ItemProps {
   columns: Reactive<number>;
   minColumns?: number;
   maxColumns?: number;
+  block?: Reactive<boolean>;
   grow?: boolean;
   tile: Tile;
   tabIndex?: number | Reactive<number | undefined>;
@@ -96,6 +97,7 @@ export default function Item({
   columns,
   minColumns = 1,
   maxColumns = 32,
+  block,
   grow,
   tile,
   tabIndex,
@@ -169,6 +171,7 @@ export default function Item({
       classList={{
         [styles.item]: true,
         [styles.draggable]: editable,
+        [styles.block]: block,
         [styles.grow]: grow,
         ...classList,
       }}

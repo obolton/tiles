@@ -23,8 +23,8 @@
 }
 
 .item {
-  grid-column: var(--column, auto) / span var(--columns, 1);
-  grid-row: var(--row, auto) / span var(--rows, 1);
+  grid-column: var(--column) / span var(--columns, 1);
+  grid-row: var(--row) / span var(--rows, 1);
   min-width: calc(
     var(--min-columns) * (var(--grid-column-width) + var(--gap)) - var(--gap)
   );
@@ -41,6 +41,11 @@
 
   &::part(outline) {
     view-transition-name: outline;
+  }
+
+  &.block {
+    grid-row: var(--row) / span 1;
+    height: auto;
   }
 
   &.grow {

@@ -54,6 +54,7 @@ export default function Canvas({
             minRows={minRowSpan}
             columns={tile.width}
             minColumns={minColumnSpan}
+            block={tile.block}
             tile={tile}
             tabIndex={isEditable.derive((editable) =>
               editable ? 0 : undefined,
