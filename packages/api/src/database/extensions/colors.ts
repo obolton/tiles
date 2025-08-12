@@ -6,32 +6,24 @@ export default Prisma.defineExtension({
     page: {
       color: {
         needs: { lightness: true, chroma: true, hue: true },
-        compute({ lightness, chroma, hue }) {
-          return { l: lightness, c: chroma, h: hue };
+        compute({ lightness: l, chroma: c, hue: h }) {
+          return { l, c, h };
         },
       },
     },
     textTile: {
-      color: {
-        needs: { lightness: true, chroma: true, hue: true },
-        compute({ lightness, chroma, hue }) {
-          return typeof lightness === "number" &&
-            typeof chroma === "number" &&
-            typeof hue === "number"
-            ? { l: lightness, c: chroma, h: hue }
-            : null;
+      textColor: {
+        needs: { textL: true, textC: true, textH: true },
+        compute({ textL: l, textC: c, textH: h }) {
+          return { l, c, h };
         },
       },
     },
     table: {
-      color: {
-        needs: { lightness: true, chroma: true, hue: true },
-        compute({ lightness, chroma, hue }) {
-          return typeof lightness === "number" &&
-            typeof chroma === "number" &&
-            typeof hue === "number"
-            ? { l: lightness, c: chroma, h: hue }
-            : null;
+      textColor: {
+        needs: { textL: true, textC: true, textH: true },
+        compute({ textL: l, textC: c, textH: h }) {
+          return { l, c, h };
         },
       },
     },
