@@ -7,25 +7,21 @@ export type Background =
   | null;
 
 function compute({
-  lightness,
-  chroma,
-  hue,
-  imageKey,
+  backgroundL: l,
+  backgroundC: c,
+  backgroundH: h,
+  backgroundImageKey: imageKey,
 }: {
-  lightness: number | null;
-  chroma: number | null;
-  hue: number | null;
-  imageKey?: string | null;
+  backgroundL: number | null;
+  backgroundC: number | null;
+  backgroundH: number | null;
+  backgroundImageKey?: string | null;
 }): Background {
   if (imageKey) {
     return { imageUrl: getImageUrl(imageKey) };
   }
-  if (
-    typeof lightness === "number" &&
-    typeof chroma === "number" &&
-    typeof hue === "number"
-  ) {
-    return { color: { l: lightness, c: chroma, h: hue } };
+  if (typeof l === "number" && typeof c === "number" && typeof h === "number") {
+    return { color: { l, c, h } };
   }
   return null;
 }
@@ -36,18 +32,34 @@ export default Prisma.defineExtension({
     page: {
       background: {
         needs: { lightness: true, chroma: true, hue: true },
-        compute,
+        compute({ lightness, chroma, hue }) {
+          return compute({
+            backgroundL: lightness,
+            backgroundC: chroma,
+            backgroundH: hue,
+          });
+        },
       },
     },
     textTile: {
       background: {
-        needs: { lightness: true, chroma: true, hue: true, imageKey: true },
+        needs: {
+          backgroundL: true,
+          backgroundC: true,
+          backgroundH: true,
+          backgroundImageKey: true,
+        },
         compute,
       },
     },
     table: {
       background: {
-        needs: { lightness: true, chroma: true, hue: true, imageKey: true },
+        needs: {
+          backgroundL: true,
+          backgroundC: true,
+          backgroundH: true,
+          backgroundImageKey: true,
+        },
         compute,
       },
     },
