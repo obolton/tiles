@@ -260,6 +260,7 @@ export default class Editor {
     y,
     width,
     height,
+    block,
   }: OmitPageId<AppRouterInputs["tiles"]["update"]>) {
     const tile = this.tiles.value.find((tile) => tile.placementId === id);
     if (!tile) {
@@ -299,6 +300,9 @@ export default class Editor {
     if (typeof height === "number") {
       tile.height.value = height;
     }
+    if (typeof block === "boolean") {
+      tile.block.value = block;
+    }
 
     await client.tiles.update.mutate({
       pageId: this.pageId,
@@ -308,6 +312,7 @@ export default class Editor {
       y,
       width,
       height,
+      block,
     });
   }
 

@@ -10,6 +10,7 @@ import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
 import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
+import FullWidthIcon from "@/icons/full-width.svg?jsx";
 import ExpandIcon from "@/icons/expand.svg?jsx";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
@@ -35,9 +36,11 @@ export interface TextTileProps extends TextProperties {
 export default function TextTile({
   editor,
   id,
+  placementId,
   content,
   textColor,
   background,
+  block,
   align,
   hasFocus,
   onDelete,
@@ -135,6 +138,15 @@ export default function TextTile({
     }
   };
 
+  function toggleBlock() {
+    editor
+      .positionTile({
+        id: placementId,
+        block: !block.value,
+      })
+      .catch(handleError);
+  }
+
   const alignClass = align.derive((value) => {
     switch (value) {
       default:
@@ -214,6 +226,21 @@ export default function TextTile({
                         <VerticalAlignBottomIcon aria-hidden="true" />
                       </swatch-item>
                     </swatch-select>
+                  </li>
+                  <li role="presentation">
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className="floating"
+                      aria-label="Expand to fit"
+                      data-tooltip="Expand to fit"
+                      aria-pressed={block.derive((value) =>
+                        value ? "true" : "false",
+                      )}
+                      on:click={toggleBlock}
+                    >
+                      <FullWidthIcon aria-hidden="true" />
+                    </button>
                   </li>
                 </ul>
               }
