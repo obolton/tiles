@@ -37,6 +37,10 @@ export default function Section({ editor, section }: SectionProps) {
       on:focus={onFocus}
       on:blur={onBlur}
     >
+      {hasFocus.derive((value) =>
+        value ? <SectionToolbar section={section} editor={editor} /> : null,
+      )}
+
       <Canvas
         editor={editor}
         isEditable={isEditable}
@@ -45,10 +49,6 @@ export default function Section({ editor, section }: SectionProps) {
         minColumnSpan={2}
         minRowSpan={1}
       />
-
-      {hasFocus.derive((value) =>
-        value ? <SectionToolbar section={section} editor={editor} /> : null,
-      )}
     </section>
   );
 }

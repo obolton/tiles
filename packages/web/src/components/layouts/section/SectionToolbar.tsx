@@ -36,7 +36,11 @@ export default function SectionToolbar({
   };
 
   return (
-    <floating-toolbar data-tooltip-position="top" aria-label="Section toolbar">
+    <floating-toolbar
+      className="vertical anchored"
+      data-tooltip-position="right"
+      aria-label="Section toolbar"
+    >
       <ul role="group" aria-label="Size">
         <li role="presentation">
           <button
