@@ -24,7 +24,7 @@ type TextColorProperties = Required<
 >;
 
 function getTextColorProperties(
-  textColor?: ColorSchema,
+  textColor?: ColorSchema | null,
 ): TextColorProperties | undefined {
   if (typeof textColor === "undefined") {
     return undefined;

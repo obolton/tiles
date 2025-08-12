@@ -15,7 +15,11 @@ export default Prisma.defineExtension({
       textColor: {
         needs: { textL: true, textC: true, textH: true },
         compute({ textL: l, textC: c, textH: h }) {
-          return { l, c, h };
+          return typeof l === "number" &&
+            typeof c === "number" &&
+            typeof h === "number"
+            ? { l, c, h }
+            : null;
         },
       },
     },
@@ -23,7 +27,11 @@ export default Prisma.defineExtension({
       textColor: {
         needs: { textL: true, textC: true, textH: true },
         compute({ textL: l, textC: c, textH: h }) {
-          return { l, c, h };
+          return typeof l === "number" &&
+            typeof c === "number" &&
+            typeof h === "number"
+            ? { l, c, h }
+            : null;
         },
       },
     },

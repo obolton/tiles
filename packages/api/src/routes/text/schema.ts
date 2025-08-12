@@ -8,7 +8,7 @@ export const CreateTextSchema = z.object({
   pageId: z.uuid(),
   sectionId: z.uuid(),
   content: RichTextSchema.optional(),
-  textColor: ColorSchema.optional(),
+  textColor: ColorSchema.nullable().optional(),
   background: BackgroundSchema.optional(),
   width: z.number().int().gte(1).lte(12).optional(),
   height: z.number().int().gte(1).lte(24).optional(),
@@ -21,7 +21,7 @@ export const UpdateTextSchema = z.object({
   pageId: z.uuid(),
   id: z.uuid(),
   content: RichTextSchema.optional(),
-  textColor: ColorSchema.optional(),
+  textColor: ColorSchema.nullable().optional(),
   background: BackgroundSchema.optional(),
   align: z.enum(VerticalAlignment).optional(),
 });
