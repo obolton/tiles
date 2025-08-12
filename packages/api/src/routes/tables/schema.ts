@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { RichTextSchema } from "@/schema/RichText.ts";
+import { ColorSchema } from "@/schema/Color.ts";
 import { BackgroundSchema } from "@/schema/Background.ts";
 
 export const CreateTableSchema = z.object({
@@ -7,6 +8,7 @@ export const CreateTableSchema = z.object({
   sectionId: z.uuid(),
   columns: z.number().int().min(1).max(100),
   rows: z.number().int().max(10),
+  textColor: ColorSchema.optional(),
   background: BackgroundSchema.optional(),
 });
 export type CreateTableSchema = z.infer<typeof CreateTableSchema>;
@@ -14,6 +16,7 @@ export type CreateTableSchema = z.infer<typeof CreateTableSchema>;
 export const UpdateTableSchema = z.object({
   pageId: z.uuid(),
   id: z.uuid(),
+  textColor: ColorSchema.optional(),
   background: BackgroundSchema.optional(),
 });
 export type UpdateTableSchema = z.infer<typeof UpdateTableSchema>;
