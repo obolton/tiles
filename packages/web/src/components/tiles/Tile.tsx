@@ -15,13 +15,14 @@ export type TileBackground = { imageUrl: string } | { color: Color } | null;
 export type TileProps = {
   className?: string;
   children?: JSX.Node;
+  font?: FontId | null;
+  textColor?: Reactive<Color | null>;
+  background?: Reactive<TileBackground>;
   border?:
     | Reactive<"inside" | "outside" | "none">
     | "inside"
     | "outside"
     | "none";
-  background?: Reactive<TileBackground>;
-  font?: FontId | null;
 };
 
 const BORDER_CLASSES = {
@@ -33,20 +34,29 @@ const BORDER_CLASSES = {
 export default function Tile({
   className,
   children,
+  textColor = reactive(null),
   background = reactive(null),
   font,
   border = "outside",
 }: TileProps) {
   const fontConfig = typeof font === "string" ? getFontConfig(font) : undefined;
-  const style = new Computed([background] as const, (value) => ({
-    "--tile-background":
-      value && "color" in value ? toCSSColor(value.color) : undefined,
-    "--font": fontConfig
-      ? `"${fontConfig.family}", "${fontConfig.fallback}"`
-      : undefined,
-    backgroundImage:
-      value && "imageUrl" in value ? `url(${value.imageUrl})` : undefined,
-  }));
+  const style = new Computed(
+    [textColor, background] as const,
+    (textColorValue, backgroundValue) => ({
+      "--font": fontConfig
+        ? `"${fontConfig.family}", "${fontConfig.fallback}"`
+        : undefined,
+      "--text-color": textColorValue ? toCSSColor(textColorValue) : undefined,
+      "--tile-background":
+        backgroundValue && "color" in backgroundValue
+          ? toCSSColor(backgroundValue.color)
+          : undefined,
+      backgroundImage:
+        backgroundValue && "imageUrl" in backgroundValue
+          ? `url(${backgroundValue.imageUrl})`
+          : undefined,
+    }),
+  );
 
   return (
     <div
