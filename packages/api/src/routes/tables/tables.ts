@@ -14,6 +14,8 @@ import type {
   DeleteColumnSchema,
   UpdateCellSchema,
 } from "./schema.ts";
+import type { ColorSchema } from "@/schema/Color.ts";
+import type { BackgroundSchema } from "@/schema/Background.ts";
 
 export const TABLE_COLUMN_FIELDS = {
   id: true,
@@ -27,6 +29,7 @@ export const TABLE_ROW_FIELDS = {
 
 export const TABLE_FIELDS = {
   id: true,
+  textColor: true,
   background: true,
 } as const satisfies Prisma.TableSelect<ExtensionArgs>;
 
@@ -61,25 +64,90 @@ export type TableWithData = Omit<
   "_count"
 > & { numRows: number };
 
+type TextColorProperties = Required<
+  Pick<Prisma.TableCreateInput, "textL" | "textC" | "textH">
+>;
+
+function getTextColorProperties(
+  textColor?: ColorSchema,
+): TextColorProperties | undefined {
+  if (typeof textColor === "undefined") {
+    return undefined;
+  }
+
+  if (textColor === null) {
+    return {
+      textL: null,
+      textC: null,
+      textH: null,
+    };
+  }
+
+  return {
+    textL: textColor.l,
+    textC: textColor.c,
+    textH: textColor.h,
+  };
+}
+
+type BackgroundProperties = Required<
+  Pick<
+    Prisma.TableCreateInput,
+    "backgroundL" | "backgroundC" | "backgroundH" | "backgroundImageKey"
+  >
+>;
+
+function getBackgroundProperties(
+  background?: BackgroundSchema,
+): BackgroundProperties | undefined {
+  if (typeof background === "undefined") {
+    return undefined;
+  }
+
+  if (background === null) {
+    return {
+      backgroundL: null,
+      backgroundC: null,
+      backgroundH: null,
+      backgroundImageKey: null,
+    };
+  }
+
+  if ("color" in background) {
+    return {
+      backgroundL: background.color.l,
+      backgroundC: background.color.c,
+      backgroundH: background.color.h,
+      backgroundImageKey: null,
+    };
+  }
+
+  if ("imageKey" in background) {
+    return {
+      backgroundL: null,
+      backgroundC: null,
+      backgroundH: null,
+      backgroundImageKey: background.imageKey,
+    };
+  }
+
+  throw new Error("Invalid background");
+}
+
 export async function createTable({
   pageId,
   sectionId,
   columns,
   rows,
+  textColor,
   background,
 }: CreateTableSchema): Promise<TableWithData> {
-  const color = background && "color" in background ? background.color : null;
-  const imageKey =
-    background && "imageKey" in background ? background.imageKey : null;
-
   return prisma.$transaction(async (transaction) => {
     const table = await transaction.table.create({
       data: {
         pageId,
-        lightness: color?.l,
-        chroma: color?.c,
-        hue: color?.h,
-        imageKey,
+        ...getTextColorProperties(textColor),
+        ...getBackgroundProperties(background),
       },
       select: { id: true },
     });
@@ -130,37 +198,17 @@ export async function createTable({
 export async function updateTable({
   pageId,
   id,
+  textColor,
   background,
 }: UpdateTableSchema) {
-  const color = background && "color" in background ? background.color : null;
-  const imageKey =
-    background && "imageKey" in background ? background.imageKey : null;
-
   const table = await prisma.table.update({
     where: {
       pageId,
       id,
     },
     data: {
-      lightness:
-        typeof background !== "undefined"
-          ? color
-            ? color.l
-            : null
-          : undefined,
-      chroma:
-        typeof background !== "undefined"
-          ? color
-            ? color.c
-            : null
-          : undefined,
-      hue:
-        typeof background !== "undefined"
-          ? color
-            ? color.h
-            : null
-          : undefined,
-      imageKey: typeof background !== "undefined" ? imageKey : undefined,
+      ...getTextColorProperties(textColor),
+      ...getBackgroundProperties(background),
     },
     select: TABLE_FIELDS,
   });
