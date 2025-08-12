@@ -10,7 +10,6 @@
   background-color: var(--background-color);
   background-size: cover;
   background-position: center;
-  overflow: clip;
   transition:
     opacity var(--animation-duration-short) var(--easing),
     box-shadow var(--animation-duration-short) var(--easing),

@@ -61,7 +61,7 @@ dialog {
   color: inherit;
   border: none;
   background: none;
-  overflow: visible;
+  overflow: clip;
   border-radius: inherit;
 
   &::backdrop {
@@ -78,6 +78,7 @@ dialog {
     max-width: clamp(100px, 80vw, var(--max-width));
     max-height: clamp(100px, calc(100vh - 180px), 600px);
     margin: auto;
+    overflow: visible;
 
     & #close {
       display: block;
