@@ -5,6 +5,7 @@ import styles from "./TextTile.module.css";
 import TextEditor, {
   type EditorState,
 } from "@/components/inputs/RichTextEditor/TextEditor";
+import ColorPicker from "@/components/colors/ColorPicker";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
@@ -16,6 +17,7 @@ import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { TextProperties } from "@/types/tiles";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type { Color } from "@/utils/color";
 import type { Background } from "@/components/backgrounds/types";
 
 const ALIGN_ICON = {
@@ -34,6 +36,7 @@ export default function TextTile({
   editor,
   id,
   content,
+  textColor,
   background,
   align,
   hasFocus,
@@ -49,6 +52,18 @@ export default function TextTile({
         id,
         content: newContent,
       });
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const onChangeTextColor = async (value: Color | null) => {
+    try {
+      const { textColor: newTextColor } = await editor.updateText({
+        id,
+        textColor: value,
+      });
+      viewTransition(() => (textColor.value = newTextColor));
     } catch (error) {
       handleError(error);
     }
@@ -134,6 +149,7 @@ export default function TextTile({
 
   return (
     <Tile
+      textColor={textColor}
       background={background}
       border={background.derive((value) => (value ? "outside" : "none"))}
     >
@@ -150,6 +166,12 @@ export default function TextTile({
               showToolbar={hasFocus}
               extraToolbarItems={
                 <ul role="group">
+                  <li role="presentation">
+                    <ColorPicker
+                      value={textColor}
+                      onChange={onChangeTextColor}
+                    />
+                  </li>
                   <li role="presentation">
                     <BackgroundPicker
                       value={background}

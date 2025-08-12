@@ -1,6 +1,7 @@
 import Tile from "./Tile";
 import RichText from "@/components/text/RichText";
 import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingToolbar";
+import ColorPicker from "@/components/colors/ColorPicker";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import AddRowIcon from "@/icons/add-row.svg?jsx";
 import AddColumnIcon from "@/icons/add-column.svg?jsx";
@@ -25,6 +26,7 @@ import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
 import type { TableProperties } from "@/types/tiles";
 import type { TableEvent } from "@/elements/table/events";
+import type { Color } from "@/utils/color";
 import type { Background } from "@/components/backgrounds/types";
 
 export interface TableTileProps extends TableProperties {
@@ -43,6 +45,7 @@ function createDocument(value: string) {
 export default function TableTile({
   editor,
   id,
+  textColor,
   background,
   columns,
   rows,
@@ -288,6 +291,18 @@ export default function TableTile({
     }
   };
 
+  const onChangeTextColor = async (value: Color | null) => {
+    try {
+      const { textColor: newTextColor } = await editor.updateTable({
+        id,
+        textColor: value,
+      });
+      viewTransition(() => (textColor.value = newTextColor));
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const onChangeBackground = async (value: Background) => {
     try {
       const { background: newBackground } = await editor.updateTable({
@@ -323,7 +338,7 @@ export default function TableTile({
   const prompting = flag(false);
 
   return (
-    <Tile background={background}>
+    <Tile textColor={textColor} background={background}>
       <table-view
         ref={ref}
         classList={["rich-text", styles.table]}
@@ -420,6 +435,9 @@ export default function TableTile({
                 >
                   <AddColumnIcon aria-hidden="true" />
                 </button>
+              </li>
+              <li role="presentation">
+                <ColorPicker value={textColor} onChange={onChangeTextColor} />
               </li>
               <li role="presentation">
                 <BackgroundPicker
