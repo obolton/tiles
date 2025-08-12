@@ -20,7 +20,7 @@
   word-wrap: break-word;
 
   &.with-image {
-    background: var(--tile-background);
+    background: var(--background-color);
     padding: clamp(8px, 6cqw, 24px);
     border-radius: 8px;
     backdrop-filter: blur(8px) contrast(80%);

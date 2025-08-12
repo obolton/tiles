@@ -1,6 +1,4 @@
 .tile {
-  --tile-background: var(--background-color);
-
   position: relative;
   width: 100%;
   height: 100%;
@@ -9,7 +7,7 @@
   border-radius: var(--border-radius);
   font-family: var(--font);
   color: var(--text-color);
-  background-color: var(--tile-background);
+  background-color: var(--background-color);
   background-size: cover;
   background-position: center;
   overflow: clip;

@@ -4,5 +4,5 @@ a.button {
   text-decoration: none;
   padding: 0.25em 0.5em;
   color: rgb(255 255 255 / 90%);
-  background: oklch(from var(--tile-background) 20% c h);
+  background: oklch(from var(--background-color) 20% c h);
 }

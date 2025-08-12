@@ -47,7 +47,7 @@ export default function Tile({
         ? `"${fontConfig.family}", "${fontConfig.fallback}"`
         : undefined,
       "--text-color": textColorValue ? toCSSColor(textColorValue) : undefined,
-      "--tile-background":
+      "--background-color":
         backgroundValue && "color" in backgroundValue
           ? toCSSColor(backgroundValue.color)
           : undefined,

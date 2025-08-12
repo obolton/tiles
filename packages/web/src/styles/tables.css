@@ -11,7 +11,7 @@
 }
 
 table-view {
-  --header-color: oklch(from var(--tile-background) 90% c h / 80%);
+  --header-color: oklch(from var(--background-color) 90% c h / 80%);
 
   display: block;
   overflow: auto;
