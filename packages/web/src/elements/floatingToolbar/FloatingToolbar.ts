@@ -12,15 +12,6 @@ export default class FloatingToolbar extends HTMLElement {
     this.addEventListener("pointerdown", this);
   }
 
-  connectedCallback() {
-    this.popover = "manual";
-    this.showPopover();
-  }
-
-  disconnectedCallback() {
-    this.hidePopover();
-  }
-
   handleEvent(event: Event) {
     switch (event.type) {
       case "pointerdown":
