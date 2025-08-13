@@ -64,7 +64,7 @@ export default function MapTile({
 
   return (
     <Tile border="inside">
-      <pop-out className={styles["pop-out"]} expandable="expandable">
+      <pop-out className={styles["pop-out"]}>
         <map-view
           ref={ref}
           className={styles.map}

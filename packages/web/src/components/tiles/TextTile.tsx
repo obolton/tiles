@@ -129,7 +129,7 @@ export default function TextTile({
         ) : null,
       )}
 
-      <pop-out className={styles["pop-out"]} expandable>
+      <pop-out className={styles["pop-out"]}>
         {isEditable.derive((value) =>
           value ? (
             <TextEditor
