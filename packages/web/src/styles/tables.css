@@ -30,6 +30,12 @@ table-view {
     z-index: 2;
   }
 
+  & thead,
+  & th[scope="row"] {
+    background: var(--header-color);
+    backdrop-filter: blur(4px);
+  }
+
   & tr {
     height: 32px;
     contain: strict;
@@ -38,8 +44,6 @@ table-view {
   & th {
     position: relative;
     padding: 0;
-    background: var(--header-color);
-    backdrop-filter: blur(4px);
     border-right: 1px solid var(--cell-border-color);
     border-bottom: 1px solid var(--cell-border-color);
     cursor: grab;
