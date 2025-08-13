@@ -3,7 +3,6 @@
   background: none;
 }
 
-:host(:hover),
 :host(:focus-within),
 :host(:state(resizing)) {
   z-index: 2;
