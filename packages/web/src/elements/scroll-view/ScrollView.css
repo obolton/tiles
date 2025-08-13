@@ -15,7 +15,6 @@
 #container {
   position: relative;
   overflow: auto;
-  isolation: isolate;
 
   &.scrolling {
     scroll-snap-type: none;
