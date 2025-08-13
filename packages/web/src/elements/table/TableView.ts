@@ -620,6 +620,7 @@ export default class TableView extends HTMLElement {
 
       if (allowMove) {
         this.moveColumn(column, index);
+        this.setSelection({ column: index + 1 });
       }
 
       return;
@@ -639,6 +640,7 @@ export default class TableView extends HTMLElement {
 
       if (allowMove) {
         this.moveRow(row, afterIndex);
+        this.setSelection({ row: afterIndex + 1 });
       }
     }
   }
