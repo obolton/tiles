@@ -110,6 +110,33 @@ export default function TextTile({
     }
   });
 
+  const contents = isEditable.derive((value) =>
+    value ? (
+      <TextEditor
+        editor={editor}
+        classList={[styles.text, styles.editor, alignClass]}
+        initialValue={content.value}
+        tabIndex={-1}
+        on:keydown={onKeyDown}
+        onBlur={onBlur}
+        showToolbar={hasFocus}
+        extraToolbarItems={
+          <ul role="group">
+            <li role="presentation">
+              <ColorPicker value={textColor} onChange={onChangeTextColor} />
+            </li>
+          </ul>
+        }
+      />
+    ) : (
+      <div classList={["rich-text", styles.text, alignClass]}>
+        {content.derive((value) => (
+          <RichText content={value} />
+        ))}
+      </div>
+    ),
+  );
+
   return (
     <Tile
       textColor={textColor}
@@ -129,39 +156,16 @@ export default function TextTile({
         ) : null,
       )}
 
-      <pop-out className={styles["pop-out"]}>
-        {isEditable.derive((value) =>
-          value ? (
-            <TextEditor
-              editor={editor}
-              classList={[styles.text, styles.editor, alignClass]}
-              initialValue={content.value}
-              tabIndex={-1}
-              on:keydown={onKeyDown}
-              onBlur={onBlur}
-              showToolbar={hasFocus}
-              extraToolbarItems={
-                <ul role="group">
-                  <li role="presentation">
-                    <ColorPicker
-                      value={textColor}
-                      onChange={onChangeTextColor}
-                    />
-                  </li>
-                </ul>
-              }
-            />
-          ) : (
-            <div classList={["rich-text", styles.text, alignClass]}>
-              {content.derive((value) => (
-                <RichText content={value} />
-              ))}
-            </div>
-          ),
-        )}
-
-        <ExpandIcon className={styles["expand-icon"]} aria-hidden="true" />
-      </pop-out>
+      {block.derive((value) =>
+        value ? (
+          contents
+        ) : (
+          <pop-out className={styles["pop-out"]}>
+            {contents}
+            <ExpandIcon className={styles["expand-icon"]} aria-hidden="true" />
+          </pop-out>
+        ),
+      )}
     </Tile>
   );
 }
