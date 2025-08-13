@@ -28,7 +28,7 @@
   &::part(contents) {
     display: grid;
     grid-auto-columns: var(--grid-column-width);
-    grid-auto-rows: var(--grid-row-height);
+    grid-auto-rows: minmax(var(--grid-row-height), auto);
     min-height: calc(48px + var(--grid-row-height));
     gap: var(--gap);
   }
