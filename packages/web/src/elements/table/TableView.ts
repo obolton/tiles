@@ -44,6 +44,8 @@ function defaultGetColumnWidth() {
   return 160;
 }
 
+const HEADER_SIZE = 32;
+
 export default class TableView extends HTMLElement {
   static readonly observedAttributes: (keyof TableViewAttributes)[] = [
     "columns",
@@ -84,6 +86,7 @@ export default class TableView extends HTMLElement {
   private verticalBufferSize = 0;
   private isSelecting = false;
   private virtualize = false;
+  private dropIndicator: HTMLElement | null = null;
 
   get columns() {
     return this.#columns;
@@ -129,6 +132,7 @@ export default class TableView extends HTMLElement {
     this.addEventListener("pointerdown", this);
     this.addEventListener("pointerup", this, { passive: true });
     this.addEventListener("dnd-dragenter", this);
+    this.addEventListener("dnd-dragover", this);
     this.addEventListener("dnd-drop", this);
   }
 
@@ -215,7 +219,7 @@ export default class TableView extends HTMLElement {
 
     if (this.colGroup.childElementCount === 0) {
       const col = document.createElement("col");
-      col.style.width = "32px";
+      col.style.width = HEADER_SIZE + "px";
       this.colGroup.appendChild(col);
     }
 
@@ -299,6 +303,8 @@ export default class TableView extends HTMLElement {
         return this.handleResizeEnd(event as ResizeEvent);
       case "dnd-dragenter":
         return this.handleDragEnter(event as DragDropEvent);
+      case "dnd-dragover":
+        return this.handleDragOver(event as DragDropEvent);
       case "dnd-drop":
         return this.handleDrop(event as DragDropEvent);
     }
@@ -501,6 +507,90 @@ export default class TableView extends HTMLElement {
     }
   }
 
+  private showDropIndicator(column: boolean) {
+    if (this.dropIndicator) {
+      return this.dropIndicator;
+    }
+    this.dropIndicator = document.createElement("div");
+    this.dropIndicator.id = "drop-indicator";
+    this.dropIndicator.classList.add(column ? "vertical" : "horizontal");
+    this.contents.appendChild(this.dropIndicator);
+    return this.dropIndicator;
+  }
+
+  private hideDropIndicator() {
+    this.dropIndicator?.remove();
+    this.dropIndicator = null;
+  }
+
+  private handleDragOver(event: DragDropEvent) {
+    const { element } = event.state;
+
+    if (
+      !(element instanceof HTMLTableCellElement) ||
+      element.tagName !== "TH" ||
+      !this.contains(element)
+    ) {
+      return;
+    }
+
+    if (element.scope === "col") {
+      const { offset } = this.getColumnDropTarget(event.clientX);
+      const indicator = this.showDropIndicator(true);
+      requestAnimationFrame(() => {
+        indicator.style.setProperty(
+          "--translate-x",
+          HEADER_SIZE + offset + "px",
+        );
+      });
+    }
+  }
+
+  private getColumnDropTarget(clientX: number) {
+    if (!this.colGroup) {
+      throw new Error("Table is not initialized");
+    }
+
+    const { left } = this.contents.getBoundingClientRect();
+    let offset = 0;
+    let index = -1;
+
+    for (const width of this.columnWidths) {
+      const midpoint = left + HEADER_SIZE + offset + width / 2;
+      if (clientX < midpoint) {
+        break;
+      }
+
+      offset += width;
+      index++;
+    }
+
+    return { index, offset };
+  }
+
+  private getRowDropTarget(clientY: number) {
+    if (!this.tableBody) {
+      throw new Error("Table is not initialized");
+    }
+
+    let index = -1;
+    for (const row of this.tableBody.rows) {
+      if (!row.ariaRowIndex) {
+        continue;
+      }
+
+      const rect = row.getBoundingClientRect();
+      const midpoint = rect.top + rect.height / 2;
+      if (clientY < midpoint) {
+        break;
+      }
+
+      index = parseInt(row.ariaRowIndex, 10);
+    }
+
+    return index;
+  }
+
   private handleDrop(event: DragDropEvent) {
     const element = event.state.element;
 
@@ -516,33 +606,20 @@ export default class TableView extends HTMLElement {
 
     if (element.scope === "col" && element.ariaColIndex) {
       const column = parseInt(element.ariaColIndex, 10);
+      const { index } = this.getColumnDropTarget(event.clientX);
 
-      let afterIndex = -1;
-      for (const col of this.colGroup
-        .children as Iterable<HTMLTableColElement>) {
-        if (!col.dataset.index) {
-          continue;
-        }
-
-        const rect = col.getBoundingClientRect();
-        const midpoint = rect.left + rect.width / 2;
-        if (event.clientX < midpoint) {
-          break;
-        }
-
-        afterIndex = parseInt(col.dataset.index, 10);
-      }
+      this.hideDropIndicator();
 
       const allowMove = this.dispatchEvent(
         new TableEvent("movetablecolumn", {
           column,
-          afterIndex,
+          afterIndex: index,
           cancelable: true,
         }),
       );
 
       if (allowMove) {
-        this.moveColumn(column, afterIndex);
+        this.moveColumn(column, index);
       }
 
       return;
@@ -550,21 +627,7 @@ export default class TableView extends HTMLElement {
 
     if (element.scope === "row" && element.parentElement?.ariaRowIndex) {
       const row = parseInt(element.parentElement?.ariaRowIndex, 10);
-
-      let afterIndex = -1;
-      for (const row of this.tableBody.rows) {
-        if (!row.ariaRowIndex) {
-          continue;
-        }
-
-        const rect = row.getBoundingClientRect();
-        const midpoint = rect.top + rect.height / 2;
-        if (event.clientY < midpoint) {
-          break;
-        }
-
-        afterIndex = parseInt(row.ariaRowIndex, 10);
-      }
+      const afterIndex = this.getRowDropTarget(event.clientY);
 
       const allowMove = this.dispatchEvent(
         new TableEvent("movetablerow", {
