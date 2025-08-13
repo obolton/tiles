@@ -31,8 +31,13 @@ function getElement(view: EditorView) {
     if (!pageId) {
       throw new Error("Page ID is not defined");
     }
+    const {
+      state: { doc, selection },
+    } = view;
+    const { from, to } = selection;
+    const context = doc.textBetween(from, to, "\n");
     const stream = await client.ai.write.mutate(
-      { pageId, prompt },
+      { pageId, prompt, context },
       { context: { stream: true } },
     );
     removePrompt();
