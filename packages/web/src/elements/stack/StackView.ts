@@ -73,7 +73,7 @@ export default class StackView extends PopOut {
 
     event.stopPropagation();
 
-    const bounds = this.dialog.getBoundingClientRect();
+    const bounds = this.container.getBoundingClientRect();
     if (
       event.clientX < bounds.left ||
       event.clientY < bounds.top ||
