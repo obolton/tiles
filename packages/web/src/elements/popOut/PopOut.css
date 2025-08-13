@@ -3,11 +3,11 @@
   border-radius: var(--border-radius);
 }
 
-:host([expandable][open]) {
+:host(:state(open)) {
   cursor: auto;
 }
 
-:host([expandable]:not([open]):state(overflowing)) {
+:host(:not(:state(open), [disabled]):state(overflowing)) {
   cursor: pointer;
 }
 
@@ -17,40 +17,51 @@
 
 #close {
   position: absolute;
-  display: none;
-  top: -22px;
-  left: -22px;
+  inset: -22px auto auto -22px;
   width: 44px;
   height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0;
+  margin: 0;
   border-radius: 50%;
   border: none;
   outline: none;
-  background-color: rgb(0 0 0 / 30%);
-  box-shadow: 0 2px 4px -2px rgb(0 0 0 / 40%);
+  background-color: rgb(0 0 0 / 15%);
   -webkit-tap-highlight-color: transparent;
   cursor: pointer;
   transition:
     background-color var(--animation-duration-short) var(--easing),
+    opacity var(--animation-duration) var(--easing),
     scale var(--animation-duration-short) var(--easing);
 
-  &::after {
-    content: url("@/icons/close.svg");
-    position: absolute;
-    inset: 10px;
-    width: 24px;
-    height: 24px;
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+    scale: 1.1;
   }
 
-  &:hover,
-  &:active,
+  &:active {
+    opacity: 1;
+    scale: 1.05;
+    background-color: rgb(0 0 0 / 25%);
+  }
+
   &:focus-visible {
-    background-color: rgb(0 0 0 / 40%);
-    scale: 1.1;
+    outline: var(--focus-outline);
+  }
+
+  & > svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--icon-color);
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 10%));
+    pointer-events: none;
   }
 }
 
-dialog {
+#container {
   display: block;
   position: static;
   width: 100%;
@@ -64,24 +75,32 @@ dialog {
   overflow: clip;
   border-radius: inherit;
 
-  &::backdrop {
-    background-color: rgb(0 0 0 / 50%);
-    backdrop-filter: blur(8px);
-  }
-
-  &[open] {
+  &:popover-open {
     --border-radius: 12px;
 
     position: fixed;
+    inset: auto;
+    top: 48px;
     width: auto;
     height: auto;
     max-width: clamp(100px, 80vw, var(--max-width));
-    max-height: clamp(100px, calc(100vh - 180px), 600px);
-    margin: auto;
+    margin: 0;
     overflow: visible;
+    box-shadow:
+      0 0 0 1px rgb(0 0 0 / 15%),
+      0 4px 12px -4px rgb(0 0 0 / 30%);
+  }
+}
 
-    & #close {
-      display: block;
-    }
+#contents {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+
+  :host(:state(open)) & {
+    position: static;
+    inset: auto;
+    overflow: auto;
+    max-height: calc(100vh - 180px);
   }
 }
