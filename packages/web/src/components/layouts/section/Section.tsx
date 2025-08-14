@@ -19,19 +19,28 @@ export default function Section({ editor, section }: SectionProps) {
   const onFocus = () => hasFocus.on();
   const onBlur = () => hasFocus.off();
 
+  const anchorName = `--section-${section.id}`;
+
   return (
     <section
       classList={{
         [styles.section]: true,
         [styles["full-width"]]: fullWidth,
       }}
+      style={{ anchorName }}
       tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
       data-animate-layout-id={section.id}
       on:focus={onFocus}
       on:blur={onBlur}
     >
       {hasFocus.derive((value) =>
-        value ? <SectionToolbar section={section} editor={editor} /> : null,
+        value ? (
+          <SectionToolbar
+            editor={editor}
+            section={section}
+            anchorName={anchorName}
+          />
+        ) : null,
       )}
 
       <Canvas

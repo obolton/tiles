@@ -16,6 +16,7 @@ export interface TableToolbarProps {
   columns: TableProperties["columns"];
   numRows: TableProperties["numRows"];
   getSelection: () => Set<Selection> | null;
+  anchorName: string;
 }
 
 export default function TableToolbar({
@@ -26,6 +27,7 @@ export default function TableToolbar({
   columns,
   numRows,
   getSelection,
+  anchorName,
 }: TableToolbarProps) {
   async function setBackground(value: Background) {
     try {
@@ -69,6 +71,7 @@ export default function TableToolbar({
   return (
     <floating-toolbar
       className="vertical anchored"
+      style={{ positionAnchor: anchorName }}
       data-tooltip-position="right"
       aria-label="Table tools"
     >

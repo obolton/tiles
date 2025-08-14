@@ -23,6 +23,7 @@ export interface TextToolbarProps {
   background: TextProperties["background"];
   block: TextProperties["block"];
   align: TextProperties["align"];
+  anchorName: string;
 }
 
 export default function TextToolbar({
@@ -32,6 +33,7 @@ export default function TextToolbar({
   background,
   block,
   align,
+  anchorName,
 }: TextToolbarProps) {
   async function setBackground(value: Background) {
     try {
@@ -73,6 +75,7 @@ export default function TextToolbar({
   return (
     <floating-toolbar
       className="vertical anchored"
+      style={{ positionAnchor: anchorName }}
       data-tooltip-position="right"
       aria-label="Toolbar"
     >

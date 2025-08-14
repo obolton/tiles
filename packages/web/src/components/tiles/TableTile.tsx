@@ -299,8 +299,10 @@ export default function TableTile({
   });
   const prompting = flag(false);
 
+  const anchorName = `--table-${id}`;
+
   return (
-    <Tile textColor={textColor} background={background}>
+    <Tile textColor={textColor} background={background} anchorName={anchorName}>
       <table-view
         ref={ref}
         classList={["rich-text", styles.table]}
@@ -375,6 +377,7 @@ export default function TableTile({
               columns={columns}
               numRows={numRows}
               getSelection={getSelection}
+              anchorName={anchorName}
             />
 
             <FormattingToolbar

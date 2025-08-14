@@ -23,6 +23,7 @@ export type TileProps = {
     | "inside"
     | "outside"
     | "none";
+  anchorName?: string;
 };
 
 const BORDER_CLASSES = {
@@ -38,6 +39,7 @@ export default function Tile({
   background = reactive(null),
   font,
   border = "outside",
+  anchorName,
 }: TileProps) {
   const fontConfig = typeof font === "string" ? getFontConfig(font) : undefined;
   const style = new Computed(
@@ -55,6 +57,7 @@ export default function Tile({
         backgroundValue && "imageUrl" in backgroundValue
           ? `url(${backgroundValue.imageUrl})`
           : undefined,
+      anchorName,
     }),
   );
 

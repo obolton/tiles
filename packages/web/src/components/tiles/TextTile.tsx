@@ -137,11 +137,14 @@ export default function TextTile({
     ),
   );
 
+  const anchorName = `--text-${id}`;
+
   return (
     <Tile
       textColor={textColor}
       background={background}
       border={background.derive((value) => (value ? "outside" : "none"))}
+      anchorName={anchorName}
     >
       {hasFocus.derive((value) =>
         value ? (
@@ -152,6 +155,7 @@ export default function TextTile({
             background={background}
             align={align}
             block={block}
+            anchorName={anchorName}
           />
         ) : null,
       )}

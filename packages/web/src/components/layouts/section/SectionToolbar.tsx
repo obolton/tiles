@@ -10,11 +10,13 @@ import type { SectionWithTiles } from "@/types/tiles";
 export interface SectionToolbarProps {
   editor: Editor;
   section: SectionWithTiles;
+  anchorName: string;
 }
 
 export default function SectionToolbar({
   editor,
   section,
+  anchorName,
 }: SectionToolbarProps) {
   const toggleFullWidth = () => {
     const width = section.width.value === "VIEWPORT" ? "DEFAULT" : "VIEWPORT";
@@ -38,6 +40,7 @@ export default function SectionToolbar({
   return (
     <floating-toolbar
       className="vertical anchored"
+      style={{ positionAnchor: anchorName }}
       data-tooltip-position="right"
       aria-label="Section toolbar"
     >
