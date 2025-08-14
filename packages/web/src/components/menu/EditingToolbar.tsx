@@ -1,33 +1,28 @@
 import EditingTools from "./EditingTools";
 import { viewTransition } from "@/utils/transitions";
-import type { Reactive } from "@/utils/reactivity";
-import type Editor from "@/editor/Editor";
 import { setEditMode } from "@/utils/edit";
 import styles from "./EditingToolbar.module.css";
+import type Editor from "@/editor/Editor";
 
 interface EditingToolbarProps {
   editor: Editor;
-  isEditable: Reactive<boolean>;
-  isPublished: Reactive<boolean>;
   allowDelete?: boolean;
   allowPublish?: boolean;
 }
 
 export default function EditingToolbar({
   editor,
-  isEditable,
-  isPublished,
   allowDelete = true,
   allowPublish = true,
 }: EditingToolbarProps) {
-  const onClickEdit = (event: MouseEvent) => {
-    const button = event.currentTarget as HTMLButtonElement;
-    const edit = button.ariaPressed !== "true";
+  const { isEditable, isPublished } = editor;
+
+  function toggleEdit() {
     viewTransition(() => {
-      setEditMode(edit);
-      isEditable.value = edit;
+      setEditMode(!isEditable.value);
+      isEditable.value = !isEditable.value;
     });
-  };
+  }
 
   return (
     <floating-toolbar
@@ -38,14 +33,14 @@ export default function EditingToolbar({
       <ul role="group" aria-label="Editing mode">
         <li role="presentation">
           <button
+            type="button"
             role="menuitem"
             id="edit-button"
-            type="button"
             className="primary"
             aria-pressed={isEditable.derive((editable) =>
               editable ? "true" : "false",
             )}
-            onclick={onClickEdit}
+            on:click={toggleEdit}
           >
             {isEditable.derive((editable) => (editable ? "Done" : "Edit"))}
           </button>

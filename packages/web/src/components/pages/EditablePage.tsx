@@ -3,10 +3,11 @@ import PageContents from "@/components/pages/PageContents";
 import Editor from "@/editor/Editor";
 import InsertToolbar from "@/components/toolbars/insert/InsertToolbar";
 import { isSignedIn } from "@/utils/sessions";
+import { handleError } from "@/utils/errors";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {
-  import("@/elements/editor");
+  import("@/elements/editor").catch(handleError);
 }
 
 interface EditablePage {
@@ -15,7 +16,7 @@ interface EditablePage {
 
 export default function EditablePage({ page }: EditablePage) {
   const editor = new Editor(page);
-  const { isEditable, layout, isPublished, focusedTile } = editor;
+  const { isEditable, layout } = editor;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
 
   return (
@@ -24,17 +25,7 @@ export default function EditablePage({ page }: EditablePage) {
         <PageContents editor={editor} isEditable={isEditable} layout={layout} />
       </main>
 
-      {showToolbar
-        ? focusedTile.derive((id) =>
-            id ? null : (
-              <EditingToolbar
-                editor={editor}
-                isEditable={isEditable}
-                isPublished={isPublished}
-              />
-            ),
-          )
-        : null}
+      {showToolbar ? <EditingToolbar editor={editor} /> : null}
 
       {isEditable.derive((value) =>
         value ? <InsertToolbar editor={editor} /> : null,
