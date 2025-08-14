@@ -46,6 +46,18 @@
   initial-value: rgb(255 255 255 / 60%);
 }
 
+@property --min-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 800px;
+}
+
+@property --border-radius {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 12px;
+}
+
 :root {
   --focus-ring-color: #0070f3;
   --focus-outline: 3px solid var(--focus-ring-color);
@@ -74,7 +86,7 @@ body {
     oklch(from var(--background-color) 45% c h)
   );
 
-  padding: 24px;
+  padding: 0;
   color: var(--text-color);
   background: var(--background-color);
 }
@@ -108,7 +120,7 @@ body > header {
 }
 
 main {
-  margin: 0 auto;
+  margin: 0 0 0 88px;
   padding: 0;
   container: main / inline-size;
 }
@@ -208,7 +220,8 @@ time {
 }
 
 .default-width {
-  width: min(var(--max-width), calc(100vw - 160px));
+  margin: 0 auto;
+  width: var(--min-width);
 }
 
 infinite-scroll {
@@ -244,10 +257,4 @@ scroll-view:not(:defined) {
     width: 0;
     scroll-snap-align: start;
   }
-}
-
-@property --border-radius {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 12px;
 }
