@@ -264,6 +264,7 @@ model TableRow {
   id      String @id @default(uuid()) @db.Uuid
   tableId String @map("table_id") @db.Uuid
   order   String
+  height  Int    @default(32) @db.SmallInt
   /// [TableRowData]
   data    Json   @db.JsonB
 
