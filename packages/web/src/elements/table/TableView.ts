@@ -544,6 +544,17 @@ export default class TableView extends HTMLElement {
         );
       });
     }
+
+    if (element.scope === "row") {
+      const { offset } = this.getRowDropTarget(event.clientY);
+      const indicator = this.showDropIndicator(false);
+      requestAnimationFrame(() => {
+        indicator.style.setProperty(
+          "--translate-y",
+          HEADER_SIZE + offset + "px",
+        );
+      });
+    }
   }
 
   private getColumnDropTarget(clientX: number) {
@@ -552,8 +563,8 @@ export default class TableView extends HTMLElement {
     }
 
     const { left } = this.contents.getBoundingClientRect();
-    let offset = 0;
     let index = -1;
+    let offset = 0;
 
     for (const width of this.columnWidths) {
       const midpoint = left + HEADER_SIZE + offset + width / 2;
@@ -561,8 +572,8 @@ export default class TableView extends HTMLElement {
         break;
       }
 
-      offset += width;
       index++;
+      offset += width;
     }
 
     return { index, offset };
@@ -573,22 +584,26 @@ export default class TableView extends HTMLElement {
       throw new Error("Table is not initialized");
     }
 
+    const { top } = this.contents.getBoundingClientRect();
     let index = -1;
+    let offset = 0;
+
     for (const row of this.tableBody.rows) {
       if (!row.ariaRowIndex) {
         continue;
       }
 
-      const rect = row.getBoundingClientRect();
-      const midpoint = rect.top + rect.height / 2;
+      const { height } = row.getBoundingClientRect();
+      const midpoint = top + HEADER_SIZE + offset + height / 2;
       if (clientY < midpoint) {
         break;
       }
 
-      index = parseInt(row.ariaRowIndex, 10);
+      index++;
+      offset += height;
     }
 
-    return index;
+    return { index, offset };
   }
 
   private handleDrop(event: DragDropEvent) {
@@ -628,20 +643,24 @@ export default class TableView extends HTMLElement {
 
     if (element.scope === "row" && element.parentElement?.ariaRowIndex) {
       const row = parseInt(element.parentElement?.ariaRowIndex, 10);
-      const afterIndex = this.getRowDropTarget(event.clientY);
+      const { index } = this.getRowDropTarget(event.clientY);
+
+      this.hideDropIndicator();
 
       const allowMove = this.dispatchEvent(
         new TableEvent("movetablerow", {
           row,
-          afterIndex,
+          afterIndex: index,
           cancelable: true,
         }),
       );
 
       if (allowMove) {
-        this.moveRow(row, afterIndex);
-        this.setSelection({ row: afterIndex + 1 });
+        this.moveRow(row, index);
+        this.setSelection({ row: index + 1 });
       }
+
+      return;
     }
   }
 
