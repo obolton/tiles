@@ -72,7 +72,6 @@ export default class Editor {
   readonly access: Reactive<PageAccess[]>;
   readonly invites: Reactive<Invite[]>;
   readonly author: User;
-  readonly focusedTile: Reactive<string | null>;
 
   constructor(page: Page) {
     this.pageId = page.id;
@@ -88,7 +87,6 @@ export default class Editor {
     this.access = reactive(page.access);
     this.invites = reactive(page.invites);
     this.author = page.author;
-    this.focusedTile = reactive<string | null>(null);
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();
@@ -330,9 +328,6 @@ export default class Editor {
     this.tiles.value = this.tiles.value.filter(
       (tile) => tile.placementId !== placementId,
     );
-    if (this.focusedTile.value === placementId) {
-      this.focusedTile.value = null;
-    }
   }
 
   // Text

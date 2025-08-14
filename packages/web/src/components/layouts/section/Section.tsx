@@ -16,15 +16,8 @@ export default function Section({ editor, section }: SectionProps) {
   const hasFocus = flag(false);
   const { isEditable } = editor;
 
-  const onFocus = () => {
-    hasFocus.on();
-    editor.focusedTile.value = section.id;
-  };
-
-  const onBlur = () => {
-    hasFocus.off();
-    editor.focusedTile.value = null;
-  };
+  const onFocus = () => hasFocus.on();
+  const onBlur = () => hasFocus.off();
 
   return (
     <section

@@ -112,7 +112,6 @@ export default function Item({
   const onFocusIn = () => {
     if (editor.isEditable.value) {
       hasFocus.value = true;
-      editor.focusedTile.value = placementId;
     }
   };
 
@@ -127,7 +126,6 @@ export default function Item({
     }
 
     hasFocus.value = false;
-    editor.focusedTile.value = null;
   };
 
   const onDragStart = (event: DragDropEvent<DragData>) => {
