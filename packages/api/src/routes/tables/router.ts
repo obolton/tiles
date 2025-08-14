@@ -4,6 +4,7 @@ import {
   createTable,
   updateTable,
   insertRow,
+  updateRow,
   moveRow,
   deleteRow,
   insertColumn,
@@ -16,6 +17,7 @@ import {
   CreateTableSchema,
   UpdateTableSchema,
   InsertRowSchema,
+  UpdateRowSchema,
   MoveRowSchema,
   DeleteRowSchema,
   InsertColumnSchema,
@@ -38,6 +40,10 @@ export default router({
     .input(InsertRowSchema)
     .mutation(({ input }) => insertRow(input)),
 
+  updateRow: pageUpdateProcedure
+    .input(UpdateRowSchema)
+    .mutation(({ input }) => updateRow(input)),
+
   moveRow: pageUpdateProcedure
     .input(MoveRowSchema)
     .mutation(({ input }) => moveRow(input)),
@@ -50,13 +56,13 @@ export default router({
     .input(InsertColumnSchema)
     .mutation(({ input }) => insertColumn(input)),
 
-  moveColumn: pageUpdateProcedure
-    .input(MoveColumnSchema)
-    .mutation(({ input }) => moveColumn(input)),
-
   updateColumn: pageUpdateProcedure
     .input(UpdateColumnSchema)
     .mutation(({ input }) => updateColumn(input)),
+
+  moveColumn: pageUpdateProcedure
+    .input(MoveColumnSchema)
+    .mutation(({ input }) => moveColumn(input)),
 
   deleteColumn: pageUpdateProcedure
     .input(DeleteColumnSchema)

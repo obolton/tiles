@@ -24,9 +24,18 @@ export type UpdateTableSchema = z.infer<typeof UpdateTableSchema>;
 export const InsertRowSchema = z.object({
   pageId: z.uuid(),
   tableId: z.uuid(),
+  height: z.number().min(32).max(400).optional(),
   afterRowId: z.uuid().nullable(),
 });
 export type InsertRowSchema = z.infer<typeof InsertRowSchema>;
+
+export const UpdateRowSchema = z.object({
+  pageId: z.uuid(),
+  tableId: z.uuid(),
+  rowId: z.uuid(),
+  height: z.number().min(32).max(400).optional(),
+});
+export type UpdateRowSchema = z.infer<typeof UpdateRowSchema>;
 
 export const MoveRowSchema = z.object({
   pageId: z.uuid(),

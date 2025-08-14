@@ -6,6 +6,7 @@ import type {
   CreateTableSchema,
   UpdateTableSchema,
   InsertRowSchema,
+  UpdateRowSchema,
   MoveRowSchema,
   DeleteRowSchema,
   InsertColumnSchema,
@@ -24,6 +25,7 @@ export const TABLE_COLUMN_FIELDS = {
 
 export const TABLE_ROW_FIELDS = {
   id: true,
+  height: true,
   data: true,
 } as const satisfies Prisma.TableRowSelect<ExtensionArgs>;
 
@@ -243,6 +245,7 @@ export async function getRowOrderKeys(
 export async function insertRow({
   pageId,
   tableId,
+  height,
   afterRowId,
 }: InsertRowSchema) {
   return prisma.$transaction(async (transaction) => {
@@ -259,7 +262,34 @@ export async function insertRow({
       data: {
         tableId,
         order,
+        height,
         data: {},
+      },
+      select: TABLE_ROW_FIELDS,
+    });
+  });
+}
+
+export async function updateRow({
+  pageId,
+  tableId,
+  rowId,
+  height,
+}: UpdateRowSchema) {
+  return prisma.$transaction(async (transaction) => {
+    // Verify access to the table
+    await transaction.table.findUniqueOrThrow({
+      where: { id: tableId, pageId },
+      select: { id: true },
+    });
+
+    return transaction.tableRow.update({
+      where: {
+        id: rowId,
+        tableId,
+      },
+      data: {
+        height,
       },
       select: TABLE_ROW_FIELDS,
     });
