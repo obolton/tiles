@@ -84,7 +84,8 @@ export default class TableView extends HTMLElement {
   private columnWidths: number[] = [];
   private horizontalBufferSize = 0;
   private verticalBufferSize = 0;
-  private isSelecting = false;
+  private isDraggingRange = false;
+  private rangeSelection: RangeSelection | null = null;
   private virtualize = false;
   private dropIndicator: HTMLElement | null = null;
 
@@ -432,6 +433,7 @@ export default class TableView extends HTMLElement {
       } else {
         this.setSelection(selection);
       }
+      this.startDraggingRangeSelection();
       return;
     }
 
@@ -439,29 +441,27 @@ export default class TableView extends HTMLElement {
   }
 
   private handlePointerUp(event: PointerEvent) {
-    if (event.button !== PRIMARY_MOUSE_BUTTON) {
-      return;
+    if (event.button === PRIMARY_MOUSE_BUTTON && this.isDraggingRange) {
+      this.stopDraggingRangeSelection();
     }
-
-    this.isSelecting = false;
   }
 
   private handlePointerOver(event: PointerEvent) {
-    if (!this.allowSelection) {
+    if (!this.isDraggingRange || !this.rangeSelection) {
       return;
     }
 
-    const target = event.currentTarget;
-    if (!(target instanceof HTMLElement)) {
+    const { target } = event;
+    const cell = target instanceof HTMLElement ? target.closest("td") : null;
+    if (!cell) {
       return;
     }
 
-    if (this.isSelecting && this.selection) {
-      const row = parseInt(target.parentElement!.ariaRowIndex ?? "0", 10);
-      const column = parseInt(target.ariaColIndex ?? "0", 10);
-      // this.selection.focus = { row, column };
-      this.redrawSelection();
-    }
+    const row = parseInt(cell.parentElement!.ariaRowIndex!, 10);
+    const column = parseInt(cell.ariaColIndex!, 10);
+
+    this.rangeSelection.focus = { row, column };
+    this.redrawSelection();
   }
 
   private handleResizeEnd(event: ResizeEvent) {
@@ -681,23 +681,36 @@ export default class TableView extends HTMLElement {
   private setSelection(selection: Selection) {
     this.selection.clear();
     this.selection.add(selection);
+    this.rangeSelection = "anchor" in selection ? selection : null;
     this.redrawSelection();
   }
 
   private addSelection(selection: Selection) {
     this.selection.add(selection);
+    this.rangeSelection = "anchor" in selection ? selection : null;
     this.redrawSelection();
   }
 
   private clearSelection() {
     this.selection.clear();
-    this.isSelecting = false;
+    this.stopDraggingRangeSelection();
+    this.rangeSelection = null;
     this.redrawSelection();
 
     const focused = getFocusedElementWithin(this);
     if (focused instanceof HTMLElement) {
       focused.blur();
     }
+  }
+
+  private startDraggingRangeSelection() {
+    this.isDraggingRange = true;
+    this.addEventListener("pointerover", this, { passive: true });
+  }
+
+  private stopDraggingRangeSelection() {
+    this.isDraggingRange = false;
+    this.removeEventListener("pointerover", this);
   }
 
   private redrawSelection() {
@@ -866,7 +879,6 @@ export default class TableView extends HTMLElement {
 
   private createCell() {
     const cell = document.createElement("td");
-    cell.addEventListener("pointerover", this, { passive: true });
     return cell;
   }
 
