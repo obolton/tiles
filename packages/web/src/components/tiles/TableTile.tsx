@@ -1,10 +1,8 @@
 import Tile from "./Tile";
 import RichText from "@/components/text/RichText";
 import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingToolbar";
+import TableToolbar from "@/components/toolbars/tables/TableToolbar";
 import ColorPicker from "@/components/colors/ColorPicker";
-import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
-import AddRowIcon from "@/icons/add-row.svg?jsx";
-import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import { selectionFormat } from "@/utils/richText/format";
 import { prompt } from "@/utils/richText/prompt";
 import styles from "./TableTile.module.css";
@@ -27,7 +25,6 @@ import type { Reactive } from "@/utils/reactivity";
 import type { TableProperties } from "@/types/tiles";
 import type { TableEvent } from "@/elements/table/events";
 import type { Color } from "@/utils/color";
-import type { Background } from "@/components/backgrounds/types";
 
 export interface TableTileProps extends TableProperties {
   editor: Editor;
@@ -67,33 +64,6 @@ export default function TableTile({
     tableView = element;
     tableView.updateCell = updateCell;
   }
-
-  const addRow = async () => {
-    const selection = tableView?.selection;
-    if (!selection) {
-      return;
-    }
-    const first = Array.from(selection)[0];
-    const index = first && "row" in first ? first.row : null;
-    const afterRowId = index ? (rows.value[index]?.id ?? null) : null;
-    await editor.insertTableRow({ tableId: id, afterRowId });
-    numRows.value++;
-  };
-
-  const addColumn = async () => {
-    const selection = tableView?.selection;
-    if (!selection) {
-      return;
-    }
-    const first = Array.from(selection)[0];
-    const index = first && "column" in first ? first.column : null;
-    const afterColumnId = index ? (columns.value[index]?.id ?? null) : null;
-    const column = await editor.insertTableColumn({
-      tableId: id,
-      afterColumnId,
-    });
-    columns.value = columns.value.concat(column);
-  };
 
   const updateCell = (row: number, column: number, cell: Element) => {
     const columnId = columns.value[column]?.id;
@@ -303,19 +273,11 @@ export default function TableTile({
     }
   };
 
-  const onChangeBackground = async (value: Background) => {
-    try {
-      const { background: newBackground } = await editor.updateTable({
-        id,
-        background: value,
-      });
-      viewTransition(() => (background.value = newBackground));
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
   const getEditorView = () => editorView;
+
+  function getSelection() {
+    return tableView?.selection ?? null;
+  }
 
   const performCommand = (command: Command) => {
     if (editorView) {
@@ -404,49 +366,31 @@ export default function TableTile({
 
       {hasFocus.derive((value) =>
         value ? (
-          <FormattingToolbar
-            editor={editor}
-            format={format}
-            prompting={prompting}
-            getEditorView={getEditorView}
-            performCommand={performCommand}
-          >
-            <ul role="group">
-              <li role="presentation">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="floating"
-                  aria-label="Add row"
-                  data-tooltip="Add row"
-                  onclick={addRow}
-                >
-                  <AddRowIcon aria-hidden="true" />
-                </button>
-              </li>
-              <li role="presentation">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="floating"
-                  aria-label="Add column"
-                  data-tooltip="Add column"
-                  onclick={addColumn}
-                >
-                  <AddColumnIcon aria-hidden="true" />
-                </button>
-              </li>
-              <li role="presentation">
-                <ColorPicker value={textColor} onChange={onChangeTextColor} />
-              </li>
-              <li role="presentation">
-                <BackgroundPicker
-                  value={background}
-                  onChange={onChangeBackground}
-                />
-              </li>
-            </ul>
-          </FormattingToolbar>
+          <>
+            <TableToolbar
+              editor={editor}
+              id={id}
+              background={background}
+              rows={rows}
+              columns={columns}
+              numRows={numRows}
+              getSelection={getSelection}
+            />
+
+            <FormattingToolbar
+              editor={editor}
+              format={format}
+              prompting={prompting}
+              getEditorView={getEditorView}
+              performCommand={performCommand}
+            >
+              <ul role="group">
+                <li role="presentation">
+                  <ColorPicker value={textColor} onChange={onChangeTextColor} />
+                </li>
+              </ul>
+            </FormattingToolbar>
+          </>
         ) : null,
       )}
     </Tile>
