@@ -4,6 +4,7 @@ import { TableEvent } from "./events";
 import { makeDraggable } from "@/utils/drag";
 import { moveBefore } from "@/utils/dom";
 import { getFocusedElementWithin } from "@/utils/focus";
+import Column from "./Column";
 import type { ResizeEvent } from "@/elements/resize/events";
 import type { DragDropEvent } from "@/utils/drag";
 
@@ -81,7 +82,7 @@ export default class TableView extends HTMLElement {
   private contentHeight = 0;
   private buffer: HTMLElement[] = [];
   private rowBuffer: HTMLElement[] = [];
-  private columnWidths: number[] = [];
+  private visibleColumns: Column[] = [];
   private horizontalBufferSize = 0;
   private verticalBufferSize = 0;
   private isDraggingRange = false;
@@ -142,7 +143,7 @@ export default class TableView extends HTMLElement {
       throw new Error("Virtualization is already enabled");
     }
 
-    if (!this.tableBody || !this.colGroup) {
+    if (!this.colGroup || !this.tableHead || !this.tableBody) {
       return;
     }
 
@@ -178,12 +179,13 @@ export default class TableView extends HTMLElement {
     this.renderedColumns = this.colGroup.childElementCount - 1;
     this.renderedRows = this.tableBody.rows.length;
 
-    for (const column of this.colGroup.children) {
-      if (column === this.colGroup.firstElementChild) {
-        continue;
-      }
-      const rect = column.getBoundingClientRect();
-      this.columnWidths.push(rect.width);
+    for (let i = 1; i < this.colGroup.childElementCount; i++) {
+      const column = this.colGroup.children[i] as HTMLTableColElement;
+      const header = this.tableHead.rows[0]!.cells[i]!;
+      const { width } = column.getBoundingClientRect();
+      this.visibleColumns.push(
+        new Column({ table: this, width, element: column, header }),
+      );
     }
 
     this.contentWidth = this.contents.offsetWidth;
@@ -493,7 +495,7 @@ export default class TableView extends HTMLElement {
     if (col) {
       col.style.width = width + "px";
       const position = Array.from(this.colGroup.children).indexOf(col) - 1;
-      this.columnWidths[position] = width;
+      this.visibleColumns[position]!.width = width;
     }
 
     this.update();
@@ -566,14 +568,14 @@ export default class TableView extends HTMLElement {
     let index = -1;
     let offset = 0;
 
-    for (const width of this.columnWidths) {
-      const midpoint = left + HEADER_SIZE + offset + width / 2;
+    for (const column of this.visibleColumns) {
+      const midpoint = left + HEADER_SIZE + offset + column.width / 2;
       if (clientX < midpoint) {
         break;
       }
 
       index++;
-      offset += width;
+      offset += column.width;
     }
 
     return { index, offset };
@@ -942,6 +944,9 @@ export default class TableView extends HTMLElement {
       row.insertBefore(cell, row.children[position + 1] ?? null);
     }
 
+    const column = new Column({ table: this, width, element: col, header: th });
+    this.visibleColumns.splice(position, 0, column);
+
     this.renderedColumns++;
   }
 
@@ -1007,7 +1012,6 @@ export default class TableView extends HTMLElement {
     ) {
       const index = this.firstVisibleColumn - 1;
       const width = this.getColumnWidth(index);
-      this.columnWidths.unshift(width);
       this.insertColumn(0, index, width);
       this.firstVisibleColumn--;
       this.translateX -= width;
@@ -1025,7 +1029,6 @@ export default class TableView extends HTMLElement {
     ) {
       const index = this.firstVisibleColumn + this.renderedColumns;
       const width = this.getColumnWidth(index);
-      this.columnWidths.push(width);
       this.insertColumn(
         this.renderedColumns,
         this.firstVisibleColumn + this.renderedColumns,
@@ -1118,14 +1121,14 @@ export default class TableView extends HTMLElement {
     }
 
     const rows = this.tableBody.rows;
-    let width = this.columnWidths[0];
+    let column = this.visibleColumns[0];
 
     while (
-      width &&
-      this.translateX - this.scrollLeft + width < -this.horizontalBufferSize
+      column &&
+      this.translateX - this.scrollLeft + column.width <
+        -this.horizontalBufferSize
     ) {
-      this.colGroup.children[1]?.remove();
-      this.tableHead.rows[0]?.cells[1]?.remove();
+      column.remove();
 
       for (const row of rows) {
         const cell = row.cells[1];
@@ -1134,13 +1137,13 @@ export default class TableView extends HTMLElement {
         }
       }
 
-      this.columnWidths.shift();
+      this.visibleColumns.shift();
       this.firstVisibleColumn++;
       this.renderedColumns--;
-      this.contentWidth -= width;
-      this.translateX += width;
+      this.contentWidth -= column.width;
+      this.translateX += column.width;
 
-      width = this.columnWidths[0];
+      column = this.visibleColumns[0];
     }
 
     this.reposition();
@@ -1158,9 +1161,11 @@ export default class TableView extends HTMLElement {
       this.renderedColumns > 1 &&
       this.contentWidth - right > this.horizontalBufferSize * 3
     ) {
-      const width = this.columnWidths.at(-1) ?? 0;
-      this.colGroup.lastElementChild?.remove();
-      this.tableHead.rows[0]?.lastElementChild?.remove();
+      const column = this.visibleColumns.at(-1);
+      if (!column) {
+        break;
+      }
+      column.remove();
 
       for (const row of rows) {
         const cell = row.cells[row.cells.length - 1];
@@ -1169,9 +1174,9 @@ export default class TableView extends HTMLElement {
         }
       }
 
-      this.columnWidths.pop();
+      this.visibleColumns.pop();
       this.renderedColumns--;
-      this.contentWidth -= width;
+      this.contentWidth -= column.width;
     }
   }
 
