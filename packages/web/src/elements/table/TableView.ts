@@ -3,6 +3,7 @@ import css from "./TableView.css?inline";
 import { TableEvent } from "./events";
 import { makeDraggable } from "@/utils/drag";
 import { moveBefore } from "@/utils/dom";
+import { moveElement } from "@/utils/arrays";
 import { getFocusedElementWithin } from "@/utils/focus";
 import Column from "./Column";
 import type { ResizeEvent } from "@/elements/resize/events";
@@ -32,7 +33,7 @@ export type RangeSelection = {
 };
 
 export type ColumnSelection = {
-  column: number;
+  column: Column;
 };
 
 export type RowSelection = {
@@ -395,11 +396,17 @@ export default class TableView extends HTMLElement {
       target.ariaColIndex
     ) {
       event.preventDefault();
-      const selection = { column: parseInt(target.ariaColIndex, 10) };
+      const visibleIndex =
+        Array.prototype.indexOf.call(target.parentElement!.children, target) -
+        1;
+      const column = this.visibleColumns[visibleIndex];
+      if (column) {
+        const selection = { column };
       if (event.shiftKey) {
         this.addSelection(selection);
       } else {
         this.setSelection(selection);
+        }
       }
       return;
     }
@@ -628,14 +635,18 @@ export default class TableView extends HTMLElement {
     }
 
     if (element.scope === "col" && element.ariaColIndex) {
-      const column = parseInt(element.ariaColIndex, 10);
+      const visibleIndex =
+        Array.prototype.indexOf.call(element.parentElement!.children, element) -
+        1;
+      const column = this.visibleColumns[visibleIndex]!;
+      const columnIndex = parseInt(element.ariaColIndex, 10);
       const { index } = this.getColumnDropTarget(event.clientX);
 
       this.hideDropIndicator();
 
       const allowMove = this.dispatchEvent(
         new TableEvent("movetablecolumn", {
-          column,
+          column: columnIndex,
           afterIndex: index,
           cancelable: true,
         }),
@@ -643,7 +654,6 @@ export default class TableView extends HTMLElement {
 
       if (allowMove) {
         this.moveColumn(column, index);
-        this.setSelection({ column: index + 1 });
       }
 
       return;
@@ -774,12 +784,8 @@ export default class TableView extends HTMLElement {
 
   private drawColumnSelection(selection: ColumnSelection) {
     const { column } = selection;
-    this.querySelector(`col[data-index="${column}"]`)?.classList.add(
-      "selected",
-    );
-    this.querySelector(`th[aria-colindex="${column}"]`)?.classList.add(
-      "selected",
-    );
+    column.element.classList.add("selected");
+    column.header?.classList.add("selected");
   }
 
   private drawRowSelection(selection: RowSelection) {
@@ -1263,26 +1269,26 @@ export default class TableView extends HTMLElement {
     return handle;
   }
 
-  moveColumn(index: number, afterIndex: number | null) {
+  moveColumn(column: Column, afterIndex: number | null) {
     if (!this.colGroup || !this.tableBody) {
       throw new Error("Table is not initialized");
     }
 
     // Re-order column elements
     // Note: No need to re-order column header cells as they hold no data
-    const col = this.colGroup.querySelector<HTMLTableColElement>(
-      `col[data-index="${index}"]`,
-    );
-    if (!col) {
-      throw new Error(`Invalid column index: ${index}`);
-    }
+    const index = column.index;
     const beforeCol =
       afterIndex === null
         ? null
         : this.colGroup.querySelector<HTMLTableColElement>(
             `col[data-index="${afterIndex + 1}"]`,
           );
-    moveBefore(this.colGroup, col, beforeCol);
+    this.visibleColumns = moveElement(
+      this.visibleColumns,
+      index,
+      afterIndex === null ? 0 : afterIndex + 1,
+    );
+    moveBefore(this.colGroup, column.element, beforeCol);
     const columns = this.colGroup.getElementsByTagName("col");
     // Skip first column
     for (let i = 1; i < columns.length; i++) {
