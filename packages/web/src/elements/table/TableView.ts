@@ -73,7 +73,6 @@ export default class TableView extends HTMLElement {
   private firstVisibleRow = 0;
   private firstVisibleColumn = 0;
   private renderedRows = 0;
-  private renderedColumns = 0;
   private resizeObserver?: ResizeObserver;
   private translateX = 0;
   private translateY = 0;
@@ -120,11 +119,18 @@ export default class TableView extends HTMLElement {
     }
   }
 
-  get headerRow() {
-    if (!this.tableHead || !this.tableHead.rows[0]) {
+  get header() {
+    if (!this.tableHead) {
       throw new Error("Table is not initialized");
     }
-    return this.tableHead.rows[0];
+    return this.tableHead;
+  }
+
+  get body() {
+    if (!this.tableBody) {
+      throw new Error("Table is not initialized");
+    }
+    return this.tableBody;
   }
 
   constructor() {
@@ -184,7 +190,6 @@ export default class TableView extends HTMLElement {
       ? parseInt(firstColumn.dataset.index, 10)
       : 0;
 
-    this.renderedColumns = this.colGroup.childElementCount - 1;
     this.renderedRows = this.tableBody.rows.length;
 
     for (let i = 1; i < this.colGroup.childElementCount; i++) {
@@ -766,7 +771,7 @@ export default class TableView extends HTMLElement {
     const startVisibleColumn = Math.max(startColumn, this.firstVisibleColumn);
     const endVisibleColumn = Math.min(
       endColumn,
-      this.firstVisibleColumn + this.renderedColumns,
+      this.firstVisibleColumn + this.visibleColumns.length,
     );
 
     for (let row = startVisibleRow; row <= endVisibleRow; row++) {
@@ -876,7 +881,7 @@ export default class TableView extends HTMLElement {
   }
 
   private fillCellBuffer() {
-    const bufferSize = this.renderedColumns * 10;
+    const bufferSize = this.visibleColumns.length * 10;
     for (let i = this.buffer.length; i < bufferSize; i++) {
       this.buffer.push(this.createCell());
     }
@@ -958,8 +963,6 @@ export default class TableView extends HTMLElement {
 
     const column = new Column({ table: this, width, element: col });
     this.visibleColumns.splice(position, 0, column);
-
-    this.renderedColumns++;
   }
 
   private insertRow(position: number, rowIndex: number) {
@@ -968,7 +971,7 @@ export default class TableView extends HTMLElement {
     }
 
     const cells = [];
-    for (let i = 0; i < this.renderedColumns; i++) {
+    for (let i = 0; i < this.visibleColumns.length; i++) {
       const cell = this.getCell(rowIndex, this.firstVisibleColumn + i);
       cells.push(cell);
     }
@@ -1035,15 +1038,15 @@ export default class TableView extends HTMLElement {
 
   private fillRight() {
     while (
-      this.firstVisibleColumn + this.renderedColumns < this.#columns &&
+      this.firstVisibleColumn + this.visibleColumns.length < this.#columns &&
       this.translateX - this.scrollLeft + this.contentWidth - this.width <
         this.horizontalBufferSize
     ) {
-      const index = this.firstVisibleColumn + this.renderedColumns;
+      const index = this.firstVisibleColumn + this.visibleColumns.length;
       const width = this.getColumnWidth(index);
       this.insertColumn(
-        this.renderedColumns,
-        this.firstVisibleColumn + this.renderedColumns,
+        this.visibleColumns.length,
+        this.firstVisibleColumn + this.visibleColumns.length,
         width,
       );
       this.contentWidth += width;
@@ -1140,7 +1143,8 @@ export default class TableView extends HTMLElement {
       this.translateX - this.scrollLeft + column.width <
         -this.horizontalBufferSize
     ) {
-      column.remove();
+      column.element.remove();
+      column.header?.remove();
 
       for (const row of rows) {
         const cell = row.cells[1];
@@ -1151,7 +1155,6 @@ export default class TableView extends HTMLElement {
 
       this.visibleColumns.shift();
       this.firstVisibleColumn++;
-      this.renderedColumns--;
       this.contentWidth -= column.width;
       this.translateX += column.width;
 
@@ -1170,14 +1173,15 @@ export default class TableView extends HTMLElement {
     const right = this.scrollLeft - this.translateX + this.width;
 
     while (
-      this.renderedColumns > 1 &&
+      this.visibleColumns.length > 1 &&
       this.contentWidth - right > this.horizontalBufferSize * 3
     ) {
       const column = this.visibleColumns.at(-1);
       if (!column) {
         break;
       }
-      column.remove();
+      column.element.remove();
+      column.header?.remove();
 
       for (const row of rows) {
         const cell = row.cells[row.cells.length - 1];
@@ -1187,7 +1191,6 @@ export default class TableView extends HTMLElement {
       }
 
       this.visibleColumns.pop();
-      this.renderedColumns--;
       this.contentWidth -= column.width;
     }
   }
@@ -1350,14 +1353,11 @@ export default class TableView extends HTMLElement {
     if (!this.tableBody) {
       return;
     }
-    column.remove();
-    const cells = this.tableBody.querySelectorAll<HTMLTableCellElement>(
-      `td[aria-colindex="${column.index}"]`,
-    );
-    for (const cell of cells) {
+    column.element.remove();
+    column.header?.remove();
+    for (const cell of column.cells) {
       this.recycleCell(cell);
     }
-    this.renderedColumns--;
     this.visibleColumns = this.visibleColumns.filter((c) => c !== column);
   }
 }
