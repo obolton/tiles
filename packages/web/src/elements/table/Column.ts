@@ -36,13 +36,14 @@ export default class Column {
   }
 
   get header() {
-    return this.table.headerRow.querySelector<HTMLTableCellElement>(
+    return this.table.header.querySelector<HTMLTableCellElement>(
       `th[aria-colindex="${this.index}"]`,
     );
   }
 
-  remove() {
-    this.element.remove();
-    this.header?.remove();
+  get cells() {
+    return this.table.body.querySelectorAll<HTMLTableCellElement>(
+      `td[aria-colindex="${this.index}"]`,
+    );
   }
 }
