@@ -119,6 +119,13 @@ export default class TableView extends HTMLElement {
     }
   }
 
+  get headerRow() {
+    if (!this.tableHead || !this.tableHead.rows[0]) {
+      throw new Error("Table is not initialized");
+    }
+    return this.tableHead.rows[0];
+  }
+
   constructor() {
     super();
 
@@ -181,10 +188,9 @@ export default class TableView extends HTMLElement {
 
     for (let i = 1; i < this.colGroup.childElementCount; i++) {
       const column = this.colGroup.children[i] as HTMLTableColElement;
-      const header = this.tableHead.rows[0]!.cells[i]!;
       const { width } = column.getBoundingClientRect();
       this.visibleColumns.push(
-        new Column({ table: this, width, element: column, header }),
+        new Column({ table: this, width, element: column }),
       );
     }
 
@@ -944,7 +950,7 @@ export default class TableView extends HTMLElement {
       row.insertBefore(cell, row.children[position + 1] ?? null);
     }
 
-    const column = new Column({ table: this, width, element: col, header: th });
+    const column = new Column({ table: this, width, element: col });
     this.visibleColumns.splice(position, 0, column);
 
     this.renderedColumns++;

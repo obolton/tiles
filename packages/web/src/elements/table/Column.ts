@@ -6,26 +6,22 @@ export default class Column {
 
   readonly table: TableView;
   readonly element: HTMLTableColElement;
-  readonly header: HTMLTableCellElement;
 
   constructor({
     table,
     id,
     width = 100,
     element,
-    header,
   }: {
     table: TableView;
     id?: string;
     width?: number;
     element: HTMLTableColElement;
-    header: HTMLTableCellElement;
   }) {
     this.table = table;
     this.id = id;
     this.width = width;
     this.element = element;
-    this.header = header;
   }
 
   get index() {
@@ -39,8 +35,14 @@ export default class Column {
     this.element.dataset.index = value.toString();
   }
 
+  get header() {
+    return this.table.headerRow.querySelector<HTMLTableCellElement>(
+      `th[aria-colindex="${this.index}"]`,
+    );
+  }
+
   remove() {
     this.element.remove();
-    this.header.remove();
+    this.header?.remove();
   }
 }
