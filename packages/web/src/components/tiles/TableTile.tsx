@@ -275,8 +275,11 @@ export default function TableTile({
 
   const getEditorView = () => editorView;
 
-  function getSelection() {
-    return tableView?.selection ?? null;
+  function getTable() {
+    if (!tableView) {
+      throw new Error("Table is not initialized");
+    }
+    return tableView;
   }
 
   const performCommand = (command: Command) => {
@@ -376,7 +379,7 @@ export default function TableTile({
               rows={rows}
               columns={columns}
               numRows={numRows}
-              getSelection={getSelection}
+              getTable={getTable}
               anchorName={anchorName}
             />
 
