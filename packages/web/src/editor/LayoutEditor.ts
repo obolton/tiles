@@ -338,9 +338,7 @@ export default class LayoutEditor {
     );
 
     if (columns !== this.columns || rows != this.rows) {
-      viewTransition(() => {
-        this.editor.positionTilePreview({ id, width: columns, height: rows });
-      });
+      this.editor.positionTilePreview({ id, width: columns, height: rows });
     }
 
     this.columns = columns;
