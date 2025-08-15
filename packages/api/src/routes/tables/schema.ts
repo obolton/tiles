@@ -45,12 +45,12 @@ export const MoveRowSchema = z.object({
 });
 export type MoveRowSchema = z.infer<typeof MoveRowSchema>;
 
-export const DeleteRowSchema = z.object({
+export const DeleteRowsSchema = z.object({
   pageId: z.uuid(),
   tableId: z.uuid(),
-  rowId: z.uuid(),
+  rowIds: z.array(z.uuid()).min(1).max(50),
 });
-export type DeleteRowSchema = z.infer<typeof DeleteRowSchema>;
+export type DeleteRowsSchema = z.infer<typeof DeleteRowsSchema>;
 
 export const InsertColumnSchema = z.object({
   pageId: z.uuid(),
@@ -76,12 +76,12 @@ export const UpdateColumnSchema = z.object({
 });
 export type UpdateColumnSchema = z.infer<typeof UpdateColumnSchema>;
 
-export const DeleteColumnSchema = z.object({
+export const DeleteColumnsSchema = z.object({
   pageId: z.uuid(),
   tableId: z.uuid(),
-  columnId: z.uuid(),
+  columnIds: z.array(z.uuid()).min(1).max(50),
 });
-export type DeleteColumnSchema = z.infer<typeof DeleteColumnSchema>;
+export type DeleteColumnsSchema = z.infer<typeof DeleteColumnsSchema>;
 
 export const UpdateCellSchema = z.object({
   pageId: z.uuid(),

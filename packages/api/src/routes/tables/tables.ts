@@ -8,11 +8,11 @@ import type {
   InsertRowSchema,
   UpdateRowSchema,
   MoveRowSchema,
-  DeleteRowSchema,
+  DeleteRowsSchema,
   InsertColumnSchema,
   MoveColumnSchema,
   UpdateColumnSchema,
-  DeleteColumnSchema,
+  DeleteColumnsSchema,
   UpdateCellSchema,
 } from "./schema.ts";
 import type { ColorSchema } from "@/schema/Color.ts";
@@ -325,7 +325,11 @@ export async function moveRow({
   });
 }
 
-export async function deleteRow({ pageId, tableId, rowId }: DeleteRowSchema) {
+export async function deleteRows({
+  pageId,
+  tableId,
+  rowIds,
+}: DeleteRowsSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the table
     await transaction.table.findUniqueOrThrow({
@@ -333,12 +337,11 @@ export async function deleteRow({ pageId, tableId, rowId }: DeleteRowSchema) {
       select: { id: true },
     });
 
-    return transaction.tableRow.delete({
+    return transaction.tableRow.deleteMany({
       where: {
         tableId,
-        id: rowId,
+        id: { in: rowIds },
       },
-      select: { id: true },
     });
   });
 }
@@ -450,11 +453,11 @@ export async function updateColumn({
   });
 }
 
-export async function deleteColumn({
+export async function deleteColumns({
   pageId,
   tableId,
-  columnId,
-}: DeleteColumnSchema) {
+  columnIds,
+}: DeleteColumnsSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the table
     await transaction.table.findUniqueOrThrow({
@@ -462,18 +465,17 @@ export async function deleteColumn({
       select: { id: true },
     });
 
-    await transaction.tableColumn.delete({
+    await transaction.tableColumn.deleteMany({
       where: {
         tableId,
-        id: columnId,
+        id: { in: columnIds },
       },
-      select: { id: true },
     });
 
     // Remove the column data
-    await transaction.$executeRaw`UPDATE "table_rows"
-    SET "data" = data - ${columnId}::text
-    WHERE "table_id" = ${tableId}::uuid;`;
+    await transaction.$executeRaw`UPDATE table_rows
+    SET data = data - ${columnIds}
+    WHERE table_id = ${tableId}::uuid AND data ?| ${columnIds};`;
   });
 }
 

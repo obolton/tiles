@@ -6,11 +6,11 @@ import {
   insertRow,
   updateRow,
   moveRow,
-  deleteRow,
+  deleteRows,
   insertColumn,
   moveColumn,
   updateColumn,
-  deleteColumn,
+  deleteColumns,
   updateCell,
 } from "./tables.ts";
 import {
@@ -19,11 +19,11 @@ import {
   InsertRowSchema,
   UpdateRowSchema,
   MoveRowSchema,
-  DeleteRowSchema,
+  DeleteRowsSchema,
   InsertColumnSchema,
   MoveColumnSchema,
   UpdateColumnSchema,
-  DeleteColumnSchema,
+  DeleteColumnsSchema,
   UpdateCellSchema,
 } from "./schema.ts";
 
@@ -48,9 +48,9 @@ export default router({
     .input(MoveRowSchema)
     .mutation(({ input }) => moveRow(input)),
 
-  deleteRow: pageUpdateProcedure
-    .input(DeleteRowSchema)
-    .mutation(({ input }) => deleteRow(input)),
+  deleteRows: pageUpdateProcedure
+    .input(DeleteRowsSchema)
+    .mutation(({ input }) => deleteRows(input)),
 
   insertColumn: pageUpdateProcedure
     .input(InsertColumnSchema)
@@ -64,9 +64,9 @@ export default router({
     .input(MoveColumnSchema)
     .mutation(({ input }) => moveColumn(input)),
 
-  deleteColumn: pageUpdateProcedure
-    .input(DeleteColumnSchema)
-    .mutation(({ input }) => deleteColumn(input)),
+  deleteColumns: pageUpdateProcedure
+    .input(DeleteColumnsSchema)
+    .mutation(({ input }) => deleteColumns(input)),
 
   updateCell: pageUpdateProcedure
     .input(UpdateCellSchema)
