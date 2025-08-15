@@ -402,10 +402,10 @@ export default class TableView extends HTMLElement {
       const column = this.visibleColumns[visibleIndex];
       if (column) {
         const selection = { column };
-      if (event.shiftKey) {
-        this.addSelection(selection);
-      } else {
-        this.setSelection(selection);
+        if (event.shiftKey) {
+          this.addSelection(selection);
+        } else {
+          this.setSelection(selection);
         }
       }
       return;
@@ -1344,6 +1344,21 @@ export default class TableView extends HTMLElement {
         this.firstVisibleRow + i
       ).toString();
     }
+  }
+
+  deleteColumn(column: Column) {
+    if (!this.tableBody) {
+      return;
+    }
+    column.remove();
+    const cells = this.tableBody.querySelectorAll<HTMLTableCellElement>(
+      `td[aria-colindex="${column.index}"]`,
+    );
+    for (const cell of cells) {
+      this.recycleCell(cell);
+    }
+    this.renderedColumns--;
+    this.visibleColumns = this.visibleColumns.filter((c) => c !== column);
   }
 }
 
