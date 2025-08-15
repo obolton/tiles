@@ -500,10 +500,10 @@ export default class Editor {
     });
   }
 
-  async deleteTableRow(
-    data: OmitPageId<AppRouterInputs["tables"]["deleteRow"]>,
+  async deleteTableRows(
+    data: OmitPageId<AppRouterInputs["tables"]["deleteRows"]>,
   ) {
-    return await client.tables.deleteRow.mutate({
+    return await client.tables.deleteRows.mutate({
       pageId: this.pageId,
       ...data,
     });
@@ -536,10 +536,10 @@ export default class Editor {
     });
   }
 
-  async deleteTableColumn(
-    data: OmitPageId<AppRouterInputs["tables"]["deleteColumn"]>,
+  async deleteTableColumns(
+    data: OmitPageId<AppRouterInputs["tables"]["deleteColumns"]>,
   ) {
-    return await client.tables.deleteColumn.mutate({
+    return await client.tables.deleteColumns.mutate({
       pageId: this.pageId,
       ...data,
     });
