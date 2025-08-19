@@ -74,25 +74,42 @@ export default function TableToolbar({
     if (!table.selection) {
       return;
     }
+
     const selectedColumns = table.selection
       .values()
       .filter((s) => "column" in s)
       .map((s) => s.column)
       .toArray();
-    if (selectedColumns.length === 0) {
-      return;
+    if (selectedColumns.length > 0) {
+      const columnIds = selectedColumns.map(
+        (column) => columns.value[column.index]!.id,
+      );
+      for (const column of selectedColumns) {
+        table.deleteColumn(column);
+      }
+      await editor.deleteTableColumns({
+        tableId: id,
+        columnIds,
+      });
+      columns.value = columns.value.filter((c) => !columnIds.includes(c.id));
     }
-    const columnIds = selectedColumns.map(
-      (column) => columns.value[column.index]!.id,
-    );
-    for (const column of selectedColumns) {
-      table.deleteColumn(column);
+
+    const selectedRows = table.selection
+      .values()
+      .filter((s) => "row" in s)
+      .map((s) => s.row)
+      .toArray();
+    if (selectedRows.length > 0) {
+      const rowIds = selectedRows.map((row) => rows.value[row]!.id);
+      for (const row of selectedRows) {
+        table.deleteRow(row);
+      }
+      await editor.deleteTableRows({
+        tableId: id,
+        rowIds,
+      });
+      rows.value = rows.value.filter((c) => !rowIds.includes(c.id));
     }
-    await editor.deleteTableColumns({
-      tableId: id,
-      columnIds,
-    });
-    columns.value = columns.value.filter((c) => !columnIds.includes(c.id));
   }
 
   return (
