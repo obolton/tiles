@@ -1350,15 +1350,29 @@ export default class TableView extends HTMLElement {
   }
 
   deleteColumn(column: Column) {
-    if (!this.tableBody) {
-      return;
-    }
     column.element.remove();
     column.header?.remove();
     for (const cell of column.cells) {
       this.recycleCell(cell);
     }
     this.visibleColumns = this.visibleColumns.filter((c) => c !== column);
+  }
+
+  deleteRow(index: number) {
+    const row = this.body.rows[index];
+    if (!row) {
+      throw new Error(`Invalid row index: ${index}`);
+    }
+
+    row.remove();
+    this.rowBuffer.push(row);
+
+    for (const cell of row.cells) {
+      if (cell.tagName === "TD") {
+        this.recycleCell(cell);
+      }
+    }
+    this.renderedRows--;
   }
 }
 
