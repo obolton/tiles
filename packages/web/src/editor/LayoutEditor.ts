@@ -24,15 +24,15 @@ export default class LayoutEditor {
   private readonly elementRef: WeakRef<HTMLElement>;
   private readonly gridRef: WeakRef<HTMLElement>;
 
-  private pageX = 0;
-  private pageY = 0;
-  private startRow = 0;
-  private endRow = 0;
+  private gridRect: DOMRect;
   private gridColumnWidth = 0;
   private gridRows: number[] = [];
   private gridColumnGap = 0;
+  private gridRowGap = 0;
   private x = 0;
   private y = 0;
+  private startRow = 0;
+  private endRow = 0;
   private columns = 0;
   private rows = 0;
   private idForPoint?: string | null;
@@ -43,6 +43,8 @@ export default class LayoutEditor {
     this.gridRef = new WeakRef(grid);
     this.editor = editor;
     this.sectionId = sectionId;
+
+    this.gridRect = grid.getBoundingClientRect();
 
     element.addEventListener("dnd-dragover", this);
     element.addEventListener("dnd-dragenter", this, { passive: true });
@@ -112,20 +114,19 @@ export default class LayoutEditor {
     this.gridColumnWidth = parseFloat(
       style.getPropertyValue("--grid-column-width"),
     );
-    this.gridColumnGap = parseFloat(style.columnGap);
 
-    const rowGap = parseFloat(style.rowGap);
+    this.gridColumnGap = parseFloat(style.columnGap);
+    this.gridRowGap = parseFloat(style.rowGap);
+
     const rowHeights = style.gridTemplateRows.split(" ").map(parseFloat);
     let top = 0;
     this.gridRows = [];
     for (const height of rowHeights) {
       this.gridRows.push(top);
-      top += height + rowGap;
+      top += height + this.gridRowGap;
     }
 
-    const rect = this.element.getBoundingClientRect();
-    this.pageX = rect.x + window.scrollX + parseFloat(style.paddingLeft);
-    this.pageY = rect.y + window.scrollY + parseFloat(style.paddingTop);
+    this.gridRect = this.grid.getBoundingClientRect();
   }
 
   private getGridRow(offsetY: number) {
@@ -138,20 +139,9 @@ export default class LayoutEditor {
   }
 
   private getGridPosition(event: DragDropEvent) {
-    const offsetX =
-      event.clientX -
-      event.state.offsetX +
-      window.scrollX +
-      this.element.scrollLeft -
-      this.pageX -
-      24;
-    const offsetY =
-      event.clientY -
-      event.state.offsetY +
-      window.scrollY +
-      this.element.scrollTop -
-      this.pageY -
-      24;
+    const { clientX, clientY, state } = event;
+    const offsetX = clientX - this.gridRect.x - state.offsetX;
+    const offsetY = clientY - this.gridRect.y - state.offsetY;
     const x = Math.max(
       Math.round(offsetX / (this.gridColumnWidth + this.gridColumnGap)),
       0,
