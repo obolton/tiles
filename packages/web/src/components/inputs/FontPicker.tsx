@@ -1,12 +1,13 @@
 import { FONTS, type FontId } from "@/config/fonts";
 import FontIcon from "@/icons/font.svg?jsx";
 import styles from "./FontPicker.module.css";
+import type { Reactive } from "@/utils/reactivity";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
 
 interface FontPickerProps
   extends Omit<JSX.Attributes<HTMLElement>, "value" | "onChange"> {
-  value?: FontId;
+  value?: Reactive<FontId>;
   onChange: (value: FontId) => void;
 }
 
