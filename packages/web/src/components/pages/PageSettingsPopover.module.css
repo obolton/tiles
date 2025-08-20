@@ -1,0 +1,21 @@
+.popover {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 24px;
+}
+
+.title {
+  width: 320px;
+}
+
+.options {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.trailing {
+  margin-inline-start: auto;
+}
