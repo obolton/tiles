@@ -1,10 +1,7 @@
 import CollaborationButtons from "./CollaborationButtons";
-import FormattingTools from "./FormattingTools";
-import MoreIcon from "@/icons/more.svg?jsx";
-import TrashIcon from "@/icons/trash.svg?jsx";
+import PageSettingsPopover from "@/components/pages/PageSettingsPopover";
+import SettingsIcon from "@/icons/settings.svg?jsx";
 import type Editor from "@/editor/Editor";
-import { redirectWithToast } from "@/utils/toasts";
-import { handleError } from "@/utils/errors";
 import type { Reactive } from "@/utils/reactivity";
 
 interface EditingToolsProps {
@@ -20,15 +17,6 @@ export default function EditingTools({
   allowPublish,
   allowDelete,
 }: EditingToolsProps) {
-  const deletePage = async () => {
-    try {
-      await editor.deletePage();
-      redirectWithToast("/library/trash", "The page was deleted.", "success");
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
   return (
     <>
       <CollaborationButtons
@@ -37,38 +25,28 @@ export default function EditingTools({
         allowPublish={allowPublish}
       />
 
-      <FormattingTools editor={editor} />
-
       <ul role="group" aria-label="More tools">
         <li role="presentation">
           <button
-            id="page-options-button"
+            id="page-settings-button"
             type="button"
             className="floating"
             role="menuitem"
-            popoverTarget="page-options"
-            aria-label="More options"
+            popoverTarget="page-settings-popover"
+            aria-label="Page settings"
             aria-haspopup="menu"
             aria-expanded="false"
-            data-tooltip="More options"
+            data-tooltip="Page settings"
           >
-            <MoreIcon aria-hidden="true" />
+            <SettingsIcon aria-hidden="true" />
           </button>
-          <popover-menu id="page-options" anchor="page-options-button">
-            <menu>
-              <li>
-                <button
-                  className="destructive"
-                  type="button"
-                  disabled={allowDelete ? undefined : true}
-                  onclick={deletePage}
-                >
-                  <TrashIcon aria-hidden="true" />
-                  Delete page
-                </button>
-              </li>
-            </menu>
-          </popover-menu>
+
+          <PageSettingsPopover
+            editor={editor}
+            allowDelete={allowDelete}
+            id="page-settings-popover"
+            anchor="page-settings-button"
+          />
         </li>
       </ul>
     </>
