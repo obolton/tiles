@@ -147,6 +147,8 @@ export default class TableView extends HTMLElement {
     this.addEventListener("keydown", this);
     this.addEventListener("pointerdown", this);
     this.addEventListener("pointerup", this, { passive: true });
+    this.addEventListener("dnd-dragstart", this, { passive: true });
+    this.addEventListener("dnd-dragend", this);
     this.addEventListener("dnd-dragenter", this);
     this.addEventListener("dnd-dragover", this);
     this.addEventListener("dnd-drop", this);
@@ -257,8 +259,6 @@ export default class TableView extends HTMLElement {
 
     this.updateCellTabIndex();
 
-    this.dataset.drop = "true";
-
     this.enableVirtualization();
   }
 
@@ -316,6 +316,10 @@ export default class TableView extends HTMLElement {
         return this.handlePointerOver(event as PointerEvent);
       case "resizeend":
         return this.handleResizeEnd(event as ResizeEvent);
+      case "dnd-dragstart":
+        return this.handleDragStart(event as DragDropEvent);
+      case "dnd-dragend":
+        return this.handleDragEnd();
       case "dnd-dragenter":
         return this.handleDragEnter(event as DragDropEvent);
       case "dnd-dragover":
@@ -517,6 +521,20 @@ export default class TableView extends HTMLElement {
     }
 
     this.update();
+  }
+
+  // Drag and drop
+
+  private handleDragStart(event: DragDropEvent) {
+    const element = event.state.element;
+
+    if (element.tagName === "TH") {
+      this.dataset.drop = "true";
+    }
+  }
+
+  private handleDragEnd() {
+    delete this.dataset.drop;
   }
 
   private handleDragEnter(event: DragDropEvent) {
