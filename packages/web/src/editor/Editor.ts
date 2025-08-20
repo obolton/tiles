@@ -64,6 +64,7 @@ export default class Editor {
   readonly isEditable: Reactive<boolean>;
   readonly title: Reactive<string>;
   readonly color: Reactive<Color>;
+  readonly font: Reactive<FontId>;
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
   readonly sections: Reactive<Section[]>;
@@ -79,6 +80,7 @@ export default class Editor {
     this.isEditable = flag(isEditMode());
     this.title = reactive(page.title);
     this.color = reactive(page.color);
+    this.font = reactive(page.font);
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
     this.sections = reactive(page.sections.map(getReactiveSection));
