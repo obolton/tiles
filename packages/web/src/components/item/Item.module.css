@@ -57,15 +57,6 @@
     }
   }
 
-  &:global(.drag-preview) {
-    width: calc(
-      var(--columns) * (var(--grid-column-width) + var(--gap)) - var(--gap)
-    );
-    height: calc(
-      var(--rows) * (var(--grid-row-height) + var(--gap)) - var(--gap)
-    );
-  }
-
   body[data-editing] & {
     outline: 2px solid rgb(0 0 0 / 5%);
 

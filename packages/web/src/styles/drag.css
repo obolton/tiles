@@ -36,11 +36,11 @@
 
 .drag-preview {
   position: fixed !important;
+  width: var(--drag-width) !important;
+  height: var(--drag-height) !important;
   contain: size layout style;
   top: 0;
   left: 0;
-  width: var(--drag-width);
-  height: var(--drag-height);
   margin: 0;
   padding: 0;
   border: none;
