@@ -13,9 +13,10 @@ enum ScrollViewStates {
 }
 
 export default class ScrollView extends HTMLElement {
+  readonly contents: HTMLDivElement;
+
   private readonly internals: ElementInternals;
   private readonly container: HTMLDivElement;
-  private readonly contents: HTMLDivElement;
   private readonly previousButton: HTMLButtonElement;
   private readonly nextButton: HTMLButtonElement;
   private readonly resizeObserver: ResizeObserver;
