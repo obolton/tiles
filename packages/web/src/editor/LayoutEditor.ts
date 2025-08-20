@@ -1,6 +1,5 @@
 import { handleError } from "@/utils/errors";
 import { layoutTransition } from "@/utils/animation/layout";
-import { viewTransition } from "@/utils/transitions";
 import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
 import type Editor from "@/editor/Editor";
 import type { DragDropEvent } from "@/utils/drag";
@@ -9,6 +8,7 @@ import type { Tile } from "@/types/tiles";
 
 export interface LayoutEditorOptions {
   element: HTMLElement;
+  grid: HTMLElement;
   editor: Editor;
   sectionId: string;
 }
@@ -22,12 +22,15 @@ export default class LayoutEditor {
   readonly sectionId: string;
 
   private readonly elementRef: WeakRef<HTMLElement>;
+  private readonly gridRef: WeakRef<HTMLElement>;
 
   private pageX = 0;
   private pageY = 0;
+  private startRow = 0;
+  private endRow = 0;
   private gridColumnWidth = 0;
-  private gridRowHeight = 0;
-  private gridGap = 0;
+  private gridRows: number[] = [];
+  private gridColumnGap = 0;
   private x = 0;
   private y = 0;
   private columns = 0;
@@ -35,8 +38,9 @@ export default class LayoutEditor {
   private idForPoint?: string | null;
   private dragPlaceholder: HTMLElement | null = null;
 
-  constructor({ element, editor, sectionId }: LayoutEditorOptions) {
+  constructor({ element, grid, editor, sectionId }: LayoutEditorOptions) {
     this.elementRef = new WeakRef(element);
+    this.gridRef = new WeakRef(grid);
     this.editor = editor;
     this.sectionId = sectionId;
 
@@ -72,6 +76,14 @@ export default class LayoutEditor {
     return element;
   }
 
+  get grid() {
+    const element = this.gridRef.deref();
+    if (!element) {
+      throw new Error("The element is no longer available");
+    }
+    return element;
+  }
+
   handleEvent(event: Event) {
     switch (event.type) {
       case "dnd-dragover":
@@ -96,18 +108,33 @@ export default class LayoutEditor {
   }
 
   private updateLayoutInfo() {
-    const style = getComputedStyle(this.element);
+    const style = getComputedStyle(this.grid);
     this.gridColumnWidth = parseFloat(
       style.getPropertyValue("--grid-column-width"),
     );
-    this.gridRowHeight = parseFloat(
-      style.getPropertyValue("--grid-row-height"),
-    );
-    this.gridGap = parseFloat(style.getPropertyValue("--gap"));
+    this.gridColumnGap = parseFloat(style.columnGap);
+
+    const rowGap = parseFloat(style.rowGap);
+    const rowHeights = style.gridTemplateRows.split(" ").map(parseFloat);
+    let top = 0;
+    this.gridRows = [];
+    for (const height of rowHeights) {
+      this.gridRows.push(top);
+      top += height + rowGap;
+    }
 
     const rect = this.element.getBoundingClientRect();
     this.pageX = rect.x + window.scrollX + parseFloat(style.paddingLeft);
     this.pageY = rect.y + window.scrollY + parseFloat(style.paddingTop);
+  }
+
+  private getGridRow(offsetY: number) {
+    for (let i = 1; i < this.gridRows.length; i++) {
+      if (offsetY < this.gridRows[i]!) {
+        return i - 1;
+      }
+    }
+    return this.gridRows.length - 1;
   }
 
   private getGridPosition(event: DragDropEvent) {
@@ -126,13 +153,10 @@ export default class LayoutEditor {
       this.pageY -
       24;
     const x = Math.max(
-      Math.round(offsetX / (this.gridColumnWidth + this.gridGap)),
+      Math.round(offsetX / (this.gridColumnWidth + this.gridColumnGap)),
       0,
     );
-    const y = Math.max(
-      Math.round(offsetY / (this.gridRowHeight + this.gridGap)),
-      0,
-    );
+    const y = this.getGridRow(offsetY);
     return { x, y };
   }
 
@@ -298,7 +322,11 @@ export default class LayoutEditor {
   // Resize
 
   private handleResizeStart(event: TileResizeEvent) {
-    const { width, height } = event;
+    const { width, height, target } = event;
+
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
 
     event.stopPropagation();
 
@@ -306,14 +334,14 @@ export default class LayoutEditor {
 
     this.columns = Math.max(
       Math.round(
-        (width + this.gridGap) / (this.gridColumnWidth + this.gridGap),
+        (width + this.gridColumnGap) /
+          (this.gridColumnWidth + this.gridColumnGap),
       ),
       1,
     );
-    this.rows = Math.max(
-      Math.round((height + this.gridGap) / (this.gridRowHeight + this.gridGap)),
-      1,
-    );
+    this.startRow = this.getGridRow(target.offsetTop);
+    this.endRow = this.getGridRow(target.offsetTop + height);
+    this.rows = Math.max(this.endRow - this.startRow + 1, 1);
   }
 
   private handleResize(event: TileResizeEvent) {
@@ -328,14 +356,13 @@ export default class LayoutEditor {
     const id = target.id;
     const columns = Math.max(
       Math.round(
-        (width + this.gridGap) / (this.gridColumnWidth + this.gridGap),
+        (width + this.gridColumnGap) /
+          (this.gridColumnWidth + this.gridColumnGap),
       ),
       1,
     );
-    const rows = Math.max(
-      Math.round((height + this.gridGap) / (this.gridRowHeight + this.gridGap)),
-      1,
-    );
+    this.endRow = this.getGridRow(target.offsetTop + height);
+    const rows = Math.max(this.endRow - this.startRow + 1, 1);
 
     if (columns !== this.columns || rows != this.rows) {
       this.editor.positionTilePreview({ id, width: columns, height: rows });

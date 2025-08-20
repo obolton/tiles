@@ -4,6 +4,7 @@ import styles from "./Canvas.module.css";
 import type { Tile } from "@/types/tiles";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
+import type ScrollView from "@/elements/scroll-view/ScrollView";
 
 export interface CanvasProps {
   editor: Editor;
@@ -24,9 +25,10 @@ export default function Canvas({
   minRowSpan = 1,
   signal,
 }: CanvasProps) {
-  const ref = (element: HTMLElement) => {
+  const ref = (scrollView: ScrollView) => {
     const layoutEditor = new LayoutEditor({
-      element,
+      element: scrollView,
+      grid: scrollView.contents,
       editor,
       sectionId,
     });
