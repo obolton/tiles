@@ -9,6 +9,7 @@ import {
   type HeadingThemeProps,
 } from "@/components/headings/themes";
 import type ThemeSelector from "@/elements/themes/ThemeSelector";
+import type { TextAlignment } from "./schema";
 
 export function headings() {
   return new Plugin({
@@ -16,7 +17,7 @@ export function headings() {
       nodeViews: {
         heading(node, view, getPos) {
           const theme = reactive<string>(
-            node.attrs.theme || DEFAULT_HEADING_THEME,
+            (node.attrs.theme as string | undefined) || DEFAULT_HEADING_THEME,
           );
 
           function onChange(value: string) {
@@ -30,8 +31,8 @@ export function headings() {
 
           function getProps() {
             return {
-              level: node.attrs.level,
-              align: node.attrs.align,
+              level: node.attrs.level as 1 | 2 | 3,
+              align: node.attrs.align as TextAlignment | undefined,
               children: dom.contents.textContent,
             };
           }
@@ -43,7 +44,6 @@ export function headings() {
               registry={HEADING_THEMES}
               getProps={getProps}
               onChange={onChange}
-              data-tooltip="Heading"
             />,
           ) as ThemeSelector;
 
