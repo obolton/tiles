@@ -8,6 +8,7 @@ import { prompt } from "@/utils/richText/prompt";
 import styles from "./TableTile.module.css";
 import { EditorView } from "prosemirror-view";
 import { EditorState } from "prosemirror-state";
+import { keymap } from "prosemirror-keymap";
 import { getPlugins } from "@/utils/richText/plugins";
 import { schema } from "@/utils/richText/schema";
 import { handleError } from "@/utils/errors";
@@ -118,12 +119,14 @@ export default function TableTile({
           ? createDocument(value)
           : deserialize(value);
 
-      const plugins = getPlugins().concat(
+      const plugins = [
+        keymap({ Enter: () => true }),
+        ...getPlugins(),
         selectionFormat((newFormat) => {
           format.value = newFormat;
         }),
         prompt((open) => (prompting.value = open)),
-      );
+      ];
       const state = EditorState.create({
         doc,
         plugins,

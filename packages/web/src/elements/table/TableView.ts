@@ -376,6 +376,7 @@ export default class TableView extends HTMLElement {
         this.focusCellAbove();
         break;
 
+      case "Enter":
       case "ArrowDown":
         event.preventDefault();
         this.focusCellBelow();
