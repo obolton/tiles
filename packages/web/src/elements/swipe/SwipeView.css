@@ -47,21 +47,21 @@
 #buttons {
   position: absolute;
   top: calc(50% - 24px);
-  left: -12px;
-  width: 16px;
+  left: -32px;
+  width: 24px;
   height: 48px;
   display: flex;
   flex-direction: column;
-  transition:
-    opacity var(--animation-duration-short) var(--easing),
-    scale var(--animation-duration-short) var(--easing);
-  backdrop-filter: saturate(200%) brightness(120%) blur(12px);
-  border-radius: 8px;
+  transition: scale var(--animation-duration-short) var(--easing);
+  background: var(--ui-background-color);
+  backdrop-filter: blur(24px);
+  border-radius: 12px;
   overflow: hidden;
-  opacity: 0.5;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
 
   &:hover {
-    opacity: 1;
     scale: 1.1;
   }
 
@@ -74,13 +74,15 @@
     justify-content: center;
     appearance: none;
     border: none;
-    background: rgb(255 255 255 / 60%);
+    background: none;
     transition: background-color var(--animation-duration-short) var(--easing);
 
     & > svg {
       width: 100%;
       height: 100%;
       fill: var(--icon-color);
+      opacity: 1;
+      pointer-events: none;
       transition: opacity var(--animation-duration) var(--easing);
     }
 
@@ -89,11 +91,11 @@
     }
 
     &:enabled:hover {
-      background-color: rgb(255 255 255 / 70%);
+      background-color: rgb(255 255 255 / 40%);
     }
 
     &:enabled:active {
-      background-color: rgb(255 255 255 / 50%);
+      background-color: rgb(255 255 255 / 30%);
     }
 
     &:disabled {
