@@ -1,4 +1,4 @@
 :global(#insert-toolbar) {
-  inset: auto 48px 48px auto;
+  inset: auto 32px 32px auto;
   view-transition-name: insert-toolbar;
 }
