@@ -405,10 +405,10 @@ export default class TableView extends HTMLElement {
       target.ariaColIndex
     ) {
       event.preventDefault();
-      const visibleIndex =
+      const index =
         Array.prototype.indexOf.call(target.parentElement!.children, target) -
         1;
-      const column = this.visibleColumns[visibleIndex];
+      const column = this.visibleColumns[index];
       if (column) {
         const selection = { column };
         if (event.shiftKey) {
@@ -1297,7 +1297,7 @@ export default class TableView extends HTMLElement {
 
     // Re-order column elements
     // Note: No need to re-order column header cells as they hold no data
-    const index = column.index;
+    const index = this.visibleColumns.indexOf(column);
     const beforeCol =
       afterIndex === null
         ? null
@@ -1307,7 +1307,11 @@ export default class TableView extends HTMLElement {
     this.visibleColumns = moveElement(
       this.visibleColumns,
       index,
-      afterIndex === null ? 0 : afterIndex + 1,
+      afterIndex === null
+        ? 0
+        : afterIndex > index
+          ? afterIndex
+          : afterIndex + 1,
     );
     moveBefore(this.colGroup, column.element, beforeCol);
     const columns = this.colGroup.getElementsByTagName("col");
@@ -1340,6 +1344,8 @@ export default class TableView extends HTMLElement {
         ).toString();
       }
     }
+
+    this.redrawSelection();
   }
 
   moveRow(index: number, afterIndex: number | null) {
@@ -1365,6 +1371,8 @@ export default class TableView extends HTMLElement {
         this.firstVisibleRow + i
       ).toString();
     }
+
+    this.redrawSelection();
   }
 
   deleteColumn(column: Column) {
@@ -1374,6 +1382,7 @@ export default class TableView extends HTMLElement {
       this.recycleCell(cell);
     }
     this.visibleColumns = this.visibleColumns.filter((c) => c !== column);
+    this.redrawSelection();
   }
 
   deleteRow(index: number) {
@@ -1391,6 +1400,7 @@ export default class TableView extends HTMLElement {
       }
     }
     this.renderedRows--;
+    this.redrawSelection();
   }
 }
 
