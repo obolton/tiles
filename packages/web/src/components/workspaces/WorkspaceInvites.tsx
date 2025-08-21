@@ -1,5 +1,5 @@
 import Search from "@/components/search/Search";
-import InviteRow from "@/components/menu/InviteRow";
+import InviteRow from "@/components/collaboration/InviteRow";
 import Placeholder from "@/components/placeholder/Placeholder";
 import NewIcon from "@/icons/new.svg?jsx";
 import client from "@/api/client";
