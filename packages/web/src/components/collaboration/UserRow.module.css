@@ -2,8 +2,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 16px;
+  padding: 8px 0;
 
+  & > img,
   & > button {
     flex: none;
   }
@@ -15,7 +16,7 @@
   flex: 1;
 }
 
-.email,
+.name,
 .description {
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -24,7 +24,9 @@ export default function InviteRow({
 
   return (
     <div className={styles.row}>
-      <MailIcon aria-hidden="true" />
+      <div className={styles.icon}>
+        <MailIcon aria-hidden="true" />
+      </div>
 
       <div className={styles.details}>
         <span className={styles.email}>{invite.email}</span>
