@@ -25,6 +25,7 @@ type ClientTileBase = Pick<
   | "y"
   | "width"
   | "height"
+  | "rowSpan"
   | "block"
 > & { placementId: string };
 

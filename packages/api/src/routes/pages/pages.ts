@@ -42,6 +42,7 @@ const TILES_FIELDS = {
   height: true,
   x: true,
   y: true,
+  rowSpan: true,
   block: true,
   image: {
     select: IMAGE_FIELDS,
@@ -116,6 +117,7 @@ export function formatTile({
   y,
   width,
   height,
+  rowSpan,
   block,
   sectionId,
   ...tile
@@ -128,6 +130,7 @@ export function formatTile({
     y,
     width,
     height,
+    rowSpan,
     block,
   };
   const { image, video, text, map, link, pageLink, table } = tile;
