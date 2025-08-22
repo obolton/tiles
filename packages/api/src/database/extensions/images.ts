@@ -35,9 +35,9 @@ export default Prisma.defineExtension({
     },
     textTile: {
       imageUrl: {
-        needs: { imageKey: true },
-        compute({ imageKey }) {
-          return imageKey ? getImageUrl(imageKey) : null;
+        needs: { backgroundImageKey: true },
+        compute({ backgroundImageKey }) {
+          return backgroundImageKey ? getImageUrl(backgroundImageKey) : null;
         },
       },
     },
