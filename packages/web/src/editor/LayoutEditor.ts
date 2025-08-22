@@ -17,6 +17,11 @@ export interface DragData {
   tile: Tile;
 }
 
+interface RowLayout {
+  top: number;
+  height: number;
+}
+
 export default class LayoutEditor {
   readonly editor: Editor;
   readonly sectionId: string;
@@ -27,7 +32,7 @@ export default class LayoutEditor {
   private gridRect: DOMRect;
   private gridColumnWidth = 0;
   private gridRowMinHeight = 24;
-  private gridRows: number[] = [];
+  private gridRows: RowLayout[] = [];
   private gridColumnGap = 0;
   private gridRowGap = 0;
   private x = 0;
@@ -124,7 +129,7 @@ export default class LayoutEditor {
     let top = 0;
     this.gridRows = [];
     for (const height of rowHeights) {
-      this.gridRows.push(top);
+      this.gridRows.push({ top, height });
       top += height + this.gridRowGap;
     }
 
@@ -132,12 +137,23 @@ export default class LayoutEditor {
   }
 
   private getGridRow(offsetY: number) {
-    for (let i = 1; i < this.gridRows.length; i++) {
-      if (offsetY < this.gridRows[i]!) {
-        return i - 1;
+    if (this.gridRows.length === 0) {
+      return 0;
+    }
+
+    for (let i = 0; i < this.gridRows.length; i++) {
+      const row = this.gridRows[i]!;
+      if (offsetY < row.top + row.height) {
+        return i;
       }
     }
-    return this.gridRows.length - 1;
+
+    const lastRow = this.gridRows.at(-1)!;
+    const distanceFromBottom = offsetY - (lastRow.top + lastRow.height);
+    const extraRows = Math.round(
+      distanceFromBottom / (this.gridRowMinHeight + this.gridRowGap),
+    );
+    return this.gridRows.length - 1 + extraRows;
   }
 
   private getGridPosition(event: DragDropEvent) {
