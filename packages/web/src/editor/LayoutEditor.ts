@@ -26,15 +26,14 @@ export default class LayoutEditor {
 
   private gridRect: DOMRect;
   private gridColumnWidth = 0;
+  private gridRowMinHeight = 24;
   private gridRows: number[] = [];
   private gridColumnGap = 0;
   private gridRowGap = 0;
   private x = 0;
   private y = 0;
-  private startRow = 0;
-  private endRow = 0;
-  private columns = 0;
-  private rows = 0;
+  private width = 0;
+  private height = 0;
   private idForPoint?: string | null;
   private dragPlaceholder: HTMLElement | null = null;
 
@@ -113,6 +112,9 @@ export default class LayoutEditor {
     const style = getComputedStyle(this.grid);
     this.gridColumnWidth = parseFloat(
       style.getPropertyValue("--grid-column-width"),
+    );
+    this.gridRowMinHeight = parseFloat(
+      style.getPropertyValue("--grid-row-height"),
     );
 
     this.gridColumnGap = parseFloat(style.columnGap);
@@ -322,16 +324,14 @@ export default class LayoutEditor {
 
     this.updateLayoutInfo();
 
-    this.columns = Math.max(
+    this.width = Math.max(
       Math.round(
         (width + this.gridColumnGap) /
           (this.gridColumnWidth + this.gridColumnGap),
       ),
       1,
     );
-    this.startRow = this.getGridRow(target.offsetTop);
-    this.endRow = this.getGridRow(target.offsetTop + height);
-    this.rows = Math.max(this.endRow - this.startRow + 1, 1);
+    this.height = Math.round(height / this.gridRowMinHeight);
   }
 
   private handleResize(event: TileResizeEvent) {
@@ -344,22 +344,25 @@ export default class LayoutEditor {
     event.stopPropagation();
 
     const id = target.id;
-    const columns = Math.max(
+    const newWidth = Math.max(
       Math.round(
         (width + this.gridColumnGap) /
           (this.gridColumnWidth + this.gridColumnGap),
       ),
       1,
     );
-    this.endRow = this.getGridRow(target.offsetTop + height);
-    const rows = Math.max(this.endRow - this.startRow + 1, 1);
+    const newHeight = Math.round(height / this.gridRowMinHeight);
 
-    if (columns !== this.columns || rows != this.rows) {
-      this.editor.positionTilePreview({ id, width: columns, height: rows });
+    if (newWidth !== this.width || newHeight != this.height) {
+      this.editor.positionTilePreview({
+        id,
+        width: newWidth,
+        height: newHeight,
+      });
     }
 
-    this.columns = columns;
-    this.rows = rows;
+    this.width = newWidth;
+    this.height = newHeight;
   }
 
   private async handleResizeEnd(event: TileResizeEvent) {
@@ -375,8 +378,8 @@ export default class LayoutEditor {
     try {
       await this.editor.positionTile({
         id,
-        width: this.columns,
-        height: this.rows,
+        width: this.width,
+        height: this.height,
       });
     } catch (error) {
       handleError(error);
