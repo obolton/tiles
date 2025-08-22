@@ -1,28 +1,23 @@
-import replicate from "@/utils/replicate.ts";
 import { TEXT_TO_IMAGE_MODEL, TEXT_MODEL } from "./constants.ts";
-import { streamToBase64String } from "@/utils/streams.ts";
 import { parseMarkdown } from "@/utils/markdown.ts";
-import type { ServerSentEvent } from "@/utils/replicate.ts";
+import { openai } from "@/utils/openai.ts";
 import type { GenerateImageSchema, WriteSchema } from "./schema.ts";
+import type { Stream } from "openai/streaming";
+import type { ResponseStreamEvent } from "openai/resources/responses/responses";
 
 export async function generateImage({ prompt }: GenerateImageSchema) {
-  const result = await replicate.run(TEXT_TO_IMAGE_MODEL, {
-    input: {
-      prompt,
-      go_fast: true,
-      num_outputs: 1,
-      aspect_ratio: "1:1",
-      output_quality: 80,
-      output_format: "webp",
-    },
+  const response = await openai.images.generate({
+    model: TEXT_TO_IMAGE_MODEL,
+    output_format: "webp",
+    prompt,
   });
 
-  if (!Array.isArray(result) || !(result[0] instanceof ReadableStream)) {
+  if (!response.data) {
     throw new Error("Invalid response");
   }
 
-  const [output] = result;
-  const data = await streamToBase64String(output);
+  const [output] = response.data;
+  const data = output?.b64_json;
 
   return {
     type: "image/webp",
@@ -30,24 +25,30 @@ export async function generateImage({ prompt }: GenerateImageSchema) {
   };
 }
 
-async function* getStreamOutput(input: AsyncGenerator<ServerSentEvent>) {
-  for await (const message of input) {
-    if (message.event === "output") {
-      yield message.data;
+async function* getStreamOutput(input: Stream<ResponseStreamEvent>) {
+  for await (const event of input) {
+    if (event.type === "response.output_text.delta") {
+      yield event.delta;
     }
   }
 }
 
-export function write({ prompt, context }: WriteSchema, signal?: AbortSignal) {
+export async function write(
+  { prompt, context }: WriteSchema,
+  signal?: AbortSignal,
+) {
   const fullPrompt =
     (context ? `### Context:\n${context}\n\n` : "") + `### Task:\n${prompt}`;
-  const stream = replicate.stream(TEXT_MODEL, {
-    input: {
-      system_prompt: "You are a helpful assistant.",
-      prompt: fullPrompt,
-    },
-    signal,
-  });
 
-  return parseMarkdown(getStreamOutput(stream));
+  const response = await openai.responses.create(
+    {
+      model: TEXT_MODEL,
+      input: fullPrompt,
+      reasoning: { effort: "minimal" },
+      stream: true,
+    },
+    { signal },
+  );
+
+  return parseMarkdown(getStreamOutput(response));
 }
