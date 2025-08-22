@@ -1,9 +1,11 @@
 import { z } from "zod";
+import { PositionSchema } from "@/schema/Position.ts";
 
 export const CreateLinkSchema = z.object({
   pageId: z.uuid(),
   sectionId: z.uuid(),
   url: z.url(),
+  ...PositionSchema.shape,
 });
 export type CreateLinkSchema = z.infer<typeof CreateLinkSchema>;
 

@@ -41,6 +41,12 @@ export async function createPageLink({
   pageId,
   sectionId,
   linkedPageId,
+  width,
+  height,
+  rowSpan,
+  x,
+  y,
+  block,
 }: CreatePageLinkSchema) {
   if (pageId === linkedPageId) {
     throw new Error("Cannot link to the same page.");
@@ -60,6 +66,12 @@ export async function createPageLink({
         sectionId,
         type: "PAGE_LINK",
         pageLinkTileId: pageLink.id,
+        width,
+        height,
+        rowSpan,
+        x,
+        y,
+        block,
       },
       transaction,
     );

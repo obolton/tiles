@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PositionSchema } from "@/schema/Position.ts";
 import {
   MIN_LATITUDE,
   MAX_LATITUDE,
@@ -9,8 +10,7 @@ import {
 export const CreateMapSchema = z.object({
   pageId: z.uuid(),
   sectionId: z.uuid(),
-  width: z.number().int().gte(4).lte(12).optional(),
-  height: z.number().int().gte(4).lte(24).optional(),
+  ...PositionSchema.shape,
   place: z.object({
     name: z.string(),
     providerId: z.string().nullable(),

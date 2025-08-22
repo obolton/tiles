@@ -15,6 +15,7 @@ export const TILE_FIELDS = {
   height: true,
   x: true,
   y: true,
+  rowSpan: true,
   block: true,
 } as const satisfies Prisma.TileSelect<ExtensionArgs>;
 
@@ -130,6 +131,7 @@ export async function updateTile({
   height,
   x,
   y,
+  rowSpan,
   block,
 }: UpdateTileSchema) {
   return prisma.$transaction(async (transaction) => {
@@ -147,19 +149,12 @@ export async function updateTile({
         sectionId,
         width,
         height,
+        rowSpan,
         x,
         y,
         block,
       },
-      select: {
-        id: true,
-        pageId: true,
-        sectionId: true,
-        width: true,
-        height: true,
-        x: true,
-        y: true,
-      },
+      select: TILE_FIELDS,
     });
   });
 }
@@ -190,6 +185,7 @@ type CreateTilePlacement = {
   height?: number;
   x?: number;
   y?: number;
+  rowSpan?: number;
   block?: boolean;
   imageTileId?: string;
   mapTileId?: string;
@@ -209,6 +205,7 @@ export async function createTilePlacement(
     height = 1,
     x,
     y,
+    rowSpan = 1,
     block,
     imageTileId,
     mapTileId,
@@ -232,6 +229,7 @@ export async function createTilePlacement(
       position,
       width,
       height,
+      rowSpan,
       x,
       y,
       block,

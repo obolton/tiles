@@ -33,6 +33,10 @@ export async function createMap({
   sectionId,
   width,
   height,
+  rowSpan,
+  x,
+  y,
+  block,
   place: { name, providerId, lat, long, boundingBox, address },
 }: CreateMapSchema) {
   return prisma.$transaction(async (transaction) => {
@@ -60,6 +64,10 @@ export async function createMap({
         mapTileId: map.id,
         width,
         height,
+        rowSpan,
+        x,
+        y,
+        block,
       },
       transaction,
     );

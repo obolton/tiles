@@ -24,6 +24,12 @@ export async function createImage({
   imageKey,
   text,
   theme,
+  width,
+  height,
+  rowSpan,
+  x,
+  y,
+  block,
 }: CreateImageSchema) {
   return prisma.$transaction(async (transaction) => {
     const image = await transaction.imageTile.create({
@@ -40,6 +46,12 @@ export async function createImage({
         pageId,
         sectionId,
         type: "IMAGE",
+        width,
+        height,
+        rowSpan,
+        x,
+        y,
+        block,
         imageTileId: image.id,
       },
       transaction,

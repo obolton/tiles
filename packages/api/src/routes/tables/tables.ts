@@ -143,6 +143,12 @@ export async function createTable({
   rows,
   textColor,
   background,
+  width,
+  height,
+  rowSpan,
+  x,
+  y,
+  block,
 }: CreateTableSchema): Promise<TableWithData> {
   return prisma.$transaction(async (transaction) => {
     const table = await transaction.table.create({
@@ -178,6 +184,12 @@ export async function createTable({
         sectionId,
         type: "TABLE",
         tableId: table.id,
+        width,
+        height,
+        rowSpan,
+        x,
+        y,
+        block,
       },
       transaction,
     );
