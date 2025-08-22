@@ -48,8 +48,6 @@ export default function Section({ editor, section }: SectionProps) {
         isEditable={isEditable}
         sectionId={section.id}
         items={section.tiles}
-        minColumnSpan={2}
-        minRowSpan={1}
       />
     </section>
   );

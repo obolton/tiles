@@ -24,13 +24,10 @@ export interface ItemProps {
   editable?: boolean | Reactive<boolean>;
   x?: Reactive<number>;
   y?: Reactive<number>;
-  rows: Reactive<number>;
-  minRows?: number;
-  columns: Reactive<number>;
-  minColumns?: number;
-  maxColumns?: number;
+  width: Reactive<number>;
+  height: Reactive<number>;
+  rowSpan: Reactive<number>;
   block?: Reactive<boolean>;
-  grow?: boolean;
   tile: Tile;
   tabIndex?: number | Reactive<number | undefined>;
 }
@@ -92,13 +89,10 @@ export default function Item({
   editable = false,
   x,
   y,
-  rows,
-  minRows = 1,
-  columns,
-  minColumns = 1,
-  maxColumns = 32,
+  width,
+  height,
+  rowSpan,
   block,
-  grow,
   tile,
   tabIndex,
 }: ItemProps) {
@@ -145,17 +139,13 @@ export default function Item({
       : reactive({});
 
   const combinedStyles = new Computed(
-    [columns, rows, position] as const,
-    (columns, rows, positionValue) => ({
+    [width, height, rowSpan, position] as const,
+    (widthValue, heightValue, rowSpanValue, positionValue) => ({
       ...style,
       ...positionValue,
-      "--columns": Math.min(
-        Math.max(columns, minColumns),
-        maxColumns,
-      ).toString(),
-      "--min-columns": minColumns.toString(),
-      "--rows": Math.max(rows, minRows).toString(),
-      "--min-rows": minRows.toString(),
+      "--width": widthValue.toString(),
+      "--height": heightValue.toString(),
+      "--rows": rowSpanValue.toString(),
     }),
   );
 
@@ -170,7 +160,6 @@ export default function Item({
         [styles.item]: true,
         [styles.draggable]: editable,
         [styles.block]: block,
-        [styles.grow]: grow,
         ...classList,
       }}
       style={combinedStyles}

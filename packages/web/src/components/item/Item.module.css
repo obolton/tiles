@@ -1,13 +1,13 @@
-@property --min-columns {
+@property --width {
   syntax: "<integer>";
   inherits: true;
-  initial-value: 1;
+  initial-value: 0;
 }
 
-@property --min-rows {
+@property --height {
   syntax: "<integer>";
   inherits: true;
-  initial-value: 1;
+  initial-value: 0;
 }
 
 @property --column {
@@ -23,14 +23,9 @@
 }
 
 .item {
-  grid-column: var(--column) / span var(--columns, 1);
-  grid-row: var(--row) / span var(--rows, 1);
-  min-width: calc(
-    var(--min-columns) * (var(--grid-column-width) + var(--gap)) - var(--gap)
-  );
-  min-height: calc(
-    var(--min-rows) * (var(--grid-row-height) + var(--gap)) - var(--gap)
-  );
+  grid-column: var(--column) / span var(--width);
+  grid-row: var(--row) / span var(--rows);
+  height: calc(var(--height) * var(--grid-row-height));
   display: flex;
   border-radius: 12px;
   outline-color: transparent;
@@ -44,17 +39,7 @@
   }
 
   &.block {
-    grid-row: var(--row) / span 1;
     height: auto;
-  }
-
-  &.grow {
-    height: fit-content;
-    min-height: unset;
-
-    &::part(outline) {
-      min-height: 100%;
-    }
   }
 
   body[data-editing] & {

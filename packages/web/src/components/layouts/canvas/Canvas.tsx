@@ -11,8 +11,6 @@ export interface CanvasProps {
   isEditable: Reactive<boolean>;
   sectionId: string;
   items: Reactive<Tile[]>;
-  minColumnSpan?: number;
-  minRowSpan?: number;
   signal?: AbortSignal;
 }
 
@@ -21,8 +19,6 @@ export default function Canvas({
   isEditable,
   sectionId,
   items,
-  minColumnSpan = 1,
-  minRowSpan = 1,
   signal,
 }: CanvasProps) {
   const ref = (scrollView: ScrollView) => {
@@ -52,11 +48,10 @@ export default function Canvas({
             editable={isEditable}
             x={tile.x}
             y={tile.y}
-            rows={tile.height}
-            minRows={minRowSpan}
-            columns={tile.width}
-            minColumns={minColumnSpan}
-            block={tile.block}
+            width={tile.width}
+            height={tile.height}
+            rowSpan={tile.rowSpan}
+            block={tile.type === "TEXT" ? tile.block : undefined}
             tile={tile}
             tabIndex={isEditable.derive((editable) =>
               editable ? 0 : undefined,
