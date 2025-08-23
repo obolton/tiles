@@ -7,7 +7,7 @@ import TextEditor, {
   type EditorState,
 } from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/colors/ColorPicker";
-import ExpandIcon from "@/icons/expand.svg?jsx";
+import ArrowDownIcon from "@/icons/arrow-down.svg?jsx";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
 import type { Reactive } from "@/utils/reactivity";
@@ -166,7 +166,10 @@ export default function TextTile({
         ) : (
           <pop-out className={styles["pop-out"]}>
             {contents}
-            <ExpandIcon className={styles["expand-icon"]} aria-hidden="true" />
+            <ArrowDownIcon
+              className={styles["expand-icon"]}
+              aria-hidden="true"
+            />
           </pop-out>
         ),
       )}
