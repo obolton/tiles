@@ -29,6 +29,7 @@ export default function Section({ editor, section }: SectionProps) {
       }}
       style={{ anchorName }}
       tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
+      data-section-id={section.id}
       data-animate-layout-id={section.id}
       on:focus={onFocus}
       on:blur={onBlur}
