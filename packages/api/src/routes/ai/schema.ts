@@ -6,6 +6,8 @@ export const GenerateImageSchema = z.object({
 export type GenerateImageSchema = z.infer<typeof GenerateImageSchema>;
 
 export const WriteSchema = z.object({
+  pageId: z.uuid(),
+  sectionId: z.uuid(),
   prompt: z.string().min(10).max(1024),
   context: z.string().max(1024).optional(),
 });
