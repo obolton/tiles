@@ -2,6 +2,8 @@ import { schema } from "./schema";
 import { closest, getListDepth } from "./helpers";
 import type { EditorView } from "prosemirror-view";
 import type { Mark } from "prosemirror-model";
+import type { ClientTile } from "@/types/tiles";
+import type Editor from "@/editor/Editor";
 
 export interface ParagraphNode {
   type: "paragraph";
@@ -28,9 +30,16 @@ function createListItem() {
   return schema.nodes.list_item.create(null, schema.nodes.paragraph.create());
 }
 
+export interface ArtifactEvent {
+  artifact: ClientTile;
+}
+
+export type StreamEvent = RichTextStreamEvent | ArtifactEvent;
+
 export async function insertFromStream(
   view: EditorView,
-  stream: AsyncIterable<RichTextStreamEvent>,
+  stream: AsyncIterable<StreamEvent>,
+  editor: Editor,
 ) {
   const { dispatch } = view;
   const { $from } = view.state.selection;
@@ -73,6 +82,11 @@ export async function insertFromStream(
       tr.insertText(event, pos);
       pos += event.length;
     } else {
+      if ("artifact" in event) {
+        editor.addTile(event.artifact);
+        continue;
+      }
+
       if ("bold" in event && typeof event.bold === "boolean") {
         bold = event.bold;
       }
