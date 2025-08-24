@@ -1,3 +1,5 @@
+import type { Transformer } from "node:stream/web";
+
 const BOLD_START_MATCH = /^(\*\*|__)(?=\w)/;
 const BOLD_END_MATCH = /^(\*\*|__)/;
 const ITALIC_START_MATCH = /^(\*|_)(?=\w)/;
@@ -36,52 +38,58 @@ enum LineBreak {
   SOFT,
 }
 
-export async function* parseMarkdown(
-  input: AsyncGenerator<string>,
-): AsyncGenerator<RichTextStreamEvent> {
-  let buffer = "";
-  let pos = 0;
-  const format: RichTextFormat = {};
-  let node: RichTextNode | null = null;
-  let lineBreak: LineBreak | null = null;
+export class MarkdownTransformer
+  implements Transformer<string, RichTextStreamEvent>
+{
+  private buffer = "";
+  private pos = 0;
+  private format: RichTextFormat = {};
+  private node: RichTextNode | null = null;
+  private lineBreak: LineBreak | null = null;
 
-  function* flush(skip: number = 0) {
-    if (pos === 0) {
-      buffer = buffer.slice(skip);
+  start() {}
+
+  private advance(
+    controller: TransformStreamDefaultController<RichTextStreamEvent>,
+    skip: number = 0,
+  ) {
+    if (this.pos === 0) {
+      this.buffer = this.buffer.slice(skip);
       return;
     }
 
-    const text = buffer.slice(0, pos);
+    const text = this.buffer.slice(0, this.pos);
 
     // Buffer until we have a non-empty chunk
     if (text.trim().length === 0) {
       return;
     }
 
-    if (!node) {
-      node = { type: "paragraph" };
-      yield node;
+    if (!this.node) {
+      this.node = { type: "paragraph" };
+      controller.enqueue(this.node);
     }
 
-    if (lineBreak !== null) {
-      switch (lineBreak) {
+    if (this.lineBreak !== null) {
+      switch (this.lineBreak) {
         case LineBreak.HARD:
-          yield "\n" + text;
+          controller.enqueue("\n" + text);
           break;
         case LineBreak.SOFT:
-          yield " " + text;
+          controller.enqueue(" " + text);
           break;
       }
-      lineBreak = null;
+      this.lineBreak = null;
     } else {
-      yield text;
+      controller.enqueue(text);
     }
 
-    buffer = buffer.slice(pos + skip);
-    pos = 0;
+    this.buffer = this.buffer.slice(this.pos + skip);
+    this.pos = 0;
   }
 
-  function* set(
+  private set(
+    controller: TransformStreamDefaultController<RichTextStreamEvent>,
     state: {
       node?: RichTextNode | null;
       format?: RichTextFormat;
@@ -89,42 +97,46 @@ export async function* parseMarkdown(
     },
     skip: number,
   ) {
-    yield* flush(skip);
+    this.advance(controller, skip);
 
     if (typeof state.node !== "undefined") {
-      node = state.node;
-      lineBreak = null;
-      if (node) {
-        yield node;
+      this.node = state.node;
+      this.lineBreak = null;
+      if (this.node) {
+        controller.enqueue(this.node);
       }
     }
 
     if (state.format) {
-      if (!node) {
-        node = { type: "paragraph" };
-        yield node;
+      if (!this.node) {
+        this.node = { type: "paragraph" };
+        controller.enqueue(this.node);
       }
-      yield state.format;
-      Object.assign(format, state.format);
+      controller.enqueue(state.format);
+      Object.assign(this.format, state.format);
     }
 
     if (typeof state.lineBreak !== "undefined") {
-      lineBreak = state.lineBreak;
+      this.lineBreak = state.lineBreak;
     }
   }
 
-  for await (const chunk of input) {
-    buffer += chunk;
-    pos = 0;
+  transform(
+    chunk: string,
+    controller: TransformStreamDefaultController<RichTextStreamEvent>,
+  ) {
+    this.buffer += chunk;
+    this.pos = 0;
 
-    while (pos < buffer.length) {
-      const rest = buffer.slice(pos);
+    while (this.pos < this.buffer.length) {
+      const rest = this.buffer.slice(this.pos);
 
-      const headingMatch = buffer.match(HEADING_MATCH);
+      const headingMatch = this.buffer.match(HEADING_MATCH);
       if (headingMatch) {
         const [match, hashes] = headingMatch;
         const level = Math.min(hashes!.length, 3);
-        yield* set(
+        this.set(
+          controller,
           {
             node: {
               type: "heading",
@@ -136,11 +148,12 @@ export async function* parseMarkdown(
         continue;
       }
 
-      const ulMatch = buffer.match(UNORDERED_LIST_ITEM_MATCH);
+      const ulMatch = this.buffer.match(UNORDERED_LIST_ITEM_MATCH);
       if (ulMatch) {
         const [match, whitespace] = ulMatch;
         const depth = Math.floor((whitespace ?? "").length / 2);
-        yield* set(
+        this.set(
+          controller,
           {
             node: {
               type: "listitem",
@@ -153,11 +166,12 @@ export async function* parseMarkdown(
         continue;
       }
 
-      const olMatch = buffer.match(ORDERED_LIST_ITEM_MATCH);
+      const olMatch = this.buffer.match(ORDERED_LIST_ITEM_MATCH);
       if (olMatch) {
         const [match, whitespace] = olMatch;
         const depth = Math.floor((whitespace ?? "").length / 2);
-        yield* set(
+        this.set(
+          controller,
           {
             node: {
               type: "listitem",
@@ -170,50 +184,64 @@ export async function* parseMarkdown(
         continue;
       }
 
-      if (!format.bold && rest.match(BOLD_START_MATCH)) {
-        yield* set({ format: { bold: true } }, 2);
+      if (!this.format.bold && rest.match(BOLD_START_MATCH)) {
+        this.set(controller, { format: { bold: true } }, 2);
         continue;
       }
 
-      if (format.bold && rest.match(BOLD_END_MATCH)) {
-        yield* set({ format: { bold: false } }, 2);
+      if (this.format.bold && rest.match(BOLD_END_MATCH)) {
+        this.set(controller, { format: { bold: false } }, 2);
         continue;
       }
 
-      if (!format.italic && rest.match(ITALIC_START_MATCH)) {
-        yield* set({ format: { italic: true } }, 1);
+      if (!this.format.italic && rest.match(ITALIC_START_MATCH)) {
+        this.set(controller, { format: { italic: true } }, 1);
         continue;
       }
 
-      if (format.italic && rest.match(ITALIC_END_MATCH)) {
-        yield* set({ format: { italic: false } }, 1);
+      if (this.format.italic && rest.match(ITALIC_END_MATCH)) {
+        this.set(controller, { format: { italic: false } }, 1);
         continue;
       }
 
       const hardLineBreakMatch = rest.match(HARD_LINE_BREAK_MATCH);
       if (hardLineBreakMatch) {
-        yield* set({ lineBreak: LineBreak.HARD }, hardLineBreakMatch[0].length);
+        this.set(
+          controller,
+          { lineBreak: LineBreak.HARD },
+          hardLineBreakMatch[0].length,
+        );
         continue;
       }
 
       const newLineMatch = rest.match(LINE_BREAK_MATCH);
       if (newLineMatch) {
         if (newLineMatch[0].match(ALL_NEW_LINES_MATCH)?.length === 1) {
-          yield* set({ lineBreak: LineBreak.SOFT }, newLineMatch[0].length);
+          this.set(
+            controller,
+            { lineBreak: LineBreak.SOFT },
+            newLineMatch[0].length,
+          );
         } else {
-          yield* set({ node: null }, newLineMatch[0].length);
+          this.set(controller, { node: null }, newLineMatch[0].length);
         }
         continue;
       }
 
-      pos += 1;
+      this.pos += 1;
     }
 
-    const delimiterMatch = buffer.match(DELIMITER_MATCH);
+    const delimiterMatch = this.buffer.match(DELIMITER_MATCH);
     if (!delimiterMatch) {
-      yield* flush();
+      this.advance(controller);
     }
   }
 
-  yield* flush();
+  flush(controller: TransformStreamDefaultController<RichTextStreamEvent>) {
+    this.advance(controller);
+  }
+}
+
+export function transformMarkdown() {
+  return new TransformStream(new MarkdownTransformer());
 }
