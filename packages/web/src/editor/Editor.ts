@@ -316,7 +316,7 @@ export default class Editor {
     });
   }
 
-  private addTile(tile: ClientTile) {
+  addTile(tile: ClientTile) {
     this.tiles.value = this.tiles.value.concat(getReactiveTile(tile));
 
     const element = document.getElementById(tile.id);
