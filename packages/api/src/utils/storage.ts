@@ -9,15 +9,15 @@ const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
 const CLOUDFLARE_R2_ACCESS_KEY_ID = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
 const CLOUDFLARE_R2_SECRET_ACCESS_KEY =
   process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
-const CLOUDFLARE_R2_BUCKET_IMAGES = process.env.CLOUDFLARE_R2_BUCKET_IMAGES;
-const CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES =
-  process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
+export const IMAGES_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_IMAGES ?? "";
+export const PROFILE_IMAGES_BUCKET =
+  process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES ?? "";
 
 assert(CLOUDFLARE_ACCOUNT_ID);
 assert(CLOUDFLARE_R2_ACCESS_KEY_ID);
 assert(CLOUDFLARE_R2_SECRET_ACCESS_KEY);
-assert(CLOUDFLARE_R2_BUCKET_IMAGES);
-assert(CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES);
+assert(IMAGES_BUCKET);
+assert(PROFILE_IMAGES_BUCKET);
 
 const S3 = new S3Client({
   region: "auto",
@@ -31,9 +31,9 @@ const S3 = new S3Client({
 function getBucket(mediaType: MediaType) {
   switch (mediaType) {
     case "image":
-      return CLOUDFLARE_R2_BUCKET_IMAGES;
+      return IMAGES_BUCKET;
     case "profile-image":
-      return CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
+      return PROFILE_IMAGES_BUCKET;
     default:
       throw new Error("Invalid media type:", mediaType);
   }
