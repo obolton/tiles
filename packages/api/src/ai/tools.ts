@@ -68,6 +68,7 @@ async function createMapTool(
 export const TOOLS: Tool[] = [CREATE_MAP_TOOL];
 
 export interface ToolContext {
+  userId: string;
   pageId: string;
   sectionId: string;
   model: string;
