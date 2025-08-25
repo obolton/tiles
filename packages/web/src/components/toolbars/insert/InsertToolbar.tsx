@@ -97,7 +97,7 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
           async onConfirm({ place }) {
             await editor.createMap({
               sectionId: editor.getCurrentSectionId(),
-              place,
+              places: [place],
               width: 6,
               height: 6,
             });

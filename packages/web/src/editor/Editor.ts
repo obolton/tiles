@@ -447,8 +447,8 @@ export default class Editor {
     return item;
   }
 
-  async addPlace(data: OmitPageId<AppRouterInputs["maps"]["addPlace"]>) {
-    return await client.maps.addPlace.mutate({
+  async addPlaces(data: OmitPageId<AppRouterInputs["maps"]["addPlaces"]>) {
+    return await client.maps.addPlaces.mutate({
       pageId: this.pageId,
       ...data,
     });

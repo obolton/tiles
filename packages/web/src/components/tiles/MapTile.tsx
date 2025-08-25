@@ -32,7 +32,7 @@ export default function MapTile({
     showModal<PlaceModalResult>("MAP", {
       boundingBox: mapView?.getBoundingBox(),
       async onConfirm({ place }) {
-        const result = await editor.addPlace({ id, place });
+        const result = await editor.addPlaces({ id, places: [place] });
         places.value = result.places;
       },
     });
@@ -55,8 +55,10 @@ export default function MapTile({
     if (markerId) {
       const result = await editor.updatePlace({
         id,
-        placeId: markerId,
-        name: value,
+        place: {
+          id: markerId,
+          name: value,
+        },
       });
       places.value = result.places;
     }
@@ -70,7 +72,7 @@ export default function MapTile({
           className={styles.map}
           movable
           legend
-          ondeletemarker={deleteMarker}
+          on:deletemarker={deleteMarker}
         >
           {places.derive((items) =>
             items.map((place) => (
@@ -87,7 +89,7 @@ export default function MapTile({
                   }
                   label={place.name}
                   tabIndex={0}
-                  onblur={handleUpdatePlace}
+                  on:blur={handleUpdatePlace}
                 />
                 <map-legend-item
                   marker={place.id}

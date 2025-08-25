@@ -89,7 +89,7 @@ export default function PlaceModal({
             type="search"
             placeholder="Address or name"
             autofocus
-            oninput={onInput}
+            on:input={onInput}
           />
         </label>
 
