@@ -1,6 +1,7 @@
 import { schema } from "./schema";
 import { closest, getListDepth } from "./helpers";
 import type { EditorView } from "prosemirror-view";
+import type { Transaction } from "prosemirror-state";
 import type { Mark } from "prosemirror-model";
 import type { ClientTile } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
@@ -36,39 +37,46 @@ export interface ArtifactEvent {
 
 export type StreamEvent = RichTextStreamEvent | ArtifactEvent;
 
+function insertPendingNode(tr: Transaction) {
+  const { $from } = tr.selection;
+
+  // Replace the current textblock if it is empty
+  if ($from.parent.isTextblock && $from.parent.content.size === 0) {
+    const from = $from.before();
+    const to = $from.after();
+    tr.replaceWith(from, to, schema.nodes.pending.create());
+    return from + 1;
+  }
+
+  const pos = $from.after();
+  tr.insert(pos, schema.nodes.pending.create());
+  return pos + 1;
+}
+
 export async function insertFromStream(
   view: EditorView,
   stream: AsyncIterable<StreamEvent>,
   editor: Editor,
 ) {
   const { dispatch } = view;
-  const { $from } = view.state.selection;
-  let startPos: number;
 
-  if ($from.parent.isTextblock && $from.parent.content.size === 0) {
-    const from = $from.before();
-    dispatch(
-      view.state.tr.replaceWith(
-        from,
-        $from.after(),
-        schema.nodes.pending.create(),
-      ),
-    );
-    startPos = from + 1;
-  } else {
-    const from = $from.after();
-    dispatch(view.state.tr.insert(from, schema.nodes.pending.create()));
-    startPos = from + 1;
-  }
-
-  let pos = startPos;
+  let startPos: number | null = null;
+  let pos: number | null = null;
   let bold = false;
   let italic = false;
 
   for await (const event of stream) {
-    const {
-      state: { tr },
-    } = view;
+    if (typeof event === "object" && "artifact" in event) {
+      editor.addTile(event.artifact);
+      continue;
+    }
+
+    const tr = view.state.tr;
+
+    if (startPos === null || pos === null) {
+      startPos = insertPendingNode(tr);
+      pos = startPos;
+    }
 
     if (typeof event === "string") {
       const marks: Mark[] = [];
@@ -82,11 +90,6 @@ export async function insertFromStream(
       tr.insertText(event, pos);
       pos += event.length;
     } else {
-      if ("artifact" in event) {
-        editor.addTile(event.artifact);
-        continue;
-      }
-
       if ("bold" in event && typeof event.bold === "boolean") {
         bold = event.bold;
       }
