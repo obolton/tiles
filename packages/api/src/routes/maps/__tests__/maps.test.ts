@@ -31,7 +31,7 @@ describe("createMap", () => {
       prisma.mapTile.create<CreateQuery<typeof MAP_FIELDS>>,
     ).mockResolvedValue(MOCK_MAP);
     vi.mock("@/routes/tiles/tiles.ts", () => ({
-      createTilePlacement: async () => MOCK_PLACEMENT,
+      createTilePlacement: () => MOCK_PLACEMENT,
     }));
   });
 
@@ -39,14 +39,16 @@ describe("createMap", () => {
     const result = await createMap({
       pageId: "1",
       sectionId: "test-collection",
-      place: {
-        name: "Test place",
-        providerId: "test-provider-id",
-        lat: 0,
-        long: 0,
-        address: "Test address",
-        boundingBox: null,
-      },
+      places: [
+        {
+          name: "Test place",
+          providerId: "test-provider-id",
+          lat: 0,
+          long: 0,
+          address: "Test address",
+          boundingBox: null,
+        },
+      ],
     });
 
     expect(result).toEqual({
