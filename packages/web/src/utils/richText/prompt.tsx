@@ -6,6 +6,7 @@ import { insertFromStream } from "@/utils/richText/stream";
 import client from "@/api/client";
 import { SPRING } from "@/utils/animation/effects";
 import type { EditorView } from "prosemirror-view";
+import type Editor from "@/editor/Editor";
 
 export const PROMPT_PLUGIN_KEY = new PluginKey<DecorationSet | null>(
   "prompt-plugin",
@@ -15,7 +16,7 @@ export interface PromptMeta {
   pos: number | null;
 }
 
-function getElement(view: EditorView) {
+function getElement(editor: Editor, view: EditorView) {
   function removePrompt() {
     void element
       .animate([{ opacity: 0 }], SPRING)
@@ -31,17 +32,22 @@ function getElement(view: EditorView) {
     if (!pageId) {
       throw new Error("Page ID is not defined");
     }
+    const sectionId =
+      element.closest<HTMLElement>("[data-section-id]")?.dataset.sectionId;
+    if (!sectionId) {
+      throw new Error("Section ID is not defined");
+    }
     const {
       state: { doc, selection },
     } = view;
     const { from, to } = selection;
     const context = doc.textBetween(from, to, "\n");
     const stream = await client.ai.write.mutate(
-      { pageId, prompt, context },
+      { pageId, sectionId, prompt, context },
       { context: { stream: true } },
     );
     removePrompt();
-    await insertFromStream(view, stream);
+    await insertFromStream(view, stream, editor);
   }
 
   const element = render(
@@ -68,7 +74,7 @@ function getElement(view: EditorView) {
   return element;
 }
 
-export function prompt(callback?: (isOpen: boolean) => void) {
+export function prompt(editor: Editor, callback?: (isOpen: boolean) => void) {
   return new Plugin<DecorationSet | null>({
     key: PROMPT_PLUGIN_KEY,
 
@@ -96,14 +102,18 @@ export function prompt(callback?: (isOpen: boolean) => void) {
               class: "context",
             },
           );
-          const promptDecoration = Decoration.widget(meta.pos, getElement, {
-            ignoreSelection: true,
+          const promptDecoration = Decoration.widget(
+            meta.pos,
+            (view) => getElement(editor, view),
+            {
+              ignoreSelection: true,
 
-            // Prevent the editor from handling events from the prompt
-            stopEvent() {
-              return true;
+              // Prevent the editor from handling events from the prompt
+              stopEvent() {
+                return true;
+              },
             },
-          });
+          );
           callback?.(true);
           return DecorationSet.create(tr.doc, [
             contextDecoration,

@@ -51,7 +51,7 @@ export default function TextEditor({
       selectionFormat((newFormat) => {
         format.value = newFormat;
       }),
-      prompt((open) => (prompting.value = open)),
+      prompt(editor, (open) => (prompting.value = open)),
     );
     try {
       const state = EditorState.create(
