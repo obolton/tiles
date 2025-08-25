@@ -12,29 +12,34 @@ import type {
 } from "openai/resources/responses/responses";
 import { createMap } from "@/routes/maps/maps.ts";
 
-const CreateMapSchema = z.object({
+const CreateMapSchema = z.strictObject({
   places: z
     .array(
-      z.object({
-        name: z
-          .string()
-          .meta({ description: "The place name, e.g. The Statue of Liberty" }),
-        latitude: z.number().min(MIN_LATITUDE).max(MAX_LATITUDE).meta({
+      z.strictObject({
+        name: z.string().meta({
+          description: "The name of the place, e.g. The Statue of Liberty",
+        }),
+        lat: z.number().min(MIN_LATITUDE).max(MAX_LATITUDE).meta({
           description: "The latitude of the place in degrees, e.g. 40.6947195",
         }),
-        longitude: z.number().min(MIN_LONGITUDE).max(MAX_LONGITUDE).meta({
+        long: z.number().min(MIN_LONGITUDE).max(MAX_LONGITUDE).meta({
           description:
             "The longitude of the place in degrees, e.g. -74.0376457",
         }),
+        address: z.string().nullable().meta({
+          description: "The street address of the place, if available.",
+        }),
       }),
     )
-    .min(1),
+    .min(1)
+    .max(20)
+    .meta({ description: "A list of places to show on the map." }),
 });
 
 export const CREATE_MAP_TOOL = {
   type: "function",
   name: "create_map",
-  description: "Creates a new map.",
+  description: "Creates a map showing one or more locations.",
   parameters: z.toJSONSchema(CreateMapSchema),
   strict: true,
 } satisfies FunctionTool;
@@ -43,26 +48,20 @@ async function createMapTool(
   args: z.infer<typeof CreateMapSchema>,
   { pageId, sectionId, model }: ToolContext,
 ) {
-  const {
-    places: [place],
-  } = args;
-  if (!place) {
-    throw new Error("No place was returned");
-  }
-  const { name, latitude, longitude } = place;
+  const { places } = args;
   return createMap({
     pageId,
     sectionId,
     width: 10,
     height: 10,
-    place: {
+    places: places.map(({ name, lat, long, address }) => ({
       name,
-      lat: latitude,
-      long: longitude,
+      lat,
+      long,
       boundingBox: null,
-      address: null,
+      address,
       providerId: model,
-    },
+    })),
   });
 }
 
