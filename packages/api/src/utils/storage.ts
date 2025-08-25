@@ -51,7 +51,7 @@ export async function createSignedUploadUrl(key: string, type: MediaType) {
 export async function upload(
   bucket: string,
   key: string,
-  body: ReadableStream,
+  body: ReadableStream | Buffer,
   contentType: string,
 ) {
   const upload = new Upload({
