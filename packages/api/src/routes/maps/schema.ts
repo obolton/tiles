@@ -7,46 +7,43 @@ import {
   MAX_LONGITUDE,
 } from "@/constants/geo.ts";
 
-export const CreateMapSchema = z.object({
+export const PlaceSchema = z.strictObject({
+  name: z.string(),
+  lat: z.number().gte(MIN_LATITUDE).lte(MAX_LATITUDE),
+  long: z.number().gte(MIN_LONGITUDE).lte(MAX_LONGITUDE),
+  boundingBox: z.array(z.number()).length(4).nullable(),
+  address: z.string().nullable(),
+  providerId: z.string(),
+});
+export type PlaceSchema = z.infer<typeof PlaceSchema>;
+
+export const CreateMapSchema = z.strictObject({
   pageId: z.uuid(),
   sectionId: z.uuid(),
   ...PositionSchema.shape,
-  place: z.object({
-    name: z.string(),
-    providerId: z.string().nullable(),
-    lat: z.number().gte(MIN_LATITUDE).lte(MAX_LATITUDE),
-    long: z.number().gte(MIN_LONGITUDE).lte(MAX_LONGITUDE),
-    boundingBox: z.array(z.number()).length(4).nullable(),
-    address: z.string().nullable(),
-  }),
+  places: z.array(PlaceSchema).min(1).max(20),
 });
 export type CreateMapSchema = z.infer<typeof CreateMapSchema>;
 
-export const AddPlaceSchema = z.object({
+export const AddPlacesSchema = z.strictObject({
   pageId: z.uuid(),
   id: z.uuid(),
-  place: z.object({
-    name: z.string(),
-    providerId: z.string().nullable(),
-    lat: z.number().gte(MIN_LATITUDE).lte(MAX_LATITUDE),
-    long: z.number().gte(MIN_LONGITUDE).lte(MAX_LONGITUDE),
-    boundingBox: z.array(z.number()).length(4).nullable(),
-    address: z.string().nullable(),
-  }),
+  places: z.array(PlaceSchema).min(1).max(20),
 });
-export type AddPlaceSchema = z.infer<typeof AddPlaceSchema>;
+export type AddPlacesSchema = z.infer<typeof AddPlacesSchema>;
 
-export const RemovePlaceSchema = z.object({
+export const RemovePlaceSchema = z.strictObject({
   pageId: z.uuid(),
   id: z.uuid(),
   placeId: z.uuid(),
 });
 export type RemovePlaceSchema = z.infer<typeof RemovePlaceSchema>;
 
-export const UpdatePlaceSchema = z.object({
+export const UpdatePlaceSchema = z.strictObject({
   pageId: z.uuid(),
   id: z.uuid(),
-  placeId: z.uuid(),
-  name: z.string(),
+  place: PlaceSchema.partial().extend({
+    id: z.uuid(),
+  }),
 });
 export type UpdatePlaceSchema = z.infer<typeof UpdatePlaceSchema>;

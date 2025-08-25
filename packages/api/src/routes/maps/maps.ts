@@ -1,21 +1,21 @@
 import prisma from "@/database/prisma.ts";
 import {
-  AddPlaceSchema,
+  AddPlacesSchema,
   RemovePlaceSchema,
   UpdatePlaceSchema,
 } from "./schema.ts";
-import type { Prisma } from "@prisma/client";
 import { createTilePlacement } from "../tiles/tiles.ts";
+import type { Prisma } from "@prisma/client";
 import type { CreateMapSchema } from "./schema.ts";
 
 export const PLACE_FIELDS = {
   id: true,
   name: true,
-  providerId: true,
   lat: true,
   long: true,
   boundingBox: true,
   address: true,
+  providerId: true,
 } as const satisfies Prisma.PlaceSelect;
 
 export const MAP_FIELDS = {
@@ -37,21 +37,23 @@ export async function createMap({
   x,
   y,
   block,
-  place: { name, providerId, lat, long, boundingBox, address },
+  places,
 }: CreateMapSchema) {
   return prisma.$transaction(async (transaction) => {
     const map = await transaction.mapTile.create({
       data: {
         pageId,
         places: {
-          create: {
-            name,
-            providerId,
-            lat,
-            long,
-            boundingBox: boundingBox ?? [],
-            address,
-          },
+          create: places.map(
+            ({ name, providerId, lat, long, boundingBox, address }) => ({
+              name,
+              lat,
+              long,
+              boundingBox: boundingBox ?? [],
+              address,
+              providerId,
+            }),
+          ),
         },
       },
       select: MAP_FIELDS,
@@ -75,21 +77,21 @@ export async function createMap({
   });
 }
 
-export async function addPlace({ pageId, id, place }: AddPlaceSchema) {
-  const { name, providerId, lat, long, boundingBox, address } = place;
-
+export async function addPlaces({ pageId, id, places }: AddPlacesSchema) {
   const map = await prisma.mapTile.update({
     where: { pageId, id },
     data: {
       places: {
-        create: {
-          name,
-          providerId,
-          lat,
-          long,
-          boundingBox: boundingBox ?? [],
-          address,
-        },
+        create: places.map(
+          ({ name, providerId, lat, long, boundingBox, address }) => ({
+            name,
+            lat,
+            long,
+            boundingBox: boundingBox ?? [],
+            address,
+            providerId,
+          }),
+        ),
       },
     },
     select: MAP_FIELDS,
@@ -113,16 +115,27 @@ export async function removePlace({ pageId, id, placeId }: RemovePlaceSchema) {
   });
 }
 
-export async function updatePlace({
-  pageId,
-  id,
-  placeId,
-  name,
-}: UpdatePlaceSchema) {
+export async function updatePlace({ pageId, id, place }: UpdatePlaceSchema) {
+  const {
+    id: placeId,
+    name,
+    lat,
+    long,
+    boundingBox,
+    address,
+    providerId,
+  } = place;
   return prisma.$transaction(async (transaction) => {
     await prisma.place.update({
       where: { id: placeId, map: { pageId, id } },
-      data: { name },
+      data: {
+        name,
+        lat,
+        long,
+        boundingBox: boundingBox === null ? [] : boundingBox,
+        address,
+        providerId,
+      },
       select: { id: true },
     });
     const map = await transaction.mapTile.findUniqueOrThrow({

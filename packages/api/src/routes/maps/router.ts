@@ -1,9 +1,9 @@
 import { router } from "@/utils/trpc.ts";
 import { pageUpdateProcedure } from "@/utils/middleware.ts";
-import { createMap, addPlace, removePlace, updatePlace } from "./maps.ts";
+import { createMap, addPlaces, removePlace, updatePlace } from "./maps.ts";
 import {
   CreateMapSchema,
-  AddPlaceSchema,
+  AddPlacesSchema,
   RemovePlaceSchema,
   UpdatePlaceSchema,
 } from "./schema.ts";
@@ -13,9 +13,9 @@ export default router({
     .input(CreateMapSchema)
     .mutation(({ input }) => createMap(input)),
 
-  addPlace: pageUpdateProcedure
-    .input(AddPlaceSchema)
-    .mutation(({ input }) => addPlace(input)),
+  addPlaces: pageUpdateProcedure
+    .input(AddPlacesSchema)
+    .mutation(({ input }) => addPlaces(input)),
 
   removePlace: pageUpdateProcedure
     .input(RemovePlaceSchema)
