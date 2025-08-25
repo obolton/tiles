@@ -13,5 +13,5 @@ export default router({
 
   write: pageUpdateProcedure
     .input(WriteSchema)
-    .mutation(({ input, signal }) => write(input, signal)),
+    .mutation(({ input, ctx, signal }) => write(input, ctx, signal)),
 });
