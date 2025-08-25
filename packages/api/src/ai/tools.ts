@@ -10,7 +10,13 @@ import type {
   Tool,
   ResponseFunctionToolCall,
 } from "openai/resources/responses/responses";
+import { IMAGE_GENERATION_OPTIONS } from "./constants.ts";
 import { createMap } from "@/routes/maps/maps.ts";
+import type { ClientTile } from "@/types/tiles.ts";
+
+export interface Artifact {
+  artifact: ClientTile;
+}
 
 const CreateMapSchema = z.strictObject({
   places: z
@@ -65,7 +71,12 @@ async function createMapTool(
   });
 }
 
-export const TOOLS: Tool[] = [CREATE_MAP_TOOL];
+export const IMAGE_GENERATION_TOOL = {
+  type: "image_generation",
+  ...IMAGE_GENERATION_OPTIONS,
+} satisfies Tool;
+
+export const TOOLS: Tool[] = [IMAGE_GENERATION_TOOL, CREATE_MAP_TOOL];
 
 export interface ToolContext {
   userId: string;
@@ -89,5 +100,3 @@ export async function callFunction(
       throw new Error(`Unknown function name: ${call.name}`);
   }
 }
-
-export type FunctionCallResult = Awaited<ReturnType<typeof callFunction>>;
