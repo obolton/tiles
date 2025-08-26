@@ -188,7 +188,7 @@ export default class LayoutEditor {
       this.x = x;
       this.y = y;
 
-      void layoutTransition(() => {
+      requestAnimationFrame(() => {
         this.dragPlaceholder?.style.setProperty("--x", x.toString());
         this.dragPlaceholder?.style.setProperty("--y", y.toString());
       });
