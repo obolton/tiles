@@ -6,9 +6,13 @@ import type {
 } from "openai/resources/responses/responses";
 import { IMAGE_GENERATION_TOOL } from "./images.ts";
 import { CREATE_MAP_TOOL } from "./createMap.ts";
+import { CREATE_TEXT_TOOL } from "./createText.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
-export const FUNCTION_TOOLS: FunctionToolOptions[] = [CREATE_MAP_TOOL];
+export const FUNCTION_TOOLS: FunctionToolOptions[] = [
+  CREATE_TEXT_TOOL,
+  CREATE_MAP_TOOL,
+];
 
 function functionTool<T extends z.ZodType>({
   name,
