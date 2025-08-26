@@ -267,18 +267,23 @@ export default class LayoutEditor {
       return;
     }
 
-    state.destination = this.dragPlaceholder;
-
     try {
-      await this.editor.positionTile({
+      this.editor.positionTile({
         id: tile.placementId,
         sectionId: this.sectionId,
         x: this.x,
         y: this.y,
       });
-      this.element
-        .querySelector<HTMLElement>(`[data-placement-id="${tile.placementId}"]`)
-        ?.focus({ preventScroll: true });
+      const destination = this.element.querySelector<HTMLElement>(
+        `[data-placement-id="${tile.placementId}"]`,
+      );
+      if (destination) {
+        destination.style.viewTransitionName = "drop";
+        destination.focus({ preventScroll: true });
+        requestAnimationFrame(() => {
+          destination.style.viewTransitionName = "";
+        });
+      }
     } catch (error) {
       handleError(error);
     }

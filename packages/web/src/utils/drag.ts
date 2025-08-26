@@ -22,6 +22,7 @@ type DragDropEventType =
 interface DragDropEventInit<T> extends EventInit {
   state: DragState<T>;
   dragSource: HTMLElement;
+  dragPreview: HTMLElement | null;
   dropTarget?: HTMLElement;
   clientX?: number;
   clientY?: number;
@@ -30,6 +31,7 @@ interface DragDropEventInit<T> extends EventInit {
 export class DragDropEvent<T = unknown> extends Event {
   readonly state: DragState<T>;
   readonly dragSource: HTMLElement;
+  readonly dragPreview: HTMLElement | null;
   readonly dropTarget?: HTMLElement;
   readonly clientX: number;
   readonly clientY: number;
@@ -38,6 +40,7 @@ export class DragDropEvent<T = unknown> extends Event {
     const {
       state,
       dragSource,
+      dragPreview,
       dropTarget,
       clientX = 0,
       clientY = 0,
@@ -47,6 +50,7 @@ export class DragDropEvent<T = unknown> extends Event {
 
     this.state = state;
     this.dragSource = dragSource;
+    this.dragPreview = dragPreview;
     this.dropTarget = dropTarget;
     this.clientX = clientX;
     this.clientY = clientY;
@@ -67,7 +71,6 @@ export class DragState<T> {
   readonly offsetY: number;
 
   data?: T;
-  destination: HTMLElement | null = null;
 
   private readonly startX: number;
   private readonly startY: number;
@@ -76,7 +79,7 @@ export class DragState<T> {
   private readonly abortController = new AbortController();
 
   private isDragging = false;
-  private dragPreview?: HTMLElement;
+  private dragPreview: HTMLElement | null = null;
   private dropTarget?: HTMLElement;
   private longPressTimeout?: ReturnType<typeof setTimeout>;
   private dragInterval?: ReturnType<typeof setInterval>;
@@ -146,6 +149,7 @@ export class DragState<T> {
     return new DragDropEvent(type, {
       state: this,
       dragSource: this.element,
+      dragPreview: this.dragPreview,
       dropTarget: this.dropTarget,
       ...options,
     });
@@ -262,6 +266,11 @@ export class DragState<T> {
   }
 
   private pointerLeave(event: PointerEvent) {
+    // Ignore pointer events triggered by view transitions
+    if (event.relatedTarget === document.documentElement) {
+      return;
+    }
+
     const target = event.currentTarget as HTMLElement;
 
     delete target.dataset.dropTarget;
@@ -355,24 +364,26 @@ export class DragState<T> {
   }
 
   private drop(event: PointerEvent) {
-    this.dropTarget?.dispatchEvent(
-      this.createDragDropEvent("dnd-drop", {
-        bubbles: true,
-        cancelable: false,
-        clientX: event.clientX,
-        clientY: event.clientY,
-      }),
-    );
+    const dropTarget = this.dropTarget;
 
-    // Animate the drag element to its final position
-    if (this.destination && this.dragPreview) {
+    if (this.dragPreview) {
       this.dragPreview.style.viewTransitionName = "drop";
     }
 
-    void viewTransition(() => {
+    viewTransition(() => {
       delete document.body.dataset.drag;
 
+      dropTarget?.dispatchEvent(
+        this.createDragDropEvent("dnd-drop", {
+          bubbles: true,
+          cancelable: false,
+          clientX: event.clientX,
+          clientY: event.clientY,
+        }),
+      );
+
       if (this.dragPreview) {
+        this.dragPreview.style.viewTransitionName = "";
         this.dragPreview.classList.remove("drag-preview");
         this.dragPreview.hidePopover();
         this.dragPreview.popover = null;
@@ -387,20 +398,12 @@ export class DragState<T> {
           this.dragPreview.style.removeProperty("--drag-width");
           this.dragPreview.style.removeProperty("--drag-height");
         }
-      }
 
-      if (this.destination) {
-        this.destination.style.viewTransitionName = "drop";
+        this.dragPreview = null;
       }
-    }).updateCallbackDone.then(() => {
-      if (this.destination) {
-        this.destination.style.viewTransitionName = "";
-        this.destination = null;
-      }
-      this.dragPreview = undefined;
+    }).updateCallbackDone.finally(() => {
+      this.finish();
     });
-
-    this.finish();
   }
 
   private finish() {
@@ -435,6 +438,7 @@ export class DragState<T> {
 
     this.isDragging = false;
     this.dropTarget = undefined;
+    this.dragPreview = null;
   }
 
   private scheduleDragEvent(x: number, y: number) {
