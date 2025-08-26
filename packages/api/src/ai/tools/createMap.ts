@@ -5,18 +5,8 @@ import {
   MIN_LONGITUDE,
   MAX_LONGITUDE,
 } from "@/constants/geo.ts";
-import type {
-  FunctionTool,
-  Tool,
-  ResponseFunctionToolCall,
-} from "openai/resources/responses/responses";
-import { IMAGE_GENERATION_OPTIONS } from "./constants.ts";
 import { createMap } from "@/routes/maps/maps.ts";
-import type { ClientTile } from "@/types/tiles.ts";
-
-export interface Artifact {
-  artifact: ClientTile;
-}
+import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateMapSchema = z.strictObject({
   places: z
@@ -42,20 +32,12 @@ const CreateMapSchema = z.strictObject({
     .meta({ description: "A list of places to show on the map." }),
 });
 
-export const CREATE_MAP_TOOL = {
-  type: "function",
-  name: "create_map",
-  description: "Creates a map showing one or more locations.",
-  parameters: z.toJSONSchema(CreateMapSchema),
-  strict: true,
-} satisfies FunctionTool;
-
-async function createMapTool(
+async function createMapArtifact(
   args: z.infer<typeof CreateMapSchema>,
   { pageId, sectionId, model }: ToolContext,
 ) {
   const { places } = args;
-  return createMap({
+  const artifact = await createMap({
     pageId,
     sectionId,
     width: 10,
@@ -69,34 +51,12 @@ async function createMapTool(
       providerId: model,
     })),
   });
+  return { artifact };
 }
 
-export const IMAGE_GENERATION_TOOL = {
-  type: "image_generation",
-  ...IMAGE_GENERATION_OPTIONS,
-} satisfies Tool;
-
-export const TOOLS: Tool[] = [IMAGE_GENERATION_TOOL, CREATE_MAP_TOOL];
-
-export interface ToolContext {
-  userId: string;
-  pageId: string;
-  sectionId: string;
-  model: string;
-}
-
-export async function callFunction(
-  call: ResponseFunctionToolCall,
-  context: ToolContext,
-) {
-  const args = JSON.parse(call.arguments) as unknown;
-  switch (call.name) {
-    case "create_map": {
-      const parsedArgs = CreateMapSchema.parse(args);
-      const artifact = await createMapTool(parsedArgs, context);
-      return { artifact };
-    }
-    default:
-      throw new Error(`Unknown function name: ${call.name}`);
-  }
-}
+export const CREATE_MAP_TOOL: FunctionToolOptions<typeof CreateMapSchema> = {
+  name: "create_map",
+  description: "Creates a map showing one or more locations.",
+  schema: CreateMapSchema,
+  function: createMapArtifact,
+};

@@ -4,8 +4,9 @@ import {
   type RichTextStreamEvent,
 } from "@/utils/markdown.ts";
 import { openai, textStream } from "@/ai/openai.ts";
-import { generateImageFromPrompt, createImageTile } from "@/ai/images.ts";
-import { TOOLS, callFunction, type Artifact } from "@/ai/tools.ts";
+import { generateImageFromPrompt, createImageTile } from "@/ai/tools/images.ts";
+import { TOOLS, useFunctionTool } from "@/ai/tools/tools.ts";
+import type { Artifact } from "@/ai/tools/types.ts";
 import type { GenerateImageSchema, WriteSchema } from "./schema.ts";
 import type {
   ResponseInput,
@@ -66,7 +67,7 @@ export async function* write(
         const { item } = event;
 
         if (item.type === "function_call" && item.status === "completed") {
-          const artifact = await callFunction(item, toolContext);
+          const artifact = await useFunctionTool(item, toolContext);
           controller.enqueue(artifact);
           return;
         }

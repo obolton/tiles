@@ -1,0 +1,45 @@
+import { z } from "zod";
+import type {
+  FunctionTool,
+  Tool,
+  ResponseFunctionToolCall,
+} from "openai/resources/responses/responses";
+import { IMAGE_GENERATION_TOOL } from "./images.ts";
+import { CREATE_MAP_TOOL } from "./createMap.ts";
+import type { FunctionToolOptions, ToolContext } from "./types.ts";
+
+export const FUNCTION_TOOLS: FunctionToolOptions[] = [CREATE_MAP_TOOL];
+
+function functionTool<T extends z.ZodType>({
+  name,
+  description,
+  schema,
+}: FunctionToolOptions<T>): FunctionTool {
+  return {
+    type: "function",
+    name,
+    description,
+    parameters: z.toJSONSchema(schema),
+    strict: true,
+  };
+}
+
+export const TOOLS: Tool[] = [
+  IMAGE_GENERATION_TOOL,
+  ...FUNCTION_TOOLS.map(functionTool),
+];
+
+export async function useFunctionTool(
+  call: ResponseFunctionToolCall,
+  context: ToolContext,
+) {
+  for (const tool of FUNCTION_TOOLS) {
+    if (tool.name === call.name) {
+      const args = JSON.parse(call.arguments) as unknown;
+      const parsedArgs = tool.schema.parse(args);
+      const result = await tool.function(parsedArgs, context);
+      return result;
+    }
+  }
+  throw new Error(`Unknown tool: ${call.name}`);
+}

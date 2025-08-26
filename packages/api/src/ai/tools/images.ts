@@ -1,15 +1,23 @@
 import { Buffer } from "node:buffer";
 import crypto from "node:crypto";
 import { upload, IMAGES_BUCKET } from "@/utils/storage.ts";
-import { openai } from "./openai.ts";
+import { openai } from "../openai.ts";
 import {
   IMAGE_GENERATION_OPTIONS,
   IMAGE_CONTENT_TYPE,
   IMAGE_EXTENSION,
-} from "./constants.ts";
+} from "../constants.ts";
 import { createImage } from "@/routes/images/images.ts";
-import type { ResponseOutputItem } from "openai/resources/responses/responses";
-import type { ToolContext } from "./tools.ts";
+import type {
+  ResponseOutputItem,
+  Tool,
+} from "openai/resources/responses/responses";
+import type { ToolContext } from "./types.ts";
+
+export const IMAGE_GENERATION_TOOL = {
+  type: "image_generation",
+  ...IMAGE_GENERATION_OPTIONS,
+} satisfies Tool;
 
 export async function generateImageFromPrompt(prompt: string) {
   const response = await openai.images.generate({
