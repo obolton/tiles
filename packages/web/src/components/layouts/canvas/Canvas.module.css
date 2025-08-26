@@ -19,9 +19,9 @@
 .canvas {
   &:not(:defined),
   &::part(container) {
+    padding: 24px;
     scroll-padding: 24px;
     scroll-snap-type: x proximity;
-    padding: 24px;
   }
 
   &:not(:defined),
@@ -33,7 +33,7 @@
     gap: var(--gap);
   }
 
-  /* Grow drop area */
+  /* Grow drop area when dragging */
   body[data-drag] & {
     margin: -24px -80px;
     padding: 24px 80px;
@@ -45,7 +45,8 @@
 
   & > :global(.drag-placeholder) {
     grid-column: calc(var(--x) + 1) / span var(--width);
-    grid-row: calc(var(--y) + 1) / span var(--height);
+    grid-row: calc(var(--y) + 1) / span var(--rows);
+    height: calc(var(--height) * var(--grid-row-height));
     background: rgb(0 0 0 / 10%);
     border-radius: var(--border-radius);
     z-index: 2;

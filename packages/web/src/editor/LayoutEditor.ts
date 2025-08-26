@@ -200,11 +200,13 @@ export default class LayoutEditor {
     y,
     width,
     height,
+    rows,
   }: {
     x: number;
     y: number;
     width: number;
     height: number;
+    rows: number;
   }) {
     if (this.dragPlaceholder) {
       return;
@@ -216,6 +218,7 @@ export default class LayoutEditor {
     placeholder.style.setProperty("--y", y.toString());
     placeholder.style.setProperty("--width", width.toString());
     placeholder.style.setProperty("--height", height.toString());
+    placeholder.style.setProperty("--rows", rows.toString());
     placeholder.dataset.animateLayoutId = "drag-placeholder-" + this.sectionId;
     this.element.appendChild(placeholder);
     this.dragPlaceholder = placeholder;
@@ -244,6 +247,7 @@ export default class LayoutEditor {
       y,
       width: tile.width.value,
       height: tile.height.value,
+      rows: tile.rowSpan.value,
     });
   }
 
