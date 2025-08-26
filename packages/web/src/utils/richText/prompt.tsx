@@ -46,8 +46,8 @@ function getElement(editor: Editor, view: EditorView) {
       { pageId, sectionId, prompt, context },
       { context: { stream: true } },
     );
-    removePrompt();
     await insertFromStream(view, stream, editor);
+    removePrompt();
   }
 
   const element = render(
