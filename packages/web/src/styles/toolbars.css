@@ -14,10 +14,18 @@ floating-toolbar {
   display: flex;
   align-items: center;
   gap: 12px;
+  opacity: 1;
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 15%),
     0 4px 12px -4px rgb(0 0 0 / 30%);
   z-index: 2;
+  transition:
+    display var(--animation-duration-short) allow-discrete,
+    opacity var(--animation-duration-short) var(--easing);
+
+  @starting-style {
+    opacity: 0;
+  }
 
   & > ul {
     position: relative;
@@ -60,6 +68,11 @@ floating-toolbar {
     inset-inline-start: 100%;
     margin: 0 24px;
   }
+
+  body:is([data-drag], [data-resize]) & {
+    display: none;
+    opacity: 0;
+  }
 }
 
 @supports (anchor-name: --anchor) {
@@ -68,8 +81,4 @@ floating-toolbar {
     inset-block-start: anchor(start);
     inset-inline-start: anchor(end);
   }
-}
-
-body[data-drag] floating-toolbar {
-  display: none;
 }

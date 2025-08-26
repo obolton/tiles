@@ -1,11 +1,7 @@
-body:has(:state(resizing)) {
+body[data-resize] {
   cursor: nwse-resize;
 
   & * {
     pointer-events: none;
-  }
-
-  & .resize-handle {
-    opacity: 0;
   }
 }

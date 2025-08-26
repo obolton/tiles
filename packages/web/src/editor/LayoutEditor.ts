@@ -352,6 +352,8 @@ export default class LayoutEditor {
       1,
     );
     this.height = Math.round(height / this.gridRowMinHeight);
+
+    document.body.dataset.resize = "true";
   }
 
   private handleResize(event: TileResizeEvent) {
@@ -393,6 +395,8 @@ export default class LayoutEditor {
 
     event.preventDefault();
     event.stopPropagation();
+
+    delete document.body.dataset.resize;
 
     const id = target.dataset.placementId ?? "";
     try {
