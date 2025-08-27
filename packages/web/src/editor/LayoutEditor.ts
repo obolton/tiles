@@ -114,6 +114,10 @@ export default class LayoutEditor {
   }
 
   private updateLayoutInfo() {
+    if (this.dragPlaceholder) {
+      this.dragPlaceholder.style.display = "none";
+    }
+
     const style = getComputedStyle(this.grid);
     this.gridColumnWidth = parseFloat(
       style.getPropertyValue("--grid-column-width"),
@@ -134,6 +138,10 @@ export default class LayoutEditor {
     }
 
     this.gridRect = this.grid.getBoundingClientRect();
+
+    if (this.dragPlaceholder) {
+      this.dragPlaceholder.style.display = "";
+    }
   }
 
   private getGridRow(offsetY: number) {
@@ -197,6 +205,7 @@ export default class LayoutEditor {
           "--placeholder-y",
           y.toString(),
         );
+        this.updateLayoutInfo();
       });
     }
   }
