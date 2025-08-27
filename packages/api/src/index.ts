@@ -28,6 +28,9 @@ const trpcHandler = createHTTPHandler({
     credentials: true,
   }),
   createContext,
+  onError({ req, error }) {
+    console.error(req.url, error);
+  },
 });
 
 async function requestHandler(req: IncomingMessage, res: ServerResponse) {
