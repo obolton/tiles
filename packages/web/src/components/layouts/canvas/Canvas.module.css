@@ -65,8 +65,8 @@
 
   /* Grow drop area when dragging */
   body[data-drag] & {
-    margin: -24px -80px;
-    padding: 24px 80px;
+    margin: 0 -80px;
+    padding: 0 80px;
   }
 
   & > * {
