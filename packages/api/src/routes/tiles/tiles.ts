@@ -221,6 +221,20 @@ export async function createTilePlacement(
     where: { pageId },
   });
 
+  let insertX;
+  let insertY;
+  if (typeof x === "number" && typeof y === "number") {
+    insertX = x;
+    insertY = y;
+  } else {
+    const next = await getNextGridPosition(
+      { pageId, sectionId, fitWidth: width, maxWidth: 20 },
+      transaction,
+    );
+    insertX = next.x;
+    insertY = next.y;
+  }
+
   const { id: placementId, ...tile } = await transaction.tile.create({
     data: {
       pageId,
@@ -230,8 +244,8 @@ export async function createTilePlacement(
       width,
       height,
       rowSpan,
-      x,
-      y,
+      x: insertX,
+      y: insertY,
       block,
       imageTileId,
       mapTileId,
@@ -244,4 +258,33 @@ export async function createTilePlacement(
     select: TILE_FIELDS,
   });
   return { ...tile, placementId };
+}
+
+export async function getNextGridPosition(
+  {
+    pageId,
+    sectionId,
+    fitWidth,
+    maxWidth = 24,
+  }: { pageId: string; sectionId: string; fitWidth: number; maxWidth: number },
+  transaction: PrismaTransactionClient,
+) {
+  const lastTile = await transaction.tile.findFirst({
+    select: { x: true, y: true, width: true, rowSpan: true },
+    where: { pageId, sectionId },
+    orderBy: [{ y: "desc" }, { x: "desc" }],
+  });
+
+  if (!lastTile) {
+    return { x: 0, y: 0 };
+  }
+
+  const { x, y, width, rowSpan } = lastTile;
+
+  // Row overflow
+  if (x + width + fitWidth > maxWidth) {
+    return { x: 0, y: y + rowSpan };
+  }
+
+  return { x: x + width, y };
 }
