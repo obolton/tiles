@@ -327,8 +327,6 @@ export class DragState<T> {
     this.isDragging = true;
     document.body.dataset.drag = "true";
 
-    this.findDropTarget(this.element, clientX, clientY);
-
     const rect = this.element.getBoundingClientRect();
     this.dragPreview = this.clone
       ? (this.element.cloneNode(true) as HTMLElement)
@@ -349,6 +347,8 @@ export class DragState<T> {
     }
 
     this.dragPreview.showPopover();
+
+    this.findDropTarget(this.element, clientX, clientY);
 
     this.dragInterval = setInterval(
       this.processPendingDragEvent.bind(this),
