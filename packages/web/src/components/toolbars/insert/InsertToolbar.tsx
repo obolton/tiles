@@ -124,6 +124,7 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
   return (
     <floating-toolbar
       id="insert-toolbar"
+      className="bottom-right"
       aria-label="Insert content"
       data-tooltip-position="top"
     >

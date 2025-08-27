@@ -168,6 +168,7 @@ export default function FormattingToolbar({
 
   return (
     <floating-toolbar
+      className="bottom-left"
       aria-label="Formatting toolbar"
       data-tooltip-position="top"
     >

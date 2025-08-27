@@ -76,8 +76,8 @@ export default function TextToolbar({
     <floating-toolbar
       className="vertical anchored"
       style={{ positionAnchor: anchorName }}
+      aria-label="Text tile toolbar"
       data-tooltip-position="right"
-      aria-label="Toolbar"
     >
       <ul role="group" aria-label="Layout">
         <li role="presentation">

@@ -1,6 +1,7 @@
 import EditingTools from "./EditingTools";
 import { viewTransition } from "@/utils/transitions";
 import { setEditMode } from "@/utils/edit";
+import { classNames } from "@/utils/css";
 import styles from "./EditingToolbar.module.css";
 import type Editor from "@/editor/Editor";
 
@@ -26,7 +27,7 @@ export default function EditingToolbar({
 
   return (
     <floating-toolbar
-      className={styles.toolbar}
+      className={classNames(styles.toolbar, "top-right")}
       aria-label="Editing toolbar"
       data-tooltip-position="top"
     >

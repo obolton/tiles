@@ -1,5 +1,4 @@
 .toolbar {
-  inset: 32px 32px auto auto;
   view-transition-name: editing-toolbar;
 }
 
