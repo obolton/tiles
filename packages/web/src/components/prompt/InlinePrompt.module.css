@@ -1,24 +1,23 @@
 .container {
   position: absolute;
   display: inline-block;
-  width: 400px;
-  background: rgb(255 255 255 / 80%);
-  backdrop-filter: blur(8px);
-  border-radius: 8px;
+  width: 520px;
+  background: var(--ui-background-color);
+  backdrop-filter: blur(24px);
+  border-radius: 12px;
   box-shadow:
-    0 0 0 1px rgb(0 0 0 / 30%),
+    0 0 0 1px rgb(0 0 0 / 20%),
     0 4px 12px -4px rgb(0 0 0 / 30%);
-  translate: 1px -8px;
+  translate: 1px -12px;
 
   &::before {
     content: "";
     position: absolute;
-    inset: 8px auto auto -2px;
+    inset: 12px auto auto -2px;
     width: 3px;
     height: 1lh;
     border-radius: 1.5px;
     background: currentcolor;
-    opacity: 0.9;
     z-index: 1;
   }
 }
@@ -31,6 +30,6 @@
 
   & > button {
     inset: 0 0 auto auto;
-    margin: 6px;
+    margin: 10px;
   }
 }
