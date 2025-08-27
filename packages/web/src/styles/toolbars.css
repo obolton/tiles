@@ -1,6 +1,4 @@
 floating-toolbar {
-  position: fixed;
-  inset: auto 48px 48px;
   width: fit-content;
   height: fit-content;
   overflow: visible;
@@ -9,7 +7,6 @@ floating-toolbar {
   backdrop-filter: blur(24px);
   border: none;
   border-radius: 32px;
-  margin: auto;
   padding: 8px;
   display: flex;
   align-items: center;
@@ -25,6 +22,21 @@ floating-toolbar {
 
   @starting-style {
     opacity: 0;
+  }
+
+  &.top-right {
+    position: fixed;
+    inset: 32px 32px auto auto;
+  }
+
+  &.bottom-left {
+    position: fixed;
+    inset: auto auto 32px 120px;
+  }
+
+  &.bottom-right {
+    position: fixed;
+    inset: auto 32px 32px auto;
   }
 
   & > ul {
@@ -48,8 +60,20 @@ floating-toolbar {
     }
   }
 
+  &.anchored {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 100%;
+    margin: 24px;
+  }
+
   &.vertical {
     flex-direction: column;
+
+    &.anchored {
+      inset-block-start: 0;
+      inset-inline-start: 100%;
+    }
 
     & > ul:not(:last-child) {
       padding: 0 0 16px;
@@ -62,13 +86,6 @@ floating-toolbar {
     }
   }
 
-  &.anchored {
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline-start: 100%;
-    margin: 0 24px;
-  }
-
   body:is([data-drag], [data-resize]) & {
     display: none;
     opacity: 0;
@@ -76,9 +93,17 @@ floating-toolbar {
 }
 
 @supports (anchor-name: --anchor) {
-  floating-toolbar.anchored {
-    position: fixed;
-    inset-block-start: anchor(start);
-    inset-inline-start: anchor(end);
+  floating-toolbar {
+    &.anchored {
+      position: fixed;
+      inset-block-start: auto !important;
+      inset-inline-start: auto !important;
+      position-area: block-end center;
+
+      &.vertical {
+        position-area: center inline-end;
+        position-try: flip-inline;
+      }
+    }
   }
 }
