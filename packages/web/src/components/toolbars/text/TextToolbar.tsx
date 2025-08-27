@@ -2,7 +2,7 @@ import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
 import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
-import FullWidthIcon from "@/icons/full-width.svg?jsx";
+import ExpandHeightIcon from "@/icons/expand-height.svg?jsx";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
 import type Editor from "@/editor/Editor";
@@ -83,55 +83,61 @@ export default function TextToolbar({
         <li role="presentation">
           <BackgroundPicker value={background} onChange={setBackground} />
         </li>
-        <li role="presentation">
-          <swatch-select
-            role="menuitem"
-            aria-label="Vertical position"
-            data-tooltip="Vertical position"
-            aria-orientation="vertical"
-            orientation="vertical"
-            align="center"
-            value={align}
-            on:change={setVerticalAlignment}
-          >
-            {align.derive((value) => ALIGN_ICON[value])}
 
-            <swatch-item
-              value="TOP"
-              data-tooltip="Top"
-              data-tooltip-position="right"
-            >
-              <VerticalAlignTopIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item
-              value="CENTER"
-              data-tooltip="Center"
-              data-tooltip-position="right"
-            >
-              <VerticalAlignCenterIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item
-              value="BOTTOM"
-              data-tooltip="Bottom"
-              data-tooltip-position="right"
-            >
-              <VerticalAlignBottomIcon aria-hidden="true" />
-            </swatch-item>
-          </swatch-select>
-        </li>
         <li role="presentation">
           <button
             type="button"
             role="menuitem"
             className="floating"
-            aria-label="Expand to fit"
-            data-tooltip="Expand to fit"
+            aria-label="Size to fit contents"
+            data-tooltip="Size to fit contents"
             aria-pressed={block.derive((value) => (value ? "true" : "false"))}
             on:click={toggleBlock}
           >
-            <FullWidthIcon aria-hidden="true" />
+            <ExpandHeightIcon aria-hidden="true" />
           </button>
         </li>
+
+        {block.derive((value) =>
+          !value ? (
+            <li role="presentation">
+              <swatch-select
+                role="menuitem"
+                aria-label="Vertical position"
+                data-tooltip="Vertical position"
+                aria-orientation="vertical"
+                orientation="vertical"
+                align="center"
+                value={align}
+                on:change={setVerticalAlignment}
+              >
+                {align.derive((value) => ALIGN_ICON[value])}
+
+                <swatch-item
+                  value="TOP"
+                  data-tooltip="Top"
+                  data-tooltip-position="right"
+                >
+                  <VerticalAlignTopIcon aria-hidden="true" />
+                </swatch-item>
+                <swatch-item
+                  value="CENTER"
+                  data-tooltip="Center"
+                  data-tooltip-position="right"
+                >
+                  <VerticalAlignCenterIcon aria-hidden="true" />
+                </swatch-item>
+                <swatch-item
+                  value="BOTTOM"
+                  data-tooltip="Bottom"
+                  data-tooltip-position="right"
+                >
+                  <VerticalAlignBottomIcon aria-hidden="true" />
+                </swatch-item>
+              </swatch-select>
+            </li>
+          ) : null,
+        )}
       </ul>
     </floating-toolbar>
   );
