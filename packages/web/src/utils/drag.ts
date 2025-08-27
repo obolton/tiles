@@ -69,6 +69,8 @@ export class DragState<T> {
   readonly element: HTMLElement;
   readonly offsetX: number;
   readonly offsetY: number;
+  readonly width: number;
+  readonly height: number;
 
   data?: T;
 
@@ -103,6 +105,8 @@ export class DragState<T> {
     const rect = element.getBoundingClientRect();
     this.offsetX = startX - rect.x;
     this.offsetY = startY - rect.y;
+    this.width = rect.width;
+    this.height = rect.height;
 
     const signal = this.abortController.signal;
 
