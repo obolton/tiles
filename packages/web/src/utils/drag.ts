@@ -325,7 +325,6 @@ export class DragState<T> {
     }
 
     this.isDragging = true;
-    document.body.dataset.drag = "true";
 
     const rect = this.element.getBoundingClientRect();
     this.dragPreview = this.clone
@@ -346,6 +345,7 @@ export class DragState<T> {
       this.element.parentElement?.appendChild(this.dragPreview);
     }
 
+    document.body.dataset.drag = "true";
     this.dragPreview.showPopover();
 
     this.findDropTarget(this.element, clientX, clientY);
