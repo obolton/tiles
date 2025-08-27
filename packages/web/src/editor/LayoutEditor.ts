@@ -189,8 +189,14 @@ export default class LayoutEditor {
       this.y = y;
 
       requestAnimationFrame(() => {
-        this.dragPlaceholder?.style.setProperty("--x", x.toString());
-        this.dragPlaceholder?.style.setProperty("--y", y.toString());
+        this.dragPlaceholder?.style.setProperty(
+          "--placeholder-x",
+          x.toString(),
+        );
+        this.dragPlaceholder?.style.setProperty(
+          "--placeholder-y",
+          y.toString(),
+        );
       });
     }
   }
@@ -200,13 +206,13 @@ export default class LayoutEditor {
     y,
     width,
     height,
-    rows,
+    rowSpan,
   }: {
     x: number;
     y: number;
     width: number;
     height: number;
-    rows: number;
+    rowSpan: number;
   }) {
     if (this.dragPlaceholder) {
       return;
@@ -214,11 +220,14 @@ export default class LayoutEditor {
 
     const placeholder = document.createElement("div");
     placeholder.classList.add("drag-placeholder");
-    placeholder.style.setProperty("--x", x.toString());
-    placeholder.style.setProperty("--y", y.toString());
-    placeholder.style.setProperty("--width", width.toString());
-    placeholder.style.setProperty("--height", height.toString());
-    placeholder.style.setProperty("--rows", rows.toString());
+    placeholder.style.setProperty("--placeholder-x", x.toString());
+    placeholder.style.setProperty("--placeholder-y", y.toString());
+    placeholder.style.setProperty("--placeholder-columns", width.toString());
+    placeholder.style.setProperty("--placeholder-rows", rowSpan.toString());
+    placeholder.style.setProperty(
+      "--placeholder-height",
+      height.toString() + "px",
+    );
     placeholder.dataset.animateLayoutId = "drag-placeholder-" + this.sectionId;
     this.element.appendChild(placeholder);
     this.dragPlaceholder = placeholder;
@@ -246,8 +255,8 @@ export default class LayoutEditor {
       x,
       y,
       width: tile.width.value,
-      height: tile.height.value,
-      rows: tile.rowSpan.value,
+      height: event.state.height,
+      rowSpan: tile.rowSpan.value,
     });
   }
 

@@ -16,6 +16,36 @@
   initial-value: 16px;
 }
 
+@property --placeholder-x {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: auto;
+}
+
+@property --placeholder-y {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: auto;
+}
+
+@property --placeholder-columns {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: auto;
+}
+
+@property --placeholder-rows {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: auto;
+}
+
+@property --placeholder-height {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: auto;
+}
+
 .canvas {
   &:not(:defined),
   &::part(container) {
@@ -44,9 +74,10 @@
   }
 
   & > :global(.drag-placeholder) {
-    grid-column: calc(var(--x) + 1) / span var(--width);
-    grid-row: calc(var(--y) + 1) / span var(--rows);
-    height: calc(var(--height) * var(--grid-row-height));
+    grid-column: calc(var(--placeholder-x) + 1) / span
+      var(--placeholder-columns);
+    grid-row: calc(var(--placeholder-y) + 1) / span var(--placeholder-rows);
+    height: var(--placeholder-height);
     background: rgb(0 0 0 / 10%);
     border-radius: var(--border-radius);
     z-index: 2;
