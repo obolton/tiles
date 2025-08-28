@@ -2,9 +2,7 @@ import MovableImage from "@/components/images/MovableImage";
 import RichText from "@/components/text/RichText";
 import styles from "./ImageTile.module.css";
 import Tile from "./Tile";
-import TextEditor, {
-  type EditorState,
-} from "@/components/inputs/RichTextEditor/TextEditor";
+import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import { setSearchParams } from "@/utils/urls";
 import { serialize } from "@/utils/richText/serialize";
 import { Computed } from "@/utils/reactivity";
@@ -58,6 +56,7 @@ function getMaxWidth(columns: number) {
 
 export default function ImageTile({
   editor,
+  state,
   id,
   width,
   imageUrl,
@@ -69,11 +68,13 @@ export default function ImageTile({
 }: ImageTileProps) {
   const { isEditable } = editor;
 
-  const onBlur = async (state: EditorState) => {
-    const newText = state.doc.textContent ? serialize(state) : null;
-    text.value = newText;
-
+  async function onBlur() {
     try {
+      const stateValue = state.value;
+      const newText = stateValue?.doc.textContent
+        ? serialize(stateValue)
+        : null;
+      text.value = newText;
       await editor.updateImage({
         id,
         text: newText,
@@ -81,7 +82,7 @@ export default function ImageTile({
     } catch (error) {
       handleError(error);
     }
-  };
+  }
 
   const onUpdateOrigin = async (origin: { x: number; y: number }) => {
     try {
@@ -146,11 +147,12 @@ export default function ImageTile({
           editable ? (
             <TextEditor
               editor={editor}
+              state={state}
               classList={[styles.caption]}
               initialValue={text.value}
-              onBlur={onBlur}
               showToolbar={hasFocus}
               on:keydown={onDelete ? onKeyDown : undefined}
+              on:blur={onBlur}
             />
           ) : (
             text.derive((value) =>

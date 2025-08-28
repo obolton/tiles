@@ -3,9 +3,7 @@ import RichText from "@/components/text/RichText";
 import TextToolbar from "@/components/toolbars/text/TextToolbar";
 import Tile from "./Tile";
 import styles from "./TextTile.module.css";
-import TextEditor, {
-  type EditorState,
-} from "@/components/inputs/RichTextEditor/TextEditor";
+import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/colors/ColorPicker";
 import ArrowDownIcon from "@/icons/arrow-down.svg?jsx";
 import { viewTransition } from "@/utils/transitions";
@@ -26,6 +24,7 @@ export default function TextTile({
   id,
   placementId,
   content,
+  state,
   textColor,
   background,
   block,
@@ -35,9 +34,13 @@ export default function TextTile({
 }: TextTileProps) {
   const { isEditable } = editor;
 
-  const onBlur = async (state: EditorState) => {
+  async function onBlur() {
     try {
-      const newContent = serialize(state);
+      const stateValue = state.value;
+      if (!stateValue) {
+        return;
+      }
+      const newContent = serialize(stateValue);
       content.value = newContent;
       await editor.updateText({
         id,
@@ -46,7 +49,7 @@ export default function TextTile({
     } catch (error) {
       handleError(error);
     }
-  };
+  }
 
   const onChangeTextColor = async (value: Color | null) => {
     try {
@@ -114,11 +117,12 @@ export default function TextTile({
     value ? (
       <TextEditor
         editor={editor}
+        state={state}
         classList={[styles.text, styles.editor, alignClass]}
         initialValue={content.value}
         tabIndex={-1}
         on:keydown={onKeyDown}
-        onBlur={onBlur}
+        on:blur={onBlur}
         showToolbar={hasFocus}
         extraToolbarItems={
           <ul role="group">
