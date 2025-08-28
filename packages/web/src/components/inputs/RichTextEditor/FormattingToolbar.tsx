@@ -75,7 +75,7 @@ interface FormattingToolbarProps {
   editor: Editor;
   format: Reactive<Format>;
   prompting: Reactive<boolean>;
-  getEditorView: () => EditorView | undefined;
+  getEditorView: () => EditorView | null;
   performCommand: (command: Command) => void;
   children?: JSX.Node;
 }
