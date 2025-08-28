@@ -18,51 +18,74 @@ import type Editor from "@/editor/Editor";
 
 export type { EditorState };
 
-interface TextEditorProps
-  extends Omit<JSX.Attributes<HTMLDivElement>, "onBlur"> {
+interface TextEditorProps extends JSX.Attributes<HTMLDivElement> {
   editor: Editor;
+  state: Reactive<EditorState | null>;
   initialValue?: RichText | null;
   showToolbar: Reactive<boolean>;
   extraToolbarItems?: JSX.Node;
-  onBlur?: (state: EditorState) => void;
   signal?: AbortSignal;
 }
 
 export default function TextEditor({
   editor,
+  state,
   classList = [],
   initialValue,
-  onBlur,
   showToolbar,
   extraToolbarItems,
   signal,
   ...props
 }: TextEditorProps) {
-  let editorView: EditorView | undefined;
+  let editorView: EditorView | null = null;
 
   signal?.addEventListener(
     "abort",
-    () => requestAnimationFrame(() => editorView?.destroy()),
+    () =>
+      requestAnimationFrame(() => {
+        editorView?.destroy();
+        editorView = null;
+      }),
     { once: true },
   );
 
-  const ref = (element: HTMLElement) => {
+  function createState() {
     const plugins = getPlugins().concat(
       selectionFormat((newFormat) => {
         format.value = newFormat;
       }),
       prompt(editor, (open) => (prompting.value = open)),
     );
+    const config = initialValue
+      ? { doc: deserialize(initialValue), plugins }
+      : { schema, plugins };
+    return EditorState.create(config);
+  }
+
+  const ref = (element: HTMLElement) => {
     try {
-      const state = EditorState.create(
-        initialValue
-          ? {
-              doc: deserialize(initialValue),
-              plugins,
-            }
-          : { schema, plugins },
+      if (!state.value) {
+        state.value = createState();
+      }
+      const view = new EditorView(
+        { mount: element },
+        {
+          state: state.value,
+          dispatchTransaction(tr) {
+            const newState = view.state.apply(tr);
+            view.updateState(newState);
+            state.value = newState;
+          },
+        },
       );
-      editorView = new EditorView({ mount: element }, { state });
+
+      // Apply external state changes
+      state.subscribe(() => {
+        if (state.value && state.value !== view.state) {
+          view.updateState(state.value);
+        }
+      }, signal);
+      editorView = view;
     } catch (error) {
       handleError(error);
     }
@@ -73,12 +96,6 @@ export default function TextEditor({
   const performCommand = (command: Command) => {
     if (editorView) {
       command(editorView.state, editorView.dispatch, editorView);
-    }
-  };
-
-  const handleBlur = () => {
-    if (editorView && onBlur) {
-      onBlur(editorView.state);
     }
   };
 
@@ -103,7 +120,6 @@ export default function TextEditor({
         ref={ref}
         classList={["rich-text", styles.editor, ...classList]}
         role="textbox"
-        onblur={handleBlur}
       />
 
       {showToolbar.derive((value) =>
