@@ -18,6 +18,7 @@ import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
 import type { Color } from "@/utils/color";
 import type { Reactive } from "@/utils/reactivity";
+import type { EditorState } from "prosemirror-state";
 
 type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
@@ -32,13 +33,32 @@ function immediateTransition(commit: () => void) {
 const IS_SERVER = import.meta.env.SSR;
 
 function getReactiveTile(tile: ClientTile): Tile {
-  const { id, placementId, type, ...properties } = tile;
-  return {
-    id,
-    placementId,
-    type,
-    ...record(properties),
-  } as Tile;
+  switch (tile.type) {
+    case "TEXT": {
+      const { id, placementId, type, ...properties } = tile;
+      return {
+        id,
+        placementId,
+        type,
+        ...record(properties),
+        state: reactive<EditorState | null>(null),
+      };
+    }
+    case "IMAGE": {
+      const { id, placementId, type, ...properties } = tile;
+      return {
+        id,
+        placementId,
+        type,
+        ...record(properties),
+        state: reactive<EditorState | null>(null),
+      };
+    }
+    default: {
+      const { id, placementId, type, ...properties } = tile;
+      return { id, placementId, type, ...record(properties) } as Tile;
+    }
+  }
 }
 
 function getReactiveSection(section: ClientCollection): Section {
