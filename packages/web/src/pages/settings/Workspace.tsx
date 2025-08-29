@@ -25,6 +25,7 @@ async function onSubmit(event: SubmitEvent) {
   try {
     const formData = new FormData(form);
     await client.workspaces.update.mutate({
+      workspaceId: formData.get("id") as string,
       name: (formData.get("name") as string | null) ?? "",
     });
     showToast("Your workspace settings were saved.", "success");
@@ -51,7 +52,9 @@ export default function Workspace({
         </header>
 
         <div className={styles.sections}>
-          <form class="vertical" onsubmit={onSubmit}>
+          <form class="vertical" on:submit={onSubmit}>
+            <input type="hidden" name="id" value={workspace.id} />
+
             <label>
               Name
               <input
@@ -63,6 +66,7 @@ export default function Workspace({
                 maxlength="64"
               />
             </label>
+
             <footer>
               <button className="primary" type="submit">
                 Save
