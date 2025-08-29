@@ -51,8 +51,9 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
         editor
           .createText({
             sectionId: editor.getCurrentSectionId(),
-            width: 4,
-            height: 4,
+            width: 20,
+            height: 1,
+            block: true,
             content: [{ type: "paragraph", children: [] }],
           })
           .catch(handleError);
@@ -67,6 +68,8 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
             const imageKey = await uploadMedia(result.image, "image");
             await editor.createImage({
               sectionId: editor.getCurrentSectionId(),
+              width: 10,
+              height: 10,
               imageKey,
             });
           },
@@ -80,11 +83,15 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
             if ("linkedPageId" in result) {
               await editor.createPageLink({
                 sectionId: editor.getCurrentSectionId(),
+                width: 5,
+                height: 5,
                 linkedPageId: result.linkedPageId,
               });
             } else if (result.url) {
               await editor.createLink({
                 sectionId: editor.getCurrentSectionId(),
+                width: 5,
+                height: 5,
                 url: result.url,
               });
             }
@@ -98,8 +105,8 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
             await editor.createMap({
               sectionId: editor.getCurrentSectionId(),
               places: [place],
-              width: 6,
-              height: 6,
+              width: 20,
+              height: 15,
             });
           },
         });
@@ -109,6 +116,8 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
         editor
           .createTable({
             sectionId: editor.getCurrentSectionId(),
+            width: 10,
+            height: 10,
             columns: 3,
             rows: 5,
           })
