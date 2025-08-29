@@ -1,4 +1,3 @@
-import { Plugin } from "prosemirror-state";
 import {
   getSelectionMarks,
   getSelectionHeadingLevel,
@@ -8,6 +7,7 @@ import {
   getLink,
 } from "./helpers";
 import { schema, type TextAlignment } from "./schema";
+import type { EditorState } from "prosemirror-state";
 
 export type { TextAlignment };
 
@@ -27,40 +27,38 @@ export interface Format {
   pending: boolean;
 }
 
-export function selectionFormat(callback: (format: Format) => void) {
-  return new Plugin({
-    view: () => ({
-      update: (view, prevState) => {
-        const state = view.state;
-        if (
-          state.selection === prevState.selection &&
-          state.storedMarks === prevState.storedMarks
-        ) {
-          return;
-        }
+export const DEFAULT_FORMAT = {
+  headingLevel: null,
+  quote: false,
+  list: null,
+  bold: false,
+  italic: false,
+  underline: false,
+  strikethrough: false,
+  highlight: false,
+  link: false,
+  pending: false,
+};
 
-        const marks = getSelectionMarks(state);
-        const headingLevel = getSelectionHeadingLevel(state);
-        const blockNodeTypes = getSelectionBlockNodeTypes(state);
-        const align = getSelectionAlignment(state);
-        const list = getSelectionList(state);
-        const link = !!getLink(state);
+export function getSelectionFormat(state: EditorState): Format {
+  const marks = getSelectionMarks(state);
+  const headingLevel = getSelectionHeadingLevel(state);
+  const blockNodeTypes = getSelectionBlockNodeTypes(state);
+  const align = getSelectionAlignment(state);
+  const list = getSelectionList(state);
+  const link = !!getLink(state);
 
-        const format = {
-          bold: marks.has(schema.marks.bold),
-          italic: marks.has(schema.marks.italic),
-          underline: marks.has(schema.marks.underline),
-          strikethrough: marks.has(schema.marks.strikethrough),
-          highlight: marks.has(schema.marks.highlight),
-          link,
-          headingLevel,
-          quote: blockNodeTypes.has(schema.nodes.quote),
-          list,
-          align,
-          pending: blockNodeTypes.has(schema.nodes.pending),
-        };
-        callback(format);
-      },
-    }),
-  });
+  return {
+    bold: marks.has(schema.marks.bold),
+    italic: marks.has(schema.marks.italic),
+    underline: marks.has(schema.marks.underline),
+    strikethrough: marks.has(schema.marks.strikethrough),
+    highlight: marks.has(schema.marks.highlight),
+    link,
+    headingLevel,
+    quote: blockNodeTypes.has(schema.nodes.quote),
+    list,
+    align,
+    pending: blockNodeTypes.has(schema.nodes.pending),
+  };
 }

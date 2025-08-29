@@ -1,11 +1,9 @@
 import { EditorView } from "prosemirror-view";
 import { EditorState } from "prosemirror-state";
 import FormattingToolbar from "./FormattingToolbar";
-import { selectionFormat } from "@/utils/richText/format";
-import { prompt } from "@/utils/richText/prompt";
-import { deserialize } from "@/utils/richText/deserialize";
-import { schema } from "@/utils/richText/schema";
-import { getPlugins } from "@/utils/richText/plugins";
+import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
+import { createState } from "@/utils/richText/state";
+import { prompt, isPromptOpen } from "@/utils/richText/prompt";
 import { handleError } from "@/utils/errors";
 import styles from "./TextEditor.module.css";
 import { reactive, flag } from "@/utils/reactivity";
@@ -18,7 +16,7 @@ import type Editor from "@/editor/Editor";
 
 export type { EditorState };
 
-interface TextEditorProps extends JSX.Attributes<HTMLDivElement> {
+export interface TextEditorProps extends JSX.Attributes<HTMLDivElement> {
   editor: Editor;
   state: Reactive<EditorState | null>;
   initialValue?: RichText | null;
@@ -31,7 +29,7 @@ export default function TextEditor({
   editor,
   state,
   classList = [],
-  initialValue,
+  initialValue = null,
   showToolbar,
   extraToolbarItems,
   signal,
@@ -49,23 +47,15 @@ export default function TextEditor({
     { once: true },
   );
 
-  function createState() {
-    const plugins = getPlugins().concat(
-      selectionFormat((newFormat) => {
-        format.value = newFormat;
-      }),
-      prompt(editor, (open) => (prompting.value = open)),
-    );
-    const config = initialValue
-      ? { doc: deserialize(initialValue), plugins }
-      : { schema, plugins };
-    return EditorState.create(config);
-  }
+  const format = reactive<Format>(
+    state.value ? getSelectionFormat(state.value) : DEFAULT_FORMAT,
+  );
+  const prompting = flag(state.value ? isPromptOpen(state.value) : false);
 
   const ref = (element: HTMLElement) => {
     try {
       if (!state.value) {
-        state.value = createState();
+        state.value = createState(initialValue, [prompt(editor)]);
       }
       const view = new EditorView(
         { mount: element },
@@ -75,14 +65,19 @@ export default function TextEditor({
             const newState = view.state.apply(tr);
             view.updateState(newState);
             state.value = newState;
+            format.value = getSelectionFormat(newState);
+            prompting.value = isPromptOpen(newState);
           },
         },
       );
 
       // Apply external state changes
       state.subscribe(() => {
-        if (state.value && state.value !== view.state) {
-          view.updateState(state.value);
+        const newState = state.value;
+        if (newState && newState !== view.state) {
+          view.updateState(newState);
+          format.value = getSelectionFormat(newState);
+          prompting.value = isPromptOpen(newState);
         }
       }, signal);
       editorView = view;
@@ -98,20 +93,6 @@ export default function TextEditor({
       command(editorView.state, editorView.dispatch, editorView);
     }
   };
-
-  const format = reactive<Format>({
-    bold: false,
-    italic: false,
-    underline: false,
-    strikethrough: false,
-    highlight: false,
-    headingLevel: null,
-    quote: false,
-    list: null,
-    link: false,
-    pending: false,
-  });
-  const prompting = flag(false);
 
   return (
     <>

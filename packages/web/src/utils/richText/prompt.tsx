@@ -1,4 +1,4 @@
-import { Plugin, PluginKey } from "prosemirror-state";
+import { Plugin, PluginKey, type EditorState } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 import InlinePrompt from "@/components/prompt/InlinePrompt";
 import { render } from "@/jsx/dom";
@@ -74,7 +74,11 @@ function getElement(editor: Editor, view: EditorView) {
   return element;
 }
 
-export function prompt(editor: Editor, callback?: (isOpen: boolean) => void) {
+export function isPromptOpen(state: EditorState) {
+  return Boolean(PROMPT_PLUGIN_KEY.getState(state));
+}
+
+export function prompt(editor: Editor) {
   return new Plugin<DecorationSet | null>({
     key: PROMPT_PLUGIN_KEY,
 
@@ -91,7 +95,6 @@ export function prompt(editor: Editor, callback?: (isOpen: boolean) => void) {
         }
 
         if (meta.pos === null) {
-          callback?.(false);
           return null;
         } else {
           const { selection } = tr;
@@ -114,7 +117,6 @@ export function prompt(editor: Editor, callback?: (isOpen: boolean) => void) {
               },
             },
           );
-          callback?.(true);
           return DecorationSet.create(tr.doc, [
             contextDecoration,
             promptDecoration,
