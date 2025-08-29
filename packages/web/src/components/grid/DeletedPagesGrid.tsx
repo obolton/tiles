@@ -2,18 +2,19 @@ import client from "@/api/client";
 import DeletedPage from "./DeletedPage";
 import Search from "@/components/search/Search";
 import { handleError } from "@/utils/errors";
-import { ReactiveValue } from "@/utils/reactivity";
+import { reactive } from "@/utils/reactivity";
 import { showToast } from "@/utils/toasts";
 import styles from "./DeletedPagesGrid.module.css";
-import type { ClientPageLink } from "@/types/tiles";
+import type { ClientPageLinkTile } from "@/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 
 interface PagesSearchResults {
-  pages: NonNullable<ClientPageLink["linkedPage"]>[];
+  pages: NonNullable<ClientPageLinkTile["linkedPage"]>[];
   hasMore: boolean;
 }
 
-interface DeletedPagesGridProps {
+export interface DeletedPagesGridProps {
+  workspaceId: string;
   inputPlaceholder?: string;
   search: (query: string, offset: number) => Promise<PagesSearchResults>;
   pages?: PagesSearchResults;
@@ -21,13 +22,14 @@ interface DeletedPagesGridProps {
 }
 
 export default function DeletedPagesGrid({
+  workspaceId,
   inputPlaceholder,
   search,
   pages: initialPages,
   renderPlaceholder,
 }: DeletedPagesGridProps) {
-  const pages = new ReactiveValue(initialPages?.pages ?? []);
-  const hasMore = new ReactiveValue(initialPages?.hasMore ?? false);
+  const pages = reactive(initialPages?.pages ?? []);
+  const hasMore = reactive(initialPages?.hasMore ?? false);
 
   const onSearch = async (query: string, offset: number = 0) => {
     try {
@@ -50,7 +52,7 @@ export default function DeletedPagesGrid({
   };
 
   const emptyTrash = async () => {
-    await client.pages.emptyTrash.mutate();
+    await client.pages.emptyTrash.mutate({ workspaceId });
     pages.value = [];
     showToast("The trash was emptied.", "success");
   };

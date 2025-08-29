@@ -37,6 +37,7 @@ export default function Trash({ workspace, folders, pages }: TrashProps) {
         </header>
 
         <DeletedPagesGrid
+          workspaceId={workspace.id}
           inputPlaceholder="Search trash"
           pages={pages}
           search={(query, offset) =>
