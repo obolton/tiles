@@ -81,7 +81,9 @@ export default function TextTile({
     if (
       (key === "Delete" || key === "Backspace") &&
       target === currentTarget &&
-      (currentTarget as HTMLElement).textContent === ""
+      state.value &&
+      state.value.doc.childCount <= 1 &&
+      state.value.doc.textContent === ""
     ) {
       event.stopPropagation();
       event.preventDefault();
