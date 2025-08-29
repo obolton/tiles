@@ -4,9 +4,6 @@ import { ColorSchema } from "@/schema/Color.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateTextSchema = z.strictObject({
-  text: z.string().meta({
-    description: "The text to add to the text block. Markdown may be used.",
-  }),
   textColor: ColorSchema.nullable().meta({
     description:
       "The text color, or null to use the default text color of the document.",
@@ -19,9 +16,14 @@ const CreateTextSchema = z.strictObject({
     .enum(["left", "center", "right"])
     .nullable()
     .meta({ description: "The horizontal alignment of the text." }),
+  size: z
+    .enum(["large", "small"])
+    .meta({ description: "The size of the text section." }),
 });
 
-function getTextAlignment(value: "left" | "center" | "right" | null) {
+type CreateTextSchemaType = z.infer<typeof CreateTextSchema>;
+
+function getTextAlignment(value: CreateTextSchemaType["align"]) {
   switch (value) {
     case "left":
       return 0;
@@ -34,27 +36,35 @@ function getTextAlignment(value: "left" | "center" | "right" | null) {
   }
 }
 
+interface Dimensions {
+  width: number;
+  height: number;
+}
+
+function getDimensions(size: CreateTextSchemaType["size"]): Dimensions {
+  switch (size) {
+    case "small":
+      return { width: 12, height: 10 };
+    case "large":
+    default:
+      return { width: 24, height: 20 };
+  }
+}
+
 async function createTextArtifact(
   args: z.infer<typeof CreateTextSchema>,
   { pageId, sectionId }: ToolContext,
 ) {
-  const { text, textColor, backgroundColor, align } = args;
+  const { textColor, backgroundColor, align, size } = args;
   const artifact = await createText({
     pageId,
     sectionId,
-    width: 10,
-    height: 10,
+    ...getDimensions(size),
     content: [
       {
         type: "paragraph",
         align: getTextAlignment(align),
-        children: [
-          {
-            type: "text",
-            text: text,
-            format: 0,
-          },
-        ],
+        children: [],
       },
     ],
     textColor,
@@ -66,7 +76,7 @@ async function createTextArtifact(
 export const CREATE_TEXT_TOOL: FunctionToolOptions<typeof CreateTextSchema> = {
   name: "create_text",
   description:
-    "Creates a text block for a section of text, with optional styling.",
+    "Creates a text block to contain a section of text, with optional styling.",
   schema: CreateTextSchema,
   function: createTextArtifact,
 };

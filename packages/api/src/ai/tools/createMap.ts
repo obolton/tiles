@@ -9,6 +9,9 @@ import { createMap } from "@/routes/maps/maps.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateMapSchema = z.strictObject({
+  size: z
+    .enum(["small", "medium", "large"])
+    .meta({ description: "The size of the map." }),
   places: z
     .array(
       z.strictObject({
@@ -32,16 +35,32 @@ const CreateMapSchema = z.strictObject({
     .meta({ description: "A list of places to show on the map." }),
 });
 
+interface Dimensions {
+  width: number;
+  height: number;
+}
+
+function getDimensions(size: "small" | "medium" | "large"): Dimensions {
+  switch (size) {
+    case "small":
+      return { width: 12, height: 10 };
+    case "medium":
+      return { width: 24, height: 15 };
+    case "large":
+    default:
+      return { width: 24, height: 20 };
+  }
+}
+
 async function createMapArtifact(
   args: z.infer<typeof CreateMapSchema>,
   { pageId, sectionId, model }: ToolContext,
 ) {
-  const { places } = args;
+  const { places, size } = args;
   const artifact = await createMap({
     pageId,
     sectionId,
-    width: 10,
-    height: 10,
+    ...getDimensions(size),
     places: places.map(({ name, lat, long, address }) => ({
       name,
       lat,
