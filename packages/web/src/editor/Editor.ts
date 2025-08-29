@@ -5,6 +5,8 @@ import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
 import { Computed, reactive, flag, record } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { isEditMode } from "@/utils/edit";
+import { createState } from "@/utils/richText/state";
+import { prompt } from "@/utils/richText/prompt";
 import type { FontId } from "@/config/fonts";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type {
@@ -13,6 +15,7 @@ import type {
   Layout,
   Tile,
   Section,
+  TextProperties,
 } from "@/types/tiles";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
@@ -402,6 +405,20 @@ export default class Editor {
       },
       { context: { stream: true } },
     );
+  }
+
+  getTextEditorState(id: string) {
+    const tile = this.tiles.value.find(
+      (entry): entry is TextProperties =>
+        entry.type === "TEXT" && entry.id === id,
+    );
+    if (!tile) {
+      throw new Error(`Invalid text tile ID: ${id}`);
+    }
+    if (!tile.state.value) {
+      tile.state.value = createState(tile.content.value, [prompt(this)]);
+    }
+    return tile.state;
   }
 
   // Images
