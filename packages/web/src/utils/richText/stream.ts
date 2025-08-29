@@ -1,10 +1,11 @@
 import { schema } from "./schema";
 import { closest, getListDepth } from "./helpers";
 import type { EditorView } from "prosemirror-view";
-import type { Transaction } from "prosemirror-state";
+import type { EditorState, Transaction } from "prosemirror-state";
 import type { Mark } from "prosemirror-model";
 import type { ClientTile } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
+import type { Reactive } from "@/utils/reactivity";
 
 export interface ParagraphNode {
   type: "paragraph";
@@ -23,9 +24,20 @@ export interface ListItemNode {
 
 export type RichTextNode = ParagraphNode | HeadingNode | ListItemNode;
 
-export type RichTextFormat = { bold?: boolean; italic?: boolean };
+export interface RichTextFormat {
+  bold?: boolean;
+  italic?: boolean;
+}
 
-export type RichTextStreamEvent = string | RichTextFormat | RichTextNode;
+export interface Destination {
+  destination: string | null;
+}
+
+export type RichTextStreamEvent =
+  | string
+  | RichTextFormat
+  | RichTextNode
+  | Destination;
 
 function createListItem() {
   return schema.nodes.list_item.create(null, schema.nodes.paragraph.create());
@@ -36,6 +48,8 @@ export interface ArtifactEvent {
 }
 
 export type StreamEvent = RichTextStreamEvent | ArtifactEvent;
+
+export type ReactiveState = Reactive<EditorState | null>;
 
 function insertPendingNode(tr: Transaction) {
   const { $from } = tr.selection;
@@ -53,17 +67,21 @@ function insertPendingNode(tr: Transaction) {
   return pos + 1;
 }
 
+function dispatch(state: ReactiveState, tr: Transaction) {
+  const newState = state.value?.apply(tr) ?? null;
+  state.value = newState;
+}
+
 export async function insertFromStream(
   view: EditorView,
   stream: AsyncIterable<StreamEvent>,
   editor: Editor,
 ) {
-  const { dispatch } = view;
-
   let startPos: number | null = null;
   let pos: number | null = null;
   let bold = false;
   let italic = false;
+  let output: ReactiveState | null = null;
 
   for await (const event of stream) {
     if (typeof event === "object" && "artifact" in event) {
@@ -71,7 +89,23 @@ export async function insertFromStream(
       continue;
     }
 
-    const tr = view.state.tr;
+    if (typeof event === "object" && "destination" in event) {
+      if (event.destination) {
+        output = editor.getTextEditorState(event.destination);
+      } else {
+        output = null;
+      }
+      startPos = null;
+      pos = null;
+      continue;
+    }
+
+    const state = output ? output.value : view.state;
+    if (!state) {
+      continue;
+    }
+
+    const tr = state.tr;
 
     if (startPos === null || pos === null) {
       startPos = insertPendingNode(tr);
@@ -176,6 +210,10 @@ export async function insertFromStream(
       }
     }
 
-    dispatch(tr);
+    if (output) {
+      dispatch(output, tr);
+    } else {
+      view.dispatch(tr);
+    }
   }
 }
