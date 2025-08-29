@@ -3,18 +3,14 @@ import RichText from "@/components/text/RichText";
 import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingToolbar";
 import TableToolbar from "@/components/toolbars/tables/TableToolbar";
 import ColorPicker from "@/components/colors/ColorPicker";
-import { selectionFormat } from "@/utils/richText/format";
-import { prompt } from "@/utils/richText/prompt";
+import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
+import { createState } from "@/utils/richText/state";
+import { prompt, isPromptOpen } from "@/utils/richText/prompt";
 import styles from "./TableTile.module.css";
 import { EditorView } from "prosemirror-view";
-import { EditorState } from "prosemirror-state";
-import { keymap } from "prosemirror-keymap";
-import { getPlugins } from "@/utils/richText/plugins";
-import { schema } from "@/utils/richText/schema";
 import { handleError } from "@/utils/errors";
 import { reactive, flag } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
-import { deserialize } from "@/utils/richText/deserialize";
 import { render } from "@/jsx/dom";
 import { moveElement } from "@/utils/arrays";
 import { viewTransition } from "@/utils/transitions";
@@ -26,6 +22,7 @@ import type { Reactive } from "@/utils/reactivity";
 import type { TableProperties } from "@/types/tiles";
 import type { TableEvent } from "@/elements/table/events";
 import type { Color } from "@/utils/color";
+import type { RichText as RichTextType } from "@/utils/richText/types";
 
 export interface TableTileProps extends TableProperties {
   editor: Editor;
@@ -33,11 +30,8 @@ export interface TableTileProps extends TableProperties {
   signal?: AbortSignal;
 }
 
-function createDocument(value: string) {
-  return schema.nodes.doc.create(
-    null,
-    schema.nodes.paragraph.create(null, value ? schema.text(value) : null),
-  );
+function createDocument(text: string): RichTextType {
+  return [{ type: "paragraph", children: [{ type: "text", format: 0, text }] }];
 }
 
 export default function TableTile({
@@ -54,6 +48,9 @@ export default function TableTile({
   let tableView: TableView | undefined;
   let editorView: EditorView | undefined;
   const { isEditable } = editor;
+
+  const format = reactive<Format>(DEFAULT_FORMAT);
+  const prompting = flag(false);
 
   signal?.addEventListener(
     "abort",
@@ -113,26 +110,27 @@ export default function TableTile({
       const columnId = columns.value[column]?.id;
 
       const value = columnId ? rows.value[row]?.data[columnId] : null;
-      const doc = !value
-        ? createDocument("")
-        : typeof value === "string"
-          ? createDocument(value)
-          : deserialize(value);
-
-      const plugins = [
-        keymap({ Enter: () => true }),
-        ...getPlugins(),
-        selectionFormat((newFormat) => {
-          format.value = newFormat;
-        }),
-        prompt((open) => (prompting.value = open)),
-      ];
-      const state = EditorState.create({
-        doc,
-        plugins,
-      });
+      const content =
+        typeof value === "string" ? createDocument(value) : (value ?? null);
+      const state = createState(content, [prompt(editor)]);
       target.replaceChildren();
-      editorView = new EditorView({ mount: target }, { state });
+
+      const view = new EditorView(
+        { mount: target },
+        {
+          state,
+          dispatchTransaction(tr) {
+            const newState = view.state.apply(tr);
+            view.updateState(newState);
+            format.value = getSelectionFormat(newState);
+            prompting.value = isPromptOpen(newState);
+          },
+        },
+      );
+      editorView = view;
+
+      format.value = getSelectionFormat(state);
+      prompting.value = isPromptOpen(state);
     } catch (error) {
       handleError(error);
     }
@@ -290,20 +288,6 @@ export default function TableTile({
       command(editorView.state, editorView.dispatch, editorView);
     }
   };
-
-  const format = reactive<Format>({
-    bold: false,
-    italic: false,
-    underline: false,
-    strikethrough: false,
-    highlight: false,
-    headingLevel: null,
-    quote: false,
-    list: null,
-    link: false,
-    pending: false,
-  });
-  const prompting = flag(false);
 
   const anchorName = `--table-${id}`;
 
