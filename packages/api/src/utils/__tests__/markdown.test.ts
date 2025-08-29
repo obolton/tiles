@@ -398,4 +398,42 @@ describe("transformMarkdown", () => {
       ]);
     });
   });
+
+  describe("blocks", () => {
+    test("returns a block start", async () => {
+      const output = await getEvents([">>> test\n", "hello world"]);
+      expect(output).toEqual([
+        { destination: "test" },
+        { type: "paragraph" },
+        "hello world",
+      ]);
+    });
+
+    test("supports block start syntax split over multiple chunks", async () => {
+      const output = await getEvents([">>", "> test", "\n", "hello world"]);
+      expect(output).toEqual([
+        { destination: "test" },
+        { type: "paragraph" },
+        "hello world",
+      ]);
+    });
+
+    test("returns a block end", async () => {
+      const output = await getEvents(["<<<\n", "hello world"]);
+      expect(output).toEqual([
+        { destination: null },
+        { type: "paragraph" },
+        "hello world",
+      ]);
+    });
+
+    test("supports block end syntax split over multiple chunks", async () => {
+      const output = await getEvents(["<<", "<", "\n", "hello world"]);
+      expect(output).toEqual([
+        { destination: null },
+        { type: "paragraph" },
+        "hello world",
+      ]);
+    });
+  });
 });

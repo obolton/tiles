@@ -9,7 +9,9 @@ const LINE_BREAK_MATCH = /^(\s*\n)+/;
 const HEADING_MATCH = /^(#{1,6})\s+(?=\S)/;
 const UNORDERED_LIST_ITEM_MATCH = /^( *)(-|\*|\+)\s+(?=\S)/;
 const ORDERED_LIST_ITEM_MATCH = /^( *)[0-9]+\.\s+(?=\S)/;
-const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *))$/;
+const BLOCK_START_MATCH = /^>>>\s+(\w+)\s*\n/;
+const BLOCK_END_MATCH = /^<<<\s*\n/;
+const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *)|>|<)/;
 const ALL_NEW_LINES_MATCH = /\n/g;
 
 export interface ParagraphNode {
@@ -29,9 +31,20 @@ export interface ListItemNode {
 
 export type RichTextNode = ParagraphNode | HeadingNode | ListItemNode;
 
-export type RichTextFormat = { bold?: boolean; italic?: boolean };
+export interface RichTextFormat {
+  bold?: boolean;
+  italic?: boolean;
+}
 
-export type RichTextStreamEvent = string | RichTextFormat | RichTextNode;
+export interface Destination {
+  destination: string | null;
+}
+
+export type RichTextStreamEvent =
+  | string
+  | RichTextFormat
+  | RichTextNode
+  | Destination;
 
 enum LineBreak {
   HARD,
@@ -46,6 +59,7 @@ export class MarkdownTransformer
   private format: RichTextFormat = {};
   private node: RichTextNode | null = null;
   private lineBreak: LineBreak | null = null;
+  private destination: string | null = null;
 
   start() {}
 
@@ -94,10 +108,19 @@ export class MarkdownTransformer
       node?: RichTextNode | null;
       format?: RichTextFormat;
       lineBreak?: LineBreak | null;
+      destination?: string | null;
     },
     skip: number,
   ) {
     this.advance(controller, skip);
+
+    if (typeof state.destination !== "undefined") {
+      this.destination = state.destination;
+      this.format = {};
+      this.node = null;
+      this.lineBreak = null;
+      controller.enqueue({ destination: this.destination });
+    }
 
     if (typeof state.node !== "undefined") {
       this.node = state.node;
@@ -130,6 +153,19 @@ export class MarkdownTransformer
 
     while (this.pos < this.buffer.length) {
       const rest = this.buffer.slice(this.pos);
+
+      const blockStartMatch = this.buffer.match(BLOCK_START_MATCH);
+      if (blockStartMatch) {
+        const [match, id] = blockStartMatch;
+        this.set(controller, { destination: id ?? "" }, match.length);
+        continue;
+      }
+
+      const blockEndMatch = this.buffer.match(BLOCK_END_MATCH);
+      if (blockEndMatch) {
+        this.set(controller, { destination: null }, blockEndMatch[0].length);
+        continue;
+      }
 
       const headingMatch = this.buffer.match(HEADING_MATCH);
       if (headingMatch) {
