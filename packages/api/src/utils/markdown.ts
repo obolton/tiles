@@ -9,8 +9,8 @@ const LINE_BREAK_MATCH = /^(\s*\n)+/;
 const HEADING_MATCH = /^(#{1,6})\s+(?=\S)/;
 const UNORDERED_LIST_ITEM_MATCH = /^( *)(-|\*|\+)\s+(?=\S)/;
 const ORDERED_LIST_ITEM_MATCH = /^( *)[0-9]+\.\s+(?=\S)/;
-const BLOCK_START_MATCH = /^>>>\s+(\w+)\s*\n/;
-const BLOCK_END_MATCH = /^<<<\s*\n/;
+const BLOCK_START_MATCH = /^>>>\s+(.+)\s*\n/;
+const BLOCK_END_MATCH = /^<<<\s*/;
 const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *)|>|<)/;
 const ALL_NEW_LINES_MATCH = /\n/g;
 

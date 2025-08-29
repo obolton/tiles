@@ -401,18 +401,24 @@ describe("transformMarkdown", () => {
 
   describe("blocks", () => {
     test("returns a block start", async () => {
-      const output = await getEvents([">>> test\n", "hello world"]);
+      const output = await getEvents([">>> test-1\n", "hello world"]);
       expect(output).toEqual([
-        { destination: "test" },
+        { destination: "test-1" },
         { type: "paragraph" },
         "hello world",
       ]);
     });
 
     test("supports block start syntax split over multiple chunks", async () => {
-      const output = await getEvents([">>", "> test", "\n", "hello world"]);
+      const output = await getEvents([
+        ">>",
+        "> test",
+        "-1",
+        "\n",
+        "hello world",
+      ]);
       expect(output).toEqual([
-        { destination: "test" },
+        { destination: "test-1" },
         { type: "paragraph" },
         "hello world",
       ]);
