@@ -23,7 +23,7 @@ export default class InfiniteScroll extends HTMLElement {
 
     this.intersectionObserver = new IntersectionObserver(
       this.intersectionObserverCallback.bind(this),
-      { threshold: 1 },
+      { threshold: 0 },
     );
   }
 
