@@ -1,34 +1,38 @@
-export interface InfiniteScrollAttributes {
-  onloadmore: (event: globalThis.Event) => void;
-}
+import css from "./InfiniteScroll.css?inline";
+
+const stylesheet = new CSSStyleSheet();
+stylesheet.replaceSync(css);
 
 export default class InfiniteScroll extends HTMLElement {
   public atEnd = false;
   private sentinel: HTMLElement;
-  private intersectionObserver: IntersectionObserver | null = null;
+  private intersectionObserver: IntersectionObserver;
 
   constructor() {
     super();
 
     const shadow = this.attachShadow({ mode: "closed" });
+    shadow.adoptedStyleSheets = [stylesheet];
+
     const slot = document.createElement("slot");
     this.sentinel = document.createElement("div");
+    this.sentinel.id = "sentinel";
     this.sentinel.ariaHidden = "true";
 
     shadow.append(slot, this.sentinel);
-  }
 
-  connectedCallback() {
     this.intersectionObserver = new IntersectionObserver(
       this.intersectionObserverCallback.bind(this),
       { threshold: 1 },
     );
+  }
+
+  connectedCallback() {
     this.intersectionObserver.observe(this.sentinel);
   }
 
   disconnectedCallback() {
-    this.intersectionObserver?.disconnect();
-    this.intersectionObserver = null;
+    this.intersectionObserver.disconnect();
   }
 
   private intersectionObserverCallback(entries: IntersectionObserverEntry[]) {
