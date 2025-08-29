@@ -9,6 +9,7 @@
     0 0 0 1px rgb(0 0 0 / 20%),
     0 4px 12px -4px rgb(0 0 0 / 30%);
   translate: 1px -12px;
+  z-index: 2;
 
   &::before {
     content: "";
