@@ -342,15 +342,15 @@ export async function createPage(
             position: 0,
             x: 0,
             y: 0,
-            width: 12,
-            height: 4,
+            width: 20,
+            height: 1,
+            block: true,
             text: {
               create: {
                 pageId: page.id,
                 content: [
                   {
-                    type: "heading",
-                    level: 1,
+                    type: "paragraph",
                     children: [],
                   },
                 ],
