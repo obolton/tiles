@@ -66,8 +66,8 @@ export async function createImageTile(
     pageId,
     sectionId,
     imageKey,
-    width: 8,
-    height: 8,
+    width: 12,
+    height: 12,
   });
   return { artifact };
 }
