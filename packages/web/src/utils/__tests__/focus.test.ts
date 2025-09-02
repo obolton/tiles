@@ -108,6 +108,17 @@ describe("focusInside", () => {
     expect(spy2).not.toHaveBeenCalled();
   });
 
+  test("focuses the container if there is no eligible descendant", () => {
+    const container = document.createElement("div");
+    const element = document.createElement("div");
+    container.append(element);
+    const spy1 = vi.spyOn(container, "focus");
+    const spy2 = vi.spyOn(element, "focus");
+    focusInside(container);
+    expect(spy1).toHaveBeenCalledOnce();
+    expect(spy2).not.toHaveBeenCalled();
+  });
+
   test("passes the focus options", () => {
     const options: FocusOptions = { preventScroll: true };
     const container = document.createElement("div");
