@@ -1,3 +1,4 @@
+import { keymap } from "prosemirror-keymap";
 import Tile from "./Tile";
 import RichText from "@/components/text/RichText";
 import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingToolbar";
@@ -29,6 +30,8 @@ export interface TableTileProps extends TableProperties {
   hasFocus: Reactive<boolean>;
   signal?: AbortSignal;
 }
+
+const KEY_MAP: Record<string, Command> = { Enter: () => true };
 
 function createDocument(text: string): RichTextType {
   return [{ type: "paragraph", children: [{ type: "text", format: 0, text }] }];
@@ -112,7 +115,7 @@ export default function TableTile({
       const value = columnId ? rows.value[row]?.data[columnId] : null;
       const content =
         typeof value === "string" ? createDocument(value) : (value ?? null);
-      const state = createState(content, [prompt(editor)]);
+      const state = createState(content, [keymap(KEY_MAP), prompt(editor)]);
       target.replaceChildren();
 
       const view = new EditorView(

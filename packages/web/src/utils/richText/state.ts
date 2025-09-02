@@ -8,7 +8,7 @@ export function createState(
   content: RichText | null,
   additionalPlugins: Plugin[] = [],
 ) {
-  const plugins = getPlugins().concat(additionalPlugins);
+  const plugins = additionalPlugins.concat(getPlugins());
   const config = content
     ? { doc: deserialize(content), plugins }
     : { schema, plugins };
