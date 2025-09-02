@@ -152,21 +152,10 @@ label:has(> input[type="checkbox"][role="switch"]) {
 }
 
 file-picker {
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
-  min-height: 160px;
-  background: rgb(0 0 0 / 5%);
-  border-radius: 24px;
-  font-weight: 500;
+  display: block;
+  cursor: pointer;
   outline: 3px solid transparent;
-  transition:
-    background-color var(--animation-duration) var(--easing),
-    outline-color var(--animation-duration) var(--easing);
-
-  &:hover {
-    background-color: rgb(0 0 0 / 15%);
-  }
+  transition: outline-color var(--animation-duration-short) var(--easing);
 
   &:focus,
   &:state(dragover) {

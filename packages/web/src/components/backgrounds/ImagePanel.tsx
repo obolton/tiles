@@ -1,6 +1,7 @@
 import { ACCEPT_IMAGE_TYPES } from "@/utils/media";
 import { handleError } from "@/utils/errors";
 import { uploadMedia } from "@/utils/media";
+import styles from "./ImagePanel.module.css";
 import type FilePicker from "@/elements/filePicker/FilePicker";
 import type { ImageBackground } from "./types";
 
@@ -21,6 +22,7 @@ export default function ImagePanel({ onChange }: ImagePanelProps) {
 
   return (
     <file-picker
+      className={styles.file}
       accept={Array.from(ACCEPT_IMAGE_TYPES).join(",")}
       tabindex="0"
       on:change={onSelectFile}
