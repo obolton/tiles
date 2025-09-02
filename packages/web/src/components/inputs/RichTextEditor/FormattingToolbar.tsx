@@ -20,6 +20,8 @@ import AIIcon from "@/icons/ai.svg?jsx";
 import ApproveIcon from "@/icons/approve.svg?jsx";
 import RejectIcon from "@/icons/reject.svg?jsx";
 import { registerModal, showModal } from "@/utils/modals";
+import { classNames } from "@/utils/css";
+import styles from "./FormattingToolbar.module.css";
 import type { DateTimeModalResult } from "@/components/modals/DateTimeModal";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { EditorView } from "prosemirror-view";
@@ -71,7 +73,7 @@ const LIST_ICON = {
   check: <CheckListIcon aria-hidden="true" slot="icon" />,
 } as const;
 
-interface FormattingToolbarProps {
+export interface FormattingToolbarProps {
   editor: Editor;
   format: Reactive<Format>;
   prompting: Reactive<boolean>;
@@ -168,7 +170,7 @@ export default function FormattingToolbar({
 
   return (
     <floating-toolbar
-      className="bottom-left"
+      className={classNames(styles.toolbar, "bottom-left")}
       aria-label="Formatting toolbar"
       data-tooltip-position="top"
     >
