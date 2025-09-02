@@ -1,12 +1,7 @@
-import css from "./FilePicker.css?inline";
 import { getAcceptableDragItem } from "@/utils/media";
-
-const stylesheet = new CSSStyleSheet();
-stylesheet.replaceSync(css);
 
 export interface FilePickerAttributes {
   accept?: string;
-  onchange?: (event: Event) => void;
 }
 
 export default class FilePicker extends HTMLElement {
@@ -14,7 +9,7 @@ export default class FilePicker extends HTMLElement {
     "accept",
   ] as const;
 
-  private internals: ElementInternals;
+  private readonly internals: ElementInternals;
 
   acceptContentTypes?: Set<string>;
   file?: File;
@@ -25,10 +20,6 @@ export default class FilePicker extends HTMLElement {
     this.internals = this.attachInternals();
 
     const shadow = this.attachShadow({ mode: "open", delegatesFocus: true });
-    shadow.adoptedStyleSheets = [stylesheet];
-
-    const label = document.createElement("label");
-    label.tabIndex = 0;
 
     const input = document.createElement("input");
     input.name = "file";
@@ -37,10 +28,9 @@ export default class FilePicker extends HTMLElement {
     input.addEventListener("change", this);
 
     const slot = document.createElement("slot");
-    label.append(input, slot);
+    shadow.append(input, slot);
 
-    shadow.appendChild(label);
-
+    this.addEventListener("click", this);
     this.addEventListener("keydown", this);
     this.addEventListener("dragover", this);
     this.addEventListener("dragleave", this);
@@ -49,7 +39,7 @@ export default class FilePicker extends HTMLElement {
 
   attributeChangedCallback(
     name: keyof FilePickerAttributes,
-    _: string,
+    _: string | null,
     value: string | null,
   ) {
     switch (name) {
@@ -71,6 +61,8 @@ export default class FilePicker extends HTMLElement {
 
   handleEvent(event: Event) {
     switch (event.type) {
+      case "click":
+        return this.handleClick(event as PointerEvent);
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
       case "change":
@@ -82,6 +74,11 @@ export default class FilePicker extends HTMLElement {
       case "drop":
         return this.handleDrop(event as DragEvent);
     }
+  }
+
+  private handleClick(event: PointerEvent) {
+    event.stopPropagation();
+    this.shadowRoot?.querySelector("input")?.click();
   }
 
   private handleKeyDown(event: KeyboardEvent) {
