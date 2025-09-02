@@ -252,16 +252,15 @@ export default class Editor {
     return section;
   }
 
-  async deleteTile(id: string, transition?: (commit: () => void) => void) {
+  async deleteTile(
+    id: string,
+    transition: TransitionFunction = immediateTransition,
+  ) {
     const result = await client.tiles.delete.mutate({
       pageId: this.pageId,
       id,
     });
-    if (transition) {
-      transition(() => this.removeTile(result.id));
-    } else {
-      this.removeTile(result.id);
-    }
+    transition(() => this.removeTile(result.id));
     return result;
   }
 
