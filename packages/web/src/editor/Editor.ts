@@ -4,6 +4,7 @@ import { preloadImage, uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
 import { Computed, reactive, flag, record } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
+import { focusInside } from "@/utils/focus";
 import { isEditMode } from "@/utils/edit";
 import { createState } from "@/utils/richText/state";
 import { prompt } from "@/utils/richText/prompt";
@@ -344,7 +345,7 @@ export default class Editor {
 
     const element = document.getElementById(tile.id);
     if (element) {
-      element.focus({ preventScroll: true });
+      focusInside(element, { preventScroll: true });
       scrollIntoViewIfNeeded(element, { behavior: "smooth" });
     }
   }
