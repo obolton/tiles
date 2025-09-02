@@ -221,9 +221,9 @@ time {
   white-space: nowrap;
 }
 
-.default-width {
-  margin: 0 auto;
-  width: var(--min-width);
+.centered {
+  margin: 48px auto;
+  width: 800px;
 }
 
 infinite-scroll {
