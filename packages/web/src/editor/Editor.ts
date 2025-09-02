@@ -8,6 +8,7 @@ import { focusInside } from "@/utils/focus";
 import { isEditMode } from "@/utils/edit";
 import { createState } from "@/utils/richText/state";
 import { prompt } from "@/utils/richText/prompt";
+import { viewTransition } from "@/utils/transitions";
 import type { FontId } from "@/config/fonts";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type {
@@ -341,13 +342,15 @@ export default class Editor {
   }
 
   addTile(tile: ClientTile) {
-    this.tiles.value = this.tiles.value.concat(getReactiveTile(tile));
-
-    const element = document.getElementById(tile.id);
-    if (element) {
-      focusInside(element, { preventScroll: true });
-      scrollIntoViewIfNeeded(element, { behavior: "smooth" });
-    }
+    viewTransition(() => {
+      this.tiles.value = this.tiles.value.concat(getReactiveTile(tile));
+    }).updateCallbackDone.then(() => {
+      const element = document.getElementById(tile.id);
+      if (element) {
+        focusInside(element, { preventScroll: true });
+        scrollIntoViewIfNeeded(element, { behavior: "smooth" });
+      }
+    });
   }
 
   removeTile(placementId: string) {
