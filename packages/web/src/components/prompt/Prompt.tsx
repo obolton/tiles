@@ -91,7 +91,7 @@ export default function Prompt({
         placeholder={placeholder}
         title={placeholder}
         required
-        disabled={pending}
+        readonly={pending}
         on:keydown={handleKeyDown}
       />
 
