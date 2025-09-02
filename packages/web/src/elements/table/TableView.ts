@@ -385,7 +385,7 @@ export default class TableView extends HTMLElement {
   }
 
   private handlePointerDown(event: PointerEvent) {
-    if (event.button !== PRIMARY_MOUSE_BUTTON) {
+    if (event.button !== PRIMARY_MOUSE_BUTTON || !this.allowSelection) {
       return;
     }
 
