@@ -1,11 +1,9 @@
 import Tile from "./Tile";
-import AddPlaceIcon from "@/icons/add-place.svg?jsx";
+import MapToolbar from "@/components/toolbars/maps/MapToolbar";
 import styles from "./MapTile.module.css";
-import { showModal } from "@/utils/modals";
 import type MapEvent from "@/elements/maps/MapEvent";
 import type MapView from "@/elements/maps/MapView";
 import type MapMarker from "@/elements/maps/MapMarker";
-import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
 import type { MapProperties } from "@/types/tiles";
@@ -28,14 +26,12 @@ export default function MapTile({
     mapView = element;
   };
 
-  const handleAddPlace = () =>
-    showModal<PlaceModalResult>("MAP", {
-      boundingBox: mapView?.getBoundingBox(),
-      async onConfirm({ place }) {
-        const result = await editor.addPlaces({ id, places: [place] });
-        places.value = result.places;
-      },
-    });
+  function getMapView() {
+    if (!mapView) {
+      throw new Error("Map is not initialized");
+    }
+    return mapView;
+  }
 
   const deleteMarker = async ({ markerId }: MapEvent) => {
     if (markerId) {
@@ -64,8 +60,22 @@ export default function MapTile({
     }
   };
 
+  const anchorName = `--map-${id}`;
+
   return (
-    <Tile border="inside">
+    <Tile border="inside" anchorName={anchorName}>
+      {hasFocus.derive((value) =>
+        value ? (
+          <MapToolbar
+            id={id}
+            editor={editor}
+            places={places}
+            getMapView={getMapView}
+            anchorName={anchorName}
+          />
+        ) : null,
+      )}
+
       <pop-out className={styles["pop-out"]}>
         <map-view
           ref={ref}
@@ -102,26 +112,6 @@ export default function MapTile({
             )),
           )}
         </map-view>
-
-        {hasFocus.derive((value) =>
-          value ? (
-            <floating-toolbar
-              data-tooltip-position="top"
-              aria-label="Map toolbar"
-            >
-              <button
-                role="menuitem"
-                type="button"
-                className="floating"
-                aria-label="Add place"
-                data-tooltip="Add a place"
-                onclick={handleAddPlace}
-              >
-                <AddPlaceIcon aria-hidden="true" />
-              </button>
-            </floating-toolbar>
-          ) : null,
-        )}
       </pop-out>
     </Tile>
   );
