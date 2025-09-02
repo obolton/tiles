@@ -7,6 +7,7 @@ import type { Color } from "@/utils/color";
 import type { Reactive } from "@/utils/reactivity";
 
 export interface ColorPickerProps {
+  id: string;
   value?: Reactive<Color | null>;
   onChange: (value: Color | null) => void;
   showClear?: boolean;
@@ -20,6 +21,7 @@ const HUES = 10;
 const START_HUE = 24;
 
 export default function ColorPicker({
+  id,
   value,
   onChange,
   showClear = false,
@@ -28,13 +30,15 @@ export default function ColorPicker({
     onChange(null);
   }
 
+  const popoverId = `${id}-popover`;
+
   return (
     <>
       <button
-        id="color-picker-button"
-        className={classNames("floating", styles.button)}
         type="button"
-        popovertarget="color-picker"
+        id={id}
+        className={classNames("floating", styles.button)}
+        popovertarget={popoverId}
         aria-label="Color"
         aria-haspopup="menu"
         aria-expanded="false"
@@ -44,9 +48,9 @@ export default function ColorPicker({
       </button>
 
       <popover-menu
-        id="color-picker"
+        id={popoverId}
         className={styles["color-picker"]}
-        anchor="color-picker-button"
+        anchor={id}
         align="center"
       >
         <ColorPalette
@@ -66,7 +70,7 @@ export default function ColorPicker({
             className={classNames("floating", styles.clear)}
             aria-label="Clear"
             data-tooltip="Clear"
-            onclick={clearColor}
+            on:click={clearColor}
           >
             <ClearColorIcon aria-hidden="true" />
           </button>

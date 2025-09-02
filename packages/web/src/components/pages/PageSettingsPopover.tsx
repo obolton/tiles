@@ -106,7 +106,11 @@ export default function PageSettingsPopover({
         </li>
 
         <li role="presentation">
-          <ColorPicker value={color} onChange={setColor} />
+          <ColorPicker
+            id="page-color-picker"
+            value={color}
+            onChange={setColor}
+          />
         </li>
 
         <li role="presentation" className={styles.trailing}>

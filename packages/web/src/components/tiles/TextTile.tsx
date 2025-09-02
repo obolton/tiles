@@ -129,7 +129,11 @@ export default function TextTile({
         extraToolbarItems={
           <ul role="group">
             <li role="presentation">
-              <ColorPicker value={textColor} onChange={onChangeTextColor} />
+              <ColorPicker
+                id={`${id}-color-picker`}
+                value={textColor}
+                onChange={onChangeTextColor}
+              />
             </li>
           </ul>
         }
