@@ -53,6 +53,12 @@ a.secondary {
     height: 20px;
     fill: currentcolor;
   }
+
+  &.small {
+    font-size: 16px;
+    height: 36px;
+    padding: 0 16px;
+  }
 }
 
 button.primary,

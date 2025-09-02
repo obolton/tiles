@@ -73,7 +73,7 @@ export default function DeletedPagesGrid({
         results={pages}
         hasMore={hasMore}
         placeholder={inputPlaceholder}
-        render={(page) => <DeletedPage {...page} />}
+        render={(page) => <DeletedPage workspaceId={workspaceId} {...page} />}
         renderPlaceholder={renderPlaceholder}
       />
     </>
