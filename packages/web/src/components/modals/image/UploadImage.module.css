@@ -1,5 +1,17 @@
 .file {
-  border-radius: var(--border-radius);
+  text-align: center;
+  align-content: center;
+  min-height: 160px;
+  font-weight: 500;
+  background: rgb(0 0 0 / 5%);
+  border-radius: 24px;
+  transition:
+    background-color var(--animation-duration-short) var(--easing),
+    outline-color var(--animation-duration-short) var(--easing);
+
+  &:hover {
+    background-color: rgb(0 0 0 / 10%);
+  }
 }
 
 .image {

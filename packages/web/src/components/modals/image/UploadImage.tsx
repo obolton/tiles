@@ -1,7 +1,6 @@
 import { ACCEPT_IMAGE_TYPES } from "@/utils/media";
 import ModalBody from "../ModalBody";
 import ModalFooter from "../ModalFooter";
-import Placeholder from "@/components/placeholder/Placeholder";
 import styles from "./UploadImage.module.css";
 import { ReactiveValue } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
@@ -63,11 +62,11 @@ export default function UploadImage({
             url ? (
               <img
                 className={styles.image}
-                src={imageUrl}
+                src={url}
                 alt={file.value?.name ?? ""}
               />
             ) : (
-              <Placeholder>Select an image or drag and drop</Placeholder>
+              <p>Select an image or drag and drop</p>
             ),
           )}
         </file-picker>
