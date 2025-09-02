@@ -116,6 +116,7 @@ export default class LayoutEditor {
   }
 
   private updateLayoutInfo() {
+    // Calculate row heights without placeholder
     if (this.dragPlaceholder) {
       this.dragPlaceholder.style.display = "none";
     }
@@ -139,11 +140,11 @@ export default class LayoutEditor {
       top += height + this.gridRowGap;
     }
 
-    this.gridRect = this.grid.getBoundingClientRect();
-
     if (this.dragPlaceholder) {
       this.dragPlaceholder.style.display = "";
     }
+
+    this.gridRect = this.grid.getBoundingClientRect();
   }
 
   private getGridRow(offsetY: number) {
