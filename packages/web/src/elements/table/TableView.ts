@@ -147,7 +147,7 @@ export default class TableView extends HTMLElement {
     this.addEventListener("keydown", this);
     this.addEventListener("pointerdown", this);
     this.addEventListener("pointerup", this, { passive: true });
-    this.addEventListener("dnd-dragstart", this, { passive: true });
+    this.addEventListener("dnd-dragstart", this);
     this.addEventListener("dnd-dragend", this);
     this.addEventListener("dnd-dragenter", this);
     this.addEventListener("dnd-dragover", this);
@@ -530,7 +530,11 @@ export default class TableView extends HTMLElement {
     const element = event.state.element;
 
     if (element.tagName === "TH") {
-      this.dataset.drop = "true";
+      if (this.allowSelection) {
+        this.dataset.drop = "true";
+      } else {
+        event.preventDefault();
+      }
     }
   }
 
