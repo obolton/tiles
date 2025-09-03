@@ -98,6 +98,25 @@ export function toggleHeading(level: 1 | 2 | 3): Command {
   };
 }
 
+export const resetBlockFormat: Command = (state, dispatch) => {
+  const tr = state.tr;
+  const selection = tr.selection;
+  for (const range of selection.ranges) {
+    tr.setBlockType(
+      range.$from.pos,
+      range.$to.pos,
+      schema.nodes.paragraph,
+      (oldNode) => ({
+        align: oldNode.attrs.align as TextAlignment | undefined,
+      }),
+    );
+  }
+  if (dispatch) {
+    dispatch(tr);
+  }
+  return true;
+};
+
 const listNodeTypes = new Set([
   schema.nodes.ordered_list,
   schema.nodes.unordered_list,
