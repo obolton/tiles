@@ -18,7 +18,8 @@ export interface PromptMeta {
 
 function getElement(editor: Editor, view: EditorView) {
   function removePrompt() {
-    void element
+    const prompt = element.firstElementChild! as HTMLFormElement;
+    void prompt
       .animate([{ opacity: 0 }], SPRING)
       .finished.finally(() =>
         view.dispatch(view.state.tr.setMeta(PROMPT_PLUGIN_KEY, { pos: null })),
@@ -59,10 +60,11 @@ function getElement(editor: Editor, view: EditorView) {
   ) as HTMLElement;
 
   requestAnimationFrame(() => {
-    element.querySelector("textarea")?.focus();
-
-    const style = getComputedStyle(element);
-    element.animate(
+    const prompt = element.firstElementChild! as HTMLFormElement;
+    prompt.showPopover();
+    prompt.querySelector("textarea")?.focus();
+    const style = getComputedStyle(prompt);
+    prompt.animate(
       [
         { width: 0, opacity: 0 },
         { width: style.width, opacity: 1 },

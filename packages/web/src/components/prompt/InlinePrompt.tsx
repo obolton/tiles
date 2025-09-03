@@ -4,7 +4,7 @@ import styles from "./InlinePrompt.module.css";
 export default function InlinePrompt(props: PromptProps) {
   return (
     <div className={styles.container}>
-      <Prompt {...props} className={styles.prompt} />
+      <Prompt {...props} className={styles.prompt} popover="manual" />
     </div>
   );
 }

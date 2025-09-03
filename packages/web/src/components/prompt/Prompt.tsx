@@ -4,8 +4,9 @@ import { flag } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import { classNames } from "@/utils/css";
 import styles from "./Prompt.module.css";
+import type { JSX } from "@/jsx/jsx";
 
-export interface PromptProps {
+export interface PromptProps extends JSX.Attributes<HTMLFormElement> {
   className?: string;
   placeholder?: string;
   submitTooltip?: string;
@@ -19,6 +20,7 @@ export default function Prompt({
   submitTooltip = "Done",
   onSubmit,
   onCancel,
+  ...props
 }: PromptProps) {
   const pending = flag(false);
 
@@ -81,6 +83,7 @@ export default function Prompt({
 
   return (
     <form
+      {...props}
       className={classNames(styles.prompt, className)}
       on:submit={handleSubmit}
       on:focusout={handleFocusOut}

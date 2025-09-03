@@ -1,22 +1,15 @@
 .container {
   position: absolute;
   display: inline-block;
-  width: 520px;
-  background: var(--ui-background-color);
-  backdrop-filter: blur(24px);
-  border-radius: 12px;
-  box-shadow:
-    0 0 0 1px rgb(0 0 0 / 20%),
-    0 4px 12px -4px rgb(0 0 0 / 30%);
-  translate: 1px -12px;
-  z-index: 2;
+  width: 0;
+  height: 1lh;
 
   &::before {
     content: "";
     position: absolute;
-    inset: 12px auto auto -2px;
+    translate: -1px 0;
+    inset: 2px auto 2px 0;
     width: 3px;
-    height: 1lh;
     border-radius: 1.5px;
     background: currentcolor;
     z-index: 1;
@@ -24,6 +17,15 @@
 }
 
 .prompt {
+  width: 520px;
+  background: var(--ui-background-color);
+  backdrop-filter: blur(24px);
+  border-radius: 12px;
+  translate: -1px 0;
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 20%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
+
   & > textarea {
     font-size: 18px;
     outline: none;
@@ -32,5 +34,18 @@
   & > button {
     inset: 0 0 auto auto;
     margin: 10px;
+  }
+}
+
+@supports (anchor-name: --anchor) {
+  .container::before {
+    anchor-name: --prompt-caret;
+  }
+
+  .prompt {
+    position: fixed;
+    position-anchor: --prompt-caret;
+    position-area: center inline-end;
+    position-try: flip-inline;
   }
 }
