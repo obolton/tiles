@@ -20,8 +20,13 @@ export default class FloatingToolbar extends HTMLElement {
   }
 
   private handlePointerDown(event: PointerEvent) {
-    // Prevent toolbar buttons from stealing focus
-    if (event.target instanceof HTMLButtonElement) {
+    const { target } = event;
+
+    // Prevent toolbar controls from stealing focus
+    if (
+      target instanceof Element &&
+      (target.tagName === "BUTTON" || target.tagName === "SWATCH-SELECT")
+    ) {
       event.preventDefault();
     }
 

@@ -32,6 +32,7 @@ button {
     width: 24px;
     height: 24px;
     filter: drop-shadow(0 1px 1px rgb(0 0 0 / 10%));
+    pointer-events: none;
     transition-duration: var(--animation-duration);
     transition-timing-function: var(--spring);
     transition-property: opacity, scale, rotate;
