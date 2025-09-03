@@ -16,42 +16,6 @@ export function createAnimationPromise(animation: Animation) {
   });
 }
 
-export function destroy(
-  element: Element,
-  { timing = DEFAULT_TIMING }: { timing: EffectTiming } = {
-    timing: DEFAULT_TIMING,
-  },
-) {
-  const rect = element.getBoundingClientRect();
-  const clone = element.cloneNode(true) as HTMLElement;
-  clone.style.setProperty("position", "fixed");
-  clone.style.setProperty("top", `${rect.top}px`);
-  clone.style.setProperty("left", `${rect.left}px`);
-  clone.style.setProperty("width", `${rect.width}px`);
-  clone.style.setProperty("height", `${rect.height}px`);
-  clone.style.setProperty("z-index", "-1");
-  clone.querySelectorAll("[popover]").forEach((popover) => popover.remove());
-  document.body.appendChild(clone);
-  const animation = clone.animate(
-    [
-      {
-        opacity: 1,
-        scale: 1,
-        filter: "blur(0)",
-      },
-      {
-        opacity: 0,
-        scale: 0.3,
-        filter: "blur(5px)",
-      },
-    ],
-    timing,
-  );
-  const promise = createAnimationPromise(animation);
-  promise.finally(() => clone.remove());
-  return promise;
-}
-
 export function move(
   element: Element,
   {
