@@ -301,6 +301,9 @@ export default function FormattingToolbar({
           <swatch-select
             role="menuitem"
             aria-label="List"
+            aria-selected={format.derive((value) =>
+              value.list ? "true" : undefined,
+            )}
             data-tooltip="List"
             orientation="horizontal"
             align="center"
