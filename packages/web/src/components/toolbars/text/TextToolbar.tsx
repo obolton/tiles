@@ -64,10 +64,26 @@ export default function TextToolbar({
   }
 
   function toggleBlock() {
+    let height: number | undefined = undefined;
+
+    // Update the height value when changing from block layout
+    if (block.value) {
+      const element = document.getElementById(id);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        const rowHeight = parseFloat(
+          style.getPropertyValue("--grid-row-height"),
+        );
+        height = Math.ceil(rect.height / rowHeight);
+      }
+    }
+
     editor
       .positionTile({
         id: placementId,
         block: !block.value,
+        height,
       })
       .catch(handleError);
   }
