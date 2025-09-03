@@ -44,11 +44,10 @@ export default function Modal({ children, onClose, open }: ModalProps) {
 
   return (
     <dialog
-      popover="auto"
       ref={ref}
       className={styles.modal}
-      onkeydown={keyDown}
-      onclick={onClick}
+      on:keydown={keyDown}
+      on:click={onClick}
     >
       {children}
     </dialog>

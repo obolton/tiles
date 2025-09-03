@@ -25,10 +25,11 @@
 }
 
 .modal::backdrop {
-  background: rgba(0 0 0 / 40%);
+  background: rgb(0 0 0 / 30%);
   animation-duration: var(--animation-duration-short);
   animation-timing-function: var(--easing);
   animation-fill-mode: both;
+  backdrop-filter: blur(5px);
 }
 
 .modal[open] {
@@ -120,23 +121,19 @@
 @keyframes overlay-appear {
   from {
     opacity: 0;
-    backdrop-filter: blur(0);
   }
 
   to {
     opacity: 1;
-    backdrop-filter: blur(5px);
   }
 }
 
 @keyframes overlay-disappear {
   from {
     opacity: 1;
-    backdrop-filter: blur(5px);
   }
 
   to {
     opacity: 0;
-    backdrop-filter: blur(0);
   }
 }
