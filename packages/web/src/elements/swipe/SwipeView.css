@@ -40,29 +40,27 @@
   }
 }
 
-::slotted(*) {
-  margin: 0 !important;
-}
-
 #buttons {
   position: absolute;
-  top: calc(50% - 24px);
-  left: -32px;
+  inset-block-start: calc(50% - 24px);
+  inset-inline-start: -48px;
   width: 24px;
   height: 48px;
+  margin: 0 12px;
   display: flex;
   flex-direction: column;
-  transition: scale var(--animation-duration-short) var(--easing);
   background: var(--ui-background-color);
   backdrop-filter: blur(24px);
   border-radius: 12px;
   overflow: hidden;
+  scale: 0.9;
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 15%),
     0 4px 12px -4px rgb(0 0 0 / 30%);
+  transition: scale var(--animation-duration-short) var(--easing);
 
   &:hover {
-    scale: 1.1;
+    scale: 1;
   }
 
   & > button {
@@ -70,7 +68,7 @@
     margin: 0;
     flex: 1;
     display: flex;
-    align-items: end;
+    align-items: center;
     justify-content: center;
     appearance: none;
     border: none;
@@ -83,7 +81,7 @@
       fill: var(--icon-color);
       opacity: 1;
       pointer-events: none;
-      transition: opacity var(--animation-duration) var(--easing);
+      transition: opacity var(--animation-duration-short) var(--easing);
     }
 
     &:enabled {
@@ -91,17 +89,34 @@
     }
 
     &:enabled:hover {
-      background-color: rgb(255 255 255 / 40%);
+      background-color: rgb(0 0 0 / 5%);
     }
 
     &:enabled:active {
-      background-color: rgb(255 255 255 / 30%);
+      background-color: rgb(0 0 0 / 10%);
     }
 
-    &:disabled {
-      & > svg {
-        opacity: 0.25;
-      }
+    &:disabled > svg {
+      opacity: 0.25;
     }
+  }
+}
+
+::slotted(*) {
+  margin: 0 !important;
+}
+
+@supports (anchor-name: --anchor) {
+  #carousel {
+    anchor-name: --carousel;
+  }
+
+  #buttons {
+    position: fixed;
+    inset-block-start: auto;
+    inset-inline-start: auto;
+    position-anchor: --carousel;
+    position-area: center inline-start;
+    position-try: flip-inline;
   }
 }
