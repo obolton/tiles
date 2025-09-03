@@ -1,6 +1,7 @@
 import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
 import H3Icon from "@/icons/h3.svg?jsx";
+import ParagraphIcon from "@/icons/paragraph.svg?jsx";
 import BoldIcon from "@/icons/bold.svg?jsx";
 import ItalicIcon from "@/icons/italic.svg?jsx";
 import UnderlineIcon from "@/icons/underline.svg?jsx";
@@ -37,6 +38,7 @@ import {
   toggleOrderedList,
   toggleUnorderedList,
   toggleCheckList,
+  resetBlockFormat,
   addLink,
   removeLink,
   setAlignment,
@@ -54,12 +56,12 @@ import type Editor from "@/editor/Editor";
 
 registerModal("DATE_TIME", () => import("@/components/modals/DateTimeModal"));
 
-const HEADING_ICON = [
-  null,
-  <H1Icon aria-hidden="true" slot="icon" />,
-  <H2Icon aria-hidden="true" slot="icon" />,
-  <H3Icon aria-hidden="true" slot="icon" />,
-] as const;
+const BLOCK_FORMAT_ICON = {
+  paragraph: <ParagraphIcon aria-hidden="true" slot="icon" />,
+  h1: <H1Icon aria-hidden="true" slot="icon" />,
+  h2: <H2Icon aria-hidden="true" slot="icon" />,
+  h3: <H3Icon aria-hidden="true" slot="icon" />,
+} as const;
 
 const ALIGN_ICON = {
   left: <AlignLeftIcon aria-hidden="true" slot="icon" />,
@@ -100,13 +102,15 @@ export default function FormattingToolbar({
 
   const formatHeading = (event: Event) => {
     switch ((event.currentTarget as SwatchSelect).value) {
-      default:
       case "1":
         return performCommand(toggleHeading(1));
       case "2":
         return performCommand(toggleHeading(2));
       case "3":
         return performCommand(toggleHeading(3));
+      case "":
+      default:
+        return performCommand(resetBlockFormat);
     }
   };
 
@@ -262,7 +266,7 @@ export default function FormattingToolbar({
               typeof value.headingLevel === "number" ? "true" : undefined,
             )}
             data-tooltip="Heading"
-            orientation="horizontal"
+            orientation="vertical"
             align="center"
             value={format.derive((value) =>
               typeof value.headingLevel === "number"
@@ -271,17 +275,25 @@ export default function FormattingToolbar({
             )}
             on:change={formatHeading}
           >
-            {format.derive((value) => HEADING_ICON[value.headingLevel ?? 1])}
+            {format.derive(
+              (value) =>
+                BLOCK_FORMAT_ICON[
+                  typeof value.headingLevel === "number"
+                    ? (`h${value.headingLevel}` as "h1" | "h2" | "h3")
+                    : "paragraph"
+                ],
+            )}
 
-            <swatch-item value="1" data-tooltip="Heading level 1">
-              <H1Icon aria-hidden="true" />
+            <swatch-item className={styles.h1} value="1">
+              Heading 1
             </swatch-item>
-            <swatch-item value="2" data-tooltip="Heading level 2">
-              <H2Icon aria-hidden="true" />
+            <swatch-item className={styles.h2} value="2">
+              Heading 2
             </swatch-item>
-            <swatch-item value="3" data-tooltip="Heading level 3">
-              <H3Icon aria-hidden="true" />
+            <swatch-item className={styles.h3} value="3">
+              Heading 3
             </swatch-item>
+            <swatch-item value="">Paragraph</swatch-item>
           </swatch-select>
         </li>
 
