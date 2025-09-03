@@ -1,8 +1,7 @@
 import { handleError } from "@/utils/errors";
-import { layoutTransition } from "@/utils/animation/layout";
-import { destroy, DEFAULT_TIMING } from "@/utils/animation/effects";
 import { focusInside } from "@/utils/focus";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
+import { viewTransition } from "@/utils/transitions";
 import type Editor from "@/editor/Editor";
 import type { DragDropEvent } from "@/utils/drag";
 import type { TileResizeEvent, TileEvent } from "@/utils/events";
@@ -452,21 +451,15 @@ export default class LayoutEditor {
 
     try {
       await this.editor.deleteTile(id, (commit) => {
-        if (target) {
-          void destroy(target, {
-            timing: { ...DEFAULT_TIMING, fill: "forwards" },
-          });
-          void layoutTransition(commit);
-        } else {
-          commit();
-        }
+        target.style.viewTransitionClass = "destroy";
+        viewTransition(commit).updateCallbackDone.then(() => {
+          // Move focus to sibling
+          if (sibling instanceof HTMLElement) {
+            focusInside(sibling, { preventScroll: true });
+            scrollIntoViewIfNeeded(sibling, { behavior: "smooth" });
+          }
+        });
       });
-
-      // Move focus to sibling
-      if (sibling instanceof HTMLElement) {
-        focusInside(sibling, { preventScroll: true });
-        scrollIntoViewIfNeeded(sibling, { behavior: "smooth" });
-      }
     } catch (error) {
       handleError(error);
     }

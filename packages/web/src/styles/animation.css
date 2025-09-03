@@ -34,3 +34,15 @@
 pop-out::part(close) {
   view-transition-name: close-button;
 }
+
+::view-transition-old(.destroy) {
+  animation-name: destroy;
+}
+
+@keyframes destroy {
+  to {
+    opacity: 0;
+    scale: 0.5;
+    filter: blur(16px);
+  }
+}
