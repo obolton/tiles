@@ -24,7 +24,7 @@ export default class ThemeSelector extends HTMLElement {
 
   readonly contents: HTMLElement;
 
-  private internals: ElementInternals;
+  private readonly internals: ElementInternals;
   private swipe: SwipeView | null = null;
 
   constructor() {
@@ -54,6 +54,11 @@ export default class ThemeSelector extends HTMLElement {
     if (this.getItem) {
       this.replaceChildren(this.getItem(this.value, this.contents));
     }
+    document.addEventListener("selectionchange", this, { passive: true });
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener("selectionchange", this);
   }
 
   attributeChangedCallback(
@@ -100,28 +105,18 @@ export default class ThemeSelector extends HTMLElement {
     switch (event.type) {
       case "pointerdown":
         return this.handlePointerDown();
-      case "click":
-        return this.handleClick(event as MouseEvent);
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
       case "change":
         return this.handleChange();
+      case "selectionchange":
+        return this.handleSelectionChange();
     }
   }
 
   private handlePointerDown() {
     if (!this.open) {
       this.show();
-    }
-  }
-
-  private handleClick(event: MouseEvent) {
-    if (
-      this.open &&
-      event.target instanceof Element &&
-      !this.contains(event.target)
-    ) {
-      this.hide();
     }
   }
 
@@ -160,6 +155,17 @@ export default class ThemeSelector extends HTMLElement {
     this.dispatchEvent(new Event("change"));
   }
 
+  private handleSelectionChange() {
+    const selection = document.getSelection();
+    const anchor = selection?.anchorNode ?? null;
+
+    if (this.open && !this.contains(anchor)) {
+      this.hide();
+    } else if (!this.open && this.contains(anchor)) {
+      this.show();
+    }
+  }
+
   private getLiveItem(index: number) {
     if (!this.getItem) {
       throw new Error("getItem is not provided");
@@ -188,7 +194,6 @@ export default class ThemeSelector extends HTMLElement {
 
     this.replaceChildren(swipe);
 
-    addEventListener("click", this, { passive: true });
     addEventListener("keydown", this);
   }
 
@@ -202,7 +207,6 @@ export default class ThemeSelector extends HTMLElement {
 
     this.replaceChildren(this.getLiveItem(this.value));
 
-    removeEventListener("click", this);
     removeEventListener("keydown", this);
   }
 }
