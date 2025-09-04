@@ -611,8 +611,9 @@ export default class Editor {
     y,
     width,
     height,
+    block,
   }: OmitPageId<AppRouterInputs["tiles"]["update"]>) {
-    const tile = this.tiles.value.find((entry) => entry.id === id);
+    const tile = this.tiles.value.find((entry) => entry.placementId === id);
     if (tile) {
       if (typeof x === "number") {
         tile.x.value = x;
@@ -625,6 +626,9 @@ export default class Editor {
       }
       if (typeof height === "number") {
         tile.height.value = height;
+      }
+      if (typeof block === "boolean") {
+        tile.block.value = block;
       }
     }
   }

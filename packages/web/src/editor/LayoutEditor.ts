@@ -23,6 +23,13 @@ interface RowLayout {
   height: number;
 }
 
+interface ItemSize {
+  id: string;
+  width: number;
+  height: number;
+  block?: boolean;
+}
+
 export default class LayoutEditor {
   readonly editor: Editor;
   readonly sectionId: string;
@@ -38,8 +45,7 @@ export default class LayoutEditor {
   private gridRowGap = 0;
   private x = 0;
   private y = 0;
-  private width = 0;
-  private height = 0;
+  private size: ItemSize | null = null;
   private idForPoint?: string | null;
   private dragPlaceholder: HTMLElement | null = null;
 
@@ -359,9 +365,7 @@ export default class LayoutEditor {
   // Resize
 
   private handleResizeStart(event: TileResizeEvent) {
-    const { width, height, target } = event;
-
-    if (!(target instanceof HTMLElement)) {
+    if (!(event.target instanceof HTMLElement)) {
       return;
     }
 
@@ -369,52 +373,55 @@ export default class LayoutEditor {
 
     this.updateLayoutInfo();
 
-    this.width = Math.max(
+    const id = event.target.dataset.placementId ?? "";
+    const width = Math.max(
       Math.round(
-        (width + this.gridColumnGap) /
+        (event.width + this.gridColumnGap) /
           (this.gridColumnWidth + this.gridColumnGap),
       ),
       1,
     );
-    this.height = Math.round(height / this.gridRowMinHeight);
+    const height = Math.max(
+      Math.round(event.height / this.gridRowMinHeight),
+      1,
+    );
+    this.size = { id, width: width, height: height };
 
     document.body.dataset.resize = "true";
   }
 
   private handleResize(event: TileResizeEvent) {
-    const { target, defaultPrevented, width, height } = event;
-    if (defaultPrevented || !(target instanceof HTMLElement)) {
+    if (event.defaultPrevented || !this.size) {
       return;
     }
 
     event.preventDefault();
     event.stopPropagation();
 
-    const id = target.id;
-    const newWidth = Math.max(
+    const width = Math.max(
       Math.round(
-        (width + this.gridColumnGap) /
+        (event.width + this.gridColumnGap) /
           (this.gridColumnWidth + this.gridColumnGap),
       ),
       1,
     );
-    const newHeight = Math.round(height / this.gridRowMinHeight);
+    const height = Math.max(
+      Math.round(event.height / this.gridRowMinHeight),
+      1,
+    );
+    const block = height !== this.size.height ? false : this.size.block;
 
-    if (newWidth !== this.width || newHeight != this.height) {
-      this.editor.positionTilePreview({
-        id,
-        width: newWidth,
-        height: newHeight,
-      });
+    if (width !== this.size.width || height !== this.size.height) {
+      this.size.width = width;
+      this.size.height = height;
+      this.size.block = block;
+
+      this.editor.positionTilePreview(this.size);
     }
-
-    this.width = newWidth;
-    this.height = newHeight;
   }
 
   private async handleResizeEnd(event: TileResizeEvent) {
-    const { target, defaultPrevented } = event;
-    if (defaultPrevented || !(target instanceof HTMLElement)) {
+    if (event.defaultPrevented || !this.size) {
       return;
     }
 
@@ -423,16 +430,13 @@ export default class LayoutEditor {
 
     delete document.body.dataset.resize;
 
-    const id = target.dataset.placementId ?? "";
     try {
-      await this.editor.positionTile({
-        id,
-        width: this.width,
-        height: this.height,
-      });
+      await this.editor.positionTile(this.size);
     } catch (error) {
       handleError(error);
     }
+
+    this.size = null;
   }
 
   // Delete
