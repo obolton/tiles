@@ -171,10 +171,13 @@ export default class ThemeSelector extends HTMLElement {
       throw new Error("getItem is not provided");
     }
 
-    return this.getItem(
-      index,
-      index === this.value ? this.contents : this.contents.cloneNode(true),
-    );
+    if (index === this.value) {
+      return this.getItem(index, this.contents);
+    } else {
+      const element = this.contents.cloneNode(true) as HTMLElement;
+      element.contentEditable = "false";
+      return this.getItem(index, element);
+    }
   }
 
   private show() {

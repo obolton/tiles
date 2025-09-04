@@ -344,24 +344,34 @@ export default class SwipeView extends HTMLElement {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    if (
-      event.repeat ||
-      event.shiftKey ||
-      event.ctrlKey ||
-      event.altKey ||
-      event.metaKey
-    ) {
+    if (event.repeat || event.shiftKey || event.ctrlKey || event.metaKey) {
       return;
     }
 
     if (event.key === "ArrowUp") {
       event.preventDefault();
-      event.stopPropagation();
-      this.previous();
-    } else if (event.key === "ArrowDown") {
+
+      if (event.altKey) {
+        this.previous();
+      } else {
+        document
+          .getSelection()
+          ?.modify(event.shiftKey ? "extend" : "move", "backward", "line");
+      }
+      return;
+    }
+
+    if (event.key === "ArrowDown") {
       event.preventDefault();
-      event.stopPropagation();
-      this.next();
+
+      if (event.altKey) {
+        this.next();
+      } else {
+        document
+          .getSelection()
+          ?.modify(event.shiftKey ? "extend" : "move", "forward", "line");
+      }
+      return;
     }
   }
 }
