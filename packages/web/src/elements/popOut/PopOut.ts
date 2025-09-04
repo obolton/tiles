@@ -16,10 +16,8 @@ export default class PopOut extends HTMLElement {
   ] as const;
 
   protected readonly internals: ElementInternals;
-  protected readonly container: HTMLElement;
   protected readonly contents: HTMLElement;
   private closeButton: HTMLButtonElement | null = null;
-  private focusTarget: HTMLElement | null = null;
   private resizeObserver: ResizeObserver;
 
   #disabled = true;
@@ -56,29 +54,22 @@ export default class PopOut extends HTMLElement {
     const shadow = this.attachShadow({ mode: "open" });
     shadow.adoptedStyleSheets = [stylesheet];
 
-    this.container = document.createElement("div");
-    this.container.id = "container";
-    this.container.popover = "manual";
-    this.container.setAttribute("part", "container");
-
     this.contents = document.createElement("div");
     this.contents.id = "contents";
     this.contents.setAttribute("part", "contents");
     this.contents.append(document.createElement("slot"));
-    this.container.append(this.contents);
+    shadow.append(this.contents);
 
     this.resizeObserver = new ResizeObserver(
       this.resizeObserverCallback.bind(this),
     );
-
-    shadow.append(this.container);
   }
 
   connectedCallback() {
     if (!this.hasAttribute("disabled")) {
       this.enable();
     }
-    this.resizeObserver.observe(this.container);
+    this.resizeObserver.observe(this.contents);
   }
 
   disconnectedCallback() {
@@ -104,8 +95,6 @@ export default class PopOut extends HTMLElement {
         return this.handlePointerDown(event as PointerEvent);
       case "click":
         return this.handleClick(event as PointerEvent);
-      case "focusin":
-        return this.handleFocusIn(event as FocusEvent);
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
     }
@@ -123,14 +112,12 @@ export default class PopOut extends HTMLElement {
     this.#disabled = false;
     this.addEventListener("pointerdown", this);
     this.addEventListener("keydown", this);
-    this.container.addEventListener("focusin", this);
   }
 
   private disable() {
     this.#disabled = true;
     this.removeEventListener("pointerdown", this);
     this.removeEventListener("keydown", this);
-    this.container.removeEventListener("focusin", this);
 
     if (this.isOpen) {
       this.close();
@@ -159,31 +146,27 @@ export default class PopOut extends HTMLElement {
       }
     } else if (!this.isOpen && this.isOverflowing) {
       event.stopPropagation();
-      event.preventDefault();
-      setTimeout(() => this.open(), 0);
+      this.open();
     }
   }
 
   private handleClick(event: PointerEvent) {
-    const { currentTarget } = event;
-
-    if (currentTarget === this.closeButton) {
+    if (event.currentTarget === this.closeButton) {
       event.stopPropagation();
       this.close();
     }
   }
 
-  private handleFocusIn(event: FocusEvent) {
-    if (!this.isTransitioning && event.target instanceof HTMLElement) {
-      this.focusTarget = event.target;
-    }
-  }
-
   private handleKeyDown(event: KeyboardEvent) {
-    if (event.key === "Escape" && this.isOpen) {
+    if (event.key === "Escape" && !event.defaultPrevented && this.isOpen) {
       event.preventDefault();
       this.close();
-    } else if (event.key === "Enter" && !this.isOpen && this.isOverflowing) {
+    } else if (
+      event.key === "Enter" &&
+      !event.defaultPrevented &&
+      !this.isOpen &&
+      this.isOverflowing
+    ) {
       event.preventDefault();
       this.open();
     }
@@ -202,7 +185,7 @@ export default class PopOut extends HTMLElement {
     button.innerHTML = closeIcon;
     button.addEventListener("click", this);
     button.addEventListener("pointerdown", this);
-    this.container.append(button);
+    this.contents.append(button);
     this.closeButton = button;
   }
 
@@ -228,33 +211,15 @@ export default class PopOut extends HTMLElement {
       return;
     }
 
-    const rect = this.container.getBoundingClientRect();
+    const rect = this.contents.getBoundingClientRect();
     this.internals.states.add("transitioning");
 
     void viewTransition(() => {
       this.internals.states.add("open");
 
-      this.container.style.left = rect.left + "px";
-      this.container.style.minWidth = rect.width + "px";
-      this.container.style.minHeight = rect.height + "px";
-      this.container.showPopover();
+      this.contents.style.minWidth = rect.width + "px";
+      this.contents.style.minHeight = rect.height + "px";
       this.showCloseButton();
-
-      // Fix popover ordering
-      const popovers = document.querySelectorAll<HTMLElement>(
-        "[popover]:popover-open",
-      );
-      popovers.forEach((popover) => {
-        popover.hidePopover();
-        popover.showPopover();
-      });
-
-      if (this.focusTarget) {
-        this.focusTarget?.focus();
-        this.focusTarget = null;
-      } else {
-        this.querySelector<HTMLElement>("[tabindex]")?.focus();
-      }
 
       this.dispatchEvent(
         new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
@@ -287,10 +252,8 @@ export default class PopOut extends HTMLElement {
 
     void viewTransition(() => {
       this.internals.states.delete("open");
-      this.container.style.left = "";
-      this.container.style.minWidth = "";
-      this.container.style.minHeight = "";
-      this.container.hidePopover();
+      this.contents.style.minWidth = "";
+      this.contents.style.minHeight = "";
       this.hideCloseButton();
 
       this.dispatchEvent(

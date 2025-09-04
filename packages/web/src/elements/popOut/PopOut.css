@@ -56,51 +56,34 @@
     width: 24px;
     height: 24px;
     fill: var(--icon-color);
-    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 10%));
     pointer-events: none;
-  }
-}
-
-#container {
-  display: block;
-  position: static;
-  width: 100%;
-  height: auto;
-  margin: 0;
-  padding: 0;
-  outline: none;
-  color: inherit;
-  border: none;
-  background: none;
-  overflow: clip;
-  border-radius: inherit;
-
-  &:popover-open {
-    --border-radius: 12px;
-
-    position: fixed;
-    inset: auto;
-    top: 48px;
-    width: auto;
-    height: auto;
-    max-width: clamp(100px, 80vw, var(--max-width));
-    margin: 0;
-    overflow: visible;
-    box-shadow:
-      0 0 0 1px rgb(0 0 0 / 15%),
-      0 4px 12px -4px rgb(0 0 0 / 30%);
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 10%));
   }
 }
 
 #contents {
-  position: absolute;
-  inset: 0;
+  display: block;
+  position: static;
+  width: 100%;
+  height: auto;
+  color: inherit;
+  background: none;
   overflow: clip;
+  border-radius: inherit;
 
   :host(:state(open)) & {
-    position: static;
-    inset: auto;
-    overflow: auto;
-    max-height: calc(100vh - 180px);
+    --border-radius: 12px;
+
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: auto;
+    height: auto;
+    max-width: var(--max-width);
+    max-height: calc(100vh - 96px);
+    overflow: visible;
+    z-index: 2;
+    box-shadow:
+      0 0 0 1px rgb(0 0 0 / 15%),
+      0 4px 12px -4px rgb(0 0 0 / 30%);
   }
 }
