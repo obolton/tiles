@@ -1,12 +1,12 @@
 .section {
   position: relative;
   box-sizing: content-box;
-  min-width: var(--min-width);
-  max-width: 100%;
-  justify-self: center;
+  width: 100%;
   margin: 0 0 24px;
   padding: 0;
-  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   transition: background-color var(--animation-duration) var(--easing);
 
   body[data-editing] & {
@@ -19,10 +19,5 @@
   &.full-width {
     width: calc(100% - 48px);
     margin: 0 24px 24px;
-  }
-
-  &:first-of-type {
-    border-start-start-radius: 0;
-    border-start-end-radius: 0;
   }
 }

@@ -47,6 +47,8 @@
 }
 
 .canvas {
+  max-width: 100%;
+
   &:not(:defined),
   &::part(container) {
     padding: 24px;
