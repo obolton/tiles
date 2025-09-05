@@ -65,6 +65,10 @@ floating-toolbar {
     inset-block-start: 0;
     inset-inline-start: 100%;
     margin: 24px;
+
+    &.inside {
+      justify-self: end;
+    }
   }
 
   &.vertical {
