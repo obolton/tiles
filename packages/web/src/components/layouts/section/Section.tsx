@@ -11,8 +11,6 @@ export interface SectionProps {
 }
 
 export default function Section({ editor, section }: SectionProps) {
-  const { width } = section;
-  const fullWidth = width.derive((value) => value === "VIEWPORT");
   const hasFocus = flag(false);
   const { isEditable } = editor;
 
@@ -25,7 +23,6 @@ export default function Section({ editor, section }: SectionProps) {
     <section
       classList={{
         [styles.section]: true,
-        [styles["full-width"]]: fullWidth,
       }}
       style={{ anchorName }}
       tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
