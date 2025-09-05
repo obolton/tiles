@@ -10,7 +10,8 @@ button {
   overflow: hidden;
 
   /* Prevent icons from being the target of pointer events */
-  & > svg {
+  & > svg,
+  & > img {
     pointer-events: none;
   }
 }
@@ -178,6 +179,7 @@ a.floating {
     }
 
     & > svg,
+    & > img,
     &::after {
       transition-property: opacity, scale, rotate;
       transition-duration: var(--animation-duration);
@@ -185,7 +187,8 @@ a.floating {
     }
 
     &[aria-expanded="true"] {
-      & > svg {
+      & > svg,
+      & > img {
         opacity: 0;
         scale: 0.7;
         rotate: z 45deg;
