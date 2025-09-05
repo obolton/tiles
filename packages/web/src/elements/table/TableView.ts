@@ -176,6 +176,7 @@ export default class TableView extends HTMLElement {
 
     this.scrollContainer = document.createElement("div");
     this.scrollContainer.id = "scroll-container";
+    this.scrollContainer.tabIndex = -1;
     this.contents = document.createElement("div");
     this.contents.id = "contents";
     this.contents.appendChild(this.contentsSlot);
