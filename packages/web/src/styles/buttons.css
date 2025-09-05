@@ -134,17 +134,13 @@ a.floating {
     background-color: rgb(0 0 0 / 15%);
   }
 
+  &.pending {
+    background-color: rgb(255 255 255);
+  }
+
   &:active:not(:disabled) {
     scale: 1.1;
     background-color: rgb(0 0 0 / 25%);
-  }
-
-  &.pending > span {
-    opacity: 0.6;
-  }
-
-  &.pending > img {
-    opacity: 0.4;
   }
 
   &.large {
@@ -208,6 +204,8 @@ a.floating {
 
 .pending,
 form[data-pending] button[type="submit"] {
+  --delay: 100ms;
+
   position: relative;
   pointer-events: none;
 
@@ -220,51 +218,52 @@ form[data-pending] button[type="submit"] {
     aspect-ratio: 1;
     min-width: 100%;
     min-height: 100%;
-    background:
-      radial-gradient(
-        closest-side,
-        rgb(255 255 255 / 70%) 0%,
-        rgb(255 255 255 / 70%) 85%,
-        transparent 85%,
-        transparent 100%
-      ),
-      conic-gradient(
-        oklch(80% 90% 0deg),
-        oklch(80% 90% 30deg),
-        oklch(80% 90% 60deg),
-        oklch(80% 90% 90deg),
-        oklch(80% 90% 120deg),
-        oklch(80% 90% 150deg),
-        oklch(80% 90% 180deg),
-        oklch(80% 90% 210deg),
-        oklch(80% 90% 240deg),
-        oklch(80% 90% 270deg),
-        oklch(80% 90% 300deg),
-        oklch(80% 90% 330deg),
-        oklch(80% 90% 360deg)
-      );
-    animation: 1s linear infinite rotate;
-    transition: opacity var(--animation-duration) var(--easing);
+    background: conic-gradient(
+      oklch(80% 90% 0deg),
+      oklch(80% 90% 30deg),
+      oklch(80% 90% 60deg),
+      oklch(80% 90% 90deg),
+      oklch(80% 90% 120deg),
+      oklch(80% 90% 150deg),
+      oklch(80% 90% 180deg),
+      oklch(80% 90% 210deg),
+      oklch(80% 90% 240deg),
+      oklch(80% 90% 270deg),
+      oklch(80% 90% 300deg),
+      oklch(80% 90% 330deg),
+      oklch(80% 90% 360deg)
+    );
+    animation: 1s linear var(--delay) infinite rotate;
+    transition: opacity var(--animation-duration) var(--easing) var(--delay);
 
     @starting-style {
       opacity: 0;
     }
   }
 
-  &.primary::after,
-  &.secondary::after {
-    content: "Saving\2026";
+  &::after {
+    content: "";
     position: absolute;
     inset: 0;
     align-content: center;
     border-radius: inherit;
     background: inherit;
-    color: rgb(from currentcolor r g b / 70%);
-    animation: var(--animation-duration) var(--easing) forwards reveal-border;
+    opacity: 0;
+    animation: var(--animation-duration) var(--easing) var(--delay) forwards
+      reveal-border;
+  }
+
+  &.primary::after,
+  &.secondary::after {
+    content: "Saving\2026";
   }
 
   &[data-pending-text]::after {
     content: attr(data-pending-text);
+  }
+
+  & > * {
+    z-index: 1;
   }
 }
 
