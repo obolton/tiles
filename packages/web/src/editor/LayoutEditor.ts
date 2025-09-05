@@ -137,7 +137,8 @@ export default class LayoutEditor {
     this.gridColumnGap = parseFloat(style.columnGap);
     this.gridRowGap = parseFloat(style.rowGap);
 
-    const rowHeights = style.gridTemplateRows.split(" ").map(parseFloat);
+    const rows = style.gridTemplateRows;
+    const rowHeights = rows === "none" ? [] : rows.split(" ").map(parseFloat);
     let top = 0;
     this.gridRows = [];
     for (const height of rowHeights) {
