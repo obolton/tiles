@@ -161,7 +161,7 @@ function setAttribute(
     }
   } else if (
     mappedName === "style" &&
-    element instanceof HTMLElement &&
+    (element instanceof HTMLElement || element instanceof SVGElement) &&
     typeof value === "object"
   ) {
     for (const [styleProperty, styleValue] of Object.entries(value)) {
