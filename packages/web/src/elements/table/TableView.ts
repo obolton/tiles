@@ -15,7 +15,7 @@ stylesheet.replaceSync(css);
 export interface TableViewAttributes {
   columns: number;
   rows: number;
-  allowselection?: boolean;
+  editable?: boolean;
 }
 
 export interface Cell {
@@ -52,12 +52,12 @@ export default class TableView extends HTMLElement {
   static readonly observedAttributes: (keyof TableViewAttributes)[] = [
     "columns",
     "rows",
-    "allowselection",
+    "editable",
   ] as const;
 
   #columns = 0;
   #rows = 0;
-  #allowSelection = false;
+  #editable = false;
 
   readonly selection = new Set<Selection>();
   getColumnWidth: (index: number) => number = defaultGetColumnWidth;
@@ -89,6 +89,7 @@ export default class TableView extends HTMLElement {
   private rangeSelection: RangeSelection | null = null;
   private virtualize = false;
   private dropIndicator: HTMLElement | null = null;
+  private editAbortController: AbortController | null = null;
 
   get columns() {
     return this.#columns;
@@ -101,18 +102,26 @@ export default class TableView extends HTMLElement {
     }
   }
 
-  get allowSelection() {
-    return this.#allowSelection;
+  get editable() {
+    return this.#editable;
   }
 
-  set allowSelection(value: boolean) {
-    if (value === this.#allowSelection) {
+  set editable(value: boolean) {
+    if (value === this.#editable) {
       return;
     }
 
-    this.#allowSelection = value;
+    this.#editable = value;
+
+    if (value) {
+      this.editAbortController = new AbortController();
+    } else {
+      this.editAbortController?.abort();
+      this.editAbortController = null;
+    }
 
     this.updateCellTabIndex();
+    this.updateHeaders();
 
     if (!value) {
       this.clearSelection();
@@ -265,6 +274,8 @@ export default class TableView extends HTMLElement {
   disconnectedCallback() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
+    this.editAbortController?.abort();
+    this.editAbortController = null;
   }
 
   attributeChangedCallback(
@@ -281,8 +292,8 @@ export default class TableView extends HTMLElement {
         this.#rows = value === null ? 0 : parseInt(value, 10);
         this.update();
         break;
-      case "allowselection":
-        this.allowSelection = value !== null;
+      case "editable":
+        this.editable = value !== null;
         break;
     }
   }
@@ -385,7 +396,7 @@ export default class TableView extends HTMLElement {
   }
 
   private handlePointerDown(event: PointerEvent) {
-    if (event.button !== PRIMARY_MOUSE_BUTTON || !this.allowSelection) {
+    if (event.button !== PRIMARY_MOUSE_BUTTON || !this.editable) {
       return;
     }
 
@@ -530,7 +541,7 @@ export default class TableView extends HTMLElement {
     const element = event.state.element;
 
     if (element.tagName === "TH") {
-      if (this.allowSelection) {
+      if (this.editable) {
         this.dataset.drop = "true";
       } else {
         event.preventDefault();
@@ -713,7 +724,7 @@ export default class TableView extends HTMLElement {
   // Focus and selection
 
   private updateCellTabIndex() {
-    if (this.allowSelection) {
+    if (this.editable) {
       this.table?.querySelectorAll("td").forEach((cell) => {
         cell.setAttribute("tabindex", "-1");
       });
@@ -931,7 +942,7 @@ export default class TableView extends HTMLElement {
 
     const cell = this.buffer.pop()!;
     cell.ariaColIndex = column.toString();
-    if (this.allowSelection) {
+    if (this.editable) {
       cell.setAttribute("tabindex", "-1");
     }
     this.updateCell?.(row, column, cell);
@@ -1274,24 +1285,40 @@ export default class TableView extends HTMLElement {
       return;
     }
 
-    for (const th of this.tableHead.rows[0]!.cells) {
-      if (th.ariaColIndex) {
-        makeDraggable(th, { constrain: "horizontal", clone: true });
-        th.appendChild(this.createResizeHandle());
+    if (this.editable) {
+      for (const th of this.tableHead.rows[0]!.cells) {
+        if (th.ariaColIndex) {
+          makeDraggable(th, {
+            constrain: "horizontal",
+            clone: true,
+            signal: this.editAbortController?.signal,
+          });
+          th.appendChild(this.createResizeHandle());
+        }
       }
-    }
 
-    for (const row of this.tableBody.rows) {
-      const th = row.querySelector("th");
-      if (th) {
-        makeDraggable(th, { constrain: "vertical", clone: true });
+      for (const row of this.tableBody.rows) {
+        const th = row.querySelector("th");
+        if (th) {
+          makeDraggable(th, {
+            constrain: "vertical",
+            clone: true,
+            signal: this.editAbortController?.signal,
+          });
+        }
+      }
+    } else {
+      for (const handle of this.tableHead.querySelectorAll("resize-handle")) {
+        handle.remove();
       }
     }
   }
 
   private createResizeHandle() {
     const handle = document.createElement("resize-handle");
-    handle.addEventListener("resizeend", this);
+    handle.addEventListener("resizeend", this, {
+      signal: this.editAbortController?.signal,
+    });
     return handle;
   }
 

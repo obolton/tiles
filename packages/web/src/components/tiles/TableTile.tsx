@@ -301,7 +301,7 @@ export default function TableTile({
         classList={["rich-text", styles.table]}
         columns={columns.derive((value) => value.length)}
         rows={numRows}
-        allowselection={isEditable}
+        editable={isEditable}
         on:focusin={onFocusIn}
         on:focusout={onFocusOut}
         on:resizetablecolumn={onResizeColumn}

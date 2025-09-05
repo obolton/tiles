@@ -46,7 +46,6 @@ table-view {
     padding: 0;
     border-right: 1px solid var(--cell-border-color);
     border-bottom: 1px solid var(--cell-border-color);
-    cursor: grab;
 
     &[scope="row"] {
       position: sticky;
@@ -115,5 +114,11 @@ table-view {
 
   & .selected {
     background: oklch(from var(--focus-ring-color) l c h / 15%);
+  }
+
+  &[editable] {
+    & th {
+      cursor: grab;
+    }
   }
 }
