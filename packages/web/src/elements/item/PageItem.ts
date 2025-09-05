@@ -167,13 +167,14 @@ export default class PageItem extends HTMLElement {
 
   private pointerMove(event: PointerEvent) {
     if (this.isResizing) {
-      this.width = event.pageX - this.initialPointerX;
-      this.height = event.pageY - this.initialPointerY;
+      const rect = this.getBoundingClientRect();
+      this.width = event.clientX - rect.x;
+      this.height = event.clientY - rect.y;
 
       this.dispatchEvent(
         new TileResizeEvent("tileresize", {
           bubbles: true,
-          cancelable: true,
+          cancelable: false,
           width: this.width,
           height: this.height,
         }),
@@ -181,8 +182,8 @@ export default class PageItem extends HTMLElement {
 
       this.updateOutlineSize();
     } else {
-      const deltaX = event.pageX - this.initialPointerX;
-      const deltaY = event.pageY - this.initialPointerY;
+      const deltaX = event.clientX - this.initialPointerX;
+      const deltaY = event.clientY - this.initialPointerY;
       const distance = Math.hypot(deltaX, deltaY);
 
       if (distance >= DRAG_THRESHOLD) {
@@ -224,11 +225,11 @@ export default class PageItem extends HTMLElement {
       throw new Error("Already resizing");
     }
 
-    const bounds = this.getBoundingClientRect();
-    this.initialPointerX = bounds.x + window.scrollX;
-    this.initialPointerY = bounds.y + window.scrollY;
-    this.width = event.pageX - this.initialPointerX;
-    this.height = event.pageY - this.initialPointerY;
+    const rect = this.getBoundingClientRect();
+    this.initialPointerX = event.clientX;
+    this.initialPointerY = event.clientY;
+    this.width = rect.width;
+    this.height = rect.height;
 
     const allowResize = this.dispatchEvent(
       new TileResizeEvent("tileresizestart", {
