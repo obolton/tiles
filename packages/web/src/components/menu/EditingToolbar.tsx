@@ -29,7 +29,7 @@ export default function EditingToolbar({
     <floating-toolbar
       className={classNames(styles.toolbar, "top-right")}
       aria-label="Editing toolbar"
-      data-tooltip-position="top"
+      data-tooltip-position="bottom"
     >
       <ul role="group" aria-label="Editing mode">
         <li role="presentation">
