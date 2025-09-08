@@ -5,10 +5,10 @@ import type {
   LinkTile,
   PageLinkTile,
   Place,
-  Section,
   Tile,
   TileType,
 } from "@prisma/client";
+import type { Section } from "@/routes/sections/sections.ts";
 import type { Text } from "@/routes/text/text.ts";
 import type { TableWithData } from "@/routes/tables/tables.ts";
 import type { PageLinkPage } from "@/routes/pageLinks/pageLinks.ts";
