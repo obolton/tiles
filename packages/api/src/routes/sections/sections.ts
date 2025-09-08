@@ -1,4 +1,5 @@
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
+import { getBackgroundProperties } from "@/utils/backgrounds.ts";
 import type { Prisma } from "@prisma/client";
 import type {
   CreateSectionSchema,
@@ -9,12 +10,21 @@ import type {
 export const SECTION_FIELDS = {
   id: true,
   layout: true,
-  width: true,
+  background: true,
 } as const satisfies Prisma.SectionSelect<ExtensionArgs>;
 
-export async function createSection({ pageId }: CreateSectionSchema) {
+export type Section = Prisma.Result<
+  typeof prisma.section,
+  { select: typeof SECTION_FIELDS },
+  "findUniqueOrThrow"
+>;
+
+export async function createSection({
+  pageId,
+  background,
+}: CreateSectionSchema) {
   return prisma.section.create({
-    data: { pageId },
+    data: { pageId, ...getBackgroundProperties(background) },
     select: SECTION_FIELDS,
   });
 }
@@ -23,7 +33,7 @@ export async function updateSection({
   pageId,
   id,
   layout,
-  width,
+  background,
 }: UpdateSectionSchema) {
   return prisma.section.update({
     where: {
@@ -32,7 +42,7 @@ export async function updateSection({
     },
     data: {
       layout,
-      width,
+      ...getBackgroundProperties(background),
     },
     select: SECTION_FIELDS,
   });
