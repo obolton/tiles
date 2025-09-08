@@ -139,4 +139,21 @@ describe("renderToString", () => {
       '<div style="color:#000;background-color:red;padding:0"></div>',
     );
   });
+
+  test("renders a class component", () => {
+    class Component {
+      name: string;
+
+      constructor({ name }: { name: string }) {
+        this.name = name;
+      }
+
+      render() {
+        return jsx("span", { children: `Hello ${this.name}` });
+      }
+    }
+
+    const element = jsx(Component, { name: "Test" });
+    expect(renderToString(element)).toBe("<span>Hello Test</span>");
+  });
 });

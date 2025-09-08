@@ -147,4 +147,21 @@ describe("render", () => {
       "Invalid node",
     );
   });
+
+  test("renders a class component", () => {
+    class Component {
+      name: string;
+
+      constructor({ name }: { name: string }) {
+        this.name = name;
+      }
+
+      render() {
+        return jsx("span", { children: `Hello ${this.name}` });
+      }
+    }
+    const element = render(jsx(Component, { name: "Test" })) as HTMLElement;
+    expect(element.tagName).toBe("SPAN");
+    expect(element.textContent).toBe("Hello Test");
+  });
 });
