@@ -4,7 +4,7 @@ import type { JSX } from "./jsx";
 
 export interface EachProps<T> {
   items: Reactive<T[]>;
-  render: (item: T) => JSX.Node;
+  children: (item: T) => JSX.Node;
 }
 
 interface Entry {
@@ -19,9 +19,9 @@ export default class Each<T> implements JSX.ElementClass {
   private readonly entries: Map<T, Entry> = new Map();
   private anchor: Node | null = null;
 
-  constructor({ items, render }: EachProps<T>) {
+  constructor({ items, children }: EachProps<T>) {
     this.items = items;
-    this.renderItem = render;
+    this.renderItem = children;
 
     if (!import.meta.env.SSR) {
       this.items.subscribe(() => this.update());
