@@ -3,7 +3,7 @@ import { createTilePlacement } from "../tiles/tiles.ts";
 import type { CreateTextSchema, UpdateTextSchema } from "./schema.ts";
 import type { Prisma } from "@prisma/client";
 import type { ColorSchema } from "@/schema/Color.ts";
-import type { BackgroundSchema } from "@/schema/Background.ts";
+import { getBackgroundProperties } from "@/utils/backgrounds.ts";
 
 export const TEXT_FIELDS = {
   id: true,
@@ -43,50 +43,6 @@ function getTextColorProperties(
     textC: textColor.c,
     textH: textColor.h,
   };
-}
-
-type BackgroundProperties = Required<
-  Pick<
-    Prisma.TextTileCreateInput,
-    "backgroundL" | "backgroundC" | "backgroundH" | "backgroundImageKey"
-  >
->;
-
-function getBackgroundProperties(
-  background?: BackgroundSchema,
-): BackgroundProperties | undefined {
-  if (typeof background === "undefined") {
-    return undefined;
-  }
-
-  if (background === null) {
-    return {
-      backgroundL: null,
-      backgroundC: null,
-      backgroundH: null,
-      backgroundImageKey: null,
-    };
-  }
-
-  if ("color" in background) {
-    return {
-      backgroundL: background.color.l,
-      backgroundC: background.color.c,
-      backgroundH: background.color.h,
-      backgroundImageKey: null,
-    };
-  }
-
-  if ("imageKey" in background) {
-    return {
-      backgroundL: null,
-      backgroundC: null,
-      backgroundH: null,
-      backgroundImageKey: background.imageKey,
-    };
-  }
-
-  throw new Error("Invalid background");
 }
 
 export async function createText({

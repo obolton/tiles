@@ -1,6 +1,7 @@
 import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
+import { getBackgroundProperties } from "@/utils/backgrounds.ts";
 import type { Prisma } from "@prisma/client";
 import type {
   CreateTableSchema,
@@ -16,7 +17,6 @@ import type {
   UpdateCellSchema,
 } from "./schema.ts";
 import type { ColorSchema } from "@/schema/Color.ts";
-import type { BackgroundSchema } from "@/schema/Background.ts";
 
 export const TABLE_COLUMN_FIELDS = {
   id: true,
@@ -90,50 +90,6 @@ function getTextColorProperties(
     textC: textColor.c,
     textH: textColor.h,
   };
-}
-
-type BackgroundProperties = Required<
-  Pick<
-    Prisma.TableCreateInput,
-    "backgroundL" | "backgroundC" | "backgroundH" | "backgroundImageKey"
-  >
->;
-
-function getBackgroundProperties(
-  background?: BackgroundSchema,
-): BackgroundProperties | undefined {
-  if (typeof background === "undefined") {
-    return undefined;
-  }
-
-  if (background === null) {
-    return {
-      backgroundL: null,
-      backgroundC: null,
-      backgroundH: null,
-      backgroundImageKey: null,
-    };
-  }
-
-  if ("color" in background) {
-    return {
-      backgroundL: background.color.l,
-      backgroundC: background.color.c,
-      backgroundH: background.color.h,
-      backgroundImageKey: null,
-    };
-  }
-
-  if ("imageKey" in background) {
-    return {
-      backgroundL: null,
-      backgroundC: null,
-      backgroundH: null,
-      backgroundImageKey: background.imageKey,
-    };
-  }
-
-  throw new Error("Invalid background");
 }
 
 export async function createTable({
