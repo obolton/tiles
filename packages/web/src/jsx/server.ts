@@ -2,6 +2,7 @@ import { escapeUTF8 } from "entities";
 import { isReactive } from "@/utils/reactivity";
 import { serializeStyles } from "@/utils/css";
 import type { JSX } from "./jsx";
+import { isClassComponent } from "./jsx";
 
 // https://developer.mozilla.org/en-US/docs/Glossary/Void_element
 const VOID_ELEMENTS = new Set([
@@ -85,6 +86,9 @@ function renderElement<T extends JSX.ElementType>({
 }: JSX.Element<T>) {
   if (typeof type === "string") {
     return renderHTMLElement(type, properties);
+  } else if (isClassComponent(type)) {
+    const instance = new type(properties);
+    return renderToString(instance.render());
   } else {
     return renderToString(type(properties));
   }

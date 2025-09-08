@@ -1,5 +1,6 @@
 import { isReactive } from "@/utils/reactivity";
 import { transformCSSProperty } from "@/utils/css";
+import { isClassComponent } from "./jsx";
 import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "./jsx";
 
@@ -229,21 +230,18 @@ function hydrateElementNode(
   index: number,
   signal?: AbortSignal,
 ) {
-  if (typeof node.type === "string") {
-    return hydrateDOMElement(
-      node.type,
-      node.properties,
-      container,
-      index,
-      signal,
-    );
+  const { type, properties } = node;
+
+  if (typeof type === "string") {
+    return hydrateDOMElement(type, properties, container, index, signal);
   }
-  return hydrateNode(
-    node.type({ ...node.properties, signal }),
-    container,
-    index,
-    signal,
-  );
+
+  if (isClassComponent(type)) {
+    const instance = new type({ ...properties, signal });
+    return hydrateNode(instance.render(), container, index, signal);
+  }
+
+  return hydrateNode(type({ ...properties, signal }), container, index, signal);
 }
 
 function hydrateDOMElement(
@@ -451,11 +449,18 @@ function renderElement(
   namespace?: string,
   signal?: AbortSignal,
 ) {
-  if (typeof node.type === "string") {
+  const { type, properties } = node;
+
+  if (typeof type === "string") {
     return renderDOMElement(node, namespace, signal);
-  } else {
-    return render(node.type({ ...node.properties, signal }), namespace, signal);
   }
+
+  if (isClassComponent(type)) {
+    const instance = new type({ ...properties, signal });
+    return render(instance.render(), namespace, signal);
+  }
+
+  return render(type({ ...properties, signal }), namespace, signal);
 }
 
 function renderFragment(

@@ -21,10 +21,15 @@ export namespace JSX {
       ? IntrinsicElements[T]
       : T extends Component<infer R>
         ? R
-        : never;
+        : T extends ClassComponent<infer R>
+          ? R
+          : never;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export type ElementType = keyof IntrinsicElements | Component<any>;
+  export type ElementType =
+    | keyof IntrinsicElements
+    | Component<any>
+    | ClassComponent<any>;
 
   export type Node =
     | Element
@@ -39,6 +44,12 @@ export namespace JSX {
     | globalThis.Node;
 
   export type Component<P> = (props: P) => Node;
+
+  export type ClassComponent<P> = new (props: P) => ElementClass;
+
+  export interface ElementClass {
+    render(): JSX.Node;
+  }
 
   export interface ElementChildrenAttribute {
     children?: Node;
@@ -111,4 +122,10 @@ interface FragmentProperties {
 
 export function Fragment({ children }: FragmentProperties) {
   return children;
+}
+
+export function isClassComponent<T>(
+  node: JSX.ElementType,
+): node is JSX.ClassComponent<T> {
+  return typeof node === "function" && node.prototype && node.prototype.render;
 }
