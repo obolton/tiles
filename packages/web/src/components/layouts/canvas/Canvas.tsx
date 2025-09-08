@@ -1,6 +1,7 @@
 import Item from "@/components/item/Item";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./Canvas.module.css";
+import Each from "@/jsx/each";
 import type { Tile } from "@/types/tiles";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
@@ -39,8 +40,8 @@ export default function Canvas({
         editable ? "true" : undefined,
       )}
     >
-      {items.derive((entries) =>
-        entries.map((tile) => (
+      <Each items={items}>
+        {(tile) => (
           <Item
             editor={editor}
             id={tile.id}
@@ -57,8 +58,8 @@ export default function Canvas({
               editable ? 0 : undefined,
             )}
           />
-        )),
-      )}
+        )}
+      </Each>
     </scroll-view>
   );
 }
