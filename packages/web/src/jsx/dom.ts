@@ -238,6 +238,9 @@ function hydrateElementNode(
 
   if (isClassComponent(type)) {
     const instance = new type({ ...properties, signal });
+    if (instance.hydrate) {
+      return instance.hydrate(container, index);
+    }
     return hydrateNode(instance.render(), container, index, signal);
   }
 
@@ -325,7 +328,7 @@ function hydrateStoreNode(
 }
 
 // Potential improvement: use anchor node instead of indexing into container
-function hydrateNode(
+export function hydrateNode(
   node: JSX.Node,
   container: Element,
   index: number,

@@ -48,6 +48,7 @@ export namespace JSX {
   export type ClassComponent<P> = new (props: P) => ElementClass;
 
   export interface ElementClass {
+    hydrate?(container: globalThis.Element, index: number): number;
     render(): JSX.Node;
   }
 
