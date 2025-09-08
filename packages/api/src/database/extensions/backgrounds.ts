@@ -41,6 +41,17 @@ export default Prisma.defineExtension({
         },
       },
     },
+    section: {
+      background: {
+        needs: {
+          backgroundL: true,
+          backgroundC: true,
+          backgroundH: true,
+          backgroundImageKey: true,
+        },
+        compute,
+      },
+    },
     textTile: {
       background: {
         needs: {
