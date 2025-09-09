@@ -5,6 +5,7 @@ import type { JSX } from "./jsx";
 export interface EachProps<T> {
   items: Reactive<T[]>;
   children: (item: T) => JSX.Node;
+  signal?: AbortSignal;
 }
 
 interface Entry {
@@ -16,16 +17,18 @@ interface Entry {
 export default class Each<T> implements JSX.ElementClass {
   readonly items: Reactive<T[]>;
   readonly renderItem: (item: T) => JSX.Node;
+  readonly signal?: AbortSignal;
 
   private readonly entries: Map<T, Entry> = new Map();
-  private anchor: Node | null = null;
+  private anchor?: Node;
 
-  constructor({ items, children }: EachProps<T>) {
+  constructor({ items, children, signal }: EachProps<T>) {
     this.items = items;
     this.renderItem = children;
+    this.signal = signal;
 
     if (!import.meta.env.SSR) {
-      this.items.subscribe(() => this.update());
+      this.items.subscribe(() => this.update(), signal);
     }
   }
 
@@ -34,34 +37,34 @@ export default class Each<T> implements JSX.ElementClass {
       throw new Error("Requires browser environment");
     }
 
-    let length = 0;
     const items = this.items.value;
+    let length = 0;
+    let itemIndex = 0;
 
-    if (items.length === 0) {
+    for (const value of items) {
+      const abort = new AbortController();
+      const signal = this.getCombinedSignal(abort);
+      const itemLength = hydrateNode(
+        this.renderItem(value),
+        container,
+        index + length,
+        signal,
+      );
+      const nodes: Node[] = [];
+      for (let j = 0; j < itemLength; j++) {
+        const node = container.childNodes[index + length + j]!;
+        nodes.push(node);
+      }
+      this.entries.set(value, { index: itemIndex, nodes, abort });
+      this.anchor ??= nodes[0];
+      itemIndex++;
+      length += itemLength;
+    }
+
+    if (!this.anchor) {
       this.anchor = this.createPlaceholderNode();
       container.insertBefore(this.anchor, container.childNodes[index] ?? null);
       length = 1;
-    } else {
-      let itemIndex = 0;
-      for (const value of items) {
-        const abort = new AbortController();
-        const itemLength = hydrateNode(
-          this.renderItem(value),
-          container,
-          index + length,
-          abort.signal,
-        );
-        const nodes: Node[] = [];
-        for (let j = 0; j < itemLength; j++) {
-          const node = container.childNodes[index + length + j]!;
-          nodes.push(node);
-        }
-        this.entries.set(value, { index: itemIndex, nodes, abort });
-        itemIndex++;
-        length += itemLength;
-      }
-
-      this.anchor = container.childNodes[index]!;
     }
 
     return length;
@@ -72,26 +75,43 @@ export default class Each<T> implements JSX.ElementClass {
       return this.items.value.map(this.renderItem);
     }
 
-    this.entries.clear();
-    return this.items.value.map((item, index) => {
+    const nodes = this.items.value.map((item, index) => {
       const abort = new AbortController();
-      const node = render(this.renderItem(item), null, abort.signal);
+      const signal = this.getCombinedSignal(abort);
+      const node = render(this.renderItem(item), null, signal);
+      const nodes = this.getNodes(node);
       this.entries.set(item, {
         index,
-        nodes:
-          node instanceof DocumentFragment
-            ? Array.from(node.childNodes)
-            : node
-              ? [node]
-              : [],
+        nodes,
         abort,
       });
+      this.anchor ??= nodes[0];
       return node;
     });
+
+    if (!this.anchor) {
+      this.anchor = this.createPlaceholderNode();
+      return this.anchor;
+    }
+
+    return nodes;
   }
 
   private createPlaceholderNode() {
     return document.createComment("");
+  }
+
+  private getCombinedSignal(abort: AbortController) {
+    return this.signal
+      ? AbortSignal.any([abort.signal, this.signal])
+      : abort.signal;
+  }
+
+  private getNodes(node: Node | null) {
+    if (node instanceof DocumentFragment) {
+      return Array.from(node.childNodes);
+    }
+    return node ? [node] : [];
   }
 
   private update() {
@@ -99,15 +119,18 @@ export default class Each<T> implements JSX.ElementClass {
       throw new Error("Requires browser environment");
     }
 
-    const parentNode = this.anchor?.parentNode;
-
-    if (!parentNode) {
-      throw new Error("Element is disconnected");
+    if (!this.anchor) {
+      throw new Error("No anchor element");
     }
 
+    if (!this.anchor.parentNode) {
+      throw new Error("Anchor element is disconnected");
+    }
+
+    const container = this.anchor.parentNode;
+    let referenceNode: Node | null = this.anchor ?? null;
     let index = 0;
-    let anchor: Node | null = null;
-    let referenceNode: Node | null = this.anchor;
+    this.anchor = undefined;
     const remainingItems = new Set(this.entries.keys());
 
     for (const item of this.items.value) {
@@ -117,20 +140,17 @@ export default class Each<T> implements JSX.ElementClass {
       // New item
       if (!position) {
         const abort = new AbortController();
-        const node = render(this.renderItem(item), null, abort.signal);
+        const signal = this.getCombinedSignal(abort);
+        const node = render(this.renderItem(item), null, signal);
+        const nodes = this.getNodes(node);
 
         if (node) {
-          parentNode.insertBefore(node, referenceNode);
+          container.insertBefore(node, referenceNode);
         }
 
         position = {
           index,
-          nodes:
-            node instanceof DocumentFragment
-              ? Array.from(node.childNodes)
-              : node
-                ? [node]
-                : [],
+          nodes,
           abort,
         };
         this.entries.set(item, position);
@@ -143,7 +163,7 @@ export default class Each<T> implements JSX.ElementClass {
           if (node === referenceNode) {
             referenceNode = referenceNode.nextSibling;
           } else {
-            parentNode.insertBefore(node, referenceNode);
+            container.insertBefore(node, referenceNode);
           }
         }
 
@@ -153,10 +173,15 @@ export default class Each<T> implements JSX.ElementClass {
       }
 
       index++;
-      anchor ??= position.nodes[0] ?? null;
+      this.anchor ??= position.nodes[0];
     }
 
-    // Remove remaining items
+    if (!this.anchor) {
+      this.anchor = this.createPlaceholderNode();
+      container.insertBefore(this.anchor, container.childNodes[index] ?? null);
+    }
+
+    // Remove discarded items
     for (const item of remainingItems.values()) {
       const position = this.entries.get(item);
 
@@ -172,7 +197,5 @@ export default class Each<T> implements JSX.ElementClass {
 
       this.entries.delete(item);
     }
-
-    this.anchor = anchor;
   }
 }
