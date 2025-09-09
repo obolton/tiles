@@ -98,6 +98,7 @@ export default class Editor {
   readonly access: Reactive<PageAccess[]>;
   readonly invites: Reactive<Invite[]>;
   readonly author: User;
+  readonly selection: Reactive<Set<Tile>>;
 
   constructor(page: Page) {
     this.pageId = page.id;
@@ -114,6 +115,7 @@ export default class Editor {
     this.access = reactive(page.access);
     this.invites = reactive(page.invites);
     this.author = page.author;
+    this.selection = reactive(new Set());
 
     if (!IS_SERVER) {
       this.enableDragAndDrop();
@@ -215,6 +217,31 @@ export default class Editor {
     return section.id;
   }
 
+  // Selection
+
+  select(ids: string[], extendSelection: boolean = false) {
+    const tiles = new Set(ids.map((id) => this.getTile(id)));
+    if (extendSelection) {
+      if (tiles.size === 0) {
+        return;
+      }
+      this.selection.value = this.selection.value.union(tiles);
+    } else {
+      this.selection.value = tiles;
+    }
+  }
+
+  deselect(ids: string[]) {
+    const tiles = new Set(ids.map((id) => this.getTile(id)));
+    this.selection.value = this.selection.value.difference(tiles);
+  }
+
+  clearSelection() {
+    if (this.selection.value.size > 0) {
+      this.selection.value = new Set();
+    }
+  }
+
   // Sections
 
   async createSection(transition: TransitionFunction = immediateTransition) {
@@ -250,6 +277,16 @@ export default class Editor {
       );
     });
     return section;
+  }
+
+  // Tiles
+
+  getTile(id: string) {
+    const tile = this.tiles.value.find((tile) => tile.id === id);
+    if (!tile) {
+      throw new Error(`Invalid tile ID: ${id}`);
+    }
+    return tile;
   }
 
   async deleteTile(
