@@ -6,6 +6,7 @@ import LinkTile from "@/components/tiles/LinkTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import TableTile from "@/components/tiles/TableTile";
 import { flag, reactive, Computed } from "@/utils/reactivity";
+import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import styles from "./Item.module.css";
 import type PageItem from "@/elements/item/PageItem";
 import type { Tile } from "@/types/tiles";
@@ -73,13 +74,6 @@ function getTileComponent(
   }
 }
 
-function handlePointerDown(event: PointerEvent) {
-  const item = event.currentTarget as HTMLElement;
-  if (!item.contains(document.activeElement)) {
-    item.focus({ preventScroll: true });
-  }
-}
-
 export default function Item({
   editor,
   id,
@@ -102,14 +96,41 @@ export default function Item({
   };
 
   const hasFocus = flag(false);
+  const isSelected = editor.selection.derive((selection) =>
+    selection.has(tile),
+  );
 
-  const onFocusIn = () => {
+  function onPointerDown(event: PointerEvent) {
+    if (event.button !== PRIMARY_MOUSE_BUTTON || !editor.isEditable.value) {
+      return;
+    }
+
+    event.stopPropagation();
+
+    if (event.shiftKey) {
+      event.preventDefault();
+
+      if (isSelected.value) {
+        editor.deselect([id]);
+      } else {
+        editor.select([id], true);
+      }
+
+      if (hasFocus.value && document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+    } else {
+      editor.select([id], false);
+    }
+  }
+
+  function onFocusIn() {
     if (editor.isEditable.value) {
       hasFocus.value = true;
     }
-  };
+  }
 
-  const onFocusOut = (event: FocusEvent) => {
+  function onFocusOut(event: FocusEvent) {
     const element = event.currentTarget as HTMLElement;
 
     if (
@@ -120,15 +141,17 @@ export default function Item({
     }
 
     hasFocus.value = false;
-  };
+  }
 
-  const onDragStart = (event: DragDropEvent<DragData>) => {
+  function onDragStart(event: DragDropEvent<DragData>) {
     if (event.target === item) {
       event.state.data = { tile };
     }
-  };
+  }
 
-  const onDelete = () => item?.delete();
+  function onDelete() {
+    item?.delete();
+  }
 
   const position =
     x && y
@@ -160,6 +183,7 @@ export default function Item({
       classList={{
         [styles.item]: true,
         [styles.draggable]: editable,
+        [styles.selected]: isSelected,
         [styles.block]: block,
         ...classList,
       }}
@@ -167,10 +191,10 @@ export default function Item({
       data-placement-id={placementId}
       data-animate-layout-id={placementId}
       tabIndex={tabIndex}
+      on:pointerdown={onPointerDown}
       on:dnd-dragstart={onDragStart}
       on:focusin={onFocusIn}
       on:focusout={onFocusOut}
-      on:pointerdown={handlePointerDown}
     >
       {getTileComponent(tile, hasFocus, onDelete, editor)}
     </page-item>

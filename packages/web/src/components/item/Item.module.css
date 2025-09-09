@@ -50,8 +50,7 @@
       outline: 2px solid rgb(0 0 0 / 10%);
     }
 
-    &:focus-within:not(:state(resizing)),
-    &:hover:focus-within:not(:state(resizing)) {
+    &:is(.selected, :focus-within):not(:state(resizing)) {
       outline: var(--focus-outline);
     }
   }

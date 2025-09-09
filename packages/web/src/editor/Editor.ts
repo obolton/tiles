@@ -9,6 +9,7 @@ import { isEditMode } from "@/utils/edit";
 import { createState } from "@/utils/richText/state";
 import { prompt } from "@/utils/richText/prompt";
 import { viewTransition } from "@/utils/transitions";
+import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import type { FontId } from "@/config/fonts";
 import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type {
@@ -118,13 +119,22 @@ export default class Editor {
     this.selection = reactive(new Set());
 
     if (!IS_SERVER) {
-      this.enableDragAndDrop();
+      this.enablePointerEvents();
     }
   }
 
-  enableDragAndDrop() {
+  enablePointerEvents() {
+    document.addEventListener("pointerdown", this.pointerDown.bind(this), {
+      passive: true,
+    });
     document.addEventListener("dragover", this.dragOver.bind(this));
     document.addEventListener("drop", this.drop.bind(this));
+  }
+
+  private pointerDown(event: PointerEvent) {
+    if (event.button === PRIMARY_MOUSE_BUTTON && !event.defaultPrevented) {
+      this.clearSelection();
+    }
   }
 
   private dragOver(event: DragEvent) {
