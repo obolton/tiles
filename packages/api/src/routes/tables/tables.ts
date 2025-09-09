@@ -105,7 +105,7 @@ export async function createTable({
   x,
   y,
   block,
-}: CreateTableSchema): Promise<TableWithData> {
+}: CreateTableSchema) {
   return prisma.$transaction(async (transaction) => {
     const table = await transaction.table.create({
       data: {
