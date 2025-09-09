@@ -7,11 +7,13 @@ import type { Reactive } from "@/utils/reactivity";
 import type { Background } from "./types";
 
 export interface BackgroundPickerProps {
+  id: string;
   value?: Reactive<Background>;
   onChange: (value: Background) => void;
 }
 
 export default function BackgroundPicker({
+  id,
   value,
   onChange,
 }: BackgroundPickerProps) {
@@ -19,9 +21,9 @@ export default function BackgroundPicker({
     <>
       <button
         type="button"
-        id="background-picker-button"
+        id={id}
         className="floating"
-        popovertarget="background-picker"
+        popovertarget={`${id}-popover`}
         aria-label="Background"
         aria-haspopup="menu"
         aria-expanded="false"
@@ -52,9 +54,8 @@ export default function BackgroundPicker({
       </button>
 
       <BackgroundPopover
-        id="background-picker"
-        anchor="background-picker-button"
-        align="center"
+        id={`${id}-popover`}
+        anchor={id}
         value={value}
         onChange={onChange}
       />

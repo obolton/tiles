@@ -97,7 +97,11 @@ export default function TextToolbar({
     >
       <ul role="group" aria-label="Layout">
         <li role="presentation">
-          <BackgroundPicker value={background} onChange={setBackground} />
+          <BackgroundPicker
+            id={`${id}-background`}
+            value={background}
+            onChange={setBackground}
+          />
         </li>
 
         <li role="presentation">

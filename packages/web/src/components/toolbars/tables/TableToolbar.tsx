@@ -157,7 +157,11 @@ export default function TableToolbar({
           </button>
         </li>
         <li role="presentation">
-          <BackgroundPicker value={background} onChange={setBackground} />
+          <BackgroundPicker
+            id={`${id}-background`}
+            value={background}
+            onChange={setBackground}
+          />
         </li>
       </ul>
     </floating-toolbar>
