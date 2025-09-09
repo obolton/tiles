@@ -28,6 +28,12 @@
   display: contents;
   background: inherit;
 
+  &:not(:defined) {
+    display: block;
+    width: 100%;
+    overflow: clip;
+  }
+
   &::part(contents) {
     background: inherit;
   }
