@@ -14,8 +14,20 @@ export default function Section({ editor, section }: SectionProps) {
   const hasFocus = flag(false);
   const { isEditable } = editor;
 
-  const onFocus = () => hasFocus.on();
-  const onBlur = () => hasFocus.off();
+  function onFocusIn() {
+    hasFocus.on();
+  }
+
+  function onFocusOut(event: FocusEvent) {
+    const element = event.currentTarget as HTMLElement;
+    if (
+      event.relatedTarget instanceof Element &&
+      element.contains(event.relatedTarget)
+    ) {
+      return;
+    }
+    hasFocus.off();
+  }
 
   const anchorName = `--section-${section.id}`;
 
@@ -28,8 +40,8 @@ export default function Section({ editor, section }: SectionProps) {
       tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
       data-section-id={section.id}
       data-animate-layout-id={section.id}
-      on:focus={onFocus}
-      on:blur={onBlur}
+      on:focusin={onFocusIn}
+      on:focusout={onFocusOut}
     >
       {hasFocus.derive((value) =>
         value ? (
