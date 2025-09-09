@@ -1,9 +1,12 @@
+import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { layoutTransition } from "@/utils/animation/layout";
+import { viewTransition } from "@/utils/transitions";
 import type Editor from "@/editor/Editor";
 import type { SectionWithTiles } from "@/types/tiles";
+import type { Background } from "@/components/backgrounds/types";
 
 export interface SectionToolbarProps {
   editor: Editor;
@@ -16,6 +19,18 @@ export default function SectionToolbar({
   section,
   anchorName,
 }: SectionToolbarProps) {
+  async function setBackground(value: Background) {
+    try {
+      const { background: newBackground } = await editor.updateSection({
+        id: section.id,
+        background: value,
+      });
+      viewTransition(() => (section.background.value = newBackground));
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
   function deleteSection() {
     editor
       .deleteSection({ id: section.id }, layoutTransition)
@@ -29,7 +44,15 @@ export default function SectionToolbar({
       data-tooltip-position="right"
       aria-label="Section toolbar"
     >
-      <ul role="group" aria-label="More options">
+      <ul role="group" aria-label="Section tools">
+        <li role="presentation">
+          <BackgroundPicker
+            id={`${section.id}-background`}
+            value={section.background}
+            onChange={setBackground}
+          />
+        </li>
+
         <li role="presentation">
           <button
             type="button"
