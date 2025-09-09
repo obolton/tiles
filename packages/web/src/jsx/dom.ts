@@ -363,7 +363,7 @@ function createPlaceholderNode() {
 
 function updateRange(
   range: MutableRange,
-  namespace?: string,
+  namespace?: string | null,
   signal?: AbortSignal,
 ) {
   range.abort.abort(null);
@@ -403,7 +403,7 @@ function updateRange(
 
 function renderDOMElement(
   node: JSX.Element<keyof JSX.IntrinsicElements>,
-  namespace?: string,
+  namespace?: string | null,
   signal?: AbortSignal,
 ) {
   switch (node.type) {
@@ -449,7 +449,7 @@ function renderTextNode(value: string) {
 
 function renderElement(
   node: JSX.Element,
-  namespace?: string,
+  namespace?: string | null,
   signal?: AbortSignal,
 ) {
   const { type, properties } = node;
@@ -468,7 +468,7 @@ function renderElement(
 
 function renderFragment(
   nodes: JSX.Node[],
-  namespace?: string,
+  namespace?: string | null,
   signal?: AbortSignal,
 ) {
   if (nodes.length === 0) {
@@ -487,7 +487,7 @@ function renderFragment(
 
 function renderStoreNode(
   store: Reactive<JSX.Node>,
-  namespace?: string,
+  namespace?: string | null,
   signal?: AbortSignal,
 ) {
   const abort = new AbortController();
@@ -531,7 +531,7 @@ function renderStoreNode(
 
 export function render(
   node: JSX.Node,
-  namespace?: string,
+  namespace?: string | null,
   signal?: AbortSignal,
 ): Node | null {
   if (isEmptyNode(node)) {

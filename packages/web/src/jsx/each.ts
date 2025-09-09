@@ -10,6 +10,7 @@ export interface EachProps<T> {
 interface Entry {
   index: number;
   nodes: Node[];
+  abort: AbortController;
 }
 
 export default class Each<T> implements JSX.ElementClass {
@@ -43,17 +44,19 @@ export default class Each<T> implements JSX.ElementClass {
     } else {
       let itemIndex = 0;
       for (const value of items) {
+        const abort = new AbortController();
         const itemLength = hydrateNode(
           this.renderItem(value),
           container,
           index + length,
+          abort.signal,
         );
         const nodes: Node[] = [];
         for (let j = 0; j < itemLength; j++) {
           const node = container.childNodes[index + length + j]!;
           nodes.push(node);
         }
-        this.entries.set(value, { index: itemIndex, nodes });
+        this.entries.set(value, { index: itemIndex, nodes, abort });
         itemIndex++;
         length += itemLength;
       }
@@ -71,7 +74,8 @@ export default class Each<T> implements JSX.ElementClass {
 
     this.entries.clear();
     return this.items.value.map((item, index) => {
-      const node = render(this.renderItem(item));
+      const abort = new AbortController();
+      const node = render(this.renderItem(item), null, abort.signal);
       this.entries.set(item, {
         index,
         nodes:
@@ -80,6 +84,7 @@ export default class Each<T> implements JSX.ElementClass {
             : node
               ? [node]
               : [],
+        abort,
       });
       return node;
     });
@@ -111,7 +116,8 @@ export default class Each<T> implements JSX.ElementClass {
 
       // New item
       if (!position) {
-        const node = render(this.renderItem(item));
+        const abort = new AbortController();
+        const node = render(this.renderItem(item), null, abort.signal);
 
         if (node) {
           parentNode.insertBefore(node, referenceNode);
@@ -125,6 +131,7 @@ export default class Each<T> implements JSX.ElementClass {
               : node
                 ? [node]
                 : [],
+          abort,
         };
         this.entries.set(item, position);
 
@@ -152,13 +159,18 @@ export default class Each<T> implements JSX.ElementClass {
     // Remove remaining items
     for (const item of remainingItems.values()) {
       const position = this.entries.get(item);
-      this.entries.delete(item);
 
       if (position) {
-        for (const node of position.nodes) {
+        const { abort, nodes } = position;
+
+        abort.abort();
+
+        for (const node of nodes) {
           node.parentNode?.removeChild(node);
         }
       }
+
+      this.entries.delete(item);
     }
 
     this.anchor = anchor;
