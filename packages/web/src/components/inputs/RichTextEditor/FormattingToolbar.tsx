@@ -20,11 +20,9 @@ import EventIcon from "@/icons/event.svg?jsx";
 import AIIcon from "@/icons/ai.svg?jsx";
 import ApproveIcon from "@/icons/approve.svg?jsx";
 import RejectIcon from "@/icons/reject.svg?jsx";
-import { registerModal, showModal } from "@/utils/modals";
+import { showModal } from "@/utils/modals";
 import { classNames } from "@/utils/css";
 import styles from "./FormattingToolbar.module.css";
-import type { DateTimeModalResult } from "@/components/modals/DateTimeModal";
-import type { LinkModalResult } from "@/components/modals/LinkModal";
 import type { EditorView } from "prosemirror-view";
 import type { Command } from "prosemirror-state";
 import {
@@ -54,7 +52,8 @@ import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 
-registerModal("DATE_TIME", () => import("@/components/modals/DateTimeModal"));
+const DateTimeModalLoader = () => import("@/components/modals/DateTimeModal");
+const LinkModalLoader = () => import("@/components/modals/LinkModal");
 
 const BLOCK_FORMAT_ICON = {
   paragraph: <ParagraphIcon aria-hidden="true" slot="icon" />,
@@ -93,7 +92,8 @@ export default function FormattingToolbar({
   children,
 }: FormattingToolbarProps) {
   const insertNewDate = () => {
-    showModal<DateTimeModalResult>("DATE_TIME", {
+    showModal(DateTimeModalLoader, {
+      props: {},
       onConfirm({ value, time }) {
         performCommand(insertDateTime(value, time));
       },
@@ -124,11 +124,13 @@ export default function FormattingToolbar({
 
     const link = getLink(state);
 
-    showModal<LinkModalResult>("LINK", {
-      workspaceId: editor.workspaceId,
-      url: link?.node.attrs.href,
-      showPages: false,
-      showRemove: !!link,
+    showModal(LinkModalLoader, {
+      props: {
+        workspaceId: editor.workspaceId,
+        url: link?.node.attrs.href,
+        showPages: false,
+        showRemove: !!link,
+      },
       onConfirm(result) {
         if (result && "url" in result) {
           performCommand(result.url ? addLink(result.url) : removeLink);

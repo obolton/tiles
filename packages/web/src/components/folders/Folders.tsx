@@ -5,9 +5,8 @@ import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import FolderIcon from "@/icons/folder.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
-import { registerModal, showModal } from "@/utils/modals";
+import { showModal } from "@/utils/modals";
 import { reactive } from "@/utils/reactivity";
-import type { FolderModalResult } from "./FolderModal";
 import type { DragDropEvent } from "@/utils/drag";
 
 export type SYSTEM_FOLDER = "RECENT" | "SHARED" | "BOOKMARKS" | "TRASH";
@@ -26,7 +25,7 @@ export interface FoldersProps {
   };
 }
 
-registerModal("FOLDER", () => import("./FolderModal"));
+const FolderModalLoader = () => import("./FolderModal");
 
 export default function Folders({
   workspaceId,
@@ -36,8 +35,10 @@ export default function Folders({
   const folders = reactive(initialFolders);
 
   function createFolder() {
-    showModal<FolderModalResult>("FOLDER", {
-      showDelete: false,
+    showModal(FolderModalLoader, {
+      props: {
+        showDelete: false,
+      },
       async onConfirm(result) {
         if (result === "DELETE") {
           return;

@@ -4,14 +4,11 @@ import LinkIcon from "@/icons/link.svg?jsx";
 import PlaceIcon from "@/icons/place.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
 import AddSectionIcon from "@/icons/add-section.svg?jsx";
-import { registerModal, showModal } from "@/utils/modals";
+import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
 import "./InsertToolbar.module.css";
-import type { LinkModalResult } from "@/components/modals/LinkModal";
-import type { ImageModalResult } from "@/components/modals/image/ImageModal";
-import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import type { TileType } from "@/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 import type Editor from "@/editor/Editor";
@@ -30,9 +27,9 @@ const BUTTONS: readonly InsertTileButton[] = [
   { label: "Table", type: "TABLE", Icon: TableIcon },
 ];
 
-registerModal("IMAGE", () => import("@/components/modals/image/ImageModal"));
-registerModal("LINK", () => import("@/components/modals/LinkModal"));
-registerModal("MAP", () => import("@/components/modals/PlaceModal"));
+const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
+const LinkModalLoader = () => import("@/components/modals/LinkModal");
+const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
 export interface InsertToolbarProps {
   editor: Editor;
@@ -60,7 +57,8 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
         break;
 
       case "IMAGE":
-        showModal<ImageModalResult>("IMAGE", {
+        showModal(ImageModalLoader, {
+          props: {},
           async onConfirm(result) {
             if (!result) {
               return;
@@ -77,8 +75,10 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
         break;
 
       case "LINK":
-        showModal<LinkModalResult>("LINK", {
-          workspaceId: editor.workspaceId,
+        showModal(LinkModalLoader, {
+          props: {
+            workspaceId: editor.workspaceId,
+          },
           async onConfirm(result) {
             if ("linkedPageId" in result) {
               await editor.createPageLink({
@@ -100,7 +100,8 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
         break;
 
       case "MAP":
-        showModal<PlaceModalResult>("MAP", {
+        showModal(PlaceModalLoader, {
+          props: {},
           async onConfirm({ place }) {
             await editor.createMap({
               sectionId: editor.getCurrentSectionId(),

@@ -1,17 +1,17 @@
 import UserRow from "./UserRow";
 import InviteRow from "./InviteRow";
 import NewIcon from "@/icons/new.svg?jsx";
-import { registerModal, showModal } from "@/utils/modals";
+import { showModal } from "@/utils/modals";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import styles from "./CollaborationPopover.module.css";
 import type Editor from "@/editor/Editor";
-import type { InviteModalResult } from "@/components/modals/invite/InviteModal";
 import type { Invite, User } from "@/types/collaboration";
 import type { JSX } from "@/jsx/jsx";
 import type PopoverMenu from "@/elements/menu/PopoverMenu";
 
-registerModal("INVITE", () => import("@/components/modals/invite/InviteModal"));
+const InviteModalLoader = () =>
+  import("@/components/modals/invite/InviteModal");
 
 export interface CollaborationPopoverProps extends JSX.Attributes<PopoverMenu> {
   editor: Editor;
@@ -37,8 +37,10 @@ export default function CollaborationPopover({
   }
 
   function showInviteModal() {
-    showModal<InviteModalResult>("INVITE", {
-      title: "Invite to page",
+    showModal(InviteModalLoader, {
+      props: {
+        title: "Invite to page",
+      },
       async onConfirm({ email }) {
         try {
           await editor.sendInvite(email);

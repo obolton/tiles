@@ -6,18 +6,18 @@ import client from "@/api/client";
 import { reactive, flag } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
-import { registerModal, showModal } from "@/utils/modals";
+import { showModal } from "@/utils/modals";
 import styles from "./WorkspaceInvites.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type { Invite } from "@/types/collaboration";
-import type { InviteModalResult } from "@/components/modals/invite/InviteModal";
 
 export interface WorkspaceInvitesProps {
   workspaceName: string;
   invites: AppRouterOutputs["workspaces"]["listInvites"];
 }
 
-registerModal("INVITE", () => import("@/components/modals/invite/InviteModal"));
+const InviteModalLoader = () =>
+  import("@/components/modals/invite/InviteModal");
 
 export default function WorkspaceInvites({
   workspaceName,
@@ -62,8 +62,10 @@ export default function WorkspaceInvites({
   };
 
   function onClickInvite() {
-    showModal<InviteModalResult>("INVITE", {
-      title: `Invite to ${workspaceName}`,
+    showModal(InviteModalLoader, {
+      props: {
+        title: `Invite to ${workspaceName}`,
+      },
       async onConfirm({ email }) {
         try {
           const invite = await client.workspaces.invite.mutate({
