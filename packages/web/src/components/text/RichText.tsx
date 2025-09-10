@@ -40,13 +40,15 @@ function renderNodes(nodes: Node[]) {
             return <List node={node} />;
           case "text":
             return node.pending ? null : (
-              <FormattedText format={node.format}>{node.text}</FormattedText>
+              <FormattedText format={node.format} size={node.size}>
+                {node.text}
+              </FormattedText>
             );
           case "link":
             return <Link node={node} />;
           case "date":
             return (
-              <FormattedText format={node.format}>
+              <FormattedText format={node.format} size={node.size}>
                 <ThemeVariant
                   theme={node.theme ?? DEFAULT_DATE_THEME}
                   registry={DATE_THEMES}
@@ -207,10 +209,11 @@ function Link({ node }: LinkProps) {
 
 interface FormattedTextProps {
   format: TextFormat;
+  size?: number;
   children: JSX.Node;
 }
 
-function FormattedText({ format, children }: FormattedTextProps) {
+function FormattedText({ format, size, children }: FormattedTextProps) {
   let content = children;
   if (format & TextFormat.BOLD) {
     content = <strong>{content}</strong>;
@@ -226,6 +229,9 @@ function FormattedText({ format, children }: FormattedTextProps) {
   }
   if (format & TextFormat.HIGHLIGHT) {
     content = <mark>{content}</mark>;
+  }
+  if (typeof size === "number") {
+    content = <span style={{ fontSize: size + "px" }}>{content}</span>;
   }
   return content;
 }
