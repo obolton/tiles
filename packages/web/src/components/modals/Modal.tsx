@@ -1,54 +1,29 @@
-import { ModalEvent } from "@/utils/modals";
 import styles from "./Modal.module.css";
-import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 
-interface ModalProps {
+export interface ModalProps {
   children: JSX.Node;
-  open: Reactive<boolean>;
-  onClose: () => void;
 }
 
-export default function Modal({ children, onClose, open }: ModalProps) {
-  let dialog: HTMLDialogElement | undefined;
-  const ref = (element: HTMLDialogElement) => {
-    dialog = element;
-  };
+function onKeyDown(event: KeyboardEvent) {
+  const dialog = event.currentTarget as HTMLDialogElement;
+  if (event.key === "Escape" && !event.defaultPrevented) {
+    event.preventDefault();
+    dialog.requestClose();
+  }
+}
 
-  open.subscribe(() => {
-    if (!dialog) {
-      return;
-    }
-    if (open.value && !dialog.open) {
-      dialog.showModal();
-    } else if (!open.value && dialog.open) {
-      dialog.close();
-      Promise.all(dialog.getAnimations().map((animation) => animation.finished))
-        .catch(() => {})
-        .finally(() => dialog?.dispatchEvent(new ModalEvent("hidemodal")));
-    }
-  });
+function onClick(event: MouseEvent) {
+  const dialog = event.currentTarget as HTMLDialogElement;
+  if (event.target === dialog && !event.defaultPrevented) {
+    event.preventDefault();
+    dialog.requestClose();
+  }
+}
 
-  const keyDown = (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      event.preventDefault();
-      onClose();
-    }
-  };
-
-  const onClick = (event: MouseEvent) => {
-    if (event.target === dialog) {
-      onClose();
-    }
-  };
-
+export default function Modal({ children }: ModalProps) {
   return (
-    <dialog
-      ref={ref}
-      className={styles.modal}
-      on:keydown={keyDown}
-      on:click={onClick}
-    >
+    <dialog className={styles.modal} on:keydown={onKeyDown} on:click={onClick}>
       {children}
     </dialog>
   );
