@@ -194,24 +194,14 @@ export async function removeFromWorkspace(
   { userId }: RemoveFromWorkspaceSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
-  return prisma.$transaction(async (transaction) => {
-    await Promise.all([
-      transaction.workspaceMembership.delete({
-        where: {
-          id: {
-            workspaceId,
-            userId,
-          },
-        },
-        select: { workspaceId: true },
-      }),
-      transaction.session.deleteMany({
-        where: {
-          workspaceId,
-          userId,
-        },
-      }),
-    ]);
+  return prisma.workspaceMembership.delete({
+    where: {
+      id: {
+        workspaceId,
+        userId,
+      },
+    },
+    select: { workspaceId: true },
   });
 }
 
