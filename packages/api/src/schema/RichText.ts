@@ -3,7 +3,8 @@ import { z } from "zod";
 const TextNodeSchema = z.object({
   type: z.literal("text"),
   text: z.string(),
-  format: z.number().int().gte(0).lte(31),
+  format: z.int().gte(0).lte(31),
+  size: z.int().gte(10).lte(72).optional(),
   pending: z.literal(true).optional(),
 });
 
@@ -17,7 +18,8 @@ const LinkNodeSchema = z.object({
 const DateNodeSchema = z.object({
   type: z.literal("date"),
   value: z.union([z.string().datetime(), z.string().date()]),
-  format: z.number().int().gte(0).lte(31),
+  format: z.int().gte(0).lte(31),
+  size: z.int().gte(10).lte(72).optional(),
   theme: z.string().nullable().optional(),
 });
 
