@@ -25,6 +25,9 @@ const DOMOutput = {
 
 export type TextAlignment = "left" | "center" | "right";
 
+export const MIN_FONT_SIZE = 10;
+export const MAX_FONT_SIZE = 72;
+
 function getTextAttributes(element: HTMLElement): { align: TextAlignment } {
   const align = element.style.textAlign;
   switch (align) {
@@ -286,6 +289,46 @@ const marksSpec = {
     parseDOM: [{ tag: "del" }, { style: "text-decoration=line-through" }],
     toDOM() {
       return DOMOutput.strikethrough;
+    },
+  },
+
+  size: {
+    attrs: {
+      size: {
+        validate(value) {
+          if (
+            !Number.isInteger(value) ||
+            value < MIN_FONT_SIZE ||
+            value > MAX_FONT_SIZE
+          ) {
+            throw new RangeError(`Invalid font size: ${value}`);
+          }
+        },
+      },
+    },
+    parseDOM: [
+      {
+        style: "font-size",
+        getAttrs(value) {
+          let size = parseFloat(value);
+          if (Number.isNaN(size)) {
+            return false;
+          }
+          // https://www.w3.org/TR/css-values-3/#absolute-lengths
+          if (value.endsWith("pt")) {
+            size *= 96 / 72;
+          }
+          return {
+            size: Math.min(
+              Math.max(Math.round(size), MIN_FONT_SIZE),
+              MAX_FONT_SIZE,
+            ),
+          };
+        },
+      },
+    ],
+    toDOM(mark) {
+      return ["span", { style: `font-size: ${mark.attrs.size}px` }, 0];
     },
   },
 } as const satisfies Record<string, MarkSpec>;
