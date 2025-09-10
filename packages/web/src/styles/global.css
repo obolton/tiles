@@ -262,7 +262,7 @@ scroll-view:not(:defined) {
 }
 
 /* Reset popover styles */
-[popover] {
+:where([popover]) {
   inset: unset;
   width: unset;
   height: unset;
