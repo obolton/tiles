@@ -5,12 +5,13 @@ import { inviteToWorkspaceEmail } from "@/emails/inviteToWorkspace.ts";
 import type { Prisma } from "@prisma/client";
 import type {
   GetWorkspaceSchema,
+  CreateWorkspaceSchema,
+  UpdateWorkspaceSchema,
   InviteToWorkspaceSchema,
   AcceptWorkspaceInviteSchema,
   DeleteWorkspaceInviteSchema,
   ListWorkspaceInvitesSchema,
   RemoveFromWorkspaceSchema,
-  UpdateWorkspaceSchema,
   ListWorkspaceUsersSchema,
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
@@ -47,6 +48,23 @@ export async function getWorkspace({ workspaceId }: GetWorkspaceSchema) {
   });
 }
 
+export async function createWorkspace(
+  { name }: CreateWorkspaceSchema,
+  { userId }: AuthenticatedRequestContext,
+) {
+  return prisma.workspace.create({
+    data: {
+      name,
+      memberships: {
+        create: {
+          userId,
+        },
+      },
+    },
+    select: WORKSPACE_FIELDS,
+  });
+}
+
 export async function updateWorkspace(
   { name }: UpdateWorkspaceSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
@@ -57,6 +75,17 @@ export async function updateWorkspace(
     },
     data: {
       name,
+    },
+    select: WORKSPACE_FIELDS,
+  });
+}
+
+export async function deleteWorkspace({
+  workspaceId,
+}: AuthenticatedWorkspaceProcedureContext) {
+  return prisma.workspace.delete({
+    where: {
+      id: workspaceId,
     },
     select: WORKSPACE_FIELDS,
   });

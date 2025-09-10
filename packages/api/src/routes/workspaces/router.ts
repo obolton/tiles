@@ -5,7 +5,9 @@ import {
 } from "@/utils/middleware.ts";
 import {
   GetWorkspaceSchema,
+  CreateWorkspaceSchema,
   UpdateWorkspaceSchema,
+  DeleteWorkspaceSchema,
   InviteToWorkspaceSchema,
   AcceptWorkspaceInviteSchema,
   DeleteWorkspaceInviteSchema,
@@ -15,7 +17,9 @@ import {
 } from "./schema.ts";
 import {
   getWorkspace,
+  createWorkspace,
   updateWorkspace,
+  deleteWorkspace,
   inviteToWorkspace,
   acceptWorkspaceInvite,
   deleteWorkspaceInvite,
@@ -29,9 +33,17 @@ export default router({
     .input(GetWorkspaceSchema)
     .query(({ input }) => getWorkspace(input)),
 
+  create: authenticatedProcedure
+    .input(CreateWorkspaceSchema)
+    .mutation(async ({ input, ctx }) => createWorkspace(input, ctx)),
+
   update: authenticatedWorkspaceProcedure
     .input(UpdateWorkspaceSchema)
     .mutation(({ input, ctx }) => updateWorkspace(input, ctx)),
+
+  delete: authenticatedWorkspaceProcedure
+    .input(DeleteWorkspaceSchema)
+    .mutation(({ ctx }) => deleteWorkspace(ctx)),
 
   invite: authenticatedWorkspaceProcedure
     .input(InviteToWorkspaceSchema)

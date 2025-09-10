@@ -5,10 +5,20 @@ export const GetWorkspaceSchema = z.object({
 });
 export type GetWorkspaceSchema = z.infer<typeof GetWorkspaceSchema>;
 
+export const CreateWorkspaceSchema = z.object({
+  name: z.string().min(1),
+});
+export type CreateWorkspaceSchema = z.infer<typeof CreateWorkspaceSchema>;
+
 export const UpdateWorkspaceSchema = z.object({
   name: z.string().min(1),
 });
 export type UpdateWorkspaceSchema = z.infer<typeof UpdateWorkspaceSchema>;
+
+export const DeleteWorkspaceSchema = z.object({
+  workspaceId: z.uuid(),
+});
+export type DeleteWorkspaceSchema = z.infer<typeof DeleteWorkspaceSchema>;
 
 export const InviteToWorkspaceSchema = z.object({
   email: z.email().max(254),
@@ -31,7 +41,7 @@ export type DeleteWorkspaceInviteSchema = z.infer<
 
 export const ListWorkspaceInvitesSchema = z.object({
   query: z.string().min(1).optional(),
-  offset: z.number().int().gte(0).optional(), // TODO: Use cursors
+  offset: z.int().gte(0).optional(), // TODO: Use cursors
 });
 export type ListWorkspaceInvitesSchema = z.infer<
   typeof ListWorkspaceInvitesSchema
