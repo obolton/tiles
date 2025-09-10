@@ -1,6 +1,7 @@
 import Canvas from "@/components/layouts/canvas/Canvas";
-import { flag } from "@/utils/reactivity";
+import { flag, Computed } from "@/utils/reactivity";
 import SectionToolbar from "./SectionToolbar";
+import { toCSSColor } from "@/utils/color";
 import styles from "./Section.module.css";
 import type { SectionWithTiles } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
@@ -11,8 +12,10 @@ export interface SectionProps {
 }
 
 export default function Section({ editor, section }: SectionProps) {
-  const hasFocus = flag(false);
   const { isEditable } = editor;
+  const { id, background, tiles } = section;
+  const hasFocus = flag(false);
+  const anchorName = `--section-${id}`;
 
   function onFocusIn() {
     hasFocus.on();
@@ -29,17 +32,27 @@ export default function Section({ editor, section }: SectionProps) {
     hasFocus.off();
   }
 
-  const anchorName = `--section-${section.id}`;
+  const style = new Computed([background] as const, (backgroundValue) => ({
+    "--background-color":
+      backgroundValue && "color" in backgroundValue
+        ? toCSSColor(backgroundValue.color)
+        : "transparent",
+    backgroundImage:
+      backgroundValue && "imageUrl" in backgroundValue
+        ? `url(${backgroundValue.imageUrl})`
+        : undefined,
+    anchorName,
+  }));
 
   return (
     <section
       classList={{
         [styles.section]: true,
       }}
-      style={{ anchorName }}
+      style={style}
       tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
-      data-section-id={section.id}
-      data-animate-layout-id={section.id}
+      data-section-id={id}
+      data-animate-layout-id={id}
       on:focusin={onFocusIn}
       on:focusout={onFocusOut}
     >
@@ -56,8 +69,8 @@ export default function Section({ editor, section }: SectionProps) {
       <Canvas
         editor={editor}
         isEditable={isEditable}
-        sectionId={section.id}
-        items={section.tiles}
+        sectionId={id}
+        items={tiles}
       />
     </section>
   );
