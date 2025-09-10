@@ -15,7 +15,8 @@ import type {
 import { TextFormat, ListType, TextAlignment } from "./types";
 import { schema } from "./schema";
 
-function getMarks(format: number) {
+function getMarks(node: TextNode | DateNode) {
+  const { format, size } = node;
   const marks = [];
 
   if (format & TextFormat.BOLD) {
@@ -33,12 +34,15 @@ function getMarks(format: number) {
   if (format & TextFormat.HIGHLIGHT) {
     marks.push(schema.marks.highlight.create());
   }
+  if (typeof size === "number") {
+    marks.push(schema.marks.size.create({ size }));
+  }
 
   return marks;
 }
 
 function createTextNode(text: TextNode) {
-  const textNode = schema.text(text.text, getMarks(text.format));
+  const textNode = schema.text(text.text, getMarks(text));
   return textNode;
 }
 
@@ -109,7 +113,7 @@ function createLinkNode(link: LinkNode): Node {
 }
 
 function createDateNode(date: DateNode): Node {
-  const marks = getMarks(date.format);
+  const marks = getMarks(date);
   return schema.nodes.date.create(
     {
       value: new Date(date.value),

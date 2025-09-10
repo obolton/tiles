@@ -27,6 +27,7 @@ export interface TextNode extends BaseNode {
   type: "text";
   text: string;
   format: number;
+  size?: number;
   pending?: boolean;
 }
 
@@ -41,6 +42,7 @@ export interface DateNode extends BaseNode {
   type: "date";
   value: string;
   format: number;
+  size?: number;
   theme?: string | null;
 }
 

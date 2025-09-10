@@ -32,6 +32,10 @@ function getTextFormat(node: Node) {
   }, 0);
 }
 
+function getTextSize(node: Node) {
+  return schema.marks.size.isInSet(node.marks)?.attrs.size;
+}
+
 function getTextAlignment(node: Node) {
   switch (node.attrs.align) {
     case "left":
@@ -51,6 +55,7 @@ function serializeNode(node: Node): SerializedNode {
       type: "text",
       text: node.text ?? "",
       format: getTextFormat(node),
+      size: getTextSize(node),
       pending: node.marks.find((mark) => mark.type === schema.marks.pending)
         ? true
         : undefined,
