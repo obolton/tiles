@@ -1,6 +1,5 @@
 import Navigation from "@/components/menu/Navigation";
 import SignIn from "@/components/menu/SignIn";
-import ModalLauncher from "@/components/modals/ModalLauncher";
 import SpeculationRules from "@/components/resources/SpeculationRules";
 import "@/styles/global.css";
 import "@/styles/editing.css";
@@ -50,8 +49,6 @@ export default function PageLayout({
       {children}
 
       <toast-container />
-
-      <ModalLauncher />
 
       <SpeculationRules />
     </>
