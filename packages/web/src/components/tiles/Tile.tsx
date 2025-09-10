@@ -52,7 +52,7 @@ export default function Tile({
       "--background-color":
         backgroundValue && "color" in backgroundValue
           ? toCSSColor(backgroundValue.color)
-          : undefined,
+          : "transparent",
       backgroundImage:
         backgroundValue && "imageUrl" in backgroundValue
           ? `url(${backgroundValue.imageUrl})`
