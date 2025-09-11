@@ -4,7 +4,7 @@ const TextNodeSchema = z.object({
   type: z.literal("text"),
   text: z.string(),
   format: z.int().gte(0).lte(31),
-  size: z.int().gte(10).lte(72).optional(),
+  size: z.number().gte(0.5).lte(2.5).optional(),
   pending: z.literal(true).optional(),
 });
 
@@ -19,7 +19,7 @@ const DateNodeSchema = z.object({
   type: z.literal("date"),
   value: z.union([z.string().datetime(), z.string().date()]),
   format: z.int().gte(0).lte(31),
-  size: z.int().gte(10).lte(72).optional(),
+  size: z.number().gte(0.5).lte(2.5).optional(),
   theme: z.string().nullable().optional(),
 });
 
