@@ -1,7 +1,7 @@
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import type {
   ReorderTileSchema,
-  DeleteTileSchema,
+  DeleteTilesSchema,
   UpdateTileSchema,
 } from "./schema.ts";
 import type { Prisma, TileType } from "@prisma/client";
@@ -159,21 +159,9 @@ export async function updateTile({
   });
 }
 
-export async function deleteTile({ pageId, id }: DeleteTileSchema) {
-  return prisma.$transaction(async (transaction) => {
-    const { sectionId, position } = await transaction.tile.delete({
-      where: { pageId, id },
-      select: { sectionId: true, position: true },
-    });
-    await transaction.tile.updateMany({
-      where: {
-        pageId,
-        sectionId,
-        position: { gt: position },
-      },
-      data: { position: { decrement: 1 } },
-    });
-    return { id, pageId };
+export async function deleteTiles({ pageId, ids }: DeleteTilesSchema) {
+  await prisma.tile.deleteMany({
+    where: { pageId, id: { in: ids } },
   });
 }
 

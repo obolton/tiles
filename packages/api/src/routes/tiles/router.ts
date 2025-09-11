@@ -1,10 +1,10 @@
 import { router } from "@/utils/trpc.ts";
 import { pageUpdateProcedure } from "@/utils/middleware.ts";
-import { reorderTile, updateTile, deleteTile } from "./tiles.ts";
+import { reorderTile, updateTile, deleteTiles } from "./tiles.ts";
 import {
   ReorderTileSchema,
   UpdateTileSchema,
-  DeleteTileSchema,
+  DeleteTilesSchema,
 } from "./schema.ts";
 
 export default router({
@@ -17,6 +17,6 @@ export default router({
     .mutation(({ input }) => updateTile(input)),
 
   delete: pageUpdateProcedure
-    .input(DeleteTileSchema)
-    .mutation(({ input }) => deleteTile(input)),
+    .input(DeleteTilesSchema)
+    .mutation(({ input }) => deleteTiles(input)),
 });

@@ -17,8 +17,8 @@ export const UpdateTileSchema = z.object({
 });
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 
-export const DeleteTileSchema = z.object({
+export const DeleteTilesSchema = z.object({
   pageId: z.uuid(),
-  id: z.uuid(),
+  ids: z.array(z.uuid()).min(1).max(20),
 });
-export type DeleteTileSchema = z.infer<typeof DeleteTileSchema>;
+export type DeleteTilesSchema = z.infer<typeof DeleteTilesSchema>;
