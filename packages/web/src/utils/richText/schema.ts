@@ -25,8 +25,8 @@ const DOMOutput = {
 
 export type TextAlignment = "left" | "center" | "right";
 
-export const MIN_FONT_SIZE = 10;
-export const MAX_FONT_SIZE = 72;
+export const MIN_FONT_SIZE = 0.5;
+export const MAX_FONT_SIZE = 2.5;
 
 function getTextAttributes(element: HTMLElement): { align: TextAlignment } {
   const align = element.style.textAlign;
@@ -297,7 +297,7 @@ const marksSpec = {
       size: {
         validate(value) {
           if (
-            !Number.isInteger(value) ||
+            !Number.isNaN(value) ||
             value < MIN_FONT_SIZE ||
             value > MAX_FONT_SIZE
           ) {
@@ -328,7 +328,8 @@ const marksSpec = {
       },
     ],
     toDOM(mark) {
-      return ["span", { style: `font-size: ${mark.attrs.size}px` }, 0];
+      const size = mark.attrs.size as number;
+      return ["span", { style: `font-size: ${size.toFixed(2)}em` }, 0];
     },
   },
 } as const satisfies Record<string, MarkSpec>;
