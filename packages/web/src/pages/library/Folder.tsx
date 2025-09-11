@@ -8,7 +8,9 @@ import SettingsIcon from "@/icons/settings.svg?jsx";
 import { showModal } from "@/utils/modals";
 import { redirectWithToast } from "@/utils/toasts";
 import type { AppRouterOutputs } from "@/api/client";
-import type { FolderModalResult } from "@/components/folders/FolderModal";
+
+const FolderModalLoader = () =>
+  import("@/components/modals/folders/FolderModal");
 
 export interface FolderProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
@@ -34,9 +36,11 @@ export default function Folder({
   pages,
 }: FolderProps) {
   function editFolder() {
-    showModal<FolderModalResult>("FOLDER", {
-      showDelete: true,
-      name,
+    showModal(FolderModalLoader, {
+      props: {
+        name,
+        showDelete: true,
+      },
       async onConfirm(result) {
         if (result === "DELETE") {
           await client.folders.delete.mutate({

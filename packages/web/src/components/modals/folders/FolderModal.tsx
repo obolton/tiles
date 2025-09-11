@@ -18,7 +18,7 @@ export default function FolderModal({
   name,
   showDelete,
 }: FolderModalProps) {
-  const isPending = flag(false);
+  const pending = flag(false);
 
   async function onSubmit(event: Event) {
     event.preventDefault();
@@ -27,37 +27,37 @@ export default function FolderModal({
     const formData = new FormData(form);
     const name = formData.get("name") as string;
 
-    if (isPending.value || !name) {
+    if (pending.value || !name) {
       return;
     }
 
-    isPending.on();
+    pending.on();
     try {
       await confirm({ name });
     } catch (error) {
       handleError(error);
     } finally {
-      isPending.off();
+      pending.off();
     }
   }
 
   async function onDelete() {
-    if (isPending.value) {
+    if (pending.value) {
       return;
     }
 
-    isPending.on();
+    pending.on();
     try {
       await confirm("DELETE");
     } catch (error) {
       handleError(error);
     } finally {
-      isPending.off();
+      pending.off();
     }
   }
 
   return (
-    <form onsubmit={onSubmit}>
+    <form on:submit={onSubmit}>
       <ModalHeader>
         <h2>Folder</h2>
       </ModalHeader>
@@ -77,19 +77,19 @@ export default function FolderModal({
       </ModalBody>
 
       <ModalFooter>
-        <button classList={{ primary: true, pending: isPending }} type="submit">
+        <button type="submit" classList={{ primary: true, pending }}>
           Save
         </button>
         {showDelete ? (
           <button
-            className="secondary destructive"
             type="button"
-            onclick={onDelete}
+            className="secondary destructive"
+            on:click={onDelete}
           >
             Delete folder
           </button>
         ) : null}
-        <button className="secondary" type="button" onclick={cancel}>
+        <button type="button" className="secondary" on:click={cancel}>
           Cancel
         </button>
       </ModalFooter>

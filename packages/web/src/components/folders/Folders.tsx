@@ -25,7 +25,8 @@ export interface FoldersProps {
   };
 }
 
-const FolderModalLoader = () => import("./FolderModal");
+const FolderModalLoader = () =>
+  import("@/components/modals/folders/FolderModal");
 
 export default function Folders({
   workspaceId,
