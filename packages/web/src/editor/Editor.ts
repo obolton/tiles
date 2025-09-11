@@ -303,12 +303,11 @@ export default class Editor {
     id: string,
     transition: TransitionFunction = immediateTransition,
   ) {
-    const result = await client.tiles.delete.mutate({
+    await client.tiles.delete.mutate({
       pageId: this.pageId,
-      id,
+      ids: [id],
     });
-    transition(() => this.removeTile(result.id));
-    return result;
+    transition(() => this.removeTile(id));
   }
 
   async moveTile({
