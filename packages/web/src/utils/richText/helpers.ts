@@ -1,6 +1,6 @@
+import { schema, LIST_NODES, type TextAlignment } from "./schema";
 import type { Node, NodeType, MarkType, ResolvedPos } from "prosemirror-model";
 import type { EditorState } from "prosemirror-state";
-import { schema, LIST_NODES, type TextAlignment } from "./schema";
 import type { ListType } from "./format";
 
 interface ResolvedNode {
@@ -45,26 +45,17 @@ export function getSelectionMarks(state: EditorState) {
 
   if (empty) {
     const storedMarks = state.storedMarks ?? [];
-    const marks = $from.marks();
-
-    return new Set<MarkType>(
-      storedMarks.concat(marks).map((mark) => mark.type),
-    );
+    return $from.marks().concat(storedMarks);
   }
 
-  const marks = new Set<MarkType>($from.marks().map((mark) => mark.type));
+  let marks = $from.marks();
 
   const textNodes = findInSelection(state, (node) => node.isText);
 
   for (const node of textNodes) {
-    for (const mark of marks) {
-      if (!mark.isInSet(node.marks)) {
-        marks?.delete(mark);
-
-        if (marks.size === 0) {
-          return marks;
-        }
-      }
+    marks = marks.filter((mark) => mark.type.isInSet(node.marks));
+    if (marks.length === 0) {
+      return marks;
     }
   }
 

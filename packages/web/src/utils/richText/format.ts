@@ -49,11 +49,11 @@ export function getSelectionFormat(state: EditorState): Format {
   const link = !!getLink(state);
 
   return {
-    bold: marks.has(schema.marks.bold),
-    italic: marks.has(schema.marks.italic),
-    underline: marks.has(schema.marks.underline),
-    strikethrough: marks.has(schema.marks.strikethrough),
-    highlight: marks.has(schema.marks.highlight),
+    bold: Boolean(schema.marks.bold.isInSet(marks)),
+    italic: Boolean(schema.marks.italic.isInSet(marks)),
+    underline: Boolean(schema.marks.underline.isInSet(marks)),
+    strikethrough: Boolean(schema.marks.strikethrough.isInSet(marks)),
+    highlight: Boolean(schema.marks.highlight.isInSet(marks)),
     link,
     headingLevel,
     quote: blockNodeTypes.has(schema.nodes.quote),
