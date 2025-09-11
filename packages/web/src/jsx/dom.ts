@@ -212,16 +212,21 @@ function hydrateTextNode(value: string, container: Element, index: number) {
     const content = textNode.data;
 
     if (content.length > value.length && content.startsWith(value)) {
-      textNode.splitText(value.length);
-    } else if (content !== value) {
+      const sibling = textNode.splitText(value.length);
+      return [textNode, sibling];
+    }
+
+    if (content !== value) {
       textNode.data = value;
     }
+
+    return [textNode];
   } else {
     const textNode = document.createTextNode(value);
     container.appendChild(textNode);
-  }
 
-  return 1;
+    return [textNode];
+  }
 }
 
 function hydrateElementNode(
@@ -263,6 +268,7 @@ function hydrateDOMElement(
     if (attributes.ref) {
       attributes.ref(element);
     }
+    return [element];
   } else {
     const element = document.createElement(tagName);
     setAttributes(element, attributes, signal);
@@ -278,9 +284,8 @@ function hydrateDOMElement(
       attributes.ref(element);
     }
     container.appendChild(element);
+    return [element];
   }
-
-  return 1;
 }
 
 function hydrateFragment(
@@ -289,12 +294,14 @@ function hydrateFragment(
   start: number,
   signal?: AbortSignal,
 ) {
-  let length = 0;
+  const hydrated: Node[] = [];
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i]!;
-    length += hydrateNode(node, container, start + length, signal);
+    hydrated.push(
+      ...hydrateNode(node, container, start + hydrated.length, signal),
+    );
   }
-  return length;
+  return hydrated;
 }
 
 function hydrateStoreNode(
@@ -308,23 +315,21 @@ function hydrateStoreNode(
   const combinedSignal = signal
     ? AbortSignal.any([signal, storeSignal])
     : storeSignal;
-  let length = hydrateNode(store.value, container, index, combinedSignal);
-  let anchor;
-  if (length === 0) {
+  const hydrated = hydrateNode(store.value, container, index, combinedSignal);
+  let anchor = hydrated[0];
+  if (!anchor) {
     anchor = createPlaceholderNode();
     container.insertBefore(anchor, container.childNodes[index] ?? null);
-    length = 1;
-  } else {
-    anchor = container.childNodes[index]!;
+    hydrated.push(anchor);
   }
   const range: MutableRange = {
     store,
     anchor,
-    length,
+    length: hydrated.length,
     abort,
   };
   store.subscribe(() => updateRange(range, undefined, signal), signal);
-  return length;
+  return hydrated;
 }
 
 // Potential improvement: use anchor node instead of indexing into container
@@ -333,9 +338,9 @@ export function hydrateNode(
   container: Element,
   index: number,
   signal?: AbortSignal,
-): number {
+): Node[] {
   if (isEmptyNode(node)) {
-    return 0;
+    return [];
   }
 
   if (isTextNode(node)) {

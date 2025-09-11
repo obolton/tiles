@@ -38,36 +38,31 @@ export default class Each<T> implements JSX.ElementClass {
     }
 
     const items = this.items.value;
-    let length = 0;
+    const hydrated: Node[] = [];
     let itemIndex = 0;
 
     for (const value of items) {
       const abort = new AbortController();
       const signal = this.getCombinedSignal(abort);
-      const itemLength = hydrateNode(
+      const nodes = hydrateNode(
         this.renderItem(value),
         container,
-        index + length,
+        index + hydrated.length,
         signal,
       );
-      const nodes: Node[] = [];
-      for (let j = 0; j < itemLength; j++) {
-        const node = container.childNodes[index + length + j]!;
-        nodes.push(node);
-      }
       this.entries.set(value, { index: itemIndex, nodes, abort });
       this.anchor ??= nodes[0];
       itemIndex++;
-      length += itemLength;
+      hydrated.push(...nodes);
     }
 
     if (!this.anchor) {
       this.anchor = this.createPlaceholderNode();
       container.insertBefore(this.anchor, container.childNodes[index] ?? null);
-      length = 1;
+      hydrated.push(this.anchor);
     }
 
-    return length;
+    return hydrated;
   }
 
   render() {
