@@ -14,6 +14,10 @@ import { signOut } from "@/utils/sessions";
 import { getIsBookmarked, setIsBookmarked } from "@/utils/bookmarks";
 import { flag } from "@/utils/reactivity";
 import { showToast } from "@/utils/toasts";
+import { showModal } from "@/utils/modals";
+
+const CreateWorkspaceModalLoader = () =>
+  import("@/components/modals/workspaces/CreateWorkspaceModal");
 
 export interface NavigationProps {
   workspaceId: string;
@@ -48,6 +52,17 @@ export default function Navigation({
             .catch(handleError);
         }
       }
+    });
+  }
+
+  function createWorkspace() {
+    showModal(CreateWorkspaceModalLoader, {
+      props: {},
+      async onConfirm({ name }) {
+        const { id } = await client.workspaces.create.mutate({ name });
+        await getUserInfo();
+        window.open(`/workspaces/${id}`, "_blank");
+      },
     });
   }
 
@@ -130,6 +145,14 @@ export default function Navigation({
                     </a>
                   </li>
                 ))}
+                {value.workspaces.length < 5 ? (
+                  <li>
+                    <button type="button" on:click={createWorkspace}>
+                      <NewIcon aria-hidden="true" />
+                      Create workspace
+                    </button>
+                  </li>
+                ) : null}
                 <li>
                   <a href={`/workspaces/${workspaceId}/settings`}>
                     <SettingsIcon aria-hidden="true" />
