@@ -25,6 +25,7 @@ export interface Format {
   link: boolean;
   align?: TextAlignment;
   pending: boolean;
+  size: number;
 }
 
 export const DEFAULT_FORMAT = {
@@ -38,6 +39,7 @@ export const DEFAULT_FORMAT = {
   highlight: false,
   link: false,
   pending: false,
+  size: 1,
 };
 
 export function getSelectionFormat(state: EditorState): Format {
@@ -47,6 +49,7 @@ export function getSelectionFormat(state: EditorState): Format {
   const align = getSelectionAlignment(state);
   const list = getSelectionList(state);
   const link = !!getLink(state);
+  const size = schema.marks.size.isInSet(marks)?.attrs.size ?? 1;
 
   return {
     bold: Boolean(schema.marks.bold.isInSet(marks)),
@@ -60,5 +63,6 @@ export function getSelectionFormat(state: EditorState): Format {
     list,
     align,
     pending: blockNodeTypes.has(schema.nodes.pending),
+    size,
   };
 }
