@@ -1,4 +1,5 @@
 import { Schema } from "prosemirror-model";
+import { MIN_TEXT_SIZE, MAX_TEXT_SIZE } from "@/constants/formatting";
 import type {
   AttributeSpec,
   NodeSpec,
@@ -24,9 +25,6 @@ const DOMOutput = {
 } as const satisfies Record<string, DOMOutputSpec>;
 
 export type TextAlignment = "left" | "center" | "right";
-
-export const MIN_FONT_SIZE = 0.5;
-export const MAX_FONT_SIZE = 2.5;
 
 function getTextAttributes(element: HTMLElement): { align: TextAlignment } {
   const align = element.style.textAlign;
@@ -298,8 +296,8 @@ const marksSpec = {
         validate(value) {
           if (
             !Number.isNaN(value) ||
-            value < MIN_FONT_SIZE ||
-            value > MAX_FONT_SIZE
+            value < MIN_TEXT_SIZE ||
+            value > MAX_TEXT_SIZE
           ) {
             throw new RangeError(`Invalid font size: ${value}`);
           }
@@ -316,19 +314,25 @@ const marksSpec = {
           }
           // https://www.w3.org/TR/css-values-3/#absolute-lengths
           if (value.endsWith("pt")) {
-            size *= 96 / 72;
+            size /= (96 / 72) * 16;
+          }
+          if (value.endsWith("px")) {
+            size /= 16;
           }
           return {
             size: Math.min(
-              Math.max(Math.round(size), MIN_FONT_SIZE),
-              MAX_FONT_SIZE,
+              Math.max(Math.round(size), MIN_TEXT_SIZE),
+              MAX_TEXT_SIZE,
             ),
           };
         },
       },
     ],
     toDOM(mark) {
-      const size = mark.attrs.size as number;
+      const size = Math.min(
+        Math.max(mark.attrs.size as number, MIN_TEXT_SIZE),
+        MAX_TEXT_SIZE,
+      );
       return ["span", { style: `font-size: ${size.toFixed(2)}em` }, 0];
     },
   },

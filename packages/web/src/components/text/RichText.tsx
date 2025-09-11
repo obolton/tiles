@@ -7,6 +7,7 @@ import {
   HEADING_THEMES,
   DEFAULT_HEADING_THEME,
 } from "@/components/headings/themes";
+import { MIN_TEXT_SIZE, MAX_TEXT_SIZE } from "@/constants/formatting";
 import { reactive } from "@/utils/reactivity";
 import type {
   RichText,
@@ -231,7 +232,16 @@ function FormattedText({ format, size, children }: FormattedTextProps) {
     content = <mark>{content}</mark>;
   }
   if (typeof size === "number") {
-    content = <span style={{ fontSize: size + "em" }}>{content}</span>;
+    content = (
+      <span
+        style={{
+          fontSize:
+            Math.min(Math.max(size, MIN_TEXT_SIZE), MAX_TEXT_SIZE) + "em",
+        }}
+      >
+        {content}
+      </span>
+    );
   }
   return content;
 }
