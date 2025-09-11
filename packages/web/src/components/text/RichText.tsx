@@ -231,7 +231,7 @@ function FormattedText({ format, size, children }: FormattedTextProps) {
     content = <mark>{content}</mark>;
   }
   if (typeof size === "number") {
-    content = <span style={{ fontSize: size + "px" }}>{content}</span>;
+    content = <span style={{ fontSize: size + "em" }}>{content}</span>;
   }
   return content;
 }
