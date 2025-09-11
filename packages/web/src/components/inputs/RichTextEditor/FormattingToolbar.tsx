@@ -2,6 +2,7 @@ import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
 import H3Icon from "@/icons/h3.svg?jsx";
 import ParagraphIcon from "@/icons/paragraph.svg?jsx";
+import TextSizeIcon from "@/icons/text-size.svg?jsx";
 import BoldIcon from "@/icons/bold.svg?jsx";
 import ItalicIcon from "@/icons/italic.svg?jsx";
 import UnderlineIcon from "@/icons/underline.svg?jsx";
@@ -20,6 +21,7 @@ import EventIcon from "@/icons/event.svg?jsx";
 import AIIcon from "@/icons/ai.svg?jsx";
 import ApproveIcon from "@/icons/approve.svg?jsx";
 import RejectIcon from "@/icons/reject.svg?jsx";
+import TextSizePopover from "@/components/formatting/TextSizePopover";
 import { showModal } from "@/utils/modals";
 import { classNames } from "@/utils/css";
 import styles from "./FormattingToolbar.module.css";
@@ -44,6 +46,7 @@ import {
   approve,
   reject,
   togglePrompt,
+  setTextSize,
 } from "@/utils/richText/commands";
 import { getLink } from "@/utils/richText/helpers";
 import type { Format, TextAlignment, ListType } from "@/utils/richText/format";
@@ -138,6 +141,8 @@ export default function FormattingToolbar({
       },
     });
   };
+
+  const changeTextSize = (size: number) => performCommand(setTextSize(size));
 
   const formatBold = () => performCommand(toggleBold);
 
@@ -334,6 +339,29 @@ export default function FormattingToolbar({
       </ul>
 
       <ul role="group" aria-label="Text style">
+        <li role="presentation">
+          <button
+            type="button"
+            role="menuitem"
+            id="text-size-button"
+            className="floating"
+            aria-label="Text size"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            popovertarget="text-size-popover"
+            data-tooltip="Text size"
+          >
+            <TextSizeIcon aria-hidden="true" />
+          </button>
+
+          <TextSizePopover
+            id="text-size-popover"
+            anchor="text-size-button"
+            align="center"
+            value={format.derive((value) => value.size)}
+            onChange={changeTextSize}
+          />
+        </li>
         <li role="presentation">
           <button
             role="menuitem"
