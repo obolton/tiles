@@ -62,7 +62,7 @@ export default function ColorPalette({
     : null;
 
   return (
-    <div className={styles.palette} onchange={setColor}>
+    <fieldset className={styles.palette} on:change={setColor}>
       {colors.map((color, i) => (
         <input
           type="radio"
@@ -77,6 +77,6 @@ export default function ColorPalette({
           checked={i === selectedIndex}
         />
       ))}
-    </div>
+    </fieldset>
   );
 }
