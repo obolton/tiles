@@ -12,6 +12,13 @@ enum VerticalAlignment {
   BOTTOM
 }
 
+enum GradientDirection {
+  VERTICAL
+  HORIZONTAL
+  BOTTOM_RIGHT
+  BOTTOM_LEFT
+}
+
 model Page {
   id            String    @id @default(uuid()) @db.Uuid
   createdAt     DateTime  @default(now()) @map("created_at")
@@ -146,15 +153,19 @@ model TextTile {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   /// [RichText]
-  content            Json              @db.JsonB
-  textL              Float?            @map("text_l") @db.Real
-  textC              Float?            @map("text_c") @db.Real
-  textH              Float?            @map("text_h") @db.Real
-  backgroundL        Float?            @map("background_l") @db.Real
-  backgroundC        Float?            @map("background_c") @db.Real
-  backgroundH        Float?            @map("background_h") @db.Real
-  backgroundImageKey String?           @map("background_image_key")
-  align              VerticalAlignment @default(TOP)
+  content            Json               @db.JsonB
+  textL              Float?             @map("text_l") @db.Real
+  textC              Float?             @map("text_c") @db.Real
+  textH              Float?             @map("text_h") @db.Real
+  backgroundL        Float?             @map("background_l") @db.Real
+  backgroundC        Float?             @map("background_c") @db.Real
+  backgroundH        Float?             @map("background_h") @db.Real
+  backgroundBL       Float?             @map("background_b_l") @db.Real
+  backgroundBC       Float?             @map("background_b_c") @db.Real
+  backgroundBH       Float?             @map("background_b_h") @db.Real
+  backgroundGradient GradientDirection? @map("background_gradient")
+  backgroundImageKey String?            @map("background_image_key")
+  align              VerticalAlignment  @default(TOP)
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[]
@@ -229,17 +240,21 @@ model PageLinkTile {
 }
 
 model Table {
-  id                 String   @id @default(uuid()) @db.Uuid
-  pageId             String   @map("page_id") @db.Uuid
-  createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
-  textL              Float?   @map("text_l") @db.Real
-  textC              Float?   @map("text_c") @db.Real
-  textH              Float?   @map("text_h") @db.Real
-  backgroundL        Float?   @map("background_l") @db.Real
-  backgroundC        Float?   @map("background_c") @db.Real
-  backgroundH        Float?   @map("background_h") @db.Real
-  backgroundImageKey String?  @map("background_image_key")
+  id                 String             @id @default(uuid()) @db.Uuid
+  pageId             String             @map("page_id") @db.Uuid
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+  textL              Float?             @map("text_l") @db.Real
+  textC              Float?             @map("text_c") @db.Real
+  textH              Float?             @map("text_h") @db.Real
+  backgroundL        Float?             @map("background_l") @db.Real
+  backgroundC        Float?             @map("background_c") @db.Real
+  backgroundH        Float?             @map("background_h") @db.Real
+  backgroundBL       Float?             @map("background_b_l") @db.Real
+  backgroundBC       Float?             @map("background_b_c") @db.Real
+  backgroundBH       Float?             @map("background_b_h") @db.Real
+  backgroundGradient GradientDirection? @map("background_gradient")
+  backgroundImageKey String?            @map("background_image_key")
 
   page    Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles   Tile[]
