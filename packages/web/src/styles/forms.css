@@ -102,7 +102,6 @@ swatch-item {
     width: 24px;
     height: 24px;
     fill: var(--icon-color);
-    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 10%));
   }
 }
 

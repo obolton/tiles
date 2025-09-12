@@ -117,7 +117,6 @@ a.floating {
     width: 24px;
     height: 24px;
     fill: var(--icon-color);
-    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 10%));
   }
 
   &:focus-visible {
@@ -172,7 +171,6 @@ a.floating {
       position: absolute;
       inset: 0;
       background: url("@/icons/close.svg?inline") no-repeat center / 24px 24px;
-      filter: drop-shadow(0 1px 1px rgb(0 0 0 / 10%));
       opacity: 0;
       scale: 0.7;
       rotate: z -45deg;
