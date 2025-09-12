@@ -1,16 +1,30 @@
 import { z } from "zod";
 import { ColorSchema } from "./Color.ts";
-
-export const ImageBackgroundSchema = z.object({
-  imageKey: z.string(),
-});
+import { GradientDirection } from "@prisma/client";
 
 export const ColorBackgroundSchema = z.object({
+  type: z.literal("color"),
   color: ColorSchema,
 });
 
+export const GradientBackgroundSchema = z.object({
+  type: z.literal("gradient"),
+  colorA: ColorSchema.nullable(),
+  colorB: ColorSchema.nullable(),
+  direction: z.enum(GradientDirection),
+});
+
+export const ImageBackgroundSchema = z.object({
+  type: z.literal("image"),
+  imageKey: z.string(),
+});
+
 export const BackgroundSchema = z
-  .union([ImageBackgroundSchema, ColorBackgroundSchema])
+  .discriminatedUnion("type", [
+    ColorBackgroundSchema,
+    GradientBackgroundSchema,
+    ImageBackgroundSchema,
+  ])
   .nullable();
 
 export type BackgroundSchema = z.infer<typeof BackgroundSchema>;
