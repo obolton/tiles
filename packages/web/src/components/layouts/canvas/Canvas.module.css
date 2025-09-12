@@ -19,31 +19,31 @@
 @property --placeholder-x {
   syntax: "<integer>";
   inherits: false;
-  initial-value: auto;
+  initial-value: 0;
 }
 
 @property --placeholder-y {
   syntax: "<integer>";
   inherits: false;
-  initial-value: auto;
+  initial-value: 0;
 }
 
 @property --placeholder-columns {
   syntax: "<integer>";
   inherits: false;
-  initial-value: auto;
+  initial-value: 0;
 }
 
 @property --placeholder-rows {
   syntax: "<integer>";
   inherits: false;
-  initial-value: auto;
+  initial-value: 0;
 }
 
 @property --placeholder-height {
   syntax: "<length>";
   inherits: false;
-  initial-value: auto;
+  initial-value: 0;
 }
 
 .canvas {
