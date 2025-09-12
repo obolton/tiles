@@ -1,5 +1,4 @@
 import ColorPalette from "@/components/colors/ColorPalette";
-import CloseIcon from "@/icons/close.svg?jsx";
 import styles from "./ColorPicker.module.css";
 import { classNames } from "@/utils/css";
 import type { Color } from "@/utils/color";
@@ -32,9 +31,7 @@ export default function ColorPicker({ id, value, onChange }: ColorPickerProps) {
         aria-haspopup="menu"
         aria-expanded="false"
         data-tooltip="Color"
-      >
-        <CloseIcon aria-hidden="true" />
-      </button>
+      />
 
       <popover-menu
         id={popoverId}
