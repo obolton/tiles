@@ -1,6 +1,7 @@
 import ColorPalette from "@/components/colors/ColorPalette";
 import type { Reactive } from "@/utils/reactivity";
 import type { ColorBackground } from "./types";
+import type { Color } from "@/utils/color";
 
 const ROWS = 5;
 const MIN_LIGHTNESS = 0.25;
@@ -10,7 +11,7 @@ const HUES = 10;
 const START_HUE = 24;
 
 export interface ColorPanelProps {
-  value?: Reactive<ColorBackground | null>;
+  value: Reactive<Color | null>;
   onChange: (background: ColorBackground) => void;
 }
 
@@ -23,7 +24,7 @@ export default function ColorPanel({ value, onChange }: ColorPanelProps) {
       chroma={CHROMA}
       hues={HUES}
       startHue={START_HUE}
-      value={value?.derive((v) => v?.color)}
+      value={value}
       onChange={(color) => onChange({ type: "color", color })}
     />
   );

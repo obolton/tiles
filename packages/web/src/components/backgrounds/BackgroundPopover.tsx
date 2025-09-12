@@ -12,7 +12,7 @@ import type PopoverMenu from "@/elements/menu/PopoverMenu";
 import type { JSX } from "@/jsx/jsx";
 
 export interface BackgroundPopoverProps extends JSX.Attributes<PopoverMenu> {
-  value?: Reactive<Background>;
+  value: Reactive<Background>;
   onChange: (value: Background) => void;
 }
 
@@ -47,7 +47,7 @@ export default function BackgroundPopover({
 
       <tab-panel id="color-tab-panel" open>
         <ColorPanel
-          value={value?.derive((v) => (v?.type === "color" ? v : null))}
+          value={value.derive((v) => (v && "color" in v ? v.color : null))}
           onChange={onChange}
         />
       </tab-panel>

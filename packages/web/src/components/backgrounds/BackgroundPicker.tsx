@@ -8,7 +8,7 @@ import type { Background } from "./types";
 
 export interface BackgroundPickerProps {
   id: string;
-  value?: Reactive<Background>;
+  value: Reactive<Background>;
   onChange: (value: Background) => void;
 }
 
