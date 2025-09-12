@@ -37,7 +37,7 @@
     display: block;
     padding: 8px;
     margin: -8px -16px;
-    color: oklch(from currentcolor l c h / 60%);
+    color: color-mix(in oklch, currentcolor 50%, transparent);
     text-decoration: none;
     background: rgb(0 0 0 / 3%);
     border-left: 8px solid rgb(0 0 0 / 20%);
@@ -47,15 +47,15 @@
     position: relative;
     padding: 0.25rem 0 0.25rem 1rem;
     font-weight: 500;
-    color: oklch(from var(--background-color) 50% calc(c * 2.5) h);
 
     &::before {
       content: "";
       position: absolute;
       inset: 0 auto 0 0;
       width: 5px;
-      background: oklch(from var(--background-color) 50% calc(c * 2.5) h);
+      background: currentcolor;
       border-radius: 3px;
+      opacity: 0.5;
     }
   }
 
@@ -151,8 +151,9 @@
   }
 
   & .context {
-    background: oklch(from currentcolor l c h / 10%);
-    text-decoration: underline solid oklch(from currentcolor l c h / 50%) 2px;
+    background: color-mix(in oklch, currentcolor 10%, transparent);
+    text-decoration: underline solid
+      color-mix(in oklch, currentcolor 50%, transparent) 2px;
     text-underline-position: under;
   }
 }
