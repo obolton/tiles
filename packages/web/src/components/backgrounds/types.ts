@@ -5,9 +5,16 @@ export interface ColorBackground {
   color: Color;
 }
 
-export interface ImageBackground {
-  type: "image";
-  imageKey: string;
+export interface GradientBackground {
+  type: "gradient";
+  colorA: Color | null;
+  colorB: Color | null;
+  direction: "VERTICAL" | "HORIZONTAL" | "BOTTOM_RIGHT" | "BOTTOM_LEFT";
 }
 
-export type Background = ColorBackground | ImageBackground | null;
+export interface ImageBackground {
+  type: "image";
+  imageKey?: string;
+}
+
+export type Background = ColorBackground | GradientBackground | ImageBackground;

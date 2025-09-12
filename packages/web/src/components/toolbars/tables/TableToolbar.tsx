@@ -30,7 +30,7 @@ export default function TableToolbar({
   getTable,
   anchorName,
 }: TableToolbarProps) {
-  async function setBackground(value: Background) {
+  async function setBackground(value: Background | null) {
     try {
       const { background: newBackground } = await editor.updateTable({
         id,

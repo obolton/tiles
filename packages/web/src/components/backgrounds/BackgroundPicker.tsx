@@ -8,8 +8,8 @@ import type { Background } from "./types";
 
 export interface BackgroundPickerProps {
   id: string;
-  value: Reactive<Background>;
-  onChange: (value: Background) => void;
+  value: Reactive<Background | null>;
+  onChange: (value: Background | null) => void;
 }
 
 export default function BackgroundPicker({

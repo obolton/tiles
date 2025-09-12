@@ -35,7 +35,7 @@ export default function TextToolbar({
   align,
   anchorName,
 }: TextToolbarProps) {
-  async function setBackground(value: Background) {
+  async function setBackground(value: Background | null) {
     try {
       const { background: newBackground } = await editor.updateText({
         id,

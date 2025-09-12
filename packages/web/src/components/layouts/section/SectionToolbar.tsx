@@ -19,7 +19,7 @@ export default function SectionToolbar({
   section,
   anchorName,
 }: SectionToolbarProps) {
-  async function setBackground(value: Background) {
+  async function setBackground(value: Background | null) {
     try {
       const { background: newBackground } = await editor.updateSection({
         id: section.id,

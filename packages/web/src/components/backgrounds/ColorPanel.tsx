@@ -1,9 +1,7 @@
 import ColorPalette from "@/components/colors/ColorPalette";
 import GradientPalette from "@/components/colors/GradientPalette";
-import { reactive } from "@/utils/reactivity";
 import type { Reactive } from "@/utils/reactivity";
-import type { ColorBackground } from "./types";
-import type { Color } from "@/utils/color";
+import type { ColorBackground, GradientBackground } from "./types";
 
 const ROWS = 5;
 const MIN_LIGHTNESS = 0.25;
@@ -13,8 +11,8 @@ const HUES = 10;
 const START_HUE = 24;
 
 export interface ColorPanelProps {
-  value: Reactive<Color | null>;
-  onChange: (background: ColorBackground) => void;
+  value: Reactive<ColorBackground | GradientBackground | null>;
+  onChange: (background: ColorBackground | GradientBackground) => void;
 }
 
 export default function ColorPanel({ value, onChange }: ColorPanelProps) {
@@ -27,10 +25,34 @@ export default function ColorPanel({ value, onChange }: ColorPanelProps) {
         chroma={CHROMA}
         hues={HUES}
         startHue={START_HUE}
-        value={value}
+        value={value.derive((background) => {
+          switch (background?.type) {
+            case "color":
+              return background.color;
+            case "gradient":
+              return background.colorA;
+            default:
+              return null;
+          }
+        })}
         onChange={(color) => onChange({ type: "color", color })}
       />
-      <GradientPalette colorA={value} colorB={reactive(null)} />
+
+      <GradientPalette
+        colors={value.derive((background) => {
+          switch (background?.type) {
+            case "color":
+              return [background.color];
+            case "gradient":
+              return [background.colorA, background.colorB];
+            default:
+              return [];
+          }
+        })}
+        value={value.derive((background) =>
+          background?.type === "gradient" ? background : null,
+        )}
+      />
     </>
   );
 }
