@@ -35,7 +35,7 @@ export default function MapToolbar({
       className="vertical anchored"
       style={{ positionAnchor: anchorName }}
       aria-label="Map toolbar"
-      data-tooltip-position="top"
+      data-tooltip-position="left"
     >
       <button
         type="button"

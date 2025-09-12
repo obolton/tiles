@@ -41,7 +41,7 @@ export default function SectionToolbar({
     <floating-toolbar
       className="vertical anchored inside"
       style={{ positionAnchor: anchorName }}
-      data-tooltip-position="right"
+      data-tooltip-position="left"
       aria-label="Section toolbar"
     >
       <ul role="group" aria-label="Section tools">

@@ -116,7 +116,7 @@ export default function TableToolbar({
     <floating-toolbar
       className="vertical anchored"
       style={{ positionAnchor: anchorName }}
-      data-tooltip-position="right"
+      data-tooltip-position="left"
       aria-label="Table tools"
     >
       <ul role="group">
