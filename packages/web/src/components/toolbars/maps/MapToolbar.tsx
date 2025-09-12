@@ -1,9 +1,10 @@
 import AddPlaceIcon from "@/icons/add-place.svg?jsx";
 import { showModal } from "@/utils/modals";
-import type { PlaceModalResult } from "@/components/modals/PlaceModal";
 import type Editor from "@/editor/Editor";
 import type MapView from "@/elements/maps/MapView";
 import type { MapProperties } from "@/types/tiles";
+
+const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
 export interface MapToolbarProps {
   editor: Editor;
@@ -21,8 +22,10 @@ export default function MapToolbar({
   anchorName,
 }: MapToolbarProps) {
   function addPlace() {
-    showModal<PlaceModalResult>("MAP", {
-      boundingBox: getMapView().getBoundingBox(),
+    showModal(PlaceModalLoader, {
+      props: {
+        boundingBox: getMapView().getBoundingBox(),
+      },
       async onConfirm({ place }) {
         const result = await editor.addPlaces({ id, places: [place] });
         places.value = result.places;
