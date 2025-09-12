@@ -1,4 +1,6 @@
 import ColorPalette from "@/components/colors/ColorPalette";
+import GradientPalette from "@/components/colors/GradientPalette";
+import { reactive } from "@/utils/reactivity";
 import type { Reactive } from "@/utils/reactivity";
 import type { ColorBackground } from "./types";
 import type { Color } from "@/utils/color";
@@ -17,15 +19,18 @@ export interface ColorPanelProps {
 
 export default function ColorPanel({ value, onChange }: ColorPanelProps) {
   return (
-    <ColorPalette
-      rows={ROWS}
-      minLightness={MIN_LIGHTNESS}
-      maxLightness={MAX_LIGHTNESS}
-      chroma={CHROMA}
-      hues={HUES}
-      startHue={START_HUE}
-      value={value}
-      onChange={(color) => onChange({ type: "color", color })}
-    />
+    <>
+      <ColorPalette
+        rows={ROWS}
+        minLightness={MIN_LIGHTNESS}
+        maxLightness={MAX_LIGHTNESS}
+        chroma={CHROMA}
+        hues={HUES}
+        startHue={START_HUE}
+        value={value}
+        onChange={(color) => onChange({ type: "color", color })}
+      />
+      <GradientPalette colorA={value} colorB={reactive(null)} />
+    </>
   );
 }
