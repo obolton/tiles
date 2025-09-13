@@ -1,5 +1,5 @@
 import css from "./PageItem.css?inline";
-import { TileResizeEvent, TileEvent } from "@/utils/events";
+import { TileResizeEvent } from "@/utils/events";
 import { DEFAULT_TIMING } from "@/utils/animation/effects";
 import { makeDraggable } from "@/utils/drag";
 
@@ -11,7 +11,6 @@ stylesheet.replaceSync(css);
 export interface PageItemAttributes {
   allowdrag?: boolean;
   allowresize?: boolean;
-  allowdelete?: boolean;
 }
 
 export default class PageItem extends HTMLElement {
@@ -41,8 +40,6 @@ export default class PageItem extends HTMLElement {
     const shadow = this.attachShadow({ mode: "open", delegatesFocus: true });
     shadow.adoptedStyleSheets = [stylesheet];
     shadow.append(document.createElement("slot"));
-
-    this.addEventListener("keydown", this);
   }
 
   attributeChangedCallback(
@@ -72,29 +69,6 @@ export default class PageItem extends HTMLElement {
 
   disconnectedCallback() {
     this.endResizing();
-  }
-
-  handleEvent(event: Event) {
-    switch (event.type) {
-      case "keydown":
-        return this.handleKeyDown(event as KeyboardEvent);
-    }
-  }
-
-  private handleKeyDown(event: KeyboardEvent) {
-    const { target, key } = event;
-    if (
-      (key === "Backspace" || key === "Delete") &&
-      target instanceof HTMLElement &&
-      target.tagName !== "INPUT" &&
-      target.tagName !== "TEXTAREA" &&
-      !target.isContentEditable &&
-      this.hasAttribute("allowdelete")
-    ) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.delete();
-    }
   }
 
   private showDragHandle() {
@@ -293,15 +267,6 @@ export default class PageItem extends HTMLElement {
         this.outline?.remove();
         this.outline = null;
       });
-  }
-
-  delete() {
-    this.dispatchEvent(
-      new TileEvent("tiledelete", {
-        bubbles: true,
-        cancelable: true,
-      }),
-    );
   }
 }
 
