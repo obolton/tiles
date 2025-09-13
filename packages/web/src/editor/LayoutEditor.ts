@@ -1,10 +1,7 @@
 import { handleError } from "@/utils/errors";
-import { focusInside } from "@/utils/focus";
-import { scrollIntoViewIfNeeded } from "@/utils/scroll";
-import { viewTransition } from "@/utils/transitions";
 import type Editor from "@/editor/Editor";
 import type { DragDropEvent } from "@/utils/drag";
-import type { TileResizeEvent, TileEvent } from "@/utils/events";
+import type { TileResizeEvent } from "@/utils/events";
 import type { Tile } from "@/types/tiles";
 
 export interface LayoutEditorOptions {
@@ -65,7 +62,6 @@ export default class LayoutEditor {
     element.addEventListener("tileresizestart", this);
     element.addEventListener("tileresize", this);
     element.addEventListener("tileresizeend", this);
-    element.addEventListener("tiledelete", this);
   }
 
   disconnect() {
@@ -78,7 +74,6 @@ export default class LayoutEditor {
     element?.removeEventListener("tileresizestart", this);
     element?.removeEventListener("tileresize", this);
     element?.removeEventListener("tileresizeend", this);
-    element?.removeEventListener("tiledelete", this);
   }
 
   get element() {
@@ -115,8 +110,6 @@ export default class LayoutEditor {
         return this.handleResize(event as TileResizeEvent);
       case "tileresizeend":
         return this.handleResizeEnd(event as TileResizeEvent);
-      case "tiledelete":
-        return this.handleDelete(event as TileEvent);
     }
   }
 
@@ -438,35 +431,5 @@ export default class LayoutEditor {
     }
 
     this.size = null;
-  }
-
-  // Delete
-
-  private async handleDelete(event: TileEvent) {
-    const { target, defaultPrevented } = event;
-    if (defaultPrevented || !(target instanceof HTMLElement)) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    const id = target.dataset.placementId ?? "";
-    const sibling = target.previousElementSibling || target.nextElementSibling;
-
-    try {
-      await this.editor.deleteTile(id, (commit) => {
-        target.style.viewTransitionClass = "destroy";
-        viewTransition(commit).updateCallbackDone.then(() => {
-          // Move focus to sibling
-          if (sibling instanceof HTMLElement) {
-            focusInside(sibling, { preventScroll: true });
-            scrollIntoViewIfNeeded(sibling, { behavior: "smooth" });
-          }
-        });
-      });
-    } catch (error) {
-      handleError(error);
-    }
   }
 }
