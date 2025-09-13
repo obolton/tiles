@@ -38,6 +38,8 @@ function immediateTransition(commit: () => void) {
 
 const IS_SERVER = import.meta.env.SSR;
 
+const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
+
 function getReactiveTile(tile: ClientTile): Tile {
   switch (tile.type) {
     case "TEXT": {
@@ -175,16 +177,19 @@ export default class Editor {
     event.preventDefault();
 
     if (isImage(item)) {
-      showModal<ImageModalResult>("IMAGE", {
-        file: item.getAsFile(),
-        onConfirm: async (result) => {
-          const imageKey = await uploadMedia(result.image, "image");
-          await this.createImage({
-            sectionId: this.getCurrentSectionId(),
-            imageKey,
-          });
-        },
-      });
+      const file = item.getAsFile();
+      if (file) {
+        showModal(ImageModalLoader, {
+          props: { file },
+          onConfirm: async (result) => {
+            const imageKey = await uploadMedia(result.image, "image");
+            await this.createImage({
+              sectionId: this.getCurrentSectionId(),
+              imageKey,
+            });
+          },
+        });
+      }
     } else if (isUriList(item)) {
       item.getAsString(async (url) => {
         await this.createLink({
