@@ -97,12 +97,16 @@ export default function Item({
 
       if (isSelected.value) {
         editor.deselect([id]);
+
+        if (
+          document.activeElement instanceof HTMLElement &&
+          item?.contains(document.activeElement)
+        ) {
+          document.activeElement.blur();
+        }
       } else {
         editor.select([id], true);
-      }
-
-      if (hasFocus.value && document.activeElement instanceof HTMLElement) {
-        document.activeElement.blur();
+        item?.focus({ preventScroll: true });
       }
     } else {
       editor.select([id], false);
