@@ -8,6 +8,7 @@ model Workspace {
   pages       Page[]
   folders     Folder[]
   invites     WorkspaceInvite[]
+  images      Image[]
 
   @@map("workspaces")
 }

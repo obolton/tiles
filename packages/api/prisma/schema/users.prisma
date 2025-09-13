@@ -16,6 +16,7 @@ model User {
   pageAccess           PageAccess[]
   pageInvites          PageInvite[]
   workspaceInvites     WorkspaceInvite[]
+  images               Image[]
 
   @@index([username])
   @@index([email])
