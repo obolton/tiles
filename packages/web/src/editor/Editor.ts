@@ -11,7 +11,6 @@ import { prompt } from "@/utils/richText/prompt";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import type { FontId } from "@/config/fonts";
-import type { ImageModalResult } from "@/components/modals/image/ImageModal";
 import type {
   ClientTile,
   ClientCollection,
