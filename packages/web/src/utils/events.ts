@@ -18,11 +18,3 @@ export class TileResizeEvent extends Event {
     this.height = options?.height ?? 0;
   }
 }
-
-export type TileEventType = "tiledelete";
-
-export class TileEvent extends Event {
-  constructor(type: TileEventType, options?: EventInit) {
-    super(type, options);
-  }
-}
