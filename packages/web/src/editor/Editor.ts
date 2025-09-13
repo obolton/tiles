@@ -127,6 +127,7 @@ export default class Editor {
     document.addEventListener("pointerdown", this.pointerDown.bind(this), {
       passive: true,
     });
+    document.addEventListener("keydown", this.keyDown.bind(this));
     document.addEventListener("dragover", this.dragOver.bind(this));
     document.addEventListener("drop", this.drop.bind(this));
   }
@@ -134,6 +135,17 @@ export default class Editor {
   private pointerDown(event: PointerEvent) {
     if (event.button === PRIMARY_MOUSE_BUTTON && !event.defaultPrevented) {
       this.clearSelection();
+    }
+  }
+
+  private keyDown(event: KeyboardEvent) {
+    if (
+      (event.key === "Backspace" || event.key === "Delete") &&
+      !event.repeat &&
+      this.selection.value.size > 0
+    ) {
+      event.preventDefault();
+      this.deleteSelection();
     }
   }
 
@@ -252,6 +264,40 @@ export default class Editor {
     }
   }
 
+  deleteSelection() {
+    if (this.selection.value.size === 0) {
+      return;
+    }
+
+    const ids = Array.from(
+      this.selection.value.values().map((tile) => tile.placementId),
+    );
+
+    this.deleteTiles(ids, (commit) => {
+      const elements = Array.from(
+        this.selection.value
+          .values()
+          .map((tile) => document.getElementById(tile.id)),
+      );
+      const lastElement = elements.at(-1);
+      const sibling =
+        lastElement?.previousElementSibling || lastElement?.nextElementSibling;
+      elements.forEach((element) => {
+        if (element) {
+          element.style.viewTransitionClass = "destroy";
+        }
+      });
+      viewTransition(commit).updateCallbackDone.then(() => {
+        // Move focus to sibling of last selected element
+        if (sibling instanceof HTMLElement) {
+          focusInside(sibling, { preventScroll: true });
+          scrollIntoViewIfNeeded(sibling, { behavior: "smooth" });
+        }
+        this.clearSelection();
+      });
+    });
+  }
+
   // Sections
 
   async createSection(transition: TransitionFunction = immediateTransition) {
@@ -299,15 +345,15 @@ export default class Editor {
     return tile;
   }
 
-  async deleteTile(
-    id: string,
+  async deleteTiles(
+    ids: string[],
     transition: TransitionFunction = immediateTransition,
   ) {
     await client.tiles.delete.mutate({
       pageId: this.pageId,
-      ids: [id],
+      ids,
     });
-    transition(() => this.removeTile(id));
+    transition(() => this.removeTiles(ids));
   }
 
   async moveTile({
@@ -398,9 +444,10 @@ export default class Editor {
     });
   }
 
-  removeTile(placementId: string) {
+  removeTiles(placementIds: string[]) {
+    const ids = new Set(placementIds);
     this.tiles.value = this.tiles.value.filter(
-      (tile) => tile.placementId !== placementId,
+      (tile) => !ids.has(tile.placementId),
     );
   }
 
