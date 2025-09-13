@@ -16,7 +16,6 @@ import type { Color } from "@/utils/color";
 export interface TextTileProps extends TextProperties {
   editor: Editor;
   hasFocus: Reactive<boolean>;
-  onDelete?: () => void;
 }
 
 export default function TextTile({
@@ -30,7 +29,6 @@ export default function TextTile({
   block,
   align,
   hasFocus,
-  onDelete,
 }: TextTileProps) {
   const { isEditable } = editor;
 
@@ -79,15 +77,12 @@ export default function TextTile({
 
     // Delete the tile if it is empty
     if (
-      (key === "Delete" || key === "Backspace") &&
       target === currentTarget &&
+      (key === "Delete" || key === "Backspace") &&
       state.value &&
-      state.value.doc.childCount <= 1 &&
-      state.value.doc.textContent === ""
+      !(state.value.doc.childCount <= 1 && state.value.doc.textContent === "")
     ) {
       event.stopPropagation();
-      event.preventDefault();
-      onDelete?.();
     }
 
     // Prevent ancestors from acting on keyboard navigation

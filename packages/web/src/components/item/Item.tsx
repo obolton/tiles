@@ -36,31 +36,16 @@ export interface ItemProps {
 function getTileComponent(
   tile: Tile,
   hasFocus: Reactive<boolean>,
-  onDelete: () => void,
   editor: Editor,
 ) {
   const type = tile.type;
   switch (type) {
     case "IMAGE":
-      return (
-        <ImageTile
-          {...tile}
-          editor={editor}
-          hasFocus={hasFocus}
-          onDelete={onDelete}
-        />
-      );
+      return <ImageTile {...tile} editor={editor} hasFocus={hasFocus} />;
     case "VIDEO":
       return <VideoTile {...tile} editor={editor} />;
     case "TEXT":
-      return (
-        <TextTile
-          {...tile}
-          editor={editor}
-          hasFocus={hasFocus}
-          onDelete={onDelete}
-        />
-      );
+      return <TextTile {...tile} editor={editor} hasFocus={hasFocus} />;
     case "MAP":
       return <MapTile {...tile} editor={editor} hasFocus={hasFocus} />;
     case "LINK":
@@ -149,10 +134,6 @@ export default function Item({
     }
   }
 
-  function onDelete() {
-    item?.delete();
-  }
-
   const position =
     x && y
       ? new Computed([x, y], (xValue, yValue) => ({
@@ -179,7 +160,6 @@ export default function Item({
       ref={ref}
       allowdrag={editable}
       allowresize={editable}
-      allowdelete={editable}
       classList={{
         [styles.item]: true,
         [styles.draggable]: editable,
@@ -196,7 +176,7 @@ export default function Item({
       on:focusin={onFocusIn}
       on:focusout={onFocusOut}
     >
-      {getTileComponent(tile, hasFocus, onDelete, editor)}
+      {getTileComponent(tile, hasFocus, editor)}
     </page-item>
   );
 }

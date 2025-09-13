@@ -14,7 +14,6 @@ import type { ImageProperties } from "@/types/tiles";
 interface ImageTileProps extends ImageProperties {
   editor: Editor;
   hasFocus: Reactive<boolean>;
-  onDelete?: () => void;
 }
 
 interface ImageVariant {
@@ -64,7 +63,6 @@ export default function ImageTile({
   originX,
   originY,
   hasFocus,
-  onDelete,
 }: ImageTileProps) {
   const { isEditable } = editor;
 
@@ -96,17 +94,8 @@ export default function ImageTile({
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
-    const element = event.currentTarget as HTMLElement;
-    if (
-      (event.key === "Delete" || event.key === "Backspace") &&
-      !event.repeat &&
-      !event.shiftKey &&
-      !event.ctrlKey &&
-      !event.altKey &&
-      !event.metaKey &&
-      element.textContent === ""
-    ) {
-      onDelete?.();
+    if (event.key === "Delete" || event.key === "Backspace") {
+      event.stopPropagation();
     }
   };
 
@@ -151,7 +140,7 @@ export default function ImageTile({
               classList={[styles.caption]}
               initialValue={text.value}
               showToolbar={hasFocus}
-              on:keydown={onDelete ? onKeyDown : undefined}
+              on:keydown={onKeyDown}
               on:blur={onBlur}
             />
           ) : (
