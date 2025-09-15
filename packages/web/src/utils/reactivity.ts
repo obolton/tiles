@@ -7,7 +7,15 @@ export interface Reactive<T = any> {
   ): UnsubscribeCallback;
   unsubscribe(callback: SubscribeCallback<T>): void;
   disconnect(): void;
-  derive<V>(transform: (input: T) => V, signal?: AbortSignal): Reactive<V>;
+  derive<V>(
+    transform: (input: T) => V,
+    signal?: AbortSignal,
+  ): ComputedReactive<V>;
+}
+
+export interface ComputedReactive<T> extends Reactive<T> {
+  readonly value: T;
+  markAsStale(): void;
 }
 
 export type SubscribeCallback<T> = (reactive: Reactive<T>) => void;
@@ -49,7 +57,7 @@ export abstract class BaseReactive<Value> implements Reactive<Value> {
 
   derive<DerivedValue>(
     transform: (input: Value) => DerivedValue,
-  ): Reactive<DerivedValue> {
+  ): ComputedReactive<DerivedValue> {
     return new Computed<[this], DerivedValue>([this], transform);
   }
 }
@@ -139,7 +147,7 @@ export class Computed<
     return result;
   }
 
-  private markAsStale() {
+  markAsStale() {
     this.stale = true;
     this.notify();
   }
