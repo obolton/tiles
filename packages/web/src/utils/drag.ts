@@ -387,7 +387,6 @@ export class DragState<T> {
       );
 
       if (this.dragPreview) {
-        this.dragPreview.style.viewTransitionName = "";
         this.dragPreview.classList.remove("drag-preview");
         this.dragPreview.hidePopover();
         this.dragPreview.popover = null;
