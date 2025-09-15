@@ -16,13 +16,13 @@ interface EditablePage {
 
 export default function EditablePage({ page }: EditablePage) {
   const editor = new Editor(page);
-  const { isEditable, layout } = editor;
+  const { isEditable, sections } = editor;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
 
   return (
     <>
       <main>
-        <PageContents editor={editor} isEditable={isEditable} layout={layout} />
+        <PageContents editor={editor} sections={sections} />
       </main>
 
       {showToolbar ? <EditingToolbar editor={editor} /> : null}
