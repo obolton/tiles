@@ -60,13 +60,13 @@ export default function TableToolbar({
       return;
     }
     const first = Array.from(selection)[0];
-    const index = first && "column" in first ? first.column.index : null;
-    const afterColumnId = index ? (columns.value[index]?.id ?? null) : null;
-    const column = await editor.insertTableColumn({
+    const column = first && "column" in first ? first.column : null;
+    const afterColumnId = column?.id ?? null;
+    const newColumn = await editor.insertTableColumn({
       tableId: id,
       afterColumnId,
     });
-    columns.value = columns.value.concat(column);
+    columns.value = columns.value.concat(newColumn);
   }
 
   async function deleteSelection() {
@@ -81,9 +81,7 @@ export default function TableToolbar({
       .map((s) => s.column)
       .toArray();
     if (selectedColumns.length > 0) {
-      const columnIds = selectedColumns.map(
-        (column) => columns.value[column.index]!.id,
-      );
+      const columnIds = selectedColumns.map((column) => column.id!);
       for (const column of selectedColumns) {
         table.deleteColumn(column);
       }
