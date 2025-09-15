@@ -2,7 +2,7 @@ import client from "@/api/client";
 import { showModal } from "@/utils/modals";
 import { preloadImage, uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { Computed, reactive, flag, record } from "@/utils/reactivity";
+import { reactive, flag, record } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
 import { isEditMode } from "@/utils/edit";
@@ -14,9 +14,8 @@ import type { FontId } from "@/config/fonts";
 import type {
   ClientTile,
   ClientCollection,
-  Layout,
   Tile,
-  Section,
+  SectionWithTiles,
   TextProperties,
 } from "@/types/tiles";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
@@ -68,21 +67,19 @@ function getReactiveTile(tile: ClientTile): Tile {
   }
 }
 
-function getReactiveSection(section: ClientCollection): Section {
+// TODO: Make a method of Editor
+function getReactiveSection(
+  section: ClientCollection,
+  tiles: Reactive<Tile[]>,
+): SectionWithTiles {
   const { id, ...properties } = section;
   return {
     id,
     ...record(properties),
-  };
-}
-
-function getLayout(sections: Section[], tiles: Tile[]): Layout {
-  return sections.map((section) => ({
-    ...section,
-    tiles: reactive(
+    tiles: tiles.derive((tiles) =>
       tiles.filter((tile) => tile.sectionId.value === section.id),
     ),
-  }));
+  };
 }
 
 export default class Editor {
@@ -94,9 +91,8 @@ export default class Editor {
   readonly font: Reactive<FontId>;
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
-  readonly sections: Reactive<Section[]>;
+  readonly sections: Reactive<SectionWithTiles[]>;
   readonly tiles: Reactive<Tile[]>;
-  readonly layout: Computed<[typeof this.sections, typeof this.tiles], Layout>;
   readonly access: Reactive<PageAccess[]>;
   readonly invites: Reactive<Invite[]>;
   readonly author: User;
@@ -111,9 +107,10 @@ export default class Editor {
     this.font = reactive(page.font);
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
-    this.sections = reactive(page.sections.map(getReactiveSection));
     this.tiles = reactive(page.tiles.map(getReactiveTile));
-    this.layout = new Computed([this.sections, this.tiles], getLayout);
+    this.sections = reactive(
+      page.sections.map((section) => getReactiveSection(section, this.tiles)),
+    );
     this.access = reactive(page.access);
     this.invites = reactive(page.invites);
     this.author = page.author;
@@ -310,7 +307,7 @@ export default class Editor {
     });
     transition(() => {
       this.sections.value = this.sections.value.concat(
-        getReactiveSection(section),
+        getReactiveSection(section, this.tiles),
       );
     });
     return section;
@@ -389,23 +386,18 @@ export default class Editor {
 
     // Move tile to new section
     if (sectionId) {
-      const section = this.layout.value.find((s) => s.id === sectionId);
+      const section = this.sections.value.find((s) => s.id === sectionId);
       if (!section) {
         throw new Error(`Invalid section ID: ${sectionId}`);
       }
 
-      const previousSection = this.layout.value.find(
+      const previousSection = this.sections.value.find(
         (s) => s.id === tile.sectionId.value,
       );
-      if (!previousSection) {
-        throw new Error(`Invalid section ID: ${tile.sectionId.value}`);
-      }
 
-      previousSection.tiles.value = previousSection.tiles.value.filter(
-        (tile) => tile.placementId !== id,
-      );
-      section.tiles.value = section.tiles.value.concat(tile);
       tile.sectionId.value = sectionId;
+      section.tiles.markAsStale();
+      previousSection?.tiles.markAsStale();
     }
 
     if (typeof x === "number") {
@@ -469,7 +461,7 @@ export default class Editor {
   async updateText(data: OmitPageId<AppRouterInputs["text"]["update"]>) {
     // Update the page title
     if (data.content) {
-      const firstTextTileId = this.layout.value[0]?.tiles.value.find(
+      const firstTextTileId = this.sections.value[0]?.tiles.value.find(
         (tile) => tile.type === "TEXT",
       )?.id;
       if (firstTextTileId && data.id === firstTextTileId) {
