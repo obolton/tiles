@@ -693,6 +693,15 @@ export default class Editor {
     });
   }
 
+  async clearTableRanges(
+    data: OmitPageId<AppRouterInputs["tables"]["clearRanges"]>,
+  ) {
+    return await client.tables.clearRanges.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+  }
+
   // Videos
 
   async updateVideo(data: OmitPageId<AppRouterInputs["videos"]["update"]>) {
