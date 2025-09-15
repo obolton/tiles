@@ -10,7 +10,11 @@ import type {
   ClientVideoTile,
   TileType,
 } from "api/src/types/tiles.ts";
-import type { Reactive, ReactiveRecord } from "@/utils/reactivity";
+import type {
+  Reactive,
+  ReactiveRecord,
+  ComputedReactive,
+} from "@/utils/reactivity";
 import type { EditorState } from "prosemirror-state";
 
 export type { ClientCollection, ClientPageLinkTile, ClientTile, TileType };
@@ -46,7 +50,7 @@ export type Section = Pick<ClientCollection, "id"> &
   ReactiveRecord<Omit<ClientCollection, "id">>;
 
 export interface SectionWithTiles extends Section {
-  tiles: Reactive<Tile[]>;
+  tiles: ComputedReactive<Tile[]>;
 }
 
 export type Layout = SectionWithTiles[];
