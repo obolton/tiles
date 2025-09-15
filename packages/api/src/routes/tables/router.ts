@@ -12,6 +12,7 @@ import {
   updateColumn,
   deleteColumns,
   updateCell,
+  clearRanges,
 } from "./tables.ts";
 import {
   CreateTableSchema,
@@ -25,6 +26,7 @@ import {
   UpdateColumnSchema,
   DeleteColumnsSchema,
   UpdateCellSchema,
+  ClearRangesSchema,
 } from "./schema.ts";
 
 export default router({
@@ -71,4 +73,8 @@ export default router({
   updateCell: pageUpdateProcedure
     .input(UpdateCellSchema)
     .mutation(({ input }) => updateCell(input)),
+
+  clearRanges: pageUpdateProcedure
+    .input(ClearRangesSchema)
+    .mutation(({ input }) => clearRanges(input)),
 });

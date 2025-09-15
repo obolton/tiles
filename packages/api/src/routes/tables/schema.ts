@@ -4,6 +4,36 @@ import { RichTextSchema } from "@/schema/RichText.ts";
 import { ColorSchema } from "@/schema/Color.ts";
 import { BackgroundSchema } from "@/schema/Background.ts";
 
+export const CellRangeSchema = z.strictObject({
+  type: z.literal("cells"),
+  from: z.strictObject({
+    row: z.uuid(),
+    column: z.uuid(),
+  }),
+  to: z.strictObject({
+    row: z.uuid(),
+    column: z.uuid(),
+  }),
+});
+
+export const RowRangeSchema = z.strictObject({
+  type: z.literal("rows"),
+  from: z.uuid(),
+  to: z.uuid(),
+});
+
+export const ColumnRangeSchema = z.strictObject({
+  type: z.literal("columns"),
+  from: z.uuid(),
+  to: z.uuid(),
+});
+
+export const RangeSchema = z.discriminatedUnion("type", [
+  CellRangeSchema,
+  RowRangeSchema,
+  ColumnRangeSchema,
+]);
+
 export const CreateTableSchema = z.object({
   pageId: z.uuid(),
   sectionId: z.uuid(),
@@ -93,3 +123,10 @@ export const UpdateCellSchema = z.object({
   value: z.union([z.string(), RichTextSchema]).nullable(),
 });
 export type UpdateCellSchema = z.infer<typeof UpdateCellSchema>;
+
+export const ClearRangesSchema = z.object({
+  pageId: z.uuid(),
+  tableId: z.uuid(),
+  ranges: z.array(RangeSchema).min(1).max(10),
+});
+export type ClearRangesSchema = z.infer<typeof ClearRangesSchema>;

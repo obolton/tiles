@@ -15,6 +15,7 @@ import type {
   UpdateColumnSchema,
   DeleteColumnsSchema,
   UpdateCellSchema,
+  ClearRangesSchema,
 } from "./schema.ts";
 import type { ColorSchema } from "@/schema/Color.ts";
 
@@ -472,5 +473,62 @@ export async function updateCell({
     return transaction.$executeRaw`UPDATE "table_rows"
     SET "data" = jsonb_set("data", ARRAY[${columnId}], ${stringValue}::jsonb, true)
     WHERE "id" = ${rowId}::uuid AND "table_id" = ${tableId}::uuid;`;
+  });
+}
+
+export async function clearRanges({
+  pageId,
+  tableId,
+  ranges,
+}: ClearRangesSchema) {
+  return prisma.$transaction(async (transaction) => {
+    // Verify access to the table
+    await transaction.table.findUniqueOrThrow({
+      where: { id: tableId, pageId },
+      select: { id: true },
+    });
+
+    await Promise.all(
+      ranges.map((range) => {
+        switch (range.type) {
+          case "cells":
+            return transaction.$executeRaw`WITH
+"from_column" AS (SELECT "order" FROM table_columns WHERE table_id = ${tableId}::uuid AND id = ${range.from.column}::uuid),
+"to_column" AS (SELECT "order" FROM table_columns WHERE table_id = ${tableId}::uuid AND id = ${range.to.column}::uuid),
+"column_ids" AS (
+  SELECT id FROM table_columns
+  WHERE "table_id" = ${tableId}::uuid
+  AND "order" >= (SELECT "order" FROM "from_column")
+  AND "order" <= (SELECT "order" FROM "to_column")
+)
+UPDATE "table_rows"
+SET "data" = "data" - (SELECT COALESCE(array_agg(id::text), ARRAY[]::text[]) FROM "column_ids")
+WHERE "table_id" = ${tableId}::uuid
+AND "order" >= (SELECT "order" FROM table_rows WHERE table_id = ${tableId}::uuid AND id = ${range.from.row}::uuid)
+AND "order" <= (SELECT "order" FROM table_rows WHERE table_id = ${tableId}::uuid AND id = ${range.to.row}::uuid);`;
+
+          case "columns":
+            return transaction.$executeRaw`WITH
+"from_column" AS (SELECT "order" FROM table_columns WHERE table_id = ${tableId}::uuid AND id = ${range.from}::uuid),
+"to_column" AS (SELECT "order" FROM table_columns WHERE table_id = ${tableId}::uuid AND id = ${range.to}::uuid),
+"column_ids" AS (
+  SELECT id FROM table_columns
+  WHERE "table_id" = ${tableId}::uuid
+  AND "order" >= (SELECT "order" FROM "from_column")
+  AND "order" <= (SELECT "order" FROM "to_column")
+)
+UPDATE "table_rows"
+SET "data" = "data" - (SELECT COALESCE(array_agg(id::text), ARRAY[]::text[]) FROM "column_ids")
+WHERE "table_id" = ${tableId}::uuid;`;
+
+          case "rows":
+            return transaction.$executeRaw`UPDATE table_rows
+SET "data" = '{}'::jsonb
+WHERE "table_id" = ${tableId}::uuid
+AND "order" >= (SELECT "order" FROM table_rows WHERE table_id = ${tableId}::uuid AND id = ${range.from}::uuid)
+AND "order" <= (SELECT "order" FROM table_rows WHERE table_id = ${tableId} ::uuid AND id = ${range.to}::uuid);`;
+        }
+      }),
+    );
   });
 }
