@@ -307,13 +307,17 @@ export default function TableTile({
         on:resizetablecolumn={onResizeColumn}
         on:movetablecolumn={onMoveColumn}
         on:movetablerow={onMoveRow}
-        $getColumnWidth={(index) => columns.value[index]?.width ?? 200}
+        $getColumn={(index) => columns.value[index]!}
       >
         <table>
           <colgroup>
             <col style={{ width: "32px" }} />
             {columns.value.map((column, index) => (
-              <col data-index={index} style={{ width: column.width + "px" }} />
+              <col
+                data-index={index}
+                data-id={column.id}
+                style={{ width: column.width + "px" }}
+              />
             ))}
           </colgroup>
 
