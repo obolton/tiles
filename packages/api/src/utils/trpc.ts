@@ -1,3 +1,4 @@
+import assert from "node:assert";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { getCookie } from "@/utils/cookies.ts";
 import { getSessionContext } from "@/routes/users/users.ts";
@@ -6,21 +7,34 @@ import { clearSessionCookie } from "@/utils/cookies.ts";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { IncomingMessage, ServerResponse } from "node:http";
 
+const SERVICE_API_TOKEN = process.env.SERVICE_API_TOKEN;
+assert(SERVICE_API_TOKEN, "SERVICE_API_TOKEN is not defined");
+
 export interface UnauthenticatedRequestContext {
   res: ServerResponse<IncomingMessage>;
   sessionId: null;
   userId: null;
+  serviceName: null;
 }
 
 export interface AuthenticatedRequestContext {
   res: ServerResponse<IncomingMessage>;
   sessionId: string;
   userId: string;
+  serviceName: null;
+}
+
+export interface AuthenticatedServiceRequestContext {
+  res: ServerResponse<IncomingMessage>;
+  sessionId: null;
+  userId: null;
+  serviceName: string;
 }
 
 export type RequestContext =
   | UnauthenticatedRequestContext
-  | AuthenticatedRequestContext;
+  | AuthenticatedRequestContext
+  | AuthenticatedServiceRequestContext;
 
 function parseAuthorizationHeader(value: string) {
   const [type, token] = value.split(" ");
@@ -31,6 +45,20 @@ function parseAuthorizationHeader(value: string) {
     });
   }
   return token;
+}
+
+// TODO: Replace with individual request signing
+function validateServiceRequest(req: IncomingMessage) {
+  const authorizationHeader = req.headers.authorization;
+  if (!authorizationHeader) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  const token = parseAuthorizationHeader(authorizationHeader);
+
+  if (token !== SERVICE_API_TOKEN) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
 }
 
 function getSessionId(req: IncomingMessage) {
@@ -51,6 +79,16 @@ export async function createContext({
   req,
   res,
 }: CreateHTTPContextOptions): Promise<RequestContext> {
+  if (req.headers["x-service-name"] === "image-upload-worker") {
+    validateServiceRequest(req);
+    return {
+      res,
+      sessionId: null,
+      userId: null,
+      serviceName: req.headers["x-service-name"],
+    };
+  }
+
   const sessionId = getSessionId(req);
 
   if (sessionId) {
@@ -60,6 +98,7 @@ export async function createContext({
         ...session,
         res,
         sessionId,
+        serviceName: null,
       };
     } else {
       clearSessionCookie(res);
@@ -70,6 +109,7 @@ export async function createContext({
     res,
     sessionId: null,
     userId: null,
+    serviceName: null,
   };
 }
 
