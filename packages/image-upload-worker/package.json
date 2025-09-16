@@ -10,6 +10,9 @@
     "test:coverage": "vitest run --coverage",
     "generate-worker-types": "wrangler types src/worker.d.ts"
   },
+  "dependencies": {
+    "@trpc/client": "^11.5.1"
+  },
   "devDependencies": {
     "wrangler": "^4.37.1"
   }
