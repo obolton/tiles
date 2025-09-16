@@ -7,7 +7,8 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "generate-worker-types": "wrangler types src/worker.d.ts"
   },
   "devDependencies": {
     "wrangler": "^4.37.1"
