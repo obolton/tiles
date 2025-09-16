@@ -6,16 +6,17 @@ import type FilePicker from "@/elements/filePicker/FilePicker";
 import type { ImageBackground } from "./types";
 
 export interface ImagePanelProps {
+  workspaceId: string;
   onChange: (background: ImageBackground) => void;
 }
 
-export default function ImagePanel({ onChange }: ImagePanelProps) {
+export default function ImagePanel({ workspaceId, onChange }: ImagePanelProps) {
   function onSelectFile(event: Event) {
     const file = (event.currentTarget as FilePicker).file;
     if (!file) {
       return;
     }
-    uploadMedia(file, "image")
+    uploadMedia({ file, type: "image", workspaceId })
       .then((imageKey) => onChange({ type: "image", imageKey }))
       .catch(handleError);
   }

@@ -63,7 +63,11 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
             if (!result) {
               return;
             }
-            const imageKey = await uploadMedia(result.image, "image");
+            const imageKey = await uploadMedia({
+              file: result.image,
+              type: "image",
+              workspaceId: editor.workspaceId,
+            });
             await editor.createImage({
               sectionId: editor.getCurrentSectionId(),
               width: 10,

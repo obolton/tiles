@@ -8,12 +8,14 @@ import type { Background } from "./types";
 
 export interface BackgroundPickerProps {
   id: string;
+  workspaceId: string;
   value: Reactive<Background | null>;
   onChange: (value: Background | null) => void;
 }
 
 export default function BackgroundPicker({
   id,
+  workspaceId,
   value,
   onChange,
 }: BackgroundPickerProps) {
@@ -55,6 +57,7 @@ export default function BackgroundPicker({
 
       <BackgroundPopover
         id={`${id}-popover`}
+        workspaceId={workspaceId}
         anchor={id}
         value={value}
         onChange={onChange}

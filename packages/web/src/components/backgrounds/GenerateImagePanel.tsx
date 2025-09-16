@@ -4,14 +4,16 @@ import { handleError } from "@/utils/errors";
 import type { ImageBackground } from "./types";
 
 export interface GenerateImagePanelProps {
+  workspaceId: string;
   onChange: (background: ImageBackground) => void;
 }
 
 export default function GenerateImagePanel({
+  workspaceId,
   onChange,
 }: GenerateImagePanelProps) {
   function onSubmit(prompt: string) {
-    return generateImage(prompt)
+    return generateImage(prompt, workspaceId)
       .then((imageKey) => onChange({ type: "image", imageKey }))
       .catch(handleError);
   }
