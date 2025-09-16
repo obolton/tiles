@@ -1,17 +1,38 @@
 import client from "@/api/client";
+import { user } from "@/utils/sessions";
 
 export const ACCEPT_IMAGE_TYPES = new Set(["image/jpeg", "image/png"]);
 export const ACCEPT_CONTENT_TYPES = new Set(["text/uri-list"]).union(
   ACCEPT_IMAGE_TYPES,
 );
 
-export async function uploadMedia(file: File, type: "image" | "profile-image") {
-  const { url, key } = await client.media.createSignedUploadUrl.mutate(type);
+export interface UploadMediaOptions {
+  file: File;
+  type: "image" | "profile-image";
+  workspaceId: string;
+}
+
+export async function uploadMedia({
+  file,
+  type,
+  workspaceId,
+}: UploadMediaOptions) {
+  const userId = user.value?.id;
+  if (!userId) {
+    throw new Error("Not signed in");
+  }
+
+  const { url, key } = await client.media.createUploadUrl.mutate({
+    type,
+    workspaceId,
+  });
   const uploadResult = await fetch(url, {
     method: "PUT",
     body: file,
     headers: {
       "Content-Type": file.type,
+      "x-amz-meta-workspace": workspaceId,
+      "x-amz-meta-user": userId,
     },
   });
   if (!uploadResult.ok) {
