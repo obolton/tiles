@@ -39,13 +39,25 @@ function getBucket(mediaType: MediaType) {
   }
 }
 
-export async function createSignedUploadUrl(key: string, type: MediaType) {
+export async function createSignedUploadUrl(
+  key: string,
+  type: MediaType,
+  metadata: { workspaceId: string; userId: string },
+) {
+  const { workspaceId, userId } = metadata;
   const bucket = getBucket(type);
   const command = new PutObjectCommand({
     Bucket: bucket,
     Key: key,
+    Metadata: {
+      workspace: workspaceId,
+      user: userId,
+    },
   });
-  return getSignedUrl(S3, command, { expiresIn: 180 });
+  return getSignedUrl(S3, command, {
+    expiresIn: 180,
+    unhoistableHeaders: new Set(["x-amz-meta-workspace", "x-amz-meta-user"]),
+  });
 }
 
 export async function upload(
