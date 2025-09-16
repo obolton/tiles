@@ -4,6 +4,7 @@
   "type": "module",
   "workspaces": [
     "packages/api",
+    "packages/image-upload-worker",
     "packages/web"
   ],
   "scripts": {
