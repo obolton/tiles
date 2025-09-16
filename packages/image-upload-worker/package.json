@@ -1,0 +1,12 @@
+{
+  "name": "image-upload-worker",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Image upload worker",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage"
+  }
+}
