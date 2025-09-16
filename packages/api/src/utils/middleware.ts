@@ -13,6 +13,16 @@ export const authenticatedProcedure = publicProcedure.use(async (opts) => {
   return opts.next({ ctx });
 });
 
+export const authenticatedServiceProcedure = publicProcedure.use(
+  async (opts) => {
+    const { ctx } = opts;
+    if (!ctx.serviceName) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return opts.next({ ctx });
+  },
+);
+
 const AuthenticatedPageProcedureSchema = z.object({
   pageId: z.uuid(),
 });
