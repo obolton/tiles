@@ -53,7 +53,8 @@ table-view {
       z-index: 1;
     }
 
-    &.selected {
+    &.selected,
+    tr.selected > & {
       background: color-mix(
         in lch,
         var(--header-color) 80%,

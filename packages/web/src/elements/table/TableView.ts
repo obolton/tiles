@@ -884,10 +884,7 @@ export default class TableView extends HTMLElement {
 
   private drawRowSelection(selection: RowSelection) {
     const { row } = selection;
-    this.querySelector(`tr[aria-rowindex="${row}"]`)?.classList.add("selected");
-    this.querySelector(`tr[aria-rowindex="${row}"] > th`)?.classList.add(
-      "selected",
-    );
+    row.element.classList.add("selected");
   }
 
   private getSelectionFocus() {
