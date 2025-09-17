@@ -1,18 +1,21 @@
+import type Column from "./Column";
+import type Row from "./Row";
+
 export type TableEventType =
   | "resizetablecolumn"
   | "movetablecolumn"
   | "movetablerow";
 
 export interface TableEventInit extends EventInit {
-  column?: number;
-  row?: number;
+  column?: Column;
+  row?: Row;
   width?: number;
   afterIndex?: number;
 }
 
 export class TableEvent extends Event {
-  readonly column?: number;
-  readonly row?: number;
+  readonly column?: Column;
+  readonly row?: Row;
   readonly width?: number;
   readonly afterIndex?: number;
 
