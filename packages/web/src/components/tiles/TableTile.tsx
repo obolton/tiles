@@ -202,10 +202,10 @@ export default function TableTile({
 
   const onResizeColumn = async (event: TableEvent) => {
     const { column, width } = event;
-    if (typeof column !== "number" || typeof width !== "number") {
+    if (!column || !column.id || !width) {
       return;
     }
-    const columnInfo = columns.value[column];
+    const columnInfo = columns.value[column.index];
     if (!columnInfo) {
       return;
     }
@@ -213,7 +213,7 @@ export default function TableTile({
       columnInfo.width = width;
       await editor.updateTableColumn({
         tableId: id,
-        columnId: columnInfo.id,
+        columnId: column.id,
         width,
       });
     } catch (error) {
@@ -224,15 +224,20 @@ export default function TableTile({
   const onMoveColumn = async (event: TableEvent) => {
     try {
       const { column, afterIndex } = event;
-      if (typeof column !== "number" || typeof afterIndex !== "number") {
+      if (
+        !column ||
+        typeof column.index !== "number" ||
+        typeof afterIndex !== "number"
+      ) {
         return;
       }
-      const columnId = columns.value[column]?.id;
+      const index = column.index;
+      const columnId = column.id;
       if (!columnId) {
         throw new Error(`Invalid column index: ${column}`);
       }
       const afterColumnId = columns.value[afterIndex]?.id ?? null;
-      columns.value = moveElement(columns.value, column, afterIndex + 1);
+      columns.value = moveElement(columns.value, index, afterIndex + 1);
       await editor.moveTableColumn({
         tableId: id,
         columnId,
@@ -246,15 +251,16 @@ export default function TableTile({
   const onMoveRow = async (event: TableEvent) => {
     try {
       const { row, afterIndex } = event;
-      if (typeof row !== "number" || typeof afterIndex !== "number") {
+      if (!row || typeof afterIndex !== "number") {
         return;
       }
-      const rowId = rows.value[row]?.id;
+      const index = row.index;
+      const rowId = row.id;
       if (!rowId) {
-        throw new Error(`Invalid row index: ${row}`);
+        throw new Error(`Invalid row index: ${index}`);
       }
       const afterRowId = rows.value[afterIndex]?.id ?? null;
-      rows.value = moveElement(rows.value, row, afterIndex + 1);
+      rows.value = moveElement(rows.value, index, afterIndex + 1);
       await editor.moveTableRow({
         tableId: id,
         rowId,
@@ -331,7 +337,7 @@ export default function TableTile({
           </thead>
 
           <tbody>
-            {rows.value.map(({ data: rowData }, row) => {
+            {rows.value.map(({ id: rowId, data: rowData }, row) => {
               const cells = [];
               for (
                 let columnIndex = 0;
@@ -353,7 +359,7 @@ export default function TableTile({
                 }
               }
               return (
-                <tr aria-rowindex={row}>
+                <tr aria-rowindex={row} data-id={rowId}>
                   <th scope="row" />
                   {cells}
                 </tr>

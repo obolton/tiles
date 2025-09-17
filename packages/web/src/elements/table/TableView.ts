@@ -1,11 +1,12 @@
+import Column from "./Column";
+import Row from "./Row";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
-import css from "./TableView.css?inline";
 import { TableEvent } from "./events";
 import { makeDraggable } from "@/utils/drag";
 import { moveBefore } from "@/utils/dom";
 import { moveElement } from "@/utils/arrays";
 import { getFocusedElementWithin } from "@/utils/focus";
-import Column from "./Column";
+import css from "./TableView.css?inline";
 import type { ResizeEvent } from "@/elements/resize/events";
 import type { DragDropEvent } from "@/utils/drag";
 
@@ -19,8 +20,8 @@ export interface TableViewAttributes {
 }
 
 export interface Cell {
-  row: number;
-  column: number;
+  row: Row;
+  column: Column;
 }
 
 export interface VisibleCell extends Cell {
@@ -37,7 +38,7 @@ export type ColumnSelection = {
 };
 
 export type RowSelection = {
-  row: number;
+  row: Row;
 };
 
 export type Selection = RangeSelection | ColumnSelection | RowSelection;
@@ -446,8 +447,9 @@ export default class TableView extends HTMLElement {
       target.parentElement?.ariaRowIndex
     ) {
       event.preventDefault();
+      const element = target.parentElement as HTMLTableRowElement;
       const selection = {
-        row: parseInt(target.parentElement.ariaRowIndex, 10),
+        row: new Row({ table: this, id: element.dataset.id, element }),
       };
       if (event.shiftKey) {
         this.addSelection(selection);
@@ -463,10 +465,7 @@ export default class TableView extends HTMLElement {
       target.ariaColIndex &&
       target.parentElement?.ariaRowIndex
     ) {
-      const anchor = {
-        column: parseInt(target.ariaColIndex, 10),
-        row: parseInt(target.parentElement.ariaRowIndex, 10),
-      };
+      const anchor = this.getCellInfo(target);
       const selection = {
         anchor,
         focus: anchor,
@@ -500,10 +499,7 @@ export default class TableView extends HTMLElement {
       return;
     }
 
-    const row = parseInt(cell.parentElement!.ariaRowIndex!, 10);
-    const column = parseInt(cell.ariaColIndex!, 10);
-
-    this.rangeSelection.focus = { row, column };
+    this.rangeSelection.focus = this.getCellInfo(cell);
     this.redrawSelection();
   }
 
@@ -518,26 +514,16 @@ export default class TableView extends HTMLElement {
       return;
     }
 
-    const column = parseInt(th?.ariaColIndex ?? "", 10);
-    if (Number.isNaN(column)) {
-      return;
-    }
+    const columnIndex =
+      Array.prototype.indexOf.call(th.parentElement!.children, th) - 1;
 
-    const col = this.querySelector<HTMLTableColElement>(
-      `col[data-index="${column}"]`,
-    );
-    if (!col) {
-      return;
-    }
+    const column = this.visibleColumns[columnIndex]!;
 
-    const width = parseFloat(col.style.width) + event.x;
+    const width = column.width + event.x;
     this.dispatchEvent(new TableEvent("resizetablecolumn", { column, width }));
 
-    if (col) {
-      col.style.width = width + "px";
-      const position = Array.from(this.colGroup.children).indexOf(col) - 1;
-      this.visibleColumns[position]!.width = width;
-    }
+    column.element.style.width = width + "px";
+    column.width = width;
 
     this.update();
   }
@@ -685,14 +671,13 @@ export default class TableView extends HTMLElement {
         Array.prototype.indexOf.call(element.parentElement!.children, element) -
         1;
       const column = this.visibleColumns[visibleIndex]!;
-      const columnIndex = parseInt(element.ariaColIndex, 10);
       const { index } = this.getColumnDropTarget(event.clientX);
 
       this.hideDropIndicator();
 
       const allowMove = this.dispatchEvent(
         new TableEvent("movetablecolumn", {
-          column: columnIndex,
+          column,
           afterIndex: index,
           cancelable: true,
         }),
@@ -706,8 +691,13 @@ export default class TableView extends HTMLElement {
     }
 
     if (element.scope === "row" && element.parentElement?.ariaRowIndex) {
-      const row = parseInt(element.parentElement?.ariaRowIndex, 10);
+      const rowElement = element.parentElement as HTMLTableRowElement;
       const { index } = this.getRowDropTarget(event.clientY);
+      const row = new Row({
+        table: this,
+        id: rowElement.dataset.id,
+        element: rowElement,
+      });
 
       this.hideDropIndicator();
 
@@ -721,11 +711,45 @@ export default class TableView extends HTMLElement {
 
       if (allowMove) {
         this.moveRow(row, index);
-        this.setSelection({ row: index + 1 });
+        this.setSelection({ row: this.getRowAtIndex(index + 1) });
       }
 
       return;
     }
+  }
+
+  // Cell info
+
+  private getCellInfo(element: HTMLTableCellElement): Cell {
+    const row = element.parentElement;
+    if (!(row instanceof HTMLTableRowElement)) {
+      throw new Error("Cell is disconnected");
+    }
+    const columnIndex = Array.prototype.indexOf.call(row.children, element) - 1;
+    return {
+      column: this.visibleColumns[columnIndex]!,
+      row: new Row({ table: this, id: row.dataset.id, element: row }),
+    };
+  }
+
+  // TODO: Refer to rows by data, rather than element
+  private getRowAtIndex(index: number) {
+    if (!this.tableBody) {
+      throw new Error("Table is not initialized");
+    }
+    const element = this.tableBody.rows[index];
+    if (!element) {
+      throw new Error(`Invalid row index: ${index}`);
+    }
+    return new Row({ table: this, id: element.dataset.id, element });
+  }
+
+  private getColumnAtIndex(index: number) {
+    const column = this.visibleColumns[index];
+    if (!column) {
+      throw new Error(`Invalid column index: ${index}`);
+    }
+    return column;
   }
 
   // Focus and selection
@@ -796,13 +820,22 @@ export default class TableView extends HTMLElement {
   }
 
   private drawRangeSelection(selection: RangeSelection) {
-    const startRow = Math.min(selection.anchor.row, selection.focus.row);
-    const endRow = Math.max(selection.anchor.row, selection.focus.row);
-    const startColumn = Math.min(
-      selection.anchor.column,
-      selection.focus.column,
+    const startRow = Math.min(
+      selection.anchor.row.index,
+      selection.focus.row.index,
     );
-    const endColumn = Math.max(selection.anchor.column, selection.focus.column);
+    const endRow = Math.max(
+      selection.anchor.row.index,
+      selection.focus.row.index,
+    );
+    const startColumn = Math.min(
+      selection.anchor.column.index,
+      selection.focus.column.index,
+    );
+    const endColumn = Math.max(
+      selection.anchor.column.index,
+      selection.focus.column.index,
+    );
 
     const startVisibleRow = Math.max(startRow, this.firstVisibleRow);
     const endVisibleRow = Math.min(
@@ -855,7 +888,7 @@ export default class TableView extends HTMLElement {
     const { row, column } = anchor;
     this.selectCell({
       row,
-      column: Math.max(column - 1, 0),
+      column: this.getColumnAtIndex(Math.max(column.index - 1, 0)),
     });
   }
 
@@ -867,7 +900,9 @@ export default class TableView extends HTMLElement {
     const { row, column } = anchor;
     this.selectCell({
       row,
-      column: Math.min(column + 1, this.#columns - 1),
+      column: this.getColumnAtIndex(
+        Math.min(column.index + 1, this.#columns - 1),
+      ),
     });
   }
 
@@ -878,7 +913,7 @@ export default class TableView extends HTMLElement {
     }
     const { row, column } = anchor;
     this.selectCell({
-      row: Math.max(row - 1, 0),
+      row: this.getRowAtIndex(Math.max(row.index - 1, 0)),
       column,
     });
   }
@@ -890,7 +925,7 @@ export default class TableView extends HTMLElement {
     }
     const { row, column } = anchor;
     this.selectCell({
-      row: Math.min(row + 1, this.#rows - 1),
+      row: this.getRowAtIndex(Math.min(row.index + 1, this.#rows - 1)),
       column,
     });
   }
@@ -1393,15 +1428,9 @@ export default class TableView extends HTMLElement {
     this.redrawSelection();
   }
 
-  moveRow(index: number, afterIndex: number | null) {
+  moveRow(row: Row, afterIndex: number | null) {
     if (!this.tableBody) {
       throw new Error("Table is not initialized");
-    }
-    const row = this.tableBody.querySelector<HTMLTableRowElement>(
-      `tr[aria-rowindex="${index}"]`,
-    );
-    if (!row) {
-      throw new Error(`Invalid row index: ${index}`);
     }
     const beforeRow =
       afterIndex === null
@@ -1409,7 +1438,7 @@ export default class TableView extends HTMLElement {
         : this.tableBody.querySelector<HTMLTableRowElement>(
             `tr[aria-rowindex="${afterIndex + 1}"]`,
           );
-    moveBefore(this.tableBody, row, beforeRow);
+    moveBefore(this.tableBody, row.element, beforeRow);
 
     for (let i = 0; i < this.tableBody.rows.length; i++) {
       this.tableBody.rows[i]!.ariaRowIndex = (
