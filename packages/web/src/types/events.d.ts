@@ -38,6 +38,7 @@ declare global {
     resizetablecolumn: TableEvent;
     movetablecolumn: TableEvent;
     movetablerow: TableEvent;
+    cleartableselection: TableEvent;
   }
 }
 

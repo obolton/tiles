@@ -4,7 +4,8 @@ import type Row from "./Row";
 export type TableEventType =
   | "resizetablecolumn"
   | "movetablecolumn"
-  | "movetablerow";
+  | "movetablerow"
+  | "cleartableselection";
 
 export interface TableEventInit extends EventInit {
   column?: Column;
