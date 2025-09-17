@@ -1,5 +1,5 @@
 .heading {
   padding: 0.15em;
-  color: var(--background-color);
-  background: oklch(from var(--text-color) l c h / 100%);
+  color: oklch(from var(--text-color) calc(1 - l) c h);
+  background: var(--text-color);
 }
