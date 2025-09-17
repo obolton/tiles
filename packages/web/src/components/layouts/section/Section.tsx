@@ -18,7 +18,9 @@ export default function Section({ editor, section }: SectionProps) {
   const anchorName = `--section-${id}`;
 
   function onFocusIn() {
-    hasFocus.on();
+    if (isEditable.value) {
+      hasFocus.on();
+    }
   }
 
   function onFocusOut(event: FocusEvent) {
