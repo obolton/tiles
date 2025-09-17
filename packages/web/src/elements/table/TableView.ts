@@ -163,6 +163,7 @@ export default class TableView extends HTMLElement {
     this.addEventListener("dnd-dragenter", this);
     this.addEventListener("dnd-dragover", this);
     this.addEventListener("dnd-drop", this);
+    this.addEventListener("focusout", this);
   }
 
   enableVirtualization() {
@@ -345,6 +346,8 @@ export default class TableView extends HTMLElement {
         return this.handleDragOver(event as DragDropEvent);
       case "dnd-drop":
         return this.handleDrop(event as DragDropEvent);
+      case "focusout":
+        return this.handleFocusOut(event as FocusEvent);
     }
   }
 
@@ -382,23 +385,23 @@ export default class TableView extends HTMLElement {
 
       case "ArrowLeft":
         event.preventDefault();
-        this.focusCellBefore();
+        this.focusCellBefore(event.shiftKey);
         break;
 
       case "ArrowRight":
         event.preventDefault();
-        this.focusCellAfter();
+        this.focusCellAfter(event.shiftKey);
         break;
 
       case "ArrowUp":
         event.preventDefault();
-        this.focusCellAbove();
+        this.focusCellAbove(event.shiftKey);
         break;
 
       case "Enter":
       case "ArrowDown":
         event.preventDefault();
-        this.focusCellBelow();
+        this.focusCellBelow(event.shiftKey);
         break;
     }
   }
@@ -425,6 +428,7 @@ export default class TableView extends HTMLElement {
       target.ariaColIndex
     ) {
       event.preventDefault();
+      event.stopPropagation();
       const index =
         Array.prototype.indexOf.call(target.parentElement!.children, target) -
         1;
@@ -447,6 +451,7 @@ export default class TableView extends HTMLElement {
       target.parentElement?.ariaRowIndex
     ) {
       event.preventDefault();
+      event.stopPropagation();
       const element = target.parentElement as HTMLTableRowElement;
       const selection = {
         row: new Row({ table: this, id: element.dataset.id, element }),
@@ -465,6 +470,7 @@ export default class TableView extends HTMLElement {
       target.ariaColIndex &&
       target.parentElement?.ariaRowIndex
     ) {
+      event.stopPropagation();
       const anchor = this.getCellInfo(target);
       const selection = {
         anchor,
@@ -718,6 +724,15 @@ export default class TableView extends HTMLElement {
     }
   }
 
+  // Focus
+
+  private handleFocusOut(event: FocusEvent) {
+    const { relatedTarget } = event;
+    if (!(relatedTarget instanceof Node) || !this.contains(relatedTarget)) {
+      this.clearSelection();
+    }
+  }
+
   // Cell info
 
   private getCellInfo(element: HTMLTableCellElement): Cell {
@@ -875,66 +890,75 @@ export default class TableView extends HTMLElement {
     );
   }
 
-  private getSelectionAnchor() {
+  private getSelectionFocus() {
     const selection = Array.from(this.selection)[0];
-    return selection && "anchor" in selection ? selection.anchor : null;
+    return selection && "focus" in selection ? selection.focus : null;
   }
 
-  private focusCellBefore() {
-    const anchor = this.getSelectionAnchor();
-    if (!anchor) {
+  private focusCellBefore(expandSelection = false) {
+    const focus = this.getSelectionFocus();
+    if (!focus) {
       return;
     }
-    const { row, column } = anchor;
-    this.selectCell({
+    const { row, column } = focus;
+    const cell = {
       row,
       column: this.getColumnAtIndex(Math.max(column.index - 1, 0)),
-    });
+    };
+    this.moveSelectionFocus(cell, expandSelection);
   }
 
-  private focusCellAfter() {
-    const anchor = this.getSelectionAnchor();
-    if (!anchor) {
+  private focusCellAfter(expandSelection = false) {
+    const focus = this.getSelectionFocus();
+    if (!focus) {
       return;
     }
-    const { row, column } = anchor;
-    this.selectCell({
+    const { row, column } = focus;
+    const cell = {
       row,
       column: this.getColumnAtIndex(
         Math.min(column.index + 1, this.#columns - 1),
       ),
-    });
+    };
+    this.moveSelectionFocus(cell, expandSelection);
   }
 
-  private focusCellAbove() {
-    const anchor = this.getSelectionAnchor();
-    if (!anchor) {
+  private focusCellAbove(expandSelection = false) {
+    const focus = this.getSelectionFocus();
+    if (!focus) {
       return;
     }
-    const { row, column } = anchor;
-    this.selectCell({
+    const { row, column } = focus;
+    const cell = {
       row: this.getRowAtIndex(Math.max(row.index - 1, 0)),
       column,
-    });
+    };
+    this.moveSelectionFocus(cell, expandSelection);
   }
 
-  private focusCellBelow() {
-    const anchor = this.getSelectionAnchor();
-    if (!anchor) {
+  private focusCellBelow(expandSelection = false) {
+    const focus = this.getSelectionFocus();
+    if (!focus) {
       return;
     }
-    const { row, column } = anchor;
-    this.selectCell({
+    const { row, column } = focus;
+    const cell = {
       row: this.getRowAtIndex(Math.min(row.index + 1, this.#rows - 1)),
       column,
-    });
+    };
+    this.moveSelectionFocus(cell, expandSelection);
   }
 
-  private selectCell(cell: Cell) {
-    this.setSelection({ anchor: cell, focus: cell });
-    this.querySelector<HTMLTableCellElement>(
-      `tr[aria-rowindex="${cell.row}"] > td[aria-colindex="${cell.column}"]`,
-    )?.focus();
+  private moveSelectionFocus(cell: Cell, expandSelection = false) {
+    if (expandSelection && this.rangeSelection) {
+      this.rangeSelection.focus = cell;
+      this.redrawSelection();
+    } else {
+      this.setSelection({ anchor: cell, focus: cell });
+      this.querySelector<HTMLTableCellElement>(
+        `tr[aria-rowindex="${cell.row.index}"] > td[aria-colindex="${cell.column.index}"]`,
+      )?.focus();
+    }
   }
 
   // Column sizing
