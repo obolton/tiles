@@ -4,6 +4,17 @@
   initial-value: 0;
 }
 
+/* Reset popover styles */
+:where([popover]) {
+  inset: unset;
+  width: unset;
+  height: unset;
+  margin: unset;
+  padding: unset;
+  color: unset;
+  border: unset;
+}
+
 :host {
   display: contents;
 }

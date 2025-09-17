@@ -29,6 +29,7 @@ export default class SwipeView extends HTMLElement {
 
   private carousel: HTMLElement;
   private items: HTMLUListElement;
+  private buttons: HTMLElement;
   private previousButton: HTMLButtonElement;
   private nextButton: HTMLButtonElement;
   private itemHeights: number[] = [];
@@ -72,12 +73,13 @@ export default class SwipeView extends HTMLElement {
     this.nextButton.addEventListener("pointerdown", this);
     this.nextButton.addEventListener("click", this);
 
-    const buttons = document.createElement("div");
-    buttons.id = "buttons";
-    buttons.part = "buttons";
-    buttons.append(this.previousButton, this.nextButton);
+    this.buttons = document.createElement("div");
+    this.buttons.id = "buttons";
+    this.buttons.part = "buttons";
+    this.buttons.popover = "manual";
+    this.buttons.append(this.previousButton, this.nextButton);
 
-    shadow.append(this.carousel, buttons);
+    shadow.append(this.carousel, this.buttons);
 
     this.intersectionObserver = new IntersectionObserver(
       this.intersectionObserverCallback.bind(this),
@@ -105,6 +107,8 @@ export default class SwipeView extends HTMLElement {
     this.previousButton.disabled = this.value === 0;
     this.nextButton.disabled = this.value === this.max;
 
+    this.buttons.showPopover();
+
     addEventListener("keydown", this);
   }
 
@@ -113,6 +117,8 @@ export default class SwipeView extends HTMLElement {
     this.resizeObserver.disconnect();
     this.items.replaceChildren();
     this.replaceChildren();
+
+    this.buttons.hidePopover();
 
     removeEventListener("keydown", this);
   }
