@@ -13,8 +13,12 @@ import type { Command } from "prosemirror-state";
 export function addMark(mark: Mark): Command {
   return function (state, dispatch) {
     if (dispatch) {
-      const { from, to } = state.selection;
-      dispatch(state.tr.addMark(from, to, mark));
+      const { empty, from, to } = state.selection;
+      if (empty) {
+        dispatch(state.tr.addStoredMark(mark));
+      } else {
+        dispatch(state.tr.addMark(from, to, mark));
+      }
     }
     return true;
   };
@@ -23,17 +27,20 @@ export function addMark(mark: Mark): Command {
 export function removeMark(mark: Mark | MarkType): Command {
   return function (state, dispatch) {
     if (dispatch) {
-      const { from, to } = state.selection;
-      dispatch(state.tr.removeMark(from, to, mark));
+      const { tr, storedMarks, selection } = state;
+
+      if (storedMarks && mark.isInSet(storedMarks)) {
+        tr.removeStoredMark(mark);
+      }
+      tr.removeMark(selection.from, selection.to, mark);
+
+      dispatch(tr);
     }
     return true;
   };
 }
 
 export function setTextSize(size: number) {
-  if (size === 1) {
-    return removeMark(schema.marks.size);
-  }
   return addMark(schema.marks.size.create({ size }));
 }
 

@@ -44,13 +44,11 @@ export function getSelectionMarks(state: EditorState) {
   } = state;
 
   if (empty) {
-    const storedMarks = state.storedMarks ?? [];
-    return $from.marks().concat(storedMarks);
+    return state.storedMarks ?? $from.marks();
   }
 
-  let marks = $from.marks();
-
   const textNodes = findInSelection(state, (node) => node.isText);
+  let marks = textNodes[0]?.marks ?? [];
 
   for (const node of textNodes) {
     marks = marks.filter((mark) => mark.type.isInSet(node.marks));
