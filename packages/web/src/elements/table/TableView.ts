@@ -444,7 +444,6 @@ export default class TableView extends HTMLElement {
       target.scope === "col" &&
       target.ariaColIndex
     ) {
-      event.preventDefault();
       event.stopPropagation();
       const index =
         Array.prototype.indexOf.call(target.parentElement!.children, target) -
@@ -467,7 +466,6 @@ export default class TableView extends HTMLElement {
       target.scope === "row" &&
       target.parentElement?.ariaRowIndex
     ) {
-      event.preventDefault();
       event.stopPropagation();
       const element = target.parentElement as HTMLTableRowElement;
       const selection: RowSelection = {
