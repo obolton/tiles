@@ -43,7 +43,7 @@ export default class PageItem extends HTMLElement {
 
     this.internals = this.attachInternals();
 
-    const shadow = this.attachShadow({ mode: "open", delegatesFocus: true });
+    const shadow = this.attachShadow({ mode: "open" });
     shadow.adoptedStyleSheets = [stylesheet];
     shadow.append(document.createElement("slot"));
   }
@@ -119,10 +119,7 @@ export default class PageItem extends HTMLElement {
   }
 
   private pointerDown(event: PointerEvent) {
-    event.preventDefault();
     event.stopPropagation();
-
-    this.focus();
 
     this.resizeAbortController = new AbortController();
     const signal = this.resizeAbortController.signal;
@@ -235,6 +232,7 @@ export default class PageItem extends HTMLElement {
     this.resizeAbortController = undefined;
     this.internals.states.delete("resizing");
     this.removeOutline();
+    this.focus({ preventScroll: true });
   }
 
   private showOutline() {
