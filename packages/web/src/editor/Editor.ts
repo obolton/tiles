@@ -287,17 +287,31 @@ export default class Editor {
       const lastElement = elements.at(-1);
       const sibling =
         lastElement?.previousElementSibling || lastElement?.nextElementSibling;
+
+      const items = document.getElementsByTagName("page-item");
+      for (const item of items) {
+        if (item.id) {
+          item.style.viewTransitionName = `item-${item.id}`;
+        }
+      }
+
       elements.forEach((element) => {
         if (element) {
           element.style.viewTransitionClass = "destroy";
         }
       });
+
       viewTransition(commit).updateCallbackDone.then(() => {
+        for (const item of items) {
+          item.style.viewTransitionName = "";
+        }
+
         // Move focus to sibling of last selected element
         if (sibling instanceof HTMLElement) {
           focusInside(sibling, { preventScroll: true });
           scrollIntoViewIfNeeded(sibling, { behavior: "smooth" });
         }
+
         this.clearSelection();
       });
     });

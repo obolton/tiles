@@ -154,7 +154,6 @@ export default function Item({
       "--width": widthValue.toString(),
       "--height": heightValue.toString(),
       "--rows": rowSpanValue.toString(),
-      viewTransitionName: `item-${id}`,
     }),
   );
 
