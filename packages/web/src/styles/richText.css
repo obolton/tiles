@@ -30,7 +30,7 @@
   }
 
   & mark {
-    background: oklch(from var(--background-color) 85% calc(c * 2.5) h);
+    background: oklch(from var(--text-color) 85% 0.4 h);
   }
 
   & ins {
