@@ -13,6 +13,12 @@ export interface PageItemAttributes {
   allowresize?: boolean;
 }
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "page-item": PageItem;
+  }
+}
+
 export default class PageItem extends HTMLElement {
   static readonly observedAttributes: (keyof PageItemAttributes)[] = [
     "allowdrag",
