@@ -249,6 +249,7 @@ export default class PageItem extends HTMLElement {
       this.outline.appendChild(this.resizeHandle);
     }
     this.shadowRoot?.appendChild(this.outline);
+    this.resizeHandle?.focus({ preventScroll: true });
   }
 
   private updateOutlineSize() {
