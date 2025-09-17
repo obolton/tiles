@@ -271,6 +271,52 @@ export default function TableTile({
     }
   };
 
+  function onClearSelection() {
+    const selection = tableView?.selection;
+    if (!selection) {
+      return;
+    }
+
+    const ranges = Array.from(
+      selection.values().map((range) => {
+        switch (range.type) {
+          case "cells":
+            return {
+              type: "cells",
+              from: {
+                row: range.anchor.row.id!,
+                column: range.anchor.column.id!,
+              },
+              to: {
+                row: range.focus.row.id!,
+                column: range.focus.column.id!,
+              },
+            } as const;
+
+          case "columns":
+            return {
+              type: "columns",
+              from: range.from.id!,
+              to: range.to?.id ?? range.from.id!,
+            } as const;
+
+          case "rows":
+            return {
+              type: "rows",
+              from: range.from.id!,
+              to: range.to?.id ?? range.from.id!,
+            } as const;
+        }
+      }),
+    );
+    editor
+      .clearTableRanges({
+        tableId: id,
+        ranges,
+      })
+      .catch(handleError);
+  }
+
   const onChangeTextColor = async (value: Color | null) => {
     try {
       const { textColor: newTextColor } = await editor.updateTable({
@@ -313,6 +359,7 @@ export default function TableTile({
         on:resizetablecolumn={onResizeColumn}
         on:movetablecolumn={onMoveColumn}
         on:movetablerow={onMoveRow}
+        on:cleartableselection={onClearSelection}
         $getColumn={(index) => columns.value[index]!}
       >
         <table>

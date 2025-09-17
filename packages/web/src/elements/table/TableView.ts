@@ -408,6 +408,18 @@ export default class TableView extends HTMLElement {
         event.preventDefault();
         this.focusCellBelow(event.shiftKey);
         break;
+
+      case "Delete":
+      case "Backspace":
+        event.preventDefault();
+        event.stopPropagation();
+        this.dispatchEvent(
+          new TableEvent("cleartableselection", {
+            bubbles: true,
+            cancelable: true,
+          }),
+        );
+        break;
     }
   }
 
@@ -836,13 +848,13 @@ export default class TableView extends HTMLElement {
     for (const selection of this.selection) {
       switch (selection.type) {
         case "cells":
-        this.drawRangeSelection(selection);
+          this.drawRangeSelection(selection);
           break;
         case "columns":
-        this.drawColumnSelection(selection);
+          this.drawColumnSelection(selection);
           break;
         case "rows":
-        this.drawRowSelection(selection);
+          this.drawRowSelection(selection);
           break;
       }
     }
