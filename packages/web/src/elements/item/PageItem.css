@@ -17,7 +17,6 @@
     content: "";
     position: absolute;
     inset: 0;
-    z-index: -1;
     background: var(--accent);
     opacity: 0;
     clip-path: inset(12px round var(--border-radius));
@@ -31,7 +30,7 @@
   :host(.drag-preview) &,
   &:hover {
     &::before {
-      opacity: 0.4;
+      opacity: 0.6;
       clip-path: inset(0 round calc(var(--border-radius) + 12px));
     }
   }
