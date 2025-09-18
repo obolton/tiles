@@ -51,6 +51,7 @@ const ListItemNodeSchema: z.ZodType<{
     | z.infer<typeof HeadingNodeSchema>
     | z.infer<typeof QuoteNodeSchema>
     | z.infer<typeof ListNodeSchema>
+    | z.infer<typeof CodeNodeSchema>
   )[];
 }> = z.object({
   type: z.literal("listitem"),
@@ -62,6 +63,7 @@ const ListItemNodeSchema: z.ZodType<{
         HeadingNodeSchema,
         QuoteNodeSchema,
         ListNodeSchema,
+        CodeNodeSchema,
       ]),
     ),
   ),
@@ -73,10 +75,21 @@ const ListNodeSchema = z.object({
   children: z.array(ListItemNodeSchema),
 });
 
+const CodeNodeSchema = z.object({
+  type: z.literal("code"),
+  language: z.string().nullable(),
+  children: z.array(TextNodeSchema),
+});
+
 const QuoteNodeSchema = z.object({
   type: z.literal("quote"),
   children: z.array(
-    z.union([ParagraphNodeSchema, HeadingNodeSchema, ListNodeSchema]),
+    z.union([
+      ParagraphNodeSchema,
+      HeadingNodeSchema,
+      ListNodeSchema,
+      CodeNodeSchema,
+    ]),
   ),
 });
 
@@ -88,6 +101,7 @@ const PendingNodeSchema = z.object({
       HeadingNodeSchema,
       ListNodeSchema,
       QuoteNodeSchema,
+      CodeNodeSchema,
     ]),
   ),
 });
@@ -98,6 +112,7 @@ const RootNodeSchema = z.discriminatedUnion("type", [
   QuoteNodeSchema,
   ListNodeSchema,
   PendingNodeSchema,
+  CodeNodeSchema,
 ]);
 
 export const RichTextSchema = z.array(RootNodeSchema);
