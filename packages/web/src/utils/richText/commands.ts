@@ -87,6 +87,18 @@ export function toggleWrap(nodeType: NodeType): Command {
 
 export const toggleQuote = toggleWrap(schema.nodes.quote);
 
+export const toggleCode: Command = (state, dispatch) => {
+  if (dispatch) {
+    const tr = state.tr;
+    for (const range of tr.selection.ranges) {
+      tr.setBlockType(range.$from.pos, range.$to.pos, schema.nodes.code);
+    }
+    dispatch(tr);
+  }
+
+  return true;
+};
+
 export function toggleHeading(level: 1 | 2 | 3): Command {
   return function (state, dispatch, view) {
     if (getSelectionHeadingLevel(state) === level) {
