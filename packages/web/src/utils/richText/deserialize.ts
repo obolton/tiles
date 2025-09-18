@@ -8,6 +8,7 @@ import type {
   TextNode,
   HeadingNode,
   QuoteNode,
+  CodeNode,
   RichText,
   PendingNode,
   Node as SerializedNode,
@@ -81,6 +82,13 @@ function createQuoteNode(quote: QuoteNode): Node {
   return schema.nodes.quote.create(null, quote.children.map(createNode));
 }
 
+function createCodeNode(code: CodeNode): Node {
+  return schema.nodes.code.create(
+    { language: code.language },
+    code.children.map(createNode),
+  );
+}
+
 function getListType(listType: ListType) {
   switch (listType) {
     case ListType.ORDERED:
@@ -140,6 +148,8 @@ function createNode(node: SerializedNode) {
       return createHeadingNode(node);
     case "quote":
       return createQuoteNode(node);
+    case "code":
+      return createCodeNode(node);
     case "list":
       return createListNode(node);
     case "listitem":

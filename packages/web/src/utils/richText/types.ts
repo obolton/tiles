@@ -70,6 +70,12 @@ export interface QuoteNode extends BaseNode {
   children: (ParagraphNode | HeadingNode | ListNode)[];
 }
 
+export interface CodeNode extends BaseNode {
+  type: "code";
+  language: string | null;
+  children: TextNode[];
+}
+
 export interface ListNode extends BaseNode {
   type: "list";
   listType: ListType;
@@ -88,7 +94,8 @@ export type BlockNode =
   | ParagraphNode
   | ListNode
   | HeadingNode
-  | QuoteNode;
+  | QuoteNode
+  | CodeNode;
 
 export type Node =
   | TextNode
@@ -99,6 +106,7 @@ export type Node =
   | QuoteNode
   | ListNode
   | ListItemNode
-  | PendingNode;
+  | PendingNode
+  | CodeNode;
 
 export type RichText = BlockNode[];

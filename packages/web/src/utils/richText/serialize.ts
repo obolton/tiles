@@ -106,6 +106,14 @@ function serializeNode(node: Node): SerializedNode {
     } as QuoteNode;
   }
 
+  if (node.type === nodes.code) {
+    return {
+      type: "code",
+      language: node.attrs.language as string | null,
+      children: node.children.map(serializeNode) as TextNode[],
+    };
+  }
+
   if (node.type === nodes.list_item) {
     return {
       type: "listitem",
