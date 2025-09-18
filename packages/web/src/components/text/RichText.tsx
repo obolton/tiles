@@ -14,6 +14,7 @@ import type {
   ParagraphNode,
   HeadingNode,
   QuoteNode,
+  CodeNode,
   ListNode,
   ListItemNode,
   Node,
@@ -37,6 +38,8 @@ function renderNodes(nodes: Node[]) {
             return <Heading node={node} />;
           case "quote":
             return <Quote node={node} />;
+          case "code":
+            return <Code node={node} />;
           case "list":
             return <List node={node} />;
           case "text":
@@ -132,6 +135,27 @@ function Quote({ node }: QuoteProps) {
     );
   }
   return <blockquote>{renderNodes(node.children)}</blockquote>;
+}
+
+interface CodeProps {
+  node: CodeNode;
+}
+
+function Code({ node }: CodeProps) {
+  if (node.children.length === 0) {
+    return (
+      <pre>
+        <code>
+          <br />
+        </code>
+      </pre>
+    );
+  }
+  return (
+    <pre>
+      <code>{renderNodes(node.children)}</code>
+    </pre>
+  );
 }
 
 interface ListItemProps extends JSX.Attributes<HTMLLIElement> {
