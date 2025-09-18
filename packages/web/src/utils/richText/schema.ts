@@ -22,6 +22,7 @@ const DOMOutput = {
   strikethrough: ["del", 0],
   highlight: ["mark", 0],
   pending: ["ins", 0],
+  code: ["pre", ["code", 0]],
 } as const satisfies Record<string, DOMOutputSpec>;
 
 export type TextAlignment = "left" | "center" | "right";
@@ -236,6 +237,21 @@ const nodesSpec = {
     group: "block",
     toDOM() {
       return DOMOutput.pending;
+    },
+  },
+
+  code: {
+    attrs: {
+      language: { default: null, validate: "string|null" },
+    },
+    content: "text*",
+    group: "block",
+    marks: "",
+    code: true,
+    defining: true,
+    parseDOM: [{ tag: "pre", preserveWhitespace: "full" }],
+    toDOM() {
+      return DOMOutput.code;
     },
   },
 } as const satisfies Record<string, NodeSpec>;
