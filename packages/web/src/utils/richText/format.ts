@@ -16,6 +16,7 @@ export type ListType = "unordered" | "ordered" | "check";
 export interface Format {
   headingLevel: number | null;
   quote: boolean;
+  code: boolean;
   list: ListType | null;
   bold: boolean;
   italic: boolean;
@@ -31,6 +32,7 @@ export interface Format {
 export const DEFAULT_FORMAT = {
   headingLevel: null,
   quote: false,
+  code: false,
   list: null,
   bold: false,
   italic: false,
@@ -52,14 +54,15 @@ export function getSelectionFormat(state: EditorState): Format {
   const size = schema.marks.size.isInSet(marks)?.attrs.size ?? 1;
 
   return {
+    headingLevel,
+    quote: blockNodeTypes.has(schema.nodes.quote),
+    code: blockNodeTypes.has(schema.nodes.code),
     bold: Boolean(schema.marks.bold.isInSet(marks)),
     italic: Boolean(schema.marks.italic.isInSet(marks)),
     underline: Boolean(schema.marks.underline.isInSet(marks)),
     strikethrough: Boolean(schema.marks.strikethrough.isInSet(marks)),
     highlight: Boolean(schema.marks.highlight.isInSet(marks)),
     link,
-    headingLevel,
-    quote: blockNodeTypes.has(schema.nodes.quote),
     list,
     align,
     pending: blockNodeTypes.has(schema.nodes.pending),
