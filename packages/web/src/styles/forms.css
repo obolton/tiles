@@ -102,6 +102,7 @@ swatch-item {
     width: 24px;
     height: 24px;
     fill: var(--icon-color);
+    pointer-events: none;
   }
 }
 

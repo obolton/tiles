@@ -1,6 +1,12 @@
 // TODO: Implement keyboard interactions:
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/menubar_role#keyboard_interactions
 
+const IGNORE_FOCUS_ELEMENTS = new Set([
+  "BUTTON",
+  "SWATCH-SELECT",
+  "SWATCH-ITEM",
+]);
+
 export default class FloatingToolbar extends HTMLElement {
   constructor() {
     super();
@@ -25,7 +31,7 @@ export default class FloatingToolbar extends HTMLElement {
     // Prevent toolbar controls from stealing focus
     if (
       target instanceof Element &&
-      (target.tagName === "BUTTON" || target.tagName === "SWATCH-SELECT")
+      IGNORE_FOCUS_ELEMENTS.has(target.tagName)
     ) {
       event.preventDefault();
     }
