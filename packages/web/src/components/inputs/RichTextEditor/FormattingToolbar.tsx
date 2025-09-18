@@ -2,6 +2,7 @@ import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
 import H3Icon from "@/icons/h3.svg?jsx";
 import ParagraphIcon from "@/icons/paragraph.svg?jsx";
+import CodeIcon from "@/icons/code.svg?jsx";
 import TextSizeIcon from "@/icons/text-size.svg?jsx";
 import BoldIcon from "@/icons/bold.svg?jsx";
 import ItalicIcon from "@/icons/italic.svg?jsx";
@@ -34,6 +35,7 @@ import {
   toggleStrikethrough,
   toggleHighlight,
   toggleQuote,
+  toggleCode,
   toggleHeading,
   toggleOrderedList,
   toggleUnorderedList,
@@ -63,6 +65,7 @@ const BLOCK_FORMAT_ICON = {
   h1: <H1Icon aria-hidden="true" slot="icon" />,
   h2: <H2Icon aria-hidden="true" slot="icon" />,
   h3: <H3Icon aria-hidden="true" slot="icon" />,
+  code: <CodeIcon aria-hidden="true" slot="icon" />,
 } as const;
 
 const ALIGN_ICON = {
@@ -103,19 +106,21 @@ export default function FormattingToolbar({
     });
   };
 
-  const formatHeading = (event: Event) => {
+  function changeTextFormat(event: Event) {
     switch ((event.currentTarget as SwatchSelect).value) {
-      case "1":
+      case "h1":
         return performCommand(toggleHeading(1));
-      case "2":
+      case "h2":
         return performCommand(toggleHeading(2));
-      case "3":
+      case "h3":
         return performCommand(toggleHeading(3));
+      case "code":
+        return performCommand(toggleCode);
       case "":
       default:
         return performCommand(resetBlockFormat);
     }
-  };
+  }
 
   const formatQuote = () => performCommand(toggleQuote);
 
@@ -268,37 +273,46 @@ export default function FormattingToolbar({
         <li role="presentation">
           <swatch-select
             role="menuitem"
-            aria-label="Heading"
+            aria-label="Text format"
             aria-selected={format.derive((value) =>
-              typeof value.headingLevel === "number" ? "true" : undefined,
+              typeof value.headingLevel === "number" || value.code
+                ? "true"
+                : undefined,
             )}
-            data-tooltip="Heading"
+            data-tooltip="Text format"
             orientation="vertical"
             align="center"
             value={format.derive((value) =>
               typeof value.headingLevel === "number"
-                ? value.headingLevel.toString()
-                : undefined,
+                ? `h${value.headingLevel}`
+                : value.code
+                  ? "code"
+                  : "",
             )}
-            on:change={formatHeading}
+            on:change={changeTextFormat}
           >
             {format.derive(
               (value) =>
                 BLOCK_FORMAT_ICON[
                   typeof value.headingLevel === "number"
                     ? (`h${value.headingLevel}` as "h1" | "h2" | "h3")
-                    : "paragraph"
+                    : value.code
+                      ? "code"
+                      : "paragraph"
                 ],
             )}
 
-            <swatch-item className={styles.h1} value="1">
+            <swatch-item className={styles.h1} value="h1">
               Heading 1
             </swatch-item>
-            <swatch-item className={styles.h2} value="2">
+            <swatch-item className={styles.h2} value="h2">
               Heading 2
             </swatch-item>
-            <swatch-item className={styles.h3} value="3">
+            <swatch-item className={styles.h3} value="h3">
               Heading 3
+            </swatch-item>
+            <swatch-item className={styles.code} value="code">
+              Code
             </swatch-item>
             <swatch-item value="">Paragraph</swatch-item>
           </swatch-select>
