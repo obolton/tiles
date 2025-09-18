@@ -18,7 +18,9 @@ export default function PagesGridItem({
   return (
     <div
       ref={
-        draggable ? (element) => makeDraggable(element, { signal }) : undefined
+        draggable
+          ? (element) => makeDraggable(element, { clone: true, signal })
+          : undefined
       }
       className={styles.item}
       data-id={id}
