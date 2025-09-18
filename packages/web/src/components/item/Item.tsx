@@ -117,6 +117,10 @@ export default function Item({
     if (editor.isEditable.value) {
       hasFocus.value = true;
     }
+
+    if (!isSelected.value) {
+      editor.select([id], false);
+    }
   }
 
   function onFocusOut(event: FocusEvent) {
