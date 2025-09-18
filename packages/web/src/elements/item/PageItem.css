@@ -1,6 +1,7 @@
 :host {
   position: relative;
   background: none;
+  isolation: isolate;
 }
 
 :host(:focus-within),
@@ -11,16 +12,21 @@
 #drag {
   position: absolute;
   inset: -12px;
+  border-radius: var(--border-radius);
   cursor: move;
+  z-index: -1;
 
   &::before {
     content: "";
+    display: none;
     position: absolute;
-    inset: 0;
-    background: var(--accent);
+    inset: 12px;
+    border-radius: inherit;
+    box-shadow: 0 0 0 12px rgb(0 0 0 / 30%);
     opacity: 0;
-    clip-path: inset(12px round var(--border-radius));
+    clip-path: inset(0 round var(--border-radius));
     transition:
+      display var(--animation-duration-short) allow-discrete,
       opacity var(--animation-duration-short) var(--easing),
       clip-path var(--animation-duration-short) var(--easing);
   }
@@ -30,8 +36,14 @@
   :host(.drag-preview) &,
   &:hover {
     &::before {
-      opacity: 0.6;
-      clip-path: inset(0 round calc(var(--border-radius) + 12px));
+      display: block;
+      opacity: 1;
+      clip-path: inset(-12px round calc(var(--border-radius) + 12px));
+
+      @starting-style {
+        opacity: 0;
+        clip-path: inset(0 round var(--border-radius));
+      }
     }
   }
 }
