@@ -246,7 +246,7 @@ export default class Editor {
 
   // Selection
 
-  select(ids: string[], extendSelection: boolean = false) {
+  select(ids: string[], extendSelection = false) {
     const tiles = new Set(ids.map((id) => this.getTile(id)));
     if (extendSelection) {
       if (tiles.size === 0) {
@@ -446,14 +446,18 @@ export default class Editor {
     });
   }
 
-  addTile(tile: ClientTile) {
+  addTile(tile: ClientTile, select = true) {
     viewTransition(() => {
       this.tiles.value = this.tiles.value.concat(getReactiveTile(tile));
     }).updateCallbackDone.then(() => {
-      const element = document.getElementById(tile.id);
-      if (element) {
-        focusInside(element, { preventScroll: true });
-        scrollIntoViewIfNeeded(element, { behavior: "smooth" });
+      if (select) {
+        this.select([tile.id]);
+
+        const element = document.getElementById(tile.id);
+        if (element) {
+          focusInside(element, { preventScroll: true });
+          scrollIntoViewIfNeeded(element, { behavior: "smooth" });
+        }
       }
     });
   }
