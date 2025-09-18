@@ -140,6 +140,8 @@ export default class Editor {
     if (
       (event.key === "Backspace" || event.key === "Delete") &&
       !event.repeat &&
+      event.target instanceof Element &&
+      event.target.tagName === "PAGE-ITEM" &&
       this.selection.value.size > 0
     ) {
       event.preventDefault();
@@ -278,43 +280,8 @@ export default class Editor {
       this.selection.value.values().map((tile) => tile.placementId),
     );
 
-    this.deleteTiles(ids, (commit) => {
-      const elements = Array.from(
-        this.selection.value
-          .values()
-          .map((tile) => document.getElementById(tile.id)),
-      );
-      const lastElement = elements.at(-1);
-      const sibling =
-        lastElement?.previousElementSibling || lastElement?.nextElementSibling;
-
-      const items = document.getElementsByTagName("page-item");
-      for (const item of items) {
-        if (item.id) {
-          item.style.viewTransitionName = `item-${item.id}`;
-        }
-      }
-
-      elements.forEach((element) => {
-        if (element) {
-          element.style.viewTransitionClass = "destroy";
-        }
-      });
-
-      viewTransition(commit).updateCallbackDone.then(() => {
-        for (const item of items) {
-          item.style.viewTransitionName = "";
-        }
-
-        // Move focus to sibling of last selected element
-        if (sibling instanceof HTMLElement) {
-          focusInside(sibling, { preventScroll: true });
-          scrollIntoViewIfNeeded(sibling, { behavior: "smooth" });
-        }
-
-        this.clearSelection();
-      });
-    });
+    this.clearSelection();
+    this.deleteTiles(ids);
   }
 
   // Sections
@@ -364,15 +331,53 @@ export default class Editor {
     return tile;
   }
 
-  async deleteTiles(
-    ids: string[],
-    transition: TransitionFunction = immediateTransition,
-  ) {
+  async deleteTiles(ids: string[]) {
     await client.tiles.delete.mutate({
       pageId: this.pageId,
       ids,
     });
-    transition(() => this.removeTiles(ids));
+
+    const items = document.getElementsByTagName("page-item");
+    for (const item of items) {
+      if (item.id) {
+        item.style.viewTransitionName = `item-${item.id}`;
+      }
+    }
+
+    const elements = ids
+      .map((id) =>
+        document.querySelector<HTMLElement>(
+          `page-item[data-placement-id="${id}"]`,
+        ),
+      )
+      .filter((element) => !!element);
+    elements.forEach((element) => {
+      element.style.viewTransitionClass = "destroy";
+    });
+
+    // If the focus was in a tile to be deleted, move focus to a new element
+    let focus: Element | null = null;
+    const containsFocus = !!elements.find((element) =>
+      element.contains(document.activeElement),
+    );
+    if (containsFocus) {
+      const last = elements.at(-1);
+      focus =
+        (last?.previousElementSibling || last?.nextElementSibling) ?? null;
+    }
+
+    viewTransition(() => {
+      this.removeTiles(ids);
+
+      if (focus instanceof HTMLElement) {
+        focusInside(focus, { preventScroll: true });
+        scrollIntoViewIfNeeded(focus, { behavior: "smooth" });
+      }
+    }).updateCallbackDone.finally(() => {
+      for (const item of items) {
+        item.style.viewTransitionName = "";
+      }
+    });
   }
 
   async moveTile({

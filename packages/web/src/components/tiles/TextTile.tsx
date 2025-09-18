@@ -80,9 +80,11 @@ export default function TextTile({
       target === currentTarget &&
       (key === "Delete" || key === "Backspace") &&
       state.value &&
-      !(state.value.doc.childCount <= 1 && state.value.doc.textContent === "")
+      state.value.doc.childCount <= 1 &&
+      state.value.doc.textContent === ""
     ) {
-      event.stopPropagation();
+      event.preventDefault();
+      editor.deleteTiles([placementId]);
     }
 
     // Prevent ancestors from acting on keyboard navigation
