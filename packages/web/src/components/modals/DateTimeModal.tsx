@@ -1,14 +1,14 @@
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
-import { ReactiveValue } from "@/utils/reactivity";
+import { reactive, flag } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import type { ModalProps } from "@/utils/modals";
 
-export type DateTimeModalResult = {
+export interface DateTimeModalResult {
   value: Date;
   time: boolean;
-};
+}
 
 interface DateTimeModalProps extends ModalProps<DateTimeModalResult> {
   value?: Date;
@@ -36,9 +36,9 @@ export default function DateTimeModal({
   cancel,
   confirm,
 }: DateTimeModalProps) {
-  const date = new ReactiveValue(value);
-  const hasTime = new ReactiveValue(time);
-  const isPending = new ReactiveValue(false);
+  const date = reactive(value);
+  const hasTime = flag(time);
+  const pending = flag(false);
 
   const onChangeDate = (event: Event) => {
     const input = event.target as HTMLInputElement;
@@ -53,7 +53,7 @@ export default function DateTimeModal({
   const onSubmit = async (event: Event) => {
     event.preventDefault();
 
-    if (isPending.value) {
+    if (pending.value) {
       return;
     }
 
@@ -62,7 +62,7 @@ export default function DateTimeModal({
       const formData = new FormData(form);
       const date = formData.get("date") as string;
 
-      isPending.value = true;
+      pending.on();
       await confirm({
         value: new Date(date),
         time: hasTime.value,
@@ -70,12 +70,12 @@ export default function DateTimeModal({
     } catch (error) {
       handleError(error);
     } finally {
-      isPending.value = false;
+      pending.off();
     }
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form on:submit={onSubmit}>
       <ModalHeader>
         <h2>Date</h2>
       </ModalHeader>
@@ -91,7 +91,7 @@ export default function DateTimeModal({
                 aria-label="Date and time"
                 required
                 value={getFormattedDateTime(date.value)}
-                onchange={onChangeDate}
+                on:change={onChangeDate}
               />
             </label>
           ) : (
@@ -103,7 +103,7 @@ export default function DateTimeModal({
                 aria-label="Date"
                 required
                 value={getFormattedDate(date.value)}
-                onchange={onChangeDate}
+                on:change={onChangeDate}
               />
             </label>
           ),
@@ -115,17 +115,17 @@ export default function DateTimeModal({
             name="time"
             type="checkbox"
             role="switch"
-            onchange={onChangeHasTime}
             checked={hasTime.value}
+            on:change={onChangeHasTime}
           />
         </label>
       </ModalBody>
 
       <ModalFooter>
-        <button classList={{ primary: true, pending: isPending }} type="submit">
+        <button type="submit" classList={{ primary: true, pending }}>
           Save
         </button>
-        <button className="secondary" type="button" onclick={cancel}>
+        <button type="button" className="secondary" on:click={cancel}>
           Cancel
         </button>
       </ModalFooter>
