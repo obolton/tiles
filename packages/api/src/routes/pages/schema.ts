@@ -8,7 +8,7 @@ export type GetPageByIdSchema = z.infer<typeof GetPageByIdSchema>;
 
 export const ListPagesSchema = z.object({
   query: z.string().min(1).optional(),
-  offset: z.number().int().gte(0).optional(), // TODO: Use cursors
+  offset: z.int().gte(0).optional(), // TODO: Use cursors
 });
 export type ListPagesSchema = z.infer<typeof ListPagesSchema>;
 
@@ -28,7 +28,7 @@ export const UpdatePageSchema = z.object({
       h: z.number().gte(0).lte(360),
     })
     .optional(),
-  font: z.nativeEnum(Font).optional(),
+  font: z.enum(Font).optional(),
   coverImageKey: z.string().nullable().optional(),
 });
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
