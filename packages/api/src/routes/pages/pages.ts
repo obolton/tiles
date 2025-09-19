@@ -15,6 +15,7 @@ import {
   PAGE_INVITE_FIELDS,
 } from "@/routes/collaboration/collaboration.ts";
 import { TABLE_WITH_DATA_FIELDS } from "@/routes/tables/tables.ts";
+import { DROPDOWN_FIELDS } from "@/routes/dropdowns/dropdowns.ts";
 import type {
   GetPageByIdSchema,
   ListPagesSchema,
@@ -101,6 +102,9 @@ const PAGE_FIELDS = {
     orderBy: {
       position: "asc",
     },
+  },
+  dropdowns: {
+    select: DROPDOWN_FIELDS,
   },
 } as const satisfies Prisma.Args<typeof prisma.page, "findMany">["select"];
 
