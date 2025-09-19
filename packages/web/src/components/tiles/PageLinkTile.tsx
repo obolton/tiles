@@ -48,7 +48,8 @@ export default function PageLinkTile({
       className={styles.link}
       href={`/pages/${page.id}`}
       target={openInNewTab ? "_blank" : undefined}
-      onclick={handleClick}
+      tabindex={editor?.isEditable.derive((value) => (value ? -1 : undefined))}
+      on:click={handleClick}
     >
       <PageTile
         title={page.title}
