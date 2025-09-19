@@ -19,6 +19,7 @@ import AlignCenterIcon from "@/icons/align-center.svg?jsx";
 import AlignRightIcon from "@/icons/align-right.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
 import EventIcon from "@/icons/event.svg?jsx";
+import DropdownIcon from "@/icons/dropdown.svg?jsx";
 import AIIcon from "@/icons/ai.svg?jsx";
 import ApproveIcon from "@/icons/approve.svg?jsx";
 import RejectIcon from "@/icons/reject.svg?jsx";
@@ -58,6 +59,7 @@ import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 
 const DateTimeModalLoader = () => import("@/components/modals/DateTimeModal");
+const DropdownModalLoader = () => import("@/components/modals/DropdownModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 
 const BLOCK_FORMAT_ICON = {
@@ -97,14 +99,23 @@ export default function FormattingToolbar({
   prompting,
   children,
 }: FormattingToolbarProps) {
-  const insertNewDate = () => {
+  function insertNewDate() {
     showModal(DateTimeModalLoader, {
       props: {},
       onConfirm({ value, time }) {
         performCommand(insertDateTime(value, time));
       },
     });
-  };
+  }
+
+  function insertDropdown() {
+    showModal(DropdownModalLoader, {
+      props: {},
+      onConfirm({ options }) {
+        // TODO
+      },
+    });
+  }
 
   function changeTextFormat(event: Event) {
     switch ((event.currentTarget as SwatchSelect).value) {
@@ -262,6 +273,12 @@ export default function FormattingToolbar({
                 <button type="button" on:click={insertNewDate}>
                   <EventIcon aria-hidden="true" />
                   Date
+                </button>
+              </li>
+              <li>
+                <button type="button" on:click={insertDropdown}>
+                  <DropdownIcon aria-hidden="true" />
+                  Dropdown
                 </button>
               </li>
             </menu>
