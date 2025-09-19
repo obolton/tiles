@@ -1,9 +1,13 @@
+.main {
+  padding: 48px;
+}
+
 .sidebar {
   position: fixed;
   top: 24px;
   width: 240px;
   height: 100vh;
-  padding-top: 40px;
+  padding-top: 24px;
 
   & > header {
     height: 64px;
@@ -13,7 +17,7 @@
 
 .content {
   margin-left: 304px;
-  padding-top: 144px;
+  padding-top: 96px;
 
   & > header {
     display: flex;

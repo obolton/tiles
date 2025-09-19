@@ -221,11 +221,6 @@ time {
   white-space: nowrap;
 }
 
-.centered {
-  margin: 48px auto;
-  width: 800px;
-}
-
 infinite-scroll {
   display: contents;
   overflow-anchor: none;

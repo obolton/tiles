@@ -11,7 +11,7 @@ export default function SidebarLayout({
   children,
 }: SidebarLayoutProps) {
   return (
-    <main className="centered">
+    <main className={styles.main}>
       <section className={styles.sidebar}>{sidebar}</section>
       <section className={styles.content}>{children}</section>
     </main>
