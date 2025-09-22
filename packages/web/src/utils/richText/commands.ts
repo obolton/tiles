@@ -303,6 +303,19 @@ export function insertDateTime(value: Date, time?: boolean): Command {
   };
 }
 
+export function insertDropdown(dropdownType: string, value: string): Command {
+  return function (state, dispatch) {
+    if (dispatch) {
+      dispatch(
+        state.tr.replaceSelectionWith(
+          schema.nodes.dropdown.create({ dropdownType, value }),
+        ),
+      );
+    }
+    return true;
+  };
+}
+
 export const approve = unwrap(schema.nodes.pending);
 
 export const reject = deleteNode(schema.nodes.pending);
