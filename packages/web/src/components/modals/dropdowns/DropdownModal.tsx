@@ -8,11 +8,12 @@ import { flag, reactive } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import styles from "./DropdownModal.module.css";
 import type { ModalProps } from "@/utils/modals";
+import type { Color } from "@/utils/color";
 
 export type DropdownOptions = DropdownOption[];
 
 export interface DropdownModalResult {
-  options: DropdownOptions;
+  options: { value: string; color: Color | null }[];
 }
 
 export interface DropdownModalProps extends ModalProps<DropdownModalResult> {
@@ -37,7 +38,12 @@ export default function DropdownModal({
 
     pending.on();
     try {
-      await confirm({ options: options.value });
+      await confirm({
+        options: options.value.map(({ value, color }) => ({
+          value: value.value,
+          color: color.value,
+        })),
+      });
     } catch (error) {
       handleError(error);
     } finally {
