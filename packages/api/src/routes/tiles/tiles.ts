@@ -189,7 +189,7 @@ export async function createTilePlacement(
     pageId,
     sectionId,
     type,
-    width = 1,
+    width,
     height = 1,
     x,
     y,
@@ -211,16 +211,23 @@ export async function createTilePlacement(
 
   let insertX;
   let insertY;
-  if (typeof x === "number" && typeof y === "number") {
+  let insertWidth;
+  if (
+    typeof x === "number" &&
+    typeof y === "number" &&
+    typeof width === "number"
+  ) {
     insertX = x;
     insertY = y;
+    insertWidth = width;
   } else {
     const next = await getNextGridPosition(
-      { pageId, sectionId, fitWidth: width, maxWidth: 20 },
+      { pageId, sectionId, width, maxWidth: 20 },
       transaction,
     );
     insertX = next.x;
     insertY = next.y;
+    insertWidth = next.width;
   }
 
   const { id: placementId, ...tile } = await transaction.tile.create({
@@ -229,7 +236,7 @@ export async function createTilePlacement(
       sectionId,
       type,
       position,
-      width,
+      width: insertWidth,
       height,
       rowSpan,
       x: insertX,
@@ -252,27 +259,27 @@ export async function getNextGridPosition(
   {
     pageId,
     sectionId,
-    fitWidth,
+    width: itemWidth,
     maxWidth = 24,
-  }: { pageId: string; sectionId: string; fitWidth: number; maxWidth: number },
+  }: { pageId: string; sectionId: string; width?: number; maxWidth: number },
   transaction: PrismaTransactionClient,
-) {
-  const lastTile = await transaction.tile.findFirst({
+): Promise<{ x: number; y: number; width: number }> {
+  const previous = await transaction.tile.findFirst({
     select: { x: true, y: true, width: true, rowSpan: true },
     where: { pageId, sectionId },
     orderBy: [{ y: "desc" }, { x: "desc" }],
   });
 
-  if (!lastTile) {
-    return { x: 0, y: 0 };
-  }
+  const width = itemWidth ?? previous?.width ?? 20;
 
-  const { x, y, width, rowSpan } = lastTile;
+  if (!previous) {
+    return { x: 0, y: 0, width };
+  }
 
   // Row overflow
-  if (x + width + fitWidth > maxWidth) {
-    return { x: 0, y: y + rowSpan };
+  if (previous.x + previous.width + width > maxWidth) {
+    return { x: 0, y: previous.y + previous.rowSpan, width };
   }
 
-  return { x: x + width, y };
+  return { x: previous.x + previous.width, y: previous.y, width };
 }
