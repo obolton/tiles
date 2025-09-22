@@ -254,6 +254,22 @@ const nodesSpec = {
       return DOMOutput.code;
     },
   },
+
+  dropdown: {
+    attrs: {
+      dropdownType: { validate: "string" },
+      value: { validate: "string" },
+    },
+    group: "inline",
+    inline: true,
+    atom: true,
+    toDOM(node) {
+      return ["span", node.attrs.value as string];
+    },
+    leafText(node) {
+      return node.attrs.value as string;
+    },
+  },
 } as const satisfies Record<string, NodeSpec>;
 
 type KeysWithProperty<T, Key, Value> = {
