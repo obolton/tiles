@@ -18,6 +18,7 @@ import type {
   SectionWithTiles,
   TextProperties,
 } from "@/types/tiles";
+import type { Dropdown } from "@/types/dropdowns";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
 import type { Color } from "@/utils/color";
@@ -97,6 +98,7 @@ export default class Editor {
   readonly invites: Reactive<Invite[]>;
   readonly author: User;
   readonly selection: Reactive<Set<Tile>>;
+  readonly dropdowns: Reactive<Dropdown[]>;
 
   constructor(page: Page) {
     this.pageId = page.id;
@@ -115,6 +117,7 @@ export default class Editor {
     this.invites = reactive(page.invites);
     this.author = page.author;
     this.selection = reactive(new Set());
+    this.dropdowns = reactive(page.dropdowns);
 
     if (!IS_SERVER) {
       this.enablePointerEvents();
@@ -798,5 +801,31 @@ export default class Editor {
         (access) => access.user.id !== userId,
       );
     });
+  }
+
+  // Dropdowns
+
+  async createDropdown(
+    data: OmitPageId<AppRouterInputs["dropdowns"]["create"]>,
+  ) {
+    const dropdown = await client.dropdowns.create.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+    this.dropdowns.value = this.dropdowns.value.concat(dropdown);
+    return dropdown;
+  }
+
+  async updateDropdown(
+    data: OmitPageId<AppRouterInputs["dropdowns"]["update"]>,
+  ) {
+    const dropdown = await client.dropdowns.update.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+    this.dropdowns.value = this.dropdowns.value.map((existing) =>
+      existing.id === dropdown.id ? dropdown : existing,
+    );
+    return dropdown;
   }
 }
