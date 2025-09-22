@@ -46,6 +46,7 @@ import {
   removeLink,
   setAlignment,
   insertDateTime,
+  insertDropdown,
   approve,
   reject,
   togglePrompt,
@@ -109,11 +110,12 @@ export default function FormattingToolbar({
     });
   }
 
-  function insertDropdown() {
+  function insertNewDropdown() {
     showModal(DropdownModalLoader, {
       props: {},
-      onConfirm({ options }) {
-        // TODO
+      async onConfirm({ options }) {
+        const dropdown = await editor.createDropdown({ options });
+        performCommand(insertDropdown(dropdown.id, dropdown.options[0]));
       },
     });
   }
@@ -277,7 +279,7 @@ export default function FormattingToolbar({
                 </button>
               </li>
               <li>
-                <button type="button" on:click={insertDropdown}>
+                <button type="button" on:click={insertNewDropdown}>
                   <DropdownIcon aria-hidden="true" />
                   Dropdown
                 </button>
