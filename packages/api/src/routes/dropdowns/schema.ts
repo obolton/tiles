@@ -3,7 +3,7 @@ import { ColorSchema } from "@/schema/Color.ts";
 
 export const DropdownOptionSchema = z.strictObject({
   value: z.string().min(1).max(50),
-  color: ColorSchema.optional(),
+  color: ColorSchema.nullable().optional(),
 });
 export type DropdownOptionSchema = z.infer<typeof DropdownOptionSchema>;
 
