@@ -59,7 +59,8 @@ import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 
 const DateTimeModalLoader = () => import("@/components/modals/DateTimeModal");
-const DropdownModalLoader = () => import("@/components/modals/DropdownModal");
+const DropdownModalLoader = () =>
+  import("@/components/modals/dropdowns/DropdownModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 
 const BLOCK_FORMAT_ICON = {
