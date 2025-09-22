@@ -11,6 +11,12 @@ export const DROPDOWN_FIELDS = {
   options: true,
 } as const satisfies Prisma.DropdownSelect<ExtensionArgs>;
 
+export type Dropdown = Prisma.Result<
+  typeof prisma.dropdown,
+  { select: typeof DROPDOWN_FIELDS },
+  "findUniqueOrThrow"
+>;
+
 export async function createDropdown({
   pageId,
   options,
