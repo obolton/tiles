@@ -27,7 +27,7 @@ export default function PageLinkTile({
     );
   }
 
-  function handleClick(event: MouseEvent) {
+  function handleClick(event: PointerEvent) {
     if (onClick) {
       onClick(event);
     } else if (

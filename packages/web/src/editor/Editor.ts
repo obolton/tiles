@@ -140,8 +140,10 @@ export default class Editor {
     if (
       (event.key === "Backspace" || event.key === "Delete") &&
       !event.repeat &&
-      event.target instanceof Element &&
-      event.target.tagName === "PAGE-ITEM" &&
+      event.target instanceof HTMLElement &&
+      event.target.tagName !== "INPUT" &&
+      event.target.tagName !== "TEXTAREA" &&
+      !event.target.isContentEditable &&
       this.selection.value.size > 0
     ) {
       event.preventDefault();
