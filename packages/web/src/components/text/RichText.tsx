@@ -61,6 +61,12 @@ function renderNodes(nodes: Node[]) {
                 />
               </FormattedText>
             );
+          case "dropdown":
+            return (
+              <FormattedText format={node.format} size={node.size}>
+                {node.value}
+              </FormattedText>
+            );
           default:
             return null;
         }
