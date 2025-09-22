@@ -1,10 +1,16 @@
 import { z } from "zod";
 
+const FormatSchema = z.int().gte(0).lte(31);
+
+const SizeSchema = z.number().gte(0.5).lte(2.5);
+
+const AlignSchema = z.union([z.literal(0), z.literal(1), z.literal(2)]);
+
 const TextNodeSchema = z.object({
   type: z.literal("text"),
   text: z.string(),
-  format: z.int().gte(0).lte(31),
-  size: z.number().gte(0.5).lte(2.5).optional(),
+  format: FormatSchema,
+  size: SizeSchema.optional(),
   pending: z.literal(true).optional(),
 });
 
@@ -17,28 +23,37 @@ const LinkNodeSchema = z.object({
 
 const DateNodeSchema = z.object({
   type: z.literal("date"),
-  value: z.union([z.string().datetime(), z.string().date()]),
-  format: z.int().gte(0).lte(31),
-  size: z.number().gte(0.5).lte(2.5).optional(),
+  value: z.union([z.iso.datetime(), z.iso.date()]),
+  format: FormatSchema,
+  size: SizeSchema.optional(),
   theme: z.string().nullable().optional(),
+});
+
+const DropdownNodeSchema = z.object({
+  type: z.literal("dropdown"),
+  dropdownType: z.uuid(),
+  value: z.string(),
+  format: FormatSchema,
+  size: SizeSchema.optional(),
 });
 
 const InlineNodeSchema = z.discriminatedUnion("type", [
   TextNodeSchema,
   LinkNodeSchema,
   DateNodeSchema,
+  DropdownNodeSchema,
 ]);
 
 const ParagraphNodeSchema = z.object({
   type: z.literal("paragraph"),
-  align: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
+  align: AlignSchema.optional(),
   children: z.array(InlineNodeSchema),
 });
 
 const HeadingNodeSchema = z.object({
   type: z.literal("heading"),
   level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
-  align: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
+  align: AlignSchema.optional(),
   theme: z.string().optional(),
   children: z.array(InlineNodeSchema),
 });
@@ -46,27 +61,11 @@ const HeadingNodeSchema = z.object({
 const ListItemNodeSchema: z.ZodType<{
   type: "listitem";
   checked?: boolean;
-  children: (
-    | z.infer<typeof ParagraphNodeSchema>
-    | z.infer<typeof HeadingNodeSchema>
-    | z.infer<typeof QuoteNodeSchema>
-    | z.infer<typeof ListNodeSchema>
-    | z.infer<typeof CodeNodeSchema>
-  )[];
+  children: z.infer<typeof BlockNodeSchema>[];
 }> = z.object({
   type: z.literal("listitem"),
   checked: z.boolean().optional(),
-  children: z.lazy(() =>
-    z.array(
-      z.union([
-        ParagraphNodeSchema,
-        HeadingNodeSchema,
-        QuoteNodeSchema,
-        ListNodeSchema,
-        CodeNodeSchema,
-      ]),
-    ),
-  ),
+  children: z.lazy(() => z.array(BlockNodeSchema)),
 });
 
 const ListNodeSchema = z.object({
@@ -106,7 +105,7 @@ const PendingNodeSchema = z.object({
   ),
 });
 
-const RootNodeSchema = z.discriminatedUnion("type", [
+const BlockNodeSchema = z.discriminatedUnion("type", [
   ParagraphNodeSchema,
   HeadingNodeSchema,
   QuoteNodeSchema,
@@ -115,5 +114,5 @@ const RootNodeSchema = z.discriminatedUnion("type", [
   CodeNodeSchema,
 ]);
 
-export const RichTextSchema = z.array(RootNodeSchema);
+export const RichTextSchema = z.array(BlockNodeSchema);
 export type RichTextSchema = z.infer<typeof RichTextSchema>;
