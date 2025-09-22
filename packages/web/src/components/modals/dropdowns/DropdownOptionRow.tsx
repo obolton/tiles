@@ -1,6 +1,6 @@
 import ColorPicker from "@/components/colors/ColorPicker";
 import TrashIcon from "@/icons/trash.svg?jsx";
-import styles from "./DropdownOption.module.css";
+import styles from "./DropdownOptionRow.module.css";
 import type { Color } from "@/utils/color";
 import type { Reactive } from "@/utils/reactivity";
 
