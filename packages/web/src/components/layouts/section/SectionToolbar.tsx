@@ -4,6 +4,8 @@ import TrashIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { layoutTransition } from "@/utils/animation/layout";
 import { viewTransition } from "@/utils/transitions";
+import { classNames } from "@/utils/css";
+import styles from "./SectionToolbar.module.css";
 import type Editor from "@/editor/Editor";
 import type { SectionWithTiles } from "@/types/tiles";
 import type { Background } from "@/components/backgrounds/types";
@@ -11,13 +13,11 @@ import type { Background } from "@/components/backgrounds/types";
 export interface SectionToolbarProps {
   editor: Editor;
   section: SectionWithTiles;
-  anchorName: string;
 }
 
 export default function SectionToolbar({
   editor,
   section,
-  anchorName,
 }: SectionToolbarProps) {
   async function setBackground(value: Background | null) {
     try {
@@ -38,56 +38,57 @@ export default function SectionToolbar({
   }
 
   return (
-    <floating-toolbar
-      className="vertical anchored inside"
-      style={{ positionAnchor: anchorName }}
-      data-tooltip-position="left"
-      aria-label="Section toolbar"
-    >
-      <ul role="group" aria-label="Section tools">
-        <li role="presentation">
-          <BackgroundPicker
-            id={`${section.id}-background`}
-            workspaceId={editor.workspaceId}
-            value={section.background}
-            onChange={setBackground}
-          />
-        </li>
+    <div className={styles.container}>
+      <floating-toolbar
+        className={classNames("vertical", styles.toolbar)}
+        data-tooltip-position="right"
+        aria-label="Section toolbar"
+      >
+        <ul role="group" aria-label="Section tools">
+          <li role="presentation">
+            <BackgroundPicker
+              id={`${section.id}-background`}
+              workspaceId={editor.workspaceId}
+              value={section.background}
+              onChange={setBackground}
+            />
+          </li>
 
-        <li role="presentation">
-          <button
-            type="button"
-            role="menuitem"
-            id={`${section.id}-options-button`}
-            className="floating"
-            popoverTarget={`${section.id}-options`}
-            aria-label="More options"
-            data-tooltip="More options"
-            aria-haspopup="menu"
-            aria-expanded="false"
-          >
-            <MoreIcon aria-hidden="true" />
-          </button>
+          <li role="presentation">
+            <button
+              type="button"
+              role="menuitem"
+              id={`${section.id}-options-button`}
+              className="floating"
+              popoverTarget={`${section.id}-options`}
+              aria-label="More options"
+              data-tooltip="More options"
+              aria-haspopup="menu"
+              aria-expanded="false"
+            >
+              <MoreIcon aria-hidden="true" />
+            </button>
 
-          <popover-menu
-            id={`${section.id}-options`}
-            anchor={`${section.id}-options-button`}
-          >
-            <menu>
-              <li>
-                <button
-                  type="button"
-                  className="destructive"
-                  on:click={deleteSection}
-                >
-                  <TrashIcon aria-hidden="true" />
-                  Delete section
-                </button>
-              </li>
-            </menu>
-          </popover-menu>
-        </li>
-      </ul>
-    </floating-toolbar>
+            <popover-menu
+              id={`${section.id}-options`}
+              anchor={`${section.id}-options-button`}
+            >
+              <menu>
+                <li>
+                  <button
+                    type="button"
+                    className="destructive"
+                    on:click={deleteSection}
+                  >
+                    <TrashIcon aria-hidden="true" />
+                    Delete section
+                  </button>
+                </li>
+              </menu>
+            </popover-menu>
+          </li>
+        </ul>
+      </floating-toolbar>
+    </div>
   );
 }

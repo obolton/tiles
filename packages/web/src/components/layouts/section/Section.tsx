@@ -15,7 +15,6 @@ export default function Section({ editor, section }: SectionProps) {
   const { isEditable } = editor;
   const { id, background, tiles } = section;
   const hasFocus = flag(false);
-  const anchorName = `--section-${id}`;
 
   function onFocusIn() {
     if (isEditable.value) {
@@ -43,7 +42,6 @@ export default function Section({ editor, section }: SectionProps) {
       backgroundValue && "imageUrl" in backgroundValue
         ? `url(${backgroundValue.imageUrl})`
         : undefined,
-    anchorName,
   }));
 
   return (
@@ -59,13 +57,7 @@ export default function Section({ editor, section }: SectionProps) {
       on:focusout={onFocusOut}
     >
       {hasFocus.derive((value) =>
-        value ? (
-          <SectionToolbar
-            editor={editor}
-            section={section}
-            anchorName={anchorName}
-          />
-        ) : null,
+        value ? <SectionToolbar editor={editor} section={section} /> : null,
       )}
 
       <Canvas
