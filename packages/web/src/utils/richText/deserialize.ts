@@ -11,12 +11,13 @@ import type {
   CodeNode,
   RichText,
   PendingNode,
+  DropdownNode,
   Node as SerializedNode,
 } from "./types";
 import { TextFormat, ListType, TextAlignment } from "./types";
 import { schema } from "./schema";
 
-function getMarks(node: TextNode | DateNode) {
+function getMarks(node: TextNode | DateNode | DropdownNode) {
   const { format, size } = node;
   const marks = [];
 
@@ -121,7 +122,6 @@ function createLinkNode(link: LinkNode): Node {
 }
 
 function createDateNode(date: DateNode): Node {
-  const marks = getMarks(date);
   return schema.nodes.date.create(
     {
       value: new Date(date.value),
@@ -129,7 +129,18 @@ function createDateNode(date: DateNode): Node {
       theme: date.theme,
     },
     null,
-    marks,
+    getMarks(date),
+  );
+}
+
+function createDropdownNode(dropdown: DropdownNode): Node {
+  return schema.nodes.dropdown.create(
+    {
+      dropdownType: dropdown.dropdownType,
+      value: dropdown.value,
+    },
+    null,
+    getMarks(dropdown),
   );
 }
 
@@ -160,6 +171,8 @@ function createNode(node: SerializedNode) {
       return createDateNode(node);
     case "pending":
       return createPendingNode(node);
+    case "dropdown":
+      return createDropdownNode(node);
     default:
       throw new Error(`Unsupported node type: ${type}`);
   }

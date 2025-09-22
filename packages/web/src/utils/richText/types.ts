@@ -46,6 +46,14 @@ export interface DateNode extends BaseNode {
   theme?: string | null;
 }
 
+export interface DropdownNode extends BaseNode {
+  type: "dropdown";
+  dropdownType: string;
+  value: string;
+  format: number;
+  size?: number;
+}
+
 export interface PendingNode extends BaseNode {
   type: "pending";
   children: Exclude<BlockNode, { type: "pending" }>[];
@@ -67,7 +75,7 @@ export interface HeadingNode extends BaseNode {
 
 export interface QuoteNode extends BaseNode {
   type: "quote";
-  children: (ParagraphNode | HeadingNode | ListNode)[];
+  children: Exclude<BlockNode, { type: "quote" }>[];
 }
 
 export interface CodeNode extends BaseNode {
@@ -88,7 +96,8 @@ export interface ListItemNode extends BaseNode {
   children: BlockNode[];
 }
 
-export type InlineNode = TextNode | LinkNode | DateNode;
+export type InlineNode = TextNode | LinkNode | DateNode | DropdownNode;
+
 export type BlockNode =
   | PendingNode
   | ParagraphNode
@@ -107,6 +116,7 @@ export type Node =
   | ListNode
   | ListItemNode
   | PendingNode
-  | CodeNode;
+  | CodeNode
+  | DropdownNode;
 
 export type RichText = BlockNode[];

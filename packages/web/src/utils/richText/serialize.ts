@@ -157,6 +157,18 @@ function serializeNode(node: Node): SerializedNode {
     };
   }
 
+  if (node.type === nodes.dropdown) {
+    const dropdownType = node.attrs.dropdownType as string;
+    const value = node.attrs.value as string;
+    return {
+      type: "dropdown",
+      dropdownType,
+      value,
+      format: getTextFormat(node),
+      size: getTextSize(node),
+    };
+  }
+
   throw new Error(`Unsupported node type: ${node.type.name}`);
 }
 
