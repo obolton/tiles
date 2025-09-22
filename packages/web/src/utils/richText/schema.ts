@@ -290,38 +290,6 @@ const marksSpec = {
     },
   },
 
-  bold: {
-    parseDOM: [{ tag: "strong" }, { tag: "b" }],
-    toDOM() {
-      return DOMOutput.bold;
-    },
-  },
-
-  italic: {
-    parseDOM: [{ tag: "em" }, { tag: "i" }, { style: "font-style=italic" }],
-    toDOM() {
-      return DOMOutput.italic;
-    },
-  },
-
-  underline: {
-    parseDOM: [
-      { tag: "u" },
-      { tag: ".underline" },
-      { style: "text-decoration=underline" },
-    ],
-    toDOM() {
-      return DOMOutput.underline;
-    },
-  },
-
-  strikethrough: {
-    parseDOM: [{ tag: "del" }, { style: "text-decoration=line-through" }],
-    toDOM() {
-      return DOMOutput.strikethrough;
-    },
-  },
-
   size: {
     attrs: {
       size: {
@@ -366,6 +334,38 @@ const marksSpec = {
         MAX_TEXT_SIZE,
       );
       return ["span", { style: `font-size: ${size.toFixed(2)}em` }, 0];
+    },
+  },
+
+  bold: {
+    parseDOM: [{ tag: "strong" }, { tag: "b" }],
+    toDOM() {
+      return DOMOutput.bold;
+    },
+  },
+
+  italic: {
+    parseDOM: [{ tag: "em" }, { tag: "i" }, { style: "font-style=italic" }],
+    toDOM() {
+      return DOMOutput.italic;
+    },
+  },
+
+  underline: {
+    parseDOM: [
+      { tag: "u" },
+      { tag: ".underline" },
+      { style: "text-decoration=underline" },
+    ],
+    toDOM() {
+      return DOMOutput.underline;
+    },
+  },
+
+  strikethrough: {
+    parseDOM: [{ tag: "del" }, { style: "text-decoration=line-through" }],
+    toDOM() {
+      return DOMOutput.strikethrough;
     },
   },
 } as const satisfies Record<string, MarkSpec>;
