@@ -48,7 +48,6 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
         editor
           .createText({
             sectionId: editor.getCurrentSectionId(),
-            width: 20,
             height: 1,
             block: true,
             content: [{ type: "paragraph", children: [] }],
@@ -70,7 +69,6 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
             });
             await editor.createImage({
               sectionId: editor.getCurrentSectionId(),
-              width: 10,
               height: 10,
               imageKey,
             });
@@ -110,7 +108,6 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
             await editor.createMap({
               sectionId: editor.getCurrentSectionId(),
               places: [place],
-              width: 20,
               height: 15,
             });
           },
@@ -121,7 +118,6 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
         editor
           .createTable({
             sectionId: editor.getCurrentSectionId(),
-            width: 10,
             height: 10,
             columns: 3,
             rows: 5,
