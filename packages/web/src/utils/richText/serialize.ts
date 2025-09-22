@@ -13,7 +13,7 @@ import { schema } from "./schema";
 
 const { nodes, marks } = schema;
 
-function getTextFormat(node: Node) {
+function getTextFormat(node: Node): number {
   return node.marks.reduce((format, mark) => {
     switch (mark.type) {
       case marks.bold:
@@ -32,11 +32,11 @@ function getTextFormat(node: Node) {
   }, 0);
 }
 
-function getTextSize(node: Node) {
+function getTextSize(node: Node): number | undefined {
   return schema.marks.size.isInSet(node.marks)?.attrs.size;
 }
 
-function getTextAlignment(node: Node) {
+function getTextAlignment(node: Node): TextAlignment | undefined {
   switch (node.attrs.align) {
     case "left":
       return TextAlignment.LEFT;
@@ -153,6 +153,7 @@ function serializeNode(node: Node): SerializedNode {
       type: "date",
       value: time ? value.toISOString() : value.toISOString().slice(0, 10),
       format: getTextFormat(node),
+      size: getTextSize(node),
       theme: node.attrs.theme as string | undefined,
     };
   }
