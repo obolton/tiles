@@ -299,7 +299,16 @@ export default class Editor {
       this.sections.value = this.sections.value.concat(
         getReactiveSection(section, this.tiles),
       );
+
+      const element = document.querySelector<HTMLElement>(
+        `[data-section-id="${section.id}"]`,
+      );
+      if (element) {
+        element.focus({ preventScroll: true });
+        scrollIntoViewIfNeeded(element, { behavior: "smooth" });
+      }
     });
+
     return section;
   }
 
