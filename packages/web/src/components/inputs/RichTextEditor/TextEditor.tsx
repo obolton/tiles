@@ -12,12 +12,10 @@ import type { RichText } from "@/utils/richText/types";
 import type { Command } from "prosemirror-state";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
-import type Editor from "@/editor/Editor";
 
 export type { EditorState };
 
 export interface TextEditorProps extends JSX.Attributes<HTMLDivElement> {
-  editor: Editor;
   state: Reactive<EditorState | null>;
   initialValue?: RichText | null;
   showToolbar: Reactive<boolean>;
@@ -26,7 +24,6 @@ export interface TextEditorProps extends JSX.Attributes<HTMLDivElement> {
 }
 
 export default function TextEditor({
-  editor,
   state,
   classList = [],
   initialValue = null,
@@ -106,7 +103,6 @@ export default function TextEditor({
       {showToolbar.derive((value) =>
         value ? (
           <FormattingToolbar
-            editor={editor}
             format={format}
             prompting={prompting}
             getEditorView={getEditorView}

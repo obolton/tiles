@@ -115,7 +115,6 @@ export default function TextTile({
   const contents = isEditable.derive((value) =>
     value ? (
       <TextEditor
-        editor={editor}
         state={state}
         classList={[styles.text, styles.editor, alignClass]}
         initialValue={content.value}

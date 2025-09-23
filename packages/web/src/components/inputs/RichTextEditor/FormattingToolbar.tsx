@@ -53,11 +53,11 @@ import {
   setTextSize,
 } from "@/utils/richText/commands";
 import { getLink } from "@/utils/richText/helpers";
+import Editor from "@/editor/Editor";
 import type { Format, TextAlignment, ListType } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
-import type Editor from "@/editor/Editor";
 
 const DateTimeModalLoader = () => import("@/components/modals/DateTimeModal");
 const DropdownModalLoader = () =>
@@ -85,7 +85,6 @@ const LIST_ICON = {
 } as const;
 
 export interface FormattingToolbarProps {
-  editor: Editor;
   format: Reactive<Format>;
   prompting: Reactive<boolean>;
   getEditorView: () => EditorView | null;
@@ -94,7 +93,6 @@ export interface FormattingToolbarProps {
 }
 
 export default function FormattingToolbar({
-  editor,
   getEditorView,
   performCommand,
   format,
@@ -114,7 +112,7 @@ export default function FormattingToolbar({
     showModal(DropdownModalLoader, {
       props: {},
       async onConfirm({ options }) {
-        const dropdown = await editor.createDropdown({ options });
+        const dropdown = await Editor.current.createDropdown({ options });
         performCommand(
           insertDropdown(dropdown.id, dropdown.options[0]?.value ?? ""),
         );
@@ -150,7 +148,7 @@ export default function FormattingToolbar({
 
     showModal(LinkModalLoader, {
       props: {
-        workspaceId: editor.workspaceId,
+        workspaceId: Editor.current.workspaceId,
         url: link?.node.attrs.href,
         showPages: false,
         showRemove: !!link,
