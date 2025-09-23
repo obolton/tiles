@@ -99,15 +99,10 @@ interface ParagraphProps {
 }
 
 function Paragraph({ node }: ParagraphProps) {
-  if (node.children.length === 0) {
-    return (
-      <p>
-        <br />
-      </p>
-    );
-  }
   return (
-    <p className={getTextAlignment(node.align)}>{renderNodes(node.children)}</p>
+    <p className={getTextAlignment(node.align)}>
+      {node.children.length > 0 ? renderNodes(node.children) : <br />}
+    </p>
   );
 }
 
@@ -123,7 +118,7 @@ function Heading({ node }: HeadingProps) {
       level={node.level}
       align={getTextAlignment(node.align)}
     >
-      {renderNodes(node.children)}
+      {node.children.length > 0 ? renderNodes(node.children) : <br />}
     </ThemeVariant>
   );
 }
@@ -133,14 +128,11 @@ interface QuoteProps {
 }
 
 function Quote({ node }: QuoteProps) {
-  if (node.children.length === 0) {
-    return (
-      <blockquote>
-        <br />
-      </blockquote>
-    );
-  }
-  return <blockquote>{renderNodes(node.children)}</blockquote>;
+  return (
+    <blockquote>
+      {node.children.length > 0 ? renderNodes(node.children) : <br />}
+    </blockquote>
+  );
 }
 
 interface CodeProps {
@@ -148,18 +140,11 @@ interface CodeProps {
 }
 
 function Code({ node }: CodeProps) {
-  if (node.children.length === 0) {
-    return (
-      <pre>
-        <code>
-          <br />
-        </code>
-      </pre>
-    );
-  }
   return (
     <pre>
-      <code>{renderNodes(node.children)}</code>
+      <code>
+        {node.children.length > 0 ? renderNodes(node.children) : <br />}
+      </code>
     </pre>
   );
 }
@@ -169,14 +154,11 @@ interface ListItemProps extends JSX.Attributes<HTMLLIElement> {
 }
 
 function ListItem({ node, ...props }: ListItemProps) {
-  if (node.children.length === 0) {
-    return (
-      <li {...props}>
-        <br />
-      </li>
-    );
-  }
-  return <li {...props}>{renderNodes(node.children)}</li>;
+  return (
+    <li {...props}>
+      {node.children.length > 0 ? renderNodes(node.children) : <br />}
+    </li>
+  );
 }
 
 interface ListProps {
