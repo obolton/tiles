@@ -161,6 +161,18 @@
     }
   }
 
+  & select {
+    appearance: none;
+    padding: 4px;
+    margin: -4px;
+    font: inherit;
+    line-height: 1;
+    color: inherit;
+    background: rgb(0 0 0 / 10%);
+    border: none;
+    border-radius: 8px;
+  }
+
   & .context {
     background: color-mix(in oklch, currentcolor 10%, transparent);
     text-decoration: underline solid
