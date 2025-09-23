@@ -115,7 +115,7 @@ export default function FormattingToolbar({
       props: {},
       async onConfirm({ options }) {
         const dropdown = await editor.createDropdown({ options });
-        performCommand(insertDropdown(dropdown.id, dropdown.options[0]));
+        performCommand(insertDropdown(dropdown.id, dropdown.options[0].value));
       },
     });
   }
