@@ -263,9 +263,6 @@ const nodesSpec = {
     group: "inline",
     inline: true,
     atom: true,
-    toDOM(node) {
-      return ["span", node.attrs.value as string];
-    },
     leafText(node) {
       return node.attrs.value as string;
     },
