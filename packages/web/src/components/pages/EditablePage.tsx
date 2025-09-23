@@ -15,7 +15,7 @@ interface EditablePage {
 }
 
 export default function EditablePage({ page }: EditablePage) {
-  const editor = new Editor(page);
+  const editor = Editor.init(page);
   const { isEditable, sections } = editor;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
 
