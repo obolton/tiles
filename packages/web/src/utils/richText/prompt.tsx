@@ -43,8 +43,12 @@ function getElement(editor: Editor, view: EditorView) {
     } = view;
     const { from, to } = selection;
     const context = doc.textBetween(from, to, "\n");
+    const tileIds = editor.selection.value
+      .values()
+      .map((tile) => tile.placementId)
+      .toArray();
     const stream = await client.ai.write.mutate(
-      { pageId, sectionId, prompt, context },
+      { pageId, sectionId, prompt, context: { text: context, tileIds } },
       { context: { stream: true } },
     );
     await insertFromStream(view, stream, editor);
