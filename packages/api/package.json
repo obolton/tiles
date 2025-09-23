@@ -17,10 +17,6 @@
     "cdn:purge": "tsx --env-file=\"../../.env\" scripts/purge-cdn.ts",
     "tsc": "tsc --build"
   },
-  "prisma": {
-    "schema": "./prisma/schema",
-    "seed": "tsx prisma/seed.ts"
-  },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.890.0",
     "@aws-sdk/client-sesv2": "^3.890.0",
