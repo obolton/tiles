@@ -4,6 +4,7 @@ import FormattingToolbar from "./FormattingToolbar";
 import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
 import { createState } from "@/utils/richText/state";
 import { prompt, isPromptOpen } from "@/utils/richText/prompt";
+import { dropdowns } from "@/utils/richText/dropdowns";
 import { handleError } from "@/utils/errors";
 import styles from "./TextEditor.module.css";
 import { reactive, flag } from "@/utils/reactivity";
@@ -55,7 +56,10 @@ export default function TextEditor({
   const ref = (element: HTMLElement) => {
     try {
       if (!state.value) {
-        state.value = createState(initialValue, [prompt(editor)]);
+        state.value = createState(initialValue, [
+          prompt(editor),
+          dropdowns(editor),
+        ]);
       }
       const view = new EditorView(
         { mount: element },
