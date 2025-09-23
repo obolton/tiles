@@ -1,22 +1,19 @@
-import { Plugin, PluginKey, type EditorState } from "prosemirror-state";
+import { Plugin, type EditorState } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 import InlinePrompt from "@/components/prompt/InlinePrompt";
 import { render } from "@/jsx/dom";
 import { insertFromStream } from "@/utils/richText/stream";
 import client from "@/api/client";
 import { SPRING } from "@/utils/animation/effects";
+import Editor from "@/editor/Editor";
+import { PROMPT_PLUGIN_KEY } from "./pluginKeys";
 import type { EditorView } from "prosemirror-view";
-import type Editor from "@/editor/Editor";
-
-export const PROMPT_PLUGIN_KEY = new PluginKey<DecorationSet | null>(
-  "prompt-plugin",
-);
 
 export interface PromptMeta {
   pos: number | null;
 }
 
-function getElement(editor: Editor, view: EditorView) {
+function getElement(view: EditorView) {
   function removePrompt() {
     const prompt = element.firstElementChild! as HTMLFormElement;
     void prompt
@@ -43,7 +40,7 @@ function getElement(editor: Editor, view: EditorView) {
     } = view;
     const { from, to } = selection;
     const context = doc.textBetween(from, to, "\n");
-    const tileIds = editor.selection.value
+    const tileIds = Editor.current.selection.value
       .values()
       .map((tile) => tile.placementId)
       .toArray();
@@ -51,7 +48,7 @@ function getElement(editor: Editor, view: EditorView) {
       { pageId, sectionId, prompt, context: { text: context, tileIds } },
       { context: { stream: true } },
     );
-    await insertFromStream(view, stream, editor);
+    await insertFromStream(view, stream);
     removePrompt();
   }
 
@@ -84,7 +81,7 @@ export function isPromptOpen(state: EditorState) {
   return Boolean(PROMPT_PLUGIN_KEY.getState(state));
 }
 
-export function prompt(editor: Editor) {
+export function prompt() {
   return new Plugin<DecorationSet | null>({
     key: PROMPT_PLUGIN_KEY,
 
@@ -111,18 +108,14 @@ export function prompt(editor: Editor) {
               class: "context",
             },
           );
-          const promptDecoration = Decoration.widget(
-            meta.pos,
-            (view) => getElement(editor, view),
-            {
-              ignoreSelection: true,
+          const promptDecoration = Decoration.widget(meta.pos, getElement, {
+            ignoreSelection: true,
 
-              // Prevent the editor from handling events from the prompt
-              stopEvent() {
-                return true;
-              },
+            // Prevent the editor from handling events from the prompt
+            stopEvent() {
+              return true;
             },
-          );
+          });
           return DecorationSet.create(tr.doc, [
             contextDecoration,
             promptDecoration,

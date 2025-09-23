@@ -7,6 +7,8 @@ import { placeholders } from "./placeholders";
 import { dates } from "./dates";
 import { links } from "./links";
 import { headings } from "./headings";
+import { prompt } from "./prompt";
+import { dropdowns } from "./dropdowns";
 import type { Plugin } from "prosemirror-state";
 
 export function getPlugins(): Plugin[] {
@@ -19,5 +21,7 @@ export function getPlugins(): Plugin[] {
     dates(),
     links(),
     headings(),
+    prompt(),
+    dropdowns(),
   ];
 }

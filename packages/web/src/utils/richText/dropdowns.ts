@@ -1,7 +1,7 @@
 import { Plugin } from "prosemirror-state";
-import type Editor from "@/editor/Editor";
+import Editor from "@/editor/Editor";
 
-export function dropdowns(editor: Editor) {
+export function dropdowns() {
   return new Plugin({
     props: {
       nodeViews: {
@@ -12,7 +12,7 @@ export function dropdowns(editor: Editor) {
           let value = node.attrs.value as string;
 
           function updateOptions() {
-            const dropdown = editor.dropdowns.value.find(
+            const dropdown = Editor.current.dropdowns.value.find(
               (dropdown) => dropdown.id === dropdownType,
             );
 
@@ -47,7 +47,7 @@ export function dropdowns(editor: Editor) {
           const { signal } = abortController;
 
           element.addEventListener("change", onChange, { signal });
-          editor.dropdowns.subscribe(updateOptions, signal);
+          Editor.current.dropdowns.subscribe(updateOptions, signal);
 
           return {
             dom: element,

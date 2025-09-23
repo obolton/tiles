@@ -1,10 +1,10 @@
 import { schema } from "./schema";
 import { closest, getListDepth } from "./helpers";
+import Editor from "@/editor/Editor";
 import type { EditorView } from "prosemirror-view";
 import type { EditorState, Transaction } from "prosemirror-state";
 import type { Mark } from "prosemirror-model";
 import type { ClientTile } from "@/types/tiles";
-import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
 
 export interface ParagraphNode {
@@ -75,7 +75,6 @@ function dispatch(state: ReactiveState, tr: Transaction) {
 export async function insertFromStream(
   view: EditorView,
   stream: AsyncIterable<StreamEvent>,
-  editor: Editor,
 ) {
   let startPos: number | null = null;
   let pos: number | null = null;
@@ -85,13 +84,13 @@ export async function insertFromStream(
 
   for await (const event of stream) {
     if (typeof event === "object" && "artifact" in event) {
-      editor.addTile(event.artifact);
+      Editor.current.addTile(event.artifact);
       continue;
     }
 
     if (typeof event === "object" && "destination" in event) {
       if (event.destination) {
-        output = editor.getTextEditorState(event.destination);
+        output = Editor.current.getTextEditorState(event.destination);
       } else {
         output = null;
       }

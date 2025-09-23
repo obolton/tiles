@@ -6,7 +6,8 @@ import {
   getSelectionHeadingLevel,
   getSelectionBlockNodeTypes,
 } from "./helpers";
-import { PROMPT_PLUGIN_KEY, type PromptMeta } from "./prompt";
+import { PROMPT_PLUGIN_KEY } from "./pluginKeys";
+import type { PromptMeta } from "./prompt";
 import type { NodeType, Mark, MarkType } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
 

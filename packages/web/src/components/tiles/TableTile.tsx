@@ -6,8 +6,7 @@ import TableToolbar from "@/components/toolbars/tables/TableToolbar";
 import ColorPicker from "@/components/colors/ColorPicker";
 import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
 import { createState } from "@/utils/richText/state";
-import { prompt, isPromptOpen } from "@/utils/richText/prompt";
-import { dropdowns } from "@/utils/richText/dropdowns";
+import { isPromptOpen } from "@/utils/richText/prompt";
 import styles from "./TableTile.module.css";
 import { EditorView } from "prosemirror-view";
 import { handleError } from "@/utils/errors";
@@ -116,11 +115,7 @@ export default function TableTile({
       const value = columnId ? rows.value[row]?.data[columnId] : null;
       const content =
         typeof value === "string" ? createDocument(value) : (value ?? null);
-      const state = createState(content, [
-        keymap(KEY_MAP),
-        prompt(editor),
-        dropdowns(editor),
-      ]);
+      const state = createState(content, [keymap(KEY_MAP)]);
       target.replaceChildren();
 
       const view = new EditorView(
