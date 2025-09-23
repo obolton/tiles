@@ -22,7 +22,7 @@ export function headings() {
 
           function onChange(value: string) {
             const pos = getPos();
-            if (typeof pos === "undefined") {
+            if (typeof pos !== "number") {
               return;
             }
             theme.value = value;
