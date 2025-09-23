@@ -67,8 +67,8 @@ export async function* write(
   signal?: AbortSignal,
 ): AsyncIterable<RichTextStreamEvent | Artifact> {
   const input: ResponseInput = [{ role: "developer", content: PROMPT }];
-  if (context) {
-    input.push({ role: "user", content: context });
+  if (context?.text) {
+    input.push({ role: "user", content: context.text });
   }
   input.push({ role: "user", content: prompt });
 

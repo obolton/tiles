@@ -9,6 +9,11 @@ export const WriteSchema = z.object({
   pageId: z.uuid(),
   sectionId: z.uuid(),
   prompt: z.string().min(10).max(4096),
-  context: z.string().max(4096).optional(),
+  context: z
+    .strictObject({
+      text: z.string().max(4096).optional(),
+      tileIds: z.array(z.uuid()).max(10).optional(),
+    })
+    .optional(),
 });
 export type WriteSchema = z.infer<typeof WriteSchema>;
