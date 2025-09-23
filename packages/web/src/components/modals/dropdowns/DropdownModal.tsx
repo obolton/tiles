@@ -33,15 +33,18 @@ export default function DropdownModal({
     ],
   );
 
-  async function onSubmit(event: Event) {
+  async function onSubmit(event: SubmitEvent) {
+    const form = event.currentTarget as HTMLFormElement;
     event.preventDefault();
 
     pending.on();
     try {
+      const formData = new FormData(form);
+      const optionValues = formData.getAll("option");
       await confirm({
-        options: options.value.map(({ value, color }) => ({
-          value: value.value,
-          color: color.value,
+        options: optionValues.map((value) => ({
+          value: value as string,
+          color: null,
         })),
       });
     } catch (error) {
