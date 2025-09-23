@@ -84,6 +84,8 @@ function getReactiveSection(
 }
 
 export default class Editor {
+  static #current?: Editor;
+
   readonly pageId: string;
   readonly workspaceId: string;
   readonly isEditable: Reactive<boolean>;
@@ -100,7 +102,33 @@ export default class Editor {
   readonly selection: Reactive<Set<Tile>>;
   readonly dropdowns: Reactive<Dropdown[]>;
 
-  constructor(page: Page) {
+  static init(page: Page) {
+    if (this.#current) {
+      throw new Error("The editor has already been initialized");
+    }
+
+    const editor = new Editor(page);
+
+    if (!import.meta.env.SSR) {
+      this.#current = editor;
+    }
+
+    return editor;
+  }
+
+  static get current() {
+    if (import.meta.env.SSR) {
+      throw new Error("Requires browser context");
+    }
+
+    if (!this.#current) {
+      throw new Error("The editor has not been initialized");
+    }
+
+    return this.#current;
+  }
+
+  private constructor(page: Page) {
     this.pageId = page.id;
     this.workspaceId = page.workspaceId;
     this.isEditable = flag(isEditMode());
