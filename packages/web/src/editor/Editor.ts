@@ -355,11 +355,21 @@ export default class Editor {
       pageId: this.pageId,
       id,
     });
+
     transition(() => {
+      const element = document.querySelector<HTMLElement>(
+        `section[data-section-id="${id}"]`,
+      );
+      const sibling =
+        element?.nextElementSibling || element?.previousElementSibling;
       this.sections.value = this.sections.value.filter(
         (section) => section.id !== id,
       );
+      if (sibling instanceof HTMLElement) {
+        sibling.focus({ preventScroll: true });
+      }
     });
+
     return section;
   }
 
@@ -405,7 +415,7 @@ export default class Editor {
     if (containsFocus) {
       const last = elements.at(-1);
       focus =
-        (last?.previousElementSibling || last?.nextElementSibling) ?? null;
+        (last?.nextElementSibling || last?.previousElementSibling) ?? null;
     }
 
     viewTransition(() => {
