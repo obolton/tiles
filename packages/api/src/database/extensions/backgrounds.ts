@@ -119,5 +119,20 @@ export default Prisma.defineExtension({
         compute,
       },
     },
+    chart: {
+      background: {
+        needs: {
+          backgroundL: true,
+          backgroundC: true,
+          backgroundH: true,
+          backgroundBL: true,
+          backgroundBC: true,
+          backgroundBH: true,
+          backgroundGradient: true,
+          backgroundImageKey: true,
+        },
+        compute,
+      },
+    },
   },
 });
