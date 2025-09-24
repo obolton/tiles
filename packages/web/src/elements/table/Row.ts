@@ -2,6 +2,7 @@ import type TableView from "./TableView";
 
 export default class Row {
   id?: string;
+  height: number;
 
   readonly table: TableView;
   readonly element: HTMLTableRowElement;
@@ -9,14 +10,17 @@ export default class Row {
   constructor({
     table,
     id,
+    height = 32,
     element,
   }: {
     table: TableView;
     id?: string;
+    height?: number;
     element: HTMLTableRowElement;
   }) {
     this.table = table;
     this.id = id;
+    this.height = height;
     this.element = element;
   }
 
