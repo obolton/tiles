@@ -577,7 +577,7 @@ export default class Editor {
       throw new Error(`Invalid text tile ID: ${id}`);
     }
     if (!tile.state.value) {
-      tile.state.value = createState(tile.content.value, [prompt(this)]);
+      tile.state.value = createState(tile.content.value);
     }
     return tile.state;
   }
