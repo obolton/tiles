@@ -3,15 +3,16 @@ import ImageIcon from "@/icons/image.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import PlaceIcon from "@/icons/place.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
+import ChartIcon from "@/icons/chart.svg?jsx";
 import AddSectionIcon from "@/icons/add-section.svg?jsx";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
+import Editor from "@/editor/Editor";
 import "./InsertToolbar.module.css";
 import type { TileType } from "@/types/tiles";
 import type { JSX } from "@/jsx/jsx";
-import type Editor from "@/editor/Editor";
 
 type InsertTileButton = {
   label: string;
@@ -25,17 +26,14 @@ const BUTTONS: readonly InsertTileButton[] = [
   { label: "Map", type: "MAP", Icon: PlaceIcon },
   { label: "Link", type: "LINK", Icon: LinkIcon },
   { label: "Table", type: "TABLE", Icon: TableIcon },
+  { label: "Chart", type: "CHART", Icon: ChartIcon },
 ];
 
 const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
-export interface InsertToolbarProps {
-  editor: Editor;
-}
-
-export default function InsertToolbar({ editor }: InsertToolbarProps) {
+export default function InsertToolbar() {
   function onClick(event: MouseEvent) {
     const button = event.currentTarget as HTMLButtonElement;
     const tileType = button.dataset.tileType as TileType;
@@ -45,9 +43,9 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
 
     switch (tileType) {
       case "TEXT":
-        editor
+        Editor.current
           .createText({
-            sectionId: editor.getCurrentSectionId(),
+            sectionId: Editor.current.getCurrentSectionId(),
             height: 1,
             block: true,
             content: [{ type: "paragraph", children: [] }],
@@ -65,10 +63,10 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
             const imageKey = await uploadMedia({
               file: result.image,
               type: "image",
-              workspaceId: editor.workspaceId,
+              workspaceId: Editor.current.workspaceId,
             });
-            await editor.createImage({
-              sectionId: editor.getCurrentSectionId(),
+            await Editor.current.createImage({
+              sectionId: Editor.current.getCurrentSectionId(),
               height: 10,
               imageKey,
             });
@@ -79,19 +77,19 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
       case "LINK":
         showModal(LinkModalLoader, {
           props: {
-            workspaceId: editor.workspaceId,
+            workspaceId: Editor.current.workspaceId,
           },
           async onConfirm(result) {
             if ("linkedPageId" in result) {
-              await editor.createPageLink({
-                sectionId: editor.getCurrentSectionId(),
+              await Editor.current.createPageLink({
+                sectionId: Editor.current.getCurrentSectionId(),
                 width: 5,
                 height: 5,
                 linkedPageId: result.linkedPageId,
               });
             } else if (result.url) {
-              await editor.createLink({
-                sectionId: editor.getCurrentSectionId(),
+              await Editor.current.createLink({
+                sectionId: Editor.current.getCurrentSectionId(),
                 width: 5,
                 height: 5,
                 url: result.url,
@@ -105,8 +103,8 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
         showModal(PlaceModalLoader, {
           props: {},
           async onConfirm({ place }) {
-            await editor.createMap({
-              sectionId: editor.getCurrentSectionId(),
+            await Editor.current.createMap({
+              sectionId: Editor.current.getCurrentSectionId(),
               places: [place],
               height: 15,
             });
@@ -115,12 +113,22 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
         break;
 
       case "TABLE":
-        editor
+        Editor.current
           .createTable({
-            sectionId: editor.getCurrentSectionId(),
+            sectionId: Editor.current.getCurrentSectionId(),
             height: 10,
             columns: 3,
             rows: 5,
+          })
+          .catch(handleError);
+        break;
+
+      case "CHART":
+        Editor.current
+          .createChart({
+            sectionId: Editor.current.getCurrentSectionId(),
+            height: 10,
+            chartType: "BAR",
           })
           .catch(handleError);
         break;
@@ -128,7 +136,7 @@ export default function InsertToolbar({ editor }: InsertToolbarProps) {
   }
 
   function createSection() {
-    editor.createSection(viewTransition).catch(handleError);
+    Editor.current.createSection(viewTransition).catch(handleError);
   }
 
   return (
