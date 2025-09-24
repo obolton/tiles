@@ -763,6 +763,24 @@ export default class Editor {
     });
   }
 
+  // Charts
+
+  async createChart(data: OmitPageId<AppRouterInputs["charts"]["create"]>) {
+    const item = await client.charts.create.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+    this.addTile(item);
+    return item;
+  }
+
+  async updateChart(data: OmitPageId<AppRouterInputs["charts"]["update"]>) {
+    return await client.charts.update.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+  }
+
   // Videos
 
   async updateVideo(data: OmitPageId<AppRouterInputs["videos"]["update"]>) {
