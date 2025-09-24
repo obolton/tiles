@@ -10,6 +10,12 @@ export const CHART_FIELDS = {
   background: true,
 } as const satisfies Prisma.ChartSelect<ExtensionArgs>;
 
+export type Chart = Prisma.Result<
+  typeof prisma.chart,
+  { select: typeof CHART_FIELDS },
+  "findUniqueOrThrow"
+>;
+
 export async function createChart({
   pageId,
   sectionId,

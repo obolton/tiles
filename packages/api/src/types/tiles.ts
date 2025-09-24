@@ -11,6 +11,7 @@ import type {
 import type { Section } from "@/routes/sections/sections.ts";
 import type { Text } from "@/routes/text/text.ts";
 import type { TableWithData } from "@/routes/tables/tables.ts";
+import type { Chart } from "@/routes/charts/charts.ts";
 import type { PageLinkPage } from "@/routes/pageLinks/pageLinks.ts";
 
 type OmitMetadata<T> = Omit<T, "pageId" | "createdAt" | "updatedAt">;
@@ -89,6 +90,12 @@ export interface ClientTableTile extends ClientTileBase, ClientTable {
   type: "TABLE";
 }
 
+// Chart
+export type ClientChart = OmitMetadata<Chart>;
+export interface ClientChartTile extends ClientTileBase, ClientChart {
+  type: "CHART";
+}
+
 // Collection
 export type ClientCollection = OmitMetadata<Omit<Section, "userId">>;
 
@@ -101,7 +108,8 @@ export type ClientEntity =
   | ClientLink
   | ClientPageLink
   | ClientCollection
-  | ClientTable;
+  | ClientTable
+  | ClientChart;
 
 export type ClientTile =
   | ClientImageTile
@@ -110,6 +118,7 @@ export type ClientTile =
   | ClientMapTile
   | ClientLinkTile
   | ClientPageLinkTile
-  | ClientTableTile;
+  | ClientTableTile
+  | ClientChartTile;
 
 export type { TileType };
