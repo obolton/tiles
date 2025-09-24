@@ -48,9 +48,10 @@ export default function TableToolbar({
       return;
     }
     const first = Array.from(selection)[0];
-    const index = first && "row" in first ? first.row : null;
-    const afterRowId = index ? (rows.value[index]?.id ?? null) : null;
-    await editor.insertTableRow({ tableId: id, afterRowId });
+    const row = first?.type === "rows" ? first.from : null;
+    const afterRowId = row?.id ?? null;
+    const newRow = await editor.insertTableRow({ tableId: id, afterRowId });
+    rows.value = rows.value.concat(newRow);
     numRows.value++;
   }
 
@@ -60,7 +61,7 @@ export default function TableToolbar({
       return;
     }
     const first = Array.from(selection)[0];
-    const column = first && "column" in first ? first.column : null;
+    const column = first?.type === "columns" ? first.from : null;
     const afterColumnId = column?.id ?? null;
     const newColumn = await editor.insertTableColumn({
       tableId: id,
@@ -77,13 +78,13 @@ export default function TableToolbar({
 
     const selectedColumns = table.selection
       .values()
-      .filter((s) => "column" in s)
-      .map((s) => s.column)
+      .filter((s) => s.type === "columns")
+      .map((s) => s.from)
       .toArray();
     if (selectedColumns.length > 0) {
       const columnIds = selectedColumns.map((column) => column.id!);
-      for (const column of selectedColumns) {
-        table.deleteColumn(column);
+      for (const columnId of columnIds) {
+        table.deleteColumn(columnId);
       }
       await editor.deleteTableColumns({
         tableId: id,
@@ -94,13 +95,13 @@ export default function TableToolbar({
 
     const selectedRows = table.selection
       .values()
-      .filter((s) => "row" in s)
-      .map((s) => s.row)
+      .filter((s) => s.type === "rows")
+      .map((s) => s.from)
       .toArray();
     if (selectedRows.length > 0) {
-      const rowIds = selectedRows.map((row) => rows.value[row]!.id);
-      for (const row of selectedRows) {
-        table.deleteRow(row);
+      const rowIds = selectedRows.map((row) => row.id!);
+      for (const rowId of rowIds) {
+        table.deleteRow(rowId);
       }
       await editor.deleteTableRows({
         tableId: id,
