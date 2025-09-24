@@ -19,6 +19,12 @@ enum GradientDirection {
   BOTTOM_LEFT
 }
 
+enum ChartType {
+  BAR
+  LINE
+  PIE
+}
+
 model Page {
   id            String    @id @default(uuid()) @db.Uuid
   createdAt     DateTime  @default(now()) @map("created_at")
@@ -52,6 +58,7 @@ model Page {
   access             PageAccess[]
   invites            PageInvite[]
   dropdowns          Dropdown[]
+  charts             Chart[]
 
   @@index([authorId])
   @@index([authorId, updatedAt])
@@ -89,6 +96,7 @@ model Tile {
   linkTileId     String?  @map("link_tile_id") @db.Uuid
   pageLinkTileId String?  @map("page_link_tile_id") @db.Uuid
   tableId        String?  @map("table_id") @db.Uuid
+  chartId        String?  @map("chart_id") @db.Uuid
   type           TileType
 
   page     Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
@@ -100,6 +108,7 @@ model Tile {
   link     LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
   pageLink PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
   table    Table?        @relation(fields: [tableId], references: [id], onDelete: SetNull)
+  chart    Chart?        @relation(fields: [chartId], references: [id], onDelete: SetNull)
 
   @@index([pageId])
   @@index([sectionId, y])
@@ -303,4 +312,18 @@ model Dropdown {
   options   Json     @db.JsonB
 
   page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+}
+
+model Chart {
+  id        String    @id @default(uuid()) @db.Uuid
+  pageId    String    @map("page_id") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  type      ChartType
+
+  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tiles Tile[]
+
+  @@index([pageId])
+  @@map("charts")
 }
