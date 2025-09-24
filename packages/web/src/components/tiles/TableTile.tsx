@@ -361,6 +361,7 @@ export default function TableTile({
         on:movetablerow={onMoveRow}
         on:cleartableselection={onClearSelection}
         $getColumn={(index) => columns.value[index]!}
+        $getRow={(index) => rows.value[index]!}
       >
         <table>
           <colgroup>
