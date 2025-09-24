@@ -319,11 +319,19 @@ model Dropdown {
 }
 
 model Chart {
-  id        String    @id @default(uuid()) @db.Uuid
-  pageId    String    @map("page_id") @db.Uuid
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  type      ChartType
+  id                 String             @id @default(uuid()) @db.Uuid
+  pageId             String             @map("page_id") @db.Uuid
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+  chartType          ChartType
+  backgroundL        Float?             @map("background_l") @db.Real
+  backgroundC        Float?             @map("background_c") @db.Real
+  backgroundH        Float?             @map("background_h") @db.Real
+  backgroundBL       Float?             @map("background_b_l") @db.Real
+  backgroundBC       Float?             @map("background_b_c") @db.Real
+  backgroundBH       Float?             @map("background_b_h") @db.Real
+  backgroundGradient GradientDirection? @map("background_gradient")
+  backgroundImageKey String?            @map("background_image_key")
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[]
