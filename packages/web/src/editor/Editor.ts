@@ -7,7 +7,6 @@ import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
 import { isEditMode } from "@/utils/edit";
 import { createState } from "@/utils/richText/state";
-import { prompt } from "@/utils/richText/prompt";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import type { FontId } from "@/config/fonts";
@@ -272,11 +271,17 @@ export default class Editor {
   }
 
   getCurrentSectionId() {
-    const section = this.sections.value[0];
-    if (!section) {
+    const activeSection = document.activeElement?.closest<HTMLElement>(
+      "section[data-section-id]",
+    );
+    const id =
+      activeSection?.dataset.sectionId ?? this.sections.value.at(-1)?.id;
+
+    if (!id) {
       throw new Error("Page has no sections");
     }
-    return section.id;
+
+    return id;
   }
 
   // Selection
