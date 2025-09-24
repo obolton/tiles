@@ -10,7 +10,7 @@ if (!import.meta.env.SSR) {
   import("@/elements/editor").catch(handleError);
 }
 
-interface EditablePage {
+export interface EditablePage {
   page: NonNullable<AppRouterOutputs["pages"]["getById"]>;
 }
 
@@ -27,9 +27,7 @@ export default function EditablePage({ page }: EditablePage) {
 
       {showToolbar ? <EditingToolbar editor={editor} /> : null}
 
-      {isEditable.derive((value) =>
-        value ? <InsertToolbar editor={editor} /> : null,
-      )}
+      {isEditable.derive((value) => (value ? <InsertToolbar /> : null))}
     </>
   );
 }
