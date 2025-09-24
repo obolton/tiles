@@ -312,6 +312,9 @@ model Dropdown {
   options   Json     @db.JsonB
 
   page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([pageId])
+  @@map("dropdowns")
 }
 
 model Chart {
