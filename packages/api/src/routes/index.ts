@@ -19,6 +19,7 @@ import tables from "./tables/router.ts";
 import folders from "./folders/router.ts";
 import workspaces from "./workspaces/router.ts";
 import dropdowns from "./dropdowns/router.ts";
+import charts from "./charts/router.ts";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 const appRouter = router({
@@ -42,6 +43,7 @@ const appRouter = router({
   folders,
   workspaces,
   dropdowns,
+  charts,
 });
 
 export type AppRouter = typeof appRouter;

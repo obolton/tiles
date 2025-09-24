@@ -182,6 +182,7 @@ type CreateTilePlacement = {
   linkTileId?: string;
   videoTileId?: string;
   tableId?: string;
+  chartId?: string;
 };
 
 export async function createTilePlacement(
@@ -202,6 +203,7 @@ export async function createTilePlacement(
     linkTileId,
     videoTileId,
     tableId,
+    chartId,
   }: CreateTilePlacement,
   transaction: PrismaTransactionClient,
 ) {
@@ -249,6 +251,7 @@ export async function createTilePlacement(
       linkTileId,
       videoTileId,
       tableId,
+      chartId,
     },
     select: TILE_FIELDS,
   });
