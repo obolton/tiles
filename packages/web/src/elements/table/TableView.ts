@@ -1061,6 +1061,20 @@ export default class TableView extends HTMLElement {
     this.buffer.push(cell);
   }
 
+  private recycleRow(row: HTMLTableRowElement) {
+    row.remove();
+    row.classList.remove("selected");
+    row.ariaRowIndex = null;
+    delete row.dataset.id;
+    this.rowBuffer.push(row);
+
+    for (const cell of row.cells) {
+      if (cell.tagName === "TD") {
+        this.recycleCell(cell);
+      }
+    }
+  }
+
   private getRowFromBuffer() {
     if (this.rowBuffer.length === 0) {
       this.fillRowBuffer();
@@ -1126,6 +1140,7 @@ export default class TableView extends HTMLElement {
     if (element.id) {
       element.dataset.id = id;
     }
+    element.style.height = height + "px";
     element.ariaRowIndex = rowIndex.toString();
     element.append(...cells);
     this.tableBody.insertBefore(
@@ -1137,41 +1152,33 @@ export default class TableView extends HTMLElement {
     this.visibleRows.splice(position, 0, row);
   }
 
-  private fillTop(height: number) {
-    const startHeight = this.contentHeight;
-    const targetHeight = startHeight + height;
-
+  private fillTop() {
     while (
       this.firstVisibleRow > 0 &&
-      this.contents.offsetHeight < targetHeight
+      this.scrollTop - this.translateY < this.verticalBufferSize
     ) {
       const index = this.firstVisibleRow - 1;
       const { id, height } = this.getRow(index);
       this.insertRow(0, index, height, id);
       this.firstVisibleRow--;
+      this.translateY -= height;
+      this.contentHeight += height;
     }
 
-    const newHeight = this.contents.offsetHeight;
-    const delta = newHeight - startHeight;
-    this.contentHeight = newHeight;
-    this.translateY -= delta;
     this.reposition();
   }
 
-  private fillBottom(height: number) {
-    const startHeight = this.contentHeight;
-    const targetHeight = startHeight + height;
-
+  private fillBottom() {
     while (
       this.firstVisibleRow + this.visibleRows.length < this.#rows &&
-      this.contents.offsetHeight < targetHeight
+      this.translateY - this.scrollTop + this.contentHeight - this.height <
+        this.verticalBufferSize
     ) {
       const index = this.firstVisibleRow + this.visibleRows.length;
       const { id, height } = this.getRow(index);
       this.insertRow(this.visibleRows.length, index, height, id);
+      this.contentHeight += height;
     }
-
-    this.contentHeight = this.contents.offsetHeight;
   }
 
   private fillLeft() {
@@ -1198,93 +1205,48 @@ export default class TableView extends HTMLElement {
     ) {
       const index = this.firstVisibleColumn + this.visibleColumns.length;
       const { id, width } = this.getColumn(index);
-      this.insertColumn(
-        this.visibleColumns.length,
-        this.firstVisibleColumn + this.visibleColumns.length,
-        width,
-        id,
-      );
+      this.insertColumn(this.visibleColumns.length, index, width, id);
       this.contentWidth += width;
     }
   }
 
-  private drainTop(height: number) {
-    if (!this.tableBody) {
-      return;
-    }
-
-    const rows = this.tableBody.rows;
-    const startHeight = this.contentHeight;
-    const targetHeight = startHeight - height;
-    let removedRows = 0;
+  private drainTop() {
+    let row = this.visibleRows[0];
 
     while (
-      this.visibleRows.length > 0 &&
-      this.contents.offsetHeight > targetHeight
+      row &&
+      this.scrollTop - this.translateY - row.height > this.verticalBufferSize
     ) {
-      const row = rows[0];
-      if (!row) {
-        break;
-      }
-
-      row.remove();
-      this.rowBuffer.push(row);
-
-      for (const cell of row.cells) {
-        if (cell.tagName === "TD") {
-          this.recycleCell(cell);
-        }
-      }
-
+      this.recycleRow(row.element);
       this.visibleRows.shift();
-      removedRows++;
+      this.firstVisibleRow++;
+      this.contentHeight -= row.height;
+      this.translateY += row.height;
+
+      row = this.visibleRows[0];
     }
 
-    if (removedRows > 0) {
-      const endHeight = this.contents.offsetHeight;
-      this.firstVisibleRow += removedRows;
-      this.contentHeight = endHeight;
-      const delta = startHeight - endHeight;
-      this.translateY += delta;
-      this.reposition();
-    }
+    this.reposition();
   }
 
-  private drainBottom(height: number) {
-    if (!this.tableBody) {
-      return;
-    }
-
-    const rows = this.tableBody.rows;
-    const startHeight = this.contentHeight;
-    const targetHeight = startHeight - height;
+  private drainBottom() {
+    const bottom = this.scrollTop - this.translateY + this.height;
+    let row = this.visibleRows.at(-1);
 
     while (
-      this.visibleRows.length > 0 &&
-      this.contents.offsetHeight > targetHeight
+      row &&
+      this.contentHeight - bottom - row.height > this.verticalBufferSize
     ) {
-      const row = rows[rows.length - 1];
-      if (!row) {
-        break;
-      }
-
-      row.remove();
-      this.rowBuffer.push(row);
-
-      for (const cell of row.cells) {
-        if (cell.tagName === "TD") {
-          this.recycleCell(cell);
-        }
-      }
-
+      this.recycleRow(row.element);
       this.visibleRows.pop();
-    }
+      this.contentHeight -= row.height;
 
-    this.contentHeight = this.contents.offsetHeight;
+      row = this.visibleRows.at(-1);
+    }
   }
 
   private drainLeft() {
-    if (!this.colGroup || !this.tableHead || !this.tableBody) {
+    if (!this.tableBody) {
       return;
     }
 
@@ -1293,8 +1255,8 @@ export default class TableView extends HTMLElement {
 
     while (
       column &&
-      this.translateX - this.scrollLeft + column.width <
-        -this.horizontalBufferSize
+      this.scrollLeft - this.translateX - column.width >
+        this.horizontalBufferSize
     ) {
       column.element.remove();
       column.header?.remove();
@@ -1324,15 +1286,12 @@ export default class TableView extends HTMLElement {
 
     const rows = this.tableBody.rows;
     const right = this.scrollLeft - this.translateX + this.width;
+    let column = this.visibleColumns.at(-1);
 
     while (
-      this.visibleColumns.length > 1 &&
-      this.contentWidth - right > this.horizontalBufferSize * 3
+      column &&
+      this.contentWidth - right - column.width > this.horizontalBufferSize
     ) {
-      const column = this.visibleColumns.at(-1);
-      if (!column) {
-        break;
-      }
       column.element.remove();
       column.header?.remove();
 
@@ -1345,36 +1304,17 @@ export default class TableView extends HTMLElement {
 
       this.visibleColumns.pop();
       this.contentWidth -= column.width;
+
+      column = this.visibleColumns.at(-1);
     }
   }
 
   private update() {
-    if (!this.colGroup || !this.tableHead || !this.tableBody) {
-      return;
-    }
+    this.drainTop();
+    this.fillTop();
 
-    const topOffset = this.translateY - this.scrollTop;
-    const topBuffer = -topOffset;
-    const bottom = topOffset + this.contentHeight;
-    const bottomBuffer = bottom - this.height;
-
-    if (topBuffer > this.verticalBufferSize * 3) {
-      this.drainTop(topBuffer - this.verticalBufferSize * 2);
-    } else if (
-      topBuffer < this.verticalBufferSize &&
-      this.firstVisibleRow > 0
-    ) {
-      this.fillTop(this.verticalBufferSize * 2 - topBuffer);
-    }
-
-    if (bottomBuffer > this.verticalBufferSize * 3) {
-      this.drainBottom(bottomBuffer - this.verticalBufferSize * 2);
-    } else if (
-      bottomBuffer < this.verticalBufferSize &&
-      this.firstVisibleRow + this.visibleRows.length < this.#rows
-    ) {
-      this.fillBottom(this.verticalBufferSize * 2 - bottomBuffer);
-    }
+    this.drainBottom();
+    this.fillBottom();
 
     this.drainLeft();
     this.fillLeft();
@@ -1543,15 +1483,7 @@ export default class TableView extends HTMLElement {
     }
 
     const row = this.visibleRows[index]!;
-    row.element.remove();
-    delete row.element.dataset.id;
-    this.rowBuffer.push(row.element);
-
-    for (const cell of row.cells) {
-      if (cell.tagName === "TD") {
-        this.recycleCell(cell);
-      }
-    }
+    this.recycleRow(row.element);
     this.visibleRows = this.visibleRows.toSpliced(index, 1);
     this.redrawSelection();
   }
