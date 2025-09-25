@@ -346,6 +346,7 @@ export default function TableTile({
 
   const anchorName = `--table-${id}`;
 
+  // TODO: Fix race condition between component hydration and element connectedCallback that causes thrashing of initial data
   return (
     <Tile textColor={textColor} background={background} anchorName={anchorName}>
       <table-view
@@ -368,9 +369,9 @@ export default function TableTile({
             <col style={{ width: "32px" }} />
             {columns.value.map((column, index) => (
               <col
+                style={{ width: column.width + "px" }}
                 data-index={index}
                 data-id={column.id}
-                style={{ width: column.width + "px" }}
               />
             ))}
           </colgroup>
@@ -385,7 +386,7 @@ export default function TableTile({
           </thead>
 
           <tbody>
-            {rows.value.map(({ id: rowId, data: rowData }, row) => {
+            {rows.value.map(({ id: rowId, height, data: rowData }, row) => {
               const cells = [];
               for (
                 let columnIndex = 0;
@@ -407,7 +408,11 @@ export default function TableTile({
                 }
               }
               return (
-                <tr aria-rowindex={row} data-id={rowId}>
+                <tr
+                  style={{ height: height + "px" }}
+                  aria-rowindex={row}
+                  data-id={rowId}
+                >
                   <th scope="row" />
                   {cells}
                 </tr>
