@@ -38,6 +38,7 @@ export function dropdowns() {
             button.style.setProperty("anchor-name", anchorName);
 
             select = document.createElement("filter-select");
+            select.value = value;
             select.tabIndex = 0;
             select.placeholder = "Search";
             select.popover = "auto";
@@ -66,10 +67,23 @@ export function dropdowns() {
                 return;
               }
               const value = select.value;
-              view.dispatch(
-                view.state.tr.setNodeAttribute(pos, "value", value),
-              );
-              close();
+
+              if (value) {
+                view.dispatch(
+                  view.state.tr.setNodeAttribute(pos, "value", value),
+                );
+                close();
+              } else {
+                const newValue = select.inputValue;
+                Editor.current
+                  .addOptionToDropdown(dropdownType, newValue)
+                  .then(() => {
+                    view.dispatch(
+                      view.state.tr.setNodeAttribute(pos, "value", newValue),
+                    );
+                    close();
+                  });
+              }
             });
           }
 
