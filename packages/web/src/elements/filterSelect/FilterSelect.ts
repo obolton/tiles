@@ -25,6 +25,7 @@ export default class FilterSelect extends HTMLElement {
 
   private readonly internals: ElementInternals;
   private readonly input: HTMLInputElement;
+  private readonly list: HTMLElement;
   private readonly itemsSlot: HTMLSlotElement;
 
   constructor() {
@@ -45,14 +46,15 @@ export default class FilterSelect extends HTMLElement {
     this.input.part = "input";
     this.input.addEventListener("input", this, { passive: true });
 
-    const list = document.createElement("div");
-    list.id = "list";
-    list.role = "listbox";
+    this.list = document.createElement("div");
+    this.list.id = "list";
+    this.list.role = "listbox";
+    this.list.part = "list";
 
     this.itemsSlot = document.createElement("slot");
-    list.appendChild(this.itemsSlot);
+    this.list.appendChild(this.itemsSlot);
 
-    shadow.append(this.input, list);
+    shadow.append(this.input, this.list);
 
     this.addEventListener("click", this);
     this.addEventListener("keydown", this);
@@ -147,6 +149,8 @@ export default class FilterSelect extends HTMLElement {
         event.preventDefault();
         if (active instanceof HTMLElement && active.dataset.value) {
           this.value = active.dataset.value;
+        } else {
+          this.value = "";
         }
         break;
     }
@@ -159,10 +163,6 @@ export default class FilterSelect extends HTMLElement {
   }
 
   set value(value: string) {
-    if (value === this.#value) {
-      return;
-    }
-
     this.#value = value;
 
     this.querySelectorAll('[data-value][aria-selected="true"]')
@@ -206,9 +206,19 @@ export default class FilterSelect extends HTMLElement {
     const options = this.querySelectorAll<HTMLElement>("[data-value]")
       .values()
       .filter((item) =>
-        filter ? item.dataset.value?.toLowerCase().includes(filter) : true,
-      );
+        filter ? item.dataset.value?.toLowerCase().startsWith(filter) : true,
+      )
+      .toArray();
     this.itemsSlot.assign(...options);
+
+    if (
+      this.ariaActiveDescendantElement instanceof HTMLElement &&
+      !options.includes(this.ariaActiveDescendantElement)
+    ) {
+      this.setActiveOption(options[0]);
+    }
+
+    this.list.style.display = options.length === 0 ? "none" : "";
   }
 
   // Active option
@@ -222,7 +232,21 @@ export default class FilterSelect extends HTMLElement {
         delete option.dataset.active;
       });
 
-    option?.setAttribute("data-active", "true");
+    if (option) {
+      option.setAttribute("data-active", "true");
+
+      const listRect = this.list.getBoundingClientRect();
+      const optionRect = option.getBoundingClientRect();
+
+      // Scroll option into view if needed
+      if (
+        optionRect.top < listRect.top ||
+        optionRect.bottom > listRect.bottom
+      ) {
+        const top = optionRect.top - listRect.top;
+        this.list.scrollTo({ top });
+      }
+    }
   }
 }
 
