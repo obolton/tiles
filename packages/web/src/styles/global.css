@@ -104,7 +104,9 @@ html,
 body,
 button,
 input,
-textarea {
+textarea,
+select,
+filter-select {
   font-family: var(--ui-font);
 }
 

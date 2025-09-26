@@ -181,3 +181,57 @@ file-picker {
     outline: var(--focus-outline);
   }
 }
+
+filter-select {
+  position-area: center;
+  place-self: start;
+  min-width: 200px;
+  margin: -4px -8px;
+  background: var(--ui-background-color);
+  backdrop-filter: blur(24px);
+  border-radius: var(--border-radius);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
+  outline: 3px solid transparent;
+  transition: outline-color var(--animation-duration) var(--easing);
+
+  &:focus-visible {
+    outline-color: var(--focus-ring-color);
+  }
+
+  &::part(input) {
+    display: block;
+    padding: 8px 12px;
+    margin: 0;
+    width: 100%;
+    font-family: var(--ui-font);
+    font-size: 1rem;
+    line-height: 1rlh;
+    color: var(--ui-color);
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid rgb(0 0 0 / 15%);
+    border-radius: 0;
+    outline: none;
+  }
+
+  &::part(items) {
+    max-height: 200px;
+    overflow: auto;
+  }
+
+  & > * {
+    padding: 12px;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+
+    &[data-active],
+    &:hover {
+      background: rgb(0 0 0 / 8%);
+    }
+  }
+}
