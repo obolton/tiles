@@ -173,6 +173,7 @@ export default class Editor {
       event.target instanceof HTMLElement &&
       event.target.tagName !== "INPUT" &&
       event.target.tagName !== "TEXTAREA" &&
+      !event.target.closest(":popover-open") &&
       !event.target.isContentEditable &&
       this.selection.value.size > 0
     ) {
