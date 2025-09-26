@@ -161,7 +161,7 @@
     }
   }
 
-  & select {
+  & button[role="combobox"] {
     appearance: none;
     padding: 4px;
     margin: -4px;
@@ -171,6 +171,7 @@
     background: rgb(0 0 0 / 10%);
     border: none;
     border-radius: 8px;
+    user-select: all;
   }
 
   & .context {
