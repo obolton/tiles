@@ -1,0 +1,8 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+#input::placeholder {
+  color: var(--placeholder-color);
+}
