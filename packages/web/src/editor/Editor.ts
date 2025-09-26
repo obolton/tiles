@@ -899,4 +899,17 @@ export default class Editor {
     );
     return dropdown;
   }
+
+  async addOptionToDropdown(id: string, value: string) {
+    const dropdown = this.dropdowns.value.find(
+      (dropdown) => dropdown.id === id,
+    );
+    if (!dropdown) {
+      throw new Error(`Invalid dropdown ID: ${id}`);
+    }
+    return this.updateDropdown({
+      id,
+      options: dropdown.options.concat({ value }),
+    });
+  }
 }
