@@ -210,16 +210,14 @@ filter-select {
     line-height: 1rlh;
     color: var(--ui-color);
     background: none;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    border-bottom: 1px solid rgb(0 0 0 / 15%);
+    border: none;
     border-radius: 0;
     outline: none;
   }
 
-  &::part(items) {
+  &::part(list) {
     max-height: 200px;
+    border-top: 1px solid rgb(0 0 0 / 15%);
     overflow: auto;
   }
 
