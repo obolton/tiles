@@ -1,53 +1,100 @@
 import { Plugin } from "prosemirror-state";
 import Editor from "@/editor/Editor";
+import type FilterSelect from "@/elements/filterSelect/FilterSelect";
 
 export function dropdowns() {
   return new Plugin({
     props: {
       nodeViews: {
         dropdown(node, view, getPos) {
-          const element = document.createElement("select");
-
           const dropdownType = node.attrs.dropdownType as string;
           let value = node.attrs.value as string;
+          let select: FilterSelect | null = null;
 
-          function updateOptions() {
+          const element = document.createElement("span");
+          const button = document.createElement("button");
+          button.role = "combobox";
+          button.textContent = value;
+          button.ariaExpanded = "false";
+          button.ariaHasPopup = "listbox";
+          element.appendChild(button);
+
+          function open() {
+            if (select) {
+              return;
+            }
+
             const dropdown = Editor.current.dropdowns.value.find(
               (dropdown) => dropdown.id === dropdownType,
             );
 
             if (!dropdown) {
-              element.replaceChildren();
               return;
             }
 
-            const fragment = document.createDocumentFragment();
+            const anchorName = "--dropdown-button";
+
+            button.ariaExpanded = "true";
+            button.style.setProperty("anchor-name", anchorName);
+
+            select = document.createElement("filter-select");
+            select.tabIndex = 0;
+            select.placeholder = "Search";
+            select.popover = "auto";
+            select.style.setProperty("position-anchor", anchorName);
+
             for (const option of dropdown.options) {
-              const optionElement = document.createElement("option");
-              optionElement.value = option.value;
+              const optionElement = document.createElement("div");
               optionElement.textContent = option.value;
-              fragment.appendChild(optionElement);
+              optionElement.dataset.value = option.value;
+              select.appendChild(optionElement);
             }
-            element.replaceChildren(fragment);
+
+            element.appendChild(select);
+            select.showPopover();
+            select.focus();
+
+            select.addEventListener("toggle", (event) => {
+              if (event.newState === "closed") {
+                close();
+              }
+            });
+
+            select.addEventListener("change", () => {
+              const pos = getPos();
+              if (typeof pos !== "number" || !select) {
+                return;
+              }
+              const value = select.value;
+              view.dispatch(
+                view.state.tr.setNodeAttribute(pos, "value", value),
+              );
+              close();
+            });
           }
 
-          function onChange() {
-            const pos = getPos();
-            if (typeof pos !== "number") {
+          function close() {
+            if (!select) {
               return;
             }
-            const value = element.value;
-            view.dispatch(view.state.tr.setNodeAttribute(pos, "value", value));
+            select.remove();
+            select = null;
+            button.ariaExpanded = "false";
+            button.style.removeProperty("anchor-name");
           }
 
-          updateOptions();
-          element.value = value;
+          function onClick() {
+            if (select) {
+              close();
+            } else {
+              open();
+            }
+          }
 
           const abortController = new AbortController();
           const { signal } = abortController;
 
-          element.addEventListener("change", onChange, { signal });
-          Editor.current.dropdowns.subscribe(updateOptions, signal);
+          button.addEventListener("click", onClick, { signal });
 
           return {
             dom: element,
@@ -55,8 +102,8 @@ export function dropdowns() {
             update(updatedNode) {
               value = updatedNode.attrs.value as string;
 
-              if (element.value !== value) {
-                element.value = value;
+              if (value !== button.textContent) {
+                button.textContent = value;
               }
 
               return true;
@@ -70,8 +117,8 @@ export function dropdowns() {
               return true;
             },
 
-            stopEvent(event) {
-              return event.type === "mousedown" || event.type === "pointerdown";
+            stopEvent() {
+              return true;
             },
           };
         },
