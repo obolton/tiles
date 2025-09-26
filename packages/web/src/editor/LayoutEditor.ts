@@ -7,8 +7,10 @@ import type { Tile } from "@/types/tiles";
 export interface LayoutEditorOptions {
   element: HTMLElement;
   grid: HTMLElement;
+  dropTarget?: HTMLElement;
   editor: Editor;
   sectionId: string;
+  signal?: AbortSignal;
 }
 
 export interface DragData {
@@ -46,7 +48,14 @@ export default class LayoutEditor {
   private idForPoint?: string | null;
   private dragPlaceholder: HTMLElement | null = null;
 
-  constructor({ element, grid, editor, sectionId }: LayoutEditorOptions) {
+  constructor({
+    element,
+    grid,
+    dropTarget = element,
+    editor,
+    sectionId,
+    signal,
+  }: LayoutEditorOptions) {
     this.elementRef = new WeakRef(element);
     this.gridRef = new WeakRef(grid);
     this.editor = editor;
@@ -54,26 +63,18 @@ export default class LayoutEditor {
 
     this.gridRect = grid.getBoundingClientRect();
 
-    element.addEventListener("dnd-dragover", this);
-    element.addEventListener("dnd-dragenter", this, { passive: true });
-    element.addEventListener("dnd-dragleave", this);
-    element.addEventListener("dnd-drop", this);
-    element.addEventListener("dnd-dragend", this, { passive: true });
-    element.addEventListener("tileresizestart", this);
-    element.addEventListener("tileresize", this);
-    element.addEventListener("tileresizeend", this);
-  }
+    dropTarget.addEventListener("dnd-dragover", this, { signal });
+    dropTarget.addEventListener("dnd-dragenter", this, {
+      passive: true,
+      signal,
+    });
+    dropTarget.addEventListener("dnd-dragleave", this, { signal });
+    dropTarget.addEventListener("dnd-drop", this, { signal });
+    dropTarget.addEventListener("dnd-dragend", this, { passive: true, signal });
 
-  disconnect() {
-    const element = this.elementRef.deref();
-    element?.removeEventListener("dnd-dragover", this);
-    element?.removeEventListener("dnd-dragenter", this);
-    element?.removeEventListener("dnd-dragleave", this);
-    element?.removeEventListener("dnd-drop", this);
-    element?.removeEventListener("dnd-dragend", this);
-    element?.removeEventListener("tileresizestart", this);
-    element?.removeEventListener("tileresize", this);
-    element?.removeEventListener("tileresizeend", this);
+    element.addEventListener("tileresizestart", this, { signal });
+    element.addEventListener("tileresize", this, { signal });
+    element.addEventListener("tileresizeend", this, { signal });
   }
 
   get element() {
