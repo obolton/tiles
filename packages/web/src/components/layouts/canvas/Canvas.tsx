@@ -23,23 +23,18 @@ export default function Canvas({
   signal,
 }: CanvasProps) {
   const ref = (scrollView: ScrollView) => {
-    const layoutEditor = new LayoutEditor({
+    new LayoutEditor({
       element: scrollView,
       grid: scrollView.contents,
+      dropTarget: scrollView.parentElement!,
       editor,
       sectionId,
+      signal,
     });
-    signal?.addEventListener("abort", () => layoutEditor.disconnect());
   };
 
   return (
-    <scroll-view
-      ref={ref}
-      className={styles.canvas}
-      data-drop={isEditable.derive((editable) =>
-        editable ? "true" : undefined,
-      )}
-    >
+    <scroll-view ref={ref} className={styles.canvas}>
       <Each items={items}>
         {(tile) => (
           <Item

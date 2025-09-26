@@ -53,6 +53,9 @@ export default function Section({ editor, section }: SectionProps) {
       tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
       data-section-id={id}
       data-animate-layout-id={id}
+      data-drop={isEditable.derive((editable) =>
+        editable ? "true" : undefined,
+      )}
       on:focusin={onFocusIn}
       on:focusout={onFocusOut}
     >

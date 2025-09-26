@@ -65,12 +65,6 @@
     gap: var(--gap);
   }
 
-  /* Grow drop area when dragging */
-  body[data-drag] & {
-    margin: 0 -80px;
-    padding: 0 80px;
-  }
-
   & > * {
     scroll-snap-align: start;
   }
