@@ -15,6 +15,7 @@ import {
   PAGE_INVITE_FIELDS,
 } from "@/routes/collaboration/collaboration.ts";
 import { TABLE_WITH_DATA_FIELDS } from "@/routes/tables/tables.ts";
+import { CHART_FIELDS } from "@/routes/charts/charts.ts";
 import { DROPDOWN_FIELDS } from "@/routes/dropdowns/dropdowns.ts";
 import type {
   GetPageByIdSchema,
@@ -65,6 +66,9 @@ const TILES_FIELDS = {
   },
   table: {
     select: TABLE_WITH_DATA_FIELDS,
+  },
+  chart: {
+    select: CHART_FIELDS,
   },
 } as const satisfies Prisma.TileSelect<ExtensionArgs>;
 
@@ -137,7 +141,7 @@ export function formatTile({
     rowSpan,
     block,
   };
-  const { image, video, text, map, link, pageLink, table } = tile;
+  const { image, video, text, map, link, pageLink, table, chart } = tile;
 
   if (image) {
     return {
@@ -194,6 +198,14 @@ export function formatTile({
       ...tableData,
       numRows: _count.rows,
       type: "TABLE",
+    };
+  }
+
+  if (chart) {
+    return {
+      type: "CHART",
+      ...base,
+      ...chart,
     };
   }
 
