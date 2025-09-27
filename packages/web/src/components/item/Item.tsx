@@ -5,6 +5,7 @@ import MapTile from "@/components/tiles/MapTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import TableTile from "@/components/tiles/TableTile";
+import ChartTile from "@/components/tiles/ChartTile";
 import { flag, reactive, Computed } from "@/utils/reactivity";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import styles from "./Item.module.css";
@@ -54,6 +55,8 @@ function getTileComponent(
       return <PageLinkTile {...tile} editor={editor} />;
     case "TABLE":
       return <TableTile {...tile} editor={editor} hasFocus={hasFocus} />;
+    case "CHART":
+      return <ChartTile {...tile} />;
     default:
       throw new Error(`Unknown tile type: ${type}`);
   }
