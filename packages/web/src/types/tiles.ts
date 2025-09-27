@@ -1,4 +1,5 @@
 import type {
+  ClientChartTile,
   ClientCollection,
   ClientImageTile,
   ClientLinkTile,
@@ -36,6 +37,7 @@ export type MapProperties = ReactiveTile<ClientMapTile>;
 export type PageLinkProperties = ReactiveTile<ClientPageLinkTile>;
 export type TableProperties = ReactiveTile<ClientTableTile>;
 export type VideoProperties = ReactiveTile<ClientVideoTile>;
+export type ChartProperties = ReactiveTile<ClientChartTile>;
 
 export type Tile =
   | ImageProperties
@@ -44,7 +46,8 @@ export type Tile =
   | PageLinkProperties
   | TableProperties
   | TextProperties
-  | VideoProperties;
+  | VideoProperties
+  | ChartProperties;
 
 export type Section = Pick<ClientCollection, "id"> &
   ReactiveRecord<Omit<ClientCollection, "id">>;
