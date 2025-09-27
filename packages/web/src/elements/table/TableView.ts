@@ -378,20 +378,16 @@ export default class TableView extends HTMLElement {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    const activeElement = document.activeElement;
+    if (!(event.target instanceof HTMLTableCellElement)) {
+      return;
+    }
 
     switch (event.key) {
       case "Escape":
-        if (
-          activeElement instanceof HTMLElement &&
-          this.contains(activeElement)
-        ) {
-          event.preventDefault();
-          activeElement.blur();
-          this.closest<HTMLElement>("[tabindex]")?.focus({
-            preventScroll: true,
-          });
-        }
+        event.preventDefault();
+        this.closest<HTMLElement>("[tabindex]")?.focus({
+          preventScroll: true,
+        });
         break;
 
       case "Tab":
