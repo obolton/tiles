@@ -105,10 +105,8 @@ table-view {
     outline-offset: -2px;
     overflow: clip;
     overflow-wrap: anywhere;
-    transition: outline-color var(--animation-duration-short) var(--easing);
 
     &:focus {
-      border-radius: 4px;
       outline-color: var(--focus-ring-color);
     }
   }
