@@ -338,6 +338,8 @@ export default class TableView extends HTMLElement {
       this.horizontalBufferSize = this.width / 4;
       this.verticalBufferSize = this.height / 2;
     }
+
+    this.update();
   }
 
   // Event handling
