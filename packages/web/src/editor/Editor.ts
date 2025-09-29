@@ -797,6 +797,33 @@ export default class Editor {
     });
   }
 
+  async addChartSeries(
+    data: OmitPageId<AppRouterInputs["charts"]["addSeries"]>,
+  ) {
+    return await client.charts.addSeries.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+  }
+
+  async updateChartSeries(
+    data: OmitPageId<AppRouterInputs["charts"]["updateSeries"]>,
+  ) {
+    return await client.charts.updateSeries.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+  }
+
+  async deleteChartSeries(
+    data: OmitPageId<AppRouterInputs["charts"]["deleteSeries"]>,
+  ) {
+    return await client.charts.deleteSeries.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+  }
+
   // Videos
 
   async updateVideo(data: OmitPageId<AppRouterInputs["videos"]["update"]>) {
