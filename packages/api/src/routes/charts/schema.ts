@@ -9,6 +9,16 @@ export const CreateChartSchema = z.strictObject({
   ...PositionSchema.shape,
   chartType: z.enum(ChartType),
   background: BackgroundSchema.optional(),
+  series: z
+    .array(
+      z.strictObject({
+        tableId: z.uuid(),
+        columnId: z.uuid(),
+        title: z.string().optional(),
+      }),
+    )
+    .max(10)
+    .optional(),
 });
 export type CreateChartSchema = z.infer<typeof CreateChartSchema>;
 

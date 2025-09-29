@@ -42,16 +42,36 @@ export async function createChart({
   block,
   chartType,
   background,
+  series = [],
 }: CreateChartSchema) {
   return prisma.$transaction(async (transaction) => {
+    // Verify access to series data
+    await Promise.all(
+      series.map(({ tableId, columnId }) =>
+        transaction.tableColumn.findUniqueOrThrow({
+          where: { id: columnId, table: { id: tableId, pageId } },
+          select: { id: true },
+        }),
+      ),
+    );
+
     const chart = await transaction.chart.create({
       data: {
         pageId,
         chartType,
         ...getBackgroundProperties(background),
+        series: {
+          createMany: {
+            data: series.map(({ columnId, title }) => ({
+              columnId,
+              title,
+            })),
+          },
+        },
       },
       select: CHART_FIELDS,
     });
+
     const placement = await createTilePlacement(
       {
         type: "CHART",
@@ -105,12 +125,8 @@ export async function addSeries({
         where: { id: chartId, pageId },
         select: { id: true },
       }),
-      transaction.table.findUniqueOrThrow({
-        where: { id: tableId, pageId },
-        select: { id: true },
-      }),
       transaction.tableColumn.findUniqueOrThrow({
-        where: { id: columnId, tableId },
+        where: { id: columnId, table: { id: tableId, pageId } },
         select: { id: true },
       }),
     ]);
