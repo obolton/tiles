@@ -772,13 +772,14 @@ export default class TableView extends HTMLElement {
     if (
       this.editable &&
       target instanceof HTMLTableCellElement &&
-      target.tagName === "TD"
+      target.tagName === "TD" &&
+      target !== this.editingCell
     ) {
-      const cell = this.getCellInfo(target);
+      this.endEditingCell();
 
       const allowEdit = target.dispatchEvent(
         new TableEvent("edittablecellstart", {
-          ...cell,
+          ...this.getCellInfo(target),
           bubbles: true,
           cancelable: true,
         }),
@@ -791,23 +792,18 @@ export default class TableView extends HTMLElement {
   }
 
   private handleFocusOut(event: FocusEvent) {
-    const { target, relatedTarget } = event;
+    const { relatedTarget } = event;
 
-    // Focus moved to a modal or popover
+    // Focus moved to a descendant, modal or popover
     if (
       relatedTarget instanceof Element &&
-      relatedTarget.closest("dialog[open], [popover]:popover-open")
+      (this.contains(relatedTarget) ||
+        relatedTarget.closest("dialog[open], [popover]:popover-open"))
     ) {
       return;
     }
 
-    if (!(relatedTarget instanceof Node) || !this.contains(relatedTarget)) {
-      this.clearSelection();
-    }
-
-    if (this.editable && target && target === this.editingCell) {
-      this.endEditingCell();
-    }
+    this.clearSelection();
   }
 
   // Cell info
