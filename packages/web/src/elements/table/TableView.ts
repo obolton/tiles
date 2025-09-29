@@ -789,10 +789,10 @@ export default class TableView extends HTMLElement {
   private handleFocusOut(event: FocusEvent) {
     const { target, relatedTarget } = event;
 
-    // Focus moved to a modal
+    // Focus moved to a modal or popover
     if (
       relatedTarget instanceof Element &&
-      relatedTarget.closest("dialog[open]")
+      relatedTarget.closest("dialog[open], [popover]:popover-open")
     ) {
       return;
     }
