@@ -1062,13 +1062,14 @@ export default class TableView extends HTMLElement {
     row.classList.remove("selected");
     row.ariaRowIndex = null;
     delete row.dataset.id;
-    this.rowBuffer.push(row);
 
-    for (const cell of row.cells) {
+    for (const cell of Array.from(row.cells)) {
       if (cell.tagName === "TD") {
         this.recycleCell(cell);
       }
     }
+
+    this.rowBuffer.push(row);
   }
 
   private getRowFromBuffer() {
