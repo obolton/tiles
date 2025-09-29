@@ -15,6 +15,7 @@ import { serialize } from "@/utils/richText/serialize";
 import { render } from "@/jsx/dom";
 import { moveElement } from "@/utils/arrays";
 import { viewTransition } from "@/utils/transitions";
+import TableViewContents from "@/elements/table/TableViewContents";
 import type TableView from "@/elements/table/TableView";
 import type { Format } from "@/utils/richText/format";
 import type { Command } from "prosemirror-state";
@@ -364,62 +365,11 @@ export default function TableTile({
         $getColumn={(index) => columns.value[index]!}
         $getRow={(index) => rows.value[index]!}
       >
-        <table>
-          <colgroup>
-            <col style={{ width: "32px" }} />
-            {columns.value.map((column, index) => (
-              <col
-                style={{ width: column.width + "px" }}
-                data-index={index}
-                data-id={column.id}
-              />
-            ))}
-          </colgroup>
-
-          <thead>
-            <tr>
-              <th scope="colgroup" />
-              {columns.value.map((_, index) => (
-                <th scope="col" aria-colindex={index} />
-              ))}
-            </tr>
-          </thead>
-
-          <tbody>
-            {rows.value.map(({ id: rowId, height, data: rowData }, row) => {
-              const cells = [];
-              for (
-                let columnIndex = 0;
-                columnIndex < columns.value.length;
-                columnIndex++
-              ) {
-                const column = columns.value[columnIndex]!;
-                const value = rowData[column.id];
-                if (!value) {
-                  cells.push(<td aria-colindex={columnIndex}></td>);
-                } else if (typeof value === "string") {
-                  cells.push(<td aria-colindex={columnIndex}>{value}</td>);
-                } else {
-                  cells.push(
-                    <td aria-colindex={columnIndex}>
-                      <RichText content={value} />
-                    </td>,
-                  );
-                }
-              }
-              return (
-                <tr
-                  style={{ height: height + "px" }}
-                  aria-rowindex={row}
-                  data-id={rowId}
-                >
-                  <th scope="row" />
-                  {cells}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <TableViewContents rows={rows} columns={columns}>
+          {(value) =>
+            Array.isArray(value) ? <RichText content={value} /> : value
+          }
+        </TableViewContents>
       </table-view>
 
       {hasFocus.derive((value) =>
