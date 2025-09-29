@@ -19,3 +19,27 @@ export const UpdateChartSchema = z.object({
   background: BackgroundSchema.optional(),
 });
 export type UpdateChartSchema = z.infer<typeof UpdateChartSchema>;
+
+export const AddSeriesSchema = z.strictObject({
+  pageId: z.uuid(),
+  chartId: z.uuid(),
+  tableId: z.uuid(),
+  columnId: z.uuid(),
+  title: z.string().optional(),
+});
+export type AddSeriesSchema = z.infer<typeof AddSeriesSchema>;
+
+export const UpdateSeriesSchema = z.strictObject({
+  pageId: z.uuid(),
+  chartId: z.uuid(),
+  seriesId: z.uuid(),
+  title: z.string().optional(),
+});
+export type UpdateSeriesSchema = z.infer<typeof UpdateSeriesSchema>;
+
+export const DeleteSeriesSchema = z.strictObject({
+  pageId: z.uuid(),
+  chartId: z.uuid(),
+  seriesId: z.uuid(),
+});
+export type DeleteSeriesSchema = z.infer<typeof DeleteSeriesSchema>;

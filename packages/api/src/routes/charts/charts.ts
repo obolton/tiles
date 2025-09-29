@@ -1,13 +1,28 @@
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import { getBackgroundProperties } from "@/utils/backgrounds.ts";
-import type { CreateChartSchema, UpdateChartSchema } from "./schema.ts";
+import type {
+  CreateChartSchema,
+  UpdateChartSchema,
+  AddSeriesSchema,
+  UpdateSeriesSchema,
+  DeleteSeriesSchema,
+} from "./schema.ts";
 import type { Prisma } from "@prisma/client";
+
+export const CHART_SERIES_FIELDS = {
+  id: true,
+  title: true,
+  columnId: true,
+} as const satisfies Prisma.ChartSeriesSelect<ExtensionArgs>;
 
 export const CHART_FIELDS = {
   id: true,
   chartType: true,
   background: true,
+  series: {
+    select: CHART_SERIES_FIELDS,
+  },
 } as const satisfies Prisma.ChartSelect<ExtensionArgs>;
 
 export type Chart = Prisma.Result<
@@ -74,4 +89,87 @@ export async function updateChart({
     select: CHART_FIELDS,
   });
   return { type: "CHART" as const, ...chart };
+}
+
+export async function addSeries({
+  pageId,
+  chartId,
+  tableId,
+  columnId,
+  title,
+}: AddSeriesSchema) {
+  return prisma.$transaction(async (transaction) => {
+    // Verify access to the chart, table and column
+    await Promise.all([
+      transaction.chart.findUniqueOrThrow({
+        where: { id: chartId, pageId },
+        select: { id: true },
+      }),
+      transaction.table.findUniqueOrThrow({
+        where: { id: tableId, pageId },
+        select: { id: true },
+      }),
+      transaction.tableColumn.findUniqueOrThrow({
+        where: { id: columnId, tableId },
+        select: { id: true },
+      }),
+    ]);
+
+    return transaction.chartSeries.create({
+      data: {
+        chartId,
+        columnId,
+        title,
+      },
+      select: CHART_SERIES_FIELDS,
+    });
+  });
+}
+
+export async function updateSeries({
+  pageId,
+  chartId,
+  seriesId,
+  title,
+}: UpdateSeriesSchema) {
+  return prisma.$transaction(async (transaction) => {
+    // Verify access to the chart
+    await transaction.chart.findUniqueOrThrow({
+      where: { id: chartId, pageId },
+      select: { id: true },
+    });
+
+    return transaction.chartSeries.update({
+      data: {
+        title,
+      },
+      where: {
+        id: seriesId,
+        chartId,
+      },
+      select: CHART_SERIES_FIELDS,
+    });
+  });
+}
+
+export async function deleteSeries({
+  pageId,
+  chartId,
+  seriesId,
+}: DeleteSeriesSchema) {
+  return prisma.$transaction(async (transaction) => {
+    // Verify access to the chart
+    await transaction.chart.findUniqueOrThrow({
+      where: { id: chartId, pageId },
+      select: { id: true },
+    });
+
+    return transaction.chartSeries.delete({
+      where: {
+        id: seriesId,
+        chartId,
+      },
+      select: { id: true },
+    });
+  });
 }
