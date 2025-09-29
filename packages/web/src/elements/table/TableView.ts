@@ -99,6 +99,7 @@ export default class TableView extends HTMLElement {
   private verticalBufferSize = 0;
   private isDraggingRange = false;
   private rangeSelection: RangeSelection | null = null;
+  private editingCell: Cell | null = null;
   private virtualize = false;
   private dropIndicator: HTMLElement | null = null;
   private editAbortController: AbortController | null = null;
@@ -173,6 +174,7 @@ export default class TableView extends HTMLElement {
     this.addEventListener("dnd-dragenter", this);
     this.addEventListener("dnd-dragover", this);
     this.addEventListener("dnd-drop", this);
+    this.addEventListener("focusin", this);
     this.addEventListener("focusout", this);
   }
 
@@ -368,6 +370,8 @@ export default class TableView extends HTMLElement {
         return this.handleDragOver(event as DragDropEvent);
       case "dnd-drop":
         return this.handleDrop(event as DragDropEvent);
+      case "focusin":
+        return this.handleFocusIn(event as FocusEvent);
       case "focusout":
         return this.handleFocusOut(event as FocusEvent);
     }
@@ -759,10 +763,58 @@ export default class TableView extends HTMLElement {
 
   // Focus
 
+  private handleFocusIn(event: FocusEvent) {
+    const { target } = event;
+    if (
+      this.editable &&
+      target instanceof HTMLTableCellElement &&
+      target.tagName === "TD"
+    ) {
+      const cell = this.getCellInfo(target);
+
+      const allowEdit = target.dispatchEvent(
+        new TableEvent("edittablecellstart", {
+          ...cell,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+
+      if (allowEdit) {
+        this.editingCell = cell;
+      }
+    }
+  }
+
   private handleFocusOut(event: FocusEvent) {
-    const { relatedTarget } = event;
+    const { target, relatedTarget } = event;
+
+    // Focus moved to a modal
+    if (
+      relatedTarget instanceof Element &&
+      relatedTarget.closest("dialog[open]")
+    ) {
+      return;
+    }
+
     if (!(relatedTarget instanceof Node) || !this.contains(relatedTarget)) {
       this.clearSelection();
+    }
+
+    if (
+      this.editable &&
+      this.editingCell &&
+      target instanceof HTMLTableCellElement &&
+      target.tagName === "TD"
+    ) {
+      target.dispatchEvent(
+        new TableEvent("edittablecellend", {
+          ...this.editingCell,
+          bubbles: true,
+          cancelable: false,
+        }),
+      );
+      this.editingCell = null;
     }
   }
 
