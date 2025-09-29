@@ -86,34 +86,20 @@ export default function TableTile({
     }
   };
 
-  const onFocusIn = (event: FocusEvent) => {
+  const onEditCell = (event: TableEvent) => {
     if (!isEditable.value) {
       return;
     }
 
-    const target = event.target;
-
-    if (
-      !(target instanceof HTMLTableCellElement) ||
-      editorView?.dom === target
-    ) {
-      return;
-    }
-
-    const rowElement = target.parentElement as HTMLTableRowElement;
-
-    if (!rowElement.ariaRowIndex || !target.ariaColIndex) {
+    const { target, row, column } = event;
+    if (!(target instanceof HTMLTableCellElement) || !row || !column) {
       return;
     }
 
     try {
       editorView?.destroy();
 
-      const row = parseInt(rowElement.ariaRowIndex, 10);
-      const column = parseInt(target.ariaColIndex, 10);
-      const columnId = columns.value[column]?.id;
-
-      const value = columnId ? rows.value[row]?.data[columnId] : null;
+      const value = column.id ? rows.value[row.index]?.data[column.id] : null;
       const content =
         typeof value === "string" ? createDocument(value) : (value ?? null);
       const state = createState(content, [keymap(KEY_MAP)]);
@@ -140,44 +126,21 @@ export default function TableTile({
     }
   };
 
-  const onFocusOut = async (event: FocusEvent) => {
-    if (!editorView) {
-      return;
-    }
-
-    const { target, relatedTarget } = event;
+  const onEditCellEnd = async (event: TableEvent) => {
+    const { target, row, column } = event;
 
     if (
       !(target instanceof HTMLTableCellElement) ||
-      (relatedTarget instanceof Element && target.contains(relatedTarget))
+      !row ||
+      !column ||
+      !editorView
     ) {
       return;
     }
 
-    const rowElement = target.parentElement as HTMLTableRowElement;
-
-    if (!rowElement.ariaRowIndex || !target.ariaColIndex) {
-      return;
-    }
-
-    // Focus moved to a modal
-    if (
-      relatedTarget instanceof HTMLElement &&
-      relatedTarget.closest("dialog[open]") !== null
-    ) {
-      return;
-    }
-
-    const row = parseInt(rowElement.ariaRowIndex, 10);
-    const column = parseInt(target.ariaColIndex, 10);
-    const columnId = columns.value[column]?.id;
-
-    if (!columnId) {
-      return;
-    }
-
-    const rowData = rows.value[row];
-    if (!rowData) {
+    const rowData = rows.value[row.index];
+    const columnId = column.id;
+    if (!rowData || !columnId) {
       return;
     }
 
@@ -347,7 +310,6 @@ export default function TableTile({
 
   const anchorName = `--table-${id}`;
 
-  // TODO: Fix race condition between component hydration and element connectedCallback that causes thrashing of initial data
   return (
     <Tile textColor={textColor} background={background} anchorName={anchorName}>
       <table-view
@@ -356,8 +318,8 @@ export default function TableTile({
         columns={columns.derive((value) => value.length)}
         rows={numRows}
         editable={isEditable}
-        on:focusin={onFocusIn}
-        on:focusout={onFocusOut}
+        on:edittablecellstart={onEditCell}
+        on:edittablecellend={onEditCellEnd}
         on:resizetablecolumn={onResizeColumn}
         on:movetablecolumn={onMoveColumn}
         on:movetablerow={onMoveRow}
