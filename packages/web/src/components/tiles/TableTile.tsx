@@ -41,6 +41,7 @@ function createDocument(text: string): RichTextType {
 export default function TableTile({
   editor,
   id,
+  sectionId,
   textColor,
   background,
   columns,
@@ -340,6 +341,7 @@ export default function TableTile({
             <TableToolbar
               editor={editor}
               id={id}
+              sectionId={sectionId}
               background={background}
               rows={rows}
               columns={columns}

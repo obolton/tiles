@@ -1,6 +1,7 @@
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import AddRowIcon from "@/icons/add-row.svg?jsx";
 import AddColumnIcon from "@/icons/add-column.svg?jsx";
+import ChartIcon from "@/icons/chart.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
@@ -12,6 +13,7 @@ import type TableView from "@/elements/table/TableView";
 export interface TableToolbarProps {
   editor: Editor;
   id: TableProperties["id"];
+  sectionId: TableProperties["sectionId"];
   background: TableProperties["background"];
   rows: TableProperties["rows"];
   columns: TableProperties["columns"];
@@ -23,6 +25,7 @@ export interface TableToolbarProps {
 export default function TableToolbar({
   editor,
   id,
+  sectionId,
   background,
   rows,
   columns,
@@ -68,6 +71,24 @@ export default function TableToolbar({
       afterColumnId,
     });
     columns.value = columns.value.concat(newColumn);
+  }
+
+  async function createChart() {
+    const selection = getTable().selection;
+    if (!selection) {
+      return;
+    }
+    const first = Array.from(selection)[0];
+    const column = first?.type === "columns" ? first.from : null;
+    const columnId = column?.id;
+    if (!columnId) {
+      return;
+    }
+    await editor.createChart({
+      sectionId: sectionId.value,
+      chartType: "BAR",
+      series: [{ tableId: id, columnId }],
+    });
   }
 
   async function deleteSelection() {
@@ -148,11 +169,11 @@ export default function TableToolbar({
             type="button"
             role="menuitem"
             className="floating"
-            aria-label="Delete"
-            data-tooltip="Delete"
-            on:click={deleteSelection}
+            aria-label="Create chart"
+            data-tooltip="Create chart"
+            on:click={createChart}
           >
-            <DeleteIcon aria-hidden="true" />
+            <ChartIcon aria-hidden="true" />
           </button>
         </li>
         <li role="presentation">
@@ -162,6 +183,18 @@ export default function TableToolbar({
             value={background}
             onChange={setBackground}
           />
+        </li>
+        <li role="presentation">
+          <button
+            type="button"
+            role="menuitem"
+            className="floating destructive"
+            aria-label="Delete"
+            data-tooltip="Delete"
+            on:click={deleteSelection}
+          >
+            <DeleteIcon aria-hidden="true" />
+          </button>
         </li>
       </ul>
     </floating-toolbar>
