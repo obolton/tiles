@@ -56,6 +56,10 @@ function defaultGetRow() {
   return { height: 32 };
 }
 
+function isCellEqual(a: Cell, b: Cell) {
+  return a.row.index === b.row.index && a.column.index === b.column.index;
+}
+
 const HEADER_SIZE = 32;
 
 export default class TableView extends HTMLElement {
@@ -99,7 +103,7 @@ export default class TableView extends HTMLElement {
   private verticalBufferSize = 0;
   private isDraggingRange = false;
   private rangeSelection: RangeSelection | null = null;
-  private editingCell: Cell | null = null;
+  private editingCell: HTMLTableCellElement | null = null;
   private virtualize = false;
   private dropIndicator: HTMLElement | null = null;
   private editAbortController: AbortController | null = null;
@@ -529,18 +533,18 @@ export default class TableView extends HTMLElement {
   }
 
   private handlePointerOver(event: PointerEvent) {
-    if (!this.isDraggingRange || !this.rangeSelection) {
+    if (
+      !this.isDraggingRange ||
+      !this.rangeSelection ||
+      !(event.target instanceof Element)
+    ) {
       return;
     }
 
-    const { target } = event;
-    const cell = target instanceof HTMLElement ? target.closest("td") : null;
-    if (!cell) {
-      return;
+    const cell = event.target.closest("td");
+    if (cell) {
+      this.moveSelectionFocus(this.getCellInfo(cell), true);
     }
-
-    this.rangeSelection.focus = this.getCellInfo(cell);
-    this.redrawSelection();
   }
 
   private handleResizeEnd(event: ResizeEvent) {
@@ -781,7 +785,7 @@ export default class TableView extends HTMLElement {
       );
 
       if (allowEdit) {
-        this.editingCell = cell;
+        this.editingCell = target;
       }
     }
   }
@@ -801,20 +805,8 @@ export default class TableView extends HTMLElement {
       this.clearSelection();
     }
 
-    if (
-      this.editable &&
-      this.editingCell &&
-      target instanceof HTMLTableCellElement &&
-      target.tagName === "TD"
-    ) {
-      target.dispatchEvent(
-        new TableEvent("edittablecellend", {
-          ...this.editingCell,
-          bubbles: true,
-          cancelable: false,
-        }),
-      );
-      this.editingCell = null;
+    if (this.editable && target && target === this.editingCell) {
+      this.endEditingCell();
     }
   }
 
@@ -883,6 +875,7 @@ export default class TableView extends HTMLElement {
     this.selection.clear();
     this.stopDraggingRangeSelection();
     this.rangeSelection = null;
+    this.endEditingCell();
     this.redrawSelection();
 
     const focused = getFocusedElementWithin(this);
@@ -1036,8 +1029,11 @@ export default class TableView extends HTMLElement {
   }
 
   private moveSelectionFocus(cell: Cell, expandSelection = false) {
-    if (expandSelection && this.rangeSelection) {
+    if (this.rangeSelection && expandSelection) {
       this.rangeSelection.focus = cell;
+      if (!isCellEqual(this.rangeSelection.anchor, this.rangeSelection.focus)) {
+        this.endEditingCell();
+      }
       this.redrawSelection();
     } else {
       this.setSelection({ type: "cells", anchor: cell, focus: cell });
@@ -1045,6 +1041,21 @@ export default class TableView extends HTMLElement {
         `tr[aria-rowindex="${cell.row.index}"] > td[aria-colindex="${cell.column.index}"]`,
       )?.focus();
     }
+  }
+
+  private endEditingCell() {
+    if (!this.editingCell) {
+      return;
+    }
+
+    this.editingCell.dispatchEvent(
+      new TableEvent("edittablecellend", {
+        ...this.getCellInfo(this.editingCell),
+        bubbles: true,
+        cancelable: false,
+      }),
+    );
+    this.editingCell = null;
   }
 
   // Column sizing
