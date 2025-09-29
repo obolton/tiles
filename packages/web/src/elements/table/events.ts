@@ -5,7 +5,9 @@ export type TableEventType =
   | "resizetablecolumn"
   | "movetablecolumn"
   | "movetablerow"
-  | "cleartableselection";
+  | "cleartableselection"
+  | "edittablecellstart"
+  | "edittablecellend";
 
 export interface TableEventInit extends EventInit {
   column?: Column;

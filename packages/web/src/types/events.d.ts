@@ -39,6 +39,8 @@ declare global {
     movetablecolumn: TableEvent;
     movetablerow: TableEvent;
     cleartableselection: TableEvent;
+    edittablecellstart: TableEvent;
+    edittablecellend: TableEvent;
   }
 }
 
