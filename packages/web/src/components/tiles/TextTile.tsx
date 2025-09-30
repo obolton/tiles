@@ -5,7 +5,6 @@ import Tile from "./Tile";
 import styles from "./TextTile.module.css";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/colors/ColorPicker";
-import ArrowDownIcon from "@/icons/arrow-down.svg?jsx";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
 import type { Reactive } from "@/utils/reactivity";
@@ -170,13 +169,7 @@ export default function TextTile({
         value ? (
           contents
         ) : (
-          <pop-out className={styles["pop-out"]}>
-            {contents}
-            <ArrowDownIcon
-              className={styles["expand-icon"]}
-              aria-hidden="true"
-            />
-          </pop-out>
+          <pop-out className={styles["pop-out"]}>{contents}</pop-out>
         ),
       )}
     </Tile>
