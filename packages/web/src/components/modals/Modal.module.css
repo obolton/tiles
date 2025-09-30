@@ -25,11 +25,11 @@
 }
 
 .modal::backdrop {
-  background: rgb(0 0 0 / 30%);
+  background: rgb(0 0 0 / 20%);
+  backdrop-filter: blur(8px);
   animation-duration: var(--animation-duration-short);
   animation-timing-function: var(--easing);
   animation-fill-mode: both;
-  backdrop-filter: blur(5px);
 }
 
 .modal[open] {
@@ -70,13 +70,11 @@
   from {
     opacity: 0;
     translate: 0 32px;
-    filter: blur(5px);
   }
 
   to {
     opacity: 1;
     translate: none;
-    filter: blur(0);
   }
 }
 
@@ -96,13 +94,11 @@
   from {
     opacity: 1;
     translate: none;
-    filter: blur(0);
   }
 
   to {
     opacity: 0;
     translate: 0 32px;
-    filter: blur(5px);
   }
 }
 
