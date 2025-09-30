@@ -61,6 +61,8 @@ function isCellEqual(a: Cell, b: Cell) {
 }
 
 const HEADER_SIZE = 32;
+const ROW_BUFFER_MIN_SIZE = 3;
+const CELL_BUFFER_MIN_SIZE = 10;
 
 export default class TableView extends HTMLElement {
   static readonly observedAttributes: (keyof TableViewAttributes)[] = [
@@ -1067,15 +1069,13 @@ export default class TableView extends HTMLElement {
   // Virtualization
 
   private fillRowBuffer() {
-    const bufferSize = this.visibleRows.length;
-    for (let i = this.rowBuffer.length; i < bufferSize; i++) {
+    for (let i = this.rowBuffer.length; i < ROW_BUFFER_MIN_SIZE; i++) {
       this.rowBuffer.push(this.createRow());
     }
   }
 
   private fillCellBuffer() {
-    const bufferSize = this.visibleColumns.length * 10;
-    for (let i = this.buffer.length; i < bufferSize; i++) {
+    for (let i = this.buffer.length; i < CELL_BUFFER_MIN_SIZE; i++) {
       this.buffer.push(this.createCell());
     }
   }
@@ -1387,7 +1387,10 @@ export default class TableView extends HTMLElement {
     }
 
     const width = this.getColumnSpan(0, this.#columns);
-    const averageRowHeight = this.contentHeight / this.visibleRows.length;
+    const averageRowHeight =
+      this.visibleRows.length > 0
+        ? this.contentHeight / this.visibleRows.length
+        : 0;
     const height = this.#rows * averageRowHeight;
     this.translateY = this.firstVisibleRow * averageRowHeight;
 

@@ -44,7 +44,6 @@
   position: absolute;
   top: var(--translate-y);
   left: var(--translate-x);
-  min-height: 100cqh;
 }
 
 :host(:hover),
