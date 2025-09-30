@@ -29,8 +29,9 @@
       opacity: 1;
     }
 
-    &[data-drop-target] > scroll-view {
-      background: rgb(0 0 0 / 5%);
+    &[data-drop-target] > scroll-view,
+    &:has(page-item:state(resizing)) > scroll-view {
+      background: rgb(0 0 0 / 3%);
     }
   }
 }
