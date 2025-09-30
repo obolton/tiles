@@ -1,7 +1,7 @@
 import css from "./PopOut.css?inline";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
-import closeIcon from "@/icons/close.svg?raw";
+import arrowDownIcon from "@/icons/arrow-down.svg?raw";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -17,7 +17,7 @@ export default class PopOut extends HTMLElement {
 
   protected readonly internals: ElementInternals;
   protected readonly contents: HTMLElement;
-  private closeButton: HTMLButtonElement | null = null;
+  private expandButton: HTMLButtonElement | null = null;
   private resizeObserver: ResizeObserver;
 
   #disabled = true;
@@ -103,8 +103,10 @@ export default class PopOut extends HTMLElement {
   private resizeObserverCallback() {
     if (this.isOverflowing) {
       this.internals.states.add("overflowing");
-    } else {
+      this.showExpandButton();
+    } else if (!this.isOpen) {
       this.internals.states.delete("overflowing");
+      this.hideExpandButton();
     }
   }
 
@@ -127,8 +129,7 @@ export default class PopOut extends HTMLElement {
   private handlePointerDown(event: PointerEvent) {
     const { currentTarget, button, defaultPrevented } = event;
 
-    if (currentTarget === this.closeButton) {
-      event.preventDefault();
+    if (currentTarget === this.expandButton) {
       event.stopPropagation();
       return;
     }
@@ -151,14 +152,18 @@ export default class PopOut extends HTMLElement {
   }
 
   private handleClick(event: PointerEvent) {
-    if (event.currentTarget === this.closeButton) {
+    if (event.currentTarget === this.expandButton) {
       event.stopPropagation();
-      this.close();
+      if (this.isOpen) {
+        this.close();
+      } else if (!this.isOpen && this.isOverflowing) {
+        this.open();
+      }
     }
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    if (event.key === "Escape" && !event.defaultPrevented && this.isOpen) {
+    if (event.key === "Escape" && this.isOpen) {
       event.preventDefault();
       this.close();
     } else if (
@@ -172,26 +177,26 @@ export default class PopOut extends HTMLElement {
     }
   }
 
-  private showCloseButton() {
-    if (this.closeButton) {
+  private showExpandButton() {
+    if (this.expandButton) {
       return;
     }
 
     const button = document.createElement("button");
-    button.setAttribute("part", "close");
-    button.id = "close";
+    button.setAttribute("part", "button");
+    button.id = "expand";
     button.type = "button";
-    button.ariaLabel = "Close";
-    button.innerHTML = closeIcon;
+    button.ariaLabel = "Expand";
+    button.innerHTML = arrowDownIcon;
     button.addEventListener("click", this);
     button.addEventListener("pointerdown", this);
     this.contents.append(button);
-    this.closeButton = button;
+    this.expandButton = button;
   }
 
-  private hideCloseButton() {
-    this.closeButton?.remove();
-    this.closeButton = null;
+  private hideExpandButton() {
+    this.expandButton?.remove();
+    this.expandButton = null;
   }
 
   open() {
@@ -219,7 +224,10 @@ export default class PopOut extends HTMLElement {
 
       this.contents.style.minWidth = rect.width + "px";
       this.contents.style.minHeight = rect.height + "px";
-      this.showCloseButton();
+
+      if (this.expandButton) {
+        this.expandButton.ariaLabel = "Collapse";
+      }
 
       this.dispatchEvent(
         new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
@@ -254,7 +262,10 @@ export default class PopOut extends HTMLElement {
       this.internals.states.delete("open");
       this.contents.style.minWidth = "";
       this.contents.style.minHeight = "";
-      this.hideCloseButton();
+
+      if (this.expandButton) {
+        this.expandButton.ariaLabel = "Expand";
+      }
 
       this.dispatchEvent(
         new ToggleEvent("toggle", { oldState: "open", newState: "closed" }),

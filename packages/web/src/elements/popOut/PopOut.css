@@ -15,9 +15,9 @@
   box-sizing: border-box;
 }
 
-#close {
+#expand {
   position: absolute;
-  inset: -22px auto auto -22px;
+  inset: auto calc(50% - 22px) 8px;
   width: 44px;
   height: 44px;
   display: flex;
@@ -28,18 +28,21 @@
   border-radius: 50%;
   border: none;
   outline: none;
-  background-color: rgb(0 0 0 / 15%);
+  background: none;
   -webkit-tap-highlight-color: transparent;
+  rotate: 0deg;
   cursor: pointer;
   transition:
     background-color var(--animation-duration-short) var(--easing),
     opacity var(--animation-duration) var(--easing),
-    scale var(--animation-duration-short) var(--easing);
+    scale var(--animation-duration-short) var(--easing),
+    rotate var(--animation-duration-short) var(--easing);
 
   &:hover,
   &:focus-visible {
     opacity: 1;
     scale: 1.1;
+    background-color: rgb(0 0 0 / 15%);
   }
 
   &:active {
@@ -57,6 +60,10 @@
     height: 24px;
     fill: var(--icon-color);
     pointer-events: none;
+  }
+
+  :host(:state(open)) & {
+    rotate: 180deg;
   }
 }
 
