@@ -21,6 +21,7 @@
     "generate-worker-types": "wrangler types src/types/worker.d.ts --include-runtime=false"
   },
   "dependencies": {
+    "@observablehq/plot": "^0.6.17",
     "@trpc/client": "^11.5.0",
     "entities": "^6.0.0",
     "maplibre-gl": "^5.6.2",
