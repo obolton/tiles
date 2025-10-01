@@ -434,14 +434,15 @@ export default class TableView extends HTMLElement {
 
       case "Delete":
       case "Backspace":
-        event.preventDefault();
-        event.stopPropagation();
-        this.dispatchEvent(
-          new TableEvent("cleartableselection", {
-            bubbles: true,
-            cancelable: true,
-          }),
-        );
+        if (!this.editingCell) {
+          event.preventDefault();
+          this.dispatchEvent(
+            new TableEvent("cleartableselection", {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        }
         break;
     }
   }
