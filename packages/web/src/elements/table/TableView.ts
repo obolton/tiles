@@ -121,6 +121,17 @@ export default class TableView extends HTMLElement {
     }
   }
 
+  get rows() {
+    return this.#rows;
+  }
+
+  set rows(value: number) {
+    if (value !== this.#rows) {
+      this.#rows = value;
+      this.update();
+    }
+  }
+
   get editable() {
     return this.#editable;
   }
@@ -322,12 +333,10 @@ export default class TableView extends HTMLElement {
   ) {
     switch (name) {
       case "columns":
-        this.#columns = value === null ? 0 : parseInt(value, 10);
-        this.update();
+        this.columns = value === null ? 0 : parseInt(value, 10);
         break;
       case "rows":
-        this.#rows = value === null ? 0 : parseInt(value, 10);
-        this.update();
+        this.rows = value === null ? 0 : parseInt(value, 10);
         break;
       case "editable":
         this.editable = value !== null;
