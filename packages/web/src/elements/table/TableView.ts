@@ -412,24 +412,32 @@ export default class TableView extends HTMLElement {
         break;
 
       case "ArrowLeft":
-        event.preventDefault();
-        this.focusCellBefore(event.shiftKey);
+        if (!(this.editingCell && event.shiftKey)) {
+          event.preventDefault();
+          this.focusCellBefore(event.metaKey);
+        }
         break;
 
       case "ArrowRight":
-        event.preventDefault();
-        this.focusCellAfter(event.shiftKey);
+        if (!(this.editingCell && event.shiftKey)) {
+          event.preventDefault();
+          this.focusCellAfter(event.metaKey);
+        }
         break;
 
       case "ArrowUp":
-        event.preventDefault();
-        this.focusCellAbove(event.shiftKey);
+        if (!(this.editingCell && event.shiftKey)) {
+          event.preventDefault();
+          this.focusCellAbove(event.metaKey);
+        }
         break;
 
       case "Enter":
       case "ArrowDown":
-        event.preventDefault();
-        this.focusCellBelow(event.shiftKey);
+        if (!(this.editingCell && event.shiftKey)) {
+          event.preventDefault();
+          this.focusCellBelow(event.metaKey);
+        }
         break;
 
       case "Delete":
