@@ -423,21 +423,36 @@ export default class TableView extends HTMLElement {
       case "ArrowLeft":
         if (!(this.editingCell && event.shiftKey)) {
           event.preventDefault();
-          this.focusCellBefore(event.metaKey);
+
+          if (event.altKey) {
+            this.focusRowStart(event.metaKey);
+          } else {
+            this.focusCellBefore(event.metaKey);
+          }
         }
         break;
 
       case "ArrowRight":
         if (!(this.editingCell && event.shiftKey)) {
           event.preventDefault();
-          this.focusCellAfter(event.metaKey);
+
+          if (event.altKey) {
+            this.focusRowEnd(event.metaKey);
+          } else {
+            this.focusCellAfter(event.metaKey);
+          }
         }
         break;
 
       case "ArrowUp":
         if (!(this.editingCell && event.shiftKey)) {
           event.preventDefault();
-          this.focusCellAbove(event.metaKey);
+
+          if (event.altKey) {
+            this.focusColumnStart(event.metaKey);
+          } else {
+            this.focusCellAbove(event.metaKey);
+          }
         }
         break;
 
@@ -445,7 +460,12 @@ export default class TableView extends HTMLElement {
       case "ArrowDown":
         if (!(this.editingCell && event.shiftKey)) {
           event.preventDefault();
-          this.focusCellBelow(event.metaKey);
+
+          if (event.altKey) {
+            this.focusColumnEnd(event.metaKey);
+          } else {
+            this.focusCellBelow(event.metaKey);
+          }
         }
         break;
 
@@ -990,17 +1010,46 @@ export default class TableView extends HTMLElement {
     return selection && "focus" in selection ? selection.focus : null;
   }
 
+  private focusRowStart(expandSelection = false) {
+    const focus = this.getSelectionFocus();
+    if (!focus) {
+      return;
+    }
+    this.moveSelectionFocus(
+      {
+        ...focus,
+        column: this.getColumnAtIndex(0),
+      },
+      expandSelection,
+    );
+  }
+
+  private focusRowEnd(expandSelection = false) {
+    const focus = this.getSelectionFocus();
+    if (!focus) {
+      return;
+    }
+    this.moveSelectionFocus(
+      {
+        ...focus,
+        column: this.getColumnAtIndex(this.columns - 1),
+      },
+      expandSelection,
+    );
+  }
+
   private focusCellBefore(expandSelection = false) {
     const focus = this.getSelectionFocus();
     if (!focus) {
       return;
     }
-    const { row, column } = focus;
-    const cell = {
-      row,
-      column: this.getColumnAtIndex(Math.max(column.index - 1, 0)),
-    };
-    this.moveSelectionFocus(cell, expandSelection);
+    this.moveSelectionFocus(
+      {
+        ...focus,
+        column: this.getColumnAtIndex(Math.max(focus.column.index - 1, 0)),
+      },
+      expandSelection,
+    );
   }
 
   private focusCellAfter(expandSelection = false) {
@@ -1008,14 +1057,43 @@ export default class TableView extends HTMLElement {
     if (!focus) {
       return;
     }
-    const { row, column } = focus;
-    const cell = {
-      row,
-      column: this.getColumnAtIndex(
-        Math.min(column.index + 1, this.#columns - 1),
-      ),
-    };
-    this.moveSelectionFocus(cell, expandSelection);
+    this.moveSelectionFocus(
+      {
+        ...focus,
+        column: this.getColumnAtIndex(
+          Math.min(focus.column.index + 1, this.#columns - 1),
+        ),
+      },
+      expandSelection,
+    );
+  }
+
+  private focusColumnStart(expandSelection = false) {
+    const focus = this.getSelectionFocus();
+    if (!focus) {
+      return;
+    }
+    this.moveSelectionFocus(
+      {
+        ...focus,
+        row: this.getRowAtIndex(0),
+      },
+      expandSelection,
+    );
+  }
+
+  private focusColumnEnd(expandSelection = false) {
+    const focus = this.getSelectionFocus();
+    if (!focus) {
+      return;
+    }
+    this.moveSelectionFocus(
+      {
+        ...focus,
+        row: this.getRowAtIndex(this.rows - 1),
+      },
+      expandSelection,
+    );
   }
 
   private focusCellAbove(expandSelection = false) {
@@ -1023,12 +1101,13 @@ export default class TableView extends HTMLElement {
     if (!focus) {
       return;
     }
-    const { row, column } = focus;
-    const cell = {
-      row: this.getRowAtIndex(Math.max(row.index - 1, 0)),
-      column,
-    };
-    this.moveSelectionFocus(cell, expandSelection);
+    this.moveSelectionFocus(
+      {
+        ...focus,
+        row: this.getRowAtIndex(Math.max(focus.row.index - 1, 0)),
+      },
+      expandSelection,
+    );
   }
 
   private focusCellBelow(expandSelection = false) {
@@ -1036,12 +1115,13 @@ export default class TableView extends HTMLElement {
     if (!focus) {
       return;
     }
-    const { row, column } = focus;
-    const cell = {
-      row: this.getRowAtIndex(Math.min(row.index + 1, this.#rows - 1)),
-      column,
-    };
-    this.moveSelectionFocus(cell, expandSelection);
+    this.moveSelectionFocus(
+      {
+        ...focus,
+        row: this.getRowAtIndex(Math.min(focus.row.index + 1, this.#rows - 1)),
+      },
+      expandSelection,
+    );
   }
 
   private moveSelectionFocus(cell: Cell, expandSelection = false) {
