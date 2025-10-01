@@ -118,6 +118,7 @@ export default function TableTile({
           },
         },
       );
+      view.focus();
       editorView = view;
 
       format.value = getSelectionFormat(state);
