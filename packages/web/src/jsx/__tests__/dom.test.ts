@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
 import { jsx } from "../jsx";
-import { render } from "../dom";
+import { render, hydrate } from "../dom";
 import { reactive } from "@/utils/reactivity";
 
 describe("render", () => {
@@ -163,5 +163,14 @@ describe("render", () => {
     const element = render(jsx(Component, { name: "Test" })) as HTMLElement;
     expect(element.tagName).toBe("SPAN");
     expect(element.textContent).toBe("Hello Test");
+  });
+});
+
+describe("hydrate", () => {
+  test("inserts a disconnected DOM node", () => {
+    const container = document.createElement("div");
+    const node = document.createElement("span");
+    hydrate(node, container);
+    expect(node.parentNode).toEqual(container);
   });
 });

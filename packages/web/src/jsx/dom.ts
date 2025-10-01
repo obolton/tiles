@@ -204,6 +204,13 @@ function ensureElementNode(node: Node, tagName: string) {
   return element;
 }
 
+function hydrateDOMNode(node: Node, container: Element, index: number) {
+  if (node.parentNode !== container) {
+    container.insertBefore(node, container.childNodes[index] ?? null);
+  }
+  return [node];
+}
+
 function hydrateTextNode(value: string, container: Element, index: number) {
   const node = container.childNodes[index];
 
@@ -341,6 +348,10 @@ export function hydrateNode(
 ): Node[] {
   if (isEmptyNode(node)) {
     return [];
+  }
+
+  if (node instanceof Node) {
+    return hydrateDOMNode(node, container, index);
   }
 
   if (isTextNode(node)) {
