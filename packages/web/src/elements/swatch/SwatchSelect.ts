@@ -56,7 +56,7 @@ export default class SwatchSelect extends HTMLElement {
 
   attributeChangedCallback(
     name: keyof SwatchSelectAttributes,
-    _: string,
+    _: string | null,
     value: string | null,
   ) {
     switch (name) {
@@ -107,9 +107,9 @@ export default class SwatchSelect extends HTMLElement {
   private handleClick(event: MouseEvent) {
     if (event.currentTarget === this.button) {
       if (this.open) {
-        this.items.hidePopover();
+        this.hide();
       } else {
-        this.items.showPopover();
+        this.show();
       }
       return;
     }
@@ -124,6 +124,28 @@ export default class SwatchSelect extends HTMLElement {
     }
     this.value = item.getAttribute("value") ?? "";
     this.dispatchEvent(new Event("change", { bubbles: true }));
+    this.items.hidePopover();
+  }
+
+  // Open and close
+
+  show() {
+    if (this.open) {
+      return;
+    }
+    this.open = true;
+    this.ariaExpanded = "true";
+    this.button.ariaPressed = "true";
+    this.items.showPopover();
+  }
+
+  hide() {
+    if (!this.open) {
+      return;
+    }
+    this.open = false;
+    this.ariaExpanded = "false";
+    this.button.ariaPressed = "false";
     this.items.hidePopover();
   }
 }
