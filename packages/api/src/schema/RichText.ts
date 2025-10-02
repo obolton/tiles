@@ -11,7 +11,7 @@ const TextNodeSchema = z.object({
   text: z.string(),
   format: FormatSchema,
   size: SizeSchema.optional(),
-  pending: z.literal(true).optional(),
+  pending: z.boolean().optional(),
 });
 
 const LinkNodeSchema = z.object({
@@ -83,7 +83,7 @@ const CodeNodeSchema = z.object({
 const QuoteNodeSchema = z.object({
   type: z.literal("quote"),
   children: z.array(
-    z.union([
+    z.discriminatedUnion("type", [
       ParagraphNodeSchema,
       HeadingNodeSchema,
       ListNodeSchema,
@@ -95,7 +95,7 @@ const QuoteNodeSchema = z.object({
 const PendingNodeSchema = z.object({
   type: z.literal("pending"),
   children: z.array(
-    z.union([
+    z.discriminatedUnion("type", [
       ParagraphNodeSchema,
       HeadingNodeSchema,
       ListNodeSchema,
