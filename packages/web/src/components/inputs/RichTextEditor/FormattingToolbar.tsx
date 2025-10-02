@@ -26,6 +26,7 @@ import RejectIcon from "@/icons/reject.svg?jsx";
 import TextSizePopover from "@/components/formatting/TextSizePopover";
 import { showModal } from "@/utils/modals";
 import { classNames } from "@/utils/css";
+import Each from "@/jsx/each";
 import styles from "./FormattingToolbar.module.css";
 import type { EditorView } from "prosemirror-view";
 import type { Command } from "prosemirror-state";
@@ -106,6 +107,10 @@ export default function FormattingToolbar({
         performCommand(insertDateTime(value, time));
       },
     });
+  }
+
+  function insertExistingDropdown(id: string, value: string) {
+    performCommand(insertDropdown(id, value));
   }
 
   function insertNewDropdown() {
@@ -198,6 +203,11 @@ export default function FormattingToolbar({
 
   const onTogglePrompt = () => performCommand(togglePrompt);
 
+  const listFormatter = new Intl.ListFormat(undefined, {
+    type: "unit",
+    style: "short",
+  });
+
   return (
     <floating-toolbar
       className={classNames(styles.toolbar, "bottom-left")}
@@ -284,6 +294,26 @@ export default function FormattingToolbar({
                   Dropdown
                 </button>
               </li>
+              <Each items={Editor.current.dropdowns}>
+                {(dropdown) => (
+                  <li>
+                    <button
+                      type="button"
+                      on:click={() =>
+                        insertExistingDropdown(
+                          dropdown.id,
+                          dropdown.options[0]?.value ?? "",
+                        )
+                      }
+                    >
+                      <DropdownIcon aria-hidden="true" />
+                      {listFormatter.format(
+                        dropdown.options.slice(0, 5).map(({ value }) => value),
+                      )}
+                    </button>
+                  </li>
+                )}
+              </Each>
             </menu>
           </popover-menu>
         </li>
