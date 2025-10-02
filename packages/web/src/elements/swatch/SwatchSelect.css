@@ -14,15 +14,13 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: transparent;
+  background: none;
   border: none;
   border-radius: 50%;
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  transition:
-    background-color var(--animation-duration-short) var(--easing),
-    scale var(--animation-duration-short) var(--easing);
+  transition: scale var(--animation-duration-short) var(--easing);
 
   & > svg,
   & ::slotted(svg) {
@@ -45,17 +43,22 @@ button {
   }
 
   :host([aria-selected="true"]) & {
-    background-color: rgb(0 0 0 / 15%);
+    background-color: rgb(0 0 0 / 10%);
   }
 
-  &:hover {
+  &:hover:enabled:not(:active) {
     scale: 1.1;
-    background-color: rgb(0 0 0 / 15%);
+    background-color: rgb(0 0 0 / 10%);
+  }
+
+  &:active:enabled {
+    scale: 1;
+    background-color: rgb(0 0 0 / 20%);
   }
 
   &[aria-pressed="true"] {
     scale: 1.1;
-    background-color: rgb(0 0 0 / 25%);
+    background-color: rgb(0 0 0 / 20%);
 
     & > svg {
       opacity: 1;
