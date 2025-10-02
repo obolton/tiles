@@ -87,6 +87,7 @@ export type DeleteRowsSchema = z.infer<typeof DeleteRowsSchema>;
 export const InsertColumnSchema = z.object({
   pageId: z.uuid(),
   tableId: z.uuid(),
+  title: z.string().nullable().optional(),
   width: z.number().min(16).max(800).optional(),
   afterColumnId: z.uuid().nullable(),
 });
@@ -104,6 +105,7 @@ export const UpdateColumnSchema = z.object({
   pageId: z.uuid(),
   tableId: z.uuid(),
   columnId: z.uuid(),
+  title: z.string().nullable().optional(),
   width: z.number().min(16).max(800).optional(),
 });
 export type UpdateColumnSchema = z.infer<typeof UpdateColumnSchema>;

@@ -21,6 +21,7 @@ import type { ColorSchema } from "@/schema/Color.ts";
 
 export const TABLE_COLUMN_FIELDS = {
   id: true,
+  title: true,
   width: true,
 } as const satisfies Prisma.TableColumnSelect<ExtensionArgs>;
 
@@ -343,6 +344,7 @@ export async function getColumnOrderKeys(
 export async function insertColumn({
   pageId,
   tableId,
+  title,
   width,
   afterColumnId,
 }: InsertColumnSchema) {
@@ -360,6 +362,7 @@ export async function insertColumn({
       data: {
         tableId,
         order,
+        title,
         width,
       },
       select: TABLE_COLUMN_FIELDS,
@@ -400,6 +403,7 @@ export async function updateColumn({
   pageId,
   tableId,
   columnId,
+  title,
   width,
 }: UpdateColumnSchema) {
   return prisma.$transaction(async (transaction) => {
@@ -415,6 +419,7 @@ export async function updateColumn({
         tableId,
       },
       data: {
+        title,
         width,
       },
       select: TABLE_COLUMN_FIELDS,
