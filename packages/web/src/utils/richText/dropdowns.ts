@@ -91,6 +91,7 @@ export function dropdowns() {
             if (!select) {
               return;
             }
+            view.focus();
             select.remove();
             select = null;
             button.ariaExpanded = "false";
