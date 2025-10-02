@@ -79,7 +79,7 @@ export default class TableView extends HTMLElement {
   getColumn: (index: number) => { id?: string; width: number } =
     defaultGetColumn;
   getRow: (index: number) => { id?: string; height: number } = defaultGetRow;
-  updateCell?: (row: number, column: number, element: Element) => void;
+  updateCell?: (row: Row, column: Column, element: Element) => void;
 
   private scrollContainer?: HTMLElement;
   private contents: HTMLElement;
@@ -1192,13 +1192,13 @@ export default class TableView extends HTMLElement {
     return cell;
   }
 
-  private getCell(row: number, column: number) {
+  private getCell(row: Row, column: Column) {
     if (this.buffer.length === 0) {
       this.fillCellBuffer();
     }
 
     const cell = this.buffer.pop()!;
-    cell.ariaColIndex = column.toString();
+    cell.ariaColIndex = column.index.toString();
     if (this.editable) {
       cell.setAttribute("tabindex", "-1");
     }
@@ -1244,7 +1244,7 @@ export default class TableView extends HTMLElement {
     width: number,
     id?: string,
   ) {
-    if (!this.colGroup || !this.tableHead || !this.tableBody) {
+    if (!this.colGroup || !this.tableHead) {
       return;
     }
 
@@ -1264,16 +1264,16 @@ export default class TableView extends HTMLElement {
     const headerRow = this.tableHead.rows[0]!;
     headerRow.insertBefore(th, headerRow.children[position + 1] ?? null);
 
-    const rows = this.tableBody.rows;
-
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i]!;
-      const cell = this.getCell(this.firstVisibleRow + i, columnIndex);
-      row.insertBefore(cell, row.children[position + 1] ?? null);
-    }
-
     const column = new Column({ table: this, id, width, element: col });
     this.visibleColumns.splice(position, 0, column);
+
+    for (const row of this.visibleRows) {
+      const cell = this.getCell(row, column);
+      row.element.insertBefore(
+        cell,
+        row.element.children[position + 1] ?? null,
+      );
+    }
   }
 
   private insertRow(
@@ -1286,26 +1286,22 @@ export default class TableView extends HTMLElement {
       return;
     }
 
-    const cells = [];
-    for (let i = 0; i < this.visibleColumns.length; i++) {
-      const cell = this.getCell(rowIndex, this.firstVisibleColumn + i);
-      cells.push(cell);
-    }
-
     const element = this.getRowFromBuffer();
     if (element.id) {
       element.dataset.id = id;
     }
     element.style.height = height + "px";
     element.ariaRowIndex = rowIndex.toString();
-    element.append(...cells);
-    this.tableBody.insertBefore(
-      element,
-      this.tableBody.children[position] ?? null,
-    );
 
     const row = new Row({ table: this, id, height, element });
     this.visibleRows.splice(position, 0, row);
+
+    for (const column of this.visibleColumns) {
+      const cell = this.getCell(row, column);
+      element.append(cell);
+    }
+
+    this.tableBody.insertBefore(element, this.tableBody.rows[position] ?? null);
   }
 
   private fillTop() {

@@ -23,6 +23,8 @@ import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
 import type { TableProperties } from "@/types/tiles";
 import type { TableEvent } from "@/elements/table/events";
+import type Column from "@/elements/table/Column";
+import type Row from "@/elements/table/Row";
 import type { Color } from "@/utils/color";
 import type { RichText as RichTextType } from "@/utils/richText/types";
 
@@ -65,15 +67,13 @@ export default function TableTile({
 
   function ref(element: TableView) {
     tableView = element;
-    tableView.updateCell = updateCell;
   }
 
-  const updateCell = (row: number, column: number, cell: Element) => {
-    const columnId = columns.value[column]?.id;
-    if (!columnId) {
+  const updateCell = (row: Row, column: Column, cell: Element) => {
+    if (!column.id) {
       return;
     }
-    const value = rows.value[row]?.data[columnId];
+    const value = rows.value[row.index]?.data[column.id];
     if (!value) {
       return;
     }
@@ -328,6 +328,7 @@ export default function TableTile({
         on:cleartableselection={onClearSelection}
         $getColumn={(index) => columns.value[index]!}
         $getRow={(index) => rows.value[index]!}
+        $updateCell={updateCell}
       >
         <TableViewContents rows={rows} columns={columns}>
           {(value) =>
