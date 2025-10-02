@@ -163,15 +163,19 @@
 
   & button[role="combobox"] {
     appearance: none;
-    padding: 4px;
-    margin: -4px;
+    margin: 0;
+    padding: 0.25em;
     font: inherit;
     line-height: 1;
     color: inherit;
     background: rgb(0 0 0 / 10%);
     border: none;
-    border-radius: 8px;
+    border-radius: 0.5em;
     user-select: all;
+
+    &:hover {
+      background-color: rgb(0 0 0 / 20%);
+    }
   }
 
   & .context {
