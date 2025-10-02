@@ -122,12 +122,12 @@ a.floating {
     outline: var(--focus-outline);
   }
 
-  &:hover:enabled:not(:active) {
+  &:hover:not(:active, :disabled) {
     scale: 1.1;
     background-color: rgb(0 0 0 / 10%);
   }
 
-  &:active:enabled {
+  &:active:not(:disabled) {
     scale: 1;
     background-color: rgb(0 0 0 / 20%);
   }
