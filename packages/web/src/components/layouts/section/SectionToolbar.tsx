@@ -48,7 +48,6 @@ export default function SectionToolbar({
           <li role="presentation">
             <BackgroundPicker
               id={`${section.id}-background`}
-              workspaceId={editor.workspaceId}
               value={section.background}
               onChange={setBackground}
             />

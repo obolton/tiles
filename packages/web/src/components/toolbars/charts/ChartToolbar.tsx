@@ -39,7 +39,6 @@ export default function ChartToolbar({
         <li role="presentation">
           <BackgroundPicker
             id={`${id}-background`}
-            workspaceId={Editor.current.workspaceId}
             value={background}
             onChange={setBackground}
           />

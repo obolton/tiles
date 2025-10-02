@@ -1,22 +1,26 @@
 import { ACCEPT_IMAGE_TYPES } from "@/utils/media";
 import { handleError } from "@/utils/errors";
 import { uploadMedia } from "@/utils/media";
+import Editor from "@/editor/Editor";
 import styles from "./ImagePanel.module.css";
 import type FilePicker from "@/elements/filePicker/FilePicker";
 import type { ImageBackground } from "./types";
 
 export interface ImagePanelProps {
-  workspaceId: string;
   onChange: (background: ImageBackground) => void;
 }
 
-export default function ImagePanel({ workspaceId, onChange }: ImagePanelProps) {
+export default function ImagePanel({ onChange }: ImagePanelProps) {
   function onSelectFile(event: Event) {
     const file = (event.currentTarget as FilePicker).file;
     if (!file) {
       return;
     }
-    uploadMedia({ file, type: "image", workspaceId })
+    uploadMedia({
+      file,
+      type: "image",
+      workspaceId: Editor.current.workspaceId,
+    })
       .then((imageKey) => onChange({ type: "image", imageKey }))
       .catch(handleError);
   }

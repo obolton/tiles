@@ -1,19 +1,18 @@
 import Prompt from "@/components/prompt/Prompt";
 import { generateImage } from "@/utils/ai";
 import { handleError } from "@/utils/errors";
+import Editor from "@/editor/Editor";
 import type { ImageBackground } from "./types";
 
 export interface GenerateImagePanelProps {
-  workspaceId: string;
   onChange: (background: ImageBackground) => void;
 }
 
 export default function GenerateImagePanel({
-  workspaceId,
   onChange,
 }: GenerateImagePanelProps) {
   function onSubmit(prompt: string) {
-    return generateImage(prompt, workspaceId)
+    return generateImage(prompt, Editor.current.workspaceId)
       .then((imageKey) => onChange({ type: "image", imageKey }))
       .catch(handleError);
   }

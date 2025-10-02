@@ -12,13 +12,11 @@ import type PopoverMenu from "@/elements/menu/PopoverMenu";
 import type { JSX } from "@/jsx/jsx";
 
 export interface BackgroundPopoverProps extends JSX.Attributes<PopoverMenu> {
-  workspaceId: string;
   value: Reactive<Background | null>;
   onChange: (value: Background | null) => void;
 }
 
 export default function BackgroundPopover({
-  workspaceId,
   value,
   onChange,
   ...props
@@ -59,11 +57,11 @@ export default function BackgroundPopover({
       </tab-panel>
 
       <tab-panel id="image-tab-panel">
-        <ImagePanel workspaceId={workspaceId} onChange={onChange} />
+        <ImagePanel onChange={onChange} />
       </tab-panel>
 
       <tab-panel id="generate-tab-panel">
-        <GenerateImagePanel workspaceId={workspaceId} onChange={onChange} />
+        <GenerateImagePanel onChange={onChange} />
       </tab-panel>
     </popover-menu>
   );

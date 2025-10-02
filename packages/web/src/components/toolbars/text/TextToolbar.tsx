@@ -99,7 +99,6 @@ export default function TextToolbar({
         <li role="presentation">
           <BackgroundPicker
             id={`${id}-background`}
-            workspaceId={editor.workspaceId}
             value={background}
             onChange={setBackground}
           />
