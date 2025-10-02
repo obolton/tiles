@@ -75,7 +75,7 @@ export interface HeadingNode extends BaseNode {
 
 export interface QuoteNode extends BaseNode {
   type: "quote";
-  children: Exclude<BlockNode, { type: "quote" }>[];
+  children: Exclude<BlockNode, { type: "quote" | "pending" }>[];
 }
 
 export interface CodeNode extends BaseNode {
