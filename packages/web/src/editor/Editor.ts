@@ -16,6 +16,7 @@ import type {
   Tile,
   SectionWithTiles,
   TextProperties,
+  TableProperties,
 } from "@/types/tiles";
 import type { Dropdown } from "@/types/dropdowns";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
@@ -777,6 +778,19 @@ export default class Editor {
       pageId: this.pageId,
       ...data,
     });
+  }
+
+  getTableColumnData(tableId: string, columnId: string) {
+    const table = this.tiles.value.find(
+      (tile): tile is TableProperties =>
+        tile.type === "TABLE" && tile.id === tableId,
+    );
+    if (!table) {
+      throw new Error(`Invalid table ID: ${tableId}`);
+    }
+    return table.rows.derive((rows) =>
+      rows.map((row) => row.data[columnId] ?? null),
+    );
   }
 
   // Charts
