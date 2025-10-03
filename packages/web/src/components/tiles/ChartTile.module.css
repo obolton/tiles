@@ -1,0 +1,11 @@
+.chart {
+  position: absolute;
+  inset: 0;
+  margin: 16px;
+
+  & > :global(.chart) {
+    font: inherit;
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+  }
+}
