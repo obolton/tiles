@@ -1,5 +1,6 @@
 import Tile from "./Tile";
 import ChartToolbar from "@/components/toolbars/charts/ChartToolbar";
+import If from "@/jsx/if";
 import Editor from "@/editor/Editor";
 import { toPlainText } from "@/utils/richText/plainText";
 import styles from "./ChartTile.module.css";
@@ -55,15 +56,9 @@ export default function ChartTile({
 
   return (
     <Tile background={background} anchorName={anchorName}>
-      {hasFocus.derive((value) =>
-        value ? (
-          <ChartToolbar
-            id={id}
-            background={background}
-            anchorName={anchorName}
-          />
-        ) : null,
-      )}
+      <If condition={hasFocus}>
+        <ChartToolbar id={id} background={background} anchorName={anchorName} />
+      </If>
 
       <chart-view ref={ref} className={styles.chart} $series={data.value} />
     </Tile>

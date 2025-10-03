@@ -13,6 +13,7 @@ import { handleError } from "@/utils/errors";
 import { reactive, flag } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { render } from "@/jsx/dom";
+import If from "@/jsx/if";
 import { moveElement } from "@/utils/arrays";
 import { viewTransition } from "@/utils/transitions";
 import TableViewContents from "@/elements/table/TableViewContents";
@@ -356,41 +357,37 @@ export default function TableTile({
         </TableViewContents>
       </table-view>
 
-      {hasFocus.derive((value) =>
-        value ? (
-          <>
-            <TableToolbar
-              editor={editor}
-              id={id}
-              sectionId={sectionId}
-              background={background}
-              rows={rows}
-              columns={columns}
-              numRows={numRows}
-              getTable={getTable}
-              anchorName={anchorName}
-            />
+      <If condition={hasFocus}>
+        <TableToolbar
+          editor={editor}
+          id={id}
+          sectionId={sectionId}
+          background={background}
+          rows={rows}
+          columns={columns}
+          numRows={numRows}
+          getTable={getTable}
+          anchorName={anchorName}
+        />
 
-            <FormattingToolbar
-              editor={editor}
-              format={format}
-              prompting={prompting}
-              getEditorView={getEditorView}
-              performCommand={performCommand}
-            >
-              <ul role="group">
-                <li role="presentation">
-                  <ColorPicker
-                    id={`${id}-color-picker`}
-                    value={textColor}
-                    onChange={onChangeTextColor}
-                  />
-                </li>
-              </ul>
-            </FormattingToolbar>
-          </>
-        ) : null,
-      )}
+        <FormattingToolbar
+          editor={editor}
+          format={format}
+          prompting={prompting}
+          getEditorView={getEditorView}
+          performCommand={performCommand}
+        >
+          <ul role="group">
+            <li role="presentation">
+              <ColorPicker
+                id={`${id}-color-picker`}
+                value={textColor}
+                onChange={onChangeTextColor}
+              />
+            </li>
+          </ul>
+        </FormattingToolbar>
+      </If>
     </Tile>
   );
 }

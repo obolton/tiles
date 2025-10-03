@@ -2,6 +2,7 @@ import Canvas from "@/components/layouts/canvas/Canvas";
 import { flag, Computed } from "@/utils/reactivity";
 import SectionToolbar from "./SectionToolbar";
 import { toCSSColor } from "@/utils/color";
+import If from "@/jsx/if";
 import styles from "./Section.module.css";
 import type { SectionWithTiles } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
@@ -59,9 +60,9 @@ export default function Section({ editor, section }: SectionProps) {
       on:focusin={onFocusIn}
       on:focusout={onFocusOut}
     >
-      {hasFocus.derive((value) =>
-        value ? <SectionToolbar editor={editor} section={section} /> : null,
-      )}
+      <If condition={hasFocus}>
+        <SectionToolbar editor={editor} section={section} />
+      </If>
 
       <Canvas
         editor={editor}

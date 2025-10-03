@@ -2,6 +2,7 @@ import { serialize } from "@/utils/richText/serialize";
 import RichText from "@/components/text/RichText";
 import TextToolbar from "@/components/toolbars/text/TextToolbar";
 import Tile from "./Tile";
+import If from "@/jsx/if";
 import styles from "./TextTile.module.css";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/colors/ColorPicker";
@@ -151,19 +152,17 @@ export default function TextTile({
       border={background.derive((value) => (value ? "outside" : "none"))}
       anchorName={anchorName}
     >
-      {hasFocus.derive((value) =>
-        value ? (
-          <TextToolbar
-            editor={editor}
-            id={id}
-            placementId={placementId}
-            background={background}
-            align={align}
-            block={block}
-            anchorName={anchorName}
-          />
-        ) : null,
-      )}
+      <If condition={hasFocus}>
+        <TextToolbar
+          editor={editor}
+          id={id}
+          placementId={placementId}
+          background={background}
+          align={align}
+          block={block}
+          anchorName={anchorName}
+        />
+      </If>
 
       {block.derive((value) =>
         value ? (

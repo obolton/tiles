@@ -2,6 +2,7 @@ import { showModal } from "@/utils/modals";
 import Tile from "./Tile";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
+import If from "@/jsx/if";
 import styles from "./LinkTile.module.css";
 import type { Reactive } from "@/utils/reactivity";
 import type { LinkModalResult } from "@/components/modals/LinkModal";
@@ -70,25 +71,20 @@ export default function LinkTile({
         <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
       </a>
 
-      {hasFocus.derive((value) =>
-        value ? (
-          <floating-toolbar
-            data-tooltip-position="top"
-            aria-label="Link toolbar"
+      <If condition={hasFocus}>
+        <floating-toolbar data-tooltip-position="top" aria-label="Link toolbar">
+          <button
+            role="menuitem"
+            type="button"
+            className="floating"
+            aria-label="Edit link"
+            data-tooltip="Edit link"
+            onclick={editLink}
           >
-            <button
-              role="menuitem"
-              type="button"
-              className="floating"
-              aria-label="Edit link"
-              data-tooltip="Edit link"
-              onclick={editLink}
-            >
-              <LinkIcon aria-hidden="true" />
-            </button>
-          </floating-toolbar>
-        ) : null,
-      )}
+            <LinkIcon aria-hidden="true" />
+          </button>
+        </floating-toolbar>
+      </If>
     </Tile>
   );
 }

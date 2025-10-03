@@ -1,5 +1,6 @@
 import Tile from "./Tile";
 import MapToolbar from "@/components/toolbars/maps/MapToolbar";
+import If from "@/jsx/if";
 import styles from "./MapTile.module.css";
 import type MapEvent from "@/elements/maps/MapEvent";
 import type MapView from "@/elements/maps/MapView";
@@ -64,17 +65,15 @@ export default function MapTile({
 
   return (
     <Tile border="inside" anchorName={anchorName}>
-      {hasFocus.derive((value) =>
-        value ? (
-          <MapToolbar
-            id={id}
-            editor={editor}
-            places={places}
-            getMapView={getMapView}
-            anchorName={anchorName}
-          />
-        ) : null,
-      )}
+      <If condition={hasFocus}>
+        <MapToolbar
+          id={id}
+          editor={editor}
+          places={places}
+          getMapView={getMapView}
+          anchorName={anchorName}
+        />
+      </If>
 
       <pop-out className={styles["pop-out"]}>
         <map-view
