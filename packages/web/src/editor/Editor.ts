@@ -2,7 +2,7 @@ import client from "@/api/client";
 import { showModal } from "@/utils/modals";
 import { preloadImage, uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { reactive, flag, record } from "@/utils/reactivity";
+import { reactive, flag, record, array } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
 import { isEditMode } from "@/utils/edit";
@@ -22,7 +22,7 @@ import type { Dropdown } from "@/types/dropdowns";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
 import type { Color } from "@/utils/color";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive, ReactiveArray } from "@/utils/reactivity";
 import type { EditorState } from "prosemirror-state";
 
 type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
@@ -94,13 +94,13 @@ export default class Editor {
   readonly font: Reactive<FontId>;
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
-  readonly sections: Reactive<SectionWithTiles[]>;
+  readonly sections: ReactiveArray<SectionWithTiles>;
   readonly tiles: Reactive<Tile[]>;
-  readonly access: Reactive<PageAccess[]>;
-  readonly invites: Reactive<Invite[]>;
+  readonly access: ReactiveArray<PageAccess>;
+  readonly invites: ReactiveArray<Invite>;
   readonly author: User;
   readonly selection: Reactive<Set<Tile>>;
-  readonly dropdowns: Reactive<Dropdown[]>;
+  readonly dropdowns: ReactiveArray<Dropdown>;
 
   static init(page: Page) {
     if (this.#current) {
@@ -138,14 +138,14 @@ export default class Editor {
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
     this.tiles = reactive(page.tiles.map(getReactiveTile));
-    this.sections = reactive(
+    this.sections = array(
       page.sections.map((section) => getReactiveSection(section, this.tiles)),
     );
-    this.access = reactive(page.access);
-    this.invites = reactive(page.invites);
+    this.access = array(page.access);
+    this.invites = array(page.invites);
     this.author = page.author;
     this.selection = reactive(new Set());
-    this.dropdowns = reactive(page.dropdowns);
+    this.dropdowns = array(page.dropdowns);
 
     if (!IS_SERVER) {
       this.enablePointerEvents();
