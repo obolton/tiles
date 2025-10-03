@@ -1,3 +1,8 @@
+enum PageType {
+  DOCUMENT
+  PRESENTATION
+}
+
 enum Font {
   MODERN
   CLASSIC
@@ -34,6 +39,7 @@ model Page {
   authorId      String    @map("author_id") @db.Uuid
   folderId      String?   @map("folder_id") @db.Uuid
   published     Boolean   @default(false)
+  type          PageType  @default(DOCUMENT)
   title         String    @db.VarChar(100)
   lightness     Float     @default(1) @db.Real
   chroma        Float     @default(0) @db.Real
