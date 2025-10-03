@@ -35,12 +35,6 @@ declare global {
     tileresizestart: TileResizeEvent;
     tileresize: TileResizeEvent;
     tileresizeend: TileResizeEvent;
-    resizetablecolumn: TableEvent;
-    movetablecolumn: TableEvent;
-    movetablerow: TableEvent;
-    cleartableselection: TableEvent;
-    edittablecellstart: TableEvent;
-    edittablecellend: TableEvent;
   }
 }
 

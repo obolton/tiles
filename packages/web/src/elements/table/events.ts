@@ -1,13 +1,20 @@
 import type Column from "./Column";
 import type Row from "./Row";
 
-export type TableEventType =
-  | "resizetablecolumn"
-  | "movetablecolumn"
-  | "movetablerow"
-  | "cleartableselection"
-  | "edittablecellstart"
-  | "edittablecellend";
+export interface TableEventMap {
+  resizetablecolumn: TableEvent;
+  movetablecolumn: TableEvent;
+  movetablerow: TableEvent;
+  cleartableselection: TableEvent;
+  edittablecellstart: TableEvent;
+  edittablecellend: TableEvent;
+  edittablecolumnstart: TableEvent;
+  edittablecolumnend: TableEvent;
+}
+
+declare global {
+  interface HTMLElementEventMap extends TableEventMap {}
+}
 
 export interface TableEventInit extends EventInit {
   column?: Column;
@@ -22,7 +29,7 @@ export class TableEvent extends Event {
   readonly width?: number;
   readonly afterIndex?: number;
 
-  constructor(type: TableEventType, options?: TableEventInit) {
+  constructor(type: keyof TableEventMap, options?: TableEventInit) {
     const { column, row, width, afterIndex, ...init } = options || {};
     super(type, init);
     this.column = column;
