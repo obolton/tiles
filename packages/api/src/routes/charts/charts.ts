@@ -13,7 +13,12 @@ import type { Prisma } from "@prisma/client";
 export const CHART_SERIES_FIELDS = {
   id: true,
   title: true,
-  columnId: true,
+  column: {
+    select: {
+      id: true,
+      tableId: true,
+    },
+  },
 } as const satisfies Prisma.ChartSeriesSelect<ExtensionArgs>;
 
 export const CHART_FIELDS = {
