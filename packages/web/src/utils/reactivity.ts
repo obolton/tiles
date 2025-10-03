@@ -105,6 +105,31 @@ export function flag(initialValue: boolean) {
   return new ReactiveFlag(initialValue);
 }
 
+export class ReactiveArray<T>
+  extends ReactiveValue<T[]>
+  implements Iterable<T>
+{
+  [Symbol.iterator]() {
+    return this.value[Symbol.iterator]();
+  }
+
+  entries() {
+    return this.value.entries();
+  }
+
+  keys() {
+    return this.value.keys();
+  }
+
+  values() {
+    return this.value.values();
+  }
+}
+
+export function array<T>(initialValue: T[]) {
+  return new ReactiveArray(initialValue);
+}
+
 type Transform<Input extends Reactive[], Value> = (
   ...values: ReactiveTypes<Input>
 ) => Value;
