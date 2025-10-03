@@ -94,6 +94,17 @@ table-view {
         width: 100cqw !important;
       }
     }
+
+    & > input[type="text"] {
+      position: absolute;
+      inset: 0;
+      min-width: auto;
+      font: inherit;
+      padding: 0 8px;
+      background: none;
+      border: none;
+      border-radius: 0;
+    }
   }
 
   & td {

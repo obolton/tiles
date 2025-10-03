@@ -166,6 +166,23 @@ export default function TableTile({
     });
   };
 
+  const onEditColumn = (event: TableEvent) => {
+    const { column } = event;
+    if (!column || !column.header) {
+      return;
+    }
+
+    const input = document.createElement("input");
+    input.type = "text";
+    column.header.appendChild(input);
+    input.focus();
+  };
+
+  const onEditColumnEnd = (event: TableEvent) => {
+    const { column } = event;
+    column?.header?.querySelector("input")?.remove();
+  };
+
   const onResizeColumn = async (event: TableEvent) => {
     const { column, width } = event;
     if (!column || !column.id || !width) {
@@ -322,6 +339,8 @@ export default function TableTile({
         editable={isEditable}
         on:edittablecellstart={onEditCell}
         on:edittablecellend={onEditCellEnd}
+        on:edittablecolumnstart={onEditColumn}
+        on:edittablecolumnend={onEditColumnEnd}
         on:resizetablecolumn={onResizeColumn}
         on:movetablecolumn={onMoveColumn}
         on:movetablerow={onMoveRow}
