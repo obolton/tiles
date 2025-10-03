@@ -106,6 +106,7 @@ export default class TableView extends HTMLElement {
   private isDraggingRange = false;
   private rangeSelection: RangeSelection | null = null;
   private editingCell: HTMLTableCellElement | null = null;
+  private editingColumn: Column | null = null;
   private virtualize = false;
   private dropIndicator: HTMLElement | null = null;
   private editAbortController: AbortController | null = null;
@@ -516,6 +517,21 @@ export default class TableView extends HTMLElement {
           this.addSelection(selection);
         } else {
           this.setSelection(selection);
+
+          if (this.editingColumn !== column) {
+            this.endEditingColumn();
+            const allowEdit = column.element.dispatchEvent(
+              new TableEvent("edittablecolumnstart", {
+                column,
+                bubbles: true,
+                cancelable: true,
+              }),
+            );
+            if (allowEdit) {
+              event.preventDefault();
+              this.editingColumn = column;
+            }
+          }
         }
       }
       return;
@@ -896,6 +912,7 @@ export default class TableView extends HTMLElement {
 
   private setSelection(selection: Selection) {
     this.selection.clear();
+    this.endEditingColumn();
     this.selection.add(selection);
     this.rangeSelection = "anchor" in selection ? selection : null;
     this.redrawSelection();
@@ -912,6 +929,7 @@ export default class TableView extends HTMLElement {
     this.stopDraggingRangeSelection();
     this.rangeSelection = null;
     this.endEditingCell();
+    this.endEditingColumn();
     this.redrawSelection();
 
     const focused = getFocusedElementWithin(this);
@@ -1152,6 +1170,21 @@ export default class TableView extends HTMLElement {
       }),
     );
     this.editingCell = null;
+  }
+
+  private endEditingColumn() {
+    if (!this.editingColumn) {
+      return;
+    }
+
+    this.editingColumn.element.dispatchEvent(
+      new TableEvent("edittablecolumnend", {
+        column: this.editingColumn,
+        bubbles: true,
+        cancelable: false,
+      }),
+    );
+    this.editingColumn = null;
   }
 
   // Column sizing
