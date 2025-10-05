@@ -1,12 +1,21 @@
 import { PrismaClient } from "@prisma/client";
 
-// Seed record IDs
+const SEED_WORKSPACE_ID = "31042e0b-f7e7-4fe1-a361-28780bf53ee9";
 const SEED_USER_ID = "d3a3e353-6e5f-46b4-be4b-d55055901c29";
 const SEED_PAGE_ID = "b8c96309-cc54-445b-a274-98b6be12c43f";
 
 const prisma = new PrismaClient();
 
 async function seed() {
+  await prisma.workspace.upsert({
+    select: { id: true },
+    where: { id: SEED_WORKSPACE_ID },
+    update: {},
+    create: {
+      id: SEED_WORKSPACE_ID,
+      name: "Test Workspace",
+    },
+  });
   await prisma.user.upsert({
     where: { email: "test@test.com" },
     update: {},
@@ -15,9 +24,19 @@ async function seed() {
       name: "Test User",
       email: "test@test.com",
       emailVerified: false,
+      workspaceMemberships: {
+        create: {
+          workspace: {
+            connect: {
+              id: SEED_WORKSPACE_ID,
+            },
+          },
+        },
+      },
       pages: {
         create: {
           id: SEED_PAGE_ID,
+          workspaceId: SEED_WORKSPACE_ID,
           title: "Hello World",
         },
       },
