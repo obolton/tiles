@@ -79,7 +79,8 @@ export default class TableView extends HTMLElement {
   getColumn: (index: number) => { id?: string; width: number } =
     defaultGetColumn;
   getRow: (index: number) => { id?: string; height: number } = defaultGetRow;
-  updateCell?: (row: Row, column: Column, element: Element) => void;
+  updateCell?: (row: Row, column: Column, cell: HTMLTableCellElement) => void;
+  updateColumnHeader?: (column: Column, cell: HTMLTableCellElement) => void;
 
   private scrollContainer?: HTMLElement;
   private contents: HTMLElement;
@@ -97,7 +98,7 @@ export default class TableView extends HTMLElement {
   private height = 0;
   private contentWidth = 0;
   private contentHeight = 0;
-  private buffer: HTMLElement[] = [];
+  private buffer: HTMLTableCellElement[] = [];
   private rowBuffer: HTMLTableRowElement[] = [];
   private visibleColumns: Column[] = [];
   private visibleRows: Row[] = [];
@@ -486,7 +487,11 @@ export default class TableView extends HTMLElement {
   }
 
   private handlePointerDown(event: PointerEvent) {
-    if (event.button !== PRIMARY_MOUSE_BUTTON || !this.editable) {
+    if (
+      event.button !== PRIMARY_MOUSE_BUTTON ||
+      !this.editable ||
+      event.defaultPrevented
+    ) {
       return;
     }
 
@@ -520,6 +525,7 @@ export default class TableView extends HTMLElement {
 
           if (this.editingColumn !== column) {
             this.endEditingColumn();
+            column.header?.classList.add("edit");
             const allowEdit = column.element.dispatchEvent(
               new TableEvent("edittablecolumnstart", {
                 column,
@@ -1173,18 +1179,19 @@ export default class TableView extends HTMLElement {
   }
 
   private endEditingColumn() {
-    if (!this.editingColumn) {
+    const column = this.editingColumn;
+    if (!column) {
       return;
     }
-
-    this.editingColumn.element.dispatchEvent(
+    this.editingColumn = null;
+    column.header?.classList.remove("edit");
+    column.element.dispatchEvent(
       new TableEvent("edittablecolumnend", {
-        column: this.editingColumn,
+        column,
         bubbles: true,
         cancelable: false,
       }),
     );
-    this.editingColumn = null;
   }
 
   // Column sizing
@@ -1294,11 +1301,13 @@ export default class TableView extends HTMLElement {
     th.ariaColIndex = columnIndex.toString();
     th.appendChild(this.createResizeHandle());
     makeDraggable(th, { constrain: "horizontal", clone: true });
-    const headerRow = this.tableHead.rows[0]!;
-    headerRow.insertBefore(th, headerRow.children[position + 1] ?? null);
 
     const column = new Column({ table: this, id, width, element: col });
+    this.updateColumnHeader?.(column, th);
+
     this.visibleColumns.splice(position, 0, column);
+    const headerRow = this.tableHead.rows[0]!;
+    headerRow.insertBefore(th, headerRow.children[position + 1] ?? null);
 
     for (const row of this.visibleRows) {
       const cell = this.getCell(row, column);
