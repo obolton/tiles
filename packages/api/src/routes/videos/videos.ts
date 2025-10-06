@@ -1,10 +1,9 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma";
 import type { Prisma } from "@prisma/client";
-import { getLinkMetadata } from "@/utils/linkMetadata.ts";
-import { getVideoInfo } from "@/utils/videos.ts";
-import { cleanUserInput } from "@/utils/text.ts";
-import type { CreateVideoSchema, UpdateVideoSchema } from "./schema.ts";
-import { createTilePlacement } from "../tiles/tiles.ts";
+import { getLinkMetadata } from "@/utils/linkMetadata";
+import { getVideoInfo } from "@/utils/videos";
+import type { CreateVideoSchema, UpdateVideoSchema } from "./schema";
+import { createTilePlacement } from "../tiles/tiles";
 
 export const VIDEO_FIELDS = {
   id: true,
@@ -40,8 +39,8 @@ export async function createVideo({
         videoType,
         videoId,
         originalImageUrl: imageUrl,
-        title: cleanUserInput(title ?? ""),
-        description: description ? cleanUserInput(description) : null,
+        title: title?.trim() ?? "",
+        description: description?.trim() || null,
       },
       select: VIDEO_FIELDS,
     });
@@ -75,7 +74,7 @@ export async function updateVideo({ pageId, id, title }: UpdateVideoSchema) {
       id,
     },
     data: {
-      title: cleanUserInput(title ?? ""),
+      title: title?.trim() ?? "",
     },
     select: VIDEO_FIELDS,
   });
