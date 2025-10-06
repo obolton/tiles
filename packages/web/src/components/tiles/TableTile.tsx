@@ -70,15 +70,14 @@ export default function TableTile({
     tableView = element;
   }
 
-  const updateCell = (row: Row, column: Column, cell: Element) => {
+  function updateCell(row: Row, column: Column, cell: Element) {
     if (!column.id) {
       return;
     }
     const value = rows.value[row.index]?.data[column.id];
     if (!value) {
       return;
-    }
-    if (typeof value === "string") {
+    } else if (typeof value === "string") {
       cell.textContent = value;
     } else {
       const contents = render(<RichText content={value} />);
@@ -86,7 +85,14 @@ export default function TableTile({
         cell.replaceChildren(contents);
       }
     }
-  };
+  }
+
+  function updateColumnHeader(column: Column, cell: Element) {
+    const title = columns.value[column.index]?.title;
+    const span = document.createElement("span");
+    span.textContent = title || null;
+    cell.appendChild(span);
+  }
 
   const onEditCell = (event: TableEvent) => {
     if (!isEditable.value) {
@@ -167,22 +173,53 @@ export default function TableTile({
     });
   };
 
-  const onEditColumn = (event: TableEvent) => {
+  function onEditColumn(event: TableEvent) {
     const { column } = event;
     if (!column || !column.header) {
       return;
     }
 
+    const columnInfo = columns.value[column.index];
+    if (!columnInfo) {
+      return;
+    }
+
     const input = document.createElement("input");
     input.type = "text";
-    column.header.appendChild(input);
+    input.id = `${columnInfo.id}-title`;
+    input.value = columnInfo.title ?? "";
+    column.header.prepend(input);
     input.focus();
-  };
+  }
 
-  const onEditColumnEnd = (event: TableEvent) => {
+  function onEditColumnEnd(event: TableEvent) {
     const { column } = event;
-    column?.header?.querySelector("input")?.remove();
-  };
+    const input = column?.header?.querySelector("input");
+
+    if (!column?.id || !input) {
+      return;
+    }
+
+    const columnInfo = columns.value[column.index];
+    if (!columnInfo) {
+      return;
+    }
+
+    const title = input.value;
+    columnInfo.title = title;
+    const span = column.header?.querySelector("span");
+    if (span) {
+      span.textContent = title;
+    }
+    editor
+      .updateTableColumn({
+        tableId: id,
+        columnId: column.id,
+        title,
+      })
+      .catch(handleError);
+    input.remove();
+  }
 
   const onResizeColumn = async (event: TableEvent) => {
     const { column, width } = event;
@@ -349,6 +386,7 @@ export default function TableTile({
         $getColumn={(index) => columns.value[index]!}
         $getRow={(index) => rows.value[index]!}
         $updateCell={updateCell}
+        $updateColumnHeader={updateColumnHeader}
       >
         <TableViewContents rows={rows} columns={columns}>
           {(value) =>
