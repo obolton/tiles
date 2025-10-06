@@ -1,26 +1,32 @@
 {
   "compilerOptions": {
     "strict": true,
-    "target": "ESNext",
-    "module": "ESNext",
+    "target": "esnext",
+    "module": "preserve",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
-    "allowJs": false,
-    "jsx": "react-jsx",
-    "jsxImportSource": "@/jsx",
+    "outDir": "dist",
+    "composite": true,
+    "skipLibCheck": true,
+
     "paths": {
       "@/*": ["./src/*"]
     },
+
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
+
+    "allowImportingTsExtensions": true,
+    "allowJs": false,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noEmit": true,
     "noUncheckedIndexedAccess": true,
     "noUncheckedSideEffectImports": true,
-    "skipLibCheck": true
+
+    "jsx": "react-jsx",
+    "jsxImportSource": "@/jsx"
   },
   "include": ["./src/**/*", "./scripts/**/*"],
   "references": [{ "path": "../api" }]
