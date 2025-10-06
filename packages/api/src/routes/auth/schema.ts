@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { AuthenticationProvider } from "@prisma/client";
+import { AuthenticationProvider } from "@/generated/prisma/client";
 
 export const SignInSchema = z.object({
   provider: z.enum(AuthenticationProvider),

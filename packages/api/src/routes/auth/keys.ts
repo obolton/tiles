@@ -1,4 +1,4 @@
-import type { AuthenticationProvider } from "@prisma/client";
+import type { AuthenticationProvider } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma.ts";
 
 type CreateKeyOptions = {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SectionLayout } from "@prisma/client";
+import { SectionLayout } from "@/generated/prisma/client";
 import { BackgroundSchema } from "@/schema/Background.ts";
 
 export const CreateSectionSchema = z.object({

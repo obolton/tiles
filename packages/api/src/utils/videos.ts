@@ -1,4 +1,4 @@
-import type { VideoType } from "@prisma/client";
+import type { VideoType } from "@/generated/prisma/client";
 
 export type Video = {
   videoType: VideoType;

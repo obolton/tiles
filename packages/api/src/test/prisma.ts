@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 
 function mockModel() {
   return {

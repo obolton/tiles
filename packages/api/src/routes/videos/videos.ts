@@ -1,5 +1,5 @@
 import prisma, { type ExtensionArgs } from "@/database/prisma";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import { getLinkMetadata } from "@/utils/linkMetadata";
 import { getVideoInfo } from "@/utils/videos";
 import type { CreateVideoSchema, UpdateVideoSchema } from "./schema";

@@ -1,4 +1,4 @@
-import { Prisma, type GradientDirection } from "@prisma/client";
+import { Prisma, type GradientDirection } from "@/generated/prisma/client";
 import { getImageUrl } from "@/utils/cdn.ts";
 
 export type Background =

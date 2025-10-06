@@ -1,4 +1,4 @@
-import type { GradientDirection } from "@prisma/client";
+import type { GradientDirection } from "@/generated/prisma/client";
 import type { BackgroundSchema } from "@/schema/Background.ts";
 
 export interface Background {

@@ -4,7 +4,7 @@ import type {
   DeleteTilesSchema,
   UpdateTileSchema,
 } from "./schema.ts";
-import type { Prisma, TileType } from "@prisma/client";
+import type { Prisma, TileType } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma.ts";
 
 export const TILE_FIELDS = {

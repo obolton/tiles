@@ -2,7 +2,7 @@ import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { createKey } from "@/utils/keys.ts";
 import { sendEmail } from "@/utils/email.ts";
 import { inviteToPageEmail } from "@/emails/inviteToPage.ts";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import type {
   InviteToPageSchema,
   AcceptPageInviteSchema,

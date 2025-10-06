@@ -8,7 +8,7 @@ import type {
   UpdateSeriesSchema,
   DeleteSeriesSchema,
 } from "./schema.ts";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 
 export const CHART_SERIES_FIELDS = {
   id: true,

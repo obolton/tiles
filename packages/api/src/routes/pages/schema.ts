@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PageType, Font } from "@prisma/client";
+import { PageType, Font } from "@/generated/prisma/client";
 
 export const GetPageByIdSchema = z.object({
   id: z.uuid(),

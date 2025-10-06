@@ -5,7 +5,7 @@ import {
   UpdatePlaceSchema,
 } from "./schema.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import type { CreateMapSchema } from "./schema.ts";
 
 export const PLACE_FIELDS = {

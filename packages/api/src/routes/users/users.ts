@@ -17,7 +17,7 @@ import type {
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 import { WORKSPACE_FIELDS } from "@/routes/workspaces/workspaces.ts";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 
 export const USER_FIELDS = {
   id: true,

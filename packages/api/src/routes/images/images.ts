@@ -1,7 +1,7 @@
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import type { CreateImageSchema, UpdateImageSchema } from "./schema.ts";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 
 export const IMAGE_FIELDS = {
   id: true,

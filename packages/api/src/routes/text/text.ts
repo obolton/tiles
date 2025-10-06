@@ -1,7 +1,7 @@
 import prisma from "@/database/prisma.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import type { CreateTextSchema, UpdateTextSchema } from "./schema.ts";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import type { ColorSchema } from "@/schema/Color.ts";
 import { getBackgroundProperties } from "@/utils/backgrounds.ts";
 

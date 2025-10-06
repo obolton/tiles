@@ -8,7 +8,7 @@ import type {
   ListPagesSchema,
   MovePageToFolderSchema,
 } from "./schema.ts";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "../pageLinks/pageLinks.ts";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
 

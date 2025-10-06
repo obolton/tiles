@@ -2,7 +2,7 @@ import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import { getBackgroundProperties } from "@/utils/backgrounds.ts";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import type {
   CreateTableSchema,
   UpdateTableSchema,

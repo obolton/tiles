@@ -1,5 +1,5 @@
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 import type { CreatePageLinkSchema } from "./schema.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 

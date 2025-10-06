@@ -7,7 +7,7 @@ import type {
   Place,
   Tile,
   TileType,
-} from "@prisma/client";
+} from "@/generated/prisma/client";
 import type { Section } from "@/routes/sections/sections.ts";
 import type { Text } from "@/routes/text/text.ts";
 import type { TableWithData } from "@/routes/tables/tables.ts";

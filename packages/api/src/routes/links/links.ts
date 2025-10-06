@@ -2,7 +2,7 @@ import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { getLinkMetadata } from "@/utils/linkMetadata.ts";
 import { getVideoInfo } from "@/utils/videos.ts";
 import { createVideo } from "../videos/videos.ts";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 import type { CreateLinkSchema, UpdateLinkSchema } from "./schema.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 

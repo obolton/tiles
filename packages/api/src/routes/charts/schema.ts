@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ChartType } from "@prisma/client";
+import { ChartType } from "@/generated/prisma/client";
 import { PositionSchema } from "@/schema/Position.ts";
 import { BackgroundSchema } from "@/schema/Background.ts";
 

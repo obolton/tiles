@@ -4,7 +4,7 @@ import type {
   UpdateDropdownSchema,
   DeleteDropdownSchema,
 } from "./schema.ts";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@/generated/prisma/client";
 
 export const DROPDOWN_FIELDS = {
   id: true,
