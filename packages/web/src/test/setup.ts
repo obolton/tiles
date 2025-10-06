@@ -1,3 +1,4 @@
+// oxlint-disable no-extend-native
 import { vi } from "vitest";
 import DOMPoint from "./mocks/DOMPoint";
 import ToggleEvent from "./mocks/ToggleEvent";
@@ -22,3 +23,11 @@ HTMLElement.prototype.hidePopover = function () {
     new ToggleEvent("toggle", { oldState: "open", newState: "closed" }),
   );
 };
+
+Object.defineProperty(ElementInternals.prototype, "states", {
+  value: {
+    add: () => {},
+    delete: () => {},
+    clear: () => {},
+  },
+});
