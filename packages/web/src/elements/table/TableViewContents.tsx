@@ -37,8 +37,10 @@ export default function TableViewContents({
       <thead>
         <tr>
           <th scope="colgroup" />
-          {columns.value.map((_, index) => (
-            <th scope="col" aria-colindex={index} />
+          {columns.value.map((column, index) => (
+            <th scope="col" aria-colindex={index}>
+              <span>{column.title}</span>
+            </th>
           ))}
         </tr>
       </thead>
