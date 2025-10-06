@@ -46,6 +46,8 @@ table-view {
     padding: 0;
     border-right: 1px solid var(--cell-border-color);
     border-bottom: 1px solid var(--cell-border-color);
+    text-align: start;
+    font-weight: 500;
 
     &[scope="row"] {
       position: sticky;
@@ -60,6 +62,19 @@ table-view {
         var(--header-color) 80%,
         var(--focus-ring-color) 20%
       );
+    }
+
+    & > span {
+      position: absolute;
+      inset: 0;
+      padding: 0 8px;
+      align-self: center;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    &.edit > span {
+      display: none;
     }
 
     & > resize-handle {
