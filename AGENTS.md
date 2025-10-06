@@ -26,6 +26,7 @@
 ## Testing Guidelines
 
 - Use Vitest for unit tests.
+- Use `describe` blocks for each function being tested, and to provide structure to test suites.
 - Place test files beside code in `__tests__` directories using `*.test.ts` files.
 - Mock external services (database, Cloudflare API etc) with existing test utilities rather than hitting the network; review current fixtures before adding new ones.
 - New features require at least one failing test before implementation and a coverage check via `npm run test:coverage` when practical.
