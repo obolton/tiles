@@ -153,7 +153,6 @@ export default function TextTile({
     >
       <If condition={hasFocus}>
         <TextToolbar
-          editor={editor}
           id={id}
           placementId={placementId}
           background={background}

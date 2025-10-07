@@ -1,23 +1,24 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import AddPlaceIcon from "@/icons/add-place.svg?jsx";
+import DeleteIcon from "@/icons/trash.svg?jsx";
 import { showModal } from "@/utils/modals";
-import type Editor from "@/editor/Editor";
+import Editor from "@/editor/Editor";
 import type MapView from "@/elements/maps/MapView";
 import type { MapProperties } from "@/types/tiles";
 
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
 export interface MapToolbarProps {
-  editor: Editor;
   id: string;
+  placementId: MapProperties["placementId"];
   places: MapProperties["places"];
   getMapView: () => MapView;
   anchorName: string;
 }
 
 export default function MapToolbar({
-  editor,
   id,
+  placementId,
   places,
   getMapView,
   anchorName,
@@ -28,10 +29,14 @@ export default function MapToolbar({
         boundingBox: getMapView().getBoundingBox(),
       },
       async onConfirm({ place }) {
-        const result = await editor.addPlaces({ id, places: [place] });
+        const result = await Editor.current.addPlaces({ id, places: [place] });
         places.value = result.places;
       },
     });
+  }
+
+  function deleteTile() {
+    Editor.current.deleteTiles([placementId]);
   }
 
   return (
@@ -41,9 +46,21 @@ export default function MapToolbar({
       aria-label="Map toolbar"
       data-tooltip-position="left"
     >
-      <ToolbarButton label="Add place" on:click={addPlace}>
-        <AddPlaceIcon aria-hidden="true" />
-      </ToolbarButton>
+      <ul role="group" aria-label="Map tools">
+        <li role="presentation">
+          <ToolbarButton label="Add place" on:click={addPlace}>
+            <AddPlaceIcon aria-hidden="true" />
+          </ToolbarButton>
+        </li>
+      </ul>
+
+      <ul role="group" aria-label="More tools">
+        <li role="presentation">
+          <ToolbarButton label="Delete" destructive on:click={deleteTile}>
+            <DeleteIcon aria-hidden="true" />
+          </ToolbarButton>
+        </li>
+      </ul>
     </floating-toolbar>
   );
 }

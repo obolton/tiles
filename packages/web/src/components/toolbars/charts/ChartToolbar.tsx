@@ -1,5 +1,7 @@
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import SeriesList from "./SeriesList";
+import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import Editor from "@/editor/Editor";
@@ -24,6 +26,10 @@ export default function ChartToolbar({ chart, anchorName }: ChartToolbarProps) {
     }
   }
 
+  function deleteTile() {
+    Editor.current.deleteTiles([chart.placementId]);
+  }
+
   const table = Editor.current.getTable(chart.tableId.value);
 
   return (
@@ -33,7 +39,7 @@ export default function ChartToolbar({ chart, anchorName }: ChartToolbarProps) {
       data-tooltip-position="left"
       aria-label="Chart tools"
     >
-      <ul role="group">
+      <ul role="group" aria-label="Chart tools">
         <li role="presentation">
           <SeriesList chart={chart} table={table} />
         </li>
@@ -43,6 +49,14 @@ export default function ChartToolbar({ chart, anchorName }: ChartToolbarProps) {
             value={chart.background}
             onChange={setBackground}
           />
+        </li>
+      </ul>
+
+      <ul role="group" aria-label="More tools">
+        <li role="presentation">
+          <ToolbarButton label="Delete" destructive on:click={deleteTile}>
+            <DeleteIcon aria-hidden="true" />
+          </ToolbarButton>
         </li>
       </ul>
     </floating-toolbar>

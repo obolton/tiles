@@ -17,6 +17,7 @@ export interface MapTileProps extends MapProperties {
 export default function MapTile({
   editor,
   id,
+  placementId,
   places,
   hasFocus,
 }: MapTileProps) {
@@ -68,7 +69,7 @@ export default function MapTile({
       <If condition={hasFocus}>
         <MapToolbar
           id={id}
-          editor={editor}
+          placementId={placementId}
           places={places}
           getMapView={getMapView}
           anchorName={anchorName}

@@ -4,9 +4,10 @@ import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
 import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
 import ExpandHeightIcon from "@/icons/expand-height.svg?jsx";
+import DeleteIcon from "@/icons/trash.svg?jsx";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
-import type Editor from "@/editor/Editor";
+import Editor from "@/editor/Editor";
 import type { Background } from "@/components/backgrounds/types";
 import type { TextProperties } from "@/types/tiles";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
@@ -18,7 +19,6 @@ const ALIGN_ICON = {
 } as const;
 
 export interface TextToolbarProps {
-  editor: Editor;
   id: TextProperties["id"];
   placementId: TextProperties["placementId"];
   background: TextProperties["background"];
@@ -28,7 +28,6 @@ export interface TextToolbarProps {
 }
 
 export default function TextToolbar({
-  editor,
   id,
   placementId,
   background,
@@ -38,7 +37,7 @@ export default function TextToolbar({
 }: TextToolbarProps) {
   async function setBackground(value: Background | null) {
     try {
-      const { background: newBackground } = await editor.updateText({
+      const { background: newBackground } = await Editor.current.updateText({
         id,
         background: value,
       });
@@ -55,7 +54,7 @@ export default function TextToolbar({
         | "CENTER"
         | "BOTTOM";
       align.value = value;
-      await editor.updateText({
+      await Editor.current.updateText({
         id,
         align: value,
       });
@@ -80,13 +79,17 @@ export default function TextToolbar({
       }
     }
 
-    editor
+    Editor.current
       .positionTile({
         id: placementId,
         block: !block.value,
         height,
       })
       .catch(handleError);
+  }
+
+  function deleteTile() {
+    Editor.current.deleteTiles([placementId]);
   }
 
   return (
@@ -155,6 +158,14 @@ export default function TextToolbar({
             </li>
           ) : null,
         )}
+      </ul>
+
+      <ul role="group" aria-label="More tools">
+        <li role="presentation">
+          <ToolbarButton label="Delete" destructive on:click={deleteTile}>
+            <DeleteIcon aria-hidden="true" />
+          </ToolbarButton>
+        </li>
       </ul>
     </floating-toolbar>
   );
