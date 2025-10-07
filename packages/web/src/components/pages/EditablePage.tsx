@@ -2,6 +2,8 @@ import EditingToolbar from "@/components/menu/EditingToolbar";
 import PageContents from "@/components/pages/PageContents";
 import Editor from "@/editor/Editor";
 import InsertToolbar from "@/components/toolbars/insert/InsertToolbar";
+import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
+import If from "@/jsx/if";
 import { isSignedIn } from "@/utils/sessions";
 import { handleError } from "@/utils/errors";
 import type { AppRouterOutputs } from "@/api/client";
@@ -16,7 +18,7 @@ export interface EditablePage {
 
 export default function EditablePage({ page }: EditablePage) {
   const editor = Editor.init(page);
-  const { isEditable, sections } = editor;
+  const { isEditable, selection, sections } = editor;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
 
   return (
@@ -27,7 +29,13 @@ export default function EditablePage({ page }: EditablePage) {
 
       {showToolbar ? <EditingToolbar editor={editor} /> : null}
 
-      {isEditable.derive((value) => (value ? <InsertToolbar /> : null))}
+      <If condition={selection.derive((value) => value.size >= 2)}>
+        <SelectionToolbar />
+      </If>
+
+      <If condition={isEditable}>
+        <InsertToolbar />
+      </If>
     </>
   );
 }
