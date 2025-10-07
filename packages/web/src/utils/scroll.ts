@@ -16,12 +16,13 @@ export function scrollIntoViewIfNeeded(
   }
 
   // Element is outside the parent (assumes parent is a scroll container)
-  const parentRect = element.parentElement!.getBoundingClientRect();
+  const parentRect = element.parentElement?.getBoundingClientRect();
   if (
-    rect.bottom < parentRect.top ||
-    rect.top > parentRect.bottom ||
-    rect.right < parentRect.left ||
-    rect.left > parentRect.right
+    parentRect &&
+    (rect.bottom < parentRect.top ||
+      rect.top > parentRect.bottom ||
+      rect.right < parentRect.left ||
+      rect.left > parentRect.right)
   ) {
     element.scrollIntoView(options);
   }
