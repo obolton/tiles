@@ -84,7 +84,7 @@ export default function Section({ editor, section, signal }: SectionProps) {
       on:focusout={onFocusOut}
     >
       <If condition={hasFocus}>
-        <SectionToolbar editor={editor} section={section} />
+        <SectionToolbar section={section} />
       </If>
 
       <scroll-view ref={scrollViewRef} className={styles.contents}>
