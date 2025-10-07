@@ -1,3 +1,4 @@
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import BackgroundPopover from "./BackgroundPopover";
 import BackgroundIcon from "@/icons/background.svg?jsx";
 import SolidColorIcon from "@/icons/solid-color.svg?jsx";
@@ -19,16 +20,13 @@ export default function BackgroundPicker({
 }: BackgroundPickerProps) {
   return (
     <>
-      <button
-        type="button"
+      <ToolbarButton
         id={id}
-        className="floating"
+        label="Background"
         popovertarget={`${id}-popover`}
-        aria-label="Background"
         aria-haspopup="menu"
         aria-expanded="false"
         aria-pressed={value?.derive((value) => (value ? "true" : "false"))}
-        data-tooltip="Background"
       >
         {value ? (
           value.derive((background) => {
@@ -51,7 +49,7 @@ export default function BackgroundPicker({
         ) : (
           <BackgroundIcon aria-hidden="true" />
         )}
-      </button>
+      </ToolbarButton>
 
       <BackgroundPopover
         id={`${id}-popover`}

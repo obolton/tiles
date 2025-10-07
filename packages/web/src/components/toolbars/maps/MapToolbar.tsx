@@ -1,3 +1,4 @@
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import AddPlaceIcon from "@/icons/add-place.svg?jsx";
 import { showModal } from "@/utils/modals";
 import type Editor from "@/editor/Editor";
@@ -40,16 +41,9 @@ export default function MapToolbar({
       aria-label="Map toolbar"
       data-tooltip-position="left"
     >
-      <button
-        type="button"
-        role="menuitem"
-        className="floating"
-        aria-label="Add place"
-        data-tooltip="Add a place"
-        on:click={addPlace}
-      >
+      <ToolbarButton label="Add place" on:click={addPlace}>
         <AddPlaceIcon aria-hidden="true" />
-      </button>
+      </ToolbarButton>
     </floating-toolbar>
   );
 }

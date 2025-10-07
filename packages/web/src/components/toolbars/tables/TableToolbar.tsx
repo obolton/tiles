@@ -1,4 +1,5 @@
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import AddRowIcon from "@/icons/add-row.svg?jsx";
 import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import ChartIcon from "@/icons/chart.svg?jsx";
@@ -141,40 +142,19 @@ export default function TableToolbar({
     >
       <ul role="group">
         <li role="presentation">
-          <button
-            type="button"
-            role="menuitem"
-            className="floating"
-            aria-label="Add row"
-            data-tooltip="Add row"
-            on:click={addRow}
-          >
+          <ToolbarButton label="Add row" on:click={addRow}>
             <AddRowIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
         <li role="presentation">
-          <button
-            type="button"
-            role="menuitem"
-            className="floating"
-            aria-label="Add column"
-            data-tooltip="Add column"
-            on:click={addColumn}
-          >
+          <ToolbarButton label="Add column" on:click={addColumn}>
             <AddColumnIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
         <li role="presentation">
-          <button
-            type="button"
-            role="menuitem"
-            className="floating"
-            aria-label="Create chart"
-            data-tooltip="Create chart"
-            on:click={createChart}
-          >
+          <ToolbarButton label="Create chart" on:click={createChart}>
             <ChartIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
         <li role="presentation">
           <BackgroundPicker
@@ -184,16 +164,9 @@ export default function TableToolbar({
           />
         </li>
         <li role="presentation">
-          <button
-            type="button"
-            role="menuitem"
-            className="floating destructive"
-            aria-label="Delete"
-            data-tooltip="Delete"
-            on:click={deleteSelection}
-          >
+          <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
             <DeleteIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
       </ul>
     </floating-toolbar>

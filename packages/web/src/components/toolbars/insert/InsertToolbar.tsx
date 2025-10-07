@@ -1,3 +1,4 @@
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import TextIcon from "@/icons/text.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
@@ -149,31 +150,20 @@ export default function InsertToolbar() {
       <ul role="group" aria-label="Create items">
         {BUTTONS.map(({ label, type, Icon }) => (
           <li role="presentation">
-            <button
-              type="button"
-              role="menuitem"
-              className="floating"
-              aria-label={label}
-              data-tooltip={label}
+            <ToolbarButton
+              label={label}
               data-tile-type={type}
               on:click={onClick}
             >
               <Icon aria-hidden="true" />
-            </button>
+            </ToolbarButton>
           </li>
         ))}
 
         <li role="presentation">
-          <button
-            type="button"
-            role="menuitem"
-            className="floating"
-            aria-label="Add a section"
-            data-tooltip="Add a section"
-            on:click={createSection}
-          >
+          <ToolbarButton label="Add a section" on:click={createSection}>
             <AddSectionIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
       </ul>
     </floating-toolbar>

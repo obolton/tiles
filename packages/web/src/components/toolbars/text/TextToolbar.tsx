@@ -1,4 +1,5 @@
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
 import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
@@ -105,17 +106,13 @@ export default function TextToolbar({
         </li>
 
         <li role="presentation">
-          <button
-            type="button"
-            role="menuitem"
-            className="floating"
-            aria-label="Size to fit contents"
-            data-tooltip="Size to fit contents"
+          <ToolbarButton
+            label="Size to fit contents"
             aria-pressed={block.derive((value) => (value ? "true" : "false"))}
             on:click={toggleBlock}
           >
             <ExpandHeightIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
 
         {block.derive((value) =>

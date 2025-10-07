@@ -1,5 +1,6 @@
 import AIIcon from "@/icons/ai.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import Editor from "@/editor/Editor";
 
 function deleteSelection() {
@@ -15,30 +16,17 @@ export default function SelectionToolbar() {
     >
       <ul role="group" aria-label="AI tools">
         <li role="presentation">
-          <button
-            type="button"
-            role="menuitem"
-            className="floating"
-            aria-label="AI"
-            data-tooltip="AI"
-          >
+          <ToolbarButton label="AI">
             <AIIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
       </ul>
 
       <ul role="group" aria-label="More tools">
         <li role="presentation">
-          <button
-            type="button"
-            role="menuitem"
-            className="floating destructive"
-            aria-label="Delete"
-            data-tooltip="Delete"
-            on:click={deleteSelection}
-          >
+          <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
             <DeleteIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
       </ul>
     </floating-toolbar>
