@@ -87,13 +87,6 @@ export default function TableTile({
     }
   }
 
-  function updateColumnHeader(column: Column, cell: Element) {
-    const title = columns.value[column.index]?.title;
-    const span = document.createElement("span");
-    span.textContent = title || null;
-    cell.appendChild(span);
-  }
-
   const onEditCell = (event: TableEvent) => {
     if (!isEditable.value) {
       return;
@@ -386,7 +379,6 @@ export default function TableTile({
         $getColumn={(index) => columns.value[index]!}
         $getRow={(index) => rows.value[index]!}
         $updateCell={updateCell}
-        $updateColumnHeader={updateColumnHeader}
       >
         <TableViewContents rows={rows} columns={columns}>
           {(value) =>

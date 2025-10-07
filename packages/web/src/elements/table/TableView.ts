@@ -76,11 +76,13 @@ export default class TableView extends HTMLElement {
   #editable = false;
 
   readonly selection = new Set<Selection>();
-  getColumn: (index: number) => { id?: string; width: number } =
-    defaultGetColumn;
+  getColumn: (index: number) => {
+    id?: string;
+    title?: string | null;
+    width: number;
+  } = defaultGetColumn;
   getRow: (index: number) => { id?: string; height: number } = defaultGetRow;
   updateCell?: (row: Row, column: Column, cell: HTMLTableCellElement) => void;
-  updateColumnHeader?: (column: Column, cell: HTMLTableCellElement) => void;
 
   private scrollContainer?: HTMLElement;
   private contents: HTMLElement;
@@ -1281,8 +1283,7 @@ export default class TableView extends HTMLElement {
   private insertColumn(
     position: number,
     columnIndex: number,
-    width: number,
-    id?: string,
+    { id, title, width }: { id?: string; title?: string | null; width: number },
   ) {
     if (!this.colGroup || !this.tableHead) {
       return;
@@ -1299,11 +1300,14 @@ export default class TableView extends HTMLElement {
     const th = document.createElement("th");
     th.scope = "col";
     th.ariaColIndex = columnIndex.toString();
-    th.appendChild(this.createResizeHandle());
+
+    const span = document.createElement("span");
+    span.textContent = title ?? null;
+
+    th.append(span, this.createResizeHandle());
     makeDraggable(th, { constrain: "horizontal", clone: true });
 
-    const column = new Column({ table: this, id, width, element: col });
-    this.updateColumnHeader?.(column, th);
+    const column = new Column({ table: this, id, title, width, element: col });
 
     this.visibleColumns.splice(position, 0, column);
     const headerRow = this.tableHead.rows[0]!;
@@ -1381,11 +1385,11 @@ export default class TableView extends HTMLElement {
       this.scrollLeft - this.translateX < this.horizontalBufferSize
     ) {
       const index = this.firstVisibleColumn - 1;
-      const { id, width } = this.getColumn(index);
-      this.insertColumn(0, index, width, id);
+      const properties = this.getColumn(index);
+      this.insertColumn(0, index, properties);
       this.firstVisibleColumn--;
-      this.translateX -= width;
-      this.contentWidth += width;
+      this.translateX -= properties.width;
+      this.contentWidth += properties.width;
     }
 
     this.reposition();
@@ -1398,9 +1402,9 @@ export default class TableView extends HTMLElement {
         this.horizontalBufferSize
     ) {
       const index = this.firstVisibleColumn + this.visibleColumns.length;
-      const { id, width } = this.getColumn(index);
-      this.insertColumn(this.visibleColumns.length, index, width, id);
-      this.contentWidth += width;
+      const properties = this.getColumn(index);
+      this.insertColumn(this.visibleColumns.length, index, properties);
+      this.contentWidth += properties.width;
     }
   }
 

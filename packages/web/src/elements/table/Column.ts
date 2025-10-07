@@ -2,6 +2,7 @@ import type TableView from "./TableView";
 
 export default class Column {
   id?: string;
+  title: string | null;
   width: number;
 
   readonly table: TableView;
@@ -10,16 +11,19 @@ export default class Column {
   constructor({
     table,
     id,
+    title,
     width = 100,
     element,
   }: {
     table: TableView;
     id?: string;
+    title?: string | null;
     width?: number;
     element: HTMLTableColElement;
   }) {
     this.table = table;
     this.id = id;
+    this.title = title ?? null;
     this.width = width;
     this.element = element;
   }
