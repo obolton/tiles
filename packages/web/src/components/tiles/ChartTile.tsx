@@ -24,41 +24,36 @@ function toNumber(input: number | string | RichText | null | undefined) {
   return Number.isNaN(value) ? null : value;
 }
 
-export interface ChartTileProps extends ChartProperties {
+export interface ChartTileProps {
+  chart: ChartProperties;
   hasFocus: Reactive<boolean>;
 }
 
-export default function ChartTile({
-  id,
-  tableId,
-  background,
-  series,
-  hasFocus,
-}: ChartTileProps) {
-  let chart: ChartView | null = null;
+export default function ChartTile({ chart, hasFocus }: ChartTileProps) {
+  let chartView: ChartView | null = null;
 
   function ref(element: ChartView) {
-    chart = element;
+    chartView = element;
   }
 
-  const anchorName = `--chart-${id}`;
+  const anchorName = `--chart-${chart.id}`;
 
   if (import.meta.env.SSR) {
-    return <Tile background={background} anchorName={anchorName}></Tile>;
+    return <Tile background={chart.background} anchorName={anchorName}></Tile>;
   }
 
-  const data = series.derive((seriesItem) =>
-    seriesItem.map(({ columnId }) => ({
+  const data = chart.series.derive((seriesItem) =>
+    seriesItem.map(({ column }) => ({
       marks: Editor.current
-        .getTableColumnData(tableId.value, columnId)
+        .getTableColumnData(chart.tableId.value, column.id)
         .value.map((value, i) => ({ label: i, value: toNumber(value) })),
     })),
   );
 
   return (
-    <Tile background={background} anchorName={anchorName}>
+    <Tile background={chart.background} anchorName={anchorName}>
       <If condition={hasFocus}>
-        <ChartToolbar id={id} background={background} anchorName={anchorName} />
+        <ChartToolbar chart={chart} anchorName={anchorName} />
       </If>
 
       <chart-view ref={ref} className={styles.chart} $series={data.value} />

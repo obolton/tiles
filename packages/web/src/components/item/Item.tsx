@@ -56,7 +56,7 @@ function getTileComponent(
     case "TABLE":
       return <TableTile {...tile} editor={editor} hasFocus={hasFocus} />;
     case "CHART":
-      return <ChartTile {...tile} hasFocus={hasFocus} />;
+      return <ChartTile chart={tile} hasFocus={hasFocus} />;
     default:
       throw new Error(`Unknown tile type: ${type}`);
   }
