@@ -8,12 +8,10 @@ import { serialize } from "@/utils/richText/serialize";
 import { Computed } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import type Editor from "@/editor/Editor";
-import type { Reactive } from "@/utils/reactivity";
 import type { ImageProperties } from "@/types/tiles";
 
-interface ImageTileProps extends ImageProperties {
+export interface ImageTileProps extends ImageProperties {
   editor: Editor;
-  hasFocus: Reactive<boolean>;
 }
 
 interface ImageVariant {
@@ -62,7 +60,6 @@ export default function ImageTile({
   text,
   originX,
   originY,
-  hasFocus,
 }: ImageTileProps) {
   const { isEditable } = editor;
 
@@ -135,11 +132,9 @@ export default function ImageTile({
         {isEditable.derive((editable) =>
           editable ? (
             <TextEditor
-              editor={editor}
               state={state}
               classList={[styles.caption]}
               initialValue={text.value}
-              showToolbar={hasFocus}
               on:keydown={onKeyDown}
               on:blur={onBlur}
             />

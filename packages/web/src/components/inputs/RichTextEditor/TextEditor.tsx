@@ -7,6 +7,7 @@ import { isPromptOpen } from "@/utils/richText/prompt";
 import { handleError } from "@/utils/errors";
 import styles from "./TextEditor.module.css";
 import { reactive, flag } from "@/utils/reactivity";
+import If from "@/jsx/if";
 import type { Format } from "@/utils/richText/format";
 import type { RichText } from "@/utils/richText/types";
 import type { Command } from "prosemirror-state";
@@ -18,7 +19,6 @@ export type { EditorState };
 export interface TextEditorProps extends JSX.Attributes<HTMLDivElement> {
   state: Reactive<EditorState | null>;
   initialValue?: RichText | null;
-  showToolbar: Reactive<boolean>;
   extraToolbarItems?: JSX.Node;
   signal?: AbortSignal;
 }
@@ -27,12 +27,12 @@ export default function TextEditor({
   state,
   classList = [],
   initialValue = null,
-  showToolbar,
   extraToolbarItems,
   signal,
   ...props
 }: TextEditorProps) {
   let editorView: EditorView | null = null;
+  const showToolbar = flag(false);
 
   signal?.addEventListener(
     "abort",
@@ -91,6 +91,14 @@ export default function TextEditor({
     }
   };
 
+  function onFocus() {
+    showToolbar.on();
+  }
+
+  function onBlur() {
+    showToolbar.off();
+  }
+
   return (
     <>
       <div
@@ -98,20 +106,20 @@ export default function TextEditor({
         ref={ref}
         classList={["rich-text", styles.editor, ...classList]}
         role="textbox"
+        on:focus={onFocus}
+        on:blur={onBlur}
       />
 
-      {showToolbar.derive((value) =>
-        value ? (
-          <FormattingToolbar
-            format={format}
-            prompting={prompting}
-            getEditorView={getEditorView}
-            performCommand={performCommand}
-          >
-            {extraToolbarItems}
-          </FormattingToolbar>
-        ) : null,
-      )}
+      <If condition={showToolbar}>
+        <FormattingToolbar
+          format={format}
+          prompting={prompting}
+          getEditorView={getEditorView}
+          performCommand={performCommand}
+        >
+          {extraToolbarItems}
+        </FormattingToolbar>
+      </If>
     </>
   );
 }

@@ -121,7 +121,6 @@ export default function TextTile({
         tabIndex={-1}
         on:keydown={onKeyDown}
         on:blur={onBlur}
-        showToolbar={hasFocus}
         extraToolbarItems={
           <ul role="group">
             <li role="presentation">

@@ -42,7 +42,7 @@ function getTileComponent(
   const type = tile.type;
   switch (type) {
     case "IMAGE":
-      return <ImageTile {...tile} editor={editor} hasFocus={hasFocus} />;
+      return <ImageTile {...tile} editor={editor} />;
     case "VIDEO":
       return <VideoTile {...tile} editor={editor} />;
     case "TEXT":
