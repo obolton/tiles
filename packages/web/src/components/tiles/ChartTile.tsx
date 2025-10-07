@@ -30,6 +30,7 @@ export interface ChartTileProps extends ChartProperties {
 
 export default function ChartTile({
   id,
+  tableId,
   background,
   series,
   hasFocus,
@@ -47,9 +48,9 @@ export default function ChartTile({
   }
 
   const data = series.derive((seriesItem) =>
-    seriesItem.map(({ column }) => ({
+    seriesItem.map(({ columnId }) => ({
       marks: Editor.current
-        .getTableColumnData(column.tableId, column.id)
+        .getTableColumnData(tableId.value, columnId)
         .value.map((value, i) => ({ label: i, value: toNumber(value) })),
     })),
   );
