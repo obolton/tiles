@@ -10,16 +10,7 @@ export const CreateChartSchema = z.strictObject({
   tableId: z.uuid(),
   chartType: z.enum(ChartType),
   background: BackgroundSchema.optional(),
-  series: z
-    .array(
-      z.strictObject({
-        tableId: z.uuid(),
-        columnId: z.uuid(),
-        title: z.string().optional(),
-      }),
-    )
-    .max(10)
-    .optional(),
+  series: z.array(z.uuid()).max(10).optional(),
 });
 export type CreateChartSchema = z.infer<typeof CreateChartSchema>;
 
@@ -35,7 +26,6 @@ export const AddSeriesSchema = z.strictObject({
   pageId: z.uuid(),
   chartId: z.uuid(),
   columnId: z.uuid(),
-  title: z.string().optional(),
 });
 export type AddSeriesSchema = z.infer<typeof AddSeriesSchema>;
 
@@ -43,7 +33,6 @@ export const UpdateSeriesSchema = z.strictObject({
   pageId: z.uuid(),
   chartId: z.uuid(),
   seriesId: z.uuid(),
-  title: z.string().optional(),
 });
 export type UpdateSeriesSchema = z.infer<typeof UpdateSeriesSchema>;
 

@@ -12,7 +12,6 @@ import type { Prisma } from "@/generated/prisma/client";
 
 export const CHART_SERIES_FIELDS = {
   id: true,
-  title: true,
   columnId: true,
 } as const satisfies Prisma.ChartSeriesSelect<ExtensionArgs>;
 
@@ -49,7 +48,7 @@ export async function createChart({
   return prisma.$transaction(async (transaction) => {
     // Verify access to series data
     await Promise.all(
-      series.map(({ tableId, columnId }) =>
+      series.map((columnId) =>
         transaction.tableColumn.findUniqueOrThrow({
           where: { id: columnId, table: { id: tableId, pageId } },
           select: { id: true },
@@ -65,9 +64,8 @@ export async function createChart({
         ...getBackgroundProperties(background),
         series: {
           createMany: {
-            data: series.map(({ columnId, title }) => ({
+            data: series.map((columnId) => ({
               columnId,
-              title,
             })),
           },
         },
@@ -118,7 +116,6 @@ export async function addSeries({
   pageId,
   chartId,
   columnId,
-  title,
 }: AddSeriesSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the chart, table and column
@@ -135,7 +132,6 @@ export async function addSeries({
       data: {
         chartId,
         columnId,
-        title,
       },
       select: CHART_SERIES_FIELDS,
     });
@@ -146,7 +142,6 @@ export async function updateSeries({
   pageId,
   chartId,
   seriesId,
-  title,
 }: UpdateSeriesSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the chart
@@ -157,7 +152,7 @@ export async function updateSeries({
 
     return transaction.chartSeries.update({
       data: {
-        title,
+        // TODO
       },
       where: {
         id: seriesId,
