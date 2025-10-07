@@ -12,7 +12,12 @@ import type { Prisma } from "@/generated/prisma/client";
 
 export const CHART_SERIES_FIELDS = {
   id: true,
-  columnId: true,
+  column: {
+    select: {
+      id: true,
+      title: true,
+    },
+  },
 } as const satisfies Prisma.ChartSeriesSelect<ExtensionArgs>;
 
 export const CHART_FIELDS = {
@@ -20,6 +25,12 @@ export const CHART_FIELDS = {
   tableId: true,
   chartType: true,
   background: true,
+  label: {
+    select: {
+      id: true,
+      title: true,
+    },
+  },
   series: {
     select: CHART_SERIES_FIELDS,
   },
@@ -42,11 +53,18 @@ export async function createChart({
   y,
   block,
   chartType,
+  labelColumnId,
   background,
   series = [],
 }: CreateChartSchema) {
   return prisma.$transaction(async (transaction) => {
-    // Verify access to series data
+    // Verify access to data
+    if (labelColumnId) {
+      await transaction.tableColumn.findUniqueOrThrow({
+        where: { id: labelColumnId, table: { id: tableId, pageId } },
+        select: { id: true },
+      });
+    }
     await Promise.all(
       series.map((columnId) =>
         transaction.tableColumn.findUniqueOrThrow({
@@ -61,6 +79,7 @@ export async function createChart({
         pageId,
         tableId,
         chartType,
+        labelColumnId,
         ...getBackgroundProperties(background),
         series: {
           createMany: {
@@ -96,18 +115,33 @@ export async function updateChart({
   pageId,
   id,
   chartType,
+  labelColumnId,
   background,
 }: UpdateChartSchema) {
-  const chart = await prisma.chart.update({
-    where: {
-      pageId,
-      id,
-    },
-    data: {
-      chartType,
-      ...getBackgroundProperties(background),
-    },
-    select: CHART_FIELDS,
+  const chart = await prisma.$transaction(async (transaction) => {
+    if (labelColumnId) {
+      const { tableId } = await transaction.chart.findUniqueOrThrow({
+        where: { id, pageId },
+        select: { tableId: true },
+      });
+      await transaction.tableColumn.findUniqueOrThrow({
+        where: { id: labelColumnId, tableId },
+        select: { id: true },
+      });
+    }
+
+    return transaction.chart.update({
+      where: {
+        pageId,
+        id,
+      },
+      data: {
+        chartType,
+        labelColumnId,
+        ...getBackgroundProperties(background),
+      },
+      select: CHART_FIELDS,
+    });
   });
   return { type: "CHART" as const, ...chart };
 }
