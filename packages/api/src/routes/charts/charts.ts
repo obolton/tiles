@@ -13,16 +13,12 @@ import type { Prisma } from "@/generated/prisma/client";
 export const CHART_SERIES_FIELDS = {
   id: true,
   title: true,
-  column: {
-    select: {
-      id: true,
-      tableId: true,
-    },
-  },
+  columnId: true,
 } as const satisfies Prisma.ChartSeriesSelect<ExtensionArgs>;
 
 export const CHART_FIELDS = {
   id: true,
+  tableId: true,
   chartType: true,
   background: true,
   series: {
@@ -39,6 +35,7 @@ export type Chart = Prisma.Result<
 export async function createChart({
   pageId,
   sectionId,
+  tableId,
   width,
   height,
   rowSpan,
@@ -63,6 +60,7 @@ export async function createChart({
     const chart = await transaction.chart.create({
       data: {
         pageId,
+        tableId,
         chartType,
         ...getBackgroundProperties(background),
         series: {
@@ -119,22 +117,19 @@ export async function updateChart({
 export async function addSeries({
   pageId,
   chartId,
-  tableId,
   columnId,
   title,
 }: AddSeriesSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the chart, table and column
-    await Promise.all([
-      transaction.chart.findUniqueOrThrow({
-        where: { id: chartId, pageId },
-        select: { id: true },
-      }),
-      transaction.tableColumn.findUniqueOrThrow({
-        where: { id: columnId, table: { id: tableId, pageId } },
-        select: { id: true },
-      }),
-    ]);
+    const { tableId } = await transaction.chart.findUniqueOrThrow({
+      where: { id: chartId, pageId },
+      select: { id: true, tableId: true },
+    });
+    await transaction.tableColumn.findUniqueOrThrow({
+      where: { id: columnId, table: { id: tableId, pageId } },
+      select: { id: true },
+    });
 
     return transaction.chartSeries.create({
       data: {

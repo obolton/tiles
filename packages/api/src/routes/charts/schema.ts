@@ -7,6 +7,7 @@ export const CreateChartSchema = z.strictObject({
   pageId: z.uuid(),
   sectionId: z.uuid(),
   ...PositionSchema.shape,
+  tableId: z.uuid(),
   chartType: z.enum(ChartType),
   background: BackgroundSchema.optional(),
   series: z
@@ -33,7 +34,6 @@ export type UpdateChartSchema = z.infer<typeof UpdateChartSchema>;
 export const AddSeriesSchema = z.strictObject({
   pageId: z.uuid(),
   chartId: z.uuid(),
-  tableId: z.uuid(),
   columnId: z.uuid(),
   title: z.string().optional(),
 });
