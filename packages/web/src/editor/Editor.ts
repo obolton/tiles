@@ -357,26 +357,40 @@ export default class Editor {
     });
   }
 
-  async deleteSection(
-    { id }: OmitPageId<AppRouterInputs["sections"]["delete"]>,
-    transition: TransitionFunction = immediateTransition,
-  ) {
+  async deleteSection({
+    id,
+  }: OmitPageId<AppRouterInputs["sections"]["delete"]>) {
     const section = await client.sections.delete.mutate({
       pageId: this.pageId,
       id,
     });
 
-    transition(() => {
-      const element = document.querySelector<HTMLElement>(
-        `section[data-section-id="${id}"]`,
-      );
-      const sibling =
-        element?.nextElementSibling || element?.previousElementSibling;
+    const sections = document.querySelectorAll<HTMLElement>(
+      "section[data-section-id]",
+    );
+    for (const section of sections) {
+      section.style.viewTransitionName = `section-${section.dataset.sectionId}`;
+    }
+
+    const element = document.querySelector<HTMLElement>(
+      `section[data-section-id="${id}"]`,
+    );
+    if (element) {
+      element.style.viewTransitionClass = "destroy";
+    }
+    const sibling =
+      element?.nextElementSibling || element?.previousElementSibling;
+
+    viewTransition(() => {
       this.sections.value = this.sections.value.filter(
         (section) => section.id !== id,
       );
       if (sibling instanceof HTMLElement) {
         sibling.focus({ preventScroll: true });
+      }
+    }).updateCallbackDone.finally(() => {
+      for (const section of sections) {
+        section.style.viewTransitionName = "";
       }
     });
 

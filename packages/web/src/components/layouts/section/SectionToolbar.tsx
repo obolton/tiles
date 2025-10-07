@@ -2,26 +2,21 @@ import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
-import { layoutTransition } from "@/utils/animation/layout";
 import { viewTransition } from "@/utils/transitions";
 import { classNames } from "@/utils/css";
 import styles from "./SectionToolbar.module.css";
-import type Editor from "@/editor/Editor";
+import Editor from "@/editor/Editor";
 import type { SectionWithTiles } from "@/types/tiles";
 import type { Background } from "@/components/backgrounds/types";
 
 export interface SectionToolbarProps {
-  editor: Editor;
   section: SectionWithTiles;
 }
 
-export default function SectionToolbar({
-  editor,
-  section,
-}: SectionToolbarProps) {
+export default function SectionToolbar({ section }: SectionToolbarProps) {
   async function setBackground(value: Background | null) {
     try {
-      const { background: newBackground } = await editor.updateSection({
+      const { background: newBackground } = await Editor.current.updateSection({
         id: section.id,
         background: value,
       });
@@ -32,9 +27,7 @@ export default function SectionToolbar({
   }
 
   function deleteSection() {
-    editor
-      .deleteSection({ id: section.id }, layoutTransition)
-      .catch(handleError);
+    Editor.current.deleteSection({ id: section.id }).catch(handleError);
   }
 
   return (
