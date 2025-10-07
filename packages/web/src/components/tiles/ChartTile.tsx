@@ -7,7 +7,6 @@ import styles from "./ChartTile.module.css";
 import type { ChartProperties } from "@/types/tiles";
 import type { RichText } from "@/utils/richText/types";
 import type { Reactive } from "@/utils/reactivity";
-import type ChartView from "@/elements/chart/ChartView";
 
 function toNumber(input: number | string | RichText | null | undefined) {
   if (typeof input === "number") {
@@ -30,12 +29,6 @@ export interface ChartTileProps {
 }
 
 export default function ChartTile({ chart, hasFocus }: ChartTileProps) {
-  let chartView: ChartView | null = null;
-
-  function ref(element: ChartView) {
-    chartView = element;
-  }
-
   const anchorName = `--chart-${chart.id}`;
 
   if (import.meta.env.SSR) {
@@ -51,12 +44,12 @@ export default function ChartTile({ chart, hasFocus }: ChartTileProps) {
   );
 
   return (
-    <Tile background={chart.background} anchorName={anchorName}>
+    <Tile border="none" background={chart.background} anchorName={anchorName}>
       <If condition={hasFocus}>
         <ChartToolbar chart={chart} anchorName={anchorName} />
       </If>
 
-      <chart-view ref={ref} className={styles.chart} $series={data.value} />
+      <chart-view className={styles.chart} $series={data.value} />
     </Tile>
   );
 }
