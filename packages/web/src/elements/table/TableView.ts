@@ -7,6 +7,7 @@ import { moveBefore } from "@/utils/dom";
 import { moveElement } from "@/utils/arrays";
 import { getFocusedElementWithin } from "@/utils/focus";
 import css from "./TableView.css?inline";
+import newIcon from "@/icons/new.svg?raw";
 import type { ResizeEvent } from "@/elements/resize/events";
 import type { DragDropEvent } from "@/utils/drag";
 
@@ -157,6 +158,12 @@ export default class TableView extends HTMLElement {
     this.updateCellTabIndex();
     this.updateHeaders();
 
+    if (value) {
+      this.showFooter();
+    } else {
+      this.hideFooter();
+    }
+
     if (!value) {
       this.clearSelection();
     }
@@ -174,6 +181,10 @@ export default class TableView extends HTMLElement {
       throw new Error("Table is not initialized");
     }
     return this.tableBody;
+  }
+
+  get footer() {
+    return this.table?.tFoot ?? null;
   }
 
   constructor() {
@@ -1571,6 +1582,28 @@ export default class TableView extends HTMLElement {
       for (const handle of this.tableHead.querySelectorAll("resize-handle")) {
         handle.remove();
       }
+    }
+  }
+
+  private showFooter() {
+    if (!this.table) {
+      throw new Error("Table is not initialized");
+    }
+
+    const foot = document.createElement("tfoot");
+    const row = foot.insertRow();
+    const th = document.createElement("th");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.innerHTML = newIcon;
+    th.appendChild(button);
+    row.appendChild(th);
+    this.table.tFoot = foot;
+  }
+
+  private hideFooter() {
+    if (this.table) {
+      this.table.tFoot = null;
     }
   }
 
