@@ -277,6 +277,7 @@ model Table {
   tiles   Tile[]
   columns TableColumn[]
   rows    TableRow[]
+  charts  Chart[]
 
   @@index([pageId])
   @@map("table_tiles")
@@ -331,6 +332,7 @@ model Chart {
   pageId             String             @map("page_id") @db.Uuid
   createdAt          DateTime           @default(now()) @map("created_at")
   updatedAt          DateTime           @updatedAt @map("updated_at")
+  tableId            String             @map("table_id") @db.Uuid
   chartType          ChartType
   backgroundL        Float?             @map("background_l") @db.Real
   backgroundC        Float?             @map("background_c") @db.Real
@@ -342,6 +344,7 @@ model Chart {
   backgroundImageKey String?            @map("background_image_key")
 
   page   Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  table  Table         @relation(fields: [tableId], references: [id], onDelete: Cascade)
   tiles  Tile[]
   series ChartSeries[]
 
