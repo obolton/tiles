@@ -75,6 +75,10 @@ select {
   &:focus-visible {
     outline-color: var(--focus-ring-color);
   }
+
+  &:has(option:disabled:checked) {
+    color: color-mix(in oklch, var(--ui-color) 50%, transparent);
+  }
 }
 
 form:invalid button[type="submit"] {
