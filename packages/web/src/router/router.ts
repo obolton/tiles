@@ -39,7 +39,9 @@ export interface RequestError {
   message: string;
 }
 
-export type RouteMiddleware = (request: Request) => Response | undefined;
+export type RouteMiddleware = (
+  request: Request,
+) => Promise<Response | undefined> | Response | undefined;
 
 export type RouteLoaderResult<T> = Promise<RouteData<T>>;
 

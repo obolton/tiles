@@ -182,7 +182,7 @@ async function renderRoute(
 
   if (middleware) {
     try {
-      const response = middleware(request);
+      const response = await middleware(request);
       if (response) {
         return response;
       }
