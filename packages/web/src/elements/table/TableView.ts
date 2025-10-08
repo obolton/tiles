@@ -101,6 +101,7 @@ export default class TableView extends HTMLElement {
   private height = 0;
   private contentWidth = 0;
   private contentHeight = 0;
+  private footerHeight = 0;
   private buffer: HTMLTableCellElement[] = [];
   private rowBuffer: HTMLTableRowElement[] = [];
   private visibleColumns: Column[] = [];
@@ -157,12 +158,7 @@ export default class TableView extends HTMLElement {
 
     this.updateCellTabIndex();
     this.updateHeaders();
-
-    if (value) {
-      this.showFooter();
-    } else {
-      this.hideFooter();
-    }
+    this.updateFooter();
 
     if (!value) {
       this.clearSelection();
@@ -282,6 +278,7 @@ export default class TableView extends HTMLElement {
 
     this.updateCellTabIndex();
     this.updateHeaders();
+    this.updateFooter();
 
     this.reposition();
 
@@ -1542,7 +1539,7 @@ export default class TableView extends HTMLElement {
       this.visibleRows.length > 0
         ? this.contentHeight / this.visibleRows.length
         : 0;
-    const height = this.#rows * averageRowHeight;
+    const height = this.#rows * averageRowHeight + this.footerHeight;
     this.translateY = this.firstVisibleRow * averageRowHeight;
 
     this.scrollContainer.style.setProperty("--scroll-width", width + "px");
@@ -1585,9 +1582,17 @@ export default class TableView extends HTMLElement {
     }
   }
 
+  private updateFooter() {
+    if (this.editable) {
+      this.showFooter();
+    } else {
+      this.hideFooter();
+    }
+  }
+
   private showFooter() {
-    if (!this.table) {
-      throw new Error("Table is not initialized");
+    if (!this.table || this.footer) {
+      return;
     }
 
     const foot = document.createElement("tfoot");
@@ -1595,16 +1600,24 @@ export default class TableView extends HTMLElement {
     const th = document.createElement("th");
     const button = document.createElement("button");
     button.type = "button";
+    button.ariaLabel = "Append row";
+    button.dataset.tooltip = "Append row";
     button.innerHTML = newIcon;
     th.appendChild(button);
     row.appendChild(th);
     this.table.tFoot = foot;
+
+    const rect = foot.getBoundingClientRect();
+    this.footerHeight = rect.height;
   }
 
   private hideFooter() {
-    if (this.table) {
-      this.table.tFoot = null;
+    if (!this.table || !this.footer) {
+      return;
     }
+
+    this.footerHeight = 0;
+    this.table.tFoot = null;
   }
 
   private createResizeHandle() {
