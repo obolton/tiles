@@ -1,5 +1,7 @@
 import Each from "@/jsx/each";
+import Row from "@/components/rows/Row";
 import Editor from "@/editor/Editor";
+import styles from "./SeriesList.module.css";
 import type { ChartProperties, TableProperties } from "@/types/tiles";
 
 export interface SeriesListProps {
@@ -20,8 +22,42 @@ export default function SeriesList({ chart, table }: SeriesListProps) {
     Editor.current.addChartSeries({ chartId: chart.id, columnId: value });
   }
 
+  function deleteSeries(seriesId: string) {
+    Editor.current.deleteChartSeries({ chartId: chart.id, seriesId });
+  }
+
   return (
-    <>
+    <div className={styles.container}>
+      <label>
+        Data
+        <ol className={styles.list}>
+          <Each items={chart.series}>
+            {(item) => (
+              <Row
+                data={item.id}
+                title={item.column.title ?? "Column"}
+                showRemoveButton
+                onRemove={deleteSeries}
+              />
+            )}
+          </Each>
+        </ol>
+      </label>
+
+      <label>
+        Add a series
+        <select on:change={addSeries}>
+          <option value="" selected disabled>
+            Column
+          </option>
+          <Each items={table.columns}>
+            {(column) => (
+              <option value={column.id}>{column.title ?? "Column"}</option>
+            )}
+          </Each>
+        </select>
+      </label>
+
       <label>
         Label
         <select id={`${chart.id}-label-select`} on:change={setLabel}>
@@ -42,23 +78,6 @@ export default function SeriesList({ chart, table }: SeriesListProps) {
           </Each>
         </select>
       </label>
-
-      <ol>
-        <Each items={chart.series}>
-          {(item) => <li>{item.column.title ?? "Column"}</li>}
-        </Each>
-      </ol>
-
-      <label>
-        Add a series
-        <select on:change={addSeries}>
-          <Each items={table.columns}>
-            {(column) => (
-              <option value={column.id}>{column.title ?? "Column"}</option>
-            )}
-          </Each>
-        </select>
-      </label>
-    </>
+    </div>
   );
 }
