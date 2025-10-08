@@ -66,7 +66,7 @@ select {
   border: 1px solid rgb(0 0 0 / 20%);
   border-radius: 8px;
   margin: 0;
-  padding: 4px 24px 4px 8px;
+  padding: 8px 24px 8px 8px;
   cursor: pointer;
   outline: 3px solid transparent;
   outline-offset: -1px;
