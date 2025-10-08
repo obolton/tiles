@@ -285,6 +285,13 @@ export default function TableTile({
     }
   };
 
+  async function onAppendRow() {
+    const afterRowId = rows.value.at(-1)?.id ?? null;
+    const newRow = await editor.insertTableRow({ tableId: id, afterRowId });
+    rows.value = rows.value.concat(newRow);
+    numRows.value++;
+  }
+
   function onClearSelection() {
     const selection = tableView?.selection;
     if (!selection) {
@@ -375,6 +382,7 @@ export default function TableTile({
         on:resizetablecolumn={onResizeColumn}
         on:movetablecolumn={onMoveColumn}
         on:movetablerow={onMoveRow}
+        on:appendtablerow={onAppendRow}
         on:cleartableselection={onClearSelection}
         $getColumn={(index) => columns.value[index]!}
         $getRow={(index) => rows.value[index]!}
