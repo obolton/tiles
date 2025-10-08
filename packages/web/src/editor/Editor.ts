@@ -332,6 +332,7 @@ export default class Editor {
   async createSection(transition: TransitionFunction = immediateTransition) {
     const section = await client.sections.create.mutate({
       pageId: this.pageId,
+      afterSectionId: null,
     });
     transition(() => {
       this.sections.value = this.sections.value.concat(
