@@ -1,3 +1,4 @@
+import { generateKeyBetween } from "fractional-indexing";
 import { Prisma } from "@/generated/prisma/client";
 import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import {
@@ -334,6 +335,7 @@ export async function createPage(
   { title }: CreatePageSchema,
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
+  const order = generateKeyBetween(null, null);
   return prisma.$transaction(async (transaction) => {
     const page = await transaction.page.create({
       data: {
@@ -349,6 +351,8 @@ export async function createPage(
     await transaction.section.create({
       data: {
         pageId: page.id,
+        order,
+        layout: "GRID",
         items: {
           create: {
             page: {
