@@ -1,17 +1,28 @@
 import { z } from "zod";
-import { SectionLayout } from "@/generated/prisma/client";
+import { Layout, Anchor } from "@/generated/prisma/client";
 import { BackgroundSchema } from "@/schema/Background.ts";
+
+const MAX_WIDTH = 64;
+const MAX_HEIGHT = 64;
 
 export const CreateSectionSchema = z.object({
   pageId: z.uuid(),
+  layout: z.enum(Layout).optional(),
+  anchor: z.enum(Anchor).optional(),
+  width: z.int().gte(1).lte(MAX_WIDTH).optional(),
+  height: z.int().gte(1).lte(MAX_HEIGHT).optional(),
   background: BackgroundSchema.optional(),
+  afterSectionId: z.uuid().nullable(),
 });
 export type CreateSectionSchema = z.infer<typeof CreateSectionSchema>;
 
 export const UpdateSectionSchema = z.object({
   pageId: z.uuid(),
   id: z.uuid(),
-  layout: z.enum(SectionLayout).optional(),
+  layout: z.enum(Layout).optional(),
+  anchor: z.enum(Anchor).optional(),
+  width: z.int().gte(1).lte(MAX_WIDTH).optional(),
+  height: z.int().gte(1).lte(MAX_HEIGHT).optional(),
   background: BackgroundSchema.optional(),
 });
 export type UpdateSectionSchema = z.infer<typeof UpdateSectionSchema>;
