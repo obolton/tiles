@@ -1,18 +1,40 @@
 import client from "@/api/client";
+import { getSessionId } from "@/utils/sessions";
+import { redirect } from "@/router/router";
 import { getFontConfig } from "@/utils/fonts";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import Page, { type PageProps } from "@/pages/Page";
 import { toCSSColor, isDark } from "@/utils/color";
 import type { Route, RouteLoaderResult, RouteMetadata } from "@/router/router";
 
-async function loader(): RouteLoaderResult<PageProps> {
-  const pageId = import.meta.env.PUBLIC_PAGE_ID;
+const PAGE_ID = import.meta.env.PUBLIC_PAGE_ID;
 
-  if (!pageId) {
+export async function indexRoute(request: Request) {
+  const sessionId = getSessionId(request.headers);
+  if (!sessionId) {
+    return;
+  }
+
+  // Redirect to first workspace
+  try {
+    const user = await client.users.getUserInfo.query(undefined, {
+      context: { sessionId },
+    });
+    const workspace = user.workspaces[0];
+    if (workspace) {
+      return redirect(`/workspaces/${workspace.id}`, 302);
+    }
+  } catch {
+    // Allow request to continue
+  }
+}
+
+async function loader(): RouteLoaderResult<PageProps> {
+  if (!PAGE_ID) {
     throw new Error("Not Found");
   }
 
-  const page = await client.pages.getById.query({ id: pageId });
+  const page = await client.pages.getById.query({ id: PAGE_ID });
 
   if (!page) {
     throw new Error("Not Found");
@@ -40,6 +62,7 @@ const metadata = {
 } satisfies RouteMetadata;
 
 export default {
+  middleware: import.meta.env.SSR ? indexRoute : undefined,
   loader: import.meta.env.SSR ? loader : undefined,
   component: Page,
   metadata,
