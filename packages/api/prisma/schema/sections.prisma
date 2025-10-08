@@ -1,5 +1,15 @@
-enum SectionLayout {
+enum Layout {
   GRID
+  HORIZONTAL
+  VERTICAL
+  FREEFORM
+}
+
+enum Anchor {
+  TOP
+  LEFT
+  RIGHT
+  BOTTOM
 }
 
 model Section {
@@ -7,7 +17,11 @@ model Section {
   pageId             String             @map("page_id") @db.Uuid
   createdAt          DateTime           @default(now()) @map("created_at")
   updatedAt          DateTime           @updatedAt @map("updated_at")
-  layout             SectionLayout      @default(GRID)
+  layout             Layout?            @default(GRID)
+  anchor             Anchor?
+  order              String
+  width              Int                @default(20) @db.SmallInt
+  height             Int                @default(20) @db.SmallInt
   backgroundL        Float?             @map("background_l") @db.Real
   backgroundC        Float?             @map("background_c") @db.Real
   backgroundH        Float?             @map("background_h") @db.Real
