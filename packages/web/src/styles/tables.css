@@ -139,8 +139,12 @@ table-view {
   }
 
   & tfoot {
+    height: 32px;
+
     & button {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: absolute;
       inset: 0;
       margin: 0;
@@ -152,6 +156,14 @@ table-view {
         width: 20px;
         height: 20px;
         fill: var(--icon-color);
+      }
+
+      &:hover:not(:active, :disabled) {
+        background-color: rgb(0 0 0 / 10%);
+      }
+
+      &:active:not(:disabled) {
+        background-color: rgb(0 0 0 / 20%);
       }
     }
   }
