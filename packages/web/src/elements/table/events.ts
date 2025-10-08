@@ -5,6 +5,7 @@ export interface TableEventMap {
   resizetablecolumn: TableEvent;
   movetablecolumn: TableEvent;
   movetablerow: TableEvent;
+  appendtablerow: TableEvent;
   cleartableselection: TableEvent;
   edittablecellstart: TableEvent;
   edittablecellend: TableEvent;

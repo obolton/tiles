@@ -1603,6 +1603,7 @@ export default class TableView extends HTMLElement {
     button.ariaLabel = "Append row";
     button.dataset.tooltip = "Append row";
     button.innerHTML = newIcon;
+    button.addEventListener("click", this.appendRow.bind(this));
     th.appendChild(button);
     row.appendChild(th);
     this.table.tFoot = foot;
@@ -1618,6 +1619,12 @@ export default class TableView extends HTMLElement {
 
     this.footerHeight = 0;
     this.table.tFoot = null;
+  }
+
+  appendRow() {
+    this.dispatchEvent(
+      new TableEvent("appendtablerow", { bubbles: true, cancelable: false }),
+    );
   }
 
   private createResizeHandle() {
