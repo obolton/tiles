@@ -92,7 +92,7 @@ export default function WorkspaceInvites({
         hasMore={hasMore}
         placeholder="Search invites"
         render={(invite) => (
-          <InviteRow invite={invite} showRemove onRemove={onRemove} />
+          <InviteRow invite={invite} showRemoveButton onRemove={onRemove} />
         )}
         renderPlaceholder={(query) => (
           <Placeholder>

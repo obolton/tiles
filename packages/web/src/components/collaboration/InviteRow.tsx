@@ -1,51 +1,30 @@
 import MailIcon from "@/icons/mail.svg?jsx";
-import RemoveIcon from "@/icons/remove.svg?jsx";
-import styles from "./InviteRow.module.css";
+import Row from "@/components/rows/Row";
 import type { Invite } from "@/types/collaboration";
 
 export interface InviteRowProps {
   invite: Invite;
-  showRemove?: boolean;
+  showRemoveButton?: boolean;
   onRemove?: (invite: Invite) => void;
 }
 
-const formatter = new Intl.DateTimeFormat(undefined, {
-  dateStyle: "medium",
-});
-
 export default function InviteRow({
   invite,
-  showRemove,
+  showRemoveButton,
   onRemove,
 }: InviteRowProps) {
-  function onClickRemove() {
-    onRemove?.(invite);
-  }
+  const formatter = new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+  });
 
   return (
-    <div className={styles.row}>
-      <div className={styles.icon}>
-        <MailIcon aria-hidden="true" />
-      </div>
-
-      <div className={styles.details}>
-        <span className={styles.email}>{invite.email}</span>
-        <span className={styles.description}>
-          Sent on {formatter.format(new Date(invite.createdAt))}
-        </span>
-      </div>
-
-      {showRemove ? (
-        <button
-          type="button"
-          className="floating small"
-          aria-label="Revoke invite"
-          data-tooltip="Revoke invite"
-          on:click={onClickRemove}
-        >
-          <RemoveIcon aria-hidden="true" />
-        </button>
-      ) : null}
-    </div>
+    <Row
+      data={invite}
+      icon={<MailIcon aria-hidden="true" />}
+      title={invite.email}
+      subtitle={`Sent on ${formatter.format(new Date(invite.createdAt))}`}
+      showRemoveButton={showRemoveButton}
+      onRemove={onRemove}
+    />
   );
 }

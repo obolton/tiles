@@ -91,7 +91,7 @@ export default function CollaborationPopover({
           <UserRow
             user={editor.author}
             description="Owner"
-            showRemove={false}
+            showRemoveButton={false}
             onRemove={revokeAccess}
           />
         </li>
@@ -102,7 +102,7 @@ export default function CollaborationPopover({
               <UserRow
                 user={access.user}
                 description="Editor"
-                showRemove
+                showRemoveButton
                 onRemove={revokeAccess}
               />
             </li>
@@ -112,7 +112,11 @@ export default function CollaborationPopover({
         {invites.derive((items) =>
           items.map((invite) => (
             <li>
-              <InviteRow invite={invite} showRemove onRemove={deleteInvite} />
+              <InviteRow
+                invite={invite}
+                showRemoveButton
+                onRemove={deleteInvite}
+              />
             </li>
           )),
         )}
