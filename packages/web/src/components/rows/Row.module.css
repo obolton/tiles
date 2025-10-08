@@ -1,0 +1,23 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.title,
+.subtitle {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.subtitle {
+  font-size: 12px;
+  opacity: 0.5;
+}
