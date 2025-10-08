@@ -3,6 +3,7 @@ import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { createTilePlacement } from "../tiles/tiles.ts";
 import { getBackgroundProperties } from "@/utils/backgrounds.ts";
 import type { Prisma } from "@/generated/prisma/client";
+import type { PrismaTransactionClient } from "@/database/prisma.ts";
 import type {
   CreateTableSchema,
   UpdateTableSchema,
@@ -188,17 +189,18 @@ export async function updateTable({
 }
 
 export async function getRowOrderKeys(
+  transaction: PrismaTransactionClient,
   tableId: string,
   rowId: string | null,
 ): Promise<[string | null, string | null]> {
   if (rowId === null) {
-    const [row] = await prisma.$queryRaw<
+    const [row] = await transaction.$queryRaw<
       { order: string }[]
     >`SELECT "order" FROM table_rows WHERE table_id = ${tableId}::uuid ORDER BY "order" ASC LIMIT 1;`;
     return [null, row?.order ?? null];
   }
 
-  const [result] = await prisma.$queryRaw<
+  const [result] = await transaction.$queryRaw<
     { a: string; b: string | null }[]
   >`SELECT row_a."order" AS a, row_b."order" AS b
   FROM table_rows AS row_a
@@ -225,7 +227,11 @@ export async function insertRow({
       select: { id: true },
     });
 
-    const [keyA, keyB] = await getRowOrderKeys(tableId, afterRowId);
+    const [keyA, keyB] = await getRowOrderKeys(
+      transaction,
+      tableId,
+      afterRowId,
+    );
     const order = generateKeyBetween(keyA, keyB);
 
     return transaction.tableRow.create({
@@ -279,7 +285,11 @@ export async function moveRow({
       select: { id: true },
     });
 
-    const [keyA, keyB] = await getRowOrderKeys(tableId, afterRowId);
+    const [keyA, keyB] = await getRowOrderKeys(
+      transaction,
+      tableId,
+      afterRowId,
+    );
     const order = generateKeyBetween(keyA, keyB);
 
     return transaction.tableRow.update({
@@ -317,17 +327,18 @@ export async function deleteRows({
 }
 
 export async function getColumnOrderKeys(
+  transaction: PrismaTransactionClient,
   tableId: string,
   columnId: string | null,
 ): Promise<[string | null, string | null]> {
   if (columnId === null) {
-    const [column] = await prisma.$queryRaw<
+    const [column] = await transaction.$queryRaw<
       [{ order: string | null }]
     >`SELECT "order" FROM table_columns WHERE table_id = ${tableId}::uuid ORDER BY "order" ASC LIMIT 1;`;
     return [null, column?.order ?? null];
   }
 
-  const [result] = await prisma.$queryRaw<
+  const [result] = await transaction.$queryRaw<
     { a: string; b: string | null }[]
   >`SELECT column_a."order" AS a, column_b."order" AS b
   FROM table_columns AS column_a
@@ -355,7 +366,11 @@ export async function insertColumn({
       select: { id: true },
     });
 
-    const [keyA, keyB] = await getColumnOrderKeys(tableId, afterColumnId);
+    const [keyA, keyB] = await getColumnOrderKeys(
+      transaction,
+      tableId,
+      afterColumnId,
+    );
     const order = generateKeyBetween(keyA, keyB);
 
     return transaction.tableColumn.create({
@@ -383,7 +398,11 @@ export async function moveColumn({
       select: { id: true },
     });
 
-    const [keyA, keyB] = await getColumnOrderKeys(tableId, afterColumnId);
+    const [keyA, keyB] = await getColumnOrderKeys(
+      transaction,
+      tableId,
+      afterColumnId,
+    );
     const order = generateKeyBetween(keyA, keyB);
 
     return transaction.tableColumn.update({
