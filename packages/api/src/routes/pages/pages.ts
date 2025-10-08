@@ -76,7 +76,6 @@ const PAGE_FIELDS = {
   id: true,
   workspaceId: true,
   published: true,
-  type: true,
   title: true,
   updatedAt: true,
   color: true,
@@ -332,7 +331,7 @@ export async function listDeletedPages(
 }
 
 export async function createPage(
-  { type, title }: CreatePageSchema,
+  { title }: CreatePageSchema,
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.$transaction(async (transaction) => {
@@ -341,7 +340,6 @@ export async function createPage(
         workspaceId,
         authorId: userId,
         published: false,
-        type,
         title,
       },
       select: {
@@ -386,22 +384,13 @@ export async function createPage(
 }
 
 export async function updatePage(
-  {
-    pageId,
-    published,
-    type,
-    title,
-    color,
-    font,
-    coverImageKey,
-  }: UpdatePageSchema,
+  { pageId, published, title, color, font, coverImageKey }: UpdatePageSchema,
   { userId }: AuthenticatedRequestContext,
 ) {
   return prisma.page.update({
     where: { id: pageId, authorId: userId, deletedAt: null },
     data: {
       published,
-      type,
       title,
       lightness: color ? color.l : undefined,
       chroma: color ? color.c : undefined,

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PageType, Font } from "@/generated/prisma/client";
+import { Font } from "@/generated/prisma/client";
 
 export const GetPageByIdSchema = z.object({
   id: z.uuid(),
@@ -13,7 +13,6 @@ export const ListPagesSchema = z.object({
 export type ListPagesSchema = z.infer<typeof ListPagesSchema>;
 
 export const CreatePageSchema = z.object({
-  type: z.enum(PageType).optional(),
   title: z.string().min(1),
 });
 export type CreatePageSchema = z.infer<typeof CreatePageSchema>;
@@ -21,7 +20,6 @@ export type CreatePageSchema = z.infer<typeof CreatePageSchema>;
 export const UpdatePageSchema = z.object({
   pageId: z.uuid(),
   published: z.boolean().optional(),
-  type: z.enum(PageType).optional(),
   title: z.string().min(1).optional(),
   color: z
     .object({
