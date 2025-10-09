@@ -10,16 +10,21 @@ const LONG_PRESS_DURATION = 500; // ms
 
 type ConstrainDragOptions = "horizontal" | "vertical";
 
-type DragDropEventType =
-  | "dnd-dragstart"
-  | "dnd-dragend"
-  | "dnd-dragenter"
-  | "dnd-dragleave"
-  | "dnd-drag"
-  | "dnd-dragover"
-  | "dnd-drop";
+export interface DragDropEventMap {
+  "dnd-dragstart": DragDropEvent;
+  "dnd-dragend": DragDropEvent;
+  "dnd-dragenter": DragDropEvent;
+  "dnd-dragleave": DragDropEvent;
+  "dnd-drag": DragDropEvent;
+  "dnd-dragover": DragDropEvent;
+  "dnd-drop": DragDropEvent;
+}
 
-interface DragDropEventInit<T> extends EventInit {
+declare global {
+  interface HTMLElementEventMap extends DragDropEventMap {}
+}
+
+export interface DragDropEventInit<T> extends EventInit {
   state: DragState<T>;
   dragSource: HTMLElement;
   dragPreview: HTMLElement | null;
@@ -36,7 +41,7 @@ export class DragDropEvent<T = unknown> extends Event {
   readonly clientX: number;
   readonly clientY: number;
 
-  constructor(type: DragDropEventType, options: DragDropEventInit<T>) {
+  constructor(type: keyof DragDropEventMap, options: DragDropEventInit<T>) {
     const {
       state,
       dragSource,
@@ -147,7 +152,7 @@ export class DragState<T> {
   }
 
   private createDragDropEvent(
-    type: DragDropEventType,
+    type: keyof DragDropEventMap,
     options: Partial<DragDropEventInit<T>> = {},
   ) {
     return new DragDropEvent(type, {
