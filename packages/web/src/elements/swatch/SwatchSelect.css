@@ -103,14 +103,14 @@ button {
 
   &:popover-open {
     @starting-style {
-      scale: 0.5;
+      scale: 0.9;
       opacity: 0;
     }
   }
 
   &:not(:popover-open) {
     display: none;
-    scale: 0.5;
+    scale: 0.9;
     opacity: 0;
   }
 }
