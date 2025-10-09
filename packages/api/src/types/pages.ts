@@ -1,1 +1,1 @@
-export type { PageType, Font } from "@/generated/prisma/client";
+export type { Layout, Anchor, Font } from "@/generated/prisma/client";
