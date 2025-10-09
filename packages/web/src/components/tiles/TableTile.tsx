@@ -299,33 +299,33 @@ export default function TableTile({
     }
 
     const ranges = Array.from(
-      selection.values().map((range) => {
-        switch (range.type) {
-          case "cells":
+      selection.values().map((selection) => {
+        switch (selection.type) {
+          case "range":
             return {
               type: "cells",
               from: {
-                row: range.anchor.row.id!,
-                column: range.anchor.column.id!,
+                row: selection.anchor.row.id!,
+                column: selection.anchor.column.id!,
               },
               to: {
-                row: range.focus.row.id!,
-                column: range.focus.column.id!,
+                row: selection.focus.row.id!,
+                column: selection.focus.column.id!,
               },
             } as const;
 
-          case "columns":
+          case "column":
             return {
               type: "columns",
-              from: range.from.id!,
-              to: range.to?.id ?? range.from.id!,
+              from: selection.column.id!,
+              to: selection.column.id!,
             } as const;
 
-          case "rows":
+          case "row":
             return {
               type: "rows",
-              from: range.from.id!,
-              to: range.to?.id ?? range.from.id!,
+              from: selection.row.id!,
+              to: selection.row.id!,
             } as const;
         }
       }),

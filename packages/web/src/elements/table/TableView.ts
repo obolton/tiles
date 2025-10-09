@@ -30,21 +30,19 @@ export interface VisibleCell extends Cell {
 }
 
 export type RangeSelection = {
-  type: "cells";
+  type: "range";
   anchor: Cell;
   focus: Cell;
 };
 
 export type ColumnSelection = {
-  type: "columns";
-  from: Column;
-  to?: Column;
+  type: "column";
+  column: Column;
 };
 
 export type RowSelection = {
-  type: "rows";
-  from: Row;
-  to?: Row;
+  type: "row";
+  row: Row;
 };
 
 export type Selection = RangeSelection | ColumnSelection | RowSelection;
@@ -527,7 +525,7 @@ export default class TableView extends HTMLElement {
         1;
       const column = this.visibleColumns[index];
       if (column) {
-        const selection: ColumnSelection = { type: "columns", from: column };
+        const selection: ColumnSelection = { type: "column", column };
         if (event.shiftKey) {
           this.addSelection(selection);
         } else {
@@ -562,8 +560,8 @@ export default class TableView extends HTMLElement {
       event.stopPropagation();
       const element = target.parentElement as HTMLTableRowElement;
       const selection: RowSelection = {
-        type: "rows",
-        from: new Row({ table: this, id: element.dataset.id, element }),
+        type: "row",
+        row: new Row({ table: this, id: element.dataset.id, element }),
       };
       if (event.shiftKey) {
         this.addSelection(selection);
@@ -582,7 +580,7 @@ export default class TableView extends HTMLElement {
       event.stopPropagation();
       const anchor = this.getCellInfo(target);
       const selection: RangeSelection = {
-        type: "cells",
+        type: "range",
         anchor,
         focus: anchor,
       };
@@ -828,8 +826,8 @@ export default class TableView extends HTMLElement {
       if (allowMove) {
         this.moveRow(row, index);
         this.setSelection({
-          type: "rows",
-          from: this.getRowAtIndex(index + 1),
+          type: "row",
+          row: this.getRowAtIndex(index + 1),
         });
       }
 
@@ -973,13 +971,13 @@ export default class TableView extends HTMLElement {
 
     for (const selection of this.selection) {
       switch (selection.type) {
-        case "cells":
+        case "range":
           this.drawRangeSelection(selection);
           break;
-        case "columns":
+        case "column":
           this.drawColumnSelection(selection);
           break;
-        case "rows":
+        case "row":
           this.drawRowSelection(selection);
           break;
       }
@@ -1028,15 +1026,13 @@ export default class TableView extends HTMLElement {
     }
   }
 
-  private drawColumnSelection(selection: ColumnSelection) {
-    const { from } = selection;
-    from.element.classList.add("selected");
-    from.header?.classList.add("selected");
+  private drawColumnSelection({ column }: ColumnSelection) {
+    column.element.classList.add("selected");
+    column.header?.classList.add("selected");
   }
 
-  private drawRowSelection(selection: RowSelection) {
-    const { from } = selection;
-    from.element.classList.add("selected");
+  private drawRowSelection({ row }: RowSelection) {
+    row.element.classList.add("selected");
   }
 
   private getSelectionFocus() {
@@ -1166,7 +1162,7 @@ export default class TableView extends HTMLElement {
       }
       this.redrawSelection();
     } else {
-      this.setSelection({ type: "cells", anchor: cell, focus: cell });
+      this.setSelection({ type: "range", anchor: cell, focus: cell });
       this.querySelector<HTMLTableCellElement>(
         `tr[aria-rowindex="${cell.row.index}"] > td[aria-colindex="${cell.column.index}"]`,
       )?.focus();
