@@ -52,7 +52,7 @@ export default function TableToolbar({
       return;
     }
     const first = Array.from(selection)[0];
-    const row = first?.type === "rows" ? first.from : null;
+    const row = first?.type === "row" ? first.row : null;
     const afterRowId = row?.id ?? null;
     const newRow = await editor.insertTableRow({ tableId: id, afterRowId });
     rows.value = rows.value.concat(newRow);
@@ -65,7 +65,7 @@ export default function TableToolbar({
       return;
     }
     const first = Array.from(selection)[0];
-    const column = first?.type === "columns" ? first.from : null;
+    const column = first?.type === "column" ? first.column : null;
     const afterColumnId = column?.id ?? null;
     const newColumn = await editor.insertTableColumn({
       tableId: id,
@@ -80,7 +80,7 @@ export default function TableToolbar({
       return;
     }
     const first = Array.from(selection)[0];
-    const column = first?.type === "columns" ? first.from : null;
+    const column = first?.type === "column" ? first.column : null;
     const columnId = column?.id;
     if (!columnId) {
       return;
@@ -101,8 +101,8 @@ export default function TableToolbar({
 
     const selectedColumns = table.selection
       .values()
-      .filter((s) => s.type === "columns")
-      .map((s) => s.from)
+      .filter((s) => s.type === "column")
+      .map((s) => s.column)
       .toArray();
     if (selectedColumns.length > 0) {
       const columnIds = selectedColumns.map((column) => column.id!);
@@ -118,8 +118,8 @@ export default function TableToolbar({
 
     const selectedRows = table.selection
       .values()
-      .filter((s) => s.type === "rows")
-      .map((s) => s.from)
+      .filter((s) => s.type === "row")
+      .map((s) => s.row)
       .toArray();
     if (selectedRows.length > 0) {
       const rowIds = selectedRows.map((row) => row.id!);
