@@ -12,6 +12,9 @@ import type {
 export const SECTION_FIELDS = {
   id: true,
   layout: true,
+  anchor: true,
+  width: true,
+  height: true,
   background: true,
 } as const satisfies Prisma.SectionSelect<ExtensionArgs>;
 
