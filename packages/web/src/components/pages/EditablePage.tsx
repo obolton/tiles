@@ -12,11 +12,11 @@ if (!import.meta.env.SSR) {
   import("@/elements/editor").catch(handleError);
 }
 
-export interface EditablePage {
+export interface EditablePageProps {
   page: NonNullable<AppRouterOutputs["pages"]["getById"]>;
 }
 
-export default function EditablePage({ page }: EditablePage) {
+export default function EditablePage({ page }: EditablePageProps) {
   const editor = Editor.init(page);
   const { isEditable, selection, sections } = editor;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
