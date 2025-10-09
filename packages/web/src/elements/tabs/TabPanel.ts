@@ -5,10 +5,6 @@ export interface TabPanelAttributes {
 }
 
 export default class TabPanel extends HTMLElement {
-  constructor() {
-    super();
-  }
-
   show() {
     if (!this.hasAttribute("open")) {
       this.setAttribute("open", "");
