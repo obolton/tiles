@@ -1,22 +1,21 @@
 import EditingTools from "./EditingTools";
+import If from "@/jsx/if";
 import { viewTransition } from "@/utils/transitions";
 import { setEditMode } from "@/utils/edit";
 import { classNames } from "@/utils/css";
 import styles from "./EditingToolbar.module.css";
 import type Editor from "@/editor/Editor";
 
-interface EditingToolbarProps {
+export interface EditingToolbarProps {
   editor: Editor;
   allowDelete?: boolean;
-  allowPublish?: boolean;
 }
 
 export default function EditingToolbar({
   editor,
   allowDelete = true,
-  allowPublish = true,
 }: EditingToolbarProps) {
-  const { isEditable, isPublished } = editor;
+  const { isEditable } = editor;
 
   function toggleEdit() {
     viewTransition(() => {
@@ -48,16 +47,9 @@ export default function EditingToolbar({
         </li>
       </ul>
 
-      {isEditable.derive((editable) =>
-        editable ? (
-          <EditingTools
-            editor={editor}
-            isPublished={isPublished}
-            allowPublish={allowPublish}
-            allowDelete={allowDelete}
-          />
-        ) : null,
-      )}
+      <If condition={isEditable}>
+        <EditingTools editor={editor} allowDelete={allowDelete} />
+      </If>
     </floating-toolbar>
   );
 }
