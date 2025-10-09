@@ -76,7 +76,6 @@ export default function Section({ editor, section, signal }: SectionProps) {
       style={style}
       tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
       data-section-id={id}
-      data-animate-layout-id={id}
       data-drop={isEditable.derive((editable) =>
         editable ? "true" : undefined,
       )}

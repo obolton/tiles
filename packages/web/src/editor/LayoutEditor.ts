@@ -240,7 +240,6 @@ export default class LayoutEditor {
       "--placeholder-height",
       height.toString() + "px",
     );
-    placeholder.dataset.animateLayoutId = "drag-placeholder-" + this.sectionId;
     this.element.appendChild(placeholder);
     this.dragPlaceholder = placeholder;
   }

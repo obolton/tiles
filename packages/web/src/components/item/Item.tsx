@@ -179,7 +179,6 @@ export default function Item({
       }}
       style={combinedStyles}
       data-placement-id={placementId}
-      data-animate-layout-id={placementId}
       tabIndex={tabIndex}
       on:pointerdown={onPointerDown}
       on:dnd-dragstart={onDragStart}
