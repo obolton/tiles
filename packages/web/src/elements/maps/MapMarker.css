@@ -44,7 +44,7 @@
   background: oklch(from var(--background-color) 100% calc(c * 0.5) h / 50%);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  border: 1px solid rgba(0 0 0 / 30%);
+  border: 1px solid rgb(0 0 0 / 30%);
   background-clip: padding-box;
   box-shadow: 0 4px 4px -2px rgb(0 0 0 / 20%);
   opacity: 0;

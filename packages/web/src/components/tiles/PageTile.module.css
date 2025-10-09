@@ -17,7 +17,7 @@
   line-clamp: 3;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   &.with-image {
     background: var(--background-color);
