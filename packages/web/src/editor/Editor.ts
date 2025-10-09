@@ -18,7 +18,6 @@ import type {
   TextProperties,
   TableProperties,
 } from "@/types/tiles";
-import type { PageType } from "@/types/pages";
 import type { Dropdown } from "@/types/dropdowns";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
@@ -102,7 +101,6 @@ export default class Editor {
   readonly author: User;
   readonly selection: Reactive<Set<Tile>>;
   readonly dropdowns: ReactiveArray<Dropdown>;
-  readonly type: Reactive<PageType>;
 
   static init(page: Page) {
     if (this.#current) {
@@ -148,7 +146,6 @@ export default class Editor {
     this.author = page.author;
     this.selection = reactive(new Set());
     this.dropdowns = array(page.dropdowns);
-    this.type = reactive(page.type);
 
     if (!IS_SERVER) {
       this.enablePointerEvents();
