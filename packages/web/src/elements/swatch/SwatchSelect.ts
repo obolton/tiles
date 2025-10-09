@@ -7,7 +7,7 @@ const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 export interface SwatchSelectAttributes {
-  value?: string;
+  value?: string | null;
   orientation?: "horizontal" | "vertical";
   align?: "left" | "center" | "right" | "auto";
 }
