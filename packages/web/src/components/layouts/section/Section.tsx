@@ -86,28 +86,30 @@ export default function Section({ editor, section, signal }: SectionProps) {
         <SectionToolbar section={section} />
       </If>
 
-      <scroll-view ref={scrollViewRef} className={styles.contents}>
-        <Each items={tiles}>
-          {(tile) => (
-            <Item
-              editor={editor}
-              id={tile.id}
-              placementId={tile.placementId}
-              editable={isEditable}
-              x={tile.x}
-              y={tile.y}
-              width={tile.width}
-              height={tile.height}
-              rowSpan={tile.rowSpan}
-              block={tile.type === "TEXT" ? tile.block : undefined}
-              tile={tile}
-              tabIndex={isEditable.derive((editable) =>
-                editable ? 0 : undefined,
-              )}
-            />
-          )}
-        </Each>
-      </scroll-view>
+      <page-item allowdrag={isEditable} allowresize={isEditable}>
+        <scroll-view ref={scrollViewRef} className={styles.contents}>
+          <Each items={tiles}>
+            {(tile) => (
+              <Item
+                editor={editor}
+                id={tile.id}
+                placementId={tile.placementId}
+                editable={isEditable}
+                x={tile.x}
+                y={tile.y}
+                width={tile.width}
+                height={tile.height}
+                rowSpan={tile.rowSpan}
+                block={tile.type === "TEXT" ? tile.block : undefined}
+                tile={tile}
+                tabIndex={isEditable.derive((editable) =>
+                  editable ? 0 : undefined,
+                )}
+              />
+            )}
+          </Each>
+        </scroll-view>
+      </page-item>
     </section>
   );
 }
