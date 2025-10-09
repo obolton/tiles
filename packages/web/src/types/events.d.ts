@@ -1,5 +1,5 @@
 import type { DragDropEvent } from "@/utils/drag";
-import type { TileResizeEvent } from "@/utils/events";
+import type { TileResizeEvent } from "@/elements/item/events";
 import type { ModalEvent } from "@/utils/modals";
 import type { TableEvent } from "@/elements/table/events";
 
@@ -16,9 +16,6 @@ declare global {
     "dnd-drag": DragDropEvent;
     "dnd-dragover": DragDropEvent;
     "dnd-drop": DragDropEvent;
-    tileresizestart: TileResizeEvent;
-    tileresize: TileResizeEvent;
-    tileresizeend: TileResizeEvent;
   }
 
   interface HTMLElementEventMap {
@@ -32,9 +29,6 @@ declare global {
     "dnd-drag": DragDropEvent;
     "dnd-dragover": DragDropEvent;
     "dnd-drop": DragDropEvent;
-    tileresizestart: TileResizeEvent;
-    tileresize: TileResizeEvent;
-    tileresizeend: TileResizeEvent;
   }
 }
 

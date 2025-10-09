@@ -1,7 +1,7 @@
 import { handleError } from "@/utils/errors";
 import type Editor from "@/editor/Editor";
 import type { DragDropEvent } from "@/utils/drag";
-import type { TileResizeEvent } from "@/utils/events";
+import type { PageItemEvent } from "@/elements/item/events";
 import type { Tile } from "@/types/tiles";
 
 export interface LayoutEditorOptions {
@@ -72,9 +72,9 @@ export default class LayoutEditor {
     dropTarget.addEventListener("dnd-drop", this, { signal });
     dropTarget.addEventListener("dnd-dragend", this, { passive: true, signal });
 
-    element.addEventListener("tileresizestart", this, { signal });
-    element.addEventListener("tileresize", this, { signal });
-    element.addEventListener("tileresizeend", this, { signal });
+    element.addEventListener("itemresizestart", this, { signal });
+    element.addEventListener("itemresize", this, { signal });
+    element.addEventListener("itemresizeend", this, { signal });
   }
 
   get element() {
@@ -105,12 +105,12 @@ export default class LayoutEditor {
         return this.handleDrop(event as DragDropEvent<DragData>);
       case "dnd-dragend":
         return this.handleDragEnd();
-      case "tileresizestart":
-        return this.handleResizeStart(event as TileResizeEvent);
-      case "tileresize":
-        return this.handleResize(event as TileResizeEvent);
-      case "tileresizeend":
-        return this.handleResizeEnd(event as TileResizeEvent);
+      case "itemresizestart":
+        return this.handleResizeStart(event as PageItemEvent);
+      case "itemresize":
+        return this.handleResize(event as PageItemEvent);
+      case "itemresizeend":
+        return this.handleResizeEnd(event as PageItemEvent);
     }
   }
 
@@ -358,7 +358,7 @@ export default class LayoutEditor {
 
   // Resize
 
-  private handleResizeStart(event: TileResizeEvent) {
+  private handleResizeStart(event: PageItemEvent) {
     if (!(event.target instanceof HTMLElement)) {
       return;
     }
@@ -384,7 +384,7 @@ export default class LayoutEditor {
     document.body.dataset.resize = "true";
   }
 
-  private handleResize(event: TileResizeEvent) {
+  private handleResize(event: PageItemEvent) {
     if (event.defaultPrevented || !this.size) {
       return;
     }
@@ -414,7 +414,7 @@ export default class LayoutEditor {
     }
   }
 
-  private async handleResizeEnd(event: TileResizeEvent) {
+  private async handleResizeEnd(event: PageItemEvent) {
     if (event.defaultPrevented || !this.size) {
       return;
     }

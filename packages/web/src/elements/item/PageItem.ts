@@ -1,5 +1,5 @@
 import css from "./PageItem.css?inline";
-import { TileResizeEvent } from "@/utils/events";
+import { PageItemEvent } from "@/elements/item/events";
 import { DEFAULT_TIMING } from "@/utils/animation/effects";
 import { makeDraggable } from "@/utils/drag";
 
@@ -149,7 +149,7 @@ export default class PageItem extends HTMLElement {
       this.height = event.clientY - rect.y;
 
       this.dispatchEvent(
-        new TileResizeEvent("tileresize", {
+        new PageItemEvent("itemresize", {
           bubbles: true,
           cancelable: false,
           width: this.width,
@@ -172,7 +172,7 @@ export default class PageItem extends HTMLElement {
   private pointerUp() {
     if (this.isResizing) {
       this.dispatchEvent(
-        new TileResizeEvent("tileresizeend", {
+        new PageItemEvent("itemresizeend", {
           bubbles: true,
           cancelable: false,
           width: this.width,
@@ -209,7 +209,7 @@ export default class PageItem extends HTMLElement {
     this.height = rect.height;
 
     const allowResize = this.dispatchEvent(
-      new TileResizeEvent("tileresizestart", {
+      new PageItemEvent("itemresizestart", {
         bubbles: true,
         cancelable: true,
         width: this.width,
