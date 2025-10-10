@@ -10,7 +10,7 @@ floating-toolbar {
   padding: 8px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   opacity: 1;
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 15%),
@@ -44,10 +44,10 @@ floating-toolbar {
     display: flex;
     flex-direction: inherit;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
 
     &:not(:last-child) {
-      padding: 0 16px 0 0;
+      padding: 0 12px 0 0;
 
       &::after {
         content: "";
@@ -80,7 +80,7 @@ floating-toolbar {
     }
 
     & > ul:not(:last-child) {
-      padding: 0 0 16px;
+      padding: 0 0 12px;
 
       &::after {
         inset: auto 4px 0;
