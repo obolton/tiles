@@ -9,6 +9,7 @@ import { isEditMode } from "@/utils/edit";
 import { createState } from "@/utils/richText/state";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
+import { moveElement } from "@/utils/arrays";
 import type { FontId } from "@/config/fonts";
 import type {
   ClientTile,
@@ -355,6 +356,20 @@ export default class Editor {
     });
   }
 
+  private transitionSections(update: () => void) {
+    const sections = document.querySelectorAll<HTMLElement>(
+      "section[data-section-id]",
+    );
+    for (const section of sections) {
+      section.style.viewTransitionName = `section-${section.dataset.sectionId}`;
+    }
+    viewTransition(update).updateCallbackDone.finally(() => {
+      for (const section of sections) {
+        section.style.viewTransitionName = "";
+      }
+    });
+  }
+
   async deleteSection({
     id,
   }: OmitPageId<AppRouterInputs["sections"]["delete"]>) {
@@ -362,13 +377,6 @@ export default class Editor {
       pageId: this.pageId,
       id,
     });
-
-    const sections = document.querySelectorAll<HTMLElement>(
-      "section[data-section-id]",
-    );
-    for (const section of sections) {
-      section.style.viewTransitionName = `section-${section.dataset.sectionId}`;
-    }
 
     const element = document.querySelector<HTMLElement>(
       `section[data-section-id="${id}"]`,
@@ -379,20 +387,60 @@ export default class Editor {
     const sibling =
       element?.nextElementSibling || element?.previousElementSibling;
 
-    viewTransition(() => {
+    this.transitionSections(() => {
       this.sections.value = this.sections.value.filter(
         (section) => section.id !== id,
       );
       if (sibling instanceof HTMLElement) {
         sibling.focus({ preventScroll: true });
       }
-    }).updateCallbackDone.finally(() => {
-      for (const section of sections) {
-        section.style.viewTransitionName = "";
-      }
     });
 
     return section;
+  }
+
+  async moveSectionUp(id: string) {
+    const index = this.sections.value.findIndex((section) => section.id === id);
+    if (index < 0) {
+      throw new Error(`Invalid section ID: ${id}`);
+    }
+    if (index === 0) {
+      return;
+    }
+
+    const afterSectionId = this.sections.value[index - 2]?.id ?? null;
+
+    this.transitionSections(() => {
+      this.sections.value = moveElement(this.sections.value, index, index - 1);
+    });
+
+    await client.sections.update.mutate({
+      pageId: this.pageId,
+      id,
+      afterSectionId,
+    });
+  }
+
+  async moveSectionDown(id: string) {
+    const index = this.sections.value.findIndex((section) => section.id === id);
+    if (index < 0) {
+      throw new Error(`Invalid section ID: ${id}`);
+    }
+
+    const afterSectionId = this.sections.value[index + 1]?.id;
+    if (!afterSectionId) {
+      return;
+    }
+
+    this.transitionSections(() => {
+      this.sections.value = moveElement(this.sections.value, index, index + 1);
+    });
+
+    await client.sections.update.mutate({
+      pageId: this.pageId,
+      id,
+      afterSectionId,
+    });
   }
 
   // Tiles
