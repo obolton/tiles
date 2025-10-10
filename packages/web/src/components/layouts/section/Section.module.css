@@ -48,10 +48,9 @@
 
 .section {
   position: relative;
-  box-sizing: content-box;
   width: 100%;
   margin: 0;
-  padding: 0;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -61,8 +60,30 @@
   outline: none;
 }
 
-.contents {
+.item {
   max-width: 100%;
+  border-radius: var(--border-radius);
+
+  body[data-editing] & {
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      box-shadow: 0 0 0 3px rgb(0 0 0 / 20%);
+      border-radius: inherit;
+      opacity: 0.5;
+      transition: opacity var(--animation-duration-short) var(--easing);
+    }
+
+    .section:is(:focus-within, [data-drop-target]) &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.contents {
+  position: absolute;
+  inset: 0;
 
   &:not(:defined),
   &::part(container) {
@@ -92,22 +113,6 @@
     background: rgb(0 0 0 / 10%);
     border-radius: var(--border-radius);
     z-index: 2;
-  }
-
-  body[data-editing] & {
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 12px;
-      border: 3px solid rgb(0 0 0 / 20%);
-      border-radius: calc(var(--border-radius) + 12px);
-      opacity: 0.5;
-      transition: opacity var(--animation-duration-short) var(--easing);
-    }
-
-    .section:is(:focus-within, [data-drop-target]) &::before {
-      opacity: 1;
-    }
   }
 }
 

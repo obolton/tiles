@@ -4,11 +4,14 @@ import SectionToolbar from "./SectionToolbar";
 import { toCSSColor } from "@/utils/color";
 import If from "@/jsx/if";
 import Each from "@/jsx/each";
+import Editor from "@/editor/Editor";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./Section.module.css";
 import type { SectionWithTiles } from "@/types/tiles";
-import type Editor from "@/editor/Editor";
 import type ScrollView from "@/elements/scroll-view/ScrollView";
+import type { PageItemEvent } from "@/elements/item/events";
+
+const SIZE_UNIT = 24;
 
 export interface SectionProps {
   editor: Editor;
@@ -18,7 +21,7 @@ export interface SectionProps {
 
 export default function Section({ editor, section, signal }: SectionProps) {
   const { isEditable } = editor;
-  const { id, background, tiles } = section;
+  const { id, width, height, background, tiles } = section;
   const hasFocus = flag(false);
   let scrollView: ScrollView | null = null;
 
@@ -46,6 +49,19 @@ export default function Section({ editor, section, signal }: SectionProps) {
     }
   }
 
+  function onResize(event: PageItemEvent) {
+    width.value = Math.round(event.width / SIZE_UNIT);
+    height.value = Math.round(event.height / SIZE_UNIT);
+  }
+
+  function onResizeEnd() {
+    Editor.current.updateSection({
+      id,
+      width: width.value,
+      height: height.value,
+    });
+  }
+
   function onFocusOut(event: FocusEvent) {
     const element = event.currentTarget as HTMLElement;
     if (
@@ -56,16 +72,27 @@ export default function Section({ editor, section, signal }: SectionProps) {
     }
   }
 
-  const style = new Computed([background] as const, (backgroundValue) => ({
-    "--background-color":
-      backgroundValue && "color" in backgroundValue
-        ? toCSSColor(backgroundValue.color)
-        : "transparent",
-    backgroundImage:
-      backgroundValue && "imageUrl" in backgroundValue
-        ? `url(${backgroundValue.imageUrl})`
-        : undefined,
-  }));
+  const containerStyle = new Computed(
+    [background] as const,
+    (backgroundValue) => ({
+      "--background-color":
+        backgroundValue && "color" in backgroundValue
+          ? toCSSColor(backgroundValue.color)
+          : "transparent",
+      backgroundImage:
+        backgroundValue && "imageUrl" in backgroundValue
+          ? `url(${backgroundValue.imageUrl})`
+          : undefined,
+    }),
+  );
+
+  const contentStyle = new Computed(
+    [width, height] as const,
+    (widthValue, heightValue) => ({
+      width: widthValue * SIZE_UNIT + "px",
+      height: heightValue * SIZE_UNIT + "px",
+    }),
+  );
 
   return (
     <section
@@ -73,7 +100,7 @@ export default function Section({ editor, section, signal }: SectionProps) {
       classList={{
         [styles.section]: true,
       }}
-      style={style}
+      style={containerStyle}
       tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
       data-section-id={id}
       data-drop={isEditable.derive((editable) =>
@@ -86,7 +113,14 @@ export default function Section({ editor, section, signal }: SectionProps) {
         <SectionToolbar section={section} />
       </If>
 
-      <page-item allowdrag={isEditable} allowresize={isEditable}>
+      <page-item
+        className={styles.item}
+        style={contentStyle}
+        allowdrag={isEditable}
+        allowresize={isEditable}
+        on:itemresize={onResize}
+        on:itemresizeend={onResizeEnd}
+      >
         <scroll-view ref={scrollViewRef} className={styles.contents}>
           <Each items={tiles}>
             {(tile) => (
