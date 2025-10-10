@@ -184,7 +184,9 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
               onChange={setBackground}
             />
           </li>
+        </ul>
 
+        <ul role="group" aria-label="Section order tools">
           <li role="presentation">
             <ToolbarButton label="Move up" on:click={moveUp}>
               <ArrowUpIcon aria-hidden="true" />
@@ -196,7 +198,9 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
               <ArrowDownIcon aria-hidden="true" />
             </ToolbarButton>
           </li>
+        </ul>
 
+        <ul role="group" aria-label="More tools">
           <li role="presentation">
             <ToolbarButton
               id={`${section.id}-options-button`}
