@@ -43,10 +43,14 @@ export default function Section({ editor, section, signal }: SectionProps) {
     scrollView = element;
   }
 
-  function onFocusIn() {
+  function onFocus() {
     if (isEditable.value) {
       hasFocus.on();
     }
+  }
+
+  function onBlur() {
+    hasFocus.off();
   }
 
   function onResize(event: PageItemEvent) {
@@ -60,16 +64,6 @@ export default function Section({ editor, section, signal }: SectionProps) {
       width: width.value,
       height: height.value,
     });
-  }
-
-  function onFocusOut(event: FocusEvent) {
-    const element = event.currentTarget as HTMLElement;
-    if (
-      !(event.relatedTarget instanceof Element) ||
-      !element.contains(event.relatedTarget)
-    ) {
-      hasFocus.off();
-    }
   }
 
   const layoutClass = layout.derive((value) => {
@@ -131,8 +125,8 @@ export default function Section({ editor, section, signal }: SectionProps) {
       data-drop={isEditable.derive((editable) =>
         editable ? "true" : undefined,
       )}
-      on:focusin={onFocusIn}
-      on:focusout={onFocusOut}
+      on:focus={onFocus}
+      on:blur={onBlur}
     >
       <page-item
         className={styles.container}
