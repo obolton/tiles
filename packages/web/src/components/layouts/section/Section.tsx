@@ -123,7 +123,7 @@ export default function Section({ editor, section, signal }: SectionProps) {
       on:focusout={onFocusOut}
     >
       <page-item
-        className={styles.item}
+        className={styles.container}
         style={contentStyle}
         allowdrag={isEditable}
         allowresize={isEditable}
