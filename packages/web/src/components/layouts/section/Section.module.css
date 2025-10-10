@@ -132,13 +132,13 @@
 .horizontal {
   &:not(:defined),
   &::part(contents) {
-    grid-auto-columns: min-content;
+    grid-auto-columns: var(--grid-column-width);
     grid-template-rows: 100%;
     grid-auto-flow: column;
   }
 
   & .item {
-    width: calc(var(--width) * var(--grid-column-width));
+    grid-column: span var(--width);
   }
 }
 
@@ -146,12 +146,12 @@
   &:not(:defined),
   &::part(contents) {
     grid-template-columns: 100%;
-    grid-auto-rows: min-content;
+    grid-auto-rows: var(--grid-row-height);
     grid-auto-flow: row;
   }
 
   & .item {
-    height: calc(var(--height) * var(--grid-row-height));
+    grid-row: span var(--height);
   }
 }
 

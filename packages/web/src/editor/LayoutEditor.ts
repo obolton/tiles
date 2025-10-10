@@ -400,7 +400,10 @@ export default class LayoutEditor {
       1,
     );
     const height = Math.max(
-      Math.round(event.height / this.gridRowMinHeight),
+      Math.round(
+        (event.height + this.gridColumnGap) /
+          (this.gridRowMinHeight + this.gridColumnGap),
+      ),
       1,
     );
     const block = height !== this.size.height ? false : this.size.block;
