@@ -8,9 +8,11 @@ const DRAG_THRESHOLD = 10;
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
+export type ResizeDirection = "all" | "horizontal" | "vertical";
+
 export interface PageItemAttributes {
   allowdrag?: boolean;
-  allowresize?: boolean;
+  resize?: ResizeDirection | null;
 }
 
 declare global {
@@ -22,8 +24,10 @@ declare global {
 export default class PageItem extends HTMLElement {
   static readonly observedAttributes: (keyof PageItemAttributes)[] = [
     "allowdrag",
-    "allowresize",
+    "resize",
   ] as const;
+
+  #resize: ResizeDirection | null = null;
 
   private readonly internals: ElementInternals;
 
@@ -38,6 +42,25 @@ export default class PageItem extends HTMLElement {
   private initialPointerX = 0;
   private initialPointerY = 0;
 
+  get resize() {
+    return this.#resize;
+  }
+
+  set resize(value: ResizeDirection | null) {
+    if (value === this.#resize) {
+      return;
+    }
+
+    this.#resize = value;
+
+    if (!value) {
+      this.endResizing();
+      this.hideResizeHandle();
+    } else {
+      this.showResizeHandle();
+    }
+  }
+
   constructor() {
     super();
 
@@ -50,17 +73,21 @@ export default class PageItem extends HTMLElement {
 
   attributeChangedCallback(
     name: keyof PageItemAttributes,
-    _: string,
+    _: string | null,
     value: string | null,
   ) {
     switch (name) {
-      case "allowresize":
-        if (value === null) {
-          this.endResizing();
-          this.hideResizeHandle();
-        } else {
-          this.showResizeHandle();
+      case "resize":
+        if (
+          typeof value === "string" &&
+          value !== "all" &&
+          value !== "horizontal" &&
+          value !== "vertical"
+        ) {
+          throw new Error(`Invalid value for resize attribute: ${value}`);
         }
+
+        this.resize = value;
         break;
 
       case "allowdrag":
@@ -143,10 +170,13 @@ export default class PageItem extends HTMLElement {
   }
 
   private pointerMove(event: PointerEvent) {
+    const horizontal = this.resize === "all" || this.resize === "horizontal";
+    const vertical = this.resize === "all" || this.resize === "vertical";
+
     if (this.isResizing) {
       const rect = this.getBoundingClientRect();
-      this.width = event.clientX - rect.x;
-      this.height = event.clientY - rect.y;
+      this.width = horizontal ? event.clientX - rect.x : rect.width;
+      this.height = vertical ? event.clientY - rect.y : rect.height;
 
       this.dispatchEvent(
         new PageItemEvent("itemresize", {
@@ -159,8 +189,8 @@ export default class PageItem extends HTMLElement {
 
       this.updateOutlineSize();
     } else {
-      const deltaX = event.clientX - this.initialPointerX;
-      const deltaY = event.clientY - this.initialPointerY;
+      const deltaX = horizontal ? event.clientX - this.initialPointerX : 0;
+      const deltaY = vertical ? event.clientY - this.initialPointerY : 0;
       const distance = Math.hypot(deltaX, deltaY);
 
       if (distance >= DRAG_THRESHOLD) {
