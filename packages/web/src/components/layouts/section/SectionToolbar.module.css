@@ -12,7 +12,7 @@
 .toolbar {
   position: absolute;
   inset-block-start: 0;
-  inset-inline-start: 0;
-  margin-block: 24px;
+  inset-inline-end: 100%;
+  margin-block: 8px;
   margin-inline: 24px;
 }

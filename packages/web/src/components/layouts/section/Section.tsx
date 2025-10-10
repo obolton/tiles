@@ -109,10 +109,6 @@ export default function Section({ editor, section, signal }: SectionProps) {
       on:focusin={onFocusIn}
       on:focusout={onFocusOut}
     >
-      <If condition={hasFocus}>
-        <SectionToolbar section={section} />
-      </If>
-
       <page-item
         className={styles.item}
         style={contentStyle}
@@ -121,6 +117,10 @@ export default function Section({ editor, section, signal }: SectionProps) {
         on:itemresize={onResize}
         on:itemresizeend={onResizeEnd}
       >
+        <If condition={hasFocus}>
+          <SectionToolbar section={section} />
+        </If>
+
         <scroll-view ref={scrollViewRef} className={styles.contents}>
           <Each items={tiles}>
             {(tile) => (
