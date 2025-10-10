@@ -24,6 +24,7 @@ export const UpdateSectionSchema = z.object({
   width: z.int().gte(1).lte(MAX_WIDTH).optional(),
   height: z.int().gte(1).lte(MAX_HEIGHT).optional(),
   background: BackgroundSchema.optional(),
+  afterSectionId: z.uuid().nullable().optional(),
 });
 export type UpdateSectionSchema = z.infer<typeof UpdateSectionSchema>;
 

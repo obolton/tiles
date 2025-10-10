@@ -90,20 +90,34 @@ export async function updateSection({
   width,
   height,
   background,
+  afterSectionId,
 }: UpdateSectionSchema) {
-  return prisma.section.update({
-    where: {
-      pageId,
-      id,
-    },
-    data: {
-      layout,
-      anchor,
-      width,
-      height,
-      ...getBackgroundProperties(background),
-    },
-    select: SECTION_FIELDS,
+  return prisma.$transaction(async (transaction) => {
+    let order: string | undefined = undefined;
+    if (typeof afterSectionId !== "undefined") {
+      const [keyA, keyB] = await getSectionOrderKeys(
+        transaction,
+        pageId,
+        afterSectionId,
+      );
+      order = generateKeyBetween(keyA, keyB);
+    }
+
+    return transaction.section.update({
+      where: {
+        pageId,
+        id,
+      },
+      data: {
+        layout,
+        anchor,
+        width,
+        height,
+        ...getBackgroundProperties(background),
+        order,
+      },
+      select: SECTION_FIELDS,
+    });
   });
 }
 

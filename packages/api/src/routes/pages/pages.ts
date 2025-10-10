@@ -99,7 +99,7 @@ const PAGE_FIELDS = {
   sections: {
     select: SECTION_FIELDS,
     orderBy: {
-      createdAt: "asc",
+      order: "asc",
     },
   },
   tiles: {
