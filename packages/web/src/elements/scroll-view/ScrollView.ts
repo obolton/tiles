@@ -1,4 +1,6 @@
 import css from "./ScrollView.css?inline";
+import arrowUpIcon from "@/icons/arrow-up.svg?raw";
+import arrowDownIcon from "@/icons/arrow-down.svg?raw";
 import arrowLeftIcon from "@/icons/arrow-left.svg?raw";
 import arrowRightIcon from "@/icons/arrow-right.svg?raw";
 import type { DragDropEvent } from "@/utils/drag";
@@ -17,8 +19,10 @@ export default class ScrollView extends HTMLElement {
 
   private readonly internals: ElementInternals;
   private readonly container: HTMLDivElement;
-  private readonly previousButton: HTMLButtonElement;
-  private readonly nextButton: HTMLButtonElement;
+  private readonly upButton: HTMLButtonElement;
+  private readonly downButton: HTMLButtonElement;
+  private readonly leftButton: HTMLButtonElement;
+  private readonly rightButton: HTMLButtonElement;
   private readonly resizeObserver: ResizeObserver;
 
   private scrollSpeed = 0;
@@ -46,25 +50,53 @@ export default class ScrollView extends HTMLElement {
     this.contents.append(document.createElement("slot"));
     this.container.append(this.contents);
 
-    this.previousButton = document.createElement("button");
-    this.previousButton.id = "previous";
-    this.previousButton.part.add("navigation");
-    this.previousButton.type = "button";
-    this.previousButton.ariaLabel = "Scroll to the previous item";
-    this.previousButton.tabIndex = 0;
-    this.previousButton.innerHTML = arrowLeftIcon;
-    this.previousButton.addEventListener("click", this);
+    this.upButton = document.createElement("button");
+    this.upButton.id = "up";
+    this.upButton.classList.add("button");
+    this.upButton.part.add("navigation");
+    this.upButton.type = "button";
+    this.upButton.ariaLabel = "Scroll up";
+    this.upButton.tabIndex = 0;
+    this.upButton.innerHTML = arrowUpIcon;
+    this.upButton.addEventListener("click", this);
 
-    this.nextButton = document.createElement("button");
-    this.nextButton.id = "next";
-    this.nextButton.part.add("navigation");
-    this.nextButton.type = "button";
-    this.nextButton.ariaLabel = "Scroll to the next item";
-    this.nextButton.tabIndex = 0;
-    this.nextButton.innerHTML = arrowRightIcon;
-    this.nextButton.addEventListener("click", this);
+    this.downButton = document.createElement("button");
+    this.downButton.id = "down";
+    this.downButton.classList.add("button");
+    this.downButton.part.add("navigation");
+    this.downButton.type = "button";
+    this.downButton.ariaLabel = "Scroll down";
+    this.downButton.tabIndex = 0;
+    this.downButton.innerHTML = arrowDownIcon;
+    this.downButton.addEventListener("click", this);
 
-    shadow.append(this.previousButton, this.nextButton, this.container);
+    this.leftButton = document.createElement("button");
+    this.leftButton.id = "left";
+    this.leftButton.classList.add("button");
+    this.leftButton.part.add("navigation");
+    this.leftButton.type = "button";
+    this.leftButton.ariaLabel = "Scroll left";
+    this.leftButton.tabIndex = 0;
+    this.leftButton.innerHTML = arrowLeftIcon;
+    this.leftButton.addEventListener("click", this);
+
+    this.rightButton = document.createElement("button");
+    this.rightButton.id = "right";
+    this.rightButton.classList.add("button");
+    this.rightButton.part.add("navigation");
+    this.rightButton.type = "button";
+    this.rightButton.ariaLabel = "Scroll down";
+    this.rightButton.tabIndex = 0;
+    this.rightButton.innerHTML = arrowRightIcon;
+    this.rightButton.addEventListener("click", this);
+
+    shadow.append(
+      this.upButton,
+      this.downButton,
+      this.leftButton,
+      this.rightButton,
+      this.container,
+    );
 
     this.resizeObserver = new ResizeObserver(this.onResize.bind(this));
   }
@@ -109,10 +141,14 @@ export default class ScrollView extends HTMLElement {
     event.preventDefault();
 
     switch (target.id) {
-      case "previous":
-        return this.previous();
-      case "next":
-        return this.next();
+      case "up":
+        return this.up();
+      case "down":
+        return this.down();
+      case "left":
+        return this.left();
+      case "right":
+        return this.right();
     }
   }
 
@@ -128,18 +164,75 @@ export default class ScrollView extends HTMLElement {
       return;
     }
 
-    if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      event.stopPropagation();
-      this.previous();
-    } else if (event.key === "ArrowRight") {
-      event.preventDefault();
-      event.stopPropagation();
-      this.next();
+    switch (event.key) {
+      case "ArrowUp":
+        event.preventDefault();
+        event.stopPropagation();
+        this.up();
+        break;
+
+      case "ArrowDown":
+        event.preventDefault();
+        event.stopPropagation();
+        this.down();
+        break;
+
+      case "ArrowLeft":
+        event.preventDefault();
+        event.stopPropagation();
+        this.left();
+        break;
+
+      case "ArrowRight":
+        event.preventDefault();
+        event.stopPropagation();
+        this.right();
+        break;
     }
   }
 
-  private getPreviousElement() {
+  private getElementUp() {
+    const style = getComputedStyle(this.container);
+    const scrollPaddingTop = parseFloat(style.scrollPaddingTop);
+    const top = this.container.scrollTop + scrollPaddingTop;
+
+    let element: HTMLElement | null = null;
+    for (const child of this.children) {
+      if (
+        child instanceof HTMLElement &&
+        child.offsetTop < top &&
+        (!element || child.offsetTop > element.offsetTop)
+      ) {
+        element = child;
+      }
+    }
+    return element;
+  }
+
+  private getElementDown() {
+    const scrollTop = this.container.scrollTop;
+    const style = getComputedStyle(this.container);
+    const scrollPaddingTop = parseFloat(style.scrollPaddingTop);
+    const scrollPaddingBottom = parseFloat(style.scrollPaddingBottom);
+    const top = scrollTop + scrollPaddingTop;
+    const bottom =
+      scrollTop + this.container.clientHeight - scrollPaddingBottom;
+
+    let element: HTMLElement | null = null;
+    for (const child of this.children) {
+      if (
+        child instanceof HTMLElement &&
+        child.offsetTop > top &&
+        child.offsetTop + child.clientHeight > bottom &&
+        (!element || child.offsetTop < element.offsetTop)
+      ) {
+        element = child;
+      }
+    }
+    return element;
+  }
+
+  private getElementLeft() {
     const style = getComputedStyle(this.container);
     const scrollPaddingLeft = parseFloat(style.scrollPaddingLeft);
     const left = this.container.scrollLeft + scrollPaddingLeft;
@@ -157,7 +250,7 @@ export default class ScrollView extends HTMLElement {
     return element;
   }
 
-  private getNextElement() {
+  private getElementRight() {
     const scrollLeft = this.container.scrollLeft;
     const style = getComputedStyle(this.container);
     const scrollPaddingLeft = parseFloat(style.scrollPaddingLeft);
@@ -181,45 +274,80 @@ export default class ScrollView extends HTMLElement {
 
   private scrollToElement(element: HTMLElement) {
     const style = getComputedStyle(this.container);
-    const scrollPadding = parseFloat(style.scrollPaddingLeft);
+    const scrollPaddingTop = parseFloat(style.scrollPaddingTop);
+    const scrollPaddingLeft = parseFloat(style.scrollPaddingLeft);
     this.container.scroll({
-      left: element.offsetLeft - scrollPadding,
+      top: element.offsetTop - scrollPaddingTop,
+      left: element.offsetLeft - scrollPaddingLeft,
       behavior: "smooth",
     });
   }
 
-  scrollToStart() {
+  scrollToTop() {
+    this.container.scroll({ top: 0, behavior: "smooth" });
+  }
+
+  scrollToBottom() {
+    this.container.scroll({
+      top: this.container.scrollHeight - this.container.clientHeight,
+      behavior: "smooth",
+    });
+  }
+
+  scrollToLeft() {
     this.container.scroll({ left: 0, behavior: "smooth" });
   }
 
-  scrollToEnd() {
+  scrollToRight() {
     this.container.scroll({
       left: this.container.scrollWidth - this.container.clientWidth,
       behavior: "smooth",
     });
   }
 
-  previous() {
-    const element = this.getPreviousElement();
+  up() {
+    const element = this.getElementUp();
     if (element) {
       this.scrollToElement(element);
     } else {
-      this.scrollToStart();
+      this.scrollToTop();
     }
   }
 
-  next() {
-    const element = this.getNextElement();
+  down() {
+    const element = this.getElementDown();
     if (element) {
       this.scrollToElement(element);
     } else {
-      this.scrollToEnd();
+      this.scrollToBottom();
+    }
+  }
+
+  left() {
+    const element = this.getElementLeft();
+    if (element) {
+      this.scrollToElement(element);
+    } else {
+      this.scrollToLeft();
+    }
+  }
+
+  right() {
+    const element = this.getElementRight();
+    if (element) {
+      this.scrollToElement(element);
+    } else {
+      this.scrollToRight();
     }
   }
 
   private updateButtons() {
-    this.previousButton.disabled = this.container.scrollLeft < 16;
-    this.nextButton.disabled =
+    this.upButton.disabled = this.container.scrollTop < 16;
+    this.downButton.disabled =
+      this.container.scrollTop >
+      this.container.scrollHeight - this.container.clientHeight - 16;
+    this.leftButton.disabled = this.container.scrollLeft < 16;
+    this.rightButton.disabled =
       this.container.scrollLeft >
       this.container.scrollWidth - this.container.clientWidth - 16;
   }
@@ -270,7 +398,10 @@ export default class ScrollView extends HTMLElement {
   }
 
   get scrollable() {
-    return this.container.scrollWidth > this.container.clientWidth;
+    return (
+      this.container.scrollHeight > this.container.clientHeight ||
+      this.container.scrollWidth > this.container.clientWidth
+    );
   }
 
   private scrollFrame(timestamp: DOMHighResTimeStamp) {
