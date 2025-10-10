@@ -8,6 +8,8 @@ import AnchorTopIcon from "@/icons/anchor-top.svg?jsx";
 import AnchorBottomIcon from "@/icons/anchor-bottom.svg?jsx";
 import AnchorLeftIcon from "@/icons/anchor-left.svg?jsx";
 import AnchorRightIcon from "@/icons/anchor-right.svg?jsx";
+import ArrowUpIcon from "@/icons/arrow-up.svg?jsx";
+import ArrowDownIcon from "@/icons/arrow-down.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
@@ -58,6 +60,22 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
         background: value,
       });
       viewTransition(() => (section.background.value = newBackground));
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  async function moveUp() {
+    try {
+      await Editor.current.moveSectionUp(section.id);
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  async function moveDown() {
+    try {
+      await Editor.current.moveSectionDown(section.id);
     } catch (error) {
       handleError(error);
     }
@@ -165,6 +183,18 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
               value={section.background}
               onChange={setBackground}
             />
+          </li>
+
+          <li role="presentation">
+            <ToolbarButton label="Move up" on:click={moveUp}>
+              <ArrowUpIcon aria-hidden="true" />
+            </ToolbarButton>
+          </li>
+
+          <li role="presentation">
+            <ToolbarButton label="Move down" on:click={moveDown}>
+              <ArrowDownIcon aria-hidden="true" />
+            </ToolbarButton>
           </li>
 
           <li role="presentation">
