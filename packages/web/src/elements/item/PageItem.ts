@@ -57,7 +57,11 @@ export default class PageItem extends HTMLElement {
       this.endResizing();
       this.hideResizeHandle();
     } else {
-      this.showResizeHandle();
+      if (this.resizeHandle) {
+        this.resizeHandle.className = value;
+      } else {
+        this.showResizeHandle();
+      }
     }
   }
 
@@ -129,6 +133,7 @@ export default class PageItem extends HTMLElement {
 
     this.resizeHandle = document.createElement("div");
     this.resizeHandle.id = "resize";
+    this.resizeHandle.className = this.resize ?? "all";
     this.resizeHandle.tabIndex = 0;
     this.resizeHandle.addEventListener(
       "pointerdown",
