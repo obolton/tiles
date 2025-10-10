@@ -10,6 +10,7 @@ import { flag, reactive, Computed } from "@/utils/reactivity";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import styles from "./Item.module.css";
 import type PageItem from "@/elements/item/PageItem";
+import type { ResizeDirection } from "@/elements/item/PageItem";
 import type { Tile } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
@@ -32,6 +33,7 @@ export interface ItemProps {
   block?: Reactive<boolean>;
   tile: Tile;
   tabIndex?: number | Reactive<number | undefined>;
+  resize?: Reactive<ResizeDirection | null>;
 }
 
 function getTileComponent(
@@ -77,6 +79,7 @@ export default function Item({
   block,
   tile,
   tabIndex,
+  resize,
 }: ItemProps) {
   let item: PageItem;
   const ref = (element: PageItem) => {
@@ -169,7 +172,7 @@ export default function Item({
       id={id}
       ref={ref}
       allowdrag={editable}
-      allowresize={editable}
+      resize={resize}
       classList={{
         [styles.item]: true,
         [styles.draggable]: editable,

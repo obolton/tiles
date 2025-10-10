@@ -107,6 +107,18 @@ export default function Section({ editor, section, signal }: SectionProps) {
     }),
   );
 
+  const resize = layout.derive((value) => {
+    switch (value) {
+      case "GRID":
+      case "FREEFORM":
+        return "all";
+      case "HORIZONTAL":
+        return "horizontal";
+      case "VERTICAL":
+        return "vertical";
+    }
+  });
+
   return (
     <section
       ref={sectionRef}
@@ -126,7 +138,7 @@ export default function Section({ editor, section, signal }: SectionProps) {
         className={styles.container}
         style={contentStyle}
         allowdrag={isEditable}
-        allowresize={isEditable}
+        resize={isEditable.derive((value) => (value ? "all" : null))}
         on:itemresize={onResize}
         on:itemresizeend={onResizeEnd}
       >
@@ -156,6 +168,7 @@ export default function Section({ editor, section, signal }: SectionProps) {
                 tabIndex={isEditable.derive((editable) =>
                   editable ? 0 : undefined,
                 )}
+                resize={resize}
               />
             )}
           </Each>
