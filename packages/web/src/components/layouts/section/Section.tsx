@@ -21,7 +21,7 @@ export interface SectionProps {
 
 export default function Section({ editor, section, signal }: SectionProps) {
   const { isEditable } = editor;
-  const { id, width, height, background, tiles } = section;
+  const { id, width, height, layout, background, tiles } = section;
   const hasFocus = flag(false);
   let scrollView: ScrollView | null = null;
 
@@ -72,6 +72,19 @@ export default function Section({ editor, section, signal }: SectionProps) {
     }
   }
 
+  const layoutClass = layout.derive((value) => {
+    switch (value) {
+      case "GRID":
+        return styles.grid;
+      case "HORIZONTAL":
+        return styles.horizontal;
+      case "VERTICAL":
+        return styles.vertical;
+      case "FREEFORM":
+        return styles.freeform;
+    }
+  });
+
   const containerStyle = new Computed(
     [background] as const,
     (backgroundValue) => ({
@@ -121,12 +134,16 @@ export default function Section({ editor, section, signal }: SectionProps) {
           <SectionToolbar section={section} />
         </If>
 
-        <scroll-view ref={scrollViewRef} className={styles.contents}>
+        <scroll-view
+          ref={scrollViewRef}
+          classList={[styles.contents, layoutClass]}
+        >
           <Each items={tiles}>
             {(tile) => (
               <Item
                 editor={editor}
                 id={tile.id}
+                classList={{ [styles.item]: true }}
                 placementId={tile.placementId}
                 editable={isEditable}
                 x={tile.x}

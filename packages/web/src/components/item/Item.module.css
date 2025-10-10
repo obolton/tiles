@@ -23,9 +23,6 @@
 }
 
 .item {
-  grid-column: var(--column) / span var(--width);
-  grid-row: var(--row) / span var(--rows);
-  height: calc(var(--height) * var(--grid-row-height));
   display: flex;
   border-radius: 12px;
   outline-color: transparent;

@@ -89,16 +89,15 @@
   &::part(container) {
     padding: 24px;
     scroll-padding: 24px;
-    scroll-snap-type: x proximity;
+    scroll-snap-type: both proximity;
   }
 
   &:not(:defined),
   &::part(contents) {
     display: grid;
-    grid-auto-columns: var(--grid-column-width);
-    grid-auto-rows: minmax(var(--grid-row-height), auto);
-    min-height: var(--grid-row-height);
     gap: var(--gap);
+    min-width: 100%;
+    min-height: 100%;
   }
 
   & > * {
@@ -113,6 +112,59 @@
     background: rgb(0 0 0 / 10%);
     border-radius: var(--border-radius);
     z-index: 2;
+  }
+}
+
+.grid {
+  &:not(:defined),
+  &::part(contents) {
+    grid-auto-columns: var(--grid-column-width);
+    grid-auto-rows: minmax(var(--grid-row-height), auto);
+  }
+
+  & .item {
+    grid-column: var(--column) / span var(--width);
+    grid-row: var(--row) / span var(--rows);
+    height: calc(var(--height) * var(--grid-row-height));
+  }
+}
+
+.horizontal {
+  &:not(:defined),
+  &::part(contents) {
+    grid-auto-columns: min-content;
+    grid-template-rows: 100%;
+    grid-auto-flow: column;
+  }
+
+  & .item {
+    width: calc(var(--width) * var(--grid-column-width));
+  }
+}
+
+.vertical {
+  &:not(:defined),
+  &::part(contents) {
+    grid-template-columns: 100%;
+    grid-auto-rows: min-content;
+    grid-auto-flow: row;
+  }
+
+  & .item {
+    height: calc(var(--height) * var(--grid-row-height));
+  }
+}
+
+.freeform {
+  &:not(:defined),
+  &::part(contents) {
+    grid-auto-columns: var(--grid-column-width);
+    grid-auto-rows: var(--grid-row-height);
+  }
+
+  & .item {
+    grid-column: var(--column) / span var(--width);
+    grid-row: var(--row) / span var(--height);
   }
 }
 
