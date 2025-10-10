@@ -87,8 +87,8 @@
 
   &:not(:defined),
   &::part(container) {
-    padding: 24px;
-    scroll-padding: 24px;
+    padding: 16px;
+    scroll-padding: 16px;
     scroll-snap-type: both proximity;
   }
 
