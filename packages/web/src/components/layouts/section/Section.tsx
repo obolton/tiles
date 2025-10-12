@@ -7,11 +7,10 @@ import Each from "@/jsx/each";
 import Editor from "@/editor/Editor";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./Section.module.css";
+import { SIZE_UNIT, LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
 import type { SectionWithTiles } from "@/types/tiles";
 import type ScrollView from "@/elements/scroll-view/ScrollView";
 import type { PageItemEvent } from "@/elements/item/events";
-
-const SIZE_UNIT = 24;
 
 export interface SectionProps {
   editor: Editor;
@@ -21,7 +20,8 @@ export interface SectionProps {
 
 export default function Section({ editor, section, signal }: SectionProps) {
   const { isEditable } = editor;
-  const { id, width, height, layout, background, hide, tiles } = section;
+  const { id, dimensions, width, height, layout, background, hide, tiles } =
+    section;
   const hasFocus = flag(false);
   let scrollView: ScrollView | null = null;
 
@@ -49,7 +49,15 @@ export default function Section({ editor, section, signal }: SectionProps) {
     }
   }
 
-  function onBlur() {
+  function onFocusOut(event: FocusEvent) {
+    const { relatedTarget } = event;
+    if (
+      relatedTarget instanceof Element &&
+      relatedTarget.closest("floating-toolbar")
+    ) {
+      return;
+    }
+
     hasFocus.off();
   }
 
@@ -94,11 +102,26 @@ export default function Section({ editor, section, signal }: SectionProps) {
   );
 
   const contentStyle = new Computed(
-    [width, height] as const,
-    (widthValue, heightValue) => ({
-      width: widthValue * SIZE_UNIT + "px",
-      height: heightValue * SIZE_UNIT + "px",
-    }),
+    [dimensions, width, height] as const,
+    (dimensionsValue, widthValue, heightValue) => {
+      switch (dimensionsValue) {
+        case "LANDSCAPE":
+          return {
+            width: LANDSCAPE_SIZE.width * SIZE_UNIT + "px",
+            height: LANDSCAPE_SIZE.height * SIZE_UNIT + "px",
+          };
+        case "PORTRAIT":
+          return {
+            width: PORTRAIT_SIZE.width * SIZE_UNIT + "px",
+            height: PORTRAIT_SIZE.height * SIZE_UNIT + "px",
+          };
+        case "CUSTOM":
+          return {
+            width: widthValue * SIZE_UNIT + "px",
+            height: heightValue * SIZE_UNIT + "px",
+          };
+      }
+    },
   );
 
   const resize = layout.derive((value) => {
@@ -133,7 +156,7 @@ export default function Section({ editor, section, signal }: SectionProps) {
           editable ? "true" : undefined,
         )}
         on:focus={onFocus}
-        on:blur={onBlur}
+        on:focusout={onFocusOut}
       >
         <page-item
           className={styles.container}

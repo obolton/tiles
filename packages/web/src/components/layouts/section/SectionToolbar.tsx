@@ -18,10 +18,11 @@ import { viewTransition } from "@/utils/transitions";
 import { classNames } from "@/utils/css";
 import styles from "./SectionToolbar.module.css";
 import Editor from "@/editor/Editor";
+import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
 import type { SectionWithTiles } from "@/types/tiles";
 import type { Background } from "@/components/backgrounds/types";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
-import type { Layout, Anchor } from "@/types/pages";
+import type { Layout, Anchor, Dimensions } from "@/types/pages";
 
 export interface SectionToolbarProps {
   section: SectionWithTiles;
@@ -52,6 +53,39 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
     } catch (error) {
       handleError(error);
     }
+  }
+
+  function setDimensions(event: Event) {
+    const select = event.currentTarget as HTMLSelectElement;
+    const dimensions = select.value as Dimensions;
+    let width = section.width.value;
+    let height = section.height.value;
+
+    switch (dimensions) {
+      case "LANDSCAPE":
+        width = LANDSCAPE_SIZE.width;
+        height = LANDSCAPE_SIZE.height;
+        break;
+      case "PORTRAIT":
+        width = PORTRAIT_SIZE.width;
+        height = PORTRAIT_SIZE.height;
+        break;
+    }
+
+    Editor.current.transitionSections(() => {
+      section.dimensions.value = dimensions;
+      section.width.value = width;
+      section.height.value = height;
+    });
+
+    Editor.current
+      .updateSection({
+        id: section.id,
+        dimensions,
+        width,
+        height,
+      })
+      .catch(handleError);
   }
 
   async function setBackground(value: Background | null) {
@@ -189,6 +223,41 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
                 <AnchorRightIcon aria-hidden="true" />
               </swatch-item>
             </swatch-select>
+          </li>
+
+          <li role="presentation">
+            <label>
+              Size
+              <select value={section.dimensions} on:change={setDimensions}>
+                <option value="" disabled>
+                  Size
+                </option>
+                <option
+                  value="LANDSCAPE"
+                  selected={
+                    section.dimensions.value === "LANDSCAPE" ? true : undefined
+                  }
+                >
+                  Landscape
+                </option>
+                <option
+                  value="PORTRAIT"
+                  selected={
+                    section.dimensions.value === "PORTRAIT" ? true : undefined
+                  }
+                >
+                  Portrait
+                </option>
+                <option
+                  value="CUSTOM"
+                  selected={
+                    section.dimensions.value === "CUSTOM" ? true : undefined
+                  }
+                >
+                  Custom
+                </option>
+              </select>
+            </label>
           </li>
 
           <li role="presentation">
