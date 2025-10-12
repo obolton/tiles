@@ -10,6 +10,7 @@ import AnchorLeftIcon from "@/icons/anchor-left.svg?jsx";
 import AnchorRightIcon from "@/icons/anchor-right.svg?jsx";
 import ArrowUpIcon from "@/icons/arrow-up.svg?jsx";
 import ArrowDownIcon from "@/icons/arrow-down.svg?jsx";
+import HiddenIcon from "@/icons/hidden.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
@@ -63,6 +64,19 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
     } catch (error) {
       handleError(error);
     }
+  }
+
+  function toggleVisibility() {
+    const value = !section.hide.value;
+    viewTransition(() => {
+      section.hide.value = value;
+    });
+    Editor.current
+      .updateSection({
+        id: section.id,
+        hide: value,
+      })
+      .catch(handleError);
   }
 
   async function moveUp() {
@@ -183,6 +197,18 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
               value={section.background}
               onChange={setBackground}
             />
+          </li>
+
+          <li role="presentation">
+            <ToolbarButton
+              label="Hide"
+              aria-pressed={section.hide.derive((value) =>
+                value ? "true" : "false",
+              )}
+              on:click={toggleVisibility}
+            >
+              <HiddenIcon aria-hidden="true" />
+            </ToolbarButton>
           </li>
         </ul>
 
