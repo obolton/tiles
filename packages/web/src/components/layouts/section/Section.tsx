@@ -8,9 +8,15 @@ import Editor from "@/editor/Editor";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./Section.module.css";
 import { SIZE_UNIT, LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
+import NewIcon from "@/icons/new.svg?jsx";
+import { handleError } from "@/utils/errors";
 import type { SectionWithTiles } from "@/types/tiles";
 import type ScrollView from "@/elements/scroll-view/ScrollView";
 import type { PageItemEvent } from "@/elements/item/events";
+
+function preventDefault(event: Event) {
+  event.preventDefault();
+}
 
 export interface SectionProps {
   editor: Editor;
@@ -72,6 +78,10 @@ export default function Section({ editor, section, signal }: SectionProps) {
       width: width.value,
       height: height.value,
     });
+  }
+
+  function insertSection() {
+    Editor.current.createSection({ afterSectionId: id }).catch(handleError);
   }
 
   const layoutClass = layout.derive((value) => {
@@ -198,6 +208,19 @@ export default function Section({ editor, section, signal }: SectionProps) {
             </Each>
           </scroll-view>
         </page-item>
+
+        <If condition={hasFocus}>
+          <button
+            type="button"
+            classList={{ floating: true, small: true, [styles.insert]: true }}
+            aria-label="Insert section"
+            data-tooltip="Insert section"
+            on:pointerdown={preventDefault}
+            on:click={insertSection}
+          >
+            <NewIcon aria-hidden="true" />
+          </button>
+        </If>
       </section>
     </If>
   );
