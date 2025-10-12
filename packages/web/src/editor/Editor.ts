@@ -356,7 +356,7 @@ export default class Editor {
     });
   }
 
-  private transitionSections(update: () => void) {
+  transitionSections(update: () => void) {
     const sections = document.querySelectorAll<HTMLElement>(
       "section[data-section-id]",
     );
