@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import { jsx } from "../jsx";
 import { renderToString } from "../server";
 import { ReactiveValue } from "@/utils/reactivity";
+import { BOOLEAN_STRING_ATTRIBUTES } from "../attributes";
 import type { JSX } from "../jsx";
 
 describe("renderToString", () => {
@@ -59,7 +60,30 @@ describe("renderToString", () => {
     expect(renderToString(element)).toBe("<input checked>");
   });
 
-  test("renders an attribute from a store", () => {
+  describe("boolean string attributes", () => {
+    describe.for(Array.from(BOOLEAN_STRING_ATTRIBUTES))("%s", (attribute) => {
+      test("truthy value", () => {
+        const element = jsx("div", { [attribute]: 1 });
+        expect(renderToString(element)).toBe(`<div ${attribute}="true"></div>`);
+      });
+
+      test("falsy value", () => {
+        const element = jsx("div", { [attribute]: 0 });
+        expect(renderToString(element)).toBe(
+          `<div ${attribute}="false"></div>`,
+        );
+      });
+
+      test("false", () => {
+        const element = jsx("div", { [attribute]: "false" });
+        expect(renderToString(element)).toBe(
+          `<div ${attribute}="false"></div>`,
+        );
+      });
+    });
+  });
+
+  test("renders a reactive attribute", () => {
     const store = new ReactiveValue(false);
     const element = jsx("input", {
       checked: store,

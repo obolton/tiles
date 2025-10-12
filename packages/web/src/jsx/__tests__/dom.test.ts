@@ -1,6 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 import { jsx } from "../jsx";
 import { render, hydrate } from "../dom";
+import { BOOLEAN_STRING_ATTRIBUTES } from "../attributes";
 import { reactive } from "@/utils/reactivity";
 
 describe("render", () => {
@@ -64,6 +65,27 @@ describe("render", () => {
     ) as HTMLElement;
     expect(element.style.backgroundColor).toBe("red");
     expect(element.style.padding).toBe("0px");
+  });
+
+  describe("boolean string attributes", () => {
+    describe.for(Array.from(BOOLEAN_STRING_ATTRIBUTES))("%s", (attribute) => {
+      test("truthy value", () => {
+        const element = render(jsx("div", { [attribute]: 1 })) as HTMLElement;
+        expect(element.getAttribute(attribute)).toBe("true");
+      });
+
+      test("falsy value", () => {
+        const element = render(jsx("div", { [attribute]: 0 })) as HTMLElement;
+        expect(element.getAttribute(attribute)).toBe("false");
+      });
+
+      test("false", () => {
+        const element = render(
+          jsx("div", { [attribute]: "false" }),
+        ) as HTMLElement;
+        expect(element.getAttribute(attribute)).toBe("false");
+      });
+    });
   });
 
   test("sets an event listener", () => {
