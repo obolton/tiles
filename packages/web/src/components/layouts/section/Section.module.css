@@ -168,6 +168,10 @@
   }
 }
 
+.hide {
+  opacity: 0.5;
+}
+
 @container main (min-width: 100px) {
   .contents {
     --gap: clamp(8px, 2cqw, 16px);

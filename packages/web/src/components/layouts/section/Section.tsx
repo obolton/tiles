@@ -21,7 +21,7 @@ export interface SectionProps {
 
 export default function Section({ editor, section, signal }: SectionProps) {
   const { isEditable } = editor;
-  const { id, width, height, layout, background, tiles } = section;
+  const { id, width, height, layout, background, hide, tiles } = section;
   const hasFocus = flag(false);
   let scrollView: ScrollView | null = null;
 
@@ -113,61 +113,69 @@ export default function Section({ editor, section, signal }: SectionProps) {
     }
   });
 
-  return (
-    <section
-      ref={sectionRef}
-      classList={{
-        [styles.section]: true,
-      }}
-      style={containerStyle}
-      tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
-      data-section-id={id}
-      data-drop={isEditable.derive((editable) =>
-        editable ? "true" : undefined,
-      )}
-      on:focus={onFocus}
-      on:blur={onBlur}
-    >
-      <page-item
-        className={styles.container}
-        style={contentStyle}
-        allowdrag={isEditable}
-        resize={isEditable.derive((value) => (value ? "all" : null))}
-        on:itemresize={onResize}
-        on:itemresizeend={onResizeEnd}
-      >
-        <If condition={hasFocus}>
-          <SectionToolbar section={section} />
-        </If>
+  const show = new Computed(
+    [isEditable, hide] as const,
+    (isEditableValue, hideValue) => !hideValue || isEditableValue,
+  );
 
-        <scroll-view
-          ref={scrollViewRef}
-          classList={[styles.contents, layoutClass]}
+  return (
+    <If condition={show}>
+      <section
+        ref={sectionRef}
+        classList={{
+          [styles.section]: true,
+          [styles.hide]: hide,
+        }}
+        style={containerStyle}
+        tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
+        data-section-id={id}
+        data-drop={isEditable.derive((editable) =>
+          editable ? "true" : undefined,
+        )}
+        on:focus={onFocus}
+        on:blur={onBlur}
+      >
+        <page-item
+          className={styles.container}
+          style={contentStyle}
+          allowdrag={isEditable}
+          resize={isEditable.derive((value) => (value ? "all" : null))}
+          on:itemresize={onResize}
+          on:itemresizeend={onResizeEnd}
         >
-          <Each items={tiles}>
-            {(tile) => (
-              <Item
-                editor={editor}
-                id={tile.id}
-                classList={{ [styles.item]: true }}
-                placementId={tile.placementId}
-                editable={isEditable}
-                x={tile.x}
-                y={tile.y}
-                width={tile.width}
-                height={tile.height}
-                rowSpan={tile.rowSpan}
-                block={tile.type === "TEXT" ? tile.block : undefined}
-                tile={tile}
-                tabIndex={isEditable.derive((editable) =>
-                  editable ? 0 : undefined,
-                )}
-                resize={resize}
-              />
-            )}
-          </Each>
-        </scroll-view>
-      </page-item>
-    </section>
+          <If condition={hasFocus}>
+            <SectionToolbar section={section} />
+          </If>
+
+          <scroll-view
+            ref={scrollViewRef}
+            classList={[styles.contents, layoutClass]}
+          >
+            <Each items={tiles}>
+              {(tile) => (
+                <Item
+                  editor={editor}
+                  id={tile.id}
+                  classList={{ [styles.item]: true }}
+                  placementId={tile.placementId}
+                  editable={isEditable}
+                  x={tile.x}
+                  y={tile.y}
+                  width={tile.width}
+                  height={tile.height}
+                  rowSpan={tile.rowSpan}
+                  block={tile.type === "TEXT" ? tile.block : undefined}
+                  tile={tile}
+                  tabIndex={isEditable.derive((editable) =>
+                    editable ? 0 : undefined,
+                  )}
+                  resize={resize}
+                />
+              )}
+            </Each>
+          </scroll-view>
+        </page-item>
+      </section>
+    </If>
   );
 }
