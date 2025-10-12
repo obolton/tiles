@@ -327,13 +327,20 @@ export default class Editor {
 
   // Sections
 
-  async createSection(transition: TransitionFunction = immediateTransition) {
+  async createSection(data: OmitPageId<AppRouterInputs["sections"]["create"]>) {
     const section = await client.sections.create.mutate({
       pageId: this.pageId,
-      afterSectionId: null,
+      ...data,
     });
-    transition(() => {
-      this.sections.value = this.sections.value.concat(
+    viewTransition(() => {
+      const afterIndex = data.afterSectionId
+        ? (this.sections.value.findIndex(
+            (section) => section.id === data.afterSectionId,
+          ) ?? -1)
+        : -1;
+      this.sections.value = this.sections.value.toSpliced(
+        afterIndex + 1,
+        0,
         getReactiveSection(section, this.tiles),
       );
 
