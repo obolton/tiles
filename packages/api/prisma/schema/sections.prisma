@@ -12,6 +12,12 @@ enum Anchor {
   BOTTOM
 }
 
+enum Dimensions {
+  LANDSCAPE
+  PORTRAIT
+  CUSTOM
+}
+
 model Section {
   id                 String             @id @default(uuid()) @db.Uuid
   pageId             String             @map("page_id") @db.Uuid
@@ -20,6 +26,7 @@ model Section {
   layout             Layout             @default(GRID)
   anchor             Anchor?
   order              String
+  dimensions         Dimensions         @default(CUSTOM)
   width              Int                @default(20) @db.SmallInt
   height             Int                @default(20) @db.SmallInt
   backgroundL        Float?             @map("background_l") @db.Real
@@ -30,10 +37,13 @@ model Section {
   backgroundBH       Float?             @map("background_b_h") @db.Real
   backgroundGradient GradientDirection? @map("background_gradient")
   backgroundImageKey String?            @map("background_image_key")
+  hide               Boolean            @default(false)
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   items Tile[]
 
   @@index([pageId])
+  @@index([order])
+  @@index([hide])
   @@map("sections")
 }
