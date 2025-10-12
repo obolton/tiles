@@ -5,10 +5,8 @@ import LinkIcon from "@/icons/link.svg?jsx";
 import PlaceIcon from "@/icons/place.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
 import ChartIcon from "@/icons/chart.svg?jsx";
-import AddSectionIcon from "@/icons/add-section.svg?jsx";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
-import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
 import "./InsertToolbar.module.css";
@@ -136,10 +134,6 @@ export default function InsertToolbar() {
     }
   }
 
-  function createSection() {
-    Editor.current.createSection(viewTransition).catch(handleError);
-  }
-
   return (
     <floating-toolbar
       id="insert-toolbar"
@@ -159,12 +153,6 @@ export default function InsertToolbar() {
             </ToolbarButton>
           </li>
         ))}
-
-        <li role="presentation">
-          <ToolbarButton label="Add a section" on:click={createSection}>
-            <AddSectionIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
       </ul>
     </floating-toolbar>
   );
