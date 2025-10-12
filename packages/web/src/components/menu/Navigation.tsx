@@ -136,9 +136,7 @@ export default function Navigation({
                     <a
                       href={`/workspaces/${workspace.id}`}
                       target="_blank"
-                      aria-current={
-                        workspace.id === workspaceId ? "true" : "false"
-                      }
+                      aria-current={workspace.id === workspaceId}
                     >
                       <WorkspaceIcon aria-hidden="true" />
                       {workspace.name}
@@ -204,9 +202,7 @@ export default function Navigation({
                 data-tooltip={isBookmarked.derive((value) =>
                   value ? "Bookmarked" : "Not bookmarked",
                 )}
-                aria-pressed={isBookmarked.derive((value) =>
-                  value ? "true" : "false",
-                )}
+                aria-pressed={isBookmarked}
                 on:click={onClickBookmark}
               >
                 {isBookmarked.derive((value) =>

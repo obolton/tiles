@@ -188,9 +188,7 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
             <swatch-select
               role="menuitem"
               aria-label="Anchor"
-              aria-selected={section.anchor.derive((value) =>
-                value ? "true" : undefined,
-              )}
+              aria-selected={section.anchor}
               data-tooltip="Anchor"
               orientation="horizontal"
               align="center"
@@ -271,9 +269,7 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
           <li role="presentation">
             <ToolbarButton
               label="Hide"
-              aria-pressed={section.hide.derive((value) =>
-                value ? "true" : "false",
-              )}
+              aria-pressed={section.hide}
               on:click={toggleVisibility}
             >
               <HiddenIcon aria-hidden="true" />

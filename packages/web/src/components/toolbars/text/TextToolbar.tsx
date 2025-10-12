@@ -111,7 +111,7 @@ export default function TextToolbar({
         <li role="presentation">
           <ToolbarButton
             label="Size to fit contents"
-            aria-pressed={block.derive((value) => (value ? "true" : "false"))}
+            aria-pressed={block}
             on:click={toggleBlock}
           >
             <ExpandHeightIcon aria-hidden="true" />

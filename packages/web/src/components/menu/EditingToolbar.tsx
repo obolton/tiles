@@ -37,9 +37,7 @@ export default function EditingToolbar({
             role="menuitem"
             id="edit-button"
             className="primary"
-            aria-pressed={isEditable.derive((editable) =>
-              editable ? "true" : "false",
-            )}
+            aria-pressed={isEditable}
             on:click={toggleEdit}
           >
             {isEditable.derive((editable) => (editable ? "Done" : "Edit"))}

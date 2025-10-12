@@ -222,9 +222,7 @@ export default function FormattingToolbar({
             className="floating"
             aria-label="Write with AI"
             data-tooltip="Write with AI"
-            aria-pressed={prompting.derive((value) =>
-              value ? "true" : "false",
-            )}
+            aria-pressed={prompting}
             on:click={onTogglePrompt}
           >
             <AIIcon aria-hidden="true" />
@@ -372,9 +370,7 @@ export default function FormattingToolbar({
           <swatch-select
             role="menuitem"
             aria-label="List"
-            aria-selected={format.derive((value) =>
-              value.list ? "true" : undefined,
-            )}
+            aria-selected={format.derive((value) => value.list)}
             data-tooltip="List"
             orientation="horizontal"
             align="center"
@@ -433,9 +429,7 @@ export default function FormattingToolbar({
             aria-label="Bold"
             data-tooltip="Format as bold"
             type="button"
-            aria-pressed={format.derive((value) =>
-              value.bold ? "true" : "false",
-            )}
+            aria-pressed={format.derive((value) => value.bold)}
             on:click={formatBold}
           >
             <BoldIcon aria-hidden="true" />
@@ -448,9 +442,7 @@ export default function FormattingToolbar({
             aria-label="Italic"
             data-tooltip="Format as italic"
             type="button"
-            aria-pressed={format.derive((value) =>
-              value.italic ? "true" : "false",
-            )}
+            aria-pressed={format.derive((value) => value.italic)}
             on:click={formatItalic}
           >
             <ItalicIcon aria-hidden="true" />
@@ -463,9 +455,7 @@ export default function FormattingToolbar({
             aria-label="Underlined"
             data-tooltip="Format as underlined"
             type="button"
-            aria-pressed={format.derive((value) =>
-              value.underline ? "true" : "false",
-            )}
+            aria-pressed={format.derive((value) => value.underline)}
             on:click={formatUnderline}
           >
             <UnderlineIcon aria-hidden="true" />
@@ -478,9 +468,7 @@ export default function FormattingToolbar({
             aria-label="Strike-through"
             data-tooltip="Format as strike-through"
             type="button"
-            aria-pressed={format.derive((value) =>
-              value.strikethrough ? "true" : "false",
-            )}
+            aria-pressed={format.derive((value) => value.strikethrough)}
             on:click={formatStrikethrough}
           >
             <StrikethroughIcon aria-hidden="true" />
@@ -493,9 +481,7 @@ export default function FormattingToolbar({
             aria-label="Highlight"
             data-tooltip="Format as highlighted"
             type="button"
-            aria-pressed={format.derive((value) =>
-              value.highlight ? "true" : "false",
-            )}
+            aria-pressed={format.derive((value) => value.highlight)}
             on:click={formatHighlight}
           >
             <HighlightIcon aria-hidden="true" />
@@ -508,9 +494,7 @@ export default function FormattingToolbar({
             aria-label="Quote"
             data-tooltip="Format as a quote"
             type="button"
-            aria-pressed={format.derive((value) =>
-              value.quote ? "true" : "false",
-            )}
+            aria-pressed={format.derive((value) => value.quote)}
             on:click={formatQuote}
           >
             <QuoteIcon aria-hidden="true" />
@@ -523,9 +507,7 @@ export default function FormattingToolbar({
             aria-label="Link"
             data-tooltip="Add a link"
             type="button"
-            aria-pressed={format.derive((value) =>
-              value.link ? "true" : "false",
-            )}
+            aria-pressed={format.derive((value) => value.link)}
             on:click={formatLink}
           >
             <LinkIcon aria-hidden="true" />

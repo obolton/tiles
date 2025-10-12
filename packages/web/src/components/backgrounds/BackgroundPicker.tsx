@@ -26,7 +26,7 @@ export default function BackgroundPicker({
         popovertarget={`${id}-popover`}
         aria-haspopup="menu"
         aria-expanded="false"
-        aria-pressed={value?.derive((value) => (value ? "true" : "false"))}
+        aria-pressed={value}
       >
         {value ? (
           value.derive((background) => {
