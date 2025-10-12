@@ -1,4 +1,5 @@
 import type { Reactive } from "@/utils/reactivity";
+import type { BooleanStringAttributes } from "./attributes";
 
 export type WithProperties<T> = {
   [K in keyof T as `$${Extract<K, string>}`]?: T[K];
@@ -83,8 +84,9 @@ export namespace JSX {
         | { [k: string]: boolean | Reactive<boolean> | null | undefined };
 
       children?: Node;
-      [k: DataAttribute]: string | null | undefined;
-    } & EventHandlers;
+      [k: DataAttribute]: string | number | null | undefined;
+    } & BooleanStringAttributes &
+    EventHandlers;
 
   export type HTMLElements = {
     [T in keyof HTMLElementTagNameMap]: Attributes<HTMLElementTagNameMap[T]>;

@@ -1,6 +1,7 @@
 import { isReactive } from "@/utils/reactivity";
 import { transformCSSProperty } from "@/utils/css";
 import { isClassComponent } from "./jsx";
+import { BOOLEAN_STRING_ATTRIBUTES } from "./attributes";
 import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "./jsx";
 
@@ -102,11 +103,7 @@ function setAttribute(
   if (isReactive(value)) {
     setAttribute(element, name, value.value);
     value.subscribe(() => setAttribute(element, name, value.value), signal);
-  } else if (
-    value === null ||
-    typeof value === "undefined" ||
-    value === false
-  ) {
+  } else if (value === null || typeof value === "undefined") {
     element.removeAttribute(mappedName);
   } else if (mappedName === "classList" && Array.isArray(value)) {
     for (const className of element.classList.values()) {
@@ -173,8 +170,17 @@ function setAttribute(
         element.style.removeProperty(transformedProperty);
       }
     }
-  } else if (value === true) {
-    element.setAttribute(mappedName, "");
+  } else if (BOOLEAN_STRING_ATTRIBUTES.has(mappedName)) {
+    element.setAttribute(
+      mappedName,
+      value && value !== "false" ? "true" : "false",
+    );
+  } else if (typeof value === "boolean") {
+    if (value) {
+      element.setAttribute(mappedName, "");
+    } else {
+      element.removeAttribute(mappedName);
+    }
   } else if (
     typeof value === "string" ||
     typeof value === "number" ||

@@ -1,8 +1,9 @@
 import { escapeUTF8 } from "entities";
 import { isReactive } from "@/utils/reactivity";
 import { serializeStyles } from "@/utils/css";
-import type { JSX } from "./jsx";
 import { isClassComponent } from "./jsx";
+import { BOOLEAN_STRING_ATTRIBUTES } from "./attributes";
+import type { JSX } from "./jsx";
 
 // https://developer.mozilla.org/en-US/docs/Glossary/Void_element
 const VOID_ELEMENTS = new Set([
@@ -107,17 +108,18 @@ function getDOMAttributes(properties: Record<string, unknown>) {
   const attributes: string[] = [];
   for (const [name, valueOrStore] of Object.entries(properties)) {
     const value = isReactive(valueOrStore) ? valueOrStore.value : valueOrStore;
+
     if (
       name === "children" ||
       name.startsWith("$") ||
       name.startsWith("on:") ||
       typeof value === "function" ||
       typeof value === "undefined" ||
-      value === false ||
       value === null
     ) {
       continue;
     }
+
     const attributeName = mapAttributeName(name);
     if (attributeName === "classlist") {
       if (Array.isArray(value)) {
@@ -139,8 +141,16 @@ function getDOMAttributes(properties: Record<string, unknown>) {
       attributes.push(
         attributeName + '="' + escapeUTF8(serializeStyles(value)) + '"',
       );
-    } else if (value === true) {
-      attributes.push(attributeName);
+    } else if (BOOLEAN_STRING_ATTRIBUTES.has(attributeName)) {
+      attributes.push(
+        attributeName +
+          "=" +
+          (value && value !== "false" ? '"true"' : '"false"'),
+      );
+    } else if (typeof value === "boolean") {
+      if (value) {
+        attributes.push(attributeName);
+      }
     } else if (typeof value === "number" || typeof value === "bigint") {
       attributes.push(attributeName + '="' + value + '"');
     } else {
