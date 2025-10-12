@@ -13,9 +13,11 @@ export const SECTION_FIELDS = {
   id: true,
   layout: true,
   anchor: true,
+  dimensions: true,
   width: true,
   height: true,
   background: true,
+  hide: true,
 } as const satisfies Prisma.SectionSelect<ExtensionArgs>;
 
 export type Section = Prisma.Result<
@@ -55,9 +57,11 @@ export async function createSection({
   afterSectionId,
   layout,
   anchor,
+  dimensions,
   width,
   height,
   background,
+  hide,
 }: CreateSectionSchema) {
   return prisma.$transaction(async (transaction) => {
     const [keyA, keyB] = await getSectionOrderKeys(
@@ -73,8 +77,10 @@ export async function createSection({
         order,
         layout,
         anchor,
+        dimensions,
         width,
         height,
+        hide,
         ...getBackgroundProperties(background),
       },
       select: SECTION_FIELDS,
@@ -87,9 +93,11 @@ export async function updateSection({
   id,
   layout,
   anchor,
+  dimensions,
   width,
   height,
   background,
+  hide,
   afterSectionId,
 }: UpdateSectionSchema) {
   return prisma.$transaction(async (transaction) => {
@@ -111,8 +119,10 @@ export async function updateSection({
       data: {
         layout,
         anchor,
+        dimensions,
         width,
         height,
+        hide,
         ...getBackgroundProperties(background),
         order,
       },
