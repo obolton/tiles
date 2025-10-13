@@ -1,13 +1,14 @@
 import { generateKeyBetween } from "fractional-indexing";
-import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
-import { getBackgroundProperties } from "@/utils/backgrounds.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma";
+import { getBackgroundProperties } from "@/utils/backgrounds";
+import { getFirstSectionOrder, getSectionOrder } from "@/generated/prisma/sql";
 import type { Prisma } from "@/generated/prisma/client";
-import type { PrismaTransactionClient } from "@/database/prisma.ts";
+import type { PrismaTransactionClient } from "@/database/prisma";
 import type {
   CreateSectionSchema,
   UpdateSectionSchema,
   DeleteSectionSchema,
-} from "./schema.ts";
+} from "./schema";
 
 export const SECTION_FIELDS = {
   id: true,
@@ -32,23 +33,15 @@ export async function getSectionOrderKeys(
   sectionId: string | null,
 ): Promise<[string | null, string | null]> {
   if (sectionId === null) {
-    const [section] = await transaction.$queryRaw<
-      { order: string }[]
-    >`SELECT "order" FROM sections WHERE page_id = ${pageId}::uuid ORDER BY "order" ASC LIMIT 1;`;
-    return [null, section?.order ?? null];
+    const [result] = await transaction.$queryRawTyped(
+      getFirstSectionOrder(pageId),
+    );
+    return [null, result?.order ?? null];
   }
 
-  const [result] = await transaction.$queryRaw<
-    { a: string; b: string | null }[]
-  >`SELECT section_a."order" AS a, section_b."order" AS b
-  FROM sections AS section_a
-  LEFT JOIN LATERAL (
-    SELECT "order" FROM sections
-    WHERE page_id = ${pageId}::uuid AND "order" > section_a."order"
-    ORDER BY "order" ASC
-    LIMIT 1
-  ) AS section_b ON true
-  WHERE section_a.page_id = ${pageId}::uuid AND section_a.id = ${sectionId}::uuid;`;
+  const [result] = await transaction.$queryRawTyped(
+    getSectionOrder(pageId, sectionId),
+  );
   return [result?.a ?? null, result?.b ?? null];
 }
 
