@@ -22,7 +22,7 @@ model Section {
   id                 String             @id @default(uuid()) @db.Uuid
   pageId             String             @map("page_id") @db.Uuid
   createdAt          DateTime           @default(now()) @map("created_at")
-  updatedAt          DateTime           @updatedAt @map("updated_at")
+  updatedAt          DateTime           @default(now()) @updatedAt @map("updated_at")
   layout             Layout             @default(GRID)
   anchor             Anchor?
   order              String
