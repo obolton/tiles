@@ -96,8 +96,8 @@
   &::part(contents) {
     display: grid;
     gap: var(--gap);
-    min-width: 100%;
-    min-height: 100%;
+    min-width: calc(100% - 32px);
+    min-height: calc(100% - 32px);
   }
 
   & > * {
@@ -158,8 +158,8 @@
 .freeform {
   &:not(:defined),
   &::part(contents) {
-    grid-auto-columns: var(--grid-column-width);
-    grid-auto-rows: var(--grid-row-height);
+    grid-template-columns: repeat(auto-fill, var(--grid-column-width));
+    grid-template-rows: repeat(auto-fill, var(--grid-row-height));
   }
 
   & .item {
