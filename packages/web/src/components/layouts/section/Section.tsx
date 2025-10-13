@@ -52,6 +52,7 @@ export default function Section({ editor, section, signal }: SectionProps) {
   function onFocus() {
     if (isEditable.value) {
       hasFocus.on();
+      Editor.current.activeSection = section;
     }
   }
 
@@ -59,12 +60,15 @@ export default function Section({ editor, section, signal }: SectionProps) {
     const { relatedTarget } = event;
     if (
       relatedTarget instanceof Element &&
-      relatedTarget.closest("floating-toolbar")
+      relatedTarget.closest(
+        "dialog[open], [popover]:popover-open, floating-toolbar",
+      )
     ) {
       return;
     }
 
     hasFocus.off();
+    Editor.current.activeSection = null;
   }
 
   function onResize(event: PageItemEvent) {

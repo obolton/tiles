@@ -103,6 +103,8 @@ export default class Editor {
   readonly selection: Reactive<Set<Tile>>;
   readonly dropdowns: ReactiveArray<Dropdown>;
 
+  activeSection: SectionWithTiles | null = null;
+
   static init(page: Page) {
     if (this.#current) {
       throw new Error("The editor has already been initialized");
@@ -274,11 +276,7 @@ export default class Editor {
   }
 
   getCurrentSectionId() {
-    const activeSection = document.activeElement?.closest<HTMLElement>(
-      "section[data-section-id]",
-    );
-    const id =
-      activeSection?.dataset.sectionId ?? this.sections.value.at(-1)?.id;
+    const id = this.activeSection?.id ?? this.sections.value.at(-1)?.id;
 
     if (!id) {
       throw new Error("Page has no sections");
