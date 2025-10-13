@@ -1,12 +1,17 @@
 import { generateKeyBetween } from "fractional-indexing";
 import prisma, { type ExtensionArgs } from "@/database/prisma";
 import { getBackgroundProperties } from "@/utils/backgrounds";
-import { getFirstSectionOrder, getSectionOrder } from "@/generated/prisma/sql";
+import {
+  getFirstSectionOrderQuery,
+  getSectionOrderQuery,
+  duplicateSectionQuery,
+} from "@/generated/prisma/sql";
 import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
 import type {
   CreateSectionSchema,
   UpdateSectionSchema,
+  DuplicateSectionSchema,
   DeleteSectionSchema,
 } from "./schema";
 
@@ -34,13 +39,13 @@ export async function getSectionOrderKeys(
 ): Promise<[string | null, string | null]> {
   if (sectionId === null) {
     const [result] = await transaction.$queryRawTyped(
-      getFirstSectionOrder(pageId),
+      getFirstSectionOrderQuery(pageId),
     );
     return [null, result?.order ?? null];
   }
 
   const [result] = await transaction.$queryRawTyped(
-    getSectionOrder(pageId, sectionId),
+    getSectionOrderQuery(pageId, sectionId),
   );
   return [result?.a ?? null, result?.b ?? null];
 }
@@ -119,6 +124,25 @@ export async function updateSection({
         ...getBackgroundProperties(background),
         order,
       },
+      select: SECTION_FIELDS,
+    });
+  });
+}
+
+// TODO: Duplicate tile relations (could be simplified by consolidating tables)
+export async function duplicateSection({ pageId, id }: DuplicateSectionSchema) {
+  return prisma.$transaction(async (transaction) => {
+    const [keyA, keyB] = await getSectionOrderKeys(transaction, pageId, id);
+    const order = generateKeyBetween(keyA, keyB);
+    const result = await transaction.$queryRawTyped(
+      duplicateSectionQuery(pageId, id, order),
+    );
+    const newSectionId = result[0]?.id;
+    if (!newSectionId) {
+      throw new Error("Could not duplicate section");
+    }
+    return transaction.section.findUniqueOrThrow({
+      where: { pageId, id: newSectionId },
       select: SECTION_FIELDS,
     });
   });

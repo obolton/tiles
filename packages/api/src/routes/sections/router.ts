@@ -3,9 +3,15 @@ import { pageUpdateProcedure } from "@/utils/middleware.ts";
 import {
   CreateSectionSchema,
   UpdateSectionSchema,
+  DuplicateSectionSchema,
   DeleteSectionSchema,
 } from "./schema.ts";
-import { createSection, updateSection, deleteSection } from "./sections.ts";
+import {
+  createSection,
+  updateSection,
+  duplicateSection,
+  deleteSection,
+} from "./sections.ts";
 
 export default router({
   create: pageUpdateProcedure
@@ -15,6 +21,10 @@ export default router({
   update: pageUpdateProcedure
     .input(UpdateSectionSchema)
     .mutation(({ input }) => updateSection(input)),
+
+  duplicate: pageUpdateProcedure
+    .input(DuplicateSectionSchema)
+    .mutation(({ input }) => duplicateSection(input)),
 
   delete: pageUpdateProcedure
     .input(DeleteSectionSchema)
