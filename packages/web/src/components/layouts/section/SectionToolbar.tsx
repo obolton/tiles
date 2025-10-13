@@ -11,6 +11,7 @@ import AnchorRightIcon from "@/icons/anchor-right.svg?jsx";
 import ArrowUpIcon from "@/icons/arrow-up.svg?jsx";
 import ArrowDownIcon from "@/icons/arrow-down.svg?jsx";
 import HiddenIcon from "@/icons/hidden.svg?jsx";
+import DuplicateIcon from "@/icons/duplicate.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
@@ -109,6 +110,14 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
       .updateSection({
         id: section.id,
         hide: value,
+      })
+      .catch(handleError);
+  }
+
+  function duplicateSection() {
+    Editor.current
+      .duplicateSection({
+        id: section.id,
       })
       .catch(handleError);
   }
@@ -273,6 +282,12 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
               on:click={toggleVisibility}
             >
               <HiddenIcon aria-hidden="true" />
+            </ToolbarButton>
+          </li>
+
+          <li role="presentation">
+            <ToolbarButton label="Duplicate" on:click={duplicateSection}>
+              <DuplicateIcon aria-hidden="true" />
             </ToolbarButton>
           </li>
         </ul>
