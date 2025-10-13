@@ -16,8 +16,6 @@ import MoreIcon from "@/icons/more.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
-import { classNames } from "@/utils/css";
-import styles from "./SectionToolbar.module.css";
 import Editor from "@/editor/Editor";
 import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
 import type { SectionWithTiles } from "@/types/tiles";
@@ -143,201 +141,196 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
   }
 
   return (
-    <div className={styles.container}>
-      <floating-toolbar
-        className={classNames("vertical", styles.toolbar)}
-        data-tooltip-position="right"
-        aria-label="Section toolbar"
-      >
-        <ul role="group" aria-label="Section tools">
-          <li role="presentation">
-            <swatch-select
-              role="menuitem"
-              aria-label="Layout"
-              data-tooltip="Layout"
-              orientation="horizontal"
-              align="center"
-              value={section.layout}
-              on:change={setLayout}
-            >
-              {section.layout.derive((value) => {
-                switch (value) {
-                  case "GRID":
-                    return <GridLayoutIcon aria-hidden="true" slot="icon" />;
-                  case "HORIZONTAL":
-                    return (
-                      <HorizontalLayoutIcon aria-hidden="true" slot="icon" />
-                    );
-                  case "VERTICAL":
-                    return (
-                      <VerticalLayoutIcon aria-hidden="true" slot="icon" />
-                    );
-                  case "FREEFORM":
-                    return (
-                      <FreeformLayoutIcon aria-hidden="true" slot="icon" />
-                    );
-                }
-              })}
-              <swatch-item value="GRID" data-tooltip="Grid">
-                <GridLayoutIcon aria-hidden="true" />
-              </swatch-item>
-              <swatch-item value="HORIZONTAL" data-tooltip="Horizontal">
-                <HorizontalLayoutIcon aria-hidden="true" />
-              </swatch-item>
-              <swatch-item value="VERTICAL" data-tooltip="Vertical">
-                <VerticalLayoutIcon aria-hidden="true" />
-              </swatch-item>
-              <swatch-item value="FREEFORM" data-tooltip="Freeform">
-                <FreeformLayoutIcon aria-hidden="true" />
-              </swatch-item>
-            </swatch-select>
-          </li>
+    <floating-toolbar
+      className="bottom-left"
+      data-tooltip-position="top"
+      aria-label="Section toolbar"
+    >
+      <ul role="group" aria-label="Section tools">
+        <li role="presentation">
+          <swatch-select
+            role="menuitem"
+            aria-label="Layout"
+            data-tooltip="Layout"
+            orientation="horizontal"
+            align="center"
+            value={section.layout}
+            on:change={setLayout}
+          >
+            {section.layout.derive((value) => {
+              switch (value) {
+                case "GRID":
+                  return <GridLayoutIcon aria-hidden="true" slot="icon" />;
+                case "HORIZONTAL":
+                  return (
+                    <HorizontalLayoutIcon aria-hidden="true" slot="icon" />
+                  );
+                case "VERTICAL":
+                  return <VerticalLayoutIcon aria-hidden="true" slot="icon" />;
+                case "FREEFORM":
+                  return <FreeformLayoutIcon aria-hidden="true" slot="icon" />;
+              }
+            })}
+            <swatch-item value="GRID" data-tooltip="Grid">
+              <GridLayoutIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="HORIZONTAL" data-tooltip="Horizontal">
+              <HorizontalLayoutIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="VERTICAL" data-tooltip="Vertical">
+              <VerticalLayoutIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="FREEFORM" data-tooltip="Freeform">
+              <FreeformLayoutIcon aria-hidden="true" />
+            </swatch-item>
+          </swatch-select>
+        </li>
 
-          <li role="presentation">
-            <swatch-select
-              role="menuitem"
-              aria-label="Anchor"
-              aria-selected={section.anchor}
-              data-tooltip="Anchor"
-              orientation="horizontal"
-              align="center"
-              value={section.anchor}
-              on:change={setAnchor}
-            >
-              {section.anchor.derive((value) => {
-                switch (value) {
-                  case "TOP":
-                    return <AnchorTopIcon aria-hidden="true" slot="icon" />;
-                  case "BOTTOM":
-                    return <AnchorBottomIcon aria-hidden="true" slot="icon" />;
-                  case "LEFT":
-                  default:
-                    return <AnchorLeftIcon aria-hidden="true" slot="icon" />;
-                  case "RIGHT":
-                    return <AnchorRightIcon aria-hidden="true" slot="icon" />;
-                }
-              })}
-              <swatch-item value="TOP" data-tooltip="Top">
-                <AnchorTopIcon aria-hidden="true" />
-              </swatch-item>
-              <swatch-item value="BOTTOM" data-tooltip="Bottom">
-                <AnchorBottomIcon aria-hidden="true" />
-              </swatch-item>
-              <swatch-item value="LEFT" data-tooltip="Left">
-                <AnchorLeftIcon aria-hidden="true" />
-              </swatch-item>
-              <swatch-item value="RIGHT" data-tooltip="Right">
-                <AnchorRightIcon aria-hidden="true" />
-              </swatch-item>
-            </swatch-select>
-          </li>
+        <li role="presentation">
+          <swatch-select
+            role="menuitem"
+            aria-label="Anchor"
+            aria-selected={section.anchor}
+            data-tooltip="Anchor"
+            orientation="horizontal"
+            align="center"
+            value={section.anchor}
+            on:change={setAnchor}
+          >
+            {section.anchor.derive((value) => {
+              switch (value) {
+                case "TOP":
+                  return <AnchorTopIcon aria-hidden="true" slot="icon" />;
+                case "BOTTOM":
+                  return <AnchorBottomIcon aria-hidden="true" slot="icon" />;
+                case "LEFT":
+                default:
+                  return <AnchorLeftIcon aria-hidden="true" slot="icon" />;
+                case "RIGHT":
+                  return <AnchorRightIcon aria-hidden="true" slot="icon" />;
+              }
+            })}
+            <swatch-item value="TOP" data-tooltip="Top">
+              <AnchorTopIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="BOTTOM" data-tooltip="Bottom">
+              <AnchorBottomIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="LEFT" data-tooltip="Left">
+              <AnchorLeftIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="RIGHT" data-tooltip="Right">
+              <AnchorRightIcon aria-hidden="true" />
+            </swatch-item>
+          </swatch-select>
+        </li>
 
-          <li role="presentation">
-            <label>
+        <li role="presentation">
+          <select
+            aria-label="Size"
+            value={section.dimensions}
+            on:change={setDimensions}
+          >
+            <option value="" disabled>
               Size
-              <select value={section.dimensions} on:change={setDimensions}>
-                <option value="" disabled>
-                  Size
-                </option>
-                <option
-                  value="LANDSCAPE"
-                  selected={
-                    section.dimensions.value === "LANDSCAPE" ? true : undefined
-                  }
-                >
-                  Landscape
-                </option>
-                <option
-                  value="PORTRAIT"
-                  selected={
-                    section.dimensions.value === "PORTRAIT" ? true : undefined
-                  }
-                >
-                  Portrait
-                </option>
-                <option
-                  value="CUSTOM"
-                  selected={
-                    section.dimensions.value === "CUSTOM" ? true : undefined
-                  }
-                >
-                  Custom
-                </option>
-              </select>
-            </label>
-          </li>
-
-          <li role="presentation">
-            <BackgroundPicker
-              id={`${section.id}-background`}
-              value={section.background}
-              onChange={setBackground}
-            />
-          </li>
-
-          <li role="presentation">
-            <ToolbarButton
-              label="Hide"
-              aria-pressed={section.hide}
-              on:click={toggleVisibility}
+            </option>
+            <option
+              value="LANDSCAPE"
+              selected={
+                section.dimensions.value === "LANDSCAPE" ? true : undefined
+              }
             >
-              <HiddenIcon aria-hidden="true" />
-            </ToolbarButton>
-          </li>
-
-          <li role="presentation">
-            <ToolbarButton label="Duplicate" on:click={duplicateSection}>
-              <DuplicateIcon aria-hidden="true" />
-            </ToolbarButton>
-          </li>
-        </ul>
-
-        <ul role="group" aria-label="Section order tools">
-          <li role="presentation">
-            <ToolbarButton label="Move up" on:click={moveUp}>
-              <ArrowUpIcon aria-hidden="true" />
-            </ToolbarButton>
-          </li>
-
-          <li role="presentation">
-            <ToolbarButton label="Move down" on:click={moveDown}>
-              <ArrowDownIcon aria-hidden="true" />
-            </ToolbarButton>
-          </li>
-        </ul>
-
-        <ul role="group" aria-label="More tools">
-          <li role="presentation">
-            <ToolbarButton
-              id={`${section.id}-options-button`}
-              label="More options"
-              popoverTarget={`${section.id}-options`}
-              aria-haspopup="menu"
-              aria-expanded="false"
+              Landscape
+            </option>
+            <option
+              value="PORTRAIT"
+              selected={
+                section.dimensions.value === "PORTRAIT" ? true : undefined
+              }
             >
-              <MoreIcon aria-hidden="true" />
-            </ToolbarButton>
-
-            <popover-menu
-              id={`${section.id}-options`}
-              anchor={`${section.id}-options-button`}
+              Portrait
+            </option>
+            <option
+              value="CUSTOM"
+              selected={
+                section.dimensions.value === "CUSTOM" ? true : undefined
+              }
             >
-              <menu>
-                <li>
-                  <button
-                    type="button"
-                    className="destructive"
-                    on:click={deleteSection}
-                  >
-                    <TrashIcon aria-hidden="true" />
-                    Delete section
-                  </button>
-                </li>
-              </menu>
-            </popover-menu>
-          </li>
-        </ul>
-      </floating-toolbar>
-    </div>
+              Custom
+            </option>
+          </select>
+        </li>
+
+        <li role="presentation">
+          <BackgroundPicker
+            id={`${section.id}-background`}
+            value={section.background}
+            onChange={setBackground}
+          />
+        </li>
+
+        <li role="presentation">
+          <ToolbarButton
+            label="Hide"
+            aria-pressed={section.hide}
+            on:click={toggleVisibility}
+          >
+            <HiddenIcon aria-hidden="true" />
+          </ToolbarButton>
+        </li>
+
+        <li role="presentation">
+          <ToolbarButton label="Duplicate" on:click={duplicateSection}>
+            <DuplicateIcon aria-hidden="true" />
+          </ToolbarButton>
+        </li>
+      </ul>
+
+      <ul role="group" aria-label="Section order tools">
+        <li role="presentation">
+          <ToolbarButton label="Move up" on:click={moveUp}>
+            <ArrowUpIcon aria-hidden="true" />
+          </ToolbarButton>
+        </li>
+
+        <li role="presentation">
+          <ToolbarButton label="Move down" on:click={moveDown}>
+            <ArrowDownIcon aria-hidden="true" />
+          </ToolbarButton>
+        </li>
+      </ul>
+
+      <ul role="group" aria-label="More tools">
+        <li role="presentation">
+          <ToolbarButton
+            id={`${section.id}-options-button`}
+            label="More options"
+            popoverTarget={`${section.id}-options`}
+            aria-haspopup="menu"
+            aria-expanded="false"
+          >
+            <MoreIcon aria-hidden="true" />
+          </ToolbarButton>
+
+          <popover-menu
+            id={`${section.id}-options`}
+            anchor={`${section.id}-options-button`}
+          >
+            <menu>
+              <li>
+                <button
+                  type="button"
+                  className="destructive"
+                  on:click={deleteSection}
+                >
+                  <TrashIcon aria-hidden="true" />
+                  Delete section
+                </button>
+              </li>
+            </menu>
+          </popover-menu>
+        </li>
+      </ul>
+    </floating-toolbar>
   );
 }
