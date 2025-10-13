@@ -363,6 +363,15 @@ export default class Editor {
     });
   }
 
+  async duplicateSection(
+    data: OmitPageId<AppRouterInputs["sections"]["duplicate"]>,
+  ) {
+    return await client.sections.duplicate.mutate({
+      pageId: this.pageId,
+      ...data,
+    });
+  }
+
   transitionSections(update: () => void) {
     const sections = document.querySelectorAll<HTMLElement>(
       "section[data-section-id]",
