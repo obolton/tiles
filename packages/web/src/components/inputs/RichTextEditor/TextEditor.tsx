@@ -20,6 +20,7 @@ export interface TextEditorProps extends JSX.Attributes<HTMLDivElement> {
   state: Reactive<EditorState | null>;
   initialValue?: RichText | null;
   extraToolbarItems?: JSX.Node;
+  onChange?: (state: EditorState) => void;
   signal?: AbortSignal;
 }
 
@@ -28,6 +29,7 @@ export default function TextEditor({
   classList = [],
   initialValue = null,
   extraToolbarItems,
+  onChange,
   signal,
   ...props
 }: TextEditorProps) {
@@ -64,6 +66,7 @@ export default function TextEditor({
             state.value = newState;
             format.value = getSelectionFormat(newState);
             prompting.value = isPromptOpen(newState);
+            onChange?.(newState);
           },
         },
       );

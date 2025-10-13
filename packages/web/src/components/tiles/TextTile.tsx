@@ -8,6 +8,7 @@ import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/colors/ColorPicker";
 import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
+import debounce from "@/utils/debounce";
 import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
 import type { TextProperties } from "@/types/tiles";
@@ -32,22 +33,22 @@ export default function TextTile({
 }: TextTileProps) {
   const { isEditable } = editor;
 
-  async function onBlur() {
-    try {
-      const stateValue = state.value;
-      if (!stateValue) {
-        return;
-      }
-      const newContent = serialize(stateValue);
-      content.value = newContent;
-      await editor.updateText({
+  function persist() {
+    const stateValue = state.value;
+    if (!stateValue) {
+      return;
+    }
+    const newContent = serialize(stateValue);
+    content.value = newContent;
+    editor
+      .updateText({
         id,
         content: newContent,
-      });
-    } catch (error) {
-      handleError(error);
-    }
+      })
+      .catch(handleError);
   }
+
+  const onChange = debounce(persist, 1500);
 
   const onChangeTextColor = async (value: Color | null) => {
     try {
@@ -119,8 +120,8 @@ export default function TextTile({
         classList={[styles.text, styles.editor, alignClass]}
         initialValue={content.value}
         tabIndex={-1}
+        onChange={onChange}
         on:keydown={onKeyDown}
-        on:blur={onBlur}
         extraToolbarItems={
           <ul role="group">
             <li role="presentation">
