@@ -9,4 +9,7 @@ export default {
   migrations: {
     seed: "tsx prisma/seed.ts",
   },
+  typedSql: {
+    path: "./src/sql",
+  },
 } satisfies PrismaConfig;
