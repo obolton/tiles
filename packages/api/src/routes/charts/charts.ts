@@ -12,6 +12,7 @@ import type { Prisma } from "@/generated/prisma/client";
 
 export const CHART_SERIES_FIELDS = {
   id: true,
+  type: true,
   column: {
     select: {
       id: true,
@@ -20,10 +21,15 @@ export const CHART_SERIES_FIELDS = {
   },
 } as const satisfies Prisma.ChartSeriesSelect<ExtensionArgs>;
 
+export type ChartSeries = Prisma.Result<
+  typeof prisma.chartSeries,
+  { select: typeof CHART_SERIES_FIELDS },
+  "findUniqueOrThrow"
+>;
+
 export const CHART_FIELDS = {
   id: true,
   tableId: true,
-  chartType: true,
   background: true,
   label: {
     select: {
@@ -52,7 +58,6 @@ export async function createChart({
   x,
   y,
   block,
-  chartType,
   labelColumnId,
   background,
   series = [],
@@ -78,7 +83,6 @@ export async function createChart({
       data: {
         pageId,
         tableId,
-        chartType,
         labelColumnId,
         ...getBackgroundProperties(background),
         series: {
@@ -114,7 +118,6 @@ export async function createChart({
 export async function updateChart({
   pageId,
   id,
-  chartType,
   labelColumnId,
   background,
 }: UpdateChartSchema) {
@@ -136,7 +139,6 @@ export async function updateChart({
         id,
       },
       data: {
-        chartType,
         labelColumnId,
         ...getBackgroundProperties(background),
       },
@@ -150,6 +152,7 @@ export async function addSeries({
   pageId,
   chartId,
   columnId,
+  type,
 }: AddSeriesSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the chart, table and column
@@ -166,6 +169,7 @@ export async function addSeries({
       data: {
         chartId,
         columnId,
+        type,
       },
       select: CHART_SERIES_FIELDS,
     });
@@ -176,6 +180,7 @@ export async function updateSeries({
   pageId,
   chartId,
   seriesId,
+  type,
 }: UpdateSeriesSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the chart
@@ -186,7 +191,7 @@ export async function updateSeries({
 
     return transaction.chartSeries.update({
       data: {
-        // TODO
+        type,
       },
       where: {
         id: seriesId,
