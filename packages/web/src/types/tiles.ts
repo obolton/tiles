@@ -10,6 +10,7 @@ import type {
   ClientTile,
   ClientVideoTile,
   TileType,
+  ChartSeries,
 } from "api/src/types/tiles.ts";
 import type {
   Reactive,
@@ -18,7 +19,13 @@ import type {
 } from "@/utils/reactivity";
 import type { EditorState } from "prosemirror-state";
 
-export type { ClientCollection, ClientPageLinkTile, ClientTile, TileType };
+export type {
+  ClientCollection,
+  ClientPageLinkTile,
+  ClientTile,
+  TileType,
+  ChartSeries,
+};
 
 export type ReactiveTile<
   T extends ClientTile = ClientTile,
@@ -38,7 +45,10 @@ export type MapProperties = ReactiveTile<ClientMapTile>;
 export type PageLinkProperties = ReactiveTile<ClientPageLinkTile>;
 export type TableProperties = ReactiveTile<ClientTableTile>;
 export type VideoProperties = ReactiveTile<ClientVideoTile>;
-export type ChartProperties = ReactiveTile<ClientChartTile>;
+export type ChartSeriesProperties = ReactiveRecord<ChartSeries, "id">;
+export type ChartProperties = Omit<ReactiveTile<ClientChartTile>, "series"> & {
+  series: Reactive<ChartSeriesProperties[]>;
+};
 
 export type Tile =
   | ImageProperties
