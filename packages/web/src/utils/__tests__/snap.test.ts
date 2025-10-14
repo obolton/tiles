@@ -71,4 +71,25 @@ describe("findSnapPoint", () => {
 
     expect(match).toEqual(points[0]);
   });
+
+  test("skips snap points matching the ignore ID", () => {
+    const points: SnapPoint[] = [
+      { type: "edge", id: "a", value: 2 },
+      { type: "edge", id: "b", value: 10 },
+      { type: "edge", id: "c", value: 12 },
+    ];
+
+    const match = findSnapPoint(points, 11, 3, "b");
+
+    expect(match).toEqual(points[2]);
+  });
+
+  test("returns null when all candidates are ignored", () => {
+    const points: SnapPoint[] = [
+      { type: "edge", id: "a", value: 4 },
+      { type: "edge", id: "b", value: 15 },
+    ];
+
+    expect(findSnapPoint(points, 5, 2, "a")).toBeNull();
+  });
 });
