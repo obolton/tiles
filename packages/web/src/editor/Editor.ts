@@ -62,6 +62,21 @@ function getReactiveTile(tile: ClientTile): Tile {
         state: reactive<EditorState | null>(null),
       };
     }
+    case "CHART": {
+      const { id, placementId, type, ...properties } = tile;
+      return {
+        id,
+        placementId,
+        type,
+        ...record(properties),
+        series: reactive(
+          properties.series.map((series) => {
+            const { id, ...seriesProperties } = series;
+            return { id, ...record(seriesProperties) };
+          }),
+        ),
+      };
+    }
     default: {
       const { id, placementId, type, ...properties } = tile;
       return { id, placementId, type, ...record(properties) } as Tile;
