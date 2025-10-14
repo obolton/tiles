@@ -19,10 +19,10 @@ enum GradientDirection {
   BOTTOM_LEFT
 }
 
-enum ChartType {
+enum ChartSeriesType {
   BAR
   LINE
-  PIE
+  AREA
 }
 
 model Page {
@@ -328,7 +328,6 @@ model Chart {
   createdAt          DateTime           @default(now()) @map("created_at")
   updatedAt          DateTime           @updatedAt @map("updated_at")
   tableId            String             @map("table_id") @db.Uuid
-  chartType          ChartType
   labelColumnId      String?            @map("label_column_id") @db.Uuid
   backgroundL        Float?             @map("background_l") @db.Real
   backgroundC        Float?             @map("background_c") @db.Real
@@ -350,11 +349,12 @@ model Chart {
 }
 
 model ChartSeries {
-  id        String   @id @default(uuid()) @db.Uuid
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  chartId   String   @map("chart_id") @db.Uuid
-  columnId  String   @map("column_id") @db.Uuid
+  id        String          @id @default(uuid()) @db.Uuid
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+  chartId   String          @map("chart_id") @db.Uuid
+  columnId  String          @map("column_id") @db.Uuid
+  type      ChartSeriesType @default(BAR)
 
   chart  Chart       @relation(fields: [chartId], references: [id], onDelete: Cascade)
   column TableColumn @relation(fields: [columnId], references: [id], onDelete: Cascade)
