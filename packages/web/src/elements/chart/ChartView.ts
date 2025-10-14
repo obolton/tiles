@@ -1,13 +1,4 @@
-import { plot, axisX, axisY, lineY } from "@observablehq/plot";
-
-export interface Mark {
-  label: string | number;
-  value: number | null | undefined;
-}
-
-export interface Series {
-  marks: Iterable<Mark>;
-}
+import { plot, axisX, axisY, barY, lineY, areaY } from "@observablehq/plot";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -16,12 +7,17 @@ declare global {
 }
 
 export default class ChartView extends HTMLElement {
-  series: Series[] = [];
-
-  private readonly resizeObserver;
+  private readonly mutationObserver: MutationObserver;
+  private readonly resizeObserver: ResizeObserver;
 
   constructor() {
     super();
+
+    this.attachShadow({ mode: "open" });
+
+    this.mutationObserver = new MutationObserver(
+      this.mutationObserverCallback.bind(this),
+    );
 
     this.resizeObserver = new ResizeObserver(
       this.resizeObserverCallback.bind(this),
@@ -29,11 +25,23 @@ export default class ChartView extends HTMLElement {
   }
 
   connectedCallback() {
+    this.draw();
+    this.mutationObserver.observe(this, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ["type"],
+    });
     this.resizeObserver.observe(this);
   }
 
   disconnectedCallback() {
+    this.mutationObserver.disconnect();
     this.resizeObserver.disconnect();
+  }
+
+  private mutationObserverCallback() {
+    this.draw();
   }
 
   private resizeObserverCallback() {
@@ -41,7 +49,9 @@ export default class ChartView extends HTMLElement {
   }
 
   draw() {
-    if (this.series.length === 0) {
+    const series = Array.from(this.getElementsByTagName("chart-series"));
+
+    if (series.length === 0) {
       this.replaceChildren();
       return;
     }
@@ -56,12 +66,22 @@ export default class ChartView extends HTMLElement {
       marks: [
         axisX({ labelArrow: "none", strokeOpacity: 0.5 }),
         axisY({ labelArrow: "none", strokeOpacity: 0.5 }),
-        ...this.series.map((series) =>
-          lineY(series.marks, { x: "label", y: "value" }),
-        ),
+        ...series.map((series) => {
+          const marks = series.values.map((value, i) => ({ label: i, value }));
+          switch (series.type) {
+            default:
+            case "BAR":
+              return barY(marks, { x: "label", y: "value" });
+            case "LINE":
+              return lineY(marks, { x: "label", y: "value" });
+            case "AREA":
+              return areaY(marks, { x: "label", y: "value" });
+          }
+        }),
       ],
     });
-    this.replaceChildren(chart);
+    chart.part = "chart";
+    this.shadowRoot?.replaceChildren(chart);
   }
 }
 
