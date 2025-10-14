@@ -10,10 +10,9 @@ import type { ChartProperties } from "@/types/tiles";
 
 export interface ChartToolbarProps {
   chart: ChartProperties;
-  anchorName: string;
 }
 
-export default function ChartToolbar({ chart, anchorName }: ChartToolbarProps) {
+export default function ChartToolbar({ chart }: ChartToolbarProps) {
   async function setBackground(value: Background | null) {
     try {
       const { background: newBackground } = await Editor.current.updateChart({
@@ -34,8 +33,7 @@ export default function ChartToolbar({ chart, anchorName }: ChartToolbarProps) {
 
   return (
     <floating-toolbar
-      className="vertical anchored"
-      style={{ positionAnchor: anchorName }}
+      className="bottom-left"
       data-tooltip-position="left"
       aria-label="Chart tools"
     >

@@ -30,16 +30,14 @@ export interface ChartTileProps {
 }
 
 export default function ChartTile({ chart, hasFocus }: ChartTileProps) {
-  const anchorName = `--chart-${chart.id}`;
-
   if (import.meta.env.SSR) {
-    return <Tile background={chart.background} anchorName={anchorName}></Tile>;
+    return <Tile background={chart.background}></Tile>;
   }
 
   return (
-    <Tile border="none" background={chart.background} anchorName={anchorName}>
+    <Tile border="none" background={chart.background}>
       <If condition={hasFocus}>
-        <ChartToolbar chart={chart} anchorName={anchorName} />
+        <ChartToolbar chart={chart} />
       </If>
 
       <chart-view className={styles.chart}>
