@@ -11,7 +11,7 @@ import type {
 import type { Section } from "@/routes/sections/sections.ts";
 import type { Text } from "@/routes/text/text.ts";
 import type { TableWithData } from "@/routes/tables/tables.ts";
-import type { Chart } from "@/routes/charts/charts.ts";
+import type { Chart, ChartSeries } from "@/routes/charts/charts.ts";
 import type { PageLinkPage } from "@/routes/pageLinks/pageLinks.ts";
 
 type OmitMetadata<T> = Omit<T, "pageId" | "createdAt" | "updatedAt">;
@@ -121,4 +121,4 @@ export type ClientTile =
   | ClientTableTile
   | ClientChartTile;
 
-export type { TileType };
+export type { TileType, ChartSeries };
