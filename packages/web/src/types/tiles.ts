@@ -20,11 +20,12 @@ import type { EditorState } from "prosemirror-state";
 
 export type { ClientCollection, ClientPageLinkTile, ClientTile, TileType };
 
-export type ReactiveTile<T extends ClientTile = ClientTile> =
-  T extends ClientTile
-    ? Pick<T, "id" | "placementId" | "type"> &
-        ReactiveRecord<Omit<T, "id" | "placementId" | "type">>
-    : never;
+export type ReactiveTile<
+  T extends ClientTile = ClientTile,
+  P extends keyof T = never,
+> = T extends ClientTile
+  ? ReactiveRecord<T, "id" | "placementId" | "type" | P>
+  : never;
 
 export type TextProperties = ReactiveTile<ClientTextTile> & {
   state: Reactive<EditorState | null>;

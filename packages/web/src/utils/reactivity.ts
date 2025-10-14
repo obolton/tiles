@@ -234,8 +234,8 @@ export function isReactive<T>(
   return value instanceof BaseReactive;
 }
 
-export type ReactiveRecord<T> = {
-  [K in keyof T]: Reactive<T[K]>;
+export type ReactiveRecord<T, P extends PropertyKey = never> = {
+  [K in keyof T]: K extends P ? T[K] : Reactive<T[K]>;
 };
 
 export function record<T extends Record<string, unknown>>(initialValues: T) {
