@@ -18,3 +18,4 @@ import "./table/TableView";
 import "./swipe/SwipeView";
 import "./themes/ThemeSelector";
 import "./chart/ChartView";
+import "./chart/ChartSeries";
