@@ -1,4 +1,5 @@
 import { handleError } from "@/utils/errors";
+import { getSnapPoints, findSnapPoint, type SnapPoints } from "@/utils/snap";
 import type Editor from "@/editor/Editor";
 import type { DragDropEvent } from "@/utils/drag";
 import type { PageItemEvent } from "@/elements/item/events";
@@ -29,6 +30,8 @@ interface ItemSize {
   block?: boolean;
 }
 
+const SNAP_THRESHOLD = 64;
+
 export default class LayoutEditor {
   readonly editor: Editor;
   readonly sectionId: string;
@@ -47,6 +50,7 @@ export default class LayoutEditor {
   private size: ItemSize | null = null;
   private idForPoint?: string | null;
   private dragPlaceholder: HTMLElement | null = null;
+  private snapPoints: SnapPoints = { x: [], y: [] };
 
   constructor({
     element,
@@ -145,16 +149,39 @@ export default class LayoutEditor {
     }
 
     this.gridRect = this.grid.getBoundingClientRect();
+
+    this.snapPoints = getSnapPoints(
+      this.element.getElementsByTagName("page-item"),
+      {
+        x: this.gridRect.x,
+        y: this.gridRect.y,
+      },
+    );
   }
 
-  private getGridRow(offsetY: number) {
+  private getGridColumn(offsetX: number, id: string) {
+    const snap = findSnapPoint(this.snapPoints.x, offsetX, SNAP_THRESHOLD, id);
+    const snapX = snap?.value ?? offsetX;
+
+    const x = Math.max(
+      Math.round(snapX / (this.gridColumnWidth + this.gridColumnGap)),
+      0,
+    );
+
+    return x;
+  }
+
+  private getGridRow(offsetY: number, id: string) {
     if (this.gridRows.length === 0) {
       return 0;
     }
 
+    const snap = findSnapPoint(this.snapPoints.y, offsetY, SNAP_THRESHOLD, id);
+    const snapY = snap?.value ?? offsetY;
+
     for (let i = 0; i < this.gridRows.length; i++) {
       const row = this.gridRows[i]!;
-      if (offsetY < row.top + row.height) {
+      if (snapY < row.top + row.height) {
         return i;
       }
     }
@@ -171,11 +198,8 @@ export default class LayoutEditor {
     const { clientX, clientY, state } = event;
     const offsetX = clientX - this.gridRect.x - state.offsetX;
     const offsetY = clientY - this.gridRect.y - state.offsetY;
-    const x = Math.max(
-      Math.round(offsetX / (this.gridColumnWidth + this.gridColumnGap)),
-      0,
-    );
-    const y = this.getGridRow(offsetY);
+    const x = this.getGridColumn(offsetX, state.element.id);
+    const y = this.getGridRow(offsetY, state.element.id);
     return { x, y };
   }
 
