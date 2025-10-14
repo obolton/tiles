@@ -1,15 +1,17 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { getMatchingSnapGuide, getSnapGuides, type SnapGuide } from "../snap";
+import { findSnapPoint, getSnapPoints, type SnapPoint } from "../snap";
 
 afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("getSnapGuides", () => {
-  test("collects sorted edge guides relative to the provided origin", () => {
+describe("getSnapPoints", () => {
+  test("collects sorted snap points relative to the provided origin", () => {
     const origin = { x: 5, y: 10 };
     const first = document.createElement("div");
+    first.id = "first";
     const second = document.createElement("div");
+    second.id = "second";
 
     vi.spyOn(first, "getBoundingClientRect").mockReturnValue(
       new DOMRect(20, 30, 40, 50),
@@ -18,55 +20,55 @@ describe("getSnapGuides", () => {
       new DOMRect(-10, 0, 30, 10),
     );
 
-    const guides = getSnapGuides([first, second], origin);
+    const points = getSnapPoints([first, second], origin);
 
-    expect(guides.x).toEqual([
-      { type: "edge", value: -15 },
-      { type: "edge", value: 15 },
-      { type: "edge", value: 15 },
-      { type: "edge", value: 55 },
+    expect(points.x).toEqual([
+      { type: "edge", id: "second", value: -15 },
+      { type: "edge", id: "first", value: 15 },
+      { type: "edge", id: "second", value: 15 },
+      { type: "edge", id: "first", value: 55 },
     ]);
-    expect(guides.y).toEqual([
-      { type: "edge", value: -10 },
-      { type: "edge", value: 0 },
-      { type: "edge", value: 20 },
-      { type: "edge", value: 70 },
+    expect(points.y).toEqual([
+      { type: "edge", id: "second", value: -10 },
+      { type: "edge", id: "second", value: 0 },
+      { type: "edge", id: "first", value: 20 },
+      { type: "edge", id: "first", value: 70 },
     ]);
   });
 });
 
-describe("getMatchingSnapGuide", () => {
-  test("returns the closest guide inside the threshold window", () => {
-    const guides: SnapGuide[] = [
-      { type: "edge", value: -20 },
-      { type: "edge", value: 0 },
-      { type: "edge", value: 10 },
-      { type: "edge", value: 25 },
+describe("findSnapPoint", () => {
+  test("returns the closest snap point inside the threshold", () => {
+    const points: SnapPoint[] = [
+      { type: "edge", id: "a", value: -20 },
+      { type: "edge", id: "b", value: 0 },
+      { type: "edge", id: "c", value: 10 },
+      { type: "edge", id: "d", value: 25 },
     ];
 
-    const match = getMatchingSnapGuide(guides, 12, 5);
+    const match = findSnapPoint(points, 12, 5);
 
-    expect(match).toEqual({ guide: guides[2], distance: 2 });
+    expect(match).toEqual(points[2]);
   });
 
-  test("returns null when no guide falls within the threshold", () => {
-    const guides: SnapGuide[] = [
-      { type: "edge", value: -10 },
-      { type: "edge", value: 0 },
-      { type: "edge", value: 20 },
+  test("returns null when no snap point falls within the threshold", () => {
+    const points: SnapPoint[] = [
+      { type: "edge", id: "a", value: -10 },
+      { type: "edge", id: "b", value: 0 },
+      { type: "edge", id: "c", value: 20 },
     ];
 
-    expect(getMatchingSnapGuide(guides, 5, 2)).toBeNull();
+    expect(findSnapPoint(points, 5, 2)).toBeNull();
   });
 
-  test("prefers the first guide when distances tie", () => {
-    const guides: SnapGuide[] = [
-      { type: "edge", value: 5 },
-      { type: "edge", value: 7 },
+  test("prefers the first snap point when distances tie", () => {
+    const points: SnapPoint[] = [
+      { type: "edge", id: "a", value: 5 },
+      { type: "edge", id: "b", value: 7 },
     ];
 
-    const match = getMatchingSnapGuide(guides, 6, 1);
+    const match = findSnapPoint(points, 6, 1);
 
-    expect(match).toEqual({ guide: guides[0], distance: 1 });
+    expect(match).toEqual(points[0]);
   });
 });
