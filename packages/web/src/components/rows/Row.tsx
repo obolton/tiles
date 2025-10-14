@@ -1,24 +1,15 @@
-import RemoveIcon from "@/icons/remove.svg?jsx";
 import styles from "./Row.module.css";
 import type { JSX } from "@/jsx/jsx";
+import type { Reactive } from "@/utils/reactivity";
 
-export interface RowProps<T> {
-  data: T;
-  title: string;
-  subtitle?: string;
+export interface RowProps {
+  title: string | Reactive<string>;
+  subtitle?: string | Reactive<string>;
   icon?: JSX.Node;
-  showRemoveButton?: boolean;
-  onRemove?: (data: T) => void;
+  controls?: JSX.Node;
 }
 
-export default function Row<T>({
-  data,
-  title,
-  subtitle,
-  icon,
-  showRemoveButton = false,
-  onRemove,
-}: RowProps<T>) {
+export default function Row({ title, subtitle, icon, controls }: RowProps) {
   return (
     <li className={styles.row}>
       {icon}
@@ -28,16 +19,7 @@ export default function Row<T>({
         {subtitle ? <span className={styles.subtitle}>{subtitle}</span> : null}
       </div>
 
-      {showRemoveButton ? (
-        <button
-          type="button"
-          className="floating small"
-          aria-label="Remove"
-          on:click={onRemove ? () => onRemove(data) : undefined}
-        >
-          <RemoveIcon aria-hidden="true" />
-        </button>
-      ) : null}
+      {controls}
     </li>
   );
 }

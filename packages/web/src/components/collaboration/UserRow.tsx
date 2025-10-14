@@ -1,4 +1,5 @@
 import Row from "@/components/rows/Row";
+import RemoveIcon from "@/icons/remove.svg?jsx";
 import type { User } from "@/types/collaboration";
 
 export interface UserRowProps {
@@ -16,7 +17,6 @@ export default function UserRow({
 }: UserRowProps) {
   return (
     <Row
-      data={user}
       icon={
         user.imageUrl ? (
           <img className="profile-image" src={user.imageUrl} alt={user.name} />
@@ -24,8 +24,18 @@ export default function UserRow({
       }
       title={user.name}
       subtitle={description}
-      showRemoveButton={showRemoveButton}
-      onRemove={onRemove}
+      controls={
+        showRemoveButton ? (
+          <button
+            type="button"
+            className="floating small"
+            aria-label="Remove"
+            on:click={onRemove ? () => onRemove(user) : undefined}
+          >
+            <RemoveIcon aria-hidden="true" />
+          </button>
+        ) : null
+      }
     />
   );
 }
