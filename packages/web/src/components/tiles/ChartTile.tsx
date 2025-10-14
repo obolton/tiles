@@ -1,6 +1,7 @@
 import Tile from "./Tile";
 import ChartToolbar from "@/components/toolbars/charts/ChartToolbar";
 import If from "@/jsx/if";
+import Each from "@/jsx/each";
 import Editor from "@/editor/Editor";
 import { toPlainText } from "@/utils/richText/plainText";
 import styles from "./ChartTile.module.css";
@@ -35,21 +36,24 @@ export default function ChartTile({ chart, hasFocus }: ChartTileProps) {
     return <Tile background={chart.background} anchorName={anchorName}></Tile>;
   }
 
-  const data = chart.series.derive((seriesItem) =>
-    seriesItem.map(({ column }) => ({
-      marks: Editor.current
-        .getTableColumnData(chart.tableId.value, column.id)
-        .value.map((value, i) => ({ label: i, value: toNumber(value) })),
-    })),
-  );
-
   return (
     <Tile border="none" background={chart.background} anchorName={anchorName}>
       <If condition={hasFocus}>
         <ChartToolbar chart={chart} anchorName={anchorName} />
       </If>
 
-      <chart-view className={styles.chart} $series={data.value} />
+      <chart-view className={styles.chart}>
+        <Each items={chart.series}>
+          {(series) => (
+            <chart-series
+              type={series.type}
+              $values={Editor.current
+                .getTableColumnData(chart.tableId.value, series.column.value.id)
+                .value.map(toNumber)}
+            />
+          )}
+        </Each>
+      </chart-view>
     </Tile>
   );
 }
