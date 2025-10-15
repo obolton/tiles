@@ -9,6 +9,12 @@ export interface SnapPoints {
   y: SnapPoint[];
 }
 
+export interface SnapPointMatch {
+  point: SnapPoint;
+  delta: number;
+  distance: number;
+}
+
 export function getSnapPoints(
   elements: Iterable<Element>,
   origin: { x: number; y: number },
@@ -67,29 +73,33 @@ function getLowerBound(guides: SnapPoint[], value: number) {
 
 export function findSnapPoint(
   snapPoints: SnapPoint[],
-  value: number,
+  values: number[],
   threshold: number,
   ignoreId?: string,
-): SnapPoint | null {
-  const lower = getLowerBound(snapPoints, value - threshold);
-  let match: { point: SnapPoint; distance: number } | null = null;
+): SnapPointMatch | null {
+  let match: SnapPointMatch | null = null;
 
-  for (
-    let i = lower;
-    i < snapPoints.length && snapPoints[i]!.value <= value + threshold;
-    i++
-  ) {
-    const guide = snapPoints[i]!;
+  for (const value of values) {
+    const lower = getLowerBound(snapPoints, value - threshold);
 
-    if (ignoreId && ignoreId === guide.id) {
-      continue;
-    }
+    for (
+      let i = lower;
+      i < snapPoints.length && snapPoints[i]!.value <= value + threshold;
+      i++
+    ) {
+      const guide = snapPoints[i]!;
 
-    const distance = Math.abs(guide.value - value);
-    if (!match || distance < match.distance) {
-      match = { point: guide, distance };
+      if (ignoreId && ignoreId === guide.id) {
+        continue;
+      }
+
+      const delta = guide.value - value;
+      const distance = Math.abs(delta);
+      if (!match || distance < match.distance) {
+        match = { point: guide, delta, distance };
+      }
     }
   }
 
-  return match ? match.point : null;
+  return match;
 }

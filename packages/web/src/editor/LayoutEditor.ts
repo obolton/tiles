@@ -159,9 +159,10 @@ export default class LayoutEditor {
     );
   }
 
-  private getGridColumn(offsetX: number, id: string) {
-    const snap = findSnapPoint(this.snapPoints.x, offsetX, SNAP_THRESHOLD, id);
-    const snapX = snap?.value ?? offsetX;
+  private getGridColumn(offsetX: number, width: number, id: string) {
+    const offsets = [offsetX, offsetX + width];
+    const snap = findSnapPoint(this.snapPoints.x, offsets, SNAP_THRESHOLD, id);
+    const snapX = snap ? offsetX + snap.delta : offsetX;
 
     const x = Math.max(
       Math.round(snapX / (this.gridColumnWidth + this.gridColumnGap)),
@@ -171,13 +172,14 @@ export default class LayoutEditor {
     return x;
   }
 
-  private getGridRow(offsetY: number, id: string) {
+  private getGridRow(offsetY: number, height: number, id: string) {
     if (this.gridRows.length === 0) {
       return 0;
     }
 
-    const snap = findSnapPoint(this.snapPoints.y, offsetY, SNAP_THRESHOLD, id);
-    const snapY = snap?.value ?? offsetY;
+    const offsets = [offsetY, offsetY + height];
+    const snap = findSnapPoint(this.snapPoints.y, offsets, SNAP_THRESHOLD, id);
+    const snapY = snap ? offsetY + snap.delta : offsetY;
 
     for (let i = 0; i < this.gridRows.length; i++) {
       const row = this.gridRows[i]!;
@@ -198,8 +200,8 @@ export default class LayoutEditor {
     const { clientX, clientY, state } = event;
     const offsetX = clientX - this.gridRect.x - state.offsetX;
     const offsetY = clientY - this.gridRect.y - state.offsetY;
-    const x = this.getGridColumn(offsetX, state.element.id);
-    const y = this.getGridRow(offsetY, state.element.id);
+    const x = this.getGridColumn(offsetX, state.width, state.element.id);
+    const y = this.getGridRow(offsetY, state.height, state.element.id);
     return { x, y };
   }
 
