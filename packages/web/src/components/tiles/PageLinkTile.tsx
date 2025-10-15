@@ -4,22 +4,25 @@ import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import styles from "./PageLinkTile.module.css";
 import { classNames } from "@/utils/css";
 import { isDark } from "@/utils/color";
-import type Editor from "@/editor/Editor";
-import type { PageLinkProperties } from "@/types/tiles";
+import type PageLink from "@/items/PageLink";
 
-interface PageLinkTileProps extends PageLinkProperties {
-  editor?: Editor;
+export interface PageLinkTileProps {
+  pageLink: PageLink;
   onClick?: (event: MouseEvent) => void;
   openInNewTab?: boolean;
 }
 
 export default function PageLinkTile({
-  editor,
-  linkedPage,
+  pageLink,
   onClick,
   openInNewTab = true,
 }: PageLinkTileProps) {
-  if (!linkedPage.value) {
+  const {
+    page,
+    editor: { isEditable },
+  } = pageLink;
+
+  if (!page) {
     return (
       <Tile>
         <div className={styles.deleted}>This page has been deleted.</div>
@@ -31,7 +34,7 @@ export default function PageLinkTile({
     if (onClick) {
       onClick(event);
     } else if (
-      editor?.isEditable.value &&
+      isEditable.value &&
       !event.ctrlKey &&
       !event.shiftKey &&
       !event.altKey &&
@@ -41,14 +44,12 @@ export default function PageLinkTile({
     }
   }
 
-  const page = linkedPage.value;
-
   return (
     <a
       className={styles.link}
       href={`/pages/${page.id}`}
       target={openInNewTab ? "_blank" : undefined}
-      tabindex={editor?.isEditable.derive((value) => (value ? -1 : undefined))}
+      tabindex={isEditable.derive((value) => (value ? -1 : undefined))}
       on:click={handleClick}
     >
       <PageTile
