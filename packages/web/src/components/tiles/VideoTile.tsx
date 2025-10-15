@@ -2,7 +2,7 @@ import Caption from "./Caption";
 import Tile from "./Tile";
 import VideoIcon from "@/icons/video.svg?jsx";
 import styles from "./VideoTile.module.css";
-import type Editor from "@/editor/Editor";
+import type Video from "@/items/Video";
 import type { VideoProperties } from "@/types/tiles";
 import type { ReactiveType } from "@/utils/reactivity";
 
@@ -19,44 +19,35 @@ function getEmbedUrl(
   }
 }
 
-interface VideoTileProps extends VideoProperties {
-  editor: Editor;
+export interface VideoTileProps {
+  video: Video;
 }
 
-export default function VideoTile({
-  editor,
-  id,
-  videoType,
-  videoId,
-  imageUrl,
-  title,
-  ...props
-}: VideoTileProps) {
-  const { isEditable } = editor;
-  const embedUrl = getEmbedUrl(videoType.value, videoId.value);
-
-  const onUpdateCaption = async (value: string) => {
-    title.value = value;
-    await editor.updateVideo({
-      id,
-      title: value,
-    });
-  };
+export default function VideoTile({ video }: VideoTileProps) {
+  const {
+    id,
+    videoType,
+    videoId,
+    imageUrl,
+    title,
+    editor: { isEditable },
+  } = video;
+  const embedUrl = getEmbedUrl(videoType, videoId);
 
   return (
-    <Tile {...props}>
+    <Tile>
       <figure className={styles.figure}>
         <embedded-video
           id={`${id}-video`}
           className={styles.video}
           src={embedUrl}
-          imagesrc={imageUrl.value ?? undefined}
+          imagesrc={imageUrl ?? undefined}
           data-show-in-lightbox="true"
         />
         <Caption
           isEditable={isEditable}
-          value={title.value}
-          onChange={onUpdateCaption}
+          value={title}
+          onChange={(value) => video.setTitle(value)}
           placeholder="Add a caption"
         />
       </figure>

@@ -46,7 +46,7 @@ function getTileComponent(
     case "IMAGE":
       return <ImageTile image={tile} />;
     case "VIDEO":
-      return <VideoTile {...tile} editor={editor} />;
+      return <VideoTile video={tile} />;
     case "TEXT":
       return <TextTile text={tile} hasFocus={hasFocus} />;
     case "MAP":
