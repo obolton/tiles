@@ -8,6 +8,8 @@ import Search from "@/components/search/Search";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
 import { flag, reactive } from "@/utils/reactivity";
+import PageLink from "@/items/PageLink";
+import Editor from "@/editor/Editor";
 import type { AppRouterOutputs } from "@/api/client";
 import type { ModalProps } from "@/utils/modals";
 
@@ -140,8 +142,9 @@ export default function LinkModal({
                 page.id === pageId ? null : (
                   <PagesGridItem>
                     <PageLinkTile
-                      id={page.id}
-                      linkedPage={reactive(page)}
+                      pageLink={
+                        new PageLink(Editor.current, { linkedPage: page })
+                      }
                       openInNewTab={false}
                       onClick={(event) => {
                         if (
