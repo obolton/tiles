@@ -13,6 +13,7 @@ import { moveElement } from "@/utils/arrays";
 import Text from "@/items/Text";
 import Image from "@/items/Image";
 import Video from "@/items/Video";
+import Link from "@/items/Link";
 import type { FontId } from "@/config/fonts";
 import type {
   ClientTile,
@@ -50,6 +51,8 @@ function getReactiveTile(editor: Editor, tile: ClientTile): Tile {
       return new Image(editor, tile);
     case "VIDEO":
       return new Video(editor, tile);
+    case "LINK":
+      return new Link(editor, tile);
     case "CHART": {
       const { id, placementId, type, ...properties } = tile;
       return {
