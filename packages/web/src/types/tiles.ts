@@ -23,6 +23,7 @@ export type {
   ClientTextTile,
   ClientImageTile,
   ClientVideoTile,
+  ClientLinkTile,
   ClientCollection,
   ClientPageLinkTile,
   ClientTile,
