@@ -1,42 +1,43 @@
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import { classNames } from "@/utils/css";
 import styles from "./Caption.module.css";
-import { ReactiveValue } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 
-interface CaptionProps {
-  isEditable: ReactiveValue<boolean>;
-  value?: string | null;
+export interface CaptionProps {
+  isEditable: Reactive<boolean>;
+  value: Reactive<string>;
   onChange: (value: string) => void;
   placeholder?: string;
 }
 
+function stopPropagation(event: Event) {
+  event.stopPropagation();
+}
+
 export default function Caption({
   isEditable,
-  value: initialValue,
+  value,
   onChange,
   placeholder,
 }: CaptionProps) {
-  const value = new ReactiveValue(initialValue ?? "");
-
   const handleChange = (event: Event) => {
-    value.value = event.currentTarget.value;
+    const element = event.currentTarget as HTMLTextAreaElement;
+    const value = element.value;
+    onChange(value);
   };
-  const handlePointerDown = (event: PointerEvent) => event.stopPropagation();
-  const commit = () => onChange(value.value);
 
   return isEditable.derive((editable) =>
     editable ? (
       <figcaption
         className={classNames(styles.caption, styles.editable)}
-        onpointerdown={handlePointerDown}
+        on:pointerdown={stopPropagation}
       >
         <ResizingTextarea
           className={styles.textarea}
           placeholder={placeholder}
-          onBlur={commit}
-          onChange={handleChange}
           rows={1}
           value={value.value}
+          on:change={handleChange}
         />
       </figcaption>
     ) : (
