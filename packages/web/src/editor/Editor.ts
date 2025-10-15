@@ -11,6 +11,7 @@ import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import { moveElement } from "@/utils/arrays";
 import Text from "@/items/Text";
+import Image from "@/items/Image";
 import type { FontId } from "@/config/fonts";
 import type {
   ClientTile,
@@ -25,7 +26,6 @@ import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
 import type { Color } from "@/utils/color";
 import type { Reactive, ReactiveArray } from "@/utils/reactivity";
-import type { EditorState } from "prosemirror-state";
 
 type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
@@ -45,16 +45,8 @@ function getReactiveTile(editor: Editor, tile: ClientTile): Tile {
   switch (tile.type) {
     case "TEXT":
       return new Text(editor, tile);
-    case "IMAGE": {
-      const { id, placementId, type, ...properties } = tile;
-      return {
-        id,
-        placementId,
-        type,
-        ...record(properties),
-        state: reactive<EditorState | null>(null),
-      };
-    }
+    case "IMAGE":
+      return new Image(editor, tile);
     case "CHART": {
       const { id, placementId, type, ...properties } = tile;
       return {
