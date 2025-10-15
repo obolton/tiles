@@ -38,7 +38,7 @@ describe("getSnapPoints", () => {
 });
 
 describe("findSnapPoint", () => {
-  test("returns the closest snap point inside the threshold", () => {
+  test("returns the closest snap point inside the threshold across multiple edges", () => {
     const points: SnapPoint[] = [
       { type: "edge", id: "a", value: -20 },
       { type: "edge", id: "b", value: 0 },
@@ -46,9 +46,13 @@ describe("findSnapPoint", () => {
       { type: "edge", id: "d", value: 25 },
     ];
 
-    const match = findSnapPoint(points, 12, 5);
+    const match = findSnapPoint(points, [12, 28], 5);
 
-    expect(match).toEqual(points[2]);
+    expect(match).toEqual({
+      point: points[2],
+      delta: -2,
+      distance: 2,
+    });
   });
 
   test("returns null when no snap point falls within the threshold", () => {
@@ -58,7 +62,7 @@ describe("findSnapPoint", () => {
       { type: "edge", id: "c", value: 20 },
     ];
 
-    expect(findSnapPoint(points, 5, 2)).toBeNull();
+    expect(findSnapPoint(points, [5, 15], 2)).toBeNull();
   });
 
   test("prefers the first snap point when distances tie", () => {
@@ -67,9 +71,13 @@ describe("findSnapPoint", () => {
       { type: "edge", id: "b", value: 7 },
     ];
 
-    const match = findSnapPoint(points, 6, 1);
+    const match = findSnapPoint(points, [6], 1);
 
-    expect(match).toEqual(points[0]);
+    expect(match).toEqual({
+      point: points[0],
+      delta: -1,
+      distance: 1,
+    });
   });
 
   test("skips snap points matching the ignore ID", () => {
@@ -79,9 +87,13 @@ describe("findSnapPoint", () => {
       { type: "edge", id: "c", value: 12 },
     ];
 
-    const match = findSnapPoint(points, 11, 3, "b");
+    const match = findSnapPoint(points, [10, 11], 3, "b");
 
-    expect(match).toEqual(points[2]);
+    expect(match).toEqual({
+      point: points[2],
+      delta: 1,
+      distance: 1,
+    });
   });
 
   test("returns null when all candidates are ignored", () => {
@@ -90,6 +102,6 @@ describe("findSnapPoint", () => {
       { type: "edge", id: "b", value: 15 },
     ];
 
-    expect(findSnapPoint(points, 5, 2, "a")).toBeNull();
+    expect(findSnapPoint(points, [4, 8], 1, "a")).toBeNull();
   });
 });
