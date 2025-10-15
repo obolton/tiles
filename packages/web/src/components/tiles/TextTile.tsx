@@ -1,4 +1,3 @@
-import { serialize } from "@/utils/richText/serialize";
 import RichText from "@/components/text/RichText";
 import TextToolbar from "@/components/toolbars/text/TextToolbar";
 import Tile from "./Tile";
@@ -6,61 +5,30 @@ import If from "@/jsx/if";
 import styles from "./TextTile.module.css";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/colors/ColorPicker";
-import { viewTransition } from "@/utils/transitions";
-import { handleError } from "@/utils/errors";
 import debounce from "@/utils/debounce";
-import type { Reactive } from "@/utils/reactivity";
 import type Editor from "@/editor/Editor";
-import type { TextProperties } from "@/types/tiles";
-import type { Color } from "@/utils/color";
+import type Text from "@/items/Text";
+import type { Reactive } from "@/utils/reactivity";
 
-export interface TextTileProps extends TextProperties {
+export interface TextTileProps {
   editor: Editor;
+  text: Text;
   hasFocus: Reactive<boolean>;
 }
 
-export default function TextTile({
-  editor,
-  id,
-  placementId,
-  content,
-  state,
-  textColor,
-  background,
-  block,
-  align,
-  hasFocus,
-}: TextTileProps) {
-  const { isEditable } = editor;
+export default function TextTile({ text, hasFocus }: TextTileProps) {
+  const {
+    id,
+    block,
+    content,
+    textColor,
+    align,
+    background,
+    state,
+    editor: { isEditable },
+  } = text;
 
-  function persist() {
-    const stateValue = state.value;
-    if (!stateValue) {
-      return;
-    }
-    const newContent = serialize(stateValue);
-    content.value = newContent;
-    editor
-      .updateText({
-        id,
-        content: newContent,
-      })
-      .catch(handleError);
-  }
-
-  const onChange = debounce(persist, 1500);
-
-  const onChangeTextColor = async (value: Color | null) => {
-    try {
-      const { textColor: newTextColor } = await editor.updateText({
-        id,
-        textColor: value,
-      });
-      viewTransition(() => (textColor.value = newTextColor));
-    } catch (error) {
-      handleError(error);
-    }
-  };
+  const onChange = debounce(() => text.persist(), 1500);
 
   function onKeyDown(event: KeyboardEvent) {
     const { currentTarget, target, key } = event;
@@ -85,7 +53,7 @@ export default function TextTile({
       state.value.doc.textContent === ""
     ) {
       event.preventDefault();
-      editor.deleteTiles([placementId]);
+      text.delete();
     }
 
     // Prevent ancestors from acting on keyboard navigation
@@ -128,7 +96,7 @@ export default function TextTile({
               <ColorPicker
                 id={`${id}-color-picker`}
                 value={textColor}
-                onChange={onChangeTextColor}
+                onChange={(color) => text.setTextColor(color)}
               />
             </li>
           </ul>
@@ -153,14 +121,7 @@ export default function TextTile({
       anchorName={anchorName}
     >
       <If condition={hasFocus}>
-        <TextToolbar
-          id={id}
-          placementId={placementId}
-          background={background}
-          align={align}
-          block={block}
-          anchorName={anchorName}
-        />
+        <TextToolbar text={text} anchorName={anchorName} />
       </If>
 
       {block.derive((value) =>

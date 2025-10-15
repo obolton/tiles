@@ -5,11 +5,9 @@ import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
 import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
 import ExpandHeightIcon from "@/icons/expand-height.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
-import { viewTransition } from "@/utils/transitions";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
-import type { Background } from "@/components/backgrounds/types";
-import type { TextProperties } from "@/types/tiles";
+import type Text from "@/items/Text";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 
 const ALIGN_ICON = {
@@ -19,49 +17,12 @@ const ALIGN_ICON = {
 } as const;
 
 export interface TextToolbarProps {
-  id: TextProperties["id"];
-  placementId: TextProperties["placementId"];
-  background: TextProperties["background"];
-  block: TextProperties["block"];
-  align: TextProperties["align"];
+  text: Text;
   anchorName: string;
 }
 
-export default function TextToolbar({
-  id,
-  placementId,
-  background,
-  block,
-  align,
-  anchorName,
-}: TextToolbarProps) {
-  async function setBackground(value: Background | null) {
-    try {
-      const { background: newBackground } = await Editor.current.updateText({
-        id,
-        background: value,
-      });
-      viewTransition(() => (background.value = newBackground));
-    } catch (error) {
-      handleError(error);
-    }
-  }
-
-  async function setVerticalAlignment(event: Event) {
-    try {
-      const value = (event.currentTarget as SwatchSelect).value as
-        | "TOP"
-        | "CENTER"
-        | "BOTTOM";
-      align.value = value;
-      await Editor.current.updateText({
-        id,
-        align: value,
-      });
-    } catch (error) {
-      handleError(error);
-    }
-  }
+export default function TextToolbar({ text, anchorName }: TextToolbarProps) {
+  const { id, placementId, align, block } = text;
 
   function toggleBlock() {
     let height: number | undefined = undefined;
@@ -88,10 +49,6 @@ export default function TextToolbar({
       .catch(handleError);
   }
 
-  function deleteTile() {
-    Editor.current.deleteTiles([placementId]);
-  }
-
   return (
     <floating-toolbar
       className="vertical anchored"
@@ -102,9 +59,9 @@ export default function TextToolbar({
       <ul role="group" aria-label="Layout">
         <li role="presentation">
           <BackgroundPicker
-            id={`${id}-background`}
-            value={background}
-            onChange={setBackground}
+            id={`${text.id}-background`}
+            value={text.background}
+            onChange={(background) => text.setBackground(background)}
           />
         </li>
 
@@ -129,7 +86,14 @@ export default function TextToolbar({
                 orientation="vertical"
                 align="center"
                 value={align}
-                on:change={setVerticalAlignment}
+                on:change={(event) =>
+                  text.setVerticalAlignment(
+                    (event.currentTarget as SwatchSelect).value as
+                      | "TOP"
+                      | "CENTER"
+                      | "BOTTOM",
+                  )
+                }
               >
                 {align.derive((value) => ALIGN_ICON[value])}
 
@@ -162,7 +126,11 @@ export default function TextToolbar({
 
       <ul role="group" aria-label="More tools">
         <li role="presentation">
-          <ToolbarButton label="Delete" destructive on:click={deleteTile}>
+          <ToolbarButton
+            label="Delete"
+            destructive
+            on:click={() => text.delete()}
+          >
             <DeleteIcon aria-hidden="true" />
           </ToolbarButton>
         </li>

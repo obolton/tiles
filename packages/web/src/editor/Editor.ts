@@ -631,6 +631,7 @@ export default class Editor {
     return item;
   }
 
+  // TODO: Restore title setting
   async updateText(data: OmitPageId<AppRouterInputs["text"]["update"]>) {
     // Update the page title
     if (data.content) {
