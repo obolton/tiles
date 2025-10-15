@@ -21,6 +21,7 @@ import type { EditorState } from "prosemirror-state";
 
 export type {
   ClientTextTile,
+  ClientImageTile,
   ClientCollection,
   ClientPageLinkTile,
   ClientTile,
