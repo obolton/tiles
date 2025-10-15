@@ -4,14 +4,10 @@ import styles from "./ImageTile.module.css";
 import Tile from "./Tile";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import { setSearchParams } from "@/utils/urls";
-import { serialize } from "@/utils/richText/serialize";
-import { Computed } from "@/utils/reactivity";
-import { handleError } from "@/utils/errors";
-import type Editor from "@/editor/Editor";
-import type { ImageProperties } from "@/types/tiles";
+import type Image from "@/items/Image";
 
-export interface ImageTileProps extends ImageProperties {
-  editor: Editor;
+export interface ImageTileProps {
+  image: Image;
 }
 
 interface ImageVariant {
@@ -51,44 +47,16 @@ function getMaxWidth(columns: number) {
   return columns * MAX_COLUMN_WIDTH + (columns - 1) * COLUMN_GAP;
 }
 
-export default function ImageTile({
-  editor,
-  state,
-  id,
-  width,
-  imageUrl,
-  text,
-  originX,
-  originY,
-}: ImageTileProps) {
-  const { isEditable } = editor;
-
-  async function onBlur() {
-    try {
-      const stateValue = state.value;
-      const newText = stateValue?.doc.textContent
-        ? serialize(stateValue)
-        : null;
-      text.value = newText;
-      await editor.updateImage({
-        id,
-        text: newText,
-      });
-    } catch (error) {
-      handleError(error);
-    }
-  }
-
-  const onUpdateOrigin = async (origin: { x: number; y: number }) => {
-    try {
-      await editor.updateImage({
-        id,
-        origin,
-      });
-    } catch (error) {
-      handleError(error);
-    }
-  };
+export default function ImageTile({ image }: ImageTileProps) {
+  const {
+    id,
+    width,
+    imageUrl,
+    text,
+    origin,
+    state,
+    editor: { isEditable },
+  } = image;
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Delete" || event.key === "Backspace") {
@@ -100,9 +68,7 @@ export default function ImageTile({
 
   const sizes = `(max-width: 800px) ${((width.value / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(width.value)}px`;
 
-  const origin = new Computed([originX, originY], (x, y) => ({ x, y }));
-
-  const style = new Computed([originX, originY], (x, y) => ({
+  const style = origin.derive(({ x, y }) => ({
     objectPosition: `${x * 100}% ${y * 100}%`,
   }));
 
@@ -122,11 +88,8 @@ export default function ImageTile({
           alt="Image"
           movable={isEditable}
           origin={origin}
-          onMove={(newOrigin) => {
-            originX.value = newOrigin.x;
-            originY.value = newOrigin.y;
-          }}
-          onRelease={onUpdateOrigin}
+          onMove={(value) => (origin.value = value)}
+          onRelease={(value) => image.setOrigin(value)}
         />
 
         {isEditable.derive((editable) =>
@@ -136,7 +99,7 @@ export default function ImageTile({
               classList={[styles.caption]}
               initialValue={text.value}
               on:keydown={onKeyDown}
-              on:blur={onBlur}
+              on:blur={() => image.persistText()}
             />
           ) : (
             text.derive((value) =>
