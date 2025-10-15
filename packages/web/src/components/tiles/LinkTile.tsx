@@ -1,44 +1,35 @@
 import { showModal } from "@/utils/modals";
 import Tile from "./Tile";
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import If from "@/jsx/if";
 import styles from "./LinkTile.module.css";
+import type Link from "@/items/Link";
 import type { Reactive } from "@/utils/reactivity";
-import type { LinkModalResult } from "@/components/modals/LinkModal";
-import type Editor from "@/editor/Editor";
-import type { LinkProperties } from "@/types/tiles";
 
-interface LinkTileProps extends LinkProperties {
-  editor: Editor;
+const LinkModalLoader = () => import("@/components/modals/LinkModal");
+
+export interface LinkTileProps {
+  link: Link;
   hasFocus: Reactive<boolean>;
 }
 
-export default function LinkTile({
-  editor,
-  id,
-  url,
-  title,
-  description,
-  siteName,
-  imageUrl,
-  hasFocus,
-}: LinkTileProps) {
+export default function LinkTile({ link, hasFocus }: LinkTileProps) {
+  const { url, title, description, siteName, imageUrl, editor } = link;
   const { isEditable } = editor;
+  const background = imageUrl.derive((url) => (url ? { imageUrl: url } : null));
 
   const editLink = () => {
-    showModal<LinkModalResult>("LINK", {
-      workspaceId: editor.workspaceId,
-      url,
-      showPages: false,
+    showModal(LinkModalLoader, {
+      props: {
+        workspaceId: editor.workspaceId,
+        url: url.value,
+        showPages: false,
+      },
       async onConfirm(result) {
         if (result && "url" in result && result.url) {
-          const link = await editor.updateLink({ id, url: result.url });
-          url.value = link.url;
-          title.value = link.title;
-          description.value = link.description;
-          siteName.value = link.siteName;
-          imageUrl.value = link.imageUrl;
+          await link.setUrl(result.url);
         }
       },
     });
@@ -46,26 +37,30 @@ export default function LinkTile({
 
   const contents = (
     <div className={styles.caption}>
-      <p className={styles.title}>{title || "Untitled page"}</p>
-      {description && <p>{description}</p>}
-      <p>{siteName || url}</p>
+      <p className={styles.title}>{title}</p>
+      <If condition={description}>
+        <p>{description}</p>
+      </If>
+      <If condition={siteName}>
+        <p>{siteName}</p>
+      </If>
     </div>
   );
 
-  const onClick = (event: Event) => {
+  function onClick(event: Event) {
     if (isEditable.value) {
       event.preventDefault();
     }
-  };
+  }
 
   return (
-    <Tile backgroundImageUrl={imageUrl}>
+    <Tile background={background}>
       <a
         className={styles.link}
         href={url}
         target="_blank"
         rel="noreferrer ugc"
-        onclick={onClick}
+        on:click={onClick}
       >
         {contents}
         <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
@@ -73,16 +68,9 @@ export default function LinkTile({
 
       <If condition={hasFocus}>
         <floating-toolbar data-tooltip-position="top" aria-label="Link toolbar">
-          <button
-            role="menuitem"
-            type="button"
-            className="floating"
-            aria-label="Edit link"
-            data-tooltip="Edit link"
-            onclick={editLink}
-          >
+          <ToolbarButton label="Edit link" on:click={editLink}>
             <LinkIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </floating-toolbar>
       </If>
     </Tile>
