@@ -10,6 +10,7 @@ import { createState } from "@/utils/richText/state";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import { moveElement } from "@/utils/arrays";
+import Text from "@/items/Text";
 import type { FontId } from "@/config/fonts";
 import type {
   ClientTile,
@@ -40,18 +41,10 @@ const IS_SERVER = import.meta.env.SSR;
 
 const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 
-function getReactiveTile(tile: ClientTile): Tile {
+function getReactiveTile(editor: Editor, tile: ClientTile): Tile {
   switch (tile.type) {
-    case "TEXT": {
-      const { id, placementId, type, ...properties } = tile;
-      return {
-        id,
-        placementId,
-        type,
-        ...record(properties),
-        state: reactive<EditorState | null>(null),
-      };
-    }
+    case "TEXT":
+      return new Text(editor, tile);
     case "IMAGE": {
       const { id, placementId, type, ...properties } = tile;
       return {
@@ -155,7 +148,9 @@ export default class Editor {
     this.font = reactive(page.font);
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
-    this.tiles = reactive(page.tiles.map(getReactiveTile));
+    this.tiles = reactive(
+      page.tiles.map((properties) => getReactiveTile(this, properties)),
+    );
     this.sections = array(
       page.sections.map((section) => getReactiveSection(section, this.tiles)),
     );
@@ -604,7 +599,7 @@ export default class Editor {
 
   addTile(tile: ClientTile, select = true) {
     viewTransition(() => {
-      this.tiles.value = this.tiles.value.concat(getReactiveTile(tile));
+      this.tiles.value = this.tiles.value.concat(getReactiveTile(this, tile));
     }).updateCallbackDone.then(() => {
       if (select) {
         this.select([tile.id]);
