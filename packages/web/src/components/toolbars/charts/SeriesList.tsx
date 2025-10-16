@@ -1,8 +1,8 @@
 import Each from "@/jsx/each";
 import SeriesRow from "./SeriesRow";
 import styles from "./SeriesList.module.css";
-import type { ChartSeries, ChartSeriesProperties } from "@/types/tiles";
 import type Chart from "@/items/Chart";
+import type { Series, ChartType } from "@/items/Chart";
 import type Table from "@/items/Table";
 
 export interface SeriesListProps {
@@ -25,14 +25,11 @@ export default function SeriesList({ chart, table }: SeriesListProps) {
     chart.addSeries(value);
   }
 
-  function setChartType(
-    type: ChartSeries["type"],
-    series: ChartSeriesProperties,
-  ) {
+  function setChartType(type: ChartType, series: Series) {
     chart.setSeriesChartType(series.id, type);
   }
 
-  function deleteSeries(series: ChartSeriesProperties) {
+  function deleteSeries(series: Series) {
     chart.deleteSeries(series.id);
   }
 

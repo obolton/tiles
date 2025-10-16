@@ -3,13 +3,9 @@ import Tile from "./Tile";
 import VideoIcon from "@/icons/video.svg?jsx";
 import styles from "./VideoTile.module.css";
 import type Video from "@/items/Video";
-import type { VideoProperties } from "@/types/tiles";
-import type { ReactiveType } from "@/utils/reactivity";
+import type { VideoType } from "@/items/Video";
 
-function getEmbedUrl(
-  videoType: ReactiveType<VideoProperties["videoType"]>,
-  videoId: string,
-) {
+function getEmbedUrl(videoType: VideoType, videoId: string) {
   switch (videoType) {
     case "YOUTUBE":
       return `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`;

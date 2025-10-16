@@ -3,7 +3,7 @@ import BarChartIcon from "@/icons/bar-chart.svg?jsx";
 import LineChartIcon from "@/icons/line-chart.svg?jsx";
 import AreaChartIcon from "@/icons/area-chart.svg?jsx";
 import RemoveIcon from "@/icons/remove.svg?jsx";
-import type { ChartSeries, ChartSeriesProperties } from "@/types/tiles";
+import type { Series, ChartType } from "@/items/Chart";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 
 const CHART_SERIES_TYPE_ICON = {
@@ -13,12 +13,9 @@ const CHART_SERIES_TYPE_ICON = {
 } as const;
 
 export interface SeriesRowProps {
-  series: ChartSeriesProperties;
-  onSetChartType: (
-    type: ChartSeries["type"],
-    series: ChartSeriesProperties,
-  ) => void;
-  onDelete: (series: ChartSeriesProperties) => void;
+  series: Series;
+  onSetChartType: (type: ChartType, series: Series) => void;
+  onDelete: (series: Series) => void;
 }
 
 export default function SeriesRow({

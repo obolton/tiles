@@ -5,7 +5,7 @@ import { handleError } from "@/utils/errors";
 import { reactive } from "@/utils/reactivity";
 import { showToast } from "@/utils/toasts";
 import styles from "./DeletedPagesGrid.module.css";
-import type { ClientPageLinkTile } from "@/types/tiles";
+import type { ClientPageLinkTile } from "api/src/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 
 interface PagesSearchResults {
