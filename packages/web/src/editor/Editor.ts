@@ -16,6 +16,7 @@ import Video from "@/items/Video";
 import Link from "@/items/Link";
 import PageLink from "@/items/PageLink";
 import Map from "@/items/Map";
+import Table from "@/items/Table";
 import type { FontId } from "@/config/fonts";
 import type {
   ClientTile,
@@ -59,6 +60,8 @@ function getReactiveTile(editor: Editor, tile: ClientTile): Tile {
       return new PageLink(editor, tile);
     case "MAP":
       return new Map(editor, tile);
+    case "TABLE":
+      return new Table(editor, tile);
     case "CHART": {
       const { id, placementId, type, ...properties } = tile;
       return {
