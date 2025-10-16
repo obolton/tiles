@@ -29,6 +29,7 @@ export type {
   ClientTableTile,
   ClientCollection,
   ClientPageLinkTile,
+  ClientChartTile,
   ClientTile,
   TileType,
   ChartSeries,
