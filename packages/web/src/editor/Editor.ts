@@ -19,14 +19,8 @@ import Map from "@/items/Map";
 import Table from "@/items/Table";
 import Chart from "@/items/Chart";
 import type { FontId } from "@/config/fonts";
-import type {
-  ClientTile,
-  ClientCollection,
-  Tile,
-  SectionWithTiles,
-  TextProperties,
-  TableProperties,
-} from "@/types/tiles";
+import type { ClientTile, ClientCollection } from "api/src/types/tiles";
+import type { Tile, SectionWithTiles } from "@/types/tiles";
 import type { Dropdown } from "@/types/dropdowns";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
@@ -66,8 +60,7 @@ function getReactiveTile(editor: Editor, tile: ClientTile): Tile {
     case "CHART":
       return new Chart(editor, tile);
     default: {
-      const { id, placementId, type, ...properties } = tile;
-      return { id, placementId, type, ...record(properties) } as Tile;
+      throw new Error(`Invalid tile type: ${tile.type}`);
     }
   }
 }
@@ -670,8 +663,7 @@ export default class Editor {
 
   getTextEditorState(id: string) {
     const tile = this.tiles.value.find(
-      (entry): entry is TextProperties =>
-        entry.type === "TEXT" && entry.id === id,
+      (entry): entry is Text => entry.type === "TEXT" && entry.id === id,
     );
     if (!tile) {
       throw new Error(`Invalid text tile ID: ${id}`);
@@ -865,8 +857,7 @@ export default class Editor {
 
   getTableColumnData(tableId: string, columnId: string) {
     const table = this.tiles.value.find(
-      (tile): tile is TableProperties =>
-        tile.type === "TABLE" && tile.id === tableId,
+      (tile): tile is Table => tile.type === "TABLE" && tile.id === tableId,
     );
     if (!table) {
       throw new Error(`Invalid table ID: ${tableId}`);
