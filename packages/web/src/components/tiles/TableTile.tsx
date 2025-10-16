@@ -15,22 +15,20 @@ import { serialize } from "@/utils/richText/serialize";
 import { render } from "@/jsx/dom";
 import If from "@/jsx/if";
 import { moveElement } from "@/utils/arrays";
-import { viewTransition } from "@/utils/transitions";
 import TableViewContents from "@/elements/table/TableViewContents";
 import type TableView from "@/elements/table/TableView";
 import type { Format } from "@/utils/richText/format";
 import type { Command } from "prosemirror-state";
-import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
-import type { TableProperties } from "@/types/tiles";
 import type { TableEvent } from "@/elements/table/events";
 import type Column from "@/elements/table/Column";
 import type Row from "@/elements/table/Row";
 import type { Color } from "@/utils/color";
 import type { RichText as RichTextType } from "@/utils/richText/types";
+import type Table from "@/items/Table";
 
-export interface TableTileProps extends TableProperties {
-  editor: Editor;
+export interface TableTileProps {
+  table: Table;
   hasFocus: Reactive<boolean>;
   signal?: AbortSignal;
 }
@@ -41,20 +39,10 @@ function createDocument(text: string): RichTextType {
   return [{ type: "paragraph", children: [{ type: "text", format: 0, text }] }];
 }
 
-export default function TableTile({
-  editor,
-  id,
-  sectionId,
-  textColor,
-  background,
-  columns,
-  rows,
-  numRows,
-  hasFocus,
-  signal,
-}: TableTileProps) {
+export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
   let tableView: TableView | undefined;
   let editorView: EditorView | undefined;
+  const { id, textColor, background, columns, rows, numRows, editor } = table;
   const { isEditable } = editor;
 
   const format = reactive<Format>(DEFAULT_FORMAT);
@@ -199,18 +187,11 @@ export default function TableTile({
     }
 
     const title = input.value;
-    columnInfo.title = title;
     const span = column.header?.querySelector("span");
     if (span) {
       span.textContent = title;
     }
-    editor
-      .updateTableColumn({
-        tableId: id,
-        columnId: column.id,
-        title,
-      })
-      .catch(handleError);
+    table.setColumnTitle(column.id, title);
     input.remove();
   }
 
@@ -224,12 +205,7 @@ export default function TableTile({
       return;
     }
     try {
-      columnInfo.width = width;
-      await editor.updateTableColumn({
-        tableId: id,
-        columnId: column.id,
-        width,
-      });
+      await table.setColumnWidth(column.id, width);
     } catch (error) {
       handleError(error);
     }
@@ -286,10 +262,7 @@ export default function TableTile({
   };
 
   async function onAppendRow() {
-    const afterRowId = rows.value.at(-1)?.id ?? null;
-    const newRow = await editor.insertTableRow({ tableId: id, afterRowId });
-    rows.value = rows.value.concat(newRow);
-    numRows.value++;
+    return table.appendRow();
   }
 
   function onClearSelection() {
@@ -340,11 +313,7 @@ export default function TableTile({
 
   const onChangeTextColor = async (value: Color | null) => {
     try {
-      const { textColor: newTextColor } = await editor.updateTable({
-        id,
-        textColor: value,
-      });
-      viewTransition(() => (textColor.value = newTextColor));
+      await table.setTextColor(value);
     } catch (error) {
       handleError(error);
     }
@@ -397,13 +366,7 @@ export default function TableTile({
 
       <If condition={hasFocus}>
         <TableToolbar
-          editor={editor}
-          id={id}
-          sectionId={sectionId}
-          background={background}
-          rows={rows}
-          columns={columns}
-          numRows={numRows}
+          table={table}
           getTable={getTable}
           anchorName={anchorName}
         />

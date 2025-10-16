@@ -56,7 +56,7 @@ function getTileComponent(
     case "PAGE_LINK":
       return <PageLinkTile pageLink={tile} />;
     case "TABLE":
-      return <TableTile {...tile} editor={editor} hasFocus={hasFocus} />;
+      return <TableTile table={tile} hasFocus={hasFocus} />;
     case "CHART":
       return <ChartTile chart={tile} hasFocus={hasFocus} />;
     default:

@@ -5,42 +5,26 @@ import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import ChartIcon from "@/icons/chart.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
-import { viewTransition } from "@/utils/transitions";
-import type Editor from "@/editor/Editor";
 import type { Background } from "@/components/backgrounds/types";
-import type { TableProperties } from "@/types/tiles";
 import type TableView from "@/elements/table/TableView";
+import type Table from "@/items/Table";
 
 export interface TableToolbarProps {
-  editor: Editor;
-  id: TableProperties["id"];
-  sectionId: TableProperties["sectionId"];
-  background: TableProperties["background"];
-  rows: TableProperties["rows"];
-  columns: TableProperties["columns"];
-  numRows: TableProperties["numRows"];
+  table: Table;
   getTable: () => TableView;
   anchorName: string;
 }
 
 export default function TableToolbar({
-  editor,
-  id,
-  sectionId,
-  background,
-  rows,
-  columns,
-  numRows,
+  table,
   getTable,
   anchorName,
 }: TableToolbarProps) {
+  const { id, sectionId, background, editor } = table;
+
   async function setBackground(value: Background | null) {
     try {
-      const { background: newBackground } = await editor.updateTable({
-        id,
-        background: value,
-      });
-      viewTransition(() => (background.value = newBackground));
+      await table.setBackground(value);
     } catch (error) {
       handleError(error);
     }
@@ -54,9 +38,11 @@ export default function TableToolbar({
     const first = Array.from(selection)[0];
     const row = first?.type === "row" ? first.row : null;
     const afterRowId = row?.id ?? null;
-    const newRow = await editor.insertTableRow({ tableId: id, afterRowId });
-    rows.value = rows.value.concat(newRow);
-    numRows.value++;
+    try {
+      await table.insertRow(afterRowId);
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   async function addColumn() {
@@ -67,11 +53,11 @@ export default function TableToolbar({
     const first = Array.from(selection)[0];
     const column = first?.type === "column" ? first.column : null;
     const afterColumnId = column?.id ?? null;
-    const newColumn = await editor.insertTableColumn({
-      tableId: id,
-      afterColumnId,
-    });
-    columns.value = columns.value.concat(newColumn);
+    try {
+      await table.insertColumn(afterColumnId);
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   async function createChart() {
@@ -88,18 +74,17 @@ export default function TableToolbar({
     await editor.createChart({
       sectionId: sectionId.value,
       tableId: id,
-      chartType: "BAR",
       series: [columnId],
     });
   }
 
   async function deleteSelection() {
-    const table = getTable();
-    if (!table.selection) {
+    const tableView = getTable();
+    if (!tableView.selection) {
       return;
     }
 
-    const selectedColumns = table.selection
+    const selectedColumns = tableView.selection
       .values()
       .filter((s) => s.type === "column")
       .map((s) => s.column)
@@ -107,16 +92,12 @@ export default function TableToolbar({
     if (selectedColumns.length > 0) {
       const columnIds = selectedColumns.map((column) => column.id!);
       for (const columnId of columnIds) {
-        table.deleteColumn(columnId);
+        tableView.deleteColumn(columnId);
       }
-      await editor.deleteTableColumns({
-        tableId: id,
-        columnIds,
-      });
-      columns.value = columns.value.filter((c) => !columnIds.includes(c.id));
+      table.removeColumns(columnIds);
     }
 
-    const selectedRows = table.selection
+    const selectedRows = tableView.selection
       .values()
       .filter((s) => s.type === "row")
       .map((s) => s.row)
@@ -124,13 +105,9 @@ export default function TableToolbar({
     if (selectedRows.length > 0) {
       const rowIds = selectedRows.map((row) => row.id!);
       for (const rowId of rowIds) {
-        table.deleteRow(rowId);
+        tableView.deleteRow(rowId);
       }
-      await editor.deleteTableRows({
-        tableId: id,
-        rowIds,
-      });
-      rows.value = rows.value.filter((c) => !rowIds.includes(c.id));
+      table.removeRows(rowIds);
     }
   }
 
