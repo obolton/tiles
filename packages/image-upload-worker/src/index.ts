@@ -1,6 +1,6 @@
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import type { AppRouter } from "api/src/routes/index.ts";
-import type { R2EventMessage } from "./events.ts";
+import type { AppRouter } from "api/routes/index";
+import type { R2EventMessage } from "./events";
 
 const SERVICE_NAME = "image-upload-worker";
 
