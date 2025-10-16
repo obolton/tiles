@@ -6,12 +6,10 @@ import styles from "./TextTile.module.css";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/colors/ColorPicker";
 import debounce from "@/utils/debounce";
-import type Editor from "@/editor/Editor";
 import type Text from "@/items/Text";
 import type { Reactive } from "@/utils/reactivity";
 
 export interface TextTileProps {
-  editor: Editor;
   text: Text;
   hasFocus: Reactive<boolean>;
 }

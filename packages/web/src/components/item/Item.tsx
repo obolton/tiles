@@ -36,11 +36,7 @@ export interface ItemProps {
   resize?: Reactive<ResizeDirection | null>;
 }
 
-function getTileComponent(
-  tile: Tile,
-  hasFocus: Reactive<boolean>,
-  editor: Editor,
-) {
+function getTileComponent(tile: Tile, hasFocus: Reactive<boolean>) {
   const type = tile.type;
   switch (type) {
     case "IMAGE":
@@ -188,7 +184,7 @@ export default function Item({
       on:focusin={onFocusIn}
       on:focusout={onFocusOut}
     >
-      {getTileComponent(tile, hasFocus, editor)}
+      {getTileComponent(tile, hasFocus)}
     </page-item>
   );
 }

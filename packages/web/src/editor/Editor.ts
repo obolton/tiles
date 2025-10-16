@@ -42,7 +42,8 @@ const IS_SERVER = import.meta.env.SSR;
 const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 
 function getReactiveTile(editor: Editor, tile: ClientTile): Tile {
-  switch (tile.type) {
+  const type = tile.type;
+  switch (type) {
     case "TEXT":
       return new Text(editor, tile);
     case "IMAGE":
@@ -59,9 +60,8 @@ function getReactiveTile(editor: Editor, tile: ClientTile): Tile {
       return new Table(editor, tile);
     case "CHART":
       return new Chart(editor, tile);
-    default: {
-      throw new Error(`Invalid tile type: ${tile.type}`);
-    }
+    default:
+      throw new Error(`Invalid tile type: ${type}`);
   }
 }
 
