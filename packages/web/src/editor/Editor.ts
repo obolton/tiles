@@ -878,8 +878,7 @@ export default class Editor {
 
   getTable(tableId: string) {
     const table = this.tiles.value.find(
-      (tile): tile is TableProperties =>
-        tile.type === "TABLE" && tile.id === tableId,
+      (tile): tile is Table => tile.type === "TABLE" && tile.id === tableId,
     );
     if (!table) {
       throw new Error(`Invalid table ID: ${tableId}`);

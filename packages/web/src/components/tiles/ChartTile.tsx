@@ -5,9 +5,9 @@ import Each from "@/jsx/each";
 import Editor from "@/editor/Editor";
 import { toPlainText } from "@/utils/richText/plainText";
 import styles from "./ChartTile.module.css";
-import type { ChartProperties } from "@/types/tiles";
 import type { RichText } from "@/utils/richText/types";
 import type { Reactive } from "@/utils/reactivity";
+import type Chart from "@/items/Chart";
 
 function toNumber(input: number | string | RichText | null | undefined) {
   if (typeof input === "number") {
@@ -25,7 +25,7 @@ function toNumber(input: number | string | RichText | null | undefined) {
 }
 
 export interface ChartTileProps {
-  chart: ChartProperties;
+  chart: Chart;
   hasFocus: Reactive<boolean>;
 }
 
@@ -46,7 +46,7 @@ export default function ChartTile({ chart, hasFocus }: ChartTileProps) {
             <chart-series
               type={series.type}
               $values={Editor.current
-                .getTableColumnData(chart.tableId.value, series.column.value.id)
+                .getTableColumnData(chart.tableId, series.column.value.id)
                 .value.map(toNumber)}
             />
           )}

@@ -1,59 +1,39 @@
 import Each from "@/jsx/each";
 import SeriesRow from "./SeriesRow";
-import Editor from "@/editor/Editor";
 import styles from "./SeriesList.module.css";
-import { record } from "@/utils/reactivity";
-import type {
-  ChartSeries,
-  ChartSeriesProperties,
-  ChartProperties,
-  TableProperties,
-} from "@/types/tiles";
+import type { ChartSeries, ChartSeriesProperties } from "@/types/tiles";
+import type Chart from "@/items/Chart";
+import type Table from "@/items/Table";
 
 export interface SeriesListProps {
-  chart: ChartProperties;
-  table: TableProperties;
+  chart: Chart;
+  table: Table;
 }
 
 export default function SeriesList({ chart, table }: SeriesListProps) {
   function setLabel(event: Event) {
     const select = event.currentTarget as HTMLSelectElement;
     const value = select.value;
-    Editor.current.updateChart({ id: chart.id, labelColumnId: value });
+    const property =
+      table.columns.find((column) => column.id === value) ?? null;
+    chart.setLabel(property);
   }
 
   async function addSeries(event: Event) {
     const select = event.currentTarget as HTMLSelectElement;
     const value = select.value;
-    const series = await Editor.current.addChartSeries({
-      chartId: chart.id,
-      columnId: value,
-    });
-    const { id, ...seriesProperties } = series;
-    chart.series.value = chart.series.value.concat({
-      id,
-      ...record(seriesProperties),
-    });
+    chart.addSeries(value);
   }
 
   function setChartType(
     type: ChartSeries["type"],
     series: ChartSeriesProperties,
   ) {
-    series.type.value = type;
-    Editor.current.updateChartSeries({
-      chartId: chart.id,
-      seriesId: series.id,
-      type,
-    });
+    chart.setSeriesChartType(series.id, type);
   }
 
   function deleteSeries(series: ChartSeriesProperties) {
-    chart.series.value = chart.series.value.filter((s) => s.id !== series.id);
-    Editor.current.deleteChartSeries({
-      chartId: chart.id,
-      seriesId: series.id,
-    });
+    chart.deleteSeries(series.id);
   }
 
   return (

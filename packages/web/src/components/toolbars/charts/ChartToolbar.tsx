@@ -3,33 +3,24 @@ import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import SeriesList from "./SeriesList";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
-import { viewTransition } from "@/utils/transitions";
 import Editor from "@/editor/Editor";
 import type { Background } from "@/components/backgrounds/types";
-import type { ChartProperties } from "@/types/tiles";
+import type Chart from "@/items/Chart";
 
 export interface ChartToolbarProps {
-  chart: ChartProperties;
+  chart: Chart;
 }
 
 export default function ChartToolbar({ chart }: ChartToolbarProps) {
   async function setBackground(value: Background | null) {
     try {
-      const { background: newBackground } = await Editor.current.updateChart({
-        id: chart.id,
-        background: value,
-      });
-      viewTransition(() => (chart.background.value = newBackground));
+      await chart.setBackground(value);
     } catch (error) {
       handleError(error);
     }
   }
 
-  function deleteTile() {
-    Editor.current.deleteTiles([chart.placementId]);
-  }
-
-  const table = Editor.current.getTable(chart.tableId.value);
+  const table = Editor.current.getTable(chart.tableId);
 
   return (
     <floating-toolbar
@@ -52,7 +43,11 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
 
       <ul role="group" aria-label="More tools">
         <li role="presentation">
-          <ToolbarButton label="Delete" destructive on:click={deleteTile}>
+          <ToolbarButton
+            label="Delete"
+            destructive
+            on:click={() => chart.delete()}
+          >
             <DeleteIcon aria-hidden="true" />
           </ToolbarButton>
         </li>
