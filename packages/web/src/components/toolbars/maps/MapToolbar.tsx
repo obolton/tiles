@@ -2,24 +2,19 @@ import ToolbarButton from "@/components/buttons/ToolbarButton";
 import AddPlaceIcon from "@/icons/add-place.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { showModal } from "@/utils/modals";
-import Editor from "@/editor/Editor";
+import type Map from "@/items/Map";
 import type MapView from "@/elements/maps/MapView";
-import type { MapProperties } from "@/types/tiles";
 
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
 export interface MapToolbarProps {
-  id: string;
-  placementId: MapProperties["placementId"];
-  places: MapProperties["places"];
+  map: Map;
   getMapView: () => MapView;
   anchorName: string;
 }
 
 export default function MapToolbar({
-  id,
-  placementId,
-  places,
+  map,
   getMapView,
   anchorName,
 }: MapToolbarProps) {
@@ -29,14 +24,9 @@ export default function MapToolbar({
         boundingBox: getMapView().getBoundingBox(),
       },
       async onConfirm({ place }) {
-        const result = await Editor.current.addPlaces({ id, places: [place] });
-        places.value = result.places;
+        return map.addPlaces([place]);
       },
     });
-  }
-
-  function deleteTile() {
-    Editor.current.deleteTiles([placementId]);
   }
 
   return (
@@ -56,7 +46,11 @@ export default function MapToolbar({
 
       <ul role="group" aria-label="More tools">
         <li role="presentation">
-          <ToolbarButton label="Delete" destructive on:click={deleteTile}>
+          <ToolbarButton
+            label="Delete"
+            destructive
+            on:click={() => map.delete()}
+          >
             <DeleteIcon aria-hidden="true" />
           </ToolbarButton>
         </li>

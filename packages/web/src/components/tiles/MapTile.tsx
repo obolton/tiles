@@ -1,28 +1,26 @@
 import Tile from "./Tile";
 import MapToolbar from "@/components/toolbars/maps/MapToolbar";
 import If from "@/jsx/if";
+import Each from "@/jsx/each";
 import styles from "./MapTile.module.css";
+import type Map from "@/items/Map";
 import type MapEvent from "@/elements/maps/MapEvent";
 import type MapView from "@/elements/maps/MapView";
 import type MapMarker from "@/elements/maps/MapMarker";
-import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
-import type { MapProperties } from "@/types/tiles";
 
-export interface MapTileProps extends MapProperties {
-  editor: Editor;
+export interface MapTileProps {
+  map: Map;
   hasFocus: Reactive<boolean>;
 }
 
-export default function MapTile({
-  editor,
-  id,
-  placementId,
-  places,
-  hasFocus,
-}: MapTileProps) {
+export default function MapTile({ map, hasFocus }: MapTileProps) {
   let mapView: MapView | undefined;
-  const { isEditable } = editor;
+  const {
+    id,
+    places,
+    editor: { isEditable },
+  } = map;
 
   const ref = (element: MapView) => {
     mapView = element;
@@ -37,11 +35,7 @@ export default function MapTile({
 
   const deleteMarker = async ({ markerId }: MapEvent) => {
     if (markerId) {
-      const result = await editor.removePlace({
-        id,
-        placeId: markerId,
-      });
-      places.value = result.places;
+      map.removePlace(markerId);
     }
   };
 
@@ -51,14 +45,7 @@ export default function MapTile({
     const value = marker.value ?? "";
     // TODO: Only update if the value has changed
     if (markerId) {
-      const result = await editor.updatePlace({
-        id,
-        place: {
-          id: markerId,
-          name: value,
-        },
-      });
-      places.value = result.places;
+      map.updatePlace({ id: markerId, name: value });
     }
   };
 
@@ -67,13 +54,7 @@ export default function MapTile({
   return (
     <Tile border="inside" anchorName={anchorName}>
       <If condition={hasFocus}>
-        <MapToolbar
-          id={id}
-          placementId={placementId}
-          places={places}
-          getMapView={getMapView}
-          anchorName={anchorName}
-        />
+        <MapToolbar map={map} getMapView={getMapView} anchorName={anchorName} />
       </If>
 
       <pop-out className={styles["pop-out"]}>
@@ -84,8 +65,8 @@ export default function MapTile({
           legend
           on:deletemarker={deleteMarker}
         >
-          {places.derive((items) =>
-            items.map((place) => (
+          <Each items={places}>
+            {(place) => (
               <>
                 <map-marker
                   editable={isEditable}
@@ -93,7 +74,7 @@ export default function MapTile({
                   lat={place.lat}
                   long={place.long}
                   bounds={
-                    place.boundingBox.length === 4
+                    place.boundingBox?.length === 4
                       ? place.boundingBox.join(",")
                       : undefined
                   }
@@ -109,8 +90,8 @@ export default function MapTile({
                   {place.name || "Unnamed point"}
                 </map-legend-item>
               </>
-            )),
-          )}
+            )}
+          </Each>
         </map-view>
       </pop-out>
     </Tile>

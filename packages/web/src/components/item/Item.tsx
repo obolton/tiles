@@ -50,7 +50,7 @@ function getTileComponent(
     case "TEXT":
       return <TextTile text={tile} hasFocus={hasFocus} />;
     case "MAP":
-      return <MapTile {...tile} editor={editor} hasFocus={hasFocus} />;
+      return <MapTile map={tile} hasFocus={hasFocus} />;
     case "LINK":
       return <LinkTile link={tile} hasFocus={hasFocus} />;
     case "PAGE_LINK":
