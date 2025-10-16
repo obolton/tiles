@@ -1,19 +1,18 @@
 import PagesGridItem from "./PagesGridItem";
-import PageTile from "@/components/tiles/PageTile";
+import PageLink from "@/components/tiles/PageLink";
 import client from "@/api/client";
 import { redirectWithToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
 import { classNames } from "@/utils/css";
 import styles from "./DeletedPage.module.css";
-import type { PageTileProps } from "@/components/tiles/PageTile";
+import type { PageLinkProps } from "@/components/tiles/PageLink";
 
-export interface DeletedPageProps extends PageTileProps {
-  id: string;
+export interface DeletedPageProps extends PageLinkProps {
   workspaceId: string;
 }
 
 export default function DeletedPage({
-  id,
+  pageId,
   workspaceId,
   ...props
 }: DeletedPageProps) {
@@ -21,9 +20,9 @@ export default function DeletedPage({
     const button = event.currentTarget as HTMLButtonElement;
     button.classList.add("pending");
     try {
-      await client.pages.restore.mutate({ workspaceId, pageId: id });
+      await client.pages.restore.mutate({ workspaceId, pageId });
       redirectWithToast(
-        `/pages/${id}`,
+        `/pages/${pageId}`,
         "The page was moved out of the trash.",
         "success",
       );
@@ -36,7 +35,7 @@ export default function DeletedPage({
 
   return (
     <PagesGridItem>
-      <PageTile id={id} {...props}>
+      <PageLink pageId={pageId} {...props}>
         <button
           type="button"
           className={classNames("secondary", "small", styles.restore)}
@@ -44,7 +43,7 @@ export default function DeletedPage({
         >
           Restore
         </button>
-      </PageTile>
+      </PageLink>
     </PagesGridItem>
   );
 }

@@ -1,46 +1,44 @@
 import Tile from "./Tile";
-import PageTile from "./PageTile";
+import PageLinkComponent from "./PageLink";
 import styles from "./PageLinkTile.module.css";
+import Editor from "@/editor/Editor";
 import type PageLink from "@/items/PageLink";
 
 export interface PageLinkTileProps {
   pageLink: PageLink;
 }
 
+function onClick(event: PointerEvent) {
+  if (
+    Editor.current.isEditable.value &&
+    !event.ctrlKey &&
+    !event.shiftKey &&
+    !event.altKey &&
+    !event.metaKey
+  ) {
+    event.preventDefault();
+  }
+}
+
 export default function PageLinkTile({ pageLink }: PageLinkTileProps) {
-  const {
-    page,
-    editor: { isEditable },
-  } = pageLink;
+  const { page } = pageLink;
 
   if (!page) {
     return (
-      <Tile>
-        <div className={styles.deleted}>This page has been deleted.</div>
+      <Tile className={styles.deleted}>
+        <p>This page has been deleted.</p>
       </Tile>
     );
   }
 
-  function handleClick(event: PointerEvent) {
-    if (
-      isEditable.value &&
-      !event.ctrlKey &&
-      !event.shiftKey &&
-      !event.altKey &&
-      !event.metaKey
-    ) {
-      event.preventDefault();
-    }
-  }
-
   return (
-    <PageTile
-      id={page.id}
+    <PageLinkComponent
+      pageId={page.id}
       title={page.title}
       font={page.font}
-      target="_blank"
       background={page.background}
-      on:click={handleClick}
+      target="_blank"
+      on:click={onClick}
     />
   );
 }

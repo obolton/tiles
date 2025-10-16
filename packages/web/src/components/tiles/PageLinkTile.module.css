@@ -1,11 +1,13 @@
 .deleted {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
   padding: 8px;
-  text-align: center;
-  align-content: center;
-  color: var(--placeholder-color);
+  align-items: center;
+  justify-content: center;
   background: rgb(0 0 0 / 2%);
-  text-overflow: ellipsis;
+
+  & > p {
+    overflow: hidden;
+    text-align: center;
+    color: var(--placeholder-color);
+    text-overflow: ellipsis;
+  }
 }

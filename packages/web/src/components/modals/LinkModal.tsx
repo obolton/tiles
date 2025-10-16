@@ -3,7 +3,7 @@ import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import styles from "./LinkModal.module.css";
 import PagesGridItem from "@/components/grid/PagesGridItem";
-import PageTile from "@/components/tiles/PageTile";
+import PageLink from "@/components/tiles/PageLink";
 import Search from "@/components/search/Search";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
@@ -139,8 +139,8 @@ export default function LinkModal({
               render={(page) =>
                 page.id === pageId ? null : (
                   <PagesGridItem>
-                    <PageTile
-                      id={page.id}
+                    <PageLink
+                      pageId={page.id}
                       title={page.title}
                       background={page.background}
                       font={page.font}

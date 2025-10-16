@@ -1,5 +1,5 @@
 import PagesGridItem from "./PagesGridItem";
-import PageTile from "@/components/tiles/PageTile";
+import PageLink from "@/components/tiles/PageLink";
 import Search from "@/components/search/Search";
 import { handleError } from "@/utils/errors";
 import { reactive } from "@/utils/reactivity";
@@ -62,8 +62,8 @@ export default function PagesGrid({
       placeholder={inputPlaceholder}
       render={(page) => (
         <PagesGridItem id={page.id} draggable={draggable}>
-          <PageTile
-            id={page.id}
+          <PageLink
+            pageId={page.id}
             title={page.title}
             background={page.background}
             font={page.font}

@@ -1,29 +1,33 @@
 import Tile, { type TileBackground } from "./Tile";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
-import styles from "./PageTile.module.css";
+import styles from "./PageLink.module.css";
 import { reactive } from "@/utils/reactivity";
-import { classNames } from "@/utils/css";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
 
-export interface PageTileProps extends JSX.Attributes<HTMLAnchorElement> {
-  id: string;
+export interface PageLinkProps extends JSX.Attributes<HTMLAnchorElement> {
+  pageId: string;
   title: string;
   background: TileBackground;
   font?: FontId | null;
 }
 
-export default function PageTile({
-  id,
+export default function PageLink({
+  pageId,
   title,
   background,
   font,
   target,
   children,
   ...props
-}: PageTileProps) {
+}: PageLinkProps) {
   return (
-    <a className={styles.link} href={`/pages/${id}`} target={target} {...props}>
+    <a
+      className={styles.link}
+      href={`/pages/${pageId}`}
+      target={target}
+      {...props}
+    >
       <Tile
         className={styles.tile}
         background={reactive(background)}
@@ -38,12 +42,11 @@ export default function PageTile({
         >
           {title}
         </p>
+
         {children}
+
         {target === "_blank" ? (
-          <ArrowOutwardIcon
-            className={classNames(styles.icon)}
-            aria-hidden="true"
-          />
+          <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
         ) : null}
       </Tile>
     </a>
