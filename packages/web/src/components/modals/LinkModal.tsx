@@ -3,13 +3,11 @@ import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import styles from "./LinkModal.module.css";
 import PagesGridItem from "@/components/grid/PagesGridItem";
-import PageLinkTile from "@/components/tiles/PageLinkTile";
+import PageTile from "@/components/tiles/PageTile";
 import Search from "@/components/search/Search";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
 import { flag, reactive } from "@/utils/reactivity";
-import PageLink from "@/items/PageLink";
-import Editor from "@/editor/Editor";
 import type { AppRouterOutputs } from "@/api/client";
 import type { ModalProps } from "@/utils/modals";
 
@@ -141,12 +139,12 @@ export default function LinkModal({
               render={(page) =>
                 page.id === pageId ? null : (
                   <PagesGridItem>
-                    <PageLinkTile
-                      pageLink={
-                        new PageLink(Editor.current, { linkedPage: page })
-                      }
-                      openInNewTab={false}
-                      onClick={(event) => {
+                    <PageTile
+                      id={page.id}
+                      title={page.title}
+                      background={page.background}
+                      font={page.font}
+                      on:click={(event) => {
                         if (
                           event.ctrlKey ||
                           event.shiftKey ||

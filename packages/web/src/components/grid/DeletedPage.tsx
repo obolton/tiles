@@ -7,7 +7,7 @@ import { classNames } from "@/utils/css";
 import styles from "./DeletedPage.module.css";
 import type { PageTileProps } from "@/components/tiles/PageTile";
 
-export interface DeletedPageProps extends Omit<PageTileProps, "actions"> {
+export interface DeletedPageProps extends PageTileProps {
   id: string;
   workspaceId: string;
 }
@@ -36,7 +36,7 @@ export default function DeletedPage({
 
   return (
     <PagesGridItem>
-      <PageTile {...props}>
+      <PageTile id={id} {...props}>
         <button
           type="button"
           className={classNames("secondary", "small", styles.restore)}
