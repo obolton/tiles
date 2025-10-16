@@ -17,6 +17,7 @@ import Link from "@/items/Link";
 import PageLink from "@/items/PageLink";
 import Map from "@/items/Map";
 import Table from "@/items/Table";
+import Chart from "@/items/Chart";
 import type { FontId } from "@/config/fonts";
 import type {
   ClientTile,
@@ -62,21 +63,8 @@ function getReactiveTile(editor: Editor, tile: ClientTile): Tile {
       return new Map(editor, tile);
     case "TABLE":
       return new Table(editor, tile);
-    case "CHART": {
-      const { id, placementId, type, ...properties } = tile;
-      return {
-        id,
-        placementId,
-        type,
-        ...record(properties),
-        series: reactive(
-          properties.series.map((series) => {
-            const { id, ...seriesProperties } = series;
-            return { id, ...record(seriesProperties) };
-          }),
-        ),
-      };
-    }
+    case "CHART":
+      return new Chart(editor, tile);
     default: {
       const { id, placementId, type, ...properties } = tile;
       return { id, placementId, type, ...record(properties) } as Tile;
