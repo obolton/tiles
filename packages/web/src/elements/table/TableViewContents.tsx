@@ -1,9 +1,8 @@
-import type { TableProperties } from "@/types/tiles";
+import type Table from "@/items/Table";
 import type { JSX } from "@/jsx/jsx";
 
 export interface TableViewContentsProps {
-  rows: TableProperties["rows"];
-  columns: TableProperties["columns"];
+  table: Table;
   children: (
     value: PrismaJson.TableRowData[keyof PrismaJson.TableRowData] | undefined,
     { rowId, columnId }: { rowId: string; columnId: string },
@@ -11,8 +10,7 @@ export interface TableViewContentsProps {
 }
 
 export default function TableViewContents({
-  rows,
-  columns,
+  table,
   children,
 }: TableViewContentsProps) {
   // On the client, allow the TableView element to control the table contents
@@ -25,7 +23,7 @@ export default function TableViewContents({
       <colgroup>
         <col style={{ width: "32px" }} />
 
-        {columns.value.map((column, index) => (
+        {table.columns.value.map((column, index) => (
           <col
             style={{ width: column.width + "px" }}
             data-index={index}
@@ -37,7 +35,7 @@ export default function TableViewContents({
       <thead>
         <tr>
           <th scope="colgroup" />
-          {columns.value.map((column, index) => (
+          {table.columns.value.map((column, index) => (
             <th scope="col" aria-colindex={index}>
               <span>{column.title}</span>
             </th>
@@ -46,15 +44,15 @@ export default function TableViewContents({
       </thead>
 
       <tbody>
-        {rows.value.map((row, rowIndex) => {
+        {table.rows.value.map((row, rowIndex) => {
           const cells = [];
 
           for (
             let columnIndex = 0;
-            columnIndex < columns.value.length;
+            columnIndex < table.columns.value.length;
             columnIndex++
           ) {
-            const column = columns.value[columnIndex]!;
+            const column = table.columns.value[columnIndex]!;
             const value = row.data[column.id];
             cells.push(
               <td aria-colindex={columnIndex}>

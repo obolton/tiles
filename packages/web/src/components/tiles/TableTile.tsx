@@ -357,7 +357,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
         $getRow={(index) => rows.value[index]!}
         $updateCell={updateCell}
       >
-        <TableViewContents rows={rows} columns={columns}>
+        <TableViewContents table={table}>
           {(value) =>
             Array.isArray(value) ? <RichText content={value} /> : value
           }
