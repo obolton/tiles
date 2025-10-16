@@ -11,6 +11,7 @@ import type {
   ClientVideoTile,
   TileType,
   ChartSeries,
+  ClientPlace,
 } from "api/src/types/tiles.ts";
 import type {
   Reactive,
@@ -24,11 +25,13 @@ export type {
   ClientImageTile,
   ClientVideoTile,
   ClientLinkTile,
+  ClientMapTile,
   ClientCollection,
   ClientPageLinkTile,
   ClientTile,
   TileType,
   ChartSeries,
+  ClientPlace,
 };
 
 export type ReactiveTile<
