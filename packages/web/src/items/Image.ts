@@ -1,10 +1,9 @@
 import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
-import { handleError } from "@/utils/errors";
 import { serialize } from "@/utils/richText/serialize";
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
-import type { ClientImageTile } from "@/types/tiles";
+import type { ClientImageTile } from "api/src/types/tiles";
 import type { EditorState } from "prosemirror-state";
 import type { AppRouterInputs } from "@/api/client";
 
@@ -34,24 +33,22 @@ export default class Image extends Tile {
   private update(
     properties: Omit<AppRouterInputs["images"]["update"], "pageId" | "id">,
   ) {
-    client.images.update
-      .mutate({
-        ...properties,
-        pageId: this.editor.pageId,
-        id: this.id,
-      })
-      .catch(handleError);
+    return client.images.update.mutate({
+      ...properties,
+      pageId: this.editor.pageId,
+      id: this.id,
+    });
   }
 
   setOrigin(origin: ImageOrigin) {
     this.origin.value = origin;
-    this.update({ origin });
+    return this.update({ origin });
   }
 
   persistText() {
     const state = this.state.value;
     const text = state ? serialize(state) : null;
     this.text.value = text;
-    this.update({ text });
+    return this.update({ text });
   }
 }

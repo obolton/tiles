@@ -1,10 +1,9 @@
 import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
-import { handleError } from "@/utils/errors";
 import { serialize } from "@/utils/richText/serialize";
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
-import type { ClientTextTile } from "@/types/tiles";
+import type { ClientTextTile } from "api/src/types/tiles";
 import type { EditorState } from "prosemirror-state";
 import type { Color } from "@/utils/color";
 import type { Background } from "@/components/backgrounds/types";
@@ -15,7 +14,7 @@ export default class Text extends Tile {
 
   readonly content: Reactive<ClientTextTile["content"]>;
   readonly align: Reactive<ClientTextTile["align"]>;
-  readonly textColor: Reactive<ClientTextTile["textColor"]>;
+  readonly textColor: Reactive<Color | null>;
   readonly background: Reactive<ClientTextTile["background"]>;
   readonly state: Reactive<EditorState | null>;
 
@@ -33,28 +32,26 @@ export default class Text extends Tile {
   private update(
     properties: Omit<AppRouterInputs["text"]["update"], "pageId" | "id">,
   ) {
-    client.text.update
-      .mutate({
-        ...properties,
-        pageId: this.editor.pageId,
-        id: this.id,
-      })
-      .catch(handleError);
+    return client.text.update.mutate({
+      ...properties,
+      pageId: this.editor.pageId,
+      id: this.id,
+    });
   }
 
   setVerticalAlignment(align: ClientTextTile["align"]) {
     this.align.value = align;
-    this.update({ align });
+    return this.update({ align });
   }
 
   setTextColor(textColor: Color | null) {
     this.textColor.value = textColor;
-    this.update({ textColor });
+    return this.update({ textColor });
   }
 
   setBackground(background: Background | null) {
     this.background.value = background;
-    this.update({ background });
+    return this.update({ background });
   }
 
   persist() {
@@ -64,6 +61,6 @@ export default class Text extends Tile {
     }
     const content = serialize(state);
     this.content.value = content;
-    this.update({ content });
+    return this.update({ content });
   }
 }

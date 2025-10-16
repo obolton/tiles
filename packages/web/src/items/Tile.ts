@@ -1,5 +1,5 @@
 import { reactive, type Reactive } from "@/utils/reactivity";
-import type { ClientTile } from "@/types/tiles";
+import type { ClientTile } from "api/src/types/tiles";
 import type Editor from "@/editor/Editor";
 
 export default class Tile {

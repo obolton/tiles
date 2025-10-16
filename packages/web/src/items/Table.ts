@@ -7,7 +7,7 @@ import {
 } from "@/utils/reactivity";
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
-import type { ClientTableTile } from "@/types/tiles";
+import type { ClientTableTile } from "api/src/types/tiles";
 import type { Color } from "@/utils/color";
 import type { Background } from "@/components/backgrounds/types";
 import type { RichText } from "@/utils/richText/types";

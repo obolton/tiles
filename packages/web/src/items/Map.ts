@@ -2,7 +2,7 @@ import Tile from "./Tile";
 import { array, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
-import type { ClientMapTile, ClientPlace } from "@/types/tiles";
+import type { ClientMapTile, ClientPlace } from "api/src/types/tiles";
 
 export default class Map extends Tile {
   readonly type = "MAP";
