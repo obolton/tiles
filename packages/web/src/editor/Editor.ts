@@ -686,13 +686,6 @@ export default class Editor {
     return item;
   }
 
-  async updateImage(data: OmitPageId<AppRouterInputs["images"]["update"]>) {
-    return await client.images.update.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
   // Links
 
   async createPageLink(
@@ -717,15 +710,6 @@ export default class Editor {
     return item;
   }
 
-  async updateLink(
-    data: OmitPageId<AppRouterInputs["externalLinks"]["update"]>,
-  ) {
-    return await client.externalLinks.update.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
   // Maps
 
   async createMap(data: OmitPageId<AppRouterInputs["maps"]["create"]>) {
@@ -735,27 +719,6 @@ export default class Editor {
     });
     this.addTile(item);
     return item;
-  }
-
-  async addPlaces(data: OmitPageId<AppRouterInputs["maps"]["addPlaces"]>) {
-    return await client.maps.addPlaces.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async updatePlace(data: OmitPageId<AppRouterInputs["maps"]["updatePlace"]>) {
-    return await client.maps.updatePlace.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async removePlace(data: OmitPageId<AppRouterInputs["maps"]["removePlace"]>) {
-    return await client.maps.removePlace.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
   }
 
   // Tables
@@ -769,42 +732,8 @@ export default class Editor {
     return item;
   }
 
-  async updateTable(data: OmitPageId<AppRouterInputs["tables"]["update"]>) {
-    return await client.tables.update.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async insertTableRow(
-    data: OmitPageId<AppRouterInputs["tables"]["insertRow"]>,
-  ) {
-    return await client.tables.insertRow.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
   async moveTableRow(data: OmitPageId<AppRouterInputs["tables"]["moveRow"]>) {
     return await client.tables.moveRow.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async deleteTableRows(
-    data: OmitPageId<AppRouterInputs["tables"]["deleteRows"]>,
-  ) {
-    return await client.tables.deleteRows.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async insertTableColumn(
-    data: OmitPageId<AppRouterInputs["tables"]["insertColumn"]>,
-  ) {
-    return await client.tables.insertColumn.mutate({
       pageId: this.pageId,
       ...data,
     });
@@ -814,24 +743,6 @@ export default class Editor {
     data: OmitPageId<AppRouterInputs["tables"]["moveColumn"]>,
   ) {
     return await client.tables.moveColumn.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async updateTableColumn(
-    data: OmitPageId<AppRouterInputs["tables"]["updateColumn"]>,
-  ) {
-    return await client.tables.updateColumn.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async deleteTableColumns(
-    data: OmitPageId<AppRouterInputs["tables"]["deleteColumns"]>,
-  ) {
-    return await client.tables.deleteColumns.mutate({
       pageId: this.pageId,
       ...data,
     });
@@ -886,49 +797,6 @@ export default class Editor {
     });
     this.addTile(item);
     return item;
-  }
-
-  async updateChart(data: OmitPageId<AppRouterInputs["charts"]["update"]>) {
-    return await client.charts.update.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async addChartSeries(
-    data: OmitPageId<AppRouterInputs["charts"]["addSeries"]>,
-  ) {
-    return await client.charts.addSeries.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async updateChartSeries(
-    data: OmitPageId<AppRouterInputs["charts"]["updateSeries"]>,
-  ) {
-    return await client.charts.updateSeries.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async deleteChartSeries(
-    data: OmitPageId<AppRouterInputs["charts"]["deleteSeries"]>,
-  ) {
-    return await client.charts.deleteSeries.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  // Videos
-
-  async updateVideo(data: OmitPageId<AppRouterInputs["videos"]["update"]>) {
-    return await client.videos.update.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
   }
 
   positionTilePreview({
