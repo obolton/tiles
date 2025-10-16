@@ -7,7 +7,7 @@ import {
 } from "@/utils/reactivity";
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
-import type { ClientChartTile } from "api/src/types/tiles";
+import type { ClientChartTile } from "api/types/tiles";
 import type { Background } from "@/components/backgrounds/types";
 import type { AppRouterInputs } from "@/api/client";
 

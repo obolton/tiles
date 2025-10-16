@@ -4,7 +4,7 @@ import Search from "@/components/search/Search";
 import { handleError } from "@/utils/errors";
 import { reactive } from "@/utils/reactivity";
 import styles from "./PagesGrid.module.css";
-import type { ClientPageLinkTile } from "api/src/types/tiles";
+import type { ClientPageLinkTile } from "api/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 
 interface PagesSearchResults {

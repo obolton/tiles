@@ -1,5 +1,5 @@
-import type { RichTextSchema } from "api/src/schema/RichText";
-import type { DropdownOptionsSchema } from "api/src/routes/dropdowns/schema";
+import type { RichTextSchema } from "api/schema/RichText";
+import type { DropdownOptionsSchema } from "api/routes/dropdowns/schema";
 
 declare global {
   namespace PrismaJson {

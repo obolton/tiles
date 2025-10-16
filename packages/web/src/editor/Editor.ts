@@ -19,7 +19,7 @@ import Map from "@/items/Map";
 import Table from "@/items/Table";
 import Chart from "@/items/Chart";
 import type { FontId } from "@/config/fonts";
-import type { ClientTile, ClientCollection } from "api/src/types/tiles";
+import type { ClientTile, ClientCollection } from "api/types/tiles";
 import type { Tile, SectionWithTiles } from "@/types/tiles";
 import type { Dropdown } from "@/types/dropdowns";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";

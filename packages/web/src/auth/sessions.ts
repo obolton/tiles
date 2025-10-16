@@ -4,7 +4,7 @@ import client, { type AppRouterInputs } from "../api/client";
 import {
   SESSION_COOKIE_NAME,
   SIGNED_IN_FLAG_COOKIE_NAME,
-} from "api/src/constants/cookies";
+} from "api/constants/cookies";
 import type { SerializeOptions } from "cookie";
 
 assert(process.env.SESSION_COOKIE_DOMAIN);

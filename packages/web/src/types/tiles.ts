@@ -1,4 +1,4 @@
-import type { ClientCollection } from "api/src/types/tiles";
+import type { ClientCollection } from "api/types/tiles";
 import type { ReactiveRecord, ComputedReactive } from "@/utils/reactivity";
 import type Text from "@/items/Text";
 import type Image from "@/items/Image";

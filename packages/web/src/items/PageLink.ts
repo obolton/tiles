@@ -1,6 +1,6 @@
 import Tile from "./Tile";
 import type Editor from "@/editor/Editor";
-import type { ClientPageLinkTile } from "api/src/types/tiles";
+import type { ClientPageLinkTile } from "api/types/tiles";
 
 export default class PageLink extends Tile {
   readonly type = "PAGE_LINK";

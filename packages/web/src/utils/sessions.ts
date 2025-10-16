@@ -1,7 +1,7 @@
 import {
   SIGNED_IN_FLAG_COOKIE_NAME,
   SESSION_COOKIE_NAME,
-} from "api/src/constants/cookies";
+} from "api/constants/cookies";
 import client from "@/api/client";
 import { getCookie } from "./cookies";
 import { clear, setPersistent, removePersistent, getPersistent } from "./state";

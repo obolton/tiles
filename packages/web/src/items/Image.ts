@@ -3,7 +3,7 @@ import { reactive, type Reactive } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
-import type { ClientImageTile } from "api/src/types/tiles";
+import type { ClientImageTile } from "api/types/tiles";
 import type { EditorState } from "prosemirror-state";
 import type { AppRouterInputs } from "@/api/client";
 

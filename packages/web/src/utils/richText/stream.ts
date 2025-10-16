@@ -4,7 +4,7 @@ import Editor from "@/editor/Editor";
 import type { EditorView } from "prosemirror-view";
 import type { EditorState, Transaction } from "prosemirror-state";
 import type { Mark } from "prosemirror-model";
-import type { ClientTile } from "api/src/types/tiles";
+import type { ClientTile } from "api/types/tiles";
 import type { Reactive } from "@/utils/reactivity";
 
 export interface ParagraphNode {

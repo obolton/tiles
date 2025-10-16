@@ -2,7 +2,7 @@ import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
-import type { ClientVideoTile } from "api/src/types/tiles";
+import type { ClientVideoTile } from "api/types/tiles";
 import type { AppRouterInputs } from "@/api/client";
 
 export type VideoType = ClientVideoTile["videoType"];

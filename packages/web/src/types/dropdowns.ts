@@ -1,1 +1,1 @@
-export type { Dropdown } from "api/src/types/dropdowns";
+export type { Dropdown } from "api/types/dropdowns";
