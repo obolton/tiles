@@ -8,7 +8,10 @@ import {
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 import type { ClientChartTile } from "api/types/tiles";
-import type { Background } from "@/components/backgrounds/types";
+import type {
+  Background,
+  BackgroundUpdate,
+} from "@/components/backgrounds/types";
 import type { AppRouterInputs } from "@/api/client";
 
 export interface Property {
@@ -30,7 +33,7 @@ export default class Chart extends Tile {
   readonly tableId: string;
   readonly label: Reactive<Property | null>;
   readonly series: ReactiveArray<Series>;
-  readonly background: Reactive<ClientChartTile["background"]>;
+  readonly background: Reactive<Background | null>;
 
   constructor(editor: Editor, properties: ClientChartTile) {
     super(editor, properties);
@@ -58,9 +61,9 @@ export default class Chart extends Tile {
     });
   }
 
-  setBackground(background: Background | null) {
-    this.background.value = background;
-    return this.update({ background });
+  async setBackground(background: BackgroundUpdate) {
+    const result = await this.update({ background });
+    this.background.value = result.background;
   }
 
   // Label

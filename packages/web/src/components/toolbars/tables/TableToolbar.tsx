@@ -5,7 +5,7 @@ import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import ChartIcon from "@/icons/chart.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
-import type { Background } from "@/components/backgrounds/types";
+import type { BackgroundUpdate } from "@/components/backgrounds/types";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/items/Table";
 
@@ -22,7 +22,7 @@ export default function TableToolbar({
 }: TableToolbarProps) {
   const { id, sectionId, background, editor } = table;
 
-  async function setBackground(value: Background | null) {
+  async function setBackground(value: BackgroundUpdate) {
     try {
       await table.setBackground(value);
     } catch (error) {

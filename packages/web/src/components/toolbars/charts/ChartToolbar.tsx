@@ -4,7 +4,7 @@ import SeriesList from "./SeriesList";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
-import type { Background } from "@/components/backgrounds/types";
+import type { BackgroundUpdate } from "@/components/backgrounds/types";
 import type Chart from "@/items/Chart";
 
 export interface ChartToolbarProps {
@@ -12,7 +12,7 @@ export interface ChartToolbarProps {
 }
 
 export default function ChartToolbar({ chart }: ChartToolbarProps) {
-  async function setBackground(value: Background | null) {
+  async function setBackground(value: BackgroundUpdate) {
     try {
       await chart.setBackground(value);
     } catch (error) {

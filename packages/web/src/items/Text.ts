@@ -6,7 +6,7 @@ import type Editor from "@/editor/Editor";
 import type { ClientTextTile } from "api/types/tiles";
 import type { EditorState } from "prosemirror-state";
 import type { Color } from "@/utils/color";
-import type { Background } from "@/components/backgrounds/types";
+import type { BackgroundUpdate } from "@/components/backgrounds/types";
 import type { AppRouterInputs } from "@/api/client";
 
 export default class Text extends Tile {
@@ -49,9 +49,9 @@ export default class Text extends Tile {
     return this.update({ textColor });
   }
 
-  setBackground(background: Background | null) {
-    this.background.value = background;
-    return this.update({ background });
+  async setBackground(background: BackgroundUpdate) {
+    const result = await this.update({ background });
+    this.background.value = result.background;
   }
 
   persist() {

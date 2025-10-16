@@ -7,13 +7,13 @@ import AIIcon from "@/icons/ai.svg?jsx";
 import EmptyIcon from "@/icons/empty.svg?jsx";
 import styles from "./BackgroundPopover.module.css";
 import type { Reactive } from "@/utils/reactivity";
-import type { Background } from "./types";
+import type { Background, BackgroundUpdate } from "./types";
 import type PopoverMenu from "@/elements/menu/PopoverMenu";
 import type { JSX } from "@/jsx/jsx";
 
 export interface BackgroundPopoverProps extends JSX.Attributes<PopoverMenu> {
   value: Reactive<Background | null>;
-  onChange: (value: Background | null) => void;
+  onChange: (value: BackgroundUpdate) => void;
 }
 
 export default function BackgroundPopover({

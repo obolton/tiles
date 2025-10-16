@@ -3,11 +3,11 @@ import { handleError } from "@/utils/errors";
 import { uploadMedia } from "@/utils/media";
 import Editor from "@/editor/Editor";
 import styles from "./ImagePanel.module.css";
+import type { ImageBackgroundUpdate } from "./types";
 import type FilePicker from "@/elements/filePicker/FilePicker";
-import type { ImageBackground } from "./types";
 
 export interface ImagePanelProps {
-  onChange: (background: ImageBackground) => void;
+  onChange: (background: ImageBackgroundUpdate) => void;
 }
 
 export default function ImagePanel({ onChange }: ImagePanelProps) {

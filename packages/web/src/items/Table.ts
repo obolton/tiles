@@ -9,7 +9,7 @@ import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 import type { ClientTableTile } from "api/types/tiles";
 import type { Color } from "@/utils/color";
-import type { Background } from "@/components/backgrounds/types";
+import type { BackgroundUpdate } from "@/components/backgrounds/types";
 import type { RichText } from "@/utils/richText/types";
 import type { AppRouterInputs } from "@/api/client";
 
@@ -60,9 +60,9 @@ export default class Table extends Tile {
     this.update({ textColor });
   }
 
-  setBackground(background: Background | null) {
-    this.background.value = background;
-    this.update({ background });
+  async setBackground(background: BackgroundUpdate) {
+    const result = await this.update({ background });
+    this.background.value = result.background;
   }
 
   // Columns

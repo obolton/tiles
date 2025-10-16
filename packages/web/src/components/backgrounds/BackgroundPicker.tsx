@@ -5,12 +5,12 @@ import SolidColorIcon from "@/icons/solid-color.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import { toCSSColor } from "@/utils/color";
 import type { Reactive } from "@/utils/reactivity";
-import type { Background } from "./types";
+import type { Background, BackgroundUpdate } from "./types";
 
 export interface BackgroundPickerProps {
   id: string;
   value: Reactive<Background | null>;
-  onChange: (value: Background | null) => void;
+  onChange: (value: BackgroundUpdate) => void;
 }
 
 export default function BackgroundPicker({

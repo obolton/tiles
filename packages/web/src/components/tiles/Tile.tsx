@@ -9,15 +9,14 @@ import {
 import { toCSSColor, isDark, type Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
-
-export type TileBackground = { imageUrl: string } | { color: Color } | null;
+import type { Background } from "@/components/backgrounds/types";
 
 export type TileProps = {
   className?: string;
   children?: JSX.Node;
   font?: FontId | null;
   textColor?: Reactive<Color | null>;
-  background?: Reactive<TileBackground>;
+  background?: Reactive<Background | null>;
   border?:
     | Reactive<"inside" | "outside" | "none">
     | "inside"
