@@ -53,8 +53,11 @@ export interface ClientTextTile extends ClientTileBase, ClientText {
 }
 
 // Place
-export type ClientPlace = OmitMetadata<Omit<Place, "mapTileId">> & {
+export type ClientPlace = OmitMetadata<
+  Omit<Place, "mapTileId" | "boundingBox">
+> & {
   id: string;
+  boundingBox: number[] | null;
 };
 
 // Map

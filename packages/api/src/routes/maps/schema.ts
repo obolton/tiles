@@ -13,7 +13,7 @@ export const PlaceSchema = z.strictObject({
   long: z.number().gte(MIN_LONGITUDE).lte(MAX_LONGITUDE),
   boundingBox: z.array(z.number()).length(4).nullable(),
   address: z.string().nullable(),
-  providerId: z.string(),
+  providerId: z.string().nullable(),
 });
 export type PlaceSchema = z.infer<typeof PlaceSchema>;
 
