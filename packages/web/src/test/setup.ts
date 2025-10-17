@@ -3,10 +3,12 @@ import { vi } from "vitest";
 import DOMPoint from "./mocks/DOMPoint";
 import ToggleEvent from "./mocks/ToggleEvent";
 import DragEvent from "./mocks/DragEvent";
+import CSS from "./mocks/CSS";
 
 vi.stubGlobal("DOMPoint", DOMPoint);
 vi.stubGlobal("ToggleEvent", ToggleEvent);
 vi.stubGlobal("DragEvent", DragEvent);
+vi.stubGlobal("CSS", CSS);
 
 Element.prototype.scrollIntoView = vi.fn();
 
