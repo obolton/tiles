@@ -2,6 +2,7 @@ import RichText from "@/components/text/RichText";
 import TextToolbar from "@/components/toolbars/text/TextToolbar";
 import Tile from "./Tile";
 import If from "@/jsx/if";
+import Portal from "@/jsx/portal";
 import styles from "./TextTile.module.css";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/colors/ColorPicker";
@@ -119,7 +120,9 @@ export default function TextTile({ text, hasFocus }: TextTileProps) {
       anchorName={anchorName}
     >
       <If condition={hasFocus}>
-        <TextToolbar text={text} anchorName={anchorName} />
+        <Portal>
+          <TextToolbar text={text} anchorName={anchorName} />
+        </Portal>
       </If>
 
       {block.derive((value) =>

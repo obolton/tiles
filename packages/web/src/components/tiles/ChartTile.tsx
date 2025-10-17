@@ -2,6 +2,7 @@ import Tile from "./Tile";
 import ChartToolbar from "@/components/toolbars/charts/ChartToolbar";
 import If from "@/jsx/if";
 import Each from "@/jsx/each";
+import Portal from "@/jsx/portal";
 import Editor from "@/editor/Editor";
 import { toPlainText } from "@/utils/richText/plainText";
 import styles from "./ChartTile.module.css";
@@ -37,7 +38,9 @@ export default function ChartTile({ chart, hasFocus }: ChartTileProps) {
   return (
     <Tile border="none" background={chart.background}>
       <If condition={hasFocus}>
-        <ChartToolbar chart={chart} />
+        <Portal>
+          <ChartToolbar chart={chart} />
+        </Portal>
       </If>
 
       <chart-view className={styles.chart}>

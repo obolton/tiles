@@ -4,6 +4,7 @@ import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import If from "@/jsx/if";
+import Portal from "@/jsx/portal";
 import styles from "./LinkTile.module.css";
 import type Link from "@/items/Link";
 import type { Reactive } from "@/utils/reactivity";
@@ -67,11 +68,16 @@ export default function LinkTile({ link, hasFocus }: LinkTileProps) {
       </a>
 
       <If condition={hasFocus}>
-        <floating-toolbar data-tooltip-position="top" aria-label="Link toolbar">
-          <ToolbarButton label="Edit link" on:click={editLink}>
-            <LinkIcon aria-hidden="true" />
-          </ToolbarButton>
-        </floating-toolbar>
+        <Portal>
+          <floating-toolbar
+            data-tooltip-position="top"
+            aria-label="Link toolbar"
+          >
+            <ToolbarButton label="Edit link" on:click={editLink}>
+              <LinkIcon aria-hidden="true" />
+            </ToolbarButton>
+          </floating-toolbar>
+        </Portal>
       </If>
     </Tile>
   );

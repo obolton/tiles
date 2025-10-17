@@ -4,6 +4,7 @@ import SectionToolbar from "./SectionToolbar";
 import { toCSSColor } from "@/utils/color";
 import If from "@/jsx/if";
 import Each from "@/jsx/each";
+import Portal from "@/jsx/portal";
 import Editor from "@/editor/Editor";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./Section.module.css";
@@ -173,7 +174,9 @@ export default function Section({ editor, section, signal }: SectionProps) {
         on:focusout={onFocusOut}
       >
         <If condition={hasFocus}>
-          <SectionToolbar section={section} />
+          <Portal>
+            <SectionToolbar section={section} />
+          </Portal>
         </If>
 
         <page-item

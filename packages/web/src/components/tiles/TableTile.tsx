@@ -14,6 +14,7 @@ import { reactive, flag } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { render } from "@/jsx/dom";
 import If from "@/jsx/if";
+import Portal from "@/jsx/portal";
 import { moveElement } from "@/utils/arrays";
 import TableViewContents from "@/elements/table/TableViewContents";
 import type TableView from "@/elements/table/TableView";
@@ -359,29 +360,31 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
       </table-view>
 
       <If condition={hasFocus}>
-        <TableToolbar
-          table={table}
-          getTable={getTable}
-          anchorName={anchorName}
-        />
+        <Portal>
+          <TableToolbar
+            table={table}
+            getTable={getTable}
+            anchorName={anchorName}
+          />
 
-        <FormattingToolbar
-          editor={editor}
-          format={format}
-          prompting={prompting}
-          getEditorView={getEditorView}
-          performCommand={performCommand}
-        >
-          <ul role="group">
-            <li role="presentation">
-              <ColorPicker
-                id={`${id}-color-picker`}
-                value={textColor}
-                onChange={onChangeTextColor}
-              />
-            </li>
-          </ul>
-        </FormattingToolbar>
+          <FormattingToolbar
+            editor={editor}
+            format={format}
+            prompting={prompting}
+            getEditorView={getEditorView}
+            performCommand={performCommand}
+          >
+            <ul role="group">
+              <li role="presentation">
+                <ColorPicker
+                  id={`${id}-color-picker`}
+                  value={textColor}
+                  onChange={onChangeTextColor}
+                />
+              </li>
+            </ul>
+          </FormattingToolbar>
+        </Portal>
       </If>
     </Tile>
   );
