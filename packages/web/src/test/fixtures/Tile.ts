@@ -91,20 +91,29 @@ export const LINK_TILE: ClientLinkTile = {
   siteName: "Test",
 };
 
-export const MAP_TILE: ClientMapTile = {
+export const MAP_TILE = {
   ...SHARED,
   id: "tile-id",
   placementId: "placement-id",
   type: "MAP",
   places: [
     {
-      id: "place-id",
-      name: "Test place",
-      address: "123 Main St",
-      boundingBox: null,
+      id: "place-1",
+      name: "Place 1",
+      address: "123 First St",
+      boundingBox: [],
       lat: 0,
       long: 0,
       providerId: "test",
     },
-  ],
-};
+    {
+      id: "place-2",
+      name: "Place 2",
+      address: "123 Second St",
+      boundingBox: [],
+      lat: 1,
+      long: 1,
+      providerId: "test",
+    },
+  ] as const,
+} satisfies ClientMapTile;
