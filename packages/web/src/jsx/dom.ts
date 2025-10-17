@@ -285,14 +285,13 @@ function hydrateDOMElement(
   } else {
     const element = document.createElement(tagName);
     setAttributes(element, attributes, signal);
-    const childNode = renderFragment(
+    const childNodes = renderFragment(
       toNodeArray(attributes.children),
       undefined,
       signal,
     );
-    if (childNode) {
-      element.appendChild(childNode);
-    }
+    element.append(...childNodes);
+
     if (attributes.ref) {
       attributes.ref(element);
     }
@@ -406,20 +405,14 @@ function updateRange(
     container?.removeChild(existingNode);
   }
 
-  const node = render(range.store.value, namespace, combinedSignal);
-  if (node instanceof Element || node instanceof Text) {
-    range.anchor = node;
-    range.length = 1;
+  const nodes = render(range.store.value, namespace, combinedSignal);
+  if (nodes.length === 0) {
+    nodes.push(createPlaceholderNode());
+  }
+  range.anchor = nodes[0]!;
+  range.length = nodes.length;
+  for (const node of nodes) {
     container?.insertBefore(node, nextNode);
-  } else if (node instanceof DocumentFragment && node.firstChild) {
-    range.anchor = node.firstChild;
-    range.length = node.childNodes.length;
-    container?.insertBefore(node, nextNode);
-  } else {
-    const anchor = createPlaceholderNode();
-    range.anchor = anchor;
-    range.length = 1;
-    container?.insertBefore(anchor, nextNode);
   }
 }
 
@@ -451,10 +444,7 @@ function renderDOMElement(
   }
 
   if (children !== null && typeof children !== "undefined") {
-    const childNode = render(children, namespace, signal);
-    if (childNode) {
-      element.appendChild(childNode);
-    }
+    element.append(...render(children, namespace, signal));
   }
 
   if (ref) {
@@ -462,11 +452,11 @@ function renderDOMElement(
     ref(element);
   }
 
-  return element;
+  return [element];
 }
 
 function renderTextNode(value: string) {
-  return document.createTextNode(value);
+  return [document.createTextNode(value)];
 }
 
 function renderElement(
@@ -493,18 +483,11 @@ function renderFragment(
   namespace?: string | null,
   signal?: AbortSignal,
 ) {
-  if (nodes.length === 0) {
-    return null;
-  }
-
-  const fragment = document.createDocumentFragment();
+  const renderedNodes: Node[] = [];
   for (const node of nodes) {
-    const renderedNode = render(node, namespace, signal);
-    if (renderedNode) {
-      fragment.appendChild(renderedNode);
-    }
+    renderedNodes.push(...render(node, namespace, signal));
   }
-  return fragment;
+  return renderedNodes;
 }
 
 function renderStoreNode(
@@ -517,51 +500,33 @@ function renderStoreNode(
     ? AbortSignal.any([signal, abort.signal])
     : abort.signal;
 
-  const container = document.createDocumentFragment();
-  const node = render(store.value, namespace, combinedSignal);
+  const nodes = render(store.value, namespace, combinedSignal);
 
-  let range: MutableRange;
-  if (node instanceof Element || node instanceof Text) {
-    range = {
-      store,
-      anchor: node,
-      length: 1,
-      abort,
-    };
-    container.appendChild(node);
-  } else if (node instanceof DocumentFragment && node.firstChild) {
-    range = {
-      store,
-      anchor: node.firstChild,
-      length: node.childNodes.length,
-      abort,
-    };
-    container.appendChild(node);
-  } else {
-    range = {
-      store,
-      anchor: createPlaceholderNode(),
-      length: 1,
-      abort,
-    };
-    container.appendChild(range.anchor);
+  if (nodes.length === 0) {
+    nodes.push(createPlaceholderNode());
   }
 
+  const range: MutableRange = {
+    store,
+    anchor: nodes[0]!,
+    length: nodes.length,
+    abort,
+  };
   store.subscribe(() => updateRange(range, namespace, signal), signal);
-  return container;
+  return nodes;
 }
 
 export function render(
   node: JSX.Node,
   namespace?: string | null,
   signal?: AbortSignal,
-): Node | null {
+): Node[] {
   if (node instanceof Node) {
-    return node;
+    return [node];
   }
 
   if (isEmptyNode(node)) {
-    return null;
+    return [];
   }
 
   if (isTextNode(node)) {
