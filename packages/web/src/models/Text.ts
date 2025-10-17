@@ -6,7 +6,10 @@ import type Editor from "@/editor/Editor";
 import type { ClientTextTile } from "api/types/tiles";
 import type { EditorState } from "prosemirror-state";
 import type { Color } from "@/utils/color";
-import type { BackgroundUpdate } from "@/components/backgrounds/types";
+import type {
+  Background,
+  BackgroundUpdate,
+} from "@/components/backgrounds/types";
 import type { AppRouterInputs } from "@/api/client";
 
 export default class Text extends Tile {
@@ -15,7 +18,7 @@ export default class Text extends Tile {
   readonly content: Reactive<ClientTextTile["content"]>;
   readonly align: Reactive<ClientTextTile["align"]>;
   readonly textColor: Reactive<Color | null>;
-  readonly background: Reactive<ClientTextTile["background"]>;
+  readonly background: Reactive<Background | null>;
   readonly state: Reactive<EditorState | null>;
 
   constructor(editor: Editor, properties: ClientTextTile) {
