@@ -1,5 +1,4 @@
 import type {
-  ImageTile,
   VideoTile,
   MapTile,
   LinkTile,
@@ -11,11 +10,12 @@ import type {
   Anchor,
   Dimensions,
 } from "@/generated/prisma/client";
-import type { Section } from "@/routes/sections/sections.ts";
-import type { Text } from "@/routes/text/text.ts";
-import type { TableWithData } from "@/routes/tables/tables.ts";
-import type { Chart, ChartSeries } from "@/routes/charts/charts.ts";
-import type { PageLinkPage } from "@/routes/pageLinks/pageLinks.ts";
+import type { Section } from "@/routes/sections/sections";
+import type { Text } from "@/routes/text/text";
+import type { Image } from "@/routes/images/images";
+import type { TableWithData } from "@/routes/tables/tables";
+import type { Chart, ChartSeries } from "@/routes/charts/charts";
+import type { PageLinkPage } from "@/routes/pageLinks/pageLinks";
 
 type OmitMetadata<T> = Omit<T, "pageId" | "createdAt" | "updatedAt">;
 
@@ -34,9 +34,7 @@ type ClientTileBase = Pick<
 > & { placementId: string };
 
 // Image
-export type ClientImage = Omit<OmitMetadata<ImageTile>, "imageKey"> & {
-  imageUrl: string;
-};
+export type ClientImage = Image;
 export interface ClientImageTile extends ClientTileBase, ClientImage {
   type: "IMAGE";
 }
