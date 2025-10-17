@@ -1,9 +1,9 @@
 import Each from "@/jsx/each";
 import SeriesRow from "./SeriesRow";
 import styles from "./SeriesList.module.css";
-import type Chart from "@/items/Chart";
-import type { Series, ChartType } from "@/items/Chart";
-import type Table from "@/items/Table";
+import type Chart from "@/models/Chart";
+import type { Series, ChartType } from "@/models/Chart";
+import type Table from "@/models/Table";
 
 export interface SeriesListProps {
   chart: Chart;

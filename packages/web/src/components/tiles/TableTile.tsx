@@ -26,7 +26,7 @@ import type Column from "@/elements/table/Column";
 import type Row from "@/elements/table/Row";
 import type { Color } from "@/utils/color";
 import type { RichText as RichTextType } from "@/utils/richText/types";
-import type Table from "@/items/Table";
+import type Table from "@/models/Table";
 
 export interface TableTileProps {
   table: Table;

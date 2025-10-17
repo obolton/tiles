@@ -4,7 +4,7 @@ import styles from "./ImageTile.module.css";
 import Tile from "./Tile";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import { setSearchParams } from "@/utils/urls";
-import type Image from "@/items/Image";
+import type Image from "@/models/Image";
 
 export interface ImageTileProps {
   image: Image;

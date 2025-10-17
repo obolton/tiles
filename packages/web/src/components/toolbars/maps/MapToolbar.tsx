@@ -2,7 +2,7 @@ import ToolbarButton from "@/components/buttons/ToolbarButton";
 import AddPlaceIcon from "@/icons/add-place.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { showModal } from "@/utils/modals";
-import type Map from "@/items/Map";
+import type Map from "@/models/Map";
 import type MapView from "@/elements/maps/MapView";
 
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");

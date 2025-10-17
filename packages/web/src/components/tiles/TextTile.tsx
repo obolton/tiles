@@ -7,7 +7,7 @@ import styles from "./TextTile.module.css";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import ColorPicker from "@/components/colors/ColorPicker";
 import debounce from "@/utils/debounce";
-import type Text from "@/items/Text";
+import type Text from "@/models/Text";
 import type { Reactive } from "@/utils/reactivity";
 
 export interface TextTileProps {

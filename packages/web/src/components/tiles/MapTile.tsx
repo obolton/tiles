@@ -4,7 +4,7 @@ import If from "@/jsx/if";
 import Each from "@/jsx/each";
 import Portal from "@/jsx/portal";
 import styles from "./MapTile.module.css";
-import type Map from "@/items/Map";
+import type Map from "@/models/Map";
 import type MapEvent from "@/elements/maps/MapEvent";
 import type MapView from "@/elements/maps/MapView";
 import type MapMarker from "@/elements/maps/MapMarker";

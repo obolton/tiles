@@ -8,7 +8,7 @@ import { toPlainText } from "@/utils/richText/plainText";
 import styles from "./ChartTile.module.css";
 import type { RichText } from "@/utils/richText/types";
 import type { Reactive } from "@/utils/reactivity";
-import type Chart from "@/items/Chart";
+import type Chart from "@/models/Chart";
 
 function toNumber(input: number | string | RichText | null | undefined) {
   if (typeof input === "number") {

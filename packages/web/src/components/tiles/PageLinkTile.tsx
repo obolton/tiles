@@ -2,7 +2,7 @@ import Tile from "./Tile";
 import PageLinkComponent from "./PageLink";
 import styles from "./PageLinkTile.module.css";
 import Editor from "@/editor/Editor";
-import type PageLink from "@/items/PageLink";
+import type PageLink from "@/models/PageLink";
 
 export interface PageLinkTileProps {
   pageLink: PageLink;

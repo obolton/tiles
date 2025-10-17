@@ -5,7 +5,7 @@ import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
 import type { BackgroundUpdate } from "@/components/backgrounds/types";
-import type Chart from "@/items/Chart";
+import type Chart from "@/models/Chart";
 
 export interface ChartToolbarProps {
   chart: Chart;

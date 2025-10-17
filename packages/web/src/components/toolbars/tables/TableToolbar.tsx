@@ -7,7 +7,7 @@ import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import type { BackgroundUpdate } from "@/components/backgrounds/types";
 import type TableView from "@/elements/table/TableView";
-import type Table from "@/items/Table";
+import type Table from "@/models/Table";
 
 export interface TableToolbarProps {
   table: Table;

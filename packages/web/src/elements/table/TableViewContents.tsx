@@ -1,4 +1,4 @@
-import type Table from "@/items/Table";
+import type Table from "@/models/Table";
 import type { JSX } from "@/jsx/jsx";
 
 export interface TableViewContentsProps {

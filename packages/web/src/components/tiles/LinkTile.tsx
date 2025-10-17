@@ -6,7 +6,7 @@ import LinkIcon from "@/icons/link.svg?jsx";
 import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
 import styles from "./LinkTile.module.css";
-import type Link from "@/items/Link";
+import type Link from "@/models/Link";
 import type { Reactive } from "@/utils/reactivity";
 
 const LinkModalLoader = () => import("@/components/modals/LinkModal");

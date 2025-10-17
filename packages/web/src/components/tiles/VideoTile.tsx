@@ -2,8 +2,8 @@ import Caption from "./Caption";
 import Tile from "./Tile";
 import VideoIcon from "@/icons/video.svg?jsx";
 import styles from "./VideoTile.module.css";
-import type Video from "@/items/Video";
-import type { VideoType } from "@/items/Video";
+import type Video from "@/models/Video";
+import type { VideoType } from "@/models/Video";
 
 function getEmbedUrl(videoType: VideoType, videoId: string) {
   switch (videoType) {

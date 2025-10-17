@@ -7,7 +7,7 @@ import ExpandHeightIcon from "@/icons/expand-height.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
-import type Text from "@/items/Text";
+import type Text from "@/models/Text";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 
 const ALIGN_ICON = {

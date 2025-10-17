@@ -3,7 +3,7 @@ import BarChartIcon from "@/icons/bar-chart.svg?jsx";
 import LineChartIcon from "@/icons/line-chart.svg?jsx";
 import AreaChartIcon from "@/icons/area-chart.svg?jsx";
 import RemoveIcon from "@/icons/remove.svg?jsx";
-import type { Series, ChartType } from "@/items/Chart";
+import type { Series, ChartType } from "@/models/Chart";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 
 const CHART_SERIES_TYPE_ICON = {
