@@ -73,15 +73,14 @@ export default class Each<T> implements JSX.ElementClass {
     const nodes = this.items.value.map((item, index) => {
       const abort = new AbortController();
       const signal = this.getCombinedSignal(abort);
-      const node = render(this.renderItem(item), null, signal);
-      const nodes = this.getNodes(node);
+      const itemNodes = render(this.renderItem(item), null, signal);
       this.entries.set(item, {
         index,
-        nodes,
+        nodes: itemNodes,
         abort,
       });
-      this.anchor ??= nodes[0];
-      return node;
+      this.anchor ??= itemNodes[0];
+      return itemNodes;
     });
 
     if (!this.anchor) {
@@ -100,13 +99,6 @@ export default class Each<T> implements JSX.ElementClass {
     return this.signal
       ? AbortSignal.any([abort.signal, this.signal])
       : abort.signal;
-  }
-
-  private getNodes(node: Node | null) {
-    if (node instanceof DocumentFragment) {
-      return Array.from(node.childNodes);
-    }
-    return node ? [node] : [];
   }
 
   private update() {
@@ -136,10 +128,8 @@ export default class Each<T> implements JSX.ElementClass {
       if (!position) {
         const abort = new AbortController();
         const signal = this.getCombinedSignal(abort);
-        const node = render(this.renderItem(item), null, signal);
-        const nodes = this.getNodes(node);
-
-        if (node) {
+        const nodes = render(this.renderItem(item), null, signal);
+        for (const node of nodes) {
           container.insertBefore(node, referenceNode);
         }
 
