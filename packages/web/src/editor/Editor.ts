@@ -2,7 +2,7 @@ import client from "@/api/client";
 import { showModal } from "@/utils/modals";
 import { preloadImage, uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { reactive, flag, record, array } from "@/utils/reactivity";
+import { reactive, flag, array } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
 import { isEditMode } from "@/utils/edit";
@@ -10,6 +10,7 @@ import { createState } from "@/utils/richText/state";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import { moveElement } from "@/utils/arrays";
+import Section from "@/models/Section";
 import Text from "@/models/Text";
 import Image from "@/models/Image";
 import Video from "@/models/Video";
@@ -20,7 +21,7 @@ import Table from "@/models/Table";
 import Chart from "@/models/Chart";
 import type { FontId } from "@/config/fonts";
 import type { ClientTile, ClientCollection } from "api/types/tiles";
-import type { Tile, SectionWithTiles } from "@/types/tiles";
+import type { Tile } from "@/types/tiles";
 import type { Dropdown } from "@/types/dropdowns";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
@@ -65,21 +66,6 @@ function getReactiveTile(editor: Editor, tile: ClientTile): Tile {
   }
 }
 
-// TODO: Make a method of Editor
-function getReactiveSection(
-  section: ClientCollection,
-  tiles: Reactive<Tile[]>,
-): SectionWithTiles {
-  const { id, ...properties } = section;
-  return {
-    id,
-    ...record(properties),
-    tiles: tiles.derive((tiles) =>
-      tiles.filter((tile) => tile.sectionId.value === section.id),
-    ),
-  };
-}
-
 export default class Editor {
   static #current?: Editor;
 
@@ -91,7 +77,7 @@ export default class Editor {
   readonly font: Reactive<FontId>;
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
-  readonly sections: ReactiveArray<SectionWithTiles>;
+  readonly sections: ReactiveArray<Section>;
   readonly tiles: Reactive<Tile[]>;
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<Invite>;
@@ -99,7 +85,7 @@ export default class Editor {
   readonly selection: Reactive<Set<Tile>>;
   readonly dropdowns: ReactiveArray<Dropdown>;
 
-  activeSection: SectionWithTiles | null = null;
+  activeSection: Section | null = null;
 
   static init(page: Page) {
     if (this.#current) {
@@ -140,7 +126,7 @@ export default class Editor {
       page.tiles.map((properties) => getReactiveTile(this, properties)),
     );
     this.sections = array(
-      page.sections.map((section) => getReactiveSection(section, this.tiles)),
+      page.sections.map((section) => this.getSection(section)),
     );
     this.access = array(page.access);
     this.invites = array(page.invites);
@@ -323,6 +309,15 @@ export default class Editor {
 
   // Sections
 
+  private getSection(properties: ClientCollection): Section {
+    return new Section(this, {
+      ...properties,
+      tiles: this.tiles.derive((tiles) =>
+        tiles.filter((tile) => tile.sectionId.value === properties.id),
+      ),
+    });
+  }
+
   async createSection(data: OmitPageId<AppRouterInputs["sections"]["create"]>) {
     const section = await client.sections.create.mutate({
       pageId: this.pageId,
@@ -337,7 +332,7 @@ export default class Editor {
       this.sections.value = this.sections.value.toSpliced(
         afterIndex + 1,
         0,
-        getReactiveSection(section, this.tiles),
+        this.getSection(section),
       );
 
       const element = document.querySelector<HTMLElement>(
