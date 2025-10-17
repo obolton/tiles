@@ -7,7 +7,7 @@ const MAX_HEIGHT = 64;
 
 export const SectionSchema = z.object({
   layout: z.enum(Layout).optional(),
-  anchor: z.enum(Anchor).optional(),
+  anchor: z.enum(Anchor).nullable().optional(),
   dimensions: z.enum(Dimensions).optional(),
   width: z.int().gte(1).lte(MAX_WIDTH).optional(),
   height: z.int().gte(1).lte(MAX_HEIGHT).optional(),
