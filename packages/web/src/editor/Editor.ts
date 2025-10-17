@@ -28,7 +28,7 @@ import type { Invite, PageAccess, User } from "@/types/collaboration";
 import type { Color } from "@/utils/color";
 import type { Reactive, ReactiveArray } from "@/utils/reactivity";
 
-type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
+export type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
 type OmitPageId<T extends { pageId: string }> = Omit<T, "pageId">;
 
