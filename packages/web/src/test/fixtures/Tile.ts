@@ -36,7 +36,21 @@ export const TEXT_TILE: ClientTextTile = {
   align: "TOP",
   textColor: null,
   background: null,
-  content: [],
+  content: [
+    {
+      type: "paragraph",
+      align: 0,
+      children: [
+        {
+          type: "text",
+          text: "Hello world",
+          format: 0,
+          pending: undefined,
+          size: 1,
+        },
+      ],
+    },
+  ],
 };
 
 export const IMAGE_TILE: ClientImageTile = {
