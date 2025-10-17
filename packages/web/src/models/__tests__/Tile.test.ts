@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import Tile from "@/models/Tile";
-import Editor, { type Page } from "@/editor/Editor";
+import Editor from "@/editor/Editor";
 import client from "@/api/client";
-import type { ClientTile } from "api/types/tiles";
+import { PAGE } from "@/test/fixtures/Page";
+import { TILE } from "@/test/fixtures/Tile";
 
 vi.mock("@/api/client", () => ({
   default: {
@@ -13,50 +14,6 @@ vi.mock("@/api/client", () => ({
     },
   },
 }));
-
-const PAGE: Page = {
-  id: "page-id",
-  workspaceId: "workspace-id",
-  updatedAt: "2025-01-01",
-  published: true,
-  author: {
-    id: "user-id",
-    name: "Test User",
-    username: "test",
-    imageUrl: "https://tiles.dev",
-  },
-  title: "Test Page",
-  coverImageUrl: null,
-  font: "CLASSIC",
-  color: {
-    l: 1,
-    c: 0,
-    h: 0,
-  },
-  sections: [],
-  tiles: [],
-  access: [],
-  invites: [],
-  dropdowns: [],
-};
-
-const TILE: ClientTile = {
-  id: "tile-id",
-  placementId: "placement-id",
-  type: "TEXT",
-  sectionId: "section-id",
-  position: 3,
-  x: 5,
-  y: 7,
-  width: 11,
-  height: 13,
-  rowSpan: 2,
-  block: false,
-  align: "TOP",
-  textColor: null,
-  background: null,
-  content: [],
-};
 
 describe("Tile", () => {
   const editor = Editor.init(PAGE);
