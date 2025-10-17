@@ -62,7 +62,21 @@ export const IMAGE_TILE: ClientImageTile = {
   originX: 0,
   originY: 0,
   theme: null,
-  text: [],
+  text: [
+    {
+      type: "paragraph",
+      align: 0,
+      children: [
+        {
+          type: "text",
+          text: "Hello world",
+          format: 0,
+          pending: undefined,
+          size: 1,
+        },
+      ],
+    },
+  ],
 };
 
 export const LINK_TILE: ClientLinkTile = {
