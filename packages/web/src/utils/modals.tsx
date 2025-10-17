@@ -40,7 +40,7 @@ export async function showModal<T, P>(
     <Modal>
       <Component cancel={cancel} confirm={confirm} {...props} />
     </Modal>,
-  ) as HTMLDialogElement;
+  )[0] as HTMLDialogElement;
 
   dialog.addEventListener(
     "close",

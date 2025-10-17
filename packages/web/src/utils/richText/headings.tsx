@@ -45,7 +45,7 @@ export function headings() {
               getProps={getProps}
               onChange={onChange}
             />,
-          ) as ThemeSelector;
+          )[0] as ThemeSelector;
 
           return {
             dom,

@@ -45,7 +45,7 @@ export function links() {
               data-tooltip="Link"
               inline
             />,
-          ) as ThemeSelector;
+          )[0] as ThemeSelector;
 
           return {
             dom,

@@ -69,9 +69,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
       cell.textContent = value;
     } else {
       const contents = render(<RichText content={value} />);
-      if (contents) {
-        cell.replaceChildren(contents);
-      }
+      cell.replaceChildren(...contents);
     }
   }
 
@@ -139,11 +137,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
     editorView = undefined;
 
     const contents = render(<RichText content={value} />);
-    if (contents) {
-      target.replaceChildren(contents);
-    } else {
-      target.replaceChildren();
-    }
+    target.replaceChildren(...contents);
 
     rowData.data[columnId] = value;
     await editor.updateTableCell({

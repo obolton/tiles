@@ -78,7 +78,7 @@ export function dates() {
                 on:click={edit}
                 on:keydown={onKeyDown}
               />,
-            ) as HTMLElement,
+            )[0] as HTMLElement,
 
             update() {
               return true;

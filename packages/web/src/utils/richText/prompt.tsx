@@ -58,7 +58,7 @@ function getElement(view: EditorView) {
       onSubmit={onSubmit}
       onCancel={removePrompt}
     />,
-  ) as HTMLElement;
+  )[0] as HTMLElement;
 
   requestAnimationFrame(() => {
     const prompt = element.firstElementChild! as HTMLFormElement;
