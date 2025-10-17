@@ -11,24 +11,32 @@ import styles from "./Section.module.css";
 import { SIZE_UNIT, LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
 import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
-import type { SectionWithTiles } from "@/types/tiles";
 import type ScrollView from "@/elements/scroll-view/ScrollView";
 import type { PageItemEvent } from "@/elements/item/events";
+import type SectionModel from "@/models/Section";
 
 function preventDefault(event: Event) {
   event.preventDefault();
 }
 
 export interface SectionProps {
-  editor: Editor;
-  section: SectionWithTiles;
+  section: SectionModel;
   signal?: AbortSignal;
 }
 
-export default function Section({ editor, section, signal }: SectionProps) {
+export default function Section({ section, signal }: SectionProps) {
+  const {
+    id,
+    dimensions,
+    width,
+    height,
+    layout,
+    background,
+    hide,
+    tiles,
+    editor,
+  } = section;
   const { isEditable } = editor;
-  const { id, dimensions, width, height, layout, background, hide, tiles } =
-    section;
   const hasFocus = flag(false);
   let scrollView: ScrollView | null = null;
 
@@ -78,11 +86,7 @@ export default function Section({ editor, section, signal }: SectionProps) {
   }
 
   function onResizeEnd() {
-    Editor.current.updateSection({
-      id,
-      width: width.value,
-      height: height.value,
-    });
+    section.setSize(width.value, height.value);
   }
 
   function insertSection() {

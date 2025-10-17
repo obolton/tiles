@@ -1,18 +1,16 @@
 import Each from "@/jsx/each";
-import Section from "@/components/layouts/section/Section";
-import type { SectionWithTiles } from "@/types/tiles";
+import SectionComponent from "@/components/layouts/section/Section";
 import type { ReactiveArray } from "@/utils/reactivity";
-import type Editor from "@/editor/Editor";
+import type Section from "@/models/Section";
 
 export interface PageContentsProps {
-  editor: Editor;
-  sections: ReactiveArray<SectionWithTiles>;
+  sections: ReactiveArray<Section>;
 }
 
-export default function PageContents({ editor, sections }: PageContentsProps) {
+export default function PageContents({ sections }: PageContentsProps) {
   return (
     <Each items={sections}>
-      {(section) => <Section editor={editor} section={section} />}
+      {(section) => <SectionComponent section={section} />}
     </Each>
   );
 }

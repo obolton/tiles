@@ -24,7 +24,7 @@ export default function EditablePage({ page }: EditablePageProps) {
   return (
     <>
       <main>
-        <PageContents editor={editor} sections={sections} />
+        <PageContents sections={sections} />
       </main>
 
       {showToolbar ? <EditingToolbar editor={editor} /> : null}

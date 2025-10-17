@@ -347,13 +347,6 @@ export default class Editor {
     return section;
   }
 
-  async updateSection(data: OmitPageId<AppRouterInputs["sections"]["update"]>) {
-    return await client.sections.update.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
   async duplicateSection(
     data: OmitPageId<AppRouterInputs["sections"]["duplicate"]>,
   ) {
