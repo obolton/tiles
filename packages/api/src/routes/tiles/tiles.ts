@@ -17,6 +17,7 @@ export const TILE_FIELDS = {
   y: true,
   rowSpan: true,
   block: true,
+  animation: true,
 } as const satisfies Prisma.TileSelect<ExtensionArgs>;
 
 export async function reorderTile({
@@ -133,6 +134,7 @@ export async function updateTile({
   y,
   rowSpan,
   block,
+  animation,
 }: UpdateTileSchema) {
   return prisma.$transaction(async (transaction) => {
     // Validate section ID
@@ -153,6 +155,7 @@ export async function updateTile({
         x,
         y,
         block,
+        animation,
       },
       select: TILE_FIELDS,
     });
@@ -181,6 +184,7 @@ export async function createTilePlacement(
     y,
     rowSpan = 1,
     block,
+    animation,
     imageTileId,
     mapTileId,
     textTileId,
@@ -229,6 +233,7 @@ export async function createTilePlacement(
       x: insertX,
       y: insertY,
       block,
+      animation,
       imageTileId,
       mapTileId,
       textTileId,

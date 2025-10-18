@@ -47,6 +47,7 @@ const TILES_FIELDS = {
   y: true,
   rowSpan: true,
   block: true,
+  animation: true,
   image: {
     select: IMAGE_FIELDS,
   },
