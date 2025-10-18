@@ -25,6 +25,25 @@ enum ChartSeriesType {
   AREA
 }
 
+enum TileType {
+  IMAGE
+  VIDEO
+  TEXT
+  PLACE
+  LINK
+  PAGE_LINK
+  MAP
+  TABLE
+  CHART
+}
+
+enum Animation {
+  FADE_IN
+  SLIDE
+  GROW
+  SHRINK
+}
+
 model Page {
   id            String    @id @default(uuid()) @db.Uuid
   createdAt     DateTime  @default(now()) @map("created_at")
@@ -65,40 +84,29 @@ model Page {
   @@map("pages")
 }
 
-enum TileType {
-  IMAGE
-  VIDEO
-  TEXT
-  PLACE
-  LINK
-  PAGE_LINK
-  MAP
-  TABLE
-  CHART
-}
-
 model Tile {
-  id             String   @id @default(uuid()) @db.Uuid
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
-  pageId         String   @map("page_id") @db.Uuid
-  sectionId      String   @map("section_id") @db.Uuid
+  id             String     @id @default(uuid()) @db.Uuid
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @default(now()) @updatedAt @map("updated_at")
+  pageId         String     @map("page_id") @db.Uuid
+  sectionId      String     @map("section_id") @db.Uuid
   position       Int
-  width          Int      @default(1) @db.SmallInt
-  height         Int      @default(1) @db.SmallInt
-  rowSpan        Int      @default(1) @map("row_span") @db.SmallInt
-  x              Int      @default(0) @db.SmallInt
-  y              Int      @db.SmallInt
-  block          Boolean  @default(true)
-  imageTileId    String?  @map("image_tile_id") @db.Uuid
-  videoTileId    String?  @map("video_tile_id") @db.Uuid
-  textTileId     String?  @map("text_tile_id") @db.Uuid
-  mapTileId      String?  @map("map_tile_id") @db.Uuid
-  linkTileId     String?  @map("link_tile_id") @db.Uuid
-  pageLinkTileId String?  @map("page_link_tile_id") @db.Uuid
-  tableId        String?  @map("table_id") @db.Uuid
-  chartId        String?  @map("chart_id") @db.Uuid
+  width          Int        @default(1) @db.SmallInt
+  height         Int        @default(1) @db.SmallInt
+  rowSpan        Int        @default(1) @map("row_span") @db.SmallInt
+  x              Int        @default(0) @db.SmallInt
+  y              Int        @db.SmallInt
+  block          Boolean    @default(true)
+  imageTileId    String?    @map("image_tile_id") @db.Uuid
+  videoTileId    String?    @map("video_tile_id") @db.Uuid
+  textTileId     String?    @map("text_tile_id") @db.Uuid
+  mapTileId      String?    @map("map_tile_id") @db.Uuid
+  linkTileId     String?    @map("link_tile_id") @db.Uuid
+  pageLinkTileId String?    @map("page_link_tile_id") @db.Uuid
+  tableId        String?    @map("table_id") @db.Uuid
+  chartId        String?    @map("chart_id") @db.Uuid
   type           TileType
+  animation      Animation?
 
   page     Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
   section  Section       @relation(fields: [sectionId], references: [id], onDelete: Cascade)
