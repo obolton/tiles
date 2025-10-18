@@ -1,12 +1,12 @@
-import prisma from "@/database/prisma.ts";
+import prisma from "@/database/prisma";
 import {
   AddPlacesSchema,
   RemovePlaceSchema,
   UpdatePlaceSchema,
-} from "./schema.ts";
-import { createTilePlacement } from "../tiles/tiles.ts";
+} from "./schema";
+import { createTilePlacement } from "../tiles/tiles";
 import type { Prisma } from "@/generated/prisma/client";
-import type { CreateMapSchema } from "./schema.ts";
+import type { CreateMapSchema } from "./schema";
 
 export const PLACE_FIELDS = {
   id: true,
@@ -31,13 +31,8 @@ export type Map = Prisma.MapTileGetPayload<{ select: typeof MAP_FIELDS }>;
 export async function createMap({
   pageId,
   sectionId,
-  width,
-  height,
-  rowSpan,
-  x,
-  y,
-  block,
   places,
+  ...tile
 }: CreateMapSchema) {
   return prisma.$transaction(async (transaction) => {
     const map = await transaction.mapTile.create({
@@ -60,16 +55,11 @@ export async function createMap({
     });
     const placement = await createTilePlacement(
       {
+        ...tile,
+        type: "MAP",
         pageId,
         sectionId,
-        type: "MAP",
         mapTileId: map.id,
-        width,
-        height,
-        rowSpan,
-        x,
-        y,
-        block,
       },
       transaction,
     );

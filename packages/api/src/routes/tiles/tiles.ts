@@ -1,11 +1,11 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma";
 import type {
   ReorderTileSchema,
   DeleteTilesSchema,
   UpdateTileSchema,
-} from "./schema.ts";
-import type { Prisma, TileType } from "@/generated/prisma/client";
-import type { PrismaTransactionClient } from "@/database/prisma.ts";
+} from "./schema";
+import type { Prisma } from "@/generated/prisma/client";
+import type { PrismaTransactionClient } from "@/database/prisma";
 
 export const TILE_FIELDS = {
   id: true,
@@ -165,25 +165,10 @@ export async function deleteTiles({ pageId, ids }: DeleteTilesSchema) {
   });
 }
 
-type CreateTilePlacement = {
-  pageId: string;
-  sectionId: string;
-  type: TileType;
-  width?: number;
-  height?: number;
-  x?: number;
-  y?: number;
-  rowSpan?: number;
-  block?: boolean;
-  imageTileId?: string;
-  mapTileId?: string;
-  textTileId?: string;
-  pageLinkTileId?: string;
-  linkTileId?: string;
-  videoTileId?: string;
-  tableId?: string;
-  chartId?: string;
-};
+type CreateTilePlacement = Omit<
+  Prisma.TileUncheckedCreateInput,
+  "id" | "createdAt" | "updatedAt" | "position" | "y"
+> & { y?: number };
 
 export async function createTilePlacement(
   {

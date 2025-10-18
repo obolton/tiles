@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PositionSchema } from "@/schema/Position.ts";
+import { TileSchema } from "@/schema/Tile";
 import { RichTextSchema } from "@/schema/RichText.ts";
 import { ColorSchema } from "@/schema/Color.ts";
 import { BackgroundSchema } from "@/schema/Background.ts";
@@ -41,7 +41,7 @@ export const CreateTableSchema = z.object({
   rows: z.number().int().max(10),
   textColor: ColorSchema.nullable().optional(),
   background: BackgroundSchema.optional(),
-  ...PositionSchema.shape,
+  ...TileSchema.shape,
 });
 export type CreateTableSchema = z.infer<typeof CreateTableSchema>;
 

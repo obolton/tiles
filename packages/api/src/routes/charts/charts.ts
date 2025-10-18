@@ -1,13 +1,13 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
-import { createTilePlacement } from "../tiles/tiles.ts";
-import { getBackgroundProperties } from "@/utils/backgrounds.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma";
+import { createTilePlacement } from "../tiles/tiles";
+import { getBackgroundProperties } from "@/utils/backgrounds";
 import type {
   CreateChartSchema,
   UpdateChartSchema,
   AddSeriesSchema,
   UpdateSeriesSchema,
   DeleteSeriesSchema,
-} from "./schema.ts";
+} from "./schema";
 import type { Prisma } from "@/generated/prisma/client";
 
 export const CHART_SERIES_FIELDS = {
@@ -52,15 +52,10 @@ export async function createChart({
   pageId,
   sectionId,
   tableId,
-  width,
-  height,
-  rowSpan,
-  x,
-  y,
-  block,
   labelColumnId,
   background,
   series = [],
+  ...tile
 }: CreateChartSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to data
@@ -98,16 +93,11 @@ export async function createChart({
 
     const placement = await createTilePlacement(
       {
+        ...tile,
         type: "CHART",
         pageId,
         sectionId,
         chartId: chart.id,
-        width,
-        height,
-        rowSpan,
-        x,
-        y,
-        block,
       },
       transaction,
     );

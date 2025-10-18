@@ -6,7 +6,7 @@ const MAX_ROWS = 32;
 const MAX_X = 32;
 const MAX_Y = 32;
 
-export const PositionSchema = z.object({
+export const TileSchema = z.object({
   x: z.int().gte(0).lte(MAX_X).optional(),
   y: z.int().gte(0).lte(MAX_Y).optional(),
   width: z.int().gte(1).lte(MAX_WIDTH).optional(),
@@ -14,4 +14,4 @@ export const PositionSchema = z.object({
   rowSpan: z.int().gte(1).lte(MAX_ROWS).optional(),
   block: z.boolean().optional(),
 });
-export type PositionSchema = z.infer<typeof PositionSchema>;
+export type TileSchema = z.infer<typeof TileSchema>;

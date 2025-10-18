@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { ChartSeriesType } from "@/generated/prisma/enums";
-import { PositionSchema } from "@/schema/Position.ts";
+import { TileSchema } from "@/schema/Tile";
 import { BackgroundSchema } from "@/schema/Background.ts";
 
 export const CreateChartSchema = z.strictObject({
   pageId: z.uuid(),
   sectionId: z.uuid(),
-  ...PositionSchema.shape,
+  ...TileSchema.shape,
   tableId: z.uuid(),
   labelColumnId: z.uuid().optional(),
   background: BackgroundSchema.optional(),

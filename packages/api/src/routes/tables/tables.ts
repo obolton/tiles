@@ -1,9 +1,9 @@
 import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
-import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
-import { createTilePlacement } from "../tiles/tiles.ts";
-import { getBackgroundProperties } from "@/utils/backgrounds.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma";
+import { createTilePlacement } from "../tiles/tiles";
+import { getBackgroundProperties } from "@/utils/backgrounds";
 import type { Prisma } from "@/generated/prisma/client";
-import type { PrismaTransactionClient } from "@/database/prisma.ts";
+import type { PrismaTransactionClient } from "@/database/prisma";
 import type {
   CreateTableSchema,
   UpdateTableSchema,
@@ -17,8 +17,8 @@ import type {
   DeleteColumnsSchema,
   UpdateCellSchema,
   ClearRangesSchema,
-} from "./schema.ts";
-import type { ColorSchema } from "@/schema/Color.ts";
+} from "./schema";
+import type { ColorSchema } from "@/schema/Color";
 
 export const TABLE_COLUMN_FIELDS = {
   id: true,
@@ -102,12 +102,7 @@ export async function createTable({
   rows,
   textColor,
   background,
-  width,
-  height,
-  rowSpan,
-  x,
-  y,
-  block,
+  ...tile
 }: CreateTableSchema) {
   return prisma.$transaction(async (transaction) => {
     const table = await transaction.table.create({
@@ -139,16 +134,11 @@ export async function createTable({
 
     const placement = await createTilePlacement(
       {
+        ...tile,
+        type: "TABLE",
         pageId,
         sectionId,
-        type: "TABLE",
         tableId: table.id,
-        width,
-        height,
-        rowSpan,
-        x,
-        y,
-        block,
       },
       transaction,
     );

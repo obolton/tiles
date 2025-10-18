@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { PositionSchema } from "@/schema/Position.ts";
+import { TileSchema } from "@/schema/Tile";
 import { RichTextSchema } from "@/schema/RichText.ts";
 
 export const CreateImageSchema = z.object({
   pageId: z.uuid(),
   sectionId: z.uuid(),
-  ...PositionSchema.shape,
+  ...TileSchema.shape,
   imageKey: z.string(),
   text: RichTextSchema.nullable().optional(),
   theme: z.string().nullable().optional(),

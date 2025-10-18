@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { PositionSchema } from "@/schema/Position.ts";
+import { TileSchema } from "@/schema/Tile";
 
 export const CreateVideoSchema = z.object({
   pageId: z.uuid(),
   sectionId: z.uuid(),
   url: z.url(),
-  ...PositionSchema.shape,
+  ...TileSchema.shape,
 });
 export type CreateVideoSchema = z.infer<typeof CreateVideoSchema>;
 

@@ -1,9 +1,9 @@
-import prisma from "@/database/prisma.ts";
-import { createTilePlacement } from "../tiles/tiles.ts";
-import type { CreateTextSchema, UpdateTextSchema } from "./schema.ts";
+import prisma from "@/database/prisma";
+import { createTilePlacement } from "../tiles/tiles";
+import type { CreateTextSchema, UpdateTextSchema } from "./schema";
 import type { Prisma } from "@/generated/prisma/client";
-import type { ColorSchema } from "@/schema/Color.ts";
-import { getBackgroundProperties } from "@/utils/backgrounds.ts";
+import type { ColorSchema } from "@/schema/Color";
+import { getBackgroundProperties } from "@/utils/backgrounds";
 
 export const TEXT_FIELDS = {
   id: true,
@@ -51,13 +51,8 @@ export async function createText({
   content,
   textColor,
   background,
-  width,
-  height,
-  rowSpan,
-  x,
-  y,
-  block,
   align,
+  ...tile
 }: CreateTextSchema) {
   return prisma.$transaction(async (transaction) => {
     const text = await transaction.textTile.create({
@@ -72,16 +67,11 @@ export async function createText({
     });
     const placement = await createTilePlacement(
       {
+        ...tile,
         type: "TEXT",
         pageId,
         sectionId,
         textTileId: text.id,
-        width,
-        height,
-        rowSpan,
-        x,
-        y,
-        block,
       },
       transaction,
     );

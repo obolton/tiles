@@ -18,12 +18,7 @@ export async function createVideo({
   pageId,
   sectionId,
   url,
-  width,
-  height,
-  rowSpan,
-  x,
-  y,
-  block,
+  ...tile
 }: CreateVideoSchema) {
   return prisma.$transaction(async (transaction) => {
     const videoInfo = getVideoInfo(url);
@@ -46,16 +41,11 @@ export async function createVideo({
     });
     const placement = await createTilePlacement(
       {
+        ...tile,
+        type: "VIDEO",
         pageId,
         sectionId,
-        type: "VIDEO",
         videoTileId: video.id,
-        width,
-        height,
-        rowSpan,
-        x,
-        y,
-        block,
       },
       transaction,
     );
