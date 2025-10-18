@@ -14,6 +14,6 @@ export const TileSchema = z.object({
   height: z.int().gte(1).lte(MAX_HEIGHT).optional(),
   rowSpan: z.int().gte(1).lte(MAX_ROWS).optional(),
   block: z.boolean().optional(),
-  animation: z.enum(Animation).optional(),
+  animation: z.enum(Animation).nullable().optional(),
 });
 export type TileSchema = z.infer<typeof TileSchema>;
