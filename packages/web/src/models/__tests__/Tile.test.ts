@@ -4,11 +4,15 @@ import Editor from "@/editor/Editor";
 import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
 import { TILE } from "@/test/fixtures/Tile";
+import type { Animation } from "api/types/tiles";
 
 vi.mock("@/api/client", () => ({
   default: {
     tiles: {
       delete: {
+        mutate: vi.fn(),
+      },
+      update: {
         mutate: vi.fn(),
       },
     },
@@ -37,6 +41,7 @@ describe("Tile", () => {
     expect(tile.height.value).toBe(TILE.height);
     expect(tile.rowSpan.value).toBe(TILE.rowSpan);
     expect(tile.block.value).toBe(TILE.block);
+    expect(tile.animation.value).toBe(TILE.animation);
   });
 
   describe("delete", () => {
@@ -48,6 +53,45 @@ describe("Tile", () => {
       expect(client.tiles.delete.mutate).toHaveBeenCalledWith({
         pageId: PAGE.id,
         ids: [TILE.placementId],
+      });
+    });
+  });
+
+  describe("setAnimation", () => {
+    test("updates the animation and persists the placement", async () => {
+      const tile = new Tile(editor, TILE);
+      const animation: Animation = "GROW";
+
+      vi.mocked(client.tiles.update.mutate).mockResolvedValue({
+        ...TILE,
+        animation,
+      });
+
+      await tile.setAnimation(animation);
+
+      expect(tile.animation.value).toBe(animation);
+      expect(client.tiles.update.mutate).toHaveBeenCalledWith({
+        animation,
+        pageId: PAGE.id,
+        id: TILE.placementId,
+      });
+    });
+
+    test("clears the animation", async () => {
+      const tile = new Tile(editor, TILE);
+
+      vi.mocked(client.tiles.update.mutate).mockResolvedValue({
+        ...TILE,
+        animation: null,
+      });
+
+      await tile.setAnimation(null);
+
+      expect(tile.animation.value).toBeNull();
+      expect(client.tiles.update.mutate).toHaveBeenCalledWith({
+        animation: null,
+        pageId: PAGE.id,
+        id: TILE.placementId,
       });
     });
   });

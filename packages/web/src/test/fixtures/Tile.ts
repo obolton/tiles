@@ -15,7 +15,8 @@ const SHARED = {
   height: 13,
   rowSpan: 2,
   block: false,
-};
+  animation: "FADE_IN",
+} as const;
 
 export const TILE: ClientTile = {
   ...SHARED,
