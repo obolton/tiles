@@ -9,6 +9,7 @@ import type {
   Layout,
   Anchor,
   Dimensions,
+  Animation,
 } from "@/generated/prisma/client";
 import type { Section } from "@/routes/sections/sections";
 import type { Text } from "@/routes/text/text";
@@ -31,6 +32,7 @@ type ClientTileBase = Pick<
   | "height"
   | "rowSpan"
   | "block"
+  | "animation"
 > & { placementId: string };
 
 // Image
@@ -125,4 +127,4 @@ export type ClientTile =
   | ClientTableTile
   | ClientChartTile;
 
-export type { TileType, ChartSeries, Layout, Anchor, Dimensions };
+export type { TileType, ChartSeries, Layout, Anchor, Dimensions, Animation };
