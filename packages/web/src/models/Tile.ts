@@ -4,6 +4,8 @@ import type { ClientTile, Animation } from "api/types/tiles";
 import type Editor from "@/editor/Editor";
 import type { AppRouterInputs } from "@/api/client";
 
+export type { Animation };
+
 export default class Tile {
   readonly editor: Editor;
   readonly id: string;

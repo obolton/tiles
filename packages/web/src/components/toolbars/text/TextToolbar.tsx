@@ -3,17 +3,30 @@ import ToolbarButton from "@/components/buttons/ToolbarButton";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
 import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
+import AnimationIcon from "@/icons/animation.svg?jsx";
+import SlideIcon from "@/icons/slide.svg?jsx";
+import GrowIcon from "@/icons/grow.svg?jsx";
+import ShrinkIcon from "@/icons/shrink.svg?jsx";
+import FadeIcon from "@/icons/fade.svg?jsx";
 import ExpandHeightIcon from "@/icons/expand-height.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
 import type Text from "@/models/Text";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type { Animation } from "@/models/Tile";
 
 const ALIGN_ICON = {
   TOP: <VerticalAlignTopIcon aria-hidden="true" slot="icon" />,
   CENTER: <VerticalAlignCenterIcon aria-hidden="true" slot="icon" />,
   BOTTOM: <VerticalAlignBottomIcon aria-hidden="true" slot="icon" />,
+} as const;
+
+const ANIMATION_ICON = {
+  SLIDE: <SlideIcon aria-hidden="true" slot="icon" />,
+  GROW: <GrowIcon aria-hidden="true" slot="icon" />,
+  SHRINK: <ShrinkIcon aria-hidden="true" slot="icon" />,
+  FADE_IN: <FadeIcon aria-hidden="true" slot="icon" />,
 } as const;
 
 export interface TextToolbarProps {
@@ -22,7 +35,7 @@ export interface TextToolbarProps {
 }
 
 export default function TextToolbar({ text, anchorName }: TextToolbarProps) {
-  const { id, placementId, align, block } = text;
+  const { id, placementId, align, block, animation } = text;
 
   function toggleBlock() {
     let height: number | undefined = undefined;
@@ -122,6 +135,44 @@ export default function TextToolbar({ text, anchorName }: TextToolbarProps) {
             </li>
           ) : null,
         )}
+
+        <li role="presentation">
+          <swatch-select
+            role="menuitem"
+            aria-label="Animation"
+            data-tooltip="Animation"
+            aria-orientation="vertical"
+            orientation="vertical"
+            align="center"
+            value={animation}
+            on:change={(event) =>
+              text.setAnimation(
+                (event.currentTarget as SwatchSelect).value as Animation,
+              )
+            }
+          >
+            {animation.derive((value) =>
+              value ? (
+                ANIMATION_ICON[value]
+              ) : (
+                <AnimationIcon aria-hidden="true" slot="icon" />
+              ),
+            )}
+
+            <swatch-item value="SLIDE" data-tooltip="Slide">
+              <SlideIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="GROW" data-tooltip="Grow">
+              <GrowIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="SHRINK" data-tooltip="Shrink">
+              <ShrinkIcon aria-hidden="true" />
+            </swatch-item>
+            <swatch-item value="FADE_IN" data-tooltip="Fade in">
+              <FadeIcon aria-hidden="true" />
+            </swatch-item>
+          </swatch-select>
+        </li>
       </ul>
 
       <ul role="group" aria-label="More tools">
