@@ -6,8 +6,13 @@ model Image {
   key         String
   bytes       Int
 
-  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace  Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  imageTiles ImageTile[]
+  textTiles  TextTile[]
+  tables     Table[]
+  charts     Chart[]
+  sections   Section[]
 
   @@index([workspaceId])
   @@map("images")

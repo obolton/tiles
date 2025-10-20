@@ -129,7 +129,7 @@ model ImageTile {
   pageId    String   @map("page_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  imageKey  String   @map("image_key")
+  imageId   String?  @map("image_id") @db.Uuid
   originX   Float    @default(0.5) @map("origin_x") @db.Real
   originY   Float    @default(0.5) @map("origin_y") @db.Real
   /// [RichText]
@@ -138,6 +138,7 @@ model ImageTile {
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tiles Tile[]
+  image Image? @relation(fields: [imageId], references: [id], onDelete: SetNull)
 
   @@index([pageId])
   @@map("image_tiles")
@@ -183,11 +184,12 @@ model TextTile {
   backgroundBC       Float?             @map("background_b_c") @db.Real
   backgroundBH       Float?             @map("background_b_h") @db.Real
   backgroundGradient GradientDirection? @map("background_gradient")
-  backgroundImageKey String?            @map("background_image_key")
+  backgroundImageId  String?            @map("background_image_id") @db.Uuid
   align              VerticalAlignment  @default(TOP)
 
-  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tiles Tile[]
+  page            Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tiles           Tile[]
+  backgroundImage Image? @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
 
   @@index([pageId])
   @@map("text_tiles")
@@ -273,13 +275,14 @@ model Table {
   backgroundBC       Float?             @map("background_b_c") @db.Real
   backgroundBH       Float?             @map("background_b_h") @db.Real
   backgroundGradient GradientDirection? @map("background_gradient")
-  backgroundImageKey String?            @map("background_image_key")
+  backgroundImageId  String?            @map("background_image_id") @db.Uuid
 
-  page    Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tiles   Tile[]
-  columns TableColumn[]
-  rows    TableRow[]
-  charts  Chart[]
+  page            Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tiles           Tile[]
+  backgroundImage Image?        @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
+  columns         TableColumn[]
+  rows            TableRow[]
+  charts          Chart[]
 
   @@index([pageId])
   @@map("table_tiles")
@@ -344,13 +347,14 @@ model Chart {
   backgroundBC       Float?             @map("background_b_c") @db.Real
   backgroundBH       Float?             @map("background_b_h") @db.Real
   backgroundGradient GradientDirection? @map("background_gradient")
-  backgroundImageKey String?            @map("background_image_key")
+  backgroundImageId  String?            @map("background_image_id") @db.Uuid
 
-  page   Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  table  Table         @relation(fields: [tableId], references: [id], onDelete: Cascade)
-  label  TableColumn?  @relation(fields: [labelColumnId], references: [id], onDelete: SetNull)
-  tiles  Tile[]
-  series ChartSeries[]
+  page            Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  backgroundImage Image?        @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
+  table           Table         @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  label           TableColumn?  @relation(fields: [labelColumnId], references: [id], onDelete: SetNull)
+  tiles           Tile[]
+  series          ChartSeries[]
 
   @@index([pageId])
   @@map("charts")

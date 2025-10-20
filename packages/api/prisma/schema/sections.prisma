@@ -36,11 +36,12 @@ model Section {
   backgroundBC       Float?             @map("background_b_c") @db.Real
   backgroundBH       Float?             @map("background_b_h") @db.Real
   backgroundGradient GradientDirection? @map("background_gradient")
-  backgroundImageKey String?            @map("background_image_key")
+  backgroundImageId  String?            @map("background_image_id") @db.Uuid
   hide               Boolean            @default(false)
 
-  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  items Tile[]
+  page            Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  items           Tile[]
+  backgroundImage Image? @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
 
   @@index([pageId])
   @@index([order])
