@@ -6,7 +6,7 @@ export const CreateImageSchema = z.object({
   pageId: z.uuid(),
   sectionId: z.uuid(),
   ...TileSchema.shape,
-  imageKey: z.string(),
+  imageId: z.uuid(),
   text: RichTextSchema.nullable().optional(),
   theme: z.string().nullable().optional(),
 });

@@ -16,7 +16,7 @@ export const GradientBackgroundSchema = z.object({
 
 export const ImageBackgroundSchema = z.object({
   type: z.literal("image"),
-  imageKey: z.string(),
+  imageId: z.uuid(),
 });
 
 export const BackgroundSchema = z

@@ -21,7 +21,7 @@ export type Image = Prisma.Result<
 export async function createImage({
   pageId,
   sectionId,
-  imageKey,
+  imageId,
   text,
   theme,
   ...tile
@@ -30,7 +30,7 @@ export async function createImage({
     const image = await transaction.imageTile.create({
       data: {
         pageId,
-        imageKey,
+        imageId,
         text,
         theme,
       },

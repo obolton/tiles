@@ -43,7 +43,7 @@ describe("createImage", () => {
     const result = await createImage({
       pageId: "1",
       sectionId: "test-collection",
-      imageKey: "test-image-key",
+      imageId: "test-image-id",
       text: [
         {
           type: "paragraph",
