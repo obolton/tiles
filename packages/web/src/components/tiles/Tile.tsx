@@ -10,6 +10,7 @@ import { toCSSColor, isDark, type Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
 import type { Background } from "@/components/backgrounds/types";
+import type { Animation } from "@/models/Tile";
 
 export type TileProps = {
   className?: string;
@@ -17,6 +18,7 @@ export type TileProps = {
   font?: FontId | null;
   textColor?: Reactive<Color | null>;
   background?: Reactive<Background | null>;
+  animation?: Reactive<Animation | null>;
   border?:
     | Reactive<"inside" | "outside" | "none">
     | "inside"
@@ -31,19 +33,27 @@ const BORDER_CLASSES = {
   none: null,
 } as const;
 
+const ANIMATION_NAMES: Record<Animation, string> = {
+  SLIDE: "slide-in",
+  GROW: "grow-in",
+  SHRINK: "shrink-in",
+  FADE_IN: "fade-in",
+};
+
 export default function Tile({
   className,
   children,
   textColor = reactive(null),
   background = reactive(null),
+  animation = reactive(null),
   font,
   border = "outside",
   anchorName,
 }: TileProps) {
   const fontConfig = typeof font === "string" ? getFontConfig(font) : undefined;
   const style = new Computed(
-    [textColor, background] as const,
-    (textColorValue, backgroundValue) => ({
+    [textColor, background, animation] as const,
+    (textColorValue, backgroundValue, animationValue) => ({
       "--font": fontConfig
         ? `"${fontConfig.family}", "${fontConfig.fallback}"`
         : undefined,
@@ -52,6 +62,9 @@ export default function Tile({
         backgroundValue && "color" in backgroundValue
           ? toCSSColor(backgroundValue.color)
           : "transparent",
+      "--animation-name": animationValue
+        ? ANIMATION_NAMES[animationValue]
+        : undefined,
       backgroundImage:
         backgroundValue && "imageUrl" in backgroundValue
           ? `url(${backgroundValue.imageUrl})`
@@ -76,6 +89,7 @@ export default function Tile({
                 : undefined,
             )
           : undefined,
+        animation?.derive((value) => (value ? styles.animate : undefined)),
         className,
       ]}
       style={style}

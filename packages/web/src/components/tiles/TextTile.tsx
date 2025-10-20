@@ -23,6 +23,7 @@ export default function TextTile({ text, hasFocus }: TextTileProps) {
     textColor,
     align,
     background,
+    animation,
     state,
     editor: { isEditable },
   } = text;
@@ -116,6 +117,7 @@ export default function TextTile({ text, hasFocus }: TextTileProps) {
     <Tile
       textColor={textColor}
       background={background}
+      animation={animation}
       border={background.derive((value) => (value ? "outside" : "none"))}
       anchorName={anchorName}
     >

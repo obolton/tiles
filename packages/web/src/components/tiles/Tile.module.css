@@ -43,3 +43,9 @@
     0 0 0 1px rgb(0 0 0 / 20%),
     0 6px 4px -4px rgb(0 0 0 / 15%);
 }
+
+.animate {
+  animation-duration: var(--animation-duration);
+  animation-timing-function: var(--easing);
+  animation-name: var(--animation-name);
+}
