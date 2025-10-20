@@ -34,10 +34,10 @@ const BORDER_CLASSES = {
 } as const;
 
 const ANIMATION_NAMES: Record<Animation, string> = {
+  FADE: "fade-in",
   SLIDE: "slide-in",
   GROW: "grow-in",
   SHRINK: "shrink-in",
-  FADE_IN: "fade-in",
 };
 
 export default function Tile({
