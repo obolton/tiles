@@ -4,7 +4,7 @@ import {
   getImageUrl,
   getLinkImageUrl,
   getVideoImageUrl,
-} from "@/utils/cdn.ts";
+} from "@/utils/cdn";
 
 export default Prisma.defineExtension({
   name: "images-extension",
@@ -27,17 +27,9 @@ export default Prisma.defineExtension({
     },
     imageTile: {
       imageUrl: {
-        needs: { imageKey: true },
-        compute({ imageKey }) {
-          return getImageUrl(imageKey);
-        },
-      },
-    },
-    textTile: {
-      imageUrl: {
-        needs: { backgroundImageKey: true },
-        compute({ backgroundImageKey }) {
-          return backgroundImageKey ? getImageUrl(backgroundImageKey) : null;
+        needs: { imageId: true },
+        compute({ imageId }) {
+          return imageId ? getImageUrl(imageId) : null;
         },
       },
     },

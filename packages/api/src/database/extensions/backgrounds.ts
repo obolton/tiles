@@ -20,7 +20,7 @@ function compute({
   backgroundBC: bc,
   backgroundBH: bh,
   backgroundGradient: gradient,
-  backgroundImageKey: imageKey,
+  backgroundImageId: imageId,
 }: {
   backgroundL: number | null;
   backgroundC: number | null;
@@ -29,10 +29,10 @@ function compute({
   backgroundBC?: number | null;
   backgroundBH?: number | null;
   backgroundGradient?: GradientDirection | null;
-  backgroundImageKey?: string | null;
+  backgroundImageId?: string | null;
 }): Background {
-  if (imageKey) {
-    return { type: "image", imageUrl: getImageUrl(imageKey) };
+  if (imageId) {
+    return { type: "image", imageUrl: getImageUrl(imageId) };
   }
 
   if (gradient) {
@@ -84,7 +84,7 @@ export default Prisma.defineExtension({
           backgroundBC: true,
           backgroundBH: true,
           backgroundGradient: true,
-          backgroundImageKey: true,
+          backgroundImageId: true,
         },
         compute,
       },
@@ -99,7 +99,7 @@ export default Prisma.defineExtension({
           backgroundBC: true,
           backgroundBH: true,
           backgroundGradient: true,
-          backgroundImageKey: true,
+          backgroundImageId: true,
         },
         compute,
       },
@@ -114,7 +114,7 @@ export default Prisma.defineExtension({
           backgroundBC: true,
           backgroundBH: true,
           backgroundGradient: true,
-          backgroundImageKey: true,
+          backgroundImageId: true,
         },
         compute,
       },
@@ -129,7 +129,7 @@ export default Prisma.defineExtension({
           backgroundBC: true,
           backgroundBH: true,
           backgroundGradient: true,
-          backgroundImageKey: true,
+          backgroundImageId: true,
         },
         compute,
       },
