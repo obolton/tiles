@@ -46,3 +46,30 @@ pop-out::part(close) {
     filter: blur(16px);
   }
 }
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    translate: 0 50%;
+  }
+}
+
+@keyframes grow-in {
+  from {
+    opacity: 0;
+    scale: 50%;
+  }
+}
+
+@keyframes shrink-in {
+  from {
+    opacity: 0;
+    scale: 150%;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
