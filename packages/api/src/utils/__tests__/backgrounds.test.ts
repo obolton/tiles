@@ -11,13 +11,14 @@ describe("getBackgroundProperties", () => {
       backgroundL: null,
       backgroundC: null,
       backgroundH: null,
-      backgroundImageKey: null,
+      backgroundImageId: null,
     });
   });
 
   test("returns a color background", () => {
     expect(
       getBackgroundProperties({
+        type: "color",
         color: {
           l: 0.5,
           c: 0.4,
@@ -28,20 +29,21 @@ describe("getBackgroundProperties", () => {
       backgroundL: 0.5,
       backgroundC: 0.4,
       backgroundH: 30,
-      backgroundImageKey: null,
+      backgroundImageId: null,
     });
   });
 
   test("returns an image background", () => {
     expect(
       getBackgroundProperties({
-        imageKey: "test",
+        type: "image",
+        imageId: "test",
       }),
     ).toEqual({
       backgroundL: null,
       backgroundC: null,
       backgroundH: null,
-      backgroundImageKey: "test",
+      backgroundImageId: "test",
     });
   });
 });

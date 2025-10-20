@@ -1,5 +1,5 @@
 import type { GradientDirection } from "@/generated/prisma/client";
-import type { BackgroundSchema } from "@/schema/Background.ts";
+import type { BackgroundSchema } from "@/schema/Background";
 
 export interface Background {
   backgroundL: number | null;
@@ -9,7 +9,7 @@ export interface Background {
   backgroundBC: number | null;
   backgroundBH: number | null;
   backgroundGradient: GradientDirection | null;
-  backgroundImageKey: string | null;
+  backgroundImageId: string | null;
 }
 
 export function getBackgroundProperties(
@@ -28,7 +28,7 @@ export function getBackgroundProperties(
       backgroundBC: null,
       backgroundBH: null,
       backgroundGradient: null,
-      backgroundImageKey: null,
+      backgroundImageId: null,
     };
   }
 
@@ -41,7 +41,7 @@ export function getBackgroundProperties(
       backgroundBC: null,
       backgroundBH: null,
       backgroundGradient: null,
-      backgroundImageKey: null,
+      backgroundImageId: null,
     };
   }
 
@@ -55,7 +55,7 @@ export function getBackgroundProperties(
       backgroundBC: colorB?.c ?? null,
       backgroundBH: colorB?.h ?? null,
       backgroundGradient: background.direction,
-      backgroundImageKey: null,
+      backgroundImageId: null,
     };
   }
 
@@ -68,7 +68,7 @@ export function getBackgroundProperties(
       backgroundBC: null,
       backgroundBH: null,
       backgroundGradient: null,
-      backgroundImageKey: background.imageKey,
+      backgroundImageId: background.imageId,
     };
   }
 
