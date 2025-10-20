@@ -8,6 +8,7 @@ import { handleError } from "@/utils/errors";
 import styles from "./TextEditor.module.css";
 import { reactive, flag } from "@/utils/reactivity";
 import If from "@/jsx/if";
+import Portal from "@/jsx/portal";
 import type { Format } from "@/utils/richText/format";
 import type { RichText } from "@/utils/richText/types";
 import type { Command } from "prosemirror-state";
@@ -114,14 +115,16 @@ export default function TextEditor({
       />
 
       <If condition={showToolbar}>
-        <FormattingToolbar
-          format={format}
-          prompting={prompting}
-          getEditorView={getEditorView}
-          performCommand={performCommand}
-        >
-          {extraToolbarItems}
-        </FormattingToolbar>
+        <Portal>
+          <FormattingToolbar
+            format={format}
+            prompting={prompting}
+            getEditorView={getEditorView}
+            performCommand={performCommand}
+          >
+            {extraToolbarItems}
+          </FormattingToolbar>
+        </Portal>
       </If>
     </>
   );
