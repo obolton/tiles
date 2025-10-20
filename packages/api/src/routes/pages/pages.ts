@@ -120,30 +120,20 @@ type TileWithData = Prisma.Result<
   "findMany"
 >[number];
 
-export function formatTile({
-  id,
-  position,
-  x,
-  y,
-  width,
-  height,
-  rowSpan,
-  block,
-  sectionId,
-  ...tile
-}: TileWithData): ClientTile {
-  const base = {
-    sectionId,
-    placementId: id,
-    position,
-    x,
-    y,
-    width,
-    height,
-    rowSpan,
-    block,
-  };
-  const { image, video, text, map, link, pageLink, table, chart } = tile;
+export function formatTile(tile: TileWithData): ClientTile {
+  const {
+    id: placementId,
+    image,
+    video,
+    text,
+    map,
+    link,
+    pageLink,
+    table,
+    chart,
+    ...properties
+  } = tile;
+  const base = { placementId, ...properties };
 
   if (image) {
     return {
@@ -211,7 +201,7 @@ export function formatTile({
     };
   }
 
-  throw new Error(`Invalid tile: ${id}`);
+  throw new Error(`Invalid tile: ${placementId}`);
 }
 
 export async function getPageById(
