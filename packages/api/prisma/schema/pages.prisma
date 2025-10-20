@@ -38,7 +38,7 @@ enum TileType {
 }
 
 enum Animation {
-  FADE_IN
+  FADE
   SLIDE
   GROW
   SHRINK
