@@ -51,11 +51,13 @@ describe("formatColor", () => {
     expect(formatColor(color, 16)).toBe("1234cdef9999");
   });
 
+  test("removes fractional parts before hex conversion", () => {
+    const formatted = formatColor({ l: 0.5, c: 0.25, h: 1 }, 8);
+    expect(formatted).toBe("7f3f00");
+  });
+
   test("clamps channel values into range", () => {
-    const formatted = formatColor({ l: 2, c: -1, h: 720 }, 8);
-    expect(formatted.slice(0, 2)).toBe("ff"); // lightness clamps to max
-    expect(formatted.slice(2, 4)).toBe("00"); // chroma clamps to min
-    expect(formatted.slice(4, 6)).toBe("00"); // hue wraps to zero
+    expect(formatColor({ l: 2, c: -1, h: 720 }, 8)).toBe("ff0000");
   });
 });
 

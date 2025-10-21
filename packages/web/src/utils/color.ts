@@ -29,9 +29,9 @@ export function formatColor(
 ): Color {
   const channelChars = channelBits / 4;
   const channelMax = (1 << channelBits) - 1;
-  const l = Math.min(Math.max(color.l, 0), 1) * channelMax;
-  const c = Math.min(Math.max(color.c, 0), 1) * channelMax;
-  const h = ((color.h % 360) / 360) * channelMax;
+  const l = (Math.min(Math.max(color.l, 0), 1) * channelMax) & channelMax;
+  const c = (Math.min(Math.max(color.c, 0), 1) * channelMax) & channelMax;
+  const h = (((color.h % 360) / 360) * channelMax) & channelMax;
   const lHex = l.toString(16).padStart(channelChars, "0");
   const cHex = c.toString(16).padStart(channelChars, "0");
   const hHex = h.toString(16).padStart(channelChars, "0");
