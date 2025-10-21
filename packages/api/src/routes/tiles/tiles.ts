@@ -1,4 +1,9 @@
+import { generateKeyBetween } from "fractional-indexing";
 import prisma, { type ExtensionArgs } from "@/database/prisma";
+import {
+  getFirstTileOrderQuery,
+  getTileOrderQuery,
+} from "@/generated/prisma/sql";
 import type {
   ReorderTileSchema,
   DeleteTilesSchema,
@@ -10,7 +15,7 @@ import type { PrismaTransactionClient } from "@/database/prisma";
 export const TILE_FIELDS = {
   id: true,
   sectionId: true,
-  position: true,
+  order: true,
   width: true,
   height: true,
   x: true,
@@ -20,6 +25,25 @@ export const TILE_FIELDS = {
   animation: true,
 } as const satisfies Prisma.TileSelect<ExtensionArgs>;
 
+export async function getTileOrder(
+  transaction: PrismaTransactionClient,
+  pageId: string,
+  sectionId: string,
+  afterTileId: string | null,
+): Promise<string> {
+  if (afterTileId === null) {
+    const [result] = await transaction.$queryRawTyped(
+      getFirstTileOrderQuery(pageId, sectionId),
+    );
+    return generateKeyBetween(null, result?.order ?? null);
+  }
+
+  const [result] = await transaction.$queryRawTyped(
+    getTileOrderQuery(pageId, sectionId, afterTileId),
+  );
+  return generateKeyBetween(result?.a ?? null, result?.b ?? null);
+}
+
 export async function reorderTile({
   pageId,
   id,
@@ -27,100 +51,17 @@ export async function reorderTile({
   afterId,
 }: ReorderTileSchema) {
   return prisma.$transaction(async (transaction) => {
-    const { sectionId: previousSectionId, position: previousPosition } =
-      await transaction.tile.findUniqueOrThrow({
-        where: { pageId, id },
-        select: { sectionId: true, position: true },
-      });
-
-    const afterTile = afterId
-      ? await transaction.tile.findUniqueOrThrow({
-          where: { pageId, id: afterId, sectionId },
-          select: { position: true },
-        })
-      : null;
-
-    const position = afterTile ? afterTile.position + 1 : 0;
-
-    // Move within same collection
-    if (sectionId === previousSectionId) {
-      // Move down collection
-      if (position > previousPosition) {
-        await Promise.all([
-          transaction.tile.updateMany({
-            where: {
-              pageId,
-              sectionId,
-              id: { not: id },
-              position: { gt: previousPosition, lte: position },
-            },
-            data: { position: { decrement: 1 } },
-          }),
-          transaction.tile.update({
-            where: { pageId, id },
-            data: { position },
-          }),
-        ]);
-        // Move up collection
-      } else {
-        await Promise.all([
-          transaction.tile.updateMany({
-            where: {
-              pageId,
-              sectionId,
-              id: { not: id },
-              position: { gte: position, lt: previousPosition },
-            },
-            data: { position: { increment: 1 } },
-          }),
-          transaction.tile.update({
-            where: { pageId, id },
-            data: { position },
-          }),
-        ]);
-      }
-
-      // Move to new collection
-    } else {
-      await Promise.all([
-        // Remove position from old collection
-        transaction.tile.updateMany({
-          where: {
-            pageId,
-            sectionId: previousSectionId,
-            id: { not: id },
-            position: { gt: previousPosition },
-          },
-          data: { position: { decrement: 1 } },
-        }),
-
-        // Create space in new collection
-        transaction.tile.updateMany({
-          where: {
-            pageId,
-            sectionId,
-            id: { not: id },
-            position: { gte: position },
-          },
-          data: { position: { increment: 1 } },
-        }),
-
-        // Move item to collection
-        transaction.tile.update({
-          where: { pageId, id },
-          data: { sectionId, position },
-          select: { id: true },
-        }),
-      ]);
-    }
-
-    return {
-      id,
+    const order = await getTileOrder(
+      transaction,
       pageId,
-      fromPosition: previousPosition,
-      toPosition: position,
       sectionId,
-    };
+      afterId ?? null,
+    );
+    return transaction.tile.update({
+      where: { pageId, id },
+      data: { sectionId, order },
+      select: TILE_FIELDS,
+    });
   });
 }
 
@@ -170,7 +111,7 @@ export async function deleteTiles({ pageId, ids }: DeleteTilesSchema) {
 
 type CreateTilePlacement = Omit<
   Prisma.TileUncheckedCreateInput,
-  "id" | "createdAt" | "updatedAt" | "position" | "y"
+  "id" | "createdAt" | "updatedAt" | "order" | "y"
 > & { y?: number };
 
 export async function createTilePlacement(
@@ -196,10 +137,6 @@ export async function createTilePlacement(
   }: CreateTilePlacement,
   transaction: PrismaTransactionClient,
 ) {
-  const position = await transaction.tile.count({
-    where: { pageId },
-  });
-
   let insertX;
   let insertY;
   let insertWidth;
@@ -221,12 +158,14 @@ export async function createTilePlacement(
     insertWidth = next.width;
   }
 
+  const order = await getTileOrder(transaction, pageId, sectionId, null);
+
   const { id: placementId, ...tile } = await transaction.tile.create({
     data: {
       pageId,
       sectionId,
       type,
-      position,
+      order,
       width: insertWidth,
       height,
       rowSpan,
