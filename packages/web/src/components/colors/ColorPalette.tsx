@@ -1,5 +1,11 @@
 import styles from "./ColorPalette.module.css";
-import { getColorName, isSameColor, type Color } from "@/utils/color";
+import {
+  getColorName,
+  isSameColor,
+  toCSSColor,
+  formatColor,
+  type Color,
+} from "@/utils/color";
 import type { Reactive } from "@/utils/reactivity";
 
 export interface ColorPaletteProps {
@@ -23,21 +29,29 @@ export default function ColorPalette({
   value,
   onChange,
 }: ColorPaletteProps) {
-  const colors: Color[] = [];
+  const items: {
+    color: Color;
+    name: string;
+  }[] = [];
 
   for (let l = rows - 1; l >= 0; l--) {
     for (let i = 0; i < hues; i++) {
-      colors.push({
+      const color = {
         l: (l / (rows - 1)) * (maxLightness - minLightness) + minLightness,
         c: chroma,
         h: startHue + (i / hues) * 360,
-      });
+      };
+      items.push({ color: formatColor(color), name: getColorName(color) });
     }
 
-    colors.push({
+    const grayscale = {
       l: (l / (rows - 1)) * (maxLightness - minLightness) + minLightness,
       c: 0,
       h: 0,
+    };
+    items.push({
+      color: formatColor(grayscale),
+      name: getColorName(grayscale),
     });
   }
 
@@ -48,31 +62,29 @@ export default function ColorPalette({
     const element = event.target as HTMLInputElement;
     const value = element.value;
     const index = parseInt(value, 10);
-    const color = colors[index];
+    const color = items[index];
     if (color) {
-      onChange(color);
+      onChange(color.color);
     }
   }
 
   const selectedColor = value?.value;
   const selectedIndex = selectedColor
-    ? colors.findIndex((compareColor) =>
-        isSameColor(compareColor, selectedColor),
+    ? items.findIndex((compareColor) =>
+        isSameColor(compareColor.color, selectedColor),
       )
     : null;
 
   return (
     <fieldset className={styles.palette} on:change={setColor}>
-      {colors.map((color, i) => (
+      {items.map((item, i) => (
         <input
           type="radio"
           name="color"
           style={{
-            "--lightness": `${color.l.toFixed(2)}`,
-            "--chroma": color.c.toFixed(2),
-            "--hue": `${color.h.toFixed(2)}deg`,
+            "--color": toCSSColor(item.color),
           }}
-          aria-label={getColorName(color)}
+          aria-label={item.name}
           value={i.toString()}
           checked={i === selectedIndex}
         />

@@ -6,8 +6,6 @@
 }
 
 .palette input[type="radio"] {
-  --color: oklch(var(--lightness) var(--chroma) var(--hue));
-
   appearance: none;
   cursor: pointer;
   width: 36px;
