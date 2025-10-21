@@ -1,33 +1,24 @@
+import { Buffer } from "node:buffer";
 import { Prisma, type GradientDirection } from "@/generated/prisma/client";
 import { getImageUrl } from "@/utils/cdn.ts";
 
 export type Background =
   | { type: "image"; imageUrl: string }
-  | { type: "color"; color: { l: number; c: number; h: number } }
+  | { type: "color"; color: string }
   | {
       type: "gradient";
-      colorA: { l: number; c: number; h: number } | null;
-      colorB: { l: number; c: number; h: number } | null;
+      colorA: string | null;
+      colorB: string | null;
       direction: GradientDirection;
     }
   | null;
 
 function compute({
-  backgroundL: l,
-  backgroundC: c,
-  backgroundH: h,
-  backgroundBL: bl,
-  backgroundBC: bc,
-  backgroundBH: bh,
+  backgroundColor: color,
   backgroundGradient: gradient,
   backgroundImageId: imageId,
 }: {
-  backgroundL: number | null;
-  backgroundC: number | null;
-  backgroundH: number | null;
-  backgroundBL?: number | null;
-  backgroundBC?: number | null;
-  backgroundBH?: number | null;
+  backgroundColor: Uint8Array | null;
   backgroundGradient?: GradientDirection | null;
   backgroundImageId?: string | null;
 }): Background {
@@ -36,14 +27,12 @@ function compute({
   }
 
   if (gradient) {
-    const colorA =
-      typeof l === "number" && typeof c === "number" && typeof h === "number"
-        ? { l, c, h }
-        : null;
-    const colorB =
-      typeof bl === "number" && typeof bc === "number" && typeof bh === "number"
-        ? { l: bl, c: bc, h: bh }
-        : null;
+    const colorA = color
+      ? Buffer.from(color.subarray(0, 6)).toString("hex")
+      : null;
+    const colorB = color
+      ? Buffer.from(color.subarray(6, 12)).toString("hex")
+      : null;
     return {
       type: "gradient",
       colorA,
@@ -52,8 +41,11 @@ function compute({
     };
   }
 
-  if (typeof l === "number" && typeof c === "number" && typeof h === "number") {
-    return { type: "color", color: { l, c, h } };
+  if (color) {
+    return {
+      type: "color",
+      color: Buffer.from(color.subarray(0, 6)).toString("hex"),
+    };
   }
 
   return null;
@@ -64,25 +56,14 @@ export default Prisma.defineExtension({
   result: {
     page: {
       background: {
-        needs: { lightness: true, chroma: true, hue: true },
-        compute({ lightness, chroma, hue }) {
-          return compute({
-            backgroundL: lightness,
-            backgroundC: chroma,
-            backgroundH: hue,
-          });
-        },
+        needs: { backgroundColor: true },
+        compute,
       },
     },
     section: {
       background: {
         needs: {
-          backgroundL: true,
-          backgroundC: true,
-          backgroundH: true,
-          backgroundBL: true,
-          backgroundBC: true,
-          backgroundBH: true,
+          backgroundColor: true,
           backgroundGradient: true,
           backgroundImageId: true,
         },
@@ -92,12 +73,7 @@ export default Prisma.defineExtension({
     textTile: {
       background: {
         needs: {
-          backgroundL: true,
-          backgroundC: true,
-          backgroundH: true,
-          backgroundBL: true,
-          backgroundBC: true,
-          backgroundBH: true,
+          backgroundColor: true,
           backgroundGradient: true,
           backgroundImageId: true,
         },
@@ -107,12 +83,7 @@ export default Prisma.defineExtension({
     table: {
       background: {
         needs: {
-          backgroundL: true,
-          backgroundC: true,
-          backgroundH: true,
-          backgroundBL: true,
-          backgroundBC: true,
-          backgroundBH: true,
+          backgroundColor: true,
           backgroundGradient: true,
           backgroundImageId: true,
         },
@@ -122,12 +93,7 @@ export default Prisma.defineExtension({
     chart: {
       background: {
         needs: {
-          backgroundL: true,
-          backgroundC: true,
-          backgroundH: true,
-          backgroundBL: true,
-          backgroundBC: true,
-          backgroundBH: true,
+          backgroundColor: true,
           backgroundGradient: true,
           backgroundImageId: true,
         },
