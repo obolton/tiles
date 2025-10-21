@@ -1,61 +1,78 @@
+import { parse } from "cookie";
+import { SESSION_COOKIE_NAME } from "api/constants/cookies";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import type { AppRouter } from "api/routes/index";
 import type { R2EventMessage } from "./events";
 
 const SERVICE_NAME = "image-upload-worker";
 
+function createClient(env: Env) {
+  return createTRPCClient<AppRouter>({
+    links: [
+      httpBatchLink({
+        url: env.PUBLIC_API_BASE_URL,
+        headers() {
+          return {
+            Authorization: `Bearer ${env.API_TOKEN}`,
+            "X-Service-Name": SERVICE_NAME,
+          };
+        },
+      }),
+    ],
+  });
+}
+
+function unauthorized() {
+  return new Response("Unauthorized", { status: 401 });
+}
+
+function badRequest() {
+  return new Response("Bad Request", { status: 400 });
+}
+
 export default {
-  async queue(batch, env): Promise<void> {
-    if (!env.PUBLIC_API_BASE_URL) {
-      throw new Error("PUBLIC_API_BASE_URL is not defined");
-    }
-    if (!env.API_TOKEN) {
-      throw new Error("API_TOKEN is not defined");
+  async fetch(request, env): Promise<Response> {
+    if (request.method !== "PUT") {
+      return badRequest();
     }
 
-    const client = createTRPCClient<AppRouter>({
-      links: [
-        httpBatchLink({
-          url: env.PUBLIC_API_BASE_URL,
-          headers() {
-            return {
-              Authorization: `Bearer ${env.API_TOKEN}`,
-              "X-Service-Name": SERVICE_NAME,
-            };
-          },
-        }),
-      ],
+    const cookie = parse(request.headers.get("Cookie") || "");
+    const sessionId = cookie[SESSION_COOKIE_NAME];
+
+    if (!sessionId) {
+      return unauthorized();
+    }
+
+    const url = new URL(request.url);
+    const workspaceId = url.searchParams.get("workspaceId");
+
+    if (!workspaceId) {
+      return badRequest();
+    }
+
+    const client = createClient(env);
+
+    const image = await client.media.createImage.mutate(
+      { workspaceId },
+      { context: { sessionId } },
+    );
+
+    const object = await env.IMAGES.put(image.id, request.body, {
+      customMetadata: {
+        workspace: image.workspaceId,
+        user: image.userId,
+      },
     });
 
-    await Promise.all(
-      batch.messages.map(async (message) => {
-        const { action, object } = message.body;
-        if (action === "PutObject") {
-          console.log(`Registering image: ${object.key}`);
-          const data = await env.IMAGES.head(object.key);
-          if (!data) {
-            throw new Error(`Invalid object key: ${object.key}`);
-          }
-
-          const { key, size, customMetadata } = data;
-          const { workspace, user } = customMetadata ?? {};
-          if (typeof workspace !== "string" || !workspace) {
-            throw new Error(`Object is missing workspace metadata key: ${key}`);
-          }
-          if (typeof user !== "string" || !user) {
-            throw new Error(`Object is missing user metadata key: ${key}`);
-          }
-
-          const image = {
-            key,
-            bytes: size,
-            workspaceId: workspace,
-            userId: user,
-          };
-
-          return client.media.registerImage.mutate(image);
-        }
-      }),
+    const updatedImage = await client.media.updateImage.mutate(
+      { id: image.id, workspaceId, bytes: object.size },
+      { context: { sessionId } },
     );
+
+    return new Response(JSON.stringify(updatedImage), {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   },
 } satisfies ExportedHandler<Env, R2EventMessage>;
