@@ -6,8 +6,5 @@
   "observability": {
     "enabled": true,
   },
-  "queues": {
-    "consumers": [{ "queue": "image-uploads" }],
-  },
   "r2_buckets": [{ "binding": "IMAGES", "bucket_name": "tiles-dev-images" }],
 }
