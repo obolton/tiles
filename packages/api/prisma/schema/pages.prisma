@@ -45,20 +45,18 @@ enum Animation {
 }
 
 model Page {
-  id            String    @id @default(uuid()) @db.Uuid
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
-  deletedAt     DateTime? @map("deleted_at")
-  workspaceId   String    @map("workspace_id") @db.Uuid
-  authorId      String    @map("author_id") @db.Uuid
-  folderId      String?   @map("folder_id") @db.Uuid
-  published     Boolean   @default(false)
-  title         String    @db.VarChar(100)
-  lightness     Float     @default(1) @db.Real
-  chroma        Float     @default(0) @db.Real
-  hue           Float     @default(0) @db.Real
-  font          Font      @default(MODERN)
-  coverImageKey String?   @map("cover_image_key")
+  id              String    @id @default(uuid()) @db.Uuid
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  deletedAt       DateTime? @map("deleted_at")
+  workspaceId     String    @map("workspace_id") @db.Uuid
+  authorId        String    @map("author_id") @db.Uuid
+  folderId        String?   @map("folder_id") @db.Uuid
+  published       Boolean   @default(false)
+  title           String    @db.VarChar(100)
+  backgroundColor Bytes?    @map("background_color") @db.ByteA
+  font            Font      @default(MODERN)
+  coverImageKey   String?   @map("cover_image_key")
 
   workspace          Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   author             User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
@@ -174,15 +172,8 @@ model TextTile {
 
   /// [RichText]
   content            Json               @db.JsonB
-  textL              Float?             @map("text_l") @db.Real
-  textC              Float?             @map("text_c") @db.Real
-  textH              Float?             @map("text_h") @db.Real
-  backgroundL        Float?             @map("background_l") @db.Real
-  backgroundC        Float?             @map("background_c") @db.Real
-  backgroundH        Float?             @map("background_h") @db.Real
-  backgroundBL       Float?             @map("background_b_l") @db.Real
-  backgroundBC       Float?             @map("background_b_c") @db.Real
-  backgroundBH       Float?             @map("background_b_h") @db.Real
+  textColor          Bytes?             @map("text_color") @db.ByteA
+  backgroundColor    Bytes?             @map("background_color") @db.ByteA
   backgroundGradient GradientDirection? @map("background_gradient")
   backgroundImageId  String?            @map("background_image_id") @db.Uuid
   align              VerticalAlignment  @default(TOP)
@@ -265,15 +256,8 @@ model Table {
   pageId             String             @map("page_id") @db.Uuid
   createdAt          DateTime           @default(now()) @map("created_at")
   updatedAt          DateTime           @updatedAt @map("updated_at")
-  textL              Float?             @map("text_l") @db.Real
-  textC              Float?             @map("text_c") @db.Real
-  textH              Float?             @map("text_h") @db.Real
-  backgroundL        Float?             @map("background_l") @db.Real
-  backgroundC        Float?             @map("background_c") @db.Real
-  backgroundH        Float?             @map("background_h") @db.Real
-  backgroundBL       Float?             @map("background_b_l") @db.Real
-  backgroundBC       Float?             @map("background_b_c") @db.Real
-  backgroundBH       Float?             @map("background_b_h") @db.Real
+  textColor          Bytes?             @map("text_color") @db.ByteA
+  backgroundColor    Bytes?             @map("background_color") @db.ByteA
   backgroundGradient GradientDirection? @map("background_gradient")
   backgroundImageId  String?            @map("background_image_id") @db.Uuid
 
@@ -340,12 +324,8 @@ model Chart {
   updatedAt          DateTime           @updatedAt @map("updated_at")
   tableId            String             @map("table_id") @db.Uuid
   labelColumnId      String?            @map("label_column_id") @db.Uuid
-  backgroundL        Float?             @map("background_l") @db.Real
-  backgroundC        Float?             @map("background_c") @db.Real
-  backgroundH        Float?             @map("background_h") @db.Real
-  backgroundBL       Float?             @map("background_b_l") @db.Real
-  backgroundBC       Float?             @map("background_b_c") @db.Real
-  backgroundBH       Float?             @map("background_b_h") @db.Real
+  textColor          Bytes?             @map("text_color") @db.ByteA
+  backgroundColor    Bytes?             @map("background_color") @db.ByteA
   backgroundGradient GradientDirection? @map("background_gradient")
   backgroundImageId  String?            @map("background_image_id") @db.Uuid
 

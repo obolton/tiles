@@ -29,12 +29,7 @@ model Section {
   dimensions         Dimensions         @default(CUSTOM)
   width              Int                @default(20) @db.SmallInt
   height             Int                @default(20) @db.SmallInt
-  backgroundL        Float?             @map("background_l") @db.Real
-  backgroundC        Float?             @map("background_c") @db.Real
-  backgroundH        Float?             @map("background_h") @db.Real
-  backgroundBL       Float?             @map("background_b_l") @db.Real
-  backgroundBC       Float?             @map("background_b_c") @db.Real
-  backgroundBH       Float?             @map("background_b_h") @db.Real
+  backgroundColor    Bytes?             @map("background_color") @db.ByteA
   backgroundGradient GradientDirection? @map("background_gradient")
   backgroundImageId  String?            @map("background_image_id") @db.Uuid
   hide               Boolean            @default(false)
