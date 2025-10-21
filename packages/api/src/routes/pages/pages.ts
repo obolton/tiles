@@ -32,6 +32,7 @@ import type {
   AuthenticatedRequestContext,
 } from "@/utils/trpc.ts";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
+import type { ColorSchema } from "@/schema/Color";
 
 const RESULTS_PER_PAGE = 15;
 
@@ -80,7 +81,7 @@ const PAGE_FIELDS = {
   published: true,
   title: true,
   updatedAt: true,
-  color: true,
+  backgroundColor: true,
   font: true,
   coverImageUrl: true,
   author: {
@@ -378,8 +379,24 @@ export async function createPage(
   });
 }
 
+function getBackgroundColorProperties(
+  color?: ColorSchema | null,
+): Pick<Prisma.PageCreateInput, "backgroundColor"> {
+  if (typeof color === "undefined" || color === null) {
+    return { backgroundColor: color };
+  }
+  return { backgroundColor: new Uint8Array(Buffer.from(color, "hex")) };
+}
+
 export async function updatePage(
-  { pageId, published, title, color, font, coverImageKey }: UpdatePageSchema,
+  {
+    pageId,
+    published,
+    title,
+    backgroundColor,
+    font,
+    coverImageKey,
+  }: UpdatePageSchema,
   { userId }: AuthenticatedRequestContext,
 ) {
   return prisma.page.update({
@@ -387,9 +404,7 @@ export async function updatePage(
     data: {
       published,
       title,
-      lightness: color ? color.l : undefined,
-      chroma: color ? color.c : undefined,
-      hue: color ? color.h : undefined,
+      ...getBackgroundColorProperties(backgroundColor),
       font,
       coverImageKey,
     },

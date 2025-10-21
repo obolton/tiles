@@ -1,13 +1,9 @@
+import { Buffer } from "node:buffer";
 import type { GradientDirection } from "@/generated/prisma/client";
 import type { BackgroundSchema } from "@/schema/Background";
 
 export interface Background {
-  backgroundL: number | null;
-  backgroundC: number | null;
-  backgroundH: number | null;
-  backgroundBL: number | null;
-  backgroundBC: number | null;
-  backgroundBH: number | null;
+  backgroundColor: Uint8Array | null;
   backgroundGradient: GradientDirection | null;
   backgroundImageId: string | null;
 }
@@ -21,12 +17,7 @@ export function getBackgroundProperties(
 
   if (background === null) {
     return {
-      backgroundL: null,
-      backgroundC: null,
-      backgroundH: null,
-      backgroundBL: null,
-      backgroundBC: null,
-      backgroundBH: null,
+      backgroundColor: null,
       backgroundGradient: null,
       backgroundImageId: null,
     };
@@ -34,12 +25,7 @@ export function getBackgroundProperties(
 
   if (background.type === "color") {
     return {
-      backgroundL: background.color.l,
-      backgroundC: background.color.c,
-      backgroundH: background.color.h,
-      backgroundBL: null,
-      backgroundBC: null,
-      backgroundBH: null,
+      backgroundColor: new Uint8Array(Buffer.from(background.color, "hex")),
       backgroundGradient: null,
       backgroundImageId: null,
     };
@@ -48,12 +34,7 @@ export function getBackgroundProperties(
   if (background.type === "gradient") {
     const { colorA, colorB } = background;
     return {
-      backgroundL: colorA?.l ?? null,
-      backgroundC: colorA?.c ?? null,
-      backgroundH: colorA?.h ?? null,
-      backgroundBL: colorB?.l ?? null,
-      backgroundBC: colorB?.c ?? null,
-      backgroundBH: colorB?.h ?? null,
+      backgroundColor: new Uint8Array(Buffer.from(colorA + colorB, "hex")),
       backgroundGradient: background.direction,
       backgroundImageId: null,
     };
@@ -61,12 +42,7 @@ export function getBackgroundProperties(
 
   if (background.type === "image") {
     return {
-      backgroundL: null,
-      backgroundC: null,
-      backgroundH: null,
-      backgroundBL: null,
-      backgroundBC: null,
-      backgroundBH: null,
+      backgroundColor: null,
       backgroundGradient: null,
       backgroundImageId: background.imageId,
     };

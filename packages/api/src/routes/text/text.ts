@@ -1,3 +1,4 @@
+import { Buffer } from "node:buffer";
 import prisma from "@/database/prisma";
 import { createTilePlacement } from "../tiles/tiles";
 import type { CreateTextSchema, UpdateTextSchema } from "./schema";
@@ -19,30 +20,13 @@ export type Text = Prisma.Result<
   "findUniqueOrThrow"
 >;
 
-type TextColorProperties = Required<
-  Pick<Prisma.TextTileCreateInput, "textL" | "textC" | "textH">
->;
-
 function getTextColorProperties(
   textColor?: ColorSchema | null,
-): TextColorProperties | undefined {
-  if (typeof textColor === "undefined") {
-    return undefined;
+): Pick<Prisma.TextTileCreateInput, "textColor"> {
+  if (typeof textColor === "undefined" || textColor === null) {
+    return { textColor };
   }
-
-  if (textColor === null) {
-    return {
-      textL: null,
-      textC: null,
-      textH: null,
-    };
-  }
-
-  return {
-    textL: textColor.l,
-    textC: textColor.c,
-    textH: textColor.h,
-  };
+  return { textColor: new Uint8Array(Buffer.from(textColor, "hex")) };
 }
 
 export async function createText({
