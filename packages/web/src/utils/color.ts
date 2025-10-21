@@ -1,19 +1,55 @@
-export interface Color {
+export type Color = string;
+
+export interface OklchColor {
   l: number;
   c: number;
   h: number;
 }
 
-export function toCSSColor({ l, c, h }: Color) {
-  return `oklch(${l.toFixed(2)} ${c.toFixed(2)} ${h.toFixed(2)}deg)`;
+export function parseColor(color: Color): OklchColor {
+  if (color.length !== 6 && color.length !== 12) {
+    throw new Error(`Invalid color: ${color}`);
+  }
+
+  const channelBits = color.length === 12 ? 16 : 8;
+  const channelChars = channelBits / 4;
+  const channelMax = (1 << channelBits) - 1;
+  const lHex = color.slice(0, channelChars);
+  const cHex = color.slice(channelChars, channelChars * 2);
+  const hHex = color.slice(channelChars * 2, channelChars * 3);
+  const l = parseInt(lHex, 16) / channelMax;
+  const c = parseInt(cHex, 16) / channelMax;
+  const h = (parseInt(hHex, 16) / channelMax) * 360;
+  return { l, c, h };
+}
+
+export function formatColor(
+  color: OklchColor,
+  channelBits: 8 | 16 = 16,
+): Color {
+  const channelChars = channelBits / 4;
+  const channelMax = (1 << channelBits) - 1;
+  const l = Math.min(Math.max(color.l, 0), 1) * channelMax;
+  const c = Math.min(Math.max(color.c, 0), 1) * channelMax;
+  const h = ((color.h % 360) / 360) * channelMax;
+  const lHex = l.toString(16).padStart(channelChars, "0");
+  const cHex = c.toString(16).padStart(channelChars, "0");
+  const hHex = h.toString(16).padStart(channelChars, "0");
+  return lHex + cHex + hHex;
+}
+
+export function toCSSColor(color: Color | OklchColor) {
+  const { l, c, h } = typeof color === "string" ? parseColor(color) : color;
+  return `oklch(${l.toFixed(4)} ${c.toFixed(4)} ${h.toFixed(4)}deg)`;
 }
 
 export function isSameColor(a: Color, b: Color) {
-  return a.l === b.l && a.c === b.c && a.h === b.h;
+  return a === b;
 }
 
 export function isDark(color: Color) {
-  return color.l < 0.5;
+  const { l } = parseColor(color);
+  return l < 0.5;
 }
 
 export function getLightnessName(l: number) {
@@ -46,7 +82,7 @@ const HUE_RANGES = [
   { from: 348, to: 360, name: "Red" },
 ];
 
-export function getHueName(color: Color) {
+export function getHueName(color: OklchColor) {
   if (color.c < 0.05) {
     return "Gray";
   }
@@ -59,7 +95,7 @@ export function getHueName(color: Color) {
   return "Unknown";
 }
 
-export function getColorName(color: Color) {
+export function getColorName(color: OklchColor) {
   if (color.c < 0.05) {
     if (color.l >= 0.9) {
       return "White";
