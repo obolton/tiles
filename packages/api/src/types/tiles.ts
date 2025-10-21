@@ -25,7 +25,7 @@ type ClientTileBase = Pick<
   | "id"
   | "sectionId"
   | "type"
-  | "position"
+  | "order"
   | "x"
   | "y"
   | "width"
