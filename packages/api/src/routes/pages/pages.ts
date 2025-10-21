@@ -1,23 +1,23 @@
 import { generateKeyBetween } from "fractional-indexing";
 import { Prisma } from "@/generated/prisma/client";
-import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma";
 import {
   PAGE_LINK_FIELDS,
   PAGE_LINK_TILE_PAGE_FIELDS,
-} from "@/routes/pageLinks/pageLinks.ts";
-import { SECTION_FIELDS } from "@/routes/sections/sections.ts";
-import { IMAGE_FIELDS } from "@/routes/images/images.ts";
-import { MAP_FIELDS } from "@/routes/maps/maps.ts";
-import { TEXT_FIELDS } from "@/routes/text/text.ts";
-import { LINK_FIELDS } from "@/routes/links/links.ts";
-import { VIDEO_FIELDS } from "@/routes/videos/videos.ts";
+} from "@/routes/pageLinks/pageLinks";
+import { SECTION_FIELDS } from "@/routes/sections/sections";
+import { IMAGE_FIELDS } from "@/routes/images/images";
+import { MAP_FIELDS } from "@/routes/maps/maps";
+import { TEXT_FIELDS } from "@/routes/text/text";
+import { LINK_FIELDS } from "@/routes/links/links";
+import { VIDEO_FIELDS } from "@/routes/videos/videos";
 import {
   PAGE_ACCESS_FIELDS,
   PAGE_INVITE_FIELDS,
-} from "@/routes/collaboration/collaboration.ts";
-import { TABLE_WITH_DATA_FIELDS } from "@/routes/tables/tables.ts";
-import { CHART_FIELDS } from "@/routes/charts/charts.ts";
-import { DROPDOWN_FIELDS } from "@/routes/dropdowns/dropdowns.ts";
+} from "@/routes/collaboration/collaboration";
+import { TABLE_WITH_DATA_FIELDS } from "@/routes/tables/tables";
+import { CHART_FIELDS } from "@/routes/charts/charts";
+import { DROPDOWN_FIELDS } from "@/routes/dropdowns/dropdowns";
 import type {
   GetPageByIdSchema,
   ListPagesSchema,
@@ -25,13 +25,10 @@ import type {
   UpdatePageSchema,
   DeletePageSchema,
   RestorePageSchema,
-} from "./schema.ts";
-import type { ClientTile } from "@/types/tiles.ts";
-import type {
-  RequestContext,
-  AuthenticatedRequestContext,
-} from "@/utils/trpc.ts";
-import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
+} from "./schema";
+import type { ClientTile } from "@/types/tiles";
+import type { RequestContext, AuthenticatedRequestContext } from "@/utils/trpc";
+import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 import type { ColorSchema } from "@/schema/Color";
 
 const RESULTS_PER_PAGE = 15;
@@ -41,7 +38,7 @@ const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
 const TILES_FIELDS = {
   id: true,
   sectionId: true,
-  position: true,
+  order: true,
   width: true,
   height: true,
   x: true,
@@ -107,7 +104,7 @@ const PAGE_FIELDS = {
   tiles: {
     select: TILES_FIELDS,
     orderBy: {
-      position: "asc",
+      order: "asc",
     },
   },
   dropdowns: {
@@ -327,7 +324,7 @@ export async function createPage(
   { title }: CreatePageSchema,
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
-  const order = generateKeyBetween(null, null);
+  const first = generateKeyBetween(null, null);
   return prisma.$transaction(async (transaction) => {
     const page = await transaction.page.create({
       data: {
@@ -343,7 +340,7 @@ export async function createPage(
     await transaction.section.create({
       data: {
         pageId: page.id,
-        order,
+        order: first,
         layout: "GRID",
         items: {
           create: {
@@ -351,7 +348,7 @@ export async function createPage(
               connect: { id: page.id },
             },
             type: "TEXT",
-            position: 0,
+            order: first,
             x: 0,
             y: 0,
             width: 20,
