@@ -3,8 +3,7 @@ model Image {
   createdAt   DateTime @default(now()) @map("created_at")
   workspaceId String   @map("workspace_id") @db.Uuid
   userId      String   @map("user_id") @db.Uuid
-  key         String
-  bytes       Int
+  bytes       Int      @default(0)
 
   workspace  Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
