@@ -88,7 +88,7 @@ model Tile {
   updatedAt      DateTime   @default(now()) @updatedAt @map("updated_at")
   pageId         String     @map("page_id") @db.Uuid
   sectionId      String     @map("section_id") @db.Uuid
-  position       Int
+  order          String
   width          Int        @default(1) @db.SmallInt
   height         Int        @default(1) @db.SmallInt
   rowSpan        Int        @default(1) @map("row_span") @db.SmallInt
@@ -118,7 +118,8 @@ model Tile {
   chart    Chart?        @relation(fields: [chartId], references: [id], onDelete: SetNull)
 
   @@index([pageId])
-  @@index([sectionId, y])
+  @@index([sectionId])
+  @@index([order])
   @@map("tiles")
 }
 
