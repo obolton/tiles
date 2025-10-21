@@ -1,10 +1,10 @@
 import { parse } from "cookie";
-import { SESSION_COOKIE_NAME } from "api/constants/cookies";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import type { AppRouter } from "api/routes/index";
 import type { R2EventMessage } from "./events";
 
 const SERVICE_NAME = "image-upload-worker";
+const SESSION_COOKIE_NAME = "__Secure-session";
 
 function createClient(env: Env) {
   return createTRPCClient<AppRouter>({
