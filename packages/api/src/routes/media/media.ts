@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import prisma from "@/database/prisma.ts";
 import { createSignedUploadUrl } from "@/utils/storage.ts";
-import type { CreateUploadURLSchema, RegisterImageSchema } from "./schema.ts";
+import type { CreateUploadURLSchema, UpdateImageSchema } from "./schema.ts";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
 
 export async function createUploadUrl(
@@ -13,21 +13,38 @@ export async function createUploadUrl(
   return { key, url };
 }
 
-export async function registerImage({
-  key,
-  bytes,
-  workspaceId,
+export async function createImage({
   userId,
-}: RegisterImageSchema) {
-  return prisma.image.create({
+  workspaceId,
+}: AuthenticatedWorkspaceProcedureContext) {
+  const { id } = await prisma.image.create({
     data: {
-      key,
-      bytes,
       workspaceId,
       userId,
     },
     select: {
       id: true,
+    },
+  });
+  return { id, userId, workspaceId };
+}
+
+export async function updateImage(
+  { id, bytes }: UpdateImageSchema,
+  { workspaceId }: AuthenticatedWorkspaceProcedureContext,
+) {
+  return prisma.image.update({
+    where: {
+      id,
+      workspaceId,
+    },
+    data: {
+      bytes,
+    },
+    select: {
+      id: true,
+      workspaceId: true,
+      bytes: true,
     },
   });
 }

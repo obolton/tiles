@@ -9,10 +9,14 @@ export const CreateUploadURLSchema = z.strictObject({
 });
 export type CreateUploadURLSchema = z.infer<typeof CreateUploadURLSchema>;
 
-export const RegisterImageSchema = z.strictObject({
-  key: z.string().min(16),
-  bytes: z.int().nonnegative(),
+export const CreateImageSchema = z.strictObject({
   workspaceId: z.uuid(),
-  userId: z.uuid(),
 });
-export type RegisterImageSchema = z.infer<typeof RegisterImageSchema>;
+export type CreateImageSchema = z.infer<typeof CreateImageSchema>;
+
+export const UpdateImageSchema = z.strictObject({
+  id: z.uuid(),
+  workspaceId: z.uuid(),
+  bytes: z.int().nonnegative(),
+});
+export type UpdateImageSchema = z.infer<typeof UpdateImageSchema>;

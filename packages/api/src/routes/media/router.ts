@@ -1,17 +1,22 @@
 import { router } from "@/utils/trpc.ts";
+import { authenticatedWorkspaceProcedure } from "@/utils/middleware.ts";
 import {
-  authenticatedWorkspaceProcedure,
-  authenticatedServiceProcedure,
-} from "@/utils/middleware.ts";
-import { CreateUploadURLSchema, RegisterImageSchema } from "./schema.ts";
-import { createUploadUrl, registerImage } from "./media.ts";
+  CreateUploadURLSchema,
+  CreateImageSchema,
+  UpdateImageSchema,
+} from "./schema.ts";
+import { createUploadUrl, createImage, updateImage } from "./media.ts";
 
 export default router({
   createUploadUrl: authenticatedWorkspaceProcedure
     .input(CreateUploadURLSchema)
     .mutation(({ input, ctx }) => createUploadUrl(input, ctx)),
 
-  registerImage: authenticatedServiceProcedure
-    .input(RegisterImageSchema)
-    .mutation(({ input }) => registerImage(input)),
+  createImage: authenticatedWorkspaceProcedure
+    .input(CreateImageSchema)
+    .mutation(({ ctx }) => createImage(ctx)),
+
+  updateImage: authenticatedWorkspaceProcedure
+    .input(UpdateImageSchema)
+    .mutation(({ input, ctx }) => updateImage(input, ctx)),
 });
