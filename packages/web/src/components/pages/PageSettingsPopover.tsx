@@ -23,7 +23,7 @@ export default function PageSettingsPopover({
   allowDelete,
   ...props
 }: PageSettingsPopoverProps) {
-  const { title, color, font } = editor;
+  const { title, backgroundColor, font } = editor;
 
   function onSubmit(event: Event) {
     event.preventDefault();
@@ -51,7 +51,7 @@ export default function PageSettingsPopover({
     if (!value) {
       return;
     }
-    color.value = value;
+    backgroundColor.value = value;
     viewTransition(() => {
       if (isDark(value)) {
         document.body.classList.add("dark");
@@ -60,7 +60,7 @@ export default function PageSettingsPopover({
       }
       document.body.style.setProperty("--background-color", toCSSColor(value));
     });
-    editor.setColor(value).catch(handleError);
+    editor.setBackgroundColor(value).catch(handleError);
   }
 
   function deletePage() {
@@ -108,7 +108,7 @@ export default function PageSettingsPopover({
         <li role="presentation">
           <ColorPicker
             id="page-color-picker"
-            value={color}
+            value={backgroundColor}
             onChange={setColor}
           />
         </li>

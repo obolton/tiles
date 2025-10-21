@@ -73,7 +73,7 @@ export default class Editor {
   readonly workspaceId: string;
   readonly isEditable: Reactive<boolean>;
   readonly title: Reactive<string>;
-  readonly color: Reactive<Color>;
+  readonly backgroundColor: Reactive<Color | null>;
   readonly font: Reactive<FontId>;
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
@@ -118,7 +118,7 @@ export default class Editor {
     this.workspaceId = page.workspaceId;
     this.isEditable = flag(isEditMode());
     this.title = reactive(page.title);
-    this.color = reactive(page.color);
+    this.backgroundColor = reactive(page.backgroundColor);
     this.font = reactive(page.font);
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
@@ -243,10 +243,10 @@ export default class Editor {
     return client.pages.update.mutate({ pageId: this.pageId, font });
   }
 
-  async setColor(color: Color) {
+  async setBackgroundColor(backgroundColor: Color) {
     return client.pages.update.mutate({
       pageId: this.pageId,
-      color,
+      backgroundColor,
     });
   }
 
