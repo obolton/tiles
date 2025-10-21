@@ -7,8 +7,8 @@ export interface ColorBackground {
 
 export interface GradientBackground {
   type: "gradient";
-  colorA: Color | null;
-  colorB: Color | null;
+  colorA: Color;
+  colorB: Color;
   direction: "VERTICAL" | "HORIZONTAL" | "BOTTOM_RIGHT" | "BOTTOM_LEFT";
 }
 
