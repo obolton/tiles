@@ -69,30 +69,13 @@ export type TableWithData = Omit<
   "_count"
 > & { numRows: number };
 
-type TextColorProperties = Required<
-  Pick<Prisma.TableCreateInput, "textL" | "textC" | "textH">
->;
-
 function getTextColorProperties(
   textColor?: ColorSchema | null,
-): TextColorProperties | undefined {
-  if (typeof textColor === "undefined") {
-    return undefined;
+): Pick<Prisma.TableCreateInput, "textColor"> {
+  if (typeof textColor === "undefined" || textColor === null) {
+    return { textColor };
   }
-
-  if (textColor === null) {
-    return {
-      textL: null,
-      textC: null,
-      textH: null,
-    };
-  }
-
-  return {
-    textL: textColor.l,
-    textC: textColor.c,
-    textH: textColor.h,
-  };
+  return { textColor: new Uint8Array(Buffer.from(textColor, "hex")) };
 }
 
 export async function createTable({
