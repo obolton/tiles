@@ -32,22 +32,22 @@ export type Section = Prisma.Result<
   "findUniqueOrThrow"
 >;
 
-export async function getSectionOrderKeys(
+export async function getSectionOrder(
   transaction: PrismaTransactionClient,
   pageId: string,
-  sectionId: string | null,
-): Promise<[string | null, string | null]> {
-  if (sectionId === null) {
+  afterSectionId: string | null,
+): Promise<string> {
+  if (afterSectionId === null) {
     const [result] = await transaction.$queryRawTyped(
       getFirstSectionOrderQuery(pageId),
     );
-    return [null, result?.order ?? null];
+    return generateKeyBetween(null, result?.order ?? null);
   }
 
   const [result] = await transaction.$queryRawTyped(
-    getSectionOrderQuery(pageId, sectionId),
+    getSectionOrderQuery(pageId, afterSectionId),
   );
-  return [result?.a ?? null, result?.b ?? null];
+  return generateKeyBetween(result?.a ?? null, result?.b ?? null);
 }
 
 export async function createSection({
@@ -62,12 +62,7 @@ export async function createSection({
   hide,
 }: CreateSectionSchema) {
   return prisma.$transaction(async (transaction) => {
-    const [keyA, keyB] = await getSectionOrderKeys(
-      transaction,
-      pageId,
-      afterSectionId,
-    );
-    const order = generateKeyBetween(keyA, keyB);
+    const order = await getSectionOrder(transaction, pageId, afterSectionId);
 
     return prisma.section.create({
       data: {
@@ -101,12 +96,7 @@ export async function updateSection({
   return prisma.$transaction(async (transaction) => {
     let order: string | undefined = undefined;
     if (typeof afterSectionId !== "undefined") {
-      const [keyA, keyB] = await getSectionOrderKeys(
-        transaction,
-        pageId,
-        afterSectionId,
-      );
-      order = generateKeyBetween(keyA, keyB);
+      order = await getSectionOrder(transaction, pageId, afterSectionId);
     }
 
     return transaction.section.update({
@@ -132,8 +122,7 @@ export async function updateSection({
 // TODO: Duplicate tile relations (could be simplified by consolidating tables)
 export async function duplicateSection({ pageId, id }: DuplicateSectionSchema) {
   return prisma.$transaction(async (transaction) => {
-    const [keyA, keyB] = await getSectionOrderKeys(transaction, pageId, id);
-    const order = generateKeyBetween(keyA, keyB);
+    const order = await getSectionOrder(transaction, pageId, id);
     const result = await transaction.$queryRawTyped(
       duplicateSectionQuery(pageId, id, order),
     );
