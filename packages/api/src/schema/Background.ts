@@ -9,8 +9,8 @@ export const ColorBackgroundSchema = z.object({
 
 export const GradientBackgroundSchema = z.object({
   type: z.literal("gradient"),
-  colorA: ColorSchema.nullable(),
-  colorB: ColorSchema.nullable(),
+  colorA: ColorSchema,
+  colorB: ColorSchema,
   direction: z.enum(GradientDirection),
 });
 

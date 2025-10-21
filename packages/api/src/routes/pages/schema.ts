@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ColorSchema } from "@/schema/Color";
 import { Font } from "@/generated/prisma/client";
 
 export const GetPageByIdSchema = z.object({
@@ -21,13 +22,7 @@ export const UpdatePageSchema = z.object({
   pageId: z.uuid(),
   published: z.boolean().optional(),
   title: z.string().min(1).optional(),
-  color: z
-    .object({
-      l: z.number().gte(0).lte(1),
-      c: z.number().gte(0).lte(0.4),
-      h: z.number().gte(0).lte(360),
-    })
-    .optional(),
+  backgroundColor: ColorSchema.nullable().optional(),
   font: z.enum(Font).optional(),
   coverImageKey: z.string().nullable().optional(),
 });
