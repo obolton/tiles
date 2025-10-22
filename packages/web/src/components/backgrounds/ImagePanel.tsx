@@ -4,7 +4,7 @@ import { uploadMedia } from "@/utils/media";
 import Editor from "@/editor/Editor";
 import styles from "./ImagePanel.module.css";
 import type { ImageBackgroundUpdate } from "./types";
-import type FilePicker from "@/elements/filePicker/FilePicker";
+import type FilePicker from "@/elements/file-picker/FilePicker";
 
 export interface ImagePanelProps {
   onChange: (background: ImageBackgroundUpdate) => void;

@@ -9,7 +9,7 @@ import { uploadMedia } from "@/utils/media";
 import { user } from "@/utils/sessions";
 import styles from "./Profile.module.css";
 import type { AppRouterOutputs } from "@/api/client";
-import type FilePicker from "@/elements/filePicker/FilePicker";
+import type FilePicker from "@/elements/file-picker/FilePicker";
 
 type User = NonNullable<AppRouterOutputs["users"]["getUserInfo"]>;
 

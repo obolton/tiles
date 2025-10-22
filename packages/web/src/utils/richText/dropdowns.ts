@@ -1,6 +1,6 @@
 import { Plugin } from "prosemirror-state";
 import Editor from "@/editor/Editor";
-import type FilterSelect from "@/elements/filterSelect/FilterSelect";
+import type FilterSelect from "@/elements/filter-select/FilterSelect";
 
 export function dropdowns() {
   return new Plugin({

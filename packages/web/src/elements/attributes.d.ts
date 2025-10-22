@@ -2,11 +2,13 @@ import type { JSX } from "@/jsx/jsx";
 import type PageItem, { PageItemAttributes } from "./item/PageItem";
 import type TabItem, { TabItemAttributes } from "./tabs/TabItem";
 import type TabPanel, { TabPanelAttributes } from "./tabs/TabPanel";
-import type FilePicker, { FilePickerAttributes } from "./filePicker/FilePicker";
+import type FilePicker, {
+  FilePickerAttributes,
+} from "./file-picker/FilePicker";
 import type PopoverMenu, { PopoverMenuAttributes } from "./menu/PopoverMenu";
 import type InfiniteScroll, {
   InfiniteScrollAttributes,
-} from "./infiniteScroll/InfiniteScroll";
+} from "./infinite-scroll/InfiniteScroll";
 import type EmbeddedVideo, {
   EmbeddedVideoAttributes,
 } from "./video/EmbeddedVideo";
@@ -14,7 +16,7 @@ import type SwatchSelect, {
   SwatchSelectAttributes,
 } from "./swatch/SwatchSelect";
 import type SwatchItem, { SwatchItemAttributes } from "./swatch/SwatchItem";
-import type PopOut, { PopOutAttributes } from "./popOut/PopOut";
+import type PopOut, { PopOutAttributes } from "./pop-out/PopOut";
 import type StackView, { StackViewAttributes } from "./stack/StackView";
 import type CalendarMonth, {
   CalendarMonthAttributes,
@@ -26,8 +28,8 @@ import type MapLegendItem, {
 } from "./maps/MapLegendItem";
 import type TableOfContents, {
   TableOfContentsAttributes,
-} from "./tableOfContents/TableOfContents";
-import FloatingToolbar from "./floatingToolbar/FloatingToolbar";
+} from "./table-of-contents/TableOfContents";
+import FloatingToolbar from "./floating-toolbar/FloatingToolbar";
 import type TableView, { TableViewAttributes } from "./table/TableView";
 import type SwipeView from "./swipe/SwipeView";
 import type { SwipeViewAttributes } from "./swipe/SwipeView";

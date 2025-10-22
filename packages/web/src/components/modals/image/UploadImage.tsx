@@ -4,7 +4,7 @@ import ModalFooter from "../ModalFooter";
 import styles from "./UploadImage.module.css";
 import { ReactiveValue } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
-import type FilePicker from "@/elements/filePicker/FilePicker";
+import type FilePicker from "@/elements/file-picker/FilePicker";
 
 interface UploadImageProps {
   file?: File;

@@ -1,6 +1,6 @@
-import "./floatingToolbar/FloatingToolbar";
+import "./floating-toolbar/FloatingToolbar";
 import "./item/PageItem";
 import "./resize/ResizeHandle";
 import "./swatch/SwatchSelect";
 import "./swatch/SwatchItem";
-import "./filterSelect/FilterSelect";
+import "./filter-select/FilterSelect";
