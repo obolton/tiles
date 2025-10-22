@@ -14,7 +14,7 @@ export default router({
 
   createImage: authenticatedWorkspaceProcedure
     .input(CreateImageSchema)
-    .mutation(({ ctx }) => createImage(ctx)),
+    .mutation(({ input, ctx }) => createImage(input, ctx)),
 
   updateImage: authenticatedWorkspaceProcedure
     .input(UpdateImageSchema)

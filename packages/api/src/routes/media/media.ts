@@ -1,8 +1,17 @@
 import { randomUUID } from "node:crypto";
-import prisma from "@/database/prisma.ts";
-import { createSignedUploadUrl } from "@/utils/storage.ts";
-import type { CreateUploadURLSchema, UpdateImageSchema } from "./schema.ts";
-import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma";
+import { createSignedUploadUrl } from "@/utils/storage";
+import type {
+  CreateUploadURLSchema,
+  CreateImageSchema,
+  UpdateImageSchema,
+} from "./schema";
+import type { Prisma } from "@/generated/prisma/client";
+import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
+
+export const IMAGE_FIELDS = {
+  id: true,
+} as const satisfies Prisma.ImageSelect<ExtensionArgs>;
 
 export async function createUploadUrl(
   { type }: CreateUploadURLSchema,
@@ -13,24 +22,27 @@ export async function createUploadUrl(
   return { key, url };
 }
 
-export async function createImage({
-  userId,
-  workspaceId,
-}: AuthenticatedWorkspaceProcedureContext) {
+export async function createImage(
+  { source, purpose, type, bytes, pending }: CreateImageSchema,
+  { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
+) {
   const { id } = await prisma.image.create({
     data: {
       workspaceId,
       userId,
+      source,
+      purpose,
+      type,
+      bytes,
+      pending,
     },
-    select: {
-      id: true,
-    },
+    select: IMAGE_FIELDS,
   });
   return { id, userId, workspaceId };
 }
 
 export async function updateImage(
-  { id, bytes }: UpdateImageSchema,
+  { id, bytes, pending }: UpdateImageSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.image.update({
@@ -40,11 +52,8 @@ export async function updateImage(
     },
     data: {
       bytes,
+      pending,
     },
-    select: {
-      id: true,
-      workspaceId: true,
-      bytes: true,
-    },
+    select: IMAGE_FIELDS,
   });
 }
