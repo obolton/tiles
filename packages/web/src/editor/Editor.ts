@@ -669,7 +669,9 @@ export default class Editor {
       pageId: this.pageId,
       ...data,
     });
-    await preloadImage(item.imageUrl);
+    if (item.imageUrl) {
+      await preloadImage(item.imageUrl);
+    }
     this.addTile(item);
     return item;
   }
