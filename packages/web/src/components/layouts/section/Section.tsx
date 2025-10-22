@@ -143,17 +143,24 @@ export default function Section({ section, signal }: SectionProps) {
     },
   );
 
-  const resize = layout.derive((value) => {
-    switch (value) {
-      case "GRID":
-      case "FREEFORM":
-        return "all";
-      case "HORIZONTAL":
-        return "horizontal";
-      case "VERTICAL":
-        return "vertical";
-    }
-  });
+  const resize = new Computed(
+    [isEditable, layout] as const,
+    (isEditableValue, layoutValue) => {
+      if (!isEditableValue) {
+        return null;
+      }
+
+      switch (layoutValue) {
+        case "GRID":
+        case "FREEFORM":
+          return "all";
+        case "HORIZONTAL":
+          return "horizontal";
+        case "VERTICAL":
+          return "vertical";
+      }
+    },
+  );
 
   const show = new Computed(
     [isEditable, hide] as const,
