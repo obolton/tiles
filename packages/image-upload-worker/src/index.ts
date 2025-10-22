@@ -7,14 +7,14 @@ const SERVICE_NAME = "image-upload-worker";
 const SESSION_COOKIE_NAME = "__Secure-session";
 const ACCESS_CONTROL_MAX_AGE = 3600; // 1 hour
 
-function createClient(env: Env) {
+function createClient(sessionId: string, env: Env) {
   return createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({
         url: env.PUBLIC_API_BASE_URL,
         headers() {
           return {
-            Authorization: `Bearer ${env.API_TOKEN}`,
+            Authorization: `Bearer ${sessionId}`,
             "X-Service-Name": SERVICE_NAME,
           };
         },
@@ -64,12 +64,9 @@ export default {
       return badRequest();
     }
 
-    const client = createClient(env);
+    const client = createClient(sessionId, env);
 
-    const image = await client.media.createImage.mutate(
-      { workspaceId },
-      { context: { sessionId } },
-    );
+    const image = await client.media.createImage.mutate({ workspaceId });
 
     const object = await env.IMAGES.put(image.id, request.body, {
       customMetadata: {
@@ -78,10 +75,11 @@ export default {
       },
     });
 
-    const updatedImage = await client.media.updateImage.mutate(
-      { id: image.id, workspaceId, bytes: object.size },
-      { context: { sessionId } },
-    );
+    const updatedImage = await client.media.updateImage.mutate({
+      id: image.id,
+      workspaceId,
+      bytes: object.size,
+    });
 
     return new Response(JSON.stringify(updatedImage), {
       headers: {
