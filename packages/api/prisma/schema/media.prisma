@@ -1,9 +1,30 @@
+enum MediaSource {
+  UPLOAD
+  GENERATED
+}
+
+enum ImageType {
+  PNG
+  JPEG
+  GIF
+  WEBP
+}
+
+enum ImagePurpose {
+  CONTENT
+  PROFILE
+}
+
 model Image {
-  id          String   @id @default(uuid()) @db.Uuid
-  createdAt   DateTime @default(now()) @map("created_at")
-  workspaceId String   @map("workspace_id") @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  bytes       Int      @default(0)
+  id          String       @id @default(uuid()) @db.Uuid
+  createdAt   DateTime     @default(now()) @map("created_at")
+  workspaceId String       @map("workspace_id") @db.Uuid
+  userId      String       @map("user_id") @db.Uuid
+  source      MediaSource
+  purpose     ImagePurpose
+  type        ImageType
+  pending     Boolean      @default(true)
+  bytes       Int          @default(0)
 
   workspace  Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -13,6 +34,6 @@ model Image {
   charts     Chart[]
   sections   Section[]
 
-  @@index([workspaceId])
+  @@index([workspaceId, purpose])
   @@map("images")
 }
