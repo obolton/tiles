@@ -47,20 +47,6 @@ function parseAuthorizationHeader(value: string) {
   return token;
 }
 
-// TODO: Replace with individual request signing
-function validateServiceRequest(req: IncomingMessage) {
-  const authorizationHeader = req.headers.authorization;
-  if (!authorizationHeader) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-
-  const token = parseAuthorizationHeader(authorizationHeader);
-
-  if (token !== SERVICE_API_TOKEN) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-}
-
 function getSessionId(req: IncomingMessage) {
   const authorizationHeader = req.headers.authorization;
   if (authorizationHeader) {
@@ -79,16 +65,6 @@ export async function createContext({
   req,
   res,
 }: CreateHTTPContextOptions): Promise<RequestContext> {
-  if (req.headers["x-service-name"] === "image-upload-worker") {
-    validateServiceRequest(req);
-    return {
-      res,
-      sessionId: null,
-      userId: null,
-      serviceName: req.headers["x-service-name"],
-    };
-  }
-
   const sessionId = getSessionId(req);
 
   if (sessionId) {
