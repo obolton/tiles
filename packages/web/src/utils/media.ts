@@ -1,20 +1,20 @@
-import client from "@/api/client";
 import { user } from "@/utils/sessions";
 
 export const ACCEPT_IMAGE_TYPES = new Set(["image/jpeg", "image/png"]);
 export const ACCEPT_CONTENT_TYPES = new Set(["text/uri-list"]).union(
   ACCEPT_IMAGE_TYPES,
 );
+export const UPLOAD_BASE_URL = import.meta.env.PUBLIC_UPLOAD_BASE_URL;
 
 export interface UploadMediaOptions {
   file: File;
-  type: "image" | "profile-image";
+  purpose: "content" | "profile";
   workspaceId: string;
 }
 
 export async function uploadMedia({
   file,
-  type,
+  purpose,
   workspaceId,
 }: UploadMediaOptions) {
   const userId = user.value?.id;
@@ -22,23 +22,26 @@ export async function uploadMedia({
     throw new Error("Not signed in");
   }
 
-  const { url, key } = await client.media.createUploadUrl.mutate({
-    type,
-    workspaceId,
-  });
-  const uploadResult = await fetch(url, {
+  const url = new URL(UPLOAD_BASE_URL);
+  url.searchParams.set("workspaceId", workspaceId);
+  url.searchParams.set("purpose", purpose);
+
+  const result = await fetch(url, {
     method: "PUT",
     body: file,
     headers: {
       "Content-Type": file.type,
-      "x-amz-meta-workspace": workspaceId,
-      "x-amz-meta-user": userId,
     },
+    credentials: "include",
   });
-  if (!uploadResult.ok) {
-    throw new Error(`Upload failed: ${uploadResult.statusText}`);
+
+  if (!result.ok) {
+    throw new Error(`Upload failed: ${result.statusText}`);
   }
-  return key;
+
+  // TODO: Validate
+  const response = await result.json();
+  return response.id;
 }
 
 export function getAcceptableDragItem(
@@ -61,6 +64,7 @@ export function isUriList(item: DataTransferItem) {
   return item.type === "text/uri-list";
 }
 
+// TODO: Fix memory leak here
 export async function preloadImage(url: string) {
   return new Promise<void>((resolve, reject) => {
     const image = new Image();
