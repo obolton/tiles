@@ -58,13 +58,21 @@ export default function ImageTile({ image }: ImageTileProps) {
     editor: { isEditable },
   } = image;
 
+  if (!imageUrl) {
+    return (
+      <Tile className={styles.deleted}>
+        <p>This image has been deleted.</p>
+      </Tile>
+    );
+  }
+
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Delete" || event.key === "Backspace") {
       event.stopPropagation();
     }
   };
 
-  const srcSet = getImageSrcSet(imageUrl.value, VARIANTS);
+  const srcSet = getImageSrcSet(imageUrl, VARIANTS);
 
   const sizes = `(max-width: 800px) ${((width.value / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(width.value)}px`;
 

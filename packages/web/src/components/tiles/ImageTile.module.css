@@ -46,6 +46,20 @@ body[data-editing] .figure {
   }
 }
 
+.deleted {
+  padding: 8px;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 2%);
+
+  & > p {
+    overflow: hidden;
+    text-align: center;
+    color: var(--placeholder-color);
+    text-overflow: ellipsis;
+  }
+}
+
 @media (width < 640px) {
   .caption {
     display: none;
