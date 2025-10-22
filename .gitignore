@@ -20,5 +20,6 @@ coverage/
 # TypeScript build information
 *.tsbuildinfo
 
-# Wrangler config
+# Wrangler
+.wrangler/
 wrangler.json
