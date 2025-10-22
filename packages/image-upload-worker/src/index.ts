@@ -5,6 +5,7 @@ import type { R2EventMessage } from "./events";
 
 const SERVICE_NAME = "image-upload-worker";
 const SESSION_COOKIE_NAME = "__Secure-session";
+const ACCESS_CONTROL_MAX_AGE = 3600; // 1 hour
 
 function createClient(env: Env) {
   return createTRPCClient<AppRouter>({
@@ -32,6 +33,19 @@ function badRequest() {
 
 export default {
   async fetch(request, env): Promise<Response> {
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          "Access-Control-Allow-Origin": env.PUBLIC_WEB_BASE_URL,
+          "Access-Control-Allow-Methods": "PUT",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Credentials": "true",
+          "Access-Control-Max-Age": ACCESS_CONTROL_MAX_AGE.toString(),
+        },
+      });
+    }
+
     if (request.method !== "PUT") {
       return badRequest();
     }
@@ -71,6 +85,8 @@ export default {
 
     return new Response(JSON.stringify(updatedImage), {
       headers: {
+        "Access-Control-Allow-Origin": env.PUBLIC_WEB_BASE_URL,
+        "Access-Control-Allow-Credentials": "true",
         "Content-Type": "application/json",
       },
     });
