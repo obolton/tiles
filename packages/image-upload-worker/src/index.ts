@@ -22,12 +22,32 @@ function createClient(sessionId: string, env: Env) {
   });
 }
 
-function unauthorized() {
-  return new Response("Unauthorized", { status: 401 });
+export class BadRequestError extends Error {}
+
+export function getPurpose(purpose: string) {
+  switch (purpose.toLowerCase()) {
+    case "content":
+      return "CONTENT";
+    case "profile":
+      return "PROFILE";
+    default:
+      throw new BadRequestError("Invalid purpose");
+  }
 }
 
-function badRequest() {
-  return new Response("Bad Request", { status: 400 });
+export function getImageType(contentType: string) {
+  switch (contentType.toLowerCase()) {
+    case "image/png":
+      return "PNG";
+    case "image/jpeg":
+      return "JPEG";
+    case "image/gif":
+      return "GIF";
+    case "image/webp":
+      return "WEBP";
+    default:
+      throw new BadRequestError("Invalid content type");
+  }
 }
 
 export default {
@@ -45,47 +65,64 @@ export default {
       });
     }
 
-    if (request.method !== "PUT") {
-      return badRequest();
+    try {
+      if (request.method !== "PUT") {
+        throw new BadRequestError("Invalid method");
+      }
+
+      const cookie = parse(request.headers.get("Cookie") || "");
+      const sessionId = cookie[SESSION_COOKIE_NAME];
+
+      if (!sessionId) {
+        return new Response("Unauthorized", { status: 401 });
+      }
+
+      const url = new URL(request.url);
+      const workspaceId = url.searchParams.get("workspaceId");
+      const purpose = getPurpose(url.searchParams.get("purpose") ?? "");
+      const type = getImageType(request.headers.get("Content-Type") ?? "");
+
+      if (!workspaceId) {
+        throw new BadRequestError("Invalid workspace ID");
+      }
+
+      const client = createClient(sessionId, env);
+
+      const image = await client.media.createImage.mutate({
+        workspaceId,
+        source: "UPLOAD",
+        purpose,
+        type,
+        pending: true,
+      });
+
+      const object = await env.IMAGES.put(image.id, request.body, {
+        customMetadata: {
+          workspace: image.workspaceId,
+          user: image.userId,
+        },
+      });
+
+      const updatedImage = await client.media.updateImage.mutate({
+        id: image.id,
+        workspaceId,
+        pending: false,
+        bytes: object.size,
+      });
+
+      return new Response(JSON.stringify(updatedImage), {
+        headers: {
+          "Access-Control-Allow-Origin": env.PUBLIC_WEB_BASE_URL,
+          "Access-Control-Allow-Credentials": "true",
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      if (error instanceof BadRequestError) {
+        return new Response("Bad Request", { status: 400 });
+      }
+
+      return new Response("Server Error", { status: 500 });
     }
-
-    const cookie = parse(request.headers.get("Cookie") || "");
-    const sessionId = cookie[SESSION_COOKIE_NAME];
-
-    if (!sessionId) {
-      return unauthorized();
-    }
-
-    const url = new URL(request.url);
-    const workspaceId = url.searchParams.get("workspaceId");
-
-    if (!workspaceId) {
-      return badRequest();
-    }
-
-    const client = createClient(sessionId, env);
-
-    const image = await client.media.createImage.mutate({ workspaceId });
-
-    const object = await env.IMAGES.put(image.id, request.body, {
-      customMetadata: {
-        workspace: image.workspaceId,
-        user: image.userId,
-      },
-    });
-
-    const updatedImage = await client.media.updateImage.mutate({
-      id: image.id,
-      workspaceId,
-      bytes: object.size,
-    });
-
-    return new Response(JSON.stringify(updatedImage), {
-      headers: {
-        "Access-Control-Allow-Origin": env.PUBLIC_WEB_BASE_URL,
-        "Access-Control-Allow-Credentials": "true",
-        "Content-Type": "application/json",
-      },
-    });
   },
 } satisfies ExportedHandler<Env>;
