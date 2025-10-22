@@ -6,5 +6,15 @@
   "observability": {
     "enabled": true,
   },
-  "r2_buckets": [{ "binding": "IMAGES", "bucket_name": "tiles-dev-images" }],
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      "bucket_name": "tiles-dev-images",
+      "remote": true,
+    },
+  ],
+  "dev": {
+    "port": 3002,
+    "local_protocol": "https",
+  },
 }
