@@ -59,7 +59,7 @@ export default function InsertToolbar() {
             if (!result) {
               return;
             }
-            const imageKey = await uploadMedia({
+            const imageId = await uploadMedia({
               file: result.image,
               type: "image",
               workspaceId: Editor.current.workspaceId,
@@ -67,7 +67,7 @@ export default function InsertToolbar() {
             await Editor.current.createImage({
               sectionId: Editor.current.getCurrentSectionId(),
               height: 10,
-              imageKey,
+              imageId,
             });
           },
         });

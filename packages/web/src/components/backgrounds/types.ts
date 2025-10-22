@@ -19,7 +19,7 @@ export interface ImageBackground {
 
 export interface ImageBackgroundUpdate {
   type: "image";
-  imageKey: string;
+  imageId: string;
 }
 
 export type Background = ColorBackground | GradientBackground | ImageBackground;

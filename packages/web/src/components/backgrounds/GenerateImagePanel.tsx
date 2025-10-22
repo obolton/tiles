@@ -2,10 +2,10 @@ import Prompt from "@/components/prompt/Prompt";
 import { generateImage } from "@/utils/ai";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
-import type { ImageBackground } from "./types";
+import type { ImageBackgroundUpdate } from "./types";
 
 export interface GenerateImagePanelProps {
-  onChange: (background: ImageBackground) => void;
+  onChange: (background: ImageBackgroundUpdate) => void;
 }
 
 export default function GenerateImagePanel({
@@ -13,7 +13,7 @@ export default function GenerateImagePanel({
 }: GenerateImagePanelProps) {
   function onSubmit(prompt: string) {
     return generateImage(prompt, Editor.current.workspaceId)
-      .then((imageKey) => onChange({ type: "image", imageKey }))
+      .then((imageId) => onChange({ type: "image", imageId }))
       .catch(handleError);
   }
 

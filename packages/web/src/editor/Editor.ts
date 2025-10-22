@@ -201,14 +201,14 @@ export default class Editor {
         showModal(ImageModalLoader, {
           props: { file },
           onConfirm: async (result) => {
-            const imageKey = await uploadMedia({
+            const imageId = await uploadMedia({
               file: result.image,
               type: "image",
               workspaceId: this.workspaceId,
             });
             await this.createImage({
               sectionId: this.getCurrentSectionId(),
-              imageKey,
+              imageId,
             });
           },
         });

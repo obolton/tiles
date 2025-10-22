@@ -21,7 +21,7 @@ export default function ImagePanel({ onChange }: ImagePanelProps) {
       type: "image",
       workspaceId: Editor.current.workspaceId,
     })
-      .then((imageKey) => onChange({ type: "image", imageKey }))
+      .then((imageId) => onChange({ type: "image", imageId }))
       .catch(handleError);
   }
 
