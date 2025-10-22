@@ -8,7 +8,7 @@
     "packages/web"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace=api & npm run dev --workspace=web",
+    "dev": "npm run dev --workspace=api & npm run dev --workspace=web & npm run dev --workspace=image-upload-worker",
     "db:push": "npm run db:push --workspace=api",
     "db:seed": "npm run db:seed --workspace=api",
     "test": "vitest run",

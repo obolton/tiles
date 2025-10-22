@@ -5,6 +5,7 @@
   "description": "Image upload worker",
   "private": true,
   "scripts": {
+    "dev": "wrangler dev --https-cert-path ../../localhost.pem --https-key-path ../../localhost-key.pem",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
