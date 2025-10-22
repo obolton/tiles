@@ -203,7 +203,7 @@ export default class Editor {
           onConfirm: async (result) => {
             const imageId = await uploadMedia({
               file: result.image,
-              type: "image",
+              purpose: "content",
               workspaceId: this.workspaceId,
             });
             await this.createImage({

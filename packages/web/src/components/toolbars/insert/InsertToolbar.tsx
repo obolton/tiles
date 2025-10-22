@@ -61,7 +61,7 @@ export default function InsertToolbar() {
             }
             const imageId = await uploadMedia({
               file: result.image,
-              type: "image",
+              purpose: "content",
               workspaceId: Editor.current.workspaceId,
             });
             await Editor.current.createImage({

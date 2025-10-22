@@ -18,7 +18,7 @@ export default function ImagePanel({ onChange }: ImagePanelProps) {
     }
     uploadMedia({
       file,
-      type: "image",
+      purpose: "content",
       workspaceId: Editor.current.workspaceId,
     })
       .then((imageId) => onChange({ type: "image", imageId }))

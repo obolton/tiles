@@ -7,5 +7,5 @@ export async function generateImage(prompt: string, workspaceId: string) {
   const response = await fetch(url);
   const blob = await response.blob();
   const file = new File([blob], "generated-image.png", { type });
-  return uploadMedia({ file, type: "image", workspaceId });
+  return uploadMedia({ file, purpose: "content", workspaceId });
 }
