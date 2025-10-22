@@ -1,7 +1,6 @@
 import { parse } from "cookie";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import type { AppRouter } from "api/routes/index";
-import type { R2EventMessage } from "./events";
 
 const SERVICE_NAME = "image-upload-worker";
 const SESSION_COOKIE_NAME = "__Secure-session";
@@ -89,4 +88,4 @@ export default {
       },
     });
   },
-} satisfies ExportedHandler<Env, R2EventMessage>;
+} satisfies ExportedHandler<Env>;
