@@ -15,7 +15,7 @@ export interface ImageOrigin {
 export default class Image extends Tile {
   readonly type = "IMAGE";
 
-  readonly imageUrl: Reactive<string>;
+  readonly imageUrl: string | null;
   readonly text: Reactive<ClientImageTile["text"]>;
   readonly origin: Reactive<ImageOrigin>;
   readonly state: Reactive<EditorState | null>;
@@ -24,7 +24,7 @@ export default class Image extends Tile {
     super(editor, properties);
 
     const { imageUrl, text, originX, originY } = properties;
-    this.imageUrl = reactive(imageUrl);
+    this.imageUrl = imageUrl;
     this.text = reactive(text);
     this.origin = reactive({ x: originX, y: originY });
     this.state = reactive(null);
