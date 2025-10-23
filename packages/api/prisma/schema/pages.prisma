@@ -102,16 +102,16 @@ model Tile {
   type      TileType
   animation Animation?
 
-  page     Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  section  Section       @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  text     TextTile?
-  image    ImageTile?
-  video    VideoTile?
-  map      MapTile?
-  link     LinkTile?
-  pageLink PageLinkTile?
-  table    Table?
-  chart    Chart?
+  page          Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  parentSection Section       @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  text          TextTile?
+  image         ImageTile?
+  video         VideoTile?
+  map           MapTile?
+  link          LinkTile?
+  pageLink      PageLinkTile?
+  table         Table?
+  chart         Chart?
 
   @@index([pageId])
   @@index([sectionId])
