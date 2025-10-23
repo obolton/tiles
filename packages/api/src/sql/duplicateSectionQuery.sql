@@ -46,15 +46,7 @@ new_tiles AS (
     row_span,
     x,
     y,
-    block,
-    image_tile_id,
-    video_tile_id,
-    text_tile_id,
-    map_tile_id,
-    link_tile_id,
-    page_link_tile_id,
-    table_id,
-    chart_id
+    block
   )
   SELECT
     gen_random_uuid(),
@@ -67,15 +59,7 @@ new_tiles AS (
     row_span,
     x,
     y,
-    block,
-    image_tile_id,
-    video_tile_id,
-    text_tile_id,
-    map_tile_id,
-    link_tile_id,
-    page_link_tile_id,
-    table_id,
-    chart_id
+    block
   FROM tiles
   JOIN new_section ON true
   WHERE page_id = $1::uuid AND section_id = $2::uuid
