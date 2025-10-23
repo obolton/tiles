@@ -44,7 +44,7 @@ export default function InsertToolbar() {
       case "TEXT":
         Editor.current
           .createText({
-            sectionId: Editor.current.getCurrentSectionId(),
+            sectionId: Editor.current.activeSection?.id,
             height: 1,
             block: true,
             content: [{ type: "paragraph", children: [] }],
@@ -65,7 +65,7 @@ export default function InsertToolbar() {
               workspaceId: Editor.current.workspaceId,
             });
             await Editor.current.createImage({
-              sectionId: Editor.current.getCurrentSectionId(),
+              sectionId: Editor.current.activeSection?.id,
               height: 10,
               imageId,
             });
@@ -81,14 +81,14 @@ export default function InsertToolbar() {
           async onConfirm(result) {
             if ("linkedPageId" in result) {
               await Editor.current.createPageLink({
-                sectionId: Editor.current.getCurrentSectionId(),
+                sectionId: Editor.current.activeSection?.id,
                 width: 5,
                 height: 5,
                 linkedPageId: result.linkedPageId,
               });
             } else if (result.url) {
               await Editor.current.createLink({
-                sectionId: Editor.current.getCurrentSectionId(),
+                sectionId: Editor.current.activeSection?.id,
                 width: 5,
                 height: 5,
                 url: result.url,
@@ -103,7 +103,7 @@ export default function InsertToolbar() {
           props: {},
           async onConfirm({ place }) {
             await Editor.current.createMap({
-              sectionId: Editor.current.getCurrentSectionId(),
+              sectionId: Editor.current.activeSection?.id,
               places: [place],
               height: 15,
             });
@@ -114,7 +114,7 @@ export default function InsertToolbar() {
       case "TABLE":
         Editor.current
           .createTable({
-            sectionId: Editor.current.getCurrentSectionId(),
+            sectionId: Editor.current.activeSection?.id,
             height: 10,
             columns: 3,
             rows: 5,
@@ -125,7 +125,7 @@ export default function InsertToolbar() {
       case "CHART":
         Editor.current
           .createChart({
-            sectionId: Editor.current.getCurrentSectionId(),
+            sectionId: Editor.current.activeSection?.id,
             height: 10,
             chartType: "BAR",
           })

@@ -209,7 +209,7 @@ export default class Editor {
               workspaceId: this.workspaceId,
             });
             await this.createImage({
-              sectionId: this.getCurrentSectionId(),
+              sectionId: this.activeSection?.id,
               imageId,
             });
           },
@@ -218,7 +218,7 @@ export default class Editor {
     } else if (isUriList(item)) {
       item.getAsString(async (url) => {
         await this.createLink({
-          sectionId: this.getCurrentSectionId(),
+          sectionId: this.activeSection?.id,
           url,
         });
       });
@@ -259,16 +259,6 @@ export default class Editor {
 
   async deletePage() {
     return client.pages.delete.mutate({ pageId: this.pageId });
-  }
-
-  getCurrentSectionId() {
-    const id = this.activeSection?.id ?? this.sections.value.at(-1)?.id;
-
-    if (!id) {
-      throw new Error("Page has no sections");
-    }
-
-    return id;
   }
 
   // Selection
