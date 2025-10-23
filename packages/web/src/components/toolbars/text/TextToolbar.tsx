@@ -35,7 +35,7 @@ export interface TextToolbarProps {
 }
 
 export default function TextToolbar({ text, anchorName }: TextToolbarProps) {
-  const { id, placementId, align, block, animation } = text;
+  const { id, align, block, animation } = text;
 
   function toggleBlock() {
     let height: number | undefined = undefined;
@@ -55,7 +55,7 @@ export default function TextToolbar({ text, anchorName }: TextToolbarProps) {
 
     Editor.current
       .positionTile({
-        id: placementId,
+        id,
         block: !block.value,
         height,
       })

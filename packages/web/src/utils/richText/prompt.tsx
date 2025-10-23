@@ -42,7 +42,7 @@ function getElement(view: EditorView) {
     const context = doc.textBetween(from, to, "\n");
     const tileIds = Editor.current.selection.value
       .values()
-      .map((tile) => tile.placementId)
+      .map((tile) => tile.id)
       .toArray();
     const stream = await client.ai.write.mutate(
       { pageId, sectionId, prompt, context: { text: context, tileIds } },
