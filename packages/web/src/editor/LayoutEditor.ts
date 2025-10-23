@@ -315,14 +315,12 @@ export default class LayoutEditor {
 
     try {
       this.editor.positionTile({
-        id: tile.placementId,
+        id: tile.id,
         sectionId: this.sectionId,
         x: this.x,
         y: this.y,
       });
-      const destination = this.element.querySelector<HTMLElement>(
-        `[data-placement-id="${tile.placementId}"]`,
-      );
+      const destination = document.getElementById(tile.id);
       if (destination) {
         destination.style.viewTransitionName = "drop";
         destination.focus({ preventScroll: true });
@@ -341,7 +339,7 @@ export default class LayoutEditor {
 
   private findIdForPoint(event: DragDropEvent<Tile>) {
     const { clientX, clientY, state } = event;
-    const dragPlacementId = state.data?.placementId;
+    const dragId = state.data?.id;
 
     // Look for an element under the pointer
     let element = document
@@ -350,19 +348,16 @@ export default class LayoutEditor {
         (element): element is HTMLElement =>
           element instanceof HTMLElement &&
           element.parentElement === this.element &&
-          element.dataset.placementId !== dragPlacementId,
+          element.id !== dragId,
       );
 
     if (element) {
-      return element.dataset.placementId || null;
+      return element.id || null;
     }
 
     // If no element was found, look for the previous element in the grid
     for (const child of this.element.children) {
-      if (
-        !(child instanceof HTMLElement) ||
-        child.dataset.placementId === dragPlacementId
-      ) {
+      if (!(child instanceof HTMLElement) || child.id === dragId) {
         continue;
       }
 
@@ -379,7 +374,7 @@ export default class LayoutEditor {
       element = child;
     }
 
-    return element?.dataset.placementId || null;
+    return element?.id || null;
   }
 
   // Resize
@@ -393,7 +388,7 @@ export default class LayoutEditor {
 
     this.updateLayoutInfo();
 
-    const id = event.target.dataset.placementId ?? "";
+    const id = event.target.id ?? "";
     const width = Math.max(
       Math.round(
         (event.width + this.gridColumnGap) /

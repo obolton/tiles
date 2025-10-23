@@ -300,7 +300,7 @@ export default class Editor {
     }
 
     const ids = Array.from(
-      this.selection.value.values().map((tile) => tile.placementId),
+      this.selection.value.values().map((tile) => tile.id),
     );
 
     this.clearSelection();
@@ -467,11 +467,7 @@ export default class Editor {
     }
 
     const elements = ids
-      .map((id) =>
-        document.querySelector<HTMLElement>(
-          `page-item[data-placement-id="${id}"]`,
-        ),
-      )
+      .map((id) => document.getElementById(id))
       .filter((element) => !!element);
     elements.forEach((element) => {
       element.style.viewTransitionClass = "destroy";
@@ -524,7 +520,7 @@ export default class Editor {
     height,
     block,
   }: OmitPageId<AppRouterInputs["tiles"]["update"]>) {
-    const tile = this.tiles.value.find((tile) => tile.placementId === id);
+    const tile = this.tiles.value.find((tile) => tile.id === id);
     if (!tile) {
       throw new Error(`Tile not found: ${id}`);
     }
@@ -589,11 +585,9 @@ export default class Editor {
     });
   }
 
-  removeTiles(placementIds: string[]) {
-    const ids = new Set(placementIds);
-    this.tiles.value = this.tiles.value.filter(
-      (tile) => !ids.has(tile.placementId),
-    );
+  removeTiles(ids: string[]) {
+    const set = new Set(ids);
+    this.tiles.value = this.tiles.value.filter((tile) => !set.has(tile.id));
   }
 
   // Text
@@ -797,7 +791,7 @@ export default class Editor {
     height,
     block,
   }: OmitPageId<AppRouterInputs["tiles"]["update"]>) {
-    const tile = this.tiles.value.find((entry) => entry.placementId === id);
+    const tile = this.tiles.value.find((entry) => entry.id === id);
     if (tile) {
       if (typeof x === "number") {
         tile.x.value = x;
