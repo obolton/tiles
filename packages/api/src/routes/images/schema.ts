@@ -4,7 +4,7 @@ import { RichTextSchema } from "@/schema/RichText.ts";
 
 export const CreateImageSchema = z.object({
   pageId: z.uuid(),
-  sectionId: z.uuid(),
+  sectionId: z.uuid().nullable().optional(),
   ...TileSchema.shape,
   imageId: z.uuid(),
   text: RichTextSchema.nullable().optional(),

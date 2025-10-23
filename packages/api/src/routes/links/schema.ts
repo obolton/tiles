@@ -3,7 +3,7 @@ import { TileSchema } from "@/schema/Tile";
 
 export const CreateLinkSchema = z.object({
   pageId: z.uuid(),
-  sectionId: z.uuid(),
+  sectionId: z.uuid().nullable().optional(),
   url: z.url(),
   ...TileSchema.shape,
 });

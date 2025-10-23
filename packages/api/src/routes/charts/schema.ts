@@ -5,7 +5,7 @@ import { BackgroundSchema } from "@/schema/Background.ts";
 
 export const CreateChartSchema = z.strictObject({
   pageId: z.uuid(),
-  sectionId: z.uuid(),
+  sectionId: z.uuid().nullable().optional(),
   ...TileSchema.shape,
   tableId: z.uuid(),
   labelColumnId: z.uuid().optional(),

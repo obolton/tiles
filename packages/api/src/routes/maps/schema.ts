@@ -19,7 +19,7 @@ export type PlaceSchema = z.infer<typeof PlaceSchema>;
 
 export const CreateMapSchema = z.strictObject({
   pageId: z.uuid(),
-  sectionId: z.uuid(),
+  sectionId: z.uuid().nullable().optional(),
   ...TileSchema.shape,
   places: z.array(PlaceSchema).min(1).max(20),
 });

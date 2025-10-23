@@ -36,7 +36,7 @@ export const RangeSchema = z.discriminatedUnion("type", [
 
 export const CreateTableSchema = z.object({
   pageId: z.uuid(),
-  sectionId: z.uuid(),
+  sectionId: z.uuid().nullable().optional(),
   columns: z.number().int().min(1).max(100),
   rows: z.number().int().max(10),
   textColor: ColorSchema.nullable().optional(),
