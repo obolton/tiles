@@ -1,3 +1,4 @@
+import Tile from "./Tile";
 import {
   reactive,
   type Reactive,
@@ -6,7 +7,7 @@ import {
 import client from "@/api/client";
 import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
 import type {
-  ClientCollection,
+  ClientSectionTile,
   Layout,
   Anchor,
   Dimensions,
@@ -17,47 +18,28 @@ import type {
   BackgroundUpdate,
 } from "@/components/backgrounds/types";
 import type { AppRouterInputs } from "@/api/client";
-import type { Tile } from "@/types/tiles";
+import type { Tile as TileProperties } from "@/types/tiles";
 
-export default class Section {
-  readonly editor: Editor;
-  readonly id: string;
-
+export default class Section extends Tile {
   readonly background: Reactive<Background | null>;
   readonly layout: Reactive<Layout>;
   readonly anchor: Reactive<Anchor | null>;
   readonly dimensions: Reactive<Dimensions>;
-  readonly width: Reactive<number>;
-  readonly height: Reactive<number>;
   readonly hide: Reactive<boolean>;
-  readonly tiles: ComputedReactive<Tile[]>;
+  readonly tiles: ComputedReactive<TileProperties[]>;
 
-  constructor(
-    editor: Editor,
-    properties: ClientCollection & { tiles: ComputedReactive<Tile[]> },
-  ) {
-    this.editor = editor;
+  constructor(editor: Editor, properties: ClientSectionTile) {
+    super(editor, properties);
 
-    const {
-      id,
-      layout,
-      anchor,
-      dimensions,
-      width,
-      height,
-      background,
-      hide,
-      tiles,
-    } = properties;
-    this.id = id;
+    const { id, layout, anchor, dimensions, background, hide } = properties;
     this.layout = reactive(layout);
     this.anchor = reactive(anchor);
     this.dimensions = reactive(dimensions);
-    this.width = reactive(width);
-    this.height = reactive(height);
     this.background = reactive(background);
     this.hide = reactive(hide);
-    this.tiles = tiles;
+    this.tiles = editor.tiles.derive((tiles) =>
+      tiles.filter((tile) => tile.sectionId.value === id),
+    );
   }
 
   private update(
