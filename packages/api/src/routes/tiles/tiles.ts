@@ -11,6 +11,7 @@ import type {
 } from "./schema";
 import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
+import type { TileType } from "@/generated/prisma/enums";
 
 export const TILE_FIELDS = {
   id: true,
@@ -116,7 +117,8 @@ type RequireExactlyOne<T> = {
   };
 }[keyof T];
 
-interface CreateTileProperties {
+type CreateTileProperties = RequireExactlyOne<{
+  section?: Prisma.SectionUncheckedCreateWithoutTileInput;
   text?: Prisma.TextTileUncheckedCreateWithoutTileInput;
   image?: Prisma.ImageTileUncheckedCreateWithoutTileInput;
   video?: Prisma.VideoTileUncheckedCreateWithoutTileInput;
@@ -125,17 +127,21 @@ interface CreateTileProperties {
   map?: Prisma.MapTileUncheckedCreateWithoutTileInput;
   table?: Prisma.TableUncheckedCreateWithoutTileInput;
   chart?: Prisma.ChartUncheckedCreateWithoutTileInput;
-}
+}>;
 
-type CreateTileOptions = Omit<
+type CreateTileOptions<T extends TileType> = Omit<
   Prisma.TileUncheckedCreateInput,
-  "id" | "createdAt" | "updatedAt" | "order" | "y"
-> & { y?: number } & RequireExactlyOne<CreateTileProperties>;
+  "id" | "createdAt" | "updatedAt" | "type" | "order" | "y"
+> &
+  CreateTileProperties & {
+    y?: number;
+    type: T;
+  };
 
-export async function createTile(
+export async function createTile<T extends TileType>(
   {
     pageId,
-    sectionId,
+    sectionId = null,
     type,
     width,
     height = 1,
@@ -144,6 +150,7 @@ export async function createTile(
     rowSpan = 1,
     block,
     animation,
+    section,
     text,
     image,
     video,
@@ -152,7 +159,7 @@ export async function createTile(
     map,
     table,
     chart,
-  }: CreateTileOptions,
+  }: CreateTileOptions<T>,
   select: Prisma.TileSelect<ExtensionArgs>,
   transaction: PrismaTransactionClient,
 ) {
@@ -192,6 +199,7 @@ export async function createTile(
       y: insertY,
       block,
       animation,
+      section: section ? { create: section } : undefined,
       text: text ? { create: text } : undefined,
       image: image ? { create: image } : undefined,
       video: video ? { create: video } : undefined,
@@ -206,7 +214,7 @@ export async function createTile(
       ...select,
     },
   });
-  return tile;
+  return { ...tile, type };
 }
 
 export async function getNextGridPosition(
