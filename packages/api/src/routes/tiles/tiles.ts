@@ -14,6 +14,7 @@ import type { PrismaTransactionClient } from "@/database/prisma";
 
 export const TILE_FIELDS = {
   id: true,
+  type: true,
   sectionId: true,
   order: true,
   width: true,
@@ -109,12 +110,29 @@ export async function deleteTiles({ pageId, ids }: DeleteTilesSchema) {
   });
 }
 
-type CreateTilePlacement = Omit<
+type RequireExactlyOne<T> = {
+  [K in keyof T]-?: Required<Pick<T, K>> & {
+    [P in Exclude<keyof T, K>]?: never;
+  };
+}[keyof T];
+
+interface CreateTileProperties {
+  text?: Prisma.TextTileUncheckedCreateWithoutTileInput;
+  image?: Prisma.ImageTileUncheckedCreateWithoutTileInput;
+  video?: Prisma.VideoTileUncheckedCreateWithoutTileInput;
+  link?: Prisma.LinkTileUncheckedCreateWithoutTileInput;
+  pageLink?: Prisma.PageLinkTileUncheckedCreateWithoutTileInput;
+  map?: Prisma.MapTileUncheckedCreateWithoutTileInput;
+  table?: Prisma.TableUncheckedCreateWithoutTileInput;
+  chart?: Prisma.ChartUncheckedCreateWithoutTileInput;
+}
+
+type CreateTileOptions = Omit<
   Prisma.TileUncheckedCreateInput,
   "id" | "createdAt" | "updatedAt" | "order" | "y"
-> & { y?: number };
+> & { y?: number } & RequireExactlyOne<CreateTileProperties>;
 
-export async function createTilePlacement(
+export async function createTile(
   {
     pageId,
     sectionId,
@@ -126,15 +144,16 @@ export async function createTilePlacement(
     rowSpan = 1,
     block,
     animation,
-    imageTileId,
-    mapTileId,
-    textTileId,
-    pageLinkTileId,
-    linkTileId,
-    videoTileId,
-    tableId,
-    chartId,
-  }: CreateTilePlacement,
+    text,
+    image,
+    video,
+    link,
+    pageLink,
+    map,
+    table,
+    chart,
+  }: CreateTileOptions,
+  select: Prisma.TileSelect<ExtensionArgs>,
   transaction: PrismaTransactionClient,
 ) {
   let insertX;
@@ -160,7 +179,7 @@ export async function createTilePlacement(
 
   const order = await getTileOrder(transaction, pageId, sectionId, null);
 
-  const { id: placementId, ...tile } = await transaction.tile.create({
+  const tile = await transaction.tile.create({
     data: {
       pageId,
       sectionId,
@@ -173,18 +192,21 @@ export async function createTilePlacement(
       y: insertY,
       block,
       animation,
-      imageTileId,
-      mapTileId,
-      textTileId,
-      pageLinkTileId,
-      linkTileId,
-      videoTileId,
-      tableId,
-      chartId,
+      text: text ? { create: text } : undefined,
+      image: image ? { create: image } : undefined,
+      video: video ? { create: video } : undefined,
+      link: link ? { create: link } : undefined,
+      pageLink: pageLink ? { create: pageLink } : undefined,
+      map: map ? { create: map } : undefined,
+      table: table ? { create: table } : undefined,
+      chart: chart ? { create: chart } : undefined,
     },
-    select: TILE_FIELDS,
+    select: {
+      ...TILE_FIELDS,
+      ...select,
+    },
   });
-  return { ...tile, placementId };
+  return tile;
 }
 
 export async function getNextGridPosition(
