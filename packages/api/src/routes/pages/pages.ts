@@ -46,23 +46,26 @@ const TILES_FIELDS = {
   rowSpan: true,
   block: true,
   animation: true,
+  section: {
+    select: SECTION_FIELDS,
+  },
+  text: {
+    select: TEXT_FIELDS,
+  },
   image: {
     select: IMAGE_FIELDS,
   },
   video: {
     select: VIDEO_FIELDS,
   },
-  text: {
-    select: TEXT_FIELDS,
-  },
-  map: {
-    select: MAP_FIELDS,
-  },
   link: {
     select: LINK_FIELDS,
   },
   pageLink: {
     select: PAGE_LINK_FIELDS,
+  },
+  map: {
+    select: MAP_FIELDS,
   },
   table: {
     select: TABLE_WITH_DATA_FIELDS,
@@ -120,16 +123,33 @@ type TileWithData = Prisma.Result<
 
 export function formatTile(tile: TileWithData): ClientTile {
   const {
+    section,
+    text,
     image,
     video,
-    text,
-    map,
     link,
     pageLink,
+    map,
     table,
     chart,
     ...properties
   } = tile;
+
+  if (section) {
+    return {
+      type: "SECTION",
+      ...properties,
+      ...section,
+    };
+  }
+
+  if (text) {
+    return {
+      type: "TEXT",
+      ...properties,
+      ...text,
+    };
+  }
 
   if (image) {
     return {
@@ -147,22 +167,6 @@ export function formatTile(tile: TileWithData): ClientTile {
     };
   }
 
-  if (text) {
-    return {
-      type: "TEXT",
-      ...properties,
-      ...text,
-    };
-  }
-
-  if (map) {
-    return {
-      type: "MAP",
-      ...properties,
-      ...map,
-    };
-  }
-
   if (link) {
     return {
       type: "LINK",
@@ -176,6 +180,14 @@ export function formatTile(tile: TileWithData): ClientTile {
       type: "PAGE_LINK",
       ...properties,
       ...pageLink,
+    };
+  }
+
+  if (map) {
+    return {
+      type: "MAP",
+      ...properties,
+      ...map,
     };
   }
 
