@@ -30,7 +30,7 @@ export const TILE_FIELDS = {
 export async function getTileOrder(
   transaction: PrismaTransactionClient,
   pageId: string,
-  sectionId: string,
+  sectionId: string | null,
   afterTileId: string | null,
 ): Promise<string> {
   if (afterTileId === null) {
@@ -223,7 +223,12 @@ export async function getNextGridPosition(
     sectionId,
     width: itemWidth,
     maxWidth = 24,
-  }: { pageId: string; sectionId: string; width?: number; maxWidth: number },
+  }: {
+    pageId: string;
+    sectionId: string | null;
+    width?: number;
+    maxWidth: number;
+  },
   transaction: PrismaTransactionClient,
 ): Promise<{ x: number; y: number; width: number }> {
   const previous = await transaction.tile.findFirst({
