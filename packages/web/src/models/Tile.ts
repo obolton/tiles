@@ -9,7 +9,6 @@ export type { Animation };
 export default class Tile {
   readonly editor: Editor;
   readonly id: string;
-  readonly placementId: string;
   readonly type: string;
 
   readonly sectionId: Reactive<string>;
@@ -25,7 +24,6 @@ export default class Tile {
   constructor(editor: Editor, properties: ClientTile) {
     const {
       id,
-      placementId,
       type,
       sectionId,
       position,
@@ -40,7 +38,6 @@ export default class Tile {
     this.editor = editor;
 
     this.id = id;
-    this.placementId = placementId;
     this.type = type;
 
     this.sectionId = reactive(sectionId);
@@ -55,7 +52,7 @@ export default class Tile {
   }
 
   delete() {
-    return this.editor.deleteTiles([this.placementId]);
+    return this.editor.deleteTiles([this.id]);
   }
 
   private updatePlacement(
@@ -64,7 +61,7 @@ export default class Tile {
     return client.tiles.update.mutate({
       ...properties,
       pageId: this.editor.pageId,
-      id: this.placementId,
+      id: this.id,
     });
   }
 
