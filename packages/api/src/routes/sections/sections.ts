@@ -2,10 +2,11 @@ import { generateKeyBetween } from "fractional-indexing";
 import prisma, { type ExtensionArgs } from "@/database/prisma";
 import { getBackgroundProperties } from "@/utils/backgrounds";
 import {
-  getFirstSectionOrderQuery,
-  getSectionOrderQuery,
+  getFirstTileOrderQuery,
+  getTileOrderQuery,
   duplicateSectionQuery,
 } from "@/generated/prisma/sql";
+import { createTile } from "../tiles/tiles";
 import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
 import type {
@@ -20,8 +21,6 @@ export const SECTION_FIELDS = {
   layout: true,
   anchor: true,
   dimensions: true,
-  width: true,
-  height: true,
   background: true,
   hide: true,
 } as const satisfies Prisma.SectionSelect<ExtensionArgs>;
@@ -39,46 +38,45 @@ export async function getSectionOrder(
 ): Promise<string> {
   if (afterSectionId === null) {
     const [result] = await transaction.$queryRawTyped(
-      getFirstSectionOrderQuery(pageId),
+      getFirstTileOrderQuery(pageId, null),
     );
     return generateKeyBetween(null, result?.order ?? null);
   }
 
   const [result] = await transaction.$queryRawTyped(
-    getSectionOrderQuery(pageId, afterSectionId),
+    getTileOrderQuery(pageId, null, afterSectionId),
   );
   return generateKeyBetween(result?.a ?? null, result?.b ?? null);
 }
 
 export async function createSection({
   pageId,
-  afterSectionId,
   layout,
   anchor,
   dimensions,
-  width,
-  height,
   background,
   hide,
+  ...properties
 }: CreateSectionSchema) {
-  return prisma.$transaction(async (transaction) => {
-    const order = await getSectionOrder(transaction, pageId, afterSectionId);
-
-    return prisma.section.create({
-      data: {
+  const { section, ...tile } = await createTile(
+    {
+      ...properties,
+      type: "SECTION",
+      pageId,
+      sectionId: null,
+      section: {
         pageId,
-        order,
         layout,
         anchor,
         dimensions,
-        width,
-        height,
         hide,
         ...getBackgroundProperties(background),
       },
-      select: SECTION_FIELDS,
-    });
-  });
+    },
+    { section: { select: SECTION_FIELDS } },
+    prisma,
+  );
+  return { ...tile, ...section };
 }
 
 export async function updateSection({
@@ -87,35 +85,22 @@ export async function updateSection({
   layout,
   anchor,
   dimensions,
-  width,
-  height,
   background,
   hide,
-  afterSectionId,
 }: UpdateSectionSchema) {
-  return prisma.$transaction(async (transaction) => {
-    let order: string | undefined = undefined;
-    if (typeof afterSectionId !== "undefined") {
-      order = await getSectionOrder(transaction, pageId, afterSectionId);
-    }
-
-    return transaction.section.update({
-      where: {
-        pageId,
-        id,
-      },
-      data: {
-        layout,
-        anchor,
-        dimensions,
-        width,
-        height,
-        hide,
-        ...getBackgroundProperties(background),
-        order,
-      },
-      select: SECTION_FIELDS,
-    });
+  return prisma.section.update({
+    where: {
+      pageId,
+      id,
+    },
+    data: {
+      layout,
+      anchor,
+      dimensions,
+      hide,
+      ...getBackgroundProperties(background),
+    },
+    select: SECTION_FIELDS,
   });
 }
 
