@@ -102,10 +102,14 @@ export interface ClientChartTile extends ClientTileBase, ClientChart {
   type: "CHART";
 }
 
-// Collection
-export type ClientCollection = OmitMetadata<Omit<Section, "userId">>;
+// Section
+export type ClientSection = Section;
+export interface ClientSectionTile extends ClientTileBase, ClientSection {
+  type: "SECTION";
+}
 
 export type ClientEntity =
+  | ClientSection
   | ClientImage
   | ClientVideo
   | ClientText
@@ -113,11 +117,11 @@ export type ClientEntity =
   | ClientMap
   | ClientLink
   | ClientPageLink
-  | ClientCollection
   | ClientTable
   | ClientChart;
 
 export type ClientTile =
+  | ClientSectionTile
   | ClientImageTile
   | ClientVideoTile
   | ClientTextTile
