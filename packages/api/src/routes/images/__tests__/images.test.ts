@@ -23,7 +23,7 @@ const MOCK_IMAGE: Image = {
 };
 
 const MOCK_PLACEMENT = {
-  placementId: "test-tile",
+  id: "test-tile",
   position: 2,
   rows: 1,
   columns: 1,
@@ -34,8 +34,8 @@ describe("createImage", () => {
     vi.mocked(
       prisma.imageTile.create<CreateQuery<typeof IMAGE_FIELDS>>,
     ).mockResolvedValue(MOCK_IMAGE);
-    vi.mock("@/routes/tiles/tiles.ts", () => ({
-      createTilePlacement: async () => MOCK_PLACEMENT,
+    vi.mock("@/routes/tiles/tiles", () => ({
+      createTile: async () => MOCK_PLACEMENT,
     }));
   });
 

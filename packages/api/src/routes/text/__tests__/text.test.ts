@@ -11,13 +11,13 @@ const MOCK_TEXT: Text = {
       children: [{ type: "text", text: "Test content", format: 0 }],
     },
   ],
-  color: { l: 0, c: 0.2, h: 120 },
-  imageUrl: null,
+  textColor: "ffff00000000",
+  background: null,
   align: "TOP",
 };
 
 const MOCK_PLACEMENT = {
-  placementId: "test-tile",
+  id: "test-tile",
   position: 2,
   rows: 1,
   columns: 1,
@@ -28,8 +28,8 @@ describe("createText", () => {
     vi.mocked(
       prisma.textTile.create<CreateQuery<typeof TEXT_FIELDS>>,
     ).mockResolvedValue(MOCK_TEXT);
-    vi.mock("@/routes/tiles/tiles.ts", () => ({
-      createTilePlacement: async () => MOCK_PLACEMENT,
+    vi.mock("@/routes/tiles/tiles", () => ({
+      createTile: async () => MOCK_PLACEMENT,
     }));
   });
 

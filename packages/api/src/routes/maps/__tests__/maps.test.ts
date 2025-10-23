@@ -19,7 +19,7 @@ const MOCK_MAP: Map = {
 };
 
 const MOCK_PLACEMENT = {
-  placementId: "test-tile",
+  id: "test-tile",
   position: 2,
   rows: 1,
   columns: 1,
@@ -30,8 +30,8 @@ describe("createMap", () => {
     vi.mocked(
       prisma.mapTile.create<CreateQuery<typeof MAP_FIELDS>>,
     ).mockResolvedValue(MOCK_MAP);
-    vi.mock("@/routes/tiles/tiles.ts", () => ({
-      createTilePlacement: () => MOCK_PLACEMENT,
+    vi.mock("@/routes/tiles/tiles", () => ({
+      createTile: () => MOCK_PLACEMENT,
     }));
   });
 

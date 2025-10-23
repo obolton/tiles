@@ -12,7 +12,7 @@ import { omit } from "@/utils/objects.ts";
 const MOCK_PAGE: PageLinkPage = {
   id: "test-page",
   title: "Test Page",
-  color: { h: 120, c: 0.2, l: 1 },
+  background: { type: "color", color: "ffff00000000" },
   font: "MODERN",
   coverImageUrl: "https://example.com/cover.jpg",
   author: {
@@ -28,7 +28,7 @@ const MOCK_PAGE_LINK: PageLink = {
 };
 
 const MOCK_PLACEMENT = {
-  placementId: "test-tile",
+  id: "test-tile",
   position: 2,
   rows: 1,
   columns: 1,
@@ -40,7 +40,7 @@ describe("createPageLink", () => {
       prisma.pageLinkTile.create<CreateQuery<typeof PAGE_LINK_FIELDS>>,
     ).mockResolvedValue(MOCK_PAGE_LINK);
     vi.mock("@/routes/tiles/tiles.ts", () => ({
-      createTilePlacement: async () => MOCK_PLACEMENT,
+      createTile: async () => MOCK_PLACEMENT,
     }));
   });
 
