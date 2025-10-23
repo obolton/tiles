@@ -120,7 +120,6 @@ type TileWithData = Prisma.Result<
 
 export function formatTile(tile: TileWithData): ClientTile {
   const {
-    id: placementId,
     image,
     video,
     text,
@@ -131,12 +130,11 @@ export function formatTile(tile: TileWithData): ClientTile {
     chart,
     ...properties
   } = tile;
-  const base = { placementId, ...properties };
 
   if (image) {
     return {
       type: "IMAGE",
-      ...base,
+      ...properties,
       ...image,
     };
   }
@@ -144,7 +142,7 @@ export function formatTile(tile: TileWithData): ClientTile {
   if (video) {
     return {
       type: "VIDEO",
-      ...base,
+      ...properties,
       ...video,
     };
   }
@@ -152,7 +150,7 @@ export function formatTile(tile: TileWithData): ClientTile {
   if (text) {
     return {
       type: "TEXT",
-      ...base,
+      ...properties,
       ...text,
     };
   }
@@ -160,7 +158,7 @@ export function formatTile(tile: TileWithData): ClientTile {
   if (map) {
     return {
       type: "MAP",
-      ...base,
+      ...properties,
       ...map,
     };
   }
@@ -168,7 +166,7 @@ export function formatTile(tile: TileWithData): ClientTile {
   if (link) {
     return {
       type: "LINK",
-      ...base,
+      ...properties,
       ...link,
     };
   }
@@ -176,7 +174,7 @@ export function formatTile(tile: TileWithData): ClientTile {
   if (pageLink) {
     return {
       type: "PAGE_LINK",
-      ...base,
+      ...properties,
       ...pageLink,
     };
   }
@@ -184,7 +182,7 @@ export function formatTile(tile: TileWithData): ClientTile {
   if (table) {
     const { _count, ...tableData } = table;
     return {
-      ...base,
+      ...properties,
       ...tableData,
       numRows: _count.rows,
       type: "TABLE",
@@ -194,12 +192,12 @@ export function formatTile(tile: TileWithData): ClientTile {
   if (chart) {
     return {
       type: "CHART",
-      ...base,
+      ...properties,
       ...chart,
     };
   }
 
-  throw new Error(`Invalid tile: ${placementId}`);
+  throw new Error(`Invalid tile: ${tile.id}`);
 }
 
 export async function getPageById(
