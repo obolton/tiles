@@ -208,7 +208,6 @@ export default function Section({ section, signal }: SectionProps) {
                   editor={editor}
                   id={tile.id}
                   classList={{ [styles.item]: true }}
-                  placementId={tile.placementId}
                   editable={isEditable}
                   x={tile.x}
                   y={tile.y}

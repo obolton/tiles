@@ -60,13 +60,10 @@ export default function Stack({
               editor={editor}
               classList={{
                 [styles.item]: true,
-                [styles.dragging]: dragId.derive(
-                  (id) => id === item.placementId,
-                ),
+                [styles.dragging]: dragId.derive((id) => id === item.id),
               }}
               id={item.id}
               sectionId={sectionId}
-              placementId={item.placementId}
               rows={new ReactiveValue(2)}
               columns={new ReactiveValue(1)}
               deletable={

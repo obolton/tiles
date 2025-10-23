@@ -21,7 +21,6 @@ import type { DragData } from "@/editor/LayoutEditor";
 export interface ItemProps {
   editor: Editor;
   id: string;
-  placementId: string;
   style?: JSX.StyleDeclaration;
   classList?: { [k: string]: boolean | Reactive<boolean> };
   editable?: boolean | Reactive<boolean>;
@@ -63,7 +62,6 @@ function getTileComponent(tile: Tile, hasFocus: Reactive<boolean>) {
 export default function Item({
   editor,
   id,
-  placementId,
   classList,
   style,
   editable = false,
@@ -177,7 +175,6 @@ export default function Item({
         ...classList,
       }}
       style={combinedStyles}
-      data-placement-id={placementId}
       tabIndex={tabIndex}
       on:pointerdown={onPointerDown}
       on:dnd-dragstart={onDragStart}
