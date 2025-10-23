@@ -7,8 +7,8 @@ export type Background =
   | { type: "color"; color: string }
   | {
       type: "gradient";
-      colorA: string | null;
-      colorB: string | null;
+      colorA: string;
+      colorB: string;
       direction: GradientDirection;
     }
   | null;
@@ -26,13 +26,9 @@ function compute({
     return { type: "image", imageUrl: getImageUrl(imageId) };
   }
 
-  if (gradient) {
-    const colorA = color
-      ? Buffer.from(color.subarray(0, 6)).toString("hex")
-      : null;
-    const colorB = color
-      ? Buffer.from(color.subarray(6, 12)).toString("hex")
-      : null;
+  if (gradient && color?.length === 12) {
+    const colorA = Buffer.from(color.subarray(0, 6)).toString("hex");
+    const colorB = Buffer.from(color.subarray(6, 12)).toString("hex");
     return {
       type: "gradient",
       colorA,
