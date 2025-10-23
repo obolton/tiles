@@ -4,7 +4,7 @@ import {
   RemovePlaceSchema,
   UpdatePlaceSchema,
 } from "./schema";
-import { createTilePlacement } from "../tiles/tiles";
+import { createTile } from "../tiles/tiles";
 import type { Prisma } from "@/generated/prisma/client";
 import type { CreateMapSchema } from "./schema";
 
@@ -32,11 +32,15 @@ export async function createMap({
   pageId,
   sectionId,
   places,
-  ...tile
+  ...properties
 }: CreateMapSchema) {
-  return prisma.$transaction(async (transaction) => {
-    const map = await transaction.mapTile.create({
-      data: {
+  const { map, ...tile } = await createTile(
+    {
+      ...properties,
+      type: "MAP",
+      pageId,
+      sectionId,
+      map: {
         pageId,
         places: {
           create: places.map(
@@ -51,20 +55,12 @@ export async function createMap({
           ),
         },
       },
-      select: MAP_FIELDS,
-    });
-    const placement = await createTilePlacement(
-      {
-        ...tile,
-        type: "MAP",
-        pageId,
-        sectionId,
-        mapTileId: map.id,
-      },
-      transaction,
-    );
-    return { type: "MAP" as const, ...map, ...placement };
-  });
+    },
+    { map: { select: MAP_FIELDS } },
+    prisma,
+  );
+
+  return { ...tile, ...map };
 }
 
 export async function addPlaces({ pageId, id, places }: AddPlacesSchema) {

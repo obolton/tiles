@@ -1,6 +1,6 @@
 import { Buffer } from "node:buffer";
 import prisma from "@/database/prisma";
-import { createTilePlacement } from "../tiles/tiles";
+import { createTile } from "../tiles/tiles";
 import type { CreateTextSchema, UpdateTextSchema } from "./schema";
 import type { Prisma } from "@/generated/prisma/client";
 import type { ColorSchema } from "@/schema/Color";
@@ -36,31 +36,26 @@ export async function createText({
   textColor,
   background,
   align,
-  ...tile
+  ...properties
 }: CreateTextSchema) {
-  return prisma.$transaction(async (transaction) => {
-    const text = await transaction.textTile.create({
-      data: {
+  const { text, ...tile } = await createTile(
+    {
+      ...properties,
+      type: "TEXT",
+      pageId,
+      sectionId,
+      text: {
         pageId,
         content,
         ...getTextColorProperties(textColor),
         ...getBackgroundProperties(background),
         align,
       },
-      select: TEXT_FIELDS,
-    });
-    const placement = await createTilePlacement(
-      {
-        ...tile,
-        type: "TEXT",
-        pageId,
-        sectionId,
-        textTileId: text.id,
-      },
-      transaction,
-    );
-    return { type: "TEXT" as const, ...text, ...placement };
-  });
+    },
+    { text: { select: TEXT_FIELDS } },
+    prisma,
+  );
+  return { ...tile, ...text };
 }
 
 export async function updateText({

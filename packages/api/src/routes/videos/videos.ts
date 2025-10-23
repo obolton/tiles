@@ -3,7 +3,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { getLinkMetadata } from "@/utils/linkMetadata";
 import { getVideoInfo } from "@/utils/videos";
 import type { CreateVideoSchema, UpdateVideoSchema } from "./schema";
-import { createTilePlacement } from "../tiles/tiles";
+import { createTile } from "../tiles/tiles";
 
 export const VIDEO_FIELDS = {
   id: true,
@@ -18,18 +18,23 @@ export async function createVideo({
   pageId,
   sectionId,
   url,
-  ...tile
+  ...properties
 }: CreateVideoSchema) {
-  return prisma.$transaction(async (transaction) => {
-    const videoInfo = getVideoInfo(url);
-    if (!videoInfo) {
-      throw new Error("Invalid video URL");
-    }
-    const { videoType, videoId } = videoInfo;
-    const linkMetadata = await getLinkMetadata(url);
-    const { title, description, imageUrl } = linkMetadata || {};
-    const video = await transaction.videoTile.create({
-      data: {
+  const videoInfo = getVideoInfo(url);
+  if (!videoInfo) {
+    throw new Error("Invalid video URL");
+  }
+  const { videoType, videoId } = videoInfo;
+  const linkMetadata = await getLinkMetadata(url);
+  const { title, description, imageUrl } = linkMetadata || {};
+
+  const { video, ...tile } = await createTile(
+    {
+      ...properties,
+      type: "VIDEO",
+      pageId,
+      sectionId,
+      video: {
         pageId,
         videoType,
         videoId,
@@ -37,24 +42,12 @@ export async function createVideo({
         title: title?.trim() ?? "",
         description: description?.trim() || null,
       },
-      select: VIDEO_FIELDS,
-    });
-    const placement = await createTilePlacement(
-      {
-        ...tile,
-        type: "VIDEO",
-        pageId,
-        sectionId,
-        videoTileId: video.id,
-      },
-      transaction,
-    );
-    return {
-      type: "VIDEO" as const,
-      ...video,
-      ...placement,
-    };
-  });
+    },
+    { video: { select: VIDEO_FIELDS } },
+    prisma,
+  );
+
+  return { ...tile, ...video };
 }
 
 export async function updateVideo({ pageId, id, title }: UpdateVideoSchema) {

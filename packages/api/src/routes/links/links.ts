@@ -4,7 +4,7 @@ import { getVideoInfo } from "@/utils/videos";
 import { createVideo } from "../videos/videos";
 import type { Prisma } from "@/generated/prisma/client";
 import type { CreateLinkSchema, UpdateLinkSchema } from "./schema";
-import { createTilePlacement } from "../tiles/tiles";
+import { createTile } from "../tiles/tiles";
 
 export const LINK_FIELDS = {
   id: true,
@@ -19,7 +19,7 @@ export async function createLink({
   pageId,
   sectionId,
   url,
-  ...tile
+  ...properties
 }: CreateLinkSchema) {
   // Convert links to video tiles if they are video links
   const videoInfo = getVideoInfo(url);
@@ -31,11 +31,16 @@ export async function createLink({
     });
   }
 
-  return prisma.$transaction(async (transaction) => {
-    const linkMetadata = await getLinkMetadata(url);
-    const { title, description, siteName, imageUrl } = linkMetadata || {};
-    const link = await transaction.linkTile.create({
-      data: {
+  const linkMetadata = await getLinkMetadata(url);
+  const { title, description, siteName, imageUrl } = linkMetadata || {};
+
+  const { link, ...tile } = await createTile(
+    {
+      ...properties,
+      type: "LINK",
+      pageId,
+      sectionId,
+      link: {
         pageId,
         url,
         title,
@@ -43,24 +48,12 @@ export async function createLink({
         siteName,
         originalImageUrl: imageUrl,
       },
-      select: LINK_FIELDS,
-    });
-    const placement = await createTilePlacement(
-      {
-        ...tile,
-        type: "LINK",
-        pageId,
-        sectionId,
-        linkTileId: link.id,
-      },
-      transaction,
-    );
-    return {
-      type: "LINK" as const,
-      ...link,
-      ...placement,
-    };
-  });
+    },
+    { link: { select: LINK_FIELDS } },
+    prisma,
+  );
+
+  return { ...tile, ...link };
 }
 
 export async function updateLink({ pageId, id, url }: UpdateLinkSchema) {

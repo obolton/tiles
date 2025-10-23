@@ -1,5 +1,5 @@
 import prisma, { type ExtensionArgs } from "@/database/prisma";
-import { createTilePlacement } from "../tiles/tiles";
+import { createTile } from "../tiles/tiles";
 import type { CreateImageSchema, UpdateImageSchema } from "./schema";
 import type { Prisma } from "@/generated/prisma/client";
 
@@ -24,30 +24,25 @@ export async function createImage({
   imageId,
   text,
   theme,
-  ...tile
+  ...properties
 }: CreateImageSchema) {
-  return prisma.$transaction(async (transaction) => {
-    const image = await transaction.imageTile.create({
-      data: {
+  const { image, ...tile } = await createTile(
+    {
+      ...properties,
+      type: "IMAGE",
+      pageId,
+      sectionId,
+      image: {
         pageId,
         imageId,
         text,
         theme,
       },
-      select: IMAGE_FIELDS,
-    });
-    const placement = await createTilePlacement(
-      {
-        ...tile,
-        type: "IMAGE",
-        pageId,
-        sectionId,
-        imageTileId: image.id,
-      },
-      transaction,
-    );
-    return { type: "IMAGE" as const, ...image, ...placement };
-  });
+    },
+    { image: { select: IMAGE_FIELDS } },
+    prisma,
+  );
+  return { ...tile, ...image };
 }
 
 export async function updateImage({

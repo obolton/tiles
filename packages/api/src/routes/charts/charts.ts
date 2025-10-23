@@ -1,5 +1,5 @@
 import prisma, { type ExtensionArgs } from "@/database/prisma";
-import { createTilePlacement } from "../tiles/tiles";
+import { createTile } from "../tiles/tiles";
 import { getBackgroundProperties } from "@/utils/backgrounds";
 import type {
   CreateChartSchema,
@@ -55,7 +55,7 @@ export async function createChart({
   labelColumnId,
   background,
   series = [],
-  ...tile
+  ...properties
 }: CreateChartSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to data
@@ -74,34 +74,31 @@ export async function createChart({
       ),
     );
 
-    const chart = await transaction.chart.create({
-      data: {
-        pageId,
-        tableId,
-        labelColumnId,
-        ...getBackgroundProperties(background),
-        series: {
-          createMany: {
-            data: series.map((columnId) => ({
-              columnId,
-            })),
-          },
-        },
-      },
-      select: CHART_FIELDS,
-    });
-
-    const placement = await createTilePlacement(
+    const { chart, ...tile } = await createTile(
       {
-        ...tile,
+        ...properties,
         type: "CHART",
         pageId,
         sectionId,
-        chartId: chart.id,
+        chart: {
+          pageId,
+          tableId,
+          labelColumnId,
+          ...getBackgroundProperties(background),
+          series: {
+            createMany: {
+              data: series.map((columnId) => ({
+                columnId,
+              })),
+            },
+          },
+        },
       },
+      { chart: { select: CHART_FIELDS } },
       transaction,
     );
-    return { type: "CHART" as const, ...chart, ...placement };
+
+    return { ...tile, ...chart };
   });
 }
 

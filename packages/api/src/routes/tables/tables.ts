@@ -1,6 +1,6 @@
 import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
 import prisma, { type ExtensionArgs } from "@/database/prisma";
-import { createTilePlacement } from "../tiles/tiles";
+import { createTile } from "../tiles/tiles";
 import { getBackgroundProperties } from "@/utils/backgrounds";
 import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
@@ -85,60 +85,54 @@ export async function createTable({
   rows,
   textColor,
   background,
-  ...tile
+  ...properties
 }: CreateTableSchema) {
-  return prisma.$transaction(async (transaction) => {
-    const table = await transaction.table.create({
-      data: {
+  const columnData: Prisma.TableColumnCreateManyTableInput[] = [];
+  const columnOrderKeys = generateNKeysBetween(null, null, columns);
+  for (let i = 0; i < columns; i++) {
+    columnData.push({ order: columnOrderKeys[i]! });
+  }
+
+  const rowData: Prisma.TableRowCreateManyTableInput[] = [];
+  const rowOrderKeys = generateNKeysBetween(null, null, rows);
+  for (let i = 0; i < rows; i++) {
+    rowData.push({ order: rowOrderKeys[i]!, data: {} });
+  }
+
+  const { table, ...tile } = await createTile(
+    {
+      ...properties,
+      type: "TABLE",
+      pageId,
+      sectionId,
+      table: {
         pageId,
         ...getTextColorProperties(textColor),
         ...getBackgroundProperties(background),
+        columns: {
+          createMany: {
+            data: columnData,
+          },
+        },
+        rows: {
+          createMany: {
+            data: rowData,
+          },
+        },
       },
-      select: { id: true },
-    });
+    },
+    { table: { select: TABLE_WITH_DATA_FIELDS } } as const,
+    prisma,
+  );
 
-    const columnData: Prisma.TableColumnCreateManyInput[] = [];
-    const columnOrderKeys = generateNKeysBetween(null, null, columns);
-    for (let i = 0; i < columns; i++) {
-      columnData.push({ tableId: table.id, order: columnOrderKeys[i]! });
-    }
-    await transaction.tableColumn.createMany({
-      data: columnData,
-    });
+  // TODO: Fix type
+  const { _count, ...tableWithData } = table;
 
-    const rowData: Prisma.TableRowCreateManyInput[] = [];
-    const rowOrderKeys = generateNKeysBetween(null, null, rows);
-    for (let i = 0; i < rows; i++) {
-      rowData.push({ tableId: table.id, order: rowOrderKeys[i]!, data: {} });
-    }
-    await transaction.tableRow.createMany({
-      data: rowData,
-    });
-
-    const placement = await createTilePlacement(
-      {
-        ...tile,
-        type: "TABLE",
-        pageId,
-        sectionId,
-        tableId: table.id,
-      },
-      transaction,
-    );
-
-    const { _count, ...tableWithData } =
-      await transaction.table.findUniqueOrThrow({
-        where: { id: table.id, pageId },
-        select: TABLE_WITH_DATA_FIELDS,
-      });
-
-    return {
-      type: "TABLE" as const,
-      ...tableWithData,
-      numRows: _count.rows,
-      ...placement,
-    };
-  });
+  return {
+    ...tile,
+    ...tableWithData,
+    numRows: _count.rows,
+  };
 }
 
 export async function updateTable({

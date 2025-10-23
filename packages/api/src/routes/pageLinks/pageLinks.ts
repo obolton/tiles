@@ -1,7 +1,7 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
+import prisma, { type ExtensionArgs } from "@/database/prisma";
 import { Prisma } from "@/generated/prisma/client";
-import type { CreatePageLinkSchema } from "./schema.ts";
-import { createTilePlacement } from "../tiles/tiles.ts";
+import type { CreatePageLinkSchema } from "./schema";
+import { createTile } from "../tiles/tiles";
 
 export const PAGE_LINK_TILE_PAGE_FIELDS = {
   id: true,
@@ -41,34 +41,26 @@ export async function createPageLink({
   pageId,
   sectionId,
   linkedPageId,
-  ...tile
+  ...properties
 }: CreatePageLinkSchema) {
   if (pageId === linkedPageId) {
     throw new Error("Cannot link to the same page.");
   }
-  return prisma.$transaction(async (transaction) => {
-    const pageLink = await transaction.pageLinkTile.create({
-      data: {
+
+  const { pageLink, ...tile } = await createTile(
+    {
+      ...properties,
+      type: "PAGE_LINK",
+      pageId,
+      sectionId,
+      pageLink: {
         pageId,
         linkedPageId,
       },
-      select: PAGE_LINK_FIELDS,
-    });
+    },
+    { pageLink: { select: PAGE_LINK_FIELDS } },
+    prisma,
+  );
 
-    const placement = await createTilePlacement(
-      {
-        ...tile,
-        type: "PAGE_LINK",
-        pageId,
-        sectionId,
-        pageLinkTileId: pageLink.id,
-      },
-      transaction,
-    );
-    return {
-      type: "PAGE_LINK" as const,
-      ...pageLink,
-      ...placement,
-    };
-  });
+  return { ...tile, ...pageLink };
 }
