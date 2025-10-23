@@ -45,6 +45,8 @@ const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 function getReactiveTile(editor: Editor, tile: ClientTile): Tile {
   const type = tile.type;
   switch (type) {
+    case "SECTION":
+      return new Section(editor, tile);
     case "TEXT":
       return new Text(editor, tile);
     case "IMAGE":
