@@ -12,7 +12,7 @@ export default class Tile {
   readonly type: string;
 
   readonly sectionId: Reactive<string>;
-  readonly position: Reactive<number>;
+  readonly order: Reactive<string>;
   readonly x: Reactive<number>;
   readonly y: Reactive<number>;
   readonly width: Reactive<number>;
@@ -26,7 +26,7 @@ export default class Tile {
       id,
       type,
       sectionId,
-      position,
+      order,
       x,
       y,
       width,
@@ -41,7 +41,7 @@ export default class Tile {
     this.type = type;
 
     this.sectionId = reactive(sectionId);
-    this.position = reactive(position);
+    this.order = reactive(order);
     this.x = reactive(x);
     this.y = reactive(y);
     this.width = reactive(width);
