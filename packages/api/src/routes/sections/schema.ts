@@ -1,22 +1,19 @@
 import { z } from "zod";
+import { TileSchema } from "@/schema/Tile";
 import { Layout, Anchor, Dimensions } from "@/generated/prisma/client";
 import { BackgroundSchema } from "@/schema/Background.ts";
-
-const MAX_WIDTH = 64;
-const MAX_HEIGHT = 64;
 
 export const SectionSchema = z.object({
   layout: z.enum(Layout).optional(),
   anchor: z.enum(Anchor).nullable().optional(),
   dimensions: z.enum(Dimensions).optional(),
-  width: z.int().gte(1).lte(MAX_WIDTH).optional(),
-  height: z.int().gte(1).lte(MAX_HEIGHT).optional(),
   background: BackgroundSchema.optional(),
   hide: z.boolean().optional(),
 });
 
 export const CreateSectionSchema = z.strictObject({
   pageId: z.uuid(),
+  ...TileSchema.shape,
   afterSectionId: z.uuid().nullable(),
   ...SectionSchema.shape,
 });
