@@ -25,6 +25,10 @@ enum ChartSeriesType {
   AREA
 }
 
+enum VideoType {
+  YOUTUBE
+}
+
 enum TileType {
   IMAGE
   VIDEO
@@ -83,86 +87,36 @@ model Page {
 }
 
 model Tile {
-  id             String     @id @default(uuid()) @db.Uuid
-  createdAt      DateTime   @default(now()) @map("created_at")
-  updatedAt      DateTime   @default(now()) @updatedAt @map("updated_at")
-  pageId         String     @map("page_id") @db.Uuid
-  sectionId      String     @map("section_id") @db.Uuid
-  order          String
-  width          Int        @default(1) @db.SmallInt
-  height         Int        @default(1) @db.SmallInt
-  rowSpan        Int        @default(1) @map("row_span") @db.SmallInt
-  x              Int        @default(0) @db.SmallInt
-  y              Int        @db.SmallInt
-  block          Boolean    @default(true)
-  imageTileId    String?    @map("image_tile_id") @db.Uuid
-  videoTileId    String?    @map("video_tile_id") @db.Uuid
-  textTileId     String?    @map("text_tile_id") @db.Uuid
-  mapTileId      String?    @map("map_tile_id") @db.Uuid
-  linkTileId     String?    @map("link_tile_id") @db.Uuid
-  pageLinkTileId String?    @map("page_link_tile_id") @db.Uuid
-  tableId        String?    @map("table_id") @db.Uuid
-  chartId        String?    @map("chart_id") @db.Uuid
-  type           TileType
-  animation      Animation?
+  id        String     @id @default(uuid()) @db.Uuid
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @default(now()) @updatedAt @map("updated_at")
+  pageId    String     @map("page_id") @db.Uuid
+  sectionId String     @map("section_id") @db.Uuid
+  order     String
+  width     Int        @default(1) @db.SmallInt
+  height    Int        @default(1) @db.SmallInt
+  rowSpan   Int        @default(1) @map("row_span") @db.SmallInt
+  x         Int        @default(0) @db.SmallInt
+  y         Int        @db.SmallInt
+  block     Boolean    @default(true)
+  type      TileType
+  animation Animation?
 
   page     Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
   section  Section       @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  image    ImageTile?    @relation(fields: [imageTileId], references: [id], onDelete: SetNull)
-  video    VideoTile?    @relation(fields: [videoTileId], references: [id], onDelete: SetNull)
-  text     TextTile?     @relation(fields: [textTileId], references: [id], onDelete: SetNull)
-  map      MapTile?      @relation(fields: [mapTileId], references: [id], onDelete: SetNull)
-  link     LinkTile?     @relation(fields: [linkTileId], references: [id], onDelete: SetNull)
-  pageLink PageLinkTile? @relation(fields: [pageLinkTileId], references: [id], onDelete: SetNull)
-  table    Table?        @relation(fields: [tableId], references: [id], onDelete: SetNull)
-  chart    Chart?        @relation(fields: [chartId], references: [id], onDelete: SetNull)
+  text     TextTile?
+  image    ImageTile?
+  video    VideoTile?
+  map      MapTile?
+  link     LinkTile?
+  pageLink PageLinkTile?
+  table    Table?
+  chart    Chart?
 
   @@index([pageId])
   @@index([sectionId])
   @@index([order])
   @@map("tiles")
-}
-
-model ImageTile {
-  id        String   @id @default(uuid()) @db.Uuid
-  pageId    String   @map("page_id") @db.Uuid
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  imageId   String?  @map("image_id") @db.Uuid
-  originX   Float    @default(0.5) @map("origin_x") @db.Real
-  originY   Float    @default(0.5) @map("origin_y") @db.Real
-  /// [RichText]
-  text      Json?    @db.JsonB
-  theme     String?
-
-  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tiles Tile[]
-  image Image? @relation(fields: [imageId], references: [id], onDelete: SetNull)
-
-  @@index([pageId])
-  @@map("image_tiles")
-}
-
-enum VideoType {
-  YOUTUBE
-}
-
-model VideoTile {
-  id               String    @id @default(uuid()) @db.Uuid
-  pageId           String    @map("page_id") @db.Uuid
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @updatedAt @map("updated_at")
-  videoType        VideoType @map("video_type")
-  videoId          String    @map("video_id")
-  originalImageUrl String?   @map("original_image_url")
-  title            String
-  description      String?
-
-  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tiles Tile[]
-
-  @@index([pageId])
-  @@map("video_tiles")
 }
 
 model TextTile {
@@ -180,11 +134,49 @@ model TextTile {
   align              VerticalAlignment  @default(TOP)
 
   page            Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tiles           Tile[]
+  tile            Tile   @relation(fields: [id], references: [id], onDelete: Cascade)
   backgroundImage Image? @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
 
   @@index([pageId])
   @@map("text_tiles")
+}
+
+model ImageTile {
+  id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  imageId   String?  @map("image_id") @db.Uuid
+  originX   Float    @default(0.5) @map("origin_x") @db.Real
+  originY   Float    @default(0.5) @map("origin_y") @db.Real
+  /// [RichText]
+  text      Json?    @db.JsonB
+  theme     String?
+
+  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tile  Tile   @relation(fields: [id], references: [id], onDelete: Cascade)
+  image Image? @relation(fields: [imageId], references: [id], onDelete: SetNull)
+
+  @@index([pageId])
+  @@map("image_tiles")
+}
+
+model VideoTile {
+  id               String    @id @default(uuid()) @db.Uuid
+  pageId           String    @map("page_id") @db.Uuid
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  videoType        VideoType @map("video_type")
+  videoId          String    @map("video_id")
+  originalImageUrl String?   @map("original_image_url")
+  title            String
+  description      String?
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tile Tile @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  @@index([pageId])
+  @@map("video_tiles")
 }
 
 model Place {
@@ -211,9 +203,9 @@ model MapTile {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  tiles  Tile[]
-  places Place[]
   page   Page    @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tile   Tile    @relation(fields: [id], references: [id], onDelete: Cascade)
+  places Place[]
 
   @@index([pageId])
   @@map("map_tiles")
@@ -230,8 +222,8 @@ model LinkTile {
   siteName         String?  @map("site_name")
   originalImageUrl String?  @map("original_image_url")
 
-  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tiles Tile[]
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tile Tile @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@index([pageId])
   @@map("link_tiles")
@@ -244,9 +236,9 @@ model PageLinkTile {
   updatedAt    DateTime @updatedAt @map("updated_at")
   linkedPageId String?  @map("linked_page_id") @db.Uuid
 
-  page       Page   @relation("Page", fields: [pageId], references: [id], onDelete: Cascade)
-  linkedPage Page?  @relation("LinkedPage", fields: [linkedPageId], references: [id], onDelete: SetNull)
-  tiles      Tile[]
+  page       Page  @relation("Page", fields: [pageId], references: [id], onDelete: Cascade)
+  tile       Tile  @relation(fields: [id], references: [id], onDelete: Cascade)
+  linkedPage Page? @relation("LinkedPage", fields: [linkedPageId], references: [id], onDelete: SetNull)
 
   @@index([pageId])
   @@map("page_link_tiles")
@@ -263,7 +255,7 @@ model Table {
   backgroundImageId  String?            @map("background_image_id") @db.Uuid
 
   page            Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tiles           Tile[]
+  tile            Tile          @relation(fields: [id], references: [id], onDelete: Cascade)
   backgroundImage Image?        @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
   columns         TableColumn[]
   rows            TableRow[]
@@ -331,10 +323,10 @@ model Chart {
   backgroundImageId  String?            @map("background_image_id") @db.Uuid
 
   page            Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tile            Tile          @relation(fields: [id], references: [id], onDelete: Cascade)
   backgroundImage Image?        @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
   table           Table         @relation(fields: [tableId], references: [id], onDelete: Cascade)
   label           TableColumn?  @relation(fields: [labelColumnId], references: [id], onDelete: SetNull)
-  tiles           Tile[]
   series          ChartSeries[]
 
   @@index([pageId])
