@@ -31,10 +31,9 @@ describe("Tile", () => {
 
     expect(tile.editor).toBe(editor);
     expect(tile.id).toBe(TILE.id);
-    expect(tile.placementId).toBe(TILE.placementId);
     expect(tile.type).toBe(TILE.type);
     expect(tile.sectionId.value).toBe(TILE.sectionId);
-    expect(tile.position.value).toBe(TILE.position);
+    expect(tile.order.value).toBe(TILE.order);
     expect(tile.x.value).toBe(TILE.x);
     expect(tile.y.value).toBe(TILE.y);
     expect(tile.width.value).toBe(TILE.width);
@@ -52,7 +51,7 @@ describe("Tile", () => {
 
       expect(client.tiles.delete.mutate).toHaveBeenCalledWith({
         pageId: PAGE.id,
-        ids: [TILE.placementId],
+        ids: [TILE.id],
       });
     });
   });
@@ -73,7 +72,7 @@ describe("Tile", () => {
       expect(client.tiles.update.mutate).toHaveBeenCalledWith({
         animation,
         pageId: PAGE.id,
-        id: TILE.placementId,
+        id: TILE.id,
       });
     });
 
@@ -91,7 +90,7 @@ describe("Tile", () => {
       expect(client.tiles.update.mutate).toHaveBeenCalledWith({
         animation: null,
         pageId: PAGE.id,
-        id: TILE.placementId,
+        id: TILE.id,
       });
     });
   });

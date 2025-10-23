@@ -8,7 +8,7 @@ import type {
 
 const SHARED = {
   sectionId: "section-id",
-  position: 3,
+  order: "a1",
   x: 5,
   y: 7,
   width: 11,
@@ -21,7 +21,6 @@ const SHARED = {
 export const TILE: ClientTile = {
   ...SHARED,
   id: "tile-id",
-  placementId: "placement-id",
   type: "TEXT",
   align: "TOP",
   textColor: null,
@@ -32,7 +31,6 @@ export const TILE: ClientTile = {
 export const TEXT_TILE: ClientTextTile = {
   ...SHARED,
   id: "tile-id",
-  placementId: "placement-id",
   type: "TEXT",
   align: "TOP",
   textColor: null,
@@ -57,7 +55,6 @@ export const TEXT_TILE: ClientTextTile = {
 export const IMAGE_TILE: ClientImageTile = {
   ...SHARED,
   id: "tile-id",
-  placementId: "placement-id",
   type: "IMAGE",
   imageUrl: "https://tiles.dev/image.png",
   originX: 0,
@@ -83,7 +80,6 @@ export const IMAGE_TILE: ClientImageTile = {
 export const LINK_TILE: ClientLinkTile = {
   ...SHARED,
   id: "tile-id",
-  placementId: "placement-id",
   type: "LINK",
   url: "https://tiles.dev",
   title: "Link title",
@@ -95,7 +91,6 @@ export const LINK_TILE: ClientLinkTile = {
 export const MAP_TILE = {
   ...SHARED,
   id: "tile-id",
-  placementId: "placement-id",
   type: "MAP",
   places: [
     {
