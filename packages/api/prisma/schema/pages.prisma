@@ -30,10 +30,10 @@ enum VideoType {
 }
 
 enum TileType {
+  SECTION
+  TEXT
   IMAGE
   VIDEO
-  TEXT
-  PLACE
   LINK
   PAGE_LINK
   MAP
@@ -91,7 +91,8 @@ model Tile {
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @default(now()) @updatedAt @map("updated_at")
   pageId    String     @map("page_id") @db.Uuid
-  sectionId String     @map("section_id") @db.Uuid
+  sectionId String?    @map("section_id") @db.Uuid
+  type      TileType
   order     String
   width     Int        @default(1) @db.SmallInt
   height    Int        @default(1) @db.SmallInt
@@ -99,17 +100,17 @@ model Tile {
   x         Int        @default(0) @db.SmallInt
   y         Int        @db.SmallInt
   block     Boolean    @default(true)
-  type      TileType
   animation Animation?
 
   page          Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  parentSection Section       @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  parentSection Section?      @relation("ParentSection", fields: [sectionId], references: [id], onDelete: Cascade)
+  section       Section?      @relation("Tile")
   text          TextTile?
   image         ImageTile?
   video         VideoTile?
-  map           MapTile?
   link          LinkTile?
   pageLink      PageLinkTile?
+  map           MapTile?
   table         Table?
   chart         Chart?
 

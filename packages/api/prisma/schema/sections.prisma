@@ -35,7 +35,8 @@ model Section {
   hide               Boolean            @default(false)
 
   page            Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  items           Tile[]
+  items           Tile[] @relation("ParentSection")
+  tile            Tile   @relation("Tile", fields: [id], references: [id], onDelete: Cascade)
   backgroundImage Image? @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
 
   @@index([pageId])
