@@ -347,32 +347,39 @@ export async function createPage(
         id: true,
       },
     });
-    await transaction.section.create({
+    await transaction.tile.create({
       data: {
         pageId: page.id,
+        type: "SECTION",
         order: first,
-        layout: "GRID",
-        items: {
+        y: 0,
+        section: {
           create: {
-            page: {
-              connect: { id: page.id },
-            },
-            type: "TEXT",
-            order: first,
-            x: 0,
-            y: 0,
-            width: 20,
-            height: 1,
-            block: true,
-            text: {
+            pageId: page.id,
+            layout: "GRID",
+            items: {
               create: {
-                pageId: page.id,
-                content: [
-                  {
-                    type: "paragraph",
-                    children: [],
+                page: {
+                  connect: { id: page.id },
+                },
+                type: "TEXT",
+                order: first,
+                x: 0,
+                y: 0,
+                width: 20,
+                height: 1,
+                block: true,
+                text: {
+                  create: {
+                    pageId: page.id,
+                    content: [
+                      {
+                        type: "paragraph",
+                        children: [],
+                      },
+                    ],
                   },
-                ],
+                },
               },
             },
           },
