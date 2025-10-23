@@ -1,3 +1,4 @@
+import type Section from "@/models/Section";
 import type Text from "@/models/Text";
 import type Image from "@/models/Image";
 import type Video from "@/models/Video";
@@ -7,4 +8,13 @@ import type Map from "@/models/Map";
 import type Table from "@/models/Table";
 import type Chart from "@/models/Chart";
 
-export type Tile = Text | Image | Video | Link | PageLink | Map | Table | Chart;
+export type Tile =
+  | Section
+  | Text
+  | Image
+  | Video
+  | Link
+  | PageLink
+  | Map
+  | Table
+  | Chart;
