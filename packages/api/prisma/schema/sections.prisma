@@ -25,10 +25,7 @@ model Section {
   updatedAt          DateTime           @default(now()) @updatedAt @map("updated_at")
   layout             Layout             @default(GRID)
   anchor             Anchor?
-  order              String
   dimensions         Dimensions         @default(CUSTOM)
-  width              Int                @default(20) @db.SmallInt
-  height             Int                @default(20) @db.SmallInt
   backgroundColor    Bytes?             @map("background_color") @db.ByteA
   backgroundGradient GradientDirection? @map("background_gradient")
   backgroundImageId  String?            @map("background_image_id") @db.Uuid
@@ -40,7 +37,6 @@ model Section {
   backgroundImage Image? @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
 
   @@index([pageId])
-  @@index([order])
   @@index([hide])
   @@map("sections")
 }
