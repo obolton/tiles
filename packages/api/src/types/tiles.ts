@@ -33,7 +33,7 @@ type ClientTileBase = Pick<
   | "rowSpan"
   | "block"
   | "animation"
-> & { placementId: string };
+>;
 
 // Image
 export type ClientImage = Image;
