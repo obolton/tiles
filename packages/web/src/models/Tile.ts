@@ -11,7 +11,7 @@ export default class Tile {
   readonly id: string;
   readonly type: string;
 
-  readonly sectionId: Reactive<string>;
+  readonly sectionId: Reactive<string | null>;
   readonly order: Reactive<string>;
   readonly x: Reactive<number>;
   readonly y: Reactive<number>;
