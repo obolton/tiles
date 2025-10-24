@@ -15,22 +15,13 @@ import type { ResizeDirection } from "@/elements/item/PageItem";
 import type { Tile } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
-import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
 import type { DragData } from "@/editor/LayoutEditor";
 
 export interface ItemProps {
-  editor: Editor;
-  id: string;
   style?: JSX.StyleDeclaration;
   classList?: { [k: string]: boolean | Reactive<boolean> };
   editable?: boolean | Reactive<boolean>;
-  x?: Reactive<number>;
-  y?: Reactive<number>;
-  width: Reactive<number>;
-  height: Reactive<number>;
-  rowSpan: Reactive<number>;
-  block?: Reactive<boolean>;
   tile: Tile;
   tabIndex?: number | Reactive<number | undefined>;
   resize?: Reactive<ResizeDirection | null>;
@@ -63,21 +54,15 @@ function getTileComponent(tile: Tile, hasFocus: Reactive<boolean>) {
 }
 
 export default function Item({
-  editor,
-  id,
   classList,
   style,
   editable = false,
-  x,
-  y,
-  width,
-  height,
-  rowSpan,
-  block,
   tile,
   tabIndex,
   resize,
 }: ItemProps) {
+  const { id, x, y, width, height, rowSpan, block, editor } = tile;
+
   let item: PageItem;
   const ref = (element: PageItem) => {
     item = element;

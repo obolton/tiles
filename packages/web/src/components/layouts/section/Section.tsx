@@ -167,6 +167,8 @@ export default function Section({ section, signal }: SectionProps) {
     (isEditableValue, hideValue) => !hideValue || isEditableValue,
   );
 
+  const tabIndex = isEditable.derive((editable) => (editable ? 0 : undefined));
+
   return (
     <If condition={show}>
       <section
