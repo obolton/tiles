@@ -10,6 +10,7 @@ import ChartTile from "@/components/tiles/ChartTile";
 import { flag, reactive, Computed } from "@/utils/reactivity";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import If from "@/jsx/if";
+import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
 import styles from "./Item.module.css";
 import type PageItem from "@/elements/item/PageItem";
 import type { ResizeDirection } from "@/elements/item/PageItem";
@@ -18,6 +19,7 @@ import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 import type { DragData } from "@/editor/LayoutEditor";
+import type { Dimensions } from "@/models/Tile";
 
 export interface ItemProps {
   style?: JSX.StyleDeclaration;
@@ -54,6 +56,31 @@ function getTileComponent(tile: Tile, hasFocus: Reactive<boolean>) {
   }
 }
 
+export function getSizeStyle(
+  dimensions: Dimensions,
+  width: number,
+  height: number,
+) {
+  switch (dimensions) {
+    case "LANDSCAPE":
+      return {
+        "--width": LANDSCAPE_SIZE.width.toString(),
+        "--height": LANDSCAPE_SIZE.height.toString(),
+      };
+    case "PORTRAIT":
+      return {
+        "--width": PORTRAIT_SIZE.width.toString(),
+        "--height": PORTRAIT_SIZE.height.toString(),
+      };
+    case "CUSTOM":
+    default:
+      return {
+        "--width": width.toString(),
+        "--height": height.toString(),
+      };
+  }
+}
+
 export default function Item({
   classList,
   style,
@@ -62,7 +89,8 @@ export default function Item({
   tabIndex,
   resize,
 }: ItemProps) {
-  const { id, x, y, width, height, rowSpan, block, hide, editor } = tile;
+  const { id, dimensions, x, y, width, height, rowSpan, block, hide, editor } =
+    tile;
 
   let item: PageItem;
   const ref = (element: PageItem) => {
@@ -140,12 +168,17 @@ export default function Item({
       : reactive({});
 
   const combinedStyles = new Computed(
-    [width, height, rowSpan, position] as const,
-    (widthValue, heightValue, rowSpanValue, positionValue) => ({
+    [dimensions, width, height, rowSpan, position] as const,
+    (
+      dimensionsValue,
+      widthValue,
+      heightValue,
+      rowSpanValue,
+      positionValue,
+    ) => ({
       ...style,
       ...positionValue,
-      "--width": widthValue.toString(),
-      "--height": heightValue.toString(),
+      ...getSizeStyle(dimensionsValue, widthValue, heightValue),
       "--rows": rowSpanValue.toString(),
     }),
   );
