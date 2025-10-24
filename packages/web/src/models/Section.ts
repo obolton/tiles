@@ -15,6 +15,8 @@ import type { AppRouterInputs } from "@/api/client";
 import type { Tile as TileProperties } from "@/types/tiles";
 
 export default class Section extends Tile {
+  readonly type = "SECTION";
+
   readonly background: Reactive<Background | null>;
   readonly layout: Reactive<Layout>;
   readonly tiles: ComputedReactive<TileProperties[]>;
