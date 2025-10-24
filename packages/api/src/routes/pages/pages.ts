@@ -101,12 +101,6 @@ const PAGE_FIELDS = {
   invites: {
     select: PAGE_INVITE_FIELDS,
   },
-  sections: {
-    select: SECTION_FIELDS,
-    orderBy: {
-      order: "asc",
-    },
-  },
   tiles: {
     select: TILES_FIELDS,
     orderBy: {
