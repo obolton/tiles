@@ -26,7 +26,11 @@ import type { Dropdown } from "@/types/dropdowns";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
 import type { Color } from "@/utils/color";
-import type { Reactive, ReactiveArray } from "@/utils/reactivity";
+import type {
+  Reactive,
+  ReactiveArray,
+  ComputedReactive,
+} from "@/utils/reactivity";
 
 export type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
@@ -80,7 +84,8 @@ export default class Editor {
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
   readonly sections: ReactiveArray<Section>;
-  readonly tiles: Reactive<Tile[]>;
+  readonly tiles: ReactiveArray<Tile>;
+  readonly rootTiles: ComputedReactive<Tile[]>;
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<Invite>;
   readonly author: User;
@@ -124,8 +129,11 @@ export default class Editor {
     this.font = reactive(page.font);
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
-    this.tiles = reactive(
+    this.tiles = array(
       page.tiles.map((properties) => getReactiveTile(this, properties)),
+    );
+    this.rootTiles = this.tiles.derive((tiles) =>
+      tiles.filter((tile) => !tile.sectionId),
     );
     this.sections = array(
       page.sections.map((section) => this.getSection(section)),
