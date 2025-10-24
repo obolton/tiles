@@ -86,7 +86,7 @@ export default function Section({ section, signal }: SectionProps) {
   }
 
   function onResizeEnd() {
-    section.setSize(width.value, height.value);
+    section.setSize({ width: width.value, height: height.value });
   }
 
   function insertSection() {
