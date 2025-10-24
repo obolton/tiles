@@ -6,6 +6,19 @@ enum Font {
   BUBBLES
 }
 
+enum Anchor {
+  TOP
+  LEFT
+  RIGHT
+  BOTTOM
+}
+
+enum Dimensions {
+  LANDSCAPE
+  PORTRAIT
+  CUSTOM
+}
+
 enum VerticalAlignment {
   TOP
   CENTER
@@ -87,20 +100,23 @@ model Page {
 }
 
 model Tile {
-  id        String     @id @default(uuid()) @db.Uuid
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @default(now()) @updatedAt @map("updated_at")
-  pageId    String     @map("page_id") @db.Uuid
-  sectionId String?    @map("section_id") @db.Uuid
-  type      TileType
-  order     String
-  width     Int        @default(1) @db.SmallInt
-  height    Int        @default(1) @db.SmallInt
-  rowSpan   Int        @default(1) @map("row_span") @db.SmallInt
-  x         Int        @default(0) @db.SmallInt
-  y         Int        @db.SmallInt
-  block     Boolean    @default(true)
-  animation Animation?
+  id         String     @id @default(uuid()) @db.Uuid
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @default(now()) @updatedAt @map("updated_at")
+  pageId     String     @map("page_id") @db.Uuid
+  sectionId  String?    @map("section_id") @db.Uuid
+  type       TileType
+  order      String
+  anchor     Anchor?
+  dimensions Dimensions @default(CUSTOM)
+  width      Int        @default(1) @db.SmallInt
+  height     Int        @default(1) @db.SmallInt
+  rowSpan    Int        @default(1) @map("row_span") @db.SmallInt
+  x          Int        @default(0) @db.SmallInt
+  y          Int        @db.SmallInt
+  block      Boolean    @default(true)
+  animation  Animation?
+  hide       Boolean    @default(false)
 
   page          Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
   parentSection Section?      @relation("ParentSection", fields: [sectionId], references: [id], onDelete: Cascade)
@@ -117,6 +133,7 @@ model Tile {
   @@index([pageId])
   @@index([sectionId])
   @@index([order])
+  @@index([hide])
   @@map("tiles")
 }
 
