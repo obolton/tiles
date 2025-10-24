@@ -20,7 +20,7 @@ import Map from "@/models/Map";
 import Table from "@/models/Table";
 import Chart from "@/models/Chart";
 import type { FontId } from "@/config/fonts";
-import type { ClientTile, ClientCollection } from "api/types/tiles";
+import type { ClientTile } from "api/types/tiles";
 import type { Tile } from "@/types/tiles";
 import type { Dropdown } from "@/types/dropdowns";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
@@ -83,7 +83,6 @@ export default class Editor {
   readonly font: Reactive<FontId>;
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
-  readonly sections: ReactiveArray<Section>;
   readonly tiles: ReactiveArray<Tile>;
   readonly rootTiles: ComputedReactive<Tile[]>;
   readonly access: ReactiveArray<PageAccess>;
@@ -134,9 +133,6 @@ export default class Editor {
     );
     this.rootTiles = this.tiles.derive((tiles) =>
       tiles.filter((tile) => !tile.sectionId),
-    );
-    this.sections = array(
-      page.sections.map((section) => this.getSection(section)),
     );
     this.access = array(page.access);
     this.invites = array(page.invites);
@@ -309,42 +305,12 @@ export default class Editor {
 
   // Sections
 
-  private getSection(properties: ClientCollection): Section {
-    return new Section(this, {
-      ...properties,
-      tiles: this.tiles.derive((tiles) =>
-        tiles.filter((tile) => tile.sectionId.value === properties.id),
-      ),
-    });
-  }
-
   async createSection(data: OmitPageId<AppRouterInputs["sections"]["create"]>) {
-    const section = await client.sections.create.mutate({
+    const properties = await client.sections.create.mutate({
       pageId: this.pageId,
       ...data,
     });
-    viewTransition(() => {
-      const afterIndex = data.afterSectionId
-        ? (this.sections.value.findIndex(
-            (section) => section.id === data.afterSectionId,
-          ) ?? -1)
-        : -1;
-      this.sections.value = this.sections.value.toSpliced(
-        afterIndex + 1,
-        0,
-        this.getSection(section),
-      );
-
-      const element = document.querySelector<HTMLElement>(
-        `[data-section-id="${section.id}"]`,
-      );
-      if (element) {
-        element.focus({ preventScroll: true });
-        scrollIntoViewIfNeeded(element, { behavior: "smooth" });
-      }
-    });
-
-    return section;
+    this.addTile(properties);
   }
 
   async duplicateSection(
@@ -388,7 +354,7 @@ export default class Editor {
       element?.nextElementSibling || element?.previousElementSibling;
 
     this.transitionSections(() => {
-      this.sections.value = this.sections.value.filter(
+      this.tiles.value = this.tiles.value.filter(
         (section) => section.id !== id,
       );
       if (sibling instanceof HTMLElement) {
@@ -400,18 +366,19 @@ export default class Editor {
   }
 
   async moveSectionUp(id: string) {
-    const index = this.sections.value.findIndex((section) => section.id === id);
+    const index = this.tiles.value.findIndex((tile) => tile.id === id);
     if (index < 0) {
-      throw new Error(`Invalid section ID: ${id}`);
+      throw new Error(`Invalid tile ID: ${id}`);
     }
     if (index === 0) {
       return;
     }
 
-    const afterSectionId = this.sections.value[index - 2]?.id ?? null;
+    // TODO: Fix so it works with nested tiles
+    const afterSectionId = this.tiles.value[index - 2]?.id ?? null;
 
     this.transitionSections(() => {
-      this.sections.value = moveElement(this.sections.value, index, index - 1);
+      this.tiles.value = moveElement(this.tiles.value, index, index - 1);
     });
 
     await client.sections.update.mutate({
@@ -422,18 +389,18 @@ export default class Editor {
   }
 
   async moveSectionDown(id: string) {
-    const index = this.sections.value.findIndex((section) => section.id === id);
+    const index = this.tiles.value.findIndex((tile) => tile.id === id);
     if (index < 0) {
       throw new Error(`Invalid section ID: ${id}`);
     }
 
-    const afterSectionId = this.sections.value[index + 1]?.id;
+    const afterSectionId = this.tiles.value[index + 1]?.id;
     if (!afterSectionId) {
       return;
     }
 
     this.transitionSections(() => {
-      this.sections.value = moveElement(this.sections.value, index, index + 1);
+      this.tiles.value = moveElement(this.tiles.value, index, index + 1);
     });
 
     await client.sections.update.mutate({
@@ -527,16 +494,21 @@ export default class Editor {
 
     // Move tile to new section
     if (sectionId) {
-      const section = this.sections.value.find((s) => s.id === sectionId);
+      const section = this.tiles.value.find(
+        (t): t is Section => t instanceof Section && t.id === sectionId,
+      );
       if (!section) {
         throw new Error(`Invalid section ID: ${sectionId}`);
       }
 
-      const previousSection = this.sections.value.find(
-        (s) => s.id === tile.sectionId.value,
+      const previousSection = this.tiles.value.find(
+        (t): t is Section =>
+          t instanceof Section && t.id === tile.sectionId.value,
       );
 
       tile.sectionId.value = sectionId;
+
+      // TODO: Move to controlled list
       section.tiles.markAsStale();
       previousSection?.tiles.markAsStale();
     }
@@ -605,7 +577,7 @@ export default class Editor {
   async updateText(data: OmitPageId<AppRouterInputs["text"]["update"]>) {
     // Update the page title
     if (data.content) {
-      const firstTextTileId = this.sections.value[0]?.tiles.value.find(
+      const firstTextTileId = this.tiles.value.find(
         (tile) => tile.type === "TEXT",
       )?.id;
       if (firstTextTileId && data.id === firstTextTileId) {
