@@ -1,23 +1,14 @@
 import Item from "@/components/item/Item";
 import { flag, Computed } from "@/utils/reactivity";
 import SectionToolbar from "./SectionToolbar";
-import { toCSSColor } from "@/utils/color";
 import If from "@/jsx/if";
 import Each from "@/jsx/each";
 import Portal from "@/jsx/portal";
 import Editor from "@/editor/Editor";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./Section.module.css";
-import { SIZE_UNIT, LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
-import NewIcon from "@/icons/new.svg?jsx";
-import { handleError } from "@/utils/errors";
 import type ScrollView from "@/elements/scroll-view/ScrollView";
-import type { PageItemEvent } from "@/elements/item/events";
 import type SectionModel from "@/models/Section";
-
-function preventDefault(event: Event) {
-  event.preventDefault();
-}
 
 export interface SectionProps {
   section: SectionModel;
@@ -25,28 +16,19 @@ export interface SectionProps {
 }
 
 export default function Section({ section, signal }: SectionProps) {
-  const { id, dimensions, width, height, layout, background, tiles, editor } =
-    section;
+  const { id, layout, tiles, editor } = section;
   const { isEditable } = editor;
   const hasFocus = flag(false);
-  let scrollView: ScrollView | null = null;
 
-  function sectionRef(element: HTMLElement) {
-    if (!scrollView) {
-      return;
-    }
+  function ref(element: ScrollView) {
     new LayoutEditor({
-      element: scrollView,
-      grid: scrollView.contents,
+      element,
+      grid: element.contents,
       dropTarget: element,
       editor,
       sectionId: id,
       signal,
     });
-  }
-
-  function scrollViewRef(element: ScrollView) {
-    scrollView = element;
   }
 
   function onFocus() {
@@ -71,19 +53,6 @@ export default function Section({ section, signal }: SectionProps) {
     Editor.current.activeSection = null;
   }
 
-  function onResize(event: PageItemEvent) {
-    width.value = Math.round(event.width / SIZE_UNIT);
-    height.value = Math.round(event.height / SIZE_UNIT);
-  }
-
-  function onResizeEnd() {
-    section.setSize({ width: width.value, height: height.value });
-  }
-
-  function insertSection() {
-    Editor.current.createSection({ afterSectionId: id }).catch(handleError);
-  }
-
   const layoutClass = layout.derive((value) => {
     switch (value) {
       case "GRID":
@@ -96,43 +65,6 @@ export default function Section({ section, signal }: SectionProps) {
         return styles.freeform;
     }
   });
-
-  const containerStyle = new Computed(
-    [background] as const,
-    (backgroundValue) => ({
-      "--background-color":
-        backgroundValue && "color" in backgroundValue
-          ? toCSSColor(backgroundValue.color)
-          : "transparent",
-      backgroundImage:
-        backgroundValue && "imageUrl" in backgroundValue
-          ? `url(${backgroundValue.imageUrl})`
-          : undefined,
-    }),
-  );
-
-  const contentStyle = new Computed(
-    [dimensions, width, height] as const,
-    (dimensionsValue, widthValue, heightValue) => {
-      switch (dimensionsValue) {
-        case "LANDSCAPE":
-          return {
-            width: LANDSCAPE_SIZE.width * SIZE_UNIT + "px",
-            height: LANDSCAPE_SIZE.height * SIZE_UNIT + "px",
-          };
-        case "PORTRAIT":
-          return {
-            width: PORTRAIT_SIZE.width * SIZE_UNIT + "px",
-            height: PORTRAIT_SIZE.height * SIZE_UNIT + "px",
-          };
-        case "CUSTOM":
-          return {
-            width: widthValue * SIZE_UNIT + "px",
-            height: heightValue * SIZE_UNIT + "px",
-          };
-      }
-    },
-  );
 
   const resize = new Computed(
     [isEditable, layout] as const,
@@ -156,14 +88,11 @@ export default function Section({ section, signal }: SectionProps) {
   const tabIndex = isEditable.derive((editable) => (editable ? 0 : undefined));
 
   return (
-    <section
-      ref={sectionRef}
-      classList={{
-        [styles.section]: true,
-      }}
-      style={containerStyle}
-      tabIndex={tabIndex}
+    <scroll-view
+      ref={ref}
+      classList={[styles.contents, layoutClass]}
       data-section-id={id}
+      tabIndex={tabIndex}
       data-drop={isEditable.derive((editable) =>
         editable ? "true" : undefined,
       )}
@@ -176,44 +105,17 @@ export default function Section({ section, signal }: SectionProps) {
         </Portal>
       </If>
 
-      <page-item
-        className={styles.container}
-        style={contentStyle}
-        allowdrag={isEditable}
-        resize={isEditable.derive((value) => (value ? "all" : null))}
-        on:itemresize={onResize}
-        on:itemresizeend={onResizeEnd}
-      >
-        <scroll-view
-          ref={scrollViewRef}
-          classList={[styles.contents, layoutClass]}
-        >
-          <Each items={tiles}>
-            {(tile) => (
-              <Item
-                classList={{ [styles.item]: true }}
-                editable={isEditable}
-                tile={tile}
-                tabIndex={tabIndex}
-                resize={resize}
-              />
-            )}
-          </Each>
-        </scroll-view>
-      </page-item>
-
-      <If condition={hasFocus}>
-        <button
-          type="button"
-          classList={{ floating: true, small: true, [styles.insert]: true }}
-          aria-label="Insert section"
-          data-tooltip="Insert section"
-          on:pointerdown={preventDefault}
-          on:click={insertSection}
-        >
-          <NewIcon aria-hidden="true" />
-        </button>
-      </If>
-    </section>
+      <Each items={tiles}>
+        {(tile) => (
+          <Item
+            classList={{ [styles.item]: true }}
+            editable={isEditable}
+            tile={tile}
+            tabIndex={tabIndex}
+            resize={resize}
+          />
+        )}
+      </Each>
+    </scroll-view>
   );
 }

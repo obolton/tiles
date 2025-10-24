@@ -46,20 +46,6 @@
   initial-value: 0;
 }
 
-.section {
-  position: relative;
-  width: 100%;
-  margin: 0;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: var(--background-color);
-  background-size: cover;
-  background-position: center;
-  outline: none;
-}
-
 .container {
   max-width: 100%;
   border-radius: var(--border-radius);
@@ -166,12 +152,6 @@
     grid-column: var(--column) / span var(--width);
     grid-row: var(--row) / span var(--height);
   }
-}
-
-.insert {
-  position: absolute;
-  bottom: -16px;
-  z-index: 2;
 }
 
 @container main (min-width: 100px) {
