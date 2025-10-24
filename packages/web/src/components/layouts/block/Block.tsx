@@ -26,7 +26,7 @@ export default function Block({
   const hasFocus = flag(false);
 
   function insertItem() {
-    Editor.current.createSection({ afterSectionId: tileId }).catch(handleError);
+    Editor.current.createSection({ afterId: tileId }).catch(handleError);
   }
 
   function onFocusIn() {
