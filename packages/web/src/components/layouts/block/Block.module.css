@@ -1,0 +1,19 @@
+.block {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--background-color);
+  background-size: cover;
+  background-position: center;
+  outline: none;
+}
+
+.insert {
+  position: absolute;
+  bottom: -16px;
+  z-index: 2;
+}
