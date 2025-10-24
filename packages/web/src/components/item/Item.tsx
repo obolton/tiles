@@ -1,3 +1,4 @@
+import Section from "@/components/layouts/section/Section";
 import ImageTile from "@/components/tiles/ImageTile";
 import VideoTile from "@/components/tiles/VideoTile";
 import TextTile from "@/components/tiles/TextTile";
@@ -38,6 +39,8 @@ export interface ItemProps {
 function getTileComponent(tile: Tile, hasFocus: Reactive<boolean>) {
   const type = tile.type;
   switch (type) {
+    case "SECTION":
+      return <Section section={tile} />;
     case "IMAGE":
       return <ImageTile image={tile} />;
     case "VIDEO":
