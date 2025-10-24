@@ -19,10 +19,7 @@ import type {
 export const SECTION_FIELDS = {
   id: true,
   layout: true,
-  anchor: true,
-  dimensions: true,
   background: true,
-  hide: true,
 } as const satisfies Prisma.SectionSelect<ExtensionArgs>;
 
 export type Section = Prisma.Result<
@@ -52,10 +49,7 @@ export async function getSectionOrder(
 export async function createSection({
   pageId,
   layout,
-  anchor,
-  dimensions,
   background,
-  hide,
   ...properties
 }: CreateSectionSchema) {
   const { section, ...tile } = await createTile(
@@ -67,9 +61,6 @@ export async function createSection({
       section: {
         pageId,
         layout,
-        anchor,
-        dimensions,
-        hide,
         ...getBackgroundProperties(background),
       },
     },
@@ -83,10 +74,7 @@ export async function updateSection({
   pageId,
   id,
   layout,
-  anchor,
-  dimensions,
   background,
-  hide,
 }: UpdateSectionSchema) {
   return prisma.section.update({
     where: {
@@ -95,9 +83,6 @@ export async function updateSection({
     },
     data: {
       layout,
-      anchor,
-      dimensions,
-      hide,
       ...getBackgroundProperties(background),
     },
     select: SECTION_FIELDS,

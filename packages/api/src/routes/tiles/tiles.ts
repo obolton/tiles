@@ -18,6 +18,8 @@ export const TILE_FIELDS = {
   type: true,
   sectionId: true,
   order: true,
+  anchor: true,
+  dimensions: true,
   width: true,
   height: true,
   x: true,
@@ -25,6 +27,7 @@ export const TILE_FIELDS = {
   rowSpan: true,
   block: true,
   animation: true,
+  hide: true,
 } as const satisfies Prisma.TileSelect<ExtensionArgs>;
 
 export async function getTileOrder(
@@ -71,6 +74,8 @@ export async function updateTile({
   pageId,
   id,
   sectionId,
+  anchor,
+  dimensions,
   width,
   height,
   x,
@@ -78,6 +83,7 @@ export async function updateTile({
   rowSpan,
   block,
   animation,
+  hide,
 }: UpdateTileSchema) {
   return prisma.$transaction(async (transaction) => {
     // Validate section ID
@@ -92,6 +98,8 @@ export async function updateTile({
       where: { pageId, id },
       data: {
         sectionId,
+        anchor,
+        dimensions,
         width,
         height,
         rowSpan,
@@ -99,6 +107,7 @@ export async function updateTile({
         y,
         block,
         animation,
+        hide,
       },
       select: TILE_FIELDS,
     });
@@ -143,6 +152,8 @@ export async function createTile<T extends TileType>(
     pageId,
     sectionId = null,
     type,
+    anchor,
+    dimensions,
     width,
     height = 1,
     x,
@@ -150,6 +161,7 @@ export async function createTile<T extends TileType>(
     rowSpan = 1,
     block,
     animation,
+    hide,
     section,
     text,
     image,
@@ -192,6 +204,8 @@ export async function createTile<T extends TileType>(
       sectionId,
       type,
       order,
+      anchor,
+      dimensions,
       width: insertWidth,
       height,
       rowSpan,
@@ -199,6 +213,7 @@ export async function createTile<T extends TileType>(
       y: insertY,
       block,
       animation,
+      hide,
       section: section ? { create: section } : undefined,
       text: text ? { create: text } : undefined,
       image: image ? { create: image } : undefined,
