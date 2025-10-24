@@ -10,7 +10,7 @@ export interface LayoutEditorOptions {
   grid: HTMLElement;
   dropTarget?: HTMLElement;
   editor: Editor;
-  sectionId: string;
+  sectionId: string | null;
   signal?: AbortSignal;
 }
 
@@ -34,7 +34,7 @@ const SNAP_THRESHOLD = 64;
 
 export default class LayoutEditor {
   readonly editor: Editor;
-  readonly sectionId: string;
+  readonly sectionId: string | null;
 
   private readonly elementRef: WeakRef<HTMLElement>;
   private readonly gridRef: WeakRef<HTMLElement>;
