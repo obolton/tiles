@@ -349,6 +349,8 @@ export async function createPage(
         pageId: page.id,
         type: "SECTION",
         order: first,
+        width: 24,
+        height: 16,
         y: 0,
         section: {
           create: {
