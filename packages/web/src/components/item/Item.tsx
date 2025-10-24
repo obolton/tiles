@@ -9,6 +9,7 @@ import TableTile from "@/components/tiles/TableTile";
 import ChartTile from "@/components/tiles/ChartTile";
 import { flag, reactive, Computed } from "@/utils/reactivity";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
+import If from "@/jsx/if";
 import styles from "./Item.module.css";
 import type PageItem from "@/elements/item/PageItem";
 import type { ResizeDirection } from "@/elements/item/PageItem";
@@ -61,7 +62,7 @@ export default function Item({
   tabIndex,
   resize,
 }: ItemProps) {
-  const { id, x, y, width, height, rowSpan, block, editor } = tile;
+  const { id, x, y, width, height, rowSpan, block, hide, editor } = tile;
 
   let item: PageItem;
   const ref = (element: PageItem) => {
@@ -149,27 +150,35 @@ export default function Item({
     }),
   );
 
+  const show = new Computed(
+    [editor.isEditable, hide] as const,
+    (editable, hidden) => !hidden || editable,
+  );
+
   return (
-    <page-item
-      id={id}
-      ref={ref}
-      allowdrag={editable}
-      resize={resize}
-      classList={{
-        [styles.item]: true,
-        [styles.draggable]: editable,
-        [styles.selected]: isSelected,
-        [styles.block]: block,
-        ...classList,
-      }}
-      style={combinedStyles}
-      tabIndex={tabIndex}
-      on:pointerdown={onPointerDown}
-      on:dnd-dragstart={onDragStart}
-      on:focusin={onFocusIn}
-      on:focusout={onFocusOut}
-    >
-      {getTileComponent(tile, hasFocus)}
-    </page-item>
+    <If condition={show}>
+      <page-item
+        id={id}
+        ref={ref}
+        allowdrag={editable}
+        resize={resize}
+        classList={{
+          [styles.item]: true,
+          [styles.draggable]: editable,
+          [styles.selected]: isSelected,
+          [styles.block]: block,
+          [styles.hide]: hide,
+          ...classList,
+        }}
+        style={combinedStyles}
+        tabIndex={tabIndex}
+        on:pointerdown={onPointerDown}
+        on:dnd-dragstart={onDragStart}
+        on:focusin={onFocusIn}
+        on:focusout={onFocusOut}
+      >
+        {getTileComponent(tile, hasFocus)}
+      </page-item>
+    </If>
   );
 }

@@ -25,17 +25,8 @@ export interface SectionProps {
 }
 
 export default function Section({ section, signal }: SectionProps) {
-  const {
-    id,
-    dimensions,
-    width,
-    height,
-    layout,
-    background,
-    hide,
-    tiles,
-    editor,
-  } = section;
+  const { id, dimensions, width, height, layout, background, tiles, editor } =
+    section;
   const { isEditable } = editor;
   const hasFocus = flag(false);
   let scrollView: ScrollView | null = null;
@@ -162,85 +153,67 @@ export default function Section({ section, signal }: SectionProps) {
     },
   );
 
-  const show = new Computed(
-    [isEditable, hide] as const,
-    (isEditableValue, hideValue) => !hideValue || isEditableValue,
-  );
-
   const tabIndex = isEditable.derive((editable) => (editable ? 0 : undefined));
 
   return (
-    <If condition={show}>
-      <section
-        ref={sectionRef}
-        classList={{
-          [styles.section]: true,
-          [styles.hide]: hide,
-        }}
-        style={containerStyle}
-        tabIndex={isEditable.derive((value) => (value ? 0 : undefined))}
-        data-section-id={id}
-        data-drop={isEditable.derive((editable) =>
-          editable ? "true" : undefined,
-        )}
-        on:focus={onFocus}
-        on:focusout={onFocusOut}
+    <section
+      ref={sectionRef}
+      classList={{
+        [styles.section]: true,
+      }}
+      style={containerStyle}
+      tabIndex={tabIndex}
+      data-section-id={id}
+      data-drop={isEditable.derive((editable) =>
+        editable ? "true" : undefined,
+      )}
+      on:focus={onFocus}
+      on:focusout={onFocusOut}
+    >
+      <If condition={hasFocus}>
+        <Portal>
+          <SectionToolbar section={section} />
+        </Portal>
+      </If>
+
+      <page-item
+        className={styles.container}
+        style={contentStyle}
+        allowdrag={isEditable}
+        resize={isEditable.derive((value) => (value ? "all" : null))}
+        on:itemresize={onResize}
+        on:itemresizeend={onResizeEnd}
       >
-        <If condition={hasFocus}>
-          <Portal>
-            <SectionToolbar section={section} />
-          </Portal>
-        </If>
-
-        <page-item
-          className={styles.container}
-          style={contentStyle}
-          allowdrag={isEditable}
-          resize={isEditable.derive((value) => (value ? "all" : null))}
-          on:itemresize={onResize}
-          on:itemresizeend={onResizeEnd}
+        <scroll-view
+          ref={scrollViewRef}
+          classList={[styles.contents, layoutClass]}
         >
-          <scroll-view
-            ref={scrollViewRef}
-            classList={[styles.contents, layoutClass]}
-          >
-            <Each items={tiles}>
-              {(tile) => (
-                <Item
-                  editor={editor}
-                  id={tile.id}
-                  classList={{ [styles.item]: true }}
-                  editable={isEditable}
-                  x={tile.x}
-                  y={tile.y}
-                  width={tile.width}
-                  height={tile.height}
-                  rowSpan={tile.rowSpan}
-                  block={tile.type === "TEXT" ? tile.block : undefined}
-                  tile={tile}
-                  tabIndex={isEditable.derive((editable) =>
-                    editable ? 0 : undefined,
-                  )}
-                  resize={resize}
-                />
-              )}
-            </Each>
-          </scroll-view>
-        </page-item>
+          <Each items={tiles}>
+            {(tile) => (
+              <Item
+                classList={{ [styles.item]: true }}
+                editable={isEditable}
+                tile={tile}
+                tabIndex={tabIndex}
+                resize={resize}
+              />
+            )}
+          </Each>
+        </scroll-view>
+      </page-item>
 
-        <If condition={hasFocus}>
-          <button
-            type="button"
-            classList={{ floating: true, small: true, [styles.insert]: true }}
-            aria-label="Insert section"
-            data-tooltip="Insert section"
-            on:pointerdown={preventDefault}
-            on:click={insertSection}
-          >
-            <NewIcon aria-hidden="true" />
-          </button>
-        </If>
-      </section>
-    </If>
+      <If condition={hasFocus}>
+        <button
+          type="button"
+          classList={{ floating: true, small: true, [styles.insert]: true }}
+          aria-label="Insert section"
+          data-tooltip="Insert section"
+          on:pointerdown={preventDefault}
+          on:click={insertSection}
+        >
+          <NewIcon aria-hidden="true" />
+        </button>
+      </If>
+    </section>
   );
 }

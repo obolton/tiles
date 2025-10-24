@@ -39,6 +39,10 @@
     height: auto;
   }
 
+  &.hide {
+    opacity: 0.5;
+  }
+
   body[data-editing] & {
     outline: 2px solid rgb(0 0 0 / 5%);
 

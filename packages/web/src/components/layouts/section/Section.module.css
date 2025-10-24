@@ -168,10 +168,6 @@
   }
 }
 
-.hide {
-  opacity: 0.5;
-}
-
 .insert {
   position: absolute;
   bottom: -16px;
