@@ -132,7 +132,7 @@ export default class Editor {
       page.tiles.map((properties) => getReactiveTile(this, properties)),
     );
     this.rootTiles = this.tiles.derive((tiles) =>
-      tiles.filter((tile) => !tile.sectionId),
+      tiles.filter((tile) => !tile.sectionId.value),
     );
     this.access = array(page.access);
     this.invites = array(page.invites);
