@@ -6,6 +6,7 @@ import type {
   Anchor,
   Dimensions,
   Animation,
+  TileType,
 } from "api/types/tiles";
 import type Editor from "@/editor/Editor";
 import type { AppRouterInputs } from "@/api/client";
@@ -15,7 +16,7 @@ export type { Anchor, Dimensions, Animation };
 export default class Tile {
   readonly editor: Editor;
   readonly id: string;
-  readonly type: string;
+  readonly type: TileType;
 
   readonly sectionId: Reactive<string | null>;
   readonly order: Reactive<string>;
