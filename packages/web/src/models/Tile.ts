@@ -1,10 +1,16 @@
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
-import type { ClientTile, Animation } from "api/types/tiles";
+import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
+import type {
+  ClientTile,
+  Anchor,
+  Dimensions,
+  Animation,
+} from "api/types/tiles";
 import type Editor from "@/editor/Editor";
 import type { AppRouterInputs } from "@/api/client";
 
-export type { Animation };
+export type { Anchor, Dimensions, Animation };
 
 export default class Tile {
   readonly editor: Editor;
@@ -13,6 +19,8 @@ export default class Tile {
 
   readonly sectionId: Reactive<string | null>;
   readonly order: Reactive<string>;
+  readonly anchor: Reactive<Anchor | null>;
+  readonly dimensions: Reactive<Dimensions>;
   readonly x: Reactive<number>;
   readonly y: Reactive<number>;
   readonly width: Reactive<number>;
@@ -20,6 +28,7 @@ export default class Tile {
   readonly rowSpan: Reactive<number>;
   readonly block: Reactive<boolean>;
   readonly animation: Reactive<Animation | null>;
+  readonly hide: Reactive<boolean>;
 
   constructor(editor: Editor, properties: ClientTile) {
     const {
@@ -27,6 +36,8 @@ export default class Tile {
       type,
       sectionId,
       order,
+      anchor,
+      dimensions,
       x,
       y,
       width,
@@ -34,6 +45,7 @@ export default class Tile {
       rowSpan,
       block,
       animation,
+      hide,
     } = properties;
     this.editor = editor;
 
@@ -42,6 +54,8 @@ export default class Tile {
 
     this.sectionId = reactive(sectionId);
     this.order = reactive(order);
+    this.anchor = reactive(anchor);
+    this.dimensions = reactive(dimensions);
     this.x = reactive(x);
     this.y = reactive(y);
     this.width = reactive(width);
@@ -49,13 +63,14 @@ export default class Tile {
     this.rowSpan = reactive(rowSpan);
     this.block = reactive(block);
     this.animation = reactive(animation);
+    this.hide = reactive(hide);
   }
 
   delete() {
     return this.editor.deleteTiles([this.id]);
   }
 
-  private updatePlacement(
+  protected updateTile(
     properties: Omit<AppRouterInputs["tiles"]["update"], "pageId" | "id">,
   ) {
     return client.tiles.update.mutate({
@@ -65,8 +80,45 @@ export default class Tile {
     });
   }
 
+  setAnchor(anchor: Anchor | null) {
+    this.anchor.value = anchor;
+    return this.updateTile({ anchor });
+  }
+
+  setDimensions(dimensions: Dimensions) {
+    this.dimensions.value = dimensions;
+
+    switch (dimensions) {
+      case "LANDSCAPE":
+        this.width.value = LANDSCAPE_SIZE.width;
+        this.height.value = LANDSCAPE_SIZE.height;
+        break;
+      case "PORTRAIT":
+        this.width.value = PORTRAIT_SIZE.width;
+        this.height.value = PORTRAIT_SIZE.height;
+        break;
+    }
+
+    return this.updateTile({
+      dimensions,
+      width: this.width.value,
+      height: this.height.value,
+    });
+  }
+
+  setSize({ width, height }: { width: number; height: number }) {
+    this.width.value = width;
+    this.height.value = height;
+    return this.updateTile({ width, height });
+  }
+
   setAnimation(animation: Animation | null) {
     this.animation.value = animation;
-    return this.updatePlacement({ animation });
+    return this.updateTile({ animation });
+  }
+
+  setHidden(hide: boolean) {
+    this.hide.value = hide;
+    return this.updateTile({ hide });
   }
 }
