@@ -132,8 +132,9 @@ export default class LayoutEditor {
       style.getPropertyValue("--grid-row-height"),
     );
 
-    this.gridColumnGap = parseFloat(style.columnGap);
-    this.gridRowGap = parseFloat(style.rowGap);
+    this.gridColumnGap =
+      style.columnGap === "normal" ? 0 : parseFloat(style.columnGap);
+    this.gridRowGap = style.rowGap === "normal" ? 0 : parseFloat(style.rowGap);
 
     const rows = style.gridTemplateRows;
     const rowHeights = rows === "none" ? [] : rows.split(" ").map(parseFloat);
