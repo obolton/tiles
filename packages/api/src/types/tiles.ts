@@ -26,6 +26,8 @@ type ClientTileBase = Pick<
   | "sectionId"
   | "type"
   | "order"
+  | "anchor"
+  | "dimensions"
   | "x"
   | "y"
   | "width"
@@ -33,6 +35,7 @@ type ClientTileBase = Pick<
   | "rowSpan"
   | "block"
   | "animation"
+  | "hide"
 >;
 
 // Image
