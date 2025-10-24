@@ -39,7 +39,6 @@ export type PageLink = Prisma.Result<
 
 export async function createPageLink({
   pageId,
-  sectionId,
   linkedPageId,
   ...properties
 }: CreatePageLinkSchema) {
@@ -50,9 +49,8 @@ export async function createPageLink({
   const { pageLink, ...tile } = await createTile(
     {
       ...properties,
-      type: "PAGE_LINK",
       pageId,
-      sectionId,
+      type: "PAGE_LINK",
       pageLink: {
         pageId,
         linkedPageId,

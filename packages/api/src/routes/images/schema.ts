@@ -1,18 +1,16 @@
 import { z } from "zod";
-import { TileSchema } from "@/schema/Tile";
+import { CreateTileSchema } from "@/schema/Tile";
 import { RichTextSchema } from "@/schema/RichText.ts";
 
-export const CreateImageSchema = z.object({
-  pageId: z.uuid(),
-  sectionId: z.uuid().nullable().optional(),
-  ...TileSchema.shape,
+export const CreateImageSchema = z.strictObject({
+  ...CreateTileSchema.shape,
   imageId: z.uuid(),
   text: RichTextSchema.nullable().optional(),
   theme: z.string().nullable().optional(),
 });
 export type CreateImageSchema = z.infer<typeof CreateImageSchema>;
 
-export const UpdateImageSchema = z.object({
+export const UpdateImageSchema = z.strictObject({
   pageId: z.uuid(),
   id: z.uuid(),
   text: RichTextSchema.nullable().optional(),

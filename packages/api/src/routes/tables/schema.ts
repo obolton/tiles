@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TileSchema } from "@/schema/Tile";
+import { CreateTileSchema } from "@/schema/Tile";
 import { RichTextSchema } from "@/schema/RichText.ts";
 import { ColorSchema } from "@/schema/Color.ts";
 import { BackgroundSchema } from "@/schema/Background.ts";
@@ -34,18 +34,16 @@ export const RangeSchema = z.discriminatedUnion("type", [
   ColumnRangeSchema,
 ]);
 
-export const CreateTableSchema = z.object({
-  pageId: z.uuid(),
-  sectionId: z.uuid().nullable().optional(),
+export const CreateTableSchema = z.strictObject({
+  ...CreateTileSchema.shape,
   columns: z.number().int().min(1).max(100),
   rows: z.number().int().max(10),
   textColor: ColorSchema.nullable().optional(),
   background: BackgroundSchema.optional(),
-  ...TileSchema.shape,
 });
 export type CreateTableSchema = z.infer<typeof CreateTableSchema>;
 
-export const UpdateTableSchema = z.object({
+export const UpdateTableSchema = z.strictObject({
   pageId: z.uuid(),
   id: z.uuid(),
   textColor: ColorSchema.nullable().optional(),
@@ -53,7 +51,7 @@ export const UpdateTableSchema = z.object({
 });
 export type UpdateTableSchema = z.infer<typeof UpdateTableSchema>;
 
-export const InsertRowSchema = z.object({
+export const InsertRowSchema = z.strictObject({
   pageId: z.uuid(),
   tableId: z.uuid(),
   height: z.number().min(32).max(400).optional(),
@@ -61,7 +59,7 @@ export const InsertRowSchema = z.object({
 });
 export type InsertRowSchema = z.infer<typeof InsertRowSchema>;
 
-export const UpdateRowSchema = z.object({
+export const UpdateRowSchema = z.strictObject({
   pageId: z.uuid(),
   tableId: z.uuid(),
   rowId: z.uuid(),
@@ -69,7 +67,7 @@ export const UpdateRowSchema = z.object({
 });
 export type UpdateRowSchema = z.infer<typeof UpdateRowSchema>;
 
-export const MoveRowSchema = z.object({
+export const MoveRowSchema = z.strictObject({
   pageId: z.uuid(),
   tableId: z.uuid(),
   rowId: z.uuid(),
@@ -77,14 +75,14 @@ export const MoveRowSchema = z.object({
 });
 export type MoveRowSchema = z.infer<typeof MoveRowSchema>;
 
-export const DeleteRowsSchema = z.object({
+export const DeleteRowsSchema = z.strictObject({
   pageId: z.uuid(),
   tableId: z.uuid(),
   rowIds: z.array(z.uuid()).min(1).max(50),
 });
 export type DeleteRowsSchema = z.infer<typeof DeleteRowsSchema>;
 
-export const InsertColumnSchema = z.object({
+export const InsertColumnSchema = z.strictObject({
   pageId: z.uuid(),
   tableId: z.uuid(),
   title: z.string().nullable().optional(),
@@ -93,7 +91,7 @@ export const InsertColumnSchema = z.object({
 });
 export type InsertColumnSchema = z.infer<typeof InsertColumnSchema>;
 
-export const MoveColumnSchema = z.object({
+export const MoveColumnSchema = z.strictObject({
   pageId: z.uuid(),
   tableId: z.uuid(),
   columnId: z.uuid(),
@@ -101,7 +99,7 @@ export const MoveColumnSchema = z.object({
 });
 export type MoveColumnSchema = z.infer<typeof MoveColumnSchema>;
 
-export const UpdateColumnSchema = z.object({
+export const UpdateColumnSchema = z.strictObject({
   pageId: z.uuid(),
   tableId: z.uuid(),
   columnId: z.uuid(),
@@ -110,14 +108,14 @@ export const UpdateColumnSchema = z.object({
 });
 export type UpdateColumnSchema = z.infer<typeof UpdateColumnSchema>;
 
-export const DeleteColumnsSchema = z.object({
+export const DeleteColumnsSchema = z.strictObject({
   pageId: z.uuid(),
   tableId: z.uuid(),
   columnIds: z.array(z.uuid()).min(1).max(50),
 });
 export type DeleteColumnsSchema = z.infer<typeof DeleteColumnsSchema>;
 
-export const UpdateCellSchema = z.object({
+export const UpdateCellSchema = z.strictObject({
   pageId: z.uuid(),
   tableId: z.uuid(),
   rowId: z.uuid(),
@@ -126,7 +124,7 @@ export const UpdateCellSchema = z.object({
 });
 export type UpdateCellSchema = z.infer<typeof UpdateCellSchema>;
 
-export const ClearRangesSchema = z.object({
+export const ClearRangesSchema = z.strictObject({
   pageId: z.uuid(),
   tableId: z.uuid(),
   ranges: z.array(RangeSchema).min(1).max(10),

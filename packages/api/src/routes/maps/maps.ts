@@ -30,16 +30,14 @@ export type Map = Prisma.MapTileGetPayload<{ select: typeof MAP_FIELDS }>;
 
 export async function createMap({
   pageId,
-  sectionId,
   places,
   ...properties
 }: CreateMapSchema) {
   const { map, ...tile } = await createTile(
     {
       ...properties,
-      type: "MAP",
       pageId,
-      sectionId,
+      type: "MAP",
       map: {
         pageId,
         places: {

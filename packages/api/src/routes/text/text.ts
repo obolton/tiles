@@ -31,7 +31,6 @@ function getTextColorProperties(
 
 export async function createText({
   pageId,
-  sectionId,
   content,
   textColor,
   background,
@@ -43,7 +42,6 @@ export async function createText({
       ...properties,
       type: "TEXT",
       pageId,
-      sectionId,
       text: {
         pageId,
         content,

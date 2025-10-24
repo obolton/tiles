@@ -1,15 +1,13 @@
 import { z } from "zod";
-import { TileSchema } from "@/schema/Tile";
+import { CreateTileSchema } from "@/schema/Tile";
 
-export const CreateLinkSchema = z.object({
-  pageId: z.uuid(),
-  sectionId: z.uuid().nullable().optional(),
+export const CreateLinkSchema = z.strictObject({
+  ...CreateTileSchema.shape,
   url: z.url(),
-  ...TileSchema.shape,
 });
 export type CreateLinkSchema = z.infer<typeof CreateLinkSchema>;
 
-export const UpdateLinkSchema = z.object({
+export const UpdateLinkSchema = z.strictObject({
   pageId: z.uuid(),
   id: z.uuid(),
   url: z.url(),

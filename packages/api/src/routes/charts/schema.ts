@@ -1,12 +1,10 @@
 import { z } from "zod";
 import { ChartSeriesType } from "@/generated/prisma/enums";
-import { TileSchema } from "@/schema/Tile";
+import { CreateTileSchema } from "@/schema/Tile";
 import { BackgroundSchema } from "@/schema/Background.ts";
 
 export const CreateChartSchema = z.strictObject({
-  pageId: z.uuid(),
-  sectionId: z.uuid().nullable().optional(),
-  ...TileSchema.shape,
+  ...CreateTileSchema.shape,
   tableId: z.uuid(),
   labelColumnId: z.uuid().optional(),
   background: BackgroundSchema.optional(),
@@ -14,7 +12,7 @@ export const CreateChartSchema = z.strictObject({
 });
 export type CreateChartSchema = z.infer<typeof CreateChartSchema>;
 
-export const UpdateChartSchema = z.object({
+export const UpdateChartSchema = z.strictObject({
   pageId: z.uuid(),
   id: z.uuid(),
   labelColumnId: z.uuid().optional(),

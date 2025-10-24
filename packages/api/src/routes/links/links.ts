@@ -17,7 +17,6 @@ export const LINK_FIELDS = {
 
 export async function createLink({
   pageId,
-  sectionId,
   url,
   ...properties
 }: CreateLinkSchema) {
@@ -25,8 +24,8 @@ export async function createLink({
   const videoInfo = getVideoInfo(url);
   if (videoInfo) {
     return createVideo({
+      ...properties,
       pageId,
-      sectionId,
       url,
     });
   }
@@ -39,7 +38,6 @@ export async function createLink({
       ...properties,
       type: "LINK",
       pageId,
-      sectionId,
       link: {
         pageId,
         url,

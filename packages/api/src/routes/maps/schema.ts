@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TileSchema } from "@/schema/Tile";
+import { CreateTileSchema } from "@/schema/Tile";
 import {
   MIN_LATITUDE,
   MAX_LATITUDE,
@@ -18,9 +18,7 @@ export const PlaceSchema = z.strictObject({
 export type PlaceSchema = z.infer<typeof PlaceSchema>;
 
 export const CreateMapSchema = z.strictObject({
-  pageId: z.uuid(),
-  sectionId: z.uuid().nullable().optional(),
-  ...TileSchema.shape,
+  ...CreateTileSchema.shape,
   places: z.array(PlaceSchema).min(1).max(20),
 });
 export type CreateMapSchema = z.infer<typeof CreateMapSchema>;

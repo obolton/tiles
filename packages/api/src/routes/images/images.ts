@@ -20,7 +20,6 @@ export type Image = Prisma.Result<
 
 export async function createImage({
   pageId,
-  sectionId,
   imageId,
   text,
   theme,
@@ -31,7 +30,6 @@ export async function createImage({
       ...properties,
       type: "IMAGE",
       pageId,
-      sectionId,
       image: {
         pageId,
         imageId,

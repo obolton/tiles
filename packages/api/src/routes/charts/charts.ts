@@ -50,7 +50,6 @@ export type Chart = Prisma.Result<
 
 export async function createChart({
   pageId,
-  sectionId,
   tableId,
   labelColumnId,
   background,
@@ -77,9 +76,8 @@ export async function createChart({
     const { chart, ...tile } = await createTile(
       {
         ...properties,
-        type: "CHART",
         pageId,
-        sectionId,
+        type: "CHART",
         chart: {
           pageId,
           tableId,

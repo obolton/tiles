@@ -48,6 +48,7 @@ export async function getSectionOrder(
 
 export async function createSection({
   pageId,
+  afterId,
   layout,
   background,
   ...properties
@@ -55,8 +56,9 @@ export async function createSection({
   const { section, ...tile } = await createTile(
     {
       ...properties,
-      type: "SECTION",
       pageId,
+      type: "SECTION",
+      afterId,
       sectionId: null,
       section: {
         pageId,

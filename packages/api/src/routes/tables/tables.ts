@@ -80,7 +80,6 @@ function getTextColorProperties(
 
 export async function createTable({
   pageId,
-  sectionId,
   columns,
   rows,
   textColor,
@@ -104,7 +103,6 @@ export async function createTable({
       ...properties,
       type: "TABLE",
       pageId,
-      sectionId,
       table: {
         pageId,
         ...getTextColorProperties(textColor),

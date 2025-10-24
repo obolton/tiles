@@ -1,10 +1,8 @@
 import { z } from "zod";
-import { TileSchema } from "@/schema/Tile";
+import { CreateTileSchema } from "@/schema/Tile";
 
-export const CreatePageLinkSchema = z.object({
-  pageId: z.uuid(),
-  sectionId: z.uuid().nullable().optional(),
+export const CreatePageLinkSchema = z.strictObject({
+  ...CreateTileSchema.shape,
   linkedPageId: z.uuid(),
-  ...TileSchema.shape,
 });
 export type CreatePageLinkSchema = z.infer<typeof CreatePageLinkSchema>;

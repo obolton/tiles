@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TileSchema } from "@/schema/Tile";
+import { CreateTileSchema } from "@/schema/Tile";
 import { Layout } from "@/generated/prisma/client";
 import { BackgroundSchema } from "@/schema/Background.ts";
 
@@ -9,9 +9,7 @@ export const SectionSchema = z.object({
 });
 
 export const CreateSectionSchema = z.strictObject({
-  pageId: z.uuid(),
-  ...TileSchema.shape,
-  afterSectionId: z.uuid().nullable(),
+  ...CreateTileSchema.omit({ sectionId: true }).shape,
   ...SectionSchema.shape,
 });
 export type CreateSectionSchema = z.infer<typeof CreateSectionSchema>;
@@ -19,7 +17,6 @@ export type CreateSectionSchema = z.infer<typeof CreateSectionSchema>;
 export const UpdateSectionSchema = z.strictObject({
   pageId: z.uuid(),
   id: z.uuid(),
-  afterSectionId: z.uuid().nullable().optional(),
   ...SectionSchema.shape,
 });
 export type UpdateSectionSchema = z.infer<typeof UpdateSectionSchema>;
