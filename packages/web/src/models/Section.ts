@@ -1,9 +1,5 @@
 import Tile from "./Tile";
-import {
-  reactive,
-  type Reactive,
-  type ComputedReactive,
-} from "@/utils/reactivity";
+import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import type { ClientSectionTile, Layout } from "api/types/tiles";
 import type Editor from "@/editor/Editor";
@@ -12,23 +8,25 @@ import type {
   BackgroundUpdate,
 } from "@/components/backgrounds/types";
 import type { AppRouterInputs } from "@/api/client";
-import type { Tile as TileProperties } from "@/types/tiles";
 
 export default class Section extends Tile {
   readonly type = "SECTION";
 
   readonly background: Reactive<Background | null>;
   readonly layout: Reactive<Layout>;
-  readonly tiles: ComputedReactive<TileProperties[]>;
 
   constructor(editor: Editor, properties: ClientSectionTile) {
     super(editor, properties);
 
-    const { id, layout, background } = properties;
+    const { layout, background } = properties;
     this.layout = reactive(layout);
     this.background = reactive(background);
-    this.tiles = editor.tiles.derive((tiles) =>
-      tiles.filter((tile) => tile.sectionId.value === id),
+    this.block.value = false;
+  }
+
+  get tiles() {
+    return this.editor.tiles.derive((tiles) =>
+      tiles.filter((tile) => tile.sectionId.value === this.id),
     );
   }
 
