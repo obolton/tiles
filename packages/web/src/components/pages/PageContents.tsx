@@ -1,16 +1,54 @@
 import Each from "@/jsx/each";
-import SectionComponent from "@/components/layouts/section/Section";
-import type { ReactiveArray } from "@/utils/reactivity";
-import type Section from "@/models/Section";
+import Block from "@/components/layouts/block/Block";
+import Item from "@/components/item/Item";
+import LayoutEditor from "@/editor/LayoutEditor";
+import type Editor from "@/editor/Editor";
+import type { Reactive } from "@/utils/reactivity";
+import type { Tile } from "@/types/tiles";
 
 export interface PageContentsProps {
-  sections: ReactiveArray<Section>;
+  editor: Editor;
+  tiles: Reactive<Tile[]>;
+  signal?: AbortSignal;
 }
 
-export default function PageContents({ sections }: PageContentsProps) {
+export default function PageContents({
+  editor,
+  tiles,
+  signal,
+}: PageContentsProps) {
+  const { isEditable } = editor;
+  const tabIndex = isEditable.derive((editable) => (editable ? 0 : undefined));
+  const resize = isEditable.derive((value) => (value ? "all" : null));
+
+  function ref(element: HTMLElement) {
+    new LayoutEditor({
+      element,
+      grid: element,
+      dropTarget: element,
+      editor,
+      sectionId: null,
+      signal,
+    });
+  }
+
   return (
-    <Each items={sections}>
-      {(section) => <SectionComponent section={section} />}
-    </Each>
+    <main ref={ref}>
+      <Each items={tiles}>
+        {(tile) => (
+          <Block
+            tileId={tile.id}
+            background={"background" in tile ? tile.background : undefined}
+          >
+            <Item
+              editable={isEditable}
+              tile={tile}
+              tabIndex={tabIndex}
+              resize={resize}
+            />
+          </Block>
+        )}
+      </Each>
+    </main>
   );
 }
