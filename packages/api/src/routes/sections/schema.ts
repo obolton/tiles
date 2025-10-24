@@ -1,14 +1,11 @@
 import { z } from "zod";
 import { TileSchema } from "@/schema/Tile";
-import { Layout, Anchor, Dimensions } from "@/generated/prisma/client";
+import { Layout } from "@/generated/prisma/client";
 import { BackgroundSchema } from "@/schema/Background.ts";
 
 export const SectionSchema = z.object({
   layout: z.enum(Layout).optional(),
-  anchor: z.enum(Anchor).nullable().optional(),
-  dimensions: z.enum(Dimensions).optional(),
   background: BackgroundSchema.optional(),
-  hide: z.boolean().optional(),
 });
 
 export const CreateSectionSchema = z.strictObject({
