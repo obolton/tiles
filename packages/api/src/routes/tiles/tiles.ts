@@ -34,9 +34,9 @@ export async function getTileOrder(
   transaction: PrismaTransactionClient,
   pageId: string,
   sectionId: string | null,
-  afterTileId: string | null,
+  afterId: string | null,
 ): Promise<string> {
-  if (afterTileId === null) {
+  if (afterId === null) {
     const [result] = await transaction.$queryRawTyped(
       getFirstTileOrderQuery(pageId, sectionId),
     );
@@ -44,7 +44,7 @@ export async function getTileOrder(
   }
 
   const [result] = await transaction.$queryRawTyped(
-    getTileOrderQuery(pageId, sectionId, afterTileId),
+    getTileOrderQuery(pageId, sectionId, afterId),
   );
   return generateKeyBetween(result?.a ?? null, result?.b ?? null);
 }
@@ -143,8 +143,9 @@ type CreateTileOptions<T extends TileType> = Omit<
   "id" | "createdAt" | "updatedAt" | "type" | "order" | "y"
 > &
   CreateTileProperties & {
-    y?: number;
     type: T;
+    afterId?: string | null;
+    y?: number;
   };
 
 export async function createTile<T extends TileType>(
@@ -152,6 +153,7 @@ export async function createTile<T extends TileType>(
     pageId,
     sectionId = null,
     type,
+    afterId = null,
     anchor,
     dimensions,
     width,
@@ -196,7 +198,7 @@ export async function createTile<T extends TileType>(
     insertWidth = next.width;
   }
 
-  const order = await getTileOrder(transaction, pageId, sectionId, null);
+  const order = await getTileOrder(transaction, pageId, sectionId, afterId);
 
   const tile = await transaction.tile.create({
     data: {
