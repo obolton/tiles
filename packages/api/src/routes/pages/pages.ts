@@ -39,6 +39,8 @@ const TILES_FIELDS = {
   id: true,
   sectionId: true,
   order: true,
+  anchor: true,
+  dimensions: true,
   width: true,
   height: true,
   x: true,
@@ -46,6 +48,7 @@ const TILES_FIELDS = {
   rowSpan: true,
   block: true,
   animation: true,
+  hide: true,
   section: {
     select: SECTION_FIELDS,
   },
