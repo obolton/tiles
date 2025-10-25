@@ -29,7 +29,7 @@ export interface Format {
   size: number;
 }
 
-export const DEFAULT_FORMAT = {
+export const DEFAULT_FORMAT: Format = {
   headingLevel: null,
   quote: false,
   code: false,
