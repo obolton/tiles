@@ -1,3 +1,4 @@
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
 import H3Icon from "@/icons/h3.svg?jsx";
@@ -216,46 +217,28 @@ export default function FormattingToolbar({
     >
       <ul role="group" aria-label="AI tools">
         <li role="presentation">
-          <button
-            type="button"
-            role="menuitem"
-            className="floating"
-            aria-label="Write with AI"
-            data-tooltip="Write with AI"
+          <ToolbarButton
+            label="Write with AI"
             aria-pressed={prompting}
             on:click={onTogglePrompt}
           >
             <AIIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
 
         {format.derive((value) =>
           value.pending ? (
             <>
               <li role="presentation">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="floating"
-                  aria-label="Approve"
-                  data-tooltip="Approve"
-                  on:click={approveSelection}
-                >
+                <ToolbarButton label="Approve" on:click={approveSelection}>
                   <ApproveIcon aria-hidden="true" />
-                </button>
+                </ToolbarButton>
               </li>
 
               <li role="presentation">
-                <button
-                  type="button"
-                  role="menuitem"
-                  className="floating"
-                  aria-label="Reject"
-                  data-tooltip="Reject"
-                  on:click={rejectSelection}
-                >
+                <ToolbarButton label="Reject" on:click={rejectSelection}>
                   <RejectIcon aria-hidden="true" />
-                </button>
+                </ToolbarButton>
               </li>
             </>
           ) : null,
@@ -264,19 +247,15 @@ export default function FormattingToolbar({
 
       <ul role="group" aria-label="Tools">
         <li role="presentation">
-          <button
+          <ToolbarButton
             id="insert-content-button"
-            role="menuitem"
-            className="floating"
             popoverTarget="insert-content-menu"
-            aria-label="Insert content"
+            label="Insert content"
             aria-haspopup="menu"
             aria-expanded="false"
-            data-tooltip="Insert content"
-            type="button"
           >
             <NewIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
 
           <popover-menu id="insert-content-menu" anchor="insert-content-button">
             <menu>
@@ -400,19 +379,15 @@ export default function FormattingToolbar({
 
       <ul role="group" aria-label="Text style">
         <li role="presentation">
-          <button
-            type="button"
-            role="menuitem"
+          <ToolbarButton
             id="text-size-button"
-            className="floating"
-            aria-label="Text size"
+            label="Text size"
             aria-haspopup="menu"
             aria-expanded="false"
             popovertarget="text-size-popover"
-            data-tooltip="Text size"
           >
             <TextSizeIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
 
           <TextSizePopover
             id="text-size-popover"
@@ -423,95 +398,67 @@ export default function FormattingToolbar({
           />
         </li>
         <li role="presentation">
-          <button
-            role="menuitem"
-            className="floating"
-            aria-label="Bold"
-            data-tooltip="Format as bold"
-            type="button"
+          <ToolbarButton
+            label="Bold"
             aria-pressed={format.derive((value) => value.bold)}
             on:click={formatBold}
           >
             <BoldIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
         <li role="presentation">
-          <button
-            role="menuitem"
-            className="floating"
-            aria-label="Italic"
-            data-tooltip="Format as italic"
-            type="button"
+          <ToolbarButton
+            label="Italic"
             aria-pressed={format.derive((value) => value.italic)}
             on:click={formatItalic}
           >
             <ItalicIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
         <li role="presentation">
-          <button
-            role="menuitem"
-            className="floating"
-            aria-label="Underlined"
-            data-tooltip="Format as underlined"
-            type="button"
+          <ToolbarButton
+            label="Underlined"
             aria-pressed={format.derive((value) => value.underline)}
             on:click={formatUnderline}
           >
             <UnderlineIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
         <li role="presentation">
-          <button
-            role="menuitem"
-            className="floating"
-            aria-label="Strike-through"
-            data-tooltip="Format as strike-through"
-            type="button"
+          <ToolbarButton
+            label="Strike-through"
             aria-pressed={format.derive((value) => value.strikethrough)}
             on:click={formatStrikethrough}
           >
             <StrikethroughIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
         <li role="presentation">
-          <button
-            role="menuitem"
-            className="floating"
-            aria-label="Highlight"
-            data-tooltip="Format as highlighted"
-            type="button"
+          <ToolbarButton
+            label="Highlight"
             aria-pressed={format.derive((value) => value.highlight)}
             on:click={formatHighlight}
           >
             <HighlightIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
         <li role="presentation">
-          <button
-            role="menuitem"
-            className="floating"
-            aria-label="Quote"
-            data-tooltip="Format as a quote"
-            type="button"
+          <ToolbarButton
+            label="Quote"
             aria-pressed={format.derive((value) => value.quote)}
             on:click={formatQuote}
           >
             <QuoteIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
         <li role="presentation">
-          <button
-            role="menuitem"
-            className="floating"
-            aria-label="Link"
-            data-tooltip="Add a link"
-            type="button"
+          <ToolbarButton
+            label="Link"
             aria-pressed={format.derive((value) => value.link)}
             on:click={formatLink}
           >
             <LinkIcon aria-hidden="true" />
-          </button>
+          </ToolbarButton>
         </li>
         <li role="presentation">
           <swatch-select
