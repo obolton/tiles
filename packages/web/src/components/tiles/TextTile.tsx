@@ -5,10 +5,10 @@ import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
 import styles from "./TextTile.module.css";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
-import ColorPicker from "@/components/colors/ColorPicker";
 import debounce from "@/utils/debounce";
+import { reactive, type Reactive } from "@/utils/reactivity";
 import type Text from "@/models/Text";
-import type { Reactive } from "@/utils/reactivity";
+import type { EditorView } from "prosemirror-view";
 
 export interface TextTileProps {
   text: Text;
@@ -17,7 +17,6 @@ export interface TextTileProps {
 
 export default function TextTile({ text, hasFocus }: TextTileProps) {
   const {
-    id,
     block,
     content,
     textColor,
@@ -27,6 +26,8 @@ export default function TextTile({ text, hasFocus }: TextTileProps) {
     state,
     editor: { isEditable },
   } = text;
+
+  const editorView = reactive<EditorView | null>(null);
 
   const onChange = debounce(() => text.persist(), 1500);
 
@@ -84,23 +85,13 @@ export default function TextTile({ text, hasFocus }: TextTileProps) {
   const contents = isEditable.derive((value) =>
     value ? (
       <TextEditor
+        editorView={editorView}
         state={state}
         classList={[styles.text, styles.editor, alignClass]}
         initialValue={content.value}
         tabIndex={-1}
         onChange={onChange}
         on:keydown={onKeyDown}
-        extraToolbarItems={
-          <ul role="group">
-            <li role="presentation">
-              <ColorPicker
-                id={`${id}-color-picker`}
-                value={textColor}
-                onChange={(color) => text.setTextColor(color)}
-              />
-            </li>
-          </ul>
-        }
       />
     ) : (
       <div classList={["rich-text", styles.text, alignClass]}>
@@ -111,19 +102,16 @@ export default function TextTile({ text, hasFocus }: TextTileProps) {
     ),
   );
 
-  const anchorName = `--text-${id}`;
-
   return (
     <Tile
       textColor={textColor}
       background={background}
       animation={animation}
       border={background.derive((value) => (value ? "outside" : "none"))}
-      anchorName={anchorName}
     >
       <If condition={hasFocus}>
         <Portal>
-          <TextToolbar text={text} anchorName={anchorName} />
+          <TextToolbar text={text} editorView={editorView} />
         </Portal>
       </If>
 

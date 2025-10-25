@@ -1,3 +1,5 @@
+import FormattingTools from "@/components/inputs/RichTextEditor/FormattingTools";
+import ColorPicker from "@/components/colors/ColorPicker";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
@@ -15,6 +17,8 @@ import Editor from "@/editor/Editor";
 import type Text from "@/models/Text";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { Animation } from "@/models/Tile";
+import type { EditorView } from "prosemirror-view";
+import type { Reactive } from "@/utils/reactivity";
 
 const ALIGN_ICON = {
   TOP: <VerticalAlignTopIcon aria-hidden="true" slot="icon" />,
@@ -31,11 +35,11 @@ const ANIMATION_ICON = {
 
 export interface TextToolbarProps {
   text: Text;
-  anchorName: string;
+  editorView: Reactive<EditorView | null>;
 }
 
-export default function TextToolbar({ text, anchorName }: TextToolbarProps) {
-  const { id, align, block, animation } = text;
+export default function TextToolbar({ text, editorView }: TextToolbarProps) {
+  const { id, textColor, background, align, block, animation } = text;
 
   function toggleBlock() {
     let height: number | undefined = undefined;
@@ -64,16 +68,25 @@ export default function TextToolbar({ text, anchorName }: TextToolbarProps) {
 
   return (
     <floating-toolbar
-      className="vertical anchored"
-      style={{ positionAnchor: anchorName }}
+      className="bottom-left"
       aria-label="Text tile toolbar"
-      data-tooltip-position="left"
+      data-tooltip-position="top"
     >
+      <FormattingTools editorView={editorView} state={text.state} />
+
       <ul role="group" aria-label="Layout">
+        <li role="presentation">
+          <ColorPicker
+            id={`${id}-color-picker`}
+            value={textColor}
+            onChange={(color) => text.setTextColor(color)}
+          />
+        </li>
+
         <li role="presentation">
           <BackgroundPicker
             id={`${text.id}-background`}
-            value={text.background}
+            value={background}
             onChange={(background) => text.setBackground(background)}
           />
         </li>

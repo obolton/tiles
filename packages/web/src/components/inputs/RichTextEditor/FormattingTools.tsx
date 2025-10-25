@@ -28,9 +28,8 @@ import TextSizePopover from "@/components/formatting/TextSizePopover";
 import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
 import { isPromptOpen } from "@/utils/richText/prompt";
 import { showModal } from "@/utils/modals";
-import { classNames } from "@/utils/css";
 import Each from "@/jsx/each";
-import styles from "./FormattingToolbar.module.css";
+import styles from "./FormattingTools.module.css";
 import {
   toggleBold,
   toggleItalic,
@@ -58,9 +57,9 @@ import { getLink } from "@/utils/richText/helpers";
 import Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
 import type { EditorState, Command } from "prosemirror-state";
+import type { EditorView } from "prosemirror-view";
 import type { TextAlignment, ListType } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
-import type { JSX } from "@/jsx/jsx";
 
 const DateTimeModalLoader = () => import("@/components/modals/DateTimeModal");
 const DropdownModalLoader = () =>
@@ -87,23 +86,28 @@ const LIST_ICON = {
   check: <CheckListIcon aria-hidden="true" slot="icon" />,
 } as const;
 
-export interface FormattingToolbarProps {
+export interface FormattingToolsProps {
+  editorView: Reactive<EditorView | null>;
   state: Reactive<EditorState | null>;
-  performCommand: (command: Command) => void;
-  children?: JSX.Node;
 }
 
-export default function FormattingToolbar({
+export default function FormattingTools({
+  editorView,
   state,
-  performCommand,
-  children,
-}: FormattingToolbarProps) {
+}: FormattingToolsProps) {
   const format = state.derive((value) =>
     value ? getSelectionFormat(value) : DEFAULT_FORMAT,
   );
   const prompting = state.derive((value) =>
     value ? isPromptOpen(value) : false,
   );
+
+  function performCommand(command: Command) {
+    const editor = editorView.value;
+    if (editor) {
+      command(editor.state, editor.dispatch, editor);
+    }
+  }
 
   function insertNewDate() {
     showModal(DateTimeModalLoader, {
@@ -214,11 +218,7 @@ export default function FormattingToolbar({
   });
 
   return (
-    <floating-toolbar
-      className={classNames(styles.toolbar, "bottom-left")}
-      aria-label="Formatting toolbar"
-      data-tooltip-position="top"
-    >
+    <>
       <ul role="group" aria-label="AI tools">
         <li role="presentation">
           <ToolbarButton
@@ -495,8 +495,6 @@ export default function FormattingToolbar({
           </swatch-select>
         </li>
       </ul>
-
-      {children}
-    </floating-toolbar>
+    </>
   );
 }
