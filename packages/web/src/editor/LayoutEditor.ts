@@ -104,6 +104,10 @@ export default class LayoutEditor {
     return element;
   }
 
+  get snap() {
+    return this.layoutType === "FREEFORM";
+  }
+
   handleEvent(event: Event) {
     switch (event.type) {
       case "dnd-dragover":
@@ -139,17 +143,20 @@ export default class LayoutEditor {
       style.getPropertyValue("--grid-row-height"),
     );
 
-    this.gridColumnGap =
-      style.columnGap === "normal" ? 0 : parseFloat(style.columnGap);
-    this.gridRowGap = style.rowGap === "normal" ? 0 : parseFloat(style.rowGap);
+    if (this.layoutType === "GRID") {
+      this.gridColumnGap =
+        style.columnGap === "normal" ? 0 : parseFloat(style.columnGap);
+      this.gridRowGap =
+        style.rowGap === "normal" ? 0 : parseFloat(style.rowGap);
 
-    const rows = style.gridTemplateRows;
-    const rowHeights = rows === "none" ? [] : rows.split(" ").map(parseFloat);
-    let top = 0;
-    this.gridRows = [];
-    for (const height of rowHeights) {
-      this.gridRows.push({ top, height });
-      top += height + this.gridRowGap;
+      const rows = style.gridTemplateRows;
+      const rowHeights = rows === "none" ? [] : rows.split(" ").map(parseFloat);
+      let top = 0;
+      this.gridRows = [];
+      for (const height of rowHeights) {
+        this.gridRows.push({ top, height });
+        top += height + this.gridRowGap;
+      }
     }
 
     if (this.dragPlaceholder) {
@@ -158,58 +165,73 @@ export default class LayoutEditor {
 
     this.gridRect = this.grid.getBoundingClientRect();
 
-    this.snapPoints = getSnapPoints(
-      this.element.getElementsByTagName("page-item"),
-      {
-        x: this.gridRect.x,
-        y: this.gridRect.y,
-      },
-    );
+    if (this.snap) {
+      this.snapPoints = getSnapPoints(
+        this.element.getElementsByTagName("page-item"),
+        {
+          x: this.gridRect.x,
+          y: this.gridRect.y,
+        },
+      );
+    }
   }
 
-  private getGridColumn(offsetX: number, width: number, id: string) {
-    const offsets = [offsetX, offsetX + width];
+  private getSnapX(x: number, width: number, id: string) {
+    const offsets = [x, x + width];
     const snap = findSnapPoint(this.snapPoints.x, offsets, SNAP_THRESHOLD, id);
-    const snapX = snap ? offsetX + snap.delta : offsetX;
+    return snap ? x + snap.delta : x;
+  }
 
-    const x = Math.max(
+  private getColumn(x: number, width: number, id: string) {
+    const snapX = this.snap ? this.getSnapX(x, width, id) : x;
+
+    return Math.max(
       Math.round(snapX / (this.gridColumnWidth + this.gridColumnGap)),
       0,
     );
-
-    return x;
   }
 
-  private getGridRow(offsetY: number, height: number, id: string) {
-    if (this.gridRows.length === 0) {
-      return 0;
-    }
-
-    const offsets = [offsetY, offsetY + height];
+  private getSnapY(y: number, height: number, id: string) {
+    const offsets = [y, y + height];
     const snap = findSnapPoint(this.snapPoints.y, offsets, SNAP_THRESHOLD, id);
-    const snapY = snap ? offsetY + snap.delta : offsetY;
-
-    for (let i = 0; i < this.gridRows.length; i++) {
-      const row = this.gridRows[i]!;
-      if (snapY < row.top + row.height) {
-        return i;
-      }
-    }
-
-    const lastRow = this.gridRows.at(-1)!;
-    const distanceFromBottom = offsetY - (lastRow.top + lastRow.height);
-    const extraRows = Math.round(
-      distanceFromBottom / (this.gridRowMinHeight + this.gridRowGap),
-    );
-    return this.gridRows.length - 1 + extraRows;
+    return snap ? y + snap.delta : y;
   }
 
-  private getGridPosition(event: DragDropEvent) {
+  private getRow(y: number, height: number, id: string) {
+    const snapY = this.snap ? this.getSnapY(y, height, id) : y;
+
+    if (this.layoutType === "GRID") {
+      if (this.gridRows.length === 0) {
+        return 0;
+      }
+
+      for (let i = 0; i < this.gridRows.length; i++) {
+        const row = this.gridRows[i]!;
+        if (snapY < row.top + row.height) {
+          return i;
+        }
+      }
+
+      const lastRow = this.gridRows.at(-1)!;
+      const distanceFromBottom = y - (lastRow.top + lastRow.height);
+      const extraRows = Math.round(
+        distanceFromBottom / (this.gridRowMinHeight + this.gridRowGap),
+      );
+      return this.gridRows.length - 1 + extraRows;
+    }
+
+    return Math.max(
+      Math.round(snapY / (this.gridRowMinHeight + this.gridRowGap)),
+      0,
+    );
+  }
+
+  private getPosition(event: DragDropEvent) {
     const { clientX, clientY, state } = event;
     const offsetX = clientX - this.gridRect.x - state.offsetX;
     const offsetY = clientY - this.gridRect.y - state.offsetY;
-    const x = this.getGridColumn(offsetX, state.width, state.element.id);
-    const y = this.getGridRow(offsetY, state.height, state.element.id);
+    const x = this.getColumn(offsetX, state.width, state.element.id);
+    const y = this.getRow(offsetY, state.height, state.element.id);
     return { x, y };
   }
 
@@ -227,7 +249,7 @@ export default class LayoutEditor {
       return;
     }
 
-    const { x, y } = this.getGridPosition(event);
+    const { x, y } = this.getPosition(event);
 
     if (x !== this.x || y !== this.y) {
       this.x = x;
@@ -291,7 +313,7 @@ export default class LayoutEditor {
 
     this.updateLayoutInfo();
 
-    const { x, y } = this.getGridPosition(event);
+    const { x, y } = this.getPosition(event);
 
     this.x = x;
     this.y = y;
