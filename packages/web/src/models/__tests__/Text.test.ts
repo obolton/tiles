@@ -55,7 +55,7 @@ describe("Text", () => {
 
   test("updates text color and persists the change", async () => {
     const text = new Text(editor, TEXT_TILE);
-    const textColor: Color = { l: 0.4, c: 0.2, h: 120 };
+    const textColor: Color = "ffff00000000";
 
     await text.setTextColor(textColor);
 
@@ -69,12 +69,13 @@ describe("Text", () => {
 
   test("applies background updates and stores the returned background", async () => {
     const text = new Text(editor, TEXT_TILE);
-    const color: Color = { l: 0.3, c: 0.1, h: 200 };
-    const backgroundUpdate: BackgroundUpdate = { type: "color", color };
+    const colorA: Color = "ffff00000000";
+    const colorB: Color = "888800000000";
+    const backgroundUpdate: BackgroundUpdate = { type: "color", color: colorA };
     const background: Background = {
       type: "gradient",
-      colorA: color,
-      colorB: null,
+      colorA,
+      colorB,
       direction: "VERTICAL",
     };
 
