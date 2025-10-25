@@ -37,7 +37,9 @@ export default function PageContents({
       <Each items={tiles}>
         {(tile) => (
           <Block
+            editor={editor}
             tileId={tile.id}
+            hide={tile.hide}
             background={"background" in tile ? tile.background : undefined}
           >
             <Item

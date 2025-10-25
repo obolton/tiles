@@ -1,10 +1,10 @@
 import { flag, reactive, Computed, type Reactive } from "@/utils/reactivity";
 import { toCSSColor } from "@/utils/color";
 import If from "@/jsx/if";
-import Editor from "@/editor/Editor";
 import styles from "./Block.module.css";
 import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
+import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
 import type { Background } from "@/components/backgrounds/types";
 
@@ -14,23 +14,27 @@ function preventDefault(event: Event) {
 
 export interface BlockProps {
   tileId: string;
+  editor: Editor;
+  hide: Reactive<boolean>;
   background?: Reactive<Background | null>;
   children: JSX.Node;
 }
 
 export default function Block({
   tileId,
+  editor,
+  hide,
   background = reactive(null),
   children,
 }: BlockProps) {
   const hasFocus = flag(false);
 
   function insertItem() {
-    Editor.current.createSection({ afterId: tileId }).catch(handleError);
+    editor.createSection({ afterId: tileId }).catch(handleError);
   }
 
   function onFocusIn() {
-    if (Editor.current.isEditable.value) {
+    if (editor.isEditable.value) {
       hasFocus.on();
     }
   }
@@ -57,27 +61,34 @@ export default function Block({
         : undefined,
   }));
 
-  return (
-    <section
-      className={styles.block}
-      style={style}
-      on:focusin={onFocusIn}
-      on:focusout={onFocusOut}
-    >
-      {children}
+  const show = new Computed(
+    [editor.isEditable, hide] as const,
+    (editable, hidden) => !hidden || editable,
+  );
 
-      <If condition={hasFocus}>
-        <button
-          type="button"
-          classList={{ floating: true, small: true, [styles.insert]: true }}
-          aria-label="Insert item"
-          data-tooltip="Insert item"
-          on:pointerdown={preventDefault}
-          on:click={insertItem}
-        >
-          <NewIcon aria-hidden="true" />
-        </button>
-      </If>
-    </section>
+  return (
+    <If condition={show}>
+      <section
+        className={styles.block}
+        style={style}
+        on:focusin={onFocusIn}
+        on:focusout={onFocusOut}
+      >
+        {children}
+
+        <If condition={hasFocus}>
+          <button
+            type="button"
+            classList={{ floating: true, small: true, [styles.insert]: true }}
+            aria-label="Insert item"
+            data-tooltip="Insert item"
+            on:pointerdown={preventDefault}
+            on:click={insertItem}
+          >
+            <NewIcon aria-hidden="true" />
+          </button>
+        </If>
+      </section>
+    </If>
   );
 }
