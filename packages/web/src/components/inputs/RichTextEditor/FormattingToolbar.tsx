@@ -25,12 +25,12 @@ import AIIcon from "@/icons/ai.svg?jsx";
 import ApproveIcon from "@/icons/approve.svg?jsx";
 import RejectIcon from "@/icons/reject.svg?jsx";
 import TextSizePopover from "@/components/formatting/TextSizePopover";
+import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
+import { isPromptOpen } from "@/utils/richText/prompt";
 import { showModal } from "@/utils/modals";
 import { classNames } from "@/utils/css";
 import Each from "@/jsx/each";
 import styles from "./FormattingToolbar.module.css";
-import type { EditorView } from "prosemirror-view";
-import type { Command } from "prosemirror-state";
 import {
   toggleBold,
   toggleItalic,
@@ -56,10 +56,11 @@ import {
 } from "@/utils/richText/commands";
 import { getLink } from "@/utils/richText/helpers";
 import Editor from "@/editor/Editor";
-import type { Format, TextAlignment, ListType } from "@/utils/richText/format";
+import type { Reactive } from "@/utils/reactivity";
+import type { EditorState, Command } from "prosemirror-state";
+import type { TextAlignment, ListType } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
-import type { Reactive } from "@/utils/reactivity";
 
 const DateTimeModalLoader = () => import("@/components/modals/DateTimeModal");
 const DropdownModalLoader = () =>
@@ -87,20 +88,23 @@ const LIST_ICON = {
 } as const;
 
 export interface FormattingToolbarProps {
-  format: Reactive<Format>;
-  prompting: Reactive<boolean>;
-  getEditorView: () => EditorView | null;
+  state: Reactive<EditorState | null>;
   performCommand: (command: Command) => void;
   children?: JSX.Node;
 }
 
 export default function FormattingToolbar({
-  getEditorView,
+  state,
   performCommand,
-  format,
-  prompting,
   children,
 }: FormattingToolbarProps) {
+  const format = state.derive((value) =>
+    value ? getSelectionFormat(value) : DEFAULT_FORMAT,
+  );
+  const prompting = state.derive((value) =>
+    value ? isPromptOpen(value) : false,
+  );
+
   function insertNewDate() {
     showModal(DateTimeModalLoader, {
       props: {},
@@ -145,12 +149,12 @@ export default function FormattingToolbar({
   const formatQuote = () => performCommand(toggleQuote);
 
   const formatLink = () => {
-    const state = getEditorView()?.state;
-    if (!state) {
+    const stateValue = state.value;
+    if (!stateValue) {
       return;
     }
 
-    const link = getLink(state);
+    const link = getLink(stateValue);
 
     showModal(LinkModalLoader, {
       props: {

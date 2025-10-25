@@ -1,15 +1,12 @@
 import { EditorView } from "prosemirror-view";
 import { EditorState } from "prosemirror-state";
 import FormattingToolbar from "./FormattingToolbar";
-import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
 import { createState } from "@/utils/richText/state";
-import { isPromptOpen } from "@/utils/richText/prompt";
 import { handleError } from "@/utils/errors";
 import styles from "./TextEditor.module.css";
-import { reactive, flag } from "@/utils/reactivity";
+import { flag } from "@/utils/reactivity";
 import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
-import type { Format } from "@/utils/richText/format";
 import type { RichText } from "@/utils/richText/types";
 import type { Command } from "prosemirror-state";
 import type { JSX } from "@/jsx/jsx";
@@ -47,11 +44,6 @@ export default function TextEditor({
     { once: true },
   );
 
-  const format = reactive<Format>(
-    state.value ? getSelectionFormat(state.value) : DEFAULT_FORMAT,
-  );
-  const prompting = flag(state.value ? isPromptOpen(state.value) : false);
-
   const ref = (element: HTMLElement) => {
     try {
       if (!state.value) {
@@ -65,8 +57,6 @@ export default function TextEditor({
             const newState = view.state.apply(tr);
             view.updateState(newState);
             state.value = newState;
-            format.value = getSelectionFormat(newState);
-            prompting.value = isPromptOpen(newState);
             onChange?.(newState);
           },
         },
@@ -77,8 +67,6 @@ export default function TextEditor({
         const newState = state.value;
         if (newState && newState !== view.state) {
           view.updateState(newState);
-          format.value = getSelectionFormat(newState);
-          prompting.value = isPromptOpen(newState);
         }
       }, signal);
       editorView = view;
@@ -86,8 +74,6 @@ export default function TextEditor({
       handleError(error);
     }
   };
-
-  const getEditorView = () => editorView;
 
   const performCommand = (command: Command) => {
     if (editorView) {
@@ -108,7 +94,7 @@ export default function TextEditor({
       <div
         {...props}
         ref={ref}
-        classList={["rich-text", styles.editor, ...classList]}
+        classList={{ "rich-text": true, [styles.editor]: true, ...classList }}
         role="textbox"
         on:focus={onFocus}
         on:blur={onBlur}
@@ -116,12 +102,7 @@ export default function TextEditor({
 
       <If condition={showToolbar}>
         <Portal>
-          <FormattingToolbar
-            format={format}
-            prompting={prompting}
-            getEditorView={getEditorView}
-            performCommand={performCommand}
-          >
+          <FormattingToolbar state={state} performCommand={performCommand}>
             {extraToolbarItems}
           </FormattingToolbar>
         </Portal>
