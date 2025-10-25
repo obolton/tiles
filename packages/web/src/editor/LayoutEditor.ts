@@ -5,9 +5,12 @@ import type { DragDropEvent } from "@/utils/drag";
 import type { PageItemEvent } from "@/elements/item/events";
 import type { Tile } from "@/types/tiles";
 
+export type LayoutType = "VERTICAL" | "HORIZONTAL" | "GRID" | "FREEFORM";
+
 export interface LayoutEditorOptions {
   element: HTMLElement;
   grid: HTMLElement;
+  layoutType: LayoutType;
   dropTarget?: HTMLElement;
   editor: Editor;
   sectionId: string | null;
@@ -36,6 +39,8 @@ export default class LayoutEditor {
   readonly editor: Editor;
   readonly sectionId: string | null;
 
+  layoutType: LayoutType;
+
   private readonly elementRef: WeakRef<HTMLElement>;
   private readonly gridRef: WeakRef<HTMLElement>;
 
@@ -55,15 +60,17 @@ export default class LayoutEditor {
   constructor({
     element,
     grid,
+    layoutType,
     dropTarget = element,
     editor,
     sectionId,
     signal,
   }: LayoutEditorOptions) {
-    this.elementRef = new WeakRef(element);
-    this.gridRef = new WeakRef(grid);
     this.editor = editor;
     this.sectionId = sectionId;
+    this.layoutType = layoutType;
+    this.elementRef = new WeakRef(element);
+    this.gridRef = new WeakRef(grid);
 
     this.gridRect = grid.getBoundingClientRect();
 
