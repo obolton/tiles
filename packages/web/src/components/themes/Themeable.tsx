@@ -32,7 +32,7 @@ export default function Themeable<T>({
     }
     return render(
       <Component {...getProps()}>{contents}</Component>,
-    ) as HTMLElement;
+    )[0] as HTMLElement;
   }
 
   function onThemeChange(event: Event) {
