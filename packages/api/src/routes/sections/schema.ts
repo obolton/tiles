@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { CreateTileSchema } from "@/schema/Tile";
 import { Layout } from "@/generated/prisma/client";
-import { BackgroundSchema } from "@/schema/Background.ts";
+import { BackgroundSchema } from "@/schema/Background";
 
 export const SectionSchema = z.object({
   layout: z.enum(Layout).optional(),
@@ -20,15 +20,3 @@ export const UpdateSectionSchema = z.strictObject({
   ...SectionSchema.shape,
 });
 export type UpdateSectionSchema = z.infer<typeof UpdateSectionSchema>;
-
-export const DuplicateSectionSchema = z.strictObject({
-  pageId: z.uuid(),
-  id: z.uuid(),
-});
-export type DuplicateSectionSchema = z.infer<typeof DuplicateSectionSchema>;
-
-export const DeleteSectionSchema = z.strictObject({
-  pageId: z.uuid(),
-  id: z.uuid(),
-});
-export type DeleteSectionSchema = z.infer<typeof DeleteSectionSchema>;
