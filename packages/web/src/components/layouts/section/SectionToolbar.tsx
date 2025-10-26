@@ -234,26 +234,6 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
             <HiddenIcon aria-hidden="true" />
           </ToolbarButton>
         </li>
-
-        <li role="presentation">
-          <ToolbarButton label="Duplicate" on:click={duplicateSection}>
-            <DuplicateIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-      </ul>
-
-      <ul role="group" aria-label="Section order tools">
-        <li role="presentation">
-          <ToolbarButton label="Move up" on:click={moveUp}>
-            <ArrowUpIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-
-        <li role="presentation">
-          <ToolbarButton label="Move down" on:click={moveDown}>
-            <ArrowDownIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
       </ul>
 
       <ul role="group" aria-label="More tools">
@@ -273,6 +253,24 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
             anchor={`${section.id}-options-button`}
           >
             <menu>
+              <li>
+                <button type="button" on:click={moveUp}>
+                  <ArrowUpIcon aria-hidden="true" />
+                  Move up
+                </button>
+              </li>
+              <li>
+                <button type="button" on:click={moveDown}>
+                  <ArrowDownIcon aria-hidden="true" />
+                  Move down
+                </button>
+              </li>
+              <li>
+                <button type="button" on:click={duplicateSection}>
+                  <DuplicateIcon aria-hidden="true" />
+                  Duplicate
+                </button>
+              </li>
               <li>
                 <button
                   type="button"
