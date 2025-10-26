@@ -69,7 +69,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
   return (
     <floating-toolbar
       className="bottom-left"
-      aria-label="Text tile toolbar"
+      aria-label="Text toolbar"
       data-tooltip-position="top"
     >
       <FormattingTools editorView={editorView} state={text.state} />

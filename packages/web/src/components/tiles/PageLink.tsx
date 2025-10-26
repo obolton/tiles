@@ -1,14 +1,15 @@
-import Tile, { type TileBackground } from "./Tile";
+import Tile from "./Tile";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import styles from "./PageLink.module.css";
 import { reactive } from "@/utils/reactivity";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
+import type { Background } from "@/components/backgrounds/types";
 
 export interface PageLinkProps extends JSX.Attributes<HTMLAnchorElement> {
   pageId: string;
   title: string;
-  background: TileBackground;
+  background: Background | null;
   font?: FontId | null;
 }
 
