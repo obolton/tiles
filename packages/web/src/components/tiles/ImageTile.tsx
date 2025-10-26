@@ -1,13 +1,19 @@
+import ImageToolbar from "@/components/toolbars/images/ImageToolbar";
 import MovableImage from "@/components/images/MovableImage";
 import RichText from "@/components/text/RichText";
 import styles from "./ImageTile.module.css";
 import Tile from "./Tile";
+import If from "@/jsx/if";
+import Portal from "@/jsx/portal";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import { setSearchParams } from "@/utils/urls";
 import type Image from "@/models/Image";
+import { reactive, type Reactive } from "@/utils/reactivity";
+import type { EditorView } from "prosemirror-view";
 
 export interface ImageTileProps {
   image: Image;
+  hasFocus: Reactive<boolean>;
 }
 
 interface ImageVariant {
@@ -47,7 +53,7 @@ function getMaxWidth(columns: number) {
   return columns * MAX_COLUMN_WIDTH + (columns - 1) * COLUMN_GAP;
 }
 
-export default function ImageTile({ image }: ImageTileProps) {
+export default function ImageTile({ image, hasFocus }: ImageTileProps) {
   const {
     id,
     width,
@@ -66,6 +72,8 @@ export default function ImageTile({ image }: ImageTileProps) {
     );
   }
 
+  const editorView = reactive<EditorView | null>(null);
+
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Delete" || event.key === "Backspace") {
       event.stopPropagation();
@@ -82,6 +90,12 @@ export default function ImageTile({ image }: ImageTileProps) {
 
   return (
     <Tile border="inside">
+      <If condition={hasFocus}>
+        <Portal>
+          <ImageToolbar image={image} editorView={editorView} />
+        </Portal>
+      </If>
+
       <figure
         id={`${id}-figure`}
         className={styles.figure}
@@ -103,6 +117,7 @@ export default function ImageTile({ image }: ImageTileProps) {
         {isEditable.derive((editable) =>
           editable ? (
             <TextEditor
+              editorView={editorView}
               state={state}
               classList={[styles.caption]}
               initialValue={text.value}

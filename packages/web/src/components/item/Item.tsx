@@ -36,7 +36,7 @@ function getTileComponent(tile: Tile, hasFocus: Reactive<boolean>) {
     case "SECTION":
       return <Section section={tile} />;
     case "IMAGE":
-      return <ImageTile image={tile} />;
+      return <ImageTile image={tile} hasFocus={hasFocus} />;
     case "VIDEO":
       return <VideoTile video={tile} />;
     case "TEXT":
