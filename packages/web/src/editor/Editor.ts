@@ -313,15 +313,6 @@ export default class Editor {
     this.addTile(properties);
   }
 
-  async duplicateSection(
-    data: OmitPageId<AppRouterInputs["sections"]["duplicate"]>,
-  ) {
-    return await client.sections.duplicate.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
   transitionSections(update: () => void) {
     const sections = document.querySelectorAll<HTMLElement>(
       "section[data-section-id]",
@@ -336,36 +327,7 @@ export default class Editor {
     });
   }
 
-  async deleteSection({
-    id,
-  }: OmitPageId<AppRouterInputs["sections"]["delete"]>) {
-    const section = await client.sections.delete.mutate({
-      pageId: this.pageId,
-      id,
-    });
-
-    const element = document.querySelector<HTMLElement>(
-      `section[data-section-id="${id}"]`,
-    );
-    if (element) {
-      element.style.viewTransitionClass = "destroy";
-    }
-    const sibling =
-      element?.nextElementSibling || element?.previousElementSibling;
-
-    this.transitionSections(() => {
-      this.tiles.value = this.tiles.value.filter(
-        (section) => section.id !== id,
-      );
-      if (sibling instanceof HTMLElement) {
-        sibling.focus({ preventScroll: true });
-      }
-    });
-
-    return section;
-  }
-
-  async moveSectionUp(id: string) {
+  async moveTileUp(id: string) {
     const index = this.tiles.value.findIndex((tile) => tile.id === id);
     if (index < 0) {
       throw new Error(`Invalid tile ID: ${id}`);
@@ -375,27 +337,28 @@ export default class Editor {
     }
 
     // TODO: Fix so it works with nested tiles
-    const afterSectionId = this.tiles.value[index - 2]?.id ?? null;
+    const afterId = this.tiles.value[index - 2]?.id ?? null;
 
     this.transitionSections(() => {
       this.tiles.value = moveElement(this.tiles.value, index, index - 1);
     });
 
-    await client.sections.update.mutate({
+    await client.tiles.reorder.mutate({
       pageId: this.pageId,
       id,
-      afterSectionId,
+      sectionId: null,
+      afterId,
     });
   }
 
-  async moveSectionDown(id: string) {
+  async moveTileDown(id: string) {
     const index = this.tiles.value.findIndex((tile) => tile.id === id);
     if (index < 0) {
-      throw new Error(`Invalid section ID: ${id}`);
+      throw new Error(`Invalid tile ID: ${id}`);
     }
 
-    const afterSectionId = this.tiles.value[index + 1]?.id;
-    if (!afterSectionId) {
+    const afterId = this.tiles.value[index + 1]?.id;
+    if (!afterId) {
       return;
     }
 
@@ -403,10 +366,11 @@ export default class Editor {
       this.tiles.value = moveElement(this.tiles.value, index, index + 1);
     });
 
-    await client.sections.update.mutate({
+    await client.tiles.reorder.mutate({
       pageId: this.pageId,
       id,
-      afterSectionId,
+      sectionId: null,
+      afterId,
     });
   }
 
