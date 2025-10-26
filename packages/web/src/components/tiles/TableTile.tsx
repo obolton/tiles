@@ -1,16 +1,13 @@
 import { keymap } from "prosemirror-keymap";
 import Tile from "./Tile";
 import RichText from "@/components/text/RichText";
-import FormattingToolbar from "@/components/inputs/RichTextEditor/FormattingToolbar";
 import TableToolbar from "@/components/toolbars/tables/TableToolbar";
-import ColorPicker from "@/components/colors/ColorPicker";
-import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
+import CellToolbar from "@/components/toolbars/tables/CellToolbar";
 import { createState } from "@/utils/richText/state";
-import { isPromptOpen } from "@/utils/richText/prompt";
 import styles from "./TableTile.module.css";
 import { EditorView } from "prosemirror-view";
 import { handleError } from "@/utils/errors";
-import { reactive, flag } from "@/utils/reactivity";
+import { reactive } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { render } from "@/jsx/dom";
 import If from "@/jsx/if";
@@ -18,15 +15,14 @@ import Portal from "@/jsx/portal";
 import { moveElement } from "@/utils/arrays";
 import TableViewContents from "@/elements/table/TableViewContents";
 import type TableView from "@/elements/table/TableView";
-import type { Format } from "@/utils/richText/format";
 import type { Command } from "prosemirror-state";
 import type { Reactive } from "@/utils/reactivity";
 import type { TableEvent } from "@/elements/table/events";
 import type Column from "@/elements/table/Column";
 import type Row from "@/elements/table/Row";
-import type { Color } from "@/utils/color";
 import type { RichText as RichTextType } from "@/utils/richText/types";
 import type Table from "@/models/Table";
+import type { EditorState } from "prosemirror-state";
 
 export interface TableTileProps {
   table: Table;
@@ -42,16 +38,18 @@ function createDocument(text: string): RichTextType {
 
 export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
   let tableView: TableView | undefined;
-  let editorView: EditorView | undefined;
+  const editorView: Reactive<EditorView | null> = reactive(null);
+  const state: Reactive<EditorState | null> = reactive(null);
   const { id, textColor, background, columns, rows, numRows, editor } = table;
   const { isEditable } = editor;
 
-  const format = reactive<Format>(DEFAULT_FORMAT);
-  const prompting = flag(false);
-
   signal?.addEventListener(
     "abort",
-    () => requestAnimationFrame(() => editorView?.destroy()),
+    () =>
+      requestAnimationFrame(() => {
+        editorView.value?.destroy();
+        editorView.value = null;
+      }),
     { once: true },
   );
 
@@ -85,31 +83,27 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
     }
 
     try {
-      editorView?.destroy();
+      editorView.value?.destroy();
 
       const value = column.id ? rows.value[row.index]?.data[column.id] : null;
       const content =
         typeof value === "string" ? createDocument(value) : (value ?? null);
-      const state = createState(content, [keymap(KEY_MAP)]);
+      state.value = createState(content, [keymap(KEY_MAP)]);
       target.replaceChildren();
 
       const view = new EditorView(
         { mount: target },
         {
-          state,
+          state: state.value,
           dispatchTransaction(tr) {
             const newState = view.state.apply(tr);
             view.updateState(newState);
-            format.value = getSelectionFormat(newState);
-            prompting.value = isPromptOpen(newState);
+            state.value = newState;
           },
         },
       );
       view.focus();
-      editorView = view;
-
-      format.value = getSelectionFormat(state);
-      prompting.value = isPromptOpen(state);
+      editorView.value = view;
     } catch (error) {
       handleError(error);
     }
@@ -122,7 +116,8 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
       !(target instanceof HTMLTableCellElement) ||
       !row ||
       !column ||
-      !editorView
+      !editorView ||
+      !state.value
     ) {
       return;
     }
@@ -133,9 +128,9 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
       return;
     }
 
-    const value = serialize(editorView.state);
-    editorView?.destroy();
-    editorView = undefined;
+    const value = serialize(state.value);
+    editorView.value?.destroy();
+    editorView.value = null;
 
     const contents = render(<RichText content={value} />);
     target.replaceChildren(...contents);
@@ -306,28 +301,12 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
       .catch(handleError);
   }
 
-  const onChangeTextColor = async (value: Color | null) => {
-    try {
-      await table.setTextColor(value);
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const getEditorView = () => editorView;
-
   function getTable() {
     if (!tableView) {
       throw new Error("Table is not initialized");
     }
     return tableView;
   }
-
-  const performCommand = (command: Command) => {
-    if (editorView) {
-      command(editorView.state, editorView.dispatch, editorView);
-    }
-  };
 
   const anchorName = `--table-${id}`;
 
@@ -367,23 +346,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
             anchorName={anchorName}
           />
 
-          <FormattingToolbar
-            editor={editor}
-            format={format}
-            prompting={prompting}
-            getEditorView={getEditorView}
-            performCommand={performCommand}
-          >
-            <ul role="group">
-              <li role="presentation">
-                <ColorPicker
-                  id={`${id}-color-picker`}
-                  value={textColor}
-                  onChange={onChangeTextColor}
-                />
-              </li>
-            </ul>
-          </FormattingToolbar>
+          <CellToolbar editorView={editorView} state={state}></CellToolbar>
         </Portal>
       </If>
     </Tile>

@@ -1,3 +1,4 @@
+import ColorPicker from "@/components/colors/ColorPicker";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import AddRowIcon from "@/icons/add-row.svg?jsx";
@@ -5,6 +6,7 @@ import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import ChartIcon from "@/icons/chart.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
+import type { Color } from "@/utils/color";
 import type { BackgroundUpdate } from "@/components/backgrounds/types";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
@@ -20,7 +22,15 @@ export default function TableToolbar({
   getTable,
   anchorName,
 }: TableToolbarProps) {
-  const { id, sectionId, background, editor } = table;
+  const { id, sectionId, textColor, background, editor } = table;
+
+  async function setTextColor(value: Color | null) {
+    try {
+      await table.setTextColor(value);
+    } catch (error) {
+      handleError(error);
+    }
+  }
 
   async function setBackground(value: BackgroundUpdate) {
     try {
@@ -118,6 +128,16 @@ export default function TableToolbar({
       data-tooltip-position="left"
       aria-label="Table tools"
     >
+      <ul role="group">
+        <li role="presentation">
+          <ColorPicker
+            id={`${id}-color-picker`}
+            value={textColor}
+            onChange={setTextColor}
+          />
+        </li>
+      </ul>
+
       <ul role="group">
         <li role="presentation">
           <ToolbarButton label="Add row" on:click={addRow}>
