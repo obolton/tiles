@@ -1,7 +1,6 @@
-import ToolbarButton from "@/components/buttons/ToolbarButton";
+import TileTools from "@/components/toolbars/tiles/TileTools";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import SeriesList from "./SeriesList";
-import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
 import type { BackgroundUpdate } from "@/components/backgrounds/types";
@@ -41,17 +40,7 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
         </li>
       </ul>
 
-      <ul role="group" aria-label="More tools">
-        <li role="presentation">
-          <ToolbarButton
-            label="Delete"
-            destructive
-            on:click={() => chart.delete()}
-          >
-            <DeleteIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-      </ul>
+      <TileTools tile={chart} />
     </floating-toolbar>
   );
 }

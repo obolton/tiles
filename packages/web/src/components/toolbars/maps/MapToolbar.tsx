@@ -1,6 +1,6 @@
+import TileTools from "@/components/toolbars/tiles/TileTools";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import AddPlaceIcon from "@/icons/add-place.svg?jsx";
-import DeleteIcon from "@/icons/trash.svg?jsx";
 import { showModal } from "@/utils/modals";
 import type Map from "@/models/Map";
 import type MapView from "@/elements/maps/MapView";
@@ -10,14 +10,9 @@ const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 export interface MapToolbarProps {
   map: Map;
   getMapView: () => MapView;
-  anchorName: string;
 }
 
-export default function MapToolbar({
-  map,
-  getMapView,
-  anchorName,
-}: MapToolbarProps) {
+export default function MapToolbar({ map, getMapView }: MapToolbarProps) {
   function addPlace() {
     showModal(PlaceModalLoader, {
       props: {
@@ -31,10 +26,9 @@ export default function MapToolbar({
 
   return (
     <floating-toolbar
-      className="vertical anchored"
-      style={{ positionAnchor: anchorName }}
+      className="bottom-left"
       aria-label="Map toolbar"
-      data-tooltip-position="left"
+      data-tooltip-position="top"
     >
       <ul role="group" aria-label="Map tools">
         <li role="presentation">
@@ -44,17 +38,7 @@ export default function MapToolbar({
         </li>
       </ul>
 
-      <ul role="group" aria-label="More tools">
-        <li role="presentation">
-          <ToolbarButton
-            label="Delete"
-            destructive
-            on:click={() => map.delete()}
-          >
-            <DeleteIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-      </ul>
+      <TileTools tile={map} />
     </floating-toolbar>
   );
 }

@@ -1,3 +1,4 @@
+import TileTools from "@/components/toolbars/tiles/TileTools";
 import ColorPicker from "@/components/colors/ColorPicker";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
@@ -167,6 +168,8 @@ export default function TableToolbar({
           </ToolbarButton>
         </li>
       </ul>
+
+      <TileTools tile={table} />
     </floating-toolbar>
   );
 }

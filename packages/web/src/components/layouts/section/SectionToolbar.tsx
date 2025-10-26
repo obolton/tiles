@@ -1,3 +1,4 @@
+import TileTools from "@/components/toolbars/tiles/TileTools";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
@@ -8,12 +9,7 @@ import AnchorTopIcon from "@/icons/anchor-top.svg?jsx";
 import AnchorBottomIcon from "@/icons/anchor-bottom.svg?jsx";
 import AnchorLeftIcon from "@/icons/anchor-left.svg?jsx";
 import AnchorRightIcon from "@/icons/anchor-right.svg?jsx";
-import ArrowUpIcon from "@/icons/arrow-up.svg?jsx";
-import ArrowDownIcon from "@/icons/arrow-down.svg?jsx";
 import HiddenIcon from "@/icons/hidden.svg?jsx";
-import DuplicateIcon from "@/icons/duplicate.svg?jsx";
-import MoreIcon from "@/icons/more.svg?jsx";
-import TrashIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import Editor from "@/editor/Editor";
@@ -66,34 +62,6 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
     viewTransition(() => {
       section.setHidden(value);
     });
-  }
-
-  function duplicateSection() {
-    Editor.current
-      .duplicateSection({
-        id: section.id,
-      })
-      .catch(handleError);
-  }
-
-  async function moveUp() {
-    try {
-      await Editor.current.moveSectionUp(section.id);
-    } catch (error) {
-      handleError(error);
-    }
-  }
-
-  async function moveDown() {
-    try {
-      await Editor.current.moveSectionDown(section.id);
-    } catch (error) {
-      handleError(error);
-    }
-  }
-
-  function deleteSection() {
-    Editor.current.deleteSection({ id: section.id }).catch(handleError);
   }
 
   return (
@@ -236,55 +204,7 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
         </li>
       </ul>
 
-      <ul role="group" aria-label="More tools">
-        <li role="presentation">
-          <ToolbarButton
-            id={`${section.id}-options-button`}
-            label="More options"
-            popoverTarget={`${section.id}-options`}
-            aria-haspopup="menu"
-            aria-expanded="false"
-          >
-            <MoreIcon aria-hidden="true" />
-          </ToolbarButton>
-
-          <popover-menu
-            id={`${section.id}-options`}
-            anchor={`${section.id}-options-button`}
-          >
-            <menu>
-              <li>
-                <button type="button" on:click={moveUp}>
-                  <ArrowUpIcon aria-hidden="true" />
-                  Move up
-                </button>
-              </li>
-              <li>
-                <button type="button" on:click={moveDown}>
-                  <ArrowDownIcon aria-hidden="true" />
-                  Move down
-                </button>
-              </li>
-              <li>
-                <button type="button" on:click={duplicateSection}>
-                  <DuplicateIcon aria-hidden="true" />
-                  Duplicate
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  className="destructive"
-                  on:click={deleteSection}
-                >
-                  <TrashIcon aria-hidden="true" />
-                  Delete section
-                </button>
-              </li>
-            </menu>
-          </popover-menu>
-        </li>
-      </ul>
+      <TileTools tile={section} />
     </floating-toolbar>
   );
 }

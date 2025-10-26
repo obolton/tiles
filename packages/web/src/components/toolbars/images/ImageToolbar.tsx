@@ -1,4 +1,5 @@
 import FormattingTools from "@/components/inputs/RichTextEditor/FormattingTools";
+import TileTools from "@/components/toolbars/tiles/TileTools";
 import type Image from "@/models/Image";
 import type { EditorView } from "prosemirror-view";
 import type { Reactive } from "@/utils/reactivity";
@@ -16,6 +17,8 @@ export default function ImageToolbar({ image, editorView }: ImageToolbarProps) {
       aria-label="Image tools"
     >
       <FormattingTools editorView={editorView} state={image.state} />
+
+      <TileTools tile={image} />
     </floating-toolbar>
   );
 }

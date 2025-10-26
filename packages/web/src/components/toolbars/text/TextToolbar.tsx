@@ -1,4 +1,5 @@
 import FormattingTools from "@/components/inputs/RichTextEditor/FormattingTools";
+import TileTools from "@/components/toolbars/tiles/TileTools";
 import ColorPicker from "@/components/colors/ColorPicker";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
@@ -11,7 +12,6 @@ import SlideIcon from "@/icons/slide.svg?jsx";
 import GrowIcon from "@/icons/grow.svg?jsx";
 import ShrinkIcon from "@/icons/shrink.svg?jsx";
 import ExpandHeightIcon from "@/icons/expand-height.svg?jsx";
-import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
 import type Text from "@/models/Text";
@@ -188,17 +188,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
         </li>
       </ul>
 
-      <ul role="group" aria-label="More tools">
-        <li role="presentation">
-          <ToolbarButton
-            label="Delete"
-            destructive
-            on:click={() => text.delete()}
-          >
-            <DeleteIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-      </ul>
+      <TileTools tile={text} />
     </floating-toolbar>
   );
 }
