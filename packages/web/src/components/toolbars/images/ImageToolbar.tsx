@@ -1,4 +1,4 @@
-import FormattingTools from "@/components/inputs/RichTextEditor/FormattingTools";
+import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import type Image from "@/models/Image";
 import type { EditorView } from "prosemirror-view";

@@ -1,4 +1,4 @@
-import FormattingTools from "@/components/inputs/RichTextEditor/FormattingTools";
+import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import type { EditorView } from "prosemirror-view";
 import type { EditorState } from "prosemirror-state";
 import type { Reactive } from "@/utils/reactivity";

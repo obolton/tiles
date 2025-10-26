@@ -1,4 +1,4 @@
-import FormattingTools from "@/components/inputs/RichTextEditor/FormattingTools";
+import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import ColorPicker from "@/components/colors/ColorPicker";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
