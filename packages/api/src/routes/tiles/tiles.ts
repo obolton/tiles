@@ -3,11 +3,13 @@ import prisma, { type ExtensionArgs } from "@/database/prisma";
 import {
   getFirstTileOrderQuery,
   getTileOrderQuery,
+  duplicateSectionQuery,
 } from "@/generated/prisma/sql";
 import type {
   ReorderTileSchema,
-  DeleteTilesSchema,
   UpdateTileSchema,
+  DuplicateTileSchema,
+  DeleteTilesSchema,
 } from "./schema";
 import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
@@ -109,6 +111,29 @@ export async function updateTile({
         animation,
         hide,
       },
+      select: TILE_FIELDS,
+    });
+  });
+}
+
+// TODO: Duplicate tile relations (could be simplified by consolidating tables)
+export async function duplicateTile({
+  pageId,
+  id,
+  sectionId,
+}: DuplicateTileSchema) {
+  return prisma.$transaction(async (transaction) => {
+    // TODO: Validate section ID
+    const order = await getTileOrder(transaction, pageId, sectionId, id);
+    const result = await transaction.$queryRawTyped(
+      duplicateSectionQuery(pageId, id, order),
+    );
+    const newId = result[0]?.id;
+    if (!newId) {
+      throw new Error("Could not duplicate tile");
+    }
+    return transaction.tile.findUniqueOrThrow({
+      where: { pageId, id: newId },
       select: TILE_FIELDS,
     });
   });

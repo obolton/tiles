@@ -17,6 +17,13 @@ export const UpdateTileSchema = z.object({
 });
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 
+export const DuplicateTileSchema = z.strictObject({
+  pageId: z.uuid(),
+  id: z.uuid(),
+  sectionId: z.uuid().nullable(),
+});
+export type DuplicateTileSchema = z.infer<typeof DuplicateTileSchema>;
+
 export const DeleteTilesSchema = z.object({
   pageId: z.uuid(),
   ids: z.array(z.uuid()).min(1).max(20),
