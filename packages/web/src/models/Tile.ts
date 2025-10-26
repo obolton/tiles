@@ -67,6 +67,14 @@ export default class Tile {
     this.hide = reactive(hide);
   }
 
+  duplicate({ sectionId }: { sectionId: string | null }) {
+    return client.tiles.duplicate.mutate({
+      pageId: this.editor.pageId,
+      id: this.id,
+      sectionId,
+    });
+  }
+
   delete() {
     return this.editor.deleteTiles([this.id]);
   }
