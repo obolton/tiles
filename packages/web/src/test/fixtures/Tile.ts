@@ -5,6 +5,7 @@ import type {
   ClientLinkTile,
   ClientMapTile,
   ClientPageLinkTile,
+  ClientVideoTile,
 } from "api/types/tiles";
 
 const SHARED = {
@@ -135,3 +136,14 @@ export const MAP_TILE = {
     },
   ] as const,
 } satisfies ClientMapTile;
+
+export const VIDEO_TILE: ClientVideoTile = {
+  ...SHARED,
+  id: "tile-id",
+  type: "VIDEO",
+  videoType: "YOUTUBE",
+  videoId: "abc123",
+  imageUrl: "https://tiles.dev/video.png",
+  title: "Sample video",
+  description: "Video description",
+};
