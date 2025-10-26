@@ -2,6 +2,7 @@ import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ArrowUpIcon from "@/icons/arrow-up.svg?jsx";
 import ArrowDownIcon from "@/icons/arrow-down.svg?jsx";
 import DuplicateIcon from "@/icons/duplicate.svg?jsx";
+import HiddenIcon from "@/icons/hidden.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
 import { handleError } from "@/utils/errors";
@@ -22,6 +23,10 @@ export default function TileTools({ tile }: TileToolsProps) {
 
   function duplicate() {
     tile.duplicate({ sectionId: tile.sectionId.value }).catch(handleError);
+  }
+
+  function toggleHide() {
+    tile.setHidden(!tile.hide.value).catch(handleError);
   }
 
   function deleteTile() {
@@ -47,26 +52,40 @@ export default function TileTools({ tile }: TileToolsProps) {
         >
           <menu>
             <li>
-              <button type="button" on:click={moveUp}>
+              <button type="button" role="menuitem" on:click={moveUp}>
                 <ArrowUpIcon aria-hidden="true" />
                 Move up
               </button>
             </li>
             <li>
-              <button type="button" on:click={moveDown}>
+              <button type="button" role="menuitem" on:click={moveDown}>
                 <ArrowDownIcon aria-hidden="true" />
                 Move down
               </button>
             </li>
             <li>
-              <button type="button" on:click={duplicate}>
+              <button type="button" role="menuitem" on:click={duplicate}>
                 <DuplicateIcon aria-hidden="true" />
                 Duplicate
               </button>
             </li>
+
+            <li role="presentation">
+              <button
+                type="button"
+                role="menuitemcheckbox"
+                aria-checked={tile.hide}
+                on:click={toggleHide}
+              >
+                <HiddenIcon aria-hidden="true" />
+                Hide
+              </button>
+            </li>
+
             <li>
               <button
                 type="button"
+                role="menuitem"
                 className="destructive"
                 on:click={deleteTile}
               >

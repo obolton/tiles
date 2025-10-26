@@ -1,5 +1,4 @@
 import TileTools from "@/components/toolbars/tiles/TileTools";
-import ToolbarButton from "@/components/buttons/ToolbarButton";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import HorizontalLayoutIcon from "@/icons/horizontal-layout.svg?jsx";
@@ -9,7 +8,6 @@ import AnchorTopIcon from "@/icons/anchor-top.svg?jsx";
 import AnchorBottomIcon from "@/icons/anchor-bottom.svg?jsx";
 import AnchorLeftIcon from "@/icons/anchor-left.svg?jsx";
 import AnchorRightIcon from "@/icons/anchor-right.svg?jsx";
-import HiddenIcon from "@/icons/hidden.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import Editor from "@/editor/Editor";
@@ -55,13 +53,6 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
     } catch (error) {
       handleError(error);
     }
-  }
-
-  function toggleVisibility() {
-    const value = !section.hide.value;
-    viewTransition(() => {
-      section.setHidden(value);
-    });
   }
 
   return (
@@ -191,16 +182,6 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
             value={section.background}
             onChange={setBackground}
           />
-        </li>
-
-        <li role="presentation">
-          <ToolbarButton
-            label="Hide"
-            aria-pressed={section.hide}
-            on:click={toggleVisibility}
-          >
-            <HiddenIcon aria-hidden="true" />
-          </ToolbarButton>
         </li>
       </ul>
 
