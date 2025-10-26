@@ -10,6 +10,9 @@ import type { Animation } from "api/types/tiles";
 vi.mock("@/api/client", () => ({
   default: {
     tiles: {
+      duplicate: {
+        mutate: vi.fn(),
+      },
       delete: {
         mutate: vi.fn(),
       },
@@ -25,6 +28,33 @@ describe("Tile", () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  describe("duplicate", () => {
+    test("duplicates the tile in the provided section", async () => {
+      const tile = new Tile(editor, TILE);
+      const sectionId = "new-section";
+
+      await tile.duplicate({ sectionId });
+
+      expect(client.tiles.duplicate.mutate).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: TILE.id,
+        sectionId,
+      });
+    });
+
+    test("duplicates the tile at the root when section is null", async () => {
+      const tile = new Tile(editor, TILE);
+
+      await tile.duplicate({ sectionId: null });
+
+      expect(client.tiles.duplicate.mutate).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: TILE.id,
+        sectionId: null,
+      });
+    });
   });
 
   test("maps properties to reactive values", () => {
