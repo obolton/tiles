@@ -1,11 +1,16 @@
 import Tile from "./Tile";
 import PageLinkComponent from "./PageLink";
+import LinkToolbar from "@/components/toolbars/links/LinkToolbar";
+import If from "@/jsx/if";
+import Portal from "@/jsx/portal";
 import styles from "./PageLinkTile.module.css";
 import Editor from "@/editor/Editor";
 import type PageLink from "@/models/PageLink";
+import type { Reactive } from "@/utils/reactivity";
 
 export interface PageLinkTileProps {
   pageLink: PageLink;
+  hasFocus: Reactive<boolean>;
 }
 
 function onClick(event: PointerEvent) {
@@ -20,7 +25,10 @@ function onClick(event: PointerEvent) {
   }
 }
 
-export default function PageLinkTile({ pageLink }: PageLinkTileProps) {
+export default function PageLinkTile({
+  pageLink,
+  hasFocus,
+}: PageLinkTileProps) {
   const { page } = pageLink;
 
   if (!page) {
@@ -39,6 +47,12 @@ export default function PageLinkTile({ pageLink }: PageLinkTileProps) {
       background={page.background}
       target="_blank"
       on:click={onClick}
-    />
+    >
+      <If condition={hasFocus}>
+        <Portal>
+          <LinkToolbar link={pageLink} />
+        </Portal>
+      </If>
+    </PageLinkComponent>
   );
 }

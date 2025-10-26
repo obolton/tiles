@@ -46,7 +46,7 @@ function getTileComponent(tile: Tile, hasFocus: Reactive<boolean>) {
     case "LINK":
       return <LinkTile link={tile} hasFocus={hasFocus} />;
     case "PAGE_LINK":
-      return <PageLinkTile pageLink={tile} />;
+      return <PageLinkTile pageLink={tile} hasFocus={hasFocus} />;
     case "TABLE":
       return <TableTile table={tile} hasFocus={hasFocus} />;
     case "CHART":
