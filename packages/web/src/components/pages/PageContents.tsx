@@ -25,6 +25,7 @@ export default function PageContents({
     new LayoutEditor({
       element,
       grid: element,
+      layoutType: "VERTICAL",
       dropTarget: element,
       editor,
       sectionId: null,
