@@ -39,82 +39,93 @@ describe("Text", () => {
     expect(text.state.value).toBeNull();
   });
 
-  test("updates vertical alignment and persists the change", async () => {
-    const text = new Text(editor, TEXT_TILE);
-    const align = "CENTER";
+  describe("setVerticalAlignment", () => {
+    test("updates vertical alignment and persists the change", async () => {
+      const text = new Text(editor, TEXT_TILE);
+      const align = "CENTER";
 
-    await text.setVerticalAlignment(align);
+      await text.setVerticalAlignment(align);
 
-    expect(text.align.value).toBe(align);
-    expect(textUpdateMock).toHaveBeenCalledWith({
-      pageId: PAGE.id,
-      id: TEXT_TILE.id,
-      align,
+      expect(text.align.value).toBe(align);
+      expect(textUpdateMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: TEXT_TILE.id,
+        align,
+      });
     });
   });
 
-  test("updates text color and persists the change", async () => {
-    const text = new Text(editor, TEXT_TILE);
-    const textColor: Color = "ffff00000000";
+  describe("setTextColor", () => {
+    test("updates the text color", async () => {
+      const text = new Text(editor, TEXT_TILE);
+      const textColor: Color = "ffff00000000";
 
-    await text.setTextColor(textColor);
+      await text.setTextColor(textColor);
 
-    expect(text.textColor.value).toBe(textColor);
-    expect(textUpdateMock).toHaveBeenCalledWith({
-      pageId: PAGE.id,
-      id: TEXT_TILE.id,
-      textColor,
+      expect(text.textColor.value).toBe(textColor);
+      expect(textUpdateMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: TEXT_TILE.id,
+        textColor,
+      });
     });
   });
 
-  test("applies background updates and stores the returned background", async () => {
-    const text = new Text(editor, TEXT_TILE);
-    const colorA: Color = "ffff00000000";
-    const colorB: Color = "888800000000";
-    const backgroundUpdate: BackgroundUpdate = { type: "color", color: colorA };
-    const background: Background = {
-      type: "gradient",
-      colorA,
-      colorB,
-      direction: "VERTICAL",
-    };
+  describe("setBackground", () => {
+    test("updates the background", async () => {
+      const text = new Text(editor, TEXT_TILE);
+      const colorA: Color = "ffff00000000";
+      const colorB: Color = "888800000000";
+      const backgroundUpdate: BackgroundUpdate = {
+        type: "color",
+        color: colorA,
+      };
+      const background: Background = {
+        type: "gradient",
+        colorA,
+        colorB,
+        direction: "VERTICAL",
+      };
 
-    textUpdateMock.mockResolvedValue({
-      ...TEXT_TILE,
-      background,
+      textUpdateMock.mockResolvedValue({
+        ...TEXT_TILE,
+        background,
+      });
+
+      await text.setBackground(backgroundUpdate);
+
+      expect(textUpdateMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: TEXT_TILE.id,
+        background: backgroundUpdate,
+      });
+      expect(text.background.value).toEqual(background);
     });
-
-    await text.setBackground(backgroundUpdate);
-
-    expect(textUpdateMock).toHaveBeenCalledWith({
-      pageId: PAGE.id,
-      id: TEXT_TILE.id,
-      background: backgroundUpdate,
-    });
-    expect(text.background.value).toEqual(background);
   });
 
-  test("does not persist when no editor state is set", () => {
-    const text = new Text(editor, TEXT_TILE);
+  describe("persist", () => {
+    test("does not persist when no editor state is set", () => {
+      const text = new Text(editor, TEXT_TILE);
 
-    const result = text.persist();
+      const result = text.persist();
 
-    expect(result).toBeUndefined();
-    expect(textUpdateMock).not.toHaveBeenCalled();
-  });
+      expect(result).toBeUndefined();
+      expect(textUpdateMock).not.toHaveBeenCalled();
+    });
 
-  test("serializes the current state before persisting", async () => {
-    const text = new Text(editor, TEXT_TILE);
+    test("persists the current state", async () => {
+      const text = new Text(editor, TEXT_TILE);
 
-    text.state.value = createState(TEXT_TILE.content);
+      text.state.value = createState(TEXT_TILE.content);
 
-    await text.persist();
+      await text.persist();
 
-    expect(text.content.value).toEqual(TEXT_TILE.content);
-    expect(textUpdateMock).toHaveBeenCalledWith({
-      pageId: PAGE.id,
-      id: TEXT_TILE.id,
-      content: TEXT_TILE.content,
+      expect(text.content.value).toEqual(TEXT_TILE.content);
+      expect(textUpdateMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: TEXT_TILE.id,
+        content: TEXT_TILE.content,
+      });
     });
   });
 });
