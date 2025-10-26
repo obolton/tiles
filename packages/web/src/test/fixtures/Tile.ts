@@ -4,6 +4,7 @@ import type {
   ClientImageTile,
   ClientLinkTile,
   ClientMapTile,
+  ClientPageLinkTile,
 } from "api/types/tiles";
 
 const SHARED = {
@@ -89,6 +90,24 @@ export const LINK_TILE: ClientLinkTile = {
   description: "Link description",
   imageUrl: "https://tiles.dev/image.png",
   siteName: "Test",
+};
+
+export const PAGE_LINK_TILE: ClientPageLinkTile = {
+  ...SHARED,
+  id: "tile-id",
+  type: "PAGE_LINK",
+  linkedPage: {
+    id: "linked-page-id",
+    title: "Linked Page",
+    background: null,
+    font: "CLASSIC",
+    coverImageUrl: "https://tiles.dev/cover.png",
+    author: {
+      id: "author-id",
+      name: "Linked Author",
+      imageUrl: "https://tiles.dev/author.png",
+    },
+  },
 };
 
 export const MAP_TILE = {
