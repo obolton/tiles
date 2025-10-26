@@ -164,13 +164,12 @@ export class Computed<
 
   private inputValues?: ReactiveTypes<Input>; // Used for lazy evaluation when disconnected
   private cachedValue?: Value;
-  private stale: boolean;
+  private stale = true;
 
   constructor(input: Input, transform: Transform<Input, Value>) {
     super();
     this.input = input;
     this.transform = transform;
-    this.stale = true;
   }
 
   subscribe(callback: (reactive: this) => void, signal?: AbortSignal) {
@@ -194,7 +193,13 @@ export class Computed<
 
   markAsStale() {
     this.stale = true;
-    this.notify();
+
+    if (this.subscribers.size > 0) {
+      const previousValue = this.cachedValue;
+      if (previousValue !== this.value) {
+        this.notify();
+      }
+    }
   }
 
   get value() {
