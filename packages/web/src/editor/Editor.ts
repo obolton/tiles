@@ -1,6 +1,6 @@
 import client from "@/api/client";
 import { showModal } from "@/utils/modals";
-import { preloadImage, uploadMedia } from "@/utils/media";
+import { uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
 import { reactive, flag, array } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
@@ -212,7 +212,7 @@ export default class Editor {
               purpose: "content",
               workspaceId: this.workspaceId,
             });
-            await this.createImage({
+            await Image.create(this, {
               sectionId: this.activeSection?.id,
               imageId,
             });
@@ -221,7 +221,7 @@ export default class Editor {
       }
     } else if (isUriList(item)) {
       item.getAsString(async (url) => {
-        await this.createLink({
+        await Link.create(this, {
           sectionId: this.activeSection?.id,
           url,
         });
@@ -301,16 +301,6 @@ export default class Editor {
 
     this.clearSelection();
     this.deleteTiles(ids);
-  }
-
-  // Sections
-
-  async createSection(data: OmitPageId<AppRouterInputs["sections"]["create"]>) {
-    const properties = await client.sections.create.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.addTile(properties);
   }
 
   transitionSections(update: () => void) {
@@ -526,17 +516,6 @@ export default class Editor {
     this.tiles.value = this.tiles.value.filter((tile) => !set.has(tile.id));
   }
 
-  // Text
-
-  async createText(data: OmitPageId<AppRouterInputs["text"]["create"]>) {
-    const item = await client.text.create.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.addTile(item);
-    return item;
-  }
-
   // TODO: Restore title setting
   async updateText(data: OmitPageId<AppRouterInputs["text"]["update"]>) {
     // Update the page title
@@ -592,65 +571,7 @@ export default class Editor {
     return tile.state;
   }
 
-  // Images
-
-  async createImage(data: OmitPageId<AppRouterInputs["images"]["create"]>) {
-    const item = await client.images.create.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    if (item.imageUrl) {
-      await preloadImage(item.imageUrl);
-    }
-    this.addTile(item);
-    return item;
-  }
-
-  // Links
-
-  async createPageLink(
-    data: OmitPageId<AppRouterInputs["pageLinks"]["create"]>,
-  ) {
-    const item = await client.pageLinks.create.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.addTile(item);
-    return item;
-  }
-
-  async createLink(
-    data: OmitPageId<AppRouterInputs["externalLinks"]["create"]>,
-  ) {
-    const item = await client.externalLinks.create.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.addTile(item);
-    return item;
-  }
-
-  // Maps
-
-  async createMap(data: OmitPageId<AppRouterInputs["maps"]["create"]>) {
-    const item = await client.maps.create.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.addTile(item);
-    return item;
-  }
-
   // Tables
-
-  async createTable(data: OmitPageId<AppRouterInputs["tables"]["create"]>) {
-    const item = await client.tables.create.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.addTile(item);
-    return item;
-  }
 
   async moveTableRow(data: OmitPageId<AppRouterInputs["tables"]["moveRow"]>) {
     return await client.tables.moveRow.mutate({
@@ -706,17 +627,6 @@ export default class Editor {
       throw new Error(`Invalid table ID: ${tableId}`);
     }
     return table;
-  }
-
-  // Charts
-
-  async createChart(data: OmitPageId<AppRouterInputs["charts"]["create"]>) {
-    const item = await client.charts.create.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.addTile(item);
-    return item;
   }
 
   positionTilePreview({

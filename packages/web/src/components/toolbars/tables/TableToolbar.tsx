@@ -7,6 +7,7 @@ import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import ChartIcon from "@/icons/chart.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
+import Chart from "@/models/Chart";
 import type { Color } from "@/utils/color";
 import type { BackgroundUpdate } from "@/components/backgrounds/types";
 import type TableView from "@/elements/table/TableView";
@@ -82,7 +83,7 @@ export default function TableToolbar({
     if (!columnId) {
       return;
     }
-    await editor.createChart({
+    await Chart.create(editor, {
       sectionId: sectionId.value,
       tableId: id,
       series: [columnId],

@@ -11,6 +11,14 @@ import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
+import Text from "@/models/Text";
+import Image from "@/models/Image";
+import Link from "@/models/Link";
+import PageLink from "@/models/PageLink";
+import Map from "@/models/Map";
+import Table from "@/models/Table";
+import Chart from "@/models/Chart";
+import Section from "@/models/Section";
 import type { TileType } from "api/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 import type PopoverMenu from "@/elements/menu/PopoverMenu";
@@ -58,14 +66,12 @@ export default function InsertMenu({
 
     switch (tileType) {
       case "TEXT":
-        Editor.current
-          .createText({
-            sectionId: insertSectionId,
-            afterId,
-            block: true,
-            content: [{ type: "paragraph", children: [] }],
-          })
-          .catch(handleError);
+        Text.create(Editor.current, {
+          sectionId: insertSectionId,
+          afterId,
+          block: true,
+          content: [{ type: "paragraph", children: [] }],
+        }).catch(handleError);
         break;
 
       case "IMAGE":
@@ -80,7 +86,7 @@ export default function InsertMenu({
               purpose: "content",
               workspaceId: Editor.current.workspaceId,
             });
-            await Editor.current.createImage({
+            await Image.create(Editor.current, {
               sectionId: insertSectionId,
               afterId,
               imageId,
@@ -97,7 +103,7 @@ export default function InsertMenu({
           },
           async onConfirm(result) {
             if ("linkedPageId" in result) {
-              await Editor.current.createPageLink({
+              await PageLink.create(Editor.current, {
                 sectionId: insertSectionId,
                 afterId,
                 linkedPageId: result.linkedPageId,
@@ -105,7 +111,7 @@ export default function InsertMenu({
                 height: 5,
               });
             } else if (result.url) {
-              await Editor.current.createLink({
+              await Link.create(Editor.current, {
                 sectionId: insertSectionId,
                 afterId,
                 url: result.url,
@@ -121,7 +127,7 @@ export default function InsertMenu({
         showModal(PlaceModalLoader, {
           props: {},
           async onConfirm({ place }) {
-            await Editor.current.createMap({
+            await Map.create(Editor.current, {
               sectionId: insertSectionId,
               afterId,
               places: [place],
@@ -132,45 +138,37 @@ export default function InsertMenu({
         break;
 
       case "TABLE":
-        Editor.current
-          .createTable({
-            sectionId: insertSectionId,
-            afterId,
-            height: 10,
-            columns: 3,
-            rows: 5,
-          })
-          .catch(handleError);
+        Table.create(Editor.current, {
+          sectionId: insertSectionId,
+          afterId,
+          height: 10,
+          columns: 3,
+          rows: 5,
+        }).catch(handleError);
         break;
 
       case "CHART":
-        Editor.current
-          .createChart({
-            sectionId: insertSectionId,
-            afterId,
-            height: 10,
-          })
-          .catch(handleError);
+        Chart.create(Editor.current, {
+          sectionId: insertSectionId,
+          afterId,
+          height: 10,
+        }).catch(handleError);
         break;
     }
   }
 
   function createFreeformSection() {
-    Editor.current
-      .createSection({
-        afterId,
-        layout: "FREEFORM",
-      })
-      .catch(handleError);
+    Section.create(Editor.current, {
+      afterId,
+      layout: "FREEFORM",
+    }).catch(handleError);
   }
 
   function createStack() {
-    Editor.current
-      .createSection({
-        afterId,
-        layout: "VERTICAL",
-      })
-      .catch(handleError);
+    Section.create(Editor.current, {
+      afterId,
+      layout: "VERTICAL",
+    }).catch(handleError);
   }
 
   return (
