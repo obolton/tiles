@@ -176,7 +176,7 @@ export default function InsertMenu({
   return (
     <popover-menu {...props}>
       <list-box>
-        <ul role="group" aria-label="Tiles">
+        <ul role="group">
           {BUTTONS.map(({ label, type, Icon }) => (
             <li role="presentation">
               <MenuItem
@@ -190,7 +190,7 @@ export default function InsertMenu({
           ))}
         </ul>
 
-        <ul role="group" aria-label="Advanced">
+        <ul role="group">
           <li role="presentation">
             <MenuItem
               icon={<VerticalLayoutIcon aria-hidden="true" />}
