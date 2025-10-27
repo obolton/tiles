@@ -1,4 +1,5 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
+import MenuItem from "@/components/buttons/MenuItem";
 import ArrowUpIcon from "@/icons/arrow-up.svg?jsx";
 import ArrowDownIcon from "@/icons/arrow-down.svg?jsx";
 import DuplicateIcon from "@/icons/duplicate.svg?jsx";
@@ -50,50 +51,55 @@ export default function TileTools({ tile }: TileToolsProps) {
           id={`${tile.id}-options`}
           anchor={`${tile.id}-options-button`}
         >
-          <menu>
-            <li>
-              <button type="button" role="menuitem" on:click={moveUp}>
-                <ArrowUpIcon aria-hidden="true" />
-                Move up
-              </button>
-            </li>
-            <li>
-              <button type="button" role="menuitem" on:click={moveDown}>
-                <ArrowDownIcon aria-hidden="true" />
-                Move down
-              </button>
-            </li>
-            <li>
-              <button type="button" role="menuitem" on:click={duplicate}>
-                <DuplicateIcon aria-hidden="true" />
-                Duplicate
-              </button>
-            </li>
+          <list-box>
+            <ul role="group">
+              <li>
+                <MenuItem
+                  icon={<ArrowUpIcon aria-hidden="true" />}
+                  on:click={moveUp}
+                >
+                  Move up
+                </MenuItem>
+              </li>
+              <li>
+                <MenuItem
+                  icon={<ArrowDownIcon aria-hidden="true" />}
+                  on:click={moveDown}
+                >
+                  Move down
+                </MenuItem>
+              </li>
+            </ul>
 
-            <li role="presentation">
-              <button
-                type="button"
-                role="menuitemcheckbox"
-                aria-checked={tile.hide}
-                on:click={toggleHide}
-              >
-                <HiddenIcon aria-hidden="true" />
-                Hide
-              </button>
-            </li>
-
-            <li>
-              <button
-                type="button"
-                role="menuitem"
-                className="destructive"
-                on:click={deleteTile}
-              >
-                <TrashIcon aria-hidden="true" />
-                Delete
-              </button>
-            </li>
-          </menu>
+            <ul role="group">
+              <li>
+                <MenuItem
+                  icon={<DuplicateIcon aria-hidden="true" />}
+                  on:click={duplicate}
+                >
+                  Duplicate
+                </MenuItem>
+              </li>
+              <li role="presentation">
+                <MenuItem
+                  icon={<HiddenIcon aria-hidden="true" />}
+                  checked={tile.hide}
+                  on:click={toggleHide}
+                >
+                  Hide
+                </MenuItem>
+              </li>
+              <li>
+                <MenuItem
+                  icon={<TrashIcon aria-hidden="true" />}
+                  destructive
+                  on:click={deleteTile}
+                >
+                  Delete
+                </MenuItem>
+              </li>
+            </ul>
+          </list-box>
         </popover-menu>
       </li>
     </ul>
