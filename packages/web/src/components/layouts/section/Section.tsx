@@ -24,6 +24,7 @@ export default function Section({ section, signal }: SectionProps) {
     new LayoutEditor({
       element,
       grid: element.contents,
+      layoutType: section.layout.value,
       dropTarget: element,
       editor,
       sectionId: id,
