@@ -141,7 +141,7 @@ model TextTile {
   id        String   @id @default(uuid()) @db.Uuid
   pageId    String   @map("page_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   /// [RichText]
   content            Json               @db.JsonB
@@ -163,13 +163,14 @@ model ImageTile {
   id        String   @id @default(uuid()) @db.Uuid
   pageId    String   @map("page_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  imageId   String?  @map("image_id") @db.Uuid
-  originX   Float    @default(0.5) @map("origin_x") @db.Real
-  originY   Float    @default(0.5) @map("origin_y") @db.Real
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  imageId String? @map("image_id") @db.Uuid
+  originX Float   @default(0.5) @map("origin_x") @db.Real
+  originY Float   @default(0.5) @map("origin_y") @db.Real
   /// [RichText]
-  text      Json?    @db.JsonB
-  theme     String?
+  text    Json?   @db.JsonB
+  theme   String?
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tile  Tile   @relation(fields: [id], references: [id], onDelete: Cascade)
@@ -180,10 +181,11 @@ model ImageTile {
 }
 
 model VideoTile {
-  id               String    @id @default(uuid()) @db.Uuid
-  pageId           String    @map("page_id") @db.Uuid
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @updatedAt @map("updated_at")
+  id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
   videoType        VideoType @map("video_type")
   videoId          String    @map("video_id")
   originalImageUrl String?   @map("original_image_url")
@@ -200,7 +202,7 @@ model VideoTile {
 model Place {
   id          String   @id @default(uuid()) @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
   name        String
   lat         Float
   long        Float
@@ -219,7 +221,7 @@ model MapTile {
   id        String   @id @default(uuid()) @db.Uuid
   pageId    String   @map("page_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   page   Page    @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tile   Tile    @relation(fields: [id], references: [id], onDelete: Cascade)
@@ -230,15 +232,16 @@ model MapTile {
 }
 
 model LinkTile {
-  id               String   @id @default(uuid()) @db.Uuid
-  pageId           String   @map("page_id") @db.Uuid
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
   url              String
   title            String?
   description      String?
-  siteName         String?  @map("site_name")
-  originalImageUrl String?  @map("original_image_url")
+  siteName         String? @map("site_name")
+  originalImageUrl String? @map("original_image_url")
 
   page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tile Tile @relation(fields: [id], references: [id], onDelete: Cascade)
@@ -248,11 +251,12 @@ model LinkTile {
 }
 
 model PageLinkTile {
-  id           String   @id @default(uuid()) @db.Uuid
-  pageId       String   @map("page_id") @db.Uuid
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  linkedPageId String?  @map("linked_page_id") @db.Uuid
+  id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  linkedPageId String? @map("linked_page_id") @db.Uuid
 
   page       Page  @relation("Page", fields: [pageId], references: [id], onDelete: Cascade)
   tile       Tile  @relation(fields: [id], references: [id], onDelete: Cascade)
@@ -263,10 +267,11 @@ model PageLinkTile {
 }
 
 model Table {
-  id                 String             @id @default(uuid()) @db.Uuid
-  pageId             String             @map("page_id") @db.Uuid
-  createdAt          DateTime           @default(now()) @map("created_at")
-  updatedAt          DateTime           @updatedAt @map("updated_at")
+  id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
   textColor          Bytes?             @map("text_color") @db.ByteA
   backgroundColor    Bytes?             @map("background_color") @db.ByteA
   backgroundGradient GradientDirection? @map("background_gradient")
@@ -317,7 +322,7 @@ model TableRow {
 model Dropdown {
   id        String   @id @default(uuid()) @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   pageId    String   @map("page_id") @db.Uuid
   /// [DropdownOptions]
   options   Json     @db.JsonB
@@ -329,10 +334,11 @@ model Dropdown {
 }
 
 model Chart {
-  id                 String             @id @default(uuid()) @db.Uuid
-  pageId             String             @map("page_id") @db.Uuid
-  createdAt          DateTime           @default(now()) @map("created_at")
-  updatedAt          DateTime           @updatedAt @map("updated_at")
+  id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
   tableId            String             @map("table_id") @db.Uuid
   labelColumnId      String?            @map("label_column_id") @db.Uuid
   textColor          Bytes?             @map("text_color") @db.ByteA
@@ -354,7 +360,7 @@ model Chart {
 model ChartSeries {
   id        String          @id @default(uuid()) @db.Uuid
   createdAt DateTime        @default(now()) @map("created_at")
-  updatedAt DateTime        @updatedAt @map("updated_at")
+  updatedAt DateTime        @default(now()) @updatedAt @map("updated_at")
   chartId   String          @map("chart_id") @db.Uuid
   columnId  String          @map("column_id") @db.Uuid
   type      ChartSeriesType @default(BAR)
