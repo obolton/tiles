@@ -267,6 +267,7 @@ scroll-view:not(:defined) {
   margin: unset;
   padding: unset;
   color: unset;
+  background: unset;
   border: unset;
 }
 
