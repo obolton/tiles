@@ -1,5 +1,5 @@
 import NewIcon from "@/icons/new.svg?jsx";
-import InsertToolbar from "@/components/toolbars/insert/InsertToolbar";
+import InsertMenu from "@/components/toolbars/insert/InsertMenu";
 import type { JSX } from "@/jsx/jsx";
 
 function preventDefault(event: Event) {
@@ -10,7 +10,6 @@ export interface InsertButtonProps extends JSX.Attributes<HTMLButtonElement> {
   id: string;
   sectionId?: string | null;
   afterId?: string | null;
-  orientation?: "horizontal" | "vertical";
 }
 
 export default function InsertButton({
@@ -18,7 +17,6 @@ export default function InsertButton({
   classList,
   sectionId,
   afterId,
-  orientation,
   ...props
 }: InsertButtonProps) {
   return (
@@ -36,11 +34,11 @@ export default function InsertButton({
         <NewIcon aria-hidden="true" id="test" />
       </button>
 
-      <InsertToolbar
+      <InsertMenu
         id={`${id}-popover`}
         sectionId={sectionId}
         afterId={afterId}
-        orientation={orientation}
+        align="auto"
         anchor={id}
       />
     </>
