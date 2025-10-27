@@ -1,15 +1,16 @@
-import ToolbarButton from "@/components/buttons/ToolbarButton";
+import MenuItem from "@/components/buttons/MenuItem";
 import TextIcon from "@/icons/text.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import PlaceIcon from "@/icons/place.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
 import ChartIcon from "@/icons/chart.svg?jsx";
+import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";
+import FreeformLayoutIcon from "@/icons/freeform-layout.svg?jsx";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
-import "./InsertToolbar.module.css";
 import type { TileType } from "api/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 import type PopoverMenu from "@/elements/menu/PopoverMenu";
@@ -33,18 +34,16 @@ const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
-export interface InsertToolbarProps extends JSX.Attributes<PopoverMenu> {
+export interface InsertMenuProps extends JSX.Attributes<PopoverMenu> {
   sectionId?: string | null;
   afterId?: string | null;
-  orientation?: "horizontal" | "vertical";
 }
 
-export default function InsertToolbar({
+export default function InsertMenu({
   sectionId,
   afterId,
-  orientation = "vertical",
   ...props
-}: InsertToolbarProps) {
+}: InsertMenuProps) {
   function onClick(event: PointerEvent) {
     const button = event.currentTarget as HTMLButtonElement;
     const tileType = button.dataset.tileType as TileType;
@@ -156,27 +155,61 @@ export default function InsertToolbar({
     }
   }
 
+  function createFreeformSection() {
+    Editor.current
+      .createSection({
+        afterId,
+        layout: "FREEFORM",
+      })
+      .catch(handleError);
+  }
+
+  function createStack() {
+    Editor.current
+      .createSection({
+        afterId,
+        layout: "VERTICAL",
+      })
+      .catch(handleError);
+  }
+
   return (
-    <popover-menu align="center" {...props}>
-      <floating-toolbar
-        className={orientation}
-        aria-label="Insert content"
-        data-tooltip-position="left"
-      >
-        <ul role="group" aria-label="Create items">
+    <popover-menu {...props}>
+      <list-box>
+        <ul role="group" aria-label="Tiles">
           {BUTTONS.map(({ label, type, Icon }) => (
             <li role="presentation">
-              <ToolbarButton
-                label={label}
+              <MenuItem
+                icon={<Icon aria-hidden="true" />}
                 data-tile-type={type}
                 on:click={onClick}
               >
-                <Icon aria-hidden="true" />
-              </ToolbarButton>
+                {label}
+              </MenuItem>
             </li>
           ))}
         </ul>
-      </floating-toolbar>
+
+        <ul role="group" aria-label="Advanced">
+          <li role="presentation">
+            <MenuItem
+              icon={<VerticalLayoutIcon aria-hidden="true" />}
+              on:click={createStack}
+            >
+              Collection
+            </MenuItem>
+          </li>
+
+          <li role="presentation">
+            <MenuItem
+              icon={<FreeformLayoutIcon aria-hidden="true" />}
+              on:click={createFreeformSection}
+            >
+              Canvas
+            </MenuItem>
+          </li>
+        </ul>
+      </list-box>
     </popover-menu>
   );
 }
