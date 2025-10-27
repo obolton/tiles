@@ -7,24 +7,24 @@ table-of-contents {
   margin: 16px 0;
   padding: 0;
   transition:
-    display var(--animation-duration) allow-discrete,
-    overlay var(--animation-duration) allow-discrete,
-    scale var(--animation-duration) var(--spring),
-    opacity var(--animation-duration) var(--spring);
+    display var(--animation-duration-short) allow-discrete,
+    overlay var(--animation-duration-short) allow-discrete,
+    scale var(--animation-duration-short) var(--easing),
+    opacity var(--animation-duration-short) var(--easing);
 
   &:popover-open {
     scale: 1;
     opacity: 1;
 
     @starting-style {
-      scale: 0.9;
+      scale: 0.95;
       opacity: 0;
     }
   }
 
   &:not(:popover-open) {
     display: none;
-    scale: 0.9;
+    scale: 0.95;
     opacity: 0;
   }
 }
