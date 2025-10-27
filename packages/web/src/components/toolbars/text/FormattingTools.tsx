@@ -1,4 +1,5 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
+import MenuItem from "@/components/buttons/MenuItem";
 import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
 import H3Icon from "@/icons/h3.svg?jsx";
@@ -262,40 +263,48 @@ export default function FormattingTools({
           </ToolbarButton>
 
           <popover-menu id="insert-content-menu" anchor="insert-content-button">
-            <menu>
-              <li>
-                <button type="button" on:click={insertNewDate}>
-                  <EventIcon aria-hidden="true" />
-                  Date
-                </button>
-              </li>
-              <li>
-                <button type="button" on:click={insertNewDropdown}>
-                  <DropdownIcon aria-hidden="true" />
-                  Dropdown
-                </button>
-              </li>
-              <Each items={Editor.current.dropdowns}>
-                {(dropdown) => (
-                  <li>
-                    <button
-                      type="button"
-                      on:click={() =>
-                        insertExistingDropdown(
-                          dropdown.id,
-                          dropdown.options[0]?.value ?? "",
-                        )
-                      }
-                    >
-                      <DropdownIcon aria-hidden="true" />
-                      {listFormatter.format(
-                        dropdown.options.slice(0, 5).map(({ value }) => value),
-                      )}
-                    </button>
-                  </li>
-                )}
-              </Each>
-            </menu>
+            <list-box>
+              <ul role="group">
+                <li>
+                  <MenuItem
+                    icon={<EventIcon aria-hidden="true" />}
+                    on:click={insertNewDate}
+                  >
+                    Date
+                  </MenuItem>
+                </li>
+                <li>
+                  <MenuItem
+                    icon={<DropdownIcon aria-hidden="true" />}
+                    on:click={insertNewDropdown}
+                  >
+                    Dropdown
+                  </MenuItem>
+                </li>
+
+                <Each items={Editor.current.dropdowns}>
+                  {(dropdown) => (
+                    <li>
+                      <MenuItem
+                        icon={<DropdownIcon aria-hidden="true" />}
+                        on:click={() =>
+                          insertExistingDropdown(
+                            dropdown.id,
+                            dropdown.options[0]?.value ?? "",
+                          )
+                        }
+                      >
+                        {listFormatter.format(
+                          dropdown.options
+                            .slice(0, 5)
+                            .map(({ value }) => value),
+                        )}
+                      </MenuItem>
+                    </li>
+                  )}
+                </Each>
+              </ul>
+            </list-box>
           </popover-menu>
         </li>
       </ul>
