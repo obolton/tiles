@@ -1,6 +1,7 @@
 /* Shared */
 
 button {
+  position: relative;
   font-size: 18px;
   line-height: 1;
   text-align: center;
@@ -162,8 +163,6 @@ a.floating {
   }
 
   &[aria-expanded] {
-    position: relative;
-
     &::after {
       content: "";
       position: absolute;
