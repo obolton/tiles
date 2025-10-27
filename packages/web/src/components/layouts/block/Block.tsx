@@ -2,15 +2,10 @@ import { flag, reactive, Computed, type Reactive } from "@/utils/reactivity";
 import { toCSSColor } from "@/utils/color";
 import If from "@/jsx/if";
 import styles from "./Block.module.css";
-import NewIcon from "@/icons/new.svg?jsx";
-import { handleError } from "@/utils/errors";
+import InsertButton from "@/components/buttons/InsertButton";
 import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
 import type { Background } from "@/components/backgrounds/types";
-
-function preventDefault(event: Event) {
-  event.preventDefault();
-}
 
 export interface BlockProps {
   tileId: string;
@@ -28,10 +23,6 @@ export default function Block({
   children,
 }: BlockProps) {
   const hasFocus = flag(false);
-
-  function insertItem() {
-    editor.createSection({ afterId: tileId }).catch(handleError);
-  }
 
   function onFocusIn() {
     if (editor.isEditable.value) {
@@ -77,16 +68,13 @@ export default function Block({
         {children}
 
         <If condition={hasFocus}>
-          <button
-            type="button"
-            classList={{ floating: true, small: true, [styles.insert]: true }}
-            aria-label="Insert item"
-            data-tooltip="Insert item"
-            on:pointerdown={preventDefault}
-            on:click={insertItem}
-          >
-            <NewIcon aria-hidden="true" />
-          </button>
+          <InsertButton
+            id={`${tileId}-insert-button`}
+            classList={{ small: true, [styles.insert]: true }}
+            orientation="horizontal"
+            sectionId={null}
+            afterId={tileId}
+          />
         </If>
       </section>
     </If>

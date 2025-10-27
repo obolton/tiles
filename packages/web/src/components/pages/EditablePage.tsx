@@ -1,7 +1,7 @@
 import EditingToolbar from "@/components/menu/EditingToolbar";
 import PageContents from "@/components/pages/PageContents";
 import Editor from "@/editor/Editor";
-import InsertToolbar from "@/components/toolbars/insert/InsertToolbar";
+import InsertButton from "@/components/buttons/InsertButton";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import If from "@/jsx/if";
 import { isSignedIn } from "@/utils/sessions";
@@ -32,7 +32,7 @@ export default function EditablePage({ page }: EditablePageProps) {
       </If>
 
       <If condition={isEditable}>
-        <InsertToolbar />
+        <InsertButton id="insert-button" orientation="vertical" />
       </If>
     </>
   );
