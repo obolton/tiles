@@ -34,6 +34,23 @@ function isElementNode(node: JSX.Node) {
   return typeof node === "object" && node !== null && "type" in node;
 }
 
+function getNamespace(tagName: string) {
+  switch (tagName.toLowerCase()) {
+    case "svg":
+      return SVG_NAMESPACE;
+    case "math":
+      return MATHML_NAMESPACE;
+    default:
+      return null;
+  }
+}
+
+function createElement(tagName: string, namespace?: string | null) {
+  return namespace
+    ? document.createElementNS(namespace, tagName)
+    : document.createElement(tagName);
+}
+
 function toNodeArray(node: JSX.Node) {
   if (isEmptyNode(node)) {
     return [];
@@ -205,7 +222,8 @@ function ensureElementNode(node: Node, tagName: string) {
   if (node instanceof Element && node.tagName.toLowerCase() === tagName) {
     return node;
   }
-  const element = document.createElement(tagName);
+  const namespace = getNamespace(tagName);
+  const element = createElement(tagName, namespace);
   node.parentNode?.replaceChild(element, node);
   return element;
 }
@@ -283,11 +301,12 @@ function hydrateDOMElement(
     }
     return [element];
   } else {
-    const element = document.createElement(tagName);
+    const namespace = getNamespace(tagName);
+    const element = createElement(tagName, namespace);
     setAttributes(element, attributes, signal);
     const childNodes = renderFragment(
       toNodeArray(attributes.children),
-      undefined,
+      namespace,
       signal,
     );
     element.append(...childNodes);
@@ -421,30 +440,21 @@ function renderDOMElement(
   namespace?: string | null,
   signal?: AbortSignal,
 ) {
-  switch (node.type) {
-    case "svg":
-      namespace = SVG_NAMESPACE;
-      break;
-    case "math":
-      namespace = MATHML_NAMESPACE;
-      break;
-  }
+  const { type, properties } = node;
+  const newNamespace = getNamespace(type) ?? namespace;
 
-  const element = namespace
-    ? document.createElementNS(namespace, node.type)
-    : document.createElement(node.type);
+  const element = createElement(type, newNamespace);
 
-  setAttributes(element, node.properties, signal);
+  setAttributes(element, properties, signal);
 
-  const { children, ref } = node.properties;
+  const { children, ref } = properties;
 
   // Included content from a different namespace
-  if (node.type === "foreignObject") {
-    namespace = XHTML_NAMESPACE;
-  }
+  const childrenNamespace =
+    type === "foreignObject" ? XHTML_NAMESPACE : newNamespace;
 
   if (children !== null && typeof children !== "undefined") {
-    element.append(...render(children, namespace, signal));
+    element.append(...render(children, childrenNamespace, signal));
   }
 
   if (ref) {
