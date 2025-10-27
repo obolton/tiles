@@ -35,6 +35,17 @@ export default class Chart extends Tile {
   readonly series: ReactiveArray<Series>;
   readonly background: Reactive<Background | null>;
 
+  static async create(
+    editor: Editor,
+    data: Omit<AppRouterInputs["charts"]["create"], "pageId">,
+  ) {
+    const properties = await client.charts.create.mutate({
+      pageId: editor.pageId,
+      ...data,
+    });
+    editor.addTile(properties);
+  }
+
   constructor(editor: Editor, properties: ClientChartTile) {
     super(editor, properties);
 

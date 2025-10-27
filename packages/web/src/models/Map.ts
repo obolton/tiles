@@ -3,11 +3,23 @@ import { array, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 import type { ClientMapTile, ClientPlace } from "api/types/tiles";
+import type { AppRouterInputs } from "@/api/client";
 
 export default class Map extends Tile {
   readonly type = "MAP";
 
   readonly places: Reactive<ClientPlace[]>;
+
+  static async create(
+    editor: Editor,
+    data: Omit<AppRouterInputs["maps"]["create"], "pageId">,
+  ) {
+    const properties = await client.maps.create.mutate({
+      pageId: editor.pageId,
+      ...data,
+    });
+    editor.addTile(properties);
+  }
 
   constructor(editor: Editor, properties: ClientMapTile) {
     super(editor, properties);

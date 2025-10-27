@@ -15,6 +15,17 @@ export default class Section extends Tile {
   readonly background: Reactive<Background | null>;
   readonly layout: Reactive<Layout>;
 
+  static async create(
+    editor: Editor,
+    data: Omit<AppRouterInputs["sections"]["create"], "pageId">,
+  ) {
+    const properties = await client.sections.create.mutate({
+      pageId: editor.pageId,
+      ...data,
+    });
+    editor.addTile(properties);
+  }
+
   constructor(editor: Editor, properties: ClientSectionTile) {
     super(editor, properties);
 

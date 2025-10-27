@@ -21,6 +21,17 @@ export default class Text extends Tile {
   readonly background: Reactive<Background | null>;
   readonly state: Reactive<EditorState | null>;
 
+  static async create(
+    editor: Editor,
+    data: Omit<AppRouterInputs["text"]["create"], "pageId">,
+  ) {
+    const properties = await client.text.create.mutate({
+      pageId: editor.pageId,
+      ...data,
+    });
+    editor.addTile(properties);
+  }
+
   constructor(editor: Editor, properties: ClientTextTile) {
     super(editor, properties);
 

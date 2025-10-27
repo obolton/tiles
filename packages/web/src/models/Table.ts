@@ -34,6 +34,17 @@ export default class Table extends Tile {
   readonly rows: ReactiveArray<TableRow>;
   readonly numRows: Reactive<number>;
 
+  static async create(
+    editor: Editor,
+    data: Omit<AppRouterInputs["tables"]["create"], "pageId">,
+  ) {
+    const properties = await client.tables.create.mutate({
+      pageId: editor.pageId,
+      ...data,
+    });
+    editor.addTile(properties);
+  }
+
   constructor(editor: Editor, properties: ClientTableTile) {
     super(editor, properties);
 

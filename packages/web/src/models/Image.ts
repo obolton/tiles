@@ -1,6 +1,7 @@
 import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
+import { preloadImage } from "@/utils/media";
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 import type { ClientImageTile } from "api/types/tiles";
@@ -19,6 +20,22 @@ export default class Image extends Tile {
   readonly text: Reactive<ClientImageTile["text"]>;
   readonly origin: Reactive<ImageOrigin>;
   readonly state: Reactive<EditorState | null>;
+
+  static async create(
+    editor: Editor,
+    data: Omit<AppRouterInputs["images"]["create"], "pageId">,
+  ) {
+    const properties = await client.images.create.mutate({
+      pageId: editor.pageId,
+      ...data,
+    });
+
+    if (properties.imageUrl) {
+      await preloadImage(properties.imageUrl);
+    }
+
+    editor.addTile(properties);
+  }
 
   constructor(editor: Editor, properties: ClientImageTile) {
     super(editor, properties);

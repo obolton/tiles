@@ -21,6 +21,17 @@ export default class Link extends Tile {
   readonly siteName: Reactive<string | null>;
   readonly imageUrl: Reactive<string | null>;
 
+  static async create(
+    editor: Editor,
+    data: Omit<AppRouterInputs["externalLinks"]["create"], "pageId">,
+  ) {
+    const properties = await client.externalLinks.create.mutate({
+      pageId: editor.pageId,
+      ...data,
+    });
+    editor.addTile(properties);
+  }
+
   constructor(editor: Editor, properties: ClientLinkTile) {
     super(editor, properties);
 
