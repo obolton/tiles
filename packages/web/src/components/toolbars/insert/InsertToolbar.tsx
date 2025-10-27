@@ -10,8 +10,9 @@ import { uploadMedia } from "@/utils/media";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
 import "./InsertToolbar.module.css";
-import type { TileType } from "@/types/tiles";
+import type { TileType } from "api/types/tiles";
 import type { JSX } from "@/jsx/jsx";
+import type PopoverMenu from "@/elements/menu/PopoverMenu";
 
 type InsertTileButton = {
   label: string;
@@ -32,20 +33,36 @@ const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
-export default function InsertToolbar() {
-  function onClick(event: MouseEvent) {
+export interface InsertToolbarProps extends JSX.Attributes<PopoverMenu> {
+  sectionId?: string | null;
+  afterId?: string | null;
+  orientation?: "horizontal" | "vertical";
+}
+
+export default function InsertToolbar({
+  sectionId,
+  afterId,
+  orientation = "vertical",
+  ...props
+}: InsertToolbarProps) {
+  function onClick(event: PointerEvent) {
     const button = event.currentTarget as HTMLButtonElement;
     const tileType = button.dataset.tileType as TileType;
     if (!tileType) {
       return;
     }
 
+    const insertSectionId =
+      typeof sectionId === "undefined"
+        ? Editor.current.activeSection?.id
+        : sectionId;
+
     switch (tileType) {
       case "TEXT":
         Editor.current
           .createText({
-            sectionId: Editor.current.activeSection?.id,
-            height: 1,
+            sectionId: insertSectionId,
+            afterId,
             block: true,
             content: [{ type: "paragraph", children: [] }],
           })
@@ -65,9 +82,10 @@ export default function InsertToolbar() {
               workspaceId: Editor.current.workspaceId,
             });
             await Editor.current.createImage({
-              sectionId: Editor.current.activeSection?.id,
-              height: 10,
+              sectionId: insertSectionId,
+              afterId,
               imageId,
+              height: 10,
             });
           },
         });
@@ -81,17 +99,19 @@ export default function InsertToolbar() {
           async onConfirm(result) {
             if ("linkedPageId" in result) {
               await Editor.current.createPageLink({
-                sectionId: Editor.current.activeSection?.id,
+                sectionId: insertSectionId,
+                afterId,
+                linkedPageId: result.linkedPageId,
                 width: 5,
                 height: 5,
-                linkedPageId: result.linkedPageId,
               });
             } else if (result.url) {
               await Editor.current.createLink({
-                sectionId: Editor.current.activeSection?.id,
+                sectionId: insertSectionId,
+                afterId,
+                url: result.url,
                 width: 5,
                 height: 5,
-                url: result.url,
               });
             }
           },
@@ -103,7 +123,8 @@ export default function InsertToolbar() {
           props: {},
           async onConfirm({ place }) {
             await Editor.current.createMap({
-              sectionId: Editor.current.activeSection?.id,
+              sectionId: insertSectionId,
+              afterId,
               places: [place],
               height: 15,
             });
@@ -114,7 +135,8 @@ export default function InsertToolbar() {
       case "TABLE":
         Editor.current
           .createTable({
-            sectionId: Editor.current.activeSection?.id,
+            sectionId: insertSectionId,
+            afterId,
             height: 10,
             columns: 3,
             rows: 5,
@@ -125,9 +147,9 @@ export default function InsertToolbar() {
       case "CHART":
         Editor.current
           .createChart({
-            sectionId: Editor.current.activeSection?.id,
+            sectionId: insertSectionId,
+            afterId,
             height: 10,
-            chartType: "BAR",
           })
           .catch(handleError);
         break;
@@ -135,25 +157,26 @@ export default function InsertToolbar() {
   }
 
   return (
-    <floating-toolbar
-      id="insert-toolbar"
-      className="bottom-right"
-      aria-label="Insert content"
-      data-tooltip-position="top"
-    >
-      <ul role="group" aria-label="Create items">
-        {BUTTONS.map(({ label, type, Icon }) => (
-          <li role="presentation">
-            <ToolbarButton
-              label={label}
-              data-tile-type={type}
-              on:click={onClick}
-            >
-              <Icon aria-hidden="true" />
-            </ToolbarButton>
-          </li>
-        ))}
-      </ul>
-    </floating-toolbar>
+    <popover-menu align="center" {...props}>
+      <floating-toolbar
+        className={orientation}
+        aria-label="Insert content"
+        data-tooltip-position="left"
+      >
+        <ul role="group" aria-label="Create items">
+          {BUTTONS.map(({ label, type, Icon }) => (
+            <li role="presentation">
+              <ToolbarButton
+                label={label}
+                data-tile-type={type}
+                on:click={onClick}
+              >
+                <Icon aria-hidden="true" />
+              </ToolbarButton>
+            </li>
+          ))}
+        </ul>
+      </floating-toolbar>
+    </popover-menu>
   );
 }
