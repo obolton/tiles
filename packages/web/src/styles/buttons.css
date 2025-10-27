@@ -9,6 +9,7 @@ button {
   user-select: none;
   appearance: none;
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
 
   /* Prevent icons from being the target of pointer events */
   & > svg,
