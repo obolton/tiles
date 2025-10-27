@@ -11,7 +11,7 @@ export interface CellToolbarProps {
 export default function CellToolbar({ editorView, state }: CellToolbarProps) {
   return (
     <floating-toolbar
-      className="bottom-left"
+      className="primary"
       data-tooltip-position="top"
       aria-label="Cell tools"
     >

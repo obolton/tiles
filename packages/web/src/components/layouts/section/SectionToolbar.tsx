@@ -57,7 +57,7 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
 
   return (
     <floating-toolbar
-      className="bottom-left"
+      className="primary"
       data-tooltip-position="top"
       aria-label="Section toolbar"
     >

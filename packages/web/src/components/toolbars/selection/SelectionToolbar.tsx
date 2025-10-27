@@ -10,7 +10,7 @@ function deleteSelection() {
 export default function SelectionToolbar() {
   return (
     <floating-toolbar
-      className="bottom-left"
+      className="primary"
       data-tooltip-position="top"
       aria-label="Selection tools"
     >

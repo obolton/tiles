@@ -26,7 +26,7 @@ export default function MapToolbar({ map, getMapView }: MapToolbarProps) {
 
   return (
     <floating-toolbar
-      className="bottom-left"
+      className="primary"
       aria-label="Map toolbar"
       data-tooltip-position="top"
     >

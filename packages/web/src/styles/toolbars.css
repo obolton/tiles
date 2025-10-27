@@ -24,14 +24,16 @@ floating-toolbar {
     opacity: 0;
   }
 
+  &.primary {
+    position: fixed;
+    inset: auto auto 64px;
+    margin-inline: 80px 0;
+    justify-self: center;
+  }
+
   &.top-right {
     position: fixed;
     inset: 32px 32px auto auto;
-  }
-
-  &.bottom-left {
-    position: fixed;
-    inset: auto auto 32px 120px;
   }
 
   &.bottom-right {

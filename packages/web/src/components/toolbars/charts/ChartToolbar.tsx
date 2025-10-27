@@ -23,7 +23,7 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
 
   return (
     <floating-toolbar
-      className="bottom-left"
+      className="primary"
       data-tooltip-position="left"
       aria-label="Chart tools"
     >
