@@ -3,7 +3,7 @@ import prisma, { type ExtensionArgs } from "@/database/prisma";
 import {
   getFirstTileOrderQuery,
   getTileOrderQuery,
-  duplicateSectionQuery,
+  duplicateTileQuery,
 } from "@/generated/prisma/sql";
 import type {
   ReorderTileSchema,
@@ -126,7 +126,7 @@ export async function duplicateTile({
     // TODO: Validate section ID
     const order = await getTileOrder(transaction, pageId, sectionId, id);
     const result = await transaction.$queryRawTyped(
-      duplicateSectionQuery(pageId, id, order),
+      duplicateTileQuery(pageId, id, order),
     );
     const newId = result[0]?.id;
     if (!newId) {
