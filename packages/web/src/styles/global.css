@@ -268,3 +268,8 @@ scroll-view:not(:defined) {
   color: unset;
   border: unset;
 }
+
+#insert-button {
+  position: fixed;
+  inset: auto 32px 32px auto;
+}
