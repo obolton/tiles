@@ -254,7 +254,7 @@ filter-select {
 list-box {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   padding: 4px;
   font-size: 1rem;
   color: var(--ui-color);
@@ -279,8 +279,8 @@ list-box {
         align-items: center;
         justify-content: flex-start;
         width: 100%;
-        gap: 8px;
-        padding: 6px 12px;
+        gap: 12px;
+        padding: 8px 16px;
         font: inherit;
         color: inherit;
         white-space: nowrap;
@@ -306,12 +306,12 @@ list-box {
     }
 
     &:not(:last-child) {
-      padding: 0 0 6px;
+      padding: 0 0 8px;
 
       &::after {
         content: "";
         position: absolute;
-        inset: auto 12px 0;
+        inset: auto 12px -1px;
         height: 2px;
         border-radius: 1px;
         background: rgb(0 0 0 / 5%);
