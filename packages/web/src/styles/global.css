@@ -106,7 +106,8 @@ button,
 input,
 textarea,
 select,
-filter-select {
+filter-select,
+list-box {
   font-family: var(--ui-font);
 }
 

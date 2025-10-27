@@ -250,3 +250,72 @@ filter-select {
     }
   }
 }
+
+list-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
+  font-size: 1rem;
+  color: var(--ui-color);
+  background: var(--ui-background-color);
+  backdrop-filter: blur(24px);
+  border-radius: var(--border-radius);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
+
+  & > ul {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    & > li {
+      border-radius: calc(var(--border-radius) - 4px);
+
+      & > button {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        gap: 8px;
+        padding: 6px 12px;
+        font: inherit;
+        color: inherit;
+        white-space: nowrap;
+        border: none;
+        background: none;
+        border-radius: inherit;
+
+        & > svg {
+          width: 20px;
+          height: 20px;
+          fill: currentcolor;
+          pointer-events: none;
+        }
+
+        &:enabled:hover:not(:active) {
+          background-color: rgb(0 0 0 / 10%);
+        }
+
+        &:enabled:active {
+          background-color: rgb(0 0 0 / 20%);
+        }
+      }
+    }
+
+    &:not(:last-child) {
+      padding: 0 0 6px;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: auto 12px 0;
+        height: 2px;
+        border-radius: 1px;
+        background: rgb(0 0 0 / 5%);
+      }
+    }
+  }
+}
