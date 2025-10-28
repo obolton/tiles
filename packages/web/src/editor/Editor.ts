@@ -629,34 +629,6 @@ export default class Editor {
     return table;
   }
 
-  positionTilePreview({
-    id,
-    x,
-    y,
-    width,
-    height,
-    block,
-  }: OmitPageId<AppRouterInputs["tiles"]["update"]>) {
-    const tile = this.tiles.value.find((entry) => entry.id === id);
-    if (tile) {
-      if (typeof x === "number") {
-        tile.x.value = x;
-      }
-      if (typeof y === "number") {
-        tile.y.value = y;
-      }
-      if (typeof width === "number") {
-        tile.width.value = width;
-      }
-      if (typeof height === "number") {
-        tile.height.value = height;
-      }
-      if (typeof block === "boolean") {
-        tile.block.value = block;
-      }
-    }
-  }
-
   // Collaboration
 
   async sendInvite(email: string) {

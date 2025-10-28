@@ -4,7 +4,7 @@ import { moveBefore } from "@/utils/dom";
 import type Editor from "@/editor/Editor";
 import type { DragDropEvent } from "@/utils/drag";
 import type { PageItemEvent } from "@/elements/item/events";
-import type { Tile } from "@/types/tiles";
+import type Tile from "@/models/Tile";
 
 export type LayoutType = "VERTICAL" | "HORIZONTAL" | "GRID" | "FREEFORM";
 
@@ -27,13 +27,6 @@ interface RowLayout {
   height: number;
 }
 
-interface ItemSize {
-  id: string;
-  width: number;
-  height: number;
-  block?: boolean;
-}
-
 const SNAP_THRESHOLD = 64;
 
 export default class LayoutEditor {
@@ -53,7 +46,7 @@ export default class LayoutEditor {
   private gridRowGap = 0;
   private x = 0;
   private y = 0;
-  private size: ItemSize | null = null;
+  private resizing: Tile | null = null;
   private idForPoint?: string | null;
   private dragPlaceholder: HTMLElement | null = null;
   private snapPoints: SnapPoints = { x: [], y: [] };
@@ -467,26 +460,12 @@ export default class LayoutEditor {
     event.stopPropagation();
 
     this.updateLayoutInfo();
-
-    const id = event.target.id ?? "";
-    const width = Math.max(
-      Math.round(
-        (event.width + this.gridColumnGap) /
-          (this.gridColumnWidth + this.gridColumnGap),
-      ),
-      1,
-    );
-    const height = Math.max(
-      Math.round(event.height / this.gridRowMinHeight),
-      1,
-    );
-    this.size = { id, width: width, height: height };
-
+    this.resizing = this.editor.getTile(event.target.id);
     document.body.dataset.resize = "true";
   }
 
   private handleResize(event: PageItemEvent) {
-    if (event.defaultPrevented || !this.size) {
+    if (event.defaultPrevented || !this.resizing) {
       return;
     }
 
@@ -507,19 +486,19 @@ export default class LayoutEditor {
       ),
       1,
     );
-    const block = height !== this.size.height ? false : this.size.block;
+    const block =
+      height !== this.resizing.height.value ? false : this.resizing.block;
 
-    if (width !== this.size.width || height !== this.size.height) {
-      this.size.width = width;
-      this.size.height = height;
-      this.size.block = block;
+    this.resizing.width.value = width;
+    this.resizing.height.value = height;
 
-      this.editor.positionTilePreview(this.size);
+    if (typeof block === "boolean") {
+      this.resizing.block.value = block;
     }
   }
 
   private async handleResizeEnd(event: PageItemEvent) {
-    if (event.defaultPrevented || !this.size) {
+    if (event.defaultPrevented || !this.resizing) {
       return;
     }
 
@@ -529,11 +508,11 @@ export default class LayoutEditor {
     delete document.body.dataset.resize;
 
     try {
-      await this.editor.positionTile(this.size);
+      await this.resizing.persistSize();
     } catch (error) {
       handleError(error);
     }
 
-    this.size = null;
+    this.resizing = null;
   }
 }
