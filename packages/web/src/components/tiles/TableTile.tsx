@@ -136,8 +136,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
     target.replaceChildren(...contents);
 
     rowData.data[columnId] = value;
-    await editor.updateTableCell({
-      tableId: id,
+    await table.updateCell({
       rowId: rowData.id,
       columnId,
       value,
@@ -218,11 +217,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
       }
       const afterColumnId = columns.value[afterIndex]?.id ?? null;
       columns.value = moveElement(columns.value, index, afterIndex + 1);
-      await editor.moveTableColumn({
-        tableId: id,
-        columnId,
-        afterColumnId,
-      });
+      await table.moveColumn(columnId, afterColumnId);
     } catch (error) {
       handleError(error);
     }
@@ -241,11 +236,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
       }
       const afterRowId = rows.value[afterIndex]?.id ?? null;
       rows.value = moveElement(rows.value, index, afterIndex + 1);
-      await editor.moveTableRow({
-        tableId: id,
-        rowId,
-        afterRowId,
-      });
+      await table.moveRow(rowId, afterRowId);
     } catch (error) {
       handleError(error);
     }
@@ -293,9 +284,8 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
         }
       }),
     );
-    editor
-      .clearTableRanges({
-        tableId: id,
+    table
+      .clearRanges({
         ranges,
       })
       .catch(handleError);

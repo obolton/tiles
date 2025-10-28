@@ -91,6 +91,15 @@ export default class Table extends Tile {
     return column;
   }
 
+  async moveColumn(id: string, afterId: string | null) {
+    return await client.tables.moveColumn.mutate({
+      pageId: this.editor.pageId,
+      tableId: this.id,
+      columnId: id,
+      afterColumnId: afterId,
+    });
+  }
+
   private updateColumn(
     properties: Omit<
       AppRouterInputs["tables"]["updateColumn"],
@@ -161,6 +170,15 @@ export default class Table extends Tile {
     return this.insertRow(afterRowId);
   }
 
+  async moveRow(id: string, afterId: string | null) {
+    return await client.tables.moveRow.mutate({
+      pageId: this.editor.pageId,
+      tableId: this.id,
+      rowId: id,
+      afterRowId: afterId,
+    });
+  }
+
   removeRows(ids: string[]) {
     if (ids.length === 0) {
       return;
@@ -171,6 +189,28 @@ export default class Table extends Tile {
       pageId: this.editor.pageId,
       tableId: this.id,
       rowIds: ids,
+    });
+  }
+
+  // Cells
+
+  async updateCell(
+    data: Omit<AppRouterInputs["tables"]["updateCell"], "pageId" | "tableId">,
+  ) {
+    return await client.tables.updateCell.mutate({
+      pageId: this.editor.pageId,
+      tableId: this.id,
+      ...data,
+    });
+  }
+
+  async clearRanges(
+    data: Omit<AppRouterInputs["tables"]["clearRanges"], "pageId" | "tableId">,
+  ) {
+    return await client.tables.clearRanges.mutate({
+      pageId: this.editor.pageId,
+      tableId: this.id,
+      ...data,
     });
   }
 }

@@ -573,40 +573,6 @@ export default class Editor {
 
   // Tables
 
-  async moveTableRow(data: OmitPageId<AppRouterInputs["tables"]["moveRow"]>) {
-    return await client.tables.moveRow.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async moveTableColumn(
-    data: OmitPageId<AppRouterInputs["tables"]["moveColumn"]>,
-  ) {
-    return await client.tables.moveColumn.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async updateTableCell(
-    data: OmitPageId<AppRouterInputs["tables"]["updateCell"]>,
-  ) {
-    return await client.tables.updateCell.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async clearTableRanges(
-    data: OmitPageId<AppRouterInputs["tables"]["clearRanges"]>,
-  ) {
-    return await client.tables.clearRanges.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
   getTableColumnData(tableId: string, columnId: string) {
     const table = this.tiles.value.find(
       (tile): tile is Table => tile.type === "TABLE" && tile.id === tableId,
