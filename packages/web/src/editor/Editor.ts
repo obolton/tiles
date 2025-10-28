@@ -495,9 +495,9 @@ export default class Editor {
     });
   }
 
-  addTile(tile: ClientTile, select = true) {
+  addTile(tile: Tile, select = true) {
     viewTransition(() => {
-      this.tiles.value = this.tiles.value.concat(getReactiveTile(this, tile));
+      this.tiles.value = this.tiles.value.concat(tile);
     }).updateCallbackDone.then(() => {
       if (select) {
         this.select([tile.id]);

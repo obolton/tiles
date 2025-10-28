@@ -17,7 +17,8 @@ export default class PageLink extends Tile {
       pageId: editor.pageId,
       ...data,
     });
-    editor.addTile(properties);
+    const pageLink = new PageLink(editor, properties);
+    editor.addTile(pageLink);
   }
 
   constructor(editor: Editor, properties: ClientPageLinkTile) {

@@ -23,7 +23,8 @@ export default class Section extends Tile {
       pageId: editor.pageId,
       ...data,
     });
-    editor.addTile(properties);
+    const section = new Section(editor, properties);
+    editor.addTile(section);
   }
 
   constructor(editor: Editor, properties: ClientSectionTile) {

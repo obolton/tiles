@@ -43,7 +43,8 @@ export default class Chart extends Tile {
       pageId: editor.pageId,
       ...data,
     });
-    editor.addTile(properties);
+    const chart = new Chart(editor, properties);
+    editor.addTile(chart);
   }
 
   constructor(editor: Editor, properties: ClientChartTile) {
