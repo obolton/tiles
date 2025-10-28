@@ -173,7 +173,10 @@ type CreateTileOptions<T extends TileType> = Omit<
     y?: number;
   };
 
-export async function createTile<T extends TileType>(
+export async function createTile<
+  T extends TileType,
+  S extends Prisma.TileSelect<ExtensionArgs>,
+>(
   {
     pageId,
     sectionId = null,
@@ -199,7 +202,7 @@ export async function createTile<T extends TileType>(
     table,
     chart,
   }: CreateTileOptions<T>,
-  select: Prisma.TileSelect<ExtensionArgs>,
+  select: S,
   transaction: PrismaTransactionClient,
 ) {
   let insertX;

@@ -96,7 +96,7 @@ export async function createChart({
       transaction,
     );
 
-    return { ...tile, ...chart };
+    return { ...tile, ...chart! };
   });
 }
 

@@ -40,7 +40,8 @@ export async function createImage({
     { image: { select: IMAGE_FIELDS } },
     prisma,
   );
-  return { ...tile, ...image };
+
+  return { ...tile, ...image! };
 }
 
 export async function updateImage({

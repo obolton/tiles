@@ -1,10 +1,13 @@
 import { Buffer } from "node:buffer";
-import prisma from "@/database/prisma";
+import prisma, { type ExtensionArgs } from "@/database/prisma";
 import { createTile } from "../tiles/tiles";
+import { getBackgroundProperties } from "@/utils/backgrounds";
 import type { CreateTextSchema, UpdateTextSchema } from "./schema";
 import type { Prisma } from "@/generated/prisma/client";
 import type { ColorSchema } from "@/schema/Color";
-import { getBackgroundProperties } from "@/utils/backgrounds";
+import type { RichTextSchema } from "@/schema/RichText";
+
+const DEFAULT_CONTENT: RichTextSchema = [{ type: "paragraph", children: [] }];
 
 export const TEXT_FIELDS = {
   id: true,
@@ -12,7 +15,7 @@ export const TEXT_FIELDS = {
   textColor: true,
   background: true,
   align: true,
-} as const satisfies Prisma.Args<typeof prisma.textTile, "findMany">["select"];
+} as const satisfies Prisma.TextTileSelect<ExtensionArgs>;
 
 export type Text = Prisma.Result<
   typeof prisma.textTile,
@@ -31,7 +34,7 @@ function getTextColorProperties(
 
 export async function createText({
   pageId,
-  content,
+  content = DEFAULT_CONTENT,
   textColor,
   background,
   align,
@@ -53,7 +56,8 @@ export async function createText({
     { text: { select: TEXT_FIELDS } },
     prisma,
   );
-  return { ...tile, ...text };
+
+  return { ...tile, ...text! };
 }
 
 export async function updateText({

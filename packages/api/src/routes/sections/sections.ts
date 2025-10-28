@@ -39,7 +39,8 @@ export async function createSection({
     { section: { select: SECTION_FIELDS } },
     prisma,
   );
-  return { ...tile, ...section };
+
+  return { ...tile, ...section! };
 }
 
 export async function updateSection({

@@ -47,7 +47,7 @@ export async function createVideo({
     prisma,
   );
 
-  return { ...tile, ...video };
+  return { ...tile, ...video! };
 }
 
 export async function updateVideo({ pageId, id, title }: UpdateVideoSchema) {

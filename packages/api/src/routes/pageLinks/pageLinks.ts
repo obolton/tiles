@@ -60,5 +60,5 @@ export async function createPageLink({
     prisma,
   );
 
-  return { ...tile, ...pageLink };
+  return { ...tile, ...pageLink! };
 }

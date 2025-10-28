@@ -58,7 +58,7 @@ export async function createMap({
     prisma,
   );
 
-  return { ...tile, ...map };
+  return { ...tile, ...map! };
 }
 
 export async function addPlaces({ pageId, id, places }: AddPlacesSchema) {

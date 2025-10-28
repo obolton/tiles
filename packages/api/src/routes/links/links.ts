@@ -51,7 +51,7 @@ export async function createLink({
     prisma,
   );
 
-  return { ...tile, ...link };
+  return { ...tile, ...link! };
 }
 
 export async function updateLink({ pageId, id, url }: UpdateLinkSchema) {

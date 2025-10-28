@@ -123,8 +123,7 @@ export async function createTable({
     prisma,
   );
 
-  // TODO: Fix type
-  const { _count, ...tableWithData } = table;
+  const { _count, ...tableWithData } = table!;
 
   return {
     ...tile,
