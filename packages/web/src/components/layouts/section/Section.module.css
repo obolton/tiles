@@ -28,7 +28,13 @@
   initial-value: 0;
 }
 
-@property --placeholder-columns {
+@property --placeholder-width {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --placeholder-height {
   syntax: "<integer>";
   inherits: false;
   initial-value: 0;
@@ -85,9 +91,6 @@
   }
 
   & > :global(.drag-placeholder) {
-    grid-column: calc(var(--placeholder-x) + 1) / span
-      var(--placeholder-columns);
-    grid-row: calc(var(--placeholder-y) + 1) / span var(--placeholder-rows);
     border-radius: var(--border-radius);
   }
 }
@@ -109,26 +112,36 @@
 .horizontal {
   &:not(:defined),
   &::part(contents) {
-    grid-auto-columns: var(--grid-column-width);
-    grid-template-rows: 100%;
-    grid-auto-flow: column;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
   }
 
   & .item {
-    grid-column: span var(--width);
+    height: auto;
+  }
+
+  & > :global(.drag-placeholder) {
+    width: calc(var(--placeholder-width) * 24px);
+    height: auto;
   }
 }
 
 .vertical {
   &:not(:defined),
   &::part(contents) {
-    grid-template-columns: 100%;
-    grid-auto-rows: var(--grid-row-height);
-    grid-auto-flow: row;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
 
   & .item {
-    grid-row: span var(--height);
+    width: auto;
+  }
+
+  & > :global(.drag-placeholder) {
+    width: auto;
+    height: calc(var(--placeholder-height) * 24px);
   }
 }
 
@@ -142,6 +155,11 @@
   & .item {
     grid-column: var(--column) / span var(--width);
     grid-row: var(--row) / span var(--height);
+  }
+
+  & > :global(.drag-placeholder) {
+    grid-column: calc(var(--placeholder-x) + 1) / span var(--placeholder-width);
+    grid-row: calc(var(--placeholder-y) + 1) / span var(--placeholder-rows);
   }
 }
 

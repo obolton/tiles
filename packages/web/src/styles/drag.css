@@ -34,12 +34,6 @@
   initial-value: 0;
 }
 
-@property --placeholder-height {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0;
-}
-
 .drag-preview {
   position: fixed !important;
   width: var(--drag-width) !important;
@@ -62,7 +56,6 @@
 }
 
 .drag-placeholder {
-  height: var(--placeholder-height);
   background: rgb(0 0 0 / 10%);
 }
 

@@ -308,12 +308,9 @@ export default class LayoutEditor {
       placeholder.style.setProperty("--placeholder-y", y.toString());
     }
 
-    placeholder.style.setProperty("--placeholder-columns", width.toString());
+    placeholder.style.setProperty("--placeholder-width", width.toString());
+    placeholder.style.setProperty("--placeholder-height", height.toString());
     placeholder.style.setProperty("--placeholder-rows", rowSpan.toString());
-    placeholder.style.setProperty(
-      "--placeholder-height",
-      height.toString() + "px",
-    );
     this.element.appendChild(placeholder);
     this.dragPlaceholder = placeholder;
   }
@@ -341,13 +338,13 @@ export default class LayoutEditor {
         x,
         y,
         width: tile.width.value,
-        height: event.state.height,
+        height: tile.height.value,
         rowSpan: tile.rowSpan.value,
       });
     } else {
       this.showDragPlaceholder({
         width: tile.width.value,
-        height: event.state.height,
+        height: tile.height.value,
         rowSpan: tile.rowSpan.value,
       });
     }
@@ -416,7 +413,10 @@ export default class LayoutEditor {
 
       const rect = child.getBoundingClientRect();
 
-      if (rect.bottom >= y) {
+      if (
+        (this.layoutType === "VERTICAL" && rect.bottom >= y) ||
+        (this.layoutType === "HORIZONTAL" && rect.right >= x)
+      ) {
         return child;
       }
     }
