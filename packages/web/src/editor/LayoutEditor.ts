@@ -263,8 +263,10 @@ export default class LayoutEditor {
       return;
     }
 
-    const referenceElement = this.getNextElement(event.clientX, event.clientY);
-    moveBefore(this.element, this.dragPlaceholder, referenceElement);
+    const position = this.getDragPosition(event.clientX, event.clientY);
+    if (position) {
+      moveBefore(this.element, this.dragPlaceholder, position.next);
+    }
   }
 
   // Drag and drop
@@ -390,34 +392,65 @@ export default class LayoutEditor {
     this.idForPoint = undefined;
   }
 
-  private getNextElement(x: number, y: number) {
-    // Look for an element under the pointer
-    let element = document
-      .elementsFromPoint(x, y)
-      .find(
-        (element): element is HTMLElement =>
-          element !== this.dragPlaceholder &&
-          element instanceof HTMLElement &&
-          element.parentElement === this.element,
-      );
+  private isElementOrdered(element: Element) {
+    return (
+      element !== this.dragPlaceholder && !element.matches(":popover-open")
+    );
+  }
 
-    if (element) {
-      return element;
+  private getPreviousItem(element: Element) {
+    let previous = element.previousElementSibling;
+
+    while (previous && !this.isElementOrdered(previous)) {
+      previous = previous.previousElementSibling;
     }
 
-    // If no element was found, look for the next element
+    return previous;
+  }
+
+  private getNextItem(element: Element) {
+    let next = element.nextElementSibling;
+
+    while (next && !this.isElementOrdered(next)) {
+      next = next.nextElementSibling;
+    }
+
+    return next;
+  }
+
+  private getDragPosition(
+    x: number,
+    y: number,
+  ): { previous: Element | null; next: Element | null } | null {
     for (const child of this.element.children) {
-      if (!(child instanceof HTMLElement) || child === this.dragPlaceholder) {
+      if (!this.isElementOrdered(child)) {
         continue;
       }
 
       const rect = child.getBoundingClientRect();
 
-      if (
-        (this.layoutType === "VERTICAL" && rect.bottom >= y) ||
-        (this.layoutType === "HORIZONTAL" && rect.right >= x)
-      ) {
-        return child;
+      if (this.layoutType === "VERTICAL") {
+        const midpoint = rect.y + rect.height / 2;
+
+        if (y >= rect.top && y <= rect.bottom) {
+          if (y < midpoint) {
+            return { previous: this.getPreviousItem(child), next: child };
+          } else {
+            return { previous: child, next: this.getNextItem(child) };
+          }
+        }
+      }
+
+      if (this.layoutType === "HORIZONTAL") {
+        const midpoint = rect.x + rect.width / 2;
+
+        if (x >= rect.left && x <= rect.right) {
+          if (x < midpoint) {
+            return { previous: this.getPreviousItem(child), next: child };
+          } else {
+            return { previous: child, next: this.getNextItem(child) };
+          }
+        }
       }
     }
 
