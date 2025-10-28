@@ -1,5 +1,6 @@
 import { handleError } from "@/utils/errors";
 import { getSnapPoints, findSnapPoint, type SnapPoints } from "@/utils/snap";
+import { moveBefore } from "@/utils/dom";
 import type Editor from "@/editor/Editor";
 import type { DragDropEvent } from "@/utils/drag";
 import type { PageItemEvent } from "@/elements/item/events";
@@ -236,20 +237,7 @@ export default class LayoutEditor {
     return { x, y };
   }
 
-  // Drag and drop
-
-  private handleDragOver(event: DragDropEvent<DragData>) {
-    const {
-      state: { data },
-    } = event;
-
-    event.stopPropagation();
-
-    const id = data?.tile.id;
-    if (!id) {
-      return;
-    }
-
+  private updateFreeformDragPosition(event: DragDropEvent<DragData>) {
     const { x, y } = this.getPosition(event);
 
     if (x !== this.x || y !== this.y) {
@@ -270,15 +258,40 @@ export default class LayoutEditor {
     }
   }
 
+  private updateOrderedDragPosition(event: DragDropEvent<DragData>) {
+    if (!this.dragPlaceholder) {
+      return;
+    }
+
+    const referenceElement = this.getNextElement(event.clientX, event.clientY);
+    moveBefore(this.element, this.dragPlaceholder, referenceElement);
+  }
+
+  // Drag and drop
+
+  private handleDragOver(event: DragDropEvent<DragData>) {
+    event.stopPropagation();
+
+    if (!event.state.data?.tile) {
+      return;
+    }
+
+    if (this.layoutType === "FREEFORM") {
+      this.updateFreeformDragPosition(event);
+    } else {
+      this.updateOrderedDragPosition(event);
+    }
+  }
+
   private showDragPlaceholder({
-    x,
-    y,
+    x = 0,
+    y = 0,
     width,
     height,
     rowSpan,
   }: {
-    x: number;
-    y: number;
+    x?: number;
+    y?: number;
     width: number;
     height: number;
     rowSpan: number;
@@ -289,8 +302,12 @@ export default class LayoutEditor {
 
     const placeholder = document.createElement("div");
     placeholder.classList.add("drag-placeholder");
-    placeholder.style.setProperty("--placeholder-x", x.toString());
-    placeholder.style.setProperty("--placeholder-y", y.toString());
+
+    if (this.layoutType === "FREEFORM") {
+      placeholder.style.setProperty("--placeholder-x", x.toString());
+      placeholder.style.setProperty("--placeholder-y", y.toString());
+    }
+
     placeholder.style.setProperty("--placeholder-columns", width.toString());
     placeholder.style.setProperty("--placeholder-rows", rowSpan.toString());
     placeholder.style.setProperty(
@@ -314,18 +331,26 @@ export default class LayoutEditor {
 
     this.updateLayoutInfo();
 
-    const { x, y } = this.getPosition(event);
+    if (this.layoutType === "FREEFORM") {
+      const { x, y } = this.getPosition(event);
 
-    this.x = x;
-    this.y = y;
+      this.x = x;
+      this.y = y;
 
-    this.showDragPlaceholder({
-      x,
-      y,
-      width: tile.width.value,
-      height: event.state.height,
-      rowSpan: tile.rowSpan.value,
-    });
+      this.showDragPlaceholder({
+        x,
+        y,
+        width: tile.width.value,
+        height: event.state.height,
+        rowSpan: tile.rowSpan.value,
+      });
+    } else {
+      this.showDragPlaceholder({
+        width: tile.width.value,
+        height: event.state.height,
+        rowSpan: tile.rowSpan.value,
+      });
+    }
   }
 
   private handleDragLeave() {
@@ -368,44 +393,35 @@ export default class LayoutEditor {
     this.idForPoint = undefined;
   }
 
-  private findIdForPoint(event: DragDropEvent<Tile>) {
-    const { clientX, clientY, state } = event;
-    const dragId = state.data?.id;
-
+  private getNextElement(x: number, y: number) {
     // Look for an element under the pointer
     let element = document
-      .elementsFromPoint(clientX, clientY)
+      .elementsFromPoint(x, y)
       .find(
         (element): element is HTMLElement =>
+          element !== this.dragPlaceholder &&
           element instanceof HTMLElement &&
-          element.parentElement === this.element &&
-          element.id !== dragId,
+          element.parentElement === this.element,
       );
 
     if (element) {
-      return element.id || null;
+      return element;
     }
 
-    // If no element was found, look for the previous element in the grid
+    // If no element was found, look for the next element
     for (const child of this.element.children) {
-      if (!(child instanceof HTMLElement) || child.id === dragId) {
+      if (!(child instanceof HTMLElement) || child === this.dragPlaceholder) {
         continue;
       }
 
-      const bounds = child.getBoundingClientRect();
+      const rect = child.getBoundingClientRect();
 
-      // Element being compared is later in the grid
-      if (
-        bounds.top > clientY ||
-        (bounds.bottom >= clientY && bounds.right > clientX)
-      ) {
-        break;
+      if (rect.bottom >= y) {
+        return child;
       }
-
-      element = child;
     }
 
-    return element?.id || null;
+    return null;
   }
 
   // Resize
