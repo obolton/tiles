@@ -94,9 +94,6 @@ export default function Section({ section, signal }: SectionProps) {
       classList={[styles.contents, layoutClass]}
       data-section-id={id}
       tabIndex={tabIndex}
-      data-drop={isEditable.derive((editable) =>
-        editable ? "true" : undefined,
-      )}
       on:focus={onFocus}
       on:focusout={onFocusOut}
     >

@@ -74,6 +74,7 @@ export default class LayoutEditor {
 
     this.gridRect = grid.getBoundingClientRect();
 
+    dropTarget.dataset.drop = "true";
     dropTarget.addEventListener("dnd-dragover", this, { signal });
     dropTarget.addEventListener("dnd-dragenter", this, {
       passive: true,
