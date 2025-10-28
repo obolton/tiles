@@ -40,12 +40,6 @@
   initial-value: 0;
 }
 
-@property --placeholder-height {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0;
-}
-
 .container {
   max-width: 100%;
   border-radius: var(--border-radius);
@@ -94,10 +88,7 @@
     grid-column: calc(var(--placeholder-x) + 1) / span
       var(--placeholder-columns);
     grid-row: calc(var(--placeholder-y) + 1) / span var(--placeholder-rows);
-    height: var(--placeholder-height);
-    background: rgb(0 0 0 / 10%);
     border-radius: var(--border-radius);
-    z-index: 2;
   }
 }
 

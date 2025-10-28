@@ -34,6 +34,12 @@
   initial-value: 0;
 }
 
+@property --placeholder-height {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+
 .drag-preview {
   position: fixed !important;
   width: var(--drag-width) !important;
@@ -53,6 +59,11 @@
   opacity: 0.75;
   scale: 0.8;
   animation: 0.75s var(--easing) backwards lift;
+}
+
+.drag-placeholder {
+  height: var(--placeholder-height);
+  background: rgb(0 0 0 / 10%);
 }
 
 @keyframes lift {
