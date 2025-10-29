@@ -26,7 +26,7 @@ export default class Section extends Tile {
       ...data,
     });
     const section = new Section(editor, properties);
-    editor.addTile(section, data.afterId);
+    editor.addTile(section, null, data.afterId);
   }
 
   constructor(editor: Editor, properties: ClientSectionTile) {

@@ -107,7 +107,7 @@ export default class Tile {
   }
 
   delete() {
-    return this.editor.deleteTiles([this.id]);
+    return this.editor.deleteTiles([this]);
   }
 
   protected updateTile(

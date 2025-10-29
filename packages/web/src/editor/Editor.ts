@@ -19,9 +19,9 @@ import PageLink from "@/models/PageLink";
 import MapObject from "@/models/Map";
 import Table from "@/models/Table";
 import Chart from "@/models/Chart";
-import type { FontId } from "@/config/fonts";
+import type Tile from "@/models/Tile";
 import type { ClientTile } from "api/types/tiles";
-import type { Tile } from "@/types/tiles";
+import type { FontId } from "@/config/fonts";
 import type { Dropdown } from "@/types/dropdowns";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
@@ -79,7 +79,7 @@ export default class Editor {
   readonly font: Reactive<FontId>;
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
-  readonly allTiles: Tile[];
+  readonly index: Map<string, Tile>;
   readonly tiles: TileCollection;
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<Invite>;
@@ -124,9 +124,7 @@ export default class Editor {
     this.font = reactive(page.font);
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
-    this.allTiles = page.tiles.map((properties) =>
-      getReactiveTile(this, properties),
-    );
+    this.index = new Map();
     this.tiles = new TileCollection(this);
     this.access = array(page.access);
     this.invites = array(page.invites);
@@ -134,24 +132,28 @@ export default class Editor {
     this.selection = reactive(new Set());
     this.dropdowns = array(page.dropdowns);
 
-    const map = new Map<string, { object: Tile; sectionId: string | null }>();
+    const parentIds = new Map<string, string | null>();
 
     for (const tile of page.tiles) {
       const object = getReactiveTile(this, tile);
-      map.set(object.id, { object, sectionId: tile.sectionId });
+      this.index.set(object.id, object);
+      if (tile.sectionId) {
+        parentIds.set(object.id, tile.sectionId);
+      }
     }
 
-    for (const { object, sectionId } of map.values()) {
-      if (sectionId) {
-        const record = map.get(sectionId);
+    for (const item of this.index.values()) {
+      const parentId = parentIds.get(item.id);
+      if (parentId) {
+        const parent = this.index.get(parentId);
 
-        if (!(record?.object instanceof Section)) {
-          throw new Error(`Invalid section ID: ${sectionId}`);
+        if (!(parent instanceof Section)) {
+          throw new Error(`Invalid parent: ${parentId}`);
         }
 
-        record.object.tiles.append(object);
+        parent.tiles.append(item);
       } else {
-        this.tiles.append(object);
+        this.tiles.append(item);
       }
     }
 
@@ -310,12 +312,8 @@ export default class Editor {
       return;
     }
 
-    const ids = Array.from(
-      this.selection.value.values().map((tile) => tile.id),
-    );
-
     this.clearSelection();
-    this.deleteTiles(ids);
+    this.deleteTiles(Array.from(this.selection.value));
   }
 
   transitionSections(update: () => void) {
@@ -335,14 +333,16 @@ export default class Editor {
   // Tiles
 
   getTile(id: string) {
-    const tile = this.allTiles.find((tile) => tile.id === id);
+    const tile = this.index.get(id);
     if (!tile) {
-      throw new Error(`Invalid tile ID: ${id}`);
+      throw new Error(`Tile cannot be found: ${id}`);
     }
     return tile;
   }
 
-  async deleteTiles(ids: string[]) {
+  async deleteTiles(tiles: Tile[]) {
+    const ids = tiles.map((tile) => tile.id);
+
     await client.tiles.delete.mutate({
       pageId: this.pageId,
       ids,
@@ -374,7 +374,7 @@ export default class Editor {
     }
 
     viewTransition(() => {
-      this.removeTiles(ids);
+      this.removeTiles(tiles);
 
       if (focus instanceof HTMLElement) {
         focusInside(focus, { preventScroll: true });
@@ -416,10 +416,9 @@ export default class Editor {
 
     // Move tile to new section
     if (sectionId) {
-      const section = this.allTiles.find(
-        (t): t is Section => t instanceof Section && t.id === sectionId,
-      );
-      if (!section) {
+      const section = this.getTile(sectionId);
+
+      if (!(section instanceof Section)) {
         throw new Error(`Invalid section ID: ${sectionId}`);
       }
 
@@ -460,12 +459,12 @@ export default class Editor {
     afterId: string | null = null,
     select = true,
   ) {
-    viewTransition(() => {
-      this.allTiles.push(tile);
+    this.index.set(tile.id, tile);
 
+    viewTransition(() => {
       if (sectionId) {
         const section = this.getTile(sectionId);
-        if (!("tiles" in section)) {
+        if (!(section instanceof Section)) {
           throw new Error(`Invalid section ID: ${sectionId}`);
         }
         section.tiles.insertAfter(afterId, tile);
@@ -485,18 +484,18 @@ export default class Editor {
     });
   }
 
-  removeTiles(ids: string[]) {
-    const set = new Set(ids);
-    const tiles = ids.map((id) => this.getTile(id));
-    tiles.forEach((tile) => tile.parent?.tiles.remove(tile));
-    this.allTiles = this.allTiles.filter((tile) => !set.has(tile.id));
+  removeTiles(tiles: Tile[]) {
+    tiles.forEach((tile) => {
+      tile.parent?.tiles.remove(tile);
+      this.index.delete(tile.id);
+    });
   }
 
   // TODO: Restore title setting
   async updateText(data: OmitPageId<AppRouterInputs["text"]["update"]>) {
     // Update the page title
     if (data.content) {
-      const firstTextTileId = this.allTiles.find(
+      const firstTextTileId = this.tiles.value.find(
         (tile) => tile.type === "TEXT",
       )?.id;
       if (firstTextTileId && data.id === firstTextTileId) {
@@ -535,40 +534,31 @@ export default class Editor {
   }
 
   getTextEditorState(id: string) {
-    const tile = this.allTiles.find(
-      (entry): entry is Text => entry.type === "TEXT" && entry.id === id,
-    );
-    if (!tile) {
+    const text = this.getTile(id);
+    if (!(text instanceof Text)) {
       throw new Error(`Invalid text tile ID: ${id}`);
     }
-    if (!tile.state.value) {
-      tile.state.value = createState(tile.content.value);
+    if (!text.state.value) {
+      text.state.value = createState(text.content.value);
     }
-    return tile.state;
+    return text.state;
   }
 
   // Tables
 
-  getTableColumnData(tableId: string, columnId: string) {
-    const table = this.allTiles.find(
-      (tile): tile is Table => tile.type === "TABLE" && tile.id === tableId,
-    );
-    if (!table) {
-      throw new Error(`Invalid table ID: ${tableId}`);
-    }
-    return table.rows.derive((rows) =>
-      rows.map((row) => row.data[columnId] ?? null),
-    );
-  }
-
   getTable(tableId: string) {
-    const table = this.allTiles.find(
-      (tile): tile is Table => tile.type === "TABLE" && tile.id === tableId,
-    );
-    if (!table) {
+    const table = this.getTile(tableId);
+    if (!(table instanceof Table)) {
       throw new Error(`Invalid table ID: ${tableId}`);
     }
     return table;
+  }
+
+  getTableColumnData(tableId: string, columnId: string) {
+    const table = this.getTable(tableId);
+    return table.rows.derive((rows) =>
+      rows.map((row) => row.data[columnId] ?? null),
+    );
   }
 
   // Collaboration
