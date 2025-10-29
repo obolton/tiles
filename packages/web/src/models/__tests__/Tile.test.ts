@@ -63,7 +63,7 @@ describe("Tile", () => {
     expect(tile.editor).toBe(editor);
     expect(tile.id).toBe(TILE.id);
     expect(tile.type).toBe(TILE.type);
-    expect(tile.sectionId.value).toBe(TILE.sectionId);
+    expect(tile.sectionId).toBe(TILE.sectionId);
     expect(tile.order.value).toBe(TILE.order);
     expect(tile.anchor.value).toBe(TILE.anchor);
     expect(tile.dimensions.value).toBe(TILE.dimensions);

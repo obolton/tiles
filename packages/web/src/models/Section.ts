@@ -1,4 +1,5 @@
 import Tile from "./Tile";
+import TileCollection from "./TileCollection";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import type { ClientSectionTile, Layout } from "api/types/tiles";
@@ -14,6 +15,7 @@ export default class Section extends Tile {
 
   readonly background: Reactive<Background | null>;
   readonly layout: Reactive<Layout>;
+  readonly tiles: TileCollection;
 
   static async create(
     editor: Editor,
@@ -34,12 +36,7 @@ export default class Section extends Tile {
     this.layout = reactive(layout);
     this.background = reactive(background);
     this.block.value = false;
-  }
-
-  get tiles() {
-    return this.editor.tiles.derive((tiles) =>
-      tiles.filter((tile) => tile.sectionId.value === this.id),
-    );
+    this.tiles = new TileCollection();
   }
 
   private update(

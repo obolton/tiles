@@ -10,6 +10,7 @@ import { createState } from "@/utils/richText/state";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import { moveElement } from "@/utils/arrays";
+import TileCollection from "@/models/TileCollection";
 import Section from "@/models/Section";
 import Text from "@/models/Text";
 import Image from "@/models/Image";
@@ -26,11 +27,7 @@ import type { Dropdown } from "@/types/dropdowns";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
 import type { Color } from "@/utils/color";
-import type {
-  Reactive,
-  ReactiveArray,
-  ComputedReactive,
-} from "@/utils/reactivity";
+import type { Reactive, ReactiveArray } from "@/utils/reactivity";
 
 export type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
@@ -83,8 +80,8 @@ export default class Editor {
   readonly font: Reactive<FontId>;
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
-  readonly tiles: ReactiveArray<Tile>;
-  readonly rootTiles: ComputedReactive<Tile[]>;
+  readonly tiles: Tile[];
+  readonly rootTiles: TileCollection;
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<Invite>;
   readonly author: User;
@@ -128,17 +125,30 @@ export default class Editor {
     this.font = reactive(page.font);
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
-    this.tiles = array(
-      page.tiles.map((properties) => getReactiveTile(this, properties)),
+    this.tiles = page.tiles.map((properties) =>
+      getReactiveTile(this, properties),
     );
-    this.rootTiles = this.tiles.derive((tiles) =>
-      tiles.filter((tile) => !tile.sectionId.value),
-    );
+    this.rootTiles = new TileCollection();
     this.access = array(page.access);
     this.invites = array(page.invites);
     this.author = page.author;
     this.selection = reactive(new Set());
     this.dropdowns = array(page.dropdowns);
+
+    for (const tile of this.tiles) {
+      const sectionId = tile.sectionId;
+      if (sectionId) {
+        const section = this.getTile(sectionId);
+
+        if (!(section instanceof Section)) {
+          throw new Error(`Invalid section ID: ${sectionId}`);
+        }
+
+        section.tiles.append(tile);
+      } else {
+        this.rootTiles.append(tile);
+      }
+    }
 
     if (!IS_SERVER) {
       this.enablePointerEvents();
@@ -318,7 +328,7 @@ export default class Editor {
   }
 
   async moveTileUp(id: string) {
-    const index = this.tiles.value.findIndex((tile) => tile.id === id);
+    const index = this.tiles.findIndex((tile) => tile.id === id);
     if (index < 0) {
       throw new Error(`Invalid tile ID: ${id}`);
     }
@@ -327,10 +337,10 @@ export default class Editor {
     }
 
     // TODO: Fix so it works with nested tiles
-    const afterId = this.tiles.value[index - 2]?.id ?? null;
+    const afterId = this.tiles[index - 2]?.id ?? null;
 
     this.transitionSections(() => {
-      this.tiles.value = moveElement(this.tiles.value, index, index - 1);
+      this.tiles = moveElement(this.tiles, index, index - 1);
     });
 
     await client.tiles.reorder.mutate({
@@ -342,18 +352,18 @@ export default class Editor {
   }
 
   async moveTileDown(id: string) {
-    const index = this.tiles.value.findIndex((tile) => tile.id === id);
+    const index = this.tiles.findIndex((tile) => tile.id === id);
     if (index < 0) {
       throw new Error(`Invalid tile ID: ${id}`);
     }
 
-    const afterId = this.tiles.value[index + 1]?.id;
+    const afterId = this.tiles[index + 1]?.id;
     if (!afterId) {
       return;
     }
 
     this.transitionSections(() => {
-      this.tiles.value = moveElement(this.tiles.value, index, index + 1);
+      this.tiles = moveElement(this.tiles, index, index + 1);
     });
 
     await client.tiles.reorder.mutate({
@@ -367,7 +377,7 @@ export default class Editor {
   // Tiles
 
   getTile(id: string) {
-    const tile = this.tiles.value.find((tile) => tile.id === id);
+    const tile = this.tiles.find((tile) => tile.id === id);
     if (!tile) {
       throw new Error(`Invalid tile ID: ${id}`);
     }
@@ -441,30 +451,33 @@ export default class Editor {
     height,
     block,
   }: OmitPageId<AppRouterInputs["tiles"]["update"]>) {
-    const tile = this.tiles.value.find((tile) => tile.id === id);
+    const tile = this.getTile(id);
     if (!tile) {
       throw new Error(`Tile not found: ${id}`);
     }
 
     // Move tile to new section
     if (sectionId) {
-      const section = this.tiles.value.find(
+      const section = this.tiles.find(
         (t): t is Section => t instanceof Section && t.id === sectionId,
       );
       if (!section) {
         throw new Error(`Invalid section ID: ${sectionId}`);
       }
 
-      const previousSection = this.tiles.value.find(
-        (t): t is Section =>
-          t instanceof Section && t.id === tile.sectionId.value,
+      const previousSection = this.tiles.find(
+        (t): t is Section => t instanceof Section && t.id === tile.sectionId,
       );
 
-      tile.sectionId.value = sectionId;
+      tile.sectionId = sectionId;
 
-      // TODO: Move to controlled list
-      section.tiles.markAsStale();
-      previousSection?.tiles.markAsStale();
+      if (previousSection) {
+        previousSection.tiles.remove(tile);
+      } else {
+        this.rootTiles.remove(tile);
+      }
+
+      section.tiles.append(tile);
     }
 
     if (typeof x === "number") {
@@ -495,9 +508,20 @@ export default class Editor {
     });
   }
 
-  addTile(tile: Tile, select = true) {
+  addTile(tile: Tile, afterId: string | null = null, select = true) {
     viewTransition(() => {
-      this.tiles.value = this.tiles.value.concat(tile);
+      this.tiles.push(tile);
+
+      const sectionId = tile.sectionId;
+      if (sectionId) {
+        const section = this.getTile(sectionId);
+        if (!("tiles" in section)) {
+          throw new Error(`Invalid section ID: ${sectionId}`);
+        }
+        section.tiles.insertAfter(afterId, tile);
+      } else {
+        this.rootTiles.insertAfter(afterId, tile);
+      }
     }).updateCallbackDone.then(() => {
       if (select) {
         this.select([tile.id]);
@@ -513,14 +537,14 @@ export default class Editor {
 
   removeTiles(ids: string[]) {
     const set = new Set(ids);
-    this.tiles.value = this.tiles.value.filter((tile) => !set.has(tile.id));
+    this.tiles = this.tiles.filter((tile) => !set.has(tile.id));
   }
 
   // TODO: Restore title setting
   async updateText(data: OmitPageId<AppRouterInputs["text"]["update"]>) {
     // Update the page title
     if (data.content) {
-      const firstTextTileId = this.tiles.value.find(
+      const firstTextTileId = this.tiles.find(
         (tile) => tile.type === "TEXT",
       )?.id;
       if (firstTextTileId && data.id === firstTextTileId) {
@@ -559,7 +583,7 @@ export default class Editor {
   }
 
   getTextEditorState(id: string) {
-    const tile = this.tiles.value.find(
+    const tile = this.tiles.find(
       (entry): entry is Text => entry.type === "TEXT" && entry.id === id,
     );
     if (!tile) {
@@ -574,7 +598,7 @@ export default class Editor {
   // Tables
 
   getTableColumnData(tableId: string, columnId: string) {
-    const table = this.tiles.value.find(
+    const table = this.tiles.find(
       (tile): tile is Table => tile.type === "TABLE" && tile.id === tableId,
     );
     if (!table) {
@@ -586,7 +610,7 @@ export default class Editor {
   }
 
   getTable(tableId: string) {
-    const table = this.tiles.value.find(
+    const table = this.tiles.find(
       (tile): tile is Table => tile.type === "TABLE" && tile.id === tableId,
     );
     if (!table) {

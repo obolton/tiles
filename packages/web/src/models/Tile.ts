@@ -18,7 +18,8 @@ export default class Tile {
   readonly id: string;
   readonly type: TileType;
 
-  readonly sectionId: Reactive<string | null>;
+  sectionId: string | null;
+
   readonly order: Reactive<string>;
   readonly anchor: Reactive<Anchor | null>;
   readonly dimensions: Reactive<Dimensions>;
@@ -52,8 +53,8 @@ export default class Tile {
 
     this.id = id;
     this.type = type;
+    this.sectionId = sectionId;
 
-    this.sectionId = reactive(sectionId);
     this.order = reactive(order);
     this.anchor = reactive(anchor);
     this.dimensions = reactive(dimensions);
