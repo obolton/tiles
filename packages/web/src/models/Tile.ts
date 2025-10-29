@@ -10,6 +10,7 @@ import type {
 } from "api/types/tiles";
 import type Editor from "@/editor/Editor";
 import type { AppRouterInputs } from "@/api/client";
+import type { TileParent } from "./TileCollection";
 
 export type { Anchor, Dimensions, Animation };
 
@@ -18,7 +19,7 @@ export default class Tile {
   readonly id: string;
   readonly type: TileType;
 
-  sectionId: string | null;
+  parent: TileParent | null = null;
 
   readonly order: Reactive<string>;
   readonly anchor: Reactive<Anchor | null>;
@@ -36,7 +37,6 @@ export default class Tile {
     const {
       id,
       type,
-      sectionId,
       order,
       anchor,
       dimensions,
@@ -53,7 +53,6 @@ export default class Tile {
 
     this.id = id;
     this.type = type;
-    this.sectionId = sectionId;
 
     this.order = reactive(order);
     this.anchor = reactive(anchor);

@@ -3,12 +3,11 @@ import Block from "@/components/layouts/block/Block";
 import Item from "@/components/item/Item";
 import LayoutEditor from "@/editor/LayoutEditor";
 import type Editor from "@/editor/Editor";
-import type { Reactive } from "@/utils/reactivity";
-import type { Tile } from "@/types/tiles";
+import type TileCollection from "@/models/TileCollection";
 
 export interface PageContentsProps {
   editor: Editor;
-  tiles: Reactive<Tile[]>;
+  tiles: TileCollection;
   signal?: AbortSignal;
 }
 
