@@ -262,6 +262,10 @@ export default class PageItem extends HTMLElement {
   }
 
   private endResizing() {
+    if (!this.isResizing) {
+      return;
+    }
+
     this.isResizing = false;
     this.resizeAbortController?.abort();
     this.resizeAbortController = undefined;
