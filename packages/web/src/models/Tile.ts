@@ -1,6 +1,7 @@
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
+import Section from "./Section";
 import type {
   ClientTile,
   Anchor,
@@ -65,6 +66,36 @@ export default class Tile {
     this.block = reactive(block);
     this.animation = reactive(animation);
     this.hide = reactive(hide);
+  }
+
+  get index(): number | null {
+    return this.parent?.tiles.value.indexOf(this) ?? null;
+  }
+
+  get previous(): Tile | null {
+    if (!this.parent) {
+      return null;
+    }
+    const index = this.index;
+    if (index === null) {
+      return null;
+    }
+    return this.parent.tiles.value[index - 1] ?? null;
+  }
+
+  get next(): Tile | null {
+    if (!this.parent) {
+      return null;
+    }
+    const index = this.index;
+    if (index === null) {
+      return null;
+    }
+    return this.parent.tiles.value[index + 1] ?? null;
+  }
+
+  get sectionId() {
+    return this.parent instanceof Section ? this.parent.id : null;
   }
 
   duplicate({ sectionId }: { sectionId: string | null }) {
@@ -137,5 +168,38 @@ export default class Tile {
   setHidden(hide: boolean) {
     this.hide.value = hide;
     return this.updateTile({ hide });
+  }
+
+  async moveUp() {
+    const previous = this.previous;
+    if (!previous) {
+      return;
+    }
+
+    const afterId = previous.previous?.id ?? null;
+    this.parent?.tiles.insertAfter(afterId, this);
+
+    await client.tiles.reorder.mutate({
+      pageId: this.editor.pageId,
+      id: this.id,
+      sectionId: this.sectionId,
+      afterId,
+    });
+  }
+
+  async moveDown() {
+    const afterId = this.next?.id;
+    if (!afterId) {
+      return;
+    }
+
+    this.parent?.tiles.insertAfter(afterId, this);
+
+    await client.tiles.reorder.mutate({
+      pageId: this.editor.pageId,
+      id: this.id,
+      sectionId: this.sectionId,
+      afterId,
+    });
   }
 }

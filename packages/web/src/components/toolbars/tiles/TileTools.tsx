@@ -15,11 +15,11 @@ export interface TileToolsProps {
 
 export default function TileTools({ tile }: TileToolsProps) {
   function moveUp() {
-    tile.editor.moveTileUp(tile.id).catch(handleError);
+    tile.moveUp().catch(handleError);
   }
 
   function moveDown() {
-    tile.editor.moveTileDown(tile.id).catch(handleError);
+    tile.moveDown().catch(handleError);
   }
 
   function duplicate() {

@@ -9,7 +9,6 @@ import { isEditMode } from "@/utils/edit";
 import { createState } from "@/utils/richText/state";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
-import { moveElement } from "@/utils/arrays";
 import TileCollection from "@/models/TileCollection";
 import Section from "@/models/Section";
 import Text from "@/models/Text";
@@ -330,53 +329,6 @@ export default class Editor {
       for (const section of sections) {
         section.style.viewTransitionName = "";
       }
-    });
-  }
-
-  async moveTileUp(id: string) {
-    const index = this.tiles.findIndex((tile) => tile.id === id);
-    if (index < 0) {
-      throw new Error(`Invalid tile ID: ${id}`);
-    }
-    if (index === 0) {
-      return;
-    }
-
-    // TODO: Fix so it works with nested tiles
-    const afterId = this.tiles[index - 2]?.id ?? null;
-
-    this.transitionSections(() => {
-      this.tiles = moveElement(this.tiles, index, index - 1);
-    });
-
-    await client.tiles.reorder.mutate({
-      pageId: this.pageId,
-      id,
-      sectionId: null,
-      afterId,
-    });
-  }
-
-  async moveTileDown(id: string) {
-    const index = this.allTiles.findIndex((tile) => tile.id === id);
-    if (index < 0) {
-      throw new Error(`Invalid tile ID: ${id}`);
-    }
-
-    const afterId = this.allTiles[index + 1]?.id;
-    if (!afterId) {
-      return;
-    }
-
-    this.transitionSections(() => {
-      this.allTiles = moveElement(this.allTiles, index, index + 1);
-    });
-
-    await client.tiles.reorder.mutate({
-      pageId: this.pageId,
-      id,
-      sectionId: null,
-      afterId,
     });
   }
 
