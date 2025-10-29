@@ -71,7 +71,6 @@ export default function Block({
           <InsertButton
             id={`${tileId}-insert-button`}
             classList={{ small: true, [styles.insert]: true }}
-            orientation="horizontal"
             sectionId={null}
             afterId={tileId}
           />
