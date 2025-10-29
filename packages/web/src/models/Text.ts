@@ -30,7 +30,7 @@ export default class Text extends Tile {
       ...data,
     });
     const text = new Text(editor, properties);
-    editor.addTile(text);
+    editor.addTile(text, data.afterId);
   }
 
   constructor(editor: Editor, properties: ClientTextTile) {

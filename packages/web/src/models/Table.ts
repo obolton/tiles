@@ -43,7 +43,7 @@ export default class Table extends Tile {
       ...data,
     });
     const table = new Table(editor, properties);
-    editor.addTile(table);
+    editor.addTile(table, data.afterId);
   }
 
   constructor(editor: Editor, properties: ClientTableTile) {

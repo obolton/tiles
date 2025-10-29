@@ -35,7 +35,7 @@ export default class Image extends Tile {
     }
 
     const image = new Image(editor, properties);
-    editor.addTile(image);
+    editor.addTile(image, data.afterId);
   }
 
   constructor(editor: Editor, properties: ClientImageTile) {

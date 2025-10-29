@@ -1,6 +1,7 @@
 import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
+import Video from "./Video";
 import type Editor from "@/editor/Editor";
 import type { ClientLinkTile } from "api/types/tiles";
 import type { AppRouterInputs } from "@/api/client";
@@ -29,8 +30,17 @@ export default class Link extends Tile {
       pageId: editor.pageId,
       ...data,
     });
-    const link = new Link(editor, properties);
-    editor.addTile(link);
+
+    switch (properties.type) {
+      case "LINK":
+        const link = new Link(editor, properties);
+        editor.addTile(link, data.afterId);
+        break;
+      case "VIDEO":
+        const video = new Video(editor, properties);
+        editor.addTile(video, data.afterId);
+        break;
+    }
   }
 
   constructor(editor: Editor, properties: ClientLinkTile) {
