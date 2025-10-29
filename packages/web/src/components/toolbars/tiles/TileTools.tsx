@@ -23,7 +23,7 @@ export default function TileTools({ tile }: TileToolsProps) {
   }
 
   function duplicate() {
-    tile.duplicate({ sectionId: tile.sectionId.value }).catch(handleError);
+    tile.duplicate({ sectionId: tile.sectionId }).catch(handleError);
   }
 
   function toggleHide() {

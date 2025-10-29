@@ -84,7 +84,7 @@ export default function TableToolbar({
       return;
     }
     await Chart.create(editor, {
-      sectionId: sectionId.value,
+      sectionId,
       tableId: id,
       series: [columnId],
     });
