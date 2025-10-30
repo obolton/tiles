@@ -342,19 +342,19 @@ export default function FormattingTools({
                 ],
             )}
 
-            <swatch-item className={styles.h1} value="h1">
+            <MenuItem className={styles.h1} value="h1">
               Heading 1
-            </swatch-item>
-            <swatch-item className={styles.h2} value="h2">
+            </MenuItem>
+            <MenuItem className={styles.h2} value="h2">
               Heading 2
-            </swatch-item>
-            <swatch-item className={styles.h3} value="h3">
+            </MenuItem>
+            <MenuItem className={styles.h3} value="h3">
               Heading 3
-            </swatch-item>
-            <swatch-item className={styles.code} value="code">
+            </MenuItem>
+            <MenuItem className={styles.code} value="code">
               Code
-            </swatch-item>
-            <swatch-item value="">Paragraph</swatch-item>
+            </MenuItem>
+            <MenuItem value="">Paragraph</MenuItem>
           </swatch-select>
         </li>
 
@@ -377,15 +377,24 @@ export default function FormattingTools({
               ),
             )}
 
-            <swatch-item value="unordered" data-tooltip="Unordered list">
-              <UnorderedListIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="ordered" data-tooltip="Ordered list">
-              <OrderedListIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="check" data-tooltip="Check list">
-              <CheckListIcon aria-hidden="true" />
-            </swatch-item>
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<UnorderedListIcon aria-hidden="true" />}
+              value="unordered"
+              label="Unordered list"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<OrderedListIcon aria-hidden="true" />}
+              value="ordered"
+              label="Ordered list"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<CheckListIcon aria-hidden="true" />}
+              value="check"
+              label="Check list"
+            />
           </swatch-select>
         </li>
       </ul>
@@ -492,15 +501,24 @@ export default function FormattingTools({
               ),
             )}
 
-            <swatch-item value="left" data-tooltip="Align left">
-              <AlignLeftIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="center" data-tooltip="Align center">
-              <AlignCenterIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="right" data-tooltip="Align right">
-              <AlignRightIcon aria-hidden="true" />
-            </swatch-item>
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<AlignLeftIcon aria-hidden="true" />}
+              value="left"
+              label="Align left"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<AlignCenterIcon aria-hidden="true" />}
+              value="center"
+              label="Align center"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<AlignRightIcon aria-hidden="true" />}
+              value="right"
+              label="Align right"
+            />
           </swatch-select>
         </li>
       </ul>

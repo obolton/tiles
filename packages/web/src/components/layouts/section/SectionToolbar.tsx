@@ -1,3 +1,4 @@
+import MenuItem from "@/components/buttons/MenuItem";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
@@ -86,18 +87,30 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
                   return <FreeformLayoutIcon aria-hidden="true" slot="icon" />;
               }
             })}
-            <swatch-item value="GRID" data-tooltip="Grid">
-              <GridLayoutIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="HORIZONTAL" data-tooltip="Horizontal">
-              <HorizontalLayoutIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="VERTICAL" data-tooltip="Vertical">
-              <VerticalLayoutIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="FREEFORM" data-tooltip="Freeform">
-              <FreeformLayoutIcon aria-hidden="true" />
-            </swatch-item>
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<GridLayoutIcon aria-hidden="true" />}
+              value="GRID"
+              label="Grid"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<HorizontalLayoutIcon aria-hidden="true" />}
+              value="HORIZONTAL"
+              label="Horizontal"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<VerticalLayoutIcon aria-hidden="true" />}
+              value="VERTICAL"
+              label="Vertical"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<FreeformLayoutIcon aria-hidden="true" />}
+              value="FREEFORM"
+              label="Freeform"
+            />
           </swatch-select>
         </li>
 
@@ -125,18 +138,30 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
                   return <AnchorRightIcon aria-hidden="true" slot="icon" />;
               }
             })}
-            <swatch-item value="TOP" data-tooltip="Top">
-              <AnchorTopIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="BOTTOM" data-tooltip="Bottom">
-              <AnchorBottomIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="LEFT" data-tooltip="Left">
-              <AnchorLeftIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="RIGHT" data-tooltip="Right">
-              <AnchorRightIcon aria-hidden="true" />
-            </swatch-item>
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<AnchorTopIcon aria-hidden="true" />}
+              value="TOP"
+              label="Top"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<AnchorBottomIcon aria-hidden="true" />}
+              value="BOTTOM"
+              label="Bottom"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<AnchorLeftIcon aria-hidden="true" />}
+              value="LEFT"
+              label="Left"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<AnchorRightIcon aria-hidden="true" />}
+              value="RIGHT"
+              label="Right"
+            />
           </swatch-select>
         </li>
 

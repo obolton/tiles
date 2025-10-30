@@ -1,3 +1,4 @@
+import MenuItem from "@/components/buttons/MenuItem";
 import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import ColorPicker from "@/components/colors/ColorPicker";
@@ -121,27 +122,24 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
               >
                 {align.derive((value) => ALIGN_ICON[value])}
 
-                <swatch-item
+                <MenuItem
+                  classList={{ floating: true }}
+                  icon={<VerticalAlignTopIcon aria-hidden="true" />}
                   value="TOP"
-                  data-tooltip="Top"
-                  data-tooltip-position="right"
-                >
-                  <VerticalAlignTopIcon aria-hidden="true" />
-                </swatch-item>
-                <swatch-item
+                  label="Top"
+                ></MenuItem>
+                <MenuItem
+                  classList={{ floating: true }}
+                  icon={<VerticalAlignCenterIcon aria-hidden="true" />}
                   value="CENTER"
-                  data-tooltip="Center"
-                  data-tooltip-position="right"
-                >
-                  <VerticalAlignCenterIcon aria-hidden="true" />
-                </swatch-item>
-                <swatch-item
+                  label="Center"
+                ></MenuItem>
+                <MenuItem
+                  classList={{ floating: true }}
+                  icon={<VerticalAlignBottomIcon aria-hidden="true" />}
                   value="BOTTOM"
-                  data-tooltip="Bottom"
-                  data-tooltip-position="right"
-                >
-                  <VerticalAlignBottomIcon aria-hidden="true" />
-                </swatch-item>
+                  label="Bottom"
+                ></MenuItem>
               </swatch-select>
             </li>
           ) : null,
@@ -170,18 +168,30 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
               ),
             )}
 
-            <swatch-item value="FADE" data-tooltip="Fade in">
-              <FadeIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="SLIDE" data-tooltip="Slide">
-              <SlideIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="GROW" data-tooltip="Grow">
-              <GrowIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="SHRINK" data-tooltip="Shrink">
-              <ShrinkIcon aria-hidden="true" />
-            </swatch-item>
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<FadeIcon aria-hidden="true" />}
+              value="FADE"
+              label="Fade in"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<SlideIcon aria-hidden="true" />}
+              value="SLIDE"
+              label="Slide"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<GrowIcon aria-hidden="true" />}
+              value="GROW"
+              label="Grow"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<ShrinkIcon aria-hidden="true" />}
+              value="SHRINK"
+              label="Shrink"
+            />
           </swatch-select>
         </li>
       </ul>

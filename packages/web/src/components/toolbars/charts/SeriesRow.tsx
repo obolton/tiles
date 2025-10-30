@@ -1,3 +1,4 @@
+import MenuItem from "@/components/buttons/MenuItem";
 import Row from "@/components/rows/Row";
 import BarChartIcon from "@/icons/bar-chart.svg?jsx";
 import LineChartIcon from "@/icons/line-chart.svg?jsx";
@@ -45,15 +46,24 @@ export default function SeriesRow({
           >
             {series.type.derive((value) => CHART_SERIES_TYPE_ICON[value])}
 
-            <swatch-item value="BAR" data-tooltip="Bar chart">
-              <BarChartIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="LINE" data-tooltip="Line chart">
-              <LineChartIcon aria-hidden="true" />
-            </swatch-item>
-            <swatch-item value="AREA" data-tooltip="Area chart">
-              <AreaChartIcon aria-hidden="true" />
-            </swatch-item>
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<BarChartIcon aria-hidden="true" />}
+              value="BAR"
+              label="Bar chart"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<LineChartIcon aria-hidden="true" />}
+              value="LINE"
+              label="Line chart"
+            />
+            <MenuItem
+              classList={{ floating: true }}
+              icon={<AreaChartIcon aria-hidden="true" />}
+              value="AREA"
+              label="Area chart"
+            />
           </swatch-select>
 
           <button

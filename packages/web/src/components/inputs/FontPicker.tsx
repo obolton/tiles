@@ -1,3 +1,4 @@
+import MenuItem from "@/components/buttons/MenuItem";
 import { FONTS, type FontId } from "@/config/fonts";
 import FontIcon from "@/icons/font.svg?jsx";
 import styles from "./FontPicker.module.css";
@@ -30,9 +31,9 @@ export default function FontPicker({
     >
       <FontIcon aria-hidden="true" slot="icon" />
       {FONTS.map((font) => (
-        <swatch-item style={{ fontFamily: font.family }} value={font.id}>
+        <MenuItem style={{ fontFamily: font.family }} value={font.id}>
           {font.name}
-        </swatch-item>
+        </MenuItem>
       ))}
     </swatch-select>
   );
