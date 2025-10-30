@@ -182,10 +182,25 @@ export default class Tile {
     });
   }
 
-  setSize({ width, height }: { width: number; height: number }) {
-    this.width.value = width;
-    this.height.value = height;
-    return this.updateTile({ width, height });
+  setSize({
+    width,
+    height,
+    block,
+  }: {
+    width?: number;
+    height?: number;
+    block?: boolean;
+  }) {
+    if (typeof width === "number") {
+      this.width.value = width;
+    }
+    if (typeof height === "number") {
+      this.height.value = height;
+    }
+    if (typeof block === "boolean") {
+      this.block.value = block;
+    }
+    return this.updateTile({ width, height, block });
   }
 
   persistSize() {
