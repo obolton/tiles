@@ -230,9 +230,7 @@ export default class Tile {
     const afterId = previous.previous?.id ?? null;
     this.parent?.tiles.insertAfter(afterId, this);
 
-    await client.tiles.reorder.mutate({
-      pageId: this.editor.pageId,
-      id: this.id,
+    return this.updateTile({
       sectionId: this.sectionId,
       afterId,
     });
@@ -246,9 +244,7 @@ export default class Tile {
 
     this.parent?.tiles.insertAfter(afterId, this);
 
-    await client.tiles.reorder.mutate({
-      pageId: this.editor.pageId,
-      id: this.id,
+    return this.updateTile({
       sectionId: this.sectionId,
       afterId,
     });
