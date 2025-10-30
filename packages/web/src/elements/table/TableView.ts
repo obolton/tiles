@@ -5,7 +5,7 @@ import { TableEvent } from "./events";
 import { makeDraggable } from "@/utils/drag";
 import { moveBefore } from "@/utils/dom";
 import { moveElement } from "@/utils/arrays";
-import { getFocusedElementWithin } from "@/utils/focus";
+import { getFocusedDescendant } from "@/utils/focus";
 import css from "./TableView.css?inline";
 import newIcon from "@/icons/new.svg?raw";
 import type { ResizeEvent } from "@/elements/resize/events";
@@ -946,7 +946,7 @@ export default class TableView extends HTMLElement {
     this.endEditingColumn();
     this.redrawSelection();
 
-    const focused = getFocusedElementWithin(this);
+    const focused = getFocusedDescendant(this);
     if (focused instanceof HTMLElement) {
       focused.blur();
     }

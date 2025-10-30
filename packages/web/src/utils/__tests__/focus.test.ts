@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { focusInside, getFocusedElementWithin } from "../focus";
+import { focusInside, getFocusedDescendant } from "../focus";
 
 describe("focusInside", () => {
   test.for([
@@ -130,7 +130,7 @@ describe("focusInside", () => {
   });
 });
 
-describe("getFocusedElementWithin", () => {
+describe("getFocusedDescendant", () => {
   afterEach(() => document.body.replaceChildren());
 
   test("returns the focused element if it is within the target", () => {
@@ -139,7 +139,7 @@ describe("getFocusedElementWithin", () => {
     container.append(input);
     document.body.append(container);
     input.focus();
-    expect(getFocusedElementWithin(container)).toBe(input);
+    expect(getFocusedDescendant(container)).toBe(input);
   });
 
   test("returns null if the focused element is not within the target", () => {
@@ -147,7 +147,7 @@ describe("getFocusedElementWithin", () => {
     const input = document.createElement("input");
     document.body.append(container, input);
     input.focus();
-    expect(getFocusedElementWithin(container)).toBeNull();
+    expect(getFocusedDescendant(container)).toBeNull();
   });
 
   test("returns null there is no focused element", () => {
@@ -155,6 +155,6 @@ describe("getFocusedElementWithin", () => {
     const input = document.createElement("input");
     container.append(input);
     document.body.append(container);
-    expect(getFocusedElementWithin(container)).toBeNull();
+    expect(getFocusedDescendant(container)).toBeNull();
   });
 });

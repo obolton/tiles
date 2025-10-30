@@ -7,8 +7,6 @@ export function focusInside(element: HTMLElement, options?: FocusOptions) {
   focusElement.focus(options);
 }
 
-export function getFocusedElementWithin(element: Element) {
-  return element.contains(document.activeElement)
-    ? document.activeElement
-    : null;
+export function getFocusedDescendant(node: Node) {
+  return node.contains(document.activeElement) ? document.activeElement : null;
 }
