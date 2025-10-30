@@ -44,10 +44,12 @@ export default class LayoutEditor {
   private gridRows: RowLayout[] = [];
   private gridColumnGap = 0;
   private gridRowGap = 0;
+
+  private afterId: string | null = null;
   private x = 0;
   private y = 0;
+
   private resizing: Tile | null = null;
-  private idForPoint?: string | null;
   private dragPlaceholder: HTMLElement | null = null;
   private snapPoints: SnapPoints = { x: [], y: [] };
 
@@ -258,7 +260,12 @@ export default class LayoutEditor {
 
     const position = this.getDragPosition(event.clientX, event.clientY);
     if (position) {
-      moveBefore(this.element, this.dragPlaceholder, position.next);
+      const { previous, next } = position;
+      this.afterId =
+        previous instanceof HTMLElement
+          ? previous.dataset.id || previous.id
+          : null;
+      moveBefore(this.element, this.dragPlaceholder, next);
     }
   }
 
@@ -346,7 +353,7 @@ export default class LayoutEditor {
   }
 
   private handleDragLeave() {
-    this.idForPoint = undefined;
+    this.afterId = null;
     this.hideDragPlaceholder();
   }
 
@@ -362,12 +369,19 @@ export default class LayoutEditor {
     }
 
     try {
-      this.editor.positionTile({
-        id: tile.id,
-        sectionId: this.sectionId,
-        x: this.x,
-        y: this.y,
-      });
+      if (this.layoutType === "HORIZONTAL" || this.layoutType === "VERTICAL") {
+        tile.move({
+          sectionId: this.sectionId,
+          afterId: this.afterId,
+        });
+      } else {
+        tile.move({
+          sectionId: this.sectionId,
+          x: this.x,
+          y: this.y,
+        });
+      }
+
       const destination = document.getElementById(tile.id);
       if (destination) {
         destination.style.viewTransitionName = "drop";
@@ -382,7 +396,7 @@ export default class LayoutEditor {
   }
 
   private handleDragEnd() {
-    this.idForPoint = undefined;
+    this.afterId = null;
   }
 
   private isElementOrdered(element: Element) {
