@@ -1,4 +1,5 @@
 import { hydrateNode, render } from "./dom";
+import { moveBefore } from "@/utils/dom";
 import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "./jsx";
 
@@ -148,7 +149,7 @@ export default class Each<T> implements JSX.ElementClass {
           if (node === referenceNode) {
             referenceNode = referenceNode.nextSibling;
           } else {
-            container.insertBefore(node, referenceNode);
+            moveBefore(container, node, referenceNode);
           }
         }
 
