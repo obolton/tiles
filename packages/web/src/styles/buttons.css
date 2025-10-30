@@ -135,6 +135,7 @@ a.floating {
   }
 
   &[aria-pressed="true"],
+  &[aria-checked="true"],
   &[aria-expanded="true"] {
     background-color: rgb(0 0 0 / 10%);
   }
