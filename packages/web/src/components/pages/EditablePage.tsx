@@ -32,7 +32,7 @@ export default function EditablePage({ page }: EditablePageProps) {
       </If>
 
       <If condition={isEditable}>
-        <InsertButton id="insert-button" orientation="vertical" />
+        <InsertButton id="insert-button" />
       </If>
     </>
   );
