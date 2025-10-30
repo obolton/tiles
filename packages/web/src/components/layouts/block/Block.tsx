@@ -62,6 +62,7 @@ export default function Block({
       <section
         className={styles.block}
         style={style}
+        data-id={tileId}
         on:focusin={onFocusIn}
         on:focusout={onFocusOut}
       >
