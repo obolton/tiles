@@ -1,7 +1,11 @@
 .color-picker {
   padding: 8px;
   border-radius: 26px;
-  overflow: visible;
+  background: var(--ui-background-color);
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
 }
 
 button.button {
