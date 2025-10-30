@@ -15,7 +15,6 @@ import type EmbeddedVideo, {
 import type SwatchSelect, {
   SwatchSelectAttributes,
 } from "./swatch/SwatchSelect";
-import type SwatchItem, { SwatchItemAttributes } from "./swatch/SwatchItem";
 import type PopOut, { PopOutAttributes } from "./pop-out/PopOut";
 import type StackView, { StackViewAttributes } from "./stack/StackView";
 import type CalendarMonth, {
@@ -62,7 +61,6 @@ declare module "@/jsx/jsx" {
         SwatchSelect,
         SwatchSelectAttributes
       >;
-      "swatch-item": CustomElementAttributes<SwatchItem, SwatchItemAttributes>;
       "calendar-month": CustomElementAttributes<
         CalendarMonth,
         CalendarMonthAttributes

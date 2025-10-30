@@ -1,11 +1,7 @@
 // TODO: Implement keyboard interactions:
 // https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/menubar_role#keyboard_interactions
 
-const IGNORE_FOCUS_ELEMENTS = new Set([
-  "BUTTON",
-  "SWATCH-SELECT",
-  "SWATCH-ITEM",
-]);
+const IGNORE_FOCUS_ELEMENTS = new Set(["BUTTON", "SWATCH-SELECT"]);
 
 export default class FloatingToolbar extends HTMLElement {
   constructor() {
