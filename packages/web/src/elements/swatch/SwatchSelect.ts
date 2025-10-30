@@ -13,12 +13,11 @@ export interface SwatchSelectAttributes {
 }
 
 export default class SwatchSelect extends HTMLElement {
-  static readonly observedAttributes: (keyof SwatchSelectAttributes)[] = [
-    "value",
-    "align",
-  ] as const;
+  static get observedAttributes() {
+    return ["value", "align"] as const;
+  }
 
-  value: string | null = "";
+  #value: string | null = null;
 
   private open = false;
   private button: HTMLButtonElement;
@@ -35,7 +34,7 @@ export default class SwatchSelect extends HTMLElement {
     this.button.type = "button";
     this.button.ariaLabel = "Close";
     this.button.ariaPressed = "false";
-    this.button.addEventListener("click", this);
+    this.button.addEventListener("click", this, { passive: true });
     this.button.innerHTML = closeIcon;
 
     const iconSlot = document.createElement("slot");
@@ -46,17 +45,41 @@ export default class SwatchSelect extends HTMLElement {
     this.items.id = "items";
     this.items.part = "items";
     this.items.anchorElement = this.button;
-    this.items.addEventListener("beforetoggle", this, { passive: true });
     this.items.addEventListener("toggle", this, { passive: true });
-    this.items.addEventListener("click", this);
-    this.items.append(document.createElement("slot"));
+    this.items.addEventListener("click", this, { passive: true });
+
+    const slot = document.createElement("slot");
+    slot.addEventListener("slotchange", this);
+    this.items.append(slot);
 
     shadow.append(this.button, this.items);
   }
 
+  get value() {
+    return this.#value;
+  }
+
+  set value(value: string | null) {
+    if (value === this.#value) {
+      return;
+    }
+
+    const previousItem = this.#value ? this.getItem(this.#value) : null;
+    if (previousItem) {
+      previousItem.ariaChecked = "false";
+    }
+
+    const item = value ? this.getItem(value) : null;
+    if (item) {
+      item.ariaChecked = "true";
+    }
+
+    this.#value = value;
+  }
+
   attributeChangedCallback(
-    name: keyof SwatchSelectAttributes,
-    _: string | null,
+    name: (typeof SwatchSelect.observedAttributes)[number],
+    _previous: string | null,
     value: string | null,
   ) {
     switch (name) {
@@ -73,26 +96,16 @@ export default class SwatchSelect extends HTMLElement {
     }
   }
 
+  // Events
+
   handleEvent(event: Event) {
     switch (event.type) {
-      case "beforetoggle":
-        return this.handleBeforeToggle(event as ToggleEvent);
       case "toggle":
         return this.handleToggle(event as ToggleEvent);
       case "click":
         return this.handleClick(event as MouseEvent);
-    }
-  }
-
-  private handleBeforeToggle(event: ToggleEvent) {
-    if (event.newState === "open") {
-      if (this.value) {
-        this.querySelector(
-          `swatch-item[value="${escapeUTF8(this.value)}"]`,
-        )?.setAttribute("selected", "");
-      }
-    } else {
-      this.querySelector("swatch-item[selected]")?.removeAttribute("selected");
+      case "slotchange":
+        return this.handleSlotChange();
     }
   }
 
@@ -118,13 +131,28 @@ export default class SwatchSelect extends HTMLElement {
     if (!(target instanceof Element)) {
       return;
     }
-    const item = target.closest("swatch-item");
+    const item = target.closest("button");
     if (!item) {
       return;
     }
-    this.value = item.getAttribute("value") ?? "";
+    this.value = item.value;
     this.dispatchEvent(new Event("change", { bubbles: true }));
     this.items.hidePopover();
+  }
+
+  private handleSlotChange() {
+    if (this.value) {
+      const item = this.getItem(this.value);
+      if (item) {
+        item.ariaChecked = "true";
+      }
+    }
+  }
+
+  // Items
+
+  private getItem(value: string) {
+    return this.querySelector(`[value="${escapeUTF8(value)}"]`);
   }
 
   // Open and close
