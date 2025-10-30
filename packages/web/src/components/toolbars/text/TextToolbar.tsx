@@ -13,7 +13,6 @@ import GrowIcon from "@/icons/grow.svg?jsx";
 import ShrinkIcon from "@/icons/shrink.svg?jsx";
 import ExpandHeightIcon from "@/icons/expand-height.svg?jsx";
 import { handleError } from "@/utils/errors";
-import Editor from "@/editor/Editor";
 import type Text from "@/models/Text";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { Animation } from "@/models/Tile";
@@ -57,11 +56,10 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
       }
     }
 
-    Editor.current
-      .positionTile({
-        id,
-        block: !block.value,
+    text
+      .setSize({
         height,
+        block: !block.value,
       })
       .catch(handleError);
   }
