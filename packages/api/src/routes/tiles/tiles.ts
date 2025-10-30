@@ -6,7 +6,6 @@ import {
   duplicateTileQuery,
 } from "@/generated/prisma/sql";
 import type {
-  ReorderTileSchema,
   UpdateTileSchema,
   DuplicateTileSchema,
   DeleteTilesSchema,
@@ -51,31 +50,22 @@ export async function getTileOrder(
   return generateKeyBetween(result?.a ?? null, result?.b ?? null);
 }
 
-export async function reorderTile({
-  pageId,
-  id,
-  sectionId,
-  afterId,
-}: ReorderTileSchema) {
-  return prisma.$transaction(async (transaction) => {
-    const order = await getTileOrder(
-      transaction,
-      pageId,
-      sectionId,
-      afterId ?? null,
-    );
-    return transaction.tile.update({
-      where: { pageId, id },
-      data: { sectionId, order },
-      select: TILE_FIELDS,
-    });
+export async function getTileSectionId(
+  transaction: PrismaTransactionClient,
+  { id, pageId }: { id: string; pageId: string },
+) {
+  const { sectionId } = await transaction.tile.findUniqueOrThrow({
+    where: { id, pageId },
+    select: { sectionId: true },
   });
+  return sectionId;
 }
 
 export async function updateTile({
   pageId,
   id,
   sectionId,
+  afterId,
   anchor,
   dimensions,
   width,
@@ -96,10 +86,25 @@ export async function updateTile({
       });
     }
 
+    let order = undefined;
+    if (typeof afterId !== "undefined") {
+      const orderSectionId =
+        typeof sectionId === "undefined"
+          ? await getTileSectionId(transaction, { id, pageId })
+          : sectionId;
+      order = await getTileOrder(
+        transaction,
+        pageId,
+        orderSectionId,
+        afterId ?? null,
+      );
+    }
+
     return transaction.tile.update({
       where: { pageId, id },
       data: {
         sectionId,
+        order,
         anchor,
         dimensions,
         width,

@@ -1,18 +1,11 @@
 import { z } from "zod";
 import { TileSchema } from "@/schema/Tile";
 
-export const ReorderTileSchema = z.object({
-  pageId: z.uuid(),
-  id: z.uuid(),
-  sectionId: z.uuid().nullable(),
-  afterId: z.uuid().nullable().optional(),
-});
-export type ReorderTileSchema = z.infer<typeof ReorderTileSchema>;
-
 export const UpdateTileSchema = z.object({
   pageId: z.uuid(),
   id: z.uuid(),
   sectionId: z.uuid().nullable().optional(),
+  afterId: z.uuid().nullable().optional(),
   ...TileSchema.shape,
 });
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
