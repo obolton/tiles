@@ -120,6 +120,42 @@ export default class Tile {
     });
   }
 
+  move({
+    sectionId,
+    afterId,
+    x,
+    y,
+  }: {
+    sectionId?: string | null;
+    afterId?: string | null;
+    x?: number;
+    y?: number;
+  }) {
+    if (
+      (typeof sectionId !== "undefined" && sectionId !== this.sectionId) ||
+      typeof afterId !== "undefined"
+    ) {
+      if (sectionId) {
+        const section = this.editor.getTile(sectionId);
+        if (!(section instanceof Section)) {
+          throw new Error(`Invalid section ID: ${sectionId}`);
+        }
+        section.tiles.insertAfter(afterId ?? null, this);
+      } else {
+        this.editor.tiles.insertAfter(afterId ?? null, this);
+      }
+    }
+
+    if (typeof x === "number") {
+      this.x.value = x;
+    }
+    if (typeof y === "number") {
+      this.y.value = y;
+    }
+
+    return this.updateTile({ sectionId, afterId, x, y });
+  }
+
   setAnchor(anchor: Anchor | null) {
     this.anchor.value = anchor;
     return this.updateTile({ anchor });
