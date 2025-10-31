@@ -7,6 +7,12 @@ export interface PopoverMenuAttributes {
   align?: Alignment;
 }
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "popover-menu": PopoverMenu;
+  }
+}
+
 export default class PopoverMenu extends HTMLElement {
   static readonly observedAttributes: (keyof PopoverMenuAttributes)[] = [
     "anchor",
