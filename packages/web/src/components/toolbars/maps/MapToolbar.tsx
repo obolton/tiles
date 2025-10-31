@@ -32,8 +32,9 @@ export default function MapToolbar({ map, getMapView }: MapToolbarProps) {
     >
       <ul role="group" aria-label="Map tools">
         <li role="presentation">
-          <ToolbarButton label="Add place" on:click={addPlace}>
+          <ToolbarButton on:click={addPlace}>
             <AddPlaceIcon aria-hidden="true" />
+            Add a place
           </ToolbarButton>
         </li>
       </ul>

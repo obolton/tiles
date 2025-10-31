@@ -38,8 +38,9 @@ export default function LinkToolbar({ link }: LinkToolbarProps) {
     >
       <ul role="group" aria-label="Layout">
         <li role="presentation">
-          <ToolbarButton label="Edit link" on:click={editLink}>
+          <ToolbarButton on:click={editLink}>
             <LinkIcon aria-hidden="true" />
+            Edit link
           </ToolbarButton>
         </li>
       </ul>
