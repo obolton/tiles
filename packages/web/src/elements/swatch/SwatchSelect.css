@@ -3,80 +3,8 @@
 }
 
 ::slotted(svg) {
-  fill: var(--icon-color);
-}
-
-button {
-  position: relative;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  transition: scale var(--animation-duration-short) var(--easing);
-
-  & > svg,
-  & ::slotted(svg) {
-    position: absolute;
-    top: calc(50% - 12px);
-    left: calc(50% - 12px);
-    width: 24px;
-    height: 24px;
-    pointer-events: none;
-    transition-duration: var(--animation-duration);
-    transition-timing-function: var(--spring);
-    transition-property: opacity, scale, rotate;
-  }
-
-  & > svg {
-    fill: var(--icon-color);
-    opacity: 0;
-    scale: 0.7;
-    rotate: z -45deg;
-  }
-
-  :host([aria-selected="true"]) & {
-    background-color: rgb(0 0 0 / 10%);
-  }
-
-  &:hover:enabled:not(:active) {
-    scale: 1.1;
-    background-color: rgb(0 0 0 / 10%);
-  }
-
-  &:active:enabled {
-    scale: 1;
-    background-color: rgb(0 0 0 / 20%);
-  }
-
-  &[aria-pressed="true"] {
-    scale: 1.1;
-    background-color: rgb(0 0 0 / 20%);
-
-    & > svg {
-      opacity: 1;
-      scale: 1;
-      rotate: none;
-    }
-
-    & ::slotted(svg) {
-      opacity: 0;
-      scale: 0.7;
-      rotate: z 45deg;
-    }
-  }
-
-  &:focus-visible {
-    outline: var(--focus-outline);
-    outline-offset: -1px;
-  }
+  fill: currentcolor;
+  pointer-events: none;
 }
 
 #items {

@@ -1,5 +1,4 @@
 import css from "./SwatchSelect.css?inline";
-import closeIcon from "@/icons/close.svg?raw";
 import PopoverMenu from "@/elements/menu/PopoverMenu";
 import { escapeUTF8 } from "entities";
 
@@ -19,40 +18,34 @@ export default class SwatchSelect extends HTMLElement {
 
   #value: string | null = null;
 
-  private open = false;
-  private button: HTMLButtonElement;
+  private internals: ElementInternals;
   private items: PopoverMenu;
 
   constructor() {
     super();
 
+    this.internals = this.attachInternals();
+    this.internals.role = "menu";
+
     const shadow = this.attachShadow({ mode: "closed" });
     shadow.adoptedStyleSheets = [stylesheet];
 
-    this.button = document.createElement("button");
-    this.button.part = "button";
-    this.button.type = "button";
-    this.button.ariaLabel = "Close";
-    this.button.ariaPressed = "false";
-    this.button.addEventListener("click", this, { passive: true });
-    this.button.innerHTML = closeIcon;
-
     const iconSlot = document.createElement("slot");
     iconSlot.name = "icon";
-    this.button.append(iconSlot);
 
-    this.items = document.createElement("popover-menu") as PopoverMenu;
+    this.items = document.createElement("popover-menu");
     this.items.id = "items";
     this.items.part = "items";
-    this.items.anchorElement = this.button;
+    this.items.anchorElement = this;
     this.items.addEventListener("toggle", this, { passive: true });
-    this.items.addEventListener("click", this, { passive: true });
 
-    const slot = document.createElement("slot");
-    slot.addEventListener("slotchange", this);
-    this.items.append(slot);
+    const itemsSlot = document.createElement("slot");
+    itemsSlot.addEventListener("slotchange", this);
+    this.items.append(itemsSlot);
 
-    shadow.append(this.button, this.items);
+    shadow.append(iconSlot, this.items);
+
+    this.addEventListener("click", this, { passive: true });
   }
 
   get value() {
@@ -75,6 +68,25 @@ export default class SwatchSelect extends HTMLElement {
     }
 
     this.#value = value;
+  }
+
+  get open() {
+    return this.internals.states.has("open");
+  }
+
+  set open(open: boolean) {
+    if (open) {
+      this.internals.states.add("open");
+    } else {
+      this.internals.states.delete("open");
+    }
+
+    this.ariaExpanded = open ? "true" : "false";
+    this.ariaPressed = open ? "true" : "false";
+  }
+
+  connectedCallback() {
+    this.open = false;
   }
 
   attributeChangedCallback(
@@ -103,22 +115,20 @@ export default class SwatchSelect extends HTMLElement {
       case "toggle":
         return this.handleToggle(event as ToggleEvent);
       case "click":
-        return this.handleClick(event as MouseEvent);
+        return this.handleClick(event as PointerEvent);
       case "slotchange":
         return this.handleSlotChange();
     }
   }
 
   private handleToggle(event: ToggleEvent) {
-    const open = event.newState === "open";
-
-    this.open = open;
-    this.ariaExpanded = open ? "true" : "false";
-    this.button.ariaPressed = open ? "true" : "false";
+    this.open = event.newState === "open";
   }
 
-  private handleClick(event: MouseEvent) {
-    if (event.currentTarget === this.button) {
+  private handleClick(event: PointerEvent) {
+    const target = event.target;
+
+    if (target === this) {
       if (this.open) {
         this.hide();
       } else {
@@ -127,17 +137,13 @@ export default class SwatchSelect extends HTMLElement {
       return;
     }
 
-    const target = event.target;
-    if (!(target instanceof Element)) {
-      return;
-    }
-    const item = target.closest("button");
+    const item = target instanceof Element ? target.closest("button") : null;
     if (!item) {
       return;
     }
     this.value = item.value;
     this.dispatchEvent(new Event("change", { bubbles: true }));
-    this.items.hidePopover();
+    this.hide();
   }
 
   private handleSlotChange() {
@@ -162,8 +168,6 @@ export default class SwatchSelect extends HTMLElement {
       return;
     }
     this.open = true;
-    this.ariaExpanded = "true";
-    this.button.ariaPressed = "true";
     this.items.showPopover();
   }
 
@@ -172,8 +176,6 @@ export default class SwatchSelect extends HTMLElement {
       return;
     }
     this.open = false;
-    this.ariaExpanded = "false";
-    this.button.ariaPressed = "false";
     this.items.hidePopover();
   }
 }
