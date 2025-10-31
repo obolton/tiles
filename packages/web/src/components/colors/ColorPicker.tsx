@@ -1,6 +1,8 @@
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ColorPalette from "@/components/colors/ColorPalette";
+import TextColorIcon from "@/icons/text-color.svg?jsx";
+import { toCSSColor } from "@/utils/color";
 import styles from "./ColorPicker.module.css";
-import { classNames } from "@/utils/css";
 import type { Color } from "@/utils/color";
 import type { Reactive } from "@/utils/reactivity";
 
@@ -22,16 +24,20 @@ export default function ColorPicker({ id, value, onChange }: ColorPickerProps) {
 
   return (
     <>
-      <button
-        type="button"
+      <ToolbarButton
         id={id}
-        className={classNames("floating", styles.button)}
         popovertarget={popoverId}
-        aria-label="Color"
+        label="Color"
         aria-haspopup="menu"
         aria-expanded="false"
-        data-tooltip="Color"
-      />
+      >
+        <TextColorIcon
+          style={value?.derive((v) =>
+            v ? { fill: toCSSColor(v) } : undefined,
+          )}
+          aria-hidden="true"
+        />
+      </ToolbarButton>
 
       <popover-menu
         id={popoverId}
