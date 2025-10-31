@@ -2,13 +2,13 @@
 
 button {
   position: relative;
-  font-size: 18px;
+  color: var(--ui-color);
+  font-size: 1rem;
   line-height: 1;
   text-align: center;
   cursor: pointer;
   user-select: none;
   appearance: none;
-  overflow: hidden;
   -webkit-font-smoothing: antialiased;
 
   /* Prevent icons from being the target of pointer events */
@@ -79,7 +79,6 @@ a.primary {
 
 button.secondary,
 a.secondary {
-  color: var(--ui-color);
   border: none;
   background: #fff;
   box-shadow:
@@ -99,16 +98,22 @@ a.secondary {
 
 button.floating,
 a.floating {
-  width: 44px;
+  --border-radius: 22px;
+
+  min-width: 44px;
   height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5em;
   flex: 0 0 auto;
+  font-weight: 500;
+  padding-block: 0;
+  padding-inline: 0.5em;
   border: none;
   background: none;
   outline-color: transparent;
-  border-radius: 50%;
+  border-radius: var(--border-radius);
   transition:
     scale var(--animation-duration-short) var(--easing),
     opacity var(--animation-duration-short) var(--easing),
@@ -117,27 +122,61 @@ a.floating {
   & > svg {
     width: 24px;
     height: 24px;
-    fill: var(--icon-color);
+    fill: currentcolor;
+    transition: scale var(--animation-duration-short) var(--easing);
   }
 
   &:focus-visible {
     outline: var(--focus-outline);
   }
 
-  &:hover:not(:active, :disabled) {
-    scale: 1.1;
-    background-color: rgb(0 0 0 / 10%);
+  &:is(
+    :hover:not(:disabled),
+    :active:not(:disabled),
+    [aria-pressed="true"],
+    [aria-checked="true"],
+    [aria-expanded="true"]
+  ) {
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      clip-path: inset(0 round var(--border-radius));
+      transition: clip-path var(--animation-duration-short) var(--easing);
+
+      @starting-style {
+        clip-path: inset(4px round var(--border-radius));
+      }
+    }
+  }
+
+  &:hover:not(:disabled) {
+    &::before {
+      background-color: rgb(0 0 0 / 10%);
+    }
+
+    & > svg {
+      scale: 1.1;
+    }
+  }
+
+  &:is(
+    :active:not(:disabled),
+    [aria-pressed="true"],
+    [aria-checked="true"],
+    [aria-expanded="true"]
+  ) {
+    &::before {
+      background-color: rgb(0 0 0 / 20%);
+    }
   }
 
   &:active:not(:disabled) {
-    scale: 1;
-    background-color: rgb(0 0 0 / 20%);
-  }
+    scale: 0.95;
 
-  &[aria-pressed="true"],
-  &[aria-checked="true"],
-  &[aria-expanded="true"] {
-    background-color: rgb(0 0 0 / 10%);
+    & > svg {
+      scale: 1.1;
+    }
   }
 
   &.pending {
@@ -145,17 +184,21 @@ a.floating {
   }
 
   &.large {
-    width: 52px;
+    --border-radius: 26px;
+
+    min-width: 52px;
     height: 52px;
 
     & > svg {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
     }
   }
 
   &.small {
-    width: 32px;
+    --border-radius: 16px;
+
+    min-width: 32px;
     height: 32px;
 
     & > svg {
