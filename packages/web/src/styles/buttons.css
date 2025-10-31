@@ -97,7 +97,8 @@ a.secondary {
 /* Floating buttons */
 
 button.floating,
-a.floating {
+a.floating,
+swatch-select {
   --border-radius: 22px;
 
   min-width: 44px;
