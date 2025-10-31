@@ -123,6 +123,7 @@ a.floating {
     width: 24px;
     height: 24px;
     fill: currentcolor;
+    z-index: 1;
     transition: scale var(--animation-duration-short) var(--easing);
   }
 
