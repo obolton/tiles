@@ -9,8 +9,8 @@
 
 #items {
   display: flex;
-  gap: 8px;
-  margin: 24px 0;
+  gap: 4px;
+  margin: 16px 0;
   padding: 8px;
   border: none;
   border-radius: 32px;
@@ -27,6 +27,7 @@
 
   :host([orientation="vertical"]) & {
     flex-direction: column;
+    border-radius: 12px;
   }
 
   &:popover-open {

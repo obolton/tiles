@@ -245,6 +245,35 @@ swatch-select {
   }
 }
 
+button.menuitem {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 36px;
+  gap: 12px;
+  padding-block: 8px;
+  padding-inline: 12px;
+  white-space: nowrap;
+  border: none;
+  border-radius: 8px;
+  background: none;
+
+  & > svg {
+    width: 20px;
+    height: 20px;
+    fill: currentcolor;
+  }
+
+  &:enabled:hover:not(:active) {
+    background-color: rgb(0 0 0 / 10%);
+  }
+
+  &:enabled:active {
+    background-color: rgb(0 0 0 / 20%);
+  }
+}
+
 /* Pending states */
 
 .pending,

@@ -211,7 +211,7 @@ list-box {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 4px;
+  padding: 8px;
   font-size: 1rem;
   color: var(--ui-color);
   background: var(--ui-background-color);
@@ -220,58 +220,23 @@ list-box {
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 15%),
     0 4px 12px -4px rgb(0 0 0 / 30%);
+}
 
-  & > ul {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+ul.menuitemgroup {
+  position: relative;
+  display: flex;
+  flex-direction: column;
 
-    & > li {
-      border-radius: calc(var(--border-radius) - 4px);
+  &:not(:last-child) {
+    padding: 0 0 8px;
 
-      & > button {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        width: 100%;
-        gap: 12px;
-        padding: 8px 16px;
-        font: inherit;
-        color: inherit;
-        white-space: nowrap;
-        border: none;
-        background: none;
-        border-radius: inherit;
-
-        & > svg {
-          width: 20px;
-          height: 20px;
-          fill: currentcolor;
-          pointer-events: none;
-        }
-
-        &:enabled:hover:not(:active) {
-          background-color: rgb(0 0 0 / 10%);
-        }
-
-        &:enabled:active {
-          background-color: rgb(0 0 0 / 20%);
-        }
-      }
-    }
-
-    &:not(:last-child) {
-      padding: 0 0 8px;
-
-      &::after {
-        content: "";
-        position: absolute;
-        inset: auto 12px -1px;
-        height: 2px;
-        border-radius: 1px;
-        background: rgb(0 0 0 / 5%);
-      }
+    &::after {
+      content: "";
+      position: absolute;
+      inset: auto 12px -1px;
+      height: 2px;
+      border-radius: 1px;
+      background: rgb(0 0 0 / 5%);
     }
   }
 }
