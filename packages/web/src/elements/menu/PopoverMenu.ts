@@ -74,9 +74,18 @@ export default class PopoverMenu extends HTMLElement {
   }
 
   protected handleBeforeToggle(event: ToggleEvent) {
+    if (event.defaultPrevented) {
+      return;
+    }
+
     // Hide the element until we have moved it into position
     if (event.newState === "open") {
       this.style.setProperty("visibility", "hidden");
+    }
+
+    const trigger = document.querySelector(`[popovertarget="${this.id}"]`);
+    if (trigger) {
+      trigger.ariaExpanded = event.newState === "open" ? "true" : "false";
     }
   }
 
@@ -86,11 +95,6 @@ export default class PopoverMenu extends HTMLElement {
         this.setPosition();
         this.style.removeProperty("visibility");
       });
-    }
-
-    const trigger = document.querySelector(`[popovertarget="${this.id}"]`);
-    if (trigger) {
-      trigger.ariaExpanded = event.newState === "open" ? "true" : "false";
     }
   }
 
