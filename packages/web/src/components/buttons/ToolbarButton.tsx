@@ -1,7 +1,7 @@
 import type { JSX } from "@/jsx/jsx";
 
 export interface ToolbarButtonProps extends JSX.Attributes<HTMLButtonElement> {
-  label: string;
+  label?: string;
   destructive?: boolean;
 }
 
