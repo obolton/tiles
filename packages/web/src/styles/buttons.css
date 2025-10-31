@@ -116,8 +116,8 @@ swatch-select {
   outline-color: transparent;
   border-radius: var(--border-radius);
   transition:
-    scale var(--animation-duration-short) var(--easing),
     opacity var(--animation-duration-short) var(--easing),
+    scale var(--animation-duration-short) var(--easing),
     outline-color var(--animation-duration) var(--easing);
 
   & > svg {
@@ -125,7 +125,9 @@ swatch-select {
     height: 24px;
     fill: currentcolor;
     z-index: 1;
-    transition: scale var(--animation-duration-short) var(--easing);
+    transition:
+      opacity var(--animation-duration-short) var(--easing),
+      scale var(--animation-duration-short) var(--easing);
   }
 
   &:focus-visible {
@@ -218,14 +220,10 @@ swatch-select {
       opacity: 0;
       scale: 0.7;
       rotate: z -45deg;
-    }
-
-    & > svg,
-    & > img,
-    &::after {
-      transition-property: opacity, scale, rotate;
-      transition-duration: var(--animation-duration);
-      transition-timing-function: var(--spring);
+      transition:
+        opacity var(--animation-duration-short) var(--easing),
+        scale var(--animation-duration-short) var(--easing),
+        rotate var(--animation-duration-short) var(--easing);
     }
 
     &[aria-expanded="true"] {
@@ -233,7 +231,6 @@ swatch-select {
       & > img {
         opacity: 0;
         scale: 0.7;
-        rotate: z 45deg;
       }
 
       &::after {
