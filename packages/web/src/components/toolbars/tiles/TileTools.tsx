@@ -52,9 +52,10 @@ export default function TileTools({ tile }: TileToolsProps) {
           anchor={`${tile.id}-options-button`}
         >
           <list-box>
-            <ul role="group">
+            <ul className="menuitemgroup" role="group">
               <li>
                 <MenuItem
+                  classList={{ menuitem: true }}
                   icon={<ArrowUpIcon aria-hidden="true" />}
                   on:click={moveUp}
                 >
@@ -63,6 +64,7 @@ export default function TileTools({ tile }: TileToolsProps) {
               </li>
               <li>
                 <MenuItem
+                  classList={{ menuitem: true }}
                   icon={<ArrowDownIcon aria-hidden="true" />}
                   on:click={moveDown}
                 >
@@ -71,9 +73,10 @@ export default function TileTools({ tile }: TileToolsProps) {
               </li>
             </ul>
 
-            <ul role="group">
+            <ul className="menuitemgroup" role="group">
               <li>
                 <MenuItem
+                  classList={{ menuitem: true }}
                   icon={<DuplicateIcon aria-hidden="true" />}
                   on:click={duplicate}
                 >
@@ -82,6 +85,7 @@ export default function TileTools({ tile }: TileToolsProps) {
               </li>
               <li role="presentation">
                 <MenuItem
+                  classList={{ menuitem: true }}
                   icon={<HiddenIcon aria-hidden="true" />}
                   checked={tile.hide}
                   on:click={toggleHide}
@@ -91,6 +95,7 @@ export default function TileTools({ tile }: TileToolsProps) {
               </li>
               <li>
                 <MenuItem
+                  classList={{ menuitem: true }}
                   icon={<TrashIcon aria-hidden="true" />}
                   destructive
                   on:click={deleteTile}

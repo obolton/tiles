@@ -264,9 +264,10 @@ export default function FormattingTools({
 
           <popover-menu id="insert-content-menu" anchor="insert-content-button">
             <list-box>
-              <ul role="group">
+              <ul className="menuitemgroup" role="group">
                 <li>
                   <MenuItem
+                    classList={{ menuitem: true }}
                     icon={<EventIcon aria-hidden="true" />}
                     on:click={insertNewDate}
                   >
@@ -275,6 +276,7 @@ export default function FormattingTools({
                 </li>
                 <li>
                   <MenuItem
+                    classList={{ menuitem: true }}
                     icon={<DropdownIcon aria-hidden="true" />}
                     on:click={insertNewDropdown}
                   >
@@ -286,6 +288,7 @@ export default function FormattingTools({
                   {(dropdown) => (
                     <li>
                       <MenuItem
+                        classList={{ menuitem: true }}
                         icon={<DropdownIcon aria-hidden="true" />}
                         on:click={() =>
                           insertExistingDropdown(
@@ -342,19 +345,45 @@ export default function FormattingTools({
                 ],
             )}
 
-            <MenuItem className={styles.h1} value="h1">
-              Heading 1
-            </MenuItem>
-            <MenuItem className={styles.h2} value="h2">
-              Heading 2
-            </MenuItem>
-            <MenuItem className={styles.h3} value="h3">
-              Heading 3
-            </MenuItem>
-            <MenuItem className={styles.code} value="code">
-              Code
-            </MenuItem>
-            <MenuItem value="">Paragraph</MenuItem>
+            <ul className="menuitemgroup" role="group">
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true, [styles.h1]: true }}
+                  value="h1"
+                >
+                  Heading 1
+                </MenuItem>
+              </li>
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true, [styles.h2]: true }}
+                  value="h2"
+                >
+                  Heading 2
+                </MenuItem>
+              </li>
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true, [styles.h3]: true }}
+                  value="h3"
+                >
+                  Heading 3
+                </MenuItem>
+              </li>
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true, [styles.code]: true }}
+                  value="code"
+                >
+                  Code
+                </MenuItem>
+              </li>
+              <li role="presentation">
+                <MenuItem classList={{ menuitem: true }} value="">
+                  Paragraph
+                </MenuItem>
+              </li>
+            </ul>
           </swatch-select>
         </li>
 

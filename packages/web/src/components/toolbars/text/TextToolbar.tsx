@@ -123,23 +123,26 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
                 {align.derive((value) => ALIGN_ICON[value])}
 
                 <MenuItem
-                  classList={{ floating: true }}
+                  classList={{ menuitem: true }}
                   icon={<VerticalAlignTopIcon aria-hidden="true" />}
                   value="TOP"
-                  label="Top"
-                ></MenuItem>
+                >
+                  Top
+                </MenuItem>
                 <MenuItem
-                  classList={{ floating: true }}
+                  classList={{ menuitem: true }}
                   icon={<VerticalAlignCenterIcon aria-hidden="true" />}
                   value="CENTER"
-                  label="Center"
-                ></MenuItem>
+                >
+                  Center
+                </MenuItem>
                 <MenuItem
-                  classList={{ floating: true }}
+                  classList={{ menuitem: true }}
                   icon={<VerticalAlignBottomIcon aria-hidden="true" />}
                   value="BOTTOM"
-                  label="Bottom"
-                ></MenuItem>
+                >
+                  Bottom
+                </MenuItem>
               </swatch-select>
             </li>
           ) : null,
@@ -169,29 +172,33 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
             )}
 
             <MenuItem
-              classList={{ floating: true }}
+              classList={{ menuitem: true }}
               icon={<FadeIcon aria-hidden="true" />}
               value="FADE"
-              label="Fade in"
-            />
+            >
+              Fade in
+            </MenuItem>
             <MenuItem
-              classList={{ floating: true }}
+              classList={{ menuitem: true }}
               icon={<SlideIcon aria-hidden="true" />}
               value="SLIDE"
-              label="Slide"
-            />
+            >
+              Slide
+            </MenuItem>
             <MenuItem
-              classList={{ floating: true }}
+              classList={{ menuitem: true }}
               icon={<GrowIcon aria-hidden="true" />}
               value="GROW"
-              label="Grow"
-            />
+            >
+              Grow
+            </MenuItem>
             <MenuItem
-              classList={{ floating: true }}
+              classList={{ menuitem: true }}
               icon={<ShrinkIcon aria-hidden="true" />}
               value="SHRINK"
-              label="Shrink"
-            />
+            >
+              Shrink
+            </MenuItem>
           </swatch-select>
         </li>
       </ul>

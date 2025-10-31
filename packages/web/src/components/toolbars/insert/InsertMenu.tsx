@@ -174,10 +174,11 @@ export default function InsertMenu({
   return (
     <popover-menu {...props}>
       <list-box>
-        <ul role="group">
+        <ul className="menuitemgroup" role="group">
           {BUTTONS.map(({ label, type, Icon }) => (
             <li role="presentation">
               <MenuItem
+                classList={{ menuitem: true }}
                 icon={<Icon aria-hidden="true" />}
                 data-tile-type={type}
                 on:click={onClick}
@@ -188,9 +189,10 @@ export default function InsertMenu({
           ))}
         </ul>
 
-        <ul role="group">
+        <ul className="menuitemgroup" role="group">
           <li role="presentation">
             <MenuItem
+              classList={{ menuitem: true }}
               icon={<VerticalLayoutIcon aria-hidden="true" />}
               on:click={createStack}
             >
@@ -200,6 +202,7 @@ export default function InsertMenu({
 
           <li role="presentation">
             <MenuItem
+              classList={{ menuitem: true }}
               icon={<FreeformLayoutIcon aria-hidden="true" />}
               on:click={createFreeformSection}
             >
