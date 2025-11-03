@@ -18,7 +18,6 @@ export default function PageContents({
 }: PageContentsProps) {
   const { isEditable } = editor;
   const tabIndex = isEditable.derive((editable) => (editable ? 0 : undefined));
-  const resize = isEditable.derive((value) => (value ? "all" : null));
 
   function ref(element: HTMLElement) {
     new LayoutEditor({
@@ -46,7 +45,9 @@ export default function PageContents({
               editable={isEditable}
               tile={tile}
               tabIndex={tabIndex}
-              resize={resize}
+              resize={tile.dimensions.derive((value) =>
+                value === "CUSTOM" ? "all" : null,
+              )}
             />
           </Block>
         )}
