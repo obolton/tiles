@@ -19,7 +19,7 @@ export interface TableToolbarProps {
   anchorName: string;
 }
 
-export default function TableToolbar({
+export default function TableSelectionToolbar({
   table,
   getTable,
   anchorName,

@@ -1,7 +1,7 @@
 import { keymap } from "prosemirror-keymap";
 import Tile from "./Tile";
 import RichText from "@/components/text/RichText";
-import TableToolbar from "@/components/toolbars/tables/TableToolbar";
+import TableSelectionToolbar from "@/components/toolbars/tables/TableSelectionToolbar";
 import CellToolbar from "@/components/toolbars/tables/CellToolbar";
 import { createState } from "@/utils/richText/state";
 import styles from "./TableTile.module.css";
@@ -330,7 +330,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
 
       <If condition={hasFocus}>
         <Portal>
-          <TableToolbar
+          <TableSelectionToolbar
             table={table}
             getTable={getTable}
             anchorName={anchorName}
