@@ -11,6 +11,7 @@ export interface TableEventMap {
   edittablecellend: TableEvent;
   edittablecolumnstart: TableEvent;
   edittablecolumnend: TableEvent;
+  tableselectionchange: TableEvent;
 }
 
 declare global {

@@ -930,12 +930,14 @@ export default class TableView extends HTMLElement {
     this.selection.add(selection);
     this.rangeSelection = "anchor" in selection ? selection : null;
     this.redrawSelection();
+    this.dispatchEvent(new TableEvent("tableselectionchange"));
   }
 
   private addSelection(selection: Selection) {
     this.selection.add(selection);
     this.rangeSelection = "anchor" in selection ? selection : null;
     this.redrawSelection();
+    this.dispatchEvent(new TableEvent("tableselectionchange"));
   }
 
   private clearSelection() {
@@ -950,6 +952,8 @@ export default class TableView extends HTMLElement {
     if (focused instanceof HTMLElement) {
       focused.blur();
     }
+
+    this.dispatchEvent(new TableEvent("tableselectionchange"));
   }
 
   private startDraggingRangeSelection() {

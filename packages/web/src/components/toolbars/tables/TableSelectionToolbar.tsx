@@ -16,13 +16,11 @@ import type Table from "@/models/Table";
 export interface TableToolbarProps {
   table: Table;
   getTable: () => TableView;
-  anchorName: string;
 }
 
 export default function TableSelectionToolbar({
   table,
   getTable,
-  anchorName,
 }: TableToolbarProps) {
   const { id, sectionId, textColor, background, editor } = table;
 
@@ -125,10 +123,9 @@ export default function TableSelectionToolbar({
 
   return (
     <floating-toolbar
-      className="vertical anchored"
-      style={{ positionAnchor: anchorName }}
-      data-tooltip-position="left"
-      aria-label="Table tools"
+      className="primary"
+      data-tooltip-position="top"
+      aria-label="Table selection tools"
     >
       <ul role="group">
         <li role="presentation">

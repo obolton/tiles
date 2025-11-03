@@ -42,6 +42,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
   const state: Reactive<EditorState | null> = reactive(null);
   const { id, textColor, background, columns, rows, numRows, editor } = table;
   const { isEditable } = editor;
+  const selectionType = reactive<"row" | "column" | "range" | null>(null);
 
   signal?.addEventListener(
     "abort",
@@ -291,6 +292,16 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
       .catch(handleError);
   }
 
+  function onSelectionChange() {
+    const selection = tableView?.selection;
+    if (!selection) {
+      selectionType.value = null;
+      return;
+    }
+    const [item] = Array.from(selection);
+    selectionType.value = item?.type ?? null;
+  }
+
   function getTable() {
     if (!tableView) {
       throw new Error("Table is not initialized");
@@ -317,6 +328,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
         on:movetablerow={onMoveRow}
         on:appendtablerow={onAppendRow}
         on:cleartableselection={onClearSelection}
+        on:tableselectionchange={onSelectionChange}
         $getColumn={(index) => columns.value[index]!}
         $getRow={(index) => rows.value[index]!}
         $updateCell={updateCell}
@@ -330,13 +342,13 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
 
       <If condition={hasFocus}>
         <Portal>
-          <TableSelectionToolbar
-            table={table}
-            getTable={getTable}
-            anchorName={anchorName}
-          />
+          <If condition={selectionType.derive((value) => value === "column")}>
+            <TableSelectionToolbar table={table} getTable={getTable} />
+          </If>
 
-          <CellToolbar editorView={editorView} state={state}></CellToolbar>
+          <If condition={selectionType.derive((value) => value === "range")}>
+            <CellToolbar editorView={editorView} state={state}></CellToolbar>
+          </If>
         </Portal>
       </If>
     </Tile>
