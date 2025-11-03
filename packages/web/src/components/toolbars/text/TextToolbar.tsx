@@ -7,7 +7,6 @@ import ToolbarButton from "@/components/buttons/ToolbarButton";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
 import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
-import AnimationIcon from "@/icons/animation.svg?jsx";
 import FadeIcon from "@/icons/fade.svg?jsx";
 import SlideIcon from "@/icons/slide.svg?jsx";
 import GrowIcon from "@/icons/grow.svg?jsx";
@@ -19,19 +18,6 @@ import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { Animation } from "@/models/Tile";
 import type { EditorView } from "prosemirror-view";
 import type { Reactive } from "@/utils/reactivity";
-
-const ALIGN_ICON = {
-  TOP: <VerticalAlignTopIcon aria-hidden="true" slot="icon" />,
-  CENTER: <VerticalAlignCenterIcon aria-hidden="true" slot="icon" />,
-  BOTTOM: <VerticalAlignBottomIcon aria-hidden="true" slot="icon" />,
-} as const;
-
-const ANIMATION_ICON = {
-  FADE: <FadeIcon aria-hidden="true" slot="icon" />,
-  SLIDE: <SlideIcon aria-hidden="true" slot="icon" />,
-  GROW: <GrowIcon aria-hidden="true" slot="icon" />,
-  SHRINK: <ShrinkIcon aria-hidden="true" slot="icon" />,
-} as const;
 
 export interface TextToolbarProps {
   text: Text;
@@ -120,29 +106,37 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
                   )
                 }
               >
-                {align.derive((value) => ALIGN_ICON[value])}
+                <ul className="menuitemgroup" role="group">
+                  <li role="presentation">
+                    <MenuItem
+                      classList={{ menuitem: true }}
+                      icon={<VerticalAlignTopIcon aria-hidden="true" />}
+                      value="TOP"
+                    >
+                      Top
+                    </MenuItem>
+                  </li>
 
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<VerticalAlignTopIcon aria-hidden="true" />}
-                  value="TOP"
-                >
-                  Top
-                </MenuItem>
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<VerticalAlignCenterIcon aria-hidden="true" />}
-                  value="CENTER"
-                >
-                  Center
-                </MenuItem>
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<VerticalAlignBottomIcon aria-hidden="true" />}
-                  value="BOTTOM"
-                >
-                  Bottom
-                </MenuItem>
+                  <li role="presentation">
+                    <MenuItem
+                      classList={{ menuitem: true }}
+                      icon={<VerticalAlignCenterIcon aria-hidden="true" />}
+                      value="CENTER"
+                    >
+                      Center
+                    </MenuItem>
+                  </li>
+
+                  <li role="presentation">
+                    <MenuItem
+                      classList={{ menuitem: true }}
+                      icon={<VerticalAlignBottomIcon aria-hidden="true" />}
+                      value="BOTTOM"
+                    >
+                      Bottom
+                    </MenuItem>
+                  </li>
+                </ul>
               </swatch-select>
             </li>
           ) : null,
@@ -163,42 +157,47 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
               )
             }
           >
-            {animation.derive((value) =>
-              value ? (
-                ANIMATION_ICON[value]
-              ) : (
-                <AnimationIcon aria-hidden="true" slot="icon" />
-              ),
-            )}
+            <ul className="menuitemgroup" role="group">
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<FadeIcon aria-hidden="true" />}
+                  value="FADE"
+                >
+                  Fade
+                </MenuItem>
+              </li>
 
-            <MenuItem
-              classList={{ menuitem: true }}
-              icon={<FadeIcon aria-hidden="true" />}
-              value="FADE"
-            >
-              Fade in
-            </MenuItem>
-            <MenuItem
-              classList={{ menuitem: true }}
-              icon={<SlideIcon aria-hidden="true" />}
-              value="SLIDE"
-            >
-              Slide
-            </MenuItem>
-            <MenuItem
-              classList={{ menuitem: true }}
-              icon={<GrowIcon aria-hidden="true" />}
-              value="GROW"
-            >
-              Grow
-            </MenuItem>
-            <MenuItem
-              classList={{ menuitem: true }}
-              icon={<ShrinkIcon aria-hidden="true" />}
-              value="SHRINK"
-            >
-              Shrink
-            </MenuItem>
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<SlideIcon aria-hidden="true" />}
+                  value="SLIDE"
+                >
+                  Slide
+                </MenuItem>
+              </li>
+
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<GrowIcon aria-hidden="true" />}
+                  value="GROW"
+                >
+                  Grow
+                </MenuItem>
+              </li>
+
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<ShrinkIcon aria-hidden="true" />}
+                  value="SHRINK"
+                >
+                  Shrink
+                </MenuItem>
+              </li>
+            </ul>
           </swatch-select>
         </li>
       </ul>

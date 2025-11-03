@@ -75,18 +75,6 @@ const BLOCK_FORMAT_ICON = {
   code: <CodeIcon aria-hidden="true" slot="icon" />,
 } as const;
 
-const ALIGN_ICON = {
-  left: <AlignLeftIcon aria-hidden="true" slot="icon" />,
-  center: <AlignCenterIcon aria-hidden="true" slot="icon" />,
-  right: <AlignRightIcon aria-hidden="true" slot="icon" />,
-} as const;
-
-const LIST_ICON = {
-  unordered: <UnorderedListIcon aria-hidden="true" slot="icon" />,
-  ordered: <OrderedListIcon aria-hidden="true" slot="icon" />,
-  check: <CheckListIcon aria-hidden="true" slot="icon" />,
-} as const;
-
 export interface FormattingToolsProps {
   editorView: Reactive<EditorView | null>;
   state: Reactive<EditorState | null>;
@@ -398,32 +386,34 @@ export default function FormattingTools({
             value={format.derive((value) => value.list ?? "")}
             on:change={formatList}
           >
-            {format.derive((value) =>
-              value.list ? (
-                LIST_ICON[value.list]
-              ) : (
-                <UnorderedListIcon aria-hidden="true" slot="icon" />
-              ),
-            )}
+            <ul className="menuitemgroup inline" role="group">
+              <li role="presentation">
+                <MenuItem
+                  classList={{ floating: true }}
+                  icon={<UnorderedListIcon aria-hidden="true" />}
+                  value="unordered"
+                  label="Unordered list"
+                />
+              </li>
 
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<UnorderedListIcon aria-hidden="true" />}
-              value="unordered"
-              label="Unordered list"
-            />
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<OrderedListIcon aria-hidden="true" />}
-              value="ordered"
-              label="Ordered list"
-            />
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<CheckListIcon aria-hidden="true" />}
-              value="check"
-              label="Check list"
-            />
+              <li role="presentation">
+                <MenuItem
+                  classList={{ floating: true }}
+                  icon={<OrderedListIcon aria-hidden="true" />}
+                  value="ordered"
+                  label="Ordered list"
+                />
+              </li>
+
+              <li role="presentation">
+                <MenuItem
+                  classList={{ floating: true }}
+                  icon={<CheckListIcon aria-hidden="true" />}
+                  value="check"
+                  label="Check list"
+                />
+              </li>
+            </ul>
           </swatch-select>
         </li>
       </ul>
@@ -522,32 +512,34 @@ export default function FormattingTools({
             value={format.derive((value) => value.align)}
             on:change={formatAlignment}
           >
-            {format.derive((value) =>
-              value.align ? (
-                ALIGN_ICON[value.align]
-              ) : (
-                <AlignLeftIcon aria-hidden="true" slot="icon" />
-              ),
-            )}
+            <ul className="menuitemgroup inline" role="group">
+              <li role="presentation">
+                <MenuItem
+                  classList={{ floating: true }}
+                  icon={<AlignLeftIcon aria-hidden="true" />}
+                  value="left"
+                  label="Align left"
+                />
+              </li>
 
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<AlignLeftIcon aria-hidden="true" />}
-              value="left"
-              label="Align left"
-            />
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<AlignCenterIcon aria-hidden="true" />}
-              value="center"
-              label="Align center"
-            />
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<AlignRightIcon aria-hidden="true" />}
-              value="right"
-              label="Align right"
-            />
+              <li role="presentation">
+                <MenuItem
+                  classList={{ floating: true }}
+                  icon={<AlignCenterIcon aria-hidden="true" />}
+                  value="center"
+                  label="Align center"
+                />
+              </li>
+
+              <li role="presentation">
+                <MenuItem
+                  classList={{ floating: true }}
+                  icon={<AlignRightIcon aria-hidden="true" />}
+                  value="right"
+                  label="Align right"
+                />
+              </li>
+            </ul>
           </swatch-select>
         </li>
       </ul>

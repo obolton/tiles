@@ -7,12 +7,6 @@ import RemoveIcon from "@/icons/remove.svg?jsx";
 import type { Series, ChartType } from "@/models/Chart";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 
-const CHART_SERIES_TYPE_ICON = {
-  BAR: <BarChartIcon aria-hidden="true" slot="icon" />,
-  LINE: <LineChartIcon aria-hidden="true" slot="icon" />,
-  AREA: <AreaChartIcon aria-hidden="true" slot="icon" />,
-} as const;
-
 export interface SeriesRowProps {
   series: Series;
   onSetChartType: (type: ChartType, series: Series) => void;
@@ -44,26 +38,34 @@ export default function SeriesRow({
               onSetChartType(type, series);
             }}
           >
-            {series.type.derive((value) => CHART_SERIES_TYPE_ICON[value])}
+            <ul className="menuitemgroup" role="group">
+              <li role="presentation">
+                <MenuItem
+                  classList={{ floating: true }}
+                  icon={<BarChartIcon aria-hidden="true" />}
+                  value="BAR"
+                  label="Bar chart"
+                />
+              </li>
 
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<BarChartIcon aria-hidden="true" />}
-              value="BAR"
-              label="Bar chart"
-            />
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<LineChartIcon aria-hidden="true" />}
-              value="LINE"
-              label="Line chart"
-            />
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<AreaChartIcon aria-hidden="true" />}
-              value="AREA"
-              label="Area chart"
-            />
+              <li role="presentation">
+                <MenuItem
+                  classList={{ floating: true }}
+                  icon={<LineChartIcon aria-hidden="true" />}
+                  value="LINE"
+                  label="Line chart"
+                />
+              </li>
+
+              <li role="presentation">
+                <MenuItem
+                  classList={{ floating: true }}
+                  icon={<AreaChartIcon aria-hidden="true" />}
+                  value="AREA"
+                  label="Area chart"
+                />
+              </li>
+            </ul>
           </swatch-select>
 
           <button
