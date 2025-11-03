@@ -25,11 +25,6 @@
     scale var(--animation-duration) var(--spring),
     opacity var(--animation-duration) var(--spring);
 
-  :host([orientation="vertical"]) & {
-    flex-direction: column;
-    border-radius: 12px;
-  }
-
   &:popover-open {
     @starting-style {
       scale: 0.9;
@@ -41,5 +36,13 @@
     display: none;
     scale: 0.9;
     opacity: 0;
+  }
+}
+
+:host([orientation="vertical"]) {
+  flex-direction: column;
+
+  #items {
+    border-radius: 12px;
   }
 }
