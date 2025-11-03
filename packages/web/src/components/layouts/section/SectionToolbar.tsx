@@ -9,6 +9,9 @@ import AnchorTopIcon from "@/icons/anchor-top.svg?jsx";
 import AnchorBottomIcon from "@/icons/anchor-bottom.svg?jsx";
 import AnchorLeftIcon from "@/icons/anchor-left.svg?jsx";
 import AnchorRightIcon from "@/icons/anchor-right.svg?jsx";
+import LandscapeIcon from "@/icons/landscape.svg?jsx";
+import PortraitIcon from "@/icons/portrait.svg?jsx";
+import SizeIcon from "@/icons/size.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import Editor from "@/editor/Editor";
@@ -68,49 +71,49 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
             role="menuitem"
             aria-label="Layout"
             data-tooltip="Layout"
-            orientation="horizontal"
+            orientation="vertical"
             align="center"
             value={section.layout}
             on:change={setLayout}
           >
-            {section.layout.derive((value) => {
-              switch (value) {
-                case "GRID":
-                  return <GridLayoutIcon aria-hidden="true" slot="icon" />;
-                case "HORIZONTAL":
-                  return (
-                    <HorizontalLayoutIcon aria-hidden="true" slot="icon" />
-                  );
-                case "VERTICAL":
-                  return <VerticalLayoutIcon aria-hidden="true" slot="icon" />;
-                case "FREEFORM":
-                  return <FreeformLayoutIcon aria-hidden="true" slot="icon" />;
-              }
-            })}
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<GridLayoutIcon aria-hidden="true" />}
-              value="GRID"
-              label="Grid"
-            />
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<HorizontalLayoutIcon aria-hidden="true" />}
-              value="HORIZONTAL"
-              label="Horizontal"
-            />
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<VerticalLayoutIcon aria-hidden="true" />}
-              value="VERTICAL"
-              label="Vertical"
-            />
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<FreeformLayoutIcon aria-hidden="true" />}
-              value="FREEFORM"
-              label="Freeform"
-            />
+            <ul className="menuitemgroup" role="group">
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<GridLayoutIcon aria-hidden="true" />}
+                  value="GRID"
+                >
+                  Grid
+                </MenuItem>
+              </li>
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<HorizontalLayoutIcon aria-hidden="true" />}
+                  value="HORIZONTAL"
+                >
+                  Horizontal
+                </MenuItem>
+              </li>
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<VerticalLayoutIcon aria-hidden="true" />}
+                  value="VERTICAL"
+                >
+                  Vertical
+                </MenuItem>
+              </li>
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<FreeformLayoutIcon aria-hidden="true" />}
+                  value="FREEFORM"
+                >
+                  Freeform
+                </MenuItem>
+              </li>
+            </ul>
           </swatch-select>
         </li>
 
@@ -120,85 +123,99 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
             aria-label="Anchor"
             aria-selected={section.anchor}
             data-tooltip="Anchor"
-            orientation="horizontal"
+            orientation="vertical"
             align="center"
             value={section.anchor}
             on:change={setAnchor}
           >
-            {section.anchor.derive((value) => {
-              switch (value) {
-                case "TOP":
-                  return <AnchorTopIcon aria-hidden="true" slot="icon" />;
-                case "BOTTOM":
-                  return <AnchorBottomIcon aria-hidden="true" slot="icon" />;
-                case "LEFT":
-                default:
-                  return <AnchorLeftIcon aria-hidden="true" slot="icon" />;
-                case "RIGHT":
-                  return <AnchorRightIcon aria-hidden="true" slot="icon" />;
-              }
-            })}
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<AnchorTopIcon aria-hidden="true" />}
-              value="TOP"
-              label="Top"
-            />
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<AnchorBottomIcon aria-hidden="true" />}
-              value="BOTTOM"
-              label="Bottom"
-            />
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<AnchorLeftIcon aria-hidden="true" />}
-              value="LEFT"
-              label="Left"
-            />
-            <MenuItem
-              classList={{ floating: true }}
-              icon={<AnchorRightIcon aria-hidden="true" />}
-              value="RIGHT"
-              label="Right"
-            />
+            <ul className="menuitemgroup" role="group">
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<AnchorTopIcon aria-hidden="true" />}
+                  value="TOP"
+                  label="Top"
+                >
+                  Top
+                </MenuItem>
+              </li>
+
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<AnchorBottomIcon aria-hidden="true" />}
+                  value="BOTTOM"
+                  label="Bottom"
+                >
+                  Bottom
+                </MenuItem>
+              </li>
+
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<AnchorLeftIcon aria-hidden="true" />}
+                  value="LEFT"
+                  label="Left"
+                >
+                  Left
+                </MenuItem>
+              </li>
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<AnchorRightIcon aria-hidden="true" />}
+                  value="RIGHT"
+                  label="Right"
+                >
+                  Right
+                </MenuItem>
+              </li>
+            </ul>
           </swatch-select>
         </li>
 
         <li role="presentation">
-          <select
+          <swatch-select
+            role="menuitem"
             aria-label="Size"
+            data-tooltip="Size"
+            orientation="vertical"
             value={section.dimensions}
             on:change={setDimensions}
           >
-            <option value="" disabled>
-              Size
-            </option>
-            <option
-              value="LANDSCAPE"
-              selected={
-                section.dimensions.value === "LANDSCAPE" ? true : undefined
-              }
-            >
-              Landscape
-            </option>
-            <option
-              value="PORTRAIT"
-              selected={
-                section.dimensions.value === "PORTRAIT" ? true : undefined
-              }
-            >
-              Portrait
-            </option>
-            <option
-              value="CUSTOM"
-              selected={
-                section.dimensions.value === "CUSTOM" ? true : undefined
-              }
-            >
-              Custom
-            </option>
-          </select>
+            <ul className="menuitemgroup" role="group">
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<SizeIcon aria-hidden="true" />}
+                  value="CUSTOM"
+                >
+                  Custom size
+                </MenuItem>
+              </li>
+
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<LandscapeIcon aria-hidden="true" />}
+                  value="LANDSCAPE"
+                >
+                  Landscape
+                </MenuItem>
+              </li>
+
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<PortraitIcon aria-hidden="true" />}
+                  value="PORTRAIT"
+                >
+                  Portrait
+                </MenuItem>
+              </li>
+            </ul>
+          </swatch-select>
         </li>
 
         <li role="presentation">
