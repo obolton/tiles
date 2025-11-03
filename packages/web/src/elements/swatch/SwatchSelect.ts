@@ -19,6 +19,7 @@ export default class SwatchSelect extends HTMLElement {
   #value: string | null = null;
 
   private internals: ElementInternals;
+  private iconSlot: HTMLSlotElement;
   private items: PopoverMenu;
 
   constructor() {
@@ -30,8 +31,8 @@ export default class SwatchSelect extends HTMLElement {
     const shadow = this.attachShadow({ mode: "closed" });
     shadow.adoptedStyleSheets = [stylesheet];
 
-    const iconSlot = document.createElement("slot");
-    iconSlot.name = "icon";
+    this.iconSlot = document.createElement("slot");
+    this.iconSlot.name = "icon";
 
     this.items = document.createElement("popover-menu");
     this.items.id = "items";
@@ -43,7 +44,7 @@ export default class SwatchSelect extends HTMLElement {
     itemsSlot.addEventListener("slotchange", this);
     this.items.append(itemsSlot);
 
-    shadow.append(iconSlot, this.items);
+    shadow.append(this.iconSlot, this.items);
 
     this.addEventListener("click", this, { passive: true });
   }
@@ -66,6 +67,8 @@ export default class SwatchSelect extends HTMLElement {
     if (item) {
       item.ariaChecked = "true";
     }
+
+    this.setIcon(item?.querySelector("svg") ?? null);
 
     this.#value = value;
   }
@@ -152,6 +155,7 @@ export default class SwatchSelect extends HTMLElement {
       if (item) {
         item.ariaChecked = "true";
       }
+      this.setIcon(item?.querySelector("svg") ?? null);
     }
   }
 
@@ -159,6 +163,22 @@ export default class SwatchSelect extends HTMLElement {
 
   private getItem(value: string) {
     return this.querySelector(`[value="${escapeUTF8(value)}"]`);
+  }
+
+  // Icon
+
+  private setIcon(icon: SVGElement | null) {
+    for (const element of this.iconSlot.assignedElements()) {
+      element.remove();
+    }
+
+    if (!icon) {
+      return;
+    }
+
+    const iconClone = icon.cloneNode(true) as SVGElement;
+    iconClone.slot = "icon";
+    this.prepend(iconClone);
   }
 
   // Open and close
