@@ -1,8 +1,20 @@
-export default class MapEvent extends Event {
-  markerId?: string;
+export interface MapEventMap {
+  deletemarker: MapEvent;
+}
 
-  constructor(type: "deletemarker", { markerId }: { markerId?: string }) {
-    super(type, { bubbles: true, cancelable: false });
-    this.markerId = markerId;
+declare global {
+  interface HTMLElementEventMap extends MapEventMap {}
+}
+
+export interface MapEventInit extends EventInit {
+  markerId?: string;
+}
+
+export default class MapEvent extends Event {
+  readonly markerId?: string;
+
+  constructor(type: keyof MapEventMap, options?: MapEventInit) {
+    super(type, { bubbles: true, cancelable: false, ...options });
+    this.markerId = options?.markerId;
   }
 }
