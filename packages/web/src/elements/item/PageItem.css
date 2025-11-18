@@ -60,15 +60,19 @@
     opacity var(--animation-duration-short) var(--easing),
     border-color var(--animation-duration-short) var(--easing);
 
-  :host(:hover) &,
-  :host(:focus-within) & {
+  :host(:hover) &:not(.inactive),
+  :host(:focus-within) &:not(.inactive) {
     opacity: 0.5;
   }
 
   &:hover,
   &:focus,
-  :host(:state(resizing)) & {
+  :host(:state(resizing)) &:not(.inactive) {
     opacity: 1 !important;
+  }
+
+  &.inactive {
+    opacity: 0;
   }
 
   &:focus,

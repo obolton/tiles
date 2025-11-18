@@ -381,10 +381,17 @@ export default class PageItem extends HTMLElement {
 
     this.shadowRoot?.appendChild(this.outline);
 
-    // Focus the active resize handle
+    // Focus the active resize handle and mark others as inactive
     const activeHandle = this.resizeDirection
       ? this.resizeHandles.get(this.resizeDirection)
       : null;
+
+    for (const handle of this.resizeHandles.values()) {
+      if (handle !== activeHandle) {
+        handle.classList.add("inactive");
+      }
+    }
+
     activeHandle?.focus({ preventScroll: true });
   }
 
@@ -402,6 +409,10 @@ export default class PageItem extends HTMLElement {
   }
 
   private removeOutline() {
+    for (const handle of this.resizeHandles.values()) {
+      handle.classList.remove("inactive");
+    }
+
     // Move all resize handles back to shadowRoot
     this.shadowRoot?.append(...this.resizeHandles.values());
 
