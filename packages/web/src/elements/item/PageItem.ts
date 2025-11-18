@@ -202,6 +202,9 @@ export default class PageItem extends HTMLElement {
     if (this.isResizing) {
       const rect = this.getBoundingClientRect();
 
+      this.x = rect.x;
+      this.y = rect.y;
+
       // Calculate new dimensions and position based on resize direction
       switch (direction) {
         case "se": // Bottom-right (default behavior)
