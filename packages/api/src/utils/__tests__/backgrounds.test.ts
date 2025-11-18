@@ -8,9 +8,8 @@ describe("getBackgroundProperties", () => {
 
   test("returns a null background", () => {
     expect(getBackgroundProperties(null)).toEqual({
-      backgroundL: null,
-      backgroundC: null,
-      backgroundH: null,
+      backgroundColor: null,
+      backgroundGradient: null,
       backgroundImageId: null,
     });
   });
@@ -19,16 +18,11 @@ describe("getBackgroundProperties", () => {
     expect(
       getBackgroundProperties({
         type: "color",
-        color: {
-          l: 0.5,
-          c: 0.4,
-          h: 30,
-        },
+        color: "ff00ff00ff00",
       }),
     ).toEqual({
-      backgroundL: 0.5,
-      backgroundC: 0.4,
-      backgroundH: 30,
+      backgroundColor: new Uint8Array([255, 0, 255, 0, 255, 0]),
+      backgroundGradient: null,
       backgroundImageId: null,
     });
   });
@@ -40,9 +34,8 @@ describe("getBackgroundProperties", () => {
         imageId: "test",
       }),
     ).toEqual({
-      backgroundL: null,
-      backgroundC: null,
-      backgroundH: null,
+      backgroundColor: null,
+      backgroundGradient: null,
       backgroundImageId: "test",
     });
   });
