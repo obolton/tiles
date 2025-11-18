@@ -24,6 +24,8 @@
 
 .item {
   display: flex;
+  width: calc(var(--width) * 24px);
+  height: calc(var(--height) * 24px);
   border-radius: 12px;
   outline-color: transparent;
   transition:
