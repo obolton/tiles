@@ -101,6 +101,7 @@ a.floating,
 swatch-select {
   --border-radius: 22px;
 
+  position: relative;
   min-width: 44px;
   height: 44px;
   display: flex;
