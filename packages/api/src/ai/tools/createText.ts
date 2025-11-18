@@ -68,7 +68,9 @@ async function createTextArtifact(
       },
     ],
     textColor,
-    background: backgroundColor ? { color: backgroundColor } : undefined,
+    background: backgroundColor
+      ? { type: "color", color: backgroundColor }
+      : undefined,
   });
   return { artifact };
 }

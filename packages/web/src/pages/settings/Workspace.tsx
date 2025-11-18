@@ -63,7 +63,7 @@ export default function Workspace({
                 value={workspace.name}
                 placeholder="Name"
                 required
-                maxlength="64"
+                maxLength={64}
               />
             </label>
 
