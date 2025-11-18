@@ -188,13 +188,20 @@ export default function Item({
     (editable, hidden) => !hidden || editable,
   );
 
+  const resizeDirection = resize
+    ? new Computed(
+        [resize, editor.isEditable] as const,
+        (direction, isEditable) => (isEditable ? direction : null),
+      )
+    : undefined;
+
   return (
     <If condition={show}>
       <page-item
         id={id}
         ref={ref}
         allowdrag={editable}
-        resize={resize}
+        resize={resizeDirection}
         classList={{
           [styles.item]: true,
           [styles.draggable]: editable,
