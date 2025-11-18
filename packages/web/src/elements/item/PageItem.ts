@@ -9,6 +9,7 @@ const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 export type ResizeDirection = "all" | "horizontal" | "vertical";
+export type ResizeHandleDirection = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w";
 
 export interface PageItemAttributes {
   allowdrag?: boolean;
@@ -32,13 +33,16 @@ export default class PageItem extends HTMLElement {
   private readonly internals: ElementInternals;
 
   private dragAbortController: AbortController | null = null;
-  private resizeHandle: HTMLElement | null = null;
+  private resizeHandles: Map<ResizeHandleDirection, HTMLElement> = new Map();
   private outline: HTMLElement | null = null;
 
   private isResizing = false;
   private resizeAbortController?: AbortController;
+  private resizeDirection: ResizeHandleDirection | null = null;
   private width = 0;
   private height = 0;
+  private x = 0;
+  private y = 0;
   private initialPointerX = 0;
   private initialPointerY = 0;
 
@@ -55,13 +59,9 @@ export default class PageItem extends HTMLElement {
 
     if (!value) {
       this.endResizing();
-      this.hideResizeHandle();
+      this.hideResizeHandles();
     } else {
-      if (this.resizeHandle) {
-        this.resizeHandle.className = value;
-      } else {
-        this.showResizeHandle();
-      }
+      this.showResizeHandles();
     }
   }
 
@@ -126,32 +126,49 @@ export default class PageItem extends HTMLElement {
     this.dragAbortController = null;
   }
 
-  private showResizeHandle() {
-    if (this.resizeHandle) {
-      return;
-    }
+  private showResizeHandles() {
+    // Remove existing handles first
+    this.hideResizeHandles();
 
-    this.resizeHandle = document.createElement("div");
-    this.resizeHandle.id = "resize";
-    this.resizeHandle.className = this.resize ?? "all";
-    this.resizeHandle.tabIndex = 0;
-    this.resizeHandle.addEventListener(
-      "pointerdown",
-      this.pointerDown.bind(this),
-      {
-        passive: false,
-      },
-    );
-    this.shadowRoot?.append(this.resizeHandle);
+    const directions: ResizeHandleDirection[] =
+      this.resize === "all"
+        ? ["nw", "n", "ne", "e", "se", "s", "sw", "w"]
+        : this.resize === "horizontal"
+        ? ["e", "w"]
+        : this.resize === "vertical"
+        ? ["n", "s"]
+        : [];
+
+    for (const direction of directions) {
+      const handle = document.createElement("div");
+      handle.className = `resize resize-${direction}`;
+      handle.dataset.direction = direction;
+      handle.tabIndex = 0;
+      handle.addEventListener(
+        "pointerdown",
+        this.pointerDown.bind(this),
+        {
+          passive: false,
+        },
+      );
+      this.shadowRoot?.append(handle);
+      this.resizeHandles.set(direction, handle);
+    }
   }
 
-  private hideResizeHandle() {
-    this.resizeHandle?.remove();
-    this.resizeHandle = null;
+  private hideResizeHandles() {
+    for (const handle of this.resizeHandles.values()) {
+      handle.remove();
+    }
+    this.resizeHandles.clear();
   }
 
   private pointerDown(event: PointerEvent) {
     event.stopPropagation();
+
+    // Capture which handle was clicked
+    const target = event.target as HTMLElement;
+    this.resizeDirection = (target.dataset.direction as ResizeHandleDirection) || null;
 
     this.resizeAbortController = new AbortController();
     const signal = this.resizeAbortController.signal;
@@ -175,13 +192,48 @@ export default class PageItem extends HTMLElement {
   }
 
   private pointerMove(event: PointerEvent) {
-    const horizontal = this.resize === "all" || this.resize === "horizontal";
-    const vertical = this.resize === "all" || this.resize === "vertical";
+    const direction = this.resizeDirection;
 
     if (this.isResizing) {
       const rect = this.getBoundingClientRect();
-      this.width = horizontal ? event.clientX - rect.x : rect.width;
-      this.height = vertical ? event.clientY - rect.y : rect.height;
+
+      // Calculate new dimensions and position based on resize direction
+      switch (direction) {
+        case "se": // Bottom-right (default behavior)
+          this.width = event.clientX - rect.x;
+          this.height = event.clientY - rect.y;
+          break;
+        case "nw": // Top-left
+          this.width = rect.right - event.clientX;
+          this.height = rect.bottom - event.clientY;
+          this.x = event.clientX;
+          this.y = event.clientY;
+          break;
+        case "ne": // Top-right
+          this.width = event.clientX - rect.x;
+          this.height = rect.bottom - event.clientY;
+          this.y = event.clientY;
+          break;
+        case "sw": // Bottom-left
+          this.width = rect.right - event.clientX;
+          this.height = event.clientY - rect.y;
+          this.x = event.clientX;
+          break;
+        case "n": // Top edge
+          this.height = rect.bottom - event.clientY;
+          this.y = event.clientY;
+          break;
+        case "e": // Right edge
+          this.width = event.clientX - rect.x;
+          break;
+        case "s": // Bottom edge
+          this.height = event.clientY - rect.y;
+          break;
+        case "w": // Left edge
+          this.width = rect.right - event.clientX;
+          this.x = event.clientX;
+          break;
+      }
 
       this.dispatchEvent(
         new PageItemEvent("itemresize", {
@@ -189,13 +241,36 @@ export default class PageItem extends HTMLElement {
           cancelable: false,
           width: this.width,
           height: this.height,
+          x: this.x,
+          y: this.y,
+          direction,
         }),
       );
 
       this.updateOutlineSize();
     } else {
-      const deltaX = horizontal ? event.clientX - this.initialPointerX : 0;
-      const deltaY = vertical ? event.clientY - this.initialPointerY : 0;
+      // Check drag threshold based on resize direction
+      let deltaX = 0;
+      let deltaY = 0;
+
+      switch (direction) {
+        case "e":
+        case "w":
+          deltaX = event.clientX - this.initialPointerX;
+          break;
+        case "n":
+        case "s":
+          deltaY = event.clientY - this.initialPointerY;
+          break;
+        case "ne":
+        case "nw":
+        case "se":
+        case "sw":
+          deltaX = event.clientX - this.initialPointerX;
+          deltaY = event.clientY - this.initialPointerY;
+          break;
+      }
+
       const distance = Math.hypot(deltaX, deltaY);
 
       if (distance >= DRAG_THRESHOLD) {
@@ -212,6 +287,9 @@ export default class PageItem extends HTMLElement {
           cancelable: false,
           width: this.width,
           height: this.height,
+          x: this.x,
+          y: this.y,
+          direction: this.resizeDirection,
         }),
       );
     }
@@ -242,6 +320,8 @@ export default class PageItem extends HTMLElement {
     this.initialPointerY = event.clientY;
     this.width = rect.width;
     this.height = rect.height;
+    this.x = rect.x;
+    this.y = rect.y;
 
     const allowResize = this.dispatchEvent(
       new PageItemEvent("itemresizestart", {
@@ -249,6 +329,9 @@ export default class PageItem extends HTMLElement {
         cancelable: true,
         width: this.width,
         height: this.height,
+        x: this.x,
+        y: this.y,
+        direction: this.resizeDirection,
       }),
     );
 
@@ -284,24 +367,34 @@ export default class PageItem extends HTMLElement {
     this.outline.setAttribute("part", "outline");
     this.outline.style.width = this.width + "px";
     this.outline.style.height = this.height + "px";
-    if (this.resizeHandle) {
-      this.outline.appendChild(this.resizeHandle);
-    }
+
+    // Move all resize handles into the outline
+    this.outline.append(...this.resizeHandles.values());
+
     this.shadowRoot?.appendChild(this.outline);
-    this.resizeHandle?.focus({ preventScroll: true });
+
+    // Focus the active resize handle
+    const activeHandle = this.resizeDirection ? this.resizeHandles.get(this.resizeDirection) : null;
+    activeHandle?.focus({ preventScroll: true });
   }
 
   private updateOutlineSize() {
     if (this.outline) {
+      const rect = this.getBoundingClientRect();
+      const offsetX = this.x - rect.x;
+      const offsetY = this.y - rect.y;
+
+      this.outline.style.left = offsetX + "px";
+      this.outline.style.top = offsetY + "px";
       this.outline.style.width = this.width + "px";
       this.outline.style.height = this.height + "px";
     }
   }
 
   private removeOutline() {
-    if (this.resizeHandle) {
-      this.shadowRoot?.appendChild(this.resizeHandle);
-    }
+    // Move all resize handles back to shadowRoot
+    this.shadowRoot?.append(...this.resizeHandles.values());
+
     void this.outline
       ?.animate([{ opacity: 0 }], {
         ...DEFAULT_TIMING,

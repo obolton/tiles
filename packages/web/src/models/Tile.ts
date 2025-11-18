@@ -203,8 +203,10 @@ export default class Tile {
     return this.updateTile({ width, height, block });
   }
 
-  persistSize() {
+  persistPosition() {
     return this.updateTile({
+      x: this.x.value,
+      y: this.y.value,
       width: this.width.value,
       height: this.height.value,
       block: this.block.value,

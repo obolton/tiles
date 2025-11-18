@@ -509,6 +509,21 @@ export default class LayoutEditor {
     if (typeof block === "boolean") {
       this.resizing.block.value = block;
     }
+
+    // Handle position changes for freeform layouts (from corner/edge resize)
+    if (
+      this.layoutType === "FREEFORM" &&
+      typeof event.x !== "undefined" &&
+      typeof event.y !== "undefined"
+    ) {
+      const offsetX = event.x - this.gridRect.x;
+      const offsetY = event.y - this.gridRect.y;
+      const x = this.getColumn(offsetX, event.width, this.resizing.id);
+      const y = this.getRow(offsetY, event.height, this.resizing.id);
+
+      this.resizing.x.value = x;
+      this.resizing.y.value = y;
+    }
   }
 
   private async handleResizeEnd(event: PageItemEvent) {
@@ -522,7 +537,7 @@ export default class LayoutEditor {
     delete document.body.dataset.resize;
 
     try {
-      await this.resizing.persistSize();
+      await this.resizing.persistPosition();
     } catch (error) {
       handleError(error);
     }
