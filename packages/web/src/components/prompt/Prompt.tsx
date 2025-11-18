@@ -90,11 +90,11 @@ export default function Prompt({
     >
       <ResizingTextarea
         name="prompt"
-        rows="1"
+        rows={1}
         placeholder={placeholder}
         title={placeholder}
         required
-        readonly={pending}
+        readOnly={pending}
         on:keydown={handleKeyDown}
       />
 

@@ -29,7 +29,7 @@ export default function ImagePanel({ onChange }: ImagePanelProps) {
     <file-picker
       className={styles.file}
       accept={Array.from(ACCEPT_IMAGE_TYPES).join(",")}
-      tabindex="0"
+      tabIndex={0}
       on:change={onSelectFile}
     >
       Select an image or drag and drop
