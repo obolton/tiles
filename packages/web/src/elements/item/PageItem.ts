@@ -9,7 +9,15 @@ const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 export type ResizeDirection = "all" | "horizontal" | "vertical";
-export type ResizeHandleDirection = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w";
+export type ResizeHandleDirection =
+  | "nw"
+  | "n"
+  | "ne"
+  | "e"
+  | "se"
+  | "s"
+  | "sw"
+  | "w";
 
 export interface PageItemAttributes {
   allowdrag?: boolean;
@@ -134,23 +142,19 @@ export default class PageItem extends HTMLElement {
       this.resize === "all"
         ? ["nw", "n", "ne", "e", "se", "s", "sw", "w"]
         : this.resize === "horizontal"
-        ? ["e", "w"]
-        : this.resize === "vertical"
-        ? ["n", "s"]
-        : [];
+          ? ["e", "w"]
+          : this.resize === "vertical"
+            ? ["n", "s"]
+            : [];
 
     for (const direction of directions) {
       const handle = document.createElement("div");
       handle.className = `resize resize-${direction}`;
       handle.dataset.direction = direction;
       handle.tabIndex = 0;
-      handle.addEventListener(
-        "pointerdown",
-        this.pointerDown.bind(this),
-        {
-          passive: false,
-        },
-      );
+      handle.addEventListener("pointerdown", this.pointerDown.bind(this), {
+        passive: false,
+      });
       this.shadowRoot?.append(handle);
       this.resizeHandles.set(direction, handle);
     }
@@ -168,7 +172,8 @@ export default class PageItem extends HTMLElement {
 
     // Capture which handle was clicked
     const target = event.target as HTMLElement;
-    this.resizeDirection = (target.dataset.direction as ResizeHandleDirection) || null;
+    this.resizeDirection =
+      (target.dataset.direction as ResizeHandleDirection) || null;
 
     this.resizeAbortController = new AbortController();
     const signal = this.resizeAbortController.signal;
@@ -374,7 +379,9 @@ export default class PageItem extends HTMLElement {
     this.shadowRoot?.appendChild(this.outline);
 
     // Focus the active resize handle
-    const activeHandle = this.resizeDirection ? this.resizeHandles.get(this.resizeDirection) : null;
+    const activeHandle = this.resizeDirection
+      ? this.resizeHandles.get(this.resizeDirection)
+      : null;
     activeHandle?.focus({ preventScroll: true });
   }
 
