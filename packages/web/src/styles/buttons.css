@@ -244,6 +244,7 @@ swatch-select {
 }
 
 button.menuitem {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -269,6 +270,21 @@ button.menuitem {
 
   &:enabled:active {
     background-color: rgb(0 0 0 / 20%);
+  }
+
+  &[aria-checked="true"] {
+    padding-inline-end: 40px;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset-inline-end: 12px;
+      width: 20px;
+      height: 20px;
+      background-color: currentcolor;
+      mask: url("@/icons/check.svg?inline") no-repeat center / contain;
+      opacity: 0.5;
+    }
   }
 }
 
