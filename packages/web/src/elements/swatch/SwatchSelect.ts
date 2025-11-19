@@ -65,7 +65,7 @@ export default class SwatchSelect extends HTMLElement {
     }
 
     this.#showLabel = show;
-    const item = this.value ? this.getItem(this.value) : null;
+    const item = this.value === null ? null : this.getItem(this.value);
     this.setLabel(item);
   }
 
@@ -78,12 +78,12 @@ export default class SwatchSelect extends HTMLElement {
       return;
     }
 
-    const previousItem = this.#value ? this.getItem(this.#value) : null;
+    const previousItem = this.#value === null ? null : this.getItem(this.#value);
     if (previousItem) {
       previousItem.ariaChecked = "false";
     }
 
-    const item = value ? this.getItem(value) : null;
+    const item = value === null ? null : this.getItem(value);
     if (item) {
       item.ariaChecked = "true";
     }
