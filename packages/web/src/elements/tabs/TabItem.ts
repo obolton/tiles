@@ -1,5 +1,11 @@
 import TabPanel from "./TabPanel";
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "tab-item": TabItem;
+  }
+}
+
 export interface TabItemAttributes {
   selected?: "selected" | "";
   for?: string;

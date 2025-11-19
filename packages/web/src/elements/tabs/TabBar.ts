@@ -1,5 +1,11 @@
 import TabItem from "./TabItem";
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "tab-bar": TabBar;
+  }
+}
+
 export default class TabBar extends HTMLElement {
   private internals: ElementInternals;
 

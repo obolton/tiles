@@ -1,5 +1,11 @@
 import { focusInside } from "@/utils/focus";
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "tab-panel": TabPanel;
+  }
+}
+
 export interface TabPanelAttributes {
   open?: "open" | "";
 }
