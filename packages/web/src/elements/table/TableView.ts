@@ -1341,7 +1341,7 @@ export default class TableView extends HTMLElement {
     }
 
     const element = this.getRowFromBuffer();
-    if (element.id) {
+    if (id) {
       element.dataset.id = id;
     }
     element.style.height = height + "px";
