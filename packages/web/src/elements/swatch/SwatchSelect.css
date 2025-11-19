@@ -1,5 +1,8 @@
 :host {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 ::slotted(svg) {
@@ -40,8 +43,6 @@
 }
 
 :host([orientation="vertical"]) {
-  flex-direction: column;
-
   #items {
     border-radius: 12px;
   }
