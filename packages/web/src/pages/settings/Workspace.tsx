@@ -74,9 +74,9 @@ export default function Workspace({
             </footer>
           </form>
 
-          <WorkspaceMembers members={users} />
+          <WorkspaceMembers workspaceId={workspace.id} members={users} />
 
-          <WorkspaceInvites workspaceName={workspace.name} invites={invites} />
+          <WorkspaceInvites workspaceId={workspace.id} workspaceName={workspace.name} invites={invites} />
         </div>
       </SidebarLayout>
     </PageLayout>

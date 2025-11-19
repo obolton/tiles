@@ -12,6 +12,7 @@ import type { AppRouterOutputs } from "@/api/client";
 import type { Invite } from "@/types/collaboration";
 
 export interface WorkspaceInvitesProps {
+  workspaceId: string;
   workspaceName: string;
   invites: AppRouterOutputs["workspaces"]["listInvites"];
 }
@@ -20,6 +21,7 @@ const InviteModalLoader = () =>
   import("@/components/modals/invite/InviteModal");
 
 export default function WorkspaceInvites({
+  workspaceId,
   workspaceName,
   invites: initialInvites,
 }: WorkspaceInvitesProps) {
@@ -35,6 +37,7 @@ export default function WorkspaceInvites({
       }
 
       const results = await client.workspaces.listInvites.query({
+        workspaceId,
         query: query || undefined,
         offset,
       });
@@ -51,7 +54,7 @@ export default function WorkspaceInvites({
 
   const onRemove = async (invite: Invite) => {
     try {
-      await client.workspaces.deleteInvite.mutate({ id: invite.id });
+      await client.workspaces.deleteInvite.mutate({ workspaceId, id: invite.id });
       invites.value = invites.value.filter(
         (existingInvite) => existingInvite !== invite,
       );
@@ -69,6 +72,7 @@ export default function WorkspaceInvites({
       async onConfirm({ email }) {
         try {
           const invite = await client.workspaces.invite.mutate({
+            workspaceId,
             email,
           });
           invites.value = invites.value.concat(invite);

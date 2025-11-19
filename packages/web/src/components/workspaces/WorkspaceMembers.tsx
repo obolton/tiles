@@ -10,10 +10,12 @@ import type { AppRouterOutputs } from "@/api/client";
 import type { User } from "@/types/collaboration";
 
 export interface WorkspaceMembersProps {
+  workspaceId: string;
   members: AppRouterOutputs["workspaces"]["listUsers"];
 }
 
 export default function WorkspaceMembers({
+  workspaceId,
   members: initialMembers,
 }: WorkspaceMembersProps) {
   const members = reactive(initialMembers.users);
@@ -28,6 +30,7 @@ export default function WorkspaceMembers({
       }
 
       const results = await client.workspaces.listUsers.query({
+        workspaceId,
         query: query || undefined,
         offset,
       });
@@ -44,7 +47,7 @@ export default function WorkspaceMembers({
 
   const onRemove = async (user: User) => {
     try {
-      await client.workspaces.remove.mutate({ userId: user.id });
+      await client.workspaces.remove.mutate({ workspaceId, userId: user.id });
       members.value = members.value.filter((member) => member !== user);
       showToast(`${user.name} was removed from the workspace.`, "success");
     } catch (error) {
