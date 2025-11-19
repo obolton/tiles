@@ -125,6 +125,12 @@ export default function FormattingTools({
         return performCommand(toggleHeading(3));
       case "code":
         return performCommand(toggleCode);
+      case "unordered-list":
+        return performCommand(toggleUnorderedList);
+      case "ordered-list":
+        return performCommand(toggleOrderedList);
+      case "check-list":
+        return performCommand(toggleCheckList);
       case "":
       default:
         return performCommand(resetBlockFormat);
@@ -171,18 +177,6 @@ export default function FormattingTools({
   const approveSelection = () => performCommand(approve);
 
   const rejectSelection = () => performCommand(reject);
-
-  const formatList = (event: Event) => {
-    const listType = (event.currentTarget as SwatchSelect).value as ListType;
-    switch (listType) {
-      case "unordered":
-        return performCommand(toggleUnorderedList);
-      case "ordered":
-        return performCommand(toggleOrderedList);
-      case "check":
-        return performCommand(toggleCheckList);
-    }
-  };
 
   const formatAlignment = (event: Event) =>
     performCommand(
@@ -311,7 +305,9 @@ export default function FormattingTools({
                 ? `h${value.headingLevel}`
                 : value.code
                   ? "code"
-                  : "",
+                  : value.list
+                    ? `${value.list}-list`
+                    : "",
             )}
             on:change={changeTextFormat}
           >
@@ -367,46 +363,37 @@ export default function FormattingTools({
                 </MenuItem>
               </li>
             </ul>
-          </swatch-select>
-        </li>
 
-        <li role="presentation">
-          <swatch-select
-            role="menuitem"
-            aria-label="List"
-            aria-selected={format.derive((value) => value.list)}
-            data-tooltip="List"
-            orientation="horizontal"
-            align="center"
-            value={format.derive((value) => value.list ?? "")}
-            on:change={formatList}
-          >
-            <ul className="menuitemgroup inline" role="group">
+            <ul className="menuitemgroup" role="group">
               <li role="presentation">
                 <MenuItem
-                  classList={{ floating: true }}
-                  icon={<UnorderedListIcon aria-hidden="true" />}
-                  value="unordered"
-                  label="Unordered list"
-                />
+                  classList={{ menuitem: true }}
+                  value="unordered-list"
+                  data-label="Bulleted list"
+                >
+                  <UnorderedListIcon aria-hidden="true" />
+                  Bulleted list
+                </MenuItem>
               </li>
-
               <li role="presentation">
                 <MenuItem
-                  classList={{ floating: true }}
-                  icon={<OrderedListIcon aria-hidden="true" />}
-                  value="ordered"
-                  label="Ordered list"
-                />
+                  classList={{ menuitem: true }}
+                  value="ordered-list"
+                  data-label="Numbered list"
+                >
+                  <OrderedListIcon aria-hidden="true" />
+                  Numbered list
+                </MenuItem>
               </li>
-
               <li role="presentation">
                 <MenuItem
-                  classList={{ floating: true }}
-                  icon={<CheckListIcon aria-hidden="true" />}
-                  value="check"
-                  label="Check list"
-                />
+                  classList={{ menuitem: true }}
+                  value="check-list"
+                  data-label="Check list"
+                >
+                  <CheckListIcon aria-hidden="true" />
+                  Check list
+                </MenuItem>
               </li>
             </ul>
           </swatch-select>
