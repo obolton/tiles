@@ -67,14 +67,6 @@ const DropdownModalLoader = () =>
   import("@/components/modals/dropdowns/DropdownModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 
-const BLOCK_FORMAT_ICON = {
-  paragraph: <ParagraphIcon aria-hidden="true" slot="icon" />,
-  h1: <H1Icon aria-hidden="true" slot="icon" />,
-  h2: <H2Icon aria-hidden="true" slot="icon" />,
-  h3: <H3Icon aria-hidden="true" slot="icon" />,
-  code: <CodeIcon aria-hidden="true" slot="icon" />,
-} as const;
-
 export interface FormattingToolsProps {
   editorView: Reactive<EditorView | null>;
   state: Reactive<EditorState | null>;
@@ -323,17 +315,6 @@ export default function FormattingTools({
             )}
             on:change={changeTextFormat}
           >
-            {format.derive(
-              (value) =>
-                BLOCK_FORMAT_ICON[
-                  typeof value.headingLevel === "number"
-                    ? (`h${value.headingLevel}` as "h1" | "h2" | "h3")
-                    : value.code
-                      ? "code"
-                      : "paragraph"
-                ],
-            )}
-
             <ul className="menuitemgroup" role="group">
               <li role="presentation">
                 <MenuItem
@@ -341,6 +322,7 @@ export default function FormattingTools({
                   value="h1"
                   data-label="Heading 1"
                 >
+                  <H1Icon aria-hidden="true" />
                   Heading 1
                 </MenuItem>
               </li>
@@ -350,6 +332,7 @@ export default function FormattingTools({
                   value="h2"
                   data-label="Heading 2"
                 >
+                  <H2Icon aria-hidden="true" />
                   Heading 2
                 </MenuItem>
               </li>
@@ -359,6 +342,7 @@ export default function FormattingTools({
                   value="h3"
                   data-label="Heading 3"
                 >
+                  <H3Icon aria-hidden="true" />
                   Heading 3
                 </MenuItem>
               </li>
@@ -368,6 +352,7 @@ export default function FormattingTools({
                   value="code"
                   data-label="Code"
                 >
+                  <CodeIcon aria-hidden="true" />
                   Code
                 </MenuItem>
               </li>
@@ -377,6 +362,7 @@ export default function FormattingTools({
                   value=""
                   data-label="Paragraph"
                 >
+                  <ParagraphIcon aria-hidden="true" />
                   Paragraph
                 </MenuItem>
               </li>
