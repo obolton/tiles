@@ -313,6 +313,7 @@ export default function FormattingTools({
             data-tooltip="Text format"
             orientation="vertical"
             align="center"
+            showlabel
             value={format.derive((value) =>
               typeof value.headingLevel === "number"
                 ? `h${value.headingLevel}`
@@ -338,6 +339,7 @@ export default function FormattingTools({
                 <MenuItem
                   classList={{ menuitem: true, [styles.h1]: true }}
                   value="h1"
+                  data-label="Heading 1"
                 >
                   Heading 1
                 </MenuItem>
@@ -346,6 +348,7 @@ export default function FormattingTools({
                 <MenuItem
                   classList={{ menuitem: true, [styles.h2]: true }}
                   value="h2"
+                  data-label="Heading 2"
                 >
                   Heading 2
                 </MenuItem>
@@ -354,6 +357,7 @@ export default function FormattingTools({
                 <MenuItem
                   classList={{ menuitem: true, [styles.h3]: true }}
                   value="h3"
+                  data-label="Heading 3"
                 >
                   Heading 3
                 </MenuItem>
@@ -362,12 +366,17 @@ export default function FormattingTools({
                 <MenuItem
                   classList={{ menuitem: true, [styles.code]: true }}
                   value="code"
+                  data-label="Code"
                 >
                   Code
                 </MenuItem>
               </li>
               <li role="presentation">
-                <MenuItem classList={{ menuitem: true }} value="">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  value=""
+                  data-label="Paragraph"
+                >
                   Paragraph
                 </MenuItem>
               </li>
