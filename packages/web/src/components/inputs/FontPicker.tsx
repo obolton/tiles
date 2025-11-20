@@ -24,14 +24,20 @@ export default function FontPicker({
     <swatch-select
       {...props}
       className={styles.font}
-      aria-orientation="horizontal"
+      aria-orientation="vertical"
+      orientation="vertical"
       align="center"
+      showlabel
       value={value}
       onchange={setFont}
     >
       <FontIcon aria-hidden="true" slot="icon" />
       {FONTS.map((font) => (
-        <MenuItem style={{ fontFamily: font.family }} value={font.id}>
+        <MenuItem
+          classList={{ menuitem: true }}
+          style={{ fontFamily: font.family }}
+          value={font.id}
+        >
           {font.name}
         </MenuItem>
       ))}
