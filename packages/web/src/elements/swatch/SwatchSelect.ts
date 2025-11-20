@@ -174,7 +174,7 @@ export default class SwatchSelect extends HTMLElement {
   }
 
   private handleSlotChange() {
-    if (this.value) {
+    if (this.value !== null) {
       const item = this.getItem(this.value);
       if (item) {
         item.ariaChecked = "true";
