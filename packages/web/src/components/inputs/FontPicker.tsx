@@ -31,7 +31,7 @@ export default function FontPicker({
       value={value}
       onchange={setFont}
     >
-      <FontIcon aria-hidden="true" slot="icon" />
+      <FontIcon aria-hidden="true" slot="default-icon" />
       {FONTS.map((font) => (
         <MenuItem
           classList={{ menuitem: true }}
