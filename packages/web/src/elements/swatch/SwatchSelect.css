@@ -10,6 +10,16 @@
   pointer-events: none;
 }
 
+/* Hide default icon when there's an item-specific icon */
+:host(:state(has-item-icon)) slot[name="default-icon"] {
+  display: none;
+}
+
+/* Hide item icon slot when empty */
+:host(:not(:state(has-item-icon))) slot[name="icon"] {
+  display: none;
+}
+
 #items {
   display: flex;
   gap: 4px;

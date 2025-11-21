@@ -21,6 +21,7 @@ export default class SwatchSelect extends HTMLElement {
   #showLabel: boolean = false;
 
   private internals: ElementInternals;
+  private defaultIconSlot: HTMLSlotElement;
   private iconSlot: HTMLSlotElement;
   private labelSlot: HTMLSlotElement;
   private items: PopoverMenu;
@@ -34,8 +35,13 @@ export default class SwatchSelect extends HTMLElement {
     const shadow = this.attachShadow({ mode: "closed" });
     shadow.adoptedStyleSheets = [stylesheet];
 
+    this.defaultIconSlot = document.createElement("slot");
+    this.defaultIconSlot.name = "default-icon";
+    this.defaultIconSlot.part.add("default-icon");
+
     this.iconSlot = document.createElement("slot");
     this.iconSlot.name = "icon";
+    this.iconSlot.part.add("icon");
 
     this.labelSlot = document.createElement("slot");
     this.labelSlot.name = "label";
@@ -50,7 +56,12 @@ export default class SwatchSelect extends HTMLElement {
     itemsSlot.addEventListener("slotchange", this);
     this.items.append(itemsSlot);
 
-    shadow.append(this.iconSlot, this.labelSlot, this.items);
+    shadow.append(
+      this.defaultIconSlot,
+      this.iconSlot,
+      this.labelSlot,
+      this.items,
+    );
 
     this.addEventListener("click", this, { passive: true });
   }
@@ -78,7 +89,8 @@ export default class SwatchSelect extends HTMLElement {
       return;
     }
 
-    const previousItem = this.#value === null ? null : this.getItem(this.#value);
+    const previousItem =
+      this.#value === null ? null : this.getItem(this.#value);
     if (previousItem) {
       previousItem.ariaChecked = "false";
     }
@@ -197,13 +209,16 @@ export default class SwatchSelect extends HTMLElement {
       element.remove();
     }
 
-    if (!icon) {
-      return;
+    if (icon) {
+      // Add the item-specific icon
+      const iconClone = icon.cloneNode(true) as SVGElement;
+      iconClone.slot = "icon";
+      this.prepend(iconClone);
+      this.internals.states.add("has-item-icon");
+    } else {
+      // Fall back to default icon (if slotted)
+      this.internals.states.delete("has-item-icon");
     }
-
-    const iconClone = icon.cloneNode(true) as SVGElement;
-    iconClone.slot = "icon";
-    this.prepend(iconClone);
   }
 
   // Label
