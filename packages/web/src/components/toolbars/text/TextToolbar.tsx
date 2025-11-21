@@ -7,6 +7,8 @@ import ToolbarButton from "@/components/buttons/ToolbarButton";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
 import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
+import AnimationIcon from "@/icons/animation.svg?jsx";
+import StopIcon from "@/icons/stop.svg?jsx";
 import FadeIcon from "@/icons/fade.svg?jsx";
 import SlideIcon from "@/icons/slide.svg?jsx";
 import GrowIcon from "@/icons/grow.svg?jsx";
@@ -157,7 +159,18 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
               )
             }
           >
+            <AnimationIcon aria-hidden="true" slot="default-icon" />
             <ul className="menuitemgroup" role="group">
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<StopIcon aria-hidden="true" />}
+                  value=""
+                >
+                  None
+                </MenuItem>
+              </li>
+
               <li role="presentation">
                 <MenuItem
                   classList={{ menuitem: true }}
