@@ -7,7 +7,7 @@ declare global {
 }
 
 export interface TabItemAttributes {
-  selected?: "selected" | "";
+  selected?: boolean;
   for?: string;
 }
 

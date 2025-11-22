@@ -7,7 +7,7 @@ declare global {
 }
 
 export interface TabPanelAttributes {
-  open?: "open" | "";
+  open?: boolean;
 }
 
 export default class TabPanel extends HTMLElement {

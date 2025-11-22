@@ -6,7 +6,10 @@ import type {
   default as FilePicker,
   FilePickerAttributes,
 } from "./file-picker/FilePicker";
-import type { default as PopoverMenu, PopoverMenuAttributes } from "./menu/PopoverMenu";
+import type {
+  default as PopoverMenu,
+  PopoverMenuAttributes,
+} from "./menu/PopoverMenu";
 import type { default as InfiniteScroll } from "./infinite-scroll/InfiniteScroll";
 import type {
   default as EmbeddedVideo,
@@ -17,13 +20,19 @@ import type {
   SwatchSelectAttributes,
 } from "./swatch/SwatchSelect";
 import type { default as PopOut, PopOutAttributes } from "./pop-out/PopOut";
-import type { default as StackView, StackViewAttributes } from "./stack/StackView";
+import type {
+  default as StackView,
+  StackViewAttributes,
+} from "./stack/StackView";
 import type {
   default as CalendarMonth,
   CalendarMonthAttributes,
 } from "./calendar/CalendarMonth";
 import type { default as MapView, MapViewAttributes } from "./maps/MapView";
-import type { default as MapMarker, MapMarkerAttributes } from "./maps/MapMarker";
+import type {
+  default as MapMarker,
+  MapMarkerAttributes,
+} from "./maps/MapMarker";
 import type {
   default as MapLegendItem,
   MapLegendItemAttributes,
@@ -33,9 +42,18 @@ import type {
   TableOfContentsAttributes,
 } from "./table-of-contents/TableOfContents";
 import type { default as FloatingToolbar } from "./floating-toolbar/FloatingToolbar";
-import type { default as TableView, TableViewAttributes } from "./table/TableView";
-import type { default as SwipeView, SwipeViewAttributes } from "./swipe/SwipeView";
-import type { default as ThemeSelector, ThemeSelectorAttributes } from "./themes/ThemeSelector";
+import type {
+  default as TableView,
+  TableViewAttributes,
+} from "./table/TableView";
+import type {
+  default as SwipeView,
+  SwipeViewAttributes,
+} from "./swipe/SwipeView";
+import type {
+  default as ThemeSelector,
+  ThemeSelectorAttributes,
+} from "./themes/ThemeSelector";
 import type { default as ScrollView } from "./scroll-view/ScrollView";
 import type { default as TabBar } from "./tabs/TabBar";
 import type { default as ToastContainer } from "./toasts/ToastContainer";
