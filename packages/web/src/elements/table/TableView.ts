@@ -517,12 +517,12 @@ export default class TableView extends HTMLElement {
     if (
       target.tagName === "TH" &&
       target.scope === "col" &&
-      target.ariaColIndex
+      target.ariaColIndex &&
+      target.parentElement
     ) {
       event.stopPropagation();
       const index =
-        Array.prototype.indexOf.call(target.parentElement!.children, target) -
-        1;
+        Array.prototype.indexOf.call(target.parentElement.children, target) - 1;
       const column = this.visibleColumns[index];
       if (column) {
         const selection: ColumnSelection = { type: "column", column };
@@ -624,14 +624,17 @@ export default class TableView extends HTMLElement {
 
     const target = event.currentTarget as HTMLElement;
     const th = target.closest("th");
-    if (!th) {
+    if (!th || !th.parentElement) {
       return;
     }
 
     const columnIndex =
-      Array.prototype.indexOf.call(th.parentElement!.children, th) - 1;
+      Array.prototype.indexOf.call(th.parentElement.children, th) - 1;
 
-    const column = this.visibleColumns[columnIndex]!;
+    const column = this.visibleColumns[columnIndex];
+    if (!column) {
+      return;
+    }
 
     const width = column.width + event.x;
     this.dispatchEvent(new TableEvent("resizetablecolumn", { column, width }));
@@ -780,11 +783,18 @@ export default class TableView extends HTMLElement {
       return;
     }
 
-    if (element.scope === "col" && element.ariaColIndex) {
+    if (
+      element.scope === "col" &&
+      element.ariaColIndex &&
+      element.parentElement
+    ) {
       const visibleIndex =
-        Array.prototype.indexOf.call(element.parentElement!.children, element) -
+        Array.prototype.indexOf.call(element.parentElement.children, element) -
         1;
-      const column = this.visibleColumns[visibleIndex]!;
+      const column = this.visibleColumns[visibleIndex];
+      if (!column) {
+        return;
+      }
       const { index } = this.getColumnDropTarget(event.clientX);
 
       this.hideDropIndicator();
