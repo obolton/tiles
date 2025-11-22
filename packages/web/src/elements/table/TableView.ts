@@ -1642,19 +1642,28 @@ export default class TableView extends HTMLElement {
 
     // Re-order column elements
     // Note: No need to re-order column header cells as they hold no data
-    const index = this.visibleColumns.indexOf(column);
+    const visibleIndex = this.visibleColumns.indexOf(column);
+
+    // Save the original column index before we update dataset.index
+    const originalColumnIndex = column.index;
+
+    // afterIndex is the visible position to insert after
+    // We need the data-index of the element at afterIndex + 1 to insert before
+    const beforeDataIndex =
+      afterIndex === null ? null : this.visibleColumns[afterIndex + 1]?.index;
+
     const beforeCol =
-      afterIndex === null
+      beforeDataIndex === null
         ? null
         : this.colGroup.querySelector<HTMLTableColElement>(
-            `col[data-index="${afterIndex + 1}"]`,
+            `col[data-index="${beforeDataIndex}"]`,
           );
     this.visibleColumns = moveElement(
       this.visibleColumns,
-      index,
+      visibleIndex,
       afterIndex === null
         ? 0
-        : afterIndex > index
+        : afterIndex > visibleIndex
           ? afterIndex
           : afterIndex + 1,
     );
@@ -1665,19 +1674,19 @@ export default class TableView extends HTMLElement {
       columns[i]!.dataset.index = (this.firstVisibleColumn + i - 1).toString();
     }
 
-    // Re-order cells
+    // Re-order cells using the original column index
     for (const row of this.tableBody.rows) {
       const cell = row.querySelector<HTMLTableCellElement>(
-        `td[aria-colindex="${index}"]`,
+        `td[aria-colindex="${originalColumnIndex}"]`,
       );
       if (!cell) {
         continue;
       }
       const beforeCell =
-        afterIndex === null
+        beforeDataIndex === null
           ? null
           : row.querySelector<HTMLTableCellElement>(
-              `td[aria-colindex="${afterIndex + 1}"]`,
+              `td[aria-colindex="${beforeDataIndex}"]`,
             );
       moveBefore(row, cell, beforeCell);
       // Skip row header
