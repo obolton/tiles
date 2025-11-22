@@ -1009,12 +1009,12 @@ export default class TableView extends HTMLElement {
     const startVisibleRow = Math.max(startRow, this.firstVisibleRow);
     const endVisibleRow = Math.min(
       endRow,
-      this.firstVisibleRow + this.visibleRows.length,
+      this.firstVisibleRow + this.visibleRows.length - 1,
     );
     const startVisibleColumn = Math.max(startColumn, this.firstVisibleColumn);
     const endVisibleColumn = Math.min(
       endColumn,
-      this.firstVisibleColumn + this.visibleColumns.length,
+      this.firstVisibleColumn + this.visibleColumns.length - 1,
     );
 
     for (let row = startVisibleRow; row <= endVisibleRow; row++) {
