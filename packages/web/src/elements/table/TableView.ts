@@ -1027,15 +1027,22 @@ export default class TableView extends HTMLElement {
       this.firstVisibleColumn + this.visibleColumns.length - 1,
     );
 
-    for (let row = startVisibleRow; row <= endVisibleRow; row++) {
-      for (
-        let column = startVisibleColumn;
-        column <= endVisibleColumn;
-        column++
-      ) {
-        this.querySelector(
-          `tr[aria-rowindex="${row}"] > td[aria-colindex="${column}"]`,
-        )?.classList.add("selected");
+    const startRowIndex = startVisibleRow - this.firstVisibleRow;
+    const endRowIndex = endVisibleRow - this.firstVisibleRow;
+    const startColIndex = startVisibleColumn - this.firstVisibleColumn;
+    const endColIndex = endVisibleColumn - this.firstVisibleColumn;
+
+    for (let i = startRowIndex; i <= endRowIndex; i++) {
+      const row = this.visibleRows[i];
+      if (!row) {
+        continue;
+      }
+
+      for (let j = startColIndex; j <= endColIndex; j++) {
+        const cell = row.element.cells[j + 1];
+        if (cell && cell.tagName === "TD") {
+          cell.classList.add("selected");
+        }
       }
     }
   }
