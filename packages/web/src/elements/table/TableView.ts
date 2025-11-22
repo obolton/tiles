@@ -1745,6 +1745,8 @@ export default class TableView extends HTMLElement {
       this.recycleCell(cell);
     }
     this.visibleColumns = this.visibleColumns.toSpliced(index, 1);
+    this.#columns--;
+    this.update();
     this.redrawSelection();
   }
 
@@ -1757,6 +1759,8 @@ export default class TableView extends HTMLElement {
     const row = this.visibleRows[index]!;
     this.recycleRow(row.element);
     this.visibleRows = this.visibleRows.toSpliced(index, 1);
+    this.#rows--;
+    this.update();
     this.redrawSelection();
   }
 }
