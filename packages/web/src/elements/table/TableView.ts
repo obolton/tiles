@@ -1540,7 +1540,6 @@ export default class TableView extends HTMLElement {
         ? this.contentHeight / this.visibleRows.length
         : 0;
     const height = this.#rows * averageRowHeight + this.footerHeight;
-    this.translateY = this.firstVisibleRow * averageRowHeight;
 
     this.scrollContainer.style.setProperty("--scroll-width", width + "px");
     this.scrollContainer.style.setProperty("--scroll-height", height + "px");
