@@ -1264,7 +1264,7 @@ export default class TableView extends HTMLElement {
       this.fillCellBuffer();
     }
 
-    const cell = this.buffer.pop()!;
+    const cell = this.buffer.pop() ?? this.createCell();
     cell.ariaColIndex = column.index.toString();
     if (this.editable) {
       cell.setAttribute("tabindex", "-1");
@@ -1302,7 +1302,7 @@ export default class TableView extends HTMLElement {
     if (this.rowBuffer.length === 0) {
       this.fillRowBuffer();
     }
-    return this.rowBuffer.pop()!;
+    return this.rowBuffer.pop() ?? this.createRow();
   }
 
   private insertColumn(
