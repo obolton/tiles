@@ -1594,8 +1594,8 @@ export default class TableView extends HTMLElement {
       }
 
       for (const row of this.tableBody.rows) {
-        const th = row.querySelector("th");
-        if (th) {
+        const th = row.cells[0];
+        if (th && th.tagName === "TH") {
           makeDraggable(th, {
             constrain: "vertical",
             clone: true,
