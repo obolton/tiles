@@ -1247,7 +1247,13 @@ export default class TableView extends HTMLElement {
     const tr = document.createElement("tr");
     const th = document.createElement("th");
     th.scope = "row";
-    makeDraggable(th, { constrain: "vertical", clone: true });
+    if (this.editable) {
+      makeDraggable(th, {
+        constrain: "vertical",
+        clone: true,
+        signal: this.editAbortController?.signal,
+      });
+    }
     tr.appendChild(th);
     return tr;
   }
@@ -1327,8 +1333,15 @@ export default class TableView extends HTMLElement {
     const span = document.createElement("span");
     span.textContent = title ?? null;
 
-    th.append(span, this.createResizeHandle());
-    makeDraggable(th, { constrain: "horizontal", clone: true });
+    th.appendChild(span);
+    if (this.editable) {
+      th.appendChild(this.createResizeHandle());
+      makeDraggable(th, {
+        constrain: "horizontal",
+        clone: true,
+        signal: this.editAbortController?.signal,
+      });
+    }
 
     const column = new Column({ table: this, id, title, width, element: col });
 
