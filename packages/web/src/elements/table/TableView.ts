@@ -403,9 +403,7 @@ export default class TableView extends HTMLElement {
   }
 
   private handleScroll() {
-    const scrollTop = this.scrollTop;
     this.update();
-    this.scrollTop = scrollTop;
   }
 
   private handleKeyDown(event: KeyboardEvent) {
