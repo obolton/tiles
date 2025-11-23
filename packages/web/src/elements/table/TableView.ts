@@ -1379,7 +1379,11 @@ export default class TableView extends HTMLElement {
       this.scrollTop - this.translateY < this.verticalBufferSize
     ) {
       const index = this.firstVisibleRow - 1;
-      const { id, height } = this.getRow(index);
+      const rowData = this.getRow(index);
+      if (!rowData) {
+        throw new Error(`getRow(${index}) returned undefined`);
+      }
+      const { id, height } = rowData;
       this.insertRow(0, index, height, id);
       this.firstVisibleRow--;
       this.translateY -= height;
@@ -1396,7 +1400,11 @@ export default class TableView extends HTMLElement {
         this.verticalBufferSize
     ) {
       const index = this.firstVisibleRow + this.visibleRows.length;
-      const { id, height } = this.getRow(index);
+      const rowData = this.getRow(index);
+      if (!rowData) {
+        throw new Error(`getRow(${index}) returned undefined`);
+      }
+      const { id, height } = rowData;
       this.insertRow(this.visibleRows.length, index, height, id);
       this.contentHeight += height;
     }
@@ -1409,6 +1417,9 @@ export default class TableView extends HTMLElement {
     ) {
       const index = this.firstVisibleColumn - 1;
       const properties = this.getColumn(index);
+      if (!properties) {
+        throw new Error(`getColumn(${index}) returned undefined`);
+      }
       this.insertColumn(0, index, properties);
       this.firstVisibleColumn--;
       this.translateX -= properties.width;
@@ -1426,6 +1437,9 @@ export default class TableView extends HTMLElement {
     ) {
       const index = this.firstVisibleColumn + this.visibleColumns.length;
       const properties = this.getColumn(index);
+      if (!properties) {
+        throw new Error(`getColumn(${index}) returned undefined`);
+      }
       this.insertColumn(this.visibleColumns.length, index, properties);
       this.contentWidth += properties.width;
     }
