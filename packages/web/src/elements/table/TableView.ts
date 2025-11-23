@@ -892,26 +892,28 @@ export default class TableView extends HTMLElement {
       throw new Error("Cell is disconnected");
     }
     const columnIndex = Array.prototype.indexOf.call(row.children, element) - 1;
+    const column = this.visibleColumns[columnIndex];
+    if (!column) {
+      throw new Error(`No visible column at index ${columnIndex}`);
+    }
     return {
-      column: this.visibleColumns[columnIndex]!,
+      column,
       row: new Row({ table: this, id: row.dataset.id, element: row }),
     };
   }
 
-  // TODO: Refer to rows by data, rather than element
   private getRowAtIndex(index: number) {
-    if (!this.tableBody) {
-      throw new Error("Table is not initialized");
-    }
-    const element = this.tableBody.rows[index];
-    if (!element) {
+    const position = index - this.firstVisibleRow;
+    const row = this.visibleRows[position];
+    if (!row) {
       throw new Error(`Invalid row index: ${index}`);
     }
-    return new Row({ table: this, id: element.dataset.id, element });
+    return row;
   }
 
   private getColumnAtIndex(index: number) {
-    const column = this.visibleColumns[index];
+    const position = index - this.firstVisibleColumn;
+    const column = this.visibleColumns[position];
     if (!column) {
       throw new Error(`Invalid column index: ${index}`);
     }
