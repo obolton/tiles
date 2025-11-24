@@ -1753,10 +1753,8 @@ export default class TableView extends HTMLElement {
           : afterIndex + 1,
     );
     moveBefore(this.colGroup, column.element, beforeCol);
-    const columns = this.colGroup.getElementsByTagName("col");
-    // Skip first column
-    for (let i = 1; i < columns.length; i++) {
-      columns[i]!.dataset.index = (this.firstVisibleColumn + i - 1).toString();
+    for (let i = 0; i < this.visibleColumns.length; i++) {
+      this.visibleColumns[i]!.index = this.firstVisibleColumn + i;
     }
 
     // Re-order cells using the original column index
