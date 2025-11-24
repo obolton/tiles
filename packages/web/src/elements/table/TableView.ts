@@ -246,10 +246,14 @@ export default class TableView extends HTMLElement {
     for (let i = 1; i < this.colGroup.childElementCount; i++) {
       const column = this.colGroup.children[i] as HTMLTableColElement;
       const { width } = column.getBoundingClientRect();
+      const index = column.dataset.index
+        ? parseInt(column.dataset.index, 10)
+        : i - 1;
       this.visibleColumns.push(
         new Column({
           table: this,
           id: column.dataset.id,
+          index,
           width,
           element: column,
         }),
@@ -258,10 +262,12 @@ export default class TableView extends HTMLElement {
 
     for (const row of this.tableBody.rows) {
       const { height } = row.getBoundingClientRect();
+      const index = row.ariaRowIndex ? parseInt(row.ariaRowIndex, 10) : 0;
       this.visibleRows.push(
         new Row({
           table: this,
           id: row.dataset.id,
+          index,
           height,
           element: row,
         }),
@@ -553,13 +559,23 @@ export default class TableView extends HTMLElement {
     if (
       target.tagName === "TH" &&
       target.scope === "row" &&
-      target.parentElement?.ariaRowIndex
+      target.parentElement instanceof HTMLTableRowElement
     ) {
+      const element = target.parentElement;
+      const ariaRowIndex = element.ariaRowIndex;
+      if (!ariaRowIndex) {
+        return;
+      }
       event.stopPropagation();
-      const element = target.parentElement as HTMLTableRowElement;
+      const index = parseInt(ariaRowIndex, 10);
       const selection: RowSelection = {
         type: "row",
-        row: new Row({ table: this, id: element.dataset.id, element }),
+        row: new Row({
+          table: this,
+          id: element.dataset.id,
+          index,
+          element,
+        }),
       };
       if (event.shiftKey) {
         this.addSelection(selection);
@@ -812,12 +828,21 @@ export default class TableView extends HTMLElement {
       return;
     }
 
-    if (element.scope === "row" && element.parentElement?.ariaRowIndex) {
-      const rowElement = element.parentElement as HTMLTableRowElement;
+    if (
+      element.scope === "row" &&
+      element.parentElement instanceof HTMLTableRowElement
+    ) {
+      const rowElement = element.parentElement;
+      const ariaRowIndex = rowElement.ariaRowIndex;
+      if (!ariaRowIndex) {
+        return;
+      }
       const { index } = this.getRowDropTarget(event.clientY);
+      const rowIndex = parseInt(ariaRowIndex, 10);
       const row = new Row({
         table: this,
         id: rowElement.dataset.id,
+        index: rowIndex,
         element: rowElement,
       });
 
@@ -896,9 +921,15 @@ export default class TableView extends HTMLElement {
     if (!column) {
       throw new Error(`No visible column at index ${columnIndex}`);
     }
+    const rowIndex = row.ariaRowIndex ? parseInt(row.ariaRowIndex, 10) : 0;
     return {
       column,
-      row: new Row({ table: this, id: row.dataset.id, element: row }),
+      row: new Row({
+        table: this,
+        id: row.dataset.id,
+        index: rowIndex,
+        element: row,
+      }),
     };
   }
 
@@ -1345,7 +1376,14 @@ export default class TableView extends HTMLElement {
       });
     }
 
-    const column = new Column({ table: this, id, title, width, element: col });
+    const column = new Column({
+      table: this,
+      id,
+      title,
+      index: columnIndex,
+      width,
+      element: col,
+    });
 
     this.visibleColumns.splice(position, 0, column);
     const headerRow = this.tableHead.rows[0]!;
@@ -1377,7 +1415,7 @@ export default class TableView extends HTMLElement {
     element.style.height = height + "px";
     element.ariaRowIndex = rowIndex.toString();
 
-    const row = new Row({ table: this, id, height, element });
+    const row = new Row({ table: this, id, index: rowIndex, height, element });
     this.visibleRows.splice(position, 0, row);
 
     for (const column of this.visibleColumns) {

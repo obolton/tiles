@@ -7,31 +7,36 @@ export default class Row {
   readonly table: TableView;
   readonly element: HTMLTableRowElement;
 
+  #index: number;
+
   constructor({
     table,
     id,
     height = 32,
+    index,
     element,
   }: {
     table: TableView;
     id?: string;
     height?: number;
+    index: number;
     element: HTMLTableRowElement;
   }) {
     this.table = table;
     this.id = id;
     this.height = height;
+    this.#index = index;
     this.element = element;
+
+    this.element.ariaRowIndex = index.toString();
   }
 
   get index() {
-    if (!this.element.ariaRowIndex) {
-      throw new Error("No row index set");
-    }
-    return parseInt(this.element.ariaRowIndex, 10);
+    return this.#index;
   }
 
   set index(value: number) {
+    this.#index = value;
     this.element.ariaRowIndex = value.toString();
   }
 

@@ -8,34 +8,39 @@ export default class Column {
   readonly table: TableView;
   readonly element: HTMLTableColElement;
 
+  #index: number;
+
   constructor({
     table,
     id,
     title,
     width = 100,
+    index,
     element,
   }: {
     table: TableView;
     id?: string;
     title?: string | null;
     width?: number;
+    index: number;
     element: HTMLTableColElement;
   }) {
     this.table = table;
     this.id = id;
     this.title = title ?? null;
     this.width = width;
+    this.#index = index;
     this.element = element;
+
+    this.element.dataset.index = index.toString();
   }
 
   get index() {
-    if (!this.element.dataset.index) {
-      throw new Error("No column index set");
-    }
-    return parseInt(this.element.dataset.index, 10);
+    return this.#index;
   }
 
   set index(value: number) {
+    this.#index = value;
     this.element.dataset.index = value.toString();
   }
 
