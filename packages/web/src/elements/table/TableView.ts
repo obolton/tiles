@@ -802,13 +802,8 @@ export default class TableView extends HTMLElement {
       element.ariaColIndex &&
       element.parentElement
     ) {
-      const visibleIndex =
-        Array.prototype.indexOf.call(element.parentElement.children, element) -
-        1;
-      const column = this.visibleColumns[visibleIndex];
-      if (!column) {
-        return;
-      }
+      const columnIndex = parseInt(element.ariaColIndex, 10);
+      const column = this.getColumnAtIndex(columnIndex);
       const { index } = this.getColumnDropTarget(event.clientX);
 
       this.hideDropIndicator();
@@ -841,12 +836,7 @@ export default class TableView extends HTMLElement {
       }
       const { index } = this.getRowDropTarget(event.clientY);
       const rowIndex = parseInt(ariaRowIndex, 10);
-      const row = new Row({
-        table: this,
-        id: rowElement.dataset.id,
-        index: rowIndex,
-        element: rowElement,
-      });
+      const row = this.getRowAtIndex(rowIndex);
 
       this.hideDropIndicator();
 
@@ -862,10 +852,6 @@ export default class TableView extends HTMLElement {
 
       if (allowMove) {
         this.moveRow(row, index);
-        this.setSelection({
-          type: "row",
-          row: this.getRowAtIndex(index + 1),
-        });
       }
 
       return;
@@ -1789,6 +1775,18 @@ export default class TableView extends HTMLElement {
     if (!this.tableBody) {
       throw new Error("Table is not initialized");
     }
+
+    const visibleIndex = this.visibleRows.indexOf(row);
+    this.visibleRows = moveElement(
+      this.visibleRows,
+      visibleIndex,
+      afterIndex === null
+        ? 0
+        : afterIndex > visibleIndex
+          ? afterIndex
+          : afterIndex + 1,
+    );
+
     const beforeRow =
       afterIndex === null
         ? null
@@ -1797,10 +1795,8 @@ export default class TableView extends HTMLElement {
           );
     moveBefore(this.tableBody, row.element, beforeRow);
 
-    for (let i = 0; i < this.tableBody.rows.length; i++) {
-      this.tableBody.rows[i]!.ariaRowIndex = (
-        this.firstVisibleRow + i
-      ).toString();
+    for (let i = 0; i < this.visibleRows.length; i++) {
+      this.visibleRows[i]!.index = this.firstVisibleRow + i;
     }
 
     this.redrawSelection();
