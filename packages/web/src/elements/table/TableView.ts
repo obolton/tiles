@@ -813,10 +813,12 @@ export default class TableView extends HTMLElement {
 
       this.hideDropIndicator();
 
+      const afterColumn = index >= 0 ? this.visibleColumns[index] : null;
       const allowMove = this.dispatchEvent(
         new TableEvent("movetablecolumn", {
           column,
           afterIndex: index,
+          afterId: afterColumn?.id ?? null,
           cancelable: true,
         }),
       );
@@ -848,10 +850,12 @@ export default class TableView extends HTMLElement {
 
       this.hideDropIndicator();
 
+      const afterRow = index >= 0 ? this.visibleRows[index] : null;
       const allowMove = this.dispatchEvent(
         new TableEvent("movetablerow", {
           row,
           afterIndex: index,
+          afterId: afterRow?.id ?? null,
           cancelable: true,
         }),
       );

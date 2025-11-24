@@ -203,7 +203,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
 
   const onMoveColumn = async (event: TableEvent) => {
     try {
-      const { column, afterIndex } = event;
+      const { column, afterIndex, afterId } = event;
       if (
         !column ||
         typeof column.index !== "number" ||
@@ -216,9 +216,8 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
       if (!columnId) {
         throw new Error(`Invalid column index: ${column}`);
       }
-      const afterColumnId = columns.value[afterIndex]?.id ?? null;
       columns.value = moveElement(columns.value, index, afterIndex + 1);
-      await table.moveColumn(columnId, afterColumnId);
+      await table.moveColumn(columnId, afterId ?? null);
     } catch (error) {
       handleError(error);
     }
@@ -226,7 +225,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
 
   const onMoveRow = async (event: TableEvent) => {
     try {
-      const { row, afterIndex } = event;
+      const { row, afterIndex, afterId } = event;
       if (!row || typeof afterIndex !== "number") {
         return;
       }
@@ -235,9 +234,8 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
       if (!rowId) {
         throw new Error(`Invalid row index: ${index}`);
       }
-      const afterRowId = rows.value[afterIndex]?.id ?? null;
       rows.value = moveElement(rows.value, index, afterIndex + 1);
-      await table.moveRow(rowId, afterRowId);
+      await table.moveRow(rowId, afterId ?? null);
     } catch (error) {
       handleError(error);
     }

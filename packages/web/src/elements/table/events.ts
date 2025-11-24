@@ -23,6 +23,7 @@ export interface TableEventInit extends EventInit {
   row?: Row;
   width?: number;
   afterIndex?: number;
+  afterId?: string | null;
 }
 
 export class TableEvent extends Event {
@@ -30,13 +31,15 @@ export class TableEvent extends Event {
   readonly row?: Row;
   readonly width?: number;
   readonly afterIndex?: number;
+  readonly afterId?: string | null;
 
   constructor(type: keyof TableEventMap, options?: TableEventInit) {
-    const { column, row, width, afterIndex, ...init } = options || {};
+    const { column, row, width, afterIndex, afterId, ...init } = options || {};
     super(type, init);
     this.column = column;
     this.row = row;
     this.width = width;
     this.afterIndex = afterIndex;
+    this.afterId = afterId;
   }
 }
