@@ -4,6 +4,8 @@
   "service": "app",
   "workspaceFolder": "/workspace",
 
+  "initializeCommand": "echo CA_CERT=$(mkcert -CAROOT)/rootCA.pem > .devcontainer/.env",
+
   "forwardPorts": [3000, 3001, 5432],
   "portsAttributes": {
     "3000": {

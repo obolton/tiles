@@ -3,12 +3,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      secrets:
+        - ca_cert
     volumes:
       - ..:/workspace:cached
     command: sleep infinity
     environment:
       - DATABASE_URL=postgresql://tiles:tiles@db:5432/tiles
       - NODE_ENV=development
+      - NODE_OPTIONS=--use-system-ca
     depends_on:
       - db
     network_mode: service:db
@@ -27,3 +30,7 @@ services:
 
 volumes:
   postgres-data:
+
+secrets:
+  ca_cert:
+    file: ${CA_CERT}
