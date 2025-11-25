@@ -1,10 +1,12 @@
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 
 const SEED_WORKSPACE_ID = "31042e0b-f7e7-4fe1-a361-28780bf53ee9";
 const SEED_USER_ID = "d3a3e353-6e5f-46b4-be4b-d55055901c29";
 const SEED_PAGE_ID = "b8c96309-cc54-445b-a274-98b6be12c43f";
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 async function seed() {
   await prisma.workspace.upsert({
