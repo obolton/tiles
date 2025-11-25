@@ -7,6 +7,10 @@ services:
         - ca_cert
     volumes:
       - ..:/workspace:cached
+      - node_modules:/workspace/node_modules
+      - api_node_modules:/workspace/packages/api/node_modules
+      - web_node_modules:/workspace/packages/web/node_modules
+      - worker_node_modules:/workspace/packages/image-upload-worker/node_modules
     command: sleep infinity
     environment:
       - DATABASE_URL=postgresql://tiles:tiles@db:5432/tiles
@@ -15,6 +19,7 @@ services:
     depends_on:
       - db
     network_mode: service:db
+    user: node
 
   db:
     image: postgres:18-alpine
@@ -30,6 +35,10 @@ services:
 
 volumes:
   postgres-data:
+  node_modules:
+  api_node_modules:
+  web_node_modules:
+  worker_node_modules:
 
 secrets:
   ca_cert:

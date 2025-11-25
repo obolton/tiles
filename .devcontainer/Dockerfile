@@ -19,3 +19,10 @@ WORKDIR /workspace
 
 # Configure git to trust the workspace directory
 RUN git config --system --add safe.directory /workspace
+
+# Pre-create node_modules directories with correct ownership
+RUN mkdir -p /workspace/node_modules \
+    /workspace/packages/api/node_modules \
+    /workspace/packages/web/node_modules \
+    /workspace/packages/image-upload-worker/node_modules \
+    && chown -R node:node /workspace
