@@ -1,6 +1,9 @@
 {
   "recommendations": [
     "esbenp.prettier-vscode",
+    "ms-azuretools.vscode-containers",
+    "ms-vscode-remote.remote-containers",
+    "oxc.oxc-vscode",
     "prisma.prisma",
     "stylelint.vscode-stylelint",
     "vitest.explorer"
