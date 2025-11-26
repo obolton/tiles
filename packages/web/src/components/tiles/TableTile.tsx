@@ -1,7 +1,9 @@
 import { keymap } from "prosemirror-keymap";
 import Tile from "./Tile";
 import RichText from "@/components/text/RichText";
-import TableSelectionToolbar from "@/components/toolbars/tables/TableSelectionToolbar";
+import ColumnToolbar from "@/components/toolbars/tables/ColumnToolbar";
+import RowToolbar from "@/components/toolbars/tables/RowToolbar";
+import TableToolbar from "@/components/toolbars/tables/TableToolbar";
 import CellToolbar from "@/components/toolbars/tables/CellToolbar";
 import { createState } from "@/utils/richText/state";
 import styles from "./TableTile.module.css";
@@ -340,12 +342,20 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
 
       <If condition={hasFocus}>
         <Portal>
+          <If condition={selectionType.derive((value) => value === null)}>
+            <TableToolbar table={table} />
+          </If>
+
           <If condition={selectionType.derive((value) => value === "column")}>
-            <TableSelectionToolbar table={table} getTable={getTable} />
+            <ColumnToolbar table={table} getTable={getTable} />
+          </If>
+
+          <If condition={selectionType.derive((value) => value === "row")}>
+            <RowToolbar table={table} getTable={getTable} />
           </If>
 
           <If condition={selectionType.derive((value) => value === "range")}>
-            <CellToolbar editorView={editorView} state={state}></CellToolbar>
+            <CellToolbar editorView={editorView} state={state} />
           </If>
         </Portal>
       </If>
