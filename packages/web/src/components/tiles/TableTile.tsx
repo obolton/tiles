@@ -9,7 +9,7 @@ import { createState } from "@/utils/richText/state";
 import styles from "./TableTile.module.css";
 import { EditorView } from "prosemirror-view";
 import { handleError } from "@/utils/errors";
-import { reactive } from "@/utils/reactivity";
+import { reactive, Computed } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { render } from "@/jsx/dom";
 import If from "@/jsx/if";
@@ -45,6 +45,23 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
   const { id, textColor, background, columns, rows, numRows, editor } = table;
   const { isEditable } = editor;
   const selectionType = reactive<"row" | "column" | "range" | null>(null);
+
+  const showTableToolbar = new Computed(
+    [hasFocus, selectionType],
+    (focus, selection) => focus && selection === null,
+  );
+  const showColumnToolbar = new Computed(
+    [hasFocus, selectionType],
+    (focus, selection) => focus && selection === "column",
+  );
+  const showRowToolbar = new Computed(
+    [hasFocus, selectionType],
+    (focus, selection) => focus && selection === "row",
+  );
+  const showCellToolbar = new Computed(
+    [hasFocus, selectionType],
+    (focus, selection) => focus && selection === "range",
+  );
 
   signal?.addEventListener(
     "abort",
@@ -340,23 +357,27 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
         </TableViewContents>
       </table-view>
 
-      <If condition={hasFocus}>
+      <If condition={showTableToolbar}>
         <Portal>
-          <If condition={selectionType.derive((value) => value === null)}>
-            <TableToolbar table={table} />
-          </If>
+          <TableToolbar table={table} />
+        </Portal>
+      </If>
 
-          <If condition={selectionType.derive((value) => value === "column")}>
-            <ColumnToolbar table={table} getTable={getTable} />
-          </If>
+      <If condition={showColumnToolbar}>
+        <Portal>
+          <ColumnToolbar table={table} getTable={getTable} />
+        </Portal>
+      </If>
 
-          <If condition={selectionType.derive((value) => value === "row")}>
-            <RowToolbar table={table} getTable={getTable} />
-          </If>
+      <If condition={showRowToolbar}>
+        <Portal>
+          <RowToolbar table={table} getTable={getTable} />
+        </Portal>
+      </If>
 
-          <If condition={selectionType.derive((value) => value === "range")}>
-            <CellToolbar editorView={editorView} state={state} />
-          </If>
+      <If condition={showCellToolbar}>
+        <Portal>
+          <CellToolbar editorView={editorView} state={state} />
         </Portal>
       </If>
     </Tile>
