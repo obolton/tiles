@@ -54,7 +54,7 @@
   }
 }
 
-.items-label {
+#items-label {
   position: absolute;
   bottom: calc(100% + 12px);
   left: 50%;

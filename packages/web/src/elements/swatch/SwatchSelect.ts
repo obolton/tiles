@@ -50,13 +50,14 @@ export default class SwatchSelect extends HTMLElement {
     this.labelSlot.name = "label";
 
     this.itemsLabel = document.createElement("span");
-    this.itemsLabel.className = "items-label";
+    this.itemsLabel.id = "items-label";
     this.itemsLabel.hidden = true;
 
     this.items = document.createElement("popover-menu");
     this.items.id = "items";
     this.items.part = "items";
     this.items.anchorElement = this;
+    this.items.setAttribute("aria-labelledby", "items-label");
     this.items.addEventListener("toggle", this, { passive: true });
 
     const itemsSlot = document.createElement("slot");
