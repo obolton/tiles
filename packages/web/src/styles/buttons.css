@@ -243,7 +243,7 @@ swatch-select {
   }
 }
 
-swatch-select[showlabel][aria-expanded] {
+swatch-select[showvalue][aria-expanded] {
   &::after {
     background-position: left 0.5em center;
     transform-origin: calc(0.5em + 12px) center;
