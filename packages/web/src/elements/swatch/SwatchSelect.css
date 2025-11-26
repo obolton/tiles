@@ -21,6 +21,7 @@
 }
 
 #items {
+  position: relative;
   display: flex;
   gap: 4px;
   margin: 16px 0;
@@ -32,6 +33,7 @@
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 15%),
     0 4px 12px -4px rgb(0 0 0 / 30%);
+  overflow: visible;
   transition:
     display var(--animation-duration) allow-discrete,
     overlay var(--animation-duration) allow-discrete,
@@ -50,6 +52,24 @@
     scale: 0.9;
     opacity: 0;
   }
+}
+
+.items-label {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  translate: -50% 0;
+  padding: 6px 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--ui-color);
+  text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
+  background-color: rgb(255 255 255 / 85%);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 3px -1px rgb(0 0 0 / 20%);
+  border-radius: 32px;
+  pointer-events: none;
 }
 
 :host([orientation="vertical"]) {

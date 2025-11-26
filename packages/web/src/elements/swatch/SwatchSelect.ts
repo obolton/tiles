@@ -9,21 +9,24 @@ export interface SwatchSelectAttributes {
   value?: string | null;
   orientation?: "horizontal" | "vertical";
   align?: "left" | "center" | "right" | "auto";
-  showlabel?: boolean;
+  showvalue?: boolean;
+  label?: string | null;
 }
 
 export default class SwatchSelect extends HTMLElement {
   static get observedAttributes() {
-    return ["value", "align", "showlabel"] as const;
+    return ["value", "align", "showvalue", "label"] as const;
   }
 
   #value: string | null = null;
-  #showLabel: boolean = false;
+  #showValue: boolean = false;
+  #label: string | null = null;
 
   private internals: ElementInternals;
   private defaultIconSlot: HTMLSlotElement;
   private iconSlot: HTMLSlotElement;
   private labelSlot: HTMLSlotElement;
+  private itemsLabel: HTMLSpanElement;
   private items: PopoverMenu;
 
   constructor() {
@@ -46,6 +49,10 @@ export default class SwatchSelect extends HTMLElement {
     this.labelSlot = document.createElement("slot");
     this.labelSlot.name = "label";
 
+    this.itemsLabel = document.createElement("span");
+    this.itemsLabel.className = "items-label";
+    this.itemsLabel.hidden = true;
+
     this.items = document.createElement("popover-menu");
     this.items.id = "items";
     this.items.part = "items";
@@ -54,7 +61,7 @@ export default class SwatchSelect extends HTMLElement {
 
     const itemsSlot = document.createElement("slot");
     itemsSlot.addEventListener("slotchange", this);
-    this.items.append(itemsSlot);
+    this.items.append(this.itemsLabel, itemsSlot);
 
     shadow.append(
       this.defaultIconSlot,
@@ -66,16 +73,36 @@ export default class SwatchSelect extends HTMLElement {
     this.addEventListener("click", this, { passive: true });
   }
 
-  get showLabel() {
-    return this.#showLabel;
+  get label() {
+    return this.#label;
   }
 
-  set showLabel(show: boolean) {
-    if (show === this.#showLabel) {
+  set label(label: string | null) {
+    if (label === this.#label) {
       return;
     }
 
-    this.#showLabel = show;
+    this.#label = label;
+
+    if (label) {
+      this.itemsLabel.textContent = label;
+      this.itemsLabel.hidden = false;
+      this.ariaLabel = label;
+    } else {
+      this.itemsLabel.hidden = true;
+    }
+  }
+
+  get showValue() {
+    return this.#showValue;
+  }
+
+  set showValue(show: boolean) {
+    if (show === this.#showValue) {
+      return;
+    }
+
+    this.#showValue = show;
     const item = this.value === null ? null : this.getItem(this.value);
     this.setLabel(item);
   }
@@ -141,8 +168,11 @@ export default class SwatchSelect extends HTMLElement {
           this.items.align = "auto";
         }
         break;
-      case "showlabel":
-        this.showLabel = value !== null;
+      case "showvalue":
+        this.showValue = value !== null;
+        break;
+      case "label":
+        this.label = value;
         break;
     }
   }
@@ -228,7 +258,7 @@ export default class SwatchSelect extends HTMLElement {
       element.remove();
     }
 
-    if (!this.#showLabel || !item) {
+    if (!this.#showValue || !item) {
       return;
     }
 
