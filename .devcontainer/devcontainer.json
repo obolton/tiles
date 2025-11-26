@@ -1,5 +1,5 @@
 {
-  "name": "Tiles Development",
+  "name": "Tiles",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
@@ -29,5 +29,19 @@
     "DATABASE_URL": "postgresql://tiles:tiles@db:5432/tiles"
   },
 
-  "remoteUser": "node"
+  "remoteUser": "node",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-containers",
+        "ms-vscode-remote.remote-containers",
+        "oxc.oxc-vscode",
+        "Prisma.prisma",
+        "stylelint.vscode-stylelint",
+        "vitest.explorer"
+      ]
+    }
+  }
 }
