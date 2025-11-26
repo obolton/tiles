@@ -27,7 +27,7 @@ export default function FontPicker({
       aria-orientation="vertical"
       orientation="vertical"
       align="center"
-      showlabel
+      showvalue
       value={value}
       onchange={setFont}
     >

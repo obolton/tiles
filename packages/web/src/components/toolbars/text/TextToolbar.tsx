@@ -93,7 +93,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
             <li role="presentation">
               <swatch-select
                 role="menuitem"
-                aria-label="Vertical position"
+                label="Vertical position"
                 data-tooltip="Vertical position"
                 aria-orientation="vertical"
                 orientation="vertical"
@@ -147,7 +147,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
         <li role="presentation">
           <swatch-select
             role="menuitem"
-            aria-label="Animation"
+            label="Animation"
             data-tooltip="Animation"
             aria-orientation="vertical"
             orientation="vertical"

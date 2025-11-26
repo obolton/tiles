@@ -299,7 +299,7 @@ export default function FormattingTools({
             data-tooltip="Text format"
             orientation="vertical"
             align="center"
-            showlabel
+            showvalue
             value={format.derive((value) =>
               typeof value.headingLevel === "number"
                 ? `h${value.headingLevel}`
