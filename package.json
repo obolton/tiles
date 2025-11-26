@@ -2,21 +2,17 @@
   "name": "tiles",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "packages/api",
-    "packages/image-upload-worker",
-    "packages/web"
-  ],
+  "packageManager": "pnpm@10.23.0",
   "scripts": {
-    "dev": "npm run dev --workspace=api & npm run dev --workspace=web & npm run dev --workspace=image-upload-worker",
-    "db:push": "npm run db:push --workspace=api",
-    "db:seed": "npm run db:seed --workspace=api",
+    "dev": "pnpm --filter api dev & pnpm --filter web dev & pnpm --filter image-upload-worker dev",
+    "db:push": "pnpm --filter api db:push",
+    "db:seed": "pnpm --filter api db:seed",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "lint": "oxlint && npm run lint:css --workspace=web",
-    "storybook": "npm run storybook --workspace=web",
-    "cdn:purge": "npm run cdn:purge --workspace=api",
+    "lint": "oxlint && pnpm --filter web lint:css",
+    "storybook": "pnpm --filter web storybook",
+    "cdn:purge": "pnpm --filter api cdn:purge",
     "tsc": "tsc --build"
   },
   "devDependencies": {

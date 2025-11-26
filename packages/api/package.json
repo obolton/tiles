@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "tsx watch --env-file=\"../../.env\" --clear-screen=false src/index.ts",
-    "build": "npm run db:generate-client && esbuild src/index.ts --bundle --outdir=dist --platform=node --target=node24 --packages=external --format=esm",
+    "build": "pnpm db:generate-client && esbuild src/index.ts --bundle --outdir=dist --platform=node --target=node24 --packages=external --format=esm",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",

@@ -22,8 +22,8 @@
     }
   },
 
-  "postCreateCommand": "npm install && npm run db:push && npm run db:seed",
-  "postStartCommand": "echo 'Dev container ready! Run npm run dev to start the development servers.'",
+  "postCreateCommand": "pnpm install && pnpm db:push && pnpm db:seed",
+  "postStartCommand": "echo 'Dev container ready! Run pnpm dev to start the development servers.'",
 
   "remoteEnv": {
     "DATABASE_URL": "postgresql://tiles:tiles@db:5432/tiles"

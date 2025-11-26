@@ -9,11 +9,11 @@
 
 ## Build, Test, and Development Commands
 
-- `npm run dev`: Starts API (Ports via `.env`) and web dev servers.
-- `npm run build --workspace=api` / `--workspace=web`: Produces deployable artifacts; API bundles with `esbuild`, web builds client + SSR worker with Vite.
-- `npm run db:push` and `npm run db:seed`: Apply Prisma schema changes and load seed data; run after editing `packages/api/prisma` files.
-- `npm run lint`: Runs `oxlint` plus `stylelint` for the web workspace; keep output clean before opening a PR.
-- `npm run test`, `npm run test --workspace=<pkg>`, and `npm run test:coverage`: Execute Vitest suites across packages with optional coverage.
+- `pnpm dev`: Starts API (Ports via `.env`) and web dev servers.
+- `pnpm --filter api build` / `pnpm --filter web build`: Produces deployable artifacts; API bundles with `esbuild`, web builds client + SSR worker with Vite.
+- `pnpm db:push` and `pnpm db:seed`: Apply Prisma schema changes and load seed data; run after editing `packages/api/prisma` files.
+- `pnpm lint`: Runs `oxlint` plus `stylelint` for the web workspace; keep output clean before opening a PR.
+- `pnpm test`, `pnpm --filter <pkg> test`, and `pnpm test:coverage`: Execute Vitest suites across packages with optional coverage.
 
 ## Coding Style & Naming Conventions
 
@@ -22,7 +22,7 @@
 - Prefer pure functions and typed helpers; keep tRPC routers, JSX components, and Workers focused on orchestration and call shared utilities.
 - Use CSS modules for component-specific styles, with a `.module.css` file adjacent to the JSX component file.
 - Use shared class names and nested rules to reduce duplication in CSS files.
-- Run `npx prettier --check "**/*.{ts,tsx,css}"` before committing when touching formatting-heavy files.
+- Run `pnpm exec prettier --check "**/*.{ts,tsx,css}"` before committing when touching formatting-heavy files.
 
 ## Testing Guidelines
 
@@ -30,13 +30,13 @@
 - Use `describe` blocks for each function being tested, and to provide structure to test suites.
 - Place test files beside code in `__tests__` directories using `*.test.ts` files.
 - Mock external services (database, Cloudflare API etc) with existing test utilities rather than hitting the network; review current fixtures before adding new ones.
-- New features require at least one failing test before implementation and a coverage check via `npm run test:coverage` when practical.
+- New features require at least one failing test before implementation and a coverage check via `pnpm test:coverage` when practical.
 
 ## Commit & Pull Request Guidelines
 
 - Follow the existing short, imperative commit style (`Add column editing events`, `Update seed script`); keep the subject under ~72 characters and skip trailing punctuation.
 - Each PR should include: what changed and why, manual test notes or screenshots for UI tweaks, linked issue numbers, and any migration or seed steps required.
-- Before requesting review, ensure `npm run lint`, `npm run test`, and relevant build commands succeed; include that status in the PR description.
+- Before requesting review, ensure `pnpm lint`, `pnpm test`, and relevant build commands succeed; include that status in the PR description.
 
 ## Environment & Security Notes
 
