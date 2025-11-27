@@ -20,6 +20,7 @@ import MapObject from "@/models/Map";
 import Table from "@/models/Table";
 import Chart from "@/models/Chart";
 import Dropdown from "@/models/Dropdown";
+import PageInvite from "@/models/PageInvite";
 import type Tile from "@/models/Tile";
 import type { ClientTile } from "api/types/tiles";
 import type { FontId } from "@/config/fonts";
@@ -82,7 +83,7 @@ export default class Editor {
   readonly index: Map<string, Tile>;
   readonly tiles: TileCollection;
   readonly access: ReactiveArray<PageAccess>;
-  readonly invites: ReactiveArray<Invite>;
+  readonly invites: ReactiveArray<PageInvite>;
   readonly author: User;
   readonly selection: Reactive<Set<Tile>>;
   readonly dropdowns: ReactiveArray<Dropdown>;
@@ -127,7 +128,7 @@ export default class Editor {
     this.index = new Map();
     this.tiles = new TileCollection(this);
     this.access = array(page.access);
-    this.invites = array(page.invites);
+    this.invites = array(page.invites.map((i) => new PageInvite(this, i)));
     this.author = page.author;
     this.selection = reactive(new Set());
     this.dropdowns = array(page.dropdowns.map((d) => new Dropdown(this, d)));
@@ -497,27 +498,20 @@ export default class Editor {
 
   // Collaboration
 
-  async sendInvite(email: string) {
-    const invite = await client.collaboration.inviteToPage.mutate({
-      pageId: this.pageId,
-      email,
-    });
+  getInvite(id: string): PageInvite {
+    const invite = this.invites.value.find((i) => i.id === id);
+    if (!invite) {
+      throw new Error(`Invite cannot be found: ${id}`);
+    }
+    return invite;
+  }
+
+  addInvite(invite: PageInvite) {
     this.invites.value = this.invites.value.concat(invite);
   }
 
-  async deleteInvite(
-    id: string,
-    transition: TransitionFunction = immediateTransition,
-  ) {
-    await client.collaboration.deletePageInvite.mutate({
-      pageId: this.pageId,
-      id,
-    });
-    transition(() => {
-      this.invites.value = this.invites.value.filter(
-        (invite) => invite.id !== id,
-      );
-    });
+  removeInvite(invite: PageInvite) {
+    this.invites.value = this.invites.value.filter((i) => i.id !== invite.id);
   }
 
   async revokeAccess(

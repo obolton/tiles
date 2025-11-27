@@ -1,12 +1,12 @@
 import MailIcon from "@/icons/mail.svg?jsx";
 import Row from "@/components/rows/Row";
 import RemoveIcon from "@/icons/remove.svg?jsx";
-import type { Invite } from "@/types/collaboration";
+import type PageInvite from "@/models/PageInvite";
 
 export interface InviteRowProps {
-  invite: Invite;
+  invite: PageInvite;
   showRemoveButton?: boolean;
-  onRemove?: (invite: Invite) => void;
+  onRemove?: (invite: PageInvite) => void;
 }
 
 export default function InviteRow({

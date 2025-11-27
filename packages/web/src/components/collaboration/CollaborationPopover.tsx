@@ -5,8 +5,9 @@ import { showModal } from "@/utils/modals";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import styles from "./CollaborationPopover.module.css";
+import PageInvite from "@/models/PageInvite";
 import type Editor from "@/editor/Editor";
-import type { Invite, User } from "@/types/collaboration";
+import type { User } from "@/types/collaboration";
 import type { JSX } from "@/jsx/jsx";
 import type PopoverMenu from "@/elements/menu/PopoverMenu";
 
@@ -43,7 +44,7 @@ export default function CollaborationPopover({
       },
       async onConfirm({ email }) {
         try {
-          await editor.sendInvite(email);
+          await PageInvite.create(editor, email);
           showToast(`An invite was sent to ${email}`, "success");
         } catch (error) {
           handleError(error);
@@ -59,9 +60,9 @@ export default function CollaborationPopover({
       .catch(handleError);
   }
 
-  function deleteInvite(invite: Invite) {
-    editor
-      .deleteInvite(invite.id)
+  function deleteInvite(invite: PageInvite) {
+    invite
+      .delete()
       .then(() =>
         showToast(`The invite for ${invite.email} was cancelled.`, "success"),
       )
