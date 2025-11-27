@@ -19,10 +19,10 @@ import PageLink from "@/models/PageLink";
 import MapObject from "@/models/Map";
 import Table from "@/models/Table";
 import Chart from "@/models/Chart";
+import Dropdown from "@/models/Dropdown";
 import type Tile from "@/models/Tile";
 import type { ClientTile } from "api/types/tiles";
 import type { FontId } from "@/config/fonts";
-import type { Dropdown } from "@/types/dropdowns";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { Invite, PageAccess, User } from "@/types/collaboration";
 import type { Color } from "@/utils/color";
@@ -130,7 +130,7 @@ export default class Editor {
     this.invites = array(page.invites);
     this.author = page.author;
     this.selection = reactive(new Set());
-    this.dropdowns = array(page.dropdowns);
+    this.dropdowns = array(page.dropdowns.map((d) => new Dropdown(this, d)));
 
     const parentIds = new Map<string, string | null>();
 
@@ -537,40 +537,21 @@ export default class Editor {
 
   // Dropdowns
 
-  async createDropdown(
-    data: OmitPageId<AppRouterInputs["dropdowns"]["create"]>,
-  ) {
-    const dropdown = await client.dropdowns.create.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.dropdowns.value = this.dropdowns.value.concat(dropdown);
-    return dropdown;
-  }
-
-  async updateDropdown(
-    data: OmitPageId<AppRouterInputs["dropdowns"]["update"]>,
-  ) {
-    const dropdown = await client.dropdowns.update.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-    this.dropdowns.value = this.dropdowns.value.map((existing) =>
-      existing.id === dropdown.id ? dropdown : existing,
-    );
-    return dropdown;
-  }
-
-  async addOptionToDropdown(id: string, value: string) {
-    const dropdown = this.dropdowns.value.find(
-      (dropdown) => dropdown.id === id,
-    );
+  getDropdown(id: string): Dropdown {
+    const dropdown = this.dropdowns.value.find((d) => d.id === id);
     if (!dropdown) {
-      throw new Error(`Invalid dropdown ID: ${id}`);
+      throw new Error(`Dropdown cannot be found: ${id}`);
     }
-    return this.updateDropdown({
-      id,
-      options: dropdown.options.concat({ value }),
-    });
+    return dropdown;
+  }
+
+  addDropdown(dropdown: Dropdown) {
+    this.dropdowns.value = this.dropdowns.value.concat(dropdown);
+  }
+
+  removeDropdown(dropdown: Dropdown) {
+    this.dropdowns.value = this.dropdowns.value.filter(
+      (d) => d.id !== dropdown.id,
+    );
   }
 }

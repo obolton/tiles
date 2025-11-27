@@ -56,6 +56,7 @@ import {
 } from "@/utils/richText/commands";
 import { getLink } from "@/utils/richText/helpers";
 import Editor from "@/editor/Editor";
+import Dropdown from "@/models/Dropdown";
 import type { Reactive } from "@/utils/reactivity";
 import type { EditorState, Command } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
@@ -107,9 +108,9 @@ export default function FormattingTools({
     showModal(DropdownModalLoader, {
       props: {},
       async onConfirm({ options }) {
-        const dropdown = await Editor.current.createDropdown({ options });
+        const dropdown = await Dropdown.create(Editor.current, { options });
         performCommand(
-          insertDropdown(dropdown.id, dropdown.options[0]?.value ?? ""),
+          insertDropdown(dropdown.id, dropdown.options.value[0]?.value ?? ""),
         );
       },
     });
@@ -267,12 +268,12 @@ export default function FormattingTools({
                         on:click={() =>
                           insertExistingDropdown(
                             dropdown.id,
-                            dropdown.options[0]?.value ?? "",
+                            dropdown.options.value[0]?.value ?? "",
                           )
                         }
                       >
                         {listFormatter.format(
-                          dropdown.options
+                          dropdown.options.value
                             .slice(0, 5)
                             .map(({ value }) => value),
                         )}

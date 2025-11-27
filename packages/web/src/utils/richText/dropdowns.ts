@@ -44,7 +44,7 @@ export function dropdowns() {
             select.popover = "auto";
             select.style.setProperty("position-anchor", anchorName);
 
-            for (const option of dropdown.options) {
+            for (const option of dropdown.options.value) {
               const optionElement = document.createElement("div");
               optionElement.textContent = option.value;
               optionElement.dataset.value = option.value;
@@ -76,7 +76,8 @@ export function dropdowns() {
               } else {
                 const newValue = select.inputValue;
                 Editor.current
-                  .addOptionToDropdown(dropdownType, newValue)
+                  .getDropdown(dropdownType)
+                  .addOption(newValue)
                   .then(() => {
                     view.dispatch(
                       view.state.tr.setNodeAttribute(pos, "value", newValue),
