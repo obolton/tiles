@@ -2,12 +2,12 @@ import type TableView from "./TableView";
 
 export default class Row {
   id?: string;
-  height: number;
 
   readonly table: TableView;
   readonly element: HTMLTableRowElement;
 
   #index: number;
+  #height: number;
 
   constructor({
     table,
@@ -24,11 +24,12 @@ export default class Row {
   }) {
     this.table = table;
     this.id = id;
-    this.height = height;
+    this.#height = height;
     this.#index = index;
     this.element = element;
 
     this.element.ariaRowIndex = index.toString();
+    this.element.style.height = height + "px";
   }
 
   get index() {
@@ -38,6 +39,15 @@ export default class Row {
   set index(value: number) {
     this.#index = value;
     this.element.ariaRowIndex = value.toString();
+  }
+
+  get height() {
+    return this.#height;
+  }
+
+  set height(value: number) {
+    this.#height = value;
+    this.element.style.height = value + "px";
   }
 
   get header() {
