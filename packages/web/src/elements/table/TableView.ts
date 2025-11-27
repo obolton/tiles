@@ -561,22 +561,14 @@ export default class TableView extends HTMLElement {
       target.scope === "row" &&
       target.parentElement instanceof HTMLTableRowElement
     ) {
-      const element = target.parentElement;
-      const ariaRowIndex = element.ariaRowIndex;
+      const ariaRowIndex = target.parentElement.ariaRowIndex;
       if (!ariaRowIndex) {
         return;
       }
       event.stopPropagation();
       const index = parseInt(ariaRowIndex, 10);
-      const selection: RowSelection = {
-        type: "row",
-        row: new Row({
-          table: this,
-          id: element.dataset.id,
-          index,
-          element,
-        }),
-      };
+      const row = this.getRowAtIndex(index);
+      const selection: RowSelection = { type: "row", row };
       if (event.shiftKey) {
         this.addSelection(selection);
       } else {
@@ -632,13 +624,21 @@ export default class TableView extends HTMLElement {
   }
 
   private handleResizeEnd(event: ResizeEvent) {
-    if (!this.colGroup) {
-      return;
-    }
-
     const target = event.currentTarget as HTMLElement;
     const th = target.closest("th");
     if (!th || !th.parentElement) {
+      return;
+    }
+
+    if (th.scope === "col") {
+      this.handleColumnResizeEnd(th, event);
+    } else if (th.scope === "row") {
+      this.handleRowResizeEnd(th, event);
+    }
+  }
+
+  private handleColumnResizeEnd(th: HTMLTableCellElement, event: ResizeEvent) {
+    if (!this.colGroup || !th.parentElement) {
       return;
     }
 
@@ -653,8 +653,24 @@ export default class TableView extends HTMLElement {
     const width = column.width + event.x;
     this.dispatchEvent(new TableEvent("resizetablecolumn", { column, width }));
 
-    column.element.style.width = width + "px";
     column.width = width;
+
+    this.update();
+  }
+
+  private handleRowResizeEnd(th: HTMLTableCellElement, event: ResizeEvent) {
+    const tr = th.parentElement;
+    if (!(tr instanceof HTMLTableRowElement) || !tr.ariaRowIndex) {
+      return;
+    }
+
+    const rowIndex = parseInt(tr.ariaRowIndex, 10);
+    const row = this.getRowAtIndex(rowIndex);
+
+    const height = row.height + event.y;
+    this.dispatchEvent(new TableEvent("resizetablerow", { row, height }));
+
+    row.height = height;
 
     this.update();
   }
@@ -902,24 +918,19 @@ export default class TableView extends HTMLElement {
   // Cell info
 
   private getCellInfo(element: HTMLTableCellElement): Cell {
-    const row = element.parentElement;
-    if (!(row instanceof HTMLTableRowElement)) {
+    const rowElement = element.parentElement;
+    if (
+      !(rowElement instanceof HTMLTableRowElement) ||
+      !rowElement.ariaRowIndex ||
+      !element.ariaColIndex
+    ) {
       throw new Error("Cell is disconnected");
     }
-    const columnIndex = Array.prototype.indexOf.call(row.children, element) - 1;
-    const column = this.visibleColumns[columnIndex];
-    if (!column) {
-      throw new Error(`No visible column at index ${columnIndex}`);
-    }
-    const rowIndex = row.ariaRowIndex ? parseInt(row.ariaRowIndex, 10) : 0;
+    const rowIndex = parseInt(rowElement.ariaRowIndex, 10);
+    const columnIndex = parseInt(element.ariaColIndex, 10);
     return {
-      column,
-      row: new Row({
-        table: this,
-        id: row.dataset.id,
-        index: rowIndex,
-        element: row,
-      }),
+      row: this.getRowAtIndex(rowIndex),
+      column: this.getColumnAtIndex(columnIndex),
     };
   }
 
@@ -1276,6 +1287,7 @@ export default class TableView extends HTMLElement {
         clone: true,
         signal: this.editAbortController?.signal,
       });
+      th.appendChild(this.createRowResizeHandle());
     }
     tr.appendChild(th);
     return tr;
@@ -1343,7 +1355,6 @@ export default class TableView extends HTMLElement {
 
     const col = document.createElement("col");
     col.dataset.index = columnIndex.toString();
-    col.style.width = width + "px";
     this.colGroup.insertBefore(
       col,
       this.colGroup.children[position + 1] ?? null,
@@ -1402,8 +1413,6 @@ export default class TableView extends HTMLElement {
     if (id) {
       element.dataset.id = id;
     }
-    element.style.height = height + "px";
-    element.ariaRowIndex = rowIndex.toString();
 
     const row = new Row({ table: this, id, index: rowIndex, height, element });
     this.visibleRows.splice(position, 0, row);
@@ -1644,10 +1653,11 @@ export default class TableView extends HTMLElement {
             clone: true,
             signal: this.editAbortController?.signal,
           });
+          th.appendChild(this.createRowResizeHandle());
         }
       }
     } else {
-      for (const handle of this.tableHead.querySelectorAll("resize-handle")) {
+      for (const handle of this.getElementsByTagName("resize-handle")) {
         handle.remove();
       }
     }
@@ -1700,6 +1710,15 @@ export default class TableView extends HTMLElement {
 
   private createResizeHandle() {
     const handle = document.createElement("resize-handle");
+    handle.addEventListener("resizeend", this, {
+      signal: this.editAbortController?.signal,
+    });
+    return handle;
+  }
+
+  private createRowResizeHandle() {
+    const handle = document.createElement("resize-handle");
+    handle.setAttribute("direction", "vertical");
     handle.addEventListener("resizeend", this, {
       signal: this.editAbortController?.signal,
     });
