@@ -54,6 +54,12 @@ table-view {
       position: sticky;
       left: 0;
       z-index: 1;
+      transition: z-index 0s var(--animation-duration-short);
+
+      &:has(resize-handle:hover, resize-handle:state(resizing)) {
+        z-index: 2;
+        transition-delay: 0s;
+      }
     }
 
     &.selected,
@@ -93,6 +99,14 @@ table-view {
       &:state(resizing) {
         background-color: var(--focus-ring-color);
       }
+    }
+
+    &[scope="row"] > resize-handle {
+      inset: auto 0 -4px;
+      width: 100cqw;
+      height: 5px;
+      z-index: 2;
+      cursor: row-resize;
     }
 
     &.drag-preview {
