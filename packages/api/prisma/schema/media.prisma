@@ -26,13 +26,15 @@ model Image {
   pending     Boolean      @default(true)
   bytes       Int          @default(0)
 
-  workspace  Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  imageTiles ImageTile[]
-  textTiles  TextTile[]
-  tables     Table[]
-  charts     Chart[]
-  sections   Section[]
+  workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  imageTiles   ImageTile[]
+  textTiles    TextTile[]
+  tables       Table[]
+  tableColumns TableColumn[]
+  tableRows    TableRow[]
+  charts       Chart[]
+  sections     Section[]
 
   @@index([workspaceId, purpose])
   @@map("images")
