@@ -86,6 +86,26 @@ export default Prisma.defineExtension({
         compute,
       },
     },
+    tableColumn: {
+      background: {
+        needs: {
+          backgroundColor: true,
+          backgroundGradient: true,
+          backgroundImageId: true,
+        },
+        compute,
+      },
+    },
+    tableRow: {
+      background: {
+        needs: {
+          backgroundColor: true,
+          backgroundGradient: true,
+          backgroundImageId: true,
+        },
+        compute,
+      },
+    },
     chart: {
       background: {
         needs: {
