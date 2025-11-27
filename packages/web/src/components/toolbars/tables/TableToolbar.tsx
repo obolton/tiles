@@ -43,9 +43,6 @@ export default function TableToolbar({ table }: TableToolbarProps) {
             onChange={setTextColor}
           />
         </li>
-      </ul>
-
-      <ul role="group">
         <li role="presentation">
           <BackgroundPicker
             id={`${id}-background`}
