@@ -81,11 +81,13 @@ export default function ColumnToolbar({
         <li role="presentation">
           <ToolbarButton label="Add column" on:click={addColumn}>
             <AddColumnIcon aria-hidden="true" />
+            Add column
           </ToolbarButton>
         </li>
         <li role="presentation">
           <ToolbarButton label="Create chart" on:click={createChart}>
             <ChartIcon aria-hidden="true" />
+            Create chart
           </ToolbarButton>
         </li>
         <li role="presentation">

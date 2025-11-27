@@ -56,6 +56,7 @@ export default function RowToolbar({ table, getTable }: RowToolbarProps) {
         <li role="presentation">
           <ToolbarButton label="Add row" on:click={addRow}>
             <AddRowIcon aria-hidden="true" />
+            Add row
           </ToolbarButton>
         </li>
         <li role="presentation">
