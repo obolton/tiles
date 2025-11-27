@@ -21,7 +21,6 @@
 }
 
 #items {
-  position: relative;
   display: flex;
   gap: 4px;
   margin: 16px 0;
