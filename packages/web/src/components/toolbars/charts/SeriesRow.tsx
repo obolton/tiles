@@ -26,9 +26,11 @@ export default function SeriesRow({
           <swatch-select
             aria-label="Chart type"
             data-tooltip="Chart type"
-            aria-orientation="horizontal"
-            orientation="horizontal"
+            label="Chart type"
+            aria-orientation="vertical"
+            orientation="vertical"
             align="center"
+            showvalue
             value={series.type}
             on:change={(event) => {
               const type = (event.currentTarget as SwatchSelect).value as
@@ -41,29 +43,35 @@ export default function SeriesRow({
             <ul className="menuitemgroup" role="group">
               <li role="presentation">
                 <MenuItem
-                  classList={{ floating: true }}
+                  classList={{ menuitem: true }}
                   icon={<BarChartIcon aria-hidden="true" />}
                   value="BAR"
-                  label="Bar chart"
-                />
+                  data-label="Bar chart"
+                >
+                  Bar chart
+                </MenuItem>
               </li>
 
               <li role="presentation">
                 <MenuItem
-                  classList={{ floating: true }}
+                  classList={{ menuitem: true }}
                   icon={<LineChartIcon aria-hidden="true" />}
                   value="LINE"
-                  label="Line chart"
-                />
+                  data-label="Line chart"
+                >
+                  Line chart
+                </MenuItem>
               </li>
 
               <li role="presentation">
                 <MenuItem
-                  classList={{ floating: true }}
+                  classList={{ menuitem: true }}
                   icon={<AreaChartIcon aria-hidden="true" />}
                   value="AREA"
-                  label="Area chart"
-                />
+                  data-label="Area chart"
+                >
+                  Area chart
+                </MenuItem>
               </li>
             </ul>
           </swatch-select>
