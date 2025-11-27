@@ -6,10 +6,12 @@ import { makeDraggable } from "@/utils/drag";
 import { moveBefore } from "@/utils/dom";
 import { moveElement } from "@/utils/arrays";
 import { getFocusedDescendant } from "@/utils/focus";
+import { getBackgroundStyle } from "@/utils/backgrounds";
 import css from "./TableView.css?inline";
 import newIcon from "@/icons/new.svg?raw";
 import type { ResizeEvent } from "@/elements/resize/events";
 import type { DragDropEvent } from "@/utils/drag";
+import type { Background } from "@/components/backgrounds/types";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -79,8 +81,13 @@ export default class TableView extends HTMLElement {
     id?: string;
     title?: string | null;
     width: number;
+    background?: Background | null;
   } = defaultGetColumn;
-  getRow: (index: number) => { id?: string; height: number } = defaultGetRow;
+  getRow: (index: number) => {
+    id?: string;
+    height: number;
+    background?: Background | null;
+  } = defaultGetRow;
   updateCell?: (row: Row, column: Column, cell: HTMLTableCellElement) => void;
 
   private scrollContainer?: HTMLElement;
@@ -1327,6 +1334,7 @@ export default class TableView extends HTMLElement {
     row.classList.remove("selected");
     row.ariaRowIndex = null;
     delete row.dataset.id;
+    row.removeAttribute("style");
 
     for (const cell of Array.from(row.cells)) {
       if (cell.tagName === "TD") {
@@ -1347,7 +1355,17 @@ export default class TableView extends HTMLElement {
   private insertColumn(
     position: number,
     columnIndex: number,
-    { id, title, width }: { id?: string; title?: string | null; width: number },
+    {
+      id,
+      title,
+      width,
+      background,
+    }: {
+      id?: string;
+      title?: string | null;
+      width: number;
+      background?: Background | null;
+    },
   ) {
     if (!this.colGroup || !this.tableHead) {
       return;
@@ -1355,6 +1373,7 @@ export default class TableView extends HTMLElement {
 
     const col = document.createElement("col");
     col.dataset.index = columnIndex.toString();
+    Object.assign(col.style, getBackgroundStyle(background));
     this.colGroup.insertBefore(
       col,
       this.colGroup.children[position + 1] ?? null,
@@ -1404,6 +1423,7 @@ export default class TableView extends HTMLElement {
     rowIndex: number,
     height: number,
     id?: string,
+    background?: Background | null,
   ) {
     if (!this.tableBody) {
       return;
@@ -1413,6 +1433,7 @@ export default class TableView extends HTMLElement {
     if (id) {
       element.dataset.id = id;
     }
+    Object.assign(element.style, getBackgroundStyle(background));
 
     const row = new Row({ table: this, id, index: rowIndex, height, element });
     this.visibleRows.splice(position, 0, row);
@@ -1435,8 +1456,8 @@ export default class TableView extends HTMLElement {
       if (!rowData) {
         throw new Error(`getRow(${index}) returned undefined`);
       }
-      const { id, height } = rowData;
-      this.insertRow(0, index, height, id);
+      const { id, height, background } = rowData;
+      this.insertRow(0, index, height, id, background);
       this.firstVisibleRow--;
       this.translateY -= height;
       this.contentHeight += height;
@@ -1456,8 +1477,8 @@ export default class TableView extends HTMLElement {
       if (!rowData) {
         throw new Error(`getRow(${index}) returned undefined`);
       }
-      const { id, height } = rowData;
-      this.insertRow(this.visibleRows.length, index, height, id);
+      const { id, height, background } = rowData;
+      this.insertRow(this.visibleRows.length, index, height, id, background);
       this.contentHeight += height;
     }
   }
@@ -1819,6 +1840,22 @@ export default class TableView extends HTMLElement {
     }
 
     this.redrawSelection();
+  }
+
+  setColumnBackground(id: string, background: Background | null) {
+    const column = this.visibleColumns.find((c) => c.id === id);
+    if (column) {
+      column.element.style.background =
+        getBackgroundStyle(background)?.background ?? "";
+    }
+  }
+
+  setRowBackground(id: string, background: Background | null) {
+    const row = this.visibleRows.find((r) => r.id === id);
+    if (row) {
+      row.element.style.background =
+        getBackgroundStyle(background)?.background ?? "";
+    }
   }
 
   deleteColumn(id: string) {

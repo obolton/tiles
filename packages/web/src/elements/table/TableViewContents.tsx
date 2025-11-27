@@ -1,3 +1,4 @@
+import { getBackgroundStyle } from "@/utils/backgrounds";
 import type Table from "@/models/Table";
 import type { JSX } from "@/jsx/jsx";
 
@@ -25,7 +26,10 @@ export default function TableViewContents({
 
         {table.columns.value.map((column, index) => (
           <col
-            style={{ width: column.width + "px" }}
+            style={{
+              width: column.width + "px",
+              ...getBackgroundStyle(column.background),
+            }}
             data-index={index}
             data-id={column.id}
           />
@@ -63,7 +67,10 @@ export default function TableViewContents({
 
           return (
             <tr
-              style={{ height: row.height + "px" }}
+              style={{
+                height: row.height + "px",
+                ...getBackgroundStyle(row.background),
+              }}
               aria-rowindex={rowIndex}
               data-id={row.id}
             >

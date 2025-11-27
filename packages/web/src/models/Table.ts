@@ -9,7 +9,10 @@ import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 import type { ClientTableTile } from "api/types/tiles";
 import type { Color } from "@/utils/color";
-import type { BackgroundUpdate } from "@/components/backgrounds/types";
+import type {
+  Background,
+  BackgroundUpdate,
+} from "@/components/backgrounds/types";
 import type { RichText } from "@/utils/richText/types";
 import type { AppRouterInputs } from "@/api/client";
 
@@ -17,12 +20,14 @@ export interface TableColumn {
   id: string;
   width: number;
   title: string | null;
+  background: Background | null;
 }
 
 export interface TableRow {
   id: string;
   height: number;
   data: Record<string, RichText | string | null>;
+  background: Background | null;
 }
 
 export default class Table extends Tile {
@@ -138,6 +143,19 @@ export default class Table extends Tile {
     });
   }
 
+  async setColumnBackground(id: string, background: BackgroundUpdate) {
+    const column = this.columns.find((c) => c.id === id);
+    if (!column) {
+      throw new Error(`Invalid column ID: ${id}`);
+    }
+    const result = await this.updateColumn({
+      columnId: id,
+      background,
+    });
+    column.background = result.background;
+    return result.background;
+  }
+
   removeColumns(ids: string[]) {
     if (ids.length === 0) {
       return;
@@ -192,6 +210,21 @@ export default class Table extends Tile {
       rowId: id,
       height,
     });
+  }
+
+  async setRowBackground(id: string, background: BackgroundUpdate) {
+    const row = this.rows.find((r) => r.id === id);
+    if (!row) {
+      throw new Error(`Invalid row ID: ${id}`);
+    }
+    const result = await client.tables.updateRow.mutate({
+      pageId: this.editor.pageId,
+      tableId: this.id,
+      rowId: id,
+      background,
+    });
+    row.background = result.background;
+    return result.background;
   }
 
   removeRows(ids: string[]) {

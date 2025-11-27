@@ -1,11 +1,14 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
+import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import ChartIcon from "@/icons/chart.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
+import { Computed } from "@/utils/reactivity";
 import Chart from "@/models/Chart";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
+import type { BackgroundUpdate } from "@/components/backgrounds/types";
 
 export interface ColumnToolbarProps {
   table: Table;
@@ -16,7 +19,37 @@ export default function ColumnToolbar({
   table,
   getTable,
 }: ColumnToolbarProps) {
-  const { id, sectionId, editor } = table;
+  const { id, sectionId, editor, columns } = table;
+
+  function getSelectedColumn() {
+    const selection = getTable().selection;
+    if (!selection) {
+      return null;
+    }
+    const first = Array.from(selection)[0];
+    return first?.type === "column" ? first.column : null;
+  }
+
+  const background = new Computed([columns], (cols) => {
+    const column = getSelectedColumn();
+    if (!column?.id) {
+      return null;
+    }
+    return cols.find((c) => c.id === column.id)?.background ?? null;
+  });
+
+  async function setBackground(value: BackgroundUpdate) {
+    const column = getSelectedColumn();
+    if (!column?.id) {
+      return;
+    }
+    try {
+      const result = await table.setColumnBackground(column.id, value);
+      getTable().setColumnBackground(column.id, result);
+    } catch (error) {
+      handleError(error);
+    }
+  }
 
   async function addColumn() {
     const selection = getTable().selection;
@@ -78,6 +111,13 @@ export default function ColumnToolbar({
       aria-label="Column tools"
     >
       <ul role="group">
+        <li role="presentation">
+          <BackgroundPicker
+            id={`${id}-column-background`}
+            value={background}
+            onChange={setBackground}
+          />
+        </li>
         <li role="presentation">
           <ToolbarButton label="Add column" on:click={addColumn}>
             <AddColumnIcon aria-hidden="true" />

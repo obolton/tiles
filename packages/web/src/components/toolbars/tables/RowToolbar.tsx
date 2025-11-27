@@ -1,9 +1,12 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
+import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import AddRowIcon from "@/icons/add-row.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
+import { Computed } from "@/utils/reactivity";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
+import type { BackgroundUpdate } from "@/components/backgrounds/types";
 
 export interface RowToolbarProps {
   table: Table;
@@ -11,6 +14,38 @@ export interface RowToolbarProps {
 }
 
 export default function RowToolbar({ table, getTable }: RowToolbarProps) {
+  const { id, rows } = table;
+
+  function getSelectedRow() {
+    const selection = getTable().selection;
+    if (!selection) {
+      return null;
+    }
+    const first = Array.from(selection)[0];
+    return first?.type === "row" ? first.row : null;
+  }
+
+  const background = new Computed([rows], (rowList) => {
+    const row = getSelectedRow();
+    if (!row?.id) {
+      return null;
+    }
+    return rowList.find((r) => r.id === row.id)?.background ?? null;
+  });
+
+  async function setBackground(value: BackgroundUpdate) {
+    const row = getSelectedRow();
+    if (!row?.id) {
+      return;
+    }
+    try {
+      const result = await table.setRowBackground(row.id, value);
+      getTable().setRowBackground(row.id, result);
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
   async function addRow() {
     const selection = getTable().selection;
     if (!selection) {
@@ -53,6 +88,13 @@ export default function RowToolbar({ table, getTable }: RowToolbarProps) {
       aria-label="Row tools"
     >
       <ul role="group">
+        <li role="presentation">
+          <BackgroundPicker
+            id={`${id}-row-background`}
+            value={background}
+            onChange={setBackground}
+          />
+        </li>
         <li role="presentation">
           <ToolbarButton label="Add row" on:click={addRow}>
             <AddRowIcon aria-hidden="true" />
