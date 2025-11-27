@@ -180,6 +180,20 @@ export default class Table extends Tile {
     });
   }
 
+  setRowHeight(id: string, height: number) {
+    const row = this.rows.find((r) => r.id === id);
+    if (!row) {
+      throw new Error(`Invalid row ID: ${id}`);
+    }
+    row.height = height;
+    return client.tables.updateRow.mutate({
+      pageId: this.editor.pageId,
+      tableId: this.id,
+      rowId: id,
+      height,
+    });
+  }
+
   removeRows(ids: string[]) {
     if (ids.length === 0) {
       return;

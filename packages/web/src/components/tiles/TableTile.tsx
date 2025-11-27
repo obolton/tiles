@@ -220,6 +220,22 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
     }
   };
 
+  const onResizeRow = async (event: TableEvent) => {
+    const { row, height } = event;
+    if (!row || !row.id || !height) {
+      return;
+    }
+    const rowData = rows.value[row.index];
+    if (!rowData) {
+      return;
+    }
+    try {
+      await table.setRowHeight(row.id, height);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const onMoveColumn = async (event: TableEvent) => {
     try {
       const { column, afterIndex, afterId } = event;
@@ -341,6 +357,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
         on:edittablecolumnstart={onEditColumn}
         on:edittablecolumnend={onEditColumnEnd}
         on:resizetablecolumn={onResizeColumn}
+        on:resizetablerow={onResizeRow}
         on:movetablecolumn={onMoveColumn}
         on:movetablerow={onMoveRow}
         on:appendtablerow={onAppendRow}
