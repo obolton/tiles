@@ -1,9 +1,12 @@
 import Each from "@/jsx/each";
+import MenuItem from "@/components/buttons/MenuItem";
 import SeriesRow from "./SeriesRow";
+import ParagraphIcon from "@/icons/paragraph.svg?jsx";
 import styles from "./SeriesList.module.css";
 import type Chart from "@/models/Chart";
 import type { Series, ChartType } from "@/models/Chart";
 import type Table from "@/models/Table";
+import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 
 export interface SeriesListProps {
   chart: Chart;
@@ -12,7 +15,7 @@ export interface SeriesListProps {
 
 export default function SeriesList({ chart, table }: SeriesListProps) {
   function setLabel(event: Event) {
-    const select = event.currentTarget as HTMLSelectElement;
+    const select = event.currentTarget as SwatchSelect;
     const value = select.value;
     const property =
       table.columns.find((column) => column.id === value) ?? null;
@@ -61,26 +64,35 @@ export default function SeriesList({ chart, table }: SeriesListProps) {
         </select>
       </label>
 
-      <label>
-        Label
-        <select id={`${chart.id}-label-select`} on:change={setLabel}>
-          <option value="" disabled>
-            Label
-          </option>
+      <swatch-select
+        id={`${chart.id}-label-select`}
+        role="menuitem"
+        aria-label="Label"
+        data-tooltip="Label"
+        label="Label"
+        orientation="vertical"
+        align="center"
+        showvalue
+        value={chart.label.derive((label) => label?.id ?? "")}
+        on:change={setLabel}
+      >
+        <ParagraphIcon slot="default-icon" aria-hidden="true" />
+        <ul className="menuitemgroup" role="group">
           <Each items={table.columns}>
             {(column) => (
-              <option
-                value={column.id}
-                selected={
-                  chart.label.value?.id === column.id ? true : undefined
-                }
-              >
-                {column.title ?? "Column"}
-              </option>
+              <li role="presentation">
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  value={column.id}
+                  data-label={column.title || "Column"}
+                >
+                  {column.title || "Column"}
+                </MenuItem>
+              </li>
             )}
           </Each>
-        </select>
-      </label>
+        </ul>
+      </swatch-select>
     </div>
   );
 }
