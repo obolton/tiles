@@ -3,12 +3,12 @@ import type TableView from "./TableView";
 export default class Column {
   id?: string;
   title: string | null;
-  width: number;
 
   readonly table: TableView;
   readonly element: HTMLTableColElement;
 
   #index: number;
+  #width: number;
 
   constructor({
     table,
@@ -28,11 +28,12 @@ export default class Column {
     this.table = table;
     this.id = id;
     this.title = title ?? null;
-    this.width = width;
+    this.#width = width;
     this.#index = index;
     this.element = element;
 
     this.element.dataset.index = index.toString();
+    this.element.style.width = width + "px";
   }
 
   get index() {
@@ -42,6 +43,15 @@ export default class Column {
   set index(value: number) {
     this.#index = value;
     this.element.dataset.index = value.toString();
+  }
+
+  get width() {
+    return this.#width;
+  }
+
+  set width(value: number) {
+    this.#width = value;
+    this.element.style.width = value + "px";
   }
 
   get header() {
