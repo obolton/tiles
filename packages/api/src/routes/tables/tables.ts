@@ -24,12 +24,14 @@ export const TABLE_COLUMN_FIELDS = {
   id: true,
   title: true,
   width: true,
+  background: true,
 } as const satisfies Prisma.TableColumnSelect<ExtensionArgs>;
 
 export const TABLE_ROW_FIELDS = {
   id: true,
   height: true,
   data: true,
+  background: true,
 } as const satisfies Prisma.TableRowSelect<ExtensionArgs>;
 
 export const TABLE_FIELDS = {
@@ -215,6 +217,7 @@ export async function updateRow({
   tableId,
   rowId,
   height,
+  background,
 }: UpdateRowSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the table
@@ -230,6 +233,7 @@ export async function updateRow({
       },
       data: {
         height,
+        ...getBackgroundProperties(background),
       },
       select: TABLE_ROW_FIELDS,
     });
@@ -388,6 +392,7 @@ export async function updateColumn({
   columnId,
   title,
   width,
+  background,
 }: UpdateColumnSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the table
@@ -404,6 +409,7 @@ export async function updateColumn({
       data: {
         title,
         width,
+        ...getBackgroundProperties(background),
       },
       select: TABLE_COLUMN_FIELDS,
     });

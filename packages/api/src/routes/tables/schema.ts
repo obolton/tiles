@@ -64,6 +64,7 @@ export const UpdateRowSchema = z.strictObject({
   tableId: z.uuid(),
   rowId: z.uuid(),
   height: z.number().min(32).max(400).optional(),
+  background: BackgroundSchema.optional(),
 });
 export type UpdateRowSchema = z.infer<typeof UpdateRowSchema>;
 
@@ -105,6 +106,7 @@ export const UpdateColumnSchema = z.strictObject({
   columnId: z.uuid(),
   title: z.string().nullable().optional(),
   width: z.number().min(16).max(800).optional(),
+  background: BackgroundSchema.optional(),
 });
 export type UpdateColumnSchema = z.infer<typeof UpdateColumnSchema>;
 
