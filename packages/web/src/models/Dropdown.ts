@@ -1,0 +1,61 @@
+import client from "@/api/client";
+import { reactive } from "@/utils/reactivity";
+import type { Dropdown as DropdownData } from "@/types/dropdowns";
+import type { AppRouterInputs } from "@/api/client";
+import type { Reactive } from "@/utils/reactivity";
+import type Editor from "@/editor/Editor";
+
+type OmitPageId<T extends { pageId: string }> = Omit<T, "pageId">;
+
+export default class Dropdown {
+  readonly editor: Editor;
+  readonly id: string;
+  readonly options: Reactive<DropdownData["options"]>;
+
+  constructor(editor: Editor, data: DropdownData) {
+    this.editor = editor;
+    this.id = data.id;
+    this.options = reactive(data.options);
+  }
+
+  static async create(
+    editor: Editor,
+    data: OmitPageId<AppRouterInputs["dropdowns"]["create"]>,
+  ) {
+    const result = await client.dropdowns.create.mutate({
+      pageId: editor.pageId,
+      ...data,
+    });
+    const dropdown = new Dropdown(editor, result);
+    editor.addDropdown(dropdown);
+    return dropdown;
+  }
+
+  private update(
+    data: Omit<AppRouterInputs["dropdowns"]["update"], "pageId" | "id">,
+  ) {
+    return client.dropdowns.update.mutate({
+      pageId: this.editor.pageId,
+      id: this.id,
+      ...data,
+    });
+  }
+
+  async setOptions(options: DropdownData["options"]) {
+    this.options.value = options;
+    await this.update({ options });
+  }
+
+  async addOption(value: string) {
+    const newOptions = this.options.value.concat({ value });
+    return this.setOptions(newOptions);
+  }
+
+  async delete() {
+    await client.dropdowns.delete.mutate({
+      pageId: this.editor.pageId,
+      id: this.id,
+    });
+    this.editor.removeDropdown(this);
+  }
+}
