@@ -1,0 +1,86 @@
+import { describe, expect, test } from "vitest";
+import { getBackgroundStyle } from "../backgrounds";
+import type { Background } from "@/components/backgrounds/types";
+
+describe("getBackgroundStyle", () => {
+  test("returns undefined for null", () => {
+    expect(getBackgroundStyle(null)).toBeUndefined();
+  });
+
+  test("returns undefined for undefined", () => {
+    expect(getBackgroundStyle(undefined)).toBeUndefined();
+  });
+
+  describe("color backgrounds", () => {
+    test("returns background with CSS color value", () => {
+      const background: Background = { type: "color", color: "80000a000000" };
+      const result = getBackgroundStyle(background);
+      expect(result).toEqual({
+        background: "oklch(0.5000 0.0391 0.0000deg)",
+      });
+    });
+  });
+
+  describe("gradient backgrounds", () => {
+    const colorA = "80000a000000";
+    const colorB = "c000148000b4";
+
+    test("returns vertical gradient", () => {
+      const background: Background = {
+        type: "gradient",
+        colorA,
+        colorB,
+        direction: "VERTICAL",
+      };
+      const result = getBackgroundStyle(background);
+      expect(result?.background).toContain("linear-gradient(to bottom");
+      expect(result?.background).toContain("in oklch");
+    });
+
+    test("returns horizontal gradient", () => {
+      const background: Background = {
+        type: "gradient",
+        colorA,
+        colorB,
+        direction: "HORIZONTAL",
+      };
+      const result = getBackgroundStyle(background);
+      expect(result?.background).toContain("linear-gradient(to right");
+    });
+
+    test("returns bottom-right diagonal gradient", () => {
+      const background: Background = {
+        type: "gradient",
+        colorA,
+        colorB,
+        direction: "BOTTOM_RIGHT",
+      };
+      const result = getBackgroundStyle(background);
+      expect(result?.background).toContain("linear-gradient(to bottom right");
+    });
+
+    test("returns bottom-left diagonal gradient", () => {
+      const background: Background = {
+        type: "gradient",
+        colorA,
+        colorB,
+        direction: "BOTTOM_LEFT",
+      };
+      const result = getBackgroundStyle(background);
+      expect(result?.background).toContain("linear-gradient(to bottom left");
+    });
+  });
+
+  describe("image backgrounds", () => {
+    test("returns background with url, center position and cover size", () => {
+      const background: Background = {
+        type: "image",
+        imageUrl: "https://example.com/image.jpg",
+      };
+      const result = getBackgroundStyle(background);
+      expect(result).toEqual({
+        background: "url(https://example.com/image.jpg) center / cover",
+      });
+    });
+  });
+});
