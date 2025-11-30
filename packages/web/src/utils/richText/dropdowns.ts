@@ -1,6 +1,9 @@
 import { Plugin } from "prosemirror-state";
 import Editor from "@/editor/Editor";
-import type FilterSelect from "@/elements/filter-select/FilterSelect";
+import type DropdownEditor from "@/elements/dropdown-editor/DropdownEditor";
+import type DropdownOption from "@/elements/dropdown-editor/DropdownOption";
+import type DropdownModel from "@/models/Dropdown";
+import type { DeleteEvent, ReorderEvent } from "@/utils/events";
 
 export function dropdowns() {
   return new Plugin({
@@ -9,7 +12,7 @@ export function dropdowns() {
         dropdown(node, view, getPos) {
           const dropdownType = node.attrs.dropdownType as string;
           let value = node.attrs.value as string;
-          let select: FilterSelect | null = null;
+          let editor: DropdownEditor | null = null;
 
           const element = document.createElement("span");
           const button = document.createElement("button");
@@ -19,13 +22,21 @@ export function dropdowns() {
           button.ariaHasPopup = "listbox";
           element.appendChild(button);
 
+          function populateOptions(dropdown: DropdownModel) {
+            if (!editor) return;
+            editor.select.replaceChildren();
+            for (const option of dropdown.options.value) {
+              editor.addOption(option.value);
+            }
+          }
+
           function open() {
-            if (select) {
+            if (editor) {
               return;
             }
 
             const dropdown = Editor.current.dropdowns.value.find(
-              (dropdown) => dropdown.id === dropdownType,
+              (d) => d.id === dropdownType,
             );
 
             if (!dropdown) {
@@ -37,70 +48,138 @@ export function dropdowns() {
             button.ariaExpanded = "true";
             button.style.setProperty("anchor-name", anchorName);
 
-            select = document.createElement("filter-select");
-            select.value = value;
-            select.tabIndex = 0;
-            select.placeholder = "Search";
-            select.popover = "auto";
-            select.style.setProperty("position-anchor", anchorName);
+            editor = document.createElement("dropdown-editor");
+            editor.value = value;
+            editor.tabIndex = 0;
+            editor.placeholder = "Search";
+            editor.popover = "auto";
+            editor.style.setProperty("position-anchor", anchorName);
 
-            for (const option of dropdown.options.value) {
-              const optionElement = document.createElement("div");
-              optionElement.textContent = option.value;
-              optionElement.dataset.value = option.value;
-              select.appendChild(optionElement);
+            if (dropdown.title.value) {
+              editor.dropdownTitle = dropdown.title.value;
             }
 
-            element.appendChild(select);
-            select.showPopover();
-            select.focus();
+            populateOptions(dropdown);
 
-            select.addEventListener("toggle", (event) => {
-              if (event.newState === "closed") {
-                close();
+            element.appendChild(editor);
+            editor.showPopover();
+            editor.focus();
+
+            editor.addEventListener("toggle", handleToggle);
+            editor.addEventListener("change", handleChange);
+            editor.addEventListener("delete", handleDelete);
+            editor.addEventListener("reorder", handleReorder);
+            editor.addEventListener("append", handleAppend);
+          }
+
+          function handleToggle(event: ToggleEvent) {
+            if (event.newState === "closed") {
+              close();
+            }
+          }
+
+          function handleChange(event: Event) {
+            const pos = getPos();
+            if (typeof pos !== "number" || !editor) {
+              return;
+            }
+
+            const target = event.target;
+            const dropdown = Editor.current.getDropdown(dropdownType);
+
+            // Title change
+            if (target === editor) {
+              dropdown.setTitle(editor.dropdownTitle || null);
+              return;
+            }
+
+            // Option value change
+            if (
+              target instanceof HTMLElement &&
+              target.tagName === "DROPDOWN-OPTION"
+            ) {
+              const option = target as DropdownOption;
+              const index = Array.from(editor.select.children).indexOf(option);
+              if (index >= 0) {
+                dropdown.updateOption(index, option.value);
               }
-            });
+              return;
+            }
 
-            select.addEventListener("change", () => {
-              const pos = getPos();
-              if (typeof pos !== "number" || !select) {
-                return;
-              }
-              const value = select.value;
+            // Selection change (from FilterSelect)
+            const selectedValue = editor.value;
+            if (selectedValue) {
+              view.dispatch(
+                view.state.tr.setNodeAttribute(pos, "value", selectedValue),
+              );
+              close();
+              return;
+            }
 
-              if (value) {
+            // New option creation (user typed a new value and pressed Enter)
+            const newValue = editor.select.inputValue.trim();
+            if (newValue) {
+              dropdown.addOption(newValue).then(() => {
+                populateOptions(dropdown);
                 view.dispatch(
-                  view.state.tr.setNodeAttribute(pos, "value", value),
+                  view.state.tr.setNodeAttribute(pos, "value", newValue),
                 );
                 close();
-              } else {
-                const newValue = select.inputValue;
-                Editor.current
-                  .getDropdown(dropdownType)
-                  .addOption(newValue)
-                  .then(() => {
-                    view.dispatch(
-                      view.state.tr.setNodeAttribute(pos, "value", newValue),
-                    );
-                    close();
-                  });
-              }
+              });
+            }
+          }
+
+          function handleDelete(event: DeleteEvent) {
+            if (!editor) return;
+
+            const option = event.target as DropdownOption;
+            const index = Array.from(editor.select.children).indexOf(option);
+            if (index >= 0) {
+              const dropdown = Editor.current.getDropdown(dropdownType);
+              dropdown.removeOption(index).then(() => {
+                populateOptions(dropdown);
+              });
+            }
+          }
+
+          function handleReorder(event: ReorderEvent) {
+            if (!editor) return;
+
+            const dropdown = Editor.current.getDropdown(dropdownType);
+            dropdown.reorderOptions(event.fromIndex, event.toIndex).then(() => {
+              populateOptions(dropdown);
             });
           }
 
+          function handleAppend() {
+            if (!editor) return;
+
+            const defaultValue = "New option";
+            const option = editor.addOption(defaultValue);
+            option.focus();
+
+            const dropdown = Editor.current.getDropdown(dropdownType);
+            dropdown.addOption(defaultValue);
+          }
+
           function close() {
-            if (!select) {
+            if (!editor) {
               return;
             }
             view.focus();
-            select.remove();
-            select = null;
+            editor.removeEventListener("toggle", handleToggle);
+            editor.removeEventListener("change", handleChange);
+            editor.removeEventListener("delete", handleDelete);
+            editor.removeEventListener("reorder", handleReorder);
+            editor.removeEventListener("append", handleAppend);
+            editor.remove();
+            editor = null;
             button.ariaExpanded = "false";
             button.style.removeProperty("anchor-name");
           }
 
           function onClick() {
-            if (select) {
+            if (editor) {
               close();
             } else {
               open();
