@@ -1,5 +1,3 @@
-import { escapeUTF8 } from "entities";
-
 declare global {
   interface HTMLElementTagNameMap {
     "list-box": ListBox;
@@ -148,7 +146,7 @@ export default class ListBox extends HTMLElement {
         option.ariaSelected = "false";
       });
 
-    const option = this.querySelector(`[data-value="${escapeUTF8(value)}"]`);
+    const option = this.querySelector(`[data-value="${CSS.escape(value)}"]`);
     if (option) {
       option.ariaSelected = "true";
     }
