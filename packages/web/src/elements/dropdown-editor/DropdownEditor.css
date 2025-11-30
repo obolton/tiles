@@ -1,0 +1,134 @@
+:host {
+  position: fixed;
+  inset: auto;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--border-radius);
+  background: var(--ui-background-color);
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
+  overflow: visible;
+  position-area: block-end span-inline-end;
+  position-try: flip-block;
+  font-size: 1rem;
+}
+
+#header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  padding-inline-start: 12px;
+  border-bottom: 1px solid rgb(0 0 0 / 10%);
+}
+
+#title-text,
+#title-input {
+  flex: 1;
+  min-width: 0;
+  height: 1lh;
+  padding: 0;
+  margin: 0;
+  font-family: var(--ui-font);
+  font-size: inherit;
+  font-weight: 600;
+  line-height: inherit;
+  color: var(--ui-color);
+  background: none;
+  border: none;
+  outline: none;
+}
+
+#title-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#title-input {
+  display: none;
+
+  &::placeholder {
+    color: var(--placeholder-color);
+  }
+}
+
+:host([editing]) #title-text {
+  display: none;
+}
+
+:host([editing]) #title-input {
+  display: block;
+}
+
+#edit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+  color: var(--icon-color);
+  opacity: 0.5;
+  transition: opacity var(--animation-duration-short, 0.15s) var(--easing, ease);
+
+  &:hover {
+    opacity: 1;
+    background-color: rgb(0 0 0 / 5%);
+  }
+
+  & svg {
+    width: 16px;
+    height: 16px;
+    fill: currentcolor;
+    pointer-events: none;
+  }
+}
+
+:host([editing]) #edit {
+  opacity: 1;
+  background-color: rgb(0 0 0 / 10%);
+}
+
+#add {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 36px;
+  padding: 8px 20px;
+  border: none;
+  border-top: 1px solid rgb(0 0 0 / 10%);
+  background: none;
+  font-family: var(--ui-font);
+  font-size: inherit;
+  color: var(--ui-color);
+  cursor: pointer;
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+    background-color: rgb(0 0 0 / 5%);
+  }
+
+  & svg {
+    width: 16px;
+    height: 16px;
+    fill: currentcolor;
+    pointer-events: none;
+  }
+}
+
+:host([editing]) #add {
+  display: flex;
+}

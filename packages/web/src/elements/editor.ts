@@ -1,3 +1,5 @@
+import "./dropdown-editor/DropdownEditor";
+import "./dropdown-editor/DropdownOption";
 import "./floating-toolbar/FloatingToolbar";
 import "./item/PageItem";
 import "./resize/ResizeHandle";
