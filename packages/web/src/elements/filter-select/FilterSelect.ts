@@ -1,4 +1,3 @@
-import { escapeUTF8 } from "entities";
 import css from "./FilterSelect.css?inline";
 
 const stylesheet = new CSSStyleSheet();
@@ -180,7 +179,7 @@ export default class FilterSelect extends HTMLElement {
         option.ariaSelected = "false";
       });
 
-    const option = this.querySelector(`[data-value="${escapeUTF8(value)}"]`);
+    const option = this.querySelector(`[data-value="${CSS.escape(value)}"]`);
     if (option) {
       option.ariaSelected = "true";
     }

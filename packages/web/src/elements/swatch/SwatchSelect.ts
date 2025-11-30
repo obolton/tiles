@@ -1,6 +1,5 @@
 import css from "./SwatchSelect.css?inline";
 import PopoverMenu from "@/elements/menu/PopoverMenu";
-import { escapeUTF8 } from "entities";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -230,7 +229,7 @@ export default class SwatchSelect extends HTMLElement {
   // Items
 
   private getItem(value: string) {
-    return this.querySelector(`[value="${escapeUTF8(value)}"]`);
+    return this.querySelector(`[value="${CSS.escape(value)}"]`);
   }
 
   // Icon
