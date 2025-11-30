@@ -37,7 +37,6 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
-    "@types/cookie": "^0.6.0",
     "@types/cors": "^2.8.18",
     "@types/node": "^24.3.0",
     "esbuild": "^0.27.0",
