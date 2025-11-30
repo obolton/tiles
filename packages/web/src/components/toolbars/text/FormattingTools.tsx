@@ -64,8 +64,6 @@ import type { TextAlignment, ListType } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 
 const DateTimeModalLoader = () => import("@/components/modals/DateTimeModal");
-const DropdownModalLoader = () =>
-  import("@/components/modals/dropdowns/DropdownModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 
 export interface FormattingToolsProps {
@@ -104,16 +102,12 @@ export default function FormattingTools({
     performCommand(insertDropdown(id, value));
   }
 
-  function insertNewDropdown() {
-    showModal(DropdownModalLoader, {
-      props: {},
-      async onConfirm({ options }) {
-        const dropdown = await Dropdown.create(Editor.current, { options });
-        performCommand(
-          insertDropdown(dropdown.id, dropdown.options.value[0]?.value ?? ""),
-        );
-      },
+  async function insertNewDropdown() {
+    const defaultOption = "Option 1";
+    const dropdown = await Dropdown.create(Editor.current, {
+      options: [{ value: defaultOption }],
     });
+    performCommand(insertDropdown(dropdown.id, defaultOption));
   }
 
   function changeTextFormat(event: Event) {
@@ -272,11 +266,12 @@ export default function FormattingTools({
                           )
                         }
                       >
-                        {listFormatter.format(
-                          dropdown.options.value
-                            .slice(0, 5)
-                            .map(({ value }) => value),
-                        )}
+                        {dropdown.title.value ||
+                          listFormatter.format(
+                            dropdown.options.value
+                              .slice(0, 5)
+                              .map(({ value }) => value),
+                          )}
                       </MenuItem>
                     </li>
                   )}
