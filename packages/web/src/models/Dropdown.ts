@@ -10,11 +10,13 @@ type OmitPageId<T extends { pageId: string }> = Omit<T, "pageId">;
 export default class Dropdown {
   readonly editor: Editor;
   readonly id: string;
+  readonly title: Reactive<string | null>;
   readonly options: Reactive<DropdownData["options"]>;
 
   constructor(editor: Editor, data: DropdownData) {
     this.editor = editor;
     this.id = data.id;
+    this.title = reactive(data.title);
     this.options = reactive(data.options);
   }
 
@@ -48,6 +50,31 @@ export default class Dropdown {
 
   async addOption(value: string) {
     const newOptions = this.options.value.concat({ value });
+    return this.setOptions(newOptions);
+  }
+
+  async setTitle(title: string | null) {
+    this.title.value = title;
+    await this.update({ title });
+  }
+
+  async updateOption(index: number, value: string) {
+    const newOptions = this.options.value.map((option, i) =>
+      i === index ? { ...option, value } : option,
+    );
+    return this.setOptions(newOptions);
+  }
+
+  async removeOption(index: number) {
+    const newOptions = this.options.value.toSpliced(index, 1);
+    return this.setOptions(newOptions);
+  }
+
+  async reorderOptions(fromIndex: number, toIndex: number) {
+    const option = this.options.value[fromIndex];
+    const newOptions = this.options.value
+      .toSpliced(fromIndex, 1)
+      .toSpliced(toIndex, 0, option);
     return this.setOptions(newOptions);
   }
 
