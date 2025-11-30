@@ -38,6 +38,16 @@
 - Each PR should include: what changed and why, manual test notes or screenshots for UI tweaks, linked issue numbers, and any migration or seed steps required.
 - Before requesting review, ensure `pnpm lint`, `pnpm test`, and relevant build commands succeed; include that status in the PR description.
 
+## Web Components
+
+- Custom elements live in `src/elements` with Shadow DOM and CSS imported via `?inline`.
+- Use the `handleEvent` pattern for event handling within components.
+- Reflect properties to attributes and vice versa.
+
+## UI Patterns
+
+- Prefer optimistic UI updates - update the DOM before API calls complete for better responsiveness.
+
 ## Environment & Security Notes
 
 - During development, environment variables are loaded from an untracked `.env` file in the workspace root. Never commit secrets.
