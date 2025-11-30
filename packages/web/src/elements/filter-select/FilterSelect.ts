@@ -27,6 +27,7 @@ export default class FilterSelect extends HTMLElement {
   private readonly input: HTMLInputElement;
   private readonly list: HTMLElement;
   private readonly itemsSlot: HTMLSlotElement;
+  private readonly childObserver: MutationObserver;
 
   constructor() {
     super();
@@ -58,10 +59,18 @@ export default class FilterSelect extends HTMLElement {
 
     this.addEventListener("click", this);
     this.addEventListener("keydown", this);
+
+    // Observe child changes to reassign slots
+    this.childObserver = new MutationObserver(() => this.filter());
   }
 
   connectedCallback() {
+    this.childObserver.observe(this, { childList: true });
     this.filter();
+  }
+
+  disconnectedCallback() {
+    this.childObserver.disconnect();
   }
 
   attributeChangedCallback(
