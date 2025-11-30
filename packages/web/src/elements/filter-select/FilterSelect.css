@@ -3,6 +3,10 @@
   flex-direction: column;
 }
 
+::slotted([hidden]) {
+  display: none !important;
+}
+
 #input::placeholder {
   color: var(--placeholder-color);
 }

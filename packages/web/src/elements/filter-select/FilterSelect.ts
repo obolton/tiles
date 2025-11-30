@@ -25,7 +25,6 @@ export default class FilterSelect extends HTMLElement {
   private readonly internals: ElementInternals;
   private readonly input: HTMLInputElement;
   private readonly list: HTMLElement;
-  private readonly itemsSlot: HTMLSlotElement;
   private readonly childObserver: MutationObserver;
 
   constructor() {
@@ -35,7 +34,6 @@ export default class FilterSelect extends HTMLElement {
 
     const shadow = this.attachShadow({
       mode: "closed",
-      slotAssignment: "manual",
       delegatesFocus: true,
     });
     shadow.adoptedStyleSheets = [stylesheet];
@@ -51,15 +49,14 @@ export default class FilterSelect extends HTMLElement {
     this.list.role = "listbox";
     this.list.part = "list";
 
-    this.itemsSlot = document.createElement("slot");
-    this.list.appendChild(this.itemsSlot);
+    this.list.appendChild(document.createElement("slot"));
 
     shadow.append(this.input, this.list);
 
     this.addEventListener("click", this);
     this.addEventListener("keydown", this);
 
-    // Observe child changes to reassign slots
+    // Observe child changes to reapply filter
     this.childObserver = new MutationObserver(() => this.filter());
   }
 
@@ -121,7 +118,9 @@ export default class FilterSelect extends HTMLElement {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    const items = this.itemsSlot.assignedElements();
+    const items = Array.from(
+      this.querySelectorAll<HTMLElement>("[data-value]:not([hidden])"),
+    );
     const active = this.ariaActiveDescendantElement;
     const activeIndex = active ? items.indexOf(active) : -1;
 
@@ -211,22 +210,25 @@ export default class FilterSelect extends HTMLElement {
 
   private filter() {
     const filter = this.inputValue.toLowerCase();
-    const options = this.querySelectorAll<HTMLElement>("[data-value]")
-      .values()
-      .filter((item) =>
-        filter ? item.dataset.value?.toLowerCase().startsWith(filter) : true,
-      )
-      .toArray();
-    this.itemsSlot.assign(...options);
+
+    for (const item of this.querySelectorAll<HTMLElement>("[data-value]")) {
+      const matches =
+        !filter || item.dataset.value?.toLowerCase().startsWith(filter);
+      item.hidden = !matches;
+    }
 
     if (
       this.ariaActiveDescendantElement instanceof HTMLElement &&
-      !options.includes(this.ariaActiveDescendantElement)
+      this.ariaActiveDescendantElement.hidden
     ) {
-      this.setActiveOption(options[0]);
+      const firstVisible = this.querySelector<HTMLElement>(
+        "[data-value]:not([hidden])",
+      );
+      this.setActiveOption(firstVisible);
     }
 
-    this.list.style.display = options.length === 0 ? "none" : "";
+    const hasVisibleOptions = this.querySelector("[data-value]:not([hidden])");
+    this.list.style.display = hasVisibleOptions ? "" : "none";
   }
 
   // Active option
