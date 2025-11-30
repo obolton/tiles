@@ -1,221 +1,256 @@
 import { Plugin } from "prosemirror-state";
+import type { EditorView } from "prosemirror-view";
+import type { Node } from "prosemirror-model";
 import Editor from "@/editor/Editor";
 import type DropdownEditor from "@/elements/dropdown-editor/DropdownEditor";
 import type DropdownOption from "@/elements/dropdown-editor/DropdownOption";
 import type DropdownModel from "@/models/Dropdown";
 import type { DeleteEvent, ReorderEvent } from "@/utils/events";
 
+class DropdownNodeView implements EventListenerObject {
+  readonly dom: HTMLSpanElement;
+
+  private dropdownType: string;
+  private value: string;
+  private editor: DropdownEditor | null = null;
+  private button: HTMLButtonElement;
+  private view: EditorView;
+  private getPos: () => number | undefined;
+  private abortController: AbortController;
+
+  constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
+    this.dropdownType = node.attrs.dropdownType as string;
+    this.value = node.attrs.value as string;
+    this.view = view;
+    this.getPos = getPos;
+
+    this.dom = document.createElement("span");
+    this.button = document.createElement("button");
+    this.button.role = "combobox";
+    this.button.textContent = this.value;
+    this.button.ariaExpanded = "false";
+    this.button.ariaHasPopup = "listbox";
+    this.dom.appendChild(this.button);
+
+    this.abortController = new AbortController();
+    this.button.addEventListener("click", this, {
+      signal: this.abortController.signal,
+    });
+  }
+
+  handleEvent(event: Event): void {
+    switch (event.type) {
+      case "click":
+        this.onClick();
+        break;
+      case "toggle":
+        this.onToggle(event as ToggleEvent);
+        break;
+      case "change":
+        this.onChange(event);
+        break;
+      case "delete":
+        this.onDelete(event as DeleteEvent);
+        break;
+      case "reorder":
+        this.onReorder(event as ReorderEvent);
+        break;
+      case "append":
+        this.onAppend();
+        break;
+    }
+  }
+
+  update(updatedNode: Node): boolean {
+    this.value = updatedNode.attrs.value as string;
+
+    if (this.value !== this.button.textContent) {
+      this.button.textContent = this.value;
+    }
+
+    return true;
+  }
+
+  destroy(): void {
+    this.abortController.abort();
+  }
+
+  ignoreMutation(): boolean {
+    return true;
+  }
+
+  stopEvent(): boolean {
+    return true;
+  }
+
+  private populateOptions(dropdown: DropdownModel): void {
+    if (!this.editor) return;
+    this.editor.select.replaceChildren();
+    for (const option of dropdown.options.value) {
+      this.editor.addOption(option.value);
+    }
+  }
+
+  private open(): void {
+    if (this.editor) {
+      return;
+    }
+
+    const dropdown = Editor.current.dropdowns.value.find(
+      (d) => d.id === this.dropdownType,
+    );
+
+    if (!dropdown) {
+      return;
+    }
+
+    const anchorName = "--dropdown-button";
+
+    this.button.ariaExpanded = "true";
+    this.button.style.setProperty("anchor-name", anchorName);
+
+    this.editor = document.createElement("dropdown-editor");
+    this.editor.value = this.value;
+    this.editor.tabIndex = 0;
+    this.editor.placeholder = "Search";
+    this.editor.popover = "auto";
+    this.editor.style.setProperty("position-anchor", anchorName);
+
+    if (dropdown.title.value) {
+      this.editor.dropdownTitle = dropdown.title.value;
+    }
+
+    this.populateOptions(dropdown);
+
+    this.dom.appendChild(this.editor);
+    this.editor.showPopover();
+    this.editor.focus();
+
+    this.editor.addEventListener("toggle", this);
+    this.editor.addEventListener("change", this);
+    this.editor.addEventListener("delete", this);
+    this.editor.addEventListener("reorder", this);
+    this.editor.addEventListener("append", this);
+  }
+
+  private close(): void {
+    if (!this.editor) {
+      return;
+    }
+    this.view.focus();
+    this.editor.removeEventListener("toggle", this);
+    this.editor.removeEventListener("change", this);
+    this.editor.removeEventListener("delete", this);
+    this.editor.removeEventListener("reorder", this);
+    this.editor.removeEventListener("append", this);
+    this.editor.remove();
+    this.editor = null;
+    this.button.ariaExpanded = "false";
+    this.button.style.removeProperty("anchor-name");
+  }
+
+  private onClick(): void {
+    if (this.editor) {
+      this.close();
+    } else {
+      this.open();
+    }
+  }
+
+  private onToggle(event: ToggleEvent): void {
+    if (event.newState === "closed") {
+      this.close();
+    }
+  }
+
+  private onChange(event: Event): void {
+    const pos = this.getPos();
+    if (typeof pos !== "number" || !this.editor) {
+      return;
+    }
+
+    const target = event.target;
+    const dropdown = Editor.current.getDropdown(this.dropdownType);
+
+    // Title change
+    if (target === this.editor) {
+      dropdown.setTitle(this.editor.dropdownTitle || null);
+      return;
+    }
+
+    // Option value change
+    if (target instanceof HTMLElement && target.tagName === "DROPDOWN-OPTION") {
+      const option = target as DropdownOption;
+      const index = Array.from(this.editor.select.children).indexOf(option);
+      if (index >= 0) {
+        dropdown.updateOption(index, option.value);
+      }
+      return;
+    }
+
+    // Selection change (from FilterSelect)
+    const selectedValue = this.editor.value;
+    if (selectedValue) {
+      this.view.dispatch(
+        this.view.state.tr.setNodeAttribute(pos, "value", selectedValue),
+      );
+      this.close();
+      return;
+    }
+
+    // New option creation (user typed a new value and pressed Enter)
+    const newValue = this.editor.select.inputValue.trim();
+    if (newValue) {
+      dropdown.addOption(newValue).then(() => {
+        this.populateOptions(dropdown);
+        this.view.dispatch(
+          this.view.state.tr.setNodeAttribute(pos, "value", newValue),
+        );
+        this.close();
+      });
+    }
+  }
+
+  private onDelete(event: DeleteEvent): void {
+    if (!this.editor) return;
+
+    const option = event.target as DropdownOption;
+    const index = Array.from(this.editor.select.children).indexOf(option);
+    if (index >= 0) {
+      const dropdown = Editor.current.getDropdown(this.dropdownType);
+      dropdown.removeOption(index).then(() => {
+        this.populateOptions(dropdown);
+      });
+    }
+  }
+
+  private onReorder(event: ReorderEvent): void {
+    if (!this.editor) return;
+
+    const dropdown = Editor.current.getDropdown(this.dropdownType);
+    dropdown.reorderOptions(event.fromIndex, event.toIndex).then(() => {
+      this.populateOptions(dropdown);
+    });
+  }
+
+  private onAppend(): void {
+    if (!this.editor) return;
+
+    const defaultValue = "New option";
+    const option = this.editor.addOption(defaultValue);
+    option.focus();
+
+    const dropdown = Editor.current.getDropdown(this.dropdownType);
+    dropdown.addOption(defaultValue);
+  }
+}
+
 export function dropdowns() {
   return new Plugin({
     props: {
       nodeViews: {
         dropdown(node, view, getPos) {
-          const dropdownType = node.attrs.dropdownType as string;
-          let value = node.attrs.value as string;
-          let editor: DropdownEditor | null = null;
-
-          const element = document.createElement("span");
-          const button = document.createElement("button");
-          button.role = "combobox";
-          button.textContent = value;
-          button.ariaExpanded = "false";
-          button.ariaHasPopup = "listbox";
-          element.appendChild(button);
-
-          function populateOptions(dropdown: DropdownModel) {
-            if (!editor) return;
-            editor.select.replaceChildren();
-            for (const option of dropdown.options.value) {
-              editor.addOption(option.value);
-            }
-          }
-
-          function open() {
-            if (editor) {
-              return;
-            }
-
-            const dropdown = Editor.current.dropdowns.value.find(
-              (d) => d.id === dropdownType,
-            );
-
-            if (!dropdown) {
-              return;
-            }
-
-            const anchorName = "--dropdown-button";
-
-            button.ariaExpanded = "true";
-            button.style.setProperty("anchor-name", anchorName);
-
-            editor = document.createElement("dropdown-editor");
-            editor.value = value;
-            editor.tabIndex = 0;
-            editor.placeholder = "Search";
-            editor.popover = "auto";
-            editor.style.setProperty("position-anchor", anchorName);
-
-            if (dropdown.title.value) {
-              editor.dropdownTitle = dropdown.title.value;
-            }
-
-            populateOptions(dropdown);
-
-            element.appendChild(editor);
-            editor.showPopover();
-            editor.focus();
-
-            editor.addEventListener("toggle", handleToggle);
-            editor.addEventListener("change", handleChange);
-            editor.addEventListener("delete", handleDelete);
-            editor.addEventListener("reorder", handleReorder);
-            editor.addEventListener("append", handleAppend);
-          }
-
-          function handleToggle(event: ToggleEvent) {
-            if (event.newState === "closed") {
-              close();
-            }
-          }
-
-          function handleChange(event: Event) {
-            const pos = getPos();
-            if (typeof pos !== "number" || !editor) {
-              return;
-            }
-
-            const target = event.target;
-            const dropdown = Editor.current.getDropdown(dropdownType);
-
-            // Title change
-            if (target === editor) {
-              dropdown.setTitle(editor.dropdownTitle || null);
-              return;
-            }
-
-            // Option value change
-            if (
-              target instanceof HTMLElement &&
-              target.tagName === "DROPDOWN-OPTION"
-            ) {
-              const option = target as DropdownOption;
-              const index = Array.from(editor.select.children).indexOf(option);
-              if (index >= 0) {
-                dropdown.updateOption(index, option.value);
-              }
-              return;
-            }
-
-            // Selection change (from FilterSelect)
-            const selectedValue = editor.value;
-            if (selectedValue) {
-              view.dispatch(
-                view.state.tr.setNodeAttribute(pos, "value", selectedValue),
-              );
-              close();
-              return;
-            }
-
-            // New option creation (user typed a new value and pressed Enter)
-            const newValue = editor.select.inputValue.trim();
-            if (newValue) {
-              dropdown.addOption(newValue).then(() => {
-                populateOptions(dropdown);
-                view.dispatch(
-                  view.state.tr.setNodeAttribute(pos, "value", newValue),
-                );
-                close();
-              });
-            }
-          }
-
-          function handleDelete(event: DeleteEvent) {
-            if (!editor) return;
-
-            const option = event.target as DropdownOption;
-            const index = Array.from(editor.select.children).indexOf(option);
-            if (index >= 0) {
-              const dropdown = Editor.current.getDropdown(dropdownType);
-              dropdown.removeOption(index).then(() => {
-                populateOptions(dropdown);
-              });
-            }
-          }
-
-          function handleReorder(event: ReorderEvent) {
-            if (!editor) return;
-
-            const dropdown = Editor.current.getDropdown(dropdownType);
-            dropdown.reorderOptions(event.fromIndex, event.toIndex).then(() => {
-              populateOptions(dropdown);
-            });
-          }
-
-          function handleAppend() {
-            if (!editor) return;
-
-            const defaultValue = "New option";
-            const option = editor.addOption(defaultValue);
-            option.focus();
-
-            const dropdown = Editor.current.getDropdown(dropdownType);
-            dropdown.addOption(defaultValue);
-          }
-
-          function close() {
-            if (!editor) {
-              return;
-            }
-            view.focus();
-            editor.removeEventListener("toggle", handleToggle);
-            editor.removeEventListener("change", handleChange);
-            editor.removeEventListener("delete", handleDelete);
-            editor.removeEventListener("reorder", handleReorder);
-            editor.removeEventListener("append", handleAppend);
-            editor.remove();
-            editor = null;
-            button.ariaExpanded = "false";
-            button.style.removeProperty("anchor-name");
-          }
-
-          function onClick() {
-            if (editor) {
-              close();
-            } else {
-              open();
-            }
-          }
-
-          const abortController = new AbortController();
-          const { signal } = abortController;
-
-          button.addEventListener("click", onClick, { signal });
-
-          return {
-            dom: element,
-
-            update(updatedNode) {
-              value = updatedNode.attrs.value as string;
-
-              if (value !== button.textContent) {
-                button.textContent = value;
-              }
-
-              return true;
-            },
-
-            destroy() {
-              abortController.abort();
-            },
-
-            ignoreMutation() {
-              return true;
-            },
-
-            stopEvent() {
-              return true;
-            },
-          };
+          return new DropdownNodeView(node, view, getPos);
         },
       },
     },
