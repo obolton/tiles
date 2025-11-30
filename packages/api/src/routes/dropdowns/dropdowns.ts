@@ -8,6 +8,7 @@ import type { Prisma } from "@/generated/prisma/client";
 
 export const DROPDOWN_FIELDS = {
   id: true,
+  title: true,
   options: true,
 } as const satisfies Prisma.DropdownSelect<ExtensionArgs>;
 
@@ -19,11 +20,13 @@ export type Dropdown = Prisma.Result<
 
 export async function createDropdown({
   pageId,
+  title,
   options,
 }: CreateDropdownSchema) {
   return prisma.dropdown.create({
     data: {
       pageId,
+      title,
       options,
     },
     select: DROPDOWN_FIELDS,
@@ -33,6 +36,7 @@ export async function createDropdown({
 export async function updateDropdown({
   pageId,
   id,
+  title,
   options,
 }: UpdateDropdownSchema) {
   return prisma.dropdown.update({
@@ -41,6 +45,7 @@ export async function updateDropdown({
       id,
     },
     data: {
+      title,
       options,
     },
     select: DROPDOWN_FIELDS,

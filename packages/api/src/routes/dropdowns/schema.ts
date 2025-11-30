@@ -15,6 +15,7 @@ export type DropdownOptionsSchema = z.infer<typeof DropdownOptionsSchema>;
 
 export const CreateDropdownSchema = z.strictObject({
   pageId: z.uuid(),
+  title: z.string().max(100).optional(),
   options: DropdownOptionsSchema,
 });
 export type CreateDropdownSchema = z.infer<typeof CreateDropdownSchema>;
@@ -22,7 +23,8 @@ export type CreateDropdownSchema = z.infer<typeof CreateDropdownSchema>;
 export const UpdateDropdownSchema = z.strictObject({
   pageId: z.uuid(),
   id: z.uuid(),
-  options: DropdownOptionsSchema,
+  title: z.string().max(100).nullable().optional(),
+  options: DropdownOptionsSchema.optional(),
 });
 export type UpdateDropdownSchema = z.infer<typeof UpdateDropdownSchema>;
 
