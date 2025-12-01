@@ -20,6 +20,7 @@
 - Use TypeScript with ES modules and two-space indentation.
 - Use the `@/*` path alias that resolves to each package's `src` directory; avoid relative `../../` imports.
 - Prefer pure functions and typed helpers; keep tRPC routers, JSX components, and Workers focused on orchestration and call shared utilities.
+- Prefer `instanceof` checks over type assertions for type narrowing.
 - Use CSS modules for component-specific styles, with a `.module.css` file adjacent to the JSX component file.
 - Use shared class names and nested rules to reduce duplication in CSS files.
 - Run `pnpm exec prettier --check "**/*.{ts,tsx,css}"` before committing when touching formatting-heavy files.
@@ -43,6 +44,7 @@
 - Custom elements live in `src/elements` with Shadow DOM and CSS imported via `?inline`.
 - Use the `handleEvent` pattern for event handling within components.
 - Reflect properties to attributes and vice versa.
+- Prefer ARIA properties (`ariaPressed`, `ariaSelected`) over `setAttribute` for accessibility attributes.
 
 ## UI Patterns
 
