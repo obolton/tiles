@@ -7,6 +7,7 @@ import FolderIcon from "@/icons/folder.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
 import { showModal } from "@/utils/modals";
 import { reactive } from "@/utils/reactivity";
+import { invalidateWorkspaceFolders } from "@/utils/folders";
 import type { DragDropEvent } from "@/utils/drag";
 
 export type SYSTEM_FOLDER = "RECENT" | "SHARED" | "BOOKMARKS" | "TRASH";
@@ -48,6 +49,7 @@ export default function Folders({
           workspaceId,
           name: result.name,
         });
+        invalidateWorkspaceFolders(workspaceId);
         folders.value = {
           folders: folders.value.folders
             .concat(folder)
