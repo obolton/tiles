@@ -49,17 +49,25 @@ export default function FolderPicker({
     >
       <FolderIcon aria-hidden="true" slot="default-icon" />
 
-      <MenuItem classList={{ menuitem: true }} value="" data-label="None">
-        None
-      </MenuItem>
-
-      <Each items={folders}>
-        {(folder) => (
-          <MenuItem classList={{ menuitem: true }} value={folder.id}>
-            {folder.name}
+      <ul className="menuitemgroup" role="group">
+        <li role="presentation">
+          <MenuItem classList={{ menuitem: true }} value="" data-label="None">
+            None
           </MenuItem>
-        )}
-      </Each>
+        </li>
+      </ul>
+
+      <ul className="menuitemgroup" role="group">
+        <Each items={folders}>
+          {(folder) => (
+            <li role="presentation">
+              <MenuItem classList={{ menuitem: true }} value={folder.id}>
+                {folder.name}
+              </MenuItem>
+            </li>
+          )}
+        </Each>
+      </ul>
     </swatch-select>
   );
 }
