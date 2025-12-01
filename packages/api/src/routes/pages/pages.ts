@@ -1,4 +1,5 @@
 import { generateKeyBetween } from "fractional-indexing";
+import { TRPCError } from "@trpc/server";
 import { Prisma } from "@/generated/prisma/client";
 import prisma, { type ExtensionArgs } from "@/database/prisma";
 import {
@@ -396,17 +397,37 @@ export async function updatePage(
   }: UpdatePageSchema,
   { userId }: AuthenticatedRequestContext,
 ) {
-  return prisma.page.update({
-    where: { id: pageId, authorId: userId, deletedAt: null },
-    data: {
-      published,
-      title,
-      ...getBackgroundColorProperties(backgroundColor),
-      font,
-      coverImageKey,
-      folderId,
-    },
-    select: PAGE_FIELDS,
+  return prisma.$transaction(async (transaction) => {
+    // Validate folder ownership only when folderId is being set
+    if (folderId) {
+      const [page, folder] = await Promise.all([
+        transaction.page.findUniqueOrThrow({
+          where: { id: pageId, authorId: userId, deletedAt: null },
+          select: { workspaceId: true },
+        }),
+        transaction.folder.findUniqueOrThrow({
+          where: { id: folderId },
+          select: { workspaceId: true },
+        }),
+      ]);
+
+      if (folder.workspaceId !== page.workspaceId) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid folder" });
+      }
+    }
+
+    return transaction.page.update({
+      where: { id: pageId, authorId: userId, deletedAt: null },
+      data: {
+        published,
+        title,
+        ...getBackgroundColorProperties(backgroundColor),
+        font,
+        coverImageKey,
+        folderId,
+      },
+      select: PAGE_FIELDS,
+    });
   });
 }
 
