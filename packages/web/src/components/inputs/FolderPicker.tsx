@@ -1,0 +1,65 @@
+import { reactive } from "@/utils/reactivity";
+import { getWorkspaceFolders, type Folder } from "@/utils/folders";
+import { handleError } from "@/utils/errors";
+import MenuItem from "@/components/buttons/MenuItem";
+import Each from "@/jsx/each";
+import FolderIcon from "@/icons/folder.svg?jsx";
+import type { Reactive } from "@/utils/reactivity";
+import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type { JSX } from "@/jsx/jsx";
+
+interface FolderPickerProps extends Omit<
+  JSX.Attributes<HTMLElement>,
+  "value" | "onChange"
+> {
+  workspaceId: string;
+  value?: Reactive<string | null>;
+  onChange: (folderId: string | null) => void;
+}
+
+export default function FolderPicker({
+  workspaceId,
+  value,
+  onChange,
+  ...props
+}: FolderPickerProps) {
+  const folders = reactive<Folder[]>([]);
+
+  getWorkspaceFolders(workspaceId)
+    .then((result) => {
+      folders.value = result.folders;
+    })
+    .catch(handleError);
+
+  function setFolder(event: Event) {
+    const selectedValue = (event.target as SwatchSelect).value;
+    onChange(selectedValue === "" ? null : selectedValue);
+  }
+
+  return (
+    <swatch-select
+      {...props}
+      aria-orientation="vertical"
+      orientation="vertical"
+      align="center"
+      showvalue
+      label="Folder"
+      value={value?.derive((v) => v ?? "")}
+      on:change={setFolder}
+    >
+      <FolderIcon aria-hidden="true" slot="default-icon" />
+
+      <MenuItem classList={{ menuitem: true }} value="" data-label="None">
+        None
+      </MenuItem>
+
+      <Each items={folders}>
+        {(folder) => (
+          <MenuItem classList={{ menuitem: true }} value={folder.id}>
+            {folder.name}
+          </MenuItem>
+        )}
+      </Each>
+    </swatch-select>
+  );
+}
