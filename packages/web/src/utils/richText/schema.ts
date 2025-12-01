@@ -156,7 +156,7 @@ const nodesSpec = {
 
   list_item: {
     attrs: {
-      checked: { default: false, validate: "boolean" },
+      checked: { default: false, validate: "boolean|undefined" },
     },
     content: "paragraph block*",
     defining: true,
