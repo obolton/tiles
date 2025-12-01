@@ -25,7 +25,7 @@ import type Tile from "@/models/Tile";
 import type { ClientTile } from "api/types/tiles";
 import type { FontId } from "@/config/fonts";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
-import type { Invite, PageAccess, User } from "@/types/collaboration";
+import type { PageAccess, User } from "@/types/collaboration";
 import type { Color } from "@/utils/color";
 import type { Reactive, ReactiveArray } from "@/utils/reactivity";
 
