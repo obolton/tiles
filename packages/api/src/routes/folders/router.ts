@@ -1,8 +1,5 @@
 import { router } from "@/utils/trpc.ts";
-import {
-  authenticatedPageProcedure,
-  authenticatedWorkspaceProcedure,
-} from "@/utils/middleware.ts";
+import { authenticatedWorkspaceProcedure } from "@/utils/middleware.ts";
 import {
   createFolder,
   getFolder,
@@ -10,7 +7,6 @@ import {
   deleteFolder,
   listFolders,
   listPages,
-  movePageToFolder,
 } from "./folders.ts";
 import {
   CreateFolderSchema,
@@ -19,7 +15,6 @@ import {
   DeleteFolderSchema,
   ListFoldersSchema,
   ListPagesSchema,
-  MovePageToFolderSchema,
 } from "./schema.ts";
 
 export default router({
@@ -46,9 +41,4 @@ export default router({
   listPages: authenticatedWorkspaceProcedure
     .input(ListPagesSchema)
     .query(async ({ input, ctx }) => listPages(input, ctx)),
-
-  movePage: authenticatedPageProcedure
-    .concat(authenticatedWorkspaceProcedure)
-    .input(MovePageToFolderSchema)
-    .mutation(({ input, ctx }) => movePageToFolder(input, ctx)),
 });

@@ -33,9 +33,3 @@ export const ListPagesSchema = z.object({
   offset: z.number().int().gte(0).optional(), // TODO: Use cursors
 });
 export type ListPagesSchema = z.infer<typeof ListPagesSchema>;
-
-export const MovePageToFolderSchema = z.object({
-  id: z.uuid(),
-  pageId: z.uuid(),
-});
-export type MovePageToFolderSchema = z.infer<typeof MovePageToFolderSchema>;

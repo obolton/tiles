@@ -6,7 +6,6 @@ import type {
   DeleteFolderSchema,
   ListFoldersSchema,
   ListPagesSchema,
-  MovePageToFolderSchema,
 } from "./schema.ts";
 import type { Prisma } from "@/generated/prisma/client";
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "../pageLinks/pageLinks.ts";
@@ -134,25 +133,5 @@ export async function listPages(
       pages: pages.slice(0, RESULTS_PER_PAGE),
       hasMore: pages.length > RESULTS_PER_PAGE,
     };
-  });
-}
-
-export async function movePageToFolder(
-  { id, pageId }: MovePageToFolderSchema,
-  { workspaceId }: AuthenticatedWorkspaceProcedureContext,
-) {
-  return prisma.folder.update({
-    where: {
-      id,
-      workspaceId,
-    },
-    data: {
-      pages: {
-        connect: {
-          id: pageId,
-        },
-      },
-    },
-    select: FOLDER_FIELDS,
   });
 }
