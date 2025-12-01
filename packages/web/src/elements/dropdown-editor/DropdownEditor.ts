@@ -227,6 +227,10 @@ export default class DropdownEditor extends HTMLElement {
 
   private handleDrop(event: DragDropEvent) {
     const draggedOption = event.dragSource;
+    if (!(draggedOption instanceof DropdownOption)) {
+      return;
+    }
+
     const options = Array.from(this.select.children);
     const fromIndex = options.indexOf(draggedOption);
 
@@ -236,8 +240,7 @@ export default class DropdownEditor extends HTMLElement {
 
     // Calculate target index based on drop position
     let toIndex = options.length - 1;
-    for (let i = 0; i < options.length; i++) {
-      const option = options[i];
+    for (const [i, option] of options.entries()) {
       const rect = option.getBoundingClientRect();
       const midpoint = rect.top + rect.height / 2;
 

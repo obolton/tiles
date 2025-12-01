@@ -126,7 +126,8 @@ export default class FilterSelect extends HTMLElement {
       this.querySelectorAll<HTMLElement>("[data-value]:not([hidden])"),
     );
     const active = this.ariaActiveDescendantElement;
-    const activeIndex = active ? items.indexOf(active) : -1;
+    const activeIndex =
+      active instanceof HTMLElement ? items.indexOf(active) : -1;
 
     switch (event.key) {
       case "ArrowDown":
