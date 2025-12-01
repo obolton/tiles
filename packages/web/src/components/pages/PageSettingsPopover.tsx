@@ -1,5 +1,6 @@
 import ColorPicker from "@/components/colors/ColorPicker";
 import FontPicker from "@/components/inputs/FontPicker";
+import FolderPicker from "@/components/inputs/FolderPicker";
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
@@ -23,7 +24,7 @@ export default function PageSettingsPopover({
   allowDelete,
   ...props
 }: PageSettingsPopoverProps) {
-  const { title, backgroundColor, font } = editor;
+  const { title, backgroundColor, font, folderId } = editor;
 
   function onSubmit(event: Event) {
     event.preventDefault();
@@ -61,6 +62,10 @@ export default function PageSettingsPopover({
       document.body.style.setProperty("--background-color", toCSSColor(value));
     });
     editor.setBackgroundColor(value).catch(handleError);
+  }
+
+  function setFolder(folderId: string | null) {
+    editor.setFolder(folderId).catch(handleError);
   }
 
   function deletePage() {
@@ -110,6 +115,17 @@ export default function PageSettingsPopover({
             id="page-color-picker"
             value={backgroundColor}
             onChange={setColor}
+          />
+        </li>
+
+        <li role="presentation">
+          <FolderPicker
+            role="menuitem"
+            workspaceId={editor.workspaceId}
+            value={folderId}
+            onChange={setFolder}
+            aria-label="Folder"
+            data-tooltip="Folder"
           />
         </li>
 
