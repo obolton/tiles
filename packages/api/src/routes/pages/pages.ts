@@ -81,6 +81,7 @@ const TILES_FIELDS = {
 const PAGE_FIELDS = {
   id: true,
   workspaceId: true,
+  folderId: true,
   published: true,
   title: true,
   updatedAt: true,
@@ -391,6 +392,7 @@ export async function updatePage(
     backgroundColor,
     font,
     coverImageKey,
+    folderId,
   }: UpdatePageSchema,
   { userId }: AuthenticatedRequestContext,
 ) {
@@ -402,6 +404,7 @@ export async function updatePage(
       ...getBackgroundColorProperties(backgroundColor),
       font,
       coverImageKey,
+      folderId,
     },
     select: PAGE_FIELDS,
   });
