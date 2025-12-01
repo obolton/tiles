@@ -1,5 +1,5 @@
 import { Plugin } from "prosemirror-state";
-import type { EditorView } from "prosemirror-view";
+import type { EditorView, NodeView } from "prosemirror-view";
 import type { Node } from "prosemirror-model";
 import Editor from "@/editor/Editor";
 import type DropdownEditor from "@/elements/dropdown-editor/DropdownEditor";
@@ -7,16 +7,17 @@ import type DropdownOption from "@/elements/dropdown-editor/DropdownOption";
 import type DropdownModel from "@/models/Dropdown";
 import type { DeleteEvent, ReorderEvent } from "@/utils/events";
 
-class DropdownNodeView implements EventListenerObject {
+class DropdownNodeView implements NodeView, EventListenerObject {
   readonly dom: HTMLSpanElement;
 
-  private dropdownType: string;
+  private readonly dropdownType: string;
+  private readonly view: EditorView;
+  private readonly getPos: () => number | undefined;
+  private readonly button: HTMLButtonElement;
+  private readonly abortController = new AbortController();
+
   private value: string;
   private editor: DropdownEditor | null = null;
-  private button: HTMLButtonElement;
-  private view: EditorView;
-  private getPos: () => number | undefined;
-  private abortController: AbortController;
 
   constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
     this.dropdownType = node.attrs.dropdownType as string;
@@ -32,19 +33,24 @@ class DropdownNodeView implements EventListenerObject {
     this.button.ariaHasPopup = "listbox";
     this.dom.appendChild(this.button);
 
-    this.abortController = new AbortController();
     this.button.addEventListener("click", this, {
       signal: this.abortController.signal,
     });
   }
 
-  handleEvent(event: Event): void {
+  handleEvent(event: Event) {
     switch (event.type) {
       case "click":
-        this.onClick();
+        if (this.editor) {
+          this.close();
+        } else {
+          this.open();
+        }
         break;
       case "toggle":
-        this.onToggle(event as ToggleEvent);
+        if ((event as ToggleEvent).newState === "closed") {
+          this.close();
+        }
         break;
       case "change":
         this.onChange(event);
@@ -61,7 +67,7 @@ class DropdownNodeView implements EventListenerObject {
     }
   }
 
-  update(updatedNode: Node): boolean {
+  update(updatedNode: Node) {
     this.value = updatedNode.attrs.value as string;
 
     if (this.value !== this.button.textContent) {
@@ -71,27 +77,29 @@ class DropdownNodeView implements EventListenerObject {
     return true;
   }
 
-  destroy(): void {
+  destroy() {
     this.abortController.abort();
   }
 
-  ignoreMutation(): boolean {
+  ignoreMutation() {
     return true;
   }
 
-  stopEvent(): boolean {
+  stopEvent() {
     return true;
   }
 
-  private populateOptions(dropdown: DropdownModel): void {
-    if (!this.editor) return;
+  private populateOptions(dropdown: DropdownModel) {
+    if (!this.editor) {
+      return;
+    }
     this.editor.select.replaceChildren();
     for (const option of dropdown.options.value) {
       this.editor.addOption(option.value);
     }
   }
 
-  private open(): void {
+  private open() {
     if (this.editor) {
       return;
     }
@@ -99,7 +107,6 @@ class DropdownNodeView implements EventListenerObject {
     const dropdown = Editor.current.dropdowns.value.find(
       (d) => d.id === this.dropdownType,
     );
-
     if (!dropdown) {
       return;
     }
@@ -133,37 +140,19 @@ class DropdownNodeView implements EventListenerObject {
     this.editor.addEventListener("append", this);
   }
 
-  private close(): void {
+  private close() {
     if (!this.editor) {
       return;
     }
+
     this.view.focus();
-    this.editor.removeEventListener("toggle", this);
-    this.editor.removeEventListener("change", this);
-    this.editor.removeEventListener("delete", this);
-    this.editor.removeEventListener("reorder", this);
-    this.editor.removeEventListener("append", this);
     this.editor.remove();
     this.editor = null;
     this.button.ariaExpanded = "false";
     this.button.style.removeProperty("anchor-name");
   }
 
-  private onClick(): void {
-    if (this.editor) {
-      this.close();
-    } else {
-      this.open();
-    }
-  }
-
-  private onToggle(event: ToggleEvent): void {
-    if (event.newState === "closed") {
-      this.close();
-    }
-  }
-
-  private onChange(event: Event): void {
+  private onChange(event: Event) {
     const pos = this.getPos();
     if (typeof pos !== "number" || !this.editor) {
       return;
@@ -211,8 +200,10 @@ class DropdownNodeView implements EventListenerObject {
     }
   }
 
-  private onDelete(event: DeleteEvent): void {
-    if (!this.editor) return;
+  private onDelete(event: DeleteEvent) {
+    if (!this.editor) {
+      return;
+    }
 
     const option = event.target as DropdownOption;
     const index = Array.from(this.editor.select.children).indexOf(option);
@@ -224,8 +215,10 @@ class DropdownNodeView implements EventListenerObject {
     }
   }
 
-  private onReorder(event: ReorderEvent): void {
-    if (!this.editor) return;
+  private onReorder(event: ReorderEvent) {
+    if (!this.editor) {
+      return;
+    }
 
     const dropdown = Editor.current.getDropdown(this.dropdownType);
     dropdown.reorderOptions(event.fromIndex, event.toIndex).then(() => {
@@ -233,8 +226,10 @@ class DropdownNodeView implements EventListenerObject {
     });
   }
 
-  private onAppend(): void {
-    if (!this.editor) return;
+  private onAppend() {
+    if (!this.editor) {
+      return;
+    }
 
     const defaultValue = "New option";
     const option = this.editor.addOption(defaultValue);
