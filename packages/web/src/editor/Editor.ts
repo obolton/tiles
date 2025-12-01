@@ -80,6 +80,7 @@ export default class Editor {
   readonly font: Reactive<FontId>;
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
+  readonly folderId: Reactive<string | null>;
   readonly index: Map<string, Tile>;
   readonly tiles: TileCollection;
   readonly access: ReactiveArray<PageAccess>;
@@ -125,6 +126,7 @@ export default class Editor {
     this.font = reactive(page.font);
     this.coverImageUrl = reactive(page.coverImageUrl);
     this.isPublished = reactive(page.published);
+    this.folderId = reactive(page.folderId);
     this.index = new Map();
     this.tiles = new TileCollection(this);
     this.access = array(page.access);
@@ -277,6 +279,11 @@ export default class Editor {
   async setPublished(published: boolean) {
     this.isPublished.value = published;
     return client.pages.update.mutate({ pageId: this.pageId, published });
+  }
+
+  async setFolder(folderId: string | null) {
+    this.folderId.value = folderId;
+    return client.pages.update.mutate({ pageId: this.pageId, folderId });
   }
 
   async deletePage() {
