@@ -14,7 +14,7 @@
   cursor: pointer;
 }
 
-:host(:hover:not([editing]):not(:active)) {
+:host(:hover:not([editing], :active)) {
   background-color: rgb(0 0 0 / 10%);
 }
 
@@ -85,7 +85,17 @@ slot {
   background: none;
   border: 1px solid rgb(0 0 0 / 15%);
   border-radius: 4px;
-  outline: none;
+  outline: 3px solid transparent;
+  outline-offset: -1px;
+  transition: outline-color var(--animation-duration) var(--easing);
+
+  &:focus-visible:not(:user-invalid) {
+    outline-color: var(--focus-ring-color);
+  }
+
+  &:user-invalid {
+    outline-color: var(--destructive-color);
+  }
 }
 
 :host([editing]) #input {
@@ -121,4 +131,19 @@ slot {
 
 :host([editing]) #delete {
   display: flex;
+}
+
+:host([aria-selected="true"]:not([editing])) {
+  padding-inline-end: 40px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline-end: 12px;
+    width: 20px;
+    height: 20px;
+    background-color: currentcolor;
+    mask: url("@/icons/check.svg?inline") no-repeat center / contain;
+    opacity: 0.5;
+  }
 }

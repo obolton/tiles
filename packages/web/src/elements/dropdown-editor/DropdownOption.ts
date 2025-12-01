@@ -44,6 +44,7 @@ export default class DropdownOption extends HTMLElement {
     this.editInput = document.createElement("input");
     this.editInput.id = "input";
     this.editInput.type = "text";
+    this.editInput.required = true;
 
     this.deleteButton = document.createElement("button");
     this.deleteButton.id = "delete";
@@ -153,12 +154,30 @@ export default class DropdownOption extends HTMLElement {
     const newValue = this.editInput.value.trim();
     const oldValue = this.value;
 
-    if (newValue && newValue !== oldValue) {
+    // Don't commit if blank or duplicate
+    if (!newValue || this.isDuplicate(newValue)) {
+      return;
+    }
+
+    if (newValue !== oldValue) {
       this.value = newValue;
       this.textContent = newValue;
       this.dispatchEvent(new Event("change", { bubbles: true }));
     }
   }
+
+  private isDuplicate(value: string) {
+    const parent = this.closest("filter-select");
+    if (!parent) {
+      return false;
+    }
+
+    const match = parent.querySelector(
+      `dropdown-option[value="${CSS.escape(value)}"]`,
+    );
+    return match !== null && match !== this;
+  }
+
 }
 
 customElements.define("dropdown-option", DropdownOption);

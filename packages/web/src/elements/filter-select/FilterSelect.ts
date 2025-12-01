@@ -56,13 +56,17 @@ export default class FilterSelect extends HTMLElement {
     this.addEventListener("click", this);
     this.addEventListener("keydown", this);
 
-    // Observe child changes to reapply filter
-    this.childObserver = new MutationObserver(() => this.filter());
+    // Observe child changes to reapply filter and selected state
+    this.childObserver = new MutationObserver(() => {
+      this.filter();
+      this.updateSelectedState();
+    });
   }
 
   connectedCallback() {
     this.childObserver.observe(this, { childList: true });
     this.filter();
+    this.updateSelectedState();
   }
 
   disconnectedCallback() {
@@ -171,19 +175,23 @@ export default class FilterSelect extends HTMLElement {
 
   set value(value: string) {
     this.#value = value;
+    this.updateSelectedState();
+    this.dispatchEvent(new Event("change", { bubbles: true }));
+  }
 
+  private updateSelectedState() {
     this.querySelectorAll('[data-value][aria-selected="true"]')
       .values()
       .forEach((option) => {
         option.ariaSelected = "false";
       });
 
-    const option = this.querySelector(`[data-value="${CSS.escape(value)}"]`);
+    const option = this.querySelector(
+      `[data-value="${CSS.escape(this.#value)}"]`,
+    );
     if (option) {
       option.ariaSelected = "true";
     }
-
-    this.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   // Placeholder

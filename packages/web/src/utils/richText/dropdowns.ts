@@ -61,9 +61,6 @@ class DropdownNodeView implements NodeView, EventListenerObject {
       case "reorder":
         this.onReorder(event as ReorderEvent);
         break;
-      case "append":
-        this.onAppend();
-        break;
     }
   }
 
@@ -137,7 +134,6 @@ class DropdownNodeView implements NodeView, EventListenerObject {
     this.editor.addEventListener("change", this);
     this.editor.addEventListener("delete", this);
     this.editor.addEventListener("reorder", this);
-    this.editor.addEventListener("append", this);
   }
 
   private close() {
@@ -172,7 +168,11 @@ class DropdownNodeView implements NodeView, EventListenerObject {
       const option = target as DropdownOption;
       const index = Array.from(this.editor.select.children).indexOf(option);
       if (index >= 0) {
-        dropdown.updateOption(index, option.value);
+        if (index >= dropdown.options.value.length) {
+          dropdown.addOption(option.value);
+        } else {
+          dropdown.updateOption(index, option.value);
+        }
       }
       return;
     }
@@ -224,19 +224,6 @@ class DropdownNodeView implements NodeView, EventListenerObject {
     dropdown.reorderOptions(event.fromIndex, event.toIndex).then(() => {
       this.populateOptions(dropdown);
     });
-  }
-
-  private onAppend() {
-    if (!this.editor) {
-      return;
-    }
-
-    const defaultValue = "New option";
-    const option = this.editor.addOption(defaultValue);
-    option.focus();
-
-    const dropdown = Editor.current.getDropdown(this.dropdownType);
-    dropdown.addOption(defaultValue);
   }
 }
 

@@ -39,6 +39,7 @@
   font-weight: 600;
   line-height: inherit;
   color: var(--ui-color);
+  text-align: start;
   background: none;
   border: none;
   outline: none;
@@ -87,6 +88,11 @@
     background-color: rgb(0 0 0 / 5%);
   }
 
+  &:active {
+    opacity: 1;
+    background-color: rgb(0 0 0 / 15%);
+  }
+
   & svg {
     width: 16px;
     height: 16px;
@@ -95,23 +101,26 @@
   }
 }
 
-:host([editing]) #edit {
+#edit[aria-pressed="true"] {
   opacity: 1;
   background-color: rgb(0 0 0 / 10%);
+
+  &:active {
+    background-color: rgb(0 0 0 / 15%);
+  }
 }
 
 #add {
   display: none;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
   width: 100%;
   min-height: 36px;
-  padding: 8px 20px;
+  padding: 8px;
   border: none;
   border-top: 1px solid rgb(0 0 0 / 10%);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
   background: none;
-  font-family: var(--ui-font);
-  font-size: inherit;
   color: var(--ui-color);
   cursor: pointer;
   opacity: 0.6;

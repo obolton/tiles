@@ -201,7 +201,7 @@ filter-select {
     cursor: pointer;
 
     &[data-active],
-    &:hover {
+    &:hover:not([editing]) {
       background: rgb(0 0 0 / 8%);
     }
   }

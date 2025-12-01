@@ -62,6 +62,7 @@ export default class DropdownEditor extends HTMLElement {
     this.editButton = document.createElement("button");
     this.editButton.id = "edit";
     this.editButton.type = "button";
+    this.editButton.ariaPressed = "false";
     this.editButton.innerHTML = writeIcon;
 
     this.header.append(this.titleText, this.titleInput, this.editButton);
@@ -73,7 +74,7 @@ export default class DropdownEditor extends HTMLElement {
     this.addButton = document.createElement("button");
     this.addButton.id = "add";
     this.addButton.type = "button";
-    this.addButton.innerHTML = newIcon + " Add option";
+    this.addButton.innerHTML = newIcon;
 
     shadow.append(this.header, slot, this.addButton);
 
@@ -123,6 +124,15 @@ export default class DropdownEditor extends HTMLElement {
   }
 
   private updateOptionsEditingState(editing: boolean) {
+    if (!editing) {
+      // Remove blank options when exiting edit mode
+      for (const option of this.select.querySelectorAll(
+        'dropdown-option[value=""]',
+      )) {
+        option.remove();
+      }
+    }
+
     for (const option of this.select.children) {
       if (editing) {
         option.setAttribute("editing", "");
@@ -198,8 +208,10 @@ export default class DropdownEditor extends HTMLElement {
       case "click":
         if (event.target === this.editButton) {
           this.editing = !this.editing;
+          this.editButton.ariaPressed = this.editing ? "true" : "false";
         } else if (event.target === this.addButton) {
-          this.dispatchEvent(new Event("append", { bubbles: true }));
+          const option = this.addOption("");
+          option.focus();
         }
         break;
       case "blur":
