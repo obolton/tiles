@@ -62,12 +62,12 @@ export default function Folders({
 
   async function onDrop(event: DragDropEvent) {
     const item = event.target as HTMLElement;
-    const id = item.dataset.id;
+    const folderId = item.dataset.id;
     const pageId = event.dragSource.dataset.id;
-    if (!id || !pageId) {
+    if (!folderId || !pageId) {
       return;
     }
-    await client.folders.movePage.mutate({ workspaceId, id, pageId });
+    await client.pages.update.mutate({ pageId, folderId });
   }
 
   const basePath = `/workspaces/${workspaceId}`;
