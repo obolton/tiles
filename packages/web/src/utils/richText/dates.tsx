@@ -1,4 +1,6 @@
 import { Plugin } from "prosemirror-state";
+import type { EditorView, NodeView } from "prosemirror-view";
+import type { Node } from "prosemirror-model";
 import Themeable from "@/components/themes/Themeable";
 import { render } from "@/jsx/dom";
 import { showModal } from "@/utils/modals";
@@ -9,90 +11,110 @@ import {
   DEFAULT_DATE_THEME,
   type DateTimeThemeProps,
 } from "@/components/dates/themes";
-import type { DateTimeModalResult } from "@/components/modals/DateTimeModal";
+
+const DateTimeModalLoader = () => import("@/components/modals/DateTimeModal");
+
+class DateNodeView implements NodeView {
+  readonly dom: HTMLElement;
+
+  private readonly view: EditorView;
+  private readonly getPos: () => number | undefined;
+  private readonly theme = reactive<string>(DEFAULT_DATE_THEME);
+  private readonly value: ReturnType<typeof reactive<Date>>;
+  private readonly time: ReturnType<typeof reactive<boolean>>;
+
+  constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
+    this.view = view;
+    this.getPos = getPos;
+
+    if (node.attrs.theme) {
+      this.theme.value = node.attrs.theme as string;
+    }
+    this.value = reactive(node.attrs.value as Date);
+    this.time = reactive(node.attrs.time as boolean);
+
+    this.dom = render(
+      <Themeable<DateTimeThemeProps>
+        theme={this.theme}
+        options={DATE_THEME_OPTIONS}
+        registry={DATE_THEMES}
+        getProps={() => this.getProps()}
+        onChange={(value) => this.onChange(value)}
+        data-tooltip="Date"
+        inline
+        on:click={() => this.edit()}
+        on:keydown={(event) => this.onKeyDown(event)}
+      />,
+    )[0] as HTMLElement;
+  }
+
+  update() {
+    return true;
+  }
+
+  stopEvent(event: Event) {
+    if (event.type === "mousedown" || event.type === "pointerdown") {
+      event.preventDefault();
+      return true;
+    }
+
+    return false;
+  }
+
+  private getProps(): DateTimeThemeProps {
+    return {
+      value: this.value,
+      time: this.time,
+    };
+  }
+
+  private onChange(value: string) {
+    const pos = this.getPos();
+    if (typeof pos === "undefined") {
+      return;
+    }
+    this.theme.value = value;
+    this.view.dispatch(
+      this.view.state.tr.setNodeAttribute(pos, "theme", value),
+    );
+  }
+
+  private edit() {
+    showModal(DateTimeModalLoader, {
+      props: {
+        value: this.value.value,
+        time: this.time.value,
+      },
+      onConfirm: (result) => {
+        const pos = this.getPos();
+        if (typeof pos !== "number") {
+          return;
+        }
+        this.value.value = result.value;
+        this.time.value = result.time;
+        this.view.dispatch(
+          this.view.state.tr.setNodeMarkup(pos, null, {
+            value: result.value,
+            time: result.time,
+          }),
+        );
+      },
+    });
+  }
+
+  private onKeyDown(event: KeyboardEvent) {
+    if (event.key === "Enter") {
+      this.edit();
+    }
+  }
+}
 
 export function dates() {
   return new Plugin({
     props: {
       nodeViews: {
         date(node, view, getPos) {
-          const theme = reactive<string>(
-            node.attrs.theme || DEFAULT_DATE_THEME,
-          );
-          const value = reactive(node.attrs.value as Date);
-          const time = reactive(node.attrs.time as boolean);
-
-          function edit() {
-            showModal<DateTimeModalResult>("DATE_TIME", {
-              value: value.value,
-              time: time.value,
-              onConfirm(result) {
-                const pos = getPos();
-                if (typeof pos !== "number") {
-                  return;
-                }
-                value.value = result.value;
-                time.value = result.time;
-                view.dispatch(
-                  view.state.tr.setNodeMarkup(pos, null, {
-                    value: result.value,
-                    time: result.time,
-                  }),
-                );
-              },
-            });
-          }
-
-          function onKeyDown(event: KeyboardEvent) {
-            if (event.key === "Enter") {
-              edit();
-            }
-          }
-
-          function getProps() {
-            return {
-              value,
-              time,
-            };
-          }
-
-          function onChange(value: string) {
-            const pos = getPos();
-            if (typeof pos === "undefined") {
-              return;
-            }
-            theme.value = value;
-            view.dispatch(view.state.tr.setNodeAttribute(pos, "theme", value));
-          }
-
-          return {
-            dom: render(
-              <Themeable<DateTimeThemeProps>
-                theme={theme}
-                options={DATE_THEME_OPTIONS}
-                registry={DATE_THEMES}
-                getProps={getProps}
-                onChange={onChange}
-                data-tooltip="Date"
-                inline
-                on:click={edit}
-                on:keydown={onKeyDown}
-              />,
-            )[0] as HTMLElement,
-
-            update() {
-              return true;
-            },
-
-            stopEvent(event) {
-              if (event.type === "mousedown" || event.type === "pointerdown") {
-                event.preventDefault();
-                return true;
-              }
-
-              return false;
-            },
-          };
+          return new DateNodeView(node, view, getPos);
         },
       },
     },
