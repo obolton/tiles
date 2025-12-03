@@ -7,6 +7,7 @@ import {
   getSelectionBlockNodeTypes,
 } from "./helpers";
 import { PROMPT_PLUGIN_KEY } from "./pluginKeys";
+import { MENTION_PLUGIN_KEY, type MentionMeta } from "./mentions";
 import type { PromptMeta } from "./prompt";
 import type { NodeType, Mark, MarkType } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
@@ -317,6 +318,19 @@ export function insertDropdown(dropdownType: string, value: string): Command {
   };
 }
 
+export function insertMention(userId: string, displayName: string): Command {
+  return function (state, dispatch) {
+    if (dispatch) {
+      dispatch(
+        state.tr.replaceSelectionWith(
+          schema.nodes.mention.create({ userId, displayName }),
+        ),
+      );
+    }
+    return true;
+  };
+}
+
 export const approve = unwrap(schema.nodes.pending);
 
 export const reject = deleteNode(schema.nodes.pending);
@@ -334,6 +348,16 @@ export const togglePrompt: Command = (state, dispatch, view) => {
     if (isOpen) {
       view?.focus();
     }
+  }
+  return true;
+};
+
+export const openMentionPicker: Command = (state, dispatch) => {
+  if (dispatch) {
+    const { from } = state.selection;
+    dispatch(
+      state.tr.setMeta(MENTION_PLUGIN_KEY, { pos: from } as MentionMeta),
+    );
   }
   return true;
 };
