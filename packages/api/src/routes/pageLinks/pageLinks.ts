@@ -9,13 +9,6 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
   background: true,
   font: true,
   coverImageUrl: true,
-  author: {
-    select: {
-      id: true,
-      name: true,
-      imageUrl: true,
-    },
-  },
 } as const satisfies Prisma.Args<typeof prisma.page, "findMany">["select"];
 
 export type PageLinkPage = Prisma.Result<
