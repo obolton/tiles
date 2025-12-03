@@ -267,6 +267,19 @@ const nodesSpec = {
       return node.attrs.value as string;
     },
   },
+
+  mention: {
+    attrs: {
+      userId: { validate: "string" },
+      displayName: { validate: "string" },
+    },
+    group: "inline",
+    inline: true,
+    atom: true,
+    leafText(node) {
+      return node.attrs.displayName as string;
+    },
+  },
 } as const satisfies Record<string, NodeSpec>;
 
 type KeysWithProperty<T, Key, Value> = {
