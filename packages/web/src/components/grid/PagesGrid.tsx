@@ -8,7 +8,6 @@ import type { ClientPageLinkTile } from "api/types/tiles";
 import type { JSX } from "@/jsx/jsx";
 
 interface PagesSearchResults {
-  // TODO: Use a different type
   pages: NonNullable<ClientPageLinkTile["linkedPage"]>[];
   hasMore: boolean;
 }
