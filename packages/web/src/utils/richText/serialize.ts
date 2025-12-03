@@ -170,6 +170,16 @@ function serializeNode(node: Node): SerializedNode {
     };
   }
 
+  if (node.type === nodes.mention) {
+    return {
+      type: "mention",
+      userId: node.attrs.userId as string,
+      displayName: node.attrs.displayName as string,
+      format: getTextFormat(node),
+      size: getTextSize(node),
+    };
+  }
+
   throw new Error(`Unsupported node type: ${node.type.name}`);
 }
 

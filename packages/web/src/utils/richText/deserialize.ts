@@ -12,12 +12,13 @@ import type {
   RichText,
   PendingNode,
   DropdownNode,
+  MentionNode,
   Node as SerializedNode,
 } from "./types";
 import { TextFormat, ListType, TextAlignment } from "./types";
 import { schema } from "./schema";
 
-function getMarks(node: TextNode | DateNode | DropdownNode) {
+function getMarks(node: TextNode | DateNode | DropdownNode | MentionNode) {
   const { format, size } = node;
   const marks = [];
 
@@ -144,6 +145,17 @@ function createDropdownNode(dropdown: DropdownNode): Node {
   );
 }
 
+function createMentionNode(mention: MentionNode): Node {
+  return schema.nodes.mention.create(
+    {
+      userId: mention.userId,
+      displayName: mention.displayName,
+    },
+    null,
+    getMarks(mention),
+  );
+}
+
 function createPendingNode(pending: PendingNode): Node {
   return schema.nodes.pending.create(null, pending.children.map(createNode));
 }
@@ -173,6 +185,8 @@ function createNode(node: SerializedNode) {
       return createPendingNode(node);
     case "dropdown":
       return createDropdownNode(node);
+    case "mention":
+      return createMentionNode(node);
     default:
       throw new Error(`Unsupported node type: ${type}`);
   }

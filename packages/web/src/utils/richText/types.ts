@@ -54,6 +54,14 @@ export interface DropdownNode extends BaseNode {
   size?: number;
 }
 
+export interface MentionNode extends BaseNode {
+  type: "mention";
+  userId: string;
+  displayName: string;
+  format: number;
+  size?: number;
+}
+
 export interface PendingNode extends BaseNode {
   type: "pending";
   children: Exclude<BlockNode, { type: "pending" }>[];
@@ -96,7 +104,12 @@ export interface ListItemNode extends BaseNode {
   children: BlockNode[];
 }
 
-export type InlineNode = TextNode | LinkNode | DateNode | DropdownNode;
+export type InlineNode =
+  | TextNode
+  | LinkNode
+  | DateNode
+  | DropdownNode
+  | MentionNode;
 
 export type BlockNode =
   | PendingNode
@@ -117,6 +130,7 @@ export type Node =
   | ListItemNode
   | PendingNode
   | CodeNode
-  | DropdownNode;
+  | DropdownNode
+  | MentionNode;
 
 export type RichText = BlockNode[];
