@@ -178,6 +178,14 @@
     }
   }
 
+  & .mention {
+    padding: 0.1em 0.25em;
+    color: var(--highlight-color);
+    background: color-mix(in oklch, var(--highlight-color) 15%, transparent);
+    border-radius: 0.25em;
+    user-select: all;
+  }
+
   & .context {
     background: color-mix(in oklch, currentcolor 10%, transparent);
     text-decoration: underline solid
