@@ -22,6 +22,7 @@ import AlignRightIcon from "@/icons/align-right.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
 import EventIcon from "@/icons/event.svg?jsx";
 import DropdownIcon from "@/icons/dropdown.svg?jsx";
+import PeopleIcon from "@/icons/people.svg?jsx";
 import AIIcon from "@/icons/ai.svg?jsx";
 import ApproveIcon from "@/icons/approve.svg?jsx";
 import RejectIcon from "@/icons/reject.svg?jsx";
@@ -49,6 +50,7 @@ import {
   setAlignment,
   insertDateTime,
   insertDropdown,
+  openMentionPicker,
   approve,
   reject,
   togglePrompt,
@@ -250,6 +252,15 @@ export default function FormattingTools({
                     on:click={insertNewDropdown}
                   >
                     Dropdown
+                  </MenuItem>
+                </li>
+                <li>
+                  <MenuItem
+                    classList={{ menuitem: true }}
+                    icon={<PeopleIcon aria-hidden="true" />}
+                    on:click={() => performCommand(openMentionPicker)}
+                  >
+                    Mention
                   </MenuItem>
                 </li>
 
