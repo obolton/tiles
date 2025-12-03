@@ -37,11 +37,20 @@ const DropdownNodeSchema = z.object({
   size: SizeSchema.optional(),
 });
 
+const MentionNodeSchema = z.object({
+  type: z.literal("mention"),
+  userId: z.uuid(),
+  displayName: z.string(),
+  format: FormatSchema,
+  size: SizeSchema.optional(),
+});
+
 const InlineNodeSchema = z.discriminatedUnion("type", [
   TextNodeSchema,
   LinkNodeSchema,
   DateNodeSchema,
   DropdownNodeSchema,
+  MentionNodeSchema,
 ]);
 
 const ParagraphNodeSchema = z.object({
