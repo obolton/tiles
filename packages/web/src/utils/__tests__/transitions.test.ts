@@ -14,12 +14,14 @@ describe("viewTransition", () => {
     expect(document.startViewTransition).toHaveBeenCalledWith(callback);
   });
 
-  test("calls the callback immediately when startViewTransition is not available", () => {
+  test("defers the callback via microtask when startViewTransition is not available", async () => {
     vi.stubGlobal("document", {
       startViewTransition: undefined,
     });
     const callback = vi.fn();
     viewTransition(callback);
+    expect(callback).not.toHaveBeenCalled();
+    await Promise.resolve();
     expect(callback).toHaveBeenCalled();
   });
 });

@@ -3,13 +3,13 @@ export function viewTransition(callback: () => void): ViewTransition {
     return document.startViewTransition(callback);
   }
 
-  // Perform the transition immediately in browsers that do not support the View Transitions API
-  callback();
+  queueMicrotask(callback);
 
   return {
     updateCallbackDone: Promise.resolve(undefined),
     ready: Promise.resolve(undefined),
     finished: Promise.resolve(undefined),
     skipTransition: () => {},
+    types: new Set(),
   };
 }
