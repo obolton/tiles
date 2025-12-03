@@ -20,6 +20,7 @@ import type {
   Node,
   TextAlignment,
   LinkNode,
+  MentionNode,
 } from "@/utils/richText/types";
 import type { JSX } from "@/jsx/jsx";
 
@@ -67,6 +68,8 @@ function renderNodes(nodes: Node[]) {
                 {node.value}
               </FormattedText>
             );
+          case "mention":
+            return <Mention node={node} />;
           default:
             return null;
         }
@@ -217,6 +220,18 @@ function Link({ node }: LinkProps) {
     >
       {renderNodes(node.children)}
     </ThemeVariant>
+  );
+}
+
+interface MentionProps {
+  node: MentionNode;
+}
+
+function Mention({ node }: MentionProps) {
+  return (
+    <FormattedText format={node.format} size={node.size}>
+      <span className="mention">{node.displayName}</span>
+    </FormattedText>
   );
 }
 
