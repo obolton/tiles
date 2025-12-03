@@ -21,6 +21,10 @@ export function toPlainText(input: RichText) {
         output += node.value;
         break;
 
+      case "mention":
+        output += node.displayName;
+        break;
+
       case "paragraph":
       case "heading":
       case "quote":
