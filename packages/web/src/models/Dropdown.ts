@@ -72,6 +72,9 @@ export default class Dropdown {
 
   async reorderOptions(fromIndex: number, toIndex: number) {
     const option = this.options.value[fromIndex];
+    if (!option) {
+      throw new Error(`Invalid option index: ${fromIndex}`);
+    }
     const newOptions = this.options.value
       .toSpliced(fromIndex, 1)
       .toSpliced(toIndex, 0, option);
