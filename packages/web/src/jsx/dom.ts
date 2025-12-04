@@ -74,8 +74,8 @@ function getNextSiblings(node: Node, count: number) {
   return nodes;
 }
 
-function setAttributes(
-  element: Element,
+function setAttributes<T extends Element>(
+  element: T,
   properties: Record<string, unknown>,
   signal?: AbortSignal,
 ) {
