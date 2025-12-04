@@ -74,9 +74,9 @@ function getNextSiblings(node: Node, count: number) {
   return nodes;
 }
 
-function setAttributes<T extends Element>(
-  element: T,
-  properties: JSX.Attributes<T>,
+function setAttributes(
+  element: Element,
+  properties: Record<string, unknown>,
   signal?: AbortSignal,
 ) {
   for (const [name, value] of Object.entries(properties)) {
