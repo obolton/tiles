@@ -96,7 +96,7 @@ export default function PlaceModal({
         <ol className={styles["place-select"]}>
           {results.derive((items) =>
             items.map((result) => (
-              <li onclick={() => selectPlace(result)}>
+              <li on:click={() => selectPlace(result)}>
                 <div>{result.name}</div>
                 <div className={styles.description}>{result.address}</div>
               </li>
@@ -106,7 +106,7 @@ export default function PlaceModal({
       </ModalBody>
 
       <ModalFooter>
-        <button className="secondary" type="button" onclick={cancel}>
+        <button className="secondary" type="button" on:click={cancel}>
           Cancel
         </button>
       </ModalFooter>

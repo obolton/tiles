@@ -95,7 +95,9 @@ describe("render", () => {
 
   test("sets an event listener", () => {
     const onclick = vi.fn();
-    const [element] = render(jsx("div", { onclick })) as [HTMLElement];
+    const [element] = render(jsx("div", { "on:click": onclick })) as [
+      HTMLElement,
+    ];
     element.click();
     expect(onclick).toHaveBeenCalled();
   });

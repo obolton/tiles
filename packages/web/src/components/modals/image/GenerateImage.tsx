@@ -60,7 +60,7 @@ export default function GenerateImage({ confirm, cancel }: GenerateImageProps) {
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form on:submit={onSubmit}>
       <ModalBody>
         <section className={styles.generation}>
           <div>
@@ -78,7 +78,7 @@ export default function GenerateImage({ confirm, cancel }: GenerateImageProps) {
                 secondary: true,
                 pending: isGenerationPending,
               }}
-              onclick={generate}
+              on:click={generate}
               data-pending-text="Generating&hellip;"
             >
               Generate
@@ -110,7 +110,7 @@ export default function GenerateImage({ confirm, cancel }: GenerateImageProps) {
           Save
         </button>
 
-        <button className="secondary" type="button" onclick={cancel}>
+        <button className="secondary" type="button" on:click={cancel}>
           Cancel
         </button>
       </ModalFooter>

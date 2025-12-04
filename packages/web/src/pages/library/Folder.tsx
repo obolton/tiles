@@ -77,7 +77,7 @@ export default function Folder({
             className="floating"
             aria-label="Folder settings"
             data-tooltip="Folder settings"
-            onclick={editFolder}
+            on:click={editFolder}
           >
             <SettingsIcon aria-hidden="true" />
           </button>

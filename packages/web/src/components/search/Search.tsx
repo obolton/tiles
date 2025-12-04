@@ -54,7 +54,7 @@ export default function Search<T>({
         on:input={onInput}
       />
 
-      <infinite-scroll className={itemsClassName} onloadmore={onLoadMore}>
+      <infinite-scroll className={itemsClassName} on:loadmore={onLoadMore}>
         {results.derive((items) =>
           items.length === 0
             ? renderPlaceholder(query.value)

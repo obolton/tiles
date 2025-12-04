@@ -43,8 +43,7 @@ export default function Stack({
       expandable={items.derive((value) =>
         value.length > 0 ? "expandable" : undefined,
       )}
-      // @ts-expect-error Incorrect event type
-      ontoggle={onToggle}
+      on:toggle={onToggle}
       data-drop={isEditable.derive((editable) =>
         editable ? "true" : undefined,
       )}

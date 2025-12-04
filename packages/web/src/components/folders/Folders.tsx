@@ -116,7 +116,7 @@ export default function Folders({
         )}
 
         <li className="muted">
-          <button type="button" onclick={createFolder}>
+          <button type="button" on:click={createFolder}>
             <NewIcon aria-hidden="true" />
             <span>New folder</span>
           </button>

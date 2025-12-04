@@ -102,11 +102,11 @@ export default function Profile({ workspaceId, user }: ProfileProps) {
           <h2>Profile</h2>
         </header>
 
-        <form class="vertical" onsubmit={onSubmit}>
+        <form class="vertical" on:submit={onSubmit}>
           <file-picker
             className={styles.file}
             accept={ACCEPT_CONTENT_TYPES.join(",")}
-            onchange={onChangeProfileImage}
+            on:change={onChangeProfileImage}
           >
             <img
               className="profile-image large"
@@ -139,7 +139,7 @@ export default function Profile({ workspaceId, user }: ProfileProps) {
               minlength={2}
               maxlength={30}
               pattern="[a-zA-Z0-9\-]{2,30}"
-              onchange={onChangeUsername}
+              on:change={onChangeUsername}
             />
           </label>
 

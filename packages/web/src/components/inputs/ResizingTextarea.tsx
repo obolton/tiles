@@ -22,7 +22,7 @@ export default function ResizingTextarea({
     <textarea
       {...props}
       classList={[styles.textarea, className]}
-      oninput={SUPPORTS_FIELD_SIZING ? undefined : onInput}
+      on:input={SUPPORTS_FIELD_SIZING ? undefined : onInput}
     >
       {value}
     </textarea>

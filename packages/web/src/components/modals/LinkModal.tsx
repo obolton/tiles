@@ -106,7 +106,7 @@ export default function LinkModal({
   const pageId = document.body.dataset.pageId;
 
   return (
-    <form onSubmit={submit}>
+    <form on:submit={submit}>
       <ModalHeader>
         <h2>Add a link</h2>
       </ModalHeader>

@@ -29,7 +29,7 @@ export default function FontPicker({
       align="center"
       showvalue
       value={value}
-      onchange={setFont}
+      on:change={setFont}
     >
       <FontIcon aria-hidden="true" slot="default-icon" />
       {FONTS.map((font) => (

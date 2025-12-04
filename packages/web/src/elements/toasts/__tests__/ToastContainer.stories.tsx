@@ -10,7 +10,7 @@ export default meta;
 export const Info = {
   render: () => (
     <>
-      <button onClick={() => showToast("This is an info toast", "info")}>
+      <button on:click={() => showToast("This is an info toast", "info")}>
         Show toast
       </button>
       <toast-container />
@@ -21,7 +21,7 @@ export const Info = {
 export const Success = {
   render: () => (
     <>
-      <button onClick={() => showToast("This is an info toast", "success")}>
+      <button on:click={() => showToast("This is an info toast", "success")}>
         Show toast
       </button>
       <toast-container />
@@ -32,7 +32,7 @@ export const Success = {
 export const Error = {
   render: () => (
     <>
-      <button onClick={() => showToast("This is an error toast", "error")}>
+      <button on:click={() => showToast("This is an error toast", "error")}>
         Show toast
       </button>
       <toast-container />

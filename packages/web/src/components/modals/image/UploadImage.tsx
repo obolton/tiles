@@ -51,12 +51,12 @@ export default function UploadImage({
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form on:submit={onSubmit}>
       <ModalBody>
         <file-picker
           className={styles.file}
           accept={Array.from(ACCEPT_IMAGE_TYPES).join(",")}
-          onchange={onChange}
+          on:change={onChange}
         >
           {imageUrl.derive((url) =>
             url ? (
@@ -81,7 +81,7 @@ export default function UploadImage({
           Save
         </button>
 
-        <button className="secondary" type="button" onclick={cancel}>
+        <button className="secondary" type="button" on:click={cancel}>
           Cancel
         </button>
       </ModalFooter>

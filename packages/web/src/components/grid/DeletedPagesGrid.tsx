@@ -61,7 +61,7 @@ export default function DeletedPagesGrid({
     <>
       <aside className={styles.aside}>
         <p>Pages in the trash will be permanently deleted after 30 days.</p>
-        <button type="button" className="secondary" onclick={emptyTrash}>
+        <button type="button" className="secondary" on:click={emptyTrash}>
           Empty trash
         </button>
       </aside>
