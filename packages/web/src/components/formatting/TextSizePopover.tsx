@@ -2,10 +2,9 @@ import Stepper from "@/components/stepper/Stepper";
 import styles from "./TextSizePopover.module.css";
 import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
-import type PopoverMenu from "@/elements/menu/PopoverMenu";
 
 export interface TextSizePopoverProps
-  extends Omit<JSX.Attributes<PopoverMenu>, "id" | "className"> {
+  extends Omit<JSX.Attributes<"popover-menu">, "id" | "className"> {
   id: string;
   value: Reactive<number>;
   onChange: (value: number) => void;

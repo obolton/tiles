@@ -21,7 +21,6 @@ import Chart from "@/models/Chart";
 import Section from "@/models/Section";
 import type { TileType } from "api/types/tiles";
 import type { JSX } from "@/jsx/jsx";
-import type PopoverMenu from "@/elements/menu/PopoverMenu";
 
 type InsertTileButton = {
   label: string;
@@ -42,7 +41,7 @@ const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
-export interface InsertMenuProps extends JSX.Attributes<PopoverMenu> {
+export interface InsertMenuProps extends JSX.Attributes<"popover-menu"> {
   sectionId?: string | null;
   afterId?: string | null;
 }

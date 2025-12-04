@@ -9,12 +9,11 @@ import PageInvite from "@/models/PageInvite";
 import type Editor from "@/editor/Editor";
 import type { User } from "@/types/collaboration";
 import type { JSX } from "@/jsx/jsx";
-import type PopoverMenu from "@/elements/menu/PopoverMenu";
 
 const InviteModalLoader = () =>
   import("@/components/modals/invite/InviteModal");
 
-export interface CollaborationPopoverProps extends JSX.Attributes<PopoverMenu> {
+export interface CollaborationPopoverProps extends JSX.Attributes<"popover-menu"> {
   editor: Editor;
 }
 

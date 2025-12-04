@@ -2,7 +2,7 @@ import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
 
 // TODO: Support menuitemradio role for Swatch
-export interface MenuItemProps extends JSX.Attributes<HTMLButtonElement> {
+export interface MenuItemProps extends JSX.Attributes<"button"> {
   label?: string;
   icon?: JSX.Node;
   destructive?: boolean;

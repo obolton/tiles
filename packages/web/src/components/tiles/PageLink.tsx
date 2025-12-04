@@ -6,7 +6,7 @@ import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
 import type { Background } from "@/components/backgrounds/types";
 
-export interface PageLinkProps extends JSX.Attributes<HTMLAnchorElement> {
+export interface PageLinkProps extends JSX.Attributes<"a"> {
   pageId: string;
   title: string;
   background: Background | null;

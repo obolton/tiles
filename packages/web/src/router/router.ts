@@ -23,7 +23,7 @@ export interface RouteMetadata {
 export interface RouteData<T = unknown> {
   headers?: Record<string, string>;
   title?: string;
-  bodyAttributes?: JSX.Attributes<HTMLBodyElement>;
+  bodyAttributes?: JSX.Attributes<"body">;
   data: T;
 }
 

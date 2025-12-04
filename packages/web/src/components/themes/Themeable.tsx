@@ -1,10 +1,10 @@
 import { render } from "@/jsx/dom";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
-import type ThemeSelector from "@/elements/themes/ThemeSelector";
 import type { ThemeRegistry } from "@/types/themes";
+import type ThemeSelector from "@/elements/themes/ThemeSelector";
 
-export interface ThemeableProps<T> extends JSX.Attributes<ThemeSelector> {
+export interface ThemeableProps<T> extends JSX.Attributes<"theme-selector"> {
   theme: Reactive<string>;
   options: string[];
   registry: ThemeRegistry<T>;

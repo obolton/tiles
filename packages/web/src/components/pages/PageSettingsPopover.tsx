@@ -10,11 +10,10 @@ import { toCSSColor, isDark, type Color } from "@/utils/color";
 import { redirectWithToast } from "@/utils/toasts";
 import styles from "./PageSettingsPopover.module.css";
 import type { FontId } from "@/config/fonts";
-import type PopoverMenu from "@/elements/menu/PopoverMenu";
 import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
 
-export interface PageSettingsPopoverProps extends JSX.Attributes<PopoverMenu> {
+export interface PageSettingsPopoverProps extends JSX.Attributes<"popover-menu"> {
   editor: Editor;
   allowDelete?: boolean;
 }

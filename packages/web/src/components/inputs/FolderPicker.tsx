@@ -9,8 +9,8 @@ import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
 
 interface FolderPickerProps extends Omit<
-  JSX.Attributes<HTMLElement>,
-  "value" | "onChange"
+  JSX.Attributes<"swatch-select">,
+  "value" | "on:change"
 > {
   workspaceId: string;
   value?: Reactive<string | null>;

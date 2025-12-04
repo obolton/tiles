@@ -1,7 +1,7 @@
 import styles from "./ResizingTextarea.module.css";
 import type { JSX } from "@/jsx/jsx";
 
-type ResizingTextareaProps = JSX.Attributes<HTMLTextAreaElement>;
+type ResizingTextareaProps = JSX.Attributes<"textarea">;
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/field-sizing
 const SUPPORTS_FIELD_SIZING =

@@ -6,7 +6,7 @@ function preventDefault(event: Event) {
   event.preventDefault();
 }
 
-export interface InsertButtonProps extends JSX.Attributes<HTMLButtonElement> {
+export interface InsertButtonProps extends JSX.Attributes<"button"> {
   id: string;
   sectionId?: string | null;
   afterId?: string | null;

@@ -6,7 +6,7 @@ import { classNames } from "@/utils/css";
 import styles from "./Prompt.module.css";
 import type { JSX } from "@/jsx/jsx";
 
-export interface PromptProps extends JSX.Attributes<HTMLFormElement> {
+export interface PromptProps extends JSX.Attributes<"form"> {
   className?: string;
   placeholder?: string;
   submitTooltip?: string;

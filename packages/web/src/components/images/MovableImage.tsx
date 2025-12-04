@@ -4,7 +4,7 @@ import type { Reactive } from "@/utils/reactivity";
 
 export type Origin = { x: number; y: number };
 
-export interface MovableImageProps extends JSX.Attributes<HTMLImageElement> {
+export interface MovableImageProps extends JSX.Attributes<"img"> {
   movable?: Reactive<boolean>;
   origin: Reactive<Origin>;
   onMove: (origin: Origin) => void;

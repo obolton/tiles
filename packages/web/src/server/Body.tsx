@@ -1,6 +1,6 @@
 import type { JSX } from "@/jsx/jsx";
 
-export interface BodyProps extends JSX.Attributes<HTMLBodyElement> {
+export interface BodyProps extends JSX.Attributes<"body"> {
   children: JSX.Node;
   hydrate?: {
     module: string;

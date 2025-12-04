@@ -4,7 +4,7 @@ import styles from "./Stepper.module.css";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
 
-export interface StepperProps extends JSX.Attributes<HTMLFieldSetElement> {
+export interface StepperProps extends JSX.Attributes<"fieldset"> {
   id: string;
   label: string;
   value: Reactive<number>;

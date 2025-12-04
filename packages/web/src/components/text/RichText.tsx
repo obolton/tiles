@@ -152,7 +152,7 @@ function Code({ node }: CodeProps) {
   );
 }
 
-interface ListItemProps extends JSX.Attributes<HTMLLIElement> {
+interface ListItemProps extends JSX.Attributes<"li"> {
   node: ListItemNode;
 }
 

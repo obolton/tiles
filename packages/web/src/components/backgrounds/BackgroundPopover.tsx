@@ -8,10 +8,9 @@ import EmptyIcon from "@/icons/empty.svg?jsx";
 import styles from "./BackgroundPopover.module.css";
 import type { Reactive } from "@/utils/reactivity";
 import type { Background, BackgroundUpdate } from "./types";
-import type PopoverMenu from "@/elements/menu/PopoverMenu";
 import type { JSX } from "@/jsx/jsx";
 
-export interface BackgroundPopoverProps extends JSX.Attributes<PopoverMenu> {
+export interface BackgroundPopoverProps extends JSX.Attributes<"popover-menu"> {
   value: Reactive<Background | null>;
   onChange: (value: BackgroundUpdate) => void;
 }

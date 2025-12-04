@@ -9,7 +9,7 @@ import type { Reactive } from "@/utils/reactivity";
 
 export type { EditorState };
 
-export interface TextEditorProps extends JSX.Attributes<HTMLDivElement> {
+export interface TextEditorProps extends JSX.Attributes<"div"> {
   editorView: Reactive<EditorView | null>;
   state: Reactive<EditorState | null>;
   initialValue?: RichText | null;
