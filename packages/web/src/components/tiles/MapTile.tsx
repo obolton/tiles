@@ -56,11 +56,7 @@ export default function MapTile({ map, hasFocus }: MapTileProps) {
     <Tile border="inside" anchorName={anchorName}>
       <If condition={hasFocus}>
         <Portal>
-          <MapToolbar
-            map={map}
-            getMapView={getMapView}
-            anchorName={anchorName}
-          />
+          <MapToolbar map={map} getMapView={getMapView} />
         </Portal>
       </If>
 
