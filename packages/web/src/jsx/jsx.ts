@@ -1,5 +1,4 @@
 import type { Reactive } from "@/utils/reactivity";
-import type { BooleanStringAttributes } from "./attributes";
 import type { AttributesFor, ElementTypeFor } from "./html-attributes";
 
 export type WithProperties<T> = {
@@ -60,11 +59,6 @@ export namespace JSX {
 
   export type Ref<T> = (element: T) => void;
 
-  export type CustomCSSProperty = `--${string}`;
-
-  export type StyleDeclaration = Partial<CSSStyleDeclaration> &
-    Record<CustomCSSProperty, string | undefined>;
-
   export type DataAttribute = `data-${string}`;
 
   export type EventHandlers = {
@@ -74,20 +68,16 @@ export namespace JSX {
   };
 
   export type Attributes<TagName extends string> = WithReactiveProperties<
-    AttributesFor<TagName> & {
-      style?: StyleDeclaration | string | null;
-    }
+    AttributesFor<TagName>
   > &
     WithProperties<ElementTypeFor<TagName>> & {
       ref?: Ref<ElementTypeFor<TagName>>;
       classList?:
         | (string | null | undefined | Reactive<string | null | undefined>)[]
         | { [k: string]: boolean | Reactive<boolean> | null | undefined };
-
       children?: Node;
       [k: DataAttribute]: string | number | null | undefined;
-    } & BooleanStringAttributes &
-    EventHandlers;
+    } & EventHandlers;
 
   export type HTMLElements = {
     [T in keyof HTMLElementTagNameMap]: Attributes<T>;

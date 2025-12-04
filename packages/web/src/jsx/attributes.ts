@@ -1,3 +1,7 @@
+/**
+ * ARIA attributes that accept boolean values but are serialized as "true"/"false" strings.
+ * Used by dom.ts and server.ts for runtime attribute handling.
+ */
 export const BOOLEAN_STRING_ATTRIBUTES = new Set([
   "aria-checked",
   "aria-current",
@@ -5,11 +9,3 @@ export const BOOLEAN_STRING_ATTRIBUTES = new Set([
   "aria-pressed",
   "aria-selected",
 ]);
-
-export type BooleanStringAttributes = {
-  "aria-checked"?: unknown;
-  "aria-current"?: unknown;
-  "aria-expanded"?: unknown;
-  "aria-pressed"?: unknown;
-  "aria-selected"?: unknown;
-};

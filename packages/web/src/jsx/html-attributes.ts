@@ -1,16 +1,21 @@
-import type { JSX } from "./jsx";
-
 /**
  * HTML attribute types for JSX elements.
  *
  * For DOM property access, use the $-prefixed syntax (e.g., $tabIndex).
  */
 
+// Style types
+export type CustomCSSProperty = `--${string}`;
+
+export type StyleDeclaration = Partial<CSSStyleDeclaration> &
+  Record<CustomCSSProperty, string | undefined>;
+
 // Global attributes shared by all HTML elements
 export interface GlobalHTMLAttributes {
   id?: string;
   class?: string;
   className?: string; // Alias for class, mapped in runtime
+  style?: StyleDeclaration | string;
   title?: string;
   tabindex?: number;
   hidden?: boolean | "";
@@ -51,6 +56,21 @@ export interface GlobalHTMLAttributes {
   role?: string;
   spellcheck?: "true" | "false" | "";
   translate?: "yes" | "no" | "";
+
+  // ARIA boolean string attributes
+  "aria-checked"?: boolean | "true" | "false" | "mixed";
+  "aria-current"?:
+    | boolean
+    | "true"
+    | "false"
+    | "page"
+    | "step"
+    | "location"
+    | "date"
+    | "time";
+  "aria-expanded"?: boolean | "true" | "false";
+  "aria-pressed"?: boolean | "true" | "false" | "mixed";
+  "aria-selected"?: boolean | "true" | "false";
 }
 
 // Anchor element attributes
@@ -669,7 +689,7 @@ export interface SVGAttributes {
   id?: string;
   class?: string;
   className?: string;
-  style?: JSX.StyleDeclaration | string | null;
+  style?: StyleDeclaration | string;
   viewBox?: string;
   xmlns?: string;
   fill?: string;
@@ -717,7 +737,7 @@ export interface MathMLAttributes {
   id?: string;
   class?: string;
   className?: string;
-  style?: JSX.StyleDeclaration | string | null;
+  style?: StyleDeclaration | string;
   displaystyle?: "true" | "false";
   scriptlevel?: number | string;
   mathvariant?: string;
