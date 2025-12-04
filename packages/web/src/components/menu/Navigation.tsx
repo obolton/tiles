@@ -118,7 +118,7 @@ export default function Navigation({
               type="button"
               id="account-button"
               className="floating large"
-              popoverTarget="account-menu"
+              popovertarget="account-menu"
               data-tooltip={`Signed in as ${value.name}`}
               aria-haspopup="menu"
               aria-expanded="false"
@@ -222,7 +222,7 @@ export default function Navigation({
                 id="toc-button"
                 className="floating large"
                 type="button"
-                popoverTarget="toc"
+                popovertarget="toc"
                 aria-label="Table of contents"
                 data-tooltip="Table of contents"
                 aria-haspopup="menu"

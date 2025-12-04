@@ -86,13 +86,13 @@ export default function MapTile({ map, hasFocus }: MapTileProps) {
                       : undefined
                   }
                   label={place.name}
-                  tabIndex={0}
+                  tabindex={0}
                   on:blur={handleUpdatePlace}
                 />
                 <map-legend-item
                   marker={place.id}
                   editable={isEditable}
-                  tabIndex={0}
+                  tabindex={0}
                 >
                   {place.name || "Unnamed point"}
                 </map-legend-item>

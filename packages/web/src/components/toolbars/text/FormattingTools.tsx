@@ -225,7 +225,7 @@ export default function FormattingTools({
         <li role="presentation">
           <ToolbarButton
             id="insert-content-button"
-            popoverTarget="insert-content-menu"
+            popovertarget="insert-content-menu"
             label="Insert content"
             aria-haspopup="menu"
             aria-expanded="false"

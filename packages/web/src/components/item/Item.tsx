@@ -26,7 +26,7 @@ export interface ItemProps {
   classList?: { [k: string]: boolean | Reactive<boolean> };
   editable?: boolean | Reactive<boolean>;
   tile: Tile;
-  tabIndex?: number | Reactive<number | undefined>;
+  tabindex?: number | Reactive<number | undefined>;
   resize?: Reactive<ResizeDirection | null>;
 }
 
@@ -86,7 +86,7 @@ export default function Item({
   style,
   editable = false,
   tile,
-  tabIndex,
+  tabindex,
   resize,
 }: ItemProps) {
   const { id, dimensions, x, y, width, height, rowSpan, block, hide, editor } =
@@ -211,7 +211,7 @@ export default function Item({
           ...classList,
         }}
         style={combinedStyles}
-        tabIndex={tabIndex}
+        tabindex={tabindex}
         on:pointerdown={onPointerDown}
         on:dnd-dragstart={onDragStart}
         on:focusin={onFocusIn}

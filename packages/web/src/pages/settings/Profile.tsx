@@ -125,7 +125,7 @@ export default function Profile({ workspaceId, user }: ProfileProps) {
               value={user.name}
               placeholder="Name"
               required
-              maxLength={64}
+              maxlength={64}
             />
           </label>
 
@@ -136,8 +136,8 @@ export default function Profile({ workspaceId, user }: ProfileProps) {
               name="username"
               value={user.username ?? ""}
               placeholder="Username"
-              minLength={2}
-              maxLength={30}
+              minlength={2}
+              maxlength={30}
               pattern="[a-zA-Z0-9\-]{2,30}"
               onchange={onChangeUsername}
             />
@@ -151,7 +151,7 @@ export default function Profile({ workspaceId, user }: ProfileProps) {
               value={user.email}
               placeholder="Email address"
               required
-              maxLength={254}
+              maxlength={254}
             />
           </label>
 

@@ -86,14 +86,14 @@ export default function Section({ section, signal }: SectionProps) {
     },
   );
 
-  const tabIndex = isEditable.derive((editable) => (editable ? 0 : undefined));
+  const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
 
   return (
     <scroll-view
       ref={ref}
       classList={[styles.contents, layoutClass]}
       data-section-id={id}
-      tabIndex={tabIndex}
+      tabindex={tabindex}
       on:focus={onFocus}
       on:focusout={onFocusOut}
     >
@@ -109,7 +109,7 @@ export default function Section({ section, signal }: SectionProps) {
             classList={{ [styles.item]: true }}
             editable={isEditable}
             tile={tile}
-            tabIndex={tabIndex}
+            tabindex={tabindex}
             resize={resize}
           />
         )}

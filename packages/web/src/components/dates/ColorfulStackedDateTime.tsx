@@ -23,7 +23,7 @@ export default function ColorfulStackedDateTime({
   return (
     <time
       className={styles.datetime}
-      dateTime={
+      datetime={
         new Computed([value, time] as const, (date, showTime) =>
           showTime ? date.toISOString() : date.toISOString().slice(0, 10),
         )

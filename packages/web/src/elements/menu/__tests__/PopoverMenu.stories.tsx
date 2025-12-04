@@ -9,7 +9,7 @@ export default meta;
 export const Default = {
   render: () => (
     <>
-      <button id="button" popoverTarget="menu">
+      <button id="button" popovertarget="menu">
         Open menu
       </button>
       <popover-menu id="menu" anchor="button">

@@ -48,7 +48,7 @@ describe("renderToString", () => {
 
   test("renders a numeric attribute", () => {
     const element = jsx("div", {
-      tabIndex: 0,
+      tabindex: 0,
     });
     expect(renderToString(element)).toBe('<div tabindex="0"></div>');
   });

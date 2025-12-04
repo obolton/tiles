@@ -85,7 +85,7 @@ export default function Stack({
                 "--angle": i === 0 ? "0" : `${((i * 123) % 20) - 10}deg`,
               }}
               tile={item}
-              tabIndex={open.derive((value) => (value ? 0 : undefined))}
+              tabindex={open.derive((value) => (value ? 0 : undefined))}
             />
           ))
         ),

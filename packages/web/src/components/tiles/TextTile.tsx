@@ -89,7 +89,7 @@ export default function TextTile({ text, hasFocus }: TextTileProps) {
         state={state}
         classList={[styles.text, styles.editor, alignClass]}
         initialValue={content.value}
-        tabIndex={-1}
+        tabindex={-1}
         onChange={onChange}
         on:keydown={onKeyDown}
       />

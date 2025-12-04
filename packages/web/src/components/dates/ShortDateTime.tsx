@@ -10,7 +10,7 @@ export default function ShortDateTime({ value, time }: DateTimeThemeProps) {
 
   return (
     <time
-      dateTime={
+      datetime={
         new Computed([value, time] as const, (date, showTime) =>
           showTime ? date.toISOString() : date.toISOString().slice(0, 10),
         )

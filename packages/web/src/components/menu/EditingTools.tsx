@@ -23,7 +23,7 @@ export default function EditingTools({
           className="floating"
           aria-label="Collaboration"
           data-tooltip="Collaboration"
-          popoverTarget="collaboration-popover"
+          popovertarget="collaboration-popover"
           aria-haspopup="menu"
           aria-expanded="false"
         >
@@ -43,7 +43,7 @@ export default function EditingTools({
           type="button"
           className="floating"
           role="menuitem"
-          popoverTarget="page-settings-popover"
+          popovertarget="page-settings-popover"
           aria-label="Page settings"
           aria-haspopup="menu"
           aria-expanded="false"

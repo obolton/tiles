@@ -40,7 +40,7 @@ export default function TileTools({ tile }: TileToolsProps) {
         <ToolbarButton
           id={`${tile.id}-options-button`}
           label="More options"
-          popoverTarget={`${tile.id}-options`}
+          popovertarget={`${tile.id}-options`}
           aria-haspopup="menu"
           aria-expanded="false"
         >
