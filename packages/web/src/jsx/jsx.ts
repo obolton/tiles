@@ -1,5 +1,6 @@
 import type { Reactive } from "@/utils/reactivity";
 import type { BooleanStringAttributes } from "./attributes";
+import type { AttributesFor, ElementTypeFor } from "./html-attributes";
 
 export type WithProperties<T> = {
   [K in keyof T as `$${Extract<K, string>}`]?: T[K];
@@ -72,13 +73,13 @@ export namespace JSX {
     ) => void;
   };
 
-  export type Attributes<T extends globalThis.Element> = WithReactiveProperties<
-    Omit<T, "classList" | "style" | "children"> & {
+  export type Attributes<TagName extends string> = WithReactiveProperties<
+    AttributesFor<TagName> & {
       style?: StyleDeclaration | string | null;
     }
   > &
-    WithProperties<T> & {
-      ref?: Ref<T>;
+    WithProperties<ElementTypeFor<TagName>> & {
+      ref?: Ref<ElementTypeFor<TagName>>;
       classList?:
         | (string | null | undefined | Reactive<string | null | undefined>)[]
         | { [k: string]: boolean | Reactive<boolean> | null | undefined };
@@ -89,26 +90,22 @@ export namespace JSX {
     EventHandlers;
 
   export type HTMLElements = {
-    [T in keyof HTMLElementTagNameMap]: Attributes<HTMLElementTagNameMap[T]>;
+    [T in keyof HTMLElementTagNameMap]: Attributes<T>;
   };
 
   export type SVGElements = {
     [T in keyof Omit<
       SVGElementTagNameMap,
       "a" | "script" | "style" | "title"
-    >]: Attributes<SVGElementTagNameMap[T]>;
+    >]: Attributes<T>;
   };
 
   export type MathMLElements = {
-    [T in keyof MathMLElementTagNameMap]: Attributes<
-      MathMLElementTagNameMap[T]
-    >;
+    [T in keyof MathMLElementTagNameMap]: Attributes<T>;
   };
 
   export interface IntrinsicElements
-    extends HTMLElements,
-      SVGElements,
-      MathMLElements {}
+    extends HTMLElements, SVGElements, MathMLElements {}
 }
 
 export function jsx<T extends JSX.ElementType>(
