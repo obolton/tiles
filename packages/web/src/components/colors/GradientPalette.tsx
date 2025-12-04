@@ -1,7 +1,7 @@
 import { toCSSColor, type Color } from "@/utils/color";
 import styles from "./GradientPalette.module.css";
 import type { Reactive } from "@/utils/reactivity";
-import type { JSX } from "@/jsx/jsx";
+import type { StyleDeclaration } from "@/jsx/html-attributes";
 import type { GradientBackground } from "@/components/backgrounds/types";
 
 export interface GradientPaletteProps {
@@ -59,7 +59,7 @@ function getCSSDirection(direction: GradientBackground["direction"]) {
 function getItemStyles(
   gradient: Gradient,
   colors: Reactive<(Color | null)[]>,
-): Reactive<JSX.StyleDeclaration> | JSX.StyleDeclaration {
+): Reactive<StyleDeclaration> | StyleDeclaration {
   switch (gradient.type) {
     case "none":
       return colors.derive((colors) => ({

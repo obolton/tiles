@@ -17,12 +17,12 @@ import type { ResizeDirection } from "@/elements/item/PageItem";
 import type { Tile } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
-import type { JSX } from "@/jsx/jsx";
+import type { StyleDeclaration } from "@/jsx/html-attributes";
 import type { DragData } from "@/editor/LayoutEditor";
 import type { Dimensions } from "@/models/Tile";
 
 export interface ItemProps {
-  style?: JSX.StyleDeclaration;
+  style?: StyleDeclaration;
   classList?: { [k: string]: boolean | Reactive<boolean> };
   editable?: boolean | Reactive<boolean>;
   tile: Tile;
