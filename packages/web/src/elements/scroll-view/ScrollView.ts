@@ -14,6 +14,12 @@ enum ScrollViewStates {
   SCROLLABLE = "scrollable",
 }
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "scroll-view": ScrollView;
+  }
+}
+
 export default class ScrollView extends HTMLElement {
   readonly contents: HTMLDivElement;
 

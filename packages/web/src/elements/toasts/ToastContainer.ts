@@ -9,6 +9,12 @@ export type ToastType = "info" | "success" | "error";
 const TOAST_DURATION = 5000;
 const MAX_TOASTS = 5;
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "toast-container": ToastContainer;
+  }
+}
+
 export default class ToastContainer extends HTMLElement {
   private paused = false;
   private timeout: ReturnType<typeof setTimeout> | null = null;

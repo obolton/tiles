@@ -2,12 +2,26 @@ import css from "./PopOut.css?inline";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import arrowDownIcon from "@/icons/arrow-down.svg?raw";
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export interface PopOutAttributes {
+export interface PopOutAttributes extends GlobalHTMLAttributes {
   disabled?: "" | "disabled";
+  expandable?: "expandable";
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "pop-out": PopOut;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "pop-out": PopOutAttributes;
+  }
 }
 
 export default class PopOut extends HTMLElement {

@@ -2,14 +2,26 @@ import MapEvent from "./MapEvent";
 import type MapView from "./MapView";
 import css from "./MapLegendItem.css?inline";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export interface MapLegendItemAttributes {
-  marker: string;
+export interface MapLegendItemAttributes extends GlobalHTMLAttributes {
+  marker?: string;
   editable?: boolean;
-  ondeletemarker?: (event: MapEvent) => void;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "map-legend-item": MapLegendItem;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "map-legend-item": MapLegendItemAttributes;
+  }
 }
 
 export default class MapLegendItem extends HTMLElement {

@@ -1,9 +1,10 @@
 import css from "./FilterSelect.css?inline";
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export interface FilterSelectAttributes {
+export interface FilterSelectAttributes extends GlobalHTMLAttributes {
   placeholder?: string;
   value?: string;
 }
@@ -11,6 +12,12 @@ export interface FilterSelectAttributes {
 declare global {
   interface HTMLElementTagNameMap {
     "filter-select": FilterSelect;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "filter-select": FilterSelectAttributes;
   }
 }
 

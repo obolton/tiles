@@ -1,8 +1,10 @@
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+
 const VIEWPORT_MARGIN = 64;
 
 type Alignment = "left" | "center" | "right" | "auto";
 
-export interface PopoverMenuAttributes {
+export interface PopoverMenuAttributes extends GlobalHTMLAttributes {
   anchor?: string;
   align?: Alignment;
 }
@@ -10,6 +12,12 @@ export interface PopoverMenuAttributes {
 declare global {
   interface HTMLElementTagNameMap {
     "popover-menu": PopoverMenu;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "popover-menu": PopoverMenuAttributes;
   }
 }
 

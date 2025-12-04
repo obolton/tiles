@@ -1,11 +1,24 @@
 import css from "./EmbeddedVideo.css?inline";
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export interface EmbeddedVideoAttributes {
+export interface EmbeddedVideoAttributes extends GlobalHTMLAttributes {
   src: string;
   imagesrc?: string;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "embedded-video": EmbeddedVideo;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "embedded-video": EmbeddedVideoAttributes;
+  }
 }
 
 export default class EmbeddedVideo extends HTMLElement {

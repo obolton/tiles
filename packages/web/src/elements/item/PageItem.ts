@@ -2,6 +2,7 @@ import css from "./PageItem.css?inline";
 import { PageItemEvent } from "@/elements/item/events";
 import { DEFAULT_TIMING } from "@/utils/animation/effects";
 import { makeDraggable } from "@/utils/drag";
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const DRAG_THRESHOLD = 10;
 
@@ -19,7 +20,7 @@ export type ResizeHandleDirection =
   | "sw"
   | "w";
 
-export interface PageItemAttributes {
+export interface PageItemAttributes extends GlobalHTMLAttributes {
   allowdrag?: boolean;
   resize?: ResizeDirection | null;
 }
@@ -27,6 +28,12 @@ export interface PageItemAttributes {
 declare global {
   interface HTMLElementTagNameMap {
     "page-item": PageItem;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "page-item": PageItemAttributes;
   }
 }
 

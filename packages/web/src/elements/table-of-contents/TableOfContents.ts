@@ -3,6 +3,18 @@ import type { PopoverMenuAttributes } from "@/elements/menu/PopoverMenu";
 
 export type TableOfContentsAttributes = PopoverMenuAttributes;
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "table-of-contents": TableOfContents;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "table-of-contents": TableOfContentsAttributes;
+  }
+}
+
 export default class TableOfContents extends PopoverMenu {
   constructor() {
     super();

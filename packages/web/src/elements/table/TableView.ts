@@ -12,14 +12,27 @@ import newIcon from "@/icons/new.svg?raw";
 import type { ResizeEvent } from "@/elements/resize/events";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Background } from "@/components/backgrounds/types";
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export interface TableViewAttributes {
+export interface TableViewAttributes extends GlobalHTMLAttributes {
   columns: number;
   rows: number;
   editable?: boolean;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "table-view": TableView;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "table-view": TableViewAttributes;
+  }
 }
 
 export interface Cell {

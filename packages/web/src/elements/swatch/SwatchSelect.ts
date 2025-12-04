@@ -1,15 +1,28 @@
 import css from "./SwatchSelect.css?inline";
 import PopoverMenu from "@/elements/menu/PopoverMenu";
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export interface SwatchSelectAttributes {
+export interface SwatchSelectAttributes extends GlobalHTMLAttributes {
   value?: string | null;
   orientation?: "horizontal" | "vertical";
   align?: "left" | "center" | "right" | "auto";
   showvalue?: boolean;
   label?: string | null;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "swatch-select": SwatchSelect;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "swatch-select": SwatchSelectAttributes;
+  }
 }
 
 export default class SwatchSelect extends HTMLElement {

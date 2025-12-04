@@ -1,16 +1,29 @@
 import css from "./SwipeView.css?inline";
 import upIcon from "@/icons/arrow-up.svg?raw";
 import downIcon from "@/icons/arrow-down.svg?raw";
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 export type GetItem = (index: number) => HTMLElement | null;
 
-export interface SwipeViewAttributes {
+export interface SwipeViewAttributes extends GlobalHTMLAttributes {
   value?: string;
   min?: string;
   max?: string;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "swipe-view": SwipeView;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "swipe-view": SwipeViewAttributes;
+  }
 }
 
 const ITEM_GAP = 8;

@@ -2,16 +2,28 @@ import maplibregl from "maplibre-gl";
 import css from "./MapView.css?inline";
 import type MapMarker from "./MapMarker";
 import type MapLegendItem from "./MapLegendItem";
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 const STYLE_URL = `https://api.maptiler.com/maps/streets-v2/style.json?key=${import.meta.env.PUBLIC_MAPTILER_API_KEY}`;
 
-export interface MapViewAttributes {
+export interface MapViewAttributes extends GlobalHTMLAttributes {
   movable?: boolean;
   legend?: boolean;
-  ondeletemarker?: (event: import("./MapEvent").default) => void;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "map-view": MapView;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "map-view": MapViewAttributes;
+  }
 }
 
 export default class MapView extends HTMLElement {

@@ -1,11 +1,24 @@
 import css from "./CalendarMonth.css?inline";
 import { getFirstDayOfWeek, getDaysInMonth } from "@/utils/dates";
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export interface CalendarMonthAttributes {
+export interface CalendarMonthAttributes extends GlobalHTMLAttributes {
   date?: string;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "calendar-month": CalendarMonth;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "calendar-month": CalendarMonthAttributes;
+  }
 }
 
 export default class CalendarMonth extends HTMLElement {

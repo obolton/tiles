@@ -1,23 +1,23 @@
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+
+export type ChartSeriesType = "BAR" | "LINE" | "AREA";
+
+const DEFAULT_TYPE: ChartSeriesType = "BAR";
+
+export interface ChartSeriesAttributes extends GlobalHTMLAttributes {
+  type?: ChartSeriesType;
+}
+
 declare global {
   interface HTMLElementTagNameMap {
     "chart-series": ChartSeries;
   }
 }
 
-declare module "@/jsx/jsx" {
-  namespace JSX {
-    interface IntrinsicElements {
-      "chart-series": JSX.Attributes<ChartSeries & ChartSeriesAttributes>;
-    }
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "chart-series": ChartSeriesAttributes;
   }
-}
-
-export type ChartSeriesType = "BAR" | "LINE" | "AREA";
-
-const DEFAULT_TYPE: ChartSeriesType = "BAR";
-
-export interface ChartSeriesAttributes {
-  type: ChartSeriesType;
 }
 
 export type DataPoint = number | null;

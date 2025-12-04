@@ -6,6 +6,18 @@ const TOGGLE_DELAY = 500;
 
 export type StackViewAttributes = PopOutAttributes;
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "stack-view": StackView;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "stack-view": StackViewAttributes;
+  }
+}
+
 export default class StackView extends PopOut {
   private toggleTimeout?: ReturnType<typeof setTimeout>;
 

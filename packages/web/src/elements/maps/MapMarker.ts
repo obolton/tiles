@@ -1,16 +1,27 @@
 import css from "./MapMarker.css?inline";
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export interface MapMarkerAttributes {
+export interface MapMarkerAttributes extends GlobalHTMLAttributes {
   editable?: boolean;
-  id: string;
-  lat: number;
-  long: number;
+  lat?: number;
+  long?: number;
   bounds?: string;
   label?: string;
-  onblur: (event: globalThis.FocusEvent) => void;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "map-marker": MapMarker;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "map-marker": MapMarkerAttributes;
+  }
 }
 
 export default class MapMarker extends HTMLElement {

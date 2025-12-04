@@ -3,6 +3,12 @@ import css from "./InfiniteScroll.css?inline";
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "infinite-scroll": InfiniteScroll;
+  }
+}
+
 export default class InfiniteScroll extends HTMLElement {
   public atEnd = false;
   private sentinel: HTMLElement;
