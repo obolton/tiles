@@ -1,28 +1,14 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "strict": true,
-    "target": "esnext",
-    "module": "preserve",
-    "moduleResolution": "bundler",
     "lib": ["ESNext"],
+    "types": ["node"],
     "outDir": "dist",
     "composite": true,
-    "skipLibCheck": true,
-
+    "emitDeclarationOnly": true,
     "paths": {
       "@/*": ["./src/*"]
-    },
-
-    "allowImportingTsExtensions": true,
-    "allowJs": false,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "emitDeclarationOnly": true,
-    "noUncheckedIndexedAccess": true,
-    "noUncheckedSideEffectImports": true
+    }
   },
   "include": ["./src/**/*", "./scripts/**/*"]
 }
