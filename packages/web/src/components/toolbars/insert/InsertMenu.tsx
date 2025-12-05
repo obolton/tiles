@@ -25,7 +25,7 @@ import type { JSX } from "@/jsx/jsx";
 type InsertTileButton = {
   label: string;
   type: TileType;
-  Icon: JSX.Component<Partial<SVGSVGElement>>;
+  Icon: JSX.Component<JSX.Attributes<"svg">>;
 };
 
 const BUTTONS: readonly InsertTileButton[] = [
