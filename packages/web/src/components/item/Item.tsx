@@ -7,14 +7,23 @@ import LinkTile from "@/components/tiles/LinkTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import TableTile from "@/components/tiles/TableTile";
 import ChartTile from "@/components/tiles/ChartTile";
+import SectionModel from "@/models/Section";
+import TextModel from "@/models/Text";
+import ImageModel from "@/models/Image";
+import VideoModel from "@/models/Video";
+import LinkModel from "@/models/Link";
+import PageLinkModel from "@/models/PageLink";
+import MapModel from "@/models/Map";
+import TableModel from "@/models/Table";
+import ChartModel from "@/models/Chart";
 import { flag, reactive, Computed } from "@/utils/reactivity";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import If from "@/jsx/if";
 import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
 import styles from "./Item.module.css";
+import type Tile from "@/models/Tile";
 import type PageItem from "@/elements/item/PageItem";
 import type { ResizeDirection } from "@/elements/item/PageItem";
-import type { TileVariant } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
 import type { StyleDeclaration } from "@/jsx/html-attributes";
@@ -25,35 +34,40 @@ export interface ItemProps {
   style?: StyleDeclaration;
   classList?: { [k: string]: boolean | Reactive<boolean> };
   editable?: boolean | Reactive<boolean>;
-  tile: TileVariant;
+  tile: Tile;
   tabindex?: number | Reactive<number | undefined>;
   resize?: Reactive<ResizeDirection | null>;
 }
 
-function getTileComponent(tile: TileVariant, hasFocus: Reactive<boolean>) {
-  const type = tile.type;
-  switch (type) {
-    case "SECTION":
-      return <Section section={tile} />;
-    case "IMAGE":
-      return <ImageTile image={tile} hasFocus={hasFocus} />;
-    case "VIDEO":
-      return <VideoTile video={tile} />;
-    case "TEXT":
-      return <TextTile text={tile} hasFocus={hasFocus} />;
-    case "MAP":
-      return <MapTile map={tile} hasFocus={hasFocus} />;
-    case "LINK":
-      return <LinkTile link={tile} hasFocus={hasFocus} />;
-    case "PAGE_LINK":
-      return <PageLinkTile pageLink={tile} hasFocus={hasFocus} />;
-    case "TABLE":
-      return <TableTile table={tile} hasFocus={hasFocus} />;
-    case "CHART":
-      return <ChartTile chart={tile} hasFocus={hasFocus} />;
-    default:
-      throw new Error(`Unknown tile type: ${type}`);
+function getTileComponent(tile: Tile, hasFocus: Reactive<boolean>) {
+  if (tile instanceof SectionModel) {
+    return <Section section={tile} />;
   }
+  if (tile instanceof ImageModel) {
+    return <ImageTile image={tile} hasFocus={hasFocus} />;
+  }
+  if (tile instanceof VideoModel) {
+    return <VideoTile video={tile} />;
+  }
+  if (tile instanceof TextModel) {
+    return <TextTile text={tile} hasFocus={hasFocus} />;
+  }
+  if (tile instanceof MapModel) {
+    return <MapTile map={tile} hasFocus={hasFocus} />;
+  }
+  if (tile instanceof LinkModel) {
+    return <LinkTile link={tile} hasFocus={hasFocus} />;
+  }
+  if (tile instanceof PageLinkModel) {
+    return <PageLinkTile pageLink={tile} hasFocus={hasFocus} />;
+  }
+  if (tile instanceof TableModel) {
+    return <TableTile table={tile} hasFocus={hasFocus} />;
+  }
+  if (tile instanceof ChartModel) {
+    return <ChartTile chart={tile} hasFocus={hasFocus} />;
+  }
+  throw new Error(`Unknown tile type: ${tile.type}`);
 }
 
 export function getSizeStyle(
