@@ -4,6 +4,7 @@ export const PAGE: Page = {
   id: "page-id",
   workspaceId: "workspace-id",
   updatedAt: "2025-01-01",
+  folderId: "folder-id",
   published: true,
   author: {
     id: "user-id",
@@ -14,12 +15,7 @@ export const PAGE: Page = {
   title: "Test Page",
   coverImageUrl: null,
   font: "CLASSIC",
-  color: {
-    l: 1,
-    c: 0,
-    h: 0,
-  },
-  sections: [],
+  backgroundColor: "ffff00000000",
   tiles: [],
   access: [],
   invites: [],

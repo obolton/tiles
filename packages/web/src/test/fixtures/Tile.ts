@@ -103,11 +103,6 @@ export const PAGE_LINK_TILE: ClientPageLinkTile = {
     background: null,
     font: "CLASSIC",
     coverImageUrl: "https://tiles.dev/cover.png",
-    author: {
-      id: "author-id",
-      name: "Linked Author",
-      imageUrl: "https://tiles.dev/author.png",
-    },
   },
 };
 
