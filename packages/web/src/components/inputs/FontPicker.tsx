@@ -6,8 +6,7 @@ import type { Reactive } from "@/utils/reactivity";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { JSX } from "@/jsx/jsx";
 
-interface FontPickerProps
-  extends Omit<JSX.Attributes<"div">, "value" | "onChange"> {
+export interface FontPickerProps extends JSX.Attributes<"swatch-select"> {
   value?: Reactive<FontId>;
   onChange: (value: FontId) => void;
 }
