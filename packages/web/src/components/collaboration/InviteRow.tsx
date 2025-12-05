@@ -3,17 +3,17 @@ import Row from "@/components/rows/Row";
 import RemoveIcon from "@/icons/remove.svg?jsx";
 import type { Invite } from "@/types/collaboration";
 
-export interface InviteRowProps {
-  invite: Invite;
+export interface InviteRowProps<T extends Invite> {
+  invite: T;
   showRemoveButton?: boolean;
-  onRemove?: (invite: Invite) => void;
+  onRemove?: (invite: T) => void;
 }
 
-export default function InviteRow({
+export default function InviteRow<T extends Invite>({
   invite,
   showRemoveButton,
   onRemove,
-}: InviteRowProps) {
+}: InviteRowProps<T>) {
   const formatter = new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
   });
