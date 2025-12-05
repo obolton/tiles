@@ -8,7 +8,7 @@ import type Map from "@/models/Map";
 import type Table from "@/models/Table";
 import type Chart from "@/models/Chart";
 
-export type Tile =
+export type TileVariant =
   | Section
   | Text
   | Image

@@ -14,7 +14,7 @@ import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
 import styles from "./Item.module.css";
 import type PageItem from "@/elements/item/PageItem";
 import type { ResizeDirection } from "@/elements/item/PageItem";
-import type { Tile } from "@/types/tiles";
+import type { TileVariant } from "@/types/tiles";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
 import type { StyleDeclaration } from "@/jsx/html-attributes";
@@ -25,12 +25,12 @@ export interface ItemProps {
   style?: StyleDeclaration;
   classList?: { [k: string]: boolean | Reactive<boolean> };
   editable?: boolean | Reactive<boolean>;
-  tile: Tile;
+  tile: TileVariant;
   tabindex?: number | Reactive<number | undefined>;
   resize?: Reactive<ResizeDirection | null>;
 }
 
-function getTileComponent(tile: Tile, hasFocus: Reactive<boolean>) {
+function getTileComponent(tile: TileVariant, hasFocus: Reactive<boolean>) {
   const type = tile.type;
   switch (type) {
     case "SECTION":

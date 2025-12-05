@@ -3,14 +3,14 @@ import Item from "@/components/item/Item";
 import { ReactiveValue, Computed, flag } from "@/utils/reactivity";
 import LayoutEditor from "@/editor/LayoutEditor";
 import type { JSX } from "@/jsx/jsx";
-import type { Tile } from "@/types/tiles";
+import type { TileVariant } from "@/types/tiles";
 import type Editor from "@/editor/Editor";
 import type { Reactive } from "@/utils/reactivity";
 
 interface StackProps {
   editor: Editor;
   sectionId: string;
-  items: Reactive<Tile[]>;
+  items: Reactive<TileVariant[]>;
   Placeholder?: JSX.Component<Pick<StackProps, "sectionId">>;
 }
 
