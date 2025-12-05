@@ -15,7 +15,7 @@
     "lint:ts": "oxlint",
     "lint:css": "stylelint \"src/**/*.css\"",
     "lint": "pnpm lint:ts && pnpm lint:css",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6001 --no-open --no-version-updates",
     "storybook:build": "storybook build",
     "tsc": "tsc --build",
     "generate-worker-types": "wrangler types src/types/worker.d.ts --include-runtime=false"

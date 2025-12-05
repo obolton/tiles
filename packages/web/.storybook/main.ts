@@ -1,10 +1,8 @@
-import path from "node:path";
-import type { StorybookConfig } from "@storybook/react-vite";
+import type { StorybookConfig } from "@storybook/html-vite";
 
-const config: StorybookConfig = {
+export default {
   stories: ["../src/**/__tests__/*.stories.@(ts|tsx)"],
-  framework: "@storybook/react-vite",
-  addons: ["@storybook/addon-essentials"],
+  framework: "@storybook/html-vite",
   core: {
     disableTelemetry: true,
     disableWhatsNewNotifications: true,
@@ -13,15 +11,4 @@ const config: StorybookConfig = {
     ...config,
     PUBLIC_API_BASE_URL: "https://localhost",
   }),
-  viteFinal: (config) => ({
-    ...config,
-    envPrefix: "PUBLIC_",
-    resolve: {
-      alias: {
-        "@": path.resolve(__dirname, "../src"),
-      },
-    },
-  }),
-};
-
-export default config;
+} satisfies StorybookConfig;
