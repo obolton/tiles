@@ -70,7 +70,7 @@ export default function WorkspaceMembers({
           <UserRow
             user={member}
             description={member.email}
-            showRemove={initialMembers.users.length > 1}
+            showRemoveButton={initialMembers.users.length > 1}
             onRemove={onRemove}
           />
         )}
