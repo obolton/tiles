@@ -3,7 +3,7 @@ import type { GradientDirection } from "@/generated/prisma/client";
 import type { BackgroundSchema } from "@/schema/Background";
 
 export interface Background {
-  backgroundColor: Uint8Array | null;
+  backgroundColor: Uint8Array<ArrayBuffer> | null;
   backgroundGradient: GradientDirection | null;
   backgroundImageId: string | null;
 }
