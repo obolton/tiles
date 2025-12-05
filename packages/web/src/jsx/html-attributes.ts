@@ -690,6 +690,7 @@ export interface SVGAttributes {
   class?: string;
   className?: string;
   style?: StyleDeclaration | string;
+  slot?: string;
   viewBox?: string;
   xmlns?: string;
   fill?: string;
@@ -738,6 +739,7 @@ export interface MathMLAttributes {
   class?: string;
   className?: string;
   style?: StyleDeclaration | string;
+  slot?: string;
   displaystyle?: "true" | "false";
   scriptlevel?: number | string;
   mathvariant?: string;
