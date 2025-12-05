@@ -1,6 +1,6 @@
 import "../ScrollView";
 import "./stories.css";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/html-vite";
 
 const meta = {
   title: "ScrollView",

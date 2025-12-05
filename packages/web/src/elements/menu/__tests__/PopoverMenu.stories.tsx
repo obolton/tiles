@@ -1,5 +1,5 @@
 import "../PopoverMenu";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/html-vite";
 
 const meta = {
   title: "PopoverMenu",
