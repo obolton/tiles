@@ -58,7 +58,7 @@ export interface GlobalHTMLAttributes {
   translate?: "yes" | "no" | "";
 
   // ARIA boolean string attributes
-  "aria-checked"?: boolean | "true" | "false" | "mixed";
+  "aria-checked"?: boolean | "true" | "false" | "mixed" | {};
   "aria-current"?:
     | boolean
     | "true"
@@ -67,10 +67,11 @@ export interface GlobalHTMLAttributes {
     | "step"
     | "location"
     | "date"
-    | "time";
-  "aria-expanded"?: boolean | "true" | "false";
-  "aria-pressed"?: boolean | "true" | "false" | "mixed";
-  "aria-selected"?: boolean | "true" | "false";
+    | "time"
+    | {};
+  "aria-expanded"?: boolean | "true" | "false" | {};
+  "aria-pressed"?: boolean | "true" | "false" | "mixed" | {};
+  "aria-selected"?: boolean | "true" | "false" | {};
 }
 
 // Anchor element attributes
