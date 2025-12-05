@@ -123,11 +123,17 @@ export default function Navigation({
               aria-haspopup="menu"
               aria-expanded="false"
             >
-              <img
-                className="profile-image"
-                src={value.imageUrl}
-                alt={value.name}
-              />
+              {value.imageUrl ? (
+                <img
+                  className="profile-image"
+                  src={value.imageUrl}
+                  alt={value.name}
+                />
+              ) : (
+                <span className="profile-image" aria-hidden="true">
+                  {value.name.charAt(0).toUpperCase()}
+                </span>
+              )}
             </button>
             <popover-menu id="account-menu" anchor="account-button">
               <menu>
