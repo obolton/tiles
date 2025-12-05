@@ -1,8 +1,4 @@
-import "@/styles/global.css";
-import "@/styles/animation.css";
-import "@/styles/tabs.css";
-import "@/styles/popovers.css";
-import "@/styles/toasts.css";
+import "@/styles";
 import type { Preview } from "@storybook/html-vite";
 
 const preview = {
