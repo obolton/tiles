@@ -34,7 +34,7 @@ export default class TableOfContents extends PopoverMenu {
     }
   }
 
-  private handleBeforeToggle(event: ToggleEvent) {
+  protected handleBeforeToggle(event: ToggleEvent) {
     if (event.newState === "open") {
       this.update();
     }
