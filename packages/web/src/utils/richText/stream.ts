@@ -84,7 +84,8 @@ export async function insertFromStream(
 
   for await (const event of stream) {
     if (typeof event === "object" && "artifact" in event) {
-      Editor.current.addTile(event.artifact);
+      const tile = Editor.current.createTile(event.artifact);
+      Editor.current.addTile(tile);
       continue;
     }
 
