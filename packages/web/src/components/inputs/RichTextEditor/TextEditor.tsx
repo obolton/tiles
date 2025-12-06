@@ -9,12 +9,21 @@ import type { Reactive } from "@/utils/reactivity";
 
 export type { EditorState };
 
-export interface TextEditorProps extends JSX.Attributes<"div"> {
+export interface TextEditorProps extends Omit<
+  JSX.Attributes<"div">,
+  "classList"
+> {
   editorView: Reactive<EditorView | null>;
   state: Reactive<EditorState | null>;
   initialValue?: RichText | null;
   onChange?: (state: EditorState) => void;
   signal?: AbortSignal;
+  classList?: (
+    | string
+    | null
+    | undefined
+    | Reactive<string | null | undefined>
+  )[];
 }
 
 export default function TextEditor({
