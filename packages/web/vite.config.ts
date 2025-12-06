@@ -1,4 +1,5 @@
 import { resolve } from "node:path";
+import { patchCssModules } from "vite-css-modules";
 import svgPlugin from "./src/vite/svg";
 import routeManifestPlugin from "./src/vite/routeManifest";
 import cloudflarePlugin from "./src/vite/cloudflare";
@@ -20,6 +21,7 @@ export default defineConfig(({ isSsrBuild }) => ({
     },
   },
   plugins: [
+    patchCssModules({ generateSourceTypes: true }),
     svgPlugin({ jsxImportSource: "@/jsx" }),
     routeManifestPlugin(),
     cloudflarePlugin(),
