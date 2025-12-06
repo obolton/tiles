@@ -4,7 +4,6 @@ import ImageIcon from "@/icons/image.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import PlaceIcon from "@/icons/place.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
-import ChartIcon from "@/icons/chart.svg?jsx";
 import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";
 import FreeformLayoutIcon from "@/icons/freeform-layout.svg?jsx";
 import { showModal } from "@/utils/modals";
@@ -17,7 +16,6 @@ import Link from "@/models/Link";
 import PageLink from "@/models/PageLink";
 import Map from "@/models/Map";
 import Table from "@/models/Table";
-import Chart from "@/models/Chart";
 import Section from "@/models/Section";
 import type { TileType } from "api/types/tiles";
 import type { JSX } from "@/jsx/jsx";
@@ -34,7 +32,6 @@ const BUTTONS: readonly InsertTileButton[] = [
   { label: "Map", type: "MAP", Icon: PlaceIcon },
   { label: "Link", type: "LINK", Icon: LinkIcon },
   { label: "Table", type: "TABLE", Icon: TableIcon },
-  { label: "Chart", type: "CHART", Icon: ChartIcon },
 ];
 
 const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
@@ -143,14 +140,6 @@ export default function InsertMenu({
           height: 10,
           columns: 3,
           rows: 5,
-        }).catch(handleError);
-        break;
-
-      case "CHART":
-        Chart.create(Editor.current, {
-          sectionId: insertSectionId,
-          afterId,
-          height: 10,
         }).catch(handleError);
         break;
     }
