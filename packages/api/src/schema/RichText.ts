@@ -67,14 +67,12 @@ const HeadingNodeSchema = z.object({
   children: z.array(InlineNodeSchema),
 });
 
-const ListItemNodeSchema: z.ZodType<{
-  type: "listitem";
-  checked?: boolean;
-  children: z.infer<typeof BlockNodeSchema>[];
-}> = z.object({
+const ListItemNodeSchema = z.object({
   type: z.literal("listitem"),
   checked: z.boolean().optional(),
-  children: z.lazy(() => z.array(BlockNodeSchema)),
+  get children() {
+    return z.array(BlockNodeSchema);
+  },
 });
 
 const ListNodeSchema = z.object({
