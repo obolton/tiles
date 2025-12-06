@@ -3,10 +3,15 @@ import css from "./InfiniteScroll.css?inline";
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
+export interface InfiniteScrollEventMap {
+  loadmore: Event;
+}
+
 declare global {
   interface HTMLElementTagNameMap {
     "infinite-scroll": InfiniteScroll;
   }
+  interface HTMLElementEventMap extends InfiniteScrollEventMap {}
 }
 
 export default class InfiniteScroll extends HTMLElement {
