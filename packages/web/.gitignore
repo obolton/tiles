@@ -1,2 +1,5 @@
 # Build output
 dist/
+
+# Generated CSS Modules types
+*.module.css.d.ts
