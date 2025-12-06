@@ -167,7 +167,7 @@ export default function Item({
     hasFocus.value = false;
   }
 
-  function onDragStart(event: DragDropEvent<DragData>) {
+  function onDragStart(event: DragDropEvent) {
     if (event.target === item) {
       event.state.data = { tile };
     }
