@@ -70,7 +70,7 @@ const HeadingNodeSchema = z.object({
 const ListItemNodeSchema = z.object({
   type: z.literal("listitem"),
   checked: z.boolean().optional(),
-  get children() {
+  get children(): z.ZodArray<typeof BlockNodeSchema> {
     return z.array(BlockNodeSchema);
   },
 });
