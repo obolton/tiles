@@ -6,7 +6,7 @@ import { setSearchParams } from "@/utils/urls";
 import { showToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
 import { uploadMedia } from "@/utils/media";
-import { user } from "@/utils/sessions";
+import { user as userProperties } from "@/utils/sessions";
 import styles from "./Profile.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type FilePicker from "@/elements/file-picker/FilePicker";
@@ -19,27 +19,6 @@ export interface ProfileProps {
 }
 
 const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
-
-async function onChangeProfileImage(event: Event) {
-  const filePicker = event.currentTarget as FilePicker;
-  const image = filePicker.firstElementChild as HTMLImageElement;
-
-  try {
-    const file = filePicker.file;
-    if (!file) {
-      return;
-    }
-    const url = URL.createObjectURL(file);
-    image.src = url;
-    const imageKey = await uploadMedia(file, "profile-image");
-    const userInfo = await client.users.update.mutate({ imageKey });
-    user.value = userInfo;
-    image.src = setSearchParams(userInfo.imageUrl!, { class: "large" })!;
-    URL.revokeObjectURL(url);
-  } catch (error) {
-    handleError(error);
-  }
-}
 
 async function onChangeUsername(event: Event) {
   const username = event.currentTarget as HTMLInputElement;
@@ -82,7 +61,7 @@ async function onSubmit(event: SubmitEvent) {
       username: (formData.get("username") as string | null) || null,
       email: (formData.get("email") as string | null) ?? "",
     });
-    user.value = userInfo;
+    userProperties.value = userInfo;
     showToast("Your settings were saved.", "success");
   } catch (error) {
     form.dataset.error = "true";
@@ -93,6 +72,31 @@ async function onSubmit(event: SubmitEvent) {
 }
 
 export default function Profile({ workspaceId, user }: ProfileProps) {
+  async function onChangeProfileImage(event: Event) {
+    const filePicker = event.currentTarget as FilePicker;
+    const image = filePicker.firstElementChild as HTMLImageElement;
+
+    try {
+      const file = filePicker.file;
+      if (!file) {
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      image.src = url;
+      const imageKey = await uploadMedia({
+        file,
+        purpose: "profile",
+        workspaceId,
+      });
+      const userInfo = await client.users.update.mutate({ imageKey });
+      userProperties.value = userInfo;
+      image.src = setSearchParams(userInfo.imageUrl!, { class: "large" })!;
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
   return (
     <PageLayout workspaceId={user.workspaces[0]?.id}>
       <SidebarLayout
