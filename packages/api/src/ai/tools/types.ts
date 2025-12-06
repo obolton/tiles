@@ -3,6 +3,7 @@ import type { ClientTile } from "@/types/tiles.ts";
 
 export interface ToolContext {
   userId: string;
+  workspaceId: string;
   pageId: string;
   sectionId: string;
   model: string;

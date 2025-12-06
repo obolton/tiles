@@ -15,7 +15,7 @@ import type {
   ResponseOutputItem,
   ResponseStreamEvent,
 } from "openai/resources/responses/responses";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
+import type { AuthenticatedPageProcedureContext } from "@/utils/middleware.ts";
 
 const MAX_TURNS = 12;
 const PROMPT = `You are a tool for creating interactive documents. Provide direct responses, be succinct, do not include preludes or questions. Use Markdown to format text (with support for bold, italics, headings, lists).
@@ -63,7 +63,7 @@ export async function generateImage({ prompt }: GenerateImageSchema) {
 
 export async function* write(
   { pageId, sectionId, prompt, context }: WriteSchema,
-  { userId }: AuthenticatedRequestContext,
+  { userId, workspaceId }: AuthenticatedPageProcedureContext,
   signal?: AbortSignal,
 ): AsyncIterable<RichTextStreamEvent | Artifact> {
   const input: ResponseInput = [{ role: "developer", content: PROMPT }];
@@ -74,6 +74,7 @@ export async function* write(
 
   const toolContext: ToolContext = {
     userId,
+    workspaceId,
     pageId,
     sectionId,
     model: TEXT_MODEL,
