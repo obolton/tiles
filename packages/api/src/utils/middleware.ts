@@ -27,6 +27,11 @@ const AuthenticatedPageProcedureSchema = z.object({
   pageId: z.uuid(),
 });
 
+export interface AuthenticatedPageProcedureContext extends AuthenticatedRequestContext {
+  pageId: string;
+  workspaceId: string;
+}
+
 export const authenticatedPageProcedure = authenticatedProcedure
   .input(AuthenticatedPageProcedureSchema)
   .use(async (opts) => {
@@ -42,17 +47,18 @@ export const authenticatedPageProcedure = authenticatedProcedure
           { access: { some: { userId: ctx.userId } } },
         ],
       },
-      select: { id: true },
+      select: { id: true, workspaceId: true },
     });
 
     if (!page) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    return opts.next({
+    return opts.next<AuthenticatedPageProcedureContext>({
       ctx: {
         ...ctx,
-        pageId,
+        pageId: page.id,
+        workspaceId: page.workspaceId,
       },
       input,
     });
@@ -70,8 +76,7 @@ const AuthenticatedWorkspaceProcedureSchema = z.object({
   workspaceId: z.uuid(),
 });
 
-export interface AuthenticatedWorkspaceProcedureContext
-  extends AuthenticatedRequestContext {
+export interface AuthenticatedWorkspaceProcedureContext extends AuthenticatedRequestContext {
   workspaceId: string;
 }
 
