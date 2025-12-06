@@ -1,11 +1,11 @@
 import { Buffer } from "node:buffer";
-import crypto from "node:crypto";
+import prisma from "@/database/prisma.ts";
 import { upload, IMAGES_BUCKET } from "@/utils/storage.ts";
 import { openai } from "../openai.ts";
 import {
   IMAGE_GENERATION_OPTIONS,
   IMAGE_CONTENT_TYPE,
-  IMAGE_EXTENSION,
+  IMAGE_TYPE,
 } from "../constants.ts";
 import { createImage } from "@/routes/images/images.ts";
 import type {
@@ -13,6 +13,35 @@ import type {
   Tool,
 } from "openai/resources/responses/responses";
 import type { ToolContext } from "./types.ts";
+
+interface CreateImageRecordInput {
+  id: string;
+  bytes: number;
+  userId: string;
+  workspaceId: string;
+}
+
+async function createImageRecord({
+  id,
+  bytes,
+  userId,
+  workspaceId,
+}: CreateImageRecordInput) {
+  await prisma.image.create({
+    data: {
+      id,
+      workspaceId,
+      userId,
+      source: "GENERATED",
+      purpose: "CONTENT",
+      type: IMAGE_TYPE,
+      bytes,
+    },
+    select: {
+      id: true,
+    },
+  });
+}
 
 export const IMAGE_GENERATION_TOOL = {
   type: "image_generation",
@@ -40,7 +69,7 @@ export async function generateImageFromPrompt(prompt: string) {
 
 export async function uploadGeneratedImage(
   call: ResponseOutputItem.ImageGenerationCall,
-  context: ToolContext,
+  { userId, workspaceId }: ToolContext,
 ) {
   if (
     call.type !== "image_generation_call" ||
@@ -51,21 +80,26 @@ export async function uploadGeneratedImage(
   }
   const buffer = Buffer.from(call.result, "base64");
   const imageId = crypto.randomUUID();
-  const imageKey = `${context.userId}/${imageId}.${IMAGE_EXTENSION}`;
-  await upload(IMAGES_BUCKET, imageKey, buffer, IMAGE_CONTENT_TYPE);
-  return imageKey;
+  await upload(IMAGES_BUCKET, imageId, buffer, IMAGE_CONTENT_TYPE);
+  await createImageRecord({
+    id: imageId,
+    userId,
+    workspaceId,
+    bytes: buffer.length,
+  });
+  return imageId;
 }
 
 export async function createImageTile(
   call: ResponseOutputItem.ImageGenerationCall,
   context: ToolContext,
 ) {
-  const imageKey = await uploadGeneratedImage(call, context);
   const { pageId, sectionId } = context;
+  const imageId = await uploadGeneratedImage(call, context);
   const artifact = await createImage({
     pageId,
     sectionId,
-    imageKey,
+    imageId,
     width: 12,
     height: 12,
   });

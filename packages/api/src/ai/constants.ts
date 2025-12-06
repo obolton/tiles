@@ -1,4 +1,5 @@
 import type { ResponsesModel, ImageGenerateParams } from "openai/resources";
+import type { ImageType } from "@/generated/prisma/enums";
 
 export const TEXT_MODEL: ResponsesModel = "gpt-5-mini";
 
@@ -9,4 +10,4 @@ export const IMAGE_GENERATION_OPTIONS = {
   size: "1024x1024",
 } satisfies Omit<ImageGenerateParams, "prompt">;
 export const IMAGE_CONTENT_TYPE = "image/webp";
-export const IMAGE_EXTENSION = "webp";
+export const IMAGE_TYPE: ImageType = "WEBP";
