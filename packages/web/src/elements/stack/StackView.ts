@@ -47,7 +47,7 @@ export default class StackView extends PopOut {
   }
 
   private handleDragEnter(event: DragDropEvent) {
-    if (this.isOpen()) {
+    if (this.isOpen) {
       event.stopPropagation();
       return;
     }
@@ -69,7 +69,7 @@ export default class StackView extends PopOut {
   }
 
   private handleDragLeave(event: DragDropEvent) {
-    if (this.isOpen()) {
+    if (this.isOpen) {
       event.stopPropagation();
       return;
     }
@@ -79,7 +79,7 @@ export default class StackView extends PopOut {
   }
 
   private handleDragOver(event: DragDropEvent) {
-    if (!this.isOpen()) {
+    if (!this.isOpen) {
       return;
     }
 
