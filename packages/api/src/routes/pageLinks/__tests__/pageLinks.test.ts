@@ -15,11 +15,6 @@ const MOCK_PAGE: PageLinkPage = {
   background: { type: "color", color: "ffff00000000" },
   font: "MODERN",
   coverImageUrl: "https://example.com/cover.jpg",
-  author: {
-    id: "test-user",
-    name: "Test User",
-    imageUrl: "https://example.com/author.jpg",
-  },
 };
 
 const MOCK_PAGE_LINK: PageLink = {
