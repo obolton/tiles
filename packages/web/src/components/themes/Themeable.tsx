@@ -24,7 +24,7 @@ export default function Themeable<T>({
   children,
   ...props
 }: ThemeableProps<T>) {
-  function getItem(index: number, contents: Element) {
+  function getItem(index: number, contents: Node) {
     const key = options[index];
     const Component = key ? registry[key] : null;
     if (!Component) {
