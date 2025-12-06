@@ -43,32 +43,6 @@ const IS_SERVER = import.meta.env.SSR;
 
 const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 
-function getReactiveTile(editor: Editor, tile: ClientTile): Tile {
-  const type = tile.type;
-  switch (type) {
-    case "SECTION":
-      return new Section(editor, tile);
-    case "TEXT":
-      return new Text(editor, tile);
-    case "IMAGE":
-      return new Image(editor, tile);
-    case "VIDEO":
-      return new Video(editor, tile);
-    case "LINK":
-      return new Link(editor, tile);
-    case "PAGE_LINK":
-      return new PageLink(editor, tile);
-    case "MAP":
-      return new MapObject(editor, tile);
-    case "TABLE":
-      return new Table(editor, tile);
-    case "CHART":
-      return new Chart(editor, tile);
-    default:
-      throw new Error(`Invalid tile type: ${type}`);
-  }
-}
-
 export default class Editor {
   static #current?: Editor;
 
@@ -138,7 +112,7 @@ export default class Editor {
     const parentIds = new Map<string, string | null>();
 
     for (const tile of page.tiles) {
-      const object = getReactiveTile(this, tile);
+      const object = this.createTile(tile);
       this.index.set(object.id, object);
       if (tile.sectionId) {
         parentIds.set(object.id, tile.sectionId);
@@ -346,6 +320,32 @@ export default class Editor {
       throw new Error(`Tile cannot be found: ${id}`);
     }
     return tile;
+  }
+
+  createTile(properties: ClientTile): Tile {
+    const type = properties.type;
+    switch (type) {
+      case "SECTION":
+        return new Section(this, properties);
+      case "TEXT":
+        return new Text(this, properties);
+      case "IMAGE":
+        return new Image(this, properties);
+      case "VIDEO":
+        return new Video(this, properties);
+      case "LINK":
+        return new Link(this, properties);
+      case "PAGE_LINK":
+        return new PageLink(this, properties);
+      case "MAP":
+        return new MapObject(this, properties);
+      case "TABLE":
+        return new Table(this, properties);
+      case "CHART":
+        return new Chart(this, properties);
+      default:
+        throw new Error(`Invalid tile type: ${type}`);
+    }
   }
 
   async deleteTiles(tiles: Tile[]) {
