@@ -1,21 +1,28 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
+## Project Structure
 
-- `packages/api`: API server using Node with tRPC and Prisma, with application code in `src`; development scripts live in `scripts`.
-- `packages/web`: Web frontend using Vite, Web Components and a custom JSX runtime; UI code is under `src/components`, `src/elements`, and `src/pages`, with helpers in `src/utils` and `src/jsx`.
-- `packages/image-upload-worker`: Cloudflare Worker handling media uploads; keep worker code small and dependency-light.
-- Root configs (`tsconfig.json`, `vitest.workspace.ts`, lint settings) and SSL certs live at the repo root. Update them cautiously because all workspaces consume them.
+- Monorepo with packages in `packages/*`.
+  - `packages/api`: API server using Node with tRPC and Prisma.
+  - `packages/web`: Web frontend using Vite, Web Components and a custom JSX runtime.
+    - `src/elements`: Web Components
+    - `src/components`: JSX components
+    - `src/routes`: Routing
+    - `src/jsx`: JSX runtime
+    - `src/utils`: Utilities
+  - `packages/image-upload-worker`: Cloudflare Worker handling media uploads.
+- Shared config files live in the repo root.
 
-## Build, Test, and Development Commands
+## Scripts
 
-- `pnpm dev`: Starts API (Ports via `.env`) and web dev servers.
-- `pnpm --filter api build` / `pnpm --filter web build`: Produces deployable artifacts; API bundles with `esbuild`, web builds client + SSR worker with Vite.
+- `pnpm dev`: Starts API and web dev servers with HMR.
+- `pnpm build`: Builds the project for deployment (API with `esbuild`, web frontend with Vite).
 - `pnpm db:push` and `pnpm db:seed`: Apply Prisma schema changes and load seed data; run after editing `packages/api/prisma` files.
-- `pnpm lint`: Runs `oxlint` plus `stylelint` for the web workspace; keep output clean before opening a PR.
+- `pnpm lint`: Runs `oxlint` plus `stylelint` for the web workspace; fix issues before opening a PR.
 - `pnpm test`, `pnpm --filter <pkg> test`, and `pnpm test:coverage`: Execute Vitest suites across packages with optional coverage.
+- Note: When working in a local environment, all dependencies are installed inside a VS Code dev container. Use the `devcontainer` CLI to run `pnpm` scripts: `devcontainer exec --workspace-folder . <command>`.
 
-## Coding Style & Naming Conventions
+## Coding Style
 
 - Use TypeScript with ES modules and two-space indentation.
 - Use the `@/*` path alias that resolves to each package's `src` directory; avoid relative `../../` imports.
@@ -41,14 +48,13 @@
 
 ## Web Components
 
-- Custom elements live in `src/elements` with Shadow DOM and CSS imported via `?inline`.
+- Use Shadow DOM to isolate structure and style, with adopted stylesheets imported via `?inline`.
 - Use the `handleEvent` pattern for event handling within components.
-- Reflect properties to attributes and vice versa.
-- Prefer ARIA properties (`ariaPressed`, `ariaSelected`) over `setAttribute` for accessibility attributes.
+- Reflect element properties to attributes and vice versa.
 
 ## UI Patterns
 
-- Prefer optimistic UI updates - update the DOM before API calls complete for better responsiveness.
+- Use optimistic UI updates where possible.
 
 ## Environment & Security Notes
 
