@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import OpenAI from "openai";
+import { OpenAI } from "openai";
 import type { ResponseStreamEvent } from "openai/resources/responses/responses";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;

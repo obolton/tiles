@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import Cloudflare from "cloudflare";
+import { Cloudflare } from "cloudflare";
 
 assert(process.env.CLOUDFLARE_API_TOKEN);
 assert(process.env.CLOUDFLARE_ZONE_ID);
