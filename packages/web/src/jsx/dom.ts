@@ -459,6 +459,7 @@ function renderDOMElement(
 
   if (ref) {
     // TODO: Improve types
+    // @ts-ignore
     ref(element);
   }
 
