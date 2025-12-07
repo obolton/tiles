@@ -4,7 +4,6 @@
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "outDir": "dist",
     "noEmit": true,
-    "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "jsx": "react-jsx",
     "jsxImportSource": "@/jsx",
     "paths": {
