@@ -18,7 +18,7 @@
   "devDependencies": {
     "@vitest/coverage-v8": "^4.0.3",
     "dotenv": "^17.2.2",
-    "oxlint": "^1.29.0",
+    "oxlint": "^1.31.0",
     "prettier": "^3.7.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.3"
