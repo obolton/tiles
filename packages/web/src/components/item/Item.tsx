@@ -27,7 +27,6 @@ import type { ResizeDirection } from "@/elements/item/PageItem";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
 import type { StyleDeclaration } from "@/jsx/html-attributes";
-import type { DragData } from "@/editor/LayoutEditor";
 import type { Dimensions } from "@/models/Tile";
 
 export interface ItemProps {
