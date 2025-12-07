@@ -4,7 +4,6 @@
     "lib": ["ESNext"],
     "types": ["node"],
     "outDir": "dist",
-    "emitDeclarationOnly": true,
     "paths": {
       "@/*": ["./src/*"]
     }

@@ -3,7 +3,6 @@
   "compilerOptions": {
     "lib": ["ESNext"],
     "outDir": "dist",
-    "emitDeclarationOnly": true,
     "paths": {
       "@/*": ["./src/*"]
     }
