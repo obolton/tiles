@@ -62,7 +62,7 @@ import Dropdown from "@/models/Dropdown";
 import type { Reactive } from "@/utils/reactivity";
 import type { EditorState, Command } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
-import type { TextAlignment, ListType } from "@/utils/richText/format";
+import type { TextAlignment } from "@/utils/richText/format";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 
 const DateTimeModalLoader = () => import("@/components/modals/DateTimeModal");
