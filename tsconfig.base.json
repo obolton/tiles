@@ -12,6 +12,7 @@
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedIndexedAccess": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "composite": true
   }
 }
