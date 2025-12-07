@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 
-const CSS = {
+const CSS: Pick<typeof globalThis.CSS, "registerProperty" | "supports"> = {
   registerProperty: vi.fn(),
   supports: vi.fn(() => true),
 };
