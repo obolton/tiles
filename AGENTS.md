@@ -17,10 +17,11 @@
 
 - `pnpm dev`: Starts API and web dev servers with HMR.
 - `pnpm build`: Builds the project for deployment (API with `esbuild`, web frontend with Vite).
+- `pnpm tsc`: Runs the TypeScript compiler.
+- `pnpm lint`: Lint TypeScript and CSS files (using `oxlint` and `stylelint`).
 - `pnpm db:push` and `pnpm db:seed`: Apply Prisma schema changes and load seed data; run after editing `packages/api/prisma` files.
-- `pnpm lint`: Runs `oxlint` plus `stylelint` for the web workspace; fix issues before opening a PR.
 - `pnpm test`, `pnpm --filter <pkg> test`, and `pnpm test:coverage`: Execute Vitest suites across packages with optional coverage.
-- Note: When working in a local environment, all dependencies are installed inside a VS Code dev container. Use the `devcontainer` CLI to run `pnpm` scripts: `devcontainer exec --workspace-folder . <command>`.
+- Note: When working in a local environment, all dependencies are installed inside a VS Code dev container. Use the `devcontainer` CLI to run all `pnpm` scripts: `devcontainer exec --workspace-folder . <command>`.
 
 ## Coding Style
 
