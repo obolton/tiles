@@ -2,6 +2,7 @@ import { BaseReactive } from "@/utils/reactivity";
 import type Tile from "./Tile";
 
 export interface TileParent {
+  id?: string;
   tiles: TileCollection;
 }
 

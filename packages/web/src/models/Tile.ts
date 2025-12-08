@@ -1,7 +1,6 @@
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
-import Section from "./Section";
 import type {
   ClientTile,
   Anchor,
@@ -95,7 +94,7 @@ export default class Tile {
   }
 
   get sectionId() {
-    return this.parent instanceof Section ? this.parent.id : null;
+    return this.parent?.id ?? null;
   }
 
   duplicate({ sectionId }: { sectionId: string | null }) {
@@ -136,10 +135,7 @@ export default class Tile {
       typeof afterId !== "undefined"
     ) {
       if (sectionId) {
-        const section = this.editor.getTile(sectionId);
-        if (!(section instanceof Section)) {
-          throw new Error(`Invalid section ID: ${sectionId}`);
-        }
+        const section = this.editor.getSection(sectionId);
         section.tiles.insertAfter(afterId ?? null, this);
       } else {
         this.editor.tiles.insertAfter(afterId ?? null, this);

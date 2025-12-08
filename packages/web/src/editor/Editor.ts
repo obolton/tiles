@@ -496,6 +496,14 @@ export default class Editor {
     return table;
   }
 
+  getSection(sectionId: string) {
+    const section = this.getTile(sectionId);
+    if (!(section instanceof Section)) {
+      throw new Error(`Invalid section ID: ${sectionId}`);
+    }
+    return section;
+  }
+
   getTableColumnData(tableId: string, columnId: string) {
     const table = this.getTable(tableId);
     return table.rows.derive((rows) =>
