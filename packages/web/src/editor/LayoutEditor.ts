@@ -30,6 +30,10 @@ interface RowLayout {
 const SNAP_THRESHOLD = 64;
 
 export default class LayoutEditor {
+  static attach(options: LayoutEditorOptions): LayoutEditor {
+    return new LayoutEditor(options);
+  }
+
   readonly editor: Editor;
   readonly sectionId: string | null;
 

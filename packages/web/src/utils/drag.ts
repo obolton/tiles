@@ -71,6 +71,10 @@ export interface DragStateOptions {
 }
 
 export class DragState<T> {
+  static attach(options: DragStateOptions): DragState<unknown> {
+    return new DragState(options);
+  }
+
   readonly element: HTMLElement;
   readonly offsetX: number;
   readonly offsetY: number;
@@ -521,7 +525,7 @@ export function makeDraggable(
     "pointerdown",
     (event: PointerEvent) => {
       if (event.button === PRIMARY_MOUSE_BUTTON && !event.defaultPrevented) {
-        new DragState({
+        DragState.attach({
           element,
           startX: event.clientX,
           startY: event.clientY,

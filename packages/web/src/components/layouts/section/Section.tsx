@@ -21,7 +21,7 @@ export default function Section({ section, signal }: SectionProps) {
   const hasFocus = flag(false);
 
   function ref(element: ScrollView) {
-    new LayoutEditor({
+    LayoutEditor.attach({
       element,
       grid: element.contents,
       layoutType: section.layout.value,

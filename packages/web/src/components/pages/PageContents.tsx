@@ -39,7 +39,7 @@ export default function PageContents({
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
 
   function ref(element: HTMLElement) {
-    new LayoutEditor({
+    LayoutEditor.attach({
       element,
       grid: element,
       layoutType: "VERTICAL",
