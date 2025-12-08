@@ -1,21 +1,9 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeAll,
-  beforeEach,
-  vi,
-  afterEach,
-} from "vitest";
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import PopoverMenu from "../PopoverMenu";
 
 describe("PopoverMenu", () => {
   let menu: PopoverMenu;
   let button: HTMLElement;
-
-  beforeAll(() => {
-    customElements.define("popover-menu", PopoverMenu);
-  });
 
   beforeEach(() => {
     menu = document.createElement("popover-menu") as PopoverMenu;
@@ -49,16 +37,14 @@ describe("PopoverMenu", () => {
       expect(menu.anchorElement).toBe(button);
     });
 
-    it("should throw an error if the anchor attribute is missing", () => {
+    it("should return null if the anchor attribute is missing", () => {
       menu.removeAttribute("anchor");
-      expect(() => menu.anchorElement).toThrow("Missing anchor attribute");
+      expect(menu.anchorElement).toBeNull();
     });
 
-    it("should throw an error if the anchor element does not exist", () => {
+    it("should return null if the anchor element does not exist", () => {
       menu.setAttribute("anchor", "non-existent");
-      expect(() => menu.anchorElement).toThrow(
-        'Anchor element with ID "non-existent" not found',
-      );
+      expect(menu.anchorElement).toBeNull();
     });
   });
 
@@ -73,7 +59,7 @@ describe("PopoverMenu", () => {
   });
 
   describe("position", () => {
-    it("should appear below and right of the anchor by default", () => {
+    it("should appear below and left-aligned by default", async () => {
       vi.spyOn(button, "getBoundingClientRect").mockReturnValue({
         top: 100,
         right: 200,
@@ -84,12 +70,13 @@ describe("PopoverMenu", () => {
       } as DOMRect);
 
       menu.showPopover();
+      await new Promise((resolve) => requestAnimationFrame(resolve));
 
       expect(menu.style.inset).toBe("120px auto auto 100px");
-      expect(menu.style.transformOrigin).toBe("top left");
+      expect(menu.style.transformOrigin).toBe("left top");
     });
 
-    it("should appear left of anchor when space is unavailable on the right", () => {
+    it("should appear right-aligned when space is unavailable on the right", async () => {
       vi.spyOn(button, "getBoundingClientRect").mockReturnValue({
         top: 100,
         right: 950,
@@ -100,12 +87,13 @@ describe("PopoverMenu", () => {
       } as DOMRect);
 
       menu.showPopover();
+      await new Promise((resolve) => requestAnimationFrame(resolve));
 
       expect(menu.style.inset).toBe("120px 50px auto auto");
-      expect(menu.style.transformOrigin).toBe("top right");
+      expect(menu.style.transformOrigin).toBe("right top");
     });
 
-    it("should appear above the anchor when space is unavailable below", () => {
+    it("should appear above the anchor when space is unavailable below", async () => {
       vi.spyOn(button, "getBoundingClientRect").mockReturnValue({
         top: 970,
         right: 200,
@@ -116,9 +104,10 @@ describe("PopoverMenu", () => {
       } as DOMRect);
 
       menu.showPopover();
+      await new Promise((resolve) => requestAnimationFrame(resolve));
 
       expect(menu.style.inset).toBe("auto auto 30px 100px");
-      expect(menu.style.transformOrigin).toBe("bottom left");
+      expect(menu.style.transformOrigin).toBe("left bottom");
     });
   });
 });
