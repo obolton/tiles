@@ -15,10 +15,7 @@ export interface ColumnToolbarProps {
   getTable: () => TableView;
 }
 
-export default function ColumnToolbar({
-  table,
-  getTable,
-}: ColumnToolbarProps) {
+export default function ColumnToolbar({ table, getTable }: ColumnToolbarProps) {
   const { id, sectionId, editor, columns } = table;
 
   function getSelectedColumn() {

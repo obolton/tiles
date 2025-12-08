@@ -1,5 +1,8 @@
 import { toCSSColor } from "@/utils/color";
-import type { Background, GradientBackground } from "@/components/backgrounds/types";
+import type {
+  Background,
+  GradientBackground,
+} from "@/components/backgrounds/types";
 
 const GRADIENT_DIRECTIONS: Record<GradientBackground["direction"], string> = {
   VERTICAL: "to bottom",

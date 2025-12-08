@@ -3,8 +3,10 @@ import styles from "./TextSizePopover.module.css";
 import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 
-export interface TextSizePopoverProps
-  extends Omit<JSX.Attributes<"popover-menu">, "id" | "className"> {
+export interface TextSizePopoverProps extends Omit<
+  JSX.Attributes<"popover-menu">,
+  "id" | "className"
+> {
   id: string;
   value: Reactive<number>;
   onChange: (value: number) => void;

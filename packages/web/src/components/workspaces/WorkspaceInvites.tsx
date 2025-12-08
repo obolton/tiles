@@ -54,7 +54,10 @@ export default function WorkspaceInvites({
 
   const onRemove = async (invite: Invite) => {
     try {
-      await client.workspaces.deleteInvite.mutate({ workspaceId, id: invite.id });
+      await client.workspaces.deleteInvite.mutate({
+        workspaceId,
+        id: invite.id,
+      });
       invites.value = invites.value.filter(
         (existingInvite) => existingInvite !== invite,
       );

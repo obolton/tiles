@@ -177,7 +177,6 @@ export default class DropdownOption extends HTMLElement {
     );
     return match !== null && match !== this;
   }
-
 }
 
 customElements.define("dropdown-option", DropdownOption);
