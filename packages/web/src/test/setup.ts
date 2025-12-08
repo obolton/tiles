@@ -13,6 +13,12 @@ vi.stubGlobal("CSS", CSS);
 Element.prototype.scrollIntoView = vi.fn();
 
 HTMLElement.prototype.showPopover = function () {
+  const allowToggle = this.dispatchEvent(
+    new ToggleEvent("beforetoggle", { oldState: "closed", newState: "open" }),
+  );
+  if (!allowToggle) {
+    return;
+  }
   this.setAttribute("open", "");
   this.dispatchEvent(
     new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
@@ -20,6 +26,12 @@ HTMLElement.prototype.showPopover = function () {
 };
 
 HTMLElement.prototype.hidePopover = function () {
+  const allowToggle = this.dispatchEvent(
+    new ToggleEvent("beforetoggle", { oldState: "open", newState: "closed" }),
+  );
+  if (!allowToggle) {
+    return;
+  }
   this.removeAttribute("open");
   this.dispatchEvent(
     new ToggleEvent("toggle", { oldState: "open", newState: "closed" }),
