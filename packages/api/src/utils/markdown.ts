@@ -10,7 +10,7 @@ const HEADING_MATCH = /^(#{1,6})\s+(?=\S)/;
 const UNORDERED_LIST_ITEM_MATCH = /^( *)(-|\*|\+)\s+(?=\S)/;
 const ORDERED_LIST_ITEM_MATCH = /^( *)[0-9]+\.\s+(?=\S)/;
 const BLOCK_START_MATCH = /^>>>\s+(.+)\s*\n/;
-const BLOCK_END_MATCH = /^<<<\s*/;
+const BLOCK_END_MATCH = /^<<<\s*\n/;
 const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *)|>|<)/;
 const ALL_NEW_LINES_MATCH = /\n/g;
 
@@ -51,9 +51,10 @@ enum LineBreak {
   SOFT,
 }
 
-export class MarkdownTransformer
-  implements Transformer<string, RichTextStreamEvent>
-{
+export class MarkdownTransformer implements Transformer<
+  string,
+  RichTextStreamEvent
+> {
   private buffer = "";
   private pos = 0;
   private format: RichTextFormat = {};
