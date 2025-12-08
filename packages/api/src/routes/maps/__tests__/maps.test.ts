@@ -25,14 +25,15 @@ const MOCK_PLACEMENT = {
   columns: 1,
 };
 
+vi.mock("@/routes/tiles/tiles", () => ({
+  createTile: async () => ({ type: "MAP", map: MOCK_MAP, ...MOCK_PLACEMENT }),
+}));
+
 describe("createMap", () => {
   beforeAll(() => {
     vi.mocked(
       prisma.mapTile.create<CreateQuery<typeof MAP_FIELDS>>,
     ).mockResolvedValue(MOCK_MAP);
-    vi.mock("@/routes/tiles/tiles", () => ({
-      createTile: () => MOCK_PLACEMENT,
-    }));
   });
 
   it("should return a map", async () => {

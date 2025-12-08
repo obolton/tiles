@@ -23,14 +23,19 @@ const MOCK_PLACEMENT = {
   columns: 1,
 };
 
+vi.mock("@/routes/tiles/tiles", () => ({
+  createTile: async () => ({
+    type: "TEXT",
+    text: MOCK_TEXT,
+    ...MOCK_PLACEMENT,
+  }),
+}));
+
 describe("createText", () => {
   beforeAll(() => {
     vi.mocked(
       prisma.textTile.create<CreateQuery<typeof TEXT_FIELDS>>,
     ).mockResolvedValue(MOCK_TEXT);
-    vi.mock("@/routes/tiles/tiles", () => ({
-      createTile: async () => MOCK_PLACEMENT,
-    }));
   });
 
   it("should return a text tile", async () => {

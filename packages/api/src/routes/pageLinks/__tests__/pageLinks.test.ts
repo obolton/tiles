@@ -29,14 +29,19 @@ const MOCK_PLACEMENT = {
   columns: 1,
 };
 
+vi.mock("@/routes/tiles/tiles.ts", () => ({
+  createTile: async () => ({
+    type: "PAGE_LINK",
+    pageLink: MOCK_PAGE_LINK,
+    ...MOCK_PLACEMENT,
+  }),
+}));
+
 describe("createPageLink", () => {
   beforeAll(() => {
     vi.mocked(
       prisma.pageLinkTile.create<CreateQuery<typeof PAGE_LINK_FIELDS>>,
     ).mockResolvedValue(MOCK_PAGE_LINK);
-    vi.mock("@/routes/tiles/tiles.ts", () => ({
-      createTile: async () => MOCK_PLACEMENT,
-    }));
   });
 
   it("should return a page link", async () => {

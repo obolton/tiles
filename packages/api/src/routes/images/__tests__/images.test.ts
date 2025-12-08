@@ -29,14 +29,19 @@ const MOCK_PLACEMENT = {
   columns: 1,
 };
 
+vi.mock("@/routes/tiles/tiles", () => ({
+  createTile: async () => ({
+    type: "IMAGE",
+    image: MOCK_IMAGE,
+    ...MOCK_PLACEMENT,
+  }),
+}));
+
 describe("createImage", () => {
   beforeAll(() => {
     vi.mocked(
       prisma.imageTile.create<CreateQuery<typeof IMAGE_FIELDS>>,
     ).mockResolvedValue(MOCK_IMAGE);
-    vi.mock("@/routes/tiles/tiles", () => ({
-      createTile: async () => MOCK_PLACEMENT,
-    }));
   });
 
   it("should return an image", async () => {
