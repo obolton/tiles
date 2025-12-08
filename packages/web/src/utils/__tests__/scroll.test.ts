@@ -1,7 +1,11 @@
-import { describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { scrollIntoViewIfNeeded } from "../scroll";
 
 describe("scrollIntoViewIfNeeded", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   window.innerWidth = 800;
   window.innerHeight = 600;
   const options = { behavior: "smooth", block: "center" } as const;
