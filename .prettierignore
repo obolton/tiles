@@ -1,7 +1,11 @@
+# Dependencies
 node_modules/
-dist/
-coverage/
-.wrangler/
-
-# Lock files
+.pnpm-store/
 pnpm-lock.yaml
+
+# Build artifacts
+dist/
+generated/
+.wrangler/
+coverage/
+*.d.ts
