@@ -18,7 +18,7 @@
 - `pnpm dev`: Start API, web, and worker dev servers in parallel with HMR.
 - `pnpm build`: Build packages for deployment (API with `esbuild`, web frontend with `Vite`).
 - `pnpm tsc`: Run the TypeScript compiler.
-- `pnpm test`and `pnpm test:coverage`: Run Vitest test suites with optional coverage.
+- `pnpm test` and `pnpm test:coverage`: Run Vitest test suites with optional coverage.
 - `pnpm lint`: Lint TypeScript and CSS files (using `oxlint` and `stylelint`).
 - `pnpm check`: Type check and lint the project.
 - `pnpm format` and `pnpm format:check`: Format files with Prettier or check formatting.
@@ -38,11 +38,22 @@
 
 ## Testing Guidelines
 
-- Use Vitest for unit tests.
-- Use `describe` blocks for each function being tested, and to provide structure to test suites.
-- Place test files beside code in `__tests__` directories using `*.test.ts` files.
-- Mock external services (database, Cloudflare API etc) with existing test utilities rather than hitting the network; review current fixtures before adding new ones.
-- New features require at least one failing test before implementation and a coverage check via `pnpm test:coverage` when practical.
+- Use Vitest for unit tests and Storybook for UI component tests and documentation.
+- Colocate test files with code in `__tests__` directories.
+- Package test helpers:
+  - `src/test/mocks`: Shared mocks
+  - `src/test/fixtures`: Fixtures
+
+### Unit tests
+
+- Use `__tests__/*.test.ts` files.
+- Use `describe` blocks for each function being tested and to provide structure to test suites.
+- Mock external services (database, external APIs etc).
+- Run tests with `pnpm test` and check coverage with `pnpm test:coverage`.
+
+### Storybook stories
+
+- Use `__tests__/*.stories.tsx` files.
 
 ## Commit & Pull Request Guidelines
 
