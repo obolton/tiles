@@ -1,4 +1,6 @@
 import "@/styles";
+import "@/elements/global";
+import "@/elements/editor";
 import { render } from "../src/jsx/dom";
 import type { JSX } from "../src/jsx/jsx";
 import type { Preview } from "@storybook/html-vite";
