@@ -6,6 +6,8 @@ import type {
   ClientMapTile,
   ClientPageLinkTile,
   ClientVideoTile,
+  ClientChartTile,
+  ClientTableTile,
 } from "api/types/tiles";
 
 const SHARED = {
@@ -141,4 +143,37 @@ export const VIDEO_TILE: ClientVideoTile = {
   imageUrl: "https://tiles.dev/video.png",
   title: "Sample video",
   description: "Video description",
+};
+
+export const TABLE_TILE: ClientTableTile = {
+  ...SHARED,
+  id: "table-id",
+  type: "TABLE",
+  textColor: null,
+  background: null,
+  numRows: 3,
+  columns: [
+    { id: "col-1", title: "Revenue", width: 100, background: null },
+    { id: "col-2", title: "Expenses", width: 100, background: null },
+    { id: "col-3", title: "Profit", width: 100, background: null },
+    { id: "col-4", title: null, width: 100, background: null },
+  ],
+  rows: [
+    { id: "row-1", height: 40, data: {}, background: null },
+    { id: "row-2", height: 40, data: {}, background: null },
+    { id: "row-3", height: 40, data: {}, background: null },
+  ],
+};
+
+export const CHART_TILE: ClientChartTile = {
+  ...SHARED,
+  id: "chart-id",
+  type: "CHART",
+  tableId: "table-id",
+  background: null,
+  label: { id: "col-1", title: "Revenue" },
+  series: [
+    { id: "series-1", type: "BAR", column: { id: "col-2", title: "Expenses" } },
+    { id: "series-2", type: "LINE", column: { id: "col-3", title: "Profit" } },
+  ],
 };
