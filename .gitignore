@@ -6,21 +6,20 @@ node_modules/
 .env
 .env.*
 
+# Build artifacts
+dist/
+.wrangler/
+coverage/
+*.tsbuildinfo
+
 # Certificates
 *.pem
-
-# Logs
-npm-debug.log*
-
-# Code coverage
-coverage/
 
 # macOS files
 .DS_Store
 
-# TypeScript build information
-*.tsbuildinfo
-
 # Wrangler
-.wrangler/
 wrangler.json
+
+# Claude
+.claude/settings.local.json
