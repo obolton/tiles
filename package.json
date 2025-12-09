@@ -11,7 +11,7 @@
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "lint": "pnpm -r --parallel lint",
-    "check": "pnpm tsc && pnpm lint",
+    "check": "pnpm tsc && pnpm lint && pnpm format:check",
     "storybook": "pnpm --filter web storybook",
     "cdn:purge": "pnpm --filter api cdn:purge",
     "tsc": "tsc --build",
