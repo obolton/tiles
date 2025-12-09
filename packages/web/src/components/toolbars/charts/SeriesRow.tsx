@@ -20,17 +20,14 @@ export default function SeriesRow({
 }: SeriesRowProps) {
   return (
     <Row
-      title={series.column.derive((column) => column.title ?? "Column")}
+      title={series.column.derive((column) => column.title || "Column")}
       controls={
         <>
           <swatch-select
             aria-label="Chart type"
             data-tooltip="Chart type"
-            label="Chart type"
-            aria-orientation="vertical"
             orientation="vertical"
             align="center"
-            showvalue
             value={series.type}
             on:change={(event) => {
               const type = (event.currentTarget as SwatchSelect).value as
@@ -78,7 +75,7 @@ export default function SeriesRow({
 
           <button
             type="button"
-            className="floating small"
+            className="floating"
             aria-label="Remove"
             on:click={() => onDelete(series)}
           >
