@@ -1,6 +1,8 @@
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
-import SeriesList from "./SeriesList";
+import SeriesPanel from "./SeriesPanel";
+import ChartIcon from "@/icons/chart.svg?jsx";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
 import type { BackgroundUpdate } from "@/components/backgrounds/types";
@@ -29,7 +31,22 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
     >
       <ul role="group" aria-label="Chart tools">
         <li role="presentation">
-          <SeriesList chart={chart} table={table} />
+          <ToolbarButton
+            id={`${chart.id}-series-button`}
+            label="Series"
+            popovertarget={`${chart.id}-series-panel`}
+            aria-haspopup="menu"
+          >
+            <ChartIcon aria-hidden="true" />
+            Series
+          </ToolbarButton>
+
+          <SeriesPanel
+            id={`${chart.id}-series-panel`}
+            anchor={`${chart.id}-series-button`}
+            chart={chart}
+            table={table}
+          />
         </li>
         <li role="presentation">
           <BackgroundPicker
