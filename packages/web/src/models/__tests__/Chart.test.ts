@@ -1,0 +1,224 @@
+import { afterEach, describe, expect, test, vi } from "vitest";
+import Chart from "@/models/Chart";
+import Editor from "@/editor/Editor";
+import client from "@/api/client";
+import { PAGE } from "@/test/fixtures/Page";
+import { CHART_TILE } from "@/test/fixtures/Tile";
+import type { Background } from "@/components/backgrounds/types";
+import type { Color } from "@/utils/color";
+
+vi.mock("@/api/client", () => ({
+  default: {
+    charts: {
+      update: {
+        mutate: vi.fn(),
+      },
+      addSeries: {
+        mutate: vi.fn(),
+      },
+      updateSeries: {
+        mutate: vi.fn(),
+      },
+      deleteSeries: {
+        mutate: vi.fn(),
+      },
+    },
+  },
+}));
+
+describe("Chart", () => {
+  const editor = Editor.init(PAGE);
+  const updateMock = vi.mocked(client.charts.update.mutate);
+  const addSeriesMock = vi.mocked(client.charts.addSeries.mutate);
+  const updateSeriesMock = vi.mocked(client.charts.updateSeries.mutate);
+  const deleteSeriesMock = vi.mocked(client.charts.deleteSeries.mutate);
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("maps properties to reactive values", () => {
+    const chart = new Chart(editor, CHART_TILE);
+
+    expect(chart.type).toBe("CHART");
+    expect(chart.tableId).toBe(CHART_TILE.tableId);
+    expect(chart.label.value).toEqual(CHART_TILE.label);
+    expect(chart.background.value).toBe(CHART_TILE.background);
+    expect(chart.series.value).toHaveLength(2);
+    expect(chart.series.value[0]?.id).toBe("series-1");
+    expect(chart.series.value[0]?.type.value).toBe("BAR");
+    expect(chart.series.value[0]?.column.value).toEqual({
+      id: "col-2",
+      title: "Expenses",
+    });
+    expect(chart.series.value[0]?.color.value).toBe("ffff40400000");
+    expect(chart.series.value[1]?.id).toBe("series-2");
+    expect(chart.series.value[1]?.type.value).toBe("LINE");
+  });
+
+  describe("setBackground", () => {
+    test("updates the background", async () => {
+      const chart = new Chart(editor, CHART_TILE);
+      const colorA: Color = "ffff00000000";
+      const colorB: Color = "888800000000";
+      const background: Background = {
+        type: "gradient",
+        colorA,
+        colorB,
+        direction: "VERTICAL",
+      };
+
+      updateMock.mockResolvedValue({
+        ...CHART_TILE,
+        background,
+      });
+
+      await chart.setBackground({ type: "color", color: colorA });
+
+      expect(updateMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: CHART_TILE.id,
+        background: { type: "color", color: colorA },
+      });
+      expect(chart.background.value).toEqual(background);
+    });
+  });
+
+  describe("setLabel", () => {
+    test("updates the label column", async () => {
+      const chart = new Chart(editor, CHART_TILE);
+      const property = { id: "col-3", title: "Profit" };
+
+      await chart.setLabel(property);
+
+      expect(chart.label.value).toEqual(property);
+      expect(updateMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: CHART_TILE.id,
+        labelColumnId: property.id,
+      });
+    });
+
+    test("clears the label column", async () => {
+      const chart = new Chart(editor, CHART_TILE);
+
+      await chart.setLabel(null);
+
+      expect(chart.label.value).toBeNull();
+      expect(updateMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: CHART_TILE.id,
+        labelColumnId: undefined,
+      });
+    });
+  });
+
+  describe("addSeries", () => {
+    test("adds a new series", async () => {
+      const chart = new Chart(editor, CHART_TILE);
+      const newSeries = {
+        id: "series-3",
+        type: "AREA" as const,
+        color: "ffff00004040" as Color,
+        column: { id: "col-4", title: "Growth" },
+      };
+
+      addSeriesMock.mockResolvedValue(newSeries);
+
+      await chart.addSeries("col-4");
+
+      expect(addSeriesMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        chartId: CHART_TILE.id,
+        columnId: "col-4",
+      });
+      expect(chart.series.value).toHaveLength(3);
+      expect(chart.series.value[2]?.id).toBe("series-3");
+      expect(chart.series.value[2]?.type.value).toBe("AREA");
+      expect(chart.series.value[2]?.column.value).toEqual({
+        id: "col-4",
+        title: "Growth",
+      });
+      expect(chart.series.value[2]?.color.value).toBe("ffff00004040");
+    });
+  });
+
+  describe("setSeriesChartType", () => {
+    test("updates the series chart type", async () => {
+      const chart = new Chart(editor, CHART_TILE);
+
+      await chart.setSeriesChartType("series-1", "LINE");
+
+      expect(chart.series.value[0]?.type.value).toBe("LINE");
+      expect(updateSeriesMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        chartId: CHART_TILE.id,
+        seriesId: "series-1",
+        type: "LINE",
+      });
+    });
+
+    test("throws an error for invalid series ID", () => {
+      const chart = new Chart(editor, CHART_TILE);
+
+      expect(() => chart.setSeriesChartType("invalid-id", "LINE")).toThrow(
+        "Invalid series ID: invalid-id",
+      );
+    });
+  });
+
+  describe("setSeriesColor", () => {
+    test("updates the series color", async () => {
+      const chart = new Chart(editor, CHART_TILE);
+      const color: Color = "ffff00008080";
+
+      await chart.setSeriesColor("series-1", color);
+
+      expect(chart.series.value[0]?.color.value).toBe(color);
+      expect(updateSeriesMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        chartId: CHART_TILE.id,
+        seriesId: "series-1",
+        color,
+      });
+    });
+
+    test("clears the series color", async () => {
+      const chart = new Chart(editor, CHART_TILE);
+
+      await chart.setSeriesColor("series-1", null);
+
+      expect(chart.series.value[0]?.color.value).toBeNull();
+      expect(updateSeriesMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        chartId: CHART_TILE.id,
+        seriesId: "series-1",
+        color: null,
+      });
+    });
+
+    test("throws an error for invalid series ID", () => {
+      const chart = new Chart(editor, CHART_TILE);
+
+      expect(() => chart.setSeriesColor("invalid-id", null)).toThrow(
+        "Invalid series ID: invalid-id",
+      );
+    });
+  });
+
+  describe("deleteSeries", () => {
+    test("removes the series from the list", async () => {
+      const chart = new Chart(editor, CHART_TILE);
+
+      await chart.deleteSeries("series-1");
+
+      expect(deleteSeriesMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        chartId: CHART_TILE.id,
+        seriesId: "series-1",
+      });
+      expect(chart.series.value).toHaveLength(1);
+      expect(chart.series.value[0]?.id).toBe("series-2");
+    });
+  });
+});
