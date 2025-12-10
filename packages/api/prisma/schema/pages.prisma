@@ -375,6 +375,7 @@ model ChartSeries {
   chartId   String          @map("chart_id") @db.Uuid
   columnId  String          @map("column_id") @db.Uuid
   type      ChartSeriesType @default(BAR)
+  color     Bytes?          @db.ByteA
 
   chart  Chart       @relation(fields: [chartId], references: [id], onDelete: Cascade)
   column TableColumn @relation(fields: [columnId], references: [id], onDelete: Cascade)
