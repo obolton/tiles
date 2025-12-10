@@ -1,3 +1,4 @@
+import { Buffer } from "node:buffer";
 import prisma, { type ExtensionArgs } from "@/database/prisma";
 import { createTile } from "../tiles/tiles";
 import { getBackgroundProperties } from "@/utils/backgrounds";
@@ -9,10 +10,22 @@ import type {
   DeleteSeriesSchema,
 } from "./schema";
 import type { Prisma } from "@/generated/prisma/client";
+import type { ColorSchema } from "@/schema/Color";
+
+function getSeriesColorData(color?: ColorSchema | null) {
+  if (typeof color === "undefined") {
+    return {};
+  }
+  if (color === null) {
+    return { color: null };
+  }
+  return { color: new Uint8Array(Buffer.from(color, "hex")) };
+}
 
 export const CHART_SERIES_FIELDS = {
   id: true,
   type: true,
+  color: true,
   column: {
     select: {
       id: true,
@@ -138,6 +151,7 @@ export async function addSeries({
   chartId,
   columnId,
   type,
+  color,
 }: AddSeriesSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the chart, table and column
@@ -155,6 +169,7 @@ export async function addSeries({
         chartId,
         columnId,
         type,
+        ...getSeriesColorData(color),
       },
       select: CHART_SERIES_FIELDS,
     });
@@ -166,6 +181,7 @@ export async function updateSeries({
   chartId,
   seriesId,
   type,
+  color,
 }: UpdateSeriesSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the chart
@@ -177,6 +193,7 @@ export async function updateSeries({
     return transaction.chartSeries.update({
       data: {
         type,
+        ...getSeriesColorData(color),
       },
       where: {
         id: seriesId,
