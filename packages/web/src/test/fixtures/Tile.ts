@@ -173,7 +173,17 @@ export const CHART_TILE: ClientChartTile = {
   background: null,
   label: { id: "col-1", title: "Revenue" },
   series: [
-    { id: "series-1", type: "BAR", column: { id: "col-2", title: "Expenses" } },
-    { id: "series-2", type: "LINE", column: { id: "col-3", title: "Profit" } },
+    {
+      id: "series-1",
+      type: "BAR",
+      color: "ffff40400000",
+      column: { id: "col-2", title: "Expenses" },
+    },
+    {
+      id: "series-2",
+      type: "LINE",
+      color: "ffff40404040",
+      column: { id: "col-3", title: "Profit" },
+    },
   ],
 };

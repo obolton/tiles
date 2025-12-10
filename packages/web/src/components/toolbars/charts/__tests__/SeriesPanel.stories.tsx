@@ -66,7 +66,12 @@ export const WithUnnamedColumns: Story = {
       ...CHART_TILE,
       id: "unnamed-chart",
       series: [
-        { id: "series-1", type: "AREA", column: { id: "col-4", title: null } },
+        {
+          id: "series-1",
+          type: "AREA",
+          color: "ffff40400000",
+          column: { id: "col-4", title: null },
+        },
       ],
       label: null,
     });
