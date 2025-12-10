@@ -1,21 +1,25 @@
 import MenuItem from "@/components/buttons/MenuItem";
 import Row from "@/components/rows/Row";
+import ColorPicker from "@/components/colors/ColorPicker";
 import BarChartIcon from "@/icons/bar-chart.svg?jsx";
 import LineChartIcon from "@/icons/line-chart.svg?jsx";
 import AreaChartIcon from "@/icons/area-chart.svg?jsx";
 import RemoveIcon from "@/icons/remove.svg?jsx";
 import type { Series, ChartType } from "@/models/Chart";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type { Color } from "@/utils/color";
 
 export interface SeriesRowProps {
   series: Series;
   onSetChartType: (type: ChartType, series: Series) => void;
+  onSetColor: (color: Color, series: Series) => void;
   onDelete: (series: Series) => void;
 }
 
 export default function SeriesRow({
   series,
   onSetChartType,
+  onSetColor,
   onDelete,
 }: SeriesRowProps) {
   return (
@@ -23,6 +27,12 @@ export default function SeriesRow({
       title={series.column.derive((column) => column.title || "Column")}
       controls={
         <>
+          <ColorPicker
+            id={`series-${series.id}-color`}
+            value={series.color}
+            onChange={(color) => onSetColor(color, series)}
+          />
+
           <swatch-select
             aria-label="Chart type"
             data-tooltip="Chart type"

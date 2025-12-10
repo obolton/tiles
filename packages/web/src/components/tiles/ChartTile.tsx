@@ -48,6 +48,7 @@ export default function ChartTile({ chart, hasFocus }: ChartTileProps) {
           {(series) => (
             <chart-series
               type={series.type}
+              color={series.color}
               $values={Editor.current
                 .getTableColumnData(chart.tableId, series.column.value.id)
                 .value.map(toNumber)}

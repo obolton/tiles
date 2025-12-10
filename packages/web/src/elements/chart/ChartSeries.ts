@@ -6,6 +6,7 @@ const DEFAULT_TYPE: ChartSeriesType = "BAR";
 
 export interface ChartSeriesAttributes extends GlobalHTMLAttributes {
   type?: ChartSeriesType;
+  color?: string | null;
 }
 
 declare global {
@@ -25,9 +26,11 @@ export type DataPoint = number | null;
 export default class ChartSeries extends HTMLElement {
   static readonly observedAttributes: (keyof ChartSeriesAttributes)[] = [
     "type",
+    "color",
   ] as const;
 
   type: ChartSeriesType = DEFAULT_TYPE;
+  color: string | null = null;
   values: DataPoint[] = [];
 
   attributeChangedCallback(
@@ -46,6 +49,9 @@ export default class ChartSeries extends HTMLElement {
           throw new Error(`Invalid series type: ${value}`);
         }
         this.type = value ?? DEFAULT_TYPE;
+        break;
+      case "color":
+        this.color = value;
         break;
     }
   }

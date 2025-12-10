@@ -1,4 +1,5 @@
 import { plot, axisX, axisY, barY, lineY, areaY } from "@observablehq/plot";
+import { toCSSColor } from "@/utils/color";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -30,7 +31,7 @@ export default class ChartView extends HTMLElement {
       subtree: true,
       childList: true,
       attributes: true,
-      attributeFilter: ["type"],
+      attributeFilter: ["type", "color"],
     });
     this.resizeObserver.observe(this);
   }
@@ -68,14 +69,15 @@ export default class ChartView extends HTMLElement {
         axisY({ labelArrow: "none", strokeOpacity: 0.5 }),
         ...series.map((series) => {
           const marks = series.values.map((value, i) => ({ label: i, value }));
+          const color = series.color ? toCSSColor(series.color) : undefined;
           switch (series.type) {
             default:
             case "BAR":
-              return barY(marks, { x: "label", y: "value" });
+              return barY(marks, { x: "label", y: "value", fill: color });
             case "LINE":
-              return lineY(marks, { x: "label", y: "value" });
+              return lineY(marks, { x: "label", y: "value", stroke: color });
             case "AREA":
-              return areaY(marks, { x: "label", y: "value" });
+              return areaY(marks, { x: "label", y: "value", fill: color });
           }
         }),
       ],
