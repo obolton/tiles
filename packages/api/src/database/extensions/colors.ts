@@ -33,5 +33,13 @@ export default Prisma.defineExtension({
         },
       },
     },
+    chartSeries: {
+      color: {
+        needs: { color: true },
+        compute({ color }) {
+          return color ? Buffer.from(color).toString("hex") : null;
+        },
+      },
+    },
   },
 });
