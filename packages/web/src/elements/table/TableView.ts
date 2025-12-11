@@ -263,16 +263,20 @@ export default class TableView extends HTMLElement {
       ? parseInt(firstColumn.dataset.index, 10)
       : 0;
 
+    const headerRow = this.tableHead.rows[0];
     for (let i = 1; i < this.colGroup.childElementCount; i++) {
       const column = this.colGroup.children[i] as HTMLTableColElement;
+      const header = headerRow?.cells[i];
       const { width } = column.getBoundingClientRect();
       const index = column.dataset.index
         ? parseInt(column.dataset.index, 10)
         : i - 1;
+      const title = header?.querySelector("span")?.textContent ?? null;
       this.visibleColumns.push(
         new Column({
           table: this,
           id: column.dataset.id,
+          title,
           index,
           width,
           element: column,
@@ -403,6 +407,8 @@ export default class TableView extends HTMLElement {
         return this.handleScroll();
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
+      case "blur":
+        return this.handleBlur(event as FocusEvent);
       case "pointerdown":
         return this.handlePointerDown(event as PointerEvent);
       case "pointerup":
@@ -433,6 +439,25 @@ export default class TableView extends HTMLElement {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
+    // Column title input handling
+    if (
+      event.target instanceof HTMLInputElement &&
+      event.target.closest("th[scope='col']")
+    ) {
+      switch (event.key) {
+        case "Enter":
+          event.preventDefault();
+          this.commitColumnTitleEdit();
+          break;
+        case "Escape":
+          event.preventDefault();
+          this.cancelColumnTitleEdit();
+          break;
+      }
+      return;
+    }
+
+    // Cell handling
     if (!(event.target instanceof HTMLTableCellElement)) {
       return;
     }
@@ -518,6 +543,15 @@ export default class TableView extends HTMLElement {
     }
   }
 
+  private handleBlur(event: FocusEvent) {
+    if (
+      event.target instanceof HTMLInputElement &&
+      event.target.closest("th[scope='col']")
+    ) {
+      this.commitColumnTitleEdit();
+    }
+  }
+
   private handlePointerDown(event: PointerEvent) {
     if (
       event.button !== PRIMARY_MOUSE_BUTTON ||
@@ -557,17 +591,9 @@ export default class TableView extends HTMLElement {
 
           if (this.editingColumn !== column) {
             this.endEditingColumn();
-            column.header?.classList.add("edit");
-            const allowEdit = column.element.dispatchEvent(
-              new TableEvent("edittablecolumnstart", {
-                column,
-                bubbles: true,
-                cancelable: true,
-              }),
-            );
-            if (allowEdit) {
+            this.startEditingColumn(column);
+            if (this.editingColumn === column) {
               event.preventDefault();
-              this.editingColumn = column;
             }
           }
         }
@@ -671,7 +697,7 @@ export default class TableView extends HTMLElement {
     }
 
     const width = column.width + event.x;
-    this.dispatchEvent(new TableEvent("resizetablecolumn", { column, width }));
+    this.dispatchEvent(new TableEvent("updatetablecolumn", { column, width }));
 
     column.width = width;
 
@@ -1257,20 +1283,84 @@ export default class TableView extends HTMLElement {
     this.editingCell = null;
   }
 
-  private endEditingColumn() {
+  private startEditingColumn(column: Column) {
+    const header = column.header;
+    if (!header) {
+      return;
+    }
+
+    this.editingColumn = column;
+    header.classList.add("edit");
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = column.title ?? "";
+    header.appendChild(input);
+    input.focus();
+    input.select();
+
+    input.addEventListener("blur", this, {
+      signal: this.editAbortController?.signal,
+    });
+    input.addEventListener("keydown", this, {
+      signal: this.editAbortController?.signal,
+    });
+  }
+
+  private commitColumnTitleEdit() {
     const column = this.editingColumn;
     if (!column) {
       return;
     }
+
+    const header = column.header;
+    const input = header?.querySelector<HTMLInputElement>("input");
+    const span = column.titleSpan;
+    if (!header || !input || !span) {
+      return;
+    }
+
+    const newTitle = input.value;
+    const titleChanged = newTitle !== column.title;
+
+    // Clear state before removing input to prevent blur handler re-entry
     this.editingColumn = null;
-    column.header?.classList.remove("edit");
-    column.element.dispatchEvent(
-      new TableEvent("edittablecolumnend", {
-        column,
-        bubbles: true,
-        cancelable: false,
-      }),
-    );
+
+    span.textContent = newTitle;
+    column.title = newTitle;
+    header.classList.remove("edit");
+    input.remove();
+
+    if (titleChanged) {
+      this.dispatchEvent(
+        new TableEvent("updatetablecolumn", { column, title: newTitle }),
+      );
+    }
+  }
+
+  private cancelColumnTitleEdit() {
+    const column = this.editingColumn;
+    if (!column) {
+      return;
+    }
+
+    const header = column.header;
+    const input = header?.querySelector<HTMLInputElement>("input");
+    if (!header || !input) {
+      return;
+    }
+
+    // Clear state before removing input to prevent blur handler re-entry
+    this.editingColumn = null;
+
+    header.classList.remove("edit");
+    input.remove();
+  }
+
+  private endEditingColumn() {
+    if (this.editingColumn) {
+      this.commitColumnTitleEdit();
+    }
   }
 
   // Column sizing
@@ -1760,12 +1850,10 @@ export default class TableView extends HTMLElement {
   }
 
   moveColumn(column: Column, afterIndex: number | null) {
-    if (!this.colGroup || !this.tableBody) {
+    if (!this.colGroup || !this.tableHead || !this.tableBody) {
       throw new Error("Table is not initialized");
     }
 
-    // Re-order column elements
-    // Note: No need to re-order column header cells as they hold no data
     const visibleIndex = this.visibleColumns.indexOf(column);
 
     // Save the original column index before we update dataset.index
@@ -1776,6 +1864,7 @@ export default class TableView extends HTMLElement {
     const beforeDataIndex =
       afterIndex === null ? null : this.visibleColumns[afterIndex + 1]?.index;
 
+    // Re-order col elements
     const beforeCol =
       beforeDataIndex === null
         ? null
@@ -1796,7 +1885,33 @@ export default class TableView extends HTMLElement {
       this.visibleColumns[i]!.index = this.firstVisibleColumn + i;
     }
 
-    // Re-order cells using the original column index
+    // Re-order header cells
+    const headerRow = this.tableHead.rows[0];
+    if (headerRow) {
+      const headerCell = headerRow.querySelector<HTMLTableCellElement>(
+        `th[aria-colindex="${originalColumnIndex}"]`,
+      );
+      const beforeHeaderCell =
+        beforeDataIndex === null
+          ? null
+          : headerRow.querySelector<HTMLTableCellElement>(
+              `th[aria-colindex="${beforeDataIndex}"]`,
+            );
+      if (headerCell) {
+        moveBefore(headerRow, headerCell, beforeHeaderCell);
+        // Update aria-colindex for all header cells
+        // TODO: This loop incorrectly includes drag preview clones
+        for (let i = 1; i < headerRow.cells.length; i++) {
+          headerRow.cells[i]!.ariaColIndex = (
+            this.firstVisibleColumn +
+            i -
+            1
+          ).toString();
+        }
+      }
+    }
+
+    // Re-order body cells
     for (const row of this.tableBody.rows) {
       const cell = row.querySelector<HTMLTableCellElement>(
         `td[aria-colindex="${originalColumnIndex}"]`,
