@@ -41,8 +41,8 @@ export default function ColumnToolbar({ table, getTable }: ColumnToolbarProps) {
       return;
     }
     try {
-      const result = await table.setColumnBackground(column.id, value);
-      getTable().setColumnBackground(column.id, result);
+      const result = await table.updateColumn(column.id, { background: value });
+      getTable().setColumnBackground(column.id, result.background);
     } catch (error) {
       handleError(error);
     }

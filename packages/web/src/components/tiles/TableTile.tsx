@@ -163,58 +163,13 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
     });
   };
 
-  function onEditColumn(event: TableEvent) {
-    const { column } = event;
-    if (!column || !column.header) {
-      return;
-    }
-
-    const columnInfo = columns.value[column.index];
-    if (!columnInfo) {
-      return;
-    }
-
-    const input = document.createElement("input");
-    input.type = "text";
-    input.id = `${columnInfo.id}-title`;
-    input.value = columnInfo.title ?? "";
-    column.header.prepend(input);
-    input.focus();
-  }
-
-  function onEditColumnEnd(event: TableEvent) {
-    const { column } = event;
-    const input = column?.header?.querySelector("input");
-
-    if (!column?.id || !input) {
-      return;
-    }
-
-    const columnInfo = columns.value[column.index];
-    if (!columnInfo) {
-      return;
-    }
-
-    const title = input.value;
-    const span = column.header?.querySelector("span");
-    if (span) {
-      span.textContent = title;
-    }
-    table.setColumnTitle(column.id, title);
-    input.remove();
-  }
-
-  const onResizeColumn = async (event: TableEvent) => {
-    const { column, width } = event;
-    if (!column || !column.id || !width) {
-      return;
-    }
-    const columnInfo = columns.value[column.index];
-    if (!columnInfo) {
+  const onUpdateColumn = async (event: TableEvent) => {
+    const { column, width, title } = event;
+    if (!column?.id) {
       return;
     }
     try {
-      await table.setColumnWidth(column.id, width);
+      await table.updateColumn(column.id, { width, title });
     } catch (error) {
       handleError(error);
     }
@@ -354,9 +309,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
         editable={isEditable}
         on:edittablecellstart={onEditCell}
         on:edittablecellend={onEditCellEnd}
-        on:edittablecolumnstart={onEditColumn}
-        on:edittablecolumnend={onEditColumnEnd}
-        on:resizetablecolumn={onResizeColumn}
+        on:updatetablecolumn={onUpdateColumn}
         on:resizetablerow={onResizeRow}
         on:movetablecolumn={onMoveColumn}
         on:movetablerow={onMoveRow}
