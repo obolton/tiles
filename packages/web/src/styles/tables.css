@@ -130,6 +130,7 @@ table-view {
       inset: 0;
       min-width: auto;
       font: inherit;
+      color: inherit;
       padding: 0 8px;
       background: none;
       border: none;
