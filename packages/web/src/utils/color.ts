@@ -1,4 +1,12 @@
+import { useMode, modeOklch, modeP3 } from "culori/fn";
+
 export type Color = string;
+
+export interface P3Color {
+  r: number;
+  g: number;
+  b: number;
+}
 
 export interface OklchColor {
   l: number;
@@ -6,7 +14,28 @@ export interface OklchColor {
   h: number;
 }
 
-export function parseColor(color: Color): OklchColor {
+const p3 = useMode(modeP3);
+const oklch = useMode(modeOklch);
+
+export function oklchToP3(color: OklchColor): P3Color {
+  const result = p3({ mode: "oklch", ...color });
+  return {
+    r: result?.r ?? 0,
+    g: result?.g ?? 0,
+    b: result?.b ?? 0,
+  };
+}
+
+export function p3ToOklch(color: P3Color): OklchColor {
+  const result = oklch({ mode: "p3", ...color });
+  return {
+    l: result?.l ?? 0,
+    c: result?.c ?? 0,
+    h: result?.h ?? 0,
+  };
+}
+
+export function parseColor(color: Color): P3Color {
   if (color.length !== 6 && color.length !== 12) {
     throw new Error(`Invalid color: ${color}`);
   }
@@ -14,33 +43,30 @@ export function parseColor(color: Color): OklchColor {
   const channelBits = color.length === 12 ? 16 : 8;
   const channelChars = channelBits / 4;
   const channelMax = (1 << channelBits) - 1;
-  const lHex = color.slice(0, channelChars);
-  const cHex = color.slice(channelChars, channelChars * 2);
-  const hHex = color.slice(channelChars * 2, channelChars * 3);
-  const l = parseInt(lHex, 16) / channelMax;
-  const c = parseInt(cHex, 16) / channelMax;
-  const h = (parseInt(hHex, 16) / channelMax) * 360;
-  return { l, c, h };
+  const rHex = color.slice(0, channelChars);
+  const gHex = color.slice(channelChars, channelChars * 2);
+  const bHex = color.slice(channelChars * 2, channelChars * 3);
+  const r = parseInt(rHex, 16) / channelMax;
+  const g = parseInt(gHex, 16) / channelMax;
+  const b = parseInt(bHex, 16) / channelMax;
+  return { r, g, b };
 }
 
-export function formatColor(
-  color: OklchColor,
-  channelBits: 8 | 16 = 16,
-): Color {
+export function formatColor(color: P3Color, channelBits: 8 | 16 = 16): Color {
   const channelChars = channelBits / 4;
   const channelMax = (1 << channelBits) - 1;
-  const l = (Math.min(Math.max(color.l, 0), 1) * channelMax) & channelMax;
-  const c = (Math.min(Math.max(color.c, 0), 1) * channelMax) & channelMax;
-  const h = (((color.h % 360) / 360) * channelMax) & channelMax;
-  const lHex = l.toString(16).padStart(channelChars, "0");
-  const cHex = c.toString(16).padStart(channelChars, "0");
-  const hHex = h.toString(16).padStart(channelChars, "0");
-  return lHex + cHex + hHex;
+  const r = Math.round(Math.min(Math.max(color.r, 0), 1) * channelMax);
+  const g = Math.round(Math.min(Math.max(color.g, 0), 1) * channelMax);
+  const b = Math.round(Math.min(Math.max(color.b, 0), 1) * channelMax);
+  const rHex = r.toString(16).padStart(channelChars, "0");
+  const gHex = g.toString(16).padStart(channelChars, "0");
+  const bHex = b.toString(16).padStart(channelChars, "0");
+  return rHex + gHex + bHex;
 }
 
-export function toCSSColor(color: Color | OklchColor) {
-  const { l, c, h } = typeof color === "string" ? parseColor(color) : color;
-  return `oklch(${l.toFixed(4)} ${c.toFixed(4)} ${h.toFixed(4)}deg)`;
+export function toCSSColor(color: Color | P3Color) {
+  const { r, g, b } = typeof color === "string" ? parseColor(color) : color;
+  return `color(display-p3 ${r.toFixed(4)} ${g.toFixed(4)} ${b.toFixed(4)})`;
 }
 
 export function isSameColor(a: Color, b: Color) {
@@ -48,8 +74,10 @@ export function isSameColor(a: Color, b: Color) {
 }
 
 export function isDark(color: Color) {
-  const { l } = parseColor(color);
-  return l < 0.5;
+  const { r, g, b } = parseColor(color);
+  // Relative luminance formula (approximately correct for P3)
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return luminance < 0.5;
 }
 
 export function getLightnessName(l: number) {

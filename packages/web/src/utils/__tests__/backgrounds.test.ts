@@ -16,7 +16,7 @@ describe("getBackgroundStyle", () => {
       const background: Background = { type: "color", color: "80000a000000" };
       const result = getBackgroundStyle(background);
       expect(result).toEqual({
-        background: "oklch(0.5000 0.0391 0.0000deg)",
+        background: "color(display-p3 0.5000 0.0391 0.0000)",
       });
     });
   });

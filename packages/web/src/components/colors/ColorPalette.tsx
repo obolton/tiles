@@ -4,6 +4,7 @@ import {
   isSameColor,
   toCSSColor,
   formatColor,
+  oklchToP3,
   type Color,
 } from "@/utils/color";
 import type { Reactive } from "@/utils/reactivity";
@@ -36,12 +37,15 @@ export default function ColorPalette({
 
   for (let l = rows - 1; l >= 0; l--) {
     for (let i = 0; i < hues; i++) {
-      const color = {
+      const oklch = {
         l: (l / (rows - 1)) * (maxLightness - minLightness) + minLightness,
         c: chroma,
         h: startHue + (i / hues) * 360,
       };
-      items.push({ color: formatColor(color), name: getColorName(color) });
+      items.push({
+        color: formatColor(oklchToP3(oklch)),
+        name: getColorName(oklch),
+      });
     }
 
     const grayscale = {
@@ -50,7 +54,7 @@ export default function ColorPalette({
       h: 0,
     };
     items.push({
-      color: formatColor(grayscale),
+      color: formatColor(oklchToP3(grayscale)),
       name: getColorName(grayscale),
     });
   }

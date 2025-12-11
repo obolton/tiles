@@ -6,25 +6,28 @@ import {
   getLightnessName,
   isDark,
   isSameColor,
+  oklchToP3,
+  p3ToOklch,
   parseColor,
   toCSSColor,
   type Color,
   type OklchColor,
+  type P3Color,
 } from "../color";
 
 describe("parseColor", () => {
   test("parses 8-bit channel colors", () => {
-    const { l, c, h } = parseColor("0ff080");
-    expect(l).toBeCloseTo(0x0f / 0xff, 6);
-    expect(c).toBeCloseTo(0xf0 / 0xff, 6);
-    expect(h).toBeCloseTo((0x80 / 0xff) * 360, 6);
+    const { r, g, b } = parseColor("0ff080");
+    expect(r).toBeCloseTo(0x0f / 0xff, 6);
+    expect(g).toBeCloseTo(0xf0 / 0xff, 6);
+    expect(b).toBeCloseTo(0x80 / 0xff, 6);
   });
 
   test("parses 16-bit channel colors", () => {
-    const { l, c, h } = parseColor("1234cdef9999");
-    expect(l).toBeCloseTo(0x1234 / 0xffff, 6);
-    expect(c).toBeCloseTo(0xcdef / 0xffff, 6);
-    expect(h).toBeCloseTo(((0x9999 / 0xffff) * 360) % 360, 6);
+    const { r, g, b } = parseColor("1234cdef9999");
+    expect(r).toBeCloseTo(0x1234 / 0xffff, 6);
+    expect(g).toBeCloseTo(0xcdef / 0xffff, 6);
+    expect(b).toBeCloseTo(0x9999 / 0xffff, 6);
   });
 
   test("throws on invalid length", () => {
@@ -34,41 +37,41 @@ describe("parseColor", () => {
 
 describe("formatColor", () => {
   test("serializes 8-bit channel colors", () => {
-    const color: OklchColor = {
-      l: 0x12 / 0xff,
-      c: 0x34 / 0xff,
-      h: (0x56 / 0xff) * 360,
+    const color: P3Color = {
+      r: 0x12 / 0xff,
+      g: 0x34 / 0xff,
+      b: 0x56 / 0xff,
     };
     expect(formatColor(color, 8)).toBe("123456");
   });
 
   test("serializes 16-bit channel colors", () => {
-    const color: OklchColor = {
-      l: 0x1234 / 0xffff,
-      c: 0xcdef / 0xffff,
-      h: (0x9999 / 0xffff) * 360,
+    const color: P3Color = {
+      r: 0x1234 / 0xffff,
+      g: 0xcdef / 0xffff,
+      b: 0x9999 / 0xffff,
     };
     expect(formatColor(color, 16)).toBe("1234cdef9999");
   });
 
-  test("removes fractional parts before hex conversion", () => {
-    const formatted = formatColor({ l: 0.5, c: 0.25, h: 1 }, 8);
-    expect(formatted).toBe("7f3f00");
+  test("rounds channel values before hex conversion", () => {
+    const formatted = formatColor({ r: 0.5, g: 0.25, b: 0.125 }, 8);
+    expect(formatted).toBe("804020");
   });
 
   test("clamps channel values into range", () => {
-    expect(formatColor({ l: 2, c: -1, h: 720 }, 8)).toBe("ff0000");
+    expect(formatColor({ r: 2, g: -1, b: 0.5 }, 8)).toBe("ff0080");
   });
 });
 
 describe("toCSSColor", () => {
   test("formats components to four decimal places", () => {
-    expect(toCSSColor("0ff080")).toBe("oklch(0.0588 0.9412 180.7059deg)");
+    expect(toCSSColor("0ff080")).toBe("color(display-p3 0.0588 0.9412 0.5020)");
   });
 
-  test("accepts direct OKLCH objects", () => {
-    const color: OklchColor = { l: 0.1234, c: 0.9876, h: 45.6789 };
-    expect(toCSSColor(color)).toBe("oklch(0.1234 0.9876 45.6789deg)");
+  test("accepts direct P3 color objects", () => {
+    const color: P3Color = { r: 0.1234, g: 0.5678, b: 0.9012 };
+    expect(toCSSColor(color)).toBe("color(display-p3 0.1234 0.5678 0.9012)");
   });
 });
 
@@ -84,9 +87,44 @@ describe("isSameColor", () => {
 });
 
 describe("isDark", () => {
-  test("uses the 0.5 threshold", () => {
-    expect(isDark("7f0000")).toBe(true);
-    expect(isDark("800000")).toBe(false);
+  test("uses relative luminance with 0.5 threshold", () => {
+    // Low luminance (dark) - red channel contributes ~0.21
+    expect(isDark("ff0000ff0000")).toBe(true);
+    // High luminance (light) - green channel contributes ~0.72
+    expect(isDark("0000ff000000")).toBe(false);
+  });
+});
+
+describe("oklchToP3", () => {
+  test("converts OKLCH to P3", () => {
+    const oklch: OklchColor = { l: 0.7, c: 0.15, h: 150 };
+    const p3 = oklchToP3(oklch);
+    expect(p3.r).toBeCloseTo(0.42, 1);
+    expect(p3.g).toBeCloseTo(0.72, 1);
+    expect(p3.b).toBeCloseTo(0.45, 1);
+  });
+
+  test("converts neutral gray", () => {
+    const oklch: OklchColor = { l: 0.5, c: 0, h: 0 };
+    const p3 = oklchToP3(oklch);
+    expect(p3.r).toBeCloseTo(p3.g, 2);
+    expect(p3.g).toBeCloseTo(p3.b, 2);
+  });
+});
+
+describe("p3ToOklch", () => {
+  test("converts P3 to OKLCH", () => {
+    const p3: P3Color = { r: 1, g: 0, b: 0 };
+    const oklch = p3ToOklch(p3);
+    expect(oklch.l).toBeCloseTo(0.63, 1);
+    expect(oklch.c).toBeCloseTo(0.26, 1);
+    expect(oklch.h).toBeCloseTo(29, 0);
+  });
+
+  test("converts neutral gray", () => {
+    const p3: P3Color = { r: 0.5, g: 0.5, b: 0.5 };
+    const oklch = p3ToOklch(p3);
+    expect(oklch.c).toBeCloseTo(0, 2);
   });
 });
 
