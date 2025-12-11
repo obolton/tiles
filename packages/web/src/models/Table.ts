@@ -106,54 +106,34 @@ export default class Table extends Tile {
     });
   }
 
-  private updateColumn(
-    properties: Omit<
-      AppRouterInputs["tables"]["updateColumn"],
-      "pageId" | "tableId"
-    >,
+  async updateColumn(
+    id: string,
+    properties: {
+      title?: string | null;
+      width?: number;
+      background?: BackgroundUpdate;
+    },
   ) {
-    return client.tables.updateColumn.mutate({
-      ...properties,
+    const column = this.columns.find((c) => c.id === id);
+    if (!column) {
+      throw new Error(`Invalid column ID: ${id}`);
+    }
+    if (typeof properties.title !== "undefined") {
+      column.title = properties.title;
+    }
+    if (typeof properties.width !== "undefined") {
+      column.width = properties.width;
+    }
+    const result = await client.tables.updateColumn.mutate({
       pageId: this.editor.pageId,
       tableId: this.id,
-    });
-  }
-
-  setColumnTitle(id: string, title: string | null) {
-    const column = this.columns.find((c) => c.id === id);
-    if (!column) {
-      throw new Error(`Invalid column ID: ${id}`);
-    }
-    column.title = title;
-    return this.updateColumn({
       columnId: id,
-      title,
+      ...properties,
     });
-  }
-
-  setColumnWidth(id: string, width: number) {
-    const column = this.columns.find((c) => c.id === id);
-    if (!column) {
-      throw new Error(`Invalid column ID: ${id}`);
+    if (typeof properties.background !== "undefined") {
+      column.background = result.background;
     }
-    column.width = width;
-    return this.updateColumn({
-      columnId: id,
-      width,
-    });
-  }
-
-  async setColumnBackground(id: string, background: BackgroundUpdate) {
-    const column = this.columns.find((c) => c.id === id);
-    if (!column) {
-      throw new Error(`Invalid column ID: ${id}`);
-    }
-    const result = await this.updateColumn({
-      columnId: id,
-      background,
-    });
-    column.background = result.background;
-    return result.background;
+    return result;
   }
 
   removeColumns(ids: string[]) {
