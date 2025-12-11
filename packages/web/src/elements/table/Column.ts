@@ -60,6 +60,10 @@ export default class Column {
     );
   }
 
+  get titleSpan() {
+    return this.header?.querySelector<HTMLSpanElement>("span");
+  }
+
   get cells() {
     return this.table.body.querySelectorAll<HTMLTableCellElement>(
       `td[aria-colindex="${this.index}"]`,
