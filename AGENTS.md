@@ -15,19 +15,16 @@
 
 ## Scripts
 
-- `pnpm dev`: Start API, web, and worker dev servers in parallel with HMR.
-- `pnpm build`: Build packages for deployment (API with `esbuild`, web frontend with `Vite`).
-- `pnpm tsc`: Run the TypeScript compiler.
-- `pnpm test` and `pnpm test:coverage`: Run Vitest test suites with optional coverage.
-- `pnpm lint`: Lint TypeScript and CSS files (using `oxlint` and `stylelint`).
-- `pnpm check`: Type check and lint the project.
+- `pnpm check`: Check types, linting and formatting for all packages in the project.
+- `pnpm tsc`: Check types.
+- `pnpm test`: Run Vitest test suites.
+- `pnpm lint`: Lint TypeScript and CSS files.
 - `pnpm format` and `pnpm format:check`: Format files with Prettier or check formatting.
-- `pnpm db:push` and `pnpm db:seed`: Apply Prisma schema changes and load seed data; run after editing `packages/api/prisma` files.
 
-### Important
+### Important notes
 
 - When working in a local environment, dependencies are installed inside a VS Code dev container. Use the `devcontainer` CLI to run any `pnpm` commands: `devcontainer exec --workspace-folder . pnpm <command>`.
-- Run scripts for specific packages with the `--filter <package>` option, e.g. `pnpm --filter api test` to run the tests for the `api` package.
+- Scripts can be run for a specific package using the `--filter <package>` option, e.g. `pnpm --filter api test` to run the tests for the `api` package.
 
 ## Coding Style
 
