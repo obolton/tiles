@@ -92,6 +92,7 @@ export default function SeriesRow({
             type="button"
             className="floating"
             aria-label="Remove"
+            data-tooltip="Remove"
             on:click={() => onDelete(series)}
           >
             <RemoveIcon aria-hidden="true" />
