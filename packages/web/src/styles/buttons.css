@@ -12,8 +12,7 @@ button {
   -webkit-font-smoothing: antialiased;
 
   /* Prevent icons from being the target of pointer events */
-  & > svg,
-  & > img {
+  & > :is(svg, img, .icon) {
     pointer-events: none;
   }
 }
@@ -121,7 +120,7 @@ swatch-select {
     scale var(--animation-duration-short) var(--easing),
     outline-color var(--animation-duration) var(--easing);
 
-  & > svg {
+  & > :is(svg, .icon) {
     width: 24px;
     height: 24px;
     fill: currentcolor;
@@ -160,7 +159,7 @@ swatch-select {
       background-color: rgb(0 0 0 / 10%);
     }
 
-    & > svg {
+    & > :is(svg, .icon) {
       scale: 1.1;
     }
   }
@@ -179,7 +178,7 @@ swatch-select {
   &:active:not(:disabled) {
     scale: 0.95;
 
-    & > svg {
+    & > :is(svg, .icon) {
       scale: 1.1;
     }
   }
@@ -228,8 +227,7 @@ swatch-select {
     }
 
     &[aria-expanded="true"] {
-      & > svg,
-      & > img {
+      & > :is(svg, img, .icon) {
         opacity: 0;
         scale: 0.7;
       }
