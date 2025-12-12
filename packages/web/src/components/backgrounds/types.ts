@@ -29,3 +29,6 @@ export type BackgroundUpdate =
   | GradientBackground
   | ImageBackgroundUpdate
   | null;
+
+export type Fill = ColorBackground | GradientBackground | null;
+export type FillUpdate = Fill;
