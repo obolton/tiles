@@ -1,0 +1,32 @@
+.toggle {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.swatch {
+  appearance: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 22px;
+  background-color: var(--color);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 20%);
+  cursor: pointer;
+  transition:
+    background-color var(--animation-duration) var(--easing),
+    scale var(--animation-duration-short) var(--easing),
+    box-shadow var(--animation-duration-short) var(--easing);
+
+  &:hover {
+    scale: 1.05;
+  }
+
+  &:checked {
+    scale: 1.1;
+    box-shadow: inset 0 0 0 3px
+      oklch(from var(--color) calc(1 - l) calc(c / 2) h / 50%);
+  }
+}
