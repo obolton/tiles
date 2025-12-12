@@ -11,9 +11,10 @@ import type { ClientChartTile } from "api/types/tiles";
 import type {
   Background,
   BackgroundUpdate,
+  Fill,
+  FillUpdate,
 } from "@/components/backgrounds/types";
 import type { AppRouterInputs } from "@/api/client";
-import type { Color } from "@/utils/color";
 
 export interface Property {
   id: string;
@@ -26,7 +27,7 @@ export interface Series {
   id: string;
   type: Reactive<ChartType>;
   column: Reactive<Property>;
-  color: Reactive<Color | null>;
+  fill: Reactive<Fill>;
 }
 
 export default class Chart extends Tile {
@@ -56,11 +57,11 @@ export default class Chart extends Tile {
     this.tableId = tableId;
     this.label = reactive(label);
     this.series = array<Series>(
-      series.map(({ id, type, column, color }) => ({
+      series.map(({ id, type, column, fill }) => ({
         id,
         type: reactive(type),
         column: reactive(column),
-        color: reactive(color),
+        fill: reactive(fill),
       })),
     );
     this.background = reactive(background);
@@ -96,12 +97,12 @@ export default class Chart extends Tile {
       chartId: this.id,
       columnId,
     });
-    const { id, type, column, color } = series;
+    const { id, type, column, fill } = series;
     this.series.push({
       id,
       type: reactive(type),
       column: reactive(column),
-      color: reactive(color),
+      fill: reactive(fill),
     });
   }
 
@@ -127,13 +128,13 @@ export default class Chart extends Tile {
     return this.updateSeries({ seriesId: id, type });
   }
 
-  setSeriesColor(id: string, color: Color | null) {
+  setSeriesFill(id: string, fill: FillUpdate) {
     const series = this.series.find((s) => s.id === id);
     if (!series) {
       throw new Error(`Invalid series ID: ${id}`);
     }
-    series.color.value = color;
-    return this.updateSeries({ seriesId: id, color });
+    series.fill.value = fill;
+    return this.updateSeries({ seriesId: id, fill });
   }
 
   deleteSeries(seriesId: string) {

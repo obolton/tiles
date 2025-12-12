@@ -4,7 +4,7 @@ import Editor from "@/editor/Editor";
 import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
 import { CHART_TILE } from "@/test/fixtures/Tile";
-import type { Background } from "@/components/backgrounds/types";
+import type { Background, BackgroundUpdate } from "@/components/backgrounds/types";
 import type { Color } from "@/utils/color";
 
 vi.mock("@/api/client", () => ({
@@ -51,7 +51,10 @@ describe("Chart", () => {
       id: "col-2",
       title: "Expenses",
     });
-    expect(chart.series.value[0]?.color.value).toBe("ffff40400000");
+    expect(chart.series.value[0]?.fill.value).toEqual({
+      type: "color",
+      color: "ffff40400000",
+    });
     expect(chart.series.value[1]?.id).toBe("series-2");
     expect(chart.series.value[1]?.type.value).toBe("LINE");
   });
@@ -116,10 +119,11 @@ describe("Chart", () => {
   describe("addSeries", () => {
     test("adds a new series", async () => {
       const chart = new Chart(editor, CHART_TILE);
+      const fill: Background = { type: "color", color: "ffff00004040" };
       const newSeries = {
         id: "series-3",
         type: "AREA" as const,
-        color: "ffff00004040" as Color,
+        fill,
         column: { id: "col-4", title: "Growth" },
       };
 
@@ -139,7 +143,7 @@ describe("Chart", () => {
         id: "col-4",
         title: "Growth",
       });
-      expect(chart.series.value[2]?.color.value).toBe("ffff00004040");
+      expect(chart.series.value[2]?.fill.value).toEqual(fill);
     });
   });
 
@@ -167,40 +171,40 @@ describe("Chart", () => {
     });
   });
 
-  describe("setSeriesColor", () => {
-    test("updates the series color", async () => {
+  describe("setSeriesFill", () => {
+    test("updates the series fill", async () => {
       const chart = new Chart(editor, CHART_TILE);
-      const color: Color = "ffff00008080";
+      const fill: BackgroundUpdate = { type: "color", color: "ffff00008080" };
 
-      await chart.setSeriesColor("series-1", color);
+      await chart.setSeriesFill("series-1", fill);
 
-      expect(chart.series.value[0]?.color.value).toBe(color);
+      expect(chart.series.value[0]?.fill.value).toEqual(fill);
       expect(updateSeriesMock).toHaveBeenCalledWith({
         pageId: PAGE.id,
         chartId: CHART_TILE.id,
         seriesId: "series-1",
-        color,
+        fill,
       });
     });
 
-    test("clears the series color", async () => {
+    test("clears the series fill", async () => {
       const chart = new Chart(editor, CHART_TILE);
 
-      await chart.setSeriesColor("series-1", null);
+      await chart.setSeriesFill("series-1", null);
 
-      expect(chart.series.value[0]?.color.value).toBeNull();
+      expect(chart.series.value[0]?.fill.value).toBeNull();
       expect(updateSeriesMock).toHaveBeenCalledWith({
         pageId: PAGE.id,
         chartId: CHART_TILE.id,
         seriesId: "series-1",
-        color: null,
+        fill: null,
       });
     });
 
     test("throws an error for invalid series ID", () => {
       const chart = new Chart(editor, CHART_TILE);
 
-      expect(() => chart.setSeriesColor("invalid-id", null)).toThrow(
+      expect(() => chart.setSeriesFill("invalid-id", null)).toThrow(
         "Invalid series ID: invalid-id",
       );
     });
