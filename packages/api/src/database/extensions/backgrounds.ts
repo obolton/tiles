@@ -13,26 +13,24 @@ export type Background =
     }
   | null;
 
-function compute({
-  backgroundColor: color,
-  backgroundGradient: gradient,
-  backgroundImageId: imageId,
-}: {
-  backgroundColor: Uint8Array | null;
-  backgroundGradient?: GradientDirection | null;
-  backgroundImageId?: string | null;
-}): Background {
-  if (imageId) {
-    return { type: "image", imageUrl: getImageUrl(imageId) };
-  }
+export type Fill = Exclude<Background, { type: "image" }>;
 
+function toHex(bytes: Uint8Array, start: number, end: number): string {
+  return Buffer.from(bytes.subarray(start, end)).toString("hex");
+}
+
+function computeFill({
+  color,
+  gradient,
+}: {
+  color: Uint8Array | null;
+  gradient?: GradientDirection | null;
+}): Fill {
   if (gradient && color?.length === 12) {
-    const colorA = Buffer.from(color.subarray(0, 6)).toString("hex");
-    const colorB = Buffer.from(color.subarray(6, 12)).toString("hex");
     return {
       type: "gradient",
-      colorA,
-      colorB,
+      colorA: toHex(color, 0, 6),
+      colorB: toHex(color, 6, 12),
       direction: gradient,
     };
   }
@@ -40,11 +38,26 @@ function compute({
   if (color) {
     return {
       type: "color",
-      color: Buffer.from(color.subarray(0, 6)).toString("hex"),
+      color: toHex(color, 0, 6),
     };
   }
 
   return null;
+}
+
+function computeBackground({
+  backgroundColor,
+  backgroundGradient,
+  backgroundImageId,
+}: {
+  backgroundColor: Uint8Array | null;
+  backgroundGradient?: GradientDirection | null;
+  backgroundImageId?: string | null;
+}): Background {
+  if (backgroundImageId) {
+    return { type: "image", imageUrl: getImageUrl(backgroundImageId) };
+  }
+  return computeFill({ color: backgroundColor, gradient: backgroundGradient });
 }
 
 export default Prisma.defineExtension({
@@ -53,7 +66,7 @@ export default Prisma.defineExtension({
     page: {
       background: {
         needs: { backgroundColor: true },
-        compute,
+        compute: computeBackground,
       },
     },
     section: {
@@ -63,7 +76,7 @@ export default Prisma.defineExtension({
           backgroundGradient: true,
           backgroundImageId: true,
         },
-        compute,
+        compute: computeBackground,
       },
     },
     textTile: {
@@ -73,7 +86,7 @@ export default Prisma.defineExtension({
           backgroundGradient: true,
           backgroundImageId: true,
         },
-        compute,
+        compute: computeBackground,
       },
     },
     table: {
@@ -83,7 +96,7 @@ export default Prisma.defineExtension({
           backgroundGradient: true,
           backgroundImageId: true,
         },
-        compute,
+        compute: computeBackground,
       },
     },
     tableColumn: {
@@ -93,7 +106,7 @@ export default Prisma.defineExtension({
           backgroundGradient: true,
           backgroundImageId: true,
         },
-        compute,
+        compute: computeBackground,
       },
     },
     tableRow: {
@@ -103,7 +116,7 @@ export default Prisma.defineExtension({
           backgroundGradient: true,
           backgroundImageId: true,
         },
-        compute,
+        compute: computeBackground,
       },
     },
     chart: {
@@ -113,7 +126,13 @@ export default Prisma.defineExtension({
           backgroundGradient: true,
           backgroundImageId: true,
         },
-        compute,
+        compute: computeBackground,
+      },
+    },
+    chartSeries: {
+      fill: {
+        needs: { color: true, gradient: true },
+        compute: computeFill,
       },
     },
   },
