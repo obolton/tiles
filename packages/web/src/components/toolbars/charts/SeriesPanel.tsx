@@ -10,7 +10,7 @@ import type Table from "@/models/Table";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import { Computed } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
-import type { Color } from "@/utils/color";
+import type { FillUpdate } from "@/components/backgrounds/types";
 
 export interface SeriesPanelProps extends JSX.Attributes<"popover-menu"> {
   chart: Chart;
@@ -50,8 +50,8 @@ export default function SeriesPanel({
     chart.setSeriesChartType(series.id, type);
   }
 
-  function setSeriesColor(color: Color, series: Series) {
-    chart.setSeriesColor(series.id, color);
+  function setSeriesFill(fill: FillUpdate, series: Series) {
+    chart.setSeriesFill(series.id, fill);
   }
 
   function deleteSeries(series: Series) {
@@ -66,7 +66,7 @@ export default function SeriesPanel({
             <SeriesRow
               series={item}
               onSetChartType={setChartType}
-              onSetColor={setSeriesColor}
+              onSetFill={setSeriesFill}
               onDelete={deleteSeries}
             />
           )}

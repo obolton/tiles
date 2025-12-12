@@ -1,25 +1,25 @@
 import MenuItem from "@/components/buttons/MenuItem";
 import Row from "@/components/rows/Row";
-import ColorPicker from "@/components/colors/ColorPicker";
+import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
 import BarChartIcon from "@/icons/bar-chart.svg?jsx";
 import LineChartIcon from "@/icons/line-chart.svg?jsx";
 import AreaChartIcon from "@/icons/area-chart.svg?jsx";
 import RemoveIcon from "@/icons/remove.svg?jsx";
 import type { Series, ChartType } from "@/models/Chart";
+import type { FillUpdate } from "@/components/backgrounds/types";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
-import type { Color } from "@/utils/color";
 
 export interface SeriesRowProps {
   series: Series;
   onSetChartType: (type: ChartType, series: Series) => void;
-  onSetColor: (color: Color, series: Series) => void;
+  onSetFill: (fill: FillUpdate, series: Series) => void;
   onDelete: (series: Series) => void;
 }
 
 export default function SeriesRow({
   series,
   onSetChartType,
-  onSetColor,
+  onSetFill,
   onDelete,
 }: SeriesRowProps) {
   return (
@@ -27,10 +27,15 @@ export default function SeriesRow({
       title={series.column.derive((column) => column.title || "Column")}
       controls={
         <>
-          <ColorPicker
-            id={`series-${series.id}-color`}
-            value={series.color}
-            onChange={(color) => onSetColor(color, series)}
+          <BackgroundPicker
+            id={`series-${series.id}-fill`}
+            value={series.fill}
+            onChange={(fill) => {
+              if (fill === null || fill.type !== "image") {
+                onSetFill(fill, series);
+              }
+            }}
+            allowImage={false}
           />
 
           <swatch-select
