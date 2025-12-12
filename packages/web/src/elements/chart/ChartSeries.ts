@@ -1,12 +1,15 @@
 import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GradientDirection } from "@/utils/svg-gradient";
 
 export type ChartSeriesType = "BAR" | "LINE" | "AREA";
+export type { GradientDirection };
 
 const DEFAULT_TYPE: ChartSeriesType = "BAR";
 
 export interface ChartSeriesAttributes extends GlobalHTMLAttributes {
   type?: ChartSeriesType;
   color?: string | null;
+  gradient?: GradientDirection | null;
 }
 
 declare global {
@@ -27,10 +30,12 @@ export default class ChartSeries extends HTMLElement {
   static readonly observedAttributes: (keyof ChartSeriesAttributes)[] = [
     "type",
     "color",
+    "gradient",
   ] as const;
 
   type: ChartSeriesType = DEFAULT_TYPE;
-  color: string | null = null;
+  color: string[] = [];
+  gradient: GradientDirection | null = null;
   values: DataPoint[] = [];
 
   attributeChangedCallback(
@@ -51,7 +56,10 @@ export default class ChartSeries extends HTMLElement {
         this.type = value ?? DEFAULT_TYPE;
         break;
       case "color":
-        this.color = value;
+        this.color = value ? value.split(",") : [];
+        break;
+      case "gradient":
+        this.gradient = value as GradientDirection | null;
         break;
     }
   }
