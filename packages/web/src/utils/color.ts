@@ -134,3 +134,27 @@ export function getColorName(color: OklchColor) {
   }
   return `${getLightnessName(color.l)} ${getHueName(color)}`;
 }
+
+export function getComplementaryColor(color: Color): Color {
+  const p3 = parseColor(color);
+  const colorOklch = p3ToOklch(p3);
+
+  // For grays (low chroma), add some chroma and pick a default hue
+  if (colorOklch.c < 0.02) {
+    return formatColor(
+      oklchToP3({
+        l: colorOklch.l,
+        c: 0.1,
+        h: 200,
+      }),
+    );
+  }
+
+  return formatColor(
+    oklchToP3({
+      l: colorOklch.l,
+      c: colorOklch.c,
+      h: (colorOklch.h + 180) % 360,
+    }),
+  );
+}

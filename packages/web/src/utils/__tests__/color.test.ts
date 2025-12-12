@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import {
   formatColor,
   getColorName,
+  getComplementaryColor,
   getHueName,
   getLightnessName,
   isDark,
@@ -171,5 +172,52 @@ describe("getColorName", () => {
 
   test("returns gray descriptor for mid neutral colors", () => {
     expect(getColorName({ l: 0.55, c: 0.03, h: 180 })).toBe("Mid Gray");
+  });
+});
+
+describe("getComplementaryColor", () => {
+  test("rotates hue by 180 degrees for saturated colors", () => {
+    const color = formatColor(oklchToP3({ l: 0.6, c: 0.1, h: 30 }));
+    const complementary = getComplementaryColor(color);
+    const complementaryOklch = p3ToOklch(parseColor(complementary));
+
+    expect(complementaryOklch.l).toBeCloseTo(0.6, 1);
+    expect(complementaryOklch.c).toBeCloseTo(0.1, 1);
+    expect(complementaryOklch.h).toBeCloseTo(210, 1);
+  });
+
+  test("wraps hue correctly when rotating past 360", () => {
+    const color = formatColor(oklchToP3({ l: 0.6, c: 0.1, h: 270 }));
+    const complementary = getComplementaryColor(color);
+    const complementaryOklch = p3ToOklch(parseColor(complementary));
+
+    expect(complementaryOklch.l).toBeCloseTo(0.6, 1);
+    expect(complementaryOklch.c).toBeCloseTo(0.1, 1);
+    expect(complementaryOklch.h).toBeCloseTo(90, 1);
+  });
+
+  test("adds chroma and default hue for gray colors", () => {
+    const gray = formatColor(oklchToP3({ l: 0.5, c: 0.01, h: 0 }));
+    const complementary = getComplementaryColor(gray);
+    const complementaryOklch = p3ToOklch(parseColor(complementary));
+
+    expect(complementaryOklch.l).toBeCloseTo(0.5, 1);
+    expect(complementaryOklch.c).toBeCloseTo(0.1, 1);
+    expect(complementaryOklch.h).toBeCloseTo(200, 0);
+  });
+
+  test("preserves lightness", () => {
+    const dark = formatColor(oklchToP3({ l: 0.3, c: 0.1, h: 120 }));
+    const light = formatColor(oklchToP3({ l: 0.8, c: 0.1, h: 120 }));
+
+    const darkComplementary = p3ToOklch(
+      parseColor(getComplementaryColor(dark)),
+    );
+    const lightComplementary = p3ToOklch(
+      parseColor(getComplementaryColor(light)),
+    );
+
+    expect(darkComplementary.l).toBeCloseTo(0.3, 1);
+    expect(lightComplementary.l).toBeCloseTo(0.8, 1);
   });
 });
