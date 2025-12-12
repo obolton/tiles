@@ -7,6 +7,7 @@ import type { GradientBackground } from "@/components/backgrounds/types";
 export interface GradientPaletteProps {
   colors: Reactive<(Color | null)[]>;
   value: Reactive<GradientBackground | null>;
+  onChange: (direction: GradientBackground["direction"] | null) => void;
 }
 
 export interface SolidColor {
@@ -43,56 +44,45 @@ const GRADIENTS: readonly Gradient[] = [
   },
 ];
 
-function getCSSDirection(direction: GradientBackground["direction"]) {
-  switch (direction) {
-    case "VERTICAL":
-      return "to bottom";
-    case "HORIZONTAL":
-      return "to right";
-    case "BOTTOM_RIGHT":
-      return "to bottom right";
-    case "BOTTOM_LEFT":
-      return "to bottom left";
-  }
-}
-
 function getItemStyles(
-  gradient: Gradient,
   colors: Reactive<(Color | null)[]>,
-): Reactive<StyleDeclaration> | StyleDeclaration {
-  switch (gradient.type) {
-    case "none":
-      return colors.derive((colors) => ({
-        background: colors[0] ? toCSSColor(colors[0]) : "transparent",
-      }));
-    case "linear":
-      return colors.derive(([colorA, colorB]) => {
-        const direction = getCSSDirection(gradient.direction);
-        const a = colorA ? toCSSColor(colorA) : "transparent";
-        const b = colorB ? toCSSColor(colorB) : "transparent";
-        return {
-          background: `linear-gradient(${direction} in oklch, ${a}, ${b})`,
-        };
-      });
-    default:
-      return {};
-  }
+): Reactive<StyleDeclaration> {
+  return colors.derive(([colorA, colorB]) => ({
+    "--color-a": colorA ? toCSSColor(colorA) : "transparent",
+    "--color-b": colorB ? toCSSColor(colorB) : "transparent",
+  }));
 }
 
 export default function GradientPalette({
   colors,
   value,
+  onChange,
 }: GradientPaletteProps) {
+  function handleChange(event: Event) {
+    const element = event.target as HTMLInputElement;
+    const index = parseInt(element.value, 10);
+    const gradient = GRADIENTS[index];
+    if (gradient) {
+      onChange(gradient.direction);
+    }
+  }
+
+  const colorStyles = getItemStyles(colors);
+
   return (
-    <fieldset className={styles.gradients}>
+    <fieldset className={styles.gradients} on:change={handleChange}>
       {GRADIENTS.map((gradient, i) => (
         <input
           type="radio"
           name="gradient"
-          style={getItemStyles(gradient, colors)}
+          className={gradient.type === "none" ? styles.solid : styles.linear}
+          style={colorStyles}
+          data-direction={gradient.direction}
           aria-label={gradient.description}
           value={i.toString()}
-          checked={gradient.direction === value.value?.direction}
+          checked={value.derive(
+            (v) => gradient.direction === (v?.direction ?? null),
+          )}
         />
       ))}
     </fieldset>
