@@ -10,22 +10,35 @@ import type {
   DeleteSeriesSchema,
 } from "./schema";
 import type { Prisma } from "@/generated/prisma/client";
-import type { ColorSchema } from "@/schema/Color";
+import type { BackgroundSchema } from "@/schema/Background";
 
-function getSeriesColorData(color?: ColorSchema | null) {
-  if (typeof color === "undefined") {
+function getSeriesFillData(fill?: BackgroundSchema) {
+  if (typeof fill === "undefined") {
     return {};
   }
-  if (color === null) {
-    return { color: null };
+  if (fill === null) {
+    return { color: null, gradient: null };
   }
-  return { color: new Uint8Array(Buffer.from(color, "hex")) };
+  if (fill.type === "color") {
+    return {
+      color: new Uint8Array(Buffer.from(fill.color, "hex")),
+      gradient: null,
+    };
+  }
+  if (fill.type === "gradient") {
+    return {
+      color: new Uint8Array(Buffer.from(fill.colorA + fill.colorB, "hex")),
+      gradient: fill.direction,
+    };
+  }
+  // Ignore 'image' type for series
+  return {};
 }
 
 export const CHART_SERIES_FIELDS = {
   id: true,
   type: true,
-  color: true,
+  fill: true,
   column: {
     select: {
       id: true,
@@ -151,7 +164,7 @@ export async function addSeries({
   chartId,
   columnId,
   type,
-  color,
+  fill,
 }: AddSeriesSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the chart, table and column
@@ -169,7 +182,7 @@ export async function addSeries({
         chartId,
         columnId,
         type,
-        ...getSeriesColorData(color),
+        ...getSeriesFillData(fill),
       },
       select: CHART_SERIES_FIELDS,
     });
@@ -181,7 +194,7 @@ export async function updateSeries({
   chartId,
   seriesId,
   type,
-  color,
+  fill,
 }: UpdateSeriesSchema) {
   return prisma.$transaction(async (transaction) => {
     // Verify access to the chart
@@ -193,7 +206,7 @@ export async function updateSeries({
     return transaction.chartSeries.update({
       data: {
         type,
-        ...getSeriesColorData(color),
+        ...getSeriesFillData(fill),
       },
       where: {
         id: seriesId,
