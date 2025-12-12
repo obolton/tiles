@@ -26,7 +26,7 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
   return (
     <floating-toolbar
       className="primary"
-      data-tooltip-position="left"
+      data-tooltip-position="top"
       aria-label="Chart tools"
     >
       <ul role="group" aria-label="Chart tools">
