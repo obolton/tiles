@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: 16px;
   padding: 12px;
+  color: var(--ui-color);
   border-radius: var(--border-radius);
   background: var(--ui-background-color);
   backdrop-filter: blur(24px);
