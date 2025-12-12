@@ -111,6 +111,7 @@ swatch-select {
   font-weight: 500;
   padding-block: 0;
   padding-inline: 0.5em;
+  color: var(--ui-color);
   border: none;
   background: none;
   outline-color: transparent;
