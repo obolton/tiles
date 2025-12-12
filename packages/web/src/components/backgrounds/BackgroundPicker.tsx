@@ -13,12 +13,14 @@ export interface BackgroundPickerProps {
   id: string;
   value: Reactive<Background | null>;
   onChange: (value: BackgroundUpdate) => void;
+  allowImage?: boolean;
 }
 
 export default function BackgroundPicker({
   id,
   value,
   onChange,
+  allowImage,
 }: BackgroundPickerProps) {
   return (
     <>
@@ -67,6 +69,7 @@ export default function BackgroundPicker({
         anchor={id}
         value={value}
         onChange={onChange}
+        allowImage={allowImage}
       />
     </>
   );

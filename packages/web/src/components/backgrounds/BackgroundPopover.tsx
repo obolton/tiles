@@ -13,11 +13,13 @@ import type { JSX } from "@/jsx/jsx";
 export interface BackgroundPopoverProps extends JSX.Attributes<"popover-menu"> {
   value: Reactive<Background | null>;
   onChange: (value: BackgroundUpdate) => void;
+  allowImage?: boolean;
 }
 
 export default function BackgroundPopover({
   value,
   onChange,
+  allowImage = true,
   ...props
 }: BackgroundPopoverProps) {
   return (
@@ -28,15 +30,19 @@ export default function BackgroundPopover({
           Color
         </tab-item>
 
-        <tab-item id="image-tab" for="image-tab-panel">
-          <ImageIcon aria-hidden="true" />
-          Image
-        </tab-item>
+        {allowImage && (
+          <tab-item id="image-tab" for="image-tab-panel">
+            <ImageIcon aria-hidden="true" />
+            Image
+          </tab-item>
+        )}
 
-        <tab-item id="generate-tab" for="generate-tab-panel">
-          <AIIcon aria-hidden="true" />
-          Generate
-        </tab-item>
+        {allowImage && (
+          <tab-item id="generate-tab" for="generate-tab-panel">
+            <AIIcon aria-hidden="true" />
+            Generate
+          </tab-item>
+        )}
 
         <tab-item id="none-tab" on:click={() => onChange(null)}>
           <EmptyIcon aria-hidden="true" />
@@ -55,13 +61,17 @@ export default function BackgroundPopover({
         />
       </tab-panel>
 
-      <tab-panel id="image-tab-panel">
-        <ImagePanel onChange={onChange} />
-      </tab-panel>
+      {allowImage && (
+        <tab-panel id="image-tab-panel">
+          <ImagePanel onChange={onChange} />
+        </tab-panel>
+      )}
 
-      <tab-panel id="generate-tab-panel">
-        <GenerateImagePanel onChange={onChange} />
-      </tab-panel>
+      {allowImage && (
+        <tab-panel id="generate-tab-panel">
+          <GenerateImagePanel onChange={onChange} />
+        </tab-panel>
+      )}
     </popover-menu>
   );
 }
