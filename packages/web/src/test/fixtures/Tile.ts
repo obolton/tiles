@@ -176,13 +176,13 @@ export const CHART_TILE: ClientChartTile = {
     {
       id: "series-1",
       type: "BAR",
-      color: "ffff40400000",
+      fill: { type: "color", color: "ffff40400000" },
       column: { id: "col-2", title: "Expenses" },
     },
     {
       id: "series-2",
       type: "LINE",
-      color: "ffff40404040",
+      fill: { type: "color", color: "ffff40404040" },
       column: { id: "col-3", title: "Profit" },
     },
   ],
