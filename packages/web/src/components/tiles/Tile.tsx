@@ -7,6 +7,7 @@ import {
   type Reactive,
 } from "@/utils/reactivity";
 import { toCSSColor, isDark, type Color } from "@/utils/color";
+import { getBackgroundStyle } from "@/utils/backgrounds";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
 import type { Background } from "@/components/backgrounds/types";
@@ -58,18 +59,11 @@ export default function Tile({
         ? `"${fontConfig.family}", "${fontConfig.fallback}"`
         : undefined,
       "--text-color": textColorValue ? toCSSColor(textColorValue) : undefined,
-      "--background-color":
-        backgroundValue && "color" in backgroundValue
-          ? toCSSColor(backgroundValue.color)
-          : "transparent",
       "--animation-name": animationValue
         ? ANIMATION_NAMES[animationValue]
         : undefined,
-      backgroundImage:
-        backgroundValue && "imageUrl" in backgroundValue
-          ? `url(${backgroundValue.imageUrl})`
-          : undefined,
       anchorName,
+      ...getBackgroundStyle(backgroundValue),
     }),
   );
 
@@ -81,13 +75,16 @@ export default function Tile({
           ? border.derive((value) => BORDER_CLASSES[value])
           : BORDER_CLASSES[border],
         background
-          ? background.derive((value) =>
-              value && "color" in value
-                ? isDark(value.color)
-                  ? styles.dark
-                  : styles.light
-                : undefined,
-            )
+          ? background.derive((value) => {
+              const color =
+                value?.type === "color"
+                  ? value.color
+                  : value?.type === "gradient"
+                    ? value.colorA
+                    : null;
+              if (!color) return undefined;
+              return isDark(color) ? styles.dark : styles.light;
+            })
           : undefined,
         animation?.derive((value) => (value ? styles.animate : undefined)),
         className,

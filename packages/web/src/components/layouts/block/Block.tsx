@@ -1,5 +1,5 @@
 import { flag, reactive, Computed, type Reactive } from "@/utils/reactivity";
-import { toCSSColor } from "@/utils/color";
+import { getBackgroundStyle } from "@/utils/backgrounds";
 import If from "@/jsx/if";
 import styles from "./Block.module.css";
 import InsertButton from "@/components/buttons/InsertButton";
@@ -41,16 +41,7 @@ export default function Block({
     }
   }
 
-  const style = new Computed([background] as const, (backgroundValue) => ({
-    "--background-color":
-      backgroundValue && "color" in backgroundValue
-        ? toCSSColor(backgroundValue.color)
-        : "transparent",
-    backgroundImage:
-      backgroundValue && "imageUrl" in backgroundValue
-        ? `url(${backgroundValue.imageUrl})`
-        : undefined,
-  }));
+  const style = background.derive(getBackgroundStyle);
 
   const show = new Computed(
     [editor.isEditable, hide] as const,

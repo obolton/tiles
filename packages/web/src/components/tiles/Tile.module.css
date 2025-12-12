@@ -7,7 +7,6 @@
   border-radius: var(--border-radius);
   font-family: var(--font);
   color: var(--text-color);
-  background-color: var(--background-color);
   background-size: cover;
   background-position: center;
   transition:
