@@ -5,23 +5,23 @@ import SolidColorIcon from "@/icons/solid-color.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import AIIcon from "@/icons/ai.svg?jsx";
 import EmptyIcon from "@/icons/empty.svg?jsx";
-import styles from "./BackgroundPopover.module.css";
+import styles from "./FillPopover.module.css";
 import type { Reactive } from "@/utils/reactivity";
-import type { Background, BackgroundUpdate } from "./types";
+import type { Fill, FillUpdate } from "./types";
 import type { JSX } from "@/jsx/jsx";
 
-export interface BackgroundPopoverProps extends JSX.Attributes<"popover-menu"> {
-  value: Reactive<Background | null>;
-  onChange: (value: BackgroundUpdate) => void;
+export interface FillPopoverProps extends JSX.Attributes<"popover-menu"> {
+  value: Reactive<Fill | null>;
+  onChange: (value: FillUpdate) => void;
   allowImage?: boolean;
 }
 
-export default function BackgroundPopover({
+export default function FillPopover({
   value,
   onChange,
   allowImage = true,
   ...props
-}: BackgroundPopoverProps) {
+}: FillPopoverProps) {
   return (
     <popover-menu {...props} className={styles.popover}>
       <tab-bar>
@@ -52,10 +52,8 @@ export default function BackgroundPopover({
 
       <tab-panel id="color-tab-panel" open>
         <ColorPanel
-          value={value.derive((background) =>
-            background?.type === "color" || background?.type === "gradient"
-              ? background
-              : null,
+          value={value.derive((fill) =>
+            fill?.type === "color" || fill?.type === "gradient" ? fill : null,
           )}
           onChange={onChange}
         />

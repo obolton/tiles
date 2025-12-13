@@ -1,27 +1,27 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
-import BackgroundPopover from "./BackgroundPopover";
+import FillPopover from "./FillPopover";
 import BackgroundIcon from "@/icons/background.svg?jsx";
 import SolidColorIcon from "@/icons/solid-color.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import { toCSSColor } from "@/utils/color";
 import { getBackgroundStyle } from "@/utils/backgrounds";
+import styles from "./FillPicker.module.css";
 import type { Reactive } from "@/utils/reactivity";
-import type { Background, BackgroundUpdate } from "./types";
-import styles from "./BackgroundPicker.module.css";
+import type { Fill, FillUpdate } from "./types";
 
-export interface BackgroundPickerProps {
+export interface FillPickerProps {
   id: string;
-  value: Reactive<Background | null>;
-  onChange: (value: BackgroundUpdate) => void;
+  value: Reactive<Fill | null>;
+  onChange: (value: FillUpdate) => void;
   allowImage?: boolean;
 }
 
-export default function BackgroundPicker({
+export default function FillPicker({
   id,
   value,
   onChange,
   allowImage,
-}: BackgroundPickerProps) {
+}: FillPickerProps) {
   return (
     <>
       <ToolbarButton
@@ -33,28 +33,28 @@ export default function BackgroundPicker({
         aria-pressed={value}
       >
         {value ? (
-          value.derive((background) => {
-            if (!background) {
+          value.derive((fill) => {
+            if (!fill) {
               return <BackgroundIcon aria-hidden="true" />;
             }
-            if (background.type === "color") {
+            if (fill.type === "color") {
               return (
                 <SolidColorIcon
-                  style={{ fill: toCSSColor(background.color) }}
+                  style={{ fill: toCSSColor(fill.color) }}
                   aria-hidden="true"
                 />
               );
             }
-            if (background.type === "gradient") {
+            if (fill.type === "gradient") {
               return (
                 <span
                   classList={[styles.gradient, "icon"]}
-                  style={getBackgroundStyle(background)}
+                  style={getBackgroundStyle(fill)}
                   aria-hidden="true"
                 />
               );
             }
-            if (background.type === "image") {
+            if (fill.type === "image") {
               return <ImageIcon aria-hidden="true" />;
             }
             return <BackgroundIcon aria-hidden="true" />;
@@ -64,7 +64,7 @@ export default function BackgroundPicker({
         )}
       </ToolbarButton>
 
-      <BackgroundPopover
+      <FillPopover
         id={`${id}-popover`}
         anchor={id}
         value={value}

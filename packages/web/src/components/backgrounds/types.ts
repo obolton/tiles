@@ -1,34 +1,27 @@
 import type { Color } from "@/utils/color";
 
-export interface ColorBackground {
+export interface ColorFill {
   type: "color";
   color: Color;
 }
 
-export interface GradientBackground {
+export interface GradientFill {
   type: "gradient";
   colorA: Color;
   colorB: Color;
   direction: "VERTICAL" | "HORIZONTAL" | "BOTTOM_RIGHT" | "BOTTOM_LEFT";
 }
 
-export interface ImageBackground {
+export interface ImageFill {
   type: "image";
   imageUrl: string;
 }
 
-export interface ImageBackgroundUpdate {
+export interface ImageFillUpdate {
   type: "image";
   imageId: string;
 }
 
-export type Background = ColorBackground | GradientBackground | ImageBackground;
+export type Fill = ColorFill | GradientFill | ImageFill;
 
-export type BackgroundUpdate =
-  | ColorBackground
-  | GradientBackground
-  | ImageBackgroundUpdate
-  | null;
-
-export type Fill = ColorBackground | GradientBackground | null;
-export type FillUpdate = Fill;
+export type FillUpdate = ColorFill | GradientFill | ImageFillUpdate | null;
