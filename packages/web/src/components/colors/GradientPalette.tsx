@@ -2,12 +2,12 @@ import { toCSSColor, type Color } from "@/utils/color";
 import styles from "./GradientPalette.module.css";
 import type { Reactive } from "@/utils/reactivity";
 import type { StyleDeclaration } from "@/jsx/html-attributes";
-import type { GradientBackground } from "@/components/backgrounds/types";
+import type { GradientFill } from "@/components/backgrounds/types";
 
 export interface GradientPaletteProps {
   colors: Reactive<(Color | null)[]>;
-  value: Reactive<GradientBackground | null>;
-  onChange: (direction: GradientBackground["direction"] | null) => void;
+  value: Reactive<GradientFill | null>;
+  onChange: (direction: GradientFill["direction"] | null) => void;
 }
 
 export interface SolidColor {
@@ -19,7 +19,7 @@ export interface SolidColor {
 export interface LinearGradient {
   type: "linear";
   description: string;
-  direction: GradientBackground["direction"];
+  direction: GradientFill["direction"];
 }
 
 export type Gradient = SolidColor | LinearGradient;

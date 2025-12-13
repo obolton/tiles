@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { getBackgroundStyle } from "../backgrounds";
-import type { Background } from "@/components/backgrounds/types";
+import type { Fill } from "@/components/backgrounds/types";
 
 describe("getBackgroundStyle", () => {
   test("returns undefined for null", () => {
@@ -13,7 +13,7 @@ describe("getBackgroundStyle", () => {
 
   describe("color backgrounds", () => {
     test("returns background with CSS color value", () => {
-      const background: Background = { type: "color", color: "80000a000000" };
+      const background: Fill = { type: "color", color: "80000a000000" };
       const result = getBackgroundStyle(background);
       expect(result).toEqual({
         background: "color(display-p3 0.5000 0.0391 0.0000)",
@@ -26,7 +26,7 @@ describe("getBackgroundStyle", () => {
     const colorB = "c000148000b4";
 
     test("returns vertical gradient", () => {
-      const background: Background = {
+      const background: Fill = {
         type: "gradient",
         colorA,
         colorB,
@@ -38,7 +38,7 @@ describe("getBackgroundStyle", () => {
     });
 
     test("returns horizontal gradient", () => {
-      const background: Background = {
+      const background: Fill = {
         type: "gradient",
         colorA,
         colorB,
@@ -49,7 +49,7 @@ describe("getBackgroundStyle", () => {
     });
 
     test("returns bottom-right diagonal gradient", () => {
-      const background: Background = {
+      const background: Fill = {
         type: "gradient",
         colorA,
         colorB,
@@ -60,7 +60,7 @@ describe("getBackgroundStyle", () => {
     });
 
     test("returns bottom-left diagonal gradient", () => {
-      const background: Background = {
+      const background: Fill = {
         type: "gradient",
         colorA,
         colorB,
@@ -73,7 +73,7 @@ describe("getBackgroundStyle", () => {
 
   describe("image backgrounds", () => {
     test("returns background with url, center position and cover size", () => {
-      const background: Background = {
+      const background: Fill = {
         type: "image",
         imageUrl: "https://example.com/image.jpg",
       };

@@ -2,10 +2,10 @@ import Prompt from "@/components/prompt/Prompt";
 import { generateImage } from "@/utils/ai";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
-import type { ImageBackgroundUpdate } from "./types";
+import type { ImageFillUpdate } from "./types";
 
 export interface GenerateImagePanelProps {
-  onChange: (background: ImageBackgroundUpdate) => void;
+  onChange: (value: ImageFillUpdate) => void;
 }
 
 export default function GenerateImagePanel({

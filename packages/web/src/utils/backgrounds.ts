@@ -1,17 +1,14 @@
 import { toCSSColor } from "@/utils/color";
-import type {
-  Background,
-  GradientBackground,
-} from "@/components/backgrounds/types";
+import type { Fill, GradientFill } from "@/components/backgrounds/types";
 
-const GRADIENT_DIRECTIONS: Record<GradientBackground["direction"], string> = {
+const GRADIENT_DIRECTIONS: Record<GradientFill["direction"], string> = {
   VERTICAL: "to bottom",
   HORIZONTAL: "to right",
   BOTTOM_RIGHT: "to bottom right",
   BOTTOM_LEFT: "to bottom left",
 };
 
-export function getBackgroundStyle(background: Background | null | undefined) {
+export function getBackgroundStyle(background: Fill | null | undefined) {
   switch (background?.type) {
     case "color":
       return { background: toCSSColor(background.color) };

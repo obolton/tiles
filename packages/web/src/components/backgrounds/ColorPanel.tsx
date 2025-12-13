@@ -3,7 +3,7 @@ import ColorToggle, { type ActiveColor } from "@/components/colors/ColorToggle";
 import GradientPalette from "@/components/colors/GradientPalette";
 import { reactive, Computed, type Reactive } from "@/utils/reactivity";
 import { getComplementaryColor, type Color } from "@/utils/color";
-import type { ColorBackground, GradientBackground } from "./types";
+import type { ColorFill, GradientFill } from "./types";
 import styles from "./ColorPanel.module.css";
 
 const ROWS = 5;
@@ -14,8 +14,8 @@ const HUES = 10;
 const START_HUE = 24;
 
 export interface ColorPanelProps {
-  value: Reactive<ColorBackground | GradientBackground | null>;
-  onChange: (background: ColorBackground | GradientBackground) => void;
+  value: Reactive<ColorFill | GradientFill | null>;
+  onChange: (value: ColorFill | GradientFill) => void;
 }
 
 export default function ColorPanel({ value, onChange }: ColorPanelProps) {
@@ -23,17 +23,15 @@ export default function ColorPanel({ value, onChange }: ColorPanelProps) {
 
   const currentEditingColor = new Computed(
     [value, activeColor] as const,
-    (bg, active) => {
-      if (bg?.type === "color") return bg.color;
-      if (bg?.type === "gradient")
-        return active === "A" ? bg.colorA : bg.colorB;
+    (fill, active) => {
+      if (fill?.type === "color") return fill.color;
+      if (fill?.type === "gradient")
+        return active === "A" ? fill.colorA : fill.colorB;
       return null;
     },
   );
 
-  function handleGradientChange(
-    direction: GradientBackground["direction"] | null,
-  ) {
+  function handleGradientChange(direction: GradientFill["direction"] | null) {
     const current = value.value;
 
     if (direction === null) {
@@ -84,14 +82,14 @@ export default function ColorPanel({ value, onChange }: ColorPanelProps) {
       />
 
       <ColorToggle
-        colorA={value.derive((bg) =>
-          bg?.type === "color" ? bg.color : (bg?.colorA ?? null),
+        colorA={value.derive((fill) =>
+          fill?.type === "color" ? fill.color : (fill?.colorA ?? null),
         )}
-        colorB={value.derive((bg) =>
-          bg?.type === "gradient" ? bg.colorB : null,
+        colorB={value.derive((fill) =>
+          fill?.type === "gradient" ? fill.colorB : null,
         )}
         active={activeColor}
-        showB={value.derive((bg) => bg?.type === "gradient")}
+        showB={value.derive((fill) => fill?.type === "gradient")}
         onSelect={(selected) => {
           activeColor.value = selected;
         }}
