@@ -1,11 +1,11 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import TileTools from "@/components/toolbars/tiles/TileTools";
-import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
+import FillPicker from "@/components/fills/FillPicker";
 import SeriesPanel from "./SeriesPanel";
 import ChartIcon from "@/icons/chart.svg?jsx";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
-import type { BackgroundUpdate } from "@/components/backgrounds/types";
+import type { FillUpdate } from "@/components/fills/types";
 import type Chart from "@/models/Chart";
 
 export interface ChartToolbarProps {
@@ -13,7 +13,7 @@ export interface ChartToolbarProps {
 }
 
 export default function ChartToolbar({ chart }: ChartToolbarProps) {
-  async function setBackground(value: BackgroundUpdate) {
+  async function setBackground(value: FillUpdate) {
     try {
       await chart.setBackground(value);
     } catch (error) {
@@ -49,7 +49,7 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
           />
         </li>
         <li role="presentation">
-          <BackgroundPicker
+          <FillPicker
             id={`${chart.id}-background`}
             value={chart.background}
             onChange={setBackground}

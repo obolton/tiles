@@ -1,5 +1,5 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
-import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
+import FillPicker from "@/components/fills/FillPicker";
 import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import ChartIcon from "@/icons/chart.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
@@ -8,7 +8,7 @@ import { Computed } from "@/utils/reactivity";
 import Chart from "@/models/Chart";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
-import type { BackgroundUpdate } from "@/components/backgrounds/types";
+import type { FillUpdate } from "@/components/fills/types";
 
 export interface ColumnToolbarProps {
   table: Table;
@@ -35,7 +35,7 @@ export default function ColumnToolbar({ table, getTable }: ColumnToolbarProps) {
     return cols.find((c) => c.id === column.id)?.background ?? null;
   });
 
-  async function setBackground(value: BackgroundUpdate) {
+  async function setBackground(value: FillUpdate) {
     const column = getSelectedColumn();
     if (!column?.id) {
       return;
@@ -109,7 +109,7 @@ export default function ColumnToolbar({ table, getTable }: ColumnToolbarProps) {
     >
       <ul role="group">
         <li role="presentation">
-          <BackgroundPicker
+          <FillPicker
             id={`${id}-column-background`}
             value={background}
             onChange={setBackground}

@@ -5,13 +5,13 @@ import styles from "./Block.module.css";
 import InsertButton from "@/components/buttons/InsertButton";
 import type Editor from "@/editor/Editor";
 import type { JSX } from "@/jsx/jsx";
-import type { Background } from "@/components/backgrounds/types";
+import type { Fill } from "@/components/fills/types";
 
 export interface BlockProps {
   tileId: string;
   editor: Editor;
   hide: Reactive<boolean>;
-  background?: Reactive<Background | null>;
+  background?: Reactive<Fill | null>;
   children: JSX.Node;
 }
 

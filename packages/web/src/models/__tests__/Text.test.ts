@@ -5,10 +5,7 @@ import client from "@/api/client";
 import { createState } from "@/utils/richText/state";
 import { PAGE } from "@/test/fixtures/Page";
 import { TEXT_TILE } from "@/test/fixtures/Tile";
-import type {
-  Background,
-  BackgroundUpdate,
-} from "@/components/backgrounds/types";
+import type { Fill, FillUpdate } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
 
 vi.mock("@/api/client", () => ({
@@ -76,11 +73,11 @@ describe("Text", () => {
       const text = new Text(editor, TEXT_TILE);
       const colorA: Color = "ffff00000000";
       const colorB: Color = "888800000000";
-      const backgroundUpdate: BackgroundUpdate = {
+      const backgroundUpdate: FillUpdate = {
         type: "color",
         color: colorA,
       };
-      const background: Background = {
+      const background: Fill = {
         type: "gradient",
         colorA,
         colorB,

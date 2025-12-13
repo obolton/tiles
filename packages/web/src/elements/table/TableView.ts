@@ -11,7 +11,7 @@ import css from "./TableView.css?inline";
 import newIcon from "@/icons/new.svg?raw";
 import type { ResizeEvent } from "@/elements/resize/events";
 import type { DragDropEvent } from "@/utils/drag";
-import type { Background } from "@/components/backgrounds/types";
+import type { Fill } from "@/components/fills/types";
 import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
@@ -94,12 +94,12 @@ export default class TableView extends HTMLElement {
     id?: string;
     title?: string | null;
     width: number;
-    background?: Background | null;
+    background?: Fill | null;
   } = defaultGetColumn;
   getRow: (index: number) => {
     id?: string;
     height: number;
-    background?: Background | null;
+    background?: Fill | null;
   } = defaultGetRow;
   updateCell?: (row: Row, column: Column, cell: HTMLTableCellElement) => void;
 
@@ -1467,7 +1467,7 @@ export default class TableView extends HTMLElement {
       id?: string;
       title?: string | null;
       width: number;
-      background?: Background | null;
+      background?: Fill | null;
     },
   ) {
     if (!this.colGroup || !this.tableHead) {
@@ -1526,7 +1526,7 @@ export default class TableView extends HTMLElement {
     rowIndex: number,
     height: number,
     id?: string,
-    background?: Background | null,
+    background?: Fill | null,
   ) {
     if (!this.tableBody) {
       return;
@@ -1970,7 +1970,7 @@ export default class TableView extends HTMLElement {
     this.redrawSelection();
   }
 
-  setColumnBackground(id: string, background: Background | null) {
+  setColumnBackground(id: string, background: Fill | null) {
     const column = this.visibleColumns.find((c) => c.id === id);
     if (column) {
       column.element.style.background =
@@ -1978,7 +1978,7 @@ export default class TableView extends HTMLElement {
     }
   }
 
-  setRowBackground(id: string, background: Background | null) {
+  setRowBackground(id: string, background: Fill | null) {
     const row = this.visibleRows.find((r) => r.id === id);
     if (row) {
       row.element.style.background =

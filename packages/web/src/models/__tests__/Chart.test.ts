@@ -4,7 +4,7 @@ import Editor from "@/editor/Editor";
 import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
 import { CHART_TILE } from "@/test/fixtures/Tile";
-import type { Background, BackgroundUpdate } from "@/components/backgrounds/types";
+import type { Fill, FillUpdate } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
 
 vi.mock("@/api/client", () => ({
@@ -64,7 +64,7 @@ describe("Chart", () => {
       const chart = new Chart(editor, CHART_TILE);
       const colorA: Color = "ffff00000000";
       const colorB: Color = "888800000000";
-      const background: Background = {
+      const background: Fill = {
         type: "gradient",
         colorA,
         colorB,
@@ -119,7 +119,7 @@ describe("Chart", () => {
   describe("addSeries", () => {
     test("adds a new series", async () => {
       const chart = new Chart(editor, CHART_TILE);
-      const fill: Background = { type: "color", color: "ffff00004040" };
+      const fill: Fill = { type: "color", color: "ffff00004040" };
       const newSeries = {
         id: "series-3",
         type: "AREA" as const,
@@ -174,7 +174,7 @@ describe("Chart", () => {
   describe("setSeriesFill", () => {
     test("updates the series fill", async () => {
       const chart = new Chart(editor, CHART_TILE);
-      const fill: BackgroundUpdate = { type: "color", color: "ffff00008080" };
+      const fill: FillUpdate = { type: "color", color: "ffff00008080" };
 
       await chart.setSeriesFill("series-1", fill);
 

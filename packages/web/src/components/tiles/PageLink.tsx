@@ -4,12 +4,12 @@ import styles from "./PageLink.module.css";
 import { reactive } from "@/utils/reactivity";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
-import type { Background } from "@/components/backgrounds/types";
+import type { Fill } from "@/components/fills/types";
 
 export interface PageLinkProps extends JSX.Attributes<"a"> {
   pageId: string;
   title: string;
-  background: Background | null;
+  background: Fill | null;
   font?: FontId | null;
 }
 

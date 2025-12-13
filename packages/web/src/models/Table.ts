@@ -9,10 +9,7 @@ import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 import type { ClientTableTile } from "api/types/tiles";
 import type { Color } from "@/utils/color";
-import type {
-  Background,
-  BackgroundUpdate,
-} from "@/components/backgrounds/types";
+import type { Fill, FillUpdate } from "@/components/fills/types";
 import type { RichText } from "@/utils/richText/types";
 import type { AppRouterInputs } from "@/api/client";
 
@@ -20,14 +17,14 @@ export interface TableColumn {
   id: string;
   width: number;
   title: string | null;
-  background: Background | null;
+  background: Fill | null;
 }
 
 export interface TableRow {
   id: string;
   height: number;
   data: Record<string, RichText | string | null>;
-  background: Background | null;
+  background: Fill | null;
 }
 
 export default class Table extends Tile {
@@ -77,7 +74,7 @@ export default class Table extends Tile {
     this.update({ textColor });
   }
 
-  async setBackground(background: BackgroundUpdate) {
+  async setBackground(background: FillUpdate) {
     const result = await this.update({ background });
     this.background.value = result.background;
   }
@@ -111,7 +108,7 @@ export default class Table extends Tile {
     properties: {
       title?: string | null;
       width?: number;
-      background?: BackgroundUpdate;
+      background?: FillUpdate;
     },
   ) {
     const column = this.columns.find((c) => c.id === id);
@@ -192,7 +189,7 @@ export default class Table extends Tile {
     });
   }
 
-  async setRowBackground(id: string, background: BackgroundUpdate) {
+  async setRowBackground(id: string, background: FillUpdate) {
     const row = this.rows.find((r) => r.id === id);
     if (!row) {
       throw new Error(`Invalid row ID: ${id}`);

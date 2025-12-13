@@ -9,7 +9,7 @@ import Chart from "@/models/Chart";
 import type Tile from "@/models/Tile";
 import type Editor from "@/editor/Editor";
 import type TileCollection from "@/models/TileCollection";
-import type { Background } from "@/components/backgrounds/types";
+import type { Fill } from "@/components/fills/types";
 import type { Reactive } from "@/utils/reactivity";
 
 export interface PageContentsProps {
@@ -18,7 +18,7 @@ export interface PageContentsProps {
   signal?: AbortSignal;
 }
 
-function getBackground(tile: Tile): Reactive<Background | null> | undefined {
+function getBackground(tile: Tile): Reactive<Fill | null> | undefined {
   if (
     tile instanceof Section ||
     tile instanceof Text ||

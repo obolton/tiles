@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { getBackgroundStyle } from "../backgrounds";
-import type { Fill } from "@/components/backgrounds/types";
+import type { Fill } from "@/components/fills/types";
 
 describe("getBackgroundStyle", () => {
   test("returns undefined for null", () => {

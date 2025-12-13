@@ -1,9 +1,9 @@
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import ColorPicker from "@/components/colors/ColorPicker";
-import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
+import FillPicker from "@/components/fills/FillPicker";
 import { handleError } from "@/utils/errors";
 import type { Color } from "@/utils/color";
-import type { BackgroundUpdate } from "@/components/backgrounds/types";
+import type { FillUpdate } from "@/components/fills/types";
 import type Table from "@/models/Table";
 
 export interface TableToolbarProps {
@@ -21,7 +21,7 @@ export default function TableToolbar({ table }: TableToolbarProps) {
     }
   }
 
-  async function setBackground(value: BackgroundUpdate) {
+  async function setBackground(value: FillUpdate) {
     try {
       await table.setBackground(value);
     } catch (error) {
@@ -44,7 +44,7 @@ export default function TableToolbar({ table }: TableToolbarProps) {
           />
         </li>
         <li role="presentation">
-          <BackgroundPicker
+          <FillPicker
             id={`${id}-background`}
             value={background}
             onChange={setBackground}

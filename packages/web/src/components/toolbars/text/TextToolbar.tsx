@@ -2,7 +2,7 @@ import MenuItem from "@/components/buttons/MenuItem";
 import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import ColorPicker from "@/components/colors/ColorPicker";
-import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
+import FillPicker from "@/components/fills/FillPicker";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
@@ -71,7 +71,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
         </li>
 
         <li role="presentation">
-          <BackgroundPicker
+          <FillPicker
             id={`${text.id}-background`}
             value={background}
             onChange={(background) => text.setBackground(background)}

@@ -9,11 +9,11 @@ import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 import type { ClientChartTile } from "api/types/tiles";
 import type {
-  Background,
-  BackgroundUpdate,
   Fill,
   FillUpdate,
-} from "@/components/backgrounds/types";
+  ColorFill,
+  GradientFill,
+} from "@/components/fills/types";
 import type { AppRouterInputs } from "@/api/client";
 
 export interface Property {
@@ -27,7 +27,7 @@ export interface Series {
   id: string;
   type: Reactive<ChartType>;
   column: Reactive<Property>;
-  fill: Reactive<Fill>;
+  fill: Reactive<ColorFill | GradientFill | null>;
 }
 
 export default class Chart extends Tile {
@@ -36,7 +36,7 @@ export default class Chart extends Tile {
   readonly tableId: string;
   readonly label: Reactive<Property | null>;
   readonly series: ReactiveArray<Series>;
-  readonly background: Reactive<Background | null>;
+  readonly background: Reactive<Fill | null>;
 
   static async create(
     editor: Editor,
@@ -77,7 +77,7 @@ export default class Chart extends Tile {
     });
   }
 
-  async setBackground(background: BackgroundUpdate) {
+  async setBackground(background: FillUpdate) {
     const result = await this.update({ background });
     this.background.value = result.background;
   }
@@ -128,7 +128,7 @@ export default class Chart extends Tile {
     return this.updateSeries({ seriesId: id, type });
   }
 
-  setSeriesFill(id: string, fill: FillUpdate) {
+  setSeriesFill(id: string, fill: GradientFill | ColorFill | null) {
     const series = this.series.find((s) => s.id === id);
     if (!series) {
       throw new Error(`Invalid series ID: ${id}`);

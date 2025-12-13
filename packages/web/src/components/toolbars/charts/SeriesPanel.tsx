@@ -4,13 +4,13 @@ import SeriesRow from "./SeriesRow";
 import NewIcon from "@/icons/new.svg?jsx";
 import ParagraphIcon from "@/icons/paragraph.svg?jsx";
 import styles from "./SeriesPanel.module.css";
+import { Computed } from "@/utils/reactivity";
 import type Chart from "@/models/Chart";
 import type { Series, ChartType } from "@/models/Chart";
 import type Table from "@/models/Table";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
-import { Computed } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
-import type { FillUpdate } from "@/components/backgrounds/types";
+import type { ColorFill, GradientFill } from "@/components/fills/types";
 
 export interface SeriesPanelProps extends JSX.Attributes<"popover-menu"> {
   chart: Chart;
@@ -50,7 +50,10 @@ export default function SeriesPanel({
     chart.setSeriesChartType(series.id, type);
   }
 
-  function setSeriesFill(fill: FillUpdate, series: Series) {
+  function setSeriesFill(
+    fill: ColorFill | GradientFill | null,
+    series: Series,
+  ) {
     chart.setSeriesFill(series.id, fill);
   }
 

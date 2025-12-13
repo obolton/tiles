@@ -10,7 +10,7 @@ import { toCSSColor, isDark, type Color } from "@/utils/color";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
-import type { Background } from "@/components/backgrounds/types";
+import type { Fill } from "@/components/fills/types";
 import type { Animation } from "@/models/Tile";
 
 export type TileProps = {
@@ -18,7 +18,7 @@ export type TileProps = {
   children?: JSX.Node;
   font?: FontId | null;
   textColor?: Reactive<Color | null>;
-  background?: Reactive<Background | null>;
+  background?: Reactive<Fill | null>;
   animation?: Reactive<Animation | null>;
   border?:
     | Reactive<"inside" | "outside" | "none">

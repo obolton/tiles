@@ -1,18 +1,18 @@
 import MenuItem from "@/components/buttons/MenuItem";
 import Row from "@/components/rows/Row";
-import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
+import FillPicker from "@/components/fills/FillPicker";
 import BarChartIcon from "@/icons/bar-chart.svg?jsx";
 import LineChartIcon from "@/icons/line-chart.svg?jsx";
 import AreaChartIcon from "@/icons/area-chart.svg?jsx";
 import RemoveIcon from "@/icons/remove.svg?jsx";
 import type { Series, ChartType } from "@/models/Chart";
-import type { FillUpdate } from "@/components/backgrounds/types";
+import type { ColorFill, GradientFill } from "@/components/fills/types";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 
 export interface SeriesRowProps {
   series: Series;
   onSetChartType: (type: ChartType, series: Series) => void;
-  onSetFill: (fill: FillUpdate, series: Series) => void;
+  onSetFill: (fill: ColorFill | GradientFill | null, series: Series) => void;
   onDelete: (series: Series) => void;
 }
 
@@ -27,7 +27,7 @@ export default function SeriesRow({
       title={series.column.derive((column) => column.title || "Column")}
       controls={
         <>
-          <BackgroundPicker
+          <FillPicker
             id={`series-${series.id}-fill`}
             value={series.fill}
             onChange={(fill) => {

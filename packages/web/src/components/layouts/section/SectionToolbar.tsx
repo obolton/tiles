@@ -1,6 +1,6 @@
 import MenuItem from "@/components/buttons/MenuItem";
 import TileTools from "@/components/toolbars/tiles/TileTools";
-import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
+import FillPicker from "@/components/fills/FillPicker";
 import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import HorizontalLayoutIcon from "@/icons/horizontal-layout.svg?jsx";
 import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";
@@ -15,7 +15,7 @@ import SizeIcon from "@/icons/size.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import Editor from "@/editor/Editor";
-import type { BackgroundUpdate } from "@/components/backgrounds/types";
+import type { FillUpdate } from "@/components/fills/types";
 import type SwatchSelect from "@/elements/swatch/SwatchSelect";
 import type { Layout, Anchor, Dimensions } from "@/types/pages";
 import type Section from "@/models/Section";
@@ -51,7 +51,7 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
     });
   }
 
-  async function setBackground(value: BackgroundUpdate) {
+  async function setBackground(value: FillUpdate) {
     try {
       await section.setBackground(value);
     } catch (error) {
@@ -219,7 +219,7 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
         </li>
 
         <li role="presentation">
-          <BackgroundPicker
+          <FillPicker
             id={`${section.id}-background`}
             value={section.background}
             onChange={setBackground}

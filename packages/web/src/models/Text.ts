@@ -6,10 +6,7 @@ import type Editor from "@/editor/Editor";
 import type { ClientTextTile } from "api/types/tiles";
 import type { EditorState } from "prosemirror-state";
 import type { Color } from "@/utils/color";
-import type {
-  Background,
-  BackgroundUpdate,
-} from "@/components/backgrounds/types";
+import type { Fill, FillUpdate } from "@/components/fills/types";
 import type { AppRouterInputs } from "@/api/client";
 
 export default class Text extends Tile {
@@ -18,7 +15,7 @@ export default class Text extends Tile {
   readonly content: Reactive<ClientTextTile["content"]>;
   readonly align: Reactive<ClientTextTile["align"]>;
   readonly textColor: Reactive<Color | null>;
-  readonly background: Reactive<Background | null>;
+  readonly background: Reactive<Fill | null>;
   readonly state: Reactive<EditorState | null>;
 
   static async create(
@@ -64,7 +61,7 @@ export default class Text extends Tile {
     return this.update({ textColor });
   }
 
-  async setBackground(background: BackgroundUpdate) {
+  async setBackground(background: FillUpdate) {
     const result = await this.update({ background });
     this.background.value = result.background;
   }

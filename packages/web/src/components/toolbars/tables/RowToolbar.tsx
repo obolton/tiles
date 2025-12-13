@@ -1,12 +1,12 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
-import BackgroundPicker from "@/components/backgrounds/BackgroundPicker";
+import FillPicker from "@/components/fills/FillPicker";
 import AddRowIcon from "@/icons/add-row.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { Computed } from "@/utils/reactivity";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
-import type { BackgroundUpdate } from "@/components/backgrounds/types";
+import type { FillUpdate } from "@/components/fills/types";
 
 export interface RowToolbarProps {
   table: Table;
@@ -33,7 +33,7 @@ export default function RowToolbar({ table, getTable }: RowToolbarProps) {
     return rowList.find((r) => r.id === row.id)?.background ?? null;
   });
 
-  async function setBackground(value: BackgroundUpdate) {
+  async function setBackground(value: FillUpdate) {
     const row = getSelectedRow();
     if (!row?.id) {
       return;
@@ -89,7 +89,7 @@ export default function RowToolbar({ table, getTable }: RowToolbarProps) {
     >
       <ul role="group">
         <li role="presentation">
-          <BackgroundPicker
+          <FillPicker
             id={`${id}-row-background`}
             value={background}
             onChange={setBackground}
