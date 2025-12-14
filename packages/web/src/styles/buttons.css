@@ -110,7 +110,7 @@ swatch-select {
   flex: 0 0 auto;
   font-weight: 500;
   padding-block: 0;
-  padding-inline: 0.5em;
+  padding-inline: 10px;
   color: var(--ui-color);
   border: none;
   background: none;
@@ -216,8 +216,10 @@ swatch-select {
     &::after {
       content: "";
       position: absolute;
-      inset: 0;
-      background: url("@/icons/close.svg?inline") no-repeat center / 24px 24px;
+      inset: 0 auto 0 0;
+      width: 44px;
+      background: url("@/icons/close.svg?inline") no-repeat 10px center / 24px
+        24px;
       opacity: 0;
       scale: 0.7;
       rotate: z -45deg;
@@ -239,13 +241,6 @@ swatch-select {
         rotate: none;
       }
     }
-  }
-}
-
-swatch-select[showvalue][aria-expanded] {
-  &::after {
-    background-position: left 0.5em center;
-    transform-origin: calc(0.5em + 12px) center;
   }
 }
 
