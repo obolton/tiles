@@ -51,6 +51,7 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
         <li role="presentation">
           <FillPicker
             id={`${chart.id}-background`}
+            label="Background"
             value={chart.background}
             onChange={setBackground}
           />

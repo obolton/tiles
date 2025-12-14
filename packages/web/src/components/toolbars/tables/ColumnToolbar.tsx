@@ -111,6 +111,7 @@ export default function ColumnToolbar({ table, getTable }: ColumnToolbarProps) {
         <li role="presentation">
           <FillPicker
             id={`${id}-column-background`}
+            label="Background"
             value={background}
             onChange={setBackground}
           />

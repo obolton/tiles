@@ -11,6 +11,7 @@ import type { Fill, FillUpdate } from "./types";
 
 export interface FillPickerProps {
   id: string;
+  label?: string;
   value: Reactive<Fill | null>;
   onChange: (value: FillUpdate) => void;
   allowImage?: boolean;
@@ -18,6 +19,7 @@ export interface FillPickerProps {
 
 export default function FillPicker({
   id,
+  label,
   value,
   onChange,
   allowImage,
@@ -26,7 +28,7 @@ export default function FillPicker({
     <>
       <ToolbarButton
         id={id}
-        label="Background"
+        label={label ?? "Background"}
         popovertarget={`${id}-popover`}
         aria-haspopup="menu"
         aria-expanded="false"
@@ -62,6 +64,7 @@ export default function FillPicker({
         ) : (
           <BackgroundIcon aria-hidden="true" />
         )}
+        {label}
       </ToolbarButton>
 
       <FillPopover

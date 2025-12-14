@@ -91,6 +91,7 @@ export default function RowToolbar({ table, getTable }: RowToolbarProps) {
         <li role="presentation">
           <FillPicker
             id={`${id}-row-background`}
+            label="Background"
             value={background}
             onChange={setBackground}
           />
