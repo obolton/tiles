@@ -12,6 +12,7 @@ model User {
   sessions             Session[]
   keys                 Key[]
   pages                Page[]
+  folders              Folder[]
   bookmarks            Bookmark[]
   pageAccess           PageAccess[]
   pageInvites          PageInvite[]
