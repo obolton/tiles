@@ -49,10 +49,14 @@ export default function ChartTile({ chart, hasFocus }: ChartTileProps) {
             <chart-series
               type={series.type}
               color={series.fill.derive((fill) => {
-                if (!fill) return null;
-                if (fill.type === "color") return fill.color;
-                if (fill.type === "gradient") return `${fill.colorA},${fill.colorB}`;
-                return null;
+                switch (fill?.type) {
+                  case "color":
+                    return fill.color;
+                  case "gradient":
+                    return `${fill.colorA},${fill.colorB}`;
+                  default:
+                    return null;
+                }
               })}
               gradient={series.fill.derive((fill) =>
                 fill?.type === "gradient" ? fill.direction : null,

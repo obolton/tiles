@@ -51,18 +51,34 @@
 
 .linear {
   &[data-direction="VERTICAL"] {
-    background: linear-gradient(to bottom in oklch, var(--color-a), var(--color-b));
+    background: linear-gradient(
+      to bottom in oklch,
+      var(--color-a),
+      var(--color-b)
+    );
   }
 
   &[data-direction="HORIZONTAL"] {
-    background: linear-gradient(to right in oklch, var(--color-a), var(--color-b));
+    background: linear-gradient(
+      to right in oklch,
+      var(--color-a),
+      var(--color-b)
+    );
   }
 
   &[data-direction="BOTTOM_RIGHT"] {
-    background: linear-gradient(to bottom right in oklch, var(--color-a), var(--color-b));
+    background: linear-gradient(
+      to bottom right in oklch,
+      var(--color-a),
+      var(--color-b)
+    );
   }
 
   &[data-direction="BOTTOM_LEFT"] {
-    background: linear-gradient(to bottom left in oklch, var(--color-a), var(--color-b));
+    background: linear-gradient(
+      to bottom left in oklch,
+      var(--color-a),
+      var(--color-b)
+    );
   }
 }

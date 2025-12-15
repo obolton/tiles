@@ -3,7 +3,11 @@ import { createSVGGradient } from "../svg-gradient";
 
 describe("createSVGGradient", () => {
   test("creates a linearGradient element with the specified id", () => {
-    const gradient = createSVGGradient("test-id", ["ff0000", "0000ff"], "VERTICAL");
+    const gradient = createSVGGradient(
+      "test-id",
+      ["ff0000", "0000ff"],
+      "VERTICAL",
+    );
 
     expect(gradient.tagName).toBe("linearGradient");
     expect(gradient.id).toBe("test-id");
@@ -20,7 +24,11 @@ describe("createSVGGradient", () => {
 
   describe("gradient direction coordinates", () => {
     test("sets VERTICAL coordinates (top to bottom)", () => {
-      const gradient = createSVGGradient("id", ["ff0000", "0000ff"], "VERTICAL");
+      const gradient = createSVGGradient(
+        "id",
+        ["ff0000", "0000ff"],
+        "VERTICAL",
+      );
 
       expect(gradient.getAttribute("x1")).toBe("0%");
       expect(gradient.getAttribute("y1")).toBe("0%");
@@ -29,7 +37,11 @@ describe("createSVGGradient", () => {
     });
 
     test("sets HORIZONTAL coordinates (left to right)", () => {
-      const gradient = createSVGGradient("id", ["ff0000", "0000ff"], "HORIZONTAL");
+      const gradient = createSVGGradient(
+        "id",
+        ["ff0000", "0000ff"],
+        "HORIZONTAL",
+      );
 
       expect(gradient.getAttribute("x1")).toBe("0%");
       expect(gradient.getAttribute("y1")).toBe("0%");
@@ -38,7 +50,11 @@ describe("createSVGGradient", () => {
     });
 
     test("sets BOTTOM_RIGHT coordinates (top-left to bottom-right)", () => {
-      const gradient = createSVGGradient("id", ["ff0000", "0000ff"], "BOTTOM_RIGHT");
+      const gradient = createSVGGradient(
+        "id",
+        ["ff0000", "0000ff"],
+        "BOTTOM_RIGHT",
+      );
 
       expect(gradient.getAttribute("x1")).toBe("0%");
       expect(gradient.getAttribute("y1")).toBe("0%");
@@ -47,7 +63,11 @@ describe("createSVGGradient", () => {
     });
 
     test("sets BOTTOM_LEFT coordinates (top-right to bottom-left)", () => {
-      const gradient = createSVGGradient("id", ["ff0000", "0000ff"], "BOTTOM_LEFT");
+      const gradient = createSVGGradient(
+        "id",
+        ["ff0000", "0000ff"],
+        "BOTTOM_LEFT",
+      );
 
       expect(gradient.getAttribute("x1")).toBe("100%");
       expect(gradient.getAttribute("y1")).toBe("0%");
@@ -58,14 +78,22 @@ describe("createSVGGradient", () => {
 
   describe("color stops", () => {
     test("creates two stops for two colors", () => {
-      const gradient = createSVGGradient("id", ["ff0000", "0000ff"], "VERTICAL");
+      const gradient = createSVGGradient(
+        "id",
+        ["ff0000", "0000ff"],
+        "VERTICAL",
+      );
       const stops = gradient.querySelectorAll("stop");
 
       expect(stops).toHaveLength(2);
     });
 
     test("sets correct offsets for two colors", () => {
-      const gradient = createSVGGradient("id", ["ff0000", "0000ff"], "VERTICAL");
+      const gradient = createSVGGradient(
+        "id",
+        ["ff0000", "0000ff"],
+        "VERTICAL",
+      );
       const stops = gradient.querySelectorAll("stop");
 
       expect(stops[0]?.getAttribute("offset")).toBe("0.000%");
@@ -73,7 +101,11 @@ describe("createSVGGradient", () => {
     });
 
     test("sets correct stop-color attributes", () => {
-      const gradient = createSVGGradient("id", ["ff0000", "00ff00"], "VERTICAL");
+      const gradient = createSVGGradient(
+        "id",
+        ["ff0000", "00ff00"],
+        "VERTICAL",
+      );
       const stops = gradient.querySelectorAll("stop");
 
       expect(stops[0]?.getAttribute("stop-color")).toBe(
