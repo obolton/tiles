@@ -127,6 +127,10 @@ export class DragState<T> {
       passive: true,
       signal,
     });
+    addEventListener("pointercancel", this, {
+      passive: true,
+      signal,
+    });
     addEventListener("keydown", this, {
       passive: false,
       signal,
@@ -146,6 +150,8 @@ export class DragState<T> {
         return this.pointerMove(event as PointerEvent);
       case "pointerup":
         return this.pointerUp(event as PointerEvent);
+      case "pointercancel":
+        return this.pointerCancel();
       case "pointerleave":
         return this.pointerLeave(event as PointerEvent);
       case "click":
@@ -276,6 +282,10 @@ export class DragState<T> {
     } else {
       this.finish();
     }
+  }
+
+  private pointerCancel() {
+    this.finish();
   }
 
   private pointerLeave(event: PointerEvent) {
