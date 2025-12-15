@@ -91,6 +91,10 @@ body[data-drag] {
   }
 }
 
+.drag-drop {
+  view-transition-name: drop !important;
+}
+
 ::view-transition-old(drop) {
   height: 100%;
 }

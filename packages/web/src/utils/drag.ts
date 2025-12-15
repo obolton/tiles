@@ -394,9 +394,7 @@ export class DragState<T> {
   private drop(event: PointerEvent) {
     const dropTarget = this.dropTarget;
 
-    if (this.dragPreview) {
-      this.dragPreview.style.viewTransitionName = "drop";
-    }
+    this.dragPreview?.classList.add("drag-drop");
 
     viewTransition(() => {
       dropTarget?.dispatchEvent(
@@ -420,7 +418,7 @@ export class DragState<T> {
     }
 
     delete document.body.dataset.drag;
-    this.dragPreview.classList.remove("drag-preview");
+    this.dragPreview.classList.remove("drag-preview", "drag-drop");
     this.dragPreview.hidePopover();
     this.dragPreview.popover = null;
 
