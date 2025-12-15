@@ -135,6 +135,9 @@ export class DragState<T = unknown> {
       passive: false,
       signal,
     });
+    element.addEventListener("contextmenu", this, {
+      signal,
+    });
 
     this.longPressTimeout = setTimeout(
       () => this.longPress(),
@@ -158,6 +161,8 @@ export class DragState<T = unknown> {
         return this.click(event as MouseEvent);
       case "keydown":
         return this.keyDown(event as KeyboardEvent);
+      case "contextmenu":
+        return this.contextMenu(event as PointerEvent);
     }
   }
 
@@ -324,6 +329,13 @@ export class DragState<T = unknown> {
     if (event.key === "Escape") {
       event.preventDefault();
       this.finish();
+    }
+  }
+
+  // Prevent context menu on touch long-press (allows right-click for mouse)
+  private contextMenu(event: PointerEvent) {
+    if (event.pointerType === "touch") {
+      event.preventDefault();
     }
   }
 
@@ -517,12 +529,6 @@ export class DragState<T = unknown> {
   }
 }
 
-function cancelContextMenu(event: PointerEvent | MouseEvent) {
-  if (event instanceof PointerEvent && event.pointerType === "touch") {
-    event.preventDefault();
-  }
-}
-
 function preventDefault(event: Event) {
   event.preventDefault();
 }
@@ -559,7 +565,4 @@ export function makeDraggable(
     },
   );
   element.addEventListener("dragstart", preventDefault, { signal });
-  element.addEventListener("contextmenu", cancelContextMenu, {
-    signal,
-  });
 }
