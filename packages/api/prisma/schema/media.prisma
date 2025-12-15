@@ -37,5 +37,6 @@ model Image {
   sections     Section[]
 
   @@index([workspaceId, purpose])
+  @@index([userId])
   @@map("images")
 }

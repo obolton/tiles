@@ -38,7 +38,5 @@ model WorkspaceInvite {
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@unique([workspaceId, email])
-  @@index([workspaceId])
-  @@index([key])
   @@map("workspace_invites")
 }

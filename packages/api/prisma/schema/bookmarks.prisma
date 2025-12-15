@@ -8,5 +8,6 @@ model Bookmark {
 
   @@id(name: "bookmarkId", [userId, pageId])
   @@index([userId])
+  @@index([pageId])
   @@map("bookmarks")
 }

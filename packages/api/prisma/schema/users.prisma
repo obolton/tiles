@@ -19,7 +19,5 @@ model User {
   workspaceInvites     WorkspaceInvite[]
   images               Image[]
 
-  @@index([username])
-  @@index([email])
   @@map("users")
 }

@@ -10,8 +10,6 @@ model PageInvite {
   page    Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
 
   @@unique([pageId, email])
-  @@index([pageId])
-  @@index([key])
   @@map("page_invites")
 }
 
