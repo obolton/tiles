@@ -394,8 +394,6 @@ export class DragState<T> {
     }
 
     viewTransition(() => {
-      delete document.body.dataset.drag;
-
       dropTarget?.dispatchEvent(
         this.createDragDropEvent("dnd-drop", {
           bubbles: true,
@@ -405,27 +403,34 @@ export class DragState<T> {
         }),
       );
 
-      if (this.dragPreview) {
-        this.dragPreview.classList.remove("drag-preview");
-        this.dragPreview.hidePopover();
-        this.dragPreview.popover = null;
-
-        if (this.clone) {
-          this.dragPreview.remove();
-        } else {
-          this.dragPreview.style.removeProperty("--drag-origin-x");
-          this.dragPreview.style.removeProperty("--drag-origin-y");
-          this.dragPreview.style.removeProperty("--drag-x");
-          this.dragPreview.style.removeProperty("--drag-y");
-          this.dragPreview.style.removeProperty("--drag-width");
-          this.dragPreview.style.removeProperty("--drag-height");
-        }
-
-        this.dragPreview = null;
-      }
+      this.removeDragPreview();
     }).updateCallbackDone.finally(() => {
       this.finish();
     });
+  }
+
+  private removeDragPreview() {
+    if (!this.dragPreview) {
+      return;
+    }
+
+    delete document.body.dataset.drag;
+    this.dragPreview.classList.remove("drag-preview");
+    this.dragPreview.hidePopover();
+    this.dragPreview.popover = null;
+
+    if (this.clone) {
+      this.dragPreview.remove();
+    } else {
+      this.dragPreview.style.removeProperty("--drag-origin-x");
+      this.dragPreview.style.removeProperty("--drag-origin-y");
+      this.dragPreview.style.removeProperty("--drag-x");
+      this.dragPreview.style.removeProperty("--drag-y");
+      this.dragPreview.style.removeProperty("--drag-width");
+      this.dragPreview.style.removeProperty("--drag-height");
+    }
+
+    this.dragPreview = null;
   }
 
   private finish() {
@@ -456,11 +461,12 @@ export class DragState<T> {
           cancelable: false,
         }),
       );
+
+      this.removeDragPreview();
     }
 
     this.isDragging = false;
     this.dropTarget = undefined;
-    this.dragPreview = null;
   }
 
   private scheduleDragEvent(x: number, y: number) {
