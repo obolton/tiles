@@ -34,7 +34,7 @@ const mockUsersResponse = {
       imageUrl: "https://example.com/bob.jpg",
     },
   ],
-  hasMore: false,
+  nextCursor: null,
 };
 
 describe("getCachedWorkspaceUsers", () => {
@@ -87,7 +87,6 @@ describe("getWorkspaceUsers", () => {
     expect(get).toHaveBeenCalledWith("users:workspace-123");
     expect(client.workspaces.listUsers.query).toHaveBeenCalledWith({
       workspaceId: "workspace-123",
-      offset: 0,
     });
     expect(set).toHaveBeenCalledWith("users:workspace-123", mockUsersResponse);
     expect(result).toEqual(mockUsersResponse);

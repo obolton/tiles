@@ -22,7 +22,7 @@ export interface FoldersProps {
   selectedId?: SYSTEM_FOLDER | (string & {});
   folders: {
     folders: Folder[];
-    hasMore: boolean;
+    nextCursor: string | null;
   };
 }
 
@@ -54,7 +54,7 @@ export default function Folders({
           folders: folders.value.folders
             .concat(folder)
             .sort((a, b) => a.name.localeCompare(b.name)),
-          hasMore: folders.value.hasMore,
+          nextCursor: folders.value.nextCursor,
         };
       },
     });

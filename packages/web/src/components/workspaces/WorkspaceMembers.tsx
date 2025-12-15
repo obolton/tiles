@@ -19,27 +19,27 @@ export default function WorkspaceMembers({
   members: initialMembers,
 }: WorkspaceMembersProps) {
   const members = reactive(initialMembers.users);
-  const hasMore = flag(initialMembers.hasMore);
+  const nextCursor = reactive(initialMembers.nextCursor);
 
-  const onSearch = async (query: string, offset: number = 0) => {
+  const onSearch = async (query: string, cursor: string | null) => {
     try {
-      if (!query && offset === 0) {
+      if (!query && !cursor) {
         members.value = initialMembers.users;
-        hasMore.value = initialMembers.hasMore;
+        nextCursor.value = initialMembers.nextCursor;
         return;
       }
 
       const results = await client.workspaces.listUsers.query({
         workspaceId,
         query: query || undefined,
-        offset,
+        cursor: cursor ?? undefined,
       });
-      if (offset === 0) {
+      if (!cursor) {
         members.value = results.users;
       } else {
         members.value = [...members.value, ...results.users];
       }
-      hasMore.value = results.hasMore;
+      nextCursor.value = results.nextCursor;
     } catch (error) {
       handleError(error);
     }
@@ -64,7 +64,7 @@ export default function WorkspaceMembers({
         id="search-members"
         search={onSearch}
         results={members}
-        hasMore={hasMore}
+        nextCursor={nextCursor}
         placeholder="Search members"
         render={(member) => (
           <UserRow

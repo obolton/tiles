@@ -10,13 +10,13 @@ import type { JSX } from "@/jsx/jsx";
 
 interface PagesSearchResults {
   pages: NonNullable<ClientPageLinkTile["linkedPage"]>[];
-  hasMore: boolean;
+  nextCursor: string | null;
 }
 
 export interface DeletedPagesGridProps {
   workspaceId: string;
   inputPlaceholder?: string;
-  search: (query: string, offset: number) => Promise<PagesSearchResults>;
+  search: (query: string, cursor: string | null) => Promise<PagesSearchResults>;
   pages?: PagesSearchResults;
   renderPlaceholder: (query: string) => JSX.Node;
 }
@@ -29,23 +29,23 @@ export default function DeletedPagesGrid({
   renderPlaceholder,
 }: DeletedPagesGridProps) {
   const pages = reactive(initialPages?.pages ?? []);
-  const hasMore = reactive(initialPages?.hasMore ?? false);
+  const nextCursor = reactive(initialPages?.nextCursor ?? null);
 
-  const onSearch = async (query: string, offset: number = 0) => {
+  const onSearch = async (query: string, cursor: string | null) => {
     try {
-      if (!query) {
+      if (!query && !cursor) {
         pages.value = initialPages?.pages ?? [];
-        hasMore.value = initialPages?.hasMore ?? false;
+        nextCursor.value = initialPages?.nextCursor ?? null;
         return;
       }
 
-      const results = await search(query, offset);
-      if (offset === 0) {
+      const results = await search(query, cursor);
+      if (!cursor) {
         pages.value = results.pages;
       } else {
         pages.value = [...pages.value, ...results.pages];
       }
-      hasMore.value = results.hasMore;
+      nextCursor.value = results.nextCursor;
     } catch (error) {
       handleError(error);
     }
@@ -71,7 +71,7 @@ export default function DeletedPagesGrid({
         itemsClassName={styles.pages}
         search={onSearch}
         results={pages}
-        hasMore={hasMore}
+        nextCursor={nextCursor}
         placeholder={inputPlaceholder}
         render={(page) => (
           <DeletedPage

@@ -8,7 +8,7 @@ export interface Folder {
 
 interface FolderCache {
   folders: Folder[];
-  hasMore: boolean;
+  nextCursor: string | null;
 }
 
 function getCacheKey(workspaceId: string) {
@@ -25,7 +25,7 @@ export async function getWorkspaceFolders(workspaceId: string) {
     return cached;
   }
 
-  const result = await client.folders.list.query({ workspaceId, offset: 0 });
+  const result = await client.folders.list.query({ workspaceId });
   set(getCacheKey(workspaceId), result);
   return result;
 }

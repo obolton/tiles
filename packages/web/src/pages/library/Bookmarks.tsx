@@ -43,8 +43,11 @@ export default function Bookmarks({
         <PagesGrid
           inputPlaceholder="Search bookmarks"
           pages={pages}
-          search={(query, offset) =>
-            client.bookmarks.list.query({ query: query || undefined, offset })
+          search={(query, cursor) =>
+            client.bookmarks.list.query({
+              query: query || undefined,
+              cursor: cursor ?? undefined,
+            })
           }
           renderPlaceholder={renderPlaceholder}
           draggable

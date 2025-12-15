@@ -10,7 +10,7 @@ export interface WorkspaceUser {
 
 interface UsersCache {
   users: WorkspaceUser[];
-  hasMore: boolean;
+  nextCursor: string | null;
 }
 
 function getCacheKey(workspaceId: string) {
@@ -27,10 +27,7 @@ export async function getWorkspaceUsers(workspaceId: string) {
     return cached;
   }
 
-  const result = await client.workspaces.listUsers.query({
-    workspaceId,
-    offset: 0,
-  });
+  const result = await client.workspaces.listUsers.query({ workspaceId });
   set(getCacheKey(workspaceId), result);
   return result;
 }

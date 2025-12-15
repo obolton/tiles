@@ -23,7 +23,7 @@ const mockFoldersResponse = {
     { id: "folder-1", name: "Folder 1" },
     { id: "folder-2", name: "Folder 2" },
   ],
-  hasMore: false,
+  nextCursor: null,
 };
 
 describe("getCachedWorkspaceFolders", () => {
@@ -76,7 +76,6 @@ describe("getWorkspaceFolders", () => {
     expect(get).toHaveBeenCalledWith("folders:workspace-123");
     expect(client.folders.list.query).toHaveBeenCalledWith({
       workspaceId: "workspace-123",
-      offset: 0,
     });
     expect(set).toHaveBeenCalledWith(
       "folders:workspace-123",

@@ -86,12 +86,12 @@ export default function Folder({
         <PagesGrid
           inputPlaceholder={`Search in ${name}`}
           pages={pages}
-          search={(query, offset) =>
+          search={(query, cursor) =>
             client.folders.listPages.query({
               workspaceId: workspace.id,
               id,
               query: query || undefined,
-              offset,
+              cursor: cursor ?? undefined,
             })
           }
           renderPlaceholder={renderPlaceholder}

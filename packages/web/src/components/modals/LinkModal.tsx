@@ -31,22 +31,22 @@ export default function LinkModal({
 }: LinkModalProps) {
   const isPending = flag(false);
   const pages = reactive<Pages["pages"]>([]);
-  const hasMore = flag(true);
+  const nextCursor = reactive<string | null>(null);
 
-  const search = async (query: string, offset: number = 0) => {
+  const search = async (query: string, cursor: string | null) => {
     try {
-      const { pages: resultPages, hasMore: resultHasMore } =
+      const { pages: resultPages, nextCursor: resultNextCursor } =
         await client.pages.list.query({
           workspaceId,
           query: query || undefined,
-          offset,
+          cursor: cursor ?? undefined,
         });
-      if (offset === 0) {
+      if (!cursor) {
         pages.value = resultPages;
       } else {
         pages.value = [...(pages.value ?? []), ...resultPages];
       }
-      hasMore.value = resultHasMore;
+      nextCursor.value = resultNextCursor;
     } catch (error) {
       handleError(error);
     }
@@ -134,7 +134,7 @@ export default function LinkModal({
               id="search-pages"
               search={search}
               results={pages}
-              hasMore={hasMore}
+              nextCursor={nextCursor}
               placeholder="Search pages"
               render={(page) =>
                 page.id === pageId ? null : (

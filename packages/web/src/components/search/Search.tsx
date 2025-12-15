@@ -7,9 +7,9 @@ import type { Reactive } from "@/utils/reactivity";
 export interface SearchProps<T> {
   id: string;
   itemsClassName?: string;
-  search: (query: string, offset: number) => void;
+  search: (query: string, cursor: string | null) => void;
   results: Reactive<T[]>;
-  hasMore: Reactive<boolean>;
+  nextCursor: Reactive<string | null>;
   placeholder?: string;
   render: (result: T) => JSX.Node;
   renderPlaceholder: (query: string) => JSX.Node;
@@ -20,7 +20,7 @@ export default function Search<T>({
   itemsClassName,
   search,
   results,
-  hasMore,
+  nextCursor,
   placeholder,
   render,
   renderPlaceholder,
@@ -28,10 +28,10 @@ export default function Search<T>({
   const query = reactive("");
 
   async function onLoadMore() {
-    if (!hasMore.value) {
+    if (!nextCursor.value) {
       return;
     }
-    search(query.value, results.value.length);
+    search(query.value, nextCursor.value);
   }
 
   const debouncedSearch = debounce(search, 250);
@@ -40,7 +40,7 @@ export default function Search<T>({
     const input = event.currentTarget as HTMLInputElement;
     const queryString = input.value.trim();
     query.value = queryString;
-    debouncedSearch(queryString, 0);
+    debouncedSearch(queryString, null);
   }
 
   return (

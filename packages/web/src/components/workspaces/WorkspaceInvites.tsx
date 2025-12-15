@@ -26,27 +26,27 @@ export default function WorkspaceInvites({
   invites: initialInvites,
 }: WorkspaceInvitesProps) {
   const invites = reactive(initialInvites.invites);
-  const hasMore = flag(initialInvites.hasMore);
+  const nextCursor = reactive(initialInvites.nextCursor);
 
-  const onSearch = async (query: string, offset: number = 0) => {
+  const onSearch = async (query: string, cursor: string | null) => {
     try {
-      if (!query && offset === 0) {
+      if (!query && !cursor) {
         invites.value = initialInvites.invites;
-        hasMore.value = initialInvites.hasMore;
+        nextCursor.value = initialInvites.nextCursor;
         return;
       }
 
       const results = await client.workspaces.listInvites.query({
         workspaceId,
         query: query || undefined,
-        offset,
+        cursor: cursor ?? undefined,
       });
-      if (offset === 0) {
+      if (!cursor) {
         invites.value = results.invites;
       } else {
         invites.value = [...invites.value, ...results.invites];
       }
-      hasMore.value = results.hasMore;
+      nextCursor.value = results.nextCursor;
     } catch (error) {
       handleError(error);
     }
@@ -96,7 +96,7 @@ export default function WorkspaceInvites({
         id="search-invites"
         search={onSearch}
         results={invites}
-        hasMore={hasMore}
+        nextCursor={nextCursor}
         placeholder="Search invites"
         render={(invite) => (
           <InviteRow invite={invite} showRemoveButton onRemove={onRemove} />

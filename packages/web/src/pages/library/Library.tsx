@@ -69,11 +69,11 @@ export default function Library({ workspace, folders, pages }: LibraryProps) {
         <PagesGrid
           inputPlaceholder="Search pages"
           pages={pages}
-          search={(query, offset) =>
+          search={(query, cursor) =>
             client.pages.list.query({
               workspaceId: workspace.id,
               query: query || undefined,
-              offset,
+              cursor: cursor ?? undefined,
             })
           }
           renderPlaceholder={renderPlaceholder}

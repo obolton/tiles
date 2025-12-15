@@ -41,11 +41,11 @@ export default function Shared({ workspace, folders, pages }: SharedProps) {
         <PagesGrid
           inputPlaceholder="Search pages shared with you"
           pages={pages}
-          search={(query, offset) =>
+          search={(query, cursor) =>
             client.pages.listShared.query({
               workspaceId: workspace.id,
               query: query || undefined,
-              offset,
+              cursor: cursor ?? undefined,
             })
           }
           renderPlaceholder={renderPlaceholder}

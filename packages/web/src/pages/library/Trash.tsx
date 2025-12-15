@@ -40,11 +40,11 @@ export default function Trash({ workspace, folders, pages }: TrashProps) {
           workspaceId={workspace.id}
           inputPlaceholder="Search trash"
           pages={pages}
-          search={(query, offset) =>
+          search={(query, cursor) =>
             client.pages.listDeleted.query({
               workspaceId: workspace.id,
               query: query || undefined,
-              offset,
+              cursor: cursor ?? undefined,
             })
           }
           renderPlaceholder={renderPlaceholder}
