@@ -294,7 +294,10 @@ export class DragState<T> {
       return;
     }
 
-    const target = event.currentTarget as HTMLElement;
+    const target = event.currentTarget;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
 
     delete target.dataset.dropTarget;
     target.dispatchEvent(
@@ -306,7 +309,9 @@ export class DragState<T> {
       }),
     );
 
-    this.dropTarget = undefined;
+    if (target === this.dropTarget) {
+      this.dropTarget = undefined;
+    }
   }
 
   private click(event: MouseEvent) {
