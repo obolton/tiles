@@ -11,7 +11,9 @@
     "test:coverage": "vitest run --coverage",
     "lint": "oxlint",
     "tsc": "tsc --build",
-    "generate-worker-types": "wrangler types src/worker.d.ts"
+    "generate-worker-types": "wrangler types src/worker.d.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@trpc/client": "^11.5.1",

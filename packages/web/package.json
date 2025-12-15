@@ -18,7 +18,9 @@
     "storybook": "storybook dev -p 6001 --no-open --no-version-updates",
     "storybook:build": "storybook build",
     "tsc": "tsc --build",
-    "generate-worker-types": "wrangler types src/types/worker.d.ts --include-runtime=false"
+    "generate-worker-types": "wrangler types src/types/worker.d.ts --include-runtime=false",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@observablehq/plot": "^0.6.17",
