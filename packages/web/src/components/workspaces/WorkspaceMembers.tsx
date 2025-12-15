@@ -2,7 +2,7 @@ import Search from "@/components/search/Search";
 import UserRow from "@/components/collaboration/UserRow";
 import Placeholder from "@/components/placeholder/Placeholder";
 import client from "@/api/client";
-import { reactive, flag } from "@/utils/reactivity";
+import { reactive } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import styles from "./WorkspaceMembers.module.css";

@@ -3,7 +3,7 @@ import InviteRow from "@/components/collaboration/InviteRow";
 import Placeholder from "@/components/placeholder/Placeholder";
 import NewIcon from "@/icons/new.svg?jsx";
 import client from "@/api/client";
-import { reactive, flag } from "@/utils/reactivity";
+import { reactive } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import { showModal } from "@/utils/modals";
