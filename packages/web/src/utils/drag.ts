@@ -244,6 +244,24 @@ export class DragState<T = unknown> {
         this.dragPreview?.style.setProperty("--drag-x", originX + "px");
         this.dragPreview?.style.setProperty("--drag-y", originY + "px");
       });
+
+      // Auto-scroll when dragging near viewport edges
+      if (clientY <= SCROLL_MARGIN) {
+        this.scrollSpeed = -(SCROLL_MARGIN - clientY);
+        this.scrollInterval ??= setInterval(
+          this.scroll.bind(this),
+          SCROLL_INTERVAL,
+        );
+      } else if (window.innerHeight - clientY <= SCROLL_MARGIN) {
+        this.scrollSpeed = SCROLL_MARGIN - (window.innerHeight - clientY);
+        this.scrollInterval ??= setInterval(
+          this.scroll.bind(this),
+          SCROLL_INTERVAL,
+        );
+      } else if (typeof this.scrollInterval !== "undefined") {
+        clearInterval(this.scrollInterval);
+        this.scrollInterval = undefined;
+      }
     } else if (event.pointerType !== "touch") {
       const deltaX = x - this.startX;
       const deltaY = y - this.startY;
@@ -251,24 +269,6 @@ export class DragState<T = unknown> {
       if (Math.hypot(deltaX, deltaY) >= DRAG_THRESHOLD) {
         this.startDrag(clientX, clientY);
       }
-    }
-
-    if (clientY <= SCROLL_MARGIN) {
-      this.scrollSpeed = -(SCROLL_MARGIN - clientY);
-      this.scrollInterval ??= setInterval(
-        this.scroll.bind(this),
-        SCROLL_INTERVAL,
-      );
-    } else if (window.innerHeight - clientY <= SCROLL_MARGIN) {
-      this.scrollSpeed = SCROLL_MARGIN - (window.innerHeight - clientY);
-      this.scrollInterval ??= setInterval(
-        this.scroll.bind(this),
-        SCROLL_INTERVAL,
-      );
-    } else if (typeof this.scrollInterval !== "undefined") {
-      clearInterval(this.scrollInterval);
-      this.scrollInterval = undefined;
-      this.scrollSpeed = 0;
     }
   }
 
