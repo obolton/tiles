@@ -9,7 +9,7 @@ export type GetPageByIdSchema = z.infer<typeof GetPageByIdSchema>;
 
 export const ListPagesSchema = z.object({
   query: z.string().min(1).optional(),
-  offset: z.int().gte(0).optional(), // TODO: Use cursors
+  cursor: z.uuid().optional(),
 });
 export type ListPagesSchema = z.infer<typeof ListPagesSchema>;
 

@@ -23,13 +23,13 @@ export type DeleteFolderSchema = z.infer<typeof DeleteFolderSchema>;
 
 export const ListFoldersSchema = z.object({
   query: z.string().min(1).optional(),
-  offset: z.number().int().gte(0).optional(), // TODO: Use cursors
+  cursor: z.uuid().optional(),
 });
 export type ListFoldersSchema = z.infer<typeof ListFoldersSchema>;
 
 export const ListPagesSchema = z.object({
   id: z.uuid(),
   query: z.string().min(1).optional(),
-  offset: z.number().int().gte(0).optional(), // TODO: Use cursors
+  cursor: z.uuid().optional(),
 });
 export type ListPagesSchema = z.infer<typeof ListPagesSchema>;

@@ -7,9 +7,8 @@ import type {
 } from "./schema.ts";
 import type { Prisma } from "@/generated/prisma/client";
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "../pageLinks/pageLinks.ts";
+import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
-
-const RESULTS_PER_PAGE = 15;
 
 export const BOOKMARK_FIELDS = {
   page: { select: PAGE_LINK_TILE_PAGE_FIELDS },
@@ -54,7 +53,7 @@ export async function deleteBookmark(
 }
 
 export async function listBookmarks(
-  { query, offset }: ListBookmarksSchema,
+  { query, cursor }: ListBookmarksSchema,
   { userId }: AuthenticatedRequestContext,
 ) {
   const filter: Prisma.BookmarkWhereInput = query
@@ -74,11 +73,15 @@ export async function listBookmarks(
       createdAt: "desc",
     },
     take: RESULTS_PER_PAGE + 1,
-    skip: offset,
+    ...(cursor && {
+      cursor: { bookmarkId: { userId, pageId: cursor } },
+      skip: 1,
+    }),
   });
+  const { items, nextCursor } = paginate(bookmarks, (b) => b.page.id);
   return {
-    pages: bookmarks.slice(0, RESULTS_PER_PAGE).map(({ page }) => page),
-    hasMore: bookmarks.length > RESULTS_PER_PAGE,
+    pages: items.map(({ page }) => page),
+    nextCursor,
   };
 }
 

@@ -41,7 +41,7 @@ export type DeleteWorkspaceInviteSchema = z.infer<
 
 export const ListWorkspaceInvitesSchema = z.object({
   query: z.string().min(1).optional(),
-  offset: z.int().gte(0).optional(), // TODO: Use cursors
+  cursor: z.uuid().optional(),
 });
 export type ListWorkspaceInvitesSchema = z.infer<
   typeof ListWorkspaceInvitesSchema
@@ -56,6 +56,6 @@ export type RemoveFromWorkspaceSchema = z.infer<
 
 export const ListWorkspaceUsersSchema = z.object({
   query: z.string().min(1).optional(),
-  offset: z.number().int().gte(0).optional(), // TODO: Use cursors
+  cursor: z.uuid().optional(),
 });
 export type ListWorkspaceUsersSchema = z.infer<typeof ListWorkspaceUsersSchema>;

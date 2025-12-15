@@ -9,9 +9,8 @@ import type {
 } from "./schema.ts";
 import type { Prisma } from "@/generated/prisma/client";
 import { PAGE_LINK_TILE_PAGE_FIELDS } from "../pageLinks/pageLinks.ts";
+import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
-
-const RESULTS_PER_PAGE = 15;
 
 export const FOLDER_FIELDS = {
   id: true,
@@ -75,7 +74,7 @@ export async function deleteFolder(
 }
 
 export async function listFolders(
-  { query, offset }: ListFoldersSchema,
+  { query, cursor }: ListFoldersSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.FolderWhereInput = query
@@ -91,16 +90,14 @@ export async function listFolders(
       name: "asc",
     },
     take: RESULTS_PER_PAGE + 1,
-    skip: offset,
+    ...(cursor && { cursor: { id: cursor }, skip: 1 }),
   });
-  return {
-    folders: folders.slice(0, RESULTS_PER_PAGE),
-    hasMore: folders.length > RESULTS_PER_PAGE,
-  };
+  const { items, nextCursor } = paginate(folders, (f) => f.id);
+  return { folders: items, nextCursor };
 }
 
 export async function listPages(
-  { id, query, offset }: ListPagesSchema,
+  { id, query, cursor }: ListPagesSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.$transaction(async (transaction) => {
@@ -127,11 +124,9 @@ export async function listPages(
         createdAt: "desc",
       },
       take: RESULTS_PER_PAGE + 1,
-      skip: offset,
+      ...(cursor && { cursor: { id: cursor }, skip: 1 }),
     });
-    return {
-      pages: pages.slice(0, RESULTS_PER_PAGE),
-      hasMore: pages.length > RESULTS_PER_PAGE,
-    };
+    const { items, nextCursor } = paginate(pages, (p) => p.id);
+    return { pages: items, nextCursor };
   });
 }

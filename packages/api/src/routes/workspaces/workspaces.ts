@@ -2,6 +2,7 @@ import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
 import { createKey } from "@/utils/keys.ts";
 import { sendEmail } from "@/utils/email.ts";
 import { inviteToWorkspaceEmail } from "@/emails/inviteToWorkspace.ts";
+import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import type { Prisma } from "@/generated/prisma/client";
 import type {
   GetWorkspaceSchema,
@@ -16,8 +17,6 @@ import type {
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
-
-const RESULTS_PER_PAGE = 15;
 
 export const WORKSPACE_FIELDS = {
   id: true,
@@ -166,13 +165,13 @@ export async function deleteWorkspaceInvite(
 }
 
 export async function listWorkspaceInvites(
-  { query, offset }: ListWorkspaceInvitesSchema,
+  { query, cursor }: ListWorkspaceInvitesSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.WorkspaceInviteWhereInput = query
     ? { email: { contains: query, mode: "insensitive" } }
     : {};
-  const results = await prisma.workspaceInvite.findMany({
+  const invites = await prisma.workspaceInvite.findMany({
     where: {
       workspaceId,
       ...filter,
@@ -182,12 +181,10 @@ export async function listWorkspaceInvites(
       createdAt: "asc",
     },
     take: RESULTS_PER_PAGE + 1,
-    skip: offset,
+    ...(cursor && { cursor: { id: cursor }, skip: 1 }),
   });
-  return {
-    invites: results.slice(0, RESULTS_PER_PAGE),
-    hasMore: results.length > RESULTS_PER_PAGE,
-  };
+  const { items, nextCursor } = paginate(invites, (i) => i.id);
+  return { invites: items, nextCursor };
 }
 
 export async function removeFromWorkspace(
@@ -206,13 +203,13 @@ export async function removeFromWorkspace(
 }
 
 export async function listWorkspaceUsers(
-  { query, offset }: ListWorkspaceUsersSchema,
+  { query, cursor }: ListWorkspaceUsersSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.WorkspaceMembershipWhereInput = query
     ? { user: { name: { contains: query, mode: "insensitive" } } }
     : {};
-  const results = await prisma.workspaceMembership.findMany({
+  const memberships = await prisma.workspaceMembership.findMany({
     where: {
       workspaceId,
       ...filter,
@@ -228,10 +225,11 @@ export async function listWorkspaceUsers(
       },
     },
     take: RESULTS_PER_PAGE + 1,
-    skip: offset,
+    ...(cursor && { cursor: { id: { workspaceId, userId: cursor } }, skip: 1 }),
   });
+  const { items, nextCursor } = paginate(memberships, (m) => m.user.id);
   return {
-    users: results.slice(0, RESULTS_PER_PAGE).map((result) => result.user),
-    hasMore: results.length > RESULTS_PER_PAGE,
+    users: items.map((item) => item.user),
+    nextCursor,
   };
 }

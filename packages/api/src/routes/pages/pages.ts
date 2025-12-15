@@ -19,6 +19,7 @@ import {
 import { TABLE_WITH_DATA_FIELDS } from "@/routes/tables/tables";
 import { CHART_FIELDS } from "@/routes/charts/charts";
 import { DROPDOWN_FIELDS } from "@/routes/dropdowns/dropdowns";
+import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import type {
   GetPageByIdSchema,
   ListPagesSchema,
@@ -31,8 +32,6 @@ import type { ClientTile } from "@/types/tiles";
 import type { RequestContext, AuthenticatedRequestContext } from "@/utils/trpc";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 import type { ColorSchema } from "@/schema/Color";
-
-const RESULTS_PER_PAGE = 15;
 
 const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
 
@@ -241,7 +240,7 @@ export async function getPageById(
 }
 
 export async function listPages(
-  { query, offset }: ListPagesSchema,
+  { query, cursor }: ListPagesSchema,
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
@@ -259,16 +258,14 @@ export async function listPages(
       updatedAt: "desc",
     },
     take: RESULTS_PER_PAGE + 1,
-    skip: offset,
+    ...(cursor && { cursor: { id: cursor }, skip: 1 }),
   });
-  return {
-    pages: pages.slice(0, RESULTS_PER_PAGE),
-    hasMore: pages.length > RESULTS_PER_PAGE,
-  };
+  const { items, nextCursor } = paginate(pages, (p) => p.id);
+  return { pages: items, nextCursor };
 }
 
 export async function listSharedPages(
-  { query, offset }: ListPagesSchema,
+  { query, cursor }: ListPagesSchema,
   { userId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
@@ -285,16 +282,14 @@ export async function listSharedPages(
       updatedAt: "desc",
     },
     take: RESULTS_PER_PAGE + 1,
-    skip: offset,
+    ...(cursor && { cursor: { id: cursor }, skip: 1 }),
   });
-  return {
-    pages: pages.slice(0, RESULTS_PER_PAGE),
-    hasMore: pages.length > RESULTS_PER_PAGE,
-  };
+  const { items, nextCursor } = paginate(pages, (p) => p.id);
+  return { pages: items, nextCursor };
 }
 
 export async function listDeletedPages(
-  { query, offset }: ListPagesSchema,
+  { query, cursor }: ListPagesSchema,
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
@@ -315,12 +310,10 @@ export async function listDeletedPages(
       updatedAt: "desc",
     },
     take: RESULTS_PER_PAGE + 1,
-    skip: offset,
+    ...(cursor && { cursor: { id: cursor }, skip: 1 }),
   });
-  return {
-    pages: pages.slice(0, RESULTS_PER_PAGE),
-    hasMore: pages.length > RESULTS_PER_PAGE,
-  };
+  const { items, nextCursor } = paginate(pages, (p) => p.id);
+  return { pages: items, nextCursor };
 }
 
 export async function createPage(
