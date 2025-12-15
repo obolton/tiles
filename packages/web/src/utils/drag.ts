@@ -70,9 +70,9 @@ export interface DragStateOptions {
   clone?: boolean;
 }
 
-export class DragState<T> {
-  static attach(options: DragStateOptions): DragState<unknown> {
-    return new DragState(options);
+export class DragState<T = unknown> {
+  static attach<T = unknown>(options: DragStateOptions): DragState<T> {
+    return new DragState<T>(options);
   }
 
   readonly element: HTMLElement;
