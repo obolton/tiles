@@ -10,6 +10,7 @@ import type {
   Anchor,
   Dimensions,
   Animation,
+  MapStyle,
 } from "@/generated/prisma/client";
 import type { Section } from "@/routes/sections/sections";
 import type { Text } from "@/routes/text/text";
@@ -134,4 +135,12 @@ export type ClientTile =
   | ClientTableTile
   | ClientChartTile;
 
-export type { TileType, ChartSeries, Layout, Anchor, Dimensions, Animation };
+export type {
+  TileType,
+  ChartSeries,
+  Layout,
+  Anchor,
+  Dimensions,
+  Animation,
+  MapStyle,
+};

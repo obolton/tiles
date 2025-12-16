@@ -5,6 +5,7 @@ import type { CreateQuery } from "@/test/prisma.ts";
 
 const MOCK_MAP: Map = {
   id: "test-map",
+  style: "DEFAULT",
   places: [
     {
       id: "test-place",

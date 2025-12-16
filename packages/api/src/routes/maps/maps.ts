@@ -3,6 +3,7 @@ import {
   AddPlacesSchema,
   RemovePlaceSchema,
   UpdatePlaceSchema,
+  UpdateMapSchema,
 } from "./schema";
 import { createTile } from "../tiles/tiles";
 import type { Prisma } from "@/generated/prisma/client";
@@ -20,6 +21,7 @@ export const PLACE_FIELDS = {
 
 export const MAP_FIELDS = {
   id: true,
+  style: true,
   places: {
     select: PLACE_FIELDS,
     orderBy: { name: "asc" },
@@ -31,6 +33,7 @@ export type Map = Prisma.MapTileGetPayload<{ select: typeof MAP_FIELDS }>;
 export async function createMap({
   pageId,
   places,
+  style,
   ...properties
 }: CreateMapSchema) {
   const { map, ...tile } = await createTile(
@@ -40,6 +43,7 @@ export async function createMap({
       type: "MAP",
       map: {
         pageId,
+        style,
         places: {
           create: places.map(
             ({ name, providerId, lat, long, boundingBox, address }) => ({
@@ -128,4 +132,13 @@ export async function updatePlace({ pageId, id, place }: UpdatePlaceSchema) {
     });
     return { type: "MAP" as const, ...map };
   });
+}
+
+export async function updateMap({ pageId, id, style }: UpdateMapSchema) {
+  const map = await prisma.mapTile.update({
+    where: { pageId, id },
+    data: { style },
+    select: MAP_FIELDS,
+  });
+  return { type: "MAP" as const, ...map };
 }

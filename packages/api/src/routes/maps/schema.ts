@@ -1,11 +1,14 @@
 import { z } from "zod";
 import { CreateTileSchema } from "@/schema/Tile";
+import { MapStyle } from "@/generated/prisma/client";
 import {
   MIN_LATITUDE,
   MAX_LATITUDE,
   MIN_LONGITUDE,
   MAX_LONGITUDE,
 } from "@/constants/geo.ts";
+
+export const MapStyleSchema = z.enum(MapStyle);
 
 export const PlaceSchema = z.strictObject({
   name: z.string(),
@@ -20,6 +23,7 @@ export type PlaceSchema = z.infer<typeof PlaceSchema>;
 export const CreateMapSchema = z.strictObject({
   ...CreateTileSchema.shape,
   places: z.array(PlaceSchema).min(1).max(20),
+  style: MapStyleSchema.optional(),
 });
 export type CreateMapSchema = z.infer<typeof CreateMapSchema>;
 
@@ -45,3 +49,14 @@ export const UpdatePlaceSchema = z.strictObject({
   }),
 });
 export type UpdatePlaceSchema = z.infer<typeof UpdatePlaceSchema>;
+
+export const MapSchema = z.object({
+  style: MapStyleSchema.optional(),
+});
+
+export const UpdateMapSchema = z.strictObject({
+  pageId: z.uuid(),
+  id: z.uuid(),
+  ...MapSchema.shape,
+});
+export type UpdateMapSchema = z.infer<typeof UpdateMapSchema>;
