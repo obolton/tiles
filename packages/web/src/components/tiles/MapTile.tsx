@@ -66,6 +66,7 @@ export default function MapTile({ map, hasFocus }: MapTileProps) {
           className={styles.map}
           movable
           legend
+          mapstyle={map.style}
           on:deletemarker={deleteMarker}
         >
           <Each items={places}>
