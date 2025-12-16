@@ -1,14 +1,15 @@
 import Tile from "./Tile";
-import { array, type Reactive } from "@/utils/reactivity";
+import { array, reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
-import type { ClientMapTile, ClientPlace } from "api/types/tiles";
+import type { ClientMapTile, ClientPlace, MapStyle } from "api/types/tiles";
 import type { AppRouterInputs } from "@/api/client";
 
 export default class Map extends Tile {
   readonly type = "MAP";
 
   readonly places: Reactive<ClientPlace[]>;
+  readonly style: Reactive<MapStyle>;
 
   static async create(
     editor: Editor,
@@ -25,8 +26,9 @@ export default class Map extends Tile {
   constructor(editor: Editor, properties: ClientMapTile) {
     super(editor, properties);
 
-    const { places } = properties;
+    const { places, style } = properties;
     this.places = array(places);
+    this.style = reactive(style);
   }
 
   async addPlaces(places: Omit<ClientPlace, "id">[]) {
@@ -60,5 +62,15 @@ export default class Map extends Tile {
       placeId,
     });
     this.places.value = result.places;
+  }
+
+  async updateStyle(style: MapStyle) {
+    this.style.value = style;
+    const result = await client.maps.update.mutate({
+      pageId: this.editor.pageId,
+      id: this.id,
+      style,
+    });
+    this.style.value = result.style;
   }
 }

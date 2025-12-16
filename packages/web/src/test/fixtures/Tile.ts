@@ -112,6 +112,7 @@ export const MAP_TILE = {
   ...SHARED,
   id: "tile-id",
   type: "MAP",
+  style: "DEFAULT",
   places: [
     {
       id: "place-1",
