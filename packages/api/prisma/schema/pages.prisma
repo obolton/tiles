@@ -42,6 +42,13 @@ enum VideoType {
   YOUTUBE
 }
 
+enum MapStyle {
+  DEFAULT
+  SATELLITE
+  WATERCOLOR
+  MONOCHROME
+}
+
 enum TileType {
   SECTION
   TEXT
@@ -225,6 +232,7 @@ model MapTile {
   pageId    String   @map("page_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  style     MapStyle @default(DEFAULT)
 
   page   Page    @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tile   Tile    @relation(fields: [id], references: [id], onDelete: Cascade)
