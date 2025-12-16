@@ -7,11 +7,24 @@ import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-const STYLE_URL = `https://api.maptiler.com/maps/streets-v2/style.json?key=${import.meta.env.PUBLIC_MAPTILER_API_KEY}`;
+type MapStyleType = "DEFAULT" | "SATELLITE" | "WATERCOLOR" | "MONOCHROME";
+
+const MAP_STYLE_NAMES: Record<MapStyleType, string> = {
+  DEFAULT: "streets-v4",
+  SATELLITE: "satellite",
+  WATERCOLOR: "aquarelle",
+  MONOCHROME: "toner-v2",
+};
+
+function getStyleUrl(style: MapStyleType = "DEFAULT") {
+  const slug = MAP_STYLE_NAMES[style] ?? MAP_STYLE_NAMES.DEFAULT;
+  return `https://api.maptiler.com/maps/${slug}/style.json?key=${import.meta.env.PUBLIC_MAPTILER_API_KEY}`;
+}
 
 export interface MapViewAttributes extends GlobalHTMLAttributes {
   movable?: boolean;
   legend?: boolean;
+  mapstyle?: MapStyleType;
 }
 
 declare global {
@@ -30,6 +43,7 @@ export default class MapView extends HTMLElement {
   static readonly observedAttributes: (keyof MapViewAttributes)[] = [
     "movable",
     "legend",
+    "mapstyle",
   ] as const;
 
   private root: HTMLElement;
@@ -37,6 +51,18 @@ export default class MapView extends HTMLElement {
   private mutationObserver: MutationObserver;
   private map?: maplibregl.Map;
   private markers: maplibregl.Marker[] = [];
+
+  get mapStyle(): MapStyleType {
+    const style = this.getAttribute("mapstyle");
+    if (style && style in MAP_STYLE_NAMES) {
+      return style as MapStyleType;
+    }
+    return "DEFAULT";
+  }
+
+  set mapStyle(value: MapStyleType) {
+    this.setAttribute("mapstyle", value);
+  }
 
   constructor() {
     super();
@@ -118,7 +144,7 @@ export default class MapView extends HTMLElement {
 
     this.map = new maplibregl.Map({
       container: this.root,
-      style: STYLE_URL,
+      style: getStyleUrl(this.mapStyle),
       center:
         markers.length === 1 ? [markers[0]!.long, markers[0]!.lat] : undefined,
       bounds: this.getBounds(),
@@ -166,6 +192,9 @@ export default class MapView extends HTMLElement {
         } else {
           this.showLegend();
         }
+        break;
+      case "mapstyle":
+        this.map.setStyle(getStyleUrl(this.mapStyle));
         break;
     }
   }
