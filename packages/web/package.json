@@ -23,6 +23,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "api": "workspace:*",
     "@codemirror/commands": "^6.10.0",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.39.4",

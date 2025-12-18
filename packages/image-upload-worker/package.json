@@ -16,6 +16,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "api": "workspace:*",
     "@trpc/client": "^11.5.1",
     "cookie": "^1.0.2"
   },
