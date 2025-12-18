@@ -9,12 +9,12 @@ import {
 } from "@/components/headings/themes";
 import { MIN_TEXT_SIZE, MAX_TEXT_SIZE } from "@/constants/formatting";
 import { reactive } from "@/utils/reactivity";
+import Code from "./Code";
 import type {
   RichText,
   ParagraphNode,
   HeadingNode,
   QuoteNode,
-  CodeNode,
   ListNode,
   ListItemNode,
   Node,
@@ -135,20 +135,6 @@ function Quote({ node }: QuoteProps) {
     <blockquote>
       {node.children.length > 0 ? renderNodes(node.children) : <br />}
     </blockquote>
-  );
-}
-
-interface CodeProps {
-  node: CodeNode;
-}
-
-function Code({ node }: CodeProps) {
-  return (
-    <pre>
-      <code>
-        {node.children.length > 0 ? renderNodes(node.children) : <br />}
-      </code>
-    </pre>
   );
 }
 
