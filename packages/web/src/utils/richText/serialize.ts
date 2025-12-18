@@ -109,7 +109,7 @@ function serializeNode(node: Node): SerializedNode {
   if (node.type === nodes.code) {
     return {
       type: "code",
-      language: node.attrs.language as string | null,
+      language: node.attrs.language as string,
       children: node.children.map(serializeNode) as TextNode[],
     };
   }
