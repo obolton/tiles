@@ -83,7 +83,7 @@ const ListNodeSchema = z.object({
 
 const CodeNodeSchema = z.object({
   type: z.literal("code"),
-  language: z.string().nullable(),
+  language: z.string(),
   children: z.array(TextNodeSchema),
 });
 
