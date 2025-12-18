@@ -1,0 +1,128 @@
+/* stylelint-disable selector-class-pattern */
+
+.tok-keyword {
+  color: #cf222e;
+}
+
+.tok-comment {
+  color: #57606a;
+  font-style: italic;
+}
+
+.tok-string,
+.tok-string2 {
+  color: #0a3069;
+}
+
+.tok-number {
+  color: #0550ae;
+}
+
+.tok-bool {
+  color: #0550ae;
+}
+
+.tok-null {
+  color: #0550ae;
+}
+
+.tok-className {
+  color: #953800;
+}
+
+.tok-function {
+  color: #8250df;
+}
+
+.tok-definition {
+  color: inherit;
+}
+
+.tok-variableName {
+  color: inherit;
+}
+
+.tok-propertyName {
+  color: #0550ae;
+}
+
+.tok-operator {
+  color: #cf222e;
+}
+
+.tok-punctuation {
+  color: inherit;
+}
+
+.tok-typeName {
+  color: #953800;
+}
+
+.tok-tagName {
+  color: #116329;
+}
+
+.tok-attributeName {
+  color: #0550ae;
+}
+
+.tok-attributeValue {
+  color: #0a3069;
+}
+
+.tok-regexp {
+  color: #0a3069;
+}
+
+.tok-escape {
+  color: #0550ae;
+}
+
+.tok-meta {
+  color: #8250df;
+}
+
+.tok-atom {
+  color: #0550ae;
+}
+
+.tok-namespace {
+  color: #953800;
+}
+
+.tok-labelName {
+  color: inherit;
+}
+
+.tok-literal {
+  color: #0550ae;
+}
+
+.tok-inserted {
+  color: #116329;
+}
+
+.tok-deleted {
+  color: #cf222e;
+}
+
+.tok-link {
+  color: #0550ae;
+  text-decoration: underline;
+}
+
+.tok-heading {
+  font-weight: bold;
+}
+
+.tok-emphasis {
+  font-style: italic;
+}
+
+.tok-strong {
+  font-weight: bold;
+}
+
+.tok-invalid {
+  color: #cf222e;
+}
