@@ -6,7 +6,7 @@ export interface HighlightedSpan {
   className: string | null;
 }
 
-export async function highlightCode(
+export async function highlight(
   code: string,
   language: string,
 ): Promise<HighlightedSpan[]> {
