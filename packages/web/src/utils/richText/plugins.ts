@@ -10,6 +10,7 @@ import { headings } from "./headings";
 import { prompt } from "./prompt";
 import { dropdowns } from "./dropdowns";
 import { mentions } from "./mentions";
+import { code } from "./code/code";
 import type { Plugin } from "prosemirror-state";
 
 export function getPlugins(): Plugin[] {
@@ -25,5 +26,6 @@ export function getPlugins(): Plugin[] {
     prompt(),
     dropdowns(),
     mentions(),
+    code(),
   ];
 }
