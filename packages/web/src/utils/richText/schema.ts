@@ -242,7 +242,7 @@ const nodesSpec = {
 
   code: {
     attrs: {
-      language: { default: null, validate: "string|null" },
+      language: { default: "", validate: "string" },
     },
     content: "text*",
     group: "block",
