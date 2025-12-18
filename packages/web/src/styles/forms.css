@@ -240,10 +240,14 @@ list-box {
     0 4px 12px -4px rgb(0 0 0 / 30%);
 }
 
+/* TODO: Use CSS layers to avoid needing !important here */
 ul.menuitemgroup {
   position: relative;
   display: flex;
   flex-direction: column;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
 
   &.inline {
     flex-direction: row;
@@ -260,5 +264,10 @@ ul.menuitemgroup {
       border-radius: 1px;
       background: rgb(0 0 0 / 5%);
     }
+  }
+
+  & > li {
+    margin: 0;
+    padding: 0;
   }
 }
