@@ -16,9 +16,9 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "api": "workspace:*",
     "@trpc/client": "^11.5.1",
-    "cookie": "^1.0.2"
+    "api": "workspace:*",
+    "cookie": "^1.1.1"
   },
   "devDependencies": {
     "wrangler": "^4.44.0"

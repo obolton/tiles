@@ -51,8 +51,8 @@ importers:
         specifier: ^5.1.0
         version: 5.2.0
       cookie:
-        specifier: ^1.0.2
-        version: 1.1.0
+        specifier: ^1.1.1
+        version: 1.1.1
       cors:
         specifier: ^2.8.5
         version: 2.8.5
@@ -97,8 +97,8 @@ importers:
         specifier: workspace:*
         version: link:../api
       cookie:
-        specifier: ^1.0.2
-        version: 1.1.0
+        specifier: ^1.1.1
+        version: 1.1.1
     devDependencies:
       wrangler:
         specifier: ^4.44.0
@@ -2125,8 +2125,8 @@ packages:
     resolution: {integrity: sha512-5IKcdX0nnYavi6G7TtOhwkYzyjfJlatbjMjuLSfE2kYT5pMDOilZ4OvMhi637CcDICTmz3wARPoyhqyX1Y+XvA==}
     engines: {node: ^14.18.0 || >=16.10.0}
 
-  cookie@1.1.0:
-    resolution: {integrity: sha512-vXiThu1/rlos7EGu8TuNZQEg2e9TvhH9dmS4T4ZVzB7Ao1agEZ6EG3sn5n+hZRYUgduISd1HpngFzAZiDGm5vQ==}
+  cookie@1.1.1:
+    resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
     engines: {node: '>=18'}
 
   cors@2.8.5:
@@ -5997,7 +5997,7 @@ snapshots:
 
   consola@3.4.2: {}
 
-  cookie@1.1.0: {}
+  cookie@1.1.1: {}
 
   cors@2.8.5:
     dependencies:
@@ -7747,7 +7747,7 @@ snapshots:
       '@poppinss/colors': 4.1.5
       '@poppinss/dumper': 0.6.5
       '@speed-highlight/core': 1.2.12
-      cookie: 1.1.0
+      cookie: 1.1.1
       youch-core: 0.3.3
 
   zeptomatch@2.0.2:
