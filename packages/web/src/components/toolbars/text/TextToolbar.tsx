@@ -58,162 +58,167 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
       className="primary"
       aria-label="Text toolbar"
       data-tooltip-position="top"
+      name="text-toolbar"
     >
-      <FormattingTools editorView={editorView} state={text.state} />
+      <toolbar-tab label="Text">
+        <FormattingTools editorView={editorView} state={text.state} />
+      </toolbar-tab>
 
-      <ul role="group" aria-label="Layout">
-        <li role="presentation">
-          <ColorPicker
-            id={`${id}-color-picker`}
-            value={textColor}
-            onChange={(color) => text.setTextColor(color)}
-          />
-        </li>
+      <toolbar-tab label="Style">
+        <ul role="group" aria-label="Style">
+          <li role="presentation">
+            <ColorPicker
+              id={`${id}-color-picker`}
+              value={textColor}
+              onChange={(color) => text.setTextColor(color)}
+            />
+          </li>
 
-        <li role="presentation">
-          <FillPicker
-            id={`${text.id}-background`}
-            value={background}
-            onChange={(background) => text.setBackground(background)}
-          />
-        </li>
+          <li role="presentation">
+            <FillPicker
+              id={`${text.id}-background`}
+              value={background}
+              onChange={(background) => text.setBackground(background)}
+            />
+          </li>
 
-        <li role="presentation">
-          <ToolbarButton
-            label="Size to fit contents"
-            aria-pressed={block}
-            on:click={toggleBlock}
-          >
-            <ExpandHeightIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
+          <li role="presentation">
+            <ToolbarButton
+              label="Size to fit contents"
+              aria-pressed={block}
+              on:click={toggleBlock}
+            >
+              <ExpandHeightIcon aria-hidden="true" />
+            </ToolbarButton>
+          </li>
 
-        {block.derive((value) =>
-          !value ? (
-            <li role="presentation">
-              <swatch-select
-                role="menuitem"
-                label="Vertical position"
-                data-tooltip="Vertical position"
-                aria-orientation="vertical"
-                orientation="vertical"
-                align="center"
-                value={align}
-                on:change={(event) =>
-                  text.setVerticalAlignment(
-                    (event.currentTarget as SwatchSelect).value as
-                      | "TOP"
-                      | "CENTER"
-                      | "BOTTOM",
-                  )
-                }
-              >
-                <ul className="menuitemgroup" role="group">
-                  <li role="presentation">
-                    <MenuItem
-                      classList={{ menuitem: true }}
-                      icon={<VerticalAlignTopIcon aria-hidden="true" />}
-                      value="TOP"
-                    >
-                      Top
-                    </MenuItem>
-                  </li>
-
-                  <li role="presentation">
-                    <MenuItem
-                      classList={{ menuitem: true }}
-                      icon={<VerticalAlignCenterIcon aria-hidden="true" />}
-                      value="CENTER"
-                    >
-                      Center
-                    </MenuItem>
-                  </li>
-
-                  <li role="presentation">
-                    <MenuItem
-                      classList={{ menuitem: true }}
-                      icon={<VerticalAlignBottomIcon aria-hidden="true" />}
-                      value="BOTTOM"
-                    >
-                      Bottom
-                    </MenuItem>
-                  </li>
-                </ul>
-              </swatch-select>
-            </li>
-          ) : null,
-        )}
-
-        <li role="presentation">
-          <swatch-select
-            role="menuitem"
-            label="Animation"
-            data-tooltip="Animation"
-            aria-orientation="vertical"
-            orientation="vertical"
-            align="center"
-            value={animation}
-            on:change={(event) =>
-              text.setAnimation(
-                (event.currentTarget as SwatchSelect).value as Animation,
-              )
-            }
-          >
-            <AnimationIcon aria-hidden="true" slot="default-icon" />
-            <ul className="menuitemgroup" role="group">
+          {block.derive((value) =>
+            !value ? (
               <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<StopIcon aria-hidden="true" />}
-                  value=""
+                <swatch-select
+                  role="menuitem"
+                  label="Vertical position"
+                  data-tooltip="Vertical position"
+                  aria-orientation="vertical"
+                  orientation="vertical"
+                  align="center"
+                  value={align}
+                  on:change={(event) =>
+                    text.setVerticalAlignment(
+                      (event.currentTarget as SwatchSelect).value as
+                        | "TOP"
+                        | "CENTER"
+                        | "BOTTOM",
+                    )
+                  }
                 >
-                  None
-                </MenuItem>
-              </li>
+                  <ul className="menuitemgroup" role="group">
+                    <li role="presentation">
+                      <MenuItem
+                        classList={{ menuitem: true }}
+                        icon={<VerticalAlignTopIcon aria-hidden="true" />}
+                        value="TOP"
+                      >
+                        Top
+                      </MenuItem>
+                    </li>
 
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<FadeIcon aria-hidden="true" />}
-                  value="FADE"
-                >
-                  Fade
-                </MenuItem>
-              </li>
+                    <li role="presentation">
+                      <MenuItem
+                        classList={{ menuitem: true }}
+                        icon={<VerticalAlignCenterIcon aria-hidden="true" />}
+                        value="CENTER"
+                      >
+                        Center
+                      </MenuItem>
+                    </li>
 
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<SlideIcon aria-hidden="true" />}
-                  value="SLIDE"
-                >
-                  Slide
-                </MenuItem>
+                    <li role="presentation">
+                      <MenuItem
+                        classList={{ menuitem: true }}
+                        icon={<VerticalAlignBottomIcon aria-hidden="true" />}
+                        value="BOTTOM"
+                      >
+                        Bottom
+                      </MenuItem>
+                    </li>
+                  </ul>
+                </swatch-select>
               </li>
+            ) : null,
+          )}
 
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<GrowIcon aria-hidden="true" />}
-                  value="GROW"
-                >
-                  Grow
-                </MenuItem>
-              </li>
+          <li role="presentation">
+            <swatch-select
+              role="menuitem"
+              label="Animation"
+              data-tooltip="Animation"
+              aria-orientation="vertical"
+              orientation="vertical"
+              align="center"
+              value={animation}
+              on:change={(event) =>
+                text.setAnimation(
+                  (event.currentTarget as SwatchSelect).value as Animation,
+                )
+              }
+            >
+              <AnimationIcon aria-hidden="true" slot="default-icon" />
+              <ul className="menuitemgroup" role="group">
+                <li role="presentation">
+                  <MenuItem
+                    classList={{ menuitem: true }}
+                    icon={<StopIcon aria-hidden="true" />}
+                    value=""
+                  >
+                    None
+                  </MenuItem>
+                </li>
 
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<ShrinkIcon aria-hidden="true" />}
-                  value="SHRINK"
-                >
-                  Shrink
-                </MenuItem>
-              </li>
-            </ul>
-          </swatch-select>
-        </li>
-      </ul>
+                <li role="presentation">
+                  <MenuItem
+                    classList={{ menuitem: true }}
+                    icon={<FadeIcon aria-hidden="true" />}
+                    value="FADE"
+                  >
+                    Fade
+                  </MenuItem>
+                </li>
+
+                <li role="presentation">
+                  <MenuItem
+                    classList={{ menuitem: true }}
+                    icon={<SlideIcon aria-hidden="true" />}
+                    value="SLIDE"
+                  >
+                    Slide
+                  </MenuItem>
+                </li>
+
+                <li role="presentation">
+                  <MenuItem
+                    classList={{ menuitem: true }}
+                    icon={<GrowIcon aria-hidden="true" />}
+                    value="GROW"
+                  >
+                    Grow
+                  </MenuItem>
+                </li>
+
+                <li role="presentation">
+                  <MenuItem
+                    classList={{ menuitem: true }}
+                    icon={<ShrinkIcon aria-hidden="true" />}
+                    value="SHRINK"
+                  >
+                    Shrink
+                  </MenuItem>
+                </li>
+              </ul>
+            </swatch-select>
+          </li>
+        </ul>
+      </toolbar-tab>
 
       <TileTools tile={text} />
     </floating-toolbar>
