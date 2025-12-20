@@ -34,8 +34,6 @@ function preventDefault(event: Event) {
 export default class FloatingToolbar extends HTMLElement {
   private internals: ElementInternals;
   private tabBar: HTMLElement;
-  private contentSlot: HTMLSlotElement;
-  private persistentSlot: HTMLSlotElement;
   private mutationObserver: MutationObserver;
 
   #selectedTabIndex = 0;
@@ -46,10 +44,7 @@ export default class FloatingToolbar extends HTMLElement {
     this.internals = this.attachInternals();
     this.internals.role = "menubar";
 
-    const shadow = this.attachShadow({
-      mode: "open",
-      slotAssignment: "manual",
-    });
+    const shadow = this.attachShadow({ mode: "open" });
     shadow.adoptedStyleSheets = [stylesheet];
 
     // Tab bar
@@ -58,17 +53,10 @@ export default class FloatingToolbar extends HTMLElement {
     this.tabBar.role = "tablist";
     this.tabBar.ariaLabel = "Toolbar sections";
 
-    // Content container
+    // Content container with single slot
     const content = document.createElement("div");
     content.id = "content";
-
-    this.contentSlot = document.createElement("slot");
-    this.contentSlot.id = "tab-content";
-
-    this.persistentSlot = document.createElement("slot");
-    this.persistentSlot.id = "persistent";
-
-    content.append(this.contentSlot, this.persistentSlot);
+    content.append(document.createElement("slot"));
     shadow.append(this.tabBar, content);
 
     // Watch for child changes
@@ -110,10 +98,6 @@ export default class FloatingToolbar extends HTMLElement {
     return this.querySelectorAll<ToolbarTab>("toolbar-tab");
   }
 
-  private get persistentChildren(): NodeListOf<Element> {
-    return this.querySelectorAll(":scope > :not(toolbar-tab)");
-  }
-
   private buildTabBar() {
     const tabs = this.tabs;
     this.tabBar.replaceChildren();
@@ -143,25 +127,15 @@ export default class FloatingToolbar extends HTMLElement {
       this.tabBar.append(button);
     });
 
-    this.updateSlotAssignment();
+    this.updateTabSelection();
   }
 
-  private updateSlotAssignment() {
-    const tabs = this.tabs;
-    const persistent = this.persistentChildren;
-
-    // Assign selected tab to content slot
-    if (tabs.length > 0) {
-      const selectedTab = tabs[this.#selectedTabIndex];
-      if (selectedTab) {
-        this.contentSlot.assign(selectedTab);
-      }
-      tabs.forEach((tab, i) => {
-        tab.selected = i === this.#selectedTabIndex;
-      });
-    }
-
-    this.persistentSlot.assign(...persistent);
+  private updateTabSelection() {
+    this.tabs.forEach((tab, i) => {
+      tab.selected = i === this.#selectedTabIndex;
+      tab.classList.toggle("before", i < this.#selectedTabIndex);
+      tab.classList.toggle("after", i > this.#selectedTabIndex);
+    });
   }
 
   private selectTab(index: number) {
@@ -170,24 +144,10 @@ export default class FloatingToolbar extends HTMLElement {
       return;
     }
 
-    const direction = index > this.#selectedTabIndex ? "left" : "right";
-
     this.#selectedTabIndex = index;
-    this.updateSlotAssignment();
+    this.updateTabSelection();
     this.updateTabButtons();
     this.persistTabSelection();
-
-    // Animate the new tab sliding in
-    tabs[index]?.animate(
-      [
-        { translate: direction === "left" ? "50% 0" : "-50% 0", opacity: 0 },
-        { translate: "0 0", opacity: 1 },
-      ],
-      {
-        duration: 200,
-        easing: "ease-out",
-      },
-    );
 
     this.dispatchEvent(new Event("tabchange"));
   }
@@ -228,7 +188,7 @@ export default class FloatingToolbar extends HTMLElement {
     }
 
     this.#selectedTabIndex = index;
-    this.updateSlotAssignment();
+    this.updateTabSelection();
     this.updateTabButtons();
   }
 

@@ -56,14 +56,6 @@
 }
 
 #content {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  background: var(--ui-background-color);
-  backdrop-filter: blur(24px);
-  border-radius: 32px;
-  box-shadow:
-    0 0 0 1px rgb(0 0 0 / 15%),
-    0 4px 12px -4px rgb(0 0 0 / 30%);
+  display: grid;
+  place-items: center;
 }
