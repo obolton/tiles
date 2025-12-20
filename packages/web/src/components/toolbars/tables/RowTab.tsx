@@ -8,12 +8,12 @@ import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
 import type { FillUpdate } from "@/components/fills/types";
 
-export interface RowToolbarProps {
+export interface RowTabProps {
   table: Table;
   getTable: () => TableView;
 }
 
-export default function RowToolbar({ table, getTable }: RowToolbarProps) {
+export default function RowTab({ table, getTable }: RowTabProps) {
   const { id, rows } = table;
 
   function getSelectedRow() {
@@ -82,34 +82,28 @@ export default function RowToolbar({ table, getTable }: RowToolbarProps) {
   }
 
   return (
-    <floating-toolbar
-      className="primary"
-      data-tooltip-position="top"
-      aria-label="Row tools"
-    >
-      <toolbar-tab label="Row">
-        <ul role="group">
-          <li role="presentation">
-            <FillPicker
-              id={`${id}-row-background`}
-              label="Background"
-              value={background}
-              onChange={setBackground}
-            />
-          </li>
-          <li role="presentation">
-            <ToolbarButton label="Add row" on:click={addRow}>
-              <AddRowIcon aria-hidden="true" />
-              Add row
-            </ToolbarButton>
-          </li>
-          <li role="presentation">
-            <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
-              <DeleteIcon aria-hidden="true" />
-            </ToolbarButton>
-          </li>
-        </ul>
-      </toolbar-tab>
-    </floating-toolbar>
+    <toolbar-tab label="Row">
+      <ul role="group">
+        <li role="presentation">
+          <FillPicker
+            id={`${id}-row-background`}
+            label="Background"
+            value={background}
+            onChange={setBackground}
+          />
+        </li>
+        <li role="presentation">
+          <ToolbarButton label="Add row" on:click={addRow}>
+            <AddRowIcon aria-hidden="true" />
+            Add row
+          </ToolbarButton>
+        </li>
+        <li role="presentation">
+          <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
+            <DeleteIcon aria-hidden="true" />
+          </ToolbarButton>
+        </li>
+      </ul>
+    </toolbar-tab>
   );
 }

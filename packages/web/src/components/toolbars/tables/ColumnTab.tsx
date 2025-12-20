@@ -10,12 +10,12 @@ import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
 import type { FillUpdate } from "@/components/fills/types";
 
-export interface ColumnToolbarProps {
+export interface ColumnTabProps {
   table: Table;
   getTable: () => TableView;
 }
 
-export default function ColumnToolbar({ table, getTable }: ColumnToolbarProps) {
+export default function ColumnTab({ table, getTable }: ColumnTabProps) {
   const { id, sectionId, editor, columns } = table;
 
   function getSelectedColumn() {
@@ -102,40 +102,34 @@ export default function ColumnToolbar({ table, getTable }: ColumnToolbarProps) {
   }
 
   return (
-    <floating-toolbar
-      className="primary"
-      data-tooltip-position="top"
-      aria-label="Column tools"
-    >
-      <toolbar-tab label="Column">
-        <ul role="group">
-          <li role="presentation">
-            <FillPicker
-              id={`${id}-column-background`}
-              label="Background"
-              value={background}
-              onChange={setBackground}
-            />
-          </li>
-          <li role="presentation">
-            <ToolbarButton label="Add column" on:click={addColumn}>
-              <AddColumnIcon aria-hidden="true" />
-              Add column
-            </ToolbarButton>
-          </li>
-          <li role="presentation">
-            <ToolbarButton label="Create chart" on:click={createChart}>
-              <ChartIcon aria-hidden="true" />
-              Create chart
-            </ToolbarButton>
-          </li>
-          <li role="presentation">
-            <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
-              <DeleteIcon aria-hidden="true" />
-            </ToolbarButton>
-          </li>
-        </ul>
-      </toolbar-tab>
-    </floating-toolbar>
+    <toolbar-tab label="Column">
+      <ul role="group">
+        <li role="presentation">
+          <FillPicker
+            id={`${id}-column-background`}
+            label="Background"
+            value={background}
+            onChange={setBackground}
+          />
+        </li>
+        <li role="presentation">
+          <ToolbarButton label="Add column" on:click={addColumn}>
+            <AddColumnIcon aria-hidden="true" />
+            Add column
+          </ToolbarButton>
+        </li>
+        <li role="presentation">
+          <ToolbarButton label="Create chart" on:click={createChart}>
+            <ChartIcon aria-hidden="true" />
+            Create chart
+          </ToolbarButton>
+        </li>
+        <li role="presentation">
+          <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
+            <DeleteIcon aria-hidden="true" />
+          </ToolbarButton>
+        </li>
+      </ul>
+    </toolbar-tab>
   );
 }
