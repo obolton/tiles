@@ -138,7 +138,7 @@ export default class FloatingToolbar extends HTMLElement {
     });
   }
 
-  private selectTab(index: number) {
+  selectTab(index: number) {
     const tabs = this.tabs;
     if (index === this.#selectedTabIndex || index < 0 || index >= tabs.length) {
       return;
