@@ -62,6 +62,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
     >
       <toolbar-tab label="Text">
         <FormattingTools editorView={editorView} state={text.state} />
+        <TileTools tile={text} />
       </toolbar-tab>
 
       <toolbar-tab label="Style">
@@ -218,9 +219,8 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
             </swatch-select>
           </li>
         </ul>
+        <TileTools tile={text} />
       </toolbar-tab>
-
-      <TileTools tile={text} />
     </floating-toolbar>
   );
 }
