@@ -25,7 +25,11 @@ export default function SelectionToolbar() {
 
         <ul role="group" aria-label="More tools">
           <li role="presentation">
-            <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
+            <ToolbarButton
+              label="Delete"
+              destructive
+              on:click={deleteSelection}
+            >
               <DeleteIcon aria-hidden="true" />
             </ToolbarButton>
           </li>
