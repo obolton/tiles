@@ -35,24 +35,26 @@ export default function TableToolbar({ table }: TableToolbarProps) {
       data-tooltip-position="top"
       aria-label="Table tools"
     >
-      <ul role="group">
-        <li role="presentation">
-          <ColorPicker
-            id={`${id}-color-picker`}
-            value={textColor}
-            onChange={setTextColor}
-          />
-        </li>
-        <li role="presentation">
-          <FillPicker
-            id={`${id}-background`}
-            value={background}
-            onChange={setBackground}
-          />
-        </li>
-      </ul>
+      <toolbar-tab label="Table">
+        <ul role="group">
+          <li role="presentation">
+            <ColorPicker
+              id={`${id}-color-picker`}
+              value={textColor}
+              onChange={setTextColor}
+            />
+          </li>
+          <li role="presentation">
+            <FillPicker
+              id={`${id}-background`}
+              value={background}
+              onChange={setBackground}
+            />
+          </li>
+        </ul>
 
-      <TileTools tile={table} />
+        <TileTools tile={table} />
+      </toolbar-tab>
     </floating-toolbar>
   );
 }

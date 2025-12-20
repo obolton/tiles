@@ -29,36 +29,38 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
       data-tooltip-position="top"
       aria-label="Chart tools"
     >
-      <ul role="group" aria-label="Chart tools">
-        <li role="presentation">
-          <ToolbarButton
-            id={`${chart.id}-series-button`}
-            label="Series"
-            popovertarget={`${chart.id}-series-panel`}
-            aria-haspopup="menu"
-          >
-            <ChartIcon aria-hidden="true" />
-            Series
-          </ToolbarButton>
+      <toolbar-tab label="Chart">
+        <ul role="group" aria-label="Chart tools">
+          <li role="presentation">
+            <ToolbarButton
+              id={`${chart.id}-series-button`}
+              label="Series"
+              popovertarget={`${chart.id}-series-panel`}
+              aria-haspopup="menu"
+            >
+              <ChartIcon aria-hidden="true" />
+              Series
+            </ToolbarButton>
 
-          <SeriesPanel
-            id={`${chart.id}-series-panel`}
-            anchor={`${chart.id}-series-button`}
-            chart={chart}
-            table={table}
-          />
-        </li>
-        <li role="presentation">
-          <FillPicker
-            id={`${chart.id}-background`}
-            label="Background"
-            value={chart.background}
-            onChange={setBackground}
-          />
-        </li>
-      </ul>
+            <SeriesPanel
+              id={`${chart.id}-series-panel`}
+              anchor={`${chart.id}-series-button`}
+              chart={chart}
+              table={table}
+            />
+          </li>
+          <li role="presentation">
+            <FillPicker
+              id={`${chart.id}-background`}
+              label="Background"
+              value={chart.background}
+              onChange={setBackground}
+            />
+          </li>
+        </ul>
 
-      <TileTools tile={chart} />
+        <TileTools tile={chart} />
+      </toolbar-tab>
     </floating-toolbar>
   );
 }

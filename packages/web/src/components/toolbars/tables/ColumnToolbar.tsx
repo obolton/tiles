@@ -107,33 +107,35 @@ export default function ColumnToolbar({ table, getTable }: ColumnToolbarProps) {
       data-tooltip-position="top"
       aria-label="Column tools"
     >
-      <ul role="group">
-        <li role="presentation">
-          <FillPicker
-            id={`${id}-column-background`}
-            label="Background"
-            value={background}
-            onChange={setBackground}
-          />
-        </li>
-        <li role="presentation">
-          <ToolbarButton label="Add column" on:click={addColumn}>
-            <AddColumnIcon aria-hidden="true" />
-            Add column
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <ToolbarButton label="Create chart" on:click={createChart}>
-            <ChartIcon aria-hidden="true" />
-            Create chart
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
-            <DeleteIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-      </ul>
+      <toolbar-tab label="Column">
+        <ul role="group">
+          <li role="presentation">
+            <FillPicker
+              id={`${id}-column-background`}
+              label="Background"
+              value={background}
+              onChange={setBackground}
+            />
+          </li>
+          <li role="presentation">
+            <ToolbarButton label="Add column" on:click={addColumn}>
+              <AddColumnIcon aria-hidden="true" />
+              Add column
+            </ToolbarButton>
+          </li>
+          <li role="presentation">
+            <ToolbarButton label="Create chart" on:click={createChart}>
+              <ChartIcon aria-hidden="true" />
+              Create chart
+            </ToolbarButton>
+          </li>
+          <li role="presentation">
+            <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
+              <DeleteIcon aria-hidden="true" />
+            </ToolbarButton>
+          </li>
+        </ul>
+      </toolbar-tab>
     </floating-toolbar>
   );
 }

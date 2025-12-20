@@ -15,7 +15,9 @@ export default function CellToolbar({ editorView, state }: CellToolbarProps) {
       data-tooltip-position="top"
       aria-label="Cell tools"
     >
-      <FormattingTools editorView={editorView} state={state} />
+      <toolbar-tab label="Cell">
+        <FormattingTools editorView={editorView} state={state} />
+      </toolbar-tab>
     </floating-toolbar>
   );
 }

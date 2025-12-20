@@ -16,9 +16,10 @@ export default function ImageToolbar({ image, editorView }: ImageToolbarProps) {
       data-tooltip-position="top"
       aria-label="Image tools"
     >
-      <FormattingTools editorView={editorView} state={image.state} />
-
-      <TileTools tile={image} />
+      <toolbar-tab label="Image">
+        <FormattingTools editorView={editorView} state={image.state} />
+        <TileTools tile={image} />
+      </toolbar-tab>
     </floating-toolbar>
   );
 }

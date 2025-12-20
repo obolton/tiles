@@ -14,21 +14,23 @@ export default function SelectionToolbar() {
       data-tooltip-position="top"
       aria-label="Selection tools"
     >
-      <ul role="group" aria-label="AI tools">
-        <li role="presentation">
-          <ToolbarButton label="AI">
-            <AIIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-      </ul>
+      <toolbar-tab label="Selection">
+        <ul role="group" aria-label="AI tools">
+          <li role="presentation">
+            <ToolbarButton label="AI">
+              <AIIcon aria-hidden="true" />
+            </ToolbarButton>
+          </li>
+        </ul>
 
-      <ul role="group" aria-label="More tools">
-        <li role="presentation">
-          <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
-            <DeleteIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-      </ul>
+        <ul role="group" aria-label="More tools">
+          <li role="presentation">
+            <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
+              <DeleteIcon aria-hidden="true" />
+            </ToolbarButton>
+          </li>
+        </ul>
+      </toolbar-tab>
     </floating-toolbar>
   );
 }

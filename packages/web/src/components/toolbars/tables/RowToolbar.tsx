@@ -87,27 +87,29 @@ export default function RowToolbar({ table, getTable }: RowToolbarProps) {
       data-tooltip-position="top"
       aria-label="Row tools"
     >
-      <ul role="group">
-        <li role="presentation">
-          <FillPicker
-            id={`${id}-row-background`}
-            label="Background"
-            value={background}
-            onChange={setBackground}
-          />
-        </li>
-        <li role="presentation">
-          <ToolbarButton label="Add row" on:click={addRow}>
-            <AddRowIcon aria-hidden="true" />
-            Add row
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
-            <DeleteIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-      </ul>
+      <toolbar-tab label="Row">
+        <ul role="group">
+          <li role="presentation">
+            <FillPicker
+              id={`${id}-row-background`}
+              label="Background"
+              value={background}
+              onChange={setBackground}
+            />
+          </li>
+          <li role="presentation">
+            <ToolbarButton label="Add row" on:click={addRow}>
+              <AddRowIcon aria-hidden="true" />
+              Add row
+            </ToolbarButton>
+          </li>
+          <li role="presentation">
+            <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
+              <DeleteIcon aria-hidden="true" />
+            </ToolbarButton>
+          </li>
+        </ul>
+      </toolbar-tab>
     </floating-toolbar>
   );
 }

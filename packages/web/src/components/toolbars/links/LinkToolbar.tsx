@@ -36,16 +36,18 @@ export default function LinkToolbar({ link }: LinkToolbarProps) {
       aria-label="Link toolbar"
       data-tooltip-position="top"
     >
-      <ul role="group" aria-label="Layout">
-        <li role="presentation">
-          <ToolbarButton on:click={editLink}>
-            <LinkIcon aria-hidden="true" />
-            Edit link
-          </ToolbarButton>
-        </li>
-      </ul>
+      <toolbar-tab label="Link">
+        <ul role="group" aria-label="Layout">
+          <li role="presentation">
+            <ToolbarButton on:click={editLink}>
+              <LinkIcon aria-hidden="true" />
+              Edit link
+            </ToolbarButton>
+          </li>
+        </ul>
 
-      <TileTools tile={link} />
+        <TileTools tile={link} />
+      </toolbar-tab>
     </floating-toolbar>
   );
 }
