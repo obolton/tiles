@@ -15,7 +15,6 @@ export default function ToolbarButton({
   return (
     <button
       type="button"
-      role="menuitem"
       classList={{ floating: true, destructive, ...classList }}
       aria-label={label}
       data-tooltip={label}

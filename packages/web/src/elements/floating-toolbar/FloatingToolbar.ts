@@ -42,7 +42,7 @@ export default class FloatingToolbar extends HTMLElement {
     super();
 
     this.internals = this.attachInternals();
-    this.internals.role = "menubar";
+    this.internals.role = "toolbar";
 
     const shadow = this.attachShadow({ mode: "open" });
     shadow.adoptedStyleSheets = [stylesheet];
