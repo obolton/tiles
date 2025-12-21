@@ -37,28 +37,6 @@ floating-toolbar {
     inset: auto 32px 32px auto;
   }
 
-  & > ul,
-  & > toolbar-tab > ul {
-    position: relative;
-    display: flex;
-    flex-direction: inherit;
-    align-items: center;
-    gap: 4px;
-
-    &:not(:last-child) {
-      padding: 0 12px 0 0;
-
-      &::after {
-        content: "";
-        position: absolute;
-        inset: 4px 0 4px auto;
-        width: 3px;
-        border-radius: 3px;
-        background: rgb(0 0 0 / 5%);
-      }
-    }
-  }
-
   &.anchored {
     position: absolute;
     inset-block-start: 0;
@@ -70,26 +48,6 @@ floating-toolbar {
     }
   }
 
-  &.vertical {
-    flex-direction: column;
-
-    &.anchored {
-      inset-block-start: 0;
-      inset-inline-start: 100%;
-    }
-
-    & > ul:not(:last-child),
-    & > toolbar-tab > ul:not(:last-child) {
-      padding: 0 0 12px;
-
-      &::after {
-        inset: auto 4px 0;
-        width: auto;
-        height: 3px;
-      }
-    }
-  }
-
   body:is([data-drag], [data-resize]) & {
     display: none;
     opacity: 0;
@@ -97,18 +55,11 @@ floating-toolbar {
 }
 
 @supports (anchor-name: --anchor) {
-  floating-toolbar {
-    &.anchored {
-      position: fixed;
-      inset-block-start: auto !important;
-      inset-inline-start: auto !important;
-      position-area: block-end center;
-
-      &.vertical {
-        position-area: center inline-end;
-        position-try: flip-inline;
-      }
-    }
+  floating-toolbar.anchored {
+    position: fixed;
+    inset-block-start: auto !important;
+    inset-inline-start: auto !important;
+    position-area: block-end center;
   }
 }
 
@@ -143,5 +94,26 @@ toolbar-tab {
     translate: 0 0;
     pointer-events: auto;
     z-index: 1;
+  }
+
+  & > [role="group"] {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    &:not(:last-child) {
+      padding-inline-end: 12px;
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset-block: 4px;
+        inset-inline: auto 0;
+        width: 3px;
+        border-radius: 3px;
+        background: rgb(0 0 0 / 5%);
+      }
+    }
   }
 }
