@@ -97,7 +97,7 @@ a.secondary {
 
 button.floating,
 a.floating,
-swatch-select {
+list-select {
   --border-radius: 22px;
 
   position: relative;

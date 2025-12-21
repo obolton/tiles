@@ -1,11 +1,11 @@
-import css from "./SwatchSelect.css?inline";
+import css from "./ListSelect.css?inline";
 import PopoverMenu from "@/elements/menu/PopoverMenu";
 import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-export interface SwatchSelectAttributes extends GlobalHTMLAttributes {
+export interface ListSelectAttributes extends GlobalHTMLAttributes {
   value?: string | null;
   orientation?: "horizontal" | "vertical";
   align?: "left" | "center" | "right" | "auto";
@@ -15,17 +15,17 @@ export interface SwatchSelectAttributes extends GlobalHTMLAttributes {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "swatch-select": SwatchSelect;
+    "list-select": ListSelect;
   }
 }
 
 declare module "@/jsx/html-attributes" {
   interface HTMLAttributesByTagName {
-    "swatch-select": SwatchSelectAttributes;
+    "list-select": ListSelectAttributes;
   }
 }
 
-export default class SwatchSelect extends HTMLElement {
+export default class ListSelect extends HTMLElement {
   static get observedAttributes() {
     return ["value", "align", "showvalue", "label"] as const;
   }
@@ -166,7 +166,7 @@ export default class SwatchSelect extends HTMLElement {
   }
 
   attributeChangedCallback(
-    name: (typeof SwatchSelect.observedAttributes)[number],
+    name: (typeof ListSelect.observedAttributes)[number],
     _previous: string | null,
     value: string | null,
   ) {
@@ -307,4 +307,4 @@ export default class SwatchSelect extends HTMLElement {
   }
 }
 
-customElements.define("swatch-select", SwatchSelect);
+customElements.define("list-select", ListSelect);

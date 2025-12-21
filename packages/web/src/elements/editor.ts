@@ -4,6 +4,6 @@ import "./floating-toolbar/FloatingToolbar";
 import "./floating-toolbar/ToolbarTab";
 import "./item/PageItem";
 import "./resize/ResizeHandle";
-import "./swatch/SwatchSelect";
+import "./list-select/ListSelect";
 import "./filter-select/FilterSelect";
 import "./list-box/ListBox";

@@ -5,11 +5,11 @@ import MenuItem from "@/components/buttons/MenuItem";
 import Each from "@/jsx/each";
 import FolderIcon from "@/icons/folder.svg?jsx";
 import type { Reactive } from "@/utils/reactivity";
-import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type ListSelect from "@/elements/list-select/ListSelect";
 import type { JSX } from "@/jsx/jsx";
 
 interface FolderPickerProps extends Omit<
-  JSX.Attributes<"swatch-select">,
+  JSX.Attributes<"list-select">,
   "value" | "on:change"
 > {
   workspaceId: string;
@@ -32,12 +32,12 @@ export default function FolderPicker({
     .catch(handleError);
 
   function setFolder(event: Event) {
-    const selectedValue = (event.target as SwatchSelect).value;
+    const selectedValue = (event.target as ListSelect).value;
     onChange(selectedValue === "" ? null : selectedValue);
   }
 
   return (
-    <swatch-select
+    <list-select
       {...props}
       aria-orientation="vertical"
       orientation="vertical"
@@ -68,6 +68,6 @@ export default function FolderPicker({
           )}
         </Each>
       </ul>
-    </swatch-select>
+    </list-select>
   );
 }

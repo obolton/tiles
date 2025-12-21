@@ -8,7 +8,7 @@ import { Computed } from "@/utils/reactivity";
 import type Chart from "@/models/Chart";
 import type { Series, ChartType } from "@/models/Chart";
 import type Table from "@/models/Table";
-import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type ListSelect from "@/elements/list-select/ListSelect";
 import type { JSX } from "@/jsx/jsx";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
 
@@ -31,7 +31,7 @@ export default function SeriesPanel({
   );
 
   function setLabel(event: Event) {
-    const select = event.currentTarget as SwatchSelect;
+    const select = event.currentTarget as ListSelect;
     const value = select.value;
     const property =
       table.columns.find((column) => column.id === value) ?? null;
@@ -39,7 +39,7 @@ export default function SeriesPanel({
   }
 
   function addSeries(event: Event) {
-    const select = event.currentTarget as SwatchSelect;
+    const select = event.currentTarget as ListSelect;
     const value = select.value;
     if (value) {
       chart.addSeries(value);
@@ -77,7 +77,7 @@ export default function SeriesPanel({
       </ul>
 
       <div className={styles.controls}>
-        <swatch-select
+        <list-select
           aria-label="Add series"
           data-tooltip="Add series"
           label="Add series"
@@ -101,9 +101,9 @@ export default function SeriesPanel({
               )}
             </Each>
           </ul>
-        </swatch-select>
+        </list-select>
 
-        <swatch-select
+        <list-select
           aria-label="Label column"
           data-tooltip="Label column"
           label="Label"
@@ -129,7 +129,7 @@ export default function SeriesPanel({
               )}
             </Each>
           </ul>
-        </swatch-select>
+        </list-select>
       </div>
     </popover-menu>
   );

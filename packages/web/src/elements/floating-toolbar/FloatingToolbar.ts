@@ -9,7 +9,7 @@ const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 const IGNORE_FOCUS_SELECTOR =
-  'button, input[type="button"], input[type="checkbox"], input[type="radio"], input[type="file"], swatch-select, tab-item';
+  'button, input[type="button"], input[type="checkbox"], input[type="radio"], input[type="file"], list-select, tab-item';
 
 export interface FloatingToolbarAttributes extends GlobalHTMLAttributes {
   name?: string;

@@ -4,7 +4,7 @@ import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { render } from "@/jsx/dom";
 import MenuItem from "@/components/buttons/MenuItem";
 import CodeIcon from "@/icons/code.svg?jsx";
-import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type ListSelect from "@/elements/list-select/ListSelect";
 import {
   loadLanguage,
   findLanguageConfig,
@@ -81,7 +81,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
     const config = findLanguageConfig(this.language);
 
     return render(
-      <swatch-select
+      <list-select
         className={styles["language-selector"]}
         value={config?.id ?? ""}
         orientation="vertical"
@@ -99,7 +99,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
             </li>
           ))}
         </ul>
-      </swatch-select>,
+      </list-select>,
     )[0] as HTMLElement;
   }
 
@@ -153,7 +153,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
 
   handleEvent(event: Event) {
     if (event.type === "change") {
-      const target = event.target as SwatchSelect;
+      const target = event.target as ListSelect;
       const pos = this.getPos();
       if (typeof pos === "number") {
         this.view.dispatch(
@@ -176,7 +176,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
     if (newLanguage !== this.language) {
       this.language = newLanguage;
       this.loadLanguageExtension(newLanguage);
-      (this.selector as SwatchSelect).value =
+      (this.selector as ListSelect).value =
         findLanguageConfig(newLanguage)?.id ?? "";
     }
 

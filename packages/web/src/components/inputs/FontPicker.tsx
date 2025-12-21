@@ -3,10 +3,10 @@ import { FONTS, type FontId } from "@/config/fonts";
 import FontIcon from "@/icons/font.svg?jsx";
 import styles from "./FontPicker.module.css";
 import type { Reactive } from "@/utils/reactivity";
-import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type ListSelect from "@/elements/list-select/ListSelect";
 import type { JSX } from "@/jsx/jsx";
 
-export interface FontPickerProps extends JSX.Attributes<"swatch-select"> {
+export interface FontPickerProps extends JSX.Attributes<"list-select"> {
   value?: Reactive<FontId>;
   onChange: (value: FontId) => void;
 }
@@ -17,10 +17,10 @@ export default function FontPicker({
   ...props
 }: FontPickerProps) {
   const setFont = (event: Event) =>
-    void onChange((event.target as SwatchSelect).value as FontId);
+    void onChange((event.target as ListSelect).value as FontId);
 
   return (
-    <swatch-select
+    <list-select
       {...props}
       className={styles.font}
       aria-orientation="vertical"
@@ -40,6 +40,6 @@ export default function FontPicker({
           {font.name}
         </MenuItem>
       ))}
-    </swatch-select>
+    </list-select>
   );
 }

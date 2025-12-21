@@ -17,7 +17,7 @@ import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import Editor from "@/editor/Editor";
 import type { FillUpdate } from "@/components/fills/types";
-import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type ListSelect from "@/elements/list-select/ListSelect";
 import type { Layout, Anchor, Dimensions } from "@/types/pages";
 import type Section from "@/models/Section";
 
@@ -27,7 +27,7 @@ export interface SectionToolbarProps {
 
 export default function SectionToolbar({ section }: SectionToolbarProps) {
   async function setLayout(event: Event) {
-    const layout = (event.currentTarget as SwatchSelect).value as Layout;
+    const layout = (event.currentTarget as ListSelect).value as Layout;
     try {
       viewTransition(() => section.setLayout(layout));
     } catch (error) {
@@ -36,7 +36,7 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
   }
 
   async function setAnchor(event: Event) {
-    const anchor = (event.currentTarget as SwatchSelect).value as Anchor;
+    const anchor = (event.currentTarget as ListSelect).value as Anchor;
     try {
       viewTransition(() => section.setAnchor(anchor));
     } catch (error) {
@@ -68,7 +68,7 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
     >
       <toolbar-tab label="Section">
         <ToolbarGroup label="Section tools">
-          <swatch-select
+          <list-select
             aria-label="Layout"
             data-tooltip="Layout"
             orientation="vertical"
@@ -114,9 +114,9 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
                 </MenuItem>
               </li>
             </ul>
-          </swatch-select>
+          </list-select>
 
-          <swatch-select
+          <list-select
             aria-label="Anchor"
             aria-selected={section.anchor}
             data-tooltip="Anchor"
@@ -169,9 +169,9 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
                 </MenuItem>
               </li>
             </ul>
-          </swatch-select>
+          </list-select>
 
-          <swatch-select
+          <list-select
             aria-label="Size"
             data-tooltip="Size"
             orientation="vertical"
@@ -209,7 +209,7 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
                 </MenuItem>
               </li>
             </ul>
-          </swatch-select>
+          </list-select>
 
           <FillPicker
             id={`${section.id}-background`}

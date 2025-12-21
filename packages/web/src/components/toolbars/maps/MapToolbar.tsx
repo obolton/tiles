@@ -8,7 +8,7 @@ import { showModal } from "@/utils/modals";
 import type Map from "@/models/Map";
 import type MapView from "@/elements/maps/MapView";
 import type { MapStyle } from "api/types/tiles";
-import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type ListSelect from "@/elements/list-select/ListSelect";
 
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
@@ -30,7 +30,7 @@ export default function MapToolbar({ map, getMapView }: MapToolbarProps) {
   }
 
   function changeMapStyle(event: Event) {
-    const style = (event.currentTarget as SwatchSelect).value as MapStyle;
+    const style = (event.currentTarget as ListSelect).value as MapStyle;
     map.updateStyle(style);
   }
 
@@ -49,7 +49,7 @@ export default function MapToolbar({ map, getMapView }: MapToolbarProps) {
         </ToolbarGroup>
 
         <ToolbarGroup label="Map style">
-          <swatch-select
+          <list-select
             aria-label="Map style"
             data-tooltip="Map style"
             orientation="vertical"
@@ -97,7 +97,7 @@ export default function MapToolbar({ map, getMapView }: MapToolbarProps) {
                 </MenuItem>
               </li>
             </ul>
-          </swatch-select>
+          </list-select>
         </ToolbarGroup>
 
         <TileTools tile={map} />

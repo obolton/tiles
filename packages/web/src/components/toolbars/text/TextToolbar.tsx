@@ -17,7 +17,7 @@ import ShrinkIcon from "@/icons/shrink.svg?jsx";
 import ExpandHeightIcon from "@/icons/expand-height.svg?jsx";
 import { handleError } from "@/utils/errors";
 import type Text from "@/models/Text";
-import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type ListSelect from "@/elements/list-select/ListSelect";
 import type { Animation } from "@/models/Tile";
 import type { EditorView } from "prosemirror-view";
 import type { Reactive } from "@/utils/reactivity";
@@ -90,7 +90,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
 
           {block.derive((value) =>
             !value ? (
-              <swatch-select
+              <list-select
                 label="Vertical position"
                 data-tooltip="Vertical position"
                 aria-orientation="vertical"
@@ -99,7 +99,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
                 value={align}
                 on:change={(event) =>
                   text.setVerticalAlignment(
-                    (event.currentTarget as SwatchSelect).value as
+                    (event.currentTarget as ListSelect).value as
                       | "TOP"
                       | "CENTER"
                       | "BOTTOM",
@@ -137,11 +137,11 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
                     </MenuItem>
                   </li>
                 </ul>
-              </swatch-select>
+              </list-select>
             ) : null,
           )}
 
-          <swatch-select
+          <list-select
             label="Animation"
             data-tooltip="Animation"
             aria-orientation="vertical"
@@ -150,7 +150,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
             value={animation}
             on:change={(event) =>
               text.setAnimation(
-                (event.currentTarget as SwatchSelect).value as Animation,
+                (event.currentTarget as ListSelect).value as Animation,
               )
             }
           >
@@ -206,7 +206,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
                 </MenuItem>
               </li>
             </ul>
-          </swatch-select>
+          </list-select>
         </ToolbarGroup>
         <TileTools tile={text} />
       </toolbar-tab>

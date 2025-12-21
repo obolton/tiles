@@ -64,7 +64,7 @@ import type { Reactive } from "@/utils/reactivity";
 import type { EditorState, Command } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
 import type { TextAlignment } from "@/utils/richText/format";
-import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type ListSelect from "@/elements/list-select/ListSelect";
 
 const DateTimeModalLoader = () => import("@/components/modals/DateTimeModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
@@ -114,7 +114,7 @@ export default function FormattingTools({
   }
 
   function changeTextFormat(event: Event) {
-    switch ((event.currentTarget as SwatchSelect).value) {
+    switch ((event.currentTarget as ListSelect).value) {
       case "h1":
         return performCommand(toggleHeading(1));
       case "h2":
@@ -178,9 +178,7 @@ export default function FormattingTools({
 
   const formatAlignment = (event: Event) =>
     performCommand(
-      setAlignment(
-        (event.currentTarget as SwatchSelect).value as TextAlignment,
-      ),
+      setAlignment((event.currentTarget as ListSelect).value as TextAlignment),
     );
 
   const onTogglePrompt = () => performCommand(togglePrompt);
@@ -287,7 +285,7 @@ export default function FormattingTools({
       </ToolbarGroup>
 
       <ToolbarGroup label="Heading">
-        <swatch-select
+        <list-select
           aria-label="Text format"
           aria-selected={format.derive((value) =>
             typeof value.headingLevel === "number" || value.code
@@ -394,7 +392,7 @@ export default function FormattingTools({
               </MenuItem>
             </li>
           </ul>
-        </swatch-select>
+        </list-select>
       </ToolbarGroup>
 
       <ToolbarGroup label="Text style">
@@ -472,7 +470,7 @@ export default function FormattingTools({
           <LinkIcon aria-hidden="true" />
         </ToolbarButton>
 
-        <swatch-select
+        <list-select
           aria-label="Text alignment"
           data-tooltip="Text alignment"
           aria-orientation="vertical"
@@ -509,7 +507,7 @@ export default function FormattingTools({
               />
             </li>
           </ul>
-        </swatch-select>
+        </list-select>
       </ToolbarGroup>
     </>
   );

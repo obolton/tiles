@@ -7,7 +7,7 @@ import AreaChartIcon from "@/icons/area-chart.svg?jsx";
 import RemoveIcon from "@/icons/remove.svg?jsx";
 import type { Series, ChartType } from "@/models/Chart";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
-import type SwatchSelect from "@/elements/swatch/SwatchSelect";
+import type ListSelect from "@/elements/list-select/ListSelect";
 
 export interface SeriesRowProps {
   series: Series;
@@ -38,14 +38,14 @@ export default function SeriesRow({
             allowImage={false}
           />
 
-          <swatch-select
+          <list-select
             aria-label="Chart type"
             data-tooltip="Chart type"
             orientation="vertical"
             align="center"
             value={series.type}
             on:change={(event) => {
-              const type = (event.currentTarget as SwatchSelect).value as
+              const type = (event.currentTarget as ListSelect).value as
                 | "BAR"
                 | "LINE"
                 | "AREA";
@@ -86,7 +86,7 @@ export default function SeriesRow({
                 </MenuItem>
               </li>
             </ul>
-          </swatch-select>
+          </list-select>
 
           <button
             type="button"
