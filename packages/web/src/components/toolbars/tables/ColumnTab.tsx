@@ -1,4 +1,5 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
+import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import FillPicker from "@/components/fills/FillPicker";
 import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import ChartIcon from "@/icons/chart.svg?jsx";
@@ -103,33 +104,25 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
 
   return (
     <toolbar-tab label="Column">
-      <ul role="group">
-        <li role="presentation">
-          <FillPicker
-            id={`${id}-column-background`}
-            label="Background"
-            value={background}
-            onChange={setBackground}
-          />
-        </li>
-        <li role="presentation">
-          <ToolbarButton label="Add column" on:click={addColumn}>
-            <AddColumnIcon aria-hidden="true" />
-            Add column
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <ToolbarButton label="Create chart" on:click={createChart}>
-            <ChartIcon aria-hidden="true" />
-            Create chart
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
-            <DeleteIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-      </ul>
+      <ToolbarGroup label="Column tools">
+        <FillPicker
+          id={`${id}-column-background`}
+          label="Background"
+          value={background}
+          onChange={setBackground}
+        />
+        <ToolbarButton label="Add column" on:click={addColumn}>
+          <AddColumnIcon aria-hidden="true" />
+          Add column
+        </ToolbarButton>
+        <ToolbarButton label="Create chart" on:click={createChart}>
+          <ChartIcon aria-hidden="true" />
+          Create chart
+        </ToolbarButton>
+        <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
+          <DeleteIcon aria-hidden="true" />
+        </ToolbarButton>
+      </ToolbarGroup>
     </toolbar-tab>
   );
 }

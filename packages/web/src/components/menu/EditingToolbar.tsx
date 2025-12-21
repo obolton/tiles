@@ -1,4 +1,5 @@
 import EditingTools from "./EditingTools";
+import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import If from "@/jsx/if";
 import { viewTransition } from "@/utils/transitions";
 import { setEditMode } from "@/utils/edit";
@@ -31,20 +32,17 @@ export default function EditingToolbar({
       data-tooltip-position="bottom"
     >
       <toolbar-tab label="Editing">
-        <ul role="group" aria-label="Editing mode">
-          <li role="presentation">
-            <button
-              type="button"
-              role="menuitem"
-              id="edit-button"
-              className="primary"
-              aria-pressed={isEditable}
-              on:click={toggleEdit}
-            >
-              {isEditable.derive((editable) => (editable ? "Done" : "Edit"))}
-            </button>
-          </li>
-        </ul>
+        <ToolbarGroup label="Editing mode">
+          <button
+            type="button"
+            id="edit-button"
+            className="primary"
+            aria-pressed={isEditable}
+            on:click={toggleEdit}
+          >
+            {isEditable.derive((editable) => (editable ? "Done" : "Edit"))}
+          </button>
+        </ToolbarGroup>
 
         <If condition={isEditable}>
           <EditingTools editor={editor} allowDelete={allowDelete} />

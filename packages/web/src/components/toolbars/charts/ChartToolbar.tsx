@@ -1,4 +1,5 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
+import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import FillPicker from "@/components/fills/FillPicker";
 import SeriesPanel from "./SeriesPanel";
@@ -30,34 +31,31 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
       aria-label="Chart tools"
     >
       <toolbar-tab label="Chart">
-        <ul role="group" aria-label="Chart tools">
-          <li role="presentation">
-            <ToolbarButton
-              id={`${chart.id}-series-button`}
-              label="Series"
-              popovertarget={`${chart.id}-series-panel`}
-              aria-haspopup="menu"
-            >
-              <ChartIcon aria-hidden="true" />
-              Series
-            </ToolbarButton>
+        <ToolbarGroup label="Chart tools">
+          <ToolbarButton
+            id={`${chart.id}-series-button`}
+            label="Series"
+            popovertarget={`${chart.id}-series-panel`}
+            aria-haspopup="menu"
+          >
+            <ChartIcon aria-hidden="true" />
+            Series
+          </ToolbarButton>
 
-            <SeriesPanel
-              id={`${chart.id}-series-panel`}
-              anchor={`${chart.id}-series-button`}
-              chart={chart}
-              table={table}
-            />
-          </li>
-          <li role="presentation">
-            <FillPicker
-              id={`${chart.id}-background`}
-              label="Background"
-              value={chart.background}
-              onChange={setBackground}
-            />
-          </li>
-        </ul>
+          <SeriesPanel
+            id={`${chart.id}-series-panel`}
+            anchor={`${chart.id}-series-button`}
+            chart={chart}
+            table={table}
+          />
+
+          <FillPicker
+            id={`${chart.id}-background`}
+            label="Background"
+            value={chart.background}
+            onChange={setBackground}
+          />
+        </ToolbarGroup>
 
         <TileTools tile={chart} />
       </toolbar-tab>

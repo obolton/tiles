@@ -1,4 +1,5 @@
 import TileTools from "@/components/toolbars/tiles/TileTools";
+import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import ColorPicker from "@/components/colors/ColorPicker";
 import FillPicker from "@/components/fills/FillPicker";
 import { handleError } from "@/utils/errors";
@@ -31,22 +32,18 @@ export default function TableTab({ table }: TableTabProps) {
 
   return (
     <toolbar-tab label="Table">
-      <ul role="group">
-        <li role="presentation">
-          <ColorPicker
-            id={`${id}-color-picker`}
-            value={textColor}
-            onChange={setTextColor}
-          />
-        </li>
-        <li role="presentation">
-          <FillPicker
-            id={`${id}-background`}
-            value={background}
-            onChange={setBackground}
-          />
-        </li>
-      </ul>
+      <ToolbarGroup label="Style">
+        <ColorPicker
+          id={`${id}-color-picker`}
+          value={textColor}
+          onChange={setTextColor}
+        />
+        <FillPicker
+          id={`${id}-background`}
+          value={background}
+          onChange={setBackground}
+        />
+      </ToolbarGroup>
 
       <TileTools tile={table} />
     </toolbar-tab>

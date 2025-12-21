@@ -1,4 +1,5 @@
 import TileTools from "@/components/toolbars/tiles/TileTools";
+import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import LinkIcon from "@/icons/link.svg?jsx";
 import { showModal } from "@/utils/modals";
@@ -37,14 +38,12 @@ export default function LinkToolbar({ link }: LinkToolbarProps) {
       data-tooltip-position="top"
     >
       <toolbar-tab label="Link">
-        <ul role="group" aria-label="Layout">
-          <li role="presentation">
-            <ToolbarButton on:click={editLink}>
-              <LinkIcon aria-hidden="true" />
-              Edit link
-            </ToolbarButton>
-          </li>
-        </ul>
+        <ToolbarGroup label="Link tools">
+          <ToolbarButton on:click={editLink}>
+            <LinkIcon aria-hidden="true" />
+            Edit link
+          </ToolbarButton>
+        </ToolbarGroup>
 
         <TileTools tile={link} />
       </toolbar-tab>

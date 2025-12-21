@@ -1,4 +1,5 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
+import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import FillPicker from "@/components/fills/FillPicker";
 import AddRowIcon from "@/icons/add-row.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
@@ -83,27 +84,21 @@ export default function RowTab({ table, getTable }: RowTabProps) {
 
   return (
     <toolbar-tab label="Row">
-      <ul role="group">
-        <li role="presentation">
-          <FillPicker
-            id={`${id}-row-background`}
-            label="Background"
-            value={background}
-            onChange={setBackground}
-          />
-        </li>
-        <li role="presentation">
-          <ToolbarButton label="Add row" on:click={addRow}>
-            <AddRowIcon aria-hidden="true" />
-            Add row
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
-            <DeleteIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-      </ul>
+      <ToolbarGroup label="Row tools">
+        <FillPicker
+          id={`${id}-row-background`}
+          label="Background"
+          value={background}
+          onChange={setBackground}
+        />
+        <ToolbarButton label="Add row" on:click={addRow}>
+          <AddRowIcon aria-hidden="true" />
+          Add row
+        </ToolbarButton>
+        <ToolbarButton label="Delete" destructive on:click={deleteSelection}>
+          <DeleteIcon aria-hidden="true" />
+        </ToolbarButton>
+      </ToolbarGroup>
     </toolbar-tab>
   );
 }

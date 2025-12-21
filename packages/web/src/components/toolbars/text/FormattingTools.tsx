@@ -1,4 +1,5 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
+import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import MenuItem from "@/components/buttons/MenuItem";
 import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
@@ -191,347 +192,325 @@ export default function FormattingTools({
 
   return (
     <>
-      <ul role="group" aria-label="AI tools">
-        <li role="presentation">
-          <ToolbarButton
-            label="Write with AI"
-            aria-pressed={prompting}
-            on:click={onTogglePrompt}
-          >
-            <AIIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
+      <ToolbarGroup label="AI tools">
+        <ToolbarButton
+          label="Write with AI"
+          aria-pressed={prompting}
+          on:click={onTogglePrompt}
+        >
+          <AIIcon aria-hidden="true" />
+        </ToolbarButton>
 
         {format.derive((value) =>
           value.pending ? (
             <>
-              <li role="presentation">
-                <ToolbarButton label="Approve" on:click={approveSelection}>
-                  <ApproveIcon aria-hidden="true" />
-                </ToolbarButton>
-              </li>
+              <ToolbarButton label="Approve" on:click={approveSelection}>
+                <ApproveIcon aria-hidden="true" />
+              </ToolbarButton>
 
-              <li role="presentation">
-                <ToolbarButton label="Reject" on:click={rejectSelection}>
-                  <RejectIcon aria-hidden="true" />
-                </ToolbarButton>
-              </li>
+              <ToolbarButton label="Reject" on:click={rejectSelection}>
+                <RejectIcon aria-hidden="true" />
+              </ToolbarButton>
             </>
           ) : null,
         )}
-      </ul>
+      </ToolbarGroup>
 
-      <ul role="group" aria-label="Tools">
-        <li role="presentation">
-          <ToolbarButton
-            id="insert-content-button"
-            popovertarget="insert-content-menu"
-            label="Insert content"
-            aria-haspopup="menu"
-            aria-expanded="false"
-          >
-            <NewIcon aria-hidden="true" />
-          </ToolbarButton>
+      <ToolbarGroup label="Tools">
+        <ToolbarButton
+          id="insert-content-button"
+          popovertarget="insert-content-menu"
+          label="Insert content"
+          aria-haspopup="menu"
+          aria-expanded="false"
+        >
+          <NewIcon aria-hidden="true" />
+        </ToolbarButton>
 
-          <popover-menu id="insert-content-menu" anchor="insert-content-button">
-            <list-box>
-              <ul className="menuitemgroup" role="group">
-                <li>
-                  <MenuItem
-                    classList={{ menuitem: true }}
-                    icon={<EventIcon aria-hidden="true" />}
-                    on:click={insertNewDate}
-                  >
-                    Date
-                  </MenuItem>
-                </li>
-                <li>
-                  <MenuItem
-                    classList={{ menuitem: true }}
-                    icon={<DropdownIcon aria-hidden="true" />}
-                    on:click={insertNewDropdown}
-                  >
-                    Dropdown
-                  </MenuItem>
-                </li>
-                <li>
-                  <MenuItem
-                    classList={{ menuitem: true }}
-                    icon={<PeopleIcon aria-hidden="true" />}
-                    on:click={() => performCommand(openMentionPicker)}
-                  >
-                    Mention
-                  </MenuItem>
-                </li>
-
-                <Each items={Editor.current.dropdowns}>
-                  {(dropdown) => (
-                    <li>
-                      <MenuItem
-                        classList={{ menuitem: true }}
-                        icon={<DropdownIcon aria-hidden="true" />}
-                        on:click={() =>
-                          insertExistingDropdown(
-                            dropdown.id,
-                            dropdown.options.value[0]?.value ?? "",
-                          )
-                        }
-                      >
-                        {dropdown.title.value ||
-                          listFormatter.format(
-                            dropdown.options.value
-                              .slice(0, 5)
-                              .map(({ value }) => value),
-                          )}
-                      </MenuItem>
-                    </li>
-                  )}
-                </Each>
-              </ul>
-            </list-box>
-          </popover-menu>
-        </li>
-      </ul>
-
-      <ul role="group" aria-label="Heading">
-        <li role="presentation">
-          <swatch-select
-            role="menuitem"
-            aria-label="Text format"
-            aria-selected={format.derive((value) =>
-              typeof value.headingLevel === "number" || value.code
-                ? "true"
-                : undefined,
-            )}
-            data-tooltip="Text format"
-            orientation="vertical"
-            align="center"
-            showvalue
-            value={format.derive((value) =>
-              typeof value.headingLevel === "number"
-                ? `h${value.headingLevel}`
-                : value.code
-                  ? "code"
-                  : value.list
-                    ? `${value.list}-list`
-                    : "",
-            )}
-            on:change={changeTextFormat}
-          >
+        <popover-menu id="insert-content-menu" anchor="insert-content-button">
+          <list-box>
             <ul className="menuitemgroup" role="group">
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true, [styles.h1]: true }}
-                  value="h1"
-                  data-label="Heading 1"
-                >
-                  <H1Icon aria-hidden="true" />
-                  Heading 1
-                </MenuItem>
-              </li>
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true, [styles.h2]: true }}
-                  value="h2"
-                  data-label="Heading 2"
-                >
-                  <H2Icon aria-hidden="true" />
-                  Heading 2
-                </MenuItem>
-              </li>
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true, [styles.h3]: true }}
-                  value="h3"
-                  data-label="Heading 3"
-                >
-                  <H3Icon aria-hidden="true" />
-                  Heading 3
-                </MenuItem>
-              </li>
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true, [styles.code]: true }}
-                  value="code"
-                  data-label="Code"
-                >
-                  <CodeIcon aria-hidden="true" />
-                  Code
-                </MenuItem>
-              </li>
-              <li role="presentation">
+              <li>
                 <MenuItem
                   classList={{ menuitem: true }}
-                  value=""
-                  data-label="Paragraph"
+                  icon={<EventIcon aria-hidden="true" />}
+                  on:click={insertNewDate}
                 >
-                  <ParagraphIcon aria-hidden="true" />
-                  Paragraph
+                  Date
                 </MenuItem>
               </li>
+              <li>
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<DropdownIcon aria-hidden="true" />}
+                  on:click={insertNewDropdown}
+                >
+                  Dropdown
+                </MenuItem>
+              </li>
+              <li>
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<PeopleIcon aria-hidden="true" />}
+                  on:click={() => performCommand(openMentionPicker)}
+                >
+                  Mention
+                </MenuItem>
+              </li>
+
+              <Each items={Editor.current.dropdowns}>
+                {(dropdown) => (
+                  <li>
+                    <MenuItem
+                      classList={{ menuitem: true }}
+                      icon={<DropdownIcon aria-hidden="true" />}
+                      on:click={() =>
+                        insertExistingDropdown(
+                          dropdown.id,
+                          dropdown.options.value[0]?.value ?? "",
+                        )
+                      }
+                    >
+                      {dropdown.title.value ||
+                        listFormatter.format(
+                          dropdown.options.value
+                            .slice(0, 5)
+                            .map(({ value }) => value),
+                        )}
+                    </MenuItem>
+                  </li>
+                )}
+              </Each>
             </ul>
+          </list-box>
+        </popover-menu>
+      </ToolbarGroup>
 
-            <ul className="menuitemgroup" role="group">
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  value="unordered-list"
-                  data-label="Bulleted list"
-                >
-                  <UnorderedListIcon aria-hidden="true" />
-                  Bulleted list
-                </MenuItem>
-              </li>
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  value="ordered-list"
-                  data-label="Numbered list"
-                >
-                  <OrderedListIcon aria-hidden="true" />
-                  Numbered list
-                </MenuItem>
-              </li>
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  value="check-list"
-                  data-label="Check list"
-                >
-                  <CheckListIcon aria-hidden="true" />
-                  Check list
-                </MenuItem>
-              </li>
-            </ul>
-          </swatch-select>
-        </li>
-      </ul>
+      <ToolbarGroup label="Heading">
+        <swatch-select
+          aria-label="Text format"
+          aria-selected={format.derive((value) =>
+            typeof value.headingLevel === "number" || value.code
+              ? "true"
+              : undefined,
+          )}
+          data-tooltip="Text format"
+          orientation="vertical"
+          align="center"
+          showvalue
+          value={format.derive((value) =>
+            typeof value.headingLevel === "number"
+              ? `h${value.headingLevel}`
+              : value.code
+                ? "code"
+                : value.list
+                  ? `${value.list}-list`
+                  : "",
+          )}
+          on:change={changeTextFormat}
+        >
+          <ul className="menuitemgroup" role="group">
+            <li role="presentation">
+              <MenuItem
+                classList={{ menuitem: true, [styles.h1]: true }}
+                value="h1"
+                data-label="Heading 1"
+              >
+                <H1Icon aria-hidden="true" />
+                Heading 1
+              </MenuItem>
+            </li>
+            <li role="presentation">
+              <MenuItem
+                classList={{ menuitem: true, [styles.h2]: true }}
+                value="h2"
+                data-label="Heading 2"
+              >
+                <H2Icon aria-hidden="true" />
+                Heading 2
+              </MenuItem>
+            </li>
+            <li role="presentation">
+              <MenuItem
+                classList={{ menuitem: true, [styles.h3]: true }}
+                value="h3"
+                data-label="Heading 3"
+              >
+                <H3Icon aria-hidden="true" />
+                Heading 3
+              </MenuItem>
+            </li>
+            <li role="presentation">
+              <MenuItem
+                classList={{ menuitem: true, [styles.code]: true }}
+                value="code"
+                data-label="Code"
+              >
+                <CodeIcon aria-hidden="true" />
+                Code
+              </MenuItem>
+            </li>
+            <li role="presentation">
+              <MenuItem
+                classList={{ menuitem: true }}
+                value=""
+                data-label="Paragraph"
+              >
+                <ParagraphIcon aria-hidden="true" />
+                Paragraph
+              </MenuItem>
+            </li>
+          </ul>
 
-      <ul role="group" aria-label="Text style">
-        <li role="presentation">
-          <ToolbarButton
-            id="text-size-button"
-            label="Text size"
-            aria-haspopup="menu"
-            aria-expanded="false"
-            popovertarget="text-size-popover"
-          >
-            <TextSizeIcon aria-hidden="true" />
-          </ToolbarButton>
+          <ul className="menuitemgroup" role="group">
+            <li role="presentation">
+              <MenuItem
+                classList={{ menuitem: true }}
+                value="unordered-list"
+                data-label="Bulleted list"
+              >
+                <UnorderedListIcon aria-hidden="true" />
+                Bulleted list
+              </MenuItem>
+            </li>
+            <li role="presentation">
+              <MenuItem
+                classList={{ menuitem: true }}
+                value="ordered-list"
+                data-label="Numbered list"
+              >
+                <OrderedListIcon aria-hidden="true" />
+                Numbered list
+              </MenuItem>
+            </li>
+            <li role="presentation">
+              <MenuItem
+                classList={{ menuitem: true }}
+                value="check-list"
+                data-label="Check list"
+              >
+                <CheckListIcon aria-hidden="true" />
+                Check list
+              </MenuItem>
+            </li>
+          </ul>
+        </swatch-select>
+      </ToolbarGroup>
 
-          <TextSizePopover
-            id="text-size-popover"
-            anchor="text-size-button"
-            align="center"
-            value={format.derive((value) => value.size)}
-            onChange={changeTextSize}
-          />
-        </li>
-        <li role="presentation">
-          <ToolbarButton
-            label="Bold"
-            aria-pressed={format.derive((value) => value.bold)}
-            on:click={formatBold}
-          >
-            <BoldIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <ToolbarButton
-            label="Italic"
-            aria-pressed={format.derive((value) => value.italic)}
-            on:click={formatItalic}
-          >
-            <ItalicIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <ToolbarButton
-            label="Underlined"
-            aria-pressed={format.derive((value) => value.underline)}
-            on:click={formatUnderline}
-          >
-            <UnderlineIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <ToolbarButton
-            label="Strike-through"
-            aria-pressed={format.derive((value) => value.strikethrough)}
-            on:click={formatStrikethrough}
-          >
-            <StrikethroughIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <ToolbarButton
-            label="Highlight"
-            aria-pressed={format.derive((value) => value.highlight)}
-            on:click={formatHighlight}
-          >
-            <HighlightIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <ToolbarButton
-            label="Quote"
-            aria-pressed={format.derive((value) => value.quote)}
-            on:click={formatQuote}
-          >
-            <QuoteIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <ToolbarButton
-            label="Link"
-            aria-pressed={format.derive((value) => value.link)}
-            on:click={formatLink}
-          >
-            <LinkIcon aria-hidden="true" />
-          </ToolbarButton>
-        </li>
-        <li role="presentation">
-          <swatch-select
-            role="menuitem"
-            aria-label="Text alignment"
-            data-tooltip="Text alignment"
-            aria-orientation="vertical"
-            orientation="horizontal"
-            align="center"
-            value={format.derive((value) => value.align)}
-            on:change={formatAlignment}
-          >
-            <ul className="menuitemgroup inline" role="group">
-              <li role="presentation">
-                <MenuItem
-                  classList={{ floating: true }}
-                  icon={<AlignLeftIcon aria-hidden="true" />}
-                  value="left"
-                  label="Align left"
-                />
-              </li>
+      <ToolbarGroup label="Text style">
+        <ToolbarButton
+          id="text-size-button"
+          label="Text size"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          popovertarget="text-size-popover"
+        >
+          <TextSizeIcon aria-hidden="true" />
+        </ToolbarButton>
 
-              <li role="presentation">
-                <MenuItem
-                  classList={{ floating: true }}
-                  icon={<AlignCenterIcon aria-hidden="true" />}
-                  value="center"
-                  label="Align center"
-                />
-              </li>
+        <TextSizePopover
+          id="text-size-popover"
+          anchor="text-size-button"
+          align="center"
+          value={format.derive((value) => value.size)}
+          onChange={changeTextSize}
+        />
 
-              <li role="presentation">
-                <MenuItem
-                  classList={{ floating: true }}
-                  icon={<AlignRightIcon aria-hidden="true" />}
-                  value="right"
-                  label="Align right"
-                />
-              </li>
-            </ul>
-          </swatch-select>
-        </li>
-      </ul>
+        <ToolbarButton
+          label="Bold"
+          aria-pressed={format.derive((value) => value.bold)}
+          on:click={formatBold}
+        >
+          <BoldIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <ToolbarButton
+          label="Italic"
+          aria-pressed={format.derive((value) => value.italic)}
+          on:click={formatItalic}
+        >
+          <ItalicIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <ToolbarButton
+          label="Underlined"
+          aria-pressed={format.derive((value) => value.underline)}
+          on:click={formatUnderline}
+        >
+          <UnderlineIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <ToolbarButton
+          label="Strike-through"
+          aria-pressed={format.derive((value) => value.strikethrough)}
+          on:click={formatStrikethrough}
+        >
+          <StrikethroughIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <ToolbarButton
+          label="Highlight"
+          aria-pressed={format.derive((value) => value.highlight)}
+          on:click={formatHighlight}
+        >
+          <HighlightIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <ToolbarButton
+          label="Quote"
+          aria-pressed={format.derive((value) => value.quote)}
+          on:click={formatQuote}
+        >
+          <QuoteIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <ToolbarButton
+          label="Link"
+          aria-pressed={format.derive((value) => value.link)}
+          on:click={formatLink}
+        >
+          <LinkIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <swatch-select
+          aria-label="Text alignment"
+          data-tooltip="Text alignment"
+          aria-orientation="vertical"
+          orientation="horizontal"
+          align="center"
+          value={format.derive((value) => value.align)}
+          on:change={formatAlignment}
+        >
+          <ul className="menuitemgroup inline" role="group">
+            <li role="presentation">
+              <MenuItem
+                classList={{ floating: true }}
+                icon={<AlignLeftIcon aria-hidden="true" />}
+                value="left"
+                label="Align left"
+              />
+            </li>
+
+            <li role="presentation">
+              <MenuItem
+                classList={{ floating: true }}
+                icon={<AlignCenterIcon aria-hidden="true" />}
+                value="center"
+                label="Align center"
+              />
+            </li>
+
+            <li role="presentation">
+              <MenuItem
+                classList={{ floating: true }}
+                icon={<AlignRightIcon aria-hidden="true" />}
+                value="right"
+                label="Align right"
+              />
+            </li>
+          </ul>
+        </swatch-select>
+      </ToolbarGroup>
     </>
   );
 }
