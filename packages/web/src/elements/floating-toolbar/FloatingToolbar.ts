@@ -8,9 +8,6 @@ import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
-const IGNORE_FOCUS_SELECTOR =
-  'button, input[type="button"], input[type="checkbox"], input[type="radio"], input[type="file"], list-select, tab-item';
-
 export interface FloatingToolbarAttributes extends GlobalHTMLAttributes {
   name?: string;
 }
@@ -25,10 +22,6 @@ declare module "@/jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "floating-toolbar": FloatingToolbarAttributes;
   }
-}
-
-function preventDefault(event: Event) {
-  event.preventDefault();
 }
 
 export default class FloatingToolbar extends HTMLElement {
@@ -122,7 +115,6 @@ export default class FloatingToolbar extends HTMLElement {
       button.ariaSelected = index === this.#selectedTabIndex ? "true" : "false";
       button.tabIndex = index === this.#selectedTabIndex ? 0 : -1;
       button.dataset.index = String(index);
-      button.addEventListener("pointerdown", preventDefault);
       button.addEventListener("click", this);
       this.tabBar.append(button);
     });
@@ -193,14 +185,10 @@ export default class FloatingToolbar extends HTMLElement {
   }
 
   private handlePointerDown(event: PointerEvent) {
-    // TODO: Rather than preventing focus, we should allow toolbar controls to
-    // receive focus normally and rely on selection state (not focus) to
-    // determine whether to show or hide toolbars.
-
-    // Prevent toolbar controls from stealing focus
+    // Prevent buttons from stealing focus
     if (
       event.target instanceof Element &&
-      event.target.matches(IGNORE_FOCUS_SELECTOR)
+      event.target.matches('button, input[type="button"]')
     ) {
       event.preventDefault();
     }
