@@ -63,7 +63,11 @@ export default class Editor {
   readonly selection: Reactive<Set<Tile>>;
   readonly dropdowns: ReactiveArray<Dropdown>;
 
-  activeSection: Section | null = null;
+  get activeSection(): Section | null {
+    const selection = Array.from(this.selection.value);
+    const lastTile = selection.at(-1);
+    return lastTile?.parent instanceof Section ? lastTile.parent : null;
+  }
 
   static init(page: Page) {
     if (this.#current) {
@@ -143,6 +147,7 @@ export default class Editor {
     document.addEventListener("pointerdown", this.pointerDown.bind(this), {
       passive: true,
     });
+    document.addEventListener("focusin", this.focusIn.bind(this));
     document.addEventListener("keydown", this.keyDown.bind(this));
     document.addEventListener("dragover", this.dragOver.bind(this));
     document.addEventListener("drop", this.drop.bind(this));
@@ -151,6 +156,24 @@ export default class Editor {
   private pointerDown(event: PointerEvent) {
     if (event.button === PRIMARY_MOUSE_BUTTON && !event.defaultPrevented) {
       this.clearSelection();
+    }
+  }
+
+  private focusIn(event: FocusEvent) {
+    if (!this.isEditable.value) {
+      return;
+    }
+
+    const target = event.target as Element;
+    const pageItem = target.closest("page-item");
+
+    if (!pageItem?.id) {
+      return;
+    }
+
+    const tile = this.index.get(pageItem.id);
+    if (tile && !this.selection.value.has(tile)) {
+      this.select([pageItem.id], false);
     }
   }
 

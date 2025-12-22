@@ -143,29 +143,6 @@ export default function Item({
     }
   }
 
-  function onFocusIn() {
-    if (editor.isEditable.value) {
-      hasFocus.value = true;
-    }
-
-    if (!isSelected.value) {
-      editor.select([id], false);
-    }
-  }
-
-  function onFocusOut(event: FocusEvent) {
-    const element = event.currentTarget as HTMLElement;
-
-    if (
-      event.relatedTarget instanceof Element &&
-      element.contains(event.relatedTarget)
-    ) {
-      return;
-    }
-
-    hasFocus.value = false;
-  }
-
   function onDragStart(event: DragDropEvent) {
     if (event.target === item) {
       event.state.data = { tile };
@@ -227,8 +204,6 @@ export default function Item({
         tabindex={tabindex}
         on:pointerdown={onPointerDown}
         on:dnd-dragstart={onDragStart}
-        on:focusin={onFocusIn}
-        on:focusout={onFocusOut}
       >
         {getTileComponent(tile, hasFocus)}
       </page-item>
