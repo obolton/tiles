@@ -240,6 +240,30 @@ list-box {
     0 4px 12px -4px rgb(0 0 0 / 30%);
 }
 
+list-select > [role="group"] {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &.inline {
+    flex-direction: row;
+  }
+
+  &:not(:last-child) {
+    padding-block-end: 8px;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset-inline: 12px;
+      inset-block: auto -1px;
+      height: 2px;
+      border-radius: 1px;
+      background: rgb(0 0 0 / 5%);
+    }
+  }
+}
+
 /* TODO: Use CSS layers to avoid needing !important here */
 ul.menuitemgroup {
   position: relative;
