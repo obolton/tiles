@@ -10,7 +10,7 @@ import type { Reactive } from "@/utils/reactivity";
 
 export interface PageLinkTileProps {
   pageLink: PageLink;
-  hasFocus: Reactive<boolean>;
+  showToolbar: Reactive<boolean>;
 }
 
 function onClick(event: PointerEvent) {
@@ -27,7 +27,7 @@ function onClick(event: PointerEvent) {
 
 export default function PageLinkTile({
   pageLink,
-  hasFocus,
+  showToolbar,
 }: PageLinkTileProps) {
   const { page } = pageLink;
 
@@ -48,7 +48,7 @@ export default function PageLinkTile({
       target="_blank"
       on:click={onClick}
     >
-      <If condition={hasFocus}>
+      <If condition={showToolbar}>
         <Portal>
           <LinkToolbar link={pageLink} />
         </Portal>

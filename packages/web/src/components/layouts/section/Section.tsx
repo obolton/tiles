@@ -1,24 +1,24 @@
 import Item from "@/components/item/Item";
-import { flag, Computed } from "@/utils/reactivity";
+import { Computed } from "@/utils/reactivity";
 import SectionToolbar from "./SectionToolbar";
 import If from "@/jsx/if";
 import Each from "@/jsx/each";
 import Portal from "@/jsx/portal";
-import Editor from "@/editor/Editor";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./Section.module.css";
 import type ScrollView from "@/elements/scroll-view/ScrollView";
 import type SectionModel from "@/models/Section";
+import type { Reactive } from "@/utils/reactivity";
 
 export interface SectionProps {
   section: SectionModel;
+  showToolbar: Reactive<boolean>;
   signal?: AbortSignal;
 }
 
-export default function Section({ section, signal }: SectionProps) {
+export default function Section({ section, showToolbar, signal }: SectionProps) {
   const { id, layout, tiles, editor } = section;
   const { isEditable } = editor;
-  const hasFocus = flag(false);
 
   function ref(element: ScrollView) {
     LayoutEditor.attach({
@@ -30,28 +30,6 @@ export default function Section({ section, signal }: SectionProps) {
       sectionId: id,
       signal,
     });
-  }
-
-  function onFocus() {
-    if (isEditable.value) {
-      hasFocus.on();
-      Editor.current.activeSection = section;
-    }
-  }
-
-  function onFocusOut(event: FocusEvent) {
-    const { relatedTarget } = event;
-    if (
-      relatedTarget instanceof Element &&
-      relatedTarget.closest(
-        "dialog[open], [popover]:popover-open, floating-toolbar",
-      )
-    ) {
-      return;
-    }
-
-    hasFocus.off();
-    Editor.current.activeSection = null;
   }
 
   const layoutClass = layout.derive((value) => {
@@ -94,10 +72,8 @@ export default function Section({ section, signal }: SectionProps) {
       classList={[styles.contents, layoutClass]}
       data-section-id={id}
       tabindex={tabindex}
-      on:focus={onFocus}
-      on:focusout={onFocusOut}
     >
-      <If condition={hasFocus}>
+      <If condition={showToolbar}>
         <Portal>
           <SectionToolbar section={section} />
         </Portal>

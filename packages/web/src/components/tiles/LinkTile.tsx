@@ -9,10 +9,10 @@ import type { Reactive } from "@/utils/reactivity";
 
 export interface LinkTileProps {
   link: Link;
-  hasFocus: Reactive<boolean>;
+  showToolbar: Reactive<boolean>;
 }
 
-export default function LinkTile({ link, hasFocus }: LinkTileProps) {
+export default function LinkTile({ link, showToolbar }: LinkTileProps) {
   const { url, title, description, siteName, imageUrl, editor } = link;
   const { isEditable } = editor;
   const background = imageUrl.derive((url) =>
@@ -50,7 +50,7 @@ export default function LinkTile({ link, hasFocus }: LinkTileProps) {
         <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
       </a>
 
-      <If condition={hasFocus}>
+      <If condition={showToolbar}>
         <Portal>
           <LinkToolbar link={link} />
         </Portal>

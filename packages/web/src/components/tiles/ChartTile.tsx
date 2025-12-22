@@ -27,17 +27,17 @@ function toNumber(input: number | string | RichText | null | undefined) {
 
 export interface ChartTileProps {
   chart: Chart;
-  hasFocus: Reactive<boolean>;
+  showToolbar: Reactive<boolean>;
 }
 
-export default function ChartTile({ chart, hasFocus }: ChartTileProps) {
+export default function ChartTile({ chart, showToolbar }: ChartTileProps) {
   if (import.meta.env.SSR) {
     return <Tile background={chart.background}></Tile>;
   }
 
   return (
     <Tile border="none" background={chart.background}>
-      <If condition={hasFocus}>
+      <If condition={showToolbar}>
         <Portal>
           <ChartToolbar chart={chart} />
         </Portal>

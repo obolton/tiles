@@ -25,7 +25,7 @@ import type { EditorState } from "prosemirror-state";
 
 export interface TableTileProps {
   table: Table;
-  hasFocus: Reactive<boolean>;
+  showToolbar: Reactive<boolean>;
   signal?: AbortSignal;
 }
 
@@ -35,7 +35,7 @@ function createDocument(text: string): RichTextType {
   return [{ type: "paragraph", children: [{ type: "text", format: 0, text }] }];
 }
 
-export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
+export default function TableTile({ table, showToolbar, signal }: TableTileProps) {
   let tableView: TableView | undefined;
   const editorView: Reactive<EditorView | null> = reactive(null);
   const state: Reactive<EditorState | null> = reactive(null);
@@ -307,7 +307,7 @@ export default function TableTile({ table, hasFocus, signal }: TableTileProps) {
         </TableViewContents>
       </table-view>
 
-      <If condition={hasFocus}>
+      <If condition={showToolbar}>
         <Portal>
           <TableToolbar
             table={table}

@@ -12,10 +12,10 @@ import type { EditorView } from "prosemirror-view";
 
 export interface TextTileProps {
   text: Text;
-  hasFocus: Reactive<boolean>;
+  showToolbar: Reactive<boolean>;
 }
 
-export default function TextTile({ text, hasFocus }: TextTileProps) {
+export default function TextTile({ text, showToolbar }: TextTileProps) {
   const {
     block,
     content,
@@ -109,7 +109,7 @@ export default function TextTile({ text, hasFocus }: TextTileProps) {
       animation={animation}
       border={background.derive((value) => (value ? "outside" : "none"))}
     >
-      <If condition={hasFocus}>
+      <If condition={showToolbar}>
         <Portal>
           <TextToolbar text={text} editorView={editorView} />
         </Portal>

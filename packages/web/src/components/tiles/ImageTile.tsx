@@ -13,7 +13,7 @@ import type { EditorView } from "prosemirror-view";
 
 export interface ImageTileProps {
   image: Image;
-  hasFocus: Reactive<boolean>;
+  showToolbar: Reactive<boolean>;
 }
 
 interface ImageVariant {
@@ -53,7 +53,7 @@ function getMaxWidth(columns: number) {
   return columns * MAX_COLUMN_WIDTH + (columns - 1) * COLUMN_GAP;
 }
 
-export default function ImageTile({ image, hasFocus }: ImageTileProps) {
+export default function ImageTile({ image, showToolbar }: ImageTileProps) {
   const {
     id,
     width,
@@ -90,7 +90,7 @@ export default function ImageTile({ image, hasFocus }: ImageTileProps) {
 
   return (
     <Tile border="inside">
-      <If condition={hasFocus}>
+      <If condition={showToolbar}>
         <Portal>
           <ImageToolbar image={image} editorView={editorView} />
         </Portal>

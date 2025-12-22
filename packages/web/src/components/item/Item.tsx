@@ -16,7 +16,7 @@ import PageLinkModel from "@/models/PageLink";
 import MapModel from "@/models/Map";
 import TableModel from "@/models/Table";
 import ChartModel from "@/models/Chart";
-import { flag, reactive, Computed } from "@/utils/reactivity";
+import { reactive, Computed } from "@/utils/reactivity";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import If from "@/jsx/if";
 import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
@@ -38,33 +38,33 @@ export interface ItemProps {
   resize?: Reactive<ResizeDirection | null>;
 }
 
-function getTileComponent(tile: Tile, hasFocus: Reactive<boolean>) {
+function getTileComponent(tile: Tile, showToolbar: Reactive<boolean>) {
   if (tile instanceof SectionModel) {
-    return <Section section={tile} />;
+    return <Section section={tile} showToolbar={showToolbar} />;
   }
   if (tile instanceof ImageModel) {
-    return <ImageTile image={tile} hasFocus={hasFocus} />;
+    return <ImageTile image={tile} showToolbar={showToolbar} />;
   }
   if (tile instanceof VideoModel) {
     return <VideoTile video={tile} />;
   }
   if (tile instanceof TextModel) {
-    return <TextTile text={tile} hasFocus={hasFocus} />;
+    return <TextTile text={tile} showToolbar={showToolbar} />;
   }
   if (tile instanceof MapModel) {
-    return <MapTile map={tile} hasFocus={hasFocus} />;
+    return <MapTile map={tile} showToolbar={showToolbar} />;
   }
   if (tile instanceof LinkModel) {
-    return <LinkTile link={tile} hasFocus={hasFocus} />;
+    return <LinkTile link={tile} showToolbar={showToolbar} />;
   }
   if (tile instanceof PageLinkModel) {
-    return <PageLinkTile pageLink={tile} hasFocus={hasFocus} />;
+    return <PageLinkTile pageLink={tile} showToolbar={showToolbar} />;
   }
   if (tile instanceof TableModel) {
-    return <TableTile table={tile} hasFocus={hasFocus} />;
+    return <TableTile table={tile} showToolbar={showToolbar} />;
   }
   if (tile instanceof ChartModel) {
-    return <ChartTile chart={tile} hasFocus={hasFocus} />;
+    return <ChartTile chart={tile} showToolbar={showToolbar} />;
   }
   throw new Error(`Unknown tile type: ${tile.type}`);
 }
@@ -110,9 +110,13 @@ export default function Item({
     item = element;
   };
 
-  const hasFocus = flag(false);
   const isSelected = editor.selection.derive((selection) =>
     selection.has(tile),
+  );
+
+  // Show toolbar when this tile is the only selected item
+  const showToolbar = editor.selection.derive(
+    (selection) => selection.has(tile) && selection.size === 1,
   );
 
   function onPointerDown(event: PointerEvent) {
@@ -190,6 +194,7 @@ export default function Item({
       <page-item
         id={id}
         ref={ref}
+        aria-selected={isSelected}
         allowdrag={editable}
         resize={resizeDirection}
         classList={{
@@ -205,7 +210,7 @@ export default function Item({
         on:pointerdown={onPointerDown}
         on:dnd-dragstart={onDragStart}
       >
-        {getTileComponent(tile, hasFocus)}
+        {getTileComponent(tile, showToolbar)}
       </page-item>
     </If>
   );

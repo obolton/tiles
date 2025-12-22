@@ -12,10 +12,10 @@ import type { Reactive } from "@/utils/reactivity";
 
 export interface MapTileProps {
   map: Map;
-  hasFocus: Reactive<boolean>;
+  showToolbar: Reactive<boolean>;
 }
 
-export default function MapTile({ map, hasFocus }: MapTileProps) {
+export default function MapTile({ map, showToolbar }: MapTileProps) {
   let mapView: MapView | undefined;
   const {
     id,
@@ -54,7 +54,7 @@ export default function MapTile({ map, hasFocus }: MapTileProps) {
 
   return (
     <Tile border="inside" anchorName={anchorName}>
-      <If condition={hasFocus}>
+      <If condition={showToolbar}>
         <Portal>
           <MapToolbar map={map} getMapView={getMapView} />
         </Portal>
