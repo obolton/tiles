@@ -1,4 +1,5 @@
-import MenuItem from "@/components/buttons/MenuItem";
+import ListOption from "@/components/lists/ListOption";
+import ListGroup from "@/components/lists/ListGroup";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import FillPicker from "@/components/fills/FillPicker";
@@ -76,44 +77,32 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
             value={section.layout}
             on:change={setLayout}
           >
-            <ul className="menuitemgroup" role="group">
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<GridLayoutIcon aria-hidden="true" />}
-                  value="GRID"
-                >
-                  Grid
-                </MenuItem>
-              </li>
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<HorizontalLayoutIcon aria-hidden="true" />}
-                  value="HORIZONTAL"
-                >
-                  Horizontal
-                </MenuItem>
-              </li>
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<VerticalLayoutIcon aria-hidden="true" />}
-                  value="VERTICAL"
-                >
-                  Vertical
-                </MenuItem>
-              </li>
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<FreeformLayoutIcon aria-hidden="true" />}
-                  value="FREEFORM"
-                >
-                  Freeform
-                </MenuItem>
-              </li>
-            </ul>
+            <ListGroup>
+              <ListOption
+                icon={<GridLayoutIcon aria-hidden="true" />}
+                value="GRID"
+              >
+                Grid
+              </ListOption>
+              <ListOption
+                icon={<HorizontalLayoutIcon aria-hidden="true" />}
+                value="HORIZONTAL"
+              >
+                Horizontal
+              </ListOption>
+              <ListOption
+                icon={<VerticalLayoutIcon aria-hidden="true" />}
+                value="VERTICAL"
+              >
+                Vertical
+              </ListOption>
+              <ListOption
+                icon={<FreeformLayoutIcon aria-hidden="true" />}
+                value="FREEFORM"
+              >
+                Freeform
+              </ListOption>
+            </ListGroup>
           </list-select>
 
           <list-select
@@ -125,50 +114,36 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
             value={section.anchor}
             on:change={setAnchor}
           >
-            <ul className="menuitemgroup" role="group">
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<AnchorTopIcon aria-hidden="true" />}
-                  value="TOP"
-                  label="Top"
-                >
-                  Top
-                </MenuItem>
-              </li>
-
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<AnchorBottomIcon aria-hidden="true" />}
-                  value="BOTTOM"
-                  label="Bottom"
-                >
-                  Bottom
-                </MenuItem>
-              </li>
-
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<AnchorLeftIcon aria-hidden="true" />}
-                  value="LEFT"
-                  label="Left"
-                >
-                  Left
-                </MenuItem>
-              </li>
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<AnchorRightIcon aria-hidden="true" />}
-                  value="RIGHT"
-                  label="Right"
-                >
-                  Right
-                </MenuItem>
-              </li>
-            </ul>
+            <ListGroup>
+              <ListOption
+                icon={<AnchorTopIcon aria-hidden="true" />}
+                value="TOP"
+                label="Top"
+              >
+                Top
+              </ListOption>
+              <ListOption
+                icon={<AnchorBottomIcon aria-hidden="true" />}
+                value="BOTTOM"
+                label="Bottom"
+              >
+                Bottom
+              </ListOption>
+              <ListOption
+                icon={<AnchorLeftIcon aria-hidden="true" />}
+                value="LEFT"
+                label="Left"
+              >
+                Left
+              </ListOption>
+              <ListOption
+                icon={<AnchorRightIcon aria-hidden="true" />}
+                value="RIGHT"
+                label="Right"
+              >
+                Right
+              </ListOption>
+            </ListGroup>
           </list-select>
 
           <list-select
@@ -178,37 +153,23 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
             value={section.dimensions}
             on:change={setDimensions}
           >
-            <ul className="menuitemgroup" role="group">
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<SizeIcon aria-hidden="true" />}
-                  value="CUSTOM"
-                >
-                  Custom size
-                </MenuItem>
-              </li>
-
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<LandscapeIcon aria-hidden="true" />}
-                  value="LANDSCAPE"
-                >
-                  Landscape
-                </MenuItem>
-              </li>
-
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<PortraitIcon aria-hidden="true" />}
-                  value="PORTRAIT"
-                >
-                  Portrait
-                </MenuItem>
-              </li>
-            </ul>
+            <ListGroup>
+              <ListOption icon={<SizeIcon aria-hidden="true" />} value="CUSTOM">
+                Custom size
+              </ListOption>
+              <ListOption
+                icon={<LandscapeIcon aria-hidden="true" />}
+                value="LANDSCAPE"
+              >
+                Landscape
+              </ListOption>
+              <ListOption
+                icon={<PortraitIcon aria-hidden="true" />}
+                value="PORTRAIT"
+              >
+                Portrait
+              </ListOption>
+            </ListGroup>
           </list-select>
 
           <FillPicker

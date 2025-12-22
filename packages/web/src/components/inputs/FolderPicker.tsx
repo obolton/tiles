@@ -1,7 +1,8 @@
 import { reactive } from "@/utils/reactivity";
 import { getWorkspaceFolders, type Folder } from "@/utils/folders";
 import { handleError } from "@/utils/errors";
-import MenuItem from "@/components/buttons/MenuItem";
+import ListOption from "@/components/lists/ListOption";
+import ListGroup from "@/components/lists/ListGroup";
 import Each from "@/jsx/each";
 import FolderIcon from "@/icons/folder.svg?jsx";
 import type { Reactive } from "@/utils/reactivity";
@@ -49,25 +50,17 @@ export default function FolderPicker({
     >
       <FolderIcon aria-hidden="true" slot="default-icon" />
 
-      <ul className="menuitemgroup" role="group">
-        <li role="presentation">
-          <MenuItem classList={{ menuitem: true }} value="" data-label="None">
-            None
-          </MenuItem>
-        </li>
-      </ul>
+      <ListGroup>
+        <ListOption value="" label="None">
+          None
+        </ListOption>
+      </ListGroup>
 
-      <ul className="menuitemgroup" role="group">
+      <ListGroup>
         <Each items={folders}>
-          {(folder) => (
-            <li role="presentation">
-              <MenuItem classList={{ menuitem: true }} value={folder.id}>
-                {folder.name}
-              </MenuItem>
-            </li>
-          )}
+          {(folder) => <ListOption value={folder.id}>{folder.name}</ListOption>}
         </Each>
-      </ul>
+      </ListGroup>
     </list-select>
   );
 }

@@ -1,7 +1,8 @@
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
-import MenuItem from "@/components/buttons/MenuItem";
+import ListOption from "@/components/lists/ListOption";
+import ListGroup from "@/components/lists/ListGroup";
 import AddPlaceIcon from "@/icons/add-place.svg?jsx";
 import PlaceIcon from "@/icons/place.svg?jsx";
 import { showModal } from "@/utils/modals";
@@ -59,44 +60,12 @@ export default function MapToolbar({ map, getMapView }: MapToolbarProps) {
             on:change={changeMapStyle}
           >
             <PlaceIcon aria-hidden="true" slot="default-icon" />
-            <ul className="menuitemgroup" role="group">
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  value="DEFAULT"
-                  data-label="Default"
-                >
-                  Default
-                </MenuItem>
-              </li>
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  value="SATELLITE"
-                  data-label="Satellite"
-                >
-                  Satellite
-                </MenuItem>
-              </li>
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  value="WATERCOLOR"
-                  data-label="Watercolor"
-                >
-                  Watercolor
-                </MenuItem>
-              </li>
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  value="MONOCHROME"
-                  data-label="Black and white"
-                >
-                  Black and white
-                </MenuItem>
-              </li>
-            </ul>
+            <ListGroup>
+              <ListOption value="DEFAULT">Default</ListOption>
+              <ListOption value="SATELLITE">Satellite</ListOption>
+              <ListOption value="WATERCOLOR">Watercolor</ListOption>
+              <ListOption value="MONOCHROME">Black and white</ListOption>
+            </ListGroup>
           </list-select>
         </ToolbarGroup>
 

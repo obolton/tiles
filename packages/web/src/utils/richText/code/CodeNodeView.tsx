@@ -2,7 +2,8 @@ import { EditorView as CMEditorView, keymap } from "@codemirror/view";
 import { EditorState, Compartment } from "@codemirror/state";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { render } from "@/jsx/dom";
-import MenuItem from "@/components/buttons/MenuItem";
+import ListOption from "@/components/lists/ListOption";
+import ListGroup from "@/components/lists/ListGroup";
 import CodeIcon from "@/icons/code.svg?jsx";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import {
@@ -90,15 +91,11 @@ export class CodeNodeView implements NodeView, EventListenerObject {
         label="Language"
       >
         <CodeIcon slot="default-icon" aria-hidden="true" />
-        <ul className="menuitemgroup" role="group">
+        <ListGroup>
           {SUPPORTED_LANGUAGES.map((language) => (
-            <li role="presentation">
-              <MenuItem classList={{ menuitem: true }} value={language.id}>
-                {language.name}
-              </MenuItem>
-            </li>
+            <ListOption value={language.id}>{language.name}</ListOption>
           ))}
-        </ul>
+        </ListGroup>
       </list-select>,
     )[0] as HTMLElement;
   }

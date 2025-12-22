@@ -1,4 +1,5 @@
-import MenuItem from "@/components/buttons/MenuItem";
+import ListOption from "@/components/lists/ListOption";
+import ListGroup from "@/components/lists/ListGroup";
 import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
@@ -106,37 +107,26 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
                   )
                 }
               >
-                <ul className="menuitemgroup" role="group">
-                  <li role="presentation">
-                    <MenuItem
-                      classList={{ menuitem: true }}
-                      icon={<VerticalAlignTopIcon aria-hidden="true" />}
-                      value="TOP"
-                    >
-                      Top
-                    </MenuItem>
-                  </li>
-
-                  <li role="presentation">
-                    <MenuItem
-                      classList={{ menuitem: true }}
-                      icon={<VerticalAlignCenterIcon aria-hidden="true" />}
-                      value="CENTER"
-                    >
-                      Center
-                    </MenuItem>
-                  </li>
-
-                  <li role="presentation">
-                    <MenuItem
-                      classList={{ menuitem: true }}
-                      icon={<VerticalAlignBottomIcon aria-hidden="true" />}
-                      value="BOTTOM"
-                    >
-                      Bottom
-                    </MenuItem>
-                  </li>
-                </ul>
+                <ListGroup>
+                  <ListOption
+                    icon={<VerticalAlignTopIcon aria-hidden="true" />}
+                    value="TOP"
+                  >
+                    Top
+                  </ListOption>
+                  <ListOption
+                    icon={<VerticalAlignCenterIcon aria-hidden="true" />}
+                    value="CENTER"
+                  >
+                    Center
+                  </ListOption>
+                  <ListOption
+                    icon={<VerticalAlignBottomIcon aria-hidden="true" />}
+                    value="BOTTOM"
+                  >
+                    Bottom
+                  </ListOption>
+                </ListGroup>
               </list-select>
             ) : null,
           )}
@@ -155,57 +145,26 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
             }
           >
             <AnimationIcon aria-hidden="true" slot="default-icon" />
-            <ul className="menuitemgroup" role="group">
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<StopIcon aria-hidden="true" />}
-                  value=""
-                >
-                  None
-                </MenuItem>
-              </li>
-
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<FadeIcon aria-hidden="true" />}
-                  value="FADE"
-                >
-                  Fade
-                </MenuItem>
-              </li>
-
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<SlideIcon aria-hidden="true" />}
-                  value="SLIDE"
-                >
-                  Slide
-                </MenuItem>
-              </li>
-
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<GrowIcon aria-hidden="true" />}
-                  value="GROW"
-                >
-                  Grow
-                </MenuItem>
-              </li>
-
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<ShrinkIcon aria-hidden="true" />}
-                  value="SHRINK"
-                >
-                  Shrink
-                </MenuItem>
-              </li>
-            </ul>
+            <ListGroup>
+              <ListOption icon={<StopIcon aria-hidden="true" />} value="">
+                None
+              </ListOption>
+              <ListOption icon={<FadeIcon aria-hidden="true" />} value="FADE">
+                Fade
+              </ListOption>
+              <ListOption icon={<SlideIcon aria-hidden="true" />} value="SLIDE">
+                Slide
+              </ListOption>
+              <ListOption icon={<GrowIcon aria-hidden="true" />} value="GROW">
+                Grow
+              </ListOption>
+              <ListOption
+                icon={<ShrinkIcon aria-hidden="true" />}
+                value="SHRINK"
+              >
+                Shrink
+              </ListOption>
+            </ListGroup>
           </list-select>
         </ToolbarGroup>
         <TileTools tile={text} />

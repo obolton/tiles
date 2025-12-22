@@ -1,4 +1,5 @@
-import MenuItem from "@/components/buttons/MenuItem";
+import ListOption from "@/components/lists/ListOption";
+import ListGroup from "@/components/lists/ListGroup";
 import Row from "@/components/rows/Row";
 import FillPicker from "@/components/fills/FillPicker";
 import BarChartIcon from "@/icons/bar-chart.svg?jsx";
@@ -52,40 +53,26 @@ export default function SeriesRow({
               onSetChartType(type, series);
             }}
           >
-            <ul className="menuitemgroup" role="group">
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<BarChartIcon aria-hidden="true" />}
-                  value="BAR"
-                  data-label="Bar chart"
-                >
-                  Bar chart
-                </MenuItem>
-              </li>
-
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<LineChartIcon aria-hidden="true" />}
-                  value="LINE"
-                  data-label="Line chart"
-                >
-                  Line chart
-                </MenuItem>
-              </li>
-
-              <li role="presentation">
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<AreaChartIcon aria-hidden="true" />}
-                  value="AREA"
-                  data-label="Area chart"
-                >
-                  Area chart
-                </MenuItem>
-              </li>
-            </ul>
+            <ListGroup>
+              <ListOption
+                icon={<BarChartIcon aria-hidden="true" />}
+                value="BAR"
+              >
+                Bar chart
+              </ListOption>
+              <ListOption
+                icon={<LineChartIcon aria-hidden="true" />}
+                value="LINE"
+              >
+                Line chart
+              </ListOption>
+              <ListOption
+                icon={<AreaChartIcon aria-hidden="true" />}
+                value="AREA"
+              >
+                Area chart
+              </ListOption>
+            </ListGroup>
           </list-select>
 
           <button

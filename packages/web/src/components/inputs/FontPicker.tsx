@@ -1,4 +1,5 @@
-import MenuItem from "@/components/buttons/MenuItem";
+import ListOption from "@/components/lists/ListOption";
+import ListGroup from "@/components/lists/ListGroup";
 import { FONTS, type FontId } from "@/config/fonts";
 import FontIcon from "@/icons/font.svg?jsx";
 import styles from "./FontPicker.module.css";
@@ -31,15 +32,13 @@ export default function FontPicker({
       on:change={setFont}
     >
       <FontIcon aria-hidden="true" slot="default-icon" />
-      {FONTS.map((font) => (
-        <MenuItem
-          classList={{ menuitem: true }}
-          style={{ fontFamily: font.family }}
-          value={font.id}
-        >
-          {font.name}
-        </MenuItem>
-      ))}
+      <ListGroup>
+        {FONTS.map((font) => (
+          <ListOption style={{ fontFamily: font.family }} value={font.id}>
+            {font.name}
+          </ListOption>
+        ))}
+      </ListGroup>
     </list-select>
   );
 }

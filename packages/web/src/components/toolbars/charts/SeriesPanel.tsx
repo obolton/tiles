@@ -1,5 +1,6 @@
 import Each from "@/jsx/each";
-import MenuItem from "@/components/buttons/MenuItem";
+import ListOption from "@/components/lists/ListOption";
+import ListGroup from "@/components/lists/ListGroup";
 import SeriesRow from "./SeriesRow";
 import NewIcon from "@/icons/new.svg?jsx";
 import ParagraphIcon from "@/icons/paragraph.svg?jsx";
@@ -86,21 +87,15 @@ export default function SeriesPanel({
           on:change={addSeries}
         >
           <NewIcon slot="default-icon" aria-hidden="true" />
-          <ul className="menuitemgroup" role="group">
+          <ListGroup>
             <Each items={availableColumns}>
               {(column) => (
-                <li role="presentation">
-                  <MenuItem
-                    classList={{ menuitem: true }}
-                    value={column.id}
-                    data-label={column.title || "Column"}
-                  >
-                    {column.title || "Column"}
-                  </MenuItem>
-                </li>
+                <ListOption value={column.id}>
+                  {column.title || "Column"}
+                </ListOption>
               )}
             </Each>
-          </ul>
+          </ListGroup>
         </list-select>
 
         <list-select
@@ -114,21 +109,15 @@ export default function SeriesPanel({
           on:change={setLabel}
         >
           <ParagraphIcon slot="default-icon" aria-hidden="true" />
-          <ul className="menuitemgroup" role="group">
+          <ListGroup>
             <Each items={table.columns}>
               {(column) => (
-                <li role="presentation">
-                  <MenuItem
-                    classList={{ menuitem: true }}
-                    value={column.id}
-                    data-label={column.title || "Column"}
-                  >
-                    {column.title || "Column"}
-                  </MenuItem>
-                </li>
+                <ListOption value={column.id}>
+                  {column.title || "Column"}
+                </ListOption>
               )}
             </Each>
-          </ul>
+          </ListGroup>
         </list-select>
       </div>
     </popover-menu>

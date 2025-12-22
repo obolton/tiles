@@ -1,6 +1,8 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import MenuItem from "@/components/buttons/MenuItem";
+import ListOption from "@/components/lists/ListOption";
+import ListGroup from "@/components/lists/ListGroup";
 import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
 import H3Icon from "@/icons/h3.svg?jsx";
@@ -307,91 +309,60 @@ export default function FormattingTools({
           )}
           on:change={changeTextFormat}
         >
-          <ul className="menuitemgroup" role="group">
-            <li role="presentation">
-              <MenuItem
-                classList={{ menuitem: true, [styles.h1]: true }}
-                value="h1"
-                data-label="Heading 1"
-              >
-                <H1Icon aria-hidden="true" />
-                Heading 1
-              </MenuItem>
-            </li>
-            <li role="presentation">
-              <MenuItem
-                classList={{ menuitem: true, [styles.h2]: true }}
-                value="h2"
-                data-label="Heading 2"
-              >
-                <H2Icon aria-hidden="true" />
-                Heading 2
-              </MenuItem>
-            </li>
-            <li role="presentation">
-              <MenuItem
-                classList={{ menuitem: true, [styles.h3]: true }}
-                value="h3"
-                data-label="Heading 3"
-              >
-                <H3Icon aria-hidden="true" />
-                Heading 3
-              </MenuItem>
-            </li>
-            <li role="presentation">
-              <MenuItem
-                classList={{ menuitem: true, [styles.code]: true }}
-                value="code"
-                data-label="Code"
-              >
-                <CodeIcon aria-hidden="true" />
-                Code
-              </MenuItem>
-            </li>
-            <li role="presentation">
-              <MenuItem
-                classList={{ menuitem: true }}
-                value=""
-                data-label="Paragraph"
-              >
-                <ParagraphIcon aria-hidden="true" />
-                Paragraph
-              </MenuItem>
-            </li>
-          </ul>
+          <ListGroup>
+            <ListOption
+              classList={{ [styles.h1]: true }}
+              icon={<H1Icon aria-hidden="true" />}
+              value="h1"
+            >
+              Heading 1
+            </ListOption>
+            <ListOption
+              classList={{ [styles.h2]: true }}
+              icon={<H2Icon aria-hidden="true" />}
+              value="h2"
+            >
+              Heading 2
+            </ListOption>
+            <ListOption
+              classList={{ [styles.h3]: true }}
+              icon={<H3Icon aria-hidden="true" />}
+              value="h3"
+            >
+              Heading 3
+            </ListOption>
+            <ListOption
+              classList={{ [styles.code]: true }}
+              icon={<CodeIcon aria-hidden="true" />}
+              value="code"
+            >
+              Code
+            </ListOption>
+            <ListOption icon={<ParagraphIcon aria-hidden="true" />} value="">
+              Paragraph
+            </ListOption>
+          </ListGroup>
 
-          <ul className="menuitemgroup" role="group">
-            <li role="presentation">
-              <MenuItem
-                classList={{ menuitem: true }}
-                value="unordered-list"
-                data-label="Bulleted list"
-              >
-                <UnorderedListIcon aria-hidden="true" />
-                Bulleted list
-              </MenuItem>
-            </li>
-            <li role="presentation">
-              <MenuItem
-                classList={{ menuitem: true }}
-                value="ordered-list"
-                data-label="Numbered list"
-              >
-                <OrderedListIcon aria-hidden="true" />
-                Numbered list
-              </MenuItem>
-            </li>
-            <li role="presentation">
-              <MenuItem
-                classList={{ menuitem: true }}
-                value="check-list"
-                data-label="Check list"
-              >
-                <CheckListIcon aria-hidden="true" />
-                Check list
-              </MenuItem>
-            </li>
-          </ul>
+          <ListGroup>
+            <ListOption
+              icon={<UnorderedListIcon aria-hidden="true" />}
+              value="unordered-list"
+            >
+              Bulleted list
+            </ListOption>
+            <ListOption
+              icon={<OrderedListIcon aria-hidden="true" />}
+              value="ordered-list"
+            >
+              Numbered list
+            </ListOption>
+            <ListOption
+              icon={<CheckListIcon aria-hidden="true" />}
+              value="check-list"
+            >
+              Check list
+            </ListOption>
+          </ListGroup>
         </list-select>
       </ToolbarGroup>
 
@@ -479,34 +450,26 @@ export default function FormattingTools({
           value={format.derive((value) => value.align)}
           on:change={formatAlignment}
         >
-          <ul className="menuitemgroup inline" role="group">
-            <li role="presentation">
-              <MenuItem
-                classList={{ floating: true }}
-                icon={<AlignLeftIcon aria-hidden="true" />}
-                value="left"
-                label="Align left"
-              />
-            </li>
-
-            <li role="presentation">
-              <MenuItem
-                classList={{ floating: true }}
-                icon={<AlignCenterIcon aria-hidden="true" />}
-                value="center"
-                label="Align center"
-              />
-            </li>
-
-            <li role="presentation">
-              <MenuItem
-                classList={{ floating: true }}
-                icon={<AlignRightIcon aria-hidden="true" />}
-                value="right"
-                label="Align right"
-              />
-            </li>
-          </ul>
+          <ListGroup classList={{ inline: true }}>
+            <ListOption
+              classList={{ floating: true }}
+              icon={<AlignLeftIcon aria-hidden="true" />}
+              value="left"
+              label="Align left"
+            />
+            <ListOption
+              classList={{ floating: true }}
+              icon={<AlignCenterIcon aria-hidden="true" />}
+              value="center"
+              label="Align center"
+            />
+            <ListOption
+              classList={{ floating: true }}
+              icon={<AlignRightIcon aria-hidden="true" />}
+              value="right"
+              label="Align right"
+            />
+          </ListGroup>
         </list-select>
       </ToolbarGroup>
     </>
