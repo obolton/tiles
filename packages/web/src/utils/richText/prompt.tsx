@@ -30,11 +30,6 @@ function getElement(view: EditorView) {
     if (!pageId) {
       throw new Error("Page ID is not defined");
     }
-    const sectionId =
-      element.closest<HTMLElement>("[data-section-id]")?.dataset.sectionId;
-    if (!sectionId) {
-      throw new Error("Section ID is not defined");
-    }
     const {
       state: { doc, selection },
     } = view;
@@ -44,6 +39,7 @@ function getElement(view: EditorView) {
       .values()
       .map((tile) => tile.id)
       .toArray();
+    const sectionId = Editor.current.activeSection?.id ?? null;
     const stream = await client.ai.write.mutate(
       { pageId, sectionId, prompt, context: { text: context, tileIds } },
       { context: { stream: true } },
