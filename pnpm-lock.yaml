@@ -64,10 +64,10 @@ importers:
         version: 10.0.0
       openai:
         specifier: ^6.10.0
-        version: 6.10.0(ws@8.18.3)(zod@4.1.13)
+        version: 6.10.0(ws@8.18.3)(zod@4.2.1)
       zod:
-        specifier: ^4.1.11
-        version: 4.1.13
+        specifier: ^4.2.1
+        version: 4.2.1
     devDependencies:
       '@types/cors':
         specifier: ^2.8.18
@@ -3828,8 +3828,8 @@ packages:
   zod@3.22.3:
     resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
 
-  zod@4.1.13:
-    resolution: {integrity: sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig==}
+  zod@4.2.1:
+    resolution: {integrity: sha512-0wZ1IRqGGhMP76gLqz8EyfBXKk0J2qo2+H3fi4mcUP/KtTocoX08nmIAHl1Z2kJIZbZee8KOpBCSNPRgauucjw==}
 
 snapshots:
 
@@ -6943,10 +6943,10 @@ snapshots:
 
   ohash@2.0.11: {}
 
-  openai@6.10.0(ws@8.18.3)(zod@4.1.13):
+  openai@6.10.0(ws@8.18.3)(zod@4.2.1):
     optionalDependencies:
       ws: 8.18.3
-      zod: 4.1.13
+      zod: 4.2.1
 
   orderedmap@2.1.1: {}
 
@@ -7759,4 +7759,4 @@ snapshots:
 
   zod@3.22.3: {}
 
-  zod@4.1.13: {}
+  zod@4.2.1: {}
