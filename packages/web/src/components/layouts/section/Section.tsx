@@ -16,7 +16,11 @@ export interface SectionProps {
   signal?: AbortSignal;
 }
 
-export default function Section({ section, showToolbar, signal }: SectionProps) {
+export default function Section({
+  section,
+  showToolbar,
+  signal,
+}: SectionProps) {
   const { id, layout, tiles, editor } = section;
   const { isEditable } = editor;
 

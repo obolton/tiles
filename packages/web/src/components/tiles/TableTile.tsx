@@ -35,7 +35,11 @@ function createDocument(text: string): RichTextType {
   return [{ type: "paragraph", children: [{ type: "text", format: 0, text }] }];
 }
 
-export default function TableTile({ table, showToolbar, signal }: TableTileProps) {
+export default function TableTile({
+  table,
+  showToolbar,
+  signal,
+}: TableTileProps) {
   let tableView: TableView | undefined;
   const editorView: Reactive<EditorView | null> = reactive(null);
   const state: Reactive<EditorState | null> = reactive(null);
