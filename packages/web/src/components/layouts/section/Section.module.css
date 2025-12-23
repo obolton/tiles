@@ -157,18 +157,24 @@
 .freeform {
   &:not(:defined),
   &::part(contents) {
-    grid-template-columns: repeat(auto-fill, var(--grid-column-width));
-    grid-template-rows: repeat(auto-fill, var(--grid-row-height));
+    position: relative;
+    display: block;
   }
 
   & .item {
-    grid-column: var(--column) / span var(--width);
-    grid-row: var(--row) / span var(--height);
+    position: absolute;
+    left: calc(var(--x) * 1%);
+    top: calc(var(--y) * 1%);
+    width: calc(var(--width) * 1%);
+    height: calc(var(--height) * 1%);
   }
 
   & > :global(.drag-placeholder) {
-    grid-column: calc(var(--placeholder-x) + 1) / span var(--placeholder-width);
-    grid-row: calc(var(--placeholder-y) + 1) / span var(--placeholder-rows);
+    position: absolute;
+    left: calc(var(--placeholder-x) * 1%);
+    top: calc(var(--placeholder-y) * 1%);
+    width: calc(var(--placeholder-width) * 1%);
+    height: calc(var(--placeholder-height) * 1%);
   }
 }
 
