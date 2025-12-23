@@ -54,10 +54,7 @@ export default class PageItem extends HTMLElement {
   private isResizing = false;
   private resizeAbortController?: AbortController;
   private resizeDirection: ResizeHandleDirection | null = null;
-  private width = 0;
-  private height = 0;
-  private x = 0;
-  private y = 0;
+  private resizeRect = new DOMRect();
   private initialPointerX = 0;
   private initialPointerY = 0;
 
@@ -209,44 +206,44 @@ export default class PageItem extends HTMLElement {
     if (this.isResizing) {
       const rect = this.getBoundingClientRect();
 
-      this.x = rect.x;
-      this.y = rect.y;
+      this.resizeRect.x = rect.x;
+      this.resizeRect.y = rect.y;
 
       // Calculate new dimensions and position based on resize direction
       switch (direction) {
         case "se": // Bottom-right (default behavior)
-          this.width = event.clientX - rect.x;
-          this.height = event.clientY - rect.y;
+          this.resizeRect.width = event.clientX - rect.x;
+          this.resizeRect.height = event.clientY - rect.y;
           break;
         case "nw": // Top-left
-          this.width = rect.right - event.clientX;
-          this.height = rect.bottom - event.clientY;
-          this.x = event.clientX;
-          this.y = event.clientY;
+          this.resizeRect.width = rect.right - event.clientX;
+          this.resizeRect.height = rect.bottom - event.clientY;
+          this.resizeRect.x = event.clientX;
+          this.resizeRect.y = event.clientY;
           break;
         case "ne": // Top-right
-          this.width = event.clientX - rect.x;
-          this.height = rect.bottom - event.clientY;
-          this.y = event.clientY;
+          this.resizeRect.width = event.clientX - rect.x;
+          this.resizeRect.height = rect.bottom - event.clientY;
+          this.resizeRect.y = event.clientY;
           break;
         case "sw": // Bottom-left
-          this.width = rect.right - event.clientX;
-          this.height = event.clientY - rect.y;
-          this.x = event.clientX;
+          this.resizeRect.width = rect.right - event.clientX;
+          this.resizeRect.height = event.clientY - rect.y;
+          this.resizeRect.x = event.clientX;
           break;
         case "n": // Top edge
-          this.height = rect.bottom - event.clientY;
-          this.y = event.clientY;
+          this.resizeRect.height = rect.bottom - event.clientY;
+          this.resizeRect.y = event.clientY;
           break;
         case "e": // Right edge
-          this.width = event.clientX - rect.x;
+          this.resizeRect.width = event.clientX - rect.x;
           break;
         case "s": // Bottom edge
-          this.height = event.clientY - rect.y;
+          this.resizeRect.height = event.clientY - rect.y;
           break;
         case "w": // Left edge
-          this.width = rect.right - event.clientX;
-          this.x = event.clientX;
+          this.resizeRect.width = rect.right - event.clientX;
+          this.resizeRect.x = event.clientX;
           break;
       }
 
@@ -254,11 +251,10 @@ export default class PageItem extends HTMLElement {
         new PageItemEvent("itemresize", {
           bubbles: true,
           cancelable: false,
-          width: this.width,
-          height: this.height,
-          x: this.x,
-          y: this.y,
+          rect: this.resizeRect,
           direction,
+          clientX: event.clientX,
+          clientY: event.clientY,
         }),
       );
 
@@ -294,17 +290,16 @@ export default class PageItem extends HTMLElement {
     }
   }
 
-  private pointerUp() {
+  private pointerUp(event: PointerEvent) {
     if (this.isResizing) {
       this.dispatchEvent(
         new PageItemEvent("itemresizeend", {
           bubbles: true,
           cancelable: false,
-          width: this.width,
-          height: this.height,
-          x: this.x,
-          y: this.y,
+          rect: this.resizeRect,
           direction: this.resizeDirection,
+          clientX: event.clientX,
+          clientY: event.clientY,
         }),
       );
     }
@@ -333,20 +328,19 @@ export default class PageItem extends HTMLElement {
     const rect = this.getBoundingClientRect();
     this.initialPointerX = event.clientX;
     this.initialPointerY = event.clientY;
-    this.width = rect.width;
-    this.height = rect.height;
-    this.x = rect.x;
-    this.y = rect.y;
+    this.resizeRect.x = rect.x;
+    this.resizeRect.y = rect.y;
+    this.resizeRect.width = rect.width;
+    this.resizeRect.height = rect.height;
 
     const allowResize = this.dispatchEvent(
       new PageItemEvent("itemresizestart", {
         bubbles: true,
         cancelable: true,
-        width: this.width,
-        height: this.height,
-        x: this.x,
-        y: this.y,
+        rect: this.resizeRect,
         direction: this.resizeDirection,
+        clientX: event.clientX,
+        clientY: event.clientY,
       }),
     );
 
@@ -380,8 +374,8 @@ export default class PageItem extends HTMLElement {
     this.outline = document.createElement("div");
     this.outline.id = "outline";
     this.outline.setAttribute("part", "outline");
-    this.outline.style.width = this.width + "px";
-    this.outline.style.height = this.height + "px";
+    this.outline.style.width = this.resizeRect.width + "px";
+    this.outline.style.height = this.resizeRect.height + "px";
 
     // Move all resize handles into the outline
     this.outline.append(...this.resizeHandles.values());
@@ -405,13 +399,13 @@ export default class PageItem extends HTMLElement {
   private updateOutlineSize() {
     if (this.outline) {
       const rect = this.getBoundingClientRect();
-      const offsetX = this.x - rect.x;
-      const offsetY = this.y - rect.y;
+      const offsetX = this.resizeRect.x - rect.x;
+      const offsetY = this.resizeRect.y - rect.y;
 
       this.outline.style.left = offsetX + "px";
       this.outline.style.top = offsetY + "px";
-      this.outline.style.width = this.width + "px";
-      this.outline.style.height = this.height + "px";
+      this.outline.style.width = this.resizeRect.width + "px";
+      this.outline.style.height = this.resizeRect.height + "px";
     }
   }
 
