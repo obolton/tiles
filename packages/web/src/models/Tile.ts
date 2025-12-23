@@ -124,11 +124,15 @@ export default class Tile {
     afterId,
     x,
     y,
+    width,
+    height,
   }: {
     sectionId?: string | null;
     afterId?: string | null;
     x?: number;
     y?: number;
+    width?: number;
+    height?: number;
   }) {
     if (
       (typeof sectionId !== "undefined" && sectionId !== this.sectionId) ||
@@ -148,8 +152,14 @@ export default class Tile {
     if (typeof y === "number") {
       this.y.value = y;
     }
+    if (typeof width === "number") {
+      this.width.value = width;
+    }
+    if (typeof height === "number") {
+      this.height.value = height;
+    }
 
-    return this.updateTile({ sectionId, afterId, x, y });
+    return this.updateTile({ sectionId, afterId, x, y, width, height });
   }
 
   setAnchor(anchor: Anchor | null) {
