@@ -1,5 +1,10 @@
 import { handleError } from "@/utils/errors";
-import { getSnapPoints, findSnapPoint, type SnapPoints } from "@/utils/snap";
+import {
+  getSnapPoints,
+  findSnapPoint,
+  type SnapPoint,
+  type SnapPoints,
+} from "@/utils/snap";
 import { moveBefore } from "@/utils/dom";
 import type Editor from "@/editor/Editor";
 import type { DragDropEvent } from "@/utils/drag";
@@ -27,7 +32,7 @@ interface RowLayout {
   height: number;
 }
 
-const SNAP_THRESHOLD = 64;
+const SNAP_THRESHOLD = 16;
 
 export default class LayoutEditor {
   static attach(options: LayoutEditorOptions): LayoutEditor {
@@ -227,10 +232,84 @@ export default class LayoutEditor {
     );
   }
 
+  private pixelToPercentX(px: number): number {
+    return (px / this.gridRect.width) * 100;
+  }
+
+  private pixelToPercentY(py: number): number {
+    return (py / this.gridRect.height) * 100;
+  }
+
+  private getPercentX(x: number, width: number, id: string) {
+    // Snap in pixel space, then convert to percentage
+    const snapped = this.snap ? this.getSnapX(x, width, id) : x;
+    return Math.max(0, this.pixelToPercentX(snapped));
+  }
+
+  private getPercentY(y: number, height: number, id: string) {
+    // Snap in pixel space, then convert to percentage
+    const snapped = this.snap ? this.getSnapY(y, height, id) : y;
+    return Math.max(0, this.pixelToPercentY(snapped));
+  }
+
+  private snapEdge(points: SnapPoint[], position: number, id: string): number {
+    if (!this.snap) {
+      return position;
+    }
+    const snap = findSnapPoint(points, [position], SNAP_THRESHOLD, id);
+    return snap ? position + snap.delta : position;
+  }
+
+  private applyResizeSnapping(event: PageItemEvent, id: string) {
+    const { rect, direction, clientX, clientY } = event;
+
+    if (!this.snap || !direction) {
+      return;
+    }
+
+    const affectsX = direction !== "n" && direction !== "s";
+    const affectsY = direction !== "e" && direction !== "w";
+    const movesLeft =
+      direction === "nw" || direction === "w" || direction === "sw";
+    const movesTop =
+      direction === "nw" || direction === "n" || direction === "ne";
+
+    if (affectsX) {
+      const snappedX =
+        this.snapEdge(this.snapPoints.x, clientX - this.gridRect.x, id) +
+        this.gridRect.x;
+      if (movesLeft) {
+        rect.width = rect.right - snappedX;
+        rect.x = snappedX;
+      } else {
+        rect.width = snappedX - rect.x;
+      }
+    }
+
+    if (affectsY) {
+      const snappedY =
+        this.snapEdge(this.snapPoints.y, clientY - this.gridRect.y, id) +
+        this.gridRect.y;
+      if (movesTop) {
+        rect.height = rect.bottom - snappedY;
+        rect.y = snappedY;
+      } else {
+        rect.height = snappedY - rect.y;
+      }
+    }
+  }
+
   private getPosition(event: DragDropEvent) {
     const { clientX, clientY, state } = event;
     const offsetX = clientX - this.gridRect.x - state.offsetX;
     const offsetY = clientY - this.gridRect.y - state.offsetY;
+
+    if (this.layoutType === "FREEFORM") {
+      const x = this.getPercentX(offsetX, state.width, state.element.id);
+      const y = this.getPercentY(offsetY, state.height, state.element.id);
+      return { x, y };
+    }
+
     const x = this.getColumn(offsetX, state.width, state.element.id);
     const y = this.getRow(offsetY, state.height, state.element.id);
     return { x, y };
@@ -340,11 +419,14 @@ export default class LayoutEditor {
       this.x = x;
       this.y = y;
 
+      const width = this.pixelToPercentX(event.state.width);
+      const height = this.pixelToPercentY(event.state.height);
+
       this.showDragPlaceholder({
         x,
         y,
-        width: tile.width.value,
-        height: tile.height.value,
+        width,
+        height,
         rowSpan: tile.rowSpan.value,
       });
     } else {
@@ -377,6 +459,16 @@ export default class LayoutEditor {
         tile.move({
           sectionId: this.sectionId,
           afterId: this.afterId,
+        });
+      } else if (this.layoutType === "FREEFORM") {
+        const width = this.pixelToPercentX(state.width);
+        const height = this.pixelToPercentY(state.height);
+        tile.move({
+          sectionId: this.sectionId,
+          x: this.x,
+          y: this.y,
+          width,
+          height,
         });
       } else {
         tile.move({
@@ -490,43 +582,45 @@ export default class LayoutEditor {
     event.preventDefault();
     event.stopPropagation();
 
-    const width = Math.max(
-      Math.round(
-        (event.width + this.gridColumnGap) /
-          (this.gridColumnWidth + this.gridColumnGap),
-      ),
-      1,
-    );
-    const height = Math.max(
-      Math.round(
-        (event.height + this.gridColumnGap) /
-          (this.gridRowMinHeight + this.gridColumnGap),
-      ),
-      1,
-    );
-    const block =
-      height !== this.resizing.height.value ? false : this.resizing.block;
+    const { rect } = event;
 
-    this.resizing.width.value = width;
-    this.resizing.height.value = height;
+    if (this.layoutType === "FREEFORM") {
+      this.applyResizeSnapping(event, this.resizing.id);
 
-    if (typeof block === "boolean") {
-      this.resizing.block.value = block;
-    }
+      const offsetX = rect.x - this.gridRect.x;
+      const offsetY = rect.y - this.gridRect.y;
 
-    // Handle position changes for freeform layouts (from corner/edge resize)
-    if (
-      this.layoutType === "FREEFORM" &&
-      typeof event.x !== "undefined" &&
-      typeof event.y !== "undefined"
-    ) {
-      const offsetX = event.x - this.gridRect.x;
-      const offsetY = event.y - this.gridRect.y;
-      const x = this.getColumn(offsetX, event.width, this.resizing.id);
-      const y = this.getRow(offsetY, event.height, this.resizing.id);
+      this.resizing.x.value = Math.max(0, this.pixelToPercentX(offsetX));
+      this.resizing.y.value = Math.max(0, this.pixelToPercentY(offsetY));
+      this.resizing.width.value = Math.max(this.pixelToPercentX(rect.width), 1);
+      this.resizing.height.value = Math.max(
+        this.pixelToPercentY(rect.height),
+        1,
+      );
+    } else {
+      const width = Math.max(
+        Math.round(
+          (rect.width + this.gridColumnGap) /
+            (this.gridColumnWidth + this.gridColumnGap),
+        ),
+        1,
+      );
+      const height = Math.max(
+        Math.round(
+          (rect.height + this.gridColumnGap) /
+            (this.gridRowMinHeight + this.gridColumnGap),
+        ),
+        1,
+      );
+      const block =
+        height !== this.resizing.height.value ? false : this.resizing.block;
 
-      this.resizing.x.value = x;
-      this.resizing.y.value = y;
+      this.resizing.width.value = width;
+      this.resizing.height.value = height;
+
+      if (typeof block === "boolean") {
+        this.resizing.block.value = block;
+      }
     }
   }
 
