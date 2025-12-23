@@ -119,11 +119,11 @@ model Tile {
   order      String
   anchor     Anchor?
   dimensions Dimensions @default(CUSTOM)
-  width      Int        @default(1) @db.SmallInt
-  height     Int        @default(1) @db.SmallInt
+  width      Float      @default(10) @db.Real
+  height     Float      @default(10) @db.Real
   rowSpan    Int        @default(1) @map("row_span") @db.SmallInt
-  x          Int        @default(0) @db.SmallInt
-  y          Int        @db.SmallInt
+  x          Float      @default(0) @db.Real
+  y          Float      @default(0) @db.Real
   block      Boolean    @default(true)
   animation  Animation?
   hide       Boolean    @default(false)
