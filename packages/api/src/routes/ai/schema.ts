@@ -7,7 +7,7 @@ export type GenerateImageSchema = z.infer<typeof GenerateImageSchema>;
 
 export const WriteSchema = z.object({
   pageId: z.uuid(),
-  sectionId: z.uuid(),
+  sectionId: z.uuid().nullable(),
   prompt: z.string().min(10).max(4096),
   context: z
     .strictObject({

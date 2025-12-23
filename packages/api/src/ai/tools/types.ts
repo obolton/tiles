@@ -5,7 +5,7 @@ export interface ToolContext {
   userId: string;
   workspaceId: string;
   pageId: string;
-  sectionId: string;
+  sectionId: string | null;
   model: string;
 }
 
