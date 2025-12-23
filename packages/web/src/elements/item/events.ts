@@ -11,26 +11,23 @@ declare global {
 }
 
 export interface PageItemEventInit extends EventInit {
-  width: number;
-  height: number;
-  x?: number;
-  y?: number;
+  clientX: number;
+  clientY: number;
+  rect: DOMRect;
   direction?: ResizeHandleDirection | null;
 }
 
 export class PageItemEvent extends Event {
-  readonly width: number;
-  readonly height: number;
-  readonly x?: number;
-  readonly y?: number;
+  readonly clientX: number;
+  readonly clientY: number;
+  readonly rect: DOMRect;
   readonly direction?: ResizeHandleDirection | null;
 
-  constructor(type: keyof PageItemEventMap, options?: PageItemEventInit) {
+  constructor(type: keyof PageItemEventMap, options: PageItemEventInit) {
     super(type, options);
-    this.width = options?.width ?? 0;
-    this.height = options?.height ?? 0;
-    this.x = options?.x;
-    this.y = options?.y;
-    this.direction = options?.direction;
+    this.clientX = options.clientX;
+    this.clientY = options.clientY;
+    this.rect = options.rect;
+    this.direction = options.direction;
   }
 }
