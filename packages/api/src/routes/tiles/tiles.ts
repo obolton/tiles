@@ -222,7 +222,7 @@ export async function createTile<
     insertY = y;
     insertWidth = width;
   } else {
-    const next = await getNextGridPosition(
+    const next = await getNextPosition(
       { pageId, sectionId, width, maxWidth: 20 },
       transaction,
     );
@@ -267,20 +267,49 @@ export async function createTile<
   return { ...tile, type };
 }
 
-export async function getNextGridPosition(
-  {
-    pageId,
-    sectionId,
-    width: itemWidth,
-    maxWidth = 24,
-  }: {
-    pageId: string;
-    sectionId: string | null;
-    width?: number;
-    maxWidth: number;
-  },
+interface NextPositionOptions {
+  pageId: string;
+  sectionId: string | null;
+  width?: number;
+  maxWidth?: number;
+}
+
+interface NextPosition {
+  x: number;
+  y: number;
+  width: number;
+}
+
+export async function getNextPosition(
+  options: NextPositionOptions,
   transaction: PrismaTransactionClient,
-): Promise<{ x: number; y: number; width: number }> {
+): Promise<NextPosition> {
+  const { pageId, sectionId } = options;
+
+  if (sectionId) {
+    const section = await transaction.section.findUnique({
+      where: { id: sectionId, pageId },
+      select: { layout: true },
+    });
+
+    if (section?.layout === "FREEFORM") {
+      return getNextFreeformPosition(options);
+    }
+  }
+
+  return getNextGridPosition(options, transaction);
+}
+
+function getNextFreeformPosition({
+  width: itemWidth,
+}: NextPositionOptions): NextPosition {
+  return { x: 5, y: 5, width: itemWidth ?? 20 };
+}
+
+async function getNextGridPosition(
+  { pageId, sectionId, width: itemWidth, maxWidth = 24 }: NextPositionOptions,
+  transaction: PrismaTransactionClient,
+): Promise<NextPosition> {
   const previous = await transaction.tile.findFirst({
     select: { x: true, y: true, width: true, rowSpan: true },
     where: { pageId, sectionId },
