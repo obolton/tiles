@@ -156,8 +156,8 @@ export default function Item({
   const position =
     x && y
       ? new Computed([x, y], (xValue, yValue) => ({
-          "--column": (xValue + 1).toString(),
-          "--row": (yValue + 1).toString(),
+          "--x": xValue.toString(),
+          "--y": yValue.toString(),
         }))
       : reactive({});
 

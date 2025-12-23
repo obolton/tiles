@@ -1,25 +1,13 @@
 @property --width {
-  syntax: "<integer>";
+  syntax: "<number>";
   inherits: true;
   initial-value: 0;
 }
 
 @property --height {
-  syntax: "<integer>";
+  syntax: "<number>";
   inherits: true;
   initial-value: 0;
-}
-
-@property --column {
-  syntax: "<integer> | auto";
-  inherits: false;
-  initial-value: auto;
-}
-
-@property --row {
-  syntax: "<integer> | auto";
-  inherits: false;
-  initial-value: auto;
 }
 
 .item {
