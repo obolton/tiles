@@ -255,6 +255,7 @@ export default class PageItem extends HTMLElement {
           direction,
           clientX: event.clientX,
           clientY: event.clientY,
+          altKey: event.altKey,
         }),
       );
 
@@ -300,6 +301,7 @@ export default class PageItem extends HTMLElement {
           direction: this.resizeDirection,
           clientX: event.clientX,
           clientY: event.clientY,
+          altKey: event.altKey,
         }),
       );
     }
@@ -341,6 +343,7 @@ export default class PageItem extends HTMLElement {
         direction: this.resizeDirection,
         clientX: event.clientX,
         clientY: event.clientY,
+        altKey: event.altKey,
       }),
     );
 

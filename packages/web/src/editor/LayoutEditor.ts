@@ -240,15 +240,17 @@ export default class LayoutEditor {
     return (py / this.gridRect.height) * 100;
   }
 
-  private getPercentX(x: number, width: number, id: string) {
+  private getPercentX(x: number, width: number, id: string, altKey: boolean) {
     // Snap in pixel space, then convert to percentage
-    const snapped = this.snap ? this.getSnapX(x, width, id) : x;
+    const shouldSnap = this.snap && !altKey;
+    const snapped = shouldSnap ? this.getSnapX(x, width, id) : x;
     return Math.max(0, this.pixelToPercentX(snapped));
   }
 
-  private getPercentY(y: number, height: number, id: string) {
+  private getPercentY(y: number, height: number, id: string, altKey: boolean) {
     // Snap in pixel space, then convert to percentage
-    const snapped = this.snap ? this.getSnapY(y, height, id) : y;
+    const shouldSnap = this.snap && !altKey;
+    const snapped = shouldSnap ? this.getSnapY(y, height, id) : y;
     return Math.max(0, this.pixelToPercentY(snapped));
   }
 
@@ -261,9 +263,9 @@ export default class LayoutEditor {
   }
 
   private applyResizeSnapping(event: PageItemEvent, id: string) {
-    const { rect, direction, clientX, clientY } = event;
+    const { rect, direction, clientX, clientY, altKey } = event;
 
-    if (!this.snap || !direction) {
+    if (!this.snap || !direction || altKey) {
       return;
     }
 
@@ -300,13 +302,13 @@ export default class LayoutEditor {
   }
 
   private getPosition(event: DragDropEvent) {
-    const { clientX, clientY, state } = event;
+    const { clientX, clientY, state, altKey } = event;
     const offsetX = clientX - this.gridRect.x - state.offsetX;
     const offsetY = clientY - this.gridRect.y - state.offsetY;
 
     if (this.layoutType === "FREEFORM") {
-      const x = this.getPercentX(offsetX, state.width, state.element.id);
-      const y = this.getPercentY(offsetY, state.height, state.element.id);
+      const x = this.getPercentX(offsetX, state.width, state.element.id, altKey);
+      const y = this.getPercentY(offsetY, state.height, state.element.id, altKey);
       return { x, y };
     }
 
