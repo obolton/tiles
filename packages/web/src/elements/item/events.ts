@@ -13,6 +13,7 @@ declare global {
 export interface PageItemEventInit extends EventInit {
   clientX: number;
   clientY: number;
+  altKey: boolean;
   rect: DOMRect;
   direction?: ResizeHandleDirection | null;
 }
@@ -20,6 +21,7 @@ export interface PageItemEventInit extends EventInit {
 export class PageItemEvent extends Event {
   readonly clientX: number;
   readonly clientY: number;
+  readonly altKey: boolean;
   readonly rect: DOMRect;
   readonly direction?: ResizeHandleDirection | null;
 
@@ -27,6 +29,7 @@ export class PageItemEvent extends Event {
     super(type, options);
     this.clientX = options.clientX;
     this.clientY = options.clientY;
+    this.altKey = options.altKey;
     this.rect = options.rect;
     this.direction = options.direction;
   }
