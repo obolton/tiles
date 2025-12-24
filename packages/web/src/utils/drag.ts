@@ -4,7 +4,6 @@ import { viewTransition } from "./transitions";
 const DRAG_THRESHOLD = 10; // px
 const SCROLL_MARGIN = 50; // px from viewport edge
 const SCROLL_INTERVAL = 16; // ms
-const DRAG_EVENT_INTERVAL = 16; // ms
 const MAX_SCROLL_SPEED = 20; // px per scroll
 const LONG_PRESS_DURATION = 500; // ms
 
@@ -97,11 +96,8 @@ export class DragState<T = unknown> {
   private dragPreview: HTMLElement | null = null;
   private dropTarget?: HTMLElement;
   private longPressTimeout?: ReturnType<typeof setTimeout>;
-  private dragInterval?: ReturnType<typeof setInterval>;
   private scrollInterval?: ReturnType<typeof setInterval>;
   private scrollSpeed = 0;
-  private pendingDragEvent: { x: number; y: number; altKey: boolean } | null =
-    null;
 
   constructor({
     element,
@@ -224,7 +220,7 @@ export class DragState<T = unknown> {
     if (allowDrop) {
       this.dropTarget = target;
       target.dataset.dropTarget = "true";
-      this.scheduleDragEvent(clientX, clientY, altKey);
+      this.dispatchDragEvents(clientX, clientY, altKey);
     } else {
       this.dropTarget = undefined;
     }
@@ -259,7 +255,7 @@ export class DragState<T = unknown> {
       const originX = x - this.offsetX;
       const originY = y - this.offsetY;
 
-      this.scheduleDragEvent(clientX, clientY, altKey);
+      this.dispatchDragEvents(clientX, clientY, altKey);
 
       requestAnimationFrame(() => {
         this.dragPreview?.style.setProperty("--drag-x", originX + "px");
@@ -403,11 +399,6 @@ export class DragState<T = unknown> {
 
     this.findDropTarget(this.element, clientX, clientY, altKey);
 
-    this.dragInterval = setInterval(
-      this.processPendingDragEvent.bind(this),
-      DRAG_EVENT_INTERVAL,
-    );
-
     // Suppress click events
     addEventListener("click", this, {
       passive: false,
@@ -471,7 +462,6 @@ export class DragState<T = unknown> {
 
     this.cancelLongPress();
     clearInterval(this.scrollInterval);
-    clearInterval(this.dragInterval);
 
     if (this.isDragging) {
       if (this.dropTarget) {
@@ -502,23 +492,17 @@ export class DragState<T = unknown> {
     this.dropTarget = undefined;
   }
 
-  private scheduleDragEvent(x: number, y: number, altKey: boolean) {
-    this.pendingDragEvent = { x, y, altKey };
-  }
-
-  private processPendingDragEvent() {
-    if (!this.pendingDragEvent) {
-      return;
-    }
-
-    const { x, y, altKey } = this.pendingDragEvent;
-
+  private dispatchDragEvents(
+    clientX: number,
+    clientY: number,
+    altKey: boolean,
+  ) {
     this.element.dispatchEvent(
       this.createDragDropEvent("dnd-drag", {
         bubbles: true,
         cancelable: false,
-        clientX: x,
-        clientY: y,
+        clientX,
+        clientY,
         altKey,
       }),
     );
@@ -527,13 +511,11 @@ export class DragState<T = unknown> {
       this.createDragDropEvent("dnd-dragover", {
         bubbles: true,
         cancelable: false,
-        clientX: x,
-        clientY: y,
+        clientX,
+        clientY,
         altKey,
       }),
     );
-
-    this.pendingDragEvent = null;
   }
 
   // Scrolling
