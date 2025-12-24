@@ -69,6 +69,7 @@ export interface DragStateOptions {
   element: HTMLElement;
   startX: number;
   startY: number;
+  pointerType: string;
   constrain?: ConstrainDragOptions;
   clone?: boolean;
 }
@@ -103,6 +104,7 @@ export class DragState<T = unknown> {
     element,
     startX,
     startY,
+    pointerType,
     constrain,
     clone = false,
   }: DragStateOptions) {
@@ -140,10 +142,18 @@ export class DragState<T = unknown> {
       signal,
     });
 
-    this.longPressTimeout = setTimeout(
-      () => this.longPress(),
-      LONG_PRESS_DURATION,
-    );
+    if (pointerType === "touch") {
+      // Disable scrolling while dragging with touch
+      addEventListener("touchmove", (event) => event.preventDefault(), {
+        passive: false,
+        signal,
+      });
+
+      this.longPressTimeout = setTimeout(
+        () => this.startDrag(this.startX, this.startY),
+        LONG_PRESS_DURATION,
+      );
+    }
   }
 
   handleEvent(event: Event) {
@@ -177,18 +187,6 @@ export class DragState<T = unknown> {
       dragPreview: this.dragPreview,
       dropTarget: this.dropTarget,
       ...options,
-    });
-  }
-
-  // Long press
-
-  private longPress() {
-    this.startDrag(this.startX, this.startY);
-
-    // Disable scrolling while dragging with touch
-    addEventListener("touchmove", (event) => event.preventDefault(), {
-      passive: false,
-      signal: this.abortController.signal,
     });
   }
 
@@ -556,6 +554,7 @@ export function makeDraggable(
           element,
           startX: event.clientX,
           startY: event.clientY,
+          pointerType: event.pointerType,
           constrain,
           clone,
         });
