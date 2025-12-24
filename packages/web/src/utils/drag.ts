@@ -31,6 +31,7 @@ export interface DragDropEventInit<T> extends EventInit {
   dropTarget?: HTMLElement;
   clientX?: number;
   clientY?: number;
+  altKey?: boolean;
 }
 
 export class DragDropEvent<T = unknown> extends Event {
@@ -40,6 +41,7 @@ export class DragDropEvent<T = unknown> extends Event {
   readonly dropTarget?: HTMLElement;
   readonly clientX: number;
   readonly clientY: number;
+  readonly altKey: boolean;
 
   constructor(type: keyof DragDropEventMap, options: DragDropEventInit<T>) {
     const {
@@ -49,6 +51,7 @@ export class DragDropEvent<T = unknown> extends Event {
       dropTarget,
       clientX = 0,
       clientY = 0,
+      altKey = false,
       ...init
     } = options || {};
     super(type, init);
@@ -59,6 +62,7 @@ export class DragDropEvent<T = unknown> extends Event {
     this.dropTarget = dropTarget;
     this.clientX = clientX;
     this.clientY = clientY;
+    this.altKey = altKey;
   }
 }
 
@@ -96,7 +100,8 @@ export class DragState<T = unknown> {
   private dragInterval?: ReturnType<typeof setInterval>;
   private scrollInterval?: ReturnType<typeof setInterval>;
   private scrollSpeed = 0;
-  private pendingDragEvent: { x: number; y: number } | null = null;
+  private pendingDragEvent: { x: number; y: number; altKey: boolean } | null =
+    null;
 
   constructor({
     element,
@@ -195,7 +200,12 @@ export class DragState<T = unknown> {
     clearTimeout(this.longPressTimeout);
   }
 
-  private findDropTarget(child: HTMLElement, clientX: number, clientY: number) {
+  private findDropTarget(
+    child: HTMLElement,
+    clientX: number,
+    clientY: number,
+    altKey: boolean,
+  ) {
     const target = child.closest<HTMLElement>('[data-drop="true"]');
     if (!target || target === this.dropTarget) {
       return;
@@ -207,13 +217,14 @@ export class DragState<T = unknown> {
         cancelable: true,
         clientX,
         clientY,
+        altKey,
       }),
     );
 
     if (allowDrop) {
       this.dropTarget = target;
       target.dataset.dropTarget = "true";
-      this.scheduleDragEvent(clientX, clientY);
+      this.scheduleDragEvent(clientX, clientY, altKey);
     } else {
       this.dropTarget = undefined;
     }
@@ -228,14 +239,19 @@ export class DragState<T = unknown> {
 
   private pointerOver(event: PointerEvent) {
     if (event.target instanceof HTMLElement) {
-      this.findDropTarget(event.target, event.clientX, event.clientY);
+      this.findDropTarget(
+        event.target,
+        event.clientX,
+        event.clientY,
+        event.altKey,
+      );
     }
   }
 
   private pointerMove(event: PointerEvent) {
     this.cancelLongPress();
 
-    const { clientX, clientY } = event;
+    const { clientX, clientY, altKey } = event;
     const x = this.constrain === "vertical" ? this.startX : clientX;
     const y = this.constrain === "horizontal" ? this.startY : clientY;
 
@@ -243,7 +259,7 @@ export class DragState<T = unknown> {
       const originX = x - this.offsetX;
       const originY = y - this.offsetY;
 
-      this.scheduleDragEvent(clientX, clientY);
+      this.scheduleDragEvent(clientX, clientY, altKey);
 
       requestAnimationFrame(() => {
         this.dragPreview?.style.setProperty("--drag-x", originX + "px");
@@ -272,7 +288,7 @@ export class DragState<T = unknown> {
       const deltaY = y - this.startY;
 
       if (Math.hypot(deltaX, deltaY) >= DRAG_THRESHOLD) {
-        this.startDrag(clientX, clientY);
+        this.startDrag(clientX, clientY, altKey);
       }
     }
   }
@@ -341,7 +357,7 @@ export class DragState<T = unknown> {
 
   // Drag lifecycle
 
-  private startDrag(clientX: number, clientY: number) {
+  private startDrag(clientX: number, clientY: number, altKey = false) {
     if (this.isDragging) {
       return;
     }
@@ -352,6 +368,7 @@ export class DragState<T = unknown> {
         cancelable: true,
         clientX,
         clientY,
+        altKey,
       }),
     );
 
@@ -384,7 +401,7 @@ export class DragState<T = unknown> {
     document.body.dataset.drag = "true";
     this.dragPreview.showPopover();
 
-    this.findDropTarget(this.element, clientX, clientY);
+    this.findDropTarget(this.element, clientX, clientY, altKey);
 
     this.dragInterval = setInterval(
       this.processPendingDragEvent.bind(this),
@@ -415,6 +432,7 @@ export class DragState<T = unknown> {
           cancelable: false,
           clientX: event.clientX,
           clientY: event.clientY,
+          altKey: event.altKey,
         }),
       );
 
@@ -484,8 +502,8 @@ export class DragState<T = unknown> {
     this.dropTarget = undefined;
   }
 
-  private scheduleDragEvent(x: number, y: number) {
-    this.pendingDragEvent = { x, y };
+  private scheduleDragEvent(x: number, y: number, altKey: boolean) {
+    this.pendingDragEvent = { x, y, altKey };
   }
 
   private processPendingDragEvent() {
@@ -493,7 +511,7 @@ export class DragState<T = unknown> {
       return;
     }
 
-    const { x, y } = this.pendingDragEvent;
+    const { x, y, altKey } = this.pendingDragEvent;
 
     this.element.dispatchEvent(
       this.createDragDropEvent("dnd-drag", {
@@ -501,6 +519,7 @@ export class DragState<T = unknown> {
         cancelable: false,
         clientX: x,
         clientY: y,
+        altKey,
       }),
     );
 
@@ -510,6 +529,7 @@ export class DragState<T = unknown> {
         cancelable: false,
         clientX: x,
         clientY: y,
+        altKey,
       }),
     );
 
