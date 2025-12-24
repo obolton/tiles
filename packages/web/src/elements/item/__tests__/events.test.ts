@@ -8,6 +8,7 @@ describe("PageItemEvent", () => {
       rect,
       clientX: 420,
       clientY: 440,
+      altKey: false,
     });
 
     expect(event.type).toBe("itemresize");
@@ -18,6 +19,7 @@ describe("PageItemEvent", () => {
     expect(event.rect.height).toBe(240);
     expect(event.clientX).toBe(420);
     expect(event.clientY).toBe(440);
+    expect(event.altKey).toBe(false);
     expect(event).toBeInstanceOf(Event);
   });
 
@@ -27,6 +29,7 @@ describe("PageItemEvent", () => {
       rect,
       clientX: 100,
       clientY: 100,
+      altKey: false,
     });
 
     event.rect.x = 50;
@@ -41,11 +44,13 @@ describe("PageItemEvent", () => {
       rect: new DOMRect(0, 0, 10, 5),
       clientX: 10,
       clientY: 5,
+      altKey: true,
       bubbles: true,
       cancelable: true,
     });
 
     expect(event.bubbles).toBe(true);
     expect(event.cancelable).toBe(true);
+    expect(event.altKey).toBe(true);
   });
 });
