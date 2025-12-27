@@ -258,6 +258,15 @@ function FormattedText({ format, size, color, children }: FormattedTextProps) {
   if (format & TextFormat.HIGHLIGHT) {
     content = <mark>{content}</mark>;
   }
+  if (format & TextFormat.SUPERSCRIPT) {
+    content = <sup>{content}</sup>;
+  }
+  if (format & TextFormat.SUBSCRIPT) {
+    content = <sub>{content}</sub>;
+  }
+  if (format & TextFormat.SMALL_CAPS) {
+    content = <span className="small-caps">{content}</span>;
+  }
   if (typeof size === "number" || typeof color === "string") {
     const style: Record<string, string> = {};
     if (typeof size === "number") {
