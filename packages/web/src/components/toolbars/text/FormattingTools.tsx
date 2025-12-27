@@ -3,6 +3,7 @@ import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import MenuItem from "@/components/buttons/MenuItem";
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
+import ColorPicker from "@/components/colors/ColorPicker";
 import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
 import H3Icon from "@/icons/h3.svg?jsx";
@@ -58,6 +59,8 @@ import {
   reject,
   togglePrompt,
   setTextSize,
+  setTextColor,
+  removeTextColor,
 } from "@/utils/richText/commands";
 import { getLink } from "@/utils/richText/helpers";
 import Editor from "@/editor/Editor";
@@ -163,6 +166,11 @@ export default function FormattingTools({
   };
 
   const changeTextSize = (size: number) => performCommand(setTextSize(size));
+
+  const changeTextColor = (color: string) =>
+    performCommand(setTextColor(color));
+
+  const clearTextColor = () => performCommand(removeTextColor);
 
   const formatBold = () => performCommand(toggleBold);
 
@@ -440,6 +448,14 @@ export default function FormattingTools({
         >
           <LinkIcon aria-hidden="true" />
         </ToolbarButton>
+
+        <ColorPicker
+          id="inline-text-color"
+          value={format.derive((value) => value.color)}
+          onChange={changeTextColor}
+          showClear
+          onClear={clearTextColor}
+        />
 
         <list-select
           aria-label="Text alignment"
