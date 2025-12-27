@@ -16,6 +16,7 @@ export const TileSchema = z.object({
   block: z.boolean().optional(),
   animation: z.enum(Animation).nullable().optional(),
   hide: z.boolean().optional(),
+  themeId: z.uuid().nullable().optional(),
 });
 export type TileSchema = z.infer<typeof TileSchema>;
 

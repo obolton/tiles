@@ -10,7 +10,7 @@ import {
 export default router({
   update: pageUpdateProcedure
     .input(UpdateTileSchema)
-    .mutation(({ input }) => updateTile(input)),
+    .mutation(({ input, ctx }) => updateTile(input, ctx)),
 
   duplicate: pageUpdateProcedure
     .input(DuplicateTileSchema)

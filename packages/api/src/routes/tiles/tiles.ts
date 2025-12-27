@@ -10,14 +10,19 @@ import type {
   DuplicateTileSchema,
   DeleteTilesSchema,
 } from "./schema";
+import { THEME_FIELDS } from "@/routes/themes/themes";
 import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
 import type { TileType } from "@/generated/prisma/enums";
+import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
 
 export const TILE_FIELDS = {
   id: true,
   type: true,
   sectionId: true,
+  theme: {
+    select: THEME_FIELDS,
+  },
   order: true,
   anchor: true,
   dimensions: true,
@@ -61,27 +66,39 @@ export async function getTileSectionId(
   return sectionId;
 }
 
-export async function updateTile({
-  pageId,
-  id,
-  sectionId,
-  afterId,
-  anchor,
-  dimensions,
-  width,
-  height,
-  x,
-  y,
-  rowSpan,
-  block,
-  animation,
-  hide,
-}: UpdateTileSchema) {
+export async function updateTile(
+  {
+    pageId,
+    id,
+    sectionId,
+    afterId,
+    anchor,
+    dimensions,
+    width,
+    height,
+    x,
+    y,
+    rowSpan,
+    block,
+    animation,
+    hide,
+    themeId,
+  }: UpdateTileSchema,
+  { workspaceId }: AuthenticatedPageProcedureContext,
+) {
   return prisma.$transaction(async (transaction) => {
     // Validate section ID
     if (sectionId) {
       await transaction.section.findUniqueOrThrow({
         where: { pageId, id: sectionId },
+        select: { id: true },
+      });
+    }
+
+    // Validate theme belongs to same workspace
+    if (themeId) {
+      await transaction.theme.findUniqueOrThrow({
+        where: { id: themeId, workspaceId },
         select: { id: true },
       });
     }
@@ -115,6 +132,7 @@ export async function updateTile({
         block,
         animation,
         hide,
+        themeId,
       },
       select: TILE_FIELDS,
     });

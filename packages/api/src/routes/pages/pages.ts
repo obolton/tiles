@@ -19,6 +19,7 @@ import {
 import { TABLE_WITH_DATA_FIELDS } from "@/routes/tables/tables";
 import { CHART_FIELDS } from "@/routes/charts/charts";
 import { DROPDOWN_FIELDS } from "@/routes/dropdowns/dropdowns";
+import { THEME_FIELDS } from "@/routes/themes/themes";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import type {
   GetPageByIdSchema,
@@ -30,7 +31,10 @@ import type {
 } from "./schema";
 import type { ClientTile } from "@/types/tiles";
 import type { RequestContext, AuthenticatedRequestContext } from "@/utils/trpc";
-import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
+import type {
+  AuthenticatedWorkspaceProcedureContext,
+  AuthenticatedPageProcedureContext,
+} from "@/utils/middleware";
 import type { ColorSchema } from "@/schema/Color";
 
 const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
@@ -38,6 +42,9 @@ const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
 const TILES_FIELDS = {
   id: true,
   sectionId: true,
+  theme: {
+    select: THEME_FIELDS,
+  },
   order: true,
   anchor: true,
   dimensions: true,
@@ -82,6 +89,9 @@ const PAGE_FIELDS = {
   id: true,
   workspaceId: true,
   folderId: true,
+  theme: {
+    select: THEME_FIELDS,
+  },
   published: true,
   title: true,
   updatedAt: true,
@@ -381,26 +391,29 @@ export async function updatePage(
     font,
     coverImageKey,
     folderId,
+    themeId,
   }: UpdatePageSchema,
-  { userId }: AuthenticatedRequestContext,
+  { userId, workspaceId }: AuthenticatedPageProcedureContext,
 ) {
   return prisma.$transaction(async (transaction) => {
     // Validate folder ownership only when folderId is being set
     if (folderId) {
-      const [page, folder] = await Promise.all([
-        transaction.page.findUniqueOrThrow({
-          where: { id: pageId, authorId: userId, deletedAt: null },
-          select: { workspaceId: true },
-        }),
-        transaction.folder.findUniqueOrThrow({
-          where: { id: folderId },
-          select: { workspaceId: true },
-        }),
-      ]);
+      const folder = await transaction.folder.findUniqueOrThrow({
+        where: { id: folderId },
+        select: { workspaceId: true },
+      });
 
-      if (folder.workspaceId !== page.workspaceId) {
+      if (folder.workspaceId !== workspaceId) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid folder" });
       }
+    }
+
+    // Validate theme belongs to same workspace
+    if (themeId) {
+      await transaction.theme.findUniqueOrThrow({
+        where: { id: themeId, workspaceId },
+        select: { id: true },
+      });
     }
 
     return transaction.page.update({
@@ -412,6 +425,7 @@ export async function updatePage(
         font,
         coverImageKey,
         folderId,
+        themeId,
       },
       select: PAGE_FIELDS,
     });

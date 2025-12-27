@@ -26,6 +26,7 @@ export const UpdatePageSchema = z.object({
   font: z.enum(Font).optional(),
   coverImageKey: z.string().nullable().optional(),
   folderId: z.uuid().nullable().optional(),
+  themeId: z.uuid().nullable().optional(),
 });
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
 
