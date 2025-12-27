@@ -10,6 +10,8 @@ export interface ColorPickerProps {
   id: string;
   value?: Reactive<Color | null>;
   onChange: (value: Color) => void;
+  showClear?: boolean;
+  onClear?: () => void;
 }
 
 const ROWS = 5;
@@ -19,7 +21,13 @@ const CHROMA = 0.15;
 const HUES = 10;
 const START_HUE = 24;
 
-export default function ColorPicker({ id, value, onChange }: ColorPickerProps) {
+export default function ColorPicker({
+  id,
+  value,
+  onChange,
+  showClear,
+  onClear,
+}: ColorPickerProps) {
   const popoverId = `${id}-popover`;
 
   return (
@@ -55,6 +63,11 @@ export default function ColorPicker({ id, value, onChange }: ColorPickerProps) {
           value={value}
           onChange={onChange}
         />
+        {showClear && (
+          <button type="button" className={styles.clear} on:click={onClear}>
+            Clear
+          </button>
+        )}
       </popover-menu>
     </>
   );
