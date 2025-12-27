@@ -1,11 +1,3 @@
-enum Font {
-  MODERN
-  CLASSIC
-  CODE
-  ROUNDED
-  BUBBLES
-}
-
 enum Anchor {
   TOP
   LEFT
@@ -76,13 +68,15 @@ model Page {
   workspaceId     String    @map("workspace_id") @db.Uuid
   authorId        String    @map("author_id") @db.Uuid
   folderId        String?   @map("folder_id") @db.Uuid
+  themeId         String?   @map("theme_id") @db.Uuid
   published       Boolean   @default(false)
   title           String    @db.VarChar(100)
   backgroundColor Bytes?    @map("background_color") @db.ByteA
-  font            Font      @default(MODERN)
+  font            Font?
   coverImageKey   String?   @map("cover_image_key")
 
   workspace          Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  theme              Theme?         @relation(fields: [themeId], references: [id], onDelete: SetNull)
   author             User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   folder             Folder?        @relation(fields: [folderId], references: [id], onDelete: SetNull)
   sections           Section[]
@@ -115,6 +109,7 @@ model Tile {
   updatedAt  DateTime   @default(now()) @updatedAt @map("updated_at")
   pageId     String     @map("page_id") @db.Uuid
   sectionId  String?    @map("section_id") @db.Uuid
+  themeId    String?    @map("theme_id") @db.Uuid
   type       TileType
   order      String
   anchor     Anchor?
@@ -129,6 +124,7 @@ model Tile {
   hide       Boolean    @default(false)
 
   page          Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  theme         Theme?        @relation(fields: [themeId], references: [id], onDelete: SetNull)
   parentSection Section?      @relation("ParentSection", fields: [sectionId], references: [id], onDelete: Cascade)
   section       Section?      @relation("Tile")
   text          TextTile?
@@ -180,7 +176,6 @@ model ImageTile {
   originY Float   @default(0.5) @map("origin_y") @db.Real
   /// [RichText]
   text    Json?   @db.JsonB
-  theme   String?
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   tile  Tile   @relation(fields: [id], references: [id], onDelete: Cascade)

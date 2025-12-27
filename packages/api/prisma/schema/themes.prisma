@@ -1,0 +1,33 @@
+enum Font {
+  MODERN
+  CLASSIC
+  CODE
+  ROUNDED
+  BUBBLES
+}
+
+model Theme {
+  id          String   @id @default(uuid()) @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  workspaceId String   @map("workspace_id") @db.Uuid
+  name        String   @db.VarChar(50)
+
+  // Colors
+  backgroundColor Bytes @map("background_color") @db.ByteA
+  textColor       Bytes @map("text_color") @db.ByteA
+  accentColor     Bytes @map("accent_color") @db.ByteA
+
+  // Fonts
+  headingFont Font @default(MODERN) @map("heading_font")
+  bodyFont    Font @default(MODERN) @map("body_font")
+  codeFont    Font @default(CODE) @map("code_font")
+
+  // Relations
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  pages     Page[]
+  tiles     Tile[]
+
+  @@index([workspaceId])
+  @@map("themes")
+}
