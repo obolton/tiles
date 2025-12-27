@@ -12,6 +12,7 @@ import type {
 
 const SHARED = {
   sectionId: "section-id",
+  theme: null,
   order: "a1",
   x: 5,
   y: 7,

@@ -5,6 +5,7 @@ export const PAGE: Page = {
   workspaceId: "workspace-id",
   updatedAt: "2025-01-01",
   folderId: "folder-id",
+  theme: null,
   published: true,
   author: {
     id: "user-id",
