@@ -8,7 +8,7 @@ import type ListSelect from "@/elements/list-select/ListSelect";
 import type { JSX } from "@/jsx/jsx";
 
 export interface FontPickerProps extends JSX.Attributes<"list-select"> {
-  value?: Reactive<FontId>;
+  value?: Reactive<FontId | null>;
   onChange: (value: FontId) => void;
 }
 
