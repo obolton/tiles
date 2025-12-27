@@ -1,5 +1,6 @@
 import { TextFormat } from "@/utils/richText/types";
 import { ListType } from "@/utils/richText/types";
+import { toCSSColor } from "@/utils/color";
 import ThemeVariant from "@/components/themes/ThemeVariant";
 import { DATE_THEMES, DEFAULT_DATE_THEME } from "@/components/dates/themes";
 import { LINK_THEMES, DEFAULT_LINK_THEME } from "@/components/links/themes";
@@ -45,7 +46,11 @@ function renderNodes(nodes: Node[]) {
             return <List node={node} />;
           case "text":
             return node.pending ? null : (
-              <FormattedText format={node.format} size={node.size}>
+              <FormattedText
+                format={node.format}
+                size={node.size}
+                color={node.color}
+              >
                 {node.text}
               </FormattedText>
             );
@@ -53,7 +58,11 @@ function renderNodes(nodes: Node[]) {
             return <Link node={node} />;
           case "date":
             return (
-              <FormattedText format={node.format} size={node.size}>
+              <FormattedText
+                format={node.format}
+                size={node.size}
+                color={node.color}
+              >
                 <ThemeVariant
                   theme={node.theme ?? DEFAULT_DATE_THEME}
                   registry={DATE_THEMES}
@@ -64,7 +73,11 @@ function renderNodes(nodes: Node[]) {
             );
           case "dropdown":
             return (
-              <FormattedText format={node.format} size={node.size}>
+              <FormattedText
+                format={node.format}
+                size={node.size}
+                color={node.color}
+              >
                 {node.value}
               </FormattedText>
             );
@@ -215,7 +228,7 @@ interface MentionProps {
 
 function Mention({ node }: MentionProps) {
   return (
-    <FormattedText format={node.format} size={node.size}>
+    <FormattedText format={node.format} size={node.size} color={node.color}>
       <span className="mention">{node.displayName}</span>
     </FormattedText>
   );
@@ -224,10 +237,11 @@ function Mention({ node }: MentionProps) {
 interface FormattedTextProps {
   format: TextFormat;
   size?: number;
+  color?: string;
   children: JSX.Node;
 }
 
-function FormattedText({ format, size, children }: FormattedTextProps) {
+function FormattedText({ format, size, color, children }: FormattedTextProps) {
   let content = children;
   if (format & TextFormat.BOLD) {
     content = <strong>{content}</strong>;
@@ -244,17 +258,16 @@ function FormattedText({ format, size, children }: FormattedTextProps) {
   if (format & TextFormat.HIGHLIGHT) {
     content = <mark>{content}</mark>;
   }
-  if (typeof size === "number") {
-    content = (
-      <span
-        style={{
-          fontSize:
-            Math.min(Math.max(size, MIN_TEXT_SIZE), MAX_TEXT_SIZE) + "em",
-        }}
-      >
-        {content}
-      </span>
-    );
+  if (typeof size === "number" || typeof color === "string") {
+    const style: Record<string, string> = {};
+    if (typeof size === "number") {
+      style.fontSize =
+        Math.min(Math.max(size, MIN_TEXT_SIZE), MAX_TEXT_SIZE) + "em";
+    }
+    if (typeof color === "string") {
+      style.color = toCSSColor(color);
+    }
+    content = <span style={style}>{content}</span>;
   }
   return content;
 }
