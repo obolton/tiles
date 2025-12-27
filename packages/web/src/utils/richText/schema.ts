@@ -24,6 +24,9 @@ const DOMOutput = {
   highlight: ["mark", 0],
   pending: ["ins", 0],
   code: ["pre", ["code", 0]],
+  superscript: ["sup", 0],
+  subscript: ["sub", 0],
+  smallCaps: ["span", { class: "small-caps" }, 0],
 } as const satisfies Record<string, DOMOutputSpec>;
 
 export type TextAlignment = "left" | "center" | "right";
@@ -393,6 +396,32 @@ const marksSpec = {
     toDOM(mark) {
       const color = mark.attrs.color as string;
       return ["span", { style: `color: ${toCSSColor(color)}` }, 0];
+    },
+  },
+
+  superscript: {
+    excludes: "subscript",
+    parseDOM: [{ tag: "sup" }],
+    toDOM() {
+      return DOMOutput.superscript;
+    },
+  },
+
+  subscript: {
+    excludes: "superscript",
+    parseDOM: [{ tag: "sub" }],
+    toDOM() {
+      return DOMOutput.subscript;
+    },
+  },
+
+  smallCaps: {
+    parseDOM: [
+      { tag: "span.small-caps" },
+      { style: "font-variant=small-caps" },
+    ],
+    toDOM() {
+      return DOMOutput.smallCaps;
     },
   },
 } as const satisfies Record<string, MarkSpec>;
