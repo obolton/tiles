@@ -1,13 +1,14 @@
 import styles from "./Tile.module.css";
-import { getFontConfig } from "@/utils/fonts";
 import {
   reactive,
   isReactive,
   Computed,
   type Reactive,
 } from "@/utils/reactivity";
-import { toCSSColor, isDark, type Color } from "@/utils/color";
+import { isDark, type Color } from "@/utils/color";
 import { getBackgroundStyle } from "@/utils/backgrounds";
+import { resolveThemeStyles, toCSSProperties } from "@/utils/themes";
+import type { Theme } from "api/types/themes";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
 import type { Fill } from "@/components/fills/types";
@@ -16,6 +17,7 @@ import type { Animation } from "@/models/Tile";
 export type TileProps = {
   className?: string;
   children?: JSX.Node;
+  theme?: Reactive<Theme | null>;
   font?: FontId | null;
   textColor?: Reactive<Color | null>;
   background?: Reactive<Fill | null>;
@@ -44,6 +46,7 @@ const ANIMATION_NAMES: Record<Animation, string> = {
 export default function Tile({
   className,
   children,
+  theme = reactive(null),
   textColor = reactive(null),
   background = reactive(null),
   animation = reactive(null),
@@ -51,20 +54,30 @@ export default function Tile({
   border = "outside",
   anchorName,
 }: TileProps) {
-  const fontConfig = typeof font === "string" ? getFontConfig(font) : undefined;
   const style = new Computed(
-    [textColor, background, animation] as const,
-    (textColorValue, backgroundValue, animationValue) => ({
-      "--font": fontConfig
-        ? `"${fontConfig.family}", "${fontConfig.fallback}"`
-        : undefined,
-      "--text-color": textColorValue ? toCSSColor(textColorValue) : undefined,
-      "--animation-name": animationValue
-        ? ANIMATION_NAMES[animationValue]
-        : undefined,
-      anchorName,
-      ...getBackgroundStyle(backgroundValue),
-    }),
+    [theme, textColor, background, animation] as const,
+    (themeValue, textColorValue, backgroundValue, animationValue) => {
+      const resolved = resolveThemeStyles(themeValue, {
+        textColor: textColorValue,
+        font,
+      });
+
+      // TODO: Support Fill types in theme backgrounds
+      const effectiveBackground =
+        backgroundValue ??
+        (resolved.backgroundColor
+          ? { type: "color" as const, color: resolved.backgroundColor }
+          : null);
+
+      return {
+        ...toCSSProperties(resolved),
+        "--animation-name": animationValue
+          ? ANIMATION_NAMES[animationValue]
+          : undefined,
+        anchorName,
+        ...getBackgroundStyle(effectiveBackground),
+      };
+    },
   );
 
   return (
