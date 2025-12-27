@@ -62,6 +62,12 @@ export const toggleStrikethrough = toggleMark(schema.marks.strikethrough);
 
 export const toggleHighlight = toggleMark(schema.marks.highlight);
 
+export const toggleSuperscript = toggleMark(schema.marks.superscript);
+
+export const toggleSubscript = toggleMark(schema.marks.subscript);
+
+export const toggleSmallCaps = toggleMark(schema.marks.smallCaps);
+
 export function addLink(href: string): Command {
   return function (state, dispatch) {
     if (!href) {
