@@ -1,5 +1,6 @@
 import { Schema } from "prosemirror-model";
 import { MIN_TEXT_SIZE, MAX_TEXT_SIZE } from "@/constants/formatting";
+import { toCSSColor, COLOR_HEX_REGEX } from "@/utils/color";
 import type {
   AttributeSpec,
   NodeSpec,
@@ -376,6 +377,22 @@ const marksSpec = {
     parseDOM: [{ tag: "del" }, { style: "text-decoration=line-through" }],
     toDOM() {
       return DOMOutput.strikethrough;
+    },
+  },
+
+  color: {
+    attrs: {
+      color: {
+        validate(value) {
+          if (typeof value !== "string" || !COLOR_HEX_REGEX.test(value)) {
+            throw new RangeError(`Invalid color: ${value}`);
+          }
+        },
+      },
+    },
+    toDOM(mark) {
+      const color = mark.attrs.color as string;
+      return ["span", { style: `color: ${toCSSColor(color)}` }, 0];
     },
   },
 } as const satisfies Record<string, MarkSpec>;
