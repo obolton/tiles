@@ -2,6 +2,8 @@ import { useMode, modeOklch, modeP3 } from "culori/fn";
 
 export type Color = string;
 
+export const COLOR_HEX_REGEX = /^[0-9a-fA-F]{12}$/;
+
 export interface P3Color {
   r: number;
   g: number;
