@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ColorSchema } from "./Color";
 
-const FormatSchema = z.int().gte(0).lte(31);
+const FormatSchema = z.int().gte(0).lte(255);
 
 const SizeSchema = z.number().gte(0.5).lte(2.5);
 
