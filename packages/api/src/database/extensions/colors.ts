@@ -1,12 +1,5 @@
-import { Buffer } from "node:buffer";
 import { Prisma } from "@/generated/prisma/client";
-
-// TODO: Use `Uint8Array.prototype.toHex` when available
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array/toHex
-
-function toHex(bytes: Uint8Array | null): string | null {
-  return bytes ? Buffer.from(bytes).toString("hex") : null;
-}
+import { toHex } from "@/utils/arrays";
 
 export default Prisma.defineExtension({
   name: "colors-extension",
@@ -14,25 +7,26 @@ export default Prisma.defineExtension({
     page: {
       backgroundColor: {
         needs: { backgroundColor: true },
-        compute: ({ backgroundColor }) => toHex(backgroundColor),
+        compute: ({ backgroundColor }) =>
+          backgroundColor ? toHex(backgroundColor) : null,
       },
     },
     textTile: {
       textColor: {
         needs: { textColor: true },
-        compute: ({ textColor }) => toHex(textColor),
+        compute: ({ textColor }) => (textColor ? toHex(textColor) : null),
       },
     },
     table: {
       textColor: {
         needs: { textColor: true },
-        compute: ({ textColor }) => toHex(textColor),
+        compute: ({ textColor }) => (textColor ? toHex(textColor) : null),
       },
     },
     chartSeries: {
       color: {
         needs: { color: true },
-        compute: ({ color }) => toHex(color),
+        compute: ({ color }) => (color ? toHex(color) : null),
       },
     },
   },
