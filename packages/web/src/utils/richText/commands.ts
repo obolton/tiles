@@ -46,6 +46,12 @@ export function setTextSize(size: number) {
   return addMark(schema.marks.size.create({ size }));
 }
 
+export function setTextColor(color: string) {
+  return addMark(schema.marks.color.create({ color }));
+}
+
+export const removeTextColor = removeMark(schema.marks.color);
+
 export const toggleBold = toggleMark(schema.marks.bold);
 
 export const toggleItalic = toggleMark(schema.marks.italic);
