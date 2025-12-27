@@ -18,6 +18,7 @@ import type { Image } from "@/routes/images/images";
 import type { TableWithData } from "@/routes/tables/tables";
 import type { Chart, ChartSeries } from "@/routes/charts/charts";
 import type { PageLinkPage } from "@/routes/pageLinks/pageLinks";
+import type { Theme } from "@/routes/themes/themes";
 
 type OmitMetadata<T> = Omit<T, "pageId" | "createdAt" | "updatedAt">;
 
@@ -37,7 +38,9 @@ type ClientTileBase = Pick<
   | "block"
   | "animation"
   | "hide"
->;
+> & {
+  theme: Theme | null;
+};
 
 // Image
 export type ClientImage = Image;
