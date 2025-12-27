@@ -1,5 +1,6 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
+import ThemePicker from "@/components/themes/ThemePicker";
 import MenuItem from "@/components/buttons/MenuItem";
 import ArrowUpIcon from "@/icons/arrow-up.svg?jsx";
 import ArrowDownIcon from "@/icons/arrow-down.svg?jsx";
@@ -35,8 +36,20 @@ export default function TileTools({ tile }: TileToolsProps) {
     tile.delete().catch(handleError);
   }
 
+  function setTheme(themeId: string | null) {
+    tile.setTheme(themeId).catch(handleError);
+  }
+
   return (
     <ToolbarGroup label="More tools">
+      <ThemePicker
+        workspaceId={tile.editor.workspaceId}
+        value={tile.theme.derive((t) => t?.id ?? null)}
+        onChange={setTheme}
+        aria-label="Theme"
+        data-tooltip="Theme"
+      />
+
       <ToolbarButton
         id={`${tile.id}-options-button`}
         label="More options"
