@@ -1,6 +1,7 @@
 import ColorPicker from "@/components/colors/ColorPicker";
 import FontPicker from "@/components/inputs/FontPicker";
 import FolderPicker from "@/components/inputs/FolderPicker";
+import ThemePicker from "@/components/themes/ThemePicker";
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
@@ -8,6 +9,8 @@ import { viewTransition } from "@/utils/transitions";
 import { getFontConfig } from "@/utils/fonts";
 import { toCSSColor, isDark, type Color } from "@/utils/color";
 import { redirectWithToast } from "@/utils/toasts";
+import { getCachedWorkspaceThemes } from "@/utils/workspaceThemes";
+import { getThemeStyles } from "@/utils/themes";
 import styles from "./PageSettingsPopover.module.css";
 import type { FontId } from "@/config/fonts";
 import type Editor from "@/editor/Editor";
@@ -23,7 +26,7 @@ export default function PageSettingsPopover({
   allowDelete,
   ...props
 }: PageSettingsPopoverProps) {
-  const { title, backgroundColor, font, folderId } = editor;
+  const { title, backgroundColor, font, folderId, themeId } = editor;
 
   function onSubmit(event: Event) {
     event.preventDefault();
@@ -65,6 +68,26 @@ export default function PageSettingsPopover({
 
   function setFolder(folderId: string | null) {
     editor.setFolder(folderId).catch(handleError);
+  }
+
+  function setTheme(newThemeId: string | null) {
+    const themes = getCachedWorkspaceThemes(editor.workspaceId);
+    const theme = themes?.find((t) => t.id === newThemeId) ?? null;
+
+    const styles = getThemeStyles(theme, {
+      backgroundColor: backgroundColor.value,
+      font: font.value,
+    });
+
+    viewTransition(() => {
+      for (const [property, value] of Object.entries(styles)) {
+        document.body.style.setProperty(property, value);
+      }
+      const bgColor = theme?.colors.background ?? backgroundColor.value;
+      document.body.classList.toggle("dark", !!bgColor && isDark(bgColor));
+    });
+
+    editor.setTheme(newThemeId).catch(handleError);
   }
 
   function deletePage() {
@@ -125,6 +148,17 @@ export default function PageSettingsPopover({
             onChange={setFolder}
             aria-label="Folder"
             data-tooltip="Folder"
+          />
+        </li>
+
+        <li role="presentation">
+          <ThemePicker
+            role="menuitem"
+            workspaceId={editor.workspaceId}
+            value={themeId}
+            onChange={setTheme}
+            aria-label="Theme"
+            data-tooltip="Theme"
           />
         </li>
 
