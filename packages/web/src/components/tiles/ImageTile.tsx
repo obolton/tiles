@@ -66,7 +66,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
 
   if (!imageUrl) {
     return (
-      <Tile className={styles.deleted}>
+      <Tile className={styles.deleted} theme={image.theme}>
         <p>This image has been deleted.</p>
       </Tile>
     );
@@ -89,7 +89,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
   }));
 
   return (
-    <Tile border="inside">
+    <Tile theme={image.theme} border="inside">
       <If condition={showToolbar}>
         <Portal>
           <ImageToolbar image={image} editorView={editorView} />

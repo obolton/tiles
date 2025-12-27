@@ -53,7 +53,7 @@ export default function MapTile({ map, showToolbar }: MapTileProps) {
   const anchorName = `--map-${id}`;
 
   return (
-    <Tile border="inside" anchorName={anchorName}>
+    <Tile theme={map.theme} border="inside" anchorName={anchorName}>
       <If condition={showToolbar}>
         <Portal>
           <MapToolbar map={map} getMapView={getMapView} />

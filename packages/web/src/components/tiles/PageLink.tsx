@@ -1,7 +1,8 @@
 import Tile from "./Tile";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import styles from "./PageLink.module.css";
-import { reactive } from "@/utils/reactivity";
+import { reactive, type Reactive } from "@/utils/reactivity";
+import type { Theme } from "api/types/themes";
 import type { FontId } from "@/config/fonts";
 import type { JSX } from "@/jsx/jsx";
 import type { Fill } from "@/components/fills/types";
@@ -11,6 +12,7 @@ export interface PageLinkProps extends JSX.Attributes<"a"> {
   title: string;
   background: Fill | null;
   font?: FontId | null;
+  theme?: Reactive<Theme | null>;
 }
 
 export default function PageLink({
@@ -18,6 +20,7 @@ export default function PageLink({
   title,
   background,
   font,
+  theme,
   target,
   children,
   ...props
@@ -31,6 +34,7 @@ export default function PageLink({
     >
       <Tile
         className={styles.tile}
+        theme={theme}
         background={reactive(background)}
         font={font}
         border="inside"

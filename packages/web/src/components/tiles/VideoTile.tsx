@@ -31,7 +31,7 @@ export default function VideoTile({ video }: VideoTileProps) {
   const embedUrl = getEmbedUrl(videoType, videoId);
 
   return (
-    <Tile>
+    <Tile theme={video.theme}>
       <figure className={styles.figure}>
         <embedded-video
           id={`${id}-video`}

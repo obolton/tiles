@@ -33,7 +33,7 @@ export default function PageLinkTile({
 
   if (!page) {
     return (
-      <Tile className={styles.deleted}>
+      <Tile className={styles.deleted} theme={pageLink.theme}>
         <p>This page has been deleted.</p>
       </Tile>
     );
@@ -45,6 +45,7 @@ export default function PageLinkTile({
       title={page.title}
       font={page.font}
       background={page.background}
+      theme={pageLink.theme}
       target="_blank"
       on:click={onClick}
     >

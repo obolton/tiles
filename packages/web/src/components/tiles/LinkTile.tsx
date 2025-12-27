@@ -38,7 +38,7 @@ export default function LinkTile({ link, showToolbar }: LinkTileProps) {
   }
 
   return (
-    <Tile background={background}>
+    <Tile theme={link.theme} background={background}>
       <a
         className={styles.link}
         href={url}

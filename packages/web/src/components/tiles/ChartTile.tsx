@@ -32,11 +32,11 @@ export interface ChartTileProps {
 
 export default function ChartTile({ chart, showToolbar }: ChartTileProps) {
   if (import.meta.env.SSR) {
-    return <Tile background={chart.background}></Tile>;
+    return <Tile theme={chart.theme} background={chart.background}></Tile>;
   }
 
   return (
-    <Tile border="none" background={chart.background}>
+    <Tile theme={chart.theme} border="none" background={chart.background}>
       <If condition={showToolbar}>
         <Portal>
           <ChartToolbar chart={chart} />

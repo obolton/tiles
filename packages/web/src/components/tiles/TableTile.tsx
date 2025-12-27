@@ -43,7 +43,8 @@ export default function TableTile({
   let tableView: TableView | undefined;
   const editorView: Reactive<EditorView | null> = reactive(null);
   const state: Reactive<EditorState | null> = reactive(null);
-  const { id, textColor, background, columns, rows, numRows, editor } = table;
+  const { id, theme, textColor, background, columns, rows, numRows, editor } =
+    table;
   const { isEditable } = editor;
   const selectionType = reactive<"row" | "column" | "range" | null>(null);
 
@@ -284,7 +285,12 @@ export default function TableTile({
   const anchorName = `--table-${id}`;
 
   return (
-    <Tile textColor={textColor} background={background} anchorName={anchorName}>
+    <Tile
+      theme={theme}
+      textColor={textColor}
+      background={background}
+      anchorName={anchorName}
+    >
       <table-view
         ref={ref}
         classList={["rich-text", styles.table]}
