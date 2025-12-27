@@ -27,7 +27,8 @@ export function resolveThemeStyles(
   theme: Theme | null,
   overrides: StyleOverrides,
 ): ResolvedStyles {
-  const backgroundColor = overrides.backgroundColor ?? theme?.colors.background ?? null;
+  const backgroundColor =
+    overrides.backgroundColor ?? theme?.colors.background ?? null;
   const textColor = overrides.textColor ?? theme?.colors.text ?? null;
   const accentColor = overrides.accentColor ?? theme?.colors.accent ?? null;
   const fontId = overrides.font ?? theme?.fonts.body ?? null;
@@ -54,9 +55,7 @@ export function toCSSProperties(styles: ResolvedStyles): {
     "--background-color": styles.backgroundColor
       ? toCSSColor(styles.backgroundColor)
       : undefined,
-    "--text-color": styles.textColor
-      ? toCSSColor(styles.textColor)
-      : undefined,
+    "--text-color": styles.textColor ? toCSSColor(styles.textColor) : undefined,
     "--accent-color": styles.accentColor
       ? toCSSColor(styles.accentColor)
       : undefined,

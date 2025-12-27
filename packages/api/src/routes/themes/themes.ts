@@ -69,7 +69,9 @@ export async function updateTheme(
     where: { id, workspaceId },
     data: {
       name,
-      backgroundColor: colors?.background ? fromHex(colors.background) : undefined,
+      backgroundColor: colors?.background
+        ? fromHex(colors.background)
+        : undefined,
       textColor: colors?.text ? fromHex(colors.text) : undefined,
       accentColor: colors?.accent ? fromHex(colors.accent) : undefined,
       headingFont: fonts?.heading,

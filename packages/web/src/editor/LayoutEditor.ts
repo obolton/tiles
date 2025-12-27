@@ -307,8 +307,18 @@ export default class LayoutEditor {
     const offsetY = clientY - this.gridRect.y - state.offsetY;
 
     if (this.layoutType === "FREEFORM") {
-      const x = this.getPercentX(offsetX, state.width, state.element.id, altKey);
-      const y = this.getPercentY(offsetY, state.height, state.element.id, altKey);
+      const x = this.getPercentX(
+        offsetX,
+        state.width,
+        state.element.id,
+        altKey,
+      );
+      const y = this.getPercentY(
+        offsetY,
+        state.height,
+        state.element.id,
+        altKey,
+      );
       return { x, y };
     }
 
