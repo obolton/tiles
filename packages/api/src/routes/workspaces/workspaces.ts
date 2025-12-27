@@ -3,6 +3,7 @@ import { createKey } from "@/utils/keys.ts";
 import { sendEmail } from "@/utils/email.ts";
 import { inviteToWorkspaceEmail } from "@/emails/inviteToWorkspace.ts";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
+import { getDefaultThemesData } from "@/utils/themes.ts";
 import type { Prisma } from "@/generated/prisma/client";
 import type {
   GetWorkspaceSchema,
@@ -57,6 +58,11 @@ export async function createWorkspace(
       memberships: {
         create: {
           userId,
+        },
+      },
+      themes: {
+        createMany: {
+          data: getDefaultThemesData(),
         },
       },
     },

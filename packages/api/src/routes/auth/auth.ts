@@ -4,6 +4,7 @@ import { createKey, getUserIdByProviderId } from "./keys.ts";
 import { createSession, deleteSession } from "./sessions.ts";
 import { sendEmail } from "@/utils/email.ts";
 import { signUpEmail } from "@/emails/signUp.ts";
+import { getDefaultThemesData } from "@/utils/themes.ts";
 import type { SignInSchema } from "./schema.ts";
 
 export async function signIn({
@@ -35,6 +36,11 @@ export async function signIn({
           memberships: {
             create: {
               userId: user.id,
+            },
+          },
+          themes: {
+            createMany: {
+              data: getDefaultThemesData(),
             },
           },
         },
