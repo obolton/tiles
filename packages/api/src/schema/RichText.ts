@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ColorSchema } from "./Color";
 
 const FormatSchema = z.int().gte(0).lte(31);
 
@@ -11,6 +12,7 @@ const TextNodeSchema = z.object({
   text: z.string(),
   format: FormatSchema,
   size: SizeSchema.optional(),
+  color: ColorSchema.optional(),
   pending: z.boolean().optional(),
 });
 
@@ -26,6 +28,7 @@ const DateNodeSchema = z.object({
   value: z.union([z.iso.datetime(), z.iso.date()]),
   format: FormatSchema,
   size: SizeSchema.optional(),
+  color: ColorSchema.optional(),
   theme: z.string().nullable().optional(),
 });
 
@@ -35,6 +38,7 @@ const DropdownNodeSchema = z.object({
   value: z.string(),
   format: FormatSchema,
   size: SizeSchema.optional(),
+  color: ColorSchema.optional(),
 });
 
 const MentionNodeSchema = z.object({
@@ -43,6 +47,7 @@ const MentionNodeSchema = z.object({
   displayName: z.string(),
   format: FormatSchema,
   size: SizeSchema.optional(),
+  color: ColorSchema.optional(),
 });
 
 const InlineNodeSchema = z.discriminatedUnion("type", [
