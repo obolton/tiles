@@ -9,7 +9,6 @@ export const IMAGE_FIELDS = {
   text: true,
   originX: true,
   originY: true,
-  theme: true,
 } as const satisfies Prisma.ImageTileSelect<ExtensionArgs>;
 
 export type Image = Prisma.Result<
@@ -22,7 +21,6 @@ export async function createImage({
   pageId,
   imageId,
   text,
-  theme,
   ...properties
 }: CreateImageSchema) {
   const { image, ...tile } = await createTile(
@@ -34,7 +32,6 @@ export async function createImage({
         pageId,
         imageId,
         text,
-        theme,
       },
     },
     { image: { select: IMAGE_FIELDS } },
@@ -49,7 +46,6 @@ export async function updateImage({
   id,
   text,
   origin,
-  theme,
 }: UpdateImageSchema) {
   const image = await prisma.imageTile.update({
     where: {
@@ -60,7 +56,6 @@ export async function updateImage({
       text,
       originX: origin?.x,
       originY: origin?.y,
-      theme,
     },
     select: IMAGE_FIELDS,
   });
