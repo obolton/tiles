@@ -8,6 +8,7 @@ import type {
   Animation,
   TileType,
 } from "api/types/tiles";
+import type { Theme } from "api/types/themes";
 import type Editor from "@/editor/Editor";
 import type { AppRouterInputs } from "@/api/client";
 import type { TileParent } from "./TileCollection";
@@ -32,6 +33,7 @@ export default class Tile {
   readonly block: Reactive<boolean>;
   readonly animation: Reactive<Animation | null>;
   readonly hide: Reactive<boolean>;
+  readonly theme: Reactive<Theme | null>;
 
   constructor(editor: Editor, properties: ClientTile) {
     const {
@@ -48,6 +50,7 @@ export default class Tile {
       block,
       animation,
       hide,
+      theme,
     } = properties;
     this.editor = editor;
 
@@ -65,6 +68,7 @@ export default class Tile {
     this.block = reactive(block);
     this.animation = reactive(animation);
     this.hide = reactive(hide);
+    this.theme = reactive(theme);
   }
 
   get index(): number | null {
@@ -227,6 +231,11 @@ export default class Tile {
   setHidden(hide: boolean) {
     this.hide.value = hide;
     return this.updateTile({ hide });
+  }
+
+  async setTheme(themeId: string | null) {
+    const result = await this.updateTile({ themeId });
+    this.theme.value = result.theme;
   }
 
   async moveUp() {
