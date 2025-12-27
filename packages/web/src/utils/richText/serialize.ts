@@ -36,6 +36,10 @@ function getTextSize(node: Node): number | undefined {
   return schema.marks.size.isInSet(node.marks)?.attrs.size;
 }
 
+function getTextColor(node: Node): string | undefined {
+  return schema.marks.color.isInSet(node.marks)?.attrs.color;
+}
+
 function getTextAlignment(node: Node): TextAlignment | undefined {
   switch (node.attrs.align) {
     case "left":
@@ -56,6 +60,7 @@ function serializeNode(node: Node): SerializedNode {
       text: node.text ?? "",
       format: getTextFormat(node),
       size: getTextSize(node),
+      color: getTextColor(node),
       pending: node.marks.find((mark) => mark.type === schema.marks.pending)
         ? true
         : undefined,
@@ -154,6 +159,7 @@ function serializeNode(node: Node): SerializedNode {
       value: time ? value.toISOString() : value.toISOString().slice(0, 10),
       format: getTextFormat(node),
       size: getTextSize(node),
+      color: getTextColor(node),
       theme: node.attrs.theme as string | undefined,
     };
   }
@@ -167,6 +173,7 @@ function serializeNode(node: Node): SerializedNode {
       value,
       format: getTextFormat(node),
       size: getTextSize(node),
+      color: getTextColor(node),
     };
   }
 
@@ -177,6 +184,7 @@ function serializeNode(node: Node): SerializedNode {
       displayName: node.attrs.displayName as string,
       format: getTextFormat(node),
       size: getTextSize(node),
+      color: getTextColor(node),
     };
   }
 

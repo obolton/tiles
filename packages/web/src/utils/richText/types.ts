@@ -28,6 +28,7 @@ export interface TextNode extends BaseNode {
   text: string;
   format: number;
   size?: number;
+  color?: string;
   pending?: boolean;
 }
 
@@ -43,6 +44,7 @@ export interface DateNode extends BaseNode {
   value: string;
   format: number;
   size?: number;
+  color?: string;
   theme?: string | null;
 }
 
@@ -52,6 +54,7 @@ export interface DropdownNode extends BaseNode {
   value: string;
   format: number;
   size?: number;
+  color?: string;
 }
 
 export interface MentionNode extends BaseNode {
@@ -60,6 +63,7 @@ export interface MentionNode extends BaseNode {
   displayName: string;
   format: number;
   size?: number;
+  color?: string;
 }
 
 export interface PendingNode extends BaseNode {

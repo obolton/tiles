@@ -19,7 +19,7 @@ import { TextFormat, ListType, TextAlignment } from "./types";
 import { schema } from "./schema";
 
 function getMarks(node: TextNode | DateNode | DropdownNode | MentionNode) {
-  const { format, size } = node;
+  const { format, size, color } = node;
   const marks = [];
 
   if (format & TextFormat.BOLD) {
@@ -39,6 +39,9 @@ function getMarks(node: TextNode | DateNode | DropdownNode | MentionNode) {
   }
   if (typeof size === "number") {
     marks.push(schema.marks.size.create({ size }));
+  }
+  if (typeof color === "string") {
+    marks.push(schema.marks.color.create({ color }));
   }
 
   return marks;
