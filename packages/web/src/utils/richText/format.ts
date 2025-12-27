@@ -27,6 +27,7 @@ export interface Format {
   align?: TextAlignment;
   pending: boolean;
   size: number;
+  color: string | null;
 }
 
 export const DEFAULT_FORMAT: Format = {
@@ -42,6 +43,7 @@ export const DEFAULT_FORMAT: Format = {
   link: false,
   pending: false,
   size: 1,
+  color: null,
 };
 
 export function getSelectionFormat(state: EditorState): Format {
@@ -52,6 +54,7 @@ export function getSelectionFormat(state: EditorState): Format {
   const list = getSelectionList(state);
   const link = !!getLink(state);
   const size = schema.marks.size.isInSet(marks)?.attrs.size ?? 1;
+  const color = schema.marks.color.isInSet(marks)?.attrs.color ?? null;
 
   return {
     headingLevel,
@@ -67,5 +70,6 @@ export function getSelectionFormat(state: EditorState): Format {
     align,
     pending: blockNodeTypes.has(schema.nodes.pending),
     size,
+    color,
   };
 }
