@@ -20,6 +20,10 @@ export interface ColorPaletteProps {
   onChange: (value: Color) => void;
 }
 
+function preventDefault(event: Event) {
+  event.preventDefault();
+}
+
 export default function ColorPalette({
   rows = 5,
   minLightness = 0,
@@ -72,15 +76,42 @@ export default function ColorPalette({
     }
   }
 
-  const selectedColor = value?.value;
-  const selectedIndex = selectedColor
-    ? items.findIndex((compareColor) =>
-        isSameColor(compareColor.color, selectedColor),
-      )
-    : null;
+  let fieldset: HTMLFieldSetElement | undefined;
+
+  function ref(element: HTMLFieldSetElement) {
+    fieldset = element;
+  }
+
+  value?.subscribe((reactive) => {
+    if (!fieldset) {
+      return;
+    }
+    const color = reactive.value;
+    if (color == null) {
+      // Clear selection
+      const checked = fieldset.querySelector<HTMLInputElement>("input:checked");
+      if (checked) {
+        checked.checked = false;
+      }
+    } else {
+      // Find and select matching color
+      const index = items.findIndex((item) => isSameColor(item.color, color));
+      const input = fieldset.querySelector<HTMLInputElement>(
+        `input[value="${index}"]`,
+      );
+      if (input) {
+        input.checked = true;
+      }
+    }
+  });
+
+  const initialColor = value?.value;
+  const initialIndex = initialColor
+    ? items.findIndex((item) => isSameColor(item.color, initialColor))
+    : -1;
 
   return (
-    <fieldset className={styles.palette} on:change={setColor}>
+    <fieldset ref={ref} className={styles.palette} on:change={setColor}>
       {items.map((item, i) => (
         <input
           type="radio"
@@ -90,7 +121,8 @@ export default function ColorPalette({
           }}
           aria-label={item.name}
           value={i.toString()}
-          checked={i === selectedIndex}
+          checked={i === initialIndex}
+          on:pointerdown={preventDefault}
         />
       ))}
     </fieldset>
