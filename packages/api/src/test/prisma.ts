@@ -54,6 +54,7 @@ export const MOCK_PRISMA = {
   table: mockModel(),
   tableColumn: mockModel(),
   tableRow: mockModel(),
+  theme: mockModel(),
   textTile: mockModel(),
   tile: mockModel(),
   user: mockModel(),
