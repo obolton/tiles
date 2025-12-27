@@ -15,6 +15,10 @@ import ItalicIcon from "@/icons/italic.svg?jsx";
 import UnderlineIcon from "@/icons/underline.svg?jsx";
 import StrikethroughIcon from "@/icons/strikethrough.svg?jsx";
 import HighlightIcon from "@/icons/highlight.svg?jsx";
+import MoreIcon from "@/icons/more.svg?jsx";
+import SuperscriptIcon from "@/icons/superscript.svg?jsx";
+import SubscriptIcon from "@/icons/subscript.svg?jsx";
+import SmallCapsIcon from "@/icons/small-caps.svg?jsx";
 import OrderedListIcon from "@/icons/ordered-list.svg?jsx";
 import UnorderedListIcon from "@/icons/unordered-list.svg?jsx";
 import CheckListIcon from "@/icons/check-list.svg?jsx";
@@ -42,6 +46,9 @@ import {
   toggleUnderline,
   toggleStrikethrough,
   toggleHighlight,
+  toggleSuperscript,
+  toggleSubscript,
+  toggleSmallCaps,
   toggleQuote,
   toggleCode,
   toggleHeading,
@@ -181,6 +188,12 @@ export default function FormattingTools({
   const formatStrikethrough = () => performCommand(toggleStrikethrough);
 
   const formatHighlight = () => performCommand(toggleHighlight);
+
+  const formatSuperscript = () => performCommand(toggleSuperscript);
+
+  const formatSubscript = () => performCommand(toggleSubscript);
+
+  const formatSmallCaps = () => performCommand(toggleSmallCaps);
 
   const approveSelection = () => performCommand(approve);
 
@@ -432,6 +445,55 @@ export default function FormattingTools({
         >
           <HighlightIcon aria-hidden="true" />
         </ToolbarButton>
+
+        <ToolbarButton
+          id="more-text-button"
+          popovertarget="more-text-menu"
+          label="More formatting"
+          aria-haspopup="menu"
+          aria-expanded="false"
+        >
+          <MoreIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <popover-menu id="more-text-menu" anchor="more-text-button">
+          <list-box>
+            <ul className="menuitemgroup" role="group" aria-label="Position">
+              <li>
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<SuperscriptIcon aria-hidden="true" />}
+                  checked={format.derive((f) => f.superscript)}
+                  on:click={formatSuperscript}
+                >
+                  Superscript
+                </MenuItem>
+              </li>
+              <li>
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<SubscriptIcon aria-hidden="true" />}
+                  checked={format.derive((f) => f.subscript)}
+                  on:click={formatSubscript}
+                >
+                  Subscript
+                </MenuItem>
+              </li>
+            </ul>
+            <ul className="menuitemgroup" role="group" aria-label="Variant">
+              <li>
+                <MenuItem
+                  classList={{ menuitem: true }}
+                  icon={<SmallCapsIcon aria-hidden="true" />}
+                  checked={format.derive((f) => f.smallCaps)}
+                  on:click={formatSmallCaps}
+                >
+                  Small caps
+                </MenuItem>
+              </li>
+            </ul>
+          </list-box>
+        </popover-menu>
 
         <ToolbarButton
           label="Quote"
