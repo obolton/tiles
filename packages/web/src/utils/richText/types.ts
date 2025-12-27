@@ -5,6 +5,9 @@ export enum TextFormat {
   STRIKETHROUGH = 1 << 2,
   UNDERLINE = 1 << 3,
   HIGHLIGHT = 1 << 4,
+  SUPERSCRIPT = 1 << 5,
+  SUBSCRIPT = 1 << 6,
+  SMALL_CAPS = 1 << 7,
 }
 
 export enum ListType {

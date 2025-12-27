@@ -37,6 +37,15 @@ function getMarks(node: TextNode | DateNode | DropdownNode | MentionNode) {
   if (format & TextFormat.HIGHLIGHT) {
     marks.push(schema.marks.highlight.create());
   }
+  if (format & TextFormat.SUPERSCRIPT) {
+    marks.push(schema.marks.superscript.create());
+  }
+  if (format & TextFormat.SUBSCRIPT) {
+    marks.push(schema.marks.subscript.create());
+  }
+  if (format & TextFormat.SMALL_CAPS) {
+    marks.push(schema.marks.smallCaps.create());
+  }
   if (typeof size === "number") {
     marks.push(schema.marks.size.create({ size }));
   }

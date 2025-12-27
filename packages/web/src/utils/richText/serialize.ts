@@ -26,6 +26,12 @@ function getTextFormat(node: Node): number {
         return format | TextFormat.UNDERLINE;
       case marks.highlight:
         return format | TextFormat.HIGHLIGHT;
+      case marks.superscript:
+        return format | TextFormat.SUPERSCRIPT;
+      case marks.subscript:
+        return format | TextFormat.SUBSCRIPT;
+      case marks.smallCaps:
+        return format | TextFormat.SMALL_CAPS;
       default:
         return format;
     }
