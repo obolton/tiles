@@ -324,8 +324,8 @@ export default class Editor {
       return;
     }
 
-    this.clearSelection();
     this.deleteTiles(Array.from(this.selection.value));
+    this.clearSelection();
   }
 
   transitionSections(update: () => void) {
