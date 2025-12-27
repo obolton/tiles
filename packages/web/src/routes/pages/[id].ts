@@ -1,9 +1,9 @@
 import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
-import { getFontConfig } from "@/utils/fonts";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import Page, { type PageProps } from "@/pages/Page";
-import { toCSSColor, isDark } from "@/utils/color";
+import { isDark } from "@/utils/color";
+import { getThemeStyles } from "@/utils/themes";
 import type {
   Route,
   RequestProperties,
@@ -32,7 +32,10 @@ async function loader({
     throw new Error("Not Found");
   }
 
-  const font = page.font ? getFontConfig(page.font) : undefined;
+  const style = getThemeStyles(page.theme, {
+    backgroundColor: page.backgroundColor,
+    font: page.font,
+  });
 
   return {
     headers: page.published
@@ -45,12 +48,7 @@ async function loader({
         page.backgroundColor && isDark(page.backgroundColor)
           ? "dark"
           : undefined,
-      style: {
-        "--background-color": page.backgroundColor
-          ? toCSSColor(page.backgroundColor)
-          : undefined,
-        "--font": font ? `"${font.family}", "${font.fallback}"` : undefined,
-      },
+      style,
     },
     data: { page },
   };
