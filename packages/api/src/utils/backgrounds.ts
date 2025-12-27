@@ -1,6 +1,6 @@
-import { Buffer } from "node:buffer";
 import type { GradientDirection } from "@/generated/prisma/client";
 import type { BackgroundSchema } from "@/schema/Background";
+import { fromHex } from "./arrays";
 
 export interface Background {
   backgroundColor: Uint8Array<ArrayBuffer> | null;
@@ -25,16 +25,15 @@ export function getBackgroundProperties(
 
   if (background.type === "color") {
     return {
-      backgroundColor: new Uint8Array(Buffer.from(background.color, "hex")),
+      backgroundColor: fromHex(background.color),
       backgroundGradient: null,
       backgroundImageId: null,
     };
   }
 
   if (background.type === "gradient") {
-    const { colorA, colorB } = background;
     return {
-      backgroundColor: new Uint8Array(Buffer.from(colorA + colorB, "hex")),
+      backgroundColor: fromHex(background.colorA + background.colorB),
       backgroundGradient: background.direction,
       backgroundImageId: null,
     };
