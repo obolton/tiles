@@ -23,6 +23,9 @@ export interface Format {
   underline: boolean;
   strikethrough: boolean;
   highlight: boolean;
+  superscript: boolean;
+  subscript: boolean;
+  smallCaps: boolean;
   link: boolean;
   align?: TextAlignment;
   pending: boolean;
@@ -40,6 +43,9 @@ export const DEFAULT_FORMAT: Format = {
   underline: false,
   strikethrough: false,
   highlight: false,
+  superscript: false,
+  subscript: false,
+  smallCaps: false,
   link: false,
   pending: false,
   size: 1,
@@ -65,6 +71,9 @@ export function getSelectionFormat(state: EditorState): Format {
     underline: Boolean(schema.marks.underline.isInSet(marks)),
     strikethrough: Boolean(schema.marks.strikethrough.isInSet(marks)),
     highlight: Boolean(schema.marks.highlight.isInSet(marks)),
+    superscript: Boolean(schema.marks.superscript.isInSet(marks)),
+    subscript: Boolean(schema.marks.subscript.isInSet(marks)),
+    smallCaps: Boolean(schema.marks.smallCaps.isInSet(marks)),
     link,
     list,
     align,
