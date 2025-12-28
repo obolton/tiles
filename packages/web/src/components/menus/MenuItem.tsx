@@ -1,12 +1,12 @@
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
 
-// TODO: Support menuitemradio role
 export interface MenuItemProps extends JSX.Attributes<"button"> {
   label?: string;
   icon?: JSX.Node;
   destructive?: boolean;
   checked?: Reactive<boolean>;
+  role?: "menuitem" | "menuitemcheckbox" | "menuitemradio";
 }
 
 export default function MenuItem({
@@ -14,15 +14,18 @@ export default function MenuItem({
   icon,
   destructive,
   checked,
+  role,
   children,
   classList,
   ...props
 }: MenuItemProps) {
+  const resolvedRole =
+    role ?? (checked !== undefined ? "menuitemcheckbox" : "menuitem");
   return (
     <button
       type="button"
-      classList={{ destructive, ...classList }}
-      role={checked ? "menuitemcheckbox" : "menuitem"}
+      classList={{ menuitem: true, destructive, ...classList }}
+      role={resolvedRole}
       aria-checked={checked}
       aria-label={label}
       data-tooltip={label}
