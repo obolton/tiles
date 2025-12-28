@@ -1,7 +1,9 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import ThemePicker from "@/components/themes/ThemePicker";
-import MenuItem from "@/components/buttons/MenuItem";
+import Menu from "@/components/menus/Menu";
+import MenuItemGroup from "@/components/menus/MenuItemGroup";
+import MenuItem from "@/components/menus/MenuItem";
 import ArrowUpIcon from "@/icons/arrow-up.svg?jsx";
 import ArrowDownIcon from "@/icons/arrow-down.svg?jsx";
 import DuplicateIcon from "@/icons/duplicate.svg?jsx";
@@ -64,60 +66,45 @@ export default function TileTools({ tile }: TileToolsProps) {
         id={`${tile.id}-options`}
         anchor={`${tile.id}-options-button`}
       >
-        <list-box>
-          <ul className="menuitemgroup" role="group">
-            <li>
-              <MenuItem
-                classList={{ menuitem: true }}
-                icon={<ArrowUpIcon aria-hidden="true" />}
-                on:click={moveUp}
-              >
-                Move up
-              </MenuItem>
-            </li>
-            <li>
-              <MenuItem
-                classList={{ menuitem: true }}
-                icon={<ArrowDownIcon aria-hidden="true" />}
-                on:click={moveDown}
-              >
-                Move down
-              </MenuItem>
-            </li>
-          </ul>
+        <Menu>
+          <MenuItemGroup>
+            <MenuItem
+              icon={<ArrowUpIcon aria-hidden="true" />}
+              on:click={moveUp}
+            >
+              Move up
+            </MenuItem>
+            <MenuItem
+              icon={<ArrowDownIcon aria-hidden="true" />}
+              on:click={moveDown}
+            >
+              Move down
+            </MenuItem>
+          </MenuItemGroup>
 
-          <ul className="menuitemgroup" role="group">
-            <li>
-              <MenuItem
-                classList={{ menuitem: true }}
-                icon={<DuplicateIcon aria-hidden="true" />}
-                on:click={duplicate}
-              >
-                Duplicate
-              </MenuItem>
-            </li>
-            <li>
-              <MenuItem
-                classList={{ menuitem: true }}
-                icon={<HiddenIcon aria-hidden="true" />}
-                checked={tile.hide}
-                on:click={toggleHide}
-              >
-                Hide
-              </MenuItem>
-            </li>
-            <li>
-              <MenuItem
-                classList={{ menuitem: true }}
-                icon={<TrashIcon aria-hidden="true" />}
-                destructive
-                on:click={deleteTile}
-              >
-                Delete
-              </MenuItem>
-            </li>
-          </ul>
-        </list-box>
+          <MenuItemGroup>
+            <MenuItem
+              icon={<DuplicateIcon aria-hidden="true" />}
+              on:click={duplicate}
+            >
+              Duplicate
+            </MenuItem>
+            <MenuItem
+              icon={<HiddenIcon aria-hidden="true" />}
+              checked={tile.hide}
+              on:click={toggleHide}
+            >
+              Hide
+            </MenuItem>
+            <MenuItem
+              icon={<TrashIcon aria-hidden="true" />}
+              destructive
+              on:click={deleteTile}
+            >
+              Delete
+            </MenuItem>
+          </MenuItemGroup>
+        </Menu>
       </popover-menu>
     </ToolbarGroup>
   );

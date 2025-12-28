@@ -1,4 +1,6 @@
-import MenuItem from "@/components/buttons/MenuItem";
+import Menu from "@/components/menus/Menu";
+import MenuItemGroup from "@/components/menus/MenuItemGroup";
+import MenuItem from "@/components/menus/MenuItem";
 import TextIcon from "@/icons/text.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
@@ -161,44 +163,35 @@ export default function InsertMenu({
 
   return (
     <popover-menu {...props}>
-      <list-box>
-        <ul className="menuitemgroup" role="group">
+      <Menu>
+        <MenuItemGroup>
           {BUTTONS.map(({ label, type, Icon }) => (
-            <li role="presentation">
-              <MenuItem
-                classList={{ menuitem: true }}
-                icon={<Icon aria-hidden="true" />}
-                data-tile-type={type}
-                on:click={onClick}
-              >
-                {label}
-              </MenuItem>
-            </li>
+            <MenuItem
+              icon={<Icon aria-hidden="true" />}
+              data-tile-type={type}
+              on:click={onClick}
+            >
+              {label}
+            </MenuItem>
           ))}
-        </ul>
+        </MenuItemGroup>
 
-        <ul className="menuitemgroup" role="group">
-          <li role="presentation">
-            <MenuItem
-              classList={{ menuitem: true }}
-              icon={<VerticalLayoutIcon aria-hidden="true" />}
-              on:click={createStack}
-            >
-              Collection
-            </MenuItem>
-          </li>
+        <MenuItemGroup>
+          <MenuItem
+            icon={<VerticalLayoutIcon aria-hidden="true" />}
+            on:click={createStack}
+          >
+            Collection
+          </MenuItem>
 
-          <li role="presentation">
-            <MenuItem
-              classList={{ menuitem: true }}
-              icon={<FreeformLayoutIcon aria-hidden="true" />}
-              on:click={createFreeformSection}
-            >
-              Canvas
-            </MenuItem>
-          </li>
-        </ul>
-      </list-box>
+          <MenuItem
+            icon={<FreeformLayoutIcon aria-hidden="true" />}
+            on:click={createFreeformSection}
+          >
+            Canvas
+          </MenuItem>
+        </MenuItemGroup>
+      </Menu>
     </popover-menu>
   );
 }

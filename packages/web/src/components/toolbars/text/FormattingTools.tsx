@@ -1,6 +1,8 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
-import MenuItem from "@/components/buttons/MenuItem";
+import Menu from "@/components/menus/Menu";
+import MenuItemGroup from "@/components/menus/MenuItemGroup";
+import MenuItem from "@/components/menus/MenuItem";
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import ColorPicker from "@/components/colors/ColorPicker";
@@ -249,61 +251,49 @@ export default function FormattingTools({
         </ToolbarButton>
 
         <popover-menu id="insert-content-menu" anchor="insert-content-button">
-          <list-box>
-            <ul className="menuitemgroup" role="group">
-              <li>
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<EventIcon aria-hidden="true" />}
-                  on:click={insertNewDate}
-                >
-                  Date
-                </MenuItem>
-              </li>
-              <li>
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<DropdownIcon aria-hidden="true" />}
-                  on:click={insertNewDropdown}
-                >
-                  Dropdown
-                </MenuItem>
-              </li>
-              <li>
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<PeopleIcon aria-hidden="true" />}
-                  on:click={() => performCommand(openMentionPicker)}
-                >
-                  Mention
-                </MenuItem>
-              </li>
+          <Menu>
+            <MenuItemGroup>
+              <MenuItem
+                icon={<EventIcon aria-hidden="true" />}
+                on:click={insertNewDate}
+              >
+                Date
+              </MenuItem>
+              <MenuItem
+                icon={<DropdownIcon aria-hidden="true" />}
+                on:click={insertNewDropdown}
+              >
+                Dropdown
+              </MenuItem>
+              <MenuItem
+                icon={<PeopleIcon aria-hidden="true" />}
+                on:click={() => performCommand(openMentionPicker)}
+              >
+                Mention
+              </MenuItem>
 
               <Each items={Editor.current.dropdowns}>
                 {(dropdown) => (
-                  <li>
-                    <MenuItem
-                      classList={{ menuitem: true }}
-                      icon={<DropdownIcon aria-hidden="true" />}
-                      on:click={() =>
-                        insertExistingDropdown(
-                          dropdown.id,
-                          dropdown.options.value[0]?.value ?? "",
-                        )
-                      }
-                    >
-                      {dropdown.title.value ||
-                        listFormatter.format(
-                          dropdown.options.value
-                            .slice(0, 5)
-                            .map(({ value }) => value),
-                        )}
-                    </MenuItem>
-                  </li>
+                  <MenuItem
+                    icon={<DropdownIcon aria-hidden="true" />}
+                    on:click={() =>
+                      insertExistingDropdown(
+                        dropdown.id,
+                        dropdown.options.value[0]?.value ?? "",
+                      )
+                    }
+                  >
+                    {dropdown.title.value ||
+                      listFormatter.format(
+                        dropdown.options.value
+                          .slice(0, 5)
+                          .map(({ value }) => value),
+                      )}
+                  </MenuItem>
                 )}
               </Each>
-            </ul>
-          </list-box>
+            </MenuItemGroup>
+          </Menu>
         </popover-menu>
       </ToolbarGroup>
 
@@ -457,42 +447,35 @@ export default function FormattingTools({
         </ToolbarButton>
 
         <popover-menu id="more-text-menu" anchor="more-text-button">
-          <list-box>
-            <ul className="menuitemgroup" role="group" aria-label="Position">
-              <li>
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<SuperscriptIcon aria-hidden="true" />}
-                  checked={format.derive((f) => f.superscript)}
-                  on:click={formatSuperscript}
-                >
-                  Superscript
-                </MenuItem>
-              </li>
-              <li>
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<SubscriptIcon aria-hidden="true" />}
-                  checked={format.derive((f) => f.subscript)}
-                  on:click={formatSubscript}
-                >
-                  Subscript
-                </MenuItem>
-              </li>
-            </ul>
-            <ul className="menuitemgroup" role="group" aria-label="Variant">
-              <li>
-                <MenuItem
-                  classList={{ menuitem: true }}
-                  icon={<SmallCapsIcon aria-hidden="true" />}
-                  checked={format.derive((f) => f.smallCaps)}
-                  on:click={formatSmallCaps}
-                >
-                  Small caps
-                </MenuItem>
-              </li>
-            </ul>
-          </list-box>
+          <Menu>
+            <MenuItemGroup label="Position">
+              <MenuItem
+                role="menuitemradio"
+                icon={<SuperscriptIcon aria-hidden="true" />}
+                checked={format.derive((f) => f.superscript)}
+                on:click={formatSuperscript}
+              >
+                Superscript
+              </MenuItem>
+              <MenuItem
+                role="menuitemradio"
+                icon={<SubscriptIcon aria-hidden="true" />}
+                checked={format.derive((f) => f.subscript)}
+                on:click={formatSubscript}
+              >
+                Subscript
+              </MenuItem>
+            </MenuItemGroup>
+            <MenuItemGroup label="Variant">
+              <MenuItem
+                icon={<SmallCapsIcon aria-hidden="true" />}
+                checked={format.derive((f) => f.smallCaps)}
+                on:click={formatSmallCaps}
+              >
+                Small caps
+              </MenuItem>
+            </MenuItemGroup>
+          </Menu>
         </popover-menu>
 
         <ToolbarButton
