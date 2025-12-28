@@ -75,8 +75,7 @@ new_image_tile AS (
     image_id,
     origin_x,
     origin_y,
-    text,
-    theme
+    text
   )
   SELECT
     new_tile.id,
@@ -84,8 +83,7 @@ new_image_tile AS (
     image_id,
     origin_x,
     origin_y,
-    text,
-    theme
+    text
   FROM image_tiles
   JOIN new_tile ON true
   WHERE new_tile.type = 'IMAGE'
