@@ -263,35 +263,3 @@ list-select > [role="group"] {
     }
   }
 }
-
-/* TODO: Use CSS layers to avoid needing !important here */
-ul.menuitemgroup {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  margin: 0 !important;
-  padding: 0 !important;
-  list-style: none !important;
-
-  &.inline {
-    flex-direction: row;
-  }
-
-  &:not(:last-child) {
-    padding: 0 0 8px;
-
-    &::after {
-      content: "";
-      position: absolute;
-      inset: auto 12px -1px;
-      height: 2px;
-      border-radius: 1px;
-      background: rgb(0 0 0 / 5%);
-    }
-  }
-
-  & > li {
-    margin: 0;
-    padding: 0;
-  }
-}
