@@ -3,6 +3,7 @@ import "@/styles/editing.css";
 import "@/styles/toolbars.css";
 import "@/styles/buttons.css";
 import "@/styles/forms.css";
+import "@/styles/menus.css";
 import "@/styles/drag.css";
 import "@/styles/resize.css";
 import "@/styles/lightbox.css";
