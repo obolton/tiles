@@ -31,20 +31,23 @@ function unorderedListInputRule() {
 }
 
 function dividerInputRule() {
-  return new InputRule(/^---$/, (state, _match, start, _end) => {
-    const $start = state.doc.resolve(start);
-    if (
-      $start.parent.type !== schema.nodes.paragraph ||
-      $start.parentOffset !== 0
-    ) {
-      return null;
-    }
-    return state.tr.replaceWith(
-      $start.before(),
-      $start.after(),
-      schema.nodes.divider.create(null),
-    );
-  });
+  return new InputRule(
+    /^(-{3,}|\*{3,}|_{3,})$/,
+    (state, _match, start, _end) => {
+      const $start = state.doc.resolve(start);
+      if (
+        $start.parent.type !== schema.nodes.paragraph ||
+        $start.parentOffset !== 0
+      ) {
+        return null;
+      }
+      return state.tr.replaceWith(
+        $start.before(),
+        $start.after(),
+        schema.nodes.divider.create(null),
+      );
+    },
+  );
 }
 
 export function createInputRules() {
