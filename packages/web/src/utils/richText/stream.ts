@@ -22,7 +22,15 @@ export interface ListItemNode {
   depth: number;
 }
 
-export type RichTextNode = ParagraphNode | HeadingNode | ListItemNode;
+export interface DividerNode {
+  type: "divider";
+}
+
+export type RichTextNode =
+  | ParagraphNode
+  | HeadingNode
+  | ListItemNode
+  | DividerNode;
 
 export interface RichTextFormat {
   bold?: boolean;
@@ -204,6 +212,15 @@ export async function insertFromStream(
                 tr.insert(pos, node);
                 pos += node.nodeSize - 3;
               }
+            }
+            break;
+
+          case "divider":
+            {
+              pos = tr.doc.resolve(startPos).end();
+              const node = schema.nodes.divider.create();
+              tr.insert(pos, node);
+              pos += node.nodeSize;
             }
             break;
         }
