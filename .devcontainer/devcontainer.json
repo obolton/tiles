@@ -24,6 +24,10 @@
 
   "postCreateCommand": "pnpm install && pnpm db:push && pnpm db:seed",
 
+  "containerEnv": {
+    "CHECKPOINT_DISABLE": "1" // Disable Prisma telemetry
+  },
+
   "remoteEnv": {
     "DATABASE_URL": "postgresql://tiles:tiles@db:5432/tiles"
   },
