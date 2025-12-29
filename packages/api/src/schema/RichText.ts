@@ -92,6 +92,10 @@ const CodeNodeSchema = z.object({
   children: z.array(TextNodeSchema),
 });
 
+const DividerNodeSchema = z.object({
+  type: z.literal("divider"),
+});
+
 const QuoteNodeSchema = z.object({
   type: z.literal("quote"),
   children: z.array(
@@ -100,6 +104,7 @@ const QuoteNodeSchema = z.object({
       HeadingNodeSchema,
       ListNodeSchema,
       CodeNodeSchema,
+      DividerNodeSchema,
     ]),
   ),
 });
@@ -113,6 +118,7 @@ const PendingNodeSchema = z.object({
       ListNodeSchema,
       QuoteNodeSchema,
       CodeNodeSchema,
+      DividerNodeSchema,
     ]),
   ),
 });
@@ -124,6 +130,7 @@ const BlockNodeSchema = z.discriminatedUnion("type", [
   ListNodeSchema,
   PendingNodeSchema,
   CodeNodeSchema,
+  DividerNodeSchema,
 ]);
 
 export const RichTextSchema = z.array(BlockNodeSchema);
