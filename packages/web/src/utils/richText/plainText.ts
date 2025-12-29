@@ -32,6 +32,10 @@ export function toPlainText(input: RichText) {
         queue.push(...node.children, "\n");
         break;
 
+      case "divider":
+        queue.push("\n");
+        break;
+
       default:
         queue.push(...node.children);
         break;
