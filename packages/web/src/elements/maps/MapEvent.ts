@@ -1,5 +1,5 @@
 export interface MapEventMap {
-  deletemarker: MapEvent;
+  mapselectionchange: MapEvent;
 }
 
 declare global {
