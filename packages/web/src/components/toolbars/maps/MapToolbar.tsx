@@ -1,8 +1,10 @@
 import TileTools from "@/components/toolbars/tiles/TileTools";
+import PlaceTab from "./PlaceTab";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
+import If from "@/jsx/if";
 import AddPlaceIcon from "@/icons/add-place.svg?jsx";
 import PlaceIcon from "@/icons/place.svg?jsx";
 import { showModal } from "@/utils/modals";
@@ -10,15 +12,25 @@ import type Map from "@/models/Map";
 import type MapView from "@/elements/maps/MapView";
 import type { MapStyle } from "api/types/tiles";
 import type ListSelect from "@/elements/list-select/ListSelect";
+import type { Reactive } from "@/utils/reactivity";
 
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
 export interface MapToolbarProps {
   map: Map;
   getMapView: () => MapView;
+  hasSelection: Reactive<boolean>;
 }
 
-export default function MapToolbar({ map, getMapView }: MapToolbarProps) {
+export default function MapToolbar({
+  map,
+  getMapView,
+  hasSelection,
+}: MapToolbarProps) {
+  const selectedTab = hasSelection.derive((selected) =>
+    selected ? "place" : null,
+  );
+
   function addPlace() {
     showModal(PlaceModalLoader, {
       props: {
@@ -40,8 +52,9 @@ export default function MapToolbar({ map, getMapView }: MapToolbarProps) {
       className="primary"
       aria-label="Map toolbar"
       data-tooltip-position="top"
+      selectedtab={selectedTab}
     >
-      <toolbar-tab label="Map">
+      <toolbar-tab id="map" label="Map">
         <ToolbarGroup label="Map tools">
           <ToolbarButton on:click={addPlace}>
             <AddPlaceIcon aria-hidden="true" />
@@ -71,6 +84,10 @@ export default function MapToolbar({ map, getMapView }: MapToolbarProps) {
 
         <TileTools tile={map} />
       </toolbar-tab>
+
+      <If condition={hasSelection}>
+        <PlaceTab map={map} getMapView={getMapView} />
+      </If>
     </floating-toolbar>
   );
 }
