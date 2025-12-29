@@ -27,6 +27,7 @@ const DOMOutput = {
   superscript: ["sup", 0],
   subscript: ["sub", 0],
   smallCaps: ["span", { class: "small-caps" }, 0],
+  divider: ["hr"],
 } as const satisfies Record<string, DOMOutputSpec>;
 
 export type TextAlignment = "left" | "center" | "right";
@@ -82,7 +83,7 @@ const nodesSpec = {
 
   quote: {
     content:
-      "(paragraph | heading | ordered_list | unordered_list | check_list)+",
+      "(paragraph | heading | ordered_list | unordered_list | check_list | divider)+",
     group: "block",
     defining: true,
     parseDOM: [{ tag: "blockquote" }],
@@ -256,6 +257,14 @@ const nodesSpec = {
     parseDOM: [{ tag: "pre", preserveWhitespace: "full" }],
     toDOM() {
       return DOMOutput.code;
+    },
+  },
+
+  divider: {
+    group: "block",
+    parseDOM: [{ tag: "hr" }],
+    toDOM() {
+      return DOMOutput.divider;
     },
   },
 
