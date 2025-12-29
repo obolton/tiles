@@ -99,6 +99,10 @@ export interface CodeNode extends BaseNode {
   children: TextNode[];
 }
 
+export interface DividerNode extends BaseNode {
+  type: "divider";
+}
+
 export interface ListNode extends BaseNode {
   type: "list";
   listType: ListType;
@@ -124,7 +128,8 @@ export type BlockNode =
   | ListNode
   | HeadingNode
   | QuoteNode
-  | CodeNode;
+  | CodeNode
+  | DividerNode;
 
 export type Node =
   | TextNode
@@ -137,6 +142,7 @@ export type Node =
   | ListItemNode
   | PendingNode
   | CodeNode
+  | DividerNode
   | DropdownNode
   | MentionNode;
 

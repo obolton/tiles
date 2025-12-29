@@ -194,6 +194,10 @@ function serializeNode(node: Node): SerializedNode {
     };
   }
 
+  if (node.type === nodes.divider) {
+    return { type: "divider" };
+  }
+
   throw new Error(`Unsupported node type: ${node.type.name}`);
 }
 

@@ -1,6 +1,7 @@
 import type { Node } from "prosemirror-model";
 import type {
   DateNode,
+  DividerNode,
   LinkNode,
   ListNode,
   ListItemNode,
@@ -172,6 +173,10 @@ function createPendingNode(pending: PendingNode): Node {
   return schema.nodes.pending.create(null, pending.children.map(createNode));
 }
 
+function createDividerNode(_divider: DividerNode): Node {
+  return schema.nodes.divider.create(null);
+}
+
 function createNode(node: SerializedNode) {
   const type = node.type;
   switch (type) {
@@ -199,6 +204,8 @@ function createNode(node: SerializedNode) {
       return createDropdownNode(node);
     case "mention":
       return createMentionNode(node);
+    case "divider":
+      return createDividerNode(node);
     default:
       throw new Error(`Unsupported node type: ${type}`);
   }
