@@ -33,6 +33,7 @@ import NewIcon from "@/icons/new.svg?jsx";
 import EventIcon from "@/icons/event.svg?jsx";
 import DropdownIcon from "@/icons/dropdown.svg?jsx";
 import PeopleIcon from "@/icons/people.svg?jsx";
+import DividerIcon from "@/icons/divider.svg?jsx";
 import AIIcon from "@/icons/ai.svg?jsx";
 import ApproveIcon from "@/icons/approve.svg?jsx";
 import RejectIcon from "@/icons/reject.svg?jsx";
@@ -64,6 +65,7 @@ import {
   insertDateTime,
   insertDropdown,
   openMentionPicker,
+  insertDivider,
   approve,
   reject,
   togglePrompt,
@@ -270,6 +272,12 @@ export default function FormattingTools({
                 on:click={() => performCommand(openMentionPicker)}
               >
                 Mention
+              </MenuItem>
+              <MenuItem
+                icon={<DividerIcon aria-hidden="true" />}
+                on:click={() => performCommand(insertDivider)}
+              >
+                Divider
               </MenuItem>
 
               <Each items={Editor.current.dropdowns}>
