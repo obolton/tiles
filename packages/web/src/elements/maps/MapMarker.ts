@@ -6,6 +6,7 @@ stylesheet.replaceSync(css);
 
 export interface MapMarkerAttributes extends GlobalHTMLAttributes {
   editable?: boolean;
+  selected?: boolean;
   lat?: number;
   long?: number;
   bounds?: string;
@@ -28,10 +29,12 @@ export default class MapMarker extends HTMLElement {
   static readonly observedAttributes: (keyof MapMarkerAttributes)[] = [
     "label",
     "editable",
+    "selected",
   ] as const;
 
   private pin: HTMLDivElement;
   private labelElement: HTMLSpanElement;
+  private editingController: AbortController | null = null;
 
   constructor() {
     super();
@@ -41,8 +44,6 @@ export default class MapMarker extends HTMLElement {
 
     this.pin = document.createElement("div");
     this.pin.id = "pin";
-    this.pin.addEventListener("pointerdown", this);
-    this.pin.addEventListener("click", () => this.focus());
     shadow.appendChild(this.pin);
 
     this.labelElement = document.createElement("span");
@@ -85,7 +86,15 @@ export default class MapMarker extends HTMLElement {
       case "input":
         this.handleLabelInput();
         break;
+
+      case "blur":
+        this.handleLabelBlur();
+        break;
     }
+  }
+
+  private handleLabelBlur() {
+    this.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   get lat() {
@@ -137,24 +146,33 @@ export default class MapMarker extends HTMLElement {
   }
 
   private startEditing() {
+    this.editingController = new AbortController();
+    const { signal } = this.editingController;
+
     this.labelElement.contentEditable = "plaintext-only";
     this.labelElement.setAttribute("data-placeholder", "Add a label");
-    this.labelElement.addEventListener("pointerdown", this);
-    this.labelElement.addEventListener("mousedown", this);
-    this.labelElement.addEventListener("click", this);
-    this.labelElement.addEventListener("dblclick", this);
-    this.labelElement.addEventListener("keydown", this);
-    this.labelElement.addEventListener("input", this);
+    this.labelElement.addEventListener("pointerdown", this, { signal });
+    this.labelElement.addEventListener("mousedown", this, { signal });
+    this.labelElement.addEventListener("click", this, { signal });
+    this.labelElement.addEventListener("dblclick", this, { signal });
+    this.labelElement.addEventListener("keydown", this, { signal });
+    this.labelElement.addEventListener("input", this, { signal });
+    this.labelElement.addEventListener("blur", this, { signal });
   }
 
   private stopEditing() {
     this.labelElement.removeAttribute("contenteditable");
-    this.labelElement.removeEventListener("pointerdown", this);
-    this.labelElement.removeEventListener("mousedown", this);
-    this.labelElement.removeEventListener("click", this);
-    this.labelElement.removeEventListener("dblclick", this);
-    this.labelElement.removeEventListener("keydown", this);
-    this.labelElement.removeEventListener("input", this);
+    this.editingController?.abort();
+    this.editingController = null;
+  }
+
+  get selected() {
+    return this.hasAttribute("selected");
+  }
+
+  set selected(value: boolean) {
+    this.toggleAttribute("selected", value);
+    this.ariaSelected = value ? "true" : "false";
   }
 }
 
