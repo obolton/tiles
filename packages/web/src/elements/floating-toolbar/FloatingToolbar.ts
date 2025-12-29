@@ -10,6 +10,7 @@ stylesheet.replaceSync(css);
 
 export interface FloatingToolbarAttributes extends GlobalHTMLAttributes {
   name?: string;
+  selectedtab?: string | null;
 }
 
 declare global {
@@ -25,11 +26,15 @@ declare module "@/jsx/html-attributes" {
 }
 
 export default class FloatingToolbar extends HTMLElement {
+  static readonly observedAttributes: (keyof FloatingToolbarAttributes)[] = [
+    "selectedtab",
+  ] as const;
+
   private internals: ElementInternals;
   private tabBar: HTMLElement;
   private mutationObserver: MutationObserver;
 
-  #selectedTabIndex = 0;
+  #selectedTabId: string | null = null;
 
   constructor() {
     super();
@@ -72,6 +77,18 @@ export default class FloatingToolbar extends HTMLElement {
     this.mutationObserver.disconnect();
   }
 
+  attributeChangedCallback(
+    name: keyof FloatingToolbarAttributes,
+    _: string | null,
+    value: string | null,
+  ) {
+    switch (name) {
+      case "selectedtab":
+        this.selectTab(value);
+        break;
+    }
+  }
+
   handleEvent(event: Event) {
     switch (event.type) {
       case "pointerdown":
@@ -83,12 +100,16 @@ export default class FloatingToolbar extends HTMLElement {
     }
   }
 
-  get selectedTabIndex(): number {
-    return this.#selectedTabIndex;
+  private get tabs(): ToolbarTab[] {
+    return Array.from(this.querySelectorAll<ToolbarTab>("toolbar-tab"));
   }
 
-  private get tabs(): NodeListOf<ToolbarTab> {
-    return this.querySelectorAll<ToolbarTab>("toolbar-tab");
+  private get selectedTabIndex(): number {
+    if (!this.#selectedTabId) {
+      return 0;
+    }
+    const index = this.tabs.findIndex((tab) => tab.id === this.#selectedTabId);
+    return index === -1 ? 0 : index;
   }
 
   private buildTabBar() {
@@ -101,20 +122,17 @@ export default class FloatingToolbar extends HTMLElement {
       this.internals.states.delete("single-tab");
     }
 
-    // Clamp selected index if tabs were removed
-    if (this.#selectedTabIndex >= tabs.length) {
-      this.#selectedTabIndex = Math.max(0, tabs.length - 1);
-    }
-
     tabs.forEach((tab, index) => {
+      const isSelected =
+        tab.id === this.#selectedTabId || (index === 0 && !this.#selectedTabId);
       const button = document.createElement("button");
       button.type = "button";
       button.className = "tab-button";
       button.textContent = tab.label;
       button.role = "tab";
-      button.ariaSelected = index === this.#selectedTabIndex ? "true" : "false";
-      button.tabIndex = index === this.#selectedTabIndex ? 0 : -1;
-      button.dataset.index = String(index);
+      button.ariaSelected = isSelected ? "true" : "false";
+      button.tabIndex = isSelected ? 0 : -1;
+      button.dataset.tabId = tab.id;
       button.addEventListener("click", this);
       this.tabBar.append(button);
     });
@@ -123,20 +141,20 @@ export default class FloatingToolbar extends HTMLElement {
   }
 
   private updateTabSelection() {
+    const selectedIndex = this.selectedTabIndex;
     this.tabs.forEach((tab, i) => {
-      tab.selected = i === this.#selectedTabIndex;
-      tab.classList.toggle("before", i < this.#selectedTabIndex);
-      tab.classList.toggle("after", i > this.#selectedTabIndex);
+      tab.selected = i === selectedIndex;
+      tab.classList.toggle("before", i < selectedIndex);
+      tab.classList.toggle("after", i > selectedIndex);
     });
   }
 
-  selectTab(index: number) {
-    const tabs = this.tabs;
-    if (index === this.#selectedTabIndex || index < 0 || index >= tabs.length) {
+  selectTab(id: string | null) {
+    if (id === this.#selectedTabId) {
       return;
     }
 
-    this.#selectedTabIndex = index;
+    this.#selectedTabId = id;
     this.updateTabSelection();
     this.updateTabButtons();
     this.persistTabSelection();
@@ -148,18 +166,18 @@ export default class FloatingToolbar extends HTMLElement {
     const buttons =
       this.tabBar.querySelectorAll<HTMLButtonElement>(".tab-button");
     buttons.forEach((button, i) => {
-      button.ariaSelected = i === this.#selectedTabIndex ? "true" : "false";
-      button.tabIndex = i === this.#selectedTabIndex ? 0 : -1;
+      const isSelected =
+        button.dataset.tabId === this.#selectedTabId ||
+        (i === 0 && !this.#selectedTabId);
+      button.ariaSelected = isSelected ? "true" : "false";
+      button.tabIndex = isSelected ? 0 : -1;
     });
   }
 
   private persistTabSelection() {
     const name = this.getAttribute("name") || this.id;
-    if (name) {
-      sessionStorage.setItem(
-        `toolbar-tab:${name}`,
-        String(this.#selectedTabIndex),
-      );
+    if (name && this.#selectedTabId) {
+      sessionStorage.setItem(`toolbar-tab:${name}`, this.#selectedTabId);
     }
   }
 
@@ -174,14 +192,12 @@ export default class FloatingToolbar extends HTMLElement {
       return;
     }
 
-    const index = parseInt(stored, 10);
-    if (Number.isNaN(index) || index < 0 || index >= this.tabs.length) {
-      return;
+    // Only restore if the tab exists
+    if (this.tabs.some((tab) => tab.id === stored)) {
+      this.#selectedTabId = stored;
+      this.updateTabSelection();
+      this.updateTabButtons();
     }
-
-    this.#selectedTabIndex = index;
-    this.updateTabSelection();
-    this.updateTabButtons();
   }
 
   private handlePointerDown(event: PointerEvent) {
@@ -205,9 +221,9 @@ export default class FloatingToolbar extends HTMLElement {
       return;
     }
 
-    const index = parseInt(target.dataset.index ?? "", 10);
-    if (!Number.isNaN(index)) {
-      this.selectTab(index);
+    const tabId = target.dataset.tabId;
+    if (tabId) {
+      this.selectTab(tabId);
     }
   }
 
@@ -218,19 +234,20 @@ export default class FloatingToolbar extends HTMLElement {
     }
 
     const tabs = this.tabs;
-    let newIndex = this.#selectedTabIndex;
+    const currentIndex = this.selectedTabIndex;
+    let newIndex = currentIndex;
 
     switch (event.key) {
       case "ArrowLeft":
         event.preventDefault();
-        newIndex = this.#selectedTabIndex - 1;
+        newIndex = currentIndex - 1;
         if (newIndex < 0) {
           newIndex = tabs.length - 1;
         }
         break;
       case "ArrowRight":
         event.preventDefault();
-        newIndex = this.#selectedTabIndex + 1;
+        newIndex = currentIndex + 1;
         if (newIndex >= tabs.length) {
           newIndex = 0;
         }
@@ -247,12 +264,15 @@ export default class FloatingToolbar extends HTMLElement {
         return;
     }
 
-    this.selectTab(newIndex);
+    const newTab = tabs[newIndex];
+    if (newTab) {
+      this.selectTab(newTab.id);
 
-    // Focus the new tab button
-    const buttons =
-      this.tabBar.querySelectorAll<HTMLButtonElement>(".tab-button");
-    buttons[newIndex]?.focus();
+      // Focus the new tab button
+      const buttons =
+        this.tabBar.querySelectorAll<HTMLButtonElement>(".tab-button");
+      buttons[newIndex]?.focus();
+    }
   }
 }
 
