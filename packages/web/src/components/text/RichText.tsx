@@ -83,6 +83,8 @@ function renderNodes(nodes: Node[]) {
             );
           case "mention":
             return <Mention node={node} />;
+          case "divider":
+            return <hr />;
           default:
             return null;
         }
