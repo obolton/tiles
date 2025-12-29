@@ -2,6 +2,7 @@ import {
   inputRules,
   wrappingInputRule,
   textblockTypeInputRule,
+  InputRule,
 } from "prosemirror-inputrules";
 import { schema } from "./schema";
 
@@ -29,6 +30,23 @@ function unorderedListInputRule() {
   return wrappingInputRule(/^\s*[-+*]\s$/, schema.nodes.unordered_list);
 }
 
+function dividerInputRule() {
+  return new InputRule(/^---$/, (state, _match, start, _end) => {
+    const $start = state.doc.resolve(start);
+    if (
+      $start.parent.type !== schema.nodes.paragraph ||
+      $start.parentOffset !== 0
+    ) {
+      return null;
+    }
+    return state.tr.replaceWith(
+      $start.before(),
+      $start.after(),
+      schema.nodes.divider.create(null),
+    );
+  });
+}
+
 export function createInputRules() {
   return inputRules({
     rules: [
@@ -36,6 +54,7 @@ export function createInputRules() {
       headingInputRule(),
       orderedListInputRule(),
       unorderedListInputRule(),
+      dividerInputRule(),
     ],
   });
 }
