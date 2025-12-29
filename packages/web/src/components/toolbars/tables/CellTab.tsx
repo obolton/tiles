@@ -10,7 +10,7 @@ export interface CellTabProps {
 
 export default function CellTab({ editorView, state }: CellTabProps) {
   return (
-    <toolbar-tab label="Cell">
+    <toolbar-tab id="range" label="Cell">
       <FormattingTools editorView={editorView} state={state} />
     </toolbar-tab>
   );

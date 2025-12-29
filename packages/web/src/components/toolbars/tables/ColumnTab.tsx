@@ -103,7 +103,7 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
   }
 
   return (
-    <toolbar-tab label="Column">
+    <toolbar-tab id="column" label="Column">
       <ToolbarGroup label="Column tools">
         <FillPicker
           id={`${id}-column-background`}

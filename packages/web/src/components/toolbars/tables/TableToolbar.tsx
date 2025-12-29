@@ -3,7 +3,6 @@ import ColumnTab from "./ColumnTab";
 import RowTab from "./RowTab";
 import CellTab from "./CellTab";
 import If from "@/jsx/if";
-import type FloatingToolbar from "@/elements/floating-toolbar/FloatingToolbar";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
 import type { EditorView } from "prosemirror-view";
@@ -25,32 +24,15 @@ export default function TableToolbar({
   editorView,
   state,
 }: TableToolbarProps) {
-  let toolbar: FloatingToolbar | undefined;
-
-  function ref(element: FloatingToolbar) {
-    toolbar = element;
-  }
-
-  // Auto-switch tabs when selection type changes
-  selectionType.subscribe((type) => {
-    if (!toolbar) {
-      return;
-    }
-    if (type === null) {
-      toolbar.selectTab(0);
-    } else {
-      // Contextual tab is always at index 1
-      toolbar.selectTab(1);
-    }
-  });
+  const selectedTab = selectionType.derive((type) => type);
 
   return (
     <floating-toolbar
-      ref={ref}
       className="primary"
       data-tooltip-position="top"
       aria-label="Table tools"
       name="table-toolbar"
+      selectedtab={selectedTab}
     >
       <TableTab table={table} />
 

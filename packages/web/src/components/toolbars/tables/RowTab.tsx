@@ -83,7 +83,7 @@ export default function RowTab({ table, getTable }: RowTabProps) {
   }
 
   return (
-    <toolbar-tab label="Row">
+    <toolbar-tab id="row" label="Row">
       <ToolbarGroup label="Row tools">
         <FillPicker
           id={`${id}-row-background`}
