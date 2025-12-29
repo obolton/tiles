@@ -3,9 +3,9 @@ import MapToolbar from "@/components/toolbars/maps/MapToolbar";
 import If from "@/jsx/if";
 import Each from "@/jsx/each";
 import Portal from "@/jsx/portal";
+import { reactive } from "@/utils/reactivity";
 import styles from "./MapTile.module.css";
 import type Map from "@/models/Map";
-import type MapEvent from "@/elements/maps/MapEvent";
 import type MapView from "@/elements/maps/MapView";
 import type MapMarker from "@/elements/maps/MapMarker";
 import type { Reactive } from "@/utils/reactivity";
@@ -17,6 +17,7 @@ export interface MapTileProps {
 
 export default function MapTile({ map, showToolbar }: MapTileProps) {
   let mapView: MapView | undefined;
+  const hasSelection = reactive(false);
   const {
     id,
     places,
@@ -34,20 +35,17 @@ export default function MapTile({ map, showToolbar }: MapTileProps) {
     return mapView;
   }
 
-  const deleteMarker = async ({ markerId }: MapEvent) => {
-    if (markerId) {
-      map.removePlace(markerId);
-    }
-  };
-
-  const handleUpdatePlace = async (event: FocusEvent) => {
+  const handleLabelChange = async (event: Event) => {
     const marker = event.target as MapMarker;
     const markerId = marker.id;
     const value = marker.value ?? "";
-    // TODO: Only update if the value has changed
     if (markerId) {
       map.updatePlace({ id: markerId, name: value });
     }
+  };
+
+  const handleSelectionChange = () => {
+    hasSelection.value = getMapView().selectedMarkerIds.size > 0;
   };
 
   const anchorName = `--map-${id}`;
@@ -56,7 +54,11 @@ export default function MapTile({ map, showToolbar }: MapTileProps) {
     <Tile theme={map.theme} border="inside" anchorName={anchorName}>
       <If condition={showToolbar}>
         <Portal>
-          <MapToolbar map={map} getMapView={getMapView} />
+          <MapToolbar
+            map={map}
+            getMapView={getMapView}
+            hasSelection={hasSelection}
+          />
         </Portal>
       </If>
 
@@ -67,33 +69,24 @@ export default function MapTile({ map, showToolbar }: MapTileProps) {
           movable
           legend
           mapstyle={map.style}
-          on:deletemarker={deleteMarker}
+          on:mapselectionchange={handleSelectionChange}
         >
           <Each items={places}>
             {(place) => (
-              <>
-                <map-marker
-                  editable={isEditable}
-                  id={place.id}
-                  lat={place.lat}
-                  long={place.long}
-                  bounds={
-                    place.boundingBox?.length === 4
-                      ? place.boundingBox.join(",")
-                      : undefined
-                  }
-                  label={place.name}
-                  tabindex={0}
-                  on:blur={handleUpdatePlace}
-                />
-                <map-legend-item
-                  marker={place.id}
-                  editable={isEditable}
-                  tabindex={0}
-                >
-                  {place.name || "Unnamed point"}
-                </map-legend-item>
-              </>
+              <map-marker
+                editable={isEditable}
+                id={place.id}
+                lat={place.lat}
+                long={place.long}
+                bounds={
+                  place.boundingBox?.length === 4
+                    ? place.boundingBox.join(",")
+                    : undefined
+                }
+                label={place.name}
+                tabindex={0}
+                on:change={handleLabelChange}
+              />
             )}
           </Each>
         </map-view>
