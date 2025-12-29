@@ -28,6 +28,11 @@ import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { PageAccess, User } from "@/types/collaboration";
 import type { Color } from "@/utils/color";
 import type { Reactive, ReactiveArray } from "@/utils/reactivity";
+import type {
+  HeadingNode,
+  ParagraphNode,
+  TextNode,
+} from "@/utils/richText/types";
 
 export type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
@@ -472,12 +477,12 @@ export default class Editor {
       )?.id;
       if (firstTextTileId && data.id === firstTextTileId) {
         const block = data.content.find(
-          (node) =>
+          (node): node is HeadingNode | ParagraphNode =>
             (node.type === "heading" || node.type === "paragraph") &&
             node.children.length > 0,
         );
         const title = block?.children
-          .filter((node) => node.type === "text")
+          .filter((node): node is TextNode => node.type === "text")
           .map((node) => node.text)
           .join("")
           .slice(0, 100)
