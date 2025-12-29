@@ -399,6 +399,49 @@ describe("transformMarkdown", () => {
     });
   });
 
+  describe("divider", () => {
+    test("supports --- syntax", async () => {
+      const output = await getEvents(["---\n"]);
+      expect(output).toEqual([{ type: "divider" }]);
+    });
+
+    test("supports *** syntax", async () => {
+      const output = await getEvents(["***\n"]);
+      expect(output).toEqual([{ type: "divider" }]);
+    });
+
+    test("supports ___ syntax", async () => {
+      const output = await getEvents(["___\n"]);
+      expect(output).toEqual([{ type: "divider" }]);
+    });
+
+    test("supports more than 3 characters", async () => {
+      const output = await getEvents(["-----\n"]);
+      expect(output).toEqual([{ type: "divider" }]);
+    });
+
+    test("allows trailing whitespace", async () => {
+      const output = await getEvents(["---  \n"]);
+      expect(output).toEqual([{ type: "divider" }]);
+    });
+
+    test("returns a divider between paragraphs", async () => {
+      const output = await getEvents(["hello\n\n---\nworld"]);
+      expect(output).toEqual([
+        { type: "paragraph" },
+        "hello",
+        { type: "divider" },
+        { type: "paragraph" },
+        "world",
+      ]);
+    });
+
+    test("supports divider split over multiple chunks", async () => {
+      const output = await getEvents(["--", "-\n"]);
+      expect(output).toEqual([{ type: "divider" }]);
+    });
+  });
+
   describe("blocks", () => {
     test("returns a block start", async () => {
       const output = await getEvents([">>> test-1\n", "hello world"]);

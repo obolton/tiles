@@ -11,6 +11,7 @@ const UNORDERED_LIST_ITEM_MATCH = /^( *)(-|\*|\+)\s+(?=\S)/;
 const ORDERED_LIST_ITEM_MATCH = /^( *)[0-9]+\.\s+(?=\S)/;
 const BLOCK_START_MATCH = /^>>>\s+(.+)\s*\n/;
 const BLOCK_END_MATCH = /^<<<\s*\n/;
+const DIVIDER_MATCH = /^(-{3,}|\*{3,}|_{3,})\s*\n/;
 const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *)|>|<)/;
 const ALL_NEW_LINES_MATCH = /\n/g;
 
@@ -29,7 +30,15 @@ export interface ListItemNode {
   depth: number;
 }
 
-export type RichTextNode = ParagraphNode | HeadingNode | ListItemNode;
+export interface DividerNode {
+  type: "divider";
+}
+
+export type RichTextNode =
+  | ParagraphNode
+  | HeadingNode
+  | ListItemNode
+  | DividerNode;
 
 export interface RichTextFormat {
   bold?: boolean;
@@ -182,6 +191,17 @@ export class MarkdownTransformer implements Transformer<
           },
           match.length,
         );
+        continue;
+      }
+
+      const dividerMatch = this.buffer.match(DIVIDER_MATCH);
+      if (dividerMatch) {
+        this.set(
+          controller,
+          { node: { type: "divider" } },
+          dividerMatch[0].length,
+        );
+        this.node = null;
         continue;
       }
 
