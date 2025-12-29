@@ -196,4 +196,12 @@
   & .small-caps {
     font-variant: small-caps;
   }
+
+  & hr {
+    height: 2px;
+    margin: 1em 0;
+    border: none;
+    border-radius: 1px;
+    background: var(--accent-color, var(--accent));
+  }
 }
