@@ -343,6 +343,13 @@ export function insertMention(userId: string, displayName: string): Command {
   };
 }
 
+export const insertDivider: Command = (state, dispatch) => {
+  if (dispatch) {
+    dispatch(state.tr.replaceSelectionWith(schema.nodes.divider.create(null)));
+  }
+  return true;
+};
+
 export const approve = unwrap(schema.nodes.pending);
 
 export const reject = deleteNode(schema.nodes.pending);
