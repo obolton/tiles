@@ -28,7 +28,8 @@
   padding: 4px;
   border: 1px solid rgb(0 0 0 / 20%);
   border-radius: 8px;
-  background: rgb(255 255 255 / 70%);
+  background: oklch(from var(--background-color) l c h / 70%);
+  color: var(--text-color);
   backdrop-filter: blur(3px);
   background-clip: padding-box;
   display: flex;
@@ -37,8 +38,63 @@
   overflow: auto;
 }
 
+.legend-item {
+  position: relative;
+  font-size: 0.875rem;
+  padding: 6px;
+  gap: 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  min-width: 0;
+  padding-left: 28px;
+  align-content: center;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  border: none;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  transition: background-color var(--animation-duration-short) var(--easing);
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    inset: auto auto auto 6px;
+    background: var(--accent-color, var(--accent));
+    border: 2px solid white;
+    border-radius: 50%;
+    opacity: 0.75;
+    box-shadow: 0 2px 3px -1px rgb(0 0 0 / 40%);
+    transition: opacity var(--animation-duration-short) var(--easing);
+  }
+
+  &:hover,
+  &[aria-selected="true"] {
+    background-color: rgb(0 0 0 / 10%);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: -2px;
+  }
+}
+
+.legend-label {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 @container tile (max-width: 320px) {
-  .legend {
+  #legend {
     display: none;
   }
 }

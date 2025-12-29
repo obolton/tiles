@@ -1,7 +1,7 @@
 import maplibregl from "maplibre-gl";
+import MapEvent from "./MapEvent";
 import css from "./MapView.css?inline";
 import type MapMarker from "./MapMarker";
-import type MapLegendItem from "./MapLegendItem";
 import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
@@ -51,6 +51,15 @@ export default class MapView extends HTMLElement {
   private mutationObserver: MutationObserver;
   private map?: maplibregl.Map;
   private markers: maplibregl.Marker[] = [];
+  readonly selectedMarkerIds = new Set<string>();
+
+  get selectedMarkers(): MapMarker[] {
+    return Array.from(this.selectedMarkerIds)
+      .map((id) =>
+        this.querySelector<MapMarker>(`map-marker#${CSS.escape(id)}`),
+      )
+      .filter((marker): marker is MapMarker => marker !== null);
+  }
 
   get mapStyle(): MapStyleType {
     const style = this.getAttribute("mapstyle");
@@ -75,6 +84,8 @@ export default class MapView extends HTMLElement {
 
     this.root = document.createElement("figure");
     this.root.id = "root";
+    this.root.addEventListener("click", this);
+    this.root.addEventListener("focusin", this);
     shadow.append(this.root);
 
     this.intersectionObserver = new IntersectionObserver(
@@ -86,12 +97,54 @@ export default class MapView extends HTMLElement {
     );
   }
 
+  handleEvent(event: Event) {
+    switch (event.type) {
+      case "click":
+        return this.handleClick(event as PointerEvent);
+      case "focusin":
+        return this.handleFocusIn(event as FocusEvent);
+    }
+  }
+
+  private handleClick(event: PointerEvent) {
+    const target = event.target as HTMLElement;
+
+    const marker = target.closest("map-marker");
+    if (marker) {
+      this.selectMarker(marker.id, event.shiftKey);
+      return;
+    }
+
+    // Selection via legend
+    const markerId =
+      target.closest<HTMLElement>("[data-marker-id]")?.dataset.markerId;
+    if (markerId) {
+      this.selectMarker(markerId, event.shiftKey);
+      this.flyToMarker(markerId);
+      return;
+    }
+
+    this.clearSelection();
+  }
+
+  private handleFocusIn(event: FocusEvent) {
+    const target = event.target as HTMLElement;
+    const marker = target.closest("map-marker");
+    if (marker) {
+      this.selectMarker(marker.id);
+    }
+  }
+
   private getMarkers() {
     return this.querySelectorAll<MapMarker>("map-marker");
   }
 
-  private getLegendItems() {
-    return this.querySelectorAll<MapLegendItem>("map-legend-item");
+  private get legendItems() {
+    return (
+      this.shadowRoot
+        ?.getElementById("legend")
+        ?.querySelectorAll<HTMLElement>(".legend-item") ?? []
+    );
   }
 
   private getBounds() {
@@ -120,6 +173,7 @@ export default class MapView extends HTMLElement {
 
     const element = document.createElement("div");
     element.classList.add("marker");
+    element.dataset.markerId = markerElement.id;
     const slot = document.createElement("slot");
     element.appendChild(slot);
 
@@ -215,12 +269,40 @@ export default class MapView extends HTMLElement {
 
   private updateSlots() {
     this.markers.forEach((marker) => marker.remove());
+    this.markers = [];
     this.getMarkers().forEach((marker) => this.addMarker(marker));
+    this.updateLegendItems();
+  }
 
-    const legendSlot = this.shadowRoot?.getElementById(
-      "legend-slot",
-    ) as HTMLSlotElement | null;
-    legendSlot?.assign(...this.getLegendItems());
+  private updateLegendItems() {
+    const legend = this.shadowRoot?.getElementById("legend");
+    if (!legend) {
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    for (const marker of this.getMarkers()) {
+      fragment.append(this.createLegendItem(marker));
+    }
+    legend.replaceChildren(fragment);
+  }
+
+  private createLegendItem(marker: MapMarker) {
+    const item = document.createElement("button");
+    item.className = "legend-item";
+    item.type = "button";
+    item.role = "option";
+    item.ariaSelected = this.selectedMarkerIds.has(marker.id)
+      ? "true"
+      : "false";
+    item.dataset.markerId = marker.id;
+
+    const label = document.createElement("span");
+    label.className = "legend-label";
+    label.textContent = marker.getAttribute("label") || "Unnamed place";
+
+    item.append(label);
+    return item;
   }
 
   private showLegend() {
@@ -229,12 +311,10 @@ export default class MapView extends HTMLElement {
     }
     const legend = document.createElement("div");
     legend.id = "legend";
-
-    const slot = document.createElement("slot");
-    slot.id = "legend-slot";
-    legend.append(slot);
-
+    legend.role = "listbox";
+    legend.ariaLabel = "Map places";
     this.root.append(legend);
+    this.updateLegendItems();
   }
 
   private hideLegend() {
@@ -273,6 +353,32 @@ export default class MapView extends HTMLElement {
     const sw = bounds.getSouthWest();
     const ne = bounds.getNorthEast();
     return [sw.lng, sw.lat, ne.lng, ne.lat];
+  }
+
+  selectMarker(markerId: string, addToSelection = false) {
+    if (!addToSelection) {
+      this.selectedMarkerIds.clear();
+    }
+    this.selectedMarkerIds.add(markerId);
+    this.updateMarkerSelection();
+    this.dispatchEvent(new MapEvent("mapselectionchange"));
+  }
+
+  clearSelection() {
+    this.selectedMarkerIds.clear();
+    this.updateMarkerSelection();
+    this.dispatchEvent(new MapEvent("mapselectionchange"));
+  }
+
+  private updateMarkerSelection() {
+    for (const marker of this.getMarkers()) {
+      marker.selected = this.selectedMarkerIds.has(marker.id);
+    }
+    for (const item of this.legendItems) {
+      const markerId = item.dataset.markerId;
+      item.ariaSelected =
+        markerId && this.selectedMarkerIds.has(markerId) ? "true" : "false";
+    }
   }
 }
 
