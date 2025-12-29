@@ -2,7 +2,6 @@ import "./menu/PopoverMenu";
 import "./toasts/ToastContainer";
 import "./maps/MapView";
 import "./maps/MapMarker";
-import "./maps/MapLegendItem";
 import "./video/EmbeddedVideo";
 import "./infinite-scroll/InfiniteScroll";
 import "./calendar/CalendarMonth";
