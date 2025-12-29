@@ -18,7 +18,7 @@
   inset: 0;
   box-sizing: border-box;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--accent-color, var(--accent));
   border: 3px solid white;
   box-shadow: 0 3px 3px -1px rgb(0 0 0 / 40%);
   outline: 2px solid transparent;
@@ -40,8 +40,8 @@
   font-family: var(--font);
   font-size: 0.875rem;
   font-weight: 500;
-  text-shadow: 0 1px 1px rgb(255 255 255 / 60%);
-  background: oklch(from var(--background-color) 100% calc(c * 0.5) h / 50%);
+  color: var(--text-color);
+  background: oklch(from var(--background-color) l c h / 70%);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   border: 1px solid rgb(0 0 0 / 30%);
@@ -58,7 +58,8 @@
 }
 
 :host(:focus-within),
-:host(:hover) {
+:host(:hover),
+:host([selected]) {
   #pin {
     scale: 1.25;
   }
@@ -75,7 +76,8 @@
   }
 }
 
-:host(:focus-within) {
+:host(:focus-within),
+:host([selected]) {
   z-index: 1;
 
   #pin {
