@@ -1,7 +1,7 @@
-import { Plugin } from "prosemirror-state";
+import { Plugin, TextSelection } from "prosemirror-state";
+import Editor from "@/editor/Editor";
 import type { EditorView, NodeView } from "prosemirror-view";
 import type { Node } from "prosemirror-model";
-import Editor from "@/editor/Editor";
 import type DropdownEditor from "@/elements/dropdown-editor/DropdownEditor";
 import type DropdownOption from "@/elements/dropdown-editor/DropdownOption";
 import type DropdownModel from "@/models/Dropdown";
@@ -36,6 +36,9 @@ class DropdownNodeView implements NodeView, EventListenerObject {
     this.button.addEventListener("click", this, {
       signal: this.abortController.signal,
     });
+    this.button.addEventListener("keydown", this, {
+      signal: this.abortController.signal,
+    });
   }
 
   handleEvent(event: Event) {
@@ -46,6 +49,9 @@ class DropdownNodeView implements NodeView, EventListenerObject {
         } else {
           this.open();
         }
+        break;
+      case "keydown":
+        this.onKeyDown(event as KeyboardEvent);
         break;
       case "toggle":
         if ((event as ToggleEvent).newState === "closed") {
@@ -88,6 +94,29 @@ class DropdownNodeView implements NodeView, EventListenerObject {
 
   selectNode() {
     this.button.focus();
+  }
+
+  private onKeyDown(event: KeyboardEvent) {
+    const pos = this.getPos();
+    if (typeof pos !== "number") {
+      return;
+    }
+
+    let targetPos: number | null = null;
+
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      targetPos = pos;
+    } else if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      const node = this.view.state.doc.nodeAt(pos);
+      targetPos = pos + (node?.nodeSize ?? 0);
+    }
+
+    if (targetPos !== null) {
+      event.preventDefault();
+      const selection = TextSelection.create(this.view.state.doc, targetPos);
+      this.view.dispatch(this.view.state.tr.setSelection(selection));
+      this.view.focus();
+    }
   }
 
   private populateOptions(dropdown: DropdownModel) {
@@ -145,11 +174,11 @@ class DropdownNodeView implements NodeView, EventListenerObject {
       return;
     }
 
-    this.view.focus();
     this.editor.remove();
     this.editor = null;
     this.button.ariaExpanded = "false";
     this.button.style.removeProperty("anchor-name");
+    this.button.focus();
   }
 
   private onChange(event: Event) {
