@@ -173,8 +173,13 @@
     border-radius: 0.5em;
     user-select: all;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
       background-color: rgb(0 0 0 / 20%);
+    }
+
+    &[aria-expanded="true"] {
+      background-color: rgb(0 0 0 / 30%);
     }
   }
 
