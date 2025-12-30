@@ -34,7 +34,7 @@ export default class FloatingToolbar extends HTMLElement {
   private tabBar: HTMLElement;
   private mutationObserver: MutationObserver;
 
-  #selectedTabId: string | null = null;
+  #selectedTab: ToolbarTab | null = null;
 
   constructor() {
     super();
@@ -104,12 +104,39 @@ export default class FloatingToolbar extends HTMLElement {
     return Array.from(this.querySelectorAll<ToolbarTab>("toolbar-tab"));
   }
 
+  private getTabByName(name: string): ToolbarTab | null {
+    return this.querySelector<ToolbarTab>(
+      `toolbar-tab[name="${CSS.escape(name)}"]`,
+    );
+  }
+
   private get selectedTabIndex(): number {
-    if (!this.#selectedTabId) {
+    if (!this.#selectedTab) {
       return 0;
     }
-    const index = this.tabs.findIndex((tab) => tab.id === this.#selectedTabId);
+    const index = this.tabs.indexOf(this.#selectedTab);
     return index === -1 ? 0 : index;
+  }
+
+  get selectedTab(): ToolbarTab | null {
+    return this.#selectedTab;
+  }
+
+  set selectedTab(tab: ToolbarTab | null) {
+    if (tab === this.#selectedTab) {
+      return;
+    }
+
+    if (tab && !this.contains(tab)) {
+      throw new Error("Tab element is not a child of the toolbar");
+    }
+
+    this.#selectedTab = tab;
+    this.updateTabSelection();
+    this.updateTabButtons();
+    this.persistTabSelection();
+
+    this.dispatchEvent(new Event("tabchange"));
   }
 
   private buildTabBar() {
@@ -122,9 +149,12 @@ export default class FloatingToolbar extends HTMLElement {
       this.internals.states.delete("single-tab");
     }
 
-    tabs.forEach((tab, index) => {
-      const isSelected =
-        tab.id === this.#selectedTabId || (index === 0 && !this.#selectedTabId);
+    if (!this.#selectedTab || !tabs.includes(this.#selectedTab)) {
+      this.#selectedTab = tabs[0] ?? null;
+    }
+
+    tabs.forEach((tab) => {
+      const isSelected = tab === this.#selectedTab;
       const button = document.createElement("button");
       button.type = "button";
       button.className = "tab-button";
@@ -132,7 +162,7 @@ export default class FloatingToolbar extends HTMLElement {
       button.role = "tab";
       button.ariaSelected = isSelected ? "true" : "false";
       button.tabIndex = isSelected ? 0 : -1;
-      button.dataset.tabId = tab.id;
+      button.dataset.tabName = tab.name;
       button.addEventListener("click", this);
       this.tabBar.append(button);
     });
@@ -149,52 +179,45 @@ export default class FloatingToolbar extends HTMLElement {
     });
   }
 
-  selectTab(id: string | null) {
-    if (id === this.#selectedTabId) {
-      return;
-    }
-
-    this.#selectedTabId = id;
-    this.updateTabSelection();
-    this.updateTabButtons();
-    this.persistTabSelection();
-
-    this.dispatchEvent(new Event("tabchange"));
+  selectTab(name: string | null) {
+    this.selectedTab = name ? this.getTabByName(name) : null;
   }
 
   private updateTabButtons() {
     const buttons =
       this.tabBar.querySelectorAll<HTMLButtonElement>(".tab-button");
-    buttons.forEach((button, i) => {
-      const isSelected =
-        button.dataset.tabId === this.#selectedTabId ||
-        (i === 0 && !this.#selectedTabId);
+    buttons.forEach((button) => {
+      const isSelected = button.dataset.tabName === this.#selectedTab?.name;
       button.ariaSelected = isSelected ? "true" : "false";
       button.tabIndex = isSelected ? 0 : -1;
     });
   }
 
   private persistTabSelection() {
-    const name = this.getAttribute("name") || this.id;
-    if (name && this.#selectedTabId) {
-      sessionStorage.setItem(`toolbar-tab:${name}`, this.#selectedTabId);
+    const toolbarName = this.getAttribute("name") || this.id;
+    if (toolbarName && this.#selectedTab?.name) {
+      sessionStorage.setItem(
+        `toolbar-tab:${toolbarName}`,
+        this.#selectedTab.name,
+      );
     }
   }
 
   private restoreTabSelection() {
-    const name = this.getAttribute("name") || this.id;
-    if (!name) {
+    const toolbarName = this.getAttribute("name") || this.id;
+    if (!toolbarName) {
       return;
     }
 
-    const stored = sessionStorage.getItem(`toolbar-tab:${name}`);
-    if (stored === null) {
+    const storedTabName = sessionStorage.getItem(`toolbar-tab:${toolbarName}`);
+    if (storedTabName === null) {
       return;
     }
 
     // Only restore if the tab exists
-    if (this.tabs.some((tab) => tab.id === stored)) {
-      this.#selectedTabId = stored;
+    const tab = this.getTabByName(storedTabName);
+    if (tab) {
+      this.#selectedTab = tab;
       this.updateTabSelection();
       this.updateTabButtons();
     }
@@ -221,9 +244,9 @@ export default class FloatingToolbar extends HTMLElement {
       return;
     }
 
-    const tabId = target.dataset.tabId;
-    if (tabId) {
-      this.selectTab(tabId);
+    const tabName = target.dataset.tabName;
+    if (tabName) {
+      this.selectTab(tabName);
     }
   }
 
@@ -266,7 +289,7 @@ export default class FloatingToolbar extends HTMLElement {
 
     const newTab = tabs[newIndex];
     if (newTab) {
-      this.selectTab(newTab.id);
+      this.selectedTab = newTab;
 
       // Focus the new tab button
       const buttons =

@@ -2,6 +2,7 @@ import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 export interface ToolbarTabAttributes extends GlobalHTMLAttributes {
   label?: string;
+  name?: string;
   selected?: boolean;
 }
 
@@ -39,6 +40,14 @@ export default class ToolbarTab extends HTMLElement {
 
   set label(value: string) {
     this.setAttribute("label", value);
+  }
+
+  get name(): string {
+    return this.getAttribute("name") ?? "";
+  }
+
+  set name(value: string) {
+    this.setAttribute("name", value);
   }
 
   get selected(): boolean {
