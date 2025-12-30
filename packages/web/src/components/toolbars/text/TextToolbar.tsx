@@ -62,12 +62,12 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
       data-tooltip-position="top"
       name="text-toolbar"
     >
-      <toolbar-tab label="Text">
+      <toolbar-tab name="text" label="Text">
         <FormattingTools editorView={editorView} state={text.state} />
         <TileTools tile={text} />
       </toolbar-tab>
 
-      <toolbar-tab label="Style">
+      <toolbar-tab name="style" label="Style">
         <ToolbarGroup label="Style">
           <ColorPicker
             id={`${id}-color-picker`}

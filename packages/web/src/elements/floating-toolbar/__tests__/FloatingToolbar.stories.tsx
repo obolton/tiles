@@ -20,7 +20,7 @@ export default meta;
 export const SingleTab: Story = {
   render: () => (
     <floating-toolbar aria-label="Text toolbar">
-      <toolbar-tab label="Text">
+      <toolbar-tab name="text" label="Text">
         <ToolbarGroup label="Text style">
           <ToolbarButton label="Bold">
             <BoldIcon aria-hidden="true" />
@@ -52,7 +52,7 @@ export const SingleTab: Story = {
 export const MultipleTabs: Story = {
   render: () => (
     <floating-toolbar aria-label="Editor toolbar" name="story-toolbar">
-      <toolbar-tab label="Format">
+      <toolbar-tab name="format" label="Format">
         <ToolbarGroup label="Text style">
           <ToolbarButton label="Bold">
             <BoldIcon aria-hidden="true" />
@@ -66,7 +66,7 @@ export const MultipleTabs: Story = {
         </ToolbarGroup>
       </toolbar-tab>
 
-      <toolbar-tab label="Insert">
+      <toolbar-tab name="insert" label="Insert">
         <ToolbarGroup label="Insert">
           <ToolbarButton label="Link">
             <LinkIcon aria-hidden="true" />
@@ -81,7 +81,7 @@ export const MultipleTabs: Story = {
 export const WithPressedState: Story = {
   render: () => (
     <floating-toolbar aria-label="Formatting toolbar">
-      <toolbar-tab label="Format">
+      <toolbar-tab name="format" label="Format">
         <ToolbarGroup label="Text style">
           <ToolbarButton label="Bold" aria-pressed="true">
             <BoldIcon aria-hidden="true" />
@@ -101,7 +101,7 @@ export const WithPressedState: Story = {
 export const WithDestructiveButton: Story = {
   render: () => (
     <floating-toolbar aria-label="Selection toolbar">
-      <toolbar-tab label="Selection">
+      <toolbar-tab name="selection" label="Selection">
         <ToolbarGroup label="Actions">
           <ToolbarButton label="Link">
             <LinkIcon aria-hidden="true" />
@@ -121,7 +121,7 @@ export const WithDestructiveButton: Story = {
 export const WithTextLabels: Story = {
   render: () => (
     <floating-toolbar aria-label="Actions toolbar">
-      <toolbar-tab label="Actions">
+      <toolbar-tab name="actions" label="Actions">
         <ToolbarGroup label="Insert">
           <ToolbarButton label="Insert link">
             <LinkIcon aria-hidden="true" />

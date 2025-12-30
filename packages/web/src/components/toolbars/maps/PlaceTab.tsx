@@ -29,7 +29,7 @@ export default function PlaceTab({ map, getMapView }: PlaceTabProps) {
   }
 
   return (
-    <toolbar-tab id="place" label="Place">
+    <toolbar-tab name="place" label="Place">
       <ToolbarGroup label="Place tools">
         <ToolbarButton label="Rename" on:click={renamePlace}>
           <WriteIcon aria-hidden="true" />

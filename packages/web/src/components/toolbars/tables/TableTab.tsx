@@ -31,7 +31,7 @@ export default function TableTab({ table }: TableTabProps) {
   }
 
   return (
-    <toolbar-tab id="table" label="Table">
+    <toolbar-tab name="table" label="Table">
       <ToolbarGroup label="Style">
         <ColorPicker
           id={`${id}-color-picker`}

@@ -54,7 +54,7 @@ export default function MapToolbar({
       data-tooltip-position="top"
       selectedtab={selectedTab}
     >
-      <toolbar-tab id="map" label="Map">
+      <toolbar-tab name="map" label="Map">
         <ToolbarGroup label="Map tools">
           <ToolbarButton on:click={addPlace}>
             <AddPlaceIcon aria-hidden="true" />
