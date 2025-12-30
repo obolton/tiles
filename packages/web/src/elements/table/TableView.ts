@@ -1849,6 +1849,43 @@ export default class TableView extends HTMLElement {
     return handle;
   }
 
+  private reindexColumns(fromIndex = 0) {
+    if (!this.tableHead || !this.tableBody) {
+      return;
+    }
+
+    for (let i = fromIndex; i < this.visibleColumns.length; i++) {
+      this.visibleColumns[i]!.index = this.firstVisibleColumn + i;
+    }
+
+    const headerRow = this.tableHead.rows[0];
+    if (headerRow) {
+      for (let i = fromIndex + 1; i < headerRow.cells.length; i++) {
+        headerRow.cells[i]!.ariaColIndex = (
+          this.firstVisibleColumn +
+          i -
+          1
+        ).toString();
+      }
+    }
+
+    for (const row of this.tableBody.rows) {
+      for (let i = fromIndex + 1; i < row.cells.length; i++) {
+        row.cells[i]!.ariaColIndex = (
+          this.firstVisibleColumn +
+          i -
+          1
+        ).toString();
+      }
+    }
+  }
+
+  private reindexRows(fromIndex = 0) {
+    for (let i = fromIndex; i < this.visibleRows.length; i++) {
+      this.visibleRows[i]!.index = this.firstVisibleRow + i;
+    }
+  }
+
   moveColumn(column: Column, afterIndex: number | null) {
     if (!this.colGroup || !this.tableHead || !this.tableBody) {
       throw new Error("Table is not initialized");
@@ -1881,9 +1918,6 @@ export default class TableView extends HTMLElement {
           : afterIndex + 1,
     );
     moveBefore(this.colGroup, column.element, beforeCol);
-    for (let i = 0; i < this.visibleColumns.length; i++) {
-      this.visibleColumns[i]!.index = this.firstVisibleColumn + i;
-    }
 
     // Re-order header cells
     const headerRow = this.tableHead.rows[0];
@@ -1899,15 +1933,6 @@ export default class TableView extends HTMLElement {
             );
       if (headerCell) {
         moveBefore(headerRow, headerCell, beforeHeaderCell);
-        // Update aria-colindex for all header cells
-        // TODO: This loop incorrectly includes drag preview clones
-        for (let i = 1; i < headerRow.cells.length; i++) {
-          headerRow.cells[i]!.ariaColIndex = (
-            this.firstVisibleColumn +
-            i -
-            1
-          ).toString();
-        }
       }
     }
 
@@ -1926,16 +1951,9 @@ export default class TableView extends HTMLElement {
               `td[aria-colindex="${beforeDataIndex}"]`,
             );
       moveBefore(row, cell, beforeCell);
-      // Skip row header
-      for (let i = 1; i < row.cells.length; i++) {
-        row.cells[i]!.ariaColIndex = (
-          this.firstVisibleColumn +
-          i -
-          1
-        ).toString();
-      }
     }
 
+    this.reindexColumns();
     this.redrawSelection();
   }
 
@@ -1963,10 +1981,7 @@ export default class TableView extends HTMLElement {
           );
     moveBefore(this.tableBody, row.element, beforeRow);
 
-    for (let i = 0; i < this.visibleRows.length; i++) {
-      this.visibleRows[i]!.index = this.firstVisibleRow + i;
-    }
-
+    this.reindexRows();
     this.redrawSelection();
   }
 
@@ -2000,6 +2015,7 @@ export default class TableView extends HTMLElement {
     }
     this.visibleColumns = this.visibleColumns.toSpliced(index, 1);
     this.#columns--;
+    this.reindexColumns(index);
     this.update();
     this.redrawSelection();
   }
@@ -2014,6 +2030,7 @@ export default class TableView extends HTMLElement {
     this.recycleRow(row.element);
     this.visibleRows = this.visibleRows.toSpliced(index, 1);
     this.#rows--;
+    this.reindexRows(index);
     this.update();
     this.redrawSelection();
   }
