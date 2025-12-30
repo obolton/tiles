@@ -50,6 +50,7 @@ export default class FloatingToolbar extends HTMLElement {
     this.tabBar.id = "tab-bar";
     this.tabBar.role = "tablist";
     this.tabBar.ariaLabel = "Toolbar sections";
+    this.tabBar.addEventListener("pointerdown", this);
 
     // Content container with single slot
     const content = document.createElement("div");
