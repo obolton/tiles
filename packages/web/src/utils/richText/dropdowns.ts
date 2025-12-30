@@ -86,6 +86,10 @@ class DropdownNodeView implements NodeView, EventListenerObject {
     return true;
   }
 
+  selectNode() {
+    this.button.focus();
+  }
+
   private populateOptions(dropdown: DropdownModel) {
     if (!this.editor) {
       return;
