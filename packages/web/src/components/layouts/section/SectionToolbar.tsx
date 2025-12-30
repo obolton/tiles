@@ -70,11 +70,12 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
       <toolbar-tab label="Section">
         <ToolbarGroup label="Section tools">
           <list-select
-            aria-label="Layout"
+            label="Layout"
             data-tooltip="Layout"
             orientation="vertical"
             align="center"
             value={section.layout}
+            showvalue
             on:change={setLayout}
           >
             <ListGroup>
@@ -106,7 +107,7 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
           </list-select>
 
           <list-select
-            aria-label="Anchor"
+            label="Anchor"
             aria-selected={section.anchor}
             data-tooltip="Anchor"
             orientation="vertical"
@@ -147,10 +148,11 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
           </list-select>
 
           <list-select
-            aria-label="Size"
+            label="Size"
             data-tooltip="Size"
             orientation="vertical"
             value={section.dimensions}
+            showvalue
             on:change={setDimensions}
           >
             <ListGroup>
