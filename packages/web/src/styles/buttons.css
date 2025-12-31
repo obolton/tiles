@@ -8,6 +8,7 @@ button {
   text-align: center;
   cursor: pointer;
   user-select: none;
+  overflow: hidden;
   appearance: none;
   -webkit-font-smoothing: antialiased;
 
@@ -136,12 +137,12 @@ list-select {
   }
 
   &:is(
-    :hover:not(:disabled),
-    :active:not(:disabled),
-    [aria-pressed="true"],
-    [aria-checked="true"],
-    [aria-expanded="true"]
-  ) {
+      :hover:not(:disabled),
+      :active:not(:disabled),
+      [aria-pressed="true"],
+      [aria-checked="true"],
+      [aria-expanded="true"]
+    ):not(.pending) {
     &::before {
       content: "";
       position: absolute;
@@ -297,9 +298,6 @@ button.option {
 form[data-pending] button[type="submit"] {
   --delay: 100ms;
 
-  position: relative;
-  pointer-events: none;
-
   &::before {
     content: "";
     position: absolute;
@@ -324,12 +322,10 @@ form[data-pending] button[type="submit"] {
       oklch(80% 90% 330deg),
       oklch(80% 90% 360deg)
     );
-    animation: 1s linear var(--delay) infinite rotate;
-    transition: opacity var(--animation-duration) var(--easing) var(--delay);
-
-    @starting-style {
-      opacity: 0;
-    }
+    animation:
+      var(--animation-duration) var(--easing) var(--delay) backwards
+        reveal-overlay,
+      1s linear var(--delay) infinite rotate;
   }
 
   &::after {
@@ -339,7 +335,6 @@ form[data-pending] button[type="submit"] {
     align-content: center;
     border-radius: inherit;
     background: inherit;
-    opacity: 0;
     animation: var(--animation-duration) var(--easing) var(--delay) forwards
       reveal-border;
   }
@@ -365,6 +360,16 @@ form[data-pending] button[type="submit"] {
 
   to {
     transform: rotateZ(360deg);
+  }
+}
+
+@keyframes reveal-overlay {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
