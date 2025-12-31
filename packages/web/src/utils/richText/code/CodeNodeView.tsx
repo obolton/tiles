@@ -160,6 +160,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
             target.value ?? "",
           ),
         );
+        this.cm.focus();
       }
     }
   }
