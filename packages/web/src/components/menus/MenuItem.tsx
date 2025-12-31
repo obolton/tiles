@@ -5,7 +5,7 @@ export interface MenuItemProps extends JSX.Attributes<"button"> {
   label?: string;
   icon?: JSX.Node;
   destructive?: boolean;
-  checked?: Reactive<boolean>;
+  checked?: boolean | Reactive<boolean>;
   role?: "menuitem" | "menuitemcheckbox" | "menuitemradio";
 }
 
