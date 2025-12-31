@@ -51,7 +51,7 @@ export default function MapToolbar({
     <floating-toolbar
       className="primary"
       aria-label="Map toolbar"
-      data-tooltip-position="top"
+      data-tooltip-position="bottom"
       selectedtab={selectedTab}
     >
       <toolbar-tab name="map" label="Map">

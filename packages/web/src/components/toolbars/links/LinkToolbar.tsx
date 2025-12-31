@@ -35,7 +35,7 @@ export default function LinkToolbar({ link }: LinkToolbarProps) {
     <floating-toolbar
       className="primary"
       aria-label="Link toolbar"
-      data-tooltip-position="top"
+      data-tooltip-position="bottom"
     >
       <toolbar-tab label="Link">
         <ToolbarGroup label="Link tools">

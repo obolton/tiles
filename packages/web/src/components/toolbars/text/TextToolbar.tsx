@@ -59,7 +59,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
     <floating-toolbar
       className="primary"
       aria-label="Text toolbar"
-      data-tooltip-position="top"
+      data-tooltip-position="bottom"
       name="text-toolbar"
     >
       <toolbar-tab name="text" label="Text">

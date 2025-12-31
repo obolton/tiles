@@ -13,7 +13,7 @@ export default function ImageToolbar({ image, editorView }: ImageToolbarProps) {
   return (
     <floating-toolbar
       className="primary"
-      data-tooltip-position="top"
+      data-tooltip-position="bottom"
       aria-label="Image tools"
     >
       <toolbar-tab label="Image">

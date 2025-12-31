@@ -12,7 +12,7 @@ export default function SelectionToolbar() {
   return (
     <floating-toolbar
       className="primary"
-      data-tooltip-position="top"
+      data-tooltip-position="bottom"
       aria-label="Selection tools"
     >
       <toolbar-tab label="Selection">

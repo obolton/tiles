@@ -29,7 +29,7 @@ export default function TableToolbar({
   return (
     <floating-toolbar
       className="primary"
-      data-tooltip-position="top"
+      data-tooltip-position="bottom"
       aria-label="Table tools"
       name="table-toolbar"
       selectedtab={selectedTab}
