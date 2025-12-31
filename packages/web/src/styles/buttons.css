@@ -98,7 +98,8 @@ a.secondary {
 
 button.floating,
 a.floating,
-list-select {
+list-select,
+list-select[orientation="horizontal"] .option {
   --border-radius: 22px;
 
   position: relative;
@@ -289,6 +290,24 @@ list-select {
       background-color: currentcolor;
       mask: url("@/icons/check.svg?inline") no-repeat center / contain;
       opacity: 0.5;
+    }
+  }
+}
+
+list-select[orientation="horizontal"] .option {
+  width: auto;
+
+  &,
+  &:hover,
+  &:active {
+    background: none;
+  }
+
+  &[aria-checked="true"] {
+    padding-inline-end: 10px;
+
+    &::after {
+      content: none;
     }
   }
 }

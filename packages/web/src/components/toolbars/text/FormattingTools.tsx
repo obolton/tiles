@@ -513,27 +513,23 @@ export default function FormattingTools({
         <list-select
           aria-label="Text alignment"
           data-tooltip="Text alignment"
-          aria-orientation="vertical"
           orientation="horizontal"
           align="center"
           value={format.derive((value) => value.align)}
           on:change={formatAlignment}
         >
-          <ListGroup classList={{ inline: true }}>
+          <ListGroup>
             <ListOption
-              classList={{ floating: true }}
               icon={<AlignLeftIcon aria-hidden="true" />}
               value="left"
               label="Align left"
             />
             <ListOption
-              classList={{ floating: true }}
               icon={<AlignCenterIcon aria-hidden="true" />}
               value="center"
               label="Align center"
             />
             <ListOption
-              classList={{ floating: true }}
               icon={<AlignRightIcon aria-hidden="true" />}
               value="right"
               label="Align right"
