@@ -245,8 +245,8 @@ list-select {
   }
 }
 
-button.menuitem,
-button.option {
+.menuitem,
+.option {
   position: relative;
   display: flex;
   align-items: center;
@@ -267,16 +267,17 @@ button.option {
     fill: currentcolor;
   }
 
-  &:enabled:hover:not(:active) {
+  &:hover:not(:active, :disabled, [aria-disabled="true"]) {
     background-color: rgb(0 0 0 / 10%);
   }
 
-  &:enabled:active {
+  &:active:not(:disabled, [aria-disabled="true"]) {
     background-color: rgb(0 0 0 / 20%);
   }
 
   &[aria-checked="true"],
-  &[aria-selected="true"] {
+  &[aria-selected="true"],
+  &[aria-current="true"] {
     padding-inline-end: 40px;
 
     &::after {
