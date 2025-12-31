@@ -15,7 +15,7 @@ export default function PlaceTab({ map, getMapView }: PlaceTabProps) {
   function renamePlace() {
     const selectedMarkers = getMapView().selectedMarkers;
     if (selectedMarkers.length === 1) {
-      selectedMarkers[0]?.focus();
+      selectedMarkers[0]?.editLabel();
     }
   }
 

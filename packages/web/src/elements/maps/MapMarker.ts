@@ -174,6 +174,10 @@ export default class MapMarker extends HTMLElement {
     this.toggleAttribute("selected", value);
     this.ariaSelected = value ? "true" : "false";
   }
+
+  editLabel() {
+    getSelection()?.selectAllChildren(this.labelElement);
+  }
 }
 
 customElements.define("map-marker", MapMarker);
