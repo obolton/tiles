@@ -40,6 +40,7 @@ export default class ListSelect extends HTMLElement {
   private labelSlot: HTMLSlotElement;
   private itemsLabel: HTMLSpanElement;
   private items: PopoverMenu;
+  private mutationObserver: MutationObserver;
 
   constructor() {
     super();
@@ -73,7 +74,6 @@ export default class ListSelect extends HTMLElement {
     this.items.addEventListener("toggle", this, { passive: true });
 
     const itemsSlot = document.createElement("slot");
-    itemsSlot.addEventListener("slotchange", this);
     this.items.append(this.itemsLabel, itemsSlot);
 
     shadow.append(
@@ -84,6 +84,10 @@ export default class ListSelect extends HTMLElement {
     );
 
     this.addEventListener("click", this, { passive: true });
+
+    this.mutationObserver = new MutationObserver((mutations) =>
+      this.mutationObserverCallback(mutations),
+    );
   }
 
   get label() {
@@ -117,7 +121,7 @@ export default class ListSelect extends HTMLElement {
 
     this.#showValue = show;
     const item = this.value === null ? null : this.getItem(this.value);
-    this.setLabel(item);
+    this.showItem(item);
   }
 
   get value() {
@@ -129,6 +133,8 @@ export default class ListSelect extends HTMLElement {
       return;
     }
 
+    this.mutationObserver.disconnect();
+
     const previousItem =
       this.#value === null ? null : this.getItem(this.#value);
     if (previousItem) {
@@ -138,10 +144,14 @@ export default class ListSelect extends HTMLElement {
     const item = value === null ? null : this.getItem(value);
     if (item) {
       item.ariaChecked = "true";
+    } else if (value !== null) {
+      // Item doesn't exist yet, observe for when it's added
+      this.mutationObserver.observe(this, {
+        childList: true,
+        subtree: true,
+      });
     }
-
-    this.setIcon(item?.querySelector("svg") ?? null);
-    this.setLabel(item);
+    this.showItem(item);
 
     this.#value = value;
   }
@@ -163,6 +173,10 @@ export default class ListSelect extends HTMLElement {
 
   connectedCallback() {
     this.open = false;
+  }
+
+  disconnectedCallback() {
+    this.mutationObserver.disconnect();
   }
 
   attributeChangedCallback(
@@ -198,8 +212,6 @@ export default class ListSelect extends HTMLElement {
         return this.handleToggle(event as ToggleEvent);
       case "click":
         return this.handleClick(event as PointerEvent);
-      case "slotchange":
-        return this.handleSlotChange();
     }
   }
 
@@ -228,14 +240,28 @@ export default class ListSelect extends HTMLElement {
     this.hide();
   }
 
-  private handleSlotChange() {
-    if (this.value !== null) {
-      const item = this.getItem(this.value);
-      if (item) {
-        item.ariaChecked = "true";
+  private mutationObserverCallback(mutations: MutationRecord[]) {
+    const value = this.value;
+    if (value === null) {
+      return;
+    }
+
+    const selector = `button[value="${CSS.escape(value)}"]`;
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (!(node instanceof Element)) {
+          continue;
+        }
+        const item = node.matches(selector)
+          ? node
+          : node.querySelector(selector);
+        if (item) {
+          item.ariaChecked = "true";
+          this.showItem(item);
+          this.mutationObserver.disconnect();
+          return;
+        }
       }
-      this.setIcon(item?.querySelector("svg") ?? null);
-      this.setLabel(item ?? null);
     }
   }
 
@@ -245,38 +271,32 @@ export default class ListSelect extends HTMLElement {
     return this.querySelector(`[value="${CSS.escape(value)}"]`);
   }
 
-  // Icon
-
-  private setIcon(icon: SVGElement | null) {
+  private showItem(item: Element | null) {
     for (const element of this.iconSlot.assignedElements()) {
       element.remove();
     }
+    for (const element of this.labelSlot.assignedElements()) {
+      element.remove();
+    }
 
+    // Set icon
+    const icon = item?.querySelector("svg");
     if (icon) {
-      // Add the item-specific icon
       const iconClone = icon.cloneNode(true) as SVGElement;
       iconClone.slot = "icon";
       this.prepend(iconClone);
       this.internals.states.add("has-item-icon");
     } else {
-      // Fall back to default icon (if slotted)
       this.internals.states.delete("has-item-icon");
     }
-  }
 
-  // Label
-
-  private setLabel(item: Element | null) {
-    for (const element of this.labelSlot.assignedElements()) {
-      element.remove();
-    }
-
-    if (!this.#showValue || !item) {
+    // Set label
+    if (!item || !this.#showValue) {
       return;
     }
 
     const labelText =
-      item.getAttribute("data-label") ?? item.textContent?.trim() ?? "";
+      item.getAttribute("data-label") ?? item.textContent?.trim();
 
     if (!labelText) {
       return;
