@@ -17,6 +17,7 @@ import MapModel from "@/models/Map";
 import TableModel from "@/models/Table";
 import ChartModel from "@/models/Chart";
 import { reactive, Computed } from "@/utils/reactivity";
+import { getThemeStyles } from "@/utils/themes";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import If from "@/jsx/if";
 import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
@@ -119,6 +120,12 @@ export default function Item({
     (selection) => selection.has(tile) && selection.size === 1,
   );
 
+  const themeStyles = new Computed(
+    [tile.background, tile.theme, tile.textColor] as const,
+    (background, theme, textColor) =>
+      getThemeStyles(theme, { background, textColor }),
+  );
+
   function onPointerDown(event: PointerEvent) {
     if (event.button !== PRIMARY_MOUSE_BUTTON || !editor.isEditable.value) {
       return;
@@ -162,18 +169,20 @@ export default function Item({
       : reactive({});
 
   const combinedStyles = new Computed(
-    [dimensions, width, height, rowSpan, position] as const,
+    [dimensions, width, height, rowSpan, position, themeStyles] as const,
     (
       dimensionsValue,
       widthValue,
       heightValue,
       rowSpanValue,
       positionValue,
+      themeVars,
     ) => ({
       ...style,
       ...positionValue,
       ...getSizeStyle(dimensionsValue, widthValue, heightValue),
       "--rows": rowSpanValue.toString(),
+      ...themeVars,
     }),
   );
 
