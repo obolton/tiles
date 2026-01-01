@@ -74,8 +74,9 @@ export default function PageSettingsPopover({
     const themes = getCachedWorkspaceThemes(editor.workspaceId);
     const theme = themes?.find((t) => t.id === newThemeId) ?? null;
 
+    const bgColor = backgroundColor.value;
     const styles = getThemeStyles(theme, {
-      backgroundColor: backgroundColor.value,
+      background: bgColor ? { type: "color", color: bgColor } : null,
       font: font.value,
     });
 
