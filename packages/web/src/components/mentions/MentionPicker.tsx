@@ -2,6 +2,7 @@ import { getWorkspaceUsers, type WorkspaceUser } from "@/utils/users";
 import type FilterSelect from "@/elements/filter-select/FilterSelect";
 import { reactive } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
+import ListOption from "@/components/lists/ListOption";
 import Each from "@/jsx/each";
 import styles from "./MentionPicker.module.css";
 
@@ -37,9 +38,8 @@ export default function MentionPicker({
     }
   }
 
-  function handleKeyDown(event: KeyboardEvent) {
-    if (event.key === "Escape") {
-      event.preventDefault();
+  function handleToggle(event: ToggleEvent) {
+    if (event.newState === "closed") {
       onClose();
     }
   }
@@ -49,17 +49,23 @@ export default function MentionPicker({
       <filter-select
         className={styles.picker}
         placeholder="Search people..."
+        popover="auto"
         on:change={handleChange}
-        on:keydown={handleKeyDown}
+        on:toggle={handleToggle}
       >
         <Each items={users}>
           {(user) => (
-            <button type="button" className="menuitem" data-value={user.id}>
-              {user.imageUrl ? (
-                <img className="profile-image" src={user.imageUrl} alt="" />
-              ) : null}
-              <span className={styles.name}>{user.name}</span>
-            </button>
+            <ListOption
+              value={user.id}
+              label={user.name}
+              icon={
+                user.imageUrl ? (
+                  <img className="profile-image" src={user.imageUrl} alt="" />
+                ) : null
+              }
+            >
+              {user.name}
+            </ListOption>
           )}
         </Each>
       </filter-select>

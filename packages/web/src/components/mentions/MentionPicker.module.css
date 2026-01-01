@@ -15,28 +15,26 @@
 .picker {
   min-width: 200px;
   max-width: 320px;
-  max-height: 300px;
-  padding: 4px;
   background: var(--ui-background-color);
   backdrop-filter: blur(24px);
   border-radius: var(--border-radius);
   box-shadow:
-    0 0 0 1px rgb(0 0 0 / 20%),
+    0 0 0 1px rgb(0 0 0 / 15%),
     0 4px 12px -4px rgb(0 0 0 / 30%);
+  overflow: hidden;
+
+  &::part(list) {
+    max-height: 240px;
+  }
 }
 
 @supports (anchor-name: --anchor) {
   .picker {
     position: fixed;
     position-anchor: --mention-anchor;
-    position-area: center end;
-    position-try: flip-block;
+    inset-block-start: anchor(start);
+    inset-inline-start: anchor(end);
+    position-try-fallbacks: flip-block;
     z-index: 1;
   }
-}
-
-.name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }

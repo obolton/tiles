@@ -111,7 +111,11 @@ function getPickerElement(view: EditorView, getPos: () => number | undefined) {
   )[0] as HTMLElement;
 
   requestAnimationFrame(() => {
-    element.querySelector<HTMLElement>("filter-select")?.focus();
+    const filterSelect = element.querySelector("filter-select");
+    if (filterSelect) {
+      filterSelect.showPopover();
+      filterSelect.focus();
+    }
   });
 
   return element;
