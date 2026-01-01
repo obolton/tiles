@@ -4,9 +4,12 @@ import { THEME } from "@/test/fixtures/Theme";
 
 describe("resolveThemeStyles", () => {
   describe("with theme and no overrides", () => {
-    test("returns theme background color", () => {
+    test("returns theme background as ColorFill", () => {
       const result = resolveThemeStyles(THEME, {});
-      expect(result.backgroundColor).toBe("ffffffffffff");
+      expect(result.background).toEqual({
+        type: "color",
+        color: "ffffffffffff",
+      });
     });
 
     test("returns theme text color", () => {
@@ -28,9 +31,12 @@ describe("resolveThemeStyles", () => {
   describe("with overrides", () => {
     test("override takes precedence over theme background", () => {
       const result = resolveThemeStyles(THEME, {
-        backgroundColor: "ff0000000000",
+        background: { type: "color", color: "ff0000000000" },
       });
-      expect(result.backgroundColor).toBe("ff0000000000");
+      expect(result.background).toEqual({
+        type: "color",
+        color: "ff0000000000",
+      });
     });
 
     test("override takes precedence over theme text color", () => {
@@ -56,21 +62,27 @@ describe("resolveThemeStyles", () => {
 
     test("null override uses theme value", () => {
       const result = resolveThemeStyles(THEME, {
-        backgroundColor: null,
+        background: null,
       });
-      expect(result.backgroundColor).toBe("ffffffffffff");
+      expect(result.background).toEqual({
+        type: "color",
+        color: "ffffffffffff",
+      });
     });
   });
 
   describe("with null theme", () => {
     test("returns override values when theme is null", () => {
       const result = resolveThemeStyles(null, {
-        backgroundColor: "ff0000000000",
+        background: { type: "color", color: "ff0000000000" },
         textColor: "00ff00000000",
         accentColor: "0000ff000000",
         font: "CODE",
       });
-      expect(result.backgroundColor).toBe("ff0000000000");
+      expect(result.background).toEqual({
+        type: "color",
+        color: "ff0000000000",
+      });
       expect(result.textColor).toBe("00ff00000000");
       expect(result.accentColor).toBe("0000ff000000");
       expect(result.font).toBe('"JetBrains Mono", "monospace"');
@@ -78,7 +90,7 @@ describe("resolveThemeStyles", () => {
 
     test("returns null for all properties when no overrides", () => {
       const result = resolveThemeStyles(null, {});
-      expect(result.backgroundColor).toBeNull();
+      expect(result.background).toBeNull();
       expect(result.textColor).toBeNull();
       expect(result.accentColor).toBeNull();
       expect(result.font).toBeNull();
@@ -87,21 +99,21 @@ describe("resolveThemeStyles", () => {
 });
 
 describe("toCSSProperties", () => {
-  test("converts background color to CSS custom property", () => {
+  test("converts background fill to CSS custom property", () => {
     const result = toCSSProperties({
-      backgroundColor: "ffff80008000",
+      background: { type: "color", color: "ffff80008000" },
       textColor: null,
       accentColor: null,
       font: null,
     });
-    expect(result["--background-color"]).toBe(
+    expect(result["--background"]).toBe(
       "color(display-p3 1.0000 0.5000 0.5000)",
     );
   });
 
   test("converts text color to CSS custom property", () => {
     const result = toCSSProperties({
-      backgroundColor: null,
+      background: null,
       textColor: "000000000000",
       accentColor: null,
       font: null,
@@ -113,7 +125,7 @@ describe("toCSSProperties", () => {
 
   test("converts accent color to CSS custom property", () => {
     const result = toCSSProperties({
-      backgroundColor: null,
+      background: null,
       textColor: null,
       accentColor: "0000ffffffff",
       font: null,
@@ -125,7 +137,7 @@ describe("toCSSProperties", () => {
 
   test("includes font as CSS custom property", () => {
     const result = toCSSProperties({
-      backgroundColor: null,
+      background: null,
       textColor: null,
       accentColor: null,
       font: '"Inter", "sans-serif"',
@@ -135,12 +147,12 @@ describe("toCSSProperties", () => {
 
   test("omits properties with null values", () => {
     const result = toCSSProperties({
-      backgroundColor: null,
+      background: null,
       textColor: null,
       accentColor: null,
       font: null,
     });
-    expect(result["--background-color"]).toBeUndefined();
+    expect(result["--background"]).toBeUndefined();
     expect(result["--text-color"]).toBeUndefined();
     expect(result["--accent-color"]).toBeUndefined();
     expect(result["--font"]).toBeUndefined();
@@ -148,12 +160,12 @@ describe("toCSSProperties", () => {
 
   test("includes all properties when all values are set", () => {
     const result = toCSSProperties({
-      backgroundColor: "ffffffffffff",
+      background: { type: "color", color: "ffffffffffff" },
       textColor: "000000000000",
       accentColor: "0000ffffffff",
       font: '"Inter", "sans-serif"',
     });
-    expect(result["--background-color"]).toBeDefined();
+    expect(result["--background"]).toBeDefined();
     expect(result["--text-color"]).toBeDefined();
     expect(result["--accent-color"]).toBeDefined();
     expect(result["--font"]).toBeDefined();
@@ -163,7 +175,7 @@ describe("toCSSProperties", () => {
 describe("getThemeStyles", () => {
   test("returns CSS properties from theme", () => {
     const result = getThemeStyles(THEME, {});
-    expect(result["--background-color"]).toBe(
+    expect(result["--background"]).toBe(
       "color(display-p3 1.0000 1.0000 1.0000)",
     );
     expect(result["--text-color"]).toBe(
@@ -173,9 +185,9 @@ describe("getThemeStyles", () => {
 
   test("applies overrides", () => {
     const result = getThemeStyles(THEME, {
-      backgroundColor: "ffff80008000",
+      background: { type: "color", color: "ffff80008000" },
     });
-    expect(result["--background-color"]).toBe(
+    expect(result["--background"]).toBe(
       "color(display-p3 1.0000 0.5000 0.5000)",
     );
   });

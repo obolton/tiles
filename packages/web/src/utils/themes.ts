@@ -1,19 +1,21 @@
 import { getFontConfig } from "@/utils/fonts";
+import { getBackgroundStyle } from "@/utils/backgrounds";
 import { toCSSColor, type Color } from "@/utils/color";
 import type { Theme } from "api/types/themes";
 import type { FontId } from "@/config/fonts";
+import type { Fill } from "@/components/fills/types";
 
 export type { Theme };
 
 export interface StyleOverrides {
-  backgroundColor?: Color | null;
+  background?: Fill | null;
   textColor?: Color | null;
   accentColor?: Color | null;
   font?: FontId | null;
 }
 
 export interface ResolvedStyles {
-  backgroundColor: Color | null;
+  background: Fill | null;
   textColor: Color | null;
   accentColor: Color | null;
   font: string | null;
@@ -25,17 +27,19 @@ export interface ResolvedStyles {
  */
 export function resolveThemeStyles(
   theme: Theme | null,
-  overrides: StyleOverrides,
+  overrides: StyleOverrides = {},
 ): ResolvedStyles {
-  const backgroundColor =
-    overrides.backgroundColor ?? theme?.colors.background ?? null;
+  const themeBackground = theme?.colors.background
+    ? ({ type: "color", color: theme.colors.background } as const)
+    : null;
+  const background = overrides.background ?? themeBackground;
   const textColor = overrides.textColor ?? theme?.colors.text ?? null;
   const accentColor = overrides.accentColor ?? theme?.colors.accent ?? null;
   const fontId = overrides.font ?? theme?.fonts.body ?? null;
   const font = fontId ? getFontConfig(fontId) : null;
 
   return {
-    backgroundColor,
+    background,
     textColor,
     accentColor,
     font: font ? `"${font.family}", "${font.fallback}"` : null,
@@ -46,15 +50,13 @@ export function resolveThemeStyles(
  * Converts resolved styles to CSS custom property values.
  */
 export function toCSSProperties(styles: ResolvedStyles): {
-  "--background-color"?: string;
+  "--background"?: string;
   "--text-color"?: string;
   "--accent-color"?: string;
   "--font"?: string;
 } {
   return {
-    "--background-color": styles.backgroundColor
-      ? toCSSColor(styles.backgroundColor)
-      : undefined,
+    "--background": getBackgroundStyle(styles.background)?.background,
     "--text-color": styles.textColor ? toCSSColor(styles.textColor) : undefined,
     "--accent-color": styles.accentColor
       ? toCSSColor(styles.accentColor)
@@ -68,7 +70,7 @@ export function toCSSProperties(styles: ResolvedStyles): {
  */
 export function getThemeStyles(
   theme: Theme | null,
-  overrides: StyleOverrides,
+  overrides: StyleOverrides = {},
 ): ReturnType<typeof toCSSProperties> {
   return toCSSProperties(resolveThemeStyles(theme, overrides));
 }
