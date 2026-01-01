@@ -52,6 +52,7 @@ export default class Link extends Tile {
     this.description = reactive(description);
     this.siteName = reactive(siteName);
     this.imageUrl = reactive(imageUrl);
+    this.background.value = imageUrl ? { type: "image", imageUrl } : null;
   }
 
   private async update(
@@ -76,5 +77,6 @@ export default class Link extends Tile {
     this.description.value = description;
     this.siteName.value = siteName;
     this.imageUrl.value = imageUrl;
+    this.background.value = imageUrl ? { type: "image", imageUrl } : null;
   }
 }

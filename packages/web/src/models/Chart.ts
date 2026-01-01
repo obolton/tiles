@@ -9,7 +9,6 @@ import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 import type { ClientChartTile } from "api/types/tiles";
 import type {
-  Fill,
   FillUpdate,
   ColorFill,
   GradientFill,
@@ -36,7 +35,6 @@ export default class Chart extends Tile {
   readonly tableId: string;
   readonly label: Reactive<Property | null>;
   readonly series: ReactiveArray<Series>;
-  readonly background: Reactive<Fill | null>;
 
   static async create(
     editor: Editor,
@@ -64,7 +62,7 @@ export default class Chart extends Tile {
         fill: reactive(fill),
       })),
     );
-    this.background = reactive(background);
+    this.background.value = background;
   }
 
   private update(

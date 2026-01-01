@@ -30,8 +30,6 @@ export interface TableRow {
 export default class Table extends Tile {
   readonly type = "TABLE";
 
-  readonly textColor: Reactive<Color | null>;
-  readonly background: Reactive<ClientTableTile["background"]>;
   readonly columns: ReactiveArray<TableColumn>;
   readonly rows: ReactiveArray<TableRow>;
   readonly numRows: Reactive<number>;
@@ -52,8 +50,8 @@ export default class Table extends Tile {
     super(editor, properties);
 
     const { textColor, background, columns, rows, numRows } = properties;
-    this.textColor = reactive(textColor);
-    this.background = reactive(background);
+    this.textColor.value = textColor;
+    this.background.value = background;
     this.columns = array(columns);
     this.rows = array(rows);
     this.numRows = reactive(numRows);
