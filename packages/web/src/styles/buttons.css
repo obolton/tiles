@@ -257,6 +257,8 @@ list-select[orientation="horizontal"] .option {
   gap: 12px;
   padding-block: 8px;
   padding-inline: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
   border: none;
   border-radius: 8px;
@@ -272,7 +274,8 @@ list-select[orientation="horizontal"] .option {
     background-color: rgb(0 0 0 / 10%);
   }
 
-  &:active:not(:disabled, [aria-disabled="true"]) {
+  &:active:not(:disabled, [aria-disabled="true"]),
+  &[data-active] {
     background-color: rgb(0 0 0 / 20%);
   }
 

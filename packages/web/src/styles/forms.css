@@ -156,23 +156,6 @@ file-picker {
 }
 
 filter-select {
-  position-area: center;
-  place-self: start;
-  min-width: 200px;
-  margin: -4px -8px;
-  background: var(--ui-background-color);
-  backdrop-filter: blur(24px);
-  border-radius: var(--border-radius);
-  box-shadow:
-    0 0 0 1px rgb(0 0 0 / 15%),
-    0 4px 12px -4px rgb(0 0 0 / 30%);
-  outline: 3px solid transparent;
-  transition: outline-color var(--animation-duration) var(--easing);
-
-  &:focus-visible {
-    outline-color: var(--focus-ring-color);
-  }
-
   &::part(input) {
     display: block;
     padding: 8px 12px;
@@ -189,40 +172,17 @@ filter-select {
   }
 
   &::part(list) {
-    max-height: 200px;
-    border-top: 1px solid rgb(0 0 0 / 15%);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 4px;
+    border-top: 1px solid rgb(0 0 0 / 10%);
     overflow: auto;
-  }
-
-  & > * {
-    padding: 12px;
-    font-size: 1rem;
-    line-height: 1;
-    cursor: pointer;
-
-    &[data-active],
-    &:hover:not([editing]) {
-      background: rgb(0 0 0 / 8%);
-    }
   }
 }
 
 dropdown-editor {
   width: 240px;
-}
-
-dropdown-editor > filter-select {
-  width: 100%;
-  margin: 0;
-  background: none;
-  backdrop-filter: none;
-  border-radius: 0;
-  box-shadow: none;
-  outline: none;
-
-  &::part(list) {
-    padding: 8px;
-  }
 }
 
 list-box {
