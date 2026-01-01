@@ -6,7 +6,6 @@ import {
   type Reactive,
 } from "@/utils/reactivity";
 import { isDark, type Color } from "@/utils/color";
-import { getBackgroundStyle } from "@/utils/backgrounds";
 import { resolveThemeStyles, toCSSProperties } from "@/utils/themes";
 import type { Theme } from "api/types/themes";
 import type { FontId } from "@/config/fonts";
@@ -58,16 +57,10 @@ export default function Tile({
     [theme, textColor, background, animation] as const,
     (themeValue, textColorValue, backgroundValue, animationValue) => {
       const resolved = resolveThemeStyles(themeValue, {
+        background: backgroundValue,
         textColor: textColorValue,
         font,
       });
-
-      // TODO: Support Fill types in theme backgrounds
-      const effectiveBackground =
-        backgroundValue ??
-        (resolved.backgroundColor
-          ? { type: "color" as const, color: resolved.backgroundColor }
-          : null);
 
       return {
         ...toCSSProperties(resolved),
@@ -75,7 +68,6 @@ export default function Tile({
           ? ANIMATION_NAMES[animationValue]
           : undefined,
         anchorName,
-        ...getBackgroundStyle(effectiveBackground),
       };
     },
   );
