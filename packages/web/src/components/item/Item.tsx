@@ -37,6 +37,7 @@ export interface ItemProps {
   tile: Tile;
   tabindex?: number | Reactive<number | undefined>;
   resize?: Reactive<ResizeDirection | null>;
+  fullBleed?: boolean;
 }
 
 function getTileComponent(tile: Tile, showToolbar: Reactive<boolean>) {
@@ -102,6 +103,7 @@ export default function Item({
   tile,
   tabindex,
   resize,
+  fullBleed = false,
 }: ItemProps) {
   const { id, dimensions, x, y, width, height, rowSpan, block, hide, editor } =
     tile;
@@ -212,6 +214,7 @@ export default function Item({
           [styles.selected]: isSelected,
           [styles.block]: block,
           [styles.hide]: hide,
+          [styles["full-bleed"]]: fullBleed,
           ...classList,
         }}
         style={combinedStyles}

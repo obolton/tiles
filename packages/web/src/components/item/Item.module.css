@@ -21,6 +21,21 @@
     box-shadow var(--animation-duration) var(--easing),
     outline-color var(--animation-duration) var(--easing);
 
+  &:not(.full-bleed) {
+    background: var(--background);
+  }
+
+  &.full-bleed::before {
+    content: "";
+    position: absolute;
+    inset-block: -24px;
+    inset-inline-start: calc(-50cqi + 50%);
+    inline-size: 100cqi;
+    z-index: -1;
+    background: var(--background);
+    pointer-events: none;
+  }
+
   &::part(outline) {
     view-transition-name: outline;
   }
