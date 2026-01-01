@@ -126,6 +126,12 @@ main {
   margin: 0 0 0 80px;
   padding: 0;
   container: main / inline-size;
+  overflow-x: clip;
+}
+
+main > page-item {
+  margin-block: 24px;
+  margin-inline: auto;
 }
 
 body[data-disable-transitions] * {
