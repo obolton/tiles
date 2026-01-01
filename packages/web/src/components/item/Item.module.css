@@ -16,6 +16,8 @@
   height: calc(var(--height) * 24px);
   border-radius: 12px;
   outline-color: transparent;
+  color: var(--text-color);
+  font-family: var(--font);
   transition:
     opacity var(--animation-duration) var(--easing),
     box-shadow var(--animation-duration) var(--easing),
