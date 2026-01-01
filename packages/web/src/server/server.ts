@@ -5,7 +5,7 @@ import globalMetadata from "@/routes/metadata";
 import Body from "./Body";
 import { internalError, notFound } from "@/router/router";
 import { resolveImport, getStylesheetsForRouteModule } from "./assets";
-import type { ModuleNode, ViteDevServer } from "vite";
+import type { EnvironmentModuleNode, ViteDevServer } from "vite";
 import type {
   RouteData,
   RouteMetadata,
@@ -16,7 +16,7 @@ import type {
 const router = getRouter();
 
 function inspectModuleStylesheets(
-  module: ModuleNode,
+  module: EnvironmentModuleNode,
   stylesheets: string[],
   seen: Set<string>,
 ) {
@@ -39,7 +39,8 @@ async function collectStylesheets(
 ) {
   const stylesheets: string[] = [];
   const seen = new Set<string>();
-  const module = await viteDevServer?.moduleGraph.getModuleByUrl(moduleUrl);
+  const ssrModuleGraph = viteDevServer?.environments.ssr.moduleGraph;
+  const module = await ssrModuleGraph?.getModuleByUrl(moduleUrl);
   if (!module) {
     return stylesheets;
   }
