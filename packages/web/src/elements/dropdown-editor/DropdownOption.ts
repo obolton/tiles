@@ -69,11 +69,6 @@ export default class DropdownOption extends HTMLElement {
     });
   }
 
-  connectedCallback() {
-    // Set data-value for FilterSelect compatibility
-    this.dataset.value = this.value;
-  }
-
   attributeChangedCallback(
     name: keyof DropdownOptionAttributes,
     _oldValue: string | null,
@@ -81,7 +76,6 @@ export default class DropdownOption extends HTMLElement {
   ) {
     switch (name) {
       case "value":
-        this.dataset.value = newValue ?? "";
         this.editInput.value = newValue ?? "";
         break;
       case "editing":

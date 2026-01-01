@@ -120,17 +120,17 @@ export default class FilterSelect extends HTMLElement {
       return;
     }
 
-    const item = event.target.closest<HTMLElement>("[data-value]");
+    const item = event.target.closest<HTMLElement>("[value]");
     if (!item) {
       return;
     }
 
-    this.value = item.dataset.value!;
+    this.value = item.getAttribute("value") ?? "";
   }
 
   private handleKeyDown(event: KeyboardEvent) {
     const items = Array.from(
-      this.querySelectorAll<HTMLElement>("[data-value]:not([hidden])"),
+      this.querySelectorAll<HTMLElement>("[value]:not([hidden])"),
     );
     const active = this.ariaActiveDescendantElement;
     const activeIndex =
@@ -166,8 +166,8 @@ export default class FilterSelect extends HTMLElement {
 
       case "Enter":
         event.preventDefault();
-        if (active instanceof HTMLElement && active.dataset.value) {
-          this.value = active.dataset.value;
+        if (active instanceof HTMLElement) {
+          this.value = active.getAttribute("value") ?? "";
         } else {
           this.value = "";
         }
@@ -188,15 +188,13 @@ export default class FilterSelect extends HTMLElement {
   }
 
   private updateSelectedState() {
-    this.querySelectorAll('[data-value][aria-selected="true"]')
+    this.querySelectorAll('[value][aria-selected="true"]')
       .values()
       .forEach((option) => {
         option.ariaSelected = "false";
       });
 
-    const option = this.querySelector(
-      `[data-value="${CSS.escape(this.#value)}"]`,
-    );
+    const option = this.querySelector(`[value="${CSS.escape(this.#value)}"]`);
     if (option) {
       option.ariaSelected = "true";
     }
@@ -225,11 +223,11 @@ export default class FilterSelect extends HTMLElement {
   // Filtering
 
   private filter() {
-    const filter = this.inputValue.toLowerCase();
+    const filter = this.inputValue.toLocaleLowerCase();
 
-    for (const item of this.querySelectorAll<HTMLElement>("[data-value]")) {
-      const matches =
-        !filter || item.dataset.value?.toLowerCase().startsWith(filter);
+    for (const item of this.querySelectorAll<HTMLElement>("[value]")) {
+      const label = item.dataset.label ?? item.textContent ?? "";
+      const matches = !filter || label.toLocaleLowerCase().includes(filter);
       item.hidden = !matches;
     }
 
@@ -238,12 +236,12 @@ export default class FilterSelect extends HTMLElement {
       this.ariaActiveDescendantElement.hidden
     ) {
       const firstVisible = this.querySelector<HTMLElement>(
-        "[data-value]:not([hidden])",
+        "[value]:not([hidden])",
       );
       this.setActiveOption(firstVisible);
     }
 
-    const hasVisibleOptions = this.querySelector("[data-value]:not([hidden])");
+    const hasVisibleOptions = this.querySelector("[value]:not([hidden])");
     this.list.style.display = hasVisibleOptions ? "" : "none";
   }
 
@@ -252,7 +250,7 @@ export default class FilterSelect extends HTMLElement {
   private setActiveOption(option?: Element | null) {
     this.ariaActiveDescendantElement = option ?? null;
 
-    this.querySelectorAll<HTMLElement>('[data-value][data-active="true"]')
+    this.querySelectorAll<HTMLElement>('[value][data-active="true"]')
       .values()
       .forEach((option) => {
         delete option.dataset.active;
