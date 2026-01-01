@@ -9,6 +9,8 @@ import type {
   TileType,
 } from "api/types/tiles";
 import type { Theme } from "api/types/themes";
+import type { Fill } from "@/components/fills/types";
+import type { Color } from "@/utils/color";
 import type Editor from "@/editor/Editor";
 import type { AppRouterInputs } from "@/api/client";
 import type { TileParent } from "./TileCollection";
@@ -34,6 +36,8 @@ export default class Tile {
   readonly animation: Reactive<Animation | null>;
   readonly hide: Reactive<boolean>;
   readonly theme: Reactive<Theme | null>;
+  readonly background: Reactive<Fill | null>;
+  readonly textColor: Reactive<Color | null>;
 
   constructor(editor: Editor, properties: ClientTile) {
     const {
@@ -69,6 +73,8 @@ export default class Tile {
     this.animation = reactive(animation);
     this.hide = reactive(hide);
     this.theme = reactive(theme);
+    this.background = reactive(null);
+    this.textColor = reactive(null);
   }
 
   get index(): number | null {
