@@ -33,7 +33,9 @@ async function loader({
   }
 
   const style = getThemeStyles(page.theme, {
-    backgroundColor: page.backgroundColor,
+    background: page.backgroundColor
+      ? { type: "color", color: page.backgroundColor }
+      : null,
     font: page.font,
   });
 
