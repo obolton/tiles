@@ -5,22 +5,10 @@
   display: flex;
   justify-content: stretch;
   border-radius: var(--border-radius);
-  font-family: var(--font);
-  color: var(--text-color);
-  background-size: cover;
-  background-position: center;
   transition:
     opacity var(--animation-duration-short) var(--easing),
     box-shadow var(--animation-duration-short) var(--easing),
     transform var(--animation-duration-short) var(--easing);
-}
-
-.light {
-  --text-color: rgb(0 0 0 / 80%);
-}
-
-.dark {
-  --text-color: rgb(255 255 255 / 80%);
 }
 
 .border-inside {

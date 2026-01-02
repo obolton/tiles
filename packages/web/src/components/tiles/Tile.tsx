@@ -1,25 +1,11 @@
 import styles from "./Tile.module.css";
-import {
-  reactive,
-  isReactive,
-  Computed,
-  type Reactive,
-} from "@/utils/reactivity";
-import { isDark, type Color } from "@/utils/color";
-import { resolveThemeStyles, toCSSProperties } from "@/utils/themes";
-import type { Theme } from "api/types/themes";
-import type { FontId } from "@/config/fonts";
+import { reactive, isReactive, type Reactive } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
-import type { Fill } from "@/components/fills/types";
 import type { Animation } from "@/models/Tile";
 
 export type TileProps = {
   className?: string;
   children?: JSX.Node;
-  theme?: Reactive<Theme | null>;
-  font?: FontId | null;
-  textColor?: Reactive<Color | null>;
-  background?: Reactive<Fill | null>;
   animation?: Reactive<Animation | null>;
   border?:
     | Reactive<"inside" | "outside" | "none">
@@ -45,32 +31,14 @@ const ANIMATION_NAMES: Record<Animation, string> = {
 export default function Tile({
   className,
   children,
-  theme = reactive(null),
-  textColor = reactive(null),
-  background = reactive(null),
   animation = reactive(null),
-  font,
   border = "outside",
   anchorName,
 }: TileProps) {
-  const style = new Computed(
-    [theme, textColor, background, animation] as const,
-    (themeValue, textColorValue, backgroundValue, animationValue) => {
-      const resolved = resolveThemeStyles(themeValue, {
-        background: backgroundValue,
-        textColor: textColorValue,
-        font,
-      });
-
-      return {
-        ...toCSSProperties(resolved),
-        "--animation-name": animationValue
-          ? ANIMATION_NAMES[animationValue]
-          : undefined,
-        anchorName,
-      };
-    },
-  );
+  const style = animation.derive((value) => ({
+    "--animation-name": value ? ANIMATION_NAMES[value] : undefined,
+    anchorName,
+  }));
 
   return (
     <div
@@ -79,19 +47,7 @@ export default function Tile({
         isReactive(border)
           ? border.derive((value) => BORDER_CLASSES[value])
           : BORDER_CLASSES[border],
-        background
-          ? background.derive((value) => {
-              const color =
-                value?.type === "color"
-                  ? value.color
-                  : value?.type === "gradient"
-                    ? value.colorA
-                    : null;
-              if (!color) return undefined;
-              return isDark(color) ? styles.dark : styles.light;
-            })
-          : undefined,
-        animation?.derive((value) => (value ? styles.animate : undefined)),
+        animation.derive((value) => (value ? styles.animate : undefined)),
         className,
       ]}
       style={style}
