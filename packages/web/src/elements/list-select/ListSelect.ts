@@ -220,6 +220,10 @@ export default class ListSelect extends HTMLElement {
   }
 
   private handleClick(event: PointerEvent) {
+    if (this.ariaDisabled === "true") {
+      return;
+    }
+
     const target = event.target;
 
     if (target === this) {
