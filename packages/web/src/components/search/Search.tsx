@@ -7,10 +7,11 @@ import type { Reactive } from "@/utils/reactivity";
 export interface SearchProps<T> {
   id: string;
   itemsClassName?: string;
-  search: (query: string, cursor: string | null) => void;
+  search: (query: string, cursor: string | null) => void | Promise<void>;
   results: Reactive<T[]>;
-  nextCursor: Reactive<string | null>;
+  nextCursor: Reactive<string | null | undefined>;
   placeholder?: string;
+  autofocus?: boolean;
   render: (result: T) => JSX.Node;
   renderPlaceholder: (query: string) => JSX.Node;
 }
@@ -22,16 +23,17 @@ export default function Search<T>({
   results,
   nextCursor,
   placeholder,
+  autofocus = true,
   render,
   renderPlaceholder,
 }: SearchProps<T>) {
   const query = reactive("");
 
   async function onLoadMore() {
-    if (!nextCursor.value) {
+    if (nextCursor.value === null) {
       return;
     }
-    search(query.value, nextCursor.value);
+    search(query.value, nextCursor.value ?? null);
   }
 
   const debouncedSearch = debounce(search, 250);
@@ -49,7 +51,7 @@ export default function Search<T>({
         id={id}
         type="search"
         className={styles.search}
-        autofocus
+        autofocus={autofocus}
         placeholder={placeholder}
         on:input={onInput}
       />
