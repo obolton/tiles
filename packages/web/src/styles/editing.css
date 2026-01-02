@@ -23,7 +23,3 @@ body[data-editing] .editable {
   justify-self: center;
   border-radius: var(--border-radius);
 }
-
-main > .drag-placeholder {
-  margin: 24px;
-}
