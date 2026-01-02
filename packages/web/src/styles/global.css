@@ -275,4 +275,5 @@ scroll-view:not(:defined) {
 #insert-button {
   position: fixed;
   inset: auto 32px 32px auto;
+  z-index: 1;
 }
