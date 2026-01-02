@@ -3,7 +3,6 @@ import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import If from "@/jsx/if";
 import { viewTransition } from "@/utils/transitions";
 import { setEditMode } from "@/utils/edit";
-import { classNames } from "@/utils/css";
 import styles from "./EditingToolbar.module.css";
 import type Editor from "@/editor/Editor";
 
@@ -27,11 +26,11 @@ export default function EditingToolbar({
 
   return (
     <floating-toolbar
-      className={classNames(styles.toolbar, "top-right")}
+      className="top-right"
       aria-label="Editing toolbar"
       data-tooltip-position="bottom"
     >
-      <toolbar-tab label="Editing">
+      <toolbar-tab className={styles.toolbar} label="Editing">
         <ToolbarGroup label="Editing mode">
           <button
             type="button"
