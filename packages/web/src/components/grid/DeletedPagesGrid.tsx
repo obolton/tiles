@@ -78,7 +78,6 @@ export default function DeletedPagesGrid({
             workspaceId={workspaceId}
             pageId={page.id}
             title={page.title}
-            font={page.font}
             background={page.background}
           />
         )}

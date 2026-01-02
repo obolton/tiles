@@ -143,7 +143,6 @@ export default function LinkModal({
                       pageId={page.id}
                       title={page.title}
                       background={page.background}
-                      font={page.font}
                       on:click={(event) => {
                         if (
                           event.ctrlKey ||

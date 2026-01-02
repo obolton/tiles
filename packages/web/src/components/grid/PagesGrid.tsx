@@ -65,7 +65,6 @@ export default function PagesGrid({
             pageId={page.id}
             title={page.title}
             background={page.background}
-            font={page.font}
           />
         </PagesGridItem>
       )}
