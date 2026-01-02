@@ -31,7 +31,7 @@ export default function LinkModal({
 }: LinkModalProps) {
   const isPending = flag(false);
   const pages = reactive<Pages["pages"]>([]);
-  const nextCursor = reactive<string | null>(null);
+  const nextCursor = reactive<string | null | undefined>();
 
   const search = async (query: string, cursor: string | null) => {
     try {
@@ -136,6 +136,7 @@ export default function LinkModal({
               results={pages}
               nextCursor={nextCursor}
               placeholder="Search pages"
+              autofocus={false}
               render={(page) =>
                 page.id === pageId ? null : (
                   <PagesGridItem>
