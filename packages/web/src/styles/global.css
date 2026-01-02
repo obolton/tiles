@@ -129,11 +129,6 @@ main {
   overflow-x: clip;
 }
 
-main > page-item {
-  margin-block: 24px;
-  margin-inline: auto;
-}
-
 body[data-disable-transitions] * {
   transition: none !important;
   animation-name: none !important;

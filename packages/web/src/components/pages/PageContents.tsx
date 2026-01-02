@@ -1,6 +1,7 @@
 import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
 import LayoutEditor from "@/editor/LayoutEditor";
+import styles from "./PageContents.module.css";
 import type Editor from "@/editor/Editor";
 import type TileCollection from "@/models/TileCollection";
 
@@ -31,7 +32,7 @@ export default function PageContents({
   }
 
   return (
-    <main ref={ref}>
+    <main ref={ref} className={styles.main}>
       <Each items={tiles}>
         {(tile) => (
           <Item
