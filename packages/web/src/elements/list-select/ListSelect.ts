@@ -38,8 +38,8 @@ export default class ListSelect extends HTMLElement {
   private defaultIconSlot: HTMLSlotElement;
   private iconSlot: HTMLSlotElement;
   private labelSlot: HTMLSlotElement;
-  private itemsLabel: HTMLSpanElement;
   private items: PopoverMenu;
+  private itemsTitle: HTMLDivElement;
   private mutationObserver: MutationObserver;
 
   constructor() {
@@ -62,19 +62,19 @@ export default class ListSelect extends HTMLElement {
     this.labelSlot = document.createElement("slot");
     this.labelSlot.name = "label";
 
-    this.itemsLabel = document.createElement("span");
-    this.itemsLabel.id = "items-label";
-    this.itemsLabel.hidden = true;
+    this.itemsTitle = document.createElement("div");
+    this.itemsTitle.id = "title";
+    this.itemsTitle.hidden = true;
 
     this.items = document.createElement("popover-menu");
     this.items.id = "items";
     this.items.part = "items";
     this.items.anchorElement = this;
-    this.items.setAttribute("aria-labelledby", "items-label");
+    this.items.setAttribute("aria-labelledby", "title");
     this.items.addEventListener("toggle", this, { passive: true });
 
     const itemsSlot = document.createElement("slot");
-    this.items.append(this.itemsLabel, itemsSlot);
+    this.items.append(this.itemsTitle, itemsSlot);
 
     shadow.append(
       this.defaultIconSlot,
@@ -102,11 +102,11 @@ export default class ListSelect extends HTMLElement {
     this.#label = label;
 
     if (label) {
-      this.itemsLabel.textContent = label;
-      this.itemsLabel.hidden = false;
+      this.itemsTitle.textContent = label;
+      this.itemsTitle.hidden = false;
       this.ariaLabel = label;
     } else {
-      this.itemsLabel.hidden = true;
+      this.itemsTitle.hidden = true;
     }
   }
 
