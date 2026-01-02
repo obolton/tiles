@@ -19,11 +19,9 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
   const {
     block,
     content,
-    textColor,
     align,
     background,
     animation,
-    theme,
     state,
     editor: { isEditable },
   } = text;
@@ -105,9 +103,6 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
 
   return (
     <Tile
-      theme={theme}
-      textColor={textColor}
-      background={background}
       animation={animation}
       border={background.derive((value) => (value ? "outside" : "none"))}
     >

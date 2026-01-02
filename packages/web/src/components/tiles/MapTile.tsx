@@ -19,7 +19,6 @@ export default function MapTile({ map, showToolbar }: MapTileProps) {
   let mapView: MapView | undefined;
   const hasSelection = reactive(false);
   const {
-    id,
     places,
     editor: { isEditable },
   } = map;
@@ -48,10 +47,8 @@ export default function MapTile({ map, showToolbar }: MapTileProps) {
     hasSelection.value = getMapView().selectedMarkerIds.size > 0;
   };
 
-  const anchorName = `--map-${id}`;
-
   return (
-    <Tile theme={map.theme} border="inside" anchorName={anchorName}>
+    <Tile border="inside">
       <If condition={showToolbar}>
         <Portal>
           <MapToolbar
