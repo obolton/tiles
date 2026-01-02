@@ -512,10 +512,13 @@ export default function FormattingTools({
 
         <list-select
           aria-label="Text alignment"
+          aria-disabled={format.derive((value) =>
+            value.align === undefined ? "true" : undefined,
+          )}
           data-tooltip="Text alignment"
           orientation="horizontal"
           align="center"
-          value={format.derive((value) => value.align)}
+          value={format.derive((value) => value.align ?? "left")}
           on:change={formatAlignment}
         >
           <ListGroup>
