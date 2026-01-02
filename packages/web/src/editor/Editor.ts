@@ -147,6 +147,12 @@ export default class Editor {
 
     if (!IS_SERVER) {
       this.enablePointerEvents();
+
+      this.isEditable.subscribe(() => {
+        if (!this.isEditable.value) {
+          this.clearSelection();
+        }
+      });
     }
   }
 
