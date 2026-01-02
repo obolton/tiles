@@ -139,7 +139,7 @@ export default function InsertMenu({
         Table.create(Editor.current, {
           sectionId: insertSectionId,
           afterId,
-          height: 10,
+          height: 15,
           columns: 3,
           rows: 5,
         }).catch(handleError);
@@ -151,6 +151,7 @@ export default function InsertMenu({
     Section.create(Editor.current, {
       afterId,
       layout: "FREEFORM",
+      height: 15,
     }).catch(handleError);
   }
 
@@ -158,6 +159,7 @@ export default function InsertMenu({
     Section.create(Editor.current, {
       afterId,
       layout: "VERTICAL",
+      height: 15,
     }).catch(handleError);
   }
 
