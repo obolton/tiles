@@ -181,7 +181,7 @@ importers:
         version: 10.1.11(storybook@10.1.11(prettier@3.7.1))
       '@storybook/html-vite':
         specifier: ^10.1.11
-        version: 10.1.11(esbuild@0.27.2)(rollup@4.53.3)(storybook@10.1.11(prettier@3.7.1))(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))
+        version: 10.1.11(esbuild@0.27.2)(rollup@4.53.3)(storybook@10.1.11(prettier@3.7.1))(vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))
       '@types/culori':
         specifier: ^4.0.1
         version: 4.0.1
@@ -210,11 +210,11 @@ importers:
         specifier: ^4.20.4
         version: 4.20.6
       vite:
-        specifier: ^7.2.2
-        version: 7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
+        specifier: ^7.3.0
+        version: 7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
       vite-css-modules:
         specifier: ^1.12.0
-        version: 1.12.0(postcss@8.5.6)(rollup@4.53.3)(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))
+        version: 1.12.0(postcss@8.5.6)(rollup@4.53.3)(vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))
       wrangler:
         specifier: ^4.54.0
         version: 4.54.0
@@ -3689,8 +3689,8 @@ packages:
       lightningcss:
         optional: true
 
-  vite@7.2.4:
-    resolution: {integrity: sha512-NL8jTlbo0Tn4dUEXEsUg8KeyG/Lkmc4Fnzb8JXN/Ykm9G4HNImjtABMJgkQoVjOBN/j2WAwDTRytdqJbZsah7w==}
+  vite@7.3.0:
+    resolution: {integrity: sha512-dZwN5L1VlUBewiP6H9s2+B3e3Jg96D0vzN+Ry73sOefebhYr9f94wwkMNN/9ouoU8pV1BqA1d1zGk8928cx0rg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -5670,33 +5670,33 @@ snapshots:
       axe-core: 4.11.0
       storybook: 10.1.11(prettier@3.7.1)
 
-  '@storybook/builder-vite@10.1.11(esbuild@0.27.2)(rollup@4.53.3)(storybook@10.1.11(prettier@3.7.1))(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))':
+  '@storybook/builder-vite@10.1.11(esbuild@0.27.2)(rollup@4.53.3)(storybook@10.1.11(prettier@3.7.1))(vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))':
     dependencies:
-      '@storybook/csf-plugin': 10.1.11(esbuild@0.27.2)(rollup@4.53.3)(storybook@10.1.11(prettier@3.7.1))(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))
-      '@vitest/mocker': 3.2.4(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))
+      '@storybook/csf-plugin': 10.1.11(esbuild@0.27.2)(rollup@4.53.3)(storybook@10.1.11(prettier@3.7.1))(vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))
+      '@vitest/mocker': 3.2.4(vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))
       storybook: 10.1.11(prettier@3.7.1)
       ts-dedent: 2.2.0
-      vite: 7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
+      vite: 7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
     transitivePeerDependencies:
       - esbuild
       - msw
       - rollup
       - webpack
 
-  '@storybook/csf-plugin@10.1.11(esbuild@0.27.2)(rollup@4.53.3)(storybook@10.1.11(prettier@3.7.1))(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))':
+  '@storybook/csf-plugin@10.1.11(esbuild@0.27.2)(rollup@4.53.3)(storybook@10.1.11(prettier@3.7.1))(vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))':
     dependencies:
       storybook: 10.1.11(prettier@3.7.1)
       unplugin: 2.3.11
     optionalDependencies:
       esbuild: 0.27.2
       rollup: 4.53.3
-      vite: 7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
+      vite: 7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
 
   '@storybook/global@5.0.0': {}
 
-  '@storybook/html-vite@10.1.11(esbuild@0.27.2)(rollup@4.53.3)(storybook@10.1.11(prettier@3.7.1))(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))':
+  '@storybook/html-vite@10.1.11(esbuild@0.27.2)(rollup@4.53.3)(storybook@10.1.11(prettier@3.7.1))(vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))':
     dependencies:
-      '@storybook/builder-vite': 10.1.11(esbuild@0.27.2)(rollup@4.53.3)(storybook@10.1.11(prettier@3.7.1))(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))
+      '@storybook/builder-vite': 10.1.11(esbuild@0.27.2)(rollup@4.53.3)(storybook@10.1.11(prettier@3.7.1))(vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))
       '@storybook/html': 10.1.11(storybook@10.1.11(prettier@3.7.1))
       storybook: 10.1.11(prettier@3.7.1)
     transitivePeerDependencies:
@@ -5806,21 +5806,21 @@ snapshots:
       chai: 6.2.1
       tinyrainbow: 3.0.3
 
-  '@vitest/mocker@3.2.4(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))':
+  '@vitest/mocker@3.2.4(vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))':
     dependencies:
       '@vitest/spy': 3.2.4
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
+      vite: 7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
 
-  '@vitest/mocker@4.0.14(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))':
+  '@vitest/mocker@4.0.14(vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))':
     dependencies:
       '@vitest/spy': 4.0.14
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
+      vite: 7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
 
   '@vitest/pretty-format@3.2.4':
     dependencies:
@@ -7686,7 +7686,7 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite-css-modules@1.12.0(postcss@8.5.6)(rollup@4.53.3)(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)):
+  vite-css-modules@1.12.0(postcss@8.5.6)(rollup@4.53.3)(vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)):
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@rollup/pluginutils': 5.3.0(rollup@4.53.3)
@@ -7698,13 +7698,13 @@ snapshots:
       postcss-modules-local-by-default: 4.2.0(postcss@8.5.6)
       postcss-modules-scope: 3.2.1(postcss@8.5.6)
       postcss-modules-values: 4.0.0(postcss@8.5.6)
-      vite: 7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
+      vite: 7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
     transitivePeerDependencies:
       - rollup
 
-  vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6):
+  vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6):
     dependencies:
-      esbuild: 0.25.12
+      esbuild: 0.27.2
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
       postcss: 8.5.6
@@ -7719,7 +7719,7 @@ snapshots:
   vitest@4.0.14(@types/node@24.10.1)(jiti@2.6.1)(jsdom@27.3.0(postcss@8.5.6))(tsx@4.20.6):
     dependencies:
       '@vitest/expect': 4.0.14
-      '@vitest/mocker': 4.0.14(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))
+      '@vitest/mocker': 4.0.14(vite@7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6))
       '@vitest/pretty-format': 4.0.14
       '@vitest/runner': 4.0.14
       '@vitest/snapshot': 4.0.14
@@ -7736,7 +7736,7 @@ snapshots:
       tinyexec: 0.3.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.2.4(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
+      vite: 7.3.0(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.20.6)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 24.10.1
