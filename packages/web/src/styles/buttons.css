@@ -200,6 +200,12 @@ list-select[orientation="horizontal"] .option {
       width: 28px;
       height: 28px;
     }
+
+    &[aria-expanded]::after {
+      width: 52px;
+      background-size: 28px 28px;
+      background-position: 12px center;
+    }
   }
 
   &.small {
