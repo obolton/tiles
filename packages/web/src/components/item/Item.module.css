@@ -27,15 +27,25 @@
     background: var(--background);
   }
 
-  &.full-bleed::before {
-    content: "";
-    position: absolute;
-    inset-block: -24px;
-    inset-inline-start: calc(-50cqi + 50%);
-    inline-size: 100cqi;
-    z-index: -1;
-    background: var(--background);
-    pointer-events: none;
+  &.full-bleed {
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block: -24px;
+      inset-inline-start: calc(-50cqi + 50%);
+      inline-size: 100cqi;
+      z-index: -1;
+      background: var(--background);
+      pointer-events: none;
+    }
+
+    &:global(.drag-preview) {
+      background: var(--background);
+
+      &::before {
+        content: none;
+      }
+    }
   }
 
   &::part(outline) {
