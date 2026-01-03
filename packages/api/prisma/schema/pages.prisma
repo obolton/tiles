@@ -60,6 +60,13 @@ enum Animation {
   SHRINK
 }
 
+enum DockEdge {
+  TOP
+  LEFT
+  RIGHT
+  BOTTOM
+}
+
 model Page {
   id              String    @id @default(uuid()) @db.Uuid
   createdAt       DateTime  @default(now()) @map("created_at")
@@ -74,6 +81,11 @@ model Page {
   backgroundColor Bytes?    @map("background_color") @db.ByteA
   font            Font?
   coverImageKey   String?   @map("cover_image_key")
+
+  dockTopHeight    Float? @map("dock_top_height") @db.Real
+  dockBottomHeight Float? @map("dock_bottom_height") @db.Real
+  dockLeftWidth    Float? @map("dock_left_width") @db.Real
+  dockRightWidth   Float? @map("dock_right_width") @db.Real
 
   workspace          Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   theme              Theme?         @relation(fields: [themeId], references: [id], onDelete: SetNull)
@@ -122,6 +134,7 @@ model Tile {
   block      Boolean    @default(false)
   animation  Animation?
   hide       Boolean    @default(false)
+  dock       DockEdge?
 
   page          Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
   theme         Theme?        @relation(fields: [themeId], references: [id], onDelete: SetNull)
