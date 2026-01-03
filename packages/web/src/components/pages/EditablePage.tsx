@@ -1,5 +1,6 @@
 import EditingToolbar from "@/components/menu/EditingToolbar";
 import PageContents from "@/components/pages/PageContents";
+import DockZone from "@/components/docks/DockZone";
 import Editor from "@/editor/Editor";
 import InsertButton from "@/components/buttons/InsertButton";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
@@ -18,12 +19,16 @@ export interface EditablePageProps {
 
 export default function EditablePage({ page }: EditablePageProps) {
   const editor = Editor.init(page);
-  const { isEditable, selection, tiles } = editor;
+  const { isEditable, selection, tiles, dockedTiles } = editor;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
 
   return (
     <>
+      <DockZone editor={editor} edge="TOP" tiles={dockedTiles.TOP} />
+      <DockZone editor={editor} edge="LEFT" tiles={dockedTiles.LEFT} />
       <PageContents editor={editor} tiles={tiles} />
+      <DockZone editor={editor} edge="RIGHT" tiles={dockedTiles.RIGHT} />
+      <DockZone editor={editor} edge="BOTTOM" tiles={dockedTiles.BOTTOM} />
 
       {showToolbar ? <EditingToolbar editor={editor} /> : null}
 
