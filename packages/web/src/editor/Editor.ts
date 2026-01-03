@@ -69,6 +69,20 @@ export default class Editor {
   readonly selection: Reactive<Set<Tile>>;
   readonly dropdowns: ReactiveArray<Dropdown>;
 
+  readonly dockSizes: Reactive<{
+    top: number | null;
+    bottom: number | null;
+    left: number | null;
+    right: number | null;
+  }>;
+
+  readonly dockedTiles: {
+    TOP: TileCollection;
+    LEFT: TileCollection;
+    RIGHT: TileCollection;
+    BOTTOM: TileCollection;
+  };
+
   get activeSection(): Section | null {
     const selection = Array.from(this.selection.value);
     const lastTile = selection.at(-1);
@@ -120,6 +134,20 @@ export default class Editor {
     this.selection = reactive(new Set());
     this.dropdowns = array(page.dropdowns.map((d) => new Dropdown(this, d)));
 
+    this.dockSizes = reactive({
+      top: page.dockTopHeight,
+      bottom: page.dockBottomHeight,
+      left: page.dockLeftWidth,
+      right: page.dockRightWidth,
+    });
+
+    this.dockedTiles = {
+      TOP: new TileCollection(this),
+      LEFT: new TileCollection(this),
+      RIGHT: new TileCollection(this),
+      BOTTOM: new TileCollection(this),
+    };
+
     const parentIds = new Map<string, string | null>();
 
     for (const tile of page.tiles) {
@@ -131,17 +159,22 @@ export default class Editor {
     }
 
     for (const item of this.index.values()) {
-      const parentId = parentIds.get(item.id);
-      if (parentId) {
-        const parent = this.index.get(parentId);
-
-        if (!(parent instanceof Section)) {
-          throw new Error(`Invalid parent: ${parentId}`);
-        }
-
-        parent.tiles.append(item);
+      const dock = item.dock.value;
+      if (dock) {
+        this.dockedTiles[dock].append(item);
       } else {
-        this.tiles.append(item);
+        const parentId = parentIds.get(item.id);
+        if (parentId) {
+          const parent = this.index.get(parentId);
+
+          if (!(parent instanceof Section)) {
+            throw new Error(`Invalid parent: ${parentId}`);
+          }
+
+          parent.tiles.append(item);
+        } else {
+          this.tiles.append(item);
+        }
       }
     }
 
@@ -303,6 +336,17 @@ export default class Editor {
 
   async deletePage() {
     return client.pages.delete.mutate({ pageId: this.pageId });
+  }
+
+  async setDockSizes(sizes: Partial<typeof this.dockSizes.value>) {
+    this.dockSizes.value = { ...this.dockSizes.value, ...sizes };
+    return client.pages.update.mutate({
+      pageId: this.pageId,
+      dockTopHeight: sizes.top,
+      dockBottomHeight: sizes.bottom,
+      dockLeftWidth: sizes.left,
+      dockRightWidth: sizes.right,
+    });
   }
 
   // Selection
