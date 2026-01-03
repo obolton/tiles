@@ -86,7 +86,13 @@ export default class Editor {
   get activeSection(): Section | null {
     const selection = Array.from(this.selection.value);
     const lastTile = selection.at(-1);
-    return lastTile?.parent instanceof Section ? lastTile.parent : null;
+    if (lastTile instanceof Section) {
+      return lastTile;
+    }
+    if (lastTile?.parent instanceof Section) {
+      return lastTile.parent;
+    }
+    return null;
   }
 
   static init(page: Page) {
@@ -200,7 +206,12 @@ export default class Editor {
   }
 
   private pointerDown(event: PointerEvent) {
-    if (event.button === PRIMARY_MOUSE_BUTTON && !event.defaultPrevented) {
+    if (
+      event.button === PRIMARY_MOUSE_BUTTON &&
+      !event.defaultPrevented &&
+      event.target instanceof Element &&
+      event.target.matches("main, [data-dock-zone]")
+    ) {
       this.clearSelection();
     }
   }
