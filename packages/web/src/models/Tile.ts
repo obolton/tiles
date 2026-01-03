@@ -7,6 +7,7 @@ import type {
   Dimensions,
   Animation,
   TileType,
+  DockEdge,
 } from "api/types/tiles";
 import type { Theme } from "api/types/themes";
 import type { Fill } from "@/components/fills/types";
@@ -15,7 +16,7 @@ import type Editor from "@/editor/Editor";
 import type { AppRouterInputs } from "@/api/client";
 import type { TileParent } from "./TileCollection";
 
-export type { Anchor, Dimensions, Animation };
+export type { Anchor, Dimensions, Animation, DockEdge };
 
 export default class Tile {
   readonly editor: Editor;
@@ -35,6 +36,7 @@ export default class Tile {
   readonly block: Reactive<boolean>;
   readonly animation: Reactive<Animation | null>;
   readonly hide: Reactive<boolean>;
+  readonly dock: Reactive<DockEdge | null>;
   readonly theme: Reactive<Theme | null>;
   readonly background: Reactive<Fill | null>;
   readonly textColor: Reactive<Color | null>;
@@ -54,6 +56,7 @@ export default class Tile {
       block,
       animation,
       hide,
+      dock,
       theme,
     } = properties;
     this.editor = editor;
@@ -72,6 +75,7 @@ export default class Tile {
     this.block = reactive(block);
     this.animation = reactive(animation);
     this.hide = reactive(hide);
+    this.dock = reactive(dock);
     this.theme = reactive(theme);
     this.background = reactive(null);
     this.textColor = reactive(null);
@@ -237,6 +241,22 @@ export default class Tile {
   setHidden(hide: boolean) {
     this.hide.value = hide;
     return this.updateTile({ hide });
+  }
+
+  async setDock(dock: DockEdge | null) {
+    if (dock === this.dock.value) {
+      return;
+    }
+
+    this.dock.value = dock;
+
+    if (dock) {
+      this.editor.dockedTiles[dock].append(this);
+    } else {
+      this.editor.tiles.append(this);
+    }
+
+    await this.updateTile({ dock });
   }
 
   async setTheme(themeId: string | null) {
