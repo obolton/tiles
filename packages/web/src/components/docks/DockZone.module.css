@@ -1,0 +1,41 @@
+.zone {
+  position: fixed;
+  z-index: 1;
+  display: flex;
+  background: var(--ui-background-color);
+  backdrop-filter: blur(10px);
+}
+
+.top {
+  inset: 0 0 auto 0;
+  flex-direction: row;
+}
+
+.bottom {
+  inset: auto 0 0 0;
+  flex-direction: row;
+}
+
+.left {
+  inset: 0 auto 0 0;
+  flex-direction: column;
+}
+
+.right {
+  inset: 0 0 0 auto;
+  flex-direction: column;
+}
+
+/* Horizontal zones: items sized by width percentage */
+.top .item,
+.bottom .item {
+  width: calc(var(--width) * 1%);
+  height: 100%;
+}
+
+/* Vertical zones: items sized by height percentage */
+.left .item,
+.right .item {
+  width: 100%;
+  height: calc(var(--height) * 1%);
+}
