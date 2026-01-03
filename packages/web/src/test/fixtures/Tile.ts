@@ -24,6 +24,7 @@ const SHARED = {
   block: false,
   animation: "FADE",
   hide: false,
+  dock: null,
 } as const;
 
 export const TILE: ClientTile = {
