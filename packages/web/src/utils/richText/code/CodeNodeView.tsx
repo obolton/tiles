@@ -65,8 +65,8 @@ export class CodeNodeView implements NodeView, EventListenerObject {
           highlightingExtension,
           this.languageCompartment.of([]),
           CMEditorView.updateListener.of((update) => {
-            if (update.docChanged && !this.updating) {
-              forwardToProseMirror(this.cm, this.view, this.getPos);
+            if (!this.updating) {
+              forwardToProseMirror(update, this.view, this.getPos);
             }
           }),
           CMEditorView.editable.of(view.editable),

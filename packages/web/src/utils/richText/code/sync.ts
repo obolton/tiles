@@ -1,4 +1,5 @@
-import type { EditorView as CMEditorView } from "@codemirror/view";
+import { TextSelection } from "prosemirror-state";
+import type { EditorView as CMEditorView, ViewUpdate } from "@codemirror/view";
 import type { EditorView as PMEditorView } from "prosemirror-view";
 
 /**
@@ -47,10 +48,15 @@ export function findTextChange(
  * Forward changes from CodeMirror to ProseMirror.
  */
 export function forwardToProseMirror(
-  cm: CMEditorView,
+  update: ViewUpdate,
   pm: PMEditorView,
   getPos: () => number | undefined,
 ): void {
+  // Only sync when CodeMirror has focus
+  if (!update.view.hasFocus) {
+    return;
+  }
+
   const pos = getPos();
   if (typeof pos !== "number") {
     return;
@@ -61,16 +67,32 @@ export function forwardToProseMirror(
     return;
   }
 
-  const change = findTextChange(node.textContent, cm.state.doc.toString());
-  if (!change) {
+  // Calculate ProseMirror positions from CodeMirror selection
+  const offset = pos + 1;
+  const { main } = update.state.selection;
+  const selFrom = offset + main.from;
+  const selTo = offset + main.to;
+  const pmSel = pm.state.selection;
+
+  // Check if we need to update (doc changed or selection differs)
+  const change = findTextChange(node.textContent, update.state.doc.toString());
+  const selectionChanged = pmSel.from !== selFrom || pmSel.to !== selTo;
+
+  if (!change && !selectionChanged) {
     return;
   }
 
-  const tr = pm.state.tr.replaceWith(
-    pos + 1 + change.from,
-    pos + 1 + change.to,
-    change.insert ? pm.state.schema.text(change.insert) : [],
-  );
+  const tr = pm.state.tr;
+
+  if (change) {
+    tr.replaceWith(
+      offset + change.from,
+      offset + change.to,
+      change.insert ? pm.state.schema.text(change.insert) : [],
+    );
+  }
+
+  tr.setSelection(TextSelection.create(tr.doc, selFrom, selTo));
 
   pm.dispatch(tr);
 }
