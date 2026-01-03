@@ -56,6 +56,7 @@ const TILES_FIELDS = {
   block: true,
   animation: true,
   hide: true,
+  dock: true,
   section: {
     select: SECTION_FIELDS,
   },
@@ -98,6 +99,10 @@ const PAGE_FIELDS = {
   backgroundColor: true,
   font: true,
   coverImageUrl: true,
+  dockTopHeight: true,
+  dockBottomHeight: true,
+  dockLeftWidth: true,
+  dockRightWidth: true,
   author: {
     select: {
       id: true,
@@ -392,6 +397,10 @@ export async function updatePage(
     coverImageKey,
     folderId,
     themeId,
+    dockTopHeight,
+    dockBottomHeight,
+    dockLeftWidth,
+    dockRightWidth,
   }: UpdatePageSchema,
   { userId, workspaceId }: AuthenticatedPageProcedureContext,
 ) {
@@ -426,6 +435,10 @@ export async function updatePage(
         coverImageKey,
         folderId,
         themeId,
+        dockTopHeight,
+        dockBottomHeight,
+        dockLeftWidth,
+        dockRightWidth,
       },
       select: PAGE_FIELDS,
     });
