@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { Anchor, Dimensions, Animation } from "@/generated/prisma/enums";
+import {
+  Anchor,
+  Animation,
+  Dimensions,
+  DockEdge,
+} from "@/generated/prisma/enums";
 
 const MAX_PERCENT = 100;
 const MIN_SIZE_PERCENT = 1;
@@ -17,6 +22,7 @@ export const TileSchema = z.object({
   animation: z.enum(Animation).nullable().optional(),
   hide: z.boolean().optional(),
   themeId: z.uuid().nullable().optional(),
+  dock: z.enum(DockEdge).nullable().optional(),
 });
 export type TileSchema = z.infer<typeof TileSchema>;
 

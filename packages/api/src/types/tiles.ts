@@ -11,6 +11,7 @@ import type {
   Dimensions,
   Animation,
   MapStyle,
+  DockEdge,
 } from "@/generated/prisma/client";
 import type { Section } from "@/routes/sections/sections";
 import type { Text } from "@/routes/text/text";
@@ -38,6 +39,7 @@ type ClientTileBase = Pick<
   | "block"
   | "animation"
   | "hide"
+  | "dock"
 > & {
   theme: Theme | null;
 };
@@ -146,4 +148,5 @@ export type {
   Dimensions,
   Animation,
   MapStyle,
+  DockEdge,
 };

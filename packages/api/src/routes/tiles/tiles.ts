@@ -34,6 +34,7 @@ export const TILE_FIELDS = {
   block: true,
   animation: true,
   hide: true,
+  dock: true,
 } as const satisfies Prisma.TileSelect<ExtensionArgs>;
 
 export async function getTileOrder(
@@ -83,6 +84,7 @@ export async function updateTile(
     animation,
     hide,
     themeId,
+    dock,
   }: UpdateTileSchema,
   { workspaceId }: AuthenticatedPageProcedureContext,
 ) {
@@ -133,6 +135,7 @@ export async function updateTile(
         animation,
         hide,
         themeId,
+        dock,
       },
       select: TILE_FIELDS,
     });
