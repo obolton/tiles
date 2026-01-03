@@ -31,7 +31,7 @@ export default function LinkModal({
 }: LinkModalProps) {
   const isPending = flag(false);
   const pages = reactive<Pages["pages"]>([]);
-  const nextCursor = reactive<string | null | undefined>();
+  const nextCursor = reactive<string | null | undefined>(undefined);
 
   const search = async (query: string, cursor: string | null) => {
     try {
