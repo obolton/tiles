@@ -1,4 +1,4 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
+import prisma from "@/database/prisma.ts";
 import type {
   CreateBookmarkSchema,
   DeleteBookmarkSchema,
@@ -6,13 +6,9 @@ import type {
   IsBookmarkedSchema,
 } from "./schema.ts";
 import type { Prisma } from "@/generated/prisma/client";
-import { PAGE_LINK_TILE_PAGE_FIELDS } from "../pageLinks/pageLinks.ts";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
-
-export const BOOKMARK_FIELDS = {
-  page: { select: PAGE_LINK_TILE_PAGE_FIELDS },
-} as const satisfies Prisma.BookmarkSelect<ExtensionArgs>;
+import { BOOKMARK_FIELDS } from "./fields";
 
 export async function createBookmark(
   { pageId }: CreateBookmarkSchema,

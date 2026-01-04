@@ -1,19 +1,10 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma";
+import prisma from "@/database/prisma";
 import { getLinkMetadata } from "@/utils/linkMetadata";
 import { getVideoInfo } from "@/utils/videos";
 import { createVideo } from "../videos/videos";
-import type { Prisma } from "@/generated/prisma/client";
 import type { CreateLinkSchema, UpdateLinkSchema } from "./schema";
 import { createTile } from "../tiles/tiles";
-
-export const LINK_FIELDS = {
-  id: true,
-  url: true,
-  title: true,
-  description: true,
-  siteName: true,
-  imageUrl: true,
-} as const satisfies Prisma.LinkTileSelect<ExtensionArgs>;
+import { LINK_FIELDS } from "./fields";
 
 export async function createLink({
   pageId,

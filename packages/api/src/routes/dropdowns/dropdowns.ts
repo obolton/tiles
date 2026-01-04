@@ -1,22 +1,10 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
+import prisma from "@/database/prisma.ts";
 import type {
   CreateDropdownSchema,
   UpdateDropdownSchema,
   DeleteDropdownSchema,
 } from "./schema.ts";
-import type { Prisma } from "@/generated/prisma/client";
-
-export const DROPDOWN_FIELDS = {
-  id: true,
-  title: true,
-  options: true,
-} as const satisfies Prisma.DropdownSelect<ExtensionArgs>;
-
-export type Dropdown = Prisma.Result<
-  typeof prisma.dropdown,
-  { select: typeof DROPDOWN_FIELDS },
-  "findUniqueOrThrow"
->;
+import { DROPDOWN_FIELDS } from "./fields";
 
 export async function createDropdown({
   pageId,

@@ -1,18 +1,9 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma";
-import type { Prisma } from "@/generated/prisma/client";
+import prisma from "@/database/prisma";
 import { getLinkMetadata } from "@/utils/linkMetadata";
 import { getVideoInfo } from "@/utils/videos";
 import type { CreateVideoSchema, UpdateVideoSchema } from "./schema";
 import { createTile } from "../tiles/tiles";
-
-export const VIDEO_FIELDS = {
-  id: true,
-  videoType: true,
-  videoId: true,
-  imageUrl: true,
-  title: true,
-  description: true,
-} as const satisfies Prisma.VideoTileSelect<ExtensionArgs>;
+import { VIDEO_FIELDS } from "./fields";
 
 export async function createVideo({
   pageId,

@@ -1,25 +1,8 @@
 import { generateKeyBetween } from "fractional-indexing";
 import { TRPCError } from "@trpc/server";
-import { Prisma } from "@/generated/prisma/client";
-import prisma, { type ExtensionArgs } from "@/database/prisma";
-import {
-  PAGE_LINK_FIELDS,
-  PAGE_LINK_TILE_PAGE_FIELDS,
-} from "@/routes/pageLinks/pageLinks";
-import { SECTION_FIELDS } from "@/routes/sections/sections";
-import { IMAGE_FIELDS } from "@/routes/images/images";
-import { MAP_FIELDS } from "@/routes/maps/maps";
-import { TEXT_FIELDS } from "@/routes/text/text";
-import { LINK_FIELDS } from "@/routes/links/links";
-import { VIDEO_FIELDS } from "@/routes/videos/videos";
-import {
-  PAGE_ACCESS_FIELDS,
-  PAGE_INVITE_FIELDS,
-} from "@/routes/collaboration/collaboration";
-import { TABLE_WITH_DATA_FIELDS } from "@/routes/tables/tables";
-import { CHART_FIELDS } from "@/routes/charts/charts";
-import { DROPDOWN_FIELDS } from "@/routes/dropdowns/dropdowns";
-import { THEME_FIELDS } from "@/routes/themes/themes";
+import type { Prisma } from "@/generated/prisma/client";
+import prisma from "@/database/prisma";
+import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/routes/pageLinks/fields";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import type {
   GetPageByIdSchema,
@@ -36,106 +19,14 @@ import type {
   AuthenticatedPageProcedureContext,
 } from "@/utils/middleware";
 import type { ColorSchema } from "@/schema/Color";
+import { PAGE_FIELDS } from "./fields";
+import type { FullTile } from "@/routes/tiles/fields";
 
 const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
 
-const TILES_FIELDS = {
-  id: true,
-  sectionId: true,
-  theme: {
-    select: THEME_FIELDS,
-  },
-  order: true,
-  anchor: true,
-  dimensions: true,
-  width: true,
-  height: true,
-  x: true,
-  y: true,
-  rowSpan: true,
-  block: true,
-  animation: true,
-  hide: true,
-  dock: true,
-  section: {
-    select: SECTION_FIELDS,
-  },
-  text: {
-    select: TEXT_FIELDS,
-  },
-  image: {
-    select: IMAGE_FIELDS,
-  },
-  video: {
-    select: VIDEO_FIELDS,
-  },
-  link: {
-    select: LINK_FIELDS,
-  },
-  pageLink: {
-    select: PAGE_LINK_FIELDS,
-  },
-  map: {
-    select: MAP_FIELDS,
-  },
-  table: {
-    select: TABLE_WITH_DATA_FIELDS,
-  },
-  chart: {
-    select: CHART_FIELDS,
-  },
-} as const satisfies Prisma.TileSelect<ExtensionArgs>;
-
-const PAGE_FIELDS = {
-  id: true,
-  workspaceId: true,
-  folderId: true,
-  theme: {
-    select: THEME_FIELDS,
-  },
-  published: true,
-  title: true,
-  updatedAt: true,
-  backgroundColor: true,
-  font: true,
-  coverImageUrl: true,
-  dockTopHeight: true,
-  dockBottomHeight: true,
-  dockLeftWidth: true,
-  dockRightWidth: true,
-  author: {
-    select: {
-      id: true,
-      username: true,
-      name: true,
-      imageUrl: true,
-    },
-  },
-  access: {
-    select: PAGE_ACCESS_FIELDS,
-  },
-  invites: {
-    select: PAGE_INVITE_FIELDS,
-  },
-  tiles: {
-    select: TILES_FIELDS,
-    orderBy: {
-      order: "asc",
-    },
-  },
-  dropdowns: {
-    select: DROPDOWN_FIELDS,
-  },
-} as const satisfies Prisma.Args<typeof prisma.page, "findMany">["select"];
-
-type TileWithData = Prisma.Result<
-  typeof prisma.tile,
-  { select: typeof TILES_FIELDS },
-  "findMany"
->[number];
-
-export function formatTile(tile: TileWithData): ClientTile {
+export function formatTile(tile: FullTile): ClientTile {
   const {
+    type: _,
     section,
     text,
     image,

@@ -1,20 +1,8 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma";
+import prisma from "@/database/prisma";
 import { getBackgroundProperties } from "@/utils/backgrounds";
 import { createTile } from "../tiles/tiles";
-import type { Prisma } from "@/generated/prisma/client";
 import type { CreateSectionSchema, UpdateSectionSchema } from "./schema";
-
-export const SECTION_FIELDS = {
-  id: true,
-  layout: true,
-  background: true,
-} as const satisfies Prisma.SectionSelect<ExtensionArgs>;
-
-export type Section = Prisma.Result<
-  typeof prisma.section,
-  { select: typeof SECTION_FIELDS },
-  "findUniqueOrThrow"
->;
+import { SECTION_FIELDS } from "./fields";
 
 export async function createSection({
   pageId,

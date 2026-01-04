@@ -1,9 +1,6 @@
 import assert from "node:assert";
 import crypto from "node:crypto";
-import prisma, {
-  type PrismaTransactionClient,
-  type ExtensionArgs,
-} from "@/database/prisma.ts";
+import prisma, { type PrismaTransactionClient } from "@/database/prisma.ts";
 import { upload } from "@/utils/storage.ts";
 import {
   IMAGE_CONTENT_TYPES,
@@ -16,23 +13,7 @@ import type {
   IsUsernameAvailableSchema,
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
-import { WORKSPACE_FIELDS } from "@/routes/workspaces/workspaces.ts";
-import type { Prisma } from "@/generated/prisma/client";
-
-export const USER_FIELDS = {
-  id: true,
-  username: true,
-  name: true,
-  email: true,
-  imageUrl: true,
-  workspaceMemberships: {
-    select: {
-      workspace: {
-        select: WORKSPACE_FIELDS,
-      },
-    },
-  },
-} as const satisfies Prisma.UserSelect<ExtensionArgs>;
+import { USER_FIELDS } from "./fields";
 
 const PROFILE_IMAGES_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
 

@@ -1,4 +1,4 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
+import prisma from "@/database/prisma.ts";
 import type {
   CreateFolderSchema,
   GetFolderSchema,
@@ -8,14 +8,10 @@ import type {
   ListPagesSchema,
 } from "./schema.ts";
 import type { Prisma } from "@/generated/prisma/client";
-import { PAGE_LINK_TILE_PAGE_FIELDS } from "../pageLinks/pageLinks.ts";
+import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/routes/pageLinks/fields";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
-
-export const FOLDER_FIELDS = {
-  id: true,
-  name: true,
-} as const satisfies Prisma.FolderSelect<ExtensionArgs>;
+import { FOLDER_FIELDS } from "./fields";
 
 export async function createFolder(
   { name }: CreateFolderSchema,

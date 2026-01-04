@@ -1,21 +1,7 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma";
+import prisma from "@/database/prisma";
 import { createTile } from "../tiles/tiles";
 import type { CreateImageSchema, UpdateImageSchema } from "./schema";
-import type { Prisma } from "@/generated/prisma/client";
-
-export const IMAGE_FIELDS = {
-  id: true,
-  imageUrl: true,
-  text: true,
-  originX: true,
-  originY: true,
-} as const satisfies Prisma.ImageTileSelect<ExtensionArgs>;
-
-export type Image = Prisma.Result<
-  typeof prisma.imageTile,
-  { select: typeof IMAGE_FIELDS },
-  "findUniqueOrThrow"
->;
+import { IMAGE_FIELDS } from "./fields";
 
 export async function createImage({
   pageId,

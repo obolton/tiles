@@ -1,27 +1,14 @@
 import { Buffer } from "node:buffer";
-import prisma, { type ExtensionArgs } from "@/database/prisma";
+import prisma from "@/database/prisma";
 import { createTile } from "../tiles/tiles";
 import { getBackgroundProperties } from "@/utils/backgrounds";
 import type { CreateTextSchema, UpdateTextSchema } from "./schema";
 import type { Prisma } from "@/generated/prisma/client";
 import type { ColorSchema } from "@/schema/Color";
 import type { RichTextSchema } from "@/schema/RichText";
+import { TEXT_FIELDS } from "./fields";
 
 const DEFAULT_CONTENT: RichTextSchema = [{ type: "paragraph", children: [] }];
-
-export const TEXT_FIELDS = {
-  id: true,
-  content: true,
-  textColor: true,
-  background: true,
-  align: true,
-} as const satisfies Prisma.TextTileSelect<ExtensionArgs>;
-
-export type Text = Prisma.Result<
-  typeof prisma.textTile,
-  { select: typeof TEXT_FIELDS },
-  "findUniqueOrThrow"
->;
 
 function getTextColorProperties(
   textColor?: ColorSchema | null,

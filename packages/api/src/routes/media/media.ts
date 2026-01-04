@@ -1,17 +1,13 @@
 import { randomUUID } from "node:crypto";
-import prisma, { type ExtensionArgs } from "@/database/prisma";
+import prisma from "@/database/prisma";
 import { createSignedUploadUrl } from "@/utils/storage";
 import type {
   CreateUploadURLSchema,
   CreateImageSchema,
   UpdateImageSchema,
 } from "./schema";
-import type { Prisma } from "@/generated/prisma/client";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
-
-export const IMAGE_FIELDS = {
-  id: true,
-} as const satisfies Prisma.ImageSelect<ExtensionArgs>;
+import { IMAGE_FIELDS } from "./fields";
 
 export async function createUploadUrl(
   { type }: CreateUploadURLSchema,

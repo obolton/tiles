@@ -10,32 +10,11 @@ import type {
   DuplicateTileSchema,
   DeleteTilesSchema,
 } from "./schema";
-import { THEME_FIELDS } from "@/routes/themes/themes";
 import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
 import type { TileType } from "@/generated/prisma/enums";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
-
-export const TILE_FIELDS = {
-  id: true,
-  type: true,
-  sectionId: true,
-  theme: {
-    select: THEME_FIELDS,
-  },
-  order: true,
-  anchor: true,
-  dimensions: true,
-  width: true,
-  height: true,
-  x: true,
-  y: true,
-  rowSpan: true,
-  block: true,
-  animation: true,
-  hide: true,
-  dock: true,
-} as const satisfies Prisma.TileSelect<ExtensionArgs>;
+import { TILE_FIELDS } from "./fields";
 
 export async function getTileOrder(
   transaction: PrismaTransactionClient,

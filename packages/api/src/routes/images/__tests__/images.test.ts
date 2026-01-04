@@ -1,11 +1,7 @@
 import { describe, it, expect, vi, beforeAll } from "vitest";
 import prisma from "@/database/prisma.ts";
-import {
-  IMAGE_FIELDS,
-  createImage,
-  updateImage,
-  type Image,
-} from "../images.ts";
+import { createImage, updateImage } from "../images.ts";
+import { IMAGE_FIELDS, type Image } from "../fields";
 import type { CreateQuery, UpdateQuery } from "@/test/prisma.ts";
 
 const MOCK_IMAGE: Image = {

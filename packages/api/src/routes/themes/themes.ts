@@ -1,5 +1,4 @@
-import { Prisma } from "@/generated/prisma/client";
-import prisma, { type ExtensionArgs } from "@/database/prisma";
+import prisma from "@/database/prisma";
 import { fromHex } from "@/utils/arrays";
 import type {
   GetThemeByIdSchema,
@@ -9,20 +8,7 @@ import type {
   DeleteThemeSchema,
 } from "./schema";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
-
-export const THEME_FIELDS = {
-  id: true,
-  workspaceId: true,
-  name: true,
-  colors: true,
-  fonts: true,
-} as const satisfies Prisma.ThemeSelect<ExtensionArgs>;
-
-export type Theme = Prisma.Result<
-  typeof prisma.theme,
-  { select: typeof THEME_FIELDS },
-  "findUniqueOrThrow"
->;
+import { THEME_FIELDS } from "./fields";
 
 export async function getThemeById({ id }: GetThemeByIdSchema) {
   return prisma.theme.findUniqueOrThrow({

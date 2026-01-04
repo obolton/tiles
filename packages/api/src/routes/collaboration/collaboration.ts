@@ -1,8 +1,7 @@
-import prisma, { type ExtensionArgs } from "@/database/prisma.ts";
+import prisma from "@/database/prisma.ts";
 import { createKey } from "@/utils/keys.ts";
 import { sendEmail } from "@/utils/email.ts";
 import { inviteToPageEmail } from "@/emails/inviteToPage.ts";
-import type { Prisma } from "@/generated/prisma/client";
 import type {
   InviteToPageSchema,
   AcceptPageInviteSchema,
@@ -10,22 +9,7 @@ import type {
   RevokePageAccessSchema,
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
-
-export const PAGE_INVITE_FIELDS = {
-  id: true,
-  email: true,
-  createdAt: true,
-} as const satisfies Prisma.PageInviteSelect<ExtensionArgs>;
-
-export const PAGE_ACCESS_FIELDS = {
-  user: {
-    select: {
-      id: true,
-      name: true,
-      imageUrl: true,
-    },
-  },
-} as const satisfies Prisma.PageAccessSelect<ExtensionArgs>;
+import { PAGE_INVITE_FIELDS } from "./fields";
 
 const INVITE_KEY_BYTES = 32;
 

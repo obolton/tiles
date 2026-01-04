@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeAll } from "vitest";
 import prisma from "@/database/prisma.ts";
-import { createMap, type Map, MAP_FIELDS } from "../maps.ts";
+import { createMap } from "../maps.ts";
+import { MAP_FIELDS, type Map } from "../fields";
 import type { CreateQuery } from "@/test/prisma.ts";
 
 const MOCK_MAP: Map = {

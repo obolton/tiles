@@ -1,11 +1,7 @@
 import { describe, it, expect, vi, beforeAll } from "vitest";
 import prisma from "@/database/prisma.ts";
-import {
-  PAGE_LINK_FIELDS,
-  createPageLink,
-  type PageLinkPage,
-  type PageLink,
-} from "../pageLinks.ts";
+import { createPageLink } from "../pageLinks.ts";
+import { PAGE_LINK_FIELDS, type PageLinkPage, type PageLink } from "../fields";
 import type { CreateQuery } from "@/test/prisma.ts";
 import { omit } from "@/utils/objects.ts";
 
