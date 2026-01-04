@@ -30,10 +30,30 @@ export const UpdatePageSchema = z.object({
   coverImageKey: z.string().nullable().optional(),
   folderId: z.uuid().nullable().optional(),
   themeId: z.uuid().nullable().optional(),
-  dockTopHeight: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).nullable().optional(),
-  dockBottomHeight: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).nullable().optional(),
-  dockLeftWidth: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).nullable().optional(),
-  dockRightWidth: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).nullable().optional(),
+  dockTopHeight: z
+    .number()
+    .gte(MIN_DOCK_SIZE)
+    .lte(MAX_DOCK_SIZE)
+    .nullable()
+    .optional(),
+  dockBottomHeight: z
+    .number()
+    .gte(MIN_DOCK_SIZE)
+    .lte(MAX_DOCK_SIZE)
+    .nullable()
+    .optional(),
+  dockLeftWidth: z
+    .number()
+    .gte(MIN_DOCK_SIZE)
+    .lte(MAX_DOCK_SIZE)
+    .nullable()
+    .optional(),
+  dockRightWidth: z
+    .number()
+    .gte(MIN_DOCK_SIZE)
+    .lte(MAX_DOCK_SIZE)
+    .nullable()
+    .optional(),
 });
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
 
