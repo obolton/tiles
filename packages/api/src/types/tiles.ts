@@ -13,13 +13,13 @@ import type {
   MapStyle,
   DockEdge,
 } from "@/generated/prisma/client";
-import type { Section } from "@/routes/sections/sections";
-import type { Text } from "@/routes/text/text";
-import type { Image } from "@/routes/images/images";
-import type { TableWithData } from "@/routes/tables/tables";
-import type { Chart, ChartSeries } from "@/routes/charts/charts";
-import type { PageLinkPage } from "@/routes/pageLinks/pageLinks";
-import type { Theme } from "@/routes/themes/themes";
+import type { Section } from "@/routes/sections/fields";
+import type { Text } from "@/routes/text/fields";
+import type { Image } from "@/routes/images/fields";
+import type { TableWithData } from "@/routes/tables/fields";
+import type { Chart, ChartSeries } from "@/routes/charts/fields";
+import type { PageLinkPage } from "@/routes/pageLinks/fields";
+import type { Theme } from "@/routes/themes/fields";
 
 type OmitMetadata<T> = Omit<T, "pageId" | "createdAt" | "updatedAt">;
 

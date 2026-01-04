@@ -1,1 +1,1 @@
-export type { Theme } from "@/routes/themes/themes";
+export type { Theme } from "@/routes/themes/fields";

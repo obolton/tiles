@@ -1,1 +1,1 @@
-export type { Dropdown } from "@/routes/dropdowns/dropdowns.ts";
+export type { Dropdown } from "@/routes/dropdowns/fields";
