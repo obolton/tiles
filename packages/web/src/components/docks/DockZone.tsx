@@ -1,6 +1,8 @@
+import { Computed } from "@/utils/reactivity";
 import If from "@/jsx/if";
 import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
+import DockLayoutEditor from "./DockLayoutEditor";
 import type Editor from "@/editor/Editor";
 import type { DockEdge } from "@/models/Tile";
 import type TileCollection from "@/models/TileCollection";
@@ -18,22 +20,30 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
   const hasTiles = tiles.derive((items) => items.length > 0);
   const edgeStyle = edge.toLowerCase() as EdgeStyle;
 
+  const dimension = edge === "TOP" || edge === "BOTTOM" ? "height" : "width";
+
   const zoneStyle = editor.dockSizes.derive((sizes) => {
-    switch (edge) {
-      case "TOP":
-        return sizes.top ? { height: `${sizes.top}px` } : {};
-      case "BOTTOM":
-        return sizes.bottom ? { height: `${sizes.bottom}px` } : {};
-      case "LEFT":
-        return sizes.left ? { width: `${sizes.left}px` } : {};
-      case "RIGHT":
-        return sizes.right ? { width: `${sizes.right}px` } : {};
-    }
+    const size = sizes[edge];
+    return size !== null ? { [dimension]: `${size}px` } : {};
   });
 
+  const shouldRender = new Computed(
+    [hasTiles, editor.isEditable],
+    (has, editable) => has || editable,
+  );
+
+  function ref(element: HTMLElement) {
+    DockLayoutEditor.attach({
+      element,
+      edge,
+      editor,
+    });
+  }
+
   return (
-    <If condition={hasTiles}>
+    <If condition={shouldRender}>
       <aside
+        ref={ref}
         classList={{
           [styles.zone]: true,
           [styles[edgeStyle]]: true,
@@ -42,7 +52,13 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
         data-dock-zone={edge}
       >
         <Each items={tiles}>
-          {(tile) => <Item classList={{ [styles.item]: true }} tile={tile} />}
+          {(tile) => (
+            <Item
+              classList={{ [styles.item]: true }}
+              editable={editor.isEditable}
+              tile={tile}
+            />
+          )}
         </Each>
       </aside>
     </If>
