@@ -89,8 +89,12 @@ export default class Editor {
     if (lastTile instanceof Section) {
       return lastTile;
     }
-    if (lastTile?.parent instanceof Section) {
-      return lastTile.parent;
+    const sectionId = lastTile?.sectionId;
+    if (sectionId) {
+      const section = this.index.get(sectionId);
+      if (section instanceof Section) {
+        return section;
+      }
     }
     return null;
   }
@@ -133,7 +137,7 @@ export default class Editor {
     this.folderId = reactive(page.folderId);
     this.themeId = reactive(page.theme?.id ?? null);
     this.index = new Map();
-    this.tiles = new TileCollection(this);
+    this.tiles = new TileCollection();
     this.access = array(page.access);
     this.invites = array(page.invites.map((i) => new PageInvite(this, i)));
     this.author = page.author;
@@ -148,10 +152,10 @@ export default class Editor {
     });
 
     this.dockedTiles = {
-      TOP: new TileCollection(this),
-      LEFT: new TileCollection(this),
-      RIGHT: new TileCollection(this),
-      BOTTOM: new TileCollection(this),
+      TOP: new TileCollection(),
+      LEFT: new TileCollection(),
+      RIGHT: new TileCollection(),
+      BOTTOM: new TileCollection(),
     };
 
     const parentIds = new Map<string, string | null>();
@@ -524,7 +528,7 @@ export default class Editor {
 
   removeTiles(tiles: Tile[]) {
     tiles.forEach((tile) => {
-      tile.parent?.tiles.remove(tile);
+      tile.parent?.remove(tile);
       this.index.delete(tile.id);
     });
   }

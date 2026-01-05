@@ -32,7 +32,7 @@ export default class Section extends Tile {
     this.layout = reactive(layout);
     this.background.value = background;
     this.block.value = false;
-    this.tiles = new TileCollection(this);
+    this.tiles = new TileCollection(this.id);
   }
 
   private update(

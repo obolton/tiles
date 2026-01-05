@@ -1,19 +1,14 @@
 import { BaseReactive } from "@/utils/reactivity";
 import type Tile from "./Tile";
 
-export interface TileParent {
-  id?: string;
-  tiles: TileCollection;
-}
-
 export default class TileCollection extends BaseReactive<Tile[]> {
-  readonly owner: TileParent;
+  readonly sectionId: string | null;
 
   private items: Tile[] = [];
 
-  constructor(owner: TileParent) {
+  constructor(sectionId: string | null = null) {
     super();
-    this.owner = owner;
+    this.sectionId = sectionId;
   }
 
   get value() {
@@ -22,14 +17,14 @@ export default class TileCollection extends BaseReactive<Tile[]> {
 
   append(...items: Tile[]) {
     for (const item of items) {
-      if (item.parent === this.owner) {
+      if (item.parent === this) {
         const index = this.items.indexOf(item);
         if (index >= 0) {
           this.items.splice(index, 1);
         }
       } else {
-        item.parent?.tiles.remove(item);
-        item.parent = this.owner;
+        item.parent?.remove(item);
+        item.parent = this;
       }
 
       this.items.push(item);
@@ -40,14 +35,14 @@ export default class TileCollection extends BaseReactive<Tile[]> {
 
   insertAfter(afterId: string | null, ...items: Tile[]) {
     for (const item of items) {
-      if (item.parent === this.owner) {
+      if (item.parent === this) {
         const index = this.items.indexOf(item);
         if (index >= 0) {
           this.items.splice(index, 1);
         }
       } else {
-        item.parent?.tiles.remove(item);
-        item.parent = this.owner;
+        item.parent?.remove(item);
+        item.parent = this;
       }
     }
 
@@ -65,7 +60,7 @@ export default class TileCollection extends BaseReactive<Tile[]> {
   }
 
   remove(tile: Tile) {
-    if (tile.parent !== this.owner) {
+    if (tile.parent !== this) {
       throw new Error("Tile to remove is not contained in collection");
     }
 

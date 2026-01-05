@@ -14,7 +14,7 @@ import type { Fill } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
 import type Editor from "@/editor/Editor";
 import type { AppRouterInputs } from "@/api/client";
-import type { TileParent } from "./TileCollection";
+import type TileCollection from "./TileCollection";
 
 export type { Anchor, Dimensions, Animation, DockEdge };
 
@@ -23,7 +23,7 @@ export default class Tile {
   readonly id: string;
   readonly type: TileType;
 
-  parent: TileParent | null = null;
+  parent: TileCollection | null = null;
 
   readonly order: Reactive<string>;
   readonly anchor: Reactive<Anchor | null>;
@@ -82,7 +82,7 @@ export default class Tile {
   }
 
   get index(): number | null {
-    return this.parent?.tiles.value.indexOf(this) ?? null;
+    return this.parent?.value.indexOf(this) ?? null;
   }
 
   get previous(): Tile | null {
@@ -93,7 +93,7 @@ export default class Tile {
     if (index === null) {
       return null;
     }
-    return this.parent.tiles.value[index - 1] ?? null;
+    return this.parent.value[index - 1] ?? null;
   }
 
   get next(): Tile | null {
@@ -104,11 +104,11 @@ export default class Tile {
     if (index === null) {
       return null;
     }
-    return this.parent.tiles.value[index + 1] ?? null;
+    return this.parent.value[index + 1] ?? null;
   }
 
   get sectionId() {
-    return this.parent?.id ?? null;
+    return this.parent?.sectionId ?? null;
   }
 
   async duplicate({
@@ -281,7 +281,7 @@ export default class Tile {
     }
 
     const afterId = previous.previous?.id ?? null;
-    this.parent?.tiles.insertAfter(afterId, this);
+    this.parent?.insertAfter(afterId, this);
 
     return this.updateTile({
       sectionId: this.sectionId,
@@ -295,7 +295,7 @@ export default class Tile {
       return;
     }
 
-    this.parent?.tiles.insertAfter(afterId, this);
+    this.parent?.insertAfter(afterId, this);
 
     return this.updateTile({
       sectionId: this.sectionId,
