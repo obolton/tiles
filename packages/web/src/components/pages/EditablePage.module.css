@@ -1,0 +1,17 @@
+.page-layout {
+  display: grid;
+  grid-template:
+    "top    top    top" auto
+    "left   main   right" 1fr
+    "bottom bottom bottom" auto
+    / auto 1fr auto;
+  min-height: 100vh;
+  margin-left: var(--navigation-bar-size);
+}
+
+@media (width < 640px) {
+  .page-layout {
+    margin-left: 0;
+    margin-bottom: var(--navigation-bar-size);
+  }
+}

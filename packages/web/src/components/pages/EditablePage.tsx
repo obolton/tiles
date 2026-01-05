@@ -7,6 +7,7 @@ import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import If from "@/jsx/if";
 import { isSignedIn } from "@/utils/sessions";
 import { handleError } from "@/utils/errors";
+import styles from "./EditablePage.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {
@@ -42,11 +43,13 @@ export default function EditablePage({ page }: EditablePageProps) {
 
   return (
     <>
+      <div className={styles["page-layout"]}>
       <DockZone editor={editor} edge="TOP" tiles={dockedTiles.TOP} />
       <DockZone editor={editor} edge="LEFT" tiles={dockedTiles.LEFT} />
       <PageContents editor={editor} tiles={tiles} />
       <DockZone editor={editor} edge="RIGHT" tiles={dockedTiles.RIGHT} />
       <DockZone editor={editor} edge="BOTTOM" tiles={dockedTiles.BOTTOM} />
+      </div>
 
       {showToolbar ? <EditingToolbar editor={editor} /> : null}
 
