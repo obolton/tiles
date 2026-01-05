@@ -219,7 +219,7 @@ export async function duplicateTile({
   id,
   sectionId,
   afterId,
-}: DuplicateTileSchema) {
+}: DuplicateTileSchema): Promise<[ClientTile, ...ClientTile[]]> {
   return prisma.$transaction(async (transaction) => {
     // TODO: Validate section ID
     const order = await getTileOrder(
@@ -239,7 +239,17 @@ export async function duplicateTile({
       where: { pageId, id: newId },
       select: FULL_TILE_FIELDS,
     });
-    return formatTile(tile);
+
+    if (tile.type === "SECTION") {
+      const children = await transaction.tile.findMany({
+        where: { pageId, sectionId: newId },
+        select: FULL_TILE_FIELDS,
+        orderBy: { order: "asc" },
+      });
+      return [formatTile(tile), ...children.map(formatTile)];
+    }
+
+    return [formatTile(tile)];
   });
 }
 
