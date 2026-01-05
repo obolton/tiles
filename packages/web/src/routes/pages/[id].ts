@@ -32,12 +32,18 @@ async function loader({
     throw new Error("Not Found");
   }
 
-  const style = getThemeStyles(page.theme, {
-    background: page.backgroundColor
-      ? { type: "color", color: page.backgroundColor }
-      : null,
-    font: page.font,
-  });
+  const style = {
+    ...getThemeStyles(page.theme, {
+      background: page.backgroundColor
+        ? { type: "color", color: page.backgroundColor }
+        : null,
+      font: page.font,
+    }),
+    "--dock-top-size": page.dockTopHeight ? `${page.dockTopHeight}px` : undefined,
+    "--dock-bottom-size": page.dockBottomHeight ? `${page.dockBottomHeight}px` : undefined,
+    "--dock-left-size": page.dockLeftWidth ? `${page.dockLeftWidth}px` : undefined,
+    "--dock-right-size": page.dockRightWidth ? `${page.dockRightWidth}px` : undefined,
+  };
 
   return {
     headers: page.published

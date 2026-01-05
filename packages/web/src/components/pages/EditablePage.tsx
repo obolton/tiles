@@ -17,10 +17,28 @@ export interface EditablePageProps {
   page: NonNullable<AppRouterOutputs["pages"]["getById"]>;
 }
 
+function setDockSizeProperty(name: string, size: number | null) {
+  if (size !== null) {
+    document.body.style.setProperty(name, `${size}px`);
+  } else {
+    document.body.style.removeProperty(name);
+  }
+}
+
 export default function EditablePage({ page }: EditablePageProps) {
   const editor = Editor.init(page);
-  const { isEditable, selection, tiles, dockedTiles } = editor;
+  const { isEditable, selection, tiles, dockedTiles, dockSizes } = editor;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
+
+  if (!import.meta.env.SSR) {
+    dockSizes.subscribe(() => {
+      const sizes = dockSizes.value;
+      setDockSizeProperty("--dock-top-size", sizes.TOP);
+      setDockSizeProperty("--dock-bottom-size", sizes.BOTTOM);
+      setDockSizeProperty("--dock-left-size", sizes.LEFT);
+      setDockSizeProperty("--dock-right-size", sizes.RIGHT);
+    });
+  }
 
   return (
     <>
