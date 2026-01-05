@@ -12,7 +12,6 @@ import type {
   DeletePageSchema,
   RestorePageSchema,
 } from "./schema";
-import type { ClientTile } from "@/types/tiles";
 import type { RequestContext, AuthenticatedRequestContext } from "@/utils/trpc";
 import type {
   AuthenticatedWorkspaceProcedureContext,
@@ -20,101 +19,9 @@ import type {
 } from "@/utils/middleware";
 import type { ColorSchema } from "@/schema/Color";
 import { PAGE_FIELDS } from "./fields";
-import type { FullTile } from "@/routes/tiles/fields";
+import { formatTile } from "@/routes/tiles/tiles";
 
 const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
-
-export function formatTile(tile: FullTile): ClientTile {
-  const {
-    type: _,
-    section,
-    text,
-    image,
-    video,
-    link,
-    pageLink,
-    map,
-    table,
-    chart,
-    ...properties
-  } = tile;
-
-  if (section) {
-    return {
-      type: "SECTION",
-      ...properties,
-      ...section,
-    };
-  }
-
-  if (text) {
-    return {
-      type: "TEXT",
-      ...properties,
-      ...text,
-    };
-  }
-
-  if (image) {
-    return {
-      type: "IMAGE",
-      ...properties,
-      ...image,
-    };
-  }
-
-  if (video) {
-    return {
-      type: "VIDEO",
-      ...properties,
-      ...video,
-    };
-  }
-
-  if (link) {
-    return {
-      type: "LINK",
-      ...properties,
-      ...link,
-    };
-  }
-
-  if (pageLink) {
-    return {
-      type: "PAGE_LINK",
-      ...properties,
-      ...pageLink,
-    };
-  }
-
-  if (map) {
-    return {
-      type: "MAP",
-      ...properties,
-      ...map,
-    };
-  }
-
-  if (table) {
-    const { _count, ...tableData } = table;
-    return {
-      ...properties,
-      ...tableData,
-      numRows: _count.rows,
-      type: "TABLE",
-    };
-  }
-
-  if (chart) {
-    return {
-      type: "CHART",
-      ...properties,
-      ...chart,
-    };
-  }
-
-  throw new Error(`Invalid tile: ${tile.id}`);
-}
 
 export async function getPageById(
   { id }: GetPageByIdSchema,

@@ -14,7 +14,100 @@ import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
 import type { TileType } from "@/generated/prisma/enums";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
-import { TILE_FIELDS } from "./fields";
+import { TILE_FIELDS, FULL_TILE_FIELDS, type FullTile } from "./fields";
+import type { ClientTile } from "@/types/tiles";
+
+export function formatTile(tile: FullTile): ClientTile {
+  const {
+    type: _,
+    section,
+    text,
+    image,
+    video,
+    link,
+    pageLink,
+    map,
+    table,
+    chart,
+    ...properties
+  } = tile;
+
+  if (section) {
+    return {
+      type: "SECTION",
+      ...properties,
+      ...section,
+    };
+  }
+
+  if (text) {
+    return {
+      type: "TEXT",
+      ...properties,
+      ...text,
+    };
+  }
+
+  if (image) {
+    return {
+      type: "IMAGE",
+      ...properties,
+      ...image,
+    };
+  }
+
+  if (video) {
+    return {
+      type: "VIDEO",
+      ...properties,
+      ...video,
+    };
+  }
+
+  if (link) {
+    return {
+      type: "LINK",
+      ...properties,
+      ...link,
+    };
+  }
+
+  if (pageLink) {
+    return {
+      type: "PAGE_LINK",
+      ...properties,
+      ...pageLink,
+    };
+  }
+
+  if (map) {
+    return {
+      type: "MAP",
+      ...properties,
+      ...map,
+    };
+  }
+
+  if (table) {
+    const { _count, ...tableData } = table;
+    return {
+      ...properties,
+      ...tableData,
+      numRows: _count.rows,
+      type: "TABLE",
+    };
+  }
+
+  if (chart) {
+    return {
+      type: "CHART",
+      ...properties,
+      ...chart,
+    };
+  }
+
+  throw new Error(`Invalid tile: ${tile.id}`);
+}
 
 export async function getTileOrder(
   transaction: PrismaTransactionClient,
@@ -121,26 +214,32 @@ export async function updateTile(
   });
 }
 
-// TODO: Duplicate tile relations (could be simplified by consolidating tables)
 export async function duplicateTile({
   pageId,
   id,
   sectionId,
+  afterId,
 }: DuplicateTileSchema) {
   return prisma.$transaction(async (transaction) => {
     // TODO: Validate section ID
-    const order = await getTileOrder(transaction, pageId, sectionId, id);
+    const order = await getTileOrder(
+      transaction,
+      pageId,
+      sectionId,
+      afterId !== undefined ? afterId : id,
+    );
     const result = await transaction.$queryRawTyped(
-      duplicateTileQuery(pageId, id, order),
+      duplicateTileQuery(pageId, id, order, sectionId),
     );
     const newId = result[0]?.id;
     if (!newId) {
       throw new Error("Could not duplicate tile");
     }
-    return transaction.tile.findUniqueOrThrow({
+    const tile = await transaction.tile.findUniqueOrThrow({
       where: { pageId, id: newId },
-      select: TILE_FIELDS,
+      select: FULL_TILE_FIELDS,
     });
+    return formatTile(tile);
   });
 }
 
