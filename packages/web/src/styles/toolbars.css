@@ -23,7 +23,7 @@ floating-toolbar {
   &.primary {
     position: fixed;
     inset: auto auto 64px;
-    margin-inline: 80px 0;
+    margin-inline: var(--navigation-bar-size) 0;
     justify-self: center;
   }
 
