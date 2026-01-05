@@ -22,7 +22,7 @@ import Chart from "@/models/Chart";
 import Dropdown from "@/models/Dropdown";
 import PageInvite from "@/models/PageInvite";
 import type Tile from "@/models/Tile";
-import type { ClientTile } from "api/types/tiles";
+import type { ClientTile, DockEdge } from "api/types/tiles";
 import type { FontId } from "@/config/fonts";
 import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
 import type { PageAccess, User } from "@/types/collaboration";
@@ -69,12 +69,7 @@ export default class Editor {
   readonly selection: Reactive<Set<Tile>>;
   readonly dropdowns: ReactiveArray<Dropdown>;
 
-  readonly dockSizes: Reactive<{
-    top: number | null;
-    bottom: number | null;
-    left: number | null;
-    right: number | null;
-  }>;
+  readonly dockSizes: Reactive<Record<DockEdge, number | null>>;
 
   readonly dockedTiles: {
     TOP: TileCollection;
@@ -145,10 +140,10 @@ export default class Editor {
     this.dropdowns = array(page.dropdowns.map((d) => new Dropdown(this, d)));
 
     this.dockSizes = reactive({
-      top: page.dockTopHeight,
-      bottom: page.dockBottomHeight,
-      left: page.dockLeftWidth,
-      right: page.dockRightWidth,
+      TOP: page.dockTopHeight,
+      BOTTOM: page.dockBottomHeight,
+      LEFT: page.dockLeftWidth,
+      RIGHT: page.dockRightWidth,
     });
 
     this.dockedTiles = {
@@ -353,14 +348,14 @@ export default class Editor {
     return client.pages.delete.mutate({ pageId: this.pageId });
   }
 
-  async setDockSizes(sizes: Partial<typeof this.dockSizes.value>) {
+  async setDockSizes(sizes: Partial<Record<DockEdge, number | null>>) {
     this.dockSizes.value = { ...this.dockSizes.value, ...sizes };
     return client.pages.update.mutate({
       pageId: this.pageId,
-      dockTopHeight: sizes.top,
-      dockBottomHeight: sizes.bottom,
-      dockLeftWidth: sizes.left,
-      dockRightWidth: sizes.right,
+      dockTopHeight: sizes.TOP,
+      dockBottomHeight: sizes.BOTTOM,
+      dockLeftWidth: sizes.LEFT,
+      dockRightWidth: sizes.RIGHT,
     });
   }
 
