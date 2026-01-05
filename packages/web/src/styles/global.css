@@ -212,11 +212,8 @@ mark {
 }
 
 aside {
-  margin: 16px 0;
-  padding: 16px;
-  color: var(--ui-color);
-  background: rgb(0 0 0 / 8%);
-  border-radius: var(--border-radius);
+  margin: 0;
+  padding: 0;
 }
 
 time {
