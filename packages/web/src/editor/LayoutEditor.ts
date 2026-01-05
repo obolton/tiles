@@ -467,6 +467,11 @@ export default class LayoutEditor {
     }
 
     try {
+      // Undock tile if it was previously docked
+      if (tile.dock.value !== null) {
+        await tile.setDock(null);
+      }
+
       if (this.layoutType === "HORIZONTAL" || this.layoutType === "VERTICAL") {
         tile.move({
           sectionId: this.sectionId,
