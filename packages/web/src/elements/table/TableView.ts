@@ -2001,38 +2001,73 @@ export default class TableView extends HTMLElement {
     }
   }
 
-  deleteColumn(id: string) {
-    const index = this.visibleColumns.findIndex((c) => c.id === id);
-    if (index < 0) {
-      throw new Error(`Invalid column ID: ${id}`);
+  deleteColumns(ids: string[]) {
+    if (ids.length === 0) {
+      return;
     }
 
-    const column = this.visibleColumns[index]!;
-    column.element.remove();
-    column.header?.remove();
-    for (const cell of column.cells) {
-      this.recycleCell(cell);
+    const firstPosition = this.visibleColumns.findIndex((c) => c.id === ids[0]);
+
+    for (const id of ids) {
+      const index = this.visibleColumns.findIndex((c) => c.id === id);
+      if (index < 0) {
+        continue;
+      }
+
+      const column = this.visibleColumns[index]!;
+      column.element.remove();
+      column.header?.remove();
+      for (const cell of column.cells) {
+        this.recycleCell(cell);
+      }
+      this.visibleColumns = this.visibleColumns.toSpliced(index, 1);
+      this.#columns--;
     }
-    this.visibleColumns = this.visibleColumns.toSpliced(index, 1);
-    this.#columns--;
-    this.reindexColumns(index);
+
+    this.reindexColumns(0);
     this.update();
-    this.redrawSelection();
+
+    const selectPosition = Math.min(
+      firstPosition,
+      this.visibleColumns.length - 1,
+    );
+    const selectColumn = this.visibleColumns[selectPosition];
+    if (selectColumn) {
+      this.setSelection({ type: "column", column: selectColumn });
+    } else {
+      this.clearSelection();
+    }
   }
 
-  deleteRow(id: string) {
-    const index = this.visibleRows.findIndex((r) => r.id === id);
-    if (index < 0) {
-      throw new Error(`Invalid row ID: ${id}`);
+  deleteRows(ids: string[]) {
+    if (ids.length === 0) {
+      return;
     }
 
-    const row = this.visibleRows[index]!;
-    this.recycleRow(row.element);
-    this.visibleRows = this.visibleRows.toSpliced(index, 1);
-    this.#rows--;
-    this.reindexRows(index);
+    const firstPosition = this.visibleRows.findIndex((r) => r.id === ids[0]);
+
+    for (const id of ids) {
+      const index = this.visibleRows.findIndex((r) => r.id === id);
+      if (index < 0) {
+        continue;
+      }
+
+      const row = this.visibleRows[index]!;
+      this.recycleRow(row.element);
+      this.visibleRows = this.visibleRows.toSpliced(index, 1);
+      this.#rows--;
+    }
+
+    this.reindexRows(0);
     this.update();
-    this.redrawSelection();
+
+    const selectPosition = Math.min(firstPosition, this.visibleRows.length - 1);
+    const selectRow = this.visibleRows[selectPosition];
+    if (selectRow) {
+      this.setSelection({ type: "row", row: selectRow });
+    } else {
+      this.clearSelection();
+    }
   }
 }
 
