@@ -3,12 +3,12 @@ import If from "@/jsx/if";
 import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
 import DockLayoutEditor from "./DockLayoutEditor";
+import styles from "./DockZone.module.css";
 import type Editor from "@/editor/Editor";
 import type { DockEdge } from "@/models/Tile";
 import type TileCollection from "@/models/TileCollection";
-import styles from "./DockZone.module.css";
 
-interface DockZoneProps {
+export interface DockZoneProps {
   editor: Editor;
   edge: DockEdge;
   tiles: TileCollection;
@@ -17,7 +17,7 @@ interface DockZoneProps {
 type EdgeStyle = "top" | "bottom" | "left" | "right";
 
 export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
-  const hasTiles = tiles.derive((items) => items.length > 0);
+  const isEmpty = tiles.derive((items) => items.length === 0);
   const edgeStyle = edge.toLowerCase() as EdgeStyle;
 
   const dimension = edge === "TOP" || edge === "BOTTOM" ? "height" : "width";
@@ -27,9 +27,9 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
     return size !== null ? { [dimension]: `${size}px` } : {};
   });
 
-  const shouldRender = new Computed(
-    [hasTiles, editor.isEditable],
-    (has, editable) => has || editable,
+  const visible = new Computed(
+    [isEmpty, editor.isEditable],
+    (empty, editable) => !empty || editable,
   );
 
   function ref(element: HTMLElement) {
@@ -40,9 +40,12 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
     });
   }
 
+  const Element =
+    edge === "TOP" ? "header" : edge === "BOTTOM" ? "footer" : "aside";
+
   return (
-    <If condition={shouldRender}>
-      <aside
+    <If condition={visible}>
+      <Element
         ref={ref}
         classList={{
           [styles.zone]: true,
@@ -50,6 +53,7 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
         }}
         style={zoneStyle}
         data-dock-zone={edge}
+        data-empty={isEmpty}
       >
         <Each items={tiles}>
           {(tile) => (
@@ -60,7 +64,7 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
             />
           )}
         </Each>
-      </aside>
+      </Element>
     </If>
   );
 }
