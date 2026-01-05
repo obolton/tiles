@@ -36,7 +36,7 @@ describe("Tile", () => {
       editor.addTile(tile, null, null, false);
 
       const duplicatedTile = { ...TILE, id: "duplicated-tile-id", sectionId: null };
-      vi.mocked(client.tiles.duplicate.mutate).mockResolvedValue(duplicatedTile);
+      vi.mocked(client.tiles.duplicate.mutate).mockResolvedValue([duplicatedTile]);
 
       const result = await tile.duplicate({ sectionId: null, afterId: tile.id });
 
@@ -55,7 +55,7 @@ describe("Tile", () => {
       editor.addTile(tile, null, null, false);
 
       const duplicatedTile = { ...TILE, id: "duplicated-tile-id-2", sectionId: null };
-      vi.mocked(client.tiles.duplicate.mutate).mockResolvedValue(duplicatedTile);
+      vi.mocked(client.tiles.duplicate.mutate).mockResolvedValue([duplicatedTile]);
 
       const result = await tile.duplicate({ sectionId: null, afterId: null });
 
