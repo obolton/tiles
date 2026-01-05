@@ -75,9 +75,7 @@ export default function RowTab({ table, getTable }: RowTabProps) {
       .toArray();
     if (selectedRows.length > 0) {
       const rowIds = selectedRows.map((row) => row.id!);
-      for (const rowId of rowIds) {
-        tableView.deleteRow(rowId);
-      }
+      tableView.deleteRows(rowIds);
       table.removeRows(rowIds);
     }
   }

@@ -95,9 +95,7 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
       .toArray();
     if (selectedColumns.length > 0) {
       const columnIds = selectedColumns.map((column) => column.id!);
-      for (const columnId of columnIds) {
-        tableView.deleteColumn(columnId);
-      }
+      tableView.deleteColumns(columnIds);
       table.removeColumns(columnIds);
     }
   }
