@@ -31,29 +31,42 @@ describe("Tile", () => {
   });
 
   describe("duplicate", () => {
-    test("duplicates the tile in the provided section", async () => {
-      const tile = new Tile(editor, TILE);
-      const sectionId = "new-section";
+    test("duplicates the tile after the specified tile", async () => {
+      const tile = new Tile(editor, { ...TILE, sectionId: null });
+      editor.addTile(tile, null, null, false);
 
-      await tile.duplicate({ sectionId });
+      const duplicatedTile = { ...TILE, id: "duplicated-tile-id", sectionId: null };
+      vi.mocked(client.tiles.duplicate.mutate).mockResolvedValue(duplicatedTile);
 
-      expect(client.tiles.duplicate.mutate).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: TILE.id,
-        sectionId,
-      });
-    });
-
-    test("duplicates the tile at the root when section is null", async () => {
-      const tile = new Tile(editor, TILE);
-
-      await tile.duplicate({ sectionId: null });
+      const result = await tile.duplicate({ sectionId: null, afterId: tile.id });
 
       expect(client.tiles.duplicate.mutate).toHaveBeenCalledWith({
         pageId: PAGE.id,
         id: TILE.id,
         sectionId: null,
+        afterId: tile.id,
       });
+      expect(result.id).toBe(duplicatedTile.id);
+      expect(editor.index.get(duplicatedTile.id)).toBe(result);
+    });
+
+    test("duplicates the tile at the start when afterId is null", async () => {
+      const tile = new Tile(editor, { ...TILE, id: "tile-for-null-test", sectionId: null });
+      editor.addTile(tile, null, null, false);
+
+      const duplicatedTile = { ...TILE, id: "duplicated-tile-id-2", sectionId: null };
+      vi.mocked(client.tiles.duplicate.mutate).mockResolvedValue(duplicatedTile);
+
+      const result = await tile.duplicate({ sectionId: null, afterId: null });
+
+      expect(client.tiles.duplicate.mutate).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: tile.id,
+        sectionId: null,
+        afterId: null,
+      });
+      expect(result.id).toBe(duplicatedTile.id);
+      expect(editor.index.get(duplicatedTile.id)).toBe(result);
     });
   });
 
