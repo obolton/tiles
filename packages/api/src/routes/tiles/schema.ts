@@ -14,6 +14,7 @@ export const DuplicateTileSchema = z.strictObject({
   pageId: z.uuid(),
   id: z.uuid(),
   sectionId: z.uuid().nullable(),
+  afterId: z.uuid().nullable().optional(),
 });
 export type DuplicateTileSchema = z.infer<typeof DuplicateTileSchema>;
 
