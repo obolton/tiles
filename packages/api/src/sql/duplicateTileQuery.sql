@@ -225,6 +225,72 @@ new_table_tile AS (
     AND table_tiles.id = $2::uuid
   RETURNING id
 ),
+new_table_columns AS (
+  INSERT INTO table_columns (
+    id,
+    table_id,
+    "order",
+    title,
+    width,
+    background_color,
+    background_gradient,
+    background_image_id
+  )
+  SELECT
+    gen_random_uuid(),
+    new_table_tile.id,
+    "order",
+    title,
+    width,
+    background_color,
+    background_gradient,
+    background_image_id
+  FROM table_columns
+  JOIN new_table_tile ON true
+  WHERE table_columns.table_id = $2::uuid
+  RETURNING id, "order"
+),
+-- Map old column IDs to new column IDs (matched by order) so we can
+-- transform the row data to reference the new columns
+column_id_mapping AS (
+  SELECT
+    old_cols.id AS old_id,
+    new_cols.id AS new_id
+  FROM table_columns old_cols
+  JOIN new_table_columns new_cols ON old_cols."order" = new_cols."order"
+  WHERE old_cols.table_id = $2::uuid
+),
+new_table_rows AS (
+  INSERT INTO table_rows (
+    id,
+    table_id,
+    "order",
+    height,
+    data,
+    background_color,
+    background_gradient,
+    background_image_id
+  )
+  SELECT
+    gen_random_uuid(),
+    new_table_tile.id,
+    table_rows."order",
+    height,
+    COALESCE(
+      (
+        SELECT jsonb_object_agg(m.new_id::text, kv.value)
+        FROM jsonb_each(table_rows.data) AS kv(key, value)
+        JOIN column_id_mapping m ON m.old_id::text = kv.key
+      ),
+      '{}'::jsonb
+    ),
+    background_color,
+    background_gradient,
+    background_image_id
+  FROM table_rows
+  JOIN new_table_tile ON true
+  WHERE table_rows.table_id = $2::uuid
+),
 new_chart_tile AS (
   INSERT INTO charts (
     id,
