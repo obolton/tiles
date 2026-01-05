@@ -161,17 +161,43 @@ new_page_link_tile AS (
 new_map_tile AS (
   INSERT INTO map_tiles (
     id,
-    page_id
+    page_id,
+    style
   )
   SELECT
     new_tile.id,
-    new_tile.page_id
+    new_tile.page_id,
+    style
   FROM map_tiles
   JOIN new_tile ON true
   WHERE new_tile.type = 'MAP'
     AND map_tiles.page_id = $1::uuid
     AND map_tiles.id = $2::uuid
   RETURNING id
+),
+new_places AS (
+  INSERT INTO places (
+    id,
+    name,
+    lat,
+    long,
+    bounding_box,
+    address,
+    provider_id,
+    map_tile_id
+  )
+  SELECT
+    gen_random_uuid(),
+    name,
+    lat,
+    long,
+    bounding_box,
+    address,
+    provider_id,
+    new_map_tile.id
+  FROM places
+  JOIN new_map_tile ON true
+  WHERE places.map_tile_id = $2::uuid
 ),
 new_table_tile AS (
   INSERT INTO table_tiles (
