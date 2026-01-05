@@ -1,7 +1,6 @@
 -- @param {String} $1:pageId Page ID
--- @param {String} $2:sectionId Section ID
+-- @param {String} $2:id Tile ID to duplicate
 -- @param {String} $3:order Order key
--- TODO: Duplicate tile relations
 WITH new_tile AS (
   INSERT INTO tiles (
     id,
@@ -18,7 +17,9 @@ WITH new_tile AS (
     y,
     block,
     animation,
-    hide
+    hide,
+    dock,
+    theme_id
   )
   SELECT
     gen_random_uuid(),
@@ -35,7 +36,9 @@ WITH new_tile AS (
     y,
     block,
     animation,
-    hide
+    hide,
+    dock,
+    theme_id
   FROM tiles
   WHERE tiles.page_id = $1::uuid
     AND tiles.id = $2::uuid
