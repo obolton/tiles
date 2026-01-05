@@ -118,15 +118,22 @@ export default class Tile {
     sectionId: string | null;
     afterId: string | null;
   }) {
-    const properties = await client.tiles.duplicate.mutate({
+    const [parent, ...children] = await client.tiles.duplicate.mutate({
       pageId: this.editor.pageId,
       id: this.id,
       sectionId,
       afterId,
     });
-    const tile = this.editor.createTile(properties);
-    this.editor.addTile(tile, properties.sectionId, afterId);
-    return tile;
+
+    const parentTile = this.editor.createTile(parent);
+    this.editor.addTile(parentTile, parent.sectionId, afterId);
+
+    for (const child of children) {
+      const childTile = this.editor.createTile(child);
+      this.editor.addTile(childTile, child.sectionId, null);
+    }
+
+    return parentTile;
   }
 
   delete() {
