@@ -18,37 +18,19 @@ export interface EditablePageProps {
   page: NonNullable<AppRouterOutputs["pages"]["getById"]>;
 }
 
-function setDockSizeProperty(name: string, size: number | null) {
-  if (size !== null) {
-    document.body.style.setProperty(name, `${size}px`);
-  } else {
-    document.body.style.removeProperty(name);
-  }
-}
-
 export default function EditablePage({ page }: EditablePageProps) {
   const editor = Editor.init(page);
-  const { isEditable, selection, tiles, dockedTiles, dockSizes } = editor;
+  const { isEditable, selection, tiles, dockedTiles } = editor;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
-
-  if (!import.meta.env.SSR) {
-    dockSizes.subscribe(() => {
-      const sizes = dockSizes.value;
-      setDockSizeProperty("--dock-top-size", sizes.TOP);
-      setDockSizeProperty("--dock-bottom-size", sizes.BOTTOM);
-      setDockSizeProperty("--dock-left-size", sizes.LEFT);
-      setDockSizeProperty("--dock-right-size", sizes.RIGHT);
-    });
-  }
 
   return (
     <>
       <div className={styles["page-layout"]}>
-      <DockZone editor={editor} edge="TOP" tiles={dockedTiles.TOP} />
-      <DockZone editor={editor} edge="LEFT" tiles={dockedTiles.LEFT} />
-      <PageContents editor={editor} tiles={tiles} />
-      <DockZone editor={editor} edge="RIGHT" tiles={dockedTiles.RIGHT} />
-      <DockZone editor={editor} edge="BOTTOM" tiles={dockedTiles.BOTTOM} />
+        <DockZone editor={editor} edge="TOP" tiles={dockedTiles.TOP} />
+        <DockZone editor={editor} edge="LEFT" tiles={dockedTiles.LEFT} />
+        <PageContents editor={editor} tiles={tiles} />
+        <DockZone editor={editor} edge="RIGHT" tiles={dockedTiles.RIGHT} />
+        <DockZone editor={editor} edge="BOTTOM" tiles={dockedTiles.BOTTOM} />
       </div>
 
       {showToolbar ? <EditingToolbar editor={editor} /> : null}

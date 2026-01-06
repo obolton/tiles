@@ -58,30 +58,6 @@
   initial-value: 12px;
 }
 
-@property --dock-top-size {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 0px;
-}
-
-@property --dock-right-size {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 0px;
-}
-
-@property --dock-bottom-size {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 0px;
-}
-
-@property --dock-left-size {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 0px;
-}
-
 @property --navigation-bar-size {
   syntax: "<length>";
   inherits: true;
@@ -153,10 +129,6 @@ body > header {
 }
 
 main {
-  margin-top: var(--dock-top-size);
-  margin-right: var(--dock-right-size);
-  margin-bottom: var(--dock-bottom-size);
-  margin-left: calc(var(--navigation-bar-size) + var(--dock-left-size));
   padding: 0;
   container: main / inline-size;
   overflow-x: clip;
