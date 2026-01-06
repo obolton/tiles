@@ -102,10 +102,6 @@ body.dark {
   --placeholder-color: rgb(255 255 255 / 20%);
 }
 
-body[data-editing] {
-  padding-bottom: 128px;
-}
-
 html,
 body,
 button,
