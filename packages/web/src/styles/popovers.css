@@ -27,6 +27,12 @@ table-of-contents {
     scale: 0.95;
     opacity: 0;
   }
+
+  @supports (anchor-name: --anchor) {
+    inset-block-start: anchor(end);
+    inset-inline-start: anchor(start);
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+  }
 }
 
 popover-menu > menu,
