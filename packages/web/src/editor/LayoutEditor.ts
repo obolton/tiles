@@ -6,6 +6,10 @@ import {
   type SnapPoints,
 } from "@/utils/snap";
 import { moveBefore } from "@/utils/dom";
+import {
+  createDragPlaceholder,
+  getDragPosition,
+} from "@/utils/drag-placeholder";
 import type Editor from "@/editor/Editor";
 import type { DragDropEvent } from "@/utils/drag";
 import type { PageItemEvent } from "@/elements/item/events";
@@ -353,7 +357,17 @@ export default class LayoutEditor {
       return;
     }
 
-    const position = this.getDragPosition(event.clientX, event.clientY);
+    const direction =
+      this.layoutType === "HORIZONTAL" ? "horizontal" : "vertical";
+
+    const position = getDragPosition(
+      this.element,
+      event.clientX,
+      event.clientY,
+      direction,
+      (el) => this.isElementOrdered(el),
+    );
+
     if (position) {
       const { previous, next } = position;
       this.afterId =
@@ -397,17 +411,15 @@ export default class LayoutEditor {
       return;
     }
 
-    const placeholder = document.createElement("div");
-    placeholder.classList.add("drag-placeholder");
+    const placeholder = createDragPlaceholder({
+      x,
+      y,
+      width,
+      height,
+      rowSpan,
+      freeform: this.layoutType === "FREEFORM",
+    });
 
-    if (this.layoutType === "FREEFORM") {
-      placeholder.style.setProperty("--placeholder-x", x.toString());
-      placeholder.style.setProperty("--placeholder-y", y.toString());
-    }
-
-    placeholder.style.setProperty("--placeholder-width", width.toString());
-    placeholder.style.setProperty("--placeholder-height", height.toString());
-    placeholder.style.setProperty("--placeholder-rows", rowSpan.toString());
     this.element.appendChild(placeholder);
     this.dragPlaceholder = placeholder;
   }
@@ -516,65 +528,6 @@ export default class LayoutEditor {
     return (
       element !== this.dragPlaceholder && !element.matches(":popover-open")
     );
-  }
-
-  private getPreviousItem(element: Element) {
-    let previous = element.previousElementSibling;
-
-    while (previous && !this.isElementOrdered(previous)) {
-      previous = previous.previousElementSibling;
-    }
-
-    return previous;
-  }
-
-  private getNextItem(element: Element) {
-    let next = element.nextElementSibling;
-
-    while (next && !this.isElementOrdered(next)) {
-      next = next.nextElementSibling;
-    }
-
-    return next;
-  }
-
-  private getDragPosition(
-    x: number,
-    y: number,
-  ): { previous: Element | null; next: Element | null } | null {
-    for (const child of this.element.children) {
-      if (!this.isElementOrdered(child)) {
-        continue;
-      }
-
-      const rect = child.getBoundingClientRect();
-
-      if (this.layoutType === "VERTICAL") {
-        const midpoint = rect.y + rect.height / 2;
-
-        if (y >= rect.top && y <= rect.bottom) {
-          if (y < midpoint) {
-            return { previous: this.getPreviousItem(child), next: child };
-          } else {
-            return { previous: child, next: this.getNextItem(child) };
-          }
-        }
-      }
-
-      if (this.layoutType === "HORIZONTAL") {
-        const midpoint = rect.x + rect.width / 2;
-
-        if (x >= rect.left && x <= rect.right) {
-          if (x < midpoint) {
-            return { previous: this.getPreviousItem(child), next: child };
-          } else {
-            return { previous: child, next: this.getNextItem(child) };
-          }
-        }
-      }
-    }
-
-    return null;
   }
 
   // Resize
