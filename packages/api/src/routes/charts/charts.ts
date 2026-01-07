@@ -52,9 +52,9 @@ export async function createChart({
       });
     }
     await Promise.all(
-      series.map((columnId) =>
+      series.map((s) =>
         transaction.tableColumn.findUniqueOrThrow({
-          where: { id: columnId, table: { id: tableId, pageId } },
+          where: { id: s.columnId, table: { id: tableId, pageId } },
           select: { id: true },
         }),
       ),
@@ -72,8 +72,10 @@ export async function createChart({
           ...getBackgroundProperties(background),
           series: {
             createMany: {
-              data: series.map((columnId) => ({
-                columnId,
+              data: series.map((s) => ({
+                columnId: s.columnId,
+                type: s.type,
+                ...getSeriesFillData(s.fill),
               })),
             },
           },

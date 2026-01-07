@@ -3,12 +3,20 @@ import { ChartSeriesType } from "@/generated/prisma/enums";
 import { CreateTileSchema } from "@/schema/Tile";
 import { BackgroundSchema } from "@/schema/Background.ts";
 
+const ChartSeriesSchema = z.strictObject({
+  type: z.enum(ChartSeriesType).optional(),
+  fill: BackgroundSchema.optional(),
+});
+
 export const CreateChartSchema = z.strictObject({
   ...CreateTileSchema.shape,
   tableId: z.uuid(),
   labelColumnId: z.uuid().optional(),
   background: BackgroundSchema.optional(),
-  series: z.array(z.uuid()).max(10).optional(),
+  series: z
+    .array(ChartSeriesSchema.extend({ columnId: z.uuid() }))
+    .max(10)
+    .optional(),
 });
 export type CreateChartSchema = z.infer<typeof CreateChartSchema>;
 
@@ -24,8 +32,7 @@ export const AddSeriesSchema = z.strictObject({
   pageId: z.uuid(),
   chartId: z.uuid(),
   columnId: z.uuid(),
-  type: z.enum(ChartSeriesType).optional(),
-  fill: BackgroundSchema.optional(),
+  ...ChartSeriesSchema.shape,
 });
 export type AddSeriesSchema = z.infer<typeof AddSeriesSchema>;
 
@@ -33,8 +40,7 @@ export const UpdateSeriesSchema = z.strictObject({
   pageId: z.uuid(),
   chartId: z.uuid(),
   seriesId: z.uuid(),
-  type: z.enum(ChartSeriesType).optional(),
-  fill: BackgroundSchema.optional(),
+  ...ChartSeriesSchema.shape,
 });
 export type UpdateSeriesSchema = z.infer<typeof UpdateSeriesSchema>;
 
