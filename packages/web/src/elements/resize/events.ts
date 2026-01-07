@@ -1,5 +1,15 @@
 export type ResizeEventType = "resizestart" | "resizedrag" | "resizeend";
 
+export interface ResizeEventMap {
+  resizestart: ResizeEvent;
+  resizedrag: ResizeEvent;
+  resizeend: ResizeEvent;
+}
+
+declare global {
+  interface HTMLElementEventMap extends ResizeEventMap {}
+}
+
 export interface ResizeEventInit extends EventInit {
   x?: number;
   y?: number;
