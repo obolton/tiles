@@ -12,6 +12,29 @@ type LinkMetadata = {
 
 // TODO: Validate image URL types (especially to filter SVGs which could contain scripts)
 
+const FETCH_TIMEOUT_MS = 10000;
+const HTML_CONTENT_TYPES = [
+  "text/html",
+  "application/xhtml+xml",
+  "application/xml",
+];
+
+export function matchContentType(
+  contentType: string,
+  allowedTypes: string[],
+): boolean {
+  const mimeType = contentType.split(";")[0]?.trim().toLowerCase() ?? "";
+  return allowedTypes.includes(mimeType);
+}
+
+function resolveImageUrl(imageUrl: string, baseUrl: string): string | null {
+  try {
+    return new URL(imageUrl, baseUrl).href;
+  } catch {
+    return null;
+  }
+}
+
 async function parseDocument(url: string, language: string) {
   const response = await fetch(url, {
     headers: {
@@ -19,11 +42,19 @@ async function parseDocument(url: string, language: string) {
       "Accept-Language": language,
       "User-Agent": "facebookexternalhit/1.1",
     },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
 
   if (!response.ok) {
     throw new Error(
       `Link metadata: Failed to fetch ${url}: [${response.status}] ${response.statusText}`,
+    );
+  }
+
+  const contentType = response.headers.get("Content-Type");
+  if (!contentType || !matchContentType(contentType, HTML_CONTENT_TYPES)) {
+    throw new Error(
+      `Link metadata: Invalid content type for ${url}: ${contentType}`,
     );
   }
 
@@ -129,7 +160,7 @@ export async function getLinkMetadata(
       title: ogTitle || title,
       description: ogDescription || description,
       siteName: ogSiteName,
-      imageUrl: ogImageUrl ? new URL(ogImageUrl, url).href : null,
+      imageUrl: ogImageUrl ? resolveImageUrl(ogImageUrl, url) : null,
     };
   } catch (error) {
     console.error(
