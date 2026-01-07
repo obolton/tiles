@@ -22,6 +22,7 @@ export default class TableOfContents extends PopoverMenu {
   }
 
   disconnectedCallback() {
+    super.disconnectedCallback();
     this.clear();
   }
 
@@ -35,6 +36,7 @@ export default class TableOfContents extends PopoverMenu {
   }
 
   protected handleBeforeToggle(event: ToggleEvent) {
+    super.handleBeforeToggle(event);
     if (event.newState === "open") {
       this.update();
     }
