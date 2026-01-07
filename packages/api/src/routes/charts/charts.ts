@@ -12,6 +12,14 @@ import type {
 import type { BackgroundSchema } from "@/schema/Background";
 import { CHART_FIELDS, CHART_SERIES_FIELDS } from "./fields";
 
+export async function getTableColumns(pageId: string, tableId: string) {
+  return prisma.tableColumn.findMany({
+    where: { tableId, table: { pageId } },
+    orderBy: { order: "asc" },
+    select: { id: true },
+  });
+}
+
 function getSeriesFillData(fill?: BackgroundSchema) {
   if (typeof fill === "undefined") {
     return {};
