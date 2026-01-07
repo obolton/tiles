@@ -8,6 +8,7 @@ import { IMAGE_GENERATION_TOOL } from "./images.ts";
 import { CREATE_CHART_TOOL } from "./createChart.ts";
 import { CREATE_LINK_TOOL } from "./createLink.ts";
 import { CREATE_MAP_TOOL } from "./createMap.ts";
+import { CREATE_SECTION_TOOL } from "./createSection.ts";
 import { CREATE_TABLE_TOOL } from "./createTable.ts";
 import { CREATE_TEXT_TOOL } from "./createText.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
@@ -18,6 +19,7 @@ export const FUNCTION_TOOLS: FunctionToolOptions[] = [
   CREATE_TABLE_TOOL,
   CREATE_CHART_TOOL,
   CREATE_LINK_TOOL,
+  CREATE_SECTION_TOOL,
 ];
 
 function functionTool<T extends z.ZodType>({
