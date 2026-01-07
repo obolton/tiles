@@ -62,10 +62,7 @@ export default function TileTools({ tile }: TileToolsProps) {
         <MoreIcon aria-hidden="true" />
       </ToolbarButton>
 
-      <popover-menu
-        id={`${tile.id}-options`}
-        anchor={`${tile.id}-options-button`}
-      >
+      <popover-menu id={`${tile.id}-options`}>
         <Menu>
           <MenuItemGroup>
             <MenuItem

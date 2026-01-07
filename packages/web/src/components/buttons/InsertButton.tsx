@@ -39,7 +39,6 @@ export default function InsertButton({
         sectionId={sectionId}
         afterId={afterId}
         align="auto"
-        anchor={id}
       />
     </>
   );

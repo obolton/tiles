@@ -69,7 +69,6 @@ export default function FillPicker({
 
       <FillPopover
         id={`${id}-popover`}
-        anchor={id}
         value={value}
         onChange={onChange}
         allowImage={allowImage}

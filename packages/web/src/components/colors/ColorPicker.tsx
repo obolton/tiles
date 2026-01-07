@@ -50,7 +50,6 @@ export default function ColorPicker({
       <popover-menu
         id={popoverId}
         className={styles["color-picker"]}
-        anchor={id}
         align="center"
       >
         <ColorPalette

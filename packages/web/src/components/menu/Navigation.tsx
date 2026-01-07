@@ -139,7 +139,7 @@ export default function Navigation({
                 </span>
               )}
             </button>
-            <popover-menu id="account-menu" anchor="account-button">
+            <popover-menu id="account-menu">
               <Menu>
                 <MenuItemGroup>
                   {value.workspaces.map((workspace) => (
@@ -242,11 +242,7 @@ export default function Navigation({
               >
                 <MenuIcon aria-hidden="true" />
               </button>
-              <table-of-contents
-                id="toc"
-                anchor="toc-button"
-                role="navigation"
-              />
+              <table-of-contents id="toc" role="navigation" />
             </li>
           ) : null}
         </ul>

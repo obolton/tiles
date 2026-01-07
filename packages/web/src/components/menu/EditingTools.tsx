@@ -30,11 +30,7 @@ export default function EditingTools({
           <PeopleIcon aria-hidden="true" />
         </button>
 
-        <CollaborationPopover
-          editor={editor}
-          id="collaboration-popover"
-          anchor="collaboration-button"
-        />
+        <CollaborationPopover editor={editor} id="collaboration-popover" />
       </li>
 
       <li role="presentation">
@@ -56,7 +52,6 @@ export default function EditingTools({
           editor={editor}
           allowDelete={allowDelete}
           id="page-settings-popover"
-          anchor="page-settings-button"
         />
       </li>
     </ul>

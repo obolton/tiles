@@ -44,7 +44,6 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
 
           <SeriesPanel
             id={`${chart.id}-series-panel`}
-            anchor={`${chart.id}-series-button`}
             chart={chart}
             table={table}
           />

@@ -69,7 +69,6 @@ export default class ListSelect extends HTMLElement {
     this.items = document.createElement("popover-menu");
     this.items.id = "items";
     this.items.part = "items";
-    this.items.anchorElement = this;
     this.items.setAttribute("aria-labelledby", "title");
     this.items.addEventListener("toggle", this, { passive: true });
 

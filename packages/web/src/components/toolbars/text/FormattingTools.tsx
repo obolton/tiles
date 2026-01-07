@@ -252,7 +252,7 @@ export default function FormattingTools({
           <NewIcon aria-hidden="true" />
         </ToolbarButton>
 
-        <popover-menu id="insert-content-menu" anchor="insert-content-button">
+        <popover-menu id="insert-content-menu">
           <Menu>
             <MenuItemGroup>
               <MenuItem
@@ -398,7 +398,6 @@ export default function FormattingTools({
 
         <TextSizePopover
           id="text-size-popover"
-          anchor="text-size-button"
           align="center"
           value={format.derive((value) => value.size)}
           onChange={changeTextSize}
@@ -454,7 +453,7 @@ export default function FormattingTools({
           <MoreIcon aria-hidden="true" />
         </ToolbarButton>
 
-        <popover-menu id="more-text-menu" anchor="more-text-button">
+        <popover-menu id="more-text-menu">
           <Menu>
             <MenuItemGroup label="Position">
               <MenuItem
