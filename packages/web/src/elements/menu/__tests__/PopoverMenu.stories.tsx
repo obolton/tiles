@@ -12,7 +12,7 @@ export const Default: Story = {
       <button id="button" popovertarget="menu">
         Open menu
       </button>
-      <popover-menu id="menu" anchor="button">
+      <popover-menu id="menu">
         <menu>
           <li>
             <button>First item</button>
