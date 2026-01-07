@@ -84,4 +84,77 @@ describe("getLinkMetadata", () => {
       ),
     );
   });
+
+  test("parses og:image from name attribute", async () => {
+    const html = `<!doctype html>
+    <html>
+    <head>
+      <title>Test Page</title>
+      <meta name="og:image" content="https://example.com/image.png">
+    </head>
+    <body></body>
+    </html>`;
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(html, { status: 200 }),
+    );
+
+    const metadata = await getLinkMetadata("https://example.com/page");
+
+    expect(metadata?.imageUrl).toBe("https://example.com/image.png");
+  });
+
+  test("parses og:image:url and og:image:secure_url variants", async () => {
+    const html = `<!doctype html>
+    <html>
+    <head>
+      <title>Test Page</title>
+      <meta property="og:image:secure_url" content="https://example.com/secure.png">
+    </head>
+    <body></body>
+    </html>`;
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(html, { status: 200 }),
+    );
+
+    const metadata = await getLinkMetadata("https://example.com/page");
+
+    expect(metadata?.imageUrl).toBe("https://example.com/secure.png");
+  });
+
+  test("prefers og:image over og:image:url variants", async () => {
+    const html = `<!doctype html>
+    <html>
+    <head>
+      <title>Test Page</title>
+      <meta property="og:image:secure_url" content="https://example.com/secure.png">
+      <meta property="og:image" content="https://example.com/canonical.png">
+    </head>
+    <body></body>
+    </html>`;
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(html, { status: 200 }),
+    );
+
+    const metadata = await getLinkMetadata("https://example.com/page");
+
+    expect(metadata?.imageUrl).toBe("https://example.com/canonical.png");
+  });
+
+  test("resolves relative image URLs to absolute URLs", async () => {
+    const html = `<!doctype html>
+    <html>
+    <head>
+      <title>Test Page</title>
+      <meta property="og:image" content="/images/og.png">
+    </head>
+    <body></body>
+    </html>`;
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(html, { status: 200 }),
+    );
+
+    const metadata = await getLinkMetadata("https://example.com/page");
+
+    expect(metadata?.imageUrl).toBe("https://example.com/images/og.png");
+  });
 });

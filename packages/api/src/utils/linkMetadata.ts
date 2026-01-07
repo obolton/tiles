@@ -10,6 +10,8 @@ type LinkMetadata = {
   ogImageUrl: string | null;
 };
 
+// TODO: Validate image URL types (especially to filter SVGs which could contain scripts)
+
 async function parseDocument(url: string, language: string) {
   const response = await fetch(url, {
     headers: {
@@ -55,17 +57,29 @@ async function parseDocument(url: string, language: string) {
             }
             data.description = content;
           }
-          if (attributes.property?.startsWith("og:")) {
+          const ogProperty = attributes.property?.startsWith("og:")
+            ? attributes.property
+            : attributes.name?.startsWith("og:")
+              ? attributes.name
+              : null;
+          if (ogProperty) {
             const content = attributes.content?.trim();
             if (!content) {
               return;
             }
-            switch (attributes.property) {
+            switch (ogProperty) {
               case "og:title":
                 data.ogTitle = content;
                 break;
               case "og:image":
                 data.ogImageUrl = content;
+                break;
+              case "og:image:url":
+              case "og:image:secure_url":
+                // Fallback to variants only if og:image not already set
+                if (!data.ogImageUrl) {
+                  data.ogImageUrl = content;
+                }
                 break;
               case "og:site_name":
                 data.ogSiteName = content;
@@ -115,7 +129,7 @@ export async function getLinkMetadata(
       title: ogTitle || title,
       description: ogDescription || description,
       siteName: ogSiteName,
-      imageUrl: ogImageUrl,
+      imageUrl: ogImageUrl ? new URL(ogImageUrl, url).href : null,
     };
   } catch (error) {
     console.error(
