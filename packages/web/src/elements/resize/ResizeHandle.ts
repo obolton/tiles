@@ -7,6 +7,18 @@ export interface ResizeHandleAttributes {
   direction?: ResizeDirection;
 }
 
+declare global {
+  interface HTMLElementTagNameMap {
+    "resize-handle": ResizeHandle;
+  }
+}
+
+declare module "@/jsx/html-attributes" {
+  interface HTMLAttributesByTagName {
+    "resize-handle": ResizeHandleAttributes;
+  }
+}
+
 export default class ResizeHandle extends HTMLElement {
   static readonly observedAttributes: (keyof ResizeHandleAttributes)[] = [
     "direction",
