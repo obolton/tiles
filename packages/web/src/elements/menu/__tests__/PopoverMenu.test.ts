@@ -1,4 +1,12 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+
+vi.hoisted(() => {
+  vi.stubGlobal("CSS", {
+    registerProperty: vi.fn(),
+    supports: vi.fn((property: string) => property !== "anchor-name"),
+  });
+});
+
 import PopoverMenu from "../PopoverMenu";
 
 describe("PopoverMenu", () => {
@@ -8,7 +16,6 @@ describe("PopoverMenu", () => {
   beforeEach(() => {
     menu = document.createElement("popover-menu") as PopoverMenu;
     menu.id = "menu";
-    menu.setAttribute("anchor", "button");
     document.body.appendChild(menu);
 
     vi.spyOn(menu, "offsetWidth", "get").mockReturnValue(200);
@@ -33,13 +40,18 @@ describe("PopoverMenu", () => {
   });
 
   describe("anchorElement", () => {
-    it("should return the anchor element", () => {
+    it("should return null before the popover is opened", () => {
+      expect(menu.anchorElement).toBeNull();
+    });
+
+    it("should return the trigger element after the popover is opened", () => {
+      menu.showPopover();
       expect(menu.anchorElement).toBe(button);
     });
 
-    it("should return null if the anchor attribute is missing", () => {
-      menu.removeAttribute("anchor");
-      expect(menu.anchorElement).toBeNull();
+    it("should return the element specified by anchor attribute", () => {
+      menu.setAttribute("anchor", "button");
+      expect(menu.anchorElement).toBe(button);
     });
 
     it("should return null if the anchor element does not exist", () => {
@@ -55,6 +67,48 @@ describe("PopoverMenu", () => {
 
       menu.hidePopover();
       expect(button.getAttribute("aria-expanded")).toBe("false");
+    });
+  });
+
+  describe("trigger capture", () => {
+    it("should capture the focused trigger element", () => {
+      button.focus();
+      menu.showPopover();
+
+      expect(menu.anchorElement).toBe(button);
+    });
+
+    it("should support multiple triggers for one popover", () => {
+      const button2 = document.createElement("button");
+      button2.setAttribute("popovertarget", menu.id);
+      document.body.appendChild(button2);
+
+      vi.spyOn(button2, "getBoundingClientRect").mockReturnValue({
+        top: 200,
+        right: 300,
+        bottom: 220,
+        left: 200,
+        width: 100,
+        height: 20,
+      } as DOMRect);
+
+      button2.focus();
+      menu.showPopover();
+
+      expect(menu.anchorElement).toBe(button2);
+      expect(button2.getAttribute("aria-expanded")).toBe("true");
+      expect(button.getAttribute("aria-expanded")).toBeNull();
+    });
+
+    it("should clear the trigger element on close", () => {
+      button.focus();
+      menu.showPopover();
+
+      expect(menu.anchorElement).toBe(button);
+
+      menu.hidePopover();
+
+      expect(menu.anchorElement).toBeNull();
     });
   });
 
