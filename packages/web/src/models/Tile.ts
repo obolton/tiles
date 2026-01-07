@@ -260,20 +260,28 @@ export default class Tile {
     return this.updateTile({ hide });
   }
 
-  async setDock(dock: DockEdge | null) {
-    if (dock === this.dock.value) {
+  async setDock(dock: DockEdge | null, afterId?: string | null) {
+    if (dock === this.dock.value && afterId === undefined) {
       return;
     }
 
     this.dock.value = dock;
 
     if (dock) {
-      this.editor.dockedTiles[dock].append(this);
+      if (afterId !== undefined) {
+        this.editor.dockedTiles[dock].insertAfter(afterId, this);
+      } else {
+        this.editor.dockedTiles[dock].append(this);
+      }
     } else {
-      this.editor.tiles.append(this);
+      if (afterId !== undefined) {
+        this.editor.tiles.insertAfter(afterId, this);
+      } else {
+        this.editor.tiles.append(this);
+      }
     }
 
-    await this.updateTile({ dock });
+    await this.updateTile({ dock, afterId });
   }
 
   async setTheme(themeId: string | null) {
