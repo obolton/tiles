@@ -4,6 +4,7 @@
   align-items: center;
   gap: 8px;
   user-select: none;
+  anchor-name: --list-select-anchor;
 }
 
 ::slotted(svg) {
@@ -22,6 +23,8 @@
 }
 
 #items {
+  position: fixed;
+  inset: auto;
   display: flex;
   gap: 4px;
   margin: 16px 0;
@@ -38,6 +41,13 @@
     overlay var(--animation-duration) allow-discrete,
     scale var(--animation-duration) var(--spring),
     opacity var(--animation-duration) var(--spring);
+
+  @supports (anchor-name: --anchor) {
+    position-anchor: --list-select-anchor;
+    inset-block-start: anchor(end);
+    inset-inline-start: anchor(start);
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+  }
 
   &:popover-open {
     @starting-style {
