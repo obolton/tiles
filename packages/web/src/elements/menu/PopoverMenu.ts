@@ -1,6 +1,7 @@
 import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const VIEWPORT_MARGIN = 64;
+const SUPPORTS_ANCHOR_POSITIONING = CSS.supports("anchor-name", "--anchor");
 
 type Alignment = "left" | "center" | "right" | "auto";
 
@@ -30,10 +31,16 @@ export default class PopoverMenu extends HTMLElement {
   align: Alignment = "auto";
 
   #anchorElement: HTMLElement | null = null;
+  #triggerElement: HTMLElement | null = null;
+  #positionAbortController: AbortController | null = null;
 
   get anchorElement() {
     if (this.#anchorElement) {
       return this.#anchorElement;
+    }
+
+    if (this.#triggerElement) {
+      return this.#triggerElement;
     }
 
     const id = this.getAttribute("anchor");
@@ -57,6 +64,10 @@ export default class PopoverMenu extends HTMLElement {
     this.popover = "auto";
   }
 
+  disconnectedCallback() {
+    this.#cleanup();
+  }
+
   attributeChangedCallback(
     name: keyof PopoverMenuAttributes,
     _: string | null,
@@ -64,7 +75,7 @@ export default class PopoverMenu extends HTMLElement {
   ) {
     switch (name) {
       case "anchor":
-        if (this.hasAttribute("open")) {
+        if (this.matches(":popover-open")) {
           this.setPosition();
         }
         return;
@@ -84,6 +95,9 @@ export default class PopoverMenu extends HTMLElement {
         return this.handleBeforeToggle(event as ToggleEvent);
       case "toggle":
         return this.handleToggle(event as ToggleEvent);
+      case "scroll":
+      case "resize":
+        return this.setPosition();
     }
   }
 
@@ -92,24 +106,84 @@ export default class PopoverMenu extends HTMLElement {
       return;
     }
 
-    // Hide the element until we have moved it into position
     if (event.newState === "open") {
-      this.style.setProperty("visibility", "hidden");
+      this.#triggerElement = this.#getTriggerElement();
+      if (!SUPPORTS_ANCHOR_POSITIONING) {
+        this.style.setProperty("visibility", "hidden");
+      }
+    }
+
+    if (this.#triggerElement) {
+      this.#triggerElement.ariaExpanded =
+        event.newState === "open" ? "true" : "false";
+    }
+  }
+
+  #getTriggerElement(): HTMLElement | null {
+    const activeElement = document.activeElement;
+    if (
+      activeElement instanceof HTMLElement &&
+      activeElement.getAttribute("popovertarget") === this.id
+    ) {
+      return activeElement;
     }
 
     const trigger = document.querySelector(`[popovertarget="${this.id}"]`);
-    if (trigger) {
-      trigger.ariaExpanded = event.newState === "open" ? "true" : "false";
+    if (trigger instanceof HTMLElement) {
+      return trigger;
     }
+
+    return null;
   }
 
   protected handleToggle(event: ToggleEvent) {
     if (event.newState === "open") {
-      requestAnimationFrame(() => {
-        this.setPosition();
-        this.style.removeProperty("visibility");
-      });
+      if (SUPPORTS_ANCHOR_POSITIONING) {
+        this.#applyAnchorPositioning();
+      } else {
+        requestAnimationFrame(() => {
+          this.setPosition();
+          this.style.removeProperty("visibility");
+          this.#addPositionListeners();
+        });
+      }
+    } else {
+      this.#cleanup();
     }
+  }
+
+  #applyAnchorPositioning() {
+    const anchor = this.anchorElement;
+    if (!anchor) {
+      return;
+    }
+
+    const anchorName = `--${this.id}-anchor`;
+    anchor.style.anchorName = anchorName;
+    this.style.positionAnchor = anchorName;
+  }
+
+  #addPositionListeners() {
+    this.#positionAbortController = new AbortController();
+    const { signal } = this.#positionAbortController;
+
+    window.addEventListener("scroll", this, { passive: true, signal });
+    window.addEventListener("resize", this, { passive: true, signal });
+  }
+
+  #cleanup() {
+    if (SUPPORTS_ANCHOR_POSITIONING) {
+      const anchor = this.anchorElement;
+      if (anchor) {
+        anchor.style.anchorName = "";
+      }
+      this.style.positionAnchor = "";
+    } else {
+      this.#positionAbortController?.abort();
+      this.#positionAbortController = null;
+    }
+
+    this.#triggerElement = null;
   }
 
   private getHorizontalAlignment(anchorBounds: DOMRect, width: number) {
