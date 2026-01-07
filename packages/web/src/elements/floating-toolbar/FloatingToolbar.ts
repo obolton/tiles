@@ -228,7 +228,9 @@ export default class FloatingToolbar extends HTMLElement {
     // Prevent buttons from stealing focus
     if (
       event.target instanceof Element &&
-      event.target.matches('button, input[type="button"]')
+      event.target.matches(
+        'button:not([popovertarget]), input[type="button"]:not([popovertarget])',
+      )
     ) {
       event.preventDefault();
     }
