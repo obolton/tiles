@@ -1,3 +1,5 @@
+@layer base, variants;
+
 @property --background-color {
   syntax: "<color>";
   inherits: true;
@@ -204,12 +206,6 @@ mark {
 
 .right {
   text-align: right;
-}
-
-.destructive {
-  --icon-color: var(--destructive-color);
-
-  color: var(--destructive-color);
 }
 
 aside {
