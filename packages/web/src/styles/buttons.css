@@ -169,11 +169,11 @@ list-select[orientation="horizontal"] .option {
   }
 
   &:is(
-    :active:not(:disabled),
-    [aria-pressed="true"],
-    [aria-checked="true"],
-    [aria-expanded="true"]
-  ):not([aria-disabled="true"]) {
+      :active:not(:disabled),
+      [aria-pressed="true"],
+      [aria-checked="true"],
+      [aria-expanded="true"]
+    ):not([aria-disabled="true"]) {
     &::before {
       background-color: rgb(0 0 0 / 20%);
     }
