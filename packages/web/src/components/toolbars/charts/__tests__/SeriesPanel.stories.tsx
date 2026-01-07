@@ -23,12 +23,7 @@ export const Default: Story = {
         <button id="series-button" popovertarget="series-panel">
           Open Series Panel
         </button>
-        <SeriesPanel
-          id="series-panel"
-          anchor="series-button"
-          chart={chart}
-          table={table}
-        />
+        <SeriesPanel id="series-panel" chart={chart} table={table} />
       </>
     );
   },
@@ -49,12 +44,7 @@ export const Empty: Story = {
         <button id="empty-series-button" popovertarget="empty-series-panel">
           Open Series Panel
         </button>
-        <SeriesPanel
-          id="empty-series-panel"
-          anchor="empty-series-button"
-          chart={chart}
-          table={table}
-        />
+        <SeriesPanel id="empty-series-panel" chart={chart} table={table} />
       </>
     );
   },
@@ -90,12 +80,7 @@ export const WithUnnamedColumns: Story = {
         <button id="unnamed-series-button" popovertarget="unnamed-series-panel">
           Open Series Panel
         </button>
-        <SeriesPanel
-          id="unnamed-series-panel"
-          anchor="unnamed-series-button"
-          chart={chart}
-          table={table}
-        />
+        <SeriesPanel id="unnamed-series-panel" chart={chart} table={table} />
       </>
     );
   },
