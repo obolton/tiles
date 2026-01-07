@@ -1,0 +1,30 @@
+import { z } from "zod";
+import { createLink } from "@/routes/links/links.ts";
+import type { FunctionToolOptions, ToolContext } from "./types.ts";
+
+const CreateLinkSchema = z.strictObject({
+  url: z.string().meta({
+    description: "A URL to create a link to",
+  }),
+});
+
+async function createLinkArtifact(
+  args: z.infer<typeof CreateLinkSchema>,
+  { pageId, sectionId }: ToolContext,
+) {
+  const artifact = await createLink({
+    pageId,
+    sectionId,
+    url: args.url,
+    width: 24,
+    height: 8,
+  });
+  return { artifact };
+}
+
+export const CREATE_LINK_TOOL: FunctionToolOptions<typeof CreateLinkSchema> = {
+  name: "create_link",
+  description: "Creates a link card for a URL.",
+  schema: CreateLinkSchema,
+  function: createLinkArtifact,
+};
