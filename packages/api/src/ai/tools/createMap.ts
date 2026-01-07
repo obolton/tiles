@@ -9,6 +9,9 @@ import { createMap } from "@/routes/maps/maps.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateMapSchema = z.strictObject({
+  sectionId: z.string().nullable().meta({
+    description: "Section ID to place this content inside a section, or null",
+  }),
   size: z
     .enum(["small", "medium", "large"])
     .meta({ description: "The size of the map." }),
@@ -54,12 +57,15 @@ function getDimensions(size: "small" | "medium" | "large"): Dimensions {
 
 async function createMapArtifact(
   args: z.infer<typeof CreateMapSchema>,
-  { pageId, sectionId, model }: ToolContext,
+  { pageId, sectionId, model, resolveArtifactId }: ToolContext,
 ) {
   const { places, size } = args;
+  const resolvedSectionId = args.sectionId
+    ? resolveArtifactId(args.sectionId)
+    : sectionId;
   const artifact = await createMap({
     pageId,
-    sectionId,
+    sectionId: resolvedSectionId,
     ...getDimensions(size),
     places: places.map(({ name, lat, long, address }) => ({
       name,

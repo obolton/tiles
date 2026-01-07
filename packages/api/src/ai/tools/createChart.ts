@@ -3,6 +3,9 @@ import { createChart, getTableColumns } from "@/routes/charts/charts.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateChartSchema = z.strictObject({
+  sectionId: z.string().nullable().meta({
+    description: "Section ID to place this content inside a section, or null",
+  }),
   tableId: z.string().meta({
     description: "The ID of the table to visualize (from create_table result)",
   }),
@@ -30,6 +33,9 @@ async function createChartArtifact(
   args: z.infer<typeof CreateChartSchema>,
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
+  const resolvedSectionId = args.sectionId
+    ? resolveArtifactId(args.sectionId)
+    : sectionId;
   const tableId = resolveArtifactId(args.tableId);
   const columns = await getTableColumns(pageId, tableId);
 
@@ -51,7 +57,7 @@ async function createChartArtifact(
 
   const artifact = await createChart({
     pageId,
-    sectionId,
+    sectionId: resolvedSectionId,
     tableId,
     labelColumnId,
     series,

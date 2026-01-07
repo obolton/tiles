@@ -4,6 +4,9 @@ import { ColorSchema } from "@/schema/Color.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateTextSchema = z.strictObject({
+  sectionId: z.string().nullable().meta({
+    description: "Section ID to place this content inside a section, or null",
+  }),
   textColor: ColorSchema.nullable().meta({
     description:
       "The text color, or null to use the default text color of the document.",
@@ -53,12 +56,15 @@ function getDimensions(size: CreateTextSchemaType["size"]): Dimensions {
 
 async function createTextArtifact(
   args: z.infer<typeof CreateTextSchema>,
-  { pageId, sectionId }: ToolContext,
+  { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
   const { textColor, backgroundColor, align, size } = args;
+  const resolvedSectionId = args.sectionId
+    ? resolveArtifactId(args.sectionId)
+    : sectionId;
   const artifact = await createText({
     pageId,
-    sectionId,
+    sectionId: resolvedSectionId,
     ...getDimensions(size),
     content: [
       {

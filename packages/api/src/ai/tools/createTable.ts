@@ -3,6 +3,9 @@ import { createTableWithData } from "@/routes/tables/tables.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateTableSchema = z.strictObject({
+  sectionId: z.string().nullable().meta({
+    description: "Section ID to place this content inside a section, or null",
+  }),
   columns: z
     .array(
       z.strictObject({
@@ -23,11 +26,14 @@ const CreateTableSchema = z.strictObject({
 
 async function createTableArtifact(
   args: z.infer<typeof CreateTableSchema>,
-  { pageId, sectionId }: ToolContext,
+  { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
+  const resolvedSectionId = args.sectionId
+    ? resolveArtifactId(args.sectionId)
+    : sectionId;
   const artifact = await createTableWithData({
     pageId,
-    sectionId,
+    sectionId: resolvedSectionId,
     columns: args.columns,
     rows: args.rows,
   });

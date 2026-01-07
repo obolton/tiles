@@ -3,6 +3,9 @@ import { createLink } from "@/routes/links/links.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateLinkSchema = z.strictObject({
+  sectionId: z.string().nullable().meta({
+    description: "Section ID to place this content inside a section, or null",
+  }),
   url: z.string().meta({
     description: "A URL to create a link to",
   }),
@@ -10,11 +13,14 @@ const CreateLinkSchema = z.strictObject({
 
 async function createLinkArtifact(
   args: z.infer<typeof CreateLinkSchema>,
-  { pageId, sectionId }: ToolContext,
+  { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
+  const resolvedSectionId = args.sectionId
+    ? resolveArtifactId(args.sectionId)
+    : sectionId;
   const artifact = await createLink({
     pageId,
-    sectionId,
+    sectionId: resolvedSectionId,
     url: args.url,
     width: 24,
     height: 8,
