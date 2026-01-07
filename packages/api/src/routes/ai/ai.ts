@@ -78,6 +78,13 @@ export async function* write(
     pageId,
     sectionId,
     model: TEXT_MODEL,
+    resolveArtifactId: (id: string) => {
+      const artifactId = artifactIds.get(id);
+      if (!artifactId) {
+        throw new Error(`Unknown artifact: ${id}`);
+      }
+      return artifactId;
+    },
   };
 
   let turn = 0;
