@@ -3,6 +3,7 @@
   z-index: 1;
   display: flex;
   padding: 24px;
+  gap: 24px;
 
   &[data-empty] {
     display: none;
@@ -98,12 +99,93 @@
 
 .top .item,
 .bottom .item {
-  flex: 1;
+  flex: var(--width) 1 0%;
+  width: auto;
   height: 100%;
 }
 
 .left .item,
 .right .item {
-  flex: 1;
+  flex: var(--height) 1 0%;
   width: 100%;
+  height: auto;
+}
+
+.top :global(.drag-placeholder),
+.bottom :global(.drag-placeholder) {
+  flex: var(--width, 1) 1 0%;
+  width: auto;
+  height: 100%;
+}
+
+.left :global(.drag-placeholder),
+.right :global(.drag-placeholder) {
+  flex: var(--height, 1) 1 0%;
+  width: 100%;
+  height: auto;
+}
+
+.zone resize-handle {
+  background: var(--highlight-color);
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity var(--animation-duration-short) var(--easing);
+
+  &:hover {
+    opacity: 0.5;
+  }
+
+  &:state(resizing) {
+    opacity: 1;
+  }
+}
+
+.zone-resize {
+  position: absolute;
+  z-index: 2;
+}
+
+.top .zone-resize {
+  inset: auto 24px -4px;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+.bottom .zone-resize {
+  inset: -4px 24px auto;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+.left .zone-resize {
+  inset: 24px -4px 24px auto;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+.right .zone-resize {
+  inset: 24px auto 24px -4px;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+.zone :global(.tile-divider) {
+  flex: 0 0 auto;
+  z-index: 1;
+}
+
+.top :global(.tile-divider),
+.bottom :global(.tile-divider) {
+  width: 8px;
+  height: 100%;
+  margin: 0 -16px;
+  cursor: ew-resize;
+}
+
+.left :global(.tile-divider),
+.right :global(.tile-divider) {
+  width: 100%;
+  height: 8px;
+  margin: -16px 0;
+  cursor: ns-resize;
 }

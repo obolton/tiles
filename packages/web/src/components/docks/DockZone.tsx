@@ -3,10 +3,14 @@ import If from "@/jsx/if";
 import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
 import DockLayoutEditor from "./DockLayoutEditor";
+import { ResizeEvent } from "@/elements/resize/events";
 import styles from "./DockZone.module.css";
 import type Editor from "@/editor/Editor";
 import type { DockEdge } from "@/models/Tile";
 import type TileCollection from "@/models/TileCollection";
+
+const MIN_DOCK_SIZE = 100;
+const MAX_DOCK_RATIO = 0.5; // 50% of viewport
 
 export interface DockZoneProps {
   editor: Editor;
@@ -19,8 +23,9 @@ type EdgeStyle = "top" | "bottom" | "left" | "right";
 export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
   const isEmpty = tiles.derive((items) => items.length === 0);
   const edgeStyle = edge.toLowerCase() as EdgeStyle;
+  const isHorizontal = edge === "TOP" || edge === "BOTTOM";
 
-  const dimension = edge === "TOP" || edge === "BOTTOM" ? "height" : "width";
+  const dimension = isHorizontal ? "height" : "width";
 
   const zoneStyle = editor.dockSizes.derive((sizes) => {
     const size = sizes[edge];
@@ -38,6 +43,39 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
       edge,
       editor,
     });
+  }
+
+  const zoneResizeDirection = isHorizontal ? "vertical" : "horizontal";
+
+  function onZoneResizeEnd(event: ResizeEvent) {
+    const initialSize = editor.dockSizes.value[edge] ?? 0;
+
+    let delta: number;
+    switch (edge) {
+      case "LEFT":
+        delta = event.x;
+        break;
+      case "RIGHT":
+        delta = -event.x;
+        break;
+      case "TOP":
+        delta = event.y;
+        break;
+      case "BOTTOM":
+        delta = -event.y;
+        break;
+    }
+
+    const maxSize = isHorizontal
+      ? window.innerHeight * MAX_DOCK_RATIO
+      : window.innerWidth * MAX_DOCK_RATIO;
+
+    const newSize = Math.max(
+      MIN_DOCK_SIZE,
+      Math.min(maxSize, initialSize + delta),
+    );
+
+    editor.setDockSizes({ [edge]: newSize });
   }
 
   const Element =
@@ -64,6 +102,14 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
             />
           )}
         </Each>
+
+        <If condition={editor.isEditable}>
+          <resize-handle
+            direction={zoneResizeDirection}
+            classList={{ [styles["zone-resize"]]: true }}
+            on:resizeend={onZoneResizeEnd}
+          />
+        </If>
       </Element>
     </If>
   );
