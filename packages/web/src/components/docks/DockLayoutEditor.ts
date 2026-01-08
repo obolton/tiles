@@ -4,6 +4,7 @@ import {
   createDragPlaceholder,
   getDragPosition,
 } from "@/utils/drag-placeholder";
+import { viewTransition } from "@/utils/transitions";
 import { ResizeEvent } from "@/elements/resize/events";
 import type Editor from "@/editor/Editor";
 import type { DragDropEvent } from "@/utils/drag";
@@ -168,7 +169,9 @@ export default class DockLayoutEditor {
   private ensureDockSize() {
     const currentSize = this.editor.dockSizes.value[this.edge];
     if (currentSize === null) {
-      this.editor.setDockSizes({ [this.edge]: DEFAULT_DOCK_SIZE });
+      viewTransition(() => {
+        this.editor.setDockSizes({ [this.edge]: DEFAULT_DOCK_SIZE });
+      });
     }
   }
 
