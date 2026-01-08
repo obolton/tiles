@@ -5,6 +5,7 @@ import {
   MIN_LONGITUDE,
   MAX_LONGITUDE,
 } from "@/constants/geo.ts";
+import { MapStyle } from "@/generated/prisma/client";
 import { createMap } from "@/routes/maps/maps.ts";
 import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
@@ -35,13 +36,20 @@ const CreateMapSchema = z.strictObject({
     .min(1)
     .max(20)
     .meta({ description: "A list of places to show on the map." }),
+  style: z
+    .enum(["default", "satellite", "watercolor", "monochrome"])
+    .nullable()
+    .meta({
+      description:
+        "The visual style of the map: default, satellite, watercolor, or monochrome.",
+    }),
 });
 
 async function createMapArtifact(
   args: z.infer<typeof CreateMapSchema>,
   { pageId, sectionId, model, resolveArtifactId }: ToolContext,
 ) {
-  const { places, size } = args;
+  const { places, size, style } = args;
   const resolvedSectionId = args.sectionId
     ? resolveArtifactId(args.sectionId)
     : sectionId;
@@ -49,6 +57,7 @@ async function createMapArtifact(
     pageId,
     sectionId: resolvedSectionId,
     ...getDimensions(size),
+    style: style ? (style.toUpperCase() as MapStyle) : undefined,
     places: places.map(({ name, lat, long, address }) => ({
       name,
       lat,
