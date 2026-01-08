@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createChart, getTableColumns } from "@/routes/charts/charts.ts";
+import { ColorSchema } from "@/schema/Color.ts";
 import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
@@ -8,6 +9,9 @@ const CreateChartSchema = z.strictObject({
     description: "Section ID to place this content inside a section, or null",
   }),
   size: SizeSchema,
+  backgroundColor: ColorSchema.nullable().meta({
+    description: "Background color for the chart, or null for transparent",
+  }),
   tableId: z.string().meta({
     description: "The ID of the table to visualize (from create_table result)",
   }),
@@ -21,8 +25,11 @@ const CreateChartSchema = z.strictObject({
         columnIndex: z.number().int().min(0).meta({
           description: "Column index (0-based) containing numeric data",
         }),
-        type: z.enum(["bar", "line", "area"]).default("bar").meta({
+        type: z.enum(["bar", "line", "area"]).meta({
           description: "Chart type for this series",
+        }),
+        color: ColorSchema.nullable().meta({
+          description: "Fill color for this series, or null for default",
         }),
       }),
     )
