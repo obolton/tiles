@@ -61,8 +61,13 @@ async function createChartArtifact(
     return {
       columnId: column.id,
       type: s.type.toUpperCase() as "BAR" | "LINE" | "AREA",
+      fill: s.color ? { type: "color" as const, color: s.color } : undefined,
     };
   });
+
+  const background = args.backgroundColor
+    ? { type: "color" as const, color: args.backgroundColor }
+    : undefined;
 
   const artifact = await createChart({
     pageId,
@@ -70,6 +75,7 @@ async function createChartArtifact(
     tableId,
     labelColumnId,
     series,
+    background,
     ...getDimensions(args.size),
   });
 
