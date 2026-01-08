@@ -1,7 +1,18 @@
-body[data-resize] {
-  cursor: nwse-resize;
-
+body[data-resize],
+body:has(resize-handle:state(resizing)) {
   & * {
     pointer-events: none;
   }
+}
+
+body[data-resize] {
+  cursor: nwse-resize;
+}
+
+body:has(resize-handle[direction="horizontal"]:state(resizing)) {
+  cursor: ew-resize;
+}
+
+body:has(resize-handle[direction="vertical"]:state(resizing)) {
+  cursor: ns-resize;
 }
