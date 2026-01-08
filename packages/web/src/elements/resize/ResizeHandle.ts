@@ -97,7 +97,7 @@ export default class ResizeHandle extends HTMLElement {
         x: 0,
         y: 0,
         cancelable: true,
-        bubbles: false,
+        bubbles: true,
       }),
     );
     if (!allowResize) {
@@ -128,7 +128,7 @@ export default class ResizeHandle extends HTMLElement {
         x: this.deltaX,
         y: this.deltaY,
         cancelable: false,
-        bubbles: false,
+        bubbles: true,
       }),
     );
 
@@ -152,7 +152,7 @@ export default class ResizeHandle extends HTMLElement {
         x: this.deltaX,
         y: this.deltaY,
         cancelable: false,
-        bubbles: false,
+        bubbles: true,
       }),
     );
 
