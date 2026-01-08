@@ -1,11 +1,13 @@
 import { z } from "zod";
 import { createChart, getTableColumns } from "@/routes/charts/charts.ts";
+import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateChartSchema = z.strictObject({
   sectionId: z.string().nullable().meta({
     description: "Section ID to place this content inside a section, or null",
   }),
+  size: SizeSchema,
   tableId: z.string().meta({
     description: "The ID of the table to visualize (from create_table result)",
   }),
@@ -61,8 +63,7 @@ async function createChartArtifact(
     tableId,
     labelColumnId,
     series,
-    width: 30,
-    height: 20,
+    ...getDimensions(args.size),
   });
 
   return { artifact };

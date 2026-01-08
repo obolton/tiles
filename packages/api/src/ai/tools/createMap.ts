@@ -6,15 +6,14 @@ import {
   MAX_LONGITUDE,
 } from "@/constants/geo.ts";
 import { createMap } from "@/routes/maps/maps.ts";
+import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateMapSchema = z.strictObject({
   sectionId: z.string().nullable().meta({
     description: "Section ID to place this content inside a section, or null",
   }),
-  size: z
-    .enum(["small", "medium", "large"])
-    .meta({ description: "The size of the map." }),
+  size: SizeSchema,
   places: z
     .array(
       z.strictObject({
@@ -37,23 +36,6 @@ const CreateMapSchema = z.strictObject({
     .max(20)
     .meta({ description: "A list of places to show on the map." }),
 });
-
-interface Dimensions {
-  width: number;
-  height: number;
-}
-
-function getDimensions(size: "small" | "medium" | "large"): Dimensions {
-  switch (size) {
-    case "small":
-      return { width: 12, height: 10 };
-    case "medium":
-      return { width: 24, height: 15 };
-    case "large":
-    default:
-      return { width: 24, height: 20 };
-  }
-}
 
 async function createMapArtifact(
   args: z.infer<typeof CreateMapSchema>,

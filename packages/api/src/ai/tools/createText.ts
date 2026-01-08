@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createText } from "@/routes/text/text.ts";
 import { ColorSchema } from "@/schema/Color.ts";
+import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateTextSchema = z.strictObject({
@@ -19,9 +20,7 @@ const CreateTextSchema = z.strictObject({
     .enum(["left", "center", "right"])
     .nullable()
     .meta({ description: "The horizontal alignment of the text." }),
-  size: z
-    .enum(["large", "small"])
-    .meta({ description: "The size of the text section." }),
+  size: SizeSchema,
 });
 
 type CreateTextSchemaType = z.infer<typeof CreateTextSchema>;
@@ -36,21 +35,6 @@ function getTextAlignment(value: CreateTextSchemaType["align"]) {
       return 2;
     default:
       return 0;
-  }
-}
-
-interface Dimensions {
-  width: number;
-  height: number;
-}
-
-function getDimensions(size: CreateTextSchemaType["size"]): Dimensions {
-  switch (size) {
-    case "small":
-      return { width: 12, height: 10 };
-    case "large":
-    default:
-      return { width: 24, height: 20 };
   }
 }
 

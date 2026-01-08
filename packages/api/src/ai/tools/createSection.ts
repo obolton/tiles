@@ -1,9 +1,11 @@
 import { z } from "zod";
 import { createSection } from "@/routes/sections/sections.ts";
 import { ColorSchema } from "@/schema/Color.ts";
+import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateSectionSchema = z.strictObject({
+  size: SizeSchema,
   layout: z
     .enum(["grid", "horizontal", "vertical", "freeform"])
     .nullable()
@@ -35,8 +37,7 @@ async function createSectionArtifact(
     pageId,
     layout,
     background,
-    width: 24,
-    height: 12,
+    ...getDimensions(args.size),
   });
 
   return { artifact };
