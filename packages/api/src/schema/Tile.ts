@@ -1,10 +1,5 @@
 import { z } from "zod";
-import {
-  Anchor,
-  Animation,
-  Dimensions,
-  DockEdge,
-} from "@/generated/prisma/enums";
+import { Animation, Dimensions, DockEdge } from "@/generated/prisma/enums";
 import { BackgroundSchema } from "./Background";
 import { ColorSchema } from "./Color";
 
@@ -13,7 +8,6 @@ const MIN_SIZE_PERCENT = 1;
 const MAX_ROWS = 32;
 
 export const TileSchema = z.object({
-  anchor: z.enum(Anchor).nullable().optional(),
   dimensions: z.enum(Dimensions).optional(),
   width: z.number().gte(MIN_SIZE_PERCENT).lte(MAX_PERCENT).optional(),
   height: z.number().gte(MIN_SIZE_PERCENT).lte(MAX_PERCENT).optional(),
