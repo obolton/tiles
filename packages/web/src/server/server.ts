@@ -217,7 +217,7 @@ async function renderRoute(
         ...bodyAttributes,
         children: component(data),
         hydrate:
-          typeof data !== "undefined"
+          data !== undefined
             ? { module: resolveImport(route.moduleUrl), data }
             : undefined,
       }),

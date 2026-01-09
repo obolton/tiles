@@ -17,9 +17,7 @@ interface MutableRange {
 }
 
 function isEmptyNode(node: JSX.Node) {
-  return (
-    typeof node === "boolean" || typeof node === "undefined" || node === null
-  );
+  return typeof node === "boolean" || node === undefined || node === null;
 }
 
 function isTextNode(node: JSX.Node) {
@@ -453,7 +451,7 @@ function renderDOMElement(
   const childrenNamespace =
     type === "foreignObject" ? XHTML_NAMESPACE : newNamespace;
 
-  if (children !== null && typeof children !== "undefined") {
+  if (children !== null && children !== undefined) {
     element.append(...render(children, childrenNamespace, signal));
   }
 

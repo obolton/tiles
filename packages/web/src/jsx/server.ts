@@ -35,11 +35,7 @@ export function renderToString(node: JSX.Node): string {
     return node.toString();
   }
 
-  if (
-    typeof node === "boolean" ||
-    typeof node === "undefined" ||
-    node === null
-  ) {
+  if (typeof node === "boolean" || node === undefined || node === null) {
     return "";
   }
 
