@@ -10,7 +10,7 @@ import type {
   DockEdge,
 } from "api/types/tiles";
 import type { Theme } from "api/types/themes";
-import type { Fill } from "@/components/fills/types";
+import type { Fill, FillUpdate } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
 import type Editor from "@/editor/Editor";
 import type { AppRouterInputs } from "@/api/client";
@@ -58,6 +58,8 @@ export default class Tile {
       hide,
       dock,
       theme,
+      textColor,
+      background,
     } = properties;
     this.editor = editor;
 
@@ -77,8 +79,8 @@ export default class Tile {
     this.hide = reactive(hide);
     this.dock = reactive(dock);
     this.theme = reactive(theme);
-    this.background = reactive(null);
-    this.textColor = reactive(null);
+    this.textColor = reactive(textColor);
+    this.background = reactive(background);
   }
 
   get index(): number | null {
@@ -287,6 +289,16 @@ export default class Tile {
   async setTheme(themeId: string | null) {
     const result = await this.updateTile({ themeId });
     this.theme.value = result.theme;
+  }
+
+  setTextColor(textColor: Color | null) {
+    this.textColor.value = textColor;
+    return this.updateTile({ textColor });
+  }
+
+  async setBackground(background: FillUpdate) {
+    const result = await this.updateTile({ background });
+    this.background.value = result.background;
   }
 
   async moveUp() {
