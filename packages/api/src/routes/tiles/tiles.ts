@@ -5,11 +5,17 @@ import {
   getTileOrderQuery,
   duplicateTileQuery,
 } from "@/generated/prisma/sql";
+import {
+  getTextColorProperties,
+  getBackgroundProperties,
+} from "@/utils/themes";
 import type {
   UpdateTileSchema,
   DuplicateTileSchema,
   DeleteTilesSchema,
 } from "./schema";
+import type { ColorSchema } from "@/schema/Color";
+import type { BackgroundSchema } from "@/schema/Background";
 import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
 import type { TileType } from "@/generated/prisma/enums";
@@ -157,6 +163,8 @@ export async function updateTile(
     hide,
     themeId,
     dock,
+    textColor,
+    background,
   }: UpdateTileSchema,
   { workspaceId }: AuthenticatedPageProcedureContext,
 ) {
@@ -208,6 +216,8 @@ export async function updateTile(
         hide,
         themeId,
         dock,
+        ...getTextColorProperties(textColor),
+        ...getBackgroundProperties(background),
       },
       select: TILE_FIELDS,
     });
@@ -279,12 +289,23 @@ type CreateTileProperties = RequireExactlyOne<{
 
 type CreateTileOptions<T extends TileType> = Omit<
   Prisma.TileUncheckedCreateInput,
-  "id" | "createdAt" | "updatedAt" | "type" | "order" | "y"
+  | "id"
+  | "createdAt"
+  | "updatedAt"
+  | "type"
+  | "order"
+  | "y"
+  | "textColor"
+  | "backgroundColor"
+  | "backgroundGradient"
+  | "backgroundImageId"
 > &
   CreateTileProperties & {
     type: T;
     afterId?: string | null;
     y?: number;
+    textColor?: ColorSchema | null;
+    background?: BackgroundSchema | null;
   };
 
 export async function createTile<
@@ -306,6 +327,8 @@ export async function createTile<
     block,
     animation,
     hide,
+    textColor,
+    background,
     section,
     text,
     image,
@@ -358,6 +381,8 @@ export async function createTile<
       block,
       animation,
       hide,
+      ...getTextColorProperties(textColor),
+      ...getBackgroundProperties(background),
       section: section ? { create: section } : undefined,
       text: text ? { create: text } : undefined,
       image: image ? { create: image } : undefined,

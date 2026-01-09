@@ -30,6 +30,8 @@ export const TILE_FIELDS = {
   animation: true,
   hide: true,
   dock: true,
+  textColor: true,
+  background: true,
 } as const satisfies Prisma.TileSelect<ExtensionArgs>;
 
 export const FULL_TILE_FIELDS = {
@@ -62,6 +64,12 @@ export const FULL_TILE_FIELDS = {
     select: CHART_FIELDS,
   },
 } as const satisfies Prisma.TileSelect<ExtensionArgs>;
+
+export type TileBase = Prisma.Result<
+  typeof prisma.tile,
+  { select: typeof TILE_FIELDS },
+  "findUniqueOrThrow"
+>;
 
 export type FullTile = Prisma.Result<
   typeof prisma.tile,
