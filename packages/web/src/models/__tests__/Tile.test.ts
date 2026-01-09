@@ -97,7 +97,6 @@ describe("Tile", () => {
     expect(tile.type).toBe(TILE.type);
     expect(tile.sectionId).toBeNull();
     expect(tile.order.value).toBe(TILE.order);
-    expect(tile.anchor.value).toBe(TILE.anchor);
     expect(tile.dimensions.value).toBe(TILE.dimensions);
     expect(tile.x.value).toBe(TILE.x);
     expect(tile.y.value).toBe(TILE.y);
@@ -154,35 +153,6 @@ describe("Tile", () => {
       expect(tile.animation.value).toBeNull();
       expect(client.tiles.update.mutate).toHaveBeenCalledWith({
         animation: null,
-        pageId: PAGE.id,
-        id: TILE.id,
-      });
-    });
-  });
-
-  describe("setAnchor", () => {
-    test("updates the anchor and persists the change", async () => {
-      const tile = new Tile(editor, TILE);
-      const anchor = "TOP";
-
-      await tile.setAnchor(anchor);
-
-      expect(tile.anchor.value).toBe(anchor);
-      expect(client.tiles.update.mutate).toHaveBeenCalledWith({
-        anchor,
-        pageId: PAGE.id,
-        id: TILE.id,
-      });
-    });
-
-    test("clears the anchor", async () => {
-      const tile = new Tile(editor, TILE);
-
-      await tile.setAnchor(null);
-
-      expect(tile.anchor.value).toBeNull();
-      expect(client.tiles.update.mutate).toHaveBeenCalledWith({
-        anchor: null,
         pageId: PAGE.id,
         id: TILE.id,
       });
