@@ -8,11 +8,7 @@ import {
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 import type { ClientChartTile } from "api/types/tiles";
-import type {
-  FillUpdate,
-  ColorFill,
-  GradientFill,
-} from "@/components/fills/types";
+import type { ColorFill, GradientFill } from "@/components/fills/types";
 import type { AppRouterInputs } from "@/api/client";
 
 export interface Property {
@@ -51,7 +47,7 @@ export default class Chart extends Tile {
   constructor(editor: Editor, properties: ClientChartTile) {
     super(editor, properties);
 
-    const { tableId, label, series, background } = properties;
+    const { tableId, label, series } = properties;
     this.tableId = tableId;
     this.label = reactive(label);
     this.series = array<Series>(
@@ -62,7 +58,6 @@ export default class Chart extends Tile {
         fill: reactive(fill),
       })),
     );
-    this.background.value = background;
   }
 
   private update(
@@ -73,11 +68,6 @@ export default class Chart extends Tile {
       pageId: this.editor.pageId,
       id: this.id,
     });
-  }
-
-  async setBackground(background: FillUpdate) {
-    const result = await this.update({ background });
-    this.background.value = result.background;
   }
 
   // Label

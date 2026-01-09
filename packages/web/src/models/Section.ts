@@ -4,7 +4,6 @@ import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import type { ClientSectionTile, Layout } from "api/types/tiles";
 import type Editor from "@/editor/Editor";
-import type { FillUpdate } from "@/components/fills/types";
 import type { AppRouterInputs } from "@/api/client";
 
 export default class Section extends Tile {
@@ -28,9 +27,8 @@ export default class Section extends Tile {
   constructor(editor: Editor, properties: ClientSectionTile) {
     super(editor, properties);
 
-    const { layout, background } = properties;
+    const { layout } = properties;
     this.layout = reactive(layout);
-    this.background.value = background;
     this.block.value = false;
     this.tiles = new TileCollection(this.id);
   }
@@ -48,10 +46,5 @@ export default class Section extends Tile {
   setLayout(layout: Layout) {
     this.layout.value = layout;
     return this.update({ layout });
-  }
-
-  async setBackground(background: FillUpdate) {
-    const result = await this.update({ background });
-    this.background.value = result.background;
   }
 }

@@ -8,7 +8,6 @@ import {
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 import type { ClientTableTile } from "api/types/tiles";
-import type { Color } from "@/utils/color";
 import type { Fill, FillUpdate } from "@/components/fills/types";
 import type { RichText } from "@/utils/richText/types";
 import type { AppRouterInputs } from "@/api/client";
@@ -49,32 +48,10 @@ export default class Table extends Tile {
   constructor(editor: Editor, properties: ClientTableTile) {
     super(editor, properties);
 
-    const { textColor, background, columns, rows, numRows } = properties;
-    this.textColor.value = textColor;
-    this.background.value = background;
+    const { columns, rows, numRows } = properties;
     this.columns = array(columns);
     this.rows = array(rows);
     this.numRows = reactive(numRows);
-  }
-
-  private update(
-    properties: Omit<AppRouterInputs["tables"]["update"], "pageId" | "id">,
-  ) {
-    return client.tables.update.mutate({
-      ...properties,
-      pageId: this.editor.pageId,
-      id: this.id,
-    });
-  }
-
-  setTextColor(textColor: Color | null) {
-    this.textColor.value = textColor;
-    this.update({ textColor });
-  }
-
-  async setBackground(background: FillUpdate) {
-    const result = await this.update({ background });
-    this.background.value = result.background;
   }
 
   // Columns

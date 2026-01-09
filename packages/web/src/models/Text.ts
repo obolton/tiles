@@ -5,8 +5,6 @@ import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 import type { ClientTextTile } from "api/types/tiles";
 import type { EditorState } from "prosemirror-state";
-import type { Color } from "@/utils/color";
-import type { FillUpdate } from "@/components/fills/types";
 import type { AppRouterInputs } from "@/api/client";
 
 export default class Text extends Tile {
@@ -31,11 +29,9 @@ export default class Text extends Tile {
   constructor(editor: Editor, properties: ClientTextTile) {
     super(editor, properties);
 
-    const { content, align, textColor, background } = properties;
+    const { content, align } = properties;
     this.content = reactive(content);
     this.align = reactive(align);
-    this.textColor.value = textColor;
-    this.background.value = background;
     this.state = reactive(null);
   }
 
@@ -52,16 +48,6 @@ export default class Text extends Tile {
   setVerticalAlignment(align: ClientTextTile["align"]) {
     this.align.value = align;
     return this.update({ align });
-  }
-
-  setTextColor(textColor: Color | null) {
-    this.textColor.value = textColor;
-    return this.update({ textColor });
-  }
-
-  async setBackground(background: FillUpdate) {
-    const result = await this.update({ background });
-    this.background.value = result.background;
   }
 
   persist() {
