@@ -3,7 +3,6 @@ import client from "@/api/client";
 import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
 import type {
   ClientTile,
-  Anchor,
   Dimensions,
   Animation,
   TileType,
@@ -16,7 +15,7 @@ import type Editor from "@/editor/Editor";
 import type { AppRouterInputs } from "@/api/client";
 import type TileCollection from "./TileCollection";
 
-export type { Anchor, Dimensions, Animation, DockEdge };
+export type { Dimensions, Animation, DockEdge };
 
 export default class Tile {
   readonly editor: Editor;
@@ -26,7 +25,6 @@ export default class Tile {
   parent: TileCollection | null = null;
 
   readonly order: Reactive<string>;
-  readonly anchor: Reactive<Anchor | null>;
   readonly dimensions: Reactive<Dimensions>;
   readonly x: Reactive<number>;
   readonly y: Reactive<number>;
@@ -45,7 +43,6 @@ export default class Tile {
       id,
       type,
       order,
-      anchor,
       dimensions,
       x,
       y,
@@ -65,7 +62,6 @@ export default class Tile {
     this.type = type;
 
     this.order = reactive(order);
-    this.anchor = reactive(anchor);
     this.dimensions = reactive(dimensions);
     this.x = reactive(x);
     this.y = reactive(y);
@@ -190,11 +186,6 @@ export default class Tile {
     }
 
     return this.updateTile({ sectionId, afterId, x, y, width, height });
-  }
-
-  setAnchor(anchor: Anchor | null) {
-    this.anchor.value = anchor;
-    return this.updateTile({ anchor });
   }
 
   setDimensions(dimensions: Dimensions) {
