@@ -171,7 +171,6 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
 
       <toolbar-tab name="style" label="Style">
         <StyleTools tile={section} />
-        <TileTools tile={section} />
       </toolbar-tab>
     </floating-toolbar>
   );

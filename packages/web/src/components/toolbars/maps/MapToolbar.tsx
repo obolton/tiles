@@ -88,7 +88,6 @@ export default function MapToolbar({
 
       <toolbar-tab name="style" label="Style">
         <StyleTools tile={map} />
-        <TileTools tile={map} />
       </toolbar-tab>
 
       <If condition={hasSelection}>

@@ -24,7 +24,6 @@ export default function ImageToolbar({ image, editorView }: ImageToolbarProps) {
 
       <toolbar-tab name="style" label="Style">
         <StyleTools tile={image} />
-        <TileTools tile={image} />
       </toolbar-tab>
     </floating-toolbar>
   );

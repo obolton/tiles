@@ -51,7 +51,6 @@ export default function LinkToolbar({ link }: LinkToolbarProps) {
 
       <toolbar-tab name="style" label="Style">
         <StyleTools tile={link} />
-        <TileTools tile={link} />
       </toolbar-tab>
     </floating-toolbar>
   );

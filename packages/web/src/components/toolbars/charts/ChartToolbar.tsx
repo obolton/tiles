@@ -44,7 +44,6 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
 
       <toolbar-tab name="style" label="Style">
         <StyleTools tile={chart} />
-        <TileTools tile={chart} />
       </toolbar-tab>
     </floating-toolbar>
   );
