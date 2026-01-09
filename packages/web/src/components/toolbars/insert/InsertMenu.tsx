@@ -58,16 +58,13 @@ export default function InsertMenu({
     }
 
     const insertSectionId =
-      typeof sectionId === "undefined"
-        ? Editor.current.activeSection?.id
-        : sectionId;
+      sectionId === undefined ? Editor.current.activeSection?.id : sectionId;
 
     switch (tileType) {
       case "TEXT":
         Text.create(Editor.current, {
           sectionId: insertSectionId,
           afterId,
-          block: true,
           content: [{ type: "paragraph", children: [] }],
         }).catch(handleError);
         break;
