@@ -15,15 +15,22 @@ vi.mock("@/api/client", () => ({
         mutate: vi.fn(),
       },
     },
+    tiles: {
+      update: {
+        mutate: vi.fn(),
+      },
+    },
   },
 }));
 
 describe("Text", () => {
   const editor = Editor.init(PAGE);
   const textUpdateMock = vi.mocked(client.text.update.mutate);
+  const tileUpdateMock = vi.mocked(client.tiles.update.mutate);
 
   afterEach(() => {
     textUpdateMock.mockReset();
+    tileUpdateMock.mockReset();
   });
 
   test("maps properties to reactive values", () => {
@@ -60,7 +67,7 @@ describe("Text", () => {
       await text.setTextColor(textColor);
 
       expect(text.textColor.value).toBe(textColor);
-      expect(textUpdateMock).toHaveBeenCalledWith({
+      expect(tileUpdateMock).toHaveBeenCalledWith({
         pageId: PAGE.id,
         id: TEXT_TILE.id,
         textColor,
@@ -84,14 +91,14 @@ describe("Text", () => {
         direction: "VERTICAL",
       };
 
-      textUpdateMock.mockResolvedValue({
+      tileUpdateMock.mockResolvedValue({
         ...TEXT_TILE,
         background,
       });
 
       await text.setBackground(backgroundUpdate);
 
-      expect(textUpdateMock).toHaveBeenCalledWith({
+      expect(tileUpdateMock).toHaveBeenCalledWith({
         pageId: PAGE.id,
         id: TEXT_TILE.id,
         background: backgroundUpdate,

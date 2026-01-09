@@ -25,6 +25,8 @@ const SHARED = {
   animation: "FADE",
   hide: false,
   dock: null,
+  textColor: null,
+  background: null,
 } as const;
 
 export const TILE: ClientTile = {
@@ -32,8 +34,6 @@ export const TILE: ClientTile = {
   id: "tile-id",
   type: "TEXT",
   align: "TOP",
-  textColor: null,
-  background: null,
   content: [],
 };
 
@@ -42,8 +42,6 @@ export const TEXT_TILE: ClientTextTile = {
   id: "tile-id",
   type: "TEXT",
   align: "TOP",
-  textColor: null,
-  background: null,
   content: [
     {
       type: "paragraph",
@@ -152,8 +150,6 @@ export const TABLE_TILE: ClientTableTile = {
   ...SHARED,
   id: "table-id",
   type: "TABLE",
-  textColor: null,
-  background: null,
   numRows: 3,
   columns: [
     { id: "col-1", title: "Revenue", width: 100, background: null },
@@ -173,7 +169,6 @@ export const CHART_TILE: ClientChartTile = {
   id: "chart-id",
   type: "CHART",
   tableId: "table-id",
-  background: null,
   label: { id: "col-1", title: "Revenue" },
   series: [
     {

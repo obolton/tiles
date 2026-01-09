@@ -23,6 +23,11 @@ vi.mock("@/api/client", () => ({
         mutate: vi.fn(),
       },
     },
+    tiles: {
+      update: {
+        mutate: vi.fn(),
+      },
+    },
   },
 }));
 
@@ -32,6 +37,7 @@ describe("Chart", () => {
   const addSeriesMock = vi.mocked(client.charts.addSeries.mutate);
   const updateSeriesMock = vi.mocked(client.charts.updateSeries.mutate);
   const deleteSeriesMock = vi.mocked(client.charts.deleteSeries.mutate);
+  const tileUpdateMock = vi.mocked(client.tiles.update.mutate);
 
   afterEach(() => {
     vi.clearAllMocks();
@@ -71,14 +77,14 @@ describe("Chart", () => {
         direction: "VERTICAL",
       };
 
-      updateMock.mockResolvedValue({
+      tileUpdateMock.mockResolvedValue({
         ...CHART_TILE,
         background,
       });
 
       await chart.setBackground({ type: "color", color: colorA });
 
-      expect(updateMock).toHaveBeenCalledWith({
+      expect(tileUpdateMock).toHaveBeenCalledWith({
         pageId: PAGE.id,
         id: CHART_TILE.id,
         background: { type: "color", color: colorA },
