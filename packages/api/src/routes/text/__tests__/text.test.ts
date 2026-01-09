@@ -12,8 +12,6 @@ const MOCK_TEXT: Text = {
       children: [{ type: "text", text: "Test content", format: 0 }],
     },
   ],
-  textColor: "ffff00000000",
-  background: null,
   align: "TOP",
 };
 
