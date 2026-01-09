@@ -155,7 +155,6 @@ export async function createPage(
         y: 0,
         width: 24,
         height: 1,
-        block: true,
         text: {
           create: {
             pageId: page.id,

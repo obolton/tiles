@@ -158,7 +158,6 @@ export async function updateTile(
     x,
     y,
     rowSpan,
-    block,
     animation,
     hide,
     themeId,
@@ -186,9 +185,9 @@ export async function updateTile(
     }
 
     let order = undefined;
-    if (typeof afterId !== "undefined") {
+    if (afterId !== undefined) {
       const orderSectionId =
-        typeof sectionId === "undefined"
+        sectionId === undefined
           ? await getTileSectionId(transaction, { id, pageId })
           : sectionId;
       order = await getTileOrder(
@@ -211,7 +210,6 @@ export async function updateTile(
         rowSpan,
         x,
         y,
-        block,
         animation,
         hide,
         themeId,
@@ -324,7 +322,6 @@ export async function createTile<
     x,
     y,
     rowSpan = 1,
-    block,
     animation,
     hide,
     textColor,
@@ -378,7 +375,6 @@ export async function createTile<
       rowSpan,
       x: insertX,
       y: insertY,
-      block,
       animation,
       hide,
       ...getTextColorProperties(textColor),

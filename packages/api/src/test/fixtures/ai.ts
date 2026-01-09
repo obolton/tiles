@@ -24,7 +24,6 @@ export const MOCK_TILE_PLACEMENT = {
   anchor: null,
   dimensions: "CUSTOM" as const,
   rowSpan: 1,
-  block: false,
   animation: null,
   hide: false,
   dock: null,

@@ -20,7 +20,6 @@ const SHARED = {
   width: 11,
   height: 13,
   rowSpan: 2,
-  block: false,
   animation: "FADE",
   hide: false,
   dock: null,
