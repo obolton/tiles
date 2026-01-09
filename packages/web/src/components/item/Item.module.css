@@ -52,7 +52,7 @@
     view-transition-name: outline;
   }
 
-  &.block {
+  &.auto-height {
     height: auto;
   }
 

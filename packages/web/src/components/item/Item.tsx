@@ -40,9 +40,14 @@ export interface ItemProps {
   resize?: Reactive<ResizeDirection | null>;
   showInsertButton?: boolean;
   fullBleed?: boolean;
+  autoHeight?: boolean;
 }
 
-function getTileComponent(tile: Tile, showToolbar: Reactive<boolean>) {
+function getTileComponent(
+  tile: Tile,
+  showToolbar: Reactive<boolean>,
+  autoHeight: boolean,
+) {
   if (tile instanceof SectionModel) {
     return <Section section={tile} showToolbar={showToolbar} />;
   }
@@ -53,7 +58,9 @@ function getTileComponent(tile: Tile, showToolbar: Reactive<boolean>) {
     return <VideoTile video={tile} />;
   }
   if (tile instanceof TextModel) {
-    return <TextTile text={tile} showToolbar={showToolbar} />;
+    return (
+      <TextTile text={tile} showToolbar={showToolbar} autoHeight={autoHeight} />
+    );
   }
   if (tile instanceof MapModel) {
     return <MapTile map={tile} showToolbar={showToolbar} />;
@@ -107,9 +114,9 @@ export default function Item({
   resize,
   showInsertButton = false,
   fullBleed = false,
+  autoHeight = false,
 }: ItemProps) {
-  const { id, dimensions, x, y, width, height, rowSpan, block, hide, editor } =
-    tile;
+  const { id, dimensions, x, y, width, height, rowSpan, hide, editor } = tile;
 
   let item: PageItem;
   const ref = (element: PageItem) => {
@@ -215,7 +222,7 @@ export default function Item({
           [styles.item]: true,
           [styles.draggable]: editable,
           [styles.selected]: isSelected,
-          [styles.block]: block,
+          [styles["auto-height"]]: autoHeight,
           [styles.hide]: hide,
           [styles["full-bleed"]]: fullBleed,
           ...classList,
@@ -225,7 +232,7 @@ export default function Item({
         on:pointerdown={onPointerDown}
         on:dnd-dragstart={onDragStart}
       >
-        {getTileComponent(tile, showToolbar)}
+        {getTileComponent(tile, showToolbar, autoHeight)}
 
         {showInsertButton && (
           <If condition={isSelected}>
