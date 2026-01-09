@@ -22,7 +22,6 @@ export type ChartSeries = Prisma.Result<
 export const CHART_FIELDS = {
   id: true,
   tableId: true,
-  background: true,
   label: {
     select: {
       id: true,

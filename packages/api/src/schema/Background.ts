@@ -19,12 +19,10 @@ export const ImageBackgroundSchema = z.object({
   imageId: z.uuid(),
 });
 
-export const BackgroundSchema = z
-  .discriminatedUnion("type", [
-    ColorBackgroundSchema,
-    GradientBackgroundSchema,
-    ImageBackgroundSchema,
-  ])
-  .nullable();
+export const BackgroundSchema = z.discriminatedUnion("type", [
+  ColorBackgroundSchema,
+  GradientBackgroundSchema,
+  ImageBackgroundSchema,
+]);
 
 export type BackgroundSchema = z.infer<typeof BackgroundSchema>;
