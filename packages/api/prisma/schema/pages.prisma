@@ -131,7 +131,6 @@ model Tile {
   rowSpan    Int        @default(1) @map("row_span") @db.SmallInt
   x          Float      @default(0) @db.Real
   y          Float      @default(0) @db.Real
-  block      Boolean    @default(false)
   animation  Animation?
   hide       Boolean    @default(false)
   dock       DockEdge?
