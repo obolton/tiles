@@ -20,6 +20,7 @@ export default function MapTile({ map, showToolbar }: MapTileProps) {
   const hasSelection = reactive(false);
   const {
     places,
+    animation,
     editor: { isEditable },
   } = map;
 
@@ -48,7 +49,7 @@ export default function MapTile({ map, showToolbar }: MapTileProps) {
   };
 
   return (
-    <Tile border="inside">
+    <Tile animation={animation} border="inside">
       <If condition={showToolbar}>
         <Portal>
           <MapToolbar

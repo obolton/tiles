@@ -26,12 +26,13 @@ export default function VideoTile({ video }: VideoTileProps) {
     videoId,
     imageUrl,
     title,
+    animation,
     editor: { isEditable },
   } = video;
   const embedUrl = getEmbedUrl(videoType, videoId);
 
   return (
-    <Tile>
+    <Tile animation={animation}>
       <figure className={styles.figure}>
         <embedded-video
           id={`${id}-video`}
