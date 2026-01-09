@@ -29,12 +29,9 @@ model Image {
   workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   imageTiles   ImageTile[]
-  textTiles    TextTile[]
-  tables       Table[]
+  tiles        Tile[]        @relation("BackgroundImage")
   tableColumns TableColumn[]
   tableRows    TableRow[]
-  charts       Chart[]
-  sections     Section[]
 
   @@index([workspaceId, purpose])
   @@index([userId])

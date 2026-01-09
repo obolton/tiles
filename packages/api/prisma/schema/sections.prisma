@@ -6,19 +6,15 @@ enum Layout {
 }
 
 model Section {
-  id                 String             @id @default(uuid()) @db.Uuid
-  pageId             String             @map("page_id") @db.Uuid
-  createdAt          DateTime           @default(now()) @map("created_at")
-  updatedAt          DateTime           @default(now()) @updatedAt @map("updated_at")
-  layout             Layout             @default(GRID)
-  backgroundColor    Bytes?             @map("background_color") @db.ByteA
-  backgroundGradient GradientDirection? @map("background_gradient")
-  backgroundImageId  String?            @map("background_image_id") @db.Uuid
+  id        String   @id @default(uuid()) @db.Uuid
+  pageId    String   @map("page_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  layout    Layout   @default(GRID)
 
-  page            Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  items           Tile[] @relation("ParentSection")
-  tile            Tile   @relation("Tile", fields: [id], references: [id], onDelete: Cascade)
-  backgroundImage Image? @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
+  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  items Tile[] @relation("ParentSection")
+  tile  Tile   @relation("Tile", fields: [id], references: [id], onDelete: Cascade)
 
   @@index([pageId])
   @@map("sections")

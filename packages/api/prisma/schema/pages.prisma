@@ -136,18 +136,24 @@ model Tile {
   hide       Boolean    @default(false)
   dock       DockEdge?
 
-  page          Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  theme         Theme?        @relation(fields: [themeId], references: [id], onDelete: SetNull)
-  parentSection Section?      @relation("ParentSection", fields: [sectionId], references: [id], onDelete: Cascade)
-  section       Section?      @relation("Tile")
-  text          TextTile?
-  image         ImageTile?
-  video         VideoTile?
-  link          LinkTile?
-  pageLink      PageLinkTile?
-  map           MapTile?
-  table         Table?
-  chart         Chart?
+  textColor          Bytes?             @map("text_color") @db.ByteA
+  backgroundColor    Bytes?             @map("background_color") @db.ByteA
+  backgroundGradient GradientDirection? @map("background_gradient")
+  backgroundImageId  String?            @map("background_image_id") @db.Uuid
+
+  page            Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  theme           Theme?        @relation(fields: [themeId], references: [id], onDelete: SetNull)
+  backgroundImage Image?        @relation("BackgroundImage", fields: [backgroundImageId], references: [id], onDelete: SetNull)
+  parentSection   Section?      @relation("ParentSection", fields: [sectionId], references: [id], onDelete: Cascade)
+  section         Section?      @relation("Tile")
+  text            TextTile?
+  image           ImageTile?
+  video           VideoTile?
+  link            LinkTile?
+  pageLink        PageLinkTile?
+  map             MapTile?
+  table           Table?
+  chart           Chart?
 
   @@index([pageId])
   @@index([sectionId])
@@ -163,16 +169,11 @@ model TextTile {
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
   /// [RichText]
-  content            Json               @db.JsonB
-  textColor          Bytes?             @map("text_color") @db.ByteA
-  backgroundColor    Bytes?             @map("background_color") @db.ByteA
-  backgroundGradient GradientDirection? @map("background_gradient")
-  backgroundImageId  String?            @map("background_image_id") @db.Uuid
-  align              VerticalAlignment  @default(TOP)
+  content Json              @db.JsonB
+  align   VerticalAlignment @default(TOP)
 
-  page            Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tile            Tile   @relation(fields: [id], references: [id], onDelete: Cascade)
-  backgroundImage Image? @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tile Tile @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@index([pageId])
   @@map("text_tiles")
@@ -291,17 +292,11 @@ model Table {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  textColor          Bytes?             @map("text_color") @db.ByteA
-  backgroundColor    Bytes?             @map("background_color") @db.ByteA
-  backgroundGradient GradientDirection? @map("background_gradient")
-  backgroundImageId  String?            @map("background_image_id") @db.Uuid
-
-  page            Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tile            Tile          @relation(fields: [id], references: [id], onDelete: Cascade)
-  backgroundImage Image?        @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
-  columns         TableColumn[]
-  rows            TableRow[]
-  charts          Chart[]
+  page    Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tile    Tile          @relation(fields: [id], references: [id], onDelete: Cascade)
+  columns TableColumn[]
+  rows    TableRow[]
+  charts  Chart[]
 
   @@index([pageId])
   @@map("table_tiles")
@@ -367,19 +362,14 @@ model Chart {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  tableId            String             @map("table_id") @db.Uuid
-  labelColumnId      String?            @map("label_column_id") @db.Uuid
-  textColor          Bytes?             @map("text_color") @db.ByteA
-  backgroundColor    Bytes?             @map("background_color") @db.ByteA
-  backgroundGradient GradientDirection? @map("background_gradient")
-  backgroundImageId  String?            @map("background_image_id") @db.Uuid
+  tableId       String  @map("table_id") @db.Uuid
+  labelColumnId String? @map("label_column_id") @db.Uuid
 
-  page            Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tile            Tile          @relation(fields: [id], references: [id], onDelete: Cascade)
-  backgroundImage Image?        @relation(fields: [backgroundImageId], references: [id], onDelete: SetNull)
-  table           Table         @relation(fields: [tableId], references: [id], onDelete: Cascade)
-  label           TableColumn?  @relation(fields: [labelColumnId], references: [id], onDelete: SetNull)
-  series          ChartSeries[]
+  page   Page          @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tile   Tile          @relation(fields: [id], references: [id], onDelete: Cascade)
+  table  Table         @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  label  TableColumn?  @relation(fields: [labelColumnId], references: [id], onDelete: SetNull)
+  series ChartSeries[]
 
   @@index([pageId])
   @@index([tableId])
