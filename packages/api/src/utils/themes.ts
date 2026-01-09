@@ -52,7 +52,7 @@ export interface TextColor {
 export function getTextColorProperties(
   textColor?: ColorSchema | null,
 ): TextColor {
-  if (typeof textColor === "undefined") {
+  if (textColor === undefined) {
     return { textColor: undefined };
   }
   if (textColor === null) {
@@ -70,7 +70,7 @@ export interface Background {
 export function getBackgroundProperties(
   background?: BackgroundSchema | null,
 ): Background | undefined {
-  if (typeof background === "undefined") {
+  if (background === undefined) {
     return undefined;
   }
 

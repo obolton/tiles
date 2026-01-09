@@ -124,7 +124,7 @@ export class MarkdownTransformer implements Transformer<
   ) {
     this.advance(controller, skip);
 
-    if (typeof state.destination !== "undefined") {
+    if (state.destination !== undefined) {
       this.destination = state.destination;
       this.format = {};
       this.node = null;
@@ -132,7 +132,7 @@ export class MarkdownTransformer implements Transformer<
       controller.enqueue({ destination: this.destination });
     }
 
-    if (typeof state.node !== "undefined") {
+    if (state.node !== undefined) {
       this.node = state.node;
       this.lineBreak = null;
       if (this.node) {
@@ -149,7 +149,7 @@ export class MarkdownTransformer implements Transformer<
       Object.assign(this.format, state.format);
     }
 
-    if (typeof state.lineBreak !== "undefined") {
+    if (state.lineBreak !== undefined) {
       this.lineBreak = state.lineBreak;
     }
   }

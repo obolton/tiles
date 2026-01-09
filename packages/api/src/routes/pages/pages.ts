@@ -178,7 +178,7 @@ export async function createPage(
 function getBackgroundColorProperties(
   color?: ColorSchema | null,
 ): Pick<Prisma.PageCreateInput, "backgroundColor"> {
-  if (typeof color === "undefined" || color === null) {
+  if (color === undefined || color === null) {
     return { backgroundColor: color };
   }
   return { backgroundColor: new Uint8Array(Buffer.from(color, "hex")) };

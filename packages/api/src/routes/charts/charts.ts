@@ -20,7 +20,7 @@ export async function getTableColumns(pageId: string, tableId: string) {
 }
 
 function getSeriesFillData(fill?: BackgroundSchema | null) {
-  if (typeof fill === "undefined") {
+  if (fill === undefined) {
     return {};
   }
   if (fill === null) {
