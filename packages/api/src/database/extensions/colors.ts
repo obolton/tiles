@@ -11,13 +11,7 @@ export default Prisma.defineExtension({
           backgroundColor ? toHex(backgroundColor) : null,
       },
     },
-    textTile: {
-      textColor: {
-        needs: { textColor: true },
-        compute: ({ textColor }) => (textColor ? toHex(textColor) : null),
-      },
-    },
-    table: {
+    tile: {
       textColor: {
         needs: { textColor: true },
         compute: ({ textColor }) => (textColor ? toHex(textColor) : null),
