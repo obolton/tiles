@@ -35,10 +35,19 @@ describe("Tile", () => {
       const tile = new Tile(editor, { ...TILE, sectionId: null });
       editor.addTile(tile, null, null, false);
 
-      const duplicatedTile = { ...TILE, id: "duplicated-tile-id", sectionId: null };
-      vi.mocked(client.tiles.duplicate.mutate).mockResolvedValue([duplicatedTile]);
+      const duplicatedTile = {
+        ...TILE,
+        id: "duplicated-tile-id",
+        sectionId: null,
+      };
+      vi.mocked(client.tiles.duplicate.mutate).mockResolvedValue([
+        duplicatedTile,
+      ]);
 
-      const result = await tile.duplicate({ sectionId: null, afterId: tile.id });
+      const result = await tile.duplicate({
+        sectionId: null,
+        afterId: tile.id,
+      });
 
       expect(client.tiles.duplicate.mutate).toHaveBeenCalledWith({
         pageId: PAGE.id,
@@ -51,11 +60,21 @@ describe("Tile", () => {
     });
 
     test("duplicates the tile at the start when afterId is null", async () => {
-      const tile = new Tile(editor, { ...TILE, id: "tile-for-null-test", sectionId: null });
+      const tile = new Tile(editor, {
+        ...TILE,
+        id: "tile-for-null-test",
+        sectionId: null,
+      });
       editor.addTile(tile, null, null, false);
 
-      const duplicatedTile = { ...TILE, id: "duplicated-tile-id-2", sectionId: null };
-      vi.mocked(client.tiles.duplicate.mutate).mockResolvedValue([duplicatedTile]);
+      const duplicatedTile = {
+        ...TILE,
+        id: "duplicated-tile-id-2",
+        sectionId: null,
+      };
+      vi.mocked(client.tiles.duplicate.mutate).mockResolvedValue([
+        duplicatedTile,
+      ]);
 
       const result = await tile.duplicate({ sectionId: null, afterId: null });
 
