@@ -5,6 +5,8 @@ import {
   Dimensions,
   DockEdge,
 } from "@/generated/prisma/enums";
+import { BackgroundSchema } from "./Background";
+import { ColorSchema } from "./Color";
 
 const MAX_PERCENT = 100;
 const MIN_SIZE_PERCENT = 1;
@@ -23,6 +25,8 @@ export const TileSchema = z.object({
   hide: z.boolean().optional(),
   themeId: z.uuid().nullable().optional(),
   dock: z.enum(DockEdge).nullable().optional(),
+  textColor: ColorSchema.nullable().optional(),
+  background: BackgroundSchema.nullable().optional(),
 });
 export type TileSchema = z.infer<typeof TileSchema>;
 

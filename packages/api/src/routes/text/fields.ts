@@ -4,8 +4,6 @@ import type { Prisma } from "@/generated/prisma/client";
 export const TEXT_FIELDS = {
   id: true,
   content: true,
-  textColor: true,
-  background: true,
   align: true,
 } as const satisfies Prisma.TextTileSelect<ExtensionArgs>;
 

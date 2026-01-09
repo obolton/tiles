@@ -17,8 +17,6 @@ export const TABLE_ROW_FIELDS = {
 
 export const TABLE_FIELDS = {
   id: true,
-  textColor: true,
-  background: true,
 } as const satisfies Prisma.TableSelect<ExtensionArgs>;
 
 export const TABLE_WITH_DATA_FIELDS = {

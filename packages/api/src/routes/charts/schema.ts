@@ -5,14 +5,13 @@ import { BackgroundSchema } from "@/schema/Background.ts";
 
 const ChartSeriesSchema = z.strictObject({
   type: z.enum(ChartSeriesType).optional(),
-  fill: BackgroundSchema.optional(),
+  fill: BackgroundSchema.nullable().optional(),
 });
 
 export const CreateChartSchema = z.strictObject({
   ...CreateTileSchema.shape,
   tableId: z.uuid(),
   labelColumnId: z.uuid().optional(),
-  background: BackgroundSchema.optional(),
   series: z
     .array(ChartSeriesSchema.extend({ columnId: z.uuid() }))
     .max(10)
@@ -24,7 +23,6 @@ export const UpdateChartSchema = z.strictObject({
   pageId: z.uuid(),
   id: z.uuid(),
   labelColumnId: z.uuid().optional(),
-  background: BackgroundSchema.optional(),
 });
 export type UpdateChartSchema = z.infer<typeof UpdateChartSchema>;
 

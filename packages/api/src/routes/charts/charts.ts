@@ -1,7 +1,6 @@
 import { Buffer } from "node:buffer";
 import prisma from "@/database/prisma";
 import { createTile } from "../tiles/tiles";
-import { getBackgroundProperties } from "@/utils/backgrounds";
 import type {
   CreateChartSchema,
   UpdateChartSchema,
@@ -20,7 +19,7 @@ export async function getTableColumns(pageId: string, tableId: string) {
   });
 }
 
-function getSeriesFillData(fill?: BackgroundSchema) {
+function getSeriesFillData(fill?: BackgroundSchema | null) {
   if (typeof fill === "undefined") {
     return {};
   }
@@ -73,11 +72,11 @@ export async function createChart({
         ...properties,
         pageId,
         type: "CHART",
+        background,
         chart: {
           pageId,
           tableId,
           labelColumnId,
-          ...getBackgroundProperties(background),
           series: {
             createMany: {
               data: series.map((s) => ({
@@ -101,7 +100,6 @@ export async function updateChart({
   pageId,
   id,
   labelColumnId,
-  background,
 }: UpdateChartSchema) {
   const chart = await prisma.$transaction(async (transaction) => {
     if (labelColumnId) {
@@ -122,7 +120,6 @@ export async function updateChart({
       },
       data: {
         labelColumnId,
-        ...getBackgroundProperties(background),
       },
       select: CHART_FIELDS,
     });

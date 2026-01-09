@@ -1,11 +1,9 @@
 import { z } from "zod";
 import { CreateTileSchema } from "@/schema/Tile";
 import { Layout } from "@/generated/prisma/client";
-import { BackgroundSchema } from "@/schema/Background";
 
 export const SectionSchema = z.object({
   layout: z.enum(Layout).optional(),
-  background: BackgroundSchema.optional(),
 });
 
 export const CreateSectionSchema = z.strictObject({

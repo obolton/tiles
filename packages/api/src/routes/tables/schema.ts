@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { CreateTileSchema } from "@/schema/Tile";
 import { RichTextSchema } from "@/schema/RichText.ts";
-import { ColorSchema } from "@/schema/Color.ts";
 import { BackgroundSchema } from "@/schema/Background.ts";
 
 export const CellRangeSchema = z.strictObject({
@@ -38,18 +37,8 @@ export const CreateTableSchema = z.strictObject({
   ...CreateTileSchema.shape,
   columns: z.number().int().min(1).max(100),
   rows: z.number().int().max(10),
-  textColor: ColorSchema.nullable().optional(),
-  background: BackgroundSchema.optional(),
 });
 export type CreateTableSchema = z.infer<typeof CreateTableSchema>;
-
-export const UpdateTableSchema = z.strictObject({
-  pageId: z.uuid(),
-  id: z.uuid(),
-  textColor: ColorSchema.nullable().optional(),
-  background: BackgroundSchema.optional(),
-});
-export type UpdateTableSchema = z.infer<typeof UpdateTableSchema>;
 
 export const InsertRowSchema = z.strictObject({
   pageId: z.uuid(),
@@ -64,7 +53,7 @@ export const UpdateRowSchema = z.strictObject({
   tableId: z.uuid(),
   rowId: z.uuid(),
   height: z.number().min(32).max(400).optional(),
-  background: BackgroundSchema.optional(),
+  background: BackgroundSchema.nullable().optional(),
 });
 export type UpdateRowSchema = z.infer<typeof UpdateRowSchema>;
 
@@ -106,7 +95,7 @@ export const UpdateColumnSchema = z.strictObject({
   columnId: z.uuid(),
   title: z.string().nullable().optional(),
   width: z.number().min(16).max(800).optional(),
-  background: BackgroundSchema.optional(),
+  background: BackgroundSchema.nullable().optional(),
 });
 export type UpdateColumnSchema = z.infer<typeof UpdateColumnSchema>;
 

@@ -1,12 +1,11 @@
 import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
 import prisma from "@/database/prisma";
 import { createTile } from "../tiles/tiles";
-import { getBackgroundProperties } from "@/utils/backgrounds";
+import { getBackgroundProperties } from "@/utils/themes";
 import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
 import type {
   CreateTableSchema,
-  UpdateTableSchema,
   InsertRowSchema,
   UpdateRowSchema,
   MoveRowSchema,
@@ -18,22 +17,11 @@ import type {
   UpdateCellSchema,
   ClearRangesSchema,
 } from "./schema";
-import type { ColorSchema } from "@/schema/Color";
 import {
   TABLE_COLUMN_FIELDS,
   TABLE_ROW_FIELDS,
-  TABLE_FIELDS,
   TABLE_WITH_DATA_FIELDS,
 } from "./fields";
-
-function getTextColorProperties(
-  textColor?: ColorSchema | null,
-): Pick<Prisma.TableCreateInput, "textColor"> {
-  if (typeof textColor === "undefined" || textColor === null) {
-    return { textColor };
-  }
-  return { textColor: new Uint8Array(Buffer.from(textColor, "hex")) };
-}
 
 export async function createTable({
   pageId,
@@ -60,10 +48,10 @@ export async function createTable({
       ...properties,
       type: "TABLE",
       pageId,
+      textColor,
+      background,
       table: {
         pageId,
-        ...getTextColorProperties(textColor),
-        ...getBackgroundProperties(background),
         columns: {
           createMany: {
             data: columnData,
@@ -146,26 +134,6 @@ export async function createTableWithData({
 
   const { _count, ...tableData } = table!;
   return { ...tile, ...tableData, numRows: _count.rows };
-}
-
-export async function updateTable({
-  pageId,
-  id,
-  textColor,
-  background,
-}: UpdateTableSchema) {
-  const table = await prisma.table.update({
-    where: {
-      pageId,
-      id,
-    },
-    data: {
-      ...getTextColorProperties(textColor),
-      ...getBackgroundProperties(background),
-    },
-    select: TABLE_FIELDS,
-  });
-  return { type: "TABLE" as const, ...table };
 }
 
 export async function getRowOrderKeys(
