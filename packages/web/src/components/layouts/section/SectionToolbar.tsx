@@ -1,8 +1,8 @@
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import TileTools from "@/components/toolbars/tiles/TileTools";
+import StyleTools from "@/components/toolbars/tiles/StyleTools";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
-import FillPicker from "@/components/fills/FillPicker";
 import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import HorizontalLayoutIcon from "@/icons/horizontal-layout.svg?jsx";
 import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";
@@ -17,7 +17,6 @@ import SizeIcon from "@/icons/size.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import Editor from "@/editor/Editor";
-import type { FillUpdate } from "@/components/fills/types";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type { Layout, Anchor, Dimensions } from "@/types/pages";
 import type Section from "@/models/Section";
@@ -51,14 +50,6 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
     Editor.current.transitionSections(() => {
       section.setDimensions(dimensions);
     });
-  }
-
-  async function setBackground(value: FillUpdate) {
-    try {
-      await section.setBackground(value);
-    } catch (error) {
-      handleError(error);
-    }
   }
 
   return (
@@ -173,14 +164,13 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
               </ListOption>
             </ListGroup>
           </list-select>
-
-          <FillPicker
-            id={`${section.id}-background`}
-            value={section.background}
-            onChange={setBackground}
-          />
         </ToolbarGroup>
 
+        <TileTools tile={section} />
+      </toolbar-tab>
+
+      <toolbar-tab name="style" label="Style">
+        <StyleTools tile={section} />
         <TileTools tile={section} />
       </toolbar-tab>
     </floating-toolbar>

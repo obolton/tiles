@@ -1,12 +1,10 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import TileTools from "@/components/toolbars/tiles/TileTools";
-import FillPicker from "@/components/fills/FillPicker";
+import StyleTools from "@/components/toolbars/tiles/StyleTools";
 import SeriesPanel from "./SeriesPanel";
 import ChartIcon from "@/icons/chart.svg?jsx";
-import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
-import type { FillUpdate } from "@/components/fills/types";
 import type Chart from "@/models/Chart";
 
 export interface ChartToolbarProps {
@@ -14,14 +12,6 @@ export interface ChartToolbarProps {
 }
 
 export default function ChartToolbar({ chart }: ChartToolbarProps) {
-  async function setBackground(value: FillUpdate) {
-    try {
-      await chart.setBackground(value);
-    } catch (error) {
-      handleError(error);
-    }
-  }
-
   const table = Editor.current.getTable(chart.tableId);
 
   return (
@@ -47,15 +37,13 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
             chart={chart}
             table={table}
           />
-
-          <FillPicker
-            id={`${chart.id}-background`}
-            label="Background"
-            value={chart.background}
-            onChange={setBackground}
-          />
         </ToolbarGroup>
 
+        <TileTools tile={chart} />
+      </toolbar-tab>
+
+      <toolbar-tab name="style" label="Style">
+        <StyleTools tile={chart} />
         <TileTools tile={chart} />
       </toolbar-tab>
     </floating-toolbar>

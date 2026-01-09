@@ -1,4 +1,5 @@
 import TileTools from "@/components/toolbars/tiles/TileTools";
+import StyleTools from "@/components/toolbars/tiles/StyleTools";
 import PlaceTab from "./PlaceTab";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
@@ -82,6 +83,11 @@ export default function MapToolbar({
           </list-select>
         </ToolbarGroup>
 
+        <TileTools tile={map} />
+      </toolbar-tab>
+
+      <toolbar-tab name="style" label="Style">
+        <StyleTools tile={map} />
         <TileTools tile={map} />
       </toolbar-tab>
 

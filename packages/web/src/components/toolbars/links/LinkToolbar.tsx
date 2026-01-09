@@ -1,4 +1,5 @@
 import TileTools from "@/components/toolbars/tiles/TileTools";
+import StyleTools from "@/components/toolbars/tiles/StyleTools";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import LinkIcon from "@/icons/link.svg?jsx";
@@ -45,6 +46,11 @@ export default function LinkToolbar({ link }: LinkToolbarProps) {
           </ToolbarButton>
         </ToolbarGroup>
 
+        <TileTools tile={link} />
+      </toolbar-tab>
+
+      <toolbar-tab name="style" label="Style">
+        <StyleTools tile={link} />
         <TileTools tile={link} />
       </toolbar-tab>
     </floating-toolbar>

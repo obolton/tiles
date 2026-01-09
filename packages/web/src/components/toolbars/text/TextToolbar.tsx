@@ -2,9 +2,8 @@ import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import TileTools from "@/components/toolbars/tiles/TileTools";
+import StyleTools from "@/components/toolbars/tiles/StyleTools";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
-import ColorPicker from "@/components/colors/ColorPicker";
-import FillPicker from "@/components/fills/FillPicker";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
@@ -29,7 +28,7 @@ export interface TextToolbarProps {
 }
 
 export default function TextToolbar({ text, editorView }: TextToolbarProps) {
-  const { id, textColor, background, align, block, animation } = text;
+  const { id, align, block, animation } = text;
 
   function toggleBlock() {
     let height: number | undefined = undefined;
@@ -68,19 +67,8 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
       </toolbar-tab>
 
       <toolbar-tab name="style" label="Style">
-        <ToolbarGroup label="Style">
-          <ColorPicker
-            id={`${id}-color-picker`}
-            value={textColor}
-            onChange={(color) => text.setTextColor(color)}
-          />
-
-          <FillPicker
-            id={`${text.id}-background`}
-            value={background}
-            onChange={(background) => text.setBackground(background)}
-          />
-
+        <StyleTools tile={text} />
+        <ToolbarGroup label="Layout">
           <ToolbarButton
             label="Size to fit contents"
             aria-pressed={block}
