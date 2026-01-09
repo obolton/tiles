@@ -1,6 +1,9 @@
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
+import ThemePicker from "@/components/themes/ThemePicker";
 import ColorPicker from "@/components/colors/ColorPicker";
 import FillPicker from "@/components/fills/FillPicker";
+import AnimationPicker from "@/components/animations/AnimationPicker";
+import { handleError } from "@/utils/errors";
 import type Tile from "@/models/Tile";
 
 export interface StyleToolsProps {
@@ -8,10 +11,22 @@ export interface StyleToolsProps {
 }
 
 export default function StyleTools({ tile }: StyleToolsProps) {
-  const { id, textColor, background } = tile;
+  const { id, textColor, background, editor, theme, animation } = tile;
+
+  function setTheme(themeId: string | null) {
+    tile.setTheme(themeId).catch(handleError);
+  }
 
   return (
     <ToolbarGroup label="Style">
+      <ThemePicker
+        workspaceId={editor.workspaceId}
+        value={theme.derive((t) => t?.id ?? null)}
+        onChange={setTheme}
+        aria-label="Theme"
+        data-tooltip="Theme"
+      />
+
       <ColorPicker
         id={`${id}-color-picker`}
         value={textColor}
@@ -22,6 +37,11 @@ export default function StyleTools({ tile }: StyleToolsProps) {
         id={`${id}-background`}
         value={background}
         onChange={(background) => tile.setBackground(background)}
+      />
+
+      <AnimationPicker
+        value={animation}
+        onChange={(animation) => tile.setAnimation(animation)}
       />
     </ToolbarGroup>
   );
