@@ -33,7 +33,6 @@ export default class Tile {
   readonly width: Reactive<number>;
   readonly height: Reactive<number>;
   readonly rowSpan: Reactive<number>;
-  readonly block: Reactive<boolean>;
   readonly animation: Reactive<Animation | null>;
   readonly hide: Reactive<boolean>;
   readonly dock: Reactive<DockEdge | null>;
@@ -53,7 +52,6 @@ export default class Tile {
       width,
       height,
       rowSpan,
-      block,
       animation,
       hide,
       dock,
@@ -74,7 +72,6 @@ export default class Tile {
     this.width = reactive(width);
     this.height = reactive(height);
     this.rowSpan = reactive(rowSpan);
-    this.block = reactive(block);
     this.animation = reactive(animation);
     this.hide = reactive(hide);
     this.dock = reactive(dock);
@@ -221,25 +218,14 @@ export default class Tile {
     });
   }
 
-  setSize({
-    width,
-    height,
-    block,
-  }: {
-    width?: number;
-    height?: number;
-    block?: boolean;
-  }) {
+  setSize({ width, height }: { width?: number; height?: number }) {
     if (typeof width === "number") {
       this.width.value = width;
     }
     if (typeof height === "number") {
       this.height.value = height;
     }
-    if (typeof block === "boolean") {
-      this.block.value = block;
-    }
-    return this.updateTile({ width, height, block });
+    return this.updateTile({ width, height });
   }
 
   persistPosition() {
@@ -248,7 +234,6 @@ export default class Tile {
       y: this.y.value,
       width: this.width.value,
       height: this.height.value,
-      block: this.block.value,
     });
   }
 

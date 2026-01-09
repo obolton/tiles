@@ -582,15 +582,9 @@ export default class LayoutEditor {
         ),
         1,
       );
-      const block =
-        height !== this.resizing.height.value ? false : this.resizing.block;
 
       this.resizing.width.value = width;
       this.resizing.height.value = height;
-
-      if (typeof block === "boolean") {
-        this.resizing.block.value = block;
-      }
     }
   }
 

@@ -29,7 +29,6 @@ export default class Section extends Tile {
 
     const { layout } = properties;
     this.layout = reactive(layout);
-    this.block.value = false;
     this.tiles = new TileCollection(this.id);
   }
 

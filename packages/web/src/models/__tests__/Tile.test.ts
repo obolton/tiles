@@ -104,7 +104,6 @@ describe("Tile", () => {
     expect(tile.width.value).toBe(TILE.width);
     expect(tile.height.value).toBe(TILE.height);
     expect(tile.rowSpan.value).toBe(TILE.rowSpan);
-    expect(tile.block.value).toBe(TILE.block);
     expect(tile.animation.value).toBe(TILE.animation);
     expect(tile.hide.value).toBe(TILE.hide);
   });
