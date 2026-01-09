@@ -13,11 +13,15 @@ import type { EditorView } from "prosemirror-view";
 export interface TextTileProps {
   text: Text;
   showToolbar: Reactive<boolean>;
+  autoHeight: boolean;
 }
 
-export default function TextTile({ text, showToolbar }: TextTileProps) {
+export default function TextTile({
+  text,
+  showToolbar,
+  autoHeight,
+}: TextTileProps) {
   const {
-    block,
     content,
     align,
     background,
@@ -108,16 +112,14 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
     >
       <If condition={showToolbar}>
         <Portal>
-          <TextToolbar text={text} editorView={editorView} />
+          <TextToolbar text={text} editorView={editorView} autoHeight={autoHeight} />
         </Portal>
       </If>
 
-      {block.derive((value) =>
-        value ? (
-          contents
-        ) : (
-          <pop-out className={styles["pop-out"]}>{contents}</pop-out>
-        ),
+      {autoHeight ? (
+        contents
+      ) : (
+        <pop-out className={styles["pop-out"]}>{contents}</pop-out>
       )}
     </Tile>
   );

@@ -25,6 +25,7 @@ import type { Reactive } from "@/utils/reactivity";
 export interface TextToolbarProps {
   text: Text;
   editorView: Reactive<EditorView | null>;
+  autoHeight: boolean;
 }
 
 export default function TextToolbar({ text, editorView }: TextToolbarProps) {
