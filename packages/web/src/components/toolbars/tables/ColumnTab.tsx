@@ -78,7 +78,7 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
     await Chart.create(editor, {
       sectionId,
       tableId: id,
-      series: [columnId],
+      series: [{ columnId }],
     });
   }
 
