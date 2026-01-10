@@ -75,6 +75,20 @@ function insertPendingNode(tr: Transaction) {
   return pos + 1;
 }
 
+function getInsertPosition(tr: Transaction) {
+  const { $from } = tr.selection;
+
+  // If inside an empty textblock, use current position
+  if ($from.parent.isTextblock && $from.parent.content.size === 0) {
+    return $from.pos;
+  }
+
+  // Otherwise, insert a new paragraph after current block
+  const pos = $from.after();
+  tr.insert(pos, schema.nodes.paragraph.create());
+  return pos + 1;
+}
+
 function dispatch(state: ReactiveState, tr: Transaction) {
   const newState = state.value?.apply(tr) ?? null;
   state.value = newState;
@@ -116,7 +130,12 @@ export async function insertFromStream(
     const tr = state.tr;
 
     if (startPos === null || pos === null) {
-      startPos = insertPendingNode(tr);
+      if (output === null) {
+        // Edit case: wrap in pending node
+        startPos = insertPendingNode(tr);
+      } else {
+        startPos = getInsertPosition(tr);
+      }
       pos = startPos;
     }
 
