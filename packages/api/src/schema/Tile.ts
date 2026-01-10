@@ -26,7 +26,7 @@ export type TileSchema = z.infer<typeof TileSchema>;
 export const CreateTileSchema = z.object({
   pageId: z.uuid(),
   sectionId: z.uuid().nullable().optional(),
-  afterId: z.uuid().nullable().optional(),
+  beforeId: z.uuid().nullable().optional(),
   ...TileSchema.shape,
 });
 export type CreateTileSchema = z.infer<typeof CreateTileSchema>;

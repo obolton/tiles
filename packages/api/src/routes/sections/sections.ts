@@ -5,7 +5,7 @@ import { SECTION_FIELDS } from "./fields";
 
 export async function createSection({
   pageId,
-  afterId,
+  beforeId,
   layout,
   background,
   ...properties
@@ -15,7 +15,7 @@ export async function createSection({
       ...properties,
       pageId,
       type: "SECTION",
-      afterId,
+      beforeId,
       sectionId: null,
       background,
       section: {

@@ -1,7 +1,7 @@
 import { generateKeyBetween } from "fractional-indexing";
 import prisma, { type ExtensionArgs } from "@/database/prisma";
 import {
-  getFirstTileOrderQuery,
+  getLastTileOrderQuery,
   getTileOrderQuery,
   duplicateTileQuery,
 } from "@/generated/prisma/sql";
@@ -119,17 +119,17 @@ export async function getTileOrder(
   transaction: PrismaTransactionClient,
   pageId: string,
   sectionId: string | null,
-  afterId: string | null,
+  beforeId: string | null,
 ): Promise<string> {
-  if (afterId === null) {
+  if (beforeId === null) {
     const [result] = await transaction.$queryRawTyped(
-      getFirstTileOrderQuery(pageId, sectionId),
+      getLastTileOrderQuery(pageId, sectionId),
     );
-    return generateKeyBetween(null, result?.order ?? null);
+    return generateKeyBetween(result?.order ?? null, null);
   }
 
   const [result] = await transaction.$queryRawTyped(
-    getTileOrderQuery(pageId, sectionId, afterId),
+    getTileOrderQuery(pageId, sectionId, beforeId),
   );
   return generateKeyBetween(result?.a ?? null, result?.b ?? null);
 }
@@ -150,7 +150,7 @@ export async function updateTile(
     pageId,
     id,
     sectionId,
-    afterId,
+    beforeId,
     dimensions,
     width,
     height,
@@ -184,7 +184,7 @@ export async function updateTile(
     }
 
     let order = undefined;
-    if (afterId !== undefined) {
+    if (beforeId !== undefined) {
       const orderSectionId =
         sectionId === undefined
           ? await getTileSectionId(transaction, { id, pageId })
@@ -193,7 +193,7 @@ export async function updateTile(
         transaction,
         pageId,
         orderSectionId,
-        afterId ?? null,
+        beforeId ?? null,
       );
     }
 
@@ -224,7 +224,7 @@ export async function duplicateTile({
   pageId,
   id,
   sectionId,
-  afterId,
+  beforeId,
 }: DuplicateTileSchema): Promise<[ClientTile, ...ClientTile[]]> {
   return prisma.$transaction(async (transaction) => {
     // TODO: Validate section ID
@@ -232,7 +232,7 @@ export async function duplicateTile({
       transaction,
       pageId,
       sectionId,
-      afterId !== undefined ? afterId : id,
+      beforeId ?? null,
     );
     const result = await transaction.$queryRawTyped(
       duplicateTileQuery(pageId, id, order, sectionId),
@@ -298,7 +298,7 @@ type CreateTileOptions<T extends TileType> = Omit<
 > &
   CreateTileProperties & {
     type: T;
-    afterId?: string | null;
+    beforeId?: string | null;
     y?: number;
     textColor?: ColorSchema | null;
     background?: BackgroundSchema | null;
@@ -312,7 +312,7 @@ export async function createTile<
     pageId,
     sectionId = null,
     type,
-    afterId = null,
+    beforeId = null,
     dimensions,
     width,
     height = 1,
@@ -357,7 +357,7 @@ export async function createTile<
     insertWidth = next.width;
   }
 
-  const order = await getTileOrder(transaction, pageId, sectionId, afterId);
+  const order = await getTileOrder(transaction, pageId, sectionId, beforeId);
 
   const tile = await transaction.tile.create({
     data: {

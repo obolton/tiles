@@ -5,7 +5,7 @@ export const UpdateTileSchema = z.object({
   pageId: z.uuid(),
   id: z.uuid(),
   sectionId: z.uuid().nullable().optional(),
-  afterId: z.uuid().nullable().optional(),
+  beforeId: z.uuid().nullable().optional(),
   ...TileSchema.shape,
 });
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
@@ -14,7 +14,7 @@ export const DuplicateTileSchema = z.strictObject({
   pageId: z.uuid(),
   id: z.uuid(),
   sectionId: z.uuid().nullable(),
-  afterId: z.uuid().nullable().optional(),
+  beforeId: z.uuid().nullable().optional(),
 });
 export type DuplicateTileSchema = z.infer<typeof DuplicateTileSchema>;
 
