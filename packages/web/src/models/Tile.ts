@@ -1,6 +1,10 @@
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
-import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
+import {
+  LANDSCAPE_SIZE,
+  PORTRAIT_SIZE,
+  DEFAULT_DOCK_SIZE,
+} from "@/constants/size";
 import type {
   ClientTile,
   Dimensions,
@@ -247,6 +251,9 @@ export default class Tile {
 
     if (dock) {
       this.editor.dockedTiles[dock].insertBefore(beforeId ?? null, this);
+      if (this.editor.dockSizes.value[dock] === null) {
+        this.editor.setDockSizes({ [dock]: DEFAULT_DOCK_SIZE });
+      }
     } else {
       this.editor.tiles.insertBefore(beforeId ?? null, this);
     }

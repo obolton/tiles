@@ -4,7 +4,6 @@ import {
   createDragPlaceholder,
   getDragPosition,
 } from "@/utils/drag-placeholder";
-import { viewTransition } from "@/utils/transitions";
 import { ResizeEvent } from "@/elements/resize/events";
 import type Editor from "@/editor/Editor";
 import type { DragDropEvent } from "@/utils/drag";
@@ -12,7 +11,6 @@ import type { DragData } from "@/editor/LayoutEditor";
 import type Tile from "@/models/Tile";
 import type { DockEdge } from "@/models/Tile";
 
-const DEFAULT_DOCK_SIZE = 200; // px
 const MIN_TILE_RATIO = 0.1;
 const MAX_TILE_RATIO = 0.9;
 
@@ -143,9 +141,6 @@ export default class DockLayoutEditor {
     }
 
     try {
-      // Set default dock size if not already set
-      this.ensureDockSize();
-
       await tile.setDock(this.edge, this.beforeId);
 
       // Apply view transition for smooth animation
@@ -162,15 +157,6 @@ export default class DockLayoutEditor {
     }
 
     this.beforeId = null;
-  }
-
-  private ensureDockSize() {
-    const currentSize = this.editor.dockSizes.value[this.edge];
-    if (currentSize === null) {
-      viewTransition(() => {
-        this.editor.setDockSizes({ [this.edge]: DEFAULT_DOCK_SIZE });
-      });
-    }
   }
 
   private showDragPlaceholder(tile: Tile) {

@@ -9,3 +9,5 @@ export const PORTRAIT_SIZE = {
   width: 27,
   height: 48,
 } as const;
+
+export const DEFAULT_DOCK_SIZE = 200; // px
