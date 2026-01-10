@@ -50,6 +50,12 @@ export default function InsertMenu({
   afterId,
   ...props
 }: InsertMenuProps) {
+  function getBeforeId() {
+    if (!afterId) return null;
+    const tile = Editor.current.getTile(afterId);
+    return tile?.next?.id ?? null;
+  }
+
   function onClick(event: PointerEvent) {
     const button = event.currentTarget as HTMLButtonElement;
     const tileType = button.dataset.tileType as TileType;
@@ -64,7 +70,7 @@ export default function InsertMenu({
       case "TEXT":
         Text.create(Editor.current, {
           sectionId: insertSectionId,
-          afterId,
+          beforeId: getBeforeId(),
           content: [{ type: "paragraph", children: [] }],
         }).catch(handleError);
         break;
@@ -83,7 +89,7 @@ export default function InsertMenu({
             });
             await Image.create(Editor.current, {
               sectionId: insertSectionId,
-              afterId,
+              beforeId: getBeforeId(),
               imageId,
               height: 10,
             });
@@ -100,7 +106,7 @@ export default function InsertMenu({
             if ("linkedPageId" in result) {
               await PageLink.create(Editor.current, {
                 sectionId: insertSectionId,
-                afterId,
+                beforeId: getBeforeId(),
                 linkedPageId: result.linkedPageId,
                 width: 5,
                 height: 5,
@@ -108,7 +114,7 @@ export default function InsertMenu({
             } else if (result.url) {
               await Link.create(Editor.current, {
                 sectionId: insertSectionId,
-                afterId,
+                beforeId: getBeforeId(),
                 url: result.url,
                 width: 5,
                 height: 5,
@@ -124,7 +130,7 @@ export default function InsertMenu({
           async onConfirm({ place }) {
             await Map.create(Editor.current, {
               sectionId: insertSectionId,
-              afterId,
+              beforeId: getBeforeId(),
               places: [place],
               height: 15,
             });
@@ -135,7 +141,7 @@ export default function InsertMenu({
       case "TABLE":
         Table.create(Editor.current, {
           sectionId: insertSectionId,
-          afterId,
+          beforeId: getBeforeId(),
           height: 15,
           columns: 3,
           rows: 5,
@@ -146,7 +152,7 @@ export default function InsertMenu({
 
   function createFreeformSection() {
     Section.create(Editor.current, {
-      afterId,
+      beforeId: getBeforeId(),
       layout: "FREEFORM",
       height: 15,
     }).catch(handleError);
@@ -154,7 +160,7 @@ export default function InsertMenu({
 
   function createStack() {
     Section.create(Editor.current, {
-      afterId,
+      beforeId: getBeforeId(),
       layout: "VERTICAL",
       height: 15,
     }).catch(handleError);

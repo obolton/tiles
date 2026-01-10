@@ -33,7 +33,7 @@ export default class TileCollection extends BaseReactive<Tile[]> {
     this.notify();
   }
 
-  insertAfter(afterId: string | null, ...items: Tile[]) {
+  insertBefore(beforeId: string | null, ...items: Tile[]) {
     for (const item of items) {
       if (item.parent === this) {
         const index = this.items.indexOf(item);
@@ -46,13 +46,13 @@ export default class TileCollection extends BaseReactive<Tile[]> {
       }
     }
 
-    let insertIndex = 0;
-    if (typeof afterId === "string") {
-      const afterIndex = this.items.findIndex((item) => item.id === afterId);
-      if (afterIndex < 0) {
-        throw new Error(`ID not found: ${afterId}`);
+    let insertIndex = this.items.length;
+    if (typeof beforeId === "string") {
+      const beforeIndex = this.items.findIndex((item) => item.id === beforeId);
+      if (beforeIndex < 0) {
+        throw new Error(`ID not found: ${beforeId}`);
       }
-      insertIndex = afterIndex + 1;
+      insertIndex = beforeIndex;
     }
 
     this.items.splice(insertIndex, 0, ...items);

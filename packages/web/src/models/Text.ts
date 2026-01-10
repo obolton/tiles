@@ -23,7 +23,7 @@ export default class Text extends Tile {
       ...data,
     });
     const text = new Text(editor, properties);
-    editor.addTile(text, properties.sectionId, data.afterId);
+    editor.addTile(text, properties.sectionId, data.beforeId);
   }
 
   constructor(editor: Editor, properties: ClientTextTile) {

@@ -32,7 +32,7 @@ export default class DockLayoutEditor {
   private readonly edge: DockEdge;
   private readonly editor: Editor;
   private dragPlaceholder: HTMLElement | null = null;
-  private afterId: string | null = null;
+  private beforeId: string | null = null;
   private dividers: HTMLElement[] = [];
 
   constructor({ element, edge, editor, signal }: DockLayoutEditorOptions) {
@@ -112,18 +112,16 @@ export default class DockLayoutEditor {
     );
 
     if (position) {
-      const { previous, next } = position;
-      this.afterId =
-        previous instanceof HTMLElement
-          ? previous.dataset.id || previous.id
-          : null;
+      const { next } = position;
+      this.beforeId =
+        next instanceof HTMLElement ? next.dataset.id || next.id : null;
       moveBefore(this.element, this.dragPlaceholder, next);
     }
   }
 
   private handleDragLeave() {
     this.hideDragPlaceholder();
-    this.afterId = null;
+    this.beforeId = null;
   }
 
   private async handleDrop(event: DragDropEvent<DragData>) {
@@ -148,7 +146,7 @@ export default class DockLayoutEditor {
       // Set default dock size if not already set
       this.ensureDockSize();
 
-      await tile.setDock(this.edge, this.afterId);
+      await tile.setDock(this.edge, this.beforeId);
 
       // Apply view transition for smooth animation
       const element = state.element;
@@ -163,7 +161,7 @@ export default class DockLayoutEditor {
       handleError(error);
     }
 
-    this.afterId = null;
+    this.beforeId = null;
   }
 
   private ensureDockSize() {

@@ -108,20 +108,20 @@ export default class Tile {
 
   async duplicate({
     sectionId,
-    afterId,
+    beforeId,
   }: {
     sectionId: string | null;
-    afterId: string | null;
+    beforeId: string | null;
   }) {
     const [parent, ...children] = await client.tiles.duplicate.mutate({
       pageId: this.editor.pageId,
       id: this.id,
       sectionId,
-      afterId,
+      beforeId,
     });
 
     const parentTile = this.editor.createTile(parent);
-    this.editor.addTile(parentTile, parent.sectionId, afterId);
+    this.editor.addTile(parentTile, parent.sectionId, beforeId);
 
     for (const child of children) {
       const childTile = this.editor.createTile(child);
@@ -147,28 +147,28 @@ export default class Tile {
 
   move({
     sectionId,
-    afterId,
+    beforeId,
     x,
     y,
     width,
     height,
   }: {
     sectionId?: string | null;
-    afterId?: string | null;
+    beforeId?: string | null;
     x?: number;
     y?: number;
     width?: number;
     height?: number;
   }) {
     if (
-      (typeof sectionId !== "undefined" && sectionId !== this.sectionId) ||
-      typeof afterId !== "undefined"
+      (sectionId !== undefined && sectionId !== this.sectionId) ||
+      beforeId !== undefined
     ) {
       if (sectionId) {
         const section = this.editor.getSection(sectionId);
-        section.tiles.insertAfter(afterId ?? null, this);
+        section.tiles.insertBefore(beforeId ?? null, this);
       } else {
-        this.editor.tiles.insertAfter(afterId ?? null, this);
+        this.editor.tiles.insertBefore(beforeId ?? null, this);
       }
     }
 
@@ -185,7 +185,7 @@ export default class Tile {
       this.height.value = height;
     }
 
-    return this.updateTile({ sectionId, afterId, x, y, width, height });
+    return this.updateTile({ sectionId, beforeId, x, y, width, height });
   }
 
   setDimensions(dimensions: Dimensions) {
@@ -238,28 +238,20 @@ export default class Tile {
     return this.updateTile({ hide });
   }
 
-  async setDock(dock: DockEdge | null, afterId?: string | null) {
-    if (dock === this.dock.value && afterId === undefined) {
+  async setDock(dock: DockEdge | null, beforeId?: string | null) {
+    if (dock === this.dock.value && beforeId === undefined) {
       return;
     }
 
     this.dock.value = dock;
 
     if (dock) {
-      if (afterId !== undefined) {
-        this.editor.dockedTiles[dock].insertAfter(afterId, this);
-      } else {
-        this.editor.dockedTiles[dock].append(this);
-      }
+      this.editor.dockedTiles[dock].insertBefore(beforeId ?? null, this);
     } else {
-      if (afterId !== undefined) {
-        this.editor.tiles.insertAfter(afterId, this);
-      } else {
-        this.editor.tiles.append(this);
-      }
+      this.editor.tiles.insertBefore(beforeId ?? null, this);
     }
 
-    await this.updateTile({ dock, afterId });
+    await this.updateTile({ dock, beforeId });
   }
 
   async setTheme(themeId: string | null) {
@@ -283,26 +275,27 @@ export default class Tile {
       return;
     }
 
-    const afterId = previous.previous?.id ?? null;
-    this.parent?.insertAfter(afterId, this);
+    const beforeId = previous.id;
+    this.parent?.insertBefore(beforeId, this);
 
     return this.updateTile({
       sectionId: this.sectionId,
-      afterId,
+      beforeId,
     });
   }
 
   async moveDown() {
-    const afterId = this.next?.id;
-    if (!afterId) {
+    const next = this.next;
+    if (!next) {
       return;
     }
 
-    this.parent?.insertAfter(afterId, this);
+    const beforeId = next.next?.id ?? null;
+    this.parent?.insertBefore(beforeId, this);
 
     return this.updateTile({
       sectionId: this.sectionId,
-      afterId,
+      beforeId,
     });
   }
 }

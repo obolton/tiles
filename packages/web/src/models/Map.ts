@@ -20,7 +20,7 @@ export default class Map extends Tile {
       ...data,
     });
     const map = new Map(editor, properties);
-    editor.addTile(map, properties.sectionId, data.afterId);
+    editor.addTile(map, properties.sectionId, data.beforeId);
   }
 
   constructor(editor: Editor, properties: ClientMapTile) {

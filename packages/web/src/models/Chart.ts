@@ -41,7 +41,7 @@ export default class Chart extends Tile {
       ...data,
     });
     const chart = new Chart(editor, properties);
-    editor.addTile(chart, properties.sectionId, data.afterId);
+    editor.addTile(chart, properties.sectionId, data.beforeId);
   }
 
   constructor(editor: Editor, properties: ClientChartTile) {

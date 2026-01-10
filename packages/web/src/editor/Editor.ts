@@ -493,7 +493,7 @@ export default class Editor {
   addTile(
     tile: Tile,
     sectionId: string | null = null,
-    afterId: string | null = null,
+    beforeId: string | null = null,
     select = true,
   ) {
     this.index.set(tile.id, tile);
@@ -504,9 +504,9 @@ export default class Editor {
         if (!(section instanceof Section)) {
           throw new Error(`Invalid section ID: ${sectionId}`);
         }
-        section.tiles.insertAfter(afterId, tile);
+        section.tiles.insertBefore(beforeId, tile);
       } else {
-        this.tiles.insertAfter(afterId, tile);
+        this.tiles.insertBefore(beforeId, tile);
       }
     }).updateCallbackDone.then(() => {
       if (select) {

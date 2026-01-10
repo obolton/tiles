@@ -32,7 +32,7 @@ export default function TileTools({ tile }: TileToolsProps) {
 
   function duplicate() {
     tile
-      .duplicate({ sectionId: tile.sectionId, afterId: tile.id })
+      .duplicate({ sectionId: tile.sectionId, beforeId: tile.next?.id ?? null })
       .catch(handleError);
   }
 

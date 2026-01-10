@@ -31,7 +31,7 @@ describe("Tile", () => {
   });
 
   describe("duplicate", () => {
-    test("duplicates the tile after the specified tile", async () => {
+    test("duplicates the tile before the specified tile", async () => {
       const tile = new Tile(editor, { ...TILE, sectionId: null });
       editor.addTile(tile, null, null, false);
 
@@ -46,20 +46,20 @@ describe("Tile", () => {
 
       const result = await tile.duplicate({
         sectionId: null,
-        afterId: tile.id,
+        beforeId: tile.id,
       });
 
       expect(client.tiles.duplicate.mutate).toHaveBeenCalledWith({
         pageId: PAGE.id,
         id: TILE.id,
         sectionId: null,
-        afterId: tile.id,
+        beforeId: tile.id,
       });
       expect(result.id).toBe(duplicatedTile.id);
       expect(editor.index.get(duplicatedTile.id)).toBe(result);
     });
 
-    test("duplicates the tile at the start when afterId is null", async () => {
+    test("duplicates the tile at the end when beforeId is null", async () => {
       const tile = new Tile(editor, {
         ...TILE,
         id: "tile-for-null-test",
@@ -76,13 +76,13 @@ describe("Tile", () => {
         duplicatedTile,
       ]);
 
-      const result = await tile.duplicate({ sectionId: null, afterId: null });
+      const result = await tile.duplicate({ sectionId: null, beforeId: null });
 
       expect(client.tiles.duplicate.mutate).toHaveBeenCalledWith({
         pageId: PAGE.id,
         id: tile.id,
         sectionId: null,
-        afterId: null,
+        beforeId: null,
       });
       expect(result.id).toBe(duplicatedTile.id);
       expect(editor.index.get(duplicatedTile.id)).toBe(result);

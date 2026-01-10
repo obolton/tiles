@@ -58,7 +58,7 @@ export default class LayoutEditor {
   private gridColumnGap = 0;
   private gridRowGap = 0;
 
-  private afterId: string | null = null;
+  private beforeId: string | null = null;
   private x = 0;
   private y = 0;
 
@@ -369,11 +369,9 @@ export default class LayoutEditor {
     );
 
     if (position) {
-      const { previous, next } = position;
-      this.afterId =
-        previous instanceof HTMLElement
-          ? previous.dataset.id || previous.id
-          : null;
+      const { next } = position;
+      this.beforeId =
+        next instanceof HTMLElement ? next.dataset.id || next.id : null;
       moveBefore(this.element, this.dragPlaceholder, next);
     }
   }
@@ -463,7 +461,7 @@ export default class LayoutEditor {
   }
 
   private handleDragLeave() {
-    this.afterId = null;
+    this.beforeId = null;
     this.hideDragPlaceholder();
   }
 
@@ -487,7 +485,7 @@ export default class LayoutEditor {
       if (this.layoutType === "HORIZONTAL" || this.layoutType === "VERTICAL") {
         tile.move({
           sectionId: this.sectionId,
-          afterId: this.afterId,
+          beforeId: this.beforeId,
         });
       } else if (this.layoutType === "FREEFORM") {
         const width = this.pixelToPercentX(state.width);
@@ -521,7 +519,7 @@ export default class LayoutEditor {
   }
 
   private handleDragEnd() {
-    this.afterId = null;
+    this.beforeId = null;
   }
 
   private isElementOrdered(element: Element) {
