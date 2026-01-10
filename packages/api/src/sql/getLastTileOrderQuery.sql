@@ -3,5 +3,5 @@
 SELECT "order"
 FROM tiles
 WHERE page_id = $1::uuid AND section_id IS NOT DISTINCT FROM $2::uuid
-ORDER BY "order" ASC
+ORDER BY "order" DESC
 LIMIT 1;
