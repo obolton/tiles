@@ -1,4 +1,17 @@
-# Repository Guidelines
+# Tiles
+
+This project is an advanced document editor for creating and sharing engaging, dynamic pages for a wide range of purposes, including documents, presentations, notes, landing pages, dashboards, galleries, portfolios, guides and much more, for both personal and business use cases.
+
+Some notable features:
+
+- An intuitive WYSIWYG page editor with view/edit modes and drag-and-drop functionality.
+- A variety of dynamic content types, including text, images, videos, maps, tables, charts and links.
+- Support for rich text (using a ProseMirror-based editor) with a wide range of formatting options, including advanced node types like dropdowns, mentions, code blocks, checklists and dates.
+- Section containers that can be used to create a variety of layouts, including freeform sections (useful for creating presentation slides, for example) and horizontal, vertical and grid containers (useful for creating galleries or lists).
+- Theming and styling features, with customizable text colors, backgrounds, gradients, fonts and animations.
+- Dock zones to attach items to the edges of the viewport.
+
+The user experience is intended to be highly intuitive, usable, accessible and delightful to use, with an emphasis on polish and performance.
 
 ## Project Structure
 
