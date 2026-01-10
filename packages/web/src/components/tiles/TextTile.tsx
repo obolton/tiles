@@ -112,7 +112,11 @@ export default function TextTile({
     >
       <If condition={showToolbar}>
         <Portal>
-          <TextToolbar text={text} editorView={editorView} autoHeight={autoHeight} />
+          <TextToolbar
+            text={text}
+            editorView={editorView}
+            autoHeight={autoHeight}
+          />
         </Portal>
       </If>
 
