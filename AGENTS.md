@@ -28,11 +28,13 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 
 ## Scripts
 
-- `pnpm check`: Check types, linting and formatting for all packages in the project.
-- `pnpm tsc`: Check types.
-- `pnpm test`: Run Vitest test suites.
+- `pnpm check`: Check types, linting and formatting for all packages.
+- `pnpm typecheck`: Check types only.
 - `pnpm lint`: Lint TypeScript and CSS files.
+- `pnpm test`: Run Vitest test suites.
+- `pnpm build`: Build all packages in dependency order.
 - `pnpm format` and `pnpm format:check`: Format files with Prettier or check formatting.
+- `pnpm storybook`: Run Storybook for UI component development.
 
 ### Important notes
 
@@ -72,7 +74,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 
 - Follow the existing short, imperative commit style (`Add column editing events`, `Update seed script`); keep the subject under ~72 characters and skip trailing punctuation.
 - Each PR should include: what changed and why, manual test notes or screenshots for UI tweaks, linked issue numbers, and any migration or seed steps required.
-- Before requesting review, ensure `pnpm lint`, `pnpm test`, and relevant build commands succeed; include that status in the PR description.
+- Before requesting review, ensure `pnpm check` and `pnpm test` succeed.
 
 ## Web Components
 
