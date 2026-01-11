@@ -1,4 +1,9 @@
 import { z } from "zod";
+import { Animation, DockEdge } from "@/generated/prisma/enums";
+import {
+  ColorBackgroundSchema,
+  GradientBackgroundSchema,
+} from "@/schema/Background";
 
 export const SizeSchema = z.enum(["small", "medium", "large"]).meta({
   description: "The size of the block: small, medium, or large",
@@ -21,3 +26,38 @@ export function getDimensions(size: Size): Dimensions {
       return { width: 24, height: 20 };
   }
 }
+
+// Excludes images for now
+export const AIBackgroundSchema = z
+  .discriminatedUnion("type", [ColorBackgroundSchema, GradientBackgroundSchema])
+  .nullable();
+
+export const AnimationSchema = z.enum(Animation).nullable().meta({
+  description: "Entrance animation effect",
+});
+
+export const DockSchema = z.enum(DockEdge).nullable().meta({
+  description: "Dock to viewport edge (stays fixed while scrolling)",
+});
+
+export const HideSchema = z.boolean().nullable().meta({
+  description: "Hide in view mode (only visible while editing)",
+});
+
+export const PositionSchema = z
+  .strictObject({
+    x: z.number().min(0).max(100),
+    y: z.number().min(0).max(100),
+  })
+  .nullable()
+  .meta({
+    description: "Position (x, y as 0-100%) for items in freeform sections",
+  });
+
+export const CommonTileSchema = {
+  background: AIBackgroundSchema,
+  animation: AnimationSchema,
+  dock: DockSchema,
+  hide: HideSchema,
+  position: PositionSchema,
+};
