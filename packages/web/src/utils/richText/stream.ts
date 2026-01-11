@@ -1,6 +1,7 @@
 import { schema } from "./schema";
 import { closest, getListDepth } from "./helpers";
 import Editor from "@/editor/Editor";
+import Text from "@/models/Text";
 import type { EditorView } from "prosemirror-view";
 import type { EditorState, Transaction } from "prosemirror-state";
 import type { Mark } from "prosemirror-model";
@@ -103,6 +104,7 @@ export async function insertFromStream(
   let bold = false;
   let italic = false;
   let output: ReactiveState | null = null;
+  const destinationTileIds = new Set<string>();
 
   for await (const event of stream) {
     if (typeof event === "object" && "artifact" in event) {
@@ -114,6 +116,7 @@ export async function insertFromStream(
     if (typeof event === "object" && "destination" in event) {
       if (event.destination) {
         output = Editor.current.getTextEditorState(event.destination);
+        destinationTileIds.add(event.destination);
       } else {
         output = null;
       }
@@ -250,6 +253,14 @@ export async function insertFromStream(
       dispatch(output, tr);
     } else {
       view.dispatch(tr);
+    }
+  }
+
+  // Persist all destination tiles that received streamed content
+  for (const tileId of destinationTileIds) {
+    const tile = Editor.current.getTile(tileId);
+    if (tile instanceof Text) {
+      tile.persist();
     }
   }
 }
