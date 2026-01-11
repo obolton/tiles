@@ -10,10 +10,8 @@
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "lint": "oxlint",
-    "tsc": "tsc --build",
-    "generate-worker-types": "wrangler types src/worker.d.ts",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "typecheck": "tsc --build",
+    "generate-worker-types": "wrangler types src/worker.d.ts"
   },
   "dependencies": {
     "@trpc/client": "^11.5.1",

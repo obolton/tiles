@@ -14,13 +14,11 @@
     "test:coverage": "vitest run --coverage",
     "lint:ts": "oxlint",
     "lint:css": "stylelint \"src/**/*.css\"",
-    "lint": "pnpm lint:ts; pnpm lint:css",
+    "lint": "pnpm run \"/^lint:.*/\"",
     "storybook": "storybook dev -p 6001 --no-open --no-version-updates",
     "storybook:build": "storybook build",
-    "tsc": "tsc --build",
-    "generate-worker-types": "wrangler types src/types/worker.d.ts --include-runtime=false",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "typecheck": "tsc --build",
+    "generate-worker-types": "wrangler types src/types/worker.d.ts --include-runtime=false"
   },
   "dependencies": {
     "@codemirror/commands": "^6.10.0",

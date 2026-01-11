@@ -20,9 +20,7 @@
     "db:push-functions": "prisma db execute --file src/sql/functions/duplicate_tile.sql",
     "db:seed": "prisma db seed",
     "cdn:purge": "tsx --env-file=\"../../.env\" scripts/purge-cdn.ts",
-    "tsc": "tsc --build",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "typecheck": "tsc --build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.890.0",
