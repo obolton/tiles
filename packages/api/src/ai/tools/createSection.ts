@@ -1,43 +1,33 @@
 import { z } from "zod";
+import { Layout } from "@/generated/prisma/enums";
 import { createSection } from "@/routes/sections/sections.ts";
-import { ColorSchema } from "@/schema/Color.ts";
-import { SizeSchema, getDimensions } from "./schema.ts";
+import { SizeSchema, getDimensions, CommonTileSchema } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateSectionSchema = z.strictObject({
   size: SizeSchema,
-  layout: z
-    .enum(["grid", "horizontal", "vertical", "freeform"])
-    .nullable()
-    .meta({
-      description:
-        "Layout type: grid (default), horizontal (side-by-side scrollable), vertical (stacked), or freeform (free positioning)",
-    }),
-  backgroundColor: ColorSchema.nullable().meta({
-    description: "Background color for the section, or null for no background",
+  layout: z.enum(Layout).meta({
+    description:
+      "Layout type: GRID (default), HORIZONTAL (side-by-side scrollable), VERTICAL (stacked), or FREEFORM (free positioning)",
   }),
+  ...CommonTileSchema,
 });
 
 async function createSectionArtifact(
   args: z.infer<typeof CreateSectionSchema>,
   { pageId }: ToolContext,
 ) {
-  const layout = (args.layout?.toUpperCase() ?? undefined) as
-    | "GRID"
-    | "HORIZONTAL"
-    | "VERTICAL"
-    | "FREEFORM"
-    | undefined;
-
-  const background = args.backgroundColor
-    ? { type: "color" as const, color: args.backgroundColor }
-    : undefined;
+  const { size, layout, background, animation, dock, hide, position } = args;
 
   const artifact = await createSection({
     pageId,
     layout,
     background,
-    ...getDimensions(args.size),
+    animation,
+    dock,
+    hide: hide ?? undefined,
+    ...(position ? { x: position.x, y: position.y } : {}),
+    ...getDimensions(size),
   });
 
   return { artifact };

@@ -1,20 +1,17 @@
 import { z } from "zod";
-import { createTableWithData } from "@/routes/tables/tables.ts";
+import { createTable } from "@/routes/tables/tables.ts";
+import { SizeSchema, getDimensions, CommonTileSchema } from "./schema.ts";
+import { ColumnDefinitionSchema } from "@/routes/tables/schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateTableSchema = z.strictObject({
   sectionId: z.string().nullable().meta({
     description: "Section ID to place this content inside a section, or null",
   }),
-  columns: z
-    .array(
-      z.strictObject({
-        title: z.string().max(50).meta({ description: "Column header text" }),
-      }),
-    )
-    .min(2)
-    .max(8)
-    .meta({ description: "Column definitions with titles" }),
+  size: SizeSchema,
+  columns: z.array(ColumnDefinitionSchema).min(2).max(8).meta({
+    description: "Column definitions with titles and optional styling",
+  }),
   rows: z
     .array(z.array(z.string().max(500)))
     .min(1)
@@ -22,20 +19,29 @@ const CreateTableSchema = z.strictObject({
     .meta({
       description: "Row data as arrays of cell values, matching column order",
     }),
+  ...CommonTileSchema,
 });
 
 async function createTableArtifact(
   args: z.infer<typeof CreateTableSchema>,
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
+  const { size, columns, rows, background, animation, dock, hide, position } =
+    args;
   const resolvedSectionId = args.sectionId
     ? resolveArtifactId(args.sectionId)
     : sectionId;
-  const artifact = await createTableWithData({
+  const artifact = await createTable({
     pageId,
     sectionId: resolvedSectionId,
-    columns: args.columns,
-    rows: args.rows,
+    columns,
+    rows,
+    background,
+    animation,
+    dock,
+    hide: hide ?? undefined,
+    ...(position ? { x: position.x, y: position.y } : {}),
+    ...getDimensions(size),
   });
   return { artifact };
 }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createChart, getTableColumns } from "@/routes/charts/charts.ts";
 import { ColorSchema } from "@/schema/Color.ts";
-import { SizeSchema, getDimensions } from "./schema.ts";
+import { SizeSchema, getDimensions, CommonTileSchema } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateChartSchema = z.strictObject({
@@ -9,9 +9,6 @@ const CreateChartSchema = z.strictObject({
     description: "Section ID to place this content inside a section, or null",
   }),
   size: SizeSchema,
-  backgroundColor: ColorSchema.nullable().meta({
-    description: "Background color for the chart, or null for transparent",
-  }),
   tableId: z.string().meta({
     description: "The ID of the table to visualize (from create_table result)",
   }),
@@ -36,12 +33,14 @@ const CreateChartSchema = z.strictObject({
     .min(1)
     .max(10)
     .meta({ description: "Data series to display in the chart" }),
+  ...CommonTileSchema,
 });
 
 async function createChartArtifact(
   args: z.infer<typeof CreateChartSchema>,
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
+  const { size, background, animation, dock, hide, position } = args;
   const resolvedSectionId = args.sectionId
     ? resolveArtifactId(args.sectionId)
     : sectionId;
@@ -65,10 +64,6 @@ async function createChartArtifact(
     };
   });
 
-  const background = args.backgroundColor
-    ? { type: "color" as const, color: args.backgroundColor }
-    : undefined;
-
   const artifact = await createChart({
     pageId,
     sectionId: resolvedSectionId,
@@ -76,7 +71,11 @@ async function createChartArtifact(
     labelColumnId,
     series,
     background,
-    ...getDimensions(args.size),
+    animation,
+    dock,
+    hide: hide ?? undefined,
+    ...(position ? { x: position.x, y: position.y } : {}),
+    ...getDimensions(size),
   });
 
   return { artifact };

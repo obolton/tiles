@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createText } from "@/routes/text/text.ts";
 import { ColorSchema } from "@/schema/Color.ts";
-import { SizeSchema, getDimensions } from "./schema.ts";
+import { SizeSchema, getDimensions, CommonTileSchema } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateTextSchema = z.strictObject({
@@ -12,15 +12,12 @@ const CreateTextSchema = z.strictObject({
     description:
       "The text color, or null to use the default text color of the document.",
   }),
-  backgroundColor: ColorSchema.nullable().meta({
-    description:
-      "A background color to apply to the text block, or null for transparent.",
-  }),
   align: z
     .enum(["left", "center", "right"])
     .nullable()
     .meta({ description: "The horizontal alignment of the text." }),
   size: SizeSchema,
+  ...CommonTileSchema,
 });
 
 type CreateTextSchemaType = z.infer<typeof CreateTextSchema>;
@@ -42,7 +39,8 @@ async function createTextArtifact(
   args: z.infer<typeof CreateTextSchema>,
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
-  const { textColor, backgroundColor, align, size } = args;
+  const { textColor, background, align, size, animation, dock, hide, position } =
+    args;
   const resolvedSectionId = args.sectionId
     ? resolveArtifactId(args.sectionId)
     : sectionId;
@@ -50,6 +48,10 @@ async function createTextArtifact(
     pageId,
     sectionId: resolvedSectionId,
     ...getDimensions(size),
+    ...(position ? { x: position.x, y: position.y } : {}),
+    animation,
+    dock,
+    hide: hide ?? undefined,
     content: [
       {
         type: "paragraph",
@@ -58,9 +60,7 @@ async function createTextArtifact(
       },
     ],
     textColor,
-    background: backgroundColor
-      ? { type: "color", color: backgroundColor }
-      : undefined,
+    background,
   });
   return { artifact };
 }
