@@ -11,6 +11,19 @@ vi.mock("@/routes/charts/charts.ts", () => ({
 
 const MOCK_COLUMNS = [{ id: "col-a" }, { id: "col-b" }, { id: "col-c" }];
 
+const BASE_ARGS = {
+  sectionId: null,
+  size: "medium" as const,
+  background: null,
+  animation: null,
+  dock: null,
+  hide: null,
+  position: null,
+  tableId: "table-0",
+  labelColumnIndex: null,
+  series: [{ columnIndex: 0, type: "bar" as const, color: null }],
+};
+
 describe("CREATE_CHART_TOOL", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -19,45 +32,19 @@ describe("CREATE_CHART_TOOL", () => {
   });
 
   test("resolves tableId via resolveArtifactId", async () => {
-    await CREATE_CHART_TOOL.function(
-      {
-        sectionId: null,
-        size: "medium",
-        backgroundColor: null,
-        tableId: "table-0",
-        labelColumnIndex: null,
-        series: [{ columnIndex: 0, type: "bar", color: null }],
-      },
-      MOCK_TOOL_CONTEXT,
-    );
-
+    await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
     expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith("table-0");
   });
 
   test("fetches table columns with pageId and resolved tableId", async () => {
-    await CREATE_CHART_TOOL.function(
-      {
-        sectionId: null,
-        size: "medium",
-        backgroundColor: null,
-        tableId: "table-0",
-        labelColumnIndex: null,
-        series: [{ columnIndex: 0, type: "bar", color: null }],
-      },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(getTableColumns).toHaveBeenCalledWith("page-1", "resolved-table-0");
+    await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
+    expect(getTableColumns).toHaveBeenCalledWith("test-page", "resolved-table-0");
   });
 
   test("maps columnIndex to columnId for each series", async () => {
     await CREATE_CHART_TOOL.function(
       {
-        sectionId: null,
-        size: "medium",
-        backgroundColor: null,
-        tableId: "table-0",
-        labelColumnIndex: null,
+        ...BASE_ARGS,
         series: [
           { columnIndex: 0, type: "bar", color: null },
           { columnIndex: 1, type: "line", color: null },
@@ -79,11 +66,7 @@ describe("CREATE_CHART_TOOL", () => {
   test("transforms chart type to uppercase", async () => {
     await CREATE_CHART_TOOL.function(
       {
-        sectionId: null,
-        size: "medium",
-        backgroundColor: null,
-        tableId: "table-0",
-        labelColumnIndex: null,
+        ...BASE_ARGS,
         series: [
           { columnIndex: 0, type: "bar", color: null },
           { columnIndex: 1, type: "line", color: null },
@@ -107,14 +90,7 @@ describe("CREATE_CHART_TOOL", () => {
   test("throws error when column index is out of bounds", async () => {
     await expect(
       CREATE_CHART_TOOL.function(
-        {
-          sectionId: null,
-          size: "medium",
-          backgroundColor: null,
-          tableId: "table-0",
-          labelColumnIndex: null,
-          series: [{ columnIndex: 10, type: "bar", color: null }],
-        },
+        { ...BASE_ARGS, series: [{ columnIndex: 10, type: "bar", color: null }] },
         MOCK_TOOL_CONTEXT,
       ),
     ).rejects.toThrow("Column index 10 out of bounds");
@@ -123,10 +99,7 @@ describe("CREATE_CHART_TOOL", () => {
   test("resolves labelColumnIndex to labelColumnId", async () => {
     await CREATE_CHART_TOOL.function(
       {
-        sectionId: null,
-        size: "medium",
-        backgroundColor: null,
-        tableId: "table-0",
+        ...BASE_ARGS,
         labelColumnIndex: 0,
         series: [{ columnIndex: 1, type: "bar", color: null }],
       },
@@ -139,18 +112,7 @@ describe("CREATE_CHART_TOOL", () => {
   });
 
   test("passes undefined labelColumnId when labelColumnIndex is null", async () => {
-    await CREATE_CHART_TOOL.function(
-      {
-        sectionId: null,
-        size: "medium",
-        backgroundColor: null,
-        tableId: "table-0",
-        labelColumnIndex: null,
-        series: [{ columnIndex: 0, type: "bar", color: null }],
-      },
-      MOCK_TOOL_CONTEXT,
-    );
-
+    await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
     expect(createChart).toHaveBeenCalledWith(
       expect.objectContaining({ labelColumnId: undefined }),
     );
@@ -159,11 +121,7 @@ describe("CREATE_CHART_TOOL", () => {
   test("transforms series color to fill object", async () => {
     await CREATE_CHART_TOOL.function(
       {
-        sectionId: null,
-        size: "medium",
-        backgroundColor: null,
-        tableId: "table-0",
-        labelColumnIndex: null,
+        ...BASE_ARGS,
         series: [{ columnIndex: 0, type: "bar", color: "ff0000000000" }],
       },
       MOCK_TOOL_CONTEXT,
@@ -181,18 +139,7 @@ describe("CREATE_CHART_TOOL", () => {
   });
 
   test("passes undefined fill when series color is null", async () => {
-    await CREATE_CHART_TOOL.function(
-      {
-        sectionId: null,
-        size: "medium",
-        backgroundColor: null,
-        tableId: "table-0",
-        labelColumnIndex: null,
-        series: [{ columnIndex: 0, type: "bar", color: null }],
-      },
-      MOCK_TOOL_CONTEXT,
-    );
-
+    await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
     expect(createChart).toHaveBeenCalledWith(
       expect.objectContaining({
         series: [expect.objectContaining({ fill: undefined })],
@@ -200,16 +147,9 @@ describe("CREATE_CHART_TOOL", () => {
     );
   });
 
-  test("transforms backgroundColor to background object", async () => {
+  test("passes background to createChart", async () => {
     await CREATE_CHART_TOOL.function(
-      {
-        sectionId: null,
-        size: "medium",
-        backgroundColor: "00ff00000000",
-        tableId: "table-0",
-        labelColumnIndex: null,
-        series: [{ columnIndex: 0, type: "bar", color: null }],
-      },
+      { ...BASE_ARGS, background: { type: "color", color: "00ff00000000" } },
       MOCK_TOOL_CONTEXT,
     );
 
@@ -222,14 +162,7 @@ describe("CREATE_CHART_TOOL", () => {
 
   test("uses correct dimensions from size", async () => {
     await CREATE_CHART_TOOL.function(
-      {
-        sectionId: null,
-        size: "large",
-        backgroundColor: null,
-        tableId: "table-0",
-        labelColumnIndex: null,
-        series: [{ columnIndex: 0, type: "bar", color: null }],
-      },
+      { ...BASE_ARGS, size: "large" },
       MOCK_TOOL_CONTEXT,
     );
 
@@ -239,18 +172,7 @@ describe("CREATE_CHART_TOOL", () => {
   });
 
   test("returns artifact from createChart", async () => {
-    const result = await CREATE_CHART_TOOL.function(
-      {
-        sectionId: null,
-        size: "medium",
-        backgroundColor: null,
-        tableId: "table-0",
-        labelColumnIndex: null,
-        series: [{ columnIndex: 0, type: "bar", color: null }],
-      },
-      MOCK_TOOL_CONTEXT,
-    );
-
+    const result = await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
     expect(result).toEqual({ artifact: CHART_TILE });
   });
 });

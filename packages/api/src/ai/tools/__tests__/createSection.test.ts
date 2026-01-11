@@ -8,6 +8,16 @@ vi.mock("@/routes/sections/sections.ts", () => ({
   createSection: vi.fn(),
 }));
 
+const BASE_ARGS = {
+  size: "medium" as const,
+  layout: "GRID" as const,
+  background: null,
+  animation: null,
+  dock: null,
+  hide: null,
+  position: null,
+};
+
 describe("CREATE_SECTION_TOOL", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -16,7 +26,7 @@ describe("CREATE_SECTION_TOOL", () => {
 
   test("uses correct dimensions for each size", async () => {
     await CREATE_SECTION_TOOL.function(
-      { size: "small", layout: null, backgroundColor: null },
+      { ...BASE_ARGS, size: "small" },
       MOCK_TOOL_CONTEXT,
     );
     expect(createSection).toHaveBeenCalledWith(
@@ -24,7 +34,7 @@ describe("CREATE_SECTION_TOOL", () => {
     );
 
     await CREATE_SECTION_TOOL.function(
-      { size: "medium", layout: null, backgroundColor: null },
+      { ...BASE_ARGS, size: "medium" },
       MOCK_TOOL_CONTEXT,
     );
     expect(createSection).toHaveBeenCalledWith(
@@ -32,7 +42,7 @@ describe("CREATE_SECTION_TOOL", () => {
     );
 
     await CREATE_SECTION_TOOL.function(
-      { size: "large", layout: null, backgroundColor: null },
+      { ...BASE_ARGS, size: "large" },
       MOCK_TOOL_CONTEXT,
     );
     expect(createSection).toHaveBeenCalledWith(
@@ -40,9 +50,9 @@ describe("CREATE_SECTION_TOOL", () => {
     );
   });
 
-  test("transforms layout to uppercase", async () => {
+  test("passes layout to createSection", async () => {
     await CREATE_SECTION_TOOL.function(
-      { size: "medium", layout: "grid", backgroundColor: null },
+      { ...BASE_ARGS, layout: "GRID" },
       MOCK_TOOL_CONTEXT,
     );
     expect(createSection).toHaveBeenCalledWith(
@@ -50,7 +60,7 @@ describe("CREATE_SECTION_TOOL", () => {
     );
 
     await CREATE_SECTION_TOOL.function(
-      { size: "medium", layout: "horizontal", backgroundColor: null },
+      { ...BASE_ARGS, layout: "HORIZONTAL" },
       MOCK_TOOL_CONTEXT,
     );
     expect(createSection).toHaveBeenCalledWith(
@@ -58,7 +68,7 @@ describe("CREATE_SECTION_TOOL", () => {
     );
 
     await CREATE_SECTION_TOOL.function(
-      { size: "medium", layout: "vertical", backgroundColor: null },
+      { ...BASE_ARGS, layout: "VERTICAL" },
       MOCK_TOOL_CONTEXT,
     );
     expect(createSection).toHaveBeenCalledWith(
@@ -66,7 +76,7 @@ describe("CREATE_SECTION_TOOL", () => {
     );
 
     await CREATE_SECTION_TOOL.function(
-      { size: "medium", layout: "freeform", backgroundColor: null },
+      { ...BASE_ARGS, layout: "FREEFORM" },
       MOCK_TOOL_CONTEXT,
     );
     expect(createSection).toHaveBeenCalledWith(
@@ -74,20 +84,9 @@ describe("CREATE_SECTION_TOOL", () => {
     );
   });
 
-  test("passes undefined layout when layout is null", async () => {
+  test("passes background to createSection", async () => {
     await CREATE_SECTION_TOOL.function(
-      { size: "medium", layout: null, backgroundColor: null },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createSection).toHaveBeenCalledWith(
-      expect.objectContaining({ layout: undefined }),
-    );
-  });
-
-  test("transforms backgroundColor to background object", async () => {
-    await CREATE_SECTION_TOOL.function(
-      { size: "medium", layout: null, backgroundColor: "ff0000000000" },
+      { ...BASE_ARGS, background: { type: "color", color: "ff0000000000" } },
       MOCK_TOOL_CONTEXT,
     );
 
@@ -98,33 +97,16 @@ describe("CREATE_SECTION_TOOL", () => {
     );
   });
 
-  test("passes undefined background when backgroundColor is null", async () => {
-    await CREATE_SECTION_TOOL.function(
-      { size: "medium", layout: null, backgroundColor: null },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createSection).toHaveBeenCalledWith(
-      expect.objectContaining({ background: undefined }),
-    );
-  });
-
   test("passes pageId from context", async () => {
-    await CREATE_SECTION_TOOL.function(
-      { size: "medium", layout: null, backgroundColor: null },
-      MOCK_TOOL_CONTEXT,
-    );
+    await CREATE_SECTION_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
 
     expect(createSection).toHaveBeenCalledWith(
-      expect.objectContaining({ pageId: "page-1" }),
+      expect.objectContaining({ pageId: "test-page" }),
     );
   });
 
   test("returns artifact from createSection", async () => {
-    const result = await CREATE_SECTION_TOOL.function(
-      { size: "medium", layout: null, backgroundColor: null },
-      MOCK_TOOL_CONTEXT,
-    );
+    const result = await CREATE_SECTION_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
 
     expect(result).toEqual({ artifact: SECTION_TILE });
   });

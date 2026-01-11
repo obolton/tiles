@@ -8,6 +8,17 @@ vi.mock("@/routes/links/links.ts", () => ({
   createLink: vi.fn(),
 }));
 
+const BASE_ARGS = {
+  sectionId: null,
+  size: "medium" as const,
+  url: "https://example.com",
+  background: null,
+  animation: null,
+  dock: null,
+  hide: null,
+  position: null,
+};
+
 describe("CREATE_LINK_TOOL", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -15,34 +26,25 @@ describe("CREATE_LINK_TOOL", () => {
   });
 
   test("passes URL to createLink", async () => {
-    await CREATE_LINK_TOOL.function(
-      { sectionId: null, url: "https://example.com" },
-      MOCK_TOOL_CONTEXT,
-    );
+    await CREATE_LINK_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
 
     expect(createLink).toHaveBeenCalledWith(
       expect.objectContaining({ url: "https://example.com" }),
     );
   });
 
-  test("uses fixed dimensions of 24x8", async () => {
-    await CREATE_LINK_TOOL.function(
-      { sectionId: null, url: "https://example.com" },
-      MOCK_TOOL_CONTEXT,
-    );
+  test("uses correct dimensions for medium size", async () => {
+    await CREATE_LINK_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
 
     expect(createLink).toHaveBeenCalledWith(
-      expect.objectContaining({ width: 24, height: 8 }),
+      expect.objectContaining({ width: 24, height: 15 }),
     );
   });
 
   test("uses context sectionId when args.sectionId is null", async () => {
     const context = { ...MOCK_TOOL_CONTEXT, sectionId: "context-section" };
 
-    await CREATE_LINK_TOOL.function(
-      { sectionId: null, url: "https://example.com" },
-      context,
-    );
+    await CREATE_LINK_TOOL.function(BASE_ARGS, context);
 
     expect(createLink).toHaveBeenCalledWith(
       expect.objectContaining({ sectionId: "context-section" }),
@@ -51,7 +53,7 @@ describe("CREATE_LINK_TOOL", () => {
 
   test("resolves sectionId when provided in args", async () => {
     await CREATE_LINK_TOOL.function(
-      { sectionId: "section-0", url: "https://example.com" },
+      { ...BASE_ARGS, sectionId: "section-0" },
       MOCK_TOOL_CONTEXT,
     );
 
@@ -64,21 +66,15 @@ describe("CREATE_LINK_TOOL", () => {
   });
 
   test("passes pageId from context", async () => {
-    await CREATE_LINK_TOOL.function(
-      { sectionId: null, url: "https://example.com" },
-      MOCK_TOOL_CONTEXT,
-    );
+    await CREATE_LINK_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
 
     expect(createLink).toHaveBeenCalledWith(
-      expect.objectContaining({ pageId: "page-1" }),
+      expect.objectContaining({ pageId: "test-page" }),
     );
   });
 
   test("returns artifact from createLink", async () => {
-    const result = await CREATE_LINK_TOOL.function(
-      { sectionId: null, url: "https://example.com" },
-      MOCK_TOOL_CONTEXT,
-    );
+    const result = await CREATE_LINK_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
 
     expect(result).toEqual({ artifact: LINK_TILE });
   });

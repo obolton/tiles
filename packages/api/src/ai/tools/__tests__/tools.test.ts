@@ -11,9 +11,7 @@ vi.mock("@/routes/maps/maps.ts", () => ({
 }));
 
 vi.mock("@/routes/tables/tables.ts", () => ({
-  createTableWithData: vi
-    .fn()
-    .mockResolvedValue({ type: "TABLE", id: "table-1" }),
+  createTable: vi.fn().mockResolvedValue({ type: "TABLE", id: "table-1" }),
 }));
 
 vi.mock("@/routes/charts/charts.ts", () => ({
@@ -30,6 +28,14 @@ vi.mock("@/routes/sections/sections.ts", () => ({
     .fn()
     .mockResolvedValue({ type: "SECTION", id: "section-1" }),
 }));
+
+const COMMON_TILE_ARGS = {
+  background: null,
+  animation: null,
+  dock: null,
+  hide: null,
+  position: null,
+};
 
 describe("FUNCTION_TOOLS", () => {
   test("contains all expected tools", () => {
@@ -71,9 +77,9 @@ describe("useFunctionTool", () => {
         arguments: JSON.stringify({
           sectionId: null,
           textColor: null,
-          backgroundColor: null,
           align: null,
           size: "medium",
+          ...COMMON_TILE_ARGS,
         }),
         status: "completed",
       },
@@ -96,6 +102,7 @@ describe("useFunctionTool", () => {
           size: "medium",
           style: null,
           places: [{ name: "Test", lat: 40.0, long: -74.0, address: null }],
+          ...COMMON_TILE_ARGS,
         }),
         status: "completed",
       },
@@ -115,8 +122,10 @@ describe("useFunctionTool", () => {
         name: "create_table",
         arguments: JSON.stringify({
           sectionId: null,
+          size: "medium",
           columns: [{ title: "A" }, { title: "B" }],
           rows: [["1", "2"]],
+          ...COMMON_TILE_ARGS,
         }),
         status: "completed",
       },
@@ -136,7 +145,9 @@ describe("useFunctionTool", () => {
         name: "create_link",
         arguments: JSON.stringify({
           sectionId: null,
+          size: "medium",
           url: "https://example.com",
+          ...COMMON_TILE_ARGS,
         }),
         status: "completed",
       },
@@ -156,8 +167,8 @@ describe("useFunctionTool", () => {
         name: "create_section",
         arguments: JSON.stringify({
           size: "medium",
-          layout: null,
-          backgroundColor: null,
+          layout: "GRID",
+          ...COMMON_TILE_ARGS,
         }),
         status: "completed",
       },

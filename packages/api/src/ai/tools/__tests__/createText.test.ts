@@ -8,6 +8,18 @@ vi.mock("@/routes/text/text.ts", () => ({
   createText: vi.fn(),
 }));
 
+const BASE_ARGS = {
+  sectionId: null,
+  textColor: null,
+  background: null,
+  align: null,
+  size: "medium" as const,
+  animation: null,
+  dock: null,
+  hide: null,
+  position: null,
+};
+
 describe("CREATE_TEXT_TOOL", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -16,13 +28,7 @@ describe("CREATE_TEXT_TOOL", () => {
 
   test("creates text with correct dimensions for small size", async () => {
     await CREATE_TEXT_TOOL.function(
-      {
-        sectionId: null,
-        textColor: null,
-        backgroundColor: null,
-        align: null,
-        size: "small",
-      },
+      { ...BASE_ARGS, size: "small" },
       MOCK_TOOL_CONTEXT,
     );
 
@@ -33,13 +39,7 @@ describe("CREATE_TEXT_TOOL", () => {
 
   test("creates text with correct dimensions for large size", async () => {
     await CREATE_TEXT_TOOL.function(
-      {
-        sectionId: null,
-        textColor: null,
-        backgroundColor: null,
-        align: null,
-        size: "large",
-      },
+      { ...BASE_ARGS, size: "large" },
       MOCK_TOOL_CONTEXT,
     );
 
@@ -51,16 +51,7 @@ describe("CREATE_TEXT_TOOL", () => {
   test("uses context sectionId when args.sectionId is null", async () => {
     const context = { ...MOCK_TOOL_CONTEXT, sectionId: "context-section" };
 
-    await CREATE_TEXT_TOOL.function(
-      {
-        sectionId: null,
-        textColor: null,
-        backgroundColor: null,
-        align: null,
-        size: "medium",
-      },
-      context,
-    );
+    await CREATE_TEXT_TOOL.function(BASE_ARGS, context);
 
     expect(createText).toHaveBeenCalledWith(
       expect.objectContaining({ sectionId: "context-section" }),
@@ -69,13 +60,7 @@ describe("CREATE_TEXT_TOOL", () => {
 
   test("resolves sectionId when provided in args", async () => {
     await CREATE_TEXT_TOOL.function(
-      {
-        sectionId: "section-0",
-        textColor: null,
-        backgroundColor: null,
-        align: null,
-        size: "medium",
-      },
+      { ...BASE_ARGS, sectionId: "section-0" },
       MOCK_TOOL_CONTEXT,
     );
 
@@ -89,13 +74,7 @@ describe("CREATE_TEXT_TOOL", () => {
 
   test("maps alignment left to 0", async () => {
     await CREATE_TEXT_TOOL.function(
-      {
-        sectionId: null,
-        textColor: null,
-        backgroundColor: null,
-        align: "left",
-        size: "medium",
-      },
+      { ...BASE_ARGS, align: "left" },
       MOCK_TOOL_CONTEXT,
     );
 
@@ -108,13 +87,7 @@ describe("CREATE_TEXT_TOOL", () => {
 
   test("maps alignment center to 1", async () => {
     await CREATE_TEXT_TOOL.function(
-      {
-        sectionId: null,
-        textColor: null,
-        backgroundColor: null,
-        align: "center",
-        size: "medium",
-      },
+      { ...BASE_ARGS, align: "center" },
       MOCK_TOOL_CONTEXT,
     );
 
@@ -127,13 +100,7 @@ describe("CREATE_TEXT_TOOL", () => {
 
   test("maps alignment right to 2", async () => {
     await CREATE_TEXT_TOOL.function(
-      {
-        sectionId: null,
-        textColor: null,
-        backgroundColor: null,
-        align: "right",
-        size: "medium",
-      },
+      { ...BASE_ARGS, align: "right" },
       MOCK_TOOL_CONTEXT,
     );
 
@@ -144,15 +111,9 @@ describe("CREATE_TEXT_TOOL", () => {
     );
   });
 
-  test("transforms backgroundColor to background object", async () => {
+  test("passes background to createText", async () => {
     await CREATE_TEXT_TOOL.function(
-      {
-        sectionId: null,
-        textColor: null,
-        backgroundColor: "ff0000000000",
-        align: null,
-        size: "medium",
-      },
+      { ...BASE_ARGS, background: { type: "color", color: "ff0000000000" } },
       MOCK_TOOL_CONTEXT,
     );
 
@@ -163,32 +124,9 @@ describe("CREATE_TEXT_TOOL", () => {
     );
   });
 
-  test("passes undefined background when backgroundColor is null", async () => {
-    await CREATE_TEXT_TOOL.function(
-      {
-        sectionId: null,
-        textColor: null,
-        backgroundColor: null,
-        align: null,
-        size: "medium",
-      },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({ background: undefined }),
-    );
-  });
-
   test("passes textColor directly", async () => {
     await CREATE_TEXT_TOOL.function(
-      {
-        sectionId: null,
-        textColor: "000000000000",
-        backgroundColor: null,
-        align: null,
-        size: "medium",
-      },
+      { ...BASE_ARGS, textColor: "000000000000" },
       MOCK_TOOL_CONTEXT,
     );
 
@@ -198,16 +136,7 @@ describe("CREATE_TEXT_TOOL", () => {
   });
 
   test("returns artifact from createText", async () => {
-    const result = await CREATE_TEXT_TOOL.function(
-      {
-        sectionId: null,
-        textColor: null,
-        backgroundColor: null,
-        align: null,
-        size: "medium",
-      },
-      MOCK_TOOL_CONTEXT,
-    );
+    const result = await CREATE_TEXT_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
 
     expect(result).toEqual({ artifact: TEXT_TILE });
   });
