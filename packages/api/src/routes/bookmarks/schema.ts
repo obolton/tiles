@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PaginationSchema } from "@/schema/Pagination";
 
 export const CreateBookmarkSchema = z.object({
   pageId: z.uuid(),
@@ -10,10 +11,7 @@ export const DeleteBookmarkSchema = z.object({
 });
 export type DeleteBookmarkSchema = z.infer<typeof DeleteBookmarkSchema>;
 
-export const ListBookmarksSchema = z.object({
-  query: z.string().min(1).optional(),
-  cursor: z.uuid().optional(),
-});
+export const ListBookmarksSchema = PaginationSchema;
 export type ListBookmarksSchema = z.infer<typeof ListBookmarksSchema>;
 
 export const IsBookmarkedSchema = z.object({

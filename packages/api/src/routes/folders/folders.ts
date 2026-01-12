@@ -93,7 +93,7 @@ export async function listFolders(
 }
 
 export async function listPages(
-  { id, query, cursor }: ListPagesSchema,
+  { id, query, cursor, sortBy = "updatedAt", sortDirection = "desc" }: ListPagesSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.$transaction(async (transaction) => {
@@ -117,7 +117,7 @@ export async function listPages(
       },
       select: PAGE_LINK_TILE_PAGE_FIELDS,
       orderBy: {
-        createdAt: "desc",
+        [sortBy]: sortDirection,
       },
       take: RESULTS_PER_PAGE + 1,
       ...(cursor && { cursor: { id: cursor }, skip: 1 }),

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ColorSchema } from "@/schema/Color";
+import { PaginationSchema, SortDirection } from "@/schema/Pagination";
 import { Font } from "@/generated/prisma/client";
 
 export const GetPageByIdSchema = z.object({
@@ -7,9 +8,12 @@ export const GetPageByIdSchema = z.object({
 });
 export type GetPageByIdSchema = z.infer<typeof GetPageByIdSchema>;
 
-export const ListPagesSchema = z.object({
-  query: z.string().min(1).optional(),
-  cursor: z.uuid().optional(),
+export const PageSortField = z.enum(["updatedAt", "createdAt", "title"]);
+export type PageSortField = z.infer<typeof PageSortField>;
+
+export const ListPagesSchema = PaginationSchema.extend({
+  sortBy: PageSortField.optional(),
+  sortDirection: SortDirection.optional(),
 });
 export type ListPagesSchema = z.infer<typeof ListPagesSchema>;
 

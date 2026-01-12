@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { PaginationSchema, SortDirection } from "@/schema/Pagination";
+import { PageSortField } from "@/routes/pages/schema";
 
 export const CreateFolderSchema = z.object({
   name: z.string().min(1),
@@ -21,15 +23,12 @@ export const DeleteFolderSchema = z.object({
 });
 export type DeleteFolderSchema = z.infer<typeof DeleteFolderSchema>;
 
-export const ListFoldersSchema = z.object({
-  query: z.string().min(1).optional(),
-  cursor: z.uuid().optional(),
-});
+export const ListFoldersSchema = PaginationSchema;
 export type ListFoldersSchema = z.infer<typeof ListFoldersSchema>;
 
-export const ListPagesSchema = z.object({
+export const ListPagesSchema = PaginationSchema.extend({
   id: z.uuid(),
-  query: z.string().min(1).optional(),
-  cursor: z.uuid().optional(),
+  sortBy: PageSortField.optional(),
+  sortDirection: SortDirection.optional(),
 });
 export type ListPagesSchema = z.infer<typeof ListPagesSchema>;
