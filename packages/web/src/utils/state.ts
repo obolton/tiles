@@ -1,3 +1,5 @@
+import { reactive } from "./reactivity";
+
 type Value = string | number | boolean | object;
 
 const cache = new Map<string, Value | null>();
@@ -90,6 +92,18 @@ export function removePersistent(key: string) {
       storageArea: localStorage,
     }),
   );
+}
+
+export function persistent<T extends Value>(key: string, defaultValue: T) {
+  if (typeof localStorage === "undefined") {
+    return reactive<T>(defaultValue);
+  }
+  const stored = getPersistent<T>(key);
+  const value = reactive<T>(stored ?? defaultValue);
+  value.subscribe(() => {
+    setPersistent(key, value.value);
+  });
+  return value;
 }
 
 // Shared
