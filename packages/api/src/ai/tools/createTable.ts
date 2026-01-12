@@ -1,7 +1,11 @@
 import { z } from "zod";
 import { createTable } from "@/routes/tables/tables.ts";
-import { SizeSchema, getDimensions, CommonTileSchema } from "./schema.ts";
-import { ColumnDefinitionSchema } from "@/routes/tables/schema.ts";
+import {
+  SizeSchema,
+  getDimensions,
+  CommonTileSchema,
+  AIColumnDefinitionSchema,
+} from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateTableSchema = z.strictObject({
@@ -9,7 +13,7 @@ const CreateTableSchema = z.strictObject({
     description: "Section ID to place this content inside a section, or null",
   }),
   size: SizeSchema,
-  columns: z.array(ColumnDefinitionSchema).min(2).max(8).meta({
+  columns: z.array(AIColumnDefinitionSchema).min(2).max(8).meta({
     description: "Column definitions with titles and optional styling",
   }),
   rows: z
@@ -34,7 +38,10 @@ async function createTableArtifact(
   const artifact = await createTable({
     pageId,
     sectionId: resolvedSectionId,
-    columns,
+    columns: columns.map((col) => ({
+      title: col.title ?? undefined,
+      background: col.background,
+    })),
     rows,
     background,
     animation,

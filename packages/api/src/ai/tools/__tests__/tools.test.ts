@@ -123,7 +123,10 @@ describe("useFunctionTool", () => {
         arguments: JSON.stringify({
           sectionId: null,
           size: "medium",
-          columns: [{ title: "A" }, { title: "B" }],
+          columns: [
+            { title: "A", background: null },
+            { title: "B", background: null },
+          ],
           rows: [["1", "2"]],
           ...COMMON_TILE_ARGS,
         }),

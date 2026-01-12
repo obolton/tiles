@@ -29,8 +29,13 @@ export function getDimensions(size: Size): Dimensions {
 
 // Excludes images for now
 export const AIBackgroundSchema = z
-  .discriminatedUnion("type", [ColorBackgroundSchema, GradientBackgroundSchema])
+  .union([ColorBackgroundSchema, GradientBackgroundSchema])
   .nullable();
+
+export const AIColumnDefinitionSchema = z.strictObject({
+  title: z.string().nullable(),
+  background: AIBackgroundSchema,
+});
 
 export const AnimationSchema = z.enum(Animation).nullable().meta({
   description: "Entrance animation effect",

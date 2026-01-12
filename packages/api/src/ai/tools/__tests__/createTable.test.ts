@@ -11,7 +11,10 @@ vi.mock("@/routes/tables/tables.ts", () => ({
 const BASE_ARGS = {
   sectionId: null,
   size: "medium" as const,
-  columns: [{ title: "A" }, { title: "B" }],
+  columns: [
+    { title: "A", background: null },
+    { title: "B", background: null },
+  ],
   rows: [["1", "2"]],
   background: null,
   animation: null,
@@ -27,7 +30,10 @@ describe("CREATE_TABLE_TOOL", () => {
   });
 
   test("passes columns and rows to createTable", async () => {
-    const columns = [{ title: "Name" }, { title: "Age" }];
+    const columns = [
+      { title: "Name", background: null },
+      { title: "Age", background: null },
+    ];
     const rows = [
       ["Alice", "30"],
       ["Bob", "25"],
@@ -39,7 +45,13 @@ describe("CREATE_TABLE_TOOL", () => {
     );
 
     expect(createTable).toHaveBeenCalledWith(
-      expect.objectContaining({ columns, rows }),
+      expect.objectContaining({
+        columns: [
+          { title: "Name", background: null },
+          { title: "Age", background: null },
+        ],
+        rows,
+      }),
     );
   });
 
@@ -76,7 +88,10 @@ describe("CREATE_TABLE_TOOL", () => {
   });
 
   test("returns artifact from createTable", async () => {
-    const result = await CREATE_TABLE_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
+    const result = await CREATE_TABLE_TOOL.function(
+      BASE_ARGS,
+      MOCK_TOOL_CONTEXT,
+    );
 
     expect(result).toEqual({ artifact: TABLE_TILE });
   });

@@ -39,8 +39,16 @@ async function createTextArtifact(
   args: z.infer<typeof CreateTextSchema>,
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
-  const { textColor, background, align, size, animation, dock, hide, position } =
-    args;
+  const {
+    textColor,
+    background,
+    align,
+    size,
+    animation,
+    dock,
+    hide,
+    position,
+  } = args;
   const resolvedSectionId = args.sectionId
     ? resolveArtifactId(args.sectionId)
     : sectionId;
