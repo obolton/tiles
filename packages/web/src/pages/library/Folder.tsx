@@ -3,11 +3,20 @@ import PageLayout from "@/layouts/PageLayout";
 import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
 import Placeholder from "@/components/placeholder/Placeholder";
-import PagesGrid from "@/components/grid/PagesGrid";
+import PagesGrid, {
+  parsePageSort,
+  type PageSort,
+} from "@/components/grid/PagesGrid";
 import SettingsIcon from "@/icons/settings.svg?jsx";
+import { handleError } from "@/utils/errors";
 import { showModal } from "@/utils/modals";
 import { redirectWithToast } from "@/utils/toasts";
+import { persistent } from "@/utils/state";
 import type { AppRouterOutputs } from "@/api/client";
+
+if (!import.meta.env.SSR) {
+  import("@/elements/editor").catch(handleError);
+}
 
 const FolderModalLoader = () =>
   import("@/components/modals/folders/FolderModal");
@@ -35,6 +44,8 @@ export default function Folder({
   folders,
   pages,
 }: FolderProps) {
+  const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
+
   function editFolder() {
     showModal(FolderModalLoader, {
       props: {
@@ -86,15 +97,19 @@ export default function Folder({
         <PagesGrid
           inputPlaceholder={`Search in ${name}`}
           pages={pages}
-          search={(query, cursor) =>
-            client.folders.listPages.query({
+          search={(query, cursor) => {
+            const { sortBy, sortDirection } = parsePageSort(sort.value);
+            return client.folders.listPages.query({
               workspaceId: workspace.id,
               id,
               query: query || undefined,
               cursor: cursor ?? undefined,
-            })
-          }
+              sortBy,
+              sortDirection,
+            });
+          }}
           renderPlaceholder={renderPlaceholder}
+          sort={sort}
           draggable
         />
       </SidebarLayout>

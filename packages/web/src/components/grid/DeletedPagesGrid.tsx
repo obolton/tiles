@@ -1,12 +1,14 @@
 import client from "@/api/client";
 import DeletedPage from "./DeletedPage";
 import Search from "@/components/search/Search";
+import { PageSortOptions, type PageSort } from "./PagesGrid";
 import { handleError } from "@/utils/errors";
 import { reactive } from "@/utils/reactivity";
 import { showToast } from "@/utils/toasts";
 import styles from "./DeletedPagesGrid.module.css";
 import type { ClientPageLinkTile } from "api/types/tiles";
 import type { JSX } from "@/jsx/jsx";
+import type { Reactive } from "@/utils/reactivity";
 
 interface PagesSearchResults {
   pages: NonNullable<ClientPageLinkTile["linkedPage"]>[];
@@ -19,6 +21,7 @@ export interface DeletedPagesGridProps {
   search: (query: string, cursor: string | null) => Promise<PagesSearchResults>;
   pages?: PagesSearchResults;
   renderPlaceholder: (query: string) => JSX.Node;
+  sort?: Reactive<PageSort>;
 }
 
 export default function DeletedPagesGrid({
@@ -27,13 +30,14 @@ export default function DeletedPagesGrid({
   search,
   pages: initialPages,
   renderPlaceholder,
+  sort,
 }: DeletedPagesGridProps) {
   const pages = reactive(initialPages?.pages ?? []);
   const nextCursor = reactive(initialPages?.nextCursor ?? null);
 
   const onSearch = async (query: string, cursor: string | null) => {
     try {
-      if (!query && !cursor) {
+      if (!query && !cursor && !sort) {
         pages.value = initialPages?.pages ?? [];
         nextCursor.value = initialPages?.nextCursor ?? null;
         return;
@@ -73,6 +77,8 @@ export default function DeletedPagesGrid({
         results={pages}
         nextCursor={nextCursor}
         placeholder={inputPlaceholder}
+        sortOptions={sort ? <PageSortOptions /> : undefined}
+        sort={sort}
         render={(page) => (
           <DeletedPage
             workspaceId={workspaceId}

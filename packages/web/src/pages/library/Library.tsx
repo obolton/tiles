@@ -3,10 +3,18 @@ import PageLayout from "@/layouts/PageLayout";
 import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
 import Placeholder from "@/components/placeholder/Placeholder";
-import PagesGrid from "@/components/grid/PagesGrid";
+import PagesGrid, {
+  parsePageSort,
+  type PageSort,
+} from "@/components/grid/PagesGrid";
 import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
+import { persistent } from "@/utils/state";
 import type { AppRouterOutputs } from "@/api/client";
+
+if (!import.meta.env.SSR) {
+  import("@/elements/editor").catch(handleError);
+}
 
 export interface LibraryProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
@@ -15,6 +23,8 @@ export interface LibraryProps {
 }
 
 export default function Library({ workspace, folders, pages }: LibraryProps) {
+  const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
+
   async function createNewPage() {
     try {
       const { id } = await client.pages.create.mutate({
@@ -69,14 +79,18 @@ export default function Library({ workspace, folders, pages }: LibraryProps) {
         <PagesGrid
           inputPlaceholder="Search pages"
           pages={pages}
-          search={(query, cursor) =>
-            client.pages.list.query({
+          search={(query, cursor) => {
+            const { sortBy, sortDirection } = parsePageSort(sort.value);
+            return client.pages.list.query({
               workspaceId: workspace.id,
               query: query || undefined,
               cursor: cursor ?? undefined,
-            })
-          }
+              sortBy,
+              sortDirection,
+            });
+          }}
           renderPlaceholder={renderPlaceholder}
+          sort={sort}
           draggable
         />
       </SidebarLayout>
