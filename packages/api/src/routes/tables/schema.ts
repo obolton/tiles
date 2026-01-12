@@ -33,10 +33,21 @@ export const RangeSchema = z.discriminatedUnion("type", [
   ColumnRangeSchema,
 ]);
 
+export const ColumnDefinitionSchema = z.strictObject({
+  title: z.string().optional(),
+  background: BackgroundSchema.nullable().optional(),
+});
+
 export const CreateTableSchema = z.strictObject({
   ...CreateTileSchema.shape,
-  columns: z.number().int().min(1).max(100),
-  rows: z.number().int().max(10),
+  columns: z.union([
+    z.number().int().min(1).max(100),
+    z.array(ColumnDefinitionSchema).min(1).max(100),
+  ]),
+  rows: z.union([
+    z.number().int().min(0).max(100),
+    z.array(z.array(z.string())).max(100),
+  ]),
 });
 export type CreateTableSchema = z.infer<typeof CreateTableSchema>;
 

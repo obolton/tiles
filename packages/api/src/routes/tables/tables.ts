@@ -23,6 +23,45 @@ import {
   TABLE_WITH_DATA_FIELDS,
 } from "./fields";
 
+type ColumnInput = CreateTableSchema["columns"];
+type RowInput = CreateTableSchema["rows"];
+
+function buildColumnData(columns: ColumnInput) {
+  const isDefinitions = Array.isArray(columns);
+  const count = isDefinitions ? columns.length : columns;
+  const ids = Array.from({ length: count }, () => crypto.randomUUID());
+  const orderKeys = generateNKeysBetween(null, null, count);
+
+  const data: Prisma.TableColumnCreateManyTableInput[] = ids.map((id, i) => ({
+    id,
+    order: orderKeys[i]!,
+    ...(isDefinitions
+      ? { title: columns[i]?.title, ...getBackgroundProperties(columns[i]?.background) }
+      : {}),
+  }));
+
+  return { ids, data };
+}
+
+function buildRowData(rows: RowInput, columnIds: string[]) {
+  const isData = Array.isArray(rows);
+  const count = isData ? rows.length : rows;
+  const ids = Array.from({ length: count }, () => crypto.randomUUID());
+  const orderKeys = generateNKeysBetween(null, null, count);
+
+  const data: Prisma.TableRowCreateManyTableInput[] = ids.map((id, i) => ({
+    id,
+    order: orderKeys[i]!,
+    data: isData
+      ? Object.fromEntries(
+          rows[i]!.map((value, colIndex) => [columnIds[colIndex], value]),
+        )
+      : {},
+  }));
+
+  return { ids, data };
+}
+
 export async function createTable({
   pageId,
   columns,
@@ -31,17 +70,8 @@ export async function createTable({
   background,
   ...properties
 }: CreateTableSchema) {
-  const columnData: Prisma.TableColumnCreateManyTableInput[] = [];
-  const columnOrderKeys = generateNKeysBetween(null, null, columns);
-  for (let i = 0; i < columns; i++) {
-    columnData.push({ order: columnOrderKeys[i]! });
-  }
-
-  const rowData: Prisma.TableRowCreateManyTableInput[] = [];
-  const rowOrderKeys = generateNKeysBetween(null, null, rows);
-  for (let i = 0; i < rows; i++) {
-    rowData.push({ order: rowOrderKeys[i]!, data: {} });
-  }
+  const { data: columnData, ids: columnIds } = buildColumnData(columns);
+  const { data: rowData } = buildRowData(rows, columnIds);
 
   const { table, ...tile } = await createTile(
     {
@@ -52,16 +82,8 @@ export async function createTable({
       background,
       table: {
         pageId,
-        columns: {
-          createMany: {
-            data: columnData,
-          },
-        },
-        rows: {
-          createMany: {
-            data: rowData,
-          },
-        },
+        columns: { createMany: { data: columnData } },
+        rows: { createMany: { data: rowData } },
       },
     },
     { table: { select: TABLE_WITH_DATA_FIELDS } } as const,
@@ -75,65 +97,6 @@ export async function createTable({
     ...tableWithData,
     numRows: _count.rows,
   };
-}
-
-export interface CreateTableWithDataInput {
-  pageId: string;
-  sectionId?: string | null;
-  columns: { title: string }[];
-  rows: string[][];
-}
-
-export async function createTableWithData({
-  pageId,
-  sectionId,
-  columns,
-  rows,
-}: CreateTableWithDataInput) {
-  // Generate column UUIDs upfront so we can use them as keys in row data
-  const columnIds = columns.map(() => crypto.randomUUID());
-  const columnOrderKeys = generateNKeysBetween(null, null, columns.length);
-
-  const columnData: Prisma.TableColumnCreateManyTableInput[] = columns.map(
-    (col, i) => ({
-      id: columnIds[i],
-      order: columnOrderKeys[i]!,
-      title: col.title,
-    }),
-  );
-
-  const rowOrderKeys = generateNKeysBetween(null, null, rows.length);
-  const rowData: Prisma.TableRowCreateManyTableInput[] = rows.map(
-    (row, rowIndex) => ({
-      order: rowOrderKeys[rowIndex]!,
-      data: Object.fromEntries(
-        row.map((cellValue, colIndex) => [columnIds[colIndex], cellValue]),
-      ),
-    }),
-  );
-
-  const width = Math.min(columns.length * 5, 40);
-  const height = Math.min(4 + rows.length * 2, 30);
-
-  const { table, ...tile } = await createTile(
-    {
-      type: "TABLE",
-      pageId,
-      sectionId,
-      width,
-      height,
-      table: {
-        pageId,
-        columns: { createMany: { data: columnData } },
-        rows: { createMany: { data: rowData } },
-      },
-    },
-    { table: { select: TABLE_WITH_DATA_FIELDS } } as const,
-    prisma,
-  );
-
-  const { _count, ...tableData } = table!;
-  return { ...tile, ...tableData, numRows: _count.rows };
 }
 
 export async function getRowOrderKeys(
