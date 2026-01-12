@@ -1,10 +1,12 @@
 import debounce from "@/utils/debounce";
 import { reactive } from "@/utils/reactivity";
+import SortIcon from "@/icons/sort.svg?jsx";
 import styles from "./Search.module.css";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
+import type ListSelect from "@/elements/list-select/ListSelect";
 
-export interface SearchProps<T> {
+export interface SearchProps<T, S extends string = string> {
   id: string;
   itemsClassName?: string;
   search: (query: string, cursor: string | null) => void | Promise<void>;
@@ -14,9 +16,11 @@ export interface SearchProps<T> {
   autofocus?: boolean;
   render: (result: T) => JSX.Node;
   renderPlaceholder: (query: string) => JSX.Node;
+  sortOptions?: JSX.Node;
+  sort?: Reactive<S>;
 }
 
-export default function Search<T>({
+export default function Search<T, S extends string = string>({
   id,
   itemsClassName,
   search,
@@ -26,7 +30,9 @@ export default function Search<T>({
   autofocus = true,
   render,
   renderPlaceholder,
-}: SearchProps<T>) {
+  sortOptions,
+  sort,
+}: SearchProps<T, S>) {
   const query = reactive("");
 
   async function onLoadMore() {
@@ -45,16 +51,39 @@ export default function Search<T>({
     debouncedSearch(queryString, null);
   }
 
+  function onSortChange(event: Event) {
+    if (sort) {
+      sort.value = (event.currentTarget as ListSelect).value as S;
+      debouncedSearch(query.value, null);
+    }
+  }
+
   return (
     <section>
-      <input
-        id={id}
-        type="search"
-        className={styles.search}
-        autofocus={autofocus}
-        placeholder={placeholder}
-        on:input={onInput}
-      />
+      <div className={styles.toolbar}>
+        <input
+          id={id}
+          type="search"
+          className={styles.search}
+          autofocus={autofocus}
+          placeholder={placeholder}
+          on:input={onInput}
+        />
+
+        {sortOptions && sort && (
+          <list-select
+            aria-label="Sort by"
+            orientation="vertical"
+            data-tooltip="Sort by"
+            showvalue
+            value={sort}
+            on:change={onSortChange}
+          >
+            <SortIcon slot="default-icon" aria-hidden="true" />
+            {sortOptions}
+          </list-select>
+        )}
+      </div>
 
       <infinite-scroll className={itemsClassName} on:loadmore={onLoadMore}>
         {results.derive((items) =>
