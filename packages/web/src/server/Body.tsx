@@ -1,3 +1,4 @@
+import { safeJsonStringify } from "@/utils/serialize";
 import type { JSX } from "@/jsx/jsx";
 
 export interface BodyProps extends JSX.Attributes<"body"> {
@@ -14,7 +15,7 @@ export default function Body({ children, hydrate, ...props }: BodyProps) {
       {children}
       {hydrate ? (
         <script id="page-data" type="application/json">
-          {JSON.stringify(hydrate)}
+          {safeJsonStringify(hydrate)}
         </script>
       ) : null}
     </body>
