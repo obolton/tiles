@@ -5,6 +5,7 @@ import globalMetadata from "@/routes/metadata";
 import Body from "./Body";
 import { internalError, notFound } from "@/router/router";
 import { resolveImport, getStylesheetsForRouteModule } from "./assets";
+import { securityHeaders } from "./security";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type {
   RouteData,
@@ -229,6 +230,7 @@ async function renderRoute(
     headers: {
       "Content-Type": "text/html",
       Link: links.join(", "),
+      ...securityHeaders,
       ...headers,
     },
   });
