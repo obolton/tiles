@@ -3,7 +3,7 @@ import { escapeUTF8 } from "entities";
 import { renderToString } from "@/jsx/server";
 import globalMetadata from "@/routes/metadata";
 import Body from "./Body";
-import { internalError, notFound } from "@/router/router";
+import { internalError, notFound } from "@/router/responses";
 import { resolveImport, getStylesheetsForRouteModule } from "./assets";
 import { securityHeaders } from "./security";
 import type { ModuleNode, ViteDevServer } from "vite";
@@ -201,7 +201,7 @@ async function renderRoute(
 
   const links = getLinks(stylesheets, mergedMetadata);
 
-  const routeData = loader
+  const loaderResult = loader
     ? await loader({
         url,
         headers: request.headers,
@@ -209,10 +209,14 @@ async function renderRoute(
       })
     : undefined;
 
-  const { headers = {}, bodyAttributes = {}, data } = routeData ?? {};
+  if (loaderResult instanceof Response) {
+    return loaderResult;
+  }
+
+  const { headers = {}, bodyAttributes = {}, data } = loaderResult ?? {};
 
   const body =
-    getPageStartChunk(stylesheets, mergedMetadata, routeData) +
+    getPageStartChunk(stylesheets, mergedMetadata, loaderResult) +
     renderToString(
       Body({
         ...bodyAttributes,
