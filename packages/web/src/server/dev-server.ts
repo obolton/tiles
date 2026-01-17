@@ -95,9 +95,13 @@ export default async function createDevServer(options: DevServerOptions) {
         if (error instanceof Error) {
           vite.ssrFixStacktrace(error);
         }
-        console.error(error);
-        response.writeHead(500);
-        response.end(error);
+        console.error(request.url + ":", error);
+        response.writeHead(500, { "Content-Type": "text/plain" });
+        response.end(
+          error instanceof Error
+            ? `${error.message}\n\n${error.stack}`
+            : "Internal Server Error",
+        );
       }
     });
   }
