@@ -8,6 +8,7 @@ import type {
   ClientVideoTile,
   ClientChartTile,
   ClientTableTile,
+  ClientSectionTile,
 } from "api/types/tiles";
 
 const SHARED = {
@@ -182,4 +183,12 @@ export const CHART_TILE: ClientChartTile = {
       column: { id: "col-3", title: "Profit" },
     },
   ],
+};
+
+export const SECTION_TILE: ClientSectionTile = {
+  ...SHARED,
+  sectionId: null,
+  id: "section-id",
+  type: "SECTION",
+  layout: "GRID",
 };
