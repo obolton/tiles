@@ -65,11 +65,17 @@ export default async function createDevServer(options: DevServerOptions) {
       )) as { default: Respond };
 
       try {
+        const method = request.method ?? "GET";
+        const hasBody = method !== "GET" && method !== "HEAD";
         const webRequest = new Request(
           new URL(request.url ?? "", process.env.PUBLIC_WEB_BASE_URL),
           {
-            method: request.method,
+            method,
             headers: toWebHeaders(request.headers),
+            body: hasBody
+              ? (Readable.toWeb(request) as globalThis.ReadableStream)
+              : undefined,
+            duplex: hasBody ? "half" : undefined,
           },
         );
         const webResponse = await respond(webRequest, vite);
