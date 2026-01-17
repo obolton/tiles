@@ -27,13 +27,6 @@ export interface RouteData<T = unknown> {
   data: T;
 }
 
-export type RedirectStatusCode = 301 | 302 | 307 | 308;
-
-export interface Redirect {
-  statusCode: RedirectStatusCode;
-  location: string;
-}
-
 export interface RequestError {
   statusCode: number;
   message: string;
@@ -43,7 +36,7 @@ export type RouteMiddleware = (
   request: Request,
 ) => Promise<Response | undefined> | Response | undefined;
 
-export type RouteLoaderResult<T> = Promise<RouteData<T>>;
+export type RouteLoaderResult<T> = Promise<RouteData<T> | Response>;
 
 export type RouteLoader<T> = (
   request: RequestProperties,
@@ -89,50 +82,6 @@ export interface RouteNode {
   parameter?: string;
   dynamic?: RouteNode;
   children?: Map<string, RouteNode>;
-}
-
-export function redirect(
-  location: string,
-  status: RedirectStatusCode = 301,
-  additionalHeaders?: HeadersInit,
-) {
-  const headers = new Headers(additionalHeaders);
-  headers.set("Location", location);
-  return new Response(null, {
-    status,
-    headers,
-  });
-}
-
-export function serverError(body: string, headers?: HeadersInit) {
-  return new Response(body, {
-    status: 500,
-    headers,
-  });
-}
-
-export function forbidden(headers?: HeadersInit) {
-  return new Response(null, {
-    status: 403,
-    statusText: "Forbidden",
-    headers,
-  });
-}
-
-export function notFound(headers?: HeadersInit) {
-  return new Response("Not Found", {
-    status: 404,
-    statusText: "Not Found",
-    headers,
-  });
-}
-
-export function internalError(headers?: HeadersInit) {
-  return new Response("Internal Server Error", {
-    status: 500,
-    statusText: "Internal Server Error",
-    headers,
-  });
 }
 
 export default class Router {
