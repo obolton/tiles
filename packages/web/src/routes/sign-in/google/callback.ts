@@ -3,7 +3,7 @@ import {
   getOAuth2DestinationCookie,
   clearOAuth2Cookies,
 } from "@/auth/oauth2";
-import { redirect, forbidden, serverError } from "@/router/router";
+import { redirect, forbidden, internalError } from "@/router/responses";
 import { getAccessToken, getGoogleUser } from "@/auth/google";
 import { validateDestination } from "@/auth/destinations";
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
@@ -26,7 +26,7 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
   const error = searchParams.get("error");
 
   if (error) {
-    return serverError(error, cookiesToSet);
+    return internalError(error, cookiesToSet);
   }
 
   if (!stateCookieValue || !state || stateCookieValue !== state || !code) {

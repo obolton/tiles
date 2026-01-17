@@ -1,4 +1,4 @@
-import { redirect } from "@/router/router";
+import { redirect } from "@/router/responses";
 import { setOAuth2StateCookies } from "@/auth/oauth2";
 import { getGoogleAuthorizationUrl } from "@/auth/google";
 import type { APIRoute, APIRequestHandler } from "@/router/router";

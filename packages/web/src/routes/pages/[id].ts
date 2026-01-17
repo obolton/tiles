@@ -4,6 +4,7 @@ import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import Page, { type PageProps } from "@/pages/Page";
 import { isDark } from "@/utils/color";
 import { getThemeStyles } from "@/utils/themes";
+import { notFound } from "@/router/responses";
 import type {
   Route,
   RequestProperties,
@@ -20,7 +21,7 @@ async function loader({
   const pageId = parameters.id;
 
   if (!pageId) {
-    throw new Error("Not Found");
+    return notFound();
   }
 
   const page = await client.pages.getById.query(
@@ -29,7 +30,7 @@ async function loader({
   );
 
   if (!page) {
-    throw new Error("Not Found");
+    return notFound();
   }
 
   const style = getThemeStyles(page.theme, {

@@ -1,5 +1,5 @@
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
-import { redirect } from "@/router/router";
+import { redirect } from "@/router/responses";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
 
 const GET: APIRequestHandler = async () => {

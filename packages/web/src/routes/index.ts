@@ -1,6 +1,6 @@
 import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
-import { redirect } from "@/router/router";
+import { redirect, notFound } from "@/router/responses";
 import { getFontConfig } from "@/utils/fonts";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import Page, { type PageProps } from "@/pages/Page";
@@ -31,13 +31,13 @@ export async function indexRoute(request: Request) {
 
 async function loader(): RouteLoaderResult<PageProps> {
   if (!PAGE_ID) {
-    throw new Error("Not Found");
+    return notFound();
   }
 
   const page = await client.pages.getById.query({ id: PAGE_ID });
 
   if (!page) {
-    throw new Error("Not Found");
+    return notFound();
   }
 
   const font = page.font ? getFontConfig(page.font) : undefined;

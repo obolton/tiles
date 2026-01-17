@@ -1,6 +1,6 @@
 import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
-import { redirect, notFound } from "@/router/router";
+import { redirect, notFound } from "@/router/responses";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
 
 const GET: APIRequestHandler = async ({ headers, parameters }) => {

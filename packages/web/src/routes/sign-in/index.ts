@@ -1,6 +1,6 @@
 import SignIn, { type SignInProps } from "@/pages/SignIn";
 import { getSessionId } from "@/utils/sessions";
-import { redirect } from "@/router/router";
+import { redirect } from "@/router/responses";
 import type {
   Route,
   RequestProperties,

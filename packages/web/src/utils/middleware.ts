@@ -1,4 +1,4 @@
-import { redirect } from "@/router/router";
+import { redirect } from "@/router/responses";
 import { getSessionId } from "@/utils/sessions";
 
 export function authenticatedRoute(request: Request) {

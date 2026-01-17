@@ -2,6 +2,7 @@ import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
 import { authenticatedRoute } from "@/utils/middleware";
 import Folder, { type FolderProps } from "@/pages/library/Folder";
+import { notFound, forbidden } from "@/router/responses";
 import type {
   Route,
   RequestProperties,
@@ -14,12 +15,12 @@ async function loader({
 }: RequestProperties): RouteLoaderResult<FolderProps> {
   const { workspaceId, folderId } = parameters;
   if (!workspaceId || !folderId) {
-    throw new Error("Not Found");
+    return notFound();
   }
 
   const sessionId = getSessionId(headers);
   if (!sessionId) {
-    throw new Error("Unauthorized");
+    return forbidden();
   }
 
   const options = { context: { sessionId } };
@@ -30,6 +31,10 @@ async function loader({
     client.folders.list.query({ workspaceId }, options),
     client.folders.listPages.query({ workspaceId, id: folderId }, options),
   ]);
+
+  if (!folder) {
+    return notFound();
+  }
 
   return {
     title: `${folder.name} - Tiles`,

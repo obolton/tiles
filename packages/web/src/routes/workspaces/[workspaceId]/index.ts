@@ -2,6 +2,7 @@ import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
 import { authenticatedRoute } from "@/utils/middleware";
 import Library, { type LibraryProps } from "@/pages/library/Library";
+import { notFound, forbidden } from "@/router/responses";
 import type {
   Route,
   RequestProperties,
@@ -14,12 +15,12 @@ async function loader({
 }: RequestProperties): RouteLoaderResult<LibraryProps> {
   const { workspaceId } = parameters;
   if (!workspaceId) {
-    throw new Error("Not Found");
+    return notFound();
   }
 
   const sessionId = getSessionId(headers);
   if (!sessionId) {
-    throw new Error("Unauthorized");
+    return forbidden();
   }
 
   const options = { context: { sessionId } };

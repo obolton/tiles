@@ -1,4 +1,4 @@
-import { redirect } from "@/router/router";
+import { redirect } from "@/router/responses";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
 
 export const GET: APIRequestHandler = ({ parameters }) => {

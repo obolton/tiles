@@ -2,6 +2,7 @@ import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
 import Workspace, { type WorkspaceProps } from "@/pages/settings/Workspace";
 import { authenticatedRoute } from "@/utils/middleware";
+import { notFound, forbidden } from "@/router/responses";
 import type {
   Route,
   RequestProperties,
@@ -14,12 +15,12 @@ async function loader({
 }: RequestProperties): RouteLoaderResult<WorkspaceProps> {
   const { workspaceId } = parameters;
   if (!workspaceId) {
-    throw new Error("Not Found");
+    return notFound();
   }
 
   const sessionId = getSessionId(headers);
   if (!sessionId) {
-    throw new Error("Unauthorized");
+    return forbidden();
   }
 
   const options = { context: { sessionId } };
@@ -31,7 +32,7 @@ async function loader({
   ]);
 
   if (!workspace) {
-    throw new Error("Unauthorized");
+    return forbidden();
   }
 
   return {
