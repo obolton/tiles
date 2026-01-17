@@ -94,10 +94,7 @@ describe("buildCSPPolicy", () => {
 
   test("font-src allows self and Google Fonts", () => {
     const policy = buildCSPPolicy(testSources);
-    expect(policy["font-src"]).toEqual([
-      "'self'",
-      "https://fonts.gstatic.com",
-    ]);
+    expect(policy["font-src"]).toEqual(["'self'", "https://fonts.gstatic.com"]);
   });
 
   test("connect-src includes base services and custom URLs", () => {

@@ -53,7 +53,12 @@ export async function getPageById(
 }
 
 export async function listPages(
-  { query, cursor, sortBy = "updatedAt", sortDirection = "desc" }: ListPagesSchema,
+  {
+    query,
+    cursor,
+    sortBy = "updatedAt",
+    sortDirection = "desc",
+  }: ListPagesSchema,
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
@@ -78,7 +83,12 @@ export async function listPages(
 }
 
 export async function listSharedPages(
-  { query, cursor, sortBy = "updatedAt", sortDirection = "desc" }: ListPagesSchema,
+  {
+    query,
+    cursor,
+    sortBy = "updatedAt",
+    sortDirection = "desc",
+  }: ListPagesSchema,
   { userId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
@@ -102,7 +112,12 @@ export async function listSharedPages(
 }
 
 export async function listDeletedPages(
-  { query, cursor, sortBy = "updatedAt", sortDirection = "desc" }: ListPagesSchema,
+  {
+    query,
+    cursor,
+    sortBy = "updatedAt",
+    sortDirection = "desc",
+  }: ListPagesSchema,
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query

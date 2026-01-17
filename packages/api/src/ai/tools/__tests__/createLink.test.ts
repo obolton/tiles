@@ -74,7 +74,10 @@ describe("CREATE_LINK_TOOL", () => {
   });
 
   test("returns artifact from createLink", async () => {
-    const result = await CREATE_LINK_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
+    const result = await CREATE_LINK_TOOL.function(
+      BASE_ARGS,
+      MOCK_TOOL_CONTEXT,
+    );
 
     expect(result).toEqual({ artifact: LINK_TILE });
   });

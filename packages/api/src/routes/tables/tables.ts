@@ -36,7 +36,10 @@ function buildColumnData(columns: ColumnInput) {
     id,
     order: orderKeys[i]!,
     ...(isDefinitions
-      ? { title: columns[i]?.title, ...getBackgroundProperties(columns[i]?.background) }
+      ? {
+          title: columns[i]?.title,
+          ...getBackgroundProperties(columns[i]?.background),
+        }
       : {}),
   }));
 

@@ -38,7 +38,10 @@ describe("CREATE_CHART_TOOL", () => {
 
   test("fetches table columns with pageId and resolved tableId", async () => {
     await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
-    expect(getTableColumns).toHaveBeenCalledWith("test-page", "resolved-table-0");
+    expect(getTableColumns).toHaveBeenCalledWith(
+      "test-page",
+      "resolved-table-0",
+    );
   });
 
   test("maps columnIndex to columnId for each series", async () => {
@@ -90,7 +93,10 @@ describe("CREATE_CHART_TOOL", () => {
   test("throws error when column index is out of bounds", async () => {
     await expect(
       CREATE_CHART_TOOL.function(
-        { ...BASE_ARGS, series: [{ columnIndex: 10, type: "bar", color: null }] },
+        {
+          ...BASE_ARGS,
+          series: [{ columnIndex: 10, type: "bar", color: null }],
+        },
         MOCK_TOOL_CONTEXT,
       ),
     ).rejects.toThrow("Column index 10 out of bounds");
@@ -172,7 +178,10 @@ describe("CREATE_CHART_TOOL", () => {
   });
 
   test("returns artifact from createChart", async () => {
-    const result = await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
+    const result = await CREATE_CHART_TOOL.function(
+      BASE_ARGS,
+      MOCK_TOOL_CONTEXT,
+    );
     expect(result).toEqual({ artifact: CHART_TILE });
   });
 });

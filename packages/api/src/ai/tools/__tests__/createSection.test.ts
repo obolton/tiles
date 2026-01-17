@@ -106,7 +106,10 @@ describe("CREATE_SECTION_TOOL", () => {
   });
 
   test("returns artifact from createSection", async () => {
-    const result = await CREATE_SECTION_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
+    const result = await CREATE_SECTION_TOOL.function(
+      BASE_ARGS,
+      MOCK_TOOL_CONTEXT,
+    );
 
     expect(result).toEqual({ artifact: SECTION_TILE });
   });

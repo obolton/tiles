@@ -34,17 +34,26 @@ describe("CREATE_MAP_TOOL", () => {
   });
 
   test("creates map with correct dimensions for each size", async () => {
-    await CREATE_MAP_TOOL.function({ ...BASE_ARGS, size: "small" }, MOCK_TOOL_CONTEXT);
+    await CREATE_MAP_TOOL.function(
+      { ...BASE_ARGS, size: "small" },
+      MOCK_TOOL_CONTEXT,
+    );
     expect(createMap).toHaveBeenCalledWith(
       expect.objectContaining({ width: 12, height: 10 }),
     );
 
-    await CREATE_MAP_TOOL.function({ ...BASE_ARGS, size: "medium" }, MOCK_TOOL_CONTEXT);
+    await CREATE_MAP_TOOL.function(
+      { ...BASE_ARGS, size: "medium" },
+      MOCK_TOOL_CONTEXT,
+    );
     expect(createMap).toHaveBeenCalledWith(
       expect.objectContaining({ width: 24, height: 15 }),
     );
 
-    await CREATE_MAP_TOOL.function({ ...BASE_ARGS, size: "large" }, MOCK_TOOL_CONTEXT);
+    await CREATE_MAP_TOOL.function(
+      { ...BASE_ARGS, size: "large" },
+      MOCK_TOOL_CONTEXT,
+    );
     expect(createMap).toHaveBeenCalledWith(
       expect.objectContaining({ width: 24, height: 20 }),
     );
