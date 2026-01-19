@@ -111,6 +111,7 @@ export function persistent<T extends Value>(key: string, defaultValue: T) {
 export function clear() {
   sessionStorage.clear();
   localStorage.clear();
+  cache.clear();
   window.dispatchEvent(new StorageEvent("state:update"));
   window.dispatchEvent(new StorageEvent("state:update-persistent"));
 }
