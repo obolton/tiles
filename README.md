@@ -4,13 +4,9 @@
 
 - `api`
 - `web`
+- `image-upload-worker`
 
 ## Development
-
-### Requirements
-
-- Node.js 22.11+
-- PostgreSQL 16
 
 ### Creating a local SSL certificate
 
@@ -36,6 +32,15 @@
 
 ### Scripts
 
-- `npm run dev`: Start the development servers.
-- `npm run db:push`: Create the database schema.
-- `npm run db:seed`: Seed the database.
+- `pnpm dev`: Start the development servers.
+- `pnpm db:push`: Create the database schema.
+
+### Dev containers
+
+If using Git worktrees with dev containers, you must enable relative paths:
+
+```sh
+git config worktree.useRelativePaths true
+```
+
+This ensures worktree references work correctly inside the container.
