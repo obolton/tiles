@@ -28,7 +28,7 @@
     }
   },
 
-  "postCreateCommand": "pnpm install && pnpm db:push && pnpm db:seed",
+  "postCreateCommand": "pnpm install && pnpm --filter api db:push && pnpm --filter api db:push-functions && pnpm --filter api db:generate-client-sql && pnpm --filter api db:seed",
 
   "containerEnv": {
     "CHECKPOINT_DISABLE": "1" // Disable Prisma telemetry
