@@ -2,9 +2,9 @@
   "name": "Tiles",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
-  "workspaceFolder": "/workspace",
+  "workspaceFolder": "/projects/${localWorkspaceFolderBasename}",
 
-  "initializeCommand": "echo CA_CERT=$(mkcert -CAROOT)/rootCA.pem > .devcontainer/.env",
+  "initializeCommand": "echo CA_CERT=$(mkcert -CAROOT)/rootCA.pem > .devcontainer/.env && echo WORKSPACE=${localWorkspaceFolderBasename} >> .devcontainer/.env",
 
   "forwardPorts": [3000, 3001, 5432],
   "portsAttributes": {
