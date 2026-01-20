@@ -12,6 +12,7 @@ services:
       - web_node_modules:/projects/${WORKSPACE}/packages/web/node_modules
       - worker_node_modules:/projects/${WORKSPACE}/packages/image-upload-worker/node_modules
     command: sleep infinity
+    init: true
     environment:
       - NODE_ENV=development
       - NODE_OPTIONS=--use-system-ca
