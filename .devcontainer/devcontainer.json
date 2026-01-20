@@ -35,7 +35,8 @@
   "postCreateCommand": "pnpm install && pnpm --filter api db:push && pnpm --filter api db:push-functions && pnpm --filter api db:generate-client-sql && pnpm --filter api db:seed",
 
   "containerEnv": {
-    "CHECKPOINT_DISABLE": "1" // Disable Prisma telemetry
+    "CHECKPOINT_DISABLE": "1", // Disable Prisma telemetry
+    "WRANGLER_LOG": "info"
   },
 
   "remoteEnv": {
