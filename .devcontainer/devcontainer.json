@@ -35,7 +35,10 @@
   },
 
   "remoteEnv": {
-    "DATABASE_URL": "postgresql://tiles:tiles@db:5432/tiles"
+    "DATABASE_URL": "postgresql://tiles:tiles@db:5432/tiles",
+    "ENABLE_HTTPS": "true",
+    "CERTIFICATE_PATH": "/projects/localhost.pem",
+    "CERTIFICATE_KEY_PATH": "/projects/localhost-key.pem"
   },
 
   "remoteUser": "node",

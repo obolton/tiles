@@ -13,7 +13,6 @@ services:
       - worker_node_modules:/projects/${WORKSPACE}/packages/image-upload-worker/node_modules
     command: sleep infinity
     environment:
-      - DATABASE_URL=postgresql://tiles:tiles@db:5432/tiles
       - NODE_ENV=development
       - NODE_OPTIONS=--use-system-ca
     depends_on:
