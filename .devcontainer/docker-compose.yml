@@ -15,10 +15,10 @@ services:
     environment:
       - NODE_ENV=development
       - NODE_OPTIONS=--use-system-ca
+      - WORKSPACE=${WORKSPACE}
     depends_on:
       - db
     network_mode: service:db
-    user: node
 
   db:
     image: postgres:18-alpine
