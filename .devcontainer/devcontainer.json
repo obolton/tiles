@@ -6,6 +6,12 @@
 
   "initializeCommand": "echo CA_CERT=$(mkcert -CAROOT)/rootCA.pem > .devcontainer/.env && echo WORKSPACE=${localWorkspaceFolderBasename} >> .devcontainer/.env",
 
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {
+      "version": "latest"
+    }
+  },
+
   "forwardPorts": [3000, 3001, 5432],
   "portsAttributes": {
     "3000": {
