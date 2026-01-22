@@ -5,7 +5,7 @@ import {
 } from "@/auth/oauth2";
 import { redirect, forbidden, internalError } from "@/router/responses";
 import { getAccessToken, getGoogleUser } from "@/auth/google";
-import { validateDestination } from "@/auth/destinations";
+import { validateDestination, isAbsoluteUrl } from "@/auth/destinations";
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
 
@@ -49,7 +49,14 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
     new Date(session.expiresAt),
   );
 
-  return redirect(`/${destinationCookieValue || ""}`, 302, [
+  // Handle both absolute URLs (for multi-instance local dev) and relative paths
+  const redirectUrl = destinationCookieValue
+    ? isAbsoluteUrl(destinationCookieValue)
+      ? destinationCookieValue
+      : `/${destinationCookieValue}`
+    : "/";
+
+  return redirect(redirectUrl, 302, [
     ...cookiesToSet,
     ...authenticationCookies,
   ]);

@@ -13,6 +13,14 @@ export function redirect(
   });
 }
 
+export function badRequest(body?: string, headers?: HeadersInit) {
+  return new Response(body ?? null, {
+    status: 400,
+    statusText: "Bad Request",
+    headers,
+  });
+}
+
 export function forbidden(headers?: HeadersInit) {
   return new Response(null, {
     status: 403,
