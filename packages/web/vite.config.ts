@@ -11,6 +11,9 @@ export default defineConfig(({ isSsrBuild }) => ({
   envDir: "../..",
   envPrefix: "PUBLIC_",
   base: "/",
+  server: {
+    allowedHosts: [".tiles.test", "localhost"],
+  },
   ssr: {
     noExternal: IS_CLOUDFLARE_WORKER ? true : undefined,
     external: ["node:assert", "node:crypto"],
