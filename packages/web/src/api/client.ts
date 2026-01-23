@@ -10,7 +10,14 @@ import type {
   AppRouterOutputs,
 } from "api/routes/index";
 
-// TODO: Split into browser and Node clients
+if (import.meta.env.SSR && !process.env.API_URL) {
+  throw new Error("API_URL environment variable is required");
+}
+
+const API_URL = import.meta.env.SSR
+  ? process.env.API_URL
+  : import.meta.env.PUBLIC_API_BASE_URL;
+
 const client = createTRPCClient<AppRouter>({
   links: [
     splitLink({
@@ -18,7 +25,7 @@ const client = createTRPCClient<AppRouter>({
         return !!op.context.stream;
       },
       true: httpBatchStreamLink({
-        url: import.meta.env.PUBLIC_API_BASE_URL,
+        url: API_URL,
         fetch(url, options) {
           return fetch(url, {
             ...options,
@@ -35,7 +42,7 @@ const client = createTRPCClient<AppRouter>({
         },
       }),
       false: httpBatchLink({
-        url: import.meta.env.PUBLIC_API_BASE_URL,
+        url: API_URL,
         fetch(url, options) {
           return fetch(url, {
             ...options,
