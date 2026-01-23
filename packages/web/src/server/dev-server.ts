@@ -1,4 +1,4 @@
-import { createServer as createHttpsServer } from "node:https";
+import { createServer } from "node:http";
 import { createServer as createViteServer } from "vite";
 import { Readable } from "node:stream";
 import type { ReadableStream } from "node:stream/web";
@@ -8,10 +8,9 @@ import type {
   OutgoingHttpHeader,
   ServerResponse,
 } from "node:http";
-import type { ServerOptions } from "node:https";
 import type { Respond } from "@/server/server";
 
-export interface DevServerOptions extends ServerOptions {
+export interface DevServerOptions {
   hostname: string;
   port: number;
 }
@@ -40,7 +39,8 @@ function fromWebHeaders(webHeaders: Headers) {
 
 export default async function createDevServer(options: DevServerOptions) {
   const { hostname, port } = options;
-  const server = createHttpsServer(options, handleRequest);
+
+  const server = createServer(handleRequest);
   server.on("error", console.error);
 
   const vite = await createViteServer({
@@ -52,7 +52,7 @@ export default async function createDevServer(options: DevServerOptions) {
   });
 
   server.listen(port, hostname, () =>
-    console.log(`Development server: https://${hostname}:${port}`),
+    console.log(`Development server: ${process.env.PUBLIC_WEB_BASE_URL}`),
   );
 
   async function handleRequest(
@@ -67,17 +67,19 @@ export default async function createDevServer(options: DevServerOptions) {
       try {
         const method = request.method ?? "GET";
         const hasBody = method !== "GET" && method !== "HEAD";
-        const webRequest = new Request(
-          new URL(request.url ?? "", process.env.PUBLIC_WEB_BASE_URL),
-          {
-            method,
-            headers: toWebHeaders(request.headers),
-            body: hasBody
-              ? (Readable.toWeb(request) as globalThis.ReadableStream)
-              : undefined,
-            duplex: hasBody ? "half" : undefined,
-          },
-        );
+        const proto = request.headers["x-forwarded-proto"] ?? "http";
+        const host = request.headers.host;
+        const baseUrl = host
+          ? `${proto}://${host}`
+          : process.env.PUBLIC_WEB_BASE_URL;
+        const webRequest = new Request(new URL(request.url ?? "", baseUrl), {
+          method,
+          headers: toWebHeaders(request.headers),
+          body: hasBody
+            ? (Readable.toWeb(request) as globalThis.ReadableStream)
+            : undefined,
+          duplex: hasBody ? "half" : undefined,
+        });
         const webResponse = await respond(webRequest, vite);
         response.writeHead(
           webResponse.status,
