@@ -7,14 +7,16 @@ import {
 } from "api/constants/cookies";
 import type { SerializeOptions } from "cookie";
 
-assert(process.env.SESSION_COOKIE_DOMAIN);
+assert(import.meta.env.PUBLIC_SESSION_COOKIE_DOMAIN);
+
+const SESSION_COOKIE_DOMAIN = import.meta.env.PUBLIC_SESSION_COOKIE_DOMAIN;
 
 const SESSION_COOKIE_OPTIONS: SerializeOptions = {
   httpOnly: true,
   secure: true,
   path: "/",
   sameSite: "lax",
-  domain: process.env.SESSION_COOKIE_DOMAIN,
+  domain: SESSION_COOKIE_DOMAIN,
 };
 
 const SIGNED_IN_FLAG_COOKIE_OPTIONS: SerializeOptions = {
@@ -22,6 +24,7 @@ const SIGNED_IN_FLAG_COOKIE_OPTIONS: SerializeOptions = {
   secure: true,
   path: "/",
   sameSite: "lax",
+  domain: SESSION_COOKIE_DOMAIN,
 };
 
 type SignInOptions = AppRouterInputs["auth"]["signIn"];

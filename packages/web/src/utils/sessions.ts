@@ -8,6 +8,8 @@ import { clear, setPersistent, removePersistent, getPersistent } from "./state";
 import { reactive } from "./reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
+const SESSION_COOKIE_DOMAIN = import.meta.env.PUBLIC_SESSION_COOKIE_DOMAIN;
+
 export type User = AppRouterOutputs["users"]["getUserInfo"];
 
 export const user = reactive<User | null>(null);
@@ -38,7 +40,7 @@ export function getCachedUserInfo() {
 }
 
 export function clearAuthenticationCookies() {
-  document.cookie = `${SIGNED_IN_FLAG_COOKIE_NAME}=; Path=/; Secure; SameSite=Lax; Max-Age=0`;
+  document.cookie = `${SIGNED_IN_FLAG_COOKIE_NAME}=; Path=/; Secure; SameSite=Lax; Domain=${SESSION_COOKIE_DOMAIN}; Max-Age=0`;
 }
 
 export async function signOut() {
