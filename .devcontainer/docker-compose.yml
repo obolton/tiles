@@ -26,12 +26,12 @@ services:
       caddy_1: api.${WORKSPACE}.tiles.test
       caddy_1.tls: internal
       caddy_1.reverse_proxy: "{{upstreams 3001}}"
-      caddy_2: storybook.${WORKSPACE}.tiles.test
+      caddy_2: uploads.${WORKSPACE}.tiles.test
       caddy_2.tls: internal
-      caddy_2.reverse_proxy: "{{upstreams 6001}}"
-      caddy_3: uploads.${WORKSPACE}.tiles.test
+      caddy_2.reverse_proxy: "{{upstreams 3002}}"
+      caddy_3: storybook.${WORKSPACE}.tiles.test
       caddy_3.tls: internal
-      caddy_3.reverse_proxy: "{{upstreams 3002}}"
+      caddy_3.reverse_proxy: "{{upstreams 6001}}"
       caddy_4: localhost
       caddy_4.tls: internal
       caddy_4.reverse_proxy: "{{upstreams 3000}}"
