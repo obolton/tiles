@@ -1,30 +1,26 @@
 import assert from "node:assert";
-import fs from "node:fs";
-import http, { type IncomingMessage, type ServerResponse } from "node:http";
-import https from "node:https";
+import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { createHTTPHandler } from "@trpc/server/adapters/standalone";
 import cors from "cors";
 import router from "@/routes/index.ts";
 import { createContext } from "@/utils/trpc.ts";
 import { resourcesHandler } from "@/resources/index.ts";
 
-const HOST = process.env.HOST;
-const PORT = parseInt(process.env.PORT || "", 10);
-const ENABLE_HTTPS = process.env.ENABLE_HTTPS === "true";
-const CERTIFICATE_PATH = process.env.CERTIFICATE_PATH;
-const CERTIFICATE_KEY_PATH = process.env.CERTIFICATE_KEY_PATH;
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
-const SERVER_URL = `${ENABLE_HTTPS ? "https" : "http"}://${HOST}:${PORT}`;
+const API_HOST = process.env.API_HOST;
+const API_PORT = parseInt(process.env.API_PORT || "", 10);
+const CORS_ORIGIN = process.env.PUBLIC_WEB_ORIGIN;
 
-assert(HOST);
-assert(PORT);
-assert(!Number.isNaN(PORT));
-assert(CLIENT_ORIGIN);
+assert(API_HOST);
+assert(API_PORT);
+assert(!Number.isNaN(API_PORT));
+assert(CORS_ORIGIN);
+
+const SERVER_URL = `http://${API_HOST}:${API_PORT}`;
 
 const trpcHandler = createHTTPHandler({
   router,
   middleware: cors({
-    origin: CLIENT_ORIGIN,
+    origin: CORS_ORIGIN,
     credentials: true,
   }),
   createContext,
@@ -50,26 +46,10 @@ async function requestHandler(req: IncomingMessage, res: ServerResponse) {
   }
 }
 
-function getServer() {
-  if (ENABLE_HTTPS) {
-    assert(CERTIFICATE_PATH);
-    assert(CERTIFICATE_KEY_PATH);
-
-    return https.createServer(
-      {
-        key: fs.readFileSync(CERTIFICATE_KEY_PATH),
-        cert: fs.readFileSync(CERTIFICATE_PATH),
-      },
-      requestHandler,
-    );
-  }
-  return http.createServer(requestHandler);
-}
-
-const server = getServer();
+const server = createServer(requestHandler);
 server.on("error", (error) => {
   console.error("API:", error);
 });
-server.listen({ host: HOST, port: PORT }, () => {
+server.listen({ host: API_HOST, port: API_PORT }, () => {
   console.log(`API: Server started at ${SERVER_URL}`);
 });
