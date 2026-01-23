@@ -4,7 +4,7 @@ import Editor from "@/editor/Editor";
 import Text from "@/models/Text";
 import type { EditorView } from "prosemirror-view";
 import type { EditorState, Transaction } from "prosemirror-state";
-import type { Mark } from "prosemirror-model";
+import type { Mark, Node } from "prosemirror-model";
 import type { ClientTile } from "api/types/tiles";
 import type { Reactive } from "@/utils/reactivity";
 
@@ -60,22 +60,6 @@ export type StreamEvent = RichTextStreamEvent | ArtifactEvent;
 
 export type ReactiveState = Reactive<EditorState | null>;
 
-function insertPendingNode(tr: Transaction) {
-  const { $from } = tr.selection;
-
-  // Replace the current textblock if it is empty
-  if ($from.parent.isTextblock && $from.parent.content.size === 0) {
-    const from = $from.before();
-    const to = $from.after();
-    tr.replaceWith(from, to, schema.nodes.pending.create());
-    return from + 1;
-  }
-
-  const pos = $from.after();
-  tr.insert(pos, schema.nodes.pending.create());
-  return pos + 1;
-}
-
 function getInsertPosition(tr: Transaction) {
   const { $from } = tr.selection;
 
@@ -90,6 +74,33 @@ function getInsertPosition(tr: Transaction) {
   return pos + 1;
 }
 
+/**
+ * Insert a node at the current position.
+ * If replaceEmpty is true, replaces an empty textblock node with the new node.
+ * Otherwise, inserts after the current block node.
+ * @returns The position where the node was inserted.
+ */
+function insertNode(
+  tr: Transaction,
+  pos: number,
+  node: Node,
+  replaceEmpty: boolean,
+): number {
+  const $pos = tr.doc.resolve(pos);
+
+  if (replaceEmpty) {
+    const from = $pos.before();
+    const to = $pos.after();
+    tr.replaceWith(from, to, node);
+    return from;
+  }
+
+  // Insert after the current block
+  const afterPos = $pos.after();
+  tr.insert(afterPos, node);
+  return afterPos;
+}
+
 function dispatch(state: ReactiveState, tr: Transaction) {
   const newState = state.value?.apply(tr) ?? null;
   state.value = newState;
@@ -99,11 +110,11 @@ export async function insertFromStream(
   view: EditorView,
   stream: AsyncIterable<StreamEvent>,
 ) {
-  let startPos: number | null = null;
   let pos: number | null = null;
   let bold = false;
   let italic = false;
   let output: ReactiveState | null = null;
+  let replaceEmptyBlock = false;
   const destinationTileIds = new Set<string>();
 
   for await (const event of stream) {
@@ -120,8 +131,8 @@ export async function insertFromStream(
       } else {
         output = null;
       }
-      startPos = null;
       pos = null;
+      replaceEmptyBlock = false;
       continue;
     }
 
@@ -132,14 +143,13 @@ export async function insertFromStream(
 
     const tr = state.tr;
 
-    if (startPos === null || pos === null) {
-      if (output === null) {
-        // Edit case: wrap in pending node
-        startPos = insertPendingNode(tr);
-      } else {
-        startPos = getInsertPosition(tr);
-      }
-      pos = startPos;
+    if (pos === null) {
+      pos = getInsertPosition(tr);
+
+      // Check if we're starting inside an empty textblock
+      const $pos = tr.doc.resolve(pos);
+      replaceEmptyBlock =
+        $pos.parent.isTextblock && $pos.parent.content.size === 0;
     }
 
     if (typeof event === "string") {
@@ -165,21 +175,21 @@ export async function insertFromStream(
       if ("type" in event) {
         switch (event.type) {
           case "paragraph":
-            {
-              pos = tr.doc.resolve(startPos).end();
-              const node = schema.nodes.paragraph.create();
-              tr.insert(pos, node);
-              pos += node.nodeSize - 1;
+            // If already inside an empty paragraph, no action needed
+            if (!replaceEmptyBlock) {
+              pos =
+                insertNode(tr, pos, schema.nodes.paragraph.create(), false) + 1;
             }
             break;
 
           case "heading":
-            {
-              pos = tr.doc.resolve(startPos).end();
-              const node = schema.nodes.heading.create({ level: event.level });
-              tr.insert(pos, node);
-              pos += node.nodeSize - 1;
-            }
+            pos =
+              insertNode(
+                tr,
+                pos,
+                schema.nodes.heading.create({ level: event.level }),
+                replaceEmptyBlock,
+              ) + 1;
             break;
 
           case "listitem":
@@ -192,60 +202,52 @@ export async function insertFromStream(
 
               const listItem = closest(
                 $pos,
-                (node) => node.type === schema.nodes.list_item,
+                (n) => n.type === schema.nodes.list_item,
               );
 
+              // Not currently in a list - create a new one
               if (!listItem) {
-                pos = tr.doc.resolve(startPos).end();
                 const node = listNodeType.create(null, createListItem());
-                tr.insert(pos, node);
-                pos += node.nodeSize - 3;
+                pos = insertNode(tr, pos, node, replaceEmptyBlock) + 3;
                 break;
               }
 
               const depth = getListDepth($pos);
               const afterPos = listItem.pos + listItem.node.nodeSize;
 
-              // Insert item at same depth
               if (event.depth === depth) {
-                pos = afterPos;
-                const node = createListItem();
-                tr.insert(pos, node);
-                pos += node.nodeSize - 2;
-
-                // Increase depth
-              } else if (event.depth > depth) {
-                pos = afterPos - 1;
-                const node = listNodeType.create(null, createListItem());
-                tr.insert(pos, node);
-                pos += node.nodeSize - 3;
-
-                // Decrease depth
-              } else if (event.depth >= 0) {
+                // Insert sibling item at same depth
+                tr.insert(afterPos, createListItem());
                 pos = afterPos + 2;
-                const node = createListItem();
-                tr.insert(pos, node);
-                pos += node.nodeSize - 2;
-
-                // If the top level is reached, insert a new list
-              } else {
-                pos = afterPos + 3;
+              } else if (event.depth > depth) {
+                // Increase depth: nest a new list inside current item
                 const node = listNodeType.create(null, createListItem());
-                tr.insert(pos, node);
-                pos += node.nodeSize - 3;
+                tr.insert(afterPos - 1, node);
+                pos = afterPos - 1 + 3;
+              } else if (event.depth >= 0) {
+                // Decrease depth: insert after parent list item
+                tr.insert(afterPos + 2, createListItem());
+                pos = afterPos + 2 + 2;
+              } else {
+                // Top level reached: create a new list after current one
+                const node = listNodeType.create(null, createListItem());
+                tr.insert(afterPos + 3, node);
+                pos = afterPos + 3 + 3;
               }
             }
             break;
 
           case "divider":
-            {
-              pos = tr.doc.resolve(startPos).end();
-              const node = schema.nodes.divider.create();
-              tr.insert(pos, node);
-              pos += node.nodeSize;
-            }
+            pos =
+              insertNode(
+                tr,
+                pos,
+                schema.nodes.divider.create(),
+                replaceEmptyBlock,
+              ) + 1;
             break;
         }
+        replaceEmptyBlock = false;
       }
     }
 
