@@ -4,7 +4,7 @@
   "service": "app",
   "workspaceFolder": "/projects/${localWorkspaceFolderBasename}",
 
-  "initializeCommand": "echo CA_CERT=$(mkcert -CAROOT)/rootCA.pem > .devcontainer/.env && echo WORKSPACE=${localWorkspaceFolderBasename} >> .devcontainer/.env",
+  "initializeCommand": ".devcontainer/init.sh ${localWorkspaceFolderBasename}",
 
   "features": {
     "ghcr.io/devcontainers/features/git:1": {
