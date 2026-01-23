@@ -38,7 +38,6 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 
 ### Important notes
 
-- When working in a local environment, dependencies are installed inside a VS Code dev container. Use the `devcontainer` CLI to run any `pnpm` commands: `devcontainer exec --workspace-folder . pnpm <command>`.
 - Scripts can be run for a specific package using the `--filter <package>` option, e.g. `pnpm --filter api test` to run the tests for the `api` package.
 
 ## Coding Style
