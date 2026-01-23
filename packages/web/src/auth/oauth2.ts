@@ -9,6 +9,7 @@ const OAUTH2_COOKIE_OPTIONS: SerializeOptions = {
 };
 const OAUTH2_STATE_COOKIE_NAME = "__Host-oauth_state";
 const OAUTH2_DESTINATION_COOKIE_NAME = "__Host-oauth_dest";
+const OAUTH2_ORIGIN_COOKIE_NAME = "__Host-oauth_origin";
 const OAUTH2_COOKIE_MAX_AGE = 60 * 10;
 const OAUTH2_STATE_BYTES = 64;
 
@@ -51,8 +52,9 @@ export function getOAuth2StateCookie(cookies: string) {
 export function setOAuth2StateCookies(
   state: string,
   destination: string,
+  origin?: string,
 ): [string, string][] {
-  return [
+  const cookies: [string, string][] = [
     [
       "Set-Cookie",
       cookie.serialize(OAUTH2_STATE_COOKIE_NAME, state, {
@@ -68,25 +70,40 @@ export function setOAuth2StateCookies(
       }),
     ],
   ];
+  if (origin) {
+    cookies.push([
+      "Set-Cookie",
+      cookie.serialize(OAUTH2_ORIGIN_COOKIE_NAME, origin, {
+        ...OAUTH2_COOKIE_OPTIONS,
+        maxAge: OAUTH2_COOKIE_MAX_AGE,
+      }),
+    ]);
+  }
+  return cookies;
 }
 
 export function getOAuth2DestinationCookie(cookies: string) {
   return cookie.parse(cookies)[OAUTH2_DESTINATION_COOKIE_NAME];
 }
 
+export function getOAuth2OriginCookie(cookies: string) {
+  return cookie.parse(cookies)[OAUTH2_ORIGIN_COOKIE_NAME];
+}
+
 export function clearOAuth2Cookies(): [string, string][] {
+  const expireOptions = { ...OAUTH2_COOKIE_OPTIONS, maxAge: 0 };
   return [
     [
       "Set-Cookie",
-      cookie.serialize(OAUTH2_STATE_COOKIE_NAME, "", OAUTH2_COOKIE_OPTIONS),
+      cookie.serialize(OAUTH2_STATE_COOKIE_NAME, "", expireOptions),
     ],
     [
       "Set-Cookie",
-      cookie.serialize(
-        OAUTH2_DESTINATION_COOKIE_NAME,
-        "",
-        OAUTH2_COOKIE_OPTIONS,
-      ),
+      cookie.serialize(OAUTH2_DESTINATION_COOKIE_NAME, "", expireOptions),
+    ],
+    [
+      "Set-Cookie",
+      cookie.serialize(OAUTH2_ORIGIN_COOKIE_NAME, "", expireOptions),
     ],
   ];
 }
