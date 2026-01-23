@@ -8,8 +8,4 @@ export default {
     disableTelemetry: true,
     disableWhatsNewNotifications: true,
   },
-  env: (config) => ({
-    ...config,
-    PUBLIC_API_BASE_URL: "https://localhost",
-  }),
 } satisfies StorybookConfig;
