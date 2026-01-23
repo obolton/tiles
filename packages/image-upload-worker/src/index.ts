@@ -10,7 +10,7 @@ function createClient(sessionId: string, env: Env) {
   return createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({
-        url: env.PUBLIC_API_BASE_URL,
+        url: env.PUBLIC_API_ORIGIN,
         headers() {
           return {
             Authorization: `Bearer ${sessionId}`,
@@ -56,7 +56,7 @@ export default {
       return new Response(null, {
         status: 204,
         headers: {
-          "Access-Control-Allow-Origin": env.PUBLIC_WEB_BASE_URL,
+          "Access-Control-Allow-Origin": env.PUBLIC_WEB_ORIGIN,
           "Access-Control-Allow-Methods": "PUT",
           "Access-Control-Allow-Headers": "Content-Type",
           "Access-Control-Allow-Credentials": "true",
@@ -112,7 +112,7 @@ export default {
 
       return new Response(JSON.stringify(updatedImage), {
         headers: {
-          "Access-Control-Allow-Origin": env.PUBLIC_WEB_BASE_URL,
+          "Access-Control-Allow-Origin": env.PUBLIC_WEB_ORIGIN,
           "Access-Control-Allow-Credentials": "true",
           "Content-Type": "application/json",
         },

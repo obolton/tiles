@@ -1,7 +1,7 @@
 declare global {
   interface Env {
-    PUBLIC_WEB_BASE_URL: string;
-    PUBLIC_API_BASE_URL: string;
+    PUBLIC_WEB_ORIGIN: string;
+    PUBLIC_API_ORIGIN: string;
     API_TOKEN: string;
   }
 }
