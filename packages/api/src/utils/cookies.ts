@@ -10,7 +10,7 @@ export function clearSessionCookie(res: ServerResponse<IncomingMessage>) {
   res.setHeader(
     "Set-Cookie",
     cookie.serialize(SESSION_COOKIE_NAME, "", {
-      domain: process.env.SESSION_COOKIE_DOMAIN,
+      domain: process.env.PUBLIC_SESSION_COOKIE_DOMAIN,
       path: "/",
       httpOnly: true,
       secure: true,
