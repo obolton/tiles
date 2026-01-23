@@ -5,7 +5,7 @@
   "description": "Image upload worker",
   "private": true,
   "scripts": {
-    "dev": "wrangler dev --env-file=\"../../../.env\" --https-cert-path $CERTIFICATE_PATH --https-key-path $CERTIFICATE_KEY_PATH",
+    "dev": "wrangler dev --env-file=\"../../../.env\"",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
