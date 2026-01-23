@@ -108,6 +108,19 @@ export function clearOAuth2Cookies(): [string, string][] {
   ];
 }
 
+/**
+ * In development, OAuth flows are handled by a canonical origin to ensure
+ * cookies are set and read on the same domain. This function returns the
+ * redirect URL if the current request should be forwarded to the OAuth origin.
+ */
+export function getOAuthOriginRedirect(url: URL): string | undefined {
+  const oauthOrigin = import.meta.env.PUBLIC_OAUTH_ORIGIN;
+  if (!oauthOrigin || url.origin === oauthOrigin) {
+    return undefined;
+  }
+  return new URL(url.pathname + url.search, oauthOrigin).toString();
+}
+
 type OAuth2GetAccessTokenOptions = {
   endpoint: string;
   clientId: string;

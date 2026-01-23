@@ -1,6 +1,8 @@
 import {
   getOAuth2StateCookie,
   getOAuth2DestinationCookie,
+  getOAuth2OriginCookie,
+  getOAuthOriginRedirect,
   clearOAuth2Cookies,
 } from "@/auth/oauth2";
 import { redirect, forbidden, internalError } from "@/router/responses";
@@ -10,9 +12,18 @@ import { signIn, setAuthenticationCookies } from "@/auth/sessions";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
 
 export const GET: APIRequestHandler = async ({ url, headers }) => {
+  if (import.meta.env.DEV) {
+    const oauthRedirect = getOAuthOriginRedirect(url);
+    if (oauthRedirect) {
+      return redirect(oauthRedirect, 302);
+    }
+  }
   const cookies = headers.get("cookie") ?? "";
   const stateCookieValue = getOAuth2StateCookie(cookies);
   const destinationCookieValue = getOAuth2DestinationCookie(cookies);
+  const originCookieValue = import.meta.env.DEV
+    ? getOAuth2OriginCookie(cookies)
+    : undefined;
   const cookiesToSet = clearOAuth2Cookies();
 
   if (destinationCookieValue && !validateDestination(destinationCookieValue)) {
@@ -49,7 +60,12 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
     new Date(session.expiresAt),
   );
 
-  return redirect(`/${destinationCookieValue || ""}`, 302, [
+  const destination = `/${destinationCookieValue || ""}`;
+  const redirectUrl = originCookieValue
+    ? `${originCookieValue}${destination}`
+    : destination;
+
+  return redirect(redirectUrl, 302, [
     ...cookiesToSet,
     ...authenticationCookies,
   ]);
