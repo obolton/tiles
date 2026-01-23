@@ -484,5 +484,15 @@ describe("transformMarkdown", () => {
         "hello world",
       ]);
     });
+
+    test("handles block end at end of stream without trailing newline", async () => {
+      const output = await getEvents([">>> test\n", "hello\n", "<<<"]);
+      expect(output).toEqual([
+        { destination: "test" },
+        { type: "paragraph" },
+        "hello",
+        { destination: null },
+      ]);
+    });
   });
 });

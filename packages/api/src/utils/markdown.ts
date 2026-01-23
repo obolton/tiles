@@ -11,6 +11,7 @@ const UNORDERED_LIST_ITEM_MATCH = /^( *)(-|\*|\+)\s+(?=\S)/;
 const ORDERED_LIST_ITEM_MATCH = /^( *)[0-9]+\.\s+(?=\S)/;
 const BLOCK_START_MATCH = /^>>>\s+(.+)\s*\n/;
 const BLOCK_END_MATCH = /^<<<\s*\n/;
+const BLOCK_END_EOF_MATCH = /^<<<\s*$/;
 const DIVIDER_MATCH = /^(-{3,}|\*{3,}|_{3,})\s*\n/;
 const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *)|>|<)/;
 const ALL_NEW_LINES_MATCH = /\n/g;
@@ -295,6 +296,11 @@ export class MarkdownTransformer implements Transformer<
   }
 
   flush(controller: TransformStreamDefaultController<RichTextStreamEvent>) {
+    const blockEndMatch = this.buffer.match(BLOCK_END_EOF_MATCH);
+    if (blockEndMatch) {
+      this.pos = 0;
+      this.set(controller, { destination: null }, blockEndMatch[0].length);
+    }
     this.advance(controller);
   }
 }
