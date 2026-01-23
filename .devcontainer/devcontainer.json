@@ -1,5 +1,5 @@
 {
-  "name": "Tiles",
+  "name": "Tiles (${localWorkspaceFolderBasename})",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/projects/${localWorkspaceFolderBasename}",
@@ -12,38 +12,45 @@
     }
   },
 
-  "forwardPorts": [3000, 3001, 5432, 6001],
   "portsAttributes": {
     "3000": {
-      "label": "Web Frontend",
-      "onAutoForward": "notify"
+      "label": "Web",
+      "onAutoForward": "ignore"
     },
     "3001": {
-      "label": "API Server",
-      "onAutoForward": "notify"
+      "label": "API",
+      "onAutoForward": "ignore"
     },
-    "5432": {
-      "label": "PostgreSQL",
-      "onAutoForward": "silent"
+    "3002": {
+      "label": "Uploads",
+      "onAutoForward": "ignore"
     },
     "6001": {
       "label": "Storybook",
-      "onAutoForward": "notify"
+      "onAutoForward": "ignore"
     }
   },
 
   "postCreateCommand": "pnpm install && pnpm --filter api db:push && pnpm --filter api db:push-functions && pnpm --filter api db:generate-client-sql && pnpm --filter api db:seed",
 
   "containerEnv": {
-    "CHECKPOINT_DISABLE": "1", // Disable Prisma telemetry
+    "CHECKPOINT_DISABLE": "1",
     "WRANGLER_LOG": "info"
   },
 
   "remoteEnv": {
-    "DATABASE_URL": "postgresql://tiles:tiles@db:5432/tiles",
-    "ENABLE_HTTPS": "true",
-    "CERTIFICATE_PATH": "/projects/localhost.pem",
-    "CERTIFICATE_KEY_PATH": "/projects/localhost-key.pem"
+    "DATABASE_URL": "postgresql://tiles:tiles@tiles-db:5432/tiles",
+    "HOST": "0.0.0.0",
+    "PORT": "3001",
+    "DEV_SERVER_PORT": "3000",
+    "CLIENT_ORIGIN": "https://${localWorkspaceFolderBasename}.tiles.test",
+    "API_URL": "http://localhost:3001",
+    "PUBLIC_API_BASE_URL": "https://api.${localWorkspaceFolderBasename}.tiles.test",
+    "PUBLIC_WEB_BASE_URL": "https://${localWorkspaceFolderBasename}.tiles.test",
+    "PUBLIC_UPLOAD_BASE_URL": "https://uploads.${localWorkspaceFolderBasename}.tiles.test",
+    "GOOGLE_REDIRECT_URI": "https://localhost/sign-in/google/callback",
+    "PUBLIC_SESSION_COOKIE_DOMAIN": ".tiles.test",
+    "PUBLIC_OAUTH_ORIGIN": "https://tiles.tiles.test"
   },
 
   "remoteUser": "node",
