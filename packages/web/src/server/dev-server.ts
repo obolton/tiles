@@ -52,7 +52,7 @@ export default async function createDevServer(options: DevServerOptions) {
   });
 
   server.listen(port, hostname, () =>
-    console.log(`Development server: ${process.env.PUBLIC_WEB_BASE_URL}`),
+    console.log(`Development server: ${process.env.PUBLIC_WEB_ORIGIN}`),
   );
 
   async function handleRequest(
@@ -71,7 +71,7 @@ export default async function createDevServer(options: DevServerOptions) {
         const host = request.headers.host;
         const baseUrl = host
           ? `${proto}://${host}`
-          : process.env.PUBLIC_WEB_BASE_URL;
+          : process.env.PUBLIC_WEB_ORIGIN;
         const webRequest = new Request(new URL(request.url ?? "", baseUrl), {
           method,
           headers: toWebHeaders(request.headers),

@@ -64,8 +64,8 @@ function buildSecurityHeaders(): Record<string, string> {
         import.meta.env.RESOURCES_BASE_URL as string,
       ],
       connectSrc: [
-        import.meta.env.PUBLIC_API_BASE_URL as string,
-        import.meta.env.PUBLIC_UPLOAD_BASE_URL as string,
+        import.meta.env.PUBLIC_API_ORIGIN as string,
+        import.meta.env.PUBLIC_UPLOAD_ORIGIN as string,
       ],
     });
 

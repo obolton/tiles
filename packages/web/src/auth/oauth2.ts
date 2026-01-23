@@ -114,7 +114,7 @@ export function clearOAuth2Cookies(): [string, string][] {
  * redirect URL if the current request should be forwarded to the OAuth origin.
  */
 export function getOAuthOriginRedirect(url: URL): string | undefined {
-  const oauthOrigin = import.meta.env.PUBLIC_OAUTH_ORIGIN;
+  const oauthOrigin = process.env.OAUTH_ORIGIN;
   if (!oauthOrigin || url.origin === oauthOrigin) {
     return undefined;
   }

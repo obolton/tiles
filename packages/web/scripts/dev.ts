@@ -1,10 +1,10 @@
 import assert from "node:assert";
 import createDevServer from "@/server/dev-server";
 
-assert(process.env.HOST);
-assert(process.env.DEV_SERVER_PORT);
+assert(process.env.WEB_HOST);
+assert(process.env.WEB_PORT);
 
 await createDevServer({
-  hostname: process.env.HOST,
-  port: parseInt(process.env.DEV_SERVER_PORT, 10),
+  hostname: process.env.WEB_HOST,
+  port: parseInt(process.env.WEB_PORT, 10),
 });

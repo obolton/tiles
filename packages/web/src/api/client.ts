@@ -10,13 +10,13 @@ import type {
   AppRouterOutputs,
 } from "api/routes/index";
 
-if (import.meta.env.SSR && !process.env.API_URL) {
-  throw new Error("API_URL environment variable is required");
+if (import.meta.env.SSR && !process.env.INTERNAL_API_ORIGIN) {
+  throw new Error("INTERNAL_API_ORIGIN environment variable is required");
 }
 
-const API_URL = import.meta.env.SSR
-  ? process.env.API_URL
-  : import.meta.env.PUBLIC_API_BASE_URL;
+const API_ORIGIN = import.meta.env.SSR
+  ? process.env.INTERNAL_API_ORIGIN
+  : import.meta.env.PUBLIC_API_ORIGIN;
 
 const client = createTRPCClient<AppRouter>({
   links: [
@@ -25,7 +25,7 @@ const client = createTRPCClient<AppRouter>({
         return !!op.context.stream;
       },
       true: httpBatchStreamLink({
-        url: API_URL,
+        url: API_ORIGIN,
         fetch(url, options) {
           return fetch(url, {
             ...options,
@@ -42,7 +42,7 @@ const client = createTRPCClient<AppRouter>({
         },
       }),
       false: httpBatchLink({
-        url: API_URL,
+        url: API_ORIGIN,
         fetch(url, options) {
           return fetch(url, {
             ...options,

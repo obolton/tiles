@@ -4,7 +4,7 @@ export const ACCEPT_IMAGE_TYPES = new Set(["image/jpeg", "image/png"]);
 export const ACCEPT_CONTENT_TYPES = new Set(["text/uri-list"]).union(
   ACCEPT_IMAGE_TYPES,
 );
-export const UPLOAD_BASE_URL = import.meta.env.PUBLIC_UPLOAD_BASE_URL;
+export const UPLOAD_ORIGIN = import.meta.env.PUBLIC_UPLOAD_ORIGIN;
 
 export interface UploadMediaOptions {
   file: File;
@@ -22,7 +22,7 @@ export async function uploadMedia({
     throw new Error("Not signed in");
   }
 
-  const url = new URL(UPLOAD_BASE_URL);
+  const url = new URL(UPLOAD_ORIGIN);
   url.searchParams.set("workspaceId", workspaceId);
   url.searchParams.set("purpose", purpose);
 
