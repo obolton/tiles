@@ -3,7 +3,7 @@ import {
   transformMarkdown,
   type RichTextStreamEvent,
 } from "@/utils/markdown.ts";
-import { openai, textStream } from "@/ai/openai.ts";
+import { openai } from "@/ai/openai.ts";
 import { generateImageFromPrompt, createImageTile } from "@/ai/tools/images.ts";
 import { TOOLS, useFunctionTool } from "@/ai/tools/tools.ts";
 import type { ToolContext } from "@/ai/tools/types.ts";
@@ -142,51 +142,50 @@ export async function streamTurn(
     { signal },
   );
 
-  const stream = ReadableStream.from(response);
-  const [a, b] = stream.tee();
-
-  const text = a.pipeThrough(textStream()).pipeThrough(transformMarkdown());
-
   const output: ResponseOutputItem[] = [];
   const toolCalls: ResponseInputItem.FunctionCallOutput[] = [];
+  const artifacts: Artifact[] = [];
 
-  const tools = b.pipeThrough(
-    new TransformStream<ResponseStreamEvent, Artifact>({
-      async transform(event, controller) {
-        if (event.type !== "response.output_item.done") {
-          return;
-        }
+  const text = ReadableStream.from(response)
+    .pipeThrough(
+      new TransformStream<ResponseStreamEvent, string>({
+        async transform(event, controller) {
+          if (event.type === "response.output_text.delta") {
+            controller.enqueue(event.delta);
+            return;
+          }
 
-        const { item } = event;
+          if (event.type === "response.output_item.done") {
+            const { item } = event;
+            output.push(item);
 
-        output.push(item);
+            if (item.type === "function_call" && item.status === "completed") {
+              const result = await useFunctionTool(item, toolContext);
+              const id =
+                result.artifact.type.toLowerCase() + "-" + event.output_index;
+              toolCalls.push({
+                type: "function_call_output",
+                call_id: item.call_id,
+                output: JSON.stringify({ id }),
+              });
+              artifactIds.set(id, result.artifact.id);
+              artifacts.push(result);
+              return;
+            }
 
-        if (item.type === "function_call" && item.status === "completed") {
-          const result = await useFunctionTool(item, toolContext);
-          const id =
-            result.artifact.type.toLowerCase() + "-" + event.output_index;
-          toolCalls.push({
-            type: "function_call_output",
-            call_id: item.call_id,
-            output: JSON.stringify({ id }),
-          });
-          artifactIds.set(id, result.artifact.id);
-          controller.enqueue(result);
-          return;
-        }
-
-        if (
-          item.type === "image_generation_call" &&
-          item.status === "completed" &&
-          item.result
-        ) {
-          const artifact = await createImageTile(item, toolContext);
-          controller.enqueue(artifact);
-          return;
-        }
-      },
-    }),
-  );
+            if (
+              item.type === "image_generation_call" &&
+              item.status === "completed" &&
+              item.result
+            ) {
+              const artifact = await createImageTile(item, toolContext);
+              artifacts.push(artifact);
+            }
+          }
+        },
+      }),
+    )
+    .pipeThrough(transformMarkdown());
 
   async function* events() {
     for await (const textEvent of text) {
@@ -200,8 +199,8 @@ export async function streamTurn(
         yield textEvent;
       }
     }
-    for await (const toolEvent of tools) {
-      yield toolEvent;
+    for (const artifact of artifacts) {
+      yield artifact;
     }
   }
 
