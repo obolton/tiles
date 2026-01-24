@@ -11,8 +11,10 @@ const OAUTH2_COOKIE_OPTIONS: SerializeOptions = {
 const OAUTH2_STATE_COOKIE_NAME = "__Host-oauth_state";
 const OAUTH2_DESTINATION_COOKIE_NAME = "__Host-oauth_dest";
 const OAUTH2_ORIGIN_COOKIE_NAME = "__Host-oauth_origin";
+const OAUTH2_VERIFIER_COOKIE_NAME = "__Host-oauth_verifier";
 const OAUTH2_COOKIE_MAX_AGE = 60 * 10;
 const OAUTH2_STATE_BYTES = 64;
+const OAUTH2_VERIFIER_BYTES = 32;
 
 type OAuth2AuthorizationUrlConfig = {
   endpoint: string;
@@ -30,35 +32,76 @@ export function getOAuth2AuthorizationUrl({
   otherAttributes,
 }: OAuth2AuthorizationUrlConfig) {
   const state = createOAuth2State();
+  const verifier = createPKCEVerifier();
+  const challenge = createPKCEChallenge(verifier);
   const url = new URL(endpoint);
   url.searchParams.set("response_type", "code");
   url.searchParams.set("client_id", clientId);
   url.searchParams.set("scope", scope.join(" "));
   url.searchParams.set("redirect_uri", redirectUri);
   url.searchParams.set("state", state);
+  url.searchParams.set("code_challenge", challenge);
+  url.searchParams.set("code_challenge_method", "S256");
   for (const [key, value] of Object.entries(otherAttributes)) {
     url.searchParams.set(key, value);
   }
-  return { url: url.toString(), state };
+  return { url: url.toString(), state, verifier };
 }
 
 function createOAuth2State() {
   return crypto.randomBytes(OAUTH2_STATE_BYTES).toString("base64url");
 }
 
+function createPKCEVerifier() {
+  return crypto.randomBytes(OAUTH2_VERIFIER_BYTES).toString("base64url");
+}
+
+function createPKCEChallenge(verifier: string) {
+  return crypto.createHash("sha256").update(verifier).digest("base64url");
+}
+
 export function getOAuth2StateCookie(cookies: string) {
   return cookie.parse(cookies)[OAUTH2_STATE_COOKIE_NAME];
 }
 
-export function setOAuth2StateCookies(
-  state: string,
-  destination: string,
-  origin?: string,
-): [string, string][] {
+export function getOAuth2VerifierCookie(cookies: string) {
+  return cookie.parse(cookies)[OAUTH2_VERIFIER_COOKIE_NAME];
+}
+
+export function compareOAuth2State(a: string, b: string): boolean {
+  const encoder = new TextEncoder();
+  const aBytes = encoder.encode(a);
+  const bBytes = encoder.encode(b);
+  if (aBytes.length !== bBytes.length) {
+    return false;
+  }
+  return crypto.timingSafeEqual(aBytes, bBytes);
+}
+
+type SetOAuth2CookiesOptions = {
+  state: string;
+  verifier: string;
+  destination: string;
+  origin?: string;
+};
+
+export function setOAuth2Cookies({
+  state,
+  verifier,
+  destination,
+  origin,
+}: SetOAuth2CookiesOptions): [string, string][] {
   const cookies: [string, string][] = [
     [
       "Set-Cookie",
       cookie.serialize(OAUTH2_STATE_COOKIE_NAME, state, {
+        ...OAUTH2_COOKIE_OPTIONS,
+        maxAge: OAUTH2_COOKIE_MAX_AGE,
+      }),
+    ],
+    [
+      "Set-Cookie",
+      cookie.serialize(OAUTH2_VERIFIER_COOKIE_NAME, verifier, {
         ...OAUTH2_COOKIE_OPTIONS,
         maxAge: OAUTH2_COOKIE_MAX_AGE,
       }),
@@ -100,6 +143,10 @@ export function clearOAuth2Cookies(): [string, string][] {
     ],
     [
       "Set-Cookie",
+      cookie.serialize(OAUTH2_VERIFIER_COOKIE_NAME, "", expireOptions),
+    ],
+    [
+      "Set-Cookie",
       cookie.serialize(OAUTH2_DESTINATION_COOKIE_NAME, "", expireOptions),
     ],
     [
@@ -128,6 +175,7 @@ type OAuth2GetAccessTokenOptions = {
   clientSecret: string;
   redirectUri: string;
   code: string;
+  codeVerifier: string;
 };
 
 // https://developers.google.com/identity/protocols/oauth2/web-server#exchange-authorization-code
@@ -137,6 +185,7 @@ export async function getOAuth2AccessToken({
   clientSecret,
   redirectUri,
   code,
+  codeVerifier,
 }: OAuth2GetAccessTokenOptions) {
   const body = new URLSearchParams({
     grant_type: "authorization_code",
@@ -144,6 +193,7 @@ export async function getOAuth2AccessToken({
     client_id: clientId,
     client_secret: clientSecret,
     code,
+    code_verifier: codeVerifier,
   });
   const headers = new Headers({
     "Content-Type": "application/x-www-form-urlencoded",

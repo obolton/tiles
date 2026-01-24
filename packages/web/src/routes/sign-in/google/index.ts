@@ -1,5 +1,5 @@
 import { redirect } from "@/router/responses";
-import { setOAuth2StateCookies, getOAuthOriginRedirect } from "@/auth/oauth2";
+import { setOAuth2Cookies, getOAuthOriginRedirect } from "@/auth/oauth2";
 import { getGoogleAuthorizationUrl } from "@/auth/google";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
 
@@ -30,11 +30,11 @@ export const GET: APIRequestHandler = ({ url, headers }) => {
   const origin = import.meta.env.DEV
     ? getDevOrigin(headers.get("referer"))
     : undefined;
-  const { url: redirectUrl, state } = getGoogleAuthorizationUrl();
+  const { url: redirectUrl, state, verifier } = getGoogleAuthorizationUrl();
   return redirect(
     redirectUrl,
     302,
-    setOAuth2StateCookies(state, destination || "", origin),
+    setOAuth2Cookies({ state, verifier, destination: destination || "", origin }),
   );
 };
 

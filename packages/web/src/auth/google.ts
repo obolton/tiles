@@ -48,13 +48,19 @@ export async function googleApiRequest<T extends object>(
   return response.json() as Promise<T>;
 }
 
-export async function getAccessToken(code: string) {
+type GetAccessTokenOptions = {
+  code: string;
+  codeVerifier: string;
+};
+
+export async function getAccessToken({ code, codeVerifier }: GetAccessTokenOptions) {
   return getOAuth2AccessToken({
     endpoint: TOKEN_ENDPOINT,
     clientId: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
     redirectUri: GOOGLE_REDIRECT_URI,
     code,
+    codeVerifier,
   });
 }
 
