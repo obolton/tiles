@@ -7,6 +7,24 @@ import { signUpEmail } from "@/emails/signUp.ts";
 import { getDefaultThemesData } from "@/utils/themes.ts";
 import type { SignInSchema } from "./schema.ts";
 
+type SendWelcomeEmailOptions = {
+  userId: string;
+  name: string;
+  email: string;
+};
+
+async function sendWelcomeEmail({
+  userId,
+  name,
+  email,
+}: SendWelcomeEmailOptions) {
+  try {
+    await sendEmail(email, signUpEmail({ id: userId, name }));
+  } catch (error) {
+    console.error("Failed to send welcome email:", error);
+  }
+}
+
 export async function signIn({
   provider,
   providerId,
@@ -48,13 +66,7 @@ export async function signIn({
       const [, session] = await Promise.all([
         createKey(transaction, { provider, providerId, userId: user.id }),
         createSession(transaction, user.id),
-        async () => {
-          try {
-            sendEmail(email, signUpEmail({ id: user.id, name }));
-          } catch (error) {
-            console.error(error);
-          }
-        },
+        sendWelcomeEmail({ userId: user.id, name, email }),
       ]);
       return session;
     }
