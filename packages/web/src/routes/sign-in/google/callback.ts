@@ -47,22 +47,28 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
     return forbidden(cookiesToSet);
   }
 
-  const { idToken } = await exchangeCode({
-    code,
-    codeVerifier: cookies.verifier,
-  });
-  const googleUser = await verifyIdToken({
-    idToken,
-    expectedNonce: cookies.nonce,
-  });
-  const session = await signIn({
-    provider: "GOOGLE",
-    providerId: googleUser.id,
-    name: googleUser.name,
-    email: googleUser.email,
-    emailVerified: googleUser.emailVerified,
-    imageUrl: googleUser.imageUrl,
-  });
+  let session;
+  try {
+    const { idToken } = await exchangeCode({
+      code,
+      codeVerifier: cookies.verifier,
+    });
+    const googleUser = await verifyIdToken({
+      idToken,
+      expectedNonce: cookies.nonce,
+    });
+    session = await signIn({
+      provider: "GOOGLE",
+      providerId: googleUser.id,
+      name: googleUser.name,
+      email: googleUser.email,
+      emailVerified: googleUser.emailVerified,
+      imageUrl: googleUser.imageUrl,
+    });
+  } catch (error) {
+    console.error("Sign-in failed:", error);
+    return redirect("/sign-in?error=failed", 302, cookiesToSet);
+  }
 
   const authenticationCookies = setAuthenticationCookies(
     session.id,
