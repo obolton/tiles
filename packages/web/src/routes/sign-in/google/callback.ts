@@ -7,7 +7,7 @@ import {
   clearOAuth2Cookies,
   compareOAuth2State,
 } from "@/auth/oauth2";
-import { redirect, forbidden, internalError } from "@/router/responses";
+import { redirect, forbidden } from "@/router/responses";
 import { getAccessToken, getGoogleUser } from "@/auth/google";
 import { validateDestination } from "@/auth/destinations";
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
@@ -40,7 +40,9 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
   const error = searchParams.get("error");
 
   if (error) {
-    return internalError(error, cookiesToSet);
+    console.error("OAuth error from Google:", error);
+    const errorCode = error === "access_denied" ? "cancelled" : "failed";
+    return redirect(`/sign-in?error=${errorCode}`, 302, cookiesToSet);
   }
 
   if (
