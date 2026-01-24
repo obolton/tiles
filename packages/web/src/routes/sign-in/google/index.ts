@@ -30,11 +30,22 @@ export const GET: APIRequestHandler = ({ url, headers }) => {
   const origin = import.meta.env.DEV
     ? getDevOrigin(headers.get("referer"))
     : undefined;
-  const { url: redirectUrl, state, verifier } = getGoogleAuthorizationUrl();
+  const {
+    url: redirectUrl,
+    state,
+    verifier,
+    nonce,
+  } = getGoogleAuthorizationUrl();
   return redirect(
     redirectUrl,
     302,
-    setOAuth2Cookies({ state, verifier, destination: destination || "", origin }),
+    setOAuth2Cookies({
+      state,
+      verifier,
+      nonce,
+      destination: destination || "",
+      origin,
+    }),
   );
 };
 

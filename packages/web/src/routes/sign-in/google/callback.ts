@@ -1,6 +1,7 @@
 import {
   getOAuth2StateCookie,
   getOAuth2VerifierCookie,
+  getOAuth2NonceCookie,
   getOAuth2DestinationCookie,
   getOAuth2OriginCookie,
   getOAuthOriginRedirect,
@@ -8,7 +9,7 @@ import {
   compareOAuth2State,
 } from "@/auth/oauth2";
 import { redirect, forbidden } from "@/router/responses";
-import { getAccessToken, getGoogleUser } from "@/auth/google";
+import { exchangeCode, verifyIdToken } from "@/auth/google";
 import { validateDestination } from "@/auth/destinations";
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
@@ -23,6 +24,7 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
   const cookies = headers.get("cookie") ?? "";
   const stateCookieValue = getOAuth2StateCookie(cookies);
   const verifierCookieValue = getOAuth2VerifierCookie(cookies);
+  const nonceCookieValue = getOAuth2NonceCookie(cookies);
   const destinationCookieValue = getOAuth2DestinationCookie(cookies);
   const originCookieValue = import.meta.env.DEV
     ? getOAuth2OriginCookie(cookies)
@@ -48,6 +50,7 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
   if (
     !stateCookieValue ||
     !verifierCookieValue ||
+    !nonceCookieValue ||
     !state ||
     !compareOAuth2State(stateCookieValue, state) ||
     !code
@@ -55,11 +58,14 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
     return forbidden(cookiesToSet);
   }
 
-  const accessToken = await getAccessToken({
+  const { idToken } = await exchangeCode({
     code,
     codeVerifier: verifierCookieValue,
   });
-  const googleUser = await getGoogleUser(accessToken);
+  const googleUser = await verifyIdToken({
+    idToken,
+    expectedNonce: nonceCookieValue,
+  });
   const session = await signIn({
     provider: "GOOGLE",
     providerId: googleUser.id,

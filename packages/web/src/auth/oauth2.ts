@@ -12,9 +12,11 @@ const OAUTH2_STATE_COOKIE_NAME = "__Host-oauth_state";
 const OAUTH2_DESTINATION_COOKIE_NAME = "__Host-oauth_dest";
 const OAUTH2_ORIGIN_COOKIE_NAME = "__Host-oauth_origin";
 const OAUTH2_VERIFIER_COOKIE_NAME = "__Host-oauth_verifier";
+const OAUTH2_NONCE_COOKIE_NAME = "__Host-oauth_nonce";
 const OAUTH2_COOKIE_MAX_AGE = 60 * 10;
 const OAUTH2_STATE_BYTES = 64;
 const OAUTH2_VERIFIER_BYTES = 32;
+const OAUTH2_NONCE_BYTES = 32;
 
 type OAuth2AuthorizationUrlConfig = {
   endpoint: string;
@@ -34,6 +36,7 @@ export function getOAuth2AuthorizationUrl({
   const state = createOAuth2State();
   const verifier = createPKCEVerifier();
   const challenge = createPKCEChallenge(verifier);
+  const nonce = createNonce();
   const url = new URL(endpoint);
   url.searchParams.set("response_type", "code");
   url.searchParams.set("client_id", clientId);
@@ -42,10 +45,11 @@ export function getOAuth2AuthorizationUrl({
   url.searchParams.set("state", state);
   url.searchParams.set("code_challenge", challenge);
   url.searchParams.set("code_challenge_method", "S256");
+  url.searchParams.set("nonce", nonce);
   for (const [key, value] of Object.entries(otherAttributes)) {
     url.searchParams.set(key, value);
   }
-  return { url: url.toString(), state, verifier };
+  return { url: url.toString(), state, verifier, nonce };
 }
 
 function createOAuth2State() {
@@ -60,12 +64,20 @@ function createPKCEChallenge(verifier: string) {
   return crypto.createHash("sha256").update(verifier).digest("base64url");
 }
 
+function createNonce() {
+  return crypto.randomBytes(OAUTH2_NONCE_BYTES).toString("base64url");
+}
+
 export function getOAuth2StateCookie(cookies: string) {
   return cookie.parse(cookies)[OAUTH2_STATE_COOKIE_NAME];
 }
 
 export function getOAuth2VerifierCookie(cookies: string) {
   return cookie.parse(cookies)[OAUTH2_VERIFIER_COOKIE_NAME];
+}
+
+export function getOAuth2NonceCookie(cookies: string) {
+  return cookie.parse(cookies)[OAUTH2_NONCE_COOKIE_NAME];
 }
 
 export function compareOAuth2State(a: string, b: string): boolean {
@@ -81,6 +93,7 @@ export function compareOAuth2State(a: string, b: string): boolean {
 type SetOAuth2CookiesOptions = {
   state: string;
   verifier: string;
+  nonce: string;
   destination: string;
   origin?: string;
 };
@@ -88,6 +101,7 @@ type SetOAuth2CookiesOptions = {
 export function setOAuth2Cookies({
   state,
   verifier,
+  nonce,
   destination,
   origin,
 }: SetOAuth2CookiesOptions): [string, string][] {
@@ -102,6 +116,13 @@ export function setOAuth2Cookies({
     [
       "Set-Cookie",
       cookie.serialize(OAUTH2_VERIFIER_COOKIE_NAME, verifier, {
+        ...OAUTH2_COOKIE_OPTIONS,
+        maxAge: OAUTH2_COOKIE_MAX_AGE,
+      }),
+    ],
+    [
+      "Set-Cookie",
+      cookie.serialize(OAUTH2_NONCE_COOKIE_NAME, nonce, {
         ...OAUTH2_COOKIE_OPTIONS,
         maxAge: OAUTH2_COOKIE_MAX_AGE,
       }),
@@ -147,6 +168,10 @@ export function clearOAuth2Cookies(): [string, string][] {
     ],
     [
       "Set-Cookie",
+      cookie.serialize(OAUTH2_NONCE_COOKIE_NAME, "", expireOptions),
+    ],
+    [
+      "Set-Cookie",
       cookie.serialize(OAUTH2_DESTINATION_COOKIE_NAME, "", expireOptions),
     ],
     [
@@ -178,6 +203,11 @@ type OAuth2GetAccessTokenOptions = {
   codeVerifier: string;
 };
 
+export type OAuth2TokenResponse = {
+  accessToken: string;
+  idToken: string;
+};
+
 // https://developers.google.com/identity/protocols/oauth2/web-server#exchange-authorization-code
 export async function getOAuth2AccessToken({
   endpoint,
@@ -186,7 +216,7 @@ export async function getOAuth2AccessToken({
   redirectUri,
   code,
   codeVerifier,
-}: OAuth2GetAccessTokenOptions) {
+}: OAuth2GetAccessTokenOptions): Promise<OAuth2TokenResponse> {
   const body = new URLSearchParams({
     grant_type: "authorization_code",
     redirect_uri: redirectUri,
@@ -207,12 +237,18 @@ export async function getOAuth2AccessToken({
     throw new Error(`Failed to get access token: ${response.statusText}`);
   }
   const data = await response.json();
-  if (typeof data !== "object") {
-    throw new Error(`Invalid access token response`);
+  if (typeof data !== "object" || data === null) {
+    throw new Error("Invalid token response");
   }
-  const accessToken = data.access_token;
+  const { access_token: accessToken, id_token: idToken } = data as Record<
+    string,
+    unknown
+  >;
   if (typeof accessToken !== "string") {
-    throw new Error(`Invalid access token`);
+    throw new Error("Invalid access token");
   }
-  return accessToken;
+  if (typeof idToken !== "string") {
+    throw new Error("Invalid ID token");
+  }
+  return { accessToken, idToken };
 }

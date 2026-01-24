@@ -1,13 +1,10 @@
 import assert from "node:assert";
+import { createRemoteJWKSet, jwtVerify } from "jose";
 import { getOAuth2AuthorizationUrl, getOAuth2AccessToken } from "./oauth2";
 
 const AUTHORIZATION_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth";
 const TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token";
-const USER_INFO_ENDPOINT = "https://www.googleapis.com/oauth2/v2/userinfo";
-const SCOPES = [
-  "https://www.googleapis.com/auth/userinfo.profile",
-  "https://www.googleapis.com/auth/userinfo.email",
-];
+const SCOPES = ["openid", "profile", "email"];
 
 assert(process.env.GOOGLE_CLIENT_ID);
 assert(process.env.GOOGLE_CLIENT_SECRET);
@@ -30,30 +27,19 @@ export function getGoogleAuthorizationUrl() {
   });
 }
 
-export async function googleApiRequest<T extends object>(
-  url: string,
-  accessToken: string,
-): Promise<T> {
-  const response = await fetch(url, {
-    headers: new Headers({
-      Accept: "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    }),
-  });
-  if (!response.ok) {
-    throw new Error(
-      `Google API request error: [${response.status}] ${response.statusText}`,
-    );
-  }
-  return response.json() as Promise<T>;
-}
+const GOOGLE_JWKS = createRemoteJWKSet(
+  new URL("https://www.googleapis.com/oauth2/v3/certs"),
+);
 
-type GetAccessTokenOptions = {
+type ExchangeCodeOptions = {
   code: string;
   codeVerifier: string;
 };
 
-export async function getAccessToken({ code, codeVerifier }: GetAccessTokenOptions) {
+export async function exchangeCode({
+  code,
+  codeVerifier,
+}: ExchangeCodeOptions) {
   return getOAuth2AccessToken({
     endpoint: TOKEN_ENDPOINT,
     clientId: GOOGLE_CLIENT_ID,
@@ -64,23 +50,49 @@ export async function getAccessToken({ code, codeVerifier }: GetAccessTokenOptio
   });
 }
 
-export async function getGoogleUser(accessToken: string) {
-  const googleUser = await googleApiRequest<{
-    id: string;
-    name: string;
-    given_name: string;
-    family_name: string;
-    email: string;
-    verified_email: boolean;
-    picture: string;
-    hd?: string;
-  }>(USER_INFO_ENDPOINT, accessToken);
-  // TODO: Validate the response
+export type GoogleUser = {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  imageUrl: string;
+};
+
+type VerifyIdTokenOptions = {
+  idToken: string;
+  expectedNonce: string;
+};
+
+export async function verifyIdToken({
+  idToken,
+  expectedNonce,
+}: VerifyIdTokenOptions): Promise<GoogleUser> {
+  const { payload } = await jwtVerify(idToken, GOOGLE_JWKS, {
+    issuer: "https://accounts.google.com",
+    audience: GOOGLE_CLIENT_ID,
+  });
+
+  if (payload.nonce !== expectedNonce) {
+    throw new Error("Invalid nonce in ID token");
+  }
+
+  const { sub, name, email, email_verified, picture } = payload;
+
+  if (
+    typeof sub !== "string" ||
+    typeof name !== "string" ||
+    typeof email !== "string" ||
+    typeof email_verified !== "boolean" ||
+    typeof picture !== "string"
+  ) {
+    throw new Error("Invalid claims in ID token");
+  }
+
   return {
-    id: googleUser.id,
-    name: googleUser.name,
-    email: googleUser.email,
-    emailVerified: googleUser.verified_email,
-    imageUrl: googleUser.picture,
+    id: sub,
+    name,
+    email,
+    emailVerified: email_verified,
+    imageUrl: picture,
   };
 }
