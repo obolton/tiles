@@ -12,8 +12,9 @@ const ORDERED_LIST_ITEM_MATCH = /^( *)[0-9]+\.\s+(?=\S)/;
 const BLOCK_START_MATCH = /^>>>\s+(.+)\s*\n/;
 const BLOCK_END_MATCH = /^<<<\s*\n/;
 const BLOCK_END_EOF_MATCH = /^<<<\s*$/;
+const CODE_BLOCK_START_MATCH = /^(`{3,}|~{3,})(\w*)\s*\n/;
 const DIVIDER_MATCH = /^(-{3,}|\*{3,}|_{3,})\s*\n/;
-const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *)|>|<)/;
+const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *)|>|<|`|~)/;
 const ALL_NEW_LINES_MATCH = /\n/g;
 
 export interface ParagraphNode {
@@ -35,11 +36,17 @@ export interface DividerNode {
   type: "divider";
 }
 
+export interface CodeNode {
+  type: "code";
+  language: string;
+}
+
 export type RichTextNode =
   | ParagraphNode
   | HeadingNode
   | ListItemNode
-  | DividerNode;
+  | DividerNode
+  | CodeNode;
 
 export interface RichTextFormat {
   bold?: boolean;
@@ -71,6 +78,7 @@ export class MarkdownTransformer implements Transformer<
   private node: RichTextNode | null = null;
   private lineBreak: LineBreak | null = null;
   private destination: string | null = null;
+  private codeFence: { char: string; length: number } | null = null;
 
   start() {}
 
@@ -84,9 +92,10 @@ export class MarkdownTransformer implements Transformer<
     }
 
     const text = this.buffer.slice(0, this.pos);
+    const isCode = this.node?.type === "code";
 
-    // Buffer until we have a non-empty chunk
-    if (text.trim().length === 0) {
+    // Buffer until we have a non-empty chunk (except in code blocks)
+    if (text.trim().length === 0 && !isCode) {
       return;
     }
 
@@ -164,6 +173,37 @@ export class MarkdownTransformer implements Transformer<
 
     while (this.pos < this.buffer.length) {
       const rest = this.buffer.slice(this.pos);
+
+      if (this.codeFence) {
+        const { char, length } = this.codeFence;
+        const endMatch = this.buffer.match(
+          new RegExp(`^[${char}]{${length},}\\s*\\n`),
+        );
+        if (endMatch) {
+          this.codeFence = null;
+          this.set(controller, { node: null }, endMatch[0].length);
+          continue;
+        }
+        const newlineIndex = this.buffer.indexOf("\n");
+        if (newlineIndex !== -1) {
+          this.pos = newlineIndex + 1;
+          this.advance(controller);
+          continue;
+        }
+        break;
+      }
+
+      const codeBlockStartMatch = this.buffer.match(CODE_BLOCK_START_MATCH);
+      if (codeBlockStartMatch) {
+        const [match, fence, language] = codeBlockStartMatch;
+        this.codeFence = { char: fence![0]!, length: fence!.length };
+        this.set(
+          controller,
+          { node: { type: "code", language: language ?? "" } },
+          match.length,
+        );
+        continue;
+      }
 
       const blockStartMatch = this.buffer.match(BLOCK_START_MATCH);
       if (blockStartMatch) {
@@ -296,11 +336,24 @@ export class MarkdownTransformer implements Transformer<
   }
 
   flush(controller: TransformStreamDefaultController<RichTextStreamEvent>) {
+    if (this.codeFence) {
+      const { char, length } = this.codeFence;
+      const endMatch = this.buffer.match(
+        new RegExp(`^[${char}]{${length},}\\s*$`),
+      );
+      if (endMatch) {
+        this.codeFence = null;
+        this.pos = 0;
+        this.set(controller, { node: null }, endMatch[0].length);
+      }
+    }
+
     const blockEndMatch = this.buffer.match(BLOCK_END_EOF_MATCH);
     if (blockEndMatch) {
       this.pos = 0;
       this.set(controller, { destination: null }, blockEndMatch[0].length);
     }
+
     this.advance(controller);
   }
 }

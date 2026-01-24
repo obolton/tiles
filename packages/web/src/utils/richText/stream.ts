@@ -27,11 +27,17 @@ export interface DividerNode {
   type: "divider";
 }
 
+export interface CodeNode {
+  type: "code";
+  language: string;
+}
+
 export type RichTextNode =
   | ParagraphNode
   | HeadingNode
   | ListItemNode
-  | DividerNode;
+  | DividerNode
+  | CodeNode;
 
 export interface RichTextFormat {
   bold?: boolean;
@@ -243,6 +249,16 @@ export async function insertFromStream(
                 tr,
                 pos,
                 schema.nodes.divider.create(),
+                replaceEmptyBlock,
+              ) + 1;
+            break;
+
+          case "code":
+            pos =
+              insertNode(
+                tr,
+                pos,
+                schema.nodes.code.create({ language: event.language }),
                 replaceEmptyBlock,
               ) + 1;
             break;
