@@ -1,5 +1,9 @@
 import assert from "node:assert";
-import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import {
+  createServer,
+  type IncomingMessage,
+  type ServerResponse,
+} from "node:http";
 import { createHTTPHandler } from "@trpc/server/adapters/standalone";
 import cors from "cors";
 import router from "@/routes/index.ts";
