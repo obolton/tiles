@@ -86,13 +86,14 @@ export class MarkdownTransformer implements Transformer<
     controller: TransformStreamDefaultController<RichTextStreamEvent>,
     skip: number = 0,
   ) {
-    if (this.pos === 0) {
+    const isCode = this.node?.type === "code";
+
+    if (this.pos === 0 && (!isCode || this.lineBreak === null)) {
       this.buffer = this.buffer.slice(skip);
       return;
     }
 
     const text = this.buffer.slice(0, this.pos);
-    const isCode = this.node?.type === "code";
 
     // Buffer until we have a non-empty chunk (except in code blocks)
     if (text.trim().length === 0 && !isCode) {
@@ -181,13 +182,15 @@ export class MarkdownTransformer implements Transformer<
         );
         if (endMatch) {
           this.codeFence = null;
+          this.lineBreak = null;
           this.set(controller, { node: null }, endMatch[0].length);
           continue;
         }
         const newlineIndex = this.buffer.indexOf("\n");
         if (newlineIndex !== -1) {
-          this.pos = newlineIndex + 1;
-          this.advance(controller);
+          this.pos = newlineIndex;
+          this.advance(controller, 1);
+          this.lineBreak = LineBreak.HARD;
           continue;
         }
         break;
@@ -330,7 +333,7 @@ export class MarkdownTransformer implements Transformer<
     }
 
     const delimiterMatch = this.buffer.match(DELIMITER_MATCH);
-    if (!delimiterMatch) {
+    if (!delimiterMatch && !this.codeFence) {
       this.advance(controller);
     }
   }
@@ -343,6 +346,7 @@ export class MarkdownTransformer implements Transformer<
       );
       if (endMatch) {
         this.codeFence = null;
+        this.lineBreak = null;
         this.pos = 0;
         this.set(controller, { node: null }, endMatch[0].length);
       }
