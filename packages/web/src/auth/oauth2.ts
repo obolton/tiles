@@ -6,6 +6,7 @@ const OAUTH2_COOKIE_OPTIONS: SerializeOptions = {
   httpOnly: true,
   secure: true,
   path: "/",
+  sameSite: "lax",
 };
 const OAUTH2_STATE_COOKIE_NAME = "__Host-oauth_state";
 const OAUTH2_DESTINATION_COOKIE_NAME = "__Host-oauth_dest";
