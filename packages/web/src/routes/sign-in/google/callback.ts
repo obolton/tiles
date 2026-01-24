@@ -1,9 +1,5 @@
 import {
-  getOAuth2StateCookie,
-  getOAuth2VerifierCookie,
-  getOAuth2NonceCookie,
-  getOAuth2DestinationCookie,
-  getOAuth2OriginCookie,
+  getOAuth2Cookies,
   getOAuthOriginRedirect,
   clearOAuth2Cookies,
   compareOAuth2State,
@@ -21,17 +17,10 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
       return redirect(oauthRedirect, 302);
     }
   }
-  const cookies = headers.get("cookie") ?? "";
-  const stateCookieValue = getOAuth2StateCookie(cookies);
-  const verifierCookieValue = getOAuth2VerifierCookie(cookies);
-  const nonceCookieValue = getOAuth2NonceCookie(cookies);
-  const destinationCookieValue = getOAuth2DestinationCookie(cookies);
-  const originCookieValue = import.meta.env.DEV
-    ? getOAuth2OriginCookie(cookies)
-    : undefined;
+  const cookies = getOAuth2Cookies(headers.get("cookie") ?? "");
   const cookiesToSet = clearOAuth2Cookies();
 
-  if (destinationCookieValue && !validateDestination(destinationCookieValue)) {
+  if (cookies.destination && !validateDestination(cookies.destination)) {
     return forbidden(cookiesToSet);
   }
 
@@ -48,11 +37,11 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
   }
 
   if (
-    !stateCookieValue ||
-    !verifierCookieValue ||
-    !nonceCookieValue ||
+    !cookies.state ||
+    !cookies.verifier ||
+    !cookies.nonce ||
     !state ||
-    !compareOAuth2State(stateCookieValue, state) ||
+    !compareOAuth2State(cookies.state, state) ||
     !code
   ) {
     return forbidden(cookiesToSet);
@@ -60,11 +49,11 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
 
   const { idToken } = await exchangeCode({
     code,
-    codeVerifier: verifierCookieValue,
+    codeVerifier: cookies.verifier,
   });
   const googleUser = await verifyIdToken({
     idToken,
-    expectedNonce: nonceCookieValue,
+    expectedNonce: cookies.nonce,
   });
   const session = await signIn({
     provider: "GOOGLE",
@@ -80,10 +69,11 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
     new Date(session.expiresAt),
   );
 
-  const destination = `/${destinationCookieValue || ""}`;
-  const redirectUrl = originCookieValue
-    ? `${originCookieValue}${destination}`
-    : destination;
+  const destination = `/${cookies.destination ?? ""}`;
+  const redirectUrl =
+    import.meta.env.DEV && cookies.origin
+      ? `${cookies.origin}${destination}`
+      : destination;
 
   return redirect(redirectUrl, 302, [
     ...cookiesToSet,

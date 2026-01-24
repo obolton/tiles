@@ -1,11 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   getOAuth2AuthorizationUrl,
-  getOAuth2StateCookie,
-  getOAuth2VerifierCookie,
-  getOAuth2NonceCookie,
-  getOAuth2DestinationCookie,
-  getOAuth2OriginCookie,
+  getOAuth2Cookies,
   setOAuth2Cookies,
   clearOAuth2Cookies,
   compareOAuth2State,
@@ -178,33 +174,35 @@ describe("oauth2", () => {
       });
     });
 
-    describe("cookie getters", () => {
-      const cookieString =
-        "__Host-oauth_state=state-value; __Host-oauth_verifier=verifier-value; __Host-oauth_nonce=nonce-value; __Host-oauth_dest=dest-value; __Host-oauth_origin=origin-value";
+    describe("getOAuth2Cookies", () => {
+      it("should parse all OAuth2 cookies", () => {
+        const cookieString =
+          "__Host-oauth_state=state-value; __Host-oauth_verifier=verifier-value; __Host-oauth_nonce=nonce-value; __Host-oauth_dest=dest-value; __Host-oauth_origin=origin-value";
 
-      it("should get state cookie", () => {
-        expect(getOAuth2StateCookie(cookieString)).toBe("state-value");
+        const cookies = getOAuth2Cookies(cookieString);
+
+        expect(cookies.state).toBe("state-value");
+        expect(cookies.verifier).toBe("verifier-value");
+        expect(cookies.nonce).toBe("nonce-value");
+        expect(cookies.destination).toBe("dest-value");
+        expect(cookies.origin).toBe("origin-value");
       });
 
-      it("should get verifier cookie", () => {
-        expect(getOAuth2VerifierCookie(cookieString)).toBe("verifier-value");
+      it("should return null for missing cookies", () => {
+        const cookies = getOAuth2Cookies("");
+
+        expect(cookies.state).toBeNull();
+        expect(cookies.verifier).toBeNull();
+        expect(cookies.nonce).toBeNull();
+        expect(cookies.destination).toBeNull();
+        expect(cookies.origin).toBeNull();
       });
 
-      it("should get nonce cookie", () => {
-        expect(getOAuth2NonceCookie(cookieString)).toBe("nonce-value");
-      });
+      it("should handle partial cookie strings", () => {
+        const cookies = getOAuth2Cookies("__Host-oauth_state=only-state");
 
-      it("should get destination cookie", () => {
-        expect(getOAuth2DestinationCookie(cookieString)).toBe("dest-value");
-      });
-
-      it("should get origin cookie", () => {
-        expect(getOAuth2OriginCookie(cookieString)).toBe("origin-value");
-      });
-
-      it("should return undefined for missing cookies", () => {
-        expect(getOAuth2StateCookie("")).toBeUndefined();
-        expect(getOAuth2VerifierCookie("other=value")).toBeUndefined();
+        expect(cookies.state).toBe("only-state");
+        expect(cookies.verifier).toBeNull();
       });
     });
   });

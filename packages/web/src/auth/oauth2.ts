@@ -68,16 +68,23 @@ function createNonce() {
   return crypto.randomBytes(OAUTH2_NONCE_BYTES).toString("base64url");
 }
 
-export function getOAuth2StateCookie(cookies: string) {
-  return cookie.parse(cookies)[OAUTH2_STATE_COOKIE_NAME];
-}
+export type OAuth2Cookies = {
+  state: string | null;
+  verifier: string | null;
+  nonce: string | null;
+  destination: string | null;
+  origin: string | null;
+};
 
-export function getOAuth2VerifierCookie(cookies: string) {
-  return cookie.parse(cookies)[OAUTH2_VERIFIER_COOKIE_NAME];
-}
-
-export function getOAuth2NonceCookie(cookies: string) {
-  return cookie.parse(cookies)[OAUTH2_NONCE_COOKIE_NAME];
+export function getOAuth2Cookies(cookies: string): OAuth2Cookies {
+  const parsed = cookie.parse(cookies);
+  return {
+    state: parsed[OAUTH2_STATE_COOKIE_NAME] ?? null,
+    verifier: parsed[OAUTH2_VERIFIER_COOKIE_NAME] ?? null,
+    nonce: parsed[OAUTH2_NONCE_COOKIE_NAME] ?? null,
+    destination: parsed[OAUTH2_DESTINATION_COOKIE_NAME] ?? null,
+    origin: parsed[OAUTH2_ORIGIN_COOKIE_NAME] ?? null,
+  };
 }
 
 export function compareOAuth2State(a: string, b: string): boolean {
@@ -145,14 +152,6 @@ export function setOAuth2Cookies({
     ]);
   }
   return cookies;
-}
-
-export function getOAuth2DestinationCookie(cookies: string) {
-  return cookie.parse(cookies)[OAUTH2_DESTINATION_COOKIE_NAME];
-}
-
-export function getOAuth2OriginCookie(cookies: string) {
-  return cookie.parse(cookies)[OAUTH2_ORIGIN_COOKIE_NAME];
 }
 
 export function clearOAuth2Cookies(): [string, string][] {
