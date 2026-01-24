@@ -83,7 +83,7 @@ function getInsertPosition(tr: Transaction) {
 /**
  * Insert a node at the current position.
  * If replaceEmpty is true, replaces an empty textblock node with the new node.
- * Otherwise, inserts after the current block node.
+ * Otherwise, inserts after the top-level block ancestor.
  * @returns The position where the node was inserted.
  */
 function insertNode(
@@ -101,8 +101,8 @@ function insertNode(
     return from;
   }
 
-  // Insert after the current block
-  const afterPos = $pos.after();
+  // Insert after the top-level block
+  const afterPos = $pos.after(1);
   tr.insert(afterPos, node);
   return afterPos;
 }
