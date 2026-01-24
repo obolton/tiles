@@ -86,7 +86,7 @@ function getInsertPosition(tr: Transaction) {
  * Otherwise, inserts after the top-level block ancestor.
  * @returns The position where the node was inserted.
  */
-function insertNode(
+export function insertNode(
   tr: Transaction,
   pos: number,
   node: Node,
