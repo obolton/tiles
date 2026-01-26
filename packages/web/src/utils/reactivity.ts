@@ -22,9 +22,6 @@ export type SubscribeCallback<T> = (reactive: Reactive<T>) => void;
 export type UnsubscribeCallback = () => boolean;
 
 export type ReactiveType<T extends Reactive> = T["value"];
-export type ReactiveTypes<T extends Reactive[]> = {
-  [K in keyof T]: ReactiveType<T[K]>;
-};
 
 export abstract class BaseReactive<Value> implements Reactive<Value> {
   protected readonly subscribers = new Set<(reactive: this) => void>();
@@ -58,7 +55,7 @@ export abstract class BaseReactive<Value> implements Reactive<Value> {
   derive<DerivedValue>(
     transform: (input: Value) => DerivedValue,
   ): ComputedReactive<DerivedValue> {
-    return new Computed<[this], DerivedValue>([this], transform);
+    return new Computed(this, transform);
   }
 }
 
@@ -150,23 +147,19 @@ export function array<T>(initialValue: T[]) {
   return new ReactiveArray(initialValue);
 }
 
-type Transform<Input extends Reactive[], Value> = (
-  ...values: ReactiveTypes<Input>
-) => Value;
-
 export class Computed<
-  Input extends Reactive[],
+  Input extends Reactive,
   Value,
 > extends BaseReactive<Value> {
   private readonly input: Input;
-  private readonly transform: Transform<Input, Value>;
-  private unsubscribeCallbacks?: UnsubscribeCallback[];
+  private readonly transform: (value: ReactiveType<Input>) => Value;
+  private unsubscribeCallback?: UnsubscribeCallback;
 
-  private inputValues?: ReactiveTypes<Input>; // Used for lazy evaluation when disconnected
+  private inputValue?: ReactiveType<Input>; // Used for lazy evaluation when disconnected
   private cachedValue?: Value;
   private stale = true;
 
-  constructor(input: Input, transform: Transform<Input, Value>) {
+  constructor(input: Input, transform: (value: ReactiveType<Input>) => Value) {
     super();
     this.input = input;
     this.transform = transform;
@@ -174,11 +167,9 @@ export class Computed<
 
   subscribe(callback: (reactive: this) => void, signal?: AbortSignal) {
     const result = super.subscribe(callback, signal);
-    if (!this.unsubscribeCallbacks && this.subscribers.size > 0) {
-      this.unsubscribeCallbacks = this.input.map((reactive) =>
-        reactive.subscribe(() => this.markAsStale()),
-      );
-      this.inputValues = undefined;
+    if (!this.unsubscribeCallback && this.subscribers.size > 0) {
+      this.unsubscribeCallback = this.input.subscribe(() => this.markAsStale());
+      this.inputValue = undefined;
     }
     return result;
   }
@@ -203,24 +194,19 @@ export class Computed<
   }
 
   get value() {
-    if (!this.unsubscribeCallbacks) {
-      const values = this.input.map(
-        (input) => input.value,
-      ) as ReactiveTypes<Input>;
-      const previousValues = this.inputValues;
-      const stale = previousValues
-        ? previousValues.some((value, i) => values[i] !== value)
-        : true;
+    if (!this.unsubscribeCallback) {
+      const value = this.input.value as ReactiveType<Input>;
+      const previousValue = this.inputValue;
+      const stale = previousValue === undefined || previousValue !== value;
       if (stale) {
-        this.inputValues = values;
-        this.cachedValue = this.transform(...values);
+        this.inputValue = value;
+        this.cachedValue = this.transform(value);
         this.stale = false;
       }
     } else if (this.stale) {
-      const values = this.input.map(
-        (input) => input.value,
-      ) as ReactiveTypes<Input>;
-      this.cachedValue = this.transform(...values);
+      this.cachedValue = this.transform(
+        this.input.value as ReactiveType<Input>,
+      );
       this.stale = false;
     }
     return this.cachedValue as Value;
@@ -228,9 +214,78 @@ export class Computed<
 
   disconnect() {
     super.disconnect();
+    this.unsubscribeCallback?.();
+    this.unsubscribeCallback = undefined;
+  }
+}
+
+type ReactiveInputs = Record<string, Reactive>;
+
+type CombinedValue<T extends ReactiveInputs> = {
+  [K in keyof T]: ReactiveType<T[K]>;
+};
+
+export class Combined<T extends ReactiveInputs> extends BaseReactive<
+  CombinedValue<T>
+> {
+  private readonly inputs: T;
+  private unsubscribeCallbacks?: UnsubscribeCallback[];
+
+  private cachedValue?: CombinedValue<T>;
+  private stale = true;
+
+  constructor(inputs: T) {
+    super();
+    this.inputs = inputs;
+  }
+
+  subscribe(callback: (reactive: this) => void, signal?: AbortSignal) {
+    const result = super.subscribe(callback, signal);
+    if (!this.unsubscribeCallbacks && this.subscribers.size > 0) {
+      this.unsubscribeCallbacks = Object.values(this.inputs).map((input) =>
+        input.subscribe(() => this.markAsStale()),
+      );
+    }
+    return result;
+  }
+
+  unsubscribe(callback: (reactive: this) => void) {
+    const result = super.unsubscribe(callback);
+    if (this.subscribers.size === 0) {
+      this.disconnect();
+    }
+    return result;
+  }
+
+  private markAsStale() {
+    this.stale = true;
+
+    if (this.subscribers.size > 0) {
+      this.notify();
+    }
+  }
+
+  get value(): CombinedValue<T> {
+    if (this.stale || !this.unsubscribeCallbacks) {
+      const result = {} as CombinedValue<T>;
+      for (const [key, input] of Object.entries(this.inputs)) {
+        result[key as keyof T] = input.value;
+      }
+      this.cachedValue = result;
+      this.stale = false;
+    }
+    return this.cachedValue as CombinedValue<T>;
+  }
+
+  disconnect() {
+    super.disconnect();
     this.unsubscribeCallbacks?.forEach((unsubscribe) => unsubscribe());
     this.unsubscribeCallbacks = undefined;
   }
+}
+
+export function combine<T extends ReactiveInputs>(inputs: T): Combined<T> {
+  return new Combined(inputs);
 }
 
 export function isReactive<T>(

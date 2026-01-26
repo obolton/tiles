@@ -5,6 +5,8 @@ import {
   ReactiveFlag,
   flag,
   Computed,
+  Combined,
+  combine,
   isReactive,
 } from "../reactivity";
 
@@ -122,24 +124,15 @@ describe("flag", () => {
 describe("Computed", () => {
   test("computes a value from a single input", () => {
     const r = new ReactiveValue(1);
-    const computed = new Computed([r], (input) => input + 1);
+    const computed = new Computed(r, (input) => input + 1);
     expect(computed.value).toBe(2);
     r.value = 3;
     expect(computed.value).toBe(4);
   });
 
-  test("computes a value from multiple inputs", () => {
-    const reactiveA = new ReactiveValue(1);
-    const reactiveB = new ReactiveValue(2);
-    const computed = new Computed([reactiveA, reactiveB], (a, b) => a + b);
-    expect(computed.value).toBe(3);
-    reactiveA.value = 3;
-    expect(computed.value).toBe(5);
-  });
-
   test("subscribes to a computed value", () => {
     const r = new ReactiveValue(1);
-    const computed = new Computed([r], (input) => input % 2);
+    const computed = new Computed(r, (input) => input % 2);
     const subscriber = vi.fn();
     computed.subscribe(subscriber);
     r.value = 3;
@@ -148,8 +141,8 @@ describe("Computed", () => {
 
   test("defers the computation until the computed value is read", () => {
     const r = new ReactiveValue(1);
-    const transform = vi.fn((value) => value + 1);
-    const computed = new Computed([r], transform);
+    const transform = vi.fn((value: number) => value + 1);
+    const computed = new Computed(r, transform);
     expect(transform).toHaveBeenCalledTimes(0);
     expect(computed.value).toBe(2);
     expect(transform).toHaveBeenCalledTimes(1);
@@ -157,12 +150,56 @@ describe("Computed", () => {
 
   test("caches the computed value", () => {
     const r = new ReactiveValue(1);
-    const transform = vi.fn((value) => value + 1);
-    const computed = new Computed([r], transform);
+    const transform = vi.fn((value: number) => value + 1);
+    const computed = new Computed(r, transform);
     expect(transform).toHaveBeenCalledTimes(0);
     const results = [computed.value, computed.value, computed.value];
     expect(results).toStrictEqual([2, 2, 2]);
     expect(transform).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("Combined", () => {
+  test("combines multiple reactive values", () => {
+    const a = new ReactiveValue(1);
+    const b = new ReactiveValue("hello");
+    const combined = new Combined({ a, b });
+    expect(combined.value).toStrictEqual({ a: 1, b: "hello" });
+  });
+
+  test("updates when any input changes", () => {
+    const a = new ReactiveValue(1);
+    const b = new ReactiveValue(2);
+    const combined = new Combined({ a, b });
+    const subscriber = vi.fn();
+    combined.subscribe(subscriber);
+
+    a.value = 10;
+    expect(subscriber).toHaveBeenCalledTimes(1);
+    expect(combined.value).toStrictEqual({ a: 10, b: 2 });
+
+    b.value = 20;
+    expect(subscriber).toHaveBeenCalledTimes(2);
+    expect(combined.value).toStrictEqual({ a: 10, b: 20 });
+  });
+
+  test("works with derive for multi-input computed", () => {
+    const a = new ReactiveValue(1);
+    const b = new ReactiveValue(2);
+    const sum = combine({ a, b }).derive(({ a, b }) => a + b);
+    expect(sum.value).toBe(3);
+
+    a.value = 10;
+    expect(sum.value).toBe(12);
+  });
+});
+
+describe("combine", () => {
+  test("returns a Combined instance", () => {
+    const a = reactive(1);
+    const b = reactive(2);
+    const combined = combine({ a, b });
+    expect(combined).toBeInstanceOf(Combined);
   });
 });
 
