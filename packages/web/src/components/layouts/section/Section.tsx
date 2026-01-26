@@ -49,23 +49,21 @@ export default function Section({
     }
   });
 
-  const resize = combine({ isEditable, layout }).derive(
-    ({ isEditable, layout }) => {
-      if (!isEditable) {
-        return null;
-      }
+  const resize = combine({ isEditable, layout }, ({ isEditable, layout }) => {
+    if (!isEditable) {
+      return null;
+    }
 
-      switch (layout) {
-        case "GRID":
-        case "FREEFORM":
-          return "all";
-        case "HORIZONTAL":
-          return "horizontal";
-        case "VERTICAL":
-          return "vertical";
-      }
-    },
-  );
+    switch (layout) {
+      case "GRID":
+      case "FREEFORM":
+        return "all";
+      case "HORIZONTAL":
+        return "horizontal";
+      case "VERTICAL":
+        return "vertical";
+    }
+  });
 
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
 

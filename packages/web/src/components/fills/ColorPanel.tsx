@@ -21,7 +21,8 @@ export interface ColorPanelProps {
 export default function ColorPanel({ value, onChange }: ColorPanelProps) {
   const activeColor = reactive<ActiveColor>("A");
 
-  const currentEditingColor = combine({ value, activeColor }).derive(
+  const currentEditingColor = combine(
+    { value, activeColor },
     ({ value, activeColor }) => {
       if (value?.type === "color") return value.color;
       if (value?.type === "gradient")

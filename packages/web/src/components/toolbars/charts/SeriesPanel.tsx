@@ -23,13 +23,16 @@ export default function SeriesPanel({
   table,
   ...props
 }: SeriesPanelProps) {
-  const availableColumns = combine({
-    series: chart.series,
-    columns: table.columns,
-  }).derive(({ series, columns }) => {
-    const usedColumnIds = new Set(series.map((s) => s.column.value.id));
-    return columns.filter((column) => !usedColumnIds.has(column.id));
-  });
+  const availableColumns = combine(
+    {
+      series: chart.series,
+      columns: table.columns,
+    },
+    ({ series, columns }) => {
+      const usedColumnIds = new Set(series.map((s) => s.column.value.id));
+      return columns.filter((column) => !usedColumnIds.has(column.id));
+    },
+  );
 
   function setLabel(event: Event) {
     const select = event.currentTarget as ListSelect;

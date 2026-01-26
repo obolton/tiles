@@ -132,12 +132,14 @@ export default function Item({
     (selection) => selection.has(tile) && selection.size === 1,
   );
 
-  const themeStyles = combine({
-    background: tile.background,
-    theme: tile.theme,
-    textColor: tile.textColor,
-  }).derive(({ background, theme, textColor }) =>
-    getThemeStyles(theme, { background, textColor }),
+  const themeStyles = combine(
+    {
+      background: tile.background,
+      theme: tile.theme,
+      textColor: tile.textColor,
+    },
+    ({ background, theme, textColor }) =>
+      getThemeStyles(theme, { background, textColor }),
   );
 
   function onPointerDown(event: PointerEvent) {
@@ -176,20 +178,21 @@ export default function Item({
 
   const position =
     x && y
-      ? combine({ x, y }).derive(({ x, y }) => ({
+      ? combine({ x, y }, ({ x, y }) => ({
           "--x": x.toString(),
           "--y": y.toString(),
         }))
       : reactive({});
 
-  const combinedStyles = combine({
-    dimensions,
-    width,
-    height,
-    rowSpan,
-    position,
-    themeStyles,
-  }).derive(
+  const combinedStyles = combine(
+    {
+      dimensions,
+      width,
+      height,
+      rowSpan,
+      position,
+      themeStyles,
+    },
     ({ dimensions, width, height, rowSpan, position, themeStyles }) => ({
       ...style,
       ...position,
@@ -199,12 +202,14 @@ export default function Item({
     }),
   );
 
-  const show = combine({ isEditable: editor.isEditable, hide }).derive(
+  const show = combine(
+    { isEditable: editor.isEditable, hide },
     ({ isEditable, hide }) => !hide || isEditable,
   );
 
   const resizeDirection = resize
-    ? combine({ resize, isEditable: editor.isEditable }).derive(
+    ? combine(
+        { resize, isEditable: editor.isEditable },
         ({ resize, isEditable }) => (isEditable ? resize : null),
       )
     : undefined;

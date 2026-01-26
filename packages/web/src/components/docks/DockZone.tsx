@@ -32,7 +32,8 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
     return size !== null ? { [dimension]: `${size}px` } : {};
   });
 
-  const visible = combine({ isEmpty, isEditable: editor.isEditable }).derive(
+  const visible = combine(
+    { isEmpty, isEditable: editor.isEditable },
     ({ isEmpty, isEditable }) => !isEmpty || isEditable,
   );
 

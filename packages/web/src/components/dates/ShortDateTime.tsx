@@ -10,7 +10,7 @@ export default function ShortDateTime({ value, time }: DateTimeThemeProps) {
 
   return (
     <time
-      datetime={combine({ value, time }).derive(({ value, time }) =>
+      datetime={combine({ value, time }, ({ value, time }) =>
         time ? value.toISOString() : value.toISOString().slice(0, 10),
       )}
     >
