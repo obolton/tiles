@@ -1,4 +1,4 @@
-import { Computed } from "@/utils/reactivity";
+import { combine } from "@/utils/reactivity";
 import If from "@/jsx/if";
 import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
@@ -32,9 +32,8 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
     return size !== null ? { [dimension]: `${size}px` } : {};
   });
 
-  const visible = new Computed(
-    [isEmpty, editor.isEditable],
-    (empty, editable) => !empty || editable,
+  const visible = combine({ isEmpty, isEditable: editor.isEditable }).derive(
+    ({ isEmpty, isEditable }) => !isEmpty || isEditable,
   );
 
   function ref(element: HTMLElement) {

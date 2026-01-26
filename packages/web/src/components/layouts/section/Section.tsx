@@ -1,5 +1,5 @@
 import Item from "@/components/item/Item";
-import { Computed } from "@/utils/reactivity";
+import { combine } from "@/utils/reactivity";
 import SectionToolbar from "./SectionToolbar";
 import If from "@/jsx/if";
 import Each from "@/jsx/each";
@@ -49,14 +49,13 @@ export default function Section({
     }
   });
 
-  const resize = new Computed(
-    [isEditable, layout] as const,
-    (isEditableValue, layoutValue) => {
-      if (!isEditableValue) {
+  const resize = combine({ isEditable, layout }).derive(
+    ({ isEditable, layout }) => {
+      if (!isEditable) {
         return null;
       }
 
-      switch (layoutValue) {
+      switch (layout) {
         case "GRID":
         case "FREEFORM":
           return "all";

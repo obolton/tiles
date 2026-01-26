@@ -16,7 +16,7 @@ import PageLinkModel from "@/models/PageLink";
 import MapModel from "@/models/Map";
 import TableModel from "@/models/Table";
 import ChartModel from "@/models/Chart";
-import { reactive, Computed } from "@/utils/reactivity";
+import { reactive, combine } from "@/utils/reactivity";
 import { getThemeStyles } from "@/utils/themes";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import If from "@/jsx/if";
@@ -132,10 +132,12 @@ export default function Item({
     (selection) => selection.has(tile) && selection.size === 1,
   );
 
-  const themeStyles = new Computed(
-    [tile.background, tile.theme, tile.textColor] as const,
-    (background, theme, textColor) =>
-      getThemeStyles(theme, { background, textColor }),
+  const themeStyles = combine({
+    background: tile.background,
+    theme: tile.theme,
+    textColor: tile.textColor,
+  }).derive(({ background, theme, textColor }) =>
+    getThemeStyles(theme, { background, textColor }),
   );
 
   function onPointerDown(event: PointerEvent) {
@@ -174,39 +176,36 @@ export default function Item({
 
   const position =
     x && y
-      ? new Computed([x, y], (xValue, yValue) => ({
-          "--x": xValue.toString(),
-          "--y": yValue.toString(),
+      ? combine({ x, y }).derive(({ x, y }) => ({
+          "--x": x.toString(),
+          "--y": y.toString(),
         }))
       : reactive({});
 
-  const combinedStyles = new Computed(
-    [dimensions, width, height, rowSpan, position, themeStyles] as const,
-    (
-      dimensionsValue,
-      widthValue,
-      heightValue,
-      rowSpanValue,
-      positionValue,
-      themeVars,
-    ) => ({
+  const combinedStyles = combine({
+    dimensions,
+    width,
+    height,
+    rowSpan,
+    position,
+    themeStyles,
+  }).derive(
+    ({ dimensions, width, height, rowSpan, position, themeStyles }) => ({
       ...style,
-      ...positionValue,
-      ...getSizeStyle(dimensionsValue, widthValue, heightValue),
-      "--rows": rowSpanValue.toString(),
-      ...themeVars,
+      ...position,
+      ...getSizeStyle(dimensions, width, height),
+      "--rows": rowSpan.toString(),
+      ...themeStyles,
     }),
   );
 
-  const show = new Computed(
-    [editor.isEditable, hide] as const,
-    (editable, hidden) => !hidden || editable,
+  const show = combine({ isEditable: editor.isEditable, hide }).derive(
+    ({ isEditable, hide }) => !hide || isEditable,
   );
 
   const resizeDirection = resize
-    ? new Computed(
-        [resize, editor.isEditable] as const,
-        (direction, isEditable) => (isEditable ? direction : null),
+    ? combine({ resize, isEditable: editor.isEditable }).derive(
+        ({ resize, isEditable }) => (isEditable ? resize : null),
       )
     : undefined;
 

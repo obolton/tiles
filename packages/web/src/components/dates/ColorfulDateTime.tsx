@@ -1,5 +1,5 @@
 import styles from "./ColorfulDateTime.module.css";
-import { Computed } from "@/utils/reactivity";
+import { combine } from "@/utils/reactivity";
 import type { DateTimeThemeProps } from "./themes";
 
 export default function ColorfulDateTime({ value, time }: DateTimeThemeProps) {
@@ -19,11 +19,9 @@ export default function ColorfulDateTime({ value, time }: DateTimeThemeProps) {
 
   return (
     <time
-      datetime={
-        new Computed([value, time] as const, (date, showTime) =>
-          showTime ? date.toISOString() : date.toISOString().slice(0, 10),
-        )
-      }
+      datetime={combine({ value, time }).derive(({ value, time }) =>
+        time ? value.toISOString() : value.toISOString().slice(0, 10),
+      )}
     >
       <span className={styles.month}>
         {value.derive((date) => monthFormatter.format(date))}

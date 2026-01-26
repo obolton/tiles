@@ -1,5 +1,5 @@
 import styles from "./ColorfulStackedDateTime.module.css";
-import { Computed } from "@/utils/reactivity";
+import { combine } from "@/utils/reactivity";
 import type { DateTimeThemeProps } from "./themes";
 
 export default function ColorfulStackedDateTime({
@@ -23,11 +23,9 @@ export default function ColorfulStackedDateTime({
   return (
     <time
       className={styles.datetime}
-      datetime={
-        new Computed([value, time] as const, (date, showTime) =>
-          showTime ? date.toISOString() : date.toISOString().slice(0, 10),
-        )
-      }
+      datetime={combine({ value, time }).derive(({ value, time }) =>
+        time ? value.toISOString() : value.toISOString().slice(0, 10),
+      )}
     >
       <span className={styles.date}>
         <span className={styles.month}>

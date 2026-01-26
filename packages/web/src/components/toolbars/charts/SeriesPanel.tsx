@@ -5,7 +5,7 @@ import SeriesRow from "./SeriesRow";
 import NewIcon from "@/icons/new.svg?jsx";
 import ParagraphIcon from "@/icons/paragraph.svg?jsx";
 import styles from "./SeriesPanel.module.css";
-import { Computed } from "@/utils/reactivity";
+import { combine } from "@/utils/reactivity";
 import type Chart from "@/models/Chart";
 import type { Series, ChartType } from "@/models/Chart";
 import type Table from "@/models/Table";
@@ -23,13 +23,13 @@ export default function SeriesPanel({
   table,
   ...props
 }: SeriesPanelProps) {
-  const availableColumns = new Computed(
-    [chart.series, table.columns] as const,
-    (series, columns) => {
-      const usedColumnIds = new Set(series.map((s) => s.column.value.id));
-      return columns.filter((column) => !usedColumnIds.has(column.id));
-    },
-  );
+  const availableColumns = combine({
+    series: chart.series,
+    columns: table.columns,
+  }).derive(({ series, columns }) => {
+    const usedColumnIds = new Set(series.map((s) => s.column.value.id));
+    return columns.filter((column) => !usedColumnIds.has(column.id));
+  });
 
   function setLabel(event: Event) {
     const select = event.currentTarget as ListSelect;

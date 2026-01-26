@@ -1,7 +1,7 @@
 import ColorPalette from "@/components/colors/ColorPalette";
 import ColorToggle, { type ActiveColor } from "@/components/colors/ColorToggle";
 import GradientPalette from "@/components/colors/GradientPalette";
-import { reactive, Computed, type Reactive } from "@/utils/reactivity";
+import { reactive, combine, type Reactive } from "@/utils/reactivity";
 import { getComplementaryColor, type Color } from "@/utils/color";
 import type { ColorFill, GradientFill } from "./types";
 import styles from "./ColorPanel.module.css";
@@ -21,12 +21,11 @@ export interface ColorPanelProps {
 export default function ColorPanel({ value, onChange }: ColorPanelProps) {
   const activeColor = reactive<ActiveColor>("A");
 
-  const currentEditingColor = new Computed(
-    [value, activeColor] as const,
-    (fill, active) => {
-      if (fill?.type === "color") return fill.color;
-      if (fill?.type === "gradient")
-        return active === "A" ? fill.colorA : fill.colorB;
+  const currentEditingColor = combine({ value, activeColor }).derive(
+    ({ value, activeColor }) => {
+      if (value?.type === "color") return value.color;
+      if (value?.type === "gradient")
+        return activeColor === "A" ? value.colorA : value.colorB;
       return null;
     },
   );

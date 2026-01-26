@@ -1,4 +1,4 @@
-import { Computed } from "@/utils/reactivity";
+import { combine } from "@/utils/reactivity";
 import type { DateTimeThemeProps } from "./themes";
 
 export default function DefaultDateTime({ value, time }: DateTimeThemeProps) {
@@ -10,11 +10,9 @@ export default function DefaultDateTime({ value, time }: DateTimeThemeProps) {
 
   return (
     <time
-      datetime={
-        new Computed([value, time] as const, (date, showTime) =>
-          showTime ? date.toISOString() : date.toISOString().slice(0, 10),
-        )
-      }
+      datetime={combine({ value, time }).derive(({ value, time }) =>
+        time ? value.toISOString() : value.toISOString().slice(0, 10),
+      )}
     >
       {value.derive((date) => formatter.format(date))}
     </time>

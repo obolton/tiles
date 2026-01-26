@@ -5,7 +5,6 @@ import AddColumnIcon from "@/icons/add-column.svg?jsx";
 import ChartIcon from "@/icons/chart.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
-import { Computed } from "@/utils/reactivity";
 import Chart from "@/models/Chart";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
@@ -28,7 +27,7 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
     return first?.type === "column" ? first.column : null;
   }
 
-  const background = new Computed([columns], (cols) => {
+  const background = columns.derive((cols) => {
     const column = getSelectedColumn();
     if (!column?.id) {
       return null;

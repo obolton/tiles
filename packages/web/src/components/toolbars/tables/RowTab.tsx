@@ -4,7 +4,6 @@ import FillPicker from "@/components/fills/FillPicker";
 import AddRowIcon from "@/icons/add-row.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
-import { Computed } from "@/utils/reactivity";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
 import type { FillUpdate } from "@/components/fills/types";
@@ -26,7 +25,7 @@ export default function RowTab({ table, getTable }: RowTabProps) {
     return first?.type === "row" ? first.row : null;
   }
 
-  const background = new Computed([rows], (rowList) => {
+  const background = rows.derive((rowList) => {
     const row = getSelectedRow();
     if (!row?.id) {
       return null;
