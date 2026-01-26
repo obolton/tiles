@@ -225,18 +225,18 @@ type CombinedValue<T extends ReactiveInputs> = {
   [K in keyof T]: ReactiveType<T[K]>;
 };
 
-export class Combined<T extends ReactiveInputs> extends BaseReactive<
-  CombinedValue<T>
-> {
+export class Combined<T extends ReactiveInputs, V> extends BaseReactive<V> {
   private readonly inputs: T;
+  private readonly transform: (values: CombinedValue<T>) => V;
   private unsubscribeCallbacks?: UnsubscribeCallback[];
 
-  private cachedValue?: CombinedValue<T>;
+  private cachedValue?: V;
   private stale = true;
 
-  constructor(inputs: T) {
+  constructor(inputs: T, transform: (values: CombinedValue<T>) => V) {
     super();
     this.inputs = inputs;
+    this.transform = transform;
   }
 
   subscribe(callback: (reactive: this) => void, signal?: AbortSignal) {
@@ -265,16 +265,16 @@ export class Combined<T extends ReactiveInputs> extends BaseReactive<
     }
   }
 
-  get value(): CombinedValue<T> {
+  get value(): V {
     if (this.stale || !this.unsubscribeCallbacks) {
-      const result = {} as CombinedValue<T>;
+      const combined = {} as CombinedValue<T>;
       for (const [key, input] of Object.entries(this.inputs)) {
-        result[key as keyof T] = input.value;
+        combined[key as keyof T] = input.value;
       }
-      this.cachedValue = result;
+      this.cachedValue = this.transform(combined);
       this.stale = false;
     }
-    return this.cachedValue as CombinedValue<T>;
+    return this.cachedValue as V;
   }
 
   disconnect() {
@@ -284,8 +284,20 @@ export class Combined<T extends ReactiveInputs> extends BaseReactive<
   }
 }
 
-export function combine<T extends ReactiveInputs>(inputs: T): Combined<T> {
-  return new Combined(inputs);
+const identity = <T>(value: T): T => value;
+
+export function combine<T extends ReactiveInputs>(
+  inputs: T,
+): Combined<T, CombinedValue<T>>;
+export function combine<T extends ReactiveInputs, V>(
+  inputs: T,
+  transform: (values: CombinedValue<T>) => V,
+): Combined<T, V>;
+export function combine<T extends ReactiveInputs>(
+  inputs: T,
+  transform: (values: CombinedValue<T>) => CombinedValue<T> = identity,
+) {
+  return new Combined(inputs, transform);
 }
 
 export function isReactive<T>(
