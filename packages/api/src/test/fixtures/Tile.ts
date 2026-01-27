@@ -136,17 +136,34 @@ export const TABLE_TILE: ClientTableTile = {
   ...SHARED,
   id: "table-id",
   type: "TABLE",
-  numRows: 3,
+  numRows: 2,
   columns: [
-    { id: "col-1", title: "Revenue", width: 100, background: null },
-    { id: "col-2", title: "Expenses", width: 100, background: null },
-    { id: "col-3", title: "Profit", width: 100, background: null },
+    { id: "col-1", title: "Name", width: 100, background: null },
+    { id: "col-2", title: "Age", width: 100, background: null },
   ],
   rows: [
-    { id: "row-1", height: 40, data: {}, background: null },
-    { id: "row-2", height: 40, data: {}, background: null },
-    { id: "row-3", height: 40, data: {}, background: null },
+    {
+      id: "row-1",
+      height: 40,
+      data: { "col-1": "Alice", "col-2": 30 },
+      background: null,
+    },
+    {
+      id: "row-2",
+      height: 40,
+      data: { "col-1": "Bob", "col-2": 25 },
+      background: null,
+    },
   ],
+};
+
+export const EMPTY_TABLE_TILE: ClientTableTile = {
+  ...SHARED,
+  id: "empty-table-id",
+  type: "TABLE",
+  numRows: 0,
+  columns: [],
+  rows: [],
 };
 
 export const CHART_TILE: ClientChartTile = {
