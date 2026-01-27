@@ -6,6 +6,8 @@ import {
 import { openai } from "@/ai/openai.ts";
 import { generateImageFromPrompt, createImageTile } from "@/ai/tools/images.ts";
 import { TOOLS, useFunctionTool } from "@/ai/tools/tools.ts";
+import { fetchTilesForContext } from "@/ai/context/tiles.ts";
+import { formatTileContext } from "@/ai/context/format.ts";
 import type { ToolContext } from "@/ai/tools/types.ts";
 import type { Artifact } from "@/ai/tools/types.ts";
 import type { GenerateImageSchema, WriteSchema } from "./schema.ts";
@@ -87,9 +89,19 @@ export async function* write(
   signal?: AbortSignal,
 ): AsyncIterable<RichTextStreamEvent | Artifact> {
   const input: ResponseInput = [{ role: "developer", content: PROMPT }];
+
   if (context?.text) {
     input.push({ role: "user", content: context.text });
   }
+
+  if (context?.tileIds && context.tileIds.length > 0) {
+    const tiles = await fetchTilesForContext(context.tileIds, pageId);
+    const tileContext = formatTileContext(tiles);
+    if (tileContext) {
+      input.push({ role: "user", content: tileContext });
+    }
+  }
+
   input.push({ role: "user", content: prompt });
 
   const toolContext: ToolContext = {
