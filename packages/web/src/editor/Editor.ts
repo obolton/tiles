@@ -67,6 +67,8 @@ export default class Editor {
   readonly invites: ReactiveArray<PageInvite>;
   readonly author: User;
   readonly selection: Reactive<Set<Tile>>;
+  readonly references: Reactive<Set<Tile>>;
+  readonly isPromptOpen: Reactive<boolean>;
   readonly dropdowns: ReactiveArray<Dropdown>;
 
   readonly dockSizes: Reactive<Record<DockEdge, number | null>>;
@@ -137,6 +139,8 @@ export default class Editor {
     this.invites = array(page.invites.map((i) => new PageInvite(this, i)));
     this.author = page.author;
     this.selection = reactive(new Set());
+    this.references = reactive(new Set());
+    this.isPromptOpen = flag(false);
     this.dropdowns = array(page.dropdowns.map((d) => new Dropdown(this, d)));
 
     this.dockSizes = reactive({
@@ -391,6 +395,33 @@ export default class Editor {
 
     this.deleteTiles(Array.from(this.selection.value));
     this.clearSelection();
+  }
+
+  // References
+
+  addReferences(ids: string[]) {
+    const tiles = new Set(ids.map((id) => this.getTile(id)));
+    this.references.value = this.references.value.union(tiles);
+  }
+
+  removeReferences(ids: string[]) {
+    const tiles = new Set(ids.map((id) => this.getTile(id)));
+    this.references.value = this.references.value.difference(tiles);
+  }
+
+  toggleReference(id: string) {
+    const tile = this.getTile(id);
+    if (this.references.value.has(tile)) {
+      this.removeReferences([id]);
+    } else {
+      this.addReferences([id]);
+    }
+  }
+
+  clearReferences() {
+    if (this.references.value.size > 0) {
+      this.references.value = new Set();
+    }
   }
 
   transitionSections(update: () => void) {
