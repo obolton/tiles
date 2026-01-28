@@ -18,7 +18,7 @@ import type { ColorSchema } from "@/schema/Color";
 import type { BackgroundSchema } from "@/schema/Background";
 import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
-import type { TileType } from "@/generated/prisma/enums";
+import type { FrameStyle, TileType } from "@/generated/prisma/enums";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
 import { TILE_FIELDS, FULL_TILE_FIELDS, type FullTile } from "./fields";
 import type { ClientTile } from "@/types/tiles";
@@ -158,6 +158,7 @@ export async function updateTile(
     y,
     rowSpan,
     animation,
+    frame,
     hide,
     themeId,
     dock,
@@ -209,6 +210,7 @@ export async function updateTile(
         x,
         y,
         animation,
+        frame,
         hide,
         themeId,
         dock,
@@ -291,6 +293,7 @@ type CreateTileOptions<T extends TileType> = Omit<
   | "type"
   | "order"
   | "y"
+  | "frame"
   | "textColor"
   | "backgroundColor"
   | "backgroundGradient"
@@ -300,6 +303,7 @@ type CreateTileOptions<T extends TileType> = Omit<
     type: T;
     beforeId?: string | null;
     y?: number;
+    frame?: FrameStyle | null;
     textColor?: ColorSchema | null;
     background?: BackgroundSchema | null;
   };
@@ -320,6 +324,7 @@ export async function createTile<
     y,
     rowSpan = 1,
     animation,
+    frame,
     hide,
     textColor,
     background,
@@ -372,6 +377,7 @@ export async function createTile<
       x: insertX,
       y: insertY,
       animation,
+      frame,
       hide,
       ...getTextColorProperties(textColor),
       ...getBackgroundProperties(background),

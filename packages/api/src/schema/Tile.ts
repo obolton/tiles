@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { Animation, Dimensions, DockEdge } from "@/generated/prisma/enums";
+import {
+  Animation,
+  FrameStyle,
+  Dimensions,
+  DockEdge,
+} from "@/generated/prisma/enums";
 import { BackgroundSchema } from "./Background";
 import { ColorSchema } from "./Color";
 
@@ -15,6 +20,7 @@ export const TileSchema = z.object({
   y: z.number().gte(0).lte(MAX_PERCENT).optional(),
   rowSpan: z.int().gte(1).lte(MAX_ROWS).optional(),
   animation: z.enum(Animation).nullable().optional(),
+  frame: z.enum(FrameStyle).nullable().optional(),
   hide: z.boolean().optional(),
   themeId: z.uuid().nullable().optional(),
   dock: z.enum(DockEdge).nullable().optional(),
