@@ -67,7 +67,7 @@ export default class Editor {
   readonly invites: ReactiveArray<PageInvite>;
   readonly author: User;
   readonly selection: Reactive<Set<Tile>>;
-  readonly references: Reactive<Set<Tile>>;
+  readonly references: Reactive<Tile[]>;
   readonly isPromptOpen: Reactive<boolean>;
   readonly dropdowns: ReactiveArray<Dropdown>;
 
@@ -139,7 +139,7 @@ export default class Editor {
     this.invites = array(page.invites.map((i) => new PageInvite(this, i)));
     this.author = page.author;
     this.selection = reactive(new Set());
-    this.references = reactive(new Set());
+    this.references = reactive([]);
     this.isPromptOpen = flag(false);
     this.dropdowns = array(page.dropdowns.map((d) => new Dropdown(this, d)));
 
@@ -399,28 +399,18 @@ export default class Editor {
 
   // References
 
-  addReferences(ids: string[]) {
-    const tiles = new Set(ids.map((id) => this.getTile(id)));
-    this.references.value = this.references.value.union(tiles);
-  }
-
-  removeReferences(ids: string[]) {
-    const tiles = new Set(ids.map((id) => this.getTile(id)));
-    this.references.value = this.references.value.difference(tiles);
-  }
-
   toggleReference(id: string) {
-    const tile = this.getTile(id);
-    if (this.references.value.has(tile)) {
-      this.removeReferences([id]);
+    const index = this.references.value.findIndex((tile) => tile.id === id);
+    if (index >= 0) {
+      this.references.value = this.references.value.toSpliced(index, 1);
     } else {
-      this.addReferences([id]);
+      this.references.value = [...this.references.value, this.getTile(id)];
     }
   }
 
   clearReferences() {
-    if (this.references.value.size > 0) {
-      this.references.value = new Set();
+    if (this.references.value.length > 0) {
+      this.references.value = [];
     }
   }
 
