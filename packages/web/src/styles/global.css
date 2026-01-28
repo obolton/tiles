@@ -48,6 +48,12 @@
   initial-value: rgb(255 255 255 / 60%);
 }
 
+@property --border-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 0 0 / 80%);
+}
+
 @property --min-width {
   syntax: "<length>";
   inherits: true;
