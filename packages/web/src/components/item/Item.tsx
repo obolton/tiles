@@ -127,7 +127,7 @@ export default function Item({
     selection.has(tile),
   );
 
-  const isReferenced = editor.references.derive((refs) => refs.has(tile));
+  const isReferenced = editor.references.derive((refs) => refs.includes(tile));
 
   // Show toolbar when this tile is the only selected item
   const showToolbar = editor.selection.derive(
@@ -148,6 +148,10 @@ export default function Item({
     event.stopPropagation();
 
     if (editor.isPromptOpen.value) {
+      const target = event.target as Element;
+      if (target.closest("[popover]:popover-open")) {
+        return;
+      }
       event.preventDefault();
       editor.toggleReference(id);
       return;
