@@ -14,7 +14,12 @@ export interface PromptMeta {
 }
 
 function getElement(view: EditorView) {
+  const editor = Editor.current;
+
   function removePrompt() {
+    editor.isPromptOpen.value = false;
+    editor.clearReferences();
+
     const prompt = element.firstElementChild! as HTMLFormElement;
     void prompt
       .animate([{ opacity: 0 }], SPRING)
@@ -35,11 +40,8 @@ function getElement(view: EditorView) {
     } = view;
     const { from, to } = selection;
     const context = doc.textBetween(from, to, "\n");
-    const tileIds = Editor.current.selection.value
-      .values()
-      .map((tile) => tile.id)
-      .toArray();
-    const sectionId = Editor.current.activeSection?.id ?? null;
+    const tileIds = editor.references.value.map((tile) => tile.id);
+    const sectionId = editor.activeSection?.id ?? null;
     const stream = await client.ai.write.mutate(
       { pageId, sectionId, prompt, context: { text: context, tileIds } },
       { context: { stream: true } },
@@ -57,6 +59,8 @@ function getElement(view: EditorView) {
   )[0] as HTMLElement;
 
   requestAnimationFrame(() => {
+    editor.isPromptOpen.value = true;
+
     const prompt = element.firstElementChild! as HTMLFormElement;
     prompt.showPopover();
     prompt.querySelector("textarea")?.focus();
