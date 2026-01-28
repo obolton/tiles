@@ -1,4 +1,5 @@
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
+import ReferenceList from "./ReferenceList";
 import CheckIcon from "@/icons/check.svg?jsx";
 import { flag } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
@@ -88,6 +89,8 @@ export default function Prompt({
       on:submit={handleSubmit}
       on:focusout={handleFocusOut}
     >
+      <ReferenceList />
+
       <ResizingTextarea
         name="prompt"
         rows={1}
