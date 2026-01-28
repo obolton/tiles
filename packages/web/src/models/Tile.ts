@@ -9,6 +9,7 @@ import type {
   ClientTile,
   Dimensions,
   Animation,
+  FrameStyle,
   TileType,
   DockEdge,
 } from "api/types/tiles";
@@ -19,7 +20,7 @@ import type Editor from "@/editor/Editor";
 import type { AppRouterInputs } from "@/api/client";
 import type TileCollection from "./TileCollection";
 
-export type { Dimensions, Animation, DockEdge };
+export type { Dimensions, Animation, FrameStyle, DockEdge };
 
 export default class Tile {
   readonly editor: Editor;
@@ -36,6 +37,7 @@ export default class Tile {
   readonly height: Reactive<number>;
   readonly rowSpan: Reactive<number>;
   readonly animation: Reactive<Animation | null>;
+  readonly frame: Reactive<FrameStyle | null>;
   readonly hide: Reactive<boolean>;
   readonly dock: Reactive<DockEdge | null>;
   readonly theme: Reactive<Theme | null>;
@@ -54,6 +56,7 @@ export default class Tile {
       height,
       rowSpan,
       animation,
+      frame,
       hide,
       dock,
       theme,
@@ -73,6 +76,7 @@ export default class Tile {
     this.height = reactive(height);
     this.rowSpan = reactive(rowSpan);
     this.animation = reactive(animation);
+    this.frame = reactive(frame);
     this.hide = reactive(hide);
     this.dock = reactive(dock);
     this.theme = reactive(theme);
@@ -235,6 +239,11 @@ export default class Tile {
   setAnimation(animation: Animation | null) {
     this.animation.value = animation;
     return this.updateTile({ animation });
+  }
+
+  setFrame(frame: FrameStyle | null) {
+    this.frame.value = frame;
+    return this.updateTile({ frame });
   }
 
   setHidden(hide: boolean) {
