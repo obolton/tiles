@@ -14,6 +14,10 @@ export const THEME: Theme = {
     body: "MODERN",
     code: "CODE",
   },
+  border: {
+    color: null,
+    radius: null,
+  },
 };
 
 export const DARK_THEME: Theme = {
@@ -29,5 +33,9 @@ export const DARK_THEME: Theme = {
     heading: "MODERN",
     body: "MODERN",
     code: "CODE",
+  },
+  border: {
+    color: null,
+    radius: null,
   },
 };
