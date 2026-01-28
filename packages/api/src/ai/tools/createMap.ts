@@ -50,8 +50,17 @@ async function createMapArtifact(
   args: z.infer<typeof CreateMapSchema>,
   { pageId, sectionId, model, resolveArtifactId }: ToolContext,
 ) {
-  const { places, size, style, background, animation, dock, hide, position } =
-    args;
+  const {
+    places,
+    size,
+    style,
+    background,
+    animation,
+    frame,
+    dock,
+    hide,
+    position,
+  } = args;
   const resolvedSectionId = args.sectionId
     ? resolveArtifactId(args.sectionId)
     : sectionId;
@@ -60,6 +69,7 @@ async function createMapArtifact(
     sectionId: resolvedSectionId,
     background,
     animation,
+    frame,
     dock,
     hide: hide ?? undefined,
     ...(position ? { x: position.x, y: position.y } : {}),

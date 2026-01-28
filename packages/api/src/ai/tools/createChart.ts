@@ -40,7 +40,7 @@ async function createChartArtifact(
   args: z.infer<typeof CreateChartSchema>,
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
-  const { size, background, animation, dock, hide, position } = args;
+  const { size, background, animation, frame, dock, hide, position } = args;
   const resolvedSectionId = args.sectionId
     ? resolveArtifactId(args.sectionId)
     : sectionId;
@@ -72,6 +72,7 @@ async function createChartArtifact(
     series,
     background,
     animation,
+    frame,
     dock,
     hide: hide ?? undefined,
     ...(position ? { x: position.x, y: position.y } : {}),

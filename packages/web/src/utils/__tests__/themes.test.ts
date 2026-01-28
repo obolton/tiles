@@ -105,6 +105,8 @@ describe("toCSSProperties", () => {
       textColor: null,
       accentColor: null,
       font: null,
+      borderColor: null,
+      borderRadius: null,
     });
     expect(result["--background"]).toBe(
       "color(display-p3 1.0000 0.5000 0.5000)",
@@ -117,6 +119,8 @@ describe("toCSSProperties", () => {
       textColor: "000000000000",
       accentColor: null,
       font: null,
+      borderColor: null,
+      borderRadius: null,
     });
     expect(result["--text-color"]).toBe(
       "color(display-p3 0.0000 0.0000 0.0000)",
@@ -129,6 +133,8 @@ describe("toCSSProperties", () => {
       textColor: null,
       accentColor: "0000ffffffff",
       font: null,
+      borderColor: null,
+      borderRadius: null,
     });
     expect(result["--accent-color"]).toBe(
       "color(display-p3 0.0000 1.0000 1.0000)",
@@ -141,6 +147,8 @@ describe("toCSSProperties", () => {
       textColor: null,
       accentColor: null,
       font: '"Inter", "sans-serif"',
+      borderColor: null,
+      borderRadius: null,
     });
     expect(result["--font"]).toBe('"Inter", "sans-serif"');
   });
@@ -151,11 +159,15 @@ describe("toCSSProperties", () => {
       textColor: null,
       accentColor: null,
       font: null,
+      borderColor: null,
+      borderRadius: null,
     });
     expect(result["--background"]).toBeUndefined();
     expect(result["--text-color"]).toBeUndefined();
     expect(result["--accent-color"]).toBeUndefined();
     expect(result["--font"]).toBeUndefined();
+    expect(result["--border-color"]).toBeUndefined();
+    expect(result["--border-radius"]).toBeUndefined();
   });
 
   test("includes all properties when all values are set", () => {
@@ -164,11 +176,15 @@ describe("toCSSProperties", () => {
       textColor: "000000000000",
       accentColor: "0000ffffffff",
       font: '"Inter", "sans-serif"',
+      borderColor: "000000000000",
+      borderRadius: 12,
     });
     expect(result["--background"]).toBeDefined();
     expect(result["--text-color"]).toBeDefined();
     expect(result["--accent-color"]).toBeDefined();
     expect(result["--font"]).toBeDefined();
+    expect(result["--border-color"]).toBeDefined();
+    expect(result["--border-radius"]).toBe("12px");
   });
 });
 

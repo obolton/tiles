@@ -21,6 +21,13 @@ export default Prisma.defineExtension({
           code: codeFont,
         }),
       },
+      border: {
+        needs: { borderColor: true, borderRadius: true },
+        compute: ({ borderColor, borderRadius }) => ({
+          color: borderColor ? toHex(borderColor) : null,
+          radius: borderRadius,
+        }),
+      },
     },
   },
 });

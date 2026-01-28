@@ -3,6 +3,7 @@ import ThemePicker from "@/components/themes/ThemePicker";
 import ColorPicker from "@/components/colors/ColorPicker";
 import FillPicker from "@/components/fills/FillPicker";
 import AnimationPicker from "@/components/animations/AnimationPicker";
+import FramePicker from "@/components/frames/FramePicker";
 import { handleError } from "@/utils/errors";
 import type Tile from "@/models/Tile";
 
@@ -11,7 +12,7 @@ export interface StyleToolsProps {
 }
 
 export default function StyleTools({ tile }: StyleToolsProps) {
-  const { id, textColor, background, editor, theme, animation } = tile;
+  const { id, textColor, background, editor, theme, animation, frame } = tile;
 
   function setTheme(themeId: string | null) {
     tile.setTheme(themeId).catch(handleError);
@@ -42,6 +43,11 @@ export default function StyleTools({ tile }: StyleToolsProps) {
       <AnimationPicker
         value={animation}
         onChange={(animation) => tile.setAnimation(animation)}
+      />
+
+      <FramePicker
+        value={frame}
+        onChange={(frame) => tile.setFrame(frame)}
       />
     </ToolbarGroup>
   );

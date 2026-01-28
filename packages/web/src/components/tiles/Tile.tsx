@@ -1,24 +1,23 @@
 import styles from "./Tile.module.css";
 import { reactive, isReactive, type Reactive } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
-import type { Animation } from "@/models/Tile";
+import type { Animation, FrameStyle } from "@/models/Tile";
 
 export type TileProps = {
   className?: string;
   children?: JSX.Node;
   animation?: Reactive<Animation | null>;
-  border?:
-    | Reactive<"inside" | "outside" | "none">
-    | "inside"
-    | "outside"
-    | "none";
+  frame?: Reactive<FrameStyle | null> | FrameStyle | null;
   anchorName?: string;
 };
 
-const BORDER_CLASSES = {
-  inside: styles["border-inside"],
-  outside: styles["border-outside"],
-  none: null,
+const FRAME_CLASSES = {
+  NONE: null,
+  OUTLINED: styles["frame-outlined"],
+  SUBTLE: styles["frame-subtle"],
+  CARD: styles["frame-card"],
+  RAISED: styles["frame-raised"],
+  FRAMED: styles["frame-framed"],
 } as const;
 
 const ANIMATION_NAMES: Record<Animation, string> = {
@@ -32,7 +31,7 @@ export default function Tile({
   className,
   children,
   animation = reactive(null),
-  border = "outside",
+  frame = null,
   anchorName,
 }: TileProps) {
   const style = animation.derive((value) => ({
@@ -40,13 +39,17 @@ export default function Tile({
     anchorName,
   }));
 
+  const frameClass = isReactive(frame)
+    ? frame.derive((value) => (value ? FRAME_CLASSES[value] : null))
+    : frame
+      ? FRAME_CLASSES[frame]
+      : null;
+
   return (
     <div
       classList={[
         styles.tile,
-        isReactive(border)
-          ? border.derive((value) => BORDER_CLASSES[value])
-          : BORDER_CLASSES[border],
+        frameClass,
         animation.derive((value) => (value ? styles.animate : undefined)),
         className,
       ]}

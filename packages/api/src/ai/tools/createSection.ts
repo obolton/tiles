@@ -17,13 +17,15 @@ async function createSectionArtifact(
   args: z.infer<typeof CreateSectionSchema>,
   { pageId }: ToolContext,
 ) {
-  const { size, layout, background, animation, dock, hide, position } = args;
+  const { size, layout, background, animation, frame, dock, hide, position } =
+    args;
 
   const artifact = await createSection({
     pageId,
     layout,
     background,
     animation,
+    frame,
     dock,
     hide: hide ?? undefined,
     ...(position ? { x: position.x, y: position.y } : {}),

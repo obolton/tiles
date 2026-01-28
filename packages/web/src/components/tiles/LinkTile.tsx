@@ -13,7 +13,7 @@ export interface LinkTileProps {
 }
 
 export default function LinkTile({ link, showToolbar }: LinkTileProps) {
-  const { url, title, description, siteName, animation, editor } = link;
+  const { url, title, description, siteName, animation, frame, editor } = link;
   const { isEditable } = editor;
   const contents = (
     <div className={styles.caption}>
@@ -34,7 +34,7 @@ export default function LinkTile({ link, showToolbar }: LinkTileProps) {
   }
 
   return (
-    <Tile animation={animation}>
+    <Tile animation={animation} frame={frame}>
       <a
         className={styles.link}
         href={url}

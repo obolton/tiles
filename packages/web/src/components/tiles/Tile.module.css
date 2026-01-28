@@ -7,28 +7,36 @@
   border-radius: var(--border-radius);
   transition:
     opacity var(--animation-duration-short) var(--easing),
-    box-shadow var(--animation-duration-short) var(--easing),
     transform var(--animation-duration-short) var(--easing);
 }
 
-.border-inside {
-  box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
-
-  &::after {
-    content: "";
-    position: absolute;
-    border-radius: inherit;
-    inset: 0;
-    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 20%);
-    pointer-events: none;
-    transition: box-shadow var(--animation-duration-short) var(--easing);
-  }
+/* Clean line definition */
+.frame-outlined {
+  box-shadow: 0 0 0 1px var(--border-color);
 }
 
-.border-outside {
+/* Soft diffuse glow */
+.frame-subtle {
+  box-shadow: 0 0 16px -4px rgb(0 0 0 / 15%);
+}
+
+/* Paper card - shadow defines edges */
+.frame-card {
   box-shadow:
-    0 0 0 1px rgb(0 0 0 / 20%),
-    0 6px 4px -4px rgb(0 0 0 / 15%);
+    0 1px 3px rgb(0 0 0 / 12%),
+    0 4px 12px rgb(0 0 0 / 8%);
+}
+
+/* Floating with dramatic offset */
+.frame-raised {
+  box-shadow:
+    0 12px 28px -8px rgb(0 0 0 / 25%),
+    0 4px 8px -2px rgb(0 0 0 / 10%);
+}
+
+/* Bold thick border */
+.frame-framed {
+  box-shadow: 0 0 0 3px var(--border-color);
 }
 
 .animate {
