@@ -29,7 +29,7 @@ export async function listThemes(
 }
 
 export async function createTheme(
-  { workspaceId, name, colors, fonts }: CreateThemeSchema,
+  { workspaceId, name, colors, fonts, border }: CreateThemeSchema,
   _ctx: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.theme.create({
@@ -42,13 +42,15 @@ export async function createTheme(
       headingFont: fonts.heading,
       bodyFont: fonts.body,
       codeFont: fonts.code,
+      borderColor: border?.color ? fromHex(border.color) : null,
+      borderRadius: border?.radius ?? null,
     },
     select: THEME_FIELDS,
   });
 }
 
 export async function updateTheme(
-  { id, name, colors, fonts }: UpdateThemeSchema,
+  { id, name, colors, fonts, border }: UpdateThemeSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.theme.update({
@@ -63,6 +65,13 @@ export async function updateTheme(
       headingFont: fonts?.heading,
       bodyFont: fonts?.body,
       codeFont: fonts?.code,
+      borderColor:
+        border?.color !== undefined
+          ? border.color
+            ? fromHex(border.color)
+            : null
+          : undefined,
+      borderRadius: border?.radius !== undefined ? border.radius : undefined,
     },
     select: THEME_FIELDS,
   });
