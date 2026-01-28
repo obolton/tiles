@@ -127,6 +127,8 @@ export default function Item({
     selection.has(tile),
   );
 
+  const isReferenced = editor.references.derive((refs) => refs.includes(tile));
+
   // Show toolbar when this tile is the only selected item
   const showToolbar = editor.selection.derive(
     (selection) => selection.has(tile) && selection.size === 1,
@@ -148,6 +150,16 @@ export default function Item({
     }
 
     event.stopPropagation();
+
+    if (editor.isPromptOpen.value) {
+      const target = event.target as Element;
+      if (target.closest("[popover]:popover-open")) {
+        return;
+      }
+      event.preventDefault();
+      editor.toggleReference(id);
+      return;
+    }
 
     if (event.shiftKey) {
       event.preventDefault();
@@ -226,6 +238,7 @@ export default function Item({
           [styles.item]: true,
           [styles.draggable]: editable,
           [styles.selected]: isSelected,
+          [styles.referenced]: isReferenced,
           [styles["auto-height"]]: autoHeight,
           [styles.hide]: hide,
           [styles["full-bleed"]]: fullBleed,
