@@ -19,6 +19,8 @@ export interface ResolvedStyles {
   textColor: Color | null;
   accentColor: Color | null;
   font: string | null;
+  borderColor: Color | null;
+  borderRadius: number | null;
 }
 
 /**
@@ -38,11 +40,16 @@ export function resolveThemeStyles(
   const fontId = overrides.font ?? theme?.fonts.body ?? null;
   const font = fontId ? getFontConfig(fontId) : null;
 
+  const borderColor = theme?.border.color ?? textColor;
+  const borderRadius = theme?.border.radius ?? null;
+
   return {
     background,
     textColor,
     accentColor,
     font: font ? `"${font.family}", "${font.fallback}"` : null,
+    borderColor,
+    borderRadius,
   };
 }
 
@@ -54,6 +61,8 @@ export function toCSSProperties(styles: ResolvedStyles): {
   "--text-color"?: string;
   "--accent-color"?: string;
   "--font"?: string;
+  "--border-color"?: string;
+  "--border-radius"?: string;
 } {
   return {
     "--background": getBackgroundStyle(styles.background)?.background,
@@ -62,6 +71,12 @@ export function toCSSProperties(styles: ResolvedStyles): {
       ? toCSSColor(styles.accentColor)
       : undefined,
     "--font": styles.font ?? undefined,
+    "--border-color": styles.borderColor
+      ? toCSSColor(styles.borderColor)
+      : undefined,
+    "--border-radius": styles.borderRadius
+      ? `${styles.borderRadius}px`
+      : undefined,
   };
 }
 
