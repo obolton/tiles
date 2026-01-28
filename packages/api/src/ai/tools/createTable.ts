@@ -30,8 +30,17 @@ async function createTableArtifact(
   args: z.infer<typeof CreateTableSchema>,
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
-  const { size, columns, rows, background, animation, dock, hide, position } =
-    args;
+  const {
+    size,
+    columns,
+    rows,
+    background,
+    animation,
+    frame,
+    dock,
+    hide,
+    position,
+  } = args;
   const resolvedSectionId = args.sectionId
     ? resolveArtifactId(args.sectionId)
     : sectionId;
@@ -45,6 +54,7 @@ async function createTableArtifact(
     rows,
     background,
     animation,
+    frame,
     dock,
     hide: hide ?? undefined,
     ...(position ? { x: position.x, y: position.y } : {}),

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Animation, DockEdge } from "@/generated/prisma/enums";
+import { Animation, DockEdge, FrameStyle } from "@/generated/prisma/enums";
 import {
   ColorBackgroundSchema,
   GradientBackgroundSchema,
@@ -49,6 +49,11 @@ export const HideSchema = z.boolean().nullable().meta({
   description: "Hide in view mode (only visible while editing)",
 });
 
+export const FrameSchema = z.enum(FrameStyle).nullable().meta({
+  description:
+    "Visual frame style: OUTLINED (thin border), SUBTLE (soft glow), CARD (paper shadow), RAISED (floating shadow), FRAMED (bold border)",
+});
+
 export const PositionSchema = z
   .strictObject({
     x: z.number().min(0).max(100),
@@ -62,6 +67,7 @@ export const PositionSchema = z
 export const CommonTileSchema = {
   background: AIBackgroundSchema,
   animation: AnimationSchema,
+  frame: FrameSchema,
   dock: DockSchema,
   hide: HideSchema,
   position: PositionSchema,

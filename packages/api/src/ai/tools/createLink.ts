@@ -18,7 +18,7 @@ async function createLinkArtifact(
   args: z.infer<typeof CreateLinkSchema>,
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
-  const { url, size, background, animation, dock, hide, position } = args;
+  const { url, size, background, animation, frame, dock, hide, position } = args;
   const resolvedSectionId = args.sectionId
     ? resolveArtifactId(args.sectionId)
     : sectionId;
@@ -28,6 +28,7 @@ async function createLinkArtifact(
     url,
     background,
     animation,
+    frame,
     dock,
     hide: hide ?? undefined,
     ...(position ? { x: position.x, y: position.y } : {}),

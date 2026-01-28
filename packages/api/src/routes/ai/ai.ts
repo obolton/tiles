@@ -72,6 +72,7 @@ Unless directed, use the styling options available with the tools to make the do
 
 - **Background**: Solid colors or gradients (vertical, horizontal, diagonal directions)
 - **Animation**: Entrance effects (FADE, SLIDE, GROW, SHRINK) for visual impact
+- **Frame**: Visual frame styles for blocks - OUTLINED (thin border), SUBTLE (soft glow), CARD (paper shadow), RAISED (floating shadow), FRAMED (bold border)
 - **Dock**: Attach blocks to viewport edges (TOP, BOTTOM, LEFT, RIGHT) to stay fixed while scrolling
 - **Hide**: Make blocks visible only in edit mode (useful for presenter notes)
 - **Position**: For FREEFORM sections, position blocks using x/y percentages (0-100)

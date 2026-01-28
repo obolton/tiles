@@ -32,6 +32,7 @@ vi.mock("@/routes/sections/sections.ts", () => ({
 const COMMON_TILE_ARGS = {
   background: null,
   animation: null,
+  frame: null,
   dock: null,
   hide: null,
   position: null,

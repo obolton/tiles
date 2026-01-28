@@ -45,6 +45,7 @@ async function createTextArtifact(
     align,
     size,
     animation,
+    frame,
     dock,
     hide,
     position,
@@ -58,6 +59,7 @@ async function createTextArtifact(
     ...getDimensions(size),
     ...(position ? { x: position.x, y: position.y } : {}),
     animation,
+    frame,
     dock,
     hide: hide ?? undefined,
     content: [
