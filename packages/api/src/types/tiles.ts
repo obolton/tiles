@@ -8,6 +8,7 @@ import type {
   Layout,
   Dimensions,
   Animation,
+  FrameStyle,
   MapStyle,
   DockEdge,
 } from "@/generated/prisma/client";
@@ -125,6 +126,7 @@ export type {
   Layout,
   Dimensions,
   Animation,
+  FrameStyle,
   MapStyle,
   DockEdge,
 };
