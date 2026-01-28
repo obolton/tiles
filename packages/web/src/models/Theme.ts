@@ -18,12 +18,18 @@ export interface ThemeFonts {
   code: FontId;
 }
 
+export interface ThemeBorder {
+  color: Color | null;
+  radius: number | null;
+}
+
 export default class Theme {
   readonly id: string;
   readonly workspaceId: string;
   readonly name: Reactive<string>;
   readonly colors: Reactive<ThemeColors>;
   readonly fonts: Reactive<ThemeFonts>;
+  readonly border: Reactive<ThemeBorder>;
 
   constructor(data: ThemeData) {
     this.id = data.id;
@@ -31,6 +37,7 @@ export default class Theme {
     this.name = reactive(data.name);
     this.colors = reactive(data.colors);
     this.fonts = reactive(data.fonts);
+    this.border = reactive(data.border);
   }
 
   private update(
@@ -56,6 +63,11 @@ export default class Theme {
   setFonts(fonts: Partial<ThemeFonts>) {
     this.fonts.value = { ...this.fonts.value, ...fonts };
     return this.update({ fonts });
+  }
+
+  setBorder(border: Partial<ThemeBorder>) {
+    this.border.value = { ...this.border.value, ...border };
+    return this.update({ border });
   }
 
   delete() {
