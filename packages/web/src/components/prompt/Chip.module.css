@@ -4,13 +4,13 @@
   gap: 4px;
   padding: 4px 4px 4px 10px;
   font-size: 13px;
-  font-weight: 500;
-  color: var(--ui-color);
-  background: color-mix(in oklch, var(--reference-color) 15%, transparent);
+  font-weight: 600;
+  color: oklch(from var(--reference-color) 100% c h);
+  background: var(--reference-color);
   border-radius: 16px;
 }
 
-.link {
+a.link {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -26,6 +26,7 @@
 .icon {
   width: 16px;
   height: 16px;
+  fill: currentcolor;
   flex-shrink: 0;
 }
 
@@ -48,12 +49,20 @@
   border: none;
   border-radius: 50%;
   cursor: pointer;
+  transition:
+    scale var(--animation-duration-short) var(--easing),
+    background-color var(--animation-duration-short) var(--easing);
 
   &:hover {
     background: rgb(0 0 0 / 10%);
+
+    & > svg {
+      scale: 1.1;
+    }
   }
 
   &:active {
+    scale: 0.9;
     background: rgb(0 0 0 / 20%);
   }
 
@@ -64,5 +73,7 @@
   & > svg {
     width: 16px;
     height: 16px;
+    fill: currentcolor;
+    transition: scale var(--animation-duration-short) var(--easing);
   }
 }

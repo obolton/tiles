@@ -20,8 +20,7 @@
   font-family: var(--font);
   transition:
     opacity var(--animation-duration) var(--easing),
-    box-shadow var(--animation-duration) var(--easing),
-    outline-color var(--animation-duration) var(--easing);
+    box-shadow var(--animation-duration) var(--easing);
 
   &:not(.frame-full-bleed) {
     background: var(--background);
@@ -81,9 +80,39 @@
       outline: var(--focus-outline);
     }
 
-    &.referenced {
-      outline: 2px solid var(--reference-color);
-      outline-offset: 2px;
+    &.referencing {
+      cursor: pointer;
+
+      &.referenced {
+        outline: 8px solid var(--reference-color);
+      }
+
+      &:hover {
+        &.referenced::after {
+          content: "Remove reference";
+        }
+
+        &:not(.referenced)::after {
+          content: "Reference";
+        }
+
+        &::after {
+          position: absolute;
+          inset: 0;
+          display: grid;
+          place-items: center;
+          border-radius: inherit;
+          font-weight: 500;
+          font-size: 18px;
+          color: oklch(from var(--reference-color) 100% c h);
+          background: color-mix(
+            in oklch,
+            var(--reference-color) 60%,
+            transparent
+          );
+          backdrop-filter: blur(2px);
+        }
+      }
     }
   }
 }
