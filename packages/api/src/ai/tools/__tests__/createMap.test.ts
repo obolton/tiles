@@ -22,6 +22,7 @@ const BASE_ARGS = {
   places: [MOCK_PLACE],
   background: null,
   animation: null,
+  frame: null,
   dock: null,
   hide: null,
   position: null,

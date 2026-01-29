@@ -13,6 +13,7 @@ const BASE_ARGS = {
   layout: "GRID" as const,
   background: null,
   animation: null,
+  frame: null,
   dock: null,
   hide: null,
   position: null,

@@ -15,6 +15,7 @@ const BASE_ARGS = {
   align: null,
   size: "medium" as const,
   animation: null,
+  frame: null,
   dock: null,
   hide: null,
   position: null,

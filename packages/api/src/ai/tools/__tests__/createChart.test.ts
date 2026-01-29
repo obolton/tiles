@@ -16,6 +16,7 @@ const BASE_ARGS = {
   size: "medium" as const,
   background: null,
   animation: null,
+  frame: null,
   dock: null,
   hide: null,
   position: null,
