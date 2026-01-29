@@ -1,35 +1,79 @@
 import client from "@/api/client";
-import { get, set, remove } from "./state";
+import {
+  getFoldersStore,
+  getFoldersMetaStore,
+  getWorkspaceId,
+  type CachedFolder,
+} from "./cache";
 
-export interface Folder {
-  id: string;
-  name: string;
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const FOLDERS_META_KEY = "meta";
+
+export type { CachedFolder as Folder } from "./cache";
+
+function isFresh(cachedAt: Date): boolean {
+  return Date.now() - cachedAt.getTime() < CACHE_TTL_MS;
 }
 
-interface FolderCache {
-  folders: Folder[];
-  nextCursor: string | null;
+export async function getCachedWorkspaceFolders() {
+  try {
+    const metaStore = getFoldersMetaStore();
+    const meta = await metaStore.get(FOLDERS_META_KEY);
+
+    if (!meta || !isFresh(meta.cachedAt)) {
+      return null;
+    }
+
+    const foldersStore = getFoldersStore();
+    const folders = await foldersStore.getAll();
+
+    return { folders, nextCursor: meta.nextCursor };
+  } catch {
+    return null;
+  }
 }
 
-function getCacheKey(workspaceId: string) {
-  return `folders:${workspaceId}`;
-}
-
-export function getCachedWorkspaceFolders(workspaceId: string) {
-  return get<FolderCache>(getCacheKey(workspaceId));
-}
-
-export async function getWorkspaceFolders(workspaceId: string) {
-  const cached = getCachedWorkspaceFolders(workspaceId);
+export async function getWorkspaceFolders() {
+  const cached = await getCachedWorkspaceFolders();
   if (cached) {
     return cached;
   }
 
+  const workspaceId = getWorkspaceId();
   const result = await client.folders.list.query({ workspaceId });
-  set(getCacheKey(workspaceId), result);
+
+  try {
+    const foldersStore = getFoldersStore();
+    const metaStore = getFoldersMetaStore();
+
+    // Clear old folders and insert new ones
+    await foldersStore.clear();
+    await foldersStore.putMany(result.folders);
+
+    // Update metadata
+    await metaStore.put(
+      { nextCursor: result.nextCursor, cachedAt: new Date() },
+      FOLDERS_META_KEY,
+    );
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn("Failed to cache folders:", error);
+    }
+  }
+
   return result;
 }
 
-export function invalidateWorkspaceFolders(workspaceId: string) {
-  remove(getCacheKey(workspaceId));
+export async function invalidateWorkspaceFolders() {
+  try {
+    const foldersStore = getFoldersStore();
+    const metaStore = getFoldersMetaStore();
+
+    await foldersStore.clear();
+    await metaStore.delete(FOLDERS_META_KEY);
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn("Failed to invalidate folders cache:", error);
+    }
+  }
 }
