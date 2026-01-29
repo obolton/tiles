@@ -211,7 +211,15 @@ export default function Item({
       themeStyles,
       animation: tile.animation,
     },
-    ({ dimensions, width, height, rowSpan, position, themeStyles, animation }) => ({
+    ({
+      dimensions,
+      width,
+      height,
+      rowSpan,
+      position,
+      themeStyles,
+      animation,
+    }) => ({
       ...style,
       ...position,
       ...getSizeStyle(dimensions, width, height),
@@ -243,12 +251,16 @@ export default function Item({
         resize={resizeDirection}
         classList={{
           [styles.item]: true,
-          [styles["frame-outlined"]]: tile.frame.derive((f) => f === "OUTLINED"),
+          [styles["frame-outlined"]]: tile.frame.derive(
+            (f) => f === "OUTLINED",
+          ),
           [styles["frame-subtle"]]: tile.frame.derive((f) => f === "SUBTLE"),
           [styles["frame-card"]]: tile.frame.derive((f) => f === "CARD"),
           [styles["frame-raised"]]: tile.frame.derive((f) => f === "RAISED"),
           [styles["frame-framed"]]: tile.frame.derive((f) => f === "FRAMED"),
-          [styles["frame-full-bleed"]]: tile.frame.derive((f) => f === "FULL_BLEED"),
+          [styles["frame-full-bleed"]]: tile.frame.derive(
+            (f) => f === "FULL_BLEED",
+          ),
           [styles.animate]: tile.animation.derive((a) => a !== null),
           [styles.draggable]: editable,
           [styles.selected]: isSelected,

@@ -45,10 +45,7 @@ export default function StyleTools({ tile }: StyleToolsProps) {
         onChange={(animation) => tile.setAnimation(animation)}
       />
 
-      <FramePicker
-        tile={tile}
-        onChange={(frame) => tile.setFrame(frame)}
-      />
+      <FramePicker tile={tile} onChange={(frame) => tile.setFrame(frame)} />
     </ToolbarGroup>
   );
 }
