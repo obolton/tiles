@@ -24,12 +24,19 @@ import InsertButton from "@/components/buttons/InsertButton";
 import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
 import styles from "./Item.module.css";
 import type Tile from "@/models/Tile";
+import type { Animation, Dimensions } from "@/models/Tile";
 import type PageItem from "@/elements/item/PageItem";
 import type { ResizeDirection } from "@/elements/item/PageItem";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
 import type { StyleDeclaration } from "@/jsx/html-attributes";
-import type { Dimensions } from "@/models/Tile";
+
+const ANIMATION_NAMES: Record<Animation, string> = {
+  FADE: "fade-in",
+  SLIDE: "slide-in",
+  GROW: "grow-in",
+  SHRINK: "shrink-in",
+};
 
 export interface ItemProps {
   style?: StyleDeclaration;
@@ -39,7 +46,6 @@ export interface ItemProps {
   tabindex?: number | Reactive<number | undefined>;
   resize?: Reactive<ResizeDirection | null>;
   showInsertButton?: boolean;
-  fullBleed?: boolean;
   autoHeight?: boolean;
 }
 
@@ -113,7 +119,6 @@ export default function Item({
   tabindex,
   resize,
   showInsertButton = false,
-  fullBleed = false,
   autoHeight = false,
 }: ItemProps) {
   const { id, dimensions, x, y, width, height, rowSpan, hide, editor } = tile;
@@ -204,13 +209,15 @@ export default function Item({
       rowSpan,
       position,
       themeStyles,
+      animation: tile.animation,
     },
-    ({ dimensions, width, height, rowSpan, position, themeStyles }) => ({
+    ({ dimensions, width, height, rowSpan, position, themeStyles, animation }) => ({
       ...style,
       ...position,
       ...getSizeStyle(dimensions, width, height),
       "--rows": rowSpan.toString(),
       ...themeStyles,
+      "--animation-name": animation ? ANIMATION_NAMES[animation] : undefined,
     }),
   );
 
@@ -236,12 +243,18 @@ export default function Item({
         resize={resizeDirection}
         classList={{
           [styles.item]: true,
+          [styles["frame-outlined"]]: tile.frame.derive((f) => f === "OUTLINED"),
+          [styles["frame-subtle"]]: tile.frame.derive((f) => f === "SUBTLE"),
+          [styles["frame-card"]]: tile.frame.derive((f) => f === "CARD"),
+          [styles["frame-raised"]]: tile.frame.derive((f) => f === "RAISED"),
+          [styles["frame-framed"]]: tile.frame.derive((f) => f === "FRAMED"),
+          [styles["frame-full-bleed"]]: tile.frame.derive((f) => f === "FULL_BLEED"),
+          [styles.animate]: tile.animation.derive((a) => a !== null),
           [styles.draggable]: editable,
           [styles.selected]: isSelected,
           [styles.referenced]: isReferenced,
           [styles["auto-height"]]: autoHeight,
           [styles.hide]: hide,
-          [styles["full-bleed"]]: fullBleed,
           ...classList,
         }}
         style={combinedStyles}
