@@ -16,6 +16,7 @@ import { handleError } from "@/utils/errors";
 import client from "@/api/client";
 import { signOut } from "@/utils/sessions";
 import { getIsBookmarked, setIsBookmarked } from "@/utils/bookmarks";
+import { initializeCache, isCacheInitialized } from "@/utils/cache";
 import { flag } from "@/utils/reactivity";
 import { showToast } from "@/utils/toasts";
 import { showModal } from "@/utils/modals";
@@ -44,9 +45,18 @@ export default function Navigation({
         const userInfo = getCachedUserInfo();
 
         if (!userInfo) {
-          getUserInfo().catch((error) => handleError(error));
+          getUserInfo()
+            .then((u) => {
+              if (u.value && !isCacheInitialized()) {
+                initializeCache(u.value.id, workspaceId);
+              }
+            })
+            .catch((error) => handleError(error));
         } else {
           user.value = userInfo;
+          if (!isCacheInitialized()) {
+            initializeCache(userInfo.id, workspaceId);
+          }
         }
 
         const pageId = document.body.dataset.pageId;

@@ -38,6 +38,13 @@ function getDatabase(): Database<CacheSchema> {
 }
 
 /**
+ * Checks if the cache has been initialized.
+ */
+export function isCacheInitialized(): boolean {
+  return db !== null;
+}
+
+/**
  * Gets the workspace ID for the current cache.
  */
 export function getWorkspaceId(): string {
