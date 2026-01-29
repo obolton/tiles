@@ -14,7 +14,7 @@
   display: flex;
   width: calc(var(--width) * 24px);
   height: calc(var(--height) * 24px);
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   outline-color: transparent;
   color: var(--text-color);
   font-family: var(--font);
@@ -23,20 +23,29 @@
     box-shadow var(--animation-duration) var(--easing),
     outline-color var(--animation-duration) var(--easing);
 
-  &:not(.full-bleed) {
+  &:not(.frame-full-bleed) {
     background: var(--background);
   }
 
-  &.full-bleed {
+  &.frame-full-bleed {
     &::before {
       content: "";
       position: absolute;
-      inset-block: -24px;
-      inset-inline-start: calc(-50cqi + 50%);
-      inline-size: 100cqi;
       z-index: -1;
       background: var(--background);
       pointer-events: none;
+    }
+
+    [data-layout="VERTICAL"] &::before {
+      inset-block: -24px;
+      inset-inline-start: calc(-50cqi + 50%);
+      inline-size: 100cqi;
+    }
+
+    [data-layout="HORIZONTAL"] &::before {
+      inset-block-start: calc(-50cqb + 50%);
+      block-size: 100cqb;
+      inset-inline: -24px;
     }
 
     &:global(.drag-preview) {
@@ -95,4 +104,34 @@
 
 ::view-transition-group(outline) {
   animation-duration: 0s;
+}
+
+.frame-outlined {
+  box-shadow: 0 0 0 1px var(--border-color);
+}
+
+.frame-subtle {
+  box-shadow: 0 0 16px -4px rgb(0 0 0 / 15%);
+}
+
+.frame-card {
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 12%),
+    0 4px 12px rgb(0 0 0 / 8%);
+}
+
+.frame-raised {
+  box-shadow:
+    0 12px 28px -8px rgb(0 0 0 / 25%),
+    0 4px 8px -2px rgb(0 0 0 / 10%);
+}
+
+.frame-framed {
+  box-shadow: 0 0 0 3px var(--border-color);
+}
+
+.animate {
+  animation-duration: var(--animation-duration);
+  animation-timing-function: var(--easing);
+  animation-name: var(--animation-name);
 }

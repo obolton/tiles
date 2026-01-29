@@ -12,7 +12,7 @@ export interface StyleToolsProps {
 }
 
 export default function StyleTools({ tile }: StyleToolsProps) {
-  const { id, textColor, background, editor, theme, animation, frame } = tile;
+  const { id, textColor, background, editor, theme, animation } = tile;
 
   function setTheme(themeId: string | null) {
     tile.setTheme(themeId).catch(handleError);
@@ -46,7 +46,7 @@ export default function StyleTools({ tile }: StyleToolsProps) {
       />
 
       <FramePicker
-        value={frame}
+        tile={tile}
         onChange={(frame) => tile.setFrame(frame)}
       />
     </ToolbarGroup>

@@ -3,23 +3,17 @@ import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import styles from "./PageLink.module.css";
 import type { JSX } from "@/jsx/jsx";
 import type { Fill } from "@/components/fills/types";
-import type { Animation, FrameStyle } from "@/models/Tile";
-import type { Reactive } from "@/utils/reactivity";
 
 export interface PageLinkProps extends JSX.Attributes<"a"> {
   pageId: string;
   title: string;
   background: Fill | null;
-  animation?: Reactive<Animation | null>;
-  frame?: Reactive<FrameStyle | null>;
 }
 
 export default function PageLink({
   pageId,
   title,
   background,
-  animation,
-  frame,
   target,
   children,
   ...props
@@ -31,7 +25,7 @@ export default function PageLink({
       target={target}
       {...props}
     >
-      <Tile animation={animation} className={styles.tile} frame={frame}>
+      <Tile className={styles.tile}>
         <p
           classList={{
             [styles.text]: true,

@@ -14,6 +14,7 @@ const BASE_ARGS = {
   url: "https://example.com",
   background: null,
   animation: null,
+  frame: null,
   dock: null,
   hide: null,
   position: null,

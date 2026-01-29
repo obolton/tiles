@@ -31,14 +31,12 @@ export interface ChartTileProps {
 }
 
 export default function ChartTile({ chart, showToolbar }: ChartTileProps) {
-  const { animation, frame } = chart;
-
   if (import.meta.env.SSR) {
-    return <Tile animation={animation} />;
+    return <Tile />;
   }
 
   return (
-    <Tile animation={animation} frame={frame}>
+    <Tile>
       <If condition={showToolbar}>
         <Portal>
           <ChartToolbar chart={chart} />

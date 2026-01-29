@@ -168,6 +168,8 @@ export default class Tile {
     width?: number;
     height?: number;
   }) {
+    let frame: FrameStyle | null | undefined;
+
     if (
       (sectionId !== undefined && sectionId !== this.sectionId) ||
       beforeId !== undefined
@@ -175,6 +177,16 @@ export default class Tile {
       if (sectionId) {
         const section = this.editor.getSection(sectionId);
         section.tiles.insertBefore(beforeId ?? null, this);
+
+        // Reset FULL_BLEED frame when moving to incompatible section
+        if (
+          this.frame.value === "FULL_BLEED" &&
+          (section.layout.value === "GRID" ||
+            section.layout.value === "FREEFORM")
+        ) {
+          this.frame.value = null;
+          frame = null;
+        }
       } else {
         this.editor.tiles.insertBefore(beforeId ?? null, this);
       }
@@ -193,7 +205,7 @@ export default class Tile {
       this.height.value = height;
     }
 
-    return this.updateTile({ sectionId, beforeId, x, y, width, height });
+    return this.updateTile({ sectionId, beforeId, x, y, width, height, frame });
   }
 
   setDimensions(dimensions: Dimensions) {

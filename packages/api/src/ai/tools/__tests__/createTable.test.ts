@@ -18,6 +18,7 @@ const BASE_ARGS = {
   rows: [["1", "2"]],
   background: null,
   animation: null,
+  frame: null,
   dock: null,
   hide: null,
   position: null,

@@ -72,6 +72,7 @@ export default function Section({
       ref={ref}
       classList={[styles.contents, layoutClass]}
       data-section-id={id}
+      data-layout={layout}
       tabindex={tabindex}
     >
       <If condition={showToolbar}>

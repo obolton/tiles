@@ -1,20 +1,30 @@
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import FrameIcon from "@/icons/frame.svg?jsx";
+import { reactive } from "@/utils/reactivity";
+import type Tile from "@/models/Tile";
 import type { FrameStyle } from "@/models/Tile";
-import type { Reactive } from "@/utils/reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
 
 export interface FramePickerProps {
-  value: Reactive<FrameStyle | null>;
+  tile: Tile;
   onChange: (frame: FrameStyle | null) => void;
 }
 
-export default function FramePicker({ value, onChange }: FramePickerProps) {
+const FULL_BLEED_LAYOUTS = ["VERTICAL", "HORIZONTAL"];
+
+export default function FramePicker({ tile, onChange }: FramePickerProps) {
+  const { frame, editor } = tile;
+
   function handleChange(event: Event) {
     const selected = (event.currentTarget as ListSelect).value;
     onChange(selected === "" ? null : (selected as FrameStyle));
   }
+
+  const section = tile.sectionId ? editor.getSection(tile.sectionId) : null;
+  const fullBleedDisabled = section
+    ? section.layout.derive((layout) => !FULL_BLEED_LAYOUTS.includes(layout))
+    : reactive(false);
 
   return (
     <list-select
@@ -24,7 +34,7 @@ export default function FramePicker({ value, onChange }: FramePickerProps) {
       orientation="vertical"
       align="center"
       showvalue
-      value={value.derive((v) => v ?? "")}
+      value={frame.derive((v) => v ?? "")}
       on:change={handleChange}
     >
       <FrameIcon aria-hidden="true" slot="default-icon" />
@@ -39,6 +49,12 @@ export default function FramePicker({ value, onChange }: FramePickerProps) {
         <ListOption value="CARD">Card</ListOption>
         <ListOption value="RAISED">Raised</ListOption>
         <ListOption value="FRAMED">Framed</ListOption>
+      </ListGroup>
+
+      <ListGroup>
+        <ListOption value="FULL_BLEED" disabled={fullBleedDisabled}>
+          Full bleed
+        </ListOption>
       </ListGroup>
     </list-select>
   );

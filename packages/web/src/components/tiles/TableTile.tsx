@@ -43,7 +43,7 @@ export default function TableTile({
   let tableView: TableView | undefined;
   const editorView: Reactive<EditorView | null> = reactive(null);
   const state: Reactive<EditorState | null> = reactive(null);
-  const { columns, rows, numRows, animation, frame, editor } = table;
+  const { columns, rows, numRows, editor } = table;
   const { isEditable } = editor;
   const selectionType = reactive<"row" | "column" | "range" | null>(null);
 
@@ -282,7 +282,7 @@ export default function TableTile({
   }
 
   return (
-    <Tile animation={animation} frame={frame}>
+    <Tile>
       <table-view
         ref={ref}
         classList={["rich-text", styles.table]}
