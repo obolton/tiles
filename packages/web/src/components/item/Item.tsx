@@ -239,6 +239,7 @@ export default function Item({
           [styles.draggable]: editable,
           [styles.selected]: isSelected,
           [styles.referenced]: isReferenced,
+          [styles.referencing]: editor.isPromptOpen,
           [styles["auto-height"]]: autoHeight,
           [styles.hide]: hide,
           [styles["full-bleed"]]: fullBleed,
