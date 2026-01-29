@@ -61,8 +61,6 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
     text,
     origin,
     state,
-    animation,
-    frame,
     editor: { isEditable },
   } = image;
 
@@ -91,7 +89,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
   }));
 
   return (
-    <Tile animation={animation} frame={frame}>
+    <Tile>
       <If condition={showToolbar}>
         <Portal>
           <ImageToolbar image={image} editorView={editorView} />

@@ -24,8 +24,6 @@ export default function TextTile({
   const {
     content,
     align,
-    frame,
-    animation,
     state,
     editor: { isEditable },
   } = text;
@@ -106,7 +104,7 @@ export default function TextTile({
   );
 
   return (
-    <Tile animation={animation} frame={frame}>
+    <Tile>
       <If condition={showToolbar}>
         <Portal>
           <TextToolbar

@@ -29,7 +29,7 @@ export default function PageLinkTile({
   pageLink,
   showToolbar,
 }: PageLinkTileProps) {
-  const { page, animation, frame } = pageLink;
+  const { page } = pageLink;
 
   if (!page) {
     return (
@@ -44,8 +44,6 @@ export default function PageLinkTile({
       pageId={page.id}
       title={page.title}
       background={page.background}
-      animation={animation}
-      frame={frame}
       target="_blank"
       on:click={onClick}
     >
