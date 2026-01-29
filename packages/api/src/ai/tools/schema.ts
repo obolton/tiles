@@ -51,7 +51,7 @@ export const HideSchema = z.boolean().nullable().meta({
 
 export const FrameSchema = z.enum(FrameStyle).nullable().meta({
   description:
-    "Visual frame style: OUTLINED (thin border), SUBTLE (soft glow), CARD (paper shadow), RAISED (floating shadow), FRAMED (bold border)",
+    "Visual frame style: OUTLINED (thin border), SUBTLE (soft glow), CARD (paper shadow), RAISED (floating shadow), FRAMED (bold border), FULL_BLEED (extends background to container edges - only for root/vertical/horizontal layouts)",
 });
 
 export const PositionSchema = z
