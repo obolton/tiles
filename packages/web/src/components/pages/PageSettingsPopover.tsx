@@ -144,7 +144,6 @@ export default function PageSettingsPopover({
         <li role="presentation">
           <FolderPicker
             role="menuitem"
-            workspaceId={editor.workspaceId}
             value={folderId}
             onChange={setFolder}
             aria-label="Folder"

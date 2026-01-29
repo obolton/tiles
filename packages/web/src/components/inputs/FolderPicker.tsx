@@ -13,20 +13,18 @@ interface FolderPickerProps extends Omit<
   JSX.Attributes<"list-select">,
   "value" | "on:change"
 > {
-  workspaceId: string;
   value?: Reactive<string | null>;
   onChange: (folderId: string | null) => void;
 }
 
 export default function FolderPicker({
-  workspaceId,
   value,
   onChange,
   ...props
 }: FolderPickerProps) {
   const folders = reactive<Folder[]>([]);
 
-  getWorkspaceFolders(workspaceId)
+  getWorkspaceFolders()
     .then((result) => {
       folders.value = result.folders;
     })

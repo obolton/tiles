@@ -49,7 +49,7 @@ export default function Folders({
           workspaceId,
           name: result.name,
         });
-        invalidateWorkspaceFolders(workspaceId);
+        invalidateWorkspaceFolders();
         folders.value = {
           folders: folders.value.folders
             .concat(folder)
