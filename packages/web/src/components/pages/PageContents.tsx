@@ -32,7 +32,7 @@ export default function PageContents({
   }
 
   return (
-    <main ref={ref} className={styles.main}>
+    <main ref={ref} className={styles.main} data-layout="VERTICAL">
       <Each items={tiles}>
         {(tile) => (
           <Item
@@ -45,7 +45,6 @@ export default function PageContents({
             })}
             autoHeight={tile.type === "TEXT"}
             showInsertButton
-            fullBleed
           />
         )}
       </Each>
