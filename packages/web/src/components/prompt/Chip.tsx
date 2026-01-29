@@ -12,19 +12,24 @@ export interface ChipProps {
 
 function handleLinkClick(event: MouseEvent) {
   const anchor = event.currentTarget as HTMLAnchorElement;
-  if (!anchor.href) {
+  const hash = anchor.hash;
+  if (!hash) {
     return;
   }
   event.preventDefault();
-  const target = document.querySelector(anchor.href);
+  const target = document.querySelector(hash);
   if (target instanceof HTMLElement) {
     scrollIntoViewIfNeeded(target, { behavior: "smooth" });
   }
 }
 
+function preventDefault(event: Event) {
+  event.preventDefault();
+}
+
 export default function Chip({ icon: Icon, label, href, onRemove }: ChipProps) {
   return (
-    <div className={styles.chip}>
+    <div className={styles.chip} on:pointerdown={preventDefault}>
       <a className={styles.link} href={href} on:click={handleLinkClick}>
         <Icon className={styles.icon} aria-hidden="true" />
         <span className={styles.label}>{label}</span>
