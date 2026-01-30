@@ -1,10 +1,13 @@
-import { describe, expect, test, vi, beforeEach } from "vitest";
+import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
+import "fake-indexeddb/auto";
 import {
   getCachedWorkspaceThemes,
   getWorkspaceThemes,
   invalidateWorkspaceThemes,
 } from "../workspaceThemes";
+import { initializeCache, destroyCache } from "../cache";
 import { THEME, DARK_THEME } from "@/test/fixtures/Theme";
+import client from "@/api/client";
 
 vi.mock("@/api/client", () => ({
   default: {
@@ -16,77 +19,86 @@ vi.mock("@/api/client", () => ({
   },
 }));
 
-vi.mock("../state", () => ({
-  get: vi.fn(),
-  set: vi.fn(),
-  remove: vi.fn(),
-}));
+// IDB returns items sorted by key (id), so order alphabetically
+const mockThemesResponse = [DARK_THEME, THEME];
 
-import client from "@/api/client";
-import { get, set, remove } from "../state";
-
-const WORKSPACE_ID = "workspace-id";
-const MOCK_THEMES = [THEME, DARK_THEME];
-
-describe("getCachedWorkspaceThemes", () => {
+describe("workspaceThemes", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    initializeCache("user-123", "workspace-123");
   });
 
-  test("returns cached themes", () => {
-    vi.mocked(get).mockReturnValue(MOCK_THEMES);
-
-    const result = getCachedWorkspaceThemes(WORKSPACE_ID);
-
-    expect(get).toHaveBeenCalledWith("themes:workspace-id");
-    expect(result).toEqual(MOCK_THEMES);
+  afterEach(async () => {
+    await destroyCache();
   });
 
-  test("returns null when no cache", () => {
-    vi.mocked(get).mockReturnValue(null);
-
-    const result = getCachedWorkspaceThemes(WORKSPACE_ID);
-
-    expect(result).toBeNull();
-  });
-});
-
-describe("getWorkspaceThemes", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  test("returns cached themes without API call", async () => {
-    vi.mocked(get).mockReturnValue(MOCK_THEMES);
-
-    const result = await getWorkspaceThemes(WORKSPACE_ID);
-
-    expect(client.themes.list.query).not.toHaveBeenCalled();
-    expect(result).toEqual(MOCK_THEMES);
-  });
-
-  test("fetches from API when no cache", async () => {
-    vi.mocked(get).mockReturnValue(null);
-    vi.mocked(client.themes.list.query).mockResolvedValue(MOCK_THEMES);
-
-    const result = await getWorkspaceThemes(WORKSPACE_ID);
-
-    expect(client.themes.list.query).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
+  describe("getCachedWorkspaceThemes", () => {
+    test("returns null when cache is empty", async () => {
+      const result = await getCachedWorkspaceThemes();
+      expect(result).toBeNull();
     });
-    expect(set).toHaveBeenCalledWith("themes:workspace-id", MOCK_THEMES);
-    expect(result).toEqual(MOCK_THEMES);
+
+    test("returns cached value when present and fresh", async () => {
+      vi.mocked(client.themes.list.query).mockResolvedValueOnce(
+        mockThemesResponse,
+      );
+      await getWorkspaceThemes();
+
+      const result = await getCachedWorkspaceThemes();
+
+      expect(result).toEqual(mockThemesResponse);
+    });
   });
-});
 
-describe("invalidateWorkspaceThemes", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  describe("getWorkspaceThemes", () => {
+    test("returns cached value without fetching when cache exists", async () => {
+      vi.mocked(client.themes.list.query).mockResolvedValueOnce(
+        mockThemesResponse,
+      );
+      await getWorkspaceThemes();
+
+      vi.clearAllMocks();
+
+      const result = await getWorkspaceThemes();
+
+      expect(client.themes.list.query).not.toHaveBeenCalled();
+      expect(result).toEqual(mockThemesResponse);
+    });
+
+    test("fetches and caches themes when cache is empty", async () => {
+      vi.mocked(client.themes.list.query).mockResolvedValueOnce(
+        mockThemesResponse,
+      );
+
+      const result = await getWorkspaceThemes();
+
+      expect(client.themes.list.query).toHaveBeenCalledWith({
+        workspaceId: "workspace-123",
+      });
+      expect(result).toEqual(mockThemesResponse);
+
+      const cached = await getCachedWorkspaceThemes();
+      expect(cached).toEqual(mockThemesResponse);
+    });
   });
 
-  test("removes themes from cache", () => {
-    invalidateWorkspaceThemes(WORKSPACE_ID);
+  describe("invalidateWorkspaceThemes", () => {
+    test("removes the cached themes list", async () => {
+      vi.mocked(client.themes.list.query).mockResolvedValueOnce(
+        mockThemesResponse,
+      );
+      await getWorkspaceThemes();
 
-    expect(remove).toHaveBeenCalledWith("themes:workspace-id");
+      // Verify cache exists
+      const beforeInvalidate = await getCachedWorkspaceThemes();
+      expect(beforeInvalidate).not.toBeNull();
+
+      // Invalidate
+      await invalidateWorkspaceThemes();
+
+      // Verify cache is cleared
+      const afterInvalidate = await getCachedWorkspaceThemes();
+      expect(afterInvalidate).toBeNull();
+    });
   });
 });
