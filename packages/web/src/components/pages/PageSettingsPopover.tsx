@@ -70,8 +70,8 @@ export default function PageSettingsPopover({
     editor.setFolder(folderId).catch(handleError);
   }
 
-  function setTheme(newThemeId: string | null) {
-    const themes = getCachedWorkspaceThemes(editor.workspaceId);
+  async function setTheme(newThemeId: string | null) {
+    const themes = await getCachedWorkspaceThemes();
     const theme = themes?.find((t) => t.id === newThemeId) ?? null;
 
     const bgColor = backgroundColor.value;
@@ -154,7 +154,6 @@ export default function PageSettingsPopover({
         <li role="presentation">
           <ThemePicker
             role="menuitem"
-            workspaceId={editor.workspaceId}
             value={themeId}
             onChange={setTheme}
             aria-label="Theme"

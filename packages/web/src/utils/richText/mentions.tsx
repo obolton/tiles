@@ -5,7 +5,6 @@ import type { Node } from "prosemirror-model";
 import MentionPicker from "@/components/mentions/MentionPicker";
 import { render } from "@/jsx/dom";
 import { getUserName } from "@/utils/users";
-import Editor from "@/editor/Editor";
 import { schema } from "./schema";
 
 export interface MentionMeta {
@@ -55,7 +54,7 @@ class MentionNodeView implements NodeView {
   }
 
   private updateDisplayName() {
-    const currentName = getUserName(Editor.current.workspaceId, this.userId);
+    const currentName = getUserName(this.userId);
 
     if (currentName && currentName !== this.displayName) {
       // Update the node attribute if the name has changed
@@ -103,11 +102,7 @@ function getPickerElement(view: EditorView, getPos: () => number | undefined) {
   }
 
   const element = render(
-    <MentionPicker
-      workspaceId={Editor.current.workspaceId}
-      onSelect={onSelect}
-      onClose={onClose}
-    />,
+    <MentionPicker onSelect={onSelect} onClose={onClose} />,
   )[0] as HTMLElement;
 
   requestAnimationFrame(() => {

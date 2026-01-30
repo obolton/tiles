@@ -12,7 +12,7 @@ export interface StyleToolsProps {
 }
 
 export default function StyleTools({ tile }: StyleToolsProps) {
-  const { id, textColor, background, editor, theme, animation } = tile;
+  const { id, textColor, background, theme, animation } = tile;
 
   function setTheme(themeId: string | null) {
     tile.setTheme(themeId).catch(handleError);
@@ -21,7 +21,6 @@ export default function StyleTools({ tile }: StyleToolsProps) {
   return (
     <ToolbarGroup label="Style">
       <ThemePicker
-        workspaceId={editor.workspaceId}
         value={theme.derive((t) => t?.id ?? null)}
         onChange={setTheme}
         aria-label="Theme"

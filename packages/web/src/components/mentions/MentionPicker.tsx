@@ -7,19 +7,17 @@ import Each from "@/jsx/each";
 import styles from "./MentionPicker.module.css";
 
 export interface MentionPickerProps {
-  workspaceId: string;
   onSelect: (userId: string, displayName: string) => void;
   onClose: () => void;
 }
 
 export default function MentionPicker({
-  workspaceId,
   onSelect,
   onClose,
 }: MentionPickerProps) {
   const users = reactive<WorkspaceUser[]>([]);
 
-  getWorkspaceUsers(workspaceId)
+  getWorkspaceUsers()
     .then((result) => {
       users.value = result.users;
     })

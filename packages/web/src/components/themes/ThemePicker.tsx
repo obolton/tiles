@@ -18,20 +18,18 @@ export interface ThemePickerProps extends Omit<
   JSX.Attributes<"list-select">,
   "value" | "on:change"
 > {
-  workspaceId: string;
   value?: Reactive<string | null>;
   onChange: (themeId: string | null) => void;
 }
 
 export default function ThemePicker({
-  workspaceId,
   value,
   onChange,
   ...props
 }: ThemePickerProps) {
   const themes = reactive<WorkspaceTheme[]>([]);
 
-  getWorkspaceThemes(workspaceId)
+  getWorkspaceThemes()
     .then((result) => {
       themes.value = result;
     })
