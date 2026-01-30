@@ -1,14 +1,15 @@
-import { describe, expect, test, vi, beforeEach } from "vitest";
+import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
+import "fake-indexeddb/auto";
 import {
   getCachedWorkspaceUsers,
   getWorkspaceUsers,
   invalidateWorkspaceUsers,
   getUserName,
+  clearUsersMap,
 } from "../users";
-import { get, set, remove } from "../state";
+import { initializeCache, destroyCache } from "../cache";
 import client from "@/api/client";
 
-vi.mock("../state");
 vi.mock("@/api/client", () => ({
   default: {
     workspaces: {
@@ -37,103 +38,129 @@ const mockUsersResponse = {
   nextCursor: null,
 };
 
-describe("getCachedWorkspaceUsers", () => {
+describe("users", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    clearUsersMap();
+    initializeCache("user-123", "workspace-123");
   });
 
-  test("returns cached value when present", () => {
-    vi.mocked(get).mockReturnValueOnce(mockUsersResponse);
-
-    const result = getCachedWorkspaceUsers("workspace-123");
-
-    expect(get).toHaveBeenCalledWith("users:workspace-123");
-    expect(result).toEqual(mockUsersResponse);
+  afterEach(async () => {
+    await destroyCache();
   });
 
-  test("returns null when cache is empty", () => {
-    vi.mocked(get).mockReturnValueOnce(null);
-
-    const result = getCachedWorkspaceUsers("workspace-123");
-
-    expect(get).toHaveBeenCalledWith("users:workspace-123");
-    expect(result).toBeNull();
-  });
-});
-
-describe("getWorkspaceUsers", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  test("returns cached value without fetching when cache exists", async () => {
-    vi.mocked(get).mockReturnValueOnce(mockUsersResponse);
-
-    const result = await getWorkspaceUsers("workspace-123");
-
-    expect(get).toHaveBeenCalledWith("users:workspace-123");
-    expect(client.workspaces.listUsers.query).not.toHaveBeenCalled();
-    expect(result).toEqual(mockUsersResponse);
-  });
-
-  test("fetches and caches users when cache is empty", async () => {
-    vi.mocked(get).mockReturnValueOnce(null);
-    vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
-      mockUsersResponse,
-    );
-
-    const result = await getWorkspaceUsers("workspace-123");
-
-    expect(get).toHaveBeenCalledWith("users:workspace-123");
-    expect(client.workspaces.listUsers.query).toHaveBeenCalledWith({
-      workspaceId: "workspace-123",
+  describe("getCachedWorkspaceUsers", () => {
+    test("returns null when cache is empty", async () => {
+      const result = await getCachedWorkspaceUsers();
+      expect(result).toBeNull();
     });
-    expect(set).toHaveBeenCalledWith("users:workspace-123", mockUsersResponse);
-    expect(result).toEqual(mockUsersResponse);
-  });
-});
 
-describe("invalidateWorkspaceUsers", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    test("returns cached value when present and fresh", async () => {
+      // Populate cache via getWorkspaceUsers
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
+        mockUsersResponse,
+      );
+      await getWorkspaceUsers();
 
-  test("removes the cached user list", () => {
-    invalidateWorkspaceUsers("workspace-123");
+      const result = await getCachedWorkspaceUsers();
 
-    expect(remove).toHaveBeenCalledWith("users:workspace-123");
-  });
-});
-
-describe("getUserName", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+      expect(result).toEqual(mockUsersResponse);
+    });
   });
 
-  test("returns user name when user is in cache", () => {
-    vi.mocked(get).mockReturnValueOnce(mockUsersResponse);
+  describe("getWorkspaceUsers", () => {
+    test("returns cached value without fetching when cache exists", async () => {
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
+        mockUsersResponse,
+      );
+      await getWorkspaceUsers();
 
-    const result = getUserName("workspace-123", "user-1");
+      vi.clearAllMocks();
 
-    expect(get).toHaveBeenCalledWith("users:workspace-123");
-    expect(result).toBe("Alice Smith");
+      const result = await getWorkspaceUsers();
+
+      expect(client.workspaces.listUsers.query).not.toHaveBeenCalled();
+      expect(result).toEqual(mockUsersResponse);
+    });
+
+    test("fetches and caches users when cache is empty", async () => {
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
+        mockUsersResponse,
+      );
+
+      const result = await getWorkspaceUsers();
+
+      expect(client.workspaces.listUsers.query).toHaveBeenCalledWith({
+        workspaceId: "workspace-123",
+      });
+      expect(result).toEqual(mockUsersResponse);
+
+      const cached = await getCachedWorkspaceUsers();
+      expect(cached).toEqual(mockUsersResponse);
+    });
   });
 
-  test("returns null when user is not in cache", () => {
-    vi.mocked(get).mockReturnValueOnce(mockUsersResponse);
+  describe("invalidateWorkspaceUsers", () => {
+    test("removes the cached user list", async () => {
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
+        mockUsersResponse,
+      );
+      await getWorkspaceUsers();
 
-    const result = getUserName("workspace-123", "user-999");
+      // Verify cache exists
+      const beforeInvalidate = await getCachedWorkspaceUsers();
+      expect(beforeInvalidate).not.toBeNull();
 
-    expect(get).toHaveBeenCalledWith("users:workspace-123");
-    expect(result).toBeNull();
+      // Invalidate
+      await invalidateWorkspaceUsers();
+
+      // Verify cache is cleared
+      const afterInvalidate = await getCachedWorkspaceUsers();
+      expect(afterInvalidate).toBeNull();
+    });
+
+    test("clears the in-memory user map", async () => {
+      // Populate cache (which also populates the memory map)
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
+        mockUsersResponse,
+      );
+      await getWorkspaceUsers();
+
+      expect(getUserName("user-1")).toBe("Alice Smith");
+
+      await invalidateWorkspaceUsers();
+
+      expect(getUserName("user-1")).toBeNull();
+    });
   });
 
-  test("returns null when cache is empty", () => {
-    vi.mocked(get).mockReturnValueOnce(null);
+  describe("getUserName", () => {
+    test("returns user name when user is in memory map", async () => {
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
+        mockUsersResponse,
+      );
+      await getWorkspaceUsers();
 
-    const result = getUserName("workspace-123", "user-1");
+      const result = getUserName("user-1");
 
-    expect(get).toHaveBeenCalledWith("users:workspace-123");
-    expect(result).toBeNull();
+      expect(result).toBe("Alice Smith");
+    });
+
+    test("returns null when user is not in memory map", async () => {
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
+        mockUsersResponse,
+      );
+      await getWorkspaceUsers();
+
+      const result = getUserName("user-999");
+
+      expect(result).toBeNull();
+    });
+
+    test("returns null when memory map is empty", () => {
+      const result = getUserName("user-1");
+
+      expect(result).toBeNull();
+    });
   });
 });
