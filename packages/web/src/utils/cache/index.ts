@@ -1,12 +1,18 @@
 import { Database } from "@/utils/idb";
 import { foldersSchema, type CachedFolder, type FoldersMeta } from "./folders";
 import { bookmarksSchema } from "./bookmarks";
+import { themesSchema, type CachedTheme, type ThemesMeta } from "./themes";
+import { usersSchema, type CachedUser, type UsersMeta } from "./users";
 
 export type { CachedFolder, FoldersMeta } from "./folders";
+export type { CachedTheme, ThemesMeta } from "./themes";
+export type { CachedUser, UsersMeta } from "./users";
 
 const schema = {
   ...foldersSchema,
   ...bookmarksSchema,
+  ...themesSchema,
+  ...usersSchema,
 } as const;
 
 type CacheSchema = typeof schema;
@@ -24,7 +30,7 @@ export function initializeCache(userId: string, workspaceId: string): void {
 
   db = new Database({
     name: `tiles-${userId}-${workspaceId}`,
-    version: 1,
+    version: 2,
     schema,
   });
   currentWorkspaceId = workspaceId;
@@ -73,6 +79,34 @@ export function getFoldersMetaStore() {
  */
 export function getBookmarksStore() {
   return getDatabase().store<boolean>("bookmarks");
+}
+
+/**
+ * Gets the themes store for caching workspace themes.
+ */
+export function getThemesStore() {
+  return getDatabase().store<CachedTheme>("themes");
+}
+
+/**
+ * Gets the themes metadata store for caching freshness info.
+ */
+export function getThemesMetaStore() {
+  return getDatabase().store<ThemesMeta>("themesMeta");
+}
+
+/**
+ * Gets the users store for caching workspace users.
+ */
+export function getUsersStore() {
+  return getDatabase().store<CachedUser>("users");
+}
+
+/**
+ * Gets the users metadata store for caching pagination and freshness info.
+ */
+export function getUsersMetaStore() {
+  return getDatabase().store<UsersMeta>("usersMeta");
 }
 
 /**
