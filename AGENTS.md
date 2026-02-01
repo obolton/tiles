@@ -35,6 +35,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - `pnpm build`: Build all packages in dependency order.
 - `pnpm format` and `pnpm format:check`: Format files with Prettier or check formatting.
 - `pnpm storybook`: Run Storybook for UI component development.
+- `pnpm generate`: Generate types for all packages (e.g. Prisma client, Cloudflare workers).
 
 ### Important notes
 
