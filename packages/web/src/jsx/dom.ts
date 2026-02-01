@@ -395,7 +395,7 @@ export function hydrateNode(
   throw new Error("Hydration error: invalid node");
 }
 
-function createPlaceholderNode() {
+export function createPlaceholderNode(): Comment {
   return document.createComment("");
 }
 
