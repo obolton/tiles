@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { classNames, serializeStyles, transformCSSProperty } from "../css";
+import { classNames, classList } from "../css";
 
 describe("classNames", () => {
   test("joins class names", () => {
@@ -19,30 +19,24 @@ describe("classNames", () => {
   });
 });
 
-describe("transformCSSProperty", () => {
-  test("converts camelCase to kebab-case", () => {
-    expect(transformCSSProperty("backgroundColor")).toBe("background-color");
-    expect(transformCSSProperty("marginTop")).toBe("margin-top");
-  });
-});
-
-describe("serializeStyles", () => {
-  test("serializes string and number values", () => {
-    expect(
-      serializeStyles({
-        backgroundColor: "red",
-        marginTop: 12,
-      }),
-    ).toBe("background-color:red;margin-top:12");
+describe("classList", () => {
+  test("merges multiple classList objects", () => {
+    const result = classList({ a: true, b: false }, { c: true });
+    expect(result).toEqual({ a: true, b: false, c: true });
   });
 
-  test("ignores null and undefined values", () => {
-    expect(
-      serializeStyles({
-        display: undefined,
-        nested: null,
-        opacity: 1,
-      }),
-    ).toBe("opacity:1");
+  test("later sources override earlier ones", () => {
+    const result = classList({ a: true }, { a: false });
+    expect(result).toEqual({ a: false });
+  });
+
+  test("ignores falsy sources", () => {
+    const result = classList({ a: true }, null, undefined, false, { b: true });
+    expect(result).toEqual({ a: true, b: true });
+  });
+
+  test("returns empty object for no sources", () => {
+    const result = classList();
+    expect(result).toEqual({});
   });
 });
