@@ -4,6 +4,10 @@ export class ReactiveArray<T>
   extends ReactiveValue<T[]>
   implements Iterable<T>
 {
+  get length(): number {
+    return this.value.length;
+  }
+
   [Symbol.iterator]() {
     return this.value[Symbol.iterator]();
   }
@@ -38,6 +42,27 @@ export class ReactiveArray<T>
     const result = this.value.splice(...args);
     this.notify();
     return result;
+  }
+
+  /**
+   * Removes all items from the array.
+   */
+  clear() {
+    this.value = [];
+  }
+
+  /**
+   * Replaces all items in the array.
+   */
+  replace(items: T[]) {
+    this.value = items;
+  }
+
+  /**
+   * Filters the array in place, keeping only items that match the predicate.
+   */
+  filter(predicate: (item: T, index: number, array: T[]) => boolean) {
+    this.value = this.value.filter(predicate);
   }
 }
 
