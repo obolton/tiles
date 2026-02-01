@@ -1,18 +1,66 @@
 import { Database } from "@/utils/idb";
-import { foldersSchema, type CachedFolder, type FoldersMeta } from "./folders";
-import { bookmarksSchema } from "./bookmarks";
-import { themesSchema, type CachedTheme, type ThemesMeta } from "./themes";
-import { usersSchema, type CachedUser, type UsersMeta } from "./users";
+import type { Theme } from "api/types/themes";
+import { CacheCollection } from "./collection";
 
-export type { CachedFolder, FoldersMeta } from "./folders";
-export type { CachedTheme, ThemesMeta } from "./themes";
-export type { CachedUser, UsersMeta } from "./users";
+export type { CacheMeta } from "./collection";
+
+// Type definitions
+
+export interface CachedUser {
+  id: string;
+  name: string;
+  email: string;
+  imageUrl: string | null;
+}
+
+export interface CachedFolder {
+  id: string;
+  name: string;
+}
+
+export type CachedTheme = Theme;
+
+export interface CachedBookmark {
+  id: string;
+}
+
+// Cache configuration
+
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+// Cache collection instances
+
+export const usersCache = new CacheCollection<CachedUser>({
+  ttlMs: CACHE_TTL_MS,
+  itemsStoreName: "users",
+  metaStoreName: "usersMeta",
+});
+
+export const foldersCache = new CacheCollection<CachedFolder>({
+  ttlMs: CACHE_TTL_MS,
+  itemsStoreName: "folders",
+  metaStoreName: "foldersMeta",
+});
+
+export const themesCache = new CacheCollection<CachedTheme>({
+  ttlMs: CACHE_TTL_MS,
+  itemsStoreName: "themes",
+  metaStoreName: "themesMeta",
+});
+
+export const bookmarksCache = new CacheCollection<CachedBookmark>({
+  ttlMs: CACHE_TTL_MS,
+  itemsStoreName: "bookmarks",
+  metaStoreName: "bookmarksMeta",
+});
+
+// Combined schema from all collections
 
 const schema = {
-  ...foldersSchema,
-  ...bookmarksSchema,
-  ...themesSchema,
-  ...usersSchema,
+  ...usersCache.schema,
+  ...foldersCache.schema,
+  ...themesCache.schema,
+  ...bookmarksCache.schema,
 } as const;
 
 type CacheSchema = typeof schema;
@@ -23,24 +71,29 @@ let currentWorkspaceId: string | null = null;
 /**
  * Initializes the cache database for the current user and workspace.
  */
-export function initializeCache(userId: string, workspaceId: string): void {
+export async function initializeCache(
+  userId: string,
+  workspaceId: string,
+): Promise<void> {
   if (db) {
-    throw new Error("Cache already initialized");
+    if (currentWorkspaceId === workspaceId) {
+      return; // Already initialized for this workspace
+    }
+    await destroyCache();
   }
 
   db = new Database({
     name: `tiles-${userId}-${workspaceId}`,
-    version: 2,
+    version: 3,
     schema,
   });
-  currentWorkspaceId = workspaceId;
-}
 
-function getDatabase(): Database<CacheSchema> {
-  if (!db) {
-    throw new Error("Cache not initialized. Call initializeCache first.");
-  }
-  return db;
+  usersCache.initialize(db);
+  foldersCache.initialize(db);
+  themesCache.initialize(db);
+  bookmarksCache.initialize(db);
+
+  currentWorkspaceId = workspaceId;
 }
 
 /**
@@ -61,59 +114,18 @@ export function getWorkspaceId(): string {
 }
 
 /**
- * Gets the folders store for caching individual folders.
- */
-export function getFoldersStore() {
-  return getDatabase().store<CachedFolder>("folders");
-}
-
-/**
- * Gets the folders metadata store for caching pagination and freshness info.
- */
-export function getFoldersMetaStore() {
-  return getDatabase().store<FoldersMeta>("foldersMeta");
-}
-
-/**
- * Gets the bookmarks store for caching page bookmarks.
- */
-export function getBookmarksStore() {
-  return getDatabase().store<boolean>("bookmarks");
-}
-
-/**
- * Gets the themes store for caching workspace themes.
- */
-export function getThemesStore() {
-  return getDatabase().store<CachedTheme>("themes");
-}
-
-/**
- * Gets the themes metadata store for caching freshness info.
- */
-export function getThemesMetaStore() {
-  return getDatabase().store<ThemesMeta>("themesMeta");
-}
-
-/**
- * Gets the users store for caching workspace users.
- */
-export function getUsersStore() {
-  return getDatabase().store<CachedUser>("users");
-}
-
-/**
- * Gets the users metadata store for caching pagination and freshness info.
- */
-export function getUsersMetaStore() {
-  return getDatabase().store<UsersMeta>("usersMeta");
-}
-
-/**
  * Destroys the cache database and clears the reference.
  */
 export async function destroyCache(): Promise<void> {
   if (db) {
+    // Clear in-memory state of all collections
+    await Promise.all([
+      usersCache.invalidate(),
+      foldersCache.invalidate(),
+      themesCache.invalidate(),
+      bookmarksCache.invalidate(),
+    ]);
+
     await db.deleteDatabase();
     db = null;
     currentWorkspaceId = null;

@@ -1,17 +1,14 @@
-import { describe, expect, test, beforeEach, afterEach } from "vitest";
+import { describe, expect, test, afterEach } from "vitest";
 import "fake-indexeddb/auto";
 import {
   initializeCache,
   isCacheInitialized,
   getWorkspaceId,
-  getFoldersStore,
-  getFoldersMetaStore,
-  getBookmarksStore,
-  getThemesStore,
-  getThemesMetaStore,
-  getUsersStore,
-  getUsersMetaStore,
   destroyCache,
+  usersCache,
+  foldersCache,
+  themesCache,
+  bookmarksCache,
 } from "../index";
 
 describe("cache", () => {
@@ -20,16 +17,27 @@ describe("cache", () => {
   });
 
   describe("initializeCache", () => {
-    test("initializes the cache database", () => {
-      initializeCache("user-1", "workspace-1");
+    test("initializes the cache database", async () => {
+      await initializeCache("user-1", "workspace-1");
       expect(isCacheInitialized()).toBe(true);
     });
 
-    test("throws if called twice", () => {
-      initializeCache("user-1", "workspace-1");
-      expect(() => initializeCache("user-1", "workspace-1")).toThrow(
-        "Cache already initialized",
-      );
+    test("is idempotent for same workspace", async () => {
+      await initializeCache("user-1", "workspace-1");
+      await initializeCache("user-1", "workspace-1");
+      expect(isCacheInitialized()).toBe(true);
+      expect(getWorkspaceId()).toBe("workspace-1");
+    });
+
+    test("switches workspace automatically", async () => {
+      await initializeCache("user-1", "workspace-1");
+      await bookmarksCache.set([{ id: "page-1" }]);
+
+      await initializeCache("user-1", "workspace-2");
+
+      expect(getWorkspaceId()).toBe("workspace-2");
+      // Old cache data should be cleared
+      expect(bookmarksCache.isWarm).toBe(false);
     });
   });
 
@@ -38,21 +46,21 @@ describe("cache", () => {
       expect(isCacheInitialized()).toBe(false);
     });
 
-    test("returns true after initialization", () => {
-      initializeCache("user-1", "workspace-1");
+    test("returns true after initialization", async () => {
+      await initializeCache("user-1", "workspace-1");
       expect(isCacheInitialized()).toBe(true);
     });
 
     test("returns false after destroy", async () => {
-      initializeCache("user-1", "workspace-1");
+      await initializeCache("user-1", "workspace-1");
       await destroyCache();
       expect(isCacheInitialized()).toBe(false);
     });
   });
 
   describe("getWorkspaceId", () => {
-    test("returns the workspace ID after initialization", () => {
-      initializeCache("user-1", "workspace-123");
+    test("returns the workspace ID after initialization", async () => {
+      await initializeCache("user-1", "workspace-123");
       expect(getWorkspaceId()).toBe("workspace-123");
     });
 
@@ -63,107 +71,9 @@ describe("cache", () => {
     });
   });
 
-  describe("getFoldersStore", () => {
-    test("returns the folders store", () => {
-      initializeCache("user-1", "workspace-1");
-      const store = getFoldersStore();
-      expect(store).toBeDefined();
-    });
-
-    test("throws if cache not initialized", () => {
-      expect(() => getFoldersStore()).toThrow(
-        "Cache not initialized. Call initializeCache first.",
-      );
-    });
-  });
-
-  describe("getFoldersMetaStore", () => {
-    test("returns the folders meta store", () => {
-      initializeCache("user-1", "workspace-1");
-      const store = getFoldersMetaStore();
-      expect(store).toBeDefined();
-    });
-
-    test("throws if cache not initialized", () => {
-      expect(() => getFoldersMetaStore()).toThrow(
-        "Cache not initialized. Call initializeCache first.",
-      );
-    });
-  });
-
-  describe("getBookmarksStore", () => {
-    test("returns the bookmarks store", () => {
-      initializeCache("user-1", "workspace-1");
-      const store = getBookmarksStore();
-      expect(store).toBeDefined();
-    });
-
-    test("throws if cache not initialized", () => {
-      expect(() => getBookmarksStore()).toThrow(
-        "Cache not initialized. Call initializeCache first.",
-      );
-    });
-  });
-
-  describe("getThemesStore", () => {
-    test("returns the themes store", () => {
-      initializeCache("user-1", "workspace-1");
-      const store = getThemesStore();
-      expect(store).toBeDefined();
-    });
-
-    test("throws if cache not initialized", () => {
-      expect(() => getThemesStore()).toThrow(
-        "Cache not initialized. Call initializeCache first.",
-      );
-    });
-  });
-
-  describe("getThemesMetaStore", () => {
-    test("returns the themes meta store", () => {
-      initializeCache("user-1", "workspace-1");
-      const store = getThemesMetaStore();
-      expect(store).toBeDefined();
-    });
-
-    test("throws if cache not initialized", () => {
-      expect(() => getThemesMetaStore()).toThrow(
-        "Cache not initialized. Call initializeCache first.",
-      );
-    });
-  });
-
-  describe("getUsersStore", () => {
-    test("returns the users store", () => {
-      initializeCache("user-1", "workspace-1");
-      const store = getUsersStore();
-      expect(store).toBeDefined();
-    });
-
-    test("throws if cache not initialized", () => {
-      expect(() => getUsersStore()).toThrow(
-        "Cache not initialized. Call initializeCache first.",
-      );
-    });
-  });
-
-  describe("getUsersMetaStore", () => {
-    test("returns the users meta store", () => {
-      initializeCache("user-1", "workspace-1");
-      const store = getUsersMetaStore();
-      expect(store).toBeDefined();
-    });
-
-    test("throws if cache not initialized", () => {
-      expect(() => getUsersMetaStore()).toThrow(
-        "Cache not initialized. Call initializeCache first.",
-      );
-    });
-  });
-
   describe("destroyCache", () => {
     test("clears the cache state", async () => {
-      initializeCache("user-1", "workspace-1");
+      await initializeCache("user-1", "workspace-1");
       await destroyCache();
 
       expect(isCacheInitialized()).toBe(false);
@@ -171,10 +81,10 @@ describe("cache", () => {
     });
 
     test("allows reinitializing after destroy", async () => {
-      initializeCache("user-1", "workspace-1");
+      await initializeCache("user-1", "workspace-1");
       await destroyCache();
 
-      initializeCache("user-2", "workspace-2");
+      await initializeCache("user-2", "workspace-2");
       expect(getWorkspaceId()).toBe("workspace-2");
     });
 
@@ -183,93 +93,65 @@ describe("cache", () => {
     });
   });
 
-  describe("store operations", () => {
-    beforeEach(() => {
-      initializeCache("user-1", "workspace-1");
-    });
+  describe("cache collections", () => {
+    test("usersCache is accessible after initialization", async () => {
+      await initializeCache("user-1", "workspace-1");
 
-    test("persists folders to IndexedDB", async () => {
-      const store = getFoldersStore();
-
-      await store.put({ id: "folder-1", name: "My Folder" });
-      const result = await store.get("folder-1");
-
-      expect(result).toEqual({ id: "folder-1", name: "My Folder" });
-    });
-
-    test("persists folders metadata to IndexedDB", async () => {
-      const store = getFoldersMetaStore();
-      const cachedAt = new Date();
-
-      await store.put({ nextCursor: "cursor-123", cachedAt }, "meta");
-      const result = await store.get("meta");
-
-      expect(result).toEqual({ nextCursor: "cursor-123", cachedAt });
-    });
-
-    test("persists bookmarks to IndexedDB", async () => {
-      const store = getBookmarksStore();
-
-      await store.put(true, "page-1");
-      const result = await store.get("page-1");
-
-      expect(result).toBe(true);
-    });
-
-    test("persists themes to IndexedDB", async () => {
-      const store = getThemesStore();
-      const theme = {
-        id: "theme-1",
-        workspaceId: "workspace-1",
-        name: "Test Theme",
-        colors: { background: "ffffff", text: "000000", accent: "0000ff" },
-        fonts: {
-          heading: "MODERN" as const,
-          body: "MODERN" as const,
-          code: "CODE" as const,
+      await usersCache.set([
+        {
+          id: "user-1",
+          name: "Alice",
+          email: "alice@test.com",
+          imageUrl: null,
         },
-        border: { color: null, radius: null },
-      };
+      ]);
+      const cached = await usersCache.getCached();
 
-      await store.put(theme);
-      const result = await store.get("theme-1");
-
-      expect(result).toEqual(theme);
+      expect(cached).not.toBeNull();
+      expect(cached?.items).toHaveLength(1);
+      expect(cached?.items[0]?.name).toBe("Alice");
     });
 
-    test("persists themes metadata to IndexedDB", async () => {
-      const store = getThemesMetaStore();
-      const cachedAt = new Date();
+    test("foldersCache is accessible after initialization", async () => {
+      await initializeCache("user-1", "workspace-1");
 
-      await store.put({ cachedAt }, "meta");
-      const result = await store.get("meta");
+      await foldersCache.set([{ id: "folder-1", name: "My Folder" }]);
+      const cached = await foldersCache.getCached();
 
-      expect(result).toEqual({ cachedAt });
+      expect(cached).not.toBeNull();
+      expect(cached?.items).toHaveLength(1);
+      expect(cached?.items[0]?.name).toBe("My Folder");
     });
 
-    test("persists users to IndexedDB", async () => {
-      const store = getUsersStore();
-      const user = {
-        id: "user-1",
-        name: "Alice Smith",
-        email: "alice@example.com",
-        imageUrl: null,
-      };
+    test("themesCache is accessible after initialization", async () => {
+      await initializeCache("user-1", "workspace-1");
 
-      await store.put(user);
-      const result = await store.get("user-1");
+      await themesCache.set([
+        {
+          id: "theme-1",
+          workspaceId: "workspace-1",
+          name: "Test Theme",
+          colors: { background: "ffffff", text: "000000", accent: "0000ff" },
+          fonts: { heading: "MODERN", body: "MODERN", code: "CODE" },
+          border: { color: null, radius: null },
+        },
+      ]);
+      const cached = await themesCache.getCached();
 
-      expect(result).toEqual(user);
+      expect(cached).not.toBeNull();
+      expect(cached?.items).toHaveLength(1);
+      expect(cached?.items[0]?.name).toBe("Test Theme");
     });
 
-    test("persists users metadata to IndexedDB", async () => {
-      const store = getUsersMetaStore();
-      const cachedAt = new Date();
+    test("bookmarksCache is accessible after initialization", async () => {
+      await initializeCache("user-1", "workspace-1");
 
-      await store.put({ nextCursor: "cursor-123", cachedAt }, "meta");
-      const result = await store.get("meta");
+      await bookmarksCache.set([{ id: "page-1" }]);
+      const cached = await bookmarksCache.getCached();
 
-      expect(result).toEqual({ nextCursor: "cursor-123", cachedAt });
+      expect(cached).not.toBeNull();
+      expect(cached?.items).toHaveLength(1);
+      expect(cached?.items[0]?.id).toBe("page-1");
     });
   });
 });
