@@ -17,8 +17,7 @@
     "lint": "pnpm run \"/^lint:.*/\"",
     "storybook": "storybook dev -p 6001 --no-open --no-version-updates",
     "storybook:build": "storybook build",
-    "typecheck": "tsc --build",
-    "generate": "wrangler types src/types/worker.d.ts --include-runtime=false"
+    "typecheck": "tsc --build"
   },
   "dependencies": {
     "@codemirror/commands": "^6.10.0",
