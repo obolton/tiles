@@ -6,7 +6,7 @@ import Portal from "@/jsx/portal";
 import styles from "./TextTile.module.css";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import debounce from "@/utils/debounce";
-import { reactive, type Reactive } from "@/utils/reactivity";
+import { combine, reactive, type Reactive } from "@/utils/reactivity";
 import type Text from "@/models/Text";
 import type { EditorView } from "prosemirror-view";
 
@@ -71,31 +71,28 @@ export default function TextTile({
     }
   }
 
-  const alignClass = align.derive((value) => {
-    switch (value) {
-      default:
-      case "TOP":
-        return styles["align-top"];
-      case "CENTER":
-        return styles["align-center"];
-      case "BOTTOM":
-        return styles["align-bottom"];
-    }
-  });
+  const classList = combine({ align, isEditable }, ({ align, isEditable }) => ({
+    "rich-text": true,
+    [styles.text]: true,
+    [styles.editor]: isEditable,
+    [styles["align-top"]]: align === "TOP",
+    [styles["align-center"]]: align === "CENTER",
+    [styles["align-bottom"]]: align === "BOTTOM",
+  }));
 
   const contents = isEditable.derive((value) =>
     value ? (
       <TextEditor
         editorView={editorView}
         state={state}
-        classList={[styles.text, styles.editor, alignClass]}
+        classList={classList}
         initialValue={content.value}
         tabindex={-1}
         onChange={onChange}
         on:keydown={onKeyDown}
       />
     ) : (
-      <div classList={["rich-text", styles.text, alignClass]}>
+      <div classList={classList}>
         {content.derive((value) => (
           <RichText content={value} />
         ))}

@@ -2,34 +2,24 @@ import { EditorView } from "prosemirror-view";
 import { EditorState } from "prosemirror-state";
 import { createState } from "@/utils/richText/state";
 import { handleError } from "@/utils/errors";
-import styles from "./TextEditor.module.css";
 import type { RichText } from "@/utils/richText/types";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
 
 export type { EditorState };
 
-export interface TextEditorProps extends Omit<
-  JSX.Attributes<"div">,
-  "classList"
-> {
+export interface TextEditorProps extends JSX.Attributes<"div"> {
   editorView: Reactive<EditorView | null>;
   state: Reactive<EditorState | null>;
   initialValue?: RichText | null;
   onChange?: (state: EditorState) => void;
   signal?: AbortSignal;
-  classList?: (
-    | string
-    | null
-    | undefined
-    | Reactive<string | null | undefined>
-  )[];
 }
 
 export default function TextEditor({
   editorView,
   state,
-  classList = [],
+  classList,
   initialValue = null,
   onChange,
   signal,
@@ -76,12 +66,5 @@ export default function TextEditor({
     }
   };
 
-  return (
-    <div
-      {...props}
-      ref={ref}
-      classList={["rich-text", styles.editor, ...classList]}
-      role="textbox"
-    />
-  );
+  return <div {...props} ref={ref} classList={classList} role="textbox" />;
 }
