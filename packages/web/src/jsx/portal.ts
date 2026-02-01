@@ -16,7 +16,6 @@ export default function Portal({ children, element, signal }: PortalProps) {
   const parent = element ?? document.body;
   parent.append(...nodes);
 
-  // TODO: Fix cleaning up reactive nodes
   signal?.addEventListener(
     "abort",
     () => {
