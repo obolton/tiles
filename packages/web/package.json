@@ -18,7 +18,7 @@
     "storybook": "storybook dev -p 6001 --no-open --no-version-updates",
     "storybook:build": "storybook build",
     "typecheck": "tsc --build",
-    "generate-worker-types": "wrangler types src/types/worker.d.ts --include-runtime=false"
+    "generate": "wrangler types src/types/worker.d.ts --include-runtime=false"
   },
   "dependencies": {
     "@codemirror/commands": "^6.10.0",

@@ -17,7 +17,8 @@
     "typecheck": "tsc --build",
     "build": "pnpm -r --if-present build",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "generate": "pnpm -r --parallel generate"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^4.0.3",
