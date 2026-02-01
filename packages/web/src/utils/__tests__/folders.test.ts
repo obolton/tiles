@@ -1,11 +1,7 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
 import "fake-indexeddb/auto";
-import {
-  getCachedWorkspaceFolders,
-  getWorkspaceFolders,
-  invalidateWorkspaceFolders,
-} from "../folders";
-import { initializeCache, destroyCache } from "../cache";
+import { getWorkspaceFolders, invalidateWorkspaceFolders } from "../folders";
+import { initializeCache, destroyCache, foldersCache } from "../cache";
 import client from "@/api/client";
 
 vi.mock("@/api/client", () => ({
@@ -27,32 +23,13 @@ const mockFoldersResponse = {
 };
 
 describe("folders", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
-    initializeCache("user-123", "workspace-123");
+    await initializeCache("user-123", "workspace-123");
   });
 
   afterEach(async () => {
     await destroyCache();
-  });
-
-  describe("getCachedWorkspaceFolders", () => {
-    test("returns null when cache is empty", async () => {
-      const result = await getCachedWorkspaceFolders();
-      expect(result).toBeNull();
-    });
-
-    test("returns cached value when present and fresh", async () => {
-      // Populate cache via getWorkspaceFolders
-      vi.mocked(client.folders.list.query).mockResolvedValueOnce(
-        mockFoldersResponse,
-      );
-      await getWorkspaceFolders();
-
-      const result = await getCachedWorkspaceFolders();
-
-      expect(result).toEqual(mockFoldersResponse);
-    });
   });
 
   describe("getWorkspaceFolders", () => {
@@ -85,8 +62,8 @@ describe("folders", () => {
       expect(result).toEqual(mockFoldersResponse);
 
       // Verify it was cached
-      const cached = await getCachedWorkspaceFolders();
-      expect(cached).toEqual(mockFoldersResponse);
+      const cached = await foldersCache.getCached();
+      expect(cached?.items).toEqual(mockFoldersResponse.folders);
     });
   });
 
@@ -99,14 +76,14 @@ describe("folders", () => {
       await getWorkspaceFolders();
 
       // Verify cache exists
-      const beforeInvalidate = await getCachedWorkspaceFolders();
+      const beforeInvalidate = await foldersCache.getCached();
       expect(beforeInvalidate).not.toBeNull();
 
       // Invalidate
       await invalidateWorkspaceFolders();
 
       // Verify cache is cleared
-      const afterInvalidate = await getCachedWorkspaceFolders();
+      const afterInvalidate = await foldersCache.getCached();
       expect(afterInvalidate).toBeNull();
     });
   });

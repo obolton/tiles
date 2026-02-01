@@ -1,13 +1,11 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
 import "fake-indexeddb/auto";
 import {
-  getCachedWorkspaceUsers,
   getWorkspaceUsers,
   invalidateWorkspaceUsers,
   getUserName,
-  clearUsersMap,
 } from "../users";
-import { initializeCache, destroyCache } from "../cache";
+import { initializeCache, destroyCache, usersCache } from "../cache";
 import client from "@/api/client";
 
 vi.mock("@/api/client", () => ({
@@ -39,33 +37,13 @@ const mockUsersResponse = {
 };
 
 describe("users", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
-    clearUsersMap();
-    initializeCache("user-123", "workspace-123");
+    await initializeCache("user-123", "workspace-123");
   });
 
   afterEach(async () => {
     await destroyCache();
-  });
-
-  describe("getCachedWorkspaceUsers", () => {
-    test("returns null when cache is empty", async () => {
-      const result = await getCachedWorkspaceUsers();
-      expect(result).toBeNull();
-    });
-
-    test("returns cached value when present and fresh", async () => {
-      // Populate cache via getWorkspaceUsers
-      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
-        mockUsersResponse,
-      );
-      await getWorkspaceUsers();
-
-      const result = await getCachedWorkspaceUsers();
-
-      expect(result).toEqual(mockUsersResponse);
-    });
   });
 
   describe("getWorkspaceUsers", () => {
@@ -95,8 +73,8 @@ describe("users", () => {
       });
       expect(result).toEqual(mockUsersResponse);
 
-      const cached = await getCachedWorkspaceUsers();
-      expect(cached).toEqual(mockUsersResponse);
+      const cached = await usersCache.getCached();
+      expect(cached?.items).toEqual(mockUsersResponse.users);
     });
   });
 
@@ -108,19 +86,18 @@ describe("users", () => {
       await getWorkspaceUsers();
 
       // Verify cache exists
-      const beforeInvalidate = await getCachedWorkspaceUsers();
+      const beforeInvalidate = await usersCache.getCached();
       expect(beforeInvalidate).not.toBeNull();
 
       // Invalidate
       await invalidateWorkspaceUsers();
 
       // Verify cache is cleared
-      const afterInvalidate = await getCachedWorkspaceUsers();
+      const afterInvalidate = await usersCache.getCached();
       expect(afterInvalidate).toBeNull();
     });
 
     test("clears the in-memory user map", async () => {
-      // Populate cache (which also populates the memory map)
       vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
         mockUsersResponse,
       );

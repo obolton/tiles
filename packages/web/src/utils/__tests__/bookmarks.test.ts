@@ -1,7 +1,7 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
 import "fake-indexeddb/auto";
 import { getIsBookmarked, setIsBookmarked } from "../bookmarks";
-import { initializeCache, destroyCache, getBookmarksStore } from "../cache";
+import { initializeCache, destroyCache, bookmarksCache } from "../cache";
 import client from "@/api/client";
 
 vi.mock("@/api/client", () => ({
@@ -15,9 +15,9 @@ vi.mock("@/api/client", () => ({
 }));
 
 describe("bookmarks", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
-    initializeCache("user-123", "workspace-123");
+    await initializeCache("user-123", "workspace-123");
   });
 
   afterEach(async () => {
@@ -39,32 +39,37 @@ describe("bookmarks", () => {
       });
     });
 
-    test("caches the bookmark state", async () => {
+    test("caches the bookmark in memory", async () => {
       await setIsBookmarked("page-1", true);
 
-      const store = getBookmarksStore();
-      const cached = await store.get("page-1");
-      expect(cached).toBe(true);
+      expect(bookmarksCache.getById("page-1")).toEqual({ id: "page-1" });
     });
 
-    test("updates the cached state when unbookmarking", async () => {
+    test("removes from cache when unbookmarking", async () => {
       await setIsBookmarked("page-1", true);
       await setIsBookmarked("page-1", false);
 
-      const store = getBookmarksStore();
-      const cached = await store.get("page-1");
-      expect(cached).toBe(false);
+      expect(bookmarksCache.getById("page-1")).toBeNull();
     });
   });
 
   describe("getIsBookmarked", () => {
-    test("returns cached value when present", async () => {
-      const store = getBookmarksStore();
-      await store.put(true, "page-1");
+    test("returns true when bookmark exists in cache", async () => {
+      await setIsBookmarked("page-1", true);
 
       const result = await getIsBookmarked("page-1");
 
       expect(result).toBe(true);
+      expect(client.bookmarks.isBookmarked.query).not.toHaveBeenCalled();
+    });
+
+    test("returns false when cache is populated but bookmark not found", async () => {
+      // Populate cache with a different bookmark
+      await setIsBookmarked("page-other", true);
+
+      const result = await getIsBookmarked("page-1");
+
+      expect(result).toBe(false);
       expect(client.bookmarks.isBookmarked.query).not.toHaveBeenCalled();
     });
 
@@ -81,16 +86,14 @@ describe("bookmarks", () => {
       expect(result).toBe(true);
     });
 
-    test("caches the API result", async () => {
+    test("caches API result when bookmarked", async () => {
       vi.mocked(client.bookmarks.isBookmarked.query).mockResolvedValueOnce(
-        false,
+        true,
       );
 
       await getIsBookmarked("page-1");
 
-      const store = getBookmarksStore();
-      const cached = await store.get("page-1");
-      expect(cached).toBe(false);
+      expect(bookmarksCache.getById("page-1")).toEqual({ id: "page-1" });
     });
 
     test("returns false from API when not bookmarked", async () => {

@@ -1,11 +1,10 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
 import "fake-indexeddb/auto";
 import {
-  getCachedWorkspaceThemes,
   getWorkspaceThemes,
   invalidateWorkspaceThemes,
 } from "../workspaceThemes";
-import { initializeCache, destroyCache } from "../cache";
+import { initializeCache, destroyCache, themesCache } from "../cache";
 import { THEME, DARK_THEME } from "@/test/fixtures/Theme";
 import client from "@/api/client";
 
@@ -23,31 +22,13 @@ vi.mock("@/api/client", () => ({
 const mockThemesResponse = [DARK_THEME, THEME];
 
 describe("workspaceThemes", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
-    initializeCache("user-123", "workspace-123");
+    await initializeCache("user-123", "workspace-123");
   });
 
   afterEach(async () => {
     await destroyCache();
-  });
-
-  describe("getCachedWorkspaceThemes", () => {
-    test("returns null when cache is empty", async () => {
-      const result = await getCachedWorkspaceThemes();
-      expect(result).toBeNull();
-    });
-
-    test("returns cached value when present and fresh", async () => {
-      vi.mocked(client.themes.list.query).mockResolvedValueOnce(
-        mockThemesResponse,
-      );
-      await getWorkspaceThemes();
-
-      const result = await getCachedWorkspaceThemes();
-
-      expect(result).toEqual(mockThemesResponse);
-    });
   });
 
   describe("getWorkspaceThemes", () => {
@@ -77,8 +58,8 @@ describe("workspaceThemes", () => {
       });
       expect(result).toEqual(mockThemesResponse);
 
-      const cached = await getCachedWorkspaceThemes();
-      expect(cached).toEqual(mockThemesResponse);
+      const cached = await themesCache.getCached();
+      expect(cached?.items).toEqual(mockThemesResponse);
     });
   });
 
@@ -90,14 +71,14 @@ describe("workspaceThemes", () => {
       await getWorkspaceThemes();
 
       // Verify cache exists
-      const beforeInvalidate = await getCachedWorkspaceThemes();
+      const beforeInvalidate = await themesCache.getCached();
       expect(beforeInvalidate).not.toBeNull();
 
       // Invalidate
       await invalidateWorkspaceThemes();
 
       // Verify cache is cleared
-      const afterInvalidate = await getCachedWorkspaceThemes();
+      const afterInvalidate = await themesCache.getCached();
       expect(afterInvalidate).toBeNull();
     });
   });
