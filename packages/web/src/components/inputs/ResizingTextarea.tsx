@@ -14,14 +14,14 @@ function onInput(event: Event) {
 }
 
 export default function ResizingTextarea({
-  className,
+  classList,
   value,
   ...props
 }: ResizingTextareaProps) {
   return (
     <textarea
       {...props}
-      classList={[styles.textarea, className]}
+      classList={{ [styles.textarea]: true, ...classList }}
       on:input={SUPPORTS_FIELD_SIZING ? undefined : onInput}
     >
       {value}

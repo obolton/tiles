@@ -50,7 +50,7 @@ export default function FillPicker({
             if (fill.type === "gradient") {
               return (
                 <span
-                  classList={[styles.gradient, "icon"]}
+                  classList={{ [styles.gradient]: true, icon: true }}
                   style={getBackgroundStyle(fill)}
                   aria-hidden="true"
                 />
