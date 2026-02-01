@@ -1,5 +1,5 @@
-import { reactive } from "@/utils/reactivity";
-import { getWorkspaceFolders, type Folder } from "@/utils/folders";
+import { foldersCache } from "@/utils/cache";
+import { getWorkspaceFolders } from "@/utils/folders";
 import { handleError } from "@/utils/errors";
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
@@ -22,13 +22,7 @@ export default function FolderPicker({
   onChange,
   ...props
 }: FolderPickerProps) {
-  const folders = reactive<Folder[]>([]);
-
-  getWorkspaceFolders()
-    .then((result) => {
-      folders.value = result.folders;
-    })
-    .catch(handleError);
+  getWorkspaceFolders().catch(handleError);
 
   function setFolder(event: Event) {
     const selectedValue = (event.target as ListSelect).value;
@@ -55,7 +49,7 @@ export default function FolderPicker({
       </ListGroup>
 
       <ListGroup>
-        <Each items={folders}>
+        <Each items={foldersCache.items}>
           {(folder) => <ListOption value={folder.id}>{folder.name}</ListOption>}
         </Each>
       </ListGroup>

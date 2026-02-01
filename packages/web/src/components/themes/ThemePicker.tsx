@@ -1,10 +1,7 @@
-import { reactive } from "@/utils/reactivity";
+import { themesCache } from "@/utils/cache";
 import { handleError } from "@/utils/errors";
 import { toCSSColor } from "@/utils/color";
-import {
-  getWorkspaceThemes,
-  type WorkspaceTheme,
-} from "@/utils/workspaceThemes";
+import { getWorkspaceThemes } from "@/utils/workspaceThemes";
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import Each from "@/jsx/each";
@@ -27,13 +24,7 @@ export default function ThemePicker({
   onChange,
   ...props
 }: ThemePickerProps) {
-  const themes = reactive<WorkspaceTheme[]>([]);
-
-  getWorkspaceThemes()
-    .then((result) => {
-      themes.value = result;
-    })
-    .catch(handleError);
+  getWorkspaceThemes().catch(handleError);
 
   function setTheme(event: Event) {
     const selectedValue = (event.target as ListSelect).value;
@@ -60,7 +51,7 @@ export default function ThemePicker({
       </ListGroup>
 
       <ListGroup>
-        <Each items={themes}>
+        <Each items={themesCache.items}>
           {(theme) => (
             <ListOption value={theme.id}>
               <span className={styles.swatches}>

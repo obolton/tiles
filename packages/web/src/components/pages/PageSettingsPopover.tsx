@@ -9,7 +9,7 @@ import { viewTransition } from "@/utils/transitions";
 import { getFontConfig } from "@/utils/fonts";
 import { toCSSColor, isDark, type Color } from "@/utils/color";
 import { redirectWithToast } from "@/utils/toasts";
-import { getCachedWorkspaceThemes } from "@/utils/workspaceThemes";
+import { themesCache } from "@/utils/cache";
 import { getThemeStyles } from "@/utils/themes";
 import styles from "./PageSettingsPopover.module.css";
 import type { FontId } from "@/config/fonts";
@@ -70,9 +70,8 @@ export default function PageSettingsPopover({
     editor.setFolder(folderId).catch(handleError);
   }
 
-  async function setTheme(newThemeId: string | null) {
-    const themes = await getCachedWorkspaceThemes();
-    const theme = themes?.find((t) => t.id === newThemeId) ?? null;
+  function setTheme(newThemeId: string | null) {
+    const theme = newThemeId ? themesCache.getById(newThemeId) : null;
 
     const bgColor = backgroundColor.value;
     const styles = getThemeStyles(theme, {

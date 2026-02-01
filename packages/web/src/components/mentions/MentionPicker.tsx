@@ -1,6 +1,6 @@
-import { getWorkspaceUsers, type WorkspaceUser } from "@/utils/users";
+import { usersCache } from "@/utils/cache";
+import { getWorkspaceUsers } from "@/utils/users";
 import type FilterSelect from "@/elements/filter-select/FilterSelect";
-import { reactive } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import ListOption from "@/components/lists/ListOption";
 import Each from "@/jsx/each";
@@ -15,13 +15,7 @@ export default function MentionPicker({
   onSelect,
   onClose,
 }: MentionPickerProps) {
-  const users = reactive<WorkspaceUser[]>([]);
-
-  getWorkspaceUsers()
-    .then((result) => {
-      users.value = result.users;
-    })
-    .catch(handleError);
+  getWorkspaceUsers().catch(handleError);
 
   function handleChange(event: Event) {
     const filterSelect = event.currentTarget as FilterSelect;
@@ -30,7 +24,7 @@ export default function MentionPicker({
       return;
     }
 
-    const user = users.value.find((u) => u.id === userId);
+    const user = usersCache.getById(userId);
     if (user) {
       onSelect(user.id, user.name);
     }
@@ -51,7 +45,7 @@ export default function MentionPicker({
         on:change={handleChange}
         on:toggle={handleToggle}
       >
-        <Each items={users}>
+        <Each items={usersCache.items}>
           {(user) => (
             <ListOption
               value={user.id}
