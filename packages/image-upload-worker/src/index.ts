@@ -1,6 +1,8 @@
 import { parse } from "cookie";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import type { AppRouter } from "api/routes/index";
+import { HttpError, BadRequestError, UnauthorizedError } from "./errors";
+import { validateContentLength } from "./validation";
 
 const SERVICE_NAME = "image-upload-worker";
 const SESSION_COOKIE_NAME = "__Secure-session";
@@ -21,8 +23,6 @@ function createClient(sessionId: string, env: Env) {
     ],
   });
 }
-
-export class BadRequestError extends Error {}
 
 export function getPurpose(purpose: string) {
   switch (purpose.toLowerCase()) {
@@ -70,11 +70,13 @@ export default {
         throw new BadRequestError("Invalid method");
       }
 
+      validateContentLength(request.headers.get("Content-Length"));
+
       const cookie = parse(request.headers.get("Cookie") || "");
       const sessionId = cookie[SESSION_COOKIE_NAME];
 
       if (!sessionId) {
-        return new Response("Unauthorized", { status: 401 });
+        throw new UnauthorizedError();
       }
 
       const url = new URL(request.url);
@@ -101,11 +103,11 @@ export default {
       let object: R2Object;
       try {
         object = await env.IMAGES.put(image.id, request.body, {
-        customMetadata: {
-          workspace: image.workspaceId,
-          user: image.userId,
-        },
-      });
+          customMetadata: {
+            workspace: image.workspaceId,
+            user: image.userId,
+          },
+        });
       } catch (r2Error) {
         // R2 upload failed - clean up the database record
         await client.media.deleteImage.mutate({ id: image.id, workspaceId });
@@ -116,11 +118,11 @@ export default {
       let updatedImage;
       try {
         updatedImage = await client.media.updateImage.mutate({
-        id: image.id,
-        workspaceId,
-        pending: false,
-        bytes: object.size,
-      });
+          id: image.id,
+          workspaceId,
+          pending: false,
+          bytes: object.size,
+        });
       } catch (dbError) {
         // Database update failed - clean up the R2 object and database record
         await env.IMAGES.delete(image.id);
@@ -136,8 +138,8 @@ export default {
         },
       });
     } catch (error) {
-      if (error instanceof BadRequestError) {
-        return new Response("Bad Request", { status: 400 });
+      if (error instanceof HttpError) {
+        return new Response(error.message, { status: error.status });
       }
 
       return new Response("Server Error", { status: 500 });
