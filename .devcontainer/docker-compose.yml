@@ -12,6 +12,7 @@ services:
       - api_node_modules:/projects/${WORKSPACE}/packages/api/node_modules
       - web_node_modules:/projects/${WORKSPACE}/packages/web/node_modules
       - worker_node_modules:/projects/${WORKSPACE}/packages/image-upload-worker/node_modules
+      - pnpm_store:/pnpm/store
     command: sleep infinity
     init: true
     environment:
@@ -41,6 +42,8 @@ volumes:
   api_node_modules:
   web_node_modules:
   worker_node_modules:
+  pnpm_store:
+    name: pnpm_store
 
 networks:
   tiles-dev:

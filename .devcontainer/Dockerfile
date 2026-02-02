@@ -1,7 +1,8 @@
 FROM node:24-trixie
 
-# Enable Corepack to install pnpm
+# Install pnpm via Corepack
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+ENV npm_config_store_dir=/pnpm/store
 RUN corepack enable
 
 # Install additional tools
