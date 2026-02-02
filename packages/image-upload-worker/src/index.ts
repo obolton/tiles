@@ -88,6 +88,7 @@ export default {
 
       const client = createClient(sessionId, env);
 
+      // Step 1: Create database record with pending=true
       const image = await client.media.createImage.mutate({
         workspaceId,
         source: "UPLOAD",
@@ -96,19 +97,36 @@ export default {
         pending: true,
       });
 
-      const object = await env.IMAGES.put(image.id, request.body, {
+      // Step 2: Upload to R2
+      let object: R2Object;
+      try {
+        object = await env.IMAGES.put(image.id, request.body, {
         customMetadata: {
           workspace: image.workspaceId,
           user: image.userId,
         },
       });
+      } catch (r2Error) {
+        // R2 upload failed - clean up the database record
+        await client.media.deleteImage.mutate({ id: image.id, workspaceId });
+        throw r2Error;
+      }
 
-      const updatedImage = await client.media.updateImage.mutate({
+      // Step 3: Update database record with pending=false
+      let updatedImage;
+      try {
+        updatedImage = await client.media.updateImage.mutate({
         id: image.id,
         workspaceId,
         pending: false,
         bytes: object.size,
       });
+      } catch (dbError) {
+        // Database update failed - clean up the R2 object and database record
+        await env.IMAGES.delete(image.id);
+        await client.media.deleteImage.mutate({ id: image.id, workspaceId });
+        throw dbError;
+      }
 
       return new Response(JSON.stringify(updatedImage), {
         headers: {
