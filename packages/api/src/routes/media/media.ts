@@ -5,6 +5,7 @@ import type {
   CreateUploadURLSchema,
   CreateImageSchema,
   UpdateImageSchema,
+  DeleteImageSchema,
 } from "./schema";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 import { IMAGE_FIELDS } from "./fields";
@@ -51,5 +52,17 @@ export async function updateImage(
       pending,
     },
     select: IMAGE_FIELDS,
+  });
+}
+
+export async function deleteImage(
+  { id }: DeleteImageSchema,
+  { workspaceId }: AuthenticatedWorkspaceProcedureContext,
+) {
+  await prisma.image.delete({
+    where: {
+      id,
+      workspaceId,
+    },
   });
 }

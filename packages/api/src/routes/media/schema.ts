@@ -27,3 +27,9 @@ export const UpdateImageSchema = z.strictObject({
   pending: z.boolean().optional(),
 });
 export type UpdateImageSchema = z.infer<typeof UpdateImageSchema>;
+
+export const DeleteImageSchema = z.strictObject({
+  id: z.uuid(),
+  workspaceId: z.uuid(),
+});
+export type DeleteImageSchema = z.infer<typeof DeleteImageSchema>;

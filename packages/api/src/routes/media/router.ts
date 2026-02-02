@@ -4,8 +4,14 @@ import {
   CreateUploadURLSchema,
   CreateImageSchema,
   UpdateImageSchema,
+  DeleteImageSchema,
 } from "./schema.ts";
-import { createUploadUrl, createImage, updateImage } from "./media.ts";
+import {
+  createUploadUrl,
+  createImage,
+  updateImage,
+  deleteImage,
+} from "./media.ts";
 
 export default router({
   createUploadUrl: authenticatedWorkspaceProcedure
@@ -21,4 +27,9 @@ export default router({
   updateImage: authenticatedWorkspaceProcedure
     .input(UpdateImageSchema)
     .mutation(({ input, ctx }) => updateImage(input, ctx)),
+
+  // TODO: Restrict access to services
+  deleteImage: authenticatedWorkspaceProcedure
+    .input(DeleteImageSchema)
+    .mutation(({ input, ctx }) => deleteImage(input, ctx)),
 });
