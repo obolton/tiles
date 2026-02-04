@@ -72,9 +72,6 @@ export namespace JSX {
   > &
     WithProperties<ElementTypeFor<TagName>> & {
       ref?: Ref<ElementTypeFor<TagName>>;
-      classList?:
-        | (string | null | undefined | Reactive<string | null | undefined>)[]
-        | { [k: string]: boolean | Reactive<boolean> | null | undefined };
       children?: Node;
       [k: DataAttribute]: string | number | null | undefined;
     } & EventHandlers;

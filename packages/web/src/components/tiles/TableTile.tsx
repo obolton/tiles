@@ -285,7 +285,7 @@ export default function TableTile({
     <Tile>
       <table-view
         ref={ref}
-        classList={["rich-text", styles.table]}
+        classList={{ "rich-text": true, [styles.table]: true }}
         columns={columns.derive((value) => value.length)}
         rows={numRows}
         editable={isEditable}

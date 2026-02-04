@@ -1,4 +1,4 @@
-import { hydrateNode, render } from "./dom";
+import { hydrateNode, render, createPlaceholderNode } from "./dom";
 import { moveBefore } from "@/utils/dom";
 import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "./jsx";
@@ -58,7 +58,7 @@ export default class Each<T> implements JSX.ElementClass {
     }
 
     if (!this.anchor) {
-      this.anchor = this.createPlaceholderNode();
+      this.anchor = createPlaceholderNode();
       container.insertBefore(this.anchor, container.childNodes[index] ?? null);
       hydrated.push(this.anchor);
     }
@@ -85,15 +85,11 @@ export default class Each<T> implements JSX.ElementClass {
     });
 
     if (!this.anchor) {
-      this.anchor = this.createPlaceholderNode();
+      this.anchor = createPlaceholderNode();
       return this.anchor;
     }
 
     return nodes;
-  }
-
-  private createPlaceholderNode() {
-    return document.createComment("");
   }
 
   private getCombinedSignal(abort: AbortController) {
@@ -163,7 +159,7 @@ export default class Each<T> implements JSX.ElementClass {
     }
 
     if (!this.anchor) {
-      this.anchor = this.createPlaceholderNode();
+      this.anchor = createPlaceholderNode();
       container.insertBefore(this.anchor, container.childNodes[index] ?? null);
     }
 

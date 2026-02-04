@@ -1,7 +1,13 @@
 import { isReactive } from "@/utils/reactivity";
-import { transformCSSProperty } from "@/utils/css";
 import { isClassComponent } from "./jsx";
-import { BOOLEAN_STRING_ATTRIBUTES } from "./attributes";
+import { isEmptyNode, isTextNode, isElementNode } from "./node-types";
+import {
+  BOOLEAN_STRING_ATTRIBUTES,
+  applyClassList,
+  applyStyleObject,
+  mapAttributeName,
+} from "./attributes";
+import type { ClassList, StyleDeclaration } from "./html-attributes";
 import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "./jsx";
 
@@ -14,22 +20,6 @@ interface MutableRange {
   anchor: Node;
   length: number;
   abort: AbortController;
-}
-
-function isEmptyNode(node: JSX.Node) {
-  return typeof node === "boolean" || node === undefined || node === null;
-}
-
-function isTextNode(node: JSX.Node) {
-  return (
-    typeof node === "string" ||
-    typeof node === "number" ||
-    typeof node === "bigint"
-  );
-}
-
-function isElementNode(node: JSX.Node) {
-  return typeof node === "object" && node !== null && "type" in node;
 }
 
 function getNamespace(tagName: string) {
@@ -113,78 +103,21 @@ function setAttribute(
   if (name === "signal") {
     return;
   }
-  const mappedName = name === "className" ? "class" : name;
+  const mappedName = mapAttributeName(name);
 
   if (isReactive(value)) {
     setAttribute(element, name, value.value);
     value.subscribe(() => setAttribute(element, name, value.value), signal);
   } else if (value === null || typeof value === "undefined") {
     element.removeAttribute(mappedName);
-  } else if (mappedName === "classList" && Array.isArray(value)) {
-    for (const className of element.classList.values()) {
-      if (!value.includes(className)) {
-        element.classList.remove(className);
-      }
-    }
-    for (const className of value) {
-      if (isReactive(className)) {
-        let value = className.value;
-        if (typeof value === "string") {
-          element.classList.add(value);
-        }
-        className.subscribe(() => {
-          if (typeof value === "string") {
-            element.classList.remove(value);
-          }
-          value = className.value;
-          if (typeof value === "string") {
-            element.classList.add(value);
-          }
-        }, signal);
-      } else if (typeof className === "string") {
-        element.classList.add(className);
-      }
-    }
   } else if (mappedName === "classList" && typeof value === "object") {
-    for (const className of element.classList.values()) {
-      if (
-        !(className in value) ||
-        !(value as Record<string, unknown>)[className]
-      ) {
-        element.classList.remove(className);
-      }
-    }
-    for (const [className, enabled] of Object.entries(value)) {
-      if (isReactive(enabled)) {
-        if (enabled.value) {
-          element.classList.add(className);
-        }
-        enabled.subscribe(() => {
-          if (enabled.value) {
-            element.classList.add(className);
-          } else {
-            element.classList.remove(className);
-          }
-        }, signal);
-      } else if (enabled) {
-        element.classList.add(className);
-      } else {
-        element.classList.remove(className);
-      }
-    }
+    applyClassList(element, value as ClassList, signal);
   } else if (
     mappedName === "style" &&
     (element instanceof HTMLElement || element instanceof SVGElement) &&
     typeof value === "object"
   ) {
-    for (const [styleProperty, styleValue] of Object.entries(value)) {
-      const transformedProperty = transformCSSProperty(styleProperty);
-      if (typeof styleValue === "string" || typeof styleValue === "number") {
-        element.style.setProperty(transformedProperty, styleValue.toString());
-      } else {
-        element.style.removeProperty(transformedProperty);
-      }
-    }
+    applyStyleObject(element, value as StyleDeclaration, signal);
   } else if (BOOLEAN_STRING_ATTRIBUTES.has(mappedName)) {
     element.setAttribute(
       mappedName,
@@ -395,7 +328,7 @@ export function hydrateNode(
   throw new Error("Hydration error: invalid node");
 }
 
-function createPlaceholderNode() {
+export function createPlaceholderNode(): Comment {
   return document.createComment("");
 }
 

@@ -10,6 +10,24 @@
   & li[role="checkbox"]::after {
     cursor: pointer;
   }
+
+  & time {
+    cursor: pointer;
+  }
+
+  &:focus {
+    & [data-placeholder] {
+      position: relative;
+
+      &::before {
+        content: attr(data-placeholder);
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        color: var(--placeholder-color);
+      }
+    }
+  }
 }
 
 .align-top {

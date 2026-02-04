@@ -33,7 +33,7 @@ export default function PageLinkTile({
 
   if (!page) {
     return (
-      <Tile className={styles.deleted}>
+      <Tile classList={{ [styles.deleted]: true }}>
         <p>This page has been deleted.</p>
       </Tile>
     );

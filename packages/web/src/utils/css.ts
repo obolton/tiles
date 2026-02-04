@@ -1,3 +1,5 @@
+import type { ClassList } from "@/jsx/html-attributes";
+
 export function classNames(...args: (string | null | undefined | false)[]) {
   return args
     .filter(
@@ -6,17 +8,24 @@ export function classNames(...args: (string | null | undefined | false)[]) {
     .join(" ");
 }
 
-export function transformCSSProperty(name: string) {
-  return name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-}
-
-export function serializeStyles(styles: object) {
-  const rules: string[] = [];
-  for (const [name, value] of Object.entries(styles)) {
-    if (!(typeof value === "string" || typeof value === "number")) {
-      continue;
+/**
+ * Merges multiple class lists objects into one.
+ *
+ * @example
+ * classList(
+ *   { [styles.button]: true, primary: true },
+ *   props.classList,
+ *   { pending: isPending }
+ * )
+ */
+export function classList(
+  ...sources: (ClassList | undefined | null | false)[]
+): ClassList {
+  const result: ClassList = {};
+  for (const source of sources) {
+    if (source) {
+      Object.assign(result, source);
     }
-    rules.push(transformCSSProperty(name) + ":" + value);
   }
-  return rules.join(";");
+  return result;
 }

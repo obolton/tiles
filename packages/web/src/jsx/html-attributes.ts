@@ -4,17 +4,34 @@
  * For DOM property access, use the $-prefixed syntax (e.g., $tabIndex).
  */
 
+import type { Reactive } from "@/utils/reactivity";
+
 // Style types
+
+export type ClassList = {
+  [className: string]:
+    | boolean
+    | null
+    | undefined
+    | Reactive<boolean | null | undefined>;
+};
+
+export type StyleValue = string | number | null | undefined;
+
 export type CustomCSSProperty = `--${string}`;
 
-export type StyleDeclaration = Partial<CSSStyleDeclaration> &
-  Record<CustomCSSProperty, string | undefined>;
+export type StyleDeclaration = {
+  [K in keyof CSSStyleDeclaration | CustomCSSProperty]?:
+    | StyleValue
+    | Reactive<StyleValue>;
+};
 
 // Global attributes shared by all HTML elements
 export interface GlobalHTMLAttributes {
   id?: string;
   class?: string;
-  className?: string; // Alias for class, mapped in runtime
+  className?: string; // Alias for class
+  classList?: ClassList;
   style?: StyleDeclaration | string;
   title?: string;
   tabindex?: number;

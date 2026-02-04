@@ -36,18 +36,13 @@ export default function Section({
     });
   }
 
-  const layoutClass = layout.derive((value) => {
-    switch (value) {
-      case "GRID":
-        return styles.grid;
-      case "HORIZONTAL":
-        return styles.horizontal;
-      case "VERTICAL":
-        return styles.vertical;
-      case "FREEFORM":
-        return styles.freeform;
-    }
-  });
+  const classList = layout.derive((value) => ({
+    [styles.contents]: true,
+    [styles.grid]: value === "GRID",
+    [styles.horizontal]: value === "HORIZONTAL",
+    [styles.vertical]: value === "VERTICAL",
+    [styles.freeform]: value === "FREEFORM",
+  }));
 
   const resize = combine({ isEditable, layout }, ({ isEditable, layout }) => {
     if (!isEditable) {
@@ -70,7 +65,7 @@ export default function Section({
   return (
     <scroll-view
       ref={ref}
-      classList={[styles.contents, layoutClass]}
+      classList={classList}
       data-section-id={id}
       data-layout={layout}
       tabindex={tabindex}

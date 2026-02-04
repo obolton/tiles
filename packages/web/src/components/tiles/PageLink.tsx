@@ -25,7 +25,7 @@ export default function PageLink({
       target={target}
       {...props}
     >
-      <Tile className={styles.tile}>
+      <Tile classList={{ [styles.tile]: true }}>
         <p
           classList={{
             [styles.text]: true,

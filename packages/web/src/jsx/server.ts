@@ -1,8 +1,14 @@
 import { escapeUTF8 } from "entities";
 import { isReactive } from "@/utils/reactivity";
-import { serializeStyles } from "@/utils/css";
 import { isClassComponent } from "./jsx";
-import { BOOLEAN_STRING_ATTRIBUTES } from "./attributes";
+import { isEmptyNode, isTextNode, isElementNode } from "./node-types";
+import {
+  BOOLEAN_STRING_ATTRIBUTES,
+  serializeClassList,
+  serializeStyles,
+  mapAttributeName,
+} from "./attributes";
+import type { ClassList } from "./html-attributes";
 import type { JSX } from "./jsx";
 
 // https://developer.mozilla.org/en-US/docs/Glossary/Void_element
@@ -27,15 +33,11 @@ export function renderToString(node: JSX.Node): string {
     return renderToString(node.value);
   }
 
-  if (
-    typeof node === "string" ||
-    typeof node === "number" ||
-    typeof node === "bigint"
-  ) {
+  if (isTextNode(node)) {
     return node.toString();
   }
 
-  if (typeof node === "boolean" || node === undefined || node === null) {
+  if (isEmptyNode(node)) {
     return "";
   }
 
@@ -43,7 +45,7 @@ export function renderToString(node: JSX.Node): string {
     return renderFragment(node);
   }
 
-  if ("type" in node) {
+  if (isElementNode(node)) {
     return renderElement(node);
   }
 
@@ -91,15 +93,6 @@ function renderElement<T extends JSX.ElementType>({
   }
 }
 
-function mapAttributeName(name: string) {
-  switch (name) {
-    case "className":
-      return "class";
-    default:
-      return name.toLowerCase();
-  }
-}
-
 function getDOMAttributes(properties: Record<string, unknown>) {
   const attributes: string[] = [];
   for (const [name, valueOrStore] of Object.entries(properties)) {
@@ -117,20 +110,9 @@ function getDOMAttributes(properties: Record<string, unknown>) {
     }
 
     const attributeName = mapAttributeName(name);
-    if (attributeName === "classlist") {
-      if (Array.isArray(value)) {
-        const classNames = value
-          .map((value) => (isReactive(value) ? value.value : value))
-          .filter((value) => typeof value === "string" && value.length > 0)
-          .join(" ");
-        attributes.push('class="' + escapeUTF8(classNames) + '"');
-      } else if (typeof value === "object" && value !== null) {
-        const classNames = Object.entries(value)
-          .filter(([, enabled]) =>
-            isReactive(enabled) ? enabled.value : enabled,
-          )
-          .map(([name]) => name)
-          .join(" ");
+    if (attributeName === "classlist" && typeof value === "object") {
+      const classNames = serializeClassList(value as ClassList);
+      if (classNames) {
         attributes.push('class="' + escapeUTF8(classNames) + '"');
       }
     } else if (attributeName === "style" && typeof value === "object") {

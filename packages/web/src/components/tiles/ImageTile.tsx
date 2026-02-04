@@ -66,7 +66,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
 
   if (!imageUrl) {
     return (
-      <Tile className={styles.deleted}>
+      <Tile classList={{ [styles.deleted]: true }}>
         <p>This image has been deleted.</p>
       </Tile>
     );
@@ -119,7 +119,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
             <TextEditor
               editorView={editorView}
               state={state}
-              classList={[styles.caption]}
+              classList={{ [styles.caption]: true }}
               initialValue={text.value}
               on:keydown={onKeyDown}
               on:blur={() => image.persistText()}
@@ -127,7 +127,9 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
           ) : (
             text.derive((value) =>
               value ? (
-                <figcaption classList={["rich-text", styles.caption]}>
+                <figcaption
+                  classList={{ "rich-text": true, [styles.caption]: true }}
+                >
                   <RichText content={value} />
                 </figcaption>
               ) : null,

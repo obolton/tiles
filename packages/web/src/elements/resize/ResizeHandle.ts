@@ -1,9 +1,10 @@
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import { ResizeEvent } from "./events";
+import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 export type ResizeDirection = "horizontal" | "vertical";
 
-export interface ResizeHandleAttributes {
+export interface ResizeHandleAttributes extends GlobalHTMLAttributes {
   direction?: ResizeDirection;
 }
 
