@@ -19,6 +19,7 @@
     "cookie": "^1.1.1"
   },
   "devDependencies": {
+    "@types/node": "^24.3.0",
     "wrangler": "^4.59.1"
   }
 }

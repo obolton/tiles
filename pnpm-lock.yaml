@@ -100,6 +100,9 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1
     devDependencies:
+      '@types/node':
+        specifier: ^24.3.0
+        version: 24.10.1
       wrangler:
         specifier: ^4.59.1
         version: 4.59.1
