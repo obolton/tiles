@@ -19,6 +19,12 @@ export class UnauthorizedError extends HttpError {
   }
 }
 
+export class MethodNotAllowedError extends HttpError {
+  constructor() {
+    super(405, "Method Not Allowed");
+  }
+}
+
 export class LengthRequiredError extends HttpError {
   constructor() {
     super(411, "Length Required");
@@ -28,5 +34,17 @@ export class LengthRequiredError extends HttpError {
 export class ContentTooLargeError extends HttpError {
   constructor() {
     super(413, "Content Too Large");
+  }
+}
+
+export class UnsupportedMediaTypeError extends HttpError {
+  constructor() {
+    super(415, "Unsupported Media Type");
+  }
+}
+
+export class InternalServerError extends HttpError {
+  constructor(message = "Internal Server Error") {
+    super(500, message);
   }
 }
