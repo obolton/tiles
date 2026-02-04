@@ -1,148 +1,27 @@
-import { parse } from "cookie";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import type { AppRouter } from "api/routes/index";
-import { HttpError, BadRequestError, UnauthorizedError } from "./errors";
-import { validateContentLength } from "./validation";
-
-const SERVICE_NAME = "image-upload-worker";
-const SESSION_COOKIE_NAME = "__Secure-session";
-const ACCESS_CONTROL_MAX_AGE = 3600; // 1 hour
-
-function createClient(sessionId: string, env: Env) {
-  return createTRPCClient<AppRouter>({
-    links: [
-      httpBatchLink({
-        url: env.PUBLIC_API_ORIGIN,
-        headers() {
-          return {
-            Authorization: `Bearer ${sessionId}`,
-            "X-Service-Name": SERVICE_NAME,
-          };
-        },
-      }),
-    ],
-  });
-}
-
-export function getPurpose(purpose: string) {
-  switch (purpose.toLowerCase()) {
-    case "content":
-      return "CONTENT";
-    case "profile":
-      return "PROFILE";
-    default:
-      throw new BadRequestError("Invalid purpose");
-  }
-}
-
-export function getImageType(contentType: string) {
-  switch (contentType.toLowerCase()) {
-    case "image/png":
-      return "PNG";
-    case "image/jpeg":
-      return "JPEG";
-    case "image/gif":
-      return "GIF";
-    case "image/webp":
-      return "WEBP";
-    default:
-      throw new BadRequestError("Invalid content type");
-  }
-}
+import { createClient } from "./client";
+import { HttpError } from "./errors";
+import { parseUploadRequest } from "./requests";
+import { createPreflightResponse, createJsonResponse } from "./responses";
+import { uploadImage } from "./upload";
 
 export default {
   async fetch(request, env): Promise<Response> {
     if (request.method === "OPTIONS") {
-      return new Response(null, {
-        status: 204,
-        headers: {
-          "Access-Control-Allow-Origin": env.PUBLIC_WEB_ORIGIN,
-          "Access-Control-Allow-Methods": "PUT",
-          "Access-Control-Allow-Headers": "Content-Type",
-          "Access-Control-Allow-Credentials": "true",
-          "Access-Control-Max-Age": ACCESS_CONTROL_MAX_AGE.toString(),
-        },
-      });
+      return createPreflightResponse();
     }
 
     try {
-      if (request.method !== "PUT") {
-        throw new BadRequestError("Invalid method");
-      }
+      const params = parseUploadRequest(request);
+      const client = createClient(params.sessionId);
+      const image = await uploadImage(params, request.body, client, env.IMAGES);
 
-      validateContentLength(request.headers.get("Content-Length"));
-
-      const cookie = parse(request.headers.get("Cookie") || "");
-      const sessionId = cookie[SESSION_COOKIE_NAME];
-
-      if (!sessionId) {
-        throw new UnauthorizedError();
-      }
-
-      const url = new URL(request.url);
-      const workspaceId = url.searchParams.get("workspaceId");
-      const purpose = getPurpose(url.searchParams.get("purpose") ?? "");
-      const type = getImageType(request.headers.get("Content-Type") ?? "");
-
-      if (!workspaceId) {
-        throw new BadRequestError("Invalid workspace ID");
-      }
-
-      const client = createClient(sessionId, env);
-
-      // Step 1: Create database record with pending=true
-      const image = await client.media.createImage.mutate({
-        workspaceId,
-        source: "UPLOAD",
-        purpose,
-        type,
-        pending: true,
-      });
-
-      // Step 2: Upload to R2
-      let object: R2Object;
-      try {
-        object = await env.IMAGES.put(image.id, request.body, {
-          customMetadata: {
-            workspace: image.workspaceId,
-            user: image.userId,
-          },
-        });
-      } catch (r2Error) {
-        // R2 upload failed - clean up the database record
-        await client.media.deleteImage.mutate({ id: image.id, workspaceId });
-        throw r2Error;
-      }
-
-      // Step 3: Update database record with pending=false
-      let updatedImage;
-      try {
-        updatedImage = await client.media.updateImage.mutate({
-          id: image.id,
-          workspaceId,
-          pending: false,
-          bytes: object.size,
-        });
-      } catch (dbError) {
-        // Database update failed - clean up the R2 object and database record
-        await env.IMAGES.delete(image.id);
-        await client.media.deleteImage.mutate({ id: image.id, workspaceId });
-        throw dbError;
-      }
-
-      return new Response(JSON.stringify(updatedImage), {
-        headers: {
-          "Access-Control-Allow-Origin": env.PUBLIC_WEB_ORIGIN,
-          "Access-Control-Allow-Credentials": "true",
-          "Content-Type": "application/json",
-        },
-      });
+      return createJsonResponse(image);
     } catch (error) {
       if (error instanceof HttpError) {
-        return new Response(error.message, { status: error.status });
+        return createJsonResponse({ error: error.message }, error.status);
       }
 
-      return new Response("Server Error", { status: 500 });
+      return createJsonResponse({ error: "Server Error" }, 500);
     }
   },
 } satisfies ExportedHandler<Env>;
