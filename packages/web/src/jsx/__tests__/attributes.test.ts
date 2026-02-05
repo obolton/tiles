@@ -15,14 +15,15 @@ describe("mapAttributeName", () => {
     expect(mapAttributeName("className")).toBe("class");
   });
 
-  test("lowercases attribute names", () => {
-    expect(mapAttributeName("tabIndex")).toBe("tabindex");
-    expect(mapAttributeName("autoFocus")).toBe("autofocus");
+  test("maps htmlFor to for", () => {
+    expect(mapAttributeName("htmlFor")).toBe("for");
   });
 
-  test("preserves already lowercase names", () => {
-    expect(mapAttributeName("id")).toBe("id");
-    expect(mapAttributeName("href")).toBe("href");
+  test("preserves attribute name casing", () => {
+    expect(mapAttributeName("viewBox")).toBe("viewBox");
+    expect(mapAttributeName("preserveAspectRatio")).toBe("preserveAspectRatio");
+    expect(mapAttributeName("tabIndex")).toBe("tabIndex");
+    expect(mapAttributeName("autoFocus")).toBe("autoFocus");
   });
 
   test("handles data attributes", () => {

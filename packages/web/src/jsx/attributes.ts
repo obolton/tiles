@@ -9,7 +9,10 @@ export function mapAttributeName(name: string): string {
   if (name === "className") {
     return "class";
   }
-  return name.toLowerCase();
+  if (name === "htmlFor") {
+    return "for";
+  }
+  return name;
 }
 
 /**
