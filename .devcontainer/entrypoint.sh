@@ -24,4 +24,4 @@ if [ -n "$WORKSPACE" ]; then
 fi
 
 # Drop to node user and execute the command
-exec su node -s /bin/sh -c "$*"
+exec su node -s /bin/zsh -c "$*"

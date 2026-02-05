@@ -9,7 +9,13 @@ RUN corepack enable
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
     postgresql-client \
+    zsh \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+# Set Zsh as the default shell
+RUN chsh -s /bin/zsh node \
+    && touch /home/node/.zshrc \
+    && chown node:node /home/node/.zshrc
 
 WORKDIR /projects
 
