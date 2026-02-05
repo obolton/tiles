@@ -51,7 +51,9 @@ export default function InsertMenu({
   ...props
 }: InsertMenuProps) {
   function getBeforeId() {
-    if (!afterId) return null;
+    if (!afterId) {
+      return null;
+    }
     const tile = Editor.current.getTile(afterId);
     return tile?.next?.id ?? null;
   }

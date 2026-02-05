@@ -24,9 +24,12 @@ export default function ColorPanel({ value, onChange }: ColorPanelProps) {
   const currentEditingColor = combine(
     { value, activeColor },
     ({ value, activeColor }) => {
-      if (value?.type === "color") return value.color;
-      if (value?.type === "gradient")
+      if (value?.type === "color") {
+        return value.color;
+      }
+      if (value?.type === "gradient") {
         return activeColor === "A" ? value.colorA : value.colorB;
+      }
       return null;
     },
   );
@@ -73,8 +76,12 @@ export default function ColorPanel({ value, onChange }: ColorPanelProps) {
     <div className={styles.panel}>
       <GradientPalette
         colors={value.derive((bg) => {
-          if (bg?.type === "color") return [bg.color];
-          if (bg?.type === "gradient") return [bg.colorA, bg.colorB];
+          if (bg?.type === "color") {
+            return [bg.color];
+          }
+          if (bg?.type === "gradient") {
+            return [bg.colorA, bg.colorB];
+          }
           return [];
         })}
         value={value.derive((bg) => (bg?.type === "gradient" ? bg : null))}

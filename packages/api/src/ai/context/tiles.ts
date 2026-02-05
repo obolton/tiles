@@ -10,7 +10,9 @@ export async function fetchTilesForContext(
   tileIds: string[],
   pageId: string,
 ): Promise<ClientTile[]> {
-  if (tileIds.length === 0) return [];
+  if (tileIds.length === 0) {
+    return [];
+  }
 
   const tiles = await prisma.tile.findMany({
     where: {

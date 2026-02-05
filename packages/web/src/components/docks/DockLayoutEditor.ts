@@ -210,12 +210,16 @@ export default class DockLayoutEditor {
     }
 
     const tiles = this.editor.dockedTiles[this.edge].value;
-    if (tiles.length < 2) return;
+    if (tiles.length < 2) {
+      return;
+    }
 
     for (let i = 0; i < tiles.length - 1; i++) {
       const beforeTile = tiles[i];
       const afterTile = tiles[i + 1];
-      if (!beforeTile || !afterTile) continue;
+      if (!beforeTile || !afterTile) {
+        continue;
+      }
 
       const afterElement = document.getElementById(afterTile.id);
       if (afterElement) {
@@ -249,17 +253,23 @@ export default class DockLayoutEditor {
 
     const beforeId = target.dataset.beforeId;
     const afterId = target.dataset.afterId;
-    if (!beforeId || !afterId) return;
+    if (!beforeId || !afterId) {
+      return;
+    }
 
     const beforeTile = this.editor.getTile(beforeId);
     const afterTile = this.editor.getTile(afterId);
-    if (!beforeTile || !afterTile) return;
+    if (!beforeTile || !afterTile) {
+      return;
+    }
 
     event.stopPropagation();
 
     const beforeElement = document.getElementById(beforeId);
     const afterElement = document.getElementById(afterId);
-    if (!beforeElement || !afterElement) return;
+    if (!beforeElement || !afterElement) {
+      return;
+    }
 
     const delta = this.isHorizontal ? event.x : event.y;
     const beforeRect = beforeElement.getBoundingClientRect();

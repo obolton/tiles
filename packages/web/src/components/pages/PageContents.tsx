@@ -40,7 +40,9 @@ export default function PageContents({
             tile={tile}
             tabindex={tabindex}
             resize={tile.dimensions.derive((value) => {
-              if (value !== "CUSTOM") return null;
+              if (value !== "CUSTOM") {
+                return null;
+              }
               return tile.type === "TEXT" ? "horizontal" : "all";
             })}
             autoHeight={tile.type === "TEXT"}
