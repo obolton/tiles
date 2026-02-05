@@ -1,13 +1,7 @@
 {
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "oxc", "import"],
-  "categories": {
-    "correctness": "error",
-    "suspicious": "warn"
-  },
+  "extends": ["../../.oxlintrc.json"],
   "env": {
-    "builtin": true,
     "node": true
-  },
-  "rules": {}
+  }
 }
