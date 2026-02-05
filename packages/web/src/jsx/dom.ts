@@ -110,7 +110,7 @@ function setAttribute(
     value.subscribe(() => setAttribute(element, name, value.value), signal);
   } else if (value === null || typeof value === "undefined") {
     element.removeAttribute(mappedName);
-  } else if (mappedName === "classList" && typeof value === "object") {
+  } else if (mappedName === "classlist" && typeof value === "object") {
     applyClassList(element, value as ClassList, signal);
   } else if (
     mappedName === "style" &&
