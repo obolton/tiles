@@ -1,6 +1,6 @@
-import type { Page } from "@/editor/Editor";
+import type { PageData } from "@/editor/Editor";
 
-export const PAGE: Page = {
+export const PAGE: PageData = {
   id: "page-id",
   workspaceId: "workspace-id",
   updatedAt: "2025-01-01",
