@@ -401,8 +401,8 @@ export default class Tile {
 
     if (dock) {
       this.editor.dockedTiles[dock].insertBefore(beforeId ?? null, this);
-      if (this.editor.dockSizes.value[dock] === null) {
-        this.editor.setDockSizes({ [dock]: DEFAULT_DOCK_SIZE });
+      if (this.editor.page.dockSizes.value[dock] === null) {
+        this.editor.page.setDockSizes({ [dock]: DEFAULT_DOCK_SIZE });
       }
     } else {
       this.editor.tiles.insertBefore(beforeId ?? null, this);
