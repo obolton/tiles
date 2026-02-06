@@ -1,5 +1,4 @@
 import { describe, expect, test } from "vitest";
-import "fake-indexeddb/auto";
 import { keyRange } from "../key-range";
 
 describe("keyRange", () => {

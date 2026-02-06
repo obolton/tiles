@@ -1,5 +1,4 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
-import "fake-indexeddb/auto";
 import { getIsBookmarked, setIsBookmarked } from "../bookmarks";
 import { initializeCache, destroyCache, getBookmarksStore } from "../cache";
 import client from "@/api/client";

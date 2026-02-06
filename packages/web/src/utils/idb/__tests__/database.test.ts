@@ -1,5 +1,4 @@
 import { describe, expect, test, beforeEach, afterEach } from "vitest";
-import "fake-indexeddb/auto";
 import { Database } from "../database";
 import { ObjectStore } from "../object-store";
 

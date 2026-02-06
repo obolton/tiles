@@ -1,5 +1,6 @@
 // oxlint-disable no-extend-native
 import { vi } from "vitest";
+import "fake-indexeddb/auto";
 import DOMPoint from "./mocks/DOMPoint";
 import ToggleEvent from "./mocks/ToggleEvent";
 import DragEvent from "./mocks/DragEvent";

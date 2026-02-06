@@ -1,5 +1,4 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
-import "fake-indexeddb/auto";
 import {
   getCachedWorkspaceFolders,
   getWorkspaceFolders,
