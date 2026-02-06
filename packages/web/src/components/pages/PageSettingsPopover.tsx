@@ -13,20 +13,20 @@ import { themesCache } from "@/utils/cache";
 import { getThemeStyles } from "@/utils/themes";
 import styles from "./PageSettingsPopover.module.css";
 import type { FontId } from "@/config/fonts";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type { JSX } from "@/jsx/jsx";
 
 export interface PageSettingsPopoverProps extends JSX.Attributes<"popover-menu"> {
-  editor: Editor;
+  page: Page;
   allowDelete?: boolean;
 }
 
 export default function PageSettingsPopover({
-  editor,
+  page,
   allowDelete,
   ...props
 }: PageSettingsPopoverProps) {
-  const { title, backgroundColor, font, folderId, themeId } = editor;
+  const { title, backgroundColor, font, folderId, themeId } = page;
 
   function onSubmit(event: Event) {
     event.preventDefault();
@@ -35,7 +35,7 @@ export default function PageSettingsPopover({
     const formData = new FormData(form);
     const title = formData.get("title") as string;
 
-    editor.setPageTitle(title).catch(handleError);
+    page.setTitle(title).catch(handleError);
   }
 
   function onTitleBlur(event: Event) {
@@ -47,7 +47,7 @@ export default function PageSettingsPopover({
     viewTransition(() => {
       document.body.style.setProperty("--font", getFontConfig(font).family);
     });
-    editor.setFont(font).catch(handleError);
+    page.setFont(font).catch(handleError);
   }
 
   function setColor(value: Color | null) {
@@ -63,11 +63,11 @@ export default function PageSettingsPopover({
       }
       document.body.style.setProperty("--background-color", toCSSColor(value));
     });
-    editor.setBackgroundColor(value).catch(handleError);
+    page.setBackgroundColor(value).catch(handleError);
   }
 
   function setFolder(folderId: string | null) {
-    editor.setFolder(folderId).catch(handleError);
+    page.setFolder(folderId).catch(handleError);
   }
 
   function setTheme(newThemeId: string | null) {
@@ -87,15 +87,15 @@ export default function PageSettingsPopover({
       document.body.classList.toggle("dark", !!bgColor && isDark(bgColor));
     });
 
-    editor.setTheme(newThemeId).catch(handleError);
+    page.setTheme(newThemeId).catch(handleError);
   }
 
   function deletePage() {
-    editor
-      .deletePage()
+    page
+      .delete()
       .then(() =>
         redirectWithToast(
-          `/workspaces/${editor.workspaceId}/trash`,
+          `/workspaces/${page.workspaceId}/trash`,
           "The page was deleted.",
           "success",
         ),

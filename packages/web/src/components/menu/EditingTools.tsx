@@ -61,7 +61,7 @@ export default function EditingTools({
         </ToolbarButton>
 
         <PageSettingsPopover
-          editor={editor}
+          page={editor.page}
           allowDelete={allowDelete}
           id="page-settings-popover"
         />

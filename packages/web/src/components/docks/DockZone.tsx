@@ -27,7 +27,7 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
 
   const dimension = isHorizontal ? "height" : "width";
 
-  const zoneStyle = editor.dockSizes.derive((sizes) => {
+  const zoneStyle = editor.page.dockSizes.derive((sizes) => {
     const size = sizes[edge];
     return size !== null ? { [dimension]: `${size}px` } : {};
   });
@@ -48,7 +48,7 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
   const zoneResizeDirection = isHorizontal ? "vertical" : "horizontal";
 
   function onZoneResizeEnd(event: ResizeEvent) {
-    const initialSize = editor.dockSizes.value[edge] ?? 0;
+    const initialSize = editor.page.dockSizes.value[edge] ?? 0;
 
     let delta: number;
     switch (edge) {
@@ -75,7 +75,7 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
       Math.min(maxSize, initialSize + delta),
     );
 
-    editor.setDockSizes({ [edge]: newSize });
+    editor.page.setDockSizes({ [edge]: newSize });
   }
 
   const Element =

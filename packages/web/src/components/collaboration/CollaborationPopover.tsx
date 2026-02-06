@@ -21,12 +21,13 @@ export default function CollaborationPopover({
   editor,
   ...props
 }: CollaborationPopoverProps) {
-  const { access, invites, isPublished } = editor;
+  const { access, invites } = editor;
+  const { isPublished } = editor.page;
 
   function setPublished(event: Event) {
     const input = event.currentTarget as HTMLInputElement;
     const publish = input.checked;
-    editor
+    editor.page
       .setPublished(publish)
       .then(() =>
         publish
@@ -89,7 +90,7 @@ export default function CollaborationPopover({
       <ul>
         <li>
           <UserRow
-            user={editor.author}
+            user={editor.page.author}
             description="Owner"
             showRemoveButton={false}
             onRemove={revokeAccess}
