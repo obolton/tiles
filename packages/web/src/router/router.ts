@@ -47,6 +47,7 @@ export interface ComponentRoute<T> {
   loader?: RouteLoader<T>;
   component: JSX.Component<T>;
   metadata?: RouteMetadata;
+  hydrate?: "immediate" | "deferred" | null;
 }
 
 export type APIRequestHandler = (
