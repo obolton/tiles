@@ -1,14 +1,14 @@
 import type { ClientImageTile } from "api/types/tiles";
-import type { Operation } from "./base";
+import type { Action } from "./base";
 
-export interface ImageUpdateData {
+export interface SetImagePropertiesData {
   tileId: string;
   changes: Partial<Pick<ClientImageTile, "text" | "originX" | "originY">>;
 }
 
-export interface ImageUpdateOperation extends Operation<
-  "image.update",
-  ImageUpdateData
+export interface SetImagePropertiesAction extends Action<
+  "image.setProperties",
+  SetImagePropertiesData
 > {}
 
-export type ImageOperation = ImageUpdateOperation;
+export type ImageAction = SetImagePropertiesAction;

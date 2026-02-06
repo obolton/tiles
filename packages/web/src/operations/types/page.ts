@@ -1,18 +1,18 @@
 import type { AppRouterInputs } from "@/api/client";
-import type { Operation } from "./base";
+import type { Action } from "./base";
 
 export type PagePropertyChanges = Omit<
   AppRouterInputs["pages"]["update"],
   "pageId"
 >;
 
-export interface PageUpdateData {
+export interface SetPagePropertiesData {
   changes: PagePropertyChanges;
 }
 
-export interface PageUpdateOperation extends Operation<
-  "page.update",
-  PageUpdateData
+export interface SetPagePropertiesAction extends Action<
+  "page.setProperties",
+  SetPagePropertiesData
 > {}
 
-export type PageOperation = PageUpdateOperation;
+export type PageAction = SetPagePropertiesAction;

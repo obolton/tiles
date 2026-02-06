@@ -1,49 +1,43 @@
 import type { ClientTile } from "api/types/tiles";
-import type { Operation } from "./base";
+import type { Action } from "./base";
 
-export interface TileUpdateData {
+export type TilePropertyChanges = Partial<ClientTile> & {
+  sectionId?: string | null;
+  beforeId?: string | null;
+  themeId?: string | null;
+};
+
+export interface SetTilePropertiesData {
   tileId: string;
-  changes: Partial<ClientTile> & {
-    sectionId?: string | null;
-    beforeId?: string | null;
-  };
+  changes: TilePropertyChanges;
 }
 
-export interface TileUpdateOperation extends Operation<
-  "tile.update",
-  TileUpdateData
+export interface SetTilePropertiesAction extends Action<
+  "tile.setProperties",
+  SetTilePropertiesData
 > {}
 
-export interface TileDeleteData {
+// Delete tiles by ID
+export interface DeleteTilesData {
   tileIds: string[];
 }
 
-export interface TileDeleteInverse {
+export interface DeleteTilesAction extends Action<
+  "tile.delete",
+  DeleteTilesData
+> {}
+
+// Restore tiles from snapshots
+export interface RestoreTilesData {
   snapshots: ClientTile[];
 }
 
-export interface TileDeleteOperation extends Operation<
-  "tile.delete",
-  TileDeleteData,
-  TileDeleteInverse
+export interface RestoreTilesAction extends Action<
+  "tile.restore",
+  RestoreTilesData
 > {}
 
-export interface TileCreateData {
-  tileId: string;
-  sectionId: string | null;
-}
-
-export interface TileCreateInverse {
-  tileId: string;
-}
-
-export interface TileCreateOperation extends Operation<
-  "tile.create",
-  TileCreateData,
-  TileCreateInverse
-> {}
-
-export type TileOperation =
-  | TileUpdateOperation
-  | TileDeleteOperation
-  | TileCreateOperation;
+export type TileAction =
+  | SetTilePropertiesAction
+  | DeleteTilesAction
+  | RestoreTilesAction;
