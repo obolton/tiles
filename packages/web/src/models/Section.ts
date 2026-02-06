@@ -50,8 +50,14 @@ export default class Section extends Tile {
     const oldLayout = this.layout.value;
     this.layout.value = layout;
     this.editor.recordOperation({
-      apply: { type: "section.setLayout", data: { sectionId: this.id, layout } },
-      reverse: { type: "section.setLayout", data: { sectionId: this.id, layout: oldLayout } },
+      apply: {
+        type: "section.setLayout",
+        data: { sectionId: this.id, layout },
+      },
+      reverse: {
+        type: "section.setLayout",
+        data: { sectionId: this.id, layout: oldLayout },
+      },
     });
     return this.update({ layout });
   }

@@ -46,11 +46,19 @@ export default class Map extends Tile {
     this.places.value = result.places;
 
     // Find the newly added places (those not in the previous set)
-    const addedPlaces = result.places.filter((p) => !previousPlaceIds.has(p.id));
+    const addedPlaces = result.places.filter(
+      (p) => !previousPlaceIds.has(p.id),
+    );
 
     this.editor.recordOperation({
-      apply: { type: "map.addPlaces", data: { tileId: this.id, places: addedPlaces } },
-      reverse: { type: "map.removePlaces", data: { tileId: this.id, placeIds: addedPlaces.map((p) => p.id) } },
+      apply: {
+        type: "map.addPlaces",
+        data: { tileId: this.id, places: addedPlaces },
+      },
+      reverse: {
+        type: "map.removePlaces",
+        data: { tileId: this.id, placeIds: addedPlaces.map((p) => p.id) },
+      },
     });
   }
 
@@ -73,8 +81,14 @@ export default class Map extends Tile {
       const { id: placeId, ...changes } = place;
       const { id: _, ...previousChanges } = previousPlace;
       this.editor.recordOperation({
-        apply: { type: "map.setPlaceProperties", data: { tileId: this.id, placeId, changes } },
-        reverse: { type: "map.setPlaceProperties", data: { tileId: this.id, placeId, changes: previousChanges } },
+        apply: {
+          type: "map.setPlaceProperties",
+          data: { tileId: this.id, placeId, changes },
+        },
+        reverse: {
+          type: "map.setPlaceProperties",
+          data: { tileId: this.id, placeId, changes: previousChanges },
+        },
       });
     }
   }
@@ -92,7 +106,10 @@ export default class Map extends Tile {
 
     if (place) {
       this.editor.recordOperation({
-        apply: { type: "map.removePlaces", data: { tileId: this.id, placeIds: [placeId] } },
+        apply: {
+          type: "map.removePlaces",
+          data: { tileId: this.id, placeIds: [placeId] },
+        },
         reverse: { type: "map.restorePlace", data: { tileId: this.id, place } },
       });
     }
@@ -111,7 +128,10 @@ export default class Map extends Tile {
 
     this.editor.recordOperation({
       apply: { type: "map.setStyle", data: { tileId: this.id, style } },
-      reverse: { type: "map.setStyle", data: { tileId: this.id, style: previousStyle } },
+      reverse: {
+        type: "map.setStyle",
+        data: { tileId: this.id, style: previousStyle },
+      },
     });
   }
 }

@@ -66,8 +66,20 @@ export default class Image extends Tile {
     const oldOrigin = this.origin.value;
     this.origin.value = origin;
     this.editor.recordOperation({
-      apply: { type: "image.setProperties", data: { tileId: this.id, changes: { originX: origin.x, originY: origin.y } } },
-      reverse: { type: "image.setProperties", data: { tileId: this.id, changes: { originX: oldOrigin.x, originY: oldOrigin.y } } },
+      apply: {
+        type: "image.setProperties",
+        data: {
+          tileId: this.id,
+          changes: { originX: origin.x, originY: origin.y },
+        },
+      },
+      reverse: {
+        type: "image.setProperties",
+        data: {
+          tileId: this.id,
+          changes: { originX: oldOrigin.x, originY: oldOrigin.y },
+        },
+      },
     });
     return this.update({ origin });
   }
@@ -78,8 +90,14 @@ export default class Image extends Tile {
     const text = state ? serialize(state) : null;
     this.text.value = text;
     this.editor.recordOperation({
-      apply: { type: "image.setProperties", data: { tileId: this.id, changes: { text } } },
-      reverse: { type: "image.setProperties", data: { tileId: this.id, changes: { text: oldText } } },
+      apply: {
+        type: "image.setProperties",
+        data: { tileId: this.id, changes: { text } },
+      },
+      reverse: {
+        type: "image.setProperties",
+        data: { tileId: this.id, changes: { text: oldText } },
+      },
     });
     return this.update({ text });
   }

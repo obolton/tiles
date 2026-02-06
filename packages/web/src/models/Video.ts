@@ -40,8 +40,14 @@ export default class Video extends Tile {
     this.title.value = title;
 
     this.editor.recordOperation({
-      apply: { type: "video.setProperties", data: { tileId: this.id, changes: { title } } },
-      reverse: { type: "video.setProperties", data: { tileId: this.id, changes: { title: previousTitle } } },
+      apply: {
+        type: "video.setProperties",
+        data: { tileId: this.id, changes: { title } },
+      },
+      reverse: {
+        type: "video.setProperties",
+        data: { tileId: this.id, changes: { title: previousTitle } },
+      },
     });
 
     return this.update({ title });

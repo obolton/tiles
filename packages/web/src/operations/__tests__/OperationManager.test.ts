@@ -2,12 +2,19 @@ import { describe, expect, test, beforeEach, afterEach } from "vitest";
 import { OperationManager } from "../OperationManager";
 import type { Action, OperationInput } from "../types";
 
-interface TestAction extends Action<string, { tileId: string; changes: { x: number } }> {}
+interface TestAction extends Action<
+  string,
+  { tileId: string; changes: { x: number } }
+> {}
 
 function createMockOperation(id: string): OperationInput<TestAction> {
   return {
-    apply: [{ type: "tile.setProperties", data: { tileId: id, changes: { x: 10 } } }],
-    reverse: [{ type: "tile.setProperties", data: { tileId: id, changes: { x: 0 } } }],
+    apply: [
+      { type: "tile.setProperties", data: { tileId: id, changes: { x: 10 } } },
+    ],
+    reverse: [
+      { type: "tile.setProperties", data: { tileId: id, changes: { x: 0 } } },
+    ],
   };
 }
 
@@ -85,7 +92,6 @@ describe("OperationManager", () => {
       await manager2.clear();
       manager2.dispose();
     });
-
   });
 
   describe("persistence", () => {

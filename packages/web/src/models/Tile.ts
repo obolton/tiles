@@ -160,7 +160,10 @@ export default class Tile {
   ) {
     this.editor.recordOperation({
       apply: { type: "tile.setProperties", data: { tileId: this.id, changes } },
-      reverse: { type: "tile.setProperties", data: { tileId: this.id, changes: inverse } },
+      reverse: {
+        type: "tile.setProperties",
+        data: { tileId: this.id, changes: inverse },
+      },
     });
   }
 

@@ -99,7 +99,10 @@ export default class Link extends Tile {
     this.editor.recordOperation({
       apply: {
         type: "link.setProperties",
-        data: { tileId: this.id, changes: { url, title, description, siteName, imageUrl } },
+        data: {
+          tileId: this.id,
+          changes: { url, title, description, siteName, imageUrl },
+        },
       },
       reverse: {
         type: "link.setProperties",

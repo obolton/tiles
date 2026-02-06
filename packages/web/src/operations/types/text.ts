@@ -6,7 +6,9 @@ export interface SetTextPropertiesData {
   changes: Partial<Pick<ClientTextTile, "content" | "align">>;
 }
 
-export interface SetTextPropertiesAction
-  extends Action<"text.setProperties", SetTextPropertiesData> {}
+export interface SetTextPropertiesAction extends Action<
+  "text.setProperties",
+  SetTextPropertiesData
+> {}
 
 export type TextAction = SetTextPropertiesAction;
