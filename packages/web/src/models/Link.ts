@@ -32,15 +32,22 @@ export default class Link extends Tile {
     });
 
     switch (properties.type) {
-      case "LINK":
+      case "LINK": {
         const link = new Link(editor, properties);
         editor.addTile(link, properties.sectionId, data.beforeId);
         break;
-      case "VIDEO":
+      }
+      case "VIDEO": {
         const video = new Video(editor, properties);
         editor.addTile(video, properties.sectionId, data.beforeId);
         break;
+      }
     }
+
+    editor.recordOperation({
+      apply: { type: "tile.restore", data: { snapshots: [properties] } },
+      reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
+    });
   }
 
   constructor(editor: Editor, properties: ClientLinkTile) {
@@ -69,6 +76,15 @@ export default class Link extends Tile {
   }
 
   async setUrl(url: string) {
+    // Capture previous state before changes
+    const previousState = {
+      url: this.url.value,
+      title: this.title.value,
+      description: this.description.value,
+      siteName: this.siteName.value,
+      imageUrl: this.imageUrl.value,
+    };
+
     this.url.value = url;
     const { title, description, siteName, imageUrl } = await this.update({
       url,
@@ -78,5 +94,17 @@ export default class Link extends Tile {
     this.siteName.value = siteName;
     this.imageUrl.value = imageUrl;
     this.background.value = imageUrl ? { type: "image", imageUrl } : null;
+
+    // Record operation after API response with full state change
+    this.editor.recordOperation({
+      apply: {
+        type: "link.setProperties",
+        data: { tileId: this.id, changes: { url, title, description, siteName, imageUrl } },
+      },
+      reverse: {
+        type: "link.setProperties",
+        data: { tileId: this.id, changes: previousState },
+      },
+    });
   }
 }

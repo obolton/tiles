@@ -42,6 +42,10 @@ export default class Chart extends Tile {
     });
     const chart = new Chart(editor, properties);
     editor.addTile(chart, properties.sectionId, data.beforeId);
+    editor.recordOperation({
+      apply: { type: "tile.restore", data: { snapshots: [properties] } },
+      reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
+    });
   }
 
   constructor(editor: Editor, properties: ClientChartTile) {
@@ -73,7 +77,14 @@ export default class Chart extends Tile {
   // Label
 
   setLabel(property: Property | null) {
+    const previousLabel = this.label.value;
     this.label.value = property;
+
+    this.editor.recordOperation({
+      apply: { type: "chart.setProperties", data: { chartId: this.id, changes: { label: property } } },
+      reverse: { type: "chart.setProperties", data: { chartId: this.id, changes: { label: previousLabel } } },
+    });
+
     return this.update({ labelColumnId: property?.id });
   }
 
@@ -91,6 +102,11 @@ export default class Chart extends Tile {
       type: reactive(type),
       column: reactive(column),
       fill: reactive(fill),
+    });
+
+    this.editor.recordOperation({
+      apply: { type: "chart.addSeries", data: { chartId: this.id, series: { id, type, column, fill } } },
+      reverse: { type: "chart.removeSeries", data: { chartId: this.id, seriesId: id } },
     });
   }
 
@@ -112,7 +128,15 @@ export default class Chart extends Tile {
     if (!series) {
       throw new Error(`Invalid series ID: ${id}`);
     }
+
+    const previousType = series.type.value;
     series.type.value = type;
+
+    this.editor.recordOperation({
+      apply: { type: "chart.setSeriesProperties", data: { chartId: this.id, seriesId: id, changes: { type } } },
+      reverse: { type: "chart.setSeriesProperties", data: { chartId: this.id, seriesId: id, changes: { type: previousType } } },
+    });
+
     return this.updateSeries({ seriesId: id, type });
   }
 
@@ -121,14 +145,41 @@ export default class Chart extends Tile {
     if (!series) {
       throw new Error(`Invalid series ID: ${id}`);
     }
+
+    const previousFill = series.fill.value;
     series.fill.value = fill;
+
+    this.editor.recordOperation({
+      apply: { type: "chart.setSeriesProperties", data: { chartId: this.id, seriesId: id, changes: { fill } } },
+      reverse: { type: "chart.setSeriesProperties", data: { chartId: this.id, seriesId: id, changes: { fill: previousFill } } },
+    });
+
     return this.updateSeries({ seriesId: id, fill });
   }
 
   deleteSeries(seriesId: string) {
-    this.series.value = this.series.value.filter(
-      (series) => series.id !== seriesId,
-    );
+    const series = this.series.find((s) => s.id === seriesId);
+
+    this.series.value = this.series.value.filter((s) => s.id !== seriesId);
+
+    if (series) {
+      this.editor.recordOperation({
+        apply: { type: "chart.removeSeries", data: { chartId: this.id, seriesId } },
+        reverse: {
+          type: "chart.restoreSeries",
+          data: {
+            chartId: this.id,
+            series: {
+              id: series.id,
+              type: series.type.value,
+              column: series.column.value,
+              fill: series.fill.value,
+            },
+          },
+        },
+      });
+    }
+
     return client.charts.deleteSeries.mutate({
       pageId: this.editor.pageId,
       chartId: this.id,

@@ -43,6 +43,10 @@ export default class Table extends Tile {
     });
     const table = new Table(editor, properties);
     editor.addTile(table, properties.sectionId, data.beforeId);
+    editor.recordOperation({
+      apply: { type: "tile.restore", data: { snapshots: [properties] } },
+      reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
+    });
   }
 
   constructor(editor: Editor, properties: ClientTableTile) {
@@ -66,10 +70,24 @@ export default class Table extends Tile {
       afterColumnId,
     });
     this.columns.splice(afterIndex + 1, 0, column);
+
+    this.editor.recordOperation({
+      apply: { type: "table.insertColumn", data: { tableId: this.id, afterColumnId, column } },
+      reverse: { type: "table.deleteColumn", data: { tableId: this.id, columnId: column.id } },
+    });
+
     return column;
   }
 
   async moveColumn(id: string, afterId: string | null) {
+    const columnIndex = this.columns.findIndex((c) => c.id === id);
+    const previousAfterId = this.columns.value[columnIndex - 1]?.id ?? null;
+
+    this.editor.recordOperation({
+      apply: { type: "table.moveColumn", data: { tableId: this.id, columnId: id, afterColumnId: afterId } },
+      reverse: { type: "table.moveColumn", data: { tableId: this.id, columnId: id, afterColumnId: previousAfterId } },
+    });
+
     return await client.tables.moveColumn.mutate({
       pageId: this.editor.pageId,
       tableId: this.id,
@@ -90,12 +108,18 @@ export default class Table extends Tile {
     if (!column) {
       throw new Error(`Invalid column ID: ${id}`);
     }
+
+    // Capture previous values for undoable properties
+    const previousChanges: { title?: string | null; width?: number } = {};
     if (typeof properties.title !== "undefined") {
+      previousChanges.title = column.title;
       column.title = properties.title;
     }
     if (typeof properties.width !== "undefined") {
+      previousChanges.width = column.width;
       column.width = properties.width;
     }
+
     const result = await client.tables.updateColumn.mutate({
       pageId: this.editor.pageId,
       tableId: this.id,
@@ -105,6 +129,22 @@ export default class Table extends Tile {
     if (typeof properties.background !== "undefined") {
       column.background = result.background;
     }
+
+    // Only record if there are undoable changes
+    const changes: { title?: string | null; width?: number } = {};
+    if (typeof properties.title !== "undefined") {
+      changes.title = properties.title;
+    }
+    if (typeof properties.width !== "undefined") {
+      changes.width = properties.width;
+    }
+    if (Object.keys(changes).length > 0) {
+      this.editor.recordOperation({
+        apply: { type: "table.setColumnProperties", data: { tableId: this.id, columnId: id, changes } },
+        reverse: { type: "table.setColumnProperties", data: { tableId: this.id, columnId: id, changes: previousChanges } },
+      });
+    }
+
     return result;
   }
 
@@ -112,9 +152,32 @@ export default class Table extends Tile {
     if (ids.length === 0) {
       return;
     }
+
+    // Capture columns with their positions for restoration
+    const columnsWithPositions = ids.flatMap((id) => {
+      const index = this.columns.findIndex((c) => c.id === id);
+      const column = this.columns.value[index];
+      if (!column) return [];
+      const afterColumnId = this.columns.value[index - 1]?.id ?? null;
+      return [{ column, afterColumnId }];
+    });
+
     this.columns.value = this.columns.value.filter(
       (column) => !ids.includes(column.id),
     );
+
+    // Record batch delete operation
+    this.editor.recordOperation({
+      apply: ids.map((columnId) => ({
+        type: "table.deleteColumn" as const,
+        data: { tableId: this.id, columnId },
+      })),
+      reverse: columnsWithPositions.map(({ column, afterColumnId }) => ({
+        type: "table.restoreColumn" as const,
+        data: { tableId: this.id, afterColumnId, column },
+      })),
+    });
+
     return client.tables.deleteColumns.mutate({
       pageId: this.editor.pageId,
       tableId: this.id,
@@ -133,6 +196,12 @@ export default class Table extends Tile {
     });
     this.rows.splice(afterIndex + 1, 0, row);
     this.numRows.value++;
+
+    this.editor.recordOperation({
+      apply: { type: "table.insertRow", data: { tableId: this.id, afterRowId, row } },
+      reverse: { type: "table.deleteRow", data: { tableId: this.id, rowId: row.id } },
+    });
+
     return row;
   }
 
@@ -142,6 +211,14 @@ export default class Table extends Tile {
   }
 
   async moveRow(id: string, afterId: string | null) {
+    const rowIndex = this.rows.findIndex((r) => r.id === id);
+    const previousAfterId = this.rows.value[rowIndex - 1]?.id ?? null;
+
+    this.editor.recordOperation({
+      apply: { type: "table.moveRow", data: { tableId: this.id, rowId: id, afterRowId: afterId } },
+      reverse: { type: "table.moveRow", data: { tableId: this.id, rowId: id, afterRowId: previousAfterId } },
+    });
+
     return await client.tables.moveRow.mutate({
       pageId: this.editor.pageId,
       tableId: this.id,
@@ -155,7 +232,15 @@ export default class Table extends Tile {
     if (!row) {
       throw new Error(`Invalid row ID: ${id}`);
     }
+
+    const previousHeight = row.height;
     row.height = height;
+
+    this.editor.recordOperation({
+      apply: { type: "table.setRowProperties", data: { tableId: this.id, rowId: id, changes: { height } } },
+      reverse: { type: "table.setRowProperties", data: { tableId: this.id, rowId: id, changes: { height: previousHeight } } },
+    });
+
     return client.tables.updateRow.mutate({
       pageId: this.editor.pageId,
       tableId: this.id,
@@ -183,8 +268,31 @@ export default class Table extends Tile {
     if (ids.length === 0) {
       return;
     }
+
+    // Capture rows with their positions for restoration
+    const rowsWithPositions = ids.flatMap((id) => {
+      const index = this.rows.findIndex((r) => r.id === id);
+      const row = this.rows.value[index];
+      if (!row) return [];
+      const afterRowId = this.rows.value[index - 1]?.id ?? null;
+      return [{ row, afterRowId }];
+    });
+
     this.rows.value = this.rows.value.filter((row) => !ids.includes(row.id));
     this.numRows.value = this.numRows.value - ids.length;
+
+    // Record batch delete operation
+    this.editor.recordOperation({
+      apply: ids.map((rowId) => ({
+        type: "table.deleteRow" as const,
+        data: { tableId: this.id, rowId },
+      })),
+      reverse: rowsWithPositions.map(({ row, afterRowId }) => ({
+        type: "table.restoreRow" as const,
+        data: { tableId: this.id, afterRowId, row },
+      })),
+    });
+
     return client.tables.deleteRows.mutate({
       pageId: this.editor.pageId,
       tableId: this.id,
