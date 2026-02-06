@@ -446,7 +446,7 @@ describe("transformMarkdown", () => {
     test("returns a block start", async () => {
       const output = await getEvents([">>> test-1\n", "hello world"]);
       expect(output).toEqual([
-        { destination: "test-1" },
+        { destination: "test-1", mode: "insert" },
         { type: "paragraph" },
         "hello world",
       ]);
@@ -461,7 +461,7 @@ describe("transformMarkdown", () => {
         "hello world",
       ]);
       expect(output).toEqual([
-        { destination: "test-1" },
+        { destination: "test-1", mode: "insert" },
         { type: "paragraph" },
         "hello world",
       ]);
@@ -488,10 +488,37 @@ describe("transformMarkdown", () => {
     test("handles block end at end of stream without trailing newline", async () => {
       const output = await getEvents([">>> test\n", "hello\n", "<<<"]);
       expect(output).toEqual([
-        { destination: "test" },
+        { destination: "test", mode: "insert" },
         { type: "paragraph" },
         "hello",
-        { destination: null },
+        { destination: null, mode: undefined },
+      ]);
+    });
+
+    test("supports replace mode with >>>= syntax", async () => {
+      const output = await getEvents([">>>= test-1\n", "replaced content"]);
+      expect(output).toEqual([
+        { destination: "test-1", mode: "replace" },
+        { type: "paragraph" },
+        "replaced content",
+      ]);
+    });
+
+    test("supports append mode with >>>+ syntax", async () => {
+      const output = await getEvents([">>>+ test-1\n", "appended content"]);
+      expect(output).toEqual([
+        { destination: "test-1", mode: "append" },
+        { type: "paragraph" },
+        "appended content",
+      ]);
+    });
+
+    test("supports prepend mode with >>>^ syntax", async () => {
+      const output = await getEvents([">>>^ test-1\n", "prepended content"]);
+      expect(output).toEqual([
+        { destination: "test-1", mode: "prepend" },
+        { type: "paragraph" },
+        "prepended content",
       ]);
     });
   });
