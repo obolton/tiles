@@ -63,7 +63,9 @@ const setSeriesProperties: ActionExecutor<SetSeriesPropertiesAction> = async (
 ) => {
   const chart = editor.getTileAs(chartId, Chart);
   const series = chart.series.find((s) => s.id === seriesId);
-  if (!series) return;
+  if (!series) {
+    return;
+  }
 
   if (changes.type !== undefined) {
     series.type.value = changes.type;

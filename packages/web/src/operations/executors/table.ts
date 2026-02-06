@@ -53,7 +53,9 @@ const moveRow: ActionExecutor<MoveRowAction> = async (
 ) => {
   const table = editor.getTileAs(tableId, Table);
   const row = table.rows.find((r) => r.id === rowId);
-  if (!row) return;
+  if (!row) {
+    return;
+  }
 
   table.rows.value = table.rows.value.filter((r) => r.id !== rowId);
   const afterIndex = afterRowId
@@ -109,7 +111,9 @@ const moveColumn: ActionExecutor<MoveColumnAction> = async (
 ) => {
   const table = editor.getTileAs(tableId, Table);
   const column = table.columns.find((c) => c.id === columnId);
-  if (!column) return;
+  if (!column) {
+    return;
+  }
 
   table.columns.value = table.columns.value.filter((c) => c.id !== columnId);
   const afterIndex = afterColumnId

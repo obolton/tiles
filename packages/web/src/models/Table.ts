@@ -72,8 +72,14 @@ export default class Table extends Tile {
     this.columns.splice(afterIndex + 1, 0, column);
 
     this.editor.recordOperation({
-      apply: { type: "table.insertColumn", data: { tableId: this.id, afterColumnId, column } },
-      reverse: { type: "table.deleteColumn", data: { tableId: this.id, columnId: column.id } },
+      apply: {
+        type: "table.insertColumn",
+        data: { tableId: this.id, afterColumnId, column },
+      },
+      reverse: {
+        type: "table.deleteColumn",
+        data: { tableId: this.id, columnId: column.id },
+      },
     });
 
     return column;
@@ -84,8 +90,18 @@ export default class Table extends Tile {
     const previousAfterId = this.columns.value[columnIndex - 1]?.id ?? null;
 
     this.editor.recordOperation({
-      apply: { type: "table.moveColumn", data: { tableId: this.id, columnId: id, afterColumnId: afterId } },
-      reverse: { type: "table.moveColumn", data: { tableId: this.id, columnId: id, afterColumnId: previousAfterId } },
+      apply: {
+        type: "table.moveColumn",
+        data: { tableId: this.id, columnId: id, afterColumnId: afterId },
+      },
+      reverse: {
+        type: "table.moveColumn",
+        data: {
+          tableId: this.id,
+          columnId: id,
+          afterColumnId: previousAfterId,
+        },
+      },
     });
 
     return await client.tables.moveColumn.mutate({
@@ -140,8 +156,14 @@ export default class Table extends Tile {
     }
     if (Object.keys(changes).length > 0) {
       this.editor.recordOperation({
-        apply: { type: "table.setColumnProperties", data: { tableId: this.id, columnId: id, changes } },
-        reverse: { type: "table.setColumnProperties", data: { tableId: this.id, columnId: id, changes: previousChanges } },
+        apply: {
+          type: "table.setColumnProperties",
+          data: { tableId: this.id, columnId: id, changes },
+        },
+        reverse: {
+          type: "table.setColumnProperties",
+          data: { tableId: this.id, columnId: id, changes: previousChanges },
+        },
       });
     }
 
@@ -157,7 +179,9 @@ export default class Table extends Tile {
     const columnsWithPositions = ids.flatMap((id) => {
       const index = this.columns.findIndex((c) => c.id === id);
       const column = this.columns.value[index];
-      if (!column) return [];
+      if (!column) {
+        return [];
+      }
       const afterColumnId = this.columns.value[index - 1]?.id ?? null;
       return [{ column, afterColumnId }];
     });
@@ -198,8 +222,14 @@ export default class Table extends Tile {
     this.numRows.value++;
 
     this.editor.recordOperation({
-      apply: { type: "table.insertRow", data: { tableId: this.id, afterRowId, row } },
-      reverse: { type: "table.deleteRow", data: { tableId: this.id, rowId: row.id } },
+      apply: {
+        type: "table.insertRow",
+        data: { tableId: this.id, afterRowId, row },
+      },
+      reverse: {
+        type: "table.deleteRow",
+        data: { tableId: this.id, rowId: row.id },
+      },
     });
 
     return row;
@@ -215,8 +245,14 @@ export default class Table extends Tile {
     const previousAfterId = this.rows.value[rowIndex - 1]?.id ?? null;
 
     this.editor.recordOperation({
-      apply: { type: "table.moveRow", data: { tableId: this.id, rowId: id, afterRowId: afterId } },
-      reverse: { type: "table.moveRow", data: { tableId: this.id, rowId: id, afterRowId: previousAfterId } },
+      apply: {
+        type: "table.moveRow",
+        data: { tableId: this.id, rowId: id, afterRowId: afterId },
+      },
+      reverse: {
+        type: "table.moveRow",
+        data: { tableId: this.id, rowId: id, afterRowId: previousAfterId },
+      },
     });
 
     return await client.tables.moveRow.mutate({
@@ -237,8 +273,18 @@ export default class Table extends Tile {
     row.height = height;
 
     this.editor.recordOperation({
-      apply: { type: "table.setRowProperties", data: { tableId: this.id, rowId: id, changes: { height } } },
-      reverse: { type: "table.setRowProperties", data: { tableId: this.id, rowId: id, changes: { height: previousHeight } } },
+      apply: {
+        type: "table.setRowProperties",
+        data: { tableId: this.id, rowId: id, changes: { height } },
+      },
+      reverse: {
+        type: "table.setRowProperties",
+        data: {
+          tableId: this.id,
+          rowId: id,
+          changes: { height: previousHeight },
+        },
+      },
     });
 
     return client.tables.updateRow.mutate({
@@ -273,7 +319,9 @@ export default class Table extends Tile {
     const rowsWithPositions = ids.flatMap((id) => {
       const index = this.rows.findIndex((r) => r.id === id);
       const row = this.rows.value[index];
-      if (!row) return [];
+      if (!row) {
+        return [];
+      }
       const afterRowId = this.rows.value[index - 1]?.id ?? null;
       return [{ row, afterRowId }];
     });
