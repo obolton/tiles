@@ -1,6 +1,10 @@
+import ToolbarButton from "@/components/buttons/ToolbarButton";
+import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import CollaborationPopover from "@/components/collaboration/CollaborationPopover";
-import PeopleIcon from "@/icons/people.svg?jsx";
 import PageSettingsPopover from "@/components/pages/PageSettingsPopover";
+import UndoIcon from "@/icons/undo.svg?jsx";
+import RedoIcon from "@/icons/redo.svg?jsx";
+import PeopleIcon from "@/icons/people.svg?jsx";
 import SettingsIcon from "@/icons/settings.svg?jsx";
 import type Editor from "@/editor/Editor";
 
@@ -13,47 +17,55 @@ export default function EditingTools({
   editor,
   allowDelete,
 }: EditingToolsProps) {
+  const { canUndo, canRedo } = editor;
+
   return (
-    <ul role="group" aria-label="More tools">
-      <li role="presentation">
-        <button
-          type="button"
-          role="menuitem"
+    <>
+      <ToolbarGroup label="History">
+        <ToolbarButton
+          label="Undo"
+          aria-disabled={canUndo.derive((v) => (v ? undefined : "true"))}
+          on:click={() => editor.undo()}
+        >
+          <UndoIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <ToolbarButton
+          label="Redo"
+          aria-disabled={canRedo.derive((v) => (v ? undefined : "true"))}
+          on:click={() => editor.redo()}
+        >
+          <RedoIcon aria-hidden="true" />
+        </ToolbarButton>
+      </ToolbarGroup>
+
+      <ToolbarGroup label="More tools">
+        <ToolbarButton
           id="collaboration-button"
-          className="floating"
-          aria-label="Collaboration"
-          data-tooltip="Collaboration"
+          label="Collaboration"
           popovertarget="collaboration-popover"
           aria-haspopup="menu"
-          aria-expanded="false"
         >
           <PeopleIcon aria-hidden="true" />
-        </button>
+        </ToolbarButton>
 
         <CollaborationPopover editor={editor} id="collaboration-popover" />
-      </li>
 
-      <li role="presentation">
-        <button
+        <ToolbarButton
           id="page-settings-button"
-          type="button"
-          className="floating"
-          role="menuitem"
+          label="Page settings"
           popovertarget="page-settings-popover"
-          aria-label="Page settings"
           aria-haspopup="menu"
-          aria-expanded="false"
-          data-tooltip="Page settings"
         >
           <SettingsIcon aria-hidden="true" />
-        </button>
+        </ToolbarButton>
 
         <PageSettingsPopover
           editor={editor}
           allowDelete={allowDelete}
           id="page-settings-popover"
         />
-      </li>
-    </ul>
+      </ToolbarGroup>
+    </>
   );
 }
