@@ -1,16 +1,11 @@
 import { z } from "zod";
 import { createText } from "@/routes/text/text.ts";
-import { ColorSchema } from "@/schema/Color.ts";
 import { SizeSchema, getDimensions, CommonTileSchema } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateTextSchema = z.strictObject({
   sectionId: z.string().nullable().meta({
     description: "Section ID to place this content inside a section, or null",
-  }),
-  textColor: ColorSchema.nullable().meta({
-    description:
-      "The text color, or null to use the default text color of the document.",
   }),
   align: z
     .enum(["left", "center", "right"])
