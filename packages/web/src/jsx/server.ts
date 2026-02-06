@@ -110,7 +110,7 @@ function getDOMAttributes(properties: Record<string, unknown>) {
     }
 
     const attributeName = mapAttributeName(name);
-    if (attributeName === "classlist" && typeof value === "object") {
+    if (attributeName === "classList" && typeof value === "object") {
       const classNames = serializeClassList(value as ClassList);
       if (classNames) {
         attributes.push('class="' + escapeUTF8(classNames) + '"');
