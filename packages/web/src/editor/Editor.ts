@@ -10,6 +10,7 @@ import { createState } from "@/utils/richText/state";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import TileCollection from "@/models/TileCollection";
+import Page, { type PageData } from "@/models/Page";
 import Section from "@/models/Section";
 import Text from "@/models/Text";
 import Image from "@/models/Image";
@@ -23,11 +24,9 @@ import Dropdown from "@/models/Dropdown";
 import PageInvite from "@/models/PageInvite";
 import { OperationManager, execute } from "@/operations";
 import type Tile from "@/models/Tile";
-import type { ClientTile, DockEdge } from "api/types/tiles";
-import type { FontId } from "@/config/fonts";
-import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
-import type { PageAccess, User } from "@/types/collaboration";
-import type { Color } from "@/utils/color";
+import type { ClientTile } from "api/types/tiles";
+import type { AppRouterInputs } from "@/api/client";
+import type { PageAccess } from "@/types/collaboration";
 import type { Reactive, ReactiveArray } from "@/utils/reactivity";
 import type {
   HeadingNode,
@@ -36,7 +35,7 @@ import type {
 } from "@/utils/richText/types";
 import type { AnyAction, OperationInput } from "@/operations";
 
-export type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
+export type { PageData } from "@/models/Page";
 
 type OmitPageId<T extends { pageId: string }> = Omit<T, "pageId">;
 
@@ -53,21 +52,12 @@ const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 export default class Editor {
   static #current?: Editor;
 
-  readonly pageId: string;
-  readonly workspaceId: string;
+  readonly page: Page;
   readonly isEditable: Reactive<boolean>;
-  readonly title: Reactive<string>;
-  readonly backgroundColor: Reactive<Color | null>;
-  readonly font: Reactive<FontId | null>;
-  readonly coverImageUrl: Reactive<string | null>;
-  readonly isPublished: Reactive<boolean>;
-  readonly folderId: Reactive<string | null>;
-  readonly themeId: Reactive<string | null>;
   readonly index: Map<string, Tile>;
   readonly tiles: TileCollection;
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<PageInvite>;
-  readonly author: User;
   readonly selection: Reactive<Set<Tile>>;
   readonly references: Reactive<Tile[]>;
   readonly isPromptOpen: Reactive<boolean>;
@@ -77,14 +67,20 @@ export default class Editor {
   readonly canUndo: Reactive<boolean>;
   readonly canRedo: Reactive<boolean>;
 
-  readonly dockSizes: Reactive<Record<DockEdge, number | null>>;
-
   readonly dockedTiles: {
     TOP: TileCollection;
     LEFT: TileCollection;
     RIGHT: TileCollection;
     BOTTOM: TileCollection;
   };
+
+  get pageId() {
+    return this.page.id;
+  }
+
+  get workspaceId() {
+    return this.page.workspaceId;
+  }
 
   get activeSection(): Section | null {
     const selection = Array.from(this.selection.value);
@@ -102,7 +98,7 @@ export default class Editor {
     return null;
   }
 
-  static init(page: Page) {
+  static init(page: PageData) {
     if (this.#current) {
       throw new Error("The editor has already been initialized");
     }
@@ -128,22 +124,13 @@ export default class Editor {
     return this.#current;
   }
 
-  private constructor(page: Page) {
-    this.pageId = page.id;
-    this.workspaceId = page.workspaceId;
+  private constructor(page: PageData) {
+    this.page = new Page(page);
     this.isEditable = flag(isEditMode());
-    this.title = reactive(page.title);
-    this.backgroundColor = reactive(page.backgroundColor);
-    this.font = reactive(page.font);
-    this.coverImageUrl = reactive(page.coverImageUrl);
-    this.isPublished = reactive(page.published);
-    this.folderId = reactive(page.folderId);
-    this.themeId = reactive(page.theme?.id ?? null);
     this.index = new Map();
     this.tiles = new TileCollection();
     this.access = array(page.access);
     this.invites = array(page.invites.map((i) => new PageInvite(this, i)));
-    this.author = page.author;
     this.selection = reactive(new Set());
     this.references = reactive([]);
     this.isPromptOpen = flag(false);
@@ -152,13 +139,6 @@ export default class Editor {
     this.canUndo = reactive(false);
     this.canRedo = reactive(false);
     this.operations = IS_SERVER ? null : new OperationManager(page.id);
-
-    this.dockSizes = reactive({
-      TOP: page.dockTopHeight,
-      BOTTOM: page.dockBottomHeight,
-      LEFT: page.dockLeftWidth,
-      RIGHT: page.dockRightWidth,
-    });
 
     this.dockedTiles = {
       TOP: new TileCollection(),
@@ -339,63 +319,6 @@ export default class Editor {
         });
       });
     }
-  }
-
-  async setPageTitle(title: string) {
-    this.title.value = title;
-    document.title = `${title} - Tiles`;
-    return client.pages.update.mutate({
-      pageId: this.pageId,
-      title,
-    });
-  }
-
-  async setCoverImage(imageKey: string | null) {
-    return client.pages.update.mutate({
-      pageId: this.pageId,
-      coverImageKey: imageKey,
-    });
-  }
-
-  async setFont(font: FontId) {
-    return client.pages.update.mutate({ pageId: this.pageId, font });
-  }
-
-  async setBackgroundColor(backgroundColor: Color) {
-    return client.pages.update.mutate({
-      pageId: this.pageId,
-      backgroundColor,
-    });
-  }
-
-  async setPublished(published: boolean) {
-    this.isPublished.value = published;
-    return client.pages.update.mutate({ pageId: this.pageId, published });
-  }
-
-  async setFolder(folderId: string | null) {
-    this.folderId.value = folderId;
-    return client.pages.update.mutate({ pageId: this.pageId, folderId });
-  }
-
-  async setTheme(themeId: string | null) {
-    this.themeId.value = themeId;
-    return client.pages.update.mutate({ pageId: this.pageId, themeId });
-  }
-
-  async deletePage() {
-    return client.pages.delete.mutate({ pageId: this.pageId });
-  }
-
-  async setDockSizes(sizes: Partial<Record<DockEdge, number | null>>) {
-    this.dockSizes.value = { ...this.dockSizes.value, ...sizes };
-    return client.pages.update.mutate({
-      pageId: this.pageId,
-      dockTopHeight: sizes.TOP,
-      dockBottomHeight: sizes.BOTTOM,
-      dockLeftWidth: sizes.LEFT,
-      dockRightWidth: sizes.RIGHT,
-    });
   }
 
   // Selection
@@ -618,7 +541,7 @@ export default class Editor {
           .trim();
 
         if (title) {
-          await this.setPageTitle(title);
+          await this.page.setTitle(title);
         }
       }
     }
