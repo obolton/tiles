@@ -1,5 +1,4 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
-import "fake-indexeddb/auto";
 import { getWorkspaceFolders, invalidateWorkspaceFolders } from "../folders";
 import { initializeCache, destroyCache, foldersCache } from "../cache";
 import client from "@/api/client";

@@ -1,5 +1,4 @@
 import { describe, expect, test, afterEach } from "vitest";
-import "fake-indexeddb/auto";
 import {
   initializeCache,
   isCacheInitialized,

@@ -3,36 +3,34 @@ export * from "./tile";
 export * from "./section";
 export * from "./text";
 export * from "./image";
+export * from "./video";
+export * from "./link";
+export * from "./map";
 export * from "./table";
 export * from "./chart";
 export * from "./page";
 
-import type { BaseOperation } from "./base";
-import type { TileOperation } from "./tile";
-import type { SectionOperation } from "./section";
-import type { TextOperation } from "./text";
-import type { ImageOperation } from "./image";
-import type { TableOperation } from "./table";
-import type { ChartOperation } from "./chart";
-import type { PageOperation } from "./page";
+import type { TileAction } from "./tile";
+import type { SectionAction } from "./section";
+import type { TextAction } from "./text";
+import type { ImageAction } from "./image";
+import type { VideoAction } from "./video";
+import type { LinkAction } from "./link";
+import type { MapAction } from "./map";
+import type { TableAction } from "./table";
+import type { ChartAction } from "./chart";
+import type { PageAction } from "./page";
 
-export interface CompoundOperation extends BaseOperation<"compound"> {
-  readonly operations: AnyOperation[];
-}
+export type AnyAction =
+  | TileAction
+  | SectionAction
+  | TextAction
+  | ImageAction
+  | VideoAction
+  | LinkAction
+  | MapAction
+  | TableAction
+  | ChartAction
+  | PageAction;
 
-export type AnyOperation =
-  | TileOperation
-  | SectionOperation
-  | TextOperation
-  | ImageOperation
-  | TableOperation
-  | ChartOperation
-  | PageOperation
-  | CompoundOperation;
-
-export type OperationType = AnyOperation["type"];
-
-export interface OperationHistory {
-  undoStack: AnyOperation[];
-  redoStack: AnyOperation[];
-}
+export type ActionType = AnyAction["type"];

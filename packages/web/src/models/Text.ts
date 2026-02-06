@@ -24,6 +24,10 @@ export default class Text extends Tile {
     });
     const text = new Text(editor, properties);
     editor.addTile(text, properties.sectionId, data.beforeId);
+    editor.recordOperation({
+      apply: { type: "tile.restore", data: { snapshots: [properties] } },
+      reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
+    });
   }
 
   constructor(editor: Editor, properties: ClientTextTile) {
@@ -46,7 +50,12 @@ export default class Text extends Tile {
   }
 
   setVerticalAlignment(align: ClientTextTile["align"]) {
+    const oldAlign = this.align.value;
     this.align.value = align;
+    this.editor.recordOperation({
+      apply: { type: "text.setProperties", data: { tileId: this.id, changes: { align } } },
+      reverse: { type: "text.setProperties", data: { tileId: this.id, changes: { align: oldAlign } } },
+    });
     return this.update({ align });
   }
 
@@ -55,8 +64,13 @@ export default class Text extends Tile {
     if (!state) {
       return;
     }
+    const oldContent = this.content.value;
     const content = serialize(state);
     this.content.value = content;
+    this.editor.recordOperation({
+      apply: { type: "text.setProperties", data: { tileId: this.id, changes: { content } } },
+      reverse: { type: "text.setProperties", data: { tileId: this.id, changes: { content: oldContent } } },
+    });
     return this.update({ content });
   }
 }

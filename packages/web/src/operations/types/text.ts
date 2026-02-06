@@ -1,14 +1,12 @@
 import type { ClientTextTile } from "api/types/tiles";
-import type { Operation } from "./base";
+import type { Action } from "./base";
 
-export interface TextUpdateData {
+export interface SetTextPropertiesData {
   tileId: string;
   changes: Partial<Pick<ClientTextTile, "content" | "align">>;
 }
 
-export interface TextUpdateOperation extends Operation<
-  "text.update",
-  TextUpdateData
-> {}
+export interface SetTextPropertiesAction
+  extends Action<"text.setProperties", SetTextPropertiesData> {}
 
-export type TextOperation = TextUpdateOperation;
+export type TextAction = SetTextPropertiesAction;

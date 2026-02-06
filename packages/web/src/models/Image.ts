@@ -36,6 +36,10 @@ export default class Image extends Tile {
 
     const image = new Image(editor, properties);
     editor.addTile(image, properties.sectionId, data.beforeId);
+    editor.recordOperation({
+      apply: { type: "tile.restore", data: { snapshots: [properties] } },
+      reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
+    });
   }
 
   constructor(editor: Editor, properties: ClientImageTile) {
@@ -59,14 +63,24 @@ export default class Image extends Tile {
   }
 
   setOrigin(origin: ImageOrigin) {
+    const oldOrigin = this.origin.value;
     this.origin.value = origin;
+    this.editor.recordOperation({
+      apply: { type: "image.setProperties", data: { tileId: this.id, changes: { originX: origin.x, originY: origin.y } } },
+      reverse: { type: "image.setProperties", data: { tileId: this.id, changes: { originX: oldOrigin.x, originY: oldOrigin.y } } },
+    });
     return this.update({ origin });
   }
 
   persistText() {
     const state = this.state.value;
+    const oldText = this.text.value;
     const text = state ? serialize(state) : null;
     this.text.value = text;
+    this.editor.recordOperation({
+      apply: { type: "image.setProperties", data: { tileId: this.id, changes: { text } } },
+      reverse: { type: "image.setProperties", data: { tileId: this.id, changes: { text: oldText } } },
+    });
     return this.update({ text });
   }
 }

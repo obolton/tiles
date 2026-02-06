@@ -103,9 +103,9 @@ export class ObjectStore<T> {
   }
 
   /**
-   * Deletes a record by its primary key.
+   * Deletes record(s) by primary key or key range.
    */
-  async delete(key: IDBValidKey): Promise<void> {
+  async delete(key: IDBValidKey | IDBKeyRange): Promise<void> {
     const store = await this.openStore("readwrite");
     await toPromise(store.delete(key));
   }
@@ -190,6 +190,37 @@ export class ObjectStore<T> {
   async deleteMany(keys: IDBValidKey[]): Promise<void> {
     const store = await this.openStore("readwrite");
     await Promise.all(keys.map((key) => toPromise(store.delete(key))));
+  }
+
+  /**
+   * Deletes all records matching an index query in a single transaction.
+   * Returns the number of records deleted.
+   */
+  async deleteByIndex(
+    indexName: string,
+    query: IDBValidKey | IDBKeyRange,
+  ): Promise<number> {
+    const store = await this.openStore("readwrite");
+
+    return new Promise((resolve, reject) => {
+      const request = store.index(indexName).openCursor(query);
+      let count = 0;
+
+      request.addEventListener("success", () => {
+        const cursor = request.result;
+
+        if (!cursor) {
+          resolve(count);
+          return;
+        }
+
+        cursor.delete();
+        count++;
+        cursor.continue();
+      });
+
+      request.addEventListener("error", () => reject(request.error));
+    });
   }
 
   // Cursor-based queries

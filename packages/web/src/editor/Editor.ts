@@ -21,6 +21,7 @@ import Table from "@/models/Table";
 import Chart from "@/models/Chart";
 import Dropdown from "@/models/Dropdown";
 import PageInvite from "@/models/PageInvite";
+import { OperationManager, execute } from "@/operations";
 import type Tile from "@/models/Tile";
 import type { ClientTile, DockEdge } from "api/types/tiles";
 import type { FontId } from "@/config/fonts";
@@ -33,6 +34,7 @@ import type {
   ParagraphNode,
   TextNode,
 } from "@/utils/richText/types";
+import type { AnyAction, OperationInput } from "@/operations";
 
 export type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
@@ -70,6 +72,10 @@ export default class Editor {
   readonly references: Reactive<Tile[]>;
   readonly isPromptOpen: Reactive<boolean>;
   readonly dropdowns: ReactiveArray<Dropdown>;
+
+  readonly operations: OperationManager<AnyAction> | null;
+  readonly canUndo: Reactive<boolean>;
+  readonly canRedo: Reactive<boolean>;
 
   readonly dockSizes: Reactive<Record<DockEdge, number | null>>;
 
@@ -143,6 +149,10 @@ export default class Editor {
     this.isPromptOpen = flag(false);
     this.dropdowns = array(page.dropdowns.map((d) => new Dropdown(this, d)));
 
+    this.canUndo = reactive(false);
+    this.canRedo = reactive(false);
+    this.operations = IS_SERVER ? null : new OperationManager(page.id);
+
     this.dockSizes = reactive({
       TOP: page.dockTopHeight,
       BOTTOM: page.dockBottomHeight,
@@ -195,6 +205,9 @@ export default class Editor {
           this.clearSelection();
         }
       });
+
+      // Load operation history
+      this.operations?.load().then(() => this.syncUndoRedoState());
     }
   }
 
@@ -238,6 +251,27 @@ export default class Editor {
   }
 
   private keyDown(event: KeyboardEvent) {
+    const isMod = event.metaKey || event.ctrlKey;
+    const isInput =
+      event.target instanceof HTMLElement &&
+      (event.target.tagName === "INPUT" ||
+        event.target.tagName === "TEXTAREA" ||
+        event.target.isContentEditable);
+
+    // Undo: Cmd/Ctrl+Z (not in text inputs - they have their own undo)
+    if (isMod && event.key === "z" && !event.shiftKey && !isInput) {
+      event.preventDefault();
+      this.undo();
+      return;
+    }
+
+    // Redo: Cmd/Ctrl+Shift+Z (not in text inputs)
+    if (isMod && event.key === "z" && event.shiftKey && !isInput) {
+      event.preventDefault();
+      this.redo();
+      return;
+    }
+
     if (
       (event.key === "Backspace" || event.key === "Delete") &&
       !event.repeat &&
@@ -434,6 +468,19 @@ export default class Editor {
     const tile = this.index.get(id);
     if (!tile) {
       throw new Error(`Tile cannot be found: ${id}`);
+    }
+    return tile;
+  }
+
+  getTileAs<T extends Tile>(
+    id: string,
+    TileClass: abstract new (...args: any[]) => T,
+  ): T {
+    const tile = this.getTile(id);
+    if (!(tile instanceof TileClass)) {
+      throw new Error(
+        `Expected ${TileClass.name} but got ${tile.constructor.name}`,
+      );
     }
     return tile;
   }
@@ -678,5 +725,33 @@ export default class Editor {
     this.dropdowns.value = this.dropdowns.value.filter(
       (d) => d.id !== dropdown.id,
     );
+  }
+
+  // Operations (Undo/Redo)
+
+  private syncUndoRedoState(): void {
+    this.canUndo.value = this.operations?.canUndo ?? false;
+    this.canRedo.value = this.operations?.canRedo ?? false;
+  }
+
+  async recordOperation(operation: OperationInput<AnyAction>): Promise<void> {
+    await this.operations?.record(operation);
+    this.syncUndoRedoState();
+  }
+
+  async undo(): Promise<void> {
+    const operation = await this.operations?.undo();
+    if (operation) {
+      await execute(this, operation, "reverse");
+    }
+    this.syncUndoRedoState();
+  }
+
+  async redo(): Promise<void> {
+    const operation = await this.operations?.redo();
+    if (operation) {
+      await execute(this, operation, "apply");
+    }
+    this.syncUndoRedoState();
   }
 }

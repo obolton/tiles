@@ -1,119 +1,151 @@
 import type { TableColumn, TableRow } from "@/models/Table";
-import type { Operation } from "./base";
+import type { Action } from "./base";
 
-// Row operations
+// Row actions
 
-export interface TableInsertRowData {
+// Insert a single row
+export interface InsertRowData {
   tableId: string;
   afterRowId: string | null;
   row: TableRow;
 }
 
-export interface TableInsertRowInverse {
+export interface InsertRowAction extends Action<
+  "table.insertRow",
+  InsertRowData
+> {}
+
+// Delete a single row by ID
+export interface DeleteRowData {
   tableId: string;
   rowId: string;
 }
 
-export interface TableInsertRowOperation extends Operation<
-  "table.insertRow",
-  TableInsertRowData,
-  TableInsertRowInverse
+export interface DeleteRowAction extends Action<
+  "table.deleteRow",
+  DeleteRowData
 > {}
 
-export interface TableDeleteRowsData {
+// Restore a row at a position (reverse of delete)
+export interface RestoreRowData {
   tableId: string;
-  rowIds: string[];
+  afterRowId: string | null;
+  row: TableRow;
 }
 
-export interface TableDeleteRowsInverse {
-  tableId: string;
-  /** Rows with their positions for restoration */
-  rows: Array<{ row: TableRow; afterRowId: string | null }>;
-}
-
-export interface TableDeleteRowsOperation extends Operation<
-  "table.deleteRows",
-  TableDeleteRowsData,
-  TableDeleteRowsInverse
+export interface RestoreRowAction extends Action<
+  "table.restoreRow",
+  RestoreRowData
 > {}
 
-export interface TableMoveRowData {
+// Move row - symmetric
+export interface MoveRowData {
   tableId: string;
   rowId: string;
   afterRowId: string | null;
 }
 
-export interface TableMoveRowOperation extends Operation<
-  "table.moveRow",
-  TableMoveRowData
+export interface MoveRowAction extends Action<"table.moveRow", MoveRowData> {}
+
+// Set row properties - symmetric
+export interface SetRowPropertiesData {
+  tableId: string;
+  rowId: string;
+  changes: {
+    height?: number;
+  };
+}
+
+export interface SetRowPropertiesAction extends Action<
+  "table.setRowProperties",
+  SetRowPropertiesData
 > {}
 
-// Column operations
+// Column actions
 
-export interface TableInsertColumnData {
+// Insert a single column
+export interface InsertColumnData {
   tableId: string;
   afterColumnId: string | null;
   column: TableColumn;
 }
 
-export interface TableInsertColumnInverse {
+export interface InsertColumnAction extends Action<
+  "table.insertColumn",
+  InsertColumnData
+> {}
+
+// Delete a single column by ID
+export interface DeleteColumnData {
   tableId: string;
   columnId: string;
 }
 
-export interface TableInsertColumnOperation extends Operation<
-  "table.insertColumn",
-  TableInsertColumnData,
-  TableInsertColumnInverse
+export interface DeleteColumnAction extends Action<
+  "table.deleteColumn",
+  DeleteColumnData
 > {}
 
-export interface TableDeleteColumnsData {
+// Restore a column at a position (reverse of delete)
+export interface RestoreColumnData {
   tableId: string;
-  columnIds: string[];
+  afterColumnId: string | null;
+  column: TableColumn;
 }
 
-export interface TableDeleteColumnsInverse {
-  tableId: string;
-  /** Columns with their positions for restoration */
-  columns: Array<{ column: TableColumn; afterColumnId: string | null }>;
-}
-
-export interface TableDeleteColumnsOperation extends Operation<
-  "table.deleteColumns",
-  TableDeleteColumnsData,
-  TableDeleteColumnsInverse
+export interface RestoreColumnAction extends Action<
+  "table.restoreColumn",
+  RestoreColumnData
 > {}
 
-export interface TableMoveColumnData {
+// Move column - symmetric
+export interface MoveColumnData {
   tableId: string;
   columnId: string;
   afterColumnId: string | null;
 }
 
-export interface TableMoveColumnOperation extends Operation<
+export interface MoveColumnAction extends Action<
   "table.moveColumn",
-  TableMoveColumnData
+  MoveColumnData
 > {}
 
-// Cell operations
+// Set column properties - symmetric
+export interface SetColumnPropertiesData {
+  tableId: string;
+  columnId: string;
+  changes: {
+    title?: string | null;
+    width?: number;
+  };
+}
 
-export interface TableUpdateCellData {
+export interface SetColumnPropertiesAction extends Action<
+  "table.setColumnProperties",
+  SetColumnPropertiesData
+> {}
+
+// Cell actions
+
+// Set cell content - symmetric
+export interface SetCellData {
   tableId: string;
   rowId: string;
   columnId: string;
   content: TableRow["data"][string];
 }
 
-export interface TableUpdateCellOperation extends Operation<
-  "table.updateCell",
-  TableUpdateCellData
-> {}
+export interface SetCellAction extends Action<"table.setCell", SetCellData> {}
 
-export type TableOperation =
-  | TableInsertRowOperation
-  | TableDeleteRowsOperation
-  | TableMoveRowOperation
-  | TableInsertColumnOperation
-  | TableDeleteColumnsOperation
-  | TableMoveColumnOperation
-  | TableUpdateCellOperation;
+export type TableAction =
+  | InsertRowAction
+  | DeleteRowAction
+  | RestoreRowAction
+  | MoveRowAction
+  | SetRowPropertiesAction
+  | InsertColumnAction
+  | DeleteColumnAction
+  | RestoreColumnAction
+  | MoveColumnAction
+  | SetColumnPropertiesAction
+  | SetCellAction;

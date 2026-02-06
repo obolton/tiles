@@ -22,6 +22,10 @@ export default class Section extends Tile {
     });
     const section = new Section(editor, properties);
     editor.addTile(section, null, data.beforeId);
+    editor.recordOperation({
+      apply: { type: "tile.restore", data: { snapshots: [properties] } },
+      reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
+    });
   }
 
   constructor(editor: Editor, properties: ClientSectionTile) {
@@ -43,7 +47,12 @@ export default class Section extends Tile {
   }
 
   setLayout(layout: Layout) {
+    const oldLayout = this.layout.value;
     this.layout.value = layout;
+    this.editor.recordOperation({
+      apply: { type: "section.setLayout", data: { sectionId: this.id, layout } },
+      reverse: { type: "section.setLayout", data: { sectionId: this.id, layout: oldLayout } },
+    });
     return this.update({ layout });
   }
 }

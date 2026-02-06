@@ -19,6 +19,7 @@ import type { Color } from "@/utils/color";
 import type Editor from "@/editor/Editor";
 import type { AppRouterInputs } from "@/api/client";
 import type TileCollection from "./TileCollection";
+import type { TilePropertyChanges } from "@/operations";
 
 export type { Dimensions, Animation, FrameStyle, DockEdge };
 
@@ -153,6 +154,84 @@ export default class Tile {
     });
   }
 
+  protected recordUpdate(
+    changes: TilePropertyChanges,
+    inverse: TilePropertyChanges,
+  ) {
+    this.editor.recordOperation({
+      apply: { type: "tile.setProperties", data: { tileId: this.id, changes } },
+      reverse: { type: "tile.setProperties", data: { tileId: this.id, changes: inverse } },
+    });
+  }
+
+  /**
+   * Moves the tile to a new position within a section or the root tile collection.
+   */
+  protected applyPosition(
+    sectionId: string | null | undefined,
+    beforeId: string | null | undefined,
+  ) {
+    if (sectionId === undefined && beforeId === undefined) {
+      return;
+    }
+
+    const targetSection =
+      sectionId !== undefined && sectionId !== null
+        ? this.editor.getSection(sectionId)
+        : null;
+    const collection = targetSection?.tiles ?? this.editor.tiles;
+    collection.insertBefore(beforeId ?? null, this);
+  }
+
+  /**
+   * Applies changes to reactive values and persists to API.
+   * Used by executors for undo/redo (does not record a new operation).
+   */
+  applyUpdate(changes: TilePropertyChanges) {
+    this.applyPosition(changes.sectionId, changes.beforeId);
+
+    if (changes.x !== undefined) {
+      this.x.value = changes.x;
+    }
+    if (changes.y !== undefined) {
+      this.y.value = changes.y;
+    }
+    if (changes.width !== undefined) {
+      this.width.value = changes.width;
+    }
+    if (changes.height !== undefined) {
+      this.height.value = changes.height;
+    }
+    if (changes.dimensions !== undefined) {
+      this.dimensions.value = changes.dimensions;
+    }
+    if (changes.animation !== undefined) {
+      this.animation.value = changes.animation;
+    }
+    if (changes.frame !== undefined) {
+      this.frame.value = changes.frame;
+    }
+    if (changes.hide !== undefined) {
+      this.hide.value = changes.hide;
+    }
+    if (changes.dock !== undefined) {
+      this.dock.value = changes.dock;
+    }
+    if (changes.rowSpan !== undefined) {
+      this.rowSpan.value = changes.rowSpan;
+    }
+    if (changes.textColor !== undefined) {
+      this.textColor.value = changes.textColor;
+    }
+    if (changes.background !== undefined) {
+      this.background.value = changes.background;
+    }
+
+    return this.updateTile(
+      changes as Omit<AppRouterInputs["tiles"]["update"], "pageId" | "id">,
+    );
+  }
+
   move({
     sectionId,
     beforeId,
@@ -168,12 +247,22 @@ export default class Tile {
     width?: number;
     height?: number;
   }) {
+    // Capture inverse values before making changes
+    const inverse: TilePropertyChanges = {};
+    const changes: TilePropertyChanges = {};
+
     let frame: FrameStyle | null | undefined;
 
     if (
       (sectionId !== undefined && sectionId !== this.sectionId) ||
       beforeId !== undefined
     ) {
+      // Capture current position for undo
+      inverse.sectionId = this.sectionId;
+      inverse.beforeId = this.next?.id ?? null;
+      changes.sectionId = sectionId;
+      changes.beforeId = beforeId;
+
       if (sectionId) {
         const section = this.editor.getSection(sectionId);
         section.tiles.insertBefore(beforeId ?? null, this);
@@ -184,8 +273,10 @@ export default class Tile {
           (section.layout.value === "GRID" ||
             section.layout.value === "FREEFORM")
         ) {
+          inverse.frame = this.frame.value;
           this.frame.value = null;
           frame = null;
+          changes.frame = null;
         }
       } else {
         this.editor.tiles.insertBefore(beforeId ?? null, this);
@@ -193,22 +284,37 @@ export default class Tile {
     }
 
     if (typeof x === "number") {
+      inverse.x = this.x.value;
       this.x.value = x;
+      changes.x = x;
     }
     if (typeof y === "number") {
+      inverse.y = this.y.value;
       this.y.value = y;
+      changes.y = y;
     }
     if (typeof width === "number") {
+      inverse.width = this.width.value;
       this.width.value = width;
+      changes.width = width;
     }
     if (typeof height === "number") {
+      inverse.height = this.height.value;
       this.height.value = height;
+      changes.height = height;
     }
 
+    this.recordUpdate(changes, inverse);
     return this.updateTile({ sectionId, beforeId, x, y, width, height, frame });
   }
 
   setDimensions(dimensions: Dimensions) {
+    const inverse: TilePropertyChanges = {
+      dimensions: this.dimensions.value,
+      width: this.width.value,
+      height: this.height.value,
+    };
+
     this.dimensions.value = dimensions;
 
     switch (dimensions) {
@@ -222,6 +328,13 @@ export default class Tile {
         break;
     }
 
+    const changes: TilePropertyChanges = {
+      dimensions,
+      width: this.width.value,
+      height: this.height.value,
+    };
+
+    this.recordUpdate(changes, inverse);
     return this.updateTile({
       dimensions,
       width: this.width.value,
@@ -230,12 +343,18 @@ export default class Tile {
   }
 
   setSize({ width, height }: { width?: number; height?: number }) {
+    const inverse: TilePropertyChanges = {};
+
     if (typeof width === "number") {
+      inverse.width = this.width.value;
       this.width.value = width;
     }
     if (typeof height === "number") {
+      inverse.height = this.height.value;
       this.height.value = height;
     }
+
+    this.recordUpdate({ width, height }, inverse);
     return this.updateTile({ width, height });
   }
 
@@ -249,24 +368,31 @@ export default class Tile {
   }
 
   setAnimation(animation: Animation | null) {
-    this.animation.value = animation;
-    return this.updateTile({ animation });
+    this.recordUpdate({ animation }, { animation: this.animation.value });
+    return this.applyUpdate({ animation });
   }
 
   setFrame(frame: FrameStyle | null) {
-    this.frame.value = frame;
-    return this.updateTile({ frame });
+    this.recordUpdate({ frame }, { frame: this.frame.value });
+    return this.applyUpdate({ frame });
   }
 
   setHidden(hide: boolean) {
-    this.hide.value = hide;
-    return this.updateTile({ hide });
+    this.recordUpdate({ hide }, { hide: this.hide.value });
+    return this.applyUpdate({ hide });
   }
 
   async setDock(dock: DockEdge | null, beforeId?: string | null) {
     if (dock === this.dock.value && beforeId === undefined) {
       return;
     }
+
+    // Capture inverse values
+    const inverse = {
+      dock: this.dock.value,
+      sectionId: this.sectionId,
+      beforeId: this.next?.id ?? null,
+    };
 
     this.dock.value = dock;
 
@@ -279,22 +405,30 @@ export default class Tile {
       this.editor.tiles.insertBefore(beforeId ?? null, this);
     }
 
+    this.recordUpdate({ dock, beforeId }, inverse);
     await this.updateTile({ dock, beforeId });
   }
 
   async setTheme(themeId: string | null) {
+    const oldThemeId = this.theme.value?.id ?? null;
+    this.recordUpdate({ themeId }, { themeId: oldThemeId });
     const result = await this.updateTile({ themeId });
     this.theme.value = result.theme;
   }
 
   setTextColor(textColor: Color | null) {
-    this.textColor.value = textColor;
-    return this.updateTile({ textColor });
+    this.recordUpdate({ textColor }, { textColor: this.textColor.value });
+    return this.applyUpdate({ textColor });
   }
 
   async setBackground(background: FillUpdate) {
+    const previousBackground = this.background.value;
     const result = await this.updateTile({ background });
     this.background.value = result.background;
+    this.recordUpdate(
+      { background: result.background },
+      { background: previousBackground },
+    );
   }
 
   async moveUp() {
@@ -303,9 +437,16 @@ export default class Tile {
       return;
     }
 
+    // For undo, we need to move back after the current previous tile
+    const inverseBeforeId = this.next?.id ?? null;
     const beforeId = previous.id;
+
     this.parent?.insertBefore(beforeId, this);
 
+    this.recordUpdate(
+      { sectionId: this.sectionId, beforeId },
+      { sectionId: this.sectionId, beforeId: inverseBeforeId },
+    );
     return this.updateTile({
       sectionId: this.sectionId,
       beforeId,
@@ -318,9 +459,16 @@ export default class Tile {
       return;
     }
 
+    // For undo, we need to move back before the tile that was after us
+    const inverseBeforeId = next.id;
     const beforeId = next.next?.id ?? null;
+
     this.parent?.insertBefore(beforeId, this);
 
+    this.recordUpdate(
+      { sectionId: this.sectionId, beforeId },
+      { sectionId: this.sectionId, beforeId: inverseBeforeId },
+    );
     return this.updateTile({
       sectionId: this.sectionId,
       beforeId,
