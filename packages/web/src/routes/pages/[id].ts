@@ -1,5 +1,5 @@
 import client from "@/api/client";
-import { getSessionId } from "@/utils/sessions";
+import { getLoaderContext } from "@/utils/loaderContext";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import Page, { type PageProps } from "@/pages/Page";
 import { isDark } from "@/utils/color";
@@ -16,18 +16,14 @@ async function loader({
   headers,
   parameters,
 }: RequestProperties): RouteLoaderResult<PageProps> {
-  const sessionId = getSessionId(headers);
-
   const pageId = parameters.id;
 
   if (!pageId) {
     return notFound();
   }
 
-  const page = await client.pages.getById.query(
-    { id: pageId },
-    { context: { sessionId } },
-  );
+  const options = getLoaderContext(headers);
+  const page = await client.pages.getById.query({ id: pageId }, options);
 
   if (!page) {
     return notFound();
@@ -58,11 +54,12 @@ async function loader({
 }
 
 const metadata = {
-  scripts: [{ src: "/src/init.ts" }],
+  scripts: [{ src: "/src/routes/pages/init.ts" }],
 } satisfies RouteMetadata;
 
 export default {
-  loader: import.meta.env.SSR ? loader : undefined,
+  loader,
   component: Page,
   metadata,
+  hydrate: "deferred",
 } satisfies Route<PageProps>;

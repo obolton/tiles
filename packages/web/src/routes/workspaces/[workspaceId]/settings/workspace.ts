@@ -1,5 +1,6 @@
 import client from "@/api/client";
-import { getSessionId } from "@/utils/sessions";
+import { getLoaderContext } from "@/utils/loaderContext";
+import { isSignedIn } from "@/utils/sessions";
 import Workspace, { type WorkspaceProps } from "@/pages/settings/Workspace";
 import { authenticatedRoute } from "@/utils/middleware";
 import { notFound, forbidden } from "@/router/responses";
@@ -18,12 +19,11 @@ async function loader({
     return notFound();
   }
 
-  const sessionId = getSessionId(headers);
-  if (!sessionId) {
+  if (!import.meta.env.SSR && !isSignedIn()) {
     return forbidden();
   }
 
-  const options = { context: { sessionId } };
+  const options = getLoaderContext(headers);
 
   const [workspace, users, invites] = await Promise.all([
     client.workspaces.get.query({ workspaceId }, options),
@@ -43,6 +43,7 @@ async function loader({
 
 export default {
   middleware: import.meta.env.SSR ? authenticatedRoute : undefined,
-  loader: import.meta.env.SSR ? loader : undefined,
+  loader,
   component: Workspace,
+  hydrate: "immediate",
 } satisfies Route<WorkspaceProps>;
