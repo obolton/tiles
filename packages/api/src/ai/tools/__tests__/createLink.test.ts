@@ -12,12 +12,6 @@ const BASE_ARGS = {
   sectionId: null,
   size: "medium" as const,
   url: "https://example.com",
-  background: null,
-  animation: null,
-  frame: null,
-  dock: null,
-  hide: null,
-  position: null,
 };
 
 describe("CREATE_LINK_TOOL", () => {

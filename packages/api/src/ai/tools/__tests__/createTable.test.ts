@@ -16,12 +16,6 @@ const BASE_ARGS = {
     { title: "B", background: null },
   ],
   rows: [["1", "2"]],
-  background: null,
-  animation: null,
-  frame: null,
-  dock: null,
-  hide: null,
-  position: null,
 };
 
 describe("CREATE_TABLE_TOOL", () => {

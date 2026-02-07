@@ -3,7 +3,6 @@ import { createTable } from "@/routes/tables/tables.ts";
 import {
   SizeSchema,
   getDimensions,
-  CommonTileSchema,
   AIColumnDefinitionSchema,
 } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
@@ -23,24 +22,13 @@ const CreateTableSchema = z.strictObject({
     .meta({
       description: "Row data as arrays of cell values, matching column order",
     }),
-  ...CommonTileSchema,
 });
 
 async function createTableArtifact(
   args: z.infer<typeof CreateTableSchema>,
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
-  const {
-    size,
-    columns,
-    rows,
-    background,
-    animation,
-    frame,
-    dock,
-    hide,
-    position,
-  } = args;
+  const { size, columns, rows } = args;
   const resolvedSectionId = args.sectionId
     ? resolveArtifactId(args.sectionId)
     : sectionId;
@@ -52,12 +40,6 @@ async function createTableArtifact(
       background: col.background,
     })),
     rows,
-    background,
-    animation,
-    frame,
-    dock,
-    hide: hide ?? undefined,
-    ...(position ? { x: position.x, y: position.y } : {}),
     ...getDimensions(size),
   });
   return { artifact };

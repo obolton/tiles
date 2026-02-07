@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createChart, getTableColumns } from "@/routes/charts/charts.ts";
 import { ColorSchema } from "@/schema/Color.ts";
-import { SizeSchema, getDimensions, CommonTileSchema } from "./schema.ts";
+import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateChartSchema = z.strictObject({
@@ -33,14 +33,13 @@ const CreateChartSchema = z.strictObject({
     .min(1)
     .max(10)
     .meta({ description: "Data series to display in the chart" }),
-  ...CommonTileSchema,
 });
 
 async function createChartArtifact(
   args: z.infer<typeof CreateChartSchema>,
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
-  const { size, background, animation, frame, dock, hide, position } = args;
+  const { size } = args;
   const resolvedSectionId = args.sectionId
     ? resolveArtifactId(args.sectionId)
     : sectionId;
@@ -70,12 +69,6 @@ async function createChartArtifact(
     tableId,
     labelColumnId,
     series,
-    background,
-    animation,
-    frame,
-    dock,
-    hide: hide ?? undefined,
-    ...(position ? { x: position.x, y: position.y } : {}),
     ...getDimensions(size),
   });
 

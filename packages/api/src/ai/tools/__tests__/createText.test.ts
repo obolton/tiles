@@ -10,15 +10,8 @@ vi.mock("@/routes/text/text.ts", () => ({
 
 const BASE_ARGS = {
   sectionId: null,
-  textColor: null,
-  background: null,
   align: null,
   size: "medium" as const,
-  animation: null,
-  frame: null,
-  dock: null,
-  hide: null,
-  position: null,
 };
 
 describe("CREATE_TEXT_TOOL", () => {
@@ -109,30 +102,6 @@ describe("CREATE_TEXT_TOOL", () => {
       expect.objectContaining({
         content: [{ type: "paragraph", align: 2, children: [] }],
       }),
-    );
-  });
-
-  test("passes background to createText", async () => {
-    await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, background: { type: "color", color: "ff0000000000" } },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({
-        background: { type: "color", color: "ff0000000000" },
-      }),
-    );
-  });
-
-  test("passes textColor directly", async () => {
-    await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, textColor: "000000000000" },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({ textColor: "000000000000" }),
     );
   });
 

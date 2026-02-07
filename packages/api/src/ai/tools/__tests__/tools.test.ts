@@ -29,15 +29,6 @@ vi.mock("@/routes/sections/sections.ts", () => ({
     .mockResolvedValue({ type: "SECTION", id: "section-1" }),
 }));
 
-const COMMON_TILE_ARGS = {
-  background: null,
-  animation: null,
-  frame: null,
-  dock: null,
-  hide: null,
-  position: null,
-};
-
 describe("FUNCTION_TOOLS", () => {
   test("contains all expected tools", () => {
     const toolNames = FUNCTION_TOOLS.map((t) => t.name);
@@ -77,18 +68,15 @@ describe("useFunctionTool", () => {
         name: "create_text",
         arguments: JSON.stringify({
           sectionId: null,
-          textColor: null,
           align: null,
           size: "medium",
-          ...COMMON_TILE_ARGS,
         }),
         status: "completed",
       },
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(result).toHaveProperty("artifact");
-    expect(result.artifact).toHaveProperty("type", "TEXT");
+    expect(result).toEqual({ artifact: { type: "TEXT", id: "text-1" } });
   });
 
   test("finds and executes create_map tool", async () => {
@@ -103,15 +91,13 @@ describe("useFunctionTool", () => {
           size: "medium",
           style: null,
           places: [{ name: "Test", lat: 40.0, long: -74.0, address: null }],
-          ...COMMON_TILE_ARGS,
         }),
         status: "completed",
       },
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(result).toHaveProperty("artifact");
-    expect(result.artifact).toHaveProperty("type", "MAP");
+    expect(result).toEqual({ artifact: { type: "MAP", id: "map-1" } });
   });
 
   test("finds and executes create_table tool", async () => {
@@ -129,15 +115,13 @@ describe("useFunctionTool", () => {
             { title: "B", background: null },
           ],
           rows: [["1", "2"]],
-          ...COMMON_TILE_ARGS,
         }),
         status: "completed",
       },
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(result).toHaveProperty("artifact");
-    expect(result.artifact).toHaveProperty("type", "TABLE");
+    expect(result).toEqual({ artifact: { type: "TABLE", id: "table-1" } });
   });
 
   test("finds and executes create_link tool", async () => {
@@ -151,15 +135,13 @@ describe("useFunctionTool", () => {
           sectionId: null,
           size: "medium",
           url: "https://example.com",
-          ...COMMON_TILE_ARGS,
         }),
         status: "completed",
       },
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(result).toHaveProperty("artifact");
-    expect(result.artifact).toHaveProperty("type", "LINK");
+    expect(result).toEqual({ artifact: { type: "LINK", id: "link-1" } });
   });
 
   test("finds and executes create_section tool", async () => {
@@ -172,15 +154,13 @@ describe("useFunctionTool", () => {
         arguments: JSON.stringify({
           size: "medium",
           layout: "GRID",
-          ...COMMON_TILE_ARGS,
         }),
         status: "completed",
       },
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(result).toHaveProperty("artifact");
-    expect(result.artifact).toHaveProperty("type", "SECTION");
+    expect(result).toEqual({ artifact: { type: "SECTION", id: "section-1" } });
   });
 
   test("throws error for unknown tool name", async () => {

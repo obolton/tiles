@@ -11,12 +11,6 @@ vi.mock("@/routes/sections/sections.ts", () => ({
 const BASE_ARGS = {
   size: "medium" as const,
   layout: "GRID" as const,
-  background: null,
-  animation: null,
-  frame: null,
-  dock: null,
-  hide: null,
-  position: null,
 };
 
 describe("CREATE_SECTION_TOOL", () => {
@@ -82,19 +76,6 @@ describe("CREATE_SECTION_TOOL", () => {
     );
     expect(createSection).toHaveBeenCalledWith(
       expect.objectContaining({ layout: "FREEFORM" }),
-    );
-  });
-
-  test("passes background to createSection", async () => {
-    await CREATE_SECTION_TOOL.function(
-      { ...BASE_ARGS, background: { type: "color", color: "ff0000000000" } },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createSection).toHaveBeenCalledWith(
-      expect.objectContaining({
-        background: { type: "color", color: "ff0000000000" },
-      }),
     );
   });
 

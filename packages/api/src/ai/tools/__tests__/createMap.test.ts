@@ -20,12 +20,6 @@ const BASE_ARGS = {
   size: "medium" as const,
   style: null,
   places: [MOCK_PLACE],
-  background: null,
-  animation: null,
-  frame: null,
-  dock: null,
-  hide: null,
-  position: null,
 };
 
 describe("CREATE_MAP_TOOL", () => {
