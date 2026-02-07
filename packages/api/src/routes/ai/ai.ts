@@ -7,7 +7,7 @@ import { openai } from "@/ai/openai.ts";
 import { generateImageFromPrompt, createImageTile } from "@/ai/tools/images.ts";
 import { TOOLS, useFunctionTool } from "@/ai/tools/tools.ts";
 import { fetchTilesForContext } from "@/ai/context/tiles.ts";
-import { formatTileContext } from "@/ai/context/format.ts";
+import { buildContextIdMap, formatTileContext } from "@/ai/context/format.ts";
 import type { ToolContext } from "@/ai/tools/types.ts";
 import type { Artifact } from "@/ai/tools/types.ts";
 import type { GenerateImageSchema, WriteSchema } from "./schema.ts";
@@ -95,12 +95,14 @@ export async function* write(
     input.push({ role: "user", content: context.text });
   }
 
-  if (context?.tileIds && context.tileIds.length > 0) {
-    const tiles = await fetchTilesForContext(context.tileIds, pageId);
+  const tiles = context?.tileIds?.length
+    ? await fetchTilesForContext(context.tileIds, pageId)
+    : [];
+  const artifactIds = buildContextIdMap(tiles);
+
     const tileContext = formatTileContext(tiles);
     if (tileContext) {
       input.push({ role: "user", content: tileContext });
-    }
   }
 
   input.push({ role: "user", content: prompt });
@@ -122,7 +124,6 @@ export async function* write(
 
   let turn = 0;
   let continueTurns = true;
-  const artifactIds = new Map<string, string>();
 
   while (continueTurns && turn < MAX_TURNS && !signal?.aborted) {
     const { events, output, toolCalls } = await streamTurn(
