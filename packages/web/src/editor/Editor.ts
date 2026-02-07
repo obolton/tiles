@@ -19,7 +19,6 @@ import PageLink from "@/models/PageLink";
 import MapObject from "@/models/Map";
 import Table from "@/models/Table";
 import Chart from "@/models/Chart";
-import Dropdown from "@/models/Dropdown";
 import PageInvite from "@/models/PageInvite";
 import { OperationManager, execute } from "@/operations";
 import type Tile from "@/models/Tile";
@@ -52,7 +51,6 @@ export default class Editor {
   readonly selection: Reactive<Set<Tile>>;
   readonly references: Reactive<Tile[]>;
   readonly isPromptOpen: Reactive<boolean>;
-  readonly dropdowns: ReactiveArray<Dropdown>;
 
   readonly operations: OperationManager<AnyAction> | null;
   readonly canUndo: Reactive<boolean>;
@@ -125,7 +123,6 @@ export default class Editor {
     this.selection = reactive(new Set());
     this.references = reactive([]);
     this.isPromptOpen = flag(false);
-    this.dropdowns = array(page.dropdowns.map((d) => new Dropdown(this, d)));
 
     this.canUndo = reactive(false);
     this.canRedo = reactive(false);
@@ -550,26 +547,6 @@ export default class Editor {
         (access) => access.user.id !== userId,
       );
     });
-  }
-
-  // Dropdowns
-
-  getDropdown(id: string): Dropdown {
-    const dropdown = this.dropdowns.value.find((d) => d.id === id);
-    if (!dropdown) {
-      throw new Error(`Dropdown cannot be found: ${id}`);
-    }
-    return dropdown;
-  }
-
-  addDropdown(dropdown: Dropdown) {
-    this.dropdowns.value = this.dropdowns.value.concat(dropdown);
-  }
-
-  removeDropdown(dropdown: Dropdown) {
-    this.dropdowns.value = this.dropdowns.value.filter(
-      (d) => d.id !== dropdown.id,
-    );
   }
 
   // Operations (Undo/Redo)
