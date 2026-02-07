@@ -1,5 +1,6 @@
 import { schema } from "./schema";
 import { closest, getListDepth } from "./helpers";
+import { handleStreamAction } from "./actions";
 import Editor from "@/editor/Editor";
 import Text from "@/models/Text";
 import type { EditorView } from "prosemirror-view";
@@ -65,7 +66,16 @@ export interface ArtifactEvent {
   artifact: ClientTile;
 }
 
-export type StreamEvent = RichTextStreamEvent | ArtifactEvent;
+export interface Action {
+  readonly type: string;
+  readonly data: Record<string, unknown>;
+}
+
+export interface ActionEvent {
+  action: Action;
+}
+
+export type StreamEvent = RichTextStreamEvent | ArtifactEvent | ActionEvent;
 
 export type ReactiveState = Reactive<EditorState | null>;
 
@@ -212,6 +222,11 @@ export async function insertFromStream(
   const destinationTileIds = new Set<string>();
 
   for await (const event of stream) {
+    if (typeof event === "object" && "action" in event) {
+      await handleStreamAction(event.action);
+      continue;
+    }
+
     if (typeof event === "object" && "artifact" in event) {
       const tile = Editor.current.createTile(event.artifact);
       Editor.current.addTile(tile, event.artifact.sectionId);
