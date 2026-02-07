@@ -58,6 +58,12 @@ export default class Table extends Tile {
     this.numRows = reactive(numRows);
   }
 
+  getColumnData(columnId: string) {
+    return this.rows.derive((rows) =>
+      rows.map((row) => row.data[columnId] ?? null),
+    );
+  }
+
   // Columns
 
   async insertColumn(afterColumnId: string | null) {
