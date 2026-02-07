@@ -1,6 +1,7 @@
 import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
+import { createState } from "@/utils/richText/state";
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 import type { ClientTextTile } from "api/types/tiles";
@@ -47,6 +48,13 @@ export default class Text extends Tile {
       pageId: this.editor.pageId,
       id: this.id,
     });
+  }
+
+  getEditorState() {
+    if (!this.state.value) {
+      this.state.value = createState(this.content.value);
+    }
+    return this.state;
   }
 
   setVerticalAlignment(align: ClientTextTile["align"]) {
