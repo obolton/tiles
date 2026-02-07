@@ -40,6 +40,31 @@ describe("Page", () => {
       LEFT: PAGE.dockLeftWidth,
       RIGHT: PAGE.dockRightWidth,
     });
+    expect(page.dropdowns.value).toEqual([]);
+  });
+
+  describe("getDropdown", () => {
+    test("returns the dropdown with the given ID", () => {
+      const pageWithDropdowns = new Page({
+        ...PAGE,
+        dropdowns: [
+          { id: "dd-1", title: "Status", options: [{ value: "Active" }] },
+        ],
+      });
+
+      const dropdown = pageWithDropdowns.getDropdown("dd-1");
+
+      expect(dropdown.id).toBe("dd-1");
+      expect(dropdown.title.value).toBe("Status");
+    });
+
+    test("throws for an unknown dropdown ID", () => {
+      const page = new Page(PAGE);
+
+      expect(() => page.getDropdown("unknown")).toThrow(
+        "Dropdown cannot be found: unknown",
+      );
+    });
   });
 
   describe("setTitle", () => {
