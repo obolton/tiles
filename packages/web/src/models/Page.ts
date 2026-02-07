@@ -1,7 +1,8 @@
 import client from "@/api/client";
-import { reactive } from "@/utils/reactivity";
+import Dropdown from "@/models/Dropdown";
+import { reactive, array } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive, ReactiveArray } from "@/utils/reactivity";
 import type { Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
 import type { User } from "@/types/collaboration";
@@ -21,6 +22,7 @@ export default class Page {
   readonly folderId: Reactive<string | null>;
   readonly themeId: Reactive<string | null>;
   readonly dockSizes: Reactive<Record<DockEdge, number | null>>;
+  readonly dropdowns: ReactiveArray<Dropdown>;
 
   constructor(data: PageData) {
     this.id = data.id;
@@ -39,6 +41,15 @@ export default class Page {
       LEFT: data.dockLeftWidth,
       RIGHT: data.dockRightWidth,
     });
+    this.dropdowns = array(data.dropdowns.map((d) => new Dropdown(this, d)));
+  }
+
+  getDropdown(id: string): Dropdown {
+    const dropdown = this.dropdowns.value.find((d) => d.id === id);
+    if (!dropdown) {
+      throw new Error(`Dropdown cannot be found: ${id}`);
+    }
+    return dropdown;
   }
 
   private update(
