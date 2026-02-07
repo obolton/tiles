@@ -123,7 +123,7 @@ export default function FormattingTools({
 
   async function insertNewDropdown() {
     const defaultOption = "Option 1";
-    const dropdown = await Dropdown.create(Editor.current, {
+    const dropdown = await Dropdown.create(Editor.current.page, {
       options: [{ value: defaultOption }],
     });
     performCommand(insertDropdown(dropdown.id, defaultOption));
@@ -280,7 +280,7 @@ export default function FormattingTools({
                 Divider
               </MenuItem>
 
-              <Each items={Editor.current.dropdowns}>
+              <Each items={Editor.current.page.dropdowns}>
                 {(dropdown) => (
                   <MenuItem
                     icon={<DropdownIcon aria-hidden="true" />}

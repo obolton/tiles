@@ -134,7 +134,7 @@ class DropdownNodeView implements NodeView, EventListenerObject {
       return;
     }
 
-    const dropdown = Editor.current.dropdowns.value.find(
+    const dropdown = Editor.current.page.dropdowns.value.find(
       (d) => d.id === this.dropdownType,
     );
     if (!dropdown) {
@@ -188,7 +188,7 @@ class DropdownNodeView implements NodeView, EventListenerObject {
     }
 
     const target = event.target;
-    const dropdown = Editor.current.getDropdown(this.dropdownType);
+    const dropdown = Editor.current.page.getDropdown(this.dropdownType);
 
     // Title change
     if (target === this.editor) {
@@ -241,7 +241,7 @@ class DropdownNodeView implements NodeView, EventListenerObject {
     const option = event.target as DropdownOption;
     const index = Array.from(this.editor.select.children).indexOf(option);
     if (index >= 0) {
-      const dropdown = Editor.current.getDropdown(this.dropdownType);
+      const dropdown = Editor.current.page.getDropdown(this.dropdownType);
       dropdown.removeOption(index).then(() => {
         this.populateOptions(dropdown);
       });
@@ -253,7 +253,7 @@ class DropdownNodeView implements NodeView, EventListenerObject {
       return;
     }
 
-    const dropdown = Editor.current.getDropdown(this.dropdownType);
+    const dropdown = Editor.current.page.getDropdown(this.dropdownType);
     dropdown.reorderOptions(event.fromIndex, event.toIndex).then(() => {
       this.populateOptions(dropdown);
     });
