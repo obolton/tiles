@@ -49,7 +49,7 @@ export default function EditingTools({
           <PeopleIcon aria-hidden="true" />
         </ToolbarButton>
 
-        <CollaborationPopover editor={editor} id="collaboration-popover" />
+        <CollaborationPopover page={editor.page} id="collaboration-popover" />
 
         <ToolbarButton
           id="page-settings-button"

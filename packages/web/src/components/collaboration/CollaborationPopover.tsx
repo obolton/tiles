@@ -6,7 +6,7 @@ import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import styles from "./CollaborationPopover.module.css";
 import PageInvite from "@/models/PageInvite";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type { User } from "@/types/collaboration";
 import type { JSX } from "@/jsx/jsx";
 
@@ -14,20 +14,19 @@ const InviteModalLoader = () =>
   import("@/components/modals/invite/InviteModal");
 
 export interface CollaborationPopoverProps extends JSX.Attributes<"popover-menu"> {
-  editor: Editor;
+  page: Page;
 }
 
 export default function CollaborationPopover({
-  editor,
+  page,
   ...props
 }: CollaborationPopoverProps) {
-  const { access, invites } = editor;
-  const { isPublished } = editor.page;
+  const { access, invites, isPublished } = page;
 
   function setPublished(event: Event) {
     const input = event.currentTarget as HTMLInputElement;
     const publish = input.checked;
-    editor.page
+    page
       .setPublished(publish)
       .then(() =>
         publish
@@ -44,7 +43,7 @@ export default function CollaborationPopover({
       },
       async onConfirm({ email }) {
         try {
-          await PageInvite.create(editor, email);
+          await PageInvite.create(page, email);
           showToast(`An invite was sent to ${email}`, "success");
         } catch (error) {
           handleError(error);
@@ -54,7 +53,7 @@ export default function CollaborationPopover({
   }
 
   function revokeAccess(user: User) {
-    editor
+    page
       .revokeAccess(user.id)
       .then(() => showToast(`${user.name}’s access was revoked.`, "success"))
       .catch(handleError);
@@ -90,7 +89,7 @@ export default function CollaborationPopover({
       <ul>
         <li>
           <UserRow
-            user={editor.page.author}
+            user={page.author}
             description="Owner"
             showRemoveButton={false}
             onRemove={revokeAccess}
