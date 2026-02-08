@@ -13,6 +13,11 @@ vi.mock("@/api/client", () => ({
         mutate: vi.fn(),
       },
     },
+    collaboration: {
+      revokePageAccess: {
+        mutate: vi.fn(),
+      },
+    },
   },
 }));
 
@@ -41,6 +46,8 @@ describe("Page", () => {
       RIGHT: PAGE.dockRightWidth,
     });
     expect(page.dropdowns.value).toEqual([]);
+    expect(page.access.value).toEqual([]);
+    expect(page.invites.value).toEqual([]);
   });
 
   describe("getDropdown", () => {
@@ -64,6 +71,51 @@ describe("Page", () => {
       expect(() => page.getDropdown("unknown")).toThrow(
         "Dropdown cannot be found: unknown",
       );
+    });
+  });
+
+  describe("getInvite", () => {
+    test("returns the invite with the given ID", () => {
+      const pageWithInvites = new Page({
+        ...PAGE,
+        invites: [{ id: "inv-1", email: "a@b.com", createdAt: "2025-01-01" }],
+      });
+
+      const invite = pageWithInvites.getInvite("inv-1");
+
+      expect(invite.id).toBe("inv-1");
+      expect(invite.email).toBe("a@b.com");
+    });
+
+    test("throws for an unknown invite ID", () => {
+      const page = new Page(PAGE);
+
+      expect(() => page.getInvite("unknown")).toThrow(
+        "Invite cannot be found: unknown",
+      );
+    });
+  });
+
+  describe("revokeAccess", () => {
+    test("revokes access and removes the user from the list", async () => {
+      const pageWithAccess = new Page({
+        ...PAGE,
+        access: [
+          { user: { id: "user-1", name: "Alice", imageUrl: null } },
+          { user: { id: "user-2", name: "Bob", imageUrl: null } },
+        ],
+      });
+
+      await pageWithAccess.revokeAccess("user-1");
+
+      expect(client.collaboration.revokePageAccess.mutate).toHaveBeenCalledWith(
+        {
+          pageId: PAGE.id,
+          userId: "user-1",
+        },
+      );
+      expect(pageWithAccess.access.value).toHaveLength(1);
+      expect(pageWithAccess.access.value[0]?.user.id).toBe("user-2");
     });
   });
 

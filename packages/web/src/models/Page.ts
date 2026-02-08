@@ -1,11 +1,12 @@
 import client from "@/api/client";
 import Dropdown from "@/models/Dropdown";
+import PageInvite from "@/models/PageInvite";
 import { reactive, array } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 import type { Reactive, ReactiveArray } from "@/utils/reactivity";
 import type { Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
-import type { User } from "@/types/collaboration";
+import type { User, PageAccess } from "@/types/collaboration";
 import type { DockEdge } from "api/types/tiles";
 
 export type PageData = NonNullable<AppRouterOutputs["pages"]["getById"]>;
@@ -23,6 +24,8 @@ export default class Page {
   readonly themeId: Reactive<string | null>;
   readonly dockSizes: Reactive<Record<DockEdge, number | null>>;
   readonly dropdowns: ReactiveArray<Dropdown>;
+  readonly access: ReactiveArray<PageAccess>;
+  readonly invites: ReactiveArray<PageInvite>;
 
   constructor(data: PageData) {
     this.id = data.id;
@@ -42,6 +45,8 @@ export default class Page {
       RIGHT: data.dockRightWidth,
     });
     this.dropdowns = array(data.dropdowns.map((d) => new Dropdown(this, d)));
+    this.access = array(data.access);
+    this.invites = array(data.invites.map((i) => new PageInvite(this, i)));
   }
 
   getDropdown(id: string): Dropdown {
@@ -50,6 +55,24 @@ export default class Page {
       throw new Error(`Dropdown cannot be found: ${id}`);
     }
     return dropdown;
+  }
+
+  getInvite(id: string): PageInvite {
+    const invite = this.invites.value.find((i) => i.id === id);
+    if (!invite) {
+      throw new Error(`Invite cannot be found: ${id}`);
+    }
+    return invite;
+  }
+
+  async revokeAccess(userId: string) {
+    await client.collaboration.revokePageAccess.mutate({
+      pageId: this.id,
+      userId,
+    });
+    this.access.value = this.access.value.filter(
+      (access) => access.user.id !== userId,
+    );
   }
 
   private update(
