@@ -2,7 +2,7 @@ import client from "@/api/client";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { reactive, flag, array } from "@/utils/reactivity";
+import { reactive, flag } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
 import { isEditMode, setEditMode } from "@/utils/edit";
@@ -19,21 +19,13 @@ import PageLink from "@/models/PageLink";
 import MapObject from "@/models/Map";
 import Table from "@/models/Table";
 import Chart from "@/models/Chart";
-import PageInvite from "@/models/PageInvite";
 import { OperationManager, execute } from "@/operations";
 import type Tile from "@/models/Tile";
 import type { ClientTile } from "api/types/tiles";
-import type { PageAccess } from "@/types/collaboration";
-import type { Reactive, ReactiveArray } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 import type { AnyAction, OperationInput } from "@/operations";
 
 export type { PageData } from "@/models/Page";
-
-type TransitionFunction = (commit: () => void) => void;
-
-function immediateTransition(commit: () => void) {
-  commit();
-}
 
 const IS_SERVER = import.meta.env.SSR;
 
@@ -46,8 +38,6 @@ export default class Editor {
   readonly isEditable: Reactive<boolean>;
   readonly index: Map<string, Tile>;
   readonly tiles: TileCollection;
-  readonly access: ReactiveArray<PageAccess>;
-  readonly invites: ReactiveArray<PageInvite>;
   readonly selection: Reactive<Set<Tile>>;
   readonly references: Reactive<Tile[]>;
   readonly isPromptOpen: Reactive<boolean>;
@@ -118,8 +108,6 @@ export default class Editor {
     this.isEditable = flag(isEditMode());
     this.index = new Map();
     this.tiles = new TileCollection();
-    this.access = array(page.access);
-    this.invites = array(page.invites.map((i) => new PageInvite(this, i)));
     this.selection = reactive(new Set());
     this.references = reactive([]);
     this.isPromptOpen = flag(false);
@@ -514,39 +502,6 @@ export default class Editor {
       throw new Error(`Invalid section ID: ${sectionId}`);
     }
     return section;
-  }
-
-  // Collaboration
-
-  getInvite(id: string): PageInvite {
-    const invite = this.invites.value.find((i) => i.id === id);
-    if (!invite) {
-      throw new Error(`Invite cannot be found: ${id}`);
-    }
-    return invite;
-  }
-
-  addInvite(invite: PageInvite) {
-    this.invites.value = this.invites.value.concat(invite);
-  }
-
-  removeInvite(invite: PageInvite) {
-    this.invites.value = this.invites.value.filter((i) => i.id !== invite.id);
-  }
-
-  async revokeAccess(
-    userId: string,
-    transition: TransitionFunction = immediateTransition,
-  ) {
-    await client.collaboration.revokePageAccess.mutate({
-      pageId: this.pageId,
-      userId,
-    });
-    transition(() => {
-      this.access.value = this.access.value.filter(
-        (access) => access.user.id !== userId,
-      );
-    });
   }
 
   // Operations (Undo/Redo)
