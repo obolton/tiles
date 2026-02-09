@@ -1,4 +1,3 @@
-import { get, remove } from "@/utils/state";
 import { fadeOut, moveTo } from "@/utils/animation/effects";
 import infoIcon from "@/icons/info.svg";
 import successIcon from "@/icons/success.svg";
@@ -31,10 +30,13 @@ export default class ToastContainer extends HTMLElement {
     this.addEventListener("pointerout", this.setRemoveToastTimeout);
 
     // Check for queued toasts
-    const toast = get<{ message: string; type?: ToastType }>("toast");
-    if (toast) {
-      this.showToast(toast.message, toast.type);
-      remove("toast");
+    const toastData = sessionStorage.getItem("toast");
+    if (toastData) {
+      sessionStorage.removeItem("toast");
+      const toast = JSON.parse(toastData);
+      if (typeof toast?.message === "string") {
+        this.showToast(toast.message, toast.type);
+      }
     }
   }
 
