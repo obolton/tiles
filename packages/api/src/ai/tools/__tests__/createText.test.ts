@@ -10,15 +10,8 @@ vi.mock("@/routes/text/text.ts", () => ({
 
 const BASE_ARGS = {
   sectionId: null,
-  textColor: null,
-  background: null,
   align: null,
   size: "medium" as const,
-  animation: null,
-  frame: null,
-  dock: null,
-  hide: null,
-  position: null,
 };
 
 describe("CREATE_TEXT_TOOL", () => {
@@ -61,15 +54,13 @@ describe("CREATE_TEXT_TOOL", () => {
 
   test("resolves sectionId when provided in args", async () => {
     await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, sectionId: "section-0" },
+      { ...BASE_ARGS, sectionId: 0 },
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith(
-      "section-0",
-    );
+    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith(0);
     expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({ sectionId: "resolved-section-0" }),
+      expect.objectContaining({ sectionId: "resolved-0" }),
     );
   });
 
@@ -109,30 +100,6 @@ describe("CREATE_TEXT_TOOL", () => {
       expect.objectContaining({
         content: [{ type: "paragraph", align: 2, children: [] }],
       }),
-    );
-  });
-
-  test("passes background to createText", async () => {
-    await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, background: { type: "color", color: "ff0000000000" } },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({
-        background: { type: "color", color: "ff0000000000" },
-      }),
-    );
-  });
-
-  test("passes textColor directly", async () => {
-    await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, textColor: "000000000000" },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({ textColor: "000000000000" }),
     );
   });
 

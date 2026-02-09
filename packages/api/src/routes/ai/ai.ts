@@ -1,16 +1,22 @@
 import { TEXT_MODEL } from "@/ai/constants.ts";
 import {
   transformMarkdown,
+  type Destination,
+  type DestinationMode,
   type RichTextStreamEvent,
 } from "@/utils/markdown.ts";
 import { openai } from "@/ai/openai.ts";
 import { generateImageFromPrompt, createImageTile } from "@/ai/tools/images.ts";
 import { TOOLS, useFunctionTool } from "@/ai/tools/tools.ts";
 import { fetchTilesForContext } from "@/ai/context/tiles.ts";
-import { formatTileContext } from "@/ai/context/format.ts";
-import type { ToolContext } from "@/ai/tools/types.ts";
-import type { Artifact } from "@/ai/tools/types.ts";
+import { buildContextIds, formatTileContext } from "@/ai/context/format.ts";
 import type { GenerateImageSchema, WriteSchema } from "./schema.ts";
+import type {
+  Action,
+  ActionEvent,
+  Artifact,
+  ToolContext,
+} from "@/ai/tools/types.ts";
 import type {
   ResponseInput,
   ResponseInputItem,
@@ -19,15 +25,26 @@ import type {
 } from "openai/resources/responses/responses";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware.ts";
 
+interface ResolvedDestination {
+  destination: string | null;
+  mode?: DestinationMode;
+}
+
+export type WriteEvent =
+  | Exclude<RichTextStreamEvent, Destination>
+  | ResolvedDestination
+  | Artifact
+  | ActionEvent;
+
 const MAX_TURNS = 12;
-const PROMPT = `You are a tool for creating interactive documents. Provide direct responses, be succinct, do not include preludes or questions.
+const PROMPT = `You are a tool for creating and editing interactive documents. Do not include any commentary, notes, or explanations in your response - only use tool calls and block markers. Any text outside of block markers will be inserted into the document as content.
 
 - The document is laid out as blocks with varying sizes.
 - Large blocks span the whole document, while other blocks may appear side-by-side.
 - Blocks will be inserted into the document in the order they are created.
 - Supported block types: text, image, map, table, chart, link, section
 
-# Tool usage
+# Creating Content
 
 Use any available tools as appropriate. You do not need to ask permission first.
 
@@ -41,7 +58,7 @@ Use the "create_text" tool to create text blocks. To provide content for a text 
 
 where "id" is the value returned by the tool. Use Markdown for formatting (bold, italics, headings, lists). Example:
 
->>> text-0
+>>> 0
 # Heading
 
 Some **text**
@@ -66,18 +83,34 @@ Use "create_link" to create link cards for URLs.
 
 Use "create_section" to create a container for grouping related content. After creating a section, pass its ID as the "sectionId" parameter to other tools to place content inside it.
 
+# Editing Existing Text
+
+When content is referenced (shown with IDs like "0", "1"), you can edit text tiles directly using marker syntax. Do NOT call "create_text" for editing - just use the marker with the referenced ID:
+
+>>>= 0
+...new content (replaces existing)...
+<<<
+
+>>>+ 0
+...content appended to end...
+<<<
+
+>>>^ 0
+...content prepended to start...
+<<<
+
+Choose the appropriate mode based on the user's request:
+- "make this shorter", "rewrite this" → replace (>>>=)
+- "add more details", "continue" → append (>>>+)
+- "add an introduction" → prepend (>>>^)
+
+# Deleting Content
+
+Use "delete_tiles" to remove one or more tiles from the document when the user asks to delete or remove content.
+
 # Styling
 
-Unless directed, use the styling options available with the tools to make the document engaging and colorful as appropriate from the input. You may use emojis.
-
-## Available styling options
-
-- **Background**: Solid colors or gradients (vertical, horizontal, diagonal directions)
-- **Animation**: Entrance effects (FADE, SLIDE, GROW, SHRINK) for visual impact
-- **Frame**: Visual frame styles for blocks - OUTLINED (thin border), SUBTLE (soft glow), CARD (paper shadow), RAISED (floating shadow), FRAMED (bold border)
-- **Dock**: Attach blocks to viewport edges (TOP, BOTTOM, LEFT, RIGHT) to stay fixed while scrolling
-- **Hide**: Make blocks visible only in edit mode (useful for presenter notes)
-- **Position**: For FREEFORM sections, position blocks using x/y percentages (0-100)
+Use the "edit_style" tool to style any block after creating it. Unless directed, style blocks to make the document engaging and colorful. You may use emojis in text content.
 `;
 
 export async function generateImage({ prompt }: GenerateImageSchema) {
@@ -88,19 +121,21 @@ export async function* write(
   { pageId, sectionId, prompt, context }: WriteSchema,
   { userId, workspaceId }: AuthenticatedPageProcedureContext,
   signal?: AbortSignal,
-): AsyncIterable<RichTextStreamEvent | Artifact> {
+): AsyncIterable<WriteEvent> {
   const input: ResponseInput = [{ role: "developer", content: PROMPT }];
 
   if (context?.text) {
     input.push({ role: "user", content: context.text });
   }
 
-  if (context?.tileIds && context.tileIds.length > 0) {
-    const tiles = await fetchTilesForContext(context.tileIds, pageId);
-    const tileContext = formatTileContext(tiles);
-    if (tileContext) {
-      input.push({ role: "user", content: tileContext });
-    }
+  const tiles = context?.tileIds?.length
+    ? await fetchTilesForContext(context.tileIds, pageId)
+    : [];
+  const artifactIds = buildContextIds(tiles);
+
+  const tileContext = formatTileContext(tiles);
+  if (tileContext) {
+    input.push({ role: "user", content: tileContext });
   }
 
   input.push({ role: "user", content: prompt });
@@ -111,8 +146,8 @@ export async function* write(
     pageId,
     sectionId,
     model: TEXT_MODEL,
-    resolveArtifactId: (id: string) => {
-      const artifactId = artifactIds.get(id);
+    resolveArtifactId: (id: number) => {
+      const artifactId = artifactIds[id];
       if (!artifactId) {
         throw new Error(`Unknown artifact: ${id}`);
       }
@@ -122,7 +157,6 @@ export async function* write(
 
   let turn = 0;
   let continueTurns = true;
-  const artifactIds = new Map<string, string>();
 
   while (continueTurns && turn < MAX_TURNS && !signal?.aborted) {
     const { events, output, toolCalls } = await streamTurn(
@@ -141,7 +175,7 @@ export async function* write(
 export async function streamTurn(
   input: ResponseInput,
   toolContext: ToolContext,
-  artifactIds: Map<string, string>,
+  artifactIds: string[],
   signal?: AbortSignal,
 ) {
   const response = await openai.responses.create(
@@ -158,6 +192,7 @@ export async function streamTurn(
   const output: ResponseOutputItem[] = [];
   const toolCalls: ResponseInputItem.FunctionCallOutput[] = [];
   const artifacts: Artifact[] = [];
+  const actions: Action[] = [];
 
   const text = ReadableStream.from(response)
     .pipeThrough(
@@ -174,14 +209,33 @@ export async function streamTurn(
 
             if (item.type === "function_call" && item.status === "completed") {
               const result = await useFunctionTool(item, toolContext);
-              const id =
-                result.artifact.type.toLowerCase() + "-" + event.output_index;
+
+              if (!result) {
+                toolCalls.push({
+                  type: "function_call_output",
+                  call_id: item.call_id,
+                  output: JSON.stringify({ status: "ok" }),
+                });
+                return;
+              }
+
+              if ("actions" in result) {
+                actions.push(...result.actions);
+                toolCalls.push({
+                  type: "function_call_output",
+                  call_id: item.call_id,
+                  output: JSON.stringify({ status: "ok" }),
+                });
+                return;
+              }
+
+              const id = String(artifactIds.length);
+              artifactIds.push(result.artifact.id);
               toolCalls.push({
                 type: "function_call_output",
                 call_id: item.call_id,
                 output: JSON.stringify({ id }),
               });
-              artifactIds.set(id, result.artifact.id);
               artifacts.push(result);
               return;
             }
@@ -204,16 +258,20 @@ export async function streamTurn(
     for await (const textEvent of text) {
       // Map artifact IDs back to entity IDs
       if (typeof textEvent === "object" && "destination" in textEvent) {
-        const destination = textEvent.destination
-          ? (artifactIds.get(textEvent.destination) ?? null)
-          : null;
-        yield { destination };
+        const destination =
+          textEvent.destination !== null
+            ? toolContext.resolveArtifactId(textEvent.destination)
+            : null;
+        yield { destination, mode: textEvent.mode };
       } else {
         yield textEvent;
       }
     }
     for (const artifact of artifacts) {
       yield artifact;
+    }
+    for (const action of actions) {
+      yield { action };
     }
   }
 

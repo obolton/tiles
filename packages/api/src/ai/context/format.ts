@@ -2,21 +2,31 @@ import { extractContent } from "./extractors";
 import type { ClientTile } from "@/types/tiles";
 
 /**
- * Format tiles as context for an LLM.
+ * Build an array mapping context indices to tile IDs.
+ */
+export function buildContextIds(tiles: ClientTile[]): string[] {
+  return tiles.map((tile) => tile.id);
+}
+
+/**
+ * Format tiles as context for an LLM, including reference IDs for editing.
  */
 export function formatTileContext(tiles: ClientTile[]): string {
   const sections: string[] = [];
 
-  for (const tile of tiles) {
+  for (let i = 0; i < tiles.length; i++) {
+    const tile = tiles[i]!;
     const content = extractContent(tile);
-    if (content) {
-      sections.push(content);
-    }
+    sections.push(
+      content
+        ? `[${i}] (${tile.type})\n${content}`
+        : `[${i}] (${tile.type}, empty)`,
+    );
   }
 
   if (sections.length === 0) {
     return "";
   }
 
-  return `The following content is selected in the document for context:\n\n${sections.join("\n\n---\n\n")}`;
+  return `The following content is referenced from the document. You can edit these using their IDs:\n\n${sections.join("\n\n---\n\n")}`;
 }

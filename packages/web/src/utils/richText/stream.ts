@@ -1,5 +1,6 @@
 import { schema } from "./schema";
 import { closest, getListDepth } from "./helpers";
+import { handleStreamAction } from "./actions";
 import Editor from "@/editor/Editor";
 import Text from "@/models/Text";
 import type { EditorView } from "prosemirror-view";
@@ -44,8 +45,11 @@ export interface RichTextFormat {
   italic?: boolean;
 }
 
+export type DestinationMode = "insert" | "replace" | "append" | "prepend";
+
 export interface Destination {
   destination: string | null;
+  mode?: DestinationMode;
 }
 
 export type RichTextStreamEvent =
@@ -62,7 +66,16 @@ export interface ArtifactEvent {
   artifact: ClientTile;
 }
 
-export type StreamEvent = RichTextStreamEvent | ArtifactEvent;
+export interface Action {
+  readonly type: string;
+  readonly data: Record<string, unknown>;
+}
+
+export interface ActionEvent {
+  action: Action;
+}
+
+export type StreamEvent = RichTextStreamEvent | ArtifactEvent | ActionEvent;
 
 export type ReactiveState = Reactive<EditorState | null>;
 
@@ -80,36 +93,120 @@ function getInsertPosition(tr: Transaction) {
   return pos + 1;
 }
 
+type InsertMode = "after" | "before" | "replace";
+
 /**
  * Insert a node at the current position.
- * If replaceEmpty is true, replaces an empty textblock node with the new node.
- * Otherwise, inserts after the top-level block ancestor.
+ * - "replace": replaces the current textblock node with the new node
+ * - "before": inserts before the top-level block ancestor
+ * - "after": inserts after the top-level block ancestor (default)
  * @returns The position where the node was inserted.
  */
 export function insertNode(
   tr: Transaction,
   pos: number,
   node: Node,
-  replaceEmpty: boolean,
+  mode: InsertMode = "after",
 ): number {
   const $pos = tr.doc.resolve(pos);
 
-  if (replaceEmpty) {
-    const from = $pos.before();
-    const to = $pos.after();
-    tr.replaceWith(from, to, node);
-    return from;
+  switch (mode) {
+    case "replace": {
+      const from = $pos.before();
+      const to = $pos.after();
+      tr.replaceWith(from, to, node);
+      return from;
+    }
+    case "before": {
+      const beforePos = $pos.before(1);
+      tr.insert(beforePos, node);
+      return beforePos;
+    }
+    case "after":
+    default: {
+      const afterPos = $pos.after(1);
+      tr.insert(afterPos, node);
+      return afterPos;
+    }
   }
-
-  // Insert after the top-level block
-  const afterPos = $pos.after(1);
-  tr.insert(afterPos, node);
-  return afterPos;
 }
 
 function dispatch(state: ReactiveState, tr: Transaction) {
   const newState = state.value?.apply(tr) ?? null;
   state.value = newState;
+}
+
+type InsertDirection = "before" | "after";
+
+interface DestinationState {
+  output: ReactiveState | null;
+  pos: number | null;
+  direction: InsertDirection;
+  replaceEmptyBlock: boolean;
+}
+
+function handleDestination(
+  event: Destination,
+  destinationTileIds: Set<string>,
+): DestinationState {
+  if (!event.destination) {
+    return {
+      output: null,
+      pos: null,
+      direction: "after",
+      replaceEmptyBlock: false,
+    };
+  }
+
+  destinationTileIds.add(event.destination);
+  const existingTile = Editor.current.getTile(event.destination);
+
+  // Editing existing tile
+  if (existingTile instanceof Text) {
+    const output = existingTile.state;
+    if (!output.value) {
+      return {
+        output,
+        pos: null,
+        direction: "after",
+        replaceEmptyBlock: false,
+      };
+    }
+
+    switch (event.mode) {
+      case "replace": {
+        const tr = output.value.tr;
+        tr.replaceWith(0, tr.doc.content.size, schema.nodes.paragraph.create());
+        dispatch(output, tr);
+        return { output, pos: 1, direction: "after", replaceEmptyBlock: true };
+      }
+      case "append":
+        return {
+          output,
+          pos: output.value.doc.content.size,
+          direction: "after",
+          replaceEmptyBlock: false,
+        };
+      case "prepend":
+        return {
+          output,
+          pos: 1,
+          direction: "before",
+          replaceEmptyBlock: false,
+        };
+      default:
+        return {
+          output,
+          pos: null,
+          direction: "after",
+          replaceEmptyBlock: false,
+        };
+    }
+  }
+
+  // New artifact tile (from create_text tool)
+  const output = Editor.current.getTextEditorState(event.destination);
+  return { output, pos: null, direction: "after", replaceEmptyBlock: false };
 }
 
 export async function insertFromStream(
@@ -120,10 +217,16 @@ export async function insertFromStream(
   let bold = false;
   let italic = false;
   let output: ReactiveState | null = null;
+  let direction: InsertDirection = "after";
   let replaceEmptyBlock = false;
   const destinationTileIds = new Set<string>();
 
   for await (const event of stream) {
+    if (typeof event === "object" && "action" in event) {
+      await handleStreamAction(event.action);
+      continue;
+    }
+
     if (typeof event === "object" && "artifact" in event) {
       const tile = Editor.current.createTile(event.artifact);
       Editor.current.addTile(tile, event.artifact.sectionId);
@@ -131,14 +234,11 @@ export async function insertFromStream(
     }
 
     if (typeof event === "object" && "destination" in event) {
-      if (event.destination) {
-        output = Editor.current.getTextEditorState(event.destination);
-        destinationTileIds.add(event.destination);
-      } else {
-        output = null;
-      }
-      pos = null;
-      replaceEmptyBlock = false;
+      const state = handleDestination(event, destinationTileIds);
+      output = state.output;
+      pos = state.pos;
+      direction = state.direction;
+      replaceEmptyBlock = state.replaceEmptyBlock;
       continue;
     }
 
@@ -179,12 +279,19 @@ export async function insertFromStream(
       }
 
       if ("type" in event) {
+        const mode: InsertMode = replaceEmptyBlock ? "replace" : direction;
+
         switch (event.type) {
           case "paragraph":
             // If already inside an empty paragraph, no action needed
             if (!replaceEmptyBlock) {
               pos =
-                insertNode(tr, pos, schema.nodes.paragraph.create(), false) + 1;
+                insertNode(
+                  tr,
+                  pos,
+                  schema.nodes.paragraph.create(),
+                  direction,
+                ) + 1;
             }
             break;
 
@@ -194,7 +301,7 @@ export async function insertFromStream(
                 tr,
                 pos,
                 schema.nodes.heading.create({ level: event.level }),
-                replaceEmptyBlock,
+                mode,
               ) + 1;
             break;
 
@@ -214,7 +321,7 @@ export async function insertFromStream(
               // Not currently in a list - create a new one
               if (!listItem) {
                 const node = listNodeType.create(null, createListItem());
-                pos = insertNode(tr, pos, node, replaceEmptyBlock) + 3;
+                pos = insertNode(tr, pos, node, mode) + 3;
                 break;
               }
 
@@ -244,13 +351,7 @@ export async function insertFromStream(
             break;
 
           case "divider":
-            pos =
-              insertNode(
-                tr,
-                pos,
-                schema.nodes.divider.create(),
-                replaceEmptyBlock,
-              ) + 1;
+            pos = insertNode(tr, pos, schema.nodes.divider.create(), mode) + 1;
             break;
 
           case "code":
@@ -259,7 +360,7 @@ export async function insertFromStream(
                 tr,
                 pos,
                 schema.nodes.code.create({ language: event.language }),
-                replaceEmptyBlock,
+                mode,
               ) + 1;
             break;
         }

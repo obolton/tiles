@@ -17,7 +17,7 @@ describe("insertNode", () => {
 
     // Insert heading from position inside the list
     const heading = schema.nodes.heading.create({ level: 1 });
-    insertNode(tr, 5, heading, false);
+    insertNode(tr, 5, heading);
 
     // Heading should be at top level, after the list
     expect(tr.doc.childCount).toBe(2);

@@ -16,12 +16,6 @@ const BASE_ARGS = {
     { title: "B", background: null },
   ],
   rows: [["1", "2"]],
-  background: null,
-  animation: null,
-  frame: null,
-  dock: null,
-  hide: null,
-  position: null,
 };
 
 describe("CREATE_TABLE_TOOL", () => {
@@ -68,15 +62,13 @@ describe("CREATE_TABLE_TOOL", () => {
 
   test("resolves sectionId when provided in args", async () => {
     await CREATE_TABLE_TOOL.function(
-      { ...BASE_ARGS, sectionId: "section-0" },
+      { ...BASE_ARGS, sectionId: 0 },
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith(
-      "section-0",
-    );
+    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith(0);
     expect(createTable).toHaveBeenCalledWith(
-      expect.objectContaining({ sectionId: "resolved-section-0" }),
+      expect.objectContaining({ sectionId: "resolved-0" }),
     );
   });
 

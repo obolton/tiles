@@ -14,13 +14,7 @@ const MOCK_COLUMNS = [{ id: "col-a" }, { id: "col-b" }, { id: "col-c" }];
 const BASE_ARGS = {
   sectionId: null,
   size: "medium" as const,
-  background: null,
-  animation: null,
-  frame: null,
-  dock: null,
-  hide: null,
-  position: null,
-  tableId: "table-0",
+  tableId: 0,
   labelColumnIndex: null,
   series: [{ columnIndex: 0, type: "bar" as const, color: null }],
 };
@@ -34,15 +28,12 @@ describe("CREATE_CHART_TOOL", () => {
 
   test("resolves tableId via resolveArtifactId", async () => {
     await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
-    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith("table-0");
+    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith(0);
   });
 
   test("fetches table columns with pageId and resolved tableId", async () => {
     await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
-    expect(getTableColumns).toHaveBeenCalledWith(
-      "test-page",
-      "resolved-table-0",
-    );
+    expect(getTableColumns).toHaveBeenCalledWith("test-page", "resolved-0");
   });
 
   test("maps columnIndex to columnId for each series", async () => {
@@ -150,19 +141,6 @@ describe("CREATE_CHART_TOOL", () => {
     expect(createChart).toHaveBeenCalledWith(
       expect.objectContaining({
         series: [expect.objectContaining({ fill: undefined })],
-      }),
-    );
-  });
-
-  test("passes background to createChart", async () => {
-    await CREATE_CHART_TOOL.function(
-      { ...BASE_ARGS, background: { type: "color", color: "00ff00000000" } },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createChart).toHaveBeenCalledWith(
-      expect.objectContaining({
-        background: { type: "color", color: "00ff00000000" },
       }),
     );
   });

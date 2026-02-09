@@ -4,6 +4,7 @@ import {
   ColorBackgroundSchema,
   GradientBackgroundSchema,
 } from "@/schema/Background";
+import { ColorSchema } from "@/schema/Color";
 
 export const SizeSchema = z.enum(["small", "medium", "large"]).meta({
   description: "The size of the block: small, medium, or large",
@@ -64,8 +65,13 @@ export const PositionSchema = z
     description: "Position (x, y as 0-100%) for items in freeform sections",
   });
 
+export const TextColorSchema = ColorSchema.nullable().meta({
+  description: "Text color",
+});
+
 export const CommonTileSchema = {
   background: AIBackgroundSchema,
+  textColor: TextColorSchema,
   animation: AnimationSchema,
   frame: FrameSchema,
   dock: DockSchema,

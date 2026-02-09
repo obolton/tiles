@@ -9,7 +9,7 @@ const LINE_BREAK_MATCH = /^(\s*\n)+/;
 const HEADING_MATCH = /^(#{1,6})\s+(?=\S)/;
 const UNORDERED_LIST_ITEM_MATCH = /^( *)(-|\*|\+)\s+(?=\S)/;
 const ORDERED_LIST_ITEM_MATCH = /^( *)[0-9]+\.\s+(?=\S)/;
-const BLOCK_START_MATCH = /^>>>\s+(.+)\s*\n/;
+const BLOCK_START_MATCH = /^>>>(=|\+|\^)?\s+(\d+)\s*\n/;
 const BLOCK_END_MATCH = /^<<<\s*\n/;
 const BLOCK_END_EOF_MATCH = /^<<<\s*$/;
 const CODE_BLOCK_START_MATCH = /^(`{3,}|~{3,})(\w*)\s*\n/;
@@ -53,8 +53,11 @@ export interface RichTextFormat {
   italic?: boolean;
 }
 
+export type DestinationMode = "insert" | "replace" | "append" | "prepend";
+
 export interface Destination {
-  destination: string | null;
+  destination: number | null;
+  mode?: DestinationMode;
 }
 
 export type RichTextStreamEvent =
@@ -77,7 +80,7 @@ export class MarkdownTransformer implements Transformer<
   private format: RichTextFormat = {};
   private node: RichTextNode | null = null;
   private lineBreak: LineBreak | null = null;
-  private destination: string | null = null;
+  private destination: number | null = null;
   private codeFence: { char: string; length: number } | null = null;
 
   start() {}
@@ -129,7 +132,8 @@ export class MarkdownTransformer implements Transformer<
       node?: RichTextNode | null;
       format?: RichTextFormat;
       lineBreak?: LineBreak | null;
-      destination?: string | null;
+      destination?: number | null;
+      mode?: DestinationMode;
     },
     skip: number,
   ) {
@@ -140,7 +144,7 @@ export class MarkdownTransformer implements Transformer<
       this.format = {};
       this.node = null;
       this.lineBreak = null;
-      controller.enqueue({ destination: this.destination });
+      controller.enqueue({ destination: this.destination, mode: state.mode });
     }
 
     if (state.node !== undefined) {
@@ -210,8 +214,26 @@ export class MarkdownTransformer implements Transformer<
 
       const blockStartMatch = this.buffer.match(BLOCK_START_MATCH);
       if (blockStartMatch) {
-        const [match, id] = blockStartMatch;
-        this.set(controller, { destination: id ?? "" }, match.length);
+        const [match, modifier, id] = blockStartMatch;
+        let mode: DestinationMode;
+        switch (modifier) {
+          case "=":
+            mode = "replace";
+            break;
+          case "+":
+            mode = "append";
+            break;
+          case "^":
+            mode = "prepend";
+            break;
+          default:
+            mode = "insert";
+        }
+        this.set(
+          controller,
+          { destination: parseInt(id!, 10), mode },
+          match.length,
+        );
         continue;
       }
 

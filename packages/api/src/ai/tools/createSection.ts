@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Layout } from "@/generated/prisma/enums";
 import { createSection } from "@/routes/sections/sections.ts";
-import { SizeSchema, getDimensions, CommonTileSchema } from "./schema.ts";
+import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateSectionSchema = z.strictObject({
@@ -10,25 +10,17 @@ const CreateSectionSchema = z.strictObject({
     description:
       "Layout type: GRID (default), HORIZONTAL (side-by-side scrollable), VERTICAL (stacked), or FREEFORM (free positioning)",
   }),
-  ...CommonTileSchema,
 });
 
 async function createSectionArtifact(
   args: z.infer<typeof CreateSectionSchema>,
   { pageId }: ToolContext,
 ) {
-  const { size, layout, background, animation, frame, dock, hide, position } =
-    args;
+  const { size, layout } = args;
 
   const artifact = await createSection({
     pageId,
     layout,
-    background,
-    animation,
-    frame,
-    dock,
-    hide: hide ?? undefined,
-    ...(position ? { x: position.x, y: position.y } : {}),
     ...getDimensions(size),
   });
 

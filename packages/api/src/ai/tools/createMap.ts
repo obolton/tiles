@@ -7,11 +7,11 @@ import {
 } from "@/constants/geo.ts";
 import { MapStyle } from "@/generated/prisma/client";
 import { createMap } from "@/routes/maps/maps.ts";
-import { SizeSchema, getDimensions, CommonTileSchema } from "./schema.ts";
+import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateMapSchema = z.strictObject({
-  sectionId: z.string().nullable().meta({
+  sectionId: z.number().int().nullable().meta({
     description: "Section ID to place this content inside a section, or null",
   }),
   size: SizeSchema,
@@ -43,36 +43,18 @@ const CreateMapSchema = z.strictObject({
       description:
         "The visual style of the map: default, satellite, watercolor, or monochrome.",
     }),
-  ...CommonTileSchema,
 });
 
 async function createMapArtifact(
   args: z.infer<typeof CreateMapSchema>,
   { pageId, sectionId, model, resolveArtifactId }: ToolContext,
 ) {
-  const {
-    places,
-    size,
-    style,
-    background,
-    animation,
-    frame,
-    dock,
-    hide,
-    position,
-  } = args;
-  const resolvedSectionId = args.sectionId
-    ? resolveArtifactId(args.sectionId)
-    : sectionId;
+  const { places, size, style } = args;
+  const resolvedSectionId =
+    args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
   const artifact = await createMap({
     pageId,
     sectionId: resolvedSectionId,
-    background,
-    animation,
-    frame,
-    dock,
-    hide: hide ?? undefined,
-    ...(position ? { x: position.x, y: position.y } : {}),
     ...getDimensions(size),
     style: style ? (style.toUpperCase() as MapStyle) : undefined,
     places: places.map(({ name, lat, long, address }) => ({
