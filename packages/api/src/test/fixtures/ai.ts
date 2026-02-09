@@ -7,7 +7,7 @@ export const MOCK_TOOL_CONTEXT: ToolContext = {
   pageId: "test-page",
   sectionId: null,
   model: "test-model",
-  resolveArtifactId: vi.fn((id: string) => `resolved-${id}`),
+  resolveArtifactId: vi.fn((id: number) => `resolved-${id}`),
 };
 
 export const MOCK_TILE_PLACEMENT = {

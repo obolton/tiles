@@ -444,24 +444,18 @@ describe("transformMarkdown", () => {
 
   describe("blocks", () => {
     test("returns a block start", async () => {
-      const output = await getEvents([">>> test-1\n", "hello world"]);
+      const output = await getEvents([">>> 1\n", "hello world"]);
       expect(output).toEqual([
-        { destination: "test-1", mode: "insert" },
+        { destination: 1, mode: "insert" },
         { type: "paragraph" },
         "hello world",
       ]);
     });
 
     test("supports block start syntax split over multiple chunks", async () => {
-      const output = await getEvents([
-        ">>",
-        "> test",
-        "-1",
-        "\n",
-        "hello world",
-      ]);
+      const output = await getEvents([">>", "> 1", "2", "\n", "hello world"]);
       expect(output).toEqual([
-        { destination: "test-1", mode: "insert" },
+        { destination: 12, mode: "insert" },
         { type: "paragraph" },
         "hello world",
       ]);
@@ -486,9 +480,9 @@ describe("transformMarkdown", () => {
     });
 
     test("handles block end at end of stream without trailing newline", async () => {
-      const output = await getEvents([">>> test\n", "hello\n", "<<<"]);
+      const output = await getEvents([">>> 0\n", "hello\n", "<<<"]);
       expect(output).toEqual([
-        { destination: "test", mode: "insert" },
+        { destination: 0, mode: "insert" },
         { type: "paragraph" },
         "hello",
         { destination: null, mode: undefined },
@@ -496,29 +490,38 @@ describe("transformMarkdown", () => {
     });
 
     test("supports replace mode with >>>= syntax", async () => {
-      const output = await getEvents([">>>= test-1\n", "replaced content"]);
+      const output = await getEvents([">>>= 1\n", "replaced content"]);
       expect(output).toEqual([
-        { destination: "test-1", mode: "replace" },
+        { destination: 1, mode: "replace" },
         { type: "paragraph" },
         "replaced content",
       ]);
     });
 
     test("supports append mode with >>>+ syntax", async () => {
-      const output = await getEvents([">>>+ test-1\n", "appended content"]);
+      const output = await getEvents([">>>+ 1\n", "appended content"]);
       expect(output).toEqual([
-        { destination: "test-1", mode: "append" },
+        { destination: 1, mode: "append" },
         { type: "paragraph" },
         "appended content",
       ]);
     });
 
     test("supports prepend mode with >>>^ syntax", async () => {
-      const output = await getEvents([">>>^ test-1\n", "prepended content"]);
+      const output = await getEvents([">>>^ 1\n", "prepended content"]);
       expect(output).toEqual([
-        { destination: "test-1", mode: "prepend" },
+        { destination: 1, mode: "prepend" },
         { type: "paragraph" },
         "prepended content",
+      ]);
+    });
+
+    test("ignores block start with non-numeric ID", async () => {
+      const output = await getEvents([">>> abc\n", "hello world"]);
+      expect(output).toEqual([
+        { type: "paragraph" },
+        ">>> abc",
+        " hello world",
       ]);
     });
   });
