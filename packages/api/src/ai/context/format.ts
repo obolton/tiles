@@ -2,22 +2,10 @@ import { extractContent } from "./extractors";
 import type { ClientTile } from "@/types/tiles";
 
 /**
- * Generate a context ID for a tile at the given index.
+ * Build an array mapping context indices to tile IDs.
  */
-export function getContextId(tile: ClientTile, index: number): string {
-  return `${tile.type.toLowerCase()}-${index}`;
-}
-
-/**
- * Build a map from context IDs to tile IDs.
- */
-export function buildContextIdMap(tiles: ClientTile[]): Map<string, string> {
-  const map = new Map<string, string>();
-  for (let i = 0; i < tiles.length; i++) {
-    const tile = tiles[i]!;
-    map.set(getContextId(tile, i), tile.id);
-  }
-  return map;
+export function buildContextIds(tiles: ClientTile[]): string[] {
+  return tiles.map((tile) => tile.id);
 }
 
 /**
@@ -28,12 +16,11 @@ export function formatTileContext(tiles: ClientTile[]): string {
 
   for (let i = 0; i < tiles.length; i++) {
     const tile = tiles[i]!;
-    const contextId = getContextId(tile, i);
     const content = extractContent(tile);
     sections.push(
       content
-        ? `[${contextId}] (${tile.type})\n${content}`
-        : `[${contextId}] (${tile.type}, empty)`,
+        ? `[${i}] (${tile.type})\n${content}`
+        : `[${i}] (${tile.type}, empty)`,
     );
   }
 

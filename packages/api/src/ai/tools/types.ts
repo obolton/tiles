@@ -7,7 +7,7 @@ export interface ToolContext {
   pageId: string;
   sectionId: string | null;
   model: string;
-  resolveArtifactId: (id: string) => string;
+  resolveArtifactId: (id: number) => string;
 }
 
 export interface Artifact {

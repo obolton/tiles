@@ -7,7 +7,7 @@ import { openai } from "@/ai/openai.ts";
 import { generateImageFromPrompt, createImageTile } from "@/ai/tools/images.ts";
 import { TOOLS, useFunctionTool } from "@/ai/tools/tools.ts";
 import { fetchTilesForContext } from "@/ai/context/tiles.ts";
-import { buildContextIdMap, formatTileContext } from "@/ai/context/format.ts";
+import { buildContextIds, formatTileContext } from "@/ai/context/format.ts";
 import type { GenerateImageSchema, WriteSchema } from "./schema.ts";
 import type {
   Action,
@@ -45,7 +45,7 @@ Use the "create_text" tool to create text blocks. To provide content for a text 
 
 where "id" is the value returned by the tool. Use Markdown for formatting (bold, italics, headings, lists). Example:
 
->>> text-0
+>>> 0
 # Heading
 
 Some **text**
@@ -70,23 +70,20 @@ Use "create_link" to create link cards for URLs.
 
 Use "create_section" to create a container for grouping related content. After creating a section, pass its ID as the "sectionId" parameter to other tools to place content inside it.
 
-# Editing Existing Content
+# Editing Existing Text
 
-When content is referenced (shown with IDs like "text-0", "table-1"), you can edit it using these marker syntax variants:
+When content is referenced (shown with IDs like "0", "1"), you can edit text tiles directly using marker syntax. Do NOT call "create_text" for editing - just use the marker with the referenced ID:
 
-## Replace (clear and rewrite)
->>>= text-0
-...new content...
+>>>= 0
+...new content (replaces existing)...
 <<<
 
-## Append (add to end)
->>>+ text-0
-...additional content...
+>>>+ 0
+...content appended to end...
 <<<
 
-## Prepend (add to beginning)
->>>^ text-0
-...content to add at start...
+>>>^ 0
+...content prepended to start...
 <<<
 
 Choose the appropriate mode based on the user's request:
@@ -117,7 +114,7 @@ export async function* write(
   const tiles = context?.tileIds?.length
     ? await fetchTilesForContext(context.tileIds, pageId)
     : [];
-  const artifactIds = buildContextIdMap(tiles);
+  const artifactIds = buildContextIds(tiles);
 
   const tileContext = formatTileContext(tiles);
   if (tileContext) {
@@ -132,8 +129,8 @@ export async function* write(
     pageId,
     sectionId,
     model: TEXT_MODEL,
-    resolveArtifactId: (id: string) => {
-      const artifactId = artifactIds.get(id);
+    resolveArtifactId: (id: number) => {
+      const artifactId = artifactIds[id];
       if (!artifactId) {
         throw new Error(`Unknown artifact: ${id}`);
       }
@@ -161,7 +158,7 @@ export async function* write(
 export async function streamTurn(
   input: ResponseInput,
   toolContext: ToolContext,
-  artifactIds: Map<string, string>,
+  artifactIds: string[],
   signal?: AbortSignal,
 ) {
   const response = await openai.responses.create(
@@ -215,14 +212,13 @@ export async function streamTurn(
                 return;
               }
 
-              const id =
-                result.artifact.type.toLowerCase() + "-" + event.output_index;
+              const id = String(artifactIds.length);
+              artifactIds.push(result.artifact.id);
               toolCalls.push({
                 type: "function_call_output",
                 call_id: item.call_id,
                 output: JSON.stringify({ id }),
               });
-              artifactIds.set(id, result.artifact.id);
               artifacts.push(result);
               return;
             }
@@ -245,8 +241,9 @@ export async function streamTurn(
     for await (const textEvent of text) {
       // Map artifact IDs back to entity IDs
       if (typeof textEvent === "object" && "destination" in textEvent) {
-        const destination = textEvent.destination
-          ? (artifactIds.get(textEvent.destination) ?? null)
+        const destination =
+          textEvent.destination !== null
+            ? toolContext.resolveArtifactId(textEvent.destination)
           : null;
         yield { destination, mode: textEvent.mode };
       } else {
