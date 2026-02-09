@@ -163,7 +163,7 @@ function handleDestination(
 
   // Editing existing tile
   if (existingTile instanceof Text) {
-    const output = existingTile.state;
+    const output = existingTile.getEditorState();
     if (!output.value) {
       return {
         output,
@@ -204,9 +204,12 @@ function handleDestination(
     }
   }
 
-  // New artifact tile (from create_text tool)
-  const output = Editor.current.getTextEditorState(event.destination);
-  return { output, pos: null, direction: "after", replaceEmptyBlock: false };
+  return {
+    output: null,
+    pos: null,
+    direction: "after",
+    replaceEmptyBlock: false,
+  };
 }
 
 export async function insertFromStream(
