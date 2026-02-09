@@ -1,8 +1,9 @@
 import client from "@/api/client";
 import { getLoaderContext } from "@/utils/loaderContext";
 import { isSignedIn } from "@/utils/sessions";
-import Profile, { type ProfileProps } from "@/pages/settings/Profile";
 import { authenticatedRoute } from "@/utils/middleware";
+import { initRoute } from "@/routes/init";
+import Profile, { type ProfileProps } from "@/pages/settings/Profile";
 import { notFound, forbidden } from "@/router/responses";
 import type {
   Route,
@@ -41,4 +42,5 @@ export default {
   loader,
   component: Profile,
   hydrate: "immediate",
+  beforeHydrate: ({ parameters }) => initRoute(parameters.workspaceId),
 } satisfies Route<ProfileProps>;

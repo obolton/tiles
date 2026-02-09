@@ -2,6 +2,7 @@ import client from "@/api/client";
 import { getLoaderContext } from "@/utils/loaderContext";
 import { isSignedIn } from "@/utils/sessions";
 import { authenticatedRoute } from "@/utils/middleware";
+import { initRoute } from "@/routes/init";
 import Bookmarks, { type BookmarksProps } from "@/pages/library/Bookmarks";
 import { notFound, forbidden } from "@/router/responses";
 import type {
@@ -42,4 +43,5 @@ export default {
   loader,
   component: Bookmarks,
   hydrate: "immediate",
+  beforeHydrate: ({ parameters }) => initRoute(parameters.workspaceId),
 } satisfies Route<BookmarksProps>;

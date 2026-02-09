@@ -2,6 +2,7 @@ import client from "@/api/client";
 import { getLoaderContext } from "@/utils/loaderContext";
 import { isSignedIn } from "@/utils/sessions";
 import { authenticatedRoute } from "@/utils/middleware";
+import { initRoute } from "@/routes/init";
 import Library, { type LibraryProps } from "@/pages/library/Library";
 import { notFound, forbidden } from "@/router/responses";
 import type {
@@ -43,4 +44,5 @@ export default {
   loader,
   component: Library,
   hydrate: "immediate",
+  beforeHydrate: ({ parameters }) => initRoute(parameters.workspaceId),
 } satisfies Route<LibraryProps>;

@@ -2,6 +2,7 @@ import client from "@/api/client";
 import { getLoaderContext } from "@/utils/loaderContext";
 import { isSignedIn } from "@/utils/sessions";
 import { authenticatedRoute } from "@/utils/middleware";
+import { initRoute } from "@/routes/init";
 import Trash, { type TrashProps } from "@/pages/library/Trash";
 import { notFound, forbidden } from "@/router/responses";
 import type {
@@ -42,4 +43,5 @@ export default {
   loader,
   component: Trash,
   hydrate: "immediate",
+  beforeHydrate: ({ parameters }) => initRoute(parameters.workspaceId),
 } satisfies Route<TrashProps>;

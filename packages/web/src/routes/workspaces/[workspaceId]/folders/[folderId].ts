@@ -2,6 +2,7 @@ import client from "@/api/client";
 import { getLoaderContext } from "@/utils/loaderContext";
 import { isSignedIn } from "@/utils/sessions";
 import { authenticatedRoute } from "@/utils/middleware";
+import { initRoute } from "@/routes/init";
 import Folder, { type FolderProps } from "@/pages/library/Folder";
 import { notFound, forbidden } from "@/router/responses";
 import type {
@@ -47,4 +48,5 @@ export default {
   loader,
   component: Folder,
   hydrate: "immediate",
+  beforeHydrate: ({ parameters }) => initRoute(parameters.workspaceId),
 } satisfies Route<FolderProps>;
