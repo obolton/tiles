@@ -5,7 +5,7 @@ interface RouteContext {
   params: RouteParameters;
 }
 
-function getRouteContext(): RouteContext {
+export function getRouteContext(): RouteContext {
   const element = document.getElementById("route-context");
   if (!element?.textContent) {
     throw new Error("Hydration error: route context not found");
@@ -13,7 +13,12 @@ function getRouteContext(): RouteContext {
   return JSON.parse(element.textContent);
 }
 
-export async function hydrateRoute(): Promise<void> {
+interface HydrateResult {
+  data: unknown;
+  parameters: RouteParameters;
+}
+
+export async function hydrateRoute(): Promise<HydrateResult> {
   const { module: routeModule, params: parameters } = getRouteContext();
 
   const [{ hydrate }, { default: route }] = await Promise.all([
@@ -21,7 +26,7 @@ export async function hydrateRoute(): Promise<void> {
     import(/* @vite-ignore */ routeModule),
   ]);
 
-  const { loader, component } = route;
+  const { loader, component, beforeHydrate, afterHydrate } = route;
 
   let data: unknown;
 
@@ -36,7 +41,7 @@ export async function hydrateRoute(): Promise<void> {
       const location = result.headers.get("Location");
       if (location) {
         window.location.href = location;
-        return;
+        return { data: undefined, parameters };
       }
       throw new Error(`Loader returned ${result.status}`);
     }
@@ -44,5 +49,10 @@ export async function hydrateRoute(): Promise<void> {
     data = result?.data;
   }
 
+  const context = { parameters, data };
+  beforeHydrate?.(context);
   hydrate(component(data), document.body);
+  afterHydrate?.(context);
+
+  return context;
 }
