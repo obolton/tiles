@@ -4,7 +4,7 @@ import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateLinkSchema = z.strictObject({
-  sectionId: z.string().nullable().meta({
+  sectionId: z.number().int().nullable().meta({
     description: "Section ID to place this content inside a section, or null",
   }),
   url: z.string().meta({
@@ -18,9 +18,8 @@ async function createLinkArtifact(
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
   const { url, size } = args;
-  const resolvedSectionId = args.sectionId
-    ? resolveArtifactId(args.sectionId)
-    : sectionId;
+  const resolvedSectionId =
+    args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
   const artifact = await createLink({
     pageId,
     sectionId: resolvedSectionId,

@@ -14,7 +14,7 @@ const MOCK_COLUMNS = [{ id: "col-a" }, { id: "col-b" }, { id: "col-c" }];
 const BASE_ARGS = {
   sectionId: null,
   size: "medium" as const,
-  tableId: "table-0",
+  tableId: 0,
   labelColumnIndex: null,
   series: [{ columnIndex: 0, type: "bar" as const, color: null }],
 };
@@ -28,15 +28,12 @@ describe("CREATE_CHART_TOOL", () => {
 
   test("resolves tableId via resolveArtifactId", async () => {
     await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
-    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith("table-0");
+    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith(0);
   });
 
   test("fetches table columns with pageId and resolved tableId", async () => {
     await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
-    expect(getTableColumns).toHaveBeenCalledWith(
-      "test-page",
-      "resolved-table-0",
-    );
+    expect(getTableColumns).toHaveBeenCalledWith("test-page", "resolved-0");
   });
 
   test("maps columnIndex to columnId for each series", async () => {

@@ -11,7 +11,7 @@ import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateMapSchema = z.strictObject({
-  sectionId: z.string().nullable().meta({
+  sectionId: z.number().int().nullable().meta({
     description: "Section ID to place this content inside a section, or null",
   }),
   size: SizeSchema,
@@ -50,9 +50,8 @@ async function createMapArtifact(
   { pageId, sectionId, model, resolveArtifactId }: ToolContext,
 ) {
   const { places, size, style } = args;
-  const resolvedSectionId = args.sectionId
-    ? resolveArtifactId(args.sectionId)
-    : sectionId;
+  const resolvedSectionId =
+    args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
   const artifact = await createMap({
     pageId,
     sectionId: resolvedSectionId,

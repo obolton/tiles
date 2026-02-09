@@ -5,11 +5,11 @@ import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateChartSchema = z.strictObject({
-  sectionId: z.string().nullable().meta({
+  sectionId: z.number().int().nullable().meta({
     description: "Section ID to place this content inside a section, or null",
   }),
   size: SizeSchema,
-  tableId: z.string().meta({
+  tableId: z.number().int().meta({
     description: "The ID of the table to visualize (from create_table result)",
   }),
   labelColumnIndex: z.number().int().min(0).nullable().meta({
@@ -40,9 +40,8 @@ async function createChartArtifact(
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
   const { size } = args;
-  const resolvedSectionId = args.sectionId
-    ? resolveArtifactId(args.sectionId)
-    : sectionId;
+  const resolvedSectionId =
+    args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
   const tableId = resolveArtifactId(args.tableId);
   const columns = await getTableColumns(pageId, tableId);
 

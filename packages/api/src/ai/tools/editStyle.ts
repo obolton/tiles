@@ -1,10 +1,14 @@
 import { z } from "zod";
 import { CommonTileSchema } from "./schema.ts";
-import type { ActionResult, FunctionToolOptions, ToolContext } from "./types.ts";
+import type {
+  ActionResult,
+  FunctionToolOptions,
+  ToolContext,
+} from "./types.ts";
 
 const EditStyleSchema = z.strictObject({
-  id: z.string().meta({
-    description: "The ID of the tile to style (e.g., text-0, table-1)",
+  id: z.number().int().meta({
+    description: "The ID of the tile to style",
   }),
   ...CommonTileSchema,
 });

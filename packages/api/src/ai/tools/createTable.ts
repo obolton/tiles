@@ -8,7 +8,7 @@ import {
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateTableSchema = z.strictObject({
-  sectionId: z.string().nullable().meta({
+  sectionId: z.number().int().nullable().meta({
     description: "Section ID to place this content inside a section, or null",
   }),
   size: SizeSchema,
@@ -29,9 +29,8 @@ async function createTableArtifact(
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
   const { size, columns, rows } = args;
-  const resolvedSectionId = args.sectionId
-    ? resolveArtifactId(args.sectionId)
-    : sectionId;
+  const resolvedSectionId =
+    args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
   const artifact = await createTable({
     pageId,
     sectionId: resolvedSectionId,

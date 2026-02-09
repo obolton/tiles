@@ -54,15 +54,13 @@ describe("CREATE_TEXT_TOOL", () => {
 
   test("resolves sectionId when provided in args", async () => {
     await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, sectionId: "section-0" },
+      { ...BASE_ARGS, sectionId: 0 },
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith(
-      "section-0",
-    );
+    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith(0);
     expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({ sectionId: "resolved-section-0" }),
+      expect.objectContaining({ sectionId: "resolved-0" }),
     );
   });
 
