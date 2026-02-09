@@ -1,6 +1,8 @@
 import { TEXT_MODEL } from "@/ai/constants.ts";
 import {
   transformMarkdown,
+  type Destination,
+  type DestinationMode,
   type RichTextStreamEvent,
 } from "@/utils/markdown.ts";
 import { openai } from "@/ai/openai.ts";
@@ -22,6 +24,17 @@ import type {
   ResponseStreamEvent,
 } from "openai/resources/responses/responses";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware.ts";
+
+interface ResolvedDestination {
+  destination: string | null;
+  mode?: DestinationMode;
+}
+
+export type WriteEvent =
+  | Exclude<RichTextStreamEvent, Destination>
+  | ResolvedDestination
+  | Artifact
+  | ActionEvent;
 
 const MAX_TURNS = 12;
 const PROMPT = `You are a tool for creating and editing interactive documents. Do not include any commentary, notes, or explanations in your response - only use tool calls and block markers. Any text outside of block markers will be inserted into the document as content.
@@ -108,7 +121,7 @@ export async function* write(
   { pageId, sectionId, prompt, context }: WriteSchema,
   { userId, workspaceId }: AuthenticatedPageProcedureContext,
   signal?: AbortSignal,
-): AsyncIterable<RichTextStreamEvent | Artifact | ActionEvent> {
+): AsyncIterable<WriteEvent> {
   const input: ResponseInput = [{ role: "developer", content: PROMPT }];
 
   if (context?.text) {
@@ -248,7 +261,7 @@ export async function streamTurn(
         const destination =
           textEvent.destination !== null
             ? toolContext.resolveArtifactId(textEvent.destination)
-          : null;
+            : null;
         yield { destination, mode: textEvent.mode };
       } else {
         yield textEvent;
