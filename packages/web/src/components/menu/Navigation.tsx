@@ -10,13 +10,10 @@ import SignOutIcon from "@/icons/sign-out.svg?jsx";
 import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import BookmarkFilledIcon from "@/icons/bookmark-filled.svg?jsx";
 import MenuIcon from "@/icons/menu.svg?jsx";
-import { user } from "@/utils/sessions";
-import { isSignedIn, getUserInfo, getCachedUserInfo } from "@/utils/sessions";
+import { user, getUserInfo, signOut } from "@/utils/sessions";
 import { handleError } from "@/utils/errors";
 import client from "@/api/client";
-import { signOut } from "@/utils/sessions";
-import { getIsBookmarked, setIsBookmarked } from "@/utils/bookmarks";
-import { initializeCache, isCacheInitialized } from "@/utils/cache";
+import { isBookmarked, setIsBookmarked } from "@/utils/bookmarks";
 import { flag } from "@/utils/reactivity";
 import { showToast } from "@/utils/toasts";
 import { showModal } from "@/utils/modals";
@@ -35,39 +32,7 @@ export default function Navigation({
   showBookmark = false,
   showTableOfContents = false,
 }: NavigationProps) {
-  const isBookmarked = flag(false);
   const bookmarkPending = flag(false);
-
-  if (!import.meta.env.SSR) {
-    queueMicrotask(() => {
-      if (isSignedIn()) {
-        document.body.dataset.signedIn = "true";
-        const userInfo = getCachedUserInfo();
-
-        if (!userInfo) {
-          getUserInfo()
-            .then((u) => {
-              if (u.value && !isCacheInitialized()) {
-                initializeCache(u.value.id, workspaceId);
-              }
-            })
-            .catch((error) => handleError(error));
-        } else {
-          user.value = userInfo;
-          if (!isCacheInitialized()) {
-            initializeCache(userInfo.id, workspaceId);
-          }
-        }
-
-        const pageId = document.body.dataset.pageId;
-        if (pageId) {
-          getIsBookmarked(pageId)
-            .then((bookmarked) => (isBookmarked.value = bookmarked))
-            .catch(handleError);
-        }
-      }
-    });
-  }
 
   function createWorkspace() {
     showModal(CreateWorkspaceModalLoader, {
