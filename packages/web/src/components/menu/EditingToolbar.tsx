@@ -2,7 +2,6 @@ import EditingTools from "./EditingTools";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import If from "@/jsx/if";
 import { viewTransition } from "@/utils/transitions";
-import { setEditMode } from "@/utils/edit";
 import styles from "./EditingToolbar.module.css";
 import type Editor from "@/editor/Editor";
 
@@ -19,7 +18,6 @@ export default function EditingToolbar({
 
   function toggleEdit() {
     viewTransition(() => {
-      setEditMode(!isEditable.value);
       isEditable.value = !isEditable.value;
     });
   }
