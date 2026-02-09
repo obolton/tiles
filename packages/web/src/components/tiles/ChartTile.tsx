@@ -4,6 +4,7 @@ import If from "@/jsx/if";
 import Each from "@/jsx/each";
 import Portal from "@/jsx/portal";
 import Editor from "@/editor/Editor";
+import Table from "@/models/Table";
 import { toPlainText } from "@/utils/richText/plainText";
 import styles from "./ChartTile.module.css";
 import type { RichText } from "@/utils/richText/types";
@@ -62,7 +63,8 @@ export default function ChartTile({ chart, showToolbar }: ChartTileProps) {
                 fill?.type === "gradient" ? fill.direction : null,
               )}
               $values={Editor.current
-                .getTableColumnData(chart.tableId, series.column.value.id)
+                .getTileAs(chart.tableId, Table)
+                .getColumnData(series.column.value.id)
                 .value.map(toNumber)}
             />
           )}
