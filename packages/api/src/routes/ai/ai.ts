@@ -87,9 +87,13 @@ When content is referenced (shown with IDs like "0", "1"), you can edit text til
 <<<
 
 Choose the appropriate mode based on the user's request:
-- "make this shorter", "rewrite this" → replace
-- "add more details", "continue" → append
-- "add an introduction" → prepend
+- "make this shorter", "rewrite this" → replace (>>>=)
+- "add more details", "continue" → append (>>>+)
+- "add an introduction" → prepend (>>>^)
+
+# Deleting Content
+
+Use "delete_tiles" to remove one or more tiles from the document when the user asks to delete or remove content.
 
 # Styling
 
