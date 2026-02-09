@@ -5,7 +5,7 @@ import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
 import { reactive, flag, array } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
-import { isEditMode } from "@/utils/edit";
+import { isEditMode, setEditMode } from "@/utils/edit";
 import { createState } from "@/utils/richText/state";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
@@ -201,6 +201,7 @@ export default class Editor {
       this.enablePointerEvents();
 
       this.isEditable.subscribe(() => {
+        setEditMode(this.isEditable.value);
         if (!this.isEditable.value) {
           this.clearSelection();
         }

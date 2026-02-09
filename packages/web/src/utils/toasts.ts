@@ -1,4 +1,3 @@
-import { set } from "./state";
 import type ToastContainer from "@/elements/toasts/ToastContainer";
 import type { ToastType } from "@/elements/toasts/ToastContainer";
 
@@ -17,6 +16,6 @@ export function redirectWithToast(
   message: string,
   type?: ToastType,
 ) {
-  set("toast", { message, type });
+  sessionStorage.setItem("toast", JSON.stringify({ message, type }));
   window.location.href = location;
 }

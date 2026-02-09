@@ -4,7 +4,6 @@ import {
 } from "api/constants/cookies";
 import client from "@/api/client";
 import { getCookie } from "./cookies";
-import { clear, setPersistent, removePersistent, getPersistent } from "./state";
 import { reactive } from "./reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
@@ -26,27 +25,64 @@ export async function getUserInfo() {
   try {
     const userInfo = await client.users.getUserInfo.query();
     user.value = userInfo;
-    setPersistent("user", userInfo);
+    try {
+      localStorage.setItem("user", JSON.stringify(userInfo));
+    } catch {
+      // Storage unavailable
+    }
     return user;
   } catch (error) {
     user.value = null;
-    removePersistent("user");
+    try {
+      localStorage.removeItem("user");
+    } catch {
+      // Storage unavailable
+    }
     throw error;
   }
 }
 
-export function getCachedUserInfo() {
-  return getPersistent<User>("user");
+export function getCachedUserInfo(): User | null {
+  try {
+    const data = localStorage.getItem("user");
+    return data !== null ? (JSON.parse(data) as User) : null;
+  } catch {
+    return null;
+  }
 }
 
 export function clearAuthenticationCookies() {
   document.cookie = `${SIGNED_IN_FLAG_COOKIE_NAME}=; Path=/; Secure; SameSite=Lax; Domain=${SESSION_COOKIE_DOMAIN}; Max-Age=0`;
 }
 
+export function initializeSession(): User | null {
+  if (!isSignedIn()) {
+    return null;
+  }
+
+  document.body.dataset.signedIn = "true";
+
+  const cached = getCachedUserInfo();
+  if (cached) {
+    user.value = cached;
+  }
+
+  // Background refresh — updates user.value reactively when resolved
+  getUserInfo().catch((error) => {
+    user.value = null;
+    if (import.meta.env.DEV) {
+      console.error("Failed to refresh user info", error);
+    }
+  });
+
+  return cached;
+}
+
 export async function signOut() {
   await client.auth.signOut.mutate();
   clearAuthenticationCookies();
-  clear();
+  sessionStorage.clear();
+  localStorage.clear();
   delete document.body.dataset.signedIn;
   window.location.href = "/";
 }

@@ -1,7 +1,9 @@
 import client from "@/api/client";
-import { getSessionId } from "@/utils/sessions";
-import Profile, { type ProfileProps } from "@/pages/settings/Profile";
+import { getLoaderContext } from "@/utils/loaderContext";
+import { isSignedIn } from "@/utils/sessions";
 import { authenticatedRoute } from "@/utils/middleware";
+import { initRoute } from "@/routes/init";
+import Profile, { type ProfileProps } from "@/pages/settings/Profile";
 import { notFound, forbidden } from "@/router/responses";
 import type {
   Route,
@@ -18,14 +20,12 @@ async function loader({
     return notFound();
   }
 
-  const sessionId = getSessionId(headers);
-  if (!sessionId) {
+  if (!import.meta.env.SSR && !isSignedIn()) {
     return forbidden();
   }
 
-  const user = await client.users.getUserInfo.query(undefined, {
-    context: { sessionId },
-  });
+  const options = getLoaderContext(headers);
+  const user = await client.users.getUserInfo.query(undefined, options);
 
   if (!user) {
     return forbidden();
@@ -39,6 +39,8 @@ async function loader({
 
 export default {
   middleware: import.meta.env.SSR ? authenticatedRoute : undefined,
-  loader: import.meta.env.SSR ? loader : undefined,
+  loader,
   component: Profile,
+  hydrate: "immediate",
+  beforeHydrate: ({ parameters }) => initRoute(parameters.workspaceId),
 } satisfies Route<ProfileProps>;

@@ -8,7 +8,7 @@ import PagesGrid, {
   type PageSort,
 } from "@/components/grid/PagesGrid";
 import { handleError } from "@/utils/errors";
-import { persistent } from "@/utils/state";
+import { persistent } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {

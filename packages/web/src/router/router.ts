@@ -42,11 +42,19 @@ export type RouteLoader<T> = (
   request: RequestProperties,
 ) => RouteLoaderResult<T>;
 
+export interface RouteHookContext<T = unknown> {
+  parameters: RouteParameters;
+  data: T;
+}
+
 export interface ComponentRoute<T> {
   middleware?: RouteMiddleware;
   loader?: RouteLoader<T>;
   component: JSX.Component<T>;
   metadata?: RouteMetadata;
+  hydrate?: "immediate" | "deferred" | null;
+  beforeHydrate?: (context: RouteHookContext<T>) => void;
+  afterHydrate?: (context: RouteHookContext<T>) => void;
 }
 
 export type APIRequestHandler = (

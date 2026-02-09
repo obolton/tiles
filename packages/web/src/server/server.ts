@@ -8,7 +8,6 @@ import { resolveImport, getStylesheetsForRouteModule } from "./assets";
 import { securityHeaders } from "./security";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type {
-  RouteData,
   RouteMetadata,
   RouteMatch,
   APIRoute,
@@ -48,37 +47,32 @@ async function collectStylesheets(
   return stylesheets;
 }
 
-function getLinks(stylesheets: string[], metadata: RouteMetadata) {
-  const hints: string[] = [];
-
-  hints.push(
-    "<" +
-      resolveImport("/src/server/hydrate.ts") +
-      ">; rel=preload; as=script; crossorigin",
-  );
-
-  for (const stylesheet of stylesheets) {
-    hints.push("<" + stylesheet + ">; rel=preload; as=style");
-  }
-
-  if (metadata.scripts) {
-    for (const script of metadata.scripts) {
-      hints.push(
-        "<" +
-          resolveImport(script.src) +
-          ">; rel=preload; as=script; crossorigin",
-      );
-    }
-  }
-
-  return hints;
+interface LinkResource {
+  href: string;
+  type: "script" | "style";
+  crossorigin?: boolean;
 }
 
-function getPageStartChunk(
-  stylesheets: string[],
-  metadata: RouteMetadata,
-  data?: RouteData,
-) {
+function getLinks(resources: LinkResource[]) {
+  return resources.map(({ href, type, crossorigin }) => {
+    const crossoriginAttr = crossorigin ? "; crossorigin" : "";
+    return `<${href}>; rel=preload; as=${type}${crossoriginAttr}`;
+  });
+}
+
+interface PageStartChunkOptions {
+  stylesheets: string[];
+  metadata: RouteMetadata;
+  title?: string;
+  hydrate?: "immediate" | "deferred" | null;
+}
+
+function getPageStartChunk({
+  stylesheets,
+  metadata,
+  title,
+  hydrate,
+}: PageStartChunkOptions) {
   let chunk = '<!doctype html><html><head><meta charset="utf-8">';
 
   for (const stylesheet of stylesheets) {
@@ -105,17 +99,19 @@ function getPageStartChunk(
     }
   }
 
-  chunk +=
-    '<script type="module" src="' +
-    resolveImport("/src/server/hydrate.ts") +
-    '"></script>';
+  if (hydrate === "immediate") {
+    chunk +=
+      '<script type="module" src="' +
+      resolveImport("/src/server/hydrate.ts") +
+      '"></script>';
+  }
 
   if (import.meta.env.DEV) {
     chunk += '<script type="module" src="/@vite/client"></script>';
   }
 
-  if (typeof data?.title === "string") {
-    chunk += "<title>" + escapeUTF8(data.title) + "</title>";
+  if (title) {
+    chunk += "<title>" + escapeUTF8(title) + "</title>";
   }
   chunk += "</head>";
   return chunk;
@@ -179,7 +175,7 @@ async function renderRoute(
     }
   }
 
-  const { middleware, loader, component, metadata = {} } = routeConfig;
+  const { middleware, loader, component, metadata = {}, hydrate } = routeConfig;
 
   if (middleware) {
     try {
@@ -199,7 +195,24 @@ async function renderRoute(
     ? getStylesheetsForRouteModule(route.moduleUrl)
     : await collectStylesheets(route.moduleUrl, viteDevServer);
 
-  const links = getLinks(stylesheets, mergedMetadata);
+  const resources: LinkResource[] = [
+    ...stylesheets.map((href) => ({ href, type: "style" as const })),
+    ...(mergedMetadata.scripts ?? []).map((s) => ({
+      href: resolveImport(s.src),
+      type: "script" as const,
+      crossorigin: true,
+    })),
+  ];
+
+  if (hydrate === "immediate") {
+    resources.push({
+      href: resolveImport("/src/server/hydrate.ts"),
+      type: "script",
+      crossorigin: true,
+    });
+  }
+
+  const links = getLinks(resources);
 
   const loaderResult = loader
     ? await loader({
@@ -216,15 +229,19 @@ async function renderRoute(
   const { headers = {}, bodyAttributes = {}, data } = loaderResult ?? {};
 
   const body =
-    getPageStartChunk(stylesheets, mergedMetadata, loaderResult) +
+    getPageStartChunk({
+      stylesheets,
+      metadata: mergedMetadata,
+      title: loaderResult?.title,
+      hydrate,
+    }) +
     renderToString(
       Body({
         ...bodyAttributes,
         children: component(data),
-        hydrate:
-          data !== undefined
-            ? { module: resolveImport(route.moduleUrl), data }
-            : undefined,
+        routeContext: hydrate
+          ? { module: resolveImport(route.moduleUrl), params: parameters }
+          : undefined,
       }),
     ) +
     "</html>";

@@ -1,21 +1,24 @@
 import { safeJsonStringify } from "@/utils/serialize";
 import type { JSX } from "@/jsx/jsx";
+import type { RouteParameters } from "@/router/router";
+
+export interface RouteContext {
+  module: string;
+  params: RouteParameters;
+}
 
 export interface BodyProps extends JSX.Attributes<"body"> {
   children: JSX.Node;
-  hydrate?: {
-    module: string;
-    data: unknown;
-  };
+  routeContext?: RouteContext;
 }
 
-export default function Body({ children, hydrate, ...props }: BodyProps) {
+export default function Body({ children, routeContext, ...props }: BodyProps) {
   return (
     <body {...props}>
       {children}
-      {hydrate ? (
-        <script id="page-data" type="application/json">
-          {safeJsonStringify(hydrate)}
+      {routeContext ? (
+        <script id="route-context" type="application/json">
+          {safeJsonStringify(routeContext)}
         </script>
       ) : null}
     </body>

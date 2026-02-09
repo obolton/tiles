@@ -39,7 +39,7 @@ export default defineConfig(({ isSsrBuild }) => ({
         index: "@/server/worker",
         hydrate: "@/server/hydrate",
         global: "@/global",
-        init: "@/init",
+        "pages-init": "@/routes/pages/init",
       },
       output: {
         manualChunks: {
