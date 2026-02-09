@@ -31,7 +31,10 @@ type ExecutorFn = (editor: Editor, data: Action["data"]) => Promise<void>;
 /**
  * Executes a single action.
  */
-export async function executeAction(editor: Editor, action: Action): Promise<void> {
+export async function executeAction(
+  editor: Editor,
+  action: Action,
+): Promise<void> {
   const executors = registry as Record<string, ExecutorFn>;
   const executor = executors[action.type];
 
