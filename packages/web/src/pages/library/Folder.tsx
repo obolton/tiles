@@ -11,7 +11,7 @@ import SettingsIcon from "@/icons/settings.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { showModal } from "@/utils/modals";
 import { redirectWithToast } from "@/utils/toasts";
-import { persistent } from "@/utils/state";
+import { persistent } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {
