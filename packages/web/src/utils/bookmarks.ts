@@ -1,5 +1,12 @@
 import client from "@/api/client";
 import { bookmarksCache } from "./cache";
+import { flag } from "./reactivity";
+
+export const isBookmarked = flag(false);
+
+export async function initBookmarkStatus(pageId: string) {
+  isBookmarked.value = await getIsBookmarked(pageId);
+}
 
 export async function setIsBookmarked(
   pageId: string,
