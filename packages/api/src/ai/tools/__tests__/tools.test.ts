@@ -39,6 +39,8 @@ describe("FUNCTION_TOOLS", () => {
     expect(toolNames).toContain("create_chart");
     expect(toolNames).toContain("create_link");
     expect(toolNames).toContain("create_section");
+    expect(toolNames).toContain("delete_tiles");
+    expect(toolNames).toContain("edit_style");
   });
 
   test("each tool has required properties", () => {

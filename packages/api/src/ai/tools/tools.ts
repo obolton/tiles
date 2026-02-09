@@ -11,6 +11,7 @@ import { CREATE_MAP_TOOL } from "./createMap.ts";
 import { CREATE_SECTION_TOOL } from "./createSection.ts";
 import { CREATE_TABLE_TOOL } from "./createTable.ts";
 import { CREATE_TEXT_TOOL } from "./createText.ts";
+import { DELETE_TILES_TOOL } from "./deleteTile.ts";
 import { EDIT_STYLE_TOOL } from "./editStyle.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
@@ -21,6 +22,7 @@ export const FUNCTION_TOOLS: FunctionToolOptions[] = [
   CREATE_CHART_TOOL,
   CREATE_LINK_TOOL,
   CREATE_SECTION_TOOL,
+  DELETE_TILES_TOOL,
   EDIT_STYLE_TOOL,
 ];
 
