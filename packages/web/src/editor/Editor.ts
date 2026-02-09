@@ -6,7 +6,6 @@ import { reactive, flag, array } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
 import { isEditMode, setEditMode } from "@/utils/edit";
-import { createState } from "@/utils/richText/state";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import TileCollection from "@/models/TileCollection";
@@ -25,19 +24,11 @@ import PageInvite from "@/models/PageInvite";
 import { OperationManager, execute } from "@/operations";
 import type Tile from "@/models/Tile";
 import type { ClientTile } from "api/types/tiles";
-import type { AppRouterInputs } from "@/api/client";
 import type { PageAccess } from "@/types/collaboration";
 import type { Reactive, ReactiveArray } from "@/utils/reactivity";
-import type {
-  HeadingNode,
-  ParagraphNode,
-  TextNode,
-} from "@/utils/richText/types";
 import type { AnyAction, OperationInput } from "@/operations";
 
 export type { PageData } from "@/models/Page";
-
-type OmitPageId<T extends { pageId: string }> = Omit<T, "pageId">;
 
 type TransitionFunction = (commit: () => void) => void;
 
@@ -520,82 +511,12 @@ export default class Editor {
     });
   }
 
-  // TODO: Restore title setting
-  async updateText(data: OmitPageId<AppRouterInputs["text"]["update"]>) {
-    // Update the page title
-    if (data.content) {
-      const firstTextTileId = this.tiles.value.find(
-        (tile) => tile.type === "TEXT",
-      )?.id;
-      if (firstTextTileId && data.id === firstTextTileId) {
-        const block = data.content.find(
-          (node): node is HeadingNode | ParagraphNode =>
-            (node.type === "heading" || node.type === "paragraph") &&
-            node.children.length > 0,
-        );
-        const title = block?.children
-          .filter((node): node is TextNode => node.type === "text")
-          .map((node) => node.text)
-          .join("")
-          .slice(0, 100)
-          .trim();
-
-        if (title) {
-          await this.page.setTitle(title);
-        }
-      }
-    }
-
-    return await client.text.update.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async write(data: OmitPageId<AppRouterInputs["ai"]["write"]>) {
-    return client.ai.write.mutate(
-      {
-        pageId: this.pageId,
-        ...data,
-      },
-      { context: { stream: true } },
-    );
-  }
-
-  getTextEditorState(id: string) {
-    const text = this.getTile(id);
-    if (!(text instanceof Text)) {
-      throw new Error(`Invalid text tile ID: ${id}`);
-    }
-    if (!text.state.value) {
-      text.state.value = createState(text.content.value);
-    }
-    return text.state;
-  }
-
-  // Tables
-
-  getTable(tableId: string) {
-    const table = this.getTile(tableId);
-    if (!(table instanceof Table)) {
-      throw new Error(`Invalid table ID: ${tableId}`);
-    }
-    return table;
-  }
-
   getSection(sectionId: string) {
     const section = this.getTile(sectionId);
     if (!(section instanceof Section)) {
       throw new Error(`Invalid section ID: ${sectionId}`);
     }
     return section;
-  }
-
-  getTableColumnData(tableId: string, columnId: string) {
-    const table = this.getTable(tableId);
-    return table.rows.derive((rows) =>
-      rows.map((row) => row.data[columnId] ?? null),
-    );
   }
 
   // Collaboration
