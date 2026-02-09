@@ -63,7 +63,7 @@ async function loader(): RouteLoaderResult<PageProps> {
 }
 
 const metadata = {
-  scripts: [{ src: "/src/init.ts" }],
+  scripts: [{ src: "/src/routes/pages/init.ts" }],
 } satisfies RouteMetadata;
 
 export default {
