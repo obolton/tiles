@@ -21,5 +21,8 @@ coverage/
 # Wrangler
 wrangler.json
 
+# Playwright
+/test-results/
+
 # Claude
 .claude/settings.local.json
