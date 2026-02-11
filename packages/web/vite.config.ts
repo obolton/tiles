@@ -7,12 +7,17 @@ import { defineConfig } from "vite";
 
 const IS_CLOUDFLARE_WORKER = process.env.CF_PAGES === "1";
 
+const allowedHosts = [".tiles.test", "localhost"];
+if (process.env.APP_HOST) {
+  allowedHosts.push(process.env.APP_HOST);
+}
+
 export default defineConfig(({ isSsrBuild }) => ({
   envDir: "../..",
   envPrefix: "PUBLIC_",
   base: "/",
   server: {
-    allowedHosts: [".tiles.test", "localhost"],
+    allowedHosts,
   },
   ssr: {
     noExternal: IS_CLOUDFLARE_WORKER ? true : undefined,
