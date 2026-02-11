@@ -21,6 +21,7 @@
     "generate": "pnpm -r --parallel generate"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@vitest/coverage-v8": "^4.0.3",
     "oxlint": "^1.41.0",
     "prettier": "^3.8.0",
