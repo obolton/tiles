@@ -3,7 +3,7 @@ import { reactive, type Reactive } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { preloadImage } from "@/utils/media";
 import client from "@/api/client";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type { ClientImageTile } from "api/types/tiles";
 import type { EditorState } from "prosemirror-state";
 import type { AppRouterInputs } from "@/api/client";
@@ -22,11 +22,11 @@ export default class Image extends Tile {
   readonly state: Reactive<EditorState | null>;
 
   static async create(
-    editor: Editor,
+    page: Page,
     data: Omit<AppRouterInputs["images"]["create"], "pageId">,
   ) {
     const properties = await client.images.create.mutate({
-      pageId: editor.pageId,
+      pageId: page.id,
       ...data,
     });
 
@@ -34,7 +34,8 @@ export default class Image extends Tile {
       await preloadImage(properties.imageUrl);
     }
 
-    const image = new Image(editor, properties);
+    const image = new Image(page, properties);
+    const { editor } = image;
     editor.addTile(image, properties.sectionId, data.beforeId);
     editor.recordOperation({
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
@@ -42,8 +43,8 @@ export default class Image extends Tile {
     });
   }
 
-  constructor(editor: Editor, properties: ClientImageTile) {
-    super(editor, properties);
+  constructor(page: Page, properties: ClientImageTile) {
+    super(page, properties);
 
     const { imageUrl, text, originX, originY } = properties;
     this.imageUrl = imageUrl;
@@ -57,7 +58,7 @@ export default class Image extends Tile {
   ) {
     return client.images.update.mutate({
       ...properties,
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
     });
   }

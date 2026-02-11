@@ -16,7 +16,7 @@ import type {
 import type { Theme } from "api/types/themes";
 import type { Fill, FillUpdate } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type { AppRouterInputs } from "@/api/client";
 import type TileCollection from "./TileCollection";
 import type { TilePropertyChanges } from "@/operations";
@@ -24,9 +24,16 @@ import type { TilePropertyChanges } from "@/operations";
 export type { Dimensions, Animation, FrameStyle, DockEdge };
 
 export default class Tile {
-  readonly editor: Editor;
+  readonly page: Page;
   readonly id: string;
   readonly type: TileType;
+
+  get editor() {
+    if (!this.page.editor) {
+      throw new Error("Requires editor context");
+    }
+    return this.page.editor;
+  }
 
   parent: TileCollection | null = null;
 
@@ -45,7 +52,7 @@ export default class Tile {
   readonly background: Reactive<Fill | null>;
   readonly textColor: Reactive<Color | null>;
 
-  constructor(editor: Editor, properties: ClientTile) {
+  constructor(page: Page, properties: ClientTile) {
     const {
       id,
       type,
@@ -64,7 +71,7 @@ export default class Tile {
       textColor,
       background,
     } = properties;
-    this.editor = editor;
+    this.page = page;
 
     this.id = id;
     this.type = type;
@@ -123,17 +130,17 @@ export default class Tile {
     beforeId: string | null;
   }) {
     const [parent, ...children] = await client.tiles.duplicate.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
       sectionId,
       beforeId,
     });
 
-    const parentTile = this.editor.createTile(parent);
+    const parentTile = this.page.createTile(parent);
     this.editor.addTile(parentTile, parent.sectionId, beforeId);
 
     for (const child of children) {
-      const childTile = this.editor.createTile(child);
+      const childTile = this.page.createTile(child);
       this.editor.addTile(childTile, child.sectionId, null);
     }
 
@@ -149,7 +156,7 @@ export default class Tile {
   ) {
     return client.tiles.update.mutate({
       ...properties,
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
     });
   }
@@ -180,9 +187,9 @@ export default class Tile {
 
     const targetSection =
       sectionId !== undefined && sectionId !== null
-        ? this.editor.getSection(sectionId)
+        ? this.page.getSection(sectionId)
         : null;
-    const collection = targetSection?.tiles ?? this.editor.tiles;
+    const collection = targetSection?.tiles ?? this.page.tiles;
     collection.insertBefore(beforeId ?? null, this);
   }
 
@@ -267,7 +274,7 @@ export default class Tile {
       changes.beforeId = beforeId;
 
       if (sectionId) {
-        const section = this.editor.getSection(sectionId);
+        const section = this.page.getSection(sectionId);
         section.tiles.insertBefore(beforeId ?? null, this);
 
         // Reset FULL_BLEED frame when moving to incompatible section
@@ -282,7 +289,7 @@ export default class Tile {
           changes.frame = null;
         }
       } else {
-        this.editor.tiles.insertBefore(beforeId ?? null, this);
+        this.page.tiles.insertBefore(beforeId ?? null, this);
       }
     }
 
@@ -400,12 +407,12 @@ export default class Tile {
     this.dock.value = dock;
 
     if (dock) {
-      this.editor.dockedTiles[dock].insertBefore(beforeId ?? null, this);
-      if (this.editor.page.dockSizes.value[dock] === null) {
-        this.editor.page.setDockSizes({ [dock]: DEFAULT_DOCK_SIZE });
+      this.page.dockedTiles[dock].insertBefore(beforeId ?? null, this);
+      if (this.page.dockSizes.value[dock] === null) {
+        this.page.setDockSizes({ [dock]: DEFAULT_DOCK_SIZE });
       }
     } else {
-      this.editor.tiles.insertBefore(beforeId ?? null, this);
+      this.page.tiles.insertBefore(beforeId ?? null, this);
     }
 
     this.recordUpdate({ dock, beforeId }, inverse);

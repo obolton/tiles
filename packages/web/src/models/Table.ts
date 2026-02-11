@@ -6,7 +6,7 @@ import {
   type ReactiveArray,
 } from "@/utils/reactivity";
 import client from "@/api/client";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type { ClientTableTile } from "api/types/tiles";
 import type { Fill, FillUpdate } from "@/components/fills/types";
 import type { RichText } from "@/utils/richText/types";
@@ -34,14 +34,15 @@ export default class Table extends Tile {
   readonly numRows: Reactive<number>;
 
   static async create(
-    editor: Editor,
+    page: Page,
     data: Omit<AppRouterInputs["tables"]["create"], "pageId">,
   ) {
     const properties = await client.tables.create.mutate({
-      pageId: editor.pageId,
+      pageId: page.id,
       ...data,
     });
-    const table = new Table(editor, properties);
+    const table = new Table(page, properties);
+    const { editor } = table;
     editor.addTile(table, properties.sectionId, data.beforeId);
     editor.recordOperation({
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
@@ -49,8 +50,8 @@ export default class Table extends Tile {
     });
   }
 
-  constructor(editor: Editor, properties: ClientTableTile) {
-    super(editor, properties);
+  constructor(page: Page, properties: ClientTableTile) {
+    super(page, properties);
 
     const { columns, rows, numRows } = properties;
     this.columns = array(columns);
@@ -71,7 +72,7 @@ export default class Table extends Tile {
       (column) => column.id === afterColumnId,
     );
     const column = await client.tables.insertColumn.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       tableId: this.id,
       afterColumnId,
     });
@@ -111,7 +112,7 @@ export default class Table extends Tile {
     });
 
     return await client.tables.moveColumn.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       tableId: this.id,
       columnId: id,
       afterColumnId: afterId,
@@ -143,7 +144,7 @@ export default class Table extends Tile {
     }
 
     const result = await client.tables.updateColumn.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       tableId: this.id,
       columnId: id,
       ...properties,
@@ -209,7 +210,7 @@ export default class Table extends Tile {
     });
 
     return client.tables.deleteColumns.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       tableId: this.id,
       columnIds: ids,
     });
@@ -220,7 +221,7 @@ export default class Table extends Tile {
   async insertRow(afterRowId: string | null) {
     const afterIndex = this.rows.findIndex((row) => row.id === afterRowId);
     const row = await client.tables.insertRow.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       tableId: this.id,
       afterRowId,
     });
@@ -262,7 +263,7 @@ export default class Table extends Tile {
     });
 
     return await client.tables.moveRow.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       tableId: this.id,
       rowId: id,
       afterRowId: afterId,
@@ -294,7 +295,7 @@ export default class Table extends Tile {
     });
 
     return client.tables.updateRow.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       tableId: this.id,
       rowId: id,
       height,
@@ -307,7 +308,7 @@ export default class Table extends Tile {
       throw new Error(`Invalid row ID: ${id}`);
     }
     const result = await client.tables.updateRow.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       tableId: this.id,
       rowId: id,
       background,
@@ -348,7 +349,7 @@ export default class Table extends Tile {
     });
 
     return client.tables.deleteRows.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       tableId: this.id,
       rowIds: ids,
     });
@@ -360,7 +361,7 @@ export default class Table extends Tile {
     data: Omit<AppRouterInputs["tables"]["updateCell"], "pageId" | "tableId">,
   ) {
     return await client.tables.updateCell.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       tableId: this.id,
       ...data,
     });
@@ -370,7 +371,7 @@ export default class Table extends Tile {
     data: Omit<AppRouterInputs["tables"]["clearRanges"], "pageId" | "tableId">,
   ) {
     return await client.tables.clearRanges.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       tableId: this.id,
       ...data,
     });

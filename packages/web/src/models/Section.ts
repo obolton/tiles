@@ -3,7 +3,7 @@ import TileCollection from "./TileCollection";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import type { ClientSectionTile, Layout } from "api/types/tiles";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type { AppRouterInputs } from "@/api/client";
 
 export default class Section extends Tile {
@@ -13,14 +13,15 @@ export default class Section extends Tile {
   readonly tiles: TileCollection;
 
   static async create(
-    editor: Editor,
+    page: Page,
     data: Omit<AppRouterInputs["sections"]["create"], "pageId">,
   ) {
     const properties = await client.sections.create.mutate({
-      pageId: editor.pageId,
+      pageId: page.id,
       ...data,
     });
-    const section = new Section(editor, properties);
+    const section = new Section(page, properties);
+    const { editor } = section;
     editor.addTile(section, null, data.beforeId);
     editor.recordOperation({
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
@@ -28,8 +29,8 @@ export default class Section extends Tile {
     });
   }
 
-  constructor(editor: Editor, properties: ClientSectionTile) {
-    super(editor, properties);
+  constructor(page: Page, properties: ClientSectionTile) {
+    super(page, properties);
 
     const { layout } = properties;
     this.layout = reactive(layout);
@@ -41,7 +42,7 @@ export default class Section extends Tile {
   ) {
     return client.sections.update.mutate({
       ...properties,
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
     });
   }
