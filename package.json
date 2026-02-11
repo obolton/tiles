@@ -8,6 +8,7 @@
     "db:push": "pnpm --filter api db:push",
     "db:seed": "pnpm --filter api db:seed",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "lint": "pnpm -r --parallel lint",
