@@ -13,14 +13,15 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["src/test/setup.ts"],
+    include: ["src/**/__tests__/**/*.test.{ts,tsx}"],
+    exclude: ["src/**/__tests__/**/*.browser.test.{ts,tsx}"],
     env: {
       GOOGLE_CLIENT_ID: "test-client-id",
       GOOGLE_CLIENT_SECRET: "test-client-secret",
       GOOGLE_REDIRECT_URI: "http://localhost:3000/sign-in/google/callback",
     },
     coverage: {
-      include: ["src/**"],
-      extension: [".ts", ".tsx"],
+      include: ["src/**/*.{ts,tsx}"],
     },
   },
 });

@@ -8,7 +8,7 @@ export default defineConfig({
       PUBLIC_API_ORIGIN: "https://api.example.com",
     },
     coverage: {
-      include: ["src/**/*.test.ts"],
+      include: ["src/**/*.ts"],
     },
   },
 });

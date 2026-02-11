@@ -24,8 +24,7 @@ export default defineConfig({
       CLIENT_ORIGIN: "https://test.example.com",
     },
     coverage: {
-      include: ["src/**"],
-      extension: [".ts"],
+      include: ["src/**/*.ts"],
     },
   },
   resolve: {
