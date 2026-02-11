@@ -21,7 +21,7 @@ export default function Section({
   showToolbar,
   signal,
 }: SectionProps) {
-  const { id, layout, tiles, editor } = section;
+  const { id, layout, tiles, page, editor } = section;
   const { isEditable } = editor;
 
   function ref(element: ScrollView) {
@@ -30,7 +30,7 @@ export default function Section({
       grid: element.contents,
       layoutType: section.layout.value,
       dropTarget: element,
-      editor,
+      page,
       sectionId: id,
       signal,
     });

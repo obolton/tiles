@@ -10,7 +10,7 @@ import {
   createDragPlaceholder,
   getDragPosition,
 } from "@/utils/drag-placeholder";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type { DragDropEvent } from "@/utils/drag";
 import type { PageItemEvent } from "@/elements/item/events";
 import type Tile from "@/models/Tile";
@@ -22,7 +22,7 @@ export interface LayoutEditorOptions {
   grid: HTMLElement;
   layoutType: LayoutType;
   dropTarget?: HTMLElement;
-  editor: Editor;
+  page: Page;
   sectionId: string | null;
   signal?: AbortSignal;
 }
@@ -43,7 +43,7 @@ export default class LayoutEditor {
     return new LayoutEditor(options);
   }
 
-  readonly editor: Editor;
+  readonly page: Page;
   readonly sectionId: string | null;
 
   layoutType: LayoutType;
@@ -71,11 +71,11 @@ export default class LayoutEditor {
     grid,
     layoutType,
     dropTarget = element,
-    editor,
+    page,
     sectionId,
     signal,
   }: LayoutEditorOptions) {
-    this.editor = editor;
+    this.page = page;
     this.sectionId = sectionId;
     this.layoutType = layoutType;
     this.elementRef = new WeakRef(element);
@@ -538,7 +538,7 @@ export default class LayoutEditor {
     event.stopPropagation();
 
     this.updateLayoutInfo();
-    this.resizing = this.editor.page.getTile(event.target.id);
+    this.resizing = this.page.getTile(event.target.id);
     document.body.dataset.resize = "true";
   }
 

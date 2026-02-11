@@ -5,7 +5,8 @@ import Item from "@/components/item/Item";
 import DockLayoutEditor from "./DockLayoutEditor";
 import { ResizeEvent } from "@/elements/resize/events";
 import styles from "./DockZone.module.css";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
+import type { Reactive } from "@/utils/reactivity";
 import type { DockEdge } from "@/models/Tile";
 import type TileCollection from "@/models/TileCollection";
 
@@ -13,27 +14,33 @@ const MIN_DOCK_SIZE = 100;
 const MAX_DOCK_RATIO = 0.5; // 50% of viewport
 
 export interface DockZoneProps {
-  editor: Editor;
+  page: Page;
+  isEditable: Reactive<boolean>;
   edge: DockEdge;
   tiles: TileCollection;
 }
 
 type EdgeStyle = "top" | "bottom" | "left" | "right";
 
-export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
+export default function DockZone({
+  page,
+  isEditable,
+  edge,
+  tiles,
+}: DockZoneProps) {
   const isEmpty = tiles.derive((items) => items.length === 0);
   const edgeStyle = edge.toLowerCase() as EdgeStyle;
   const isHorizontal = edge === "TOP" || edge === "BOTTOM";
 
   const dimension = isHorizontal ? "height" : "width";
 
-  const zoneStyle = editor.page.dockSizes.derive((sizes) => {
+  const zoneStyle = page.dockSizes.derive((sizes) => {
     const size = sizes[edge];
     return size !== null ? { [dimension]: `${size}px` } : {};
   });
 
   const visible = combine(
-    { isEmpty, isEditable: editor.isEditable },
+    { isEmpty, isEditable },
     ({ isEmpty, isEditable }) => !isEmpty || isEditable,
   );
 
@@ -41,14 +48,15 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
     DockLayoutEditor.attach({
       element,
       edge,
-      editor,
+      page,
+      isEditable,
     });
   }
 
   const zoneResizeDirection = isHorizontal ? "vertical" : "horizontal";
 
   function onZoneResizeEnd(event: ResizeEvent) {
-    const initialSize = editor.page.dockSizes.value[edge] ?? 0;
+    const initialSize = page.dockSizes.value[edge] ?? 0;
 
     let delta: number;
     switch (edge) {
@@ -75,7 +83,7 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
       Math.min(maxSize, initialSize + delta),
     );
 
-    editor.page.setDockSizes({ [edge]: newSize });
+    page.setDockSizes({ [edge]: newSize });
   }
 
   const Element =
@@ -97,13 +105,13 @@ export default function DockZone({ editor, edge, tiles }: DockZoneProps) {
           {(tile) => (
             <Item
               classList={{ [styles.item]: true }}
-              editable={editor.isEditable}
+              editable={isEditable}
               tile={tile}
             />
           )}
         </Each>
 
-        <If condition={editor.isEditable}>
+        <If condition={isEditable}>
           <resize-handle
             direction={zoneResizeDirection}
             classList={{ [styles["zone-resize"]]: true }}
