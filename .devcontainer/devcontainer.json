@@ -50,7 +50,9 @@
     "PUBLIC_API_ORIGIN": "https://api.${localWorkspaceFolderBasename}.tiles.test",
     "PUBLIC_WEB_ORIGIN": "https://${localWorkspaceFolderBasename}.tiles.test",
     "PUBLIC_UPLOAD_ORIGIN": "https://uploads.${localWorkspaceFolderBasename}.tiles.test",
-    "PUBLIC_SESSION_COOKIE_DOMAIN": ".tiles.test"
+    "PUBLIC_SESSION_COOKIE_DOMAIN": ".tiles.test",
+    "PLAYWRIGHT_HOST": "tiles-playwright",
+    "APP_HOST": "${localWorkspaceFolderBasename}-app"
   },
 
   "remoteUser": "node",

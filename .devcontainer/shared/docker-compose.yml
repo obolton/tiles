@@ -11,6 +11,21 @@ services:
     networks:
       - tiles-dev
 
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.58.2-noble
+    container_name: tiles-playwright
+    restart: unless-stopped
+    init: true
+    ipc: host
+    ports:
+      - "3100:3100"
+    command: >
+      npx -y playwright@1.58.2 run-server
+      --port 3100
+      --host 0.0.0.0
+    networks:
+      - tiles-dev
+
   db:
     image: postgres:18-alpine
     container_name: tiles-db
