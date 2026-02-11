@@ -8,20 +8,12 @@ import { focusInside } from "@/utils/focus";
 import { isEditMode, setEditMode } from "@/utils/edit";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
-import TileCollection from "@/models/TileCollection";
 import Page, { type PageData } from "@/models/Page";
 import Section from "@/models/Section";
-import Text from "@/models/Text";
 import Image from "@/models/Image";
-import Video from "@/models/Video";
 import Link from "@/models/Link";
-import PageLink from "@/models/PageLink";
-import MapObject from "@/models/Map";
-import Table from "@/models/Table";
-import Chart from "@/models/Chart";
 import { OperationManager, execute } from "@/operations";
 import type Tile from "@/models/Tile";
-import type { ClientTile } from "api/types/tiles";
 import type { Reactive } from "@/utils/reactivity";
 import type { AnyAction, OperationInput } from "@/operations";
 
@@ -36,8 +28,6 @@ export default class Editor {
 
   readonly page: Page;
   readonly isEditable: Reactive<boolean>;
-  readonly index: Map<string, Tile>;
-  readonly tiles: TileCollection;
   readonly selection: Reactive<Set<Tile>>;
   readonly references: Reactive<Tile[]>;
   readonly isPromptOpen: Reactive<boolean>;
@@ -45,13 +35,6 @@ export default class Editor {
   readonly operations: OperationManager<AnyAction> | null;
   readonly canUndo: Reactive<boolean>;
   readonly canRedo: Reactive<boolean>;
-
-  readonly dockedTiles: {
-    TOP: TileCollection;
-    LEFT: TileCollection;
-    RIGHT: TileCollection;
-    BOTTOM: TileCollection;
-  };
 
   get pageId() {
     return this.page.id;
@@ -69,7 +52,7 @@ export default class Editor {
     }
     const sectionId = lastTile?.sectionId;
     if (sectionId) {
-      const section = this.index.get(sectionId);
+      const section = this.page.index.get(sectionId);
       if (section instanceof Section) {
         return section;
       }
@@ -105,9 +88,9 @@ export default class Editor {
 
   private constructor(page: PageData) {
     this.page = new Page(page);
+    this.page.editor = this;
+    this.page.initTiles(page.tiles);
     this.isEditable = flag(isEditMode());
-    this.index = new Map();
-    this.tiles = new TileCollection();
     this.selection = reactive(new Set());
     this.references = reactive([]);
     this.isPromptOpen = flag(false);
@@ -115,43 +98,6 @@ export default class Editor {
     this.canUndo = reactive(false);
     this.canRedo = reactive(false);
     this.operations = IS_SERVER ? null : new OperationManager(page.id);
-
-    this.dockedTiles = {
-      TOP: new TileCollection(),
-      LEFT: new TileCollection(),
-      RIGHT: new TileCollection(),
-      BOTTOM: new TileCollection(),
-    };
-
-    const parentIds = new Map<string, string | null>();
-
-    for (const tile of page.tiles) {
-      const object = this.createTile(tile);
-      this.index.set(object.id, object);
-      if (tile.sectionId) {
-        parentIds.set(object.id, tile.sectionId);
-      }
-    }
-
-    for (const item of this.index.values()) {
-      const dock = item.dock.value;
-      if (dock) {
-        this.dockedTiles[dock].append(item);
-      } else {
-        const parentId = parentIds.get(item.id);
-        if (parentId) {
-          const parent = this.index.get(parentId);
-
-          if (!(parent instanceof Section)) {
-            throw new Error(`Invalid parent: ${parentId}`);
-          }
-
-          parent.tiles.append(item);
-        } else {
-          this.tiles.append(item);
-        }
-      }
-    }
 
     if (!IS_SERVER) {
       this.enablePointerEvents();
@@ -201,7 +147,7 @@ export default class Editor {
       return;
     }
 
-    const tile = this.index.get(pageItem.id);
+    const tile = this.page.index.get(pageItem.id);
     if (tile && !this.selection.value.has(tile)) {
       this.select([pageItem.id], false);
     }
@@ -280,7 +226,7 @@ export default class Editor {
               purpose: "content",
               workspaceId: this.workspaceId,
             });
-            await Image.create(this, {
+            await Image.create(this.page, {
               sectionId: this.activeSection?.id,
               imageId,
             });
@@ -289,7 +235,7 @@ export default class Editor {
       }
     } else if (isUriList(item)) {
       item.getAsString(async (url) => {
-        await Link.create(this, {
+        await Link.create(this.page, {
           sectionId: this.activeSection?.id,
           url,
         });
@@ -300,7 +246,7 @@ export default class Editor {
   // Selection
 
   select(ids: string[], extendSelection = false) {
-    const tiles = new Set(ids.map((id) => this.getTile(id)));
+    const tiles = new Set(ids.map((id) => this.page.getTile(id)));
     if (extendSelection) {
       if (tiles.size === 0) {
         return;
@@ -312,7 +258,7 @@ export default class Editor {
   }
 
   deselect(ids: string[]) {
-    const tiles = new Set(ids.map((id) => this.getTile(id)));
+    const tiles = new Set(ids.map((id) => this.page.getTile(id)));
     this.selection.value = this.selection.value.difference(tiles);
   }
 
@@ -338,7 +284,7 @@ export default class Editor {
     if (index >= 0) {
       this.references.value = this.references.value.toSpliced(index, 1);
     } else {
-      this.references.value = [...this.references.value, this.getTile(id)];
+      this.references.value = [...this.references.value, this.page.getTile(id)];
     }
   }
 
@@ -363,53 +309,6 @@ export default class Editor {
   }
 
   // Tiles
-
-  getTile(id: string) {
-    const tile = this.index.get(id);
-    if (!tile) {
-      throw new Error(`Tile cannot be found: ${id}`);
-    }
-    return tile;
-  }
-
-  getTileAs<T extends Tile>(
-    id: string,
-    TileClass: abstract new (...args: any[]) => T,
-  ): T {
-    const tile = this.getTile(id);
-    if (!(tile instanceof TileClass)) {
-      throw new Error(
-        `Expected ${TileClass.name} but got ${tile.constructor.name}`,
-      );
-    }
-    return tile;
-  }
-
-  createTile(properties: ClientTile): Tile {
-    const type = properties.type;
-    switch (type) {
-      case "SECTION":
-        return new Section(this, properties);
-      case "TEXT":
-        return new Text(this, properties);
-      case "IMAGE":
-        return new Image(this, properties);
-      case "VIDEO":
-        return new Video(this, properties);
-      case "LINK":
-        return new Link(this, properties);
-      case "PAGE_LINK":
-        return new PageLink(this, properties);
-      case "MAP":
-        return new MapObject(this, properties);
-      case "TABLE":
-        return new Table(this, properties);
-      case "CHART":
-        return new Chart(this, properties);
-      default:
-        throw new Error(`Invalid tile type: ${type}`);
-    }
-  }
 
   async deleteTiles(tiles: Tile[]) {
     const ids = tiles.map((tile) => tile.id);
@@ -464,17 +363,13 @@ export default class Editor {
     beforeId: string | null = null,
     select = true,
   ) {
-    this.index.set(tile.id, tile);
+    this.page.index.set(tile.id, tile);
 
     viewTransition(() => {
       if (sectionId) {
-        const section = this.getTile(sectionId);
-        if (!(section instanceof Section)) {
-          throw new Error(`Invalid section ID: ${sectionId}`);
-        }
-        section.tiles.insertBefore(beforeId, tile);
+        this.page.getSection(sectionId).tiles.insertBefore(beforeId, tile);
       } else {
-        this.tiles.insertBefore(beforeId, tile);
+        this.page.tiles.insertBefore(beforeId, tile);
       }
     }).updateCallbackDone.then(() => {
       if (select) {
@@ -492,16 +387,8 @@ export default class Editor {
   removeTiles(tiles: Tile[]) {
     tiles.forEach((tile) => {
       tile.parent?.remove(tile);
-      this.index.delete(tile.id);
+      this.page.index.delete(tile.id);
     });
-  }
-
-  getSection(sectionId: string) {
-    const section = this.getTile(sectionId);
-    if (!(section instanceof Section)) {
-      throw new Error(`Invalid section ID: ${sectionId}`);
-    }
-    return section;
   }
 
   // Operations (Undo/Redo)
