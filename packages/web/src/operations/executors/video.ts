@@ -6,7 +6,7 @@ const setProperties: ActionExecutor<SetVideoPropertiesAction> = async (
   editor,
   { tileId, changes },
 ) => {
-  const tile = editor.getTileAs(tileId, Video);
+  const tile = editor.page.getTile(tileId, Video);
 
   if (changes.title !== undefined) {
     tile.title.value = changes.title;

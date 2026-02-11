@@ -6,7 +6,7 @@ const setProperties: ActionExecutor<SetTextPropertiesAction> = async (
   editor,
   { tileId, changes },
 ) => {
-  const tile = editor.getTileAs(tileId, Text);
+  const tile = editor.page.getTile(tileId, Text);
 
   if (changes.content !== undefined) {
     tile.content.value = changes.content;

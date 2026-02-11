@@ -12,7 +12,7 @@ const addPlaces: ActionExecutor<AddPlacesAction> = async (
   editor,
   { tileId, places },
 ) => {
-  const map = editor.getTileAs(tileId, Map);
+  const map = editor.page.getTile(tileId, Map);
   map.places.value = [...map.places.value, ...places];
 };
 
@@ -20,7 +20,7 @@ const removePlaces: ActionExecutor<RemovePlacesAction> = async (
   editor,
   { tileId, placeIds },
 ) => {
-  const map = editor.getTileAs(tileId, Map);
+  const map = editor.page.getTile(tileId, Map);
   map.places.value = map.places.value.filter((p) => !placeIds.includes(p.id));
 };
 
@@ -28,7 +28,7 @@ const restorePlace: ActionExecutor<RestorePlaceAction> = async (
   editor,
   { tileId, place },
 ) => {
-  const map = editor.getTileAs(tileId, Map);
+  const map = editor.page.getTile(tileId, Map);
   map.places.value = [...map.places.value, place];
 };
 
@@ -36,7 +36,7 @@ const setPlaceProperties: ActionExecutor<SetPlacePropertiesAction> = async (
   editor,
   { tileId, placeId, changes },
 ) => {
-  const map = editor.getTileAs(tileId, Map);
+  const map = editor.page.getTile(tileId, Map);
   map.places.value = map.places.value.map((p) =>
     p.id === placeId ? { ...p, ...changes } : p,
   );
@@ -46,7 +46,7 @@ const setStyle: ActionExecutor<SetMapStyleAction> = async (
   editor,
   { tileId, style },
 ) => {
-  const map = editor.getTileAs(tileId, Map);
+  const map = editor.page.getTile(tileId, Map);
   map.style.value = style;
 };
 

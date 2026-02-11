@@ -9,7 +9,7 @@ const setProperties: ActionExecutor<SetTilePropertiesAction> = async (
   editor,
   { tileId, changes },
 ) => {
-  const tile = editor.getTile(tileId);
+  const tile = editor.page.getTile(tileId);
   await tile.applyUpdate(changes);
 };
 
@@ -17,7 +17,7 @@ const deleteTiles: ActionExecutor<DeleteTilesAction> = async (
   editor,
   { tileIds },
 ) => {
-  const tiles = tileIds.map((id) => editor.getTile(id));
+  const tiles = tileIds.map((id) => editor.page.getTile(id));
   await editor.deleteTiles(tiles);
 };
 
@@ -26,7 +26,7 @@ const restoreTiles: ActionExecutor<RestoreTilesAction> = async (
   { snapshots },
 ) => {
   for (const snapshot of snapshots) {
-    const tile = editor.createTile(snapshot);
+    const tile = editor.page.createTile(snapshot);
     editor.addTile(tile, snapshot.sectionId, null, false);
   }
 };

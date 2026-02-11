@@ -6,7 +6,7 @@ const setProperties: ActionExecutor<SetLinkPropertiesAction> = async (
   editor,
   { tileId, changes },
 ) => {
-  const tile = editor.getTileAs(tileId, Link);
+  const tile = editor.page.getTile(tileId, Link);
 
   if (changes.url !== undefined) {
     tile.url.value = changes.url;

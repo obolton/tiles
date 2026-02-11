@@ -6,7 +6,7 @@ const setProperties: ActionExecutor<SetImagePropertiesAction> = async (
   editor,
   { tileId, changes },
 ) => {
-  const tile = editor.getTileAs(tileId, Image);
+  const tile = editor.page.getTile(tileId, Image);
 
   if (changes.originX !== undefined || changes.originY !== undefined) {
     tile.origin.value = {
