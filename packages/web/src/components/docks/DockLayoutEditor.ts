@@ -46,7 +46,7 @@ export default class DockLayoutEditor {
     element.addEventListener("resizeend", this, { signal });
 
     // Subscribe to tile and edit mode changes for divider management
-    const tileCollection = this.editor.dockedTiles[this.edge];
+    const tileCollection = this.editor.page.dockedTiles[this.edge];
     tileCollection.subscribe(() => this.updateDividers(), signal);
     this.editor.isEditable.subscribe(() => this.updateDividers(), signal);
 
@@ -209,7 +209,7 @@ export default class DockLayoutEditor {
       return;
     }
 
-    const tiles = this.editor.dockedTiles[this.edge].value;
+    const tiles = this.editor.page.dockedTiles[this.edge].value;
     if (tiles.length < 2) {
       return;
     }
@@ -257,8 +257,8 @@ export default class DockLayoutEditor {
       return;
     }
 
-    const beforeTile = this.editor.getTile(beforeId);
-    const afterTile = this.editor.getTile(afterId);
+    const beforeTile = this.editor.page.getTile(beforeId);
+    const afterTile = this.editor.page.getTile(afterId);
     if (!beforeTile || !afterTile) {
       return;
     }

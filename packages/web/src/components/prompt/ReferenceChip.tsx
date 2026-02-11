@@ -90,7 +90,7 @@ function getTileLabel(tile: Tile): string {
   }
 
   if (tile instanceof PageLink) {
-    return tile.page?.title || "Page";
+    return tile.linkedPage?.title || "Page";
   }
 
   if (tile instanceof Video) {

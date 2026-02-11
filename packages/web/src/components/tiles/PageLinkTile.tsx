@@ -29,9 +29,9 @@ export default function PageLinkTile({
   pageLink,
   showToolbar,
 }: PageLinkTileProps) {
-  const { page } = pageLink;
+  const { linkedPage } = pageLink;
 
-  if (!page) {
+  if (!linkedPage) {
     return (
       <Tile classList={{ [styles.deleted]: true }}>
         <p>This page has been deleted.</p>
@@ -41,9 +41,9 @@ export default function PageLinkTile({
 
   return (
     <PageLinkComponent
-      pageId={page.id}
-      title={page.title}
-      background={page.background}
+      pageId={linkedPage.id}
+      title={linkedPage.title}
+      background={linkedPage.background}
       target="_blank"
       on:click={onClick}
     >

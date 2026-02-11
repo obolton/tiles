@@ -62,8 +62,8 @@ export default function ChartTile({ chart, showToolbar }: ChartTileProps) {
               gradient={series.fill.derive((fill) =>
                 fill?.type === "gradient" ? fill.direction : null,
               )}
-              $values={Editor.current
-                .getTileAs(chart.tableId, Table)
+              $values={Editor.current.page
+                .getTile(chart.tableId, Table)
                 .getColumnData(series.column.value.id)
                 .value.map(toNumber)}
             />

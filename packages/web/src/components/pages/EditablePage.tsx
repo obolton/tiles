@@ -20,7 +20,8 @@ export interface EditablePageProps {
 
 export default function EditablePage({ page }: EditablePageProps) {
   const editor = Editor.init(page);
-  const { isEditable, selection, tiles, dockedTiles } = editor;
+  const { isEditable, selection } = editor;
+  const { tiles, dockedTiles } = editor.page;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
 
   return (

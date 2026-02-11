@@ -14,14 +14,14 @@ export interface FramePickerProps {
 const FULL_BLEED_LAYOUTS = ["VERTICAL", "HORIZONTAL"];
 
 export default function FramePicker({ tile, onChange }: FramePickerProps) {
-  const { frame, editor } = tile;
+  const { frame, page } = tile;
 
   function handleChange(event: Event) {
     const selected = (event.currentTarget as ListSelect).value;
     onChange(selected === "" ? null : (selected as FrameStyle));
   }
 
-  const section = tile.sectionId ? editor.getSection(tile.sectionId) : null;
+  const section = tile.sectionId ? page.getSection(tile.sectionId) : null;
   const fullBleedDisabled = section
     ? section.layout.derive((layout) => !FULL_BLEED_LAYOUTS.includes(layout))
     : reactive(false);

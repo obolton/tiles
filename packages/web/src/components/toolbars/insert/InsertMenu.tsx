@@ -54,7 +54,7 @@ export default function InsertMenu({
     if (!afterId) {
       return null;
     }
-    const tile = Editor.current.getTile(afterId);
+    const tile = Editor.current.page.getTile(afterId);
     return tile?.next?.id ?? null;
   }
 
@@ -70,7 +70,7 @@ export default function InsertMenu({
 
     switch (tileType) {
       case "TEXT":
-        Text.create(Editor.current, {
+        Text.create(Editor.current.page, {
           sectionId: insertSectionId,
           beforeId: getBeforeId(),
           content: [{ type: "paragraph", children: [] }],
@@ -89,7 +89,7 @@ export default function InsertMenu({
               purpose: "content",
               workspaceId: Editor.current.workspaceId,
             });
-            await Image.create(Editor.current, {
+            await Image.create(Editor.current.page, {
               sectionId: insertSectionId,
               beforeId: getBeforeId(),
               imageId,
@@ -106,7 +106,7 @@ export default function InsertMenu({
           },
           async onConfirm(result) {
             if ("linkedPageId" in result) {
-              await PageLink.create(Editor.current, {
+              await PageLink.create(Editor.current.page, {
                 sectionId: insertSectionId,
                 beforeId: getBeforeId(),
                 linkedPageId: result.linkedPageId,
@@ -114,7 +114,7 @@ export default function InsertMenu({
                 height: 5,
               });
             } else if (result.url) {
-              await Link.create(Editor.current, {
+              await Link.create(Editor.current.page, {
                 sectionId: insertSectionId,
                 beforeId: getBeforeId(),
                 url: result.url,
@@ -130,7 +130,7 @@ export default function InsertMenu({
         showModal(PlaceModalLoader, {
           props: {},
           async onConfirm({ place }) {
-            await Map.create(Editor.current, {
+            await Map.create(Editor.current.page, {
               sectionId: insertSectionId,
               beforeId: getBeforeId(),
               places: [place],
@@ -141,7 +141,7 @@ export default function InsertMenu({
         break;
 
       case "TABLE":
-        Table.create(Editor.current, {
+        Table.create(Editor.current.page, {
           sectionId: insertSectionId,
           beforeId: getBeforeId(),
           height: 15,
@@ -153,7 +153,7 @@ export default function InsertMenu({
   }
 
   function createFreeformSection() {
-    Section.create(Editor.current, {
+    Section.create(Editor.current.page, {
       beforeId: getBeforeId(),
       layout: "FREEFORM",
       height: 15,
@@ -161,7 +161,7 @@ export default function InsertMenu({
   }
 
   function createStack() {
-    Section.create(Editor.current, {
+    Section.create(Editor.current.page, {
       beforeId: getBeforeId(),
       layout: "VERTICAL",
       height: 15,

@@ -13,7 +13,7 @@ export interface ChartToolbarProps {
 }
 
 export default function ChartToolbar({ chart }: ChartToolbarProps) {
-  const table = Editor.current.getTileAs(chart.tableId, Table);
+  const table = Editor.current.page.getTile(chart.tableId, Table);
 
   return (
     <floating-toolbar
