@@ -1,8 +1,9 @@
 import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
+import { createState } from "@/utils/richText/state";
 import client from "@/api/client";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type { ClientTextTile } from "api/types/tiles";
 import type { EditorState } from "prosemirror-state";
 import type { AppRouterInputs } from "@/api/client";
@@ -15,14 +16,15 @@ export default class Text extends Tile {
   readonly state: Reactive<EditorState | null>;
 
   static async create(
-    editor: Editor,
+    page: Page,
     data: Omit<AppRouterInputs["text"]["create"], "pageId">,
   ) {
     const properties = await client.text.create.mutate({
-      pageId: editor.pageId,
+      pageId: page.id,
       ...data,
     });
-    const text = new Text(editor, properties);
+    const text = new Text(page, properties);
+    const { editor } = text;
     editor.addTile(text, properties.sectionId, data.beforeId);
     editor.recordOperation({
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
@@ -30,8 +32,8 @@ export default class Text extends Tile {
     });
   }
 
-  constructor(editor: Editor, properties: ClientTextTile) {
-    super(editor, properties);
+  constructor(page: Page, properties: ClientTextTile) {
+    super(page, properties);
 
     const { content, align } = properties;
     this.content = reactive(content);
@@ -44,9 +46,16 @@ export default class Text extends Tile {
   ) {
     return client.text.update.mutate({
       ...properties,
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
     });
+  }
+
+  getEditorState() {
+    if (!this.state.value) {
+      this.state.value = createState(this.content.value);
+    }
+    return this.state;
   }
 
   setVerticalAlignment(align: ClientTextTile["align"]) {

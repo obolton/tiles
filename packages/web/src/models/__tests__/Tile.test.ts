@@ -32,7 +32,7 @@ describe("Tile", () => {
 
   describe("duplicate", () => {
     test("duplicates the tile before the specified tile", async () => {
-      const tile = new Tile(editor, { ...TILE, sectionId: null });
+      const tile = new Tile(editor.page, { ...TILE, sectionId: null });
       editor.addTile(tile, null, null, false);
 
       const duplicatedTile = {
@@ -56,11 +56,11 @@ describe("Tile", () => {
         beforeId: tile.id,
       });
       expect(result.id).toBe(duplicatedTile.id);
-      expect(editor.index.get(duplicatedTile.id)).toBe(result);
+      expect(editor.page.index.get(duplicatedTile.id)).toBe(result);
     });
 
     test("duplicates the tile at the end when beforeId is null", async () => {
-      const tile = new Tile(editor, {
+      const tile = new Tile(editor.page, {
         ...TILE,
         id: "tile-for-null-test",
         sectionId: null,
@@ -85,14 +85,14 @@ describe("Tile", () => {
         beforeId: null,
       });
       expect(result.id).toBe(duplicatedTile.id);
-      expect(editor.index.get(duplicatedTile.id)).toBe(result);
+      expect(editor.page.index.get(duplicatedTile.id)).toBe(result);
     });
   });
 
   test("maps properties to reactive values", () => {
-    const tile = new Tile(editor, TILE);
+    const tile = new Tile(editor.page, TILE);
 
-    expect(tile.editor).toBe(editor);
+    expect(tile.page).toBe(editor.page);
     expect(tile.id).toBe(TILE.id);
     expect(tile.type).toBe(TILE.type);
     expect(tile.sectionId).toBeNull();
@@ -109,7 +109,7 @@ describe("Tile", () => {
 
   describe("delete", () => {
     test("deletes the tile", async () => {
-      const tile = new Tile(editor, TILE);
+      const tile = new Tile(editor.page, TILE);
 
       await tile.delete();
 
@@ -122,7 +122,7 @@ describe("Tile", () => {
 
   describe("setAnimation", () => {
     test("updates the animation and persists the placement", async () => {
-      const tile = new Tile(editor, TILE);
+      const tile = new Tile(editor.page, TILE);
       const animation: Animation = "GROW";
 
       vi.mocked(client.tiles.update.mutate).mockResolvedValue({
@@ -141,7 +141,7 @@ describe("Tile", () => {
     });
 
     test("clears the animation", async () => {
-      const tile = new Tile(editor, TILE);
+      const tile = new Tile(editor.page, TILE);
 
       vi.mocked(client.tiles.update.mutate).mockResolvedValue({
         ...TILE,
@@ -161,7 +161,7 @@ describe("Tile", () => {
 
   describe("setDimensions", () => {
     test("sets landscape dimensions and updates size", async () => {
-      const tile = new Tile(editor, TILE);
+      const tile = new Tile(editor.page, TILE);
 
       await tile.setDimensions("LANDSCAPE");
 
@@ -178,7 +178,7 @@ describe("Tile", () => {
     });
 
     test("sets portrait dimensions and updates size", async () => {
-      const tile = new Tile(editor, TILE);
+      const tile = new Tile(editor.page, TILE);
 
       await tile.setDimensions("PORTRAIT");
 
@@ -197,7 +197,7 @@ describe("Tile", () => {
 
   describe("setSize", () => {
     test("updates the size and persists it", async () => {
-      const tile = new Tile(editor, TILE);
+      const tile = new Tile(editor.page, TILE);
       const width = 99;
       const height = 101;
 
@@ -216,7 +216,7 @@ describe("Tile", () => {
 
   describe("setHidden", () => {
     test("updates the hidden state and persists it", async () => {
-      const tile = new Tile(editor, TILE);
+      const tile = new Tile(editor.page, TILE);
 
       await tile.setHidden(true);
 

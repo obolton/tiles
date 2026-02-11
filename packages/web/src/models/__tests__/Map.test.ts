@@ -32,7 +32,7 @@ describe("Map", () => {
   });
 
   test("maps properties to reactive values", () => {
-    const map = new Map(editor, MAP_TILE);
+    const map = new Map(editor.page, MAP_TILE);
 
     expect(map.type).toBe("MAP");
     expect(map.places.value).toEqual(MAP_TILE.places);
@@ -40,7 +40,7 @@ describe("Map", () => {
 
   describe("addPlaces", () => {
     test("updates the list of places", async () => {
-      const map = new Map(editor, MAP_TILE);
+      const map = new Map(editor.page, MAP_TILE);
       const place = {
         name: "New place",
         address: "123 New St",
@@ -69,7 +69,7 @@ describe("Map", () => {
 
   describe("updatePlace", () => {
     test("updates the list of places", async () => {
-      const map = new Map(editor, MAP_TILE);
+      const map = new Map(editor.page, MAP_TILE);
       const place = {
         id: MAP_TILE.places[0].id,
         name: "Updated name",
@@ -100,7 +100,7 @@ describe("Map", () => {
 
   describe("removePlaces", () => {
     test("updates the list of places", async () => {
-      const map = new Map(editor, MAP_TILE);
+      const map = new Map(editor.page, MAP_TILE);
 
       const response = {
         ...MAP_TILE,

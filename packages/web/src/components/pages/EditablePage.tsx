@@ -20,17 +20,42 @@ export interface EditablePageProps {
 
 export default function EditablePage({ page }: EditablePageProps) {
   const editor = Editor.init(page);
-  const { isEditable, selection, tiles, dockedTiles } = editor;
+  const { isEditable, selection } = editor;
+  const { tiles, dockedTiles } = editor.page;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
 
   return (
     <>
       <div className={styles["page-layout"]}>
-        <DockZone editor={editor} edge="TOP" tiles={dockedTiles.TOP} />
-        <DockZone editor={editor} edge="LEFT" tiles={dockedTiles.LEFT} />
-        <PageContents editor={editor} tiles={tiles} />
-        <DockZone editor={editor} edge="RIGHT" tiles={dockedTiles.RIGHT} />
-        <DockZone editor={editor} edge="BOTTOM" tiles={dockedTiles.BOTTOM} />
+        <DockZone
+          page={editor.page}
+          isEditable={isEditable}
+          edge="TOP"
+          tiles={dockedTiles.TOP}
+        />
+        <DockZone
+          page={editor.page}
+          isEditable={isEditable}
+          edge="LEFT"
+          tiles={dockedTiles.LEFT}
+        />
+        <PageContents
+          page={editor.page}
+          isEditable={isEditable}
+          tiles={tiles}
+        />
+        <DockZone
+          page={editor.page}
+          isEditable={isEditable}
+          edge="RIGHT"
+          tiles={dockedTiles.RIGHT}
+        />
+        <DockZone
+          page={editor.page}
+          isEditable={isEditable}
+          edge="BOTTOM"
+          tiles={dockedTiles.BOTTOM}
+        />
       </div>
 
       {showToolbar ? <EditingToolbar editor={editor} /> : null}

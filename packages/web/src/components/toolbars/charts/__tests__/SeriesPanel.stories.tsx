@@ -15,8 +15,8 @@ export default meta;
 
 export const Default: Story = {
   render: () => {
-    const chart = new Chart(editor, CHART_TILE);
-    const table = new Table(editor, TABLE_TILE);
+    const chart = new Chart(editor.page, CHART_TILE);
+    const table = new Table(editor.page, TABLE_TILE);
 
     return (
       <>
@@ -31,13 +31,13 @@ export const Default: Story = {
 
 export const Empty: Story = {
   render: () => {
-    const chart = new Chart(editor, {
+    const chart = new Chart(editor.page, {
       ...CHART_TILE,
       id: "empty-chart",
       series: [],
       label: null,
     });
-    const table = new Table(editor, TABLE_TILE);
+    const table = new Table(editor.page, TABLE_TILE);
 
     return (
       <>
@@ -52,7 +52,7 @@ export const Empty: Story = {
 
 export const WithUnnamedColumns: Story = {
   render: () => {
-    const chart = new Chart(editor, {
+    const chart = new Chart(editor.page, {
       ...CHART_TILE,
       id: "unnamed-chart",
       series: [
@@ -65,7 +65,7 @@ export const WithUnnamedColumns: Story = {
       ],
       label: null,
     });
-    const table = new Table(editor, {
+    const table = new Table(editor.page, {
       ...TABLE_TILE,
       id: "unnamed-table",
       columns: [

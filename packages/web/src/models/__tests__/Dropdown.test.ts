@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import Dropdown from "@/models/Dropdown";
-import Editor from "@/editor/Editor";
+import Page from "@/models/Page";
 import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
 import { DROPDOWN } from "@/test/fixtures/Dropdown";
@@ -22,7 +22,7 @@ vi.mock("@/api/client", () => ({
 }));
 
 describe("Dropdown", () => {
-  const editor = Editor.init(PAGE);
+  const page = new Page(PAGE);
   const createMock = vi.mocked(client.dropdowns.create.mutate);
   const updateMock = vi.mocked(client.dropdowns.update.mutate);
   const deleteMock = vi.mocked(client.dropdowns.delete.mutate);
@@ -32,20 +32,19 @@ describe("Dropdown", () => {
   });
 
   test("maps properties to reactive values", () => {
-    const dropdown = new Dropdown(editor, DROPDOWN);
+    const dropdown = new Dropdown(page, DROPDOWN);
 
-    expect(dropdown.editor).toBe(editor);
+    expect(dropdown.page).toBe(page);
     expect(dropdown.id).toBe(DROPDOWN.id);
     expect(dropdown.title.value).toBe(DROPDOWN.title);
     expect(dropdown.options.value).toEqual(DROPDOWN.options);
   });
 
   describe("create", () => {
-    test("creates a new dropdown and adds it to the editor", async () => {
-      const addDropdownSpy = vi.spyOn(editor, "addDropdown");
+    test("creates a new dropdown and adds it to the page", async () => {
       createMock.mockResolvedValue(DROPDOWN);
 
-      const dropdown = await Dropdown.create(editor, {
+      const dropdown = await Dropdown.create(page, {
         title: "Status",
         options: DROPDOWN.options,
       });
@@ -57,13 +56,13 @@ describe("Dropdown", () => {
       });
       expect(dropdown.id).toBe(DROPDOWN.id);
       expect(dropdown.title.value).toBe(DROPDOWN.title);
-      expect(addDropdownSpy).toHaveBeenCalledWith(dropdown);
+      expect(page.dropdowns.value).toContain(dropdown);
     });
   });
 
   describe("setTitle", () => {
     test("updates the title", async () => {
-      const dropdown = new Dropdown(editor, DROPDOWN);
+      const dropdown = new Dropdown(page, DROPDOWN);
       const newTitle = "Priority";
 
       await dropdown.setTitle(newTitle);
@@ -77,7 +76,7 @@ describe("Dropdown", () => {
     });
 
     test("clears the title", async () => {
-      const dropdown = new Dropdown(editor, DROPDOWN);
+      const dropdown = new Dropdown(page, DROPDOWN);
 
       await dropdown.setTitle(null);
 
@@ -92,7 +91,7 @@ describe("Dropdown", () => {
 
   describe("setOptions", () => {
     test("updates the options", async () => {
-      const dropdown = new Dropdown(editor, DROPDOWN);
+      const dropdown = new Dropdown(page, DROPDOWN);
       const newOptions = [{ value: "High" }, { value: "Low" }];
 
       await dropdown.setOptions(newOptions);
@@ -108,7 +107,7 @@ describe("Dropdown", () => {
 
   describe("addOption", () => {
     test("adds a new option to the list", async () => {
-      const dropdown = new Dropdown(editor, DROPDOWN);
+      const dropdown = new Dropdown(page, DROPDOWN);
 
       await dropdown.addOption("Archived");
 
@@ -133,7 +132,7 @@ describe("Dropdown", () => {
 
   describe("updateOption", () => {
     test("updates an option at the specified index", async () => {
-      const dropdown = new Dropdown(editor, DROPDOWN);
+      const dropdown = new Dropdown(page, DROPDOWN);
 
       await dropdown.updateOption(1, "Disabled");
 
@@ -156,7 +155,7 @@ describe("Dropdown", () => {
 
   describe("removeOption", () => {
     test("removes an option at the specified index", async () => {
-      const dropdown = new Dropdown(editor, DROPDOWN);
+      const dropdown = new Dropdown(page, DROPDOWN);
 
       await dropdown.removeOption(1);
 
@@ -174,7 +173,7 @@ describe("Dropdown", () => {
 
   describe("reorderOptions", () => {
     test("moves an option from one index to another", async () => {
-      const dropdown = new Dropdown(editor, DROPDOWN);
+      const dropdown = new Dropdown(page, DROPDOWN);
 
       await dropdown.reorderOptions(2, 0);
 
@@ -195,7 +194,7 @@ describe("Dropdown", () => {
     });
 
     test("throws an error for invalid from index", async () => {
-      const dropdown = new Dropdown(editor, DROPDOWN);
+      const dropdown = new Dropdown(page, DROPDOWN);
 
       await expect(dropdown.reorderOptions(5, 0)).rejects.toThrow(
         "Invalid option index: 5",
@@ -204,9 +203,9 @@ describe("Dropdown", () => {
   });
 
   describe("delete", () => {
-    test("deletes the dropdown and removes it from the editor", async () => {
-      const removeDropdownSpy = vi.spyOn(editor, "removeDropdown");
-      const dropdown = new Dropdown(editor, DROPDOWN);
+    test("deletes the dropdown and removes it from the page", async () => {
+      const dropdown = new Dropdown(page, DROPDOWN);
+      page.dropdowns.value = page.dropdowns.value.concat(dropdown);
 
       await dropdown.delete();
 
@@ -214,7 +213,7 @@ describe("Dropdown", () => {
         pageId: PAGE.id,
         id: DROPDOWN.id,
       });
-      expect(removeDropdownSpy).toHaveBeenCalledWith(dropdown);
+      expect(page.dropdowns.value).not.toContain(dropdown);
     });
   });
 });

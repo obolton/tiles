@@ -24,7 +24,7 @@ describe("Video", () => {
   });
 
   test("maps properties to reactive values", () => {
-    const video = new Video(editor, VIDEO_TILE);
+    const video = new Video(editor.page, VIDEO_TILE);
 
     expect(video.type).toBe("VIDEO");
     expect(video.videoType).toBe(VIDEO_TILE.videoType);
@@ -35,7 +35,7 @@ describe("Video", () => {
 
   describe("setTitle", () => {
     test("updates the title and persists it", async () => {
-      const video = new Video(editor, VIDEO_TILE);
+      const video = new Video(editor.page, VIDEO_TILE);
       const title = "Updated title";
 
       await video.setTitle(title);

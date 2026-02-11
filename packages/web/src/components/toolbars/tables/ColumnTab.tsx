@@ -16,7 +16,7 @@ export interface ColumnTabProps {
 }
 
 export default function ColumnTab({ table, getTable }: ColumnTabProps) {
-  const { id, sectionId, editor, columns } = table;
+  const { id, sectionId, page, columns } = table;
 
   function getSelectedColumn() {
     const selection = getTable().selection;
@@ -74,7 +74,7 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
     if (!columnId) {
       return;
     }
-    await Chart.create(editor, {
+    await Chart.create(page, {
       sectionId,
       tableId: id,
       series: [{ columnId }],

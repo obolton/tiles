@@ -3,33 +3,33 @@ import { reactive } from "@/utils/reactivity";
 import type { Dropdown as DropdownData } from "@/types/dropdowns";
 import type { AppRouterInputs } from "@/api/client";
 import type { Reactive } from "@/utils/reactivity";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 
 type OmitPageId<T extends { pageId: string }> = Omit<T, "pageId">;
 
 export default class Dropdown {
-  readonly editor: Editor;
+  readonly page: Page;
   readonly id: string;
   readonly title: Reactive<string | null>;
   readonly options: Reactive<DropdownData["options"]>;
 
-  constructor(editor: Editor, data: DropdownData) {
-    this.editor = editor;
+  constructor(page: Page, data: DropdownData) {
+    this.page = page;
     this.id = data.id;
     this.title = reactive(data.title);
     this.options = reactive(data.options);
   }
 
   static async create(
-    editor: Editor,
+    page: Page,
     data: OmitPageId<AppRouterInputs["dropdowns"]["create"]>,
   ) {
     const result = await client.dropdowns.create.mutate({
-      pageId: editor.pageId,
+      pageId: page.id,
       ...data,
     });
-    const dropdown = new Dropdown(editor, result);
-    editor.addDropdown(dropdown);
+    const dropdown = new Dropdown(page, result);
+    page.dropdowns.value = page.dropdowns.value.concat(dropdown);
     return dropdown;
   }
 
@@ -37,7 +37,7 @@ export default class Dropdown {
     data: Omit<AppRouterInputs["dropdowns"]["update"], "pageId" | "id">,
   ) {
     return client.dropdowns.update.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
       ...data,
     });
@@ -83,9 +83,11 @@ export default class Dropdown {
 
   async delete() {
     await client.dropdowns.delete.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
     });
-    this.editor.removeDropdown(this);
+    this.page.dropdowns.value = this.page.dropdowns.value.filter(
+      (d) => d.id !== this.id,
+    );
   }
 }

@@ -6,7 +6,7 @@ import {
   type ReactiveArray,
 } from "@/utils/reactivity";
 import client from "@/api/client";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type { ClientChartTile } from "api/types/tiles";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
 import type { AppRouterInputs } from "@/api/client";
@@ -33,14 +33,15 @@ export default class Chart extends Tile {
   readonly series: ReactiveArray<Series>;
 
   static async create(
-    editor: Editor,
+    page: Page,
     data: Omit<AppRouterInputs["charts"]["create"], "pageId">,
   ) {
     const properties = await client.charts.create.mutate({
-      pageId: editor.pageId,
+      pageId: page.id,
       ...data,
     });
-    const chart = new Chart(editor, properties);
+    const chart = new Chart(page, properties);
+    const { editor } = chart;
     editor.addTile(chart, properties.sectionId, data.beforeId);
     editor.recordOperation({
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
@@ -48,8 +49,8 @@ export default class Chart extends Tile {
     });
   }
 
-  constructor(editor: Editor, properties: ClientChartTile) {
-    super(editor, properties);
+  constructor(page: Page, properties: ClientChartTile) {
+    super(page, properties);
 
     const { tableId, label, series } = properties;
     this.tableId = tableId;
@@ -69,7 +70,7 @@ export default class Chart extends Tile {
   ) {
     return client.charts.update.mutate({
       ...properties,
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
     });
   }
@@ -98,7 +99,7 @@ export default class Chart extends Tile {
 
   async addSeries(columnId: string) {
     const series = await client.charts.addSeries.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       chartId: this.id,
       columnId,
     });
@@ -130,7 +131,7 @@ export default class Chart extends Tile {
   ) {
     return client.charts.updateSeries.mutate({
       ...properties,
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       chartId: this.id,
     });
   }
@@ -216,7 +217,7 @@ export default class Chart extends Tile {
     }
 
     return client.charts.deleteSeries.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       chartId: this.id,
       seriesId,
     });

@@ -5,6 +5,7 @@ import StyleTools from "@/components/toolbars/tiles/StyleTools";
 import SeriesPanel from "./SeriesPanel";
 import ChartIcon from "@/icons/chart.svg?jsx";
 import Editor from "@/editor/Editor";
+import Table from "@/models/Table";
 import type Chart from "@/models/Chart";
 
 export interface ChartToolbarProps {
@@ -12,7 +13,7 @@ export interface ChartToolbarProps {
 }
 
 export default function ChartToolbar({ chart }: ChartToolbarProps) {
-  const table = Editor.current.getTable(chart.tableId);
+  const table = Editor.current.page.getTile(chart.tableId, Table);
 
   return (
     <floating-toolbar

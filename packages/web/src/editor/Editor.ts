@@ -2,49 +2,22 @@ import client from "@/api/client";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { reactive, flag, array } from "@/utils/reactivity";
+import { reactive, flag } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
 import { isEditMode, setEditMode } from "@/utils/edit";
-import { createState } from "@/utils/richText/state";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
-import TileCollection from "@/models/TileCollection";
+import Page, { type PageData } from "@/models/Page";
 import Section from "@/models/Section";
-import Text from "@/models/Text";
 import Image from "@/models/Image";
-import Video from "@/models/Video";
 import Link from "@/models/Link";
-import PageLink from "@/models/PageLink";
-import MapObject from "@/models/Map";
-import Table from "@/models/Table";
-import Chart from "@/models/Chart";
-import Dropdown from "@/models/Dropdown";
-import PageInvite from "@/models/PageInvite";
 import { OperationManager, execute } from "@/operations";
 import type Tile from "@/models/Tile";
-import type { ClientTile, DockEdge } from "api/types/tiles";
-import type { FontId } from "@/config/fonts";
-import type { AppRouterInputs, AppRouterOutputs } from "@/api/client";
-import type { PageAccess, User } from "@/types/collaboration";
-import type { Color } from "@/utils/color";
-import type { Reactive, ReactiveArray } from "@/utils/reactivity";
-import type {
-  HeadingNode,
-  ParagraphNode,
-  TextNode,
-} from "@/utils/richText/types";
+import type { Reactive } from "@/utils/reactivity";
 import type { AnyAction, OperationInput } from "@/operations";
 
-export type Page = NonNullable<AppRouterOutputs["pages"]["getById"]>;
-
-type OmitPageId<T extends { pageId: string }> = Omit<T, "pageId">;
-
-type TransitionFunction = (commit: () => void) => void;
-
-function immediateTransition(commit: () => void) {
-  commit();
-}
+export type { PageData } from "@/models/Page";
 
 const IS_SERVER = import.meta.env.SSR;
 
@@ -53,38 +26,23 @@ const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 export default class Editor {
   static #current?: Editor;
 
-  readonly pageId: string;
-  readonly workspaceId: string;
+  readonly page: Page;
   readonly isEditable: Reactive<boolean>;
-  readonly title: Reactive<string>;
-  readonly backgroundColor: Reactive<Color | null>;
-  readonly font: Reactive<FontId | null>;
-  readonly coverImageUrl: Reactive<string | null>;
-  readonly isPublished: Reactive<boolean>;
-  readonly folderId: Reactive<string | null>;
-  readonly themeId: Reactive<string | null>;
-  readonly index: Map<string, Tile>;
-  readonly tiles: TileCollection;
-  readonly access: ReactiveArray<PageAccess>;
-  readonly invites: ReactiveArray<PageInvite>;
-  readonly author: User;
   readonly selection: Reactive<Set<Tile>>;
   readonly references: Reactive<Tile[]>;
   readonly isPromptOpen: Reactive<boolean>;
-  readonly dropdowns: ReactiveArray<Dropdown>;
 
   readonly operations: OperationManager<AnyAction> | null;
   readonly canUndo: Reactive<boolean>;
   readonly canRedo: Reactive<boolean>;
 
-  readonly dockSizes: Reactive<Record<DockEdge, number | null>>;
+  get pageId() {
+    return this.page.id;
+  }
 
-  readonly dockedTiles: {
-    TOP: TileCollection;
-    LEFT: TileCollection;
-    RIGHT: TileCollection;
-    BOTTOM: TileCollection;
-  };
+  get workspaceId() {
+    return this.page.workspaceId;
+  }
 
   get activeSection(): Section | null {
     const selection = Array.from(this.selection.value);
@@ -94,7 +52,7 @@ export default class Editor {
     }
     const sectionId = lastTile?.sectionId;
     if (sectionId) {
-      const section = this.index.get(sectionId);
+      const section = this.page.index.get(sectionId);
       if (section instanceof Section) {
         return section;
       }
@@ -102,7 +60,7 @@ export default class Editor {
     return null;
   }
 
-  static init(page: Page) {
+  static init(page: PageData) {
     if (this.#current) {
       throw new Error("The editor has already been initialized");
     }
@@ -128,74 +86,18 @@ export default class Editor {
     return this.#current;
   }
 
-  private constructor(page: Page) {
-    this.pageId = page.id;
-    this.workspaceId = page.workspaceId;
+  private constructor(page: PageData) {
+    this.page = new Page(page);
+    this.page.editor = this;
+    this.page.initTiles(page.tiles);
     this.isEditable = flag(isEditMode());
-    this.title = reactive(page.title);
-    this.backgroundColor = reactive(page.backgroundColor);
-    this.font = reactive(page.font);
-    this.coverImageUrl = reactive(page.coverImageUrl);
-    this.isPublished = reactive(page.published);
-    this.folderId = reactive(page.folderId);
-    this.themeId = reactive(page.theme?.id ?? null);
-    this.index = new Map();
-    this.tiles = new TileCollection();
-    this.access = array(page.access);
-    this.invites = array(page.invites.map((i) => new PageInvite(this, i)));
-    this.author = page.author;
     this.selection = reactive(new Set());
     this.references = reactive([]);
     this.isPromptOpen = flag(false);
-    this.dropdowns = array(page.dropdowns.map((d) => new Dropdown(this, d)));
 
     this.canUndo = reactive(false);
     this.canRedo = reactive(false);
     this.operations = IS_SERVER ? null : new OperationManager(page.id);
-
-    this.dockSizes = reactive({
-      TOP: page.dockTopHeight,
-      BOTTOM: page.dockBottomHeight,
-      LEFT: page.dockLeftWidth,
-      RIGHT: page.dockRightWidth,
-    });
-
-    this.dockedTiles = {
-      TOP: new TileCollection(),
-      LEFT: new TileCollection(),
-      RIGHT: new TileCollection(),
-      BOTTOM: new TileCollection(),
-    };
-
-    const parentIds = new Map<string, string | null>();
-
-    for (const tile of page.tiles) {
-      const object = this.createTile(tile);
-      this.index.set(object.id, object);
-      if (tile.sectionId) {
-        parentIds.set(object.id, tile.sectionId);
-      }
-    }
-
-    for (const item of this.index.values()) {
-      const dock = item.dock.value;
-      if (dock) {
-        this.dockedTiles[dock].append(item);
-      } else {
-        const parentId = parentIds.get(item.id);
-        if (parentId) {
-          const parent = this.index.get(parentId);
-
-          if (!(parent instanceof Section)) {
-            throw new Error(`Invalid parent: ${parentId}`);
-          }
-
-          parent.tiles.append(item);
-        } else {
-          this.tiles.append(item);
-        }
-      }
-    }
 
     if (!IS_SERVER) {
       this.enablePointerEvents();
@@ -245,7 +147,7 @@ export default class Editor {
       return;
     }
 
-    const tile = this.index.get(pageItem.id);
+    const tile = this.page.index.get(pageItem.id);
     if (tile && !this.selection.value.has(tile)) {
       this.select([pageItem.id], false);
     }
@@ -324,7 +226,7 @@ export default class Editor {
               purpose: "content",
               workspaceId: this.workspaceId,
             });
-            await Image.create(this, {
+            await Image.create(this.page, {
               sectionId: this.activeSection?.id,
               imageId,
             });
@@ -333,7 +235,7 @@ export default class Editor {
       }
     } else if (isUriList(item)) {
       item.getAsString(async (url) => {
-        await Link.create(this, {
+        await Link.create(this.page, {
           sectionId: this.activeSection?.id,
           url,
         });
@@ -341,67 +243,10 @@ export default class Editor {
     }
   }
 
-  async setPageTitle(title: string) {
-    this.title.value = title;
-    document.title = `${title} - Tiles`;
-    return client.pages.update.mutate({
-      pageId: this.pageId,
-      title,
-    });
-  }
-
-  async setCoverImage(imageKey: string | null) {
-    return client.pages.update.mutate({
-      pageId: this.pageId,
-      coverImageKey: imageKey,
-    });
-  }
-
-  async setFont(font: FontId) {
-    return client.pages.update.mutate({ pageId: this.pageId, font });
-  }
-
-  async setBackgroundColor(backgroundColor: Color) {
-    return client.pages.update.mutate({
-      pageId: this.pageId,
-      backgroundColor,
-    });
-  }
-
-  async setPublished(published: boolean) {
-    this.isPublished.value = published;
-    return client.pages.update.mutate({ pageId: this.pageId, published });
-  }
-
-  async setFolder(folderId: string | null) {
-    this.folderId.value = folderId;
-    return client.pages.update.mutate({ pageId: this.pageId, folderId });
-  }
-
-  async setTheme(themeId: string | null) {
-    this.themeId.value = themeId;
-    return client.pages.update.mutate({ pageId: this.pageId, themeId });
-  }
-
-  async deletePage() {
-    return client.pages.delete.mutate({ pageId: this.pageId });
-  }
-
-  async setDockSizes(sizes: Partial<Record<DockEdge, number | null>>) {
-    this.dockSizes.value = { ...this.dockSizes.value, ...sizes };
-    return client.pages.update.mutate({
-      pageId: this.pageId,
-      dockTopHeight: sizes.TOP,
-      dockBottomHeight: sizes.BOTTOM,
-      dockLeftWidth: sizes.LEFT,
-      dockRightWidth: sizes.RIGHT,
-    });
-  }
-
   // Selection
 
   select(ids: string[], extendSelection = false) {
-    const tiles = new Set(ids.map((id) => this.getTile(id)));
+    const tiles = new Set(ids.map((id) => this.page.getTile(id)));
     if (extendSelection) {
       if (tiles.size === 0) {
         return;
@@ -413,7 +258,7 @@ export default class Editor {
   }
 
   deselect(ids: string[]) {
-    const tiles = new Set(ids.map((id) => this.getTile(id)));
+    const tiles = new Set(ids.map((id) => this.page.getTile(id)));
     this.selection.value = this.selection.value.difference(tiles);
   }
 
@@ -439,7 +284,7 @@ export default class Editor {
     if (index >= 0) {
       this.references.value = this.references.value.toSpliced(index, 1);
     } else {
-      this.references.value = [...this.references.value, this.getTile(id)];
+      this.references.value = [...this.references.value, this.page.getTile(id)];
     }
   }
 
@@ -464,53 +309,6 @@ export default class Editor {
   }
 
   // Tiles
-
-  getTile(id: string) {
-    const tile = this.index.get(id);
-    if (!tile) {
-      throw new Error(`Tile cannot be found: ${id}`);
-    }
-    return tile;
-  }
-
-  getTileAs<T extends Tile>(
-    id: string,
-    TileClass: abstract new (...args: any[]) => T,
-  ): T {
-    const tile = this.getTile(id);
-    if (!(tile instanceof TileClass)) {
-      throw new Error(
-        `Expected ${TileClass.name} but got ${tile.constructor.name}`,
-      );
-    }
-    return tile;
-  }
-
-  createTile(properties: ClientTile): Tile {
-    const type = properties.type;
-    switch (type) {
-      case "SECTION":
-        return new Section(this, properties);
-      case "TEXT":
-        return new Text(this, properties);
-      case "IMAGE":
-        return new Image(this, properties);
-      case "VIDEO":
-        return new Video(this, properties);
-      case "LINK":
-        return new Link(this, properties);
-      case "PAGE_LINK":
-        return new PageLink(this, properties);
-      case "MAP":
-        return new MapObject(this, properties);
-      case "TABLE":
-        return new Table(this, properties);
-      case "CHART":
-        return new Chart(this, properties);
-      default:
-        throw new Error(`Invalid tile type: ${type}`);
-    }
-  }
 
   async deleteTiles(tiles: Tile[]) {
     const ids = tiles.map((tile) => tile.id);
@@ -565,17 +363,13 @@ export default class Editor {
     beforeId: string | null = null,
     select = true,
   ) {
-    this.index.set(tile.id, tile);
+    this.page.index.set(tile.id, tile);
 
     viewTransition(() => {
       if (sectionId) {
-        const section = this.getTile(sectionId);
-        if (!(section instanceof Section)) {
-          throw new Error(`Invalid section ID: ${sectionId}`);
-        }
-        section.tiles.insertBefore(beforeId, tile);
+        this.page.getSection(sectionId).tiles.insertBefore(beforeId, tile);
       } else {
-        this.tiles.insertBefore(beforeId, tile);
+        this.page.tiles.insertBefore(beforeId, tile);
       }
     }).updateCallbackDone.then(() => {
       if (select) {
@@ -593,139 +387,8 @@ export default class Editor {
   removeTiles(tiles: Tile[]) {
     tiles.forEach((tile) => {
       tile.parent?.remove(tile);
-      this.index.delete(tile.id);
+      this.page.index.delete(tile.id);
     });
-  }
-
-  // TODO: Restore title setting
-  async updateText(data: OmitPageId<AppRouterInputs["text"]["update"]>) {
-    // Update the page title
-    if (data.content) {
-      const firstTextTileId = this.tiles.value.find(
-        (tile) => tile.type === "TEXT",
-      )?.id;
-      if (firstTextTileId && data.id === firstTextTileId) {
-        const block = data.content.find(
-          (node): node is HeadingNode | ParagraphNode =>
-            (node.type === "heading" || node.type === "paragraph") &&
-            node.children.length > 0,
-        );
-        const title = block?.children
-          .filter((node): node is TextNode => node.type === "text")
-          .map((node) => node.text)
-          .join("")
-          .slice(0, 100)
-          .trim();
-
-        if (title) {
-          await this.setPageTitle(title);
-        }
-      }
-    }
-
-    return await client.text.update.mutate({
-      pageId: this.pageId,
-      ...data,
-    });
-  }
-
-  async write(data: OmitPageId<AppRouterInputs["ai"]["write"]>) {
-    return client.ai.write.mutate(
-      {
-        pageId: this.pageId,
-        ...data,
-      },
-      { context: { stream: true } },
-    );
-  }
-
-  getTextEditorState(id: string) {
-    const text = this.getTile(id);
-    if (!(text instanceof Text)) {
-      throw new Error(`Invalid text tile ID: ${id}`);
-    }
-    if (!text.state.value) {
-      text.state.value = createState(text.content.value);
-    }
-    return text.state;
-  }
-
-  // Tables
-
-  getTable(tableId: string) {
-    const table = this.getTile(tableId);
-    if (!(table instanceof Table)) {
-      throw new Error(`Invalid table ID: ${tableId}`);
-    }
-    return table;
-  }
-
-  getSection(sectionId: string) {
-    const section = this.getTile(sectionId);
-    if (!(section instanceof Section)) {
-      throw new Error(`Invalid section ID: ${sectionId}`);
-    }
-    return section;
-  }
-
-  getTableColumnData(tableId: string, columnId: string) {
-    const table = this.getTable(tableId);
-    return table.rows.derive((rows) =>
-      rows.map((row) => row.data[columnId] ?? null),
-    );
-  }
-
-  // Collaboration
-
-  getInvite(id: string): PageInvite {
-    const invite = this.invites.value.find((i) => i.id === id);
-    if (!invite) {
-      throw new Error(`Invite cannot be found: ${id}`);
-    }
-    return invite;
-  }
-
-  addInvite(invite: PageInvite) {
-    this.invites.value = this.invites.value.concat(invite);
-  }
-
-  removeInvite(invite: PageInvite) {
-    this.invites.value = this.invites.value.filter((i) => i.id !== invite.id);
-  }
-
-  async revokeAccess(
-    userId: string,
-    transition: TransitionFunction = immediateTransition,
-  ) {
-    await client.collaboration.revokePageAccess.mutate({
-      pageId: this.pageId,
-      userId,
-    });
-    transition(() => {
-      this.access.value = this.access.value.filter(
-        (access) => access.user.id !== userId,
-      );
-    });
-  }
-
-  // Dropdowns
-
-  getDropdown(id: string): Dropdown {
-    const dropdown = this.dropdowns.value.find((d) => d.id === id);
-    if (!dropdown) {
-      throw new Error(`Dropdown cannot be found: ${id}`);
-    }
-    return dropdown;
-  }
-
-  addDropdown(dropdown: Dropdown) {
-    this.dropdowns.value = this.dropdowns.value.concat(dropdown);
-  }
-
-  removeDropdown(dropdown: Dropdown) {
-    this.dropdowns.value = this.dropdowns.value.filter(
-      (d) => d.id !== dropdown.id,
-    );
   }
 
   // Operations (Undo/Redo)

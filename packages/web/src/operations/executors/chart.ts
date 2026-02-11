@@ -13,7 +13,7 @@ const setProperties: ActionExecutor<SetChartPropertiesAction> = async (
   editor,
   { chartId, changes },
 ) => {
-  const chart = editor.getTileAs(chartId, Chart);
+  const chart = editor.page.getTile(chartId, Chart);
   if (changes.label !== undefined) {
     chart.label.value = changes.label;
   }
@@ -23,7 +23,7 @@ const addSeries: ActionExecutor<AddSeriesAction> = async (
   editor,
   { chartId, series },
 ) => {
-  const chart = editor.getTileAs(chartId, Chart);
+  const chart = editor.page.getTile(chartId, Chart);
   const { id, type, column, fill } = series;
 
   chart.series.push({
@@ -38,7 +38,7 @@ const removeSeries: ActionExecutor<RemoveSeriesAction> = async (
   editor,
   { chartId, seriesId },
 ) => {
-  const chart = editor.getTileAs(chartId, Chart);
+  const chart = editor.page.getTile(chartId, Chart);
   chart.series.value = chart.series.value.filter((s) => s.id !== seriesId);
 };
 
@@ -46,7 +46,7 @@ const restoreSeries: ActionExecutor<RestoreSeriesAction> = async (
   editor,
   { chartId, series },
 ) => {
-  const chart = editor.getTileAs(chartId, Chart);
+  const chart = editor.page.getTile(chartId, Chart);
   const { id, type, column, fill } = series;
 
   chart.series.push({
@@ -61,7 +61,7 @@ const setSeriesProperties: ActionExecutor<SetSeriesPropertiesAction> = async (
   editor,
   { chartId, seriesId, changes },
 ) => {
-  const chart = editor.getTileAs(chartId, Chart);
+  const chart = editor.page.getTile(chartId, Chart);
   const series = chart.series.find((s) => s.id === seriesId);
   if (!series) {
     return;

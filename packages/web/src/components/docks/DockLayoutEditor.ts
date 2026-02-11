@@ -5,7 +5,8 @@ import {
   getDragPosition,
 } from "@/utils/drag-placeholder";
 import { ResizeEvent } from "@/elements/resize/events";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
+import type { Reactive } from "@/utils/reactivity";
 import type { DragDropEvent } from "@/utils/drag";
 import type { DragData } from "@/editor/LayoutEditor";
 import type Tile from "@/models/Tile";
@@ -17,7 +18,8 @@ const MAX_TILE_RATIO = 0.9;
 export interface DockLayoutEditorOptions {
   element: HTMLElement;
   edge: DockEdge;
-  editor: Editor;
+  page: Page;
+  isEditable: Reactive<boolean>;
   signal?: AbortSignal;
 }
 
@@ -28,15 +30,23 @@ export default class DockLayoutEditor {
 
   private readonly elementRef: WeakRef<HTMLElement>;
   private readonly edge: DockEdge;
-  private readonly editor: Editor;
+  private readonly page: Page;
+  private readonly isEditable: Reactive<boolean>;
   private dragPlaceholder: HTMLElement | null = null;
   private beforeId: string | null = null;
   private dividers: HTMLElement[] = [];
 
-  constructor({ element, edge, editor, signal }: DockLayoutEditorOptions) {
+  constructor({
+    element,
+    edge,
+    page,
+    isEditable,
+    signal,
+  }: DockLayoutEditorOptions) {
     this.elementRef = new WeakRef(element);
     this.edge = edge;
-    this.editor = editor;
+    this.page = page;
+    this.isEditable = isEditable;
 
     element.dataset.drop = "true";
     element.addEventListener("dnd-dragenter", this, { signal });
@@ -46,9 +56,9 @@ export default class DockLayoutEditor {
     element.addEventListener("resizeend", this, { signal });
 
     // Subscribe to tile and edit mode changes for divider management
-    const tileCollection = this.editor.dockedTiles[this.edge];
+    const tileCollection = this.page.dockedTiles[this.edge];
     tileCollection.subscribe(() => this.updateDividers(), signal);
-    this.editor.isEditable.subscribe(() => this.updateDividers(), signal);
+    this.isEditable.subscribe(() => this.updateDividers(), signal);
 
     this.updateDividers();
   }
@@ -205,11 +215,11 @@ export default class DockLayoutEditor {
     }
     this.dividers = [];
 
-    if (!this.editor.isEditable.value) {
+    if (!this.isEditable.value) {
       return;
     }
 
-    const tiles = this.editor.dockedTiles[this.edge].value;
+    const tiles = this.page.dockedTiles[this.edge].value;
     if (tiles.length < 2) {
       return;
     }
@@ -257,8 +267,8 @@ export default class DockLayoutEditor {
       return;
     }
 
-    const beforeTile = this.editor.getTile(beforeId);
-    const afterTile = this.editor.getTile(afterId);
+    const beforeTile = this.page.getTile(beforeId);
+    const afterTile = this.page.getTile(afterId);
     if (!beforeTile || !afterTile) {
       return;
     }

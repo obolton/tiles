@@ -2,21 +2,23 @@ import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./PageContents.module.css";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
+import type { Reactive } from "@/utils/reactivity";
 
 export interface PageContentsProps {
-  editor: Editor;
+  page: Page;
+  isEditable: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
 }
 
 export default function PageContents({
-  editor,
+  page,
+  isEditable,
   tiles,
   signal,
 }: PageContentsProps) {
-  const { isEditable } = editor;
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
 
   function ref(element: HTMLElement) {
@@ -25,7 +27,7 @@ export default function PageContents({
       grid: element,
       layoutType: "VERTICAL",
       dropTarget: element,
-      editor,
+      page,
       sectionId: null,
       signal,
     });

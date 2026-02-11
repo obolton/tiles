@@ -2,7 +2,7 @@ import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import Video from "./Video";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type { ClientLinkTile } from "api/types/tiles";
 import type { AppRouterInputs } from "@/api/client";
 
@@ -23,22 +23,26 @@ export default class Link extends Tile {
   readonly imageUrl: Reactive<string | null>;
 
   static async create(
-    editor: Editor,
+    page: Page,
     data: Omit<AppRouterInputs["externalLinks"]["create"], "pageId">,
   ) {
+    const editor = page.editor;
+    if (!editor) {
+      throw new Error("Requires editor context");
+    }
     const properties = await client.externalLinks.create.mutate({
-      pageId: editor.pageId,
+      pageId: page.id,
       ...data,
     });
 
     switch (properties.type) {
       case "LINK": {
-        const link = new Link(editor, properties);
+        const link = new Link(page, properties);
         editor.addTile(link, properties.sectionId, data.beforeId);
         break;
       }
       case "VIDEO": {
-        const video = new Video(editor, properties);
+        const video = new Video(page, properties);
         editor.addTile(video, properties.sectionId, data.beforeId);
         break;
       }
@@ -50,8 +54,8 @@ export default class Link extends Tile {
     });
   }
 
-  constructor(editor: Editor, properties: ClientLinkTile) {
-    super(editor, properties);
+  constructor(page: Page, properties: ClientLinkTile) {
+    super(page, properties);
 
     const { url, title, description, siteName, imageUrl } = properties;
     this.url = reactive(url);
@@ -70,7 +74,7 @@ export default class Link extends Tile {
   ) {
     return client.externalLinks.update.mutate({
       ...properties,
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
     });
   }

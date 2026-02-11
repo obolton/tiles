@@ -159,11 +159,11 @@ function handleDestination(
   }
 
   destinationTileIds.add(event.destination);
-  const existingTile = Editor.current.getTile(event.destination);
+  const existingTile = Editor.current.page.getTile(event.destination);
 
   // Editing existing tile
   if (existingTile instanceof Text) {
-    const output = existingTile.state;
+    const output = existingTile.getEditorState();
     if (!output.value) {
       return {
         output,
@@ -204,9 +204,12 @@ function handleDestination(
     }
   }
 
-  // New artifact tile (from create_text tool)
-  const output = Editor.current.getTextEditorState(event.destination);
-  return { output, pos: null, direction: "after", replaceEmptyBlock: false };
+  return {
+    output: null,
+    pos: null,
+    direction: "after",
+    replaceEmptyBlock: false,
+  };
 }
 
 export async function insertFromStream(
@@ -228,7 +231,7 @@ export async function insertFromStream(
     }
 
     if (typeof event === "object" && "artifact" in event) {
-      const tile = Editor.current.createTile(event.artifact);
+      const tile = Editor.current.page.createTile(event.artifact);
       Editor.current.addTile(tile, event.artifact.sectionId);
       continue;
     }
@@ -377,7 +380,7 @@ export async function insertFromStream(
 
   // Persist all destination tiles that received streamed content
   for (const tileId of destinationTileIds) {
-    const tile = Editor.current.getTile(tileId);
+    const tile = Editor.current.page.getTile(tileId);
     if (tile instanceof Text) {
       tile.persist();
     }

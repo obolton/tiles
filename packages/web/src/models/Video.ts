@@ -1,7 +1,7 @@
 import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type { ClientVideoTile } from "api/types/tiles";
 import type { AppRouterInputs } from "@/api/client";
 
@@ -15,8 +15,8 @@ export default class Video extends Tile {
   readonly imageUrl: string | null;
   readonly title: Reactive<string>;
 
-  constructor(editor: Editor, properties: ClientVideoTile) {
-    super(editor, properties);
+  constructor(page: Page, properties: ClientVideoTile) {
+    super(page, properties);
 
     const { videoType, videoId, imageUrl, title } = properties;
     this.videoType = videoType;
@@ -30,7 +30,7 @@ export default class Video extends Tile {
   ) {
     return client.videos.update.mutate({
       ...properties,
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
     });
   }

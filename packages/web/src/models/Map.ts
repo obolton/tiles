@@ -1,7 +1,7 @@
 import Tile from "./Tile";
 import { array, reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
-import type Editor from "@/editor/Editor";
+import type Page from "@/models/Page";
 import type { ClientMapTile, ClientPlace, MapStyle } from "api/types/tiles";
 import type { AppRouterInputs } from "@/api/client";
 
@@ -12,14 +12,15 @@ export default class Map extends Tile {
   readonly style: Reactive<MapStyle>;
 
   static async create(
-    editor: Editor,
+    page: Page,
     data: Omit<AppRouterInputs["maps"]["create"], "pageId">,
   ) {
     const properties = await client.maps.create.mutate({
-      pageId: editor.pageId,
+      pageId: page.id,
       ...data,
     });
-    const map = new Map(editor, properties);
+    const map = new Map(page, properties);
+    const { editor } = map;
     editor.addTile(map, properties.sectionId, data.beforeId);
     editor.recordOperation({
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
@@ -27,8 +28,8 @@ export default class Map extends Tile {
     });
   }
 
-  constructor(editor: Editor, properties: ClientMapTile) {
-    super(editor, properties);
+  constructor(page: Page, properties: ClientMapTile) {
+    super(page, properties);
 
     const { places, style } = properties;
     this.places = array(places);
@@ -39,7 +40,7 @@ export default class Map extends Tile {
     const previousPlaceIds = new Set(this.places.value.map((p) => p.id));
 
     const result = await client.maps.addPlaces.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
       places,
     });
@@ -71,7 +72,7 @@ export default class Map extends Tile {
       p.id === place.id ? { ...p, ...place } : p,
     );
     const result = await client.maps.updatePlace.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
       place,
     });
@@ -98,7 +99,7 @@ export default class Map extends Tile {
 
     this.places.value = this.places.value.filter((p) => p.id !== placeId);
     const result = await client.maps.removePlace.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
       placeId,
     });
@@ -120,7 +121,7 @@ export default class Map extends Tile {
 
     this.style.value = style;
     const result = await client.maps.update.mutate({
-      pageId: this.editor.pageId,
+      pageId: this.page.id,
       id: this.id,
       style,
     });

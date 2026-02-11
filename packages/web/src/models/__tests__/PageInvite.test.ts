@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import PageInvite from "@/models/PageInvite";
-import Editor from "@/editor/Editor";
+import Page from "@/models/Page";
 import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
 import { PAGE_INVITE } from "@/test/fixtures/PageInvite";
@@ -19,7 +19,7 @@ vi.mock("@/api/client", () => ({
 }));
 
 describe("PageInvite", () => {
-  const editor = Editor.init(PAGE);
+  const page = new Page(PAGE);
   const inviteToPageMock = vi.mocked(client.collaboration.inviteToPage.mutate);
   const deletePageInviteMock = vi.mocked(
     client.collaboration.deletePageInvite.mutate,
@@ -30,20 +30,19 @@ describe("PageInvite", () => {
   });
 
   test("maps properties to values", () => {
-    const invite = new PageInvite(editor, PAGE_INVITE);
+    const invite = new PageInvite(page, PAGE_INVITE);
 
-    expect(invite.editor).toBe(editor);
+    expect(invite.page).toBe(page);
     expect(invite.id).toBe(PAGE_INVITE.id);
     expect(invite.email).toBe(PAGE_INVITE.email);
     expect(invite.createdAt).toBe(PAGE_INVITE.createdAt);
   });
 
   describe("create", () => {
-    test("creates a new invite and adds it to the editor", async () => {
-      const addInviteSpy = vi.spyOn(editor, "addInvite");
+    test("creates a new invite and adds it to the page", async () => {
       inviteToPageMock.mockResolvedValue(PAGE_INVITE);
 
-      const invite = await PageInvite.create(editor, "user@example.com");
+      const invite = await PageInvite.create(page, "user@example.com");
 
       expect(inviteToPageMock).toHaveBeenCalledWith({
         pageId: PAGE.id,
@@ -51,14 +50,14 @@ describe("PageInvite", () => {
       });
       expect(invite.id).toBe(PAGE_INVITE.id);
       expect(invite.email).toBe(PAGE_INVITE.email);
-      expect(addInviteSpy).toHaveBeenCalledWith(invite);
+      expect(page.invites.value).toContain(invite);
     });
   });
 
   describe("delete", () => {
-    test("deletes the invite and removes it from the editor", async () => {
-      const removeInviteSpy = vi.spyOn(editor, "removeInvite");
-      const invite = new PageInvite(editor, PAGE_INVITE);
+    test("deletes the invite and removes it from the page", async () => {
+      const invite = new PageInvite(page, PAGE_INVITE);
+      page.invites.value = page.invites.value.concat(invite);
 
       await invite.delete();
 
@@ -66,7 +65,7 @@ describe("PageInvite", () => {
         pageId: PAGE.id,
         id: PAGE_INVITE.id,
       });
-      expect(removeInviteSpy).toHaveBeenCalledWith(invite);
+      expect(page.invites.value).not.toContain(invite);
     });
   });
 });
