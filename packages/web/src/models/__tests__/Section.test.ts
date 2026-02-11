@@ -35,18 +35,18 @@ describe("Section", () => {
 
       createMock.mockResolvedValue(SECTION_TILE);
 
-      await Section.create(editor, { layout });
+      await Section.create(editor.page, { layout });
 
       expect(createMock).toHaveBeenCalledWith({
         pageId: PAGE.id,
         layout,
       });
-      expect(editor.index.get(SECTION_TILE.id)).toBeInstanceOf(Section);
+      expect(editor.page.index.get(SECTION_TILE.id)).toBeInstanceOf(Section);
     });
 
     test("creates a section before a specified tile", async () => {
       const layout: Layout = "VERTICAL";
-      const existingSection = new Section(editor, SECTION_TILE);
+      const existingSection = new Section(editor.page, SECTION_TILE);
       editor.addTile(existingSection, null, null, false);
 
       const newSectionId = "new-section-id";
@@ -56,19 +56,22 @@ describe("Section", () => {
         layout,
       });
 
-      await Section.create(editor, { layout, beforeId: existingSection.id });
+      await Section.create(editor.page, {
+        layout,
+        beforeId: existingSection.id,
+      });
 
       expect(createMock).toHaveBeenCalledWith({
         pageId: PAGE.id,
         layout,
         beforeId: existingSection.id,
       });
-      expect(editor.index.get(newSectionId)).toBeInstanceOf(Section);
+      expect(editor.page.index.get(newSectionId)).toBeInstanceOf(Section);
     });
   });
 
   test("maps properties to reactive values", () => {
-    const section = new Section(editor, SECTION_TILE);
+    const section = new Section(editor.page, SECTION_TILE);
 
     expect(section.type).toBe("SECTION");
     expect(section.layout.value).toBe(SECTION_TILE.layout);
@@ -78,7 +81,7 @@ describe("Section", () => {
 
   describe("setLayout", () => {
     test("updates the layout and persists it", async () => {
-      const section = new Section(editor, SECTION_TILE);
+      const section = new Section(editor.page, SECTION_TILE);
       const layout: Layout = "FREEFORM";
 
       updateMock.mockResolvedValue({
@@ -97,7 +100,7 @@ describe("Section", () => {
     });
 
     test("updates layout to GRID", async () => {
-      const section = new Section(editor, {
+      const section = new Section(editor.page, {
         ...SECTION_TILE,
         layout: "VERTICAL",
       });
@@ -119,7 +122,7 @@ describe("Section", () => {
     });
 
     test("updates layout to HORIZONTAL", async () => {
-      const section = new Section(editor, {
+      const section = new Section(editor.page, {
         ...SECTION_TILE,
         layout: "GRID",
       });

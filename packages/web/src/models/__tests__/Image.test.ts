@@ -25,7 +25,7 @@ describe("Image", () => {
   });
 
   test("maps properties to reactive values", () => {
-    const image = new Image(editor, IMAGE_TILE);
+    const image = new Image(editor.page, IMAGE_TILE);
 
     expect(image.type).toBe("IMAGE");
     expect(image.imageUrl).toBe(IMAGE_TILE.imageUrl);
@@ -39,7 +39,7 @@ describe("Image", () => {
 
   describe("setOrigin", () => {
     test("updates the origin and persists it", async () => {
-      const image = new Image(editor, IMAGE_TILE);
+      const image = new Image(editor.page, IMAGE_TILE);
       const origin = { x: 10, y: 12 };
 
       await image.setOrigin(origin);
@@ -55,7 +55,7 @@ describe("Image", () => {
 
   describe("persistText", () => {
     test("persists null text when no editor state is present", async () => {
-      const image = new Image(editor, IMAGE_TILE);
+      const image = new Image(editor.page, IMAGE_TILE);
 
       await image.persistText();
 
@@ -68,7 +68,7 @@ describe("Image", () => {
     });
 
     test("serializes and persists the current editor state", async () => {
-      const image = new Image(editor, IMAGE_TILE);
+      const image = new Image(editor.page, IMAGE_TILE);
       image.state.value = createState(IMAGE_TILE.text);
 
       await image.persistText();

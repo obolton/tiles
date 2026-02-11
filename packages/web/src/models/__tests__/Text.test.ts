@@ -34,7 +34,7 @@ describe("Text", () => {
   });
 
   test("maps properties to reactive values", () => {
-    const text = new Text(editor, TEXT_TILE);
+    const text = new Text(editor.page, TEXT_TILE);
 
     expect(text.content.value).toEqual(TEXT_TILE.content);
     expect(text.align.value).toBe(TEXT_TILE.align);
@@ -45,7 +45,7 @@ describe("Text", () => {
 
   describe("setVerticalAlignment", () => {
     test("updates vertical alignment and persists the change", async () => {
-      const text = new Text(editor, TEXT_TILE);
+      const text = new Text(editor.page, TEXT_TILE);
       const align = "CENTER";
 
       await text.setVerticalAlignment(align);
@@ -61,7 +61,7 @@ describe("Text", () => {
 
   describe("setTextColor", () => {
     test("updates the text color", async () => {
-      const text = new Text(editor, TEXT_TILE);
+      const text = new Text(editor.page, TEXT_TILE);
       const textColor: Color = "ffff00000000";
 
       await text.setTextColor(textColor);
@@ -77,7 +77,7 @@ describe("Text", () => {
 
   describe("setBackground", () => {
     test("updates the background", async () => {
-      const text = new Text(editor, TEXT_TILE);
+      const text = new Text(editor.page, TEXT_TILE);
       const colorA: Color = "ffff00000000";
       const colorB: Color = "888800000000";
       const backgroundUpdate: FillUpdate = {
@@ -109,7 +109,7 @@ describe("Text", () => {
 
   describe("persist", () => {
     test("does not persist when no editor state is set", () => {
-      const text = new Text(editor, TEXT_TILE);
+      const text = new Text(editor.page, TEXT_TILE);
 
       const result = text.persist();
 
@@ -118,7 +118,7 @@ describe("Text", () => {
     });
 
     test("persists the current state", async () => {
-      const text = new Text(editor, TEXT_TILE);
+      const text = new Text(editor.page, TEXT_TILE);
 
       text.state.value = createState(TEXT_TILE.content);
 

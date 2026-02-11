@@ -44,7 +44,7 @@ describe("Chart", () => {
   });
 
   test("maps properties to reactive values", () => {
-    const chart = new Chart(editor, CHART_TILE);
+    const chart = new Chart(editor.page, CHART_TILE);
 
     expect(chart.type).toBe("CHART");
     expect(chart.tableId).toBe(CHART_TILE.tableId);
@@ -67,7 +67,7 @@ describe("Chart", () => {
 
   describe("setBackground", () => {
     test("updates the background", async () => {
-      const chart = new Chart(editor, CHART_TILE);
+      const chart = new Chart(editor.page, CHART_TILE);
       const colorA: Color = "ffff00000000";
       const colorB: Color = "888800000000";
       const background: Fill = {
@@ -95,7 +95,7 @@ describe("Chart", () => {
 
   describe("setLabel", () => {
     test("updates the label column", async () => {
-      const chart = new Chart(editor, CHART_TILE);
+      const chart = new Chart(editor.page, CHART_TILE);
       const property = { id: "col-3", title: "Profit" };
 
       await chart.setLabel(property);
@@ -109,7 +109,7 @@ describe("Chart", () => {
     });
 
     test("clears the label column", async () => {
-      const chart = new Chart(editor, CHART_TILE);
+      const chart = new Chart(editor.page, CHART_TILE);
 
       await chart.setLabel(null);
 
@@ -124,7 +124,7 @@ describe("Chart", () => {
 
   describe("addSeries", () => {
     test("adds a new series", async () => {
-      const chart = new Chart(editor, CHART_TILE);
+      const chart = new Chart(editor.page, CHART_TILE);
       const fill: Fill = { type: "color", color: "ffff00004040" };
       const newSeries = {
         id: "series-3",
@@ -155,7 +155,7 @@ describe("Chart", () => {
 
   describe("setSeriesChartType", () => {
     test("updates the series chart type", async () => {
-      const chart = new Chart(editor, CHART_TILE);
+      const chart = new Chart(editor.page, CHART_TILE);
 
       await chart.setSeriesChartType("series-1", "LINE");
 
@@ -169,7 +169,7 @@ describe("Chart", () => {
     });
 
     test("throws an error for invalid series ID", () => {
-      const chart = new Chart(editor, CHART_TILE);
+      const chart = new Chart(editor.page, CHART_TILE);
 
       expect(() => chart.setSeriesChartType("invalid-id", "LINE")).toThrow(
         "Invalid series ID: invalid-id",
@@ -179,7 +179,7 @@ describe("Chart", () => {
 
   describe("setSeriesFill", () => {
     test("updates the series fill", async () => {
-      const chart = new Chart(editor, CHART_TILE);
+      const chart = new Chart(editor.page, CHART_TILE);
       const fill: FillUpdate = { type: "color", color: "ffff00008080" };
 
       await chart.setSeriesFill("series-1", fill);
@@ -194,7 +194,7 @@ describe("Chart", () => {
     });
 
     test("clears the series fill", async () => {
-      const chart = new Chart(editor, CHART_TILE);
+      const chart = new Chart(editor.page, CHART_TILE);
 
       await chart.setSeriesFill("series-1", null);
 
@@ -208,7 +208,7 @@ describe("Chart", () => {
     });
 
     test("throws an error for invalid series ID", () => {
-      const chart = new Chart(editor, CHART_TILE);
+      const chart = new Chart(editor.page, CHART_TILE);
 
       expect(() => chart.setSeriesFill("invalid-id", null)).toThrow(
         "Invalid series ID: invalid-id",
@@ -218,7 +218,7 @@ describe("Chart", () => {
 
   describe("deleteSeries", () => {
     test("removes the series from the list", async () => {
-      const chart = new Chart(editor, CHART_TILE);
+      const chart = new Chart(editor.page, CHART_TILE);
 
       await chart.deleteSeries("series-1");
 

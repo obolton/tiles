@@ -24,7 +24,7 @@ describe("Link", () => {
   });
 
   test("maps properties to reactive values", () => {
-    const link = new Link(editor, LINK_TILE);
+    const link = new Link(editor.page, LINK_TILE);
 
     expect(link.url.value).toBe(LINK_TILE.url);
     expect(link.title.value).toBe(LINK_TILE.title);
@@ -34,7 +34,7 @@ describe("Link", () => {
   });
 
   test("updates the url and refreshes metadata from the server", async () => {
-    const link = new Link(editor, LINK_TILE);
+    const link = new Link(editor.page, LINK_TILE);
     const nextUrl = "https://tiles.dev/updated";
     const nextMetadata = {
       title: "Updated title",

@@ -24,11 +24,11 @@ describe("PageLink", () => {
   const editor = Editor.init(PAGE);
 
   test("maps properties to reactive values", () => {
-    const pageLink = new PageLink(editor, PAGE_LINK_TILE);
+    const pageLink = new PageLink(editor.page, PAGE_LINK_TILE);
 
     expect(pageLink.type).toBe("PAGE_LINK");
     expect(pageLink.id).toBe(PAGE_LINK_TILE.id);
-    expect(pageLink.page).toEqual(PAGE_LINK_TILE.linkedPage);
+    expect(pageLink.linkedPage).toEqual(PAGE_LINK_TILE.linkedPage);
   });
 
   test("handles missing linked page", () => {
@@ -37,8 +37,8 @@ describe("PageLink", () => {
       linkedPage: null,
     };
 
-    const pageLink = new PageLink(editor, tile);
+    const pageLink = new PageLink(editor.page, tile);
 
-    expect(pageLink.page).toBeNull();
+    expect(pageLink.linkedPage).toBeNull();
   });
 });
