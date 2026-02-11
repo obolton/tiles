@@ -538,7 +538,7 @@ export default class LayoutEditor {
     event.stopPropagation();
 
     this.updateLayoutInfo();
-    this.resizing = this.editor.getTile(event.target.id);
+    this.resizing = this.editor.page.getTile(event.target.id);
     document.body.dataset.resize = "true";
   }
 
