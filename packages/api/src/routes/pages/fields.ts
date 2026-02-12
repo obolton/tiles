@@ -49,3 +49,35 @@ export const PAGE_FIELDS = {
     select: DROPDOWN_FIELDS,
   },
 } as const satisfies Prisma.Args<typeof prisma.page, "findMany">["select"];
+
+export const LIBRARY_PAGE_FIELDS = {
+  id: true,
+  title: true,
+  updatedAt: true,
+  published: true,
+  folderId: true,
+  background: true,
+  font: true,
+  theme: {
+    select: THEME_FIELDS,
+  },
+  author: {
+    select: {
+      id: true,
+      name: true,
+      imageUrl: true,
+    },
+  },
+  folder: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
+} as const satisfies Prisma.Args<typeof prisma.page, "findMany">["select"];
+
+export type LibraryPage = Prisma.Result<
+  typeof prisma.page,
+  { select: typeof LIBRARY_PAGE_FIELDS },
+  "findUniqueOrThrow"
+>;
