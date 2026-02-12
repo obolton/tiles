@@ -2,7 +2,7 @@ import { generateKeyBetween } from "fractional-indexing";
 import { TRPCError } from "@trpc/server";
 import type { Prisma } from "@/generated/prisma/client";
 import prisma from "@/database/prisma";
-import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/routes/pageLinks/fields";
+import { LIBRARY_PAGE_FIELDS } from "./fields";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import type {
   GetPageByIdSchema,
@@ -71,7 +71,7 @@ export async function listPages(
       deletedAt: null,
       ...filter,
     },
-    select: PAGE_LINK_TILE_PAGE_FIELDS,
+    select: LIBRARY_PAGE_FIELDS,
     orderBy: {
       [sortBy]: sortDirection,
     },
@@ -100,7 +100,7 @@ export async function listSharedPages(
       deletedAt: null,
       ...filter,
     },
-    select: PAGE_LINK_TILE_PAGE_FIELDS,
+    select: LIBRARY_PAGE_FIELDS,
     orderBy: {
       [sortBy]: sortDirection,
     },
@@ -133,7 +133,7 @@ export async function listDeletedPages(
       },
       ...filter,
     },
-    select: PAGE_LINK_TILE_PAGE_FIELDS,
+    select: LIBRARY_PAGE_FIELDS,
     orderBy: {
       [sortBy]: sortDirection,
     },
