@@ -67,7 +67,11 @@ export default function Folders({
     if (!folderId || !pageId) {
       return;
     }
-    await client.pages.update.mutate({ pageId, folderId });
+    await client.pages.move.mutate({
+      workspaceId,
+      pageIds: [pageId],
+      folderId,
+    });
   }
 
   const basePath = `/workspaces/${workspaceId}`;
