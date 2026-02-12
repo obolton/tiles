@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import prisma from "@/database/prisma.ts";
-import { invalidateCachedPage } from "@/utils/cdn.ts";
+import { invalidateCachedPages } from "@/utils/cdn.ts";
 import { publicProcedure } from "@/utils/trpc.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 
@@ -67,7 +67,7 @@ export const authenticatedPageProcedure = authenticatedProcedure
 export const pageUpdateProcedure = authenticatedPageProcedure.use(
   async ({ next, ctx }) => {
     const result = await next();
-    invalidateCachedPage(ctx.pageId);
+    invalidateCachedPages([ctx.pageId]);
     return result;
   },
 );

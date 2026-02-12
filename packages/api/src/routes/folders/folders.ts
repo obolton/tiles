@@ -8,7 +8,7 @@ import type {
   ListPagesSchema,
 } from "./schema.ts";
 import type { Prisma } from "@/generated/prisma/client";
-import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/routes/pageLinks/fields";
+import { LIBRARY_PAGE_FIELDS } from "@/routes/pages/fields";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
 import { FOLDER_FIELDS } from "./fields";
@@ -121,7 +121,7 @@ export async function listPages(
         folderId: id,
         ...filter,
       },
-      select: PAGE_LINK_TILE_PAGE_FIELDS,
+      select: LIBRARY_PAGE_FIELDS,
       orderBy: {
         [sortBy]: sortDirection,
       },

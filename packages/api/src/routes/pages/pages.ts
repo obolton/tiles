@@ -2,8 +2,9 @@ import { generateKeyBetween } from "fractional-indexing";
 import { TRPCError } from "@trpc/server";
 import type { Prisma } from "@/generated/prisma/client";
 import prisma from "@/database/prisma";
-import { PAGE_LINK_TILE_PAGE_FIELDS } from "@/routes/pageLinks/fields";
+import { LIBRARY_PAGE_FIELDS } from "./fields";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
+import { invalidateCachedPages } from "@/utils/cdn";
 import type {
   GetPageByIdSchema,
   ListPagesSchema,
@@ -11,8 +12,9 @@ import type {
   UpdatePageSchema,
   DeletePageSchema,
   RestorePageSchema,
+  MovePagesSchema,
 } from "./schema";
-import type { RequestContext, AuthenticatedRequestContext } from "@/utils/trpc";
+import type { RequestContext } from "@/utils/trpc";
 import type {
   AuthenticatedWorkspaceProcedureContext,
   AuthenticatedPageProcedureContext,
@@ -71,7 +73,7 @@ export async function listPages(
       deletedAt: null,
       ...filter,
     },
-    select: PAGE_LINK_TILE_PAGE_FIELDS,
+    select: LIBRARY_PAGE_FIELDS,
     orderBy: {
       [sortBy]: sortDirection,
     },
@@ -100,7 +102,7 @@ export async function listSharedPages(
       deletedAt: null,
       ...filter,
     },
-    select: PAGE_LINK_TILE_PAGE_FIELDS,
+    select: LIBRARY_PAGE_FIELDS,
     orderBy: {
       [sortBy]: sortDirection,
     },
@@ -133,7 +135,7 @@ export async function listDeletedPages(
       },
       ...filter,
     },
-    select: PAGE_LINK_TILE_PAGE_FIELDS,
+    select: LIBRARY_PAGE_FIELDS,
     orderBy: {
       [sortBy]: sortDirection,
     },
@@ -257,30 +259,60 @@ export async function updatePage(
   });
 }
 
-export async function deletePage(
-  { pageId }: DeletePageSchema,
-  { userId }: AuthenticatedRequestContext,
-) {
-  return prisma.page.update({
-    where: { id: pageId, authorId: userId, deletedAt: null },
-    data: { deletedAt: new Date() },
-    select: { id: true },
-  });
-}
-
-export async function restorePage(
-  { pageId }: RestorePageSchema,
+export async function deletePages(
+  { pageIds }: DeletePageSchema,
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
-  return prisma.page.update({
+  const result = await prisma.page.updateMany({
     where: {
+      id: { in: pageIds },
       workspaceId,
-      id: pageId,
+      authorId: userId,
+      deletedAt: null,
+    },
+    data: { deletedAt: new Date() },
+  });
+  invalidateCachedPages(pageIds);
+  return result;
+}
+
+export async function restorePages(
+  { pageIds }: RestorePageSchema,
+  { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
+) {
+  return prisma.page.updateMany({
+    where: {
+      id: { in: pageIds },
+      workspaceId,
       authorId: userId,
       deletedAt: { not: null },
     },
     data: { deletedAt: null },
-    select: { id: true },
+  });
+}
+
+export async function movePages(
+  { pageIds, folderId }: MovePagesSchema,
+  { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
+) {
+  if (folderId) {
+    const folder = await prisma.folder.findUniqueOrThrow({
+      where: { id: folderId, workspaceId },
+      select: { id: true },
+    });
+    if (!folder) {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid folder" });
+    }
+  }
+
+  return prisma.page.updateMany({
+    where: {
+      id: { in: pageIds },
+      workspaceId,
+      authorId: userId,
+      deletedAt: null,
+    },
+    data: { folderId },
   });
 }
 

@@ -62,11 +62,17 @@ export const UpdatePageSchema = z.object({
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
 
 export const DeletePageSchema = z.object({
-  pageId: z.uuid(),
+  pageIds: z.array(z.uuid()).min(1).max(100),
 });
 export type DeletePageSchema = z.infer<typeof DeletePageSchema>;
 
 export const RestorePageSchema = z.object({
-  pageId: z.uuid(),
+  pageIds: z.array(z.uuid()).min(1).max(100),
 });
 export type RestorePageSchema = z.infer<typeof RestorePageSchema>;
+
+export const MovePagesSchema = z.object({
+  pageIds: z.array(z.uuid()).min(1).max(100),
+  folderId: z.uuid().nullable(),
+});
+export type MovePagesSchema = z.infer<typeof MovePagesSchema>;

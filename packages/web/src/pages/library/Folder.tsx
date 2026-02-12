@@ -11,7 +11,7 @@ import SettingsIcon from "@/icons/settings.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { showModal } from "@/utils/modals";
 import { redirectWithToast } from "@/utils/toasts";
-import { persistent } from "@/utils/reactivity";
+import { reactive, persistent } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {
@@ -42,9 +42,11 @@ export default function Folder({
   id,
   name,
   folders,
-  pages,
+  pages: initialPages,
 }: FolderProps) {
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
+  const pages = reactive(initialPages.pages);
+  const cursor = reactive<string | null>(initialPages.nextCursor);
 
   function editFolder() {
     showModal(FolderModalLoader, {
@@ -95,15 +97,17 @@ export default function Folder({
         </header>
 
         <PagesGrid
+          workspaceId={workspace.id}
           inputPlaceholder={`Search in ${name}`}
           pages={pages}
-          search={(query, cursor) => {
+          cursor={cursor}
+          search={(query, searchCursor) => {
             const { sortBy, sortDirection } = parsePageSort(sort.value);
             return client.folders.listPages.query({
               workspaceId: workspace.id,
               id,
               query: query || undefined,
-              cursor: cursor ?? undefined,
+              cursor: searchCursor ?? undefined,
               sortBy,
               sortDirection,
             });
@@ -111,6 +115,8 @@ export default function Folder({
           renderPlaceholder={renderPlaceholder}
           sort={sort}
           draggable
+          move
+          trash
         />
       </SidebarLayout>
     </PageLayout>

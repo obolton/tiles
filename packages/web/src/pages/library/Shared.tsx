@@ -8,7 +8,7 @@ import PagesGrid, {
   type PageSort,
 } from "@/components/grid/PagesGrid";
 import { handleError } from "@/utils/errors";
-import { persistent } from "@/utils/reactivity";
+import { reactive, persistent } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {
@@ -31,8 +31,14 @@ function renderPlaceholder(query: string) {
   );
 }
 
-export default function Shared({ workspace, folders, pages }: SharedProps) {
+export default function Shared({
+  workspace,
+  folders,
+  pages: initialPages,
+}: SharedProps) {
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
+  const pages = reactive(initialPages.pages);
+  const cursor = reactive<string | null>(initialPages.nextCursor);
 
   return (
     <PageLayout workspaceId={workspace.id}>
@@ -50,14 +56,16 @@ export default function Shared({ workspace, folders, pages }: SharedProps) {
         </header>
 
         <PagesGrid
+          workspaceId={workspace.id}
           inputPlaceholder="Search pages shared with you"
           pages={pages}
-          search={(query, cursor) => {
+          cursor={cursor}
+          search={(query, searchCursor) => {
             const { sortBy, sortDirection } = parsePageSort(sort.value);
             return client.pages.listShared.query({
               workspaceId: workspace.id,
               query: query || undefined,
-              cursor: cursor ?? undefined,
+              cursor: searchCursor ?? undefined,
               sortBy,
               sortDirection,
             });
@@ -65,6 +73,7 @@ export default function Shared({ workspace, folders, pages }: SharedProps) {
           renderPlaceholder={renderPlaceholder}
           sort={sort}
           draggable
+          move
         />
       </SidebarLayout>
     </PageLayout>

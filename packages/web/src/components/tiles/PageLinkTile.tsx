@@ -1,6 +1,6 @@
 import Tile from "./Tile";
-import PageLinkComponent from "./PageLink";
 import LinkToolbar from "@/components/toolbars/links/LinkToolbar";
+import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
 import styles from "./PageLinkTile.module.css";
@@ -40,18 +40,31 @@ export default function PageLinkTile({
   }
 
   return (
-    <PageLinkComponent
-      pageId={linkedPage.id}
-      title={linkedPage.title}
-      background={linkedPage.background}
-      target="_blank"
-      on:click={onClick}
-    >
+    <Tile classList={{ [styles.tile]: true }}>
+      <a
+        className={styles.link}
+        href={`/pages/${linkedPage.id}`}
+        target="_blank"
+        on:click={onClick}
+      >
+        <p
+          classList={{
+            [styles.text]: true,
+            [styles["with-image"]]:
+              linkedPage.background && "imageUrl" in linkedPage.background,
+          }}
+        >
+          {linkedPage.title}
+        </p>
+
+        <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
+      </a>
+
       <If condition={showToolbar}>
         <Portal>
           <LinkToolbar link={pageLink} />
         </Portal>
       </If>
-    </PageLinkComponent>
+    </Tile>
   );
 }

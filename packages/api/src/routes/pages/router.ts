@@ -10,6 +10,7 @@ import {
   UpdatePageSchema,
   DeletePageSchema,
   RestorePageSchema,
+  MovePagesSchema,
 } from "./schema.ts";
 import {
   getPageById,
@@ -18,8 +19,9 @@ import {
   listDeletedPages,
   createPage,
   updatePage,
-  deletePage,
-  restorePage,
+  deletePages,
+  restorePages,
+  movePages,
   emptyTrash,
 } from "./pages.ts";
 
@@ -49,13 +51,17 @@ export default router({
     .input(UpdatePageSchema)
     .mutation(async ({ input, ctx }) => updatePage(input, ctx)),
 
-  delete: pageUpdateProcedure
+  delete: authenticatedWorkspaceProcedure
     .input(DeletePageSchema)
-    .mutation(async ({ input, ctx }) => deletePage(input, ctx)),
+    .mutation(async ({ input, ctx }) => deletePages(input, ctx)),
 
   restore: authenticatedWorkspaceProcedure
     .input(RestorePageSchema)
-    .mutation(async ({ input, ctx }) => restorePage(input, ctx)),
+    .mutation(async ({ input, ctx }) => restorePages(input, ctx)),
+
+  move: authenticatedWorkspaceProcedure
+    .input(MovePagesSchema)
+    .mutation(async ({ input, ctx }) => movePages(input, ctx)),
 
   emptyTrash: authenticatedWorkspaceProcedure.mutation(async ({ ctx }) =>
     emptyTrash(ctx),

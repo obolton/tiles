@@ -30,24 +30,25 @@ export function getProfilePageUrl(userId: string) {
   return `${process.env.CLIENT_ORIGIN}/profiles/${userId}`;
 }
 
-export function invalidateCachedUrl(url: string) {
-  if (process.env.NODE_ENV !== "production") {
+export function invalidateCachedUrls(urls: string[]) {
+  if (process.env.NODE_ENV !== "production" || urls.length === 0) {
     return;
   }
 
   cloudflare.cache
     .purge({
       zone_id: CLOUDFLARE_ZONE_ID,
-      files: [url],
+      files: urls,
     })
     .catch((error) =>
-      console.error("Failed to invalidate cached URL:", url, error),
+      console.error("Failed to invalidate cached URLs:", urls, error),
     );
 }
 
-export function invalidateCachedPage(id: string) {
-  invalidateCachedUrl(getPageUrl(id));
-  if (id === HOME_PAGE_ID) {
-    invalidateCachedUrl(getHomePageUrl());
+export function invalidateCachedPages(ids: string[]) {
+  const urls = ids.map(getPageUrl);
+  if (HOME_PAGE_ID && ids.includes(HOME_PAGE_ID)) {
+    urls.push(getHomePageUrl());
   }
+  invalidateCachedUrls(urls);
 }
