@@ -90,6 +90,51 @@ textarea::placeholder {
   color: var(--placeholder-color);
 }
 
+@layer base {
+  input[type="checkbox"]:not([role="switch"]) {
+    appearance: none;
+    position: relative;
+    display: block;
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgb(0 0 0 / 15%);
+    border-radius: 6px;
+    background-color: rgb(255 255 255 / 20%);
+    background-clip: padding-box;
+    cursor: pointer;
+    transition: border-color var(--animation-duration-short) var(--easing);
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("@/icons/check.svg");
+      background-size: 22px 22px;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0;
+      scale: 0.7;
+      transition:
+        opacity var(--animation-duration-short) var(--easing),
+        scale var(--animation-duration-short) var(--easing);
+    }
+
+    &:checked {
+      border-color: rgb(0 0 0 / 40%);
+
+      &::after {
+        opacity: 0.7;
+        scale: 1;
+      }
+    }
+
+    &:focus-visible {
+      outline: var(--focus-outline);
+      outline-offset: 2px;
+    }
+  }
+}
+
 input[type="checkbox"][role="switch"] {
   appearance: none;
   position: relative;
