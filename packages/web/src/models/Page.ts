@@ -215,6 +215,9 @@ export default class Page {
   }
 
   delete() {
-    return client.pages.delete.mutate({ pageId: this.id });
+    return client.pages.delete.mutate({
+      workspaceId: this.workspaceId,
+      pageIds: [this.id],
+    });
   }
 }
