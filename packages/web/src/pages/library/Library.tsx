@@ -9,7 +9,7 @@ import PagesGrid, {
 } from "@/components/grid/PagesGrid";
 import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
-import { persistent } from "@/utils/reactivity";
+import { reactive, persistent } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {
@@ -22,8 +22,14 @@ export interface LibraryProps {
   pages: AppRouterOutputs["pages"]["list"];
 }
 
-export default function Library({ workspace, folders, pages }: LibraryProps) {
+export default function Library({
+  workspace,
+  folders,
+  pages: initialPages,
+}: LibraryProps) {
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
+  const pages = reactive(initialPages.pages);
+  const cursor = reactive<string | null>(initialPages.nextCursor);
 
   async function createNewPage() {
     try {
@@ -77,14 +83,16 @@ export default function Library({ workspace, folders, pages }: LibraryProps) {
         </header>
 
         <PagesGrid
+          workspaceId={workspace.id}
           inputPlaceholder="Search pages"
           pages={pages}
-          search={(query, cursor) => {
+          cursor={cursor}
+          search={(query, searchCursor) => {
             const { sortBy, sortDirection } = parsePageSort(sort.value);
             return client.pages.list.query({
               workspaceId: workspace.id,
               query: query || undefined,
-              cursor: cursor ?? undefined,
+              cursor: searchCursor ?? undefined,
               sortBy,
               sortDirection,
             });
@@ -92,6 +100,8 @@ export default function Library({ workspace, folders, pages }: LibraryProps) {
           renderPlaceholder={renderPlaceholder}
           sort={sort}
           draggable
+          move
+          trash
         />
       </SidebarLayout>
     </PageLayout>

@@ -4,6 +4,7 @@ import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
 import Placeholder from "@/components/placeholder/Placeholder";
 import PagesGrid from "@/components/grid/PagesGrid";
+import { reactive } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
 export interface BookmarksProps {
@@ -23,8 +24,11 @@ function renderPlaceholder(query: string) {
 export default function Bookmarks({
   workspace,
   folders,
-  pages,
+  pages: initialPages,
 }: BookmarksProps) {
+  const pages = reactive(initialPages.pages);
+  const cursor = reactive<string | null>(initialPages.nextCursor);
+
   return (
     <PageLayout workspaceId={workspace.id}>
       <SidebarLayout
@@ -41,12 +45,14 @@ export default function Bookmarks({
         </header>
 
         <PagesGrid
+          workspaceId={workspace.id}
           inputPlaceholder="Search bookmarks"
           pages={pages}
-          search={(query, cursor) =>
+          cursor={cursor}
+          search={(query, searchCursor) =>
             client.bookmarks.list.query({
               query: query || undefined,
-              cursor: cursor ?? undefined,
+              cursor: searchCursor ?? undefined,
             })
           }
           renderPlaceholder={renderPlaceholder}

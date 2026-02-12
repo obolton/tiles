@@ -1,0 +1,14 @@
+.aside {
+  margin-top: 24px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ui-color);
+  background: rgb(0 0 0 / 8%);
+  border-radius: var(--border-radius);
+
+  & > button {
+    flex: none;
+  }
+}
