@@ -7,11 +7,7 @@ import { internalError, notFound } from "@/router/responses";
 import { resolveImport, getStylesheetsForRouteModule } from "./assets";
 import { securityHeaders } from "./security";
 import type { ModuleNode, ViteDevServer } from "vite";
-import type {
-  RouteMetadata,
-  RouteMatch,
-  APIRoute,
-} from "@/router/router";
+import type { RouteMetadata, RouteMatch, APIRoute } from "@/router/router";
 
 const router = getRouter();
 
