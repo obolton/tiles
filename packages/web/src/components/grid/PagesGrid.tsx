@@ -1,17 +1,18 @@
-import PagesGridItem from "./PagesGridItem";
-import PageLink from "@/components/tiles/PageLink";
+import LibraryCard from "@/components/library/LibraryCard";
+import LibrarySelectionToolbar from "@/components/library/LibrarySelectionToolbar";
+import If from "@/jsx/if";
 import Search from "@/components/search/Search";
 import ListGroup from "@/components/lists/ListGroup";
 import ListOption from "@/components/lists/ListOption";
 import { handleError } from "@/utils/errors";
-import { reactive } from "@/utils/reactivity";
+import { set } from "@/utils/reactivity";
 import styles from "./PagesGrid.module.css";
-import type { ClientPageLinkTile } from "api/types/tiles";
+import type { LibraryPage } from "@/components/library/LibraryCard";
 import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
 
 interface PagesSearchResults {
-  pages: NonNullable<ClientPageLinkTile["linkedPage"]>[];
+  pages: LibraryPage[];
   nextCursor: string | null;
 }
 
@@ -48,66 +49,103 @@ export function parsePageSort(sort: PageSort) {
 }
 
 interface PagesGridProps {
+  workspaceId: string;
   inputPlaceholder?: string;
+  pages: Reactive<LibraryPage[]>;
+  cursor: Reactive<string | null>;
   search: (query: string, cursor: string | null) => Promise<PagesSearchResults>;
-  pages?: PagesSearchResults;
   renderPlaceholder: (query: string) => JSX.Node;
   draggable?: boolean;
   sort?: Reactive<PageSort>;
+  move?: boolean;
+  trash?: boolean;
+  restore?: boolean;
 }
 
 export default function PagesGrid({
+  workspaceId,
   inputPlaceholder,
+  pages,
+  cursor,
   search,
-  pages: initialPages,
   renderPlaceholder,
   draggable,
   sort,
+  move,
+  trash,
+  restore,
 }: PagesGridProps) {
-  // TODO: Lift reactive pages list out of component
-  const pages = reactive(initialPages?.pages ?? []);
-  const nextCursor = reactive(initialPages?.nextCursor ?? null);
+  const selection = set<string>();
+  const hasSelection = selection.derive((ids) => ids.size > 0);
 
-  const onSearch = async (query: string, cursor: string | null) => {
+  const onSearch = async (query: string, searchCursor: string | null) => {
     try {
-      if (!query && !cursor && !sort) {
-        pages.value = initialPages?.pages ?? [];
-        nextCursor.value = initialPages?.nextCursor ?? null;
-        return;
-      }
-
-      const results = await search(query, cursor);
-      if (!cursor) {
+      const results = await search(query, searchCursor);
+      if (!searchCursor) {
         pages.value = results.pages;
       } else {
         pages.value = [...pages.value, ...results.pages];
       }
-      nextCursor.value = results.nextCursor;
+      cursor.value = results.nextCursor;
     } catch (error) {
       handleError(error);
     }
   };
 
+  function onRefresh() {
+    selection.clear();
+    onSearch("", null);
+  }
+
+  if (!import.meta.env.SSR) {
+    document.addEventListener("keydown", (event: KeyboardEvent) => {
+      if (event.target instanceof HTMLInputElement) {
+        return;
+      }
+
+      if (event.key === "a" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        selection.replace(pages.value.map((page) => page.id));
+      }
+
+      if (event.key === "Escape") {
+        selection.clear();
+      }
+    });
+  }
+
   return (
-    <Search
-      id="search-pages"
-      itemsClassName={styles.pages}
-      search={onSearch}
-      results={pages}
-      nextCursor={nextCursor}
-      placeholder={inputPlaceholder}
-      sortOptions={sort ? <PageSortOptions /> : undefined}
-      sort={sort}
-      render={(page) => (
-        <PagesGridItem id={page.id} draggable={draggable}>
-          <PageLink
-            pageId={page.id}
-            title={page.title}
-            background={page.background}
+    <>
+      <Search
+        id="search-pages"
+        itemsClassName={styles.pages}
+        search={onSearch}
+        results={pages}
+        nextCursor={cursor}
+        placeholder={inputPlaceholder}
+        sortOptions={sort ? <PageSortOptions /> : undefined}
+        sort={sort}
+        render={(page) => (
+          <LibraryCard
+            page={page}
+            selected={selection.derive((ids) => ids.has(page.id))}
+            onToggle={() => selection.toggle(page.id)}
+            draggable={draggable}
           />
-        </PagesGridItem>
-      )}
-      renderPlaceholder={renderPlaceholder}
-    />
+        )}
+        renderPlaceholder={renderPlaceholder}
+      />
+
+      <If condition={hasSelection}>
+        <LibrarySelectionToolbar
+          workspaceId={workspaceId}
+          selection={selection}
+          move={move}
+          trash={trash}
+          restore={restore}
+          onComplete={onRefresh}
+        />
+      </If>
+    </>
   );
 }
