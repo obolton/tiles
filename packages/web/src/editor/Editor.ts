@@ -384,7 +384,10 @@ export default class Editor {
   }
 
   async deletePage() {
-    return client.pages.delete.mutate({ pageId: this.pageId });
+    return client.pages.delete.mutate({
+      workspaceId: this.workspaceId,
+      pageIds: [this.pageId],
+    });
   }
 
   async setDockSizes(sizes: Partial<Record<DockEdge, number | null>>) {
