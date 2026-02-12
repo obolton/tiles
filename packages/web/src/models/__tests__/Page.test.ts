@@ -230,7 +230,8 @@ describe("Page", () => {
       await page.delete();
 
       expect(client.pages.delete.mutate).toHaveBeenCalledWith({
-        pageId: PAGE.id,
+        workspaceId: PAGE.workspaceId,
+        pageIds: [PAGE.id],
       });
     });
   });
