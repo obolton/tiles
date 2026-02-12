@@ -2,16 +2,13 @@ import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import styles from "./LinkModal.module.css";
-import PagesGridItem from "@/components/grid/PagesGridItem";
-import PageLink from "@/components/tiles/PageLink";
+import LibraryCard from "@/components/library/LibraryCard";
 import Search from "@/components/search/Search";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
 import { flag, reactive } from "@/utils/reactivity";
-import type { AppRouterOutputs } from "@/api/client";
+import type { LibraryPage } from "@/components/library/LibraryCard";
 import type { ModalProps } from "@/utils/modals";
-
-type Pages = AppRouterOutputs["pages"]["list"];
 export type LinkModalResult = { linkedPageId: string } | { url: string | null };
 
 export interface LinkModalProps extends ModalProps<LinkModalResult> {
@@ -30,7 +27,7 @@ export default function LinkModal({
   showRemove = false,
 }: LinkModalProps) {
   const isPending = flag(false);
-  const pages = reactive<Pages["pages"]>([]);
+  const pages = reactive<LibraryPage[]>([]);
   const nextCursor = reactive<string | null | undefined>(undefined);
 
   const search = async (query: string, cursor: string | null) => {
@@ -105,6 +102,22 @@ export default function LinkModal({
 
   const pageId = document.body.dataset.pageId;
 
+  function onPageClick(event: MouseEvent) {
+    if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey) {
+      return;
+    }
+    const link = (event.target as Element).closest("a");
+    if (!link) {
+      return;
+    }
+    const card = link.closest<HTMLElement>("[data-id]");
+    if (!card?.dataset.id) {
+      return;
+    }
+    event.preventDefault();
+    selectPage(card.dataset.id);
+  }
+
   return (
     <form on:submit={submit}>
       <ModalHeader>
@@ -126,7 +139,7 @@ export default function LinkModal({
         </label>
 
         {showPages ? (
-          <section>
+          <section on:click={onPageClick}>
             <h3>Recent pages</h3>
 
             <Search
@@ -138,27 +151,7 @@ export default function LinkModal({
               placeholder="Search pages"
               autofocus={false}
               render={(page) =>
-                page.id === pageId ? null : (
-                  <PagesGridItem>
-                    <PageLink
-                      pageId={page.id}
-                      title={page.title}
-                      background={page.background}
-                      on:click={(event) => {
-                        if (
-                          event.ctrlKey ||
-                          event.shiftKey ||
-                          event.altKey ||
-                          event.metaKey
-                        ) {
-                          return;
-                        }
-                        event.preventDefault();
-                        selectPage(page.id);
-                      }}
-                    />
-                  </PagesGridItem>
-                )
+                page.id === pageId ? null : <LibraryCard page={page} />
               }
               renderPlaceholder={() => <p>There are no results.</p>}
             />
