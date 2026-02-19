@@ -6,6 +6,7 @@ import { reactive, flag } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
 import { isEditMode, setEditMode } from "@/utils/edit";
+import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import Page, { type PageData } from "@/models/Page";
@@ -160,6 +161,14 @@ export default class Editor {
       (event.target.tagName === "INPUT" ||
         event.target.tagName === "TEXTAREA" ||
         event.target.isContentEditable);
+
+    // Present: Cmd/Ctrl+Enter (not in text inputs)
+    if (isMod && event.key === "Enter" && !isInput) {
+      event.preventDefault();
+      this.isEditable.value = false;
+      startPresentation();
+      return;
+    }
 
     // Undo: Cmd/Ctrl+Z (not in text inputs - they have their own undo)
     if (isMod && event.key === "z" && !event.shiftKey && !isInput) {
