@@ -45,7 +45,7 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
       data-tooltip-position="bottom"
       aria-label="Section toolbar"
     >
-      <toolbar-tab label="Section">
+      <toolbar-tab name="section" label="Section">
         <ToolbarGroup label="Section tools">
           <list-select
             label="Layout"

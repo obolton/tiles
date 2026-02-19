@@ -21,7 +21,7 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
       data-tooltip-position="bottom"
       aria-label="Chart tools"
     >
-      <toolbar-tab label="Chart">
+      <toolbar-tab name="chart" label="Chart">
         <ToolbarGroup label="Chart tools">
           <ToolbarButton
             id={`${chart.id}-series-button`}

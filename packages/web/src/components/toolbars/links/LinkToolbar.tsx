@@ -38,7 +38,7 @@ export default function LinkToolbar({ link }: LinkToolbarProps) {
       aria-label="Link toolbar"
       data-tooltip-position="bottom"
     >
-      <toolbar-tab label="Link">
+      <toolbar-tab name="link" label="Link">
         <ToolbarGroup label="Link tools">
           <ToolbarButton on:click={editLink}>
             <LinkIcon aria-hidden="true" />
