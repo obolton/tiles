@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import prisma from "@/database/prisma.ts";
 import { createKey } from "@/utils/keys.ts";
 import { sendEmail } from "@/utils/email.ts";
@@ -15,6 +16,7 @@ import type {
   ListWorkspaceInvitesSchema,
   RemoveFromWorkspaceSchema,
   ListWorkspaceUsersSchema,
+  UpdateRoleSchema,
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
@@ -225,4 +227,30 @@ export async function listWorkspaceUsers(
     users: items.map((item) => item.user),
     nextCursor,
   };
+}
+
+// TODO: Add guards to prevent admins from changing other admins' roles (workspace takeover prevention)
+export async function updateWorkspaceRole(
+  { userId, role }: UpdateRoleSchema,
+  { workspaceId }: AuthenticatedWorkspaceProcedureContext,
+) {
+  return prisma.$transaction(async (transaction) => {
+    if (role !== "ADMIN") {
+      const otherAdminCount = await transaction.workspaceMembership.count({
+        where: { workspaceId, role: "ADMIN", NOT: { userId } },
+      });
+      if (otherAdminCount === 0) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot demote the last admin",
+        });
+      }
+    }
+
+    return transaction.workspaceMembership.update({
+      where: { id: { workspaceId, userId } },
+      data: { role },
+      select: { role: true },
+    });
+  });
 }

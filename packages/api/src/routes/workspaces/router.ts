@@ -2,6 +2,7 @@ import { router } from "@/utils/trpc.ts";
 import {
   authenticatedProcedure,
   authenticatedWorkspaceProcedure,
+  adminWorkspaceProcedure,
 } from "@/utils/middleware.ts";
 import {
   GetWorkspaceSchema,
@@ -14,6 +15,7 @@ import {
   ListWorkspaceInvitesSchema,
   RemoveFromWorkspaceSchema,
   ListWorkspaceUsersSchema,
+  UpdateRoleSchema,
 } from "./schema.ts";
 import {
   getWorkspace,
@@ -26,6 +28,7 @@ import {
   listWorkspaceInvites,
   removeFromWorkspace,
   listWorkspaceUsers,
+  updateWorkspaceRole,
 } from "./workspaces.ts";
 
 export default router({
@@ -68,4 +71,8 @@ export default router({
   listUsers: authenticatedWorkspaceProcedure
     .input(ListWorkspaceUsersSchema)
     .query(async ({ input, ctx }) => listWorkspaceUsers(input, ctx)),
+
+  updateRole: adminWorkspaceProcedure
+    .input(UpdateRoleSchema)
+    .mutation(({ input, ctx }) => updateWorkspaceRole(input, ctx)),
 });

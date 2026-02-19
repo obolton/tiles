@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { WorkspaceRole } from "@/generated/prisma/client";
 
 export const GetWorkspaceSchema = z.object({
   workspaceId: z.uuid(),
@@ -59,3 +60,9 @@ export const ListWorkspaceUsersSchema = z.object({
   cursor: z.uuid().optional(),
 });
 export type ListWorkspaceUsersSchema = z.infer<typeof ListWorkspaceUsersSchema>;
+
+export const UpdateRoleSchema = z.object({
+  userId: z.uuid(),
+  role: z.enum(WorkspaceRole),
+});
+export type UpdateRoleSchema = z.infer<typeof UpdateRoleSchema>;
