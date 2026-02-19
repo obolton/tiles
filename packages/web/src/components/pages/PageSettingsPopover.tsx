@@ -16,7 +16,7 @@ import type { FontId } from "@/config/fonts";
 import type Page from "@/models/Page";
 import type { JSX } from "@/jsx/jsx";
 
-export interface PageSettingsPopoverProps extends JSX.Attributes<"popover-menu"> {
+export interface PageSettingsPopoverProps extends JSX.Attributes<"anchored-popover"> {
   page: Page;
   allowDelete?: boolean;
 }
@@ -104,7 +104,7 @@ export default function PageSettingsPopover({
   }
 
   return (
-    <popover-menu className={styles.popover} {...props}>
+    <anchored-popover className={styles.popover} {...props}>
       <form on:submit={onSubmit}>
         <ResizingTextarea
           className={styles.title}
@@ -173,6 +173,6 @@ export default function PageSettingsPopover({
           </button>
         </li>
       </ul>
-    </popover-menu>
+    </anchored-popover>
   );
 }

@@ -10,7 +10,7 @@ import type { Reactive } from "@/utils/reactivity";
 import type { Fill, FillUpdate } from "./types";
 import type { JSX } from "@/jsx/jsx";
 
-export interface FillPopoverProps extends JSX.Attributes<"popover-menu"> {
+export interface FillPopoverProps extends JSX.Attributes<"anchored-popover"> {
   value: Reactive<Fill | null>;
   onChange: (value: FillUpdate) => void;
   allowImage?: boolean;
@@ -23,7 +23,7 @@ export default function FillPopover({
   ...props
 }: FillPopoverProps) {
   return (
-    <popover-menu {...props} className={styles.popover}>
+    <anchored-popover {...props} className={styles.popover}>
       <tab-bar>
         <tab-item id="color-tab" for="color-tab-panel" selected>
           <SolidColorIcon aria-hidden="true" />
@@ -70,6 +70,6 @@ export default function FillPopover({
           <GenerateImagePanel onChange={onChange} />
         </tab-panel>
       )}
-    </popover-menu>
+    </anchored-popover>
   );
 }

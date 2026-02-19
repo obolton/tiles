@@ -47,7 +47,7 @@ export default function ColorPicker({
         />
       </ToolbarButton>
 
-      <popover-menu
+      <anchored-popover
         id={popoverId}
         className={styles["color-picker"]}
         align="center"
@@ -67,7 +67,7 @@ export default function ColorPicker({
             Clear
           </button>
         )}
-      </popover-menu>
+      </anchored-popover>
     </>
   );
 }
