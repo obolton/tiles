@@ -13,6 +13,13 @@ export const WORKSPACE_USER_FIELDS = {
   imageUrl: true,
 } as const satisfies Prisma.UserSelect<ExtensionArgs>;
 
+export const WORKSPACE_MEMBERSHIP_FIELDS = {
+  role: true,
+  user: {
+    select: WORKSPACE_USER_FIELDS,
+  },
+} as const satisfies Prisma.WorkspaceMembershipSelect<ExtensionArgs>;
+
 export const WORKSPACE_INVITE_FIELDS = {
   id: true,
   email: true,

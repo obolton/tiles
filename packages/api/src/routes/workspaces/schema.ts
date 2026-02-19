@@ -16,11 +16,6 @@ export const UpdateWorkspaceSchema = z.object({
 });
 export type UpdateWorkspaceSchema = z.infer<typeof UpdateWorkspaceSchema>;
 
-export const DeleteWorkspaceSchema = z.object({
-  workspaceId: z.uuid(),
-});
-export type DeleteWorkspaceSchema = z.infer<typeof DeleteWorkspaceSchema>;
-
 export const InviteToWorkspaceSchema = z.object({
   email: z.email().max(254),
 });
