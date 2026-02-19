@@ -4,6 +4,7 @@ import prisma from "@/database/prisma.ts";
 import { invalidateCachedPages } from "@/utils/cdn.ts";
 import { publicProcedure } from "@/utils/trpc.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
+import type { WorkspaceRole } from "@/generated/prisma/client";
 
 export const authenticatedProcedure = publicProcedure.use(async (opts) => {
   const { ctx } = opts;
@@ -78,6 +79,7 @@ const AuthenticatedWorkspaceProcedureSchema = z.object({
 
 export interface AuthenticatedWorkspaceProcedureContext extends AuthenticatedRequestContext {
   workspaceId: string;
+  role: WorkspaceRole;
 }
 
 export const authenticatedWorkspaceProcedure = authenticatedProcedure
@@ -93,7 +95,7 @@ export const authenticatedWorkspaceProcedure = authenticatedProcedure
           workspaceId,
         },
       },
-      select: { workspaceId: true },
+      select: { workspaceId: true, role: true },
     });
 
     if (!membership) {
@@ -104,7 +106,17 @@ export const authenticatedWorkspaceProcedure = authenticatedProcedure
       ctx: {
         ...ctx,
         workspaceId: membership.workspaceId,
+        role: membership.role,
       },
       input,
     });
   });
+
+export const adminWorkspaceProcedure = authenticatedWorkspaceProcedure.use(
+  async (opts) => {
+    if (opts.ctx.role !== "ADMIN") {
+      throw new TRPCError({ code: "FORBIDDEN" });
+    }
+    return opts.next();
+  },
+);
