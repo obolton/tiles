@@ -1,8 +1,6 @@
-// TODO: Implement keyboard interactions:
-// https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/menubar_role#keyboard_interactions
-
 import css from "./FloatingToolbar.css?inline";
 import ToolbarTab from "./ToolbarTab";
+import KeyboardNavigation from "@/utils/keyboard";
 import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
@@ -32,6 +30,8 @@ export default class FloatingToolbar extends HTMLElement {
 
   private internals: ElementInternals;
   private tabBar: HTMLElement;
+  private tabBarNav: KeyboardNavigation;
+  private itemsNav: KeyboardNavigation;
   private mutationObserver: MutationObserver;
 
   #selectedTab: ToolbarTab | null = null;
@@ -51,12 +51,24 @@ export default class FloatingToolbar extends HTMLElement {
     this.tabBar.role = "tablist";
     this.tabBar.ariaLabel = "Toolbar sections";
     this.tabBar.addEventListener("pointerdown", this);
+    this.tabBar.addEventListener("focusin", this);
 
     // Content container with single slot
     const content = document.createElement("div");
     content.id = "content";
     content.append(document.createElement("slot"));
     shadow.append(this.tabBar, content);
+
+    // Keyboard navigation for tab bar and toolbar items
+    this.tabBarNav = new KeyboardNavigation(this.tabBar, {
+      selector: ".tab-button",
+      orientation: "horizontal",
+    });
+    this.itemsNav = new KeyboardNavigation(this, {
+      selector:
+        'toolbar-tab[selected] > [role="group"] > :is(button, list-select)',
+      orientation: "horizontal",
+    });
 
     // Watch for child changes
     this.mutationObserver = new MutationObserver(() => {
@@ -65,17 +77,24 @@ export default class FloatingToolbar extends HTMLElement {
 
     // Prevent toolbar items from stealing focus on pointer down
     this.addEventListener("pointerdown", this);
+
+    // Cross-navigation between tab bar and toolbar items
+    this.tabBar.addEventListener("keydown", this);
     this.addEventListener("keydown", this);
   }
 
   connectedCallback() {
     this.mutationObserver.observe(this, { childList: true });
+    this.tabBarNav.attach();
+    this.itemsNav.attach();
     this.buildTabBar();
     this.restoreTabSelection();
   }
 
   disconnectedCallback() {
     this.mutationObserver.disconnect();
+    this.tabBarNav.detach();
+    this.itemsNav.detach();
   }
 
   attributeChangedCallback(
@@ -94,29 +113,30 @@ export default class FloatingToolbar extends HTMLElement {
     switch (event.type) {
       case "pointerdown":
         return this.handlePointerDown(event as PointerEvent);
-      case "click":
-        return this.handleClick(event as PointerEvent);
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
+      case "click":
+      case "focusin":
+        return this.handleTabSelect(event);
     }
   }
 
+  // Tabs
+
   private get tabs(): ToolbarTab[] {
     return Array.from(this.querySelectorAll<ToolbarTab>("toolbar-tab"));
+  }
+
+  private get tabButtons(): HTMLButtonElement[] {
+    return Array.from(
+      this.tabBar.querySelectorAll<HTMLButtonElement>(".tab-button"),
+    );
   }
 
   private getTabByName(name: string): ToolbarTab | null {
     return this.querySelector<ToolbarTab>(
       `toolbar-tab[name="${CSS.escape(name)}"]`,
     );
-  }
-
-  private get selectedTabIndex(): number {
-    if (!this.#selectedTab) {
-      return 0;
-    }
-    const index = this.tabs.indexOf(this.#selectedTab);
-    return index === -1 ? 0 : index;
   }
 
   get selectedTab(): ToolbarTab | null {
@@ -133,12 +153,17 @@ export default class FloatingToolbar extends HTMLElement {
     }
 
     this.#selectedTab = tab;
-    this.updateTabSelection();
-    this.updateTabButtons();
+    this.updateSelection();
     this.persistTabSelection();
 
     this.dispatchEvent(new Event("tabchange"));
   }
+
+  selectTab(name: string | null) {
+    this.selectedTab = name ? this.getTabByName(name) : null;
+  }
+
+  // Tab bar
 
   private buildTabBar() {
     const tabs = this.tabs;
@@ -154,45 +179,45 @@ export default class FloatingToolbar extends HTMLElement {
       this.#selectedTab = tabs[0] ?? null;
     }
 
-    tabs.forEach((tab) => {
-      const isSelected = tab === this.#selectedTab;
+    for (const tab of tabs) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "tab-button";
       button.textContent = tab.label;
       button.role = "tab";
-      button.ariaSelected = isSelected ? "true" : "false";
-      button.tabIndex = isSelected ? 0 : -1;
       button.dataset.tabName = tab.name;
       button.addEventListener("click", this);
       this.tabBar.append(button);
-    });
+    }
 
-    this.updateTabSelection();
+    this.updateSelection();
   }
 
-  private updateTabSelection() {
-    const selectedIndex = this.selectedTabIndex;
-    this.tabs.forEach((tab, i) => {
+  private updateSelection() {
+    const tabs = this.tabs;
+    const tabButtons = this.tabButtons;
+    const selectedIndex = this.#selectedTab
+      ? tabs.indexOf(this.#selectedTab)
+      : -1;
+
+    // Update tab panels
+    tabs.forEach((tab, i) => {
       tab.selected = i === selectedIndex;
       tab.classList.toggle("before", i < selectedIndex);
       tab.classList.toggle("after", i > selectedIndex);
     });
-  }
 
-  selectTab(name: string | null) {
-    this.selectedTab = name ? this.getTabByName(name) : null;
-  }
-
-  private updateTabButtons() {
-    const buttons =
-      this.tabBar.querySelectorAll<HTMLButtonElement>(".tab-button");
-    buttons.forEach((button) => {
-      const isSelected = button.dataset.tabName === this.#selectedTab?.name;
-      button.ariaSelected = isSelected ? "true" : "false";
-      button.tabIndex = isSelected ? 0 : -1;
+    // Update tab bar buttons
+    tabButtons.forEach((button, i) => {
+      button.ariaSelected = i === selectedIndex ? "true" : "false";
     });
+    this.tabBarNav.setActiveItem(tabButtons[selectedIndex] ?? null);
+
+    // Update toolbar items
+    this.itemsNav.update();
   }
+
+  // Persistence
 
   private persistTabSelection() {
     const toolbarName = this.getAttribute("name") || this.id;
@@ -215,12 +240,34 @@ export default class FloatingToolbar extends HTMLElement {
       return;
     }
 
-    // Only restore if the tab exists
     const tab = this.getTabByName(storedTabName);
     if (tab) {
       this.#selectedTab = tab;
-      this.updateTabSelection();
-      this.updateTabButtons();
+      this.updateSelection();
+    }
+  }
+
+  // Event handlers
+
+  private handleKeyDown(event: KeyboardEvent) {
+    if (event.defaultPrevented) {
+      return;
+    }
+
+    if (
+      event.key === "ArrowDown" &&
+      event.target instanceof Element &&
+      event.target.closest(".tab-button")
+    ) {
+      event.preventDefault();
+      this.itemsNav.activeItem?.focus();
+    } else if (
+      event.key === "ArrowUp" &&
+      event.target instanceof Element &&
+      event.target.closest("toolbar-tab[selected]")
+    ) {
+      event.preventDefault();
+      this.tabBarNav.activeItem?.focus();
     }
   }
 
@@ -238,7 +285,7 @@ export default class FloatingToolbar extends HTMLElement {
     event.stopPropagation();
   }
 
-  private handleClick(event: PointerEvent) {
+  private handleTabSelect(event: Event) {
     const target = event.target;
     if (
       !(target instanceof HTMLButtonElement) ||
@@ -247,57 +294,10 @@ export default class FloatingToolbar extends HTMLElement {
       return;
     }
 
-    const tabName = target.dataset.tabName;
-    if (tabName) {
-      this.selectTab(tabName);
-    }
-  }
-
-  private handleKeyDown(event: KeyboardEvent) {
-    // Only handle keyboard events when focus is in the tab bar
-    if (!this.tabBar.contains(document.activeElement)) {
-      return;
-    }
-
-    const tabs = this.tabs;
-    const currentIndex = this.selectedTabIndex;
-    let newIndex = currentIndex;
-
-    switch (event.key) {
-      case "ArrowLeft":
-        event.preventDefault();
-        newIndex = currentIndex - 1;
-        if (newIndex < 0) {
-          newIndex = tabs.length - 1;
-        }
-        break;
-      case "ArrowRight":
-        event.preventDefault();
-        newIndex = currentIndex + 1;
-        if (newIndex >= tabs.length) {
-          newIndex = 0;
-        }
-        break;
-      case "Home":
-        event.preventDefault();
-        newIndex = 0;
-        break;
-      case "End":
-        event.preventDefault();
-        newIndex = tabs.length - 1;
-        break;
-      default:
-        return;
-    }
-
-    const newTab = tabs[newIndex];
-    if (newTab) {
-      this.selectedTab = newTab;
-
-      // Focus the new tab button
-      const buttons =
-        this.tabBar.querySelectorAll<HTMLButtonElement>(".tab-button");
-      buttons[newIndex]?.focus();
+    const index = this.tabButtons.indexOf(target);
+    const tab = this.tabs[index];
+    if (tab) {
+      this.selectedTab = tab;
     }
   }
 }
