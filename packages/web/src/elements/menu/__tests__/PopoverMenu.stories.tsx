@@ -1,4 +1,7 @@
 import "../PopoverMenu";
+import Menu from "@/components/menus/Menu";
+import MenuItem from "@/components/menus/MenuItem";
+import MenuItemGroup from "@/components/menus/MenuItemGroup";
 import type { Meta, Story } from "@/test/storybook";
 
 const meta = {
@@ -13,14 +16,13 @@ export const Default: Story = {
         Open menu
       </button>
       <popover-menu id="menu">
-        <menu>
-          <li>
-            <button>First item</button>
-          </li>
-          <li>
-            <button>Second item</button>
-          </li>
-        </menu>
+        <Menu>
+          <MenuItemGroup>
+            <MenuItem>First item</MenuItem>
+            <MenuItem>Second item</MenuItem>
+            <MenuItem>Third item</MenuItem>
+          </MenuItemGroup>
+        </Menu>
       </popover-menu>
     </>
   ),
