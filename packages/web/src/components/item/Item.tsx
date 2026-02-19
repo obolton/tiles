@@ -261,7 +261,7 @@ export default function Item({
           [styles["frame-full-bleed"]]: tile.frame.derive(
             (f) => f === "FULL_BLEED",
           ),
-          [styles.animate]: tile.animation.derive((a) => a !== null),
+          animate: tile.animation.derive((a) => a !== null),
           [styles.draggable]: editable,
           [styles.selected]: isSelected,
           [styles.referenced]: isReferenced,

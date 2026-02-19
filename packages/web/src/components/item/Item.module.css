@@ -159,7 +159,7 @@
   box-shadow: 0 0 0 3px var(--border-color);
 }
 
-.animate {
+:global(.animate) {
   animation-duration: var(--animation-duration);
   animation-timing-function: var(--easing);
   animation-name: var(--animation-name);
