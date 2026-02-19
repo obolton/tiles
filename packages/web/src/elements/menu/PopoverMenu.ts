@@ -1,14 +1,8 @@
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import AnchoredPopover from "@/elements/anchored-popover/AnchoredPopover";
+import KeyboardNavigation from "@/utils/keyboard";
+import type { AnchoredPopoverAttributes } from "@/elements/anchored-popover/AnchoredPopover";
 
-const VIEWPORT_MARGIN = 64;
-const SUPPORTS_ANCHOR_POSITIONING = CSS.supports("anchor-name", "--anchor");
-
-type Alignment = "left" | "center" | "right" | "auto";
-
-export interface PopoverMenuAttributes extends GlobalHTMLAttributes {
-  anchor?: string;
-  align?: Alignment;
-}
+export type PopoverMenuAttributes = AnchoredPopoverAttributes;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -22,231 +16,28 @@ declare module "@/jsx/html-attributes" {
   }
 }
 
-export default class PopoverMenu extends HTMLElement {
-  static readonly observedAttributes: (keyof PopoverMenuAttributes)[] = [
-    "anchor",
-    "align",
-  ] as const;
-
-  align: Alignment = "auto";
-
-  #anchorElement: HTMLElement | null = null;
-  #triggerElement: HTMLElement | null = null;
-  #positionAbortController: AbortController | null = null;
-
-  get anchorElement() {
-    if (this.#anchorElement) {
-      return this.#anchorElement;
-    }
-
-    if (this.#triggerElement) {
-      return this.#triggerElement;
-    }
-
-    const id = this.getAttribute("anchor");
-    if (!id) {
-      return null;
-    }
-    return document.getElementById(id);
-  }
-
-  set anchorElement(element: HTMLElement | null) {
-    this.#anchorElement = element;
-  }
-
-  constructor() {
-    super();
-    this.addEventListener("beforetoggle", this, { passive: true });
-    this.addEventListener("toggle", this, { passive: true });
-  }
+export default class PopoverMenu extends AnchoredPopover {
+  private navigation = new KeyboardNavigation(this, {
+    selector: ".menuitem",
+    orientation: "vertical",
+  });
 
   connectedCallback() {
-    this.popover = "auto";
+    super.connectedCallback();
+    this.navigation.attach();
   }
 
   disconnectedCallback() {
-    this.#cleanup();
-  }
-
-  attributeChangedCallback(
-    name: keyof PopoverMenuAttributes,
-    _: string | null,
-    value: string | null,
-  ) {
-    switch (name) {
-      case "anchor":
-        if (this.matches(":popover-open")) {
-          this.setPosition();
-        }
-        return;
-      case "align":
-        if (value === "left" || value === "center" || value === "right") {
-          this.align = value;
-        } else {
-          this.align = "auto";
-        }
-        break;
-    }
-  }
-
-  handleEvent(event: Event) {
-    switch (event.type) {
-      case "beforetoggle":
-        return this.handleBeforeToggle(event as ToggleEvent);
-      case "toggle":
-        return this.handleToggle(event as ToggleEvent);
-      case "scroll":
-      case "resize":
-        return this.setPosition();
-    }
-  }
-
-  protected handleBeforeToggle(event: ToggleEvent) {
-    if (event.defaultPrevented) {
-      return;
-    }
-
-    if (event.newState === "open") {
-      this.#triggerElement = this.#getTriggerElement();
-      if (!SUPPORTS_ANCHOR_POSITIONING) {
-        this.style.setProperty("visibility", "hidden");
-      }
-    }
-
-    if (this.#triggerElement) {
-      this.#triggerElement.ariaExpanded =
-        event.newState === "open" ? "true" : "false";
-    }
-  }
-
-  #getTriggerElement(): HTMLElement | null {
-    const activeElement = document.activeElement;
-    if (
-      activeElement instanceof HTMLElement &&
-      activeElement.getAttribute("popovertarget") === this.id
-    ) {
-      return activeElement;
-    }
-
-    const trigger = document.querySelector(`[popovertarget="${this.id}"]`);
-    if (trigger instanceof HTMLElement) {
-      return trigger;
-    }
-
-    return null;
+    super.disconnectedCallback();
+    this.navigation.detach();
   }
 
   protected handleToggle(event: ToggleEvent) {
+    super.handleToggle(event);
+
     if (event.newState === "open") {
-      if (SUPPORTS_ANCHOR_POSITIONING) {
-        this.#applyAnchorPositioning();
-      } else {
-        requestAnimationFrame(() => {
-          this.setPosition();
-          this.style.removeProperty("visibility");
-          this.#addPositionListeners();
-        });
-      }
-    } else {
-      this.#cleanup();
+      this.navigation.focusFirst();
     }
-  }
-
-  #applyAnchorPositioning() {
-    const anchor = this.anchorElement;
-    if (!anchor) {
-      return;
-    }
-
-    const anchorName = `--${this.id}-anchor`;
-    anchor.style.anchorName = anchorName;
-    this.style.positionAnchor = anchorName;
-  }
-
-  #addPositionListeners() {
-    this.#positionAbortController = new AbortController();
-    const { signal } = this.#positionAbortController;
-
-    window.addEventListener("scroll", this, { passive: true, signal });
-    window.addEventListener("resize", this, { passive: true, signal });
-  }
-
-  #cleanup() {
-    if (SUPPORTS_ANCHOR_POSITIONING) {
-      const anchor = this.anchorElement;
-      if (anchor) {
-        anchor.style.anchorName = "";
-      }
-      this.style.positionAnchor = "";
-    } else {
-      this.#positionAbortController?.abort();
-      this.#positionAbortController = null;
-    }
-
-    this.#triggerElement = null;
-  }
-
-  private getHorizontalAlignment(anchorBounds: DOMRect, width: number) {
-    if (this.align === "auto") {
-      return anchorBounds.right + width + VIEWPORT_MARGIN < window.innerWidth
-        ? "left"
-        : "right";
-    }
-    return this.align;
-  }
-
-  private setPosition() {
-    const anchor = this.anchorElement;
-    if (!anchor) {
-      return;
-    }
-
-    const width = this.offsetWidth;
-    const height = this.offsetHeight;
-    const anchorBounds = anchor.getBoundingClientRect();
-
-    const horizontalAlignment = this.getHorizontalAlignment(
-      anchorBounds,
-      width,
-    );
-
-    const verticalPosition =
-      anchorBounds.bottom + height + VIEWPORT_MARGIN < window.innerHeight
-        ? "bottom"
-        : "top";
-
-    let left = "auto";
-    let right = "auto";
-    let top = "auto";
-    let bottom = "auto";
-    let verticalOrigin = "top";
-
-    switch (horizontalAlignment) {
-      case "left":
-        left = anchorBounds.left + "px";
-        break;
-      case "right":
-        right =
-          window.innerWidth - (anchorBounds.left + anchorBounds.width) + "px";
-        break;
-      case "center":
-        left = anchorBounds.left + (anchorBounds.width - width) / 2 + "px";
-        break;
-    }
-
-    switch (verticalPosition) {
-      case "top":
-        bottom = window.innerHeight - anchorBounds.top + "px";
-        verticalOrigin = "bottom";
-        break;
-      case "bottom":
-        top = anchorBounds.bottom + "px";
-        verticalOrigin = "top";
-        break;
-    }
-
-    this.style.transformOrigin = `${horizontalAlignment} ${verticalOrigin}`;
-    this.style.inset = `${top} ${right} ${bottom} ${left}`;
   }
 }
 

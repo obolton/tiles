@@ -13,7 +13,7 @@ import type ListSelect from "@/elements/list-select/ListSelect";
 import type { JSX } from "@/jsx/jsx";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
 
-export interface SeriesPanelProps extends JSX.Attributes<"popover-menu"> {
+export interface SeriesPanelProps extends JSX.Attributes<"anchored-popover"> {
   chart: Chart;
   table: Table;
 }
@@ -66,7 +66,7 @@ export default function SeriesPanel({
   }
 
   return (
-    <popover-menu {...props} className={styles.panel}>
+    <anchored-popover {...props} className={styles.panel}>
       <ul className={styles["series-list"]} role="group" aria-label="Series">
         <Each items={chart.series}>
           {(item) => (
@@ -123,6 +123,6 @@ export default function SeriesPanel({
           </ListGroup>
         </list-select>
       </div>
-    </popover-menu>
+    </anchored-popover>
   );
 }

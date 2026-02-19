@@ -34,6 +34,10 @@ export default class ToolbarTab extends HTMLElement {
     this.internals.ariaHidden = "true";
   }
 
+  connectedCallback() {
+    this.inert = !this.#selected;
+  }
+
   get label(): string {
     return this.getAttribute("label") ?? "";
   }
@@ -61,6 +65,7 @@ export default class ToolbarTab extends HTMLElement {
 
     this.#selected = value;
     this.internals.ariaHidden = value ? "false" : "true";
+    this.inert = !value;
 
     if (value) {
       this.setAttribute("selected", "");

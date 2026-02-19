@@ -1,5 +1,5 @@
 import css from "./ListSelect.css?inline";
-import PopoverMenu from "@/elements/menu/PopoverMenu";
+import AnchoredPopover from "@/elements/anchored-popover/AnchoredPopover";
 import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
@@ -38,7 +38,7 @@ export default class ListSelect extends HTMLElement {
   private defaultIconSlot: HTMLSlotElement;
   private iconSlot: HTMLSlotElement;
   private labelSlot: HTMLSlotElement;
-  private items: PopoverMenu;
+  private items: AnchoredPopover;
   private itemsTitle: HTMLDivElement;
   private mutationObserver: MutationObserver;
 
@@ -66,7 +66,7 @@ export default class ListSelect extends HTMLElement {
     this.itemsTitle.id = "title";
     this.itemsTitle.hidden = true;
 
-    this.items = document.createElement("popover-menu");
+    this.items = document.createElement("anchored-popover");
     this.items.id = "items";
     this.items.part = "items";
     this.items.setAttribute("aria-labelledby", "title");

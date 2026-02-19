@@ -4,7 +4,7 @@ import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 export interface TextSizePopoverProps extends Omit<
-  JSX.Attributes<"popover-menu">,
+  JSX.Attributes<"anchored-popover">,
   "id" | "className"
 > {
   id: string;
@@ -19,7 +19,7 @@ export default function TextSizePopover({
   ...props
 }: TextSizePopoverProps) {
   return (
-    <popover-menu {...props} id={id} className={styles.popover}>
+    <anchored-popover {...props} id={id} className={styles.popover}>
       <Stepper
         id={`${id}-stepper`}
         label="Text size"
@@ -30,6 +30,6 @@ export default function TextSizePopover({
         value={value}
         onChange={onChange}
       />
-    </popover-menu>
+    </anchored-popover>
   );
 }

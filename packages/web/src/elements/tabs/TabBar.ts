@@ -1,4 +1,5 @@
 import TabItem from "./TabItem";
+import KeyboardNavigation from "@/utils/keyboard";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -8,6 +9,7 @@ declare global {
 
 export default class TabBar extends HTMLElement {
   private internals: ElementInternals;
+  private navigation: KeyboardNavigation;
 
   constructor() {
     super();
@@ -16,39 +18,40 @@ export default class TabBar extends HTMLElement {
     this.internals.role = "tablist";
     this.internals.ariaOrientation = "horizontal";
 
+    this.navigation = new KeyboardNavigation(this, {
+      selector: "tab-item",
+      orientation: "horizontal",
+    });
+
     this.addEventListener("click", this);
-    this.addEventListener("keydown", this);
+    this.addEventListener("focusin", this);
+  }
+
+  connectedCallback() {
+    this.navigation.attach();
+    const selected = this.querySelector<TabItem>("tab-item[selected]");
+    this.navigation.setActiveItem(selected ?? this.navigation.items[0] ?? null);
+  }
+
+  disconnectedCallback() {
+    this.navigation.detach();
   }
 
   handleEvent(event: Event) {
-    switch (event.type) {
-      case "click":
-        return this.handleClick(event as MouseEvent);
-      case "keydown":
-        return this.handleKeyDown(event as KeyboardEvent);
-    }
-  }
-
-  private handleClick(event: MouseEvent) {
     if (event.target instanceof TabItem) {
       this.select(event.target.id);
     }
   }
 
-  private handleKeyDown(event: KeyboardEvent) {
-    if (
-      event.target instanceof TabItem &&
-      (event.key === "Enter" || event.key === " ")
-    ) {
-      event.preventDefault();
-      this.select(event.target.id);
-    }
-  }
-
   select(id: string) {
-    this.querySelectorAll<TabItem>(`tab-item`)?.forEach((item) => {
+    let selected: TabItem | null = null;
+    for (const item of this.querySelectorAll<TabItem>("tab-item")) {
       item.selected = item.id === id;
-    });
+      if (item.id === id) {
+        selected = item;
+      }
+    }
+    this.navigation.setActiveItem(selected);
   }
 }
 

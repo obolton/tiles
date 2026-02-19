@@ -33,10 +33,6 @@ export default class TabItem extends HTMLElement {
   }
 
   connectedCallback() {
-    if (!this.hasAttribute("tabindex")) {
-      this.tabIndex = 0;
-    }
-
     if (this.selected) {
       this.select();
     } else {

@@ -13,7 +13,7 @@ import type { JSX } from "@/jsx/jsx";
 const InviteModalLoader = () =>
   import("@/components/modals/invite/InviteModal");
 
-export interface CollaborationPopoverProps extends JSX.Attributes<"popover-menu"> {
+export interface CollaborationPopoverProps extends JSX.Attributes<"anchored-popover"> {
   page: Page;
 }
 
@@ -69,7 +69,7 @@ export default function CollaborationPopover({
   }
 
   return (
-    <popover-menu {...props} className={styles.popover}>
+    <anchored-popover {...props} className={styles.popover}>
       <label>
         Public link
         <input
@@ -121,6 +121,6 @@ export default function CollaborationPopover({
           )),
         )}
       </ul>
-    </popover-menu>
+    </anchored-popover>
   );
 }

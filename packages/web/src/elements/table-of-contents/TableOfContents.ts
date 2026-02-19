@@ -1,7 +1,7 @@
-import PopoverMenu from "@/elements/menu/PopoverMenu";
-import type { PopoverMenuAttributes } from "@/elements/menu/PopoverMenu";
+import AnchoredPopover from "@/elements/anchored-popover/AnchoredPopover";
+import type { AnchoredPopoverAttributes } from "@/elements/anchored-popover/AnchoredPopover";
 
-export type TableOfContentsAttributes = PopoverMenuAttributes;
+export type TableOfContentsAttributes = AnchoredPopoverAttributes;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -15,7 +15,7 @@ declare module "@/jsx/html-attributes" {
   }
 }
 
-export default class TableOfContents extends PopoverMenu {
+export default class TableOfContents extends AnchoredPopover {
   constructor() {
     super();
     this.addEventListener("beforetoggle", this);
