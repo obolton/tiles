@@ -66,3 +66,6 @@ export const MOCK_PRISMA = {
 
 export type CreateQuery<T> = { select: T; data: never };
 export type UpdateQuery<T> = { select: T; where: never; data: never };
+export type FindUniqueQuery<T> = { select: T; where: never };
+export type FindManyQuery<T> = { select: T; where: never };
+export type DeleteQuery<T> = { select: T; where: never };
