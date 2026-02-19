@@ -1,0 +1,97 @@
+body[data-presenting] {
+  --navigation-bar-size: 0px;
+
+  overflow: hidden;
+  height: 100dvh;
+
+  /* Hide navigation and editing chrome */
+  & #navigation,
+  & floating-toolbar:not(#presentation-toolbar),
+  & #insert-button {
+    display: none;
+  }
+
+  & page-item {
+    outline: none;
+  }
+
+  & main {
+    height: 100%;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+    gap: 0;
+    padding: 0;
+
+    /* Each top-level page-item becomes a slide */
+    & > page-item {
+      width: 100%;
+      height: auto;
+      min-height: 100%;
+      max-height: 100%;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 0;
+      outline: none;
+      scroll-snap-align: start;
+
+      /* Sections: fill the slide frame */
+      &:has(scroll-view) {
+        padding: 0;
+      }
+
+      /* Non-section tiles: pad so content doesn't touch viewport edges */
+      &:not(:has(scroll-view)) {
+        padding: 48px;
+      }
+
+      /* Reset tile entrance animations; restored when a slide becomes active */
+      & .animate {
+        animation-name: none;
+      }
+
+      &.slide-active .animate {
+        animation-name: var(--animation-name);
+      }
+
+      /* Scale freeform sections to preserve text proportions */
+      &:has([data-layout="FREEFORM"]) {
+        container-type: size;
+      }
+
+      & [data-layout="FREEFORM"] {
+        position: static;
+        width: calc(var(--width) * 24px);
+        height: calc(var(--height) * 24px);
+        scale: min(
+          calc(100cqw / (var(--width) * 24px)),
+          calc(100cqh / (var(--height) * 24px))
+        );
+      }
+    }
+  }
+}
+
+#presentation-toolbar {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--animation-duration) var(--easing),
+    visibility var(--animation-duration);
+
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  & .slide-counter {
+    font-family: var(--ui-font);
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ui-color);
+    min-width: 48px;
+    text-align: center;
+  }
+}
