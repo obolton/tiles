@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { WorkspaceRole } from "@/generated/prisma/client";
 
 export const GetWorkspaceSchema = z.object({
   workspaceId: z.uuid(),
@@ -14,11 +15,6 @@ export const UpdateWorkspaceSchema = z.object({
   name: z.string().min(1),
 });
 export type UpdateWorkspaceSchema = z.infer<typeof UpdateWorkspaceSchema>;
-
-export const DeleteWorkspaceSchema = z.object({
-  workspaceId: z.uuid(),
-});
-export type DeleteWorkspaceSchema = z.infer<typeof DeleteWorkspaceSchema>;
 
 export const InviteToWorkspaceSchema = z.object({
   email: z.email().max(254),
@@ -59,3 +55,9 @@ export const ListWorkspaceUsersSchema = z.object({
   cursor: z.uuid().optional(),
 });
 export type ListWorkspaceUsersSchema = z.infer<typeof ListWorkspaceUsersSchema>;
+
+export const UpdateRoleSchema = z.object({
+  userId: z.uuid(),
+  role: z.enum(WorkspaceRole),
+});
+export type UpdateRoleSchema = z.infer<typeof UpdateRoleSchema>;

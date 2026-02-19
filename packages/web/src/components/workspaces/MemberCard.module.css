@@ -1,0 +1,41 @@
+.card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--border-radius);
+  background: rgb(0 0 0 / 5%);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 10%);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.email {
+  font-size: 0.875rem;
+  color: var(--secondary-text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.role {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  color: var(--secondary-text-color);
+}
+
+.remove {
+  color: var(--destructive-color);
+}

@@ -1,13 +1,19 @@
 import PageLayout from "@/layouts/PageLayout";
 import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
+import If from "@/jsx/if";
 import WorkspaceMembers from "@/components/workspaces/WorkspaceMembers";
 import WorkspaceInvites from "@/components/workspaces/WorkspaceInvites";
 import client from "@/api/client";
+import { reactive } from "@/utils/reactivity";
 import { showToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
 import styles from "./Workspace.module.css";
 import type { AppRouterOutputs } from "@/api/client";
+
+if (!import.meta.env.SSR) {
+  import("@/elements/editor").catch(handleError);
+}
 
 export interface WorkspaceProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
@@ -42,6 +48,8 @@ export default function Workspace({
   users,
   invites,
 }: WorkspaceProps) {
+  const isAdmin = reactive(workspace.role === "ADMIN");
+
   return (
     <PageLayout workspaceId={workspace.id}>
       <SidebarLayout
@@ -64,23 +72,32 @@ export default function Workspace({
                 placeholder="Name"
                 required
                 maxlength={64}
+                disabled={isAdmin.derive((admin) => !admin)}
               />
             </label>
 
-            <footer>
-              <button className="primary" type="submit">
-                Save
-              </button>
-            </footer>
+            <If condition={isAdmin}>
+              <footer>
+                <button className="primary" type="submit">
+                  Save
+                </button>
+              </footer>
+            </If>
           </form>
 
-          <WorkspaceMembers workspaceId={workspace.id} members={users} />
-
-          <WorkspaceInvites
+          <WorkspaceMembers
             workspaceId={workspace.id}
-            workspaceName={workspace.name}
-            invites={invites}
+            members={users}
+            isAdmin={isAdmin}
           />
+
+          <If condition={isAdmin}>
+            <WorkspaceInvites
+              workspaceId={workspace.id}
+              workspaceName={workspace.name}
+              invites={invites}
+            />
+          </If>
         </div>
       </SidebarLayout>
     </PageLayout>

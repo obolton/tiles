@@ -1,22 +1,25 @@
 import Search from "@/components/search/Search";
-import UserRow from "@/components/collaboration/UserRow";
+import MemberCard from "./MemberCard";
 import Placeholder from "@/components/placeholder/Placeholder";
 import client from "@/api/client";
+import { user as currentUser } from "@/utils/sessions";
 import { reactive } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
-import { showToast } from "@/utils/toasts";
 import styles from "./WorkspaceMembers.module.css";
 import type { AppRouterOutputs } from "@/api/client";
-import type { User } from "@/types/collaboration";
+import type { ReactiveValue } from "@/utils/reactivity";
+import type { WorkspaceMember } from "./MemberCard";
 
 export interface WorkspaceMembersProps {
   workspaceId: string;
   members: AppRouterOutputs["workspaces"]["listUsers"];
+  isAdmin: ReactiveValue<boolean>;
 }
 
 export default function WorkspaceMembers({
   workspaceId,
   members: initialMembers,
+  isAdmin,
 }: WorkspaceMembersProps) {
   const members = reactive(initialMembers.users);
   const nextCursor = reactive(initialMembers.nextCursor);
@@ -45,18 +48,71 @@ export default function WorkspaceMembers({
     }
   };
 
-  const onRemove = async (user: User) => {
+  const onRemove = async (member: WorkspaceMember) => {
+    const isSelf = member.id === currentUser.value?.id;
+    const previousMembers = members.value;
+    members.value = members.value.filter((m) => m !== member);
+
     try {
-      await client.workspaces.remove.mutate({ workspaceId, userId: user.id });
-      members.value = members.value.filter((member) => member !== user);
-      showToast(`${user.name} was removed from the workspace.`, "success");
+      if (isSelf) {
+        await client.workspaces.leave.mutate({ workspaceId });
+        window.location.href = "/";
+      } else {
+        await client.workspaces.remove.mutate({
+          workspaceId,
+          userId: member.id,
+        });
+      }
     } catch (error) {
+      members.value = previousMembers;
+      handleError(error);
+    }
+  };
+
+  const onChangeRole = async (
+    member: WorkspaceMember,
+    role: WorkspaceMember["role"],
+  ) => {
+    const previousRole = member.role;
+    const isSelf = member.id === currentUser.value?.id;
+    members.value = members.value.map((m) =>
+      m === member ? { ...m, role } : m,
+    );
+    if (isSelf) {
+      isAdmin.value = role === "ADMIN";
+    }
+    try {
+      await client.workspaces.updateRole.mutate({
+        workspaceId,
+        userId: member.id,
+        role,
+      });
+    } catch (error) {
+      members.value = members.value.map((m) =>
+        m.id === member.id ? { ...m, role: previousRole } : m,
+      );
+      if (isSelf) {
+        isAdmin.value = previousRole === "ADMIN";
+      }
+      handleError(error);
+    }
+  };
+
+  const onLeave = async (event: SubmitEvent) => {
+    const form = event.currentTarget as HTMLFormElement;
+    event.preventDefault();
+    form.dataset.pending = "true";
+    try {
+      await client.workspaces.leave.mutate({ workspaceId });
+      window.location.href = "/";
+    } catch (error) {
+      delete form.dataset.pending;
       handleError(error);
     }
   };
 
   return (
-    <section>
+    <section className={styles.section}>
       <h3>Members</h3>
 
       <Search
@@ -67,17 +123,24 @@ export default function WorkspaceMembers({
         nextCursor={nextCursor}
         placeholder="Search members"
         render={(member) => (
-          <UserRow
-            user={member}
-            description={member.email}
-            showRemoveButton={initialMembers.users.length > 1}
-            onRemove={onRemove}
+          <MemberCard
+            member={member}
+            editable={isAdmin}
+            isSelf={member.id === currentUser.value?.id}
+            onChangeRole={(role) => onChangeRole(member, role)}
+            onRemove={() => onRemove(member)}
           />
         )}
         renderPlaceholder={() => (
           <Placeholder>There are no results</Placeholder>
         )}
       />
+
+      <form on:submit={onLeave}>
+        <button className="secondary destructive" type="submit">
+          Leave workspace
+        </button>
+      </form>
     </section>
   );
 }

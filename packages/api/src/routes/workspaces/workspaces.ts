@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import prisma from "@/database/prisma.ts";
 import { createKey } from "@/utils/keys.ts";
 import { sendEmail } from "@/utils/email.ts";
@@ -15,24 +16,29 @@ import type {
   ListWorkspaceInvitesSchema,
   RemoveFromWorkspaceSchema,
   ListWorkspaceUsersSchema,
+  UpdateRoleSchema,
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
 import {
   WORKSPACE_FIELDS,
-  WORKSPACE_USER_FIELDS,
+  WORKSPACE_MEMBERSHIP_FIELDS,
   WORKSPACE_INVITE_FIELDS,
 } from "./fields";
 
 const INVITE_KEY_BYTES = 32;
 
-export async function getWorkspace({ workspaceId }: GetWorkspaceSchema) {
-  return prisma.workspace.findUniqueOrThrow({
+export async function getWorkspace(
+  { workspaceId }: GetWorkspaceSchema,
+  { role }: AuthenticatedWorkspaceProcedureContext,
+) {
+  const workspace = await prisma.workspace.findUniqueOrThrow({
     where: {
       id: workspaceId,
     },
     select: WORKSPACE_FIELDS,
   });
+  return { ...workspace, role };
 }
 
 export async function createWorkspace(
@@ -45,6 +51,7 @@ export async function createWorkspace(
       memberships: {
         create: {
           userId,
+          role: "ADMIN",
         },
       },
       themes: {
@@ -137,6 +144,7 @@ export async function acceptWorkspaceInvite(
         data: {
           workspaceId,
           userId,
+          role: "MEMBER",
         },
         select: { userId: true },
       }),
@@ -180,18 +188,48 @@ export async function listWorkspaceInvites(
   return { invites: items, nextCursor };
 }
 
+export async function leaveWorkspace({
+  workspaceId,
+  userId,
+}: AuthenticatedWorkspaceProcedureContext) {
+  return prisma.$transaction(async (transaction) => {
+    const otherAdminCount = await transaction.workspaceMembership.count({
+      where: { workspaceId, role: "ADMIN", NOT: { userId } },
+    });
+    if (otherAdminCount === 0) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Cannot leave as the last admin",
+      });
+    }
+
+    return transaction.workspaceMembership.delete({
+      where: { id: { workspaceId, userId } },
+      select: { workspaceId: true },
+    });
+  });
+}
+
+// TODO: Add guards to prevent admins from removing other admins (workspace takeover prevention)
 export async function removeFromWorkspace(
   { userId }: RemoveFromWorkspaceSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
-  return prisma.workspaceMembership.delete({
-    where: {
-      id: {
-        workspaceId,
-        userId,
-      },
-    },
-    select: { workspaceId: true },
+  return prisma.$transaction(async (transaction) => {
+    const otherAdminCount = await transaction.workspaceMembership.count({
+      where: { workspaceId, role: "ADMIN", NOT: { userId } },
+    });
+    if (otherAdminCount === 0) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Cannot remove the last admin",
+      });
+    }
+
+    return transaction.workspaceMembership.delete({
+      where: { id: { workspaceId, userId } },
+      select: { workspaceId: true },
+    });
   });
 }
 
@@ -207,11 +245,7 @@ export async function listWorkspaceUsers(
       workspaceId,
       ...filter,
     },
-    select: {
-      user: {
-        select: WORKSPACE_USER_FIELDS,
-      },
-    },
+    select: WORKSPACE_MEMBERSHIP_FIELDS,
     orderBy: {
       user: {
         name: "asc",
@@ -222,7 +256,33 @@ export async function listWorkspaceUsers(
   });
   const { items, nextCursor } = paginate(memberships, (m) => m.user.id);
   return {
-    users: items.map((item) => item.user),
+    users: items.map((item) => ({ ...item.user, role: item.role })),
     nextCursor,
   };
+}
+
+// TODO: Add guards to prevent admins from changing other admins' roles (workspace takeover prevention)
+export async function updateWorkspaceRole(
+  { userId, role }: UpdateRoleSchema,
+  { workspaceId }: AuthenticatedWorkspaceProcedureContext,
+) {
+  return prisma.$transaction(async (transaction) => {
+    if (role !== "ADMIN") {
+      const otherAdminCount = await transaction.workspaceMembership.count({
+        where: { workspaceId, role: "ADMIN", NOT: { userId } },
+      });
+      if (otherAdminCount === 0) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot demote the last admin",
+        });
+      }
+    }
+
+    return transaction.workspaceMembership.update({
+      where: { id: { workspaceId, userId } },
+      data: { role },
+      select: { role: true },
+    });
+  });
 }
