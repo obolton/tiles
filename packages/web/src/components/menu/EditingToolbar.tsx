@@ -1,6 +1,9 @@
 import EditingTools from "./EditingTools";
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
+import PresentIcon from "@/icons/present.svg?jsx";
 import If from "@/jsx/if";
+import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
 import styles from "./EditingToolbar.module.css";
 import type Editor from "@/editor/Editor";
@@ -39,6 +42,18 @@ export default function EditingToolbar({
           >
             {isEditable.derive((editable) => (editable ? "Done" : "Edit"))}
           </button>
+        </ToolbarGroup>
+
+        <ToolbarGroup label="Present">
+          <ToolbarButton
+            label="Present"
+            on:click={() => {
+              isEditable.value = false;
+              startPresentation();
+            }}
+          >
+            <PresentIcon aria-hidden="true" />
+          </ToolbarButton>
         </ToolbarGroup>
 
         <If condition={isEditable}>
