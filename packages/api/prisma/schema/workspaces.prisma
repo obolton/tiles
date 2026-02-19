@@ -14,10 +14,16 @@ model Workspace {
   @@map("workspaces")
 }
 
+enum WorkspaceRole {
+  ADMIN
+  MEMBER
+}
+
 model WorkspaceMembership {
-  workspaceId String   @map("workspace_id") @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  createdAt   DateTime @default(now()) @map("created_at")
+  workspaceId String        @map("workspace_id") @db.Uuid
+  userId      String        @map("user_id") @db.Uuid
+  createdAt   DateTime      @default(now()) @map("created_at")
+  role        WorkspaceRole @default(MEMBER)
 
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
