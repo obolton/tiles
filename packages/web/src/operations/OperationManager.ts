@@ -154,17 +154,14 @@ export class OperationManager<TAction extends Action> {
   }
 
   private async prune(): Promise<void> {
-    // Get oldest operations beyond the limit
-    const oldest = await this.operationsStore.query({
-      direction: "next",
-    });
-
-    const excess = oldest.length - MAX_OPERATIONS;
+    const totalCount = await this.operationsStore.count();
+    const excess = totalCount - MAX_OPERATIONS;
     if (excess <= 0) {
       return;
     }
 
-    const cutoffId = oldest[excess - 1]?.id;
+    const keys = await this.operationsStore.getKeys(undefined, excess);
+    const cutoffId = keys[keys.length - 1];
     if (cutoffId !== undefined) {
       await this.operationsStore.delete(keyRange({ upper: cutoffId }));
     }
