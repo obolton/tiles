@@ -14,7 +14,7 @@ const setProperties: ActionExecutor<SetTextPropertiesAction> = async (
     tile.state.value = null;
   }
   if (changes.align !== undefined) {
-    await tile.setVerticalAlignment(changes.align);
+    tile.align.value = changes.align;
   }
 };
 

@@ -7,7 +7,7 @@ const setLayout: ActionExecutor<SetSectionLayoutAction> = async (
   { sectionId, layout },
 ) => {
   const section = editor.page.getTile(sectionId, Section);
-  await section.setLayout(layout);
+  section.layout.value = layout;
 };
 
 export const executors = {

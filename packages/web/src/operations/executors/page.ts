@@ -1,4 +1,3 @@
-import client from "@/api/client";
 import type { SetPagePropertiesAction } from "../types";
 import type { ActionExecutor } from "./types";
 
@@ -26,12 +25,6 @@ const setProperties: ActionExecutor<SetPagePropertiesAction> = async (
   if (changes.themeId !== undefined) {
     page.themeId.value = changes.themeId;
   }
-
-  // Persist to server
-  await client.pages.update.mutate({
-    pageId: page.id,
-    ...changes,
-  });
 };
 
 export const executors = {

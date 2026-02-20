@@ -10,7 +10,7 @@ const setProperties: ActionExecutor<SetTilePropertiesAction> = async (
   { tileId, changes },
 ) => {
   const tile = editor.page.getTile(tileId);
-  await tile.applyUpdate(changes);
+  tile.applyUpdate(changes);
 };
 
 const deleteTiles: ActionExecutor<DeleteTilesAction> = async (

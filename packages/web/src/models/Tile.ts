@@ -194,7 +194,7 @@ export default class Tile {
   }
 
   /**
-   * Applies changes to reactive values and persists to API.
+   * Applies changes to reactive values.
    * Used by executors for undo/redo (does not record a new operation).
    */
   applyUpdate(changes: TilePropertyChanges) {
@@ -236,10 +236,6 @@ export default class Tile {
     if (changes.background !== undefined) {
       this.background.value = changes.background;
     }
-
-    return this.updateTile(
-      changes as Omit<AppRouterInputs["tiles"]["update"], "pageId" | "id">,
-    );
   }
 
   move({
@@ -379,17 +375,20 @@ export default class Tile {
 
   setAnimation(animation: Animation | null) {
     this.recordUpdate({ animation }, { animation: this.animation.value });
-    return this.applyUpdate({ animation });
+    this.applyUpdate({ animation });
+    return this.updateTile({ animation });
   }
 
   setFrame(frame: FrameStyle | null) {
     this.recordUpdate({ frame }, { frame: this.frame.value });
-    return this.applyUpdate({ frame });
+    this.applyUpdate({ frame });
+    return this.updateTile({ frame });
   }
 
   setHidden(hide: boolean) {
     this.recordUpdate({ hide }, { hide: this.hide.value });
-    return this.applyUpdate({ hide });
+    this.applyUpdate({ hide });
+    return this.updateTile({ hide });
   }
 
   async setDock(dock: DockEdge | null, beforeId?: string | null) {
@@ -428,7 +427,8 @@ export default class Tile {
 
   setTextColor(textColor: Color | null) {
     this.recordUpdate({ textColor }, { textColor: this.textColor.value });
-    return this.applyUpdate({ textColor });
+    this.applyUpdate({ textColor });
+    return this.updateTile({ textColor });
   }
 
   async setBackground(background: FillUpdate) {
