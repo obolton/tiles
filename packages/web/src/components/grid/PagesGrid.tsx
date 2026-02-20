@@ -56,6 +56,7 @@ interface PagesGridProps {
   search: (query: string, cursor: string | null) => Promise<PagesSearchResults>;
   renderPlaceholder: (query: string) => JSX.Node;
   draggable?: boolean;
+  link?: boolean;
   sort?: Reactive<PageSort>;
   move?: boolean;
   trash?: boolean;
@@ -70,6 +71,7 @@ export default function PagesGrid({
   search,
   renderPlaceholder,
   draggable,
+  link,
   sort,
   move,
   trash,
@@ -131,6 +133,7 @@ export default function PagesGrid({
             selected={selection.derive((ids) => ids.has(page.id))}
             onToggle={() => selection.toggle(page.id)}
             draggable={draggable}
+            link={link}
           />
         )}
         renderPlaceholder={renderPlaceholder}

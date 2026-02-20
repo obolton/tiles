@@ -14,6 +14,7 @@ export interface LibraryCardProps {
   selected?: boolean | Reactive<boolean>;
   onToggle?: () => void;
   draggable?: boolean;
+  link?: boolean;
 }
 
 export default function LibraryCard({
@@ -21,6 +22,7 @@ export default function LibraryCard({
   selected,
   onToggle,
   draggable,
+  link = true,
 }: LibraryCardProps) {
   const updatedAt = new Date(page.updatedAt);
 
@@ -28,6 +30,44 @@ export default function LibraryCard({
     event.stopPropagation();
     onToggle?.();
   }
+
+  const content = (
+    <>
+      <p className={styles.title}>{page.title}</p>
+
+      <div className={styles.details}>
+        <div className={styles.meta}>
+          <time
+            datetime={updatedAt.toISOString()}
+            data-tooltip={updatedAt.toLocaleString(undefined, {
+              dateStyle: "medium",
+              timeStyle: "short",
+            })}
+          >
+            {formatRelativeDate(updatedAt)}
+          </time>
+          {page.folder ? (
+            <span className={styles.folder}>{page.folder.name}</span>
+          ) : null}
+          {page.published ? (
+            <PublicIcon
+              className={styles.published}
+              aria-label="Published"
+              data-tooltip="Published"
+            />
+          ) : null}
+        </div>
+
+        <div className={styles.author}>
+          <ProfileImage
+            imageUrl={page.author.imageUrl}
+            name={page.author.name}
+          />
+          <span className={styles["author-name"]}>{page.author.name}</span>
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <article
@@ -46,41 +86,13 @@ export default function LibraryCard({
       })}
       data-id={page.id}
     >
-      <a className={styles.link} href={`/pages/${page.id}`}>
-        <p className={styles.title}>{page.title}</p>
-
-        <div className={styles.details}>
-          <div className={styles.meta}>
-            <time
-              datetime={updatedAt.toISOString()}
-              data-tooltip={updatedAt.toLocaleString(undefined, {
-                dateStyle: "medium",
-                timeStyle: "short",
-              })}
-            >
-              {formatRelativeDate(updatedAt)}
-            </time>
-            {page.folder ? (
-              <span className={styles.folder}>{page.folder.name}</span>
-            ) : null}
-            {page.published ? (
-              <PublicIcon
-                className={styles.published}
-                aria-label="Published"
-                data-tooltip="Published"
-              />
-            ) : null}
-          </div>
-
-          <div className={styles.author}>
-            <ProfileImage
-              imageUrl={page.author.imageUrl}
-              name={page.author.name}
-            />
-            <span className={styles["author-name"]}>{page.author.name}</span>
-          </div>
-        </div>
-      </a>
+      {link ? (
+        <a className={styles.link} href={`/pages/${page.id}`}>
+          {content}
+        </a>
+      ) : (
+        <div className={styles.link}>{content}</div>
+      )}
 
       {selected != null ? (
         <input
