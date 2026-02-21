@@ -1,5 +1,6 @@
 import prisma from "@/database/prisma";
 import { fromHex } from "@/utils/arrays";
+import { getBackgroundProperties } from "@/utils/themes";
 import type {
   GetThemeByIdSchema,
   ListThemesSchema,
@@ -29,14 +30,14 @@ export async function listThemes(
 }
 
 export async function createTheme(
-  { workspaceId, name, colors, fonts, border }: CreateThemeSchema,
+  { workspaceId, name, background, colors, fonts, border }: CreateThemeSchema,
   _ctx: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.theme.create({
     data: {
       workspaceId,
       name,
-      backgroundColor: fromHex(colors.background),
+      ...getBackgroundProperties(background),
       textColor: fromHex(colors.text),
       accentColor: fromHex(colors.accent),
       headingFont: fonts.heading,
@@ -50,16 +51,14 @@ export async function createTheme(
 }
 
 export async function updateTheme(
-  { id, name, colors, fonts, border }: UpdateThemeSchema,
+  { id, name, background, colors, fonts, border }: UpdateThemeSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.theme.update({
     where: { id, workspaceId },
     data: {
       name,
-      backgroundColor: colors?.background
-        ? fromHex(colors.background)
-        : undefined,
+      ...getBackgroundProperties(background),
       textColor: colors?.text ? fromHex(colors.text) : undefined,
       accentColor: colors?.accent ? fromHex(colors.accent) : undefined,
       headingFont: fonts?.heading,

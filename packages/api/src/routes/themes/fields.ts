@@ -5,6 +5,7 @@ export const THEME_FIELDS = {
   id: true,
   workspaceId: true,
   name: true,
+  background: true,
   colors: true,
   fonts: true,
   border: true,
