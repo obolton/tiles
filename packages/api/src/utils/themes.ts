@@ -61,6 +61,13 @@ export function getTextColorProperties(
   return { textColor: fromHex(textColor) };
 }
 
+type ColorBackgroundSchema = Exclude<BackgroundSchema, { type: "image" }>;
+
+export interface ColorBackground {
+  backgroundColor: Uint8Array<ArrayBuffer>;
+  backgroundGradient: GradientDirection | null;
+}
+
 export interface Background {
   backgroundColor: Uint8Array<ArrayBuffer> | null;
   backgroundGradient: GradientDirection | null;
@@ -68,8 +75,17 @@ export interface Background {
 }
 
 export function getBackgroundProperties(
+  background: ColorBackgroundSchema,
+): ColorBackground;
+export function getBackgroundProperties(
+  background: ColorBackgroundSchema | undefined,
+): ColorBackground | undefined;
+export function getBackgroundProperties(
   background?: BackgroundSchema | null,
-): Background | undefined {
+): Background | undefined;
+export function getBackgroundProperties(
+  background?: BackgroundSchema | null,
+): ColorBackground | Background | undefined {
   if (background === undefined) {
     return undefined;
   }
@@ -82,22 +98,6 @@ export function getBackgroundProperties(
     };
   }
 
-  if (background.type === "color") {
-    return {
-      backgroundColor: fromHex(background.color),
-      backgroundGradient: null,
-      backgroundImageId: null,
-    };
-  }
-
-  if (background.type === "gradient") {
-    return {
-      backgroundColor: fromHex(background.colorA + background.colorB),
-      backgroundGradient: background.direction,
-      backgroundImageId: null,
-    };
-  }
-
   if (background.type === "image") {
     return {
       backgroundColor: null,
@@ -106,5 +106,15 @@ export function getBackgroundProperties(
     };
   }
 
-  throw new Error("Invalid background");
+  if (background.type === "gradient") {
+    return {
+      backgroundColor: fromHex(background.colorA + background.colorB),
+      backgroundGradient: background.direction,
+    };
+  }
+
+  return {
+    backgroundColor: fromHex(background.color),
+    backgroundGradient: null,
+  };
 }

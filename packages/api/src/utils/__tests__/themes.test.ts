@@ -23,7 +23,22 @@ describe("getBackgroundProperties", () => {
     ).toEqual({
       backgroundColor: new Uint8Array([255, 0, 255, 0, 255, 0]),
       backgroundGradient: null,
-      backgroundImageId: null,
+    });
+  });
+
+  test("returns a gradient background", () => {
+    expect(
+      getBackgroundProperties({
+        type: "gradient",
+        colorA: "ff00ff00ff00",
+        colorB: "00ff0000ff00",
+        direction: "VERTICAL",
+      }),
+    ).toEqual({
+      backgroundColor: new Uint8Array([
+        255, 0, 255, 0, 255, 0, 0, 255, 0, 0, 255, 0,
+      ]),
+      backgroundGradient: "VERTICAL",
     });
   });
 
