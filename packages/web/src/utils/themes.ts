@@ -2,10 +2,14 @@ import { getFontConfig } from "@/utils/fonts";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import { toCSSColor, type Color } from "@/utils/color";
 import type { Theme } from "api/types/themes";
-import type { FontId } from "@/config/fonts";
+import type { FontConfig, FontId } from "@/config/fonts";
 import type { Fill } from "@/components/fills/types";
 
 export type { Theme };
+
+function formatFont(config: FontConfig) {
+  return `"${config.family}", "${config.fallback}"`;
+}
 
 export interface StyleOverrides {
   background?: Fill | null;
@@ -19,6 +23,8 @@ export interface ResolvedStyles {
   textColor: Color | null;
   accentColor: Color | null;
   font: string | null;
+  headingFont: string | null;
+  codeFont: string | null;
   borderColor: Color | null;
   borderRadius: number | null;
 }
@@ -31,14 +37,16 @@ export function resolveThemeStyles(
   theme: Theme | null,
   overrides: StyleOverrides = {},
 ): ResolvedStyles {
-  const themeBackground = theme?.colors.background
-    ? ({ type: "color", color: theme.colors.background } as const)
-    : null;
+  const themeBackground = theme?.background ?? null;
   const background = overrides.background ?? themeBackground;
   const textColor = overrides.textColor ?? theme?.colors.text ?? null;
   const accentColor = overrides.accentColor ?? theme?.colors.accent ?? null;
   const fontId = overrides.font ?? theme?.fonts.body ?? null;
   const font = fontId ? getFontConfig(fontId) : null;
+  const headingFontId = theme?.fonts.heading ?? null;
+  const headingFontConfig = headingFontId ? getFontConfig(headingFontId) : null;
+  const codeFontId = theme?.fonts.code ?? null;
+  const codeFontConfig = codeFontId ? getFontConfig(codeFontId) : null;
 
   const borderColor = theme?.border.color ?? textColor;
   const borderRadius = theme?.border.radius ?? null;
@@ -47,7 +55,9 @@ export function resolveThemeStyles(
     background,
     textColor,
     accentColor,
-    font: font ? `"${font.family}", "${font.fallback}"` : null,
+    font: font ? formatFont(font) : null,
+    headingFont: headingFontConfig ? formatFont(headingFontConfig) : null,
+    codeFont: codeFontConfig ? formatFont(codeFontConfig) : null,
     borderColor,
     borderRadius,
   };
@@ -61,6 +71,8 @@ export function toCSSProperties(styles: ResolvedStyles): {
   "--text-color"?: string;
   "--accent-color"?: string;
   "--font"?: string;
+  "--heading-font"?: string;
+  "--code-font"?: string;
   "--border-color"?: string;
   "--border-radius"?: string;
 } {
@@ -71,6 +83,8 @@ export function toCSSProperties(styles: ResolvedStyles): {
       ? toCSSColor(styles.accentColor)
       : undefined,
     "--font": styles.font ?? undefined,
+    "--heading-font": styles.headingFont ?? undefined,
+    "--code-font": styles.codeFont ?? undefined,
     "--border-color": styles.borderColor
       ? toCSSColor(styles.borderColor)
       : undefined,

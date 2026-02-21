@@ -26,6 +26,16 @@ describe("resolveThemeStyles", () => {
       const result = resolveThemeStyles(THEME, {});
       expect(result.font).toBe('"Inter", "sans-serif"');
     });
+
+    test("returns theme heading font as CSS font-family string", () => {
+      const result = resolveThemeStyles(THEME, {});
+      expect(result.headingFont).toBe('"Lora", "serif"');
+    });
+
+    test("returns theme code font as CSS font-family string", () => {
+      const result = resolveThemeStyles(THEME, {});
+      expect(result.codeFont).toBe('"JetBrains Mono", "monospace"');
+    });
   });
 
   describe("with overrides", () => {
@@ -94,6 +104,8 @@ describe("resolveThemeStyles", () => {
       expect(result.textColor).toBeNull();
       expect(result.accentColor).toBeNull();
       expect(result.font).toBeNull();
+      expect(result.headingFont).toBeNull();
+      expect(result.codeFont).toBeNull();
     });
   });
 });
@@ -105,6 +117,8 @@ describe("toCSSProperties", () => {
       textColor: null,
       accentColor: null,
       font: null,
+      headingFont: null,
+      codeFont: null,
       borderColor: null,
       borderRadius: null,
     });
@@ -119,6 +133,8 @@ describe("toCSSProperties", () => {
       textColor: "000000000000",
       accentColor: null,
       font: null,
+      headingFont: null,
+      codeFont: null,
       borderColor: null,
       borderRadius: null,
     });
@@ -133,6 +149,8 @@ describe("toCSSProperties", () => {
       textColor: null,
       accentColor: "0000ffffffff",
       font: null,
+      headingFont: null,
+      codeFont: null,
       borderColor: null,
       borderRadius: null,
     });
@@ -147,10 +165,40 @@ describe("toCSSProperties", () => {
       textColor: null,
       accentColor: null,
       font: '"Inter", "sans-serif"',
+      headingFont: null,
+      codeFont: null,
       borderColor: null,
       borderRadius: null,
     });
     expect(result["--font"]).toBe('"Inter", "sans-serif"');
+  });
+
+  test("includes heading font as CSS custom property", () => {
+    const result = toCSSProperties({
+      background: null,
+      textColor: null,
+      accentColor: null,
+      font: null,
+      headingFont: '"Lora", "serif"',
+      codeFont: null,
+      borderColor: null,
+      borderRadius: null,
+    });
+    expect(result["--heading-font"]).toBe('"Lora", "serif"');
+  });
+
+  test("includes code font as CSS custom property", () => {
+    const result = toCSSProperties({
+      background: null,
+      textColor: null,
+      accentColor: null,
+      font: null,
+      headingFont: null,
+      codeFont: '"JetBrains Mono", "monospace"',
+      borderColor: null,
+      borderRadius: null,
+    });
+    expect(result["--code-font"]).toBe('"JetBrains Mono", "monospace"');
   });
 
   test("omits properties with null values", () => {
@@ -159,6 +207,8 @@ describe("toCSSProperties", () => {
       textColor: null,
       accentColor: null,
       font: null,
+      headingFont: null,
+      codeFont: null,
       borderColor: null,
       borderRadius: null,
     });
@@ -166,6 +216,8 @@ describe("toCSSProperties", () => {
     expect(result["--text-color"]).toBeUndefined();
     expect(result["--accent-color"]).toBeUndefined();
     expect(result["--font"]).toBeUndefined();
+    expect(result["--heading-font"]).toBeUndefined();
+    expect(result["--code-font"]).toBeUndefined();
     expect(result["--border-color"]).toBeUndefined();
     expect(result["--border-radius"]).toBeUndefined();
   });
@@ -176,6 +228,8 @@ describe("toCSSProperties", () => {
       textColor: "000000000000",
       accentColor: "0000ffffffff",
       font: '"Inter", "sans-serif"',
+      headingFont: '"Lora", "serif"',
+      codeFont: '"JetBrains Mono", "monospace"',
       borderColor: "000000000000",
       borderRadius: 12,
     });
@@ -183,6 +237,8 @@ describe("toCSSProperties", () => {
     expect(result["--text-color"]).toBeDefined();
     expect(result["--accent-color"]).toBeDefined();
     expect(result["--font"]).toBeDefined();
+    expect(result["--heading-font"]).toBeDefined();
+    expect(result["--code-font"]).toBeDefined();
     expect(result["--border-color"]).toBeDefined();
     expect(result["--border-radius"]).toBe("12px");
   });
