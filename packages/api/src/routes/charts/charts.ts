@@ -1,4 +1,3 @@
-import { Buffer } from "node:buffer";
 import prisma from "@/database/prisma";
 import { createTile } from "../tiles/tiles";
 import type {
@@ -9,6 +8,7 @@ import type {
   DeleteSeriesSchema,
 } from "./schema";
 import type { BackgroundSchema } from "@/schema/Background";
+import { getBackgroundProperties } from "@/utils/themes";
 import { CHART_FIELDS, CHART_SERIES_FIELDS } from "./fields";
 
 export async function getTableColumns(pageId: string, tableId: string) {
@@ -20,26 +20,9 @@ export async function getTableColumns(pageId: string, tableId: string) {
 }
 
 function getSeriesFillData(fill?: BackgroundSchema | null) {
-  if (fill === undefined) {
-    return {};
-  }
-  if (fill === null) {
-    return { color: null, gradient: null };
-  }
-  if (fill.type === "color") {
-    return {
-      color: new Uint8Array(Buffer.from(fill.color, "hex")),
-      gradient: null,
-    };
-  }
-  if (fill.type === "gradient") {
-    return {
-      color: new Uint8Array(Buffer.from(fill.colorA + fill.colorB, "hex")),
-      gradient: fill.direction,
-    };
-  }
-  // Ignore 'image' type for series
-  return {};
+  const { backgroundColor: color, backgroundGradient: gradient } =
+    getBackgroundProperties(fill) ?? {};
+  return { color, gradient };
 }
 
 export async function createChart({
