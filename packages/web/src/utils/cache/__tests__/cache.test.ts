@@ -130,6 +130,7 @@ describe("cache", () => {
           id: "theme-1",
           workspaceId: "workspace-1",
           name: "Test Theme",
+          background: { type: "color", color: "ffffffffffff" },
           colors: { background: "ffffff", text: "000000", accent: "0000ff" },
           fonts: { heading: "MODERN", body: "MODERN", code: "CODE" },
           border: { color: null, radius: null },
