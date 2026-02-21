@@ -27,6 +27,7 @@ export default class Theme {
   readonly id: string;
   readonly workspaceId: string;
   readonly name: Reactive<string>;
+  readonly background: Reactive<ThemeData["background"]>;
   readonly colors: Reactive<ThemeColors>;
   readonly fonts: Reactive<ThemeFonts>;
   readonly border: Reactive<ThemeBorder>;
@@ -35,6 +36,7 @@ export default class Theme {
     this.id = data.id;
     this.workspaceId = data.workspaceId;
     this.name = reactive(data.name);
+    this.background = reactive(data.background);
     this.colors = reactive(data.colors);
     this.fonts = reactive(data.fonts);
     this.border = reactive(data.border);
