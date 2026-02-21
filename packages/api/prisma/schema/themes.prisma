@@ -14,9 +14,10 @@ model Theme {
   name        String   @db.VarChar(50)
 
   // Colors
-  backgroundColor Bytes @map("background_color") @db.ByteA
-  textColor       Bytes @map("text_color") @db.ByteA
-  accentColor     Bytes @map("accent_color") @db.ByteA
+  backgroundColor    Bytes              @map("background_color") @db.ByteA
+  backgroundGradient GradientDirection? @map("background_gradient")
+  textColor          Bytes              @map("text_color") @db.ByteA
+  accentColor        Bytes              @map("accent_color") @db.ByteA
 
   // Fonts
   headingFont Font @default(MODERN) @map("heading_font")
