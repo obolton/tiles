@@ -169,7 +169,7 @@ export default class ListSelect extends HTMLElement {
       this.internals.states.add("open");
     } else {
       this.internals.states.delete("open");
-      this.setActiveOption(null);
+      this.activeItem = null;
     }
 
     this.ariaExpanded = open ? "true" : "false";
@@ -292,38 +292,27 @@ export default class ListSelect extends HTMLElement {
         break;
 
       case "Home":
-        if (!this.open) {
-          break;
+        if (this.open) {
+          event.preventDefault();
+          event.stopPropagation();
+          this.activeItem = this.options[0] ?? null;
         }
-        event.preventDefault();
-        event.stopPropagation();
-        this.setActiveOption(this.options[0] ?? null);
         break;
 
       case "End":
-        if (!this.open) {
-          break;
+        if (this.open) {
+          event.preventDefault();
+          event.stopPropagation();
+          this.activeItem = this.options.at(-1) ?? null;
         }
-        event.preventDefault();
-        event.stopPropagation();
-        this.setActiveOption(this.options.at(-1) ?? null);
         break;
 
       case "Escape":
-        if (!this.open) {
-          break;
+        if (this.open) {
+          event.preventDefault();
+          event.stopPropagation();
+          this.hide();
         }
-        event.preventDefault();
-        event.stopPropagation();
-        this.hide();
-        break;
-
-      case "Tab":
-        if (!this.open) {
-          break;
-        }
-        event.stopPropagation();
-        this.hide();
         break;
     }
   }
@@ -356,7 +345,7 @@ export default class ListSelect extends HTMLElement {
   // Items
 
   private getItem(value: string) {
-    return this.querySelector(`[value="${CSS.escape(value)}"]`);
+    return this.querySelector<HTMLElement>(`[value="${CSS.escape(value)}"]`);
   }
 
   private showItem(item: Element | null) {
@@ -404,7 +393,12 @@ export default class ListSelect extends HTMLElement {
     );
   }
 
-  private setActiveOption(option: HTMLElement | null) {
+  private get activeItem(): HTMLElement | null {
+    const element = this.ariaActiveDescendantElement;
+    return element instanceof HTMLElement ? element : null;
+  }
+
+  private set activeItem(option: HTMLElement | null) {
     this.ariaActiveDescendantElement = option;
 
     for (const element of this.querySelectorAll<HTMLElement>(
@@ -429,8 +423,8 @@ export default class ListSelect extends HTMLElement {
   }
 
   private selectActiveOption() {
-    const active = this.ariaActiveDescendantElement;
-    if (active instanceof HTMLElement) {
+    const active = this.activeItem;
+    if (active) {
       this.selectOption(active);
     } else {
       this.hide();
@@ -439,24 +433,24 @@ export default class ListSelect extends HTMLElement {
 
   private highlightNext() {
     const options = this.options;
-    const active = this.ariaActiveDescendantElement;
-    const index = active instanceof HTMLElement ? options.indexOf(active) : -1;
+    const active = this.activeItem;
+    const index = active ? options.indexOf(active) : -1;
     const next = index < 0 ? options[0] : options[(index + 1) % options.length];
     if (next) {
-      this.setActiveOption(next);
+      this.activeItem = next;
     }
   }
 
   private highlightPrevious() {
     const options = this.options;
-    const active = this.ariaActiveDescendantElement;
-    const index = active instanceof HTMLElement ? options.indexOf(active) : -1;
+    const active = this.activeItem;
+    const index = active ? options.indexOf(active) : -1;
     const prev =
       index < 0
-        ? options[options.length - 1]
+        ? options.at(-1)
         : options[(index - 1 + options.length) % options.length];
     if (prev) {
-      this.setActiveOption(prev);
+      this.activeItem = prev;
     }
   }
 
@@ -469,14 +463,8 @@ export default class ListSelect extends HTMLElement {
     this.open = true;
     this.items.showPopover();
 
-    // Highlight the currently selected option, or the first
-    const selected =
-      this.#value !== null
-        ? this.querySelector<HTMLElement>(
-            `[role="option"][value="${CSS.escape(this.#value)}"]`,
-          )
-        : null;
-    this.setActiveOption(selected ?? this.options[0] ?? null);
+    const selected = this.#value !== null ? this.getItem(this.#value) : null;
+    this.activeItem = selected ?? this.options[0] ?? null;
   }
 
   hide() {
