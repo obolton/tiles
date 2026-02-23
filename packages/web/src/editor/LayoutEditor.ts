@@ -15,8 +15,9 @@ import type Page from "@/models/Page";
 import type { DragDropEvent } from "@/utils/drag";
 import type { PageItemEvent } from "@/elements/item/events";
 import type Tile from "@/models/Tile";
+import type { Layout } from "api/types/tiles";
 
-export type LayoutType = "VERTICAL" | "HORIZONTAL" | "GRID" | "FREEFORM";
+export type LayoutType = Layout;
 
 export interface LayoutEditorOptions {
   element: HTMLElement;
