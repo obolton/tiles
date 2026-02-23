@@ -4,13 +4,15 @@ import images from "./extensions/images";
 import colors from "./extensions/colors";
 import backgrounds from "./extensions/backgrounds";
 import themes from "./extensions/themes";
+import dates from "./extensions/dates";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter })
   .$extends(images)
   .$extends(colors)
   .$extends(backgrounds)
-  .$extends(themes);
+  .$extends(themes)
+  .$extends(dates);
 
 export type ExtendedPrismaClient = typeof prisma;
 
@@ -25,6 +27,7 @@ type PrismaClientExtensionArgs<
 export type ExtensionArgs = PrismaClientExtensionArgs<typeof images> &
   PrismaClientExtensionArgs<typeof colors> &
   PrismaClientExtensionArgs<typeof backgrounds> &
-  PrismaClientExtensionArgs<typeof themes>;
+  PrismaClientExtensionArgs<typeof themes> &
+  PrismaClientExtensionArgs<typeof dates>;
 
 export default prisma;
