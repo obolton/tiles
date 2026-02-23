@@ -8,6 +8,7 @@ import type { Reactive } from "@/utils/reactivity";
 
 export interface ColorPickerProps {
   id: string;
+  label?: string;
   value?: Reactive<Color | null>;
   onChange: (value: Color) => void;
   showClear?: boolean;
@@ -23,6 +24,7 @@ const START_HUE = 24;
 
 export default function ColorPicker({
   id,
+  label = "Color",
   value,
   onChange,
   showClear,
@@ -35,7 +37,7 @@ export default function ColorPicker({
       <ToolbarButton
         id={id}
         popovertarget={popoverId}
-        label="Color"
+        label={label}
         aria-haspopup="menu"
         aria-expanded="false"
       >
