@@ -1,5 +1,4 @@
 import "@/styles/global.css";
-import "@/styles/editing.css";
 import "@/styles/toolbars.css";
 import "@/styles/buttons.css";
 import "@/styles/forms.css";
