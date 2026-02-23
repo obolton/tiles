@@ -135,6 +135,18 @@
       outline: var(--focus-outline);
     }
 
+    &:is(list-select) {
+      padding: 0;
+    }
+
+    &:is(list-select)::part(button) {
+      position: relative;
+      align-self: stretch;
+      padding-block: 0;
+      padding-inline: 10px;
+      transition: scale var(--animation-duration-short) var(--easing);
+    }
+
     &:is(
         :hover:not(:disabled),
         :active:not(:disabled),
@@ -142,7 +154,8 @@
         [aria-checked="true"],
         [aria-expanded="true"]
       ):not(.pending, [aria-disabled="true"]) {
-      &::before {
+      &:not(list-select)::before,
+      &:is(list-select)::part(button)::before {
         content: "";
         position: absolute;
         inset: 0;
@@ -156,7 +169,8 @@
     }
 
     &:hover:not(:disabled, [aria-disabled="true"]) {
-      &::before {
+      &:not(list-select)::before,
+      &:is(list-select)::part(button)::before {
         background-color: rgb(0 0 0 / 10%);
       }
 
@@ -171,13 +185,20 @@
         [aria-checked="true"],
         [aria-expanded="true"]
       ):not([aria-disabled="true"]) {
-      &::before {
+      &:not(list-select)::before,
+      &:is(list-select)::part(button)::before {
         background-color: rgb(0 0 0 / 20%);
       }
     }
 
-    &:active:not(:disabled, [aria-disabled="true"]) {
-      scale: 0.95;
+    &:active:not(:disabled, [aria-disabled="true"], :has(:active)) {
+      &:not(list-select) {
+        scale: 0.95;
+      }
+
+      &:is(list-select)::part(button) {
+        scale: 0.95;
+      }
 
       & > :is(svg, .icon) {
         scale: 1.1;
