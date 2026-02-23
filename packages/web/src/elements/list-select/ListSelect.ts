@@ -86,6 +86,7 @@ export default class ListSelect extends HTMLElement {
     shadow.append(button, this.items);
 
     this.addEventListener("click", this, { passive: true });
+    this.addEventListener("pointermove", this, { passive: true });
     this.addEventListener("keydown", this);
     this.addEventListener("blur", this, { passive: true });
 
@@ -219,6 +220,8 @@ export default class ListSelect extends HTMLElement {
         return this.handleToggle(event as ToggleEvent);
       case "click":
         return this.handleClick(event as PointerEvent);
+      case "pointermove":
+        return this.handlePointerMove(event as PointerEvent);
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
       case "blur":
@@ -234,6 +237,17 @@ export default class ListSelect extends HTMLElement {
 
   private handleToggle(event: ToggleEvent) {
     this.open = event.newState === "open";
+  }
+
+  private handlePointerMove(event: PointerEvent) {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    const option = target.closest<HTMLElement>('[role="option"]');
+    if (option && option !== this.activeItem) {
+      this.activeItem = option;
+    }
   }
 
   private handleClick(event: PointerEvent) {
