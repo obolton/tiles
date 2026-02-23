@@ -2,9 +2,14 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
   user-select: none;
   anchor-name: --list-select-anchor;
+}
+
+#button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 ::slotted(svg) {

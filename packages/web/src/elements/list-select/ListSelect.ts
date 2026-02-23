@@ -1,6 +1,7 @@
 import css from "./ListSelect.css?inline";
 import AnchoredPopover from "@/elements/anchored-popover/AnchoredPopover";
 import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import { reveal } from "@/utils/scroll";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -46,7 +47,8 @@ export default class ListSelect extends HTMLElement {
     super();
 
     this.internals = this.attachInternals();
-    this.internals.role = "menu";
+    this.internals.role = "combobox";
+    this.internals.ariaHasPopup = "listbox";
 
     const shadow = this.attachShadow({ mode: "closed" });
     shadow.adoptedStyleSheets = [stylesheet];
@@ -70,19 +72,22 @@ export default class ListSelect extends HTMLElement {
     this.items.id = "items";
     this.items.part = "items";
     this.items.setAttribute("aria-labelledby", "title");
+    this.items.role = "listbox";
     this.items.addEventListener("toggle", this, { passive: true });
 
     const itemsSlot = document.createElement("slot");
     this.items.append(this.itemsTitle, itemsSlot);
 
-    shadow.append(
-      this.defaultIconSlot,
-      this.iconSlot,
-      this.labelSlot,
-      this.items,
-    );
+    const button = document.createElement("div");
+    button.id = "button";
+    button.part.add("button");
+    button.append(this.defaultIconSlot, this.iconSlot, this.labelSlot);
+
+    shadow.append(button, this.items);
 
     this.addEventListener("click", this, { passive: true });
+    this.addEventListener("keydown", this);
+    this.addEventListener("blur", this, { passive: true });
 
     this.mutationObserver = new MutationObserver((mutations) =>
       this.mutationObserverCallback(mutations),
@@ -164,13 +169,16 @@ export default class ListSelect extends HTMLElement {
       this.internals.states.add("open");
     } else {
       this.internals.states.delete("open");
+      this.setActiveOption(null);
     }
 
     this.ariaExpanded = open ? "true" : "false";
-    this.ariaPressed = open ? "true" : "false";
   }
 
   connectedCallback() {
+    if (!this.hasAttribute("tabindex")) {
+      this.tabIndex = 0;
+    }
     this.open = false;
   }
 
@@ -211,6 +219,16 @@ export default class ListSelect extends HTMLElement {
         return this.handleToggle(event as ToggleEvent);
       case "click":
         return this.handleClick(event as PointerEvent);
+      case "keydown":
+        return this.handleKeyDown(event as KeyboardEvent);
+      case "blur":
+        return this.handleBlur();
+    }
+  }
+
+  private handleBlur() {
+    if (this.open) {
+      this.hide();
     }
   }
 
@@ -235,12 +253,79 @@ export default class ListSelect extends HTMLElement {
     }
 
     const item = target instanceof Element ? target.closest("button") : null;
-    if (!item) {
-      return;
+    if (item) {
+      this.selectOption(item);
     }
-    this.value = item.value;
-    this.dispatchEvent(new Event("change", { bubbles: true }));
-    this.hide();
+  }
+
+  private handleKeyDown(event: KeyboardEvent) {
+    switch (event.key) {
+      case "ArrowDown":
+        event.preventDefault();
+        event.stopPropagation();
+        if (this.open) {
+          this.highlightNext();
+        } else {
+          this.show();
+        }
+        break;
+
+      case "ArrowUp":
+        event.preventDefault();
+        event.stopPropagation();
+        if (this.open) {
+          this.highlightPrevious();
+        } else {
+          this.show();
+        }
+        break;
+
+      case "Enter":
+      case " ":
+        event.preventDefault();
+        event.stopPropagation();
+        if (this.open) {
+          this.selectActiveOption();
+        } else {
+          this.show();
+        }
+        break;
+
+      case "Home":
+        if (!this.open) {
+          break;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        this.setActiveOption(this.options[0] ?? null);
+        break;
+
+      case "End":
+        if (!this.open) {
+          break;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        this.setActiveOption(this.options.at(-1) ?? null);
+        break;
+
+      case "Escape":
+        if (!this.open) {
+          break;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        this.hide();
+        break;
+
+      case "Tab":
+        if (!this.open) {
+          break;
+        }
+        event.stopPropagation();
+        this.hide();
+        break;
+    }
   }
 
   private mutationObserverCallback(mutations: MutationRecord[]) {
@@ -311,6 +396,70 @@ export default class ListSelect extends HTMLElement {
     this.prepend(labelElement);
   }
 
+  // Keyboard navigation
+
+  private get options(): HTMLElement[] {
+    return Array.from(
+      this.querySelectorAll<HTMLElement>('[role="option"]:not([hidden])'),
+    );
+  }
+
+  private setActiveOption(option: HTMLElement | null) {
+    this.ariaActiveDescendantElement = option;
+
+    for (const element of this.querySelectorAll<HTMLElement>(
+      '[role="option"][data-active]',
+    )) {
+      delete element.dataset.active;
+    }
+
+    if (option) {
+      option.dataset.active = "true";
+      reveal(this.items, option);
+    }
+  }
+
+  private selectOption(option: HTMLElement) {
+    const value = option.getAttribute("value");
+    if (value !== null) {
+      this.value = value;
+      this.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    this.hide();
+  }
+
+  private selectActiveOption() {
+    const active = this.ariaActiveDescendantElement;
+    if (active instanceof HTMLElement) {
+      this.selectOption(active);
+    } else {
+      this.hide();
+    }
+  }
+
+  private highlightNext() {
+    const options = this.options;
+    const active = this.ariaActiveDescendantElement;
+    const index = active instanceof HTMLElement ? options.indexOf(active) : -1;
+    const next = index < 0 ? options[0] : options[(index + 1) % options.length];
+    if (next) {
+      this.setActiveOption(next);
+    }
+  }
+
+  private highlightPrevious() {
+    const options = this.options;
+    const active = this.ariaActiveDescendantElement;
+    const index = active instanceof HTMLElement ? options.indexOf(active) : -1;
+    const prev =
+      index < 0
+        ? options[options.length - 1]
+        : options[(index - 1 + options.length) % options.length];
+    if (prev) {
+      this.setActiveOption(prev);
+    }
+  }
+
   // Open and close
 
   show() {
@@ -319,6 +468,15 @@ export default class ListSelect extends HTMLElement {
     }
     this.open = true;
     this.items.showPopover();
+
+    // Highlight the currently selected option, or the first
+    const selected =
+      this.#value !== null
+        ? this.querySelector<HTMLElement>(
+            `[role="option"][value="${CSS.escape(this.#value)}"]`,
+          )
+        : null;
+    this.setActiveOption(selected ?? this.options[0] ?? null);
   }
 
   hide() {
