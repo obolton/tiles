@@ -56,6 +56,10 @@
 }
 
 .drag-placeholder {
+  width: calc(var(--placeholder-width) * 24px);
+  height: calc(var(--placeholder-height) * 24px);
+  justify-self: center;
+  border-radius: var(--border-radius);
   background: rgb(0 0 0 / 10%);
 }
 
