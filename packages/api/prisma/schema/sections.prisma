@@ -3,6 +3,7 @@ enum Layout {
   HORIZONTAL
   VERTICAL
   FREEFORM
+  CALENDAR
 }
 
 model Section {
