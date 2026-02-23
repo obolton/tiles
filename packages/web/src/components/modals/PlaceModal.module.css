@@ -29,9 +29,6 @@
   outline: transparent solid 0;
   border-radius: 8px;
   cursor: pointer;
-  transition:
-    outline-width var(--animation-duration) var(--easing),
-    outline-color var(--animation-duration) var(--easing);
 }
 
 .place-select > li:hover {

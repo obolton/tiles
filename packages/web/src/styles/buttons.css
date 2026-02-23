@@ -116,12 +116,10 @@
     color: var(--ui-color);
     border: none;
     background: none;
-    outline-color: transparent;
     border-radius: var(--border-radius);
     transition:
       opacity var(--animation-duration-short) var(--easing),
-      scale var(--animation-duration-short) var(--easing),
-      outline-color var(--animation-duration) var(--easing);
+      scale var(--animation-duration-short) var(--easing);
 
     & > :is(svg, .icon) {
       width: 24px;
