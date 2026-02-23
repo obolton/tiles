@@ -73,7 +73,7 @@ export default function MemberCard({
               <ListOption
                 value="REMOVE"
                 label="Remove"
-                classList={{ [styles.remove]: true }}
+                classList={{ destructive: true }}
               >
                 {isSelf ? "Leave workspace" : "Remove from workspace"}
               </ListOption>
