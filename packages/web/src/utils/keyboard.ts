@@ -103,11 +103,14 @@ export default class KeyboardNavigation implements EventListenerObject {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    if (!(event.target instanceof Element)) {
+    const target = event.target;
+
+    if (event.defaultPrevented || !(target instanceof Element)) {
       return;
     }
 
-    const item = event.target.closest<HTMLElement>(this.selector);
+    const item = target.closest<HTMLElement>(this.selector) ?? this.activeItem;
+
     if (!item) {
       return;
     }
