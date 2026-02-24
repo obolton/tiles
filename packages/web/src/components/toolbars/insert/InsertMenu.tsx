@@ -1,4 +1,3 @@
-import Menu from "@/components/menus/Menu";
 import MenuItemGroup from "@/components/menus/MenuItemGroup";
 import MenuItem from "@/components/menus/MenuItem";
 import TextIcon from "@/icons/text.svg?jsx";
@@ -170,35 +169,33 @@ export default function InsertMenu({
 
   return (
     <popover-menu {...props}>
-      <Menu>
-        <MenuItemGroup>
-          {BUTTONS.map(({ label, type, Icon }) => (
-            <MenuItem
-              icon={<Icon aria-hidden="true" />}
-              data-tile-type={type}
-              on:click={onClick}
-            >
-              {label}
-            </MenuItem>
-          ))}
-        </MenuItemGroup>
-
-        <MenuItemGroup>
+      <MenuItemGroup>
+        {BUTTONS.map(({ label, type, Icon }) => (
           <MenuItem
-            icon={<VerticalLayoutIcon aria-hidden="true" />}
-            on:click={createStack}
+            icon={<Icon aria-hidden="true" />}
+            data-tile-type={type}
+            on:click={onClick}
           >
-            Collection
+            {label}
           </MenuItem>
+        ))}
+      </MenuItemGroup>
 
-          <MenuItem
-            icon={<FreeformLayoutIcon aria-hidden="true" />}
-            on:click={createFreeformSection}
-          >
-            Canvas
-          </MenuItem>
-        </MenuItemGroup>
-      </Menu>
+      <MenuItemGroup>
+        <MenuItem
+          icon={<VerticalLayoutIcon aria-hidden="true" />}
+          on:click={createStack}
+        >
+          Collection
+        </MenuItem>
+
+        <MenuItem
+          icon={<FreeformLayoutIcon aria-hidden="true" />}
+          on:click={createFreeformSection}
+        >
+          Canvas
+        </MenuItem>
+      </MenuItemGroup>
     </popover-menu>
   );
 }

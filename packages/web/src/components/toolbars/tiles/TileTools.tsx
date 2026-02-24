@@ -1,6 +1,5 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
-import Menu from "@/components/menus/Menu";
 import MenuItemGroup from "@/components/menus/MenuItemGroup";
 import MenuItem from "@/components/menus/MenuItem";
 import ArrowUpIcon from "@/icons/arrow-up.svg?jsx";
@@ -61,87 +60,82 @@ export default function TileTools({ tile }: TileToolsProps) {
       </ToolbarButton>
 
       <popover-menu id={`${tile.id}-options`}>
-        <Menu>
-          <MenuItemGroup>
-            <MenuItem
-              icon={<ArrowUpIcon aria-hidden="true" />}
-              on:click={moveUp}
-            >
-              Move up
-            </MenuItem>
-            <MenuItem
-              icon={<ArrowDownIcon aria-hidden="true" />}
-              on:click={moveDown}
-            >
-              Move down
-            </MenuItem>
-          </MenuItemGroup>
+        <MenuItemGroup>
+          <MenuItem icon={<ArrowUpIcon aria-hidden="true" />} on:click={moveUp}>
+            Move up
+          </MenuItem>
+          <MenuItem
+            icon={<ArrowDownIcon aria-hidden="true" />}
+            on:click={moveDown}
+          >
+            Move down
+          </MenuItem>
+        </MenuItemGroup>
 
-          <MenuItemGroup>
-            <MenuItem
-              role="menuitemradio"
-              icon={<DockTopIcon aria-hidden="true" />}
-              checked={tile.dock.derive((d) => d === "TOP")}
-              on:click={() => setDock("TOP")}
-            >
-              Dock to top
-            </MenuItem>
-            <MenuItem
-              role="menuitemradio"
-              icon={<DockBottomIcon aria-hidden="true" />}
-              checked={tile.dock.derive((d) => d === "BOTTOM")}
-              on:click={() => setDock("BOTTOM")}
-            >
-              Dock to bottom
-            </MenuItem>
-            <MenuItem
-              role="menuitemradio"
-              icon={<DockLeftIcon aria-hidden="true" />}
-              checked={tile.dock.derive((d) => d === "LEFT")}
-              on:click={() => setDock("LEFT")}
-            >
-              Dock to left
-            </MenuItem>
-            <MenuItem
-              role="menuitemradio"
-              icon={<DockRightIcon aria-hidden="true" />}
-              checked={tile.dock.derive((d) => d === "RIGHT")}
-              on:click={() => setDock("RIGHT")}
-            >
-              Dock to right
-            </MenuItem>
-            <MenuItem
-              role="menuitemradio"
-              checked={tile.dock.derive((d) => d === null)}
-              on:click={() => setDock(null)}
-            >
-              Undock
-            </MenuItem>
-          </MenuItemGroup>
+        <MenuItemGroup>
+          <MenuItem
+            role="menuitemradio"
+            icon={<DockTopIcon aria-hidden="true" />}
+            checked={tile.dock.derive((d) => d === "TOP")}
+            on:click={() => setDock("TOP")}
+          >
+            Dock to top
+          </MenuItem>
+          <MenuItem
+            role="menuitemradio"
+            icon={<DockBottomIcon aria-hidden="true" />}
+            checked={tile.dock.derive((d) => d === "BOTTOM")}
+            on:click={() => setDock("BOTTOM")}
+          >
+            Dock to bottom
+          </MenuItem>
+          <MenuItem
+            role="menuitemradio"
+            icon={<DockLeftIcon aria-hidden="true" />}
+            checked={tile.dock.derive((d) => d === "LEFT")}
+            on:click={() => setDock("LEFT")}
+          >
+            Dock to left
+          </MenuItem>
+          <MenuItem
+            role="menuitemradio"
+            icon={<DockRightIcon aria-hidden="true" />}
+            checked={tile.dock.derive((d) => d === "RIGHT")}
+            on:click={() => setDock("RIGHT")}
+          >
+            Dock to right
+          </MenuItem>
+          <MenuItem
+            role="menuitemradio"
+            checked={tile.dock.derive((d) => d === null)}
+            on:click={() => setDock(null)}
+          >
+            Undock
+          </MenuItem>
+        </MenuItemGroup>
 
-          <MenuItemGroup>
-            <MenuItem
-              icon={<DuplicateIcon aria-hidden="true" />}
-              on:click={duplicate}
-            >
-              Duplicate
-            </MenuItem>
-            <MenuItem
-              icon={<HiddenIcon aria-hidden="true" />}
-              checked={tile.hide}
-              on:click={toggleHide}
-            >
-              Hide
-            </MenuItem>
-            <MenuItem
-              icon={<TrashIcon aria-hidden="true" />}
-              destructive
-              on:click={deleteTile}
-            >
-              Delete
-            </MenuItem>
-          </MenuItemGroup>
-        </Menu>
+        <MenuItemGroup>
+          <MenuItem
+            icon={<DuplicateIcon aria-hidden="true" />}
+            on:click={duplicate}
+          >
+            Duplicate
+          </MenuItem>
+          <MenuItem
+            icon={<HiddenIcon aria-hidden="true" />}
+            checked={tile.hide}
+            on:click={toggleHide}
+          >
+            Hide
+          </MenuItem>
+          <MenuItem
+            icon={<TrashIcon aria-hidden="true" />}
+            destructive
+            on:click={deleteTile}
+          >
+            Delete
+          </MenuItem>
+        </MenuItemGroup>
       </popover-menu>
     </ToolbarGroup>
   );

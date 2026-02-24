@@ -1,6 +1,5 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
-import Menu from "@/components/menus/Menu";
 import MenuItemGroup from "@/components/menus/MenuItemGroup";
 import MenuItem from "@/components/menus/MenuItem";
 import ListOption from "@/components/lists/ListOption";
@@ -253,55 +252,53 @@ export default function FormattingTools({
         </ToolbarButton>
 
         <popover-menu id="insert-content-menu">
-          <Menu>
-            <MenuItemGroup>
-              <MenuItem
-                icon={<EventIcon aria-hidden="true" />}
-                on:click={insertNewDate}
-              >
-                Date
-              </MenuItem>
-              <MenuItem
-                icon={<DropdownIcon aria-hidden="true" />}
-                on:click={insertNewDropdown}
-              >
-                Dropdown
-              </MenuItem>
-              <MenuItem
-                icon={<PeopleIcon aria-hidden="true" />}
-                on:click={() => performCommand(openMentionPicker)}
-              >
-                Mention
-              </MenuItem>
-              <MenuItem
-                icon={<DividerIcon aria-hidden="true" />}
-                on:click={() => performCommand(insertDivider)}
-              >
-                Divider
-              </MenuItem>
+          <MenuItemGroup>
+            <MenuItem
+              icon={<EventIcon aria-hidden="true" />}
+              on:click={insertNewDate}
+            >
+              Date
+            </MenuItem>
+            <MenuItem
+              icon={<DropdownIcon aria-hidden="true" />}
+              on:click={insertNewDropdown}
+            >
+              Dropdown
+            </MenuItem>
+            <MenuItem
+              icon={<PeopleIcon aria-hidden="true" />}
+              on:click={() => performCommand(openMentionPicker)}
+            >
+              Mention
+            </MenuItem>
+            <MenuItem
+              icon={<DividerIcon aria-hidden="true" />}
+              on:click={() => performCommand(insertDivider)}
+            >
+              Divider
+            </MenuItem>
 
-              <Each items={Editor.current.page.dropdowns}>
-                {(dropdown) => (
-                  <MenuItem
-                    icon={<DropdownIcon aria-hidden="true" />}
-                    on:click={() =>
-                      insertExistingDropdown(
-                        dropdown.id,
-                        dropdown.options.value[0]?.value ?? "",
-                      )
-                    }
-                  >
-                    {dropdown.title.value ||
-                      listFormatter.format(
-                        dropdown.options.value
-                          .slice(0, 5)
-                          .map(({ value }) => value),
-                      )}
-                  </MenuItem>
-                )}
-              </Each>
-            </MenuItemGroup>
-          </Menu>
+            <Each items={Editor.current.page.dropdowns}>
+              {(dropdown) => (
+                <MenuItem
+                  icon={<DropdownIcon aria-hidden="true" />}
+                  on:click={() =>
+                    insertExistingDropdown(
+                      dropdown.id,
+                      dropdown.options.value[0]?.value ?? "",
+                    )
+                  }
+                >
+                  {dropdown.title.value ||
+                    listFormatter.format(
+                      dropdown.options.value
+                        .slice(0, 5)
+                        .map(({ value }) => value),
+                    )}
+                </MenuItem>
+              )}
+            </Each>
+          </MenuItemGroup>
         </popover-menu>
       </ToolbarGroup>
 
@@ -454,35 +451,33 @@ export default function FormattingTools({
         </ToolbarButton>
 
         <popover-menu id="more-text-menu">
-          <Menu>
-            <MenuItemGroup label="Position">
-              <MenuItem
-                role="menuitemradio"
-                icon={<SuperscriptIcon aria-hidden="true" />}
-                checked={format.derive((f) => f.superscript)}
-                on:click={formatSuperscript}
-              >
-                Superscript
-              </MenuItem>
-              <MenuItem
-                role="menuitemradio"
-                icon={<SubscriptIcon aria-hidden="true" />}
-                checked={format.derive((f) => f.subscript)}
-                on:click={formatSubscript}
-              >
-                Subscript
-              </MenuItem>
-            </MenuItemGroup>
-            <MenuItemGroup label="Variant">
-              <MenuItem
-                icon={<SmallCapsIcon aria-hidden="true" />}
-                checked={format.derive((f) => f.smallCaps)}
-                on:click={formatSmallCaps}
-              >
-                Small caps
-              </MenuItem>
-            </MenuItemGroup>
-          </Menu>
+          <MenuItemGroup label="Position">
+            <MenuItem
+              role="menuitemradio"
+              icon={<SuperscriptIcon aria-hidden="true" />}
+              checked={format.derive((f) => f.superscript)}
+              on:click={formatSuperscript}
+            >
+              Superscript
+            </MenuItem>
+            <MenuItem
+              role="menuitemradio"
+              icon={<SubscriptIcon aria-hidden="true" />}
+              checked={format.derive((f) => f.subscript)}
+              on:click={formatSubscript}
+            >
+              Subscript
+            </MenuItem>
+          </MenuItemGroup>
+          <MenuItemGroup label="Variant">
+            <MenuItem
+              icon={<SmallCapsIcon aria-hidden="true" />}
+              checked={format.derive((f) => f.smallCaps)}
+              on:click={formatSmallCaps}
+            >
+              Small caps
+            </MenuItem>
+          </MenuItemGroup>
         </popover-menu>
 
         <ToolbarButton
