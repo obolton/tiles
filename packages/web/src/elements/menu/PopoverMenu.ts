@@ -31,6 +31,7 @@ export default class PopoverMenu extends AnchoredPopover {
     internals.role = "menu";
 
     this.addEventListener("pointermove", this, { passive: true });
+    this.addEventListener("keydown", this, { passive: true });
   }
 
   connectedCallback() {
@@ -46,8 +47,24 @@ export default class PopoverMenu extends AnchoredPopover {
   handleEvent(event: Event) {
     super.handleEvent(event);
 
-    if (event.type === "pointermove") {
-      this.handlePointerMove(event as PointerEvent);
+    switch (event.type) {
+      case "pointermove":
+        return this.handlePointerMove(event as PointerEvent);
+      case "keydown":
+        return this.handleKeyDown(event as KeyboardEvent);
+    }
+  }
+
+  private handleKeyDown(event: KeyboardEvent) {
+    if (event.defaultPrevented) {
+      return;
+    }
+
+    if (
+      (event.key === "ArrowLeft" || event.key === "ArrowRight") &&
+      this.matches(":popover-open")
+    ) {
+      this.hidePopover();
     }
   }
 
