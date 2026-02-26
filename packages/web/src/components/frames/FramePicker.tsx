@@ -52,7 +52,7 @@ export default function FramePicker({ tile, onChange }: FramePickerProps) {
       </ListGroup>
 
       <ListGroup>
-        <ListOption value="FULL_BLEED" disabled={fullBleedDisabled}>
+        <ListOption value="FULL_BLEED" aria-disabled={fullBleedDisabled}>
           Full bleed
         </ListOption>
       </ListGroup>
