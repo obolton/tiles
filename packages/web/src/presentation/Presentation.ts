@@ -43,6 +43,7 @@ export default class Presentation {
   private currentIndex: number;
   private activeSlide: HTMLElement | null = null;
   private idleTimer = 0;
+  private togglingFullscreen = false;
 
   private get slideCount() {
     return this.container.children.length;
@@ -273,12 +274,17 @@ export default class Presentation {
   }
 
   private onFullscreenChange() {
-    this.fullscreenButton.ariaPressed = document.fullscreenElement
-      ? "true"
-      : "false";
+    const isFullscreen = Boolean(document.fullscreenElement);
+    this.fullscreenButton.ariaPressed = isFullscreen ? "true" : "false";
+
+    if (!isFullscreen && !this.togglingFullscreen) {
+      Presentation.stop();
+    }
+    this.togglingFullscreen = false;
   }
 
   private toggleFullscreen() {
+    this.togglingFullscreen = true;
     if (document.fullscreenElement) {
       document.exitFullscreen();
     } else {

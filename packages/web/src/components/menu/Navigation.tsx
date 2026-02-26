@@ -1,4 +1,3 @@
-import Menu from "@/components/menus/Menu";
 import MenuItem from "@/components/menus/MenuItem";
 import MenuItemGroup from "@/components/menus/MenuItemGroup";
 import MenuItemLink from "@/components/menus/MenuItemLink";
@@ -115,42 +114,40 @@ export default function Navigation({
               )}
             </button>
             <popover-menu id="account-menu">
-              <Menu>
-                <MenuItemGroup>
-                  {value.workspaces.map((workspace) => (
-                    <MenuItemLink
-                      icon={<WorkspaceIcon aria-hidden="true" />}
-                      href={`/workspaces/${workspace.id}`}
-                      target="_blank"
-                      aria-current={workspace.id === workspaceId}
-                    >
-                      {workspace.name}
-                    </MenuItemLink>
-                  ))}
-                  {value.workspaces.length < 5 ? (
-                    <MenuItem
-                      icon={<NewIcon aria-hidden="true" />}
-                      on:click={createWorkspace}
-                    >
-                      Create workspace
-                    </MenuItem>
-                  ) : null}
-                </MenuItemGroup>
-                <MenuItemGroup>
+              <MenuItemGroup>
+                {value.workspaces.map((workspace) => (
                   <MenuItemLink
-                    icon={<SettingsIcon aria-hidden="true" />}
-                    href={`/workspaces/${workspaceId}/settings`}
+                    icon={<WorkspaceIcon aria-hidden="true" />}
+                    href={`/workspaces/${workspace.id}`}
+                    target="_blank"
+                    aria-current={workspace.id === workspaceId}
                   >
-                    Settings
+                    {workspace.name}
                   </MenuItemLink>
+                ))}
+                {value.workspaces.length < 5 ? (
                   <MenuItem
-                    icon={<SignOutIcon aria-hidden="true" />}
-                    on:click={signOut}
+                    icon={<NewIcon aria-hidden="true" />}
+                    on:click={createWorkspace}
                   >
-                    Sign out
+                    Create workspace
                   </MenuItem>
-                </MenuItemGroup>
-              </Menu>
+                ) : null}
+              </MenuItemGroup>
+              <MenuItemGroup>
+                <MenuItemLink
+                  icon={<SettingsIcon aria-hidden="true" />}
+                  href={`/workspaces/${workspaceId}/settings`}
+                >
+                  Settings
+                </MenuItemLink>
+                <MenuItem
+                  icon={<SignOutIcon aria-hidden="true" />}
+                  on:click={signOut}
+                >
+                  Sign out
+                </MenuItem>
+              </MenuItemGroup>
             </popover-menu>
           </li>
           <li>

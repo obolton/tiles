@@ -23,11 +23,10 @@ tab-item {
   padding: 0 12px;
   border: none;
   border-radius: 20px;
-  outline: 3px solid transparent;
   cursor: pointer;
   transition-duration: var(--animation-duration-short);
   transition-timing-function: var(--easing);
-  transition-property: background-color, outline-color;
+  transition-property: background-color;
 
   &:focus-visible {
     outline: var(--focus-outline);

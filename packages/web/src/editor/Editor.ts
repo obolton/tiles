@@ -105,10 +105,17 @@ export default class Editor {
 
       this.isEditable.subscribe(() => {
         setEditMode(this.isEditable.value);
-        if (!this.isEditable.value) {
+        if (this.isEditable.value) {
+          requestAnimationFrame(() => this.focusFirstTile());
+        } else {
           this.clearSelection();
         }
       });
+
+      // Focus the first tile if starting in edit mode
+      if (this.isEditable.value) {
+        requestAnimationFrame(() => this.focusFirstTile());
+      }
 
       // Load operation history
       this.operations?.load().then(() => this.syncUndoRedoState());
@@ -253,6 +260,18 @@ export default class Editor {
   }
 
   // Selection
+
+  focusFirstTile() {
+    const first = this.page.tiles.value[0];
+    if (!first) {
+      return;
+    }
+    this.select([first.id]);
+    const element = document.getElementById(first.id);
+    if (element) {
+      focusInside(element);
+    }
+  }
 
   select(ids: string[], extendSelection = false) {
     const tiles = new Set(ids.map((id) => this.page.getTile(id)));

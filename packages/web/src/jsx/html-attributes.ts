@@ -86,6 +86,7 @@ export interface GlobalHTMLAttributes {
     | "date"
     | "time"
     | {};
+  "aria-disabled"?: boolean | "true" | "false" | {};
   "aria-expanded"?: boolean | "true" | "false" | {};
   "aria-pressed"?: boolean | "true" | "false" | "mixed" | {};
   "aria-selected"?: boolean | "true" | "false" | {};

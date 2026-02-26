@@ -60,11 +60,9 @@ ul.navigation-menu {
     line-height: 1.3;
     background: none;
     border-radius: var(--border-radius);
-    outline: 3px solid transparent;
     transition:
       color var(--animation-duration-short) var(--easing),
-      background-color var(--animation-duration-short) var(--easing),
-      outline-color var(--animation-duration) var(--easing);
+      background-color var(--animation-duration-short) var(--easing);
 
     body:not([data-drag]) &:hover {
       color: var(--ui-color);

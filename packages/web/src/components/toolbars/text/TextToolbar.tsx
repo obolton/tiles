@@ -39,8 +39,9 @@ export default function TextToolbar({
 
       <toolbar-tab name="style" label="Style">
         <StyleTools tile={text} />
-        <ToolbarGroup label="Layout">
-          {!autoHeight && (
+
+        {!autoHeight && (
+          <ToolbarGroup label="Layout">
             <list-select
               label="Vertical position"
               data-tooltip="Vertical position"
@@ -78,8 +79,8 @@ export default function TextToolbar({
                 </ListOption>
               </ListGroup>
             </list-select>
-          )}
-        </ToolbarGroup>
+          </ToolbarGroup>
+        )}
       </toolbar-tab>
     </floating-toolbar>
   );

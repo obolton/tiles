@@ -20,12 +20,14 @@ DECLARE
 BEGIN
   -- Insert base tile and capture its type
   INSERT INTO tiles (
-    id, page_id, section_id, type, "order", anchor, dimensions,
-    width, height, row_span, x, y, block, animation, hide, dock, theme_id
+    id, page_id, section_id, type, "order", dimensions,
+    width, height, row_span, x, y, animation, frame, hide, dock, theme_id,
+    text_color, background_color, background_gradient, background_image_id
   )
   SELECT
-    v_new_id, page_id, p_new_section_id, type, p_new_order, anchor, dimensions,
-    width, height, row_span, x, y, block, animation, hide, dock, theme_id
+    v_new_id, page_id, p_new_section_id, type, p_new_order, dimensions,
+    width, height, row_span, x, y, animation, frame, hide, dock, theme_id,
+    text_color, background_color, background_gradient, background_image_id
   FROM tiles
   WHERE page_id = p_page_id AND id = p_tile_id
   RETURNING type INTO v_tile_type;
@@ -33,8 +35,8 @@ BEGIN
   -- Handle type-specific data
   CASE v_tile_type
     WHEN 'TEXT' THEN
-      INSERT INTO text_tiles (id, page_id, content, text_color, background_color, background_gradient, background_image_id, align)
-      SELECT v_new_id, p_page_id, content, text_color, background_color, background_gradient, background_image_id, align
+      INSERT INTO text_tiles (id, page_id, content, align)
+      SELECT v_new_id, p_page_id, content, align
       FROM text_tiles
       WHERE id = p_tile_id AND page_id = p_page_id;
 
@@ -75,8 +77,8 @@ BEGIN
       WHERE map_tile_id = p_tile_id;
 
     WHEN 'TABLE' THEN
-      INSERT INTO table_tiles (id, page_id, text_color, background_color, background_gradient, background_image_id)
-      SELECT v_new_id, p_page_id, text_color, background_color, background_gradient, background_image_id
+      INSERT INTO table_tiles (id, page_id)
+      SELECT v_new_id, p_page_id
       FROM table_tiles
       WHERE id = p_tile_id AND page_id = p_page_id;
 
@@ -117,8 +119,8 @@ BEGIN
 
     WHEN 'CHART' THEN
       -- Chart references an existing table, so column IDs remain valid
-      INSERT INTO charts (id, page_id, table_id, label_column_id, text_color, background_color, background_gradient, background_image_id)
-      SELECT v_new_id, p_page_id, table_id, label_column_id, text_color, background_color, background_gradient, background_image_id
+      INSERT INTO charts (id, page_id, table_id, label_column_id)
+      SELECT v_new_id, p_page_id, table_id, label_column_id
       FROM charts
       WHERE id = p_tile_id AND page_id = p_page_id;
 
@@ -128,8 +130,8 @@ BEGIN
       WHERE chart_id = p_tile_id;
 
     WHEN 'SECTION' THEN
-      INSERT INTO sections (id, page_id, layout, background_color, background_gradient, background_image_id)
-      SELECT v_new_id, p_page_id, layout, background_color, background_gradient, background_image_id
+      INSERT INTO sections (id, page_id, layout)
+      SELECT v_new_id, p_page_id, layout
       FROM sections
       WHERE id = p_tile_id AND page_id = p_page_id;
 

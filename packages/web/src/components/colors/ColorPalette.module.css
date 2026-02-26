@@ -18,8 +18,7 @@
   background: var(--color);
   transition:
     scale var(--animation-duration-short) var(--easing),
-    box-shadow var(--animation-duration-short) var(--easing),
-    outline-color var(--animation-duration) var(--easing);
+    box-shadow var(--animation-duration-short) var(--easing);
 
   &:hover,
   &:checked,

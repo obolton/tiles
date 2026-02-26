@@ -423,14 +423,28 @@ describe("KeyboardNavigation", () => {
       expect(event.preventDefault).not.toHaveBeenCalled();
     });
 
-    test("ignores events from elements not matching the selector", () => {
+    test("falls back to active item when event target doesn't match selector", () => {
       const container = createToolbar(3);
+      const items = container.querySelectorAll(".item");
       const other = document.createElement("span");
       container.append(other);
 
       const nav = new KeyboardNavigation(container, { selector: ".item" });
       nav.attach();
       nav.update();
+
+      press(other, "ArrowRight");
+
+      expect(document.activeElement).toBe(items[1]);
+    });
+
+    test("ignores events when no active item and target doesn't match selector", () => {
+      const container = createToolbar(3);
+      const other = document.createElement("span");
+      container.append(other);
+
+      const nav = new KeyboardNavigation(container, { selector: ".item" });
+      nav.attach();
 
       const event = press(other, "ArrowRight");
 

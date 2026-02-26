@@ -71,7 +71,6 @@ slot {
   display: none;
 }
 
-/* Input - hidden in view mode, visible in edit mode */
 #input {
   display: none;
   flex: 1;
@@ -85,16 +84,14 @@ slot {
   background: none;
   border: 1px solid rgb(0 0 0 / 15%);
   border-radius: 4px;
-  outline: 3px solid transparent;
   outline-offset: -1px;
-  transition: outline-color var(--animation-duration) var(--easing);
 
   &:focus-visible:not(:user-invalid) {
-    outline-color: var(--focus-ring-color);
+    outline: var(--focus-outline);
   }
 
   &:user-invalid {
-    outline-color: var(--destructive-color);
+    outline: 3px solid var(--destructive-color);
   }
 }
 
@@ -102,7 +99,6 @@ slot {
   display: block;
 }
 
-/* Delete button - only visible in edit mode */
 #delete {
   display: none;
   align-items: center;

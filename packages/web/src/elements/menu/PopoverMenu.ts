@@ -16,11 +16,23 @@ declare module "@/jsx/html-attributes" {
   }
 }
 
+const ITEM_SELECTOR = '[role^="menuitem"]';
+
 export default class PopoverMenu extends AnchoredPopover {
   private navigation = new KeyboardNavigation(this, {
-    selector: ".menuitem",
+    selector: ITEM_SELECTOR,
     orientation: "vertical",
   });
+
+  constructor() {
+    super();
+
+    const internals = this.attachInternals();
+    internals.role = "menu";
+
+    this.addEventListener("pointermove", this, { passive: true });
+    this.addEventListener("keydown", this, { passive: true });
+  }
 
   connectedCallback() {
     super.connectedCallback();
@@ -30,6 +42,41 @@ export default class PopoverMenu extends AnchoredPopover {
   disconnectedCallback() {
     super.disconnectedCallback();
     this.navigation.detach();
+  }
+
+  handleEvent(event: Event) {
+    super.handleEvent(event);
+
+    switch (event.type) {
+      case "pointermove":
+        return this.handlePointerMove(event as PointerEvent);
+      case "keydown":
+        return this.handleKeyDown(event as KeyboardEvent);
+    }
+  }
+
+  private handleKeyDown(event: KeyboardEvent) {
+    if (event.defaultPrevented) {
+      return;
+    }
+
+    if (
+      (event.key === "ArrowLeft" || event.key === "ArrowRight") &&
+      this.matches(":popover-open")
+    ) {
+      this.hidePopover();
+    }
+  }
+
+  private handlePointerMove(event: PointerEvent) {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    const item = target.closest<HTMLElement>(ITEM_SELECTOR);
+    if (item && item !== this.navigation.activeItem) {
+      this.navigation.setActiveItem(item, true);
+    }
   }
 
   protected handleToggle(event: ToggleEvent) {

@@ -39,6 +39,7 @@ export function isValidStyleValue(value: unknown): value is string | number {
 export const BOOLEAN_STRING_ATTRIBUTES = new Set([
   "aria-checked",
   "aria-current",
+  "aria-disabled",
   "aria-expanded",
   "aria-pressed",
   "aria-selected",

@@ -21,6 +21,7 @@ describe("PopoverMenu", () => {
     items = Array.from({ length: 3 }, (_, i) => {
       const item = document.createElement("button");
       item.className = "menuitem";
+      item.role = "menuitem";
       item.textContent = `Item ${i + 1}`;
       menu.appendChild(item);
       return item;

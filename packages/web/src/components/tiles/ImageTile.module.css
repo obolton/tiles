@@ -38,8 +38,6 @@ body[data-editing] .figure {
   background: rgb(255 255 255 / 50%);
   backdrop-filter: blur(16px) saturate(180%);
   border-radius: calc(var(--border-radius) - 8px);
-  outline: 2px solid transparent;
-  transition: outline-color var(--animation-duration) var(--easing);
 
   &:focus-visible {
     outline: var(--focus-outline);

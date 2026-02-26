@@ -90,6 +90,7 @@ export default function Trash({
           }}
           renderPlaceholder={renderPlaceholder}
           sort={sort}
+          link={false}
           restore
         />
       </SidebarLayout>
