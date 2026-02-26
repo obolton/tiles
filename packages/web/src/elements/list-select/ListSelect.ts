@@ -143,12 +143,12 @@ export default class ListSelect extends HTMLElement {
     const previousItem =
       this.#value === null ? null : this.getItem(this.#value);
     if (previousItem) {
-      previousItem.ariaChecked = "false";
+      previousItem.ariaSelected = "false";
     }
 
     const item = value === null ? null : this.getItem(value);
     if (item) {
-      item.ariaChecked = "true";
+      item.ariaSelected = "true";
     } else if (value !== null) {
       // Item doesn't exist yet, observe for when it's added
       this.mutationObserver.observe(this, {
@@ -241,11 +241,15 @@ export default class ListSelect extends HTMLElement {
 
   private handlePointerMove(event: PointerEvent) {
     const target = event.target;
-    if (!(target instanceof HTMLElement)) {
+    if (!(target instanceof Element)) {
       return;
     }
     const option = target.closest<HTMLElement>('[role="option"]');
-    if (option && option !== this.activeItem) {
+    if (
+      option &&
+      option !== this.activeItem &&
+      option.ariaDisabled !== "true"
+    ) {
       this.activeItem = option;
     }
   }
@@ -266,7 +270,10 @@ export default class ListSelect extends HTMLElement {
       return;
     }
 
-    const item = target instanceof Element ? target.closest("button") : null;
+    const item =
+      target instanceof Element
+        ? target.closest<HTMLElement>('[role="option"]')
+        : null;
     if (item) {
       this.selectOption(item);
     }
@@ -337,7 +344,7 @@ export default class ListSelect extends HTMLElement {
       return;
     }
 
-    const selector = `button[value="${CSS.escape(value)}"]`;
+    const selector = `[role="option"][data-value="${CSS.escape(value)}"]`;
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {
         if (!(node instanceof Element)) {
@@ -347,7 +354,7 @@ export default class ListSelect extends HTMLElement {
           ? node
           : node.querySelector(selector);
         if (item) {
-          item.ariaChecked = "true";
+          item.ariaSelected = "true";
           this.showItem(item);
           this.mutationObserver.disconnect();
           return;
@@ -359,7 +366,9 @@ export default class ListSelect extends HTMLElement {
   // Items
 
   private getItem(value: string) {
-    return this.querySelector<HTMLElement>(`[value="${CSS.escape(value)}"]`);
+    return this.querySelector<HTMLElement>(
+      `[role="option"][data-value="${CSS.escape(value)}"]`,
+    );
   }
 
   private showItem(item: Element | null) {
@@ -403,7 +412,9 @@ export default class ListSelect extends HTMLElement {
 
   private get options(): HTMLElement[] {
     return Array.from(
-      this.querySelectorAll<HTMLElement>('[role="option"]:not([hidden])'),
+      this.querySelectorAll<HTMLElement>(
+        '[role="option"]:not([hidden], [aria-disabled="true"])',
+      ),
     );
   }
 
@@ -428,7 +439,10 @@ export default class ListSelect extends HTMLElement {
   }
 
   private selectOption(option: HTMLElement) {
-    const value = option.getAttribute("value");
+    if (option.ariaDisabled === "true") {
+      return;
+    }
+    const value = option.dataset.value ?? null;
     if (value !== null) {
       this.value = value;
       this.dispatchEvent(new Event("change", { bubbles: true }));

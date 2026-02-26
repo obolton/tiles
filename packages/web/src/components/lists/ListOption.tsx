@@ -1,11 +1,13 @@
 import type { JSX } from "@/jsx/jsx";
 
-export interface ListOptionProps extends JSX.Attributes<"button"> {
+export interface ListOptionProps extends JSX.Attributes<"div"> {
+  value?: string;
   label?: string;
   icon?: JSX.Node;
 }
 
 export default function ListOption({
+  value,
   label,
   icon,
   children,
@@ -13,17 +15,17 @@ export default function ListOption({
   ...props
 }: ListOptionProps) {
   return (
-    <button
-      type="button"
+    <div
       role="option"
       classList={{ option: true, ...classList }}
       aria-label={label}
+      data-value={value}
       data-label={label}
       data-tooltip={label}
       {...props}
     >
       {icon}
       {children}
-    </button>
+    </div>
   );
 }
