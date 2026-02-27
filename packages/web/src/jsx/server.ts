@@ -120,11 +120,9 @@ function getDOMAttributes(properties: Record<string, unknown>) {
         attributeName + '="' + escapeUTF8(serializeStyles(value)) + '"',
       );
     } else if (BOOLEAN_STRING_ATTRIBUTES.has(attributeName)) {
-      attributes.push(
-        attributeName +
-          "=" +
-          (value && value !== "false" ? '"true"' : '"false"'),
-      );
+      const stringValue =
+        typeof value === "string" ? value : value ? "true" : "false";
+      attributes.push(attributeName + '="' + escapeUTF8(stringValue) + '"');
     } else if (typeof value === "boolean") {
       if (value) {
         attributes.push(attributeName);

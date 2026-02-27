@@ -90,6 +90,13 @@ describe("render", () => {
         ];
         expect(element.getAttribute(attribute)).toBe("false");
       });
+
+      test("string value", () => {
+        const [element] = render(jsx("div", { [attribute]: "page" })) as [
+          HTMLElement,
+        ];
+        expect(element.getAttribute(attribute)).toBe("page");
+      });
     });
   });
 
