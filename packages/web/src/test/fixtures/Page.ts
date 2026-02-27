@@ -17,6 +17,8 @@ export const PAGE: PageData = {
   coverImageUrl: null,
   font: "CLASSIC",
   backgroundColor: "ffff00000000",
+  width: 32,
+  alignment: "CENTER" as const,
   dockTopHeight: null,
   dockBottomHeight: null,
   dockLeftWidth: null,

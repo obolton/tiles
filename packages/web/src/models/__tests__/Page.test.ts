@@ -39,6 +39,8 @@ describe("Page", () => {
     expect(page.isPublished.value).toBe(PAGE.published);
     expect(page.folderId.value).toBe(PAGE.folderId);
     expect(page.themeId.value).toBeNull();
+    expect(page.width.value).toBe(PAGE.width);
+    expect(page.alignment.value).toBe(PAGE.alignment);
     expect(page.dockSizes.value).toEqual({
       TOP: PAGE.dockTopHeight,
       BOTTOM: PAGE.dockBottomHeight,
@@ -201,6 +203,46 @@ describe("Page", () => {
       expect(client.pages.update.mutate).toHaveBeenCalledWith({
         pageId: PAGE.id,
         themeId: newThemeId,
+      });
+    });
+  });
+
+  describe("setWidth", () => {
+    test("updates the width and persists it", async () => {
+      const page = new Page(PAGE);
+
+      await page.setWidth(40);
+
+      expect(page.width.value).toBe(40);
+      expect(client.pages.update.mutate).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        width: 40,
+      });
+    });
+
+    test("resets width to default", async () => {
+      const page = new Page({ ...PAGE, width: 40 });
+
+      await page.setWidth(32);
+
+      expect(page.width.value).toBe(32);
+      expect(client.pages.update.mutate).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        width: 32,
+      });
+    });
+  });
+
+  describe("setAlignment", () => {
+    test("updates the alignment and persists it", async () => {
+      const page = new Page(PAGE);
+
+      await page.setAlignment("LEFT");
+
+      expect(page.alignment.value).toBe("LEFT");
+      expect(client.pages.update.mutate).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        alignment: "LEFT",
       });
     });
   });
