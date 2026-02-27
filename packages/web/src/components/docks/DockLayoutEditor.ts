@@ -180,7 +180,7 @@ export default class DockLayoutEditor {
 
     this.dragPlaceholder = createDragPlaceholder();
 
-    if (this.isHorizontal) {
+    if (this.isHorizontal && tile.width.value != null) {
       this.dragPlaceholder.style.setProperty(
         "--width",
         tile.width.value.toString(),
@@ -286,7 +286,8 @@ export default class DockLayoutEditor {
     const afterRect = afterElement.getBoundingClientRect();
 
     const size = this.isHorizontal ? "width" : "height";
-    const combined = beforeTile[size].value + afterTile[size].value;
+    const combined =
+      (beforeTile[size].value ?? 0) + (afterTile[size].value ?? 0);
     const combinedPixels = beforeRect[size] + afterRect[size];
     const newBeforePixels = beforeRect[size] + delta;
 

@@ -72,6 +72,7 @@ export default function InsertMenu({
         Text.create(Editor.current.page, {
           sectionId: insertSectionId,
           beforeId: getBeforeId(),
+          sizing: "AUTO",
           content: [{ type: "paragraph", children: [] }],
         }).catch(handleError);
         break;
@@ -92,7 +93,7 @@ export default function InsertMenu({
               sectionId: insertSectionId,
               beforeId: getBeforeId(),
               imageId,
-              height: 10,
+              sizing: "FOUR_THREE",
             });
           },
         });
@@ -133,7 +134,7 @@ export default function InsertMenu({
               sectionId: insertSectionId,
               beforeId: getBeforeId(),
               places: [place],
-              height: 15,
+              sizing: "FOUR_THREE",
             });
           },
         });
@@ -155,7 +156,7 @@ export default function InsertMenu({
     Section.create(Editor.current.page, {
       beforeId: getBeforeId(),
       layout: "FREEFORM",
-      height: 15,
+      sizing: "FOUR_THREE",
     }).catch(handleError);
   }
 

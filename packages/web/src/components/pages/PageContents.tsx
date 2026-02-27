@@ -34,20 +34,22 @@ export default function PageContents({
   }
 
   return (
-    <main ref={ref} className={styles.main} data-layout="VERTICAL">
+    <main
+      ref={ref}
+      className={styles.main}
+      style={{ "--width": page.width }}
+      data-alignment={page.alignment}
+      data-layout="VERTICAL"
+    >
       <Each items={tiles}>
         {(tile) => (
           <Item
             editable={isEditable}
             tile={tile}
             tabindex={tabindex}
-            resize={tile.dimensions.derive((value) => {
-              if (value !== "CUSTOM") {
-                return null;
-              }
-              return tile.type === "TEXT" ? "horizontal" : "all";
-            })}
-            autoHeight={tile.type === "TEXT"}
+            resize={tile.sizing.derive((d) =>
+              d === "CUSTOM" ? "all" : "horizontal",
+            )}
             showInsertButton
           />
         )}

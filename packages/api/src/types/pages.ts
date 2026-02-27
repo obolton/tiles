@@ -1,1 +1,6 @@
-export type { Layout, Dimensions, Font } from "@/generated/prisma/client";
+export type {
+  Layout,
+  Sizing,
+  Font,
+  HorizontalAlignment,
+} from "@/generated/prisma/client";

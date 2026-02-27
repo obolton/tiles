@@ -21,10 +21,10 @@ import { getThemeStyles } from "@/utils/themes";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import If from "@/jsx/if";
 import InsertButton from "@/components/buttons/InsertButton";
-import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
+import { ASPECT_RATIOS } from "@/constants/size";
 import styles from "./Item.module.css";
 import type Tile from "@/models/Tile";
-import type { Animation, Dimensions } from "@/models/Tile";
+import type { Animation, Sizing } from "@/models/Tile";
 import type PageItem from "@/elements/item/PageItem";
 import type { ResizeDirection } from "@/elements/item/PageItem";
 import type { DragDropEvent } from "@/utils/drag";
@@ -46,14 +46,9 @@ export interface ItemProps {
   tabindex?: number | Reactive<number | undefined>;
   resize?: Reactive<ResizeDirection | null>;
   showInsertButton?: boolean;
-  autoHeight?: boolean;
 }
 
-function getTileComponent(
-  tile: Tile,
-  showToolbar: Reactive<boolean>,
-  autoHeight: boolean,
-) {
+function getTileComponent(tile: Tile, showToolbar: Reactive<boolean>) {
   if (tile instanceof SectionModel) {
     return <Section section={tile} showToolbar={showToolbar} />;
   }
@@ -64,9 +59,7 @@ function getTileComponent(
     return <VideoTile video={tile} />;
   }
   if (tile instanceof TextModel) {
-    return (
-      <TextTile text={tile} showToolbar={showToolbar} autoHeight={autoHeight} />
-    );
+    return <TextTile text={tile} showToolbar={showToolbar} />;
   }
   if (tile instanceof MapModel) {
     return <MapTile map={tile} showToolbar={showToolbar} />;
@@ -87,28 +80,33 @@ function getTileComponent(
 }
 
 export function getSizeStyle(
-  dimensions: Dimensions,
-  width: number,
+  sizing: Sizing,
+  width: number | null,
   height: number,
 ) {
-  switch (dimensions) {
-    case "LANDSCAPE":
-      return {
-        "--width": LANDSCAPE_SIZE.width.toString(),
-        "--height": LANDSCAPE_SIZE.height.toString(),
-      };
-    case "PORTRAIT":
-      return {
-        "--width": PORTRAIT_SIZE.width.toString(),
-        "--height": PORTRAIT_SIZE.height.toString(),
-      };
-    case "CUSTOM":
-    default:
-      return {
-        "--width": width.toString(),
-        "--height": height.toString(),
-      };
+  if (sizing === "CUSTOM") {
+    return {
+      "--width": width?.toString(),
+      "--height": height.toString(),
+      "aspect-ratio": undefined,
+      height: undefined,
+    };
   }
+  if (sizing === "AUTO") {
+    return {
+      "--width": width?.toString(),
+      "--height": undefined,
+      "aspect-ratio": undefined,
+      height: "auto",
+    };
+  }
+  const ratio = ASPECT_RATIOS[sizing];
+  return {
+    "--width": width?.toString(),
+    "--height": undefined,
+    "aspect-ratio": ratio,
+    height: "auto",
+  };
 }
 
 export default function Item({
@@ -119,9 +117,8 @@ export default function Item({
   tabindex,
   resize,
   showInsertButton = false,
-  autoHeight = false,
 }: ItemProps) {
-  const { id, dimensions, x, y, width, height, rowSpan, hide, editor } = tile;
+  const { id, sizing, x, y, width, height, rowSpan, hide, editor } = tile;
 
   let item: PageItem;
   const ref = (element: PageItem) => {
@@ -203,7 +200,7 @@ export default function Item({
 
   const combinedStyles = combine(
     {
-      dimensions,
+      sizing,
       width,
       height,
       rowSpan,
@@ -211,18 +208,10 @@ export default function Item({
       themeStyles,
       animation: tile.animation,
     },
-    ({
-      dimensions,
-      width,
-      height,
-      rowSpan,
-      position,
-      themeStyles,
-      animation,
-    }) => ({
+    ({ sizing, width, height, rowSpan, position, themeStyles, animation }) => ({
       ...style,
       ...position,
-      ...getSizeStyle(dimensions, width, height),
+      ...getSizeStyle(sizing, width, height),
       "--rows": rowSpan.toString(),
       ...themeStyles,
       "--animation-name": animation ? ANIMATION_NAMES[animation] : undefined,
@@ -266,7 +255,6 @@ export default function Item({
           [styles.selected]: isSelected,
           [styles.referenced]: isReferenced,
           [styles.referencing]: editor.isPromptOpen,
-          [styles["auto-height"]]: autoHeight,
           [styles.hide]: hide,
           ...classList,
         }}
@@ -275,7 +263,7 @@ export default function Item({
         on:pointerdown={onPointerDown}
         on:dnd-dragstart={onDragStart}
       >
-        {getTileComponent(tile, showToolbar, autoHeight)}
+        {getTileComponent(tile, showToolbar)}
 
         {showInsertButton && (
           <If condition={isSelected}>

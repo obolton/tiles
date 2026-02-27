@@ -239,4 +239,5 @@
   border-radius: inherit;
   min-width: inherit;
   min-height: inherit;
+  aspect-ratio: inherit;
 }

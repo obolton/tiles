@@ -2,7 +2,7 @@ import { z } from "zod";
 import {
   Animation,
   FrameStyle,
-  Dimensions,
+  Sizing,
   DockEdge,
 } from "@/generated/prisma/enums";
 import { BackgroundSchema } from "./Background";
@@ -13,8 +13,13 @@ const MIN_SIZE_PERCENT = 1;
 const MAX_ROWS = 32;
 
 export const TileSchema = z.object({
-  dimensions: z.enum(Dimensions).optional(),
-  width: z.number().gte(MIN_SIZE_PERCENT).lte(MAX_PERCENT).optional(),
+  sizing: z.enum(Sizing).optional(),
+  width: z
+    .number()
+    .gte(MIN_SIZE_PERCENT)
+    .lte(MAX_PERCENT)
+    .nullable()
+    .optional(),
   height: z.number().gte(MIN_SIZE_PERCENT).lte(MAX_PERCENT).optional(),
   x: z.number().gte(0).lte(MAX_PERCENT).optional(),
   y: z.number().gte(0).lte(MAX_PERCENT).optional(),

@@ -11,6 +11,7 @@ import type { Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
 import type { User, PageAccess } from "@/types/collaboration";
 import type { DockEdge, ClientTile } from "api/types/tiles";
+import type { HorizontalAlignment } from "api/types/pages";
 import type Tile from "@/models/Tile";
 import type Editor from "@/editor/Editor";
 
@@ -31,6 +32,8 @@ export default class Page {
   readonly isPublished: Reactive<boolean>;
   readonly folderId: Reactive<string | null>;
   readonly themeId: Reactive<string | null>;
+  readonly width: Reactive<number>;
+  readonly alignment: Reactive<HorizontalAlignment>;
   readonly dockSizes: Reactive<Record<DockEdge, number | null>>;
   readonly dropdowns: ReactiveArray<Dropdown>;
   readonly access: ReactiveArray<PageAccess>;
@@ -55,6 +58,8 @@ export default class Page {
     this.isPublished = reactive(data.published);
     this.folderId = reactive(data.folderId);
     this.themeId = reactive(data.theme?.id ?? null);
+    this.width = reactive(data.width);
+    this.alignment = reactive(data.alignment);
     this.dockSizes = reactive({
       TOP: data.dockTopHeight,
       BOTTOM: data.dockBottomHeight,
@@ -159,6 +164,8 @@ export default class Page {
       published: boolean;
       folderId: string | null;
       themeId: string | null;
+      width: number;
+      alignment: HorizontalAlignment;
       dockTopHeight: number | null;
       dockBottomHeight: number | null;
       dockLeftWidth: number | null;
@@ -202,6 +209,16 @@ export default class Page {
   setTheme(themeId: string | null) {
     this.themeId.value = themeId;
     return this.update({ themeId });
+  }
+
+  setWidth(width: number) {
+    this.width.value = width;
+    return this.update({ width });
+  }
+
+  setAlignment(alignment: HorizontalAlignment) {
+    this.alignment.value = alignment;
+    return this.update({ alignment });
   }
 
   setDockSizes(sizes: Partial<Record<DockEdge, number | null>>) {

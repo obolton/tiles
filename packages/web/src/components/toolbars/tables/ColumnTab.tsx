@@ -77,6 +77,7 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
     await Chart.create(page, {
       sectionId,
       tableId: id,
+      sizing: "FOUR_THREE",
       series: [{ columnId }],
     });
   }

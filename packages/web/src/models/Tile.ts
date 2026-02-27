@@ -1,13 +1,9 @@
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
-import {
-  LANDSCAPE_SIZE,
-  PORTRAIT_SIZE,
-  DEFAULT_DOCK_SIZE,
-} from "@/constants/size";
+import { ASPECT_RATIOS, DEFAULT_DOCK_SIZE } from "@/constants/size";
 import type {
   ClientTile,
-  Dimensions,
+  Sizing,
   Animation,
   FrameStyle,
   TileType,
@@ -21,7 +17,7 @@ import type { AppRouterInputs } from "@/api/client";
 import type TileCollection from "./TileCollection";
 import type { TilePropertyChanges } from "@/operations";
 
-export type { Dimensions, Animation, FrameStyle, DockEdge };
+export type { Sizing, Animation, FrameStyle, DockEdge };
 
 export default class Tile {
   readonly page: Page;
@@ -38,10 +34,10 @@ export default class Tile {
   parent: TileCollection | null = null;
 
   readonly order: Reactive<string>;
-  readonly dimensions: Reactive<Dimensions>;
+  readonly sizing: Reactive<Sizing>;
   readonly x: Reactive<number>;
   readonly y: Reactive<number>;
-  readonly width: Reactive<number>;
+  readonly width: Reactive<number | null>;
   readonly height: Reactive<number>;
   readonly rowSpan: Reactive<number>;
   readonly animation: Reactive<Animation | null>;
@@ -57,7 +53,7 @@ export default class Tile {
       id,
       type,
       order,
-      dimensions,
+      sizing,
       x,
       y,
       width,
@@ -77,7 +73,7 @@ export default class Tile {
     this.type = type;
 
     this.order = reactive(order);
-    this.dimensions = reactive(dimensions);
+    this.sizing = reactive(sizing);
     this.x = reactive(x);
     this.y = reactive(y);
     this.width = reactive(width);
@@ -212,8 +208,8 @@ export default class Tile {
     if (changes.height !== undefined) {
       this.height.value = changes.height;
     }
-    if (changes.dimensions !== undefined) {
-      this.dimensions.value = changes.dimensions;
+    if (changes.sizing !== undefined) {
+      this.sizing.value = changes.sizing;
     }
     if (changes.animation !== undefined) {
       this.animation.value = changes.animation;
@@ -250,7 +246,7 @@ export default class Tile {
     beforeId?: string | null;
     x?: number;
     y?: number;
-    width?: number;
+    width?: number | null;
     height?: number;
   }) {
     // Capture inverse values before making changes
@@ -299,7 +295,7 @@ export default class Tile {
       this.y.value = y;
       changes.y = y;
     }
-    if (typeof width === "number") {
+    if (width !== undefined) {
       inverse.width = this.width.value;
       this.width.value = width;
       changes.width = width;
@@ -314,44 +310,39 @@ export default class Tile {
     return this.updateTile({ sectionId, beforeId, x, y, width, height, frame });
   }
 
-  setDimensions(dimensions: Dimensions) {
+  setSizing(sizing: Sizing) {
     const inverse: TilePropertyChanges = {
-      dimensions: this.dimensions.value,
+      sizing: this.sizing.value,
       width: this.width.value,
       height: this.height.value,
     };
 
-    this.dimensions.value = dimensions;
+    this.sizing.value = sizing;
 
-    switch (dimensions) {
-      case "LANDSCAPE":
-        this.width.value = LANDSCAPE_SIZE.width;
-        this.height.value = LANDSCAPE_SIZE.height;
-        break;
-      case "PORTRAIT":
-        this.width.value = PORTRAIT_SIZE.width;
-        this.height.value = PORTRAIT_SIZE.height;
-        break;
+    if (sizing !== "CUSTOM" && sizing !== "AUTO") {
+      const ratio = ASPECT_RATIOS[sizing];
+      const resolvedWidth = this.width.value ?? this.page.width.value;
+      this.height.value = Math.round(resolvedWidth / ratio);
     }
 
     const changes: TilePropertyChanges = {
-      dimensions,
+      sizing,
       width: this.width.value,
       height: this.height.value,
     };
 
     this.recordUpdate(changes, inverse);
     return this.updateTile({
-      dimensions,
+      sizing,
       width: this.width.value,
       height: this.height.value,
     });
   }
 
-  setSize({ width, height }: { width?: number; height?: number }) {
+  setSize({ width, height }: { width?: number | null; height?: number }) {
     const inverse: TilePropertyChanges = {};
 
-    if (typeof width === "number") {
+    if (width !== undefined) {
       inverse.width = this.width.value;
       this.width.value = width;
     }

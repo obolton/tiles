@@ -16,7 +16,7 @@ const SHARED = {
   x: 5,
   y: 7,
   anchor: "LEFT",
-  dimensions: "CUSTOM",
+  sizing: "CUSTOM",
   width: 11,
   height: 13,
   rowSpan: 2,

@@ -3,7 +3,7 @@ import { getSibling } from "./dom";
 export interface DragPlaceholderOptions {
   x?: number;
   y?: number;
-  width?: number;
+  width?: number | null;
   height?: number;
   rowSpan?: number;
   freeform?: boolean;
@@ -25,7 +25,7 @@ export function createDragPlaceholder(
     placeholder.style.setProperty("--placeholder-y", y.toString());
   }
 
-  if (width !== undefined) {
+  if (typeof width === "number") {
     placeholder.style.setProperty("--placeholder-width", width.toString());
   }
   if (height !== undefined) {

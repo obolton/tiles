@@ -1,4 +1,5 @@
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
+import AspectRatioSelect from "@/components/toolbars/tiles/AspectRatioSelect";
 import ThemePicker from "@/components/themes/ThemePicker";
 import ColorPicker from "@/components/colors/ColorPicker";
 import FillPicker from "@/components/fills/FillPicker";
@@ -20,6 +21,12 @@ export default function StyleTools({ tile }: StyleToolsProps) {
 
   return (
     <ToolbarGroup label="Style">
+      <AspectRatioSelect
+        value={tile.sizing}
+        onChange={(d) => tile.setSizing(d).catch(handleError)}
+        showAuto={tile.type === "TEXT" || tile.type === "TABLE"}
+      />
+
       <ThemePicker
         value={theme.derive((t) => t?.id ?? null)}
         onChange={setTheme}

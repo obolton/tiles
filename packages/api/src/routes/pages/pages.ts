@@ -170,8 +170,9 @@ export async function createPage(
         order: first,
         x: 0,
         y: 0,
-        width: 24,
+        width: null,
         height: 1,
+        sizing: "AUTO",
         text: {
           create: {
             pageId: page.id,
@@ -215,6 +216,8 @@ export async function updatePage(
     dockBottomHeight,
     dockLeftWidth,
     dockRightWidth,
+    width,
+    alignment,
   }: UpdatePageSchema,
   { userId, workspaceId }: AuthenticatedPageProcedureContext,
 ) {
@@ -253,6 +256,8 @@ export async function updatePage(
         dockBottomHeight,
         dockLeftWidth,
         dockRightWidth,
+        width,
+        alignment,
       },
       select: PAGE_FIELDS,
     });

@@ -17,7 +17,7 @@ const SHARED = {
   order: "a1",
   x: 5,
   y: 7,
-  dimensions: "CUSTOM",
+  sizing: "CUSTOM",
   width: 11,
   height: 13,
   rowSpan: 2,
