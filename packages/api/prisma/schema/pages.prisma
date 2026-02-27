@@ -1,13 +1,23 @@
-enum Dimensions {
+enum Sizing {
+  AUTO
   LANDSCAPE
   PORTRAIT
   CUSTOM
+  SQUARE
+  FOUR_THREE
+  THREE_FOUR
 }
 
 enum VerticalAlignment {
   TOP
   CENTER
   BOTTOM
+}
+
+enum HorizontalAlignment {
+  LEFT
+  CENTER
+  RIGHT
 }
 
 enum GradientDirection {
@@ -71,19 +81,21 @@ enum DockEdge {
 }
 
 model Page {
-  id              String    @id @default(uuid()) @db.Uuid
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-  deletedAt       DateTime? @map("deleted_at")
-  workspaceId     String    @map("workspace_id") @db.Uuid
-  authorId        String    @map("author_id") @db.Uuid
-  folderId        String?   @map("folder_id") @db.Uuid
-  themeId         String?   @map("theme_id") @db.Uuid
-  published       Boolean   @default(false)
-  title           String    @db.VarChar(100)
-  backgroundColor Bytes?    @map("background_color") @db.ByteA
+  id              String              @id @default(uuid()) @db.Uuid
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
+  deletedAt       DateTime?           @map("deleted_at")
+  workspaceId     String              @map("workspace_id") @db.Uuid
+  authorId        String              @map("author_id") @db.Uuid
+  folderId        String?             @map("folder_id") @db.Uuid
+  themeId         String?             @map("theme_id") @db.Uuid
+  published       Boolean             @default(false)
+  title           String              @db.VarChar(100)
+  backgroundColor Bytes?              @map("background_color") @db.ByteA
   font            Font?
-  coverImageKey   String?   @map("cover_image_key")
+  coverImageKey   String?             @map("cover_image_key")
+  width           Int                 @default(32) @db.SmallInt
+  alignment       HorizontalAlignment @default(CENTER)
 
   dockTopHeight    Float? @map("dock_top_height") @db.Real
   dockBottomHeight Float? @map("dock_bottom_height") @db.Real
@@ -119,24 +131,24 @@ model Page {
 }
 
 model Tile {
-  id         String      @id @default(uuid()) @db.Uuid
-  createdAt  DateTime    @default(now()) @map("created_at")
-  updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at")
-  pageId     String      @map("page_id") @db.Uuid
-  sectionId  String?     @map("section_id") @db.Uuid
-  themeId    String?     @map("theme_id") @db.Uuid
-  type       TileType
-  order      String
-  dimensions Dimensions  @default(CUSTOM)
-  width      Float       @default(10) @db.Real
-  height     Float       @default(10) @db.Real
-  rowSpan    Int         @default(1) @map("row_span") @db.SmallInt
-  x          Float       @default(0) @db.Real
-  y          Float       @default(0) @db.Real
-  animation  Animation?
-  frame      FrameStyle?
-  hide       Boolean     @default(false)
-  dock       DockEdge?
+  id        String      @id @default(uuid()) @db.Uuid
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @default(now()) @updatedAt @map("updated_at")
+  pageId    String      @map("page_id") @db.Uuid
+  sectionId String?     @map("section_id") @db.Uuid
+  themeId   String?     @map("theme_id") @db.Uuid
+  type      TileType
+  order     String
+  sizing    Sizing      @default(CUSTOM)
+  width     Float?      @db.Real
+  height    Float       @default(10) @db.Real
+  rowSpan   Int         @default(1) @map("row_span") @db.SmallInt
+  x         Float       @default(0) @db.Real
+  y         Float       @default(0) @db.Real
+  animation Animation?
+  frame     FrameStyle?
+  hide      Boolean     @default(false)
+  dock      DockEdge?
 
   textColor          Bytes?             @map("text_color") @db.ByteA
   backgroundColor    Bytes?             @map("background_color") @db.ByteA
