@@ -16,6 +16,7 @@ type User = NonNullable<AppRouterOutputs["users"]["getUserInfo"]>;
 export interface ProfileProps {
   workspaceId: string;
   user: User;
+  isAdmin: boolean;
 }
 
 const ACCEPT_CONTENT_TYPES = ["image/jpeg", "image/png"];
@@ -71,7 +72,7 @@ async function onSubmit(event: SubmitEvent) {
   }
 }
 
-export default function Profile({ workspaceId, user }: ProfileProps) {
+export default function Profile({ workspaceId, user, isAdmin }: ProfileProps) {
   async function onChangeProfileImage(event: Event) {
     const filePicker = event.currentTarget as FilePicker;
     const image = filePicker.firstElementChild as HTMLImageElement;
@@ -100,7 +101,9 @@ export default function Profile({ workspaceId, user }: ProfileProps) {
   return (
     <PageLayout workspaceId={user.workspaces[0]?.id}>
       <SidebarLayout
-        sidebar={<Sidebar workspaceId={workspaceId} page="PROFILE" />}
+        sidebar={
+          <Sidebar workspaceId={workspaceId} page="PROFILE" isAdmin={isAdmin} />
+        }
       >
         <header>
           <h2>Profile</h2>
