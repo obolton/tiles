@@ -47,13 +47,9 @@ export default function PageContents({
             editable={isEditable}
             tile={tile}
             tabindex={tabindex}
-            resize={tile.dimensions.derive((value) => {
-              if (value !== "CUSTOM") {
-                return null;
-              }
-              return tile.type === "TEXT" ? "horizontal" : "all";
-            })}
-            autoHeight={tile.type === "TEXT"}
+            resize={tile.sizing.derive((d) =>
+              d === "CUSTOM" ? "all" : "horizontal",
+            )}
             showInsertButton
           />
         )}
