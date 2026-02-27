@@ -24,7 +24,7 @@
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "@vitest/coverage-v8": "^4.0.18",
-    "oxlint": "^1.43.0",
+    "oxlint": "^1.50.0",
     "prettier": "^3.8.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
