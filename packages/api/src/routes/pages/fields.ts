@@ -21,6 +21,8 @@ export const PAGE_FIELDS = {
   backgroundColor: true,
   font: true,
   coverImageUrl: true,
+  width: true,
+  alignment: true,
   dockTopHeight: true,
   dockBottomHeight: true,
   dockLeftWidth: true,
