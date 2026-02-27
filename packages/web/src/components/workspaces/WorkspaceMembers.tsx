@@ -112,9 +112,7 @@ export default function WorkspaceMembers({
   };
 
   return (
-    <section className={styles.section}>
-      <h3>Members</h3>
-
+    <>
       <Search
         itemsClassName={styles.members}
         id="search-members"
@@ -136,11 +134,11 @@ export default function WorkspaceMembers({
         )}
       />
 
-      <form on:submit={onLeave}>
+      <form className={styles.leave} on:submit={onLeave}>
         <button className="secondary destructive" type="submit">
           Leave workspace
         </button>
       </form>
-    </section>
+    </>
   );
 }
