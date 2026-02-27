@@ -7,14 +7,10 @@ import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import HorizontalLayoutIcon from "@/icons/horizontal-layout.svg?jsx";
 import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";
 import FreeformLayoutIcon from "@/icons/freeform-layout.svg?jsx";
-import LandscapeIcon from "@/icons/landscape.svg?jsx";
-import PortraitIcon from "@/icons/portrait.svg?jsx";
-import SizeIcon from "@/icons/size.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
-import Editor from "@/editor/Editor";
 import type ListSelect from "@/elements/list-select/ListSelect";
-import type { Layout, Dimensions } from "@/types/pages";
+import type { Layout } from "@/types/pages";
 import type Section from "@/models/Section";
 
 export interface SectionToolbarProps {
@@ -29,14 +25,6 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
     } catch (error) {
       handleError(error);
     }
-  }
-
-  function setDimensions(event: Event) {
-    const select = event.currentTarget as HTMLSelectElement;
-    const dimensions = select.value as Dimensions;
-    Editor.current.transitionSections(() => {
-      section.setDimensions(dimensions);
-    });
   }
 
   return (
@@ -80,33 +68,6 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
                 value="FREEFORM"
               >
                 Freeform
-              </ListOption>
-            </ListGroup>
-          </list-select>
-
-          <list-select
-            label="Size"
-            data-tooltip="Size"
-            orientation="vertical"
-            value={section.dimensions}
-            showvalue
-            on:change={setDimensions}
-          >
-            <ListGroup>
-              <ListOption icon={<SizeIcon aria-hidden="true" />} value="CUSTOM">
-                Custom size
-              </ListOption>
-              <ListOption
-                icon={<LandscapeIcon aria-hidden="true" />}
-                value="LANDSCAPE"
-              >
-                Landscape
-              </ListOption>
-              <ListOption
-                icon={<PortraitIcon aria-hidden="true" />}
-                value="PORTRAIT"
-              >
-                Portrait
               </ListOption>
             </ListGroup>
           </list-select>
