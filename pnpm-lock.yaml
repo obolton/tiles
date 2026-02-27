@@ -228,8 +228,8 @@ importers:
         specifier: ^7.3.1
         version: 7.3.1(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.21.0)
       vite-css-modules:
-        specifier: ^1.12.0
-        version: 1.12.0(postcss@8.5.6)(rollup@4.57.1)(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.21.0))
+        specifier: ^1.13.0
+        version: 1.13.0(postcss@8.5.6)(rollup@4.57.1)(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.21.0))
       wrangler:
         specifier: ^4.59.1
         version: 4.59.1
@@ -2663,6 +2663,9 @@ packages:
   get-tsconfig@4.13.0:
     resolution: {integrity: sha512-1VKTZJCwBrvbd+Wn3AOgQP/2Av+TfTCOlE4AcRJE72W1ksZXbAx8PPBR9RzgTeSPzlPMHrbANMH3LbltH73wxQ==}
 
+  get-tsconfig@4.13.6:
+    resolution: {integrity: sha512-shZT/QMiSHc/YBLxxOkMtgSid5HFoauqCE3/exfsEcwg1WkeqjG+V40yBbBrsD+jW2HDXcs28xOfcbm2jI8Ddw==}
+
   giget@2.0.0:
     resolution: {integrity: sha512-L5bGsVkxJbJgdnwyuheIunkGatUF/zssUoxxjACCseZYAVbaqdh9Tsmmlkl8vYan09H7sbvKt4pS8GqKLBrEzA==}
     hasBin: true
@@ -3740,11 +3743,11 @@ packages:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
 
-  vite-css-modules@1.12.0:
-    resolution: {integrity: sha512-1QeZAuk58qaYwPspLpG7QdOHrvcqQqTQ8sNyPhEIXM5hFwG/R4pdr4UsvReDtTkEbBHV1cdx88EMxyo6UivceA==}
+  vite-css-modules@1.13.0:
+    resolution: {integrity: sha512-BnBHu4QWCheiTFOddOnGzGqe4HRdmrQMTb8uG/7ck8v+g5D0hJX8cXtoiObUzutV2y70MlSdHb382YkkSCJgjA==}
     peerDependencies:
       lightningcss: ^1.23.0
-      postcss: ^8.4.33
+      postcss: ^8.4.49
       vite: ^5.0.12 || ^6.0.0 || ^7.0.0
     peerDependenciesMeta:
       lightningcss:
@@ -6675,6 +6678,10 @@ snapshots:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
+  get-tsconfig@4.13.6:
+    dependencies:
+      resolve-pkg-maps: 1.0.0
+
   giget@2.0.0:
     dependencies:
       citty: 0.1.6
@@ -7782,11 +7789,13 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite-css-modules@1.12.0(postcss@8.5.6)(rollup@4.57.1)(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.21.0)):
+  vite-css-modules@1.13.0(postcss@8.5.6)(rollup@4.57.1)(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.21.0)):
     dependencies:
       '@jridgewell/remapping': 2.3.5
+      '@jridgewell/sourcemap-codec': 1.5.5
       '@rollup/pluginutils': 5.3.0(rollup@4.57.1)
       generic-names: 4.0.0
+      get-tsconfig: 4.13.6
       icss-utils: 5.1.0(postcss@8.5.6)
       magic-string: 0.30.21
       postcss: 8.5.6
@@ -7794,6 +7803,7 @@ snapshots:
       postcss-modules-local-by-default: 4.2.0(postcss@8.5.6)
       postcss-modules-scope: 3.2.1(postcss@8.5.6)
       postcss-modules-values: 4.0.0(postcss@8.5.6)
+      postcss-selector-parser: 7.1.1
       vite: 7.3.1(@types/node@24.10.1)(jiti@2.6.1)(tsx@4.21.0)
     transitivePeerDependencies:
       - rollup
