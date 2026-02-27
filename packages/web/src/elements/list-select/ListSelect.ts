@@ -6,7 +6,7 @@ const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
 
 export interface ListSelectAttributes extends GlobalHTMLAttributes {
-  value?: string | null;
+  value?: string | number | null;
   orientation?: "horizontal" | "vertical";
   align?: "left" | "center" | "right" | "auto";
   showvalue?: boolean;
