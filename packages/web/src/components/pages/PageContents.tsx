@@ -34,7 +34,13 @@ export default function PageContents({
   }
 
   return (
-    <main ref={ref} className={styles.main} data-layout="VERTICAL">
+    <main
+      ref={ref}
+      className={styles.main}
+      style={{ "--width": page.width }}
+      data-alignment={page.alignment}
+      data-layout="VERTICAL"
+    >
       <Each items={tiles}>
         {(tile) => (
           <Item
