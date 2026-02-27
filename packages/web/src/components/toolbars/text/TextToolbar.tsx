@@ -7,6 +7,7 @@ import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
 import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
+import If from "@/jsx/if";
 import type Text from "@/models/Text";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type { EditorView } from "prosemirror-view";
@@ -15,14 +16,9 @@ import type { Reactive } from "@/utils/reactivity";
 export interface TextToolbarProps {
   text: Text;
   editorView: Reactive<EditorView | null>;
-  autoHeight: boolean;
 }
 
-export default function TextToolbar({
-  text,
-  editorView,
-  autoHeight,
-}: TextToolbarProps) {
+export default function TextToolbar({ text, editorView }: TextToolbarProps) {
   const { align } = text;
 
   return (
@@ -39,8 +35,8 @@ export default function TextToolbar({
 
       <toolbar-tab name="style" label="Style">
         <StyleTools tile={text} />
-        <ToolbarGroup label="Layout">
-          {!autoHeight && (
+        <If condition={text.sizing.derive((d) => d !== "AUTO")}>
+          <ToolbarGroup label="Layout">
             <list-select
               label="Vertical position"
               data-tooltip="Vertical position"
@@ -78,8 +74,8 @@ export default function TextToolbar({
                 </ListOption>
               </ListGroup>
             </list-select>
-          )}
-        </ToolbarGroup>
+          </ToolbarGroup>
+        </If>
       </toolbar-tab>
     </floating-toolbar>
   );
