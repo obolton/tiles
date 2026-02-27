@@ -88,9 +88,7 @@ export default function WorkspaceInvites({
   }
 
   return (
-    <section>
-      <h3>Invites</h3>
-
+    <>
       <Search
         itemsClassName={styles.invites}
         id="search-invites"
@@ -112,6 +110,6 @@ export default function WorkspaceInvites({
         <NewIcon aria-hidden="true" />
         Invite to workspace
       </button>
-    </section>
+    </>
   );
 }

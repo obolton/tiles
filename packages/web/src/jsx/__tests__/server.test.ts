@@ -80,6 +80,11 @@ describe("renderToString", () => {
           `<div ${attribute}="false"></div>`,
         );
       });
+
+      test("string value", () => {
+        const element = jsx("div", { [attribute]: "page" });
+        expect(renderToString(element)).toBe(`<div ${attribute}="page"></div>`);
+      });
     });
   });
 

@@ -25,7 +25,11 @@ async function loader({
   }
 
   const options = getLoaderContext(headers);
-  const user = await client.users.getUserInfo.query(undefined, options);
+
+  const [user, workspace] = await Promise.all([
+    client.users.getUserInfo.query(undefined, options),
+    client.workspaces.get.query({ workspaceId }, options),
+  ]);
 
   if (!user) {
     return forbidden();
@@ -33,7 +37,11 @@ async function loader({
 
   return {
     title: "Profile settings - Tiles",
-    data: { workspaceId, user },
+    data: {
+      workspaceId,
+      user,
+      isAdmin: workspace?.role === "ADMIN",
+    },
   };
 }
 

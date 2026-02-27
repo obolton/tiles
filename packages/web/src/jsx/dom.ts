@@ -121,7 +121,7 @@ function setAttribute(
   } else if (BOOLEAN_STRING_ATTRIBUTES.has(mappedName)) {
     element.setAttribute(
       mappedName,
-      value && value !== "false" ? "true" : "false",
+      typeof value === "string" ? value : value ? "true" : "false",
     );
   } else if (typeof value === "boolean") {
     if (value) {
