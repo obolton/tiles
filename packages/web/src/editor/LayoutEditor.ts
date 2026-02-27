@@ -10,6 +10,7 @@ import {
   createDragPlaceholder,
   getDragPosition,
 } from "@/utils/drag-placeholder";
+import { ASPECT_RATIOS } from "@/constants/size";
 import type Page from "@/models/Page";
 import type { DragDropEvent } from "@/utils/drag";
 import type { PageItemEvent } from "@/elements/item/events";
@@ -65,6 +66,7 @@ export default class LayoutEditor {
   private resizing: Tile | null = null;
   private dragPlaceholder: HTMLElement | null = null;
   private snapPoints: SnapPoints = { x: [], y: [] };
+  private widthSnapValues: number[] = [];
 
   constructor({
     element,
@@ -401,7 +403,7 @@ export default class LayoutEditor {
   }: {
     x?: number;
     y?: number;
-    width: number;
+    width: number | null;
     height: number;
     rowSpan: number;
   }) {
@@ -540,6 +542,16 @@ export default class LayoutEditor {
     this.updateLayoutInfo();
     this.resizing = this.page.getTile(event.target.id);
     document.body.dataset.resize = "true";
+
+    if (this.layoutType === "VERTICAL") {
+      const cw = this.page.width.value;
+      this.widthSnapValues = [
+        cw,
+        Math.round((cw * 2) / 3),
+        Math.round(cw / 2),
+        Math.round(cw / 3),
+      ];
+    }
   }
 
   private handleResize(event: PageItemEvent) {
@@ -566,22 +578,39 @@ export default class LayoutEditor {
         1,
       );
     } else {
-      const width = Math.max(
+      let width = Math.max(
         Math.round(
           (rect.width + this.gridColumnGap) /
             (this.gridColumnWidth + this.gridColumnGap),
         ),
         1,
       );
-      const height = Math.max(
-        Math.round(
-          (rect.height + this.gridColumnGap) /
-            (this.gridRowMinHeight + this.gridColumnGap),
-        ),
-        1,
-      );
 
-      this.resizing.width.value = width;
+      const snapped = this.widthSnapValues.find(
+        (v) => Math.abs(width - v) <= 1,
+      );
+      if (snapped) {
+        width = snapped;
+      }
+
+      const { sizing } = this.resizing;
+      const ratio =
+        sizing.value !== "CUSTOM" && sizing.value !== "AUTO"
+          ? ASPECT_RATIOS[sizing.value]
+          : undefined;
+
+      const height = ratio
+        ? Math.round(width / ratio)
+        : Math.max(
+            Math.round(
+              (rect.height + this.gridColumnGap) /
+                (this.gridRowMinHeight + this.gridColumnGap),
+            ),
+            1,
+          );
+
+      this.resizing.width.value =
+        width === this.page.width.value ? null : width;
       this.resizing.height.value = height;
     }
   }
