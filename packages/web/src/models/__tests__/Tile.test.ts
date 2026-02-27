@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import Tile from "@/models/Tile";
 import Editor from "@/editor/Editor";
 import client from "@/api/client";
-import { LANDSCAPE_SIZE, PORTRAIT_SIZE } from "@/constants/size";
+import { ASPECT_RATIOS } from "@/constants/size";
 import { PAGE } from "@/test/fixtures/Page";
 import { TILE } from "@/test/fixtures/Tile";
 import type { Animation } from "api/types/tiles";
@@ -97,7 +97,7 @@ describe("Tile", () => {
     expect(tile.type).toBe(TILE.type);
     expect(tile.sectionId).toBeNull();
     expect(tile.order.value).toBe(TILE.order);
-    expect(tile.dimensions.value).toBe(TILE.dimensions);
+    expect(tile.sizing.value).toBe(TILE.sizing);
     expect(tile.x.value).toBe(TILE.x);
     expect(tile.y.value).toBe(TILE.y);
     expect(tile.width.value).toBe(TILE.width);
@@ -159,36 +159,75 @@ describe("Tile", () => {
     });
   });
 
-  describe("setDimensions", () => {
-    test("sets landscape dimensions and updates size", async () => {
+  describe("setSizing", () => {
+    test("sets landscape sizing and computes height from aspect ratio", async () => {
       const tile = new Tile(editor.page, TILE);
+      const expectedHeight = Math.round(TILE.width! / ASPECT_RATIOS.LANDSCAPE);
 
-      await tile.setDimensions("LANDSCAPE");
+      await tile.setSizing("LANDSCAPE");
 
-      expect(tile.dimensions.value).toBe("LANDSCAPE");
-      expect(tile.width.value).toBe(LANDSCAPE_SIZE.width);
-      expect(tile.height.value).toBe(LANDSCAPE_SIZE.height);
+      expect(tile.sizing.value).toBe("LANDSCAPE");
+      expect(tile.width.value).toBe(TILE.width);
+      expect(tile.height.value).toBe(expectedHeight);
       expect(client.tiles.update.mutate).toHaveBeenCalledWith({
-        dimensions: "LANDSCAPE",
-        width: LANDSCAPE_SIZE.width,
-        height: LANDSCAPE_SIZE.height,
+        sizing: "LANDSCAPE",
+        width: TILE.width,
+        height: expectedHeight,
         pageId: PAGE.id,
         id: TILE.id,
       });
     });
 
-    test("sets portrait dimensions and updates size", async () => {
+    test("sets portrait sizing and computes height from aspect ratio", async () => {
+      const tile = new Tile(editor.page, TILE);
+      const expectedHeight = Math.round(TILE.width! / ASPECT_RATIOS.PORTRAIT);
+
+      await tile.setSizing("PORTRAIT");
+
+      expect(tile.sizing.value).toBe("PORTRAIT");
+      expect(tile.width.value).toBe(TILE.width);
+      expect(tile.height.value).toBe(expectedHeight);
+      expect(client.tiles.update.mutate).toHaveBeenCalledWith({
+        sizing: "PORTRAIT",
+        width: TILE.width,
+        height: expectedHeight,
+        pageId: PAGE.id,
+        id: TILE.id,
+      });
+    });
+
+    test("sets square sizing", async () => {
       const tile = new Tile(editor.page, TILE);
 
-      await tile.setDimensions("PORTRAIT");
+      await tile.setSizing("SQUARE");
 
-      expect(tile.dimensions.value).toBe("PORTRAIT");
-      expect(tile.width.value).toBe(PORTRAIT_SIZE.width);
-      expect(tile.height.value).toBe(PORTRAIT_SIZE.height);
+      expect(tile.sizing.value).toBe("SQUARE");
+      expect(tile.width.value).toBe(TILE.width);
+      expect(tile.height.value).toBe(TILE.width);
+    });
+
+    test("uses page width when tile width is null", async () => {
+      const tile = new Tile(editor.page, { ...TILE, width: null });
+      const pageWidth = editor.page.width.value;
+      const expectedHeight = Math.round(pageWidth / ASPECT_RATIOS.LANDSCAPE);
+
+      await tile.setSizing("LANDSCAPE");
+
+      expect(tile.height.value).toBe(expectedHeight);
+    });
+
+    test("sets auto sizing without recomputing height", async () => {
+      const tile = new Tile(editor.page, TILE);
+      const originalHeight = tile.height.value;
+
+      await tile.setSizing("AUTO");
+
+      expect(tile.sizing.value).toBe("AUTO");
+      expect(tile.height.value).toBe(originalHeight);
       expect(client.tiles.update.mutate).toHaveBeenCalledWith({
-        dimensions: "PORTRAIT",
-        width: PORTRAIT_SIZE.width,
-        height: PORTRAIT_SIZE.height,
+        sizing: "AUTO",
+        width: TILE.width,
+        height: originalHeight,
         pageId: PAGE.id,
         id: TILE.id,
       });
@@ -208,6 +247,20 @@ describe("Tile", () => {
       expect(client.tiles.update.mutate).toHaveBeenCalledWith({
         width,
         height,
+        pageId: PAGE.id,
+        id: TILE.id,
+      });
+    });
+
+    test("sets width to null for page width", async () => {
+      const tile = new Tile(editor.page, TILE);
+
+      await tile.setSize({ width: null });
+
+      expect(tile.width.value).toBeNull();
+      expect(client.tiles.update.mutate).toHaveBeenCalledWith({
+        width: null,
+        height: undefined,
         pageId: PAGE.id,
         id: TILE.id,
       });
