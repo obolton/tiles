@@ -341,17 +341,12 @@ export async function createTile<
   select: S,
   transaction: PrismaTransactionClient,
 ) {
-  let insertX;
-  let insertY;
-  let insertWidth;
-  if (
-    typeof x === "number" &&
-    typeof y === "number" &&
-    typeof width === "number"
-  ) {
+  let insertX: number;
+  let insertY: number;
+  let insertWidth = width;
+  if (typeof x === "number" && typeof y === "number") {
     insertX = x;
     insertY = y;
-    insertWidth = width;
   } else {
     const next = await getNextPosition(
       { pageId, sectionId, width, maxWidth: 20 },
@@ -359,7 +354,9 @@ export async function createTile<
     );
     insertX = next.x;
     insertY = next.y;
-    insertWidth = next.width;
+    if (insertWidth === undefined && sectionId) {
+      insertWidth = next.width;
+    }
   }
 
   const order = await getTileOrder(transaction, pageId, sectionId, beforeId);
@@ -402,7 +399,7 @@ export async function createTile<
 interface NextPositionOptions {
   pageId: string;
   sectionId: string | null;
-  width?: number;
+  width?: number | null;
   maxWidth?: number;
 }
 
@@ -435,7 +432,7 @@ export async function getNextPosition(
 function getNextFreeformPosition({
   width: itemWidth,
 }: NextPositionOptions): NextPosition {
-  return { x: 5, y: 5, width: itemWidth ?? 20 };
+  return { x: 5, y: 5, width: itemWidth ?? 1 };
 }
 
 async function getNextGridPosition(
@@ -448,16 +445,18 @@ async function getNextGridPosition(
     orderBy: [{ y: "desc" }, { x: "desc" }],
   });
 
-  const width = itemWidth ?? previous?.width ?? 20;
+  const width = itemWidth ?? previous?.width ?? 1;
 
   if (!previous) {
     return { x: 0, y: 0, width };
   }
 
+  const previousWidth = previous.width ?? 1;
+
   // Row overflow
-  if (previous.x + previous.width + width > maxWidth) {
+  if (previous.x + previousWidth + width > maxWidth) {
     return { x: 0, y: previous.y + previous.rowSpan, width };
   }
 
-  return { x: previous.x + previous.width, y: previous.y, width };
+  return { x: previous.x + previousWidth, y: previous.y, width };
 }
