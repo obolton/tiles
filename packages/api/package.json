@@ -33,7 +33,7 @@
     "cookie": "^1.1.1",
     "cors": "^2.8.5",
     "fractional-indexing": "^3.2.0",
-    "htmlparser2": "^10.0.0",
+    "htmlparser2": "^10.1.0",
     "openai": "^6.23.0",
     "zod": "^4.3.5"
   },
