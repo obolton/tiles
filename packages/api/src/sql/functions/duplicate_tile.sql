@@ -20,11 +20,11 @@ DECLARE
 BEGIN
   -- Insert base tile and capture its type
   INSERT INTO tiles (
-    id, page_id, section_id, type, "order", anchor, dimensions,
+    id, page_id, section_id, type, "order", anchor, sizing,
     width, height, row_span, x, y, block, animation, hide, dock, theme_id
   )
   SELECT
-    v_new_id, page_id, p_new_section_id, type, p_new_order, anchor, dimensions,
+    v_new_id, page_id, p_new_section_id, type, p_new_order, anchor, sizing,
     width, height, row_span, x, y, block, animation, hide, dock, theme_id
   FROM tiles
   WHERE page_id = p_page_id AND id = p_tile_id

@@ -19,7 +19,7 @@ export const TILE_FIELDS = {
     select: THEME_FIELDS,
   },
   order: true,
-  dimensions: true,
+  sizing: true,
   width: true,
   height: true,
   x: true,

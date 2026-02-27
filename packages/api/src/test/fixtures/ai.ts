@@ -22,7 +22,7 @@ export const MOCK_TILE_PLACEMENT = {
   textColor: null,
   background: null,
   anchor: null,
-  dimensions: "CUSTOM" as const,
+  sizing: "CUSTOM" as const,
   rowSpan: 1,
   animation: null,
   hide: false,
