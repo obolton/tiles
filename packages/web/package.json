@@ -51,7 +51,7 @@
     "@storybook/html-vite": "^10.2.12",
     "@types/culori": "^4.0.1",
     "@vitest/browser-playwright": "^4.0.18",
-    "autoprefixer": "^10.4.22",
+    "autoprefixer": "^10.4.24",
     "fake-indexeddb": "^6.2.5",
     "jsdom": "^27.3.0",
     "postcss-html": "^1.8.0",
