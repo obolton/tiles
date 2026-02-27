@@ -55,6 +55,7 @@ export default class PageItem extends HTMLElement {
   private resizeAbortController?: AbortController;
   private resizeDirection: ResizeHandleDirection | null = null;
   private resizeRect = new DOMRect();
+  private aspectRatio = "auto";
   private initialPointerX = 0;
   private initialPointerY = 0;
 
@@ -352,6 +353,7 @@ export default class PageItem extends HTMLElement {
     }
 
     this.isResizing = true;
+    this.aspectRatio = getComputedStyle(this).aspectRatio;
     this.internals.states.add("resizing");
     this.showOutline();
   }
@@ -378,7 +380,12 @@ export default class PageItem extends HTMLElement {
     this.outline.id = "outline";
     this.outline.setAttribute("part", "outline");
     this.outline.style.width = this.resizeRect.width + "px";
-    this.outline.style.height = this.resizeRect.height + "px";
+    if (
+      (this.resizeDirection !== "e" && this.resizeDirection !== "w") ||
+      this.aspectRatio === "auto"
+    ) {
+      this.outline.style.height = this.resizeRect.height + "px";
+    }
 
     // Move all resize handles into the outline
     this.outline.append(...this.resizeHandles.values());
@@ -408,7 +415,12 @@ export default class PageItem extends HTMLElement {
       this.outline.style.left = offsetX + "px";
       this.outline.style.top = offsetY + "px";
       this.outline.style.width = this.resizeRect.width + "px";
-      this.outline.style.height = this.resizeRect.height + "px";
+      if (
+        (this.resizeDirection !== "e" && this.resizeDirection !== "w") ||
+        this.aspectRatio === "auto"
+      ) {
+        this.outline.style.height = this.resizeRect.height + "px";
+      }
     }
   }
 
