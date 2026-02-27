@@ -82,7 +82,8 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
 
   const srcSet = getImageSrcSet(imageUrl, VARIANTS);
 
-  const sizes = `(max-width: 800px) ${((width.value / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(width.value)}px`;
+  const columns = width.value ?? image.page.width.value;
+  const sizes = `(max-width: 800px) ${((columns / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(columns)}px`;
 
   const style = origin.derive(({ x, y }) => ({
     objectPosition: `${x * 100}% ${y * 100}%`,
