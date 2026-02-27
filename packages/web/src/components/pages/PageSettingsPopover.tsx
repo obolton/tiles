@@ -2,8 +2,14 @@ import ColorPicker from "@/components/colors/ColorPicker";
 import FontPicker from "@/components/inputs/FontPicker";
 import FolderPicker from "@/components/inputs/FolderPicker";
 import ThemePicker from "@/components/themes/ThemePicker";
+import ListOption from "@/components/lists/ListOption";
+import ListGroup from "@/components/lists/ListGroup";
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import TrashIcon from "@/icons/trash.svg?jsx";
+import SizeIcon from "@/icons/size.svg?jsx";
+import AlignLeftIcon from "@/icons/align-left.svg?jsx";
+import AlignCenterIcon from "@/icons/align-center.svg?jsx";
+import AlignRightIcon from "@/icons/align-right.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import { getFontConfig } from "@/utils/fonts";
@@ -13,6 +19,8 @@ import { themesCache } from "@/utils/cache";
 import { getThemeStyles } from "@/utils/themes";
 import styles from "./PageSettingsPopover.module.css";
 import type { FontId } from "@/config/fonts";
+import type { HorizontalAlignment } from "api/types/pages";
+import type ListSelect from "@/elements/list-select/ListSelect";
 import type Page from "@/models/Page";
 import type { JSX } from "@/jsx/jsx";
 
@@ -90,6 +98,19 @@ export default function PageSettingsPopover({
     page.setTheme(newThemeId).catch(handleError);
   }
 
+  function setWidth(event: Event) {
+    const value = (event.currentTarget as ListSelect).value;
+    if (value) {
+      page.setWidth(parseInt(value, 10)).catch(handleError);
+    }
+  }
+
+  function setAlignment(event: Event) {
+    const alignment = (event.currentTarget as ListSelect)
+      .value as HorizontalAlignment;
+    page.setAlignment(alignment).catch(handleError);
+  }
+
   function deletePage() {
     page
       .delete()
@@ -158,6 +179,59 @@ export default function PageSettingsPopover({
             aria-label="Theme"
             data-tooltip="Theme"
           />
+        </li>
+
+        <li role="presentation">
+          <list-select
+            label="Page width"
+            aria-label="Page width"
+            data-tooltip="Page width"
+            orientation="vertical"
+            value={page.width}
+            showvalue
+            on:change={setWidth}
+          >
+            <SizeIcon slot="default-icon" aria-hidden="true" />
+            <ListGroup>
+              <ListOption value="32">Standard</ListOption>
+              <ListOption value="24">Narrow</ListOption>
+              <ListOption value="40">Wide</ListOption>
+              <ListOption value="48">Full</ListOption>
+            </ListGroup>
+          </list-select>
+        </li>
+
+        <li role="presentation">
+          <list-select
+            label="Alignment"
+            aria-label="Alignment"
+            data-tooltip="Alignment"
+            orientation="vertical"
+            value={page.alignment}
+            showvalue
+            on:change={setAlignment}
+          >
+            <ListGroup>
+              <ListOption
+                icon={<AlignLeftIcon aria-hidden="true" />}
+                value="LEFT"
+              >
+                Left
+              </ListOption>
+              <ListOption
+                icon={<AlignCenterIcon aria-hidden="true" />}
+                value="CENTER"
+              >
+                Center
+              </ListOption>
+              <ListOption
+                icon={<AlignRightIcon aria-hidden="true" />}
+                value="RIGHT"
+              >
+                Right
+              </ListOption>
+            </ListGroup>
+          </list-select>
         </li>
 
         <li role="presentation" className={styles.trailing}>
