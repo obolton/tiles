@@ -6,10 +6,20 @@ export interface CacheMeta {
   nextCursor?: string | null;
 }
 
-interface CacheCollectionOptions {
+type CacheCollectionOptions<
+  Raw extends { id: string },
+  Item extends { id: string } = Raw,
+> = {
   ttlMs: number;
   itemsStoreName: string;
   metaStoreName: string;
+} & (
+  | { serialize: (item: Item) => Raw; deserialize: (raw: Raw) => Item }
+  | { serialize?: never; deserialize?: never }
+);
+
+function identity<T>(value: T): T {
+  return value;
 }
 
 const META_KEY = "meta";
@@ -17,21 +27,28 @@ const META_KEY = "meta";
 /**
  * A cached collection of items, persisted to IndexedDB.
  */
-export class CacheCollection<T extends { id: string }> {
-  readonly items = new ReactiveArray<T>([]);
+export class CacheCollection<
+  Raw extends { id: string },
+  Item extends { id: string } = Raw,
+> {
+  readonly items = new ReactiveArray<Item>([]);
   readonly schema: SchemaDefinition;
 
   private database: Database<SchemaDefinition> | null = null;
-  private readonly itemsMap = new Map<string, T>();
+  private readonly itemsMap = new Map<string, Item>();
   private readonly ttlMs: number;
   private readonly itemsStoreName: string;
   private readonly metaStoreName: string;
+  private readonly serialize: (item: Item) => Raw;
+  private readonly deserialize: (raw: Raw) => Item;
   private cachedMeta: CacheMeta | null = null;
 
-  constructor(options: CacheCollectionOptions) {
+  constructor(options: CacheCollectionOptions<Raw, Item>) {
     this.ttlMs = options.ttlMs;
     this.itemsStoreName = options.itemsStoreName;
     this.metaStoreName = options.metaStoreName;
+    this.serialize = options.serialize ?? (identity as (item: Item) => Raw);
+    this.deserialize = options.deserialize ?? (identity as (raw: Raw) => Item);
     this.schema = {
       [options.itemsStoreName]: { keyPath: "id" },
       [options.metaStoreName]: {},
@@ -61,7 +78,7 @@ export class CacheCollection<T extends { id: string }> {
     return this.items.length;
   }
 
-  private get itemsStore(): ObjectStore<T> {
+  private get itemsStore(): ObjectStore<Raw> {
     if (!this.database) {
       throw new Error("Cache not initialized");
     }
@@ -79,7 +96,7 @@ export class CacheCollection<T extends { id: string }> {
     return Date.now() - cachedAt.getTime() < this.ttlMs;
   }
 
-  private setMemory(items: T[], meta: CacheMeta): void {
+  private setMemory(items: Item[], meta: CacheMeta): void {
     this.itemsMap.clear();
     for (const item of items) {
       this.itemsMap.set(item.id, item);
@@ -88,14 +105,15 @@ export class CacheCollection<T extends { id: string }> {
     this.cachedMeta = meta;
   }
 
-  async getCached(): Promise<{ items: T[]; meta: CacheMeta } | null> {
+  async getCached(): Promise<{ items: Item[]; meta: CacheMeta } | null> {
     try {
       const meta = await this.metaStore.get(META_KEY);
       if (!meta || !this.isFresh(meta.cachedAt)) {
         return null;
       }
 
-      const items = await this.itemsStore.getAll();
+      const rawItems = await this.itemsStore.getAll();
+      const items = rawItems.map(this.deserialize);
       this.setMemory(items, meta);
       return { items, meta };
     } catch {
@@ -106,13 +124,13 @@ export class CacheCollection<T extends { id: string }> {
   /**
    * Sets the cached items, replacing any existing data.
    */
-  async set(items: T[], meta?: Omit<CacheMeta, "cachedAt">): Promise<void> {
+  async set(items: Item[], meta?: Omit<CacheMeta, "cachedAt">): Promise<void> {
     const fullMeta: CacheMeta = { ...meta, cachedAt: new Date() };
     this.setMemory(items, fullMeta);
 
     try {
       await this.itemsStore.clear();
-      await this.itemsStore.putMany(items);
+      await this.itemsStore.putMany(items.map(this.serialize));
       await this.metaStore.put(fullMeta, META_KEY);
     } catch (error) {
       if (import.meta.env.DEV) {
@@ -124,7 +142,7 @@ export class CacheCollection<T extends { id: string }> {
   /**
    * Appends items to the cache.
    */
-  async append(items: T[], nextCursor?: string | null): Promise<void> {
+  async append(items: Item[], nextCursor?: string | null): Promise<void> {
     const fullMeta: CacheMeta = {
       ...this.cachedMeta,
       nextCursor:
@@ -139,7 +157,7 @@ export class CacheCollection<T extends { id: string }> {
     this.cachedMeta = fullMeta;
 
     try {
-      await this.itemsStore.putMany(items);
+      await this.itemsStore.putMany(items.map(this.serialize));
       await this.metaStore.put(fullMeta, META_KEY);
     } catch (error) {
       if (import.meta.env.DEV) {
@@ -169,7 +187,7 @@ export class CacheCollection<T extends { id: string }> {
   /**
    * Gets an item by ID.
    */
-  getById(id: string): T | null {
+  getById(id: string): Item | null {
     return this.itemsMap.get(id) ?? null;
   }
 
@@ -195,15 +213,20 @@ export class CacheCollection<T extends { id: string }> {
 
   /**
    * Updates a single item's properties by ID.
+   * Accepts partial updates in the raw (serialized) form.
    * Returns the updated item, or null if the item doesn't exist.
    */
-  async update(id: string, updates: Partial<Omit<T, "id">>): Promise<T | null> {
+  async update(
+    id: string,
+    updates: Partial<Omit<Raw, "id">>,
+  ): Promise<Item | null> {
     const existing = this.itemsMap.get(id);
     if (!existing) {
       return null;
     }
 
-    const updated = { ...existing, ...updates };
+    const updatedRaw = { ...this.serialize(existing), ...updates };
+    const updated = this.deserialize(updatedRaw);
     this.itemsMap.set(id, updated);
 
     const index = this.items.value.findIndex((item) => item.id === id);
@@ -212,7 +235,7 @@ export class CacheCollection<T extends { id: string }> {
     }
 
     try {
-      await this.itemsStore.put(updated);
+      await this.itemsStore.put(updatedRaw);
     } catch (error) {
       if (import.meta.env.DEV) {
         console.warn("Failed to update cache:", error);
@@ -225,7 +248,7 @@ export class CacheCollection<T extends { id: string }> {
   /**
    * Inserts or updates a single item.
    */
-  async upsert(item: T): Promise<void> {
+  async upsert(item: Item): Promise<void> {
     const existingIndex = this.items.value.findIndex((i) => i.id === item.id);
     this.itemsMap.set(item.id, item);
 
@@ -236,7 +259,7 @@ export class CacheCollection<T extends { id: string }> {
     }
 
     try {
-      await this.itemsStore.put(item);
+      await this.itemsStore.put(this.serialize(item));
     } catch (error) {
       if (import.meta.env.DEV) {
         console.warn("Failed to upsert cache:", error);

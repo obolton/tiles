@@ -8,6 +8,24 @@ interface TestItem {
   name: string;
 }
 
+interface TestItemRaw {
+  id: string;
+  name: string;
+  count: number;
+}
+
+class TestModel {
+  readonly id: string;
+  name: string;
+  count: number;
+
+  constructor(data: TestItemRaw) {
+    this.id = data.id;
+    this.name = data.name;
+    this.count = data.count;
+  }
+}
+
 const TTL_MS = 1000;
 
 function createCollection() {
@@ -535,6 +553,169 @@ describe("CacheCollection", () => {
       await collection.upsert({ id: "1", name: "Updated" });
 
       expect(notified).toBe(true);
+    });
+  });
+
+  describe("serialize/deserialize", () => {
+    let transformCollection: CacheCollection<TestItemRaw, TestModel>;
+    let transformDb: Database<
+      ReturnType<typeof createTransformCollection>["schema"]
+    >;
+
+    function createTransformCollection() {
+      return new CacheCollection<TestItemRaw, TestModel>({
+        ttlMs: TTL_MS,
+        itemsStoreName: "transformItems",
+        metaStoreName: "transformItemsMeta",
+        serialize: (model) => ({
+          id: model.id,
+          name: model.name,
+          count: model.count,
+        }),
+        deserialize: (raw) => new TestModel(raw),
+      });
+    }
+
+    beforeEach(() => {
+      transformCollection = createTransformCollection();
+      transformDb = new Database({
+        name: "test-cache-transform",
+        version: 1,
+        schema: transformCollection.schema,
+      });
+      transformCollection.initialize(transformDb);
+    });
+
+    afterEach(async () => {
+      await transformDb.deleteDatabase();
+    });
+
+    test("set stores model instances in memory", async () => {
+      await transformCollection.set([
+        new TestModel({ id: "1", name: "Test", count: 5 }),
+      ]);
+
+      expect(transformCollection.items.value[0]).toBeInstanceOf(TestModel);
+      expect(transformCollection.items.value[0]?.name).toBe("Test");
+      expect(transformCollection.getById("1")).toBeInstanceOf(TestModel);
+    });
+
+    test("set persists raw form to IDB and getCached deserializes", async () => {
+      await transformCollection.set([
+        new TestModel({ id: "1", name: "Test", count: 5 }),
+      ]);
+
+      const freshCollection = createTransformCollection();
+      freshCollection.initialize(transformDb);
+      const cached = await freshCollection.getCached();
+
+      expect(cached?.items).toHaveLength(1);
+      expect(cached?.items[0]).toBeInstanceOf(TestModel);
+      expect(cached?.items[0]?.name).toBe("Test");
+      expect(cached?.items[0]?.count).toBe(5);
+      expect(freshCollection.getById("1")).toBeInstanceOf(TestModel);
+    });
+
+    test("append stores model instances in memory and IDB", async () => {
+      await transformCollection.set([
+        new TestModel({ id: "1", name: "First", count: 1 }),
+      ]);
+      await transformCollection.append([
+        new TestModel({ id: "2", name: "Second", count: 2 }),
+      ]);
+
+      expect(transformCollection.items.value).toHaveLength(2);
+      expect(transformCollection.items.value[1]).toBeInstanceOf(TestModel);
+      expect(transformCollection.getById("2")?.name).toBe("Second");
+
+      const freshCollection = createTransformCollection();
+      freshCollection.initialize(transformDb);
+      const cached = await freshCollection.getCached();
+
+      expect(cached?.items).toHaveLength(2);
+      expect(cached?.items[1]).toBeInstanceOf(TestModel);
+    });
+
+    test("upsert inserts model instance", async () => {
+      await transformCollection.set([
+        new TestModel({ id: "1", name: "First", count: 1 }),
+      ]);
+      await transformCollection.upsert(
+        new TestModel({ id: "2", name: "Second", count: 2 }),
+      );
+
+      expect(transformCollection.items.value).toHaveLength(2);
+      expect(transformCollection.getById("2")).toBeInstanceOf(TestModel);
+    });
+
+    test("upsert updates existing model instance", async () => {
+      await transformCollection.set([
+        new TestModel({ id: "1", name: "Original", count: 1 }),
+      ]);
+      await transformCollection.upsert(
+        new TestModel({ id: "1", name: "Updated", count: 10 }),
+      );
+
+      expect(transformCollection.items.value).toHaveLength(1);
+      expect(transformCollection.items.value[0]).toBeInstanceOf(TestModel);
+      expect(transformCollection.items.value[0]?.name).toBe("Updated");
+      expect(transformCollection.items.value[0]?.count).toBe(10);
+    });
+
+    test("update round-trips through serialize and deserialize", async () => {
+      await transformCollection.set([
+        new TestModel({ id: "1", name: "Original", count: 5 }),
+      ]);
+
+      const updated = await transformCollection.update("1", {
+        name: "Updated",
+      });
+
+      expect(updated).toBeInstanceOf(TestModel);
+      expect(updated?.name).toBe("Updated");
+      expect(updated?.count).toBe(5);
+      expect(transformCollection.getById("1")).toBeInstanceOf(TestModel);
+      expect(transformCollection.items.value[0]?.name).toBe("Updated");
+    });
+
+    test("update persists raw form to IDB", async () => {
+      await transformCollection.set([
+        new TestModel({ id: "1", name: "Original", count: 5 }),
+      ]);
+      await transformCollection.update("1", { name: "Updated" });
+
+      const freshCollection = createTransformCollection();
+      freshCollection.initialize(transformDb);
+      const cached = await freshCollection.getCached();
+
+      expect(cached?.items[0]).toBeInstanceOf(TestModel);
+      expect(cached?.items[0]?.name).toBe("Updated");
+      expect(cached?.items[0]?.count).toBe(5);
+    });
+
+    test("delete preserves remaining model instances", async () => {
+      await transformCollection.set([
+        new TestModel({ id: "1", name: "First", count: 1 }),
+        new TestModel({ id: "2", name: "Second", count: 2 }),
+      ]);
+
+      await transformCollection.delete(["1"]);
+
+      expect(transformCollection.items.value).toHaveLength(1);
+      expect(transformCollection.items.value[0]).toBeInstanceOf(TestModel);
+      expect(transformCollection.items.value[0]?.name).toBe("Second");
+    });
+
+    test("invalidate clears all model instances", async () => {
+      await transformCollection.set([
+        new TestModel({ id: "1", name: "Test", count: 1 }),
+      ]);
+
+      await transformCollection.invalidate();
+
+      expect(transformCollection.items.value).toHaveLength(0);
+      expect(transformCollection.getById("1")).toBeNull();
+      expect(transformCollection.isWarm).toBe(false);
     });
   });
 });
