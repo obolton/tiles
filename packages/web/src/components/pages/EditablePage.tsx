@@ -1,11 +1,13 @@
 import EditingToolbar from "@/components/menu/EditingToolbar";
 import PageContents from "@/components/pages/PageContents";
+import PageToolbar from "@/components/toolbars/pages/PageToolbar";
 import DockZone from "@/components/docks/DockZone";
 import Editor from "@/editor/Editor";
 import InsertButton from "@/components/buttons/InsertButton";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import If from "@/jsx/if";
 import { isSignedIn } from "@/utils/sessions";
+import { combine } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import styles from "./EditablePage.module.css";
 import type { AppRouterOutputs } from "@/api/client";
@@ -23,6 +25,10 @@ export default function EditablePage({ page }: EditablePageProps) {
   const { isEditable, selection } = editor;
   const { tiles, dockedTiles } = editor.page;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
+  const showPageToolbar = combine(
+    { selection, isEditable },
+    ({ selection, isEditable }) => isEditable && selection.size === 0,
+  );
 
   return (
     <>
@@ -59,6 +65,10 @@ export default function EditablePage({ page }: EditablePageProps) {
       </div>
 
       {showToolbar ? <EditingToolbar editor={editor} /> : null}
+
+      <If condition={showPageToolbar}>
+        <PageToolbar page={editor.page} />
+      </If>
 
       <If condition={selection.derive((value) => value.size >= 2)}>
         <SelectionToolbar />
