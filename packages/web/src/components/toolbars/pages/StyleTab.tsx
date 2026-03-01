@@ -1,0 +1,159 @@
+import ColorPicker from "@/components/colors/ColorPicker";
+import FontPicker from "@/components/inputs/FontPicker";
+import ThemePicker from "@/components/themes/ThemePicker";
+import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
+import ListOption from "@/components/lists/ListOption";
+import ListGroup from "@/components/lists/ListGroup";
+import SizeIcon from "@/icons/size.svg?jsx";
+import AlignLeftIcon from "@/icons/align-left.svg?jsx";
+import AlignCenterIcon from "@/icons/align-center.svg?jsx";
+import AlignRightIcon from "@/icons/align-right.svg?jsx";
+import { handleError } from "@/utils/errors";
+import { viewTransition } from "@/utils/transitions";
+import { getFontConfig } from "@/utils/fonts";
+import { toCSSColor, isDark, type Color } from "@/utils/color";
+import { themesCache } from "@/utils/cache";
+import { getThemeStyles } from "@/utils/themes";
+import type { FontId } from "@/config/fonts";
+import type { HorizontalAlignment } from "api/types/pages";
+import type ListSelect from "@/elements/list-select/ListSelect";
+import type Page from "@/models/Page";
+
+export interface StyleTabProps {
+  page: Page;
+}
+
+export default function StyleTab({ page }: StyleTabProps) {
+  const { backgroundColor, font, themeId } = page;
+
+  function setFont(newFont: FontId) {
+    viewTransition(() => {
+      document.body.style.setProperty("--font", getFontConfig(newFont).family);
+    });
+    page.setFont(newFont).catch(handleError);
+  }
+
+  function setColor(value: Color | null) {
+    if (!value) {
+      return;
+    }
+    backgroundColor.value = value;
+    viewTransition(() => {
+      if (isDark(value)) {
+        document.body.classList.add("dark");
+      } else {
+        document.body.classList.remove("dark");
+      }
+      document.body.style.setProperty("--background-color", toCSSColor(value));
+    });
+    page.setBackgroundColor(value).catch(handleError);
+  }
+
+  function setTheme(newThemeId: string | null) {
+    const theme = newThemeId ? themesCache.getById(newThemeId) : null;
+
+    const bgColor = backgroundColor.value;
+    const themeStyles = getThemeStyles(theme, {
+      background: bgColor ? { type: "color", color: bgColor } : null,
+      font: font.value,
+    });
+
+    viewTransition(() => {
+      for (const [property, value] of Object.entries(themeStyles)) {
+        document.body.style.setProperty(property, value);
+      }
+      const bgColor = theme?.colors.background ?? backgroundColor.value;
+      document.body.classList.toggle("dark", !!bgColor && isDark(bgColor));
+    });
+
+    page.setTheme(newThemeId).catch(handleError);
+  }
+
+  function setWidth(event: Event) {
+    const value = (event.currentTarget as ListSelect).value;
+    if (value) {
+      page.setWidth(parseInt(value, 10)).catch(handleError);
+    }
+  }
+
+  function setAlignment(event: Event) {
+    const alignment = (event.currentTarget as ListSelect)
+      .value as HorizontalAlignment;
+    page.setAlignment(alignment).catch(handleError);
+  }
+
+  return (
+    <toolbar-tab name="style" label="Style">
+      <ToolbarGroup label="Style">
+        <FontPicker
+          value={font}
+          onChange={setFont}
+          aria-label="Font"
+          data-tooltip="Font"
+        />
+
+        <ThemePicker
+          value={themeId}
+          onChange={setTheme}
+          aria-label="Theme"
+          data-tooltip="Theme"
+        />
+
+        <ColorPicker
+          id="page-color-picker"
+          value={backgroundColor}
+          onChange={setColor}
+        />
+
+        <list-select
+          label="Page width"
+          aria-label="Page width"
+          data-tooltip="Page width"
+          orientation="vertical"
+          value={page.width}
+          showvalue
+          on:change={setWidth}
+        >
+          <SizeIcon slot="default-icon" aria-hidden="true" />
+          <ListGroup>
+            <ListOption value="32">Standard</ListOption>
+            <ListOption value="24">Narrow</ListOption>
+            <ListOption value="40">Wide</ListOption>
+            <ListOption value="48">Full</ListOption>
+          </ListGroup>
+        </list-select>
+
+        <list-select
+          label="Alignment"
+          aria-label="Alignment"
+          data-tooltip="Alignment"
+          orientation="vertical"
+          value={page.alignment}
+          showvalue
+          on:change={setAlignment}
+        >
+          <ListGroup>
+            <ListOption
+              icon={<AlignLeftIcon aria-hidden="true" />}
+              value="LEFT"
+            >
+              Left
+            </ListOption>
+            <ListOption
+              icon={<AlignCenterIcon aria-hidden="true" />}
+              value="CENTER"
+            >
+              Center
+            </ListOption>
+            <ListOption
+              icon={<AlignRightIcon aria-hidden="true" />}
+              value="RIGHT"
+            >
+              Right
+            </ListOption>
+          </ListGroup>
+        </list-select>
+      </ToolbarGroup>
+    </toolbar-tab>
+  );
+}
