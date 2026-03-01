@@ -1,0 +1,9 @@
+.title {
+  width: 400px;
+  height: 44px;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  border-radius: inherit;
+  outline-offset: 8px;
+}
