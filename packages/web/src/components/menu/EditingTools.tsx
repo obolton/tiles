@@ -1,22 +1,16 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import CollaborationPopover from "@/components/collaboration/CollaborationPopover";
-import PageSettingsPopover from "@/components/pages/PageSettingsPopover";
 import UndoIcon from "@/icons/undo.svg?jsx";
 import RedoIcon from "@/icons/redo.svg?jsx";
 import PeopleIcon from "@/icons/people.svg?jsx";
-import SettingsIcon from "@/icons/settings.svg?jsx";
 import type Editor from "@/editor/Editor";
 
 export interface EditingToolsProps {
   editor: Editor;
-  allowDelete: boolean;
 }
 
-export default function EditingTools({
-  editor,
-  allowDelete,
-}: EditingToolsProps) {
+export default function EditingTools({ editor }: EditingToolsProps) {
   const { canUndo, canRedo } = editor;
 
   return (
@@ -50,21 +44,6 @@ export default function EditingTools({
         </ToolbarButton>
 
         <CollaborationPopover page={editor.page} id="collaboration-popover" />
-
-        <ToolbarButton
-          id="page-settings-button"
-          label="Page settings"
-          popovertarget="page-settings-popover"
-          aria-haspopup="menu"
-        >
-          <SettingsIcon aria-hidden="true" />
-        </ToolbarButton>
-
-        <PageSettingsPopover
-          page={editor.page}
-          allowDelete={allowDelete}
-          id="page-settings-popover"
-        />
       </ToolbarGroup>
     </>
   );

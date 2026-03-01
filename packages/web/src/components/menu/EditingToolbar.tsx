@@ -10,13 +10,9 @@ import type Editor from "@/editor/Editor";
 
 export interface EditingToolbarProps {
   editor: Editor;
-  allowDelete?: boolean;
 }
 
-export default function EditingToolbar({
-  editor,
-  allowDelete = true,
-}: EditingToolbarProps) {
+export default function EditingToolbar({ editor }: EditingToolbarProps) {
   const { isEditable } = editor;
 
   function toggleEdit() {
@@ -57,7 +53,7 @@ export default function EditingToolbar({
         </ToolbarGroup>
 
         <If condition={isEditable}>
-          <EditingTools editor={editor} allowDelete={allowDelete} />
+          <EditingTools editor={editor} />
         </If>
       </toolbar-tab>
     </floating-toolbar>
