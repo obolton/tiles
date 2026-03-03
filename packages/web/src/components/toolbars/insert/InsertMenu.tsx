@@ -7,6 +7,7 @@ import PlaceIcon from "@/icons/place.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
 import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";
 import FreeformLayoutIcon from "@/icons/freeform-layout.svg?jsx";
+import CalendarLayoutIcon from "@/icons/event.svg?jsx";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { handleError } from "@/utils/errors";
@@ -168,6 +169,14 @@ export default function InsertMenu({
     }).catch(handleError);
   }
 
+  function createCalendar() {
+    Section.create(Editor.current.page, {
+      beforeId: getBeforeId(),
+      layout: "CALENDAR",
+      sizing: "FOUR_THREE",
+    }).catch(handleError);
+  }
+
   return (
     <popover-menu {...props}>
       <MenuItemGroup>
@@ -195,6 +204,13 @@ export default function InsertMenu({
           on:click={createFreeformSection}
         >
           Canvas
+        </MenuItem>
+
+        <MenuItem
+          icon={<CalendarLayoutIcon aria-hidden="true" />}
+          on:click={createCalendar}
+        >
+          Calendar
         </MenuItem>
       </MenuItemGroup>
     </popover-menu>

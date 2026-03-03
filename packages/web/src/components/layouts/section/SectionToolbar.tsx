@@ -7,6 +7,7 @@ import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import HorizontalLayoutIcon from "@/icons/horizontal-layout.svg?jsx";
 import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";
 import FreeformLayoutIcon from "@/icons/freeform-layout.svg?jsx";
+import CalendarLayoutIcon from "@/icons/event.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import type ListSelect from "@/elements/list-select/ListSelect";
@@ -68,6 +69,12 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
                 value="FREEFORM"
               >
                 Freeform
+              </ListOption>
+              <ListOption
+                icon={<CalendarLayoutIcon aria-hidden="true" />}
+                value="CALENDAR"
+              >
+                Calendar
               </ListOption>
             </ListGroup>
           </list-select>
