@@ -10,6 +10,7 @@
   },
   "rules": {
     "curly": "error",
-    "import/no-unassigned-import": "off"
+    "import/no-unassigned-import": "off",
+    "no-shadow": "off"
   }
 }
