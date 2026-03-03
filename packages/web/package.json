@@ -9,6 +9,7 @@
     "build:client": "vite build --outDir dist",
     "build:server": "vite build --outDir dist/_worker.js --ssr",
     "build": "pnpm build:client && pnpm build:server",
+    "generate": "cmk",
     "test": "vitest run",
     "test:browser": "vitest run --config vitest.browser.config.ts",
     "test:watch": "vitest watch",
