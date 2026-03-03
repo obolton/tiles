@@ -10,5 +10,10 @@
     }
   },
   "include": ["./src/**/*", "./scripts/**/*"],
-  "references": [{ "path": "../api" }]
+  "references": [{ "path": "../api" }],
+
+  "cmkOptions": {
+    "enabled": true,
+    "dtsOutDir": "."
+  }
 }
