@@ -185,6 +185,9 @@ importers:
         specifier: ^1.41.5
         version: 1.41.5
     devDependencies:
+      '@css-modules-kit/codegen':
+        specifier: ^0.10.0
+        version: 0.10.0(typescript@5.9.3)
       '@storybook/addon-a11y':
         specifier: ^10.2.12
         version: 10.2.12(storybook@10.2.12(prettier@3.8.1))
@@ -556,6 +559,19 @@ packages:
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
+
+  '@css-modules-kit/codegen@0.10.0':
+    resolution: {integrity: sha512-46uKcCy3ynrdIFUQWxG1JVBHDyMLZxGxzxnx44bEq8xO0VrnQUj8XE94e0w+NV54/+FHE1wSv8WAYJAwWDpbNQ==}
+    engines: {node: '>=20.19.0'}
+    hasBin: true
+    peerDependencies:
+      typescript: ^5.7.3
+
+  '@css-modules-kit/core@0.10.0':
+    resolution: {integrity: sha512-zbBW07LHR0Nn88I9h0krsQ9EoSFRbd6UvzLUIP5dzXnbRg/34BtVx3l8gDiu2xsqMHm0iYHAbtvfUuu018cCgQ==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      typescript: ^5.7.3
 
   '@csstools/color-helpers@6.0.2':
     resolution: {integrity: sha512-LMGQLS9EuADloEFkcTBR3BwV/CGHV7zyDxVRtVDTwdI2Ca4it0CCVTT9wCkxSgokjE5Ho41hEPgb8OEUwoXr6Q==}
@@ -4490,6 +4506,20 @@ snapshots:
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
+
+  '@css-modules-kit/codegen@0.10.0(typescript@5.9.3)':
+    dependencies:
+      '@css-modules-kit/core': 0.10.0(typescript@5.9.3)
+      chokidar: 4.0.3
+      typescript: 5.9.3
+
+  '@css-modules-kit/core@0.10.0(typescript@5.9.3)':
+    dependencies:
+      postcss: 8.5.6
+      postcss-safe-parser: 7.0.1(postcss@8.5.6)
+      postcss-selector-parser: 7.1.1
+      postcss-value-parser: 4.2.0
+      typescript: 5.9.3
 
   '@csstools/color-helpers@6.0.2': {}
 

@@ -47,6 +47,7 @@
     "prosemirror-view": "^1.41.5"
   },
   "devDependencies": {
+    "@css-modules-kit/codegen": "^0.10.0",
     "@storybook/addon-a11y": "^10.2.12",
     "@storybook/html-vite": "^10.2.12",
     "@types/culori": "^4.0.1",
