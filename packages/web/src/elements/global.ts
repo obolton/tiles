@@ -19,3 +19,5 @@ import "./swipe/SwipeView";
 import "./themes/ThemeSelector";
 import "./chart/ChartView";
 import "./chart/ChartSeries";
+import "./calendar-grid/CalendarDate";
+import "./calendar-grid/CalendarGrid";
