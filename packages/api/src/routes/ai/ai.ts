@@ -158,6 +158,7 @@ export async function* write(
   let turn = 0;
   let continueTurns = true;
 
+  // oxlint-disable-next-line no-unmodified-loop-condition
   while (continueTurns && turn < MAX_TURNS && !signal?.aborted) {
     const { events, output, toolCalls } = await streamTurn(
       input,
