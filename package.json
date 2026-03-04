@@ -5,6 +5,11 @@
   "packageManager": "pnpm@10.30.3",
   "scripts": {
     "dev": "pnpm -r --parallel dev",
+    "db:create": ".devcontainer/bin/db-create",
+    "db:use": ".devcontainer/bin/db-use",
+    "db:current": ".devcontainer/bin/db-current",
+    "db:list": ".devcontainer/bin/db-list",
+    "db:drop": ".devcontainer/bin/db-drop",
     "db:push": "pnpm --filter api db:push",
     "db:seed": "pnpm --filter api db:seed",
     "test": "vitest run",
