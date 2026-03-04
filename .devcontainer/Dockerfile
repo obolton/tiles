@@ -1,5 +1,7 @@
 FROM node:24-trixie
 
+ENV LANG=C.UTF-8
+
 # Install pnpm via Corepack
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 ENV npm_config_store_dir=/pnpm/store
