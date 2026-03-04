@@ -38,9 +38,9 @@ export default class ListSelect extends HTMLElement {
   private internals: ElementInternals;
   private defaultIconSlot: HTMLSlotElement;
   private iconSlot: HTMLSlotElement;
+  private buttonLabel: HTMLSpanElement;
   private labelSlot: HTMLSlotElement;
   private items: AnchoredPopover;
-  private itemsTitle: HTMLDivElement;
   private mutationObserver: MutationObserver;
 
   constructor() {
@@ -61,27 +61,32 @@ export default class ListSelect extends HTMLElement {
     this.iconSlot.name = "icon";
     this.iconSlot.part.add("icon");
 
+    this.buttonLabel = document.createElement("span");
+    this.buttonLabel.id = "button-label";
+    this.buttonLabel.hidden = true;
+
     this.labelSlot = document.createElement("slot");
     this.labelSlot.name = "label";
-
-    this.itemsTitle = document.createElement("div");
-    this.itemsTitle.id = "title";
-    this.itemsTitle.hidden = true;
 
     this.items = document.createElement("anchored-popover");
     this.items.id = "items";
     this.items.part = "items";
-    this.items.setAttribute("aria-labelledby", "title");
+    this.items.setAttribute("aria-labelledby", "button-label");
     this.items.role = "listbox";
     this.items.addEventListener("toggle", this, { passive: true });
 
     const itemsSlot = document.createElement("slot");
-    this.items.append(this.itemsTitle, itemsSlot);
+    this.items.append(itemsSlot);
 
     const button = document.createElement("div");
     button.id = "button";
     button.part.add("button");
-    button.append(this.defaultIconSlot, this.iconSlot, this.labelSlot);
+    button.append(
+      this.defaultIconSlot,
+      this.iconSlot,
+      this.buttonLabel,
+      this.labelSlot,
+    );
 
     shadow.append(button, this.items);
 
@@ -107,11 +112,12 @@ export default class ListSelect extends HTMLElement {
     this.#label = label;
 
     if (label) {
-      this.itemsTitle.textContent = label;
-      this.itemsTitle.hidden = false;
-      this.ariaLabel = label;
+      this.buttonLabel.textContent = label;
+      this.buttonLabel.hidden = false;
+      this.internals.ariaLabelledByElements = [this.buttonLabel];
     } else {
-      this.itemsTitle.hidden = true;
+      this.buttonLabel.hidden = true;
+      this.internals.ariaLabelledByElements = [];
     }
   }
 

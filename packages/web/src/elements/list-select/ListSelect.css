@@ -2,19 +2,27 @@
   position: relative;
   display: inline-flex;
   align-items: center;
+  text-align: start;
   user-select: none;
   anchor-name: --list-select-anchor;
 }
 
 #button {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-content: center;
   align-items: center;
-  gap: 8px;
+  column-gap: 8px;
 }
 
 ::slotted(svg) {
   fill: currentcolor;
   pointer-events: none;
+}
+
+slot[name="default-icon"]::slotted(*),
+slot[name="icon"]::slotted(*) {
+  grid-column: 1;
 }
 
 /* Hide default icon when there's an item-specific icon */
@@ -25,6 +33,23 @@
 /* Hide item icon slot when empty */
 :host(:not(:state(has-item-icon))) slot[name="icon"] {
   display: none;
+}
+
+slot[name="label"]::slotted(*) {
+  grid-column: 2;
+  line-height: 1;
+}
+
+/* Two-row layout when label is visible */
+:host([label]) {
+  slot[name="default-icon"]::slotted(*),
+  slot[name="icon"]::slotted(*) {
+    grid-row: 1 / span 2;
+  }
+
+  slot[name="label"]::slotted(*) {
+    grid-row: 2;
+  }
 }
 
 #items {
@@ -71,18 +96,14 @@
   }
 }
 
-#title {
-  padding-block: 12px;
-  padding-inline: 20px;
-  margin-block: -8px 4px;
-  margin-inline: -8px;
-  font-size: 1rem;
+#button-label {
+  grid-column: 2;
+  grid-row: 1;
+  margin-bottom: 4px;
+  font-size: 0.5rem;
   line-height: 1;
-  font-weight: 500;
-  text-align: start;
-  color: var(--ui-color);
-  background: rgb(0 0 0 / 5%);
-  border-bottom: 1px solid rgb(0 0 0 / 10%);
+  opacity: 0.5;
+  white-space: nowrap;
 }
 
 :host([orientation="vertical"]) {
