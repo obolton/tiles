@@ -43,6 +43,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
               aria-orientation="vertical"
               orientation="vertical"
               align="center"
+              showvalue
               value={align}
               on:change={(event) =>
                 text.setVerticalAlignment(
