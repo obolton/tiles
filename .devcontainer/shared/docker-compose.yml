@@ -38,6 +38,7 @@ services:
       POSTGRES_USER: tiles
       POSTGRES_PASSWORD: tiles
       POSTGRES_DB: tiles
+      POSTGRES_HOST_AUTH_METHOD: trust
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U tiles"]
       interval: 5s

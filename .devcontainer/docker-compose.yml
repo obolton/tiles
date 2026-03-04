@@ -18,6 +18,7 @@ services:
     environment:
       - NODE_ENV=development
       - WORKSPACE=${WORKSPACE}
+      - DB_NAME=${DB_NAME:-tiles}
     networks:
       - tiles-dev
     labels:

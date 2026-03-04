@@ -39,7 +39,7 @@
   },
 
   "remoteEnv": {
-    "DATABASE_URL": "postgresql://tiles:tiles@tiles-db:5432/tiles",
+    "DATABASE_URL": "postgresql://tiles@tiles-db:5432/${containerEnv:DB_NAME}",
     "API_HOST": "0.0.0.0",
     "API_PORT": "3001",
     "WEB_HOST": "0.0.0.0",
