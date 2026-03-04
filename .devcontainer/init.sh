@@ -30,6 +30,9 @@ if [ "$(uname)" = "Darwin" ]; then
 fi
 
 # Write environment variables
-cat > .devcontainer/.env << EOF
+if [ ! -f .devcontainer/.env ]; then
+  cat > .devcontainer/.env << EOF
 WORKSPACE=${WORKSPACE}
+DB_NAME=tiles
 EOF
+fi
