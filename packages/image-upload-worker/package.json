@@ -14,7 +14,7 @@
     "generate": "wrangler types src/worker.d.ts"
   },
   "dependencies": {
-    "@trpc/client": "^11.8.1",
+    "@trpc/client": "^11.11.0",
     "api": "workspace:*",
     "cookie": "^1.1.1"
   },

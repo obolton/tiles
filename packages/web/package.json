@@ -32,7 +32,7 @@
     "@codemirror/view": "^6.39.4",
     "@lezer/highlight": "^1.2.1",
     "@observablehq/plot": "^0.6.17",
-    "@trpc/client": "^11.8.1",
+    "@trpc/client": "^11.11.0",
     "api": "workspace:*",
     "cookie": "^1.1.1",
     "culori": "^4.0.2",
