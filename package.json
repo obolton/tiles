@@ -2,7 +2,7 @@
   "name": "tiles",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.28.1",
+  "packageManager": "pnpm@10.30.3",
   "scripts": {
     "dev": "pnpm -r --parallel dev",
     "db:push": "pnpm --filter api db:push",
