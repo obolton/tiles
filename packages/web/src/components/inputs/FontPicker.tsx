@@ -24,6 +24,7 @@ export default function FontPicker({
     <list-select
       {...props}
       className={styles.font}
+      label="Font"
       aria-orientation="vertical"
       orientation="vertical"
       align="center"
