@@ -6,7 +6,6 @@ export const THEME: Theme = {
   name: "Test Theme",
   background: { type: "color", color: "ffffffffffff" },
   colors: {
-    background: "ffffffffffff",
     text: "000000000000",
     accent: "0000ffffffff",
   },
@@ -17,7 +16,6 @@ export const THEME: Theme = {
   },
   border: {
     color: null,
-    radius: null,
   },
 };
 
@@ -27,7 +25,6 @@ export const DARK_THEME: Theme = {
   name: "Dark Theme",
   background: { type: "color", color: "000000000000" },
   colors: {
-    background: "000000000000",
     text: "ffffffffffff",
     accent: "ffff00000000",
   },
@@ -38,6 +35,5 @@ export const DARK_THEME: Theme = {
   },
   border: {
     color: null,
-    radius: null,
   },
 };
