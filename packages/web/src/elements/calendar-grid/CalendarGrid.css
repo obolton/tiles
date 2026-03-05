@@ -5,17 +5,13 @@
   grid-auto-rows: 1fr;
   container: calendar-grid / inline-size;
   overflow: auto;
-  gap: 1px 0;
 }
 
 .weekday {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  font-size: clamp(0.55rem, 2cqw, 0.75rem);
+  padding: 4px 6px;
+  font-size: 1rem;
   font-weight: 600;
-  opacity: 0.5;
+  text-decoration: none;
 }
 
 .weeks {
@@ -29,34 +25,44 @@
   grid-auto-flow: row dense;
   align-content: start;
   overflow: hidden;
+  position: relative;
+  padding-top: 2rem;
 }
 
 .day {
+  position: absolute;
+  inset: 0;
   padding: 4px 6px;
-  font-size: clamp(0.5rem, 1.8cqw, 0.75rem);
+  font-size: 1rem;
   opacity: 0.5;
   border-top: 1px solid rgb(0 0 0 / 8%);
+}
+
+:host([editable]) .day:hover {
+  background: rgb(0 0 0 / 10%);
+  cursor: pointer;
 }
 
 .day.today {
   font-weight: 700;
   opacity: 1;
-  position: relative;
-  z-index: 0;
+}
+
+.day.today > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5em;
+  height: 1.5em;
+  padding: 0.1em;
+  border-radius: 50%;
+  background: var(--accent);
   color: white;
   -webkit-font-smoothing: antialiased;
 }
 
-.day.today::before {
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 1.6em;
-  height: 1.6em;
-  border-radius: 50%;
-  background: var(--accent);
-  z-index: -1;
+.day.highlight {
+  background: rgb(0 0 0 / 10%);
 }
 
 .day.outside {
@@ -64,11 +70,15 @@
 }
 
 ::slotted(*) {
+  position: relative;
+  z-index: 1;
   min-height: 22px;
   min-width: 0;
 }
 
 .continuation {
+  position: relative;
+  z-index: 1;
   min-height: 22px;
   min-width: 0;
   border-radius: 4px;

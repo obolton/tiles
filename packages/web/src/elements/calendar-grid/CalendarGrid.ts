@@ -14,6 +14,7 @@ stylesheet.replaceSync(css);
 export interface CalendarGridAttributes extends GlobalHTMLAttributes {
   year?: number;
   month?: number;
+  editable?: boolean;
 }
 
 declare global {
@@ -119,8 +120,15 @@ export default class CalendarGrid extends HTMLElement {
         if (date.getMonth() !== this.month) {
           element.classList.add("outside");
         }
+
+        const label = String(date.getDate());
         if (isSameDay(date, today)) {
           element.classList.add("today");
+          const span = document.createElement("span");
+          span.textContent = label;
+          element.append(span);
+        } else {
+          element.textContent = label;
         }
 
         container.append(element);
@@ -193,13 +201,13 @@ export default class CalendarGrid extends HTMLElement {
   }
 
   private createWeekdayHeaders() {
-    const narrow = getWeekdays("narrow");
+    const short = getWeekdays("short");
     const long = getWeekdays("long");
 
     for (let i = 0; i < 7; i++) {
       const element = document.createElement("abbr");
       element.classList.add("weekday");
-      element.textContent = narrow[i]!;
+      element.textContent = short[i]!;
       element.title = long[i]!;
       element.style.gridRow = "header";
       element.style.gridColumn = String(i + 1);
