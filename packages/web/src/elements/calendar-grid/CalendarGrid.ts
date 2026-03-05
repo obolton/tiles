@@ -6,6 +6,7 @@ import {
   isSameDay,
   toISODate,
 } from "@/utils/dates";
+import { CalendarGridEvent } from "./events";
 import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
@@ -39,6 +40,7 @@ export default class CalendarGrid extends HTMLElement {
 
   private weeks: { container: HTMLElement; slot: HTMLSlotElement }[] = [];
   private continuations: HTMLElement[] = [];
+  private highlighted: HTMLTimeElement | null = null;
   private gridPositions = new Map<
     string,
     { week: number; start: number; end: number }
@@ -57,6 +59,33 @@ export default class CalendarGrid extends HTMLElement {
     return Array.from(this.getElementsByTagName("calendar-date"));
   }
 
+  dateFromPoint(x: number, y: number): string | null {
+    for (const el of this.shadow.elementsFromPoint(x, y)) {
+      if (el instanceof HTMLTimeElement) {
+        return el.dateTime;
+      }
+    }
+    return null;
+  }
+
+  highlightDate(date: string | null) {
+    if (this.highlighted?.dateTime === date) {
+      return;
+    }
+
+    this.highlighted?.classList.remove("highlight");
+
+    if (!date) {
+      this.highlighted = null;
+      return;
+    }
+
+    this.highlighted = this.shadow.querySelector<HTMLTimeElement>(
+      `time[datetime="${date}"]`,
+    );
+    this.highlighted?.classList.add("highlight");
+  }
+
   constructor() {
     super();
     this.shadow = this.attachShadow({
@@ -73,6 +102,15 @@ export default class CalendarGrid extends HTMLElement {
     this.shadow.append(this.weeksContainer);
 
     this.mutationObserver = new MutationObserver(() => this.layout());
+
+    this.shadow.addEventListener("click", this);
+  }
+
+  handleEvent(event: Event) {
+    switch (event.type) {
+      case "click":
+        return this.handleClick(event);
+    }
   }
 
   connectedCallback() {
@@ -98,10 +136,22 @@ export default class CalendarGrid extends HTMLElement {
     }
   }
 
+  private handleClick(event: Event) {
+    if (event.target instanceof HTMLTimeElement) {
+      this.dispatchEvent(
+        new CalendarGridEvent("calendarcellclick", {
+          date: event.target.dateTime,
+          bubbles: true,
+        }),
+      );
+    }
+  }
+
   private updateMonth() {
     const dates = getCalendarWeeks(this.year, this.month, this.firstDayOfWeek);
     this.weeks = [];
     this.gridPositions.clear();
+    this.highlighted = null;
 
     const today = new Date();
     const fragment = document.createDocumentFragment();
@@ -115,7 +165,7 @@ export default class CalendarGrid extends HTMLElement {
         const element = document.createElement("time");
         element.classList.add("day");
         element.dateTime = toISODate(date);
-        element.textContent = String(date.getDate());
+        element.style.gridColumn = `${d + 1} / ${d + 2}`;
 
         if (date.getMonth() !== this.month) {
           element.classList.add("outside");
@@ -169,7 +219,7 @@ export default class CalendarGrid extends HTMLElement {
         continue;
       }
 
-      const endPos = this.gridPositions.get(item.end!);
+      const endPos = item.end ? this.gridPositions.get(item.end) : undefined;
 
       item.style.gridColumn = `${position.start} / ${this.endColumn(endPos, position.week)}`;
       slotItems[position.week]!.push(item);
