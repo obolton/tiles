@@ -1,0 +1,65 @@
+.editor {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px 8px;
+  padding: 8px;
+  width: 260px;
+}
+
+.editor > * {
+  grid-column: 1 / -1;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.header input[type="text"] {
+  flex: 1;
+  min-width: 0;
+}
+
+.section {
+  position: relative;
+  display: grid;
+  grid-template-columns: subgrid;
+  row-gap: 4px;
+}
+
+.section:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  inset-inline: 4px;
+  bottom: -6px;
+  height: 3px;
+  border-radius: 1.5px;
+  background: rgb(0 0 0 / 5%);
+}
+
+.section > * {
+  grid-column: 1 / -1;
+}
+
+.legend {
+  text-align: start;
+  padding-inline-start: 4px;
+  font-family: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.5;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: subgrid;
+  place-items: center start;
+}
+
+.row label {
+  font-size: 1rem;
+  padding-inline-start: 4px;
+}

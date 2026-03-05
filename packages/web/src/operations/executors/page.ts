@@ -1,3 +1,4 @@
+import { themesCache } from "@/utils/cache";
 import type { SetPagePropertiesAction } from "../types";
 import type { ActionExecutor } from "./types";
 
@@ -23,7 +24,9 @@ const setProperties: ActionExecutor<SetPagePropertiesAction> = async (
     page.folderId.value = changes.folderId;
   }
   if (changes.themeId !== undefined) {
-    page.themeId.value = changes.themeId;
+    page.theme.value = changes.themeId
+      ? themesCache.getById(changes.themeId)
+      : null;
   }
 };
 

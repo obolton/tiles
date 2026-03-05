@@ -99,6 +99,16 @@ export default Prisma.defineExtension({
         compute: computeBackground,
       },
     },
+    theme: {
+      background: {
+        needs: { backgroundColor: true, backgroundGradient: true },
+        compute: ({ backgroundColor, backgroundGradient }) =>
+          computeFill({
+            color: backgroundColor,
+            gradient: backgroundGradient,
+          }),
+      },
+    },
     chartSeries: {
       fill: {
         needs: { color: true, gradient: true },

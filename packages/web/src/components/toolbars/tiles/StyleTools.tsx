@@ -5,6 +5,7 @@ import ColorPicker from "@/components/colors/ColorPicker";
 import FillPicker from "@/components/fills/FillPicker";
 import AnimationPicker from "@/components/animations/AnimationPicker";
 import FramePicker from "@/components/frames/FramePicker";
+import { resolveTheme, getThemeColors } from "@/utils/themes";
 import { handleError } from "@/utils/errors";
 import type Tile from "@/models/Tile";
 
@@ -14,6 +15,10 @@ export interface StyleToolsProps {
 
 export default function StyleTools({ tile }: StyleToolsProps) {
   const { id, textColor, background, theme, animation } = tile;
+  const themeColors = theme.derive(() => {
+    const resolved = resolveTheme(tile);
+    return resolved ? getThemeColors(resolved) : [];
+  });
 
   function setTheme(themeId: string | null) {
     tile.setTheme(themeId).catch(handleError);
@@ -28,7 +33,8 @@ export default function StyleTools({ tile }: StyleToolsProps) {
       />
 
       <ThemePicker
-        value={theme.derive((t) => t?.id ?? null)}
+        id={`${id}-theme`}
+        value={theme}
         onChange={setTheme}
         aria-label="Theme"
         data-tooltip="Theme"
@@ -38,12 +44,15 @@ export default function StyleTools({ tile }: StyleToolsProps) {
         id={`${id}-color-picker`}
         value={textColor}
         onChange={(color) => tile.setTextColor(color)}
+        themeColors={themeColors}
       />
 
       <FillPicker
         id={`${id}-background`}
         value={background}
         onChange={(background) => tile.setBackground(background)}
+        aria-pressed={background}
+        themeColors={themeColors}
       />
 
       <AnimationPicker

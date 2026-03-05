@@ -5,7 +5,6 @@ import { initRoute } from "@/routes/init";
 import { initBookmarkStatus } from "@/utils/bookmarks";
 import { handleError } from "@/utils/errors";
 import Page, { type PageProps } from "@/pages/Page";
-import { isDark } from "@/utils/color";
 import { getThemeStyles } from "@/utils/themes";
 import { notFound } from "@/router/responses";
 import type {
@@ -46,10 +45,6 @@ async function loader({
     title: `${page.title} - Tiles`,
     bodyAttributes: {
       "data-page-id": page.id,
-      className:
-        page.backgroundColor && isDark(page.backgroundColor)
-          ? "dark"
-          : undefined,
       style,
     },
     data: { page },

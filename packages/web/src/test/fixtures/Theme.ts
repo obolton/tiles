@@ -4,8 +4,8 @@ export const THEME: Theme = {
   id: "theme-id",
   workspaceId: "workspace-id",
   name: "Test Theme",
+  background: { type: "color", color: "ffffffffffff" },
   colors: {
-    background: "ffffffffffff",
     text: "000000000000",
     accent: "0000ffffffff",
   },
@@ -14,18 +14,15 @@ export const THEME: Theme = {
     body: "MODERN",
     code: "CODE",
   },
-  border: {
-    color: null,
-    radius: null,
-  },
+  border: null,
 };
 
 export const DARK_THEME: Theme = {
   id: "dark-theme-id",
   workspaceId: "workspace-id",
   name: "Dark Theme",
+  background: { type: "color", color: "000000000000" },
   colors: {
-    background: "000000000000",
     text: "ffffffffffff",
     accent: "ffff00000000",
   },
@@ -34,8 +31,5 @@ export const DARK_THEME: Theme = {
     body: "MODERN",
     code: "CODE",
   },
-  border: {
-    color: null,
-    radius: null,
-  },
+  border: null,
 };

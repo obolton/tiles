@@ -7,11 +7,15 @@ import { toCSSColor } from "@/utils/color";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import styles from "./FillPicker.module.css";
 import type { Reactive } from "@/utils/reactivity";
+import type { ThemeColor } from "@/components/colors/ColorPalette";
 import type { Fill, FillUpdate } from "./types";
+import type { ToolbarButtonProps } from "@/components/buttons/ToolbarButton";
 
-export interface FillPickerProps {
-  id: string;
-  label?: string;
+export interface FillPickerProps extends Omit<
+  ToolbarButtonProps,
+  "children" | "value"
+> {
+  themeColors?: Reactive<ThemeColor[]>;
   value: Reactive<Fill | null>;
   onChange: (value: FillUpdate) => void;
   allowImage?: boolean;
@@ -20,19 +24,21 @@ export interface FillPickerProps {
 export default function FillPicker({
   id,
   label,
+  themeColors,
   value,
   onChange,
   allowImage,
+  ...props
 }: FillPickerProps) {
   return (
     <>
       <ToolbarButton
+        {...props}
         id={id}
         label={label ?? "Background"}
         popovertarget={`${id}-popover`}
         aria-haspopup="menu"
         aria-expanded="false"
-        aria-pressed={value}
       >
         {value ? (
           value.derive((fill) => {
@@ -69,6 +75,7 @@ export default function FillPicker({
 
       <FillPopover
         id={`${id}-popover`}
+        themeColors={themeColors}
         value={value}
         onChange={onChange}
         allowImage={allowImage}

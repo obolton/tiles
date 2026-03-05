@@ -5,7 +5,6 @@ import {
   getComplementaryColor,
   getHueName,
   getLightnessName,
-  isDark,
   isSameColor,
   oklchToP3,
   p3ToOklch,
@@ -84,15 +83,6 @@ describe("isSameColor", () => {
 
   test("returns false when color strings differ", () => {
     expect(isSameColor("0ff080", "0ff181")).toBe(false);
-  });
-});
-
-describe("isDark", () => {
-  test("uses relative luminance with 0.5 threshold", () => {
-    // Low luminance (dark) - red channel contributes ~0.21
-    expect(isDark("ff0000ff0000")).toBe(true);
-    // High luminance (light) - green channel contributes ~0.72
-    expect(isDark("0000ff000000")).toBe(false);
   });
 });
 

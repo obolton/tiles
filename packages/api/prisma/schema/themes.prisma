@@ -14,9 +14,10 @@ model Theme {
   name        String   @db.VarChar(50)
 
   // Colors
-  backgroundColor Bytes @map("background_color") @db.ByteA
-  textColor       Bytes @map("text_color") @db.ByteA
-  accentColor     Bytes @map("accent_color") @db.ByteA
+  backgroundColor    Bytes              @map("background_color") @db.ByteA
+  backgroundGradient GradientDirection? @map("background_gradient")
+  textColor          Bytes              @map("text_color") @db.ByteA
+  accentColor        Bytes              @map("accent_color") @db.ByteA
 
   // Fonts
   headingFont Font @default(MODERN) @map("heading_font")
@@ -24,8 +25,7 @@ model Theme {
   codeFont    Font @default(CODE) @map("code_font")
 
   // Borders
-  borderColor  Bytes? @map("border_color") @db.ByteA
-  borderRadius Float? @map("border_radius") @db.Real
+  borderColor Bytes? @map("border_color") @db.ByteA
 
   // Relations
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)

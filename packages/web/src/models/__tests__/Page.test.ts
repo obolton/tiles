@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import Page from "@/models/Page";
+import Theme from "@/models/Theme";
 import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
+import { THEME } from "@/test/fixtures/Theme";
 
 vi.mock("@/api/client", () => ({
   default: {
@@ -38,7 +40,7 @@ describe("Page", () => {
     expect(page.coverImageUrl.value).toBe(PAGE.coverImageUrl);
     expect(page.isPublished.value).toBe(PAGE.published);
     expect(page.folderId.value).toBe(PAGE.folderId);
-    expect(page.themeId.value).toBeNull();
+    expect(page.theme.value).toBeNull();
     expect(page.width.value).toBe(PAGE.width);
     expect(page.alignment.value).toBe(PAGE.alignment);
     expect(page.dockSizes.value).toEqual({
@@ -195,14 +197,14 @@ describe("Page", () => {
   describe("setTheme", () => {
     test("updates the theme and persists it", async () => {
       const page = new Page(PAGE);
-      const newThemeId = "new-theme-id";
+      const theme = new Theme(THEME);
 
-      await page.setTheme(newThemeId);
+      await page.setTheme(theme);
 
-      expect(page.themeId.value).toBe(newThemeId);
+      expect(page.theme.value).toBe(theme);
       expect(client.pages.update.mutate).toHaveBeenCalledWith({
         pageId: PAGE.id,
-        themeId: newThemeId,
+        themeId: THEME.id,
       });
     });
   });

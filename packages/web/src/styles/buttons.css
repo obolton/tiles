@@ -68,7 +68,7 @@
   a.primary {
     color: #fff;
     -webkit-font-smoothing: antialiased;
-    background: var(--accent);
+    background: var(--accent-color, var(--accent));
     box-shadow: 0 4px 4px -2px rgb(0 0 0 / 20%);
 
     &:enabled:active:not([aria-disabled="true"]) {
@@ -235,6 +235,7 @@
 
       min-width: 32px;
       height: 32px;
+      padding: 0;
 
       & > svg {
         width: 20px;

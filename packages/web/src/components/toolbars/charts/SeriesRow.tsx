@@ -31,6 +31,7 @@ export default function SeriesRow({
           <FillPicker
             id={`series-${series.id}-fill`}
             value={series.fill}
+            aria-pressed={series.fill}
             onChange={(fill) => {
               if (fill === null || fill.type !== "image") {
                 onSetFill(fill, series);

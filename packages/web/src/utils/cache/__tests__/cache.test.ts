@@ -1,4 +1,5 @@
 import { describe, expect, test, afterEach } from "vitest";
+import Theme from "@/models/Theme";
 import {
   initializeCache,
   isCacheInitialized,
@@ -126,20 +127,21 @@ describe("cache", () => {
       await initializeCache("user-1", "workspace-1");
 
       await themesCache.set([
-        {
+        new Theme({
           id: "theme-1",
           workspaceId: "workspace-1",
           name: "Test Theme",
-          colors: { background: "ffffff", text: "000000", accent: "0000ff" },
+          background: { type: "color", color: "ffffffffffff" },
+          colors: { text: "000000", accent: "0000ff" },
           fonts: { heading: "MODERN", body: "MODERN", code: "CODE" },
-          border: { color: null, radius: null },
-        },
+          border: null,
+        }),
       ]);
       const cached = await themesCache.getCached();
 
       expect(cached).not.toBeNull();
       expect(cached?.items).toHaveLength(1);
-      expect(cached?.items[0]?.name).toBe("Test Theme");
+      expect(cached?.items[0]?.name.value).toBe("Test Theme");
     });
 
     test("bookmarksCache is accessible after initialization", async () => {

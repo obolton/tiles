@@ -6,6 +6,7 @@ import { fromHex } from "./arrays";
 interface ThemeDefinition {
   name: string;
   backgroundColor: string;
+  backgroundGradient?: GradientDirection;
   textColor: string;
   accentColor: string;
   headingFont: Font;
@@ -16,18 +17,93 @@ interface ThemeDefinition {
 const DEFAULT_THEMES: ThemeDefinition[] = [
   {
     name: "Light",
-    backgroundColor: "ffffffffffff", // White
-    textColor: "1a1a1a1a1a1a", // Near black
-    accentColor: "0066ff0066ff", // Blue
+    backgroundColor: "ffffffffffff",
+    textColor: "1a1a1a1a1a1a",
+    accentColor: "0066ff0066ff",
     headingFont: "MODERN",
     bodyFont: "MODERN",
     codeFont: "CODE",
   },
   {
     name: "Dark",
-    backgroundColor: "1a1a1a1a1a1a", // Near black
-    textColor: "ffffffffffff", // White
-    accentColor: "66b3ff66b3ff", // Light blue
+    backgroundColor: "1a1a1a1a1a1a",
+    textColor: "ffffffffffff",
+    accentColor: "66b3ff66b3ff",
+    headingFont: "MODERN",
+    bodyFont: "MODERN",
+    codeFont: "CODE",
+  },
+  {
+    name: "Ocean",
+    backgroundColor: "080810103030184860609090",
+    backgroundGradient: "VERTICAL",
+    textColor: "e0e0e8e8f0f0",
+    accentColor: "4040a0a0d8d8",
+    headingFont: "MODERN",
+    bodyFont: "MODERN",
+    codeFont: "CODE",
+  },
+  {
+    name: "Forest",
+    backgroundColor: "1a1a28281a1a",
+    textColor: "d8d8e8e8d8d8",
+    accentColor: "5a5a7a7a5a5a",
+    headingFont: "CLASSIC",
+    bodyFont: "MODERN",
+    codeFont: "CODE",
+  },
+  {
+    name: "Sunset",
+    backgroundColor: "fefee8e8d4d4e8e8a0a06060",
+    backgroundGradient: "BOTTOM_RIGHT",
+    textColor: "2d2d18181010",
+    accentColor: "d86848684868",
+    headingFont: "ROUNDED",
+    bodyFont: "MODERN",
+    codeFont: "CODE",
+  },
+  {
+    name: "Rose",
+    backgroundColor: "fefee0e0e4e4",
+    textColor: "2a2a1a1a2020",
+    accentColor: "c83060306030",
+    headingFont: "CLASSIC",
+    bodyFont: "MODERN",
+    codeFont: "CODE",
+  },
+  {
+    name: "Violet",
+    backgroundColor: "1818080820203a3a18185858",
+    backgroundGradient: "BOTTOM_LEFT",
+    textColor: "e0e0d8d8f0f0",
+    accentColor: "a0a07070d0d0",
+    headingFont: "MODERN",
+    bodyFont: "MODERN",
+    codeFont: "CODE",
+  },
+  {
+    name: "Slate",
+    backgroundColor: "2d2d36364040",
+    textColor: "d0d0d8d8e0e0",
+    accentColor: "5858a0a0b8b8",
+    headingFont: "MODERN",
+    bodyFont: "MODERN",
+    codeFont: "CODE",
+  },
+  {
+    name: "Cream",
+    backgroundColor: "f8f8f0f0e0e0",
+    textColor: "383828281818",
+    accentColor: "b0b080804848",
+    headingFont: "CLASSIC",
+    bodyFont: "CLASSIC",
+    codeFont: "CODE",
+  },
+  {
+    name: "Mono",
+    backgroundColor: "f0f0f0f0f0f0",
+    textColor: "181818181818",
+    accentColor: "606060606060",
     headingFont: "MODERN",
     bodyFont: "MODERN",
     codeFont: "CODE",
@@ -36,9 +112,16 @@ const DEFAULT_THEMES: ThemeDefinition[] = [
 
 export function getDefaultThemesData() {
   return DEFAULT_THEMES.map(
-    ({ backgroundColor, textColor, accentColor, ...theme }) => ({
+    ({
+      backgroundColor,
+      backgroundGradient,
+      textColor,
+      accentColor,
+      ...theme
+    }) => ({
       ...theme,
       backgroundColor: fromHex(backgroundColor),
+      backgroundGradient: backgroundGradient ?? null,
       textColor: fromHex(textColor),
       accentColor: fromHex(accentColor),
     }),
@@ -61,6 +144,13 @@ export function getTextColorProperties(
   return { textColor: fromHex(textColor) };
 }
 
+type ColorBackgroundSchema = Exclude<BackgroundSchema, { type: "image" }>;
+
+export interface ColorBackground {
+  backgroundColor: Uint8Array<ArrayBuffer>;
+  backgroundGradient: GradientDirection | null;
+}
+
 export interface Background {
   backgroundColor: Uint8Array<ArrayBuffer> | null;
   backgroundGradient: GradientDirection | null;
@@ -68,8 +158,17 @@ export interface Background {
 }
 
 export function getBackgroundProperties(
+  background: ColorBackgroundSchema,
+): ColorBackground;
+export function getBackgroundProperties(
+  background: ColorBackgroundSchema | undefined,
+): ColorBackground | undefined;
+export function getBackgroundProperties(
   background?: BackgroundSchema | null,
-): Background | undefined {
+): Background | undefined;
+export function getBackgroundProperties(
+  background?: BackgroundSchema | null,
+): ColorBackground | Background | undefined {
   if (background === undefined) {
     return undefined;
   }
@@ -82,22 +181,6 @@ export function getBackgroundProperties(
     };
   }
 
-  if (background.type === "color") {
-    return {
-      backgroundColor: fromHex(background.color),
-      backgroundGradient: null,
-      backgroundImageId: null,
-    };
-  }
-
-  if (background.type === "gradient") {
-    return {
-      backgroundColor: fromHex(background.colorA + background.colorB),
-      backgroundGradient: background.direction,
-      backgroundImageId: null,
-    };
-  }
-
   if (background.type === "image") {
     return {
       backgroundColor: null,
@@ -106,5 +189,15 @@ export function getBackgroundProperties(
     };
   }
 
-  throw new Error("Invalid background");
+  if (background.type === "gradient") {
+    return {
+      backgroundColor: fromHex(background.colorA + background.colorB),
+      backgroundGradient: background.direction,
+    };
+  }
+
+  return {
+    backgroundColor: fromHex(background.color),
+    backgroundGradient: null,
+  };
 }

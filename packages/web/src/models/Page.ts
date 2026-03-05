@@ -3,6 +3,7 @@ import Dropdown from "@/models/Dropdown";
 import PageInvite from "@/models/PageInvite";
 import TileCollection from "@/models/TileCollection";
 import Section from "@/models/Section";
+import Theme from "@/models/Theme";
 import createTileFromData from "@/models/createTile";
 import { reactive, array } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
@@ -31,7 +32,7 @@ export default class Page {
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
   readonly folderId: Reactive<string | null>;
-  readonly themeId: Reactive<string | null>;
+  readonly theme: Reactive<Theme | null>;
   readonly width: Reactive<number>;
   readonly alignment: Reactive<HorizontalAlignment>;
   readonly dockSizes: Reactive<Record<DockEdge, number | null>>;
@@ -57,7 +58,7 @@ export default class Page {
     this.coverImageUrl = reactive(data.coverImageUrl);
     this.isPublished = reactive(data.published);
     this.folderId = reactive(data.folderId);
-    this.themeId = reactive(data.theme?.id ?? null);
+    this.theme = reactive(data.theme ? new Theme(data.theme) : null);
     this.width = reactive(data.width);
     this.alignment = reactive(data.alignment);
     this.dockSizes = reactive({
@@ -206,9 +207,9 @@ export default class Page {
     return this.update({ folderId });
   }
 
-  setTheme(themeId: string | null) {
-    this.themeId.value = themeId;
-    return this.update({ themeId });
+  setTheme(theme: Theme | null) {
+    this.theme.value = theme;
+    return this.update({ themeId: theme?.id ?? null });
   }
 
   setWidth(width: number) {

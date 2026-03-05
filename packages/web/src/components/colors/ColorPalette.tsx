@@ -9,6 +9,11 @@ import {
 } from "@/utils/color";
 import type { Reactive } from "@/utils/reactivity";
 
+export interface ThemeColor {
+  name: string;
+  color: Color;
+}
+
 export interface ColorPaletteProps {
   rows?: number;
   minLightness?: number;
@@ -16,12 +21,43 @@ export interface ColorPaletteProps {
   chroma?: number;
   hues?: number;
   startHue?: number;
+  themeColors?: Reactive<ThemeColor[]>;
   value?: Reactive<Color | null | undefined>;
   onChange: (value: Color) => void;
 }
 
 function preventDefault(event: Event) {
   event.preventDefault();
+}
+
+function ColorSwatch({
+  color,
+  name,
+  checked,
+  row,
+}: {
+  color: Color;
+  name: string;
+  checked: boolean;
+  row?: string;
+}) {
+  const style: Record<string, string> = {
+    "--color": toCSSColor(color),
+  };
+  if (row) {
+    style["grid-row"] = row;
+  }
+  return (
+    <input
+      type="radio"
+      name="color"
+      style={style}
+      aria-label={name}
+      value={color}
+      checked={checked}
+      on:pointerdown={preventDefault}
+    />
+  );
 }
 
 export default function ColorPalette({
@@ -31,13 +67,12 @@ export default function ColorPalette({
   chroma = 0.2,
   hues = 10,
   startHue = 0,
+  themeColors,
   value,
   onChange,
 }: ColorPaletteProps) {
-  const items: {
-    color: Color;
-    name: string;
-  }[] = [];
+  const columns = hues + 1;
+  const items: ThemeColor[] = [];
 
   for (let l = rows - 1; l >= 0; l--) {
     for (let i = 0; i < hues; i++) {
@@ -64,15 +99,9 @@ export default function ColorPalette({
   }
 
   function setColor(event: Event) {
-    if (!onChange) {
-      return;
-    }
     const element = event.target as HTMLInputElement;
-    const value = element.value;
-    const index = parseInt(value, 10);
-    const color = items[index];
-    if (color) {
-      onChange(color.color);
+    if (element.type === "radio") {
+      onChange(element.value as Color);
     }
   }
 
@@ -88,16 +117,13 @@ export default function ColorPalette({
     }
     const color = reactive.value;
     if (color == null) {
-      // Clear selection
       const checked = fieldset.querySelector<HTMLInputElement>("input:checked");
       if (checked) {
         checked.checked = false;
       }
     } else {
-      // Find and select matching color
-      const index = items.findIndex((item) => isSameColor(item.color, color));
       const input = fieldset.querySelector<HTMLInputElement>(
-        `input[value="${index}"]`,
+        `input[value="${color}"]`,
       );
       if (input) {
         input.checked = true;
@@ -106,25 +132,46 @@ export default function ColorPalette({
   });
 
   const initialColor = value?.value;
-  const initialIndex = initialColor
-    ? items.findIndex((item) => isSameColor(item.color, initialColor))
-    : -1;
+
+  function isChecked(color: Color) {
+    return initialColor != null && isSameColor(color, initialColor);
+  }
 
   return (
-    <fieldset ref={ref} className={styles.palette} on:change={setColor}>
-      {items.map((item, i) => (
-        <input
-          type="radio"
-          name="color"
-          style={{
-            "--color": toCSSColor(item.color),
-          }}
-          aria-label={item.name}
-          value={i.toString()}
-          checked={i === initialIndex}
-          on:pointerdown={preventDefault}
-        />
-      ))}
+    <fieldset
+      ref={ref}
+      classList={{
+        [styles.palette]: true,
+        [styles["with-theme-colors"]]: themeColors?.derive((c) => c.length > 0),
+      }}
+      on:change={setColor}
+    >
+      {themeColors?.derive((colors) =>
+        colors.map((item) => (
+          <ColorSwatch
+            color={item.color}
+            name={item.name}
+            checked={isChecked(item.color)}
+            row="theme"
+          />
+        )),
+      )}
+      {items.map((item, i) =>
+        themeColors ? (
+          <ColorSwatch
+            color={item.color}
+            name={item.name}
+            checked={isChecked(item.color)}
+            row={`palette ${Math.floor(i / columns) + 1}`}
+          />
+        ) : (
+          <ColorSwatch
+            color={item.color}
+            name={item.name}
+            checked={isChecked(item.color)}
+          />
+        ),
+      )}
     </fieldset>
   );
 }
