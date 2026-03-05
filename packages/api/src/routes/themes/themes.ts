@@ -29,6 +29,8 @@ export async function listThemes(
   });
 }
 
+const DEFAULT_BACKGROUND = { type: "color" as const, color: "ffffffffffff" };
+
 export async function createTheme(
   { workspaceId, name, background, colors, fonts, border }: CreateThemeSchema,
   _ctx: AuthenticatedWorkspaceProcedureContext,
@@ -37,7 +39,7 @@ export async function createTheme(
     data: {
       workspaceId,
       name,
-      ...getBackgroundProperties(background),
+      ...getBackgroundProperties(background ?? DEFAULT_BACKGROUND),
       textColor: fromHex(colors.text),
       accentColor: fromHex(colors.accent),
       headingFont: fonts.heading,

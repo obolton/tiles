@@ -43,7 +43,7 @@ export type ListThemesSchema = z.infer<typeof ListThemesSchema>;
 export const CreateThemeSchema = z.object({
   workspaceId: z.uuid(),
   name: z.string().min(1).max(50),
-  background: ThemeBackgroundSchema,
+  background: ThemeBackgroundSchema.optional(),
   colors: ThemeColorsSchema,
   fonts: ThemeFontsSchema,
   border: ThemeBorderSchema.optional(),
