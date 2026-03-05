@@ -6,8 +6,9 @@ import type { FontId } from "@/config/fonts";
 
 export type ThemeData = NonNullable<AppRouterOutputs["themes"]["getById"]>;
 
+export type ThemeBackground = NonNullable<ThemeData["background"]>;
+
 export interface ThemeColors {
-  background: Color;
   text: Color;
   accent: Color;
 }
@@ -20,7 +21,6 @@ export interface ThemeFonts {
 
 export interface ThemeBorder {
   color: Color | null;
-  radius: number | null;
 }
 
 export default class Theme {
@@ -67,9 +67,35 @@ export default class Theme {
     return this.update({ fonts });
   }
 
+  setBackground(background: ThemeBackground) {
+    this.background.value = background;
+    return this.update({ background });
+  }
+
   setBorder(border: Partial<ThemeBorder>) {
     this.border.value = { ...this.border.value, ...border };
     return this.update({ border });
+  }
+
+  serialize(): ThemeData {
+    return {
+      id: this.id,
+      workspaceId: this.workspaceId,
+      name: this.name.value,
+      background: this.background.value,
+      colors: this.colors.value,
+      fonts: this.fonts.value,
+      border: this.border.value,
+    };
+  }
+
+  duplicate() {
+    const { background, ...data } = this.serialize();
+    return client.themes.create.mutate({
+      ...data,
+      name: `${data.name} Copy`,
+      background: background ?? undefined,
+    });
   }
 
   delete() {

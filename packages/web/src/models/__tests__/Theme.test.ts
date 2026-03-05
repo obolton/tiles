@@ -54,12 +54,12 @@ describe("Theme", () => {
   describe("setColors", () => {
     test("updates colors and persists the change", async () => {
       const theme = new Theme(THEME);
-      const colors = { background: "ff0000000000" as const };
+      const colors = { text: "ff0000000000" as const };
 
       await theme.setColors(colors);
 
-      expect(theme.colors.value.background).toBe("ff0000000000");
-      expect(theme.colors.value.text).toBe(THEME.colors.text);
+      expect(theme.colors.value.text).toBe("ff0000000000");
+      expect(theme.colors.value.accent).toBe(THEME.colors.accent);
       expect(updateMock).toHaveBeenCalledWith({
         workspaceId: THEME.workspaceId,
         id: THEME.id,
