@@ -87,6 +87,7 @@ export default function RowTab({ table, getTable }: RowTabProps) {
           label="Background"
           value={background}
           onChange={setBackground}
+          aria-pressed={background}
         />
         <ToolbarButton label="Add row" on:click={addRow}>
           <AddRowIcon aria-hidden="true" />

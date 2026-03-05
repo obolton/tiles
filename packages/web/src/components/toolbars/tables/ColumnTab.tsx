@@ -108,6 +108,7 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
           label="Background"
           value={background}
           onChange={setBackground}
+          aria-pressed={background}
         />
         <ToolbarButton label="Add column" on:click={addColumn}>
           <AddColumnIcon aria-hidden="true" />
