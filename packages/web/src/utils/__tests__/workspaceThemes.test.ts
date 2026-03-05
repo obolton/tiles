@@ -43,7 +43,7 @@ describe("workspaceThemes", () => {
       const result = await getWorkspaceThemes();
 
       expect(client.themes.list.query).not.toHaveBeenCalled();
-      expect(result).toEqual(mockThemesResponse);
+      expect(result.map((t) => t.serialize())).toEqual(mockThemesResponse);
     });
 
     test("fetches and caches themes when cache is empty", async () => {
@@ -56,10 +56,12 @@ describe("workspaceThemes", () => {
       expect(client.themes.list.query).toHaveBeenCalledWith({
         workspaceId: "workspace-123",
       });
-      expect(result).toEqual(mockThemesResponse);
+      expect(result.map((t) => t.serialize())).toEqual(mockThemesResponse);
 
       const cached = await themesCache.getCached();
-      expect(cached?.items).toEqual(mockThemesResponse);
+      expect(cached?.items.map((t) => t.serialize())).toEqual(
+        mockThemesResponse,
+      );
     });
   });
 
