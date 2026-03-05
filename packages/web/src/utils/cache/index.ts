@@ -1,4 +1,5 @@
 import { Database } from "@/utils/idb";
+import ThemeModel from "@/models/Theme";
 import type { Theme } from "api/types/themes";
 import { CacheCollection } from "./collection";
 
@@ -42,10 +43,12 @@ export const foldersCache = new CacheCollection<CachedFolder>({
   metaStoreName: "foldersMeta",
 });
 
-export const themesCache = new CacheCollection<CachedTheme>({
+export const themesCache = new CacheCollection<CachedTheme, ThemeModel>({
   ttlMs: CACHE_TTL_MS,
   itemsStoreName: "themes",
   metaStoreName: "themesMeta",
+  serialize: (theme) => theme.serialize(),
+  deserialize: (raw) => new ThemeModel(raw),
 });
 
 export const bookmarksCache = new CacheCollection<CachedBookmark>({
