@@ -1,5 +1,6 @@
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import StyleTools from "@/components/toolbars/tiles/StyleTools";
+import DateTab from "@/components/toolbars/tiles/DateTab";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import LinkIcon from "@/icons/link.svg?jsx";
@@ -52,6 +53,8 @@ export default function LinkToolbar({ link }: LinkToolbarProps) {
       <toolbar-tab name="style" label="Style">
         <StyleTools tile={link} />
       </toolbar-tab>
+
+      <DateTab tile={link} />
     </floating-toolbar>
   );
 }

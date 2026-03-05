@@ -1,5 +1,6 @@
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import StyleTools from "@/components/toolbars/tiles/StyleTools";
+import DateTab from "@/components/toolbars/tiles/DateTab";
 import PlaceTab from "./PlaceTab";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
@@ -93,6 +94,8 @@ export default function MapToolbar({
       <If condition={hasSelection}>
         <PlaceTab map={map} getMapView={getMapView} />
       </If>
+
+      <DateTab tile={map} />
     </floating-toolbar>
   );
 }
