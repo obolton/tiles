@@ -97,10 +97,10 @@ model Page {
   width           Int                 @default(32) @db.SmallInt
   alignment       HorizontalAlignment @default(CENTER)
 
-  dockTopHeight    Float? @map("dock_top_height") @db.Real
-  dockBottomHeight Float? @map("dock_bottom_height") @db.Real
-  dockLeftWidth    Float? @map("dock_left_width") @db.Real
-  dockRightWidth   Float? @map("dock_right_width") @db.Real
+  dockTopHeight    Float @default(200) @map("dock_top_height") @db.Real
+  dockBottomHeight Float @default(200) @map("dock_bottom_height") @db.Real
+  dockLeftWidth    Float @default(200) @map("dock_left_width") @db.Real
+  dockRightWidth   Float @default(200) @map("dock_right_width") @db.Real
 
   workspace          Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   theme              Theme?         @relation(fields: [themeId], references: [id], onDelete: SetNull)

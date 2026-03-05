@@ -37,30 +37,10 @@ export const UpdatePageSchema = z.object({
   coverImageKey: z.string().nullable().optional(),
   folderId: z.uuid().nullable().optional(),
   themeId: z.uuid().nullable().optional(),
-  dockTopHeight: z
-    .number()
-    .gte(MIN_DOCK_SIZE)
-    .lte(MAX_DOCK_SIZE)
-    .nullable()
-    .optional(),
-  dockBottomHeight: z
-    .number()
-    .gte(MIN_DOCK_SIZE)
-    .lte(MAX_DOCK_SIZE)
-    .nullable()
-    .optional(),
-  dockLeftWidth: z
-    .number()
-    .gte(MIN_DOCK_SIZE)
-    .lte(MAX_DOCK_SIZE)
-    .nullable()
-    .optional(),
-  dockRightWidth: z
-    .number()
-    .gte(MIN_DOCK_SIZE)
-    .lte(MAX_DOCK_SIZE)
-    .nullable()
-    .optional(),
+  dockTopHeight: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
+  dockBottomHeight: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
+  dockLeftWidth: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
+  dockRightWidth: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
   width: z.int().gte(MIN_WIDTH).lte(MAX_WIDTH).optional(),
   alignment: z.enum(HorizontalAlignment).optional(),
 });
