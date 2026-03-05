@@ -25,11 +25,6 @@ const ThemeFontsSchema = z.object({
 });
 export type ThemeFontsSchema = z.infer<typeof ThemeFontsSchema>;
 
-const ThemeBorderSchema = z.object({
-  color: ColorSchema.nullable(),
-});
-export type ThemeBorderSchema = z.infer<typeof ThemeBorderSchema>;
-
 export const GetThemeByIdSchema = z.object({
   id: z.uuid(),
 });
@@ -46,7 +41,7 @@ export const CreateThemeSchema = z.object({
   background: ThemeBackgroundSchema.optional(),
   colors: ThemeColorsSchema,
   fonts: ThemeFontsSchema,
-  border: ThemeBorderSchema.optional(),
+  border: ColorSchema.nullable().optional(),
 });
 export type CreateThemeSchema = z.infer<typeof CreateThemeSchema>;
 
@@ -56,7 +51,7 @@ export const UpdateThemeSchema = z.object({
   background: ThemeBackgroundSchema.optional(),
   colors: ThemeColorsSchema.partial().optional(),
   fonts: ThemeFontsSchema.partial().optional(),
-  border: ThemeBorderSchema.partial().optional(),
+  border: ColorSchema.nullable().optional(),
 });
 export type UpdateThemeSchema = z.infer<typeof UpdateThemeSchema>;
 

@@ -45,7 +45,7 @@ export async function createTheme(
       headingFont: fonts.heading,
       bodyFont: fonts.body,
       codeFont: fonts.code,
-      borderColor: border?.color ? fromHex(border.color) : null,
+      borderColor: border ? fromHex(border) : null,
     },
     select: THEME_FIELDS,
   });
@@ -66,11 +66,7 @@ export async function updateTheme(
       bodyFont: fonts?.body,
       codeFont: fonts?.code,
       borderColor:
-        border?.color !== undefined
-          ? border.color
-            ? fromHex(border.color)
-            : null
-          : undefined,
+        border !== undefined ? (border ? fromHex(border) : null) : undefined,
     },
     select: THEME_FIELDS,
   });

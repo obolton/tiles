@@ -22,9 +22,8 @@ export default Prisma.defineExtension({
       },
       border: {
         needs: { borderColor: true },
-        compute: ({ borderColor }) => ({
-          color: borderColor ? toHex(borderColor) : null,
-        }),
+        compute: ({ borderColor }) =>
+          borderColor ? toHex(borderColor) : null,
       },
     },
   },
