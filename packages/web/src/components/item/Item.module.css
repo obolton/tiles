@@ -13,6 +13,7 @@
 .item {
   display: flex;
   width: calc(var(--width) * 24px);
+  max-width: 100%;
   height: calc(var(--height) * 24px);
   border-radius: var(--border-radius);
   outline-color: transparent;
