@@ -1,6 +1,12 @@
 import { describe, expect, test } from "vitest";
-import { resolveThemeStyles, toCSSProperties, getThemeStyles } from "../themes";
+import {
+  resolveThemeStyles,
+  toCSSProperties,
+  getThemeColors,
+  getThemeStyles,
+} from "../themes";
 import { THEME } from "@/test/fixtures/Theme";
+import type { Theme } from "api/types/themes";
 
 describe("resolveThemeStyles", () => {
   describe("with theme and no overrides", () => {
@@ -78,6 +84,39 @@ describe("resolveThemeStyles", () => {
         type: "color",
         color: "ffffffffffff",
       });
+    });
+  });
+
+  describe("border resolution", () => {
+    test("falls back to text color when border is null", () => {
+      const result = resolveThemeStyles(THEME, {});
+      expect(result.borderColor).toBe(THEME.colors.text);
+    });
+
+    test("uses explicit border color when set", () => {
+      const theme: Theme = { ...THEME, border: "ff00ff00ff00" };
+      const result = resolveThemeStyles(theme, {});
+      expect(result.borderColor).toBe("ff00ff00ff00");
+    });
+  });
+
+  describe("background variants", () => {
+    test("returns null when theme has no background", () => {
+      const theme: Theme = { ...THEME, background: null };
+      const result = resolveThemeStyles(theme, {});
+      expect(result.background).toBeNull();
+    });
+
+    test("passes through gradient background", () => {
+      const gradient = {
+        type: "gradient" as const,
+        colorA: "ff0000000000",
+        colorB: "0000ffffffff",
+        direction: "VERTICAL" as const,
+      };
+      const theme: Theme = { ...THEME, background: gradient };
+      const result = resolveThemeStyles(theme, {});
+      expect(result.background).toEqual(gradient);
     });
   });
 
@@ -195,6 +234,21 @@ describe("toCSSProperties", () => {
     expect(result["--code-font"]).toBe('"JetBrains Mono", "monospace"');
   });
 
+  test("converts border color to CSS custom property", () => {
+    const result = toCSSProperties({
+      background: null,
+      textColor: null,
+      accentColor: null,
+      font: null,
+      headingFont: null,
+      codeFont: null,
+      borderColor: "ffff00000000",
+    });
+    expect(result["--border-color"]).toBe(
+      "color(display-p3 1.0000 0.0000 0.0000)",
+    );
+  });
+
   test("omits properties with null values", () => {
     const result = toCSSProperties({
       background: null,
@@ -252,5 +306,58 @@ describe("getThemeStyles", () => {
     expect(result["--background"]).toBe(
       "color(display-p3 1.0000 0.5000 0.5000)",
     );
+  });
+});
+
+describe("getThemeColors", () => {
+  test("always includes text and accent colors", () => {
+    const result = getThemeColors(THEME);
+    expect(result).toContainEqual({ name: "Text", color: THEME.colors.text });
+    expect(result).toContainEqual({
+      name: "Accent",
+      color: THEME.colors.accent,
+    });
+  });
+
+  test("includes background color for color fills", () => {
+    const result = getThemeColors(THEME);
+    expect(result).toContainEqual({
+      name: "Background",
+      color: "ffffffffffff",
+    });
+  });
+
+  test("excludes background for gradient fills", () => {
+    const theme: Theme = {
+      ...THEME,
+      background: {
+        type: "gradient",
+        colorA: "ff0000000000",
+        colorB: "0000ffffffff",
+        direction: "VERTICAL",
+      },
+    };
+    const result = getThemeColors(theme);
+    expect(result.find((c) => c.name === "Background")).toBeUndefined();
+  });
+
+  test("excludes background when null", () => {
+    const theme: Theme = { ...THEME, background: null };
+    const result = getThemeColors(theme);
+    expect(result.find((c) => c.name === "Background")).toBeUndefined();
+  });
+
+  test("includes border color when set", () => {
+    const theme: Theme = { ...THEME, border: "ff00ff00ff00" };
+    const result = getThemeColors(theme);
+    expect(result).toContainEqual({
+      name: "Border",
+      color: "ff00ff00ff00",
+    });
+  });
+
+  test("excludes border when null", () => {
+    const result = getThemeColors(THEME);
+    expect(result.find((c) => c.name === "Border")).toBeUndefined();
   });
 });
