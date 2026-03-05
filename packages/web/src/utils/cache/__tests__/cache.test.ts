@@ -134,7 +134,7 @@ describe("cache", () => {
           background: { type: "color", color: "ffffffffffff" },
           colors: { text: "000000", accent: "0000ff" },
           fonts: { heading: "MODERN", body: "MODERN", code: "CODE" },
-          border: { color: null },
+          border: null,
         }),
       ]);
       const cached = await themesCache.getCached();
