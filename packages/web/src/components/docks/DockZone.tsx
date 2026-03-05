@@ -18,6 +18,7 @@ export interface DockZoneProps {
   isEditable: Reactive<boolean>;
   edge: DockEdge;
   tiles: TileCollection;
+  signal?: AbortSignal;
 }
 
 type EdgeStyle = "top" | "bottom" | "left" | "right";
@@ -27,6 +28,7 @@ export default function DockZone({
   isEditable,
   edge,
   tiles,
+  signal,
 }: DockZoneProps) {
   const isEmpty = tiles.derive((items) => items.length === 0);
   const edgeStyle = edge.toLowerCase() as EdgeStyle;
@@ -34,10 +36,9 @@ export default function DockZone({
 
   const dimension = isHorizontal ? "height" : "width";
 
-  const zoneStyle = page.dockSizes.derive((sizes) => {
-    const size = sizes[edge];
-    return size !== null ? { [dimension]: `${size}px` } : {};
-  });
+  const zoneStyle = page.dockSizes.derive((sizes) => ({
+    [dimension]: `${sizes[edge]}px`,
+  }));
 
   const visible = combine(
     { isEmpty, isEditable },
@@ -50,13 +51,14 @@ export default function DockZone({
       edge,
       page,
       isEditable,
+      signal,
     });
   }
 
   const zoneResizeDirection = isHorizontal ? "vertical" : "horizontal";
 
   function onZoneResizeEnd(event: ResizeEvent) {
-    const initialSize = page.dockSizes.value[edge] ?? 0;
+    const initialSize = page.dockSizes.value[edge];
 
     let delta: number;
     switch (edge) {
