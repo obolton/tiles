@@ -5,6 +5,10 @@
   gap: 4px;
 }
 
+.with-theme-colors {
+  grid-template-rows: [theme] 36px 4px repeat(5, [palette] 36px);
+}
+
 .palette input[type="radio"] {
   appearance: none;
   cursor: pointer;
