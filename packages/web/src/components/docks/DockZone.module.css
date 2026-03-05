@@ -4,34 +4,19 @@
   display: flex;
   padding: 24px;
   gap: 24px;
+  background: var(--background-color);
 
   &[data-empty] {
     display: none;
   }
 
-  &:not([data-empty])[data-drop-target] {
+  &[data-drop-target] {
     outline: 2px solid var(--focus-ring-color);
     outline-offset: -2px;
   }
 
   body[data-drag] &[data-empty] {
-    display: block;
-    overflow: visible;
-    padding: 0;
-    min-width: 0;
-    min-height: 0;
-
-    &::after {
-      content: "";
-      position: absolute;
-      opacity: 0.5;
-    }
-
-    &[data-drop-target]::after {
-      outline: 2px solid var(--focus-ring-color);
-      outline-offset: -2px;
-      opacity: 1;
-    }
+    display: flex;
   }
 }
 
@@ -43,12 +28,7 @@
   flex-direction: row;
 
   body[data-drag] &[data-empty] {
-    height: 0 !important;
-
-    &::after {
-      inset: 0 0 auto;
-      min-height: 60px;
-    }
+    min-height: 60px;
   }
 }
 
@@ -60,12 +40,7 @@
   flex-direction: row;
 
   body[data-drag] &[data-empty] {
-    height: 0 !important;
-
-    &::after {
-      inset: auto 0 0;
-      min-height: 60px;
-    }
+    min-height: 60px;
   }
 }
 
@@ -77,12 +52,7 @@
   flex-direction: column;
 
   body[data-drag] &[data-empty] {
-    width: 0 !important;
-
-    &::after {
-      inset: 0 auto 0 0;
-      min-width: 60px;
-    }
+    min-width: 60px;
   }
 }
 
@@ -94,12 +64,7 @@
   flex-direction: column;
 
   body[data-drag] &[data-empty] {
-    width: 0 !important;
-
-    &::after {
-      inset: 0 0 0 auto;
-      min-width: 60px;
-    }
+    min-width: 60px;
   }
 }
 
