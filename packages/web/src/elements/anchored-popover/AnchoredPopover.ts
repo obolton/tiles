@@ -108,7 +108,9 @@ export default class AnchoredPopover extends HTMLElement {
 
     if (event.newState === "open") {
       this.#triggerElement = this.#getTriggerElement();
-      if (!SUPPORTS_ANCHOR_POSITIONING) {
+      if (SUPPORTS_ANCHOR_POSITIONING) {
+        this.#applyAnchorPositioning();
+      } else {
         this.style.setProperty("visibility", "hidden");
       }
     }
@@ -138,9 +140,7 @@ export default class AnchoredPopover extends HTMLElement {
 
   protected handleToggle(event: ToggleEvent) {
     if (event.newState === "open") {
-      if (SUPPORTS_ANCHOR_POSITIONING) {
-        this.#applyAnchorPositioning();
-      } else {
+      if (!SUPPORTS_ANCHOR_POSITIONING) {
         requestAnimationFrame(() => {
           this.setPosition();
           this.style.removeProperty("visibility");
