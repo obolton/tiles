@@ -35,7 +35,7 @@ export default class Page {
   readonly theme: Reactive<Theme | null>;
   readonly width: Reactive<number>;
   readonly alignment: Reactive<HorizontalAlignment>;
-  readonly dockSizes: Reactive<Record<DockEdge, number | null>>;
+  readonly dockSizes: Reactive<Record<DockEdge, number>>;
   readonly dropdowns: ReactiveArray<Dropdown>;
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<PageInvite>;
@@ -167,10 +167,10 @@ export default class Page {
       themeId: string | null;
       width: number;
       alignment: HorizontalAlignment;
-      dockTopHeight: number | null;
-      dockBottomHeight: number | null;
-      dockLeftWidth: number | null;
-      dockRightWidth: number | null;
+      dockTopHeight: number;
+      dockBottomHeight: number;
+      dockLeftWidth: number;
+      dockRightWidth: number;
     }>,
   ) {
     return client.pages.update.mutate({
@@ -222,7 +222,7 @@ export default class Page {
     return this.update({ alignment });
   }
 
-  setDockSizes(sizes: Partial<Record<DockEdge, number | null>>) {
+  setDockSizes(sizes: Partial<Record<DockEdge, number>>) {
     this.dockSizes.value = { ...this.dockSizes.value, ...sizes };
     return this.update({
       dockTopHeight: sizes.TOP,

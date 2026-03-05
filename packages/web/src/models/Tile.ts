@@ -1,7 +1,7 @@
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import Theme from "@/models/Theme";
-import { ASPECT_RATIOS, DEFAULT_DOCK_SIZE } from "@/constants/size";
+import { ASPECT_RATIOS } from "@/constants/size";
 import type {
   ClientTile,
   Sizing,
@@ -398,9 +398,6 @@ export default class Tile {
 
     if (dock) {
       this.page.dockedTiles[dock].insertBefore(beforeId ?? null, this);
-      if (this.page.dockSizes.value[dock] === null) {
-        this.page.setDockSizes({ [dock]: DEFAULT_DOCK_SIZE });
-      }
     } else {
       this.page.tiles.insertBefore(beforeId ?? null, this);
     }
