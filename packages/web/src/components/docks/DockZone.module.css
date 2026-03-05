@@ -30,15 +30,6 @@
   left: var(--navigation-bar-size);
   right: 0;
   flex-direction: row;
-
-  body[data-drag] &[data-empty] {
-    z-index: 2;
-    height: 60px !important;
-
-    &[data-drop-target] {
-      height: 120px !important;
-    }
-  }
 }
 
 .bottom {
@@ -47,7 +38,10 @@
   left: var(--navigation-bar-size);
   right: 0;
   flex-direction: row;
+}
 
+.top,
+.bottom {
   body[data-drag] &[data-empty] {
     z-index: 2;
     height: 60px !important;
@@ -64,14 +58,6 @@
   bottom: var(--dock-bottom-size);
   left: var(--navigation-bar-size);
   flex-direction: column;
-
-  body[data-drag] &[data-empty] {
-    width: 60px !important;
-
-    &[data-drop-target] {
-      width: 120px !important;
-    }
-  }
 }
 
 .right {
@@ -80,7 +66,10 @@
   bottom: var(--dock-bottom-size);
   right: 0;
   flex-direction: column;
+}
 
+.left,
+.right {
   body[data-drag] &[data-empty] {
     width: 60px !important;
 
