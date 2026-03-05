@@ -235,6 +235,7 @@
 
       min-width: 32px;
       height: 32px;
+      padding: 0;
 
       & > svg {
         width: 20px;
