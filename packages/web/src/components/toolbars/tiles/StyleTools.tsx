@@ -1,5 +1,6 @@
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import AspectRatioSelect from "@/components/toolbars/tiles/AspectRatioSelect";
+import DockSelect from "@/components/toolbars/tiles/DockSelect";
 import ThemePicker from "@/components/themes/ThemePicker";
 import ColorPicker from "@/components/colors/ColorPicker";
 import FillPicker from "@/components/fills/FillPicker";
@@ -61,6 +62,8 @@ export default function StyleTools({ tile }: StyleToolsProps) {
       />
 
       <FramePicker tile={tile} onChange={(frame) => tile.setFrame(frame)} />
+
+      <DockSelect tile={tile} />
     </ToolbarGroup>
   );
 }
