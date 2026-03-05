@@ -174,10 +174,6 @@ export default class DockLayoutEditor {
       return;
     }
 
-    if (this.element.dataset.empty !== undefined) {
-      return;
-    }
-
     this.dragPlaceholder = createDragPlaceholder();
 
     if (this.isHorizontal && tile.width.value != null) {
