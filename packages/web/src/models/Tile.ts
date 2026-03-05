@@ -1,5 +1,6 @@
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
+import Theme from "@/models/Theme";
 import { ASPECT_RATIOS, DEFAULT_DOCK_SIZE } from "@/constants/size";
 import type {
   ClientTile,
@@ -9,7 +10,6 @@ import type {
   TileType,
   DockEdge,
 } from "api/types/tiles";
-import type { Theme } from "api/types/themes";
 import type { Fill, FillUpdate } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
 import type Page from "@/models/Page";
@@ -83,7 +83,7 @@ export default class Tile {
     this.frame = reactive(frame);
     this.hide = reactive(hide);
     this.dock = reactive(dock);
-    this.theme = reactive(theme);
+    this.theme = reactive(theme ? new Theme(theme) : null);
     this.textColor = reactive(textColor);
     this.background = reactive(background);
   }
@@ -413,7 +413,7 @@ export default class Tile {
     const oldThemeId = this.theme.value?.id ?? null;
     this.recordUpdate({ themeId }, { themeId: oldThemeId });
     const result = await this.updateTile({ themeId });
-    this.theme.value = result.theme;
+    this.theme.value = result.theme ? new Theme(result.theme) : null;
   }
 
   setTextColor(textColor: Color | null) {
