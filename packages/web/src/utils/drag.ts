@@ -224,7 +224,6 @@ export class DragState<T = unknown> {
     }
 
     target.addEventListener("pointerleave", this, {
-      once: true,
       signal: this.abortController.signal,
     });
   }
@@ -313,6 +312,8 @@ export class DragState<T = unknown> {
     if (!(target instanceof HTMLElement)) {
       return;
     }
+
+    target.removeEventListener("pointerleave", this);
 
     delete target.dataset.dropTarget;
     target.dispatchEvent(
