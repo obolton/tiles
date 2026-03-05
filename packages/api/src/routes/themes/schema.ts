@@ -27,7 +27,6 @@ export type ThemeFontsSchema = z.infer<typeof ThemeFontsSchema>;
 
 const ThemeBorderSchema = z.object({
   color: ColorSchema.nullable(),
-  radius: z.number().gte(0).lte(100).nullable(),
 });
 export type ThemeBorderSchema = z.infer<typeof ThemeBorderSchema>;
 

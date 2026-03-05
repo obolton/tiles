@@ -44,7 +44,6 @@ export async function createTheme(
       bodyFont: fonts.body,
       codeFont: fonts.code,
       borderColor: border?.color ? fromHex(border.color) : null,
-      borderRadius: border?.radius ?? null,
     },
     select: THEME_FIELDS,
   });
@@ -70,7 +69,6 @@ export async function updateTheme(
             ? fromHex(border.color)
             : null
           : undefined,
-      borderRadius: border?.radius !== undefined ? border.radius : undefined,
     },
     select: THEME_FIELDS,
   });
