@@ -19,10 +19,6 @@ export interface ThemeFonts {
   code: FontId;
 }
 
-export interface ThemeBorder {
-  color: Color | null;
-}
-
 export default class Theme {
   readonly id: string;
   readonly workspaceId: string;
@@ -30,7 +26,7 @@ export default class Theme {
   readonly background: Reactive<ThemeData["background"]>;
   readonly colors: Reactive<ThemeColors>;
   readonly fonts: Reactive<ThemeFonts>;
-  readonly border: Reactive<ThemeBorder>;
+  readonly border: Reactive<Color | null>;
 
   constructor(data: ThemeData) {
     this.id = data.id;
@@ -72,8 +68,8 @@ export default class Theme {
     return this.update({ background });
   }
 
-  setBorder(border: Partial<ThemeBorder>) {
-    this.border.value = { ...this.border.value, ...border };
+  setBorder(border: Color | null) {
+    this.border.value = border;
     return this.update({ border });
   }
 

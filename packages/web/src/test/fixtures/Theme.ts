@@ -14,9 +14,7 @@ export const THEME: Theme = {
     body: "MODERN",
     code: "CODE",
   },
-  border: {
-    color: null,
-  },
+  border: null,
 };
 
 export const DARK_THEME: Theme = {
@@ -33,7 +31,5 @@ export const DARK_THEME: Theme = {
     body: "MODERN",
     code: "CODE",
   },
-  border: {
-    color: null,
-  },
+  border: null,
 };
