@@ -11,12 +11,16 @@
   }
 
   &[data-drop-target] {
-    outline: 2px solid var(--focus-ring-color);
-    outline-offset: -2px;
+    background: color-mix(in display-p3, var(--background-color), black 10%);
   }
 
   body[data-drag] &[data-empty] {
     display: flex;
+    background: transparent;
+  }
+
+  body[data-drag] &[data-empty][data-drop-target] {
+    background: rgb(0 0 0 / 10%);
   }
 }
 
@@ -28,7 +32,12 @@
   flex-direction: row;
 
   body[data-drag] &[data-empty] {
-    min-height: 60px;
+    z-index: 2;
+    height: 60px !important;
+
+    &[data-drop-target] {
+      height: 120px !important;
+    }
   }
 }
 
@@ -40,7 +49,12 @@
   flex-direction: row;
 
   body[data-drag] &[data-empty] {
-    min-height: 60px;
+    z-index: 2;
+    height: 60px !important;
+
+    &[data-drop-target] {
+      height: 120px !important;
+    }
   }
 }
 
@@ -52,7 +66,11 @@
   flex-direction: column;
 
   body[data-drag] &[data-empty] {
-    min-width: 60px;
+    width: 60px !important;
+
+    &[data-drop-target] {
+      width: 120px !important;
+    }
   }
 }
 
@@ -64,7 +82,11 @@
   flex-direction: column;
 
   body[data-drag] &[data-empty] {
-    min-width: 60px;
+    width: 60px !important;
+
+    &[data-drop-target] {
+      width: 120px !important;
+    }
   }
 }
 
