@@ -120,7 +120,6 @@ describe("toCSSProperties", () => {
       headingFont: null,
       codeFont: null,
       borderColor: null,
-      borderRadius: null,
     });
     expect(result["--background"]).toBe(
       "color(display-p3 1.0000 0.5000 0.5000)",
@@ -136,7 +135,6 @@ describe("toCSSProperties", () => {
       headingFont: null,
       codeFont: null,
       borderColor: null,
-      borderRadius: null,
     });
     expect(result["--text-color"]).toBe(
       "color(display-p3 0.0000 0.0000 0.0000)",
@@ -152,7 +150,6 @@ describe("toCSSProperties", () => {
       headingFont: null,
       codeFont: null,
       borderColor: null,
-      borderRadius: null,
     });
     expect(result["--accent-color"]).toBe(
       "color(display-p3 0.0000 1.0000 1.0000)",
@@ -168,7 +165,6 @@ describe("toCSSProperties", () => {
       headingFont: null,
       codeFont: null,
       borderColor: null,
-      borderRadius: null,
     });
     expect(result["--font"]).toBe('"Inter", "sans-serif"');
   });
@@ -182,7 +178,6 @@ describe("toCSSProperties", () => {
       headingFont: '"Lora", "serif"',
       codeFont: null,
       borderColor: null,
-      borderRadius: null,
     });
     expect(result["--heading-font"]).toBe('"Lora", "serif"');
   });
@@ -196,7 +191,6 @@ describe("toCSSProperties", () => {
       headingFont: null,
       codeFont: '"JetBrains Mono", "monospace"',
       borderColor: null,
-      borderRadius: null,
     });
     expect(result["--code-font"]).toBe('"JetBrains Mono", "monospace"');
   });
@@ -210,7 +204,6 @@ describe("toCSSProperties", () => {
       headingFont: null,
       codeFont: null,
       borderColor: null,
-      borderRadius: null,
     });
     expect(result["--background"]).toBeUndefined();
     expect(result["--text-color"]).toBeUndefined();
@@ -219,7 +212,6 @@ describe("toCSSProperties", () => {
     expect(result["--heading-font"]).toBeUndefined();
     expect(result["--code-font"]).toBeUndefined();
     expect(result["--border-color"]).toBeUndefined();
-    expect(result["--border-radius"]).toBeUndefined();
   });
 
   test("includes all properties when all values are set", () => {
@@ -231,7 +223,6 @@ describe("toCSSProperties", () => {
       headingFont: '"Lora", "serif"',
       codeFont: '"JetBrains Mono", "monospace"',
       borderColor: "000000000000",
-      borderRadius: 12,
     });
     expect(result["--background"]).toBeDefined();
     expect(result["--text-color"]).toBeDefined();
@@ -240,7 +231,6 @@ describe("toCSSProperties", () => {
     expect(result["--heading-font"]).toBeDefined();
     expect(result["--code-font"]).toBeDefined();
     expect(result["--border-color"]).toBeDefined();
-    expect(result["--border-radius"]).toBe("12px");
   });
 });
 
