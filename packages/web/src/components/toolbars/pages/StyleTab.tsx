@@ -24,7 +24,7 @@ export interface StyleTabProps {
 }
 
 export default function StyleTab({ page }: StyleTabProps) {
-  const { backgroundColor, font, themeId } = page;
+  const { backgroundColor, font, theme } = page;
 
   function setFont(newFont: FontId) {
     viewTransition(() => {
@@ -50,10 +50,10 @@ export default function StyleTab({ page }: StyleTabProps) {
   }
 
   function setTheme(newThemeId: string | null) {
-    const theme = newThemeId ? themesCache.getById(newThemeId) : null;
+    const newTheme = newThemeId ? themesCache.getById(newThemeId) : null;
 
     const bgColor = backgroundColor.value;
-    const themeStyles = getThemeStyles(theme, {
+    const themeStyles = getThemeStyles(newTheme, {
       background: bgColor ? { type: "color", color: bgColor } : null,
       font: font.value,
     });
@@ -66,7 +66,7 @@ export default function StyleTab({ page }: StyleTabProps) {
       document.body.classList.toggle("dark", !!bgColor && isDark(bgColor));
     });
 
-    page.setTheme(newThemeId).catch(handleError);
+    page.setTheme(newTheme).catch(handleError);
   }
 
   function setWidth(event: Event) {
@@ -93,7 +93,8 @@ export default function StyleTab({ page }: StyleTabProps) {
         />
 
         <ThemePicker
-          value={themeId}
+          id="page-theme"
+          value={theme}
           onChange={setTheme}
           aria-label="Theme"
           data-tooltip="Theme"
