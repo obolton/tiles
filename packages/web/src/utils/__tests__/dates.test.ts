@@ -2,6 +2,8 @@ import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import {
   formatRelativeDate,
   isSameDay,
+  addDays,
+  daysBetween,
   getWeekdays,
   getCalendarWeeks,
 } from "../dates";
@@ -77,6 +79,50 @@ describe("isSameDay", () => {
 
   test("returns false for different years", () => {
     expect(isSameDay(new Date(2025, 1, 15), new Date(2026, 1, 15))).toBe(false);
+  });
+});
+
+describe("addDays", () => {
+  test("adds days within the same month", () => {
+    const result = addDays(new Date(2026, 2, 5), 3);
+    expect(result.getDate()).toBe(8);
+    expect(result.getMonth()).toBe(2);
+  });
+
+  test("handles month overflow", () => {
+    const result = addDays(new Date(2026, 0, 30), 5);
+    expect(result.getDate()).toBe(4);
+    expect(result.getMonth()).toBe(1);
+  });
+
+  test("handles negative days", () => {
+    const result = addDays(new Date(2026, 2, 3), -5);
+    expect(result.getDate()).toBe(26);
+    expect(result.getMonth()).toBe(1);
+  });
+
+  test("does not mutate the original date", () => {
+    const original = new Date(2026, 2, 5);
+    addDays(original, 10);
+    expect(original.getDate()).toBe(5);
+  });
+});
+
+describe("daysBetween", () => {
+  test("returns positive for b after a", () => {
+    expect(daysBetween(new Date(2026, 2, 1), new Date(2026, 2, 5))).toBe(4);
+  });
+
+  test("returns negative for b before a", () => {
+    expect(daysBetween(new Date(2026, 2, 5), new Date(2026, 2, 1))).toBe(-4);
+  });
+
+  test("returns 0 for the same date", () => {
+    expect(daysBetween(new Date(2026, 2, 5), new Date(2026, 2, 5))).toBe(0);
+  });
+
+  test("works across months", () => {
+    expect(daysBetween(new Date(2026, 0, 28), new Date(2026, 1, 2))).toBe(5);
   });
 });
 

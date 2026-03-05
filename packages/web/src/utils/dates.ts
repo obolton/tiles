@@ -92,6 +92,16 @@ export function isSameDay(a: Date, b: Date): boolean {
   );
 }
 
+export function addDays(date: Date, days: number): Date {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+export function daysBetween(a: Date, b: Date): number {
+  return Math.round((b.getTime() - a.getTime()) / DAY);
+}
+
 /**
  * Computes the calendar grid for a given month, including leading and
  * trailing days from adjacent months. Returns 4–6 weeks of 7 days each.
