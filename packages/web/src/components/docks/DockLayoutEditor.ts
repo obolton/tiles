@@ -286,16 +286,16 @@ export default class DockLayoutEditor {
     const afterRect = afterElement.getBoundingClientRect();
 
     const size = this.isHorizontal ? "width" : "height";
+    const fallback = this.isHorizontal ? this.page.width.value : 0;
     const combined =
-      (beforeTile[size].value ?? 0) + (afterTile[size].value ?? 0);
+      (beforeTile[size].value ?? fallback) +
+      (afterTile[size].value ?? fallback);
     const combinedPixels = beforeRect[size] + afterRect[size];
     const newBeforePixels = beforeRect[size] + delta;
 
-    const minRatio = Math.max(MIN_TILE_RATIO, 1 / combined);
-    const maxRatio = Math.min(MAX_TILE_RATIO, 1 - 1 / combined);
     const ratio = Math.max(
-      minRatio,
-      Math.min(maxRatio, newBeforePixels / combinedPixels),
+      MIN_TILE_RATIO,
+      Math.min(MAX_TILE_RATIO, newBeforePixels / combinedPixels),
     );
 
     beforeTile[size].value = combined * ratio;
