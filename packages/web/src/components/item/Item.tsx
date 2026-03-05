@@ -95,7 +95,7 @@ export function getSizeStyle(
   if (sizing === "AUTO") {
     return {
       "--width": width?.toString(),
-      "--height": undefined,
+      "--height": height.toString(),
       "aspect-ratio": undefined,
       height: "auto",
     };
@@ -103,7 +103,7 @@ export function getSizeStyle(
   const ratio = ASPECT_RATIOS[sizing];
   return {
     "--width": width?.toString(),
-    "--height": undefined,
+    "--height": height.toString(),
     "aspect-ratio": ratio,
     height: "auto",
   };
