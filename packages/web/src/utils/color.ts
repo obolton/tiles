@@ -75,13 +75,6 @@ export function isSameColor(a: Color, b: Color) {
   return a === b;
 }
 
-export function isDark(color: Color) {
-  const { r, g, b } = parseColor(color);
-  // Relative luminance formula (approximately correct for P3)
-  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  return luminance < 0.5;
-}
-
 export function getLightnessName(l: number) {
   if (l <= 0.3) {
     return "Very Dark";

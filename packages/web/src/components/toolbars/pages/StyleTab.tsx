@@ -11,7 +11,7 @@ import AlignRightIcon from "@/icons/align-right.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import { getFontConfig } from "@/utils/fonts";
-import { toCSSColor, isDark, type Color } from "@/utils/color";
+import { toCSSColor, type Color } from "@/utils/color";
 import { themesCache } from "@/utils/cache";
 import { getThemeStyles } from "@/utils/themes";
 import type { FontId } from "@/config/fonts";
@@ -39,11 +39,6 @@ export default function StyleTab({ page }: StyleTabProps) {
     }
     backgroundColor.value = value;
     viewTransition(() => {
-      if (isDark(value)) {
-        document.body.classList.add("dark");
-      } else {
-        document.body.classList.remove("dark");
-      }
       document.body.style.setProperty("--background-color", toCSSColor(value));
     });
     page.setBackgroundColor(value).catch(handleError);
@@ -62,8 +57,6 @@ export default function StyleTab({ page }: StyleTabProps) {
       for (const [property, value] of Object.entries(themeStyles)) {
         document.body.style.setProperty(property, value);
       }
-      const bgColor = theme?.colors.background ?? backgroundColor.value;
-      document.body.classList.toggle("dark", !!bgColor && isDark(bgColor));
     });
 
     page.setTheme(newTheme).catch(handleError);
