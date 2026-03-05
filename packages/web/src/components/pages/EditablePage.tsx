@@ -25,6 +25,23 @@ export default function EditablePage({ page }: EditablePageProps) {
   const { isEditable, selection } = editor;
   const { tiles, dockedTiles } = editor.page;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
+  const style = combine(
+    {
+      sizes: editor.page.dockSizes,
+      topTiles: dockedTiles.TOP,
+      bottomTiles: dockedTiles.BOTTOM,
+      leftTiles: dockedTiles.LEFT,
+      rightTiles: dockedTiles.RIGHT,
+    },
+    ({ sizes, topTiles, bottomTiles, leftTiles, rightTiles }) => ({
+      "--dock-top-size": topTiles.length > 0 ? `${sizes.TOP}px` : "0px",
+      "--dock-bottom-size":
+        bottomTiles.length > 0 ? `${sizes.BOTTOM}px` : "0px",
+      "--dock-left-size": leftTiles.length > 0 ? `${sizes.LEFT}px` : "0px",
+      "--dock-right-size": rightTiles.length > 0 ? `${sizes.RIGHT}px` : "0px",
+    }),
+  );
+
   const showPageToolbar = combine(
     { selection, isEditable },
     ({ selection, isEditable }) => isEditable && selection.size === 0,
@@ -32,7 +49,7 @@ export default function EditablePage({ page }: EditablePageProps) {
 
   return (
     <>
-      <div className={styles["page-layout"]}>
+      <div className={styles["page-layout"]} style={style}>
         <DockZone
           page={editor.page}
           isEditable={isEditable}

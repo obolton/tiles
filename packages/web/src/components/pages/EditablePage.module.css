@@ -1,12 +1,8 @@
 .page-layout {
-  display: grid;
-  grid-template:
-    "top    top    top" auto
-    "left   main   right" 1fr
-    "bottom bottom bottom" auto
-    / auto 1fr auto;
   min-height: 100vh;
   margin-left: var(--navigation-bar-size);
+  padding: var(--dock-top-size) var(--dock-right-size) var(--dock-bottom-size)
+    var(--dock-left-size);
 }
 
 @media (width < 640px) {
