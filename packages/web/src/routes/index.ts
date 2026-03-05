@@ -1,10 +1,9 @@
 import client from "@/api/client";
 import { getSessionId } from "@/utils/sessions";
 import { redirect, notFound } from "@/router/responses";
-import { getFontConfig } from "@/utils/fonts";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import Page, { type PageProps } from "@/pages/Page";
-import { toCSSColor, isDark } from "@/utils/color";
+import { getThemeStyles } from "@/utils/themes";
 import type { Route, RouteLoaderResult, RouteMetadata } from "@/router/router";
 
 const PAGE_ID = import.meta.env.PUBLIC_PAGE_ID;
@@ -40,23 +39,19 @@ async function loader(): RouteLoaderResult<PageProps> {
     return notFound();
   }
 
-  const font = page.font ? getFontConfig(page.font) : undefined;
+  const style = getThemeStyles(page.theme, {
+    background: page.backgroundColor
+      ? { type: "color", color: page.backgroundColor }
+      : null,
+    font: page.font,
+  });
 
   return {
     headers: { "Cache-Control": CACHE_CONTROL_VALUE },
     title: page.title,
     bodyAttributes: {
       "data-page-id": page.id,
-      className:
-        page.backgroundColor && isDark(page.backgroundColor)
-          ? "dark"
-          : undefined,
-      style: {
-        "--background-color": page.backgroundColor
-          ? toCSSColor(page.backgroundColor)
-          : undefined,
-        "--font": font ? `"${font.family}", "${font.fallback}"` : undefined,
-      },
+      style,
     },
     data: { page },
   };
