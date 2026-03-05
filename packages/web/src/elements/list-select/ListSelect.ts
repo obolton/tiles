@@ -165,6 +165,12 @@ export default class ListSelect extends HTMLElement {
     this.showItem(item);
 
     this.#value = value;
+
+    if (value) {
+      this.internals.states.add("has-value");
+    } else {
+      this.internals.states.delete("has-value");
+    }
   }
 
   get open() {

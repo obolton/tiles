@@ -40,8 +40,15 @@ slot[name="label"]::slotted(*) {
   line-height: 1;
 }
 
-/* Two-row layout when label is visible */
-:host([label]) {
+:host(:not(:state(has-value))) slot[name="label"] {
+  display: none;
+}
+
+:host(:not(:state(has-value))) slot[name="default-icon"]::slotted(*) {
+  opacity: 0.5;
+}
+
+:host([label]:state(has-value)) {
   slot[name="default-icon"]::slotted(*),
   slot[name="icon"]::slotted(*) {
     grid-row: 1 / span 2;
@@ -98,12 +105,15 @@ slot[name="label"]::slotted(*) {
 
 #button-label {
   grid-column: 2;
-  grid-row: 1;
-  margin-bottom: 4px;
-  font-size: 0.5rem;
   line-height: 1;
   opacity: 0.5;
   white-space: nowrap;
+}
+
+:host(:state(has-value)) #button-label {
+  grid-row: 1;
+  margin-bottom: 4px;
+  font-size: 0.5rem;
 }
 
 :host([orientation="vertical"]) {
