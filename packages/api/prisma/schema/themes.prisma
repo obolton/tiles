@@ -25,8 +25,7 @@ model Theme {
   codeFont    Font @default(CODE) @map("code_font")
 
   // Borders
-  borderColor  Bytes? @map("border_color") @db.ByteA
-  borderRadius Float? @map("border_radius") @db.Real
+  borderColor Bytes? @map("border_color") @db.ByteA
 
   // Relations
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
