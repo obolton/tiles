@@ -21,7 +21,6 @@ export default function ListOption({
       aria-label={label}
       data-value={value}
       data-label={label}
-      data-tooltip={label}
       {...props}
     >
       {icon}
