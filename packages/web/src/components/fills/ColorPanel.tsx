@@ -3,6 +3,7 @@ import ColorToggle, { type ActiveColor } from "@/components/colors/ColorToggle";
 import GradientPalette from "@/components/colors/GradientPalette";
 import { reactive, combine, type Reactive } from "@/utils/reactivity";
 import { getComplementaryColor, type Color } from "@/utils/color";
+import type { ThemeColor } from "@/components/colors/ColorPalette";
 import type { ColorFill, GradientFill } from "./types";
 import styles from "./ColorPanel.module.css";
 
@@ -14,11 +15,16 @@ const HUES = 10;
 const START_HUE = 24;
 
 export interface ColorPanelProps {
+  themeColors?: Reactive<ThemeColor[]>;
   value: Reactive<ColorFill | GradientFill | null>;
   onChange: (value: ColorFill | GradientFill) => void;
 }
 
-export default function ColorPanel({ value, onChange }: ColorPanelProps) {
+export default function ColorPanel({
+  themeColors,
+  value,
+  onChange,
+}: ColorPanelProps) {
   const activeColor = reactive<ActiveColor>("A");
 
   const currentEditingColor = combine(
@@ -109,6 +115,7 @@ export default function ColorPanel({ value, onChange }: ColorPanelProps) {
         chroma={CHROMA}
         hues={HUES}
         startHue={START_HUE}
+        themeColors={themeColors}
         value={currentEditingColor}
         onChange={handleColorChange}
       />

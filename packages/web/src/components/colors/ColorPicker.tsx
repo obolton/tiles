@@ -5,10 +5,12 @@ import { toCSSColor } from "@/utils/color";
 import styles from "./ColorPicker.module.css";
 import type { Color } from "@/utils/color";
 import type { Reactive } from "@/utils/reactivity";
+import type { ThemeColor } from "@/components/colors/ColorPalette";
 
 export interface ColorPickerProps {
   id: string;
   label?: string;
+  themeColors?: Reactive<ThemeColor[]>;
   value?: Reactive<Color | null>;
   onChange: (value: Color) => void;
   showClear?: boolean;
@@ -25,6 +27,7 @@ const START_HUE = 24;
 export default function ColorPicker({
   id,
   label = "Color",
+  themeColors,
   value,
   onChange,
   showClear,
@@ -61,6 +64,7 @@ export default function ColorPicker({
           chroma={CHROMA}
           hues={HUES}
           startHue={START_HUE}
+          themeColors={themeColors}
           value={value}
           onChange={onChange}
         />
