@@ -6,9 +6,8 @@ export default Prisma.defineExtension({
   result: {
     theme: {
       colors: {
-        needs: { backgroundColor: true, textColor: true, accentColor: true },
-        compute: ({ backgroundColor, textColor, accentColor }) => ({
-          background: toHex(backgroundColor),
+        needs: { textColor: true, accentColor: true },
+        compute: ({ textColor, accentColor }) => ({
           text: toHex(textColor),
           accent: toHex(accentColor),
         }),
@@ -22,10 +21,9 @@ export default Prisma.defineExtension({
         }),
       },
       border: {
-        needs: { borderColor: true, borderRadius: true },
-        compute: ({ borderColor, borderRadius }) => ({
+        needs: { borderColor: true },
+        compute: ({ borderColor }) => ({
           color: borderColor ? toHex(borderColor) : null,
-          radius: borderRadius,
         }),
       },
     },
