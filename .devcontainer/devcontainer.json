@@ -45,12 +45,11 @@
     "WEB_HOST": "0.0.0.0",
     "WEB_PORT": "3000",
     "INTERNAL_API_ORIGIN": "http://localhost:3001",
-    "OAUTH_ORIGIN": "https://tiles.tiles.test",
     "GOOGLE_REDIRECT_URI": "https://localhost/sign-in/google/callback",
     "PUBLIC_API_ORIGIN": "https://api.${localWorkspaceFolderBasename}.tiles.test",
     "PUBLIC_WEB_ORIGIN": "https://${localWorkspaceFolderBasename}.tiles.test",
     "PUBLIC_UPLOAD_ORIGIN": "https://uploads.${localWorkspaceFolderBasename}.tiles.test",
-    "PUBLIC_SESSION_COOKIE_DOMAIN": ".tiles.test",
+    "PUBLIC_SESSION_COOKIE_DOMAIN": ".${localWorkspaceFolderBasename}.tiles.test",
     "PLAYWRIGHT_HOST": "tiles-playwright",
     "APP_HOST": "${localWorkspaceFolderBasename}-app"
   },
