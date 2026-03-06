@@ -1,0 +1,17 @@
+localhost {
+	tls internal
+
+	map {header.Referer} {referer_origin} {
+		~^(https?://[^/]+) "${1}"
+	}
+
+	handle /sign-in/google {
+		header Set-Cookie "oauth_origin={referer_origin}; Path=/sign-in/google/callback; Secure; HttpOnly; SameSite=Lax; Max-Age=600"
+		redir https://accounts.google.com/o/oauth2/v2/auth?{query} 302
+	}
+
+	handle /sign-in/google/callback {
+		header Set-Cookie "oauth_origin=; Path=/sign-in/google/callback; Secure; HttpOnly; SameSite=Lax; Max-Age=0"
+		redir {cookie.oauth_origin}{uri} 302
+	}
+}
