@@ -131,22 +131,6 @@ describe("oauth2", () => {
         ).toBe(true);
       });
 
-      it("should include origin cookie when provided", () => {
-        const cookies = setOAuth2Cookies({
-          state: "test-state",
-          verifier: "test-verifier",
-          nonce: "test-nonce",
-          destination: "test-destination",
-          origin: "https://dev.example.com",
-        });
-
-        expect(cookies).toHaveLength(5);
-        const cookieValues = cookies.map(([, value]) => value);
-        expect(
-          cookieValues.some((v) => v.includes("__Host-oauth_origin=")),
-        ).toBe(true);
-      });
-
       it("should set secure cookie options", () => {
         const cookies = setOAuth2Cookies({
           state: "test-state",
@@ -168,7 +152,7 @@ describe("oauth2", () => {
       it("should clear all OAuth cookies", () => {
         const cookies = clearOAuth2Cookies();
 
-        expect(cookies).toHaveLength(5);
+        expect(cookies).toHaveLength(4);
         const cookieValues = cookies.map(([, value]) => value);
         expect(cookieValues.every((v) => v.includes("Max-Age=0"))).toBe(true);
       });
@@ -177,7 +161,7 @@ describe("oauth2", () => {
     describe("getOAuth2Cookies", () => {
       it("should parse all OAuth2 cookies", () => {
         const cookieString =
-          "__Host-oauth_state=state-value; __Host-oauth_verifier=verifier-value; __Host-oauth_nonce=nonce-value; __Host-oauth_dest=dest-value; __Host-oauth_origin=origin-value";
+          "__Host-oauth_state=state-value; __Host-oauth_verifier=verifier-value; __Host-oauth_nonce=nonce-value; __Host-oauth_dest=dest-value";
 
         const cookies = getOAuth2Cookies(cookieString);
 
@@ -185,7 +169,6 @@ describe("oauth2", () => {
         expect(cookies.verifier).toBe("verifier-value");
         expect(cookies.nonce).toBe("nonce-value");
         expect(cookies.destination).toBe("dest-value");
-        expect(cookies.origin).toBe("origin-value");
       });
 
       it("should return null for missing cookies", () => {
@@ -195,7 +178,6 @@ describe("oauth2", () => {
         expect(cookies.verifier).toBeNull();
         expect(cookies.nonce).toBeNull();
         expect(cookies.destination).toBeNull();
-        expect(cookies.origin).toBeNull();
       });
 
       it("should handle partial cookie strings", () => {

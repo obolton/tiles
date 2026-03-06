@@ -10,7 +10,6 @@ const OAUTH2_COOKIE_OPTIONS: SerializeOptions = {
 };
 const OAUTH2_STATE_COOKIE_NAME = "__Host-oauth_state";
 const OAUTH2_DESTINATION_COOKIE_NAME = "__Host-oauth_dest";
-const OAUTH2_ORIGIN_COOKIE_NAME = "__Host-oauth_origin";
 const OAUTH2_VERIFIER_COOKIE_NAME = "__Host-oauth_verifier";
 const OAUTH2_NONCE_COOKIE_NAME = "__Host-oauth_nonce";
 const OAUTH2_COOKIE_MAX_AGE = 60 * 10;
@@ -73,7 +72,6 @@ export type OAuth2Cookies = {
   verifier: string | null;
   nonce: string | null;
   destination: string | null;
-  origin: string | null;
 };
 
 export function getOAuth2Cookies(cookies: string): OAuth2Cookies {
@@ -83,7 +81,6 @@ export function getOAuth2Cookies(cookies: string): OAuth2Cookies {
     verifier: parsed[OAUTH2_VERIFIER_COOKIE_NAME] ?? null,
     nonce: parsed[OAUTH2_NONCE_COOKIE_NAME] ?? null,
     destination: parsed[OAUTH2_DESTINATION_COOKIE_NAME] ?? null,
-    origin: parsed[OAUTH2_ORIGIN_COOKIE_NAME] ?? null,
   };
 }
 
@@ -102,7 +99,6 @@ type SetOAuth2CookiesOptions = {
   verifier: string;
   nonce: string;
   destination: string;
-  origin?: string;
 };
 
 export function setOAuth2Cookies({
@@ -110,9 +106,8 @@ export function setOAuth2Cookies({
   verifier,
   nonce,
   destination,
-  origin,
 }: SetOAuth2CookiesOptions): [string, string][] {
-  const cookies: [string, string][] = [
+  return [
     [
       "Set-Cookie",
       cookie.serialize(OAUTH2_STATE_COOKIE_NAME, state, {
@@ -142,16 +137,6 @@ export function setOAuth2Cookies({
       }),
     ],
   ];
-  if (origin) {
-    cookies.push([
-      "Set-Cookie",
-      cookie.serialize(OAUTH2_ORIGIN_COOKIE_NAME, origin, {
-        ...OAUTH2_COOKIE_OPTIONS,
-        maxAge: OAUTH2_COOKIE_MAX_AGE,
-      }),
-    ]);
-  }
-  return cookies;
 }
 
 export function clearOAuth2Cookies(): [string, string][] {
@@ -173,24 +158,7 @@ export function clearOAuth2Cookies(): [string, string][] {
       "Set-Cookie",
       cookie.serialize(OAUTH2_DESTINATION_COOKIE_NAME, "", expireOptions),
     ],
-    [
-      "Set-Cookie",
-      cookie.serialize(OAUTH2_ORIGIN_COOKIE_NAME, "", expireOptions),
-    ],
   ];
-}
-
-/**
- * In development, OAuth flows are handled by a canonical origin to ensure
- * cookies are set and read on the same domain. This function returns the
- * redirect URL if the current request should be forwarded to the OAuth origin.
- */
-export function getOAuthOriginRedirect(url: URL): string | undefined {
-  const oauthOrigin = process.env.OAUTH_ORIGIN;
-  if (!oauthOrigin || url.origin === oauthOrigin) {
-    return undefined;
-  }
-  return new URL(url.pathname + url.search, oauthOrigin).toString();
 }
 
 type OAuth2GetAccessTokenOptions = {
