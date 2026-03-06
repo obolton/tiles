@@ -29,8 +29,9 @@ export default function Section({
     switch (layout) {
       case "GRID":
       case "FREEFORM":
-      case "CALENDAR":
         return "all";
+      case "CALENDAR":
+        return null;
       case "HORIZONTAL":
         return "horizontal";
       case "VERTICAL":
