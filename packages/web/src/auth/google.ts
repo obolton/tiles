@@ -2,7 +2,9 @@ import assert from "node:assert";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { getOAuth2AuthorizationUrl, getOAuth2AccessToken } from "./oauth2";
 
-const AUTHORIZATION_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth";
+const AUTHORIZATION_ENDPOINT = import.meta.env.DEV
+  ? "https://localhost/sign-in/google"
+  : "https://accounts.google.com/o/oauth2/v2/auth";
 const TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token";
 const SCOPES = ["openid", "profile", "email"];
 

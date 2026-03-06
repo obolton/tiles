@@ -15,8 +15,8 @@ describe("google", () => {
       const { url } = getGoogleAuthorizationUrl();
       const parsedUrl = new URL(url);
 
-      expect(parsedUrl.origin).toBe("https://accounts.google.com");
-      expect(parsedUrl.pathname).toBe("/o/oauth2/v2/auth");
+      expect(parsedUrl.origin).toBe("https://localhost");
+      expect(parsedUrl.pathname).toBe("/sign-in/google");
       expect(parsedUrl.searchParams.get("response_type")).toBe("code");
       expect(parsedUrl.searchParams.get("client_id")).toBe(
         process.env.GOOGLE_CLIENT_ID,
