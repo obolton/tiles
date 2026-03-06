@@ -53,6 +53,10 @@ export default class ResizeHandle extends HTMLElement {
 
   connectedCallback() {
     this.addEventListener("pointerdown", this);
+    if (this.resizing) {
+      addEventListener("pointermove", this, { passive: true });
+      addEventListener("pointerup", this);
+    }
   }
 
   disconnectedCallback() {
