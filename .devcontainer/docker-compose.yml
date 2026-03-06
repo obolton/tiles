@@ -35,9 +35,6 @@ services:
       caddy_3: storybook.${WORKSPACE}.tiles.test
       caddy_3.tls: internal
       caddy_3.reverse_proxy: "{{upstreams 6001}}"
-      caddy_4: localhost
-      caddy_4.tls: internal
-      caddy_4.reverse_proxy: "{{upstreams 3000}}"
 
 volumes:
   node_modules:
