@@ -8,7 +8,7 @@ if [ -z "$name" ]; then
   exit 1
 fi
 
-sed -i "s/^DB_NAME=.*/DB_NAME=$name/" .devcontainer/.env
+sed -i "s/^DATABASE_NAME=.*/DATABASE_NAME=$name/" .devcontainer/.env
 
 echo "Switched to database '$name'."
 echo "Rebuild the dev container for this to take effect."

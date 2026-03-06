@@ -33,6 +33,6 @@ fi
 if [ ! -f .devcontainer/.env ]; then
   cat > .devcontainer/.env << EOF
 WORKSPACE=${WORKSPACE}
-DB_NAME=tiles
+DATABASE_NAME=tiles
 EOF
 fi

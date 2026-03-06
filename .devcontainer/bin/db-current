@@ -1,4 +1,4 @@
 #!/bin/bash
 set -e
 
-echo "${DB_NAME:-tiles}"
+echo "${DATABASE_NAME:-tiles}"
