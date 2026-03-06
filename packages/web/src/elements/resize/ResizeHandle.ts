@@ -101,6 +101,8 @@ export default class ResizeHandle extends HTMLElement {
       new ResizeEvent("resizestart", {
         x: 0,
         y: 0,
+        clientX: event.clientX,
+        clientY: event.clientY,
         cancelable: true,
         bubbles: true,
       }),
@@ -128,18 +130,22 @@ export default class ResizeHandle extends HTMLElement {
     this.deltaY =
       this.direction === "vertical" ? event.pageY - this.initialPageY : 0;
 
-    this.dispatchEvent(
+    const allowed = this.dispatchEvent(
       new ResizeEvent("resizedrag", {
         x: this.deltaX,
         y: this.deltaY,
-        cancelable: false,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        cancelable: true,
         bubbles: true,
       }),
     );
 
-    requestAnimationFrame(() => {
-      this.style.translate = `${this.deltaX}px ${this.deltaY}px`;
-    });
+    if (allowed) {
+      requestAnimationFrame(() => {
+        this.style.translate = `${this.deltaX}px ${this.deltaY}px`;
+      });
+    }
   }
 
   private handlePointerUp(event: PointerEvent) {
@@ -156,7 +162,8 @@ export default class ResizeHandle extends HTMLElement {
       new ResizeEvent("resizeend", {
         x: this.deltaX,
         y: this.deltaY,
-        cancelable: false,
+        clientX: event.clientX,
+        clientY: event.clientY,
         bubbles: true,
       }),
     );
