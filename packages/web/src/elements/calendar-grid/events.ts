@@ -1,9 +1,17 @@
-export interface CalendarGridEventMap {
+export type CalendarMoveEventType =
+  | "calendarmovestart"
+  | "calendarmovedrag"
+  | "calendarmoveend";
+
+export interface CalendarEventMap {
   calendarcellclick: CalendarGridEvent;
+  calendarmovestart: CalendarMoveEvent;
+  calendarmovedrag: CalendarMoveEvent;
+  calendarmoveend: CalendarMoveEvent;
 }
 
 declare global {
-  interface HTMLElementEventMap extends CalendarGridEventMap {}
+  interface HTMLElementEventMap extends CalendarEventMap {}
 }
 
 export interface CalendarGridEventInit extends EventInit {
@@ -13,11 +21,27 @@ export interface CalendarGridEventInit extends EventInit {
 export class CalendarGridEvent extends Event {
   readonly date: string;
 
-  constructor(
-    type: keyof CalendarGridEventMap,
-    options: CalendarGridEventInit,
-  ) {
+  constructor(type: "calendarcellclick", options: CalendarGridEventInit) {
     super(type, options);
     this.date = options.date;
+  }
+}
+
+export interface CalendarMoveEventInit extends EventInit {
+  edge: "start" | "end";
+  clientX: number;
+  clientY: number;
+}
+
+export class CalendarMoveEvent extends Event {
+  readonly edge: "start" | "end";
+  readonly clientX: number;
+  readonly clientY: number;
+
+  constructor(type: CalendarMoveEventType, options: CalendarMoveEventInit) {
+    super(type, options);
+    this.edge = options.edge;
+    this.clientX = options.clientX;
+    this.clientY = options.clientY;
   }
 }
