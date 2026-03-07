@@ -7,7 +7,7 @@ popover-menu {
   color: var(--ui-color);
   background: var(--ui-background-color);
   backdrop-filter: blur(24px);
-  border-radius: var(--border-radius);
+  border-radius: calc(var(--border-radius) + 8px);
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 15%),
     0 4px 12px -4px rgb(0 0 0 / 30%);

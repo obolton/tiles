@@ -67,7 +67,7 @@ slot[name="label"]::slotted(*) {
   margin: 16px 0;
   padding: 8px;
   border: none;
-  border-radius: 32px;
+  border-radius: calc(var(--border-radius) + 8px);
   background: var(--ui-background-color);
   backdrop-filter: blur(24px);
   box-shadow:
@@ -119,6 +119,5 @@ slot[name="label"]::slotted(*) {
 :host([orientation="vertical"]) {
   #items {
     flex-direction: column;
-    border-radius: 12px;
   }
 }

@@ -5,6 +5,7 @@
     font-size: 1rem;
     line-height: 1;
     text-align: center;
+    border-radius: var(--border-radius);
     cursor: pointer;
     user-select: none;
     overflow: hidden;
@@ -42,7 +43,6 @@
     gap: 12px;
     font-weight: 600;
     border: none;
-    border-radius: 22px;
     padding: 0 24px;
     min-width: 104px;
     transition:
@@ -100,8 +100,6 @@
   a.floating,
   list-select,
   list-select[orientation="horizontal"] .option {
-    --border-radius: 22px;
-
     position: relative;
     min-width: 44px;
     height: 44px;
@@ -290,7 +288,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     background: none;
     color: var(--ui-color);
     font-weight: normal;
