@@ -101,8 +101,8 @@
   list-select,
   list-select[orientation="horizontal"] .option {
     position: relative;
-    min-width: 44px;
-    height: 44px;
+    min-width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -110,11 +110,11 @@
     flex: 0 0 auto;
     font-weight: 500;
     padding-block: 0;
-    padding-inline: 10px;
+    padding-inline: 8px;
     color: var(--ui-color);
     border: none;
-    background: none;
     border-radius: var(--border-radius);
+    background: none;
     transition:
       opacity var(--animation-duration-short) var(--easing),
       scale var(--animation-duration-short) var(--easing);
@@ -163,7 +163,7 @@
           scale var(--animation-duration-short) var(--easing);
 
         @starting-style {
-          clip-path: inset(4px round var(--border-radius));
+          clip-path: inset(2px round var(--border-radius));
         }
       }
     }
@@ -175,7 +175,7 @@
       }
 
       & > :is(svg, .icon) {
-        scale: 1.1;
+        scale: 1.05;
       }
     }
 
@@ -194,11 +194,11 @@
     &:active:not(:disabled, [aria-disabled="true"], :has(:active)) {
       &:not(list-select)::before,
       &:not(list-select)::after {
-        scale: 0.95;
+        scale: 0.97;
       }
 
       &:is(list-select)::part(button)::before {
-        scale: 0.95;
+        scale: 0.97;
       }
 
       & > :is(svg, .icon) {
@@ -246,8 +246,8 @@
         content: "";
         position: absolute;
         inset: 0 auto 0 0;
-        width: 44px;
-        background: url("@/icons/close.svg?inline") no-repeat 10px center / 24px
+        width: 40px;
+        background: url("@/icons/close.svg?inline") no-repeat 8px center / 24px
           24px;
         opacity: 0;
         scale: 0.7;
@@ -282,8 +282,8 @@
     width: 100%;
     min-height: 36px;
     gap: 12px;
-    padding-block: 8px;
-    padding-inline: 12px;
+    padding-block: 0.5rem;
+    padding-inline: 0.75rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
