@@ -1,5 +1,6 @@
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
+import { toISODate } from "@/utils/dates";
 import Theme from "@/models/Theme";
 import { ASPECT_RATIOS } from "@/constants/size";
 import type {
@@ -40,6 +41,8 @@ export default class Tile {
   readonly width: Reactive<number | null>;
   readonly height: Reactive<number>;
   readonly rowSpan: Reactive<number>;
+  readonly startDate: Reactive<Date | null>;
+  readonly endDate: Reactive<Date | null>;
   readonly animation: Reactive<Animation | null>;
   readonly frame: Reactive<FrameStyle | null>;
   readonly hide: Reactive<boolean>;
@@ -59,6 +62,8 @@ export default class Tile {
       width,
       height,
       rowSpan,
+      startDate,
+      endDate,
       animation,
       frame,
       hide,
@@ -79,6 +84,8 @@ export default class Tile {
     this.width = reactive(width);
     this.height = reactive(height);
     this.rowSpan = reactive(rowSpan);
+    this.startDate = reactive(startDate ? new Date(startDate) : null);
+    this.endDate = reactive(endDate ? new Date(endDate) : null);
     this.animation = reactive(animation);
     this.frame = reactive(frame);
     this.hide = reactive(hide);
@@ -226,6 +233,14 @@ export default class Tile {
     if (changes.rowSpan !== undefined) {
       this.rowSpan.value = changes.rowSpan;
     }
+    if (changes.startDate !== undefined) {
+      this.startDate.value = changes.startDate
+        ? new Date(changes.startDate)
+        : null;
+    }
+    if (changes.endDate !== undefined) {
+      this.endDate.value = changes.endDate ? new Date(changes.endDate) : null;
+    }
     if (changes.textColor !== undefined) {
       this.textColor.value = changes.textColor;
     }
@@ -353,6 +368,27 @@ export default class Tile {
 
     this.recordUpdate({ width, height }, inverse);
     return this.updateTile({ width, height });
+  }
+
+  setDates(startDate: Date | null, endDate: Date | null) {
+    const inverse: TilePropertyChanges = {
+      startDate: this.startDate.value ? toISODate(this.startDate.value) : null,
+      endDate: this.endDate.value ? toISODate(this.endDate.value) : null,
+    };
+
+    this.startDate.value = startDate;
+    this.endDate.value = endDate;
+
+    const changes: TilePropertyChanges = {
+      startDate: startDate ? toISODate(startDate) : null,
+      endDate: endDate ? toISODate(endDate) : null,
+    };
+
+    this.recordUpdate(changes, inverse);
+    return this.updateTile({
+      startDate: startDate ? toISODate(startDate) : null,
+      endDate: endDate ? toISODate(endDate) : null,
+    });
   }
 
   persistPosition() {
