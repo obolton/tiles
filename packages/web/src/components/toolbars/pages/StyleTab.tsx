@@ -101,9 +101,6 @@ export default function StyleTab({ page }: StyleTabProps) {
 
         <list-select
           label="Page width"
-          aria-label="Page width"
-          data-tooltip="Page width"
-          orientation="vertical"
           value={page.width}
           showvalue
           on:change={setWidth}
@@ -119,9 +116,6 @@ export default function StyleTab({ page }: StyleTabProps) {
 
         <list-select
           label="Alignment"
-          aria-label="Alignment"
-          data-tooltip="Alignment"
-          orientation="vertical"
           value={page.alignment}
           showvalue
           on:change={setAlignment}

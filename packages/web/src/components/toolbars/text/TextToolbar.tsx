@@ -39,10 +39,6 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
           <ToolbarGroup label="Layout">
             <list-select
               label="Vertical position"
-              data-tooltip="Vertical position"
-              aria-orientation="vertical"
-              orientation="vertical"
-              align="center"
               showvalue
               value={align}
               on:change={(event) =>

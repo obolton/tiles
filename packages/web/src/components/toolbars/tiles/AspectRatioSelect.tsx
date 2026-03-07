@@ -1,6 +1,5 @@
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
-import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import SquareIcon from "@/icons/square.svg?jsx";
 import FourThreeIcon from "@/icons/4-3.svg?jsx";
 import ThreeFourIcon from "@/icons/3-4.svg?jsx";
@@ -27,50 +26,46 @@ export default function AspectRatioSelect({
   }
 
   return (
-    <ToolbarGroup label="Aspect ratio">
-      <list-select
-        label="Aspect ratio"
-        data-tooltip="Aspect ratio"
-        orientation="vertical"
-        value={value}
-        showvalue
-        on:change={handleChange}
-      >
-        <SizeIcon slot="default-icon" aria-hidden="true" />
-        <ListGroup>
-          <ListOption icon={<SizeIcon aria-hidden="true" />} value="CUSTOM">
-            Custom
-          </ListOption>
-          {showAuto && <ListOption value="AUTO">Auto</ListOption>}
-          <ListOption
-            icon={<SixteenNineIcon aria-hidden="true" />}
-            value="LANDSCAPE"
-          >
-            16:9
-          </ListOption>
-          <ListOption
-            icon={<NineSixteenIcon aria-hidden="true" />}
-            value="PORTRAIT"
-          >
-            9:16
-          </ListOption>
-          <ListOption icon={<SquareIcon aria-hidden="true" />} value="SQUARE">
-            Square
-          </ListOption>
-          <ListOption
-            icon={<FourThreeIcon aria-hidden="true" />}
-            value="FOUR_THREE"
-          >
-            4:3
-          </ListOption>
-          <ListOption
-            icon={<ThreeFourIcon aria-hidden="true" />}
-            value="THREE_FOUR"
-          >
-            3:4
-          </ListOption>
-        </ListGroup>
-      </list-select>
-    </ToolbarGroup>
+    <list-select
+      label="Aspect ratio"
+      value={value}
+      showvalue
+      on:change={handleChange}
+    >
+      <SizeIcon slot="default-icon" aria-hidden="true" />
+      <ListGroup>
+        <ListOption icon={<SizeIcon aria-hidden="true" />} value="CUSTOM">
+          Custom
+        </ListOption>
+        {showAuto && <ListOption value="AUTO">Auto</ListOption>}
+        <ListOption
+          icon={<SixteenNineIcon aria-hidden="true" />}
+          value="LANDSCAPE"
+        >
+          16:9
+        </ListOption>
+        <ListOption
+          icon={<NineSixteenIcon aria-hidden="true" />}
+          value="PORTRAIT"
+        >
+          9:16
+        </ListOption>
+        <ListOption icon={<SquareIcon aria-hidden="true" />} value="SQUARE">
+          Square
+        </ListOption>
+        <ListOption
+          icon={<FourThreeIcon aria-hidden="true" />}
+          value="FOUR_THREE"
+        >
+          4:3
+        </ListOption>
+        <ListOption
+          icon={<ThreeFourIcon aria-hidden="true" />}
+          value="THREE_FOUR"
+        >
+          3:4
+        </ListOption>
+      </ListGroup>
+    </list-select>
   );
 }

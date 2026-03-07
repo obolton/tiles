@@ -65,10 +65,7 @@ export default function MapToolbar({
 
         <ToolbarGroup label="Map style">
           <list-select
-            aria-label="Map style"
-            data-tooltip="Map style"
-            orientation="vertical"
-            align="center"
+            label="Map style"
             showvalue
             value={map.style}
             on:change={changeMapStyle}

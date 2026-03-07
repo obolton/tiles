@@ -27,10 +27,7 @@ export default function AnimationPicker({
   return (
     <list-select
       label="Animation"
-      data-tooltip="Animation"
-      aria-orientation="vertical"
       orientation="vertical"
-      align="center"
       showvalue
       value={value.derive((v) => v ?? "")}
       on:change={handleChange}
@@ -40,6 +37,8 @@ export default function AnimationPicker({
         <ListOption icon={<StopIcon aria-hidden="true" />} value="">
           None
         </ListOption>
+      </ListGroup>
+      <ListGroup>
         <ListOption icon={<FadeIcon aria-hidden="true" />} value="FADE">
           Fade
         </ListOption>
