@@ -8,6 +8,7 @@
   align-items: center;
   margin: -24px 0;
   padding: 8px 0;
+  color: var(--ui-color);
   background: var(--ui-background-color);
   backdrop-filter: blur(24px);
   background-clip: padding-box;
