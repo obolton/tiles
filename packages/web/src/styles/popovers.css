@@ -17,14 +17,14 @@ table-of-contents {
     opacity: 1;
 
     @starting-style {
-      scale: 0.95;
+      scale: 0.97;
       opacity: 0;
     }
   }
 
   &:not(:popover-open) {
     display: none;
-    scale: 0.95;
+    scale: 0.97;
     opacity: 0;
   }
 

@@ -89,14 +89,14 @@ slot[name="label"]::slotted(*) {
 
   &:popover-open {
     @starting-style {
-      scale: 0.9;
+      scale: 0.97;
       opacity: 0;
     }
   }
 
   &:not(:popover-open) {
     display: none;
-    scale: 0.9;
+    scale: 0.97;
     opacity: 0;
   }
 }
