@@ -1,9 +1,9 @@
 .title {
   width: 400px;
-  height: 44px;
+  height: 40px;
   font-weight: 500;
   background: transparent;
   border: none;
-  border-radius: inherit;
+  border-radius: var(--border-radius);
   outline-offset: 8px;
 }
