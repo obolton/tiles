@@ -4,19 +4,17 @@
 
 #tab-bar {
   position: absolute;
-  inset-block-end: 100%;
+  inset-block-end: calc(100% - 8px);
   left: 50%;
   translate: -50% 0;
-  margin-block-end: 8px;
   display: flex;
   gap: 4px;
-  padding: 4px;
-  background: var(--ui-background-color);
+  padding: 8px 8px 16px;
+  background: oklch(from var(--ui-background-color) 90% c h / 80%);
   backdrop-filter: blur(24px);
-  border-radius: 20px;
-  box-shadow:
-    0 0 0 1px rgb(0 0 0 / 15%),
-    0 4px 12px -4px rgb(0 0 0 / 30%);
+  border-radius: calc(var(--border-radius) + 4px)
+    calc(var(--border-radius) + 4px) 0 0;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 15%);
 
   :host(:state(single-tab)) & {
     display: none;
@@ -27,15 +25,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 28px;
-  padding: 0 12px;
-  font-family: inherit;
-  font-size: 13px;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--ui-font);
+  font-size: 0.875rem;
   font-weight: 500;
+  line-height: 1;
   color: var(--ui-color);
   white-space: nowrap;
   border: none;
-  border-radius: 14px;
+  border-radius: var(--border-radius);
   background: none;
   cursor: pointer;
   transition:
