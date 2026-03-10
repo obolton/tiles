@@ -2,7 +2,7 @@ import client from "@/api/client";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { reactive, flag } from "@/utils/reactivity";
+import { reactive, flag, combine } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
 import { isEditMode, setEditMode } from "@/utils/edit";
@@ -33,6 +33,7 @@ export default class Editor {
   readonly references: Reactive<Tile[]>;
   readonly isPromptOpen: Reactive<boolean>;
   readonly isPromptToolbarOpen: Reactive<boolean>;
+  readonly isTileEditable: Reactive<boolean>;
 
   readonly operations: OperationManager<AnyAction> | null;
   readonly canUndo: Reactive<boolean>;
@@ -97,6 +98,10 @@ export default class Editor {
     this.references = reactive([]);
     this.isPromptOpen = flag(false);
     this.isPromptToolbarOpen = flag(false);
+    this.isTileEditable = combine(
+      { isEditable: this.isEditable, isPromptOpen: this.isPromptOpen },
+      ({ isEditable, isPromptOpen }) => isEditable && !isPromptOpen,
+    );
 
     this.canUndo = reactive(false);
     this.canRedo = reactive(false);
