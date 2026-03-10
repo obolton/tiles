@@ -32,6 +32,7 @@ export default class Editor {
   readonly selection: Reactive<Set<Tile>>;
   readonly references: Reactive<Tile[]>;
   readonly isPromptOpen: Reactive<boolean>;
+  readonly isPromptToolbarOpen: Reactive<boolean>;
 
   readonly operations: OperationManager<AnyAction> | null;
   readonly canUndo: Reactive<boolean>;
@@ -95,6 +96,7 @@ export default class Editor {
     this.selection = reactive(new Set());
     this.references = reactive([]);
     this.isPromptOpen = flag(false);
+    this.isPromptToolbarOpen = flag(false);
 
     this.canUndo = reactive(false);
     this.canRedo = reactive(false);
@@ -168,6 +170,13 @@ export default class Editor {
       (event.target.tagName === "INPUT" ||
         event.target.tagName === "TEXTAREA" ||
         event.target.isContentEditable);
+
+    // AI Prompt: Cmd/Ctrl+J
+    if (isMod && event.key === "j" && this.isEditable.value) {
+      event.preventDefault();
+      this.togglePromptToolbar();
+      return;
+    }
 
     // Present: Cmd/Ctrl+Enter (not in text inputs)
     if (isMod && event.key === "Enter" && !isInput) {
@@ -319,6 +328,38 @@ export default class Editor {
   clearReferences() {
     if (this.references.value.length > 0) {
       this.references.value = [];
+    }
+  }
+
+  // Prompt toolbar
+
+  openPromptToolbar() {
+    if (this.isPromptOpen.value) {
+      return;
+    }
+
+    const selected = Array.from(this.selection.value);
+    if (selected.length > 0 && this.references.value.length === 0) {
+      this.references.value = selected;
+    }
+
+    this.isPromptToolbarOpen.value = true;
+    this.isPromptOpen.value = true;
+    document.body.dataset.prompt = "";
+  }
+
+  closePromptToolbar() {
+    this.isPromptToolbarOpen.value = false;
+    this.isPromptOpen.value = false;
+    delete document.body.dataset.prompt;
+    this.clearReferences();
+  }
+
+  togglePromptToolbar() {
+    if (this.isPromptToolbarOpen.value) {
+      this.closePromptToolbar();
+    } else {
+      this.openPromptToolbar();
     }
   }
 
