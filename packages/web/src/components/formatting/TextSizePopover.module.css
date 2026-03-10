@@ -1,6 +1,6 @@
 .popover {
   padding: 8px;
-  border-radius: 32px;
+  border-radius: calc(var(--border-radius) + 8px);
   background: var(--ui-background-color);
   backdrop-filter: blur(24px);
   box-shadow:
