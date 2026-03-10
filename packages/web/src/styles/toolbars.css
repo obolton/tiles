@@ -49,7 +49,7 @@ floating-toolbar {
   }
 
   body:is([data-drag], [data-resize]) &,
-  body[data-prompt] &:not(.prompt) {
+  body[data-prompt] &.primary:not(.prompt) {
     display: none;
     opacity: 0;
   }
