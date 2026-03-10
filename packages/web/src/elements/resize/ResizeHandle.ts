@@ -33,6 +33,14 @@ export default class ResizeHandle extends HTMLElement {
   private deltaX = 0;
   private deltaY = 0;
 
+  get target(): Element | null {
+    return this.internals.ariaControlsElements?.[0] ?? null;
+  }
+
+  set target(value: Element | null) {
+    this.internals.ariaControlsElements = value ? [value] : null;
+  }
+
   get resizing() {
     return this.internals.states.has("resizing");
   }
