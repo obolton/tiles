@@ -98,6 +98,7 @@
 
   button.floating,
   a.floating,
+  input.floating,
   list-select,
   list-select[orientation="horizontal"] .option {
     position: relative;
@@ -148,6 +149,7 @@
     &:is(
         :hover:not(:disabled),
         :active:not(:disabled),
+        :checked,
         [aria-pressed="true"],
         [aria-checked="true"],
         [aria-expanded="true"]
@@ -181,6 +183,7 @@
 
     &:is(
         :active:not(:disabled),
+        :checked,
         [aria-pressed="true"],
         [aria-checked="true"],
         [aria-expanded="true"]
@@ -229,7 +232,7 @@
     }
 
     &.small {
-      --border-radius: 16px;
+      --border-radius: 8px;
 
       min-width: 32px;
       height: 32px;

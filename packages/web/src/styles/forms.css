@@ -123,6 +123,14 @@
     }
   }
 
+  input[type="radio"] {
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+  }
+
   input[type="checkbox"][role="switch"] {
     appearance: none;
     position: relative;
