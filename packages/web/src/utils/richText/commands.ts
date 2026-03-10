@@ -125,6 +125,7 @@ export function toggleHeading(level: 1 | 2 | 3): Command {
           schema.nodes.paragraph,
           (oldNode) => ({
             align: oldNode.attrs.align as TextAlignment | undefined,
+            lineHeight: oldNode.attrs.lineHeight as number | undefined,
           }),
         );
       }
@@ -168,6 +169,7 @@ export const resetBlockFormat: Command = (state, dispatch) => {
       schema.nodes.paragraph,
       (oldNode) => ({
         align: oldNode.attrs.align as TextAlignment | undefined,
+        lineHeight: oldNode.attrs.lineHeight as number | undefined,
       }),
     );
   }
