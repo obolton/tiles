@@ -2,6 +2,11 @@ import { Database } from "@/utils/idb";
 import ThemeModel from "@/models/Theme";
 import type { Theme } from "api/types/themes";
 import { CacheCollection } from "./collection";
+import {
+  pageStoresSchema,
+  initializePageCache,
+  invalidateAllPages,
+} from "./pages";
 
 export type { CacheMeta } from "./collection";
 
@@ -64,6 +69,7 @@ const schema = {
   ...foldersCache.schema,
   ...themesCache.schema,
   ...bookmarksCache.schema,
+  ...pageStoresSchema,
 } as const;
 
 type CacheSchema = typeof schema;
@@ -87,7 +93,7 @@ export async function initializeCache(
 
   db = new Database({
     name: `tiles-${userId}-${workspaceId}`,
-    version: 3,
+    version: 4,
     schema,
   });
 
@@ -95,6 +101,7 @@ export async function initializeCache(
   foldersCache.initialize(db);
   themesCache.initialize(db);
   bookmarksCache.initialize(db);
+  initializePageCache(db);
 
   currentWorkspaceId = workspaceId;
 }
@@ -127,6 +134,7 @@ export async function destroyCache(): Promise<void> {
       foldersCache.invalidate(),
       themesCache.invalidate(),
       bookmarksCache.invalidate(),
+      invalidateAllPages(),
     ]);
 
     await db.deleteDatabase();

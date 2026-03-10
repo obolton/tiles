@@ -1,0 +1,91 @@
+import type { Database, ObjectStore, SchemaDefinition } from "@/utils/idb";
+import type { PageData } from "@/models/Page";
+import type { ClientTile } from "api/types/tiles";
+
+type CachedPage = Omit<PageData, "tiles">;
+type CachedTile = ClientTile & { pageId: string };
+
+export const pageStoresSchema = {
+  pages: { keyPath: "id" as const },
+  tiles: {
+    keyPath: "id" as const,
+    indexes: {
+      byPageId: { keyPath: "pageId" as const },
+    },
+  },
+};
+
+let database: Database<SchemaDefinition> | null = null;
+
+export function initializePageCache(db: Database<SchemaDefinition>): void {
+  database = db;
+}
+
+function pagesStore(): ObjectStore<CachedPage> {
+  if (!database) {
+    throw new Error("Page cache not initialized");
+  }
+  return database.store("pages");
+}
+
+function tilesStore(): ObjectStore<CachedTile> {
+  if (!database) {
+    throw new Error("Page cache not initialized");
+  }
+  return database.store("tiles");
+}
+
+export async function cachePageData(pageData: PageData): Promise<void> {
+  try {
+    const { tiles, ...pageProps } = pageData;
+    await pagesStore().put(pageProps);
+    await tilesStore().deleteByIndex("byPageId", pageData.id);
+    await tilesStore().putMany(
+      tiles.map((tile) => ({ ...tile, pageId: pageData.id })),
+    );
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn("Failed to cache page data:", error);
+    }
+  }
+}
+
+export async function getCachedPageData(
+  pageId: string,
+): Promise<PageData | null> {
+  try {
+    const page = await pagesStore().get(pageId);
+    if (!page) {
+      return null;
+    }
+
+    const cachedTiles = await tilesStore().getAllByIndex("byPageId", pageId);
+    const tiles = cachedTiles.map(({ pageId: _, ...tile }): ClientTile => tile);
+
+    return { ...page, tiles };
+  } catch {
+    return null;
+  }
+}
+
+export async function invalidateCachedPageData(pageId: string): Promise<void> {
+  try {
+    await pagesStore().delete(pageId);
+    await tilesStore().deleteByIndex("byPageId", pageId);
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn("Failed to invalidate cached page:", error);
+    }
+  }
+}
+
+export async function invalidateAllPages(): Promise<void> {
+  try {
+    await pagesStore().clear();
+    await tilesStore().clear();
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn("Failed to invalidate all cached pages:", error);
+    }
+  }
+}
