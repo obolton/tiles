@@ -3,7 +3,7 @@ import { handleError } from "@/utils/errors";
 import type CalendarGrid from "@/elements/calendar-grid/CalendarGrid";
 import type Page from "@/models/Page";
 import type { DragDropEvent } from "@/utils/drag";
-import type { CalendarMoveEvent } from "@/elements/calendar-grid/events";
+import type { CalendarEvent } from "@/elements/calendar-grid/events";
 import type { DragData } from "./LayoutEditor";
 
 export interface CalendarEditorOptions {
@@ -47,7 +47,7 @@ export default class CalendarEditor {
       case "dnd-drop":
         return this.handleDrop(event as DragDropEvent<DragData>);
       case "calendarmoveend":
-        return this.handleMoveEnd(event as CalendarMoveEvent);
+        return this.handleMoveEnd(event as CalendarEvent);
     }
   }
 
@@ -56,17 +56,17 @@ export default class CalendarEditor {
   private handleDragOver(event: DragDropEvent<DragData>) {
     event.stopPropagation();
     const date = this.element.dateFromPoint(event.clientX, event.clientY);
-    this.element.highlightDate(date);
+    this.element.highlightDates(date);
   }
 
   private handleDragEnd() {
-    this.element.highlightDate(null);
+    this.element.highlightDates(null);
   }
 
   private handleDrop(event: DragDropEvent<DragData>) {
     event.preventDefault();
     event.stopPropagation();
-    this.element.highlightDate(null);
+    this.element.highlightDates(null);
 
     const tile = event.state.data?.tile;
     if (!tile) {
@@ -104,7 +104,7 @@ export default class CalendarEditor {
 
   // Resize
 
-  private handleMoveEnd(event: CalendarMoveEvent) {
+  private handleMoveEnd(event: CalendarEvent) {
     if (!(event.target instanceof HTMLElement)) {
       return;
     }

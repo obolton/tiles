@@ -6,7 +6,7 @@ import {
   isSameDay,
   toISODate,
 } from "@/utils/dates";
-import { CalendarGridEvent, CalendarMoveEvent } from "./events";
+import { CalendarEvent } from "./events";
 import type CalendarDate from "./CalendarDate";
 import type ResizeHandle from "@/elements/resize/ResizeHandle";
 import type { ResizeEvent } from "@/elements/resize/events";
@@ -57,7 +57,10 @@ export default class CalendarGrid extends HTMLElement {
     start: string;
     end: string;
   } | null = null;
-  private highlighted: HTMLTimeElement | null = null;
+  private select: {
+    anchor: string;
+    abort: AbortController;
+  } | null = null;
   private gridPositions = new Map<
     string,
     { week: number; start: number; end: number }
@@ -89,22 +92,15 @@ export default class CalendarGrid extends HTMLElement {
     return null;
   }
 
-  highlightDate(date: string | null) {
-    if (this.highlighted?.dateTime === date) {
-      return;
+  highlightDates(from: string | null, to: string | null = from) {
+    const start = from && to && to < from ? to : from;
+    const end = from && to && to > from ? to : from;
+    for (const day of this.shadow.querySelectorAll<HTMLTimeElement>("time.day")) {
+      day.classList.toggle(
+        "highlight",
+        !!start && day.dateTime >= start && day.dateTime <= (end ?? start),
+      );
     }
-
-    this.highlighted?.classList.remove("highlight");
-
-    if (!date) {
-      this.highlighted = null;
-      return;
-    }
-
-    this.highlighted = this.shadow.querySelector<HTMLTimeElement>(
-      `time[datetime="${date}"]`,
-    );
-    this.highlighted?.classList.add("highlight");
   }
 
   constructor() {
@@ -125,7 +121,7 @@ export default class CalendarGrid extends HTMLElement {
 
     this.mutationObserver = new MutationObserver(() => this.layout());
 
-    this.shadow.addEventListener("click", this);
+    this.shadow.addEventListener("pointerdown", this);
     this.shadow.addEventListener("resizestart", this);
     this.shadow.addEventListener("resizedrag", this);
     this.shadow.addEventListener("resizeend", this);
@@ -133,8 +129,12 @@ export default class CalendarGrid extends HTMLElement {
 
   handleEvent(event: Event) {
     switch (event.type) {
-      case "click":
-        return this.handleClick(event);
+      case "pointerdown":
+        return this.handlePointerDown(event as PointerEvent);
+      case "pointermove":
+        return this.handlePointerMove(event as PointerEvent);
+      case "pointerup":
+        return this.handlePointerUp(event as PointerEvent);
       case "resizestart":
         return this.handleResizeStart(event as ResizeEvent);
       case "resizedrag":
@@ -156,6 +156,8 @@ export default class CalendarGrid extends HTMLElement {
 
   disconnectedCallback() {
     this.mutationObserver.disconnect();
+    this.select?.abort.abort();
+    this.select = null;
   }
 
   attributeChangedCallback(name: string) {
@@ -170,15 +172,58 @@ export default class CalendarGrid extends HTMLElement {
     }
   }
 
-  private handleClick(event: Event) {
-    if (event.target instanceof HTMLTimeElement) {
-      this.dispatchEvent(
-        new CalendarGridEvent("calendarcellclick", {
-          date: event.target.dateTime,
-          bubbles: true,
-        }),
-      );
+  private handlePointerDown(event: PointerEvent) {
+    if (!this.editable || this.resize) {
+      return;
     }
+    if (!(event.target instanceof HTMLTimeElement)) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const abort = new AbortController();
+    this.select = { anchor: event.target.dateTime, abort };
+    this.highlightDates(this.select.anchor);
+    this.internals.states.add("selecting");
+
+    addEventListener("pointermove", this, { signal: abort.signal });
+    addEventListener("pointerup", this, { signal: abort.signal });
+  }
+
+  private handlePointerMove(event: PointerEvent) {
+    if (!this.select) {
+      return;
+    }
+
+    event.preventDefault();
+    const date = this.dateFromPoint(event.clientX, event.clientY);
+    if (date) {
+      this.highlightDates(this.select.anchor, date);
+    }
+  }
+
+  private handlePointerUp(event: PointerEvent) {
+    if (!this.select) {
+      return;
+    }
+
+    const { anchor, abort } = this.select;
+    const end = this.dateFromPoint(event.clientX, event.clientY) ?? anchor;
+    const [start, to] = anchor <= end ? [anchor, end] : [end, anchor];
+
+    abort.abort();
+    this.select = null;
+    this.highlightDates(null);
+    this.internals.states.delete("selecting");
+
+    this.dispatchEvent(
+      new CalendarEvent("calendarcellselect", {
+        start,
+        end: to,
+        bubbles: true,
+      }),
+    );
   }
 
   private handleResizeStart(event: ResizeEvent) {
@@ -194,7 +239,7 @@ export default class CalendarGrid extends HTMLElement {
     this.internals.states.add("resizing");
 
     item.dispatchEvent(
-      new CalendarMoveEvent("calendarmovestart", {
+      new CalendarEvent("calendarmovestart", {
         edge,
         start,
         end,
@@ -235,7 +280,7 @@ export default class CalendarGrid extends HTMLElement {
     this.previewResize(prevDate, targetDate);
 
     item.dispatchEvent(
-      new CalendarMoveEvent("calendarmovedrag", {
+      new CalendarEvent("calendarmovedrag", {
         edge,
         start: this.resize.start,
         end: this.resize.end,
@@ -257,7 +302,7 @@ export default class CalendarGrid extends HTMLElement {
     this.layout();
 
     item.dispatchEvent(
-      new CalendarMoveEvent("calendarmoveend", {
+      new CalendarEvent("calendarmoveend", {
         edge,
         start,
         end,
@@ -356,7 +401,6 @@ export default class CalendarGrid extends HTMLElement {
     const dates = getCalendarWeeks(this.year, this.month, this.firstDayOfWeek);
     this.weeks = [];
     this.gridPositions.clear();
-    this.highlighted = null;
 
     const today = new Date();
 

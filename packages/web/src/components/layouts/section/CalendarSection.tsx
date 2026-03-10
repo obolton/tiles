@@ -6,7 +6,7 @@ import { handleError } from "@/utils/errors";
 import Each from "@/jsx/each";
 import styles from "./CalendarSection.module.css";
 import type CalendarGrid from "@/elements/calendar-grid/CalendarGrid";
-import type { CalendarGridEvent } from "@/elements/calendar-grid/events";
+import type { CalendarEvent } from "@/elements/calendar-grid/events";
 import type SectionModel from "@/models/Section";
 import type { ResizeDirection } from "@/elements/item/PageItem";
 import type { Reactive } from "@/utils/reactivity";
@@ -36,7 +36,7 @@ export default function CalendarSection({
     });
   }
 
-  function handleCellClick(event: CalendarGridEvent) {
+  function handleCellSelect(event: CalendarEvent) {
     if (!isEditable.value) {
       return;
     }
@@ -45,8 +45,8 @@ export default function CalendarSection({
       beforeId: null,
       sizing: "AUTO",
       content: [{ type: "paragraph", children: [] }],
-      startDate: event.date,
-      endDate: event.date,
+      startDate: event.start,
+      endDate: event.end,
     }).catch(handleError);
   }
 
@@ -58,7 +58,7 @@ export default function CalendarSection({
       data-layout="CALENDAR"
       tabindex={tabindex}
       editable={isEditable}
-      on:calendarcellclick={handleCellClick}
+      on:calendarcellselect={handleCellSelect}
     >
       <Each items={tiles}>
         {(tile) => (
