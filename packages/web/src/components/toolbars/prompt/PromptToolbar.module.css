@@ -3,5 +3,5 @@
 }
 
 .prompt {
-  width: 600px;
+  width: min(600px, 80vw);
 }
