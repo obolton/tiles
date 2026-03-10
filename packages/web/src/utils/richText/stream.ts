@@ -213,7 +213,7 @@ function handleDestination(
 }
 
 export async function insertFromStream(
-  view: EditorView,
+  view: EditorView | null,
   stream: AsyncIterable<StreamEvent>,
 ) {
   let pos: number | null = null;
@@ -245,7 +245,7 @@ export async function insertFromStream(
       continue;
     }
 
-    const state = output ? output.value : view.state;
+    const state = output ? output.value : (view?.state ?? null);
     if (!state) {
       continue;
     }
@@ -373,7 +373,7 @@ export async function insertFromStream(
 
     if (output) {
       dispatch(output, tr);
-    } else {
+    } else if (view) {
       view.dispatch(tr);
     }
   }
