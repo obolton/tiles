@@ -80,7 +80,6 @@ export default function Section({
         {(tile) => (
           <Item
             classList={{ [styles.item]: true }}
-            editable={isEditable}
             tile={tile}
             tabindex={tabindex}
             resize={resize}

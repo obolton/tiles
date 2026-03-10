@@ -107,7 +107,6 @@ export default function DockZone({
           {(tile) => (
             <Item
               classList={{ [styles.item]: true }}
-              editable={isEditable}
               tile={tile}
             />
           )}

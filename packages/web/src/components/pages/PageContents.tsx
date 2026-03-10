@@ -44,7 +44,6 @@ export default function PageContents({
       <Each items={tiles}>
         {(tile) => (
           <Item
-            editable={isEditable}
             tile={tile}
             tabindex={tabindex}
             resize={tile.sizing.derive((d) =>

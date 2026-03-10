@@ -111,7 +111,6 @@ export function getSizeStyle(
 export default function Item({
   classList,
   style,
-  editable = false,
   tile,
   tabindex,
   resize,
