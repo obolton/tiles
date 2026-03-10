@@ -1,53 +1,41 @@
-export type CalendarMoveEventType =
+export type CalendarEventType =
+  | "calendarcellselect"
   | "calendarmovestart"
   | "calendarmovedrag"
   | "calendarmoveend";
 
 export interface CalendarEventMap {
-  calendarcellclick: CalendarGridEvent;
-  calendarmovestart: CalendarMoveEvent;
-  calendarmovedrag: CalendarMoveEvent;
-  calendarmoveend: CalendarMoveEvent;
+  calendarcellselect: CalendarEvent;
+  calendarmovestart: CalendarEvent;
+  calendarmovedrag: CalendarEvent;
+  calendarmoveend: CalendarEvent;
 }
 
 declare global {
   interface HTMLElementEventMap extends CalendarEventMap {}
 }
 
-export interface CalendarGridEventInit extends EventInit {
-  date: string;
-}
-
-export class CalendarGridEvent extends Event {
-  readonly date: string;
-
-  constructor(type: "calendarcellclick", options: CalendarGridEventInit) {
-    super(type, options);
-    this.date = options.date;
-  }
-}
-
-export interface CalendarMoveEventInit extends EventInit {
-  edge: "start" | "end";
+export interface CalendarEventInit extends EventInit {
   start: string;
   end: string;
-  clientX: number;
-  clientY: number;
+  edge?: "start" | "end";
+  clientX?: number;
+  clientY?: number;
 }
 
-export class CalendarMoveEvent extends Event {
-  readonly edge: "start" | "end";
+export class CalendarEvent extends Event {
   readonly start: string;
   readonly end: string;
+  readonly edge?: "start" | "end";
   readonly clientX: number;
   readonly clientY: number;
 
-  constructor(type: CalendarMoveEventType, options: CalendarMoveEventInit) {
+  constructor(type: CalendarEventType, options: CalendarEventInit) {
     super(type, options);
-    this.edge = options.edge;
     this.start = options.start;
     this.end = options.end;
-    this.clientX = options.clientX;
-    this.clientY = options.clientY;
+    this.edge = options.edge;
+    this.clientX = options.clientX ?? 0;
+    this.clientY = options.clientY ?? 0;
   }
 }
