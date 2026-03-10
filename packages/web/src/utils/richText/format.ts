@@ -3,6 +3,7 @@ import {
   getSelectionHeadingLevel,
   getSelectionBlockNodeTypes,
   getSelectionAlignment,
+  getSelectionLineHeight,
   getSelectionList,
   getLink,
 } from "./helpers";
@@ -28,6 +29,7 @@ export interface Format {
   smallCaps: boolean;
   link: boolean;
   align?: TextAlignment;
+  lineHeight?: number;
   pending: boolean;
   size: number;
   color: string | null;
@@ -57,6 +59,7 @@ export function getSelectionFormat(state: EditorState): Format {
   const headingLevel = getSelectionHeadingLevel(state);
   const blockNodeTypes = getSelectionBlockNodeTypes(state);
   const align = getSelectionAlignment(state);
+  const lineHeight = getSelectionLineHeight(state);
   const list = getSelectionList(state);
   const link = !!getLink(state);
   const size = schema.marks.size.isInSet(marks)?.attrs.size ?? 1;
@@ -77,6 +80,7 @@ export function getSelectionFormat(state: EditorState): Format {
     link,
     list,
     align,
+    lineHeight,
     pending: blockNodeTypes.has(schema.nodes.pending),
     size,
     color,

@@ -97,6 +97,13 @@ export function getSelectionAlignment(
     : undefined;
 }
 
+export function getSelectionLineHeight(state: EditorState): number | undefined {
+  const textBlock = closest(state.selection.$from, (node) => node.isTextblock);
+  return textBlock
+    ? (textBlock.node.attrs.lineHeight as number | undefined)
+    : undefined;
+}
+
 export function getSelectionList(state: EditorState): ListType | null {
   const blockNodeTypes = getSelectionBlockNodeTypes(state);
   if (blockNodeTypes.has(schema.nodes.unordered_list)) {
