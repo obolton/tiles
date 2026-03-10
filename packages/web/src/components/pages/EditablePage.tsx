@@ -4,7 +4,9 @@ import PageToolbar from "@/components/toolbars/pages/PageToolbar";
 import DockZone from "@/components/docks/DockZone";
 import Editor from "@/editor/Editor";
 import InsertButton from "@/components/buttons/InsertButton";
+import AIButton from "@/components/buttons/AIButton";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
+import PromptToolbar from "@/components/toolbars/prompt/PromptToolbar";
 import If from "@/jsx/if";
 import { isSignedIn } from "@/utils/sessions";
 import { combine } from "@/utils/reactivity";
@@ -91,8 +93,13 @@ export default function EditablePage({ page }: EditablePageProps) {
         <SelectionToolbar />
       </If>
 
+      <If condition={editor.isPromptToolbarOpen}>
+        <PromptToolbar />
+      </If>
+
       <If condition={isEditable}>
         <InsertButton id="insert-button" />
+        <AIButton isOpen={editor.isPromptToolbarOpen} />
       </If>
     </>
   );
