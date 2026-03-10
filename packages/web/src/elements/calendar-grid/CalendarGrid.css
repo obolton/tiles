@@ -38,7 +38,7 @@
   border-top: 1px solid rgb(0 0 0 / 8%);
 }
 
-:host([editable]:not(:state(resizing))) .day:hover {
+:host([editable]:not(:state(resizing), :state(selecting))) .day:hover {
   background: rgb(0 0 0 / 10%);
   cursor: pointer;
 }
@@ -72,6 +72,7 @@
 .segment {
   position: relative;
   z-index: 1;
+  align-self: start;
   min-height: 22px;
   min-width: 0;
   border-radius: 4px;
@@ -79,29 +80,34 @@
 }
 
 .segment.primary {
+  min-height: unset;
   background: none;
 }
 
 .segment > resize-handle {
   position: absolute;
   inset-block: 3px;
-  inline-size: 5px;
-  border-radius: 2.5px;
+  inline-size: 7px;
+  border-radius: 3.5px;
   background: var(--focus-ring-color);
   opacity: 0;
   cursor: ew-resize;
   transition: opacity var(--animation-duration-short) var(--easing);
 
   &[data-edge="start"] {
-    inset-inline-start: -2.5px;
+    inset-inline-start: -3.5px;
   }
 
   &[data-edge="end"] {
-    inset-inline-end: -2.5px;
+    inset-inline-end: -3.5px;
   }
 }
 
-:host(:state(resizing)) .segment {
+:host(:state(resizing)) {
+  cursor: ew-resize;
+}
+
+:host(:is(:state(resizing), :state(selecting))) .segment {
   pointer-events: none;
 }
 
@@ -109,7 +115,7 @@
   opacity: 1;
 }
 
-.segment:hover > resize-handle {
+:host(:not(:state(resizing), :state(selecting), [data-drop-target])) .segment:hover > resize-handle {
   opacity: 0.5;
 
   &:hover {
