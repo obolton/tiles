@@ -207,14 +207,26 @@ export default function Item({
       position,
       themeStyles,
       animation: tile.animation,
+      cornerRadius: tile.cornerRadius,
     },
-    ({ sizing, width, height, rowSpan, position, themeStyles, animation }) => ({
+    ({
+      sizing,
+      width,
+      height,
+      rowSpan,
+      position,
+      themeStyles,
+      animation,
+      cornerRadius,
+    }) => ({
       ...style,
       ...position,
       ...getSizeStyle(sizing, width, height),
       "--rows": rowSpan.toString(),
       ...themeStyles,
       "--animation-name": animation ? ANIMATION_NAMES[animation] : undefined,
+      "--border-radius":
+        cornerRadius !== null ? `${cornerRadius}px` : undefined,
     }),
   );
 
