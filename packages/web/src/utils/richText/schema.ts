@@ -28,7 +28,8 @@ const DOMOutput = {
   strikethrough: ["del", 0],
   highlight: ["mark", 0],
   pending: ["ins", 0],
-  code: ["pre", ["code", 0]],
+  code: ["code", 0],
+  codeBlock: ["pre", ["code", 0]],
   superscript: ["sup", 0],
   subscript: ["sub", 0],
   smallCaps: ["span", { class: "small-caps" }, 0],
@@ -290,7 +291,7 @@ const nodesSpec = {
     },
   },
 
-  code: {
+  codeBlock: {
     attrs: {
       language: { default: "", validate: "string" },
     },
@@ -301,7 +302,7 @@ const nodesSpec = {
     defining: true,
     parseDOM: [{ tag: "pre", preserveWhitespace: "full" }],
     toDOM() {
-      return DOMOutput.code;
+      return DOMOutput.codeBlock;
     },
   },
 
@@ -476,6 +477,13 @@ const marksSpec = {
     ],
     toDOM() {
       return DOMOutput.smallCaps;
+    },
+  },
+
+  code: {
+    parseDOM: [{ tag: "code" }],
+    toDOM() {
+      return DOMOutput.code;
     },
   },
 } as const satisfies Record<string, MarkSpec>;
