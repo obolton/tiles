@@ -42,6 +42,7 @@ export default class Tile {
   readonly rowSpan: Reactive<number>;
   readonly animation: Reactive<Animation | null>;
   readonly frame: Reactive<FrameStyle | null>;
+  readonly cornerRadius: Reactive<number | null>;
   readonly hide: Reactive<boolean>;
   readonly dock: Reactive<DockEdge | null>;
   readonly theme: Reactive<Theme | null>;
@@ -61,6 +62,7 @@ export default class Tile {
       rowSpan,
       animation,
       frame,
+      cornerRadius,
       hide,
       dock,
       theme,
@@ -81,6 +83,7 @@ export default class Tile {
     this.rowSpan = reactive(rowSpan);
     this.animation = reactive(animation);
     this.frame = reactive(frame);
+    this.cornerRadius = reactive(cornerRadius);
     this.hide = reactive(hide);
     this.dock = reactive(dock);
     this.theme = reactive(theme ? new Theme(theme) : null);
@@ -216,6 +219,9 @@ export default class Tile {
     }
     if (changes.frame !== undefined) {
       this.frame.value = changes.frame;
+    }
+    if (changes.cornerRadius !== undefined) {
+      this.cornerRadius.value = changes.cornerRadius;
     }
     if (changes.hide !== undefined) {
       this.hide.value = changes.hide;
@@ -374,6 +380,15 @@ export default class Tile {
     this.recordUpdate({ frame }, { frame: this.frame.value });
     this.applyUpdate({ frame });
     return this.updateTile({ frame });
+  }
+
+  setCornerRadius(cornerRadius: number | null) {
+    this.recordUpdate(
+      { cornerRadius },
+      { cornerRadius: this.cornerRadius.value },
+    );
+    this.applyUpdate({ cornerRadius });
+    return this.updateTile({ cornerRadius });
   }
 
   setHidden(hide: boolean) {
