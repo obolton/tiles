@@ -35,6 +35,15 @@ table-of-contents {
       flip-block,
       flip-inline,
       flip-block flip-inline;
+
+    &[align="center"] {
+      inset-inline-start: auto;
+      justify-self: anchor-center;
+    }
+
+    &[align="right"] {
+      inset-inline: auto anchor(end);
+    }
   }
 }
 
