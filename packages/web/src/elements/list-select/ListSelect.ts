@@ -71,12 +71,20 @@ export default class ListSelect extends HTMLElement {
     this.items = document.createElement("anchored-popover");
     this.items.id = "items";
     this.items.part = "items";
-    this.items.setAttribute("aria-labelledby", "button-label");
-    this.items.role = "listbox";
     this.items.addEventListener("toggle", this, { passive: true });
 
+    const listbox = document.createElement("div");
+    listbox.id = "listbox";
+    listbox.role = "listbox";
+    listbox.ariaLabelledByElements = [this.buttonLabel];
+
     const itemsSlot = document.createElement("slot");
-    this.items.append(itemsSlot);
+    listbox.append(itemsSlot);
+
+    const footerSlot = document.createElement("slot");
+    footerSlot.name = "footer";
+
+    this.items.append(listbox, footerSlot);
 
     const button = document.createElement("div");
     button.id = "button";
@@ -93,7 +101,7 @@ export default class ListSelect extends HTMLElement {
     this.addEventListener("click", this, { passive: true });
     this.addEventListener("pointermove", this, { passive: true });
     this.addEventListener("keydown", this);
-    this.addEventListener("blur", this, { passive: true });
+    this.addEventListener("focusout", this, { passive: true });
 
     this.mutationObserver = new MutationObserver((mutations) =>
       this.mutationObserverCallback(mutations),
@@ -236,13 +244,19 @@ export default class ListSelect extends HTMLElement {
         return this.handlePointerMove(event as PointerEvent);
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
-      case "blur":
-        return this.handleBlur();
+      case "focusout":
+        return this.handleFocusOut(event as FocusEvent);
     }
   }
 
-  private handleBlur() {
-    if (this.open) {
+  private handleFocusOut(event: FocusEvent) {
+    if (
+      this.open &&
+      !(
+        event.relatedTarget instanceof Node &&
+        this.contains(event.relatedTarget)
+      )
+    ) {
       this.hide();
     }
   }

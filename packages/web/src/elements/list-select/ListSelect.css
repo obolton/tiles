@@ -61,6 +61,7 @@ slot[name="label"]::slotted(*) {
   position: fixed;
   inset: auto;
   display: flex;
+  flex-direction: column;
   gap: 8px;
   margin: 16px 0;
   padding: 8px;
@@ -101,6 +102,11 @@ slot[name="label"]::slotted(*) {
   }
 }
 
+#listbox {
+  display: flex;
+  gap: inherit;
+}
+
 #button-label {
   grid-column: 2;
   line-height: 1;
@@ -120,7 +126,7 @@ slot[name="label"]::slotted(*) {
 }
 
 :host([orientation="vertical"]) {
-  #items {
+  #listbox {
     flex-direction: column;
   }
 }
