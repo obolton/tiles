@@ -22,6 +22,7 @@ const SHARED = {
   rowSpan: 2,
   animation: "FADE",
   frame: null,
+  cornerRadius: null,
   hide: false,
   dock: null,
   textColor: null,

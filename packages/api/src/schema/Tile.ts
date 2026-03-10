@@ -11,6 +11,7 @@ import { ColorSchema } from "./Color";
 const MAX_PERCENT = 100;
 const MIN_SIZE_PERCENT = 1;
 const MAX_ROWS = 32;
+const MAX_CORNER_RADIUS = 48;
 
 export const TileSchema = z.object({
   sizing: z.enum(Sizing).optional(),
@@ -26,6 +27,7 @@ export const TileSchema = z.object({
   rowSpan: z.int().gte(1).lte(MAX_ROWS).optional(),
   animation: z.enum(Animation).nullable().optional(),
   frame: z.enum(FrameStyle).nullable().optional(),
+  cornerRadius: z.int().gte(0).lte(MAX_CORNER_RADIUS).nullable().optional(),
   hide: z.boolean().optional(),
   themeId: z.uuid().nullable().optional(),
   dock: z.enum(DockEdge).nullable().optional(),
