@@ -1,5 +1,6 @@
 import css from "./CalendarGrid.css?inline";
 import {
+  addDays,
   getFirstDayOfWeek,
   getWeekdays,
   getCalendarWeeks,
@@ -61,6 +62,11 @@ export default class CalendarGrid extends HTMLElement {
     anchor: string;
     abort: AbortController;
   } | null = null;
+  private placeholder: {
+    start: string;
+    end: string;
+    elements: HTMLElement[];
+  } | null = null;
   private gridPositions = new Map<
     string,
     { week: number; start: number; end: number }
@@ -92,15 +98,52 @@ export default class CalendarGrid extends HTMLElement {
     return null;
   }
 
+  dateRangeFromPoint(
+    x: number,
+    y: number,
+    days: number,
+  ): { start: string; end: string } | null {
+    const start = this.dateFromPoint(x, y);
+    if (!start) {
+      return null;
+    }
+    const end = days > 0 ? toISODate(addDays(new Date(start), days)) : start;
+    return { start, end };
+  }
+
   highlightDates(from: string | null, to: string | null = from) {
     const start = from && to && to < from ? to : from;
     const end = from && to && to > from ? to : from;
-    for (const day of this.shadow.querySelectorAll<HTMLTimeElement>("time.day")) {
+    for (const day of this.shadow.querySelectorAll<HTMLTimeElement>(
+      "time.day",
+    )) {
       day.classList.toggle(
         "highlight",
         !!start && day.dateTime >= start && day.dateTime <= (end ?? start),
       );
     }
+  }
+
+  showPlaceholder(start: string, end: string) {
+    if (this.placeholder?.start === start && this.placeholder.end === end) {
+      return;
+    }
+    this.hidePlaceholder();
+    const elements = this.createDateSegments(start, end);
+    for (const el of elements) {
+      el.classList.add("placeholder");
+    }
+    this.placeholder = { start, end, elements };
+  }
+
+  hidePlaceholder() {
+    if (!this.placeholder) {
+      return;
+    }
+    for (const el of this.placeholder.elements) {
+      el.remove();
+    }
+    this.placeholder = null;
   }
 
   constructor() {
@@ -173,7 +216,7 @@ export default class CalendarGrid extends HTMLElement {
   }
 
   private handlePointerDown(event: PointerEvent) {
-    if (!this.editable || this.resize) {
+    if (!this.editable || this.resize || this.select) {
       return;
     }
     if (!(event.target instanceof HTMLTimeElement)) {
@@ -270,6 +313,9 @@ export default class CalendarGrid extends HTMLElement {
     }
 
     const prevDate = edge === "start" ? start : end;
+    if (targetDate === prevDate) {
+      return;
+    }
 
     if (edge === "start") {
       this.resize.start = targetDate;
@@ -347,8 +393,7 @@ export default class CalendarGrid extends HTMLElement {
     const first = entry.elements[0]!;
     const last = entry.elements[entry.elements.length - 1]!;
 
-    first.style.gridColumn =
-      `${startPos.start} / ${first === last ? endPos.end : -1}`;
+    first.style.gridColumn = `${startPos.start} / ${first === last ? endPos.end : -1}`;
     for (let i = 1; i < entry.elements.length - 1; i++) {
       entry.elements[i]!.style.gridColumn = "1 / -1";
     }
@@ -514,9 +559,7 @@ export default class CalendarGrid extends HTMLElement {
 
     const lastWeek = endPos ? endPos.week : this.weeks.length - 1;
     for (let w = startPos.week + 1; w <= lastWeek; w++) {
-      segments.push(
-        this.createSegment(w, `1 / ${this.endColumn(endPos, w)}`),
-      );
+      segments.push(this.createSegment(w, `1 / ${this.endColumn(endPos, w)}`));
     }
 
     return segments;

@@ -38,7 +38,8 @@
   border-top: 1px solid rgb(0 0 0 / 8%);
 }
 
-:host([editable]:not(:state(resizing), :state(selecting))) .day:hover {
+:host([editable]:not(:state(resizing), :state(selecting), [data-drop-target]))
+  .day:hover {
   background: rgb(0 0 0 / 10%);
   cursor: pointer;
 }
@@ -84,6 +85,10 @@
   background: none;
 }
 
+.segment.placeholder {
+  background: rgb(0 0 0 / 10%);
+}
+
 .segment > resize-handle {
   position: absolute;
   inset-block: 3px;
@@ -115,7 +120,9 @@
   opacity: 1;
 }
 
-:host(:not(:state(resizing), :state(selecting), [data-drop-target])) .segment:hover > resize-handle {
+:host(:not(:state(resizing), :state(selecting), [data-drop-target]))
+  .segment:hover
+  > resize-handle {
   opacity: 0.5;
 
   &:hover {

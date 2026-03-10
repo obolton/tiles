@@ -1,4 +1,4 @@
-import { addDays, daysBetween } from "@/utils/dates";
+import { daysBetween } from "@/utils/dates";
 import { handleError } from "@/utils/errors";
 import type CalendarGrid from "@/elements/calendar-grid/CalendarGrid";
 import type Page from "@/models/Page";
@@ -21,6 +21,11 @@ export default class CalendarEditor {
   private readonly element: CalendarGrid;
   private readonly page: Page;
   private readonly sectionId: string;
+  private drag: {
+    days: number;
+    start: string;
+    end: string;
+  } | null = null;
 
   constructor({ element, page, sectionId, signal }: CalendarEditorOptions) {
     this.element = element;
@@ -39,6 +44,8 @@ export default class CalendarEditor {
 
   handleEvent(event: Event) {
     switch (event.type) {
+      case "dnd-dragenter":
+        return this.handleDragEnter(event as DragDropEvent<DragData>);
       case "dnd-dragover":
         return this.handleDragOver(event as DragDropEvent<DragData>);
       case "dnd-dragleave":
@@ -53,49 +60,57 @@ export default class CalendarEditor {
 
   // Drag and drop
 
+  private handleDragEnter(event: DragDropEvent<DragData>) {
+    const tile = event.state.data?.tile;
+    if (!tile) {
+      return;
+    }
+    const start = tile.startDate.value;
+    const end = tile.endDate.value;
+    this.drag = {
+      days: start && end ? daysBetween(start, end) : 0,
+      start: "",
+      end: "",
+    };
+  }
+
   private handleDragOver(event: DragDropEvent<DragData>) {
     event.stopPropagation();
-    const date = this.element.dateFromPoint(event.clientX, event.clientY);
-    this.element.highlightDates(date);
+    if (!this.drag) {
+      return;
+    }
+    const dates = this.element.dateRangeFromPoint(
+      event.clientX,
+      event.clientY,
+      this.drag.days,
+    );
+    if (dates) {
+      this.drag.start = dates.start;
+      this.drag.end = dates.end;
+      this.element.showPlaceholder(dates.start, dates.end);
+    }
   }
 
   private handleDragEnd() {
-    this.element.highlightDates(null);
+    this.element.hidePlaceholder();
+    this.drag = null;
   }
 
   private handleDrop(event: DragDropEvent<DragData>) {
     event.preventDefault();
     event.stopPropagation();
-    this.element.highlightDates(null);
+    this.element.hidePlaceholder();
 
     const tile = event.state.data?.tile;
-    if (!tile) {
+    if (!tile || !this.drag?.start) {
+      this.drag = null;
       return;
     }
 
-    const targetDate = this.element.dateFromPoint(event.clientX, event.clientY);
-    if (!targetDate) {
-      return;
-    }
+    const { start, end } = this.drag;
+    this.drag = null;
 
-    const dropDate = new Date(targetDate);
-    const startDate = tile.startDate.value;
-
-    let newStart: Date;
-    let newEnd: Date;
-
-    if (startDate) {
-      const offset = daysBetween(startDate, dropDate);
-      newStart = addDays(startDate, offset);
-      newEnd = tile.endDate.value
-        ? addDays(tile.endDate.value, offset)
-        : newStart;
-    } else {
-      newStart = dropDate;
-      newEnd = dropDate;
-    }
-
-    tile.setDates(newStart, newEnd).catch(handleError);
+    tile.setDates(new Date(start), new Date(end)).catch(handleError);
 
     if (tile.sectionId !== this.sectionId) {
       tile.move({ sectionId: this.sectionId }).catch(handleError);
