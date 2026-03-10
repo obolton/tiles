@@ -96,6 +96,7 @@ function serializeNode(node: Node): SerializedNode {
     return {
       type: "paragraph",
       align: getTextAlignment(node),
+      lineHeight: node.attrs.lineHeight as number | undefined,
       children: node.children.map(serializeNode) as InlineNode[],
     };
   }
@@ -105,6 +106,7 @@ function serializeNode(node: Node): SerializedNode {
       type: "heading",
       level: node.attrs.level as 1 | 2 | 3,
       align: getTextAlignment(node),
+      lineHeight: node.attrs.lineHeight as number | undefined,
       theme: node.attrs.theme as string | undefined,
       children: node.children.map(serializeNode) as InlineNode[],
     };

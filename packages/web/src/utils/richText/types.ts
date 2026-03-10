@@ -77,6 +77,7 @@ export interface PendingNode extends BaseNode {
 export interface ParagraphNode extends BaseNode {
   type: "paragraph";
   align?: TextAlignment;
+  lineHeight?: number;
   children: InlineNode[];
 }
 
@@ -84,6 +85,7 @@ export interface HeadingNode extends BaseNode {
   type: "heading";
   level: 1 | 2 | 3;
   align?: TextAlignment;
+  lineHeight?: number;
   theme?: string;
   children: InlineNode[];
 }

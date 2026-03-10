@@ -77,7 +77,10 @@ function getTextAlignment(align?: TextAlignment) {
 
 function createParagraphNode(paragraph: ParagraphNode): Node {
   return schema.nodes.paragraph.create(
-    { align: getTextAlignment(paragraph.align) },
+    {
+      align: getTextAlignment(paragraph.align),
+      lineHeight: paragraph.lineHeight,
+    },
     paragraph.children.map(createNode),
   );
 }
@@ -87,6 +90,7 @@ function createHeadingNode(heading: HeadingNode): Node {
     {
       level: heading.level,
       align: getTextAlignment(heading.align),
+      lineHeight: heading.lineHeight,
       theme: heading.theme,
     },
     heading.children.map(createNode),
