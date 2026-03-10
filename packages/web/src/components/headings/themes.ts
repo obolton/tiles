@@ -7,6 +7,7 @@ import type { JSX } from "@/jsx/jsx";
 export interface HeadingThemeProps {
   level: 1 | 2 | 3;
   align?: "left" | "center" | "right";
+  lineHeight?: number;
   children?: JSX.Node;
 }
 
