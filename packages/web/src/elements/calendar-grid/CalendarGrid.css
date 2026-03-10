@@ -1,7 +1,7 @@
 :host {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: [header] auto;
+  grid-template-rows: [header] max-content;
   grid-auto-rows: minmax(6rem, auto);
   container: calendar-grid / inline-size;
   overflow: auto;
