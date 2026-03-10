@@ -37,6 +37,9 @@ import AIIcon from "@/icons/ai.svg?jsx";
 import ApproveIcon from "@/icons/approve.svg?jsx";
 import RejectIcon from "@/icons/reject.svg?jsx";
 import TextSizePopover from "@/components/formatting/TextSizePopover";
+import LineHeightPopover from "@/components/formatting/LineHeightPopover";
+import LineHeightIcon from "@/icons/line-height.svg?jsx";
+import { DEFAULT_LINE_HEIGHT } from "@/constants/formatting";
 import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
 import { isPromptOpen } from "@/utils/richText/prompt";
 import { showModal } from "@/utils/modals";
@@ -71,6 +74,7 @@ import {
   setTextSize,
   setTextColor,
   removeTextColor,
+  setLineHeight,
 } from "@/utils/richText/commands";
 import { getLink } from "@/utils/richText/helpers";
 import Editor from "@/editor/Editor";
@@ -176,6 +180,11 @@ export default function FormattingTools({
   };
 
   const changeTextSize = (size: number) => performCommand(setTextSize(size));
+
+  const changeLineHeight = (value: number) =>
+    performCommand(
+      setLineHeight(value === DEFAULT_LINE_HEIGHT ? undefined : value),
+    );
 
   const changeTextColor = (color: string) =>
     performCommand(setTextColor(color));
@@ -398,6 +407,25 @@ export default function FormattingTools({
           align="center"
           value={format.derive((value) => value.size)}
           onChange={changeTextSize}
+        />
+
+        <ToolbarButton
+          id="line-height-button"
+          label="Line height"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          popovertarget="line-height-popover"
+        >
+          <LineHeightIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <LineHeightPopover
+          id="line-height-popover"
+          align="center"
+          value={format.derive(
+            (value) => value.lineHeight ?? DEFAULT_LINE_HEIGHT,
+          )}
+          onChange={changeLineHeight}
         />
 
         <ToolbarButton
