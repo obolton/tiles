@@ -16,7 +16,7 @@ import type {
   MentionNode,
   Node as SerializedNode,
 } from "./types";
-import { TextFormat, ListType, TextAlignment } from "./types";
+import { TextFormat, ListType, TextAlignment, type BlockStyle } from "./types";
 import { schema } from "./schema";
 
 function getMarks(node: TextNode | DateNode | DropdownNode | MentionNode) {
@@ -75,12 +75,16 @@ function getTextAlignment(align?: TextAlignment) {
   }
 }
 
+function getBlockStyle(node: BlockStyle) {
+  return {
+    align: getTextAlignment(node.align),
+    lineHeight: node.lineHeight,
+  };
+}
+
 function createParagraphNode(paragraph: ParagraphNode): Node {
   return schema.nodes.paragraph.create(
-    {
-      align: getTextAlignment(paragraph.align),
-      lineHeight: paragraph.lineHeight,
-    },
+    getBlockStyle(paragraph),
     paragraph.children.map(createNode),
   );
 }
@@ -89,8 +93,7 @@ function createHeadingNode(heading: HeadingNode): Node {
   return schema.nodes.heading.create(
     {
       level: heading.level,
-      align: getTextAlignment(heading.align),
-      lineHeight: heading.lineHeight,
+      ...getBlockStyle(heading),
       theme: heading.theme,
     },
     heading.children.map(createNode),

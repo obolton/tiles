@@ -5,6 +5,7 @@ import type {
   TextNode,
   QuoteNode,
   BlockNode,
+  BlockStyle,
   InlineNode,
   Node as SerializedNode,
 } from "./types";
@@ -59,6 +60,13 @@ function getTextAlignment(node: Node): TextAlignment | undefined {
   }
 }
 
+function getBlockStyle(node: Node): BlockStyle {
+  return {
+    align: getTextAlignment(node),
+    lineHeight: node.attrs.lineHeight as number | undefined,
+  };
+}
+
 function serializeNode(node: Node): SerializedNode {
   if (node.isText) {
     return {
@@ -95,8 +103,7 @@ function serializeNode(node: Node): SerializedNode {
   if (node.type === nodes.paragraph) {
     return {
       type: "paragraph",
-      align: getTextAlignment(node),
-      lineHeight: node.attrs.lineHeight as number | undefined,
+      ...getBlockStyle(node),
       children: node.children.map(serializeNode) as InlineNode[],
     };
   }
@@ -105,8 +112,7 @@ function serializeNode(node: Node): SerializedNode {
     return {
       type: "heading",
       level: node.attrs.level as 1 | 2 | 3,
-      align: getTextAlignment(node),
-      lineHeight: node.attrs.lineHeight as number | undefined,
+      ...getBlockStyle(node),
       theme: node.attrs.theme as string | undefined,
       children: node.children.map(serializeNode) as InlineNode[],
     };
