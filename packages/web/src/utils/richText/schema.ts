@@ -1,5 +1,10 @@
 import { Schema } from "prosemirror-model";
-import { MIN_TEXT_SIZE, MAX_TEXT_SIZE } from "@/constants/formatting";
+import {
+  MIN_TEXT_SIZE,
+  MAX_TEXT_SIZE,
+  MIN_LINE_HEIGHT,
+  MAX_LINE_HEIGHT,
+} from "@/constants/formatting";
 import { toCSSColor, COLOR_HEX_REGEX } from "@/utils/color";
 import type {
   AttributeSpec,
@@ -32,15 +37,28 @@ const DOMOutput = {
 
 export type TextAlignment = "left" | "center" | "right";
 
-function getTextAttributes(element: HTMLElement): { align: TextAlignment } {
+function getLineHeight(style: CSSStyleDeclaration): number | undefined {
+  const value = parseFloat(style.lineHeight);
+  if (Number.isNaN(value)) {
+    return undefined;
+  }
+  return Math.min(Math.max(value, MIN_LINE_HEIGHT), MAX_LINE_HEIGHT);
+}
+
+function getTextAttributes(element: HTMLElement): {
+  align: TextAlignment;
+  lineHeight: number | undefined;
+} {
   const align = element.style.textAlign;
+  const lineHeight = getLineHeight(element.style);
+
   switch (align) {
     case "left":
     case "center":
     case "right":
-      return { align };
+      return { align, lineHeight };
     default:
-      return { align: "left" };
+      return { align: "left", lineHeight };
   }
 }
 
@@ -50,6 +68,19 @@ const attributesSpec = {
     validate(value) {
       if (!(value === "left" || value === "center" || value === "right")) {
         throw new RangeError(`Invalid paragraph alignment: ${value}`);
+      }
+    },
+  },
+  lineHeight: {
+    default: undefined,
+    validate(value) {
+      if (
+        value !== undefined &&
+        (typeof value !== "number" ||
+          value < MIN_LINE_HEIGHT ||
+          value > MAX_LINE_HEIGHT)
+      ) {
+        throw new RangeError(`Invalid line height: ${value}`);
       }
     },
   },
@@ -67,6 +98,7 @@ const nodesSpec = {
   paragraph: {
     attrs: {
       align: attributesSpec.align,
+      lineHeight: attributesSpec.lineHeight,
     },
     content: "inline*",
     group: "block",
@@ -77,7 +109,15 @@ const nodesSpec = {
       },
     ],
     toDOM(node) {
-      return ["p", { class: node.attrs.align as TextAlignment | undefined }, 0];
+      const lineHeight = node.attrs.lineHeight as number | undefined;
+      return [
+        "p",
+        {
+          class: node.attrs.align as TextAlignment | undefined,
+          style: lineHeight != null ? `line-height: ${lineHeight}` : undefined,
+        },
+        0,
+      ];
     },
   },
 
@@ -103,6 +143,7 @@ const nodesSpec = {
         },
       },
       align: attributesSpec.align,
+      lineHeight: attributesSpec.lineHeight,
       theme: { default: undefined, validate: "string|undefined" },
     },
     content: "inline*",
@@ -123,9 +164,13 @@ const nodesSpec = {
       },
     ],
     toDOM(node) {
+      const lineHeight = node.attrs.lineHeight as number | undefined;
       return [
         "h" + node.attrs.level,
-        { class: node.attrs.align as TextAlignment | undefined },
+        {
+          class: node.attrs.align as TextAlignment | undefined,
+          style: lineHeight != null ? `line-height: ${lineHeight}` : undefined,
+        },
         0,
       ];
     },
