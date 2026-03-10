@@ -48,7 +48,8 @@ floating-toolbar {
     }
   }
 
-  body:is([data-drag], [data-resize]) & {
+  body:is([data-drag], [data-resize]) &,
+  body[data-prompt] &:not(.prompt) {
     display: none;
     opacity: 0;
   }
