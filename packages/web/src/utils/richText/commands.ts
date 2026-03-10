@@ -273,6 +273,37 @@ export function deleteNode(nodeType: NodeType): Command {
 
 export const removeLink = unwrap(schema.nodes.link);
 
+export function setLineHeight(lineHeight: number | undefined): Command {
+  return function (state, dispatch) {
+    const { selection, tr } = state;
+
+    if (selection.empty) {
+      const node = closest(selection.$from, (node) => node.isTextblock);
+      if (!node) {
+        return false;
+      }
+
+      if (dispatch) {
+        dispatch(tr.setNodeAttribute(node.pos, "lineHeight", lineHeight));
+      }
+
+      return true;
+    }
+
+    if (dispatch) {
+      state.doc.nodesBetween(selection.from, selection.to, (node, pos) => {
+        if (node.isTextblock) {
+          tr.setNodeAttribute(pos, "lineHeight", lineHeight);
+        }
+      });
+
+      dispatch(tr);
+    }
+
+    return true;
+  };
+}
+
 export function setAlignment(align: TextAlignment): Command {
   return function (state, dispatch) {
     const { selection, tr } = state;
