@@ -47,6 +47,9 @@ function getMarks(node: TextNode | DateNode | DropdownNode | MentionNode) {
   if (format & TextFormat.SMALL_CAPS) {
     marks.push(schema.marks.smallCaps.create());
   }
+  if (format & TextFormat.CODE) {
+    marks.push(schema.marks.code.create());
+  }
   if (typeof size === "number") {
     marks.push(schema.marks.size.create({ size }));
   }
@@ -105,7 +108,7 @@ function createQuoteNode(quote: QuoteNode): Node {
 }
 
 function createCodeNode(code: CodeNode): Node {
-  return schema.nodes.code.create(
+  return schema.nodes.codeBlock.create(
     { language: code.language },
     code.children.map(createNode),
   );

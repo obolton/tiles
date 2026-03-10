@@ -33,6 +33,8 @@ function getTextFormat(node: Node): number {
         return format | TextFormat.SUBSCRIPT;
       case marks.smallCaps:
         return format | TextFormat.SMALL_CAPS;
+      case marks.code:
+        return format | TextFormat.CODE;
       default:
         return format;
     }
@@ -125,7 +127,7 @@ function serializeNode(node: Node): SerializedNode {
     } as QuoteNode;
   }
 
-  if (node.type === nodes.code) {
+  if (node.type === nodes.codeBlock) {
     return {
       type: "code",
       language: node.attrs.language as string,

@@ -8,6 +8,7 @@ export enum TextFormat {
   SUPERSCRIPT = 1 << 5,
   SUBSCRIPT = 1 << 6,
   SMALL_CAPS = 1 << 7,
+  CODE = 1 << 8,
 }
 
 export enum ListType {
