@@ -30,6 +30,7 @@ export default function CalendarSection({
   function ref(element: CalendarGrid) {
     CalendarEditor.attach({
       element,
+      page: editor.page,
       sectionId: section.id,
       signal,
     });

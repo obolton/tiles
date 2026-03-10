@@ -1,11 +1,14 @@
 import { addDays, daysBetween } from "@/utils/dates";
 import { handleError } from "@/utils/errors";
 import type CalendarGrid from "@/elements/calendar-grid/CalendarGrid";
+import type Page from "@/models/Page";
 import type { DragDropEvent } from "@/utils/drag";
+import type { CalendarMoveEvent } from "@/elements/calendar-grid/events";
 import type { DragData } from "./LayoutEditor";
 
 export interface CalendarEditorOptions {
   element: CalendarGrid;
+  page: Page;
   sectionId: string;
   signal?: AbortSignal;
 }
@@ -16,10 +19,12 @@ export default class CalendarEditor {
   }
 
   private readonly element: CalendarGrid;
+  private readonly page: Page;
   private readonly sectionId: string;
 
-  constructor({ element, sectionId, signal }: CalendarEditorOptions) {
+  constructor({ element, page, sectionId, signal }: CalendarEditorOptions) {
     this.element = element;
+    this.page = page;
     this.sectionId = sectionId;
 
     element.dataset.drop = "true";
@@ -28,6 +33,8 @@ export default class CalendarEditor {
     element.addEventListener("dnd-dragleave", this, { signal });
     element.addEventListener("dnd-drop", this, { signal });
     element.addEventListener("dnd-dragend", this, { passive: true, signal });
+
+    element.addEventListener("calendarmoveend", this, { signal });
   }
 
   handleEvent(event: Event) {
@@ -39,8 +46,12 @@ export default class CalendarEditor {
         return this.handleDragEnd();
       case "dnd-drop":
         return this.handleDrop(event as DragDropEvent<DragData>);
+      case "calendarmoveend":
+        return this.handleMoveEnd(event as CalendarMoveEvent);
     }
   }
+
+  // Drag and drop
 
   private handleDragOver(event: DragDropEvent<DragData>) {
     event.stopPropagation();
@@ -89,5 +100,23 @@ export default class CalendarEditor {
     if (tile.sectionId !== this.sectionId) {
       tile.move({ sectionId: this.sectionId }).catch(handleError);
     }
+  }
+
+  // Resize
+
+  private handleMoveEnd(event: CalendarMoveEvent) {
+    if (!(event.target instanceof HTMLElement)) {
+      return;
+    }
+
+    const pageItem = event.target.querySelector("page-item");
+    if (!pageItem) {
+      return;
+    }
+
+    const tile = this.page.getTile(pageItem.id);
+    tile
+      .setDates(new Date(event.start), new Date(event.end))
+      .catch(handleError);
   }
 }
