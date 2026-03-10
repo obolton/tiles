@@ -74,18 +74,19 @@ export interface PendingNode extends BaseNode {
   children: Exclude<BlockNode, { type: "pending" }>[];
 }
 
-export interface ParagraphNode extends BaseNode {
-  type: "paragraph";
+export interface BlockStyle {
   align?: TextAlignment;
   lineHeight?: number;
+}
+
+export interface ParagraphNode extends BaseNode, BlockStyle {
+  type: "paragraph";
   children: InlineNode[];
 }
 
-export interface HeadingNode extends BaseNode {
+export interface HeadingNode extends BaseNode, BlockStyle {
   type: "heading";
   level: 1 | 2 | 3;
-  align?: TextAlignment;
-  lineHeight?: number;
   theme?: string;
   children: InlineNode[];
 }
