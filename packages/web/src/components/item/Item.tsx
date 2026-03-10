@@ -41,7 +41,6 @@ const ANIMATION_NAMES: Record<Animation, string> = {
 export interface ItemProps {
   style?: StyleDeclaration;
   classList?: { [k: string]: boolean | Reactive<boolean> };
-  editable?: boolean | Reactive<boolean>;
   tile: Tile;
   tabindex?: number | Reactive<number | undefined>;
   resize?: Reactive<ResizeDirection | null>;
