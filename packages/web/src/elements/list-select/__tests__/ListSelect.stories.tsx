@@ -181,3 +181,25 @@ export const Disabled: Story = {
     </list-select>
   ),
 };
+
+export const WithFooter: Story = {
+  render: () => (
+    <list-select label="Frame" orientation="vertical" value="outlined">
+      <ListGroup>
+        <ListOption value="">None</ListOption>
+      </ListGroup>
+      <ListGroup>
+        <ListOption value="outlined">Outlined</ListOption>
+        <ListOption value="card">Card</ListOption>
+        <ListOption value="raised">Raised</ListOption>
+      </ListGroup>
+      <div slot="footer" style={{ display: "flex", gap: "8px" }}>
+        <button className="floating small">Sharp</button>
+        <button className="floating small" aria-pressed="true">
+          Rounded
+        </button>
+        <button className="floating small">Round</button>
+      </div>
+    </list-select>
+  ),
+};
