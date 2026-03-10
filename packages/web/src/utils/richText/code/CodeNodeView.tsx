@@ -166,7 +166,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
   }
 
   update(node: Node): boolean {
-    if (node.type.name !== "code") {
+    if (node.type.name !== "codeBlock") {
       return false;
     }
 

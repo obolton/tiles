@@ -315,7 +315,7 @@ export default function FormattingTools({
         <list-select
           aria-label="Text format"
           aria-selected={format.derive((value) =>
-            typeof value.headingLevel === "number" || value.code
+            typeof value.headingLevel === "number" || value.codeBlock
               ? "true"
               : undefined,
           )}
@@ -326,7 +326,7 @@ export default function FormattingTools({
           value={format.derive((value) =>
             typeof value.headingLevel === "number"
               ? `h${value.headingLevel}`
-              : value.code
+              : value.codeBlock
                 ? "code"
                 : value.list
                   ? `${value.list}-list`

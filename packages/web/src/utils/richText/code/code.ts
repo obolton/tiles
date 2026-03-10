@@ -5,7 +5,7 @@ export function code() {
   return new Plugin({
     props: {
       nodeViews: {
-        code(node, view, getPos) {
+        codeBlock(node, view, getPos) {
           return new CodeNodeView(node, view, getPos);
         },
       },

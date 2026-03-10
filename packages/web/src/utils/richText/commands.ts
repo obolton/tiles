@@ -105,7 +105,7 @@ export const toggleCode: Command = (state, dispatch) => {
   if (dispatch) {
     const tr = state.tr;
     for (const range of tr.selection.ranges) {
-      tr.setBlockType(range.$from.pos, range.$to.pos, schema.nodes.code);
+      tr.setBlockType(range.$from.pos, range.$to.pos, schema.nodes.codeBlock);
     }
     dispatch(tr);
   }

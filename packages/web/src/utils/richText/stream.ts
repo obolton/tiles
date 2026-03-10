@@ -362,7 +362,7 @@ export async function insertFromStream(
               insertNode(
                 tr,
                 pos,
-                schema.nodes.code.create({ language: event.language }),
+                schema.nodes.codeBlock.create({ language: event.language }),
                 mode,
               ) + 1;
             break;
