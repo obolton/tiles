@@ -54,6 +54,7 @@ import {
   toggleSuperscript,
   toggleSubscript,
   toggleSmallCaps,
+  toggleInlineCode,
   toggleQuote,
   toggleCode,
   toggleHeading,
@@ -206,6 +207,8 @@ export default function FormattingTools({
   const formatSubscript = () => performCommand(toggleSubscript);
 
   const formatSmallCaps = () => performCommand(toggleSmallCaps);
+
+  const formatInlineCode = () => performCommand(toggleInlineCode);
 
   const approveSelection = () => performCommand(approve);
 
@@ -466,6 +469,14 @@ export default function FormattingTools({
           on:click={formatHighlight}
         >
           <HighlightIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <ToolbarButton
+          label="Code"
+          aria-pressed={format.derive((value) => value.code)}
+          on:click={formatInlineCode}
+        >
+          <CodeIcon aria-hidden="true" />
         </ToolbarButton>
 
         <ToolbarButton
