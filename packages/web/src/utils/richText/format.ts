@@ -27,6 +27,7 @@ export interface Format {
   superscript: boolean;
   subscript: boolean;
   smallCaps: boolean;
+  code: boolean;
   link: boolean;
   align?: TextAlignment;
   lineHeight?: number;
@@ -48,6 +49,7 @@ export const DEFAULT_FORMAT: Format = {
   superscript: false,
   subscript: false,
   smallCaps: false,
+  code: false,
   link: false,
   pending: false,
   size: 1,
@@ -77,6 +79,7 @@ export function getSelectionFormat(state: EditorState): Format {
     superscript: Boolean(schema.marks.superscript.isInSet(marks)),
     subscript: Boolean(schema.marks.subscript.isInSet(marks)),
     smallCaps: Boolean(schema.marks.smallCaps.isInSet(marks)),
+    code: Boolean(schema.marks.code.isInSet(marks)),
     link,
     list,
     align,
