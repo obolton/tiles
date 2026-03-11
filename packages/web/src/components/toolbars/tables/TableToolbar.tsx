@@ -2,6 +2,7 @@ import TableTab from "./TableTab";
 import ColumnTab from "./ColumnTab";
 import RowTab from "./RowTab";
 import CellTab from "./CellTab";
+import DateTab from "@/components/toolbars/tiles/DateTab";
 import If from "@/jsx/if";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
@@ -47,6 +48,8 @@ export default function TableToolbar({
       <If condition={selectionType.derive((type) => type === "range")}>
         <CellTab editorView={editorView} state={state} />
       </If>
+
+      <DateTab tile={table} />
     </floating-toolbar>
   );
 }

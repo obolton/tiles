@@ -3,6 +3,7 @@ import ListGroup from "@/components/lists/ListGroup";
 import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import StyleTools from "@/components/toolbars/tiles/StyleTools";
+import DateTab from "@/components/toolbars/tiles/DateTab";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
@@ -74,6 +75,8 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
           </ToolbarGroup>
         </If>
       </toolbar-tab>
+
+      <DateTab tile={text} />
     </floating-toolbar>
   );
 }

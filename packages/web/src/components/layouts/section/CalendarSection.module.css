@@ -1,0 +1,13 @@
+.calendar {
+  width: 100%;
+  padding: 16px;
+
+  & calendar-date {
+    display: contents;
+  }
+
+  & page-item {
+    display: block;
+    width: 100%;
+  }
+}

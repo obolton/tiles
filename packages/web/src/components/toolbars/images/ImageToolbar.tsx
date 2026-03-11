@@ -1,6 +1,7 @@
 import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import StyleTools from "@/components/toolbars/tiles/StyleTools";
+import DateTab from "@/components/toolbars/tiles/DateTab";
 import type Image from "@/models/Image";
 import type { EditorView } from "prosemirror-view";
 import type { Reactive } from "@/utils/reactivity";
@@ -25,6 +26,8 @@ export default function ImageToolbar({ image, editorView }: ImageToolbarProps) {
       <toolbar-tab name="style" label="Style">
         <StyleTools tile={image} />
       </toolbar-tab>
+
+      <DateTab tile={image} />
     </floating-toolbar>
   );
 }

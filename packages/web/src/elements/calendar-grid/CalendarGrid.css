@@ -1,0 +1,131 @@
+:host {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: [header] max-content;
+  grid-auto-rows: minmax(6rem, auto);
+  container: calendar-grid / inline-size;
+  overflow: auto;
+}
+
+.weekday {
+  padding: 4px 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.weeks {
+  display: contents;
+}
+
+.week {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-auto-flow: row dense;
+  align-content: start;
+  gap: 2px;
+  position: relative;
+  padding-top: 2rem;
+}
+
+.day {
+  position: absolute;
+  inset: 0;
+  padding: 4px 6px;
+  font-size: 1rem;
+  opacity: 0.5;
+  border-top: 1px solid rgb(0 0 0 / 8%);
+}
+
+:host([editable]:not(:state(resizing), :state(selecting), [data-drop-target]))
+  .day:hover {
+  background: rgb(0 0 0 / 10%);
+  cursor: pointer;
+}
+
+.day.today {
+  font-weight: 700;
+  opacity: 1;
+}
+
+.day.today > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5em;
+  height: 1.5em;
+  padding: 0.1em;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  -webkit-font-smoothing: antialiased;
+}
+
+.day.highlight {
+  background: rgb(0 0 0 / 10%);
+}
+
+.day.outside {
+  opacity: 0.25;
+}
+
+.segment {
+  position: relative;
+  z-index: 1;
+  align-self: start;
+  min-height: 22px;
+  min-width: 0;
+  border-radius: 4px;
+  background: var(--chip-background, var(--accent));
+}
+
+.segment.primary {
+  min-height: unset;
+  background: none;
+}
+
+.segment.placeholder {
+  background: rgb(0 0 0 / 10%);
+}
+
+.segment > resize-handle {
+  position: absolute;
+  inset-block: 3px;
+  inline-size: 7px;
+  border-radius: 3.5px;
+  background: var(--focus-ring-color);
+  opacity: 0;
+  cursor: ew-resize;
+  transition: opacity var(--animation-duration-short) var(--easing);
+
+  &[data-edge="start"] {
+    inset-inline-start: -3.5px;
+  }
+
+  &[data-edge="end"] {
+    inset-inline-end: -3.5px;
+  }
+}
+
+:host(:state(resizing)) {
+  cursor: ew-resize;
+}
+
+:host(:is(:state(resizing), :state(selecting))) .segment {
+  pointer-events: none;
+}
+
+.segment > resize-handle:state(resizing) {
+  opacity: 1;
+}
+
+:host(:not(:state(resizing), :state(selecting), [data-drop-target]))
+  .segment:hover
+  > resize-handle {
+  opacity: 0.5;
+
+  &:hover {
+    opacity: 1;
+  }
+}
