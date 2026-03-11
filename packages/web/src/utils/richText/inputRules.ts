@@ -30,6 +30,25 @@ function unorderedListInputRule() {
   return wrappingInputRule(/^\s*[-+*]\s$/, schema.nodes.unordered_list);
 }
 
+function codeBlockInputRule() {
+  return textblockTypeInputRule(/^```$/, schema.nodes.codeBlock);
+}
+
+function inlineCodeInputRule() {
+  return new InputRule(/(?<=^|[^`])`([^`]+)`$/, (state, match, start, end) => {
+    const text = match[1];
+    if (!text) {
+      return null;
+    }
+    const code = schema.marks.code.create();
+    return state.tr
+      .delete(start, end)
+      .insertText(text, start)
+      .addMark(start, start + text.length, code)
+      .removeStoredMark(code);
+  });
+}
+
 function dividerInputRule() {
   return new InputRule(
     /^(-{3,}|\*{3,}|_{3,})$/,
@@ -58,6 +77,8 @@ export function createInputRules() {
       orderedListInputRule(),
       unorderedListInputRule(),
       dividerInputRule(),
+      codeBlockInputRule(),
+      inlineCodeInputRule(),
     ],
   });
 }
