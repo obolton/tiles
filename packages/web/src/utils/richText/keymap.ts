@@ -16,6 +16,7 @@ export const keys = {
   "Mod-b": toggleMark(schema.marks.bold),
   "Mod-i": toggleMark(schema.marks.italic),
   "Mod-u": toggleMark(schema.marks.underline),
+  "Mod-e": toggleMark(schema.marks.code),
   Enter: splitListItem(schema.nodes.list_item),
   Tab: sinkListItem(schema.nodes.list_item),
   "Shift-Tab": liftListItem(schema.nodes.list_item),
