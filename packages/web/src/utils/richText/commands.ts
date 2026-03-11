@@ -68,6 +68,8 @@ export const toggleSubscript = toggleMark(schema.marks.subscript);
 
 export const toggleSmallCaps = toggleMark(schema.marks.smallCaps);
 
+export const toggleInlineCode = toggleMark(schema.marks.code);
+
 export function addLink(href: string): Command {
   return function (state, dispatch) {
     if (!href) {
