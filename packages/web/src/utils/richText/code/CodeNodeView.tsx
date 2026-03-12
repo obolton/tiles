@@ -30,6 +30,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
   private readonly getPos: () => number | undefined;
   private readonly cm: CMEditorView;
   private readonly languageCompartment = new Compartment();
+  private readonly editableCompartment = new Compartment();
   private readonly selector: HTMLElement;
 
   private updating = false;
@@ -69,7 +70,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
               forwardToProseMirror(update, this.view, this.getPos);
             }
           }),
-          CMEditorView.editable.of(view.editable),
+          this.editableCompartment.of(CMEditorView.editable.of(view.editable)),
         ],
       }),
       parent: container,
@@ -177,6 +178,13 @@ export class CodeNodeView implements NodeView, EventListenerObject {
       (this.selector as ListSelect).value =
         findLanguageConfig(newLanguage)?.id ?? "";
     }
+
+    // Sync editable state
+    this.cm.dispatch({
+      effects: this.editableCompartment.reconfigure(
+        CMEditorView.editable.of(this.view.editable),
+      ),
+    });
 
     // Sync content from ProseMirror (e.g., undo/redo)
     this.updating = true;
