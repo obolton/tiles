@@ -219,21 +219,6 @@
     width: 240px;
   }
 
-  list-box {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 8px;
-    font-size: 1rem;
-    color: var(--ui-color);
-    background: var(--ui-background-color);
-    backdrop-filter: blur(24px);
-    border-radius: var(--border-radius);
-    box-shadow:
-      0 0 0 1px rgb(0 0 0 / 15%),
-      0 4px 12px -4px rgb(0 0 0 / 30%);
-  }
-
   list-select > [role="group"] {
     position: relative;
     display: flex;
