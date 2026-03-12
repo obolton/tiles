@@ -217,6 +217,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
   }
 
   destroy() {
+    this.selector.removeEventListener("change", this);
     this.cm.destroy();
   }
 }
