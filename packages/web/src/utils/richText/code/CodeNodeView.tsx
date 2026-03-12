@@ -18,6 +18,7 @@ import {
   insertParagraphAfter,
   deleteCodeBlockIfEmpty,
 } from "./navigation";
+import { handleError } from "@/utils/errors";
 import styles from "./code.module.css";
 import "./highlight.css";
 import type { NodeView, EditorView } from "prosemirror-view";
@@ -143,10 +144,14 @@ export class CodeNodeView implements NodeView, EventListenerObject {
   }
 
   private async loadLanguageExtension(language: string) {
-    const support = await loadLanguage(language);
-    this.cm.dispatch({
-      effects: this.languageCompartment.reconfigure(support ?? []),
-    });
+    try {
+      const support = await loadLanguage(language);
+      this.cm.dispatch({
+        effects: this.languageCompartment.reconfigure(support ?? []),
+      });
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   handleEvent(event: Event) {
