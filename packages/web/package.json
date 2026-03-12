@@ -58,7 +58,7 @@
     "prosemirror-model": "^1.25.3",
     "prosemirror-schema-list": "^1.5.1",
     "prosemirror-state": "^1.4.3",
-    "prosemirror-view": "^1.41.5"
+    "prosemirror-view": "^1.41.6"
   },
   "devDependencies": {
     "@css-modules-kit/codegen": "^0.10.0",
