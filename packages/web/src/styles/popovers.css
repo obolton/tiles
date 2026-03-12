@@ -54,3 +54,18 @@ table-of-contents {
     padding-left: 32px;
   }
 }
+
+anchored-popover,
+popover-menu,
+table-of-contents,
+toolbar-tab {
+  padding: 8px;
+  border-radius: calc(var(--border-radius) + 8px);
+  font-size: 1rem;
+  color: var(--ui-color);
+  background: var(--ui-background-color);
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
+}
