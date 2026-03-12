@@ -52,11 +52,7 @@ export default function ColorPicker({
         />
       </ToolbarButton>
 
-      <anchored-popover
-        id={popoverId}
-        className={styles["color-picker"]}
-        align="center"
-      >
+      <anchored-popover id={popoverId} align="center">
         <ColorPalette
           rows={ROWS}
           minLightness={MIN_LIGHTNESS}

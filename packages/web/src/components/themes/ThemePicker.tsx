@@ -12,7 +12,6 @@ import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import Each from "@/jsx/each";
 import PaletteIcon from "@/icons/palette.svg?jsx";
-import styles from "./ThemePicker.module.css";
 import type Theme from "@/models/Theme";
 import type { Reactive } from "@/utils/reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
@@ -147,7 +146,6 @@ export default function ThemePicker({
         }}
         anchor={selectId}
         align="center"
-        className={styles.popover}
       >
         {editing.derive((theme) =>
           theme ? (

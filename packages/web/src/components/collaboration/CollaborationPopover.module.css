@@ -2,12 +2,4 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 12px;
-  color: var(--ui-color);
-  border-radius: var(--border-radius);
-  background: var(--ui-background-color);
-  backdrop-filter: blur(24px);
-  box-shadow:
-    0 0 0 1px rgb(0 0 0 / 15%),
-    0 4px 12px -4px rgb(0 0 0 / 30%);
 }
