@@ -19,7 +19,7 @@ import type { TilePropertyChanges } from "@/operations";
 
 export type { Sizing, Animation, FrameStyle, DockEdge };
 
-export default class Tile {
+export default abstract class Tile {
   readonly page: Page;
   readonly id: string;
   readonly type: TileType;
