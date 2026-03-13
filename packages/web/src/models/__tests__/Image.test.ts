@@ -24,6 +24,13 @@ describe("Image", () => {
     updateMock.mockReset();
   });
 
+  test("serialize", () => {
+    const data = { ...IMAGE_TILE, sectionId: null };
+    const image = new Image(editor.page, data);
+
+    expect(image.serialize()).toEqual(data);
+  });
+
   test("maps properties to reactive values", () => {
     const image = new Image(editor.page, IMAGE_TILE);
 

@@ -43,6 +43,13 @@ describe("Chart", () => {
     vi.clearAllMocks();
   });
 
+  test("serialize", () => {
+    const data = { ...CHART_TILE, sectionId: null };
+    const chart = new Chart(editor.page, data);
+
+    expect(chart.serialize()).toEqual(data);
+  });
+
   test("maps properties to reactive values", () => {
     const chart = new Chart(editor.page, CHART_TILE);
 

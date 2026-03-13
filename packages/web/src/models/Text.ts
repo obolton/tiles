@@ -41,6 +41,15 @@ export default class Text extends Tile {
     this.state = reactive(null);
   }
 
+  serialize(): ClientTextTile {
+    return {
+      ...super.serialize(),
+      type: "TEXT",
+      content: this.content.value,
+      align: this.align.value,
+    };
+  }
+
   private update(
     properties: Omit<AppRouterInputs["text"]["update"], "pageId" | "id">,
   ) {

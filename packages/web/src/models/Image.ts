@@ -53,6 +53,17 @@ export default class Image extends Tile {
     this.state = reactive(null);
   }
 
+  serialize(): ClientImageTile {
+    return {
+      ...super.serialize(),
+      type: "IMAGE",
+      imageUrl: this.imageUrl,
+      originX: this.origin.value.x,
+      originY: this.origin.value.y,
+      text: this.text.value,
+    };
+  }
+
   private update(
     properties: Omit<AppRouterInputs["images"]["update"], "pageId" | "id">,
   ) {

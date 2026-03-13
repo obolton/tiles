@@ -13,16 +13,30 @@ export default class Video extends Tile {
   readonly videoType: VideoType;
   readonly videoId: string;
   readonly imageUrl: string | null;
+  readonly description: string | null;
   readonly title: Reactive<string>;
 
   constructor(page: Page, properties: ClientVideoTile) {
     super(page, properties);
 
-    const { videoType, videoId, imageUrl, title } = properties;
+    const { videoType, videoId, imageUrl, description, title } = properties;
     this.videoType = videoType;
     this.videoId = videoId;
     this.imageUrl = imageUrl;
+    this.description = description;
     this.title = reactive(title);
+  }
+
+  serialize(): ClientVideoTile {
+    return {
+      ...super.serialize(),
+      type: "VIDEO",
+      videoType: this.videoType,
+      videoId: this.videoId,
+      imageUrl: this.imageUrl,
+      description: this.description,
+      title: this.title.value,
+    };
   }
 
   private update(

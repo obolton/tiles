@@ -1,11 +1,11 @@
 import type { TableColumn, TableRow } from "@/models/Table";
 import type { Action } from "./base";
+import type { TileActionData } from "./tile";
 
 // Row actions
 
 // Insert a single row
-export interface InsertRowData {
-  tableId: string;
+export interface InsertRowData extends TileActionData {
   afterRowId: string | null;
   row: TableRow;
 }
@@ -16,8 +16,7 @@ export interface InsertRowAction extends Action<
 > {}
 
 // Delete a single row by ID
-export interface DeleteRowData {
-  tableId: string;
+export interface DeleteRowData extends TileActionData {
   rowId: string;
 }
 
@@ -27,8 +26,7 @@ export interface DeleteRowAction extends Action<
 > {}
 
 // Restore a row at a position (reverse of delete)
-export interface RestoreRowData {
-  tableId: string;
+export interface RestoreRowData extends TileActionData {
   afterRowId: string | null;
   row: TableRow;
 }
@@ -39,8 +37,7 @@ export interface RestoreRowAction extends Action<
 > {}
 
 // Move row - symmetric
-export interface MoveRowData {
-  tableId: string;
+export interface MoveRowData extends TileActionData {
   rowId: string;
   afterRowId: string | null;
 }
@@ -48,8 +45,7 @@ export interface MoveRowData {
 export interface MoveRowAction extends Action<"table.moveRow", MoveRowData> {}
 
 // Set row properties - symmetric
-export interface SetRowPropertiesData {
-  tableId: string;
+export interface SetRowPropertiesData extends TileActionData {
   rowId: string;
   changes: {
     height?: number;
@@ -64,8 +60,7 @@ export interface SetRowPropertiesAction extends Action<
 // Column actions
 
 // Insert a single column
-export interface InsertColumnData {
-  tableId: string;
+export interface InsertColumnData extends TileActionData {
   afterColumnId: string | null;
   column: TableColumn;
 }
@@ -76,8 +71,7 @@ export interface InsertColumnAction extends Action<
 > {}
 
 // Delete a single column by ID
-export interface DeleteColumnData {
-  tableId: string;
+export interface DeleteColumnData extends TileActionData {
   columnId: string;
 }
 
@@ -87,8 +81,7 @@ export interface DeleteColumnAction extends Action<
 > {}
 
 // Restore a column at a position (reverse of delete)
-export interface RestoreColumnData {
-  tableId: string;
+export interface RestoreColumnData extends TileActionData {
   afterColumnId: string | null;
   column: TableColumn;
 }
@@ -99,8 +92,7 @@ export interface RestoreColumnAction extends Action<
 > {}
 
 // Move column - symmetric
-export interface MoveColumnData {
-  tableId: string;
+export interface MoveColumnData extends TileActionData {
   columnId: string;
   afterColumnId: string | null;
 }
@@ -111,8 +103,7 @@ export interface MoveColumnAction extends Action<
 > {}
 
 // Set column properties - symmetric
-export interface SetColumnPropertiesData {
-  tableId: string;
+export interface SetColumnPropertiesData extends TileActionData {
   columnId: string;
   changes: {
     title?: string | null;
@@ -128,8 +119,7 @@ export interface SetColumnPropertiesAction extends Action<
 // Cell actions
 
 // Set cell content - symmetric
-export interface SetCellData {
-  tableId: string;
+export interface SetCellData extends TileActionData {
   rowId: string;
   columnId: string;
   content: TableRow["data"][string];

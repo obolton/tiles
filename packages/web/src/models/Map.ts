@@ -36,6 +36,15 @@ export default class Map extends Tile {
     this.style = reactive(style);
   }
 
+  serialize(): ClientMapTile {
+    return {
+      ...super.serialize(),
+      type: "MAP",
+      style: this.style.value,
+      places: this.places.value,
+    };
+  }
+
   async addPlaces(places: Omit<ClientPlace, "id">[]) {
     const previousPlaceIds = new Set(this.places.value.map((p) => p.id));
 

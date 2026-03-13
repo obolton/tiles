@@ -33,6 +33,13 @@ describe("Text", () => {
     tileUpdateMock.mockReset();
   });
 
+  test("serialize", () => {
+    const data = { ...TEXT_TILE, sectionId: null };
+    const text = new Text(editor.page, data);
+
+    expect(text.serialize()).toEqual(data);
+  });
+
   test("maps properties to reactive values", () => {
     const text = new Text(editor.page, TEXT_TILE);
 

@@ -5,7 +5,18 @@ import client from "@/api/client";
 import { ASPECT_RATIOS } from "@/constants/size";
 import { PAGE } from "@/test/fixtures/Page";
 import { TILE } from "@/test/fixtures/Tile";
-import type { Animation } from "api/types/tiles";
+import type { Animation, ClientTextTile } from "api/types/tiles";
+
+class TestTile extends Tile {
+  serialize(): ClientTextTile {
+    return {
+      ...super.serialize(),
+      type: "TEXT",
+      content: [],
+      align: "TOP",
+    };
+  }
+}
 
 vi.mock("@/api/client", () => ({
   default: {
@@ -32,7 +43,7 @@ describe("Tile", () => {
 
   describe("duplicate", () => {
     test("duplicates the tile before the specified tile", async () => {
-      const tile = new Tile(editor.page, { ...TILE, sectionId: null });
+      const tile = new TestTile(editor.page, { ...TILE, sectionId: null });
       editor.addTile(tile, null, null, false);
 
       const duplicatedTile = {
@@ -60,7 +71,7 @@ describe("Tile", () => {
     });
 
     test("duplicates the tile at the end when beforeId is null", async () => {
-      const tile = new Tile(editor.page, {
+      const tile = new TestTile(editor.page, {
         ...TILE,
         id: "tile-for-null-test",
         sectionId: null,
@@ -89,8 +100,15 @@ describe("Tile", () => {
     });
   });
 
+  test("serialize", () => {
+    const data = { ...TILE, sectionId: null };
+    const tile = new TestTile(editor.page, data);
+
+    expect(tile.serialize()).toEqual(data);
+  });
+
   test("maps properties to reactive values", () => {
-    const tile = new Tile(editor.page, TILE);
+    const tile = new TestTile(editor.page, TILE);
 
     expect(tile.page).toBe(editor.page);
     expect(tile.id).toBe(TILE.id);
@@ -109,7 +127,7 @@ describe("Tile", () => {
 
   describe("delete", () => {
     test("deletes the tile", async () => {
-      const tile = new Tile(editor.page, TILE);
+      const tile = new TestTile(editor.page, TILE);
 
       await tile.delete();
 
@@ -122,7 +140,7 @@ describe("Tile", () => {
 
   describe("setAnimation", () => {
     test("updates the animation and persists the placement", async () => {
-      const tile = new Tile(editor.page, TILE);
+      const tile = new TestTile(editor.page, TILE);
       const animation: Animation = "GROW";
 
       vi.mocked(client.tiles.update.mutate).mockResolvedValue({
@@ -141,7 +159,7 @@ describe("Tile", () => {
     });
 
     test("clears the animation", async () => {
-      const tile = new Tile(editor.page, TILE);
+      const tile = new TestTile(editor.page, TILE);
 
       vi.mocked(client.tiles.update.mutate).mockResolvedValue({
         ...TILE,
@@ -161,7 +179,7 @@ describe("Tile", () => {
 
   describe("setSizing", () => {
     test("sets landscape sizing and computes height from aspect ratio", async () => {
-      const tile = new Tile(editor.page, TILE);
+      const tile = new TestTile(editor.page, TILE);
       const expectedHeight = Math.round(TILE.width! / ASPECT_RATIOS.LANDSCAPE);
 
       await tile.setSizing("LANDSCAPE");
@@ -179,7 +197,7 @@ describe("Tile", () => {
     });
 
     test("sets portrait sizing and computes height from aspect ratio", async () => {
-      const tile = new Tile(editor.page, TILE);
+      const tile = new TestTile(editor.page, TILE);
       const expectedHeight = Math.round(TILE.width! / ASPECT_RATIOS.PORTRAIT);
 
       await tile.setSizing("PORTRAIT");
@@ -197,7 +215,7 @@ describe("Tile", () => {
     });
 
     test("sets square sizing", async () => {
-      const tile = new Tile(editor.page, TILE);
+      const tile = new TestTile(editor.page, TILE);
 
       await tile.setSizing("SQUARE");
 
@@ -207,7 +225,7 @@ describe("Tile", () => {
     });
 
     test("uses page width when tile width is null", async () => {
-      const tile = new Tile(editor.page, { ...TILE, width: null });
+      const tile = new TestTile(editor.page, { ...TILE, width: null });
       const pageWidth = editor.page.width.value;
       const expectedHeight = Math.round(pageWidth / ASPECT_RATIOS.LANDSCAPE);
 
@@ -217,7 +235,7 @@ describe("Tile", () => {
     });
 
     test("sets auto sizing without recomputing height", async () => {
-      const tile = new Tile(editor.page, TILE);
+      const tile = new TestTile(editor.page, TILE);
       const originalHeight = tile.height.value;
 
       await tile.setSizing("AUTO");
@@ -236,7 +254,7 @@ describe("Tile", () => {
 
   describe("setSize", () => {
     test("updates the size and persists it", async () => {
-      const tile = new Tile(editor.page, TILE);
+      const tile = new TestTile(editor.page, TILE);
       const width = 99;
       const height = 101;
 
@@ -253,7 +271,7 @@ describe("Tile", () => {
     });
 
     test("sets width to null for page width", async () => {
-      const tile = new Tile(editor.page, TILE);
+      const tile = new TestTile(editor.page, TILE);
 
       await tile.setSize({ width: null });
 
@@ -269,7 +287,7 @@ describe("Tile", () => {
 
   describe("setHidden", () => {
     test("updates the hidden state and persists it", async () => {
-      const tile = new Tile(editor.page, TILE);
+      const tile = new TestTile(editor.page, TILE);
 
       await tile.setHidden(true);
 

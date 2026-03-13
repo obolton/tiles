@@ -37,6 +37,14 @@ export default class Section extends Tile {
     this.tiles = new TileCollection(this.id);
   }
 
+  serialize(): ClientSectionTile {
+    return {
+      ...super.serialize(),
+      type: "SECTION",
+      layout: this.layout.value,
+    };
+  }
+
   private update(
     properties: Omit<AppRouterInputs["sections"]["update"], "pageId" | "id">,
   ) {
@@ -53,11 +61,11 @@ export default class Section extends Tile {
     this.editor.recordOperation({
       apply: {
         type: "section.setLayout",
-        data: { sectionId: this.id, layout },
+        data: { tileId: this.id, layout },
       },
       reverse: {
         type: "section.setLayout",
-        data: { sectionId: this.id, layout: oldLayout },
+        data: { tileId: this.id, layout: oldLayout },
       },
     });
     return this.update({ layout });

@@ -28,6 +28,16 @@ describe("Page", () => {
     vi.clearAllMocks();
   });
 
+  test("serialize", () => {
+    const page = new Page(PAGE);
+    const { tiles: _, ...expected } = PAGE;
+
+    expect(page.serialize()).toEqual({
+      ...expected,
+      updatedAt: new Date(PAGE.updatedAt).toISOString(),
+    });
+  });
+
   test("maps properties to reactive values", () => {
     const page = new Page(PAGE);
 

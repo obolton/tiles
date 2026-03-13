@@ -5,6 +5,7 @@ import Theme from "@/models/Theme";
 import { ASPECT_RATIOS } from "@/constants/size";
 import type {
   ClientTile,
+  ClientTileBase,
   Sizing,
   Animation,
   FrameStyle,
@@ -20,7 +21,7 @@ import type { TilePropertyChanges } from "@/operations";
 
 export type { Sizing, Animation, FrameStyle, DockEdge };
 
-export default class Tile {
+export default abstract class Tile {
   readonly page: Page;
   readonly id: string;
   readonly type: TileType;
@@ -96,6 +97,28 @@ export default class Tile {
     this.theme = reactive(theme ? new Theme(theme) : null);
     this.textColor = reactive(textColor);
     this.background = reactive(background);
+  }
+
+  serialize(): ClientTileBase {
+    return {
+      id: this.id,
+      type: this.type,
+      sectionId: this.sectionId,
+      theme: this.theme.value?.serialize() ?? null,
+      order: this.order.value,
+      sizing: this.sizing.value,
+      x: this.x.value,
+      y: this.y.value,
+      width: this.width.value,
+      height: this.height.value,
+      rowSpan: this.rowSpan.value,
+      animation: this.animation.value,
+      frame: this.frame.value,
+      hide: this.hide.value,
+      dock: this.dock.value,
+      textColor: this.textColor.value,
+      background: this.background.value,
+    };
   }
 
   get index(): number | null {

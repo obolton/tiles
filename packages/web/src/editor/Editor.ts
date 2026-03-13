@@ -10,6 +10,8 @@ import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import Page, { type PageData } from "@/models/Page";
+import { cachePageProperties, cacheTiles } from "@/utils/cache/pages";
+import { handleError } from "@/utils/errors";
 import Section from "@/models/Section";
 import Image from "@/models/Image";
 import Link from "@/models/Link";
@@ -426,15 +428,39 @@ export default class Editor {
     this.canRedo.value = this.operations?.canRedo ?? false;
   }
 
+  // Cache
+
+  private updateCache(actions: readonly AnyAction[]) {
+    const tileIds = new Set<string>();
+    for (const { data } of actions) {
+      if ("tileId" in data) {
+        tileIds.add(data.tileId);
+      }
+    }
+    const tiles = [];
+    for (const id of tileIds) {
+      const tile = this.page.index.get(id);
+      if (tile) {
+        tiles.push(tile.serialize());
+      }
+    }
+    if (tiles.length > 0) {
+      cacheTiles(this.pageId, tiles).catch(handleError);
+    }
+    cachePageProperties(this.page.serialize()).catch(handleError);
+  }
+
   async recordOperation(operation: OperationInput<AnyAction>): Promise<void> {
     await this.operations?.record(operation);
     this.syncUndoRedoState();
+    this.updateCache([operation.apply].flat());
   }
 
   async undo(): Promise<void> {
     const operation = await this.operations?.undo();
     if (operation) {
       await execute(this, operation, "reverse");
+      this.updateCache(operation.reverse);
     }
     this.syncUndoRedoState();
   }
@@ -443,6 +469,7 @@ export default class Editor {
     const operation = await this.operations?.redo();
     if (operation) {
       await execute(this, operation, "apply");
+      this.updateCache(operation.apply);
     }
     this.syncUndoRedoState();
   }

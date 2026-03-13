@@ -1,9 +1,9 @@
 import type { ClientPlace, MapStyle } from "api/types/tiles";
 import type { Action } from "./base";
+import type { TileActionData } from "./tile";
 
 // Add places to map
-export interface AddPlacesData {
-  tileId: string;
+export interface AddPlacesData extends TileActionData {
   places: ClientPlace[];
 }
 
@@ -13,8 +13,7 @@ export interface AddPlacesAction extends Action<
 > {}
 
 // Remove places by ID
-export interface RemovePlacesData {
-  tileId: string;
+export interface RemovePlacesData extends TileActionData {
   placeIds: string[];
 }
 
@@ -24,8 +23,7 @@ export interface RemovePlacesAction extends Action<
 > {}
 
 // Restore a place from snapshot (reverse of remove)
-export interface RestorePlaceData {
-  tileId: string;
+export interface RestorePlaceData extends TileActionData {
   place: ClientPlace;
 }
 
@@ -35,8 +33,7 @@ export interface RestorePlaceAction extends Action<
 > {}
 
 // Set place properties - symmetric
-export interface SetPlacePropertiesData {
-  tileId: string;
+export interface SetPlacePropertiesData extends TileActionData {
   placeId: string;
   changes: Partial<Omit<ClientPlace, "id">>;
 }
@@ -47,8 +44,7 @@ export interface SetPlacePropertiesAction extends Action<
 > {}
 
 // Set map style
-export interface SetMapStyleData {
-  tileId: string;
+export interface SetMapStyleData extends TileActionData {
   style: MapStyle;
 }
 

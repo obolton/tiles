@@ -65,6 +65,21 @@ export default class Chart extends Tile {
     );
   }
 
+  serialize(): ClientChartTile {
+    return {
+      ...super.serialize(),
+      type: "CHART",
+      tableId: this.tableId,
+      label: this.label.value,
+      series: this.series.value.map((s) => ({
+        id: s.id,
+        type: s.type.value,
+        column: s.column.value,
+        fill: s.fill.value,
+      })),
+    };
+  }
+
   private update(
     properties: Omit<AppRouterInputs["charts"]["update"], "pageId" | "id">,
   ) {
@@ -84,11 +99,11 @@ export default class Chart extends Tile {
     this.editor.recordOperation({
       apply: {
         type: "chart.setProperties",
-        data: { chartId: this.id, changes: { label: property } },
+        data: { tileId: this.id, changes: { label: property } },
       },
       reverse: {
         type: "chart.setProperties",
-        data: { chartId: this.id, changes: { label: previousLabel } },
+        data: { tileId: this.id, changes: { label: previousLabel } },
       },
     });
 
@@ -114,11 +129,11 @@ export default class Chart extends Tile {
     this.editor.recordOperation({
       apply: {
         type: "chart.addSeries",
-        data: { chartId: this.id, series: { id, type, column, fill } },
+        data: { tileId: this.id, series: { id, type, column, fill } },
       },
       reverse: {
         type: "chart.removeSeries",
-        data: { chartId: this.id, seriesId: id },
+        data: { tileId: this.id, seriesId: id },
       },
     });
   }
@@ -148,12 +163,12 @@ export default class Chart extends Tile {
     this.editor.recordOperation({
       apply: {
         type: "chart.setSeriesProperties",
-        data: { chartId: this.id, seriesId: id, changes: { type } },
+        data: { tileId: this.id, seriesId: id, changes: { type } },
       },
       reverse: {
         type: "chart.setSeriesProperties",
         data: {
-          chartId: this.id,
+          tileId: this.id,
           seriesId: id,
           changes: { type: previousType },
         },
@@ -175,12 +190,12 @@ export default class Chart extends Tile {
     this.editor.recordOperation({
       apply: {
         type: "chart.setSeriesProperties",
-        data: { chartId: this.id, seriesId: id, changes: { fill } },
+        data: { tileId: this.id, seriesId: id, changes: { fill } },
       },
       reverse: {
         type: "chart.setSeriesProperties",
         data: {
-          chartId: this.id,
+          tileId: this.id,
           seriesId: id,
           changes: { fill: previousFill },
         },
@@ -199,12 +214,12 @@ export default class Chart extends Tile {
       this.editor.recordOperation({
         apply: {
           type: "chart.removeSeries",
-          data: { chartId: this.id, seriesId },
+          data: { tileId: this.id, seriesId },
         },
         reverse: {
           type: "chart.restoreSeries",
           data: {
-            chartId: this.id,
+            tileId: this.id,
             series: {
               id: series.id,
               type: series.type.value,

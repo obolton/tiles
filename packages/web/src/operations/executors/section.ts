@@ -4,9 +4,9 @@ import type { ActionExecutor } from "./types";
 
 const setLayout: ActionExecutor<SetSectionLayoutAction> = async (
   editor,
-  { sectionId, layout },
+  { tileId, layout },
 ) => {
-  const section = editor.page.getTile(sectionId, Section);
+  const section = editor.page.getTile(tileId, Section);
   section.layout.value = layout;
 };
 

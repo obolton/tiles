@@ -23,6 +23,16 @@ describe("Link", () => {
     updateMock.mockReset();
   });
 
+  test("serialize", () => {
+    const data = { ...LINK_TILE, sectionId: null };
+    const link = new Link(editor.page, data);
+
+    expect(link.serialize()).toEqual({
+      ...data,
+      background: { type: "image", imageUrl: LINK_TILE.imageUrl },
+    });
+  });
+
   test("maps properties to reactive values", () => {
     const link = new Link(editor.page, LINK_TILE);
 
