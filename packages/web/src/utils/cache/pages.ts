@@ -1,9 +1,13 @@
 import type { Database, ObjectStore, SchemaDefinition } from "@/utils/idb";
 import type { PageData } from "@/models/Page";
-import type { ClientTile } from "api/types/tiles";
+import type { ClientTileBase } from "api/types/tiles";
+
+export type CachedPageData = Omit<PageData, "tiles"> & {
+  tiles: ClientTileBase[];
+};
 
 type CachedPage = Omit<PageData, "tiles">;
-type CachedTile = ClientTile & { pageId: string };
+type CachedTile = ClientTileBase & { pageId: string };
 
 export const pageStoresSchema = {
   pages: { keyPath: "id" as const },
@@ -35,7 +39,7 @@ function tilesStore(): ObjectStore<CachedTile> {
   return database.store("tiles");
 }
 
-export async function cachePageData(pageData: PageData): Promise<void> {
+export async function cachePage(pageData: PageData): Promise<void> {
   try {
     const { tiles, ...pageProps } = pageData;
     await pagesStore().put(pageProps);
@@ -50,9 +54,34 @@ export async function cachePageData(pageData: PageData): Promise<void> {
   }
 }
 
+export async function cachePageProperties(
+  props: Omit<PageData, "tiles">,
+): Promise<void> {
+  try {
+    await pagesStore().put(props);
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn("Failed to cache page properties:", error);
+    }
+  }
+}
+
+export async function cacheTiles(
+  pageId: string,
+  tiles: ClientTileBase[],
+): Promise<void> {
+  try {
+    await tilesStore().putMany(tiles.map((tile) => ({ ...tile, pageId })));
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn("Failed to cache tiles:", error);
+    }
+  }
+}
+
 export async function getCachedPageData(
   pageId: string,
-): Promise<PageData | null> {
+): Promise<CachedPageData | null> {
   try {
     const page = await pagesStore().get(pageId);
     if (!page) {
@@ -60,7 +89,9 @@ export async function getCachedPageData(
     }
 
     const cachedTiles = await tilesStore().getAllByIndex("byPageId", pageId);
-    const tiles = cachedTiles.map(({ pageId: _, ...tile }): ClientTile => tile);
+    const tiles = cachedTiles.map(
+      ({ pageId: _, ...tile }): ClientTileBase => tile,
+    );
 
     return { ...page, tiles };
   } catch {

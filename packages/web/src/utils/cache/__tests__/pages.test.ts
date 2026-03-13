@@ -3,7 +3,7 @@ import { PAGE } from "@/test/fixtures/Page";
 import { TEXT_TILE, IMAGE_TILE, SECTION_TILE } from "@/test/fixtures/Tile";
 import { initializeCache, destroyCache } from "../index";
 import {
-  cachePageData,
+  cachePage,
   getCachedPageData,
   invalidateCachedPageData,
   invalidateAllPages,
@@ -24,10 +24,10 @@ describe("page cache", () => {
     await destroyCache();
   });
 
-  describe("cachePageData", () => {
+  describe("cachePage", () => {
     test("stores page data", async () => {
       await initializeCache("user-1", "workspace-1");
-      await cachePageData(page);
+      await cachePage(page);
 
       const cached = await getCachedPageData(page.id);
       expect(cached).not.toBeNull();
@@ -37,7 +37,7 @@ describe("page cache", () => {
 
     test("stores tiles separately from page properties", async () => {
       await initializeCache("user-1", "workspace-1");
-      await cachePageData(page);
+      await cachePage(page);
 
       const cached = await getCachedPageData(page.id);
       expect(cached?.tiles).toHaveLength(3);
@@ -45,10 +45,10 @@ describe("page cache", () => {
 
     test("overwrites previously cached page data", async () => {
       await initializeCache("user-1", "workspace-1");
-      await cachePageData(page);
+      await cachePage(page);
 
       const updated: PageData = { ...page, title: "Updated Title" };
-      await cachePageData(updated);
+      await cachePage(updated);
 
       const cached = await getCachedPageData(page.id);
       expect(cached?.title).toBe("Updated Title");
@@ -56,13 +56,13 @@ describe("page cache", () => {
 
     test("replaces tiles when re-caching", async () => {
       await initializeCache("user-1", "workspace-1");
-      await cachePageData(page);
+      await cachePage(page);
 
       const updated: PageData = {
         ...page,
         tiles: [{ ...TEXT_TILE, id: "tile-new", sectionId: null }],
       };
-      await cachePageData(updated);
+      await cachePage(updated);
 
       const cached = await getCachedPageData(page.id);
       expect(cached?.tiles).toHaveLength(1);
@@ -79,7 +79,7 @@ describe("page cache", () => {
 
     test("reconstructs full PageData with tiles", async () => {
       await initializeCache("user-1", "workspace-1");
-      await cachePageData(page);
+      await cachePage(page);
 
       const cached = await getCachedPageData(page.id);
 
@@ -94,7 +94,7 @@ describe("page cache", () => {
 
     test("preserves tile properties", async () => {
       await initializeCache("user-1", "workspace-1");
-      await cachePageData(page);
+      await cachePage(page);
 
       const cached = await getCachedPageData(page.id);
       const textTile = cached?.tiles.find((t) => t.id === "tile-1");
@@ -106,7 +106,7 @@ describe("page cache", () => {
 
     test("strips pageId from returned tiles", async () => {
       await initializeCache("user-1", "workspace-1");
-      await cachePageData(page);
+      await cachePage(page);
 
       const cached = await getCachedPageData(page.id);
       for (const tile of cached?.tiles ?? []) {
@@ -116,7 +116,7 @@ describe("page cache", () => {
 
     test("returns page with empty tiles array when page has no tiles", async () => {
       await initializeCache("user-1", "workspace-1");
-      await cachePageData({ ...PAGE, tiles: [] });
+      await cachePage({ ...PAGE, tiles: [] });
 
       const cached = await getCachedPageData(PAGE.id);
       expect(cached?.tiles).toEqual([]);
@@ -139,8 +139,8 @@ describe("page cache", () => {
         ],
       };
 
-      await cachePageData(page1);
-      await cachePageData(page2);
+      await cachePage(page1);
+      await cachePage(page2);
 
       const cached1 = await getCachedPageData("page-1");
       const cached2 = await getCachedPageData("page-2");
@@ -154,7 +154,7 @@ describe("page cache", () => {
   describe("invalidateCachedPageData", () => {
     test("removes a cached page", async () => {
       await initializeCache("user-1", "workspace-1");
-      await cachePageData(page);
+      await cachePage(page);
 
       await invalidateCachedPageData(page.id);
 
@@ -176,8 +176,8 @@ describe("page cache", () => {
         tiles: [{ ...TEXT_TILE, id: "tile-b", sectionId: null }],
       };
 
-      await cachePageData(page1);
-      await cachePageData(page2);
+      await cachePage(page1);
+      await cachePage(page2);
 
       await invalidateCachedPageData("page-1");
 
@@ -199,8 +199,8 @@ describe("page cache", () => {
     test("clears all cached pages", async () => {
       await initializeCache("user-1", "workspace-1");
 
-      await cachePageData({ ...page, id: "page-1" });
-      await cachePageData({ ...page, id: "page-2" });
+      await cachePage({ ...page, id: "page-1" });
+      await cachePage({ ...page, id: "page-2" });
 
       await invalidateAllPages();
 
