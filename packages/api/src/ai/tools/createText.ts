@@ -8,7 +8,7 @@ const CreateTextSchema = z.strictObject({
     description: "Section ID to place this content inside a section, or null",
   }),
   align: z
-    .enum(["left", "center", "right"])
+    .enum(["left", "center", "right", "justify"])
     .nullable()
     .meta({ description: "The horizontal alignment of the text." }),
   size: SizeSchema,
@@ -24,6 +24,8 @@ function getTextAlignment(value: CreateTextSchemaType["align"]) {
       return 1;
     case "right":
       return 2;
+    case "justify":
+      return 3;
     default:
       return 0;
   }

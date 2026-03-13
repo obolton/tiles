@@ -5,7 +5,12 @@ const FormatSchema = z.int().gte(0).lte(255);
 
 const SizeSchema = z.number().gte(0.5).lte(2.5);
 
-const AlignSchema = z.union([z.literal(0), z.literal(1), z.literal(2)]);
+const AlignSchema = z.union([
+  z.literal(0),
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+]);
 
 const LineHeightSchema = z.number().gte(1).lte(3);
 
