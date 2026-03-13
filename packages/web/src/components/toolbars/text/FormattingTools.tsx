@@ -28,6 +28,7 @@ import LinkIcon from "@/icons/link.svg?jsx";
 import AlignLeftIcon from "@/icons/align-left.svg?jsx";
 import AlignCenterIcon from "@/icons/align-center.svg?jsx";
 import AlignRightIcon from "@/icons/align-right.svg?jsx";
+import AlignJustifyIcon from "@/icons/align-justify.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
 import EventIcon from "@/icons/event.svg?jsx";
 import DropdownIcon from "@/icons/dropdown.svg?jsx";
@@ -569,6 +570,11 @@ export default function FormattingTools({
               icon={<AlignRightIcon aria-hidden="true" />}
               value="right"
               label="Align right"
+            />
+            <ListOption
+              icon={<AlignJustifyIcon aria-hidden="true" />}
+              value="justify"
+              label="Justify"
             />
           </ListGroup>
         </list-select>
