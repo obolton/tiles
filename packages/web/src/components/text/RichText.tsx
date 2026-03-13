@@ -107,6 +107,8 @@ function getTextAlignment(align?: TextAlignment) {
       return "center";
     case 2:
       return "right";
+    case 3:
+      return "justify";
     default:
       return undefined;
   }

@@ -4,7 +4,7 @@ import type { JSX } from "@/jsx/jsx";
 export interface HeadingTagProps {
   className?: string;
   level: 1 | 2 | 3;
-  align?: "left" | "center" | "right";
+  align?: "left" | "center" | "right" | "justify";
   lineHeight?: number;
   children?: JSX.Node;
 }

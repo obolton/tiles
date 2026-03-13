@@ -36,7 +36,7 @@ const DOMOutput = {
   divider: ["hr"],
 } as const satisfies Record<string, DOMOutputSpec>;
 
-export type TextAlignment = "left" | "center" | "right";
+export type TextAlignment = "left" | "center" | "right" | "justify";
 
 function getLineHeight(style: CSSStyleDeclaration): number | undefined {
   const value = parseFloat(style.lineHeight);
@@ -57,6 +57,7 @@ function getTextAttributes(element: HTMLElement): {
     case "left":
     case "center":
     case "right":
+    case "justify":
       return { align, lineHeight };
     default:
       return { align: "left", lineHeight };
@@ -67,7 +68,14 @@ const attributesSpec = {
   align: {
     default: "left",
     validate(value) {
-      if (!(value === "left" || value === "center" || value === "right")) {
+      if (
+        !(
+          value === "left" ||
+          value === "center" ||
+          value === "right" ||
+          value === "justify"
+        )
+      ) {
         throw new RangeError(`Invalid paragraph alignment: ${value}`);
       }
     },

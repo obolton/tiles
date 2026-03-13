@@ -73,6 +73,8 @@ function getTextAlignment(align?: TextAlignment) {
       return "center";
     case TextAlignment.RIGHT:
       return "right";
+    case TextAlignment.JUSTIFY:
+      return "justify";
     default:
       return undefined;
   }

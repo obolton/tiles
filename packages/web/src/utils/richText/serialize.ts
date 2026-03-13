@@ -57,6 +57,8 @@ function getTextAlignment(node: Node): TextAlignment | undefined {
       return TextAlignment.CENTER;
     case "right":
       return TextAlignment.RIGHT;
+    case "justify":
+      return TextAlignment.JUSTIFY;
     default:
       return undefined;
   }

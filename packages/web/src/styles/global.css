@@ -217,6 +217,10 @@ mark {
   text-align: right;
 }
 
+.justify {
+  text-align: justify;
+}
+
 aside {
   margin: 0;
   padding: 0;
