@@ -37,7 +37,6 @@ export default function StyleTab({ page }: StyleTabProps) {
     if (!value) {
       return;
     }
-    backgroundColor.value = value;
     viewTransition(() => {
       document.body.style.setProperty("--background-color", toCSSColor(value));
     });
