@@ -22,7 +22,7 @@ import type { PageLinkPage } from "@/routes/pageLinks/fields";
 
 type OmitMetadata<T> = Omit<T, "pageId" | "createdAt" | "updatedAt">;
 
-type ClientTileBase = TileBase;
+export type ClientTileBase = TileBase;
 
 // Image
 export type ClientImage = Image;
