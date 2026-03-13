@@ -122,7 +122,7 @@ function Paragraph({ node }: ParagraphProps) {
   return (
     <p
       className={getTextAlignment(node.align)}
-      style={{ lineHeight: node.lineHeight }}
+      style={{ lineHeight: node.lineHeight, "--indent": node.indent }}
     >
       {node.children.length > 0 ? renderNodes(node.children) : <br />}
     </p>
@@ -141,6 +141,7 @@ function Heading({ node }: HeadingProps) {
       level={node.level}
       align={getTextAlignment(node.align)}
       lineHeight={node.lineHeight}
+      indent={node.indent}
     >
       {node.children.length > 0 ? renderNodes(node.children) : <br />}
     </ThemeVariant>
