@@ -68,6 +68,7 @@ function getBlockStyle(node: Node): BlockStyle {
   return {
     align: getTextAlignment(node),
     lineHeight: node.attrs.lineHeight as number | undefined,
+    indent: node.attrs.indent as number | undefined,
   };
 }
 

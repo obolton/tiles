@@ -84,6 +84,7 @@ function getBlockStyle(node: BlockStyle) {
   return {
     align: getTextAlignment(node.align),
     lineHeight: node.lineHeight,
+    indent: node.indent,
   };
 }
 

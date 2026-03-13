@@ -79,6 +79,7 @@ export interface PendingNode extends BaseNode {
 export interface BlockStyle {
   align?: TextAlignment;
   lineHeight?: number;
+  indent?: number;
 }
 
 export interface ParagraphNode extends BaseNode, BlockStyle {
