@@ -6,6 +6,7 @@ import {
   getSelectionHeadingLevel,
   getSelectionBlockNodeTypes,
 } from "./helpers";
+import { MAX_INDENT } from "@/constants/formatting";
 import { PROMPT_PLUGIN_KEY } from "./pluginKeys";
 import { MENTION_PLUGIN_KEY, type MentionMeta } from "./mentions";
 import type { PromptMeta } from "./prompt";
@@ -128,6 +129,7 @@ export function toggleHeading(level: 1 | 2 | 3): Command {
           (oldNode) => ({
             align: oldNode.attrs.align as TextAlignment | undefined,
             lineHeight: oldNode.attrs.lineHeight as number | undefined,
+            indent: oldNode.attrs.indent as number | undefined,
           }),
         );
       }
@@ -307,6 +309,29 @@ export function setLineHeight(lineHeight: number | undefined): Command {
     return true;
   };
 }
+
+export function adjustIndent(delta: number): Command {
+  return function (state, dispatch) {
+    if (dispatch) {
+      const { selection, tr } = state;
+      state.doc.nodesBetween(selection.from, selection.to, (node, pos) => {
+        if (node.isTextblock) {
+          const current = (node.attrs.indent as number | undefined) ?? 0;
+          const next = Math.min(Math.max(current + delta, 0), MAX_INDENT);
+          if (next !== current) {
+            tr.setNodeAttribute(pos, "indent", next || undefined);
+          }
+        }
+      });
+      dispatch(tr);
+    }
+    return true;
+  };
+}
+
+export const indent = adjustIndent(1);
+
+export const outdent = adjustIndent(-1);
 
 export function setAlignment(align: TextAlignment): Command {
   return function (state, dispatch) {
