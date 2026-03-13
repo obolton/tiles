@@ -1,7 +1,7 @@
 import type { Action } from "./base";
+import type { TileActionData } from "./tile";
 
-export interface SetVideoPropertiesData {
-  tileId: string;
+export interface SetVideoPropertiesData extends TileActionData {
   changes: {
     title?: string;
   };

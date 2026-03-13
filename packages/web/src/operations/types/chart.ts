@@ -1,6 +1,7 @@
 import type { ChartType, Property } from "@/models/Chart";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
 import type { Action } from "./base";
+import type { TileActionData } from "./tile";
 
 // Series snapshot for add/restore
 export interface ChartSeriesSnapshot {
@@ -11,8 +12,7 @@ export interface ChartSeriesSnapshot {
 }
 
 // Set chart properties
-export interface SetChartPropertiesData {
-  chartId: string;
+export interface SetChartPropertiesData extends TileActionData {
   changes: {
     label?: Property | null;
   };
@@ -24,8 +24,7 @@ export interface SetChartPropertiesAction extends Action<
 > {}
 
 // Add series
-export interface AddSeriesData {
-  chartId: string;
+export interface AddSeriesData extends TileActionData {
   series: ChartSeriesSnapshot;
 }
 
@@ -35,8 +34,7 @@ export interface AddSeriesAction extends Action<
 > {}
 
 // Remove series by ID
-export interface RemoveSeriesData {
-  chartId: string;
+export interface RemoveSeriesData extends TileActionData {
   seriesId: string;
 }
 
@@ -46,8 +44,7 @@ export interface RemoveSeriesAction extends Action<
 > {}
 
 // Restore series from snapshot (reverse of remove)
-export interface RestoreSeriesData {
-  chartId: string;
+export interface RestoreSeriesData extends TileActionData {
   series: ChartSeriesSnapshot;
 }
 
@@ -57,8 +54,7 @@ export interface RestoreSeriesAction extends Action<
 > {}
 
 // Set series properties
-export interface SetSeriesPropertiesData {
-  chartId: string;
+export interface SetSeriesPropertiesData extends TileActionData {
   seriesId: string;
   changes: Partial<Pick<ChartSeriesSnapshot, "type" | "fill">>;
 }

@@ -1,7 +1,7 @@
 import type { Action } from "./base";
+import type { TileActionData } from "./tile";
 
-export interface SetLinkPropertiesData {
-  tileId: string;
+export interface SetLinkPropertiesData extends TileActionData {
   changes: {
     url?: string;
     title?: string | null;
