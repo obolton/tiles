@@ -4,8 +4,11 @@ import {
   MAX_TEXT_SIZE,
   MIN_LINE_HEIGHT,
   MAX_LINE_HEIGHT,
+  MAX_INDENT,
+  INDENT_SIZE,
 } from "@/constants/formatting";
 import { toCSSColor, COLOR_HEX_REGEX } from "@/utils/color";
+import { serializeStyles } from "@/jsx/attributes";
 import type {
   AttributeSpec,
   NodeSpec,
@@ -46,21 +49,39 @@ function getLineHeight(style: CSSStyleDeclaration): number | undefined {
   return Math.min(Math.max(value, MIN_LINE_HEIGHT), MAX_LINE_HEIGHT);
 }
 
+function getIndent(style: CSSStyleDeclaration): number | undefined {
+  const paddingLeft = style.paddingLeft;
+  if (!paddingLeft) {
+    return undefined;
+  }
+  let value = parseFloat(paddingLeft);
+  if (Number.isNaN(value) || value <= 0) {
+    return undefined;
+  }
+  if (paddingLeft.endsWith("px")) {
+    value /= 16;
+  }
+  const level = Math.round(value / INDENT_SIZE);
+  return level >= 1 ? Math.min(level, MAX_INDENT) : undefined;
+}
+
 function getTextAttributes(element: HTMLElement): {
   align: TextAlignment;
   lineHeight: number | undefined;
+  indent: number | undefined;
 } {
   const align = element.style.textAlign;
   const lineHeight = getLineHeight(element.style);
+  const indent = getIndent(element.style);
 
   switch (align) {
     case "left":
     case "center":
     case "right":
     case "justify":
-      return { align, lineHeight };
+      return { align, lineHeight, indent };
     default:
-      return { align: "left", lineHeight };
+      return { align: "left", lineHeight, indent };
   }
 }
 
@@ -93,6 +114,17 @@ const attributesSpec = {
       }
     },
   },
+  indent: {
+    default: undefined,
+    validate(value) {
+      if (
+        value !== undefined &&
+        (typeof value !== "number" || value < 1 || value > MAX_INDENT)
+      ) {
+        throw new RangeError(`Invalid indent: ${value}`);
+      }
+    },
+  },
 } as const satisfies Record<string, AttributeSpec>;
 
 const nodesSpec = {
@@ -108,6 +140,7 @@ const nodesSpec = {
     attrs: {
       align: attributesSpec.align,
       lineHeight: attributesSpec.lineHeight,
+      indent: attributesSpec.indent,
     },
     content: "inline*",
     group: "block",
@@ -119,11 +152,16 @@ const nodesSpec = {
     ],
     toDOM(node) {
       const lineHeight = node.attrs.lineHeight as number | undefined;
+      const indent = node.attrs.indent as number | undefined;
       return [
         "p",
         {
           class: node.attrs.align as TextAlignment | undefined,
-          style: lineHeight != null ? `line-height: ${lineHeight}` : undefined,
+          style:
+            serializeStyles({
+              lineHeight,
+              "--indent": indent,
+            }) || undefined,
         },
         0,
       ];
@@ -153,6 +191,7 @@ const nodesSpec = {
       },
       align: attributesSpec.align,
       lineHeight: attributesSpec.lineHeight,
+      indent: attributesSpec.indent,
       theme: { default: undefined, validate: "string|undefined" },
     },
     content: "inline*",
@@ -174,11 +213,16 @@ const nodesSpec = {
     ],
     toDOM(node) {
       const lineHeight = node.attrs.lineHeight as number | undefined;
+      const indent = node.attrs.indent as number | undefined;
       return [
         "h" + node.attrs.level,
         {
           class: node.attrs.align as TextAlignment | undefined,
-          style: lineHeight != null ? `line-height: ${lineHeight}` : undefined,
+          style:
+            serializeStyles({
+              lineHeight,
+              "--indent": indent,
+            }) || undefined,
         },
         0,
       ];
