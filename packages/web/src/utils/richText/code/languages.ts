@@ -137,8 +137,7 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     id: "markdown",
     name: "Markdown",
     aliases: ["md", "mdx"],
-    load: () =>
-      import("@codemirror/lang-markdown").then((m) => m.markdown()),
+    load: () => import("@codemirror/lang-markdown").then((m) => m.markdown()),
   },
   {
     id: "perl",

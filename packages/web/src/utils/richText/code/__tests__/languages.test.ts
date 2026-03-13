@@ -7,8 +7,8 @@ import {
 
 describe("SUPPORTED_LANGUAGES", () => {
   test("has Plain Text as the first entry", () => {
-    expect(SUPPORTED_LANGUAGES[0].id).toBe("");
-    expect(SUPPORTED_LANGUAGES[0].name).toBe("Plain Text");
+    expect(SUPPORTED_LANGUAGES[0]?.id).toBe("");
+    expect(SUPPORTED_LANGUAGES[0]?.name).toBe("Plain Text");
   });
 
   test("has unique ids", () => {
@@ -20,7 +20,10 @@ describe("SUPPORTED_LANGUAGES", () => {
     const seen = new Map<string, string>();
     for (const config of SUPPORTED_LANGUAGES) {
       for (const alias of config.aliases) {
-        expect(seen.has(alias), `alias "${alias}" is used by both "${seen.get(alias)}" and "${config.id}"`).toBe(false);
+        expect(
+          seen.has(alias),
+          `alias "${alias}" is used by both "${seen.get(alias)}" and "${config.id}"`,
+        ).toBe(false);
         seen.set(alias, config.id);
       }
     }
@@ -31,7 +34,9 @@ describe("SUPPORTED_LANGUAGES", () => {
     for (const config of SUPPORTED_LANGUAGES) {
       for (const alias of config.aliases) {
         if (ids.has(alias)) {
-          expect.fail(`alias "${alias}" on "${config.id}" collides with another language id`);
+          expect.fail(
+            `alias "${alias}" on "${config.id}" collides with another language id`,
+          );
         }
       }
     }
@@ -40,7 +45,10 @@ describe("SUPPORTED_LANGUAGES", () => {
   test("all non-Plain Text entries have a load function", () => {
     for (const config of SUPPORTED_LANGUAGES) {
       if (config.id !== "") {
-        expect(config.load, `${config.name} is missing a load function`).toBeDefined();
+        expect(
+          config.load,
+          `${config.name} is missing a load function`,
+        ).toBeDefined();
       }
     }
   });
@@ -76,13 +84,14 @@ describe("findLanguageConfig", () => {
     expect(findLanguageConfig("unknown-language")).toBeUndefined();
   });
 
-  test.each(
-    SUPPORTED_LANGUAGES.map((l) => [l.id, l.name] as const),
-  )("finds %s by id", (id, name) => {
-    const config = findLanguageConfig(id);
-    expect(config).toBeDefined();
-    expect(config?.name).toBe(name);
-  });
+  test.each(SUPPORTED_LANGUAGES.map((l) => [l.id, l.name] as const))(
+    "finds %s by id",
+    (id, name) => {
+      const config = findLanguageConfig(id);
+      expect(config).toBeDefined();
+      expect(config?.name).toBe(name);
+    },
+  );
 
   test.each([
     ["js", "JavaScript"],
