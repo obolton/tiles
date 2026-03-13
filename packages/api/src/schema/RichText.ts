@@ -14,6 +14,8 @@ const AlignSchema = z.union([
 
 const LineHeightSchema = z.number().gte(1).lte(3);
 
+const IndentSchema = z.number().int().gte(1).lte(6);
+
 const TextNodeSchema = z.object({
   type: z.literal("text"),
   text: z.string(),
@@ -69,6 +71,7 @@ const ParagraphNodeSchema = z.object({
   type: z.literal("paragraph"),
   align: AlignSchema.optional(),
   lineHeight: LineHeightSchema.optional(),
+  indent: IndentSchema.optional(),
   children: z.array(InlineNodeSchema),
 });
 
@@ -77,6 +80,7 @@ const HeadingNodeSchema = z.object({
   level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
   align: AlignSchema.optional(),
   lineHeight: LineHeightSchema.optional(),
+  indent: IndentSchema.optional(),
   theme: z.string().optional(),
   children: z.array(InlineNodeSchema),
 });
