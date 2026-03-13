@@ -11,9 +11,9 @@ import type { ActionExecutor } from "./types";
 
 const setProperties: ActionExecutor<SetChartPropertiesAction> = async (
   editor,
-  { chartId, changes },
+  { tileId, changes },
 ) => {
-  const chart = editor.page.getTile(chartId, Chart);
+  const chart = editor.page.getTile(tileId, Chart);
   if (changes.label !== undefined) {
     chart.label.value = changes.label;
   }
@@ -21,9 +21,9 @@ const setProperties: ActionExecutor<SetChartPropertiesAction> = async (
 
 const addSeries: ActionExecutor<AddSeriesAction> = async (
   editor,
-  { chartId, series },
+  { tileId, series },
 ) => {
-  const chart = editor.page.getTile(chartId, Chart);
+  const chart = editor.page.getTile(tileId, Chart);
   const { id, type, column, fill } = series;
 
   chart.series.push({
@@ -36,17 +36,17 @@ const addSeries: ActionExecutor<AddSeriesAction> = async (
 
 const removeSeries: ActionExecutor<RemoveSeriesAction> = async (
   editor,
-  { chartId, seriesId },
+  { tileId, seriesId },
 ) => {
-  const chart = editor.page.getTile(chartId, Chart);
+  const chart = editor.page.getTile(tileId, Chart);
   chart.series.value = chart.series.value.filter((s) => s.id !== seriesId);
 };
 
 const restoreSeries: ActionExecutor<RestoreSeriesAction> = async (
   editor,
-  { chartId, series },
+  { tileId, series },
 ) => {
-  const chart = editor.page.getTile(chartId, Chart);
+  const chart = editor.page.getTile(tileId, Chart);
   const { id, type, column, fill } = series;
 
   chart.series.push({
@@ -59,9 +59,9 @@ const restoreSeries: ActionExecutor<RestoreSeriesAction> = async (
 
 const setSeriesProperties: ActionExecutor<SetSeriesPropertiesAction> = async (
   editor,
-  { chartId, seriesId, changes },
+  { tileId, seriesId, changes },
 ) => {
-  const chart = editor.page.getTile(chartId, Chart);
+  const chart = editor.page.getTile(tileId, Chart);
   const series = chart.series.find((s) => s.id === seriesId);
   if (!series) {
     return;

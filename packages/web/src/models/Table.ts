@@ -91,11 +91,11 @@ export default class Table extends Tile {
     this.editor.recordOperation({
       apply: {
         type: "table.insertColumn",
-        data: { tableId: this.id, afterColumnId, column },
+        data: { tileId: this.id, afterColumnId, column },
       },
       reverse: {
         type: "table.deleteColumn",
-        data: { tableId: this.id, columnId: column.id },
+        data: { tileId: this.id, columnId: column.id },
       },
     });
 
@@ -109,12 +109,12 @@ export default class Table extends Tile {
     this.editor.recordOperation({
       apply: {
         type: "table.moveColumn",
-        data: { tableId: this.id, columnId: id, afterColumnId: afterId },
+        data: { tileId: this.id, columnId: id, afterColumnId: afterId },
       },
       reverse: {
         type: "table.moveColumn",
         data: {
-          tableId: this.id,
+          tileId: this.id,
           columnId: id,
           afterColumnId: previousAfterId,
         },
@@ -175,11 +175,11 @@ export default class Table extends Tile {
       this.editor.recordOperation({
         apply: {
           type: "table.setColumnProperties",
-          data: { tableId: this.id, columnId: id, changes },
+          data: { tileId: this.id, columnId: id, changes },
         },
         reverse: {
           type: "table.setColumnProperties",
-          data: { tableId: this.id, columnId: id, changes: previousChanges },
+          data: { tileId: this.id, columnId: id, changes: previousChanges },
         },
       });
     }
@@ -211,11 +211,11 @@ export default class Table extends Tile {
     this.editor.recordOperation({
       apply: ids.map((columnId) => ({
         type: "table.deleteColumn" as const,
-        data: { tableId: this.id, columnId },
+        data: { tileId: this.id, columnId },
       })),
       reverse: columnsWithPositions.map(({ column, afterColumnId }) => ({
         type: "table.restoreColumn" as const,
-        data: { tableId: this.id, afterColumnId, column },
+        data: { tileId: this.id, afterColumnId, column },
       })),
     });
 
@@ -241,11 +241,11 @@ export default class Table extends Tile {
     this.editor.recordOperation({
       apply: {
         type: "table.insertRow",
-        data: { tableId: this.id, afterRowId, row },
+        data: { tileId: this.id, afterRowId, row },
       },
       reverse: {
         type: "table.deleteRow",
-        data: { tableId: this.id, rowId: row.id },
+        data: { tileId: this.id, rowId: row.id },
       },
     });
 
@@ -264,11 +264,11 @@ export default class Table extends Tile {
     this.editor.recordOperation({
       apply: {
         type: "table.moveRow",
-        data: { tableId: this.id, rowId: id, afterRowId: afterId },
+        data: { tileId: this.id, rowId: id, afterRowId: afterId },
       },
       reverse: {
         type: "table.moveRow",
-        data: { tableId: this.id, rowId: id, afterRowId: previousAfterId },
+        data: { tileId: this.id, rowId: id, afterRowId: previousAfterId },
       },
     });
 
@@ -292,12 +292,12 @@ export default class Table extends Tile {
     this.editor.recordOperation({
       apply: {
         type: "table.setRowProperties",
-        data: { tableId: this.id, rowId: id, changes: { height } },
+        data: { tileId: this.id, rowId: id, changes: { height } },
       },
       reverse: {
         type: "table.setRowProperties",
         data: {
-          tableId: this.id,
+          tileId: this.id,
           rowId: id,
           changes: { height: previousHeight },
         },
@@ -350,11 +350,11 @@ export default class Table extends Tile {
     this.editor.recordOperation({
       apply: ids.map((rowId) => ({
         type: "table.deleteRow" as const,
-        data: { tableId: this.id, rowId },
+        data: { tileId: this.id, rowId },
       })),
       reverse: rowsWithPositions.map(({ row, afterRowId }) => ({
         type: "table.restoreRow" as const,
-        data: { tableId: this.id, afterRowId, row },
+        data: { tileId: this.id, afterRowId, row },
       })),
     });
 

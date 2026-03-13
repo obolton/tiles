@@ -18,9 +18,9 @@ import type { ActionExecutor } from "./types";
 
 const insertRow: ActionExecutor<InsertRowAction> = async (
   editor,
-  { tableId, afterRowId, row },
+  { tileId, afterRowId, row },
 ) => {
-  const table = editor.page.getTile(tableId, Table);
+  const table = editor.page.getTile(tileId, Table);
   const afterIndex = table.rows.findIndex((r) => r.id === afterRowId);
   table.rows.splice(afterIndex + 1, 0, row);
   table.numRows.value++;
@@ -28,18 +28,18 @@ const insertRow: ActionExecutor<InsertRowAction> = async (
 
 const deleteRow: ActionExecutor<DeleteRowAction> = async (
   editor,
-  { tableId, rowId },
+  { tileId, rowId },
 ) => {
-  const table = editor.page.getTile(tableId, Table);
+  const table = editor.page.getTile(tileId, Table);
   table.rows.value = table.rows.value.filter((r) => r.id !== rowId);
   table.numRows.value--;
 };
 
 const restoreRow: ActionExecutor<RestoreRowAction> = async (
   editor,
-  { tableId, afterRowId, row },
+  { tileId, afterRowId, row },
 ) => {
-  const table = editor.page.getTile(tableId, Table);
+  const table = editor.page.getTile(tileId, Table);
   const afterIndex = afterRowId
     ? table.rows.findIndex((r) => r.id === afterRowId)
     : -1;
@@ -49,9 +49,9 @@ const restoreRow: ActionExecutor<RestoreRowAction> = async (
 
 const moveRow: ActionExecutor<MoveRowAction> = async (
   editor,
-  { tableId, rowId, afterRowId },
+  { tileId, rowId, afterRowId },
 ) => {
-  const table = editor.page.getTile(tableId, Table);
+  const table = editor.page.getTile(tileId, Table);
   const row = table.rows.find((r) => r.id === rowId);
   if (!row) {
     return;
@@ -66,9 +66,9 @@ const moveRow: ActionExecutor<MoveRowAction> = async (
 
 const setRowProperties: ActionExecutor<SetRowPropertiesAction> = async (
   editor,
-  { tableId, rowId, changes },
+  { tileId, rowId, changes },
 ) => {
-  const table = editor.page.getTile(tableId, Table);
+  const table = editor.page.getTile(tileId, Table);
   const row = table.rows.find((r) => r.id === rowId);
   if (row && changes.height !== undefined) {
     row.height = changes.height;
@@ -79,26 +79,26 @@ const setRowProperties: ActionExecutor<SetRowPropertiesAction> = async (
 
 const insertColumn: ActionExecutor<InsertColumnAction> = async (
   editor,
-  { tableId, afterColumnId, column },
+  { tileId, afterColumnId, column },
 ) => {
-  const table = editor.page.getTile(tableId, Table);
+  const table = editor.page.getTile(tileId, Table);
   const afterIndex = table.columns.findIndex((c) => c.id === afterColumnId);
   table.columns.splice(afterIndex + 1, 0, column);
 };
 
 const deleteColumn: ActionExecutor<DeleteColumnAction> = async (
   editor,
-  { tableId, columnId },
+  { tileId, columnId },
 ) => {
-  const table = editor.page.getTile(tableId, Table);
+  const table = editor.page.getTile(tileId, Table);
   table.columns.value = table.columns.value.filter((c) => c.id !== columnId);
 };
 
 const restoreColumn: ActionExecutor<RestoreColumnAction> = async (
   editor,
-  { tableId, afterColumnId, column },
+  { tileId, afterColumnId, column },
 ) => {
-  const table = editor.page.getTile(tableId, Table);
+  const table = editor.page.getTile(tileId, Table);
   const afterIndex = afterColumnId
     ? table.columns.findIndex((c) => c.id === afterColumnId)
     : -1;
@@ -107,9 +107,9 @@ const restoreColumn: ActionExecutor<RestoreColumnAction> = async (
 
 const moveColumn: ActionExecutor<MoveColumnAction> = async (
   editor,
-  { tableId, columnId, afterColumnId },
+  { tileId, columnId, afterColumnId },
 ) => {
-  const table = editor.page.getTile(tableId, Table);
+  const table = editor.page.getTile(tileId, Table);
   const column = table.columns.find((c) => c.id === columnId);
   if (!column) {
     return;
@@ -124,9 +124,9 @@ const moveColumn: ActionExecutor<MoveColumnAction> = async (
 
 const setColumnProperties: ActionExecutor<SetColumnPropertiesAction> = async (
   editor,
-  { tableId, columnId, changes },
+  { tileId, columnId, changes },
 ) => {
-  const table = editor.page.getTile(tableId, Table);
+  const table = editor.page.getTile(tileId, Table);
   const column = table.columns.find((c) => c.id === columnId);
   if (column) {
     if (changes.title !== undefined) {
@@ -142,9 +142,9 @@ const setColumnProperties: ActionExecutor<SetColumnPropertiesAction> = async (
 
 const setCell: ActionExecutor<SetCellAction> = async (
   editor,
-  { tableId, rowId, columnId, content },
+  { tileId, rowId, columnId, content },
 ) => {
-  const table = editor.page.getTile(tableId, Table);
+  const table = editor.page.getTile(tileId, Table);
   const row = table.rows.find((r) => r.id === rowId);
   if (row) {
     row.data[columnId] = content;
