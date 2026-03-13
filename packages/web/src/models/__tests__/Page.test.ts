@@ -30,7 +30,7 @@ describe("Page", () => {
 
   test("serialize", () => {
     const page = new Page(PAGE);
-    const { tiles, ...expected } = PAGE;
+    const { tiles: _, ...expected } = PAGE;
 
     expect(page.serialize()).toEqual({
       ...expected,
