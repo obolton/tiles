@@ -6,6 +6,7 @@ import {
   getSelectionHeadingLevel,
   getSelectionBlockNodeTypes,
 } from "./helpers";
+import { MAX_INDENT } from "@/constants/formatting";
 import { PROMPT_PLUGIN_KEY } from "./pluginKeys";
 import { MENTION_PLUGIN_KEY, type MentionMeta } from "./mentions";
 import type { PromptMeta } from "./prompt";
@@ -68,6 +69,8 @@ export const toggleSubscript = toggleMark(schema.marks.subscript);
 
 export const toggleSmallCaps = toggleMark(schema.marks.smallCaps);
 
+export const toggleInlineCode = toggleMark(schema.marks.code);
+
 export function addLink(href: string): Command {
   return function (state, dispatch) {
     if (!href) {
@@ -105,7 +108,7 @@ export const toggleCode: Command = (state, dispatch) => {
   if (dispatch) {
     const tr = state.tr;
     for (const range of tr.selection.ranges) {
-      tr.setBlockType(range.$from.pos, range.$to.pos, schema.nodes.code);
+      tr.setBlockType(range.$from.pos, range.$to.pos, schema.nodes.codeBlock);
     }
     dispatch(tr);
   }
@@ -125,6 +128,8 @@ export function toggleHeading(level: 1 | 2 | 3): Command {
           schema.nodes.paragraph,
           (oldNode) => ({
             align: oldNode.attrs.align as TextAlignment | undefined,
+            lineHeight: oldNode.attrs.lineHeight as number | undefined,
+            indent: oldNode.attrs.indent as number | undefined,
           }),
         );
       }
@@ -168,6 +173,7 @@ export const resetBlockFormat: Command = (state, dispatch) => {
       schema.nodes.paragraph,
       (oldNode) => ({
         align: oldNode.attrs.align as TextAlignment | undefined,
+        lineHeight: oldNode.attrs.lineHeight as number | undefined,
       }),
     );
   }
@@ -272,6 +278,60 @@ export function deleteNode(nodeType: NodeType): Command {
 }
 
 export const removeLink = unwrap(schema.nodes.link);
+
+export function setLineHeight(lineHeight: number | undefined): Command {
+  return function (state, dispatch) {
+    const { selection, tr } = state;
+
+    if (selection.empty) {
+      const node = closest(selection.$from, (node) => node.isTextblock);
+      if (!node) {
+        return false;
+      }
+
+      if (dispatch) {
+        dispatch(tr.setNodeAttribute(node.pos, "lineHeight", lineHeight));
+      }
+
+      return true;
+    }
+
+    if (dispatch) {
+      state.doc.nodesBetween(selection.from, selection.to, (node, pos) => {
+        if (node.isTextblock) {
+          tr.setNodeAttribute(pos, "lineHeight", lineHeight);
+        }
+      });
+
+      dispatch(tr);
+    }
+
+    return true;
+  };
+}
+
+export function adjustIndent(delta: number): Command {
+  return function (state, dispatch) {
+    if (dispatch) {
+      const { selection, tr } = state;
+      state.doc.nodesBetween(selection.from, selection.to, (node, pos) => {
+        if (node.isTextblock) {
+          const current = (node.attrs.indent as number | undefined) ?? 0;
+          const next = Math.min(Math.max(current + delta, 0), MAX_INDENT);
+          if (next !== current) {
+            tr.setNodeAttribute(pos, "indent", next || undefined);
+          }
+        }
+      });
+      dispatch(tr);
+    }
+    return true;
+  };
+}
+
+export const indent = adjustIndent(1);
+
+export const outdent = adjustIndent(-1);
 
 export function setAlignment(align: TextAlignment): Command {
   return function (state, dispatch) {

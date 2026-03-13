@@ -1,4 +1,4 @@
 .popover {
   padding: 8px;
-  border-radius: 32px;
+  border-radius: calc(var(--border-radius) + 8px);
 }

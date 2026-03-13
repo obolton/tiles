@@ -18,6 +18,7 @@ import {
   insertParagraphAfter,
   deleteCodeBlockIfEmpty,
 } from "./navigation";
+import { handleError } from "@/utils/errors";
 import styles from "./code.module.css";
 import "./highlight.css";
 import type { NodeView, EditorView } from "prosemirror-view";
@@ -30,6 +31,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
   private readonly getPos: () => number | undefined;
   private readonly cm: CMEditorView;
   private readonly languageCompartment = new Compartment();
+  private readonly editableCompartment = new Compartment();
   private readonly selector: HTMLElement;
 
   private updating = false;
@@ -69,7 +71,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
               forwardToProseMirror(update, this.view, this.getPos);
             }
           }),
-          CMEditorView.editable.of(view.editable),
+          this.editableCompartment.of(CMEditorView.editable.of(view.editable)),
         ],
       }),
       parent: container,
@@ -142,10 +144,14 @@ export class CodeNodeView implements NodeView, EventListenerObject {
   }
 
   private async loadLanguageExtension(language: string) {
-    const support = await loadLanguage(language);
-    this.cm.dispatch({
-      effects: this.languageCompartment.reconfigure(support ?? []),
-    });
+    try {
+      const support = await loadLanguage(language);
+      this.cm.dispatch({
+        effects: this.languageCompartment.reconfigure(support ?? []),
+      });
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   handleEvent(event: Event) {
@@ -166,7 +172,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
   }
 
   update(node: Node): boolean {
-    if (node.type.name !== "code") {
+    if (node.type.name !== "codeBlock") {
       return false;
     }
 
@@ -177,6 +183,13 @@ export class CodeNodeView implements NodeView, EventListenerObject {
       (this.selector as ListSelect).value =
         findLanguageConfig(newLanguage)?.id ?? "";
     }
+
+    // Sync editable state
+    this.cm.dispatch({
+      effects: this.editableCompartment.reconfigure(
+        CMEditorView.editable.of(this.view.editable),
+      ),
+    });
 
     // Sync content from ProseMirror (e.g., undo/redo)
     this.updating = true;
@@ -204,6 +217,7 @@ export class CodeNodeView implements NodeView, EventListenerObject {
   }
 
   destroy() {
+    this.selector.removeEventListener("change", this);
     this.cm.destroy();
   }
 }

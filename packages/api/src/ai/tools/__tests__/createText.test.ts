@@ -103,6 +103,19 @@ describe("CREATE_TEXT_TOOL", () => {
     );
   });
 
+  test("maps alignment justify to 3", async () => {
+    await CREATE_TEXT_TOOL.function(
+      { ...BASE_ARGS, align: "justify" },
+      MOCK_TOOL_CONTEXT,
+    );
+
+    expect(createText).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: [{ type: "paragraph", align: 3, children: [] }],
+      }),
+    );
+  });
+
   test("returns artifact from createText", async () => {
     const result = await CREATE_TEXT_TOOL.function(
       BASE_ARGS,

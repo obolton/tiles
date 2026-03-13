@@ -8,6 +8,7 @@ export enum TextFormat {
   SUPERSCRIPT = 1 << 5,
   SUBSCRIPT = 1 << 6,
   SMALL_CAPS = 1 << 7,
+  CODE = 1 << 8,
 }
 
 export enum ListType {
@@ -20,6 +21,7 @@ export enum TextAlignment {
   LEFT = 0,
   CENTER = 1,
   RIGHT = 2,
+  JUSTIFY = 3,
 }
 
 export interface BaseNode {
@@ -74,16 +76,20 @@ export interface PendingNode extends BaseNode {
   children: Exclude<BlockNode, { type: "pending" }>[];
 }
 
-export interface ParagraphNode extends BaseNode {
-  type: "paragraph";
+export interface BlockStyle {
   align?: TextAlignment;
+  lineHeight?: number;
+  indent?: number;
+}
+
+export interface ParagraphNode extends BaseNode, BlockStyle {
+  type: "paragraph";
   children: InlineNode[];
 }
 
-export interface HeadingNode extends BaseNode {
+export interface HeadingNode extends BaseNode, BlockStyle {
   type: "heading";
   level: 1 | 2 | 3;
-  align?: TextAlignment;
   theme?: string;
   children: InlineNode[];
 }

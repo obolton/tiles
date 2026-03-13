@@ -97,6 +97,22 @@ export function getSelectionAlignment(
     : undefined;
 }
 
+export function getSelectionLineHeight(state: EditorState): number | undefined {
+  const textBlock = closest(state.selection.$from, (node) => node.isTextblock);
+  return textBlock
+    ? (textBlock.node.attrs.lineHeight as number | undefined)
+    : undefined;
+}
+
+export function getSelectionIndent(state: EditorState): number | undefined {
+  return closest(state.selection.$from, (node) => node.isTextblock)?.node.attrs
+    .indent as number | undefined;
+}
+
+export function isInList(state: EditorState): boolean {
+  return !!closest(state.selection.$from, (node) => LIST_NODES.has(node.type));
+}
+
 export function getSelectionList(state: EditorState): ListType | null {
   const blockNodeTypes = getSelectionBlockNodeTypes(state);
   if (blockNodeTypes.has(schema.nodes.unordered_list)) {

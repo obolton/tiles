@@ -1,5 +1,64 @@
 import { describe, test, expect } from "vitest";
-import { findLanguageConfig, loadLanguage } from "../languages";
+import {
+  findLanguageConfig,
+  loadLanguage,
+  SUPPORTED_LANGUAGES,
+} from "../languages";
+
+describe("SUPPORTED_LANGUAGES", () => {
+  test("has Plain Text as the first entry", () => {
+    expect(SUPPORTED_LANGUAGES[0]?.id).toBe("");
+    expect(SUPPORTED_LANGUAGES[0]?.name).toBe("Plain Text");
+  });
+
+  test("has unique ids", () => {
+    const ids = SUPPORTED_LANGUAGES.map((l) => l.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  test("has no duplicate aliases", () => {
+    const seen = new Map<string, string>();
+    for (const config of SUPPORTED_LANGUAGES) {
+      for (const alias of config.aliases) {
+        expect(
+          seen.has(alias),
+          `alias "${alias}" is used by both "${seen.get(alias)}" and "${config.id}"`,
+        ).toBe(false);
+        seen.set(alias, config.id);
+      }
+    }
+  });
+
+  test("has no aliases that collide with another language id", () => {
+    const ids = new Set(SUPPORTED_LANGUAGES.map((l) => l.id));
+    for (const config of SUPPORTED_LANGUAGES) {
+      for (const alias of config.aliases) {
+        if (ids.has(alias)) {
+          expect.fail(
+            `alias "${alias}" on "${config.id}" collides with another language id`,
+          );
+        }
+      }
+    }
+  });
+
+  test("all non-Plain Text entries have a load function", () => {
+    for (const config of SUPPORTED_LANGUAGES) {
+      if (config.id !== "") {
+        expect(
+          config.load,
+          `${config.name} is missing a load function`,
+        ).toBeDefined();
+      }
+    }
+  });
+
+  test("is sorted alphabetically by id after Plain Text", () => {
+    const ids = SUPPORTED_LANGUAGES.slice(1).map((l) => l.id);
+    const sorted = [...ids].sort((a, b) => a.localeCompare(b));
+    expect(ids).toEqual(sorted);
+  });
+});
 
 describe("findLanguageConfig", () => {
   test("returns Plain Text config for empty string", () => {
@@ -15,56 +74,59 @@ describe("findLanguageConfig", () => {
     expect(config?.name).toBe("JavaScript");
   });
 
-  test("returns config by alias", () => {
-    const config = findLanguageConfig("js");
-    expect(config).toBeDefined();
-    expect(config?.name).toBe("JavaScript");
-  });
-
-  test("returns config by alias case-insensitively", () => {
-    const config = findLanguageConfig("JS");
-    expect(config).toBeDefined();
-    expect(config?.name).toBe("JavaScript");
-  });
-
-  test("returns config for TypeScript alias", () => {
-    const config = findLanguageConfig("typescript");
-    expect(config).toBeDefined();
-    expect(config?.name).toBe("JavaScript");
-  });
-
-  test("returns config for tsx alias", () => {
-    const config = findLanguageConfig("tsx");
+  test("returns config case-insensitively", () => {
+    const config = findLanguageConfig("JavaScript");
     expect(config).toBeDefined();
     expect(config?.name).toBe("JavaScript");
   });
 
   test("returns undefined for unknown language", () => {
-    const config = findLanguageConfig("unknown-language");
-    expect(config).toBeUndefined();
+    expect(findLanguageConfig("unknown-language")).toBeUndefined();
   });
 
-  test("returns config for html", () => {
-    const config = findLanguageConfig("html");
-    expect(config).toBeDefined();
-    expect(config?.name).toBe("HTML");
-  });
+  test.each(SUPPORTED_LANGUAGES.map((l) => [l.id, l.name] as const))(
+    "finds %s by id",
+    (id, name) => {
+      const config = findLanguageConfig(id);
+      expect(config).toBeDefined();
+      expect(config?.name).toBe(name);
+    },
+  );
 
-  test("returns config for css", () => {
-    const config = findLanguageConfig("css");
+  test.each([
+    ["js", "JavaScript"],
+    ["jsx", "JavaScript"],
+    ["ts", "TypeScript"],
+    ["tsx", "TypeScript"],
+    ["py", "Python"],
+    ["rb", "Ruby"],
+    ["rs", "Rust"],
+    ["go", "Go"],
+    ["golang", "Go"],
+    ["bash", "Shell"],
+    ["sh", "Shell"],
+    ["yml", "YAML"],
+    ["md", "Markdown"],
+    ["cs", "C#"],
+    ["kt", "Kotlin"],
+    ["h", "C"],
+    ["hpp", "C++"],
+    ["htm", "HTML"],
+    ["sass", "SCSS"],
+    ["patch", "Diff"],
+    ["docker", "Dockerfile"],
+    ["svg", "XML"],
+    ["ps1", "PowerShell"],
+    ["pl", "Perl"],
+  ] as const)("resolves alias %s to %s", (alias, name) => {
+    const config = findLanguageConfig(alias);
     expect(config).toBeDefined();
-    expect(config?.name).toBe("CSS");
-  });
-
-  test("returns config for json", () => {
-    const config = findLanguageConfig("json");
-    expect(config).toBeDefined();
-    expect(config?.name).toBe("JSON");
+    expect(config?.name).toBe(name);
   });
 });
 
 describe("loadLanguage", () => {
-  test("returns null for empty string (Plain Text)", async () => {
+  test("returns null for Plain Text", async () => {
     const support = await loadLanguage("");
     expect(support).toBeNull();
   });
@@ -74,35 +136,65 @@ describe("loadLanguage", () => {
     expect(support).toBeNull();
   });
 
-  test("loads JavaScript language support", async () => {
-    const support = await loadLanguage("javascript");
-    expect(support).not.toBeNull();
-    expect(support?.language).toBeDefined();
-  });
-
-  test("loads language support by alias", async () => {
-    const support = await loadLanguage("js");
-    expect(support).not.toBeNull();
-  });
-
   test("caches loaded language support", async () => {
     const support1 = await loadLanguage("javascript");
     const support2 = await loadLanguage("javascript");
     expect(support1).toBe(support2);
   });
 
-  test("loads HTML language support", async () => {
-    const support = await loadLanguage("html");
-    expect(support).not.toBeNull();
+  test("resolves aliases to the same cached instance", async () => {
+    const byId = await loadLanguage("javascript");
+    const byAlias = await loadLanguage("js");
+    expect(byId).toBe(byAlias);
   });
 
-  test("loads CSS language support", async () => {
-    const support = await loadLanguage("css");
-    expect(support).not.toBeNull();
+  describe("official packages", () => {
+    test.each([
+      "javascript",
+      "typescript",
+      "html",
+      "css",
+      "json",
+      "python",
+      "java",
+      "c",
+      "cpp",
+      "rust",
+      "go",
+      "xml",
+      "sql",
+      "markdown",
+      "php",
+      "yaml",
+      "scss",
+      "less",
+    ])("loads %s", async (id) => {
+      const support = await loadLanguage(id);
+      expect(support).not.toBeNull();
+      expect(support?.language).toBeDefined();
+    });
   });
 
-  test("loads JSON language support", async () => {
-    const support = await loadLanguage("json");
-    expect(support).not.toBeNull();
+  describe("legacy modes", () => {
+    test.each([
+      "csharp",
+      "dart",
+      "diff",
+      "dockerfile",
+      "kotlin",
+      "lua",
+      "perl",
+      "powershell",
+      "r",
+      "ruby",
+      "scala",
+      "shell",
+      "swift",
+      "toml",
+    ])("loads %s", async (id) => {
+      const support = await loadLanguage(id);
+      expect(support).not.toBeNull();
+      expect(support?.language).toBeDefined();
+    });
   });
 });

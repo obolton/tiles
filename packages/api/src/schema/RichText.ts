@@ -5,7 +5,16 @@ const FormatSchema = z.int().gte(0).lte(255);
 
 const SizeSchema = z.number().gte(0.5).lte(2.5);
 
-const AlignSchema = z.union([z.literal(0), z.literal(1), z.literal(2)]);
+const AlignSchema = z.union([
+  z.literal(0),
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+]);
+
+const LineHeightSchema = z.number().gte(1).lte(3);
+
+const IndentSchema = z.number().int().gte(1).lte(6);
 
 const TextNodeSchema = z.object({
   type: z.literal("text"),
@@ -61,6 +70,8 @@ const InlineNodeSchema = z.discriminatedUnion("type", [
 const ParagraphNodeSchema = z.object({
   type: z.literal("paragraph"),
   align: AlignSchema.optional(),
+  lineHeight: LineHeightSchema.optional(),
+  indent: IndentSchema.optional(),
   children: z.array(InlineNodeSchema),
 });
 
@@ -68,6 +79,8 @@ const HeadingNodeSchema = z.object({
   type: z.literal("heading"),
   level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
   align: AlignSchema.optional(),
+  lineHeight: LineHeightSchema.optional(),
+  indent: IndentSchema.optional(),
   theme: z.string().optional(),
   children: z.array(InlineNodeSchema),
 });

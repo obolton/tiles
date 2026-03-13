@@ -16,7 +16,7 @@ import type {
   MentionNode,
   Node as SerializedNode,
 } from "./types";
-import { TextFormat, ListType, TextAlignment } from "./types";
+import { TextFormat, ListType, TextAlignment, type BlockStyle } from "./types";
 import { schema } from "./schema";
 
 function getMarks(node: TextNode | DateNode | DropdownNode | MentionNode) {
@@ -47,6 +47,9 @@ function getMarks(node: TextNode | DateNode | DropdownNode | MentionNode) {
   if (format & TextFormat.SMALL_CAPS) {
     marks.push(schema.marks.smallCaps.create());
   }
+  if (format & TextFormat.CODE) {
+    marks.push(schema.marks.code.create());
+  }
   if (typeof size === "number") {
     marks.push(schema.marks.size.create({ size }));
   }
@@ -70,14 +73,24 @@ function getTextAlignment(align?: TextAlignment) {
       return "center";
     case TextAlignment.RIGHT:
       return "right";
+    case TextAlignment.JUSTIFY:
+      return "justify";
     default:
       return undefined;
   }
 }
 
+function getBlockStyle(node: BlockStyle) {
+  return {
+    align: getTextAlignment(node.align),
+    lineHeight: node.lineHeight,
+    indent: node.indent,
+  };
+}
+
 function createParagraphNode(paragraph: ParagraphNode): Node {
   return schema.nodes.paragraph.create(
-    { align: getTextAlignment(paragraph.align) },
+    getBlockStyle(paragraph),
     paragraph.children.map(createNode),
   );
 }
@@ -86,7 +99,7 @@ function createHeadingNode(heading: HeadingNode): Node {
   return schema.nodes.heading.create(
     {
       level: heading.level,
-      align: getTextAlignment(heading.align),
+      ...getBlockStyle(heading),
       theme: heading.theme,
     },
     heading.children.map(createNode),
@@ -98,7 +111,7 @@ function createQuoteNode(quote: QuoteNode): Node {
 }
 
 function createCodeNode(code: CodeNode): Node {
-  return schema.nodes.code.create(
+  return schema.nodes.codeBlock.create(
     { language: code.language },
     code.children.map(createNode),
   );

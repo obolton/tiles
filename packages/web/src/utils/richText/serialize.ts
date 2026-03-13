@@ -5,6 +5,7 @@ import type {
   TextNode,
   QuoteNode,
   BlockNode,
+  BlockStyle,
   InlineNode,
   Node as SerializedNode,
 } from "./types";
@@ -32,6 +33,8 @@ function getTextFormat(node: Node): number {
         return format | TextFormat.SUBSCRIPT;
       case marks.smallCaps:
         return format | TextFormat.SMALL_CAPS;
+      case marks.code:
+        return format | TextFormat.CODE;
       default:
         return format;
     }
@@ -54,9 +57,19 @@ function getTextAlignment(node: Node): TextAlignment | undefined {
       return TextAlignment.CENTER;
     case "right":
       return TextAlignment.RIGHT;
+    case "justify":
+      return TextAlignment.JUSTIFY;
     default:
       return undefined;
   }
+}
+
+function getBlockStyle(node: Node): BlockStyle {
+  return {
+    align: getTextAlignment(node),
+    lineHeight: node.attrs.lineHeight as number | undefined,
+    indent: node.attrs.indent as number | undefined,
+  };
 }
 
 function serializeNode(node: Node): SerializedNode {
@@ -95,7 +108,7 @@ function serializeNode(node: Node): SerializedNode {
   if (node.type === nodes.paragraph) {
     return {
       type: "paragraph",
-      align: getTextAlignment(node),
+      ...getBlockStyle(node),
       children: node.children.map(serializeNode) as InlineNode[],
     };
   }
@@ -104,7 +117,7 @@ function serializeNode(node: Node): SerializedNode {
     return {
       type: "heading",
       level: node.attrs.level as 1 | 2 | 3,
-      align: getTextAlignment(node),
+      ...getBlockStyle(node),
       theme: node.attrs.theme as string | undefined,
       children: node.children.map(serializeNode) as InlineNode[],
     };
@@ -117,7 +130,7 @@ function serializeNode(node: Node): SerializedNode {
     } as QuoteNode;
   }
 
-  if (node.type === nodes.code) {
+  if (node.type === nodes.codeBlock) {
     return {
       type: "code",
       language: node.attrs.language as string,

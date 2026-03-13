@@ -1,6 +1,14 @@
 import { Schema } from "prosemirror-model";
-import { MIN_TEXT_SIZE, MAX_TEXT_SIZE } from "@/constants/formatting";
+import {
+  MIN_TEXT_SIZE,
+  MAX_TEXT_SIZE,
+  MIN_LINE_HEIGHT,
+  MAX_LINE_HEIGHT,
+  MAX_INDENT,
+  INDENT_SIZE,
+} from "@/constants/formatting";
 import { toCSSColor, COLOR_HEX_REGEX } from "@/utils/color";
+import { serializeStyles } from "@/jsx/attributes";
 import type {
   AttributeSpec,
   NodeSpec,
@@ -23,24 +31,57 @@ const DOMOutput = {
   strikethrough: ["del", 0],
   highlight: ["mark", 0],
   pending: ["ins", 0],
-  code: ["pre", ["code", 0]],
+  code: ["code", 0],
+  codeBlock: ["pre", ["code", 0]],
   superscript: ["sup", 0],
   subscript: ["sub", 0],
   smallCaps: ["span", { class: "small-caps" }, 0],
   divider: ["hr"],
 } as const satisfies Record<string, DOMOutputSpec>;
 
-export type TextAlignment = "left" | "center" | "right";
+export type TextAlignment = "left" | "center" | "right" | "justify";
 
-function getTextAttributes(element: HTMLElement): { align: TextAlignment } {
+function getLineHeight(style: CSSStyleDeclaration): number | undefined {
+  const value = parseFloat(style.lineHeight);
+  if (Number.isNaN(value)) {
+    return undefined;
+  }
+  return Math.min(Math.max(value, MIN_LINE_HEIGHT), MAX_LINE_HEIGHT);
+}
+
+function getIndent(style: CSSStyleDeclaration): number | undefined {
+  const paddingLeft = style.paddingLeft;
+  if (!paddingLeft) {
+    return undefined;
+  }
+  let value = parseFloat(paddingLeft);
+  if (Number.isNaN(value) || value <= 0) {
+    return undefined;
+  }
+  if (paddingLeft.endsWith("px")) {
+    value /= 16;
+  }
+  const level = Math.round(value / INDENT_SIZE);
+  return level >= 1 ? Math.min(level, MAX_INDENT) : undefined;
+}
+
+function getTextAttributes(element: HTMLElement): {
+  align: TextAlignment;
+  lineHeight: number | undefined;
+  indent: number | undefined;
+} {
   const align = element.style.textAlign;
+  const lineHeight = getLineHeight(element.style);
+  const indent = getIndent(element.style);
+
   switch (align) {
     case "left":
     case "center":
     case "right":
-      return { align };
+    case "justify":
+      return { align, lineHeight, indent };
     default:
-      return { align: "left" };
+      return { align: "left", lineHeight, indent };
   }
 }
 
@@ -48,8 +89,39 @@ const attributesSpec = {
   align: {
     default: "left",
     validate(value) {
-      if (!(value === "left" || value === "center" || value === "right")) {
+      if (
+        !(
+          value === "left" ||
+          value === "center" ||
+          value === "right" ||
+          value === "justify"
+        )
+      ) {
         throw new RangeError(`Invalid paragraph alignment: ${value}`);
+      }
+    },
+  },
+  lineHeight: {
+    default: undefined,
+    validate(value) {
+      if (
+        value !== undefined &&
+        (typeof value !== "number" ||
+          value < MIN_LINE_HEIGHT ||
+          value > MAX_LINE_HEIGHT)
+      ) {
+        throw new RangeError(`Invalid line height: ${value}`);
+      }
+    },
+  },
+  indent: {
+    default: undefined,
+    validate(value) {
+      if (
+        value !== undefined &&
+        (typeof value !== "number" || value < 1 || value > MAX_INDENT)
+      ) {
+        throw new RangeError(`Invalid indent: ${value}`);
       }
     },
   },
@@ -67,6 +139,8 @@ const nodesSpec = {
   paragraph: {
     attrs: {
       align: attributesSpec.align,
+      lineHeight: attributesSpec.lineHeight,
+      indent: attributesSpec.indent,
     },
     content: "inline*",
     group: "block",
@@ -77,7 +151,20 @@ const nodesSpec = {
       },
     ],
     toDOM(node) {
-      return ["p", { class: node.attrs.align as TextAlignment | undefined }, 0];
+      const lineHeight = node.attrs.lineHeight as number | undefined;
+      const indent = node.attrs.indent as number | undefined;
+      return [
+        "p",
+        {
+          class: node.attrs.align as TextAlignment | undefined,
+          style:
+            serializeStyles({
+              lineHeight,
+              "--indent": indent,
+            }) || undefined,
+        },
+        0,
+      ];
     },
   },
 
@@ -103,6 +190,8 @@ const nodesSpec = {
         },
       },
       align: attributesSpec.align,
+      lineHeight: attributesSpec.lineHeight,
+      indent: attributesSpec.indent,
       theme: { default: undefined, validate: "string|undefined" },
     },
     content: "inline*",
@@ -123,9 +212,18 @@ const nodesSpec = {
       },
     ],
     toDOM(node) {
+      const lineHeight = node.attrs.lineHeight as number | undefined;
+      const indent = node.attrs.indent as number | undefined;
       return [
         "h" + node.attrs.level,
-        { class: node.attrs.align as TextAlignment | undefined },
+        {
+          class: node.attrs.align as TextAlignment | undefined,
+          style:
+            serializeStyles({
+              lineHeight,
+              "--indent": indent,
+            }) || undefined,
+        },
         0,
       ];
     },
@@ -245,7 +343,7 @@ const nodesSpec = {
     },
   },
 
-  code: {
+  codeBlock: {
     attrs: {
       language: { default: "", validate: "string" },
     },
@@ -256,7 +354,7 @@ const nodesSpec = {
     defining: true,
     parseDOM: [{ tag: "pre", preserveWhitespace: "full" }],
     toDOM() {
-      return DOMOutput.code;
+      return DOMOutput.codeBlock;
     },
   },
 
@@ -431,6 +529,13 @@ const marksSpec = {
     ],
     toDOM() {
       return DOMOutput.smallCaps;
+    },
+  },
+
+  code: {
+    parseDOM: [{ tag: "code" }],
+    toDOM() {
+      return DOMOutput.code;
     },
   },
 } as const satisfies Record<string, MarkSpec>;

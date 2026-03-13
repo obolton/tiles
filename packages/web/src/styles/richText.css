@@ -1,8 +1,21 @@
+@property --indent {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+
 .rich-text {
   font-size: 18px;
   line-height: 1.6;
   white-space-collapse: preserve;
   -webkit-font-smoothing: antialiased;
+
+  & h1,
+  & h2,
+  & h3,
+  & p {
+    padding-left: calc(var(--indent) * 2em);
+  }
 
   & h1,
   & h2,
@@ -68,6 +81,15 @@
 
   & code {
     font-family: var(--code-font, "JetBrains Mono", monospace);
+    padding: 0.1em 0.3em;
+    background: rgb(0 0 0 / 5%);
+    border-radius: 0.25em;
+  }
+
+  & pre code {
+    padding: 0;
+    background: none;
+    border-radius: 0;
   }
 
   & ol,

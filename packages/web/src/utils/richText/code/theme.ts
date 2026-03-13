@@ -30,7 +30,7 @@ export const editorTheme = EditorView.theme({
   },
   ".cm-scroller": {
     overflow: "auto",
-    fontFamily: '"JetBrains Mono", monospace',
+    fontFamily: 'var(--code-font, "JetBrains Mono", monospace)',
     lineHeight: "inherit",
   },
 });

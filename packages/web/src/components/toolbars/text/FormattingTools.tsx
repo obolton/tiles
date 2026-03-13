@@ -28,6 +28,7 @@ import LinkIcon from "@/icons/link.svg?jsx";
 import AlignLeftIcon from "@/icons/align-left.svg?jsx";
 import AlignCenterIcon from "@/icons/align-center.svg?jsx";
 import AlignRightIcon from "@/icons/align-right.svg?jsx";
+import AlignJustifyIcon from "@/icons/align-justify.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
 import EventIcon from "@/icons/event.svg?jsx";
 import DropdownIcon from "@/icons/dropdown.svg?jsx";
@@ -37,6 +38,9 @@ import AIIcon from "@/icons/ai.svg?jsx";
 import ApproveIcon from "@/icons/approve.svg?jsx";
 import RejectIcon from "@/icons/reject.svg?jsx";
 import TextSizePopover from "@/components/formatting/TextSizePopover";
+import LineHeightPopover from "@/components/formatting/LineHeightPopover";
+import LineHeightIcon from "@/icons/line-height.svg?jsx";
+import { DEFAULT_LINE_HEIGHT } from "@/constants/formatting";
 import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
 import { isPromptOpen } from "@/utils/richText/prompt";
 import { showModal } from "@/utils/modals";
@@ -51,6 +55,7 @@ import {
   toggleSuperscript,
   toggleSubscript,
   toggleSmallCaps,
+  toggleInlineCode,
   toggleQuote,
   toggleCode,
   toggleHeading,
@@ -71,6 +76,7 @@ import {
   setTextSize,
   setTextColor,
   removeTextColor,
+  setLineHeight,
 } from "@/utils/richText/commands";
 import { getLink } from "@/utils/richText/helpers";
 import Editor from "@/editor/Editor";
@@ -177,6 +183,11 @@ export default function FormattingTools({
 
   const changeTextSize = (size: number) => performCommand(setTextSize(size));
 
+  const changeLineHeight = (value: number) =>
+    performCommand(
+      setLineHeight(value === DEFAULT_LINE_HEIGHT ? undefined : value),
+    );
+
   const changeTextColor = (color: string) =>
     performCommand(setTextColor(color));
 
@@ -197,6 +208,8 @@ export default function FormattingTools({
   const formatSubscript = () => performCommand(toggleSubscript);
 
   const formatSmallCaps = () => performCommand(toggleSmallCaps);
+
+  const formatInlineCode = () => performCommand(toggleInlineCode);
 
   const approveSelection = () => performCommand(approve);
 
@@ -306,7 +319,7 @@ export default function FormattingTools({
         <list-select
           aria-label="Text format"
           aria-selected={format.derive((value) =>
-            typeof value.headingLevel === "number" || value.code
+            typeof value.headingLevel === "number" || value.codeBlock
               ? "true"
               : undefined,
           )}
@@ -317,7 +330,7 @@ export default function FormattingTools({
           value={format.derive((value) =>
             typeof value.headingLevel === "number"
               ? `h${value.headingLevel}`
-              : value.code
+              : value.codeBlock
                 ? "code"
                 : value.list
                   ? `${value.list}-list`
@@ -401,6 +414,25 @@ export default function FormattingTools({
         />
 
         <ToolbarButton
+          id="line-height-button"
+          label="Line height"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          popovertarget="line-height-popover"
+        >
+          <LineHeightIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <LineHeightPopover
+          id="line-height-popover"
+          align="center"
+          value={format.derive(
+            (value) => value.lineHeight ?? DEFAULT_LINE_HEIGHT,
+          )}
+          onChange={changeLineHeight}
+        />
+
+        <ToolbarButton
           label="Bold"
           aria-pressed={format.derive((value) => value.bold)}
           on:click={formatBold}
@@ -438,6 +470,14 @@ export default function FormattingTools({
           on:click={formatHighlight}
         >
           <HighlightIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <ToolbarButton
+          label="Code"
+          aria-pressed={format.derive((value) => value.code)}
+          on:click={formatInlineCode}
+        >
+          <CodeIcon aria-hidden="true" />
         </ToolbarButton>
 
         <ToolbarButton
@@ -530,6 +570,11 @@ export default function FormattingTools({
               icon={<AlignRightIcon aria-hidden="true" />}
               value="right"
               label="Align right"
+            />
+            <ListOption
+              icon={<AlignJustifyIcon aria-hidden="true" />}
+              value="justify"
+              label="Justify"
             />
           </ListGroup>
         </list-select>

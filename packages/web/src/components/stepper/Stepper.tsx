@@ -47,22 +47,9 @@ export default function Stepper({
       aria-valuemin={min.toString()}
       aria-valuemax={max.toString()}
       aria-valuenow={value}
-      data-tooltip-position="right"
+      data-tooltip-position="top"
       {...props}
     >
-      <button
-        type="button"
-        name="increase"
-        className="floating"
-        aria-label="Increase"
-        aria-controls={id}
-        data-tooltip="Increase"
-        disabled={value.derive((v) => v >= max)}
-        on:click={onClickIncrease}
-      >
-        <IncreaseIcon aria-hidden="true" />
-      </button>
-      <span>{value.derive((value) => formatter.format(value))}</span>
       <button
         type="button"
         name="decrease"
@@ -74,6 +61,19 @@ export default function Stepper({
         on:click={onClickDecrease}
       >
         <DecreaseIcon aria-hidden="true" />
+      </button>
+      <span>{value.derive((value) => formatter.format(value))}</span>
+      <button
+        type="button"
+        name="increase"
+        className="floating"
+        aria-label="Increase"
+        aria-controls={id}
+        data-tooltip="Increase"
+        disabled={value.derive((v) => v >= max)}
+        on:click={onClickIncrease}
+      >
+        <IncreaseIcon aria-hidden="true" />
       </button>
     </fieldset>
   );
