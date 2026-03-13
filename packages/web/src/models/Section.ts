@@ -37,6 +37,14 @@ export default class Section extends Tile {
     this.tiles = new TileCollection(this.id);
   }
 
+  serialize(): ClientSectionTile {
+    return {
+      ...super.serialize(),
+      type: "SECTION",
+      layout: this.layout.value,
+    };
+  }
+
   private update(
     properties: Omit<AppRouterInputs["sections"]["update"], "pageId" | "id">,
   ) {

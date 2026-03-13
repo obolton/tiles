@@ -70,6 +70,12 @@ describe("Section", () => {
     });
   });
 
+  test("serialize", () => {
+    const section = new Section(editor.page, SECTION_TILE);
+
+    expect(section.serialize()).toEqual(SECTION_TILE);
+  });
+
   test("maps properties to reactive values", () => {
     const section = new Section(editor.page, SECTION_TILE);
 

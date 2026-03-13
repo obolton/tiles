@@ -23,6 +23,13 @@ vi.mock("@/api/client", () => ({
 describe("PageLink", () => {
   const editor = Editor.init(PAGE);
 
+  test("serialize", () => {
+    const data = { ...PAGE_LINK_TILE, sectionId: null };
+    const pageLink = new PageLink(editor.page, data);
+
+    expect(pageLink.serialize()).toEqual(data);
+  });
+
   test("maps properties to reactive values", () => {
     const pageLink = new PageLink(editor.page, PAGE_LINK_TILE);
 

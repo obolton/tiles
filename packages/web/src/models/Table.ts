@@ -59,6 +59,16 @@ export default class Table extends Tile {
     this.numRows = reactive(numRows);
   }
 
+  serialize(): ClientTableTile {
+    return {
+      ...super.serialize(),
+      type: "TABLE",
+      numRows: this.numRows.value,
+      columns: this.columns.value,
+      rows: this.rows.value,
+    };
+  }
+
   getColumnData(columnId: string) {
     return this.rows.derive((rows) =>
       rows.map((row) => row.data[columnId] ?? null),

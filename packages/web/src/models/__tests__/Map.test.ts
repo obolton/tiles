@@ -31,6 +31,13 @@ describe("Map", () => {
     vi.clearAllMocks();
   });
 
+  test("serialize", () => {
+    const data = { ...MAP_TILE, sectionId: null };
+    const map = new Map(editor.page, data);
+
+    expect(map.serialize()).toEqual(data);
+  });
+
   test("maps properties to reactive values", () => {
     const map = new Map(editor.page, MAP_TILE);
 

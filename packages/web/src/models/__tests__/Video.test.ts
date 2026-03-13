@@ -23,6 +23,13 @@ describe("Video", () => {
     updateMock.mockReset();
   });
 
+  test("serialize", () => {
+    const data = { ...VIDEO_TILE, sectionId: null };
+    const video = new Video(editor.page, data);
+
+    expect(video.serialize()).toEqual(data);
+  });
+
   test("maps properties to reactive values", () => {
     const video = new Video(editor.page, VIDEO_TILE);
 

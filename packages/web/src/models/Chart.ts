@@ -65,6 +65,21 @@ export default class Chart extends Tile {
     );
   }
 
+  serialize(): ClientChartTile {
+    return {
+      ...super.serialize(),
+      type: "CHART",
+      tableId: this.tableId,
+      label: this.label.value,
+      series: this.series.value.map((s) => ({
+        id: s.id,
+        type: s.type.value,
+        column: s.column.value,
+        fill: s.fill.value,
+      })),
+    };
+  }
+
   private update(
     properties: Omit<AppRouterInputs["charts"]["update"], "pageId" | "id">,
   ) {

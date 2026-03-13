@@ -31,4 +31,12 @@ export default class PageLink extends Tile {
 
     this.linkedPage = properties.linkedPage;
   }
+
+  serialize(): ClientPageLinkTile {
+    return {
+      ...super.serialize(),
+      type: "PAGE_LINK",
+      linkedPage: this.linkedPage,
+    };
+  }
 }

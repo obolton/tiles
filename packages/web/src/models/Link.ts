@@ -66,6 +66,18 @@ export default class Link extends Tile {
     this.background.value = imageUrl ? { type: "image", imageUrl } : null;
   }
 
+  serialize(): ClientLinkTile {
+    return {
+      ...super.serialize(),
+      type: "LINK",
+      url: this.url.value,
+      title: this.title.value,
+      description: this.description.value,
+      siteName: this.siteName.value,
+      imageUrl: this.imageUrl.value,
+    };
+  }
+
   private async update(
     properties: Omit<
       AppRouterInputs["externalLinks"]["update"],
