@@ -1,14 +1,17 @@
 import type { ClientTile } from "api/types/tiles";
 import type { Action } from "./base";
 
+export interface TileActionData {
+  tileId: string;
+}
+
 export type TilePropertyChanges = Partial<ClientTile> & {
   sectionId?: string | null;
   beforeId?: string | null;
   themeId?: string | null;
 };
 
-export interface SetTilePropertiesData {
-  tileId: string;
+export interface SetTilePropertiesData extends TileActionData {
   changes: TilePropertyChanges;
 }
 
