@@ -10,6 +10,7 @@ const setProperties: ActionExecutor<SetPagePropertiesAction> = async (
 
   if (changes.title !== undefined) {
     page.title.value = changes.title;
+    document.title = `${changes.title} - Tiles`;
   }
   if (changes.backgroundColor !== undefined) {
     page.backgroundColor.value = changes.backgroundColor;
@@ -27,6 +28,26 @@ const setProperties: ActionExecutor<SetPagePropertiesAction> = async (
     page.theme.value = changes.themeId
       ? themesCache.getById(changes.themeId)
       : null;
+  }
+  if (changes.width !== undefined) {
+    page.width.value = changes.width;
+  }
+  if (changes.alignment !== undefined) {
+    page.alignment.value = changes.alignment;
+  }
+  if (
+    changes.dockTopHeight !== undefined ||
+    changes.dockBottomHeight !== undefined ||
+    changes.dockLeftWidth !== undefined ||
+    changes.dockRightWidth !== undefined
+  ) {
+    const prev = page.dockSizes.value;
+    page.dockSizes.value = {
+      TOP: changes.dockTopHeight ?? prev.TOP,
+      BOTTOM: changes.dockBottomHeight ?? prev.BOTTOM,
+      LEFT: changes.dockLeftWidth ?? prev.LEFT,
+      RIGHT: changes.dockRightWidth ?? prev.RIGHT,
+    };
   }
 };
 

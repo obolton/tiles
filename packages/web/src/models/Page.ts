@@ -10,7 +10,8 @@ import type { AppRouterOutputs } from "@/api/client";
 import type { Reactive, ReactiveArray } from "@/utils/reactivity";
 import type { Color } from "@/utils/color";
 import type { FontId } from "@/config/fonts";
-import type { User, PageAccess } from "@/types/collaboration";
+import type { PageAccess } from "@/types/collaboration";
+import type { PagePropertyChanges } from "@/operations";
 import type { DockEdge, ClientTile } from "api/types/tiles";
 import type { HorizontalAlignment } from "api/types/pages";
 import type Tile from "@/models/Tile";
@@ -25,7 +26,8 @@ export default class Page {
 
   readonly id: string;
   readonly workspaceId: string;
-  readonly author: User;
+  readonly updatedAt: Date;
+  readonly author: PageData["author"];
   readonly title: Reactive<string>;
   readonly backgroundColor: Reactive<Color | null>;
   readonly font: Reactive<FontId | null>;
@@ -51,6 +53,7 @@ export default class Page {
   constructor(data: PageData) {
     this.id = data.id;
     this.workspaceId = data.workspaceId;
+    this.updatedAt = new Date(data.updatedAt);
     this.author = data.author;
     this.title = reactive(data.title);
     this.backgroundColor = reactive(data.backgroundColor);
@@ -112,6 +115,16 @@ export default class Page {
         createdAt: i.createdAt,
       })),
     };
+  }
+
+  private recordUpdate(
+    changes: PagePropertyChanges,
+    inverse: PagePropertyChanges,
+  ) {
+    this.editor?.recordOperation({
+      apply: { type: "page.setProperties", data: { changes } },
+      reverse: { type: "page.setProperties", data: { changes: inverse } },
+    });
   }
 
   getDropdown(id: string): Dropdown {
@@ -195,7 +208,7 @@ export default class Page {
       title: string;
       coverImageKey: string | null;
       font: FontId;
-      backgroundColor: Color;
+      backgroundColor: Color | null;
       published: boolean;
       folderId: string | null;
       themeId: string | null;
@@ -214,6 +227,7 @@ export default class Page {
   }
 
   setTitle(title: string) {
+    this.recordUpdate({ title }, { title: this.title.value });
     this.title.value = title;
     document.title = `${title} - Tiles`;
     return this.update({ title });
@@ -224,46 +238,67 @@ export default class Page {
   }
 
   setFont(font: FontId) {
+    this.recordUpdate({ font }, { font: this.font.value ?? undefined });
+    this.font.value = font;
     return this.update({ font });
   }
 
-  setBackgroundColor(backgroundColor: Color) {
+  setBackgroundColor(backgroundColor: Color | null) {
+    this.recordUpdate(
+      { backgroundColor },
+      { backgroundColor: this.backgroundColor.value },
+    );
+    this.backgroundColor.value = backgroundColor;
     return this.update({ backgroundColor });
   }
 
   setPublished(published: boolean) {
+    this.recordUpdate({ published }, { published: this.isPublished.value });
     this.isPublished.value = published;
     return this.update({ published });
   }
 
   setFolder(folderId: string | null) {
+    this.recordUpdate({ folderId }, { folderId: this.folderId.value });
     this.folderId.value = folderId;
     return this.update({ folderId });
   }
 
   setTheme(theme: Theme | null) {
+    const themeId = theme?.id ?? null;
+    this.recordUpdate({ themeId }, { themeId: this.theme.value?.id ?? null });
     this.theme.value = theme;
-    return this.update({ themeId: theme?.id ?? null });
+    return this.update({ themeId });
   }
 
   setWidth(width: number) {
+    this.recordUpdate({ width }, { width: this.width.value });
     this.width.value = width;
     return this.update({ width });
   }
 
   setAlignment(alignment: HorizontalAlignment) {
+    this.recordUpdate({ alignment }, { alignment: this.alignment.value });
     this.alignment.value = alignment;
     return this.update({ alignment });
   }
 
   setDockSizes(sizes: Partial<Record<DockEdge, number>>) {
-    this.dockSizes.value = { ...this.dockSizes.value, ...sizes };
-    return this.update({
+    const prev = this.dockSizes.value;
+    const changes = {
       dockTopHeight: sizes.TOP,
       dockBottomHeight: sizes.BOTTOM,
       dockLeftWidth: sizes.LEFT,
       dockRightWidth: sizes.RIGHT,
+    };
+    this.recordUpdate(changes, {
+      dockTopHeight: sizes.TOP !== undefined ? prev.TOP : undefined,
+      dockBottomHeight: sizes.BOTTOM !== undefined ? prev.BOTTOM : undefined,
+      dockLeftWidth: sizes.LEFT !== undefined ? prev.LEFT : undefined,
+      dockRightWidth: sizes.RIGHT !== undefined ? prev.RIGHT : undefined,
     });
+    this.dockSizes.value = { ...prev, ...sizes };
+    return this.update(changes);
   }
 
   delete() {
