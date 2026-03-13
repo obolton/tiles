@@ -80,6 +80,40 @@ export default class Page {
     };
   }
 
+  serialize(): Omit<PageData, "tiles"> {
+    const dockSizes = this.dockSizes.value;
+    return {
+      id: this.id,
+      workspaceId: this.workspaceId,
+      updatedAt: this.updatedAt.toISOString(),
+      author: this.author,
+      title: this.title.value,
+      backgroundColor: this.backgroundColor.value,
+      font: this.font.value,
+      coverImageUrl: this.coverImageUrl.value,
+      published: this.isPublished.value,
+      folderId: this.folderId.value,
+      theme: this.theme.value?.serialize() ?? null,
+      width: this.width.value,
+      alignment: this.alignment.value,
+      dockTopHeight: dockSizes.TOP,
+      dockBottomHeight: dockSizes.BOTTOM,
+      dockLeftWidth: dockSizes.LEFT,
+      dockRightWidth: dockSizes.RIGHT,
+      dropdowns: this.dropdowns.value.map((d) => ({
+        id: d.id,
+        title: d.title.value,
+        options: d.options.value,
+      })),
+      access: this.access.value,
+      invites: this.invites.value.map((i) => ({
+        id: i.id,
+        email: i.email,
+        createdAt: i.createdAt,
+      })),
+    };
+  }
+
   getDropdown(id: string): Dropdown {
     const dropdown = this.dropdowns.value.find((d) => d.id === id);
     if (!dropdown) {
