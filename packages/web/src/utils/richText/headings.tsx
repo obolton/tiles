@@ -53,7 +53,8 @@ class HeadingNodeView implements NodeView {
     if (
       updatedNode.attrs.level !== this.node.attrs.level ||
       updatedNode.attrs.align !== this.node.attrs.align ||
-      updatedNode.attrs.lineHeight !== this.node.attrs.lineHeight
+      updatedNode.attrs.lineHeight !== this.node.attrs.lineHeight ||
+      updatedNode.attrs.indent !== this.node.attrs.indent
     ) {
       return false;
     }
@@ -71,6 +72,7 @@ class HeadingNodeView implements NodeView {
       level: this.node.attrs.level as 1 | 2 | 3,
       align: this.node.attrs.align as TextAlignment | undefined,
       lineHeight: this.node.attrs.lineHeight as number | undefined,
+      indent: this.node.attrs.indent as number | undefined,
       children: this.contentDOM.textContent,
     };
   }

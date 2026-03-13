@@ -6,6 +6,7 @@ export interface HeadingTagProps {
   level: 1 | 2 | 3;
   align?: "left" | "center" | "right" | "justify";
   lineHeight?: number;
+  indent?: number;
   children?: JSX.Node;
 }
 
@@ -14,9 +15,10 @@ export default function HeadingTag({
   level,
   align,
   lineHeight,
+  indent,
   ...props
 }: HeadingTagProps) {
-  const style = { lineHeight };
+  const style = { lineHeight, "--indent": indent };
   switch (level) {
     case 1:
       return (
