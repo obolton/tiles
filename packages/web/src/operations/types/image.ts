@@ -3,7 +3,7 @@ import type { Action } from "./base";
 import type { TileActionData } from "./tile";
 
 export interface SetImagePropertiesData extends TileActionData {
-  changes: Partial<Pick<ClientImageTile, "text" | "originX" | "originY">>;
+  changes: Partial<Pick<ClientImageTile, "alt" | "text" | "originX" | "originY">>;
 }
 
 export interface SetImagePropertiesAction extends Action<

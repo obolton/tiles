@@ -14,6 +14,9 @@ const setProperties: ActionExecutor<SetImagePropertiesAction> = async (
       y: changes.originY ?? tile.origin.value.y,
     };
   }
+  if (changes.alt !== undefined) {
+    tile.alt.value = changes.alt;
+  }
   if (changes.text !== undefined) {
     tile.text.value = changes.text;
   }
