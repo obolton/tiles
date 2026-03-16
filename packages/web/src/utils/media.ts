@@ -1,6 +1,11 @@
 import { user } from "@/utils/sessions";
 
-export const ACCEPT_IMAGE_TYPES = new Set(["image/jpeg", "image/png"]);
+export const ACCEPT_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+]);
 export const ACCEPT_CONTENT_TYPES = new Set(["text/uri-list"]).union(
   ACCEPT_IMAGE_TYPES,
 );
