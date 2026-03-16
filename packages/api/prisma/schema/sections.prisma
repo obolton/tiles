@@ -4,14 +4,16 @@ enum Layout {
   VERTICAL
   FREEFORM
   CALENDAR
+  MAP
 }
 
 model Section {
-  id        String   @id @default(uuid()) @db.Uuid
-  pageId    String   @map("page_id") @db.Uuid
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-  layout    Layout   @default(GRID)
+  id        String    @id @default(uuid()) @db.Uuid
+  pageId    String    @map("page_id") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  layout    Layout    @default(GRID)
+  mapStyle  MapStyle? @map("map_style")
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   items Tile[] @relation("ParentSection")
