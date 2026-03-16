@@ -206,6 +206,7 @@ model ImageTile {
   imageId String? @map("image_id") @db.Uuid
   originX Float   @default(0.5) @map("origin_x") @db.Real
   originY Float   @default(0.5) @map("origin_y") @db.Real
+  alt     String? @db.Text
   /// [RichText]
   text    Json?   @db.JsonB
 
