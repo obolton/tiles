@@ -5,7 +5,6 @@ import media from "./media/router.ts";
 import tiles from "./tiles/router.ts";
 import users from "./users/router.ts";
 import places from "./places/router.ts";
-import maps from "./maps/router.ts";
 import images from "./images/router.ts";
 import text from "./text/router.ts";
 import themes from "./themes/router.ts";
@@ -30,7 +29,6 @@ const appRouter = router({
   tiles,
   users,
   places,
-  maps,
   images,
   text,
   themes,
