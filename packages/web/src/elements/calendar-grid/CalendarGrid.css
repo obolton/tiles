@@ -89,6 +89,17 @@
   background: rgb(0 0 0 / 10%);
 }
 
+.segment > .label {
+  display: block;
+  padding: 2px 6px;
+  font-size: 12px;
+  line-height: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-font-smoothing: antialiased;
+}
+
 .segment > resize-handle {
   position: absolute;
   inset-block: 3px;

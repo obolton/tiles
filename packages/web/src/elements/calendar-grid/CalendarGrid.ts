@@ -193,7 +193,7 @@ export default class CalendarGrid extends HTMLElement {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["start", "end"],
+      attributeFilter: ["start", "end", "style", "label"],
     });
   }
 
@@ -403,7 +403,7 @@ export default class CalendarGrid extends HTMLElement {
   }
 
   private appendSegment(entry: ItemSegments, week: number) {
-    const seg = this.createSegment(week, "1 / -1");
+    const seg = this.createSegment(week, "1 / -1", this.resize?.item);
     if (entry.endHandle) {
       seg.append(entry.endHandle);
     }
@@ -506,7 +506,7 @@ export default class CalendarGrid extends HTMLElement {
         continue;
       }
 
-      const elements = this.createDateSegments(item.start, item.end);
+      const elements = this.createDateSegments(item.start, item.end, item);
       if (!elements.length) {
         continue;
       }
@@ -541,6 +541,7 @@ export default class CalendarGrid extends HTMLElement {
   private createDateSegments(
     startDate: string,
     endDate: string | null,
+    item?: CalendarDate,
   ): HTMLElement[] {
     const startPos = this.gridPositions.get(startDate);
     if (!startPos) {
@@ -559,7 +560,9 @@ export default class CalendarGrid extends HTMLElement {
 
     const lastWeek = endPos ? endPos.week : this.weeks.length - 1;
     for (let w = startPos.week + 1; w <= lastWeek; w++) {
-      segments.push(this.createSegment(w, `1 / ${this.endColumn(endPos, w)}`));
+      segments.push(
+        this.createSegment(w, `1 / ${this.endColumn(endPos, w)}`, item),
+      );
     }
 
     return segments;
@@ -572,10 +575,26 @@ export default class CalendarGrid extends HTMLElement {
     return endPos?.week === week ? endPos.end : -1;
   }
 
-  private createSegment(week: number, gridColumn: string): HTMLElement {
+  private createSegment(
+    week: number,
+    gridColumn: string,
+    item?: CalendarDate,
+  ): HTMLElement {
     const segment = document.createElement("div");
     segment.classList.add("segment");
     segment.style.gridColumn = gridColumn;
+
+    if (item) {
+      segment.style.cssText += item.style.cssText;
+      const label = item.getAttribute("label");
+      if (label) {
+        const span = document.createElement("span");
+        span.classList.add("label");
+        span.textContent = label;
+        segment.append(span);
+      }
+    }
+
     this.weeks[week]!.append(segment);
     return segment;
   }
