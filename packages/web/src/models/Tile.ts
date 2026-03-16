@@ -43,6 +43,7 @@ export default class Tile {
   readonly rowSpan: Reactive<number>;
   readonly startDate: Reactive<Date | null>;
   readonly endDate: Reactive<Date | null>;
+  readonly coordinates: Reactive<{ lat: number; long: number } | null>;
   readonly animation: Reactive<Animation | null>;
   readonly frame: Reactive<FrameStyle | null>;
   readonly cornerRadius: Reactive<number | null>;
@@ -65,6 +66,8 @@ export default class Tile {
       rowSpan,
       startDate,
       endDate,
+      lat,
+      long,
       animation,
       frame,
       cornerRadius,
@@ -88,6 +91,9 @@ export default class Tile {
     this.rowSpan = reactive(rowSpan);
     this.startDate = reactive(startDate ? new Date(startDate) : null);
     this.endDate = reactive(endDate ? new Date(endDate) : null);
+    this.coordinates = reactive(
+      lat != null && long != null ? { lat, long } : null,
+    );
     this.animation = reactive(animation);
     this.frame = reactive(frame);
     this.cornerRadius = reactive(cornerRadius);
@@ -247,6 +253,12 @@ export default class Tile {
     if (changes.endDate !== undefined) {
       this.endDate.value = changes.endDate ? new Date(changes.endDate) : null;
     }
+    if (changes.lat !== undefined || changes.long !== undefined) {
+      const lat = changes.lat ?? this.coordinates.value?.lat ?? null;
+      const long = changes.long ?? this.coordinates.value?.long ?? null;
+      this.coordinates.value =
+        lat != null && long != null ? { lat, long } : null;
+    }
     if (changes.textColor !== undefined) {
       this.textColor.value = changes.textColor;
     }
@@ -262,6 +274,8 @@ export default class Tile {
     y,
     width,
     height,
+    lat,
+    long,
   }: {
     sectionId?: string | null;
     beforeId?: string | null;
@@ -269,6 +283,8 @@ export default class Tile {
     y?: number;
     width?: number | null;
     height?: number;
+    lat?: number | null;
+    long?: number | null;
   }) {
     // Capture inverse values before making changes
     const inverse: TilePropertyChanges = {};
@@ -294,7 +310,8 @@ export default class Tile {
         if (
           this.frame.value === "FULL_BLEED" &&
           (section.layout.value === "GRID" ||
-            section.layout.value === "FREEFORM")
+            section.layout.value === "FREEFORM" ||
+            section.layout.value === "MAP")
         ) {
           inverse.frame = this.frame.value;
           this.frame.value = null;
@@ -326,9 +343,32 @@ export default class Tile {
       this.height.value = height;
       changes.height = height;
     }
+    if (lat !== undefined || long !== undefined) {
+      const prev = this.coordinates.value;
+      inverse.lat = prev?.lat ?? null;
+      inverse.long = prev?.long ?? null;
+      const newLat = lat ?? prev?.lat ?? null;
+      const newLong = long ?? prev?.long ?? null;
+      this.coordinates.value =
+        newLat != null && newLong != null
+          ? { lat: newLat, long: newLong }
+          : null;
+      changes.lat = newLat;
+      changes.long = newLong;
+    }
 
     this.recordUpdate(changes, inverse);
-    return this.updateTile({ sectionId, beforeId, x, y, width, height, frame });
+    return this.updateTile({
+      sectionId,
+      beforeId,
+      x,
+      y,
+      width,
+      height,
+      lat,
+      long,
+      frame,
+    });
   }
 
   setSizing(sizing: Sizing) {
@@ -376,6 +416,27 @@ export default class Tile {
     return this.updateTile({ width, height });
   }
 
+  setCoordinates(coordinates: { lat: number; long: number } | null) {
+    const prev = this.coordinates.value;
+    const inverse: TilePropertyChanges = {
+      lat: prev?.lat ?? null,
+      long: prev?.long ?? null,
+    };
+
+    this.coordinates.value = coordinates;
+
+    const changes: TilePropertyChanges = {
+      lat: coordinates?.lat ?? null,
+      long: coordinates?.long ?? null,
+    };
+
+    this.recordUpdate(changes, inverse);
+    return this.updateTile({
+      lat: coordinates?.lat ?? null,
+      long: coordinates?.long ?? null,
+    });
+  }
+
   setDates(startDate: Date | null, endDate: Date | null) {
     const inverse: TilePropertyChanges = {
       startDate: this.startDate.value ? toISODate(this.startDate.value) : null,
@@ -403,6 +464,8 @@ export default class Tile {
       y: this.y.value,
       width: this.width.value,
       height: this.height.value,
+      lat: this.coordinates.value?.lat ?? null,
+      long: this.coordinates.value?.long ?? null,
     });
   }
 
