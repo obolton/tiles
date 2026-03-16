@@ -27,6 +27,8 @@ export const TILE_FIELDS = {
   rowSpan: true,
   startDate: true,
   endDate: true,
+  lat: true,
+  long: true,
   animation: true,
   frame: true,
   cornerRadius: true,
