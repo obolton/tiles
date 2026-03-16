@@ -46,8 +46,9 @@ export default class Image extends Tile {
   constructor(page: Page, properties: ClientImageTile) {
     super(page, properties);
 
-    const { imageUrl, text, originX, originY } = properties;
+    const { imageUrl, alt, text, originX, originY } = properties;
     this.imageUrl = imageUrl;
+    this.alt = reactive(alt);
     this.text = reactive(text);
     this.origin = reactive({ x: originX, y: originY });
     this.state = reactive(null);
@@ -58,6 +59,7 @@ export default class Image extends Tile {
       ...super.serialize(),
       type: "IMAGE",
       imageUrl: this.imageUrl,
+      alt: this.alt.value,
       originX: this.origin.value.x,
       originY: this.origin.value.y,
       text: this.text.value,
@@ -72,6 +74,22 @@ export default class Image extends Tile {
       pageId: this.page.id,
       id: this.id,
     });
+  }
+
+  setAlt(alt: string | null) {
+    const oldAlt = this.alt.value;
+    this.alt.value = alt;
+    this.editor.recordOperation({
+      apply: {
+        type: "image.setProperties",
+        data: { tileId: this.id, changes: { alt } },
+      },
+      reverse: {
+        type: "image.setProperties",
+        data: { tileId: this.id, changes: { alt: oldAlt } },
+      },
+    });
+    return this.update({ alt });
   }
 
   setOrigin(origin: ImageOrigin) {

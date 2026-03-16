@@ -36,12 +36,28 @@ describe("Image", () => {
 
     expect(image.type).toBe("IMAGE");
     expect(image.imageUrl).toBe(IMAGE_TILE.imageUrl);
+    expect(image.alt.value).toBe(IMAGE_TILE.alt);
     expect(image.text.value).toEqual(IMAGE_TILE.text);
     expect(image.origin.value).toEqual({
       x: IMAGE_TILE.originX,
       y: IMAGE_TILE.originY,
     });
     expect(image.state.value).toBeNull();
+  });
+
+  describe("setAlt", () => {
+    test("updates the alt text and persists it", async () => {
+      const image = new Image(editor.page, IMAGE_TILE);
+
+      await image.setAlt("A sunset over the ocean");
+
+      expect(image.alt.value).toBe("A sunset over the ocean");
+      expect(updateMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: IMAGE_TILE.id,
+        alt: "A sunset over the ocean",
+      });
+    });
   });
 
   describe("setOrigin", () => {
