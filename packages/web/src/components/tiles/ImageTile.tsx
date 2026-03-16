@@ -108,7 +108,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
           sizes={sizes}
           style={style}
           loading="lazy"
-          alt="Image"
+          alt={image.alt}
           movable={isEditable}
           origin={origin}
           onMove={(value) => (origin.value = value)}

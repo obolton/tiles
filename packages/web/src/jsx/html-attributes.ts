@@ -259,7 +259,7 @@ export interface LegendHTMLAttributes extends GlobalHTMLAttributes {}
 // Image element attributes
 export interface ImageHTMLAttributes extends GlobalHTMLAttributes {
   src?: string;
-  alt?: string;
+  alt?: string | null;
   width?: number | string;
   height?: number | string;
   srcset?: string;
