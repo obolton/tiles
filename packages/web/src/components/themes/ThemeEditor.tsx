@@ -1,6 +1,7 @@
 import ThemePreview from "@/components/themes/ThemePreview";
 import FillPicker from "@/components/fills/FillPicker";
 import ColorPicker from "@/components/colors/ColorPicker";
+import SolidColorIcon from "@/icons/solid-color.svg?jsx";
 import FontPicker from "@/components/inputs/FontPicker";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ArrowLeftIcon from "@/icons/arrow-left.svg?jsx";
@@ -78,6 +79,7 @@ export default function ThemeEditor({
           <label>Text</label>
           <ColorPicker
             id={`${id}-text`}
+            icon={<SolidColorIcon aria-hidden="true" />}
             label="Text"
             value={theme.colors.derive((c) => c.text)}
             onChange={(color) => theme.setColors({ text: color })}
@@ -87,6 +89,7 @@ export default function ThemeEditor({
           <label>Accent</label>
           <ColorPicker
             id={`${id}-accent`}
+            icon={<SolidColorIcon aria-hidden="true" />}
             label="Accent"
             value={theme.colors.derive((c) => c.accent)}
             onChange={(color) => theme.setColors({ accent: color })}
@@ -96,6 +99,7 @@ export default function ThemeEditor({
           <label>Border</label>
           <ColorPicker
             id={`${id}-border-color`}
+            icon={<SolidColorIcon aria-hidden="true" />}
             label="Border"
             value={theme.border}
             onChange={(color) => theme.setBorder(color)}

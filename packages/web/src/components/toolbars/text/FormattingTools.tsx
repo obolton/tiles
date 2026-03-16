@@ -5,6 +5,7 @@ import MenuItem from "@/components/menus/MenuItem";
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import ColorPicker from "@/components/colors/ColorPicker";
+import TextColorIcon from "@/icons/text-color.svg?jsx";
 import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
 import H3Icon from "@/icons/h3.svg?jsx";
@@ -538,6 +539,7 @@ export default function FormattingTools({
 
         <ColorPicker
           id="inline-text-color"
+          icon={<TextColorIcon aria-hidden="true" />}
           value={format.derive((value) => value.color)}
           onChange={changeTextColor}
           showClear

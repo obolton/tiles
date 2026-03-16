@@ -1,4 +1,5 @@
 import ColorPicker from "@/components/colors/ColorPicker";
+import SolidColorIcon from "@/icons/solid-color.svg?jsx";
 import FontPicker from "@/components/inputs/FontPicker";
 import ThemePicker from "@/components/themes/ThemePicker";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
@@ -94,6 +95,7 @@ export default function StyleTab({ page }: StyleTabProps) {
 
         <ColorPicker
           id="page-color-picker"
+          icon={<SolidColorIcon aria-hidden="true" />}
           value={backgroundColor}
           onChange={setColor}
         />

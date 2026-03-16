@@ -3,6 +3,7 @@ import AspectRatioSelect from "@/components/toolbars/tiles/AspectRatioSelect";
 import DockSelect from "@/components/toolbars/tiles/DockSelect";
 import ThemePicker from "@/components/themes/ThemePicker";
 import ColorPicker from "@/components/colors/ColorPicker";
+import TextColorIcon from "@/icons/text-color.svg?jsx";
 import FillPicker from "@/components/fills/FillPicker";
 import AnimationPicker from "@/components/animations/AnimationPicker";
 import FramePicker from "@/components/frames/FramePicker";
@@ -43,6 +44,7 @@ export default function StyleTools({ tile }: StyleToolsProps) {
 
       <ColorPicker
         id={`${id}-color-picker`}
+        icon={<TextColorIcon aria-hidden="true" />}
         value={textColor}
         onChange={(color) => tile.setTextColor(color)}
         themeColors={themeColors}
