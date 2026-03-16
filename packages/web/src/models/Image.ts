@@ -1,7 +1,6 @@
 import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
-import { preloadImage } from "@/utils/media";
 import client from "@/api/client";
 import type Page from "@/models/Page";
 import type { ClientImageTile } from "api/types/tiles";
@@ -17,6 +16,7 @@ export default class Image extends Tile {
   readonly type = "IMAGE";
 
   readonly imageUrl: string | null;
+  readonly alt: Reactive<string | null>;
   readonly text: Reactive<ClientImageTile["text"]>;
   readonly origin: Reactive<ImageOrigin>;
   readonly state: Reactive<EditorState | null>;
@@ -29,10 +29,6 @@ export default class Image extends Tile {
       pageId: page.id,
       ...data,
     });
-
-    if (properties.imageUrl) {
-      await preloadImage(properties.imageUrl);
-    }
 
     const image = new Image(page, properties);
     const { editor } = image;
