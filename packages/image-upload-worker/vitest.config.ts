@@ -5,7 +5,7 @@ export default defineConfig({
     environment: "node",
     env: {
       PUBLIC_WEB_ORIGIN: "https://example.com",
-      PUBLIC_API_ORIGIN: "https://api.example.com",
+      INTERNAL_API_ORIGIN: "https://api.example.com",
     },
     coverage: {
       include: ["src/**/*.ts"],
