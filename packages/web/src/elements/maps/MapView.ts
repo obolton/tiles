@@ -380,6 +380,25 @@ export default class MapView extends HTMLElement {
         markerId && this.selectedMarkerIds.has(markerId) ? "true" : "false";
     }
   }
+
+  project(coordinates: { lat: number; long: number }): {
+    x: number;
+    y: number;
+  } {
+    if (!this.map) {
+      throw new Error("Map is not initialized");
+    }
+    const point = this.map.project([coordinates.long, coordinates.lat]);
+    return { x: point.x, y: point.y };
+  }
+
+  unproject(point: { x: number; y: number }): { lat: number; long: number } {
+    if (!this.map) {
+      throw new Error("Map is not initialized");
+    }
+    const lngLat = this.map.unproject([point.x, point.y]);
+    return { lat: lngLat.lat, long: lngLat.lng };
+  }
 }
 
 customElements.define("map-view", MapView);
