@@ -6,10 +6,6 @@ vi.mock("@/routes/text/text.ts", () => ({
   createText: vi.fn().mockResolvedValue({ type: "TEXT", id: "text-1" }),
 }));
 
-vi.mock("@/routes/maps/maps.ts", () => ({
-  createMap: vi.fn().mockResolvedValue({ type: "MAP", id: "map-1" }),
-}));
-
 vi.mock("@/routes/tables/tables.ts", () => ({
   createTable: vi.fn().mockResolvedValue({ type: "TABLE", id: "table-1" }),
 }));
@@ -34,7 +30,6 @@ describe("FUNCTION_TOOLS", () => {
     const toolNames = FUNCTION_TOOLS.map((t) => t.name);
 
     expect(toolNames).toContain("create_text");
-    expect(toolNames).toContain("create_map");
     expect(toolNames).toContain("create_table");
     expect(toolNames).toContain("create_chart");
     expect(toolNames).toContain("create_link");
@@ -79,27 +74,6 @@ describe("useFunctionTool", () => {
     );
 
     expect(result).toEqual({ artifact: { type: "TEXT", id: "text-1" } });
-  });
-
-  test("finds and executes create_map tool", async () => {
-    const result = await useFunctionTool(
-      {
-        type: "function_call",
-        id: "call-1",
-        call_id: "call-1",
-        name: "create_map",
-        arguments: JSON.stringify({
-          sectionId: null,
-          size: "medium",
-          style: null,
-          places: [{ name: "Test", lat: 40.0, long: -74.0, address: null }],
-        }),
-        status: "completed",
-      },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(result).toEqual({ artifact: { type: "MAP", id: "map-1" } });
   });
 
   test("finds and executes create_table tool", async () => {
