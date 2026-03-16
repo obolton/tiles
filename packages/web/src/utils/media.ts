@@ -10,6 +10,7 @@ export const ACCEPT_CONTENT_TYPES = new Set(["text/uri-list"]).union(
   ACCEPT_IMAGE_TYPES,
 );
 export const UPLOAD_ORIGIN = import.meta.env.PUBLIC_UPLOAD_ORIGIN;
+export const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB
 
 export interface UploadMediaOptions {
   file: File;
@@ -22,6 +23,10 @@ export async function uploadMedia({
   purpose,
   workspaceId,
 }: UploadMediaOptions) {
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error("File size exceeds the 25 MB limit");
+  }
+
   const userId = user.value?.id;
   if (!userId) {
     throw new Error("Not signed in");
