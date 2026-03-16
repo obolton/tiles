@@ -46,7 +46,7 @@ export default class CalendarGrid extends HTMLElement {
 
   private readonly internals: ElementInternals;
   private readonly shadow: ShadowRoot;
-  private readonly weeksContainer: HTMLElement;
+  private readonly container: HTMLElement;
   private readonly mutationObserver: MutationObserver;
   private readonly firstDayOfWeek: number;
 
@@ -156,11 +156,11 @@ export default class CalendarGrid extends HTMLElement {
     this.shadow.adoptedStyleSheets = [stylesheet];
     this.firstDayOfWeek = getFirstDayOfWeek();
 
-    this.createWeekdayHeaders();
+    this.container = document.createElement("div");
+    this.container.id = "month";
+    this.shadow.append(this.container);
 
-    this.weeksContainer = document.createElement("div");
-    this.weeksContainer.classList.add("weeks");
-    this.shadow.append(this.weeksContainer);
+    this.createWeekdayHeaders();
 
     this.mutationObserver = new MutationObserver(() => this.layout());
 
@@ -485,7 +485,10 @@ export default class CalendarGrid extends HTMLElement {
       this.weeks.push(container);
     }
 
-    this.weeksContainer.replaceChildren(...this.weeks);
+    this.container.replaceChildren(
+      ...this.container.querySelectorAll(".weekday"),
+      ...this.weeks,
+    );
     this.layout();
   }
 
@@ -610,7 +613,7 @@ export default class CalendarGrid extends HTMLElement {
       element.title = long[i]!;
       element.style.gridRow = "header";
       element.style.gridColumn = String(i + 1);
-      this.shadow.append(element);
+      this.container.append(element);
     }
   }
 }

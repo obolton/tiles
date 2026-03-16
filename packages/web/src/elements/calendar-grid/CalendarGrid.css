@@ -1,10 +1,12 @@
 :host {
+  overflow: auto;
+}
+
+#month {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: [header] max-content;
   grid-auto-rows: minmax(6rem, auto);
-  container: calendar-grid / inline-size;
-  overflow: auto;
 }
 
 .weekday {
@@ -12,10 +14,6 @@
   font-size: 1rem;
   font-weight: 600;
   text-decoration: none;
-}
-
-.weeks {
-  display: contents;
 }
 
 .week {
@@ -77,7 +75,7 @@
   min-height: 22px;
   min-width: 0;
   border-radius: 4px;
-  background: var(--chip-background, var(--accent));
+  background: var(--segment-background, var(--accent));
 }
 
 .segment.primary {
