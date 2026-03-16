@@ -7,6 +7,7 @@ import type { CreateQuery, UpdateQuery } from "@/test/prisma.ts";
 const MOCK_IMAGE: Image = {
   id: "test-image",
   imageUrl: "https://example.com/test-image-key",
+  alt: null,
   text: [
     {
       type: "paragraph",

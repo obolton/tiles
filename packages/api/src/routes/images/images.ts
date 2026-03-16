@@ -6,6 +6,7 @@ import { IMAGE_FIELDS } from "./fields";
 export async function createImage({
   pageId,
   imageId,
+  alt,
   text,
   ...properties
 }: CreateImageSchema) {
@@ -17,6 +18,7 @@ export async function createImage({
       image: {
         pageId,
         imageId,
+        alt,
         text,
       },
     },
@@ -30,6 +32,7 @@ export async function createImage({
 export async function updateImage({
   pageId,
   id,
+  alt,
   text,
   origin,
 }: UpdateImageSchema) {
@@ -39,6 +42,7 @@ export async function updateImage({
       id,
     },
     data: {
+      alt,
       text,
       originX: origin?.x,
       originY: origin?.y,
