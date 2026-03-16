@@ -1,6 +1,7 @@
 import { combine } from "@/utils/reactivity";
 import ScrollSection from "./ScrollSection";
 import CalendarSection from "./CalendarSection";
+import MapSection from "./MapSection";
 import SectionToolbar from "./SectionToolbar";
 import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
@@ -29,6 +30,7 @@ export default function Section({
     switch (layout) {
       case "GRID":
       case "FREEFORM":
+      case "MAP":
         return "all";
       case "CALENDAR":
         return null;
@@ -49,6 +51,16 @@ export default function Section({
             section={section}
             tabindex={tabindex}
             resize={resize}
+          />
+        );
+
+      case "MAP":
+        return (
+          <MapSection
+            section={section}
+            tabindex={tabindex}
+            resize={resize}
+            signal={signal}
           />
         );
 
