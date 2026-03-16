@@ -8,7 +8,7 @@ import Portal from "@/jsx/portal";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import { setSearchParams } from "@/utils/urls";
 import type Image from "@/models/Image";
-import { reactive, type Reactive } from "@/utils/reactivity";
+import { flag, reactive, type Reactive } from "@/utils/reactivity";
 import type { EditorView } from "prosemirror-view";
 
 export interface ImageTileProps {
@@ -73,6 +73,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
   }
 
   const editorView = reactive<EditorView | null>(null);
+  const loaded = flag(false);
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Delete" || event.key === "Backspace") {
@@ -99,7 +100,10 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
 
       <figure
         id={`${id}-figure`}
-        className={styles.figure}
+        classList={{
+          [styles.figure]: true,
+          [styles.loading]: loaded.derive((v) => !v),
+        }}
         data-show-in-lightbox="true"
       >
         <MovableImage
@@ -113,6 +117,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
           origin={origin}
           onMove={(value) => (origin.value = value)}
           onRelease={(value) => image.setOrigin(value)}
+          on:load={loaded.on.bind(loaded)}
         />
 
         {isEditable.derive((editable) =>
