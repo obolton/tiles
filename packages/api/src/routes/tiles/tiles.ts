@@ -32,7 +32,6 @@ export function formatTile(tile: FullTile): ClientTile {
     video,
     link,
     pageLink,
-    map,
     table,
     chart,
     ...properties
@@ -83,14 +82,6 @@ export function formatTile(tile: FullTile): ClientTile {
       type: "PAGE_LINK",
       ...properties,
       ...pageLink,
-    };
-  }
-
-  if (map) {
-    return {
-      type: "MAP",
-      ...properties,
-      ...map,
     };
   }
 
@@ -290,7 +281,6 @@ type CreateTileProperties = RequireExactlyOne<{
   video?: Prisma.VideoTileUncheckedCreateWithoutTileInput;
   link?: Prisma.LinkTileUncheckedCreateWithoutTileInput;
   pageLink?: Prisma.PageLinkTileUncheckedCreateWithoutTileInput;
-  map?: Prisma.MapTileUncheckedCreateWithoutTileInput;
   table?: Prisma.TableUncheckedCreateWithoutTileInput;
   chart?: Prisma.ChartUncheckedCreateWithoutTileInput;
 }>;
@@ -349,7 +339,6 @@ export async function createTile<
     video,
     link,
     pageLink,
-    map,
     table,
     chart,
   }: CreateTileOptions<T>,
@@ -404,7 +393,6 @@ export async function createTile<
       video: video ? { create: video } : undefined,
       link: link ? { create: link } : undefined,
       pageLink: pageLink ? { create: pageLink } : undefined,
-      map: map ? { create: map } : undefined,
       table: table ? { create: table } : undefined,
       chart: chart ? { create: chart } : undefined,
     },

@@ -1,9 +1,7 @@
 import type {
   VideoTile,
-  MapTile,
   LinkTile,
   PageLinkTile,
-  Place,
   TileType,
   Layout,
   Sizing,
@@ -42,22 +40,6 @@ export interface ClientVideoTile extends ClientTileBase, ClientVideo {
 export type ClientText = Text;
 export interface ClientTextTile extends ClientTileBase, ClientText {
   type: "TEXT";
-}
-
-// Place
-export type ClientPlace = OmitMetadata<
-  Omit<Place, "mapTileId" | "boundingBox">
-> & {
-  id: string;
-  boundingBox: number[] | null;
-};
-
-// Map
-export type ClientMap = OmitMetadata<MapTile> & {
-  places: ClientPlace[];
-};
-export interface ClientMapTile extends ClientTileBase, ClientMap {
-  type: "MAP";
 }
 
 // Link
@@ -102,8 +84,6 @@ export type ClientEntity =
   | ClientImage
   | ClientVideo
   | ClientText
-  | ClientPlace
-  | ClientMap
   | ClientLink
   | ClientPageLink
   | ClientTable
@@ -114,7 +94,6 @@ export type ClientTile =
   | ClientImageTile
   | ClientVideoTile
   | ClientTextTile
-  | ClientMapTile
   | ClientLinkTile
   | ClientPageLinkTile
   | ClientTableTile
