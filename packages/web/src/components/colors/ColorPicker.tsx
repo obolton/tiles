@@ -1,14 +1,15 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ColorPalette from "@/components/colors/ColorPalette";
-import TextColorIcon from "@/icons/text-color.svg?jsx";
 import { toCSSColor } from "@/utils/color";
 import styles from "./ColorPicker.module.css";
 import type { Color } from "@/utils/color";
 import type { Reactive } from "@/utils/reactivity";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
+import type { JSX } from "@/jsx/jsx";
 
 export interface ColorPickerProps {
   id: string;
+  icon: JSX.Element;
   label?: string;
   themeColors?: Reactive<ThemeColor[]>;
   value?: Reactive<Color | null>;
@@ -26,6 +27,7 @@ const START_HUE = 24;
 
 export default function ColorPicker({
   id,
+  icon,
   label = "Color",
   themeColors,
   value,
@@ -43,13 +45,9 @@ export default function ColorPicker({
         label={label}
         aria-haspopup="menu"
         aria-expanded="false"
+        style={value?.derive((v) => (v ? { color: toCSSColor(v) } : undefined))}
       >
-        <TextColorIcon
-          style={value?.derive((v) =>
-            v ? { fill: toCSSColor(v) } : undefined,
-          )}
-          aria-hidden="true"
-        />
+        {icon}
       </ToolbarButton>
 
       <anchored-popover id={popoverId} align="center">
