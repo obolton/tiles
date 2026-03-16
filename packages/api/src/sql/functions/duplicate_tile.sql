@@ -64,18 +64,6 @@ BEGIN
       FROM page_link_tiles
       WHERE id = p_tile_id AND page_id = p_page_id;
 
-    WHEN 'MAP' THEN
-      INSERT INTO map_tiles (id, page_id, style)
-      SELECT v_new_id, p_page_id, style
-      FROM map_tiles
-      WHERE id = p_tile_id AND page_id = p_page_id;
-
-      -- Duplicate all places on this map
-      INSERT INTO places (id, name, lat, long, bounding_box, address, provider_id, map_tile_id)
-      SELECT gen_random_uuid(), name, lat, long, bounding_box, address, provider_id, v_new_id
-      FROM places
-      WHERE map_tile_id = p_tile_id;
-
     WHEN 'TABLE' THEN
       INSERT INTO table_tiles (id, page_id)
       SELECT v_new_id, p_page_id
