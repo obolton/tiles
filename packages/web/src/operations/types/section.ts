@@ -1,4 +1,4 @@
-import type { Layout } from "api/types/tiles";
+import type { Layout, MapStyle } from "api/types/tiles";
 import type { Action } from "./base";
 
 export interface SetSectionLayoutData {
@@ -11,4 +11,14 @@ export interface SetSectionLayoutAction extends Action<
   SetSectionLayoutData
 > {}
 
-export type SectionAction = SetSectionLayoutAction;
+export interface SetSectionMapStyleData {
+  sectionId: string;
+  mapStyle: MapStyle | null;
+}
+
+export interface SetSectionMapStyleAction extends Action<
+  "section.setMapStyle",
+  SetSectionMapStyleData
+> {}
+
+export type SectionAction = SetSectionLayoutAction | SetSectionMapStyleAction;
