@@ -24,7 +24,7 @@ function getStyleUrl(style: MapStyleType = "DEFAULT") {
 export interface MapViewAttributes extends GlobalHTMLAttributes {
   movable?: boolean;
   legend?: boolean;
-  mapstyle?: MapStyleType;
+  mapstyle?: MapStyleType | null;
 }
 
 declare global {
