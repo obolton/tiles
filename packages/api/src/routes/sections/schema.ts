@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { CreateTileSchema } from "@/schema/Tile";
-import { Layout } from "@/generated/prisma/client";
+import { Layout, MapStyle } from "@/generated/prisma/client";
 
 export const SectionSchema = z.object({
   layout: z.enum(Layout).optional(),
+  mapStyle: z.enum(MapStyle).nullable().optional(),
 });
 
 export const CreateSectionSchema = z.strictObject({
