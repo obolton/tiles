@@ -154,6 +154,9 @@ model Tile {
   startDate DateTime? @map("start_date") @db.Date
   endDate   DateTime? @map("end_date") @db.Date
 
+  lat  Float? @db.Real
+  long Float? @db.Real
+
   textColor          Bytes?             @map("text_color") @db.ByteA
   backgroundColor    Bytes?             @map("background_color") @db.ByteA
   backgroundGradient GradientDirection? @map("background_gradient")
