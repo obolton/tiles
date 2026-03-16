@@ -1,7 +1,11 @@
 import client from "@/api/client";
-import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
-import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
+import {
+  ACCEPT_IMAGE_TYPES,
+  getAcceptableDragItem,
+  isImage,
+  isUriList,
+} from "@/utils/media";
 import { reactive, flag } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
@@ -128,6 +132,7 @@ export default class Editor {
     });
     document.addEventListener("focusin", this.focusIn.bind(this));
     document.addEventListener("keydown", this.keyDown.bind(this));
+    document.addEventListener("paste", this.paste.bind(this));
     document.addEventListener("dragover", this.dragOver.bind(this));
     document.addEventListener("drop", this.drop.bind(this));
   }
@@ -204,6 +209,31 @@ export default class Editor {
       event.preventDefault();
       this.deleteSelection();
     }
+  }
+
+  private async paste(event: ClipboardEvent) {
+    if (!this.isEditable.value || !event.clipboardData) {
+      return;
+    }
+
+    const file = Array.from(event.clipboardData.files).find((file) =>
+      ACCEPT_IMAGE_TYPES.has(file.type),
+    );
+    if (!file) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const imageId = await uploadMedia({
+      file,
+      purpose: "content",
+      workspaceId: this.workspaceId,
+    });
+    await Image.create(this.page, {
+      sectionId: this.activeSection?.id,
+      imageId,
+    });
   }
 
   private dragOver(event: DragEvent) {
