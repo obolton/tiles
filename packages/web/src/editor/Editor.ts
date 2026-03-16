@@ -24,8 +24,6 @@ export type { PageData } from "@/models/Page";
 
 const IS_SERVER = import.meta.env.SSR;
 
-const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
-
 export default class Editor {
   static #current?: Editor;
 
@@ -221,7 +219,7 @@ export default class Editor {
     }
   }
 
-  private drop(event: DragEvent) {
+  private async drop(event: DragEvent) {
     if (!this.isEditable.value || !event.dataTransfer) {
       return;
     }
@@ -236,19 +234,14 @@ export default class Editor {
     if (isImage(item)) {
       const file = item.getAsFile();
       if (file) {
-        showModal(ImageModalLoader, {
-          props: { file },
-          onConfirm: async (result) => {
-            const imageId = await uploadMedia({
-              file: result.image,
-              purpose: "content",
-              workspaceId: this.workspaceId,
-            });
-            await Image.create(this.page, {
-              sectionId: this.activeSection?.id,
-              imageId,
-            });
-          },
+        const imageId = await uploadMedia({
+          file,
+          purpose: "content",
+          workspaceId: this.workspaceId,
+        });
+        await Image.create(this.page, {
+          sectionId: this.activeSection?.id,
+          imageId,
         });
       }
     } else if (isUriList(item)) {
