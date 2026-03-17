@@ -1,0 +1,15 @@
+.thread {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 32px 16px;
+  padding-block-end: 120px;
+  background: color-mix(in oklch, var(--text-color) 5%, transparent);
+  backdrop-filter: blur(4px);
+}
