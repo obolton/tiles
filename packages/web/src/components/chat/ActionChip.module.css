@@ -1,0 +1,8 @@
+.chip {
+  display: inline-block;
+  padding: 0.15em 0.5em;
+  border-radius: 8px;
+  background: color-mix(in oklch, var(--text-color) 8%, transparent);
+  font-size: 0.875rem;
+  color: var(--secondary-text-color);
+}
