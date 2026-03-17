@@ -2,7 +2,6 @@ import Section from "@/components/layouts/section/Section";
 import ImageTile from "@/components/tiles/ImageTile";
 import VideoTile from "@/components/tiles/VideoTile";
 import TextTile from "@/components/tiles/TextTile";
-import MapTile from "@/components/tiles/MapTile";
 import LinkTile from "@/components/tiles/LinkTile";
 import PageLinkTile from "@/components/tiles/PageLinkTile";
 import TableTile from "@/components/tiles/TableTile";
@@ -13,7 +12,6 @@ import ImageModel from "@/models/Image";
 import VideoModel from "@/models/Video";
 import LinkModel from "@/models/Link";
 import PageLinkModel from "@/models/PageLink";
-import MapModel from "@/models/Map";
 import TableModel from "@/models/Table";
 import ChartModel from "@/models/Chart";
 import { reactive, combine } from "@/utils/reactivity";
@@ -60,9 +58,6 @@ function getTileComponent(tile: Tile, showToolbar: Reactive<boolean>) {
   }
   if (tile instanceof TextModel) {
     return <TextTile text={tile} showToolbar={showToolbar} />;
-  }
-  if (tile instanceof MapModel) {
-    return <MapTile map={tile} showToolbar={showToolbar} />;
   }
   if (tile instanceof LinkModel) {
     return <LinkTile link={tile} showToolbar={showToolbar} />;
