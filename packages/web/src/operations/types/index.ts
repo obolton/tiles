@@ -5,7 +5,6 @@ export * from "./text";
 export * from "./image";
 export * from "./video";
 export * from "./link";
-export * from "./map";
 export * from "./table";
 export * from "./chart";
 export * from "./page";
@@ -16,7 +15,6 @@ import type { TextAction } from "./text";
 import type { ImageAction } from "./image";
 import type { VideoAction } from "./video";
 import type { LinkAction } from "./link";
-import type { MapAction } from "./map";
 import type { TableAction } from "./table";
 import type { ChartAction } from "./chart";
 import type { PageAction } from "./page";
@@ -28,7 +26,6 @@ export type AnyAction =
   | ImageAction
   | VideoAction
   | LinkAction
-  | MapAction
   | TableAction
   | ChartAction
   | PageAction;
