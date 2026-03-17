@@ -4,7 +4,6 @@ import type Image from "@/models/Image";
 import type Video from "@/models/Video";
 import type Link from "@/models/Link";
 import type PageLink from "@/models/PageLink";
-import type Map from "@/models/Map";
 import type Table from "@/models/Table";
 import type Chart from "@/models/Chart";
 
@@ -15,6 +14,5 @@ export type TileVariant =
   | Video
   | Link
   | PageLink
-  | Map
   | Table
   | Chart;
