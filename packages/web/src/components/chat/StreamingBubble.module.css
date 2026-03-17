@@ -1,0 +1,19 @@
+.streaming {
+  min-height: 1.5em;
+}
+
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-inline-start: 1px;
+  vertical-align: text-bottom;
+  background: var(--text-color);
+  animation: blink 1s steps(2) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
