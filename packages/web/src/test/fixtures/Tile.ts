@@ -3,7 +3,6 @@ import type {
   ClientTextTile,
   ClientImageTile,
   ClientLinkTile,
-  ClientMapTile,
   ClientPageLinkTile,
   ClientVideoTile,
   ClientChartTile,
@@ -23,6 +22,8 @@ const SHARED = {
   rowSpan: 2,
   startDate: null,
   endDate: null,
+  lat: null,
+  long: null,
   animation: "FADE",
   frame: null,
   cornerRadius: null,
@@ -111,33 +112,6 @@ export const PAGE_LINK_TILE: ClientPageLinkTile = {
   },
 };
 
-export const MAP_TILE = {
-  ...SHARED,
-  id: "tile-id",
-  type: "MAP",
-  style: "DEFAULT",
-  places: [
-    {
-      id: "place-1",
-      name: "Place 1",
-      address: "123 First St",
-      boundingBox: [],
-      lat: 0,
-      long: 0,
-      providerId: "test",
-    },
-    {
-      id: "place-2",
-      name: "Place 2",
-      address: "123 Second St",
-      boundingBox: [],
-      lat: 1,
-      long: 1,
-      providerId: "test",
-    },
-  ] as const,
-} satisfies ClientMapTile;
-
 export const VIDEO_TILE: ClientVideoTile = {
   ...SHARED,
   id: "tile-id",
@@ -195,4 +169,5 @@ export const SECTION_TILE: ClientSectionTile = {
   id: "section-id",
   type: "SECTION",
   layout: "GRID",
+  mapStyle: null,
 };
