@@ -7,7 +7,7 @@ export default function StreamingBubble() {
   const editor = Editor.current;
   const content = document.createElement("span");
 
-  editor.chat.subscribeToContent((chunk) => {
+  editor.chat.subscribe((chunk) => {
     content.append(chunk);
   });
 
