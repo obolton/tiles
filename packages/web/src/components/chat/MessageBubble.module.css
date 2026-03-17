@@ -1,0 +1,31 @@
+.bubble {
+  max-width: 80%;
+  padding: 0.6em 0.85em;
+  border-radius: var(--border-radius);
+}
+
+.content {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+}
+
+.user {
+  align-self: flex-end;
+  background: var(--highlight-color);
+  color: #fff;
+  border-end-end-radius: 4px;
+}
+
+.assistant {
+  align-self: flex-start;
+  background: color-mix(in oklch, var(--text-color) 6%, transparent);
+  border-end-start-radius: 4px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-block-start: 0.4em;
+}
