@@ -197,4 +197,5 @@ export const SECTION_TILE: ClientSectionTile = {
   id: "section-id",
   type: "SECTION",
   layout: "GRID",
+  columns: null,
 };
