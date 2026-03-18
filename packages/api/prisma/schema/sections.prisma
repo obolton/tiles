@@ -12,6 +12,7 @@ model Section {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   layout    Layout   @default(GRID)
+  columns   Int?     @db.SmallInt
 
   page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
   items Tile[] @relation("ParentSection")
