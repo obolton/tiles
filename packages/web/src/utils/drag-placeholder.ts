@@ -51,7 +51,7 @@ export function getDragPosition(
   container: HTMLElement,
   x: number,
   y: number,
-  direction: "horizontal" | "vertical",
+  direction: "horizontal" | "vertical" | "grid",
   filter: (element: Element) => boolean = () => true,
 ): DragPositionResult | null {
   for (const child of container.children) {
@@ -77,9 +77,7 @@ export function getDragPosition(
           };
         }
       }
-    }
-
-    if (direction === "horizontal") {
+    } else if (direction === "horizontal") {
       const midpoint = rect.x + rect.width / 2;
 
       if (x >= rect.left && x <= rect.right) {
@@ -92,6 +90,23 @@ export function getDragPosition(
           return {
             previous: child,
             next: getSibling(child, "next", filter),
+          };
+        }
+      }
+    } else {
+      if (y < rect.top) {
+        return {
+          previous: getSibling(child, "previous", filter),
+          next: child,
+        };
+      }
+
+      if (y < rect.bottom) {
+        const midpoint = rect.x + rect.width / 2;
+        if (x < midpoint) {
+          return {
+            previous: getSibling(child, "previous", filter),
+            next: child,
           };
         }
       }
