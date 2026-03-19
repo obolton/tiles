@@ -381,8 +381,12 @@ export class StreamHandler {
 
   private insertCode(tr: Transaction, language: string, mode: InsertMode) {
     this.pos =
-      insertNode(tr, this.pos!, schema.nodes.code.create({ language }), mode) +
-      1;
+      insertNode(
+        tr,
+        this.pos!,
+        schema.nodes.codeBlock.create({ language }),
+        mode,
+      ) + 1;
   }
 }
 
