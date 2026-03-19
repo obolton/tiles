@@ -7,13 +7,7 @@ const meta = {
 export default meta;
 
 export const Default: Story = {
-  render: () => (
-    <calendar-grid
-      year={2026}
-      month={2}
-      style={{ width: "800px", height: "600px" }}
-    />
-  ),
+  render: () => <calendar-grid style={{ width: "800px", height: "600px" }} />,
 };
 
 const chip = {
