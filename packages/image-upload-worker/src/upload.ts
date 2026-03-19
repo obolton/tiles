@@ -1,6 +1,6 @@
 import { imageDimensionsFromStream } from "image-dimensions";
 import type { Client } from "./client";
-import { BadRequestError, InternalServerError, UnsupportedMediaTypeError } from "./errors";
+import { BadRequestError, UnsupportedMediaTypeError } from "./errors";
 import { IMAGE_TYPES } from "./images";
 import type { UploadParams } from "./requests";
 
@@ -23,7 +23,7 @@ export async function uploadImage(
 
   const { workspaceId, purpose, type } = params;
 
-  // Step 1: Create database record with pending=true
+  // Create pending database record
   const image = await client.media.createImage.mutate({
     workspaceId,
     source: "UPLOAD",
@@ -32,12 +32,12 @@ export async function uploadImage(
     pending: true,
   });
 
-  // Step 2: Upload to R2 and extract dimensions concurrently
-  const [uploadStream, dimensionsStream] = body.tee();
-
-  let object: R2Object;
-  let dimensions: { width: number; height: number; type: string } | undefined;
+  // Stream to R2 and extract dimensions
+  let object: R2Object | undefined;
   try {
+    const [uploadStream, dimensionsStream] = body.tee();
+
+    let dimensions: { width: number; height: number; type: string } | undefined;
     [object, dimensions] = await Promise.all([
       bucket.put(image.id, uploadStream, {
         customMetadata: {
@@ -47,27 +47,17 @@ export async function uploadImage(
       }),
       imageDimensionsFromStream(dimensionsStream),
     ]);
-  } catch {
-    await client.media.deleteImage.mutate({ id: image.id, workspaceId });
-    throw new InternalServerError("Failed to upload file");
-  }
 
-  if (!dimensions) {
-    await bucket.delete(image.id);
-    await client.media.deleteImage.mutate({ id: image.id, workspaceId });
-    throw new BadRequestError("Could not read image dimensions");
-  }
+    if (!dimensions) {
+      throw new BadRequestError("Could not read image dimensions");
+    }
 
-  // Validate that the detected image type matches the claimed Content-Type
-  const detectedType = IMAGE_TYPES[dimensions.type];
-  if (detectedType !== type) {
-    await bucket.delete(image.id);
-    await client.media.deleteImage.mutate({ id: image.id, workspaceId });
-    throw new UnsupportedMediaTypeError();
-  }
+    const detectedType = IMAGE_TYPES[dimensions.type];
+    if (detectedType !== type) {
+      throw new UnsupportedMediaTypeError();
+    }
 
-  // Step 3: Update database record with pending=false
-  try {
+    // Update database record
     return await client.media.updateImage.mutate({
       id: image.id,
       workspaceId,
@@ -76,9 +66,12 @@ export async function uploadImage(
       width: dimensions.width,
       height: dimensions.height,
     });
-  } catch {
-    await bucket.delete(image.id);
+  } catch (error) {
+    // Roll back
+    if (object) {
+      await bucket.delete(image.id);
+    }
     await client.media.deleteImage.mutate({ id: image.id, workspaceId });
-    throw new InternalServerError("Failed to complete upload");
+    throw error;
   }
 }

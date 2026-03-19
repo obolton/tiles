@@ -2,11 +2,7 @@ import { describe, expect, test, vi, beforeEach } from "vitest";
 import { imageDimensionsFromStream } from "image-dimensions";
 import { uploadImage } from "../upload";
 import { createClient } from "../client";
-import {
-  BadRequestError,
-  InternalServerError,
-  UnsupportedMediaTypeError,
-} from "../errors";
+import { BadRequestError, UnsupportedMediaTypeError } from "../errors";
 import type { UploadParams } from "../requests";
 
 vi.mock("../client", () => ({
@@ -171,21 +167,16 @@ describe("uploadImage", () => {
       vi.mocked(bucket.put).mockRejectedValue(new Error("R2 error"));
     });
 
-    test("deletes the database record", async () => {
+    test("deletes the database record but not the R2 object", async () => {
       await expect(
         uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
-      ).rejects.toThrow();
+      ).rejects.toThrow("R2 error");
 
+      expect(bucket.delete).not.toHaveBeenCalled();
       expect(deleteImageMock).toHaveBeenCalledWith({
         id: "img-123",
         workspaceId: "ws-123",
       });
-    });
-
-    test("throws InternalServerError", async () => {
-      await expect(
-        uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
-      ).rejects.toThrow(InternalServerError);
     });
   });
 
@@ -194,29 +185,16 @@ describe("uploadImage", () => {
       updateImageMock.mockRejectedValue(new Error("Database error"));
     });
 
-    test("deletes the R2 object", async () => {
+    test("deletes the R2 object and database record", async () => {
       await expect(
         uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
-      ).rejects.toThrow();
+      ).rejects.toThrow("Database error");
 
       expect(bucket.delete).toHaveBeenCalledWith("img-123");
-    });
-
-    test("deletes the database record", async () => {
-      await expect(
-        uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
-      ).rejects.toThrow();
-
       expect(deleteImageMock).toHaveBeenCalledWith({
         id: "img-123",
         workspaceId: "ws-123",
       });
-    });
-
-    test("throws InternalServerError", async () => {
-      await expect(
-        uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
-      ).rejects.toThrow(InternalServerError);
     });
   });
 });
