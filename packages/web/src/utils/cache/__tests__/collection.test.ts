@@ -49,7 +49,7 @@ describe("CacheCollection", () => {
   let db: Database<ReturnType<typeof createCollection>["schema"]>;
 
   beforeEach(() => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.useFakeTimers({ toFake: ["Date"] });
     collection = createCollection();
     db = createDatabase(collection);
     collection.initialize(db);
