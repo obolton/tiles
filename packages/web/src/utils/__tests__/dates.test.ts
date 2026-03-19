@@ -6,6 +6,7 @@ import {
   daysBetween,
   getWeekdays,
   getCalendarWeeks,
+  getNearestMonth,
 } from "../dates";
 
 describe("formatRelativeDate", () => {
@@ -262,5 +263,45 @@ describe("getCalendarWeeks", () => {
         expect(week[0]!.getDay()).toBe(firstDayOfWeek);
       }
     }
+  });
+});
+
+describe("getNearestMonth", () => {
+  beforeAll(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 2, 15)); // March 15, 2026
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+
+  test("returns current month when dates is empty", () => {
+    expect(getNearestMonth([])).toEqual({ year: 2026, month: 2 });
+  });
+
+  test("returns current month when it contains a date", () => {
+    const dates = [new Date(2026, 5, 10), new Date(2026, 2, 20)];
+    expect(getNearestMonth(dates)).toEqual({ year: 2026, month: 2 });
+  });
+
+  test("returns nearest future month when current month has no dates", () => {
+    const dates = [new Date(2026, 6, 1), new Date(2026, 4, 10)];
+    expect(getNearestMonth(dates)).toEqual({ year: 2026, month: 4 });
+  });
+
+  test("returns most recent past month when no future dates exist", () => {
+    const dates = [new Date(2025, 10, 5), new Date(2026, 0, 20)];
+    expect(getNearestMonth(dates)).toEqual({ year: 2026, month: 0 });
+  });
+
+  test("prefers nearest future over nearest past", () => {
+    const dates = [new Date(2026, 1, 28), new Date(2026, 3, 1)];
+    expect(getNearestMonth(dates)).toEqual({ year: 2026, month: 3 });
+  });
+
+  test("handles dates across year boundaries", () => {
+    const dates = [new Date(2027, 0, 15)];
+    expect(getNearestMonth(dates)).toEqual({ year: 2027, month: 0 });
   });
 });
