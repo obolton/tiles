@@ -103,6 +103,48 @@ export function daysBetween(a: Date, b: Date): number {
 }
 
 /**
+ * Determines the most relevant month to display for a set of dates.
+ * Prefers the current month if it contains any dates, then the nearest
+ * future month, then the most recent past month. Falls back to the
+ * current month if the array is empty.
+ */
+export function getNearestMonth(dates: Date[]): {
+  year: number;
+  month: number;
+} {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth();
+
+  let nearestFuture: Date | null = null;
+  let nearestPast: Date | null = null;
+
+  for (const date of dates) {
+    if (
+      date.getFullYear() === currentYear &&
+      date.getMonth() === currentMonth
+    ) {
+      return { year: currentYear, month: currentMonth };
+    }
+
+    if (date > now && (!nearestFuture || date < nearestFuture)) {
+      nearestFuture = date;
+    }
+
+    if (date < now && (!nearestPast || date > nearestPast)) {
+      nearestPast = date;
+    }
+  }
+
+  const best = nearestFuture ?? nearestPast;
+  if (best) {
+    return { year: best.getFullYear(), month: best.getMonth() };
+  }
+
+  return { year: currentYear, month: currentMonth };
+}
+
+/**
  * Computes the calendar grid for a given month, including leading and
  * trailing days from adjacent months. Returns 4–6 weeks of 7 days each.
  *

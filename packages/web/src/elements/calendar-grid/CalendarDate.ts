@@ -3,6 +3,7 @@ import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 export interface CalendarDateAttributes extends GlobalHTMLAttributes {
   start?: string | null;
   end?: string | null;
+  label?: string | null;
 }
 
 declare global {

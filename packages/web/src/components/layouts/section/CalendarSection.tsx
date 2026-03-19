@@ -1,15 +1,69 @@
 import Item from "@/components/item/Item";
 import CalendarEditor from "@/editor/CalendarEditor";
 import Text from "@/models/Text";
-import { toISODate } from "@/utils/dates";
+import Image from "@/models/Image";
+import Link from "@/models/Link";
+import Video from "@/models/Video";
+import PageLink from "@/models/PageLink";
+import { toISODate, getNearestMonth } from "@/utils/dates";
+import { toPlainText } from "@/utils/richText/plainText";
+import { getBackgroundStyle } from "@/utils/backgrounds";
+import { getThemeStyles } from "@/utils/themes";
 import { handleError } from "@/utils/errors";
+import { reactive, combine } from "@/utils/reactivity";
 import Each from "@/jsx/each";
 import styles from "./CalendarSection.module.css";
 import type CalendarGrid from "@/elements/calendar-grid/CalendarGrid";
 import type { CalendarEvent } from "@/elements/calendar-grid/events";
+import type Tile from "@/models/Tile";
 import type SectionModel from "@/models/Section";
 import type { ResizeDirection } from "@/elements/item/PageItem";
 import type { Reactive } from "@/utils/reactivity";
+
+function getSegmentTextColor(tile: Tile): Reactive<string | null> {
+  return combine(
+    { textColor: tile.textColor, theme: tile.theme },
+    ({ textColor, theme }) =>
+      getThemeStyles(theme, { textColor })["--text-color"] ?? null,
+  );
+}
+
+function getSegmentBackground(tile: Tile): Reactive<string | null> {
+  if (tile instanceof Image && tile.imageUrl) {
+    return reactive(`url(${tile.imageUrl}) center / cover`);
+  }
+  return tile.background.derive(
+    (bg) => getBackgroundStyle(bg)?.background ?? null,
+  );
+}
+
+function getSegmentLabel(tile: Tile): Reactive<string | null> {
+  if (tile instanceof Text) {
+    return tile.content.derive((content) => {
+      const text = toPlainText(content).split("\n")[0]?.trim();
+      return text || null;
+    });
+  }
+  if (tile instanceof Link) {
+    return tile.title;
+  }
+  if (tile instanceof Video) {
+    return tile.title;
+  }
+  if (tile instanceof PageLink) {
+    return reactive(tile.linkedPage?.title ?? null);
+  }
+  if (tile instanceof Image) {
+    return tile.text.derive((text) => {
+      if (!text) {
+        return null;
+      }
+      const plain = toPlainText(text).split("\n")[0]?.trim();
+      return plain || null;
+    });
+  }
+  return reactive(null);
+}
 
 export interface CalendarSectionProps {
   section: SectionModel;
@@ -26,6 +80,11 @@ export default function CalendarSection({
 }: CalendarSectionProps) {
   const { tiles, editor } = section;
   const { isEditable } = editor;
+
+  const startDates = tiles.value.flatMap((tile) =>
+    tile.startDate.value ? [tile.startDate.value] : [],
+  );
+  const initialMonth = getNearestMonth(startDates);
 
   function ref(element: CalendarGrid) {
     CalendarEditor.attach({
@@ -58,6 +117,8 @@ export default function CalendarSection({
       data-layout="CALENDAR"
       tabindex={tabindex}
       editable={isEditable}
+      year={initialMonth.year}
+      month={initialMonth.month + 1}
       on:calendarcellselect={handleCellSelect}
     >
       <Each items={tiles}>
@@ -65,6 +126,11 @@ export default function CalendarSection({
           <calendar-date
             start={tile.startDate.derive((d) => (d ? toISODate(d) : null))}
             end={tile.endDate.derive((d) => (d ? toISODate(d) : null))}
+            style={{
+              "--segment-background": getSegmentBackground(tile),
+              color: getSegmentTextColor(tile),
+            }}
+            label={getSegmentLabel(tile)}
           >
             <Item
               editable={isEditable}

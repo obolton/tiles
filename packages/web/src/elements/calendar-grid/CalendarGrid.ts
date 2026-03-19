@@ -1,4 +1,6 @@
 import css from "./CalendarGrid.css?inline";
+import leftIcon from "@/icons/arrow-left.svg?raw";
+import rightIcon from "@/icons/arrow-right.svg?raw";
 import {
   addDays,
   getFirstDayOfWeek,
@@ -44,9 +46,19 @@ declare module "@/jsx/html-attributes" {
 export default class CalendarGrid extends HTMLElement {
   static observedAttributes = ["year", "month", "editable"];
 
+  private static headingFormatter = new Intl.DateTimeFormat(
+    navigator.language,
+    { month: "long", year: "numeric" },
+  );
+
   private readonly internals: ElementInternals;
   private readonly shadow: ShadowRoot;
-  private readonly weeksContainer: HTMLElement;
+  private readonly header: HTMLElement;
+  private readonly monthTitle: HTMLHeadingElement;
+  private readonly previousButton: HTMLButtonElement;
+  private readonly nextButton: HTMLButtonElement;
+  private readonly todayButton: HTMLButtonElement;
+  private readonly container: HTMLElement;
   private readonly mutationObserver: MutationObserver;
   private readonly firstDayOfWeek: number;
 
@@ -156,22 +168,59 @@ export default class CalendarGrid extends HTMLElement {
     this.shadow.adoptedStyleSheets = [stylesheet];
     this.firstDayOfWeek = getFirstDayOfWeek();
 
-    this.createWeekdayHeaders();
+    this.previousButton = document.createElement("button");
+    this.previousButton.type = "button";
+    this.previousButton.ariaLabel = "Previous month";
+    this.previousButton.innerHTML = leftIcon;
 
-    this.weeksContainer = document.createElement("div");
-    this.weeksContainer.classList.add("weeks");
-    this.shadow.append(this.weeksContainer);
+    this.monthTitle = document.createElement("h2");
+    this.monthTitle.id = "title";
+    this.monthTitle.ariaLive = "polite";
+
+    this.nextButton = document.createElement("button");
+    this.nextButton.type = "button";
+    this.nextButton.ariaLabel = "Next month";
+    this.nextButton.innerHTML = rightIcon;
+
+    this.todayButton = document.createElement("button");
+    this.todayButton.type = "button";
+    this.todayButton.ariaLabel = "Go to current month";
+    this.todayButton.textContent = "Today";
+    this.todayButton.classList.add("today-button");
+
+    this.header = document.createElement("header");
+    this.header.id = "header";
+    this.header.role = "navigation";
+    this.header.ariaLabel = "Calendar navigation";
+    this.header.append(
+      this.monthTitle,
+      this.previousButton,
+      this.todayButton,
+      this.nextButton,
+    );
+
+    this.container = document.createElement("div");
+    this.container.id = "month";
+    this.shadow.append(this.header, this.container);
+
+    this.createWeekdayHeaders();
 
     this.mutationObserver = new MutationObserver(() => this.layout());
 
     this.shadow.addEventListener("pointerdown", this);
+    this.shadow.addEventListener("click", this);
     this.shadow.addEventListener("resizestart", this);
     this.shadow.addEventListener("resizedrag", this);
     this.shadow.addEventListener("resizeend", this);
+    this.addEventListener("keydown", this);
   }
 
   handleEvent(event: Event) {
     switch (event.type) {
+      case "click":
+        return this.handleClick(event as MouseEvent);
+      case "keydown":
+        return this.handleKeyDown(event as KeyboardEvent);
       case "pointerdown":
         return this.handlePointerDown(event as PointerEvent);
       case "pointermove":
@@ -193,7 +242,7 @@ export default class CalendarGrid extends HTMLElement {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["start", "end"],
+      attributeFilter: ["start", "end", "style", "label"],
     });
   }
 
@@ -337,6 +386,45 @@ export default class CalendarGrid extends HTMLElement {
     );
   }
 
+  private handleClick(event: MouseEvent) {
+    switch (event.target) {
+      case this.previousButton:
+        return this.navigateMonth(-1);
+      case this.nextButton:
+        return this.navigateMonth(1);
+      case this.todayButton:
+        return this.navigateToday();
+    }
+  }
+
+  private handleKeyDown(event: KeyboardEvent) {
+    if (event.target !== this) {
+      return;
+    }
+    switch (event.key) {
+      case "ArrowLeft":
+        event.preventDefault();
+        this.navigateMonth(-1);
+        break;
+      case "ArrowRight":
+        event.preventDefault();
+        this.navigateMonth(1);
+        break;
+    }
+  }
+
+  private navigateMonth(delta: number) {
+    const date = new Date(this.year, this.month + delta, 1);
+    this.setAttribute("year", String(date.getFullYear()));
+    this.setAttribute("month", String(date.getMonth() + 1));
+  }
+
+  private navigateToday() {
+    const today = new Date();
+    this.setAttribute("year", String(today.getFullYear()));
+    this.setAttribute("month", String(today.getMonth() + 1));
+  }
+
   private handleResizeEnd(event: ResizeEvent) {
     if (!this.resize) {
       return;
@@ -403,7 +491,7 @@ export default class CalendarGrid extends HTMLElement {
   }
 
   private appendSegment(entry: ItemSegments, week: number) {
-    const seg = this.createSegment(week, "1 / -1");
+    const seg = this.createSegment(week, "1 / -1", this.resize?.item);
     if (entry.endHandle) {
       seg.append(entry.endHandle);
     }
@@ -485,8 +573,17 @@ export default class CalendarGrid extends HTMLElement {
       this.weeks.push(container);
     }
 
-    this.weeksContainer.replaceChildren(...this.weeks);
+    this.container.replaceChildren(
+      ...this.container.querySelectorAll(".weekday"),
+      ...this.weeks,
+    );
     this.layout();
+
+    this.monthTitle.textContent = CalendarGrid.headingFormatter.format(
+      new Date(this.year, this.month),
+    );
+    this.todayButton.disabled =
+      this.year === today.getFullYear() && this.month === today.getMonth();
   }
 
   private layout() {
@@ -506,7 +603,7 @@ export default class CalendarGrid extends HTMLElement {
         continue;
       }
 
-      const elements = this.createDateSegments(item.start, item.end);
+      const elements = this.createDateSegments(item.start, item.end, item);
       if (!elements.length) {
         continue;
       }
@@ -541,6 +638,7 @@ export default class CalendarGrid extends HTMLElement {
   private createDateSegments(
     startDate: string,
     endDate: string | null,
+    item?: CalendarDate,
   ): HTMLElement[] {
     const startPos = this.gridPositions.get(startDate);
     if (!startPos) {
@@ -559,7 +657,9 @@ export default class CalendarGrid extends HTMLElement {
 
     const lastWeek = endPos ? endPos.week : this.weeks.length - 1;
     for (let w = startPos.week + 1; w <= lastWeek; w++) {
-      segments.push(this.createSegment(w, `1 / ${this.endColumn(endPos, w)}`));
+      segments.push(
+        this.createSegment(w, `1 / ${this.endColumn(endPos, w)}`, item),
+      );
     }
 
     return segments;
@@ -572,10 +672,26 @@ export default class CalendarGrid extends HTMLElement {
     return endPos?.week === week ? endPos.end : -1;
   }
 
-  private createSegment(week: number, gridColumn: string): HTMLElement {
+  private createSegment(
+    week: number,
+    gridColumn: string,
+    item?: CalendarDate,
+  ): HTMLElement {
     const segment = document.createElement("div");
     segment.classList.add("segment");
     segment.style.gridColumn = gridColumn;
+
+    if (item) {
+      segment.style.cssText += item.style.cssText;
+      const label = item.getAttribute("label");
+      if (label) {
+        const span = document.createElement("span");
+        span.classList.add("label");
+        span.textContent = label;
+        segment.append(span);
+      }
+    }
+
     this.weeks[week]!.append(segment);
     return segment;
   }
@@ -591,7 +707,7 @@ export default class CalendarGrid extends HTMLElement {
       element.title = long[i]!;
       element.style.gridRow = "header";
       element.style.gridColumn = String(i + 1);
-      this.shadow.append(element);
+      this.container.append(element);
     }
   }
 }
