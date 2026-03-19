@@ -1,14 +1,15 @@
-import { ReactiveArray, array, flag } from "@/utils/reactivity";
-import type { ReactiveFlag } from "@/utils/reactivity";
+import { ReactiveArray, reactive, array } from "@/utils/reactivity";
 import type { ChatAction, ChatMessage } from "./types";
 
 const MAX_HISTORY = 40;
+
+export type StreamState = "idle" | "pending" | "responding";
 
 type ContentCallback = (chunk: string) => void;
 
 export default class ChatState {
   readonly messages: ReactiveArray<ChatMessage> = array<ChatMessage>([]);
-  readonly isStreaming: ReactiveFlag = flag(false);
+  readonly state = reactive<StreamState>("idle");
 
   private buffer = "";
   private readonly subscribers = new Set<ContentCallback>();
@@ -26,7 +27,7 @@ export default class ChatState {
   }
 
   beginStreaming(): void {
-    this.isStreaming.on();
+    this.state.value = "pending";
     this.buffer = "";
   }
 
@@ -39,31 +40,45 @@ export default class ChatState {
   }
 
   append(text: string): void {
+    if (this.state.value === "pending") {
+      this.state.value = "responding";
+    }
     this.buffer += text;
     for (const callback of this.subscribers) {
       callback(text);
     }
   }
 
-  completeMessage(actions: ChatAction[]): void {
+  addAction(action: ChatAction): void {
     this.messages.push({
       id: crypto.randomUUID(),
       role: "assistant",
-      content: this.buffer,
-      actions,
+      actions: [action],
     });
-    this.isStreaming.off();
+  }
+
+  completeStreaming(): void {
+    if (this.buffer) {
+      this.messages.push({
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: this.buffer,
+      });
+    }
+    this.state.value = "idle";
     this.buffer = "";
   }
 
   getHistory(): Array<{ role: "user" | "assistant"; content: string }> {
-    const messages = this.messages.value.slice(-MAX_HISTORY);
-    return messages.map(({ role, content }) => ({ role, content }));
+    return this.messages.value
+      .slice(-MAX_HISTORY)
+      .filter((m): m is ChatMessage & { content: string } => !!m.content)
+      .map(({ role, content }) => ({ role, content }));
   }
 
   clear(): void {
     this.messages.clear();
-    this.isStreaming.off();
+    this.state.value = "idle";
     this.buffer = "";
     this.subscribers.clear();
   }
