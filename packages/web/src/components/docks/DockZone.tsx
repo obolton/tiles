@@ -104,12 +104,7 @@ export default function DockZone({
         data-empty={isEmpty}
       >
         <Each items={tiles}>
-          {(tile) => (
-            <Item
-              classList={{ [styles.item]: true }}
-              tile={tile}
-            />
-          )}
+          {(tile) => <Item classList={{ [styles.item]: true }} tile={tile} />}
         </Each>
 
         <If condition={isEditable}>
