@@ -13,18 +13,12 @@ export default function StreamingBubble() {
 
   return (
     <article
-      className={classNames(
-        bubbleStyles.bubble,
-        bubbleStyles.assistant,
-        styles.streaming,
-      )}
+      className={classNames(bubbleStyles.bubble, bubbleStyles.assistant)}
       aria-label="AI"
       aria-live="polite"
     >
-      <div className={bubbleStyles.content}>
-        {content}
-        <span className={styles.cursor} />
-      </div>
+      {content}
+      <span className={styles.cursor} />
     </article>
   );
 }
