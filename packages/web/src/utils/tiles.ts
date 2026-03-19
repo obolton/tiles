@@ -3,7 +3,6 @@ import Text from "@/models/Text";
 import Image from "@/models/Image";
 import Table from "@/models/Table";
 import Chart from "@/models/Chart";
-import Map from "@/models/Map";
 import Link from "@/models/Link";
 import PageLink from "@/models/PageLink";
 import Video from "@/models/Video";
@@ -35,17 +34,6 @@ export function getTileLabel(tile: Tile): string {
 
   if (tile instanceof Chart) {
     return tile.label.value?.title || "Chart";
-  }
-
-  if (tile instanceof Map) {
-    const count = tile.places.value.length;
-    if (count === 0) {
-      return "Map";
-    }
-    if (count === 1) {
-      return tile.places.value[0]?.name || "Map";
-    }
-    return `Map (${count} places)`;
   }
 
   if (tile instanceof Link) {

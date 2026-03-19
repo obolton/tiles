@@ -67,12 +67,7 @@ export default function MapPin({
         )}
         <span className={styles.label}>{label}</span>
       </div>
-      <Item
-        editable={editor.isEditable}
-        tile={tile}
-        tabindex={tabindex}
-        resize={resize}
-      />
+      <Item tile={tile} tabindex={tabindex} resize={resize} />
     </map-point>
   );
 }

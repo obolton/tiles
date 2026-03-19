@@ -3,7 +3,6 @@ import ImageIcon from "@/icons/image.svg?jsx";
 import VideoIcon from "@/icons/video.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
 import ChartIcon from "@/icons/chart.svg?jsx";
-import PlaceIcon from "@/icons/place.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import type { TileType } from "api/types/tiles";
@@ -18,7 +17,6 @@ export const TILE_ICONS: Record<
   VIDEO: VideoIcon,
   TABLE: TableIcon,
   CHART: ChartIcon,
-  MAP: PlaceIcon,
   LINK: LinkIcon,
   PAGE_LINK: LinkIcon,
   SECTION: GridLayoutIcon,

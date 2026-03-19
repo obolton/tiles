@@ -132,12 +132,7 @@ export default function CalendarSection({
             }}
             label={getSegmentLabel(tile)}
           >
-            <Item
-              editable={isEditable}
-              tile={tile}
-              tabindex={tabindex}
-              resize={resize}
-            />
+            <Item tile={tile} tabindex={tabindex} resize={resize} />
           </calendar-date>
         )}
       </Each>

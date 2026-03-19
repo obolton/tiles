@@ -23,8 +23,7 @@ export default function ScrollSection({
   resize,
   signal,
 }: ScrollSectionProps) {
-  const { tiles, editor } = section;
-  const { isEditable } = editor;
+  const { tiles } = section;
 
   const style =
     layout === "GRID"
@@ -64,7 +63,6 @@ export default function ScrollSection({
         {(tile) => (
           <Item
             classList={{ [styles.item]: true }}
-            editable={isEditable}
             tile={tile}
             tabindex={tabindex}
             resize={resize}
