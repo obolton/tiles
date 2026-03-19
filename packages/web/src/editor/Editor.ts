@@ -324,6 +324,10 @@ export default class Editor {
 
   // References
 
+  addReference(tile: Tile) {
+    this.references.value = [...this.references.value, tile];
+  }
+
   toggleReference(id: string) {
     const index = this.references.value.findIndex((tile) => tile.id === id);
     if (index >= 0) {
