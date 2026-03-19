@@ -19,9 +19,11 @@ describe("persistent", () => {
     });
 
     test("uses the default value when stored value is invalid JSON", () => {
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
       localStorage.setItem("key", "not valid json");
       const value = persistent("key", "default");
       expect(value.value).toBe("default");
+      expect(spy).toHaveBeenCalledOnce();
     });
 
     test("supports object values", () => {
