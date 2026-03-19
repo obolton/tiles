@@ -24,6 +24,8 @@ export const UpdateImageSchema = z.strictObject({
   id: z.uuid(),
   workspaceId: z.uuid(),
   bytes: z.int().nonnegative().optional(),
+  width: z.int().nonnegative().optional(),
+  height: z.int().nonnegative().optional(),
   pending: z.boolean().optional(),
 });
 export type UpdateImageSchema = z.infer<typeof UpdateImageSchema>;

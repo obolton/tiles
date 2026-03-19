@@ -65,6 +65,7 @@ export const IMAGE_TILE: ClientImageTile = {
   id: "tile-id",
   type: "IMAGE",
   imageUrl: "https://tiles.dev/image.png",
+  image: { width: 1920, height: 1080 },
   alt: null,
   originX: 0,
   originY: 0,

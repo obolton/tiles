@@ -39,7 +39,7 @@ export async function createImage(
 }
 
 export async function updateImage(
-  { id, bytes, pending }: UpdateImageSchema,
+  { id, bytes, width, height, pending }: UpdateImageSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.image.update({
@@ -49,6 +49,8 @@ export async function updateImage(
     },
     data: {
       bytes,
+      width,
+      height,
       pending,
     },
     select: IMAGE_FIELDS,

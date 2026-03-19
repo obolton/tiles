@@ -16,6 +16,10 @@ const MOCK_IMAGE: Image = {
   ],
   originX: 0.5,
   originY: 0.5,
+  image: {
+    width: 1920,
+    height: 1080,
+  },
 };
 
 const MOCK_PLACEMENT = {

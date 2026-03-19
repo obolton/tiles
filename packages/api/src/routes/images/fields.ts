@@ -8,6 +8,12 @@ export const IMAGE_FIELDS = {
   text: true,
   originX: true,
   originY: true,
+  image: {
+    select: {
+      width: true,
+      height: true,
+    },
+  },
 } as const satisfies Prisma.ImageTileSelect<ExtensionArgs>;
 
 export type Image = Prisma.Result<
