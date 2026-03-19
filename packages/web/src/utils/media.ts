@@ -49,8 +49,10 @@ export async function uploadMedia({
     throw new Error(`Upload failed: ${result.statusText}`);
   }
 
-  // TODO: Validate
   const response = await result.json();
+  if (typeof response?.id !== "string") {
+    throw new Error("Invalid response");
+  }
   return response.id;
 }
 
