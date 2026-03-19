@@ -5,12 +5,12 @@ import {
   MethodNotAllowedError,
   UnsupportedMediaTypeError,
 } from "./errors";
+import { type ImageType, parseContentType } from "./images";
 import { validateContentLength } from "./validation";
 
 const SESSION_COOKIE_NAME = "__Secure-session";
 
 export type ImagePurpose = "CONTENT" | "PROFILE";
-export type ImageType = "PNG" | "JPEG" | "GIF" | "WEBP";
 
 export interface UploadParams {
   sessionId: string;
@@ -27,21 +27,6 @@ function parsePurpose(purpose: string | null): ImagePurpose {
       return "PROFILE";
     default:
       throw new BadRequestError("Invalid purpose");
-  }
-}
-
-function parseImageType(contentType: string | null): ImageType {
-  switch (contentType?.toLowerCase()) {
-    case "image/png":
-      return "PNG";
-    case "image/jpeg":
-      return "JPEG";
-    case "image/gif":
-      return "GIF";
-    case "image/webp":
-      return "WEBP";
-    default:
-      throw new UnsupportedMediaTypeError();
   }
 }
 
@@ -69,7 +54,10 @@ export function parseUploadRequest(request: Request): UploadParams {
   }
 
   const purpose = parsePurpose(url.searchParams.get("purpose"));
-  const type = parseImageType(request.headers.get("Content-Type"));
+  const type = parseContentType(request.headers.get("Content-Type"));
+  if (!type) {
+    throw new UnsupportedMediaTypeError();
+  }
 
   return { sessionId, workspaceId, purpose, type };
 }
