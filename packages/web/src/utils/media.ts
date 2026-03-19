@@ -1,10 +1,16 @@
 import { user } from "@/utils/sessions";
 
-export const ACCEPT_IMAGE_TYPES = new Set(["image/jpeg", "image/png"]);
+export const ACCEPT_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+]);
 export const ACCEPT_CONTENT_TYPES = new Set(["text/uri-list"]).union(
   ACCEPT_IMAGE_TYPES,
 );
 export const UPLOAD_ORIGIN = import.meta.env.PUBLIC_UPLOAD_ORIGIN;
+export const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB
 
 export interface UploadMediaOptions {
   file: File;
@@ -17,6 +23,10 @@ export async function uploadMedia({
   purpose,
   workspaceId,
 }: UploadMediaOptions) {
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error("File size exceeds the 25 MB limit");
+  }
+
   const userId = user.value?.id;
   if (!userId) {
     throw new Error("Not signed in");
@@ -39,8 +49,10 @@ export async function uploadMedia({
     throw new Error(`Upload failed: ${result.statusText}`);
   }
 
-  // TODO: Validate
   const response = await result.json();
+  if (typeof response?.id !== "string") {
+    throw new Error("Invalid response");
+  }
   return response.id;
 }
 
@@ -62,15 +74,4 @@ export function isImage(item: DataTransferItem) {
 
 export function isUriList(item: DataTransferItem) {
   return item.type === "text/uri-list";
-}
-
-// TODO: Fix memory leak here
-export async function preloadImage(url: string) {
-  return new Promise<void>((resolve, reject) => {
-    const image = new Image();
-    image.addEventListener("load", () => resolve());
-    image.addEventListener("error", reject);
-    image.fetchPriority = "high";
-    image.src = url;
-  });
 }

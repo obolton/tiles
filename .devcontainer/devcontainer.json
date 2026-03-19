@@ -35,7 +35,8 @@
 
   "containerEnv": {
     "CHECKPOINT_DISABLE": "1",
-    "WRANGLER_LOG": "info"
+    "WRANGLER_LOG": "info",
+    "CLOUDFLARE_INCLUDE_PROCESS_ENV": "true"
   },
 
   "remoteEnv": {

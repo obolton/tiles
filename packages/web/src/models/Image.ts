@@ -1,7 +1,6 @@
 import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
-import { preloadImage } from "@/utils/media";
 import client from "@/api/client";
 import type Page from "@/models/Page";
 import type { ClientImageTile } from "api/types/tiles";
@@ -17,6 +16,8 @@ export default class Image extends Tile {
   readonly type = "IMAGE";
 
   readonly imageUrl: string | null;
+  readonly size: { width: number; height: number };
+  readonly alt: Reactive<string | null>;
   readonly text: Reactive<ClientImageTile["text"]>;
   readonly origin: Reactive<ImageOrigin>;
   readonly state: Reactive<EditorState | null>;
@@ -30,10 +31,6 @@ export default class Image extends Tile {
       ...data,
     });
 
-    if (properties.imageUrl) {
-      await preloadImage(properties.imageUrl);
-    }
-
     const image = new Image(page, properties);
     const { editor } = image;
     editor.addTile(image, properties.sectionId, data.beforeId);
@@ -46,8 +43,10 @@ export default class Image extends Tile {
   constructor(page: Page, properties: ClientImageTile) {
     super(page, properties);
 
-    const { imageUrl, text, originX, originY } = properties;
+    const { imageUrl, image, alt, text, originX, originY } = properties;
     this.imageUrl = imageUrl;
+    this.size = image ?? { width: 0, height: 0 };
+    this.alt = reactive(alt);
     this.text = reactive(text);
     this.origin = reactive({ x: originX, y: originY });
     this.state = reactive(null);
@@ -58,6 +57,8 @@ export default class Image extends Tile {
       ...super.serialize(),
       type: "IMAGE",
       imageUrl: this.imageUrl,
+      image: this.size,
+      alt: this.alt.value,
       originX: this.origin.value.x,
       originY: this.origin.value.y,
       text: this.text.value,
@@ -72,6 +73,22 @@ export default class Image extends Tile {
       pageId: this.page.id,
       id: this.id,
     });
+  }
+
+  setAlt(alt: string | null) {
+    const oldAlt = this.alt.value;
+    this.alt.value = alt;
+    this.editor.recordOperation({
+      apply: {
+        type: "image.setProperties",
+        data: { tileId: this.id, changes: { alt } },
+      },
+      reverse: {
+        type: "image.setProperties",
+        data: { tileId: this.id, changes: { alt: oldAlt } },
+      },
+    });
+    return this.update({ alt });
   }
 
   setOrigin(origin: ImageOrigin) {

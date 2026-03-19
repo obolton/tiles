@@ -8,7 +8,7 @@ import Portal from "@/jsx/portal";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import { setSearchParams } from "@/utils/urls";
 import type Image from "@/models/Image";
-import { reactive, type Reactive } from "@/utils/reactivity";
+import { combine, flag, reactive, type Reactive } from "@/utils/reactivity";
 import type { EditorView } from "prosemirror-view";
 
 export interface ImageTileProps {
@@ -73,6 +73,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
   }
 
   const editorView = reactive<EditorView | null>(null);
+  const loaded = flag(false);
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Delete" || event.key === "Backspace") {
@@ -85,9 +86,16 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
   const columns = width.value ?? image.page.width.value;
   const sizes = `(max-width: 800px) ${((columns / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(columns)}px`;
 
-  const style = origin.derive(({ x, y }) => ({
-    objectPosition: `${x * 100}% ${y * 100}%`,
-  }));
+  const style = combine(
+    { origin, sizing: image.sizing },
+    ({ origin, sizing }) => ({
+      objectPosition: `${origin.x * 100}% ${origin.y * 100}%`,
+      aspectRatio:
+        sizing === "AUTO"
+          ? `${image.size.width} / ${image.size.height}`
+          : undefined,
+    }),
+  );
 
   return (
     <Tile>
@@ -99,7 +107,11 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
 
       <figure
         id={`${id}-figure`}
-        className={styles.figure}
+        classList={{
+          [styles.figure]: true,
+          [styles.auto]: image.sizing.derive((s) => s === "AUTO"),
+          [styles.loading]: loaded.derive((v) => !v),
+        }}
         data-show-in-lightbox="true"
       >
         <MovableImage
@@ -108,11 +120,12 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
           sizes={sizes}
           style={style}
           loading="lazy"
-          alt="Image"
+          alt={image.alt}
           movable={isEditable}
           origin={origin}
           onMove={(value) => (origin.value = value)}
           onRelease={(value) => image.setOrigin(value)}
+          on:load={loaded.on.bind(loaded)}
         />
 
         {isEditable.derive((editable) =>

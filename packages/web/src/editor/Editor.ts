@@ -1,7 +1,11 @@
 import client from "@/api/client";
-import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
-import { getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
+import {
+  ACCEPT_IMAGE_TYPES,
+  getAcceptableDragItem,
+  isImage,
+  isUriList,
+} from "@/utils/media";
 import { reactive, flag } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
@@ -23,8 +27,6 @@ import type { AnyAction, OperationInput } from "@/operations";
 export type { PageData } from "@/models/Page";
 
 const IS_SERVER = import.meta.env.SSR;
-
-const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 
 export default class Editor {
   static #current?: Editor;
@@ -130,6 +132,7 @@ export default class Editor {
     });
     document.addEventListener("focusin", this.focusIn.bind(this));
     document.addEventListener("keydown", this.keyDown.bind(this));
+    document.addEventListener("paste", this.paste.bind(this));
     document.addEventListener("dragover", this.dragOver.bind(this));
     document.addEventListener("drop", this.drop.bind(this));
   }
@@ -208,6 +211,31 @@ export default class Editor {
     }
   }
 
+  private async paste(event: ClipboardEvent) {
+    if (!this.isEditable.value || !event.clipboardData) {
+      return;
+    }
+
+    const file = Array.from(event.clipboardData.files).find((file) =>
+      ACCEPT_IMAGE_TYPES.has(file.type),
+    );
+    if (!file) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const imageId = await uploadMedia({
+      file,
+      purpose: "content",
+      workspaceId: this.workspaceId,
+    });
+    await Image.create(this.page, {
+      sectionId: this.activeSection?.id,
+      imageId,
+    });
+  }
+
   private dragOver(event: DragEvent) {
     if (!this.isEditable.value || !event.dataTransfer) {
       return;
@@ -221,7 +249,7 @@ export default class Editor {
     }
   }
 
-  private drop(event: DragEvent) {
+  private async drop(event: DragEvent) {
     if (!this.isEditable.value || !event.dataTransfer) {
       return;
     }
@@ -236,19 +264,14 @@ export default class Editor {
     if (isImage(item)) {
       const file = item.getAsFile();
       if (file) {
-        showModal(ImageModalLoader, {
-          props: { file },
-          onConfirm: async (result) => {
-            const imageId = await uploadMedia({
-              file: result.image,
-              purpose: "content",
-              workspaceId: this.workspaceId,
-            });
-            await Image.create(this.page, {
-              sectionId: this.activeSection?.id,
-              imageId,
-            });
-          },
+        const imageId = await uploadMedia({
+          file,
+          purpose: "content",
+          workspaceId: this.workspaceId,
+        });
+        await Image.create(this.page, {
+          sectionId: this.activeSection?.id,
+          imageId,
         });
       }
     } else if (isUriList(item)) {
