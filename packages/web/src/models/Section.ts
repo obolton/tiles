@@ -2,7 +2,7 @@ import Tile from "./Tile";
 import TileCollection from "./TileCollection";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
-import type { ClientSectionTile, Layout } from "api/types/tiles";
+import type { ClientSectionTile, Layout, MapStyle } from "api/types/tiles";
 import type Page from "@/models/Page";
 import type { AppRouterInputs } from "@/api/client";
 
@@ -10,6 +10,7 @@ export default class Section extends Tile {
   readonly type = "SECTION";
 
   readonly layout: Reactive<Layout>;
+  readonly mapStyle: Reactive<MapStyle | null>;
   readonly columns: Reactive<number | null>;
   readonly tiles: TileCollection;
 
@@ -28,13 +29,15 @@ export default class Section extends Tile {
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
       reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
     });
+    return section;
   }
 
   constructor(page: Page, properties: ClientSectionTile) {
     super(page, properties);
 
-    const { layout, columns } = properties;
+    const { layout, mapStyle, columns } = properties;
     this.layout = reactive(layout);
+    this.mapStyle = reactive(mapStyle);
     this.columns = reactive(columns);
     this.tiles = new TileCollection(this.id);
   }
@@ -72,6 +75,22 @@ export default class Section extends Tile {
       },
     });
     return this.update({ layout });
+  }
+
+  setMapStyle(mapStyle: MapStyle) {
+    const oldMapStyle = this.mapStyle.value;
+    this.mapStyle.value = mapStyle;
+    this.editor.recordOperation({
+      apply: {
+        type: "section.setMapStyle",
+        data: { sectionId: this.id, mapStyle },
+      },
+      reverse: {
+        type: "section.setMapStyle",
+        data: { sectionId: this.id, mapStyle: oldMapStyle },
+      },
+    });
+    return this.update({ mapStyle });
   }
 
   setColumns(columns: number | null) {

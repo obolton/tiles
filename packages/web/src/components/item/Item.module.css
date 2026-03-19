@@ -10,6 +10,12 @@
   initial-value: 0;
 }
 
+@property --background-fallback {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
 .item {
   display: flex;
   width: calc(var(--width) * 24px);
@@ -24,7 +30,7 @@
     box-shadow var(--animation-duration) var(--easing);
 
   &:not(.frame-full-bleed) {
-    background: var(--background);
+    background: var(--background, var(--background-fallback));
   }
 
   &.frame-full-bleed {
@@ -32,7 +38,7 @@
       content: "";
       position: absolute;
       z-index: -1;
-      background: var(--background);
+      background: var(--background, var(--background-fallback));
       pointer-events: none;
     }
 
@@ -49,7 +55,7 @@
     }
 
     &:global(.drag-preview) {
-      background: var(--background);
+      background: var(--background, var(--background-fallback));
 
       &::before {
         content: none;

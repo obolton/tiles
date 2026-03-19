@@ -6,7 +6,6 @@ import type {
   ClientImageTile,
   ClientVideoTile,
   ClientLinkTile,
-  ClientMapTile,
   ClientPageLinkTile,
   ClientChartTile,
 } from "@/types/tiles";
@@ -46,12 +45,6 @@ function extractLinkContent(tile: ClientLinkTile): string {
   return parts.join("\n");
 }
 
-function extractMapContent(tile: ClientMapTile): string {
-  return tile.places
-    .map((place) => [place.name, place.address].filter(Boolean).join(" - "))
-    .join("\n");
-}
-
 function extractPageLinkContent(tile: ClientPageLinkTile): string {
   return tile.linkedPage?.title ?? "";
 }
@@ -86,8 +79,6 @@ export function extractContent(tile: ClientTile): string {
       return extractVideoContent(tile);
     case "LINK":
       return extractLinkContent(tile);
-    case "MAP":
-      return extractMapContent(tile);
     case "PAGE_LINK":
       return extractPageLinkContent(tile);
     case "CHART":

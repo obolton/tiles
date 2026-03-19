@@ -51,7 +51,6 @@ enum TileType {
   VIDEO
   LINK
   PAGE_LINK
-  MAP
   TABLE
   CHART
 }
@@ -114,7 +113,6 @@ model Page {
   videos             VideoTile[]
   text               TextTile[]
   links              LinkTile[]
-  maps               MapTile[]
   pageLinks          PageLinkTile[] @relation("Page")
   tables             Table[]
   access             PageAccess[]
@@ -154,6 +152,9 @@ model Tile {
   startDate DateTime? @map("start_date") @db.Date
   endDate   DateTime? @map("end_date") @db.Date
 
+  lat  Float? @db.Real
+  long Float? @db.Real
+
   textColor          Bytes?             @map("text_color") @db.ByteA
   backgroundColor    Bytes?             @map("background_color") @db.ByteA
   backgroundGradient GradientDirection? @map("background_gradient")
@@ -169,7 +170,6 @@ model Tile {
   video           VideoTile?
   link            LinkTile?
   pageLink        PageLinkTile?
-  map             MapTile?
   table           Table?
   chart           Chart?
 
@@ -235,39 +235,6 @@ model VideoTile {
 
   @@index([pageId])
   @@map("video_tiles")
-}
-
-model Place {
-  id          String   @id @default(uuid()) @db.Uuid
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
-  name        String
-  lat         Float
-  long        Float
-  boundingBox Float[]  @map("bounding_box")
-  address     String?
-  providerId  String?  @map("provider_id")
-  mapTileId   String   @map("map_tile_id") @db.Uuid
-
-  map MapTile @relation(fields: [mapTileId], references: [id], onDelete: Cascade)
-
-  @@index([mapTileId])
-  @@map("places")
-}
-
-model MapTile {
-  id        String   @id @default(uuid()) @db.Uuid
-  pageId    String   @map("page_id") @db.Uuid
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-  style     MapStyle @default(DEFAULT)
-
-  page   Page    @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tile   Tile    @relation(fields: [id], references: [id], onDelete: Cascade)
-  places Place[]
-
-  @@index([pageId])
-  @@map("map_tiles")
 }
 
 model LinkTile {

@@ -2,7 +2,7 @@ import "./anchored-popover/AnchoredPopover";
 import "./menu/PopoverMenu";
 import "./toasts/ToastContainer";
 import "./maps/MapView";
-import "./maps/MapMarker";
+import "./maps/MapPoint";
 import "./video/EmbeddedVideo";
 import "./infinite-scroll/InfiniteScroll";
 import "./calendar/CalendarMonth";

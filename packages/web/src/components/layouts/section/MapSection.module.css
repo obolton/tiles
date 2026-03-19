@@ -1,0 +1,114 @@
+.map {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius);
+
+  --background-fallback: var(--background-color);
+}
+
+.pin {
+  position: relative;
+  cursor: pointer;
+
+  & page-item:not(:global(.drag-preview)) {
+    display: flex;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    max-width: none;
+    cursor: auto;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      visibility 0s var(--animation-duration),
+      opacity var(--animation-duration-short) var(--easing);
+  }
+
+  &:hover:not(:has([aria-selected="true"])) {
+    z-index: 1;
+
+    & page-item:not(:global(.drag-preview)) {
+      visibility: visible;
+      opacity: 1;
+      transition-delay: 0s;
+      pointer-events: none;
+    }
+  }
+
+  &:has([aria-selected="true"]) {
+    z-index: 1;
+
+    & .label {
+      display: none;
+    }
+
+    & page-item:not(:global(.drag-preview)) {
+      visibility: visible;
+      opacity: 1;
+      transition-delay: 0s;
+    }
+
+    :global(body[data-drag]) & {
+      & page-item:not(:global(.drag-preview)) {
+        visibility: hidden;
+        opacity: 0;
+      }
+
+      & .label {
+        display: unset;
+      }
+    }
+  }
+}
+
+.handle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: visible;
+}
+
+.dot,
+.image {
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 3px 3px -1px rgb(0 0 0 / 40%);
+  outline: 2px solid transparent;
+  outline-offset: -1px;
+  transition:
+    outline-color var(--animation-duration-short) var(--easing),
+    scale var(--animation-duration-short) var(--easing);
+  flex-shrink: 0;
+
+  .pin:has([aria-selected="true"]) &,
+  .pin:focus-within & {
+    outline-color: var(--focus-ring-color);
+  }
+}
+
+.dot {
+  width: 22px;
+  height: 22px;
+  background: var(--accent-color, var(--accent));
+}
+
+.image {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+}
+
+.label {
+  position: absolute;
+  left: 100%;
+  margin-left: 4px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color);
+}

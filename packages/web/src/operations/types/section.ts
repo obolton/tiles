@@ -1,4 +1,4 @@
-import type { Layout } from "api/types/tiles";
+import type { Layout, MapStyle } from "api/types/tiles";
 import type { Action } from "./base";
 import type { TileActionData } from "./tile";
 
@@ -20,4 +20,17 @@ export interface SetSectionColumnsAction extends Action<
   SetSectionColumnsData
 > {}
 
-export type SectionAction = SetSectionLayoutAction | SetSectionColumnsAction;
+export interface SetSectionMapStyleData {
+  sectionId: string;
+  mapStyle: MapStyle | null;
+}
+
+export interface SetSectionMapStyleAction extends Action<
+  "section.setMapStyle",
+  SetSectionMapStyleData
+> {}
+
+export type SectionAction =
+  | SetSectionLayoutAction
+  | SetSectionMapStyleAction
+  | SetSectionColumnsAction;

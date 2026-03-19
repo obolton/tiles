@@ -8,6 +8,7 @@ export async function createSection({
   beforeId,
   layout,
   columns,
+  mapStyle,
   background,
   ...properties
 }: CreateSectionSchema) {
@@ -23,6 +24,7 @@ export async function createSection({
         pageId,
         layout,
         columns,
+        mapStyle,
       },
     },
     { section: { select: SECTION_FIELDS } },
@@ -37,6 +39,7 @@ export async function updateSection({
   id,
   layout,
   columns,
+  mapStyle,
 }: UpdateSectionSchema) {
   return prisma.section.update({
     where: {
@@ -46,6 +49,7 @@ export async function updateSection({
     data: {
       layout,
       columns,
+      mapStyle,
     },
     select: SECTION_FIELDS,
   });

@@ -5,6 +5,7 @@ export const SECTION_FIELDS = {
   id: true,
   layout: true,
   columns: true,
+  mapStyle: true,
 } as const satisfies Prisma.SectionSelect<ExtensionArgs>;
 
 export type Section = Prisma.Result<

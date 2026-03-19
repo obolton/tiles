@@ -5,6 +5,12 @@ import {
   Sizing,
   DockEdge,
 } from "@/generated/prisma/enums";
+import {
+  MIN_LATITUDE,
+  MAX_LATITUDE,
+  MIN_LONGITUDE,
+  MAX_LONGITUDE,
+} from "@/constants/geo";
 import { BackgroundSchema } from "./Background";
 import { ColorSchema } from "./Color";
 
@@ -27,6 +33,8 @@ export const TileSchema = z.object({
   rowSpan: z.int().gte(1).lte(MAX_ROWS).optional(),
   startDate: z.iso.date().nullable().optional(),
   endDate: z.iso.date().nullable().optional(),
+  lat: z.number().gte(MIN_LATITUDE).lte(MAX_LATITUDE).nullable().optional(),
+  long: z.number().gte(MIN_LONGITUDE).lte(MAX_LONGITUDE).nullable().optional(),
   animation: z.enum(Animation).nullable().optional(),
   frame: z.enum(FrameStyle).nullable().optional(),
   cornerRadius: z.int().gte(0).lte(MAX_CORNER_RADIUS).nullable().optional(),

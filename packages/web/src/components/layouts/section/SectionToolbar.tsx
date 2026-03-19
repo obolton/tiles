@@ -4,12 +4,14 @@ import Stepper from "@/components/stepper/Stepper";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import StyleTools from "@/components/toolbars/tiles/StyleTools";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
+import MapTab from "./MapTab";
 import If from "@/jsx/if";
 import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import HorizontalLayoutIcon from "@/icons/horizontal-layout.svg?jsx";
 import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";
 import FreeformLayoutIcon from "@/icons/freeform-layout.svg?jsx";
 import CalendarLayoutIcon from "@/icons/event.svg?jsx";
+import PlaceIcon from "@/icons/place.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import type ListSelect from "@/elements/list-select/ListSelect";
@@ -21,6 +23,8 @@ export interface SectionToolbarProps {
 }
 
 export default function SectionToolbar({ section }: SectionToolbarProps) {
+  const isMap = section.layout.derive((layout) => layout === "MAP");
+
   async function setLayout(event: Event) {
     const layout = (event.currentTarget as ListSelect).value as Layout;
     try {
@@ -78,6 +82,9 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
               >
                 Calendar
               </ListOption>
+              <ListOption icon={<PlaceIcon aria-hidden="true" />} value="MAP">
+                Map
+              </ListOption>
             </ListGroup>
           </list-select>
         </ToolbarGroup>
@@ -100,6 +107,10 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
 
         <TileTools tile={section} />
       </toolbar-tab>
+
+      <If condition={isMap}>
+        <MapTab section={section} />
+      </If>
 
       <toolbar-tab name="style" label="Style">
         <StyleTools tile={section} />

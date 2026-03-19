@@ -4,7 +4,6 @@ import Image from "@/models/Image";
 import Video from "@/models/Video";
 import Link from "@/models/Link";
 import PageLink from "@/models/PageLink";
-import MapObject from "@/models/Map";
 import Table from "@/models/Table";
 import Chart from "@/models/Chart";
 import Tile from "@/models/Tile";
@@ -26,8 +25,6 @@ export default function createTile(page: Page, properties: ClientTile): Tile {
       return new Link(page, properties);
     case "PAGE_LINK":
       return new PageLink(page, properties);
-    case "MAP":
-      return new MapObject(page, properties);
     case "TABLE":
       return new Table(page, properties);
     case "CHART":

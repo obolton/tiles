@@ -3,8 +3,8 @@ import MenuItem from "@/components/menus/MenuItem";
 import TextIcon from "@/icons/text.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
-import PlaceIcon from "@/icons/place.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
+import PlaceIcon from "@/icons/place.svg?jsx";
 import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";
 import FreeformLayoutIcon from "@/icons/freeform-layout.svg?jsx";
 import CalendarLayoutIcon from "@/icons/event.svg?jsx";
@@ -16,7 +16,6 @@ import Text from "@/models/Text";
 import Image from "@/models/Image";
 import Link from "@/models/Link";
 import PageLink from "@/models/PageLink";
-import Map from "@/models/Map";
 import Table from "@/models/Table";
 import Section from "@/models/Section";
 import type { TileType } from "api/types/tiles";
@@ -31,7 +30,6 @@ type InsertTileButton = {
 const BUTTONS: readonly InsertTileButton[] = [
   { label: "Text", type: "TEXT", Icon: TextIcon },
   { label: "Image", type: "IMAGE", Icon: ImageIcon },
-  { label: "Map", type: "MAP", Icon: PlaceIcon },
   { label: "Link", type: "LINK", Icon: LinkIcon },
   { label: "Table", type: "TABLE", Icon: TableIcon },
 ];
@@ -127,20 +125,6 @@ export default function InsertMenu({
         });
         break;
 
-      case "MAP":
-        showModal(PlaceModalLoader, {
-          props: {},
-          async onConfirm({ place }) {
-            await Map.create(Editor.current.page, {
-              sectionId: insertSectionId,
-              beforeId: getBeforeId(),
-              places: [place],
-              sizing: "FOUR_THREE",
-            });
-          },
-        });
-        break;
-
       case "TABLE":
         Table.create(Editor.current.page, {
           sectionId: insertSectionId,
@@ -177,6 +161,32 @@ export default function InsertMenu({
     }).catch(handleError);
   }
 
+  function createMap() {
+    showModal(PlaceModalLoader, {
+      props: {},
+      async onConfirm({ place }) {
+        const section = await Section.create(Editor.current.page, {
+          beforeId: getBeforeId(),
+          layout: "MAP",
+          sizing: "FOUR_THREE",
+        });
+        await Text.create(Editor.current.page, {
+          sectionId: section.id,
+          sizing: "AUTO",
+          width: 8,
+          lat: place.lat,
+          long: place.long,
+          content: [
+            {
+              type: "paragraph",
+              children: [{ type: "text", format: 0, text: place.name }],
+            },
+          ],
+        });
+      },
+    });
+  }
+
   return (
     <popover-menu {...props}>
       <MenuItemGroup>
@@ -211,6 +221,10 @@ export default function InsertMenu({
           on:click={createCalendar}
         >
           Calendar
+        </MenuItem>
+
+        <MenuItem icon={<PlaceIcon aria-hidden="true" />} on:click={createMap}>
+          Map
         </MenuItem>
       </MenuItemGroup>
     </popover-menu>

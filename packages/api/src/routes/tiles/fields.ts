@@ -7,7 +7,6 @@ import { IMAGE_FIELDS } from "@/routes/images/fields";
 import { VIDEO_FIELDS } from "@/routes/videos/fields";
 import { LINK_FIELDS } from "@/routes/links/fields";
 import { PAGE_LINK_FIELDS } from "@/routes/pageLinks/fields";
-import { MAP_FIELDS } from "@/routes/maps/fields";
 import { TABLE_WITH_DATA_FIELDS } from "@/routes/tables/fields";
 import { CHART_FIELDS } from "@/routes/charts/fields";
 
@@ -27,6 +26,8 @@ export const TILE_FIELDS = {
   rowSpan: true,
   startDate: true,
   endDate: true,
+  lat: true,
+  long: true,
   animation: true,
   frame: true,
   cornerRadius: true,
@@ -55,9 +56,6 @@ export const FULL_TILE_FIELDS = {
   },
   pageLink: {
     select: PAGE_LINK_FIELDS,
-  },
-  map: {
-    select: MAP_FIELDS,
   },
   table: {
     select: TABLE_WITH_DATA_FIELDS,

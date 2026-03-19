@@ -1,7 +1,7 @@
 import maplibregl from "maplibre-gl";
 import MapEvent from "./MapEvent";
 import css from "./MapView.css?inline";
-import type MapMarker from "./MapMarker";
+import type MapPoint from "./MapPoint";
 import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
@@ -24,7 +24,7 @@ function getStyleUrl(style: MapStyleType = "DEFAULT") {
 export interface MapViewAttributes extends GlobalHTMLAttributes {
   movable?: boolean;
   legend?: boolean;
-  mapstyle?: MapStyleType;
+  mapstyle?: MapStyleType | null;
 }
 
 declare global {
@@ -50,15 +50,17 @@ export default class MapView extends HTMLElement {
   private intersectionObserver: IntersectionObserver;
   private mutationObserver: MutationObserver;
   private map?: maplibregl.Map;
-  private markers: maplibregl.Marker[] = [];
+  private markers = new Map<MapPoint, maplibregl.Marker>();
   readonly selectedMarkerIds = new Set<string>();
 
-  get selectedMarkers(): MapMarker[] {
+  get selectedMarkers(): MapPoint[] {
     return Array.from(this.selectedMarkerIds)
-      .map((id) =>
-        this.querySelector<MapMarker>(`map-marker#${CSS.escape(id)}`),
-      )
-      .filter((marker): marker is MapMarker => marker !== null);
+      .map((id) => this.getPointById(id))
+      .filter((point): point is MapPoint => point !== null);
+  }
+
+  getPointById(id: string): MapPoint | null {
+    return this.querySelector<MapPoint>(`map-point#${CSS.escape(id)}`);
   }
 
   get mapStyle(): MapStyleType {
@@ -109,9 +111,9 @@ export default class MapView extends HTMLElement {
   private handleClick(event: PointerEvent) {
     const target = event.target as HTMLElement;
 
-    const marker = target.closest("map-marker");
-    if (marker) {
-      this.selectMarker(marker.id, event.shiftKey);
+    const point = target.closest("map-point");
+    if (point) {
+      this.selectMarker(point.id, event.shiftKey);
       return;
     }
 
@@ -129,14 +131,14 @@ export default class MapView extends HTMLElement {
 
   private handleFocusIn(event: FocusEvent) {
     const target = event.target as HTMLElement;
-    const marker = target.closest("map-marker");
-    if (marker) {
-      this.selectMarker(marker.id);
+    const point = target.closest("map-point");
+    if (point) {
+      this.selectMarker(point.id);
     }
   }
 
-  private getMarkers() {
-    return this.querySelectorAll<MapMarker>("map-marker");
+  private getPoints() {
+    return this.getElementsByTagName("map-point") as HTMLCollectionOf<MapPoint>;
   }
 
   private get legendItems() {
@@ -148,32 +150,28 @@ export default class MapView extends HTMLElement {
   }
 
   private getBounds() {
-    const markers = this.getMarkers();
+    const points = this.getPoints();
 
-    if (markers.length === 1) {
-      const bounds = markers[0]?.getBounds();
-      if (bounds) {
-        return new maplibregl.LngLatBounds(bounds);
-      } else {
-        return undefined;
-      }
+    if (points.length <= 1) {
+      return undefined;
     }
 
     const mapBounds = new maplibregl.LngLatBounds();
-    markers.forEach((marker) =>
-      mapBounds.extend(marker.getBounds() || [marker.long, marker.lat]),
-    );
+    for (const point of points) {
+      mapBounds.extend([point.long, point.lat]);
+    }
     return mapBounds;
   }
 
-  private addMarker(markerElement: MapMarker) {
+  private addPoint(pointElement: MapPoint) {
     if (!this.map) {
       throw new Error("Map is not initialized");
     }
 
     const element = document.createElement("div");
     element.classList.add("marker");
-    element.dataset.markerId = markerElement.id;
+    element.dataset.markerId = pointElement.id;
+    element.addEventListener("mousedown", (e) => e.stopImmediatePropagation());
     const slot = document.createElement("slot");
     element.appendChild(slot);
 
@@ -182,11 +180,11 @@ export default class MapView extends HTMLElement {
       offset: [0, 0],
       subpixelPositioning: true,
     })
-      .setLngLat([markerElement.long, markerElement.lat])
+      .setLngLat([pointElement.long, pointElement.lat])
       .addTo(this.map);
-    this.markers.push(marker);
+    this.markers.set(pointElement, marker);
 
-    slot.assign(markerElement);
+    slot.assign(pointElement);
   }
 
   private initializeMap() {
@@ -194,13 +192,13 @@ export default class MapView extends HTMLElement {
       throw new Error("Map is already initialized");
     }
 
-    const markers = this.getMarkers();
+    const points = this.getPoints();
 
     this.map = new maplibregl.Map({
       container: this.root,
       style: getStyleUrl(this.mapStyle),
       center:
-        markers.length === 1 ? [markers[0]!.long, markers[0]!.lat] : undefined,
+        points.length === 1 ? [points[0]!.long, points[0]!.lat] : undefined,
       bounds: this.getBounds(),
       zoom: 13,
       attributionControl: { compact: true },
@@ -214,7 +212,12 @@ export default class MapView extends HTMLElement {
 
     this.updateSlots();
 
-    this.mutationObserver.observe(this, { childList: true });
+    this.mutationObserver.observe(this, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["lat", "long"],
+    });
 
     requestAnimationFrame(() => this.map?.resize());
   }
@@ -263,14 +266,33 @@ export default class MapView extends HTMLElement {
     }
   }
 
-  mutationObserverCallback() {
-    this.updateSlots();
+  mutationObserverCallback(mutations: MutationRecord[]) {
+    for (const mutation of mutations) {
+      if (
+        mutation.type === "attributes" &&
+        mutation.target instanceof HTMLElement
+      ) {
+        const point = mutation.target.closest("map-point") as MapPoint | null;
+        if (point) {
+          this.markers.get(point)?.setLngLat([point.long, point.lat]);
+        }
+        continue;
+      }
+      if (mutation.type === "childList") {
+        this.updateSlots();
+        return;
+      }
+    }
   }
 
   private updateSlots() {
-    this.markers.forEach((marker) => marker.remove());
-    this.markers = [];
-    this.getMarkers().forEach((marker) => this.addMarker(marker));
+    for (const marker of this.markers.values()) {
+      marker.remove();
+    }
+    this.markers.clear();
+    for (const point of this.getPoints()) {
+      this.addPoint(point);
+    }
     this.updateLegendItems();
   }
 
@@ -281,25 +303,23 @@ export default class MapView extends HTMLElement {
     }
 
     const fragment = document.createDocumentFragment();
-    for (const marker of this.getMarkers()) {
-      fragment.append(this.createLegendItem(marker));
+    for (const point of this.getPoints()) {
+      fragment.append(this.createLegendItem(point));
     }
     legend.replaceChildren(fragment);
   }
 
-  private createLegendItem(marker: MapMarker) {
+  private createLegendItem(point: MapPoint) {
     const item = document.createElement("button");
     item.className = "legend-item";
     item.type = "button";
     item.role = "option";
-    item.ariaSelected = this.selectedMarkerIds.has(marker.id)
-      ? "true"
-      : "false";
-    item.dataset.markerId = marker.id;
+    item.ariaSelected = this.selectedMarkerIds.has(point.id) ? "true" : "false";
+    item.dataset.markerId = point.id;
 
     const label = document.createElement("span");
     label.className = "legend-label";
-    label.textContent = marker.getAttribute("label") || "Unnamed place";
+    label.textContent = point.getAttribute("label") || "Unnamed place";
 
     item.append(label);
     return item;
@@ -322,27 +342,16 @@ export default class MapView extends HTMLElement {
   }
 
   flyToMarker(markerId: string) {
-    const marker = Array.from(this.getMarkers()).find(
-      (marker) => marker.id === markerId,
-    );
-    if (!marker) {
+    const point = this.getPointById(markerId);
+    if (!point) {
       return;
     }
-    const bounds = marker.getBounds();
-    if (bounds) {
-      this.map?.fitBounds(bounds, {
-        padding: 64,
-        animate: true,
-        duration: 500,
-      });
-    } else {
-      this.map?.flyTo({
-        center: [marker.long, marker.lat],
-        zoom: 13,
-        duration: 500,
-      });
-    }
-    marker.focus({ preventScroll: true });
+    this.map?.flyTo({
+      center: [point.long, point.lat],
+      zoom: 13,
+      duration: 500,
+    });
+    point.focus({ preventScroll: true });
   }
 
   getBoundingBox(): [number, number, number, number] {
@@ -371,14 +380,30 @@ export default class MapView extends HTMLElement {
   }
 
   private updateMarkerSelection() {
-    for (const marker of this.getMarkers()) {
-      marker.selected = this.selectedMarkerIds.has(marker.id);
-    }
     for (const item of this.legendItems) {
       const markerId = item.dataset.markerId;
       item.ariaSelected =
         markerId && this.selectedMarkerIds.has(markerId) ? "true" : "false";
     }
+  }
+
+  project(coordinates: { lat: number; long: number }): {
+    x: number;
+    y: number;
+  } {
+    if (!this.map) {
+      throw new Error("Map is not initialized");
+    }
+    const point = this.map.project([coordinates.long, coordinates.lat]);
+    return { x: point.x, y: point.y };
+  }
+
+  unproject(point: { x: number; y: number }): { lat: number; long: number } {
+    if (!this.map) {
+      throw new Error("Map is not initialized");
+    }
+    const lngLat = this.map.unproject([point.x, point.y]);
+    return { lat: lngLat.lat, long: lngLat.lng };
   }
 }
 
