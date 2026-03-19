@@ -9,18 +9,22 @@ export interface MessageBubbleProps {
 
 export default function MessageBubble({ message }: MessageBubbleProps) {
   return (
-    <article
-      className={classNames(styles.bubble, styles[message.role])}
-      aria-label={message.role === "user" ? "You" : "AI"}
-    >
-      <div className={styles.content}>{message.content}</div>
-      {message.role === "assistant" && message.actions.length > 0 ? (
+    <>
+      {message.content ? (
+        <article
+          className={classNames(styles.bubble, styles[message.role])}
+          aria-label={message.role === "user" ? "You" : "AI"}
+        >
+          {message.content}
+        </article>
+      ) : null}
+      {message.role === "assistant" && message.actions?.length ? (
         <div className={styles.actions}>
           {message.actions.map((action) => (
             <ActionChip action={action} />
           ))}
         </div>
       ) : null}
-    </article>
+    </>
   );
 }

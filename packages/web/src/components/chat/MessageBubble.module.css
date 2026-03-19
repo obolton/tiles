@@ -2,12 +2,11 @@
   max-width: 80%;
   padding: 0.6em 0.85em;
   border-radius: var(--border-radius);
-}
-
-.content {
   white-space: pre-wrap;
   overflow-wrap: break-word;
   line-height: 1.5;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 2px 8px -2px rgb(0 0 0 / 15%);
 }
 
 .user {
@@ -19,7 +18,7 @@
 
 .assistant {
   align-self: flex-start;
-  background: color-mix(in oklch, var(--text-color) 6%, transparent);
+  background: var(--ui-background-color);
   border-end-start-radius: 4px;
 }
 
