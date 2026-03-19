@@ -14,8 +14,6 @@ export interface MapEditorOptions {
 interface DragState {
   lat: number;
   long: number;
-  offsetX: number;
-  offsetY: number;
 }
 
 export default class MapEditor {
@@ -60,19 +58,8 @@ export default class MapEditor {
     if (!tile) {
       return;
     }
-
-    const coordinates = tile.coordinates.value;
-    if (!coordinates) {
-      throw new Error("Map tile is missing coordinates");
-    }
-
-    // Calculate offset from pointer to the tile's pin position
-    const rect = this.element.getBoundingClientRect();
-    const pinPixel = this.element.project(coordinates);
-    const offsetX = event.clientX - rect.left - pinPixel.x;
-    const offsetY = event.clientY - rect.top - pinPixel.y;
-
-    this.drag = { lat: 0, long: 0, offsetX, offsetY };
+    event.stopPropagation();
+    this.drag = { lat: 0, long: 0 };
   }
 
   private handleDragOver(event: DragDropEvent<DragData>) {
@@ -83,8 +70,8 @@ export default class MapEditor {
 
     const rect = this.element.getBoundingClientRect();
     const coordinates = this.element.unproject({
-      x: event.clientX - rect.left - this.drag.offsetX,
-      y: event.clientY - rect.top - this.drag.offsetY,
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
     });
 
     this.drag.lat = coordinates.lat;
