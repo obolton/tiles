@@ -26,6 +26,13 @@ export default function ScrollSection({
   const { tiles, editor } = section;
   const { isEditable } = editor;
 
+  const style =
+    layout === "GRID"
+      ? {
+          "--columns": section.columns.derive((columns) => columns?.toString()),
+        }
+      : undefined;
+
   function ref(element: ScrollView) {
     LayoutEditor.attach({
       element,
@@ -48,6 +55,7 @@ export default function ScrollSection({
         [styles.vertical]: layout === "VERTICAL",
         [styles.freeform]: layout === "FREEFORM",
       }}
+      style={style}
       data-section-id={section.id}
       data-layout={layout}
       tabindex={tabindex}

@@ -1,8 +1,10 @@
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
+import Stepper from "@/components/stepper/Stepper";
 import TileTools from "@/components/toolbars/tiles/TileTools";
 import StyleTools from "@/components/toolbars/tiles/StyleTools";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
+import If from "@/jsx/if";
 import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import HorizontalLayoutIcon from "@/icons/horizontal-layout.svg?jsx";
 import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";
@@ -79,6 +81,22 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
             </ListGroup>
           </list-select>
         </ToolbarGroup>
+
+        <If condition={section.layout.derive((l) => l === "GRID")}>
+          <ToolbarGroup label="Columns">
+            <Stepper
+              id="columns"
+              label="Columns"
+              data-tooltip="Columns"
+              value={section.columns.derive((c) => c ?? 4)}
+              min={1}
+              max={12}
+              onChange={(columns) =>
+                section.setColumns(columns).catch(handleError)
+              }
+            />
+          </ToolbarGroup>
+        </If>
 
         <TileTools tile={section} />
       </toolbar-tab>

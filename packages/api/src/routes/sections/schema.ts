@@ -4,6 +4,7 @@ import { Layout } from "@/generated/prisma/client";
 
 export const SectionSchema = z.object({
   layout: z.enum(Layout).optional(),
+  columns: z.int().gte(1).lte(12).nullable().optional(),
 });
 
 export const CreateSectionSchema = z.strictObject({

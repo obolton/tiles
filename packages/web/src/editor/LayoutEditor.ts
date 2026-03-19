@@ -33,11 +33,6 @@ export interface DragData {
   tile: Tile;
 }
 
-interface RowLayout {
-  top: number;
-  height: number;
-}
-
 const SNAP_THRESHOLD = 16;
 
 export default class LayoutEditor {
@@ -54,11 +49,10 @@ export default class LayoutEditor {
   private readonly gridRef: WeakRef<HTMLElement>;
 
   private gridRect: DOMRect;
+  private gridColumns = 4;
   private gridColumnWidth = 0;
   private gridRowMinHeight = 24;
-  private gridRows: RowLayout[] = [];
   private gridColumnGap = 0;
-  private gridRowGap = 0;
 
   private beforeId: string | null = null;
   private x = 0;
@@ -159,17 +153,10 @@ export default class LayoutEditor {
     if (this.layoutType === "GRID") {
       this.gridColumnGap =
         style.columnGap === "normal" ? 0 : parseFloat(style.columnGap);
-      this.gridRowGap =
-        style.rowGap === "normal" ? 0 : parseFloat(style.rowGap);
-
-      const rows = style.gridTemplateRows;
-      const rowHeights = rows === "none" ? [] : rows.split(" ").map(parseFloat);
-      let top = 0;
-      this.gridRows = [];
-      for (const height of rowHeights) {
-        this.gridRows.push({ top, height });
-        top += height + this.gridRowGap;
-      }
+      this.gridColumns =
+        style.gridTemplateColumns === "none"
+          ? 4
+          : style.gridTemplateColumns.split(" ").length;
     }
 
     if (this.dragPlaceholder) {
@@ -195,48 +182,10 @@ export default class LayoutEditor {
     return snap ? x + snap.delta : x;
   }
 
-  private getColumn(x: number, width: number, id: string) {
-    const snapX = this.snap ? this.getSnapX(x, width, id) : x;
-
-    return Math.max(
-      Math.round(snapX / (this.gridColumnWidth + this.gridColumnGap)),
-      0,
-    );
-  }
-
   private getSnapY(y: number, height: number, id: string) {
     const offsets = [y, y + height];
     const snap = findSnapPoint(this.snapPoints.y, offsets, SNAP_THRESHOLD, id);
     return snap ? y + snap.delta : y;
-  }
-
-  private getRow(y: number, height: number, id: string) {
-    const snapY = this.snap ? this.getSnapY(y, height, id) : y;
-
-    if (this.layoutType === "GRID") {
-      if (this.gridRows.length === 0) {
-        return 0;
-      }
-
-      for (let i = 0; i < this.gridRows.length; i++) {
-        const row = this.gridRows[i]!;
-        if (snapY < row.top + row.height) {
-          return i;
-        }
-      }
-
-      const lastRow = this.gridRows.at(-1)!;
-      const distanceFromBottom = y - (lastRow.top + lastRow.height);
-      const extraRows = Math.round(
-        distanceFromBottom / (this.gridRowMinHeight + this.gridRowGap),
-      );
-      return this.gridRows.length - 1 + extraRows;
-    }
-
-    return Math.max(
-      Math.round(snapY / (this.gridRowMinHeight + this.gridRowGap)),
-      0,
-    );
   }
 
   private pixelToPercentX(px: number): number {
@@ -313,24 +262,8 @@ export default class LayoutEditor {
     const offsetX = clientX - this.gridRect.x - state.offsetX;
     const offsetY = clientY - this.gridRect.y - state.offsetY;
 
-    if (this.layoutType === "FREEFORM") {
-      const x = this.getPercentX(
-        offsetX,
-        state.width,
-        state.element.id,
-        altKey,
-      );
-      const y = this.getPercentY(
-        offsetY,
-        state.height,
-        state.element.id,
-        altKey,
-      );
-      return { x, y };
-    }
-
-    const x = this.getColumn(offsetX, state.width, state.element.id);
-    const y = this.getRow(offsetY, state.height, state.element.id);
+    const x = this.getPercentX(offsetX, state.width, state.element.id, altKey);
+    const y = this.getPercentY(offsetY, state.height, state.element.id, altKey);
     return { x, y };
   }
 
@@ -361,7 +294,11 @@ export default class LayoutEditor {
     }
 
     const direction =
-      this.layoutType === "HORIZONTAL" ? "horizontal" : "vertical";
+      this.layoutType === "HORIZONTAL"
+        ? "horizontal"
+        : this.layoutType === "GRID"
+          ? "grid"
+          : "vertical";
 
     const position = getDragPosition(
       this.element,
@@ -454,6 +391,22 @@ export default class LayoutEditor {
         height,
         rowSpan: tile.rowSpan.value,
       });
+    } else if (this.layoutType === "GRID") {
+      const sizing = tile.sizing.value;
+      const ratio =
+        sizing !== "CUSTOM" && sizing !== "AUTO"
+          ? ASPECT_RATIOS[sizing]
+          : event.state.width / event.state.height;
+      const span = Math.min(tile.width.value ?? 1, this.gridColumns);
+      this.showDragPlaceholder({
+        width: null,
+        height: 0,
+        rowSpan: 1,
+      });
+      if (this.dragPlaceholder) {
+        this.dragPlaceholder.style.gridColumn = `span ${span}`;
+        this.dragPlaceholder.style.aspectRatio = `${ratio}`;
+      }
     } else {
       this.showDragPlaceholder({
         width: tile.width.value,
@@ -485,12 +438,7 @@ export default class LayoutEditor {
         await tile.setDock(null);
       }
 
-      if (this.layoutType === "HORIZONTAL" || this.layoutType === "VERTICAL") {
-        tile.move({
-          sectionId: this.sectionId,
-          beforeId: this.beforeId,
-        });
-      } else if (this.layoutType === "FREEFORM") {
+      if (this.layoutType === "FREEFORM") {
         const width = this.pixelToPercentX(state.width);
         const height = this.pixelToPercentY(state.height);
         tile.move({
@@ -503,8 +451,7 @@ export default class LayoutEditor {
       } else {
         tile.move({
           sectionId: this.sectionId,
-          x: this.x,
-          y: this.y,
+          beforeId: this.beforeId,
         });
       }
 
@@ -578,6 +525,15 @@ export default class LayoutEditor {
         this.pixelToPercentY(rect.height),
         1,
       );
+    } else if (this.layoutType === "GRID") {
+      const columns = this.gridColumns;
+      const gap = this.gridColumnGap;
+      const columnWidth = (this.gridRect.width - gap * (columns - 1)) / columns;
+      const span = Math.min(
+        Math.max(Math.round((rect.width + gap) / (columnWidth + gap)), 1),
+        columns,
+      );
+      this.resizing.width.value = span;
     } else {
       let width = Math.max(
         Math.round(

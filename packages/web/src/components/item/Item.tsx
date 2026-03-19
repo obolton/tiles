@@ -88,7 +88,7 @@ export function getSizeStyle(
     return {
       "--width": width?.toString(),
       "--height": height.toString(),
-      "aspect-ratio": undefined,
+      "aspect-ratio": "auto",
       height: undefined,
     };
   }
@@ -96,7 +96,7 @@ export function getSizeStyle(
     return {
       "--width": width?.toString(),
       "--height": height.toString(),
-      "aspect-ratio": undefined,
+      "aspect-ratio": "auto",
       height: "auto",
     };
   }

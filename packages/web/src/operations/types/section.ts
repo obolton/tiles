@@ -11,4 +11,13 @@ export interface SetSectionLayoutAction extends Action<
   SetSectionLayoutData
 > {}
 
-export type SectionAction = SetSectionLayoutAction;
+export interface SetSectionColumnsData extends TileActionData {
+  columns: number | null;
+}
+
+export interface SetSectionColumnsAction extends Action<
+  "section.setColumns",
+  SetSectionColumnsData
+> {}
+
+export type SectionAction = SetSectionLayoutAction | SetSectionColumnsAction;

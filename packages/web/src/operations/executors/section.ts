@@ -1,5 +1,5 @@
 import Section from "@/models/Section";
-import type { SetSectionLayoutAction } from "../types";
+import type { SetSectionLayoutAction, SetSectionColumnsAction } from "../types";
 import type { ActionExecutor } from "./types";
 
 const setLayout: ActionExecutor<SetSectionLayoutAction> = async (
@@ -10,6 +10,15 @@ const setLayout: ActionExecutor<SetSectionLayoutAction> = async (
   section.layout.value = layout;
 };
 
+const setColumns: ActionExecutor<SetSectionColumnsAction> = async (
+  editor,
+  { tileId, columns },
+) => {
+  const section = editor.page.getTile(tileId, Section);
+  section.columns.value = columns;
+};
+
 export const executors = {
   "section.setLayout": setLayout,
+  "section.setColumns": setColumns,
 } as const;
