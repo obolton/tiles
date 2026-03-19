@@ -1,0 +1,7 @@
+.tab {
+  padding: 0;
+}
+
+.prompt {
+  width: min(600px, 80vw);
+}

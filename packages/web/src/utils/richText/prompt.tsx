@@ -46,7 +46,7 @@ function getElement(view: EditorView) {
       { pageId, sectionId, prompt, context: { text: context, tileIds } },
       { context: { stream: true } },
     );
-    await insertFromStream(view, stream);
+    await insertFromStream(stream);
     removePrompt();
   }
 

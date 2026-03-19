@@ -98,8 +98,14 @@ export class MarkdownTransformer implements Transformer<
 
     const text = this.buffer.slice(0, this.pos);
 
-    // Buffer until we have a non-empty chunk (except in code blocks)
+    // Skip whitespace-only chunks (except in code blocks). When a
+    // delimiter is being consumed (skip > 0), still advance the buffer
+    // past it to avoid re-matching the same position indefinitely.
     if (text.trim().length === 0 && !isCode) {
+      if (skip > 0) {
+        this.buffer = this.buffer.slice(this.pos + skip);
+        this.pos = 0;
+      }
       return;
     }
 
@@ -200,111 +206,114 @@ export class MarkdownTransformer implements Transformer<
         break;
       }
 
-      const codeBlockStartMatch = this.buffer.match(CODE_BLOCK_START_MATCH);
-      if (codeBlockStartMatch) {
-        const [match, fence, language] = codeBlockStartMatch;
-        this.codeFence = { char: fence![0]!, length: fence!.length };
-        this.set(
-          controller,
-          { node: { type: "code", language: language ?? "" } },
-          match.length,
-        );
-        continue;
-      }
-
-      const blockStartMatch = this.buffer.match(BLOCK_START_MATCH);
-      if (blockStartMatch) {
-        const [match, modifier, id] = blockStartMatch;
-        let mode: DestinationMode;
-        switch (modifier) {
-          case "=":
-            mode = "replace";
-            break;
-          case "+":
-            mode = "append";
-            break;
-          case "^":
-            mode = "prepend";
-            break;
-          default:
-            mode = "insert";
+      // Block-level patterns
+      if (this.pos === 0) {
+        const codeBlockStartMatch = this.buffer.match(CODE_BLOCK_START_MATCH);
+        if (codeBlockStartMatch) {
+          const [match, fence, language] = codeBlockStartMatch;
+          this.codeFence = { char: fence![0]!, length: fence!.length };
+          this.set(
+            controller,
+            { node: { type: "code", language: language ?? "" } },
+            match.length,
+          );
+          continue;
         }
-        this.set(
-          controller,
-          { destination: parseInt(id!, 10), mode },
-          match.length,
-        );
-        continue;
-      }
 
-      const blockEndMatch = this.buffer.match(BLOCK_END_MATCH);
-      if (blockEndMatch) {
-        this.set(controller, { destination: null }, blockEndMatch[0].length);
-        continue;
-      }
+        const blockStartMatch = this.buffer.match(BLOCK_START_MATCH);
+        if (blockStartMatch) {
+          const [match, modifier, id] = blockStartMatch;
+          let mode: DestinationMode;
+          switch (modifier) {
+            case "=":
+              mode = "replace";
+              break;
+            case "+":
+              mode = "append";
+              break;
+            case "^":
+              mode = "prepend";
+              break;
+            default:
+              mode = "insert";
+          }
+          this.set(
+            controller,
+            { destination: parseInt(id!, 10), mode },
+            match.length,
+          );
+          continue;
+        }
 
-      const headingMatch = this.buffer.match(HEADING_MATCH);
-      if (headingMatch) {
-        const [match, hashes] = headingMatch;
-        const level = Math.min(hashes!.length, 3);
-        this.set(
-          controller,
-          {
-            node: {
-              type: "heading",
-              level,
+        const blockEndMatch = this.buffer.match(BLOCK_END_MATCH);
+        if (blockEndMatch) {
+          this.set(controller, { destination: null }, blockEndMatch[0].length);
+          continue;
+        }
+
+        const headingMatch = this.buffer.match(HEADING_MATCH);
+        if (headingMatch) {
+          const [match, hashes] = headingMatch;
+          const level = Math.min(hashes!.length, 3);
+          this.set(
+            controller,
+            {
+              node: {
+                type: "heading",
+                level,
+              },
             },
-          },
-          match.length,
-        );
-        continue;
-      }
+            match.length,
+          );
+          continue;
+        }
 
-      const dividerMatch = this.buffer.match(DIVIDER_MATCH);
-      if (dividerMatch) {
-        this.set(
-          controller,
-          { node: { type: "divider" } },
-          dividerMatch[0].length,
-        );
-        this.node = null;
-        continue;
-      }
+        const dividerMatch = this.buffer.match(DIVIDER_MATCH);
+        if (dividerMatch) {
+          this.set(
+            controller,
+            { node: { type: "divider" } },
+            dividerMatch[0].length,
+          );
+          this.node = null;
+          continue;
+        }
 
-      const ulMatch = this.buffer.match(UNORDERED_LIST_ITEM_MATCH);
-      if (ulMatch) {
-        const [match, whitespace] = ulMatch;
-        const depth = Math.floor((whitespace ?? "").length / 2);
-        this.set(
-          controller,
-          {
-            node: {
-              type: "listitem",
-              listType: "unordered",
-              depth,
+        const ulMatch = this.buffer.match(UNORDERED_LIST_ITEM_MATCH);
+        if (ulMatch) {
+          const [match, whitespace] = ulMatch;
+          const depth = Math.floor((whitespace ?? "").length / 2);
+          this.set(
+            controller,
+            {
+              node: {
+                type: "listitem",
+                listType: "unordered",
+                depth,
+              },
             },
-          },
-          match.length,
-        );
-        continue;
-      }
+            match.length,
+          );
+          continue;
+        }
 
-      const olMatch = this.buffer.match(ORDERED_LIST_ITEM_MATCH);
-      if (olMatch) {
-        const [match, whitespace] = olMatch;
-        const depth = Math.floor((whitespace ?? "").length / 2);
-        this.set(
-          controller,
-          {
-            node: {
-              type: "listitem",
-              listType: "ordered",
-              depth,
+        const olMatch = this.buffer.match(ORDERED_LIST_ITEM_MATCH);
+        if (olMatch) {
+          const [match, whitespace] = olMatch;
+          const depth = Math.floor((whitespace ?? "").length / 2);
+          this.set(
+            controller,
+            {
+              node: {
+                type: "listitem",
+                listType: "ordered",
+                depth,
+              },
             },
-          },
-          match.length,
-        );
-        continue;
+            match.length,
+          );
+          continue;
+        }
       }
 
       if (!this.format.bold && rest.match(BOLD_START_MATCH)) {

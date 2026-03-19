@@ -15,6 +15,10 @@ declare global {
   interface HTMLElementTagNameMap {
     "floating-toolbar": FloatingToolbar;
   }
+
+  interface HTMLElementEventMap {
+    tabchange: Event;
+  }
 }
 
 declare module "@/jsx/html-attributes" {

@@ -101,19 +101,16 @@
 
         &::after {
           position: absolute;
-          inset: 0;
-          display: grid;
-          place-items: center;
-          border-radius: inherit;
-          font-weight: 500;
-          font-size: 18px;
+          top: 50%;
+          left: 50%;
+          translate: -50% -50%;
+          z-index: 1;
+          padding: 6px 12px;
+          background: var(--reference-color);
+          border-radius: 16px;
+          font-weight: 600;
+          font-size: 1rem;
           color: oklch(from var(--reference-color) 100% c h);
-          background: color-mix(
-            in oklch,
-            var(--reference-color) 60%,
-            transparent
-          );
-          backdrop-filter: blur(2px);
         }
       }
     }

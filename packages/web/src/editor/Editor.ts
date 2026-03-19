@@ -6,7 +6,7 @@ import {
   isImage,
   isUriList,
 } from "@/utils/media";
-import { reactive, flag } from "@/utils/reactivity";
+import { reactive, flag, combine } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
 import { isEditMode, setEditMode } from "@/utils/edit";
@@ -19,6 +19,7 @@ import { handleError } from "@/utils/errors";
 import Section from "@/models/Section";
 import Image from "@/models/Image";
 import Link from "@/models/Link";
+import ChatState from "@/components/chat/ChatState";
 import { OperationManager, execute } from "@/operations";
 import type Tile from "@/models/Tile";
 import type { Reactive } from "@/utils/reactivity";
@@ -36,6 +37,9 @@ export default class Editor {
   readonly selection: Reactive<Set<Tile>>;
   readonly references: Reactive<Tile[]>;
   readonly isPromptOpen: Reactive<boolean>;
+  readonly isPromptToolbarOpen: Reactive<boolean>;
+  readonly isTileEditable: Reactive<boolean>;
+  readonly chat: ChatState;
 
   readonly operations: OperationManager<AnyAction> | null;
   readonly canUndo: Reactive<boolean>;
@@ -99,6 +103,12 @@ export default class Editor {
     this.selection = reactive(new Set());
     this.references = reactive([]);
     this.isPromptOpen = flag(false);
+    this.isPromptToolbarOpen = flag(false);
+    this.chat = new ChatState();
+    this.isTileEditable = combine(
+      { isEditable: this.isEditable, isPromptOpen: this.isPromptOpen },
+      ({ isEditable, isPromptOpen }) => isEditable && !isPromptOpen,
+    );
 
     this.canUndo = reactive(false);
     this.canRedo = reactive(false);
@@ -173,6 +183,13 @@ export default class Editor {
       (event.target.tagName === "INPUT" ||
         event.target.tagName === "TEXTAREA" ||
         event.target.isContentEditable);
+
+    // AI Prompt: Cmd/Ctrl+J
+    if (isMod && event.key === "j" && this.isEditable.value) {
+      event.preventDefault();
+      this.togglePromptToolbar();
+      return;
+    }
 
     // Present: Cmd/Ctrl+Enter (not in text inputs)
     if (isMod && event.key === "Enter" && !isInput) {
@@ -332,6 +349,10 @@ export default class Editor {
 
   // References
 
+  addReference(tile: Tile) {
+    this.references.value = [...this.references.value, tile];
+  }
+
   toggleReference(id: string) {
     const index = this.references.value.findIndex((tile) => tile.id === id);
     if (index >= 0) {
@@ -344,6 +365,39 @@ export default class Editor {
   clearReferences() {
     if (this.references.value.length > 0) {
       this.references.value = [];
+    }
+  }
+
+  // Prompt toolbar
+
+  openPromptToolbar() {
+    if (this.isPromptOpen.value) {
+      return;
+    }
+
+    const selected = Array.from(this.selection.value);
+    if (selected.length > 0 && this.references.value.length === 0) {
+      this.references.value = selected;
+    }
+
+    this.isPromptToolbarOpen.value = true;
+    this.isPromptOpen.value = true;
+    document.body.dataset.prompt = "";
+  }
+
+  closePromptToolbar() {
+    this.isPromptToolbarOpen.value = false;
+    this.isPromptOpen.value = false;
+    delete document.body.dataset.prompt;
+    this.clearReferences();
+    this.chat.clear();
+  }
+
+  togglePromptToolbar() {
+    if (this.isPromptToolbarOpen.value) {
+      this.closePromptToolbar();
+    } else {
+      this.openPromptToolbar();
     }
   }
 

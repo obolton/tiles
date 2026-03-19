@@ -30,14 +30,19 @@ interface ResolvedDestination {
   mode?: DestinationMode;
 }
 
+export interface Message {
+  message: string;
+}
+
 export type WriteEvent =
   | Exclude<RichTextStreamEvent, Destination>
   | ResolvedDestination
   | Artifact
-  | ActionEvent;
+  | ActionEvent
+  | Message;
 
 const MAX_TURNS = 12;
-const PROMPT = `You are a tool for creating and editing interactive documents. Do not include any commentary, notes, or explanations in your response - only use tool calls and block markers. Any text outside of block markers will be inserted into the document as content.
+const PROMPT = `You are a tool for creating and editing interactive documents. Use tool calls and block markers to create and edit document content. Any text outside of block markers will be shown as a message to the user in a chat interface (not inserted into the document). You may include a brief conversational response when appropriate, especially to acknowledge the user's request, explain what you did, or ask clarifying questions.
 
 - The document is laid out as blocks with varying sizes.
 - Large blocks span the whole document, while other blocks may appear side-by-side.
@@ -118,7 +123,7 @@ export async function generateImage({ prompt }: GenerateImageSchema) {
 }
 
 export async function* write(
-  { pageId, sectionId, prompt, context }: WriteSchema,
+  { pageId, sectionId, prompt, context, history }: WriteSchema,
   { userId, workspaceId }: AuthenticatedPageProcedureContext,
   signal?: AbortSignal,
 ): AsyncIterable<WriteEvent> {
@@ -136,6 +141,12 @@ export async function* write(
   const tileContext = formatTileContext(tiles);
   if (tileContext) {
     input.push({ role: "user", content: tileContext });
+  }
+
+  if (history?.length) {
+    for (const message of history) {
+      input.push({ role: message.role, content: message.content });
+    }
   }
 
   input.push({ role: "user", content: prompt });
@@ -256,16 +267,21 @@ export async function streamTurn(
     .pipeThrough(transformMarkdown());
 
   async function* events() {
+    let destination: string | null = null;
+
     for await (const textEvent of text) {
-      // Map artifact IDs back to entity IDs
       if (typeof textEvent === "object" && "destination" in textEvent) {
-        const destination =
+        destination =
           textEvent.destination !== null
             ? toolContext.resolveArtifactId(textEvent.destination)
             : null;
-        yield { destination, mode: textEvent.mode };
-      } else {
+        if (destination) {
+          yield { destination, mode: textEvent.mode };
+        }
+      } else if (destination) {
         yield textEvent;
+      } else if (typeof textEvent === "string") {
+        yield { message: textEvent };
       }
     }
     for (const artifact of artifacts) {

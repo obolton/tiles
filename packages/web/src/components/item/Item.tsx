@@ -39,7 +39,6 @@ const ANIMATION_NAMES: Record<Animation, string> = {
 export interface ItemProps {
   style?: StyleDeclaration;
   classList?: { [k: string]: boolean | Reactive<boolean> };
-  editable?: boolean | Reactive<boolean>;
   tile: Tile;
   tabindex?: number | Reactive<number | undefined>;
   resize?: Reactive<ResizeDirection | null>;
@@ -107,7 +106,6 @@ export function getSizeStyle(
 export default function Item({
   classList,
   style,
-  editable = false,
   tile,
   tabindex,
   resize,
@@ -232,8 +230,8 @@ export default function Item({
 
   const resizeDirection = resize
     ? combine(
-        { resize, isEditable: editor.isEditable },
-        ({ resize, isEditable }) => (isEditable ? resize : null),
+        { resize, isTileEditable: editor.isTileEditable },
+        ({ resize, isTileEditable }) => (isTileEditable ? resize : null),
       )
     : undefined;
 
@@ -243,7 +241,7 @@ export default function Item({
         id={id}
         ref={ref}
         aria-selected={isSelected}
-        allowdrag={editable}
+        allowdrag={editor.isTileEditable}
         resize={resizeDirection}
         classList={{
           [styles.item]: true,
@@ -258,7 +256,7 @@ export default function Item({
             (f) => f === "FULL_BLEED",
           ),
           animate: tile.animation.derive((a) => a !== null),
-          [styles.draggable]: editable,
+          [styles.draggable]: editor.isTileEditable,
           [styles.selected]: isSelected,
           [styles.referenced]: isReferenced,
           [styles.referencing]: editor.isPromptOpen,

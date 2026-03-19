@@ -35,7 +35,9 @@ export default function Prompt({
     }
 
     if (
-      (event.key === "Escape" || (event.key === "/" && event.metaKey)) &&
+      (event.key === "Escape" ||
+        (event.key === "/" && event.metaKey) ||
+        (event.key === "j" && (event.metaKey || event.ctrlKey))) &&
       onCancel
     ) {
       event.preventDefault();
@@ -60,26 +62,10 @@ export default function Prompt({
     }
 
     pending.on();
+    form.reset();
     onSubmit(prompt)
       .catch(handleError)
       .finally(() => pending.off());
-  }
-
-  function handleFocusOut(event: FocusEvent) {
-    const form = event.currentTarget as HTMLFormElement;
-
-    if (
-      !onCancel ||
-      !(event.relatedTarget instanceof Element) ||
-      form.contains(event.relatedTarget)
-    ) {
-      return;
-    }
-
-    const prompt = (new FormData(form).get("prompt") as string).trim();
-    if (!prompt) {
-      onCancel();
-    }
   }
 
   return (
@@ -87,7 +73,6 @@ export default function Prompt({
       {...props}
       className={classNames(styles.prompt, className)}
       on:submit={handleSubmit}
-      on:focusout={handleFocusOut}
     >
       <ReferenceList />
 

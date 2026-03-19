@@ -2,7 +2,8 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 4px 4px 10px;
+  height: 32px;
+  padding-inline: 10px;
   font-size: 13px;
   font-weight: 600;
   color: oklch(from var(--reference-color) 100% c h);
