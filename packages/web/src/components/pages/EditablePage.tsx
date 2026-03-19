@@ -7,6 +7,7 @@ import InsertButton from "@/components/buttons/InsertButton";
 import AIButton from "@/components/buttons/AIButton";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import PromptToolbar from "@/components/toolbars/prompt/PromptToolbar";
+import Thread from "@/components/chat/Thread";
 import If from "@/jsx/if";
 import { isSignedIn } from "@/utils/sessions";
 import { combine } from "@/utils/reactivity";
@@ -94,6 +95,9 @@ export default function EditablePage({ page }: EditablePageProps) {
       </If>
 
       <If condition={editor.isPromptToolbarOpen}>
+        <If condition={editor.chat.messages.derive((m) => m.length > 0)}>
+          <Thread />
+        </If>
         <PromptToolbar />
       </If>
 
