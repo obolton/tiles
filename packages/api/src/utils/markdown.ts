@@ -98,8 +98,14 @@ export class MarkdownTransformer implements Transformer<
 
     const text = this.buffer.slice(0, this.pos);
 
-    // Buffer until we have a non-empty chunk (except in code blocks)
+    // Skip whitespace-only chunks (except in code blocks). When a
+    // delimiter is being consumed (skip > 0), still advance the buffer
+    // past it to avoid re-matching the same position indefinitely.
     if (text.trim().length === 0 && !isCode) {
+      if (skip > 0) {
+        this.buffer = this.buffer.slice(this.pos + skip);
+        this.pos = 0;
+      }
       return;
     }
 

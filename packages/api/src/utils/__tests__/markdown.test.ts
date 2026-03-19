@@ -62,6 +62,16 @@ describe("transformMarkdown", () => {
       const output = await getEvents(["hello ** world"]);
       expect(output).toEqual([{ type: "paragraph" }, "hello ** world"]);
     });
+
+    test("handles whitespace before bold delimiter", async () => {
+      const output = await getEvents(["  **bold**"]);
+      expect(output).toEqual([
+        { type: "paragraph" },
+        { bold: true },
+        "bold",
+        { bold: false },
+      ]);
+    });
   });
 
   describe("italic", () => {
