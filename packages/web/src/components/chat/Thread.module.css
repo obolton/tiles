@@ -1,15 +1,18 @@
 .thread {
   position: fixed;
-  inset: 0;
+  inset: 0 0 132px;
   z-index: 1;
   overflow-y: auto;
   overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   gap: 12px;
-  padding: 32px 16px;
-  padding-block-end: 120px;
-  background: color-mix(in oklch, var(--text-color) 5%, transparent);
-  backdrop-filter: blur(4px);
+  width: min(600px, 80vw);
+  margin-inline: var(--navigation-bar-size) 0;
+  justify-self: center;
+  padding-block-start: 32px;
+}
+
+.thread > :first-child {
+  margin-block-start: auto;
 }
