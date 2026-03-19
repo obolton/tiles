@@ -16,6 +16,7 @@ export default class Image extends Tile {
   readonly type = "IMAGE";
 
   readonly imageUrl: string | null;
+  readonly size: { width: number; height: number };
   readonly alt: Reactive<string | null>;
   readonly text: Reactive<ClientImageTile["text"]>;
   readonly origin: Reactive<ImageOrigin>;
@@ -42,8 +43,9 @@ export default class Image extends Tile {
   constructor(page: Page, properties: ClientImageTile) {
     super(page, properties);
 
-    const { imageUrl, alt, text, originX, originY } = properties;
+    const { imageUrl, image, alt, text, originX, originY } = properties;
     this.imageUrl = imageUrl;
+    this.size = image ?? { width: 0, height: 0 };
     this.alt = reactive(alt);
     this.text = reactive(text);
     this.origin = reactive({ x: originX, y: originY });
@@ -55,6 +57,7 @@ export default class Image extends Tile {
       ...super.serialize(),
       type: "IMAGE",
       imageUrl: this.imageUrl,
+      image: this.size,
       alt: this.alt.value,
       originX: this.origin.value.x,
       originY: this.origin.value.y,
