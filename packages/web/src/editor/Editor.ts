@@ -15,6 +15,7 @@ import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import Page, { type PageData } from "@/models/Page";
 import { cachePageProperties, cacheTiles } from "@/utils/cache/pages";
+import { isCacheInitialized } from "@/utils/cache";
 import { handleError } from "@/utils/errors";
 import Section from "@/models/Section";
 import Image from "@/models/Image";
@@ -508,6 +509,10 @@ export default class Editor {
   // Cache
 
   private updateCache(actions: readonly AnyAction[]) {
+    if (!isCacheInitialized()) {
+      return;
+    }
+
     const tileIds = new Set<string>();
     for (const { data } of actions) {
       if ("tileId" in data) {
