@@ -44,6 +44,13 @@ body[data-editing] .figure {
   }
 }
 
+.auto {
+  & > img {
+    height: auto;
+    object-fit: contain;
+  }
+}
+
 .loading {
   background: rgb(0 0 0 / 2%);
   animation: 0.75s ease-in-out infinite alternate loading;
