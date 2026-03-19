@@ -58,6 +58,12 @@
   initial-value: 0;
 }
 
+@property --columns {
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 4;
+}
+
 .contents {
   position: absolute;
   inset: 0;
@@ -72,7 +78,7 @@
   &:not(:defined),
   &::part(contents) {
     display: grid;
-    min-width: calc(100% - 32px);
+    width: 100%;
     min-height: calc(100% - 32px);
   }
 
@@ -84,14 +90,22 @@
 .grid {
   &:not(:defined),
   &::part(contents) {
-    grid-auto-columns: var(--grid-column-width);
-    grid-auto-rows: minmax(var(--grid-row-height), auto);
+    grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+    gap: var(--gap);
   }
 
   & .item {
-    grid-column: calc(var(--x) + 1) / span var(--width);
-    grid-row: calc(var(--y) + 1) / span var(--rows);
-    height: calc(var(--height) * var(--grid-row-height));
+    grid-column: span min(var(--width, 1), var(--columns));
+    width: auto;
+    height: auto;
+    aspect-ratio: 1;
+    align-self: center;
+  }
+
+  & > :global(.drag-placeholder) {
+    width: auto;
+    height: auto;
+    justify-self: stretch;
   }
 }
 
