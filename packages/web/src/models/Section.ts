@@ -10,6 +10,7 @@ export default class Section extends Tile {
   readonly type = "SECTION";
 
   readonly layout: Reactive<Layout>;
+  readonly columns: Reactive<number | null>;
   readonly tiles: TileCollection;
 
   static async create(
@@ -32,8 +33,9 @@ export default class Section extends Tile {
   constructor(page: Page, properties: ClientSectionTile) {
     super(page, properties);
 
-    const { layout } = properties;
+    const { layout, columns } = properties;
     this.layout = reactive(layout);
+    this.columns = reactive(columns);
     this.tiles = new TileCollection(this.id);
   }
 
@@ -42,6 +44,7 @@ export default class Section extends Tile {
       ...super.serialize(),
       type: "SECTION",
       layout: this.layout.value,
+      columns: this.columns.value,
     };
   }
 
@@ -69,5 +72,21 @@ export default class Section extends Tile {
       },
     });
     return this.update({ layout });
+  }
+
+  setColumns(columns: number | null) {
+    const oldColumns = this.columns.value;
+    this.columns.value = columns;
+    this.editor.recordOperation({
+      apply: {
+        type: "section.setColumns",
+        data: { tileId: this.id, columns },
+      },
+      reverse: {
+        type: "section.setColumns",
+        data: { tileId: this.id, columns: oldColumns },
+      },
+    });
+    return this.update({ columns });
   }
 }

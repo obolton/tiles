@@ -149,4 +149,39 @@ describe("Section", () => {
       });
     });
   });
+
+  describe("setColumns", () => {
+    test("updates the columns and persists it", async () => {
+      const section = new Section(editor.page, SECTION_TILE);
+
+      updateMock.mockResolvedValue({ ...SECTION_TILE, columns: 3 });
+
+      await section.setColumns(3);
+
+      expect(section.columns.value).toBe(3);
+      expect(updateMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: SECTION_TILE.id,
+        columns: 3,
+      });
+    });
+
+    test("sets columns to null for default", async () => {
+      const section = new Section(editor.page, {
+        ...SECTION_TILE,
+        columns: 6,
+      });
+
+      updateMock.mockResolvedValue({ ...SECTION_TILE, columns: null });
+
+      await section.setColumns(null);
+
+      expect(section.columns.value).toBeNull();
+      expect(updateMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        id: SECTION_TILE.id,
+        columns: null,
+      });
+    });
+  });
 });
