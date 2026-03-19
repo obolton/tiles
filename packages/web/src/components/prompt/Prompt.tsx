@@ -62,6 +62,7 @@ export default function Prompt({
     }
 
     pending.on();
+    form.reset();
     onSubmit(prompt)
       .catch(handleError)
       .finally(() => pending.off());
