@@ -1,16 +1,40 @@
 .map {
   width: 100%;
   height: 100%;
+  border-radius: var(--border-radius);
+
+  --background-fallback: var(--background-color);
 }
 
 .pin {
   position: relative;
-  display: flex;
-  align-items: center;
   cursor: pointer;
 
-  & page-item {
-    display: none;
+  & page-item:not(:global(.drag-preview)) {
+    display: flex;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    max-width: none;
+    cursor: auto;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      visibility 0s var(--animation-duration),
+      opacity var(--animation-duration-short) var(--easing);
+  }
+
+  &:hover:not(:has([aria-selected="true"])) {
+    z-index: 1;
+
+    & page-item:not(:global(.drag-preview)) {
+      visibility: visible;
+      opacity: 1;
+      transition-delay: 0s;
+      pointer-events: none;
+    }
   }
 
   &:has([aria-selected="true"]) {
@@ -20,16 +44,30 @@
       display: none;
     }
 
-    & page-item {
-      display: flex;
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      margin-bottom: 8px;
-      max-width: none;
+    & page-item:not(:global(.drag-preview)) {
+      visibility: visible;
+      opacity: 1;
+      transition-delay: 0s;
+    }
+
+    :global(body[data-drag]) & {
+      & page-item:not(:global(.drag-preview)) {
+        visibility: hidden;
+        opacity: 0;
+      }
+
+      & .label {
+        display: unset;
+      }
     }
   }
+}
+
+.handle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: visible;
 }
 
 .dot,
