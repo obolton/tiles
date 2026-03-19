@@ -3,7 +3,6 @@ import { closest, getListDepth } from "./helpers";
 import { handleStreamAction } from "./actions";
 import Editor from "@/editor/Editor";
 import Text from "@/models/Text";
-import type { EditorView } from "prosemirror-view";
 import type { EditorState, Transaction } from "prosemirror-state";
 import type { Mark, Node } from "prosemirror-model";
 import type { ClientTile } from "api/types/tiles";
@@ -75,7 +74,15 @@ export interface ActionEvent {
   action: Action;
 }
 
-export type StreamEvent = RichTextStreamEvent | ArtifactEvent | ActionEvent;
+export interface Message {
+  message: string;
+}
+
+export type StreamEvent =
+  | RichTextStreamEvent
+  | ArtifactEvent
+  | ActionEvent
+  | Message;
 
 export type ReactiveState = Reactive<EditorState | null>;
 
@@ -138,249 +145,270 @@ function dispatch(state: ReactiveState, tr: Transaction) {
 
 type InsertDirection = "before" | "after";
 
-interface DestinationState {
-  output: ReactiveState | null;
-  pos: number | null;
-  direction: InsertDirection;
-  replaceEmptyBlock: boolean;
+export type ObserverEvent = Message | ActionEvent | ArtifactEvent;
+
+export interface StreamContext {
+  getState: (id: string) => ReactiveState | null;
+  onEvent?: (event: ObserverEvent) => void;
 }
 
-function handleDestination(
-  event: Destination,
-  destinationTileIds: Set<string>,
-): DestinationState {
-  if (!event.destination) {
-    return {
-      output: null,
-      pos: null,
-      direction: "after",
-      replaceEmptyBlock: false,
-    };
+function isObserverEvent(event: StreamEvent): event is ObserverEvent {
+  return (
+    typeof event === "object" &&
+    ("message" in event || "action" in event || "artifact" in event)
+  );
+}
+
+export class StreamHandler {
+  private readonly context: StreamContext;
+  private readonly destinationIds = new Set<string>();
+  private pos: number | null = null;
+  private bold = false;
+  private italic = false;
+  private output: ReactiveState | null = null;
+  private direction: InsertDirection = "after";
+  private replaceEmptyBlock = false;
+
+  constructor(context: StreamContext) {
+    this.context = context;
   }
 
-  destinationTileIds.add(event.destination);
-  const existingTile = Editor.current.page.getTile(event.destination);
-
-  // Editing existing tile
-  if (existingTile instanceof Text) {
-    const output = existingTile.getEditorState();
-    if (!output.value) {
-      return {
-        output,
-        pos: null,
-        direction: "after",
-        replaceEmptyBlock: false,
-      };
-    }
-
-    switch (event.mode) {
-      case "replace": {
-        const tr = output.value.tr;
-        tr.replaceWith(0, tr.doc.content.size, schema.nodes.paragraph.create());
-        dispatch(output, tr);
-        return { output, pos: 1, direction: "after", replaceEmptyBlock: true };
+  async handle(stream: AsyncIterable<StreamEvent>): Promise<Set<string>> {
+    for await (const event of stream) {
+      if (typeof event === "object" && "destination" in event) {
+        this.setDestination(event.destination, event.mode);
+      } else if (isObserverEvent(event)) {
+        this.context.onEvent?.(event);
+      } else {
+        this.handleContent(event);
       }
-      case "append":
-        return {
-          output,
-          pos: output.value.doc.content.size,
-          direction: "after",
-          replaceEmptyBlock: false,
-        };
-      case "prepend":
-        return {
-          output,
-          pos: 1,
-          direction: "before",
-          replaceEmptyBlock: false,
-        };
-      default:
-        return {
-          output,
-          pos: null,
-          direction: "after",
-          replaceEmptyBlock: false,
-        };
     }
+
+    return this.destinationIds;
   }
 
-  return {
-    output: null,
-    pos: null,
-    direction: "after",
-    replaceEmptyBlock: false,
-  };
-}
-
-export async function insertFromStream(
-  view: EditorView | null,
-  stream: AsyncIterable<StreamEvent>,
-) {
-  let pos: number | null = null;
-  let bold = false;
-  let italic = false;
-  let output: ReactiveState | null = null;
-  let direction: InsertDirection = "after";
-  let replaceEmptyBlock = false;
-  const destinationTileIds = new Set<string>();
-
-  for await (const event of stream) {
-    if (typeof event === "object" && "action" in event) {
-      await handleStreamAction(event.action);
-      continue;
+  private handleContent(event: string | RichTextFormat | RichTextNode) {
+    if (typeof event === "object" && !("type" in event)) {
+      if ("bold" in event && typeof event.bold === "boolean") {
+        this.bold = event.bold;
+      }
+      if ("italic" in event && typeof event.italic === "boolean") {
+        this.italic = event.italic;
+      }
+      return;
     }
 
-    if (typeof event === "object" && "artifact" in event) {
-      const tile = Editor.current.page.createTile(event.artifact);
-      Editor.current.addTile(tile, event.artifact.sectionId);
-      continue;
+    if (!this.output?.value) {
+      return;
     }
 
-    if (typeof event === "object" && "destination" in event) {
-      const state = handleDestination(event, destinationTileIds);
-      output = state.output;
-      pos = state.pos;
-      direction = state.direction;
-      replaceEmptyBlock = state.replaceEmptyBlock;
-      continue;
-    }
+    const tr = this.output.value.tr;
 
-    const state = output ? output.value : (view?.state ?? null);
-    if (!state) {
-      continue;
-    }
-
-    const tr = state.tr;
-
-    if (pos === null) {
-      pos = getInsertPosition(tr);
-
-      // Check if we're starting inside an empty textblock
-      const $pos = tr.doc.resolve(pos);
-      replaceEmptyBlock =
+    if (this.pos === null) {
+      this.pos = getInsertPosition(tr);
+      const $pos = tr.doc.resolve(this.pos);
+      this.replaceEmptyBlock =
         $pos.parent.isTextblock && $pos.parent.content.size === 0;
     }
 
     if (typeof event === "string") {
-      const marks: Mark[] = [];
-      if (bold) {
-        marks.push(schema.marks.bold.create());
-      }
-      if (italic) {
-        marks.push(schema.marks.italic.create());
-      }
-      tr.setStoredMarks(marks);
-      tr.insertText(event, pos);
-      pos += event.length;
+      this.insertText(tr, event);
     } else {
-      if ("bold" in event && typeof event.bold === "boolean") {
-        bold = event.bold;
+      const mode: InsertMode = this.replaceEmptyBlock
+        ? "replace"
+        : this.direction;
+
+      switch (event.type) {
+        case "paragraph":
+          this.insertParagraph(tr);
+          break;
+        case "heading":
+          this.insertHeading(tr, event.level, mode);
+          break;
+        case "listitem":
+          this.insertListItem(tr, event.listType, event.depth, mode);
+          break;
+        case "divider":
+          this.insertDivider(tr, mode);
+          break;
+        case "code":
+          this.insertCode(tr, event.language, mode);
+          break;
       }
-
-      if ("italic" in event && typeof event.italic === "boolean") {
-        italic = event.italic;
-      }
-
-      if ("type" in event) {
-        const mode: InsertMode = replaceEmptyBlock ? "replace" : direction;
-
-        switch (event.type) {
-          case "paragraph":
-            // If already inside an empty paragraph, no action needed
-            if (!replaceEmptyBlock) {
-              pos =
-                insertNode(
-                  tr,
-                  pos,
-                  schema.nodes.paragraph.create(),
-                  direction,
-                ) + 1;
-            }
-            break;
-
-          case "heading":
-            pos =
-              insertNode(
-                tr,
-                pos,
-                schema.nodes.heading.create({ level: event.level }),
-                mode,
-              ) + 1;
-            break;
-
-          case "listitem":
-            {
-              const $pos = tr.doc.resolve(pos);
-              const listNodeType =
-                event.listType === "ordered"
-                  ? schema.nodes.ordered_list
-                  : schema.nodes.unordered_list;
-
-              const listItem = closest(
-                $pos,
-                (n) => n.type === schema.nodes.list_item,
-              );
-
-              // Not currently in a list - create a new one
-              if (!listItem) {
-                const node = listNodeType.create(null, createListItem());
-                pos = insertNode(tr, pos, node, mode) + 3;
-                break;
-              }
-
-              const depth = getListDepth($pos);
-              const afterPos = listItem.pos + listItem.node.nodeSize;
-
-              if (event.depth === depth) {
-                // Insert sibling item at same depth
-                tr.insert(afterPos, createListItem());
-                pos = afterPos + 2;
-              } else if (event.depth > depth) {
-                // Increase depth: nest a new list inside current item
-                const node = listNodeType.create(null, createListItem());
-                tr.insert(afterPos - 1, node);
-                pos = afterPos - 1 + 3;
-              } else if (event.depth >= 0) {
-                // Decrease depth: insert after parent list item
-                tr.insert(afterPos + 2, createListItem());
-                pos = afterPos + 2 + 2;
-              } else {
-                // Top level reached: create a new list after current one
-                const node = listNodeType.create(null, createListItem());
-                tr.insert(afterPos + 3, node);
-                pos = afterPos + 3 + 3;
-              }
-            }
-            break;
-
-          case "divider":
-            pos = insertNode(tr, pos, schema.nodes.divider.create(), mode) + 1;
-            break;
-
-          case "code":
-            pos =
-              insertNode(
-                tr,
-                pos,
-                schema.nodes.code.create({ language: event.language }),
-                mode,
-              ) + 1;
-            break;
-        }
-        replaceEmptyBlock = false;
-      }
+      this.replaceEmptyBlock = false;
     }
 
-    if (output) {
-      dispatch(output, tr);
-    } else if (view) {
-      view.dispatch(tr);
+    dispatch(this.output, tr);
+  }
+
+  private setDestination(destination: string | null, mode?: DestinationMode) {
+    if (!destination) {
+      this.output = null;
+      this.pos = null;
+      this.direction = "after";
+      this.replaceEmptyBlock = false;
+      return;
+    }
+
+    this.destinationIds.add(destination);
+    const output = this.context.getState(destination);
+
+    if (!output) {
+      this.output = null;
+      this.pos = null;
+      this.direction = "after";
+      this.replaceEmptyBlock = false;
+      return;
+    }
+
+    this.output = output;
+
+    if (!output.value) {
+      this.pos = null;
+      this.direction = "after";
+      this.replaceEmptyBlock = false;
+      return;
+    }
+
+    switch (mode) {
+      case "replace": {
+        const tr = output.value.tr;
+        tr.replaceWith(0, tr.doc.content.size, schema.nodes.paragraph.create());
+        dispatch(output, tr);
+        this.pos = 1;
+        this.direction = "after";
+        this.replaceEmptyBlock = true;
+        break;
+      }
+      case "append":
+        this.pos = output.value.doc.content.size;
+        this.direction = "after";
+        this.replaceEmptyBlock = false;
+        break;
+      case "prepend":
+        this.pos = 1;
+        this.direction = "before";
+        this.replaceEmptyBlock = false;
+        break;
+      default:
+        this.pos = null;
+        this.direction = "after";
+        this.replaceEmptyBlock = false;
+        break;
     }
   }
 
-  // Persist all destination tiles that received streamed content
-  for (const tileId of destinationTileIds) {
-    const tile = Editor.current.page.getTile(tileId);
+  private insertText(tr: Transaction, text: string) {
+    const marks: Mark[] = [];
+    if (this.bold) {
+      marks.push(schema.marks.bold.create());
+    }
+    if (this.italic) {
+      marks.push(schema.marks.italic.create());
+    }
+    tr.setStoredMarks(marks);
+    tr.insertText(text, this.pos!);
+    this.pos! += text.length;
+  }
+
+  private insertParagraph(tr: Transaction) {
+    if (!this.replaceEmptyBlock) {
+      this.pos =
+        insertNode(
+          tr,
+          this.pos!,
+          schema.nodes.paragraph.create(),
+          this.direction,
+        ) + 1;
+    }
+  }
+
+  private insertHeading(tr: Transaction, level: number, mode: InsertMode) {
+    this.pos =
+      insertNode(tr, this.pos!, schema.nodes.heading.create({ level }), mode) +
+      1;
+  }
+
+  private insertListItem(
+    tr: Transaction,
+    listType: "ordered" | "unordered",
+    depth: number,
+    mode: InsertMode,
+  ) {
+    const $pos = tr.doc.resolve(this.pos!);
+    const listNodeType =
+      listType === "ordered"
+        ? schema.nodes.ordered_list
+        : schema.nodes.unordered_list;
+
+    const listItem = closest($pos, (n) => n.type === schema.nodes.list_item);
+
+    // Not currently in a list - create a new one
+    if (!listItem) {
+      const node = listNodeType.create(null, createListItem());
+      this.pos = insertNode(tr, this.pos!, node, mode) + 3;
+      return;
+    }
+
+    const currentDepth = getListDepth($pos);
+    const afterPos = listItem.pos + listItem.node.nodeSize;
+
+    if (depth === currentDepth) {
+      // Insert sibling item at same depth
+      tr.insert(afterPos, createListItem());
+      this.pos = afterPos + 2;
+    } else if (depth > currentDepth) {
+      // Increase depth: nest a new list inside current item
+      const node = listNodeType.create(null, createListItem());
+      tr.insert(afterPos - 1, node);
+      this.pos = afterPos - 1 + 3;
+    } else if (depth >= 0) {
+      // Decrease depth: insert after parent list item
+      tr.insert(afterPos + 2, createListItem());
+      this.pos = afterPos + 2 + 2;
+    } else {
+      // Top level reached: create a new list after current one
+      const node = listNodeType.create(null, createListItem());
+      tr.insert(afterPos + 3, node);
+      this.pos = afterPos + 3 + 3;
+    }
+  }
+
+  private insertDivider(tr: Transaction, mode: InsertMode) {
+    this.pos =
+      insertNode(tr, this.pos!, schema.nodes.divider.create(), mode) + 1;
+  }
+
+  private insertCode(tr: Transaction, language: string, mode: InsertMode) {
+    this.pos =
+      insertNode(tr, this.pos!, schema.nodes.code.create({ language }), mode) +
+      1;
+  }
+}
+
+export async function insertFromStream(stream: AsyncIterable<StreamEvent>) {
+  const editor = Editor.current;
+
+  const destinationIds = await new StreamHandler({
+    getState(id) {
+      const tile = editor.page.getTile(id);
+      if (!(tile instanceof Text)) {
+        return null;
+      }
+      return tile.getEditorState();
+    },
+    onEvent(event) {
+      if ("artifact" in event) {
+        const tile = editor.page.createTile(event.artifact);
+        editor.addTile(tile, event.artifact.sectionId);
+      } else if ("action" in event) {
+        handleStreamAction(event.action);
+      }
+    },
+  }).handle(stream);
+
+  for (const id of destinationIds) {
+    const tile = editor.page.getTile(id);
     if (tile instanceof Text) {
       tile.persist();
     }
