@@ -102,6 +102,9 @@ importers:
       cookie:
         specifier: ^1.1.1
         version: 1.1.1
+      image-dimensions:
+        specifier: ^2.5.0
+        version: 2.5.0
     devDependencies:
       '@types/node':
         specifier: ^24.3.0
@@ -2691,6 +2694,11 @@ packages:
   ignore@7.0.5:
     resolution: {integrity: sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==}
     engines: {node: '>= 4'}
+
+  image-dimensions@2.5.0:
+    resolution: {integrity: sha512-CKZPHjAEtSg9lBV9eER0bhNn/yrY7cFEQEhkwjLhqLY+Na8lcP1pEyWsaGMGc8t2qbKWA/tuqbhFQpOKGN72Yw==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
@@ -6662,6 +6670,8 @@ snapshots:
   ieee754@1.2.1: {}
 
   ignore@7.0.5: {}
+
+  image-dimensions@2.5.0: {}
 
   import-fresh@3.3.1:
     dependencies:

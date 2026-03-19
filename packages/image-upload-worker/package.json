@@ -16,7 +16,8 @@
   "dependencies": {
     "@trpc/client": "^11.11.0",
     "api": "workspace:*",
-    "cookie": "^1.1.1"
+    "cookie": "^1.1.1",
+    "image-dimensions": "^2.5.0"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
