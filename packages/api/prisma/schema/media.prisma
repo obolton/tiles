@@ -25,6 +25,8 @@ model Image {
   type        ImageType
   pending     Boolean      @default(true)
   bytes       Int          @default(0)
+  width       Int          @default(0) @db.SmallInt
+  height      Int          @default(0) @db.SmallInt
 
   workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
