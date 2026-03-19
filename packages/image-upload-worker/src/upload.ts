@@ -1,13 +1,15 @@
+import { imageDimensionsFromStream } from "image-dimensions";
 import type { Client } from "./client";
+import { BadRequestError, InternalServerError, UnsupportedMediaTypeError } from "./errors";
+import { IMAGE_TYPES } from "./images";
 import type { UploadParams } from "./requests";
-import { BadRequestError, InternalServerError } from "./errors";
 
 export interface UploadResult {
   id: string;
 }
 
 /**
- * Uploads and image to R2 and creates a database record.
+ * Uploads an image to R2 and creates a database record.
  */
 export async function uploadImage(
   params: UploadParams,
@@ -30,18 +32,38 @@ export async function uploadImage(
     pending: true,
   });
 
-  // Step 2: Upload to R2
+  // Step 2: Upload to R2 and extract dimensions concurrently
+  const [uploadStream, dimensionsStream] = body.tee();
+
   let object: R2Object;
+  let dimensions: { width: number; height: number; type: string } | undefined;
   try {
-    object = await bucket.put(image.id, body, {
-      customMetadata: {
-        workspace: image.workspaceId,
-        user: image.userId,
-      },
-    });
+    [object, dimensions] = await Promise.all([
+      bucket.put(image.id, uploadStream, {
+        customMetadata: {
+          workspace: image.workspaceId,
+          user: image.userId,
+        },
+      }),
+      imageDimensionsFromStream(dimensionsStream),
+    ]);
   } catch {
     await client.media.deleteImage.mutate({ id: image.id, workspaceId });
     throw new InternalServerError("Failed to upload file");
+  }
+
+  if (!dimensions) {
+    await bucket.delete(image.id);
+    await client.media.deleteImage.mutate({ id: image.id, workspaceId });
+    throw new BadRequestError("Could not read image dimensions");
+  }
+
+  // Validate that the detected image type matches the claimed Content-Type
+  const detectedType = IMAGE_TYPES[dimensions.type];
+  if (detectedType !== type) {
+    await bucket.delete(image.id);
+    await client.media.deleteImage.mutate({ id: image.id, workspaceId });
+    throw new UnsupportedMediaTypeError();
   }
 
   // Step 3: Update database record with pending=false
@@ -51,6 +73,8 @@ export async function uploadImage(
       workspaceId,
       pending: false,
       bytes: object.size,
+      width: dimensions.width,
+      height: dimensions.height,
     });
   } catch {
     await bucket.delete(image.id);

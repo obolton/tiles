@@ -1,7 +1,12 @@
 import { describe, expect, test, vi, beforeEach } from "vitest";
+import { imageDimensionsFromStream } from "image-dimensions";
 import { uploadImage } from "../upload";
 import { createClient } from "../client";
-import { BadRequestError, InternalServerError } from "../errors";
+import {
+  BadRequestError,
+  InternalServerError,
+  UnsupportedMediaTypeError,
+} from "../errors";
 import type { UploadParams } from "../requests";
 
 vi.mock("../client", () => ({
@@ -12,6 +17,12 @@ vi.mock("../client", () => ({
       deleteImage: { mutate: vi.fn() },
     },
   })),
+}));
+
+vi.mock("image-dimensions", () => ({
+  imageDimensionsFromStream: vi.fn(() =>
+    Promise.resolve({ width: 800, height: 600, type: "png" }),
+  ),
 }));
 
 const UPLOAD_PARAMS: UploadParams = {
@@ -43,6 +54,15 @@ const bucket: R2Bucket = {
   resumeMultipartUpload: vi.fn(),
 };
 
+function createBody() {
+  return new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(new Uint8Array([0]));
+      controller.close();
+    },
+  });
+}
+
 describe("uploadImage", () => {
   const client = createClient("test-session");
   const createImageMock = vi.mocked(client.media.createImage.mutate);
@@ -64,12 +84,7 @@ describe("uploadImage", () => {
   });
 
   test("creates image record with correct parameters", async () => {
-    await uploadImage(
-      UPLOAD_PARAMS,
-      new ReadableStream<Uint8Array>(),
-      client,
-      bucket,
-    );
+    await uploadImage(UPLOAD_PARAMS, createBody(), client, bucket);
 
     expect(createImageMock).toHaveBeenCalledWith({
       workspaceId: "ws-123",
@@ -81,43 +96,74 @@ describe("uploadImage", () => {
   });
 
   test("uploads to R2 with correct key and metadata", async () => {
-    const body = new ReadableStream<Uint8Array>();
+    await uploadImage(UPLOAD_PARAMS, createBody(), client, bucket);
 
-    await uploadImage(UPLOAD_PARAMS, body, client, bucket);
-
-    expect(bucket.put).toHaveBeenCalledWith("img-123", body, {
-      customMetadata: {
-        workspace: "ws-123",
-        user: "user-456",
+    expect(bucket.put).toHaveBeenCalledWith(
+      "img-123",
+      expect.any(ReadableStream),
+      {
+        customMetadata: {
+          workspace: "ws-123",
+          user: "user-456",
+        },
       },
-    });
+    );
   });
 
-  test("updates image record with file size", async () => {
-    await uploadImage(
-      UPLOAD_PARAMS,
-      new ReadableStream<Uint8Array>(),
-      client,
-      bucket,
-    );
+  test("updates image record with file size and dimensions", async () => {
+    await uploadImage(UPLOAD_PARAMS, createBody(), client, bucket);
 
     expect(updateImageMock).toHaveBeenCalledWith({
       id: "img-123",
       workspaceId: "ws-123",
       pending: false,
       bytes: 1024,
+      width: 800,
+      height: 600,
     });
   });
 
   test("returns upload result", async () => {
     const result = await uploadImage(
       UPLOAD_PARAMS,
-      new ReadableStream<Uint8Array>(),
+      createBody(),
       client,
       bucket,
     );
 
     expect(result).toEqual({ id: "img-123" });
+  });
+
+  test("rolls back and throws BadRequestError when dimensions cannot be read", async () => {
+    vi.mocked(imageDimensionsFromStream).mockResolvedValueOnce(undefined);
+
+    await expect(
+      uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
+    ).rejects.toThrow(BadRequestError);
+
+    expect(bucket.delete).toHaveBeenCalledWith("img-123");
+    expect(deleteImageMock).toHaveBeenCalledWith({
+      id: "img-123",
+      workspaceId: "ws-123",
+    });
+  });
+
+  test("rolls back and throws UnsupportedMediaTypeError when detected type does not match Content-Type", async () => {
+    vi.mocked(imageDimensionsFromStream).mockResolvedValueOnce({
+      width: 800,
+      height: 600,
+      type: "jpeg",
+    });
+
+    await expect(
+      uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
+    ).rejects.toThrow(UnsupportedMediaTypeError);
+
+    expect(bucket.delete).toHaveBeenCalledWith("img-123");
+    expect(deleteImageMock).toHaveBeenCalledWith({
+      id: "img-123",
+      workspaceId: "ws-123",
+    });
   });
 
   describe("rollback on R2 upload failure", () => {
@@ -127,12 +173,7 @@ describe("uploadImage", () => {
 
     test("deletes the database record", async () => {
       await expect(
-        uploadImage(
-          UPLOAD_PARAMS,
-          new ReadableStream<Uint8Array>(),
-          client,
-          bucket,
-        ),
+        uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
       ).rejects.toThrow();
 
       expect(deleteImageMock).toHaveBeenCalledWith({
@@ -143,12 +184,7 @@ describe("uploadImage", () => {
 
     test("throws InternalServerError", async () => {
       await expect(
-        uploadImage(
-          UPLOAD_PARAMS,
-          new ReadableStream<Uint8Array>(),
-          client,
-          bucket,
-        ),
+        uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
       ).rejects.toThrow(InternalServerError);
     });
   });
@@ -160,12 +196,7 @@ describe("uploadImage", () => {
 
     test("deletes the R2 object", async () => {
       await expect(
-        uploadImage(
-          UPLOAD_PARAMS,
-          new ReadableStream<Uint8Array>(),
-          client,
-          bucket,
-        ),
+        uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
       ).rejects.toThrow();
 
       expect(bucket.delete).toHaveBeenCalledWith("img-123");
@@ -173,12 +204,7 @@ describe("uploadImage", () => {
 
     test("deletes the database record", async () => {
       await expect(
-        uploadImage(
-          UPLOAD_PARAMS,
-          new ReadableStream<Uint8Array>(),
-          client,
-          bucket,
-        ),
+        uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
       ).rejects.toThrow();
 
       expect(deleteImageMock).toHaveBeenCalledWith({
@@ -189,12 +215,7 @@ describe("uploadImage", () => {
 
     test("throws InternalServerError", async () => {
       await expect(
-        uploadImage(
-          UPLOAD_PARAMS,
-          new ReadableStream<Uint8Array>(),
-          client,
-          bucket,
-        ),
+        uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
       ).rejects.toThrow(InternalServerError);
     });
   });
