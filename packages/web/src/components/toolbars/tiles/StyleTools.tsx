@@ -30,7 +30,9 @@ export default function StyleTools({ tile }: StyleToolsProps) {
       <AspectRatioSelect
         value={tile.sizing}
         onChange={(d) => tile.setSizing(d).catch(handleError)}
-        showAuto={tile.type === "TEXT" || tile.type === "TABLE"}
+        showAuto={
+          tile.type === "TEXT" || tile.type === "TABLE" || tile.type === "IMAGE"
+        }
       />
 
       <ThemePicker
