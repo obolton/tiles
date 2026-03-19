@@ -5,7 +5,7 @@ import Image from "@/models/Image";
 import Link from "@/models/Link";
 import Video from "@/models/Video";
 import PageLink from "@/models/PageLink";
-import { toISODate } from "@/utils/dates";
+import { toISODate, getNearestMonth } from "@/utils/dates";
 import { toPlainText } from "@/utils/richText/plainText";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import { getThemeStyles } from "@/utils/themes";
@@ -81,6 +81,11 @@ export default function CalendarSection({
   const { tiles, editor } = section;
   const { isEditable } = editor;
 
+  const startDates = tiles.value.flatMap((tile) =>
+    tile.startDate.value ? [tile.startDate.value] : [],
+  );
+  const initialMonth = getNearestMonth(startDates);
+
   function ref(element: CalendarGrid) {
     CalendarEditor.attach({
       element,
@@ -112,6 +117,8 @@ export default function CalendarSection({
       data-layout="CALENDAR"
       tabindex={tabindex}
       editable={isEditable}
+      year={initialMonth.year}
+      month={initialMonth.month + 1}
       on:calendarcellselect={handleCellSelect}
     >
       <Each items={tiles}>
