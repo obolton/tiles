@@ -48,6 +48,7 @@ export default class Section extends Tile {
       type: "SECTION",
       layout: this.layout.value,
       columns: this.columns.value,
+      mapStyle: this.mapStyle.value,
     };
   }
 

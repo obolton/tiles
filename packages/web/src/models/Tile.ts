@@ -120,6 +120,8 @@ export default abstract class Tile {
       rowSpan: this.rowSpan.value,
       startDate: this.startDate.value ? toISODate(this.startDate.value) : null,
       endDate: this.endDate.value ? toISODate(this.endDate.value) : null,
+      lat: this.coordinates.value?.lat ?? null,
+      long: this.coordinates.value?.long ?? null,
       cornerRadius: this.cornerRadius.value,
       animation: this.animation.value,
       frame: this.frame.value,
