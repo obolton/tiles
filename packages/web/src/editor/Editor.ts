@@ -13,6 +13,7 @@ import Page, { type PageData } from "@/models/Page";
 import Section from "@/models/Section";
 import Image from "@/models/Image";
 import Link from "@/models/Link";
+import ChatState from "@/components/chat/ChatState";
 import { OperationManager, execute } from "@/operations";
 import type Tile from "@/models/Tile";
 import type { Reactive } from "@/utils/reactivity";
@@ -34,6 +35,7 @@ export default class Editor {
   readonly isPromptOpen: Reactive<boolean>;
   readonly isPromptToolbarOpen: Reactive<boolean>;
   readonly isTileEditable: Reactive<boolean>;
+  readonly chat: ChatState;
 
   readonly operations: OperationManager<AnyAction> | null;
   readonly canUndo: Reactive<boolean>;
@@ -98,6 +100,7 @@ export default class Editor {
     this.references = reactive([]);
     this.isPromptOpen = flag(false);
     this.isPromptToolbarOpen = flag(false);
+    this.chat = new ChatState();
     this.isTileEditable = combine(
       { isEditable: this.isEditable, isPromptOpen: this.isPromptOpen },
       ({ isEditable, isPromptOpen }) => isEditable && !isPromptOpen,
@@ -358,6 +361,7 @@ export default class Editor {
     this.isPromptOpen.value = false;
     delete document.body.dataset.prompt;
     this.clearReferences();
+    this.chat.clear();
   }
 
   togglePromptToolbar() {
