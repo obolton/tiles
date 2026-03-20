@@ -12,7 +12,6 @@
   grid-template-columns: auto 1fr;
   align-content: center;
   align-items: center;
-  column-gap: 8px;
 }
 
 ::slotted(svg) {
@@ -38,12 +37,17 @@ slot[name="label"]::slotted(*) {
   line-height: 1;
 }
 
-:host(:not(:state(has-value))) slot[name="label"] {
+:host(:not([showvalue]:state(has-value))) slot[name="label"] {
   display: none;
 }
 
 :host(:not(:state(has-value))) slot[name="default-icon"]::slotted(*) {
   opacity: 0.7;
+}
+
+:host([showvalue]:state(has-value)) #button,
+:host([label]) #button {
+  column-gap: 8px;
 }
 
 :host([label]:state(has-value)) {

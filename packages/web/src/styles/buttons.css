@@ -142,7 +142,7 @@
       position: relative;
       align-self: stretch;
       padding-block: 0;
-      padding-inline: 10px;
+      padding-inline: 8px;
       transition: scale var(--animation-duration-short) var(--easing);
     }
 
