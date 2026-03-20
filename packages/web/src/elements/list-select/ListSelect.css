@@ -90,6 +90,11 @@ slot[name="label"]::slotted(*) {
       flip-block,
       flip-inline,
       flip-block flip-inline;
+
+    :host([align="center"]) & {
+      inset-inline-start: auto;
+      justify-self: anchor-center;
+    }
   }
 
   &:popover-open {
