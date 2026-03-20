@@ -258,7 +258,9 @@ export default class Editor {
     });
     await Image.create(this.page, {
       sectionId: this.activeSection?.id,
+      beforeId: this.insertBeforeId,
       imageId,
+      sizing: "AUTO",
     });
   }
 
@@ -297,13 +299,16 @@ export default class Editor {
         });
         await Image.create(this.page, {
           sectionId: this.activeSection?.id,
+          beforeId: this.insertBeforeId,
           imageId,
+          sizing: "AUTO",
         });
       }
     } else if (isUriList(item)) {
       item.getAsString(async (url) => {
         await Link.create(this.page, {
           sectionId: this.activeSection?.id,
+          beforeId: this.insertBeforeId,
           url,
         });
       });
