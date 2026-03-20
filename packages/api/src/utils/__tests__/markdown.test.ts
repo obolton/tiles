@@ -72,6 +72,18 @@ describe("transformMarkdown", () => {
         { bold: false },
       ]);
     });
+
+    test("preserves whitespace before bold when split across chunks", async () => {
+      const output = await getEvents(["hello", " **world**"]);
+      expect(output).toEqual([
+        { type: "paragraph" },
+        "hello",
+        " ",
+        { bold: true },
+        "world",
+        { bold: false },
+      ]);
+    });
   });
 
   describe("italic", () => {
@@ -112,6 +124,18 @@ describe("transformMarkdown", () => {
       const output = await getEvents(["hello * world"]);
       expect(output).toEqual([{ type: "paragraph" }, "hello * world"]);
     });
+
+    test("preserves whitespace before italic when split across chunks", async () => {
+      const output = await getEvents(["hello", " *world*"]);
+      expect(output).toEqual([
+        { type: "paragraph" },
+        "hello",
+        " ",
+        { italic: true },
+        "world",
+        { italic: false },
+      ]);
+    });
   });
 
   describe("bold and italic", () => {
@@ -124,6 +148,20 @@ describe("transformMarkdown", () => {
         { bold: true },
         "world",
         { bold: false },
+        { italic: false },
+      ]);
+    });
+
+    test("preserves whitespace between bold and italic when split across chunks", async () => {
+      const output = await getEvents(["**bold**", " *italic*"]);
+      expect(output).toEqual([
+        { type: "paragraph" },
+        { bold: true },
+        "bold",
+        { bold: false },
+        " ",
+        { italic: true },
+        "italic",
         { italic: false },
       ]);
     });
