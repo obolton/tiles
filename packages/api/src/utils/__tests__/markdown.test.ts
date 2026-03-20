@@ -651,5 +651,14 @@ describe("transformMarkdown", () => {
         "\nline2",
       ]);
     });
+
+    test("emits remaining content in unclosed code block at end of stream", async () => {
+      const output = await getEvents(["```\nline1\nline2"]);
+      expect(output).toEqual([
+        { type: "code", language: "" },
+        "line1",
+        "\nline2",
+      ]);
+    });
   });
 });

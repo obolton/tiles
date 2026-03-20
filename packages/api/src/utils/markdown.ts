@@ -382,6 +382,8 @@ export class MarkdownTransformer implements Transformer<
         this.lineBreak = null;
         this.pos = 0;
         this.set(controller, { node: null }, endMatch[0].length);
+      } else {
+        this.pos = this.buffer.length;
       }
     }
 
