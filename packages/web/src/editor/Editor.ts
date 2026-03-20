@@ -54,6 +54,14 @@ export default class Editor {
     return this.page.workspaceId;
   }
 
+  get insertBeforeId(): string | null {
+    const lastSelected = Array.from(this.selection.value).at(-1);
+    if (!lastSelected || lastSelected instanceof Section) {
+      return null;
+    }
+    return lastSelected.next?.id ?? null;
+  }
+
   get activeSection(): Section | null {
     const selection = Array.from(this.selection.value);
     const lastTile = selection.at(-1);
