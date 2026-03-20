@@ -5,6 +5,8 @@ import ImageIcon from "@/icons/image.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
 import PlaceIcon from "@/icons/place.svg?jsx";
+import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
+import HorizontalLayoutIcon from "@/icons/horizontal-layout.svg?jsx";
 import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";
 import FreeformLayoutIcon from "@/icons/freeform-layout.svg?jsx";
 import CalendarLayoutIcon from "@/icons/event.svg?jsx";
@@ -92,7 +94,7 @@ export default function InsertMenu({
               sectionId: insertSectionId,
               beforeId: getBeforeId(),
               imageId,
-              sizing: "FOUR_THREE",
+              sizing: "AUTO",
             });
           },
         });
@@ -137,19 +139,35 @@ export default function InsertMenu({
     }
   }
 
-  function createFreeformSection() {
+  function createGrid() {
     Section.create(Editor.current.page, {
       beforeId: getBeforeId(),
-      layout: "FREEFORM",
-      sizing: "FOUR_THREE",
+      layout: "GRID",
+      height: 15,
     }).catch(handleError);
   }
 
-  function createStack() {
+  function createHorizontal() {
+    Section.create(Editor.current.page, {
+      beforeId: getBeforeId(),
+      layout: "HORIZONTAL",
+      height: 15,
+    }).catch(handleError);
+  }
+
+  function createVertical() {
     Section.create(Editor.current.page, {
       beforeId: getBeforeId(),
       layout: "VERTICAL",
       height: 15,
+    }).catch(handleError);
+  }
+
+  function createFreeform() {
+    Section.create(Editor.current.page, {
+      beforeId: getBeforeId(),
+      layout: "FREEFORM",
+      sizing: "FOUR_THREE",
     }).catch(handleError);
   }
 
@@ -203,17 +221,31 @@ export default function InsertMenu({
 
       <MenuItemGroup>
         <MenuItem
-          icon={<VerticalLayoutIcon aria-hidden="true" />}
-          on:click={createStack}
+          icon={<GridLayoutIcon aria-hidden="true" />}
+          on:click={createGrid}
         >
-          Collection
+          Grid
+        </MenuItem>
+
+        <MenuItem
+          icon={<HorizontalLayoutIcon aria-hidden="true" />}
+          on:click={createHorizontal}
+        >
+          Horizontal
+        </MenuItem>
+
+        <MenuItem
+          icon={<VerticalLayoutIcon aria-hidden="true" />}
+          on:click={createVertical}
+        >
+          Vertical
         </MenuItem>
 
         <MenuItem
           icon={<FreeformLayoutIcon aria-hidden="true" />}
-          on:click={createFreeformSection}
+          on:click={createFreeform}
         >
-          Canvas
+          Freeform
         </MenuItem>
 
         <MenuItem
