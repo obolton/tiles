@@ -1,3 +1,5 @@
+import "prosemirror-view/style/prosemirror.css";
+import "prosemirror-gapcursor/style/gapcursor.css";
 import { EditorView } from "prosemirror-view";
 import { EditorState } from "prosemirror-state";
 import { createState } from "@/utils/richText/state";
