@@ -29,6 +29,7 @@
   top: 0;
   left: var(--navigation-bar-size);
   right: 0;
+  height: var(--dock-top-size);
   flex-direction: row;
 }
 
@@ -37,6 +38,7 @@
   bottom: 0;
   left: var(--navigation-bar-size);
   right: 0;
+  height: var(--dock-bottom-size);
   flex-direction: row;
 }
 
@@ -54,22 +56,31 @@
 
 .left {
   view-transition-name: dock-left;
-  top: var(--dock-top-size);
-  bottom: var(--dock-bottom-size);
   left: var(--navigation-bar-size);
+  width: var(--dock-left-size);
   flex-direction: column;
 }
 
 .right {
   view-transition-name: dock-right;
-  top: var(--dock-top-size);
-  bottom: var(--dock-bottom-size);
   right: 0;
+  width: var(--dock-right-size);
   flex-direction: column;
 }
 
 .left,
 .right {
+  top: 0;
+  bottom: 0;
+
+  :has([data-dock-zone="TOP"]:not([data-empty])) > & {
+    top: var(--dock-top-size);
+  }
+
+  :has([data-dock-zone="BOTTOM"]:not([data-empty])) > & {
+    bottom: var(--dock-bottom-size);
+  }
+
   body[data-drag] &[data-empty] {
     width: 60px !important;
 

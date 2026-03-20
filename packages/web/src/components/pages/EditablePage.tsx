@@ -28,22 +28,12 @@ export default function EditablePage({ page }: EditablePageProps) {
   const { isEditable, selection } = editor;
   const { tiles, dockedTiles } = editor.page;
   const showToolbar = !import.meta.env.SSR && isSignedIn();
-  const style = combine(
-    {
-      sizes: editor.page.dockSizes,
-      topTiles: dockedTiles.TOP,
-      bottomTiles: dockedTiles.BOTTOM,
-      leftTiles: dockedTiles.LEFT,
-      rightTiles: dockedTiles.RIGHT,
-    },
-    ({ sizes, topTiles, bottomTiles, leftTiles, rightTiles }) => ({
-      "--dock-top-size": topTiles.length > 0 ? `${sizes.TOP}px` : "0px",
-      "--dock-bottom-size":
-        bottomTiles.length > 0 ? `${sizes.BOTTOM}px` : "0px",
-      "--dock-left-size": leftTiles.length > 0 ? `${sizes.LEFT}px` : "0px",
-      "--dock-right-size": rightTiles.length > 0 ? `${sizes.RIGHT}px` : "0px",
-    }),
-  );
+  const style = editor.page.dockSizes.derive((sizes) => ({
+    "--dock-top-size": `${sizes.TOP}px`,
+    "--dock-bottom-size": `${sizes.BOTTOM}px`,
+    "--dock-left-size": `${sizes.LEFT}px`,
+    "--dock-right-size": `${sizes.RIGHT}px`,
+  }));
 
   const showPageToolbar = combine(
     { selection, isEditable },

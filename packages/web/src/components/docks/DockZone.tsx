@@ -34,12 +34,6 @@ export default function DockZone({
   const edgeStyle = edge.toLowerCase() as EdgeStyle;
   const isHorizontal = edge === "TOP" || edge === "BOTTOM";
 
-  const dimension = isHorizontal ? "height" : "width";
-
-  const zoneStyle = page.dockSizes.derive((sizes) => ({
-    [dimension]: `${sizes[edge]}px`,
-  }));
-
   const visible = combine(
     { isEmpty, isEditable },
     ({ isEmpty, isEditable }) => !isEmpty || isEditable,
@@ -99,7 +93,6 @@ export default function DockZone({
           [styles.zone]: true,
           [styles[edgeStyle]]: true,
         }}
-        style={zoneStyle}
         data-dock-zone={edge}
         data-empty={isEmpty}
       >
