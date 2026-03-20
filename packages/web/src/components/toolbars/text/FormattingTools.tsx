@@ -138,23 +138,32 @@ export default function FormattingTools({
   function changeTextFormat(event: Event) {
     switch ((event.currentTarget as ListSelect).value) {
       case "h1":
-        return performCommand(toggleHeading(1));
+        performCommand(toggleHeading(1));
+        break;
       case "h2":
-        return performCommand(toggleHeading(2));
+        performCommand(toggleHeading(2));
+        break;
       case "h3":
-        return performCommand(toggleHeading(3));
+        performCommand(toggleHeading(3));
+        break;
       case "code":
-        return performCommand(toggleCode);
+        performCommand(toggleCode);
+        break;
       case "unordered-list":
-        return performCommand(toggleUnorderedList);
+        performCommand(toggleUnorderedList);
+        break;
       case "ordered-list":
-        return performCommand(toggleOrderedList);
+        performCommand(toggleOrderedList);
+        break;
       case "check-list":
-        return performCommand(toggleCheckList);
+        performCommand(toggleCheckList);
+        break;
       case "":
       default:
-        return performCommand(resetBlockFormat);
+        performCommand(resetBlockFormat);
+        break;
     }
+    editorView.value?.focus();
   }
 
   const formatQuote = () => performCommand(toggleQuote);
@@ -216,10 +225,12 @@ export default function FormattingTools({
 
   const rejectSelection = () => performCommand(reject);
 
-  const formatAlignment = (event: Event) =>
+  const formatAlignment = (event: Event) => {
     performCommand(
       setAlignment((event.currentTarget as ListSelect).value as TextAlignment),
     );
+    editorView.value?.focus();
+  };
 
   const onTogglePrompt = () => performCommand(togglePrompt);
 
