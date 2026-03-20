@@ -1,5 +1,6 @@
 import { keymap } from "prosemirror-keymap";
 import { baseKeymap } from "prosemirror-commands";
+import { gapCursor } from "prosemirror-gapcursor";
 import { keys } from "./keymap";
 import { lists } from "./lists";
 import { createInputRules } from "./inputRules";
@@ -17,6 +18,7 @@ export function getPlugins(): Plugin[] {
   return [
     keymap(keys),
     keymap(baseKeymap),
+    gapCursor(),
     lists(),
     createInputRules(),
     placeholders(),
