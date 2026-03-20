@@ -51,34 +51,32 @@ export default function DockZone({
 
   const zoneResizeDirection = isHorizontal ? "vertical" : "horizontal";
 
-  function onZoneResizeEnd(event: ResizeEvent) {
-    const initialSize = page.dockSizes.value[edge];
+  let initialSize = 0;
 
-    let delta: number;
-    switch (edge) {
-      case "LEFT":
-        delta = event.x;
-        break;
-      case "RIGHT":
-        delta = -event.x;
-        break;
-      case "TOP":
-        delta = event.y;
-        break;
-      case "BOTTOM":
-        delta = -event.y;
-        break;
-    }
-
+  function getNewSize(event: ResizeEvent): number {
+    const delta = isHorizontal ? event.y : event.x;
+    const sign = edge === "RIGHT" || edge === "BOTTOM" ? -1 : 1;
     const maxSize = isHorizontal
       ? window.innerHeight * MAX_DOCK_RATIO
       : window.innerWidth * MAX_DOCK_RATIO;
-
-    const newSize = Math.max(
+    return Math.max(
       MIN_DOCK_SIZE,
-      Math.min(maxSize, initialSize + delta),
+      Math.min(maxSize, initialSize + delta * sign),
     );
+  }
 
+  function onZoneResizeStart() {
+    initialSize = page.dockSizes.value[edge];
+  }
+
+  function onZoneResizeDrag(event: ResizeEvent) {
+    event.preventDefault();
+    page.dockSizes.value = { ...page.dockSizes.value, [edge]: getNewSize(event) };
+  }
+
+  function onZoneResizeEnd(event: ResizeEvent) {
+    const newSize = getNewSize(event);
+    page.dockSizes.value = { ...page.dockSizes.value, [edge]: initialSize };
     page.setDockSizes({ [edge]: newSize });
   }
 
@@ -104,6 +102,8 @@ export default function DockZone({
           <resize-handle
             direction={zoneResizeDirection}
             classList={{ [styles["zone-resize"]]: true }}
+            on:resizestart={onZoneResizeStart}
+            on:resizedrag={onZoneResizeDrag}
             on:resizeend={onZoneResizeEnd}
           />
         </If>
