@@ -1,7 +1,7 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import TileTools from "@/components/toolbars/tiles/TileTools";
-import StyleTools from "@/components/toolbars/tiles/StyleTools";
+import StyleTab from "@/components/toolbars/tiles/StyleTab";
 import DateTab from "@/components/toolbars/tiles/DateTab";
 import SeriesPanel from "./SeriesPanel";
 import ChartIcon from "@/icons/chart.svg?jsx";
@@ -44,9 +44,7 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
         <TileTools tile={chart} />
       </toolbar-tab>
 
-      <toolbar-tab name="style" label="Style">
-        <StyleTools tile={chart} />
-      </toolbar-tab>
+      <StyleTab tile={chart} />
 
       <DateTab tile={chart} />
     </floating-toolbar>

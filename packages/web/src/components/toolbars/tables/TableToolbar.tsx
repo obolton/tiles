@@ -2,6 +2,7 @@ import TableTab from "./TableTab";
 import ColumnTab from "./ColumnTab";
 import RowTab from "./RowTab";
 import CellTab from "./CellTab";
+import StyleTab from "@/components/toolbars/tiles/StyleTab";
 import DateTab from "@/components/toolbars/tiles/DateTab";
 import If from "@/jsx/if";
 import type TableView from "@/elements/table/TableView";
@@ -49,6 +50,7 @@ export default function TableToolbar({
         <CellTab editorView={editorView} state={state} />
       </If>
 
+      <StyleTab tile={table} />
       <DateTab tile={table} />
     </floating-toolbar>
   );

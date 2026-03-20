@@ -1,6 +1,6 @@
 import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import TileTools from "@/components/toolbars/tiles/TileTools";
-import StyleTools from "@/components/toolbars/tiles/StyleTools";
+import StyleTab from "@/components/toolbars/tiles/StyleTab";
 import DateTab from "@/components/toolbars/tiles/DateTab";
 import AltTab from "./AltTab";
 import type Image from "@/models/Image";
@@ -24,9 +24,7 @@ export default function ImageToolbar({ image, editorView }: ImageToolbarProps) {
         <TileTools tile={image} />
       </toolbar-tab>
 
-      <toolbar-tab name="style" label="Style">
-        <StyleTools tile={image} />
-      </toolbar-tab>
+      <StyleTab tile={image} />
 
       <AltTab image={image} />
       <DateTab tile={image} />

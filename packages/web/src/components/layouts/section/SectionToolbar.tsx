@@ -2,7 +2,7 @@ import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import Stepper from "@/components/stepper/Stepper";
 import TileTools from "@/components/toolbars/tiles/TileTools";
-import StyleTools from "@/components/toolbars/tiles/StyleTools";
+import StyleTab from "@/components/toolbars/tiles/StyleTab";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import MapTab from "./MapTab";
 import If from "@/jsx/if";
@@ -112,9 +112,7 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
         <MapTab section={section} />
       </If>
 
-      <toolbar-tab name="style" label="Style">
-        <StyleTools tile={section} />
-      </toolbar-tab>
+      <StyleTab tile={section} />
     </floating-toolbar>
   );
 }
