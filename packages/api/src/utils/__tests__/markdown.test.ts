@@ -322,6 +322,14 @@ describe("transformMarkdown", () => {
       ]);
     });
 
+    test("supports + item split over multiple chunks", async () => {
+      const output = await getEvents(["+", " hello world"]);
+      expect(output).toEqual([
+        { type: "listitem", listType: "unordered", depth: 0 },
+        "hello world",
+      ]);
+    });
+
     test("supports item split over multiple chunks", async () => {
       const output = await getEvents(["- ", "hello world"]);
       expect(output).toEqual([

@@ -14,7 +14,7 @@ const BLOCK_END_MATCH = /^<<<\s*\n/;
 const BLOCK_END_EOF_MATCH = /^<<<\s*$/;
 const CODE_BLOCK_START_MATCH = /^(`{3,}|~{3,})(\w*)\s*\n/;
 const DIVIDER_MATCH = /^(-{3,}|\*{3,}|_{3,})\s*\n/;
-const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *)|>|<|`|~)/;
+const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *)|>|<|`|~|\+)/;
 const ALL_NEW_LINES_MATCH = /\n/g;
 
 export interface ParagraphNode {
