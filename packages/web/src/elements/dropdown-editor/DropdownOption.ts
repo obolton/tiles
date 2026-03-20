@@ -77,6 +77,7 @@ export default class DropdownOption extends HTMLElement {
     switch (name) {
       case "value":
         this.editInput.value = newValue ?? "";
+        this.dataset.value = newValue ?? "";
         break;
       case "editing":
         if (newValue !== null) {
