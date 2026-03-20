@@ -360,6 +360,7 @@ const nodesSpec = {
 
   divider: {
     group: "block",
+    atom: true,
     parseDOM: [{ tag: "hr" }],
     toDOM() {
       return DOMOutput.divider;
