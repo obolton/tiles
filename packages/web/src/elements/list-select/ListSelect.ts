@@ -174,7 +174,7 @@ export default class ListSelect extends HTMLElement {
 
     this.#value = value;
 
-    if (value) {
+    if (value !== null) {
       this.internals.states.add("has-value");
     } else {
       this.internals.states.delete("has-value");
