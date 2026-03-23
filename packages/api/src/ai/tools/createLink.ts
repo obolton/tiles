@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createLink } from "@/routes/links/links.ts";
-import { SizeSchema, getDimensions } from "./schema.ts";
+import { SizeSchema, getDimensions, CoordinatesSchema } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateLinkSchema = z.strictObject({
@@ -11,21 +11,28 @@ const CreateLinkSchema = z.strictObject({
     description: "A URL to create a link to",
   }),
   size: SizeSchema,
+  coordinates: CoordinatesSchema,
 });
 
 async function createLinkArtifact(
   args: z.infer<typeof CreateLinkSchema>,
-  { pageId, sectionId, resolveArtifactId }: ToolContext,
+  context: ToolContext,
 ) {
-  const { url, size } = args;
+  const { url, size, coordinates } = args;
+  const { pageId, sectionId, resolveArtifactId } = context;
   const resolvedSectionId =
     args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
-  const artifact = await createLink({
-    pageId,
-    sectionId: resolvedSectionId,
-    url,
-    ...getDimensions(size),
-  });
+  const artifact = await createLink(
+    {
+      pageId,
+      sectionId: resolvedSectionId,
+      url,
+      ...getDimensions(size),
+      lat: coordinates?.lat,
+      long: coordinates?.long,
+    },
+    context,
+  );
   return { artifact };
 }
 

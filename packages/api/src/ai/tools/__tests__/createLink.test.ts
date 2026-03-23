@@ -12,6 +12,7 @@ const BASE_ARGS = {
   sectionId: null,
   size: "medium" as const,
   url: "https://example.com",
+  coordinates: null,
 };
 
 describe("CREATE_LINK_TOOL", () => {
@@ -25,6 +26,7 @@ describe("CREATE_LINK_TOOL", () => {
 
     expect(createLink).toHaveBeenCalledWith(
       expect.objectContaining({ url: "https://example.com" }),
+      MOCK_TOOL_CONTEXT,
     );
   });
 
@@ -33,6 +35,7 @@ describe("CREATE_LINK_TOOL", () => {
 
     expect(createLink).toHaveBeenCalledWith(
       expect.objectContaining({ width: 24, height: 15 }),
+      MOCK_TOOL_CONTEXT,
     );
   });
 
@@ -43,6 +46,7 @@ describe("CREATE_LINK_TOOL", () => {
 
     expect(createLink).toHaveBeenCalledWith(
       expect.objectContaining({ sectionId: "context-section" }),
+      context,
     );
   });
 
@@ -55,6 +59,7 @@ describe("CREATE_LINK_TOOL", () => {
     expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith(0);
     expect(createLink).toHaveBeenCalledWith(
       expect.objectContaining({ sectionId: "resolved-0" }),
+      MOCK_TOOL_CONTEXT,
     );
   });
 
@@ -63,6 +68,7 @@ describe("CREATE_LINK_TOOL", () => {
 
     expect(createLink).toHaveBeenCalledWith(
       expect.objectContaining({ pageId: "test-page" }),
+      MOCK_TOOL_CONTEXT,
     );
   });
 
