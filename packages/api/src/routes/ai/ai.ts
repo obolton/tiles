@@ -124,7 +124,7 @@ export async function generateImage({ prompt }: GenerateImageSchema) {
 
 export async function* write(
   { pageId, sectionId, prompt, context, history }: WriteSchema,
-  { userId, workspaceId }: AuthenticatedPageProcedureContext,
+  ctx: AuthenticatedPageProcedureContext,
   signal?: AbortSignal,
 ): AsyncIterable<WriteEvent> {
   const input: ResponseInput = [{ role: "developer", content: PROMPT }];
@@ -152,8 +152,7 @@ export async function* write(
   input.push({ role: "user", content: prompt });
 
   const toolContext: ToolContext = {
-    userId,
-    workspaceId,
+    ...ctx,
     pageId,
     sectionId,
     model: TEXT_MODEL,

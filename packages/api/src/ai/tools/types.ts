@@ -1,10 +1,8 @@
 import { z } from "zod";
 import type { ClientTile } from "@/types/tiles.ts";
+import type { AuthenticatedPageProcedureContext } from "@/utils/middleware.ts";
 
-export interface ToolContext {
-  userId: string;
-  workspaceId: string;
-  pageId: string;
+export interface ToolContext extends AuthenticatedPageProcedureContext {
   sectionId: string | null;
   model: string;
   resolveArtifactId: (id: number) => string;
