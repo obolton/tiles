@@ -10,10 +10,6 @@ export function getImageUrl(imageKey: string) {
   return `${process.env.IMAGES_BASE_URL}/${imageKey}?optimizer=image&class=large`;
 }
 
-export function getLinkImageUrl(tileId: string) {
-  return `${process.env.RESOURCES_BASE_URL}/links/${tileId}`;
-}
-
 export function getVideoImageUrl(tileId: string) {
   return `${process.env.RESOURCES_BASE_URL}/videos/${tileId}`;
 }

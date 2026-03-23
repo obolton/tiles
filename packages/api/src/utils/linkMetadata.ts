@@ -10,8 +10,6 @@ type LinkMetadata = {
   ogImageUrl: string | null;
 };
 
-// TODO: Validate image URL types (especially to filter SVGs which could contain scripts)
-
 const FETCH_TIMEOUT_MS = 10000;
 const HTML_CONTENT_TYPES = [
   "text/html",

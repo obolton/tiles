@@ -1,9 +1,5 @@
 import { describe, expect, test } from "vitest";
-import {
-  getProfileImageUrl,
-  getLinkImageUrl,
-  getVideoImageUrl,
-} from "../cdn.ts";
+import { getProfileImageUrl, getVideoImageUrl } from "../cdn.ts";
 
 describe("getProfileImageUrl", () => {
   test("returns the profile image URL", () => {
@@ -11,13 +7,6 @@ describe("getProfileImageUrl", () => {
     expect(result).toEqual(
       "https://example.com/profile-images/image-key?optimizer=image&class=small",
     );
-  });
-});
-
-describe("getLinkImageUrl", () => {
-  test("returns the link image URL", () => {
-    const result = getLinkImageUrl("link-tile-id");
-    expect(result).toEqual("https://example.com/resources/links/link-tile-id");
   });
 });
 
