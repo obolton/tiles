@@ -31,6 +31,7 @@ model Image {
   workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   imageTiles   ImageTile[]
+  linkTiles    LinkTile[]
   tiles        Tile[]        @relation("BackgroundImage")
   tableColumns TableColumn[]
   tableRows    TableRow[]

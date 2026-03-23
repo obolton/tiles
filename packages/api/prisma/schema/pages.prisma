@@ -243,14 +243,15 @@ model LinkTile {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
-  url              String
-  title            String?
-  description      String?
-  siteName         String? @map("site_name")
-  originalImageUrl String? @map("original_image_url")
+  url         String
+  title       String?
+  description String?
+  siteName    String? @map("site_name")
+  imageId     String? @map("image_id") @db.Uuid
 
-  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  tile Tile @relation(fields: [id], references: [id], onDelete: Cascade)
+  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  tile  Tile   @relation(fields: [id], references: [id], onDelete: Cascade)
+  image Image? @relation(fields: [imageId], references: [id], onDelete: SetNull)
 
   @@index([pageId])
   @@map("link_tiles")
