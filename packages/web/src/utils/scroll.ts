@@ -1,6 +1,6 @@
 /**
  * Scrolls a container to reveal a descendant element, if it is not
- * already fully visible within the container's bounds.
+ * fully visible within the container's bounds.
  */
 export function reveal(
   container: Element,
@@ -10,19 +10,41 @@ export function reveal(
   const containerRect = container.getBoundingClientRect();
   const elementRect = element.getBoundingClientRect();
 
+  const containerStyle = getComputedStyle(container);
+  const elementStyle = getComputedStyle(element);
+
+  const padTop =
+    (parseFloat(containerStyle.scrollPaddingTop) || 0) +
+    (parseFloat(elementStyle.scrollMarginTop) || 0);
+  const padBottom =
+    (parseFloat(containerStyle.scrollPaddingBottom) || 0) +
+    (parseFloat(elementStyle.scrollMarginBottom) || 0);
+  const padLeft =
+    (parseFloat(containerStyle.scrollPaddingLeft) || 0) +
+    (parseFloat(elementStyle.scrollMarginLeft) || 0);
+  const padRight =
+    (parseFloat(containerStyle.scrollPaddingRight) || 0) +
+    (parseFloat(elementStyle.scrollMarginRight) || 0);
+
   let top: number | undefined;
   let left: number | undefined;
 
-  if (elementRect.top < containerRect.top) {
-    top = elementRect.top - containerRect.top + container.scrollTop;
-  } else if (elementRect.bottom > containerRect.bottom) {
-    top = elementRect.bottom - containerRect.bottom + container.scrollTop;
+  if (elementRect.top < containerRect.top + padTop) {
+    top = elementRect.top - containerRect.top - padTop + container.scrollTop;
+  } else if (elementRect.bottom > containerRect.bottom - padBottom) {
+    top =
+      elementRect.bottom -
+      containerRect.bottom +
+      padBottom +
+      container.scrollTop;
   }
 
-  if (elementRect.left < containerRect.left) {
-    left = elementRect.left - containerRect.left + container.scrollLeft;
-  } else if (elementRect.right > containerRect.right) {
-    left = elementRect.right - containerRect.right + container.scrollLeft;
+  if (elementRect.left < containerRect.left + padLeft) {
+    left =
+      elementRect.left - containerRect.left - padLeft + container.scrollLeft;
+  } else if (elementRect.right > containerRect.right - padRight) {
+    left =
+      elementRect.right - containerRect.right + padRight + container.scrollLeft;
   }
 
   if (top !== undefined || left !== undefined) {

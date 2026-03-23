@@ -123,6 +123,143 @@ describe("reveal", () => {
       left: undefined,
     });
   });
+
+  describe("scroll-padding and scroll-margin", () => {
+    test("scroll-padding-top triggers scroll for element within padding zone", () => {
+      const container = document.createElement("div");
+      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(containerRect);
+      container.style.scrollPaddingTop = "20px";
+      container.scroll = vi.fn();
+
+      // Element top (115) is below container top (100) but within padding zone (100 + 20 = 120)
+      const element = document.createElement("div");
+      vi.spyOn(element, "getBoundingClientRect").mockReturnValue(
+        new DOMRect(50, 115, 100, 40),
+      );
+
+      reveal(container, element);
+      expect(container.scroll).toHaveBeenCalledWith({
+        top: -5,
+        left: undefined,
+      });
+    });
+
+    test("scroll-margin-top triggers scroll for element within margin zone", () => {
+      const container = document.createElement("div");
+      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(containerRect);
+      container.scroll = vi.fn();
+
+      // Element top (115) is below container top (100) but within margin zone (100 + 20 = 120)
+      const element = document.createElement("div");
+      vi.spyOn(element, "getBoundingClientRect").mockReturnValue(
+        new DOMRect(50, 115, 100, 40),
+      );
+      element.style.scrollMarginTop = "20px";
+
+      reveal(container, element);
+      expect(container.scroll).toHaveBeenCalledWith({
+        top: -5,
+        left: undefined,
+      });
+    });
+
+    test("scroll-padding-bottom triggers scroll for element within padding zone", () => {
+      const container = document.createElement("div");
+      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(containerRect);
+      container.style.scrollPaddingBottom = "20px";
+      container.scroll = vi.fn();
+
+      // Element bottom (390) is above container bottom (400) but within padding zone (400 - 20 = 380)
+      const element = document.createElement("div");
+      vi.spyOn(element, "getBoundingClientRect").mockReturnValue(
+        new DOMRect(50, 370, 100, 20),
+      );
+
+      reveal(container, element);
+      expect(container.scroll).toHaveBeenCalledWith({
+        top: 10,
+        left: undefined,
+      });
+    });
+
+    test("scroll-padding-left triggers scroll for element within padding zone", () => {
+      const container = document.createElement("div");
+      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(
+        new DOMRect(100, 0, 400, 300),
+      );
+      container.style.scrollPaddingLeft = "20px";
+      container.scroll = vi.fn();
+
+      // Element left (115) is right of container left (100) but within padding zone (100 + 20 = 120)
+      const element = document.createElement("div");
+      vi.spyOn(element, "getBoundingClientRect").mockReturnValue(
+        new DOMRect(115, 50, 40, 40),
+      );
+
+      reveal(container, element);
+      expect(container.scroll).toHaveBeenCalledWith({
+        top: undefined,
+        left: -5,
+      });
+    });
+
+    test("scroll-padding-right triggers scroll for element within padding zone", () => {
+      const container = document.createElement("div");
+      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(
+        new DOMRect(100, 0, 400, 300),
+      );
+      container.style.scrollPaddingRight = "20px";
+      container.scroll = vi.fn();
+
+      // Element right (490) is left of container right (500) but within padding zone (500 - 20 = 480)
+      const element = document.createElement("div");
+      vi.spyOn(element, "getBoundingClientRect").mockReturnValue(
+        new DOMRect(450, 50, 40, 40),
+      );
+
+      reveal(container, element);
+      expect(container.scroll).toHaveBeenCalledWith({
+        top: undefined,
+        left: 10,
+      });
+    });
+
+    test("combines scroll-padding and scroll-margin", () => {
+      const container = document.createElement("div");
+      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(containerRect);
+      container.style.scrollPaddingTop = "15px";
+      container.scroll = vi.fn();
+
+      // Element top (125) is below container top (100) but within combined zone (100 + 15 + 15 = 130)
+      const element = document.createElement("div");
+      vi.spyOn(element, "getBoundingClientRect").mockReturnValue(
+        new DOMRect(50, 125, 100, 40),
+      );
+      element.style.scrollMarginTop = "15px";
+
+      reveal(container, element);
+      expect(container.scroll).toHaveBeenCalledWith({
+        top: -5,
+        left: undefined,
+      });
+    });
+
+    test("does not scroll when element is visible outside padding zone", () => {
+      const container = document.createElement("div");
+      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(containerRect);
+      container.style.scrollPaddingTop = "20px";
+      container.scroll = vi.fn();
+
+      // Element top (130) is below the padding zone (100 + 20 = 120)
+      const element = document.createElement("div");
+      vi.spyOn(element, "getBoundingClientRect").mockReturnValue(
+        new DOMRect(50, 130, 100, 40),
+      );
+
+      reveal(container, element);
+      expect(container.scroll).not.toHaveBeenCalled();
+    });
+  });
 });
 
 describe("scrollIntoViewIfNeeded", () => {
