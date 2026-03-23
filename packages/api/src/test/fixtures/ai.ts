@@ -1,8 +1,12 @@
 import { vi } from "vitest";
+import type { ServerResponse, IncomingMessage } from "node:http";
 import type { ToolContext } from "@/ai/tools/types";
 
 export const MOCK_TOOL_CONTEXT: ToolContext = {
+  res: {} as ServerResponse<IncomingMessage>,
+  sessionId: "test-session",
   userId: "test-user",
+  serviceName: null,
   workspaceId: "test-workspace",
   pageId: "test-page",
   sectionId: null,
