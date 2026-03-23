@@ -33,6 +33,7 @@ describe("FUNCTION_TOOLS", () => {
     expect(toolNames).toContain("create_table");
     expect(toolNames).toContain("create_chart");
     expect(toolNames).toContain("create_link");
+    expect(toolNames).toContain("create_map");
     expect(toolNames).toContain("create_section");
     expect(toolNames).toContain("delete_tiles");
     expect(toolNames).toContain("edit_style");
