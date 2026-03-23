@@ -1,16 +1,17 @@
 import prisma from "@/database/prisma";
 import { getLinkMetadata } from "@/utils/linkMetadata";
+import { fetchImage } from "@/utils/fetchImage";
 import { getVideoInfo } from "@/utils/videos";
 import { createVideo } from "../videos/videos";
 import type { CreateLinkSchema, UpdateLinkSchema } from "./schema";
 import { createTile } from "../tiles/tiles";
 import { LINK_FIELDS } from "./fields";
+import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
 
-export async function createLink({
-  pageId,
-  url,
-  ...properties
-}: CreateLinkSchema) {
+export async function createLink(
+  { pageId, url, ...properties }: CreateLinkSchema,
+  ctx: AuthenticatedPageProcedureContext,
+) {
   // Convert links to video tiles if they are video links
   const videoInfo = getVideoInfo(url);
   if (videoInfo) {
@@ -24,6 +25,10 @@ export async function createLink({
   const linkMetadata = await getLinkMetadata(url);
   const { title, description, siteName, imageUrl } = linkMetadata || {};
 
+  const imageId = imageUrl
+    ? await fetchImage(imageUrl, ctx.workspaceId, ctx.userId)
+    : null;
+
   const { link, ...tile } = await createTile(
     {
       ...properties,
@@ -35,7 +40,7 @@ export async function createLink({
         title,
         description,
         siteName,
-        originalImageUrl: imageUrl,
+        imageId,
       },
     },
     { link: { select: LINK_FIELDS } },
@@ -45,9 +50,17 @@ export async function createLink({
   return { ...tile, ...link! };
 }
 
-export async function updateLink({ pageId, id, url }: UpdateLinkSchema) {
+export async function updateLink(
+  { pageId, id, url }: UpdateLinkSchema,
+  { workspaceId, userId }: AuthenticatedPageProcedureContext,
+) {
   const linkMetadata = await getLinkMetadata(url);
   const { title, description, siteName, imageUrl } = linkMetadata || {};
+
+  const imageId = imageUrl
+    ? await fetchImage(imageUrl, workspaceId, userId)
+    : null;
+
   const link = await prisma.linkTile.update({
     where: {
       pageId,
@@ -58,7 +71,7 @@ export async function updateLink({ pageId, id, url }: UpdateLinkSchema) {
       title,
       description,
       siteName,
-      originalImageUrl: imageUrl,
+      imageId,
     },
     select: LINK_FIELDS,
   });
@@ -66,16 +79,4 @@ export async function updateLink({ pageId, id, url }: UpdateLinkSchema) {
     type: "LINK" as const,
     ...link,
   };
-}
-
-export async function getLinkTileOriginalImageUrl(id: string) {
-  const link = await prisma.linkTile.findUnique({
-    where: {
-      id,
-    },
-    select: {
-      originalImageUrl: true,
-    },
-  });
-  return link?.originalImageUrl;
 }

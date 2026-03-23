@@ -6,9 +6,9 @@ import { CreateLinkSchema, UpdateLinkSchema } from "./schema.ts";
 export default router({
   create: pageUpdateProcedure
     .input(CreateLinkSchema)
-    .mutation(({ input }) => createLink(input)),
+    .mutation(({ input, ctx }) => createLink(input, ctx)),
 
   update: pageUpdateProcedure
     .input(UpdateLinkSchema)
-    .mutation(({ input }) => updateLink(input)),
+    .mutation(({ input, ctx }) => updateLink(input, ctx)),
 });
