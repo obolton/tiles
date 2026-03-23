@@ -12,6 +12,7 @@ const BASE_ARGS = {
   sectionId: null,
   align: null,
   size: "medium" as const,
+  coordinates: null,
 };
 
 describe("CREATE_TEXT_TOOL", () => {

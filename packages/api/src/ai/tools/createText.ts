@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createText } from "@/routes/text/text.ts";
-import { SizeSchema, getDimensions } from "./schema.ts";
+import { SizeSchema, getDimensions, CoordinatesSchema } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateTextSchema = z.strictObject({
@@ -12,6 +12,7 @@ const CreateTextSchema = z.strictObject({
     .nullable()
     .meta({ description: "The horizontal alignment of the text." }),
   size: SizeSchema,
+  coordinates: CoordinatesSchema,
 });
 
 type CreateTextSchemaType = z.infer<typeof CreateTextSchema>;
@@ -35,13 +36,15 @@ async function createTextArtifact(
   args: z.infer<typeof CreateTextSchema>,
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
-  const { align, size } = args;
+  const { align, size, coordinates } = args;
   const resolvedSectionId =
     args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
   const artifact = await createText({
     pageId,
     sectionId: resolvedSectionId,
     ...getDimensions(size),
+    lat: coordinates?.lat,
+    long: coordinates?.long,
     content: [
       {
         type: "paragraph",

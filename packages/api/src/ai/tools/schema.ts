@@ -5,6 +5,12 @@ import {
   GradientBackgroundSchema,
 } from "@/schema/Background";
 import { ColorSchema } from "@/schema/Color";
+import {
+  MIN_LATITUDE,
+  MAX_LATITUDE,
+  MIN_LONGITUDE,
+  MAX_LONGITUDE,
+} from "@/constants/geo";
 
 export const SizeSchema = z.enum(["small", "medium", "large"]).meta({
   description: "The size of the block: small, medium, or large",
@@ -68,6 +74,17 @@ export const PositionSchema = z
 export const TextColorSchema = ColorSchema.nullable().meta({
   description: "Text color",
 });
+
+export const CoordinatesSchema = z
+  .strictObject({
+    lat: z.number().gte(MIN_LATITUDE).lte(MAX_LATITUDE),
+    long: z.number().gte(MIN_LONGITUDE).lte(MAX_LONGITUDE),
+  })
+  .nullable()
+  .meta({
+    description:
+      "Geographic coordinates for placing this tile on a map section",
+  });
 
 export const CommonTileSchema = {
   background: AIBackgroundSchema,

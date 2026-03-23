@@ -17,6 +17,7 @@ const BASE_ARGS = {
   tableId: 0,
   labelColumnIndex: null,
   series: [{ columnIndex: 0, type: "bar" as const, color: null }],
+  coordinates: null,
 };
 
 describe("CREATE_CHART_TOOL", () => {

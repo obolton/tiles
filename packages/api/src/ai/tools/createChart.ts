@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createChart, getTableColumns } from "@/routes/charts/charts.ts";
 import { ColorSchema } from "@/schema/Color.ts";
-import { SizeSchema, getDimensions } from "./schema.ts";
+import { SizeSchema, getDimensions, CoordinatesSchema } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const CreateChartSchema = z.strictObject({
@@ -33,6 +33,7 @@ const CreateChartSchema = z.strictObject({
     .min(1)
     .max(10)
     .meta({ description: "Data series to display in the chart" }),
+  coordinates: CoordinatesSchema,
 });
 
 async function createChartArtifact(
@@ -69,6 +70,8 @@ async function createChartArtifact(
     labelColumnId,
     series,
     ...getDimensions(size),
+    lat: args.coordinates?.lat,
+    long: args.coordinates?.long,
   });
 
   return { artifact };

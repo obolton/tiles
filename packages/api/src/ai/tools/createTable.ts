@@ -4,6 +4,7 @@ import {
   SizeSchema,
   getDimensions,
   AIColumnDefinitionSchema,
+  CoordinatesSchema,
 } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
@@ -22,13 +23,14 @@ const CreateTableSchema = z.strictObject({
     .meta({
       description: "Row data as arrays of cell values, matching column order",
     }),
+  coordinates: CoordinatesSchema,
 });
 
 async function createTableArtifact(
   args: z.infer<typeof CreateTableSchema>,
   { pageId, sectionId, resolveArtifactId }: ToolContext,
 ) {
-  const { size, columns, rows } = args;
+  const { size, columns, rows, coordinates } = args;
   const resolvedSectionId =
     args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
   const artifact = await createTable({
@@ -40,6 +42,8 @@ async function createTableArtifact(
     })),
     rows,
     ...getDimensions(size),
+    lat: coordinates?.lat,
+    long: coordinates?.long,
   });
   return { artifact };
 }

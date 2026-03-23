@@ -16,6 +16,7 @@ const BASE_ARGS = {
     { title: "B", background: null },
   ],
   rows: [["1", "2"]],
+  coordinates: null,
 };
 
 describe("CREATE_TABLE_TOOL", () => {

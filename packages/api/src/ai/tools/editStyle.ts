@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CommonTileSchema } from "./schema.ts";
+import { CommonTileSchema, CoordinatesSchema } from "./schema.ts";
 import type {
   ActionResult,
   FunctionToolOptions,
@@ -11,6 +11,7 @@ const EditStyleSchema = z.strictObject({
     description: "The ID of the tile to style",
   }),
   ...CommonTileSchema,
+  coordinates: CoordinatesSchema,
 });
 
 async function editStyle(
@@ -18,7 +19,7 @@ async function editStyle(
   context: ToolContext,
 ): Promise<ActionResult> {
   const tileId = context.resolveArtifactId(args.id);
-  const { id: _, position, hide, ...changes } = args;
+  const { id: _, position, coordinates, hide, ...changes } = args;
 
   return {
     actions: [
@@ -30,6 +31,9 @@ async function editStyle(
             ...changes,
             hide: hide ?? undefined,
             ...(position ? { x: position.x, y: position.y } : {}),
+            ...(coordinates
+              ? { lat: coordinates.lat, long: coordinates.long }
+              : {}),
           },
         },
       },
