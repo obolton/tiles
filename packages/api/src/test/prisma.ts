@@ -25,9 +25,7 @@ function mockModel() {
 }
 
 export const MOCK_PRISMA = {
-  $transaction: async (
-    callback: (transaction: Prisma.TransactionClient) => void,
-  ) => callback(MOCK_PRISMA),
+  $transaction: vi.fn(async (callback) => callback(MOCK_PRISMA)),
   $executeRaw: vi.fn(),
   $executeRawUnsafe: vi.fn(),
   $queryRaw: vi.fn(),
