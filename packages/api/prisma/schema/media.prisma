@@ -1,6 +1,7 @@
 enum MediaSource {
   UPLOAD
   GENERATED
+  EXTERNAL_LINK
 }
 
 enum ImageType {
