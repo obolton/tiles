@@ -88,6 +88,10 @@ Use "create_link" to create link cards for URLs.
 
 Use "create_section" to create a container for grouping related content. After creating a section, pass its ID as the "sectionId" parameter to other tools to place content inside it.
 
+## Maps
+
+Use "create_map" to create an interactive map with a style (DEFAULT, SATELLITE, WATERCOLOR, or MONOCHROME). After creating a map, pass its ID as the "sectionId" parameter to other tools and provide "coordinates" (lat/long) to place content as pins on the map. Use real-world geographic coordinates for locations. Use "edit_style" with "coordinates" to reposition existing tiles or to place generated images on the map.
+
 # Editing Existing Text
 
 When content is referenced (shown with IDs like "0", "1"), you can edit text tiles directly using marker syntax. Do NOT call "create_text" for editing - just use the marker with the referenced ID:
