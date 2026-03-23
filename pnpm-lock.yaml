@@ -234,11 +234,11 @@ importers:
         specifier: ^0.10.0
         version: 0.10.0(typescript@5.9.3)
       '@storybook/addon-a11y':
-        specifier: ^10.2.19
-        version: 10.2.19(storybook@10.2.19(prettier@3.8.1))
+        specifier: ^10.3.1
+        version: 10.3.1(storybook@10.3.1(prettier@3.8.1))
       '@storybook/html-vite':
-        specifier: ^10.2.19
-        version: 10.2.19(esbuild@0.27.4)(rollup@4.57.1)(storybook@10.2.19(prettier@3.8.1))(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0))
+        specifier: ^10.3.1
+        version: 10.3.1(esbuild@0.27.4)(rollup@4.57.1)(storybook@10.3.1(prettier@3.8.1))(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0))
       '@types/culori':
         specifier: ^4.0.1
         version: 4.0.1
@@ -258,8 +258,8 @@ importers:
         specifier: ^1.8.1
         version: 1.8.1
       storybook:
-        specifier: ^10.2.19
-        version: 10.2.19(prettier@3.8.1)
+        specifier: ^10.3.1
+        version: 10.3.1(prettier@3.8.1)
       stylelint:
         specifier: ^17.5.0
         version: 17.5.0(typescript@5.9.3)
@@ -2037,23 +2037,23 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@storybook/addon-a11y@10.2.19':
-    resolution: {integrity: sha512-SJGf1ghCoRVlwyiRwz5GiHuNvu7C5iCDNIRJW8WGOJlnoQa3rYaY7WJ/8a/eT9N8buIscL9AYWudhh5zsI1W3g==}
+  '@storybook/addon-a11y@10.3.1':
+    resolution: {integrity: sha512-6mbrvFgBx5A6vn4Gt44m8KFvrBOhr+AvNvI8LFutWrW3/lJhvnVCz2wTTDausgSRPJdsW67wWgZCFhsLEUinqQ==}
     peerDependencies:
-      storybook: ^10.2.19
+      storybook: ^10.3.1
 
-  '@storybook/builder-vite@10.2.19':
-    resolution: {integrity: sha512-a59xALzM9GeYh6p+wzAeBbDyIe+qyrC4nxS3QNzb5i2ZOhrq1iIpvnDaOWe80NC8mV3IlqUEGY8Uawkf//1Rmg==}
+  '@storybook/builder-vite@10.3.1':
+    resolution: {integrity: sha512-8X3Mv6VxVaVHip51ZuTAjQv7jI3K4GxpgW0ZAhaLi8atSTHezu7hQOuISC1cHAwhMV0GhGHtCCKi33G9EGx5hw==}
     peerDependencies:
-      storybook: ^10.2.19
+      storybook: ^10.3.1
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
 
-  '@storybook/csf-plugin@10.2.19':
-    resolution: {integrity: sha512-BpjYIOdyQn/Rm6MjUAc5Gl8HlARZrskD/OhUNShiOh2fznb523dHjiE5mbU1kKM/+L1uvRlEqqih40rTx+xCrg==}
+  '@storybook/csf-plugin@10.3.1':
+    resolution: {integrity: sha512-P1WUSoyueV+ULpNeip4eIjjDvOXDBQI4gaq/s1PdAg1Szz/0GhDPu/CXuwukgkmyHaJP3aVR3pHPvSfeLfMCrA==}
     peerDependencies:
       esbuild: '*'
       rollup: '*'
-      storybook: ^10.2.19
+      storybook: ^10.3.1
       vite: '*'
       webpack: '*'
     peerDependenciesMeta:
@@ -2069,15 +2069,15 @@ packages:
   '@storybook/global@5.0.0':
     resolution: {integrity: sha512-FcOqPAXACP0I3oJ/ws6/rrPT9WGhu915Cg8D02a9YxLo0DE9zI+a9A5gRGvmQ09fiWPukqI8ZAEoQEdWUKMQdQ==}
 
-  '@storybook/html-vite@10.2.19':
-    resolution: {integrity: sha512-XzPqeRCO4DAym9uKu+9y7pFfBSXI3sdQby0ViMFWr9/z2myThIi67HEQ7soiU8RZzot842oGYUwOjloHuIUJ0A==}
+  '@storybook/html-vite@10.3.1':
+    resolution: {integrity: sha512-/YZx0cP6pjU7lI6D5QKwNt2vhbZ8GRJvxQUPlc2iSYbYWBvbDC+kBJ4OUmJRC5PK6Za/i/IBxWVilNIUUjkd8A==}
     peerDependencies:
-      storybook: ^10.2.19
+      storybook: ^10.3.1
 
-  '@storybook/html@10.2.19':
-    resolution: {integrity: sha512-5t2Vj8koYG3djjoY7I6KiYRXyHElB2+SGGm+6i2fDDYzLSBRycKBgSJMnA4V4bXEFnVYwcfJUZ/TO4a3ciDmNg==}
+  '@storybook/html@10.3.1':
+    resolution: {integrity: sha512-dCOczBUVb7Xv0tK0FCiEDK2uJqIwjJ6o1PxSfQQtCX72KgMgc/pI9QC9jetMEtgw20bEXLnZGS/3rj0l1wTQQg==}
     peerDependencies:
-      storybook: ^10.2.19
+      storybook: ^10.3.1
 
   '@storybook/icons@2.0.1':
     resolution: {integrity: sha512-/smVjw88yK3CKsiuR71vNgWQ9+NuY2L+e8X7IMrFjexjm6ZR8ULrV2DRkTA61aV6ryefslzHEGDInGpnNeIocg==}
@@ -3781,8 +3781,8 @@ packages:
   std-env@4.0.0:
     resolution: {integrity: sha512-zUMPtQ/HBY3/50VbpkupYHbRroTRZJPRLvreamgErJVys0ceuzMkD44J/QjqhHjOzK42GQ3QZIeFG1OYfOtKqQ==}
 
-  storybook@10.2.19:
-    resolution: {integrity: sha512-UUm5eGSm6BLhkcFP0WbxkmAHJZfVN2ViLpIZOqiIPS++q32VYn+CLFC0lrTYTDqYvaG7i4BK4uowXYujzE4NdQ==}
+  storybook@10.3.1:
+    resolution: {integrity: sha512-i/CA1dUyVcF6cNL3tgPTQ/G6Evh6r3QdATuiiKObrA3QkEKmt3jrY+WeuQA7FCcmHk/vKabeliNrblaff8aY6Q==}
     hasBin: true
     peerDependencies:
       prettier: ^2 || ^3
@@ -6248,16 +6248,16 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@storybook/addon-a11y@10.2.19(storybook@10.2.19(prettier@3.8.1))':
+  '@storybook/addon-a11y@10.3.1(storybook@10.3.1(prettier@3.8.1))':
     dependencies:
       '@storybook/global': 5.0.0
       axe-core: 4.11.1
-      storybook: 10.2.19(prettier@3.8.1)
+      storybook: 10.3.1(prettier@3.8.1)
 
-  '@storybook/builder-vite@10.2.19(esbuild@0.27.4)(rollup@4.57.1)(storybook@10.2.19(prettier@3.8.1))(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0))':
+  '@storybook/builder-vite@10.3.1(esbuild@0.27.4)(rollup@4.57.1)(storybook@10.3.1(prettier@3.8.1))(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0))':
     dependencies:
-      '@storybook/csf-plugin': 10.2.19(esbuild@0.27.4)(rollup@4.57.1)(storybook@10.2.19(prettier@3.8.1))(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0))
-      storybook: 10.2.19(prettier@3.8.1)
+      '@storybook/csf-plugin': 10.3.1(esbuild@0.27.4)(rollup@4.57.1)(storybook@10.3.1(prettier@3.8.1))(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0))
+      storybook: 10.3.1(prettier@3.8.1)
       ts-dedent: 2.2.0
       vite: 7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)
     transitivePeerDependencies:
@@ -6265,9 +6265,9 @@ snapshots:
       - rollup
       - webpack
 
-  '@storybook/csf-plugin@10.2.19(esbuild@0.27.4)(rollup@4.57.1)(storybook@10.2.19(prettier@3.8.1))(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0))':
+  '@storybook/csf-plugin@10.3.1(esbuild@0.27.4)(rollup@4.57.1)(storybook@10.3.1(prettier@3.8.1))(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0))':
     dependencies:
-      storybook: 10.2.19(prettier@3.8.1)
+      storybook: 10.3.1(prettier@3.8.1)
       unplugin: 2.3.11
     optionalDependencies:
       esbuild: 0.27.4
@@ -6276,21 +6276,21 @@ snapshots:
 
   '@storybook/global@5.0.0': {}
 
-  '@storybook/html-vite@10.2.19(esbuild@0.27.4)(rollup@4.57.1)(storybook@10.2.19(prettier@3.8.1))(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0))':
+  '@storybook/html-vite@10.3.1(esbuild@0.27.4)(rollup@4.57.1)(storybook@10.3.1(prettier@3.8.1))(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0))':
     dependencies:
-      '@storybook/builder-vite': 10.2.19(esbuild@0.27.4)(rollup@4.57.1)(storybook@10.2.19(prettier@3.8.1))(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0))
-      '@storybook/html': 10.2.19(storybook@10.2.19(prettier@3.8.1))
-      storybook: 10.2.19(prettier@3.8.1)
+      '@storybook/builder-vite': 10.3.1(esbuild@0.27.4)(rollup@4.57.1)(storybook@10.3.1(prettier@3.8.1))(vite@7.3.1(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0))
+      '@storybook/html': 10.3.1(storybook@10.3.1(prettier@3.8.1))
+      storybook: 10.3.1(prettier@3.8.1)
     transitivePeerDependencies:
       - esbuild
       - rollup
       - vite
       - webpack
 
-  '@storybook/html@10.2.19(storybook@10.2.19(prettier@3.8.1))':
+  '@storybook/html@10.3.1(storybook@10.3.1(prettier@3.8.1))':
     dependencies:
       '@storybook/global': 5.0.0
-      storybook: 10.2.19(prettier@3.8.1)
+      storybook: 10.3.1(prettier@3.8.1)
       ts-dedent: 2.2.0
 
   '@storybook/icons@2.0.1': {}
@@ -8107,7 +8107,7 @@ snapshots:
 
   std-env@4.0.0: {}
 
-  storybook@10.2.19(prettier@3.8.1):
+  storybook@10.3.1(prettier@3.8.1):
     dependencies:
       '@storybook/global': 5.0.0
       '@storybook/icons': 2.0.1
