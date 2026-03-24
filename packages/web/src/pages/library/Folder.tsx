@@ -7,19 +7,13 @@ import PagesGrid, {
   parsePageSort,
   type PageSort,
 } from "@/components/grid/PagesGrid";
-import SettingsIcon from "@/icons/settings.svg?jsx";
 import { handleError } from "@/utils/errors";
-import { showModal } from "@/utils/modals";
-import { redirectWithToast } from "@/utils/toasts";
 import { reactive, persistent } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
 if (!import.meta.env.SSR) {
   import("@/elements/editor").catch(handleError);
 }
-
-const FolderModalLoader = () =>
-  import("@/components/modals/folders/FolderModal");
 
 export interface FolderProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
@@ -48,30 +42,6 @@ export default function Folder({
   const pages = reactive(initialPages.pages);
   const cursor = reactive<string | null>(initialPages.nextCursor);
 
-  function editFolder() {
-    showModal(FolderModalLoader, {
-      props: {
-        name,
-        showDelete: true,
-      },
-      async onConfirm(result) {
-        if (result === "DELETE") {
-          await client.folders.delete.mutate({
-            workspaceId: workspace.id,
-            id,
-          });
-          redirectWithToast("/library", "The folder was deleted.", "success");
-          return;
-        }
-        await client.folders.update.mutate({
-          workspaceId: workspace.id,
-          id,
-          name: result.name,
-        });
-      },
-    });
-  }
-
   return (
     <PageLayout workspaceId={workspace.id}>
       <SidebarLayout
@@ -83,19 +53,6 @@ export default function Folder({
           />
         }
       >
-        <header>
-          <h2>{name}</h2>
-          <button
-            type="button"
-            className="floating"
-            aria-label="Folder settings"
-            data-tooltip="Folder settings"
-            on:click={editFolder}
-          >
-            <SettingsIcon aria-hidden="true" />
-          </button>
-        </header>
-
         <PagesGrid
           workspaceId={workspace.id}
           inputPlaceholder={`Search in ${name}`}

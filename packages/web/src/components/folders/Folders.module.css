@@ -1,0 +1,21 @@
+.folder {
+  display: flex;
+  align-items: center;
+
+  & > a {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.folder > .settings {
+  flex: none;
+  width: auto;
+  opacity: 0;
+  transition: opacity var(--animation-duration-short) var(--easing);
+
+  .folder:hover &,
+  .folder[aria-current="page"] & {
+    opacity: 1;
+  }
+}

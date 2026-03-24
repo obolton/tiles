@@ -5,9 +5,12 @@ import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import FolderIcon from "@/icons/folder.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
+import SettingsIcon from "@/icons/settings.svg?jsx";
 import { showModal } from "@/utils/modals";
 import { reactive } from "@/utils/reactivity";
 import { invalidateWorkspaceFolders } from "@/utils/folders";
+import { redirectWithToast } from "@/utils/toasts";
+import styles from "./Folders.module.css";
 import type { DragDropEvent } from "@/utils/drag";
 
 export type SYSTEM_FOLDER = "RECENT" | "SHARED" | "BOOKMARKS" | "TRASH";
@@ -60,6 +63,41 @@ export default function Folders({
     });
   }
 
+  function editFolder(folder: Folder) {
+    showModal(FolderModalLoader, {
+      props: {
+        name: folder.name,
+        showDelete: true,
+      },
+      async onConfirm(result) {
+        if (result === "DELETE") {
+          await client.folders.delete.mutate({
+            workspaceId,
+            id: folder.id,
+          });
+          folders.value = {
+            folders: folders.value.folders.filter((f) => f.id !== folder.id),
+            nextCursor: folders.value.nextCursor,
+          };
+          if (selectedId === folder.id) {
+            redirectWithToast(
+              `/workspaces/${workspaceId}`,
+              "The folder was deleted.",
+              "success",
+            );
+          }
+          return;
+        }
+        await client.folders.update.mutate({
+          workspaceId,
+          id: folder.id,
+          name: result.name,
+        });
+        invalidateWorkspaceFolders();
+      },
+    });
+  }
+
   async function onDrop(event: DragDropEvent) {
     const item = event.target as HTMLElement;
     const folderId = item.dataset.id;
@@ -107,6 +145,7 @@ export default function Folders({
         {folders.derive((value) =>
           value.folders.map((folder) => (
             <li
+              className={styles.folder}
               aria-current={selectedId === folder.id ? "page" : "false"}
               data-id={folder.id}
               data-drop="true"
@@ -115,6 +154,19 @@ export default function Folders({
                 <FolderIcon aria-hidden="true" />
                 <span>{folder.name}</span>
               </a>
+              <button
+                type="button"
+                classList={{
+                  floating: true,
+                  small: true,
+                  [styles.settings]: true,
+                }}
+                aria-label="Folder settings"
+                data-tooltip="Folder settings"
+                on:click={() => editFolder(folder)}
+              >
+                <SettingsIcon aria-hidden="true" />
+              </button>
             </li>
           )),
         )}
