@@ -127,7 +127,9 @@ describe("reveal", () => {
   describe("scroll-padding and scroll-margin", () => {
     test("scroll-padding-top triggers scroll for element within padding zone", () => {
       const container = document.createElement("div");
-      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(containerRect);
+      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(
+        containerRect,
+      );
       container.style.scrollPaddingTop = "20px";
       container.scroll = vi.fn();
 
@@ -146,7 +148,9 @@ describe("reveal", () => {
 
     test("scroll-margin-top triggers scroll for element within margin zone", () => {
       const container = document.createElement("div");
-      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(containerRect);
+      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(
+        containerRect,
+      );
       container.scroll = vi.fn();
 
       // Element top (115) is below container top (100) but within margin zone (100 + 20 = 120)
@@ -165,7 +169,9 @@ describe("reveal", () => {
 
     test("scroll-padding-bottom triggers scroll for element within padding zone", () => {
       const container = document.createElement("div");
-      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(containerRect);
+      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(
+        containerRect,
+      );
       container.style.scrollPaddingBottom = "20px";
       container.scroll = vi.fn();
 
@@ -226,7 +232,9 @@ describe("reveal", () => {
 
     test("combines scroll-padding and scroll-margin", () => {
       const container = document.createElement("div");
-      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(containerRect);
+      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(
+        containerRect,
+      );
       container.style.scrollPaddingTop = "15px";
       container.scroll = vi.fn();
 
@@ -246,7 +254,9 @@ describe("reveal", () => {
 
     test("does not scroll when element is visible outside padding zone", () => {
       const container = document.createElement("div");
-      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(containerRect);
+      vi.spyOn(container, "getBoundingClientRect").mockReturnValue(
+        containerRect,
+      );
       container.style.scrollPaddingTop = "20px";
       container.scroll = vi.fn();
 

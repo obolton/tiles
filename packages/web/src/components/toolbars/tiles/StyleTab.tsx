@@ -35,7 +35,9 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
           value={tile.sizing}
           onChange={(d) => tile.setSizing(d).catch(handleError)}
           showAuto={
-            tile.type === "TEXT" || tile.type === "TABLE" || tile.type === "IMAGE"
+            tile.type === "TEXT" ||
+            tile.type === "TABLE" ||
+            tile.type === "IMAGE"
           }
         />
 

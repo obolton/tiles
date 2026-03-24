@@ -31,10 +31,6 @@
   animation-duration: var(--animation-duration);
 }
 
-pop-out::part(close) {
-  view-transition-name: close-button;
-}
-
 ::view-transition-old(.destroy) {
   animation-name: destroy;
 }

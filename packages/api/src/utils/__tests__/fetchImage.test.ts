@@ -13,7 +13,10 @@ const USER_ID = "user-1";
 
 function imageResponse(
   contentType = "image/jpeg",
-  { status = 200, contentLength }: { status?: number; contentLength?: string } = {},
+  {
+    status = 200,
+    contentLength,
+  }: { status?: number; contentLength?: string } = {},
 ) {
   const headers: Record<string, string> = { "Content-Type": contentType };
   if (contentLength) {
@@ -101,9 +104,7 @@ describe("fetchImage", () => {
 
   describe("URL validation", () => {
     test("rejects non-http/https protocols", async () => {
-      const errorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage(
         "ftp://example.com/image.jpg",
@@ -117,9 +118,7 @@ describe("fetchImage", () => {
     });
 
     test("rejects invalid URLs", async () => {
-      const errorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage("not-a-url", WORKSPACE_ID, USER_ID);
 
@@ -133,9 +132,7 @@ describe("fetchImage", () => {
       vi.spyOn(globalThis, "fetch").mockResolvedValue(
         imageResponse("image/jpeg", { status: 404 }),
       );
-      const errorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage(
         "https://example.com/missing.jpg",
@@ -152,9 +149,7 @@ describe("fetchImage", () => {
       vi.spyOn(globalThis, "fetch").mockResolvedValue(
         imageResponse("text/html"),
       );
-      const errorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage(
         "https://example.com/page.html",
@@ -171,9 +166,7 @@ describe("fetchImage", () => {
       vi.spyOn(globalThis, "fetch").mockResolvedValue(
         imageResponse("image/svg+xml"),
       );
-      const errorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage(
         "https://example.com/logo.svg",
@@ -190,9 +183,7 @@ describe("fetchImage", () => {
       vi.spyOn(globalThis, "fetch").mockResolvedValue(
         imageResponse("image/jpeg", { contentLength: "10000000" }),
       );
-      const errorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage(
         "https://example.com/huge.jpg",
@@ -226,9 +217,7 @@ describe("fetchImage", () => {
           headers: { "Content-Type": "image/jpeg" },
         }),
       );
-      const errorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage(
         "https://example.com/empty.jpg",
@@ -246,9 +235,7 @@ describe("fetchImage", () => {
       vi.spyOn(globalThis, "fetch").mockRejectedValue(
         new Error("Network error"),
       );
-      const errorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage(
         "https://example.com/image.jpg",
@@ -263,9 +250,7 @@ describe("fetchImage", () => {
     test("returns null on upload failure", async () => {
       vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse());
       vi.mocked(upload).mockRejectedValue(new Error("R2 upload failed"));
-      const errorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage(
         "https://example.com/image.jpg",
@@ -279,12 +264,8 @@ describe("fetchImage", () => {
 
     test("returns null on database failure", async () => {
       vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse());
-      vi.mocked(prisma.image.create).mockRejectedValue(
-        new Error("DB error"),
-      );
-      const errorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      vi.mocked(prisma.image.create).mockRejectedValue(new Error("DB error"));
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage(
         "https://example.com/image.jpg",
