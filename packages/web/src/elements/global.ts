@@ -7,8 +7,6 @@ import "./video/EmbeddedVideo";
 import "./infinite-scroll/InfiniteScroll";
 import "./calendar/CalendarMonth";
 import "./file-picker/FilePicker";
-import "./pop-out/PopOut";
-import "./stack/StackView";
 import "./scroll-view/ScrollView";
 import "./tabs/TabBar";
 import "./tabs/TabItem";
