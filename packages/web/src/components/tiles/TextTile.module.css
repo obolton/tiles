@@ -2,9 +2,11 @@
   width: 100%;
   height: 100%;
   padding: clamp(8px, 2vw, 16px);
+  overflow: hidden;
 }
 
 .editor {
+  overflow-block: auto;
   outline: none;
 
   & li[role="checkbox"]::after {
@@ -40,63 +42,4 @@
 
 .align-bottom {
   align-content: end;
-}
-
-.pop-out {
-  display: contents;
-  background: inherit;
-
-  &:not(:defined) {
-    display: block;
-    width: 100%;
-    overflow: clip;
-  }
-
-  &::part(contents) {
-    background: inherit;
-  }
-
-  &:state(open)::part(contents) {
-    backdrop-filter: blur(32px);
-  }
-
-  &:state(transitioning) {
-    &::part(contents) {
-      view-transition-name: text-tile;
-    }
-
-    &::part(button) {
-      view-transition-name: text-tile-button;
-    }
-
-    & > div:first-of-type {
-      view-transition-name: text-tile-text;
-    }
-  }
-}
-
-::view-transition-group(text-tile) {
-  border-radius: 12px;
-}
-
-::view-transition-group(text-tile-text) {
-  overflow-y: clip;
-}
-
-::view-transition-old(text-tile),
-::view-transition-new(text-tile),
-::view-transition-old(text-tile-text),
-::view-transition-new(text-tile-text) {
-  block-size: 100%;
-  object-position: left top;
-}
-
-::view-transition-old(text-tile),
-::view-transition-new(text-tile) {
-  animation: none;
-}
-
-::view-transition-old(text-tile-text),
-::view-transition-new(text-tile-text) {
-  object-fit: none;
 }

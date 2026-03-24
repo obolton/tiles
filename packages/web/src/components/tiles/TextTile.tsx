@@ -16,7 +16,6 @@ export interface TextTileProps {
 }
 
 export default function TextTile({ text, showToolbar }: TextTileProps) {
-  const autoHeight = text.sizing.derive((d) => d === "AUTO");
   const {
     content,
     align,
@@ -104,13 +103,7 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
         </Portal>
       </If>
 
-      {autoHeight.derive((value) =>
-        value ? (
-          contents
-        ) : (
-          <pop-out className={styles["pop-out"]}>{contents}</pop-out>
-        ),
-      )}
+      {contents}
     </Tile>
   );
 }
