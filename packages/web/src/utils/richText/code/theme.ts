@@ -22,8 +22,15 @@ export const editorTheme = EditorView.theme({
   ".cm-selectionBackground": {
     backgroundColor: "rgb(0 0 0 / 10%)",
   },
-  ".cm-gutters": {
-    display: "none",
+  "& .cm-gutters": {
+    backgroundColor: "transparent",
+    borderRight: "none",
+    color: "inherit",
+    opacity: "0.4",
+  },
+  "& .cm-lineNumbers .cm-gutterElement": {
+    padding: "0 8px 0 0",
+    minWidth: "auto",
   },
   "&.cm-focused": {
     outline: "none",
