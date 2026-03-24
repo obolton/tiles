@@ -1,4 +1,4 @@
-import { createFilter, transformWithEsbuild } from "vite";
+import { createFilter, transformWithOxc } from "vite";
 import { optimize, type Config } from "svgo";
 import fs from "node:fs/promises";
 import type { Plugin } from "vite";
@@ -16,11 +16,11 @@ const SVGO_CONFIG: Config = {
 };
 
 export interface SVGPluginOptions {
-  jsxImportSource?: string;
+  importSource?: string;
 }
 
 export default function svgPlugin({
-  jsxImportSource,
+  importSource,
 }: SVGPluginOptions = {}): Plugin {
   const filter = createFilter(FILTER);
   return {
@@ -42,10 +42,13 @@ export default function svgPlugin({
       const [, attrs, children] = match;
       const component = `export default function Svg(props) { return <svg${attrs} {...props}>${children}</svg>; }`;
 
-      return transformWithEsbuild(component, id, {
-        loader: "jsx",
-        jsx: "automatic",
-        jsxImportSource,
+      return transformWithOxc(component, id, {
+        lang: "jsx",
+        jsx: {
+          runtime: "automatic",
+          importSource,
+          development: this.environment.mode === "dev",
+        },
       });
     },
   };
