@@ -1,0 +1,123 @@
+import Header from "../Header";
+import ToolbarButton from "@/components/buttons/ToolbarButton";
+import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
+import BookmarkIcon from "@/icons/bookmark.svg?jsx";
+import PresentIcon from "@/icons/present.svg?jsx";
+import MenuIcon from "@/icons/menu.svg?jsx";
+import UndoIcon from "@/icons/undo.svg?jsx";
+import RedoIcon from "@/icons/redo.svg?jsx";
+import PeopleIcon from "@/icons/people.svg?jsx";
+import type { Meta, Story } from "@/test/storybook";
+import type { User } from "@/utils/sessions";
+
+const meta = {
+  title: "Header",
+} satisfies Meta;
+export default meta;
+
+const USER: User = {
+  id: "user-1",
+  name: "Jane Smith",
+  username: "jane",
+  email: "jane@example.com",
+  imageUrl: null,
+  workspaces: [
+    { id: "ws-1", name: "Personal" },
+    { id: "ws-2", name: "Acme Corp" },
+  ],
+};
+
+const WORKSPACE_ID = "ws-1";
+
+export const LibraryPage: Story = {
+  render: () => <Header user={USER} workspaceId={WORKSPACE_ID} />,
+};
+
+export const SettingsPage: Story = {
+  render: () => (
+    <Header user={USER} workspaceId={WORKSPACE_ID} center={<h1>Settings</h1>} />
+  ),
+};
+
+export const EditorViewMode: Story = {
+  render: () => (
+    <Header
+      user={USER}
+      workspaceId={WORKSPACE_ID}
+      center={<h1>My Document</h1>}
+      actions={
+        <>
+          <ToolbarGroup label="Editing">
+            <button type="button" className="primary">
+              Edit
+            </button>
+          </ToolbarGroup>
+
+          <ToolbarGroup label="Page actions">
+            <ToolbarButton label="Not bookmarked">
+              <BookmarkIcon aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton label="Present">
+              <PresentIcon aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton label="Table of contents">
+              <MenuIcon aria-hidden="true" />
+            </ToolbarButton>
+          </ToolbarGroup>
+        </>
+      }
+    />
+  ),
+};
+
+export const EditorEditMode: Story = {
+  render: () => (
+    <Header
+      user={USER}
+      workspaceId={WORKSPACE_ID}
+      center={<h1>My Document</h1>}
+      actions={
+        <>
+          <ToolbarGroup label="Editing">
+            <button type="button" className="primary" aria-pressed="true">
+              Done
+            </button>
+            <ToolbarButton label="Undo">
+              <UndoIcon aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton label="Redo">
+              <RedoIcon aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton label="Collaboration">
+              <PeopleIcon aria-hidden="true" />
+            </ToolbarButton>
+          </ToolbarGroup>
+
+          <ToolbarGroup label="Page actions">
+            <ToolbarButton label="Not bookmarked">
+              <BookmarkIcon aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton label="Present">
+              <PresentIcon aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton label="Table of contents">
+              <MenuIcon aria-hidden="true" />
+            </ToolbarButton>
+          </ToolbarGroup>
+        </>
+      }
+    />
+  ),
+};
+
+export const SingleWorkspace: Story = {
+  render: () => (
+    <Header
+      user={{
+        ...USER,
+        workspaces: [{ id: "ws-1", name: "Personal" }],
+      }}
+      workspaceId={WORKSPACE_ID}
+    />
+  ),
+};
