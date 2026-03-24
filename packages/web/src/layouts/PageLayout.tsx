@@ -1,31 +1,37 @@
-import Navigation from "@/components/menu/Navigation";
+import Header from "@/components/menu/Header";
 import SignIn from "@/components/menu/SignIn";
 import SpeculationRules from "@/components/resources/SpeculationRules";
+import { user } from "@/utils/sessions";
 import "@/styles";
 import type { JSX } from "@/jsx/jsx";
 
 export interface PageLayoutProps {
   workspaceId?: string;
-  showBookmark?: boolean;
-  showTableOfContents?: boolean;
+  center?: JSX.Node;
+  actions?: JSX.Node;
   children: JSX.Node;
 }
 
 export default function PageLayout({
   workspaceId,
-  showBookmark,
-  showTableOfContents,
+  center,
+  actions,
   children,
 }: PageLayoutProps) {
   return (
     <>
-      {workspaceId ? (
-        <Navigation
-          workspaceId={workspaceId}
-          showBookmark={showBookmark}
-          showTableOfContents={showTableOfContents}
-        />
-      ) : null}
+      {workspaceId
+        ? user.derive((value) =>
+            value ? (
+              <Header
+                user={value}
+                workspaceId={workspaceId}
+                center={center}
+                actions={actions}
+              />
+            ) : null,
+          )
+        : null}
 
       <SignIn />
 

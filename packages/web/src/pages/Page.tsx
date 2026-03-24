@@ -1,5 +1,9 @@
 import PageLayout from "@/layouts/PageLayout";
 import EditablePage from "@/components/pages/EditablePage";
+import HeaderActions from "@/components/menu/HeaderActions";
+import PageTitle from "@/components/menu/PageTitle";
+import Editor from "@/editor/Editor";
+import { isSignedIn } from "@/utils/sessions";
 import type { AppRouterOutputs } from "@/api/client";
 
 type PageData = NonNullable<AppRouterOutputs["pages"]["getById"]>;
@@ -9,9 +13,16 @@ export interface PageProps {
 }
 
 export default function Page({ page }: PageProps) {
+  const editor = Editor.init(page);
+  const showActions = !import.meta.env.SSR && isSignedIn();
+
   return (
-    <PageLayout workspaceId={page.workspaceId} showBookmark showTableOfContents>
-      <EditablePage page={page} />
+    <PageLayout
+      workspaceId={page.workspaceId}
+      center={<PageTitle page={editor.page} isEditable={editor.isEditable} />}
+      actions={showActions ? <HeaderActions editor={editor} /> : null}
+    >
+      <EditablePage editor={editor} />
     </PageLayout>
   );
 }
