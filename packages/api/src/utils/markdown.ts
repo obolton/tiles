@@ -39,6 +39,7 @@ export interface DividerNode {
 export interface CodeNode {
   type: "code";
   language: string;
+  lineNumbers: boolean;
 }
 
 export type RichTextNode =
@@ -216,7 +217,13 @@ export class MarkdownTransformer implements Transformer<
           this.codeFence = { char: fence![0]!, length: fence!.length };
           this.set(
             controller,
-            { node: { type: "code", language: language ?? "" } },
+            {
+              node: {
+                type: "code",
+                language: language ?? "",
+                lineNumbers: false,
+              },
+            },
             match.length,
           );
           continue;

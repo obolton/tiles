@@ -586,20 +586,23 @@ describe("transformMarkdown", () => {
     test("supports backtick code blocks with language", async () => {
       const output = await getEvents(["```js\nconst x = 1;\n```\n"]);
       expect(output).toEqual([
-        { type: "code", language: "js" },
+        { type: "code", language: "js", lineNumbers: false },
         "const x = 1;",
       ]);
     });
 
     test("supports backtick code blocks without language", async () => {
       const output = await getEvents(["```\nhello\n```\n"]);
-      expect(output).toEqual([{ type: "code", language: "" }, "hello"]);
+      expect(output).toEqual([
+        { type: "code", language: "", lineNumbers: false },
+        "hello",
+      ]);
     });
 
     test("supports tilde code blocks", async () => {
       const output = await getEvents(["~~~python\nprint('hi')\n~~~\n"]);
       expect(output).toEqual([
-        { type: "code", language: "python" },
+        { type: "code", language: "python", lineNumbers: false },
         "print('hi')",
       ]);
     });
@@ -607,7 +610,7 @@ describe("transformMarkdown", () => {
     test("requires closing fence to match opening fence character", async () => {
       const output = await getEvents(["```js\ncode\n~~~\nmore\n```\n"]);
       expect(output).toEqual([
-        { type: "code", language: "js" },
+        { type: "code", language: "js", lineNumbers: false },
         "code",
         "\n~~~",
         "\nmore",
@@ -617,7 +620,7 @@ describe("transformMarkdown", () => {
     test("requires closing fence to be at least as long as opening", async () => {
       const output = await getEvents(["````\ncode\n```\nmore\n````\n"]);
       expect(output).toEqual([
-        { type: "code", language: "" },
+        { type: "code", language: "", lineNumbers: false },
         "code",
         "\n```",
         "\nmore",
@@ -627,25 +630,31 @@ describe("transformMarkdown", () => {
     test("does not process markdown inside code blocks", async () => {
       const output = await getEvents(["```\n**bold** # heading\n```\n"]);
       expect(output).toEqual([
-        { type: "code", language: "" },
+        { type: "code", language: "", lineNumbers: false },
         "**bold** # heading",
       ]);
     });
 
     test("handles code block split across chunks", async () => {
       const output = await getEvents(["```", "js\n", "code\n", "```\n"]);
-      expect(output).toEqual([{ type: "code", language: "js" }, "code"]);
+      expect(output).toEqual([
+        { type: "code", language: "js", lineNumbers: false },
+        "code",
+      ]);
     });
 
     test("handles code block end at end of stream without trailing newline", async () => {
       const output = await getEvents(["```\nhello\n```"]);
-      expect(output).toEqual([{ type: "code", language: "" }, "hello"]);
+      expect(output).toEqual([
+        { type: "code", language: "", lineNumbers: false },
+        "hello",
+      ]);
     });
 
     test("preserves empty lines in code blocks", async () => {
       const output = await getEvents(["```\nline1\n\nline2\n```\n"]);
       expect(output).toEqual([
-        { type: "code", language: "" },
+        { type: "code", language: "", lineNumbers: false },
         "line1",
         "\n",
         "\nline2",
@@ -655,7 +664,7 @@ describe("transformMarkdown", () => {
     test("emits remaining content in unclosed code block at end of stream", async () => {
       const output = await getEvents(["```\nline1\nline2"]);
       expect(output).toEqual([
-        { type: "code", language: "" },
+        { type: "code", language: "", lineNumbers: false },
         "line1",
         "\nline2",
       ]);

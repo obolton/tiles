@@ -164,6 +164,7 @@ describe("toMarkdown", () => {
         {
           type: "code",
           language: "javascript",
+          lineNumbers: false,
           children: [{ type: "text", text: "const x = 1;", format: 0 }],
         },
       ];
@@ -175,6 +176,7 @@ describe("toMarkdown", () => {
         {
           type: "code",
           language: "",
+          lineNumbers: false,
           children: [{ type: "text", text: "some code", format: 0 }],
         },
       ];
