@@ -11,7 +11,7 @@ export interface InvitesProps {
 
 export default function Invites({ workspace, invites }: InvitesProps) {
   return (
-    <PageLayout workspaceId={workspace.id}>
+    <PageLayout workspaceId={workspace.id} center={<h1>Settings</h1>}>
       <SidebarLayout
         sidebar={
           <Sidebar
@@ -21,10 +21,6 @@ export default function Invites({ workspace, invites }: InvitesProps) {
           />
         }
       >
-        <header>
-          <h2>Invites</h2>
-        </header>
-
         <WorkspaceInvites
           workspaceId={workspace.id}
           workspaceName={workspace.name}

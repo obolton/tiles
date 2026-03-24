@@ -20,48 +20,42 @@ export default function Sidebar({
   const base = `/workspaces/${workspaceId}/settings`;
 
   return (
-    <>
-      <header>
-        <h1>Settings</h1>
-      </header>
+    <nav>
+      <ul className="navigation-menu">
+        <li aria-current={page === "PROFILE" ? "page" : "false"}>
+          <a href={`${base}/profile`}>
+            <ProfileIcon aria-hidden="true" />
+            <span>Profile</span>
+          </a>
+        </li>
+      </ul>
 
-      <nav>
-        <ul className="navigation-menu">
-          <li aria-current={page === "PROFILE" ? "page" : "false"}>
-            <a href={`${base}/profile`}>
-              <ProfileIcon aria-hidden="true" />
-              <span>Profile</span>
+      <h3 className={styles.heading}>Workspace</h3>
+
+      <ul className="navigation-menu">
+        <li aria-current={page === "GENERAL" ? "page" : "false"}>
+          <a href={`${base}/workspace/general`}>
+            <SettingsIcon aria-hidden="true" />
+            <span>General</span>
+          </a>
+        </li>
+
+        <li aria-current={page === "MEMBERS" ? "page" : "false"}>
+          <a href={`${base}/workspace/members`}>
+            <PeopleIcon aria-hidden="true" />
+            <span>Members</span>
+          </a>
+        </li>
+
+        {isAdmin ? (
+          <li aria-current={page === "INVITES" ? "page" : "false"}>
+            <a href={`${base}/workspace/invites`}>
+              <MailIcon aria-hidden="true" />
+              <span>Invites</span>
             </a>
           </li>
-        </ul>
-
-        <h3 className={styles.heading}>Workspace</h3>
-
-        <ul className="navigation-menu">
-          <li aria-current={page === "GENERAL" ? "page" : "false"}>
-            <a href={`${base}/workspace/general`}>
-              <SettingsIcon aria-hidden="true" />
-              <span>General</span>
-            </a>
-          </li>
-
-          <li aria-current={page === "MEMBERS" ? "page" : "false"}>
-            <a href={`${base}/workspace/members`}>
-              <PeopleIcon aria-hidden="true" />
-              <span>Members</span>
-            </a>
-          </li>
-
-          {isAdmin ? (
-            <li aria-current={page === "INVITES" ? "page" : "false"}>
-              <a href={`${base}/workspace/invites`}>
-                <MailIcon aria-hidden="true" />
-                <span>Invites</span>
-              </a>
-            </li>
-          ) : null}
-        </ul>
-      </nav>
-    </>
+        ) : null}
+      </ul>
+    </nav>
   );
 }

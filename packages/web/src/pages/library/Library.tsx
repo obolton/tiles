@@ -78,10 +78,6 @@ export default function Library({
           />
         }
       >
-        <header>
-          <h2>Your pages</h2>
-        </header>
-
         <PagesGrid
           workspaceId={workspace.id}
           inputPlaceholder="Search pages"

@@ -51,10 +51,6 @@ export default function Shared({
           />
         }
       >
-        <header>
-          <h2>Shared with you</h2>
-        </header>
-
         <PagesGrid
           workspaceId={workspace.id}
           inputPlaceholder="Search pages shared with you"

@@ -38,7 +38,7 @@ export default function General({ workspace }: GeneralProps) {
   }
 
   return (
-    <PageLayout workspaceId={workspace.id}>
+    <PageLayout workspaceId={workspace.id} center={<h1>Settings</h1>}>
       <SidebarLayout
         sidebar={
           <Sidebar
@@ -48,10 +48,6 @@ export default function General({ workspace }: GeneralProps) {
           />
         }
       >
-        <header>
-          <h2>General</h2>
-        </header>
-
         <form class="vertical" on:submit={onSubmit}>
           <label>
             Name

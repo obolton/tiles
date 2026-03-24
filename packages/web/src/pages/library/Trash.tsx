@@ -62,10 +62,6 @@ export default function Trash({
           />
         }
       >
-        <header>
-          <h2>Trash</h2>
-        </header>
-
         <aside className={styles.aside}>
           <p>Pages in the trash will be permanently deleted after 30 days.</p>
           <button type="button" className="secondary" on:click={emptyTrash}>

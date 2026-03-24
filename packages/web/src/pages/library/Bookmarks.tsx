@@ -40,10 +40,6 @@ export default function Bookmarks({
           />
         }
       >
-        <header>
-          <h2>Bookmarks</h2>
-        </header>
-
         <PagesGrid
           workspaceId={workspace.id}
           inputPlaceholder="Search bookmarks"

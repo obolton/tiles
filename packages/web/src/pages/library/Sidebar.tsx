@@ -13,16 +13,10 @@ export default function Sidebar({
   selectedFolderId,
 }: SidebarProps) {
   return (
-    <>
-      <header>
-        <h2>{workspace.name}</h2>
-      </header>
-
-      <Folders
-        workspaceId={workspace.id}
-        selectedId={selectedFolderId}
-        folders={folders}
-      />
-    </>
+    <Folders
+      workspaceId={workspace.id}
+      selectedId={selectedFolderId}
+      folders={folders}
+    />
   );
 }

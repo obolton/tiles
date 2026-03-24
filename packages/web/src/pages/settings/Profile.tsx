@@ -99,16 +99,12 @@ export default function Profile({ workspaceId, user, isAdmin }: ProfileProps) {
   }
 
   return (
-    <PageLayout workspaceId={user.workspaces[0]?.id}>
+    <PageLayout workspaceId={user.workspaces[0]?.id} center={<h1>Settings</h1>}>
       <SidebarLayout
         sidebar={
           <Sidebar workspaceId={workspaceId} page="PROFILE" isAdmin={isAdmin} />
         }
       >
-        <header>
-          <h2>Profile</h2>
-        </header>
-
         <form class="vertical" on:submit={onSubmit}>
           <file-picker
             className={styles.file}
