@@ -1,16 +1,11 @@
-import { EditorView as CMEditorView, keymap } from "@codemirror/view";
+import {
+  EditorView as CMEditorView,
+  keymap,
+  lineNumbers as cmLineNumbers,
+} from "@codemirror/view";
 import { EditorState, Compartment } from "@codemirror/state";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
-import { render } from "@/jsx/dom";
-import ListOption from "@/components/lists/ListOption";
-import ListGroup from "@/components/lists/ListGroup";
-import CodeIcon from "@/icons/code.svg?jsx";
-import type ListSelect from "@/elements/list-select/ListSelect";
-import {
-  loadLanguage,
-  findLanguageConfig,
-  SUPPORTED_LANGUAGES,
-} from "./languages";
+import { loadLanguage } from "./languages";
 import { editorTheme, highlightingExtension } from "./theme";
 import { forwardToProseMirror, applyToCodeMirror } from "./sync";
 import {
@@ -24,31 +19,27 @@ import "./highlight.css";
 import type { NodeView, EditorView } from "prosemirror-view";
 import type { Node } from "prosemirror-model";
 
-export class CodeNodeView implements NodeView, EventListenerObject {
+export class CodeNodeView implements NodeView {
   readonly dom: HTMLElement;
 
   private readonly view: EditorView;
   private readonly getPos: () => number | undefined;
   private readonly cm: CMEditorView;
   private readonly languageCompartment = new Compartment();
+  private readonly lineNumbersCompartment = new Compartment();
   private readonly editableCompartment = new Compartment();
-  private readonly selector: HTMLElement;
 
   private updating = false;
   private language: string;
+  private lineNumbers: boolean;
 
   constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
     this.view = view;
     this.getPos = getPos;
     this.language = node.attrs.language as string;
+    this.lineNumbers = node.attrs.lineNumbers as boolean;
 
     this.dom = document.createElement("pre");
-    this.dom.className = styles["code-block"];
-
-    // Language selector
-    this.selector = this.createLanguageSelector();
-    this.selector.addEventListener("change", this);
-    this.dom.appendChild(this.selector);
 
     // CodeMirror container
     const container = document.createElement("code");
@@ -66,6 +57,9 @@ export class CodeNodeView implements NodeView, EventListenerObject {
           editorTheme,
           highlightingExtension,
           this.languageCompartment.of([]),
+          this.lineNumbersCompartment.of(
+            this.lineNumbers ? cmLineNumbers() : [],
+          ),
           CMEditorView.updateListener.of((update) => {
             if (!this.updating) {
               forwardToProseMirror(update, this.view, this.getPos);
@@ -78,28 +72,6 @@ export class CodeNodeView implements NodeView, EventListenerObject {
     });
 
     this.loadLanguageExtension(this.language);
-  }
-
-  private createLanguageSelector(): HTMLElement {
-    const config = findLanguageConfig(this.language);
-
-    return render(
-      <list-select
-        className={styles["language-selector"]}
-        value={config?.id ?? ""}
-        orientation="vertical"
-        align="right"
-        showvalue
-        label="Language"
-      >
-        <CodeIcon slot="default-icon" aria-hidden="true" />
-        <ListGroup>
-          {SUPPORTED_LANGUAGES.map((language) => (
-            <ListOption value={language.id}>{language.name}</ListOption>
-          ))}
-        </ListGroup>
-      </list-select>,
-    )[0] as HTMLElement;
   }
 
   private createKeymap() {
@@ -154,23 +126,6 @@ export class CodeNodeView implements NodeView, EventListenerObject {
     }
   }
 
-  handleEvent(event: Event) {
-    if (event.type === "change") {
-      const target = event.target as ListSelect;
-      const pos = this.getPos();
-      if (typeof pos === "number") {
-        this.view.dispatch(
-          this.view.state.tr.setNodeAttribute(
-            pos,
-            "language",
-            target.value ?? "",
-          ),
-        );
-        this.cm.focus();
-      }
-    }
-  }
-
   update(node: Node): boolean {
     if (node.type.name !== "codeBlock") {
       return false;
@@ -180,8 +135,16 @@ export class CodeNodeView implements NodeView, EventListenerObject {
     if (newLanguage !== this.language) {
       this.language = newLanguage;
       this.loadLanguageExtension(newLanguage);
-      (this.selector as ListSelect).value =
-        findLanguageConfig(newLanguage)?.id ?? "";
+    }
+
+    const newLineNumbers = node.attrs.lineNumbers as boolean;
+    if (newLineNumbers !== this.lineNumbers) {
+      this.lineNumbers = newLineNumbers;
+      this.cm.dispatch({
+        effects: this.lineNumbersCompartment.reconfigure(
+          newLineNumbers ? cmLineNumbers() : [],
+        ),
+      });
     }
 
     // Sync editable state
@@ -217,7 +180,6 @@ export class CodeNodeView implements NodeView, EventListenerObject {
   }
 
   destroy() {
-    this.selector.removeEventListener("change", this);
     this.cm.destroy();
   }
 }
