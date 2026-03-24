@@ -333,6 +333,42 @@ export const indent = adjustIndent(1);
 
 export const outdent = adjustIndent(-1);
 
+export function setCodeBlockLanguage(language: string): Command {
+  return function (state, dispatch) {
+    const codeBlock = closest(
+      state.selection.$from,
+      (node) => node.type === schema.nodes.codeBlock,
+    );
+    if (!codeBlock) {
+      return false;
+    }
+    if (dispatch) {
+      dispatch(state.tr.setNodeAttribute(codeBlock.pos, "language", language));
+    }
+    return true;
+  };
+}
+
+export const toggleCodeBlockLineNumbers: Command = (state, dispatch) => {
+  const codeBlock = closest(
+    state.selection.$from,
+    (node) => node.type === schema.nodes.codeBlock,
+  );
+  if (!codeBlock) {
+    return false;
+  }
+  if (dispatch) {
+    dispatch(
+      state.tr.setNodeAttribute(
+        codeBlock.pos,
+        "lineNumbers",
+        !codeBlock.node.attrs.lineNumbers,
+      ),
+    );
+  }
+  return true;
+};
+
 export function setAlignment(align: TextAlignment): Command {
   return function (state, dispatch) {
     const { selection, tr } = state;
