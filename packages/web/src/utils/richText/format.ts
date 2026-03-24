@@ -6,6 +6,7 @@ import {
   getSelectionLineHeight,
   getSelectionIndent,
   getSelectionList,
+  getCodeBlockAttrs,
   getLink,
 } from "./helpers";
 import { schema, type TextAlignment } from "./schema";
@@ -19,6 +20,8 @@ export interface Format {
   headingLevel: number | null;
   quote: boolean;
   codeBlock: boolean;
+  codeLanguage: string | null;
+  codeLineNumbers: boolean;
   list: ListType | null;
   bold: boolean;
   italic: boolean;
@@ -42,6 +45,8 @@ export const DEFAULT_FORMAT: Format = {
   headingLevel: null,
   quote: false,
   codeBlock: false,
+  codeLanguage: null,
+  codeLineNumbers: false,
   list: null,
   bold: false,
   italic: false,
@@ -62,6 +67,7 @@ export function getSelectionFormat(state: EditorState): Format {
   const marks = getSelectionMarks(state);
   const headingLevel = getSelectionHeadingLevel(state);
   const blockNodeTypes = getSelectionBlockNodeTypes(state);
+  const codeBlockAttrs = getCodeBlockAttrs(state);
   const align = getSelectionAlignment(state);
   const lineHeight = getSelectionLineHeight(state);
   const indent = getSelectionIndent(state);
@@ -74,6 +80,8 @@ export function getSelectionFormat(state: EditorState): Format {
     headingLevel,
     quote: blockNodeTypes.has(schema.nodes.quote),
     codeBlock: blockNodeTypes.has(schema.nodes.codeBlock),
+    codeLanguage: codeBlockAttrs?.language ?? null,
+    codeLineNumbers: codeBlockAttrs?.lineNumbers ?? false,
     bold: Boolean(schema.marks.bold.isInSet(marks)),
     italic: Boolean(schema.marks.italic.isInSet(marks)),
     underline: Boolean(schema.marks.underline.isInSet(marks)),

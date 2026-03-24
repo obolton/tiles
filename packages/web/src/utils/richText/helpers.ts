@@ -88,6 +88,25 @@ export function getLink(state: EditorState) {
   );
 }
 
+export interface CodeBlockAttrs {
+  language: string;
+  lineNumbers: boolean;
+}
+
+export function getCodeBlockAttrs(state: EditorState): CodeBlockAttrs | null {
+  const codeBlock = closest(
+    state.selection.$from,
+    (node) => node.type === schema.nodes.codeBlock,
+  );
+  if (!codeBlock) {
+    return null;
+  }
+  return {
+    language: codeBlock.node.attrs.language as string,
+    lineNumbers: codeBlock.node.attrs.lineNumbers as boolean,
+  };
+}
+
 export function getSelectionAlignment(
   state: EditorState,
 ): TextAlignment | undefined {
