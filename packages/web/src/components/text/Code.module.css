@@ -1,0 +1,15 @@
+.numbered {
+  display: flex;
+}
+
+.gutter {
+  font-family: var(--code-font, "JetBrains Mono", monospace);
+  user-select: none;
+  text-align: right;
+  white-space: nowrap;
+  opacity: 0.4;
+}
+
+.gutter > div {
+  padding: 0 8px 0 0;
+}

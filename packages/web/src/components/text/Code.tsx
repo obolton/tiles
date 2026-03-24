@@ -1,6 +1,7 @@
 import Each from "@/jsx/each";
 import { reactive } from "@/utils/reactivity";
 import { highlight } from "@/utils/richText/code/highlight";
+import styles from "./Code.module.css";
 import type { CodeNode } from "@/utils/richText/types";
 
 export interface CodeProps {
@@ -17,8 +18,17 @@ export default function Code({ node }: CodeProps) {
     spans.value = highlighted;
   });
 
+  const lineCount = code.split("\n").length;
+
   return (
-    <pre>
+    <pre classList={{ [styles.numbered]: node.lineNumbers }}>
+      {node.lineNumbers && (
+        <div className={styles.gutter} aria-hidden="true">
+          {Array.from({ length: lineCount }, (_, i) => (
+            <div>{i + 1}</div>
+          ))}
+        </div>
+      )}
       <code data-language={node.language}>
         {code.length > 0 ? (
           <Each items={spans}>
