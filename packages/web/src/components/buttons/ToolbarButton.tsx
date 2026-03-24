@@ -1,7 +1,8 @@
+import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 export interface ToolbarButtonProps extends JSX.Attributes<"button"> {
-  label?: string;
+  label?: string | Reactive<string>;
   destructive?: boolean;
 }
 
