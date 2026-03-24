@@ -1,6 +1,5 @@
 import Item from "@/components/item/Item";
 import ImageModel from "@/models/Image";
-import { getTileLabel } from "@/utils/tileLabel";
 import { makeDraggable, type DragDropEvent } from "@/utils/drag";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import styles from "./MapSection.module.css";
@@ -25,8 +24,6 @@ export default function MapPin({
   signal,
 }: MapPinProps) {
   const imageUrl = tile instanceof ImageModel ? tile.imageUrl : null;
-  const label = getTileLabel(tile);
-
   function onPointerDown(event: PointerEvent) {
     if (event.button !== PRIMARY_MOUSE_BUTTON) {
       return;
@@ -65,7 +62,6 @@ export default function MapPin({
         ) : (
           <span className={styles.dot} />
         )}
-        <span className={styles.label}>{label}</span>
       </div>
       <Item tile={tile} tabindex={tabindex} resize={resize} />
     </map-point>

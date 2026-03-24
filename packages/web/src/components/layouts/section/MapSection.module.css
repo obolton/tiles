@@ -40,10 +40,6 @@
   &:has([aria-selected="true"]) {
     z-index: 1;
 
-    & .label {
-      display: none;
-    }
-
     & page-item:not(:global(.drag-preview)) {
       visibility: visible;
       opacity: 1;
@@ -54,10 +50,6 @@
       & page-item:not(:global(.drag-preview)) {
         visibility: hidden;
         opacity: 0;
-      }
-
-      & .label {
-        display: unset;
       }
     }
   }
@@ -98,17 +90,4 @@
   width: 32px;
   height: 32px;
   object-fit: cover;
-}
-
-.label {
-  position: absolute;
-  left: 100%;
-  margin-left: 4px;
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--text-color);
 }
