@@ -175,7 +175,7 @@ describe("StreamHandler", () => {
       await new StreamHandler(createContext(output)).handle(
         streamOf(
           destination("t1"),
-          { type: "code", language: "typescript" },
+          { type: "code", language: "typescript", lineNumbers: false },
           "const x = 1;",
         ),
       );

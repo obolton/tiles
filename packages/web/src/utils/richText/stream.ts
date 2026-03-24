@@ -30,6 +30,7 @@ export interface DividerNode {
 export interface CodeNode {
   type: "code";
   language: string;
+  lineNumbers: boolean;
 }
 
 export type RichTextNode =
