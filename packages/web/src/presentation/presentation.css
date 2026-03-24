@@ -1,11 +1,11 @@
 body[data-presenting] {
-  --navigation-bar-size: 0px;
+  --header-height: 0px;
 
   overflow: hidden;
   height: 100dvh;
 
   /* Hide navigation and editing chrome */
-  & #navigation,
+  & #header,
   & floating-toolbar:not(#presentation-toolbar),
   & #insert-button {
     display: none;

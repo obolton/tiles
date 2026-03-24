@@ -66,10 +66,10 @@
   initial-value: 12px;
 }
 
-@property --navigation-bar-size {
+@property --header-height {
   syntax: "<length>";
   inherits: true;
-  initial-value: 80px;
+  initial-value: 56px;
 }
 
 :root {
@@ -129,10 +129,6 @@ menu {
   padding: 0;
 }
 
-body > header {
-  margin: 48px auto;
-}
-
 main {
   padding: 0;
   container: main / inline-size;
@@ -144,9 +140,7 @@ body[data-disable-transitions] * {
   animation-name: none !important;
 }
 
-body:has(dialog[open]),
-body:has(pop-out[open]),
-body:has(stack-view[open]) {
+body:has(dialog[open]) {
   overflow: hidden;
 }
 
@@ -288,5 +282,4 @@ scroll-view:not(:defined) {
   position: fixed;
   inset: auto auto 32px 32px;
   z-index: 1;
-  margin-inline-start: var(--navigation-bar-size);
 }
