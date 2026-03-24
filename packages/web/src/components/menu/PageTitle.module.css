@@ -1,0 +1,13 @@
+.input {
+  width: min(400px, 50vw);
+  height: 40px;
+  font-size: inherit;
+  font-weight: inherit;
+  text-align: center;
+  background: transparent;
+  border-color: transparent;
+
+  &:hover {
+    border-color: rgb(0 0 0 / 10%);
+  }
+}
