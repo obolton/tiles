@@ -1,0 +1,87 @@
+import ToolbarButton from "@/components/buttons/ToolbarButton";
+import MenuItem from "@/components/menus/MenuItem";
+import MenuItemGroup from "@/components/menus/MenuItemGroup";
+import MenuItemLink from "@/components/menus/MenuItemLink";
+import ProfileImage from "@/components/profile-image/ProfileImage";
+import NewIcon from "@/icons/new.svg?jsx";
+import WorkspaceIcon from "@/icons/workspace.svg?jsx";
+import SettingsIcon from "@/icons/settings.svg?jsx";
+import SignOutIcon from "@/icons/sign-out.svg?jsx";
+import { getUserInfo, signOut } from "@/utils/sessions";
+import { showModal } from "@/utils/modals";
+import client from "@/api/client";
+import type { User } from "@/utils/sessions";
+
+const CreateWorkspaceModalLoader = () =>
+  import("@/components/modals/workspaces/CreateWorkspaceModal");
+
+export interface WorkspaceSelectorProps {
+  user: User;
+  workspaceId: string;
+}
+
+export default function WorkspaceSelector({
+  user,
+  workspaceId,
+}: WorkspaceSelectorProps) {
+  const workspace = user.workspaces.find((w) => w.id === workspaceId);
+
+  function createWorkspace() {
+    showModal(CreateWorkspaceModalLoader, {
+      props: {},
+      async onConfirm({ name }) {
+        const { id } = await client.workspaces.create.mutate({ name });
+        await getUserInfo();
+        window.open(`/workspaces/${id}`, "_blank");
+      },
+    });
+  }
+
+  return (
+    <>
+      <ToolbarButton
+        label={workspace?.name}
+        popovertarget="workspace-menu"
+        aria-haspopup="menu"
+      >
+        <ProfileImage imageUrl={user.imageUrl} name={user.name} />
+        {workspace?.name}
+      </ToolbarButton>
+      <popover-menu id="workspace-menu">
+        <MenuItemGroup>
+          {user.workspaces.map((w) => (
+            <MenuItemLink
+              icon={<WorkspaceIcon aria-hidden="true" />}
+              href={`/workspaces/${w.id}`}
+              aria-current={w.id === workspaceId}
+            >
+              {w.name}
+            </MenuItemLink>
+          ))}
+          {user.workspaces.length < 5 ? (
+            <MenuItem
+              icon={<NewIcon aria-hidden="true" />}
+              on:click={createWorkspace}
+            >
+              Create workspace
+            </MenuItem>
+          ) : null}
+        </MenuItemGroup>
+        <MenuItemGroup>
+          <MenuItemLink
+            icon={<SettingsIcon aria-hidden="true" />}
+            href={`/workspaces/${workspaceId}/settings`}
+          >
+            Settings
+          </MenuItemLink>
+          <MenuItem
+            icon={<SignOutIcon aria-hidden="true" />}
+            on:click={signOut}
+          >
+            Sign out
+          </MenuItem>
+        </MenuItemGroup>
+      </popover-menu>
+    </>
+  );
+}
