@@ -346,6 +346,7 @@ const nodesSpec = {
   codeBlock: {
     attrs: {
       language: { default: "", validate: "string" },
+      lineNumbers: { default: false, validate: "boolean" },
     },
     content: "text*",
     group: "block",
