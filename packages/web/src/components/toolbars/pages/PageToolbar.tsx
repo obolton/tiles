@@ -1,4 +1,3 @@
-import TitleTab from "./TitleTab";
 import PageTab from "./PageTab";
 import StyleTab from "./StyleTab";
 import type Page from "@/models/Page";
@@ -16,7 +15,6 @@ export default function PageToolbar({ page, allowDelete }: PageToolbarProps) {
       aria-label="Page toolbar"
       name="page-toolbar"
     >
-      <TitleTab page={page} />
       <PageTab page={page} allowDelete={allowDelete} />
       <StyleTab page={page} />
     </floating-toolbar>

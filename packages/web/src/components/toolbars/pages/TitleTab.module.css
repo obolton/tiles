@@ -1,9 +1,0 @@
-.title {
-  width: 400px;
-  height: 40px;
-  font-weight: 500;
-  background: transparent;
-  border: none;
-  border-radius: var(--border-radius);
-  outline-offset: 8px;
-}
