@@ -28,7 +28,7 @@ export default defineConfig(({ isSsrBuild }) => ({
     },
   },
   plugins: [
-    svgPlugin({ jsxImportSource: "@/jsx" }),
+    svgPlugin({ importSource: "@/jsx" }),
     routeManifestPlugin(),
     cloudflarePlugin(),
   ],
@@ -36,8 +36,8 @@ export default defineConfig(({ isSsrBuild }) => ({
     target: "esnext",
     assetsDir: isSsrBuild ? "" : "assets",
     copyPublicDir: !isSsrBuild,
-    rollupOptions: {
-      treeshake: "recommended",
+    rolldownOptions: {
+      treeshake: true,
       input: {
         index: "@/server/worker",
         hydrate: "@/server/hydrate",
@@ -45,8 +45,13 @@ export default defineConfig(({ isSsrBuild }) => ({
         "pages-init": "@/routes/pages/init",
       },
       output: {
-        manualChunks: {
-          server: ["@/server/server"],
+        codeSplitting: {
+          groups: [
+            {
+              test: "@/server/server",
+              name: "server",
+            },
+          ],
         },
       },
     },
