@@ -278,6 +278,7 @@
 
   .menuitem,
   .option {
+    scroll-snap-align: start;
     position: relative;
     display: flex;
     align-items: center;
