@@ -71,7 +71,10 @@ export default function DockZone({
 
   function onZoneResizeDrag(event: ResizeEvent) {
     event.preventDefault();
-    page.dockSizes.value = { ...page.dockSizes.value, [edge]: getNewSize(event) };
+    page.dockSizes.value = {
+      ...page.dockSizes.value,
+      [edge]: getNewSize(event),
+    };
   }
 
   function onZoneResizeEnd(event: ResizeEvent) {

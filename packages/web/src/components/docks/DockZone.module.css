@@ -26,8 +26,8 @@
 
 .top {
   view-transition-name: dock-top;
-  top: 0;
-  left: var(--navigation-bar-size);
+  top: var(--header-height);
+  left: 0;
   right: 0;
   height: var(--dock-top-size);
   flex-direction: row;
@@ -36,7 +36,7 @@
 .bottom {
   view-transition-name: dock-bottom;
   bottom: 0;
-  left: var(--navigation-bar-size);
+  left: 0;
   right: 0;
   height: var(--dock-bottom-size);
   flex-direction: row;
@@ -56,7 +56,7 @@
 
 .left {
   view-transition-name: dock-left;
-  left: var(--navigation-bar-size);
+  left: 0;
   width: var(--dock-left-size);
   flex-direction: column;
 }
@@ -70,7 +70,7 @@
 
 .left,
 .right {
-  top: 0;
+  top: var(--header-height);
   bottom: 0;
 
   :has([data-dock-zone="TOP"]:not([data-empty])) > & {
@@ -87,18 +87,6 @@
     &[data-drop-target] {
       width: 120px !important;
     }
-  }
-}
-
-@media (width < 640px) {
-  .top,
-  .bottom,
-  .left {
-    left: 0;
-  }
-
-  .bottom {
-    bottom: var(--navigation-bar-size);
   }
 }
 
