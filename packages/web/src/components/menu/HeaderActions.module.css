@@ -1,0 +1,14 @@
+.editing {
+  view-transition-name: editing-toolbar;
+}
+
+::view-transition-group(editing-toolbar) {
+  overflow: clip;
+  overflow-clip-margin: 8px;
+}
+
+::view-transition-new(editing-toolbar),
+::view-transition-old(editing-toolbar) {
+  object-fit: none;
+  object-position: left top;
+}
