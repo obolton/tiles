@@ -41,6 +41,7 @@ export default class ListSelect extends HTMLElement {
   private buttonLabel: HTMLSpanElement;
   private labelSlot: HTMLSlotElement;
   private items: AnchoredPopover;
+  private listbox: HTMLDivElement;
   private mutationObserver: MutationObserver;
 
   constructor() {
@@ -73,18 +74,18 @@ export default class ListSelect extends HTMLElement {
     this.items.part = "items";
     this.items.addEventListener("toggle", this, { passive: true });
 
-    const listbox = document.createElement("div");
-    listbox.id = "listbox";
-    listbox.role = "listbox";
-    listbox.ariaLabelledByElements = [this.buttonLabel];
+    this.listbox = document.createElement("div");
+    this.listbox.id = "listbox";
+    this.listbox.role = "listbox";
+    this.listbox.ariaLabelledByElements = [this.buttonLabel];
 
     const itemsSlot = document.createElement("slot");
-    listbox.append(itemsSlot);
+    this.listbox.append(itemsSlot);
 
     const footerSlot = document.createElement("slot");
     footerSlot.name = "footer";
 
-    this.items.append(listbox, footerSlot);
+    this.items.append(this.listbox, footerSlot);
 
     const button = document.createElement("div");
     button.id = "button";
@@ -190,7 +191,7 @@ export default class ListSelect extends HTMLElement {
       this.internals.states.add("open");
     } else {
       this.internals.states.delete("open");
-      this.activeItem = null;
+      this.setActiveItem(null);
     }
 
     this.ariaExpanded = open ? "true" : "false";
@@ -276,7 +277,7 @@ export default class ListSelect extends HTMLElement {
       option !== this.activeItem &&
       option.ariaDisabled !== "true"
     ) {
-      this.activeItem = option;
+      this.setActiveItem(option, false);
     }
   }
 
@@ -342,7 +343,7 @@ export default class ListSelect extends HTMLElement {
         if (this.open) {
           event.preventDefault();
           event.stopPropagation();
-          this.activeItem = this.options[0] ?? null;
+          this.setActiveItem(this.options[0] ?? null);
         }
         break;
 
@@ -350,7 +351,7 @@ export default class ListSelect extends HTMLElement {
         if (this.open) {
           event.preventDefault();
           event.stopPropagation();
-          this.activeItem = this.options.at(-1) ?? null;
+          this.setActiveItem(this.options.at(-1) ?? null);
         }
         break;
 
@@ -449,7 +450,7 @@ export default class ListSelect extends HTMLElement {
     return element instanceof HTMLElement ? element : null;
   }
 
-  private set activeItem(option: HTMLElement | null) {
+  private setActiveItem(option: HTMLElement | null, scroll = true) {
     this.ariaActiveDescendantElement = option;
 
     for (const element of this.querySelectorAll<HTMLElement>(
@@ -460,7 +461,9 @@ export default class ListSelect extends HTMLElement {
 
     if (option) {
       option.dataset.active = "true";
-      reveal(this.items, option);
+      if (scroll) {
+        reveal(this.listbox, option);
+      }
     }
   }
 
@@ -491,7 +494,7 @@ export default class ListSelect extends HTMLElement {
     const index = active ? options.indexOf(active) : -1;
     const next = index < 0 ? options[0] : options[(index + 1) % options.length];
     if (next) {
-      this.activeItem = next;
+      this.setActiveItem(next);
     }
   }
 
@@ -504,7 +507,7 @@ export default class ListSelect extends HTMLElement {
         ? options.at(-1)
         : options[(index - 1 + options.length) % options.length];
     if (prev) {
-      this.activeItem = prev;
+      this.setActiveItem(prev);
     }
   }
 
@@ -518,7 +521,7 @@ export default class ListSelect extends HTMLElement {
     this.items.showPopover();
 
     const selected = this.#value !== null ? this.getItem(this.#value) : null;
-    this.activeItem = selected ?? this.options[0] ?? null;
+    this.setActiveItem(selected ?? this.options[0] ?? null);
   }
 
   hide() {
