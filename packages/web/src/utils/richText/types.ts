@@ -102,6 +102,7 @@ export interface QuoteNode extends BaseNode {
 export interface CodeNode extends BaseNode {
   type: "code";
   language: string;
+  lineNumbers: boolean;
   children: TextNode[];
 }
 

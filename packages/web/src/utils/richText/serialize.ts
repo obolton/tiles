@@ -134,6 +134,7 @@ function serializeNode(node: Node): SerializedNode {
     return {
       type: "code",
       language: node.attrs.language as string,
+      lineNumbers: node.attrs.lineNumbers as boolean,
       children: node.children.map(serializeNode) as TextNode[],
     };
   }

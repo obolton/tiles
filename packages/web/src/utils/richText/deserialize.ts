@@ -112,7 +112,7 @@ function createQuoteNode(quote: QuoteNode): Node {
 
 function createCodeNode(code: CodeNode): Node {
   return schema.nodes.codeBlock.create(
-    { language: code.language },
+    { language: code.language, lineNumbers: code.lineNumbers },
     code.children.map(createNode),
   );
 }
