@@ -1,6 +1,6 @@
 .page-layout {
   min-height: 100vh;
-  margin-left: var(--navigation-bar-size);
+  margin-top: var(--header-height);
 
   &:has([data-dock-zone="TOP"]:not([data-empty])) {
     padding-top: var(--dock-top-size);
@@ -16,12 +16,5 @@
 
   &:has([data-dock-zone="RIGHT"]:not([data-empty])) {
     padding-right: var(--dock-right-size);
-  }
-}
-
-@media (width < 640px) {
-  .page-layout {
-    margin-left: 0;
-    margin-bottom: var(--navigation-bar-size);
   }
 }

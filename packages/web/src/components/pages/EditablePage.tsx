@@ -1,33 +1,28 @@
-import EditingToolbar from "@/components/menu/EditingToolbar";
 import PageContents from "@/components/pages/PageContents";
 import PageToolbar from "@/components/toolbars/pages/PageToolbar";
 import DockZone from "@/components/docks/DockZone";
-import Editor from "@/editor/Editor";
 import InsertButton from "@/components/buttons/InsertButton";
 import AIButton from "@/components/buttons/AIButton";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import PromptToolbar from "@/components/toolbars/prompt/PromptToolbar";
 import Thread from "@/components/chat/Thread";
 import If from "@/jsx/if";
-import { isSignedIn } from "@/utils/sessions";
 import { combine } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import styles from "./EditablePage.module.css";
-import type { AppRouterOutputs } from "@/api/client";
+import type Editor from "@/editor/Editor";
 
 if (!import.meta.env.SSR) {
   import("@/elements/editor").catch(handleError);
 }
 
 export interface EditablePageProps {
-  page: NonNullable<AppRouterOutputs["pages"]["getById"]>;
+  editor: Editor;
 }
 
-export default function EditablePage({ page }: EditablePageProps) {
-  const editor = Editor.init(page);
+export default function EditablePage({ editor }: EditablePageProps) {
   const { isEditable, selection } = editor;
   const { tiles, dockedTiles } = editor.page;
-  const showToolbar = !import.meta.env.SSR && isSignedIn();
   const style = editor.page.dockSizes.derive((sizes) => ({
     "--dock-top-size": `${sizes.TOP}px`,
     "--dock-bottom-size": `${sizes.BOTTOM}px`,
@@ -73,8 +68,6 @@ export default function EditablePage({ page }: EditablePageProps) {
           tiles={dockedTiles.BOTTOM}
         />
       </div>
-
-      {showToolbar ? <EditingToolbar editor={editor} /> : null}
 
       <If condition={showPageToolbar}>
         <PageToolbar page={editor.page} />
