@@ -26,11 +26,6 @@ floating-toolbar {
     justify-self: center;
   }
 
-  &.top-right {
-    position: fixed;
-    inset: 32px 32px auto auto;
-  }
-
   &.bottom-right {
     position: fixed;
     inset: auto 32px 32px auto;
@@ -88,25 +83,25 @@ toolbar-tab {
     pointer-events: auto;
     z-index: 1;
   }
+}
 
-  & > [role="group"] {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+:is(toolbar-tab, [role="toolbar"]) > [role="group"] {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 
-    &:not(:last-child) {
-      padding-inline-end: 12px;
+  &:not(:last-child) {
+    padding-inline-end: 12px;
 
-      &::after {
-        content: "";
-        position: absolute;
-        inset-block: 4px;
-        inset-inline: auto 0;
-        width: 3px;
-        border-radius: 3px;
-        background: rgb(0 0 0 / 5%);
-      }
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block: 4px;
+      inset-inline: auto 0;
+      width: 3px;
+      border-radius: 3px;
+      background: rgb(0 0 0 / 5%);
     }
   }
 }
