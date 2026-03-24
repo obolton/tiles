@@ -99,6 +99,8 @@ slot[name="label"]::slotted(*) {
   }
 
   &:popover-open {
+    will-change: scale, opacity;
+
     @starting-style {
       scale: 0.97;
       opacity: 0;
