@@ -12,6 +12,7 @@ import SearchToolbar from "@/components/search/SearchToolbar";
 import { handleError } from "@/utils/errors";
 import { reactive, persistent } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
+import type { User } from "@/utils/sessions";
 
 if (!import.meta.env.SSR) {
   import("@/elements/editor").catch(handleError);
@@ -23,6 +24,7 @@ export interface FolderProps {
   name: string;
   folders: AppRouterOutputs["folders"]["list"];
   pages: AppRouterOutputs["folders"]["listPages"];
+  user: User;
 }
 
 function renderPlaceholder(query: string) {
@@ -39,6 +41,7 @@ export default function Folder({
   name,
   folders,
   pages: initialPages,
+  user,
 }: FolderProps) {
   const query = reactive("");
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
@@ -48,6 +51,7 @@ export default function Folder({
   return (
     <PageLayout
       workspaceId={workspace.id}
+      user={user}
       center={
         <SearchToolbar
           id="search-pages"

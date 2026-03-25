@@ -7,11 +7,13 @@ import PagesGrid from "@/components/grid/PagesGrid";
 import SearchToolbar from "@/components/search/SearchToolbar";
 import { reactive } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
+import type { User } from "@/utils/sessions";
 
 export interface BookmarksProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
   folders: AppRouterOutputs["folders"]["list"];
   pages: AppRouterOutputs["bookmarks"]["list"];
+  user: User;
 }
 
 function renderPlaceholder(query: string) {
@@ -26,6 +28,7 @@ export default function Bookmarks({
   workspace,
   folders,
   pages: initialPages,
+  user,
 }: BookmarksProps) {
   const query = reactive("");
   const pages = reactive(initialPages.pages);
@@ -34,6 +37,7 @@ export default function Bookmarks({
   return (
     <PageLayout
       workspaceId={workspace.id}
+      user={user}
       center={
         <SearchToolbar
           id="search-pages"

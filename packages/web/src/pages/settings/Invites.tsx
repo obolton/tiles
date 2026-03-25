@@ -3,15 +3,21 @@ import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
 import WorkspaceInvites from "@/components/workspaces/WorkspaceInvites";
 import type { AppRouterOutputs } from "@/api/client";
+import type { User } from "@/utils/sessions";
 
 export interface InvitesProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
   invites: AppRouterOutputs["workspaces"]["listInvites"];
+  user: User;
 }
 
-export default function Invites({ workspace, invites }: InvitesProps) {
+export default function Invites({ workspace, invites, user }: InvitesProps) {
   return (
-    <PageLayout workspaceId={workspace.id} center={<h1>Settings</h1>}>
+    <PageLayout
+      workspaceId={workspace.id}
+      user={user}
+      center={<h1>Settings</h1>}
+    >
       <SidebarLayout
         sidebar={
           <Sidebar

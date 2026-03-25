@@ -5,6 +5,7 @@ import WorkspaceMembers from "@/components/workspaces/WorkspaceMembers";
 import { reactive } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
 import type { AppRouterOutputs } from "@/api/client";
+import type { User } from "@/utils/sessions";
 
 if (!import.meta.env.SSR) {
   import("@/elements/editor").catch(handleError);
@@ -13,13 +14,14 @@ if (!import.meta.env.SSR) {
 export interface MembersProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
   users: AppRouterOutputs["workspaces"]["listUsers"];
+  user: User;
 }
 
-export default function Members({ workspace, users }: MembersProps) {
+export default function Members({ workspace, users, user }: MembersProps) {
   const isAdmin = reactive(workspace.role === "ADMIN");
 
   return (
-    <PageLayout workspaceId={workspace.id} center={<h1>Settings</h1>}>
+    <PageLayout workspaceId={workspace.id} user={user} center={<h1>Settings</h1>}>
       <SidebarLayout
         sidebar={
           <Sidebar

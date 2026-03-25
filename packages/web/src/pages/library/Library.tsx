@@ -13,6 +13,7 @@ import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { reactive, persistent } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
+import type { User } from "@/utils/sessions";
 
 if (!import.meta.env.SSR) {
   import("@/elements/editor").catch(handleError);
@@ -22,12 +23,14 @@ export interface LibraryProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
   folders: AppRouterOutputs["folders"]["list"];
   pages: AppRouterOutputs["pages"]["list"];
+  user: User;
 }
 
 export default function Library({
   workspace,
   folders,
   pages: initialPages,
+  user,
 }: LibraryProps) {
   const query = reactive("");
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
@@ -73,6 +76,7 @@ export default function Library({
   return (
     <PageLayout
       workspaceId={workspace.id}
+      user={user}
       center={
         <SearchToolbar
           id="search-pages"

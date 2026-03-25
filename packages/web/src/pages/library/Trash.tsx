@@ -14,6 +14,7 @@ import { showToast } from "@/utils/toasts";
 import { reactive, persistent } from "@/utils/reactivity";
 import styles from "./Trash.module.css";
 import type { AppRouterOutputs } from "@/api/client";
+import type { User } from "@/utils/sessions";
 
 if (!import.meta.env.SSR) {
   import("@/elements/editor").catch(handleError);
@@ -23,6 +24,7 @@ export interface TrashProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
   folders: AppRouterOutputs["folders"]["list"];
   pages: AppRouterOutputs["pages"]["listDeleted"];
+  user: User;
 }
 
 function renderPlaceholder(query: string) {
@@ -37,6 +39,7 @@ export default function Trash({
   workspace,
   folders,
   pages: initialPages,
+  user,
 }: TrashProps) {
   const query = reactive("");
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
@@ -57,6 +60,7 @@ export default function Trash({
   return (
     <PageLayout
       workspaceId={workspace.id}
+      user={user}
       center={
         <SearchToolbar
           id="search-pages"

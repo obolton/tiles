@@ -12,6 +12,7 @@ import SearchToolbar from "@/components/search/SearchToolbar";
 import { handleError } from "@/utils/errors";
 import { reactive, persistent } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
+import type { User } from "@/utils/sessions";
 
 if (!import.meta.env.SSR) {
   import("@/elements/editor").catch(handleError);
@@ -21,6 +22,7 @@ export interface SharedProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
   folders: AppRouterOutputs["folders"]["list"];
   pages: AppRouterOutputs["pages"]["listShared"];
+  user: User;
 }
 
 function renderPlaceholder(query: string) {
@@ -37,6 +39,7 @@ export default function Shared({
   workspace,
   folders,
   pages: initialPages,
+  user,
 }: SharedProps) {
   const query = reactive("");
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
@@ -46,6 +49,7 @@ export default function Shared({
   return (
     <PageLayout
       workspaceId={workspace.id}
+      user={user}
       center={
         <SearchToolbar
           id="search-pages"
