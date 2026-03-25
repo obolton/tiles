@@ -77,6 +77,7 @@ export default function Prompt({
       <ReferenceList />
 
       <ResizingTextarea
+        id="prompt-input"
         name="prompt"
         rows={1}
         placeholder={placeholder}

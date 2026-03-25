@@ -397,6 +397,10 @@ export default class Editor {
     this.isPromptToolbarOpen.value = true;
     this.isPromptOpen.value = true;
     document.body.dataset.prompt = "";
+
+    requestAnimationFrame(() => {
+      document.getElementById("prompt-input")?.focus();
+    });
   }
 
   closePromptToolbar() {
