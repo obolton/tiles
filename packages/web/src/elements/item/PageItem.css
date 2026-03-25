@@ -32,7 +32,6 @@
       clip-path var(--animation-duration-short) var(--easing);
   }
 
-  :host(:hover) &,
   :host(:focus-within) &,
   :host(.drag-preview) &,
   &:hover {
@@ -61,12 +60,11 @@
     opacity var(--animation-duration-short) var(--easing),
     border-color var(--animation-duration-short) var(--easing);
 
-  :host(:hover) &:not(.inactive),
   :host(:focus-within) &:not(.inactive) {
     opacity: 0.5;
   }
 
-  &:hover,
+  :host(:focus-within) &:hover,
   &:focus,
   :host(:state(resizing)) &:not(.inactive) {
     opacity: 1 !important;
