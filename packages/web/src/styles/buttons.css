@@ -37,7 +37,7 @@
   a.primary,
   a.secondary {
     display: inline-flex;
-    height: 44px;
+    height: 40px;
     align-items: center;
     justify-content: center;
     gap: 12px;
