@@ -4,6 +4,7 @@ import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
 import Placeholder from "@/components/placeholder/Placeholder";
 import PagesGrid from "@/components/grid/PagesGrid";
+import SearchToolbar from "@/components/search/SearchToolbar";
 import { reactive } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
@@ -26,11 +27,21 @@ export default function Bookmarks({
   folders,
   pages: initialPages,
 }: BookmarksProps) {
+  const query = reactive("");
   const pages = reactive(initialPages.pages);
   const cursor = reactive<string | null>(initialPages.nextCursor);
 
   return (
-    <PageLayout workspaceId={workspace.id}>
+    <PageLayout
+      workspaceId={workspace.id}
+      center={
+        <SearchToolbar
+          id="search-pages"
+          placeholder="Search bookmarks"
+          query={query}
+        />
+      }
+    >
       <SidebarLayout
         sidebar={
           <Sidebar
@@ -42,7 +53,7 @@ export default function Bookmarks({
       >
         <PagesGrid
           workspaceId={workspace.id}
-          inputPlaceholder="Search bookmarks"
+          query={query}
           pages={pages}
           cursor={cursor}
           search={(query, searchCursor) =>

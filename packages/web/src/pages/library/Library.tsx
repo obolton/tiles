@@ -4,9 +4,11 @@ import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
 import Placeholder from "@/components/placeholder/Placeholder";
 import PagesGrid, {
+  PageSortOptions,
   parsePageSort,
   type PageSort,
 } from "@/components/grid/PagesGrid";
+import SearchToolbar from "@/components/search/SearchToolbar";
 import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { reactive, persistent } from "@/utils/reactivity";
@@ -27,6 +29,7 @@ export default function Library({
   folders,
   pages: initialPages,
 }: LibraryProps) {
+  const query = reactive("");
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
   const pages = reactive(initialPages.pages);
   const cursor = reactive<string | null>(initialPages.nextCursor);
@@ -68,7 +71,18 @@ export default function Library({
   }
 
   return (
-    <PageLayout workspaceId={workspace.id}>
+    <PageLayout
+      workspaceId={workspace.id}
+      center={
+        <SearchToolbar
+          id="search-pages"
+          placeholder="Search pages"
+          query={query}
+          sortOptions={<PageSortOptions />}
+          sort={sort}
+        />
+      }
+    >
       <SidebarLayout
         sidebar={
           <Sidebar
@@ -80,7 +94,7 @@ export default function Library({
       >
         <PagesGrid
           workspaceId={workspace.id}
-          inputPlaceholder="Search pages"
+          query={query}
           pages={pages}
           cursor={cursor}
           search={(query, searchCursor) => {

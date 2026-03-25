@@ -4,9 +4,11 @@ import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
 import Placeholder from "@/components/placeholder/Placeholder";
 import PagesGrid, {
+  PageSortOptions,
   parsePageSort,
   type PageSort,
 } from "@/components/grid/PagesGrid";
+import SearchToolbar from "@/components/search/SearchToolbar";
 import { handleError } from "@/utils/errors";
 import { reactive, persistent } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
@@ -36,12 +38,24 @@ export default function Shared({
   folders,
   pages: initialPages,
 }: SharedProps) {
+  const query = reactive("");
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
   const pages = reactive(initialPages.pages);
   const cursor = reactive<string | null>(initialPages.nextCursor);
 
   return (
-    <PageLayout workspaceId={workspace.id}>
+    <PageLayout
+      workspaceId={workspace.id}
+      center={
+        <SearchToolbar
+          id="search-pages"
+          placeholder="Search pages shared with you"
+          query={query}
+          sortOptions={<PageSortOptions />}
+          sort={sort}
+        />
+      }
+    >
       <SidebarLayout
         sidebar={
           <Sidebar
@@ -53,7 +67,7 @@ export default function Shared({
       >
         <PagesGrid
           workspaceId={workspace.id}
-          inputPlaceholder="Search pages shared with you"
+          query={query}
           pages={pages}
           cursor={cursor}
           search={(query, searchCursor) => {

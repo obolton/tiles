@@ -4,9 +4,11 @@ import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
 import Placeholder from "@/components/placeholder/Placeholder";
 import PagesGrid, {
+  PageSortOptions,
   parsePageSort,
   type PageSort,
 } from "@/components/grid/PagesGrid";
+import SearchToolbar from "@/components/search/SearchToolbar";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import { reactive, persistent } from "@/utils/reactivity";
@@ -36,6 +38,7 @@ export default function Trash({
   folders,
   pages: initialPages,
 }: TrashProps) {
+  const query = reactive("");
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
   const pages = reactive(initialPages.pages);
   const cursor = reactive<string | null>(initialPages.nextCursor);
@@ -52,7 +55,18 @@ export default function Trash({
   }
 
   return (
-    <PageLayout workspaceId={workspace.id}>
+    <PageLayout
+      workspaceId={workspace.id}
+      center={
+        <SearchToolbar
+          id="search-pages"
+          placeholder="Search trash"
+          query={query}
+          sortOptions={<PageSortOptions />}
+          sort={sort}
+        />
+      }
+    >
       <SidebarLayout
         sidebar={
           <Sidebar
@@ -71,7 +85,7 @@ export default function Trash({
 
         <PagesGrid
           workspaceId={workspace.id}
-          inputPlaceholder="Search trash"
+          query={query}
           pages={pages}
           cursor={cursor}
           search={(query, searchCursor) => {
