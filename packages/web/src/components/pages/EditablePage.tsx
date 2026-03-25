@@ -37,6 +37,34 @@ export default function EditablePage({ editor }: EditablePageProps) {
 
   return (
     <>
+      <If condition={isEditable}>
+        <div
+          className={styles["bottom-bar"]}
+          role="group"
+          aria-label="Editor tools"
+        >
+          <AIButton isOpen={editor.isPromptToolbarOpen} />
+          <div id="toolbar-slot" className={styles["toolbar-slot"]}>
+            <If condition={showPageToolbar}>
+              <PageToolbar page={editor.page} />
+            </If>
+            <If condition={selection.derive((value) => value.size >= 2)}>
+              <SelectionToolbar />
+            </If>
+            <If condition={editor.isPromptToolbarOpen}>
+              <PromptToolbar />
+            </If>
+          </div>
+          <InsertButton id="insert-button" />
+        </div>
+      </If>
+
+      <If condition={editor.isPromptToolbarOpen}>
+        <If condition={editor.chat.messages.derive((m) => m.length > 0)}>
+          <Thread />
+        </If>
+      </If>
+
       <div className={styles["page-layout"]} style={style}>
         <DockZone
           page={editor.page}
@@ -68,26 +96,6 @@ export default function EditablePage({ editor }: EditablePageProps) {
           tiles={dockedTiles.BOTTOM}
         />
       </div>
-
-      <If condition={showPageToolbar}>
-        <PageToolbar page={editor.page} />
-      </If>
-
-      <If condition={selection.derive((value) => value.size >= 2)}>
-        <SelectionToolbar />
-      </If>
-
-      <If condition={editor.isPromptToolbarOpen}>
-        <If condition={editor.chat.messages.derive((m) => m.length > 0)}>
-          <Thread />
-        </If>
-        <PromptToolbar />
-      </If>
-
-      <If condition={isEditable}>
-        <InsertButton id="insert-button" />
-        <AIButton isOpen={editor.isPromptToolbarOpen} />
-      </If>
     </>
   );
 }

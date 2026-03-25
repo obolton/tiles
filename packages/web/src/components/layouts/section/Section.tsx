@@ -80,7 +80,7 @@ export default function Section({
   return (
     <>
       <If condition={showToolbar}>
-        <Portal>
+        <Portal element="toolbar-slot">
           <SectionToolbar section={section} />
         </Portal>
       </If>

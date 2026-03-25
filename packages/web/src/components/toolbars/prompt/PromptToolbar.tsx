@@ -21,6 +21,7 @@ export default function PromptToolbar() {
 
   return (
     <floating-toolbar
+      id="prompt-toolbar"
       className="primary prompt"
       aria-label="AI prompt"
       data-tooltip-position="bottom"

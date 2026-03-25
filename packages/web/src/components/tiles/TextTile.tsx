@@ -98,7 +98,7 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
   return (
     <Tile>
       <If condition={showToolbar}>
-        <Portal>
+        <Portal element="toolbar-slot">
           <TextToolbar text={text} editorView={editorView} />
         </Portal>
       </If>

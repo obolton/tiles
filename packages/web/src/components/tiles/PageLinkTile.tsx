@@ -61,7 +61,7 @@ export default function PageLinkTile({
       </a>
 
       <If condition={showToolbar}>
-        <Portal>
+        <Portal element="toolbar-slot">
           <LinkToolbar link={pageLink} />
         </Portal>
       </If>

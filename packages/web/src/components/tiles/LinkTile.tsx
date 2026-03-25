@@ -47,7 +47,7 @@ export default function LinkTile({ link, showToolbar }: LinkTileProps) {
       </a>
 
       <If condition={showToolbar}>
-        <Portal>
+        <Portal element="toolbar-slot">
           <LinkToolbar link={link} />
         </Portal>
       </If>

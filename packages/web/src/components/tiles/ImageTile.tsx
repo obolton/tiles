@@ -100,7 +100,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
   return (
     <Tile>
       <If condition={showToolbar}>
-        <Portal>
+        <Portal element="toolbar-slot">
           <ImageToolbar image={image} editorView={editorView} />
         </Portal>
       </If>

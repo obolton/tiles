@@ -272,14 +272,3 @@ scroll-view:not(:defined) {
   border: unset;
 }
 
-#insert-button {
-  position: fixed;
-  inset: auto 32px 32px auto;
-  z-index: 1;
-}
-
-#ai-button {
-  position: fixed;
-  inset: auto auto 32px 32px;
-  z-index: 1;
-}

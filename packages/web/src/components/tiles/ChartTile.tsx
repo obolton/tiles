@@ -39,7 +39,7 @@ export default function ChartTile({ chart, showToolbar }: ChartTileProps) {
   return (
     <Tile>
       <If condition={showToolbar}>
-        <Portal>
+        <Portal element="toolbar-slot">
           <ChartToolbar chart={chart} />
         </Portal>
       </If>

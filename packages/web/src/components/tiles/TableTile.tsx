@@ -310,7 +310,7 @@ export default function TableTile({
       </table-view>
 
       <If condition={showToolbar}>
-        <Portal>
+        <Portal element="toolbar-slot">
           <TableToolbar
             table={table}
             getTable={getTable}
