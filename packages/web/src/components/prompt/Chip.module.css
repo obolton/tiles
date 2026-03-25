@@ -2,10 +2,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  height: 32px;
-  padding-inline: 10px;
-  font-size: 13px;
-  font-weight: 600;
+  padding: 0.25em 1em;
+  font-size: 0.875rem;
+  font-weight: 500;
   color: oklch(from var(--reference-color) 100% c h);
   background: var(--reference-color);
   border-radius: 16px;

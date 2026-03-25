@@ -1,15 +1,17 @@
 .thread {
-  position: fixed;
-  inset: 0 0 132px;
-  z-index: 1;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: min(600px, 80vw);
-  justify-self: center;
-  padding-block-start: 32px;
+  padding-block: 24px;
+  pointer-events: none;
+}
+
+.thread > * {
+  pointer-events: auto;
 }
 
 .thread > :first-child {
