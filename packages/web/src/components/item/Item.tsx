@@ -230,8 +230,21 @@ export default function Item({
 
   const resizeDirection = resize
     ? combine(
-        { resize, isTileEditable: editor.isTileEditable },
-        ({ resize, isTileEditable }) => (isTileEditable ? resize : null),
+        { resize, sizing, isTileEditable: editor.isTileEditable },
+        ({ resize, sizing, isTileEditable }) => {
+          if (!isTileEditable) {
+            return null;
+          }
+          if (sizing === "AUTO") {
+            if (resize === "vertical") {
+              return null;
+            }
+            if (resize === "all") {
+              return "horizontal";
+            }
+          }
+          return resize;
+        },
       )
     : undefined;
 
