@@ -4,6 +4,7 @@ import ModalFooter from "./ModalFooter";
 import styles from "./LinkModal.module.css";
 import LibraryCard from "@/components/library/LibraryCard";
 import Search from "@/components/search/Search";
+import SearchToolbar from "@/components/search/SearchToolbar";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
 import { flag, reactive } from "@/utils/reactivity";
@@ -27,6 +28,7 @@ export default function LinkModal({
   showRemove = false,
 }: LinkModalProps) {
   const isPending = flag(false);
+  const query = reactive("");
   const pages = reactive<LibraryPage[]>([]);
   const nextCursor = reactive<string | null | undefined>(undefined);
 
@@ -142,14 +144,20 @@ export default function LinkModal({
           <section on:click={onPageClick}>
             <h3>Recent pages</h3>
 
+            <SearchToolbar
+              id="search-pages"
+              classList={{ [styles.toolbar]: true }}
+              placeholder="Search pages"
+              autofocus={false}
+              query={query}
+            />
+
             <Search
               itemsClassName={styles.pages}
-              id="search-pages"
               search={search}
               results={pages}
               nextCursor={nextCursor}
-              placeholder="Search pages"
-              autofocus={false}
+              query={query}
               render={(page) =>
                 page.id === pageId ? null : <LibraryCard page={page} />
               }
