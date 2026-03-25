@@ -4,8 +4,7 @@ import DockZone from "@/components/docks/DockZone";
 import InsertButton from "@/components/buttons/InsertButton";
 import AIButton from "@/components/buttons/AIButton";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
-import PromptToolbar from "@/components/toolbars/prompt/PromptToolbar";
-import Thread from "@/components/chat/Thread";
+import ChatPanel from "@/components/chat/ChatPanel";
 import If from "@/jsx/if";
 import { combine } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
@@ -52,17 +51,11 @@ export default function EditablePage({ editor }: EditablePageProps) {
               <SelectionToolbar />
             </If>
             <If condition={editor.isPromptToolbarOpen}>
-              <PromptToolbar />
+              <ChatPanel />
             </If>
           </div>
           <InsertButton id="insert-button" />
         </div>
-      </If>
-
-      <If condition={editor.isPromptToolbarOpen}>
-        <If condition={editor.chat.messages.derive((m) => m.length > 0)}>
-          <Thread />
-        </If>
       </If>
 
       <div className={styles["page-layout"]} style={style}>
