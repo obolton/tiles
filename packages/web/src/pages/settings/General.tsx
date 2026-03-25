@@ -4,16 +4,33 @@ import Sidebar from "./Sidebar";
 import If from "@/jsx/if";
 import client from "@/api/client";
 import { reactive } from "@/utils/reactivity";
-import { showToast } from "@/utils/toasts";
+import { showToast, redirectWithToast } from "@/utils/toasts";
+import { showModal } from "@/utils/modals";
 import { handleError } from "@/utils/errors";
+import styles from "./General.module.css";
 import type { AppRouterOutputs } from "@/api/client";
+import type { User } from "@/utils/sessions";
+
+const DeleteWorkspaceModalLoader = () =>
+  import("@/components/modals/workspaces/DeleteWorkspaceModal");
 
 export interface GeneralProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
+  user: User;
 }
 
-export default function General({ workspace }: GeneralProps) {
+export default function General({ workspace, user }: GeneralProps) {
   const isAdmin = reactive(workspace.role === "ADMIN");
+
+  function deleteWorkspace() {
+    showModal(DeleteWorkspaceModalLoader, {
+      props: {},
+      async onConfirm() {
+        await client.workspaces.delete.mutate({ workspaceId: workspace.id });
+        redirectWithToast("/", "Workspace deleted.", "success");
+      },
+    });
+  }
 
   async function onSubmit(event: SubmitEvent) {
     const form = event.currentTarget as HTMLFormElement;
@@ -38,7 +55,7 @@ export default function General({ workspace }: GeneralProps) {
   }
 
   return (
-    <PageLayout workspaceId={workspace.id} center={<h1>Settings</h1>}>
+    <PageLayout workspaceId={workspace.id} user={user} center={<h1>Settings</h1>}>
       <SidebarLayout
         sidebar={
           <Sidebar
@@ -70,6 +87,19 @@ export default function General({ workspace }: GeneralProps) {
             </footer>
           </If>
         </form>
+
+        <If condition={isAdmin}>
+          <section className={styles.delete}>
+            <h3>Danger zone</h3>
+            <button
+              type="button"
+              className="secondary destructive"
+              on:click={deleteWorkspace}
+            >
+              Delete workspace
+            </button>
+          </section>
+        </If>
       </SidebarLayout>
     </PageLayout>
   );
