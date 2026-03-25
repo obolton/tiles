@@ -23,7 +23,7 @@
     position: absolute;
     inset: 16px;
     border-radius: inherit;
-    box-shadow: 0 0 0 12px rgb(0 0 0 / 30%);
+    box-shadow: 0 0 0 16px rgb(0 0 0 / 10%);
     opacity: 0;
     clip-path: inset(0 round var(--border-radius));
     transition:
