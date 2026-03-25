@@ -5,7 +5,7 @@
   overflow: visible;
 }
 
-:host(:focus-within),
+:host([aria-selected="true"]),
 :host(:state(resizing)) {
   z-index: 1;
 }
@@ -32,7 +32,7 @@
       clip-path var(--animation-duration-short) var(--easing);
   }
 
-  :host(:focus-within) &,
+  :host([aria-selected="true"]) &,
   :host(.drag-preview) &,
   &:hover {
     &::before {
@@ -60,11 +60,11 @@
     opacity var(--animation-duration-short) var(--easing),
     border-color var(--animation-duration-short) var(--easing);
 
-  :host(:focus-within) &:not(.inactive) {
+  :host([aria-selected="true"]) &:not(.inactive) {
     opacity: 0.5;
   }
 
-  :host(:focus-within) &:hover,
+  :host([aria-selected="true"]) &:hover,
   &:focus,
   :host(:state(resizing)) &:not(.inactive) {
     opacity: 1 !important;
