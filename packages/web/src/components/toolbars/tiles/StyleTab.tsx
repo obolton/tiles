@@ -56,6 +56,7 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
         <ColorPicker
           id={`${id}-color-picker`}
           icon={<TextColorIcon aria-hidden="true" />}
+          label="Text"
           value={textColor}
           onChange={(color) => tile.setTextColor(color)}
           themeColors={themeColors}
@@ -63,6 +64,7 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
 
         <FillPicker
           id={`${id}-background`}
+          label="Background"
           value={background}
           onChange={(background) => tile.setBackground(background)}
           aria-pressed={background}
