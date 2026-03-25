@@ -74,14 +74,6 @@
   body[data-editing] & {
     outline: 2px solid rgb(0 0 0 / 5%);
 
-    &:hover,
-    &:state(resizing) {
-      outline: 2px solid rgb(0 0 0 / 10%);
-    }
-
-    &:is(.selected, :focus-within):not(:state(resizing)) {
-      outline: var(--focus-outline);
-    }
 
     &.referencing {
       cursor: pointer;
