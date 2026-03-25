@@ -1,0 +1,18 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - var(--header-height) - 96px);
+  width: min(600px, 80vw);
+  pointer-events: none !important;
+}
+
+.prompt {
+  pointer-events: auto;
+  padding: 8px;
+  border-radius: calc(var(--border-radius) + 8px);
+  background: var(--ui-background-color);
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 0 0 1px rgb(0 0 0 / 15%),
+    0 4px 12px -4px rgb(0 0 0 / 30%);
+}
