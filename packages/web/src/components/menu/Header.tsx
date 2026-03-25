@@ -1,4 +1,4 @@
-import WorkspaceSelector from "./WorkspaceSelector";
+import NavigationMenu from "./NavigationMenu";
 import styles from "./Header.module.css";
 import type { User } from "@/utils/sessions";
 import type { JSX } from "@/jsx/jsx";
@@ -23,7 +23,7 @@ export default function Header({
       data-tooltip-position="bottom"
     >
       <nav className={styles.start} aria-label="Navigation">
-        <WorkspaceSelector user={user} workspaceId={workspaceId} />
+        <NavigationMenu user={user} workspaceId={workspaceId} />
       </nav>
 
       <div className={styles.center}>{center}</div>

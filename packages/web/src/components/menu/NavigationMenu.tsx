@@ -3,27 +3,29 @@ import MenuItem from "@/components/menus/MenuItem";
 import MenuItemGroup from "@/components/menus/MenuItemGroup";
 import MenuItemLink from "@/components/menus/MenuItemLink";
 import ProfileImage from "@/components/profile-image/ProfileImage";
+import LibraryIcon from "@/icons/library.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
 import WorkspaceIcon from "@/icons/workspace.svg?jsx";
 import SettingsIcon from "@/icons/settings.svg?jsx";
 import SignOutIcon from "@/icons/sign-out.svg?jsx";
 import { getUserInfo, signOut } from "@/utils/sessions";
 import { showModal } from "@/utils/modals";
+import { handleError } from "@/utils/errors";
 import client from "@/api/client";
 import type { User } from "@/utils/sessions";
 
 const CreateWorkspaceModalLoader = () =>
   import("@/components/modals/workspaces/CreateWorkspaceModal");
 
-export interface WorkspaceSelectorProps {
+export interface NavigationMenuProps {
   user: User;
   workspaceId: string;
 }
 
-export default function WorkspaceSelector({
+export default function NavigationMenu({
   user,
   workspaceId,
-}: WorkspaceSelectorProps) {
+}: NavigationMenuProps) {
   const workspace = user.workspaces.find((w) => w.id === workspaceId);
 
   function createWorkspace() {
@@ -37,17 +39,43 @@ export default function WorkspaceSelector({
     });
   }
 
+  async function createNewPage() {
+    try {
+      const { id } = await client.pages.create.mutate({
+        workspaceId,
+        title: "New page",
+      });
+      window.open(`/pages/${id}?edit=true`);
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
   return (
     <>
       <ToolbarButton
         label={workspace?.name}
-        popovertarget="workspace-menu"
+        popovertarget="navigation-menu"
         aria-haspopup="menu"
       >
         <ProfileImage imageUrl={user.imageUrl} name={user.name} />
         {workspace?.name}
       </ToolbarButton>
-      <popover-menu id="workspace-menu">
+      <popover-menu id="navigation-menu">
+        <MenuItemGroup>
+          <MenuItemLink
+            icon={<LibraryIcon aria-hidden="true" />}
+            href={`/workspaces/${workspaceId}`}
+          >
+            Library
+          </MenuItemLink>
+          <MenuItem
+            icon={<NewIcon aria-hidden="true" />}
+            on:click={createNewPage}
+          >
+            New page
+          </MenuItem>
+        </MenuItemGroup>
         <MenuItemGroup>
           {user.workspaces.map((w) => (
             <MenuItemLink
