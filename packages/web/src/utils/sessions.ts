@@ -55,7 +55,18 @@ export function clearAuthenticationCookies() {
   document.cookie = `${SIGNED_IN_FLAG_COOKIE_NAME}=; Path=/; Secure; SameSite=Lax; Domain=${SESSION_COOKIE_DOMAIN}; Max-Age=0`;
 }
 
-export function initializeSession(): User | null {
+export function initializeSession(userData?: User | null): User | null {
+  if (userData) {
+    user.value = userData;
+    document.body.dataset.signedIn = "true";
+    try {
+      localStorage.setItem("user", JSON.stringify(userData));
+    } catch {
+      // Storage unavailable
+    }
+    return userData;
+  }
+
   if (!isSignedIn()) {
     return null;
   }
