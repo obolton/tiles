@@ -50,7 +50,7 @@ export function parsePageSort(sort: PageSort) {
 
 interface PagesGridProps {
   workspaceId: string;
-  inputPlaceholder?: string;
+  query: Reactive<string>;
   pages: Reactive<LibraryPage[]>;
   cursor: Reactive<string | null>;
   search: (query: string, cursor: string | null) => Promise<PagesSearchResults>;
@@ -65,7 +65,7 @@ interface PagesGridProps {
 
 export default function PagesGrid({
   workspaceId,
-  inputPlaceholder,
+  query,
   pages,
   cursor,
   search,
@@ -119,13 +119,11 @@ export default function PagesGrid({
   return (
     <>
       <Search
-        id="search-pages"
         itemsClassName={styles.pages}
         search={onSearch}
         results={pages}
         nextCursor={cursor}
-        placeholder={inputPlaceholder}
-        sortOptions={sort ? <PageSortOptions /> : undefined}
+        query={query}
         sort={sort}
         render={(page) => (
           <LibraryCard
