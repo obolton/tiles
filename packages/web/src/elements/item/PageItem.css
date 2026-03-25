@@ -97,108 +97,108 @@
   }
 
   &::before {
-    width: 6px;
-    height: 12px;
+    width: 4px;
+    height: 8px;
   }
 
   &::after {
-    width: 12px;
-    height: 6px;
+    width: 8px;
+    height: 4px;
   }
 }
 
 .resize-se {
   right: -12px;
   bottom: -12px;
-  border-right: 12px solid var(--resize-handle-color);
-  border-bottom: 12px solid var(--resize-handle-color);
+  border-right: 8px solid var(--resize-handle-color);
+  border-bottom: 8px solid var(--resize-handle-color);
   border-bottom-right-radius: calc(var(--border-radius) + 12px);
   cursor: nwse-resize;
 
   &::before {
-    bottom: -12px;
-    left: -6px;
-    border-radius: 6px 0 0 6px;
+    bottom: -8px;
+    left: -4px;
+    border-radius: 4px 0 0 4px;
   }
 
   &::after {
-    top: -6px;
-    right: -12px;
-    border-radius: 6px 6px 0 0;
+    top: -4px;
+    right: -8px;
+    border-radius: 4px 4px 0 0;
   }
 }
 
 .resize-nw {
   left: -12px;
   top: -12px;
-  border-left: 12px solid var(--resize-handle-color);
-  border-top: 12px solid var(--resize-handle-color);
+  border-left: 8px solid var(--resize-handle-color);
+  border-top: 8px solid var(--resize-handle-color);
   border-top-left-radius: calc(var(--border-radius) + 12px);
   cursor: nwse-resize;
 
   &::before {
-    top: -12px;
-    right: -6px;
-    border-radius: 0 6px 6px 0;
+    top: -8px;
+    right: -4px;
+    border-radius: 0 4px 4px 0;
   }
 
   &::after {
-    bottom: -6px;
-    left: -12px;
-    border-radius: 0 0 6px 6px;
+    bottom: -4px;
+    left: -8px;
+    border-radius: 0 0 4px 4px;
   }
 }
 
 .resize-ne {
   right: -12px;
   top: -12px;
-  border-right: 12px solid var(--resize-handle-color);
-  border-top: 12px solid var(--resize-handle-color);
+  border-right: 8px solid var(--resize-handle-color);
+  border-top: 8px solid var(--resize-handle-color);
   border-top-right-radius: calc(var(--border-radius) + 12px);
   cursor: nesw-resize;
 
   &::before {
-    top: -12px;
-    left: -6px;
-    border-radius: 6px 0 0 6px;
+    top: -8px;
+    left: -4px;
+    border-radius: 4px 0 0 4px;
   }
 
   &::after {
-    bottom: -6px;
-    right: -12px;
-    border-radius: 0 0 6px 6px;
+    bottom: -4px;
+    right: -8px;
+    border-radius: 0 0 4px 4px;
   }
 }
 
 .resize-sw {
   left: -12px;
   bottom: -12px;
-  border-left: 12px solid var(--resize-handle-color);
-  border-bottom: 12px solid var(--resize-handle-color);
+  border-left: 8px solid var(--resize-handle-color);
+  border-bottom: 8px solid var(--resize-handle-color);
   border-bottom-left-radius: calc(var(--border-radius) + 12px);
   cursor: nesw-resize;
 
   &::before {
-    bottom: -12px;
-    right: -6px;
-    border-radius: 0 6px 6px 0;
+    bottom: -8px;
+    right: -4px;
+    border-radius: 0 4px 4px 0;
   }
 
   &::after {
-    top: -6px;
-    left: -12px;
-    border-radius: 6px 6px 0 0;
+    top: -4px;
+    left: -8px;
+    border-radius: 4px 4px 0 0;
   }
 }
 
 /* Edge handles */
 .resize-e,
 .resize-w {
-  width: 12px;
+  width: 8px;
   height: 48px;
   top: calc(50% - 24px);
   background: var(--resize-handle-color);
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: ew-resize;
 }
 
@@ -213,10 +213,10 @@
 .resize-n,
 .resize-s {
   width: 48px;
-  height: 12px;
+  height: 8px;
   left: calc(50% - 24px);
   background: var(--resize-handle-color);
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: ns-resize;
 }
 
