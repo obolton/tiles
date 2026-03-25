@@ -26,9 +26,10 @@ async function loader({
 
   const options = getLoaderContext(headers);
 
-  const [workspace, invites] = await Promise.all([
+  const [workspace, invites, user] = await Promise.all([
     client.workspaces.get.query({ workspaceId }, options),
     client.workspaces.listInvites.query({ workspaceId }, options),
+    client.users.getUserInfo.query(undefined, options),
   ]);
 
   if (!workspace) {
@@ -41,7 +42,7 @@ async function loader({
 
   return {
     title: "Invites settings - Tiles",
-    data: { workspace, invites },
+    data: { workspace, invites, user },
   };
 }
 
@@ -50,5 +51,5 @@ export default {
   loader,
   component: Invites,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters }) => initRoute(parameters.workspaceId),
+  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
 } satisfies Route<InvitesProps>;

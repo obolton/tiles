@@ -27,15 +27,16 @@ async function loader({
 
   const options = getLoaderContext(headers);
 
-  const [workspace, folders, pages] = await Promise.all([
+  const [workspace, folders, pages, user] = await Promise.all([
     client.workspaces.get.query({ workspaceId }, options),
     client.folders.list.query({ workspaceId }, options),
     client.pages.list.query({ workspaceId }, options),
+    client.users.getUserInfo.query(undefined, options),
   ]);
 
   return {
     title: "Your pages - Tiles",
-    data: { workspace, folders, pages },
+    data: { workspace, folders, pages, user },
   };
 }
 
@@ -44,5 +45,5 @@ export default {
   loader,
   component: Library,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters }) => initRoute(parameters.workspaceId),
+  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
 } satisfies Route<LibraryProps>;

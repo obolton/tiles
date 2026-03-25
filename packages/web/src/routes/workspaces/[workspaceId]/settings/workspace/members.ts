@@ -26,9 +26,10 @@ async function loader({
 
   const options = getLoaderContext(headers);
 
-  const [workspace, users] = await Promise.all([
+  const [workspace, users, user] = await Promise.all([
     client.workspaces.get.query({ workspaceId }, options),
     client.workspaces.listUsers.query({ workspaceId }, options),
+    client.users.getUserInfo.query(undefined, options),
   ]);
 
   if (!workspace) {
@@ -37,7 +38,7 @@ async function loader({
 
   return {
     title: "Members settings - Tiles",
-    data: { workspace, users },
+    data: { workspace, users, user },
   };
 }
 
@@ -46,5 +47,5 @@ export default {
   loader,
   component: Members,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters }) => initRoute(parameters.workspaceId),
+  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
 } satisfies Route<MembersProps>;

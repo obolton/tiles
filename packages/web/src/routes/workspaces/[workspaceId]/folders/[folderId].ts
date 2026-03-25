@@ -26,11 +26,12 @@ async function loader({
 
   const options = getLoaderContext(headers);
 
-  const [workspace, folder, folders, pages] = await Promise.all([
+  const [workspace, folder, folders, pages, user] = await Promise.all([
     client.workspaces.get.query({ workspaceId }, options),
     client.folders.get.query({ workspaceId, id: folderId }, options),
     client.folders.list.query({ workspaceId }, options),
     client.folders.listPages.query({ workspaceId, id: folderId }, options),
+    client.users.getUserInfo.query(undefined, options),
   ]);
 
   if (!folder) {
@@ -39,7 +40,7 @@ async function loader({
 
   return {
     title: `${folder.name} - Tiles`,
-    data: { workspace, id: folder.id, name: folder.name, folders, pages },
+    data: { workspace, id: folder.id, name: folder.name, folders, pages, user },
   };
 }
 
@@ -48,5 +49,5 @@ export default {
   loader,
   component: Folder,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters }) => initRoute(parameters.workspaceId),
+  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
 } satisfies Route<FolderProps>;

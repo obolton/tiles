@@ -25,7 +25,11 @@ async function loader({
   }
 
   const options = getLoaderContext(headers);
-  const workspace = await client.workspaces.get.query({ workspaceId }, options);
+
+  const [workspace, user] = await Promise.all([
+    client.workspaces.get.query({ workspaceId }, options),
+    client.users.getUserInfo.query(undefined, options),
+  ]);
 
   if (!workspace) {
     return forbidden();
@@ -33,7 +37,7 @@ async function loader({
 
   return {
     title: "General settings - Tiles",
-    data: { workspace },
+    data: { workspace, user },
   };
 }
 
@@ -42,5 +46,5 @@ export default {
   loader,
   component: General,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters }) => initRoute(parameters.workspaceId),
+  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
 } satisfies Route<GeneralProps>;

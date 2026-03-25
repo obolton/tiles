@@ -26,15 +26,16 @@ async function loader({
 
   const options = getLoaderContext(headers);
 
-  const [workspace, folders, pages] = await Promise.all([
+  const [workspace, folders, pages, user] = await Promise.all([
     client.workspaces.get.query({ workspaceId }, options),
     client.folders.list.query({ workspaceId }, options),
     client.pages.listShared.query({ workspaceId }, options),
+    client.users.getUserInfo.query(undefined, options),
   ]);
 
   return {
     title: "Shared with you - Tiles",
-    data: { workspace, folders, pages },
+    data: { workspace, folders, pages, user },
   };
 }
 
@@ -43,5 +44,5 @@ export default {
   loader,
   component: Shared,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters }) => initRoute(parameters.workspaceId),
+  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
 } satisfies Route<SharedProps>;
