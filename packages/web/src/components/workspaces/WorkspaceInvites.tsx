@@ -1,4 +1,5 @@
 import Search from "@/components/search/Search";
+import SearchToolbar from "@/components/search/SearchToolbar";
 import InviteRow from "@/components/collaboration/InviteRow";
 import Placeholder from "@/components/placeholder/Placeholder";
 import NewIcon from "@/icons/new.svg?jsx";
@@ -25,6 +26,7 @@ export default function WorkspaceInvites({
   workspaceName,
   invites: initialInvites,
 }: WorkspaceInvitesProps) {
+  const query = reactive("");
   const invites = reactive(initialInvites.invites);
   const nextCursor = reactive(initialInvites.nextCursor);
 
@@ -89,13 +91,19 @@ export default function WorkspaceInvites({
 
   return (
     <>
+      <SearchToolbar
+        id="search-invites"
+        classList={{ [styles.toolbar]: true }}
+        placeholder="Search invites"
+        query={query}
+      />
+
       <Search
         itemsClassName={styles.invites}
-        id="search-invites"
         search={onSearch}
         results={invites}
         nextCursor={nextCursor}
-        placeholder="Search invites"
+        query={query}
         render={(invite) => (
           <InviteRow invite={invite} showRemoveButton onRemove={onRemove} />
         )}

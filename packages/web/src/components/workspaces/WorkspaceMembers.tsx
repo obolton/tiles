@@ -1,4 +1,5 @@
 import Search from "@/components/search/Search";
+import SearchToolbar from "@/components/search/SearchToolbar";
 import MemberCard from "./MemberCard";
 import Placeholder from "@/components/placeholder/Placeholder";
 import client from "@/api/client";
@@ -21,6 +22,7 @@ export default function WorkspaceMembers({
   members: initialMembers,
   isAdmin,
 }: WorkspaceMembersProps) {
+  const query = reactive("");
   const members = reactive(initialMembers.users);
   const nextCursor = reactive(initialMembers.nextCursor);
 
@@ -113,13 +115,19 @@ export default function WorkspaceMembers({
 
   return (
     <>
+      <SearchToolbar
+        id="search-members"
+        classList={{ [styles.toolbar]: true }}
+        placeholder="Search members"
+        query={query}
+      />
+
       <Search
         itemsClassName={styles.members}
-        id="search-members"
         search={onSearch}
         results={members}
         nextCursor={nextCursor}
-        placeholder="Search members"
+        query={query}
         render={(member) => (
           <MemberCard
             member={member}
