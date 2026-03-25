@@ -45,9 +45,13 @@ export default function ColorPicker({
         label={label}
         aria-haspopup="menu"
         aria-expanded="false"
-        style={value?.derive((v) => (v ? { color: toCSSColor(v) } : undefined))}
+        classList={{ [styles.picker]: true }}
+        style={value?.derive((v) =>
+          v ? { "--icon-color": toCSSColor(v) } : undefined,
+        )}
       >
         {icon}
+        {label}
       </ToolbarButton>
 
       <anchored-popover id={popoverId} align="center">

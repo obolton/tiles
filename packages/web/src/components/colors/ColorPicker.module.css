@@ -1,3 +1,7 @@
+.picker > svg {
+  color: var(--icon-color);
+}
+
 .clear {
   display: flex;
   align-items: center;
