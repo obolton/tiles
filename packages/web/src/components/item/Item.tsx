@@ -270,7 +270,6 @@ export default function Item({
           ),
           animate: tile.animation.derive((a) => a !== null),
           [styles.draggable]: editor.isTileEditable,
-          [styles.selected]: isSelected,
           [styles.referenced]: isReferenced,
           [styles.referencing]: editor.isPromptOpen,
           [styles.hide]: hide,
