@@ -99,7 +99,7 @@ export default function Profile({ workspaceId, user, isAdmin }: ProfileProps) {
   }
 
   return (
-    <PageLayout workspaceId={user.workspaces[0]?.id} center={<h1>Settings</h1>}>
+    <PageLayout workspaceId={user.workspaces[0]?.id} user={user} center={<h1>Settings</h1>}>
       <SidebarLayout
         sidebar={
           <Sidebar workspaceId={workspaceId} page="PROFILE" isAdmin={isAdmin} />
