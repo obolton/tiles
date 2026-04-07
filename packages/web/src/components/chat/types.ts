@@ -17,7 +17,7 @@ export interface UserMessage {
 export interface AssistantMessage {
   readonly id: string;
   readonly role: "assistant";
-  readonly content?: string;
+  readonly content?: HTMLElement;
   readonly actions?: ChatAction[];
 }
 
