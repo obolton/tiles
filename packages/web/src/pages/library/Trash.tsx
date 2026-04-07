@@ -12,6 +12,7 @@ import SearchToolbar from "@/components/search/SearchToolbar";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import { reactive, persistent } from "@/utils/reactivity";
+import If from "@/jsx/if";
 import styles from "./Trash.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type { User } from "@/utils/sessions";
@@ -70,6 +71,11 @@ export default function Trash({
           sort={sort}
         />
       }
+      actions={
+        <button type="button" className="secondary" on:click={emptyTrash}>
+          Empty trash
+        </button>
+      }
     >
       <SidebarLayout
         sidebar={
@@ -80,12 +86,13 @@ export default function Trash({
           />
         }
       >
-        <aside className={styles.aside}>
-          <p>Pages in the trash will be permanently deleted after 30 days.</p>
-          <button type="button" className="secondary" on:click={emptyTrash}>
-            Empty trash
-          </button>
-        </aside>
+        <If condition={pages.derive((p) => p.length > 0)}>
+          <aside className={styles.aside}>
+            <p>
+              Pages in the trash will be permanently deleted after 30 days.
+            </p>
+          </aside>
+        </If>
 
         <PagesGrid
           workspaceId={workspace.id}
