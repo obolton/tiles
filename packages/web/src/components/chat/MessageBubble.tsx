@@ -12,7 +12,11 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
     <>
       {message.content ? (
         <article
-          className={classNames(styles.bubble, styles[message.role])}
+          className={classNames(
+            styles.bubble,
+            styles[message.role],
+            message.role === "assistant" && "rich-text",
+          )}
           aria-label={message.role === "user" ? "You" : "AI"}
         >
           {message.content}
