@@ -67,6 +67,8 @@
 .contents {
   position: absolute;
   inset: 0;
+  border-radius: var(--border-radius);
+  overflow: hidden;
 
   &:not(:defined),
   &::part(container) {
