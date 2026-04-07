@@ -40,7 +40,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.18",
     "@types/node": "^24.3.0",
-    "esbuild": "^0.27.3",
+    "esbuild": "^0.28.0",
     "prisma": "^7.5.0",
     "prisma-json-types-generator": "^4.1.1",
     "tsx": "^4.21.0"
