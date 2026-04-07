@@ -26,14 +26,7 @@ export default function CollaborationPopover({
   function setPublished(event: Event) {
     const input = event.currentTarget as HTMLInputElement;
     const publish = input.checked;
-    page
-      .setPublished(publish)
-      .then(() =>
-        publish
-          ? showToast("The page was published.", "success")
-          : showToast("The page was unpublished.", "success"),
-      )
-      .catch(handleError);
+    page.setPublished(publish).catch(handleError);
   }
 
   function showInviteModal() {
