@@ -174,13 +174,28 @@
   align-self: start;
   min-height: 22px;
   min-width: 0;
-  border-radius: 4px;
+  border-radius: 0;
   background: var(--segment-background, var(--accent));
+}
+
+.segment:not(.primary) {
+  display: flex;
+  align-items: center;
 }
 
 .segment.primary {
   min-height: unset;
   background: none;
+}
+
+.segment.segment-start {
+  border-start-start-radius: 4px;
+  border-end-start-radius: 4px;
+}
+
+.segment.segment-end {
+  border-start-end-radius: 4px;
+  border-end-end-radius: 4px;
 }
 
 .segment.placeholder {

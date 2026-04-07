@@ -60,6 +60,7 @@ export default class CalendarGrid extends HTMLElement {
   private readonly todayButton: HTMLButtonElement;
   private readonly container: HTMLElement;
   private readonly mutationObserver: MutationObserver;
+  private readonly resizeObserver: ResizeObserver;
   private readonly firstDayOfWeek: number;
 
   private weeks: HTMLElement[] = [];
@@ -69,6 +70,7 @@ export default class CalendarGrid extends HTMLElement {
     edge: "start" | "end";
     start: string;
     end: string;
+    height: number;
   } | null = null;
   private select: {
     anchor: string;
@@ -206,6 +208,9 @@ export default class CalendarGrid extends HTMLElement {
     this.createWeekdayHeaders();
 
     this.mutationObserver = new MutationObserver(() => this.layout());
+    this.resizeObserver = new ResizeObserver((entries) =>
+      this.syncSegmentHeights(entries),
+    );
 
     this.shadow.addEventListener("pointerdown", this);
     this.shadow.addEventListener("click", this);
@@ -248,6 +253,7 @@ export default class CalendarGrid extends HTMLElement {
 
   disconnectedCallback() {
     this.mutationObserver.disconnect();
+    this.resizeObserver.disconnect();
     this.select?.abort.abort();
     this.select = null;
   }
@@ -327,7 +333,8 @@ export default class CalendarGrid extends HTMLElement {
     }
 
     const { start, end } = item;
-    this.resize = { item, edge, start, end };
+    const height = item.offsetHeight;
+    this.resize = { item, edge, start, end, height };
     this.internals.states.add("resizing");
 
     item.dispatchEvent(
@@ -447,6 +454,22 @@ export default class CalendarGrid extends HTMLElement {
     );
   }
 
+  private syncSegmentHeights(entries: ResizeObserverEntry[]) {
+    for (const entry of entries) {
+      const height = entry.borderBoxSize[0]?.blockSize;
+      if (height === undefined) {
+        continue;
+      }
+      const segments = this.segments.get(entry.target as CalendarDate);
+      if (!segments) {
+        continue;
+      }
+      for (let i = 1; i < segments.elements.length; i++) {
+        segments.elements[i]!.style.minHeight = `${height}px`;
+      }
+    }
+  }
+
   private previewResize(prevDate: string, targetDate: string) {
     const { item, edge, start, end } = this.resize!;
     const entry = this.segments.get(item);
@@ -491,7 +514,14 @@ export default class CalendarGrid extends HTMLElement {
   }
 
   private appendSegment(entry: ItemSegments, week: number) {
+    const prev = entry.elements[entry.elements.length - 1]!;
+    prev.classList.remove("segment-end");
+
     const seg = this.createSegment(week, "1 / -1", this.resize?.item);
+    seg.classList.add("segment-end");
+    if (this.resize) {
+      seg.style.minHeight = `${this.resize.height}px`;
+    }
     if (entry.endHandle) {
       seg.append(entry.endHandle);
     }
@@ -500,18 +530,23 @@ export default class CalendarGrid extends HTMLElement {
 
   private removeLastSegment(entry: ItemSegments) {
     const removed = entry.elements.pop()!;
+    const newLast = entry.elements[entry.elements.length - 1]!;
+    newLast.classList.add("segment-end");
     if (entry.endHandle) {
-      entry.elements[entry.elements.length - 1]!.append(entry.endHandle);
+      newLast.append(entry.endHandle);
     }
     removed.remove();
   }
 
   private prependSegment(entry: ItemSegments, week: number) {
     const first = entry.elements[0]!;
-    first.classList.remove("primary");
+    first.classList.remove("primary", "segment-start");
+    if (this.resize) {
+      first.style.minHeight = `${this.resize.height}px`;
+    }
 
     const seg = this.createSegment(week, "1 / -1");
-    seg.classList.add("primary");
+    seg.classList.add("primary", "segment-start");
     seg.prepend(entry.slot);
     if (entry.startHandle) {
       seg.append(entry.startHandle);
@@ -522,7 +557,7 @@ export default class CalendarGrid extends HTMLElement {
   private removeFirstSegment(entry: ItemSegments) {
     const removed = entry.elements.shift()!;
     const newFirst = entry.elements[0]!;
-    newFirst.classList.add("primary");
+    newFirst.classList.add("primary", "segment-start");
     newFirst.prepend(entry.slot);
     if (entry.startHandle) {
       newFirst.append(entry.startHandle);
@@ -597,6 +632,7 @@ export default class CalendarGrid extends HTMLElement {
       }
     }
     this.segments.clear();
+    this.resizeObserver.disconnect();
 
     for (const item of this.items) {
       if (!item.start) {
@@ -632,6 +668,10 @@ export default class CalendarGrid extends HTMLElement {
       }
 
       this.segments.set(item, { elements, slot, startHandle, endHandle });
+
+      if (elements.length > 1) {
+        this.resizeObserver.observe(item);
+      }
     }
   }
 
@@ -661,6 +701,9 @@ export default class CalendarGrid extends HTMLElement {
         this.createSegment(w, `1 / ${this.endColumn(endPos, w)}`, item),
       );
     }
+
+    segments[0]?.classList.add("segment-start");
+    segments[segments.length - 1]?.classList.add("segment-end");
 
     return segments;
   }
