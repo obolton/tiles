@@ -55,7 +55,7 @@ export default class PageItem extends HTMLElement {
   private resizeAbortController?: AbortController;
   private resizeDirection: ResizeHandleDirection | null = null;
   private resizeRect = new DOMRect();
-  private aspectRatio = "auto";
+  private aspectRatio: number | null = null;
   private initialPointerX = 0;
   private initialPointerY = 0;
 
@@ -353,7 +353,9 @@ export default class PageItem extends HTMLElement {
     }
 
     this.isResizing = true;
-    this.aspectRatio = getComputedStyle(this).aspectRatio;
+    const computedRatio = getComputedStyle(this).aspectRatio;
+    this.aspectRatio =
+      computedRatio === "auto" ? null : parseFloat(computedRatio);
     this.internals.states.add("resizing");
     this.showOutline();
   }
@@ -379,12 +381,16 @@ export default class PageItem extends HTMLElement {
     this.outline = document.createElement("div");
     this.outline.id = "outline";
     this.outline.setAttribute("part", "outline");
-    this.outline.style.width = this.resizeRect.width + "px";
     if (
-      (this.resizeDirection !== "e" && this.resizeDirection !== "w") ||
-      this.aspectRatio === "auto"
+      this.aspectRatio !== null &&
+      (this.resizeDirection === "n" || this.resizeDirection === "s")
     ) {
       this.outline.style.height = this.resizeRect.height + "px";
+    } else {
+      this.outline.style.width = this.resizeRect.width + "px";
+      if (this.aspectRatio === null) {
+        this.outline.style.height = this.resizeRect.height + "px";
+      }
     }
 
     // Move all resize handles into the outline
@@ -414,12 +420,16 @@ export default class PageItem extends HTMLElement {
 
       this.outline.style.left = offsetX + "px";
       this.outline.style.top = offsetY + "px";
-      this.outline.style.width = this.resizeRect.width + "px";
       if (
-        (this.resizeDirection !== "e" && this.resizeDirection !== "w") ||
-        this.aspectRatio === "auto"
+        this.aspectRatio !== null &&
+        (this.resizeDirection === "n" || this.resizeDirection === "s")
       ) {
         this.outline.style.height = this.resizeRect.height + "px";
+      } else {
+        this.outline.style.width = this.resizeRect.width + "px";
+        if (this.aspectRatio === null) {
+          this.outline.style.height = this.resizeRect.height + "px";
+        }
       }
     }
   }
