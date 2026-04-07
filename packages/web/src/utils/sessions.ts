@@ -21,28 +21,19 @@ export function isSignedIn() {
   return getCookie(document.cookie, SIGNED_IN_FLAG_COOKIE_NAME) === "1";
 }
 
-export async function getUserInfo() {
+function cacheUser(value: User | null) {
   try {
-    const userInfo = await client.users.getUserInfo.query();
-    user.value = userInfo;
-    try {
-      localStorage.setItem("user", JSON.stringify(userInfo));
-    } catch {
-      // Storage unavailable
-    }
-    return user;
-  } catch (error) {
-    user.value = null;
-    try {
+    if (value) {
+      localStorage.setItem("user", JSON.stringify(value));
+    } else {
       localStorage.removeItem("user");
-    } catch {
-      // Storage unavailable
     }
-    throw error;
+  } catch {
+    // Storage unavailable
   }
 }
 
-export function getCachedUserInfo(): User | null {
+function getCachedUser(): User | null {
   try {
     const data = localStorage.getItem("user");
     return data !== null ? (JSON.parse(data) as User) : null;
@@ -51,49 +42,46 @@ export function getCachedUserInfo(): User | null {
   }
 }
 
-export function clearAuthenticationCookies() {
-  document.cookie = `${SIGNED_IN_FLAG_COOKIE_NAME}=; Path=/; Secure; SameSite=Lax; Domain=${SESSION_COOKIE_DOMAIN}; Max-Age=0`;
+export async function getUserInfo() {
+  try {
+    const userInfo = await client.users.getUserInfo.query();
+    user.value = userInfo;
+    cacheUser(userInfo);
+  } catch (error) {
+    user.value = null;
+    cacheUser(null);
+    throw error;
+  }
 }
 
-export function initializeSession(userData?: User | null): User | null {
+export function initializeSession(userData?: User | null) {
   if (userData) {
     user.value = userData;
-    document.body.dataset.signedIn = "true";
-    try {
-      localStorage.setItem("user", JSON.stringify(userData));
-    } catch {
-      // Storage unavailable
-    }
-    return userData;
+    cacheUser(userData);
+    return;
   }
 
   if (!isSignedIn()) {
-    return null;
+    return;
   }
 
-  document.body.dataset.signedIn = "true";
-
-  const cached = getCachedUserInfo();
+  const cached = getCachedUser();
   if (cached) {
     user.value = cached;
   }
 
   // Background refresh — updates user.value reactively when resolved
   getUserInfo().catch((error) => {
-    user.value = null;
     if (import.meta.env.DEV) {
       console.error("Failed to refresh user info", error);
     }
   });
-
-  return cached;
 }
 
 export async function signOut() {
   await client.auth.signOut.mutate();
-  clearAuthenticationCookies();
+  document.cookie = `${SIGNED_IN_FLAG_COOKIE_NAME}=; Path=/; Secure; SameSite=Lax; Domain=${SESSION_COOKIE_DOMAIN}; Max-Age=0`;
   sessionStorage.clear();
   localStorage.clear();
-  delete document.body.dataset.signedIn;
   window.location.href = "/";
 }
