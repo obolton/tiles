@@ -440,7 +440,7 @@ export async function getNextPosition(
 function getNextFreeformPosition({
   width: itemWidth,
 }: NextPositionOptions): NextPosition {
-  return { x: 5, y: 5, width: itemWidth ?? 1 };
+  return { x: 5, y: 5, width: itemWidth ?? 40 };
 }
 
 async function getNextGridPosition(
