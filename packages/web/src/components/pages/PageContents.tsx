@@ -47,7 +47,7 @@ export default function PageContents({
             tile={tile}
             tabindex={tabindex}
             resize={tile.sizing.derive((d) =>
-              d === "CUSTOM" ? "all" : "horizontal",
+              d === "AUTO" ? "horizontal" : "all",
             )}
             showInsertButton
           />
