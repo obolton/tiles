@@ -34,7 +34,7 @@
     "cors": "^2.8.5",
     "fractional-indexing": "^3.2.0",
     "htmlparser2": "^12.0.0",
-    "openai": "^6.23.0",
+    "openai": "^6.33.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
