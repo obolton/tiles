@@ -4,14 +4,9 @@
   justify-content: center;
   width: 100%;
   grid-column: 1 / -1;
-  padding: 48px;
+  padding-block: 0.5em;
   gap: 24px;
-  text-align: center;
-  font-family: var(--ui-font);
-  font-size: 18px;
   color: var(--placeholder-color);
-  border-radius: var(--border-radius);
-  background: rgb(0 0 0 / 5%);
 }
 
 .actions {
