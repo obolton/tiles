@@ -49,7 +49,7 @@
     "api": "workspace:*",
     "cookie": "^1.1.1",
     "culori": "^4.0.2",
-    "entities": "^7.0.1",
+    "entities": "^8.0.0",
     "jose": "^6.2.2",
     "maplibre-gl": "^5.21.0",
     "prosemirror-commands": "^1.7.1",
