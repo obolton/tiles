@@ -17,7 +17,7 @@ toast-container {
     line-height: 1;
     padding: 16px;
     border-radius: 16px;
-    color: var(--text-color);
+    color: var(--ui-color);
     background: rgb(255 255 255 / 90%);
     backdrop-filter: blur(5px);
     box-shadow:
