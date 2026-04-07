@@ -21,7 +21,11 @@ export default function Members({ workspace, users, user }: MembersProps) {
   const isAdmin = reactive(workspace.role === "ADMIN");
 
   return (
-    <PageLayout workspaceId={workspace.id} user={user} center={<h1>Settings</h1>}>
+    <PageLayout
+      workspaceId={workspace.id}
+      user={user}
+      center={<h1>Settings</h1>}
+    >
       <SidebarLayout
         sidebar={
           <Sidebar

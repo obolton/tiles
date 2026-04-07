@@ -4,8 +4,9 @@ import type { JSX } from "@/jsx/jsx";
 import type { Reactive } from "@/utils/reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
 
-export interface SearchToolbarProps<S extends string = string>
-  extends JSX.Attributes<"div"> {
+export interface SearchToolbarProps<
+  S extends string = string,
+> extends JSX.Attributes<"div"> {
   id: string;
   placeholder?: string;
   autofocus?: boolean;

@@ -56,9 +56,7 @@ describe("getSessionId", () => {
 
 describe("isSignedIn", () => {
   test("returns true when signed-in cookie is 1", () => {
-    vi.spyOn(document, "cookie", "get").mockReturnValue(
-      "__Secure-signed-in=1",
-    );
+    vi.spyOn(document, "cookie", "get").mockReturnValue("__Secure-signed-in=1");
     expect(isSignedIn()).toBe(true);
   });
 
@@ -68,9 +66,7 @@ describe("isSignedIn", () => {
   });
 
   test("returns false when signed-in cookie has a different value", () => {
-    vi.spyOn(document, "cookie", "get").mockReturnValue(
-      "__Secure-signed-in=0",
-    );
+    vi.spyOn(document, "cookie", "get").mockReturnValue("__Secure-signed-in=0");
     expect(isSignedIn()).toBe(false);
   });
 });
@@ -178,9 +174,7 @@ describe("initializeSession", () => {
 
     test("loads cached user from localStorage", () => {
       localStorage.setItem("user", JSON.stringify(mockUser));
-      vi.mocked(client.users.getUserInfo.query).mockResolvedValueOnce(
-        mockUser,
-      );
+      vi.mocked(client.users.getUserInfo.query).mockResolvedValueOnce(mockUser);
 
       initializeSession();
 
@@ -188,9 +182,7 @@ describe("initializeSession", () => {
     });
 
     test("starts a background refresh", () => {
-      vi.mocked(client.users.getUserInfo.query).mockResolvedValueOnce(
-        mockUser,
-      );
+      vi.mocked(client.users.getUserInfo.query).mockResolvedValueOnce(mockUser);
 
       initializeSession();
 
@@ -198,9 +190,7 @@ describe("initializeSession", () => {
     });
 
     test("user is null before background refresh resolves when no cache", () => {
-      vi.mocked(client.users.getUserInfo.query).mockResolvedValueOnce(
-        mockUser,
-      );
+      vi.mocked(client.users.getUserInfo.query).mockResolvedValueOnce(mockUser);
 
       initializeSession();
 
@@ -208,9 +198,7 @@ describe("initializeSession", () => {
     });
 
     test("background refresh updates user store when it resolves", async () => {
-      vi.mocked(client.users.getUserInfo.query).mockResolvedValueOnce(
-        mockUser,
-      );
+      vi.mocked(client.users.getUserInfo.query).mockResolvedValueOnce(mockUser);
 
       initializeSession();
 
@@ -236,7 +224,7 @@ describe("signOut", () => {
   let location: { href: string };
 
   beforeEach(() => {
-    vi.mocked(client.auth.signOut.mutate).mockResolvedValueOnce(undefined);
+    vi.mocked(client.auth.signOut.mutate).mockResolvedValueOnce(null);
     location = { href: "" };
     vi.stubGlobal("location", location);
   });

@@ -55,7 +55,11 @@ export default function General({ workspace, user }: GeneralProps) {
   }
 
   return (
-    <PageLayout workspaceId={workspace.id} user={user} center={<h1>Settings</h1>}>
+    <PageLayout
+      workspaceId={workspace.id}
+      user={user}
+      center={<h1>Settings</h1>}
+    >
       <SidebarLayout
         sidebar={
           <Sidebar

@@ -51,5 +51,6 @@ export default {
   loader,
   component: Invites,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
+  beforeHydrate: ({ parameters, data }) =>
+    initRoute(parameters.workspaceId, data.user),
 } satisfies Route<InvitesProps>;

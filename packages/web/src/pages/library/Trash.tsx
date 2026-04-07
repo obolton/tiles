@@ -88,9 +88,7 @@ export default function Trash({
       >
         <If condition={pages.derive((p) => p.length > 0)}>
           <aside className={styles.aside}>
-            <p>
-              Pages in the trash will be permanently deleted after 30 days.
-            </p>
+            <p>Pages in the trash will be permanently deleted after 30 days.</p>
           </aside>
         </If>
 

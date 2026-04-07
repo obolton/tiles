@@ -45,5 +45,6 @@ export default {
   loader,
   component: Library,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
+  beforeHydrate: ({ parameters, data }) =>
+    initRoute(parameters.workspaceId, data.user),
 } satisfies Route<LibraryProps>;
