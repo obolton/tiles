@@ -76,7 +76,7 @@ export interface ActionEvent {
 }
 
 export interface Message {
-  message: string;
+  message: string | RichTextFormat | RichTextNode;
 }
 
 export type StreamEvent =

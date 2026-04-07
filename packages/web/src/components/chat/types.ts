@@ -1,3 +1,7 @@
+import type { RichTextFormat, RichTextNode } from "@/utils/richText/stream";
+
+export type MessageEvent = string | RichTextFormat | RichTextNode;
+
 export interface ChatAction {
   readonly id?: string;
   readonly type: string;
