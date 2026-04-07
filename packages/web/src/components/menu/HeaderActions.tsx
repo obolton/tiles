@@ -10,8 +10,6 @@ import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
 import { isBookmarked, setIsBookmarked } from "@/utils/bookmarks";
 import { handleError } from "@/utils/errors";
-import { flag } from "@/utils/reactivity";
-import { showToast } from "@/utils/toasts";
 import styles from "./HeaderActions.module.css";
 import type Editor from "@/editor/Editor";
 
@@ -21,8 +19,6 @@ export interface HeaderActionsProps {
 
 export default function HeaderActions({ editor }: HeaderActionsProps) {
   const { isEditable } = editor;
-  const bookmarkPending = flag(false);
-
   function toggleEdit() {
     viewTransition(() => {
       isEditable.value = !isEditable.value;
@@ -37,18 +33,9 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
 
     try {
       isBookmarked.toggle();
-      bookmarkPending.on();
       await setIsBookmarked(pageId, isBookmarked.value);
-      showToast(
-        isBookmarked.value
-          ? "The page was bookmarked."
-          : "The bookmark was removed.",
-        "success",
-      );
     } catch (error) {
       handleError(error);
-    } finally {
-      bookmarkPending.off();
     }
   }
 
@@ -75,7 +62,6 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
           label={isBookmarked.derive((value) =>
             value ? "Bookmarked" : "Not bookmarked",
           )}
-          classList={{ pending: bookmarkPending }}
           aria-pressed={isBookmarked}
           on:click={onClickBookmark}
         >
