@@ -245,6 +245,14 @@
   }
 }
 
+dropdown-editor > filter-select {
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+  backdrop-filter: none;
+}
+
 @layer variants {
   form.vertical {
     display: flex;
