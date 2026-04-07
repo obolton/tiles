@@ -3,6 +3,8 @@ import {
   transformMarkdown,
   type Destination,
   type DestinationMode,
+  type RichTextFormat,
+  type RichTextNode,
   type RichTextStreamEvent,
 } from "@/utils/markdown.ts";
 import { openai } from "@/ai/openai.ts";
@@ -30,8 +32,10 @@ interface ResolvedDestination {
   mode?: DestinationMode;
 }
 
+export type MessageEvent = string | RichTextFormat | RichTextNode;
+
 export interface Message {
-  message: string;
+  message: MessageEvent;
 }
 
 export type WriteEvent =
@@ -283,7 +287,7 @@ export async function streamTurn(
         }
       } else if (destination) {
         yield textEvent;
-      } else if (typeof textEvent === "string") {
+      } else {
         yield { message: textEvent };
       }
     }
