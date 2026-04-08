@@ -6,7 +6,8 @@
     "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "rootDir": "."
   },
   "include": ["./src/**/*", "./scripts/**/*"]
 }

@@ -2,10 +2,12 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "lib": ["ESNext"],
+    "types": ["node"],
     "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "rootDir": "."
   },
   "include": ["./src/**/*"],
   "references": [{ "path": "../api" }]

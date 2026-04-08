@@ -1,13 +1,14 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext", "DOM"],
     "outDir": "dist",
     "jsx": "react-jsx",
     "jsxImportSource": "@/jsx",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "rootDir": "."
   },
   "include": ["./src/**/*", "./scripts/**/*"],
   "references": [{ "path": "../api" }],
