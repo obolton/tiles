@@ -113,14 +113,6 @@
   -webkit-touch-callout: none;
 }
 
-.insert {
-  position: absolute !important;
-  inset-block-end: -40px;
-  inset-inline: 0;
-  margin-inline: auto;
-  width: fit-content;
-  z-index: 2;
-}
 
 ::view-transition-group(outline) {
   animation-duration: 0s;

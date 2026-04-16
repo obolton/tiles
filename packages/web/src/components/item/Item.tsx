@@ -18,7 +18,6 @@ import { reactive, combine } from "@/utils/reactivity";
 import { getThemeStyles } from "@/utils/themes";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import If from "@/jsx/if";
-import InsertButton from "@/components/buttons/InsertButton";
 import { ASPECT_RATIOS } from "@/constants/size";
 import styles from "./Item.module.css";
 import type Tile from "@/models/Tile";
@@ -42,7 +41,6 @@ export interface ItemProps {
   tile: Tile;
   tabindex?: number | Reactive<number | undefined>;
   resize?: Reactive<ResizeDirection | null>;
-  showInsertButton?: boolean;
 }
 
 function getTileComponent(tile: Tile, showToolbar: Reactive<boolean>) {
@@ -109,7 +107,6 @@ export default function Item({
   tile,
   tabindex,
   resize,
-  showInsertButton = false,
 }: ItemProps) {
   const { id, sizing, x, y, width, height, rowSpan, hide, editor } = tile;
 
@@ -281,17 +278,6 @@ export default function Item({
         on:dnd-dragstart={onDragStart}
       >
         {getTileComponent(tile, showToolbar)}
-
-        {showInsertButton && (
-          <If condition={isSelected}>
-            <InsertButton
-              classList={{ small: true, [styles.insert]: true }}
-              id={`${id}-insert`}
-              sectionId={tile.sectionId}
-              afterId={id}
-            />
-          </If>
-        )}
       </page-item>
     </If>
   );

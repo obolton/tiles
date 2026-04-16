@@ -49,7 +49,6 @@ export default function PageContents({
             resize={tile.sizing.derive((d) =>
               d === "AUTO" ? "horizontal" : "all",
             )}
-            showInsertButton
           />
         )}
       </Each>
