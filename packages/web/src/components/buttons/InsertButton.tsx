@@ -8,15 +8,11 @@ function preventDefault(event: Event) {
 
 export interface InsertButtonProps extends JSX.Attributes<"button"> {
   id: string;
-  sectionId?: string | null;
-  afterId?: string | null;
 }
 
 export default function InsertButton({
   id,
   classList,
-  sectionId,
-  afterId,
   ...props
 }: InsertButtonProps) {
   return (
@@ -34,12 +30,7 @@ export default function InsertButton({
         <NewIcon aria-hidden="true" id="test" />
       </button>
 
-      <InsertMenu
-        id={`${id}-popover`}
-        sectionId={sectionId}
-        afterId={afterId}
-        align="auto"
-      />
+      <InsertMenu id={`${id}-popover`} align="auto" />
     </>
   );
 }

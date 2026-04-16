@@ -40,24 +40,9 @@ const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
-export interface InsertMenuProps extends JSX.Attributes<"popover-menu"> {
-  sectionId?: string | null;
-  afterId?: string | null;
-}
-
 export default function InsertMenu({
-  sectionId,
-  afterId,
   ...props
-}: InsertMenuProps) {
-  function getBeforeId() {
-    if (!afterId) {
-      return null;
-    }
-    const tile = Editor.current.page.getTile(afterId);
-    return tile?.next?.id ?? null;
-  }
-
+}: JSX.Attributes<"popover-menu">) {
   function onClick(event: PointerEvent) {
     const button = event.currentTarget as HTMLButtonElement;
     const tileType = button.dataset.tileType as TileType;
@@ -65,14 +50,13 @@ export default function InsertMenu({
       return;
     }
 
-    const insertSectionId =
-      sectionId === undefined ? Editor.current.activeSection?.id : sectionId;
+    const sectionId = Editor.current.activeSection?.id;
 
     switch (tileType) {
       case "TEXT":
         Text.create(Editor.current.page, {
-          sectionId: insertSectionId,
-          beforeId: getBeforeId(),
+          sectionId,
+          beforeId: null,
           sizing: "AUTO",
           content: [{ type: "paragraph", children: [] }],
         }).catch(handleError);
@@ -91,8 +75,8 @@ export default function InsertMenu({
               workspaceId: Editor.current.workspaceId,
             });
             await Image.create(Editor.current.page, {
-              sectionId: insertSectionId,
-              beforeId: getBeforeId(),
+              sectionId,
+              beforeId: null,
               imageId,
               sizing: "AUTO",
             });
@@ -108,16 +92,16 @@ export default function InsertMenu({
           async onConfirm(result) {
             if ("linkedPageId" in result) {
               await PageLink.create(Editor.current.page, {
-                sectionId: insertSectionId,
-                beforeId: getBeforeId(),
+                sectionId,
+                beforeId: null,
                 linkedPageId: result.linkedPageId,
                 width: 5,
                 height: 5,
               });
             } else if (result.url) {
               await Link.create(Editor.current.page, {
-                sectionId: insertSectionId,
-                beforeId: getBeforeId(),
+                sectionId,
+                beforeId: null,
                 url: result.url,
                 width: 5,
                 height: 5,
@@ -129,8 +113,8 @@ export default function InsertMenu({
 
       case "TABLE":
         Table.create(Editor.current.page, {
-          sectionId: insertSectionId,
-          beforeId: getBeforeId(),
+          sectionId,
+          beforeId: null,
           height: 15,
           columns: 3,
           rows: 5,
@@ -141,7 +125,7 @@ export default function InsertMenu({
 
   function createGrid() {
     Section.create(Editor.current.page, {
-      beforeId: getBeforeId(),
+      beforeId: null,
       layout: "GRID",
       height: 15,
     }).catch(handleError);
@@ -149,7 +133,7 @@ export default function InsertMenu({
 
   function createHorizontal() {
     Section.create(Editor.current.page, {
-      beforeId: getBeforeId(),
+      beforeId: null,
       layout: "HORIZONTAL",
       height: 15,
     }).catch(handleError);
@@ -157,7 +141,7 @@ export default function InsertMenu({
 
   function createVertical() {
     Section.create(Editor.current.page, {
-      beforeId: getBeforeId(),
+      beforeId: null,
       layout: "VERTICAL",
       height: 15,
     }).catch(handleError);
@@ -165,7 +149,7 @@ export default function InsertMenu({
 
   function createFreeform() {
     Section.create(Editor.current.page, {
-      beforeId: getBeforeId(),
+      beforeId: null,
       layout: "FREEFORM",
       sizing: "FOUR_THREE",
     }).catch(handleError);
@@ -173,7 +157,7 @@ export default function InsertMenu({
 
   function createCalendar() {
     Section.create(Editor.current.page, {
-      beforeId: getBeforeId(),
+      beforeId: null,
       layout: "CALENDAR",
       sizing: "FOUR_THREE",
     }).catch(handleError);
@@ -184,7 +168,7 @@ export default function InsertMenu({
       props: {},
       async onConfirm({ place }) {
         const section = await Section.create(Editor.current.page, {
-          beforeId: getBeforeId(),
+          beforeId: null,
           layout: "MAP",
           sizing: "FOUR_THREE",
         });
