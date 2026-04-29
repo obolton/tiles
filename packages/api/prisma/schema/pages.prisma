@@ -79,6 +79,13 @@ enum DockEdge {
   BOTTOM
 }
 
+enum PageType {
+  DOCUMENT
+  PRESENTATION
+  COLLECTION
+  FREE
+}
+
 model Page {
   id              String              @id @default(uuid()) @db.Uuid
   createdAt       DateTime            @default(now()) @map("created_at")
@@ -95,6 +102,7 @@ model Page {
   coverImageKey   String?             @map("cover_image_key")
   width           Int                 @default(32) @db.SmallInt
   alignment       HorizontalAlignment @default(CENTER)
+  type            PageType            @default(FREE)
 
   dockTopHeight    Float @default(200) @map("dock_top_height") @db.Real
   dockBottomHeight Float @default(200) @map("dock_bottom_height") @db.Real
