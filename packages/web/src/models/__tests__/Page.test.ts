@@ -44,6 +44,7 @@ describe("Page", () => {
     expect(page.id).toBe(PAGE.id);
     expect(page.workspaceId).toBe(PAGE.workspaceId);
     expect(page.author).toBe(PAGE.author);
+    expect(page.type).toBe(PAGE.type);
     expect(page.title.value).toBe(PAGE.title);
     expect(page.backgroundColor.value).toBe(PAGE.backgroundColor);
     expect(page.font.value).toBe(PAGE.font);
