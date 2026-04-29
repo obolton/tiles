@@ -1,0 +1,25 @@
+.main {
+  --slide-block-size: calc(100dvh - var(--header-height) - 120px);
+
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 24px 120px;
+
+  & > page-item:has([data-layout="FREEFORM"]) {
+    inline-size: min(100%, calc(var(--slide-block-size) * var(--aspect-ratio)));
+    max-block-size: var(--slide-block-size);
+    flex-shrink: 0;
+    scroll-snap-align: center;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+    border-radius: 4px;
+  }
+}
+
+html:has(main[data-page-type="PRESENTATION"]) {
+  scroll-snap-type: y mandatory;
+  scroll-padding-top: calc(var(--header-height) + 24px);
+}
