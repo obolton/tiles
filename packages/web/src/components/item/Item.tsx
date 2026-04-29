@@ -41,6 +41,7 @@ export interface ItemProps {
   tile: Tile;
   tabindex?: number | Reactive<number | undefined>;
   resize?: Reactive<ResizeDirection | null>;
+  draggable?: boolean;
 }
 
 function getTileComponent(tile: Tile, showToolbar: Reactive<boolean>) {
@@ -80,7 +81,7 @@ export function getSizeStyle(
     return {
       "--width": width?.toString(),
       "--height": height.toString(),
-      "aspect-ratio": "auto",
+      "--aspect-ratio": "auto",
       height: undefined,
     };
   }
@@ -88,7 +89,7 @@ export function getSizeStyle(
     return {
       "--width": width?.toString(),
       "--height": height.toString(),
-      "aspect-ratio": "auto",
+      "--aspect-ratio": "auto",
       height: "auto",
     };
   }
@@ -96,7 +97,7 @@ export function getSizeStyle(
   return {
     "--width": width?.toString(),
     "--height": height.toString(),
-    "aspect-ratio": ratio,
+    "--aspect-ratio": ratio.toString(),
     height: "auto",
   };
 }
@@ -107,8 +108,10 @@ export default function Item({
   tile,
   tabindex,
   resize,
+  draggable,
 }: ItemProps) {
   const { id, sizing, x, y, width, height, rowSpan, hide, editor } = tile;
+  const allowDrag = draggable === false ? false : editor.isTileEditable;
 
   let item: PageItem;
   const ref = (element: PageItem) => {
@@ -251,7 +254,7 @@ export default function Item({
         id={id}
         ref={ref}
         aria-selected={isSelected}
-        allowdrag={editor.isTileEditable}
+        allowdrag={allowDrag}
         resize={resizeDirection}
         classList={{
           [styles.item]: true,
@@ -266,7 +269,7 @@ export default function Item({
             (f) => f === "FULL_BLEED",
           ),
           animate: tile.animation.derive((a) => a !== null),
-          [styles.draggable]: editor.isTileEditable,
+          [styles.draggable]: allowDrag,
           [styles.referenced]: isReferenced,
           [styles.referencing]: editor.isPromptOpen,
           [styles.hide]: hide,
