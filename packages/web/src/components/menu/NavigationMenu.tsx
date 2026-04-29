@@ -10,7 +10,6 @@ import SettingsIcon from "@/icons/settings.svg?jsx";
 import SignOutIcon from "@/icons/sign-out.svg?jsx";
 import { getUserInfo, signOut } from "@/utils/sessions";
 import { showModal } from "@/utils/modals";
-import { handleError } from "@/utils/errors";
 import client from "@/api/client";
 import type { User } from "@/utils/sessions";
 
@@ -39,18 +38,6 @@ export default function NavigationMenu({
     });
   }
 
-  async function createNewPage() {
-    try {
-      const { id } = await client.pages.create.mutate({
-        workspaceId,
-        title: "New page",
-      });
-      window.open(`/pages/${id}?edit=true`);
-    } catch (error) {
-      handleError(error);
-    }
-  }
-
   return (
     <>
       <ToolbarButton
@@ -69,12 +56,6 @@ export default function NavigationMenu({
           >
             Library
           </MenuItemLink>
-          <MenuItem
-            icon={<NewIcon aria-hidden="true" />}
-            on:click={createNewPage}
-          >
-            New page
-          </MenuItem>
         </MenuItemGroup>
         <MenuItemGroup>
           {user.workspaces.map((w) => (
