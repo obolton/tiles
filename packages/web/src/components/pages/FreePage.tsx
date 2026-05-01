@@ -1,5 +1,6 @@
 import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
+import DockZone from "@/components/docks/DockZone";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./FreePage.module.css";
 import type Page from "@/models/Page";
@@ -20,6 +21,13 @@ export default function FreePage({
   signal,
 }: FreePageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
+  const { dockedTiles } = page;
+  const style = page.dockSizes.derive((sizes) => ({
+    "--dock-top-size": `${sizes.TOP}px`,
+    "--dock-bottom-size": `${sizes.BOTTOM}px`,
+    "--dock-left-size": `${sizes.LEFT}px`,
+    "--dock-right-size": `${sizes.RIGHT}px`,
+  }));
 
   function ref(element: HTMLElement) {
     LayoutEditor.attach({
@@ -34,25 +42,55 @@ export default function FreePage({
   }
 
   return (
-    <main
-      ref={ref}
-      className={styles.main}
-      style={{ "--width": page.width }}
-      data-alignment={page.alignment}
-      data-layout="VERTICAL"
-      data-page-type="FREE"
-    >
-      <Each items={tiles}>
-        {(tile) => (
-          <Item
-            tile={tile}
-            tabindex={tabindex}
-            resize={tile.sizing.derive((d) =>
-              d === "AUTO" ? "horizontal" : "all",
-            )}
-          />
-        )}
-      </Each>
-    </main>
+    <div className={styles.layout} style={style}>
+      <DockZone
+        page={page}
+        isEditable={isEditable}
+        edge="TOP"
+        tiles={dockedTiles.TOP}
+        signal={signal}
+      />
+      <DockZone
+        page={page}
+        isEditable={isEditable}
+        edge="LEFT"
+        tiles={dockedTiles.LEFT}
+        signal={signal}
+      />
+      <main
+        ref={ref}
+        className={styles.main}
+        style={{ "--width": page.width }}
+        data-alignment={page.alignment}
+        data-layout="VERTICAL"
+        data-page-type="FREE"
+      >
+        <Each items={tiles}>
+          {(tile) => (
+            <Item
+              tile={tile}
+              tabindex={tabindex}
+              resize={tile.sizing.derive((d) =>
+                d === "AUTO" ? "horizontal" : "all",
+              )}
+            />
+          )}
+        </Each>
+      </main>
+      <DockZone
+        page={page}
+        isEditable={isEditable}
+        edge="RIGHT"
+        tiles={dockedTiles.RIGHT}
+        signal={signal}
+      />
+      <DockZone
+        page={page}
+        isEditable={isEditable}
+        edge="BOTTOM"
+        tiles={dockedTiles.BOTTOM}
+        signal={signal}
+      />
+    </div>
   );
 }

@@ -1,6 +1,5 @@
 import PageContents from "@/components/pages/PageContents";
 import PageToolbar from "@/components/toolbars/pages/PageToolbar";
-import DockZone from "@/components/docks/DockZone";
 import InsertButton from "@/components/buttons/InsertButton";
 import AIButton from "@/components/buttons/AIButton";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
@@ -21,13 +20,6 @@ export interface EditablePageProps {
 
 export default function EditablePage({ editor }: EditablePageProps) {
   const { isEditable, selection } = editor;
-  const { tiles, dockedTiles } = editor.page;
-  const style = editor.page.dockSizes.derive((sizes) => ({
-    "--dock-top-size": `${sizes.TOP}px`,
-    "--dock-bottom-size": `${sizes.BOTTOM}px`,
-    "--dock-left-size": `${sizes.LEFT}px`,
-    "--dock-right-size": `${sizes.RIGHT}px`,
-  }));
 
   const showPageToolbar = combine(
     { selection, isEditable },
@@ -58,37 +50,11 @@ export default function EditablePage({ editor }: EditablePageProps) {
         </div>
       </If>
 
-      <div className={styles["page-layout"]} style={style}>
-        <DockZone
-          page={editor.page}
-          isEditable={isEditable}
-          edge="TOP"
-          tiles={dockedTiles.TOP}
-        />
-        <DockZone
-          page={editor.page}
-          isEditable={isEditable}
-          edge="LEFT"
-          tiles={dockedTiles.LEFT}
-        />
-        <PageContents
-          page={editor.page}
-          isEditable={isEditable}
-          tiles={tiles}
-        />
-        <DockZone
-          page={editor.page}
-          isEditable={isEditable}
-          edge="RIGHT"
-          tiles={dockedTiles.RIGHT}
-        />
-        <DockZone
-          page={editor.page}
-          isEditable={isEditable}
-          edge="BOTTOM"
-          tiles={dockedTiles.BOTTOM}
-        />
-      </div>
+      <PageContents
+        page={editor.page}
+        isEditable={isEditable}
+        tiles={editor.page.tiles}
+      />
     </>
   );
 }

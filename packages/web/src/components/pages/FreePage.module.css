@@ -1,3 +1,26 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--header-height));
+  margin-top: var(--header-height);
+
+  &:has([data-dock-zone="TOP"]:not([data-empty])) {
+    padding-top: var(--dock-top-size);
+  }
+
+  &:has([data-dock-zone="BOTTOM"]:not([data-empty])) {
+    padding-bottom: var(--dock-bottom-size);
+  }
+
+  &:has([data-dock-zone="LEFT"]:not([data-empty])) {
+    padding-left: var(--dock-left-size);
+  }
+
+  &:has([data-dock-zone="RIGHT"]:not([data-empty])) {
+    padding-right: var(--dock-right-size);
+  }
+}
+
 .main {
   position: relative;
   display: flex;
