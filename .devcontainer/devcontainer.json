@@ -48,6 +48,7 @@
     "INTERNAL_API_ORIGIN": "http://localhost:3001",
     "GOOGLE_REDIRECT_URI": "https://localhost/sign-in/google/callback",
     "PUBLIC_API_ORIGIN": "https://api.${localWorkspaceFolderBasename}.tiles.test",
+    "PUBLIC_COLLABORATION_URL": "wss://api.${localWorkspaceFolderBasename}.tiles.test/collaboration",
     "PUBLIC_WEB_ORIGIN": "https://${localWorkspaceFolderBasename}.tiles.test",
     "PUBLIC_UPLOAD_ORIGIN": "https://uploads.${localWorkspaceFolderBasename}.tiles.test",
     "PUBLIC_SESSION_COOKIE_DOMAIN": ".${localWorkspaceFolderBasename}.tiles.test",
