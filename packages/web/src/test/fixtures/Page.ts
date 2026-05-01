@@ -14,6 +14,7 @@ export const PAGE: PageData = {
     imageUrl: "https://tiles.dev",
   },
   title: "Test Page",
+  type: "FREE",
   coverImageUrl: null,
   font: "CLASSIC",
   backgroundColor: "ffff00000000",

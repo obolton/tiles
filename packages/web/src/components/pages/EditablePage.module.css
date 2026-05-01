@@ -19,6 +19,10 @@
   &:has([data-dock-zone="RIGHT"]:not([data-empty])) {
     padding-right: var(--dock-right-size);
   }
+
+  &:has(main[data-page-type="COLLECTION"]) {
+    container-type: inline-size;
+  }
 }
 
 .bottom-bar {

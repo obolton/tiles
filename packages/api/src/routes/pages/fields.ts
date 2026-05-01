@@ -17,6 +17,7 @@ export const PAGE_FIELDS = {
   },
   published: true,
   title: true,
+  type: true,
   updatedAt: true,
   backgroundColor: true,
   font: true,

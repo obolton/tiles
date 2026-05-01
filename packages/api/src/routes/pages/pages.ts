@@ -147,9 +147,10 @@ export async function listDeletedPages(
 }
 
 export async function createPage(
-  { title }: CreatePageSchema,
+  { title, type }: CreatePageSchema,
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
+  const pageType = type ?? "DOCUMENT";
   const first = generateKeyBetween(null, null);
   return prisma.$transaction(async (transaction) => {
     const page = await transaction.page.create({
@@ -158,37 +159,68 @@ export async function createPage(
         authorId: userId,
         published: false,
         title,
+        type: pageType,
       },
       select: {
         id: true,
       },
     });
-    await transaction.tile.create({
-      data: {
-        pageId: page.id,
-        type: "TEXT",
-        order: first,
-        x: 0,
-        y: 0,
-        width: null,
-        height: 1,
-        sizing: "AUTO",
-        text: {
-          create: {
+    switch (pageType) {
+      case "DOCUMENT":
+        await transaction.tile.create({
+          data: {
             pageId: page.id,
-            content: [
-              {
-                type: "paragraph",
-                children: [],
+            type: "TEXT",
+            order: first,
+            x: 0,
+            y: 0,
+            width: null,
+            height: 1,
+            sizing: "AUTO",
+            text: {
+              create: {
+                pageId: page.id,
+                content: [
+                  {
+                    type: "paragraph",
+                    children: [],
+                  },
+                ],
               },
-            ],
+            },
           },
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
+          select: {
+            id: true,
+          },
+        });
+        break;
+      case "PRESENTATION":
+        await transaction.tile.create({
+          data: {
+            pageId: page.id,
+            type: "SECTION",
+            order: first,
+            x: 0,
+            y: 0,
+            width: null,
+            height: 1,
+            sizing: "LANDSCAPE",
+            section: {
+              create: {
+                pageId: page.id,
+                layout: "FREEFORM",
+              },
+            },
+          },
+          select: {
+            id: true,
+          },
+        });
+        break;
+      case "COLLECTION":
+      case "FREE":
+        break;
+    }
     return page;
   });
 }

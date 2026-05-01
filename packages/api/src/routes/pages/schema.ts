@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ColorSchema } from "@/schema/Color";
 import { PaginationSchema, SortDirection } from "@/schema/Pagination";
-import { Font, HorizontalAlignment } from "@/generated/prisma/client";
+import { Font, HorizontalAlignment, PageType } from "@/generated/prisma/client";
 
 export const MIN_WIDTH = 12;
 export const MAX_WIDTH = 80;
@@ -22,6 +22,7 @@ export type ListPagesSchema = z.infer<typeof ListPagesSchema>;
 
 export const CreatePageSchema = z.object({
   title: z.string().min(1),
+  type: z.enum(PageType).optional(),
 });
 export type CreatePageSchema = z.infer<typeof CreatePageSchema>;
 

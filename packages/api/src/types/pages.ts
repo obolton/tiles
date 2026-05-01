@@ -3,4 +3,5 @@ export type {
   Sizing,
   Font,
   HorizontalAlignment,
+  PageType,
 } from "@/generated/prisma/client";

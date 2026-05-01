@@ -13,7 +13,7 @@ import type { FontId } from "@/config/fonts";
 import type { PageAccess } from "@/types/collaboration";
 import type { PagePropertyChanges } from "@/operations";
 import type { DockEdge, ClientTile } from "api/types/tiles";
-import type { HorizontalAlignment } from "api/types/pages";
+import type { HorizontalAlignment, PageType } from "api/types/pages";
 import type Tile from "@/models/Tile";
 import type Editor from "@/editor/Editor";
 
@@ -28,6 +28,7 @@ export default class Page {
   readonly workspaceId: string;
   readonly updatedAt: Date;
   readonly author: PageData["author"];
+  readonly type: PageType;
   readonly title: Reactive<string>;
   readonly backgroundColor: Reactive<Color | null>;
   readonly font: Reactive<FontId | null>;
@@ -55,6 +56,7 @@ export default class Page {
     this.workspaceId = data.workspaceId;
     this.updatedAt = new Date(data.updatedAt);
     this.author = data.author;
+    this.type = data.type;
     this.title = reactive(data.title);
     this.backgroundColor = reactive(data.backgroundColor);
     this.font = reactive(data.font);
@@ -90,6 +92,7 @@ export default class Page {
       workspaceId: this.workspaceId,
       updatedAt: this.updatedAt.toISOString(),
       author: this.author,
+      type: this.type,
       title: this.title.value,
       backgroundColor: this.backgroundColor.value,
       font: this.font.value,

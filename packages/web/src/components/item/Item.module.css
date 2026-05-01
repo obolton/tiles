@@ -10,6 +10,12 @@
   initial-value: 0;
 }
 
+@property --aspect-ratio {
+  syntax: "<number> | auto";
+  inherits: false;
+  initial-value: auto;
+}
+
 @property --background-fallback {
   syntax: "<color>";
   inherits: true;
@@ -21,6 +27,7 @@
   width: calc(var(--width) * 24px);
   max-width: 100%;
   height: calc(var(--height) * 24px);
+  aspect-ratio: var(--aspect-ratio);
   border-radius: var(--border-radius);
   outline-color: transparent;
   color: var(--text-color);
@@ -112,7 +119,6 @@
   user-select: none;
   -webkit-touch-callout: none;
 }
-
 
 ::view-transition-group(outline) {
   animation-duration: 0s;
