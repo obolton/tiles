@@ -23,6 +23,7 @@ export default defineConfig({
       CLOUDFLARE_R2_BUCKET_FONTS: "test",
       OPENAI_API_KEY: "test",
       CLIENT_ORIGIN: "https://test.example.com",
+      SERVICE_API_TOKEN: "test",
     },
     coverage: {
       include: ["src/**/*.ts"],
