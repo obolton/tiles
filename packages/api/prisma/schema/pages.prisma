@@ -127,6 +127,7 @@ model Page {
   invites            PageInvite[]
   dropdowns          Dropdown[]
   charts             Chart[]
+  document           PageDocument?
 
   @@index([authorId])
   @@index([authorId, updatedAt])
@@ -134,6 +135,17 @@ model Page {
   @@index([folderId])
   @@index([deletedAt])
   @@map("pages")
+}
+
+model PageDocument {
+  pageId        String   @id @map("page_id") @db.Uuid
+  snapshot      Bytes    @db.ByteA
+  schemaVersion Int      @default(1) @map("schema_version")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@map("page_documents")
 }
 
 model Tile {
