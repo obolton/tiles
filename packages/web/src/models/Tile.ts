@@ -492,6 +492,7 @@ export default abstract class Tile {
       y: this.y.value,
       width: this.width.value,
       height: this.height.value,
+      rowSpan: this.rowSpan.value,
       lat: this.coordinates.value?.lat ?? null,
       long: this.coordinates.value?.long ?? null,
     });
