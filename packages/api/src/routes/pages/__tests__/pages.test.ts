@@ -79,23 +79,10 @@ describe("createPage", () => {
     );
   });
 
-  test("seeds a GRID section for COLLECTION pages", async () => {
+  test("seeds no tiles for COLLECTION pages", async () => {
     await createPage({ title: "Gallery", type: "COLLECTION" }, MOCK_CONTEXT);
 
-    expect(prisma.tile.create).toHaveBeenCalledTimes(1);
-    expect(prisma.tile.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          type: "SECTION",
-          section: expect.objectContaining({
-            create: expect.objectContaining({
-              layout: "GRID",
-              columns: 3,
-            }),
-          }),
-        }),
-      }),
-    );
+    expect(prisma.tile.create).not.toHaveBeenCalled();
   });
 
   test("seeds no tiles for FREE pages", async () => {

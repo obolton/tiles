@@ -218,29 +218,6 @@ export async function createPage(
         });
         break;
       case "COLLECTION":
-        await transaction.tile.create({
-          data: {
-            pageId: page.id,
-            type: "SECTION",
-            order: first,
-            x: 0,
-            y: 0,
-            width: null,
-            height: 1,
-            sizing: "AUTO",
-            section: {
-              create: {
-                pageId: page.id,
-                layout: "GRID",
-                columns: 3,
-              },
-            },
-          },
-          select: {
-            id: true,
-          },
-        });
-        break;
       case "FREE":
         break;
     }
