@@ -47,13 +47,13 @@ export default function Themeable<T>({
     }
   }
 
-  const value = Math.max(options.indexOf(theme.value), 0);
-
   return (
     <theme-selector
       {...props}
       className={inline ? "inline" : undefined}
-      value={value.toString()}
+      value={theme.derive((current) =>
+        Math.max(options.indexOf(current), 0).toString(),
+      )}
       on:change={onThemeChange}
       max={(options.length - 1).toString()}
       $getItem={getItem}

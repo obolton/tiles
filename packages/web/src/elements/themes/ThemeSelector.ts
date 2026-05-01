@@ -85,6 +85,8 @@ export default class ThemeSelector extends HTMLElement {
           this.value = parseInt(value, 10);
           if (this.swipe) {
             this.swipe.value = this.value;
+          } else if (this.isConnected && this.getItem) {
+            this.replaceChildren(this.getLiveItem(this.value));
           }
         }
         break;
