@@ -33,23 +33,24 @@ export interface AuthenticatedPageProcedureContext extends AuthenticatedRequestC
   workspaceId: string;
 }
 
+export async function getPage(userId: string, pageId: string) {
+  return prisma.page.findUnique({
+    where: {
+      id: pageId,
+      deletedAt: null,
+      OR: [{ authorId: userId }, { access: { some: { userId } } }],
+    },
+    select: { id: true, workspaceId: true },
+  });
+}
+
 export const authenticatedPageProcedure = authenticatedProcedure
   .input(AuthenticatedPageProcedureSchema)
   .use(async (opts) => {
     const { ctx, input } = opts;
     const { pageId } = input;
 
-    const page = await prisma.page.findUnique({
-      where: {
-        id: pageId,
-        deletedAt: null,
-        OR: [
-          { authorId: ctx.userId },
-          { access: { some: { userId: ctx.userId } } },
-        ],
-      },
-      select: { id: true, workspaceId: true },
-    });
+    const page = await getPage(ctx.userId, pageId);
 
     if (!page) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
