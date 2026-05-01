@@ -1,11 +1,10 @@
+import * as Y from "yjs";
 import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
-import { serialize } from "@/utils/richText/serialize";
-import { createState } from "@/utils/richText/state";
+import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import client from "@/api/client";
 import type Page from "@/models/Page";
 import type { ClientTextTile } from "api/types/tiles";
-import type { EditorState } from "prosemirror-state";
 import type { AppRouterInputs } from "@/api/client";
 
 export default class Text extends Tile {
@@ -13,7 +12,6 @@ export default class Text extends Tile {
 
   readonly content: Reactive<ClientTextTile["content"]>;
   readonly align: Reactive<ClientTextTile["align"]>;
-  readonly state: Reactive<EditorState | null>;
 
   static async create(
     page: Page,
@@ -38,7 +36,6 @@ export default class Text extends Tile {
     const { content, align } = properties;
     this.content = reactive(content);
     this.align = reactive(align);
-    this.state = reactive(null);
   }
 
   serialize(): ClientTextTile {
@@ -50,21 +47,12 @@ export default class Text extends Tile {
     };
   }
 
-  private update(
-    properties: Omit<AppRouterInputs["text"]["update"], "pageId" | "id">,
-  ) {
-    return client.text.update.mutate({
-      ...properties,
-      pageId: this.page.id,
-      id: this.id,
-    });
-  }
-
-  getEditorState() {
-    if (!this.state.value) {
-      this.state.value = createState(this.content.value);
+  get contentFragment(): Y.XmlFragment {
+    const collab = PageCollaboration.current;
+    if (!collab) {
+      throw new Error("PageCollaboration is not initialized");
     }
-    return this.state;
+    return collab.doc.getXmlFragment(`text:${this.id}`);
   }
 
   setVerticalAlignment(align: ClientTextTile["align"]) {
@@ -80,27 +68,10 @@ export default class Text extends Tile {
         data: { tileId: this.id, changes: { align: oldAlign } },
       },
     });
-    return this.update({ align });
-  }
-
-  persist() {
-    const state = this.state.value;
-    if (!state) {
-      return;
-    }
-    const oldContent = this.content.value;
-    const content = serialize(state);
-    this.content.value = content;
-    this.editor.recordOperation({
-      apply: {
-        type: "text.setProperties",
-        data: { tileId: this.id, changes: { content } },
-      },
-      reverse: {
-        type: "text.setProperties",
-        data: { tileId: this.id, changes: { content: oldContent } },
-      },
+    return client.text.update.mutate({
+      pageId: this.page.id,
+      id: this.id,
+      align,
     });
-    return this.update({ content });
   }
 }

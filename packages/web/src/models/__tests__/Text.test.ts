@@ -2,7 +2,6 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import Text from "@/models/Text";
 import Editor from "@/editor/Editor";
 import client from "@/api/client";
-import { createState } from "@/utils/richText/state";
 import { PAGE } from "@/test/fixtures/Page";
 import { TEXT_TILE } from "@/test/fixtures/Tile";
 import type { Fill, FillUpdate } from "@/components/fills/types";
@@ -47,7 +46,6 @@ describe("Text", () => {
     expect(text.align.value).toBe(TEXT_TILE.align);
     expect(text.textColor.value).toBe(TEXT_TILE.textColor);
     expect(text.background.value).toBe(TEXT_TILE.background);
-    expect(text.state.value).toBeNull();
   });
 
   describe("setVerticalAlignment", () => {
@@ -114,29 +112,4 @@ describe("Text", () => {
     });
   });
 
-  describe("persist", () => {
-    test("does not persist when no editor state is set", () => {
-      const text = new Text(editor.page, TEXT_TILE);
-
-      const result = text.persist();
-
-      expect(result).toBeUndefined();
-      expect(textUpdateMock).not.toHaveBeenCalled();
-    });
-
-    test("persists the current state", async () => {
-      const text = new Text(editor.page, TEXT_TILE);
-
-      text.state.value = createState(TEXT_TILE.content);
-
-      await text.persist();
-
-      expect(text.content.value).toEqual(TEXT_TILE.content);
-      expect(textUpdateMock).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: TEXT_TILE.id,
-        content: TEXT_TILE.content,
-      });
-    });
-  });
 });
