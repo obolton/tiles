@@ -10,8 +10,6 @@ const setProperties: ActionExecutor<SetTextPropertiesAction> = async (
 
   if (changes.content !== undefined) {
     tile.content.value = changes.content;
-    // Clear editor state so it reinitializes from content
-    tile.state.value = null;
   }
   if (changes.align !== undefined) {
     tile.align.value = changes.align;

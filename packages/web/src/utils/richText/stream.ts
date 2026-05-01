@@ -2,7 +2,6 @@ import { schema } from "./schema";
 import { closest, getListDepth } from "./helpers";
 import { handleStreamAction } from "./actions";
 import Editor from "@/editor/Editor";
-import Text from "@/models/Text";
 import type { EditorState, Transaction } from "prosemirror-state";
 import type { Mark, Node } from "prosemirror-model";
 import type { ClientTile } from "api/types/tiles";
@@ -394,13 +393,11 @@ export class StreamHandler {
 export async function insertFromStream(stream: AsyncIterable<StreamEvent>) {
   const editor = Editor.current;
 
-  const destinationIds = await new StreamHandler({
-    getState(id) {
-      const tile = editor.page.getTile(id);
-      if (!(tile instanceof Text)) {
-        return null;
-      }
-      return tile.getEditorState();
+  await new StreamHandler({
+    getState() {
+      // AI streaming for text tiles is disabled in Phase 1; restored
+      // server-side in Phase 6.
+      return null;
     },
     onEvent(event) {
       if ("artifact" in event) {
@@ -411,11 +408,4 @@ export async function insertFromStream(stream: AsyncIterable<StreamEvent>) {
       }
     },
   }).handle(stream);
-
-  for (const id of destinationIds) {
-    const tile = editor.page.getTile(id);
-    if (tile instanceof Text) {
-      tile.persist();
-    }
-  }
 }

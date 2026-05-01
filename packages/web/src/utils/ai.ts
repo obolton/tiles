@@ -3,7 +3,6 @@ import { uploadMedia } from "@/utils/media";
 import { handleStreamAction } from "@/utils/richText/actions";
 import { StreamHandler } from "@/utils/richText/stream";
 import Editor from "@/editor/Editor";
-import Text from "@/models/Text";
 
 export async function generateImage(prompt: string, workspaceId: string) {
   const { data, type } = await client.ai.generateImage.mutate({ prompt });
@@ -32,13 +31,11 @@ export async function submitPrompt(prompt: string) {
   chat.beginStreaming();
 
   try {
-    const destinationIds = await new StreamHandler({
-      getState(id) {
-        const tile = editor.page.getTile(id);
-        if (!(tile instanceof Text)) {
-          return null;
-        }
-        return tile.getEditorState();
+    await new StreamHandler({
+      getState() {
+        // AI streaming for text tiles is disabled in Phase 1; restored
+        // server-side in Phase 6.
+        return null;
       },
       onEvent(event) {
         if ("message" in event) {
@@ -61,13 +58,6 @@ export async function submitPrompt(prompt: string) {
         }
       },
     }).handle(stream);
-
-    for (const id of destinationIds) {
-      const tile = editor.page.getTile(id);
-      if (tile instanceof Text) {
-        tile.persist();
-      }
-    }
   } finally {
     chat.completeStreaming();
   }
