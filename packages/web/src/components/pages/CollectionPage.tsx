@@ -25,7 +25,7 @@ export default function CollectionPage({
     LayoutEditor.attach({
       element,
       grid: element,
-      layoutType: "VERTICAL",
+      layoutType: "GRID",
       dropTarget: element,
       page,
       sectionId: null,
@@ -39,7 +39,7 @@ export default function CollectionPage({
       className={styles.main}
       style={{ "--width": page.width }}
       data-alignment={page.alignment}
-      data-layout="VERTICAL"
+      data-layout="GRID"
       data-page-type="COLLECTION"
     >
       <Each items={tiles}>
