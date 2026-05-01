@@ -41,7 +41,7 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
           }
         />
 
-        <DockSelect tile={tile} />
+        {tile.page.type === "FREE" && <DockSelect tile={tile} />}
       </ToolbarGroup>
 
       <ToolbarGroup label="Appearance">
