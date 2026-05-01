@@ -55,6 +55,7 @@ export default class PageItem extends HTMLElement {
   private resizeAbortController?: AbortController;
   private resizeDirection: ResizeHandleDirection | null = null;
   private resizeRect = new DOMRect();
+  private initialResizeRect = new DOMRect();
   private aspectRatio: number | null = null;
   private initialPointerX = 0;
   private initialPointerY = 0;
@@ -205,7 +206,7 @@ export default class PageItem extends HTMLElement {
     const direction = this.resizeDirection;
 
     if (this.isResizing) {
-      const rect = this.getBoundingClientRect();
+      const rect = this.initialResizeRect;
 
       this.resizeRect.x = rect.x;
       this.resizeRect.y = rect.y;
@@ -329,6 +330,7 @@ export default class PageItem extends HTMLElement {
     }
 
     const rect = this.getBoundingClientRect();
+    this.initialResizeRect = rect;
     this.initialPointerX = event.clientX;
     this.initialPointerY = event.clientY;
     this.resizeRect.x = rect.x;
