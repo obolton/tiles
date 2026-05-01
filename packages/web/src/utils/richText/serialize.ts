@@ -177,11 +177,11 @@ function serializeNode(node: Node): SerializedNode {
   }
 
   if (node.type === nodes.date) {
-    const value = node.attrs.value as Date;
+    const value = node.attrs.value as string;
     const time = node.attrs.time as boolean;
     return {
       type: "date",
-      value: time ? value.toISOString() : value.toISOString().slice(0, 10),
+      value: time ? value : value.slice(0, 10),
       format: getTextFormat(node),
       size: getTextSize(node),
       color: getTextColor(node),

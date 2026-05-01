@@ -310,13 +310,7 @@ const nodesSpec = {
 
   date: {
     attrs: {
-      value: {
-        validate(value) {
-          if (!(value instanceof Date)) {
-            throw new RangeError("Invalid date");
-          }
-        },
-      },
+      value: { validate: "string" },
       time: { default: true, validate: "boolean" },
       theme: { default: null, validate: "string|null" },
     },
@@ -328,7 +322,7 @@ const nodesSpec = {
         getAttrs(node) {
           const dateTime = node.getAttribute("datetime") ?? "";
           return {
-            value: new Date(dateTime),
+            value: dateTime,
             time: dateTime.length > 10,
           };
         },

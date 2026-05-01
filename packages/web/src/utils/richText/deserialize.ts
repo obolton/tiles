@@ -154,7 +154,7 @@ function createLinkNode(link: LinkNode): Node {
 function createDateNode(date: DateNode): Node {
   return schema.nodes.date.create(
     {
-      value: new Date(date.value),
+      value: date.value,
       time: date.value.length > 10,
       theme: date.theme,
     },

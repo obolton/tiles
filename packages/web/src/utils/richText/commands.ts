@@ -410,7 +410,7 @@ export function insertDateTime(value: Date, time?: boolean): Command {
     if (dispatch) {
       dispatch(
         state.tr.replaceSelectionWith(
-          schema.nodes.date.create({ value, time }),
+          schema.nodes.date.create({ value: value.toISOString(), time }),
         ),
       );
     }

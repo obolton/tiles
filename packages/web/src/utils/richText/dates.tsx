@@ -27,10 +27,9 @@ class DateNodeView implements NodeView {
     this.view = view;
     this.getPos = getPos;
 
-    if (node.attrs.theme) {
-      this.theme.value = node.attrs.theme as string;
-    }
-    this.value = reactive(node.attrs.value as Date);
+    this.theme.value =
+      (node.attrs.theme as string | null) ?? DEFAULT_DATE_THEME;
+    this.value = reactive(new Date(node.attrs.value as string));
     this.time = reactive(node.attrs.time as boolean);
 
     this.dom = render(
@@ -48,7 +47,11 @@ class DateNodeView implements NodeView {
     )[0] as HTMLElement;
   }
 
-  update() {
+  update(node: Node) {
+    this.value.value = new Date(node.attrs.value as string);
+    this.time.value = node.attrs.time as boolean;
+    this.theme.value =
+      (node.attrs.theme as string | null) ?? DEFAULT_DATE_THEME;
     return true;
   }
 
@@ -94,7 +97,7 @@ class DateNodeView implements NodeView {
         this.time.value = result.time;
         this.view.dispatch(
           this.view.state.tr.setNodeMarkup(pos, null, {
-            value: result.value,
+            value: result.value.toISOString(),
             time: result.time,
           }),
         );
