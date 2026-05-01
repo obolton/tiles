@@ -1,4 +1,5 @@
 import client from "@/api/client";
+import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { uploadMedia } from "@/utils/media";
 import {
   ACCEPT_IMAGE_TYPES,
@@ -129,6 +130,7 @@ export default class Editor {
       this.isEditable.subscribe(() => {
         setEditMode(this.isEditable.value);
         if (this.isEditable.value) {
+          PageCollaboration.init(this.pageId);
           requestAnimationFrame(() => this.focusFirstTile());
         } else {
           this.clearSelection();
@@ -137,6 +139,7 @@ export default class Editor {
 
       // Focus the first tile if starting in edit mode
       if (this.isEditable.value) {
+        PageCollaboration.init(this.pageId);
         requestAnimationFrame(() => this.focusFirstTile());
       }
 
