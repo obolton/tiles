@@ -44,15 +44,14 @@
   margin: 0;
   padding: 0;
   border: none;
-  box-shadow: 0 10px 10px -5px rgb(0 0 0 / 40%);
+  box-shadow: 0 10px 10px -5px rgb(0 0 0 / 30%);
   overflow: visible;
   z-index: 1;
   pointer-events: none;
   translate: var(--drag-x) var(--drag-y);
   transform-origin: var(--drag-origin-x) var(--drag-origin-y);
   opacity: 0.75;
-  scale: 0.8;
-  animation: 0.75s var(--easing) backwards lift;
+  animation: var(--animation-duration-short) var(--easing) backwards lift;
 }
 
 .drag-placeholder {
@@ -67,18 +66,11 @@
   0% {
     box-shadow: none;
     opacity: 1;
-    scale: 1;
-  }
-
-  33% {
-    box-shadow: 0 10px 10px -2px rgb(0 0 0 / 20%);
-    scale: 0.8;
   }
 
   100% {
-    box-shadow: 0 10px 10px -5px rgb(0 0 0 / 40%);
+    box-shadow: 0 10px 10px -5px rgb(0 0 0 / 30%);
     opacity: 0.75;
-    scale: 0.8;
   }
 }
 
