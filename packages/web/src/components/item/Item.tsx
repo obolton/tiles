@@ -269,6 +269,7 @@ export default function Item({
             (f) => f === "FULL_BLEED",
           ),
           animate: tile.animation.derive((a) => a !== null),
+          "aspect-fixed": sizing.derive((s) => s !== "AUTO" && s !== "CUSTOM"),
           [styles.draggable]: allowDrag,
           [styles.referenced]: isReferenced,
           [styles.referencing]: editor.isPromptOpen,

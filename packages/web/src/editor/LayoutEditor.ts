@@ -529,11 +529,10 @@ export default class LayoutEditor {
       const columns = this.gridColumns;
       const gap = this.gridColumnGap;
       const columnWidth = (this.gridRect.width - gap * (columns - 1)) / columns;
-      const span = Math.min(
-        Math.max(Math.round((rect.width + gap) / (columnWidth + gap)), 1),
-        columns,
-      );
-      this.resizing.width.value = span;
+      const cellSpan = (size: number) =>
+        Math.max(Math.round((size + gap) / (columnWidth + gap)), 1);
+      this.resizing.width.value = Math.min(cellSpan(rect.width), columns);
+      this.resizing.rowSpan.value = cellSpan(rect.height);
     } else {
       let width = Math.max(
         Math.round(
