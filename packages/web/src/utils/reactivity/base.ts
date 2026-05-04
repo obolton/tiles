@@ -26,7 +26,7 @@ export abstract class BaseReactive<Value> implements Reactive<Value> {
     this.subscribers.clear();
   }
 
-  protected notify() {
+  notify() {
     for (const subscriber of this.subscribers) {
       subscriber(this);
     }
