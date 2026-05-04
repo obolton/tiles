@@ -5,6 +5,7 @@ import "./maps/MapView";
 import "./maps/MapPoint";
 import "./video/EmbeddedVideo";
 import "./infinite-scroll/InfiniteScroll";
+import "./filmstrip/FilmstripView";
 import "./calendar/CalendarMonth";
 import "./file-picker/FilePicker";
 import "./scroll-view/ScrollView";
