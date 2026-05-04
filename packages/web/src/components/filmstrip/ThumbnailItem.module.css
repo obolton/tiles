@@ -1,0 +1,60 @@
+@property --width {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 32;
+}
+
+@property --height {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --aspect-ratio {
+  syntax: "<number> | auto";
+  inherits: false;
+  initial-value: auto;
+}
+
+.item {
+  display: flex;
+  width: calc(var(--width) * 24px);
+  max-width: 100%;
+  height: calc(var(--height) * 24px);
+  aspect-ratio: var(--aspect-ratio);
+  border-radius: var(--border-radius);
+  color: var(--text-color);
+  font-family: var(--font);
+
+  &:not(.frame-full-bleed) {
+    background: var(--background, var(--background-fallback, transparent));
+  }
+}
+
+.frame-outlined {
+  box-shadow: 0 0 0 1px var(--border-color);
+}
+
+.frame-subtle {
+  box-shadow: 0 0 16px -4px rgb(0 0 0 / 15%);
+}
+
+.frame-card {
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 12%),
+    0 4px 12px rgb(0 0 0 / 8%);
+}
+
+.frame-raised {
+  box-shadow:
+    0 12px 28px -8px rgb(0 0 0 / 25%),
+    0 4px 8px -2px rgb(0 0 0 / 10%);
+}
+
+.frame-framed {
+  box-shadow: 0 0 0 3px var(--border-color);
+}
+
+.hide {
+  opacity: 0.5;
+}
