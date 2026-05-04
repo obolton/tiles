@@ -1,0 +1,26 @@
+.thumbnail {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--aspect-ratio, 16 / 9);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--background, var(--background-fallback, #fff));
+  color: var(--text-color);
+  font-family: var(--font);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 8%);
+  font-size: 4px;
+  cursor: pointer;
+  container-type: size;
+  outline: 1px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color var(--animation-duration-short) var(--easing);
+
+  &:hover {
+    outline-color: rgb(0 0 0 / 16%);
+  }
+
+  &[aria-selected="true"] {
+    outline-color: var(--accent-color);
+    outline-width: 2px;
+  }
+}
