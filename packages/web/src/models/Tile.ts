@@ -3,6 +3,7 @@ import client from "@/api/client";
 import { toISODate } from "@/utils/dates";
 import Theme from "@/models/Theme";
 import { ASPECT_RATIOS } from "@/constants/size";
+import { YMapBinding } from "@/collaboration/YMapBinding";
 import type {
   ClientTile,
   ClientTileBase,
@@ -34,6 +35,8 @@ export default abstract class Tile {
   }
 
   parent: TileCollection | null = null;
+
+  protected readonly binding: YMapBinding | null;
 
   readonly order: Reactive<string>;
   readonly sizing: Reactive<Sizing>;
@@ -83,6 +86,10 @@ export default abstract class Tile {
     this.id = id;
     this.type = type;
 
+    this.binding = page.doc
+      ? new YMapBinding(page.doc.getMap<unknown>(`tile:${id}`), page.doc)
+      : null;
+
     this.order = reactive(order);
     this.sizing = reactive(sizing);
     this.x = reactive(x);
@@ -96,13 +103,20 @@ export default abstract class Tile {
       lat != null && long != null ? { lat, long } : null,
     );
     this.animation = reactive(animation);
-    this.frame = reactive(frame);
+    this.frame = this.bind("frame", frame);
     this.cornerRadius = reactive(cornerRadius);
     this.hide = reactive(hide);
     this.dock = reactive(dock);
     this.theme = reactive(theme ? new Theme(theme) : null);
     this.textColor = reactive(textColor);
     this.background = reactive(background);
+  }
+
+  /**
+   * Binds a property to this tile's map if available.
+   */
+  protected bind<T>(key: string, initial: T): Reactive<T> {
+    return this.binding ? this.binding.field(key, initial) : reactive(initial);
   }
 
   serialize(): ClientTileBase {
@@ -505,9 +519,7 @@ export default abstract class Tile {
   }
 
   setFrame(frame: FrameStyle | null) {
-    this.recordUpdate({ frame }, { frame: this.frame.value });
-    this.applyUpdate({ frame });
-    return this.updateTile({ frame });
+    this.frame.value = frame;
   }
 
   setCornerRadius(cornerRadius: number | null) {
