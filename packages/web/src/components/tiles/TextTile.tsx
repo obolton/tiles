@@ -6,7 +6,6 @@ import Portal from "@/jsx/portal";
 import styles from "./TextTile.module.css";
 import textViewStyles from "@/components/text/TextView.module.css";
 import CollaborativeTextEditor from "@/components/inputs/RichTextEditor/CollaborativeTextEditor";
-import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { combine, reactive, type Reactive } from "@/utils/reactivity";
 import type Text from "@/models/Text";
 import type { EditorState } from "prosemirror-state";
@@ -79,15 +78,15 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
       return <TextView text={text} />;
     }
 
-    const collab = PageCollaboration.current;
-    if (!collab?.awareness) {
+    const awareness = text.page.awareness;
+    if (!awareness) {
       return null;
     }
 
     return (
       <CollaborativeTextEditor
         contentFragment={text.contentFragment}
-        awareness={collab.awareness}
+        awareness={awareness}
         editorView={editorView}
         classList={editorClassList}
         tabindex={-1}

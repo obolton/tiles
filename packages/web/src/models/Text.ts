@@ -1,7 +1,6 @@
 import * as Y from "yjs";
 import Tile from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
-import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import client from "@/api/client";
 import type Page from "@/models/Page";
 import type { ClientTextTile } from "api/types/tiles";
@@ -48,11 +47,10 @@ export default class Text extends Tile {
   }
 
   get contentFragment(): Y.XmlFragment {
-    const collab = PageCollaboration.current;
-    if (!collab) {
-      throw new Error("PageCollaboration is not initialized");
+    if (!this.page.doc) {
+      throw new Error("Cannot access content fragment without a Y.Doc");
     }
-    return collab.doc.getXmlFragment(`text:${this.id}`);
+    return this.page.doc.getXmlFragment(`text:${this.id}`);
   }
 
   setVerticalAlignment(align: ClientTextTile["align"]) {
