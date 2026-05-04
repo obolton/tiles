@@ -14,23 +14,25 @@ import type { Awareness } from "./types";
 const COLLABORATION_URL = import.meta.env.PUBLIC_COLLABORATION_URL;
 
 export class PageCollaboration {
-  static #current?: PageCollaboration;
-
   readonly pageId: string;
   readonly doc: Y.Doc;
   readonly status: Reactive<WebSocketStatus>;
   readonly synced: ReactiveFlag;
 
-  #provider: HocuspocusProvider;
-  #indexeddb: IndexeddbPersistence;
+  #provider: HocuspocusProvider | null = null;
+  #indexeddb: IndexeddbPersistence | null = null;
   #abort = new AbortController();
   #userColor: string | null = null;
 
-  private constructor(pageId: string) {
+  constructor(pageId: string) {
     this.pageId = pageId;
     this.doc = new Y.Doc();
     this.status = reactive(WebSocketStatus.Connecting);
     this.synced = flag(false);
+
+    if (!COLLABORATION_URL) {
+      return;
+    }
 
     this.#indexeddb = new IndexeddbPersistence(`tiles-yjs-${pageId}`, this.doc);
 
@@ -51,37 +53,20 @@ export class PageCollaboration {
     this.publishUser();
   }
 
-  static init(pageId: string): PageCollaboration {
-    if (this.#current?.pageId === pageId) {
-      return this.#current;
-    }
-    this.#current?.dispose();
-    this.#current = new PageCollaboration(pageId);
-    return this.#current;
-  }
-
-  static get current(): PageCollaboration | undefined {
-    return this.#current;
-  }
-
   get awareness(): Awareness | null {
-    return this.#provider.awareness;
+    return this.#provider?.awareness ?? null;
   }
 
   dispose() {
     this.#abort.abort();
-    this.#provider.destroy();
-    this.#indexeddb.destroy();
+    this.#provider?.destroy();
+    this.#indexeddb?.destroy();
     this.doc.destroy();
-
-    if (PageCollaboration.#current === this) {
-      PageCollaboration.#current = undefined;
-    }
   }
 
   publishUser() {
+    const awareness = this.#provider?.awareness;
     const u = user.value;
-    const awareness = this.#provider.awareness;
 
     if (!u || !this.synced.value || !awareness) {
       return;

@@ -35,6 +35,7 @@ export default class Editor {
   static #current?: Editor;
 
   readonly page: Page;
+  readonly collaboration: PageCollaboration | null;
   readonly isEditable: Reactive<boolean>;
   readonly selection: Reactive<Set<Tile>>;
   readonly references: Reactive<Tile[]>;
@@ -106,6 +107,7 @@ export default class Editor {
   }
 
   private constructor(page: PageData) {
+    this.collaboration = IS_SERVER ? null : new PageCollaboration(page.id);
     this.page = new Page(page);
     this.page.editor = this;
     this.page.initTiles(page.tiles);
@@ -130,7 +132,6 @@ export default class Editor {
       this.isEditable.subscribe(() => {
         setEditMode(this.isEditable.value);
         if (this.isEditable.value) {
-          PageCollaboration.init(this.pageId);
           requestAnimationFrame(() => this.focusFirstTile());
         } else {
           this.clearSelection();
@@ -139,7 +140,6 @@ export default class Editor {
 
       // Focus the first tile if starting in edit mode
       if (this.isEditable.value) {
-        PageCollaboration.init(this.pageId);
         requestAnimationFrame(() => this.focusFirstTile());
       }
 
