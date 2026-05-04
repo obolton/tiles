@@ -231,8 +231,8 @@ importers:
         version: 1.41.6
     devDependencies:
       '@css-modules-kit/codegen':
-        specifier: ^0.10.0
-        version: 0.10.0(typescript@6.0.3)
+        specifier: ^1.1.0
+        version: 1.1.0(typescript@6.0.3)
       '@storybook/addon-a11y':
         specifier: ^10.3.4
         version: 10.3.4(storybook@10.3.4(prettier@3.8.1))
@@ -247,7 +247,7 @@ importers:
         version: 4.1.4(playwright@1.59.1)(vite@8.0.8(@types/node@24.10.1)(esbuild@0.28.0)(jiti@2.6.1)(tsx@4.21.0))(vitest@4.1.4)
       autoprefixer:
         specifier: ^10.4.27
-        version: 10.4.27(postcss@8.5.9)
+        version: 10.4.27(postcss@8.5.13)
       fake-indexeddb:
         specifier: ^6.2.5
         version: 6.2.5
@@ -626,18 +626,18 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
-  '@css-modules-kit/codegen@0.10.0':
-    resolution: {integrity: sha512-46uKcCy3ynrdIFUQWxG1JVBHDyMLZxGxzxnx44bEq8xO0VrnQUj8XE94e0w+NV54/+FHE1wSv8WAYJAwWDpbNQ==}
-    engines: {node: '>=20.19.0'}
+  '@css-modules-kit/codegen@1.1.0':
+    resolution: {integrity: sha512-qJsPHCHp22hsNOvopRNxWSBSIp7uTr7c7orgRJ/QmhV/zbeRfk/DFZrt41CS9vOZfPA9sJHA3I0P6s6sgCcGtw==}
+    engines: {node: '>=22.12.0'}
     hasBin: true
     peerDependencies:
-      typescript: ^5.7.3
+      typescript: '>=5.7.3'
 
-  '@css-modules-kit/core@0.10.0':
-    resolution: {integrity: sha512-zbBW07LHR0Nn88I9h0krsQ9EoSFRbd6UvzLUIP5dzXnbRg/34BtVx3l8gDiu2xsqMHm0iYHAbtvfUuu018cCgQ==}
-    engines: {node: '>=20.19.0'}
+  '@css-modules-kit/core@1.1.0':
+    resolution: {integrity: sha512-pSMCJxE33sUNGfsJIXZTgLo9giyrqgSuC076Zjd6JRzbLB2td2ssUTLmqTYVJByYAKNl0d0H9Zz4SSl3H35wRg==}
+    engines: {node: '>=22.12.0'}
     peerDependencies:
-      typescript: ^5.7.3
+      typescript: '>=5.7.3'
 
   '@csstools/color-helpers@6.0.2':
     resolution: {integrity: sha512-LMGQLS9EuADloEFkcTBR3BwV/CGHV7zyDxVRtVDTwdI2Ca4it0CCVTT9wCkxSgokjE5Ho41hEPgb8OEUwoXr6Q==}
@@ -3418,6 +3418,11 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
+  nanoid@3.3.12:
+    resolution: {integrity: sha512-ZB9RH/39qpq5Vu6Y+NmUaFhQR6pp+M2Xt76XBnEwDaGcVAqhlvxrl3B2bKS5D3NH3QR76v3aSrKaF/Kiy7lEtQ==}
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
@@ -3609,6 +3614,10 @@ packages:
 
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
+
+  postcss@8.5.13:
+    resolution: {integrity: sha512-qif0+jGGZoLWdHey3UFHHWP0H7Gbmsk8T5VEqyYFbWqPr1XqvLGBbk/sl8V5exGmcYJklJOhOQq1pV9IcsiFag==}
+    engines: {node: ^10 || ^12 || >=14}
 
   postcss@8.5.6:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
@@ -5056,16 +5065,16 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  '@css-modules-kit/codegen@0.10.0(typescript@6.0.3)':
+  '@css-modules-kit/codegen@1.1.0(typescript@6.0.3)':
     dependencies:
-      '@css-modules-kit/core': 0.10.0(typescript@6.0.3)
+      '@css-modules-kit/core': 1.1.0(typescript@6.0.3)
       chokidar: 4.0.3
       typescript: 6.0.3
 
-  '@css-modules-kit/core@0.10.0(typescript@6.0.3)':
+  '@css-modules-kit/core@1.1.0(typescript@6.0.3)':
     dependencies:
-      postcss: 8.5.6
-      postcss-safe-parser: 7.0.1(postcss@8.5.6)
+      postcss: 8.5.13
+      postcss-safe-parser: 7.0.1(postcss@8.5.13)
       postcss-selector-parser: 7.1.1
       postcss-value-parser: 4.2.0
       typescript: 6.0.3
@@ -6552,13 +6561,13 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  autoprefixer@10.4.27(postcss@8.5.9):
+  autoprefixer@10.4.27(postcss@8.5.13):
     dependencies:
       browserslist: 4.28.2
       caniuse-lite: 1.0.30001785
       fraction.js: 5.3.4
       picocolors: 1.1.1
-      postcss: 8.5.9
+      postcss: 8.5.13
       postcss-value-parser: 4.2.0
 
   aws-ssl-profiles@1.1.2: {}
@@ -7649,6 +7658,8 @@ snapshots:
 
   nanoid@3.3.11: {}
 
+  nanoid@3.3.12: {}
+
   node-domexception@1.0.0: {}
 
   node-fetch-native@1.6.7: {}
@@ -7812,9 +7823,9 @@ snapshots:
     dependencies:
       postcss: 8.5.6
 
-  postcss-safe-parser@7.0.1(postcss@8.5.6):
+  postcss-safe-parser@7.0.1(postcss@8.5.13):
     dependencies:
-      postcss: 8.5.6
+      postcss: 8.5.13
 
   postcss-safe-parser@7.0.1(postcss@8.5.8):
     dependencies:
@@ -7826,6 +7837,12 @@ snapshots:
       util-deprecate: 1.0.2
 
   postcss-value-parser@4.2.0: {}
+
+  postcss@8.5.13:
+    dependencies:
+      nanoid: 3.3.12
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
 
   postcss@8.5.6:
     dependencies:
