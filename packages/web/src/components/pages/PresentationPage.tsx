@@ -3,6 +3,7 @@ import If from "@/jsx/if";
 import Item from "@/components/item/Item";
 import LayoutEditor from "@/editor/LayoutEditor";
 import Section from "@/models/Section";
+import FilmstripPanel from "@/components/filmstrip/FilmstripPanel";
 import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
 import styles from "./PresentationPage.module.css";
@@ -46,28 +47,31 @@ export default function PresentationPage({
   }
 
   return (
-    <main
-      ref={ref}
-      className={styles.main}
-      style={{ "--width": page.width }}
-      data-alignment={page.alignment}
-      data-layout="VERTICAL"
-      data-page-type="PRESENTATION"
-    >
-      <Each items={tiles}>
-        {(tile) => <Item tile={tile} tabindex={tabindex} draggable={false} />}
-      </Each>
-      <If condition={isEditable}>
-        <button
-          className="floating"
-          type="button"
-          aria-label="Add slide"
-          data-tooltip="Add slide"
-          on:click={addSlide}
-        >
-          <NewIcon aria-hidden="true" />
-        </button>
-      </If>
-    </main>
+    <>
+      <FilmstripPanel tiles={tiles} />
+      <main
+        ref={ref}
+        className={styles.main}
+        style={{ "--width": page.width }}
+        data-alignment={page.alignment}
+        data-layout="VERTICAL"
+        data-page-type="PRESENTATION"
+      >
+        <Each items={tiles}>
+          {(tile) => <Item tile={tile} tabindex={tabindex} draggable={false} />}
+        </Each>
+        <If condition={isEditable}>
+          <button
+            className="floating"
+            type="button"
+            aria-label="Add slide"
+            data-tooltip="Add slide"
+            on:click={addSlide}
+          >
+            <NewIcon aria-hidden="true" />
+          </button>
+        </If>
+      </main>
+    </>
   );
 }
