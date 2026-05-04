@@ -1,30 +1,11 @@
 import Tile from "./Tile";
 import ChartToolbar from "@/components/toolbars/charts/ChartToolbar";
+import ChartView from "@/components/charts/ChartView";
 import If from "@/jsx/if";
-import Each from "@/jsx/each";
 import Portal from "@/jsx/portal";
-import Editor from "@/editor/Editor";
-import Table from "@/models/Table";
-import { toPlainText } from "@/utils/richText/plainText";
 import styles from "./ChartTile.module.css";
-import type { RichText } from "@/utils/richText/types";
 import type { Reactive } from "@/utils/reactivity";
 import type Chart from "@/models/Chart";
-
-function toNumber(input: number | string | RichText | null | undefined) {
-  if (typeof input === "number") {
-    return input;
-  }
-
-  if (!input) {
-    return null;
-  }
-
-  const text = Array.isArray(input) ? toPlainText(input) : input;
-  const value = parseFloat(text);
-
-  return Number.isNaN(value) ? null : value;
-}
 
 export interface ChartTileProps {
   chart: Chart;
@@ -32,10 +13,6 @@ export interface ChartTileProps {
 }
 
 export default function ChartTile({ chart, showToolbar }: ChartTileProps) {
-  if (import.meta.env.SSR) {
-    return <Tile />;
-  }
-
   return (
     <Tile>
       <If condition={showToolbar}>
@@ -44,32 +21,7 @@ export default function ChartTile({ chart, showToolbar }: ChartTileProps) {
         </Portal>
       </If>
 
-      <chart-view className={styles.chart}>
-        <Each items={chart.series}>
-          {(series) => (
-            <chart-series
-              type={series.type}
-              color={series.fill.derive((fill) => {
-                switch (fill?.type) {
-                  case "color":
-                    return fill.color;
-                  case "gradient":
-                    return `${fill.colorA},${fill.colorB}`;
-                  default:
-                    return null;
-                }
-              })}
-              gradient={series.fill.derive((fill) =>
-                fill?.type === "gradient" ? fill.direction : null,
-              )}
-              $values={Editor.current.page
-                .getTile(chart.tableId, Table)
-                .getColumnData(series.column.value.id)
-                .value.map(toNumber)}
-            />
-          )}
-        </Each>
-      </chart-view>
+      <ChartView chart={chart} className={styles.chart} />
     </Tile>
   );
 }
