@@ -14,15 +14,8 @@ describe("YMapBinding", () => {
   });
 
   describe("field", () => {
-    test("seeds the map when the key is missing", () => {
-      binding.field("x", 5);
-      expect(map.get("x")).toBe(5);
-    });
-
-    test("does not overwrite an existing value", () => {
-      map.set("x", 7);
-      binding.field("x", 5);
-      expect(map.get("x")).toBe(7);
+    test("returns a BoundField", () => {
+      expect(binding.field("x", 1)).toBeInstanceOf(BoundField);
     });
 
     test("returns the same instance on repeat calls", () => {
@@ -31,43 +24,48 @@ describe("YMapBinding", () => {
       expect(second).toBe(first);
     });
 
-    test("returns a BoundField", () => {
-      expect(binding.field("x", 1)).toBeInstanceOf(BoundField);
-    });
-
-    test("seeds with origin LOCAL_ORIGIN", () => {
-      const origins: unknown[] = [];
-      doc.on("afterTransaction", (tr: Y.Transaction) =>
-        origins.push(tr.origin),
-      );
+    test("does not eagerly write to the map", () => {
       binding.field("x", 5);
-      expect(origins).toContain(LOCAL_ORIGIN);
+      expect(map.has("x")).toBe(false);
     });
   });
 
-  describe("BoundField", () => {
-    test("value getter reads through to the map", () => {
-      const field = binding.field("x", 1);
-      expect(field.value).toBe(1);
-      map.set("x", 2);
-      expect(field.value).toBe(2);
+  describe("BoundField.value getter", () => {
+    test("returns the fallback when the key is absent", () => {
+      const field = binding.field("x", 7);
+      expect(field.value).toBe(7);
     });
 
-    test("value setter writes through to the map", () => {
-      const field = binding.field("x", 1);
-      field.value = 2;
-      expect(map.get("x")).toBe(2);
+    test("returns the live map value when the key is present", () => {
+      map.set("x", 42);
+      const field = binding.field("x", 0);
+      expect(field.value).toBe(42);
     });
 
-    test("notifies subscribers when the setter changes the value", () => {
-      const field = binding.field("x", 1);
+    test("reflects external map updates", () => {
+      const field = binding.field("x", 0);
+      expect(field.value).toBe(0);
+      map.set("x", 99);
+      expect(field.value).toBe(99);
+    });
+  });
+
+  describe("BoundField.value setter", () => {
+    test("writes through to the map", () => {
+      const field = binding.field("x", 0);
+      field.value = 42;
+      expect(map.get("x")).toBe(42);
+    });
+
+    test("notifies subscribers when the value changes", () => {
+      const field = binding.field("x", 0);
       const sub = vi.fn();
       field.subscribe(sub);
-      field.value = 2;
+      field.value = 1;
       expect(sub).toHaveBeenCalledTimes(1);
     });
 
-    test("does not notify when the setter is given the current value", () => {
+    test("does not notify when set to the current fallback value", () => {
       const field = binding.field("x", 1);
       const sub = vi.fn();
       field.subscribe(sub);
@@ -75,40 +73,39 @@ describe("YMapBinding", () => {
       expect(sub).toHaveBeenCalledTimes(0);
     });
 
-    test("notifies subscribers when the map changes externally", () => {
-      const field = binding.field("x", 1);
+    test("does not notify when set to the current live value", () => {
+      map.set("x", 5);
+      const field = binding.field("x", 0);
       const sub = vi.fn();
       field.subscribe(sub);
-      map.set("x", 2);
-      expect(sub).toHaveBeenCalledTimes(1);
+      field.value = 5;
+      expect(sub).toHaveBeenCalledTimes(0);
     });
 
-    test("setter writes carry origin LOCAL_ORIGIN", () => {
-      const field = binding.field("x", 1);
-      const origins: unknown[] = [];
-      doc.on("afterTransaction", (tr: Y.Transaction) =>
-        origins.push(tr.origin),
-      );
-      field.value = 2;
-      expect(origins).toContain(LOCAL_ORIGIN);
+    test("notifies subscribers when the map changes externally", () => {
+      const field = binding.field("x", 0);
+      const sub = vi.fn();
+      field.subscribe(sub);
+      map.set("x", 1);
+      expect(sub).toHaveBeenCalledTimes(1);
     });
 
     test("subscribers respect AbortSignal", () => {
-      const field = binding.field("x", 1);
+      const field = binding.field("x", 0);
       const sub = vi.fn();
       const controller = new AbortController();
       field.subscribe(sub, controller.signal);
-      field.value = 2;
+      field.value = 1;
       expect(sub).toHaveBeenCalledTimes(1);
       controller.abort();
-      field.value = 3;
+      field.value = 2;
       expect(sub).toHaveBeenCalledTimes(1);
     });
   });
 
   describe("remote updates", () => {
     test("notifies subscribers when a remote update arrives", () => {
-      const fieldA = binding.field<number>("x", 1);
+      const fieldA = binding.field<number>("x", 0);
 
       const docB = new Y.Doc();
       const mapB = docB.getMap<unknown>("test");
@@ -126,7 +123,7 @@ describe("YMapBinding", () => {
   });
 
   describe("transact", () => {
-    test("collapses nested setter writes into one Yjs transaction", () => {
+    test("collapses multiple writes into one Yjs transaction", () => {
       const x = binding.field("x", 0);
       const y = binding.field("y", 0);
 
@@ -168,14 +165,29 @@ describe("YMapBinding", () => {
       doc.on("afterTransaction", (tr: Y.Transaction) =>
         origins.push(tr.origin),
       );
-      binding.transact(() => binding.field("x", 1), customOrigin);
+      const field = binding.field("x", 0);
+      binding.transact(() => {
+        field.value = 1;
+      }, customOrigin);
       expect(origins).toContain(customOrigin);
+    });
+
+    test("defaults to LOCAL_ORIGIN", () => {
+      const origins: unknown[] = [];
+      doc.on("afterTransaction", (tr: Y.Transaction) =>
+        origins.push(tr.origin),
+      );
+      const field = binding.field("x", 0);
+      binding.transact(() => {
+        field.value = 1;
+      });
+      expect(origins).toContain(LOCAL_ORIGIN);
     });
   });
 
   describe("dispose", () => {
     test("stops notifying subscribers after dispose", () => {
-      const field = binding.field("x", 1);
+      const field = binding.field("x", 0);
       const sub = vi.fn();
       field.subscribe(sub);
 

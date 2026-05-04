@@ -3,17 +3,21 @@ import { BaseReactive } from "@/utils/reactivity";
 
 export const LOCAL_ORIGIN = Symbol("yjs-binding:local");
 
+/**
+ * A reactive view of a single key on a {@link Y.Map}.
+ */
 export class BoundField<T> extends BaseReactive<T> {
   constructor(
     private readonly map: Y.Map<unknown>,
     private readonly key: string,
-    private readonly doc: Y.Doc,
+    private readonly fallback: T,
   ) {
     super();
   }
 
   get value(): T {
-    return this.map.get(this.key) as T;
+    const value = this.map.get(this.key);
+    return value === undefined ? this.fallback : (value as T);
   }
 
   set value(next: T) {
@@ -21,7 +25,7 @@ export class BoundField<T> extends BaseReactive<T> {
       return;
     }
 
-    this.doc.transact(() => this.map.set(this.key, next), LOCAL_ORIGIN);
+    this.map.set(this.key, next);
   }
 }
 
@@ -46,17 +50,16 @@ export class YMapBinding {
   }
 
   /**
-   * Returns a reactive view of `key`.
+   * Returns a reactive view of a key in the map.
    */
-  field<T>(key: string, initial: T): BoundField<T> {
-    if (!this.map.has(key)) {
-      this.doc.transact(() => this.map.set(key, initial), LOCAL_ORIGIN);
-    }
+  field<T>(key: string, fallback: T): BoundField<T> {
     let field = this.fields.get(key) as BoundField<T> | undefined;
+
     if (!field) {
-      field = new BoundField<T>(this.map, key, this.doc);
+      field = new BoundField<T>(this.map, key, fallback);
       this.fields.set(key, field as BoundField<unknown>);
     }
+
     return field;
   }
 
