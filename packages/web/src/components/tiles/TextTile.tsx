@@ -1,9 +1,10 @@
-import RichText from "@/components/text/RichText";
 import TextToolbar from "@/components/toolbars/text/TextToolbar";
+import TextView from "@/components/text/TextView";
 import Tile from "./Tile";
 import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
 import styles from "./TextTile.module.css";
+import textViewStyles from "@/components/text/TextView.module.css";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import debounce from "@/utils/debounce";
 import { combine, reactive, type Reactive } from "@/utils/reactivity";
@@ -66,13 +67,13 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
     }
   }
 
-  const classList = combine({ align, isEditable }, ({ align, isEditable }) => ({
+  const editorClassList = combine({ align }, ({ align }) => ({
     "rich-text": true,
-    [styles.text]: true,
-    [styles.editor]: isEditable,
-    [styles["align-top"]]: align === "TOP",
-    [styles["align-center"]]: align === "CENTER",
-    [styles["align-bottom"]]: align === "BOTTOM",
+    [textViewStyles.text]: true,
+    [styles.editor]: true,
+    [textViewStyles["align-top"]]: align === "TOP",
+    [textViewStyles["align-center"]]: align === "CENTER",
+    [textViewStyles["align-bottom"]]: align === "BOTTOM",
   }));
 
   const contents = isEditable.derive((value) =>
@@ -80,18 +81,14 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
       <TextEditor
         editorView={editorView}
         state={state}
-        classList={classList}
+        classList={editorClassList}
         initialValue={content.value}
         tabindex={-1}
         onChange={onChange}
         on:keydown={onKeyDown}
       />
     ) : (
-      <div classList={classList}>
-        {content.derive((value) => (
-          <RichText content={value} />
-        ))}
-      </div>
+      <TextView text={text} />
     ),
   );
 
