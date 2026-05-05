@@ -148,7 +148,7 @@ export interface InputHTMLAttributes extends GlobalHTMLAttributes {
     | "time"
     | "url"
     | "week";
-  value?: string | number;
+  value?: string | number | null;
   checked?: boolean;
   disabled?: boolean;
   readonly?: boolean;
