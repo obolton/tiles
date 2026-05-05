@@ -1,5 +1,4 @@
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
-import { toISODate } from "@/utils/dates";
 import { handleError } from "@/utils/errors";
 import type Tile from "@/models/Tile";
 
@@ -18,19 +17,14 @@ export default function DateTab({ tile }: DateTabProps) {
     return null;
   }
 
-  const startValue = tile.startDate.derive((d) => (d ? toISODate(d) : ""));
-  const endValue = tile.endDate.derive((d) => (d ? toISODate(d) : ""));
-
   function handleStartChange(event: Event) {
     const input = event.currentTarget as HTMLInputElement;
-    const start = input.value ? new Date(input.value) : null;
-    tile.setDates(start, tile.endDate.value).catch(handleError);
+    tile.setDates(input.value || null, tile.endDate.value).catch(handleError);
   }
 
   function handleEndChange(event: Event) {
     const input = event.currentTarget as HTMLInputElement;
-    const end = input.value ? new Date(input.value) : null;
-    tile.setDates(tile.startDate.value, end).catch(handleError);
+    tile.setDates(tile.startDate.value, input.value || null).catch(handleError);
   }
 
   return (
@@ -38,11 +32,19 @@ export default function DateTab({ tile }: DateTabProps) {
       <ToolbarGroup label="Date range">
         <label>
           Start
-          <input type="date" value={startValue} on:change={handleStartChange} />
+          <input
+            type="date"
+            value={tile.startDate}
+            on:change={handleStartChange}
+          />
         </label>
         <label>
           End
-          <input type="date" value={endValue} on:change={handleEndChange} />
+          <input
+            type="date"
+            value={tile.endDate}
+            on:change={handleEndChange}
+          />
         </label>
       </ToolbarGroup>
     </toolbar-tab>

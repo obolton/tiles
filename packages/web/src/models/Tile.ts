@@ -1,6 +1,5 @@
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
-import { toISODate } from "@/utils/dates";
 import Theme from "@/models/Theme";
 import { ASPECT_RATIOS } from "@/constants/size";
 import { YMapBinding } from "@/collaboration/YMapBinding";
@@ -45,8 +44,8 @@ export default abstract class Tile {
   readonly width: Reactive<number | null>;
   readonly height: Reactive<number>;
   readonly rowSpan: Reactive<number>;
-  readonly startDate: Reactive<Date | null>;
-  readonly endDate: Reactive<Date | null>;
+  readonly startDate: Reactive<string | null>;
+  readonly endDate: Reactive<string | null>;
   readonly coordinates: Reactive<{ lat: number; long: number } | null>;
   readonly animation: Reactive<Animation | null>;
   readonly frame: Reactive<FrameStyle | null>;
@@ -97,8 +96,8 @@ export default abstract class Tile {
     this.width = this.bind("width", width);
     this.height = this.bind("height", height);
     this.rowSpan = this.bind("rowSpan", rowSpan);
-    this.startDate = reactive(startDate ? new Date(startDate) : null);
-    this.endDate = reactive(endDate ? new Date(endDate) : null);
+    this.startDate = this.bind("startDate", startDate);
+    this.endDate = this.bind("endDate", endDate);
     this.coordinates = this.bind(
       "coordinates",
       lat != null && long != null ? { lat, long } : null,
@@ -133,8 +132,8 @@ export default abstract class Tile {
       width: this.width.value,
       height: this.height.value,
       rowSpan: this.rowSpan.value,
-      startDate: this.startDate.value ? toISODate(this.startDate.value) : null,
-      endDate: this.endDate.value ? toISODate(this.endDate.value) : null,
+      startDate: this.startDate.value,
+      endDate: this.endDate.value,
       lat: this.coordinates.value?.lat ?? null,
       long: this.coordinates.value?.long ?? null,
       cornerRadius: this.cornerRadius.value,
@@ -289,12 +288,10 @@ export default abstract class Tile {
       this.rowSpan.value = changes.rowSpan;
     }
     if (changes.startDate !== undefined) {
-      this.startDate.value = changes.startDate
-        ? new Date(changes.startDate)
-        : null;
+      this.startDate.value = changes.startDate;
     }
     if (changes.endDate !== undefined) {
-      this.endDate.value = changes.endDate ? new Date(changes.endDate) : null;
+      this.endDate.value = changes.endDate;
     }
     if (changes.lat !== undefined || changes.long !== undefined) {
       const lat = changes.lat ?? this.coordinates.value?.lat ?? null;
@@ -480,25 +477,17 @@ export default abstract class Tile {
     });
   }
 
-  setDates(startDate: Date | null, endDate: Date | null) {
+  setDates(startDate: string | null, endDate: string | null) {
     const inverse: TilePropertyChanges = {
-      startDate: this.startDate.value ? toISODate(this.startDate.value) : null,
-      endDate: this.endDate.value ? toISODate(this.endDate.value) : null,
+      startDate: this.startDate.value,
+      endDate: this.endDate.value,
     };
 
     this.startDate.value = startDate;
     this.endDate.value = endDate;
 
-    const changes: TilePropertyChanges = {
-      startDate: startDate ? toISODate(startDate) : null,
-      endDate: endDate ? toISODate(endDate) : null,
-    };
-
-    this.recordUpdate(changes, inverse);
-    return this.updateTile({
-      startDate: startDate ? toISODate(startDate) : null,
-      endDate: endDate ? toISODate(endDate) : null,
-    });
+    this.recordUpdate({ startDate, endDate }, inverse);
+    return this.updateTile({ startDate, endDate });
   }
 
   persistPosition() {

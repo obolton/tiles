@@ -68,7 +68,7 @@ export default class CalendarEditor {
     const start = tile.startDate.value;
     const end = tile.endDate.value;
     this.drag = {
-      days: start && end ? daysBetween(start, end) : 0,
+      days: start && end ? daysBetween(new Date(start), new Date(end)) : 0,
       start: "",
       end: "",
     };
@@ -110,7 +110,7 @@ export default class CalendarEditor {
     const { start, end } = this.drag;
     this.drag = null;
 
-    tile.setDates(new Date(start), new Date(end)).catch(handleError);
+    tile.setDates(start, end).catch(handleError);
 
     if (tile.sectionId !== this.sectionId) {
       tile.move({ sectionId: this.sectionId }).catch(handleError);
@@ -130,8 +130,6 @@ export default class CalendarEditor {
     }
 
     const tile = this.page.getTile(pageItem.id);
-    tile
-      .setDates(new Date(event.start), new Date(event.end))
-      .catch(handleError);
+    tile.setDates(event.start, event.end).catch(handleError);
   }
 }

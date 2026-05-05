@@ -82,7 +82,7 @@ export default function CalendarSection({
   const { isEditable } = editor;
 
   const startDates = tiles.value.flatMap((tile) =>
-    tile.startDate.value ? [tile.startDate.value] : [],
+    tile.startDate.value ? [new Date(tile.startDate.value)] : [],
   );
   const initialMonth = getNearestMonth(startDates);
 
@@ -124,8 +124,8 @@ export default function CalendarSection({
       <Each items={tiles}>
         {(tile) => (
           <calendar-date
-            start={tile.startDate.derive((d) => (d ? toISODate(d) : null))}
-            end={tile.endDate.derive((d) => (d ? toISODate(d) : null))}
+            start={tile.startDate}
+            end={tile.endDate}
             style={{
               "--segment-background": getSegmentBackground(tile),
               color: getSegmentTextColor(tile),
