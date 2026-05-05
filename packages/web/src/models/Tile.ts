@@ -91,25 +91,26 @@ export default abstract class Tile {
       : null;
 
     this.order = reactive(order);
-    this.sizing = reactive(sizing);
-    this.x = reactive(x);
-    this.y = reactive(y);
-    this.width = reactive(width);
-    this.height = reactive(height);
-    this.rowSpan = reactive(rowSpan);
+    this.sizing = this.bind("sizing", sizing);
+    this.x = this.bind("x", x);
+    this.y = this.bind("y", y);
+    this.width = this.bind("width", width);
+    this.height = this.bind("height", height);
+    this.rowSpan = this.bind("rowSpan", rowSpan);
     this.startDate = reactive(startDate ? new Date(startDate) : null);
     this.endDate = reactive(endDate ? new Date(endDate) : null);
-    this.coordinates = reactive(
+    this.coordinates = this.bind(
+      "coordinates",
       lat != null && long != null ? { lat, long } : null,
     );
-    this.animation = reactive(animation);
+    this.animation = this.bind("animation", animation);
     this.frame = this.bind("frame", frame);
-    this.cornerRadius = reactive(cornerRadius);
-    this.hide = reactive(hide);
+    this.cornerRadius = this.bind("cornerRadius", cornerRadius);
+    this.hide = this.bind("hide", hide);
     this.dock = reactive(dock);
     this.theme = reactive(theme ? new Theme(theme) : null);
-    this.textColor = reactive(textColor);
-    this.background = reactive(background);
+    this.textColor = this.bind("textColor", textColor);
+    this.background = this.bind("background", background);
   }
 
   /**
@@ -516,10 +517,6 @@ export default abstract class Tile {
     this.recordUpdate({ animation }, { animation: this.animation.value });
     this.applyUpdate({ animation });
     return this.updateTile({ animation });
-  }
-
-  setFrame(frame: FrameStyle | null) {
-    this.frame.value = frame;
   }
 
   setCornerRadius(cornerRadius: number | null) {
