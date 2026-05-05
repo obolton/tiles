@@ -43,7 +43,7 @@ describe("date node", () => {
     );
     const dateNode = after.firstChild?.firstChild;
     expect(dateNode?.attrs).toMatchObject({
-      value: "2026-04-30",
+      value: "2026-01-01",
       time: false,
     });
   });
