@@ -1,5 +1,5 @@
 import Each from "@/jsx/each";
-import If from "@/jsx/if";
+import { Switch, Case } from "@/jsx/switch";
 import Editor from "@/editor/Editor";
 import MessageBubble from "./MessageBubble";
 import StreamingBubble from "./StreamingBubble";
@@ -16,13 +16,14 @@ export default function Thread() {
         {(message) => <MessageBubble message={message} />}
       </Each>
 
-      <If condition={state.derive((s) => s === "pending")}>
-        <ActivityIndicator />
-      </If>
-
-      <If condition={state.derive((s) => s === "responding")}>
-        <StreamingBubble />
-      </If>
+      <Switch value={state}>
+        <Case value="pending">
+          <ActivityIndicator />
+        </Case>
+        <Case value="responding">
+          <StreamingBubble />
+        </Case>
+      </Switch>
     </section>
   );
 }

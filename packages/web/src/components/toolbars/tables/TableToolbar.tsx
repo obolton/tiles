@@ -4,7 +4,7 @@ import RowTab from "./RowTab";
 import CellTab from "./CellTab";
 import StyleTab from "@/components/toolbars/tiles/StyleTab";
 import DateTab from "@/components/toolbars/tiles/DateTab";
-import If from "@/jsx/if";
+import { Switch, Case } from "@/jsx/switch";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
 import type { EditorView } from "prosemirror-view";
@@ -38,17 +38,17 @@ export default function TableToolbar({
     >
       <TableTab table={table} />
 
-      <If condition={selectionType.derive((type) => type === "column")}>
-        <ColumnTab table={table} getTable={getTable} />
-      </If>
-
-      <If condition={selectionType.derive((type) => type === "row")}>
-        <RowTab table={table} getTable={getTable} />
-      </If>
-
-      <If condition={selectionType.derive((type) => type === "range")}>
-        <CellTab editorView={editorView} state={state} />
-      </If>
+      <Switch value={selectionType}>
+        <Case value="column">
+          <ColumnTab table={table} getTable={getTable} />
+        </Case>
+        <Case value="row">
+          <RowTab table={table} getTable={getTable} />
+        </Case>
+        <Case value="range">
+          <CellTab editorView={editorView} state={state} />
+        </Case>
+      </Switch>
 
       <StyleTab tile={table} />
       <DateTab tile={table} />
