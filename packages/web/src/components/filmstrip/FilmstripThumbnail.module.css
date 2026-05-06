@@ -13,7 +13,9 @@
   container-type: size;
   outline: 1px solid transparent;
   outline-offset: 2px;
-  transition: outline-color var(--animation-duration-short) var(--easing);
+  transition:
+    outline-color var(--animation-duration-short) var(--easing),
+    opacity var(--animation-duration) var(--easing);
 
   &:hover {
     outline-color: rgb(0 0 0 / 16%);
@@ -23,4 +25,20 @@
     outline-color: var(--accent-color);
     outline-width: 2px;
   }
+
+  &[data-draggable="true"] {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  &.hide {
+    opacity: 0.5;
+  }
+}
+
+.content {
+  display: contents;
 }

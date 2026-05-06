@@ -10,38 +10,35 @@ export interface FilmstripThumbnailProps {
 }
 
 export default function FilmstripThumbnail({ tile }: FilmstripThumbnailProps) {
-  const aspectRatio = combine(
-    { sizing: tile.sizing, width: tile.width, height: tile.height },
-    ({ sizing, width, height }) => getAspect(sizing, width, height).toString(),
-  );
-
-  const themeStyles = combine(
+  const frameStyle = combine(
     {
+      sizing: tile.sizing,
+      width: tile.width,
+      height: tile.height,
       background: tile.background,
       theme: tile.theme,
       textColor: tile.textColor,
     },
-    ({ background, theme, textColor }) =>
-      getThemeStyles(theme, { background, textColor }),
-  );
-
-  const frameStyle = combine(
-    { aspectRatio, themeStyles },
-    ({ aspectRatio, themeStyles }) => ({
-      "--aspect-ratio": aspectRatio,
-      ...themeStyles,
+    ({ sizing, width, height, background, theme, textColor }) => ({
+      "--aspect-ratio": getAspect(sizing, width, height).toString(),
+      ...getThemeStyles(theme, { background, textColor }),
     }),
   );
 
   return (
     <div
-      className={styles.thumbnail}
+      classList={{
+        [styles.thumbnail]: true,
+        [styles.hide]: tile.hide,
+      }}
       role="option"
       aria-controls={tile.id}
       aria-selected="false"
       style={frameStyle}
     >
-      {getTileThumbnail(tile)}
+      <div className={styles.content} inert>
+        {getTileThumbnail(tile)}
+      </div>
     </div>
   );
 }
