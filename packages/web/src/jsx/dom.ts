@@ -1,6 +1,11 @@
 import { isReactive } from "@/utils/reactivity";
 import { isClassComponent } from "./jsx";
-import { isEmptyNode, isTextNode, isElementNode } from "./node-types";
+import {
+  isEmptyNode,
+  isTextNode,
+  isElementNode,
+  toNodeArray,
+} from "./node-types";
 import {
   BOOLEAN_STRING_ATTRIBUTES,
   applyClassList,
@@ -37,16 +42,6 @@ function createElement(tagName: string, namespace?: string | null) {
   return namespace
     ? document.createElementNS(namespace, tagName)
     : document.createElement(tagName);
-}
-
-function toNodeArray(node: JSX.Node) {
-  if (isEmptyNode(node)) {
-    return [];
-  } else if (Array.isArray(node)) {
-    return node;
-  } else {
-    return [node];
-  }
 }
 
 function getNextSiblings(node: Node, count: number) {

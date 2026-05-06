@@ -17,3 +17,13 @@ export function isTextNode(node: JSX.Node): node is string | number | bigint {
 export function isElementNode(node: JSX.Node): node is JSX.Element {
   return typeof node === "object" && node !== null && "type" in node;
 }
+
+export function toNodeArray(node: JSX.Node): JSX.Node[] {
+  if (isEmptyNode(node)) {
+    return [];
+  } else if (Array.isArray(node)) {
+    return node;
+  } else {
+    return [node];
+  }
+}

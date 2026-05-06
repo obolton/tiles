@@ -1,5 +1,10 @@
 import { describe, expect, test } from "vitest";
-import { isEmptyNode, isTextNode, isElementNode } from "../node-types";
+import {
+  isEmptyNode,
+  isTextNode,
+  isElementNode,
+  toNodeArray,
+} from "../node-types";
 import { jsx } from "../jsx";
 
 describe("isEmptyNode", () => {
@@ -127,5 +132,54 @@ describe("isElementNode", () => {
   test("returns false for object without type property", () => {
     // @ts-expect-error Invalid value
     expect(isElementNode({ properties: {} })).toBe(false);
+  });
+});
+
+describe("toNodeArray", () => {
+  test("returns an empty array for null", () => {
+    expect(toNodeArray(null)).toEqual([]);
+  });
+
+  test("returns an empty array for undefined", () => {
+    expect(toNodeArray(undefined)).toEqual([]);
+  });
+
+  test("returns an empty array for true", () => {
+    expect(toNodeArray(true)).toEqual([]);
+  });
+
+  test("returns an empty array for false", () => {
+    expect(toNodeArray(false)).toEqual([]);
+  });
+
+  test("returns the same array for an array input", () => {
+    const nodes = [jsx("span", {}), jsx("p", {})];
+    expect(toNodeArray(nodes)).toBe(nodes);
+  });
+
+  test("returns an empty array as-is", () => {
+    const nodes: never[] = [];
+    expect(toNodeArray(nodes)).toBe(nodes);
+  });
+
+  test("wraps a JSX element in an array", () => {
+    const element = jsx("div", {});
+    expect(toNodeArray(element)).toEqual([element]);
+  });
+
+  test("wraps a string in an array", () => {
+    expect(toNodeArray("hello")).toEqual(["hello"]);
+  });
+
+  test("wraps an empty string in an array", () => {
+    expect(toNodeArray("")).toEqual([""]);
+  });
+
+  test("wraps a number in an array", () => {
+    expect(toNodeArray(42)).toEqual([42]);
+  });
+
+  test("wraps zero in an array", () => {
+    expect(toNodeArray(0)).toEqual([0]);
   });
 });
