@@ -5,7 +5,7 @@ import type { JSX } from "./jsx";
 
 export interface EachProps<T> {
   items: Reactive<T[]>;
-  children: (item: T) => JSX.Node;
+  children: (item: T, index: number) => JSX.Node;
   signal?: AbortSignal;
 }
 
@@ -17,7 +17,7 @@ interface Entry {
 
 export default class Each<T> implements JSX.ElementClass {
   readonly items: Reactive<T[]>;
-  readonly renderItem: (item: T) => JSX.Node;
+  readonly renderItem: (item: T, index: number) => JSX.Node;
   readonly signal?: AbortSignal;
 
   private readonly entries: Map<T, Entry> = new Map();
@@ -46,7 +46,7 @@ export default class Each<T> implements JSX.ElementClass {
       const abort = new AbortController();
       const signal = this.getCombinedSignal(abort);
       const nodes = hydrateNode(
-        this.renderItem(value),
+        this.renderItem(value, itemIndex),
         container,
         index + hydrated.length,
         signal,
@@ -74,7 +74,7 @@ export default class Each<T> implements JSX.ElementClass {
     const nodes = this.items.value.map((item, index) => {
       const abort = new AbortController();
       const signal = this.getCombinedSignal(abort);
-      const itemNodes = render(this.renderItem(item), null, signal);
+      const itemNodes = render(this.renderItem(item, index), null, signal);
       this.entries.set(item, {
         index,
         nodes: itemNodes,
@@ -125,7 +125,7 @@ export default class Each<T> implements JSX.ElementClass {
       if (!position) {
         const abort = new AbortController();
         const signal = this.getCombinedSignal(abort);
-        const nodes = render(this.renderItem(item), null, signal);
+        const nodes = render(this.renderItem(item, index), null, signal);
         for (const node of nodes) {
           container.insertBefore(node, referenceNode);
         }

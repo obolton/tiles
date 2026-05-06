@@ -1,0 +1,7 @@
+filmstrip-view .drop-indicator {
+  height: 2px;
+  margin: -13px 0;
+  background: var(--highlight-color);
+  border-radius: 1px;
+  pointer-events: none;
+}

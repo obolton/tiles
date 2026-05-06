@@ -1,0 +1,10 @@
+.chart {
+  width: 100%;
+  height: 100%;
+}
+
+.chart,
+.chart * {
+  animation: none !important;
+  transition: none !important;
+}

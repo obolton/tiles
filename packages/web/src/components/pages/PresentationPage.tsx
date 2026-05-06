@@ -1,10 +1,7 @@
 import Each from "@/jsx/each";
-import If from "@/jsx/if";
 import Item from "@/components/item/Item";
 import LayoutEditor from "@/editor/LayoutEditor";
-import Section from "@/models/Section";
-import NewIcon from "@/icons/new.svg?jsx";
-import { handleError } from "@/utils/errors";
+import FilmstripPanel from "@/components/filmstrip/FilmstripPanel";
 import styles from "./PresentationPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
@@ -37,37 +34,21 @@ export default function PresentationPage({
     });
   }
 
-  function addSlide() {
-    Section.create(page, {
-      beforeId: null,
-      layout: "FREEFORM",
-      sizing: "LANDSCAPE",
-    }).catch(handleError);
-  }
-
   return (
-    <main
-      ref={ref}
-      className={styles.main}
-      style={{ "--width": page.width }}
-      data-alignment={page.alignment}
-      data-layout="VERTICAL"
-      data-page-type="PRESENTATION"
-    >
-      <Each items={tiles}>
-        {(tile) => <Item tile={tile} tabindex={tabindex} draggable={false} />}
-      </Each>
-      <If condition={isEditable}>
-        <button
-          className="floating"
-          type="button"
-          aria-label="Add slide"
-          data-tooltip="Add slide"
-          on:click={addSlide}
-        >
-          <NewIcon aria-hidden="true" />
-        </button>
-      </If>
-    </main>
+    <>
+      <FilmstripPanel page={page} isEditable={isEditable} tiles={tiles} />
+      <main
+        ref={ref}
+        className={styles.main}
+        style={{ "--width": page.width }}
+        data-alignment={page.alignment}
+        data-layout="VERTICAL"
+        data-page-type="PRESENTATION"
+      >
+        <Each items={tiles}>
+          {(tile) => <Item tile={tile} tabindex={tabindex} draggable={false} />}
+        </Each>
+      </main>
+    </>
   );
 }

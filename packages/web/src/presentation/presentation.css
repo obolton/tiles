@@ -7,7 +7,8 @@ body[data-presenting] {
   /* Hide navigation and editing chrome */
   & #header,
   & floating-toolbar:not(#presentation-toolbar),
-  & #insert-button {
+  & #insert-button,
+  & .filmstrip-panel {
     display: none;
   }
 

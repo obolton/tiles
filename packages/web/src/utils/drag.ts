@@ -545,6 +545,11 @@ export function makeDraggable(
   element: HTMLElement,
   options?: MakeDraggableOptions,
 ) {
+  if (element.dataset.draggable === "true") {
+    return;
+  }
+  element.dataset.draggable = "true";
+
   const { handle, signal, constrain, clone } = options ?? {};
   const pointerElement = handle ?? element;
   pointerElement.addEventListener(
@@ -567,4 +572,12 @@ export function makeDraggable(
     },
   );
   element.addEventListener("dragstart", preventDefault, { signal });
+
+  signal?.addEventListener(
+    "abort",
+    () => {
+      delete element.dataset.draggable;
+    },
+    { once: true },
+  );
 }

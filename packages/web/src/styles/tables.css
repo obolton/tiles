@@ -10,7 +10,7 @@
   initial-value: rgb(0 0 0 / 10%);
 }
 
-table-view {
+:is(table-view, .static-table-view) {
   --header-color: oklch(from var(--background-color) 90% c h / 80%);
 
   display: block;

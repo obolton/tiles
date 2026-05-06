@@ -302,11 +302,13 @@ export default function TableTile({
         $getRow={(index) => rows.value[index]!}
         $updateCell={updateCell}
       >
-        <TableViewContents table={table}>
-          {(value) =>
-            Array.isArray(value) ? <RichText content={value} /> : value
-          }
-        </TableViewContents>
+        {import.meta.env.SSR && (
+          <TableViewContents table={table}>
+            {(value) =>
+              Array.isArray(value) ? <RichText content={value} /> : value
+            }
+          </TableViewContents>
+        )}
       </table-view>
 
       <If condition={showToolbar}>
