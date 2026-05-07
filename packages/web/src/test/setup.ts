@@ -5,11 +5,21 @@ import DOMPoint from "./mocks/DOMPoint";
 import ToggleEvent from "./mocks/ToggleEvent";
 import DragEvent from "./mocks/DragEvent";
 import CSS from "./mocks/CSS";
+import FontFace from "./mocks/FontFace";
 
 vi.stubGlobal("DOMPoint", DOMPoint);
 vi.stubGlobal("ToggleEvent", ToggleEvent);
 vi.stubGlobal("DragEvent", DragEvent);
 vi.stubGlobal("CSS", CSS);
+vi.stubGlobal("FontFace", FontFace);
+
+Object.defineProperty(document, "fonts", {
+  configurable: true,
+  value: {
+    add: vi.fn(),
+    check: vi.fn().mockReturnValue(false),
+  },
+});
 
 Element.prototype.scrollIntoView = vi.fn();
 
