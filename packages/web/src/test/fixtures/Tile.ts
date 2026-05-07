@@ -109,7 +109,7 @@ export const PAGE_LINK_TILE: ClientPageLinkTile = {
     id: "linked-page-id",
     title: "Linked Page",
     background: null,
-    font: "CLASSIC",
+    font: "lora",
     coverImageUrl: "https://tiles.dev/cover.png",
   },
 };

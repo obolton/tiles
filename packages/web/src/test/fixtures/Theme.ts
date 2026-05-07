@@ -10,9 +10,9 @@ export const THEME: Theme = {
     accent: "0000ffffffff",
   },
   fonts: {
-    heading: "CLASSIC",
-    body: "MODERN",
-    code: "CODE",
+    heading: "lora",
+    body: "inter",
+    code: "jetbrains-mono",
   },
   border: null,
 };
@@ -27,9 +27,9 @@ export const DARK_THEME: Theme = {
     accent: "ffff00000000",
   },
   fonts: {
-    heading: "MODERN",
-    body: "MODERN",
-    code: "CODE",
+    heading: "inter",
+    body: "inter",
+    code: "jetbrains-mono",
   },
   border: null,
 };
