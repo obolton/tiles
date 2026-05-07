@@ -11,6 +11,7 @@ import {
 } from "./helpers";
 import { schema, type TextAlignment } from "./schema";
 import type { EditorState } from "prosemirror-state";
+import type { FontId } from "api/config/fonts";
 
 export type { TextAlignment };
 
@@ -39,6 +40,7 @@ export interface Format {
   pending: boolean;
   size: number;
   color: string | null;
+  font: FontId | null;
 }
 
 export const DEFAULT_FORMAT: Format = {
@@ -61,6 +63,7 @@ export const DEFAULT_FORMAT: Format = {
   pending: false,
   size: 1,
   color: null,
+  font: null,
 };
 
 export function getSelectionFormat(state: EditorState): Format {
@@ -75,6 +78,7 @@ export function getSelectionFormat(state: EditorState): Format {
   const link = !!getLink(state);
   const size = schema.marks.size.isInSet(marks)?.attrs.size ?? 1;
   const color = schema.marks.color.isInSet(marks)?.attrs.color ?? null;
+  const font = schema.marks.font.isInSet(marks)?.attrs.font ?? null;
 
   return {
     headingLevel,
@@ -99,5 +103,6 @@ export function getSelectionFormat(state: EditorState): Format {
     pending: blockNodeTypes.has(schema.nodes.pending),
     size,
     color,
+    font,
   };
 }
