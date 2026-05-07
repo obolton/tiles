@@ -1,5 +1,6 @@
 import { escapeUTF8 } from "entities";
 import { isReactive } from "@/utils/reactivity";
+import { VOID_ELEMENTS } from "@/utils/html";
 import { isClassComponent } from "./jsx";
 import { isEmptyNode, isTextNode, isElementNode } from "./node-types";
 import {
@@ -10,23 +11,6 @@ import {
 } from "./attributes";
 import type { ClassList } from "./html-attributes";
 import type { JSX } from "./jsx";
-
-// https://developer.mozilla.org/en-US/docs/Glossary/Void_element
-const VOID_ELEMENTS = new Set([
-  "area",
-  "base",
-  "br",
-  "col",
-  "embed",
-  "hr",
-  "img",
-  "input",
-  "link",
-  "meta",
-  "source",
-  "track",
-  "wbr",
-]);
 
 export function renderToString(node: JSX.Node): string {
   if (isReactive(node)) {

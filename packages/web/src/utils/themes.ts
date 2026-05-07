@@ -1,9 +1,8 @@
 import ThemeModel from "@/models/Theme";
-import { getFontConfig } from "@/utils/fonts";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import { toCSSColor, type Color } from "@/utils/color";
+import { getFontConfig, type FontConfig, type FontId } from "api/config/fonts";
 import type { Theme } from "api/types/themes";
-import type { FontConfig, FontId } from "@/config/fonts";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
 import type { Fill } from "@/components/fills/types";
 import type Tile from "@/models/Tile";
@@ -15,7 +14,7 @@ export type ThemeStyleInput =
   | ThemeModel;
 
 function formatFont(config: FontConfig) {
-  return `"${config.family}", "${config.fallback}"`;
+  return `"${config.family}", ${config.fallback}`;
 }
 
 export interface StyleOverrides {
