@@ -58,6 +58,7 @@ describe("buildCSPHeader", () => {
 
 describe("buildCSPPolicy", () => {
   const testSources = {
+    fontSrc: ["https://fonts.example.com"],
     imgSrc: ["https://images.example.com", "https://profiles.example.com"],
     connectSrc: ["https://api.example.com"],
   };
@@ -72,13 +73,9 @@ describe("buildCSPPolicy", () => {
     expect(policy["script-src"]).toEqual(["'self'"]);
   });
 
-  test("style-src allows self, inline styles, and Google Fonts", () => {
+  test("style-src allows self and inline styles", () => {
     const policy = buildCSPPolicy(testSources);
-    expect(policy["style-src"]).toEqual([
-      "'self'",
-      "'unsafe-inline'",
-      "https://fonts.googleapis.com",
-    ]);
+    expect(policy["style-src"]).toEqual(["'self'", "'unsafe-inline'"]);
   });
 
   test("img-src includes base sources and custom URLs", () => {
@@ -92,9 +89,9 @@ describe("buildCSPPolicy", () => {
     ]);
   });
 
-  test("font-src allows self and Google Fonts", () => {
+  test("font-src includes self and custom font URLs", () => {
     const policy = buildCSPPolicy(testSources);
-    expect(policy["font-src"]).toEqual(["'self'", "https://fonts.gstatic.com"]);
+    expect(policy["font-src"]).toEqual(["'self'", "https://fonts.example.com"]);
   });
 
   test("connect-src includes base services and custom URLs", () => {
@@ -139,8 +136,9 @@ describe("buildCSPPolicy", () => {
   });
 
   test("handles empty custom sources", () => {
-    const policy = buildCSPPolicy({ imgSrc: [], connectSrc: [] });
+    const policy = buildCSPPolicy({ fontSrc: [], imgSrc: [], connectSrc: [] });
     expect(policy["img-src"]).toEqual(["'self'", "data:", "blob:"]);
+    expect(policy["font-src"]).toEqual(["'self'"]);
     expect(policy["connect-src"]).toEqual([
       "'self'",
       "https://oauth2.googleapis.com",
