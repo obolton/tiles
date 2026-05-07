@@ -4,7 +4,7 @@ import {
   ColorBackgroundSchema,
   GradientBackgroundSchema,
 } from "@/schema/Background";
-import { Font } from "@/generated/prisma/client";
+import { FontIdSchema } from "@/config/fonts";
 
 const ThemeBackgroundSchema = z.discriminatedUnion("type", [
   ColorBackgroundSchema,
@@ -19,9 +19,9 @@ const ThemeColorsSchema = z.object({
 export type ThemeColorsSchema = z.infer<typeof ThemeColorsSchema>;
 
 const ThemeFontsSchema = z.object({
-  heading: z.enum(Font),
-  body: z.enum(Font),
-  code: z.enum(Font),
+  heading: FontIdSchema,
+  body: FontIdSchema,
+  code: FontIdSchema,
 });
 export type ThemeFontsSchema = z.infer<typeof ThemeFontsSchema>;
 
