@@ -1,6 +1,7 @@
-import type { Font, GradientDirection } from "@/generated/prisma/client";
+import type { GradientDirection } from "@/generated/prisma/client";
 import type { BackgroundSchema } from "@/schema/Background";
 import type { ColorSchema } from "@/schema/Color";
+import type { FontId } from "@/config/fonts";
 import { fromHex } from "./arrays";
 
 interface ThemeDefinition {
@@ -9,9 +10,9 @@ interface ThemeDefinition {
   backgroundGradient?: GradientDirection;
   textColor: string;
   accentColor: string;
-  headingFont: Font;
-  bodyFont: Font;
-  codeFont: Font;
+  headingFont: FontId;
+  bodyFont: FontId;
+  codeFont: FontId;
 }
 
 const DEFAULT_THEMES: ThemeDefinition[] = [
@@ -20,18 +21,18 @@ const DEFAULT_THEMES: ThemeDefinition[] = [
     backgroundColor: "ffffffffffff",
     textColor: "1a1a1a1a1a1a",
     accentColor: "0066ff0066ff",
-    headingFont: "MODERN",
-    bodyFont: "MODERN",
-    codeFont: "CODE",
+    headingFont: "inter",
+    bodyFont: "inter",
+    codeFont: "jetbrains-mono",
   },
   {
     name: "Dark",
     backgroundColor: "1a1a1a1a1a1a",
     textColor: "ffffffffffff",
     accentColor: "66b3ff66b3ff",
-    headingFont: "MODERN",
-    bodyFont: "MODERN",
-    codeFont: "CODE",
+    headingFont: "inter",
+    bodyFont: "inter",
+    codeFont: "jetbrains-mono",
   },
   {
     name: "Ocean",
@@ -39,18 +40,18 @@ const DEFAULT_THEMES: ThemeDefinition[] = [
     backgroundGradient: "VERTICAL",
     textColor: "e0e0e8e8f0f0",
     accentColor: "4040a0a0d8d8",
-    headingFont: "MODERN",
-    bodyFont: "MODERN",
-    codeFont: "CODE",
+    headingFont: "inter",
+    bodyFont: "inter",
+    codeFont: "jetbrains-mono",
   },
   {
     name: "Forest",
     backgroundColor: "1a1a28281a1a",
     textColor: "d8d8e8e8d8d8",
     accentColor: "5a5a7a7a5a5a",
-    headingFont: "CLASSIC",
-    bodyFont: "MODERN",
-    codeFont: "CODE",
+    headingFont: "lora",
+    bodyFont: "inter",
+    codeFont: "jetbrains-mono",
   },
   {
     name: "Sunset",
@@ -58,18 +59,18 @@ const DEFAULT_THEMES: ThemeDefinition[] = [
     backgroundGradient: "BOTTOM_RIGHT",
     textColor: "2d2d18181010",
     accentColor: "d86848684868",
-    headingFont: "ROUNDED",
-    bodyFont: "MODERN",
-    codeFont: "CODE",
+    headingFont: "quicksand",
+    bodyFont: "inter",
+    codeFont: "jetbrains-mono",
   },
   {
     name: "Rose",
     backgroundColor: "fefee0e0e4e4",
     textColor: "2a2a1a1a2020",
     accentColor: "c83060306030",
-    headingFont: "CLASSIC",
-    bodyFont: "MODERN",
-    codeFont: "CODE",
+    headingFont: "lora",
+    bodyFont: "inter",
+    codeFont: "jetbrains-mono",
   },
   {
     name: "Violet",
@@ -77,36 +78,36 @@ const DEFAULT_THEMES: ThemeDefinition[] = [
     backgroundGradient: "BOTTOM_LEFT",
     textColor: "e0e0d8d8f0f0",
     accentColor: "a0a07070d0d0",
-    headingFont: "MODERN",
-    bodyFont: "MODERN",
-    codeFont: "CODE",
+    headingFont: "inter",
+    bodyFont: "inter",
+    codeFont: "jetbrains-mono",
   },
   {
     name: "Slate",
     backgroundColor: "2d2d36364040",
     textColor: "d0d0d8d8e0e0",
     accentColor: "5858a0a0b8b8",
-    headingFont: "MODERN",
-    bodyFont: "MODERN",
-    codeFont: "CODE",
+    headingFont: "inter",
+    bodyFont: "inter",
+    codeFont: "jetbrains-mono",
   },
   {
     name: "Cream",
     backgroundColor: "f8f8f0f0e0e0",
     textColor: "383828281818",
     accentColor: "b0b080804848",
-    headingFont: "CLASSIC",
-    bodyFont: "CLASSIC",
-    codeFont: "CODE",
+    headingFont: "lora",
+    bodyFont: "lora",
+    codeFont: "jetbrains-mono",
   },
   {
     name: "Mono",
     backgroundColor: "f0f0f0f0f0f0",
     textColor: "181818181818",
     accentColor: "606060606060",
-    headingFont: "MODERN",
-    bodyFont: "MODERN",
-    codeFont: "CODE",
+    headingFont: "inter",
+    bodyFont: "inter",
+    codeFont: "jetbrains-mono",
   },
 ];
 
