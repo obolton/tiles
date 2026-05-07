@@ -71,6 +71,7 @@ export async function upload(
   key: string,
   body: ReadableStream | Buffer,
   contentType: string,
+  cacheControl?: string,
 ) {
   const upload = new Upload({
     client: S3,
@@ -79,6 +80,7 @@ export async function upload(
       Key: key,
       Body: body,
       ContentType: contentType,
+      CacheControl: cacheControl,
     },
     queueSize: 4,
     leavePartsOnError: false,
