@@ -98,7 +98,7 @@ model Page {
   published       Boolean             @default(false)
   title           String              @db.VarChar(100)
   backgroundColor Bytes?              @map("background_color") @db.ByteA
-  font            Font?
+  font            String?
   coverImageKey   String?             @map("cover_image_key")
   width           Int                 @default(32) @db.SmallInt
   alignment       HorizontalAlignment @default(CENTER)
