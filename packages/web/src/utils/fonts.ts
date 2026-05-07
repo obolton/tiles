@@ -1,29 +1,112 @@
-import {
-  FONTS,
-  DEFAULT_WEIGHTS,
-  type FontId,
-  type FontConfig,
-} from "@/config/fonts";
+import manifestJson from "api/fonts/manifest.json" with { type: "json" };
+import { FontsManifestSchema, type ManifestWeight } from "api/fonts/manifest";
+import type { FontId } from "api/config/fonts";
+import type { Link, Style } from "@/router/router";
 
-export const GOOGLE_FONTS_BASE_URL = "https://fonts.googleapis.com/css2";
+const MANIFEST = FontsManifestSchema.parse(manifestJson);
+const FONTS_BASE_URL = import.meta.env.PUBLIC_FONTS_BASE_URL as string;
 
-export function getFontConfig(id: FontId) {
-  const config = FONTS.find((font) => font.id === id);
-  if (!config) {
-    throw new Error(`Invalid font: ${id}`);
+function formatWeight(weight: ManifestWeight): string {
+  return typeof weight === "number"
+    ? String(weight)
+    : `${weight.min} ${weight.max}`;
+}
+
+function weightMatches(weight: ManifestWeight, target: number): boolean {
+  return typeof weight === "number"
+    ? weight === target
+    : weight.min <= target && target <= weight.max;
+}
+
+export function generateFontFaceCSS(fontIds: Iterable<FontId>): Style {
+  const declarations: string[] = [];
+  for (const id of fontIds) {
+    const font = MANIFEST.fonts[id];
+    if (!font) {
+      continue;
+    }
+
+    for (const file of font.files) {
+      const url = `${FONTS_BASE_URL}/${file.path}`;
+      declarations.push(
+        `@font-face{` +
+          `font-family:"${font.family}";` +
+          `font-style:${file.style};` +
+          `font-weight:${formatWeight(file.weight)};` +
+          `font-display:swap;` +
+          `src:url("${url}") format("woff2")` +
+          `}`,
+      );
+    }
   }
-  return config;
+
+  return { content: declarations.join("") };
 }
 
-function getFontConfigValue(font: FontConfig) {
-  const family = font.family.replace(" ", "+");
-  const weights = font.weights ?? DEFAULT_WEIGHTS;
-  return `${family}:ital${font.opticalSizing ? ",opsz" : ""},wght@0,${weights};1,${weights}`;
-}
+export function getFontPreload(
+  fontId: FontId,
+  weight = 400,
+  style = "normal",
+): Link {
+  const font = MANIFEST.fonts[fontId];
+  if (!font) {
+    throw new Error(`Unknown font: ${fontId}`);
+  }
 
-export function getGoogleFontsUrl(fonts: FontConfig[] = FONTS) {
-  const families = fonts.map(
-    (config) => `family=${getFontConfigValue(config)}`,
+  const file = font.files.find(
+    (f) => f.style === style && weightMatches(f.weight, weight),
   );
-  return `${GOOGLE_FONTS_BASE_URL}?${families.join("&")}&display=swap`;
+
+  if (!file) {
+    throw new Error(`No file for ${fontId} (weight ${weight}, style ${style})`);
+  }
+
+  return {
+    rel: "preload",
+    href: `${FONTS_BASE_URL}/${file.path}`,
+    as: "font",
+    type: "font/woff2",
+    crossorigin: true,
+  };
+}
+
+const loadedFonts = new Set<FontId>();
+
+export async function loadFonts(...ids: FontId[]): Promise<void> {
+  if (import.meta.env.SSR) {
+    return;
+  }
+
+  const tasks: Promise<unknown>[] = [];
+  for (const id of ids) {
+    const font = MANIFEST.fonts[id];
+    if (!font) {
+      throw new Error(`Unknown font: ${id}`);
+    }
+
+    if (loadedFonts.has(id)) {
+      continue;
+    }
+    loadedFonts.add(id);
+
+    for (const file of font.files) {
+      const face = new FontFace(
+        font.family,
+        `url("${FONTS_BASE_URL}/${file.path}") format("woff2")`,
+        {
+          weight: formatWeight(file.weight),
+          style: file.style,
+          display: "swap",
+        },
+      );
+      document.fonts.add(face);
+      tasks.push(face.load());
+    }
+  }
+
+  await Promise.all(tasks);
+}
+
+export function clearLoadedFonts() {
+  loadedFonts.clear();
 }
