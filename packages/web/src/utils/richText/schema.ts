@@ -9,6 +9,7 @@ import {
 } from "@/constants/formatting";
 import { toCSSColor, COLOR_HEX_REGEX } from "@/utils/color";
 import { serializeStyles } from "@/jsx/attributes";
+import { FONT_IDS, getFontConfig, type FontId } from "api/config/fonts";
 import type {
   AttributeSpec,
   NodeSpec,
@@ -505,6 +506,26 @@ const marksSpec = {
     toDOM(mark) {
       const color = mark.attrs.color as string;
       return ["span", { style: `color: ${toCSSColor(color)}` }, 0];
+    },
+  },
+
+  font: {
+    attrs: {
+      font: {
+        validate(value) {
+          if (typeof value !== "string" || !FONT_IDS.includes(value)) {
+            throw new RangeError(`Invalid font: ${value}`);
+          }
+        },
+      },
+    },
+    toDOM(mark) {
+      const fontId = mark.attrs.font as FontId;
+      return [
+        "span",
+        { style: `font-family: "${getFontConfig(fontId).family}"` },
+        0,
+      ];
     },
   },
 
