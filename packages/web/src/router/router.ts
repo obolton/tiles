@@ -9,21 +9,30 @@ export interface RequestProperties {
 export interface Link {
   rel: string;
   href: string;
+  as?: string;
+  type?: string;
+  crossorigin?: boolean;
 }
 
 export interface Script {
   src: string;
 }
 
+export interface Style {
+  content: string;
+}
+
 export interface RouteMetadata {
   links?: Link[];
   scripts?: Script[];
+  styles?: Style[];
 }
 
 export interface RouteData<T = unknown> {
   headers?: Record<string, string>;
   title?: string;
   bodyAttributes?: JSX.Attributes<"body">;
+  metadata?: RouteMetadata;
   data: T;
 }
 
