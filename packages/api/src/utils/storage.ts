@@ -1,5 +1,9 @@
 import assert from "node:assert";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  HeadObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Upload } from "@aws-sdk/lib-storage";
 
@@ -78,4 +82,16 @@ export async function upload(
     leavePartsOnError: false,
   });
   return upload.done();
+}
+
+export async function objectExists(bucket: string, key: string) {
+  try {
+    await S3.send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
+    return true;
+  } catch (error) {
+    if (error instanceof Error && error.name === "NotFound") {
+      return false;
+    }
+    throw error;
+  }
 }
