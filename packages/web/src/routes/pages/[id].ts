@@ -7,7 +7,10 @@ import { cachePage } from "@/utils/cache/pages";
 import { handleError } from "@/utils/errors";
 import Page, { type PageProps } from "@/pages/Page";
 import { getThemeStyles } from "@/utils/themes";
+import { generateFontFaceCSS } from "@/utils/fonts";
+import { getPageFonts, getPagePreloads } from "@/utils/pageFonts";
 import { notFound } from "@/router/responses";
+import { DEFAULT_FONT } from "api/config/fonts";
 import type {
   Route,
   RequestProperties,
@@ -39,6 +42,10 @@ async function loader({
     font: page.font,
   });
 
+  // The global metadata already emits @font-face for DEFAULT_FONT.
+  const pageFonts = getPageFonts(page);
+  pageFonts.delete(DEFAULT_FONT);
+
   return {
     headers: page.published
       ? { "Cache-Control": CACHE_CONTROL_VALUE }
@@ -47,6 +54,10 @@ async function loader({
     bodyAttributes: {
       "data-page-id": page.id,
       style,
+    },
+    metadata: {
+      styles: [generateFontFaceCSS(pageFonts)],
+      links: getPagePreloads(page),
     },
     data: { page },
   };
