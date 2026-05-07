@@ -8,6 +8,8 @@ import FillPicker from "@/components/fills/FillPicker";
 import AnimationPicker from "@/components/animations/AnimationPicker";
 import FramePicker from "@/components/frames/FramePicker";
 import { resolveTheme, getThemeColors } from "@/utils/themes";
+import { loadFonts } from "@/utils/fonts";
+import { themesCache } from "@/utils/cache";
 import { handleError } from "@/utils/errors";
 import type { JSX } from "@/jsx/jsx";
 import type Tile from "@/models/Tile";
@@ -24,7 +26,14 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
     return resolved ? getThemeColors(resolved) : [];
   });
 
-  function setTheme(themeId: string | null) {
+  async function setTheme(themeId: string | null) {
+    if (themeId) {
+      const newTheme = themesCache.getById(themeId);
+      if (newTheme) {
+        const themeFonts = newTheme.fonts.value;
+        await loadFonts(themeFonts.heading, themeFonts.body, themeFonts.code);
+      }
+    }
     tile.setTheme(themeId).catch(handleError);
   }
 
