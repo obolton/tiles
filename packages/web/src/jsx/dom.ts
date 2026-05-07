@@ -261,7 +261,7 @@ function hydrateFragment(
   return hydrated;
 }
 
-function hydrateStoreNode(
+function hydrateReactiveNode(
   store: Reactive<JSX.Node>,
   container: Element,
   index: number,
@@ -317,7 +317,7 @@ export function hydrateNode(
   }
 
   if (isReactive(node)) {
-    return hydrateStoreNode(node, container, index, signal);
+    return hydrateReactiveNode(node, container, index, signal);
   }
 
   throw new Error("Hydration error: invalid node");
@@ -427,7 +427,7 @@ function renderFragment(
   return renderedNodes;
 }
 
-function renderStoreNode(
+function renderReactiveNode(
   store: Reactive<JSX.Node>,
   namespace?: string | null,
   signal?: AbortSignal,
@@ -479,7 +479,7 @@ export function render(
   }
 
   if (isReactive(node)) {
-    return renderStoreNode(node, namespace, signal);
+    return renderReactiveNode(node, namespace, signal);
   }
 
   throw new Error("Invalid node");
