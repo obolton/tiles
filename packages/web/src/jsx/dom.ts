@@ -20,6 +20,11 @@ const XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 const MATHML_NAMESPACE = "http://www.w3.org/1998/Math/MathML";
 
+export interface RenderContext {
+  namespace?: string | null;
+  signal?: AbortSignal;
+}
+
 interface MutableRange {
   store: Reactive<JSX.Node>;
   anchor: Node;
@@ -55,6 +60,18 @@ function getNextSiblings(node: Node, count: number) {
     siblingNode = siblingNode.nextSibling;
   }
   return nodes;
+}
+
+function combineSignal(
+  context: RenderContext,
+  signal: AbortSignal,
+): RenderContext {
+  return {
+    ...context,
+    signal: context.signal
+      ? AbortSignal.any([context.signal, signal])
+      : signal,
+  };
 }
 
 function setAttributes<T extends Element>(
@@ -144,11 +161,14 @@ function ensureTextNode(node: Node, value: string) {
   return textNode;
 }
 
-function ensureElementNode(node: Node, tagName: string) {
+function ensureElementNode(
+  node: Node,
+  tagName: string,
+  namespace?: string | null,
+) {
   if (node instanceof Element && node.tagName.toLowerCase() === tagName) {
     return node;
   }
-  const namespace = getNamespace(tagName);
   const element = createElement(tagName, namespace);
   node.parentNode?.replaceChild(element, node);
   return element;
@@ -169,8 +189,8 @@ function hydrateTextNode(value: string, container: Element, index: number) {
     const content = textNode.data;
 
     if (content.length > value.length && content.startsWith(value)) {
-      const sibling = textNode.splitText(value.length);
-      return [textNode, sibling];
+      textNode.splitText(value.length);
+      return [textNode];
     }
 
     if (content !== value) {
@@ -190,23 +210,28 @@ function hydrateElementNode(
   node: JSX.Element,
   container: Element,
   index: number,
-  signal?: AbortSignal,
+  context: RenderContext,
 ) {
   const { type, properties } = node;
 
   if (typeof type === "string") {
-    return hydrateDOMElement(type, properties, container, index, signal);
+    return hydrateDOMElement(type, properties, container, index, context);
   }
 
   if (isClassComponent(type)) {
-    const instance = new type({ ...properties, signal });
+    const instance = new type({ ...properties, signal: context.signal });
     if (instance.hydrate) {
       return instance.hydrate(container, index);
     }
-    return hydrateNode(instance.render(), container, index, signal);
+    return hydrateNode(instance.render(), container, index, context);
   }
 
-  return hydrateNode(type({ ...properties, signal }), container, index, signal);
+  return hydrateNode(
+    type({ ...properties, signal: context.signal }),
+    container,
+    index,
+    context,
+  );
 }
 
 function hydrateDOMElement(
@@ -214,26 +239,36 @@ function hydrateDOMElement(
   attributes: { children?: JSX.Node; ref?: JSX.Ref<unknown> },
   container: Element,
   index: number,
-  signal?: AbortSignal,
+  context: RenderContext,
 ) {
+  const elementNamespace = getNamespace(tagName) ?? context.namespace;
+  const childrenContext: RenderContext = {
+    ...context,
+    namespace:
+      tagName === "foreignObject" ? XHTML_NAMESPACE : elementNamespace,
+  };
+
   const node = container.childNodes[index];
 
   if (node) {
-    const element = ensureElementNode(node, tagName);
-    setAttributes(element, attributes, signal);
-    hydrateFragment(toNodeArray(attributes.children), element, 0, signal);
+    const element = ensureElementNode(node, tagName, elementNamespace);
+    setAttributes(element, attributes, context.signal);
+    hydrateFragment(
+      toNodeArray(attributes.children),
+      element,
+      0,
+      childrenContext,
+    );
     if (attributes.ref) {
       attributes.ref(element);
     }
     return [element];
   } else {
-    const namespace = getNamespace(tagName);
-    const element = createElement(tagName, namespace);
-    setAttributes(element, attributes, signal);
+    const element = createElement(tagName, elementNamespace);
+    setAttributes(element, attributes, context.signal);
     const childNodes = renderFragment(
       toNodeArray(attributes.children),
-      namespace,
-      signal,
+      childrenContext,
     );
     element.append(...childNodes);
 
@@ -249,13 +284,13 @@ function hydrateFragment(
   nodes: JSX.Node[],
   container: Element,
   start: number,
-  signal?: AbortSignal,
+  context: RenderContext,
 ) {
   const hydrated: Node[] = [];
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i]!;
     hydrated.push(
-      ...hydrateNode(node, container, start + hydrated.length, signal),
+      ...hydrateNode(node, container, start + hydrated.length, context),
     );
   }
   return hydrated;
@@ -265,14 +300,11 @@ function hydrateReactiveNode(
   store: Reactive<JSX.Node>,
   container: Element,
   index: number,
-  signal?: AbortSignal,
+  context: RenderContext,
 ) {
   const abort = new AbortController();
-  const storeSignal = abort.signal;
-  const combinedSignal = signal
-    ? AbortSignal.any([signal, storeSignal])
-    : storeSignal;
-  const hydrated = hydrateNode(store.value, container, index, combinedSignal);
+  const childContext = combineSignal(context, abort.signal);
+  const hydrated = hydrateNode(store.value, container, index, childContext);
   let anchor = hydrated[0];
   if (!anchor) {
     anchor = createPlaceholderNode();
@@ -285,7 +317,7 @@ function hydrateReactiveNode(
     length: hydrated.length,
     abort,
   };
-  store.subscribe(() => updateRange(range, undefined, signal), signal);
+  store.subscribe(() => updateRange(range, context), context.signal);
   return hydrated;
 }
 
@@ -294,7 +326,7 @@ export function hydrateNode(
   node: JSX.Node,
   container: Element,
   index: number,
-  signal?: AbortSignal,
+  context: RenderContext = {},
 ): Node[] {
   if (isEmptyNode(node)) {
     return [];
@@ -309,15 +341,15 @@ export function hydrateNode(
   }
 
   if (isElementNode(node)) {
-    return hydrateElementNode(node, container, index, signal);
+    return hydrateElementNode(node, container, index, context);
   }
 
   if (Array.isArray(node)) {
-    return hydrateFragment(node, container, index, signal);
+    return hydrateFragment(node, container, index, context);
   }
 
   if (isReactive(node)) {
-    return hydrateReactiveNode(node, container, index, signal);
+    return hydrateReactiveNode(node, container, index, context);
   }
 
   throw new Error("Hydration error: invalid node");
@@ -327,16 +359,10 @@ export function createPlaceholderNode(): Comment {
   return document.createComment("");
 }
 
-function updateRange(
-  range: MutableRange,
-  namespace?: string | null,
-  signal?: AbortSignal,
-) {
+function updateRange(range: MutableRange, context: RenderContext) {
   range.abort.abort(null);
   range.abort = new AbortController();
-  const combinedSignal = signal
-    ? AbortSignal.any([signal, range.abort.signal])
-    : range.abort.signal;
+  const childContext = combineSignal(context, range.abort.signal);
 
   const existingNodes = [
     range.anchor,
@@ -350,7 +376,7 @@ function updateRange(
     container?.removeChild(existingNode);
   }
 
-  const nodes = render(range.store.value, namespace, combinedSignal);
+  const nodes = render(range.store.value, childContext);
   if (nodes.length === 0) {
     nodes.push(createPlaceholderNode());
   }
@@ -363,24 +389,25 @@ function updateRange(
 
 function renderDOMElement(
   node: JSX.Element<keyof JSX.IntrinsicElements>,
-  namespace?: string | null,
-  signal?: AbortSignal,
+  context: RenderContext,
 ) {
   const { type, properties } = node;
-  const newNamespace = getNamespace(type) ?? namespace;
+  const elementNamespace = getNamespace(type) ?? context.namespace;
 
-  const element = createElement(type, newNamespace);
+  const element = createElement(type, elementNamespace);
 
-  setAttributes(element, properties, signal);
+  setAttributes(element, properties, context.signal);
 
   const { children, ref } = properties;
 
   // Included content from a different namespace
-  const childrenNamespace =
-    type === "foreignObject" ? XHTML_NAMESPACE : newNamespace;
+  const childrenContext: RenderContext = {
+    ...context,
+    namespace: type === "foreignObject" ? XHTML_NAMESPACE : elementNamespace,
+  };
 
   if (children !== null && children !== undefined) {
-    element.append(...render(children, childrenNamespace, signal));
+    element.append(...render(children, childrenContext));
   }
 
   if (ref) {
@@ -396,48 +423,37 @@ function renderTextNode(value: string) {
   return [document.createTextNode(value)];
 }
 
-function renderElement(
-  node: JSX.Element,
-  namespace?: string | null,
-  signal?: AbortSignal,
-) {
+function renderElement(node: JSX.Element, context: RenderContext) {
   const { type, properties } = node;
 
   if (typeof type === "string") {
-    return renderDOMElement(node, namespace, signal);
+    return renderDOMElement(node, context);
   }
 
   if (isClassComponent(type)) {
-    const instance = new type({ ...properties, signal });
-    return render(instance.render(), namespace, signal);
+    const instance = new type({ ...properties, signal: context.signal });
+    return render(instance.render(), context);
   }
 
-  return render(type({ ...properties, signal }), namespace, signal);
+  return render(type({ ...properties, signal: context.signal }), context);
 }
 
-function renderFragment(
-  nodes: JSX.Node[],
-  namespace?: string | null,
-  signal?: AbortSignal,
-) {
+function renderFragment(nodes: JSX.Node[], context: RenderContext) {
   const renderedNodes: Node[] = [];
   for (const node of nodes) {
-    renderedNodes.push(...render(node, namespace, signal));
+    renderedNodes.push(...render(node, context));
   }
   return renderedNodes;
 }
 
 function renderReactiveNode(
   store: Reactive<JSX.Node>,
-  namespace?: string | null,
-  signal?: AbortSignal,
+  context: RenderContext,
 ) {
   const abort = new AbortController();
-  const combinedSignal = signal
-    ? AbortSignal.any([signal, abort.signal])
-    : abort.signal;
+  const childContext = combineSignal(context, abort.signal);
 
-  const nodes = render(store.value, namespace, combinedSignal);
+  const nodes = render(store.value, childContext);
 
   if (nodes.length === 0) {
     nodes.push(createPlaceholderNode());
@@ -449,14 +465,13 @@ function renderReactiveNode(
     length: nodes.length,
     abort,
   };
-  store.subscribe(() => updateRange(range, namespace, signal), signal);
+  store.subscribe(() => updateRange(range, context), context.signal);
   return nodes;
 }
 
 export function render(
   node: JSX.Node,
-  namespace?: string | null,
-  signal?: AbortSignal,
+  context: RenderContext = {},
 ): Node[] {
   if (node instanceof Node) {
     return [node];
@@ -471,20 +486,24 @@ export function render(
   }
 
   if (isElementNode(node)) {
-    return renderElement(node, namespace, signal);
+    return renderElement(node, context);
   }
 
   if (Array.isArray(node)) {
-    return renderFragment(node, namespace, signal);
+    return renderFragment(node, context);
   }
 
   if (isReactive(node)) {
-    return renderReactiveNode(node, namespace, signal);
+    return renderReactiveNode(node, context);
   }
 
   throw new Error("Invalid node");
 }
 
-export function hydrate(node: JSX.Node, container: Element) {
-  hydrateNode(node, container, 0);
+export function hydrate(
+  node: JSX.Node,
+  container: Element,
+  context: RenderContext = {},
+) {
+  hydrateNode(node, container, 0, context);
 }

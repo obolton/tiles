@@ -23,7 +23,7 @@ export default function Portal({ children, element, signal }: PortalProps) {
     return null;
   }
 
-  const nodes = render(children, null, signal);
+  const nodes = render(children, { signal });
   const parent = resolveElement(element);
   parent.append(...nodes);
 
