@@ -5,6 +5,7 @@
   "description": "API",
   "private": true,
   "exports": {
+    "./*.json": "./src/*.json",
     "./*": "./src/*.ts"
   },
   "scripts": {
