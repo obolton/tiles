@@ -19,20 +19,20 @@ export class PageCollaboration {
   readonly status: Reactive<WebSocketStatus>;
   readonly synced: ReactiveFlag;
 
-  #provider: HocuspocusProvider | null = null;
-  #indexeddb: IndexeddbPersistence | null = null;
+  #provider: HocuspocusProvider;
+  #indexeddb: IndexeddbPersistence;
   #abort = new AbortController();
   #userColor: string | null = null;
 
-  constructor(pageId: string) {
+  constructor(pageId: string, onSynced: () => void) {
+    if (!COLLABORATION_URL) {
+      throw new Error("PUBLIC_COLLABORATION_URL is not set");
+    }
+
     this.pageId = pageId;
     this.doc = new Y.Doc();
     this.status = reactive(WebSocketStatus.Connecting);
     this.synced = flag(false);
-
-    if (!COLLABORATION_URL) {
-      return;
-    }
 
     this.#indexeddb = new IndexeddbPersistence(`tiles-yjs-${pageId}`, this.doc);
 
@@ -44,7 +44,11 @@ export class PageCollaboration {
         this.status.value = status;
       },
       onSynced: () => {
+        if (this.synced.value) {
+          return;
+        }
         this.synced.on();
+        onSynced();
       },
     });
 
@@ -54,18 +58,18 @@ export class PageCollaboration {
   }
 
   get awareness(): Awareness | null {
-    return this.#provider?.awareness ?? null;
+    return this.#provider.awareness ?? null;
   }
 
   dispose() {
     this.#abort.abort();
-    this.#provider?.destroy();
-    this.#indexeddb?.destroy();
+    this.#provider.destroy();
+    this.#indexeddb.destroy();
     this.doc.destroy();
   }
 
   publishUser() {
-    const awareness = this.#provider?.awareness;
+    const awareness = this.#provider.awareness;
     const u = user.value;
 
     if (!u || !this.synced.value || !awareness) {
