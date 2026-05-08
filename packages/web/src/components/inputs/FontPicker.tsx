@@ -2,7 +2,7 @@ import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import { FONTS, FONT_IDS, type FontId } from "api/config/fonts";
 import FontIcon from "@/icons/font.svg?jsx";
-import { loadFonts } from "@/utils/fonts";
+import { loadFontPreviews } from "@/utils/fonts";
 import { handleError } from "@/utils/errors";
 import styles from "./FontPicker.module.css";
 import type { Reactive } from "@/utils/reactivity";
@@ -20,7 +20,7 @@ export default function FontPicker({
   ...props
 }: FontPickerProps) {
   if (!import.meta.env.SSR) {
-    loadFonts(...FONT_IDS).catch(handleError);
+    loadFontPreviews(...FONT_IDS).catch(handleError);
   }
 
   const setFont = (event: Event) =>
@@ -41,7 +41,12 @@ export default function FontPicker({
       <FontIcon aria-hidden="true" slot="default-icon" />
       <ListGroup>
         {FONTS.map((font) => (
-          <ListOption style={{ fontFamily: font.family }} value={font.id}>
+          <ListOption
+            style={{
+              fontFamily: `"${font.previewFamily}", "${font.family}"`,
+            }}
+            value={font.id}
+          >
             {font.family}
           </ListOption>
         ))}
