@@ -1,6 +1,6 @@
 import manifestJson from "api/fonts/manifest.json" with { type: "json" };
 import { FontsManifestSchema, type ManifestWeight } from "api/fonts/manifest";
-import type { FontId } from "api/config/fonts";
+import { getFontConfig, type FontId } from "api/config/fonts";
 import type { Link, Style } from "@/router/router";
 
 const MANIFEST = FontsManifestSchema.parse(manifestJson);
@@ -109,4 +109,39 @@ export async function loadFonts(...ids: FontId[]): Promise<void> {
 
 export function clearLoadedFonts() {
   loadedFonts.clear();
+}
+
+const loadedPreviews = new Set<FontId>();
+
+export async function loadFontPreviews(...ids: FontId[]): Promise<void> {
+  if (import.meta.env.SSR) {
+    return;
+  }
+
+  const tasks: Promise<unknown>[] = [];
+  for (const id of ids) {
+    const font = MANIFEST.fonts[id];
+    if (!font) {
+      throw new Error(`Unknown font: ${id}`);
+    }
+
+    if (loadedPreviews.has(id)) {
+      continue;
+    }
+    loadedPreviews.add(id);
+
+    const face = new FontFace(
+      getFontConfig(id).previewFamily,
+      `url("${FONTS_BASE_URL}/${font.previewPath}") format("woff2")`,
+      { display: "swap" },
+    );
+    document.fonts.add(face);
+    tasks.push(face.load());
+  }
+
+  await Promise.all(tasks);
+}
+
+export function clearLoadedPreviews() {
+  loadedPreviews.clear();
 }

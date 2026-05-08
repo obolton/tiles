@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import {
   clearLoadedFonts,
+  clearLoadedPreviews,
   generateFontFaceCSS,
   getFontPreload,
+  loadFontPreviews,
   loadFonts,
 } from "../fonts";
 import type FontFace from "@/test/mocks/FontFace";
@@ -136,6 +138,50 @@ describe("loadFonts", () => {
 
   test("throws on unknown font id", async () => {
     await expect(loadFonts("not-a-font" as FontId)).rejects.toThrow(
+      "Unknown font: not-a-font",
+    );
+  });
+});
+
+describe("loadFontPreviews", () => {
+  beforeEach(() => {
+    clearLoadedPreviews();
+    vi.mocked(document.fonts.add).mockClear();
+  });
+
+  function getAddedFaces(): FontFace[] {
+    return vi
+      .mocked(document.fonts.add)
+      .mock.calls.map(([face]) => face as unknown as FontFace);
+  }
+
+  test("registers a FontFace under the previewFamily for each id", async () => {
+    await loadFontPreviews("inter", "lora");
+    const families = getAddedFaces().map((face) => face.family);
+    expect(families).toEqual(["Inter Preview", "Lora Preview"]);
+  });
+
+  test("uses the previewPath from the manifest", async () => {
+    await loadFontPreviews("inter");
+    const faces = getAddedFaces();
+    expect(faces[0]!.source).toContain("inter/inter-preview.woff2");
+  });
+
+  test("registers each face with display: swap", async () => {
+    await loadFontPreviews("inter");
+    const faces = getAddedFaces();
+    expect(faces[0]!.descriptors).toMatchObject({ display: "swap" });
+  });
+
+  test("skips ids already loaded in a previous call", async () => {
+    await loadFontPreviews("inter");
+    vi.mocked(document.fonts.add).mockClear();
+    await loadFontPreviews("inter");
+    expect(document.fonts.add).not.toHaveBeenCalled();
+  });
+
+  test("throws on unknown font id", async () => {
+    await expect(loadFontPreviews("not-a-font" as FontId)).rejects.toThrow(
       "Unknown font: not-a-font",
     );
   });
