@@ -49,7 +49,7 @@ export default class Each<T> implements JSX.ElementClass {
         this.renderItem(value, itemIndex),
         container,
         index + hydrated.length,
-        signal,
+        { signal },
       );
       this.entries.set(value, { index: itemIndex, nodes, abort });
       this.anchor ??= nodes[0];
@@ -74,7 +74,7 @@ export default class Each<T> implements JSX.ElementClass {
     const nodes = this.items.value.map((item, index) => {
       const abort = new AbortController();
       const signal = this.getCombinedSignal(abort);
-      const itemNodes = render(this.renderItem(item, index), null, signal);
+      const itemNodes = render(this.renderItem(item, index), { signal });
       this.entries.set(item, {
         index,
         nodes: itemNodes,
@@ -125,7 +125,7 @@ export default class Each<T> implements JSX.ElementClass {
       if (!position) {
         const abort = new AbortController();
         const signal = this.getCombinedSignal(abort);
-        const nodes = render(this.renderItem(item, index), null, signal);
+        const nodes = render(this.renderItem(item, index), { signal });
         for (const node of nodes) {
           container.insertBefore(node, referenceNode);
         }
