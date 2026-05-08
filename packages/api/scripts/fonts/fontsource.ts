@@ -1,11 +1,8 @@
 import { z } from "zod";
+import type { FontStyle } from "@/fonts/manifest";
 
 const FONTSOURCE_API = "https://api.fontsource.org/v1";
 const FONTSOURCE_CDN = "https://cdn.jsdelivr.net/fontsource/fonts";
-
-const FontsourceVariantSchema = z.object({
-  url: z.object({ woff2: z.url() }),
-});
 
 const FontsourceFontSchema = z.object({
   family: z.string(),
@@ -14,7 +11,7 @@ const FontsourceFontSchema = z.object({
   styles: z.array(z.string()),
   variants: z.record(
     z.string(),
-    z.record(z.string(), z.record(z.string(), FontsourceVariantSchema)),
+    z.record(z.string(), z.record(z.string(), z.unknown())),
   ),
 });
 
@@ -64,18 +61,12 @@ export async function fetchVariableFontMetadata(
   return FontsourceVariableFontSchema.parse(await response.json());
 }
 
-export function getFontFilename(
-  subset: string,
-  weightOrAxis: number | "wght",
-  style: string,
-): string {
-  return `${subset}-${weightOrAxis}-${style}.woff2`;
-}
-
-export function getVariableFontUrl(
+export function getFontUrl(
   id: string,
   subset: string,
-  style: "normal" | "italic",
+  weightOrAxis: number | "wght",
+  style: FontStyle,
 ): string {
-  return `${FONTSOURCE_CDN}/${id}:vf@latest/${getFontFilename(subset, "wght", style)}`;
+  const slug = weightOrAxis === "wght" ? `${id}:vf` : id;
+  return `${FONTSOURCE_CDN}/${slug}@latest/${subset}-${weightOrAxis}-${style}.woff2`;
 }
