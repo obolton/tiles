@@ -1,6 +1,5 @@
-import { escapeUTF8 } from "entities";
 import { isReactive } from "@/utils/reactivity";
-import { VOID_ELEMENTS } from "@/utils/html";
+import { tag, type Attributes } from "@/utils/html";
 import { isClassComponent } from "./jsx";
 import { isEmptyNode, isTextNode, isElementNode } from "./node-types";
 import {
@@ -44,23 +43,11 @@ function renderHTMLElement<T extends keyof JSX.IntrinsicElements>(
   tagName: T,
   properties: JSX.Properties<T>,
 ) {
-  const attributes = getDOMAttributes(properties).join(" ");
-  const children = properties.children;
-
-  if (VOID_ELEMENTS.has(tagName)) {
-    return "<" + tagName + (attributes ? " " + attributes : "") + ">";
-  } else {
-    return (
-      "<" +
-      tagName +
-      (attributes ? " " + attributes : "") +
-      ">" +
-      renderToString(children) +
-      "</" +
-      tagName +
-      ">"
-    );
-  }
+  return tag(
+    tagName,
+    getAttributes(properties),
+    renderToString(properties.children),
+  );
 }
 
 function renderElement<T extends JSX.ElementType>({
@@ -77,9 +64,10 @@ function renderElement<T extends JSX.ElementType>({
   }
 }
 
-function getDOMAttributes(properties: Record<string, unknown>) {
-  const attributes: string[] = [];
-  for (const [name, valueOrStore] of Object.entries(properties)) {
+function getAttributes(properties: Record<string, unknown>): Attributes {
+  const attributes: Attributes = {};
+  for (const [originalName, valueOrStore] of Object.entries(properties)) {
+    const name = mapAttributeName(originalName);
     const value = isReactive(valueOrStore) ? valueOrStore.value : valueOrStore;
 
     if (
@@ -93,31 +81,30 @@ function getDOMAttributes(properties: Record<string, unknown>) {
       continue;
     }
 
-    const attributeName = mapAttributeName(name);
-    if (attributeName === "classList" && typeof value === "object") {
+    if (name === "classList" && typeof value === "object") {
       const classNames = serializeClassList(value as ClassList);
       if (classNames) {
-        attributes.push('class="' + escapeUTF8(classNames) + '"');
+        attributes["class"] = classNames;
       }
-    } else if (attributeName === "style" && typeof value === "object") {
-      attributes.push(
-        attributeName + '="' + escapeUTF8(serializeStyles(value)) + '"',
-      );
-    } else if (BOOLEAN_STRING_ATTRIBUTES.has(attributeName)) {
-      const stringValue =
+    } else if (name === "style" && typeof value === "object") {
+      const styles = serializeStyles(value);
+      if (styles) {
+        attributes["style"] = styles;
+      }
+    } else if (BOOLEAN_STRING_ATTRIBUTES.has(name)) {
+      attributes[name] =
         typeof value === "string" ? value : value ? "true" : "false";
-      attributes.push(attributeName + '="' + escapeUTF8(stringValue) + '"');
-    } else if (typeof value === "boolean") {
-      if (value) {
-        attributes.push(attributeName);
-      }
-    } else if (typeof value === "number" || typeof value === "bigint") {
-      attributes.push(attributeName + '="' + value + '"');
+    } else if (
+      typeof value === "string" ||
+      typeof value === "number" ||
+      typeof value === "bigint" ||
+      typeof value === "boolean"
+    ) {
+      attributes[name] = value;
     } else {
-      attributes.push(
-        attributeName + '="' + escapeUTF8(value.toString()) + '"',
-      );
+      attributes[name] = value.toString();
     }
   }
+
   return attributes;
 }
