@@ -1,11 +1,11 @@
 import { describe, expect, test } from "vitest";
 import {
   FontsManifestSchema,
-  ManifestFileSchema,
+  FontVariantSchema,
   ManifestFontSchema,
 } from "../manifest";
 
-const SAMPLE_FILE = {
+const SAMPLE_VARIANT = {
   weight: 400,
   style: "normal",
   subset: "latin",
@@ -15,7 +15,8 @@ const SAMPLE_FILE = {
 const SAMPLE_FONT = {
   family: "Inter",
   version: "v20",
-  files: [SAMPLE_FILE],
+  files: [SAMPLE_VARIANT],
+  previewPath: "inter/inter-preview.woff2",
 };
 
 const SAMPLE_MANIFEST = {
@@ -23,48 +24,56 @@ const SAMPLE_MANIFEST = {
   fonts: { inter: SAMPLE_FONT },
 };
 
-describe("ManifestFileSchema", () => {
-  test("accepts a valid file entry", () => {
-    expect(ManifestFileSchema.parse(SAMPLE_FILE)).toEqual(SAMPLE_FILE);
+describe("FontVariantSchema", () => {
+  test("accepts a valid variant", () => {
+    expect(FontVariantSchema.parse(SAMPLE_VARIANT)).toEqual(SAMPLE_VARIANT);
+  });
+
+  test("rejects an unknown style", () => {
+    const result = FontVariantSchema.safeParse({
+      ...SAMPLE_VARIANT,
+      style: "oblique",
+    });
+    expect(result.success).toBe(false);
   });
 
   test("rejects unknown fields", () => {
-    const result = ManifestFileSchema.safeParse({
-      ...SAMPLE_FILE,
+    const result = FontVariantSchema.safeParse({
+      ...SAMPLE_VARIANT,
       extra: "x",
     });
     expect(result.success).toBe(false);
   });
 
   test("rejects a missing required field", () => {
-    const { weight: _weight, ...withoutWeight } = SAMPLE_FILE;
-    expect(ManifestFileSchema.safeParse(withoutWeight).success).toBe(false);
+    const { weight: _weight, ...withoutWeight } = SAMPLE_VARIANT;
+    expect(FontVariantSchema.safeParse(withoutWeight).success).toBe(false);
   });
 
   test("rejects a non-integer weight", () => {
-    const result = ManifestFileSchema.safeParse({
-      ...SAMPLE_FILE,
+    const result = FontVariantSchema.safeParse({
+      ...SAMPLE_VARIANT,
       weight: 400.5,
     });
     expect(result.success).toBe(false);
   });
 
   test("accepts a variable weight range", () => {
-    const file = { ...SAMPLE_FILE, weight: { min: 100, max: 900 } };
-    expect(ManifestFileSchema.parse(file)).toEqual(file);
+    const file = { ...SAMPLE_VARIANT, weight: { min: 100, max: 900 } };
+    expect(FontVariantSchema.parse(file)).toEqual(file);
   });
 
   test("rejects a weight range with missing bounds", () => {
-    const result = ManifestFileSchema.safeParse({
-      ...SAMPLE_FILE,
+    const result = FontVariantSchema.safeParse({
+      ...SAMPLE_VARIANT,
       weight: { min: 100 },
     });
     expect(result.success).toBe(false);
   });
 
   test("rejects a weight range with non-numeric bounds", () => {
-    const result = ManifestFileSchema.safeParse({
-      ...SAMPLE_FILE,
+    const result = FontVariantSchema.safeParse({
+      ...SAMPLE_VARIANT,
       weight: { min: "100", max: "900" },
     });
     expect(result.success).toBe(false);
@@ -87,9 +96,14 @@ describe("ManifestFontSchema", () => {
   test("rejects when an inner file has unknown fields", () => {
     const result = ManifestFontSchema.safeParse({
       ...SAMPLE_FONT,
-      files: [{ ...SAMPLE_FILE, extra: "x" }],
+      files: [{ ...SAMPLE_VARIANT, extra: "x" }],
     });
     expect(result.success).toBe(false);
+  });
+
+  test("rejects a missing previewPath", () => {
+    const { previewPath: _previewPath, ...withoutPreview } = SAMPLE_FONT;
+    expect(ManifestFontSchema.safeParse(withoutPreview).success).toBe(false);
   });
 });
 

@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+export const FontStyleSchema = z.enum(["normal", "italic"]);
+export type FontStyle = z.infer<typeof FontStyleSchema>;
+
 export const ManifestWeightSchema = z.union([
   z.number().int(),
   z.strictObject({
@@ -9,18 +12,19 @@ export const ManifestWeightSchema = z.union([
 ]);
 export type ManifestWeight = z.infer<typeof ManifestWeightSchema>;
 
-export const ManifestFileSchema = z.strictObject({
+export const FontVariantSchema = z.strictObject({
   weight: ManifestWeightSchema,
-  style: z.string(),
+  style: FontStyleSchema,
   subset: z.string(),
   path: z.string(),
 });
-export type ManifestFile = z.infer<typeof ManifestFileSchema>;
+export type FontVariant = z.infer<typeof FontVariantSchema>;
 
 export const ManifestFontSchema = z.strictObject({
   family: z.string(),
   version: z.string(),
-  files: z.array(ManifestFileSchema),
+  files: z.array(FontVariantSchema),
+  previewPath: z.string(),
 });
 export type ManifestFont = z.infer<typeof ManifestFontSchema>;
 
