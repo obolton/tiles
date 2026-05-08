@@ -3,14 +3,19 @@ import fontsJson from "./fonts.json" with { type: "json" };
 
 const FONT_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-export const FontConfigSchema = z.object({
-  id: z.string().regex(FONT_ID_PATTERN, "Font id must be kebab-case"),
-  family: z.string().min(1),
-  category: z.enum(["sans-serif", "serif", "monospace", "display"]),
-  fallback: z.string().min(1),
-  weights: z.array(z.number().int().positive()).nonempty(),
-  opticalSizing: z.boolean().optional(),
-});
+export const FontConfigSchema = z
+  .object({
+    id: z.string().regex(FONT_ID_PATTERN, "Font id must be kebab-case"),
+    family: z.string().min(1),
+    category: z.enum(["sans-serif", "serif", "monospace", "display"]),
+    fallback: z.string().min(1),
+    weights: z.array(z.number().int().positive()).nonempty(),
+    opticalSizing: z.boolean().optional(),
+  })
+  .transform((font) => ({
+    ...font,
+    previewFamily: `${font.family} Preview`,
+  }));
 
 export type FontConfig = z.infer<typeof FontConfigSchema>;
 export type FontCategory = FontConfig["category"];
