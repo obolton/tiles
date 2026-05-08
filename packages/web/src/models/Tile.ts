@@ -1,8 +1,9 @@
+import * as Y from "yjs";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import Theme from "@/models/Theme";
 import { ASPECT_RATIOS } from "@/constants/size";
-import { YMapBinding } from "@/collaboration/YMapBinding";
+import { LOCAL_ORIGIN, YMapBinding } from "@/collaboration/YMapBinding";
 import type {
   ClientTile,
   ClientTileBase,
@@ -20,6 +21,68 @@ import type TileCollection from "./TileCollection";
 import type { TilePropertyChanges } from "@/operations";
 
 export type { Sizing, Animation, FrameStyle, DockEdge };
+
+function writeInitialTileFields(
+  tileMap: Y.Map<unknown>,
+  properties: ClientTile,
+) {
+  tileMap.set("sizing", properties.sizing);
+  tileMap.set("x", properties.x);
+  tileMap.set("y", properties.y);
+  tileMap.set("height", properties.height);
+  tileMap.set("rowSpan", properties.rowSpan);
+  tileMap.set("hide", properties.hide);
+
+  if (properties.width !== null) {
+    tileMap.set("width", properties.width);
+  }
+  if (properties.startDate !== null) {
+    tileMap.set("startDate", properties.startDate);
+  }
+  if (properties.endDate !== null) {
+    tileMap.set("endDate", properties.endDate);
+  }
+  if (properties.lat !== null && properties.long !== null) {
+    tileMap.set("coordinates", {
+      lat: properties.lat,
+      long: properties.long,
+    });
+  }
+  if (properties.animation !== null) {
+    tileMap.set("animation", properties.animation);
+  }
+  if (properties.frame !== null) {
+    tileMap.set("frame", properties.frame);
+  }
+  if (properties.cornerRadius !== null) {
+    tileMap.set("cornerRadius", properties.cornerRadius);
+  }
+  if (properties.textColor !== null) {
+    tileMap.set("textColor", properties.textColor);
+  }
+  if (properties.background !== null) {
+    tileMap.set("background", properties.background);
+  }
+}
+
+function resolveOrCreateTileMap(
+  page: Page,
+  properties: ClientTile,
+): Y.Map<unknown> | null {
+  if (!page.doc) {
+    return null;
+  }
+  const tilesMap = page.doc.getMap<Y.Map<unknown>>("tiles");
+  let tileMap = tilesMap.get(properties.id);
+  if (!tileMap) {
+    page.doc.transact(() => {
+      tileMap = new Y.Map<unknown>();
+      writeInitialTileFields(tileMap, properties);
+      tilesMap.set(properties.id, tileMap);
+    }, LOCAL_ORIGIN);
+  }
+  return tileMap ?? null;
+}
 
 export default abstract class Tile {
   readonly page: Page;
@@ -57,59 +120,37 @@ export default abstract class Tile {
   readonly textColor: Reactive<Color | null>;
 
   constructor(page: Page, properties: ClientTile) {
-    const {
-      id,
-      type,
-      order,
-      sizing,
-      x,
-      y,
-      width,
-      height,
-      rowSpan,
-      startDate,
-      endDate,
-      lat,
-      long,
-      animation,
-      frame,
-      cornerRadius,
-      hide,
-      dock,
-      theme,
-      textColor,
-      background,
-    } = properties;
+    const { id, type, order, dock, theme } = properties;
     this.page = page;
 
     this.id = id;
     this.type = type;
 
-    this.binding = page.doc
-      ? new YMapBinding(page.doc.getMap<unknown>(`tile:${id}`), page.doc)
-      : null;
+    const tileMap = resolveOrCreateTileMap(page, properties);
+    this.binding =
+      tileMap && page.doc ? new YMapBinding(tileMap, page.doc) : null;
 
     this.order = reactive(order);
-    this.sizing = this.bind("sizing", sizing);
-    this.x = this.bind("x", x);
-    this.y = this.bind("y", y);
-    this.width = this.bind("width", width);
-    this.height = this.bind("height", height);
-    this.rowSpan = this.bind("rowSpan", rowSpan);
-    this.startDate = this.bind("startDate", startDate);
-    this.endDate = this.bind("endDate", endDate);
-    this.coordinates = this.bind(
+    this.sizing = this.bind<Sizing>("sizing", "CUSTOM");
+    this.x = this.bind("x", 0);
+    this.y = this.bind("y", 0);
+    this.width = this.bind<number | null>("width", null);
+    this.height = this.bind("height", 0);
+    this.rowSpan = this.bind("rowSpan", 1);
+    this.startDate = this.bind<string | null>("startDate", null);
+    this.endDate = this.bind<string | null>("endDate", null);
+    this.coordinates = this.bind<{ lat: number; long: number } | null>(
       "coordinates",
-      lat != null && long != null ? { lat, long } : null,
+      null,
     );
-    this.animation = this.bind("animation", animation);
-    this.frame = this.bind("frame", frame);
-    this.cornerRadius = this.bind("cornerRadius", cornerRadius);
-    this.hide = this.bind("hide", hide);
+    this.animation = this.bind<Animation | null>("animation", null);
+    this.frame = this.bind<FrameStyle | null>("frame", null);
+    this.cornerRadius = this.bind<number | null>("cornerRadius", null);
+    this.hide = this.bind("hide", false);
     this.dock = reactive(dock);
     this.theme = reactive(theme ? new Theme(theme) : null);
-    this.textColor = this.bind("textColor", textColor);
-    this.background = this.bind("background", background);
+    this.textColor = this.bind<Color | null>("textColor", null);
+    this.background = this.bind<Fill | null>("background", null);
   }
 
   /**

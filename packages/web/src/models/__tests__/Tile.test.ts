@@ -225,7 +225,11 @@ describe("Tile", () => {
     });
 
     test("uses page width when tile width is null", async () => {
-      const tile = new TestTile(editor.page, { ...TILE, width: null });
+      const tile = new TestTile(editor.page, {
+        ...TILE,
+        id: "tile-with-null-width",
+        width: null,
+      });
       const pageWidth = editor.page.width.value;
       const expectedHeight = Math.round(pageWidth / ASPECT_RATIOS.LANDSCAPE);
 
