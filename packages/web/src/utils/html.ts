@@ -17,12 +17,15 @@ export const VOID_ELEMENTS = new Set([
   "wbr",
 ]);
 
-export type Attributes = Record<string, string | boolean | number | undefined>;
+export type Attributes = Record<
+  string,
+  string | boolean | number | bigint | null | undefined
+>;
 
 function serializeAttributes(attributes: Attributes): string {
   const parts: string[] = [];
   for (const [key, value] of Object.entries(attributes)) {
-    if (value === undefined || value === false) {
+    if (value === undefined || value === null || value === false) {
       continue;
     }
 
