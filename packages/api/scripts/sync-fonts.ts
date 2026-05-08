@@ -14,7 +14,7 @@ console.log(`Syncing ${FONTS.length} fonts to bucket "${FONTS_BUCKET}"...`);
 
 const { manifest, uploaded, skipped } = await syncFonts(FONTS, (progress) => {
   console.log(
-    `  ${progress.id}: ${progress.variants} variants (${progress.uploaded} uploaded, ${progress.skipped} skipped)`,
+    `  ${progress.id}: ${progress.files} files (${progress.uploaded} uploaded, ${progress.skipped} skipped)`,
   );
 });
 
