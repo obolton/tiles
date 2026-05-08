@@ -10,6 +10,7 @@ const migrators: Record<number, Migrator> = {
     if (!metadata.has("createdAt")) {
       metadata.set("createdAt", new Date().toISOString());
     }
+    doc.getMap("tiles");
   },
 };
 
