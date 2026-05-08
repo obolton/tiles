@@ -1,4 +1,6 @@
+import * as Y from "yjs";
 import client from "@/api/client";
+import { LOCAL_ORIGIN } from "@/collaboration/YMapBinding";
 import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { uploadMedia } from "@/utils/media";
 import {
@@ -107,10 +109,16 @@ export default class Editor {
   }
 
   private constructor(page: PageData) {
-    this.collaboration = IS_SERVER ? null : new PageCollaboration(page.id);
+    this.collaboration = IS_SERVER
+      ? null
+      : new PageCollaboration(page.id, () => {
+          this.page.initTiles(page.tiles);
+        });
     this.page = new Page(page);
     this.page.editor = this;
-    this.page.initTiles(page.tiles);
+    if (!this.collaboration) {
+      this.page.initTiles(page.tiles);
+    }
     this.isEditable = flag(isEditMode());
     this.selection = reactive(new Set());
     this.references = reactive([]);
@@ -445,6 +453,16 @@ export default class Editor {
       pageId: this.pageId,
       ids,
     });
+
+    const doc = this.page.doc;
+    if (doc) {
+      const tilesMap = doc.getMap<Y.Map<unknown>>("tiles");
+      doc.transact(() => {
+        for (const id of ids) {
+          tilesMap.delete(id);
+        }
+      }, LOCAL_ORIGIN);
+    }
 
     const items = document.getElementsByTagName("page-item");
     for (const item of items) {
