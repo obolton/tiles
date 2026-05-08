@@ -1,5 +1,5 @@
 {
-  "syncedAt": "2026-05-07T20:32:13.706Z",
+  "syncedAt": "2026-05-08T16:57:56.894Z",
   "fonts": {
     "bungee": {
       "family": "Bungee",
@@ -11,7 +11,8 @@
           "subset": "latin",
           "path": "bungee/bungee-latin-400-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "bungee/bungee-preview.woff2"
     },
     "caveat": {
       "family": "Caveat",
@@ -26,7 +27,8 @@
           "subset": "latin",
           "path": "caveat/caveat-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "caveat/caveat-preview.woff2"
     },
     "dynapuff": {
       "family": "DynaPuff",
@@ -41,7 +43,8 @@
           "subset": "latin",
           "path": "dynapuff/dynapuff-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "dynapuff/dynapuff-preview.woff2"
     },
     "eb-garamond": {
       "family": "EB Garamond",
@@ -65,7 +68,8 @@
           "subset": "latin",
           "path": "eb-garamond/eb-garamond-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "eb-garamond/eb-garamond-preview.woff2"
     },
     "fira-code": {
       "family": "Fira Code",
@@ -80,7 +84,8 @@
           "subset": "latin",
           "path": "fira-code/fira-code-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "fira-code/fira-code-preview.woff2"
     },
     "ibm-plex-mono": {
       "family": "IBM Plex Mono",
@@ -134,7 +139,8 @@
           "subset": "latin",
           "path": "ibm-plex-mono/ibm-plex-mono-latin-700-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "ibm-plex-mono/ibm-plex-mono-preview.woff2"
     },
     "inter": {
       "family": "Inter",
@@ -158,7 +164,8 @@
           "subset": "latin",
           "path": "inter/inter-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "inter/inter-preview.woff2"
     },
     "jetbrains-mono": {
       "family": "JetBrains Mono",
@@ -182,7 +189,8 @@
           "subset": "latin",
           "path": "jetbrains-mono/jetbrains-mono-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "jetbrains-mono/jetbrains-mono-preview.woff2"
     },
     "lora": {
       "family": "Lora",
@@ -206,7 +214,8 @@
           "subset": "latin",
           "path": "lora/lora-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "lora/lora-preview.woff2"
     },
     "merriweather": {
       "family": "Merriweather",
@@ -230,7 +239,8 @@
           "subset": "latin",
           "path": "merriweather/merriweather-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "merriweather/merriweather-preview.woff2"
     },
     "montserrat": {
       "family": "Montserrat",
@@ -254,7 +264,8 @@
           "subset": "latin",
           "path": "montserrat/montserrat-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "montserrat/montserrat-preview.woff2"
     },
     "nunito": {
       "family": "Nunito",
@@ -278,7 +289,8 @@
           "subset": "latin",
           "path": "nunito/nunito-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "nunito/nunito-preview.woff2"
     },
     "open-sans": {
       "family": "Open Sans",
@@ -302,7 +314,8 @@
           "subset": "latin",
           "path": "open-sans/open-sans-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "open-sans/open-sans-preview.woff2"
     },
     "pacifico": {
       "family": "Pacifico",
@@ -314,7 +327,8 @@
           "subset": "latin",
           "path": "pacifico/pacifico-latin-400-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "pacifico/pacifico-preview.woff2"
     },
     "playfair-display": {
       "family": "Playfair Display",
@@ -338,7 +352,8 @@
           "subset": "latin",
           "path": "playfair-display/playfair-display-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "playfair-display/playfair-display-preview.woff2"
     },
     "poppins": {
       "family": "Poppins",
@@ -392,7 +407,8 @@
           "subset": "latin",
           "path": "poppins/poppins-latin-700-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "poppins/poppins-preview.woff2"
     },
     "pt-serif": {
       "family": "PT Serif",
@@ -422,7 +438,8 @@
           "subset": "latin",
           "path": "pt-serif/pt-serif-latin-700-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "pt-serif/pt-serif-preview.woff2"
     },
     "quicksand": {
       "family": "Quicksand",
@@ -437,7 +454,8 @@
           "subset": "latin",
           "path": "quicksand/quicksand-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "quicksand/quicksand-preview.woff2"
     },
     "roboto": {
       "family": "Roboto",
@@ -461,7 +479,8 @@
           "subset": "latin",
           "path": "roboto/roboto-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "roboto/roboto-preview.woff2"
     },
     "work-sans": {
       "family": "Work Sans",
@@ -485,7 +504,8 @@
           "subset": "latin",
           "path": "work-sans/work-sans-latin-wght-normal.woff2"
         }
-      ]
+      ],
+      "previewPath": "work-sans/work-sans-preview.woff2"
     }
   }
 }
