@@ -5,7 +5,7 @@ import Image from "@/models/Image";
 import Link from "@/models/Link";
 import Video from "@/models/Video";
 import PageLink from "@/models/PageLink";
-import { toISODate, getNearestMonth } from "@/utils/dates";
+import { getNearestMonth } from "@/utils/dates";
 import { toPlainText } from "@/utils/richText/plainText";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import { getThemeStyles } from "@/utils/themes";
