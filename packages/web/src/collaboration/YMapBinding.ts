@@ -21,7 +21,7 @@ export class BoundField<T> extends BaseReactive<T> {
   }
 
   set value(next: T) {
-    if (next === this.value) {
+    if (next === this.map.get(this.key)) {
       return;
     }
 

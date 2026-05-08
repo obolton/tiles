@@ -65,12 +65,13 @@ describe("YMapBinding", () => {
       expect(sub).toHaveBeenCalledTimes(1);
     });
 
-    test("does not notify when set to the current fallback value", () => {
+    test("writes through and notifies when set to the fallback while the key is absent", () => {
       const field = binding.field("x", 1);
       const sub = vi.fn();
       field.subscribe(sub);
       field.value = 1;
-      expect(sub).toHaveBeenCalledTimes(0);
+      expect(map.get("x")).toBe(1);
+      expect(sub).toHaveBeenCalledTimes(1);
     });
 
     test("does not notify when set to the current live value", () => {
