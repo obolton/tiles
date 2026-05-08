@@ -12,6 +12,7 @@ import { MENTION_PLUGIN_KEY, type MentionMeta } from "./mentions";
 import type { PromptMeta } from "./prompt";
 import type { NodeType, Mark, MarkType } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
+import type { FontId } from "api/config/fonts";
 
 export function addMark(mark: Mark): Command {
   return function (state, dispatch) {
@@ -52,6 +53,10 @@ export function setTextColor(color: string) {
 }
 
 export const removeTextColor = removeMark(schema.marks.color);
+
+export function setFont(font: FontId) {
+  return addMark(schema.marks.font.create({ font }));
+}
 
 export const toggleBold = toggleMark(schema.marks.bold);
 

@@ -11,11 +11,11 @@ import AlignCenterIcon from "@/icons/align-center.svg?jsx";
 import AlignRightIcon from "@/icons/align-right.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
-import { getFontConfig } from "@/utils/fonts";
 import { toCSSColor, type Color } from "@/utils/color";
 import { themesCache } from "@/utils/cache";
 import { getThemeStyles } from "@/utils/themes";
-import type { FontId } from "@/config/fonts";
+import { loadFonts } from "@/utils/fonts";
+import { getFontConfig, type FontId } from "api/config/fonts";
 import type { HorizontalAlignment } from "api/types/pages";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type Page from "@/models/Page";
@@ -27,7 +27,8 @@ export interface StyleTabProps {
 export default function StyleTab({ page }: StyleTabProps) {
   const { backgroundColor, font, theme } = page;
 
-  function setFont(newFont: FontId) {
+  async function setFont(newFont: FontId) {
+    await loadFonts(newFont);
     viewTransition(() => {
       document.body.style.setProperty("--font", getFontConfig(newFont).family);
     });
@@ -44,8 +45,13 @@ export default function StyleTab({ page }: StyleTabProps) {
     page.setBackgroundColor(value).catch(handleError);
   }
 
-  function setTheme(newThemeId: string | null) {
+  async function setTheme(newThemeId: string | null) {
     const newTheme = newThemeId ? themesCache.getById(newThemeId) : null;
+
+    if (newTheme) {
+      const themeFonts = newTheme.fonts.value;
+      await loadFonts(themeFonts.heading, themeFonts.body, themeFonts.code);
+    }
 
     const bgColor = backgroundColor.value;
     const themeStyles = getThemeStyles(newTheme, {

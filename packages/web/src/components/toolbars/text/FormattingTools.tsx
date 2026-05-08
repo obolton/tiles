@@ -5,6 +5,7 @@ import MenuItem from "@/components/menus/MenuItem";
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import ColorPicker from "@/components/colors/ColorPicker";
+import FontPicker from "@/components/inputs/FontPicker";
 import TextColorIcon from "@/icons/text-color.svg?jsx";
 import H1Icon from "@/icons/h1.svg?jsx";
 import H2Icon from "@/icons/h2.svg?jsx";
@@ -77,9 +78,11 @@ import {
   setTextSize,
   setTextColor,
   removeTextColor,
+  setFont,
   setLineHeight,
 } from "@/utils/richText/commands";
 import { getLink } from "@/utils/richText/helpers";
+import { loadFonts } from "@/utils/fonts";
 import Editor from "@/editor/Editor";
 import Dropdown from "@/models/Dropdown";
 import type { Reactive } from "@/utils/reactivity";
@@ -87,6 +90,7 @@ import type { EditorState, Command } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
 import type { TextAlignment } from "@/utils/richText/format";
 import type ListSelect from "@/elements/list-select/ListSelect";
+import type { FontId } from "api/config/fonts";
 
 const DateTimeModalLoader = () => import("@/components/modals/DateTimeModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
@@ -202,6 +206,12 @@ export default function FormattingTools({
     performCommand(setTextColor(color));
 
   const clearTextColor = () => performCommand(removeTextColor);
+
+  const changeFont = async (font: FontId) => {
+    await loadFonts(font);
+    performCommand(setFont(font));
+    editorView.value?.focus();
+  };
 
   const formatBold = () => performCommand(toggleBold);
 
@@ -555,6 +565,13 @@ export default function FormattingTools({
           onChange={changeTextColor}
           showClear
           onClear={clearTextColor}
+        />
+
+        <FontPicker
+          aria-label="Font"
+          data-tooltip="Font"
+          value={format.derive((value) => value.font)}
+          onChange={changeFont}
         />
 
         <list-select

@@ -23,6 +23,7 @@ export function buildCSPHeader(policy: CSPPolicy): string {
 }
 
 export interface CSPSources {
+  fontSrc: string[];
   imgSrc: string[];
   connectSrc: string[];
 }
@@ -31,9 +32,9 @@ export function buildCSPPolicy(sources: CSPSources): CSPPolicy {
   return {
     "default-src": ["'self'"],
     "script-src": ["'self'"],
-    "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+    "style-src": ["'self'", "'unsafe-inline'"],
     "img-src": ["'self'", "data:", "blob:", ...sources.imgSrc],
-    "font-src": ["'self'", "https://fonts.gstatic.com"],
+    "font-src": ["'self'", ...sources.fontSrc],
     "connect-src": [
       "'self'",
       "https://oauth2.googleapis.com",
@@ -58,6 +59,7 @@ function buildSecurityHeaders(): Record<string, string> {
 
   if (import.meta.env.PROD) {
     const cspPolicy = buildCSPPolicy({
+      fontSrc: [import.meta.env.PUBLIC_FONTS_BASE_URL as string],
       imgSrc: [
         import.meta.env.PROFILE_IMAGES_BASE_URL as string,
         import.meta.env.IMAGES_BASE_URL as string,

@@ -1,6 +1,7 @@
 import { getRouter } from "./routes";
 import { escapeUTF8 } from "entities";
 import { renderToString } from "@/jsx/server";
+import { tag, escapeTagContents } from "@/utils/html";
 import globalMetadata from "@/routes/metadata";
 import Body from "./Body";
 import { internalError, notFound } from "@/router/responses";
@@ -69,45 +70,53 @@ function getPageStartChunk({
   title,
   hydrate,
 }: PageStartChunkOptions) {
-  let chunk = '<!doctype html><html><head><meta charset="utf-8">';
+  let chunk = "<!doctype html><html><head>";
+  chunk += tag("meta", { charset: "utf-8" });
 
   for (const stylesheet of stylesheets) {
-    chunk += '<link rel="stylesheet" href="' + escapeUTF8(stylesheet) + '">';
+    chunk += tag("link", { rel: "stylesheet", href: stylesheet });
   }
 
   if (metadata.links) {
     for (const link of metadata.links) {
-      chunk +=
-        '<link rel="' +
-        escapeUTF8(link.rel) +
-        '" href="' +
-        escapeUTF8(link.href) +
-        '">';
+      chunk += tag("link", {
+        rel: link.rel,
+        href: link.href,
+        as: link.as,
+        type: link.type,
+        crossorigin: link.crossorigin,
+      });
+    }
+  }
+
+  if (metadata.styles) {
+    for (const style of metadata.styles) {
+      chunk += tag("style", {}, escapeTagContents(style.content));
     }
   }
 
   if (metadata.scripts) {
     for (const script of metadata.scripts) {
-      chunk +=
-        '<script type="module" src="' +
-        escapeUTF8(resolveImport(script.src)) +
-        '"></script>';
+      chunk += tag("script", {
+        type: "module",
+        src: resolveImport(script.src),
+      });
     }
   }
 
   if (hydrate === "immediate") {
-    chunk +=
-      '<script type="module" src="' +
-      resolveImport("/src/server/hydrate.ts") +
-      '"></script>';
+    chunk += tag("script", {
+      type: "module",
+      src: resolveImport("/src/server/hydrate.ts"),
+    });
   }
 
   if (import.meta.env.DEV) {
-    chunk += '<script type="module" src="/@vite/client"></script>';
+    chunk += tag("script", { type: "module", src: "/@vite/client" });
   }
 
   if (title) {
-    chunk += "<title>" + escapeUTF8(title) + "</title>";
+    chunk += tag("title", {}, escapeUTF8(title));
   }
   chunk += "</head>";
   return chunk;
@@ -121,6 +130,9 @@ function mergeRouteMetadata(...metadata: RouteMetadata[]) {
     }
     if (entry.scripts) {
       merged.scripts = (merged.scripts ?? []).concat(entry.scripts);
+    }
+    if (entry.styles) {
+      merged.styles = (merged.styles ?? []).concat(entry.styles);
     }
   }
   return merged;
@@ -185,11 +197,34 @@ async function renderRoute(
     }
   }
 
-  const mergedMetadata = mergeRouteMetadata(globalMetadata, metadata);
-
   const stylesheets = import.meta.env.PROD
     ? getStylesheetsForRouteModule(route.moduleUrl)
     : await collectStylesheets(route.moduleUrl, viteDevServer);
+
+  const loaderResult = loader
+    ? await loader({
+        url,
+        headers: request.headers,
+        parameters,
+      })
+    : undefined;
+
+  if (loaderResult instanceof Response) {
+    return loaderResult;
+  }
+
+  const {
+    headers = {},
+    bodyAttributes = {},
+    metadata: loaderMetadata,
+    data,
+  } = loaderResult ?? {};
+
+  const mergedMetadata = mergeRouteMetadata(
+    globalMetadata,
+    metadata,
+    loaderMetadata ?? {},
+  );
 
   const resources: LinkResource[] = [
     ...stylesheets.map((href) => ({ href, type: "style" as const })),
@@ -209,20 +244,6 @@ async function renderRoute(
   }
 
   const links = getLinks(resources);
-
-  const loaderResult = loader
-    ? await loader({
-        url,
-        headers: request.headers,
-        parameters,
-      })
-    : undefined;
-
-  if (loaderResult instanceof Response) {
-    return loaderResult;
-  }
-
-  const { headers = {}, bodyAttributes = {}, data } = loaderResult ?? {};
 
   const body =
     getPageStartChunk({

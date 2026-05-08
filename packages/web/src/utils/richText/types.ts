@@ -1,3 +1,5 @@
+import type { FontId } from "api/config/fonts";
+
 export enum TextFormat {
   NONE = 0,
   BOLD = 1,
@@ -34,6 +36,7 @@ export interface TextNode extends BaseNode {
   format: number;
   size?: number;
   color?: string;
+  font?: FontId;
   pending?: boolean;
 }
 
@@ -50,6 +53,7 @@ export interface DateNode extends BaseNode {
   format: number;
   size?: number;
   color?: string;
+  font?: FontId;
   theme?: string | null;
 }
 
@@ -60,6 +64,7 @@ export interface DropdownNode extends BaseNode {
   format: number;
   size?: number;
   color?: string;
+  font?: FontId;
 }
 
 export interface MentionNode extends BaseNode {
@@ -69,6 +74,7 @@ export interface MentionNode extends BaseNode {
   format: number;
   size?: number;
   color?: string;
+  font?: FontId;
 }
 
 export interface PendingNode extends BaseNode {

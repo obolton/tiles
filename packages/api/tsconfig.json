@@ -9,5 +9,5 @@
     },
     "rootDir": "."
   },
-  "include": ["./src/**/*", "./scripts/**/*"]
+  "include": ["./src/**/*", "./src/**/*.json", "./scripts/**/*"]
 }

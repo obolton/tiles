@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { ColorSchema } from "@/schema/Color";
 import { PaginationSchema, SortDirection } from "@/schema/Pagination";
-import { Font, HorizontalAlignment, PageType } from "@/generated/prisma/client";
+import { HorizontalAlignment, PageType } from "@/generated/prisma/client";
+import { FontIdSchema } from "@/config/fonts";
 
 export const MIN_WIDTH = 12;
 export const MAX_WIDTH = 80;
@@ -34,7 +35,7 @@ export const UpdatePageSchema = z.object({
   published: z.boolean().optional(),
   title: z.string().min(1).optional(),
   backgroundColor: ColorSchema.nullable().optional(),
-  font: z.enum(Font).optional(),
+  font: FontIdSchema.optional(),
   coverImageKey: z.string().nullable().optional(),
   folderId: z.uuid().nullable().optional(),
   themeId: z.uuid().nullable().optional(),

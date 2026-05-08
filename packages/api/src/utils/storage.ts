@@ -1,5 +1,9 @@
 import assert from "node:assert";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  HeadObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Upload } from "@aws-sdk/lib-storage";
 
@@ -12,12 +16,14 @@ const CLOUDFLARE_R2_SECRET_ACCESS_KEY =
 export const IMAGES_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_IMAGES ?? "";
 export const PROFILE_IMAGES_BUCKET =
   process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES ?? "";
+export const FONTS_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_FONTS ?? "";
 
 assert(CLOUDFLARE_ACCOUNT_ID);
 assert(CLOUDFLARE_R2_ACCESS_KEY_ID);
 assert(CLOUDFLARE_R2_SECRET_ACCESS_KEY);
 assert(IMAGES_BUCKET);
 assert(PROFILE_IMAGES_BUCKET);
+assert(FONTS_BUCKET);
 
 const S3 = new S3Client({
   region: "auto",
@@ -65,6 +71,7 @@ export async function upload(
   key: string,
   body: ReadableStream | Buffer,
   contentType: string,
+  cacheControl?: string,
 ) {
   const upload = new Upload({
     client: S3,
@@ -73,9 +80,22 @@ export async function upload(
       Key: key,
       Body: body,
       ContentType: contentType,
+      CacheControl: cacheControl,
     },
     queueSize: 4,
     leavePartsOnError: false,
   });
   return upload.done();
+}
+
+export async function objectExists(bucket: string, key: string) {
+  try {
+    await S3.send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
+    return true;
+  } catch (error) {
+    if (error instanceof Error && error.name === "NotFound") {
+      return false;
+    }
+    throw error;
+  }
 }

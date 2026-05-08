@@ -5,6 +5,7 @@
   "description": "API",
   "private": true,
   "exports": {
+    "./*.json": "./src/*.json",
     "./*": "./src/*.ts"
   },
   "scripts": {
@@ -19,6 +20,7 @@
     "db:push-functions": "prisma db execute --file src/sql/functions/duplicate_tile.sql",
     "db:seed": "prisma db seed",
     "cdn:purge": "tsx --env-file=\"../../../.env\" scripts/purge-cdn.ts",
+    "fonts:sync": "tsx --env-file=\"../../../.env\" scripts/sync-fonts.ts",
     "typecheck": "tsc --build"
   },
   "dependencies": {
@@ -40,9 +42,11 @@
   "devDependencies": {
     "@types/cors": "^2.8.18",
     "@types/node": "^24.3.0",
+    "@types/subset-font": "^2.3.0",
     "esbuild": "^0.28.0",
     "prisma": "^7.8.0",
     "prisma-json-types-generator": "^5.0.0",
+    "subset-font": "^2.5.0",
     "tsx": "^4.21.0"
   },
   "engines": {

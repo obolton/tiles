@@ -10,6 +10,7 @@ import {
 } from "@/components/headings/themes";
 import { MIN_TEXT_SIZE, MAX_TEXT_SIZE } from "@/constants/formatting";
 import { reactive } from "@/utils/reactivity";
+import { getFontConfig, type FontId } from "api/config/fonts";
 import Code from "./Code";
 import type {
   RichText,
@@ -50,6 +51,7 @@ function renderNodes(nodes: Node[]) {
                 format={node.format}
                 size={node.size}
                 color={node.color}
+                font={node.font}
               >
                 {node.text}
               </FormattedText>
@@ -62,6 +64,7 @@ function renderNodes(nodes: Node[]) {
                 format={node.format}
                 size={node.size}
                 color={node.color}
+                font={node.font}
               >
                 <ThemeVariant
                   theme={node.theme ?? DEFAULT_DATE_THEME}
@@ -77,6 +80,7 @@ function renderNodes(nodes: Node[]) {
                 format={node.format}
                 size={node.size}
                 color={node.color}
+                font={node.font}
               >
                 {node.value}
               </FormattedText>
@@ -237,7 +241,12 @@ interface MentionProps {
 
 function Mention({ node }: MentionProps) {
   return (
-    <FormattedText format={node.format} size={node.size} color={node.color}>
+    <FormattedText
+      format={node.format}
+      size={node.size}
+      color={node.color}
+      font={node.font}
+    >
       <span className="mention">{node.displayName}</span>
     </FormattedText>
   );
@@ -247,10 +256,17 @@ interface FormattedTextProps {
   format: TextFormat;
   size?: number;
   color?: string;
+  font?: FontId;
   children: JSX.Node;
 }
 
-function FormattedText({ format, size, color, children }: FormattedTextProps) {
+function FormattedText({
+  format,
+  size,
+  color,
+  font,
+  children,
+}: FormattedTextProps) {
   let content = children;
   if (format & TextFormat.BOLD) {
     content = <strong>{content}</strong>;
@@ -276,7 +292,11 @@ function FormattedText({ format, size, color, children }: FormattedTextProps) {
   if (format & TextFormat.SMALL_CAPS) {
     content = <span className="small-caps">{content}</span>;
   }
-  if (typeof size === "number" || typeof color === "string") {
+  if (
+    typeof size === "number" ||
+    typeof color === "string" ||
+    typeof font === "string"
+  ) {
     const style: Record<string, string> = {};
     if (typeof size === "number") {
       style.fontSize =
@@ -284,6 +304,9 @@ function FormattedText({ format, size, color, children }: FormattedTextProps) {
     }
     if (typeof color === "string") {
       style.color = toCSSColor(color);
+    }
+    if (typeof font === "string") {
+      style.fontFamily = `"${getFontConfig(font).family}"`;
     }
     content = <span style={style}>{content}</span>;
   }

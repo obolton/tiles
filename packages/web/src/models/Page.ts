@@ -9,7 +9,7 @@ import { reactive, array } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 import type { Reactive, ReactiveArray } from "@/utils/reactivity";
 import type { Color } from "@/utils/color";
-import type { FontId } from "@/config/fonts";
+import type { FontId } from "api/config/fonts";
 import type { PageAccess } from "@/types/collaboration";
 import type { PagePropertyChanges } from "@/operations";
 import type { DockEdge, ClientTile } from "api/types/tiles";

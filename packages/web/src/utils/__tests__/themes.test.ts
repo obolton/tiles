@@ -30,17 +30,17 @@ describe("resolveThemeStyles", () => {
 
     test("returns theme body font as CSS font-family string", () => {
       const result = resolveThemeStyles(THEME, {});
-      expect(result.font).toBe('"Inter", "sans-serif"');
+      expect(result.font).toBe('"Inter", sans-serif');
     });
 
     test("returns theme heading font as CSS font-family string", () => {
       const result = resolveThemeStyles(THEME, {});
-      expect(result.headingFont).toBe('"Lora", "serif"');
+      expect(result.headingFont).toBe('"Lora", serif');
     });
 
     test("returns theme code font as CSS font-family string", () => {
       const result = resolveThemeStyles(THEME, {});
-      expect(result.codeFont).toBe('"JetBrains Mono", "monospace"');
+      expect(result.codeFont).toBe('"JetBrains Mono", monospace');
     });
   });
 
@@ -71,9 +71,9 @@ describe("resolveThemeStyles", () => {
 
     test("override takes precedence over theme font", () => {
       const result = resolveThemeStyles(THEME, {
-        font: "CLASSIC",
+        font: "lora",
       });
-      expect(result.font).toBe('"Lora", "serif"');
+      expect(result.font).toBe('"Lora", serif');
     });
 
     test("null override uses theme value", () => {
@@ -126,7 +126,7 @@ describe("resolveThemeStyles", () => {
         background: { type: "color", color: "ff0000000000" },
         textColor: "00ff00000000",
         accentColor: "0000ff000000",
-        font: "CODE",
+        font: "jetbrains-mono",
       });
       expect(result.background).toEqual({
         type: "color",
@@ -134,7 +134,7 @@ describe("resolveThemeStyles", () => {
       });
       expect(result.textColor).toBe("00ff00000000");
       expect(result.accentColor).toBe("0000ff000000");
-      expect(result.font).toBe('"JetBrains Mono", "monospace"');
+      expect(result.font).toBe('"JetBrains Mono", monospace');
     });
 
     test("returns null for all properties when no overrides", () => {
@@ -200,12 +200,12 @@ describe("toCSSProperties", () => {
       background: null,
       textColor: null,
       accentColor: null,
-      font: '"Inter", "sans-serif"',
+      font: '"Inter", sans-serif',
       headingFont: null,
       codeFont: null,
       borderColor: null,
     });
-    expect(result["--font"]).toBe('"Inter", "sans-serif"');
+    expect(result["--font"]).toBe('"Inter", sans-serif');
   });
 
   test("includes heading font as CSS custom property", () => {
@@ -214,11 +214,11 @@ describe("toCSSProperties", () => {
       textColor: null,
       accentColor: null,
       font: null,
-      headingFont: '"Lora", "serif"',
+      headingFont: '"Lora", serif',
       codeFont: null,
       borderColor: null,
     });
-    expect(result["--heading-font"]).toBe('"Lora", "serif"');
+    expect(result["--heading-font"]).toBe('"Lora", serif');
   });
 
   test("includes code font as CSS custom property", () => {
@@ -228,10 +228,10 @@ describe("toCSSProperties", () => {
       accentColor: null,
       font: null,
       headingFont: null,
-      codeFont: '"JetBrains Mono", "monospace"',
+      codeFont: '"JetBrains Mono", monospace',
       borderColor: null,
     });
-    expect(result["--code-font"]).toBe('"JetBrains Mono", "monospace"');
+    expect(result["--code-font"]).toBe('"JetBrains Mono", monospace');
   });
 
   test("converts border color to CSS custom property", () => {
@@ -273,9 +273,9 @@ describe("toCSSProperties", () => {
       background: { type: "color", color: "ffffffffffff" },
       textColor: "000000000000",
       accentColor: "0000ffffffff",
-      font: '"Inter", "sans-serif"',
-      headingFont: '"Lora", "serif"',
-      codeFont: '"JetBrains Mono", "monospace"',
+      font: '"Inter", sans-serif',
+      headingFont: '"Lora", serif',
+      codeFont: '"JetBrains Mono", monospace',
       borderColor: "000000000000",
     });
     expect(result["--background"]).toBeDefined();

@@ -1,7 +1,8 @@
-import { getGoogleFontsUrl } from "@/utils/fonts";
+import { DEFAULT_FONT } from "api/config/fonts";
+import { generateFontFaceCSS } from "@/utils/fonts";
 import type { RouteMetadata } from "@/router/router";
 
 export default {
-  links: [{ rel: "stylesheet", href: getGoogleFontsUrl() }],
+  styles: [generateFontFaceCSS([DEFAULT_FONT])],
   scripts: [{ src: "/src/global.ts" }],
 } satisfies RouteMetadata;

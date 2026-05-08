@@ -1,11 +1,3 @@
-enum Font {
-  MODERN
-  CLASSIC
-  CODE
-  ROUNDED
-  BUBBLES
-}
-
 model Theme {
   id          String   @id @default(uuid()) @db.Uuid
   createdAt   DateTime @default(now()) @map("created_at")
@@ -20,9 +12,9 @@ model Theme {
   accentColor        Bytes              @map("accent_color") @db.ByteA
 
   // Fonts
-  headingFont Font @default(MODERN) @map("heading_font")
-  bodyFont    Font @default(MODERN) @map("body_font")
-  codeFont    Font @default(CODE) @map("code_font")
+  headingFont String @default("inter") @map("heading_font")
+  bodyFont    String @default("inter") @map("body_font")
+  codeFont    String @default("jetbrains-mono") @map("code_font")
 
   // Borders
   borderColor Bytes? @map("border_color") @db.ByteA
