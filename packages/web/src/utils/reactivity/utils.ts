@@ -6,3 +6,10 @@ export function isReactive<T>(
 ): value is Reactive<T> {
   return value instanceof BaseReactive;
 }
+
+export function unwrap<T>(value: T): T {
+  while (isReactive<T>(value)) {
+    value = value.value;
+  }
+  return value;
+}
