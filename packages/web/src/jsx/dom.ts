@@ -68,9 +68,7 @@ function combineSignal(
 ): RenderContext {
   return {
     ...context,
-    signal: context.signal
-      ? AbortSignal.any([context.signal, signal])
-      : signal,
+    signal: context.signal ? AbortSignal.any([context.signal, signal]) : signal,
   };
 }
 
@@ -244,8 +242,7 @@ function hydrateDOMElement(
   const elementNamespace = getNamespace(tagName) ?? context.namespace;
   const childrenContext: RenderContext = {
     ...context,
-    namespace:
-      tagName === "foreignObject" ? XHTML_NAMESPACE : elementNamespace,
+    namespace: tagName === "foreignObject" ? XHTML_NAMESPACE : elementNamespace,
   };
 
   const node = container.childNodes[index];
@@ -446,10 +443,7 @@ function renderFragment(nodes: JSX.Node[], context: RenderContext) {
   return renderedNodes;
 }
 
-function renderReactiveNode(
-  store: Reactive<JSX.Node>,
-  context: RenderContext,
-) {
+function renderReactiveNode(store: Reactive<JSX.Node>, context: RenderContext) {
   const abort = new AbortController();
   const childContext = combineSignal(context, abort.signal);
 
@@ -469,10 +463,7 @@ function renderReactiveNode(
   return nodes;
 }
 
-export function render(
-  node: JSX.Node,
-  context: RenderContext = {},
-): Node[] {
+export function render(node: JSX.Node, context: RenderContext = {}): Node[] {
   if (node instanceof Node) {
     return [node];
   }

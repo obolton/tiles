@@ -408,7 +408,9 @@ describe("hydrate", () => {
         }),
         container,
       );
-      expect(container.querySelector("div")?.namespaceURI).toBe(XHTML_NAMESPACE);
+      expect(container.querySelector("div")?.namespaceURI).toBe(
+        XHTML_NAMESPACE,
+      );
     });
   });
 });
