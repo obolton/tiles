@@ -39,19 +39,25 @@ function serializeAttributes(attributes: Attributes): string {
   return parts.join(" ");
 }
 
+export function openTag(name: string, attributes: Attributes): string {
+  const attrs = serializeAttributes(attributes);
+  return "<" + name + (attrs ? " " + attrs : "") + ">";
+}
+
+export function closeTag(name: string): string {
+  return "</" + name + ">";
+}
+
 export function tag(
   name: string,
   attributes: Attributes,
   content?: string,
 ): string {
-  const attrs = serializeAttributes(attributes);
-  const open = "<" + name + (attrs ? " " + attrs : "") + ">";
-
+  const open = openTag(name, attributes);
   if (VOID_ELEMENTS.has(name)) {
     return open;
   }
-
-  return open + (content ?? "") + "</" + name + ">";
+  return open + (content ?? "") + closeTag(name);
 }
 
 export function escapeTagContents(content: string): string {

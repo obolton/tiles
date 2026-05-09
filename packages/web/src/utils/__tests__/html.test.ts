@@ -1,5 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { VOID_ELEMENTS, escapeTagContents, tag } from "../html";
+import {
+  VOID_ELEMENTS,
+  closeTag,
+  escapeTagContents,
+  openTag,
+  tag,
+} from "../html";
 
 describe("tag", () => {
   test("returns just the open tag for void elements", () => {
@@ -64,6 +70,31 @@ describe("tag", () => {
 
   test("emits opening tag with no whitespace when there are no attributes", () => {
     expect(tag("style", {}, "")).toBe("<style></style>");
+  });
+});
+
+describe("openTag", () => {
+  test("returns just the opening tag with no closing tag", () => {
+    expect(openTag("div", {})).toBe("<div>");
+    expect(openTag("script", { src: "/m.js" })).toBe(`<script src="/m.js">`);
+  });
+
+  test("serializes attributes", () => {
+    expect(openTag("a", { href: "/x", title: "hi" })).toBe(
+      `<a href="/x" title="hi">`,
+    );
+  });
+
+  test("does not special-case void elements", () => {
+    expect(openTag("br", {})).toBe("<br>");
+    expect(openTag("img", { src: "/x.png" })).toBe(`<img src="/x.png">`);
+  });
+});
+
+describe("closeTag", () => {
+  test("returns the closing tag for a name", () => {
+    expect(closeTag("div")).toBe("</div>");
+    expect(closeTag("my-element")).toBe("</my-element>");
   });
 });
 
