@@ -1,5 +1,11 @@
-import { isReactive } from "@/utils/reactivity";
-import { tag, type Attributes } from "@/utils/html";
+import { escapeText } from "entities";
+import { unwrap } from "@/utils/reactivity";
+import {
+  openTag,
+  closeTag,
+  VOID_ELEMENTS,
+  type Attributes,
+} from "@/utils/html";
 import { isClassComponent } from "./jsx";
 import { isEmptyNode, isTextNode, isElementNode } from "./node-types";
 import {
@@ -11,71 +17,81 @@ import {
 import type { ClassList } from "./html-attributes";
 import type { JSX } from "./jsx";
 
+type Item = string | { node: JSX.Node };
+
 export function renderToString(node: JSX.Node): string {
-  if (isReactive(node)) {
-    return renderToString(node.value);
+  let output = "";
+  const stack: Item[] = [{ node }];
+
+  while (stack.length > 0) {
+    output += renderItem(stack.pop()!, stack);
   }
 
-  if (isTextNode(node)) {
-    return node.toString();
+  return output;
+}
+
+function renderItem(item: Item, stack: Item[]): string {
+  if (typeof item === "string") {
+    return item;
   }
+
+  const node = unwrap(item.node);
 
   if (isEmptyNode(node)) {
     return "";
   }
 
+  if (isTextNode(node)) {
+    return escapeText(node.toString());
+  }
+
   if (Array.isArray(node)) {
-    return renderFragment(node);
+    for (let i = node.length - 1; i >= 0; i--) {
+      stack.push({ node: node[i] });
+    }
+    return "";
   }
 
   if (isElementNode(node)) {
-    return renderElement(node);
+    const { type, properties } = node;
+
+    if (typeof type === "string") {
+      const open = openTag(type, getAttributes(properties));
+
+      if (VOID_ELEMENTS.has(type)) {
+        return open;
+      } else {
+        stack.push(closeTag(type));
+        stack.push({ node: properties.children });
+        return open;
+      }
+    }
+
+    if (isClassComponent(type)) {
+      const instance = new type(properties);
+      stack.push({ node: instance.render() });
+      return "";
+    }
+
+    stack.push({ node: type(properties) });
+    return "";
   }
 
   throw new Error(`Invalid node: ${node}`);
 }
 
-function renderFragment(nodes: JSX.Node[]) {
-  return nodes.map(renderToString).join("");
-}
-
-function renderHTMLElement<T extends keyof JSX.IntrinsicElements>(
-  tagName: T,
-  properties: JSX.Properties<T>,
-) {
-  return tag(
-    tagName,
-    getAttributes(properties),
-    renderToString(properties.children),
-  );
-}
-
-function renderElement<T extends JSX.ElementType>({
-  type,
-  properties,
-}: JSX.Element<T>) {
-  if (typeof type === "string") {
-    return renderHTMLElement(type, properties);
-  } else if (isClassComponent(type)) {
-    const instance = new type(properties);
-    return renderToString(instance.render());
-  } else {
-    return renderToString(type(properties));
-  }
-}
-
 function getAttributes(properties: Record<string, unknown>): Attributes {
   const attributes: Attributes = {};
-  for (const [originalName, valueOrStore] of Object.entries(properties)) {
+  for (const [originalName, valueOrReactive] of Object.entries(properties)) {
     const name = mapAttributeName(originalName);
-    const value = isReactive(valueOrStore) ? valueOrStore.value : valueOrStore;
+    const value = unwrap(valueOrReactive);
 
     if (
       name === "children" ||
       name.startsWith("$") ||
       name.startsWith("on:") ||
       typeof value === "function" ||
-      typeof value === "undefined" ||
+      value === undefined ||
       value === null
     ) {
       continue;
