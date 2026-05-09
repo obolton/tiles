@@ -126,6 +126,22 @@ describe("renderToString", () => {
     expect(renderToString(element)).toBe("<p>Hello world</p>");
   });
 
+  test("escapes HTML metacharacters in a child text node", () => {
+    const element = jsx("p", {
+      children: "<script>alert('xss & pwn')</script>",
+    });
+    expect(renderToString(element)).toBe(
+      "<p>&lt;script&gt;alert('xss &amp; pwn')&lt;/script&gt;</p>",
+    );
+  });
+
+  test("escapes HTML metacharacters in fragment children", () => {
+    const element = jsx("p", {
+      children: ["<a>", " & ", "<b>"],
+    });
+    expect(renderToString(element)).toBe("<p>&lt;a&gt; &amp; &lt;b&gt;</p>");
+  });
+
   test("renders a child element node", () => {
     const element = jsx("p", {
       children: jsx("span", { children: "Hello world" }),
@@ -184,5 +200,16 @@ describe("renderToString", () => {
 
     const element = jsx(Component, { name: "Test" });
     expect(renderToString(element)).toBe("<span>Hello Test</span>");
+  });
+
+  test("renders deeply nested elements without causing a stack overflow", () => {
+    let element: JSX.Element = jsx("span", { children: "leaf" });
+    for (let i = 0; i < 50_000; i++) {
+      element = jsx("div", { children: element });
+    }
+    const html = renderToString(element);
+    expect(html.startsWith("<div>".repeat(50_000))).toBe(true);
+    expect(html.endsWith("</div>".repeat(50_000))).toBe(true);
+    expect(html).toContain("<span>leaf</span>");
   });
 });
