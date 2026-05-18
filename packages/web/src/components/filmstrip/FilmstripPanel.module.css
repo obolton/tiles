@@ -2,7 +2,7 @@
   position: fixed;
   top: var(--header-height, 0);
   left: 0;
-  width: 200px;
+  width: var(--sidebar-width);
   height: calc(100dvh - var(--header-height, 0px));
   z-index: 1;
   background: var(--ui-background, #fff);

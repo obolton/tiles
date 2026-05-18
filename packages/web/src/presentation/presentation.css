@@ -1,5 +1,6 @@
 body[data-presenting] {
   --header-height: 0px;
+  --sidebar-width: 0px;
 
   overflow: hidden;
   height: 100dvh;
