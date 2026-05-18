@@ -111,5 +111,4 @@ describe("Text", () => {
       expect(text.background.value).toEqual(background);
     });
   });
-
 });

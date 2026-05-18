@@ -40,11 +40,7 @@ export default function DateTab({ tile }: DateTabProps) {
         </label>
         <label>
           End
-          <input
-            type="date"
-            value={tile.endDate}
-            on:change={handleEndChange}
-          />
+          <input type="date" value={tile.endDate} on:change={handleEndChange} />
         </label>
       </ToolbarGroup>
     </toolbar-tab>
