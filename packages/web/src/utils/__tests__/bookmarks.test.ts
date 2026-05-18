@@ -34,7 +34,7 @@ describe("bookmarks", () => {
     test("calls delete API when unbookmarking", async () => {
       await setIsBookmarked("page-1", false);
       expect(client.bookmarks.delete.mutate).toHaveBeenCalledWith({
-        pageId: "page-1",
+        pageIds: ["page-1"],
       });
     });
 

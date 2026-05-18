@@ -16,7 +16,7 @@ export async function setIsBookmarked(
     await client.bookmarks.create.mutate({ pageId });
     await bookmarksCache.append([{ id: pageId }]);
   } else {
-    await client.bookmarks.delete.mutate({ pageId });
+    await client.bookmarks.delete.mutate({ pageIds: [pageId] });
     await bookmarksCache.delete([pageId]);
   }
 }
