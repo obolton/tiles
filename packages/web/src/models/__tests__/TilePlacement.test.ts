@@ -184,4 +184,72 @@ describe("TilePlacement", () => {
       expect(editor.page.index.has("t1")).toBe(true);
     });
   });
+
+  describe("tile.move", () => {
+    beforeEach(() => {
+      editor.page.placement.bootstrap([
+        { ...SECTION_TILE, id: "sec", sectionId: null, order: "a0" },
+        { ...TILE, id: "t1", sectionId: null, order: "a1" },
+        { ...TILE, id: "t2", sectionId: null, order: "a2" },
+        { ...TILE, id: "t3", sectionId: null, order: "a3" },
+      ]);
+    });
+
+    test("reparents a tile into a section", async () => {
+      await editor.page.getTile("t1").move({ parentId: "sec" });
+
+      expect(editor.page.tiles.value.map((t) => t.id)).toEqual([
+        "sec",
+        "t2",
+        "t3",
+      ]);
+      expect(
+        editor.page.getSection("sec").tiles.value.map((t) => t.id),
+      ).toEqual(["t1"]);
+    });
+
+    test("reorders before a sibling via beforeId", async () => {
+      await editor.page.getTile("t3").move({ beforeId: "t1" });
+
+      expect(editor.page.tiles.value.map((t) => t.id)).toEqual([
+        "sec",
+        "t3",
+        "t1",
+        "t2",
+      ]);
+    });
+
+    test("appends to the end when beforeId is null", async () => {
+      await editor.page.getTile("t1").move({ beforeId: null });
+
+      expect(editor.page.tiles.value.map((t) => t.id)).toEqual([
+        "sec",
+        "t2",
+        "t3",
+        "t1",
+      ]);
+    });
+
+    test("moveUp swaps with the previous sibling", async () => {
+      await editor.page.getTile("t3").moveUp();
+
+      expect(editor.page.tiles.value.map((t) => t.id)).toEqual([
+        "sec",
+        "t1",
+        "t3",
+        "t2",
+      ]);
+    });
+
+    test("moveDown swaps with the next sibling", async () => {
+      await editor.page.getTile("t1").moveDown();
+
+      expect(editor.page.tiles.value.map((t) => t.id)).toEqual([
+        "sec",
+        "t2",
+        "t1",
+        "t3",
+      ]);
+    });
+  });
 });
