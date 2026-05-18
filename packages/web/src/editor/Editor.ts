@@ -454,16 +454,7 @@ export default class Editor {
       ids,
     });
 
-    const doc = this.page.doc;
-    if (doc) {
-      const tilesMap = doc.getMap<Y.Map<unknown>>("tiles");
-      doc.transact(() => {
-        for (const id of ids) {
-          tilesMap.delete(id);
-        }
-      }, LOCAL_ORIGIN);
-    }
-
+    // Tag elements before removal so the view transition can capture them.
     const items = document.getElementsByTagName("page-item");
     for (const item of items) {
       if (item.id) {
@@ -489,8 +480,19 @@ export default class Editor {
         (last?.nextElementSibling || last?.previousElementSibling) ?? null;
     }
 
+    const doc = this.page.doc;
+
     viewTransition(() => {
-      this.removeTiles(tiles);
+      if (doc) {
+        const tilesMap = doc.getMap<Y.Map<unknown>>("tiles");
+        doc.transact(() => {
+          for (const id of ids) {
+            tilesMap.delete(id);
+          }
+        }, LOCAL_ORIGIN);
+      } else {
+        this.removeTiles(tiles);
+      }
 
       if (focus instanceof HTMLElement) {
         focusInside(focus, { preventScroll: true });
