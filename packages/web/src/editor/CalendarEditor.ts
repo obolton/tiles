@@ -113,7 +113,7 @@ export default class CalendarEditor {
     tile.setDates(start, end).catch(handleError);
 
     if (tile.sectionId !== this.sectionId) {
-      tile.move({ sectionId: this.sectionId }).catch(handleError);
+      tile.move({ parentId: this.sectionId }).catch(handleError);
     }
   }
 

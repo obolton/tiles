@@ -5,6 +5,7 @@ import {
   getDragPosition,
 } from "@/utils/drag-placeholder";
 import { ResizeEvent } from "@/elements/resize/events";
+import { dockParentId } from "@/models/parentId";
 import type Page from "@/models/Page";
 import type { Reactive } from "@/utils/reactivity";
 import type { DragDropEvent } from "@/utils/drag";
@@ -151,7 +152,10 @@ export default class DockLayoutEditor {
     }
 
     try {
-      await tile.setDock(this.edge, this.beforeId);
+      await tile.move({
+        parentId: dockParentId(this.edge),
+        beforeId: this.beforeId,
+      });
 
       // Apply view transition for smooth animation
       const element = state.element;

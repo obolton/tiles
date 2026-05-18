@@ -5,6 +5,7 @@ import DockBottomIcon from "@/icons/dock-bottom.svg?jsx";
 import DockLeftIcon from "@/icons/dock-left.svg?jsx";
 import DockRightIcon from "@/icons/dock-right.svg?jsx";
 import { handleError } from "@/utils/errors";
+import { dockParentId } from "@/models/parentId";
 import type Tile from "@/models/Tile";
 import type { DockEdge } from "@/models/Tile";
 import type ListSelect from "@/elements/list-select/ListSelect";
@@ -16,7 +17,9 @@ export interface DockSelectProps {
 export default function DockSelect({ tile }: DockSelectProps) {
   function handleChange(event: Event) {
     const value = (event.currentTarget as ListSelect).value as DockEdge | "";
-    tile.setDock(value || null).catch(handleError);
+    tile
+      .move({ parentId: value ? dockParentId(value) : null })
+      .catch(handleError);
   }
 
   return (

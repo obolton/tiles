@@ -433,16 +433,11 @@ export default class LayoutEditor {
     }
 
     try {
-      // Undock tile if it was previously docked
-      if (tile.dock.value !== null) {
-        await tile.setDock(null);
-      }
-
       if (this.layoutType === "FREEFORM") {
         const width = this.pixelToPercentX(state.width);
         const height = this.pixelToPercentY(state.height);
         tile.move({
-          sectionId: this.sectionId,
+          parentId: this.sectionId,
           x: this.x,
           y: this.y,
           width,
@@ -450,7 +445,7 @@ export default class LayoutEditor {
         });
       } else {
         tile.move({
-          sectionId: this.sectionId,
+          parentId: this.sectionId,
           beforeId: this.beforeId,
         });
       }
