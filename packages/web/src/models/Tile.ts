@@ -17,6 +17,7 @@ import type { Fill, FillUpdate } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
 import type Page from "@/models/Page";
 import type { AppRouterInputs } from "@/api/client";
+import { toParentId } from "./parentId";
 import type TileCollection from "./TileCollection";
 import type { TilePropertyChanges } from "@/operations";
 
@@ -26,12 +27,18 @@ function writeInitialTileFields(
   tileMap: Y.Map<unknown>,
   properties: ClientTile,
 ) {
+  tileMap.set("order", properties.order);
   tileMap.set("sizing", properties.sizing);
   tileMap.set("x", properties.x);
   tileMap.set("y", properties.y);
   tileMap.set("height", properties.height);
   tileMap.set("rowSpan", properties.rowSpan);
   tileMap.set("hide", properties.hide);
+
+  const parentId = toParentId(properties.sectionId, properties.dock);
+  if (parentId !== null) {
+    tileMap.set("parentId", parentId);
+  }
 
   if (properties.width !== null) {
     tileMap.set("width", properties.width);
@@ -101,6 +108,7 @@ export default abstract class Tile {
   protected readonly binding: YMapBinding | null;
 
   readonly order: Reactive<string>;
+  readonly parentId: Reactive<string | null>;
   readonly sizing: Reactive<Sizing>;
   readonly x: Reactive<number>;
   readonly y: Reactive<number>;
@@ -130,7 +138,11 @@ export default abstract class Tile {
     this.binding =
       tileMap && page.doc ? new YMapBinding(tileMap, page.doc) : null;
 
-    this.order = reactive(order);
+    this.order = this.bind<string>("order", order);
+    this.parentId = this.bind<string | null>(
+      "parentId",
+      toParentId(properties.sectionId, properties.dock),
+    );
     this.sizing = this.bind<Sizing>("sizing", "CUSTOM");
     this.x = this.bind("x", 0);
     this.y = this.bind("y", 0);

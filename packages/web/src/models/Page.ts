@@ -2,6 +2,7 @@ import client from "@/api/client";
 import Dropdown from "@/models/Dropdown";
 import PageInvite from "@/models/PageInvite";
 import TileCollection from "@/models/TileCollection";
+import TilePlacement from "@/models/TilePlacement";
 import Section from "@/models/Section";
 import Theme from "@/models/Theme";
 import createTileFromData from "@/models/createTile";
@@ -45,6 +46,7 @@ export default class Page {
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<PageInvite>;
   readonly index: Map<string, Tile>;
+  readonly placement: TilePlacement;
   readonly tiles: TileCollection;
   readonly dockedTiles: {
     TOP: TileCollection;
@@ -78,6 +80,7 @@ export default class Page {
     this.access = array(data.access);
     this.invites = array(data.invites.map((i) => new PageInvite(this, i)));
     this.index = new Map();
+    this.placement = new TilePlacement(this);
     this.tiles = new TileCollection();
     this.dockedTiles = {
       TOP: new TileCollection(),
