@@ -505,18 +505,16 @@ export default class Editor {
 
   addTile(
     tile: Tile,
-    sectionId: string | null = null,
-    beforeId: string | null = null,
+    _sectionId: string | null = null,
+    _beforeId: string | null = null,
     select = true,
   ) {
-    this.page.index.set(tile.id, tile);
-
+    // Placement comes from the tile's Y-bound parentId/order (the create
+    // mutation already encoded position into `order`); the controller owns
+    // collection membership. sectionId/beforeId are vestigial here and are
+    // dropped from the signature in a later cleanup.
     viewTransition(() => {
-      if (sectionId) {
-        this.page.getSection(sectionId).tiles.insertBefore(beforeId, tile);
-      } else {
-        this.page.tiles.insertBefore(beforeId, tile);
-      }
+      this.page.placement.add(tile);
     }).updateCallbackDone.then(() => {
       if (select) {
         this.select([tile.id]);
@@ -532,8 +530,7 @@ export default class Editor {
 
   removeTiles(tiles: Tile[]) {
     tiles.forEach((tile) => {
-      tile.parent?.remove(tile);
-      this.page.index.delete(tile.id);
+      this.page.placement.remove(tile.id);
     });
   }
 
