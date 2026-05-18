@@ -33,18 +33,15 @@ export async function createBookmark(
   });
 }
 
-export async function deleteBookmark(
-  { pageId }: DeleteBookmarkSchema,
+export async function deleteBookmarks(
+  { pageIds }: DeleteBookmarkSchema,
   { userId }: AuthenticatedRequestContext,
 ) {
-  return prisma.bookmark.delete({
+  return prisma.bookmark.deleteMany({
     where: {
-      bookmarkId: {
-        userId,
-        pageId,
-      },
+      userId,
+      pageId: { in: pageIds },
     },
-    select: { pageId: true },
   });
 }
 

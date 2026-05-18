@@ -7,7 +7,7 @@ export const CreateBookmarkSchema = z.object({
 export type CreateBookmarkSchema = z.infer<typeof CreateBookmarkSchema>;
 
 export const DeleteBookmarkSchema = z.object({
-  pageId: z.uuid(),
+  pageIds: z.array(z.uuid()).min(1).max(100),
 });
 export type DeleteBookmarkSchema = z.infer<typeof DeleteBookmarkSchema>;
 

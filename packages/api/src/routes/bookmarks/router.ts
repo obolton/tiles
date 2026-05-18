@@ -5,7 +5,7 @@ import {
 } from "@/utils/middleware.ts";
 import {
   createBookmark,
-  deleteBookmark,
+  deleteBookmarks,
   listBookmarks,
   isBookmarked,
 } from "./bookmarks.ts";
@@ -31,5 +31,5 @@ export default router({
 
   delete: authenticatedProcedure
     .input(DeleteBookmarkSchema)
-    .mutation(({ input, ctx }) => deleteBookmark(input, ctx)),
+    .mutation(({ input, ctx }) => deleteBookmarks(input, ctx)),
 });
