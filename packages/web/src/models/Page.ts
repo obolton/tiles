@@ -3,6 +3,7 @@ import Dropdown from "@/models/Dropdown";
 import PageInvite from "@/models/PageInvite";
 import TileCollection from "@/models/TileCollection";
 import TilePlacement from "@/models/TilePlacement";
+import { dockParentId } from "@/models/parentId";
 import Section from "@/models/Section";
 import Theme from "@/models/Theme";
 import createTileFromData from "@/models/createTile";
@@ -47,13 +48,24 @@ export default class Page {
   readonly invites: ReactiveArray<PageInvite>;
   readonly index: Map<string, Tile>;
   readonly placement: TilePlacement;
-  readonly tiles: TileCollection;
-  readonly dockedTiles: {
-    TOP: TileCollection;
-    LEFT: TileCollection;
-    RIGHT: TileCollection;
-    BOTTOM: TileCollection;
-  };
+
+  /** The page-root tiles, as a controller-maintained order-sorted view. */
+  get tiles(): TileCollection {
+    return this.placement.getCollection(null);
+  }
+
+  /** The docked tiles per edge, as controller-maintained views. */
+  get dockedTiles(): Record<
+    "TOP" | "LEFT" | "RIGHT" | "BOTTOM",
+    TileCollection
+  > {
+    return {
+      TOP: this.placement.getCollection(dockParentId("TOP")),
+      LEFT: this.placement.getCollection(dockParentId("LEFT")),
+      RIGHT: this.placement.getCollection(dockParentId("RIGHT")),
+      BOTTOM: this.placement.getCollection(dockParentId("BOTTOM")),
+    };
+  }
 
   constructor(data: PageData) {
     this.id = data.id;
@@ -81,13 +93,6 @@ export default class Page {
     this.invites = array(data.invites.map((i) => new PageInvite(this, i)));
     this.index = new Map();
     this.placement = new TilePlacement(this);
-    this.tiles = new TileCollection();
-    this.dockedTiles = {
-      TOP: new TileCollection(),
-      LEFT: new TileCollection(),
-      RIGHT: new TileCollection(),
-      BOTTOM: new TileCollection(),
-    };
   }
 
   get doc(): Y.Doc | null {
@@ -194,29 +199,7 @@ export default class Page {
   }
 
   initTiles(tiles: ClientTile[]) {
-    const parentIds = new Map<string, string | null>();
-
-    for (const tile of tiles) {
-      const object = createTileFromData(this, tile);
-      this.index.set(object.id, object);
-      if (tile.sectionId) {
-        parentIds.set(object.id, tile.sectionId);
-      }
-    }
-
-    for (const item of this.index.values()) {
-      const dock = item.dock.value;
-      if (dock) {
-        this.dockedTiles[dock].append(item);
-      } else {
-        const parentId = parentIds.get(item.id);
-        if (parentId) {
-          this.getSection(parentId).tiles.append(item);
-        } else {
-          this.tiles.append(item);
-        }
-      }
-    }
+    this.placement.bootstrap(tiles);
   }
 
   private update(

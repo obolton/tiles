@@ -1,5 +1,5 @@
 import Tile from "./Tile";
-import TileCollection from "./TileCollection";
+import type TileCollection from "./TileCollection";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import type { ClientSectionTile, Layout, MapStyle } from "api/types/tiles";
@@ -12,7 +12,11 @@ export default class Section extends Tile {
   readonly layout: Reactive<Layout>;
   readonly mapStyle: Reactive<MapStyle | null>;
   readonly columns: Reactive<number | null>;
-  readonly tiles: TileCollection;
+
+  /** This section's children, as a controller-maintained order-sorted view. */
+  get tiles(): TileCollection {
+    return this.page.placement.getCollection(this.id);
+  }
 
   static async create(
     page: Page,
@@ -39,7 +43,6 @@ export default class Section extends Tile {
     this.layout = reactive(layout);
     this.mapStyle = reactive(mapStyle);
     this.columns = reactive(columns);
-    this.tiles = new TileCollection(this.id);
   }
 
   serialize(): ClientSectionTile {
