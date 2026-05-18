@@ -1,4 +1,3 @@
-import TileTools from "@/components/toolbars/tiles/TileTools";
 import StyleTab from "@/components/toolbars/tiles/StyleTab";
 import DateTab from "@/components/toolbars/tiles/DateTab";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
@@ -46,8 +45,6 @@ export default function LinkToolbar({ link }: LinkToolbarProps) {
             Edit link
           </ToolbarButton>
         </ToolbarGroup>
-
-        <TileTools tile={link} />
       </toolbar-tab>
 
       <StyleTab tile={link} />

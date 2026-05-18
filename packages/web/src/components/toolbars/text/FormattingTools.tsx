@@ -503,46 +503,6 @@ export default function FormattingTools({
         </ToolbarButton>
 
         <ToolbarButton
-          id="more-text-button"
-          popovertarget="more-text-menu"
-          label="More formatting"
-          aria-haspopup="menu"
-          aria-expanded="false"
-        >
-          <MoreIcon aria-hidden="true" />
-        </ToolbarButton>
-
-        <popover-menu id="more-text-menu">
-          <MenuItemGroup label="Position">
-            <MenuItem
-              role="menuitemradio"
-              icon={<SuperscriptIcon aria-hidden="true" />}
-              checked={format.derive((f) => f.superscript)}
-              on:click={formatSuperscript}
-            >
-              Superscript
-            </MenuItem>
-            <MenuItem
-              role="menuitemradio"
-              icon={<SubscriptIcon aria-hidden="true" />}
-              checked={format.derive((f) => f.subscript)}
-              on:click={formatSubscript}
-            >
-              Subscript
-            </MenuItem>
-          </MenuItemGroup>
-          <MenuItemGroup label="Variant">
-            <MenuItem
-              icon={<SmallCapsIcon aria-hidden="true" />}
-              checked={format.derive((f) => f.smallCaps)}
-              on:click={formatSmallCaps}
-            >
-              Small caps
-            </MenuItem>
-          </MenuItemGroup>
-        </popover-menu>
-
-        <ToolbarButton
           label="Quote"
           aria-pressed={format.derive((value) => value.quote)}
           on:click={formatQuote}
@@ -608,6 +568,46 @@ export default function FormattingTools({
             />
           </ListGroup>
         </list-select>
+
+        <ToolbarButton
+          id="more-text-button"
+          popovertarget="more-text-menu"
+          label="More formatting"
+          aria-haspopup="menu"
+          aria-expanded="false"
+        >
+          <MoreIcon aria-hidden="true" />
+        </ToolbarButton>
+
+        <popover-menu id="more-text-menu">
+          <MenuItemGroup label="Position">
+            <MenuItem
+              role="menuitemradio"
+              icon={<SuperscriptIcon aria-hidden="true" />}
+              checked={format.derive((f) => f.superscript)}
+              on:click={formatSuperscript}
+            >
+              Superscript
+            </MenuItem>
+            <MenuItem
+              role="menuitemradio"
+              icon={<SubscriptIcon aria-hidden="true" />}
+              checked={format.derive((f) => f.subscript)}
+              on:click={formatSubscript}
+            >
+              Subscript
+            </MenuItem>
+          </MenuItemGroup>
+          <MenuItemGroup label="Variant">
+            <MenuItem
+              icon={<SmallCapsIcon aria-hidden="true" />}
+              checked={format.derive((f) => f.smallCaps)}
+              on:click={formatSmallCaps}
+            >
+              Small caps
+            </MenuItem>
+          </MenuItemGroup>
+        </popover-menu>
       </ToolbarGroup>
     </>
   );

@@ -2,7 +2,6 @@ import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import CodeTab from "@/components/toolbars/text/CodeTab";
-import TileTools from "@/components/toolbars/tiles/TileTools";
 import StyleTab from "@/components/toolbars/tiles/StyleTab";
 import DateTab from "@/components/toolbars/tiles/DateTab";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
@@ -45,7 +44,6 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
     >
       <toolbar-tab name="text" label="Text">
         <FormattingTools editorView={editorView} state={text.state} />
-        <TileTools tile={text} />
       </toolbar-tab>
 
       <If condition={format.derive((f) => f.codeBlock)}>
