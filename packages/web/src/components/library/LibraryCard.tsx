@@ -1,13 +1,29 @@
 import ProfileImage from "@/components/profile-image/ProfileImage";
 import PublicIcon from "@/icons/public.svg?jsx";
+import DocumentIcon from "@/icons/document.svg?jsx";
+import PresentationIcon from "@/icons/presentation.svg?jsx";
+import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
+import EmptyIcon from "@/icons/empty.svg?jsx";
 import { makeDraggable } from "@/utils/drag";
 import { getThemeStyles } from "@/utils/themes";
 import { formatRelativeDate } from "@/utils/dates";
 import styles from "./LibraryCard.module.css";
 import type { Reactive } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
+import type { PageType } from "api/types/pages";
+import type { JSX } from "@/jsx/jsx";
 
 export type LibraryPage = AppRouterOutputs["pages"]["list"]["pages"][number];
+
+const PAGE_TYPES: Record<
+  PageType,
+  { Icon: JSX.Component<JSX.Attributes<"svg">>; label: string }
+> = {
+  DOCUMENT: { Icon: DocumentIcon, label: "Document" },
+  PRESENTATION: { Icon: PresentationIcon, label: "Presentation" },
+  COLLECTION: { Icon: GridLayoutIcon, label: "Collection" },
+  FREE: { Icon: EmptyIcon, label: "Blank page" },
+};
 
 export interface LibraryCardProps {
   page: LibraryPage;
@@ -25,6 +41,7 @@ export default function LibraryCard({
   link = true,
 }: LibraryCardProps) {
   const updatedAt = new Date(page.updatedAt);
+  const { Icon: TypeIcon, label: typeLabel } = PAGE_TYPES[page.type];
 
   function onCheckboxChange(event: Event) {
     event.stopPropagation();
@@ -93,6 +110,12 @@ export default function LibraryCard({
       ) : (
         <div className={styles.link}>{content}</div>
       )}
+
+      <TypeIcon
+        className={styles.type}
+        aria-label={typeLabel}
+        data-tooltip={typeLabel}
+      />
 
       {selected != null ? (
         <input

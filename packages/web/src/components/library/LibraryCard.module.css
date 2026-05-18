@@ -53,8 +53,8 @@
 .details {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 10px 12px;
+  gap: 8px;
+  padding: 8px 12px;
   font-size: 0.875rem;
   color: var(--secondary-text-color);
   background: rgb(255 255 255 / 85%);
@@ -78,10 +78,18 @@
   }
 }
 
+.type,
 .published {
-  width: 16px;
-  height: 16px;
-  fill: var(--secondary-text-color);
+  width: 20px;
+  height: 20px;
+  fill: currentcolor;
+}
+
+.type {
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline-end: 8px;
+  opacity: 0.5;
 }
 
 .author {
