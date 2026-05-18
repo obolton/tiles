@@ -7,6 +7,7 @@ import FolderPicker from "@/components/inputs/FolderPicker";
 import CloseIcon from "@/icons/close.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import UndoIcon from "@/icons/undo.svg?jsx";
+import BookmarkFilledIcon from "@/icons/bookmark-filled.svg?jsx";
 import type { ReactiveSet } from "@/utils/reactivity";
 
 interface LibrarySelectionToolbarProps {
@@ -15,6 +16,7 @@ interface LibrarySelectionToolbarProps {
   move?: boolean;
   trash?: boolean;
   restore?: boolean;
+  bookmark?: boolean;
   onComplete: () => void;
 }
 
@@ -24,6 +26,7 @@ export default function LibrarySelectionToolbar({
   move,
   trash,
   restore,
+  bookmark,
   onComplete,
 }: LibrarySelectionToolbarProps) {
   async function deleteSelected() {
@@ -45,6 +48,19 @@ export default function LibrarySelectionToolbar({
       await client.pages.restore.mutate({ workspaceId, pageIds });
       const count = pageIds.length;
       showToast(`Restored ${count} ${count === 1 ? "page" : "pages"}`);
+      selection.clear();
+      onComplete();
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  async function removeBookmarks() {
+    const pageIds = Array.from(selection);
+    try {
+      await client.bookmarks.delete.mutate({ pageIds });
+      const count = pageIds.length;
+      showToast(`Removed ${count} ${count === 1 ? "bookmark" : "bookmarks"}`);
       selection.clear();
       onComplete();
     } catch (error) {
@@ -88,17 +104,22 @@ export default function LibrarySelectionToolbar({
         <ToolbarGroup label="Actions">
           {move ? <FolderPicker onChange={moveToFolder} /> : null}
           {trash ? (
-            <ToolbarButton
-              label="Move to trash"
-              destructive
-              on:click={deleteSelected}
-            >
+            <ToolbarButton destructive on:click={deleteSelected}>
               <TrashIcon aria-hidden="true" />
+              Delete
             </ToolbarButton>
           ) : null}
+
           {restore ? (
             <ToolbarButton label="Restore" on:click={restoreSelected}>
               <UndoIcon aria-hidden="true" />
+            </ToolbarButton>
+          ) : null}
+
+          {bookmark ? (
+            <ToolbarButton aria-pressed={true} on:click={removeBookmarks}>
+              <BookmarkFilledIcon aria-hidden="true" />
+              Bookmark
             </ToolbarButton>
           ) : null}
         </ToolbarGroup>

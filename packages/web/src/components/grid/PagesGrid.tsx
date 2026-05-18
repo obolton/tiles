@@ -1,6 +1,7 @@
 import LibraryCard from "@/components/library/LibraryCard";
 import LibrarySelectionToolbar from "@/components/library/LibrarySelectionToolbar";
 import If from "@/jsx/if";
+import Portal from "@/jsx/portal";
 import Search from "@/components/search/Search";
 import ListGroup from "@/components/lists/ListGroup";
 import ListOption from "@/components/lists/ListOption";
@@ -61,6 +62,7 @@ interface PagesGridProps {
   move?: boolean;
   trash?: boolean;
   restore?: boolean;
+  bookmark?: boolean;
 }
 
 export default function PagesGrid({
@@ -76,6 +78,7 @@ export default function PagesGrid({
   move,
   trash,
   restore,
+  bookmark,
 }: PagesGridProps) {
   const selection = set<string>();
   const hasSelection = selection.derive((ids) => ids.size > 0);
@@ -138,14 +141,19 @@ export default function PagesGrid({
       />
 
       <If condition={hasSelection}>
-        <LibrarySelectionToolbar
-          workspaceId={workspaceId}
-          selection={selection}
-          move={move}
-          trash={trash}
-          restore={restore}
-          onComplete={onRefresh}
-        />
+        <Portal>
+          <div className={styles.toolbar}>
+            <LibrarySelectionToolbar
+              workspaceId={workspaceId}
+              selection={selection}
+              move={move}
+              trash={trash}
+              restore={restore}
+              bookmark={bookmark}
+              onComplete={onRefresh}
+            />
+          </div>
+        </Portal>
       </If>
     </>
   );
