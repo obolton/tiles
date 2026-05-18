@@ -5,9 +5,14 @@ import Sidebar from "./Sidebar";
 import Placeholder from "@/components/placeholder/Placeholder";
 import PagesGrid from "@/components/grid/PagesGrid";
 import SearchToolbar from "@/components/search/SearchToolbar";
+import { handleError } from "@/utils/errors";
 import { reactive } from "@/utils/reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 import type { User } from "@/utils/sessions";
+
+if (!import.meta.env.SSR) {
+  import("@/elements/editor").catch(handleError);
+}
 
 export interface BookmarksProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
@@ -68,6 +73,7 @@ export default function Bookmarks({
           }
           renderPlaceholder={renderPlaceholder}
           draggable
+          bookmark
         />
       </SidebarLayout>
     </PageLayout>
