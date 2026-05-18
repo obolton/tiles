@@ -2,7 +2,7 @@ import type { Reactive } from "@/utils/reactivity";
 import type { AttributesFor, ElementTypeFor } from "./html-attributes";
 
 export type WithProperties<T> = {
-  [K in keyof T as `$${Extract<K, string>}`]?: T[K];
+  [K in keyof T as `$${Extract<K, string>}`]?: T[K] | Reactive<T[K]>;
 };
 
 export type WithReactiveProperties<T> = {

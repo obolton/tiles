@@ -96,7 +96,14 @@ function setAttributes<T extends Element>(
     } else if (name.startsWith("$")) {
       const property = name.slice(1) as keyof T;
       if (property in element) {
-        element[property] = value as T[typeof property];
+        if (isReactive(value)) {
+          element[property] = value.value as T[typeof property];
+          value.subscribe(() => {
+            element[property] = value.value as T[typeof property];
+          }, signal);
+        } else {
+          element[property] = value as T[typeof property];
+        }
       }
     } else {
       setAttribute(element, name, value, signal);

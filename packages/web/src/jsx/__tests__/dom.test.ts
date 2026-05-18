@@ -29,6 +29,19 @@ describe("render", () => {
     expect(element.className).toBe("test-class");
   });
 
+  test("keeps a reactive property in sync", () => {
+    const checked = reactive(false);
+    const [element] = render(
+      jsx("input", { type: "checkbox", $checked: checked }),
+    ) as [HTMLInputElement];
+
+    expect(element.checked).toBe(false);
+
+    checked.value = true;
+
+    expect(element.checked).toBe(true);
+  });
+
   describe("styles", () => {
     test("sets styles from an object", () => {
       const style = { backgroundColor: "red", padding: "0" };
