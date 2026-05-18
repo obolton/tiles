@@ -56,6 +56,7 @@ export const PAGE_FIELDS = {
 export const LIBRARY_PAGE_FIELDS = {
   id: true,
   title: true,
+  type: true,
   updatedAt: true,
   published: true,
   folderId: true,
