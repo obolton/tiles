@@ -1,13 +1,10 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
-import MenuItemGroup from "@/components/menus/MenuItemGroup";
-import MenuItem from "@/components/menus/MenuItem";
 import ArrowUpIcon from "@/icons/arrow-up.svg?jsx";
 import ArrowDownIcon from "@/icons/arrow-down.svg?jsx";
 import DuplicateIcon from "@/icons/duplicate.svg?jsx";
 import HiddenIcon from "@/icons/hidden.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
-import MoreIcon from "@/icons/more.svg?jsx";
 import { handleError } from "@/utils/errors";
 import type Tile from "@/models/Tile";
 
@@ -16,15 +13,15 @@ export interface TileToolsProps {
 }
 
 export default function TileTools({ tile }: TileToolsProps) {
-  function moveUp() {
+  function handleMoveUp() {
     tile.moveUp().catch(handleError);
   }
 
-  function moveDown() {
+  function handleMoveDown() {
     tile.moveDown().catch(handleError);
   }
 
-  function duplicate() {
+  function handleDuplicate() {
     tile
       .duplicate({ sectionId: tile.sectionId, beforeId: tile.next?.id ?? null })
       .catch(handleError);
@@ -34,58 +31,41 @@ export default function TileTools({ tile }: TileToolsProps) {
     tile.setHidden(!tile.hide.value).catch(handleError);
   }
 
-  function deleteTile() {
+  function handleDelete() {
     tile.delete().catch(handleError);
   }
 
   return (
-    <ToolbarGroup label="More tools">
-      <ToolbarButton
-        id={`${tile.id}-options-button`}
-        label="More options"
-        popovertarget={`${tile.id}-options`}
-        aria-haspopup="menu"
-        aria-expanded="false"
-      >
-        <MoreIcon aria-hidden="true" />
-      </ToolbarButton>
+    <>
+      <ToolbarGroup label="Move">
+        <ToolbarButton on:click={handleMoveUp}>
+          <ArrowUpIcon aria-hidden="true" />
+          Move up
+        </ToolbarButton>
+        <ToolbarButton on:click={handleMoveDown}>
+          <ArrowDownIcon aria-hidden="true" />
+          Move down
+        </ToolbarButton>
+      </ToolbarGroup>
 
-      <popover-menu id={`${tile.id}-options`}>
-        <MenuItemGroup>
-          <MenuItem icon={<ArrowUpIcon aria-hidden="true" />} on:click={moveUp}>
-            Move up
-          </MenuItem>
-          <MenuItem
-            icon={<ArrowDownIcon aria-hidden="true" />}
-            on:click={moveDown}
-          >
-            Move down
-          </MenuItem>
-        </MenuItemGroup>
+      <ToolbarGroup label="Tile actions">
+        <ToolbarButton on:click={handleDuplicate}>
+          <DuplicateIcon aria-hidden="true" />
+          Duplicate
+        </ToolbarButton>
 
-        <MenuItemGroup>
-          <MenuItem
-            icon={<DuplicateIcon aria-hidden="true" />}
-            on:click={duplicate}
-          >
-            Duplicate
-          </MenuItem>
-          <MenuItem
-            icon={<HiddenIcon aria-hidden="true" />}
-            checked={tile.hide}
-            on:click={toggleHide}
-          >
-            Hide
-          </MenuItem>
-          <MenuItem
-            icon={<TrashIcon aria-hidden="true" />}
-            destructive
-            on:click={deleteTile}
-          >
-            Delete
-          </MenuItem>
-        </MenuItemGroup>
-      </popover-menu>
-    </ToolbarGroup>
+        <ToolbarButton aria-pressed={tile.hide} on:click={toggleHide}>
+          <HiddenIcon aria-hidden="true" />
+          Hide
+        </ToolbarButton>
+      </ToolbarGroup>
+
+      <ToolbarGroup label="Delete">
+        <ToolbarButton destructive on:click={handleDelete}>
+          <TrashIcon aria-hidden="true" />
+          Delete
+        </ToolbarButton>
+      </ToolbarGroup>
+    </>
   );
 }
