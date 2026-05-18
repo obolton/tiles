@@ -1,4 +1,5 @@
 import * as Y from "yjs";
+import { generateKeyBetween } from "jittered-fractional-indexing";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import Theme from "@/models/Theme";
@@ -17,7 +18,7 @@ import type { Fill, FillUpdate } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
 import type Page from "@/models/Page";
 import type { AppRouterInputs } from "@/api/client";
-import { toParentId } from "./parentId";
+import { toParentId, parseParentId } from "./parentId";
 import type TileCollection from "./TileCollection";
 import type { TilePropertyChanges } from "@/operations";
 
@@ -128,7 +129,7 @@ export default abstract class Tile {
   readonly textColor: Reactive<Color | null>;
 
   constructor(page: Page, properties: ClientTile) {
-    const { id, type, order, dock, theme } = properties;
+    const { id, type, order, theme } = properties;
     this.page = page;
 
     this.id = id;
@@ -159,7 +160,10 @@ export default abstract class Tile {
     this.frame = this.bind<FrameStyle | null>("frame", null);
     this.cornerRadius = this.bind<number | null>("cornerRadius", null);
     this.hide = this.bind("hide", false);
-    this.dock = reactive(dock);
+    this.dock = this.parentId.derive((parentId) => {
+      const parent = parseParentId(parentId);
+      return parent.type === "dock" ? parent.edge : null;
+    });
     this.theme = reactive(theme ? new Theme(theme) : null);
     this.textColor = this.bind<Color | null>("textColor", null);
     this.background = this.bind<Fill | null>("background", null);
@@ -282,31 +286,11 @@ export default abstract class Tile {
   }
 
   /**
-   * Moves the tile to a new position within a section or the root tile collection.
-   */
-  protected applyPosition(
-    sectionId: string | null | undefined,
-    beforeId: string | null | undefined,
-  ) {
-    if (sectionId === undefined && beforeId === undefined) {
-      return;
-    }
-
-    const targetSection =
-      sectionId !== undefined && sectionId !== null
-        ? this.page.getSection(sectionId)
-        : null;
-    const collection = targetSection?.tiles ?? this.page.tiles;
-    collection.insertBefore(beforeId ?? null, this);
-  }
-
-  /**
    * Applies changes to reactive values.
    * Used by executors for undo/redo (does not record a new operation).
+   * Placement (parentId/order) is Y.Doc-authoritative and not handled here.
    */
   applyUpdate(changes: TilePropertyChanges) {
-    this.applyPosition(changes.sectionId, changes.beforeId);
-
     if (changes.x !== undefined) {
       this.x.value = changes.x;
     }
@@ -334,9 +318,6 @@ export default abstract class Tile {
     if (changes.hide !== undefined) {
       this.hide.value = changes.hide;
     }
-    if (changes.dock !== undefined) {
-      this.dock.value = changes.dock;
-    }
     if (changes.rowSpan !== undefined) {
       this.rowSpan.value = changes.rowSpan;
     }
@@ -360,8 +341,43 @@ export default abstract class Tile {
     }
   }
 
+  /**
+   * A fractional order key positioning this tile before `beforeId` (or last
+   * when null/missing) within `parentId`'s collection. Single pass; this tile
+   * is skipped so a within-collection move computes the correct gap.
+   */
+  private orderBefore(
+    parentId: string | null,
+    beforeId: string | null | undefined,
+  ): string {
+    let prev: Tile | undefined;
+    let next: Tile | undefined;
+
+    for (const item of this.page.placement.getCollection(parentId).value) {
+      if (item === this) {
+        continue;
+      }
+      if (beforeId != null && item.id === beforeId) {
+        next = item;
+        break;
+      }
+      prev = item;
+    }
+
+    return generateKeyBetween(
+      prev?.order.value ?? null,
+      next?.order.value ?? null,
+    );
+  }
+
+  /**
+   * Moves and/or repositions the tile. Placement (`parentId`/`order`) is
+   * written to the Y.Doc only; the controller's observer reconciles the
+   * collections. Geometry still persists to Postgres until the projection
+   * lands. No tRPC and no undo record for the placement itself.
+   */
   move({
-    sectionId,
+    parentId,
     beforeId,
     x,
     y,
@@ -370,7 +386,7 @@ export default abstract class Tile {
     lat,
     long,
   }: {
-    sectionId?: string | null;
+    parentId?: string | null;
     beforeId?: string | null;
     x?: number;
     y?: number;
@@ -379,89 +395,52 @@ export default abstract class Tile {
     lat?: number | null;
     long?: number | null;
   }) {
-    // Capture inverse values before making changes
-    const inverse: TilePropertyChanges = {};
-    const changes: TilePropertyChanges = {};
+    const reparenting =
+      parentId !== undefined && parentId !== this.parentId.value;
+    const repositioning = beforeId !== undefined;
 
-    let frame: FrameStyle | null | undefined;
-
-    if (
-      (sectionId !== undefined && sectionId !== this.sectionId) ||
-      beforeId !== undefined
-    ) {
-      // Capture current position for undo
-      inverse.sectionId = this.sectionId;
-      inverse.beforeId = this.next?.id ?? null;
-      changes.sectionId = sectionId;
-      changes.beforeId = beforeId;
-
-      if (sectionId) {
-        const section = this.page.getSection(sectionId);
-        section.tiles.insertBefore(beforeId ?? null, this);
-
-        // Reset FULL_BLEED frame when moving to incompatible section
-        if (
-          this.frame.value === "FULL_BLEED" &&
-          (section.layout.value === "GRID" ||
-            section.layout.value === "FREEFORM" ||
-            section.layout.value === "MAP")
-        ) {
-          inverse.frame = this.frame.value;
-          this.frame.value = null;
-          frame = null;
-          changes.frame = null;
-        }
-      } else {
-        this.page.tiles.insertBefore(beforeId ?? null, this);
+    const apply = () => {
+      if (reparenting || repositioning) {
+        const targetParentId =
+          parentId !== undefined ? parentId : this.parentId.value;
+        this.order.value = this.orderBefore(targetParentId, beforeId);
+        this.parentId.value = targetParentId;
       }
+
+      if (typeof x === "number") {
+        this.x.value = x;
+      }
+      if (typeof y === "number") {
+        this.y.value = y;
+      }
+      if (width !== undefined) {
+        this.width.value = width;
+      }
+      if (typeof height === "number") {
+        this.height.value = height;
+      }
+      if (lat !== undefined || long !== undefined) {
+        const prev = this.coordinates.value;
+        const newLat = lat ?? prev?.lat ?? null;
+        const newLong = long ?? prev?.long ?? null;
+        this.coordinates.value =
+          newLat != null && newLong != null
+            ? { lat: newLat, long: newLong }
+            : null;
+      }
+    };
+
+    if (this.binding) {
+      this.binding.transact(apply, LOCAL_ORIGIN);
+    } else {
+      apply();
     }
 
-    if (typeof x === "number") {
-      inverse.x = this.x.value;
-      this.x.value = x;
-      changes.x = x;
-    }
-    if (typeof y === "number") {
-      inverse.y = this.y.value;
-      this.y.value = y;
-      changes.y = y;
-    }
-    if (width !== undefined) {
-      inverse.width = this.width.value;
-      this.width.value = width;
-      changes.width = width;
-    }
-    if (typeof height === "number") {
-      inverse.height = this.height.value;
-      this.height.value = height;
-      changes.height = height;
-    }
-    if (lat !== undefined || long !== undefined) {
-      const prev = this.coordinates.value;
-      inverse.lat = prev?.lat ?? null;
-      inverse.long = prev?.long ?? null;
-      const newLat = lat ?? prev?.lat ?? null;
-      const newLong = long ?? prev?.long ?? null;
-      this.coordinates.value =
-        newLat != null && newLong != null
-          ? { lat: newLat, long: newLong }
-          : null;
-      changes.lat = newLat;
-      changes.long = newLong;
-    }
-
-    this.recordUpdate(changes, inverse);
-    return this.updateTile({
-      sectionId,
-      beforeId,
-      x,
-      y,
-      width,
-      height,
-      lat,
-      long,
-      frame,
-    });
+    const geometry = { x, y, width, height, lat, long };
+    const hasGeometry = Object.values(geometry).some(
+      (value) => value !== undefined,
+    );
+    return hasGeometry ? this.updateTile(geometry) : Promise.resolve();
   }
 
   setSizing(sizing: Sizing) {
@@ -576,30 +555,6 @@ export default abstract class Tile {
     return this.updateTile({ hide });
   }
 
-  async setDock(dock: DockEdge | null, beforeId?: string | null) {
-    if (dock === this.dock.value && beforeId === undefined) {
-      return;
-    }
-
-    // Capture inverse values
-    const inverse = {
-      dock: this.dock.value,
-      sectionId: this.sectionId,
-      beforeId: this.next?.id ?? null,
-    };
-
-    this.dock.value = dock;
-
-    if (dock) {
-      this.page.dockedTiles[dock].insertBefore(beforeId ?? null, this);
-    } else {
-      this.page.tiles.insertBefore(beforeId ?? null, this);
-    }
-
-    this.recordUpdate({ dock, beforeId }, inverse);
-    await this.updateTile({ dock, beforeId });
-  }
-
   async setTheme(themeId: string | null) {
     const oldThemeId = this.theme.value?.id ?? null;
     this.recordUpdate({ themeId }, { themeId: oldThemeId });
@@ -625,45 +580,15 @@ export default abstract class Tile {
 
   async moveUp() {
     const previous = this.previous;
-    if (!previous) {
-      return;
+    if (previous) {
+      await this.move({ beforeId: previous.id });
     }
-
-    // For undo, we need to move back after the current previous tile
-    const inverseBeforeId = this.next?.id ?? null;
-    const beforeId = previous.id;
-
-    this.parent?.insertBefore(beforeId, this);
-
-    this.recordUpdate(
-      { sectionId: this.sectionId, beforeId },
-      { sectionId: this.sectionId, beforeId: inverseBeforeId },
-    );
-    return this.updateTile({
-      sectionId: this.sectionId,
-      beforeId,
-    });
   }
 
   async moveDown() {
     const next = this.next;
-    if (!next) {
-      return;
+    if (next) {
+      await this.move({ beforeId: next.next?.id ?? null });
     }
-
-    // For undo, we need to move back before the tile that was after us
-    const inverseBeforeId = next.id;
-    const beforeId = next.next?.id ?? null;
-
-    this.parent?.insertBefore(beforeId, this);
-
-    this.recordUpdate(
-      { sectionId: this.sectionId, beforeId },
-      { sectionId: this.sectionId, beforeId: inverseBeforeId },
-    );
-    return this.updateTile({
-      sectionId: this.sectionId,
-      beforeId,
-    });
   }
 }
