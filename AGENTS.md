@@ -23,23 +23,24 @@ The user experience is intended to be highly intuitive, usable, accessible and d
     - `src/routes`: Routing
     - `src/jsx`: JSX runtime
     - `src/utils`: Utilities
-  - `packages/image-upload-worker`: Cloudflare Worker handling media uploads.
+  - `packages/image-upload-worker`: Cloudflare Worker for media uploads.
 - Shared config files live in the repo root.
+- Uses `pnpm` for package management and scripts.
 
 ## Scripts
 
+- `pnpm generate`: Generate types for all packages (e.g. CSS Modules, Prisma client, Cloudflare workers).
 - `pnpm check`: Check types, linting and formatting for all packages.
 - `pnpm typecheck`: Check types only.
 - `pnpm lint`: Lint TypeScript and CSS files.
 - `pnpm test`: Run Vitest test suites.
 - `pnpm build`: Build all packages in dependency order.
-- `pnpm format` and `pnpm format:check`: Format files with Prettier or check formatting.
+- `pnpm format` Format files with Prettier.
 - `pnpm storybook`: Run Storybook for UI component development.
-- `pnpm generate`: Generate types for all packages (e.g. Prisma client, Cloudflare workers).
 
 ### Important notes
 
-- Scripts can be run for a specific package using the `--filter <package>` option, e.g. `pnpm --filter api test` to run the tests for the `api` package.
+- All scripts are fast, so prefer running them across the whole workspace. However, scripts can be run for a specific package using the pnpm `--filter <package>` option, e.g. `pnpm --filter api test` to run tests for the `api` package only.
 
 ## Coding Style
 
@@ -47,9 +48,8 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - Use the `@/*` path alias that resolves to each package's `src` directory; avoid relative `../../` imports.
 - Prefer pure functions and typed helpers; keep tRPC routers, JSX components, and Workers focused on orchestration and call shared utilities.
 - Prefer `instanceof` checks over type assertions for type narrowing.
-- Use CSS modules for component-specific styles, with a `.module.css` file adjacent to the JSX component file.
+- Use CSS Modules for component-specific styles, with a `.module.css` file adjacent to the JSX component file.
 - Use shared class names and nested rules to reduce duplication in CSS files.
-- Run `pnpm format:check` before committing.
 
 ## Testing Guidelines
 
@@ -70,12 +70,6 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 
 - Use `__tests__/*.stories.tsx` files.
 
-## Commit & Pull Request Guidelines
-
-- Follow the existing short, imperative commit style (`Add column editing events`, `Update seed script`); keep the subject under ~72 characters and skip trailing punctuation.
-- Each PR should include: what changed and why, manual test notes or screenshots for UI tweaks, linked issue numbers, and any migration or seed steps required.
-- Before requesting review, ensure `pnpm check` and `pnpm test` succeed.
-
 ## Web Components
 
 - Use Shadow DOM to isolate structure and style, with adopted stylesheets imported via `?inline`.
@@ -88,4 +82,4 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 
 ## Environment & Security Notes
 
-- During development, environment variables are loaded from an untracked `.env` file in the workspace root. Never commit secrets.
+- During development, environment variables are loaded from an untracked `.env` file. Never commit secrets.
