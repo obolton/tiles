@@ -13,7 +13,7 @@ import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import { toCSSColor, type Color } from "@/utils/color";
 import { themesCache } from "@/utils/cache";
-import { getThemeStyles } from "@/utils/themes";
+import { getThemeStyles, loadThemeFonts } from "@/utils/themes";
 import { loadFonts } from "@/utils/fonts";
 import { getFontConfig, type FontId } from "api/config/fonts";
 import type { HorizontalAlignment } from "api/types/pages";
@@ -48,9 +48,8 @@ export default function StyleTab({ page }: StyleTabProps) {
   async function setTheme(newThemeId: string | null) {
     const newTheme = newThemeId ? themesCache.getById(newThemeId) : null;
 
-    if (newTheme) {
-      const themeFonts = newTheme.fonts.value;
-      await loadFonts(themeFonts.heading, themeFonts.body, themeFonts.code);
+    if (newThemeId) {
+      await loadThemeFonts(newThemeId);
     }
 
     const bgColor = backgroundColor.value;

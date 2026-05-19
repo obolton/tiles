@@ -2,6 +2,8 @@ import ThemeModel from "@/models/Theme";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import { toCSSColor, type Color } from "@/utils/color";
 import { getFontConfig, type FontConfig, type FontId } from "api/config/fonts";
+import { themesCache } from "@/utils/cache";
+import { loadFonts } from "@/utils/fonts";
 import type { Theme } from "api/types/themes";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
 import type { Fill } from "@/components/fills/types";
@@ -142,4 +144,15 @@ export function getThemeStyles(
   overrides: StyleOverrides = {},
 ): ReturnType<typeof toCSSProperties> {
   return toCSSProperties(resolveThemeStyles(theme, overrides));
+}
+
+/**
+ * Loads the fonts for a theme.
+ */
+export async function loadThemeFonts(themeId: string) {
+  const theme = themesCache.getById(themeId);
+  if (theme) {
+    const fonts = theme.fonts.value;
+    await loadFonts(fonts.heading, fonts.body, fonts.code);
+  }
 }

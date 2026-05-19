@@ -7,9 +7,7 @@ import TextColorIcon from "@/icons/text-color.svg?jsx";
 import FillPicker from "@/components/fills/FillPicker";
 import AnimationPicker from "@/components/animations/AnimationPicker";
 import FramePicker from "@/components/frames/FramePicker";
-import { resolveTheme, getThemeColors } from "@/utils/themes";
-import { loadFonts } from "@/utils/fonts";
-import { themesCache } from "@/utils/cache";
+import { resolveTheme, getThemeColors, loadThemeFonts } from "@/utils/themes";
 import { handleError } from "@/utils/errors";
 import type { JSX } from "@/jsx/jsx";
 import type Tile from "@/models/Tile";
@@ -28,11 +26,7 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
 
   async function setTheme(themeId: string | null) {
     if (themeId) {
-      const newTheme = themesCache.getById(themeId);
-      if (newTheme) {
-        const themeFonts = newTheme.fonts.value;
-        await loadFonts(themeFonts.heading, themeFonts.body, themeFonts.code);
-      }
+      await loadThemeFonts(themeId);
     }
     tile.setTheme(themeId).catch(handleError);
   }
