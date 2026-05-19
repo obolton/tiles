@@ -125,53 +125,11 @@ export async function getTileOrder(
   return generateKeyBetween(result?.a ?? null, result?.b ?? null);
 }
 
-export async function getTileSectionId(
-  transaction: PrismaTransactionClient,
-  { id, pageId }: { id: string; pageId: string },
-) {
-  const { sectionId } = await transaction.tile.findUniqueOrThrow({
-    where: { id, pageId },
-    select: { sectionId: true },
-  });
-  return sectionId;
-}
-
 export async function updateTile(
-  {
-    pageId,
-    id,
-    sectionId,
-    beforeId,
-    sizing,
-    width,
-    height,
-    x,
-    y,
-    rowSpan,
-    startDate,
-    endDate,
-    lat,
-    long,
-    animation,
-    frame,
-    cornerRadius,
-    hide,
-    themeId,
-    dock,
-    textColor,
-    background,
-  }: UpdateTileSchema,
+  { pageId, id, themeId, background }: UpdateTileSchema,
   { workspaceId }: AuthenticatedPageProcedureContext,
 ) {
   return prisma.$transaction(async (transaction) => {
-    // Validate section ID
-    if (sectionId) {
-      await transaction.section.findUniqueOrThrow({
-        where: { pageId, id: sectionId },
-        select: { id: true },
-      });
-    }
-
     // Validate theme belongs to same workspace
     if (themeId) {
       await transaction.theme.findUniqueOrThrow({
@@ -180,42 +138,10 @@ export async function updateTile(
       });
     }
 
-    let order = undefined;
-    if (beforeId !== undefined) {
-      const orderSectionId =
-        sectionId === undefined
-          ? await getTileSectionId(transaction, { id, pageId })
-          : sectionId;
-      order = await getTileOrder(
-        transaction,
-        pageId,
-        orderSectionId,
-        beforeId ?? null,
-      );
-    }
-
     return transaction.tile.update({
       where: { pageId, id },
       data: {
-        sectionId,
-        order,
-        sizing,
-        width,
-        height,
-        rowSpan,
-        x,
-        y,
-        startDate: startDate && new Date(startDate),
-        endDate: endDate && new Date(endDate),
-        lat,
-        long,
-        animation,
-        frame,
-        cornerRadius,
-        hide,
         themeId,
-        dock,
-        ...getTextColorProperties(textColor),
         ...getBackgroundProperties(background),
       },
       select: TILE_FIELDS,

@@ -4,9 +4,8 @@ import { TileSchema } from "@/schema/Tile";
 export const UpdateTileSchema = z.object({
   pageId: z.uuid(),
   id: z.uuid(),
-  sectionId: z.uuid().nullable().optional(),
-  beforeId: z.uuid().nullable().optional(),
-  ...TileSchema.shape,
+  themeId: TileSchema.shape.themeId,
+  background: TileSchema.shape.background,
 });
 export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 
