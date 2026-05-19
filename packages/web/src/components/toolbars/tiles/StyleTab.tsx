@@ -9,6 +9,7 @@ import AnimationPicker from "@/components/animations/AnimationPicker";
 import FramePicker from "@/components/frames/FramePicker";
 import { resolveTheme, getThemeColors, loadThemeFonts } from "@/utils/themes";
 import { handleError } from "@/utils/errors";
+import { viewTransition } from "@/utils/transitions";
 import type { JSX } from "@/jsx/jsx";
 import type Tile from "@/models/Tile";
 
@@ -36,7 +37,9 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
       <ToolbarGroup label="Layout">
         <AspectRatioSelect
           value={tile.sizing}
-          onChange={(d) => tile.setSizing(d).catch(handleError)}
+          onChange={(sizing) =>
+            viewTransition(() => tile.setSizing(sizing).catch(handleError))
+          }
           showAuto={
             tile.type === "TEXT" ||
             tile.type === "TABLE" ||
@@ -61,7 +64,7 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
           icon={<TextColorIcon aria-hidden="true" />}
           label="Text"
           value={textColor}
-          onChange={(color) => tile.setTextColor(color)}
+          onChange={(color) => viewTransition(() => tile.setTextColor(color))}
           themeColors={themeColors}
         />
 
@@ -69,7 +72,9 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
           id={`${id}-background`}
           label="Background"
           value={background}
-          onChange={(background) => tile.setBackground(background)}
+          onChange={(background) =>
+            viewTransition(() => tile.setBackground(background))
+          }
           aria-pressed={background}
           themeColors={themeColors}
         />
@@ -79,7 +84,10 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
           onChange={(animation) => tile.setAnimation(animation)}
         />
 
-        <FramePicker tile={tile} onChange={(frame) => tile.setFrame(frame)} />
+        <FramePicker
+          tile={tile}
+          onChange={(frame) => viewTransition(() => tile.setFrame(frame))}
+        />
       </ToolbarGroup>
 
       {children}
