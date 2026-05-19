@@ -13,10 +13,3 @@ export const CreateSectionSchema = z.strictObject({
   ...SectionSchema.shape,
 });
 export type CreateSectionSchema = z.infer<typeof CreateSectionSchema>;
-
-export const UpdateSectionSchema = z.strictObject({
-  pageId: z.uuid(),
-  id: z.uuid(),
-  ...SectionSchema.shape,
-});
-export type UpdateSectionSchema = z.infer<typeof UpdateSectionSchema>;

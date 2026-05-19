@@ -1,6 +1,6 @@
 import prisma from "@/database/prisma";
 import { createTile } from "../tiles/tiles";
-import type { CreateSectionSchema, UpdateSectionSchema } from "./schema";
+import type { CreateSectionSchema } from "./schema";
 import { SECTION_FIELDS } from "./fields";
 
 export async function createSection({
@@ -32,25 +32,4 @@ export async function createSection({
   );
 
   return { ...tile, ...section! };
-}
-
-export async function updateSection({
-  pageId,
-  id,
-  layout,
-  columns,
-  mapStyle,
-}: UpdateSectionSchema) {
-  return prisma.section.update({
-    where: {
-      pageId,
-      id,
-    },
-    data: {
-      layout,
-      columns,
-      mapStyle,
-    },
-    select: SECTION_FIELDS,
-  });
 }
