@@ -28,7 +28,7 @@ export default class Section extends Tile {
     });
     const section = new Section(page, properties);
     const { editor } = section;
-    editor.addTile(section, null, data.beforeId);
+    editor.addTile(section);
     editor.recordOperation({
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
       reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },

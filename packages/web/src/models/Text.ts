@@ -22,7 +22,7 @@ export default class Text extends Tile {
     });
     const text = new Text(page, properties);
     const { editor } = text;
-    editor.addTile(text, properties.sectionId, data.beforeId);
+    editor.addTile(text);
     editor.recordOperation({
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
       reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },

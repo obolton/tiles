@@ -42,7 +42,7 @@ export default class Chart extends Tile {
     });
     const chart = new Chart(page, properties);
     const { editor } = chart;
-    editor.addTile(chart, properties.sectionId, data.beforeId);
+    editor.addTile(chart);
     editor.recordOperation({
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
       reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },

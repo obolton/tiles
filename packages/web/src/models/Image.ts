@@ -33,7 +33,7 @@ export default class Image extends Tile {
 
     const image = new Image(page, properties);
     const { editor } = image;
-    editor.addTile(image, properties.sectionId, data.beforeId);
+    editor.addTile(image);
     editor.recordOperation({
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
       reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },

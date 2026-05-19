@@ -38,12 +38,12 @@ export default class Link extends Tile {
     switch (properties.type) {
       case "LINK": {
         const link = new Link(page, properties);
-        editor.addTile(link, properties.sectionId, data.beforeId);
+        editor.addTile(link);
         break;
       }
       case "VIDEO": {
         const video = new Video(page, properties);
-        editor.addTile(video, properties.sectionId, data.beforeId);
+        editor.addTile(video);
         break;
       }
     }

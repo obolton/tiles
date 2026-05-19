@@ -43,7 +43,7 @@ export default class Table extends Tile {
     });
     const table = new Table(page, properties);
     const { editor } = table;
-    editor.addTile(table, properties.sectionId, data.beforeId);
+    editor.addTile(table);
     editor.recordOperation({
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
       reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },

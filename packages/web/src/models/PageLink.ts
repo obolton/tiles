@@ -19,7 +19,7 @@ export default class PageLink extends Tile {
     });
     const pageLink = new PageLink(page, properties);
     const { editor } = pageLink;
-    editor.addTile(pageLink, properties.sectionId, data.beforeId);
+    editor.addTile(pageLink);
     editor.recordOperation({
       apply: { type: "tile.restore", data: { snapshots: [properties] } },
       reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
