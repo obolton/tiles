@@ -12,9 +12,6 @@ vi.mock("@/api/client", () => ({
       create: {
         mutate: vi.fn(),
       },
-      update: {
-        mutate: vi.fn(),
-      },
     },
   },
 }));
@@ -22,11 +19,9 @@ vi.mock("@/api/client", () => ({
 describe("Section", () => {
   const editor = Editor.init(PAGE);
   const createMock = vi.mocked(client.sections.create.mutate);
-  const updateMock = vi.mocked(client.sections.update.mutate);
 
   afterEach(() => {
     createMock.mockReset();
-    updateMock.mockReset();
   });
 
   describe("create", () => {
@@ -83,105 +78,5 @@ describe("Section", () => {
     expect(section.layout.value).toBe(SECTION_TILE.layout);
     expect(section.tiles).toBeDefined();
     expect(section.tiles.sectionId).toBe(SECTION_TILE.id);
-  });
-
-  describe("setLayout", () => {
-    test("updates the layout and persists it", async () => {
-      const section = new Section(editor.page, SECTION_TILE);
-      const layout: Layout = "FREEFORM";
-
-      updateMock.mockResolvedValue({
-        ...SECTION_TILE,
-        layout,
-      });
-
-      await section.setLayout(layout);
-
-      expect(section.layout.value).toBe(layout);
-      expect(updateMock).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: SECTION_TILE.id,
-        layout,
-      });
-    });
-
-    test("updates layout to GRID", async () => {
-      const section = new Section(editor.page, {
-        ...SECTION_TILE,
-        layout: "VERTICAL",
-      });
-      const layout: Layout = "GRID";
-
-      updateMock.mockResolvedValue({
-        ...SECTION_TILE,
-        layout,
-      });
-
-      await section.setLayout(layout);
-
-      expect(section.layout.value).toBe(layout);
-      expect(updateMock).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: SECTION_TILE.id,
-        layout,
-      });
-    });
-
-    test("updates layout to HORIZONTAL", async () => {
-      const section = new Section(editor.page, {
-        ...SECTION_TILE,
-        layout: "GRID",
-      });
-      const layout: Layout = "HORIZONTAL";
-
-      updateMock.mockResolvedValue({
-        ...SECTION_TILE,
-        layout,
-      });
-
-      await section.setLayout(layout);
-
-      expect(section.layout.value).toBe(layout);
-      expect(updateMock).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: SECTION_TILE.id,
-        layout,
-      });
-    });
-  });
-
-  describe("setColumns", () => {
-    test("updates the columns and persists it", async () => {
-      const section = new Section(editor.page, SECTION_TILE);
-
-      updateMock.mockResolvedValue({ ...SECTION_TILE, columns: 3 });
-
-      await section.setColumns(3);
-
-      expect(section.columns.value).toBe(3);
-      expect(updateMock).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: SECTION_TILE.id,
-        columns: 3,
-      });
-    });
-
-    test("sets columns to null for default", async () => {
-      const section = new Section(editor.page, {
-        ...SECTION_TILE,
-        columns: 6,
-      });
-
-      updateMock.mockResolvedValue({ ...SECTION_TILE, columns: null });
-
-      await section.setColumns(null);
-
-      expect(section.columns.value).toBeNull();
-      expect(updateMock).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: SECTION_TILE.id,
-        columns: null,
-      });
-    });
   });
 });

@@ -1,6 +1,6 @@
 import Tile from "./Tile";
 import type TileCollection from "./TileCollection";
-import { reactive, type Reactive } from "@/utils/reactivity";
+import type { Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import type { ClientSectionTile, Layout, MapStyle } from "api/types/tiles";
 import type Page from "@/models/Page";
@@ -40,9 +40,9 @@ export default class Section extends Tile {
     super(page, properties);
 
     const { layout, mapStyle, columns } = properties;
-    this.layout = reactive(layout);
-    this.mapStyle = reactive(mapStyle);
-    this.columns = reactive(columns);
+    this.layout = this.bind<Layout>("layout", layout);
+    this.mapStyle = this.bind<MapStyle | null>("mapStyle", mapStyle);
+    this.columns = this.bind<number | null>("columns", columns);
   }
 
   serialize(): ClientSectionTile {
@@ -53,63 +53,5 @@ export default class Section extends Tile {
       columns: this.columns.value,
       mapStyle: this.mapStyle.value,
     };
-  }
-
-  private update(
-    properties: Omit<AppRouterInputs["sections"]["update"], "pageId" | "id">,
-  ) {
-    return client.sections.update.mutate({
-      ...properties,
-      pageId: this.page.id,
-      id: this.id,
-    });
-  }
-
-  setLayout(layout: Layout) {
-    const oldLayout = this.layout.value;
-    this.layout.value = layout;
-    this.editor.recordOperation({
-      apply: {
-        type: "section.setLayout",
-        data: { tileId: this.id, layout },
-      },
-      reverse: {
-        type: "section.setLayout",
-        data: { tileId: this.id, layout: oldLayout },
-      },
-    });
-    return this.update({ layout });
-  }
-
-  setMapStyle(mapStyle: MapStyle) {
-    const oldMapStyle = this.mapStyle.value;
-    this.mapStyle.value = mapStyle;
-    this.editor.recordOperation({
-      apply: {
-        type: "section.setMapStyle",
-        data: { sectionId: this.id, mapStyle },
-      },
-      reverse: {
-        type: "section.setMapStyle",
-        data: { sectionId: this.id, mapStyle: oldMapStyle },
-      },
-    });
-    return this.update({ mapStyle });
-  }
-
-  setColumns(columns: number | null) {
-    const oldColumns = this.columns.value;
-    this.columns.value = columns;
-    this.editor.recordOperation({
-      apply: {
-        type: "section.setColumns",
-        data: { tileId: this.id, columns },
-      },
-      reverse: {
-        type: "section.setColumns",
-        data: { tileId: this.id, columns: oldColumns },
-      },
-    });
-    return this.update({ columns });
   }
 }
