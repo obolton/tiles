@@ -20,7 +20,7 @@ export interface MapTabProps {
 export default function MapTab({ section }: MapTabProps) {
   function changeMapStyle(event: Event) {
     const style = (event.currentTarget as ListSelect).value as MapStyle;
-    section.setMapStyle(style);
+    section.mapStyle.value = style;
   }
 
   function addPlace() {

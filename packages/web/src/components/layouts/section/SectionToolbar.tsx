@@ -28,7 +28,9 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
   async function setLayout(event: Event) {
     const layout = (event.currentTarget as ListSelect).value as Layout;
     try {
-      viewTransition(() => section.setLayout(layout));
+      viewTransition(() => {
+        section.layout.value = layout;
+      });
     } catch (error) {
       handleError(error);
     }
@@ -84,9 +86,9 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
                 value={section.columns.derive((c) => c ?? 4)}
                 min={1}
                 max={12}
-                onChange={(columns) =>
-                  section.setColumns(columns).catch(handleError)
-                }
+                onChange={(columns) => {
+                  section.columns.value = columns;
+                }}
               />
             </ToolbarGroup>
           </If>
