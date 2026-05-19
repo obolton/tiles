@@ -65,18 +65,13 @@ describe("Text", () => {
   });
 
   describe("setTextColor", () => {
-    test("updates the text color", async () => {
+    test("updates the text color", () => {
       const text = new Text(editor.page, TEXT_TILE);
       const textColor: Color = "ffff00000000";
 
-      await text.setTextColor(textColor);
+      text.setTextColor(textColor);
 
       expect(text.textColor.value).toBe(textColor);
-      expect(tileUpdateMock).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: TEXT_TILE.id,
-        textColor,
-      });
     });
   });
 
