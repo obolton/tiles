@@ -13,6 +13,7 @@
   container-type: size;
   outline: 1px solid transparent;
   outline-offset: 2px;
+  view-transition-name: match-element;
   transition:
     outline-color var(--animation-duration-short) var(--easing),
     opacity var(--animation-duration) var(--easing);

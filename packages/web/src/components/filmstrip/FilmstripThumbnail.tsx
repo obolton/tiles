@@ -10,7 +10,7 @@ export interface FilmstripThumbnailProps {
 }
 
 export default function FilmstripThumbnail({ tile }: FilmstripThumbnailProps) {
-  const frameStyle = combine(
+  const style = combine(
     {
       sizing: tile.sizing,
       width: tile.width,
@@ -27,14 +27,14 @@ export default function FilmstripThumbnail({ tile }: FilmstripThumbnailProps) {
 
   return (
     <div
+      role="option"
+      aria-controls={tile.id}
+      aria-selected="false"
       classList={{
         [styles.thumbnail]: true,
         [styles.hide]: tile.hide,
       }}
-      role="option"
-      aria-controls={tile.id}
-      aria-selected="false"
-      style={frameStyle}
+      style={style}
     >
       <div className={styles.content} inert>
         {getTileThumbnail(tile)}
