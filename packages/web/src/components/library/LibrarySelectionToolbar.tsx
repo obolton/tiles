@@ -88,8 +88,8 @@ export default function LibrarySelectionToolbar({
   return (
     <floating-toolbar
       className="primary"
-      data-tooltip-position="bottom"
       aria-label="Bulk actions"
+      data-tooltip-position="top"
     >
       <toolbar-tab label="Actions">
         <ToolbarGroup label="Selection">
@@ -111,8 +111,9 @@ export default function LibrarySelectionToolbar({
           ) : null}
 
           {restore ? (
-            <ToolbarButton label="Restore" on:click={restoreSelected}>
+            <ToolbarButton on:click={restoreSelected}>
               <UndoIcon aria-hidden="true" />
+              Restore
             </ToolbarButton>
           ) : null}
 
