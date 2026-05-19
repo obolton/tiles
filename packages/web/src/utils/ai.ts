@@ -42,7 +42,7 @@ export async function submitPrompt(prompt: string) {
           chat.append(event.message);
         } else if ("artifact" in event) {
           const tile = editor.page.createTile(event.artifact);
-          editor.addTile(tile, event.artifact.sectionId);
+          editor.addTile(tile);
           editor.addReference(tile);
           chat.addAction({
             id: event.artifact.id,

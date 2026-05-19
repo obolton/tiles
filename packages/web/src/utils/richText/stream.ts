@@ -402,7 +402,7 @@ export async function insertFromStream(stream: AsyncIterable<StreamEvent>) {
     onEvent(event) {
       if ("artifact" in event) {
         const tile = editor.page.createTile(event.artifact);
-        editor.addTile(tile, event.artifact.sectionId);
+        editor.addTile(tile);
       } else if ("action" in event) {
         handleStreamAction(event.action);
       }

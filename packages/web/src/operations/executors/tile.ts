@@ -27,7 +27,7 @@ const restoreTiles: ActionExecutor<RestoreTilesAction> = async (
 ) => {
   for (const snapshot of snapshots) {
     const tile = editor.page.createTile(snapshot);
-    editor.addTile(tile, snapshot.sectionId, null, false);
+    editor.addTile(tile, false);
   }
 };
 

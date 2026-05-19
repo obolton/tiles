@@ -47,7 +47,7 @@ describe("Section", () => {
     test("creates a section before a specified tile", async () => {
       const layout: Layout = "VERTICAL";
       const existingSection = new Section(editor.page, SECTION_TILE);
-      editor.addTile(existingSection, null, null, false);
+      editor.addTile(existingSection, false);
 
       const newSectionId = "new-section-id";
       createMock.mockResolvedValue({
