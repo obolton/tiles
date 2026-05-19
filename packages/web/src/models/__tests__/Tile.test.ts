@@ -44,7 +44,7 @@ describe("Tile", () => {
   describe("duplicate", () => {
     test("duplicates the tile before the specified tile", async () => {
       const tile = new TestTile(editor.page, { ...TILE, sectionId: null });
-      editor.addTile(tile, null, null, false);
+      editor.addTile(tile, false);
 
       const duplicatedTile = {
         ...TILE,
@@ -56,7 +56,7 @@ describe("Tile", () => {
       ]);
 
       const result = await tile.duplicate({
-        sectionId: null,
+        parentId: null,
         beforeId: tile.id,
       });
 
@@ -76,7 +76,7 @@ describe("Tile", () => {
         id: "tile-for-null-test",
         sectionId: null,
       });
-      editor.addTile(tile, null, null, false);
+      editor.addTile(tile, false);
 
       const duplicatedTile = {
         ...TILE,
@@ -87,7 +87,7 @@ describe("Tile", () => {
         duplicatedTile,
       ]);
 
-      const result = await tile.duplicate({ sectionId: null, beforeId: null });
+      const result = await tile.duplicate({ parentId: null, beforeId: null });
 
       expect(client.tiles.duplicate.mutate).toHaveBeenCalledWith({
         pageId: PAGE.id,
@@ -113,7 +113,7 @@ describe("Tile", () => {
     expect(tile.page).toBe(editor.page);
     expect(tile.id).toBe(TILE.id);
     expect(tile.type).toBe(TILE.type);
-    expect(tile.sectionId).toBeNull();
+    expect(tile.parentId.value).toBe(TILE.sectionId);
     expect(tile.order.value).toBe(TILE.order);
     expect(tile.sizing.value).toBe(TILE.sizing);
     expect(tile.x.value).toBe(TILE.x);

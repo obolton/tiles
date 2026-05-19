@@ -123,7 +123,6 @@ export default abstract class Tile {
   readonly frame: Reactive<FrameStyle | null>;
   readonly cornerRadius: Reactive<number | null>;
   readonly hide: Reactive<boolean>;
-  readonly dock: Reactive<DockEdge | null>;
   readonly theme: Reactive<Theme | null>;
   readonly background: Reactive<Fill | null>;
   readonly textColor: Reactive<Color | null>;
@@ -160,10 +159,6 @@ export default abstract class Tile {
     this.frame = this.bind<FrameStyle | null>("frame", null);
     this.cornerRadius = this.bind<number | null>("cornerRadius", null);
     this.hide = this.bind("hide", false);
-    this.dock = this.parentId.derive((parentId) => {
-      const parent = parseParentId(parentId);
-      return parent.type === "dock" ? parent.edge : null;
-    });
     this.theme = reactive(theme ? new Theme(theme) : null);
     this.textColor = this.bind<Color | null>("textColor", null);
     this.background = this.bind<Fill | null>("background", null);
@@ -177,10 +172,11 @@ export default abstract class Tile {
   }
 
   serialize(): ClientTileBase {
+    const parent = parseParentId(this.parentId.value);
     return {
       id: this.id,
       type: this.type,
-      sectionId: this.sectionId,
+      sectionId: parent.type === "section" ? parent.sectionId : null,
       theme: this.theme.value?.serialize() ?? null,
       order: this.order.value,
       sizing: this.sizing.value,
@@ -197,7 +193,7 @@ export default abstract class Tile {
       animation: this.animation.value,
       frame: this.frame.value,
       hide: this.hide.value,
-      dock: this.dock.value,
+      dock: parent.type === "dock" ? parent.edge : null,
       textColor: this.textColor.value,
       background: this.background.value,
     };
@@ -229,30 +225,28 @@ export default abstract class Tile {
     return this.parent.value[index + 1] ?? null;
   }
 
-  get sectionId() {
-    return this.parent?.sectionId ?? null;
-  }
-
   async duplicate({
-    sectionId,
+    parentId,
     beforeId,
   }: {
-    sectionId: string | null;
+    parentId: string | null;
     beforeId: string | null;
   }) {
+    const target = parseParentId(parentId);
     const [parent, ...children] = await client.tiles.duplicate.mutate({
       pageId: this.page.id,
       id: this.id,
-      sectionId,
+      sectionId: target.type === "section" ? target.sectionId : null,
       beforeId,
     });
 
     const parentTile = this.page.createTile(parent);
-    this.editor.addTile(parentTile, parent.sectionId, beforeId);
+    await parentTile.move({ parentId, beforeId });
+    this.editor.addTile(parentTile);
 
     for (const child of children) {
       const childTile = this.page.createTile(child);
-      this.editor.addTile(childTile, child.sectionId, null);
+      this.editor.addTile(childTile);
     }
 
     return parentTile;
