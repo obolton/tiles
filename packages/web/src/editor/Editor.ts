@@ -21,6 +21,7 @@ import { cachePageProperties, cacheTiles } from "@/utils/cache/pages";
 import { isCacheInitialized } from "@/utils/cache";
 import { handleError } from "@/utils/errors";
 import Section from "@/models/Section";
+import { parseParentId } from "@/models/parentId";
 import Image from "@/models/Image";
 import Link from "@/models/Link";
 import ChatState from "@/components/chat/ChatState";
@@ -72,9 +73,9 @@ export default class Editor {
     if (lastTile instanceof Section) {
       return lastTile;
     }
-    const sectionId = lastTile?.sectionId;
-    if (sectionId) {
-      const section = this.page.index.get(sectionId);
+    const parent = parseParentId(lastTile?.parentId.value ?? null);
+    if (parent.type === "section") {
+      const section = this.page.index.get(parent.sectionId);
       if (section instanceof Section) {
         return section;
       }
@@ -505,16 +506,7 @@ export default class Editor {
     });
   }
 
-  addTile(
-    tile: Tile,
-    _sectionId: string | null = null,
-    _beforeId: string | null = null,
-    select = true,
-  ) {
-    // Placement comes from the tile's Y-bound parentId/order (the create
-    // mutation already encoded position into `order`); the controller owns
-    // collection membership. sectionId/beforeId are vestigial here and are
-    // dropped from the signature in a later cleanup.
+  addTile(tile: Tile, select = true) {
     viewTransition(() => {
       this.page.placement.add(tile);
     }).updateCallbackDone.then(() => {
