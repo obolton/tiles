@@ -3,7 +3,6 @@ import type { Action, Operation } from "../types";
 import type { ActionExecutorRegistry } from "./types";
 
 import { executors as tile } from "./tile";
-import { executors as section } from "./section";
 import { executors as text } from "./text";
 import { executors as image } from "./image";
 import { executors as video } from "./video";
@@ -14,7 +13,6 @@ import { executors as page } from "./page";
 
 const registry: ActionExecutorRegistry = {
   ...tile,
-  ...section,
   ...text,
   ...image,
   ...video,
