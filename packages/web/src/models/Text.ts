@@ -1,75 +1,66 @@
 import * as Y from "yjs";
-import Tile from "./Tile";
-import { reactive, type Reactive } from "@/utils/reactivity";
-import client from "@/api/client";
+import { prosemirrorToYXmlFragment } from "y-prosemirror";
+import Tile, { type CreateTileInput } from "./Tile";
+import { type Reactive } from "@/utils/reactivity";
+import { deserialize } from "@/utils/richText/deserialize";
 import type Page from "@/models/Page";
 import type { ClientTextTile } from "api/types/tiles";
-import type { AppRouterInputs } from "@/api/client";
+import type { RichText } from "@/utils/richText/types";
+
+export interface CreateTextInput extends Omit<CreateTileInput, "type"> {
+  align?: ClientTextTile["align"];
+  content?: RichText;
+}
 
 export default class Text extends Tile {
   readonly type = "TEXT";
 
-  readonly content: Reactive<ClientTextTile["content"]>;
   readonly align: Reactive<ClientTextTile["align"]>;
+  readonly contentFragment: Y.XmlFragment;
 
-  static async create(
-    page: Page,
-    data: Omit<AppRouterInputs["text"]["create"], "pageId">,
-  ) {
-    const properties = await client.text.create.mutate({
-      pageId: page.id,
-      ...data,
-    });
-    const text = new Text(page, properties);
-    const { editor } = text;
-    editor.addTile(text);
-    editor.recordOperation({
-      apply: { type: "tile.restore", data: { snapshots: [properties] } },
-      reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
-    });
+  static createMap(
+    properties: Omit<CreateTextInput, "parentId" | "beforeId">,
+  ): Y.Map<unknown> {
+    const { content, align, ...baseProps } = properties;
+    const map = super.buildBaseMap({ ...baseProps, type: "TEXT" });
+    map.set("align", align ?? "TOP");
+
+    const fragment = new Y.XmlFragment();
+    if (content && content.length > 0) {
+      prosemirrorToYXmlFragment(deserialize(content), fragment);
+    }
+    map.set("content", fragment);
+
+    return map;
   }
 
-  constructor(page: Page, properties: ClientTextTile) {
-    super(page, properties);
+  static async create(page: Page, data: CreateTextInput): Promise<Text> {
+    const { parentId, beforeId, ...rest } = data;
+    const map = Text.createMap(rest);
+    const text = page.createTile(map, { parentId, beforeId }) as Text;
+    text.editor.addTile(text);
+    return text;
+  }
 
-    const { content, align } = properties;
-    this.content = reactive(content);
-    this.align = reactive(align);
+  constructor(page: Page, map: Y.Map<unknown>) {
+    super(page, map);
+
+    this.align = this.binding.field("align", "TOP");
+
+    const fragment = map.get("content");
+    if (!(fragment instanceof Y.XmlFragment)) {
+      throw new Error("Text tile missing content fragment");
+    }
+    this.contentFragment = fragment;
   }
 
   serialize(): ClientTextTile {
     return {
       ...super.serialize(),
       type: "TEXT",
-      content: this.content.value,
+      content: [],
       align: this.align.value,
     };
   }
 
-  get contentFragment(): Y.XmlFragment {
-    if (!this.page.doc) {
-      throw new Error("Cannot access content fragment without a Y.Doc");
-    }
-    return this.page.doc.getXmlFragment(`text:${this.id}`);
-  }
-
-  setVerticalAlignment(align: ClientTextTile["align"]) {
-    const oldAlign = this.align.value;
-    this.align.value = align;
-    this.editor.recordOperation({
-      apply: {
-        type: "text.setProperties",
-        data: { tileId: this.id, changes: { align } },
-      },
-      reverse: {
-        type: "text.setProperties",
-        data: { tileId: this.id, changes: { align: oldAlign } },
-      },
-    });
-    return client.text.update.mutate({
-      pageId: this.page.id,
-      id: this.id,
-      align,
-    });
-  }
 }

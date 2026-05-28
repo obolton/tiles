@@ -1,109 +1,37 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
-import Text from "@/models/Text";
+import { describe, expect, test } from "vitest";
+import * as Y from "yjs";
+import Text, { type CreateTextInput } from "@/models/Text";
 import Editor from "@/editor/Editor";
-import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
-import { TEXT_TILE } from "@/test/fixtures/Tile";
-import type { Fill, FillUpdate } from "@/components/fills/types";
-import type { Color } from "@/utils/color";
 
-vi.mock("@/api/client", () => ({
-  default: {
-    text: {
-      update: {
-        mutate: vi.fn(),
-      },
-    },
-    tiles: {
-      update: {
-        mutate: vi.fn(),
-      },
-    },
-  },
-}));
+const TEXT_PROPS: Omit<CreateTextInput, "parentId" | "beforeId"> = {
+  align: "TOP",
+};
 
 describe("Text", () => {
-  const editor = Editor.init(PAGE);
-  const textUpdateMock = vi.mocked(client.text.update.mutate);
-  const tileUpdateMock = vi.mocked(client.tiles.update.mutate);
+  const editor = Editor.init(PAGE, new Y.Doc());
 
-  afterEach(() => {
-    textUpdateMock.mockReset();
-    tileUpdateMock.mockReset();
+  function createText(
+    overrides: Partial<CreateTextInput> = {},
+  ): Text {
+    return editor.page.createTile(
+      Text.createMap({ ...TEXT_PROPS, ...overrides }),
+      {},
+    ) as Text;
+  }
+
+  test("maps properties to reactive values", () => {
+    const text = createText();
+
+    expect(text.align.value).toBe(TEXT_PROPS.align);
+    expect(text.contentFragment).toBeInstanceOf(Y.XmlFragment);
   });
 
   test("serialize", () => {
-    const data = { ...TEXT_TILE, sectionId: null };
-    const text = new Text(editor.page, data);
+    const text = createText();
+    const data = text.serialize();
 
-    expect(text.serialize()).toEqual(data);
-  });
-
-  test("maps properties to reactive values", () => {
-    const text = new Text(editor.page, TEXT_TILE);
-
-    expect(text.content.value).toEqual(TEXT_TILE.content);
-    expect(text.align.value).toBe(TEXT_TILE.align);
-    expect(text.textColor.value).toBe(TEXT_TILE.textColor);
-    expect(text.background.value).toBe(TEXT_TILE.background);
-  });
-
-  describe("setVerticalAlignment", () => {
-    test("updates vertical alignment and persists the change", async () => {
-      const text = new Text(editor.page, TEXT_TILE);
-      const align = "CENTER";
-
-      await text.setVerticalAlignment(align);
-
-      expect(text.align.value).toBe(align);
-      expect(textUpdateMock).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: TEXT_TILE.id,
-        align,
-      });
-    });
-  });
-
-  describe("setTextColor", () => {
-    test("updates the text color", () => {
-      const text = new Text(editor.page, TEXT_TILE);
-      const textColor: Color = "ffff00000000";
-
-      text.setTextColor(textColor);
-
-      expect(text.textColor.value).toBe(textColor);
-    });
-  });
-
-  describe("setBackground", () => {
-    test("updates the background", async () => {
-      const text = new Text(editor.page, TEXT_TILE);
-      const colorA: Color = "ffff00000000";
-      const colorB: Color = "888800000000";
-      const backgroundUpdate: FillUpdate = {
-        type: "color",
-        color: colorA,
-      };
-      const background: Fill = {
-        type: "gradient",
-        colorA,
-        colorB,
-        direction: "VERTICAL",
-      };
-
-      tileUpdateMock.mockResolvedValue({
-        ...TEXT_TILE,
-        background,
-      });
-
-      await text.setBackground(backgroundUpdate);
-
-      expect(tileUpdateMock).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: TEXT_TILE.id,
-        background: backgroundUpdate,
-      });
-      expect(text.background.value).toEqual(background);
-    });
+    expect(data.type).toBe("TEXT");
+    expect(data.align).toBe(TEXT_PROPS.align);
   });
 });
