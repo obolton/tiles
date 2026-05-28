@@ -104,10 +104,11 @@ model Page {
   alignment       HorizontalAlignment @default(CENTER)
   type            PageType            @default(FREE)
 
-  dockTopHeight    Float @default(200) @map("dock_top_height") @db.Real
-  dockBottomHeight Float @default(200) @map("dock_bottom_height") @db.Real
-  dockLeftWidth    Float @default(200) @map("dock_left_width") @db.Real
-  dockRightWidth   Float @default(200) @map("dock_right_width") @db.Real
+  dockTopHeight    Float  @default(200) @map("dock_top_height") @db.Real
+  dockBottomHeight Float  @default(200) @map("dock_bottom_height") @db.Real
+  dockLeftWidth    Float  @default(200) @map("dock_left_width") @db.Real
+  dockRightWidth   Float  @default(200) @map("dock_right_width") @db.Real
+  documentId       String @unique @map("document_id") @db.Uuid
 
   workspace          Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   theme              Theme?         @relation(fields: [themeId], references: [id], onDelete: SetNull)
@@ -127,7 +128,7 @@ model Page {
   invites            PageInvite[]
   dropdowns          Dropdown[]
   charts             Chart[]
-  document           PageDocument?
+  document           PageDocument   @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   @@index([authorId])
   @@index([authorId, updatedAt])
@@ -138,12 +139,12 @@ model Page {
 }
 
 model PageDocument {
-  pageId        String   @id @map("page_id") @db.Uuid
+  id            String   @id @default(uuid()) @db.Uuid
   snapshot      Bytes    @db.ByteA
   schemaVersion Int      @default(1) @map("schema_version")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  page Page?
 
   @@map("page_documents")
 }
