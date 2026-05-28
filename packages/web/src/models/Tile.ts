@@ -1,12 +1,10 @@
 import * as Y from "yjs";
-import { generateKeyBetween } from "jittered-fractional-indexing";
-import { reactive, type Reactive } from "@/utils/reactivity";
-import client from "@/api/client";
-import Theme from "@/models/Theme";
+import { combine, type Reactive } from "@/utils/reactivity";
+import type Theme from "@/models/Theme";
+import type { ThemeData } from "@/models/Theme";
 import { ASPECT_RATIOS } from "@/constants/size";
 import { LOCAL_ORIGIN, YMapBinding } from "@/collaboration/YMapBinding";
 import type {
-  ClientTile,
   ClientTileBase,
   Sizing,
   Animation,
@@ -14,82 +12,37 @@ import type {
   TileType,
   DockEdge,
 } from "api/types/tiles";
-import type { Fill, FillUpdate } from "@/components/fills/types";
+import type { Fill } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
 import type Page from "@/models/Page";
-import type { AppRouterInputs } from "@/api/client";
-import { toParentId, parseParentId } from "./parentId";
+import { parseParentId } from "./parentId";
 import type TileCollection from "./TileCollection";
 import type { TilePropertyChanges } from "@/operations";
 
 export type { Sizing, Animation, FrameStyle, DockEdge };
 
-function writeInitialTileFields(
-  tileMap: Y.Map<unknown>,
-  properties: ClientTile,
-) {
-  tileMap.set("order", properties.order);
-  tileMap.set("sizing", properties.sizing);
-  tileMap.set("x", properties.x);
-  tileMap.set("y", properties.y);
-  tileMap.set("height", properties.height);
-  tileMap.set("rowSpan", properties.rowSpan);
-  tileMap.set("hide", properties.hide);
-
-  const parentId = toParentId(properties.sectionId, properties.dock);
-  if (parentId !== null) {
-    tileMap.set("parentId", parentId);
-  }
-
-  if (properties.width !== null) {
-    tileMap.set("width", properties.width);
-  }
-  if (properties.startDate !== null) {
-    tileMap.set("startDate", properties.startDate);
-  }
-  if (properties.endDate !== null) {
-    tileMap.set("endDate", properties.endDate);
-  }
-  if (properties.lat !== null && properties.long !== null) {
-    tileMap.set("coordinates", {
-      lat: properties.lat,
-      long: properties.long,
-    });
-  }
-  if (properties.animation !== null) {
-    tileMap.set("animation", properties.animation);
-  }
-  if (properties.frame !== null) {
-    tileMap.set("frame", properties.frame);
-  }
-  if (properties.cornerRadius !== null) {
-    tileMap.set("cornerRadius", properties.cornerRadius);
-  }
-  if (properties.textColor !== null) {
-    tileMap.set("textColor", properties.textColor);
-  }
-  if (properties.background !== null) {
-    tileMap.set("background", properties.background);
-  }
-}
-
-function resolveOrCreateTileMap(
-  page: Page,
-  properties: ClientTile,
-): Y.Map<unknown> | null {
-  if (!page.doc) {
-    return null;
-  }
-  const tilesMap = page.doc.getMap<Y.Map<unknown>>("tiles");
-  let tileMap = tilesMap.get(properties.id);
-  if (!tileMap) {
-    page.doc.transact(() => {
-      tileMap = new Y.Map<unknown>();
-      writeInitialTileFields(tileMap, properties);
-      tilesMap.set(properties.id, tileMap);
-    }, LOCAL_ORIGIN);
-  }
-  return tileMap ?? null;
+export interface CreateTileInput {
+  type: TileType;
+  parentId?: string | null;
+  beforeId?: string | null;
+  sizing?: Sizing;
+  x?: number;
+  y?: number;
+  width?: number | null;
+  height?: number;
+  rowSpan?: number;
+  hide?: boolean;
+  startDate?: string;
+  endDate?: string;
+  coordinates?: {
+    lat: number;
+    long: number;
+  } | null;
+  animation?: Animation | null;
+  frame?: FrameStyle | null;
+  cornerRadius?: number;
+  textColor?: Color | null;
+  background?: Fill | null;
 }
 
 export default abstract class Tile {
@@ -106,7 +59,8 @@ export default abstract class Tile {
 
   parent: TileCollection | null = null;
 
-  protected readonly binding: YMapBinding | null;
+  protected map: Y.Map<unknown>;
+  protected binding: YMapBinding;
 
   readonly order: Reactive<string>;
   readonly parentId: Reactive<string | null>;
@@ -123,52 +77,87 @@ export default abstract class Tile {
   readonly frame: Reactive<FrameStyle | null>;
   readonly cornerRadius: Reactive<number | null>;
   readonly hide: Reactive<boolean>;
-  readonly theme: Reactive<Theme | null>;
+  readonly themeId: Reactive<string | null>;
+  readonly theme: Reactive<ThemeData | null>;
   readonly background: Reactive<Fill | null>;
   readonly textColor: Reactive<Color | null>;
 
-  constructor(page: Page, properties: ClientTile) {
-    const { id, type, order, theme } = properties;
-    this.page = page;
+  /**
+   * Builds a detached Y.Map populated with the base tile fields. Subclasses
+   * call this from their own static `createMap` and write type-specific
+   * fields before the map is attached to the doc.
+   */
+  protected static buildBaseMap(
+    properties: Omit<CreateTileInput, "parentId" | "beforeId">,
+  ): Y.Map<unknown> {
+    const map = new Y.Map<unknown>();
 
-    this.id = id;
-    this.type = type;
+    map.set("type", properties.type);
+    map.set("sizing", properties.sizing ?? "AUTO");
+    map.set("x", properties.x ?? 0);
+    map.set("y", properties.y ?? 0);
+    map.set("width", properties.width === undefined ? 0 : properties.width);
+    map.set("height", properties.height ?? 0);
+    map.set("rowSpan", properties.rowSpan ?? 0);
+    map.set("hide", properties.hide ?? false);
+    map.set("startDate", properties.startDate ?? null);
+    map.set("endDate", properties.endDate ?? null);
+    map.set("coordinates", properties.coordinates);
+    map.set("animation", properties.animation ?? null);
+    map.set("frame", properties.frame ?? null);
+    map.set("cornerRadius", properties.cornerRadius ?? 0);
+    map.set("textColor", properties.textColor ?? null);
+    map.set("background", properties.background ?? null);
 
-    const tileMap = resolveOrCreateTileMap(page, properties);
-    this.binding =
-      tileMap && page.doc ? new YMapBinding(tileMap, page.doc) : null;
-
-    this.order = this.bind<string>("order", order);
-    this.parentId = this.bind<string | null>(
-      "parentId",
-      toParentId(properties.sectionId, properties.dock),
-    );
-    this.sizing = this.bind<Sizing>("sizing", "CUSTOM");
-    this.x = this.bind("x", 0);
-    this.y = this.bind("y", 0);
-    this.width = this.bind<number | null>("width", null);
-    this.height = this.bind("height", 0);
-    this.rowSpan = this.bind("rowSpan", 1);
-    this.startDate = this.bind<string | null>("startDate", null);
-    this.endDate = this.bind<string | null>("endDate", null);
-    this.coordinates = this.bind<{ lat: number; long: number } | null>(
-      "coordinates",
-      null,
-    );
-    this.animation = this.bind<Animation | null>("animation", null);
-    this.frame = this.bind<FrameStyle | null>("frame", null);
-    this.cornerRadius = this.bind<number | null>("cornerRadius", null);
-    this.hide = this.bind("hide", false);
-    this.theme = reactive(theme ? new Theme(theme) : null);
-    this.textColor = this.bind<Color | null>("textColor", null);
-    this.background = this.bind<Fill | null>("background", null);
+    return map;
   }
 
-  /**
-   * Binds a property to this tile's map if available.
-   */
-  protected bind<T>(key: string, initial: T): Reactive<T> {
-    return this.binding ? this.binding.field(key, initial) : reactive(initial);
+  constructor(page: Page, map: Y.Map<unknown>) {
+    this.page = page;
+    this.map = map;
+
+    const id = map.get("id");
+    const type = map.get("type");
+
+    if (typeof id !== "string" || !id) {
+      throw new Error("Missing ID");
+    }
+
+    if (typeof type !== "string" || !type) {
+      throw new Error("Missing type");
+    }
+
+    this.id = id;
+    this.type = type as TileType; // TODO: Validate
+
+    this.binding = new YMapBinding(map);
+
+    this.order = this.binding.field("order", "");
+    this.parentId = this.binding.field("parentId", null);
+    this.sizing = this.binding.field("sizing", "AUTO");
+    this.x = this.binding.field("x", 0);
+    this.y = this.binding.field("y", 0);
+    this.width = this.binding.field("width", 0);
+    this.height = this.binding.field("height", 0);
+    this.rowSpan = this.binding.field("rowSpan", 0);
+    this.startDate = this.binding.field("startDate", null);
+    this.endDate = this.binding.field("endDate", null);
+    this.coordinates = this.binding.field("coordinates", null);
+    this.animation = this.binding.field("animation", null);
+    this.frame = this.binding.field("frame", null);
+    this.cornerRadius = this.binding.field("cornerRadius", null);
+    this.hide = this.binding.field("hide", false);
+    this.themeId = this.binding.field("themeId", null);
+    this.theme = combine(
+      { id: this.themeId, themes: this.page.themes },
+      ({ id, themes }) => (id ? (themes.get(id) ?? null) : null),
+    );
+    this.textColor = this.binding.field("textColor", null);
+    this.background = this.binding.field("background", null);
+  }
+
+  dispose() {
+    this.binding?.dispose();
   }
 
   serialize(): ClientTileBase {
@@ -177,7 +166,6 @@ export default abstract class Tile {
       id: this.id,
       type: this.type,
       sectionId: parent.type === "section" ? parent.sectionId : null,
-      theme: this.theme.value?.serialize() ?? null,
       order: this.order.value,
       sizing: this.sizing.value,
       x: this.x.value,
@@ -231,52 +219,23 @@ export default abstract class Tile {
   }: {
     parentId: string | null;
     beforeId: string | null;
-  }) {
-    const target = parseParentId(parentId);
-    const [parent, ...children] = await client.tiles.duplicate.mutate({
-      pageId: this.page.id,
-      id: this.id,
-      sectionId: target.type === "section" ? target.sectionId : null,
+  }): Promise<Tile> {
+    const cloned = this.page.createTile(this.map.clone(), {
+      parentId,
       beforeId,
     });
 
-    const parentTile = this.page.createTile(parent);
-    parentTile.move({ parentId, beforeId });
-    this.editor.addTile(parentTile);
-
-    for (const child of children) {
-      const childTile = this.page.createTile(child);
-      this.editor.addTile(childTile);
+    for (const child of this.page.placement.getCollection(this.id).value) {
+      this.page.createTile(child.map.clone(), {
+        parentId: cloned.id,
+        beforeId: null,
+      });
     }
-
-    return parentTile;
+    return cloned;
   }
 
   delete() {
     return this.editor.deleteTiles([this]);
-  }
-
-  protected updateTile(
-    properties: Omit<AppRouterInputs["tiles"]["update"], "pageId" | "id">,
-  ) {
-    return client.tiles.update.mutate({
-      ...properties,
-      pageId: this.page.id,
-      id: this.id,
-    });
-  }
-
-  protected recordUpdate(
-    changes: TilePropertyChanges,
-    inverse: TilePropertyChanges,
-  ) {
-    this.editor.recordOperation({
-      apply: { type: "tile.setProperties", data: { tileId: this.id, changes } },
-      reverse: {
-        type: "tile.setProperties",
-        data: { tileId: this.id, changes: inverse },
-      },
-    });
   }
 
   /**
@@ -330,38 +289,6 @@ export default abstract class Tile {
     if (changes.textColor !== undefined) {
       this.textColor.value = changes.textColor;
     }
-    if (changes.background !== undefined) {
-      this.background.value = changes.background;
-    }
-  }
-
-  /**
-   * A fractional order key positioning this tile before `beforeId` (or last
-   * when null/missing) within `parentId`'s collection. Single pass; this tile
-   * is skipped so a within-collection move computes the correct gap.
-   */
-  private orderBefore(
-    parentId: string | null,
-    beforeId: string | null | undefined,
-  ): string {
-    let prev: Tile | undefined;
-    let next: Tile | undefined;
-
-    for (const item of this.page.placement.getCollection(parentId).value) {
-      if (item === this) {
-        continue;
-      }
-      if (beforeId != null && item.id === beforeId) {
-        next = item;
-        break;
-      }
-      prev = item;
-    }
-
-    return generateKeyBetween(
-      prev?.order.value ?? null,
-      next?.order.value ?? null,
-    );
   }
 
   /**
@@ -397,7 +324,11 @@ export default abstract class Tile {
       if (reparenting || repositioning) {
         const targetParentId =
           parentId !== undefined ? parentId : this.parentId.value;
-        this.order.value = this.orderBefore(targetParentId, beforeId);
+        this.order.value = this.page.placement.orderBefore(
+          targetParentId,
+          beforeId,
+          this,
+        );
         this.parentId.value = targetParentId;
       }
 
@@ -424,11 +355,7 @@ export default abstract class Tile {
       }
     };
 
-    if (this.binding) {
-      this.binding.transact(apply, LOCAL_ORIGIN);
-    } else {
-      apply();
-    }
+    this.page.doc.transact(apply, LOCAL_ORIGIN);
   }
 
   setSizing(sizing: Sizing) {
@@ -471,25 +398,17 @@ export default abstract class Tile {
     this.applyUpdate({ hide });
   }
 
-  async setTheme(themeId: string | null) {
-    const oldThemeId = this.theme.value?.id ?? null;
-    this.recordUpdate({ themeId }, { themeId: oldThemeId });
-    const result = await this.updateTile({ themeId });
-    this.theme.value = result.theme ? new Theme(result.theme) : null;
+  setTheme(theme: Theme | null) {
+    this.page.doc.transact(() => {
+      if (theme) {
+        this.page.themes.apply(theme);
+      }
+      this.themeId.value = theme?.id ?? null;
+    }, LOCAL_ORIGIN);
   }
 
   setTextColor(textColor: Color | null) {
     this.applyUpdate({ textColor });
-  }
-
-  async setBackground(background: FillUpdate) {
-    const previousBackground = this.background.value;
-    const result = await this.updateTile({ background });
-    this.background.value = result.background;
-    this.recordUpdate(
-      { background: result.background },
-      { background: previousBackground },
-    );
   }
 
   moveUp() {

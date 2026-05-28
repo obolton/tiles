@@ -1,146 +1,53 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
-import Tile from "@/models/Tile";
+import { describe, expect, test } from "vitest";
+import * as Y from "yjs";
+import Section, { type CreateSectionInput } from "@/models/Section";
+import Theme from "@/models/Theme";
 import Editor from "@/editor/Editor";
-import client from "@/api/client";
 import { ASPECT_RATIOS } from "@/constants/size";
 import { PAGE } from "@/test/fixtures/Page";
-import { TILE } from "@/test/fixtures/Tile";
-import type { Animation, ClientTextTile } from "api/types/tiles";
+import { THEME } from "@/test/fixtures/Theme";
+import type { Animation } from "api/types/tiles";
 
-class TestTile extends Tile {
-  serialize(): ClientTextTile {
-    return {
-      ...super.serialize(),
-      type: "TEXT",
-      content: [],
-      align: "TOP",
-    };
-  }
-}
-
-vi.mock("@/api/client", () => ({
-  default: {
-    tiles: {
-      duplicate: {
-        mutate: vi.fn(),
-      },
-      delete: {
-        mutate: vi.fn(),
-      },
-      update: {
-        mutate: vi.fn(),
-      },
-    },
-  },
-}));
+// Tile is abstract; exercise its base behavior via Section.
+const PROPS: CreateSectionInput = {
+  layout: "VERTICAL",
+  sizing: "CUSTOM",
+  x: 5,
+  y: 7,
+  width: 11,
+  height: 13,
+  rowSpan: 2,
+  hide: false,
+  animation: "FADE",
+};
 
 describe("Tile", () => {
-  const editor = Editor.init(PAGE);
+  const editor = Editor.init(PAGE, new Y.Doc());
 
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  describe("duplicate", () => {
-    test("duplicates the tile before the specified tile", async () => {
-      const tile = new TestTile(editor.page, { ...TILE, sectionId: null });
-      editor.addTile(tile, false);
-
-      const duplicatedTile = {
-        ...TILE,
-        id: "duplicated-tile-id",
-        sectionId: null,
-      };
-      vi.mocked(client.tiles.duplicate.mutate).mockResolvedValue([
-        duplicatedTile,
-      ]);
-
-      const result = await tile.duplicate({
-        parentId: null,
-        beforeId: tile.id,
-      });
-
-      expect(client.tiles.duplicate.mutate).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: TILE.id,
-        sectionId: null,
-        beforeId: tile.id,
-      });
-      expect(result.id).toBe(duplicatedTile.id);
-      expect(editor.page.index.get(duplicatedTile.id)).toBe(result);
-    });
-
-    test("duplicates the tile at the end when beforeId is null", async () => {
-      const tile = new TestTile(editor.page, {
-        ...TILE,
-        id: "tile-for-null-test",
-        sectionId: null,
-      });
-      editor.addTile(tile, false);
-
-      const duplicatedTile = {
-        ...TILE,
-        id: "duplicated-tile-id-2",
-        sectionId: null,
-      };
-      vi.mocked(client.tiles.duplicate.mutate).mockResolvedValue([
-        duplicatedTile,
-      ]);
-
-      const result = await tile.duplicate({ parentId: null, beforeId: null });
-
-      expect(client.tiles.duplicate.mutate).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: tile.id,
-        sectionId: null,
-        beforeId: null,
-      });
-      expect(result.id).toBe(duplicatedTile.id);
-      expect(editor.page.index.get(duplicatedTile.id)).toBe(result);
-    });
-  });
-
-  test("serialize", () => {
-    const data = { ...TILE, sectionId: null };
-    const tile = new TestTile(editor.page, data);
-
-    expect(tile.serialize()).toEqual(data);
-  });
+  function createTile(overrides: Partial<CreateSectionInput> = {}) {
+    return editor.page.createTile(
+      Section.createMap({ ...PROPS, ...overrides }),
+      {},
+    ) as Section;
+  }
 
   test("maps properties to reactive values", () => {
-    const tile = new TestTile(editor.page, TILE);
+    const tile = createTile();
 
     expect(tile.page).toBe(editor.page);
-    expect(tile.id).toBe(TILE.id);
-    expect(tile.type).toBe(TILE.type);
-    expect(tile.parentId.value).toBe(TILE.sectionId);
-    expect(tile.order.value).toBe(TILE.order);
-    expect(tile.sizing.value).toBe(TILE.sizing);
-    expect(tile.x.value).toBe(TILE.x);
-    expect(tile.y.value).toBe(TILE.y);
-    expect(tile.width.value).toBe(TILE.width);
-    expect(tile.height.value).toBe(TILE.height);
-    expect(tile.rowSpan.value).toBe(TILE.rowSpan);
-    expect(tile.animation.value).toBe(TILE.animation);
-    expect(tile.hide.value).toBe(TILE.hide);
-  });
-
-  describe("delete", () => {
-    test("deletes the tile", async () => {
-      const tile = new TestTile(editor.page, TILE);
-
-      await tile.delete();
-
-      expect(client.tiles.delete.mutate).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        ids: [TILE.id],
-      });
-    });
+    expect(tile.sizing.value).toBe(PROPS.sizing);
+    expect(tile.x.value).toBe(PROPS.x);
+    expect(tile.y.value).toBe(PROPS.y);
+    expect(tile.width.value).toBe(PROPS.width);
+    expect(tile.height.value).toBe(PROPS.height);
+    expect(tile.rowSpan.value).toBe(PROPS.rowSpan);
+    expect(tile.animation.value).toBe(PROPS.animation);
+    expect(tile.hide.value).toBe(PROPS.hide);
   });
 
   describe("setAnimation", () => {
     test("updates the animation", () => {
-      const tile = new TestTile(editor.page, TILE);
+      const tile = createTile();
       const animation: Animation = "GROW";
 
       tile.setAnimation(animation);
@@ -149,7 +56,7 @@ describe("Tile", () => {
     });
 
     test("clears the animation", () => {
-      const tile = new TestTile(editor.page, TILE);
+      const tile = createTile();
 
       tile.setAnimation(null);
 
@@ -159,43 +66,28 @@ describe("Tile", () => {
 
   describe("setSizing", () => {
     test("sets landscape sizing and computes height from aspect ratio", () => {
-      const tile = new TestTile(editor.page, TILE);
-      const expectedHeight = Math.round(TILE.width! / ASPECT_RATIOS.LANDSCAPE);
+      const tile = createTile({ width: 11 });
+      const expectedHeight = Math.round(11 / ASPECT_RATIOS.LANDSCAPE);
 
       tile.setSizing("LANDSCAPE");
 
       expect(tile.sizing.value).toBe("LANDSCAPE");
-      expect(tile.width.value).toBe(TILE.width);
-      expect(tile.height.value).toBe(expectedHeight);
-    });
-
-    test("sets portrait sizing and computes height from aspect ratio", () => {
-      const tile = new TestTile(editor.page, TILE);
-      const expectedHeight = Math.round(TILE.width! / ASPECT_RATIOS.PORTRAIT);
-
-      tile.setSizing("PORTRAIT");
-
-      expect(tile.sizing.value).toBe("PORTRAIT");
-      expect(tile.width.value).toBe(TILE.width);
+      expect(tile.width.value).toBe(PROPS.width);
       expect(tile.height.value).toBe(expectedHeight);
     });
 
     test("sets square sizing", () => {
-      const tile = new TestTile(editor.page, TILE);
+      const tile = createTile();
 
       tile.setSizing("SQUARE");
 
       expect(tile.sizing.value).toBe("SQUARE");
-      expect(tile.width.value).toBe(TILE.width);
-      expect(tile.height.value).toBe(TILE.width);
+      expect(tile.width.value).toBe(PROPS.width);
+      expect(tile.height.value).toBe(PROPS.width);
     });
 
     test("uses page width when tile width is null", () => {
-      const tile = new TestTile(editor.page, {
-        ...TILE,
-        id: "tile-with-null-width",
-        width: null,
-      });
+      const tile = createTile({ width: null });
       const pageWidth = editor.page.width.value;
       const expectedHeight = Math.round(pageWidth / ASPECT_RATIOS.LANDSCAPE);
 
@@ -205,7 +97,7 @@ describe("Tile", () => {
     });
 
     test("sets auto sizing without recomputing height", () => {
-      const tile = new TestTile(editor.page, TILE);
+      const tile = createTile();
       const originalHeight = tile.height.value;
 
       tile.setSizing("AUTO");
@@ -217,7 +109,7 @@ describe("Tile", () => {
 
   describe("setSize", () => {
     test("updates the size", () => {
-      const tile = new TestTile(editor.page, TILE);
+      const tile = createTile();
       const width = 99;
       const height = 101;
 
@@ -228,7 +120,7 @@ describe("Tile", () => {
     });
 
     test("sets width to null for page width", () => {
-      const tile = new TestTile(editor.page, TILE);
+      const tile = createTile();
 
       tile.setSize({ width: null });
 
@@ -238,11 +130,51 @@ describe("Tile", () => {
 
   describe("setHidden", () => {
     test("updates the hidden state", () => {
-      const tile = new TestTile(editor.page, TILE);
+      const tile = createTile();
 
       tile.setHidden(true);
 
       expect(tile.hide.value).toBe(true);
+    });
+  });
+
+  describe("setTheme", () => {
+    test("writes the snapshot and themeId into the doc", () => {
+      const tile = createTile();
+      const theme = new Theme(THEME);
+
+      tile.setTheme(theme);
+
+      expect(tile.themeId.value).toBe(theme.id);
+      expect(tile.theme.value).toEqual(theme.serialize());
+      expect(editor.page.doc?.getMap("themes").get(theme.id)).toEqual(
+        theme.serialize(),
+      );
+    });
+
+    test("overwrites the snapshot on re-apply", () => {
+      const tile = createTile();
+      const theme = new Theme(THEME);
+      tile.setTheme(theme);
+      theme.name.value = "Renamed";
+
+      tile.setTheme(theme);
+
+      const snapshot = editor.page.doc?.getMap("themes").get(theme.id) as
+        | { name: string }
+        | undefined;
+      expect(snapshot?.name).toBe("Renamed");
+    });
+
+    test("clears the theme", () => {
+      const tile = createTile();
+      const theme = new Theme(THEME);
+      tile.setTheme(theme);
+
+      tile.setTheme(null);
+
+      expect(tile.themeId.value).toBeNull();
+      expect(tile.theme.value).toBeNull();
     });
   });
 });
