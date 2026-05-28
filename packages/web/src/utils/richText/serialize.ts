@@ -1,5 +1,7 @@
 import type { EditorState } from "prosemirror-state";
 import type { Node } from "prosemirror-model";
+import { yXmlFragmentToProseMirrorRootNode } from "y-prosemirror";
+import type * as Y from "yjs";
 import type {
   ListItemNode,
   TextNode,
@@ -225,4 +227,12 @@ function serializeNode(node: Node): SerializedNode {
 
 export function serialize(editorState: EditorState) {
   return editorState.doc.children.map(serializeNode) as BlockNode[];
+}
+
+/**
+ * Serialize a Y.XmlFragment into rich text JSON.
+ */
+export function serializeFragment(fragment: Y.XmlFragment): BlockNode[] {
+  const doc = yXmlFragmentToProseMirrorRootNode(fragment, schema);
+  return doc.children.map(serializeNode) as BlockNode[];
 }
