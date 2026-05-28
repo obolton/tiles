@@ -1,10 +1,9 @@
 import * as Y from "yjs";
+import { generateKeyBetween } from "jittered-fractional-indexing";
 import TileCollection from "./TileCollection";
-import createTile from "./createTile";
 import { parseParentId } from "./parentId";
 import type Page from "./Page";
 import type Tile from "./Tile";
-import type { ClientTile } from "api/types/tiles";
 
 /** Tile Y.Map keys that affect placement. Other field writes are ignored. */
 const PLACEMENT_KEYS = ["parentId", "order"];
@@ -14,10 +13,6 @@ const PLACEMENT_KEYS = ["parentId", "order"];
  * Y.Doc `tiles` map. The Y.Doc is the source of truth for placement
  * (`parentId` + `order`); each collection is an incrementally-maintained,
  * order-sorted view of it.
- *
- * The controller is inert until {@link bootstrap} is called: it attaches its
- * Y.Doc observer there, so nothing reconciles while the legacy
- * `Page.initTiles` path is still in use.
  */
 export default class TilePlacement {
   private readonly page: Page;
@@ -30,13 +25,22 @@ export default class TilePlacement {
 
   constructor(page: Page) {
     this.page = page;
+    const tiles = page.doc.getMap<Y.Map<unknown>>("tiles");
+    // Index every tile before placing any, so a child's section is in the
+    // index regardless of the order of the map map.
+    const created: Tile[] = [];
+    for (const data of tiles.values()) {
+      created.push(page.add(data));
+    }
+    for (const tile of created) {
+      this.place(tile);
+    }
+    this.tilesMap = tiles;
+    this.tilesMap.observeDeep(this.onChange);
   }
 
   /**
-   * Returns the collection for a parentId, creating it on first access. Dock
-   * and root collections carry a `null` sectionId; section collections carry
-   * their section id (preserving the existing `TileCollection.sectionId`
-   * contract).
+   * Returns the collection for a parentId, creating it on first access.
    */
   getCollection(parentId: string | null): TileCollection {
     let collection = this.collections.get(parentId);
@@ -51,39 +55,34 @@ export default class TilePlacement {
   }
 
   /**
-   * Constructs the tile models and places them into collections. The full set
-   * of tiles and their type-specific data is still server-owned this phase, so
-   * `serverTiles` is the authoritative list; the Y.Doc supplies placement
-   * through each tile's Y-bound `parentId`/`order`.
-   *
-   * All models are constructed (and indexed) before any are placed, so a
-   * child's section always exists when the child is positioned regardless of
-   * order in the list or section nesting.
-   *
-   * After construction the controller observes the Y.Doc for subsequent
-   * placement changes (remote edits, deletes). Observation is client-only —
-   * under SSR there is no doc and placement comes from the fields' fallbacks.
+   * The fractional order key positioning a tile before `beforeId` (or last
+   * when null/missing) within `parentId`'s collection. Pass `skip` to exclude
+   * a tile from comparison (e.g. when repositioning a tile within its current
+   * collection).
    */
-  bootstrap(serverTiles: ClientTile[]) {
-    for (const data of serverTiles) {
-      const tile = createTile(this.page, data);
-      this.page.index.set(tile.id, tile);
-    }
-    for (const tile of this.page.index.values()) {
-      this.place(tile);
+  orderBefore(
+    parentId: string | null,
+    beforeId: string | null | undefined,
+    skip?: Tile,
+  ): string {
+    let prev: Tile | undefined;
+    let next: Tile | undefined;
+
+    for (const item of this.getCollection(parentId).value) {
+      if (item === skip) {
+        continue;
+      }
+      if (beforeId != null && item.id === beforeId) {
+        next = item;
+        break;
+      }
+      prev = item;
     }
 
-    const doc = this.page.doc;
-    if (doc) {
-      this.tilesMap = doc.getMap<Y.Map<unknown>>("tiles");
-      this.tilesMap.observeDeep(this.onChange);
-    }
-  }
-
-  /** Registers a newly-created tile and places it. */
-  add(tile: Tile) {
-    this.page.index.set(tile.id, tile);
-    this.place(tile);
+    return generateKeyBetween(
+      prev?.order.value ?? null,
+      next?.order.value ?? null,
+    );
   }
 
   /** Removes a tile from its collection and the page index. Idempotent. */
@@ -93,7 +92,7 @@ export default class TilePlacement {
       return;
     }
     tile.parent?.remove(tile);
-    this.page.index.delete(id);
+    this.page.remove(id);
   }
 
   /**
@@ -165,15 +164,19 @@ export default class TilePlacement {
     for (const id of removed) {
       this.remove(id);
     }
+
+    const tilesToPlace: Tile[] = [];
     for (const id of added) {
-      // Locally-created tiles already have a model (the model layer writes the
-      // Y.Map then calls add()). Remote creation carrying no server payload is
-      // out of scope until client-first creation lands (migration plan).
-      const tile = this.page.index.get(id);
-      if (tile) {
-        this.place(tile);
+      const data = this.tilesMap?.get(id);
+      if (data) {
+        tilesToPlace.push(this.page.add(data));
       }
     }
+
+    for (const tile of tilesToPlace) {
+      this.place(tile);
+    }
+
     for (const id of moved) {
       if (added.has(id) || removed.has(id)) {
         continue;

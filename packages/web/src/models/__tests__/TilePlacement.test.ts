@@ -1,217 +1,246 @@
 import * as Y from "yjs";
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  test,
-  vi,
-} from "vitest";
-import Editor from "@/editor/Editor";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import Page from "@/models/Page";
 import Section from "@/models/Section";
+import Text from "@/models/Text";
 import { PAGE } from "@/test/fixtures/Page";
-import { TILE, SECTION_TILE } from "@/test/fixtures/Tile";
 
 vi.mock("@/api/client", () => ({ default: {} }));
 
-// Hocuspocus would open a real WebSocket on construction; stub it. The Y.Doc
-// PageCollaboration creates is independent of the provider, so it stays real.
-vi.mock("@hocuspocus/provider", () => ({
-  WebSocketStatus: { Connecting: "connecting" },
-  HocuspocusProvider: class {
-    awareness = null;
-    destroy() {}
-  },
-}));
+function placeTile(
+  doc: Y.Doc,
+  map: Y.Map<unknown>,
+  id: string,
+  parentId: string | null,
+  order: string,
+) {
+  map.set("id", id);
+  map.set("parentId", parentId);
+  map.set("order", order);
+  doc.getMap("tiles").set(id, map);
+}
 
 describe("TilePlacement", () => {
-  let editor: Editor;
-  let doc: Y.Doc;
-
-  beforeAll(() => {
-    // Exercise the real collaboration wiring rather than the SSR no-op path.
-    vi.stubEnv("SSR", false);
-    vi.stubEnv("PUBLIC_COLLABORATION_URL", "ws://test");
-    editor = Editor.init(PAGE);
-    doc = editor.page.doc!;
-  });
-
-  afterAll(() => {
-    editor.page.placement.dispose();
-    vi.unstubAllEnvs();
-  });
-
-  beforeEach(() => {
-    editor.page.placement.dispose();
-    editor.page.index.clear();
-    doc.transact(() => doc.getMap("tiles").clear());
-  });
-
   describe("getCollection", () => {
+    let page: Page;
+
+    beforeEach(() => {
+      page = new Page(PAGE, new Y.Doc());
+    });
+
     test("returns a stable instance per parentId", () => {
-      expect(editor.page.placement.getCollection(null)).toBe(
-        editor.page.placement.getCollection(null),
+      expect(page.placement.getCollection(null)).toBe(
+        page.placement.getCollection(null),
       );
-      expect(editor.page.placement.getCollection("dock:TOP")).not.toBe(
-        editor.page.placement.getCollection(null),
+      expect(page.placement.getCollection("dock:TOP")).not.toBe(
+        page.placement.getCollection(null),
       );
     });
 
     test("section collections carry their section id, others null", () => {
-      expect(editor.page.placement.getCollection("sec-1").sectionId).toBe(
-        "sec-1",
-      );
-      expect(editor.page.placement.getCollection(null).sectionId).toBeNull();
-      expect(
-        editor.page.placement.getCollection("dock:LEFT").sectionId,
-      ).toBeNull();
+      expect(page.placement.getCollection("sec-1").sectionId).toBe("sec-1");
+      expect(page.placement.getCollection(null).sectionId).toBeNull();
+      expect(page.placement.getCollection("dock:LEFT").sectionId).toBeNull();
     });
   });
 
-  describe("bootstrap", () => {
+  describe("initial placement", () => {
     test("places tiles into root, section, and dock collections", () => {
-      editor.page.placement.bootstrap([
-        { ...SECTION_TILE, id: "sec", sectionId: null },
-        { ...TILE, id: "root-1", sectionId: null, dock: null },
-        { ...TILE, id: "child", sectionId: "sec", dock: null },
-        { ...TILE, id: "docked", sectionId: null, dock: "TOP" },
-      ]);
-
-      expect(editor.page.tiles.value.map((t) => t.id)).toEqual([
+      const doc = new Y.Doc();
+      placeTile(
+        doc,
+        Section.createMap({ layout: "VERTICAL" }),
         "sec",
-        "root-1",
-      ]);
-      const section = editor.page.index.get("sec") as Section;
-      expect(section.tiles.value.map((t) => t.id)).toEqual(["child"]);
-      expect(editor.page.dockedTiles.TOP.value.map((t) => t.id)).toEqual([
+        null,
+        "a0",
+      );
+      placeTile(doc, Text.createMap({ align: "TOP" }), "root-1", null, "a1");
+      placeTile(doc, Text.createMap({ align: "TOP" }), "child", "sec", "a1");
+      placeTile(
+        doc,
+        Text.createMap({ align: "TOP" }),
         "docked",
-      ]);
+        "dock:TOP",
+        "a1",
+      );
+      const page = new Page(PAGE, doc);
+
+      expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "root-1"]);
+      const section = page.index.get("sec") as Section;
+      expect(section.tiles.value.map((t) => t.id)).toEqual(["child"]);
+      expect(page.dockedTiles.TOP.value.map((t) => t.id)).toEqual(["docked"]);
     });
 
     test("orders tiles within a collection by `order`", () => {
-      editor.page.placement.bootstrap([
-        { ...TILE, id: "c", sectionId: null, order: "a3" },
-        { ...TILE, id: "a", sectionId: null, order: "a1" },
-        { ...TILE, id: "b", sectionId: null, order: "a2" },
-      ]);
+      const doc = new Y.Doc();
+      placeTile(doc, Text.createMap({ align: "TOP" }), "c", null, "a3");
+      placeTile(doc, Text.createMap({ align: "TOP" }), "a", null, "a1");
+      placeTile(doc, Text.createMap({ align: "TOP" }), "b", null, "a2");
+      const page = new Page(PAGE, doc);
 
-      expect(editor.page.tiles.value.map((t) => t.id)).toEqual(["a", "b", "c"]);
+      expect(page.tiles.value.map((t) => t.id)).toEqual(["a", "b", "c"]);
     });
 
     test("does not render tiles whose parent section is missing", () => {
-      editor.page.placement.bootstrap([
-        { ...TILE, id: "orphan", sectionId: "ghost", dock: null },
-      ]);
+      const doc = new Y.Doc();
+      placeTile(doc, Text.createMap({ align: "TOP" }), "orphan", "ghost", "a1");
+      const page = new Page(PAGE, doc);
 
-      expect(editor.page.tiles.value).toHaveLength(0);
-      expect(editor.page.placement.getCollection("ghost").value).toHaveLength(
-        0,
-      );
-      // Still constructed/indexed, just not placed.
-      expect(editor.page.index.has("orphan")).toBe(true);
+      expect(page.tiles.value).toHaveLength(0);
+      expect(page.placement.getCollection("ghost").value).toHaveLength(0);
+      expect(page.index.has("orphan")).toBe(true);
     });
 
-    test("places children regardless of section order in the list", () => {
-      editor.page.placement.bootstrap([
-        { ...TILE, id: "child", sectionId: "sec", dock: null },
-        { ...SECTION_TILE, id: "sec", sectionId: null },
-      ]);
+    test("places children regardless of section order in the doc map", () => {
+      const doc = new Y.Doc();
+      placeTile(doc, Text.createMap({ align: "TOP" }), "child", "sec", "a1");
+      placeTile(
+        doc,
+        Section.createMap({ layout: "VERTICAL" }),
+        "sec",
+        null,
+        "a0",
+      );
+      const page = new Page(PAGE, doc);
 
-      const section = editor.page.index.get("sec") as Section;
+      const section = page.index.get("sec") as Section;
       expect(section.tiles.value.map((t) => t.id)).toEqual(["child"]);
     });
   });
 
   describe("reconcile", () => {
-    function tilesMap() {
-      return doc.getMap<Y.Map<unknown>>("tiles");
-    }
+    let page: Page;
 
     beforeEach(() => {
-      editor.page.placement.bootstrap([
-        { ...SECTION_TILE, id: "sec", sectionId: null },
-        { ...TILE, id: "t1", sectionId: null, order: "a1" },
-        { ...TILE, id: "t2", sectionId: null, order: "a2" },
-      ]);
+      const doc = new Y.Doc();
+      placeTile(
+        doc,
+        Section.createMap({ layout: "VERTICAL" }),
+        "sec",
+        null,
+        "a0",
+      );
+      placeTile(doc, Text.createMap({ align: "TOP" }), "t1", null, "a1");
+      placeTile(doc, Text.createMap({ align: "TOP" }), "t2", null, "a2");
+      page = new Page(PAGE, doc);
     });
 
-    test("removes a tile when its Y.Map entry is deleted", () => {
-      doc.transact(() => tilesMap().delete("t1"));
+    function tilesMap() {
+      return page.doc.getMap<Y.Map<unknown>>("tiles");
+    }
 
-      expect(editor.page.tiles.value.map((t) => t.id)).toEqual(["sec", "t2"]);
-      expect(editor.page.index.has("t1")).toBe(false);
+    test("removes a tile when its Y.Map entry is deleted", () => {
+      page.doc.transact(() => tilesMap().delete("t1"));
+
+      expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "t2"]);
+      expect(page.index.has("t1")).toBe(false);
     });
 
     test("moves a tile when its parentId changes", () => {
-      doc.transact(() => tilesMap().get("t1")?.set("parentId", "sec"));
+      page.doc.transact(() => tilesMap().get("t1")?.set("parentId", "sec"));
 
-      expect(editor.page.tiles.value.map((t) => t.id)).toEqual(["sec", "t2"]);
-      const section = editor.page.index.get("sec") as Section;
+      expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "t2"]);
+      const section = page.index.get("sec") as Section;
       expect(section.tiles.value.map((t) => t.id)).toEqual(["t1"]);
     });
 
     test("repositions a tile when its order changes", () => {
-      doc.transact(() => tilesMap().get("t1")?.set("order", "a9"));
+      page.doc.transact(() => tilesMap().get("t1")?.set("order", "a9"));
 
-      expect(editor.page.tiles.value.map((t) => t.id)).toEqual([
-        "sec",
-        "t2",
-        "t1",
-      ]);
+      expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "t2", "t1"]);
     });
 
     test("ignores non-placement field changes", () => {
-      const before = editor.page.tiles.value.map((t) => t.id);
-      doc.transact(() => tilesMap().get("t1")?.set("x", 999));
+      const before = page.tiles.value.map((t) => t.id);
 
-      expect(editor.page.tiles.value.map((t) => t.id)).toEqual(before);
+      page.doc.transact(() => tilesMap().get("t1")?.set("x", 999));
+
+      expect(page.tiles.value.map((t) => t.id)).toEqual(before);
     });
 
     test("drops a tile reparented onto a missing section", () => {
-      doc.transact(() => tilesMap().get("t2")?.set("parentId", "ghost"));
+      page.doc.transact(() => tilesMap().get("t2")?.set("parentId", "ghost"));
 
-      expect(editor.page.tiles.value.map((t) => t.id)).toEqual(["sec", "t1"]);
-      expect(editor.page.placement.getCollection("ghost").value).toHaveLength(
-        0,
-      );
+      expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "t1"]);
+      expect(page.placement.getCollection("ghost").value).toHaveLength(0);
     });
 
     test("stops reconciling after dispose", () => {
-      editor.page.placement.dispose();
-      doc.transact(() => tilesMap().delete("t1"));
+      page.placement.dispose();
+      page.doc.transact(() => tilesMap().delete("t1"));
 
-      expect(editor.page.index.has("t1")).toBe(true);
+      expect(page.index.has("t1")).toBe(true);
+    });
+
+    test("constructs a sync-arriving tile from its Y.Map", () => {
+      page.doc.transact(() => {
+        placeTile(page.doc, Text.createMap({ align: "TOP" }), "t3", null, "a3");
+      });
+
+      expect(page.index.has("t3")).toBe(true);
+      expect(page.tiles.value.map((t) => t.id)).toEqual([
+        "sec",
+        "t1",
+        "t2",
+        "t3",
+      ]);
+    });
+
+    test("places a sync-arriving child under a sync-arriving section in the same batch", () => {
+      page.doc.transact(() => {
+        // Insert the child before the section to exercise the two-pass.
+        placeTile(
+          page.doc,
+          Text.createMap({ align: "TOP" }),
+          "child",
+          "new-sec",
+          "a1",
+        );
+        placeTile(
+          page.doc,
+          Section.createMap({ layout: "VERTICAL" }),
+          "new-sec",
+          null,
+          "a3",
+        );
+      });
+
+      const newSection = page.index.get("new-sec") as Section;
+      expect(newSection.tiles.value.map((t) => t.id)).toEqual(["child"]);
     });
   });
 
   describe("tile.move", () => {
+    let page: Page;
+
     beforeEach(() => {
-      editor.page.placement.bootstrap([
-        { ...SECTION_TILE, id: "sec", sectionId: null, order: "a0" },
-        { ...TILE, id: "t1", sectionId: null, order: "a1" },
-        { ...TILE, id: "t2", sectionId: null, order: "a2" },
-        { ...TILE, id: "t3", sectionId: null, order: "a3" },
-      ]);
-    });
-
-    test("reparents a tile into a section", async () => {
-      await editor.page.getTile("t1").move({ parentId: "sec" });
-
-      expect(editor.page.tiles.value.map((t) => t.id)).toEqual([
+      const doc = new Y.Doc();
+      placeTile(
+        doc,
+        Section.createMap({ layout: "VERTICAL" }),
         "sec",
-        "t2",
-        "t3",
-      ]);
-      expect(
-        editor.page.getSection("sec").tiles.value.map((t) => t.id),
-      ).toEqual(["t1"]);
+        null,
+        "a0",
+      );
+      placeTile(doc, Text.createMap({ align: "TOP" }), "t1", null, "a1");
+      placeTile(doc, Text.createMap({ align: "TOP" }), "t2", null, "a2");
+      placeTile(doc, Text.createMap({ align: "TOP" }), "t3", null, "a3");
+      page = new Page(PAGE, doc);
     });
 
-    test("reorders before a sibling via beforeId", async () => {
-      await editor.page.getTile("t3").move({ beforeId: "t1" });
+    test("reparents a tile into a section", () => {
+      page.getTile("t1").move({ parentId: "sec" });
 
-      expect(editor.page.tiles.value.map((t) => t.id)).toEqual([
+      expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "t2", "t3"]);
+      expect(page.getSection("sec").tiles.value.map((t) => t.id)).toEqual([
+        "t1",
+      ]);
+    });
+
+    test("reorders before a sibling via beforeId", () => {
+      page.getTile("t3").move({ beforeId: "t1" });
+
+      expect(page.tiles.value.map((t) => t.id)).toEqual([
         "sec",
         "t3",
         "t1",
@@ -219,10 +248,10 @@ describe("TilePlacement", () => {
       ]);
     });
 
-    test("appends to the end when beforeId is null", async () => {
-      await editor.page.getTile("t1").move({ beforeId: null });
+    test("appends to the end when beforeId is null", () => {
+      page.getTile("t1").move({ beforeId: null });
 
-      expect(editor.page.tiles.value.map((t) => t.id)).toEqual([
+      expect(page.tiles.value.map((t) => t.id)).toEqual([
         "sec",
         "t2",
         "t3",
@@ -230,10 +259,10 @@ describe("TilePlacement", () => {
       ]);
     });
 
-    test("moveUp swaps with the previous sibling", async () => {
-      await editor.page.getTile("t3").moveUp();
+    test("moveUp swaps with the previous sibling", () => {
+      page.getTile("t3").moveUp();
 
-      expect(editor.page.tiles.value.map((t) => t.id)).toEqual([
+      expect(page.tiles.value.map((t) => t.id)).toEqual([
         "sec",
         "t1",
         "t3",
@@ -241,10 +270,10 @@ describe("TilePlacement", () => {
       ]);
     });
 
-    test("moveDown swaps with the next sibling", async () => {
-      await editor.page.getTile("t1").moveDown();
+    test("moveDown swaps with the next sibling", () => {
+      page.getTile("t1").moveDown();
 
-      expect(editor.page.tiles.value.map((t) => t.id)).toEqual([
+      expect(page.tiles.value.map((t) => t.id)).toEqual([
         "sec",
         "t2",
         "t1",
