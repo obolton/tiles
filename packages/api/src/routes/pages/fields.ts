@@ -51,6 +51,11 @@ export const PAGE_FIELDS = {
   dropdowns: {
     select: DROPDOWN_FIELDS,
   },
+  document: {
+    select: {
+      snapshot: true,
+    },
+  },
 } as const satisfies Prisma.Args<typeof prisma.page, "findMany">["select"];
 
 export const LIBRARY_PAGE_FIELDS = {
