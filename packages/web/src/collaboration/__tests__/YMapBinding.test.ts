@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 import { describe, expect, test, beforeEach, vi } from "vitest";
-import { YMapBinding, BoundField, LOCAL_ORIGIN } from "../YMapBinding";
+import { YMapBinding, BoundField } from "../YMapBinding";
 
 describe("YMapBinding", () => {
   let doc: Y.Doc;
@@ -10,7 +10,7 @@ describe("YMapBinding", () => {
   beforeEach(() => {
     doc = new Y.Doc();
     map = doc.getMap<unknown>("test");
-    binding = new YMapBinding(map, doc);
+    binding = new YMapBinding(map);
   });
 
   describe("field", () => {
@@ -120,69 +120,6 @@ describe("YMapBinding", () => {
 
       expect(sub).toHaveBeenCalledTimes(1);
       expect(fieldA.value).toBe(42);
-    });
-  });
-
-  describe("transact", () => {
-    test("collapses multiple writes into one Yjs transaction", () => {
-      const x = binding.field("x", 0);
-      const y = binding.field("y", 0);
-
-      let txnCount = 0;
-      doc.on("afterTransaction", () => {
-        txnCount++;
-      });
-
-      binding.transact(() => {
-        x.value = 1;
-        y.value = 2;
-      });
-
-      expect(txnCount).toBe(1);
-      expect(x.value).toBe(1);
-      expect(y.value).toBe(2);
-    });
-
-    test("notifies each changed field's subscribers exactly once", () => {
-      const x = binding.field("x", 0);
-      const y = binding.field("y", 0);
-      const subX = vi.fn();
-      const subY = vi.fn();
-      x.subscribe(subX);
-      y.subscribe(subY);
-
-      binding.transact(() => {
-        x.value = 1;
-        y.value = 2;
-      });
-
-      expect(subX).toHaveBeenCalledTimes(1);
-      expect(subY).toHaveBeenCalledTimes(1);
-    });
-
-    test("forwards a custom origin to the Yjs transaction", () => {
-      const customOrigin = Symbol("custom");
-      const origins: unknown[] = [];
-      doc.on("afterTransaction", (tr: Y.Transaction) =>
-        origins.push(tr.origin),
-      );
-      const field = binding.field("x", 0);
-      binding.transact(() => {
-        field.value = 1;
-      }, customOrigin);
-      expect(origins).toContain(customOrigin);
-    });
-
-    test("defaults to LOCAL_ORIGIN", () => {
-      const origins: unknown[] = [];
-      doc.on("afterTransaction", (tr: Y.Transaction) =>
-        origins.push(tr.origin),
-      );
-      const field = binding.field("x", 0);
-      binding.transact(() => {
-        field.value = 1;
-      });
-      expect(origins).toContain(LOCAL_ORIGIN);
     });
   });
 

@@ -35,10 +35,7 @@ export class BoundField<T> extends BaseReactive<T> {
 export class YMapBinding {
   private readonly fields = new Map<string, BoundField<unknown>>();
 
-  constructor(
-    private readonly map: Y.Map<unknown>,
-    private readonly doc: Y.Doc,
-  ) {
+  constructor(private readonly map: Y.Map<unknown>) {
     this.onMapChange = this.onMapChange.bind(this);
     map.observe(this.onMapChange);
   }
@@ -61,10 +58,6 @@ export class YMapBinding {
     }
 
     return field;
-  }
-
-  transact<R>(fn: () => R, origin: unknown = LOCAL_ORIGIN): R {
-    return this.doc.transact(fn, origin);
   }
 
   dispose() {
