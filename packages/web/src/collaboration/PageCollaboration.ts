@@ -24,13 +24,13 @@ export class PageCollaboration {
   #abort = new AbortController();
   #userColor: string | null = null;
 
-  constructor(pageId: string, onSynced: () => void) {
+  constructor(pageId: string, doc: Y.Doc) {
     if (!COLLABORATION_URL) {
       throw new Error("PUBLIC_COLLABORATION_URL is not set");
     }
 
     this.pageId = pageId;
-    this.doc = new Y.Doc();
+    this.doc = doc;
     this.status = reactive(WebSocketStatus.Connecting);
     this.synced = flag(false);
 
@@ -48,7 +48,6 @@ export class PageCollaboration {
           return;
         }
         this.synced.on();
-        onSynced();
       },
     });
 
@@ -61,11 +60,13 @@ export class PageCollaboration {
     return this.#provider.awareness ?? null;
   }
 
+  /**
+   * Ends the collaboration session.
+   */
   dispose() {
     this.#abort.abort();
     this.#provider.destroy();
     this.#indexeddb.destroy();
-    this.doc.destroy();
   }
 
   publishUser() {
