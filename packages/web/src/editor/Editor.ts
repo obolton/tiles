@@ -38,7 +38,7 @@ export default class Editor {
   static #current?: Editor;
 
   readonly page: Page;
-  readonly collaboration: PageCollaboration | null;
+  collaboration: PageCollaboration | null = null;
   readonly isEditable: Reactive<boolean>;
   readonly selection: Reactive<Set<Tile>>;
   readonly references: Reactive<Tile[]>;
@@ -83,12 +83,12 @@ export default class Editor {
     return null;
   }
 
-  static init(page: PageData) {
+  static init(page: PageData, doc: Y.Doc) {
     if (this.#current) {
       throw new Error("The editor has already been initialized");
     }
 
-    const editor = new Editor(page);
+    const editor = new Editor(page, doc);
 
     if (!import.meta.env.SSR) {
       this.#current = editor;
@@ -109,17 +109,9 @@ export default class Editor {
     return this.#current;
   }
 
-  private constructor(page: PageData) {
-    this.collaboration = IS_SERVER
-      ? null
-      : new PageCollaboration(page.id, () => {
-          this.page.initTiles(page.tiles);
-        });
-    this.page = new Page(page);
+  private constructor(page: PageData, doc: Y.Doc) {
+    this.page = new Page(page, doc);
     this.page.editor = this;
-    if (!this.collaboration) {
-      this.page.initTiles(page.tiles);
-    }
     this.isEditable = flag(isEditMode());
     this.selection = reactive(new Set());
     this.references = reactive([]);
@@ -141,20 +133,35 @@ export default class Editor {
       this.isEditable.subscribe(() => {
         setEditMode(this.isEditable.value);
         if (this.isEditable.value) {
+          this.startCollaboration();
           requestAnimationFrame(() => this.focusFirstTile());
         } else {
+          this.stopCollaboration();
           this.clearSelection();
         }
       });
 
       // Focus the first tile if starting in edit mode
       if (this.isEditable.value) {
+        this.startCollaboration();
         requestAnimationFrame(() => this.focusFirstTile());
       }
 
       // Load operation history
       this.operations?.load().then(() => this.syncUndoRedoState());
     }
+  }
+
+  private startCollaboration() {
+    if (this.collaboration) {
+      return;
+    }
+    this.collaboration = new PageCollaboration(this.page.id, this.page.doc);
+  }
+
+  private stopCollaboration() {
+    this.collaboration?.dispose();
+    this.collaboration = null;
   }
 
   enablePointerEvents() {
