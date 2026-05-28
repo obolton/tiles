@@ -1,9 +1,8 @@
 import { Buffer } from "node:buffer";
 import { Prisma, type GradientDirection } from "@/generated/prisma/client";
-import { getImageUrl } from "@/utils/cdn.ts";
 
 export type Background =
-  | { type: "image"; imageUrl: string }
+  | { type: "image"; imageId: string }
   | { type: "color"; color: string }
   | {
       type: "gradient";
@@ -55,7 +54,7 @@ function computeBackground({
   backgroundImageId?: string | null;
 }): Background {
   if (backgroundImageId) {
-    return { type: "image", imageUrl: getImageUrl(backgroundImageId) };
+    return { type: "image", imageId: backgroundImageId };
   }
   return computeFill({ color: backgroundColor, gradient: backgroundGradient });
 }
