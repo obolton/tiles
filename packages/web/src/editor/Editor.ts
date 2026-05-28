@@ -270,16 +270,18 @@ export default class Editor {
 
     event.preventDefault();
 
-    const imageId = await uploadMedia({
+    const { id, width, height } = await uploadMedia({
       file,
       purpose: "content",
       workspaceId: this.workspaceId,
     });
     await Image.create(this.page, {
-      sectionId: this.activeSection?.id,
+      parentId: this.activeSection?.id ?? null,
       beforeId: this.insertBeforeId,
-      imageId,
+      imageId: id,
+      size: { width, height },
       sizing: "AUTO",
+      width: this.page.width.value,
     });
   }
 
@@ -311,22 +313,24 @@ export default class Editor {
     if (isImage(item)) {
       const file = item.getAsFile();
       if (file) {
-        const imageId = await uploadMedia({
+        const { id, width, height } = await uploadMedia({
           file,
           purpose: "content",
           workspaceId: this.workspaceId,
         });
         await Image.create(this.page, {
-          sectionId: this.activeSection?.id,
+          parentId: this.activeSection?.id ?? null,
           beforeId: this.insertBeforeId,
-          imageId,
+          imageId: id,
+          size: { width, height },
           sizing: "AUTO",
+          width: this.page.width.value,
         });
       }
     } else if (isUriList(item)) {
       item.getAsString(async (url) => {
         await Link.create(this.page, {
-          sectionId: this.activeSection?.id,
+          parentId: this.activeSection?.id ?? null,
           beforeId: this.insertBeforeId,
           url,
         });
@@ -514,19 +518,16 @@ export default class Editor {
   }
 
   addTile(tile: Tile, select = true) {
-    viewTransition(() => {
-      this.page.placement.add(tile);
-    }).updateCallbackDone.then(() => {
-      if (select) {
-        this.select([tile.id]);
+    if (!select) {
+      return;
+    }
 
-        const element = document.getElementById(tile.id);
-        if (element) {
-          focusInside(element, { preventScroll: true });
-          scrollIntoViewIfNeeded(element, { behavior: "smooth" });
-        }
-      }
-    });
+    this.select([tile.id]);
+    const element = document.getElementById(tile.id);
+    if (element) {
+      focusInside(element, { preventScroll: true });
+      scrollIntoViewIfNeeded(element, { behavior: "smooth" });
+    }
   }
 
   removeTiles(tiles: Tile[]) {
