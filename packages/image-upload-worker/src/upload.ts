@@ -6,6 +6,8 @@ import type { UploadParams } from "./requests";
 
 export interface UploadResult {
   id: string;
+  width: number;
+  height: number;
 }
 
 /**
@@ -58,7 +60,7 @@ export async function uploadImage(
     }
 
     // Update database record
-    return await client.media.updateImage.mutate({
+    const updated = await client.media.updateImage.mutate({
       id: image.id,
       workspaceId,
       pending: false,
@@ -66,6 +68,12 @@ export async function uploadImage(
       width: dimensions.width,
       height: dimensions.height,
     });
+
+    return {
+      id: updated.id,
+      width: dimensions.width,
+      height: dimensions.height,
+    };
   } catch (error) {
     // Roll back
     if (object) {

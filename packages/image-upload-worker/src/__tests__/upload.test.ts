@@ -127,7 +127,7 @@ describe("uploadImage", () => {
       bucket,
     );
 
-    expect(result).toEqual({ id: "img-123" });
+    expect(result).toEqual({ id: "img-123", width: 800, height: 600 });
   });
 
   test("rolls back and throws BadRequestError when dimensions cannot be read", async () => {

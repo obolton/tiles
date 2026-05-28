@@ -46,7 +46,7 @@ describe("fetch handler", () => {
         headers: HEADERS,
       },
     );
-    const image = { id: "img-123" };
+    const image = { id: "img-123", width: 300, height: 400 };
 
     vi.mocked(createClient).mockReturnValue({} as never);
     vi.mocked(uploadImage).mockResolvedValue(image);
