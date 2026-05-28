@@ -1,26 +1,20 @@
 import * as Y from "yjs";
 import prisma from "@/database/prisma.ts";
-import {
-  applyMigrations,
-  createEmptyDoc,
-  CURRENT_SCHEMA_VERSION,
-} from "./migrator.ts";
+import { applyMigrations, CURRENT_SCHEMA_VERSION } from "./migrator.ts";
 
 export async function loadDoc(pageId: string): Promise<Y.Doc> {
-  const record = await prisma.pageDocument.findUnique({
-    where: { pageId },
-    select: { snapshot: true, schemaVersion: true },
+  const page = await prisma.page.findUniqueOrThrow({
+    where: { id: pageId },
+    select: {
+      document: { select: { snapshot: true, schemaVersion: true } },
+    },
   });
 
-  if (!record) {
-    return createEmptyDoc();
-  }
-
   const doc = new Y.Doc();
-  Y.applyUpdate(doc, record.snapshot);
+  Y.applyUpdate(doc, page.document.snapshot);
 
-  if (record.schemaVersion < CURRENT_SCHEMA_VERSION) {
-    applyMigrations(doc, record.schemaVersion);
+  if (page.document.schemaVersion < CURRENT_SCHEMA_VERSION) {
+    applyMigrations(doc, page.document.schemaVersion);
   }
   return doc;
 }
@@ -30,16 +24,12 @@ export async function saveDoc(
   state: Uint8Array,
 ): Promise<void> {
   const snapshot = Buffer.from(state);
-  await prisma.pageDocument.upsert({
-    where: { pageId },
-    create: {
-      pageId,
-      snapshot,
-      schemaVersion: CURRENT_SCHEMA_VERSION,
-    },
-    update: {
-      snapshot,
-      schemaVersion: CURRENT_SCHEMA_VERSION,
+  await prisma.page.update({
+    where: { id: pageId },
+    data: {
+      document: {
+        update: { snapshot, schemaVersion: CURRENT_SCHEMA_VERSION },
+      },
     },
   });
 }
