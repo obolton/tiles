@@ -52,6 +52,7 @@ export async function getPageById(
 
   return {
     ...page,
+    document: Buffer.from(page.document.snapshot).toString("base64"),
     tiles: page.tiles.map(formatTile),
   };
 }
