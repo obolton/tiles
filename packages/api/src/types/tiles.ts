@@ -43,9 +43,7 @@ export interface ClientTextTile extends ClientTileBase, ClientText {
 }
 
 // Link
-export type ClientLink = Omit<OmitMetadata<LinkTile>, "imageId"> & {
-  imageUrl: string | null;
-};
+export type ClientLink = OmitMetadata<LinkTile>;
 export interface ClientLinkTile extends ClientTileBase, ClientLink {
   type: "LINK";
 }

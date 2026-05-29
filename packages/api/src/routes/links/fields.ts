@@ -7,5 +7,5 @@ export const LINK_FIELDS = {
   title: true,
   description: true,
   siteName: true,
-  imageUrl: true,
+  imageId: true,
 } as const satisfies Prisma.LinkTileSelect<ExtensionArgs>;

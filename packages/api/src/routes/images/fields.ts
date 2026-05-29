@@ -3,7 +3,7 @@ import type { Prisma } from "@/generated/prisma/client";
 
 export const IMAGE_FIELDS = {
   id: true,
-  imageUrl: true,
+  imageId: true,
   alt: true,
   text: true,
   originX: true,
