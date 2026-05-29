@@ -1,4 +1,33 @@
+import * as Y from "yjs";
 import type { RichText, Node } from "./types";
+
+/**
+ * Extracts plain text from a Y.XmlFragment.
+ */
+type FragmentChild = Y.XmlElement | Y.XmlText | Y.XmlHook;
+type QueueItem = Y.XmlFragment | FragmentChild | "\n";
+
+export function fragmentToPlainText(
+  fragment: Y.XmlFragment | Y.XmlElement,
+): string {
+  let output = "";
+  const queue: QueueItem[] = [fragment];
+
+  while (queue.length > 0) {
+    const node = queue.shift()!;
+    if (node === "\n") {
+      output += "\n";
+    } else if (node instanceof Y.XmlText) {
+      output += node.toString();
+    } else if (node instanceof Y.XmlElement) {
+      queue.push(...node.toArray(), "\n");
+    } else if (node instanceof Y.XmlFragment) {
+      queue.push(...node.toArray());
+    }
+  }
+
+  return output;
+}
 
 export function toPlainText(input: RichText) {
   const queue: (Node | string)[] = [...input];
