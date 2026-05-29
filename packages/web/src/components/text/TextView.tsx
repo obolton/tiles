@@ -1,6 +1,7 @@
 import RichText from "./RichText";
 import { combine } from "@/utils/reactivity";
 import styles from "./TextView.module.css";
+import { serializeFragment } from "@/utils/richText/serialize";
 import type Text from "@/models/Text";
 
 export interface TextViewProps {
@@ -8,7 +9,7 @@ export interface TextViewProps {
 }
 
 export default function TextView({ text }: TextViewProps) {
-  const { content, align } = text;
+  const { contentFragment, align } = text;
 
   const classList = combine({ align }, ({ align }) => ({
     "rich-text": true,
@@ -20,9 +21,7 @@ export default function TextView({ text }: TextViewProps) {
 
   return (
     <div classList={classList}>
-      {content.derive((value) => (
-        <RichText content={value} />
-      ))}
+      <RichText content={serializeFragment(contentFragment)} />
     </div>
   );
 }
