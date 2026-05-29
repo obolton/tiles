@@ -1,13 +1,4 @@
 import { z } from "zod";
-import { TileSchema } from "@/schema/Tile";
-
-export const UpdateTileSchema = z.object({
-  pageId: z.uuid(),
-  id: z.uuid(),
-  themeId: TileSchema.shape.themeId,
-  background: TileSchema.shape.background,
-});
-export type UpdateTileSchema = z.infer<typeof UpdateTileSchema>;
 
 export const DuplicateTileSchema = z.strictObject({
   pageId: z.uuid(),

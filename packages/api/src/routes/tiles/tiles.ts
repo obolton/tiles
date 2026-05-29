@@ -9,17 +9,12 @@ import {
   getTextColorProperties,
   getBackgroundProperties,
 } from "@/utils/themes";
-import type {
-  UpdateTileSchema,
-  DuplicateTileSchema,
-  DeleteTilesSchema,
-} from "./schema";
+import type { DuplicateTileSchema, DeleteTilesSchema } from "./schema";
 import type { ColorSchema } from "@/schema/Color";
 import type { BackgroundSchema } from "@/schema/Background";
 import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
 import type { FrameStyle, TileType } from "@/generated/prisma/enums";
-import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
 import { TILE_FIELDS, FULL_TILE_FIELDS, type FullTile } from "./fields";
 import type { ClientTile } from "@/types/tiles";
 
@@ -123,30 +118,6 @@ export async function getTileOrder(
     getTileOrderQuery(pageId, sectionId, beforeId),
   );
   return generateKeyBetween(result?.a ?? null, result?.b ?? null);
-}
-
-export async function updateTile(
-  { pageId, id, themeId, background }: UpdateTileSchema,
-  { workspaceId }: AuthenticatedPageProcedureContext,
-) {
-  return prisma.$transaction(async (transaction) => {
-    // Validate theme belongs to same workspace
-    if (themeId) {
-      await transaction.theme.findUniqueOrThrow({
-        where: { id: themeId, workspaceId },
-        select: { id: true },
-      });
-    }
-
-    return transaction.tile.update({
-      where: { pageId, id },
-      data: {
-        themeId,
-        ...getBackgroundProperties(background),
-      },
-      select: TILE_FIELDS,
-    });
-  });
 }
 
 export async function duplicateTile({
