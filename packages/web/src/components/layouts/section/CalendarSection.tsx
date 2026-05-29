@@ -6,7 +6,7 @@ import Link from "@/models/Link";
 import Video from "@/models/Video";
 import PageLink from "@/models/PageLink";
 import { getNearestMonth } from "@/utils/dates";
-import { toPlainText } from "@/utils/richText/plainText";
+import { fragmentToPlainText, toPlainText } from "@/utils/richText/plainText";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import { getThemeStyles } from "@/utils/themes";
 import { handleError } from "@/utils/errors";
@@ -39,10 +39,11 @@ function getSegmentBackground(tile: Tile): Reactive<string | null> {
 
 function getSegmentLabel(tile: Tile): Reactive<string | null> {
   if (tile instanceof Text) {
-    return tile.content.derive((content) => {
-      const text = toPlainText(content).split("\n")[0]?.trim();
-      return text || null;
-    });
+    // TODO: react to Y.XmlFragment changes; currently a snapshot at mount time.
+    const text = fragmentToPlainText(tile.contentFragment)
+      .split("\n")[0]
+      ?.trim();
+    return reactive(text || null);
   }
   if (tile instanceof Link) {
     return tile.title;
@@ -51,7 +52,7 @@ function getSegmentLabel(tile: Tile): Reactive<string | null> {
     return tile.title;
   }
   if (tile instanceof PageLink) {
-    return reactive(tile.linkedPage?.title ?? null);
+    return tile.linkedPage.derive((page) => page?.title ?? null);
   }
   if (tile instanceof Image) {
     return tile.text.derive((text) => {
@@ -100,10 +101,9 @@ export default function CalendarSection({
       return;
     }
     Text.create(editor.page, {
-      sectionId: section.id,
+      parentId: section.id,
       beforeId: null,
       sizing: "AUTO",
-      content: [{ type: "paragraph", children: [] }],
       startDate: event.start,
       endDate: event.end,
     }).catch(handleError);

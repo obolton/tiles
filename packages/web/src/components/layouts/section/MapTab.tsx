@@ -33,11 +33,10 @@ export default function MapTab({ section }: MapTabProps) {
       props: { boundingBox },
       async onConfirm({ place }) {
         await Text.create(section.page, {
-          sectionId: section.id,
+          parentId: section.id,
           sizing: "AUTO",
           width: 8,
-          lat: place.lat,
-          long: place.long,
+          coordinates: { lat: place.lat, long: place.long },
           content: [
             {
               type: "paragraph",

@@ -55,10 +55,9 @@ export default function InsertMenu({
     switch (tileType) {
       case "TEXT":
         Text.create(Editor.current.page, {
-          sectionId,
+          parentId: sectionId,
           beforeId: null,
           sizing: "AUTO",
-          content: [{ type: "paragraph", children: [] }],
         }).catch(handleError);
         break;
 
@@ -69,16 +68,18 @@ export default function InsertMenu({
             if (!result) {
               return;
             }
-            const imageId = await uploadMedia({
+            const { id, width, height } = await uploadMedia({
               file: result.image,
               purpose: "content",
               workspaceId: Editor.current.workspaceId,
             });
             await Image.create(Editor.current.page, {
-              sectionId,
+              parentId: sectionId,
               beforeId: null,
-              imageId,
+              imageId: id,
+              size: { width, height },
               sizing: "AUTO",
+              width: Editor.current.page.width.value,
             });
           },
         });
@@ -90,17 +91,17 @@ export default function InsertMenu({
             workspaceId: Editor.current.workspaceId,
           },
           async onConfirm(result) {
-            if ("linkedPageId" in result) {
+            if ("linkedPage" in result) {
               await PageLink.create(Editor.current.page, {
-                sectionId,
+                parentId: sectionId,
                 beforeId: null,
-                linkedPageId: result.linkedPageId,
+                linkedPage: result.linkedPage,
                 width: 5,
                 height: 5,
               });
             } else if (result.url) {
               await Link.create(Editor.current.page, {
-                sectionId,
+                parentId: sectionId,
                 beforeId: null,
                 url: result.url,
                 width: 5,
@@ -173,11 +174,10 @@ export default function InsertMenu({
           sizing: "FOUR_THREE",
         });
         await Text.create(Editor.current.page, {
-          sectionId: section.id,
+          parentId: section.id,
           sizing: "AUTO",
           width: 8,
-          lat: place.lat,
-          long: place.long,
+          coordinates: { lat: place.lat, long: place.long },
           content: [
             {
               type: "paragraph",
