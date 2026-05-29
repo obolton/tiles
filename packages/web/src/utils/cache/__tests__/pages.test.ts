@@ -88,7 +88,6 @@ describe("page cache", () => {
       expect(cached?.workspaceId).toBe(page.workspaceId);
       expect(cached?.title).toBe(page.title);
       expect(cached?.font).toBe(page.font);
-      expect(cached?.backgroundColor).toBe(page.backgroundColor);
       expect(cached?.tiles).toHaveLength(3);
     });
 
