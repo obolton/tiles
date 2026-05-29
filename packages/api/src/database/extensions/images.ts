@@ -20,22 +20,6 @@ export default Prisma.defineExtension({
         },
       },
     },
-    imageTile: {
-      imageUrl: {
-        needs: { imageId: true },
-        compute({ imageId }) {
-          return imageId ? getImageUrl(imageId) : null;
-        },
-      },
-    },
-    linkTile: {
-      imageUrl: {
-        needs: { imageId: true },
-        compute({ imageId }) {
-          return imageId ? getImageUrl(imageId) : null;
-        },
-      },
-    },
     videoTile: {
       imageUrl: {
         needs: { id: true },
