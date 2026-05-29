@@ -45,10 +45,7 @@ export default class TilePlacement {
   getCollection(parentId: string | null): TileCollection {
     let collection = this.collections.get(parentId);
     if (!collection) {
-      const parent = parseParentId(parentId);
-      collection = new TileCollection(
-        parent.type === "section" ? parent.sectionId : null,
-      );
+      collection = new TileCollection();
       this.collections.set(parentId, collection);
     }
     return collection;

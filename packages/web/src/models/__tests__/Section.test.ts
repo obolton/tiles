@@ -60,6 +60,5 @@ describe("Section", () => {
     expect(section.type).toBe("SECTION");
     expect(section.layout.value).toBe(SECTION_PROPS.layout);
     expect(section.tiles).toBeDefined();
-    expect(section.tiles.sectionId).toBe(section.id);
   });
 });

@@ -2,14 +2,7 @@ import { BaseReactive } from "@/utils/reactivity";
 import type Tile from "./Tile";
 
 export default class TileCollection extends BaseReactive<Tile[]> {
-  readonly sectionId: string | null;
-
   private items: Tile[] = [];
-
-  constructor(sectionId: string | null = null) {
-    super();
-    this.sectionId = sectionId;
-  }
 
   get value() {
     return this.items;

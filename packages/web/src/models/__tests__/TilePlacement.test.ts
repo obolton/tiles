@@ -36,12 +36,6 @@ describe("TilePlacement", () => {
         page.placement.getCollection(null),
       );
     });
-
-    test("section collections carry their section id, others null", () => {
-      expect(page.placement.getCollection("sec-1").sectionId).toBe("sec-1");
-      expect(page.placement.getCollection(null).sectionId).toBeNull();
-      expect(page.placement.getCollection("dock:LEFT").sectionId).toBeNull();
-    });
   });
 
   describe("initial placement", () => {
