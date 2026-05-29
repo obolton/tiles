@@ -14,14 +14,7 @@ export interface GradientFill {
 
 export interface ImageFill {
   type: "image";
-  imageUrl: string;
-}
-
-export interface ImageFillUpdate {
-  type: "image";
   imageId: string;
 }
 
 export type Fill = ColorFill | GradientFill | ImageFill;
-
-export type FillUpdate = ColorFill | GradientFill | ImageFillUpdate | null;
