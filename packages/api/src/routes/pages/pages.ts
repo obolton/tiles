@@ -244,8 +244,6 @@ export async function updatePage(
     dockBottomHeight,
     dockLeftWidth,
     dockRightWidth,
-    width,
-    alignment,
   }: UpdatePageSchema,
   { userId, workspaceId }: AuthenticatedPageProcedureContext,
 ) {
@@ -273,8 +271,6 @@ export async function updatePage(
         dockBottomHeight,
         dockLeftWidth,
         dockRightWidth,
-        width,
-        alignment,
       },
       select: PAGE_FIELDS,
     });

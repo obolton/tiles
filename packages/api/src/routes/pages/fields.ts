@@ -17,8 +17,6 @@ export const PAGE_FIELDS = {
   type: true,
   updatedAt: true,
   coverImageUrl: true,
-  width: true,
-  alignment: true,
   dockTopHeight: true,
   dockBottomHeight: true,
   dockLeftWidth: true,

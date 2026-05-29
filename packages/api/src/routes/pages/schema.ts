@@ -1,9 +1,6 @@
 import { z } from "zod";
 import { PaginationSchema, SortDirection } from "@/schema/Pagination";
-import { HorizontalAlignment, PageType } from "@/generated/prisma/client";
-
-export const MIN_WIDTH = 12;
-export const MAX_WIDTH = 80;
+import { PageType } from "@/generated/prisma/client";
 
 export const GetPageByIdSchema = z.object({
   id: z.uuid(),
@@ -38,8 +35,6 @@ export const UpdatePageSchema = z.object({
   dockBottomHeight: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
   dockLeftWidth: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
   dockRightWidth: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
-  width: z.int().gte(MIN_WIDTH).lte(MAX_WIDTH).optional(),
-  alignment: z.enum(HorizontalAlignment).optional(),
 });
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
 
