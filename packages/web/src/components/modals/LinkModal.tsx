@@ -10,7 +10,13 @@ import { handleError } from "@/utils/errors";
 import { flag, reactive } from "@/utils/reactivity";
 import type { LibraryPage } from "@/components/library/LibraryCard";
 import type { ModalProps } from "@/utils/modals";
-export type LinkModalResult = { linkedPageId: string } | { url: string | null };
+import type { ClientPageLinkTile } from "api/types/tiles";
+
+type LinkedPage = NonNullable<ClientPageLinkTile["linkedPage"]>;
+
+export type LinkModalResult =
+  | { linkedPage: LinkedPage }
+  | { url: string | null };
 
 export interface LinkModalProps extends ModalProps<LinkModalResult> {
   workspaceId: string;
@@ -51,13 +57,13 @@ export default function LinkModal({
     }
   };
 
-  const selectPage = async (linkedPageId: string) => {
+  const selectPage = async (page: LibraryPage) => {
     if (isPending.value) {
       return;
     }
     isPending.on();
     try {
-      await confirm({ linkedPageId });
+      await confirm({ linkedPage: { ...page, coverImageUrl: null } });
     } catch (error) {
       handleError(error);
     } finally {
@@ -116,8 +122,12 @@ export default function LinkModal({
     if (!card?.dataset.id) {
       return;
     }
+    const page = pages.value.find((p) => p.id === card.dataset.id);
+    if (!page) {
+      return;
+    }
     event.preventDefault();
-    selectPage(card.dataset.id);
+    selectPage(page);
   }
 
   return (
