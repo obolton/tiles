@@ -1,58 +1,45 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
-import Video from "@/models/Video";
+import { describe, expect, test } from "vitest";
+import * as Y from "yjs";
+import Video, { type CreateVideoInput } from "@/models/Video";
 import Editor from "@/editor/Editor";
-import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
-import { VIDEO_TILE } from "@/test/fixtures/Tile";
 
-vi.mock("@/api/client", () => ({
-  default: {
-    videos: {
-      update: {
-        mutate: vi.fn(),
-      },
-    },
-  },
-}));
+const VIDEO_PROPS: Omit<CreateVideoInput, "parentId" | "beforeId"> = {
+  videoType: "YOUTUBE",
+  videoId: "abc123",
+  title: "Sample video",
+  description: "Video description",
+  imageUrl: "https://tiles.dev/video.png",
+};
 
 describe("Video", () => {
-  const editor = Editor.init(PAGE);
-  const updateMock = vi.mocked(client.videos.update.mutate);
+  const editor = Editor.init(PAGE, new Y.Doc());
 
-  afterEach(() => {
-    updateMock.mockReset();
+  function createVideo() {
+    const map = Video.createMap(VIDEO_PROPS);
+    return editor.page.createTile(map, {}) as Video;
+  }
+
+  test("maps properties to reactive values", () => {
+    const video = createVideo();
+
+    expect(video.type).toBe("VIDEO");
+    expect(video.videoType.value).toBe(VIDEO_PROPS.videoType);
+    expect(video.videoId.value).toBe(VIDEO_PROPS.videoId);
+    expect(video.imageUrl.value).toBe(VIDEO_PROPS.imageUrl);
+    expect(video.description.value).toBe(VIDEO_PROPS.description);
+    expect(video.title.value).toBe(VIDEO_PROPS.title);
   });
 
   test("serialize", () => {
-    const data = { ...VIDEO_TILE, sectionId: null };
-    const video = new Video(editor.page, data);
+    const video = createVideo();
+    const data = video.serialize();
 
-    expect(video.serialize()).toEqual(data);
-  });
-
-  test("maps properties to reactive values", () => {
-    const video = new Video(editor.page, VIDEO_TILE);
-
-    expect(video.type).toBe("VIDEO");
-    expect(video.videoType).toBe(VIDEO_TILE.videoType);
-    expect(video.videoId).toBe(VIDEO_TILE.videoId);
-    expect(video.imageUrl).toBe(VIDEO_TILE.imageUrl);
-    expect(video.title.value).toBe(VIDEO_TILE.title);
-  });
-
-  describe("setTitle", () => {
-    test("updates the title and persists it", async () => {
-      const video = new Video(editor.page, VIDEO_TILE);
-      const title = "Updated title";
-
-      await video.setTitle(title);
-
-      expect(video.title.value).toBe(title);
-      expect(updateMock).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: VIDEO_TILE.id,
-        title,
-      });
-    });
+    expect(data.type).toBe("VIDEO");
+    expect(data.videoType).toBe(VIDEO_PROPS.videoType);
+    expect(data.videoId).toBe(VIDEO_PROPS.videoId);
+    expect(data.imageUrl).toBe(VIDEO_PROPS.imageUrl);
+    expect(data.description).toBe(VIDEO_PROPS.description);
+    expect(data.title).toBe(VIDEO_PROPS.title);
   });
 });

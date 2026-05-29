@@ -1,69 +1,62 @@
-import Tile from "./Tile";
-import { reactive, type Reactive } from "@/utils/reactivity";
-import client from "@/api/client";
+import * as Y from "yjs";
+import Tile, { type CreateTileInput } from "./Tile";
+import { type Reactive } from "@/utils/reactivity";
 import type Page from "@/models/Page";
 import type { ClientVideoTile } from "api/types/tiles";
-import type { AppRouterInputs } from "@/api/client";
 
 export type VideoType = ClientVideoTile["videoType"];
+
+export interface CreateVideoInput extends Omit<CreateTileInput, "type"> {
+  videoType: VideoType;
+  videoId: string;
+  title: string;
+  description: string | null;
+  imageUrl: string | null;
+}
 
 export default class Video extends Tile {
   readonly type = "VIDEO";
 
-  readonly videoType: VideoType;
-  readonly videoId: string;
-  readonly imageUrl: string | null;
-  readonly description: string | null;
+  readonly videoType: Reactive<VideoType>;
+  readonly videoId: Reactive<string>;
+  readonly imageUrl: Reactive<string | null>;
+  readonly description: Reactive<string | null>;
   readonly title: Reactive<string>;
 
-  constructor(page: Page, properties: ClientVideoTile) {
-    super(page, properties);
+  static createMap(
+    properties: Omit<CreateVideoInput, "parentId" | "beforeId">,
+  ): Y.Map<unknown> {
+    const { videoType, videoId, title, description, imageUrl, ...baseProps } =
+      properties;
+    const map = super.buildBaseMap({ ...baseProps, type: "VIDEO" });
+    map.set("videoType", videoType);
+    map.set("videoId", videoId);
+    map.set("title", title);
+    map.set("description", description);
+    map.set("imageUrl", imageUrl);
+    return map;
+  }
 
-    const { videoType, videoId, imageUrl, description, title } = properties;
-    this.videoType = videoType;
-    this.videoId = videoId;
-    this.imageUrl = imageUrl;
-    this.description = description;
-    this.title = reactive(title);
+  constructor(page: Page, map: Y.Map<unknown>) {
+    super(page, map);
+
+    this.videoType = this.binding.field("videoType", "YOUTUBE");
+    this.videoId = this.binding.field("videoId", "");
+    this.imageUrl = this.binding.field("imageUrl", null);
+    this.description = this.binding.field("description", null);
+    this.title = this.binding.field("title", "");
   }
 
   serialize(): ClientVideoTile {
     return {
       ...super.serialize(),
       type: "VIDEO",
-      videoType: this.videoType,
-      videoId: this.videoId,
-      imageUrl: this.imageUrl,
-      description: this.description,
+      videoType: this.videoType.value,
+      videoId: this.videoId.value,
+      imageUrl: this.imageUrl.value,
+      description: this.description.value,
       title: this.title.value,
     };
   }
 
-  private update(
-    properties: Omit<AppRouterInputs["videos"]["update"], "pageId" | "id">,
-  ) {
-    return client.videos.update.mutate({
-      ...properties,
-      pageId: this.page.id,
-      id: this.id,
-    });
-  }
-
-  setTitle(title: string) {
-    const previousTitle = this.title.value;
-    this.title.value = title;
-
-    this.editor.recordOperation({
-      apply: {
-        type: "video.setProperties",
-        data: { tileId: this.id, changes: { title } },
-      },
-      reverse: {
-        type: "video.setProperties",
-        data: { tileId: this.id, changes: { title: previousTitle } },
-      },
-    });
-
-    return this.update({ title });
-  }
 }
