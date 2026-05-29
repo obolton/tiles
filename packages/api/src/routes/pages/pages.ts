@@ -157,10 +157,10 @@ export async function createPage(
   return prisma.$transaction(async (transaction) => {
     const page = await transaction.page.create({
       data: {
-        workspaceId,
-        authorId: userId,
         published: false,
         title,
+        workspace: { connect: { id: workspaceId } },
+        author: { connect: { id: userId } },
         type: pageType,
         document: {
           create: {
