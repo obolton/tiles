@@ -1,54 +1,68 @@
-import Tile from "./Tile";
+import * as Y from "yjs";
+import Tile, { type CreateTileInput } from "./Tile";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
-import client from "@/api/client";
+import { getImageUrl } from "@/utils/images";
 import type Page from "@/models/Page";
 import type { ClientImageTile } from "api/types/tiles";
 import type { EditorState } from "prosemirror-state";
-import type { AppRouterInputs } from "@/api/client";
 
 export interface ImageOrigin {
   x: number;
   y: number;
 }
 
+export interface CreateImageInput extends Omit<CreateTileInput, "type"> {
+  imageId: string;
+  size: { width: number; height: number };
+  alt?: string | null;
+  text?: ClientImageTile["text"];
+}
+
 export default class Image extends Tile {
   readonly type = "IMAGE";
 
-  readonly imageUrl: string | null;
-  readonly size: { width: number; height: number };
+  readonly imageId: Reactive<string | null>;
+  readonly size: Reactive<{ width: number; height: number }>;
   readonly alt: Reactive<string | null>;
   readonly text: Reactive<ClientImageTile["text"]>;
   readonly origin: Reactive<ImageOrigin>;
   readonly state: Reactive<EditorState | null>;
 
-  static async create(
-    page: Page,
-    data: Omit<AppRouterInputs["images"]["create"], "pageId">,
-  ) {
-    const properties = await client.images.create.mutate({
-      pageId: page.id,
-      ...data,
-    });
-
-    const image = new Image(page, properties);
-    const { editor } = image;
-    editor.addTile(image);
-    editor.recordOperation({
-      apply: { type: "tile.restore", data: { snapshots: [properties] } },
-      reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
-    });
+  get imageUrl(): string | null {
+    const imageId = this.imageId.value;
+    return imageId ? getImageUrl(imageId) : null;
   }
 
-  constructor(page: Page, properties: ClientImageTile) {
-    super(page, properties);
+  static createMap(
+    properties: Omit<CreateImageInput, "parentId" | "beforeId">,
+  ): Y.Map<unknown> {
+    const { imageId, size, alt, text, ...baseProps } = properties;
+    const map = super.buildBaseMap({ ...baseProps, type: "IMAGE" });
+    map.set("imageId", imageId);
+    map.set("size", size);
+    map.set("alt", alt ?? null);
+    map.set("text", text ?? null);
+    map.set("origin", { x: 0, y: 0 });
+    return map;
+  }
 
-    const { imageUrl, image, alt, text, originX, originY } = properties;
-    this.imageUrl = imageUrl;
-    this.size = image ?? { width: 0, height: 0 };
-    this.alt = reactive(alt);
-    this.text = reactive(text);
-    this.origin = reactive({ x: originX, y: originY });
+  static async create(page: Page, data: CreateImageInput): Promise<Image> {
+    const { parentId, beforeId, ...rest } = data;
+    const map = Image.createMap(rest);
+    const image = page.createTile(map, { parentId, beforeId }) as Image;
+    image.editor.addTile(image);
+    return image;
+  }
+
+  constructor(page: Page, map: Y.Map<unknown>) {
+    super(page, map);
+
+    this.imageId = this.binding.field("imageId", null);
+    this.size = this.binding.field("size", { width: 0, height: 0 });
+    this.alt = this.binding.field("alt", null);
+    this.text = this.binding.field("text", null);
+    this.origin = this.binding.field("origin", { x: 0, y: 0 });
     this.state = reactive(null);
   }
 
@@ -56,8 +70,8 @@ export default class Image extends Tile {
     return {
       ...super.serialize(),
       type: "IMAGE",
-      imageUrl: this.imageUrl,
-      image: this.size,
+      imageId: this.imageId.value,
+      image: this.size.value,
       alt: this.alt.value,
       originX: this.origin.value.x,
       originY: this.origin.value.y,
@@ -65,69 +79,8 @@ export default class Image extends Tile {
     };
   }
 
-  private update(
-    properties: Omit<AppRouterInputs["images"]["update"], "pageId" | "id">,
-  ) {
-    return client.images.update.mutate({
-      ...properties,
-      pageId: this.page.id,
-      id: this.id,
-    });
-  }
-
-  setAlt(alt: string | null) {
-    const oldAlt = this.alt.value;
-    this.alt.value = alt;
-    this.editor.recordOperation({
-      apply: {
-        type: "image.setProperties",
-        data: { tileId: this.id, changes: { alt } },
-      },
-      reverse: {
-        type: "image.setProperties",
-        data: { tileId: this.id, changes: { alt: oldAlt } },
-      },
-    });
-    return this.update({ alt });
-  }
-
-  setOrigin(origin: ImageOrigin) {
-    const oldOrigin = this.origin.value;
-    this.origin.value = origin;
-    this.editor.recordOperation({
-      apply: {
-        type: "image.setProperties",
-        data: {
-          tileId: this.id,
-          changes: { originX: origin.x, originY: origin.y },
-        },
-      },
-      reverse: {
-        type: "image.setProperties",
-        data: {
-          tileId: this.id,
-          changes: { originX: oldOrigin.x, originY: oldOrigin.y },
-        },
-      },
-    });
-    return this.update({ origin });
-  }
-
   persistText() {
     const state = this.state.value;
-    const oldText = this.text.value;
-    const text = state ? serialize(state) : null;
-    this.text.value = text;
-    this.editor.recordOperation({
-      apply: {
-        type: "image.setProperties",
-        data: { tileId: this.id, changes: { text } },
-      },
-      reverse: {
-        type: "image.setProperties",
-        data: { tileId: this.id, changes: { text: oldText } },
-      },
-    });
-    return this.update({ text });
+    this.text.value = state ? serialize(state) : null;
   }
 }
