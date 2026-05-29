@@ -12,13 +12,13 @@ import AlignRightIcon from "@/icons/align-right.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import { toCSSColor, type Color } from "@/utils/color";
-import { themesCache } from "@/utils/cache";
 import { getThemeStyles, loadThemeFonts } from "@/utils/themes";
 import { loadFonts } from "@/utils/fonts";
 import { getFontConfig, type FontId } from "api/config/fonts";
 import type { HorizontalAlignment } from "api/types/pages";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type Page from "@/models/Page";
+import type Theme from "@/models/Theme";
 
 export interface StyleTabProps {
   page: Page;
@@ -42,14 +42,12 @@ export default function StyleTab({ page }: StyleTabProps) {
     viewTransition(() => {
       document.body.style.setProperty("--background-color", toCSSColor(value));
     });
-    page.setBackgroundColor(value).catch(handleError);
+    page.backgroundColor.value = value;
   }
 
-  async function setTheme(newThemeId: string | null) {
-    const newTheme = newThemeId ? themesCache.getById(newThemeId) : null;
-
-    if (newThemeId) {
-      await loadThemeFonts(newThemeId);
+  async function setTheme(newTheme: Theme | null) {
+    if (newTheme) {
+      await loadThemeFonts(newTheme.id);
     }
 
     const bgColor = backgroundColor.value;
@@ -64,7 +62,7 @@ export default function StyleTab({ page }: StyleTabProps) {
       }
     });
 
-    page.setTheme(newTheme).catch(handleError);
+    page.setTheme(newTheme);
   }
 
   function setWidth(event: Event) {

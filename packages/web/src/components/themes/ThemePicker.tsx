@@ -13,6 +13,7 @@ import ListGroup from "@/components/lists/ListGroup";
 import Each from "@/jsx/each";
 import PaletteIcon from "@/icons/palette.svg?jsx";
 import type Theme from "@/models/Theme";
+import type { ThemeData } from "@/models/Theme";
 import type { Reactive } from "@/utils/reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type AnchoredPopover from "@/elements/anchored-popover/AnchoredPopover";
@@ -23,8 +24,8 @@ export interface ThemePickerProps extends Omit<
   "value" | "on:change"
 > {
   id: string;
-  value?: Reactive<Theme | null>;
-  onChange: (themeId: string | null) => void;
+  value?: Reactive<ThemeData | null>;
+  onChange: (theme: Theme | null) => void;
 }
 
 export default function ThemePicker({
@@ -44,7 +45,7 @@ export default function ThemePicker({
 
   function setTheme(event: Event) {
     const selectedValue = (event.target as ListSelect).value;
-    onChange(selectedValue === "" ? null : selectedValue);
+    onChange(selectedValue ? themesCache.getById(selectedValue) : null);
   }
 
   function editTheme(theme: Theme, event: Event) {
@@ -71,7 +72,7 @@ export default function ThemePicker({
     }
     try {
       const theme = await duplicateWorkspaceTheme(current);
-      onChange(theme.id);
+      onChange(theme);
       editing.value = theme;
     } catch (error) {
       handleError(error);

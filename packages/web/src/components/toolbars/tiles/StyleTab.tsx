@@ -8,9 +8,9 @@ import FillPicker from "@/components/fills/FillPicker";
 import AnimationPicker from "@/components/animations/AnimationPicker";
 import FramePicker from "@/components/frames/FramePicker";
 import { resolveTheme, getThemeColors, loadThemeFonts } from "@/utils/themes";
-import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import type { JSX } from "@/jsx/jsx";
+import type Theme from "@/models/Theme";
 import type Tile from "@/models/Tile";
 
 export interface StyleTabProps {
@@ -25,11 +25,12 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
     return resolved ? getThemeColors(resolved) : [];
   });
 
-  async function setTheme(themeId: string | null) {
-    if (themeId) {
-      await loadThemeFonts(themeId);
+  async function setTheme(theme: Theme | null) {
+    if (theme) {
+      await loadThemeFonts(theme.id);
     }
-    tile.setTheme(themeId).catch(handleError);
+
+    tile.setTheme(theme);
   }
 
   return (
@@ -70,9 +71,7 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
           id={`${id}-background`}
           label="Background"
           value={background}
-          onChange={(background) =>
-            viewTransition(() => tile.setBackground(background))
-          }
+          onChange={(value) => (tile.background.value = value)}
           aria-pressed={background}
           themeColors={themeColors}
         />
