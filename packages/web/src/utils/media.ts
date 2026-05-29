@@ -18,11 +18,17 @@ export interface UploadMediaOptions {
   workspaceId: string;
 }
 
+export interface UploadedMedia {
+  id: string;
+  width: number;
+  height: number;
+}
+
 export async function uploadMedia({
   file,
   purpose,
   workspaceId,
-}: UploadMediaOptions) {
+}: UploadMediaOptions): Promise<UploadedMedia> {
   if (file.size > MAX_FILE_SIZE) {
     throw new Error("File size exceeds the 25 MB limit");
   }
@@ -50,10 +56,18 @@ export async function uploadMedia({
   }
 
   const response = await result.json();
-  if (typeof response?.id !== "string") {
+  if (
+    typeof response?.id !== "string" ||
+    typeof response?.width !== "number" ||
+    typeof response?.height !== "number"
+  ) {
     throw new Error("Invalid response");
   }
-  return response.id;
+  return {
+    id: response.id,
+    width: response.width,
+    height: response.height,
+  };
 }
 
 export function getAcceptableDragItem(
