@@ -241,7 +241,7 @@ export default abstract class Tile {
     });
 
     const parentTile = this.page.createTile(parent);
-    await parentTile.move({ parentId, beforeId });
+    parentTile.move({ parentId, beforeId });
     this.editor.addTile(parentTile);
 
     for (const child of children) {
@@ -429,21 +429,9 @@ export default abstract class Tile {
     } else {
       apply();
     }
-
-    const geometry = { x, y, width, height, lat, long };
-    const hasGeometry = Object.values(geometry).some(
-      (value) => value !== undefined,
-    );
-    return hasGeometry ? this.updateTile(geometry) : Promise.resolve();
   }
 
   setSizing(sizing: Sizing) {
-    const inverse: TilePropertyChanges = {
-      sizing: this.sizing.value,
-      width: this.width.value,
-      height: this.height.value,
-    };
-
     this.sizing.value = sizing;
 
     if (sizing !== "CUSTOM" && sizing !== "AUTO") {
@@ -451,102 +439,36 @@ export default abstract class Tile {
       const resolvedWidth = this.width.value ?? this.page.width.value;
       this.height.value = Math.round(resolvedWidth / ratio);
     }
-
-    const changes: TilePropertyChanges = {
-      sizing,
-      width: this.width.value,
-      height: this.height.value,
-    };
-
-    this.recordUpdate(changes, inverse);
-    return this.updateTile({
-      sizing,
-      width: this.width.value,
-      height: this.height.value,
-    });
   }
 
   setSize({ width, height }: { width?: number | null; height?: number }) {
-    const inverse: TilePropertyChanges = {};
-
     if (width !== undefined) {
-      inverse.width = this.width.value;
       this.width.value = width;
     }
     if (typeof height === "number") {
-      inverse.height = this.height.value;
       this.height.value = height;
     }
-
-    this.recordUpdate({ width, height }, inverse);
-    return this.updateTile({ width, height });
   }
 
   setCoordinates(coordinates: { lat: number; long: number } | null) {
-    const prev = this.coordinates.value;
-    const inverse: TilePropertyChanges = {
-      lat: prev?.lat ?? null,
-      long: prev?.long ?? null,
-    };
-
     this.coordinates.value = coordinates;
-
-    const changes: TilePropertyChanges = {
-      lat: coordinates?.lat ?? null,
-      long: coordinates?.long ?? null,
-    };
-
-    this.recordUpdate(changes, inverse);
-    return this.updateTile({
-      lat: coordinates?.lat ?? null,
-      long: coordinates?.long ?? null,
-    });
   }
 
   setDates(startDate: string | null, endDate: string | null) {
-    const inverse: TilePropertyChanges = {
-      startDate: this.startDate.value,
-      endDate: this.endDate.value,
-    };
-
     this.startDate.value = startDate;
     this.endDate.value = endDate;
-
-    this.recordUpdate({ startDate, endDate }, inverse);
-    return this.updateTile({ startDate, endDate });
-  }
-
-  persistPosition() {
-    return this.updateTile({
-      x: this.x.value,
-      y: this.y.value,
-      width: this.width.value,
-      height: this.height.value,
-      rowSpan: this.rowSpan.value,
-      lat: this.coordinates.value?.lat ?? null,
-      long: this.coordinates.value?.long ?? null,
-    });
   }
 
   setAnimation(animation: Animation | null) {
-    this.recordUpdate({ animation }, { animation: this.animation.value });
     this.applyUpdate({ animation });
-    return this.updateTile({ animation });
   }
 
   setCornerRadius(cornerRadius: number | null) {
-    this.recordUpdate(
-      { cornerRadius },
-      { cornerRadius: this.cornerRadius.value },
-    );
     this.applyUpdate({ cornerRadius });
-    return this.updateTile({ cornerRadius });
   }
 
   setHidden(hide: boolean) {
-    this.recordUpdate({ hide }, { hide: this.hide.value });
     this.applyUpdate({ hide });
-    return this.updateTile({ hide });
   }
 
   async setTheme(themeId: string | null) {
@@ -557,9 +479,7 @@ export default abstract class Tile {
   }
 
   setTextColor(textColor: Color | null) {
-    this.recordUpdate({ textColor }, { textColor: this.textColor.value });
     this.applyUpdate({ textColor });
-    return this.updateTile({ textColor });
   }
 
   async setBackground(background: FillUpdate) {
@@ -572,17 +492,17 @@ export default abstract class Tile {
     );
   }
 
-  async moveUp() {
+  moveUp() {
     const previous = this.previous;
     if (previous) {
-      await this.move({ beforeId: previous.id });
+      this.move({ beforeId: previous.id });
     }
   }
 
-  async moveDown() {
+  moveDown() {
     const next = this.next;
     if (next) {
-      await this.move({ beforeId: next.next?.id ?? null });
+      this.move({ beforeId: next.next?.id ?? null });
     }
   }
 }
