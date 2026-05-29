@@ -31,7 +31,7 @@ export default function FilmstripPanel({
       return;
     }
     const tile = page.getTile(event.slideId);
-    tile.move({ sectionId: null, beforeId: event.beforeId });
+    tile.move({ parentId: null, beforeId: event.beforeId });
   }
 
   function onDragStart(event: DragDropEvent) {
