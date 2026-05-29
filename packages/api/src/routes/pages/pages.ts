@@ -21,7 +21,6 @@ import type {
   AuthenticatedWorkspaceProcedureContext,
   AuthenticatedPageProcedureContext,
 } from "@/utils/middleware";
-import type { ColorSchema } from "@/schema/Color";
 import { PAGE_FIELDS } from "./fields";
 import { formatTile } from "@/routes/tiles/tiles";
 
@@ -234,25 +233,14 @@ export async function createPage(
   });
 }
 
-function getBackgroundColorProperties(
-  color?: ColorSchema | null,
-): Pick<Prisma.PageCreateInput, "backgroundColor"> {
-  if (color === undefined || color === null) {
-    return { backgroundColor: color };
-  }
-  return { backgroundColor: new Uint8Array(Buffer.from(color, "hex")) };
-}
-
 export async function updatePage(
   {
     pageId,
     published,
     title,
-    backgroundColor,
     font,
     coverImageKey,
     folderId,
-    themeId,
     dockTopHeight,
     dockBottomHeight,
     dockLeftWidth,
@@ -275,24 +263,14 @@ export async function updatePage(
       }
     }
 
-    // Validate theme belongs to same workspace
-    if (themeId) {
-      await transaction.theme.findUniqueOrThrow({
-        where: { id: themeId, workspaceId },
-        select: { id: true },
-      });
-    }
-
     return transaction.page.update({
       where: { id: pageId, authorId: userId, deletedAt: null },
       data: {
         published,
         title,
-        ...getBackgroundColorProperties(backgroundColor),
         font,
         coverImageKey,
         folderId,
-        themeId,
         dockTopHeight,
         dockBottomHeight,
         dockLeftWidth,

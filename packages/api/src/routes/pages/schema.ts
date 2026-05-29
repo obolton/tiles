@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { ColorSchema } from "@/schema/Color";
 import { PaginationSchema, SortDirection } from "@/schema/Pagination";
 import { HorizontalAlignment, PageType } from "@/generated/prisma/client";
 import { FontIdSchema } from "@/config/fonts";
@@ -34,11 +33,9 @@ export const UpdatePageSchema = z.object({
   pageId: z.uuid(),
   published: z.boolean().optional(),
   title: z.string().min(1).optional(),
-  backgroundColor: ColorSchema.nullable().optional(),
   font: FontIdSchema.optional(),
   coverImageKey: z.string().nullable().optional(),
   folderId: z.uuid().nullable().optional(),
-  themeId: z.uuid().nullable().optional(),
   dockTopHeight: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
   dockBottomHeight: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
   dockLeftWidth: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
