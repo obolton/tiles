@@ -1,3 +1,4 @@
+import * as Y from "yjs";
 import Tile from "./Tile";
 import {
   reactive,
@@ -8,7 +9,7 @@ import {
 import client from "@/api/client";
 import type Page from "@/models/Page";
 import type { ClientTableTile } from "api/types/tiles";
-import type { Fill, FillUpdate } from "@/components/fills/types";
+import type { Fill } from "@/components/fills/types";
 import type { RichText } from "@/utils/richText/types";
 import type { AppRouterInputs } from "@/api/client";
 
@@ -50,13 +51,12 @@ export default class Table extends Tile {
     });
   }
 
-  constructor(page: Page, properties: ClientTableTile) {
-    super(page, properties);
+  constructor(page: Page, map: Y.Map<unknown>) {
+    super(page, map);
 
-    const { columns, rows, numRows } = properties;
-    this.columns = array(columns);
-    this.rows = array(rows);
-    this.numRows = reactive(numRows);
+    this.columns = array<TableColumn>([]);
+    this.rows = array<TableRow>([]);
+    this.numRows = reactive(0);
   }
 
   serialize(): ClientTableTile {
@@ -134,7 +134,7 @@ export default class Table extends Tile {
     properties: {
       title?: string | null;
       width?: number;
-      background?: FillUpdate;
+      background?: Fill | null;
     },
   ) {
     const column = this.columns.find((c) => c.id === id);
@@ -312,7 +312,7 @@ export default class Table extends Tile {
     });
   }
 
-  async setRowBackground(id: string, background: FillUpdate) {
+  async setRowBackground(id: string, background: Fill | null) {
     const row = this.rows.find((r) => r.id === id);
     if (!row) {
       throw new Error(`Invalid row ID: ${id}`);
