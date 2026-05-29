@@ -1,6 +1,5 @@
 import prisma, { type ExtensionArgs } from "@/database/prisma";
 import type { Prisma } from "@/generated/prisma/client";
-import { THEME_FIELDS } from "@/routes/themes/fields";
 import { SECTION_FIELDS } from "@/routes/sections/fields";
 import { TEXT_FIELDS } from "@/routes/text/fields";
 import { IMAGE_FIELDS } from "@/routes/images/fields";
@@ -14,9 +13,6 @@ export const TILE_FIELDS = {
   id: true,
   type: true,
   sectionId: true,
-  theme: {
-    select: THEME_FIELDS,
-  },
   order: true,
   sizing: true,
   width: true,
