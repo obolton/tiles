@@ -1,42 +1,55 @@
-import Tile from "./Tile";
-import client from "@/api/client";
+import * as Y from "yjs";
+import Tile, { type CreateTileInput } from "./Tile";
+import { type Reactive } from "@/utils/reactivity";
 import type Page from "@/models/Page";
 import type { ClientPageLinkTile } from "api/types/tiles";
-import type { AppRouterInputs } from "@/api/client";
 
+type LinkedPage = ClientPageLinkTile["linkedPage"];
+
+export interface CreatePageLinkInput extends Omit<CreateTileInput, "type"> {
+  linkedPage: NonNullable<LinkedPage>;
+}
+
+// TODO: this currently snapshots the linked page's metadata into the Y.Map at
+// link-time, so renamed pages won't update referencing links. Replace with a
+// shared PageMetadataStore (lazy tRPC fetch + SSR pre-seed) that resolves
+// `linkedPageId` reactively against live page data.
 export default class PageLink extends Tile {
   readonly type = "PAGE_LINK";
 
-  readonly linkedPage: ClientPageLinkTile["linkedPage"];
+  readonly linkedPage: Reactive<LinkedPage>;
+
+  static createMap(
+    properties: Omit<CreatePageLinkInput, "parentId" | "beforeId">,
+  ): Y.Map<unknown> {
+    const { linkedPage, ...baseProps } = properties;
+    const map = super.buildBaseMap({ ...baseProps, type: "PAGE_LINK" });
+    map.set("linkedPage", linkedPage);
+    return map;
+  }
 
   static async create(
     page: Page,
-    data: Omit<AppRouterInputs["pageLinks"]["create"], "pageId">,
-  ) {
-    const properties = await client.pageLinks.create.mutate({
-      pageId: page.id,
-      ...data,
-    });
-    const pageLink = new PageLink(page, properties);
-    const { editor } = pageLink;
-    editor.addTile(pageLink);
-    editor.recordOperation({
-      apply: { type: "tile.restore", data: { snapshots: [properties] } },
-      reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
-    });
+    data: CreatePageLinkInput,
+  ): Promise<PageLink> {
+    const { parentId, beforeId, ...rest } = data;
+    const map = PageLink.createMap(rest);
+    const pageLink = page.createTile(map, { parentId, beforeId }) as PageLink;
+    pageLink.editor.addTile(pageLink);
+    return pageLink;
   }
 
-  constructor(page: Page, properties: ClientPageLinkTile) {
-    super(page, properties);
+  constructor(page: Page, map: Y.Map<unknown>) {
+    super(page, map);
 
-    this.linkedPage = properties.linkedPage;
+    this.linkedPage = this.binding.field("linkedPage", null);
   }
 
   serialize(): ClientPageLinkTile {
     return {
       ...super.serialize(),
       type: "PAGE_LINK",
-      linkedPage: this.linkedPage,
+      linkedPage: this.linkedPage.value,
     };
   }
 }

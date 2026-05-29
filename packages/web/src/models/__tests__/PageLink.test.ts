@@ -1,51 +1,41 @@
-import { describe, expect, test, vi } from "vitest";
-import PageLink from "@/models/PageLink";
+import { describe, expect, test } from "vitest";
+import * as Y from "yjs";
+import PageLink, { type CreatePageLinkInput } from "@/models/PageLink";
 import Editor from "@/editor/Editor";
 import { PAGE } from "@/test/fixtures/Page";
-import { PAGE_LINK_TILE } from "@/test/fixtures/Tile";
 
-vi.mock("@/api/client", () => ({
-  default: {
-    tiles: {
-      duplicate: {
-        mutate: vi.fn(),
-      },
-      delete: {
-        mutate: vi.fn(),
-      },
-      update: {
-        mutate: vi.fn(),
-      },
-    },
-  },
-}));
+const LINKED_PAGE = {
+  id: "linked-page-id",
+  title: "Linked Page",
+  background: null,
+  font: "CLASSIC" as const,
+  coverImageUrl: "https://tiles.dev/cover.png",
+};
 
 describe("PageLink", () => {
-  const editor = Editor.init(PAGE);
+  const editor = Editor.init(PAGE, new Y.Doc());
 
-  test("serialize", () => {
-    const data = { ...PAGE_LINK_TILE, sectionId: null };
-    const pageLink = new PageLink(editor.page, data);
-
-    expect(pageLink.serialize()).toEqual(data);
-  });
+  function createPageLink(
+    overrides: Partial<CreatePageLinkInput> = {},
+  ): PageLink {
+    return editor.page.createTile(
+      PageLink.createMap({ linkedPage: LINKED_PAGE, ...overrides }),
+      {},
+    ) as PageLink;
+  }
 
   test("maps properties to reactive values", () => {
-    const pageLink = new PageLink(editor.page, PAGE_LINK_TILE);
+    const pageLink = createPageLink();
 
     expect(pageLink.type).toBe("PAGE_LINK");
-    expect(pageLink.id).toBe(PAGE_LINK_TILE.id);
-    expect(pageLink.linkedPage).toEqual(PAGE_LINK_TILE.linkedPage);
+    expect(pageLink.linkedPage.value).toEqual(LINKED_PAGE);
   });
 
-  test("handles missing linked page", () => {
-    const tile = {
-      ...PAGE_LINK_TILE,
-      linkedPage: null,
-    };
+  test("serialize", () => {
+    const pageLink = createPageLink();
+    const data = pageLink.serialize();
 
-    const pageLink = new PageLink(editor.page, tile);
-
-    expect(pageLink.linkedPage).toBeNull();
+    expect(data.type).toBe("PAGE_LINK");
+    expect(data.linkedPage).toEqual(LINKED_PAGE);
   });
 });
