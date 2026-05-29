@@ -1,75 +1,85 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
+import * as Y from "yjs";
 import Link from "@/models/Link";
 import Editor from "@/editor/Editor";
 import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
-import { LINK_TILE } from "@/test/fixtures/Tile";
+
+const LINK_PROPS = {
+  url: "https://tiles.dev",
+  title: "Link title",
+  description: "Link description",
+  siteName: "Test",
+  imageId: "image-id",
+};
 
 vi.mock("@/api/client", () => ({
   default: {
     externalLinks: {
-      update: {
-        mutate: vi.fn(),
+      getMetadata: {
+        query: vi.fn(),
       },
     },
   },
 }));
 
 describe("Link", () => {
-  const editor = Editor.init(PAGE);
-  const updateMock = vi.mocked(client.externalLinks.update.mutate);
+  const editor = Editor.init(PAGE, new Y.Doc());
+  const getMetadataMock = vi.mocked(client.externalLinks.getMetadata.query);
 
   afterEach(() => {
-    updateMock.mockReset();
+    getMetadataMock.mockReset();
+  });
+
+  function createLink(): Link {
+    return editor.page.createTile(Link.createMap(LINK_PROPS), {}) as Link;
+  }
+
+  test("maps properties to reactive values", () => {
+    const link = createLink();
+
+    expect(link.url.value).toBe(LINK_PROPS.url);
+    expect(link.title.value).toBe(LINK_PROPS.title);
+    expect(link.description.value).toBe(LINK_PROPS.description);
+    expect(link.siteName.value).toBe(LINK_PROPS.siteName);
+    expect(link.imageId.value).toBe(LINK_PROPS.imageId);
   });
 
   test("serialize", () => {
-    const data = { ...LINK_TILE, sectionId: null };
-    const link = new Link(editor.page, data);
+    const link = createLink();
+    const data = link.serialize();
 
-    expect(link.serialize()).toEqual({
-      ...data,
-      background: { type: "image", imageUrl: LINK_TILE.imageUrl },
-    });
-  });
-
-  test("maps properties to reactive values", () => {
-    const link = new Link(editor.page, LINK_TILE);
-
-    expect(link.url.value).toBe(LINK_TILE.url);
-    expect(link.title.value).toBe(LINK_TILE.title);
-    expect(link.description.value).toBe(LINK_TILE.description);
-    expect(link.siteName.value).toBe(LINK_TILE.siteName);
-    expect(link.imageUrl.value).toBe(LINK_TILE.imageUrl);
+    expect(data.type).toBe("LINK");
+    expect(data.url).toBe(LINK_PROPS.url);
+    expect(data.title).toBe(LINK_PROPS.title);
+    expect(data.description).toBe(LINK_PROPS.description);
+    expect(data.siteName).toBe(LINK_PROPS.siteName);
   });
 
   test("updates the url and refreshes metadata from the server", async () => {
-    const link = new Link(editor.page, LINK_TILE);
+    const link = createLink();
     const nextUrl = "https://tiles.dev/updated";
     const nextMetadata = {
+      type: "LINK" as const,
+      url: nextUrl,
       title: "Updated title",
       description: "Updated description",
       siteName: "Updated site",
-      imageUrl: "https://tiles.dev/updated-image.png",
+      imageId: "updated-image-id",
     };
 
-    updateMock.mockResolvedValue({
-      ...LINK_TILE,
-      ...nextMetadata,
-      url: nextUrl,
-    });
+    getMetadataMock.mockResolvedValue(nextMetadata);
 
     await link.setUrl(nextUrl);
 
-    expect(updateMock).toHaveBeenCalledWith({
+    expect(getMetadataMock).toHaveBeenCalledWith({
       pageId: PAGE.id,
-      id: LINK_TILE.id,
       url: nextUrl,
     });
     expect(link.url.value).toBe(nextUrl);
     expect(link.title.value).toBe(nextMetadata.title);
     expect(link.description.value).toBe(nextMetadata.description);
     expect(link.siteName.value).toBe(nextMetadata.siteName);
-    expect(link.imageUrl.value).toBe(nextMetadata.imageUrl);
+    expect(link.imageId.value).toBe(nextMetadata.imageId);
   });
 });
