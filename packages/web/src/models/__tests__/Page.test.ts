@@ -5,6 +5,7 @@ import Section from "@/models/Section";
 import Text from "@/models/Text";
 import Theme from "@/models/Theme";
 import client from "@/api/client";
+import { DEFAULT_PAGE_WIDTH } from "@/constants/size";
 import { PAGE } from "@/test/fixtures/Page";
 import { THEME } from "@/test/fixtures/Theme";
 
@@ -54,8 +55,8 @@ describe("Page", () => {
     expect(page.coverImageUrl.value).toBe(PAGE.coverImageUrl);
     expect(page.isPublished.value).toBe(PAGE.published);
     expect(page.folderId.value).toBe(PAGE.folderId);
-    expect(page.width.value).toBe(PAGE.width);
-    expect(page.alignment.value).toBe(PAGE.alignment);
+    expect(page.width.value).toBe(DEFAULT_PAGE_WIDTH);
+    expect(page.alignment.value).toBe("CENTER");
     expect(page.dockSizes.value).toEqual({
       TOP: PAGE.dockTopHeight,
       BOTTOM: PAGE.dockBottomHeight,
@@ -212,46 +213,6 @@ describe("Page", () => {
 
       expect(page.themeId.value).toBeNull();
       expect(page.theme.value).toBeNull();
-    });
-  });
-
-  describe("setWidth", () => {
-    test("updates the width and persists it", async () => {
-      const page = new Page(PAGE, new Y.Doc());
-
-      await page.setWidth(40);
-
-      expect(page.width.value).toBe(40);
-      expect(client.pages.update.mutate).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        width: 40,
-      });
-    });
-
-    test("resets width to default", async () => {
-      const page = new Page({ ...PAGE, width: 40 }, new Y.Doc());
-
-      await page.setWidth(32);
-
-      expect(page.width.value).toBe(32);
-      expect(client.pages.update.mutate).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        width: 32,
-      });
-    });
-  });
-
-  describe("setAlignment", () => {
-    test("updates the alignment and persists it", async () => {
-      const page = new Page(PAGE, new Y.Doc());
-
-      await page.setAlignment("LEFT");
-
-      expect(page.alignment.value).toBe("LEFT");
-      expect(client.pages.update.mutate).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        alignment: "LEFT",
-      });
     });
   });
 

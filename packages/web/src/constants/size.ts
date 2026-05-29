@@ -14,3 +14,5 @@ export const ASPECT_RATIOS: Record<
 };
 
 export const DEFAULT_DOCK_SIZE = 200; // px
+
+export const DEFAULT_PAGE_WIDTH = 32;

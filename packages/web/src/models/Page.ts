@@ -9,6 +9,7 @@ import Section from "@/models/Section";
 import createTileFromData from "@/models/createTile";
 import { LOCAL_ORIGIN, YMapBinding } from "@/collaboration/YMapBinding";
 import { reactive, array, combine } from "@/utils/reactivity";
+import { DEFAULT_PAGE_WIDTH } from "@/constants/size";
 import * as Y from "yjs";
 import type { AppRouterOutputs } from "@/api/client";
 import type { Reactive, ReactiveArray } from "@/utils/reactivity";
@@ -90,12 +91,12 @@ export default class Page {
     this.themeId = this.metadataBinding.field("themeId", null);
     this.backgroundColor = this.metadataBinding.field("backgroundColor", null);
     this.font = this.metadataBinding.field("font", null);
+    this.width = this.metadataBinding.field("width", DEFAULT_PAGE_WIDTH);
+    this.alignment = this.metadataBinding.field("alignment", "CENTER");
     this.theme = combine(
       { id: this.themeId, themes: this.themes },
       ({ id, themes }) => (id ? (themes.get(id) ?? null) : null),
     );
-    this.width = reactive(data.width);
-    this.alignment = reactive(data.alignment);
     this.dockSizes = reactive({
       TOP: data.dockTopHeight,
       BOTTOM: data.dockBottomHeight,
@@ -125,8 +126,6 @@ export default class Page {
       coverImageUrl: this.coverImageUrl.value,
       published: this.isPublished.value,
       folderId: this.folderId.value,
-      width: this.width.value,
-      alignment: this.alignment.value,
       dockTopHeight: dockSizes.TOP,
       dockBottomHeight: dockSizes.BOTTOM,
       dockLeftWidth: dockSizes.LEFT,
@@ -239,12 +238,8 @@ export default class Page {
     properties: Partial<{
       title: string;
       coverImageKey: string | null;
-      font: FontId;
-      backgroundColor: Color | null;
       published: boolean;
       folderId: string | null;
-      width: number;
-      alignment: HorizontalAlignment;
       dockTopHeight: number;
       dockBottomHeight: number;
       dockLeftWidth: number;
@@ -287,18 +282,6 @@ export default class Page {
       }
       this.themeId.value = theme?.id ?? null;
     }, LOCAL_ORIGIN);
-  }
-
-  setWidth(width: number) {
-    this.recordUpdate({ width }, { width: this.width.value });
-    this.width.value = width;
-    return this.update({ width });
-  }
-
-  setAlignment(alignment: HorizontalAlignment) {
-    this.recordUpdate({ alignment }, { alignment: this.alignment.value });
-    this.alignment.value = alignment;
-    return this.update({ alignment });
   }
 
   setDockSizes(sizes: Partial<Record<DockEdge, number>>) {

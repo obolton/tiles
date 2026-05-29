@@ -9,7 +9,6 @@ import SizeIcon from "@/icons/size.svg?jsx";
 import AlignLeftIcon from "@/icons/align-left.svg?jsx";
 import AlignCenterIcon from "@/icons/align-center.svg?jsx";
 import AlignRightIcon from "@/icons/align-right.svg?jsx";
-import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import { toCSSColor, type Color } from "@/utils/color";
 import { getThemeStyles, loadThemeFonts } from "@/utils/themes";
@@ -68,14 +67,13 @@ export default function StyleTab({ page }: StyleTabProps) {
   function setWidth(event: Event) {
     const value = (event.currentTarget as ListSelect).value;
     if (value) {
-      page.setWidth(parseInt(value, 10)).catch(handleError);
+      page.width.value = parseInt(value, 10);
     }
   }
 
   function setAlignment(event: Event) {
-    const alignment = (event.currentTarget as ListSelect)
+    page.alignment.value = (event.currentTarget as ListSelect)
       .value as HorizontalAlignment;
-    page.setAlignment(alignment).catch(handleError);
   }
 
   return (

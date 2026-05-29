@@ -17,12 +17,6 @@ const setProperties: ActionExecutor<SetPagePropertiesAction> = async (
   if (changes.folderId !== undefined) {
     page.folderId.value = changes.folderId;
   }
-  if (changes.width !== undefined) {
-    page.width.value = changes.width;
-  }
-  if (changes.alignment !== undefined) {
-    page.alignment.value = changes.alignment;
-  }
   if (
     changes.dockTopHeight !== undefined ||
     changes.dockBottomHeight !== undefined ||
