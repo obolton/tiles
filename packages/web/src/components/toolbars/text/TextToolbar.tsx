@@ -13,18 +13,23 @@ import If from "@/jsx/if";
 import type Text from "@/models/Text";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type { EditorView } from "prosemirror-view";
-import type { Command } from "prosemirror-state";
+import type { Command, EditorState } from "prosemirror-state";
 import type { Reactive } from "@/utils/reactivity";
 
 export interface TextToolbarProps {
   text: Text;
+  state: Reactive<EditorState | null>;
   editorView: Reactive<EditorView | null>;
 }
 
-export default function TextToolbar({ text, editorView }: TextToolbarProps) {
+export default function TextToolbar({
+  text,
+  state,
+  editorView,
+}: TextToolbarProps) {
   const { align } = text;
 
-  const format = text.state.derive((value) =>
+  const format = state.derive((value) =>
     value ? getSelectionFormat(value) : DEFAULT_FORMAT,
   );
 
@@ -43,7 +48,7 @@ export default function TextToolbar({ text, editorView }: TextToolbarProps) {
       name="text-toolbar"
     >
       <toolbar-tab name="text" label="Text">
-        <FormattingTools editorView={editorView} state={text.state} />
+        <FormattingTools editorView={editorView} state={state} />
       </toolbar-tab>
 
       <If condition={format.derive((f) => f.codeBlock)}>
