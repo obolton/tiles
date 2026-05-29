@@ -20,10 +20,10 @@ const setProperties: ActionExecutor<SetLinkPropertiesAction> = async (
   if (changes.siteName !== undefined) {
     tile.siteName.value = changes.siteName;
   }
-  if (changes.imageUrl !== undefined) {
-    tile.imageUrl.value = changes.imageUrl;
-    tile.background.value = changes.imageUrl
-      ? { type: "image", imageUrl: changes.imageUrl }
+  if (changes.imageId !== undefined) {
+    tile.imageId.value = changes.imageId;
+    tile.background.value = changes.imageId
+      ? { type: "image", imageId: changes.imageId }
       : null;
   }
 };

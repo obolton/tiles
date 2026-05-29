@@ -8,9 +8,8 @@ const setProperties: ActionExecutor<SetTextPropertiesAction> = async (
 ) => {
   const tile = editor.page.getTile(tileId, Text);
 
-  if (changes.content !== undefined) {
-    tile.content.value = changes.content;
-  }
+  // Text content undo is handled by y-prosemirror's yUndoPlugin; only
+  // non-text-content properties are routed through the OperationManager.
   if (changes.align !== undefined) {
     tile.align.value = changes.align;
   }

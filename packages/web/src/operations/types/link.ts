@@ -7,7 +7,7 @@ export interface SetLinkPropertiesData extends TileActionData {
     title?: string | null;
     description?: string | null;
     siteName?: string | null;
-    imageUrl?: string | null;
+    imageId?: string | null;
   };
 }
 

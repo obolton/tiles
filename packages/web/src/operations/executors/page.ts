@@ -1,4 +1,3 @@
-import { themesCache } from "@/utils/cache";
 import type { SetPagePropertiesAction } from "../types";
 import type { ActionExecutor } from "./types";
 
@@ -12,9 +11,6 @@ const setProperties: ActionExecutor<SetPagePropertiesAction> = async (
     page.title.value = changes.title;
     document.title = `${changes.title} - Tiles`;
   }
-  if (changes.backgroundColor !== undefined) {
-    page.backgroundColor.value = changes.backgroundColor;
-  }
   if (changes.font !== undefined) {
     page.font.value = changes.font;
   }
@@ -23,11 +19,6 @@ const setProperties: ActionExecutor<SetPagePropertiesAction> = async (
   }
   if (changes.folderId !== undefined) {
     page.folderId.value = changes.folderId;
-  }
-  if (changes.themeId !== undefined) {
-    page.theme.value = changes.themeId
-      ? themesCache.getById(changes.themeId)
-      : null;
   }
   if (changes.width !== undefined) {
     page.width.value = changes.width;
