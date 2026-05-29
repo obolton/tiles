@@ -13,10 +13,12 @@ export default function VideoTileThumbnail({ video }: VideoTileThumbnailProps) {
   return (
     <Tile>
       <figure className={styles.figure}>
-        {imageUrl ? (
-          <img className={styles.image} src={imageUrl} alt="" loading="lazy" />
-        ) : (
-          <div className={styles.placeholder} />
+        {imageUrl.derive((url) =>
+          url ? (
+            <img className={styles.image} src={url} alt="" loading="lazy" />
+          ) : (
+            <div className={styles.placeholder} />
+          ),
         )}
         {title.derive((value) =>
           value ? (
