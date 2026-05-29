@@ -238,7 +238,6 @@ export async function updatePage(
     pageId,
     published,
     title,
-    font,
     coverImageKey,
     folderId,
     dockTopHeight,
@@ -268,7 +267,6 @@ export async function updatePage(
       data: {
         published,
         title,
-        font,
         coverImageKey,
         folderId,
         dockTopHeight,

@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { PaginationSchema, SortDirection } from "@/schema/Pagination";
 import { HorizontalAlignment, PageType } from "@/generated/prisma/client";
-import { FontIdSchema } from "@/config/fonts";
 
 export const MIN_WIDTH = 12;
 export const MAX_WIDTH = 80;
@@ -33,7 +32,6 @@ export const UpdatePageSchema = z.object({
   pageId: z.uuid(),
   published: z.boolean().optional(),
   title: z.string().min(1).optional(),
-  font: FontIdSchema.optional(),
   coverImageKey: z.string().nullable().optional(),
   folderId: z.uuid().nullable().optional(),
   dockTopHeight: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
