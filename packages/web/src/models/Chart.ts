@@ -1,3 +1,4 @@
+import * as Y from "yjs";
 import Tile from "./Tile";
 import {
   reactive,
@@ -28,7 +29,7 @@ export interface Series {
 export default class Chart extends Tile {
   readonly type = "CHART";
 
-  readonly tableId: string;
+  readonly tableId: Reactive<string>;
   readonly label: Reactive<Property | null>;
   readonly series: ReactiveArray<Series>;
 
@@ -49,27 +50,19 @@ export default class Chart extends Tile {
     });
   }
 
-  constructor(page: Page, properties: ClientChartTile) {
-    super(page, properties);
+  constructor(page: Page, map: Y.Map<unknown>) {
+    super(page, map);
 
-    const { tableId, label, series } = properties;
-    this.tableId = tableId;
-    this.label = reactive(label);
-    this.series = array<Series>(
-      series.map(({ id, type, column, fill }) => ({
-        id,
-        type: reactive(type),
-        column: reactive(column),
-        fill: reactive(fill),
-      })),
-    );
+    this.tableId = this.binding.field("tableId", "");
+    this.label = this.binding.field("label", null);
+    this.series = array<Series>([]);
   }
 
   serialize(): ClientChartTile {
     return {
       ...super.serialize(),
       type: "CHART",
-      tableId: this.tableId,
+      tableId: this.tableId.value,
       label: this.label.value,
       series: this.series.value.map((s) => ({
         id: s.id,

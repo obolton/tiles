@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
+import * as Y from "yjs";
 import Chart from "@/models/Chart";
 import Editor from "@/editor/Editor";
 import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
 import { CHART_TILE } from "@/test/fixtures/Tile";
-import type { Fill, FillUpdate } from "@/components/fills/types";
-import type { Color } from "@/utils/color";
+import type { Fill } from "@/components/fills/types";
 
 vi.mock("@/api/client", () => ({
   default: {
@@ -23,21 +23,15 @@ vi.mock("@/api/client", () => ({
         mutate: vi.fn(),
       },
     },
-    tiles: {
-      update: {
-        mutate: vi.fn(),
-      },
-    },
   },
 }));
 
 describe("Chart", () => {
-  const editor = Editor.init(PAGE);
+  const editor = Editor.init(PAGE, new Y.Doc());
   const updateMock = vi.mocked(client.charts.update.mutate);
   const addSeriesMock = vi.mocked(client.charts.addSeries.mutate);
   const updateSeriesMock = vi.mocked(client.charts.updateSeries.mutate);
   const deleteSeriesMock = vi.mocked(client.charts.deleteSeries.mutate);
-  const tileUpdateMock = vi.mocked(client.tiles.update.mutate);
 
   afterEach(() => {
     vi.clearAllMocks();
@@ -70,34 +64,6 @@ describe("Chart", () => {
     });
     expect(chart.series.value[1]?.id).toBe("series-2");
     expect(chart.series.value[1]?.type.value).toBe("LINE");
-  });
-
-  describe("setBackground", () => {
-    test("updates the background", async () => {
-      const chart = new Chart(editor.page, CHART_TILE);
-      const colorA: Color = "ffff00000000";
-      const colorB: Color = "888800000000";
-      const background: Fill = {
-        type: "gradient",
-        colorA,
-        colorB,
-        direction: "VERTICAL",
-      };
-
-      tileUpdateMock.mockResolvedValue({
-        ...CHART_TILE,
-        background,
-      });
-
-      await chart.setBackground({ type: "color", color: colorA });
-
-      expect(tileUpdateMock).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        id: CHART_TILE.id,
-        background: { type: "color", color: colorA },
-      });
-      expect(chart.background.value).toEqual(background);
-    });
   });
 
   describe("setLabel", () => {
@@ -187,7 +153,7 @@ describe("Chart", () => {
   describe("setSeriesFill", () => {
     test("updates the series fill", async () => {
       const chart = new Chart(editor.page, CHART_TILE);
-      const fill: FillUpdate = { type: "color", color: "ffff00008080" };
+      const fill: Fill = { type: "color", color: "ffff00008080" };
 
       await chart.setSeriesFill("series-1", fill);
 
