@@ -1,4 +1,4 @@
-import { toPlainText } from "@/utils/richText/plainText";
+import { fragmentToPlainText, toPlainText } from "@/utils/richText/plainText";
 import Text from "@/models/Text";
 import Image from "@/models/Image";
 import Table from "@/models/Table";
@@ -19,7 +19,9 @@ function truncate(text: string, maxLength: number): string {
 
 export function getTileLabel(tile: Tile): string {
   if (tile instanceof Text) {
-    const firstLine = toPlainText(tile.content.value).split("\n")[0]?.trim();
+    const firstLine = fragmentToPlainText(tile.contentFragment)
+      .split("\n")[0]
+      ?.trim();
     return firstLine ? truncate(firstLine, MAX_LABEL_LENGTH) : "Text";
   }
 
@@ -41,7 +43,7 @@ export function getTileLabel(tile: Tile): string {
   }
 
   if (tile instanceof PageLink) {
-    return tile.linkedPage?.title || "Page";
+    return tile.linkedPage.value?.title || "Page";
   }
 
   if (tile instanceof Video) {
