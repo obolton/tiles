@@ -2,11 +2,11 @@ import type { Database, ObjectStore, SchemaDefinition } from "@/utils/idb";
 import type { PageData } from "@/models/Page";
 import type { ClientTileBase } from "api/types/tiles";
 
-export type CachedPageData = Omit<PageData, "tiles"> & {
+export type CachedPageData = Omit<PageData, "tiles" | "document"> & {
   tiles: ClientTileBase[];
 };
 
-type CachedPage = Omit<PageData, "tiles">;
+type CachedPage = Omit<PageData, "tiles" | "document">;
 type CachedTile = ClientTileBase & { pageId: string };
 
 export const pageStoresSchema = {
@@ -55,7 +55,7 @@ export async function cachePage(pageData: PageData): Promise<void> {
 }
 
 export async function cachePageProperties(
-  props: Omit<PageData, "tiles">,
+  props: Omit<PageData, "tiles" | "document">,
 ): Promise<void> {
   try {
     await pagesStore().put(props);
