@@ -5,10 +5,11 @@ import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
 import styles from "./TextTile.module.css";
 import textViewStyles from "@/components/text/TextView.module.css";
-import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
-import debounce from "@/utils/debounce";
+import CollaborativeTextEditor from "@/components/inputs/RichTextEditor/CollaborativeTextEditor";
+import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { combine, reactive, type Reactive } from "@/utils/reactivity";
 import type Text from "@/models/Text";
+import type { EditorState } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
 
 export interface TextTileProps {
@@ -18,15 +19,12 @@ export interface TextTileProps {
 
 export default function TextTile({ text, showToolbar }: TextTileProps) {
   const {
-    content,
     align,
-    state,
     editor: { isEditable },
   } = text;
 
   const editorView = reactive<EditorView | null>(null);
-
-  const onChange = debounce(() => text.persist(), 1500);
+  const state = reactive<EditorState | null>(null);
 
   function onKeyDown(event: KeyboardEvent) {
     const { currentTarget, target, key } = event;
@@ -76,27 +74,34 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
     [textViewStyles["align-bottom"]]: align === "BOTTOM",
   }));
 
-  const contents = isEditable.derive((value) =>
-    value ? (
-      <TextEditor
+  const contents = isEditable.derive((value) => {
+    if (!value) {
+      return <TextView text={text} />;
+    }
+
+    const collab = PageCollaboration.current;
+    if (!collab?.awareness) {
+      return null;
+    }
+
+    return (
+      <CollaborativeTextEditor
+        contentFragment={text.contentFragment}
+        awareness={collab.awareness}
         editorView={editorView}
-        state={state}
         classList={editorClassList}
-        initialValue={content.value}
         tabindex={-1}
-        onChange={onChange}
+        onChange={(newState) => (state.value = newState)}
         on:keydown={onKeyDown}
       />
-    ) : (
-      <TextView text={text} />
-    ),
-  );
+    );
+  });
 
   return (
     <Tile>
       <If condition={showToolbar}>
         <Portal element="toolbar-slot">
-          <TextToolbar text={text} editorView={editorView} />
+          <TextToolbar text={text} state={state} editorView={editorView} />
         </Portal>
       </If>
 
