@@ -5,7 +5,6 @@ export const PAGE: PageData = {
   workspaceId: "workspace-id",
   updatedAt: "2025-01-01",
   folderId: "folder-id",
-  theme: null,
   published: true,
   author: {
     id: "user-id",
@@ -17,7 +16,6 @@ export const PAGE: PageData = {
   type: "FREE",
   coverImageUrl: null,
   font: "lora",
-  backgroundColor: "ffff00000000",
   width: 32,
   alignment: "CENTER" as const,
   dockTopHeight: 200,
@@ -28,4 +26,5 @@ export const PAGE: PageData = {
   access: [],
   invites: [],
   dropdowns: [],
+  document: "",
 };

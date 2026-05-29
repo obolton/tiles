@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
+import * as Y from "yjs";
 import PageInvite from "@/models/PageInvite";
 import Page from "@/models/Page";
 import client from "@/api/client";
@@ -19,7 +20,7 @@ vi.mock("@/api/client", () => ({
 }));
 
 describe("PageInvite", () => {
-  const page = new Page(PAGE);
+  const page = new Page(PAGE, new Y.Doc());
   const inviteToPageMock = vi.mocked(client.collaboration.inviteToPage.mutate);
   const deletePageInviteMock = vi.mocked(
     client.collaboration.deletePageInvite.mutate,

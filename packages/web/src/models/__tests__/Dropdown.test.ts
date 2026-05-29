@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
+import * as Y from "yjs";
 import Dropdown from "@/models/Dropdown";
 import Page from "@/models/Page";
 import client from "@/api/client";
@@ -22,7 +23,7 @@ vi.mock("@/api/client", () => ({
 }));
 
 describe("Dropdown", () => {
-  const page = new Page(PAGE);
+  const page = new Page(PAGE, new Y.Doc());
   const createMock = vi.mocked(client.dropdowns.create.mutate);
   const updateMock = vi.mocked(client.dropdowns.update.mutate);
   const deleteMock = vi.mocked(client.dropdowns.delete.mutate);

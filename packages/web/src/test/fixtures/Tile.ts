@@ -12,7 +12,6 @@ import type {
 
 const SHARED = {
   sectionId: "section-id",
-  theme: null,
   order: "a1",
   x: 5,
   y: 7,
@@ -67,12 +66,11 @@ export const IMAGE_TILE: ClientImageTile = {
   ...SHARED,
   id: "tile-id",
   type: "IMAGE",
-  imageUrl: "https://tiles.dev/image.png",
+  imageId: "00000000-0000-0000-0000-000000000001",
   image: { width: 1920, height: 1080 },
   alt: null,
   originX: 0,
   originY: 0,
-  theme: null,
   text: [
     {
       type: "paragraph",
@@ -97,7 +95,7 @@ export const LINK_TILE: ClientLinkTile = {
   url: "https://tiles.dev",
   title: "Link title",
   description: "Link description",
-  imageUrl: "https://tiles.dev/image.png",
+  imageId: "00000000-0000-0000-0000-000000000001",
   siteName: "Test",
 };
 
