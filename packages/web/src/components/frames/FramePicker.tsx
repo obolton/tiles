@@ -2,6 +2,7 @@ import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import FrameIcon from "@/icons/frame.svg?jsx";
 import { reactive } from "@/utils/reactivity";
+import { parseParentId } from "@/models/parentId";
 import styles from "./FramePicker.module.css";
 import type Tile from "@/models/Tile";
 import type { FrameStyle } from "@/models/Tile";
@@ -38,7 +39,9 @@ export default function FramePicker({ tile, onChange }: FramePickerProps) {
     tile.setCornerRadius(value === DEFAULT_CORNER_RADIUS ? null : value);
   }
 
-  const section = tile.sectionId ? page.getSection(tile.sectionId) : null;
+  const parent = parseParentId(tile.parentId.value);
+  const section =
+    parent.type === "section" ? page.getSection(parent.sectionId) : null;
   const fullBleedDisabled = section
     ? section.layout.derive((layout) => !FULL_BLEED_LAYOUTS.includes(layout))
     : reactive(false);

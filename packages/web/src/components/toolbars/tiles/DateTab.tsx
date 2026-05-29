@@ -1,5 +1,6 @@
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import { handleError } from "@/utils/errors";
+import { parseParentId } from "@/models/parentId";
 import type Tile from "@/models/Tile";
 
 export interface DateTabProps {
@@ -7,12 +8,12 @@ export interface DateTabProps {
 }
 
 export default function DateTab({ tile }: DateTabProps) {
-  const { sectionId } = tile;
-  if (!sectionId) {
+  const parent = parseParentId(tile.parentId.value);
+  if (parent.type !== "section") {
     return null;
   }
 
-  const section = tile.page.getSection(sectionId);
+  const section = tile.page.getSection(parent.sectionId);
   if (section.layout.value !== "CALENDAR") {
     return null;
   }

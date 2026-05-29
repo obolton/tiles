@@ -97,7 +97,7 @@ export default class MapEditor {
 
     tile.setCoordinates({ lat, long }).catch(handleError);
 
-    if (tile.sectionId !== this.sectionId) {
+    if (tile.parentId.value !== this.sectionId) {
       tile.move({ parentId: this.sectionId }).catch(handleError);
     }
   }

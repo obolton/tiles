@@ -1,4 +1,5 @@
 import ThemeModel from "@/models/Theme";
+import { parseParentId } from "@/models/parentId";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import { toCSSColor, type Color } from "@/utils/color";
 import { getFontConfig, type FontConfig, type FontId } from "api/config/fonts";
@@ -125,9 +126,9 @@ export function resolveTheme(tile: Tile): ThemeModel | null {
     return tile.theme.value;
   }
 
-  const sectionId = tile.sectionId;
-  if (sectionId) {
-    const section = tile.page.getSection(sectionId);
+  const parent = parseParentId(tile.parentId.value);
+  if (parent.type === "section") {
+    const section = tile.page.getSection(parent.sectionId);
     if (section.theme.value) {
       return section.theme.value;
     }

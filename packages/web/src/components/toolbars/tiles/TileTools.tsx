@@ -24,7 +24,10 @@ export default function TileTools({ tile }: TileToolsProps) {
 
   function handleDuplicate() {
     tile
-      .duplicate({ sectionId: tile.sectionId, beforeId: tile.next?.id ?? null })
+      .duplicate({
+        parentId: tile.parentId.value,
+        beforeId: tile.next?.id ?? null,
+      })
       .catch(handleError);
   }
 
