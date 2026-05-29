@@ -1,22 +1,25 @@
 import client from "@/api/client";
 import Dropdown from "@/models/Dropdown";
 import PageInvite from "@/models/PageInvite";
+import PageThemes from "@/models/PageThemes";
 import TileCollection from "@/models/TileCollection";
 import TilePlacement from "@/models/TilePlacement";
 import { dockParentId } from "@/models/parentId";
 import Section from "@/models/Section";
-import Theme from "@/models/Theme";
 import createTileFromData from "@/models/createTile";
-import { reactive, array } from "@/utils/reactivity";
-import type * as Y from "yjs";
+import { LOCAL_ORIGIN, YMapBinding } from "@/collaboration/YMapBinding";
+import { reactive, array, combine } from "@/utils/reactivity";
+import * as Y from "yjs";
 import type { AppRouterOutputs } from "@/api/client";
 import type { Reactive, ReactiveArray } from "@/utils/reactivity";
+import type Theme from "@/models/Theme";
+import type { ThemeData } from "@/models/Theme";
 import type { Color } from "@/utils/color";
 import type { FontId } from "api/config/fonts";
 import type { PageAccess } from "@/types/collaboration";
 import type { Awareness } from "@/collaboration/types";
 import type { PagePropertyChanges } from "@/operations";
-import type { DockEdge, ClientTile } from "api/types/tiles";
+import type { DockEdge } from "api/types/tiles";
 import type { HorizontalAlignment, PageType } from "api/types/pages";
 import type Tile from "@/models/Tile";
 import type Editor from "@/editor/Editor";
@@ -27,6 +30,7 @@ type TileClass<T extends Tile = Tile> = abstract new (...args: any[]) => T;
 
 export default class Page {
   editor?: Editor;
+  readonly doc: Y.Doc;
 
   readonly id: string;
   readonly workspaceId: string;
@@ -39,7 +43,9 @@ export default class Page {
   readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
   readonly folderId: Reactive<string | null>;
-  readonly theme: Reactive<Theme | null>;
+  readonly themes: PageThemes;
+  readonly themeId: Reactive<string | null>;
+  readonly theme: Reactive<ThemeData | null>;
   readonly width: Reactive<number>;
   readonly alignment: Reactive<HorizontalAlignment>;
   readonly dockSizes: Reactive<Record<DockEdge, number>>;
@@ -48,6 +54,7 @@ export default class Page {
   readonly invites: ReactiveArray<PageInvite>;
   readonly index: Map<string, Tile>;
   readonly placement: TilePlacement;
+  private readonly metadataBinding: YMapBinding;
 
   /** The page-root tiles, as a controller-maintained order-sorted view. */
   get tiles(): TileCollection {
@@ -67,19 +74,26 @@ export default class Page {
     };
   }
 
-  constructor(data: PageData) {
+  constructor(data: PageData, doc: Y.Doc) {
+    this.doc = doc;
     this.id = data.id;
     this.workspaceId = data.workspaceId;
     this.updatedAt = new Date(data.updatedAt);
     this.author = data.author;
     this.type = data.type;
     this.title = reactive(data.title);
-    this.backgroundColor = reactive(data.backgroundColor);
     this.font = reactive(data.font);
     this.coverImageUrl = reactive(data.coverImageUrl);
     this.isPublished = reactive(data.published);
     this.folderId = reactive(data.folderId);
-    this.theme = reactive(data.theme ? new Theme(data.theme) : null);
+    this.themes = new PageThemes(doc);
+    this.metadataBinding = new YMapBinding(doc.getMap("metadata"));
+    this.themeId = this.metadataBinding.field("themeId", null);
+    this.backgroundColor = this.metadataBinding.field("backgroundColor", null);
+    this.theme = combine(
+      { id: this.themeId, themes: this.themes },
+      ({ id, themes }) => (id ? (themes.get(id) ?? null) : null),
+    );
     this.width = reactive(data.width);
     this.alignment = reactive(data.alignment);
     this.dockSizes = reactive({
@@ -95,15 +109,11 @@ export default class Page {
     this.placement = new TilePlacement(this);
   }
 
-  get doc(): Y.Doc | null {
-    return this.editor?.collaboration?.doc ?? null;
-  }
-
   get awareness(): Awareness | null {
     return this.editor?.collaboration?.awareness ?? null;
   }
 
-  serialize(): Omit<PageData, "tiles"> {
+  serialize(): Omit<PageData, "tiles" | "document"> {
     const dockSizes = this.dockSizes.value;
     return {
       id: this.id,
@@ -112,12 +122,10 @@ export default class Page {
       author: this.author,
       type: this.type,
       title: this.title.value,
-      backgroundColor: this.backgroundColor.value,
       font: this.font.value,
       coverImageUrl: this.coverImageUrl.value,
       published: this.isPublished.value,
       folderId: this.folderId.value,
-      theme: this.theme.value?.serialize() ?? null,
       width: this.width.value,
       alignment: this.alignment.value,
       dockTopHeight: dockSizes.TOP,
@@ -194,12 +202,38 @@ export default class Page {
     return this.getTile(sectionId, Section);
   }
 
-  createTile(properties: ClientTile): Tile {
-    return createTileFromData(this, properties);
+  add(map: Y.Map<unknown>): Tile {
+    const id = map.get("id") as string;
+    let tile = this.index.get(id);
+    if (!tile) {
+      tile = createTileFromData(this, map);
+      this.index.set(id, tile);
+    }
+    return tile;
   }
 
-  initTiles(tiles: ClientTile[]) {
-    this.placement.bootstrap(tiles);
+  /** Removes the tile from the page index. Idempotent. */
+  remove(id: string) {
+    this.index.delete(id);
+  }
+
+  createTile(
+    map: Y.Map<unknown>,
+    options: { parentId?: string | null; beforeId?: string | null } = {},
+  ): Tile {
+    const id = crypto.randomUUID();
+    const parentId = options.parentId ?? null;
+    const order = this.placement.orderBefore(parentId, options.beforeId);
+
+    map.set("id", id);
+    map.set("parentId", parentId);
+    map.set("order", order);
+
+    this.doc.transact(() => {
+      this.doc.getMap<Y.Map<unknown>>("tiles").set(id, map);
+    }, LOCAL_ORIGIN);
+
+    return this.add(map);
   }
 
   private update(
@@ -210,7 +244,6 @@ export default class Page {
       backgroundColor: Color | null;
       published: boolean;
       folderId: string | null;
-      themeId: string | null;
       width: number;
       alignment: HorizontalAlignment;
       dockTopHeight: number;
@@ -242,15 +275,6 @@ export default class Page {
     return this.update({ font });
   }
 
-  setBackgroundColor(backgroundColor: Color | null) {
-    this.recordUpdate(
-      { backgroundColor },
-      { backgroundColor: this.backgroundColor.value },
-    );
-    this.backgroundColor.value = backgroundColor;
-    return this.update({ backgroundColor });
-  }
-
   setPublished(published: boolean) {
     this.recordUpdate({ published }, { published: this.isPublished.value });
     this.isPublished.value = published;
@@ -264,10 +288,12 @@ export default class Page {
   }
 
   setTheme(theme: Theme | null) {
-    const themeId = theme?.id ?? null;
-    this.recordUpdate({ themeId }, { themeId: this.theme.value?.id ?? null });
-    this.theme.value = theme;
-    return this.update({ themeId });
+    this.doc.transact(() => {
+      if (theme) {
+        this.themes.apply(theme);
+      }
+      this.themeId.value = theme?.id ?? null;
+    }, LOCAL_ORIGIN);
   }
 
   setWidth(width: number) {
