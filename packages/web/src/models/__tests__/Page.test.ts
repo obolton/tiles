@@ -50,7 +50,7 @@ describe("Page", () => {
     expect(page.type).toBe(PAGE.type);
     expect(page.title.value).toBe(PAGE.title);
     expect(page.backgroundColor.value).toBeNull();
-    expect(page.font.value).toBe(PAGE.font);
+    expect(page.font.value).toBeNull();
     expect(page.coverImageUrl.value).toBe(PAGE.coverImageUrl);
     expect(page.isPublished.value).toBe(PAGE.published);
     expect(page.folderId.value).toBe(PAGE.folderId);
@@ -156,19 +156,6 @@ describe("Page", () => {
       expect(client.pages.update.mutate).toHaveBeenCalledWith({
         pageId: PAGE.id,
         title: newTitle,
-      });
-    });
-  });
-
-  describe("setFont", () => {
-    test("persists the font", async () => {
-      const page = new Page(PAGE, new Y.Doc());
-
-      await page.setFont("CODE");
-
-      expect(client.pages.update.mutate).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        font: "CODE",
       });
     });
   });

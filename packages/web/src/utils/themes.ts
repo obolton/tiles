@@ -167,9 +167,12 @@ export function getPageTheme(doc: Y.Doc): ThemeData | null {
     : null;
 }
 
+export function getPageFont(doc: Y.Doc): FontId | null {
+  return (doc.getMap("metadata").get("font") as FontId | null) ?? null;
+}
+
 export function getPageBodyStyle(
   doc: Y.Doc,
-  page: { font: FontId | null },
 ): ReturnType<typeof toCSSProperties> {
   const backgroundColor =
     (doc.getMap("metadata").get("backgroundColor") as Color | null) ?? null;
@@ -177,6 +180,6 @@ export function getPageBodyStyle(
     background: backgroundColor
       ? { type: "color", color: backgroundColor }
       : null,
-    font: page.font,
+    font: getPageFont(doc),
   });
 }

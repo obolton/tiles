@@ -11,9 +11,6 @@ const setProperties: ActionExecutor<SetPagePropertiesAction> = async (
     page.title.value = changes.title;
     document.title = `${changes.title} - Tiles`;
   }
-  if (changes.font !== undefined) {
-    page.font.value = changes.font;
-  }
   if (changes.published !== undefined) {
     page.isPublished.value = changes.published;
   }

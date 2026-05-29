@@ -1,188 +1,140 @@
 import { describe, expect, test } from "vitest";
+import * as Y from "yjs";
+import { prosemirrorToYXmlFragment } from "y-prosemirror";
 import { getPageFonts, getPagePreloads } from "../pageFonts";
-import { PAGE } from "@/test/fixtures/Page";
+import Text from "@/models/Text";
+import Image from "@/models/Image";
+import { deserialize } from "@/utils/richText/deserialize";
 import { THEME } from "@/test/fixtures/Theme";
-import { TILE, TEXT_TILE, IMAGE_TILE } from "@/test/fixtures/Tile";
+import type { Theme } from "api/types/themes";
+import type { RichText } from "@/utils/richText/types";
+
+function createDoc(themes: Theme[] = [], pageThemeId?: string): Y.Doc {
+  const doc = new Y.Doc();
+  const themesMap = doc.getMap("themes");
+  for (const theme of themes) {
+    themesMap.set(theme.id, theme);
+  }
+  if (pageThemeId) {
+    doc.getMap("metadata").set("themeId", pageThemeId);
+  }
+  return doc;
+}
+
+function addTile(doc: Y.Doc, id: string, map: Y.Map<unknown>): void {
+  map.set("id", id);
+  doc.getMap<Y.Map<unknown>>("tiles").set(id, map);
+}
+
+function addTextTile(doc: Y.Doc, id: string, content: RichText): void {
+  const map = Text.createMap({});
+  addTile(doc, id, map);
+  prosemirrorToYXmlFragment(
+    deserialize(content),
+    map.get("content") as Y.XmlFragment,
+  );
+}
+
+function fontParagraph(font: string): RichText {
+  return [
+    {
+      type: "paragraph",
+      align: 0,
+      children: [{ type: "text", text: "Hi", format: 0, font }],
+    },
+  ];
+}
 
 describe("getPageFonts", () => {
   test("returns an empty set for a bare page", () => {
-    expect(
-      getPageFonts({ ...PAGE, font: null, theme: null, tiles: [] }),
-    ).toEqual(new Set());
+    expect(getPageFonts(createDoc())).toEqual(new Set());
   });
 
-  test("includes page.font override", () => {
-    expect(getPageFonts({ ...PAGE, font: "lora", theme: null })).toEqual(
-      new Set(["lora"]),
+  test("includes the page font override", () => {
+    const doc = createDoc();
+    doc.getMap("metadata").set("font", "lora");
+    expect(getPageFonts(doc)).toEqual(new Set(["lora"]));
+  });
+
+  test("includes all three fonts of a theme snapshot", () => {
+    expect(getPageFonts(createDoc([THEME]))).toEqual(
+      new Set(["lora", "inter", "jetbrains-mono"]),
     );
   });
 
-  test("includes all three theme fonts", () => {
-    expect(
-      getPageFonts({ ...PAGE, font: null, theme: THEME, tiles: [] }),
-    ).toEqual(new Set(["lora", "inter", "jetbrains-mono"]));
-  });
-
-  test("includes fonts from tiles with their own themes", () => {
-    const tile = {
-      ...TILE,
-      theme: {
-        ...THEME,
-        fonts: {
-          heading: "quicksand" as const,
-          body: "quicksand" as const,
-          code: "jetbrains-mono" as const,
-        },
-      },
+  test("merges fonts across multiple theme snapshots", () => {
+    const other: Theme = {
+      ...THEME,
+      id: "other-theme",
+      fonts: { heading: "quicksand", body: "quicksand", code: "dynapuff" },
     };
-    expect(
-      getPageFonts({ ...PAGE, font: null, theme: null, tiles: [tile] }),
-    ).toEqual(new Set(["quicksand", "jetbrains-mono"]));
-  });
-
-  test("merges page-level and tile-level fonts", () => {
-    const tile = {
-      ...TILE,
-      theme: {
-        ...THEME,
-        fonts: {
-          heading: "dynapuff" as const,
-          body: "dynapuff" as const,
-          code: "dynapuff" as const,
-        },
-      },
-    };
-    expect(
-      getPageFonts({ ...PAGE, font: "lora", theme: THEME, tiles: [tile] }),
-    ).toEqual(new Set(["lora", "inter", "jetbrains-mono", "dynapuff"]));
-  });
-
-  test("ignores tiles without a theme", () => {
-    expect(
-      getPageFonts({
-        ...PAGE,
-        font: null,
-        theme: null,
-        tiles: [{ ...TILE, theme: null }],
-      }),
-    ).toEqual(new Set());
+    expect(getPageFonts(createDoc([THEME, other]))).toEqual(
+      new Set(["lora", "inter", "jetbrains-mono", "quicksand", "dynapuff"]),
+    );
   });
 
   test("includes fonts from font marks in TextTile content", () => {
-    const tile = {
-      ...TEXT_TILE,
-      content: [
-        {
-          type: "paragraph" as const,
-          align: 0 as const,
-          children: [
-            {
-              type: "text" as const,
-              text: "Hi",
-              format: 0,
-              font: "lora" as const,
-            },
-          ],
-        },
-      ],
-    };
-    expect(
-      getPageFonts({ ...PAGE, font: null, theme: null, tiles: [tile] }),
-    ).toEqual(new Set(["lora"]));
+    const doc = createDoc();
+    addTextTile(doc, "text-1", fontParagraph("lora"));
+    expect(getPageFonts(doc)).toEqual(new Set(["lora"]));
   });
 
   test("includes fonts from font marks in ImageTile text", () => {
-    const tile = {
-      ...IMAGE_TILE,
-      text: [
-        {
-          type: "paragraph" as const,
-          align: 0 as const,
-          children: [
-            {
-              type: "text" as const,
-              text: "Caption",
-              format: 0,
-              font: "quicksand" as const,
-            },
-          ],
-        },
-      ],
-    };
-    expect(
-      getPageFonts({ ...PAGE, font: null, theme: null, tiles: [tile] }),
-    ).toEqual(new Set(["quicksand"]));
+    const doc = createDoc();
+    addTile(
+      doc,
+      "image-1",
+      Image.createMap({
+        imageId: "image",
+        size: { width: 1, height: 1 },
+        text: fontParagraph("quicksand"),
+      }),
+    );
+    expect(getPageFonts(doc)).toEqual(new Set(["quicksand"]));
   });
 
   test("merges mark fonts with theme fonts", () => {
-    const tile = {
-      ...TEXT_TILE,
-      content: [
-        {
-          type: "paragraph" as const,
-          align: 0 as const,
-          children: [
-            {
-              type: "text" as const,
-              text: "Hi",
-              format: 0,
-              font: "dynapuff" as const,
-            },
-          ],
-        },
-      ],
-    };
-    expect(
-      getPageFonts({ ...PAGE, font: null, theme: THEME, tiles: [tile] }),
-    ).toEqual(new Set(["lora", "inter", "jetbrains-mono", "dynapuff"]));
+    const doc = createDoc([THEME]);
+    addTextTile(doc, "text-1", fontParagraph("dynapuff"));
+    expect(getPageFonts(doc)).toEqual(
+      new Set(["lora", "inter", "jetbrains-mono", "dynapuff"]),
+    );
   });
 });
 
 describe("getPagePreloads", () => {
   test("preloads the default font when nothing is set", () => {
-    const preloads = getPagePreloads({ ...PAGE, font: null, theme: null });
+    const preloads = getPagePreloads(createDoc());
     expect(preloads).toHaveLength(1);
     expect(preloads[0]?.href).toContain("inter-latin-wght-normal");
     expect(preloads[0]?.as).toBe("font");
   });
 
-  test("respects page.font override", () => {
-    const preloads = getPagePreloads({ ...PAGE, font: "lora", theme: null });
+  test("respects the page font override", () => {
+    const doc = createDoc();
+    doc.getMap("metadata").set("font", "lora");
+    const preloads = getPagePreloads(doc);
     expect(preloads).toHaveLength(1);
     expect(preloads[0]?.href).toContain("lora-latin-wght-normal");
   });
 
-  test("falls back to theme.fonts.body when no page.font", () => {
-    const preloads = getPagePreloads({
-      ...PAGE,
-      font: null,
-      theme: {
-        ...THEME,
-        fonts: {
-          heading: "lora" as const,
-          body: "quicksand" as const,
-          code: "jetbrains-mono" as const,
-        },
-      },
-    });
+  test("falls back to theme.fonts.body when no page font", () => {
+    const theme: Theme = {
+      ...THEME,
+      fonts: { heading: "lora", body: "quicksand", code: "jetbrains-mono" },
+    };
+    const preloads = getPagePreloads(createDoc([theme], theme.id));
     expect(preloads).toHaveLength(2);
     expect(preloads[0]?.href).toContain("quicksand-latin-wght-normal");
     expect(preloads[1]?.href).toContain("lora-latin-wght-normal");
   });
 
   test("emits one preload when heading and body are the same font", () => {
-    const preloads = getPagePreloads({
-      ...PAGE,
-      font: null,
-      theme: {
-        ...THEME,
-        fonts: {
-          heading: "inter" as const,
-          body: "inter" as const,
-          code: "jetbrains-mono" as const,
-        },
-      },
-    });
+    const theme: Theme = {
+      ...THEME,
+      fonts: { heading: "inter", body: "inter", code: "jetbrains-mono" },
+    };
+    const preloads = getPagePreloads(createDoc([theme], theme.id));
     expect(preloads).toHaveLength(1);
     expect(preloads[0]?.href).toContain("inter-latin-wght-normal");
   });

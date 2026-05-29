@@ -82,7 +82,6 @@ export default class Page {
     this.author = data.author;
     this.type = data.type;
     this.title = reactive(data.title);
-    this.font = reactive(data.font);
     this.coverImageUrl = reactive(data.coverImageUrl);
     this.isPublished = reactive(data.published);
     this.folderId = reactive(data.folderId);
@@ -90,6 +89,7 @@ export default class Page {
     this.metadataBinding = new YMapBinding(doc.getMap("metadata"));
     this.themeId = this.metadataBinding.field("themeId", null);
     this.backgroundColor = this.metadataBinding.field("backgroundColor", null);
+    this.font = this.metadataBinding.field("font", null);
     this.theme = combine(
       { id: this.themeId, themes: this.themes },
       ({ id, themes }) => (id ? (themes.get(id) ?? null) : null),
@@ -122,7 +122,6 @@ export default class Page {
       author: this.author,
       type: this.type,
       title: this.title.value,
-      font: this.font.value,
       coverImageUrl: this.coverImageUrl.value,
       published: this.isPublished.value,
       folderId: this.folderId.value,
@@ -267,12 +266,6 @@ export default class Page {
 
   setCoverImage(imageKey: string | null) {
     return this.update({ coverImageKey: imageKey });
-  }
-
-  setFont(font: FontId) {
-    this.recordUpdate({ font }, { font: this.font.value ?? undefined });
-    this.font.value = font;
-    return this.update({ font });
   }
 
   setPublished(published: boolean) {

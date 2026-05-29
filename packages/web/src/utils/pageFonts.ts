@@ -1,45 +1,58 @@
+import * as Y from "yjs";
 import { DEFAULT_FONT, type FontId } from "api/config/fonts";
 import { getFontPreload } from "@/utils/fonts";
-import { getRichTextFonts } from "@/utils/richText/fonts";
+import { getPageTheme, getPageFont } from "@/utils/themes";
+import { getRichTextFonts, getFragmentFonts } from "@/utils/richText/fonts";
+import type { ThemeData } from "@/models/Theme";
+import type { RichText } from "@/utils/richText/types";
 import type { Link } from "@/router/router";
-import type { PageData } from "@/models/Page";
 
-export function getPageFonts(pageData: PageData): Set<FontId> {
-  const fonts = new Set<FontId>();
-  if (pageData.font) {
-    fonts.add(pageData.font);
-  }
-
-  if (pageData.theme) {
-    fonts.add(pageData.theme.fonts.heading);
-    fonts.add(pageData.theme.fonts.body);
-    fonts.add(pageData.theme.fonts.code);
-  }
-
-  for (const tile of pageData.tiles) {
-    if (tile.theme) {
-      fonts.add(tile.theme.fonts.heading);
-      fonts.add(tile.theme.fonts.body);
-      fonts.add(tile.theme.fonts.code);
+function getTileFonts(tile: Y.Map<unknown>): Set<FontId> {
+  switch (tile.get("type")) {
+    case "TEXT": {
+      const content = tile.get("content");
+      return content instanceof Y.XmlFragment
+        ? getFragmentFonts(content)
+        : new Set();
     }
-    if (tile.type === "TEXT") {
-      for (const id of getRichTextFonts(tile.content)) {
-        fonts.add(id);
-      }
-    } else if (tile.type === "IMAGE" && tile.text) {
-      for (const id of getRichTextFonts(tile.text)) {
-        fonts.add(id);
-      }
+    case "IMAGE": {
+      const text = tile.get("text") as RichText | null;
+      return text ? getRichTextFonts(text) : new Set();
+    }
+    default:
+      return new Set();
+  }
+}
+
+export function getPageFonts(doc: Y.Doc): Set<FontId> {
+  const fonts = new Set<FontId>();
+
+  const font = getPageFont(doc);
+  if (font) {
+    fonts.add(font);
+  }
+
+  // Themes
+  for (const theme of doc.getMap<ThemeData>("themes").values()) {
+    fonts.add(theme.fonts.heading);
+    fonts.add(theme.fonts.body);
+    fonts.add(theme.fonts.code);
+  }
+
+  // Inline fonts
+  for (const tile of doc.getMap<Y.Map<unknown>>("tiles").values()) {
+    for (const id of getTileFonts(tile)) {
+      fonts.add(id);
     }
   }
 
   return fonts;
 }
 
-export function getPagePreloads(pageData: PageData): Link[] {
-  const bodyFontId =
-    pageData.font ?? pageData.theme?.fonts.body ?? DEFAULT_FONT;
-  const headingFontId = pageData.theme?.fonts.heading ?? bodyFontId;
+export function getPagePreloads(doc: Y.Doc): Link[] {
+  const pageTheme = getPageTheme(doc);
+  const bodyFontId = getPageFont(doc) ?? pageTheme?.fonts.body ?? DEFAULT_FONT;
+  const headingFontId = pageTheme?.fonts.heading ?? bodyFontId;
 
   const preloads: Link[] = [getFontPreload(bodyFontId)];
 

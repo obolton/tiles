@@ -32,7 +32,7 @@ export default function StyleTab({ page }: StyleTabProps) {
     viewTransition(() => {
       document.body.style.setProperty("--font", getFontConfig(newFont).family);
     });
-    page.setFont(newFont).catch(handleError);
+    page.font.value = newFont;
   }
 
   function setColor(value: Color | null) {

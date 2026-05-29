@@ -15,7 +15,6 @@ export const PAGE: PageData = {
   title: "Test Page",
   type: "FREE",
   coverImageUrl: null,
-  font: "lora",
   width: 32,
   alignment: "CENTER" as const,
   dockTopHeight: 200,

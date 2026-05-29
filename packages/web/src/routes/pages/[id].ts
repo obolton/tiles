@@ -37,10 +37,10 @@ async function loader({
   }
 
   const doc = initializeDoc(page);
-  const style = getPageBodyStyle(doc, page);
+  const style = getPageBodyStyle(doc);
 
   // The global metadata already emits @font-face for DEFAULT_FONT.
-  const pageFonts = getPageFonts(page);
+  const pageFonts = getPageFonts(doc);
   pageFonts.delete(DEFAULT_FONT);
 
   return {
@@ -54,7 +54,7 @@ async function loader({
     },
     metadata: {
       styles: [generateFontFaceCSS(pageFonts)],
-      links: getPagePreloads(page),
+      links: getPagePreloads(doc),
     },
     data: { page, doc },
   };
