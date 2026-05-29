@@ -1,10 +1,12 @@
 import { generateKeyBetween } from "fractional-indexing";
 import { TRPCError } from "@trpc/server";
+import * as Y from "yjs";
 import type { Prisma } from "@/generated/prisma/client";
 import prisma from "@/database/prisma";
 import { LIBRARY_PAGE_FIELDS } from "./fields";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import { invalidateCachedPages } from "@/utils/cdn";
+import { createEmptyDoc, currentSchemaVersion } from "@/collaboration";
 import type {
   GetPageByIdSchema,
   ListPagesSchema,
@@ -160,6 +162,12 @@ export async function createPage(
         published: false,
         title,
         type: pageType,
+        document: {
+          create: {
+            snapshot: Buffer.from(Y.encodeStateAsUpdate(createEmptyDoc())),
+            schemaVersion: currentSchemaVersion,
+          },
+        },
       },
       select: {
         id: true,
