@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { getBackgroundStyle } from "../backgrounds";
+import { getImageUrl } from "../images";
 import type { Fill } from "@/components/fills/types";
 
 describe("getBackgroundStyle", () => {
@@ -72,14 +73,12 @@ describe("getBackgroundStyle", () => {
   });
 
   describe("image backgrounds", () => {
-    test("returns background with url, center position and cover size", () => {
-      const background: Fill = {
-        type: "image",
-        imageUrl: "https://example.com/image.jpg",
-      };
+    test("returns background", () => {
+      const imageId = "00000000-0000-0000-0000-000000000001";
+      const background: Fill = { type: "image", imageId };
       const result = getBackgroundStyle(background);
       expect(result).toEqual({
-        background: "url(https://example.com/image.jpg) center / cover",
+        background: `url(${getImageUrl(imageId)}) center / cover`,
       });
     });
   });

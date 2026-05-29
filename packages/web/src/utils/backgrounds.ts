@@ -1,4 +1,5 @@
 import { toCSSColor } from "@/utils/color";
+import { getImageUrl } from "@/utils/images";
 import type { Fill, GradientFill } from "@/components/fills/types";
 
 const GRADIENT_DIRECTIONS: Record<GradientFill["direction"], string> = {
@@ -22,7 +23,7 @@ export function getBackgroundStyle(background: Fill | null | undefined) {
     }
     case "image":
       return {
-        background: `url(${background.imageUrl}) center / cover`,
+        background: `url(${getImageUrl(background.imageId)}) center / cover`,
       };
   }
 }
