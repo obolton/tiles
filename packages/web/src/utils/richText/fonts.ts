@@ -1,3 +1,4 @@
+import * as Y from "yjs";
 import type { FontId } from "api/config/fonts";
 import type { RichText, Node } from "./types";
 
@@ -23,6 +24,24 @@ export function getRichTextFonts(content: RichText): Set<FontId> {
       default:
         queue.push(...node.children);
         break;
+    }
+  }
+
+  return fonts;
+}
+
+export function getFragmentFonts(fragment: Y.XmlFragment): Set<FontId> {
+  const fonts = new Set<FontId>();
+  const texts = fragment.createTreeWalker(
+    (node) => node instanceof Y.XmlText,
+  ) as Iterable<Y.XmlText>;
+
+  for (const text of texts) {
+    for (const { attributes } of text.toDelta()) {
+      const font = (attributes?.font as { font?: FontId } | undefined)?.font;
+      if (font) {
+        fonts.add(font);
+      }
     }
   }
 
