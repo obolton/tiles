@@ -1,13 +1,14 @@
+import * as Y from "yjs";
 import Editor from "@/editor/Editor";
 import Text from "@/models/Text";
 import TextView from "../TextView";
 import { TextFormat } from "@/utils/richText/types";
 import { PAGE } from "@/test/fixtures/Page";
-import { TEXT_TILE } from "@/test/fixtures/Tile";
 import type { Meta, Story } from "@/test/storybook";
 import type { RichText } from "@/utils/richText/types";
+import type { ClientTextTile } from "api/types/tiles";
 
-const editor = Editor.init(PAGE);
+const editor = Editor.init(PAGE, new Y.Doc());
 
 const meta = {
   title: "TextView",
@@ -15,28 +16,32 @@ const meta = {
 export default meta;
 
 function paragraph(text: string): RichText {
-  const format = 0;
   return [
     {
       type: "paragraph",
       align: 0,
-      children: [{ type: "text", text, format, size: 1, pending: undefined }],
+      children: [{ type: "text", text, format: 0, size: 1, pending: undefined }],
     },
   ];
 }
 
+function createText(props: {
+  align?: ClientTextTile["align"];
+  content?: RichText;
+}): Text {
+  return editor.page.createTile(Text.createMap(props), {}) as Text;
+}
+
 export const Default: Story = {
   render: () => {
-    const text = new Text(editor.page, TEXT_TILE);
+    const text = createText({ content: paragraph("Hello world") });
     return <TextView text={text} />;
   },
 };
 
 export const AlignedTop: Story = {
   render: () => {
-    const text = new Text(editor.page, {
-      ...TEXT_TILE,
-      id: "text-top",
+    const text = createText({
       align: "TOP",
       content: paragraph("Aligned to the top"),
     });
@@ -46,9 +51,7 @@ export const AlignedTop: Story = {
 
 export const AlignedCenter: Story = {
   render: () => {
-    const text = new Text(editor.page, {
-      ...TEXT_TILE,
-      id: "text-center",
+    const text = createText({
       align: "CENTER",
       content: paragraph("Centered vertically"),
     });
@@ -58,9 +61,7 @@ export const AlignedCenter: Story = {
 
 export const AlignedBottom: Story = {
   render: () => {
-    const text = new Text(editor.page, {
-      ...TEXT_TILE,
-      id: "text-bottom",
+    const text = createText({
       align: "BOTTOM",
       content: paragraph("Aligned to the bottom"),
     });
@@ -70,9 +71,7 @@ export const AlignedBottom: Story = {
 
 export const RichFormatting: Story = {
   render: () => {
-    const text = new Text(editor.page, {
-      ...TEXT_TILE,
-      id: "text-rich",
+    const text = createText({
       align: "CENTER",
       content: [
         {
@@ -131,9 +130,7 @@ export const RichFormatting: Story = {
 
 export const LongContent: Story = {
   render: () => {
-    const text = new Text(editor.page, {
-      ...TEXT_TILE,
-      id: "text-long",
+    const text = createText({
       align: "TOP",
       content: [
         {
@@ -157,11 +154,7 @@ export const LongContent: Story = {
 
 export const Empty: Story = {
   render: () => {
-    const text = new Text(editor.page, {
-      ...TEXT_TILE,
-      id: "text-empty",
-      content: [],
-    });
+    const text = createText({ content: [] });
     return <TextView text={text} />;
   },
 };

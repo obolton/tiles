@@ -1,38 +1,25 @@
+import * as Y from "yjs";
 import Editor from "@/editor/Editor";
+import Section from "@/models/Section";
 import FilmstripPanel from "../FilmstripPanel";
 import { flag } from "@/utils/reactivity";
 import { PAGE } from "@/test/fixtures/Page";
-import { SECTION_TILE } from "@/test/fixtures/Tile";
 import type { Meta, Story } from "@/test/storybook";
-import type { ClientSectionTile } from "api/types/tiles";
 
-function slide(
-  id: string,
-  overrides: Partial<ClientSectionTile> = {},
-): ClientSectionTile {
-  return {
-    ...SECTION_TILE,
-    id,
-    sectionId: null,
-    layout: "FREEFORM",
-    sizing: "LANDSCAPE",
-    width: null,
-    height: 1,
-    ...overrides,
-  };
+const editor = Editor.init({ ...PAGE, type: "PRESENTATION" }, new Y.Doc());
+
+for (let i = 1; i <= 5; i++) {
+  editor.page.createTile(
+    Section.createMap({
+      layout: "FREEFORM",
+      sizing: "LANDSCAPE",
+      width: null,
+      height: 1,
+      hide: i === 3,
+    }),
+    {},
+  );
 }
-
-const editor = Editor.init({
-  ...PAGE,
-  type: "PRESENTATION",
-  tiles: [
-    slide("slide-1"),
-    slide("slide-2"),
-    slide("slide-3", { hide: true }),
-    slide("slide-4"),
-    slide("slide-5"),
-  ],
-});
 
 const meta = {
   title: "FilmstripPanel",

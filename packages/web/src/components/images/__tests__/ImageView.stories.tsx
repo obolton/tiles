@@ -1,73 +1,67 @@
+import * as Y from "yjs";
 import Editor from "@/editor/Editor";
 import Image from "@/models/Image";
 import ImageView from "../ImageView";
 import { PAGE } from "@/test/fixtures/Page";
-import { IMAGE_TILE } from "@/test/fixtures/Tile";
 import type { Meta, Story } from "@/test/storybook";
+import type { RichText } from "@/utils/richText/types";
 
-const editor = Editor.init(PAGE);
+const editor = Editor.init(PAGE, new Y.Doc());
 
 const meta = {
   title: "ImageView",
 } satisfies Meta;
 export default meta;
 
-const SAMPLE_IMAGE_URL = "https://images.test/landscape.jpg";
+const CAPTION: RichText = [
+  {
+    type: "paragraph",
+    align: 0,
+    children: [{ type: "text", text: "A sample caption", format: 0 }],
+  },
+];
+
+type ImageProps = Parameters<typeof Image.createMap>[0];
+
+function createImage(overrides: Partial<ImageProps> = {}): Image {
+  return editor.page.createTile(
+    Image.createMap({
+      imageId: "sample-image",
+      size: { width: 1200, height: 800 },
+      text: CAPTION,
+      ...overrides,
+    }),
+    {},
+  ) as Image;
+}
 
 export const Default: Story = {
-  render: () => {
-    const image = new Image(editor.page, {
-      ...IMAGE_TILE,
-      id: "image-default",
-      imageUrl: SAMPLE_IMAGE_URL,
-    });
-    return <ImageView image={image} />;
-  },
+  render: () => <ImageView image={createImage()} />,
 };
 
 export const WithoutCaption: Story = {
-  render: () => {
-    const image = new Image(editor.page, {
-      ...IMAGE_TILE,
-      id: "image-no-caption",
-      imageUrl: SAMPLE_IMAGE_URL,
-      text: [],
-    });
-    return <ImageView image={image} />;
-  },
+  render: () => <ImageView image={createImage({ text: [] })} />,
 };
 
 export const AutoSized: Story = {
-  render: () => {
-    const image = new Image(editor.page, {
-      ...IMAGE_TILE,
-      id: "image-auto",
-      imageUrl: SAMPLE_IMAGE_URL,
-      sizing: "AUTO",
-      image: { width: 1600, height: 900 },
-    });
-    return <ImageView image={image} />;
-  },
+  render: () => (
+    <ImageView
+      image={createImage({
+        sizing: "AUTO",
+        size: { width: 1600, height: 900 },
+      })}
+    />
+  ),
 };
 
 export const Deleted: Story = {
   render: () => {
-    const image = new Image(editor.page, {
-      ...IMAGE_TILE,
-      id: "image-deleted",
-      imageUrl: null,
-    });
+    const image = createImage();
+    image.imageId.value = null;
     return <ImageView image={image} />;
   },
 };
 
 export const WithLightbox: Story = {
-  render: () => {
-    const image = new Image(editor.page, {
-      ...IMAGE_TILE,
-      id: "image-lightbox",
-      imageUrl: SAMPLE_IMAGE_URL,
-    });
-    return <ImageView image={image} showInLightbox />;
-  },
+  render: () => <ImageView image={createImage()} showInLightbox />,
 };
