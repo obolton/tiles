@@ -84,7 +84,7 @@ export default function Profile({ workspaceId, user, isAdmin }: ProfileProps) {
       }
       const url = URL.createObjectURL(file);
       image.src = url;
-      const imageKey = await uploadMedia({
+      const { id: imageKey } = await uploadMedia({
         file,
         purpose: "profile",
         workspaceId,
