@@ -37,9 +37,7 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
       <ToolbarGroup label="Layout">
         <AspectRatioSelect
           value={tile.sizing}
-          onChange={(sizing) =>
-            viewTransition(() => tile.setSizing(sizing).catch(handleError))
-          }
+          onChange={(sizing) => tile.setSizing(sizing)}
           showAuto={
             tile.type === "TEXT" ||
             tile.type === "TABLE" ||

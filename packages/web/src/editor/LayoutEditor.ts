@@ -576,12 +576,6 @@ export default class LayoutEditor {
 
     delete document.body.dataset.resize;
 
-    try {
-      await this.resizing.persistPosition();
-    } catch (error) {
-      handleError(error);
-    }
-
     this.resizing = null;
   }
 }

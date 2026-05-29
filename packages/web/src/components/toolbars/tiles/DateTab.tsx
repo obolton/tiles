@@ -1,5 +1,4 @@
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
-import { handleError } from "@/utils/errors";
 import { parseParentId } from "@/models/parentId";
 import type Tile from "@/models/Tile";
 
@@ -20,12 +19,12 @@ export default function DateTab({ tile }: DateTabProps) {
 
   function handleStartChange(event: Event) {
     const input = event.currentTarget as HTMLInputElement;
-    tile.setDates(input.value || null, tile.endDate.value).catch(handleError);
+    tile.setDates(input.value || null, tile.endDate.value);
   }
 
   function handleEndChange(event: Event) {
     const input = event.currentTarget as HTMLInputElement;
-    tile.setDates(tile.startDate.value, input.value || null).catch(handleError);
+    tile.setDates(tile.startDate.value, input.value || null);
   }
 
   return (

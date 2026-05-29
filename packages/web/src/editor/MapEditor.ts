@@ -1,4 +1,3 @@
-import { handleError } from "@/utils/errors";
 import type MapView from "@/elements/maps/MapView";
 import type Page from "@/models/Page";
 import type { DragDropEvent } from "@/utils/drag";
@@ -95,10 +94,10 @@ export default class MapEditor {
     const { lat, long } = this.drag;
     this.drag = null;
 
-    tile.setCoordinates({ lat, long }).catch(handleError);
+    tile.setCoordinates({ lat, long });
 
     if (tile.parentId.value !== this.sectionId) {
-      tile.move({ parentId: this.sectionId }).catch(handleError);
+      tile.move({ parentId: this.sectionId });
     }
   }
 }

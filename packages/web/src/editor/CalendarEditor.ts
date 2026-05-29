@@ -1,5 +1,4 @@
 import { daysBetween } from "@/utils/dates";
-import { handleError } from "@/utils/errors";
 import type CalendarGrid from "@/elements/calendar-grid/CalendarGrid";
 import type Page from "@/models/Page";
 import type { DragDropEvent } from "@/utils/drag";
@@ -110,10 +109,10 @@ export default class CalendarEditor {
     const { start, end } = this.drag;
     this.drag = null;
 
-    tile.setDates(start, end).catch(handleError);
+    tile.setDates(start, end);
 
     if (tile.parentId.value !== this.sectionId) {
-      tile.move({ parentId: this.sectionId }).catch(handleError);
+      tile.move({ parentId: this.sectionId });
     }
   }
 
@@ -130,6 +129,6 @@ export default class CalendarEditor {
     }
 
     const tile = this.page.getTile(pageItem.id);
-    tile.setDates(event.start, event.end).catch(handleError);
+    tile.setDates(event.start, event.end);
   }
 }

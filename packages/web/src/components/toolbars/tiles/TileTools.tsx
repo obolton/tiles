@@ -6,7 +6,6 @@ import DuplicateIcon from "@/icons/duplicate.svg?jsx";
 import HiddenIcon from "@/icons/hidden.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
-import { viewTransition } from "@/utils/transitions";
 import type Tile from "@/models/Tile";
 
 export interface TileToolsProps {
@@ -15,11 +14,11 @@ export interface TileToolsProps {
 
 export default function TileTools({ tile }: TileToolsProps) {
   function handleMoveUp() {
-    viewTransition(() => tile.moveUp().catch(handleError));
+    tile.moveUp();
   }
 
   function handleMoveDown() {
-    viewTransition(() => tile.moveDown().catch(handleError));
+    tile.moveDown();
   }
 
   function handleDuplicate() {
@@ -32,7 +31,7 @@ export default function TileTools({ tile }: TileToolsProps) {
   }
 
   function toggleHide() {
-    tile.setHidden(!tile.hide.value).catch(handleError);
+    tile.setHidden(!tile.hide.value);
   }
 
   function handleDelete() {

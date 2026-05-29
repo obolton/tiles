@@ -152,7 +152,7 @@ export default class DockLayoutEditor {
     }
 
     try {
-      await tile.move({
+      tile.move({
         parentId: dockParentId(this.edge),
         beforeId: this.beforeId,
       });
@@ -300,10 +300,5 @@ export default class DockLayoutEditor {
 
     beforeTile[size].value = combined * ratio;
     afterTile[size].value = combined * (1 - ratio);
-
-    Promise.all([
-      beforeTile.persistPosition(),
-      afterTile.persistPosition(),
-    ]).catch(handleError);
   }
 }
