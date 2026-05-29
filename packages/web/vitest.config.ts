@@ -20,6 +20,7 @@ export default defineConfig({
       GOOGLE_CLIENT_SECRET: "test-client-secret",
       GOOGLE_REDIRECT_URI: "http://localhost:3000/sign-in/google/callback",
       PUBLIC_FONTS_BASE_URL: "https://test-fonts.example.com",
+      PUBLIC_IMAGES_BASE_URL: "https://images.test",
     },
     coverage: {
       include: ["src/**/*.{ts,tsx}"],
