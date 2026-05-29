@@ -44,7 +44,7 @@ export function getImageStyle(image: Image) {
       objectPosition: `${origin.x * 100}% ${origin.y * 100}%`,
       aspectRatio:
         sizing === "AUTO"
-          ? `${image.size.width} / ${image.size.height}`
+          ? `${image.size.value.width} / ${image.size.value.height}`
           : undefined,
     }),
   );

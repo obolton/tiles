@@ -49,7 +49,7 @@ export default function ChartView({ chart, className }: ChartViewProps) {
               fill?.type === "gradient" ? fill.direction : null,
             )}
             $values={Editor.current.page
-              .getTile(chart.tableId, Table)
+              .getTile(chart.tableId.value, Table)
               .getColumnData(series.column.value.id)
               .value.map(toNumber)}
           />

@@ -27,10 +27,11 @@ export default function PageLinkTileThumbnail({
           classList={{
             [styles.text]: true,
             [styles["with-image"]]:
-              linkedPage.background && "imageUrl" in linkedPage.background,
+              linkedPage.value?.background &&
+              "imageUrl" in linkedPage.value.background,
           }}
         >
-          {linkedPage.title}
+          {linkedPage.value?.title}
         </p>
         <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
       </div>
