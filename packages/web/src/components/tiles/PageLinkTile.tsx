@@ -29,7 +29,7 @@ export default function PageLinkTile({
   pageLink,
   showToolbar,
 }: PageLinkTileProps) {
-  const { linkedPage } = pageLink;
+  const linkedPage = pageLink.linkedPage.value;
 
   if (!linkedPage) {
     return (
@@ -50,8 +50,7 @@ export default function PageLinkTile({
         <p
           classList={{
             [styles.text]: true,
-            [styles["with-image"]]:
-              linkedPage.background && "imageUrl" in linkedPage.background,
+            [styles["with-image"]]: linkedPage.background?.type === "image",
           }}
         >
           {linkedPage.title}
