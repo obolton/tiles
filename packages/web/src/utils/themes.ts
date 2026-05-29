@@ -1,3 +1,4 @@
+import * as Y from "yjs";
 import ThemeModel from "@/models/Theme";
 import { parseParentId } from "@/models/parentId";
 import { getBackgroundStyle } from "@/utils/backgrounds";
@@ -9,6 +10,7 @@ import type { Theme } from "api/types/themes";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
 import type { Fill } from "@/components/fills/types";
 import type Tile from "@/models/Tile";
+import type { ThemeData } from "@/models/Theme";
 
 export type { Theme };
 
@@ -121,7 +123,7 @@ export function getThemeColors(input: ThemeModel | Theme): ThemeColor[] {
  * Resolves the effective theme for a tile by walking up the cascade:
  * tile > parent section > page.
  */
-export function resolveTheme(tile: Tile): ThemeModel | null {
+export function resolveTheme(tile: Tile): ThemeData | null {
   if (tile.theme.value) {
     return tile.theme.value;
   }
@@ -156,4 +158,23 @@ export async function loadThemeFonts(themeId: string) {
     const fonts = theme.fonts.value;
     await loadFonts(fonts.heading, fonts.body, fonts.code);
   }
+}
+
+export function getPageBodyStyle(
+  doc: Y.Doc,
+  page: { font: FontId | null },
+): ReturnType<typeof toCSSProperties> {
+  const metadata = doc.getMap<unknown>("metadata");
+  const themeId = (metadata.get("themeId") as string | null) ?? null;
+  const backgroundColor =
+    (metadata.get("backgroundColor") as Color | null) ?? null;
+  const theme = themeId
+    ? (doc.getMap<ThemeData>("themes").get(themeId) ?? null)
+    : null;
+  return getThemeStyles(theme, {
+    background: backgroundColor
+      ? { type: "color", color: backgroundColor }
+      : null,
+    font: page.font,
+  });
 }

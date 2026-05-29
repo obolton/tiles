@@ -1,9 +1,11 @@
 import { describe, expect, test } from "vitest";
+import * as Y from "yjs";
 import {
   resolveThemeStyles,
   toCSSProperties,
   getThemeColors,
   getThemeStyles,
+  getPageBodyStyle,
 } from "../themes";
 import { THEME } from "@/test/fixtures/Theme";
 import type { Theme } from "api/types/themes";
@@ -359,5 +361,64 @@ describe("getThemeColors", () => {
   test("excludes border when null", () => {
     const result = getThemeColors(THEME);
     expect(result.find((c) => c.name === "Border")).toBeUndefined();
+  });
+});
+
+describe("getPageBodyStyle", () => {
+  function docWithTheme(theme: Theme = THEME): Y.Doc {
+    const doc = new Y.Doc();
+    doc.getMap("themes").set(theme.id, theme);
+    doc.getMap("metadata").set("themeId", theme.id);
+    return doc;
+  }
+
+  test("resolves CSS properties from the doc theme snapshot", () => {
+    const doc = docWithTheme();
+    const result = getPageBodyStyle(doc, { font: null });
+
+    expect(result["--background"]).toBe(
+      "color(display-p3 1.0000 1.0000 1.0000)",
+    );
+    expect(result["--text-color"]).toBe(
+      "color(display-p3 0.0000 0.0000 0.0000)",
+    );
+  });
+
+  test("doc backgroundColor metadata overrides the theme background", () => {
+    const doc = docWithTheme();
+    doc.getMap("metadata").set("backgroundColor", "ffff80008000");
+    const result = getPageBodyStyle(doc, { font: null });
+
+    expect(result["--background"]).toBe(
+      "color(display-p3 1.0000 0.5000 0.5000)",
+    );
+  });
+
+  test("page font overrides the theme body font", () => {
+    const doc = docWithTheme();
+    const result = getPageBodyStyle(doc, { font: "CLASSIC" });
+
+    expect(result["--font"]).toBe('"Lora", "serif"');
+  });
+
+  test("renders nothing when themeId is unset and no overrides are set", () => {
+    const doc = new Y.Doc();
+    const result = getPageBodyStyle(doc, { font: null });
+
+    expect(result["--background"]).toBeUndefined();
+    expect(result["--text-color"]).toBeUndefined();
+    expect(result["--font"]).toBeUndefined();
+  });
+
+  test("uses overrides even when the themeId is unknown to the doc", () => {
+    const doc = new Y.Doc();
+    doc.getMap("metadata").set("themeId", "missing-id");
+    doc.getMap("metadata").set("backgroundColor", "ffff80008000");
+    const result = getPageBodyStyle(doc, { font: "MODERN" });
+
+    expect(result["--background"]).toBe(
+      "color(display-p3 1.0000 0.5000 0.5000)",
+    );
+    expect(result["--font"]).toBe('"Inter", "sans-serif"');
   });
 });
