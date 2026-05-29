@@ -86,7 +86,9 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
 
         <FramePicker
           tile={tile}
-          onChange={(frame) => viewTransition(() => tile.setFrame(frame))}
+          onChange={(frame) => {
+            tile.frame.value = frame;
+          }}
         />
       </ToolbarGroup>
 
