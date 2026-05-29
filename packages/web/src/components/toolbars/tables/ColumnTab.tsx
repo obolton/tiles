@@ -9,7 +9,7 @@ import Chart from "@/models/Chart";
 import { parseParentId } from "@/models/parentId";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
-import type { FillUpdate } from "@/components/fills/types";
+import type { Fill } from "@/components/fills/types";
 
 export interface ColumnTabProps {
   table: Table;
@@ -38,7 +38,7 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
     return cols.find((c) => c.id === column.id)?.background ?? null;
   });
 
-  async function setBackground(value: FillUpdate) {
+  async function setBackground(value: Fill | null) {
     const column = getSelectedColumn();
     if (!column?.id) {
       return;

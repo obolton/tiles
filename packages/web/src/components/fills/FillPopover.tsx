@@ -8,13 +8,13 @@ import EmptyIcon from "@/icons/empty.svg?jsx";
 import styles from "./FillPopover.module.css";
 import type { Reactive } from "@/utils/reactivity";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
-import type { Fill, FillUpdate } from "./types";
+import type { Fill } from "./types";
 import type { JSX } from "@/jsx/jsx";
 
 export interface FillPopoverProps extends JSX.Attributes<"anchored-popover"> {
   themeColors?: Reactive<ThemeColor[]>;
   value: Reactive<Fill | null>;
-  onChange: (value: FillUpdate) => void;
+  onChange: (value: Fill | null) => void;
   allowImage?: boolean;
 }
 

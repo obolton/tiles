@@ -8,7 +8,7 @@ import { getBackgroundStyle } from "@/utils/backgrounds";
 import styles from "./FillPicker.module.css";
 import type { Reactive } from "@/utils/reactivity";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
-import type { Fill, FillUpdate } from "./types";
+import type { Fill } from "./types";
 import type { ToolbarButtonProps } from "@/components/buttons/ToolbarButton";
 
 export interface FillPickerProps extends Omit<
@@ -17,7 +17,7 @@ export interface FillPickerProps extends Omit<
 > {
   themeColors?: Reactive<ThemeColor[]>;
   value: Reactive<Fill | null>;
-  onChange: (value: FillUpdate) => void;
+  onChange: (value: Fill | null) => void;
   allowImage?: boolean;
 }
 

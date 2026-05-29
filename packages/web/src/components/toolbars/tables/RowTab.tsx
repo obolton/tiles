@@ -6,7 +6,7 @@ import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
-import type { FillUpdate } from "@/components/fills/types";
+import type { Fill } from "@/components/fills/types";
 
 export interface RowTabProps {
   table: Table;
@@ -33,7 +33,7 @@ export default function RowTab({ table, getTable }: RowTabProps) {
     return rowList.find((r) => r.id === row.id)?.background ?? null;
   });
 
-  async function setBackground(value: FillUpdate) {
+  async function setBackground(value: Fill | null) {
     const row = getSelectedRow();
     if (!row?.id) {
       return;

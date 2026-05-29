@@ -3,11 +3,11 @@ import { handleError } from "@/utils/errors";
 import { uploadMedia } from "@/utils/media";
 import Editor from "@/editor/Editor";
 import styles from "./ImagePanel.module.css";
-import type { ImageFillUpdate } from "./types";
+import type { ImageFill } from "./types";
 import type FilePicker from "@/elements/file-picker/FilePicker";
 
 export interface ImagePanelProps {
-  onChange: (value: ImageFillUpdate) => void;
+  onChange: (value: ImageFill) => void;
 }
 
 export default function ImagePanel({ onChange }: ImagePanelProps) {
@@ -21,7 +21,7 @@ export default function ImagePanel({ onChange }: ImagePanelProps) {
       purpose: "content",
       workspaceId: Editor.current.workspaceId,
     })
-      .then((imageId) => onChange({ type: "image", imageId }))
+      .then(({ id }) => onChange({ type: "image", imageId: id }))
       .catch(handleError);
   }
 
