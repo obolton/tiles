@@ -1,3 +1,4 @@
+import type { Doc } from "yjs";
 import PageLayout from "@/layouts/PageLayout";
 import EditablePage from "@/components/pages/EditablePage";
 import HeaderActions from "@/components/menu/HeaderActions";
@@ -10,10 +11,11 @@ type PageData = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
 export interface PageProps {
   page: PageData;
+  doc: Doc;
 }
 
-export default function Page({ page }: PageProps) {
-  const editor = Editor.init(page);
+export default function Page({ page, doc }: PageProps) {
+  const editor = Editor.init(page, doc);
   const showActions = !import.meta.env.SSR && isSignedIn();
 
   return (

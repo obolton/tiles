@@ -6,9 +6,10 @@ import { initBookmarkStatus } from "@/utils/bookmarks";
 import { cachePage } from "@/utils/cache/pages";
 import { handleError } from "@/utils/errors";
 import Page, { type PageProps } from "@/pages/Page";
-import { getThemeStyles } from "@/utils/themes";
 import { generateFontFaceCSS } from "@/utils/fonts";
 import { getPageFonts, getPagePreloads } from "@/utils/pageFonts";
+import { getPageBodyStyle } from "@/utils/themes";
+import { initializeDoc } from "@/collaboration/doc";
 import { notFound } from "@/router/responses";
 import { DEFAULT_FONT } from "api/config/fonts";
 import type {
@@ -35,12 +36,8 @@ async function loader({
     return notFound();
   }
 
-  const style = getThemeStyles(page.theme, {
-    background: page.backgroundColor
-      ? { type: "color", color: page.backgroundColor }
-      : null,
-    font: page.font,
-  });
+  const doc = initializeDoc(page);
+  const style = getPageBodyStyle(doc, page);
 
   // The global metadata already emits @font-face for DEFAULT_FONT.
   const pageFonts = getPageFonts(page);
@@ -59,7 +56,7 @@ async function loader({
       styles: [generateFontFaceCSS(pageFonts)],
       links: getPagePreloads(page),
     },
-    data: { page },
+    data: { page, doc },
   };
 }
 
