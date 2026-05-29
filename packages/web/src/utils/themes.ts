@@ -160,18 +160,20 @@ export async function loadThemeFonts(themeId: string) {
   }
 }
 
+export function getPageTheme(doc: Y.Doc): ThemeData | null {
+  const themeId = doc.getMap("metadata").get("themeId") as string | null;
+  return themeId
+    ? (doc.getMap<ThemeData>("themes").get(themeId) ?? null)
+    : null;
+}
+
 export function getPageBodyStyle(
   doc: Y.Doc,
   page: { font: FontId | null },
 ): ReturnType<typeof toCSSProperties> {
-  const metadata = doc.getMap<unknown>("metadata");
-  const themeId = (metadata.get("themeId") as string | null) ?? null;
   const backgroundColor =
-    (metadata.get("backgroundColor") as Color | null) ?? null;
-  const theme = themeId
-    ? (doc.getMap<ThemeData>("themes").get(themeId) ?? null)
-    : null;
-  return getThemeStyles(theme, {
+    (doc.getMap("metadata").get("backgroundColor") as Color | null) ?? null;
+  return getThemeStyles(getPageTheme(doc), {
     background: backgroundColor
       ? { type: "color", color: backgroundColor }
       : null,
