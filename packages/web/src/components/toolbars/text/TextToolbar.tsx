@@ -62,14 +62,12 @@ export default function TextToolbar({
               label="Vertical position"
               showvalue
               value={align}
-              on:change={(event) =>
-                text.setVerticalAlignment(
-                  (event.currentTarget as ListSelect).value as
-                    | "TOP"
-                    | "CENTER"
-                    | "BOTTOM",
-                )
-              }
+              on:change={(event) => {
+                text.align.value = (event.currentTarget as ListSelect).value as
+                  | "TOP"
+                  | "CENTER"
+                  | "BOTTOM";
+              }}
             >
               <ListGroup>
                 <ListOption

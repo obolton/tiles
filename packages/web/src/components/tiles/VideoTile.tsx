@@ -28,7 +28,7 @@ export default function VideoTile({ video }: VideoTileProps) {
     title,
     editor: { isEditable },
   } = video;
-  const embedUrl = getEmbedUrl(videoType, videoId);
+  const embedUrl = getEmbedUrl(videoType.value, videoId.value);
 
   return (
     <Tile>
@@ -37,13 +37,13 @@ export default function VideoTile({ video }: VideoTileProps) {
           id={`${id}-video`}
           className={styles.video}
           src={embedUrl}
-          imagesrc={imageUrl ?? undefined}
+          imagesrc={imageUrl}
           data-show-in-lightbox="true"
         />
         <Caption
           isEditable={isEditable}
           value={title}
-          onChange={(value) => video.setTitle(value)}
+          onChange={(value) => (video.title.value = value)}
           placeholder="Add a caption"
         />
       </figure>

@@ -84,7 +84,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
               movable={isEditable}
               origin={origin}
               onMove={(value) => (origin.value = value)}
-              onRelease={(value) => image.setOrigin(value)}
+              onRelease={(value) => (image.origin.value = value)}
               on:load={loaded.on.bind(loaded)}
             />
 

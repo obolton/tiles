@@ -1,4 +1,3 @@
-import { handleError } from "@/utils/errors";
 import styles from "./AltTab.module.css";
 import type Image from "@/models/Image";
 
@@ -11,7 +10,7 @@ export default function AltTab({ image }: AltTabProps) {
     const input = event.currentTarget as HTMLInputElement;
     const alt = input.value || null;
     if (alt !== image.alt.value) {
-      image.setAlt(alt).catch(handleError);
+      image.alt.value = alt;
     }
   }
 
