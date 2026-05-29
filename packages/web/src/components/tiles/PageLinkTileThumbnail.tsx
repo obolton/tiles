@@ -27,8 +27,7 @@ export default function PageLinkTileThumbnail({
           classList={{
             [styles.text]: true,
             [styles["with-image"]]:
-              linkedPage.value?.background &&
-              "imageUrl" in linkedPage.value.background,
+              linkedPage.value?.background?.type === "image",
           }}
         >
           {linkedPage.value?.title}
