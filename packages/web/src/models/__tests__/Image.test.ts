@@ -26,9 +26,7 @@ const IMAGE_PROPS: Omit<CreateImageInput, "parentId" | "beforeId"> = {
 describe("Image", () => {
   const editor = Editor.init(PAGE, new Y.Doc());
 
-  function createImage(
-    overrides: Partial<CreateImageInput> = {},
-  ): Image {
+  function createImage(overrides: Partial<CreateImageInput> = {}): Image {
     return editor.page.createTile(
       Image.createMap({ ...IMAGE_PROPS, ...overrides }),
       {},

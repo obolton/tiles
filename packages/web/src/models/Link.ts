@@ -10,8 +10,10 @@ export interface CreateLinkInput extends Omit<CreateTileInput, "type"> {
   url: string;
 }
 
-interface CreateLinkMapInput
-  extends Omit<CreateLinkInput, "parentId" | "beforeId"> {
+interface CreateLinkMapInput extends Omit<
+  CreateLinkInput,
+  "parentId" | "beforeId"
+> {
   title: string | null;
   description: string | null;
   siteName: string | null;

@@ -20,7 +20,9 @@ function paragraph(text: string): RichText {
     {
       type: "paragraph",
       align: 0,
-      children: [{ type: "text", text, format: 0, size: 1, pending: undefined }],
+      children: [
+        { type: "text", text, format: 0, size: 1, pending: undefined },
+      ],
     },
   ];
 }

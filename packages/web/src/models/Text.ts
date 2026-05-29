@@ -62,5 +62,4 @@ export default class Text extends Tile {
       align: this.align.value,
     };
   }
-
 }

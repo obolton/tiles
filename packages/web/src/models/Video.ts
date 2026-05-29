@@ -58,5 +58,4 @@ export default class Video extends Tile {
       title: this.title.value,
     };
   }
-
 }

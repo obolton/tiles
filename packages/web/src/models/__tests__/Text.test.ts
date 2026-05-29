@@ -11,9 +11,7 @@ const TEXT_PROPS: Omit<CreateTextInput, "parentId" | "beforeId"> = {
 describe("Text", () => {
   const editor = Editor.init(PAGE, new Y.Doc());
 
-  function createText(
-    overrides: Partial<CreateTextInput> = {},
-  ): Text {
+  function createText(overrides: Partial<CreateTextInput> = {}): Text {
     return editor.page.createTile(
       Text.createMap({ ...TEXT_PROPS, ...overrides }),
       {},

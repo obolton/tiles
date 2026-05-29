@@ -14,9 +14,7 @@ const SECTION_PROPS: Omit<CreateSectionInput, "parentId" | "beforeId"> = {
 describe("Section", () => {
   const editor = Editor.init(PAGE, new Y.Doc());
 
-  function createSection(
-    overrides: Partial<CreateSectionInput> = {},
-  ): Section {
+  function createSection(overrides: Partial<CreateSectionInput> = {}): Section {
     return editor.page.createTile(
       Section.createMap({ ...SECTION_PROPS, ...overrides }),
       {},
