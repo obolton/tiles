@@ -6,7 +6,7 @@ stylesheet.replaceSync(css);
 
 export interface EmbeddedVideoAttributes extends GlobalHTMLAttributes {
   src: string;
-  imagesrc?: string;
+  imagesrc?: string | null;
 }
 
 declare global {
