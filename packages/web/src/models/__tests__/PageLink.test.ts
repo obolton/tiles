@@ -9,7 +9,6 @@ const LINKED_PAGE = {
   title: "Linked Page",
   background: null,
   font: "CLASSIC" as const,
-  coverImageUrl: "https://tiles.dev/cover.png",
 };
 
 describe("PageLink", () => {

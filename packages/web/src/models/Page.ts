@@ -45,7 +45,6 @@ export default class Page {
   readonly title: Reactive<string>;
   readonly backgroundColor: Reactive<Color | null>;
   readonly font: Reactive<FontId | null>;
-  readonly coverImageUrl: Reactive<string | null>;
   readonly isPublished: Reactive<boolean>;
   readonly folderId: Reactive<string | null>;
   readonly themes: PageThemes;
@@ -87,7 +86,6 @@ export default class Page {
     this.author = data.author;
     this.type = data.type;
     this.title = reactive(data.title);
-    this.coverImageUrl = reactive(data.coverImageUrl);
     this.isPublished = reactive(data.published);
     this.folderId = reactive(data.folderId);
     this.themes = new PageThemes(doc);
@@ -126,7 +124,6 @@ export default class Page {
       author: this.author,
       type: this.type,
       title: this.title.value,
-      coverImageUrl: this.coverImageUrl.value,
       published: this.isPublished.value,
       folderId: this.folderId.value,
       dropdowns: this.dropdowns.value.map((d) => ({
@@ -236,7 +233,6 @@ export default class Page {
   private update(
     properties: Partial<{
       title: string;
-      coverImageKey: string | null;
       published: boolean;
       folderId: string | null;
     }>,
@@ -252,10 +248,6 @@ export default class Page {
     this.title.value = title;
     document.title = `${title} - Tiles`;
     return this.update({ title });
-  }
-
-  setCoverImage(imageKey: string | null) {
-    return this.update({ coverImageKey: imageKey });
   }
 
   setPublished(published: boolean) {

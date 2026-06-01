@@ -52,7 +52,6 @@ describe("Page", () => {
     expect(page.title.value).toBe(PAGE.title);
     expect(page.backgroundColor.value).toBeNull();
     expect(page.font.value).toBeNull();
-    expect(page.coverImageUrl.value).toBe(PAGE.coverImageUrl);
     expect(page.isPublished.value).toBe(PAGE.published);
     expect(page.folderId.value).toBe(PAGE.folderId);
     expect(page.width.value).toBe(DEFAULT_PAGE_WIDTH);

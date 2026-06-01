@@ -14,7 +14,6 @@ export const PAGE: PageData = {
   },
   title: "Test Page",
   type: "FREE",
-  coverImageUrl: null,
   tiles: [],
   access: [],
   invites: [],

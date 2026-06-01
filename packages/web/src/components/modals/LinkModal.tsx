@@ -63,7 +63,7 @@ export default function LinkModal({
     }
     isPending.on();
     try {
-      await confirm({ linkedPage: { ...page, coverImageUrl: null } });
+      await confirm({ linkedPage: { ...page } });
     } catch (error) {
       handleError(error);
     } finally {
