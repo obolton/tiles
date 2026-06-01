@@ -22,19 +22,12 @@ export const CreatePageSchema = z.object({
 });
 export type CreatePageSchema = z.infer<typeof CreatePageSchema>;
 
-const MIN_DOCK_SIZE = 100;
-const MAX_DOCK_SIZE = 1000;
-
 export const UpdatePageSchema = z.object({
   pageId: z.uuid(),
   published: z.boolean().optional(),
   title: z.string().min(1).optional(),
   coverImageKey: z.string().nullable().optional(),
   folderId: z.uuid().nullable().optional(),
-  dockTopHeight: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
-  dockBottomHeight: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
-  dockLeftWidth: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
-  dockRightWidth: z.number().gte(MIN_DOCK_SIZE).lte(MAX_DOCK_SIZE).optional(),
 });
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;
 

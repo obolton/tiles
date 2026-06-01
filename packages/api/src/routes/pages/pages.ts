@@ -234,17 +234,7 @@ export async function createPage(
 }
 
 export async function updatePage(
-  {
-    pageId,
-    published,
-    title,
-    coverImageKey,
-    folderId,
-    dockTopHeight,
-    dockBottomHeight,
-    dockLeftWidth,
-    dockRightWidth,
-  }: UpdatePageSchema,
+  { pageId, published, title, coverImageKey, folderId }: UpdatePageSchema,
   { userId, workspaceId }: AuthenticatedPageProcedureContext,
 ) {
   return prisma.$transaction(async (transaction) => {
@@ -267,10 +257,6 @@ export async function updatePage(
         title,
         coverImageKey,
         folderId,
-        dockTopHeight,
-        dockBottomHeight,
-        dockLeftWidth,
-        dockRightWidth,
       },
       select: PAGE_FIELDS,
     });

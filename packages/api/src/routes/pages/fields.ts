@@ -17,10 +17,6 @@ export const PAGE_FIELDS = {
   type: true,
   updatedAt: true,
   coverImageUrl: true,
-  dockTopHeight: true,
-  dockBottomHeight: true,
-  dockLeftWidth: true,
-  dockRightWidth: true,
   author: {
     select: {
       id: true,
