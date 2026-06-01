@@ -2,6 +2,7 @@ import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
 import DockZone from "@/components/docks/DockZone";
 import LayoutEditor from "@/editor/LayoutEditor";
+import { combine } from "@/utils/reactivity";
 import styles from "./FreePage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
@@ -22,7 +23,7 @@ export default function FreePage({
 }: FreePageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const { dockedTiles } = page;
-  const style = page.dockSizes.derive((sizes) => ({
+  const style = combine(page.dockSizes, (sizes) => ({
     "--dock-top-size": `${sizes.TOP}px`,
     "--dock-bottom-size": `${sizes.BOTTOM}px`,
     "--dock-left-size": `${sizes.LEFT}px`,

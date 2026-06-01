@@ -66,21 +66,16 @@ export default function DockZone({
   }
 
   function onZoneResizeStart() {
-    initialSize = page.dockSizes.value[edge];
+    initialSize = page.dockSizes[edge].value;
   }
 
   function onZoneResizeDrag(event: ResizeEvent) {
     event.preventDefault();
-    page.dockSizes.value = {
-      ...page.dockSizes.value,
-      [edge]: getNewSize(event),
-    };
+    page.dockSizes[edge].preview(getNewSize(event));
   }
 
   function onZoneResizeEnd(event: ResizeEvent) {
-    const newSize = getNewSize(event);
-    page.dockSizes.value = { ...page.dockSizes.value, [edge]: initialSize };
-    page.setDockSizes({ [edge]: newSize });
+    page.dockSizes[edge].value = getNewSize(event);
   }
 
   const Element =

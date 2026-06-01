@@ -17,20 +17,6 @@ const setProperties: ActionExecutor<SetPagePropertiesAction> = async (
   if (changes.folderId !== undefined) {
     page.folderId.value = changes.folderId;
   }
-  if (
-    changes.dockTopHeight !== undefined ||
-    changes.dockBottomHeight !== undefined ||
-    changes.dockLeftWidth !== undefined ||
-    changes.dockRightWidth !== undefined
-  ) {
-    const prev = page.dockSizes.value;
-    page.dockSizes.value = {
-      TOP: changes.dockTopHeight ?? prev.TOP,
-      BOTTOM: changes.dockBottomHeight ?? prev.BOTTOM,
-      LEFT: changes.dockLeftWidth ?? prev.LEFT,
-      RIGHT: changes.dockRightWidth ?? prev.RIGHT,
-    };
-  }
 };
 
 export const executors = {
