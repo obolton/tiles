@@ -104,6 +104,65 @@ describe("YMapBinding", () => {
     });
   });
 
+  describe("BoundField.preview", () => {
+    test("updates the read value without writing to the map", () => {
+      const field = binding.field("x", 0);
+      field.preview(42);
+      expect(field.value).toBe(42);
+      expect(map.has("x")).toBe(false);
+    });
+
+    test("notifies subscribers", () => {
+      const field = binding.field("x", 0);
+      const sub = vi.fn();
+      field.subscribe(sub);
+      field.preview(42);
+      expect(sub).toHaveBeenCalledTimes(1);
+    });
+
+    test("shadows the live map value while previewing", () => {
+      map.set("x", 5);
+      const field = binding.field("x", 0);
+      field.preview(42);
+      expect(field.value).toBe(42);
+      map.set("x", 7);
+      expect(field.value).toBe(42);
+    });
+
+    test("honors a null preview, distinct from not previewing", () => {
+      const field = binding.field<number | null>("x", 0);
+      field.preview(null);
+      expect(field.value).toBeNull();
+    });
+
+    test("committing via the setter writes the value and clears the preview", () => {
+      const field = binding.field("x", 0);
+      field.preview(42);
+      field.value = 99;
+      expect(map.get("x")).toBe(99);
+      expect(field.value).toBe(99);
+    });
+
+    test("committing the current map value clears the preview and notifies", () => {
+      map.set("x", 5);
+      const field = binding.field("x", 0);
+      const sub = vi.fn();
+      field.subscribe(sub);
+      field.preview(42);
+      field.value = 5;
+      expect(field.value).toBe(5);
+      expect(sub).toHaveBeenCalledTimes(2);
+    });
+
+    test("reflects map updates again after committing", () => {
+      const field = binding.field("x", 0);
+      field.preview(42);
+      field.value = 99;
+      map.set("x", 7);
+      expect(field.value).toBe(7);
+    });
+  });
+
   describe("remote updates", () => {
     test("notifies subscribers when a remote update arrives", () => {
       const fieldA = binding.field<number>("x", 0);

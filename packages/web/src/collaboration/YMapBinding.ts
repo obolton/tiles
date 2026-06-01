@@ -7,6 +7,8 @@ export const LOCAL_ORIGIN = Symbol("yjs-binding:local");
  * A reactive view of a single key on a {@link Y.Map}.
  */
 export class BoundField<T> extends BaseReactive<T> {
+  private previewValue?: T;
+
   constructor(
     private readonly map: Y.Map<unknown>,
     private readonly key: string,
@@ -16,12 +18,32 @@ export class BoundField<T> extends BaseReactive<T> {
   }
 
   get value(): T {
+    if (this.previewValue !== undefined) {
+      return this.previewValue;
+    }
+
     const value = this.map.get(this.key);
     return value === undefined ? this.fallback : (value as T);
   }
 
+  /**
+   * Updates the value locally and notifies subscribers without writing to the
+   * Y.Doc. Used for transient previews (e.g. live drag) where only the
+   * committed value should persist. Cleared by the next `value` assignment.
+   */
+  preview(next: T) {
+    this.previewValue = next;
+    this.notify();
+  }
+
   set value(next: T) {
+    const previewing = this.previewValue !== undefined;
+    this.previewValue = undefined;
+
     if (next === this.map.get(this.key)) {
+      if (previewing) {
+        this.notify();
+      }
       return;
     }
 
