@@ -1,7 +1,6 @@
 import prisma from "@/database/prisma";
 import type { Prisma } from "@/generated/prisma/client";
 import { THEME_FIELDS } from "@/routes/themes/fields";
-import { DROPDOWN_FIELDS } from "@/routes/dropdowns/fields";
 import { FULL_TILE_FIELDS } from "@/routes/tiles/fields";
 import {
   PAGE_ACCESS_FIELDS,
@@ -35,9 +34,6 @@ export const PAGE_FIELDS = {
     orderBy: {
       order: "asc",
     },
-  },
-  dropdowns: {
-    select: DROPDOWN_FIELDS,
   },
   document: {
     select: {

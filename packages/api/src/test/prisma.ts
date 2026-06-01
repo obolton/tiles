@@ -35,7 +35,6 @@ export const MOCK_PRISMA = {
   chart: mockModel(),
   chartSeries: mockModel(),
   collection: mockModel(),
-  dropdown: mockModel(),
   folder: mockModel(),
   image: mockModel(),
   imageTile: mockModel(),
