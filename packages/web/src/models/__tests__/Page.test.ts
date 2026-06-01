@@ -5,7 +5,7 @@ import Section from "@/models/Section";
 import Text from "@/models/Text";
 import Theme from "@/models/Theme";
 import client from "@/api/client";
-import { DEFAULT_PAGE_WIDTH } from "@/constants/size";
+import { DEFAULT_DOCK_SIZE, DEFAULT_PAGE_WIDTH } from "@/constants/size";
 import { PAGE } from "@/test/fixtures/Page";
 import { THEME } from "@/test/fixtures/Theme";
 
@@ -57,12 +57,10 @@ describe("Page", () => {
     expect(page.folderId.value).toBe(PAGE.folderId);
     expect(page.width.value).toBe(DEFAULT_PAGE_WIDTH);
     expect(page.alignment.value).toBe("CENTER");
-    expect(page.dockSizes.value).toEqual({
-      TOP: PAGE.dockTopHeight,
-      BOTTOM: PAGE.dockBottomHeight,
-      LEFT: PAGE.dockLeftWidth,
-      RIGHT: PAGE.dockRightWidth,
-    });
+    expect(page.dockSizes.TOP.value).toBe(DEFAULT_DOCK_SIZE);
+    expect(page.dockSizes.BOTTOM.value).toBe(DEFAULT_DOCK_SIZE);
+    expect(page.dockSizes.LEFT.value).toBe(DEFAULT_DOCK_SIZE);
+    expect(page.dockSizes.RIGHT.value).toBe(DEFAULT_DOCK_SIZE);
     expect(page.dropdowns.value).toEqual([]);
     expect(page.access.value).toEqual([]);
     expect(page.invites.value).toEqual([]);
@@ -213,24 +211,6 @@ describe("Page", () => {
 
       expect(page.themeId.value).toBeNull();
       expect(page.theme.value).toBeNull();
-    });
-  });
-
-  describe("setDockSizes", () => {
-    test("updates dock sizes and persists them", async () => {
-      const page = new Page(PAGE, new Y.Doc());
-
-      await page.setDockSizes({ TOP: 200, LEFT: 300 });
-
-      expect(page.dockSizes.value.TOP).toBe(200);
-      expect(page.dockSizes.value.LEFT).toBe(300);
-      expect(client.pages.update.mutate).toHaveBeenCalledWith({
-        pageId: PAGE.id,
-        dockTopHeight: 200,
-        dockBottomHeight: undefined,
-        dockLeftWidth: 300,
-        dockRightWidth: undefined,
-      });
     });
   });
 

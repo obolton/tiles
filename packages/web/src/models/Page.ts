@@ -7,9 +7,13 @@ import TilePlacement from "@/models/TilePlacement";
 import { dockParentId } from "@/models/parentId";
 import Section from "@/models/Section";
 import createTileFromData from "@/models/createTile";
-import { LOCAL_ORIGIN, YMapBinding } from "@/collaboration/YMapBinding";
+import {
+  LOCAL_ORIGIN,
+  YMapBinding,
+  type BoundField,
+} from "@/collaboration/YMapBinding";
 import { reactive, array, combine } from "@/utils/reactivity";
-import { DEFAULT_PAGE_WIDTH } from "@/constants/size";
+import { DEFAULT_DOCK_SIZE, DEFAULT_PAGE_WIDTH } from "@/constants/size";
 import * as Y from "yjs";
 import type { AppRouterOutputs } from "@/api/client";
 import type { Reactive, ReactiveArray } from "@/utils/reactivity";
@@ -49,7 +53,7 @@ export default class Page {
   readonly theme: Reactive<ThemeData | null>;
   readonly width: Reactive<number>;
   readonly alignment: Reactive<HorizontalAlignment>;
-  readonly dockSizes: Reactive<Record<DockEdge, number>>;
+  readonly dockSizes: Record<DockEdge, BoundField<number>>;
   readonly dropdowns: ReactiveArray<Dropdown>;
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<PageInvite>;
@@ -97,12 +101,12 @@ export default class Page {
       { id: this.themeId, themes: this.themes },
       ({ id, themes }) => (id ? (themes.get(id) ?? null) : null),
     );
-    this.dockSizes = reactive({
-      TOP: data.dockTopHeight,
-      BOTTOM: data.dockBottomHeight,
-      LEFT: data.dockLeftWidth,
-      RIGHT: data.dockRightWidth,
-    });
+    this.dockSizes = {
+      TOP: this.metadataBinding.field("dockTop", DEFAULT_DOCK_SIZE),
+      BOTTOM: this.metadataBinding.field("dockBottom", DEFAULT_DOCK_SIZE),
+      LEFT: this.metadataBinding.field("dockLeft", DEFAULT_DOCK_SIZE),
+      RIGHT: this.metadataBinding.field("dockRight", DEFAULT_DOCK_SIZE),
+    };
     this.dropdowns = array(data.dropdowns.map((d) => new Dropdown(this, d)));
     this.access = array(data.access);
     this.invites = array(data.invites.map((i) => new PageInvite(this, i)));
@@ -115,7 +119,6 @@ export default class Page {
   }
 
   serialize(): Omit<PageData, "tiles" | "document"> {
-    const dockSizes = this.dockSizes.value;
     return {
       id: this.id,
       workspaceId: this.workspaceId,
@@ -126,10 +129,6 @@ export default class Page {
       coverImageUrl: this.coverImageUrl.value,
       published: this.isPublished.value,
       folderId: this.folderId.value,
-      dockTopHeight: dockSizes.TOP,
-      dockBottomHeight: dockSizes.BOTTOM,
-      dockLeftWidth: dockSizes.LEFT,
-      dockRightWidth: dockSizes.RIGHT,
       dropdowns: this.dropdowns.value.map((d) => ({
         id: d.id,
         title: d.title.value,
@@ -240,10 +239,6 @@ export default class Page {
       coverImageKey: string | null;
       published: boolean;
       folderId: string | null;
-      dockTopHeight: number;
-      dockBottomHeight: number;
-      dockLeftWidth: number;
-      dockRightWidth: number;
     }>,
   ) {
     return client.pages.update.mutate({
@@ -282,24 +277,6 @@ export default class Page {
       }
       this.themeId.value = theme?.id ?? null;
     }, LOCAL_ORIGIN);
-  }
-
-  setDockSizes(sizes: Partial<Record<DockEdge, number>>) {
-    const prev = this.dockSizes.value;
-    const changes = {
-      dockTopHeight: sizes.TOP,
-      dockBottomHeight: sizes.BOTTOM,
-      dockLeftWidth: sizes.LEFT,
-      dockRightWidth: sizes.RIGHT,
-    };
-    this.recordUpdate(changes, {
-      dockTopHeight: sizes.TOP !== undefined ? prev.TOP : undefined,
-      dockBottomHeight: sizes.BOTTOM !== undefined ? prev.BOTTOM : undefined,
-      dockLeftWidth: sizes.LEFT !== undefined ? prev.LEFT : undefined,
-      dockRightWidth: sizes.RIGHT !== undefined ? prev.RIGHT : undefined,
-    });
-    this.dockSizes.value = { ...prev, ...sizes };
-    return this.update(changes);
   }
 
   delete() {
