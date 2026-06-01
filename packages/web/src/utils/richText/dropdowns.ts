@@ -192,7 +192,7 @@ class DropdownNodeView implements NodeView, EventListenerObject {
 
     // Title change
     if (target === this.editor) {
-      dropdown.setTitle(this.editor.dropdownTitle || null);
+      dropdown.title.value = this.editor.dropdownTitle || null;
       return;
     }
 
@@ -223,13 +223,12 @@ class DropdownNodeView implements NodeView, EventListenerObject {
     // New option creation (user typed a new value and pressed Enter)
     const newValue = this.editor.select.inputValue.trim();
     if (newValue) {
-      dropdown.addOption(newValue).then(() => {
-        this.populateOptions(dropdown);
-        this.view.dispatch(
-          this.view.state.tr.setNodeAttribute(pos, "value", newValue),
-        );
-        this.close();
-      });
+      dropdown.addOption(newValue);
+      this.populateOptions(dropdown);
+      this.view.dispatch(
+        this.view.state.tr.setNodeAttribute(pos, "value", newValue),
+      );
+      this.close();
     }
   }
 
@@ -242,9 +241,8 @@ class DropdownNodeView implements NodeView, EventListenerObject {
     const index = Array.from(this.editor.select.children).indexOf(option);
     if (index >= 0) {
       const dropdown = Editor.current.page.getDropdown(this.dropdownType);
-      dropdown.removeOption(index).then(() => {
-        this.populateOptions(dropdown);
-      });
+      dropdown.removeOption(index);
+      this.populateOptions(dropdown);
     }
   }
 
@@ -254,9 +252,8 @@ class DropdownNodeView implements NodeView, EventListenerObject {
     }
 
     const dropdown = Editor.current.page.getDropdown(this.dropdownType);
-    dropdown.reorderOptions(event.fromIndex, event.toIndex).then(() => {
-      this.populateOptions(dropdown);
-    });
+    dropdown.reorderOptions(event.fromIndex, event.toIndex);
+    this.populateOptions(dropdown);
   }
 }
 

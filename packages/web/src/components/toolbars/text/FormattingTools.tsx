@@ -84,7 +84,6 @@ import {
 import { getLink } from "@/utils/richText/helpers";
 import { loadFonts } from "@/utils/fonts";
 import Editor from "@/editor/Editor";
-import Dropdown from "@/models/Dropdown";
 import type { Reactive } from "@/utils/reactivity";
 import type { EditorState, Command } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
@@ -131,9 +130,9 @@ export default function FormattingTools({
     performCommand(insertDropdown(id, value));
   }
 
-  async function insertNewDropdown() {
+  function insertNewDropdown() {
     const defaultOption = "Option 1";
-    const dropdown = await Dropdown.create(Editor.current.page, {
+    const dropdown = Editor.current.page.dropdowns.create({
       options: [{ value: defaultOption }],
     });
     performCommand(insertDropdown(dropdown.id, defaultOption));
