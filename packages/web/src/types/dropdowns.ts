@@ -1,1 +1,3 @@
-export type { Dropdown } from "api/types/dropdowns";
+export interface DropdownOption {
+  value: string;
+}

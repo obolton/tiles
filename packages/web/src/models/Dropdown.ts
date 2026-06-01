@@ -1,93 +1,63 @@
-import client from "@/api/client";
-import { reactive } from "@/utils/reactivity";
-import type { Dropdown as DropdownData } from "@/types/dropdowns";
-import type { AppRouterInputs } from "@/api/client";
+import * as Y from "yjs";
+import { YMapBinding } from "@/collaboration/YMapBinding";
 import type { Reactive } from "@/utils/reactivity";
-import type Page from "@/models/Page";
+import type { DropdownOption } from "@/types/dropdowns";
 
-type OmitPageId<T extends { pageId: string }> = Omit<T, "pageId">;
+export interface CreateDropdownInput {
+  title?: string | null;
+  options: DropdownOption[];
+}
 
 export default class Dropdown {
-  readonly page: Page;
   readonly id: string;
   readonly title: Reactive<string | null>;
-  readonly options: Reactive<DropdownData["options"]>;
+  readonly options: Reactive<DropdownOption[]>;
+  private readonly binding: YMapBinding;
 
-  constructor(page: Page, data: DropdownData) {
-    this.page = page;
-    this.id = data.id;
-    this.title = reactive(data.title);
-    this.options = reactive(data.options);
+  static createMap(input: CreateDropdownInput): Y.Map<unknown> {
+    const map = new Y.Map<unknown>();
+    map.set("title", input.title ?? null);
+    map.set("options", input.options);
+    return map;
   }
 
-  static async create(
-    page: Page,
-    data: OmitPageId<AppRouterInputs["dropdowns"]["create"]>,
-  ) {
-    const result = await client.dropdowns.create.mutate({
-      pageId: page.id,
-      ...data,
-    });
-    const dropdown = new Dropdown(page, result);
-    page.dropdowns.value = page.dropdowns.value.concat(dropdown);
-    return dropdown;
+  constructor(map: Y.Map<unknown>) {
+    const id = map.get("id");
+    if (typeof id !== "string" || !id) {
+      throw new Error("Missing ID");
+    }
+    this.id = id;
+
+    this.binding = new YMapBinding(map);
+    this.title = this.binding.field("title", null);
+    this.options = this.binding.field("options", []);
   }
 
-  private update(
-    data: Omit<AppRouterInputs["dropdowns"]["update"], "pageId" | "id">,
-  ) {
-    return client.dropdowns.update.mutate({
-      pageId: this.page.id,
-      id: this.id,
-      ...data,
-    });
+  addOption(value: string) {
+    this.options.value = this.options.value.concat({ value });
   }
 
-  async setOptions(options: DropdownData["options"]) {
-    this.options.value = options;
-    await this.update({ options });
-  }
-
-  async addOption(value: string) {
-    const newOptions = this.options.value.concat({ value });
-    return this.setOptions(newOptions);
-  }
-
-  async setTitle(title: string | null) {
-    this.title.value = title;
-    await this.update({ title });
-  }
-
-  async updateOption(index: number, value: string) {
-    const newOptions = this.options.value.map((option, i) =>
+  updateOption(index: number, value: string) {
+    this.options.value = this.options.value.map((option, i) =>
       i === index ? { ...option, value } : option,
     );
-    return this.setOptions(newOptions);
   }
 
-  async removeOption(index: number) {
-    const newOptions = this.options.value.toSpliced(index, 1);
-    return this.setOptions(newOptions);
+  removeOption(index: number) {
+    this.options.value = this.options.value.toSpliced(index, 1);
   }
 
-  async reorderOptions(fromIndex: number, toIndex: number) {
+  reorderOptions(fromIndex: number, toIndex: number) {
     const option = this.options.value[fromIndex];
     if (!option) {
       throw new Error(`Invalid option index: ${fromIndex}`);
     }
-    const newOptions = this.options.value
+    this.options.value = this.options.value
       .toSpliced(fromIndex, 1)
       .toSpliced(toIndex, 0, option);
-    return this.setOptions(newOptions);
   }
 
-  async delete() {
-    await client.dropdowns.delete.mutate({
-      pageId: this.page.id,
-      id: this.id,
-    });
-    this.page.dropdowns.value = this.page.dropdowns.value.filter(
-      (d) => d.id !== this.id,
-    );
+  dispose() {
+    this.binding.dispose();
   }
 }
