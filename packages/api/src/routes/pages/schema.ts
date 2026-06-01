@@ -26,7 +26,6 @@ export const UpdatePageSchema = z.object({
   pageId: z.uuid(),
   published: z.boolean().optional(),
   title: z.string().min(1).optional(),
-  coverImageKey: z.string().nullable().optional(),
   folderId: z.uuid().nullable().optional(),
 });
 export type UpdatePageSchema = z.infer<typeof UpdatePageSchema>;

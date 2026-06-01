@@ -6,7 +6,6 @@ export const PAGE_LINK_TILE_PAGE_FIELDS = {
   title: true,
   background: true,
   font: true,
-  coverImageUrl: true,
 } as const satisfies Prisma.Args<typeof prisma.page, "findMany">["select"];
 
 export type PageLinkPage = Prisma.Result<

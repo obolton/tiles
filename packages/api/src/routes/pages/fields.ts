@@ -16,7 +16,6 @@ export const PAGE_FIELDS = {
   title: true,
   type: true,
   updatedAt: true,
-  coverImageUrl: true,
   author: {
     select: {
       id: true,

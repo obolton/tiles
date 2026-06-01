@@ -1,5 +1,5 @@
 import { Prisma } from "@/generated/prisma/client";
-import { getProfileImageUrl, getImageUrl, getVideoImageUrl } from "@/utils/cdn";
+import { getProfileImageUrl, getVideoImageUrl } from "@/utils/cdn";
 
 export default Prisma.defineExtension({
   name: "images-extension",
@@ -9,14 +9,6 @@ export default Prisma.defineExtension({
         needs: { imageKey: true },
         compute({ imageKey }) {
           return imageKey ? getProfileImageUrl(imageKey) : null;
-        },
-      },
-    },
-    page: {
-      coverImageUrl: {
-        needs: { coverImageKey: true },
-        compute({ coverImageKey }) {
-          return coverImageKey ? getImageUrl(coverImageKey) : null;
         },
       },
     },
