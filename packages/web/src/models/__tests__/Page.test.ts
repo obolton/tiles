@@ -67,19 +67,15 @@ describe("Page", () => {
 
   describe("getDropdown", () => {
     test("returns the dropdown with the given ID", () => {
-      const pageWithDropdowns = new Page(
-        {
-          ...PAGE,
-          dropdowns: [
-            { id: "dd-1", title: "Status", options: [{ value: "Active" }] },
-          ],
-        },
-        new Y.Doc(),
-      );
+      const page = new Page(PAGE, new Y.Doc());
+      const created = page.dropdowns.create({
+        title: "Status",
+        options: [{ value: "Active" }],
+      });
 
-      const dropdown = pageWithDropdowns.getDropdown("dd-1");
+      const dropdown = page.getDropdown(created.id);
 
-      expect(dropdown.id).toBe("dd-1");
+      expect(dropdown).toBe(created);
       expect(dropdown.title.value).toBe("Status");
     });
 

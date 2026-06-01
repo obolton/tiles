@@ -1,5 +1,5 @@
 import client from "@/api/client";
-import Dropdown from "@/models/Dropdown";
+import PageDropdowns from "@/models/PageDropdowns";
 import PageInvite from "@/models/PageInvite";
 import PageThemes from "@/models/PageThemes";
 import TileCollection from "@/models/TileCollection";
@@ -26,6 +26,7 @@ import type { Awareness } from "@/collaboration/types";
 import type { PagePropertyChanges } from "@/operations";
 import type { DockEdge } from "api/types/tiles";
 import type { HorizontalAlignment, PageType } from "api/types/pages";
+import type Dropdown from "@/models/Dropdown";
 import type Tile from "@/models/Tile";
 import type Editor from "@/editor/Editor";
 
@@ -53,7 +54,7 @@ export default class Page {
   readonly width: Reactive<number>;
   readonly alignment: Reactive<HorizontalAlignment>;
   readonly dockSizes: Record<DockEdge, BoundField<number>>;
-  readonly dropdowns: ReactiveArray<Dropdown>;
+  readonly dropdowns: PageDropdowns;
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<PageInvite>;
   readonly index: Map<string, Tile>;
@@ -105,7 +106,7 @@ export default class Page {
       LEFT: this.metadataBinding.field("dockLeft", DEFAULT_DOCK_SIZE),
       RIGHT: this.metadataBinding.field("dockRight", DEFAULT_DOCK_SIZE),
     };
-    this.dropdowns = array(data.dropdowns.map((d) => new Dropdown(this, d)));
+    this.dropdowns = new PageDropdowns(this);
     this.access = array(data.access);
     this.invites = array(data.invites.map((i) => new PageInvite(this, i)));
     this.index = new Map();
@@ -126,11 +127,6 @@ export default class Page {
       title: this.title.value,
       published: this.isPublished.value,
       folderId: this.folderId.value,
-      dropdowns: this.dropdowns.value.map((d) => ({
-        id: d.id,
-        title: d.title.value,
-        options: d.options.value,
-      })),
       access: this.access.value,
       invites: this.invites.value.map((i) => ({
         id: i.id,
@@ -151,11 +147,7 @@ export default class Page {
   }
 
   getDropdown(id: string): Dropdown {
-    const dropdown = this.dropdowns.value.find((d) => d.id === id);
-    if (!dropdown) {
-      throw new Error(`Dropdown cannot be found: ${id}`);
-    }
-    return dropdown;
+    return this.dropdowns.get(id);
   }
 
   getInvite(id: string): PageInvite {
