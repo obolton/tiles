@@ -17,6 +17,5 @@ export const PAGE: PageData = {
   tiles: [],
   access: [],
   invites: [],
-  dropdowns: [],
   document: "",
 };
