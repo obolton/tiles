@@ -34,6 +34,7 @@ import AlignJustifyIcon from "@/icons/align-justify.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
 import EventIcon from "@/icons/event.svg?jsx";
 import DropdownIcon from "@/icons/dropdown.svg?jsx";
+import Dropdown from "@/models/Dropdown";
 import PeopleIcon from "@/icons/people.svg?jsx";
 import DividerIcon from "@/icons/divider.svg?jsx";
 import AIIcon from "@/icons/ai.svg?jsx";
@@ -132,9 +133,9 @@ export default function FormattingTools({
 
   function insertNewDropdown() {
     const defaultOption = "Option 1";
-    const dropdown = Editor.current.page.dropdowns.create({
-      options: [{ value: defaultOption }],
-    });
+    const dropdown = Editor.current.page.dropdowns.create(
+      Dropdown.createMap({ options: [{ value: defaultOption }] }),
+    );
     performCommand(insertDropdown(dropdown.id, defaultOption));
   }
 

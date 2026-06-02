@@ -45,8 +45,9 @@ export default function SeriesPanel({
   function addSeries(event: Event) {
     const select = event.currentTarget as ListSelect;
     const value = select.value;
-    if (value) {
-      chart.addSeries(value);
+    const column = table.columns.find((c) => c.id === value);
+    if (column) {
+      chart.addSeries({ id: column.id, title: column.title });
     }
   }
 

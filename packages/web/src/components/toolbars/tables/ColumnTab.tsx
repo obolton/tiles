@@ -6,7 +6,6 @@ import ChartIcon from "@/icons/chart.svg?jsx";
 import DeleteIcon from "@/icons/trash.svg?jsx";
 import { handleError } from "@/utils/errors";
 import Chart from "@/models/Chart";
-import { parseParentId } from "@/models/parentId";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
 import type { Fill } from "@/components/fills/types";
@@ -18,8 +17,6 @@ export interface ColumnTabProps {
 
 export default function ColumnTab({ table, getTable }: ColumnTabProps) {
   const { id, page, columns } = table;
-  const parent = parseParentId(table.parentId.value);
-  const sectionId = parent.type === "section" ? parent.sectionId : null;
 
   function getSelectedColumn() {
     const selection = getTable().selection;
@@ -77,11 +74,12 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
     if (!columnId) {
       return;
     }
+    const selected = columns.find((c) => c.id === columnId);
     await Chart.create(page, {
-      sectionId,
+      parentId: table.parentId.value,
       tableId: id,
       sizing: "FOUR_THREE",
-      series: [{ columnId }],
+      columns: selected ? [{ id: selected.id, title: selected.title }] : [],
     });
   }
 
