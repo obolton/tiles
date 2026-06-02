@@ -3,19 +3,18 @@ import prisma, { type ExtensionArgs } from "@/database/prisma";
 import {
   getLastTileOrderQuery,
   getTileOrderQuery,
-  duplicateTileQuery,
 } from "@/generated/prisma/sql";
 import {
   getTextColorProperties,
   getBackgroundProperties,
 } from "@/utils/themes";
-import type { DuplicateTileSchema, DeleteTilesSchema } from "./schema";
+import type { DeleteTilesSchema } from "./schema";
 import type { ColorSchema } from "@/schema/Color";
 import type { BackgroundSchema } from "@/schema/Background";
 import type { Prisma } from "@/generated/prisma/client";
 import type { PrismaTransactionClient } from "@/database/prisma";
 import type { FrameStyle, TileType } from "@/generated/prisma/enums";
-import { TILE_FIELDS, FULL_TILE_FIELDS, type FullTile } from "./fields";
+import { TILE_FIELDS, type FullTile } from "./fields";
 import type { ClientTile } from "@/types/tiles";
 
 export function formatTile(tile: FullTile): ClientTile {
@@ -118,45 +117,6 @@ export async function getTileOrder(
     getTileOrderQuery(pageId, sectionId, beforeId),
   );
   return generateKeyBetween(result?.a ?? null, result?.b ?? null);
-}
-
-export async function duplicateTile({
-  pageId,
-  id,
-  sectionId,
-  beforeId,
-}: DuplicateTileSchema): Promise<[ClientTile, ...ClientTile[]]> {
-  return prisma.$transaction(async (transaction) => {
-    // TODO: Validate section ID
-    const order = await getTileOrder(
-      transaction,
-      pageId,
-      sectionId,
-      beforeId ?? null,
-    );
-    const result = await transaction.$queryRawTyped(
-      duplicateTileQuery(pageId, id, order, sectionId),
-    );
-    const newId = result[0]?.id;
-    if (!newId) {
-      throw new Error("Could not duplicate tile");
-    }
-    const tile = await transaction.tile.findUniqueOrThrow({
-      where: { pageId, id: newId },
-      select: FULL_TILE_FIELDS,
-    });
-
-    if (tile.type === "SECTION") {
-      const children = await transaction.tile.findMany({
-        where: { pageId, sectionId: newId },
-        select: FULL_TILE_FIELDS,
-        orderBy: { order: "asc" },
-      });
-      return [formatTile(tile), ...children.map(formatTile)];
-    }
-
-    return [formatTile(tile)];
-  });
 }
 
 export async function deleteTiles({ pageId, ids }: DeleteTilesSchema) {
