@@ -9,11 +9,3 @@ export const CreateTextSchema = z.strictObject({
   align: z.enum(VerticalAlignment).optional(),
 });
 export type CreateTextSchema = z.infer<typeof CreateTextSchema>;
-
-export const UpdateTextSchema = z.strictObject({
-  pageId: z.uuid(),
-  id: z.uuid(),
-  content: RichTextSchema.optional(),
-  align: z.enum(VerticalAlignment).optional(),
-});
-export type UpdateTextSchema = z.infer<typeof UpdateTextSchema>;

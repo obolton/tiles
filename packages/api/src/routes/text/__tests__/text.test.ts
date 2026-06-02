@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeAll } from "vitest";
 import prisma from "@/database/prisma.ts";
-import { createText, updateText } from "../text.ts";
+import { createText } from "../text.ts";
 import { TEXT_FIELDS, type Text } from "../fields";
-import type { CreateQuery, UpdateQuery } from "@/test/prisma.ts";
+import type { CreateQuery } from "@/test/prisma.ts";
 
 const MOCK_TEXT: Text = {
   id: "test-text",
@@ -47,27 +47,6 @@ describe("createText", () => {
     expect(result).toEqual({
       type: "TEXT",
       ...MOCK_PLACEMENT,
-      ...MOCK_TEXT,
-    });
-  });
-});
-
-describe("updateText", () => {
-  beforeAll(() => {
-    vi.mocked(
-      prisma.textTile.update<UpdateQuery<typeof TEXT_FIELDS>>,
-    ).mockResolvedValue(MOCK_TEXT);
-  });
-
-  it("should update and return a text tile", async () => {
-    const result = await updateText({
-      pageId: "1",
-      id: "1",
-      content: MOCK_TEXT.content,
-    });
-
-    expect(result).toEqual({
-      type: "TEXT",
       ...MOCK_TEXT,
     });
   });

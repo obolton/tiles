@@ -1,6 +1,6 @@
 import prisma from "@/database/prisma";
 import { createTile } from "../tiles/tiles";
-import type { CreateTextSchema, UpdateTextSchema } from "./schema";
+import type { CreateTextSchema } from "./schema";
 import type { RichTextSchema } from "@/schema/RichText";
 import { TEXT_FIELDS } from "./fields";
 
@@ -32,24 +32,4 @@ export async function createText({
   );
 
   return { ...tile, ...text! };
-}
-
-export async function updateText({
-  pageId,
-  id,
-  content,
-  align,
-}: UpdateTextSchema) {
-  const text = await prisma.textTile.update({
-    where: {
-      pageId,
-      id,
-    },
-    data: {
-      content,
-      align,
-    },
-    select: TEXT_FIELDS,
-  });
-  return { type: "TEXT" as const, ...text };
 }
