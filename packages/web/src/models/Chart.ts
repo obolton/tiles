@@ -1,29 +1,20 @@
 import * as Y from "yjs";
-import Tile from "./Tile";
-import {
-  reactive,
-  array,
-  type Reactive,
-  type ReactiveArray,
-} from "@/utils/reactivity";
-import client from "@/api/client";
+import Tile, { type CreateTileInput } from "./Tile";
+import Series from "@/models/Series";
+import Collection from "@/collaboration/Collection";
+import type { Reactive } from "@/utils/reactivity";
+import type { ChartType, Property } from "@/models/Series";
 import type Page from "@/models/Page";
 import type { ClientChartTile } from "api/types/tiles";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
-import type { AppRouterInputs } from "@/api/client";
 
-export interface Property {
-  id: string;
-  title: string | null;
-}
+export { Series };
+export type { ChartType, Property };
 
-export type ChartType = "BAR" | "LINE" | "AREA";
-
-export interface Series {
-  id: string;
-  type: Reactive<ChartType>;
-  column: Reactive<Property>;
-  fill: Reactive<ColorFill | GradientFill | null>;
+export interface CreateChartInput extends Omit<CreateTileInput, "type"> {
+  tableId: string;
+  label?: Property | null;
+  columns?: Property[];
 }
 
 export default class Chart extends Tile {
@@ -31,23 +22,30 @@ export default class Chart extends Tile {
 
   readonly tableId: Reactive<string>;
   readonly label: Reactive<Property | null>;
-  readonly series: ReactiveArray<Series>;
+  readonly series: Collection<Series>;
 
-  static async create(
-    page: Page,
-    data: Omit<AppRouterInputs["charts"]["create"], "pageId">,
-  ) {
-    const properties = await client.charts.create.mutate({
-      pageId: page.id,
-      ...data,
-    });
-    const chart = new Chart(page, properties);
-    const { editor } = chart;
-    editor.addTile(chart);
-    editor.recordOperation({
-      apply: { type: "tile.restore", data: { snapshots: [properties] } },
-      reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
-    });
+  static createMap(
+    properties: Omit<CreateChartInput, "parentId" | "beforeId" | "columns">,
+  ): Y.Map<unknown> {
+    const { tableId, label, ...baseProps } = properties;
+    const map = super.buildBaseMap({ ...baseProps, type: "CHART" });
+    map.set("tableId", tableId);
+    map.set("label", label ?? null);
+    map.set("series", new Y.Map<Y.Map<unknown>>());
+    return map;
+  }
+
+  static async create(page: Page, data: CreateChartInput): Promise<Chart> {
+    const { parentId, beforeId, columns, ...rest } = data;
+    const map = Chart.createMap(rest);
+    const chart = page.createTile(map, { parentId, beforeId }) as Chart;
+    for (const column of columns ?? []) {
+      chart.series.create(
+        Series.createMap({ type: "BAR", column, fill: null }),
+      );
+    }
+    chart.editor.addTile(chart);
+    return chart;
   }
 
   constructor(page: Page, map: Y.Map<unknown>) {
@@ -55,7 +53,10 @@ export default class Chart extends Tile {
 
     this.tableId = this.binding.field("tableId", "");
     this.label = this.binding.field("label", null);
-    this.series = array<Series>([]);
+    this.series = new Collection(
+      map.get("series") as Y.Map<Y.Map<unknown>>,
+      (id, map) => new Series(id, map),
+    );
   }
 
   serialize(): ClientChartTile {
@@ -73,161 +74,28 @@ export default class Chart extends Tile {
     };
   }
 
-  private update(
-    properties: Omit<AppRouterInputs["charts"]["update"], "pageId" | "id">,
-  ) {
-    return client.charts.update.mutate({
-      ...properties,
-      pageId: this.page.id,
-      id: this.id,
-    });
-  }
-
-  // Label
-
   setLabel(property: Property | null) {
-    const previousLabel = this.label.value;
     this.label.value = property;
-
-    this.editor.recordOperation({
-      apply: {
-        type: "chart.setProperties",
-        data: { tileId: this.id, changes: { label: property } },
-      },
-      reverse: {
-        type: "chart.setProperties",
-        data: { tileId: this.id, changes: { label: previousLabel } },
-      },
-    });
-
-    return this.update({ labelColumnId: property?.id });
   }
 
-  // Series
-
-  async addSeries(columnId: string) {
-    const series = await client.charts.addSeries.mutate({
-      pageId: this.page.id,
-      chartId: this.id,
-      columnId,
-    });
-    const { id, type, column, fill } = series;
-    this.series.push({
-      id,
-      type: reactive(type),
-      column: reactive(column),
-      fill: reactive(fill),
-    });
-
-    this.editor.recordOperation({
-      apply: {
-        type: "chart.addSeries",
-        data: { tileId: this.id, series: { id, type, column, fill } },
-      },
-      reverse: {
-        type: "chart.removeSeries",
-        data: { tileId: this.id, seriesId: id },
-      },
-    });
-  }
-
-  private updateSeries(
-    properties: Omit<
-      AppRouterInputs["charts"]["updateSeries"],
-      "pageId" | "chartId"
-    >,
-  ) {
-    return client.charts.updateSeries.mutate({
-      ...properties,
-      pageId: this.page.id,
-      chartId: this.id,
-    });
+  addSeries(column: Property) {
+    this.series.create(Series.createMap({ type: "BAR", column, fill: null }));
   }
 
   setSeriesChartType(id: string, type: ChartType) {
-    const series = this.series.find((s) => s.id === id);
-    if (!series) {
-      throw new Error(`Invalid series ID: ${id}`);
-    }
-
-    const previousType = series.type.value;
-    series.type.value = type;
-
-    this.editor.recordOperation({
-      apply: {
-        type: "chart.setSeriesProperties",
-        data: { tileId: this.id, seriesId: id, changes: { type } },
-      },
-      reverse: {
-        type: "chart.setSeriesProperties",
-        data: {
-          tileId: this.id,
-          seriesId: id,
-          changes: { type: previousType },
-        },
-      },
-    });
-
-    return this.updateSeries({ seriesId: id, type });
+    this.series.get(id).type.value = type;
   }
 
-  setSeriesFill(id: string, fill: GradientFill | ColorFill | null) {
-    const series = this.series.find((s) => s.id === id);
-    if (!series) {
-      throw new Error(`Invalid series ID: ${id}`);
-    }
-
-    const previousFill = series.fill.value;
-    series.fill.value = fill;
-
-    this.editor.recordOperation({
-      apply: {
-        type: "chart.setSeriesProperties",
-        data: { tileId: this.id, seriesId: id, changes: { fill } },
-      },
-      reverse: {
-        type: "chart.setSeriesProperties",
-        data: {
-          tileId: this.id,
-          seriesId: id,
-          changes: { fill: previousFill },
-        },
-      },
-    });
-
-    return this.updateSeries({ seriesId: id, fill });
+  setSeriesFill(id: string, fill: ColorFill | GradientFill | null) {
+    this.series.get(id).fill.value = fill;
   }
 
-  deleteSeries(seriesId: string) {
-    const series = this.series.find((s) => s.id === seriesId);
+  deleteSeries(id: string) {
+    this.series.remove(id);
+  }
 
-    this.series.value = this.series.value.filter((s) => s.id !== seriesId);
-
-    if (series) {
-      this.editor.recordOperation({
-        apply: {
-          type: "chart.removeSeries",
-          data: { tileId: this.id, seriesId },
-        },
-        reverse: {
-          type: "chart.restoreSeries",
-          data: {
-            tileId: this.id,
-            series: {
-              id: series.id,
-              type: series.type.value,
-              column: series.column.value,
-              fill: series.fill.value,
-            },
-          },
-        },
-      });
-    }
-
-    return client.charts.deleteSeries.mutate({
-      pageId: this.page.id,
-      chartId: this.id,
-      seriesId,
-    });
+  dispose() {
+    this.series.dispose();
+    super.dispose();
   }
 }
