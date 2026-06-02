@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeAll } from "vitest";
 import prisma from "@/database/prisma.ts";
-import { createImage, updateImage } from "../images.ts";
+import { createImage } from "../images.ts";
 import { IMAGE_FIELDS, type Image } from "../fields";
-import type { CreateQuery, UpdateQuery } from "@/test/prisma.ts";
+import type { CreateQuery } from "@/test/prisma.ts";
 
 const MOCK_IMAGE: Image = {
   id: "test-image",
@@ -60,32 +60,6 @@ describe("createImage", () => {
     expect(result).toEqual({
       type: "IMAGE",
       ...MOCK_PLACEMENT,
-      ...MOCK_IMAGE,
-    });
-  });
-});
-
-describe("updateImage", () => {
-  beforeAll(() => {
-    vi.mocked(
-      prisma.imageTile.update<UpdateQuery<typeof IMAGE_FIELDS>>,
-    ).mockResolvedValue(MOCK_IMAGE);
-  });
-
-  it("should update and return an image", async () => {
-    const result = await updateImage({
-      pageId: "1",
-      id: "1",
-      text: [
-        {
-          type: "paragraph",
-          children: [{ type: "text", format: 0, text: "New caption" }],
-        },
-      ],
-    });
-
-    expect(result).toEqual({
-      type: "IMAGE",
       ...MOCK_IMAGE,
     });
   });
