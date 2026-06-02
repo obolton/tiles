@@ -31,7 +31,7 @@
     }
   },
 
-  "postCreateCommand": "pnpm install && pnpm --filter api db:push && pnpm --filter api db:push-functions && pnpm generate && pnpm --filter api db:seed",
+  "postCreateCommand": "pnpm install && pnpm --filter api db:push && pnpm generate && pnpm --filter api db:seed",
 
   "containerEnv": {
     "CHECKPOINT_DISABLE": "1",

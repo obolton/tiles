@@ -17,7 +17,6 @@
     "lint": "oxlint",
     "generate": "prisma generate --no-hints --sql",
     "db:push": "prisma db push",
-    "db:push-functions": "prisma db execute --file src/sql/functions/duplicate_tile.sql",
     "db:seed": "prisma db seed",
     "cdn:purge": "tsx --env-file=\"../../../.env\" scripts/purge-cdn.ts",
     "fonts:sync": "tsx --env-file=\"../../../.env\" scripts/sync-fonts.ts",
