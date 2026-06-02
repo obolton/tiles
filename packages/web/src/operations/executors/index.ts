@@ -8,7 +8,6 @@ import { executors as image } from "./image";
 import { executors as video } from "./video";
 import { executors as link } from "./link";
 import { executors as table } from "./table";
-import { executors as chart } from "./chart";
 import { executors as page } from "./page";
 
 const registry: ActionExecutorRegistry = {
@@ -18,7 +17,6 @@ const registry: ActionExecutorRegistry = {
   ...video,
   ...link,
   ...table,
-  ...chart,
   ...page,
 };
 
