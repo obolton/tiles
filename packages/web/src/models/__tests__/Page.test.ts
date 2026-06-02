@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
 import Page from "@/models/Page";
+import Dropdown from "@/models/Dropdown";
 import Section from "@/models/Section";
 import Text from "@/models/Text";
 import Theme from "@/models/Theme";
@@ -68,10 +69,12 @@ describe("Page", () => {
   describe("getDropdown", () => {
     test("returns the dropdown with the given ID", () => {
       const page = new Page(PAGE, new Y.Doc());
-      const created = page.dropdowns.create({
-        title: "Status",
-        options: [{ value: "Active" }],
-      });
+      const created = page.dropdowns.create(
+        Dropdown.createMap({
+          title: "Status",
+          options: [{ value: "Active" }],
+        }),
+      );
 
       const dropdown = page.getDropdown(created.id);
 
@@ -83,7 +86,7 @@ describe("Page", () => {
       const page = new Page(PAGE, new Y.Doc());
 
       expect(() => page.getDropdown("unknown")).toThrow(
-        "Dropdown cannot be found: unknown",
+        "Item not found: unknown",
       );
     });
   });

@@ -1,5 +1,5 @@
 import client from "@/api/client";
-import PageDropdowns from "@/models/PageDropdowns";
+import Collection from "@/collaboration/Collection";
 import PageInvite from "@/models/PageInvite";
 import PageThemes from "@/models/PageThemes";
 import TileCollection from "@/models/TileCollection";
@@ -26,7 +26,7 @@ import type { Awareness } from "@/collaboration/types";
 import type { PagePropertyChanges } from "@/operations";
 import type { DockEdge } from "api/types/tiles";
 import type { HorizontalAlignment, PageType } from "api/types/pages";
-import type Dropdown from "@/models/Dropdown";
+import Dropdown from "@/models/Dropdown";
 import type Tile from "@/models/Tile";
 import type Editor from "@/editor/Editor";
 
@@ -54,7 +54,7 @@ export default class Page {
   readonly width: Reactive<number>;
   readonly alignment: Reactive<HorizontalAlignment>;
   readonly dockSizes: Record<DockEdge, BoundField<number>>;
-  readonly dropdowns: PageDropdowns;
+  readonly dropdowns: Collection<Dropdown>;
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<PageInvite>;
   readonly index: Map<string, Tile>;
@@ -106,7 +106,10 @@ export default class Page {
       LEFT: this.metadataBinding.field("dockLeft", DEFAULT_DOCK_SIZE),
       RIGHT: this.metadataBinding.field("dockRight", DEFAULT_DOCK_SIZE),
     };
-    this.dropdowns = new PageDropdowns(this);
+    this.dropdowns = new Collection(
+      this.doc.getMap<Y.Map<unknown>>("dropdowns"),
+      (id, map) => new Dropdown(id, map),
+    );
     this.access = array(data.access);
     this.invites = array(data.invites.map((i) => new PageInvite(this, i)));
     this.index = new Map();

@@ -14,10 +14,8 @@ describe("Dropdown", () => {
         { value: "Pending" },
       ],
     });
-    map.set("id", "dropdown-id");
-    // The map must be attached to a doc before its values are readable.
     new Y.Doc().getMap("dropdowns").set("dropdown-id", map);
-    dropdown = new Dropdown(map);
+    dropdown = new Dropdown("dropdown-id", map);
   });
 
   describe("addOption", () => {

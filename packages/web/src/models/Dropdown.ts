@@ -21,13 +21,8 @@ export default class Dropdown {
     return map;
   }
 
-  constructor(map: Y.Map<unknown>) {
-    const id = map.get("id");
-    if (typeof id !== "string" || !id) {
-      throw new Error("Missing ID");
-    }
+  constructor(id: string, map: Y.Map<unknown>) {
     this.id = id;
-
     this.binding = new YMapBinding(map);
     this.title = this.binding.field("title", null);
     this.options = this.binding.field("options", []);
