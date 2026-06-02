@@ -3,11 +3,7 @@ import { getLinkMetadata } from "@/utils/linkMetadata";
 import { fetchImage } from "@/utils/fetchImage";
 import { getVideoInfo } from "@/utils/videos";
 import { createVideo } from "../videos/videos";
-import type {
-  CreateLinkSchema,
-  GetLinkMetadataSchema,
-  UpdateLinkSchema,
-} from "./schema";
+import type { CreateLinkSchema, GetLinkMetadataSchema } from "./schema";
 import { createTile } from "../tiles/tiles";
 import { LINK_FIELDS } from "./fields";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
@@ -108,35 +104,4 @@ export async function createLink(
   );
 
   return { ...tile, ...link! };
-}
-
-export async function updateLink(
-  { pageId, id, url }: UpdateLinkSchema,
-  { workspaceId, userId }: AuthenticatedPageProcedureContext,
-) {
-  const linkMetadata = await getLinkMetadata(url);
-  const { title, description, siteName, imageUrl } = linkMetadata || {};
-
-  const imageId = imageUrl
-    ? await fetchImage(imageUrl, workspaceId, userId)
-    : null;
-
-  const link = await prisma.linkTile.update({
-    where: {
-      pageId,
-      id,
-    },
-    data: {
-      url,
-      title,
-      description,
-      siteName,
-      imageId,
-    },
-    select: LINK_FIELDS,
-  });
-  return {
-    type: "LINK" as const,
-    ...link,
-  };
 }
