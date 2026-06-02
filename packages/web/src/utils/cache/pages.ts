@@ -41,12 +41,7 @@ function tilesStore(): ObjectStore<CachedTile> {
 
 export async function cachePage(pageData: PageData): Promise<void> {
   try {
-    const { tiles, ...pageProps } = pageData;
-    await pagesStore().put(pageProps);
-    await tilesStore().deleteByIndex("byPageId", pageData.id);
-    await tilesStore().putMany(
-      tiles.map((tile) => ({ ...tile, pageId: pageData.id })),
-    );
+    await pagesStore().put(pageData);
   } catch (error) {
     if (import.meta.env.DEV) {
       console.warn("Failed to cache page data:", error);
