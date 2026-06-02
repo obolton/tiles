@@ -35,7 +35,7 @@ describe("Page", () => {
 
   test("serialize", () => {
     const page = new Page(PAGE, new Y.Doc());
-    const { tiles: _, document: __, ...expected } = PAGE;
+    const { document: __, ...expected } = PAGE;
 
     expect(page.serialize()).toEqual({
       ...expected,

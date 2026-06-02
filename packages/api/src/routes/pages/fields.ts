@@ -1,7 +1,6 @@
 import prisma from "@/database/prisma";
 import type { Prisma } from "@/generated/prisma/client";
 import { THEME_FIELDS } from "@/routes/themes/fields";
-import { FULL_TILE_FIELDS } from "@/routes/tiles/fields";
 import {
   PAGE_ACCESS_FIELDS,
   PAGE_INVITE_FIELDS,
@@ -28,12 +27,6 @@ export const PAGE_FIELDS = {
   },
   invites: {
     select: PAGE_INVITE_FIELDS,
-  },
-  tiles: {
-    select: FULL_TILE_FIELDS,
-    orderBy: {
-      order: "asc",
-    },
   },
   document: {
     select: {

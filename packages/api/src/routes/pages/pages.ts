@@ -22,7 +22,6 @@ import type {
   AuthenticatedPageProcedureContext,
 } from "@/utils/middleware";
 import { PAGE_FIELDS } from "./fields";
-import { formatTile } from "@/routes/tiles/tiles";
 
 const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
 
@@ -52,7 +51,6 @@ export async function getPageById(
   return {
     ...page,
     document: Buffer.from(page.document.snapshot).toString("base64"),
-    tiles: page.tiles.map(formatTile),
   };
 }
 
