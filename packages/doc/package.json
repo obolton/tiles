@@ -1,0 +1,21 @@
+{
+  "name": "doc",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Document schema and utilities",
+  "private": true,
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "lint": "oxlint",
+    "typecheck": "tsc --build"
+  },
+  "dependencies": {
+    "jittered-fractional-indexing": "^1.0.1",
+    "yjs": "^13.6.30"
+  }
+}
