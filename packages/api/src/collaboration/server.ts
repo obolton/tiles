@@ -12,6 +12,10 @@ export function parseDocName(documentName: string): string {
   return documentName.slice(DOC_NAME_PREFIX.length);
 }
 
+export function docName(pageId: string): string {
+  return `${DOC_NAME_PREFIX}${pageId}`;
+}
+
 export function createHocuspocus() {
   return new Hocuspocus({
     name: "tiles-collaboration",
