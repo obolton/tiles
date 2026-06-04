@@ -7,10 +7,10 @@ import {
 import { createHTTPHandler } from "@trpc/server/adapters/standalone";
 import cors from "cors";
 import crossws from "crossws/adapters/node";
-import router from "@/routes/index.ts";
-import { createContext } from "@/utils/trpc.ts";
-import { resourcesHandler } from "@/resources/index.ts";
-import { createHocuspocus } from "@/collaboration/index.ts";
+import router from "@/routes/index";
+import { createContext } from "@/utils/trpc";
+import { resourcesHandler } from "@/resources/index";
+import { hocuspocus } from "@/collaboration/instance";
 
 const API_HOST = process.env.API_HOST;
 const API_PORT = parseInt(process.env.API_PORT || "", 10);
@@ -53,7 +53,6 @@ async function requestHandler(req: IncomingMessage, res: ServerResponse) {
   }
 }
 
-const hocuspocus = createHocuspocus();
 const server = createServer(requestHandler);
 
 const peerConnections = new WeakMap<
