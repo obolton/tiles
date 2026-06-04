@@ -11,6 +11,7 @@ import {
   MIN_LONGITUDE,
   MAX_LONGITUDE,
 } from "@/constants/geo";
+import type { ToolContext } from "./types";
 
 export const SizeSchema = z.enum(["small", "medium", "large"]).meta({
   description: "The size of the block: small, medium, or large",
@@ -32,6 +33,13 @@ export function getDimensions(size: Size): Dimensions {
     case "large":
       return { width: 24, height: 20 };
   }
+}
+
+export function resolveParentId(
+  parentId: number | null,
+  { resolveArtifactId, sectionId }: ToolContext,
+): string | null {
+  return parentId === null ? sectionId : resolveArtifactId(parentId);
 }
 
 // Excludes images for now
