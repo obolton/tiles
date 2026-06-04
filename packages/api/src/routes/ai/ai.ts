@@ -5,7 +5,7 @@ import {
   type RichTextNode,
 } from "@/utils/markdown";
 import { openai } from "@/ai/openai";
-import { generateImageFromPrompt, createImageTile } from "@/ai/tools/images";
+import { generateImageFromPrompt } from "@/ai/tools/images";
 import { TOOLS, useFunctionTool } from "@/ai/tools/tools";
 import { fetchTilesForContext } from "@/ai/context/tiles";
 import { buildContextIds, formatTileContext } from "@/ai/context/format";
@@ -19,7 +19,7 @@ import type {
   ActionEvent,
   Artifact,
   ToolContext,
-} from "@/ai/tools/types.ts";
+} from "@/ai/tools/types";
 import type {
   ResponseInput,
   ResponseInputItem,
@@ -69,7 +69,7 @@ Some **text**
 
 ## Images
 
-Generated images will be inserted as image blocks.
+Use "create_image" to generate an image from a text prompt; it is inserted as an image block. To place it inside a section or on a map, pass the section or map ID as "parentId" (and "coordinates" for a map pin).
 
 ## Tables and Charts
 
@@ -81,11 +81,11 @@ Use "create_link" to create link cards for URLs.
 
 ## Sections
 
-Use "create_section" to create a container for grouping related content. After creating a section, pass its ID as the "sectionId" parameter to other tools to place content inside it.
+Use "create_section" to create a container for grouping related content. After creating a section, pass its ID as the "parentId" parameter to other tools to place content inside it.
 
 ## Maps
 
-Use "create_map" to create an interactive map with a style (DEFAULT, SATELLITE, WATERCOLOR, or MONOCHROME). After creating a map, pass its ID as the "sectionId" parameter to other tools and provide "coordinates" (lat/long) to place content as pins on the map. Use real-world geographic coordinates for locations. Use "edit_style" with "coordinates" to reposition existing tiles or to place generated images on the map.
+Use "create_map" to create an interactive map with a style (DEFAULT, SATELLITE, WATERCOLOR, or MONOCHROME). After creating a map, pass its ID as the "parentId" parameter to other tools and provide "coordinates" (lat/long) to place content as pins on the map. Use real-world geographic coordinates for locations. Use "edit_style" with "coordinates" to reposition existing tiles or to place generated images on the map.
 
 # Editing Existing Text
 
@@ -275,14 +275,6 @@ export async function streamTurn(
               });
               artifacts.push(result);
               return;
-            }
-
-            if (
-              item.type === "image_generation_call" &&
-              item.status === "completed" &&
-              item.result
-            ) {
-              await createImageTile(item, toolContext);
             }
           }
         },

@@ -4,19 +4,20 @@ import type {
   Tool,
   ResponseFunctionToolCall,
 } from "openai/resources/responses/responses";
-import { IMAGE_GENERATION_TOOL } from "./images.ts";
-import { CREATE_CHART_TOOL } from "./createChart.ts";
-import { CREATE_LINK_TOOL } from "./createLink.ts";
-import { CREATE_MAP_TOOL } from "./createMap.ts";
-import { CREATE_SECTION_TOOL } from "./createSection.ts";
-import { CREATE_TABLE_TOOL } from "./createTable.ts";
-import { CREATE_TEXT_TOOL } from "./createText.ts";
-import { DELETE_TILES_TOOL } from "./deleteTile.ts";
-import { EDIT_STYLE_TOOL } from "./editStyle.ts";
-import type { FunctionToolOptions, ToolContext } from "./types.ts";
+import { CREATE_CHART_TOOL } from "./createChart";
+import { CREATE_IMAGE_TOOL } from "./createImage";
+import { CREATE_LINK_TOOL } from "./createLink";
+import { CREATE_MAP_TOOL } from "./createMap";
+import { CREATE_SECTION_TOOL } from "./createSection";
+import { CREATE_TABLE_TOOL } from "./createTable";
+import { CREATE_TEXT_TOOL } from "./createText";
+import { DELETE_TILES_TOOL } from "./deleteTile";
+import { EDIT_STYLE_TOOL } from "./editStyle";
+import type { FunctionToolOptions, ToolContext } from "./types";
 
 export const FUNCTION_TOOLS: FunctionToolOptions[] = [
   CREATE_TEXT_TOOL,
+  CREATE_IMAGE_TOOL,
   CREATE_TABLE_TOOL,
   CREATE_CHART_TOOL,
   CREATE_LINK_TOOL,
@@ -40,10 +41,7 @@ function functionTool<T extends z.ZodType>({
   };
 }
 
-export const TOOLS: Tool[] = [
-  IMAGE_GENERATION_TOOL,
-  ...FUNCTION_TOOLS.map(functionTool),
-];
+export const TOOLS: Tool[] = FUNCTION_TOOLS.map(functionTool);
 
 export async function useFunctionTool(
   call: ResponseFunctionToolCall,

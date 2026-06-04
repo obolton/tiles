@@ -1,48 +1,78 @@
 import { Buffer } from "node:buffer";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import * as Y from "yjs";
-import { createToolContext, getCreatedTile } from "@/test/fixtures/ai.ts";
-import { createImageTile } from "../images.ts";
-import type { ToolContext } from "../types.ts";
-import type { ResponseOutputItem } from "openai/resources/responses/responses";
+import prisma from "@/database/prisma";
+import { upload } from "@/utils/storage";
+import { openai } from "@/ai/openai";
+import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
+import { generateAndUploadImage, generateImageFromPrompt } from "../images";
+
+vi.mock("@/ai/openai.ts", () => ({
+  openai: { images: { generate: vi.fn() } },
+}));
 
 vi.mock("@/utils/storage.ts", () => ({
   upload: vi.fn(),
-  IMAGES_BUCKET: "images",
+  IMAGES_BUCKET: "images-bucket",
 }));
 
-const CALL = {
-  type: "image_generation_call",
-  status: "completed",
-  result: Buffer.from("fake-image-bytes").toString("base64"),
-  id: "img-call-1",
-} as unknown as ResponseOutputItem.ImageGenerationCall;
+const IMAGE_DATA = Buffer.from("image-bytes").toString("base64");
 
-describe("createImageTile", () => {
-  let doc: Y.Doc;
-  let context: ToolContext;
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.mocked(openai.images.generate).mockResolvedValue({
+    created: 0,
+    data: [{ b64_json: IMAGE_DATA }],
+  });
+});
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-    ({ doc, context } = createToolContext());
+describe("generateImageFromPrompt", () => {
+  test("returns the generated image data for the prompt", async () => {
+    const result = await generateImageFromPrompt("a red circle");
+
+    expect(openai.images.generate).toHaveBeenCalledWith(
+      expect.objectContaining({ prompt: "a red circle" }),
+    );
+    expect(result).toEqual({ type: "image/webp", data: IMAGE_DATA });
   });
 
-  test("creates an image tile in the doc", async () => {
-    const result = await createImageTile(CALL, context);
+  test("throws when no image is returned", async () => {
+    vi.mocked(openai.images.generate).mockResolvedValue({
+      created: 0,
+      data: [],
+    });
 
-    const map = getCreatedTile(doc, result);
-    expect(map.get("type")).toBe("IMAGE");
-    expect(map.get("imageId")).toBeTypeOf("string");
-    expect(map.get("size")).toEqual({ width: 1024, height: 1024 });
-    expect(map.get("width")).toBe(12);
-    expect(map.get("height")).toBe(12);
+    await expect(generateImageFromPrompt("a red circle")).rejects.toThrow(
+      "Image generation returned no data",
+    );
   });
+});
 
-  test("places the image inside the context section", async () => {
-    context.sectionId = "section-1";
+describe("generateAndUploadImage", () => {
+  test("uploads the generated image, records it, and returns the id", async () => {
+    const imageId = await generateAndUploadImage(
+      "a red circle",
+      MOCK_TOOL_CONTEXT,
+    );
 
-    const result = await createImageTile(CALL, context);
-
-    expect(getCreatedTile(doc, result).get("parentId")).toBe("section-1");
+    expect(imageId).toBeTypeOf("string");
+    expect(upload).toHaveBeenCalledWith(
+      "images-bucket",
+      imageId,
+      expect.any(Buffer),
+      "image/webp",
+    );
+    expect(prisma.image.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          id: imageId,
+          userId: "test-user",
+          workspaceId: "test-workspace",
+          source: "GENERATED",
+          purpose: "CONTENT",
+          type: "WEBP",
+          bytes: expect.any(Number),
+        }),
+      }),
+    );
   });
 });
