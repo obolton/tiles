@@ -1,45 +1,45 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
-import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai.ts";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import * as Y from "yjs";
+import { buildSectionMap } from "doc/tiles/section";
+import { createToolContext } from "@/test/fixtures/ai.ts";
 import { DELETE_TILES_TOOL } from "../deleteTile.ts";
+import type { ToolContext } from "../types.ts";
 
 describe("DELETE_TILES_TOOL", () => {
+  let doc: Y.Doc;
+  let context: ToolContext;
+  let sectionA: string;
+  let sectionB: string;
+  let sectionC: string;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    ({ doc, context } = createToolContext());
+    sectionA = context.session.createTile(buildSectionMap({}));
+    sectionB = context.session.createTile(buildSectionMap({}));
+    sectionC = context.session.createTile(buildSectionMap({}));
+    const ids = [sectionA, sectionB, sectionC];
+    context.resolveArtifactId = vi.fn((id: number) => ids[id] ?? "");
   });
 
-  test("resolves a single tile ID and returns delete action", async () => {
-    const result = await DELETE_TILES_TOOL.function(
-      { ids: [0] },
-      MOCK_TOOL_CONTEXT,
-    );
+  function tiles(): Y.Map<Y.Map<unknown>> {
+    return doc.getMap<Y.Map<unknown>>("tiles");
+  }
 
-    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith(0);
-    expect(result).toEqual({
-      actions: [
-        {
-          type: "tile.delete",
-          data: { tileIds: ["resolved-0"] },
-        },
-      ],
-    });
+  test("deletes a single tile from the doc", async () => {
+    await DELETE_TILES_TOOL.function({ ids: [0] }, context);
+
+    expect(context.resolveArtifactId).toHaveBeenCalledWith(0);
+    expect(tiles().has(sectionA)).toBe(false);
+    expect(tiles().size).toBe(2);
   });
 
-  test("resolves multiple tile IDs", async () => {
-    const result = await DELETE_TILES_TOOL.function(
-      { ids: [0, 1, 2] },
-      MOCK_TOOL_CONTEXT,
-    );
+  test("deletes multiple tiles from the doc", async () => {
+    await DELETE_TILES_TOOL.function({ ids: [0, 2] }, context);
 
-    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledTimes(3);
-    expect(result).toEqual({
-      actions: [
-        {
-          type: "tile.delete",
-          data: {
-            tileIds: ["resolved-0", "resolved-1", "resolved-2"],
-          },
-        },
-      ],
-    });
+    expect(tiles().has(sectionA)).toBe(false);
+    expect(tiles().has(sectionB)).toBe(true);
+    expect(tiles().has(sectionC)).toBe(false);
+    expect(tiles().size).toBe(1);
   });
 });

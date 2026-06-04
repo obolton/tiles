@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Layout } from "@/generated/prisma/enums";
-import { createSection } from "@/routes/sections/sections.ts";
+import { buildSectionMap } from "doc/tiles/section";
 import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
@@ -12,19 +12,14 @@ const CreateSectionSchema = z.strictObject({
   }),
 });
 
-async function createSectionArtifact(
+async function createSectionTile(
   args: z.infer<typeof CreateSectionSchema>,
-  { pageId }: ToolContext,
+  { session }: ToolContext,
 ) {
   const { size, layout } = args;
-
-  const artifact = await createSection({
-    pageId,
-    layout,
-    ...getDimensions(size),
-  });
-
-  return { artifact };
+  const map = buildSectionMap({ layout, ...getDimensions(size) });
+  const tileId = session.createTile(map);
+  return { tileId };
 }
 
 export const CREATE_SECTION_TOOL: FunctionToolOptions<
@@ -34,5 +29,5 @@ export const CREATE_SECTION_TOOL: FunctionToolOptions<
   description:
     "Creates a section container for grouping related content. After creating a section, use its ID as the sectionId parameter in other tools to add content inside it.",
   schema: CreateSectionSchema,
-  function: createSectionArtifact,
+  function: createSectionTile,
 };

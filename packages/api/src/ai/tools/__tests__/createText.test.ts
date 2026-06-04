@@ -1,12 +1,9 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
-import { createText } from "@/routes/text/text.ts";
-import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai.ts";
-import { TEXT_TILE } from "@/test/fixtures/Tile.ts";
-import { CREATE_TEXT_TOOL } from "../createText.ts";
-
-vi.mock("@/routes/text/text.ts", () => ({
-  createText: vi.fn(),
-}));
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import * as Y from "yjs";
+import { DocWriter } from "@/collaboration/DocWriter";
+import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
+import { CREATE_TEXT_TOOL } from "../createText";
+import type { ToolContext } from "../types";
 
 const BASE_ARGS = {
   sectionId: null,
@@ -16,113 +13,62 @@ const BASE_ARGS = {
 };
 
 describe("CREATE_TEXT_TOOL", () => {
+  let doc: Y.Doc;
+  let context: ToolContext;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(createText).mockResolvedValue(TEXT_TILE);
+    doc = new Y.Doc();
+    context = { ...MOCK_TOOL_CONTEXT, session: new DocWriter(doc) };
   });
 
-  test("creates text with correct dimensions for small size", async () => {
-    await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, size: "small" },
-      MOCK_TOOL_CONTEXT,
-    );
+  function tile(result: unknown): Y.Map<unknown> {
+    const { tileId } = result as { tileId: string };
+    return doc.getMap<Y.Map<unknown>>("tiles").get(tileId)!;
+  }
 
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({ width: 12, height: 10 }),
-    );
+  test("creates a text tile with an empty content fragment", async () => {
+    const result = await CREATE_TEXT_TOOL.function(BASE_ARGS, context);
+
+    const map = tile(result);
+    expect(map.get("type")).toBe("TEXT");
+    expect(map.get("content")).toBeInstanceOf(Y.XmlFragment);
+    expect((map.get("content") as Y.XmlFragment).length).toBe(0);
   });
 
-  test("creates text with correct dimensions for large size", async () => {
-    await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, size: "large" },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({ width: 24, height: 20 }),
-    );
-  });
-
-  test("uses context sectionId when args.sectionId is null", async () => {
-    const context = { ...MOCK_TOOL_CONTEXT, sectionId: "context-section" };
-
-    await CREATE_TEXT_TOOL.function(BASE_ARGS, context);
-
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({ sectionId: "context-section" }),
-    );
-  });
-
-  test("resolves sectionId when provided in args", async () => {
-    await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, sectionId: 0 },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith(0);
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({ sectionId: "resolved-0" }),
-    );
-  });
-
-  test("maps alignment left to 0", async () => {
-    await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, align: "left" },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({
-        content: [{ type: "paragraph", align: 0, children: [] }],
-      }),
-    );
-  });
-
-  test("maps alignment center to 1", async () => {
-    await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, align: "center" },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({
-        content: [{ type: "paragraph", align: 1, children: [] }],
-      }),
-    );
-  });
-
-  test("maps alignment right to 2", async () => {
-    await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, align: "right" },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({
-        content: [{ type: "paragraph", align: 2, children: [] }],
-      }),
-    );
-  });
-
-  test("maps alignment justify to 3", async () => {
-    await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, align: "justify" },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(createText).toHaveBeenCalledWith(
-      expect.objectContaining({
-        content: [{ type: "paragraph", align: 3, children: [] }],
-      }),
-    );
-  });
-
-  test("returns artifact from createText", async () => {
+  test("sets dimensions for small size", async () => {
     const result = await CREATE_TEXT_TOOL.function(
-      BASE_ARGS,
-      MOCK_TOOL_CONTEXT,
+      { ...BASE_ARGS, size: "small" },
+      context,
     );
 
-    expect(result).toEqual({ artifact: TEXT_TILE });
+    const map = tile(result);
+    expect(map.get("width")).toBe(12);
+    expect(map.get("height")).toBe(10);
+  });
+
+  test("places at the page root when there is no section", async () => {
+    const result = await CREATE_TEXT_TOOL.function(BASE_ARGS, context);
+
+    expect(tile(result).get("parentId")).toBeNull();
+  });
+
+  test("uses the context sectionId as the parent", async () => {
+    const result = await CREATE_TEXT_TOOL.function(BASE_ARGS, {
+      ...context,
+      sectionId: "context-section",
+    });
+
+    expect(tile(result).get("parentId")).toBe("context-section");
+  });
+
+  test("resolves an args sectionId to the parent", async () => {
+    const result = await CREATE_TEXT_TOOL.function(
+      { ...BASE_ARGS, sectionId: 0 },
+      context,
+    );
+
+    expect(context.resolveArtifactId).toHaveBeenCalledWith(0);
+    expect(tile(result).get("parentId")).toBe("resolved-0");
   });
 });

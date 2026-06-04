@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createText } from "@/routes/text/text.ts";
+import { buildTextMap } from "doc/tiles/text";
 import { SizeSchema, getDimensions, CoordinatesSchema } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
@@ -15,50 +15,21 @@ const CreateTextSchema = z.strictObject({
   coordinates: CoordinatesSchema,
 });
 
-type CreateTextSchemaType = z.infer<typeof CreateTextSchema>;
-
-function getTextAlignment(value: CreateTextSchemaType["align"]) {
-  switch (value) {
-    case "left":
-      return 0;
-    case "center":
-      return 1;
-    case "right":
-      return 2;
-    case "justify":
-      return 3;
-    default:
-      return 0;
-  }
-}
-
-async function createTextArtifact(
+async function createTextTile(
   args: z.infer<typeof CreateTextSchema>,
-  { pageId, sectionId, resolveArtifactId }: ToolContext,
+  { sectionId, resolveArtifactId, session }: ToolContext,
 ) {
-  const { align, size, coordinates } = args;
-  const resolvedSectionId =
+  const { size, coordinates } = args;
+  const parentId =
     args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
-  const artifact = await createText({
-    pageId,
-    sectionId: resolvedSectionId,
-    ...getDimensions(size),
-    lat: coordinates?.lat,
-    long: coordinates?.long,
-    content: [
-      {
-        type: "paragraph",
-        align: getTextAlignment(align),
-        children: [],
-      },
-    ],
-  });
-  return { artifact };
+  const map = buildTextMap({ ...getDimensions(size), coordinates });
+  const tileId = session.createTile(map, { parentId });
+  return { tileId };
 }
 
 export const CREATE_TEXT_TOOL: FunctionToolOptions<typeof CreateTextSchema> = {
   name: "create_text",
   description: "Creates a text block to contain a section of text.",
   schema: CreateTextSchema,
-  function: createTextArtifact,
+  function: createTextTile,
 };

@@ -1,10 +1,6 @@
 import { z } from "zod";
 import { CommonTileSchema, CoordinatesSchema } from "./schema.ts";
-import type {
-  ActionResult,
-  FunctionToolOptions,
-  ToolContext,
-} from "./types.ts";
+import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
 const EditStyleSchema = z.strictObject({
   id: z.number().int().meta({
@@ -16,29 +12,14 @@ const EditStyleSchema = z.strictObject({
 
 async function editStyle(
   args: z.infer<typeof EditStyleSchema>,
-  context: ToolContext,
-): Promise<ActionResult> {
-  const tileId = context.resolveArtifactId(args.id);
-  const { id: _, position, coordinates, hide, ...changes } = args;
+  { session, resolveArtifactId }: ToolContext,
+) {
+  const { id, ...fields } = args;
+  const changes: Record<string, unknown> = Object.fromEntries(
+    Object.entries(fields).filter(([, value]) => value !== null),
+  );
 
-  return {
-    actions: [
-      {
-        type: "tile.setProperties",
-        data: {
-          tileId,
-          changes: {
-            ...changes,
-            hide: hide ?? undefined,
-            ...(position ? { x: position.x, y: position.y } : {}),
-            ...(coordinates
-              ? { lat: coordinates.lat, long: coordinates.long }
-              : {}),
-          },
-        },
-      },
-    ],
-  };
+  session.setProperties(resolveArtifactId(id), changes);
 }
 
 export const EDIT_STYLE_TOOL: FunctionToolOptions<typeof EditStyleSchema> = {

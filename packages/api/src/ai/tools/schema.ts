@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Animation, DockEdge, FrameStyle } from "@/generated/prisma/enums";
+import { Animation, FrameStyle } from "@/generated/prisma/enums";
 import {
   ColorBackgroundSchema,
   GradientBackgroundSchema,
@@ -48,10 +48,6 @@ export const AnimationSchema = z.enum(Animation).nullable().meta({
   description: "Entrance animation effect",
 });
 
-export const DockSchema = z.enum(DockEdge).nullable().meta({
-  description: "Dock to viewport edge (stays fixed while scrolling)",
-});
-
 export const HideSchema = z.boolean().nullable().meta({
   description: "Hide in view mode (only visible while editing)",
 });
@@ -61,15 +57,13 @@ export const FrameSchema = z.enum(FrameStyle).nullable().meta({
     "Visual frame style: OUTLINED (thin border), SUBTLE (soft glow), CARD (paper shadow), RAISED (floating shadow), FRAMED (bold border), FULL_BLEED (extends background to container edges - only for root/vertical/horizontal layouts)",
 });
 
-export const PositionSchema = z
-  .strictObject({
-    x: z.number().min(0).max(100),
-    y: z.number().min(0).max(100),
-  })
-  .nullable()
-  .meta({
-    description: "Position (x, y as 0-100%) for items in freeform sections",
-  });
+export const PositionXSchema = z.number().min(0).max(100).nullable().meta({
+  description: "Horizontal position (0-100%) for items in freeform sections",
+});
+
+export const PositionYSchema = z.number().min(0).max(100).nullable().meta({
+  description: "Vertical position (0-100%) for items in freeform sections",
+});
 
 export const TextColorSchema = ColorSchema.nullable().meta({
   description: "Text color",
@@ -91,7 +85,7 @@ export const CommonTileSchema = {
   textColor: TextColorSchema,
   animation: AnimationSchema,
   frame: FrameSchema,
-  dock: DockSchema,
   hide: HideSchema,
-  position: PositionSchema,
+  x: PositionXSchema,
+  y: PositionYSchema,
 };

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { MapStyle } from "@/generated/prisma/enums";
-import { createSection } from "@/routes/sections/sections.ts";
+import { buildSectionMap } from "doc/tiles/section";
 import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, ToolContext } from "./types.ts";
 
@@ -15,20 +15,18 @@ const CreateMapSchema = z.strictObject({
     .default("DEFAULT"),
 });
 
-async function createMapArtifact(
+async function createMapTile(
   args: z.infer<typeof CreateMapSchema>,
-  { pageId }: ToolContext,
+  { session }: ToolContext,
 ) {
   const { size, mapStyle } = args;
-
-  const artifact = await createSection({
-    pageId,
+  const map = buildSectionMap({
     layout: "MAP",
     mapStyle,
     ...getDimensions(size),
   });
-
-  return { artifact };
+  const tileId = session.createTile(map);
+  return { tileId };
 }
 
 export const CREATE_MAP_TOOL: FunctionToolOptions<typeof CreateMapSchema> = {
@@ -36,5 +34,5 @@ export const CREATE_MAP_TOOL: FunctionToolOptions<typeof CreateMapSchema> = {
   description:
     "Creates an interactive map. After creating a map, use its ID as the sectionId parameter in other tools and provide coordinates (lat/long) to place content as pins on the map.",
   schema: CreateMapSchema,
-  function: createMapArtifact,
+  function: createMapTile,
 };

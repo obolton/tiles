@@ -1,83 +1,88 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
-import { createLink } from "@/routes/links/links.ts";
-import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai.ts";
-import { LINK_TILE } from "@/test/fixtures/Tile.ts";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import * as Y from "yjs";
+import { resolveLinkMetadata } from "@/routes/links/links.ts";
+import { createToolContext, getCreatedTile } from "@/test/fixtures/ai.ts";
 import { CREATE_LINK_TOOL } from "../createLink.ts";
+import type { ToolContext } from "../types.ts";
 
 vi.mock("@/routes/links/links.ts", () => ({
-  createLink: vi.fn(),
+  resolveLinkMetadata: vi.fn(),
 }));
 
 const BASE_ARGS = {
   sectionId: null,
-  size: "medium" as const,
   url: "https://example.com",
+  size: "medium" as const,
   coordinates: null,
 };
 
 describe("CREATE_LINK_TOOL", () => {
+  let doc: Y.Doc;
+  let context: ToolContext;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(createLink).mockResolvedValue(LINK_TILE);
+    ({ doc, context } = createToolContext());
   });
 
-  test("passes URL to createLink", async () => {
-    await CREATE_LINK_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
+  test("creates a link tile from the unfurled metadata", async () => {
+    vi.mocked(resolveLinkMetadata).mockResolvedValue({
+      type: "LINK",
+      url: "https://example.com",
+      title: "Example",
+      description: "An example site",
+      siteName: "example.com",
+      imageId: "image-1",
+    });
 
-    expect(createLink).toHaveBeenCalledWith(
-      expect.objectContaining({ url: "https://example.com" }),
-      MOCK_TOOL_CONTEXT,
-    );
+    const result = await CREATE_LINK_TOOL.function(BASE_ARGS, context);
+
+    const map = getCreatedTile(doc, result);
+    expect(map.get("type")).toBe("LINK");
+    expect(map.get("url")).toBe("https://example.com");
+    expect(map.get("title")).toBe("Example");
+    expect(map.get("siteName")).toBe("example.com");
+    expect(map.get("imageId")).toBe("image-1");
   });
 
-  test("uses correct dimensions for medium size", async () => {
-    await CREATE_LINK_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
+  test("creates a video tile when the URL resolves to a video", async () => {
+    vi.mocked(resolveLinkMetadata).mockResolvedValue({
+      type: "VIDEO",
+      videoType: "YOUTUBE",
+      videoId: "abc123",
+      title: "A video",
+      description: null,
+      imageUrl: "https://img.example/thumb.jpg",
+    });
 
-    expect(createLink).toHaveBeenCalledWith(
-      expect.objectContaining({ width: 24, height: 15 }),
-      MOCK_TOOL_CONTEXT,
-    );
-  });
-
-  test("uses context sectionId when args.sectionId is null", async () => {
-    const context = { ...MOCK_TOOL_CONTEXT, sectionId: "context-section" };
-
-    await CREATE_LINK_TOOL.function(BASE_ARGS, context);
-
-    expect(createLink).toHaveBeenCalledWith(
-      expect.objectContaining({ sectionId: "context-section" }),
+    const result = await CREATE_LINK_TOOL.function(
+      { ...BASE_ARGS, url: "https://youtube.com/watch?v=abc123" },
       context,
     );
+
+    const map = getCreatedTile(doc, result);
+    expect(map.get("type")).toBe("VIDEO");
+    expect(map.get("videoType")).toBe("YOUTUBE");
+    expect(map.get("videoId")).toBe("abc123");
+    expect(map.get("title")).toBe("A video");
   });
 
-  test("resolves sectionId when provided in args", async () => {
-    await CREATE_LINK_TOOL.function(
-      { ...BASE_ARGS, sectionId: 0 },
-      MOCK_TOOL_CONTEXT,
-    );
+  test("resolves an args sectionId to the parent", async () => {
+    vi.mocked(resolveLinkMetadata).mockResolvedValue({
+      type: "LINK",
+      url: "https://example.com",
+      title: null,
+      description: null,
+      siteName: null,
+      imageId: null,
+    });
 
-    expect(MOCK_TOOL_CONTEXT.resolveArtifactId).toHaveBeenCalledWith(0);
-    expect(createLink).toHaveBeenCalledWith(
-      expect.objectContaining({ sectionId: "resolved-0" }),
-      MOCK_TOOL_CONTEXT,
-    );
-  });
-
-  test("passes pageId from context", async () => {
-    await CREATE_LINK_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
-
-    expect(createLink).toHaveBeenCalledWith(
-      expect.objectContaining({ pageId: "test-page" }),
-      MOCK_TOOL_CONTEXT,
-    );
-  });
-
-  test("returns artifact from createLink", async () => {
     const result = await CREATE_LINK_TOOL.function(
-      BASE_ARGS,
-      MOCK_TOOL_CONTEXT,
+      { ...BASE_ARGS, sectionId: 0 },
+      context,
     );
 
-    expect(result).toEqual({ artifact: LINK_TILE });
+    expect(context.resolveArtifactId).toHaveBeenCalledWith(0);
+    expect(getCreatedTile(doc, result).get("parentId")).toBe("resolved-0");
   });
 });

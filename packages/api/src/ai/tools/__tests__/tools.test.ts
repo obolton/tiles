@@ -2,10 +2,6 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai.ts";
 import { FUNCTION_TOOLS, useFunctionTool } from "../tools.ts";
 
-vi.mock("@/routes/text/text.ts", () => ({
-  createText: vi.fn().mockResolvedValue({ type: "TEXT", id: "text-1" }),
-}));
-
 vi.mock("@/routes/tables/tables.ts", () => ({
   createTable: vi.fn().mockResolvedValue({ type: "TABLE", id: "table-1" }),
 }));
@@ -16,13 +12,14 @@ vi.mock("@/routes/charts/charts.ts", () => ({
 }));
 
 vi.mock("@/routes/links/links.ts", () => ({
-  createLink: vi.fn().mockResolvedValue({ type: "LINK", id: "link-1" }),
-}));
-
-vi.mock("@/routes/sections/sections.ts", () => ({
-  createSection: vi
-    .fn()
-    .mockResolvedValue({ type: "SECTION", id: "section-1" }),
+  resolveLinkMetadata: vi.fn().mockResolvedValue({
+    type: "LINK",
+    url: "https://example.com",
+    title: null,
+    description: null,
+    siteName: null,
+    imageId: null,
+  }),
 }));
 
 describe("FUNCTION_TOOLS", () => {
@@ -75,7 +72,7 @@ describe("useFunctionTool", () => {
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(result).toEqual({ artifact: { type: "TEXT", id: "text-1" } });
+    expect(result).toEqual({ tileId: expect.any(String) });
   });
 
   test("finds and executes create_table tool", async () => {
@@ -121,7 +118,7 @@ describe("useFunctionTool", () => {
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(result).toEqual({ artifact: { type: "LINK", id: "link-1" } });
+    expect(result).toEqual({ tileId: expect.any(String) });
   });
 
   test("finds and executes create_section tool", async () => {
@@ -140,7 +137,7 @@ describe("useFunctionTool", () => {
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(result).toEqual({ artifact: { type: "SECTION", id: "section-1" } });
+    expect(result).toEqual({ tileId: expect.any(String) });
   });
 
   test("throws error for unknown tool name", async () => {

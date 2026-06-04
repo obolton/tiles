@@ -4,10 +4,11 @@ import { upload, IMAGES_BUCKET } from "@/utils/storage.ts";
 import { openai } from "../openai.ts";
 import {
   IMAGE_GENERATION_OPTIONS,
+  IMAGE_GENERATION_DIMENSIONS,
   IMAGE_CONTENT_TYPE,
   IMAGE_TYPE,
 } from "../constants.ts";
-import { createImage } from "@/routes/images/images.ts";
+import { buildImageMap } from "doc/tiles/image";
 import type {
   ResponseOutputItem,
   Tool,
@@ -94,14 +95,14 @@ export async function createImageTile(
   call: ResponseOutputItem.ImageGenerationCall,
   context: ToolContext,
 ) {
-  const { pageId, sectionId } = context;
+  const { sectionId, session } = context;
   const imageId = await uploadGeneratedImage(call, context);
-  const artifact = await createImage({
-    pageId,
-    sectionId,
+  const map = buildImageMap({
     imageId,
+    size: IMAGE_GENERATION_DIMENSIONS,
     width: 12,
     height: 12,
   });
-  return { artifact };
+  const tileId = session.createTile(map, { parentId: sectionId });
+  return { tileId };
 }
