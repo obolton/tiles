@@ -6,7 +6,7 @@ import { CREATE_TEXT_TOOL } from "../createText";
 import type { ToolContext } from "../types";
 
 const BASE_ARGS = {
-  sectionId: null,
+  parentId: null,
   align: null,
   size: "medium" as const,
   coordinates: null,
@@ -62,9 +62,9 @@ describe("CREATE_TEXT_TOOL", () => {
     expect(tile(result).get("parentId")).toBe("context-section");
   });
 
-  test("resolves an args sectionId to the parent", async () => {
+  test("resolves an args parentId to the parent", async () => {
     const result = await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, sectionId: 0 },
+      { ...BASE_ARGS, parentId: 0 },
       context,
     );
 

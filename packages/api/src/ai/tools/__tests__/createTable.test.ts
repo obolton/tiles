@@ -1,15 +1,15 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { createTable } from "@/routes/tables/tables.ts";
-import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai.ts";
-import { TABLE_TILE } from "@/test/fixtures/Tile.ts";
-import { CREATE_TABLE_TOOL } from "../createTable.ts";
+import { createTable } from "@/routes/tables/tables";
+import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
+import { TABLE_TILE } from "@/test/fixtures/Tile";
+import { CREATE_TABLE_TOOL } from "../createTable";
 
 vi.mock("@/routes/tables/tables.ts", () => ({
   createTable: vi.fn(),
 }));
 
 const BASE_ARGS = {
-  sectionId: null,
+  parentId: null,
   size: "medium" as const,
   columns: [
     { title: "A", background: null },
@@ -51,7 +51,7 @@ describe("CREATE_TABLE_TOOL", () => {
     );
   });
 
-  test("uses context sectionId when args.sectionId is null", async () => {
+  test("uses context sectionId when args.parentId is null", async () => {
     const context = { ...MOCK_TOOL_CONTEXT, sectionId: "context-section" };
 
     await CREATE_TABLE_TOOL.function(BASE_ARGS, context);
@@ -61,9 +61,9 @@ describe("CREATE_TABLE_TOOL", () => {
     );
   });
 
-  test("resolves sectionId when provided in args", async () => {
+  test("resolves an args parentId to the parent", async () => {
     await CREATE_TABLE_TOOL.function(
-      { ...BASE_ARGS, sectionId: 0 },
+      { ...BASE_ARGS, parentId: 0 },
       MOCK_TOOL_CONTEXT,
     );
 

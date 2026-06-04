@@ -1,8 +1,8 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { createChart, getTableColumns } from "@/routes/charts/charts.ts";
-import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai.ts";
-import { CHART_TILE } from "@/test/fixtures/Tile.ts";
-import { CREATE_CHART_TOOL } from "../createChart.ts";
+import { createChart, getTableColumns } from "@/routes/charts/charts";
+import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
+import { CHART_TILE } from "@/test/fixtures/Tile";
+import { CREATE_CHART_TOOL } from "../createChart";
 
 vi.mock("@/routes/charts/charts.ts", () => ({
   createChart: vi.fn(),
@@ -12,7 +12,7 @@ vi.mock("@/routes/charts/charts.ts", () => ({
 const MOCK_COLUMNS = [{ id: "col-a" }, { id: "col-b" }, { id: "col-c" }];
 
 const BASE_ARGS = {
-  sectionId: null,
+  parentId: null,
   size: "medium" as const,
   tableId: 0,
   labelColumnIndex: null,

@@ -1,16 +1,16 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
-import { resolveLinkMetadata } from "@/routes/links/links.ts";
-import { createToolContext, getCreatedTile } from "@/test/fixtures/ai.ts";
-import { CREATE_LINK_TOOL } from "../createLink.ts";
-import type { ToolContext } from "../types.ts";
+import { resolveLinkMetadata } from "@/routes/links/links";
+import { createToolContext, getCreatedTile } from "@/test/fixtures/ai";
+import { CREATE_LINK_TOOL } from "../createLink";
+import type { ToolContext } from "../types";
 
 vi.mock("@/routes/links/links.ts", () => ({
   resolveLinkMetadata: vi.fn(),
 }));
 
 const BASE_ARGS = {
-  sectionId: null,
+  parentId: null,
   url: "https://example.com",
   size: "medium" as const,
   coordinates: null,
@@ -67,7 +67,7 @@ describe("CREATE_LINK_TOOL", () => {
     expect(map.get("title")).toBe("A video");
   });
 
-  test("resolves an args sectionId to the parent", async () => {
+  test("resolves an args parentId to the parent", async () => {
     vi.mocked(resolveLinkMetadata).mockResolvedValue({
       type: "LINK",
       url: "https://example.com",
@@ -78,7 +78,7 @@ describe("CREATE_LINK_TOOL", () => {
     });
 
     const result = await CREATE_LINK_TOOL.function(
-      { ...BASE_ARGS, sectionId: 0 },
+      { ...BASE_ARGS, parentId: 0 },
       context,
     );
 

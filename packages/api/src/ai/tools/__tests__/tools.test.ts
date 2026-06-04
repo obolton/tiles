@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai.ts";
-import { FUNCTION_TOOLS, useFunctionTool } from "../tools.ts";
+import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
+import { FUNCTION_TOOLS, useFunctionTool } from "../tools";
 
 vi.mock("@/routes/tables/tables.ts", () => ({
   createTable: vi.fn().mockResolvedValue({ type: "TABLE", id: "table-1" }),
@@ -27,6 +27,7 @@ describe("FUNCTION_TOOLS", () => {
     const toolNames = FUNCTION_TOOLS.map((t) => t.name);
 
     expect(toolNames).toContain("create_text");
+    expect(toolNames).toContain("create_image");
     expect(toolNames).toContain("create_table");
     expect(toolNames).toContain("create_chart");
     expect(toolNames).toContain("create_link");
@@ -62,7 +63,7 @@ describe("useFunctionTool", () => {
         call_id: "call-1",
         name: "create_text",
         arguments: JSON.stringify({
-          sectionId: null,
+          parentId: null,
           align: null,
           size: "medium",
           coordinates: null,
@@ -83,7 +84,7 @@ describe("useFunctionTool", () => {
         call_id: "call-1",
         name: "create_table",
         arguments: JSON.stringify({
-          sectionId: null,
+          parentId: null,
           size: "medium",
           columns: [
             { title: "A", background: null },
@@ -108,7 +109,7 @@ describe("useFunctionTool", () => {
         call_id: "call-1",
         name: "create_link",
         arguments: JSON.stringify({
-          sectionId: null,
+          parentId: null,
           size: "medium",
           url: "https://example.com",
           coordinates: null,

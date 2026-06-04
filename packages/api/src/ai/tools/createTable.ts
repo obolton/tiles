@@ -1,16 +1,18 @@
 import { z } from "zod";
-import { createTable } from "@/routes/tables/tables.ts";
+import { createTable } from "@/routes/tables/tables";
 import {
   SizeSchema,
   getDimensions,
   AIColumnDefinitionSchema,
   CoordinatesSchema,
-} from "./schema.ts";
-import type { FunctionToolOptions, ToolContext } from "./types.ts";
+  resolveParentId,
+} from "./schema";
+import type { FunctionToolOptions, ToolContext } from "./types";
 
 const CreateTableSchema = z.strictObject({
-  sectionId: z.number().int().nullable().meta({
-    description: "Section ID to place this content inside a section, or null",
+  parentId: z.number().int().nullable().meta({
+    description:
+      "ID of a section or map to place this content inside (from a create_section or create_map result), or null",
   }),
   size: SizeSchema,
   columns: z.array(AIColumnDefinitionSchema).min(2).max(8).meta({
@@ -28,14 +30,14 @@ const CreateTableSchema = z.strictObject({
 
 async function createTableArtifact(
   args: z.infer<typeof CreateTableSchema>,
-  { pageId, sectionId, resolveArtifactId }: ToolContext,
+  context: ToolContext,
 ) {
+  const { pageId } = context;
   const { size, columns, rows, coordinates } = args;
-  const resolvedSectionId =
-    args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
+  const parentId = resolveParentId(args.parentId, context);
   const artifact = await createTable({
     pageId,
-    sectionId: resolvedSectionId,
+    sectionId: parentId,
     columns: columns.map((col) => ({
       title: col.title ?? undefined,
       background: col.background,

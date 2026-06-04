@@ -1,12 +1,18 @@
 import { z } from "zod";
-import { createChart, getTableColumns } from "@/routes/charts/charts.ts";
-import { ColorSchema } from "@/schema/Color.ts";
-import { SizeSchema, getDimensions, CoordinatesSchema } from "./schema.ts";
-import type { FunctionToolOptions, ToolContext } from "./types.ts";
+import { createChart, getTableColumns } from "@/routes/charts/charts";
+import { ColorSchema } from "@/schema/Color";
+import {
+  SizeSchema,
+  getDimensions,
+  CoordinatesSchema,
+  resolveParentId,
+} from "./schema";
+import type { FunctionToolOptions, ToolContext } from "./types";
 
 const CreateChartSchema = z.strictObject({
-  sectionId: z.number().int().nullable().meta({
-    description: "Section ID to place this content inside a section, or null",
+  parentId: z.number().int().nullable().meta({
+    description:
+      "ID of a section or map to place this content inside (from a create_section or create_map result), or null",
   }),
   size: SizeSchema,
   tableId: z.number().int().meta({
@@ -38,11 +44,11 @@ const CreateChartSchema = z.strictObject({
 
 async function createChartArtifact(
   args: z.infer<typeof CreateChartSchema>,
-  { pageId, sectionId, resolveArtifactId }: ToolContext,
+  context: ToolContext,
 ) {
+  const { pageId, resolveArtifactId } = context;
   const { size } = args;
-  const resolvedSectionId =
-    args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
+  const parentId = resolveParentId(args.parentId, context);
   const tableId = resolveArtifactId(args.tableId);
   const columns = await getTableColumns(pageId, tableId);
 
@@ -65,7 +71,7 @@ async function createChartArtifact(
 
   const artifact = await createChart({
     pageId,
-    sectionId: resolvedSectionId,
+    sectionId: parentId,
     tableId,
     labelColumnId,
     series,

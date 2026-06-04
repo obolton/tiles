@@ -2,12 +2,18 @@ import { z } from "zod";
 import { resolveLinkMetadata } from "@/routes/links/links.ts";
 import { buildLinkMap } from "doc/tiles/link";
 import { buildVideoMap } from "doc/tiles/video";
-import { SizeSchema, getDimensions, CoordinatesSchema } from "./schema.ts";
-import type { FunctionToolOptions, ToolContext } from "./types.ts";
+import {
+  SizeSchema,
+  getDimensions,
+  CoordinatesSchema,
+  resolveParentId,
+} from "./schema";
+import type { FunctionToolOptions, ToolContext } from "./types";
 
 const CreateLinkSchema = z.strictObject({
-  sectionId: z.number().int().nullable().meta({
-    description: "Section ID to place this content inside a section, or null",
+  parentId: z.number().int().nullable().meta({
+    description:
+      "ID of a section or map to place this content inside (from a create_section or create_map result), or null",
   }),
   url: z.string().meta({
     description: "A URL to create a link to",
@@ -21,9 +27,8 @@ async function createLinkTile(
   context: ToolContext,
 ) {
   const { url, size, coordinates } = args;
-  const { pageId, sectionId, resolveArtifactId, session } = context;
-  const parentId =
-    args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
+  const { pageId, session } = context;
+  const parentId = resolveParentId(args.parentId, context);
 
   // Unfurl the URL: video links (e.g. YouTube) become video tiles, everything
   // else becomes a link card.

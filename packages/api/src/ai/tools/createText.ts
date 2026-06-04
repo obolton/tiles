@@ -1,11 +1,17 @@
 import { z } from "zod";
 import { buildTextMap } from "doc/tiles/text";
-import { SizeSchema, getDimensions, CoordinatesSchema } from "./schema.ts";
-import type { FunctionToolOptions, ToolContext } from "./types.ts";
+import {
+  SizeSchema,
+  getDimensions,
+  CoordinatesSchema,
+  resolveParentId,
+} from "./schema";
+import type { FunctionToolOptions, ToolContext } from "./types";
 
 const CreateTextSchema = z.strictObject({
-  sectionId: z.number().int().nullable().meta({
-    description: "Section ID to place this content inside a section, or null",
+  parentId: z.number().int().nullable().meta({
+    description:
+      "ID of a section or map to place this content inside (from a create_section or create_map result), or null",
   }),
   align: z
     .enum(["left", "center", "right", "justify"])
@@ -17,13 +23,12 @@ const CreateTextSchema = z.strictObject({
 
 async function createTextTile(
   args: z.infer<typeof CreateTextSchema>,
-  { sectionId, resolveArtifactId, session }: ToolContext,
+  context: ToolContext,
 ) {
   const { size, coordinates } = args;
-  const parentId =
-    args.sectionId !== null ? resolveArtifactId(args.sectionId) : sectionId;
+  const parentId = resolveParentId(args.parentId, context);
   const map = buildTextMap({ ...getDimensions(size), coordinates });
-  const tileId = session.createTile(map, { parentId });
+  const tileId = context.session.createTile(map, { parentId });
   return { tileId };
 }
 
