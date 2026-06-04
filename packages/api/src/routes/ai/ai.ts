@@ -1,18 +1,19 @@
-import { TEXT_MODEL } from "@/ai/constants.ts";
+import { TEXT_MODEL } from "@/ai/constants";
 import {
   transformMarkdown,
-  type Destination,
-  type DestinationMode,
   type RichTextFormat,
   type RichTextNode,
-  type RichTextStreamEvent,
-} from "@/utils/markdown.ts";
-import { openai } from "@/ai/openai.ts";
-import { generateImageFromPrompt, createImageTile } from "@/ai/tools/images.ts";
-import { TOOLS, useFunctionTool } from "@/ai/tools/tools.ts";
-import { fetchTilesForContext } from "@/ai/context/tiles.ts";
-import { buildContextIds, formatTileContext } from "@/ai/context/format.ts";
-import type { GenerateImageSchema, WriteSchema } from "./schema.ts";
+} from "@/utils/markdown";
+import { openai } from "@/ai/openai";
+import { generateImageFromPrompt, createImageTile } from "@/ai/tools/images";
+import { TOOLS, useFunctionTool } from "@/ai/tools/tools";
+import { fetchTilesForContext } from "@/ai/context/tiles";
+import { buildContextIds, formatTileContext } from "@/ai/context/format";
+import { hocuspocus } from "@/collaboration/instance";
+import { docName } from "@/collaboration/server";
+import { DocWriter } from "@/collaboration/DocWriter";
+import { YXmlStreamWriter } from "doc/richText/writer";
+import type { GenerateImageSchema, WriteSchema } from "./schema";
 import type {
   Action,
   ActionEvent,
@@ -25,12 +26,7 @@ import type {
   ResponseOutputItem,
   ResponseStreamEvent,
 } from "openai/resources/responses/responses";
-import type { AuthenticatedPageProcedureContext } from "@/utils/middleware.ts";
-
-interface ResolvedDestination {
-  destination: string | null;
-  mode?: DestinationMode;
-}
+import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
 
 export type MessageEvent = string | RichTextFormat | RichTextNode;
 
@@ -38,12 +34,7 @@ export interface Message {
   message: MessageEvent;
 }
 
-export type WriteEvent =
-  | Exclude<RichTextStreamEvent, Destination>
-  | ResolvedDestination
-  | Artifact
-  | ActionEvent
-  | Message;
+export type WriteEvent = Message | Artifact | ActionEvent;
 
 const MAX_TURNS = 12;
 const PROMPT = `You are a tool for creating and editing interactive documents. Use tool calls and block markers to create and edit document content. Any text outside of block markers will be shown as a message to the user in a chat interface (not inserted into the document). You may include a brief conversational response when appropriate, especially to acknowledge the user's request, explain what you did, or ask clarifying questions.
@@ -159,35 +150,51 @@ export async function* write(
 
   input.push({ role: "user", content: prompt });
 
-  const toolContext: ToolContext = {
-    ...ctx,
+  const connection = await hocuspocus.openDirectConnection(docName(pageId), {
+    userId: ctx.userId,
+    sessionId: ctx.sessionId,
     pageId,
-    sectionId,
-    model: TEXT_MODEL,
-    resolveArtifactId: (id: number) => {
-      const artifactId = artifactIds[id];
-      if (!artifactId) {
-        throw new Error(`Unknown artifact: ${id}`);
-      }
-      return artifactId;
-    },
-  };
+  });
 
-  let turn = 0;
-  let continueTurns = true;
+  try {
+    const document = connection.document;
+    if (!document) {
+      throw new Error(`Failed to open page document: ${pageId}`);
+    }
 
-  // oxlint-disable-next-line no-unmodified-loop-condition
-  while (continueTurns && turn < MAX_TURNS && !signal?.aborted) {
-    const { events, output, toolCalls } = await streamTurn(
-      input,
-      toolContext,
-      artifactIds,
-      signal,
-    );
-    yield* events();
-    input.push(...output, ...toolCalls);
-    turn++;
-    continueTurns = toolCalls.length > 0;
+    const toolContext: ToolContext = {
+      ...ctx,
+      pageId,
+      sectionId,
+      model: TEXT_MODEL,
+      session: new DocWriter(document),
+      resolveArtifactId: (id: number) => {
+        const artifactId = artifactIds[id];
+        if (!artifactId) {
+          throw new Error(`Unknown artifact: ${id}`);
+        }
+        return artifactId;
+      },
+    };
+
+    let turn = 0;
+    let continueTurns = true;
+
+    // oxlint-disable-next-line no-unmodified-loop-condition
+    while (continueTurns && turn < MAX_TURNS && !signal?.aborted) {
+      const { events, output, toolCalls } = await streamTurn(
+        input,
+        toolContext,
+        artifactIds,
+        signal,
+      );
+      yield* events();
+      input.push(...output, ...toolCalls);
+      turn++;
+      continueTurns = toolCalls.length > 0;
+    }
+  } finally {
+    await connection.disconnect();
   }
 }
 
@@ -248,6 +255,17 @@ export async function streamTurn(
                 return;
               }
 
+              if ("tileId" in result) {
+                const id = String(artifactIds.length);
+                artifactIds.push(result.tileId);
+                toolCalls.push({
+                  type: "function_call_output",
+                  call_id: item.call_id,
+                  output: JSON.stringify({ id }),
+                });
+                return;
+              }
+
               const id = String(artifactIds.length);
               artifactIds.push(result.artifact.id);
               toolCalls.push({
@@ -264,8 +282,7 @@ export async function streamTurn(
               item.status === "completed" &&
               item.result
             ) {
-              const artifact = await createImageTile(item, toolContext);
-              artifacts.push(artifact);
+              await createImageTile(item, toolContext);
             }
           }
         },
@@ -274,19 +291,19 @@ export async function streamTurn(
     .pipeThrough(transformMarkdown());
 
   async function* events() {
-    let destination: string | null = null;
+    let writer: YXmlStreamWriter | null = null;
 
     for await (const textEvent of text) {
       if (typeof textEvent === "object" && "destination" in textEvent) {
-        destination =
+        writer =
           textEvent.destination !== null
-            ? toolContext.resolveArtifactId(textEvent.destination)
+            ? toolContext.session.streamText(
+                toolContext.resolveArtifactId(textEvent.destination),
+                textEvent.mode ?? "insert",
+              )
             : null;
-        if (destination) {
-          yield { destination, mode: textEvent.mode };
-        }
-      } else if (destination) {
-        yield textEvent;
+      } else if (writer) {
+        writer.apply(textEvent);
       } else {
         yield { message: textEvent };
       }
