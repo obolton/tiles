@@ -1,5 +1,6 @@
 import * as Y from "yjs";
 import Tile, { type CreateTileInput } from "./Tile";
+import { buildImageMap } from "doc/tiles/image";
 import { reactive, type Reactive } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { getImageUrl } from "@/utils/images";
@@ -37,14 +38,7 @@ export default class Image extends Tile {
   static createMap(
     properties: Omit<CreateImageInput, "parentId" | "beforeId">,
   ): Y.Map<unknown> {
-    const { imageId, size, alt, text, ...baseProps } = properties;
-    const map = super.buildBaseMap({ ...baseProps, type: "IMAGE" });
-    map.set("imageId", imageId);
-    map.set("size", size);
-    map.set("alt", alt ?? null);
-    map.set("text", text ?? null);
-    map.set("origin", { x: 0, y: 0 });
-    return map;
+    return buildImageMap(properties);
   }
 
   static async create(page: Page, data: CreateImageInput): Promise<Image> {

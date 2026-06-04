@@ -1,5 +1,6 @@
 import * as Y from "yjs";
 import Tile, { type CreateTileInput } from "./Tile";
+import { buildPageLinkMap } from "doc/tiles/pageLink";
 import { type Reactive } from "@/utils/reactivity";
 import type Page from "@/models/Page";
 import type { ClientPageLinkTile } from "api/types/tiles";
@@ -22,10 +23,7 @@ export default class PageLink extends Tile {
   static createMap(
     properties: Omit<CreatePageLinkInput, "parentId" | "beforeId">,
   ): Y.Map<unknown> {
-    const { linkedPage, ...baseProps } = properties;
-    const map = super.buildBaseMap({ ...baseProps, type: "PAGE_LINK" });
-    map.set("linkedPage", linkedPage);
-    return map;
+    return buildPageLinkMap(properties);
   }
 
   static async create(

@@ -1,12 +1,10 @@
 import * as Y from "yjs";
+import { buildDropdownMap, type DropdownMapInput } from "doc/tiles/dropdown";
 import { YMapBinding } from "@/collaboration/YMapBinding";
 import type { Reactive } from "@/utils/reactivity";
 import type { DropdownOption } from "doc/types/dropdown";
 
-export interface CreateDropdownInput {
-  title?: string | null;
-  options: DropdownOption[];
-}
+export type { DropdownMapInput };
 
 export default class Dropdown {
   readonly id: string;
@@ -14,11 +12,8 @@ export default class Dropdown {
   readonly options: Reactive<DropdownOption[]>;
   private readonly binding: YMapBinding;
 
-  static createMap(input: CreateDropdownInput): Y.Map<unknown> {
-    const map = new Y.Map<unknown>();
-    map.set("title", input.title ?? null);
-    map.set("options", input.options);
-    return map;
+  static createMap(input: DropdownMapInput): Y.Map<unknown> {
+    return buildDropdownMap(input);
   }
 
   constructor(id: string, map: Y.Map<unknown>) {

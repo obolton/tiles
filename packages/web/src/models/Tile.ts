@@ -21,29 +21,7 @@ import type { TilePropertyChanges } from "@/operations";
 
 export type { Sizing, Animation, FrameStyle, DockEdge };
 
-export interface CreateTileInput {
-  type: TileType;
-  parentId?: string | null;
-  beforeId?: string | null;
-  sizing?: Sizing;
-  x?: number;
-  y?: number;
-  width?: number | null;
-  height?: number;
-  rowSpan?: number;
-  hide?: boolean;
-  startDate?: string;
-  endDate?: string;
-  coordinates?: {
-    lat: number;
-    long: number;
-  } | null;
-  animation?: Animation | null;
-  frame?: FrameStyle | null;
-  cornerRadius?: number;
-  textColor?: Color | null;
-  background?: Fill | null;
-}
+export type { CreateTileInput } from "doc/tiles/base";
 
 export default abstract class Tile {
   readonly page: Page;
@@ -81,36 +59,6 @@ export default abstract class Tile {
   readonly theme: Reactive<ThemeData | null>;
   readonly background: Reactive<Fill | null>;
   readonly textColor: Reactive<Color | null>;
-
-  /**
-   * Builds a detached Y.Map populated with the base tile fields. Subclasses
-   * call this from their own static `createMap` and write type-specific
-   * fields before the map is attached to the doc.
-   */
-  protected static buildBaseMap(
-    properties: Omit<CreateTileInput, "parentId" | "beforeId">,
-  ): Y.Map<unknown> {
-    const map = new Y.Map<unknown>();
-
-    map.set("type", properties.type);
-    map.set("sizing", properties.sizing ?? "AUTO");
-    map.set("x", properties.x ?? 0);
-    map.set("y", properties.y ?? 0);
-    map.set("width", properties.width === undefined ? 0 : properties.width);
-    map.set("height", properties.height ?? 0);
-    map.set("rowSpan", properties.rowSpan ?? 0);
-    map.set("hide", properties.hide ?? false);
-    map.set("startDate", properties.startDate ?? null);
-    map.set("endDate", properties.endDate ?? null);
-    map.set("coordinates", properties.coordinates);
-    map.set("animation", properties.animation ?? null);
-    map.set("frame", properties.frame ?? null);
-    map.set("cornerRadius", properties.cornerRadius ?? 0);
-    map.set("textColor", properties.textColor ?? null);
-    map.set("background", properties.background ?? null);
-
-    return map;
-  }
 
   constructor(page: Page, map: Y.Map<unknown>) {
     this.page = page;

@@ -1,5 +1,6 @@
 import * as Y from "yjs";
 import Tile, { type CreateTileInput } from "./Tile";
+import { buildLinkMap, type LinkMapInput } from "doc/tiles/link";
 import { type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import Video from "./Video";
@@ -8,16 +9,6 @@ import type { ClientLinkTile } from "api/types/tiles";
 
 export interface CreateLinkInput extends Omit<CreateTileInput, "type"> {
   url: string;
-}
-
-interface CreateLinkMapInput extends Omit<
-  CreateLinkInput,
-  "parentId" | "beforeId"
-> {
-  title: string | null;
-  description: string | null;
-  siteName: string | null;
-  imageId: string | null;
 }
 
 export default class Link extends Tile {
@@ -29,27 +20,10 @@ export default class Link extends Tile {
   readonly siteName: Reactive<string | null>;
   readonly imageId: Reactive<string | null>;
 
-  static createMap(properties: CreateLinkMapInput): Y.Map<unknown> {
-    const {
-      url,
-      title,
-      description,
-      siteName,
-      imageId,
-      background,
-      ...baseProps
-    } = properties;
-    const map = super.buildBaseMap({
-      ...baseProps,
-      type: "LINK",
-      background: imageId ? { type: "image", imageId } : background,
-    });
-    map.set("url", url);
-    map.set("title", title);
-    map.set("description", description);
-    map.set("siteName", siteName);
-    map.set("imageId", imageId);
-    return map;
+  static createMap(
+    properties: Omit<LinkMapInput, "parentId" | "beforeId">,
+  ): Y.Map<unknown> {
+    return buildLinkMap(properties);
   }
 
   static async create(

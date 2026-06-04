@@ -1,14 +1,14 @@
 import * as Y from "yjs";
 import { prosemirrorToYXmlFragment } from "y-prosemirror";
-import Tile, { type CreateTileInput } from "./Tile";
+import Tile from "./Tile";
+import { buildTextMap, type TextMapInput } from "doc/tiles/text";
 import { type Reactive } from "@/utils/reactivity";
 import { deserialize } from "@/utils/richText/deserialize";
 import type Page from "@/models/Page";
 import type { ClientTextTile } from "api/types/tiles";
 import type { RichText } from "@/utils/richText/types";
 
-export interface CreateTextInput extends Omit<CreateTileInput, "type"> {
-  align?: ClientTextTile["align"];
+export interface CreateTextInput extends TextMapInput {
   content?: RichText;
 }
 
@@ -21,16 +21,14 @@ export default class Text extends Tile {
   static createMap(
     properties: Omit<CreateTextInput, "parentId" | "beforeId">,
   ): Y.Map<unknown> {
-    const { content, align, ...baseProps } = properties;
-    const map = super.buildBaseMap({ ...baseProps, type: "TEXT" });
-    map.set("align", align ?? "TOP");
-
-    const fragment = new Y.XmlFragment();
+    const { content, ...rest } = properties;
+    const map = buildTextMap(rest);
     if (content && content.length > 0) {
-      prosemirrorToYXmlFragment(deserialize(content), fragment);
+      prosemirrorToYXmlFragment(
+        deserialize(content),
+        map.get("content") as Y.XmlFragment,
+      );
     }
-    map.set("content", fragment);
-
     return map;
   }
 

@@ -1,19 +1,16 @@
 import * as Y from "yjs";
-import Tile, { type CreateTileInput } from "./Tile";
+import Tile from "./Tile";
+import { buildChartMap, type ChartMapInput } from "doc/tiles/chart";
 import Series from "@/models/Series";
 import Collection from "@/collaboration/Collection";
 import type { Reactive } from "@/utils/reactivity";
-import type { ChartType, Property } from "@/models/Series";
+import type { ChartType } from "@/models/Series";
 import type Page from "@/models/Page";
 import type { ClientChartTile } from "api/types/tiles";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
+import type { Property } from "doc/types/chart";
 
-export { Series };
-export type { ChartType, Property };
-
-export interface CreateChartInput extends Omit<CreateTileInput, "type"> {
-  tableId: string;
-  label?: Property | null;
+export interface CreateChartInput extends ChartMapInput {
   columns?: Property[];
 }
 
@@ -27,12 +24,7 @@ export default class Chart extends Tile {
   static createMap(
     properties: Omit<CreateChartInput, "parentId" | "beforeId" | "columns">,
   ): Y.Map<unknown> {
-    const { tableId, label, ...baseProps } = properties;
-    const map = super.buildBaseMap({ ...baseProps, type: "CHART" });
-    map.set("tableId", tableId);
-    map.set("label", label ?? null);
-    map.set("series", new Y.Map<Y.Map<unknown>>());
-    return map;
+    return buildChartMap(properties);
   }
 
   static async create(page: Page, data: CreateChartInput): Promise<Chart> {

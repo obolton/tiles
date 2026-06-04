@@ -1,20 +1,12 @@
 import * as Y from "yjs";
+import { buildSeriesMap, type SeriesMapInput } from "doc/tiles/series";
 import { YMapBinding } from "@/collaboration/YMapBinding";
 import type { Reactive } from "@/utils/reactivity";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
+import type { Property } from "doc/types/chart";
+import type { ChartSeriesType } from "doc/types/enums";
 
-export interface Property {
-  id: string;
-  title: string | null;
-}
-
-export type ChartType = "BAR" | "LINE" | "AREA";
-
-export interface CreateSeriesInput {
-  type: ChartType;
-  column: Property;
-  fill: ColorFill | GradientFill | null;
-}
+export type ChartType = ChartSeriesType;
 
 export default class Series {
   readonly id: string;
@@ -23,12 +15,8 @@ export default class Series {
   readonly fill: Reactive<ColorFill | GradientFill | null>;
   private readonly binding: YMapBinding;
 
-  static createMap(input: CreateSeriesInput): Y.Map<unknown> {
-    const map = new Y.Map<unknown>();
-    map.set("type", input.type);
-    map.set("column", input.column);
-    map.set("fill", input.fill);
-    return map;
+  static createMap(input: SeriesMapInput): Y.Map<unknown> {
+    return buildSeriesMap(input);
   }
 
   constructor(id: string, map: Y.Map<unknown>) {
