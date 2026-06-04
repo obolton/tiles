@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { generateKeyBetween } from "jittered-fractional-indexing";
+import { orderBetween } from "doc/placement/ordering";
 import TileCollection from "./TileCollection";
 import { parseParentId } from "./parentId";
 import type Page from "./Page";
@@ -62,24 +62,10 @@ export default class TilePlacement {
     beforeId: string | null | undefined,
     skip?: Tile,
   ): string {
-    let prev: Tile | undefined;
-    let next: Tile | undefined;
-
-    for (const item of this.getCollection(parentId).value) {
-      if (item === skip) {
-        continue;
-      }
-      if (beforeId != null && item.id === beforeId) {
-        next = item;
-        break;
-      }
-      prev = item;
-    }
-
-    return generateKeyBetween(
-      prev?.order.value ?? null,
-      next?.order.value ?? null,
-    );
+    const siblings = this.getCollection(parentId)
+      .value.values()
+      .map((tile) => ({ id: tile.id, order: tile.order.value }));
+    return orderBetween(siblings, beforeId, skip?.id);
   }
 
   /** Removes a tile from its collection and the page index. Idempotent. */
