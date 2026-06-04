@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import { YMapBinding } from "@/collaboration/YMapBinding";
 import type { Reactive } from "@/utils/reactivity";
-import type { DropdownOption } from "@/types/dropdowns";
+import type { DropdownOption } from "doc/types/dropdown";
 
 export interface CreateDropdownInput {
   title?: string | null;
