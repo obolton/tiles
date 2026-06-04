@@ -1,6 +1,7 @@
 import { useMode, modeOklch, modeP3 } from "culori/fn";
+import type { Color } from "doc/types/color";
 
-export type Color = string;
+export type { Color };
 
 export const COLOR_HEX_REGEX = /^[0-9a-fA-F]{12}$/;
 
