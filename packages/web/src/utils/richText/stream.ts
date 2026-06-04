@@ -6,45 +6,13 @@ import type { EditorState, Transaction } from "prosemirror-state";
 import type { Mark, Node } from "prosemirror-model";
 import type { ClientTile } from "api/types/tiles";
 import type { Reactive } from "@/utils/reactivity";
+import type {
+  RichTextNode,
+  RichTextFormat,
+  DestinationMode,
+} from "doc/richText/events";
 
-export interface ParagraphNode {
-  type: "paragraph";
-}
-
-export interface HeadingNode {
-  type: "heading";
-  level: number;
-}
-
-export interface ListItemNode {
-  type: "listitem";
-  listType: "ordered" | "unordered";
-  depth: number;
-}
-
-export interface DividerNode {
-  type: "divider";
-}
-
-export interface CodeNode {
-  type: "code";
-  language: string;
-  lineNumbers: boolean;
-}
-
-export type RichTextNode =
-  | ParagraphNode
-  | HeadingNode
-  | ListItemNode
-  | DividerNode
-  | CodeNode;
-
-export interface RichTextFormat {
-  bold?: boolean;
-  italic?: boolean;
-}
-
-export type DestinationMode = "insert" | "replace" | "append" | "prepend";
+export type { RichTextNode, RichTextFormat, DestinationMode };
 
 export interface Destination {
   destination: string | null;
