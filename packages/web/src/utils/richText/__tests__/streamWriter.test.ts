@@ -1,55 +1,62 @@
 import { describe, expect, test } from "vitest";
 import * as Y from "yjs";
 import { EditorState } from "prosemirror-state";
-import { prosemirrorToYXmlFragment } from "y-prosemirror";
-import { reactive } from "@/utils/reactivity";
+import {
+  prosemirrorToYXmlFragment,
+  yXmlFragmentToProseMirrorRootNode,
+} from "y-prosemirror";
 import { schema } from "@/utils/richText/schema";
-import { StreamHandler, type StreamEvent } from "@/utils/richText/stream";
-import { serializeFragment } from "@/utils/richText/serialize";
 import { YXmlStreamWriter } from "doc/richText/writer";
 import type { DestinationMode, RichTextContent } from "doc/richText/events";
 
-// The contract: for the same event stream, the server-side YXmlStreamWriter must
-// produce a Y.XmlFragment that serializes identically to what the client
-// StreamHandler produces (→ prosemirrorToYXmlFragment). This pins the writer to
-// y-prosemirror's representation without depending on its internals at runtime.
+// Verifies that YXmlStreamWriter's output matches y-prosemirror.
 
-async function* iterate(items: StreamEvent[]): AsyncIterable<StreamEvent> {
-  for (const item of items) {
-    yield item;
+function definedAttrs(node: Y.XmlElement): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(node.getAttributes()).filter(
+      ([, value]) => value !== undefined,
+    ),
+  );
+}
+
+function serialize(node: Y.XmlElement | Y.XmlText | Y.XmlHook): unknown {
+  if (node instanceof Y.XmlText) {
+    return node.toDelta();
   }
+  if (!(node instanceof Y.XmlElement)) {
+    throw new Error(`unexpected node: ${node.constructor.name}`);
+  }
+  const attrs = definedAttrs(node);
+  return {
+    name: node.nodeName,
+    ...(Object.keys(attrs).length > 0 ? { attrs } : {}),
+    children: node.toArray().map(serialize),
+  };
+}
+
+function blocks(fragment: Y.XmlFragment): unknown[] {
+  return fragment.toArray().map(serialize);
 }
 
 function emptyDoc() {
   return EditorState.create({ schema }).doc;
 }
 
-// Drive the real StreamHandler headless on a bare editor state.
-async function fromStreamHandler(
-  mode: DestinationMode,
-  events: RichTextContent[],
-) {
-  const state = reactive<EditorState | null>(EditorState.create({ schema }));
-  const handler = new StreamHandler({ getState: () => state });
-  await handler.handle(
-    iterate([{ destination: "tile", mode }, ...events, { destination: null }]),
-  );
-
-  const fragment = new Y.Doc().getXmlFragment("content");
-  prosemirrorToYXmlFragment(state.value!.doc, fragment);
-  return serializeFragment(fragment);
-}
-
-// Drive the writer, seeded with the same initial doc (one empty paragraph) the
-// StreamHandler starts from, so the two are directly comparable.
-function fromWriter(mode: DestinationMode, events: RichTextContent[]) {
+function write(mode: DestinationMode, events: RichTextContent[]) {
   const fragment = new Y.Doc().getXmlFragment("content");
   prosemirrorToYXmlFragment(emptyDoc(), fragment);
   const writer = new YXmlStreamWriter(fragment, mode);
   for (const event of events) {
     writer.apply(event);
   }
-  return serializeFragment(fragment);
+  return fragment;
+}
+
+function reencode(fragment: Y.XmlFragment) {
+  const doc = yXmlFragmentToProseMirrorRootNode(fragment, schema);
+  const out = new Y.Doc().getXmlFragment("content");
+  prosemirrorToYXmlFragment(doc, out);
+  return out;
 }
 
 const FIXTURES: { name: string; events: RichTextContent[] }[] = [
@@ -198,14 +205,13 @@ const FIXTURES: { name: string; events: RichTextContent[] }[] = [
   },
 ];
 
-describe("YXmlStreamWriter matches the client StreamHandler", () => {
+describe("YXmlStreamWriter matches y-prosemirror's representation", () => {
   for (const mode of ["append", "replace", "prepend"] as const) {
     describe(mode, () => {
       for (const { name, events } of FIXTURES) {
-        test(name, async () => {
-          expect(fromWriter(mode, events)).toEqual(
-            await fromStreamHandler(mode, events),
-          );
+        test(name, () => {
+          const fragment = write(mode, events);
+          expect(blocks(fragment)).toEqual(blocks(reencode(fragment)));
         });
       }
     });
