@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { base64ToBytes } from "@/utils/encoding";
+import { base64ToBytes } from "doc/encoding";
 import type { PageData } from "@/models/Page";
 
 /**
