@@ -2,7 +2,6 @@ import { Plugin, type EditorState } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 import InlinePrompt from "@/components/prompt/InlinePrompt";
 import { render } from "@/jsx/dom";
-import { insertFromStream } from "@/utils/richText/stream";
 import client from "@/api/client";
 import { SPRING } from "@/utils/animation/effects";
 import Editor from "@/editor/Editor";
@@ -46,7 +45,10 @@ function getElement(view: EditorView) {
       { pageId, sectionId, prompt, context: { text: context, tileIds } },
       { context: { stream: true } },
     );
-    await insertFromStream(stream);
+    // TODO: Chat messages are ignored for now
+    for await (const event of stream) {
+      void event;
+    }
     removePrompt();
   }
 
