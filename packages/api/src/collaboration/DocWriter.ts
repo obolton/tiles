@@ -3,6 +3,7 @@ import * as Y from "yjs";
 import { AI_ORIGIN } from "doc/origins";
 import { getChildren, orderBetween } from "doc/placement/ordering";
 import { YXmlStreamWriter } from "doc/richText/writer";
+import type { SelectionRange } from "doc/richText/selection";
 import type { DestinationMode } from "doc/richText/events";
 
 export interface CreateTilePlacement {
@@ -36,12 +37,16 @@ export class DocWriter {
     return id;
   }
 
-  streamText(tileId: string, mode: DestinationMode): YXmlStreamWriter | null {
+  streamText(
+    tileId: string,
+    mode: DestinationMode,
+    range?: SelectionRange,
+  ): YXmlStreamWriter | null {
     const content = this.tiles.get(tileId)?.get("content");
     if (!(content instanceof Y.XmlFragment)) {
       return null;
     }
-    return new YXmlStreamWriter(content, mode, this.origin);
+    return new YXmlStreamWriter(content, mode, this.origin, range);
   }
 
   setProperties(tileId: string, changes: Record<string, unknown>): void {
