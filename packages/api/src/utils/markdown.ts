@@ -58,6 +58,7 @@ export class MarkdownTransformer implements Transformer<
   private lineBreak: LineBreak | null = null;
   private destination: number | null = null;
   private codeFence: { char: string; length: number } | null = null;
+  private started = false;
 
   start() {}
 
@@ -89,7 +90,10 @@ export class MarkdownTransformer implements Transformer<
 
     if (!this.node) {
       this.node = { type: "paragraph" };
-      controller.enqueue(this.node);
+      if (this.started) {
+        controller.enqueue(this.node);
+      }
+      this.started = true;
     }
 
     if (this.lineBreak !== null) {
@@ -128,6 +132,7 @@ export class MarkdownTransformer implements Transformer<
       this.format = {};
       this.node = null;
       this.lineBreak = null;
+      this.started = false;
       controller.enqueue({ destination: this.destination, mode: state.mode });
     }
 
@@ -136,13 +141,17 @@ export class MarkdownTransformer implements Transformer<
       this.lineBreak = null;
       if (this.node) {
         controller.enqueue(this.node);
+        this.started = true;
       }
     }
 
     if (state.format) {
       if (!this.node) {
         this.node = { type: "paragraph" };
-        controller.enqueue(this.node);
+        if (this.started) {
+          controller.enqueue(this.node);
+        }
+        this.started = true;
       }
       controller.enqueue(state.format);
       Object.assign(this.format, state.format);

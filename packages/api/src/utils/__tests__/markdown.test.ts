@@ -10,14 +10,13 @@ async function getEvents(input: string[]) {
 describe("transformMarkdown", () => {
   test("generates a stream of events", async () => {
     const output = await getEvents(["hello ", "world"]);
-    expect(output).toEqual([{ type: "paragraph" }, "hello ", "world"]);
+    expect(output).toEqual(["hello ", "world"]);
   });
 
   describe("bold", () => {
     test("supports **bold** syntax", async () => {
       const output = await getEvents(["hello **world**"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         "hello ",
         { bold: true },
         "world",
@@ -28,7 +27,6 @@ describe("transformMarkdown", () => {
     test("supports __bold__ syntax", async () => {
       const output = await getEvents(["hello __world__"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         "hello ",
         { bold: true },
         "world",
@@ -39,7 +37,6 @@ describe("transformMarkdown", () => {
     test("handles delimeters at the end of a chunk", async () => {
       const output = await getEvents(["hello **", "world", "**"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         "hello ",
         { bold: true },
         "world",
@@ -50,7 +47,6 @@ describe("transformMarkdown", () => {
     test("handles delimiters split over two chunks", async () => {
       const output = await getEvents(["hello *", "*world*", "*"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         "hello ",
         { bold: true },
         "world",
@@ -60,23 +56,17 @@ describe("transformMarkdown", () => {
 
     test("treats a start delimiter followed by whitespace as text", async () => {
       const output = await getEvents(["hello ** world"]);
-      expect(output).toEqual([{ type: "paragraph" }, "hello ** world"]);
+      expect(output).toEqual(["hello ** world"]);
     });
 
     test("handles whitespace before bold delimiter", async () => {
       const output = await getEvents(["  **bold**"]);
-      expect(output).toEqual([
-        { type: "paragraph" },
-        { bold: true },
-        "bold",
-        { bold: false },
-      ]);
+      expect(output).toEqual([{ bold: true }, "bold", { bold: false }]);
     });
 
     test("preserves whitespace before bold when split across chunks", async () => {
       const output = await getEvents(["hello", " **world**"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         "hello",
         " ",
         { bold: true },
@@ -90,7 +80,6 @@ describe("transformMarkdown", () => {
     test("supports *italic* syntax", async () => {
       const output = await getEvents(["hello *world*"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         "hello ",
         { italic: true },
         "world",
@@ -101,7 +90,6 @@ describe("transformMarkdown", () => {
     test("supports _italic_ syntax", async () => {
       const output = await getEvents(["hello _world_"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         "hello ",
         { italic: true },
         "world",
@@ -112,7 +100,6 @@ describe("transformMarkdown", () => {
     test("handles delimeters at the end of a chunk", async () => {
       const output = await getEvents(["hello *", "world", "*"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         "hello ",
         { italic: true },
         "world",
@@ -122,13 +109,12 @@ describe("transformMarkdown", () => {
 
     test("treats a start delimiter followed by whitespace as text", async () => {
       const output = await getEvents(["hello * world"]);
-      expect(output).toEqual([{ type: "paragraph" }, "hello * world"]);
+      expect(output).toEqual(["hello * world"]);
     });
 
     test("preserves whitespace before italic when split across chunks", async () => {
       const output = await getEvents(["hello", " *world*"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         "hello",
         " ",
         { italic: true },
@@ -142,7 +128,6 @@ describe("transformMarkdown", () => {
     test("handles combined bold and italic", async () => {
       const output = await getEvents(["*hello **world***"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         { italic: true },
         "hello ",
         { bold: true },
@@ -155,7 +140,6 @@ describe("transformMarkdown", () => {
     test("preserves whitespace between bold and italic when split across chunks", async () => {
       const output = await getEvents(["**bold**", " *italic*"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         { bold: true },
         "bold",
         { bold: false },
@@ -170,64 +154,44 @@ describe("transformMarkdown", () => {
   describe("line breaks", () => {
     test("treats a single line break as a space", async () => {
       const output = await getEvents(["hello\nworld"]);
-      expect(output).toEqual([{ type: "paragraph" }, "hello", " world"]);
+      expect(output).toEqual(["hello", " world"]);
     });
 
     test("treats a line break preceded by one space as a space", async () => {
       const output = await getEvents(["hello \nworld"]);
-      expect(output).toEqual([{ type: "paragraph" }, "hello", " world"]);
+      expect(output).toEqual(["hello", " world"]);
     });
 
     test("treats a line break preceded by one tab as a space", async () => {
       const output = await getEvents(["hello\t\nworld"]);
-      expect(output).toEqual([{ type: "paragraph" }, "hello", " world"]);
+      expect(output).toEqual(["hello", " world"]);
     });
 
     test("treats an empty line as a paragraph break", async () => {
       const output = await getEvents(["hello\n\nworld"]);
-      expect(output).toEqual([
-        { type: "paragraph" },
-        "hello",
-        { type: "paragraph" },
-        "world",
-      ]);
+      expect(output).toEqual(["hello", { type: "paragraph" }, "world"]);
     });
 
     test("treats multiple empty lines as one paragraph break", async () => {
       const output = await getEvents(["hello\n\n\n\nworld"]);
-      expect(output).toEqual([
-        { type: "paragraph" },
-        "hello",
-        { type: "paragraph" },
-        "world",
-      ]);
+      expect(output).toEqual(["hello", { type: "paragraph" }, "world"]);
     });
 
     test("does not treat an empty line before a heading as a paragraph break", async () => {
       const output = await getEvents(["hello\n\n# world"]);
-      expect(output).toEqual([
-        { type: "paragraph" },
-        "hello",
-        { type: "heading", level: 1 },
-        "world",
-      ]);
+      expect(output).toEqual(["hello", { type: "heading", level: 1 }, "world"]);
     });
 
     test("treats a line containing only whitespace as an empty line", async () => {
       const output = await getEvents(["hello\n  \nworld"]);
-      expect(output).toEqual([
-        { type: "paragraph" },
-        "hello",
-        { type: "paragraph" },
-        "world",
-      ]);
+      expect(output).toEqual(["hello", { type: "paragraph" }, "world"]);
     });
 
     test.for([2, 3, 4])(
       "treats %i spaces at the end of a line as a hard line break",
       async (i) => {
         const output = await getEvents([`hello${" ".repeat(i)}\nworld`]);
-        expect(output).toEqual([{ type: "paragraph" }, "hello", "\nworld"]);
+        expect(output).toEqual(["hello", "\nworld"]);
       },
     );
 
@@ -235,7 +199,7 @@ describe("transformMarkdown", () => {
       "treats %i tabs at the end of a line as a hard line break",
       async (i) => {
         const output = await getEvents([`hello${"\t".repeat(i)}\nworld`]);
-        expect(output).toEqual([{ type: "paragraph" }, "hello", "\nworld"]);
+        expect(output).toEqual(["hello", "\nworld"]);
       },
     );
   });
@@ -263,7 +227,7 @@ describe("transformMarkdown", () => {
 
     test("requires whitespace between the delimeter and heading text", async () => {
       const output = await getEvents(["#hello world"]);
-      expect(output).toEqual([{ type: "paragraph" }, "#hello world"]);
+      expect(output).toEqual(["#hello world"]);
     });
 
     test("returns a heading following a line break", async () => {
@@ -274,7 +238,6 @@ describe("transformMarkdown", () => {
     test("returns a heading following a paragraph", async () => {
       const output = await getEvents(["foo\n\n", "### hello world"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         "foo",
         { type: "heading", level: 3 },
         "hello world",
@@ -283,7 +246,7 @@ describe("transformMarkdown", () => {
 
     test("requires the heading to be at the start of the line", async () => {
       const output = await getEvents(["abc ### hello world"]);
-      expect(output).toEqual([{ type: "paragraph" }, "abc ### hello world"]);
+      expect(output).toEqual(["abc ### hello world"]);
     });
 
     test("supports heading markers split over multiple chunks", async () => {
@@ -484,7 +447,6 @@ describe("transformMarkdown", () => {
     test("returns a divider between paragraphs", async () => {
       const output = await getEvents(["hello\n\n---\nworld"]);
       expect(output).toEqual([
-        { type: "paragraph" },
         "hello",
         { type: "divider" },
         { type: "paragraph" },
@@ -503,7 +465,6 @@ describe("transformMarkdown", () => {
       const output = await getEvents([">>> 1\n", "hello world"]);
       expect(output).toEqual([
         { destination: 1, mode: "insert" },
-        { type: "paragraph" },
         "hello world",
       ]);
     });
@@ -512,34 +473,24 @@ describe("transformMarkdown", () => {
       const output = await getEvents([">>", "> 1", "2", "\n", "hello world"]);
       expect(output).toEqual([
         { destination: 12, mode: "insert" },
-        { type: "paragraph" },
         "hello world",
       ]);
     });
 
     test("returns a block end", async () => {
       const output = await getEvents(["<<<\n", "hello world"]);
-      expect(output).toEqual([
-        { destination: null },
-        { type: "paragraph" },
-        "hello world",
-      ]);
+      expect(output).toEqual([{ destination: null }, "hello world"]);
     });
 
     test("supports block end syntax split over multiple chunks", async () => {
       const output = await getEvents(["<<", "<", "\n", "hello world"]);
-      expect(output).toEqual([
-        { destination: null },
-        { type: "paragraph" },
-        "hello world",
-      ]);
+      expect(output).toEqual([{ destination: null }, "hello world"]);
     });
 
     test("handles block end at end of stream without trailing newline", async () => {
       const output = await getEvents([">>> 0\n", "hello\n", "<<<"]);
       expect(output).toEqual([
         { destination: 0, mode: "insert" },
-        { type: "paragraph" },
         "hello",
         { destination: null, mode: undefined },
       ]);
@@ -549,7 +500,6 @@ describe("transformMarkdown", () => {
       const output = await getEvents([">>>= 1\n", "replaced content"]);
       expect(output).toEqual([
         { destination: 1, mode: "replace" },
-        { type: "paragraph" },
         "replaced content",
       ]);
     });
@@ -558,7 +508,6 @@ describe("transformMarkdown", () => {
       const output = await getEvents([">>>+ 1\n", "appended content"]);
       expect(output).toEqual([
         { destination: 1, mode: "append" },
-        { type: "paragraph" },
         "appended content",
       ]);
     });
@@ -567,18 +516,13 @@ describe("transformMarkdown", () => {
       const output = await getEvents([">>>^ 1\n", "prepended content"]);
       expect(output).toEqual([
         { destination: 1, mode: "prepend" },
-        { type: "paragraph" },
         "prepended content",
       ]);
     });
 
     test("ignores block start with non-numeric ID", async () => {
       const output = await getEvents([">>> abc\n", "hello world"]);
-      expect(output).toEqual([
-        { type: "paragraph" },
-        ">>> abc",
-        " hello world",
-      ]);
+      expect(output).toEqual([">>> abc", " hello world"]);
     });
   });
 
