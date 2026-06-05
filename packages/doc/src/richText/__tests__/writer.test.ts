@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import * as Y from "yjs";
 import { YXmlStreamWriter } from "@/richText/writer";
+import type { SelectionRange } from "@/richText/selection";
 
 function paragraph(text: string): Y.XmlElement {
   const el = new Y.XmlElement("paragraph");
@@ -8,6 +9,21 @@ function paragraph(text: string): Y.XmlElement {
   content.insert(0, text);
   el.insert(0, [content]);
   return el;
+}
+
+/** A selection within block `index`'s text node, collapsed unless `to` is set. */
+function selection(
+  fragment: Y.XmlFragment,
+  index: number,
+  from: number,
+  to: number = from,
+): SelectionRange {
+  const block = fragment.get(index) as Y.XmlElement;
+  const text = block.get(0) as Y.XmlText;
+  return {
+    from: Y.createRelativePositionFromTypeIndex(text, from),
+    to: Y.createRelativePositionFromTypeIndex(text, to),
+  };
 }
 
 /** A readable structural view of the produced Y.Xml. */
@@ -255,6 +271,160 @@ describe("YXmlStreamWriter", () => {
           children: [[{ insert: "new" }]],
         },
         { name: "paragraph", children: [[{ insert: "old" }]] },
+      ]);
+    });
+  });
+
+  describe("selection", () => {
+    let fragment: Y.XmlFragment;
+
+    beforeEach(() => {
+      fragment = new Y.Doc().getXmlFragment("content");
+    });
+
+    test("continues the text node at a collapsed selection", () => {
+      fragment.insert(0, [paragraph("Hello world")]);
+      const writer = new YXmlStreamWriter(
+        fragment,
+        "selection",
+        undefined,
+        selection(fragment, 0, 5),
+      );
+      writer.apply(" there");
+
+      expect(blocks(fragment)).toEqual([
+        { name: "paragraph", children: [[{ insert: "Hello there world" }]] },
+      ]);
+    });
+
+    test("inserts new blocks after the selection's block", () => {
+      fragment.insert(0, [paragraph("Hello"), paragraph("World")]);
+      const writer = new YXmlStreamWriter(
+        fragment,
+        "selection",
+        undefined,
+        selection(fragment, 0, 5),
+      );
+      writer.apply("!");
+      writer.apply({ type: "paragraph" });
+      writer.apply("New");
+
+      expect(blocks(fragment)).toEqual([
+        { name: "paragraph", children: [[{ insert: "Hello!" }]] },
+        {
+          name: "paragraph",
+          attrs: { align: "left" },
+          children: [[{ insert: "New" }]],
+        },
+        { name: "paragraph", children: [[{ insert: "World" }]] },
+      ]);
+    });
+
+    test("replaces a non-empty selection within the text node", () => {
+      fragment.insert(0, [paragraph("Hello world")]);
+      const writer = new YXmlStreamWriter(
+        fragment,
+        "selection",
+        undefined,
+        selection(fragment, 0, 6, 11),
+      );
+      writer.apply("there");
+
+      expect(blocks(fragment)).toEqual([
+        { name: "paragraph", children: [[{ insert: "Hello there" }]] },
+      ]);
+    });
+
+    test("inserts a leading block after the selection's block", () => {
+      fragment.insert(0, [paragraph("Hello")]);
+      const writer = new YXmlStreamWriter(
+        fragment,
+        "selection",
+        undefined,
+        selection(fragment, 0, 5),
+      );
+      writer.apply({ type: "heading", level: 2 });
+      writer.apply("Title");
+
+      expect(blocks(fragment)).toEqual([
+        { name: "paragraph", children: [[{ insert: "Hello" }]] },
+        {
+          name: "heading",
+          attrs: { align: "left", level: 2 },
+          children: [[{ insert: "Title" }]],
+        },
+      ]);
+    });
+
+    test("inserts at the start of a block", () => {
+      fragment.insert(0, [paragraph("World")]);
+      const writer = new YXmlStreamWriter(
+        fragment,
+        "selection",
+        undefined,
+        selection(fragment, 0, 0),
+      );
+      writer.apply("Hello ");
+
+      expect(blocks(fragment)).toEqual([
+        { name: "paragraph", children: [[{ insert: "Hello World" }]] },
+      ]);
+    });
+
+    test("anchors after the whole list for a selection in a list item", () => {
+      const list = new Y.XmlElement("unordered_list");
+      const item = new Y.XmlElement("list_item");
+      const para = new Y.XmlElement("paragraph");
+      const itemText = new Y.XmlText();
+      itemText.insert(0, "item");
+      para.insert(0, [itemText]);
+      item.insert(0, [para]);
+      list.insert(0, [item]);
+      fragment.insert(0, [list]);
+
+      const at = Y.createRelativePositionFromTypeIndex(itemText, 4);
+      const writer = new YXmlStreamWriter(fragment, "selection", undefined, {
+        from: at,
+        to: at,
+      });
+      writer.apply("!");
+      writer.apply({ type: "paragraph" });
+      writer.apply("After");
+
+      expect(blocks(fragment)).toEqual([
+        {
+          name: "unordered_list",
+          children: [
+            {
+              name: "list_item",
+              children: [
+                { name: "paragraph", children: [[{ insert: "item!" }]] },
+              ],
+            },
+          ],
+        },
+        {
+          name: "paragraph",
+          attrs: { align: "left" },
+          children: [[{ insert: "After" }]],
+        },
+      ]);
+    });
+
+    test("appends when the selection does not resolve to a text node", () => {
+      const at = Y.createRelativePositionFromTypeIndex(fragment, 0);
+      const writer = new YXmlStreamWriter(fragment, "selection", undefined, {
+        from: at,
+        to: at,
+      });
+      writer.apply("Fresh");
+
+      expect(blocks(fragment)).toEqual([
+        {
+          name: "paragraph",
+          attrs: { align: "left" },
+          children: [[{ insert: "Fresh" }]],
+        },
       ]);
     });
   });

@@ -1,5 +1,6 @@
 import * as Y from "yjs";
 import { AI_ORIGIN } from "../origins";
+import type { SelectionRange } from "./selection";
 import type { DestinationMode, RichTextContent, RichTextNode } from "./events";
 
 type ListType = "ordered" | "unordered";
@@ -22,6 +23,7 @@ export class YXmlStreamWriter {
   private text: Y.XmlText | null = null;
   private textRel: Y.RelativePosition | null = null;
   private blockRel: Y.RelativePosition | null = null;
+  private afterBlock: Y.XmlElement | null = null;
   private bold = false;
   private italic = false;
   private lists: ListLevel[] = [];
@@ -30,6 +32,7 @@ export class YXmlStreamWriter {
     fragment: Y.XmlFragment,
     mode: DestinationMode,
     origin: unknown = AI_ORIGIN,
+    range?: SelectionRange,
   ) {
     if (!fragment.doc) {
       throw new Error("YXmlStreamWriter requires an integrated Y.XmlFragment");
@@ -37,11 +40,12 @@ export class YXmlStreamWriter {
     this.fragment = fragment;
     this.doc = fragment.doc;
     this.origin = origin;
-    // "insert" (the create-text default) appends; cursor-anchored insertion at
-    // a Y.RelativePosition is Milestone 3.5.
+    // "insert" (the create-text default) and "selection" both append forwards.
     this.before = mode === "prepend";
     if (mode === "replace") {
       this.transact(() => this.fragment.delete(0, this.fragment.length));
+    } else if (mode === "selection" && range) {
+      this.positionAtSelection(range);
     }
   }
 
@@ -123,6 +127,11 @@ export class YXmlStreamWriter {
   }
 
   private insertTopLevel(el: Y.XmlElement, atom = false): void {
+    if (this.afterBlock) {
+      this.fragment.insertAfter(this.afterBlock, [el]);
+      this.afterBlock = el;
+      return;
+    }
     const at = this.resolve(
       this.blockRel,
       this.before ? 0 : this.fragment.length,
@@ -174,6 +183,34 @@ export class YXmlStreamWriter {
       ? Y.createAbsolutePositionFromRelativePosition(rel, this.doc)
       : null;
     return abs ? abs.index : fallback;
+  }
+
+  private positionAtSelection(range: SelectionRange): void {
+    const from = Y.createAbsolutePositionFromRelativePosition(
+      range.from,
+      this.doc,
+    );
+    if (!(from?.type instanceof Y.XmlText)) {
+      return;
+    }
+    const text = from.type;
+    const start = from.index;
+
+    // Replace a selection that lies within the same text node.
+    const to = Y.createAbsolutePositionFromRelativePosition(range.to, this.doc);
+    if (to?.type === text && to.index > start) {
+      this.transact(() => text.delete(start, to.index - start));
+    }
+
+    this.text = text;
+    this.textRel = Y.createRelativePositionFromTypeIndex(text, start);
+    this.block = text.parent instanceof Y.XmlElement ? text.parent : null;
+
+    let top = this.block;
+    while (top && top.parent !== this.fragment) {
+      top = top.parent instanceof Y.XmlElement ? top.parent : null;
+    }
+    this.afterBlock = top;
   }
 
   private element(name: string, attrs?: Record<string, unknown>): Y.XmlElement {
