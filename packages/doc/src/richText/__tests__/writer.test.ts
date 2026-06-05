@@ -45,7 +45,11 @@ describe("YXmlStreamWriter", () => {
       writer.apply("hello world");
 
       expect(blocks(fragment)).toEqual([
-        { name: "paragraph", children: [[{ insert: "hello world" }]] },
+        {
+          name: "paragraph",
+          attrs: { align: "left" },
+          children: [[{ insert: "hello world" }]],
+        },
       ]);
     });
 
@@ -76,7 +80,7 @@ describe("YXmlStreamWriter", () => {
       expect(blocks(fragment)).toEqual([
         {
           name: "heading",
-          attrs: { level: 2 },
+          attrs: { align: "left", level: 2 },
           children: [[{ insert: "Title" }]],
         },
       ]);
@@ -104,9 +108,17 @@ describe("YXmlStreamWriter", () => {
       writer.apply("after");
 
       expect(blocks(fragment)).toEqual([
-        { name: "paragraph", children: [[{ insert: "before" }]] },
+        {
+          name: "paragraph",
+          attrs: { align: "left" },
+          children: [[{ insert: "before" }]],
+        },
         { name: "divider", children: [] },
-        { name: "paragraph", children: [[{ insert: "after" }]] },
+        {
+          name: "paragraph",
+          attrs: { align: "left" },
+          children: [[{ insert: "after" }]],
+        },
       ]);
     });
 
@@ -124,15 +136,25 @@ describe("YXmlStreamWriter", () => {
           children: [
             {
               name: "list_item",
+              attrs: { checked: false },
               children: [
-                { name: "paragraph", children: [[{ insert: "a" }]] },
+                {
+                  name: "paragraph",
+                  attrs: { align: "left" },
+                  children: [[{ insert: "a" }]],
+                },
                 {
                   name: "unordered_list",
                   children: [
                     {
                       name: "list_item",
+                      attrs: { checked: false },
                       children: [
-                        { name: "paragraph", children: [[{ insert: "b" }]] },
+                        {
+                          name: "paragraph",
+                          attrs: { align: "left" },
+                          children: [[{ insert: "b" }]],
+                        },
                       ],
                     },
                   ],
@@ -141,7 +163,14 @@ describe("YXmlStreamWriter", () => {
             },
             {
               name: "list_item",
-              children: [{ name: "paragraph", children: [[{ insert: "c" }]] }],
+              attrs: { checked: false },
+              children: [
+                {
+                  name: "paragraph",
+                  attrs: { align: "left" },
+                  children: [[{ insert: "c" }]],
+                },
+              ],
             },
           ],
         },
@@ -157,16 +186,26 @@ describe("YXmlStreamWriter", () => {
       expect(blocks(fragment)).toEqual([
         {
           name: "ordered_list",
+          attrs: { order: 1 },
           children: [
             {
               name: "list_item",
+              attrs: { checked: false },
               children: [
-                { name: "paragraph", children: [[{ insert: "item" }]] },
+                {
+                  name: "paragraph",
+                  attrs: { align: "left" },
+                  children: [[{ insert: "item" }]],
+                },
               ],
             },
           ],
         },
-        { name: "paragraph", children: [[{ insert: "after" }]] },
+        {
+          name: "paragraph",
+          attrs: { align: "left" },
+          children: [[{ insert: "after" }]],
+        },
       ]);
     });
   });
@@ -186,7 +225,11 @@ describe("YXmlStreamWriter", () => {
       writer.apply("new");
 
       expect(blocks(fragment)).toEqual([
-        { name: "paragraph", children: [[{ insert: "new" }]] },
+        {
+          name: "paragraph",
+          attrs: { align: "left" },
+          children: [[{ insert: "new" }]],
+        },
       ]);
     });
   });
@@ -206,7 +249,11 @@ describe("YXmlStreamWriter", () => {
       writer.apply("new");
 
       expect(blocks(fragment)).toEqual([
-        { name: "paragraph", children: [[{ insert: "new" }]] },
+        {
+          name: "paragraph",
+          attrs: { align: "left" },
+          children: [[{ insert: "new" }]],
+        },
         { name: "paragraph", children: [[{ insert: "old" }]] },
       ]);
     });

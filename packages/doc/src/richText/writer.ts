@@ -67,7 +67,7 @@ export class YXmlStreamWriter {
   }
 
   private insertText(str: string): void {
-    const block = this.block ?? this.placeBlock(this.element("paragraph"));
+    const block = this.block ?? this.placeBlock(this.paragraph());
     let text = this.text;
     if (!text) {
       text = new Y.XmlText();
@@ -91,10 +91,12 @@ export class YXmlStreamWriter {
   private insertNode(node: RichTextNode): void {
     switch (node.type) {
       case "paragraph":
-        this.placeBlock(this.element("paragraph"));
+        this.placeBlock(this.paragraph());
         break;
       case "heading":
-        this.placeBlock(this.element("heading", { level: node.level }));
+        this.placeBlock(
+          this.element("heading", { align: "left", level: node.level }),
+        );
         break;
       case "code":
         this.placeBlock(
@@ -137,9 +139,10 @@ export class YXmlStreamWriter {
     const { item, paragraph } = this.listItem();
 
     if (depth > this.lists.length - 1) {
-      const list = this.element(
-        type === "ordered" ? "ordered_list" : "unordered_list",
-      );
+      const list =
+        type === "ordered"
+          ? this.element("ordered_list", { order: 1 })
+          : this.element("unordered_list");
       list.insert(0, [item]);
       if (this.lists.length === 0) {
         this.insertTopLevel(list);
@@ -181,9 +184,13 @@ export class YXmlStreamWriter {
     return el;
   }
 
+  private paragraph(): Y.XmlElement {
+    return this.element("paragraph", { align: "left" });
+  }
+
   private listItem(): { item: Y.XmlElement; paragraph: Y.XmlElement } {
-    const item = this.element("list_item");
-    const paragraph = this.element("paragraph");
+    const item = this.element("list_item", { checked: false });
+    const paragraph = this.paragraph();
     item.insert(0, [paragraph]);
     return { item, paragraph };
   }
