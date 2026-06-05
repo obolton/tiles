@@ -5,6 +5,7 @@ import { render } from "@/jsx/dom";
 import client from "@/api/client";
 import { SPRING } from "@/utils/animation/effects";
 import Editor from "@/editor/Editor";
+import { serializeSelection } from "./selection";
 import { PROMPT_PLUGIN_KEY } from "./pluginKeys";
 import type { EditorView } from "prosemirror-view";
 
@@ -41,8 +42,16 @@ function getElement(view: EditorView) {
     const context = doc.textBetween(from, to, "\n");
     const tileIds = editor.references.value.map((tile) => tile.id);
     const sectionId = editor.activeSection?.id ?? null;
+    const range = serializeSelection(view.state);
+    const tileId = view.dom.closest("page-item")?.id;
     const stream = await client.ai.write.mutate(
-      { pageId, sectionId, prompt, context: { text: context, tileIds } },
+      {
+        pageId,
+        sectionId,
+        prompt,
+        context: { text: context, tileIds },
+        selection: range && tileId ? { tileId, ...range } : undefined,
+      },
       { context: { stream: true } },
     );
     // TODO: Chat messages are ignored for now
