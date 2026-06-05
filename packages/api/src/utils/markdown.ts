@@ -21,7 +21,7 @@ const LINE_BREAK_MATCH = /^(\s*\n)+/;
 const HEADING_MATCH = /^(#{1,6})\s+(?=\S)/;
 const UNORDERED_LIST_ITEM_MATCH = /^( *)(-|\*|\+)\s+(?=\S)/;
 const ORDERED_LIST_ITEM_MATCH = /^( *)[0-9]+\.\s+(?=\S)/;
-const BLOCK_START_MATCH = /^>>>(=|\+|\^)?\s+(\d+)\s*\n/;
+const BLOCK_START_MATCH = /^>>>(=|\+|\^|@)?\s+(\d+)\s*\n/;
 const BLOCK_END_MATCH = /^<<<\s*\n/;
 const BLOCK_END_EOF_MATCH = /^<<<\s*$/;
 const CODE_BLOCK_START_MATCH = /^(`{3,}|~{3,})(\w*)\s*\n/;
@@ -226,6 +226,9 @@ export class MarkdownTransformer implements Transformer<
               break;
             case "^":
               mode = "prepend";
+              break;
+            case "@":
+              mode = "selection";
               break;
             default:
               mode = "insert";

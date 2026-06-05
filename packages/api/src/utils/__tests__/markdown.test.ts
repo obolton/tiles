@@ -520,6 +520,14 @@ describe("transformMarkdown", () => {
       ]);
     });
 
+    test("supports selection mode with >>>@ syntax", async () => {
+      const output = await getEvents([">>>@ 1\n", "inserted content"]);
+      expect(output).toEqual([
+        { destination: 1, mode: "selection" },
+        "inserted content",
+      ]);
+    });
+
     test("ignores block start with non-numeric ID", async () => {
       const output = await getEvents([">>> abc\n", "hello world"]);
       expect(output).toEqual([">>> abc", " hello world"]);
