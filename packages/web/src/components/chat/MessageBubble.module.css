@@ -22,7 +22,7 @@
   border-end-start-radius: 4px;
 }
 
-.actions {
+.references {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;

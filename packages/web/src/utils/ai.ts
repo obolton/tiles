@@ -1,7 +1,5 @@
 import client from "@/api/client";
 import { uploadMedia } from "@/utils/media";
-import { handleStreamAction } from "@/utils/richText/actions";
-import { StreamHandler } from "@/utils/richText/stream";
 import Editor from "@/editor/Editor";
 
 export async function generateImage(prompt: string, workspaceId: string) {
@@ -31,33 +29,13 @@ export async function submitPrompt(prompt: string) {
   chat.beginStreaming();
 
   try {
-    await new StreamHandler({
-      getState() {
-        // AI streaming for text tiles is disabled in Phase 1; restored
-        // server-side in Phase 6.
-        return null;
-      },
-      onEvent(event) {
-        if ("message" in event) {
-          chat.append(event.message);
-        } else if ("artifact" in event) {
-          const tile = editor.page.createTile(event.artifact);
-          editor.addTile(tile);
-          editor.addReference(tile);
-          chat.addAction({
-            id: event.artifact.id,
-            type: event.artifact.type,
-            label: event.artifact.type.toLowerCase(),
-          });
-        } else {
-          handleStreamAction(event.action);
-          chat.addAction({
-            type: event.action.type,
-            label: event.action.type,
-          });
-        }
-      },
-    }).handle(stream);
+    for await (const event of stream) {
+      if ("message" in event) {
+        chat.append(event.message);
+      } else {
+        chat.addReference(event.reference);
+      }
+    }
   } finally {
     chat.completeStreaming();
   }

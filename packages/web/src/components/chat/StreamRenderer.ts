@@ -1,5 +1,5 @@
 import type { MessageEvent } from "./types";
-import type { RichTextFormat, RichTextNode } from "@/utils/richText/stream";
+import type { RichTextFormat, RichTextNode } from "doc/richText/events";
 
 function isListElement(
   el: Element | null,

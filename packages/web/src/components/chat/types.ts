@@ -1,11 +1,11 @@
-import type { RichTextFormat, RichTextNode } from "@/utils/richText/stream";
+import type { RichTextFormat, RichTextNode } from "doc/richText/events";
+import type { TileType } from "api/types/tiles";
 
 export type MessageEvent = string | RichTextFormat | RichTextNode;
 
-export interface ChatAction {
-  readonly id?: string;
-  readonly type: string;
-  readonly label: string;
+export interface ChatReference {
+  readonly id: string;
+  readonly type: TileType;
 }
 
 export interface UserMessage {
@@ -18,7 +18,7 @@ export interface AssistantMessage {
   readonly id: string;
   readonly role: "assistant";
   readonly content?: HTMLElement;
-  readonly actions?: ChatAction[];
+  readonly references?: ChatReference[];
 }
 
 export type ChatMessage = UserMessage | AssistantMessage;

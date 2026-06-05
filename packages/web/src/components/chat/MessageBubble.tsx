@@ -1,4 +1,4 @@
-import ActionChip from "./ActionChip";
+import ReferenceChip from "./ReferenceChip";
 import { classNames } from "@/utils/css";
 import styles from "./MessageBubble.module.css";
 import type { ChatMessage } from "./types";
@@ -22,10 +22,10 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
           {message.content}
         </article>
       ) : null}
-      {message.role === "assistant" && message.actions?.length ? (
-        <div className={styles.actions}>
-          {message.actions.map((action) => (
-            <ActionChip action={action} />
+      {message.role === "assistant" && message.references?.length ? (
+        <div className={styles.references}>
+          {message.references.map((reference) => (
+            <ReferenceChip reference={reference} />
           ))}
         </div>
       ) : null}

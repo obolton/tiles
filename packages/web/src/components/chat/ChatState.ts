@@ -1,5 +1,5 @@
 import { ReactiveArray, reactive, array } from "@/utils/reactivity";
-import type { ChatAction, ChatMessage, MessageEvent } from "./types";
+import type { ChatReference, ChatMessage, MessageEvent } from "./types";
 
 const MAX_HISTORY = 40;
 
@@ -54,11 +54,11 @@ export default class ChatState {
     }
   }
 
-  addAction(action: ChatAction): void {
+  addReference(reference: ChatReference): void {
     this.messages.push({
       id: crypto.randomUUID(),
       role: "assistant",
-      actions: [action],
+      references: [reference],
     });
   }
 
