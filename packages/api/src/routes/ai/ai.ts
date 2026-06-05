@@ -14,12 +14,8 @@ import { docName } from "@/collaboration/server";
 import { DocWriter } from "@/collaboration/DocWriter";
 import { YXmlStreamWriter } from "doc/richText/writer";
 import type { GenerateImageSchema, WriteSchema } from "./schema";
-import type {
-  Action,
-  ActionEvent,
-  Artifact,
-  ToolContext,
-} from "@/ai/tools/types";
+import type { ToolContext } from "@/ai/tools/types";
+import type { TileType } from "@/types/tiles";
 import type {
   ResponseInput,
   ResponseInputItem,
@@ -34,7 +30,12 @@ export interface Message {
   message: MessageEvent;
 }
 
-export type WriteEvent = Message | Artifact | ActionEvent;
+export interface Reference {
+  id: string;
+  type: TileType;
+}
+
+export type WriteEvent = Message | { reference: Reference };
 
 const MAX_TURNS = 12;
 const PROMPT = `You are a tool for creating and editing interactive documents. Use tool calls and block markers to create and edit document content. Any text outside of block markers will be shown as a message to the user in a chat interface (not inserted into the document). You may include a brief conversational response when appropriate, especially to acknowledge the user's request, explain what you did, or ask clarifying questions.
@@ -70,10 +71,6 @@ Some **text**
 ## Images
 
 Use "create_image" to generate an image from a text prompt; it is inserted as an image block. To place it inside a section or on a map, pass the section or map ID as "parentId" (and "coordinates" for a map pin).
-
-## Tables and Charts
-
-Use "create_table" to create structured data tables. Use "create_chart" to visualize table data - you must create a table first, then reference its ID when creating the chart.
 
 ## Links
 
@@ -217,8 +214,7 @@ export async function streamTurn(
 
   const output: ResponseOutputItem[] = [];
   const toolCalls: ResponseInputItem.FunctionCallOutput[] = [];
-  const artifacts: Artifact[] = [];
-  const actions: Action[] = [];
+  const references: Reference[] = [];
 
   const text = ReadableStream.from(response)
     .pipeThrough(
@@ -245,35 +241,18 @@ export async function streamTurn(
                 return;
               }
 
-              if ("actions" in result) {
-                actions.push(...result.actions);
-                toolCalls.push({
-                  type: "function_call_output",
-                  call_id: item.call_id,
-                  output: JSON.stringify({ status: "ok" }),
-                });
-                return;
-              }
-
-              if ("tileId" in result) {
-                const id = String(artifactIds.length);
-                artifactIds.push(result.tileId);
-                toolCalls.push({
-                  type: "function_call_output",
-                  call_id: item.call_id,
-                  output: JSON.stringify({ id }),
-                });
-                return;
+              if (!("tileId" in result)) {
+                throw new Error(`Unexpected tool result from ${item.name}`);
               }
 
               const id = String(artifactIds.length);
-              artifactIds.push(result.artifact.id);
+              artifactIds.push(result.tileId);
               toolCalls.push({
                 type: "function_call_output",
                 call_id: item.call_id,
                 output: JSON.stringify({ id }),
               });
-              artifacts.push(result);
+              references.push({ id: result.tileId, type: result.type });
               return;
             }
           }
@@ -300,11 +279,8 @@ export async function streamTurn(
         yield { message: textEvent };
       }
     }
-    for (const artifact of artifacts) {
-      yield artifact;
-    }
-    for (const action of actions) {
-      yield { action };
+    for (const reference of references) {
+      yield { reference };
     }
   }
 

@@ -8,7 +8,7 @@ import {
   CoordinatesSchema,
   resolveParentId,
 } from "./schema";
-import type { FunctionToolOptions, ToolContext } from "./types";
+import type { FunctionToolOptions, TileResult, ToolContext } from "./types";
 
 const CreateLinkSchema = z.strictObject({
   parentId: z.number().int().nullable().meta({
@@ -25,7 +25,7 @@ const CreateLinkSchema = z.strictObject({
 async function createLinkTile(
   args: z.infer<typeof CreateLinkSchema>,
   context: ToolContext,
-) {
+): Promise<TileResult> {
   const { url, size, coordinates } = args;
   const { pageId, session } = context;
   const parentId = resolveParentId(args.parentId, context);
@@ -57,7 +57,7 @@ async function createLinkTile(
         });
 
   const tileId = session.createTile(map, { parentId });
-  return { tileId };
+  return { tileId, type: metadata.type === "VIDEO" ? "VIDEO" : "LINK" };
 }
 
 export const CREATE_LINK_TOOL: FunctionToolOptions<typeof CreateLinkSchema> = {

@@ -37,6 +37,7 @@ describe("CREATE_LINK_TOOL", () => {
 
     const result = await CREATE_LINK_TOOL.function(BASE_ARGS, context);
 
+    expect(result).toMatchObject({ type: "LINK" });
     const map = getCreatedTile(doc, result);
     expect(map.get("type")).toBe("LINK");
     expect(map.get("url")).toBe("https://example.com");
@@ -60,6 +61,7 @@ describe("CREATE_LINK_TOOL", () => {
       context,
     );
 
+    expect(result).toMatchObject({ type: "VIDEO" });
     const map = getCreatedTile(doc, result);
     expect(map.get("type")).toBe("VIDEO");
     expect(map.get("videoType")).toBe("YOUTUBE");

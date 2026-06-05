@@ -6,7 +6,7 @@ import {
   CoordinatesSchema,
   resolveParentId,
 } from "./schema";
-import type { FunctionToolOptions, ToolContext } from "./types";
+import type { FunctionToolOptions, TileResult, ToolContext } from "./types";
 
 const CreateTextSchema = z.strictObject({
   parentId: z.number().int().nullable().meta({
@@ -24,12 +24,12 @@ const CreateTextSchema = z.strictObject({
 async function createTextTile(
   args: z.infer<typeof CreateTextSchema>,
   context: ToolContext,
-) {
+): Promise<TileResult> {
   const { size, coordinates } = args;
   const parentId = resolveParentId(args.parentId, context);
   const map = buildTextMap({ ...getDimensions(size), coordinates });
   const tileId = context.session.createTile(map, { parentId });
-  return { tileId };
+  return { tileId, type: "TEXT" };
 }
 
 export const CREATE_TEXT_TOOL: FunctionToolOptions<typeof CreateTextSchema> = {

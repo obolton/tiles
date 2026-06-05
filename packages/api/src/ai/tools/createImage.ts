@@ -3,7 +3,7 @@ import { buildImageMap } from "doc/tiles/image";
 import { IMAGE_GENERATION_DIMENSIONS } from "../constants";
 import { generateAndUploadImage } from "./images";
 import { CoordinatesSchema, resolveParentId } from "./schema";
-import type { FunctionToolOptions, ToolContext } from "./types";
+import type { FunctionToolOptions, TileResult, ToolContext } from "./types";
 
 const CreateImageSchema = z.strictObject({
   parentId: z.number().int().nullable().meta({
@@ -19,7 +19,7 @@ const CreateImageSchema = z.strictObject({
 async function createImageTile(
   args: z.infer<typeof CreateImageSchema>,
   context: ToolContext,
-) {
+): Promise<TileResult> {
   const { prompt, coordinates } = args;
   const parentId = resolveParentId(args.parentId, context);
   const imageId = await generateAndUploadImage(prompt, context);
@@ -32,7 +32,7 @@ async function createImageTile(
     coordinates,
   });
   const tileId = context.session.createTile(map, { parentId });
-  return { tileId };
+  return { tileId, type: "IMAGE" };
 }
 
 export const CREATE_IMAGE_TOOL: FunctionToolOptions<typeof CreateImageSchema> =

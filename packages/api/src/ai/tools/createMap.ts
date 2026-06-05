@@ -2,7 +2,7 @@ import { z } from "zod";
 import { MapStyle } from "@/generated/prisma/enums";
 import { buildSectionMap } from "doc/tiles/section";
 import { SizeSchema, getDimensions } from "./schema.ts";
-import type { FunctionToolOptions, ToolContext } from "./types.ts";
+import type { FunctionToolOptions, TileResult, ToolContext } from "./types.ts";
 
 const CreateMapSchema = z.strictObject({
   size: SizeSchema,
@@ -18,7 +18,7 @@ const CreateMapSchema = z.strictObject({
 async function createMapTile(
   args: z.infer<typeof CreateMapSchema>,
   { session }: ToolContext,
-) {
+): Promise<TileResult> {
   const { size, mapStyle } = args;
   const map = buildSectionMap({
     layout: "MAP",
@@ -26,7 +26,7 @@ async function createMapTile(
     ...getDimensions(size),
   });
   const tileId = session.createTile(map);
-  return { tileId };
+  return { tileId, type: "SECTION" };
 }
 
 export const CREATE_MAP_TOOL: FunctionToolOptions<typeof CreateMapSchema> = {
