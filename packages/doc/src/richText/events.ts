@@ -35,7 +35,12 @@ export interface RichTextFormat {
   italic?: boolean;
 }
 
-export type DestinationMode = "insert" | "replace" | "append" | "prepend";
+export type DestinationMode =
+  | "insert"
+  | "replace"
+  | "append"
+  | "prepend"
+  | "selection";
 
 export interface Destination {
   destination: number | null;

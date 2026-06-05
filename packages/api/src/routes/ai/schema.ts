@@ -20,6 +20,13 @@ export const WriteSchema = z.object({
       tileIds: z.array(z.uuid()).max(10).optional(),
     })
     .optional(),
+  selection: z
+    .strictObject({
+      tileId: z.uuid(),
+      from: z.string().max(1024),
+      to: z.string().max(1024),
+    })
+    .optional(),
   history: z.array(MessageSchema).max(50).optional(),
 });
 export type WriteSchema = z.infer<typeof WriteSchema>;

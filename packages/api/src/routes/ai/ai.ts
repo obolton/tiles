@@ -13,6 +13,7 @@ import { hocuspocus } from "@/collaboration/instance";
 import { docName } from "@/collaboration/server";
 import { DocWriter } from "@/collaboration/DocWriter";
 import { YXmlStreamWriter } from "doc/richText/writer";
+import { decodeSelection, type SelectionRange } from "doc/richText/selection";
 import type { GenerateImageSchema, WriteSchema } from "./schema";
 import type { ToolContext } from "@/ai/tools/types";
 import type { TileType } from "@/types/tiles";
@@ -36,6 +37,21 @@ export interface Reference {
 }
 
 export type WriteEvent = Message | { reference: Reference };
+
+interface SelectionAnchor {
+  tileId: string;
+  range: SelectionRange;
+}
+
+function resolveSelection(
+  selection: WriteSchema["selection"],
+): SelectionAnchor | null {
+  if (!selection) {
+    return null;
+  }
+  const range = decodeSelection(selection);
+  return range ? { tileId: selection.tileId, range } : null;
+}
 
 const MAX_TURNS = 12;
 const PROMPT = `You are a tool for creating and editing interactive documents. Use tool calls and block markers to create and edit document content. Any text outside of block markers will be shown as a message to the user in a chat interface (not inserted into the document). You may include a brief conversational response when appropriate, especially to acknowledge the user's request, explain what you did, or ask clarifying questions.
@@ -119,18 +135,23 @@ export async function generateImage({ prompt }: GenerateImageSchema) {
 }
 
 export async function* write(
-  { pageId, sectionId, prompt, context, history }: WriteSchema,
+  { pageId, sectionId, prompt, context, selection, history }: WriteSchema,
   ctx: AuthenticatedPageProcedureContext,
   signal?: AbortSignal,
 ): AsyncIterable<WriteEvent> {
+  const anchor = resolveSelection(selection);
   const input: ResponseInput = [{ role: "developer", content: PROMPT }];
 
   if (context?.text) {
     input.push({ role: "user", content: context.text });
   }
 
-  const tiles = context?.tileIds?.length
-    ? await fetchTilesForContext(context.tileIds, pageId)
+  const contextIds = new Set(context?.tileIds ?? []);
+  if (anchor) {
+    contextIds.add(anchor.tileId);
+  }
+  const tiles = contextIds.size
+    ? await fetchTilesForContext([...contextIds], pageId)
     : [];
   const artifactIds = buildContextIds(tiles);
 
@@ -143,6 +164,18 @@ export async function* write(
     for (const message of history) {
       input.push({ role: message.role, content: message.content });
     }
+  }
+
+  if (anchor) {
+    let selectionRef = artifactIds.indexOf(anchor.tileId);
+    if (selectionRef === -1) {
+      selectionRef = artifactIds.length;
+      artifactIds.push(anchor.tileId);
+    }
+    input.push({
+      role: "developer",
+      content: `The user's selection is in block ${selectionRef}. Insert your response at the selection (replacing any selected text) using the marker:\n\n>>>@ ${selectionRef}\n...content...\n<<<`,
+    });
   }
 
   input.push({ role: "user", content: prompt });
@@ -183,6 +216,7 @@ export async function* write(
         input,
         toolContext,
         artifactIds,
+        anchor,
         signal,
       );
       yield* events();
@@ -199,6 +233,7 @@ export async function streamTurn(
   input: ResponseInput,
   toolContext: ToolContext,
   artifactIds: string[],
+  anchor: SelectionAnchor | null,
   signal?: AbortSignal,
 ) {
   const response = await openai.responses.create(
@@ -266,13 +301,17 @@ export async function streamTurn(
 
     for await (const textEvent of text) {
       if (typeof textEvent === "object" && "destination" in textEvent) {
-        writer =
-          textEvent.destination !== null
-            ? toolContext.session.streamText(
-                toolContext.resolveArtifactId(textEvent.destination),
-                textEvent.mode ?? "insert",
-              )
-            : null;
+        if (textEvent.destination === null) {
+          writer = null;
+        } else {
+          const tileId = toolContext.resolveArtifactId(textEvent.destination);
+          const mode = textEvent.mode ?? "insert";
+          const range =
+            mode === "selection" && anchor && tileId === anchor.tileId
+              ? anchor.range
+              : undefined;
+          writer = toolContext.session.streamText(tileId, mode, range);
+        }
       } else if (writer) {
         writer.apply(textEvent);
       } else {
