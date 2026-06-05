@@ -4,12 +4,10 @@ import type {
   Tool,
   ResponseFunctionToolCall,
 } from "openai/resources/responses/responses";
-import { CREATE_CHART_TOOL } from "./createChart";
 import { CREATE_IMAGE_TOOL } from "./createImage";
 import { CREATE_LINK_TOOL } from "./createLink";
 import { CREATE_MAP_TOOL } from "./createMap";
 import { CREATE_SECTION_TOOL } from "./createSection";
-import { CREATE_TABLE_TOOL } from "./createTable";
 import { CREATE_TEXT_TOOL } from "./createText";
 import { DELETE_TILES_TOOL } from "./deleteTile";
 import { EDIT_STYLE_TOOL } from "./editStyle";
@@ -18,8 +16,6 @@ import type { FunctionToolOptions, ToolContext } from "./types";
 export const FUNCTION_TOOLS: FunctionToolOptions[] = [
   CREATE_TEXT_TOOL,
   CREATE_IMAGE_TOOL,
-  CREATE_TABLE_TOOL,
-  CREATE_CHART_TOOL,
   CREATE_LINK_TOOL,
   CREATE_MAP_TOOL,
   CREATE_SECTION_TOOL,

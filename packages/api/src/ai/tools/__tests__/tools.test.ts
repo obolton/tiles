@@ -2,15 +2,6 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
 import { FUNCTION_TOOLS, useFunctionTool } from "../tools";
 
-vi.mock("@/routes/tables/tables.ts", () => ({
-  createTable: vi.fn().mockResolvedValue({ type: "TABLE", id: "table-1" }),
-}));
-
-vi.mock("@/routes/charts/charts.ts", () => ({
-  createChart: vi.fn().mockResolvedValue({ type: "CHART", id: "chart-1" }),
-  getTableColumns: vi.fn().mockResolvedValue([{ id: "col-1" }]),
-}));
-
 vi.mock("@/routes/links/links.ts", () => ({
   resolveLinkMetadata: vi.fn().mockResolvedValue({
     type: "LINK",
@@ -28,8 +19,6 @@ describe("FUNCTION_TOOLS", () => {
 
     expect(toolNames).toContain("create_text");
     expect(toolNames).toContain("create_image");
-    expect(toolNames).toContain("create_table");
-    expect(toolNames).toContain("create_chart");
     expect(toolNames).toContain("create_link");
     expect(toolNames).toContain("create_map");
     expect(toolNames).toContain("create_section");
@@ -73,32 +62,7 @@ describe("useFunctionTool", () => {
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(result).toEqual({ tileId: expect.any(String) });
-  });
-
-  test("finds and executes create_table tool", async () => {
-    const result = await useFunctionTool(
-      {
-        type: "function_call",
-        id: "call-1",
-        call_id: "call-1",
-        name: "create_table",
-        arguments: JSON.stringify({
-          parentId: null,
-          size: "medium",
-          columns: [
-            { title: "A", background: null },
-            { title: "B", background: null },
-          ],
-          rows: [["1", "2"]],
-          coordinates: null,
-        }),
-        status: "completed",
-      },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(result).toEqual({ artifact: { type: "TABLE", id: "table-1" } });
+    expect(result).toEqual({ tileId: expect.any(String), type: "TEXT" });
   });
 
   test("finds and executes create_link tool", async () => {
@@ -119,7 +83,7 @@ describe("useFunctionTool", () => {
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(result).toEqual({ tileId: expect.any(String) });
+    expect(result).toEqual({ tileId: expect.any(String), type: "LINK" });
   });
 
   test("finds and executes create_section tool", async () => {
@@ -138,7 +102,7 @@ describe("useFunctionTool", () => {
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(result).toEqual({ tileId: expect.any(String) });
+    expect(result).toEqual({ tileId: expect.any(String), type: "SECTION" });
   });
 
   test("throws error for unknown tool name", async () => {
