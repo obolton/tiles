@@ -7,7 +7,7 @@ import {
 import { openai } from "@/ai/openai";
 import { generateImageFromPrompt } from "@/ai/tools/images";
 import { TOOLS, useFunctionTool } from "@/ai/tools/tools";
-import { fetchTilesForContext } from "@/ai/context/tiles";
+import { resolveTileContents, type TileContent } from "@/ai/tileContent";
 import { buildContextIds, formatTileContext } from "@/ai/context/format";
 import { hocuspocus } from "@/collaboration/instance";
 import { docName } from "@/collaboration/server";
@@ -134,44 +134,41 @@ export async function generateImage({ prompt }: GenerateImageSchema) {
   return generateImageFromPrompt(prompt);
 }
 
-export async function* write(
-  { pageId, sectionId, prompt, context, selection, history }: WriteSchema,
-  ctx: AuthenticatedPageProcedureContext,
-  signal?: AbortSignal,
-): AsyncIterable<WriteEvent> {
-  const anchor = resolveSelection(selection);
+interface InputOptions {
+  prompt: string;
+  contextText?: string;
+  contextTiles: TileContent[];
+  history?: WriteSchema["history"];
+  selectionRef: number | null;
+}
+
+/**
+ * Assembles the model input: system prompt, referenced tile content, chat
+ * history, an optional selection-insert instruction, and the user's prompt.
+ */
+function buildInput({
+  prompt,
+  contextText,
+  contextTiles,
+  history,
+  selectionRef,
+}: InputOptions): ResponseInput {
   const input: ResponseInput = [{ role: "developer", content: PROMPT }];
 
-  if (context?.text) {
-    input.push({ role: "user", content: context.text });
+  if (contextText) {
+    input.push({ role: "user", content: contextText });
   }
 
-  const contextIds = new Set(context?.tileIds ?? []);
-  if (anchor) {
-    contextIds.add(anchor.tileId);
-  }
-  const tiles = contextIds.size
-    ? await fetchTilesForContext([...contextIds], pageId)
-    : [];
-  const artifactIds = buildContextIds(tiles);
-
-  const tileContext = formatTileContext(tiles);
+  const tileContext = formatTileContext(contextTiles);
   if (tileContext) {
     input.push({ role: "user", content: tileContext });
   }
 
-  if (history?.length) {
-    for (const message of history) {
-      input.push({ role: message.role, content: message.content });
-    }
+  for (const message of history ?? []) {
+    input.push({ role: message.role, content: message.content });
   }
 
-  if (anchor) {
-    let selectionRef = artifactIds.indexOf(anchor.tileId);
-    if (selectionRef === -1) {
-      selectionRef = artifactIds.length;
-      artifactIds.push(anchor.tileId);
-    }
+  if (selectionRef !== null) {
     input.push({
       role: "developer",
       content: `The user's selection is in block ${selectionRef}. Insert your response at the selection (replacing any selected text) using the marker:\n\n>>>@ ${selectionRef}\n...content...\n<<<`,
@@ -179,6 +176,31 @@ export async function* write(
   }
 
   input.push({ role: "user", content: prompt });
+  return input;
+}
+
+/**
+ * The artifact id of the selection's tile, registering it as a reference if it
+ * is not already in context.
+ */
+function resolveSelectionRef(
+  anchor: SelectionAnchor,
+  artifactIds: string[],
+): number {
+  const index = artifactIds.indexOf(anchor.tileId);
+  if (index !== -1) {
+    return index;
+  }
+  artifactIds.push(anchor.tileId);
+  return artifactIds.length - 1;
+}
+
+export async function* write(
+  { pageId, sectionId, prompt, context, selection, history }: WriteSchema,
+  ctx: AuthenticatedPageProcedureContext,
+  signal?: AbortSignal,
+): AsyncIterable<WriteEvent> {
+  const anchor = resolveSelection(selection);
 
   const connection = await hocuspocus.openDirectConnection(docName(pageId), {
     userId: ctx.userId,
@@ -191,6 +213,24 @@ export async function* write(
     if (!document) {
       throw new Error(`Failed to open page document: ${pageId}`);
     }
+
+    const contextIds = new Set(context?.tileIds ?? []);
+    if (anchor) {
+      contextIds.add(anchor.tileId);
+    }
+    const contextTiles = resolveTileContents(document, [...contextIds]);
+    const artifactIds = buildContextIds(contextTiles);
+
+    const selectionRef = anchor
+      ? resolveSelectionRef(anchor, artifactIds)
+      : null;
+    const input = buildInput({
+      prompt,
+      contextText: context?.text,
+      contextTiles,
+      history,
+      selectionRef,
+    });
 
     const toolContext: ToolContext = {
       ...ctx,
