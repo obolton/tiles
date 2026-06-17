@@ -1,389 +1,237 @@
 import * as Y from "yjs";
-import Tile from "./Tile";
+import { orderedEntries, orderAfter } from "doc/placement/ordering";
 import {
-  reactive,
-  array,
-  type Reactive,
-  type ReactiveArray,
-} from "@/utils/reactivity";
-import client from "@/api/client";
+  buildTableMap,
+  buildColumn,
+  buildRow,
+  clearRowCells,
+  getCell,
+  idsInRange,
+  type TableMapInput,
+} from "doc/tiles/table";
+import Tile from "./Tile";
+import Column from "./Column";
+import Row, { type CellValue } from "./Row";
+import OrderedCollection from "@/collaboration/OrderedCollection";
+import YReactive from "@/collaboration/YReactive";
+import { LOCAL_ORIGIN } from "@/collaboration/YMapBinding";
+import type { Reactive } from "@/utils/reactivity";
 import type Page from "@/models/Page";
 import type { ClientTableTile } from "api/types/tiles";
-import type { Fill } from "@/components/fills/types";
-import type { RichText } from "@/utils/richText/types";
-import type { AppRouterInputs } from "@/api/client";
 
-export interface TableColumn {
-  id: string;
-  width: number;
-  title: string | null;
-  background: Fill | null;
+export type { CellValue };
+
+export interface UpdateCellInput {
+  rowId: string;
+  columnId: string;
+  value: CellValue;
 }
 
-export interface TableRow {
-  id: string;
-  height: number;
-  data: Record<string, RichText | string | null>;
-  background: Fill | null;
+interface CellRange {
+  type: "cells";
+  from: { row: string; column: string };
+  to: { row: string; column: string };
 }
+
+interface RowRange {
+  type: "rows";
+  from: string;
+  to: string;
+}
+
+interface ColumnRange {
+  type: "columns";
+  from: string;
+  to: string;
+}
+
+export type TableRange = CellRange | RowRange | ColumnRange;
 
 export default class Table extends Tile {
   readonly type = "TABLE";
 
-  readonly columns: ReactiveArray<TableColumn>;
-  readonly rows: ReactiveArray<TableRow>;
-  readonly numRows: Reactive<number>;
+  readonly columns: OrderedCollection<Column>;
+  readonly rows: OrderedCollection<Row>;
 
-  static async create(
-    page: Page,
-    data: Omit<AppRouterInputs["tables"]["create"], "pageId">,
-  ) {
-    const properties = await client.tables.create.mutate({
-      pageId: page.id,
-      ...data,
-    });
-    const table = new Table(page, properties);
-    const { editor } = table;
-    editor.addTile(table);
-    editor.recordOperation({
-      apply: { type: "tile.restore", data: { snapshots: [properties] } },
-      reverse: { type: "tile.delete", data: { tileIds: [properties.id] } },
-    });
+  private readonly columnsMap: Y.Map<Y.Map<unknown>>;
+  private readonly rowsMap: Y.Map<Y.Map<unknown>>;
+  private readonly rowsContent: YReactive<Y.Map<Y.Map<unknown>>>;
+
+  static async create(page: Page, data: TableMapInput): Promise<Table> {
+    const { parentId, beforeId, ...rest } = data;
+    const map = buildTableMap(rest);
+    const table = page.createTile(map, { parentId, beforeId }) as Table;
+    table.editor.addTile(table);
+    return table;
   }
 
   constructor(page: Page, map: Y.Map<unknown>) {
     super(page, map);
 
-    this.columns = array<TableColumn>([]);
-    this.rows = array<TableRow>([]);
-    this.numRows = reactive(0);
+    const columnsMap = map.get("columns");
+    const rowsMap = map.get("rows");
+    if (!(columnsMap instanceof Y.Map) || !(rowsMap instanceof Y.Map)) {
+      throw new Error("Table tile missing columns or rows");
+    }
+    this.columnsMap = columnsMap as Y.Map<Y.Map<unknown>>;
+    this.rowsMap = rowsMap as Y.Map<Y.Map<unknown>>;
+    this.rowsContent = new YReactive(this.rowsMap);
+
+    this.columns = new OrderedCollection(
+      this.columnsMap,
+      (id, columnMap) => new Column(id, columnMap),
+    );
+    this.rows = new OrderedCollection(
+      this.rowsMap,
+      (id, rowMap) => new Row(id, rowMap),
+    );
+  }
+
+  getColumnData(columnId: string): Reactive<CellValue[]> {
+    return this.rowsContent.derive((rows) =>
+      orderedEntries(rows).map(({ map }) => getCell<CellValue>(map, columnId)),
+    );
   }
 
   serialize(): ClientTableTile {
     return {
       ...super.serialize(),
       type: "TABLE",
-      numRows: this.numRows.value,
-      columns: this.columns.value,
-      rows: this.rows.value,
+      columns: this.columns.value.map((column) => column.serialize()),
+      rows: this.rows.value.map((row) => row.serialize()),
     };
-  }
-
-  getColumnData(columnId: string) {
-    return this.rows.derive((rows) =>
-      rows.map((row) => row.data[columnId] ?? null),
-    );
   }
 
   // Columns
 
-  async insertColumn(afterColumnId: string | null) {
-    const afterIndex = this.columns.findIndex(
-      (column) => column.id === afterColumnId,
-    );
-    const column = await client.tables.insertColumn.mutate({
-      pageId: this.page.id,
-      tableId: this.id,
-      afterColumnId,
+  insertColumn(afterColumnId: string | null): Column {
+    let column!: Column;
+    this.transact(() => {
+      const order = orderAfter(orderedEntries(this.columnsMap), afterColumnId);
+      column = this.columns.create(buildColumn(order));
     });
-    this.columns.splice(afterIndex + 1, 0, column);
-
-    this.editor.recordOperation({
-      apply: {
-        type: "table.insertColumn",
-        data: { tileId: this.id, afterColumnId, column },
-      },
-      reverse: {
-        type: "table.deleteColumn",
-        data: { tileId: this.id, columnId: column.id },
-      },
-    });
-
     return column;
   }
 
-  async moveColumn(id: string, afterId: string | null) {
-    const columnIndex = this.columns.findIndex((c) => c.id === id);
-    const previousAfterId = this.columns.value[columnIndex - 1]?.id ?? null;
-
-    this.editor.recordOperation({
-      apply: {
-        type: "table.moveColumn",
-        data: { tileId: this.id, columnId: id, afterColumnId: afterId },
-      },
-      reverse: {
-        type: "table.moveColumn",
-        data: {
-          tileId: this.id,
-          columnId: id,
-          afterColumnId: previousAfterId,
-        },
-      },
+  moveColumn(id: string, afterId: string | null) {
+    this.transact(() => {
+      const siblings = orderedEntries(this.columnsMap).filter(
+        (e) => e.id !== id,
+      );
+      this.columnsMap.get(id)?.set("order", orderAfter(siblings, afterId));
     });
-
-    return await client.tables.moveColumn.mutate({
-      pageId: this.page.id,
-      tableId: this.id,
-      columnId: id,
-      afterColumnId: afterId,
-    });
-  }
-
-  async updateColumn(
-    id: string,
-    properties: {
-      title?: string | null;
-      width?: number;
-      background?: Fill | null;
-    },
-  ) {
-    const column = this.columns.find((c) => c.id === id);
-    if (!column) {
-      throw new Error(`Invalid column ID: ${id}`);
-    }
-
-    // Capture previous values for undoable properties
-    const previousChanges: { title?: string | null; width?: number } = {};
-    if (typeof properties.title !== "undefined") {
-      previousChanges.title = column.title;
-      column.title = properties.title;
-    }
-    if (typeof properties.width !== "undefined") {
-      previousChanges.width = column.width;
-      column.width = properties.width;
-    }
-
-    const result = await client.tables.updateColumn.mutate({
-      pageId: this.page.id,
-      tableId: this.id,
-      columnId: id,
-      ...properties,
-    });
-    if (typeof properties.background !== "undefined") {
-      column.background = result.background;
-    }
-
-    // Only record if there are undoable changes
-    const changes: { title?: string | null; width?: number } = {};
-    if (typeof properties.title !== "undefined") {
-      changes.title = properties.title;
-    }
-    if (typeof properties.width !== "undefined") {
-      changes.width = properties.width;
-    }
-    if (Object.keys(changes).length > 0) {
-      this.editor.recordOperation({
-        apply: {
-          type: "table.setColumnProperties",
-          data: { tileId: this.id, columnId: id, changes },
-        },
-        reverse: {
-          type: "table.setColumnProperties",
-          data: { tileId: this.id, columnId: id, changes: previousChanges },
-        },
-      });
-    }
-
-    return result;
   }
 
   removeColumns(ids: string[]) {
     if (ids.length === 0) {
       return;
     }
-
-    // Capture columns with their positions for restoration
-    const columnsWithPositions = ids.flatMap((id) => {
-      const index = this.columns.findIndex((c) => c.id === id);
-      const column = this.columns.value[index];
-      if (!column) {
-        return [];
+    this.transact(() => {
+      for (const id of ids) {
+        this.columns.remove(id);
       }
-      const afterColumnId = this.columns.value[index - 1]?.id ?? null;
-      return [{ column, afterColumnId }];
-    });
-
-    this.columns.value = this.columns.value.filter(
-      (column) => !ids.includes(column.id),
-    );
-
-    // Record batch delete operation
-    this.editor.recordOperation({
-      apply: ids.map((columnId) => ({
-        type: "table.deleteColumn" as const,
-        data: { tileId: this.id, columnId },
-      })),
-      reverse: columnsWithPositions.map(({ column, afterColumnId }) => ({
-        type: "table.restoreColumn" as const,
-        data: { tileId: this.id, afterColumnId, column },
-      })),
-    });
-
-    return client.tables.deleteColumns.mutate({
-      pageId: this.page.id,
-      tableId: this.id,
-      columnIds: ids,
+      // Drop the deleted columns' cells from every row.
+      for (const { map } of orderedEntries(this.rowsMap)) {
+        clearRowCells(map, ids);
+      }
     });
   }
 
   // Rows
 
-  async insertRow(afterRowId: string | null) {
-    const afterIndex = this.rows.findIndex((row) => row.id === afterRowId);
-    const row = await client.tables.insertRow.mutate({
-      pageId: this.page.id,
-      tableId: this.id,
-      afterRowId,
+  insertRow(afterRowId: string | null): Row {
+    let row!: Row;
+    this.transact(() => {
+      const order = orderAfter(orderedEntries(this.rowsMap), afterRowId);
+      row = this.rows.create(buildRow(order));
     });
-    this.rows.splice(afterIndex + 1, 0, row);
-    this.numRows.value++;
-
-    this.editor.recordOperation({
-      apply: {
-        type: "table.insertRow",
-        data: { tileId: this.id, afterRowId, row },
-      },
-      reverse: {
-        type: "table.deleteRow",
-        data: { tileId: this.id, rowId: row.id },
-      },
-    });
-
     return row;
   }
 
-  async appendRow() {
-    const afterRowId = this.rows.value.at(-1)?.id ?? null;
-    return this.insertRow(afterRowId);
+  appendRow(): Row {
+    const last = orderedEntries(this.rowsMap).at(-1)?.id ?? null;
+    return this.insertRow(last);
   }
 
-  async moveRow(id: string, afterId: string | null) {
-    const rowIndex = this.rows.findIndex((r) => r.id === id);
-    const previousAfterId = this.rows.value[rowIndex - 1]?.id ?? null;
-
-    this.editor.recordOperation({
-      apply: {
-        type: "table.moveRow",
-        data: { tileId: this.id, rowId: id, afterRowId: afterId },
-      },
-      reverse: {
-        type: "table.moveRow",
-        data: { tileId: this.id, rowId: id, afterRowId: previousAfterId },
-      },
+  moveRow(id: string, afterId: string | null) {
+    this.transact(() => {
+      const siblings = orderedEntries(this.rowsMap).filter((e) => e.id !== id);
+      this.rowsMap.get(id)?.set("order", orderAfter(siblings, afterId));
     });
-
-    return await client.tables.moveRow.mutate({
-      pageId: this.page.id,
-      tableId: this.id,
-      rowId: id,
-      afterRowId: afterId,
-    });
-  }
-
-  setRowHeight(id: string, height: number) {
-    const row = this.rows.find((r) => r.id === id);
-    if (!row) {
-      throw new Error(`Invalid row ID: ${id}`);
-    }
-
-    const previousHeight = row.height;
-    row.height = height;
-
-    this.editor.recordOperation({
-      apply: {
-        type: "table.setRowProperties",
-        data: { tileId: this.id, rowId: id, changes: { height } },
-      },
-      reverse: {
-        type: "table.setRowProperties",
-        data: {
-          tileId: this.id,
-          rowId: id,
-          changes: { height: previousHeight },
-        },
-      },
-    });
-
-    return client.tables.updateRow.mutate({
-      pageId: this.page.id,
-      tableId: this.id,
-      rowId: id,
-      height,
-    });
-  }
-
-  async setRowBackground(id: string, background: Fill | null) {
-    const row = this.rows.find((r) => r.id === id);
-    if (!row) {
-      throw new Error(`Invalid row ID: ${id}`);
-    }
-    const result = await client.tables.updateRow.mutate({
-      pageId: this.page.id,
-      tableId: this.id,
-      rowId: id,
-      background,
-    });
-    row.background = result.background;
-    return result.background;
   }
 
   removeRows(ids: string[]) {
     if (ids.length === 0) {
       return;
     }
-
-    // Capture rows with their positions for restoration
-    const rowsWithPositions = ids.flatMap((id) => {
-      const index = this.rows.findIndex((r) => r.id === id);
-      const row = this.rows.value[index];
-      if (!row) {
-        return [];
+    this.transact(() => {
+      for (const id of ids) {
+        this.rows.remove(id);
       }
-      const afterRowId = this.rows.value[index - 1]?.id ?? null;
-      return [{ row, afterRowId }];
-    });
-
-    this.rows.value = this.rows.value.filter((row) => !ids.includes(row.id));
-    this.numRows.value = this.numRows.value - ids.length;
-
-    // Record batch delete operation
-    this.editor.recordOperation({
-      apply: ids.map((rowId) => ({
-        type: "table.deleteRow" as const,
-        data: { tileId: this.id, rowId },
-      })),
-      reverse: rowsWithPositions.map(({ row, afterRowId }) => ({
-        type: "table.restoreRow" as const,
-        data: { tileId: this.id, afterRowId, row },
-      })),
-    });
-
-    return client.tables.deleteRows.mutate({
-      pageId: this.page.id,
-      tableId: this.id,
-      rowIds: ids,
     });
   }
 
   // Cells
 
-  async updateCell(
-    data: Omit<AppRouterInputs["tables"]["updateCell"], "pageId" | "tableId">,
-  ) {
-    return await client.tables.updateCell.mutate({
-      pageId: this.page.id,
-      tableId: this.id,
-      ...data,
+  updateCell({ rowId, columnId, value }: UpdateCellInput) {
+    this.transact(() => {
+      const cells = this.rowsMap.get(rowId)?.get("cells");
+      if (!(cells instanceof Y.Map)) {
+        return;
+      }
+      if (value == null || value === "") {
+        cells.delete(columnId);
+      } else {
+        cells.set(columnId, value);
+      }
     });
   }
 
-  async clearRanges(
-    data: Omit<AppRouterInputs["tables"]["clearRanges"], "pageId" | "tableId">,
-  ) {
-    return await client.tables.clearRanges.mutate({
-      pageId: this.page.id,
-      tableId: this.id,
-      ...data,
+  clearRanges({ ranges }: { ranges: TableRange[] }) {
+    const columnIds = orderedEntries(this.columnsMap).map((entry) => entry.id);
+    const rows = orderedEntries(this.rowsMap);
+    const rowIds = rows.map((entry) => entry.id);
+
+    this.transact(() => {
+      for (const range of ranges) {
+        if (range.type === "columns") {
+          const targets = idsInRange(columnIds, range.from, range.to);
+          for (const { map } of rows) {
+            clearRowCells(map, targets);
+          }
+        } else if (range.type === "rows") {
+          const targets = new Set(idsInRange(rowIds, range.from, range.to));
+          for (const { id, map } of rows) {
+            if (targets.has(id)) {
+              clearRowCells(map);
+            }
+          }
+        } else {
+          const targetRows = new Set(
+            idsInRange(rowIds, range.from.row, range.to.row),
+          );
+          const targetColumns = idsInRange(
+            columnIds,
+            range.from.column,
+            range.to.column,
+          );
+          for (const { id, map } of rows) {
+            if (targetRows.has(id)) {
+              clearRowCells(map, targetColumns);
+            }
+          }
+        }
+      }
     });
+  }
+
+  dispose() {
+    this.columns.dispose();
+    this.rows.dispose();
+    super.dispose();
+  }
+
+  private transact(fn: () => void) {
+    this.page.doc.transact(fn, LOCAL_ORIGIN);
   }
 }
