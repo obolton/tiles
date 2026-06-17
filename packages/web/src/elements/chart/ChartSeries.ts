@@ -36,7 +36,16 @@ export default class ChartSeries extends HTMLElement {
   type: ChartSeriesType = DEFAULT_TYPE;
   color: string[] = [];
   gradient: GradientDirection | null = null;
-  values: DataPoint[] = [];
+  #values: DataPoint[] = [];
+
+  get values(): DataPoint[] {
+    return this.#values;
+  }
+
+  set values(values: DataPoint[]) {
+    this.#values = values;
+    this.dispatchEvent(new Event("serieschange", { bubbles: true }));
+  }
 
   attributeChangedCallback(
     name: keyof ChartSeriesAttributes,

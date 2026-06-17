@@ -11,6 +11,7 @@ declare global {
 export default class ChartView extends HTMLElement {
   private readonly mutationObserver: MutationObserver;
   private readonly resizeObserver: ResizeObserver;
+  private drawScheduled = false;
 
   constructor() {
     super();
@@ -27,7 +28,7 @@ export default class ChartView extends HTMLElement {
   }
 
   connectedCallback() {
-    this.draw();
+    this.scheduleDraw();
     this.mutationObserver.observe(this, {
       subtree: true,
       childList: true,
@@ -35,19 +36,40 @@ export default class ChartView extends HTMLElement {
       attributeFilter: ["type", "color", "gradient"],
     });
     this.resizeObserver.observe(this);
+    this.addEventListener("serieschange", this);
   }
 
   disconnectedCallback() {
     this.mutationObserver.disconnect();
     this.resizeObserver.disconnect();
+    this.removeEventListener("serieschange", this);
+  }
+
+  handleEvent(event: Event) {
+    if (event.type === "serieschange") {
+      this.scheduleDraw();
+    }
   }
 
   private mutationObserverCallback() {
-    this.draw();
+    this.scheduleDraw();
   }
 
   private resizeObserverCallback() {
-    this.draw();
+    this.scheduleDraw();
+  }
+
+  private scheduleDraw() {
+    if (this.drawScheduled) {
+      return;
+    }
+    this.drawScheduled = true;
+    queueMicrotask(() => {
+      this.drawScheduled = false;
+      if (this.isConnected) {
+        this.draw();
+      }
+    });
   }
 
   draw() {
