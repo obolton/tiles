@@ -49,7 +49,6 @@ export class Computed<
   private readonly transform: (value: ReactiveType<Input>) => Value;
   private unsubscribeCallback?: UnsubscribeCallback;
 
-  private inputValue?: ReactiveType<Input>; // Used for lazy evaluation when disconnected
   private cachedValue?: Value;
   private stale = true;
 
@@ -63,7 +62,7 @@ export class Computed<
     const result = super.subscribe(callback, signal);
     if (!this.unsubscribeCallback && this.subscribers.size > 0) {
       this.unsubscribeCallback = this.input.subscribe(() => this.markAsStale());
-      this.inputValue = undefined;
+      this.stale = true;
     }
     return result;
   }
@@ -88,16 +87,7 @@ export class Computed<
   }
 
   get value() {
-    if (!this.unsubscribeCallback) {
-      const value = this.input.value as ReactiveType<Input>;
-      const previousValue = this.inputValue;
-      const stale = previousValue === undefined || previousValue !== value;
-      if (stale) {
-        this.inputValue = value;
-        this.cachedValue = this.transform(value);
-        this.stale = false;
-      }
-    } else if (this.stale) {
+    if (!this.unsubscribeCallback || this.stale) {
       this.cachedValue = this.transform(
         this.input.value as ReactiveType<Input>,
       );
