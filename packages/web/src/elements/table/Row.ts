@@ -57,4 +57,10 @@ export default class Row {
   get cells() {
     return this.element.cells;
   }
+
+  cellAt(columnIndex: number) {
+    return this.element.querySelector<HTMLTableCellElement>(
+      `td[aria-colindex="${columnIndex}"]`,
+    );
+  }
 }
