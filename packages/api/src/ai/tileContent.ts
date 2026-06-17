@@ -1,5 +1,6 @@
 import * as Y from "yjs";
-import { getChildren } from "doc/placement/ordering";
+import { getChildren, orderedEntries } from "doc/placement/ordering";
+import { getCell } from "doc/tiles/table";
 import { fragmentToMarkdown } from "doc/richText/markdown";
 import { toMarkdown } from "@/ai/context/markdown";
 import type { RichTextSchema } from "@/schema/RichText";
@@ -19,6 +20,7 @@ const TILE_CONTENT: Partial<Record<TileType, TileSerializer>> = {
   VIDEO: getVideoContent,
   LINK: getLinkContent,
   PAGE_LINK: getPageLinkContent,
+  TABLE: getTableContent,
   CHART: getChartContent,
 };
 
@@ -94,6 +96,49 @@ function getChartContent(tile: Y.Map<unknown>): string {
   }
 
   return parts.join("\n");
+}
+
+function getTableContent(tile: Y.Map<unknown>): string {
+  const columnsMap = tile.get("columns");
+  const rowsMap = tile.get("rows");
+  if (!(columnsMap instanceof Y.Map) || !(rowsMap instanceof Y.Map)) {
+    return "";
+  }
+
+  const columns = orderedEntries(columnsMap);
+  if (columns.length === 0) {
+    return "";
+  }
+
+  const headers = columns.map(({ map }) => escapeCell(getString(map, "title")));
+  const lines = [
+    `| ${headers.join(" | ")} |`,
+    `| ${headers.map(() => "---").join(" | ")} |`,
+  ];
+
+  for (const { map } of orderedEntries(rowsMap)) {
+    const values = columns.map(({ id }) => formatCell(getCell(map, id)));
+    lines.push(`| ${values.join(" | ")} |`);
+  }
+
+  return lines.join("\n");
+}
+
+function formatCell(value: unknown): string {
+  if (typeof value === "string") {
+    return escapeCell(value);
+  }
+  if (Array.isArray(value)) {
+    return escapeCell(toMarkdown(value as RichTextSchema));
+  }
+  return "";
+}
+
+/**
+ * Escapes cell content so a value stays within one table cell.
+ */
+function escapeCell(value: string): string {
+  return value.replace(/\|/g, "\\|").replace(/[\r\n]+/g, " ");
 }
 
 function expandSections(tiles: Y.Map<Y.Map<unknown>>, ids: string[]): string[] {

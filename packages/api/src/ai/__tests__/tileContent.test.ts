@@ -6,6 +6,7 @@ import { buildVideoMap } from "doc/tiles/video";
 import { buildLinkMap } from "doc/tiles/link";
 import { buildPageLinkMap } from "doc/tiles/pageLink";
 import { buildChartMap } from "doc/tiles/chart";
+import { buildTableMap, buildColumn, buildRow } from "doc/tiles/table";
 import { buildSectionMap } from "doc/tiles/section";
 import { getTileContent, resolveTileContents } from "@/ai/tileContent";
 import type { RichTextSchema } from "@/schema/RichText";
@@ -39,6 +40,13 @@ function writeText(tile: Y.Map<unknown>, markdown: string): void {
   text.insert(0, markdown);
   paragraph.insert(0, [text]);
   content.insert(0, [paragraph]);
+}
+
+function writeCells(row: Y.Map<unknown>, data: Record<string, string>): void {
+  const cells = row.get("cells") as Y.Map<unknown>;
+  for (const [columnId, value] of Object.entries(data)) {
+    cells.set(columnId, value);
+  }
 }
 
 describe("getTileContent", () => {
@@ -131,11 +139,47 @@ describe("getTileContent", () => {
     expect(getTileContent(tile)).toBe("Labels: Month\nSeries: Revenue, Profit");
   });
 
-  test("yields no content for a table (not yet in the Y.Doc)", () => {
+  test("serializes a table as a markdown table", () => {
     const { tiles: map } = tiles();
-    const tile = new Y.Map<unknown>();
-    tile.set("type", "TABLE");
-    place(map, "tab", tile);
+    const tile = place(map, "tab", buildTableMap({}));
+    const columns = tile.get("columns") as Y.Map<Y.Map<unknown>>;
+    const rows = tile.get("rows") as Y.Map<Y.Map<unknown>>;
+
+    columns.set("col-1", buildColumn("a0", { title: "Month" }));
+    columns.set("col-2", buildColumn("a1", { title: "Revenue" }));
+
+    const first = buildRow("a0");
+    const second = buildRow("a1");
+    rows.set("row-1", first);
+    rows.set("row-2", second);
+    writeCells(first, { "col-1": "Jan", "col-2": "100" });
+    writeCells(second, { "col-1": "Feb", "col-2": "200" });
+
+    expect(getTileContent(tile)).toBe(
+      "| Month | Revenue |\n| --- | --- |\n| Jan | 100 |\n| Feb | 200 |",
+    );
+  });
+
+  test("escapes pipes and collapses newlines in table cells", () => {
+    const { tiles: map } = tiles();
+    const tile = place(map, "tab", buildTableMap({}));
+    const columns = tile.get("columns") as Y.Map<Y.Map<unknown>>;
+    const rows = tile.get("rows") as Y.Map<Y.Map<unknown>>;
+
+    columns.set("col-1", buildColumn("a0", { title: "A | B" }));
+
+    const row = buildRow("a0");
+    rows.set("row-1", row);
+    writeCells(row, { "col-1": "line1\nline2 | x" });
+
+    expect(getTileContent(tile)).toBe(
+      "| A \\| B |\n| --- |\n| line1 line2 \\| x |",
+    );
+  });
+
+  test("yields no content for a table with no columns", () => {
+    const { tiles: map } = tiles();
+    const tile = place(map, "tab", buildTableMap({}));
     expect(getTileContent(tile)).toBe("");
   });
 });
