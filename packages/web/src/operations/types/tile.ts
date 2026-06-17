@@ -20,27 +20,4 @@ export interface SetTilePropertiesAction extends Action<
   SetTilePropertiesData
 > {}
 
-// Delete tiles by ID
-export interface DeleteTilesData {
-  tileIds: string[];
-}
-
-export interface DeleteTilesAction extends Action<
-  "tile.delete",
-  DeleteTilesData
-> {}
-
-// Restore tiles from snapshots
-export interface RestoreTilesData {
-  snapshots: ClientTile[];
-}
-
-export interface RestoreTilesAction extends Action<
-  "tile.restore",
-  RestoreTilesData
-> {}
-
-export type TileAction =
-  | SetTilePropertiesAction
-  | DeleteTilesAction
-  | RestoreTilesAction;
+export type TileAction = SetTilePropertiesAction;
