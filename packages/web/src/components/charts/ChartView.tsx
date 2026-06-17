@@ -51,7 +51,7 @@ export default function ChartView({ chart, className }: ChartViewProps) {
             $values={Editor.current.page
               .getTile(chart.tableId.value, Table)
               .getColumnData(series.column.value.id)
-              .value.map(toNumber)}
+              .derive((cells) => cells.map(toNumber))}
           />
         )}
       </Each>
