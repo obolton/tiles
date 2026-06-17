@@ -1,12 +1,13 @@
 import Each from "@/jsx/each";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import type Table from "@/models/Table";
+import type { CellValue } from "@/models/Row";
 import type { JSX } from "@/jsx/jsx";
 
 export interface TableViewContentsProps {
   table: Table;
   children: (
-    value: PrismaJson.TableRowData[keyof PrismaJson.TableRowData] | undefined,
+    value: CellValue,
     { rowId, columnId }: { rowId: string; columnId: string },
   ) => JSX.Node;
 }
@@ -24,8 +25,8 @@ export default function TableViewContents({
           {(column, index) => (
             <col
               style={{
-                width: column.width + "px",
-                ...getBackgroundStyle(column.background),
+                width: column.width.value + "px",
+                ...getBackgroundStyle(column.background.value),
               }}
               data-index={index}
               data-id={column.id}
@@ -40,7 +41,7 @@ export default function TableViewContents({
           <Each items={table.columns}>
             {(column, index) => (
               <th scope="col" aria-colindex={index}>
-                <span>{column.title}</span>
+                <span>{column.title.value}</span>
               </th>
             )}
           </Each>
@@ -52,8 +53,8 @@ export default function TableViewContents({
           {(row, rowIndex) => (
             <tr
               style={{
-                height: row.height + "px",
-                ...getBackgroundStyle(row.background),
+                height: row.height.value + "px",
+                ...getBackgroundStyle(row.background.value),
               }}
               aria-rowindex={rowIndex}
               data-id={row.id}
@@ -62,7 +63,7 @@ export default function TableViewContents({
               <Each items={table.columns}>
                 {(column, columnIndex) => (
                   <td aria-colindex={columnIndex}>
-                    {children(row.data[column.id], {
+                    {children(row.cell(column.id), {
                       rowId: row.id,
                       columnId: column.id,
                     })}
