@@ -10,12 +10,12 @@ export interface CollectionItem {
  */
 export default class Collection<
   Item extends CollectionItem,
-> extends BaseReactive<Item[]> {
+> extends BaseReactive<readonly Item[]> {
   private readonly instances = new Map<string, Item>();
   private readonly onMapChange = this.reconcile.bind(this);
 
   constructor(
-    private readonly map: Y.Map<Y.Map<unknown>>,
+    protected readonly map: Y.Map<Y.Map<unknown>>,
     private readonly createItem: (id: string, map: Y.Map<unknown>) => Item,
   ) {
     super();
@@ -25,7 +25,7 @@ export default class Collection<
     this.map.observe(this.onMapChange);
   }
 
-  get value(): Item[] {
+  get value(): readonly Item[] {
     return [...this.instances.values()];
   }
 
