@@ -30,17 +30,17 @@ export default function RowTab({ table, getTable }: RowTabProps) {
     if (!row?.id) {
       return null;
     }
-    return rowList.find((r) => r.id === row.id)?.background ?? null;
+    return rowList.find((r) => r.id === row.id)?.background.value ?? null;
   });
 
-  async function setBackground(value: Fill | null) {
+  function setBackground(value: Fill | null) {
     const row = getSelectedRow();
     if (!row?.id) {
       return;
     }
     try {
-      const result = await table.setRowBackground(row.id, value);
-      getTable().setRowBackground(row.id, result);
+      table.rows.get(row.id).background.value = value;
+      getTable().setRowBackground(row.id, value);
     } catch (error) {
       handleError(error);
     }

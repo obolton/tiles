@@ -32,17 +32,17 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
     if (!column?.id) {
       return null;
     }
-    return cols.find((c) => c.id === column.id)?.background ?? null;
+    return cols.find((c) => c.id === column.id)?.background.value ?? null;
   });
 
-  async function setBackground(value: Fill | null) {
+  function setBackground(value: Fill | null) {
     const column = getSelectedColumn();
     if (!column?.id) {
       return;
     }
     try {
-      const result = await table.updateColumn(column.id, { background: value });
-      getTable().setColumnBackground(column.id, result.background);
+      table.columns.get(column.id).background.value = value;
+      getTable().setColumnBackground(column.id, value);
     } catch (error) {
       handleError(error);
     }
@@ -74,12 +74,14 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
     if (!columnId) {
       return;
     }
-    const selected = columns.find((c) => c.id === columnId);
+    const selected = columns.value.find((c) => c.id === columnId);
     await Chart.create(page, {
       parentId: table.parentId.value,
       tableId: id,
       sizing: "FOUR_THREE",
-      columns: selected ? [{ id: selected.id, title: selected.title }] : [],
+      columns: selected
+        ? [{ id: selected.id, title: selected.title.value }]
+        : [],
     });
   }
 
