@@ -4,6 +4,7 @@ import { generateKeyBetween } from "jittered-fractional-indexing";
 import {
   getChildren,
   orderBetween,
+  orderedEntries,
   type OrderedTile,
 } from "@/placement/ordering";
 
@@ -105,5 +106,40 @@ describe("getChildren", () => {
 
   test("returns an empty array when the parent has no children", () => {
     expect(getChildren(tiles, "missing")).toEqual([]);
+  });
+});
+
+describe("orderedEntries", () => {
+  let columns: Y.Map<Y.Map<unknown>>;
+  let first: Y.Map<unknown>;
+  let second: Y.Map<unknown>;
+
+  beforeAll(() => {
+    const doc = new Y.Doc();
+    columns = doc.getMap("columns");
+
+    // Inserted out of order: the later key first.
+    second = new Y.Map<unknown>();
+    second.set("order", b);
+    columns.set("second", second);
+
+    first = new Y.Map<unknown>();
+    first.set("order", a);
+    columns.set("first", first);
+
+    // A malformed entry is skipped
+    const broken = new Y.Map<unknown>();
+    columns.set("broken", broken);
+  });
+
+  test("returns child maps with their ids, sorted ascending by order", () => {
+    expect(orderedEntries(columns)).toEqual([
+      { id: "first", order: a, map: first },
+      { id: "second", order: b, map: second },
+    ]);
+  });
+
+  test("returns an empty array for an empty map", () => {
+    expect(orderedEntries(new Y.Doc().getMap("empty"))).toEqual([]);
   });
 });

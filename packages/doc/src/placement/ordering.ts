@@ -24,6 +24,24 @@ export function getChildren(
   return children.sort((a, b) => (a.order < b.order ? -1 : 1));
 }
 
+export interface OrderedEntry extends OrderedTile {
+  map: Y.Map<unknown>;
+}
+
+/**
+ * Returns a map's children sorted by their `order` field.
+ */
+export function orderedEntries(map: Y.Map<Y.Map<unknown>>): OrderedEntry[] {
+  const entries: OrderedEntry[] = [];
+  for (const [id, child] of map) {
+    const order = child.get("order");
+    if (typeof order === "string") {
+      entries.push({ id, order, map: child });
+    }
+  }
+  return entries.sort((a, b) => (a.order < b.order ? -1 : 1));
+}
+
 export function orderBetween(
   siblings: Iterable<OrderedTile>,
   beforeId?: string | null,
@@ -44,4 +62,18 @@ export function orderBetween(
   }
 
   return generateKeyBetween(prev?.order ?? null, next?.order ?? null);
+}
+
+export function orderAfter(
+  siblings: OrderedTile[],
+  afterId: string | null,
+): string {
+  const index =
+    afterId == null
+      ? -1
+      : siblings.findIndex((sibling) => sibling.id === afterId);
+  return generateKeyBetween(
+    siblings[index]?.order ?? null,
+    siblings[index + 1]?.order ?? null,
+  );
 }
