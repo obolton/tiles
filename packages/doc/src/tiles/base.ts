@@ -5,6 +5,7 @@ import type { Fill } from "../types/fill";
 
 export interface CreateTileInput {
   type: TileType;
+  id?: string;
   parentId?: string | null;
   beforeId?: string | null;
   sizing?: Sizing;
@@ -30,6 +31,9 @@ export function buildBaseTileMap(properties: BaseTileInput): Y.Map<unknown> {
   const map = new Y.Map<unknown>();
 
   map.set("type", properties.type);
+  if (properties.id !== undefined) {
+    map.set("id", properties.id);
+  }
   map.set("sizing", properties.sizing ?? "AUTO");
   map.set("x", properties.x ?? 0);
   map.set("y", properties.y ?? 0);
