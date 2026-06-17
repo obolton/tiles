@@ -11,7 +11,6 @@ import { serialize } from "@/utils/richText/serialize";
 import { render } from "@/jsx/dom";
 import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
-import { moveElement } from "@/utils/arrays";
 import TableViewContents from "@/elements/table/TableViewContents";
 import type TableView from "@/elements/table/TableView";
 import type { Command } from "prosemirror-state";
@@ -43,7 +42,7 @@ export default function TableTile({
   let tableView: TableView | undefined;
   const editorView: Reactive<EditorView | null> = reactive(null);
   const state: Reactive<EditorState | null> = reactive(null);
-  const { columns, rows, numRows, editor } = table;
+  const { columns, rows, editor } = table;
   const { isEditable } = editor;
   const selectionType = reactive<"row" | "column" | "range" | null>(null);
 
@@ -65,7 +64,7 @@ export default function TableTile({
     if (!column.id) {
       return;
     }
-    const value = rows.value[row.index]?.data[column.id];
+    const value = rows.value[row.index]?.cell(column.id);
     if (!value) {
       return;
     } else if (typeof value === "string") {
@@ -89,7 +88,7 @@ export default function TableTile({
     try {
       editorView.value?.destroy();
 
-      const value = column.id ? rows.value[row.index]?.data[column.id] : null;
+      const value = column.id ? rows.value[row.index]?.cell(column.id) : null;
       const content =
         typeof value === "string" ? createDocument(value) : (value ?? null);
       state.value = createState(content, [keymap(KEY_MAP)]);
@@ -139,77 +138,58 @@ export default function TableTile({
     const contents = render(<RichText content={value} />);
     target.replaceChildren(...contents);
 
-    rowData.data[columnId] = value;
-    await table.updateCell({
-      rowId: rowData.id,
-      columnId,
-      value,
-    });
+    table.updateCell({ rowId: rowData.id, columnId, value });
   };
 
-  const onUpdateColumn = async (event: TableEvent) => {
+  const onUpdateColumn = (event: TableEvent) => {
     const { column, width, title } = event;
     if (!column?.id) {
       return;
     }
     try {
-      await table.updateColumn(column.id, { width, title });
+      const model = table.columns.get(column.id);
+      if (width !== undefined) {
+        model.width.value = width;
+      }
+      if (title !== undefined) {
+        model.title.value = title;
+      }
     } catch (error) {
       handleError(error);
     }
   };
 
-  const onResizeRow = async (event: TableEvent) => {
+  const onResizeRow = (event: TableEvent) => {
     const { row, height } = event;
     if (!row || !row.id || !height) {
       return;
     }
-    const rowData = rows.value[row.index];
-    if (!rowData) {
+    try {
+      table.rows.get(row.id).height.value = height;
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const onMoveColumn = (event: TableEvent) => {
+    const { column, afterId } = event;
+    if (!column?.id) {
       return;
     }
     try {
-      await table.setRowHeight(row.id, height);
+      table.moveColumn(column.id, afterId ?? null);
     } catch (error) {
       handleError(error);
     }
   };
 
-  const onMoveColumn = async (event: TableEvent) => {
-    try {
-      const { column, afterIndex, afterId } = event;
-      if (
-        !column ||
-        typeof column.index !== "number" ||
-        typeof afterIndex !== "number"
-      ) {
-        return;
-      }
-      const index = column.index;
-      const columnId = column.id;
-      if (!columnId) {
-        throw new Error(`Invalid column index: ${column}`);
-      }
-      columns.value = moveElement(columns.value, index, afterIndex + 1);
-      await table.moveColumn(columnId, afterId ?? null);
-    } catch (error) {
-      handleError(error);
+  const onMoveRow = (event: TableEvent) => {
+    const { row, afterId } = event;
+    if (!row?.id) {
+      return;
     }
-  };
-
-  const onMoveRow = async (event: TableEvent) => {
     try {
-      const { row, afterIndex, afterId } = event;
-      if (!row || typeof afterIndex !== "number") {
-        return;
-      }
-      const index = row.index;
-      const rowId = row.id;
-      if (!rowId) {
-        throw new Error(`Invalid row index: ${index}`);
-      }
-      rows.value = moveElement(rows.value, index, afterIndex + 1);
-      await table.moveRow(rowId, afterId ?? null);
+      table.moveRow(row.id, afterId ?? null);
     } catch (error) {
       handleError(error);
     }
@@ -257,11 +237,11 @@ export default function TableTile({
         }
       }),
     );
-    table
-      .clearRanges({
-        ranges,
-      })
-      .catch(handleError);
+    try {
+      table.clearRanges({ ranges });
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   function onSelectionChange() {
@@ -287,7 +267,7 @@ export default function TableTile({
         ref={ref}
         classList={{ "rich-text": true, [styles.table]: true }}
         columns={columns.derive((value) => value.length)}
-        rows={numRows}
+        rows={rows.derive((value) => value.length)}
         editable={isEditable}
         on:edittablecellstart={onEditCell}
         on:edittablecellend={onEditCellEnd}
@@ -298,8 +278,8 @@ export default function TableTile({
         on:appendtablerow={onAppendRow}
         on:cleartableselection={onClearSelection}
         on:tableselectionchange={onSelectionChange}
-        $getColumn={(index) => columns.value[index]!}
-        $getRow={(index) => rows.value[index]!}
+        $getColumn={(index) => columns.value[index]!.serialize()}
+        $getRow={(index) => rows.value[index]!.serialize()}
         $updateCell={updateCell}
       >
         {import.meta.env.SSR && (
