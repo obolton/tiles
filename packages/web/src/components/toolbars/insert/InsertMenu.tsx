@@ -114,7 +114,7 @@ export default function InsertMenu({
 
       case "TABLE":
         Table.create(Editor.current.page, {
-          sectionId,
+          parentId: sectionId,
           beforeId: null,
           height: 15,
           columns: 3,
