@@ -125,7 +125,6 @@ export const TABLE_TILE: ClientTableTile = {
   ...SHARED,
   id: "table-id",
   type: "TABLE",
-  numRows: 2,
   columns: [
     { id: "col-1", title: "Name", width: 100, background: null },
     { id: "col-2", title: "Age", width: 100, background: null },
@@ -150,7 +149,6 @@ export const EMPTY_TABLE_TILE: ClientTableTile = {
   ...SHARED,
   id: "empty-table-id",
   type: "TABLE",
-  numRows: 0,
   columns: [],
   rows: [],
 };

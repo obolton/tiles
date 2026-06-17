@@ -80,11 +80,9 @@ export function formatTile(tile: FullTile): ClientTile {
   }
 
   if (table) {
-    const { _count, ...tableData } = table;
     return {
       ...properties,
-      ...tableData,
-      numRows: _count.rows,
+      ...table,
       type: "TABLE",
     };
   }

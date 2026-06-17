@@ -21,11 +21,6 @@ export const TABLE_FIELDS = {
 
 export const TABLE_WITH_DATA_FIELDS = {
   ...TABLE_FIELDS,
-  _count: {
-    select: {
-      rows: true,
-    },
-  },
   columns: {
     select: TABLE_COLUMN_FIELDS,
     orderBy: {
@@ -41,11 +36,8 @@ export const TABLE_WITH_DATA_FIELDS = {
   },
 } as const satisfies Prisma.TableSelect<ExtensionArgs>;
 
-export type TableWithData = Omit<
-  Prisma.Result<
-    typeof prisma.table,
-    { select: typeof TABLE_WITH_DATA_FIELDS },
-    "findUniqueOrThrow"
-  >,
-  "_count"
-> & { numRows: number };
+export type TableWithData = Prisma.Result<
+  typeof prisma.table,
+  { select: typeof TABLE_WITH_DATA_FIELDS },
+  "findUniqueOrThrow"
+>;
