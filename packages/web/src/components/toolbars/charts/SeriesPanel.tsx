@@ -7,7 +7,8 @@ import ParagraphIcon from "@/icons/paragraph.svg?jsx";
 import styles from "./SeriesPanel.module.css";
 import { combine } from "@/utils/reactivity";
 import type Chart from "@/models/Chart";
-import type { Series, ChartType } from "@/models/Chart";
+import type Series from "@/models/Series";
+import type { ChartType } from "@/models/Series";
 import type Table from "@/models/Table";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type { JSX } from "@/jsx/jsx";
@@ -37,17 +38,18 @@ export default function SeriesPanel({
   function setLabel(event: Event) {
     const select = event.currentTarget as ListSelect;
     const value = select.value;
-    const property =
-      table.columns.find((column) => column.id === value) ?? null;
-    chart.setLabel(property);
+    const column = table.columns.value.find((c) => c.id === value);
+    chart.setLabel(
+      column ? { id: column.id, title: column.title.value } : null,
+    );
   }
 
   function addSeries(event: Event) {
     const select = event.currentTarget as ListSelect;
     const value = select.value;
-    const column = table.columns.find((c) => c.id === value);
+    const column = table.columns.value.find((c) => c.id === value);
     if (column) {
-      chart.addSeries({ id: column.id, title: column.title });
+      chart.addSeries({ id: column.id, title: column.title.value });
     }
   }
 
@@ -95,7 +97,7 @@ export default function SeriesPanel({
             <Each items={availableColumns}>
               {(column) => (
                 <ListOption value={column.id}>
-                  {column.title || "Column"}
+                  {column.title.derive((title) => title || "Column")}
                 </ListOption>
               )}
             </Each>
@@ -117,7 +119,7 @@ export default function SeriesPanel({
             <Each items={table.columns}>
               {(column) => (
                 <ListOption value={column.id}>
-                  {column.title || "Column"}
+                  {column.title.derive((title) => title || "Column")}
                 </ListOption>
               )}
             </Each>

@@ -6,7 +6,8 @@ import BarChartIcon from "@/icons/bar-chart.svg?jsx";
 import LineChartIcon from "@/icons/line-chart.svg?jsx";
 import AreaChartIcon from "@/icons/area-chart.svg?jsx";
 import RemoveIcon from "@/icons/remove.svg?jsx";
-import type { Series, ChartType } from "@/models/Chart";
+import type Series from "@/models/Series";
+import type { ChartType } from "@/models/Series";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
 import type ListSelect from "@/elements/list-select/ListSelect";
 
