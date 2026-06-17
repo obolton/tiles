@@ -31,7 +31,7 @@ export function getTileLabel(tile: Tile): string {
   }
 
   if (tile instanceof Table) {
-    return tile.columns.value[0]?.title || "Table";
+    return tile.columns.value[0]?.title.value || "Table";
   }
 
   if (tile instanceof Chart) {
