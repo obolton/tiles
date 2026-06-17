@@ -10,7 +10,6 @@ import externalLinks from "./links/router.ts";
 import bookmarks from "./bookmarks/router.ts";
 import ai from "./ai/router.ts";
 import collaboration from "./collaboration/router.ts";
-import tables from "./tables/router.ts";
 import folders from "./folders/router.ts";
 import workspaces from "./workspaces/router.ts";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
@@ -27,7 +26,6 @@ const appRouter = router({
   bookmarks,
   ai,
   collaboration,
-  tables,
   folders,
   workspaces,
 });
