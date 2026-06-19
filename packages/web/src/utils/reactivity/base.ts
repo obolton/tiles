@@ -3,12 +3,18 @@ import type {
   ComputedReactive,
   UnsubscribeCallback,
   ReactiveType,
+  SubscribeCallback,
 } from "./types";
 
-export abstract class BaseReactive<Value> implements Reactive<Value> {
-  protected readonly subscribers = new Set<(reactive: this) => void>();
+type NotifyArgs<Change> = [Change] extends [void] ? [] : [change: Change];
 
-  subscribe(callback: (reactive: this) => void, signal?: AbortSignal) {
+export abstract class BaseReactive<Value, Change = void> implements Reactive<
+  Value,
+  Change
+> {
+  protected readonly subscribers = new Set<SubscribeCallback<Value, Change>>();
+
+  subscribe(callback: SubscribeCallback<Value, Change>, signal?: AbortSignal) {
     this.subscribers.add(callback);
     const unsubscriber = () => this.unsubscribe(callback);
     signal?.addEventListener("abort", unsubscriber, {
@@ -18,7 +24,7 @@ export abstract class BaseReactive<Value> implements Reactive<Value> {
     return unsubscriber;
   }
 
-  unsubscribe(callback: (reactive: this) => void) {
+  unsubscribe(callback: SubscribeCallback<Value, Change>) {
     return this.subscribers.delete(callback);
   }
 
@@ -26,9 +32,10 @@ export abstract class BaseReactive<Value> implements Reactive<Value> {
     this.subscribers.clear();
   }
 
-  notify() {
+  notify(...args: NotifyArgs<Change>) {
+    const change = args[0] as Change;
     for (const subscriber of this.subscribers) {
-      subscriber(this);
+      subscriber(this, change);
     }
   }
 
@@ -42,7 +49,7 @@ export abstract class BaseReactive<Value> implements Reactive<Value> {
 }
 
 export class Computed<
-  Input extends Reactive,
+  Input extends Reactive<unknown, unknown>,
   Value,
 > extends BaseReactive<Value> {
   private readonly input: Input;
@@ -58,7 +65,7 @@ export class Computed<
     this.transform = transform;
   }
 
-  subscribe(callback: (reactive: this) => void, signal?: AbortSignal) {
+  subscribe(callback: SubscribeCallback<Value>, signal?: AbortSignal) {
     const result = super.subscribe(callback, signal);
     if (!this.unsubscribeCallback && this.subscribers.size > 0) {
       this.unsubscribeCallback = this.input.subscribe(() => this.markAsStale());
@@ -67,7 +74,7 @@ export class Computed<
     return result;
   }
 
-  unsubscribe(callback: (reactive: this) => void) {
+  unsubscribe(callback: SubscribeCallback<Value>) {
     const result = super.unsubscribe(callback);
     if (this.subscribers.size === 0) {
       this.disconnect();

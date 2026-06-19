@@ -1,7 +1,12 @@
 import { BaseReactive } from "./base";
-import type { Reactive, UnsubscribeCallback, ReactiveType } from "./types";
+import type {
+  Reactive,
+  UnsubscribeCallback,
+  ReactiveType,
+  SubscribeCallback,
+} from "./types";
 
-type ReactiveInputs = Record<string, Reactive>;
+type ReactiveInputs = Record<string, Reactive<any, unknown>>;
 
 type CombinedValue<T extends ReactiveInputs> = {
   [K in keyof T]: ReactiveType<T[K]>;
@@ -21,7 +26,7 @@ export class Combined<T extends ReactiveInputs, V> extends BaseReactive<V> {
     this.transform = transform;
   }
 
-  subscribe(callback: (reactive: this) => void, signal?: AbortSignal) {
+  subscribe(callback: SubscribeCallback<V>, signal?: AbortSignal) {
     const result = super.subscribe(callback, signal);
     if (!this.unsubscribeCallbacks && this.subscribers.size > 0) {
       this.unsubscribeCallbacks = Object.values(this.inputs).map((input) =>
@@ -31,7 +36,7 @@ export class Combined<T extends ReactiveInputs, V> extends BaseReactive<V> {
     return result;
   }
 
-  unsubscribe(callback: (reactive: this) => void) {
+  unsubscribe(callback: SubscribeCallback<V>) {
     const result = super.unsubscribe(callback);
     if (this.subscribers.size === 0) {
       this.disconnect();

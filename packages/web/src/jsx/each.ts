@@ -4,7 +4,7 @@ import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "./jsx";
 
 export interface EachProps<T> {
-  items: Reactive<T[]> | Reactive<readonly T[]>;
+  items: Reactive<readonly T[], unknown>;
   children: (item: T, index: number) => JSX.Node;
   signal?: AbortSignal;
 }
@@ -16,7 +16,7 @@ interface Entry {
 }
 
 export default class Each<T> implements JSX.ElementClass {
-  readonly items: Reactive<T[]> | Reactive<readonly T[]>;
+  readonly items: Reactive<readonly T[], unknown>;
   readonly renderItem: (item: T, index: number) => JSX.Node;
   readonly signal?: AbortSignal;
 
