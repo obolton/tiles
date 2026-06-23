@@ -266,8 +266,8 @@ export default function TableTile({
       <table-view
         ref={ref}
         classList={{ "rich-text": true, [styles.table]: true }}
-        columns={columns.derive((value) => value.length)}
-        rows={rows.derive((value) => value.length)}
+        $columns={columns}
+        $rows={rows}
         editable={isEditable}
         on:edittablecellstart={onEditCell}
         on:edittablecellend={onEditCellEnd}
@@ -278,8 +278,6 @@ export default function TableTile({
         on:appendtablerow={onAppendRow}
         on:cleartableselection={onClearSelection}
         on:tableselectionchange={onSelectionChange}
-        $getColumn={(index) => columns.value[index]!.serialize()}
-        $getRow={(index) => rows.value[index]!.serialize()}
         $updateCell={updateCell}
       >
         {import.meta.env.SSR && (
