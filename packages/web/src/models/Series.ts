@@ -15,8 +15,8 @@ export default class Series {
   readonly fill: Reactive<ColorFill | GradientFill | null>;
   private readonly binding: YMapBinding;
 
-  static createMap(input: SeriesMapInput): Y.Map<unknown> {
-    return buildSeriesMap(input);
+  static createMap(order: string, input: SeriesMapInput): Y.Map<unknown> {
+    return buildSeriesMap(order, input);
   }
 
   constructor(id: string, map: Y.Map<unknown>) {

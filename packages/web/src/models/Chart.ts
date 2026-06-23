@@ -2,7 +2,9 @@ import * as Y from "yjs";
 import Tile from "./Tile";
 import { buildChartMap, type ChartMapInput } from "doc/tiles/chart";
 import Series from "@/models/Series";
-import Collection from "@/collaboration/Collection";
+import SharedList from "@/collaboration/SharedList";
+import { createId } from "doc/id";
+import { orderBetween, orderedEntries } from "doc/placement/ordering";
 import type { Reactive } from "@/utils/reactivity";
 import type { ChartType } from "@/models/Series";
 import type Page from "@/models/Page";
@@ -19,7 +21,8 @@ export default class Chart extends Tile {
 
   readonly tableId: Reactive<string>;
   readonly label: Reactive<Property | null>;
-  readonly series: Collection<Series>;
+  readonly series: SharedList<Series>;
+  private readonly seriesMap: Y.Map<Y.Map<unknown>>;
 
   static createMap(
     properties: Omit<CreateChartInput, "parentId" | "beforeId" | "columns">,
@@ -32,9 +35,7 @@ export default class Chart extends Tile {
     const map = Chart.createMap(rest);
     const chart = page.createTile(map, { parentId, beforeId }) as Chart;
     for (const column of columns ?? []) {
-      chart.series.create(
-        Series.createMap({ type: "BAR", column, fill: null }),
-      );
+      chart.addSeries(column);
     }
     chart.editor.addTile(chart);
     return chart;
@@ -45,8 +46,9 @@ export default class Chart extends Tile {
 
     this.tableId = this.binding.field("tableId", "");
     this.label = this.binding.field("label", null);
-    this.series = new Collection(
-      map.get("series") as Y.Map<Y.Map<unknown>>,
+    this.seriesMap = map.get("series") as Y.Map<Y.Map<unknown>>;
+    this.series = new SharedList(
+      this.seriesMap,
       (id, map) => new Series(id, map),
     );
   }
@@ -71,7 +73,11 @@ export default class Chart extends Tile {
   }
 
   addSeries(column: Property) {
-    this.series.create(Series.createMap({ type: "BAR", column, fill: null }));
+    const order = orderBetween(orderedEntries(this.seriesMap), null);
+    this.seriesMap.set(
+      createId(),
+      Series.createMap(order, { type: "BAR", column, fill: null }),
+    );
   }
 
   setSeriesChartType(id: string, type: ChartType) {

@@ -12,7 +12,8 @@ import {
 import Tile from "./Tile";
 import Column from "./Column";
 import Row, { type CellValue } from "./Row";
-import OrderedCollection from "@/collaboration/OrderedCollection";
+import SharedList from "@/collaboration/SharedList";
+import { createId } from "doc/id";
 import YReactive from "@/collaboration/YReactive";
 import { LOCAL_ORIGIN } from "@/collaboration/YMapBinding";
 import type { Reactive } from "@/utils/reactivity";
@@ -50,8 +51,8 @@ export type TableRange = CellRange | RowRange | ColumnRange;
 export default class Table extends Tile {
   readonly type = "TABLE";
 
-  readonly columns: OrderedCollection<Column>;
-  readonly rows: OrderedCollection<Row>;
+  readonly columns: SharedList<Column>;
+  readonly rows: SharedList<Row>;
 
   private readonly columnsMap: Y.Map<Y.Map<unknown>>;
   private readonly rowsMap: Y.Map<Y.Map<unknown>>;
@@ -77,11 +78,11 @@ export default class Table extends Tile {
     this.rowsMap = rowsMap as Y.Map<Y.Map<unknown>>;
     this.rowsContent = new YReactive(this.rowsMap);
 
-    this.columns = new OrderedCollection(
+    this.columns = new SharedList(
       this.columnsMap,
       (id, columnMap) => new Column(id, columnMap),
     );
-    this.rows = new OrderedCollection(
+    this.rows = new SharedList(
       this.rowsMap,
       (id, rowMap) => new Row(id, rowMap),
     );
@@ -105,12 +106,12 @@ export default class Table extends Tile {
   // Columns
 
   insertColumn(afterColumnId: string | null): Column {
-    let column!: Column;
+    const id = createId();
     this.transact(() => {
       const order = orderAfter(orderedEntries(this.columnsMap), afterColumnId);
-      column = this.columns.create(buildColumn(order));
+      this.columnsMap.set(id, buildColumn(order));
     });
-    return column;
+    return this.columns.get(id);
   }
 
   moveColumn(id: string, afterId: string | null) {
@@ -140,12 +141,12 @@ export default class Table extends Tile {
   // Rows
 
   insertRow(afterRowId: string | null): Row {
-    let row!: Row;
+    const id = createId();
     this.transact(() => {
       const order = orderAfter(orderedEntries(this.rowsMap), afterRowId);
-      row = this.rows.create(buildRow(order));
+      this.rowsMap.set(id, buildRow(order));
     });
-    return row;
+    return this.rows.get(id);
   }
 
   appendRow(): Row {

@@ -69,7 +69,7 @@ describe("Page", () => {
   describe("getDropdown", () => {
     test("returns the dropdown with the given ID", () => {
       const page = new Page(PAGE, new Y.Doc());
-      const created = page.dropdowns.create(
+      const created = page.createDropdown(
         Dropdown.createMap({
           title: "Status",
           options: [{ value: "Active" }],

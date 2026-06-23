@@ -1,5 +1,6 @@
 import client from "@/api/client";
-import Collection from "@/collaboration/Collection";
+import SharedList, { type SortOptions } from "@/collaboration/SharedList";
+import { createId } from "doc/id";
 import PageInvite from "@/models/PageInvite";
 import PageThemes from "@/models/PageThemes";
 import TileCollection from "@/models/TileCollection";
@@ -34,6 +35,15 @@ export type PageData = NonNullable<AppRouterOutputs["pages"]["getById"]>;
 
 type TileClass<T extends Tile = Tile> = abstract new (...args: any[]) => T;
 
+const titleCollator = new Intl.Collator(undefined, {
+  sensitivity: "base",
+  numeric: true,
+});
+const SORT_BY_TITLE: SortOptions = {
+  key: "title",
+  compare: titleCollator.compare,
+};
+
 export default class Page {
   editor?: Editor;
   readonly doc: Y.Doc;
@@ -54,7 +64,8 @@ export default class Page {
   readonly width: Reactive<number>;
   readonly alignment: Reactive<HorizontalAlignment>;
   readonly dockSizes: Record<DockEdge, BoundField<number>>;
-  readonly dropdowns: Collection<Dropdown>;
+  readonly dropdowns: SharedList<Dropdown>;
+  private readonly dropdownsMap: Y.Map<Y.Map<unknown>>;
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<PageInvite>;
   readonly index: Map<string, Tile>;
@@ -106,9 +117,11 @@ export default class Page {
       LEFT: this.metadataBinding.field("dockLeft", DEFAULT_DOCK_SIZE),
       RIGHT: this.metadataBinding.field("dockRight", DEFAULT_DOCK_SIZE),
     };
-    this.dropdowns = new Collection(
-      this.doc.getMap<Y.Map<unknown>>("dropdowns"),
+    this.dropdownsMap = this.doc.getMap<Y.Map<unknown>>("dropdowns");
+    this.dropdowns = new SharedList(
+      this.dropdownsMap,
       (id, map) => new Dropdown(id, map),
+      SORT_BY_TITLE,
     );
     this.access = array(data.access);
     this.invites = array(data.invites.map((i) => new PageInvite(this, i)));
@@ -147,6 +160,12 @@ export default class Page {
       apply: { type: "page.setProperties", data: { changes } },
       reverse: { type: "page.setProperties", data: { changes: inverse } },
     });
+  }
+
+  createDropdown(entry: Y.Map<unknown>): Dropdown {
+    const id = createId();
+    this.dropdownsMap.set(id, entry);
+    return this.dropdowns.get(id);
   }
 
   getDropdown(id: string): Dropdown {
@@ -210,7 +229,7 @@ export default class Page {
     map: Y.Map<unknown>,
     options: { parentId?: string | null; beforeId?: string | null } = {},
   ): Tile {
-    const id = crypto.randomUUID();
+    const id = createId();
     const parentId = options.parentId ?? null;
     const order = this.placement.orderBefore(parentId, options.beforeId);
 
