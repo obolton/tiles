@@ -133,7 +133,7 @@ export default function FormattingTools({
 
   function insertNewDropdown() {
     const defaultOption = "Option 1";
-    const dropdown = Editor.current.page.dropdowns.create(
+    const dropdown = Editor.current.page.createDropdown(
       Dropdown.createMap({ options: [{ value: defaultOption }] }),
     );
     performCommand(insertDropdown(dropdown.id, defaultOption));
