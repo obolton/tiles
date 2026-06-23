@@ -1,6 +1,7 @@
 import * as Y from "yjs";
 import { generateNKeysBetween } from "jittered-fractional-indexing";
 import { buildBaseTileMap, type CreateTileInput } from "./base";
+import { createId } from "../id";
 import type { Fill } from "../types/fill";
 
 export const DEFAULT_COLUMN_WIDTH = 200;
@@ -38,7 +39,7 @@ export function buildTableMap(
   const columnIds: string[] = [];
   const columnOrders = generateNKeysBetween(null, null, columnInputs.length);
   columnInputs.forEach((column, index) => {
-    const id = column.id ?? crypto.randomUUID();
+    const id = column.id ?? createId();
     columnsMap.set(id, buildColumn(columnOrders[index]!, column));
     columnIds.push(id);
   });
@@ -49,10 +50,7 @@ export function buildTableMap(
   const rowsMap = new Y.Map<Y.Map<unknown>>();
   const rowOrders = generateNKeysBetween(null, null, rowInputs.length);
   rowInputs.forEach((row, index) => {
-    rowsMap.set(
-      crypto.randomUUID(),
-      buildRow(rowOrders[index]!, row, columnIds),
-    );
+    rowsMap.set(createId(), buildRow(rowOrders[index]!, row, columnIds));
   });
   map.set("rows", rowsMap);
 

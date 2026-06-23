@@ -1,6 +1,8 @@
 import * as Y from "yjs";
+import { generateKeyBetween } from "jittered-fractional-indexing";
 import { buildBaseTileMap, type CreateTileInput } from "./base";
 import { buildSeriesMap, type SeriesMapInput } from "./series";
+import { createId } from "../id";
 import type { Property } from "../types/chart";
 
 export interface ChartMapInput extends Omit<CreateTileInput, "type"> {
@@ -18,8 +20,10 @@ export function buildChartMap(
   map.set("label", label ?? null);
 
   const seriesMap = new Y.Map<Y.Map<unknown>>();
+  let order: string | null = null;
   for (const entry of series) {
-    seriesMap.set(crypto.randomUUID(), buildSeriesMap(entry));
+    order = generateKeyBetween(order, null);
+    seriesMap.set(createId(), buildSeriesMap(order, entry));
   }
   map.set("series", seriesMap);
 
