@@ -2,7 +2,11 @@ import type { Reactive } from "@/utils/reactivity";
 import type { AttributesFor, ElementTypeFor } from "./html-attributes";
 
 export type WithProperties<T> = {
-  [K in keyof T as `$${Extract<K, string>}`]?: T[K] | Reactive<T[K]>;
+  [K in keyof T as `$${Extract<K, string>}`]?: T[K];
+};
+
+export type WithBindings<T> = {
+  [K in keyof T as `bind:${Extract<K, string>}`]?: T[K] | Reactive<T[K]>;
 };
 
 export type WithReactiveProperties<T> = {
@@ -70,7 +74,8 @@ export namespace JSX {
   export type Attributes<TagName extends string> = WithReactiveProperties<
     AttributesFor<TagName>
   > &
-    WithProperties<ElementTypeFor<TagName>> & {
+    WithProperties<ElementTypeFor<TagName>> &
+    WithBindings<ElementTypeFor<TagName>> & {
       ref?: Ref<ElementTypeFor<TagName>>;
       children?: Node;
       [k: DataAttribute]: string | number | null | undefined;

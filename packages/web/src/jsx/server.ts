@@ -89,6 +89,7 @@ function getAttributes(properties: Record<string, unknown>): Attributes {
     if (
       name === "children" ||
       name.startsWith("$") ||
+      name.startsWith("bind:") ||
       name.startsWith("on:") ||
       typeof value === "function" ||
       value === undefined ||

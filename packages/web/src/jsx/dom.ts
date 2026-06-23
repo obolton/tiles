@@ -93,8 +93,8 @@ function setAttributes<T extends Element>(
         value as EventListener,
         { signal },
       );
-    } else if (name.startsWith("$")) {
-      const property = name.slice(1) as keyof T;
+    } else if (name.startsWith("bind:")) {
+      const property = name.slice(5) as keyof T;
       if (property in element) {
         if (isReactive(value)) {
           element[property] = value.value as T[typeof property];
@@ -104,6 +104,11 @@ function setAttributes<T extends Element>(
         } else {
           element[property] = value as T[typeof property];
         }
+      }
+    } else if (name.startsWith("$")) {
+      const property = name.slice(1) as keyof T;
+      if (property in element) {
+        element[property] = value as T[typeof property];
       }
     } else {
       setAttribute(element, name, value, signal);

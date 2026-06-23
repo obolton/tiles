@@ -5,6 +5,17 @@ import { render, hydrate } from "../dom";
 import { BOOLEAN_STRING_ATTRIBUTES } from "../attributes";
 import { reactive } from "@/utils/reactivity";
 
+class TestWidget extends HTMLElement {
+  data: { id: string } | null = null;
+}
+customElements.define("test-widget", TestWidget);
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "test-widget": TestWidget;
+  }
+}
+
 describe("render", () => {
   test("creates an element with the given type", () => {
     const nodes = render(jsx("div", {}));
@@ -29,17 +40,27 @@ describe("render", () => {
     expect(element.className).toBe("test-class");
   });
 
-  test("keeps a reactive property in sync", () => {
-    const checked = reactive(false);
-    const [element] = render(
-      jsx("input", { type: "checkbox", $checked: checked }),
-    ) as [HTMLInputElement];
+  test("assigns a property value as-is", () => {
+    const data = { id: "a" };
+    const [element] = render(jsx("test-widget", { $data: data })) as [
+      TestWidget,
+    ];
 
-    expect(element.checked).toBe(false);
+    // `$` assigns the value itself, with no unwrapping or subscription.
+    expect(element.data).toBe(data);
+  });
 
-    checked.value = true;
+  test("binds a property to a reactive value and keeps it in sync", () => {
+    const data = reactive<{ id: string } | null>({ id: "a" });
+    const [element] = render(jsx("test-widget", { "bind:data": data })) as [
+      TestWidget,
+    ];
 
-    expect(element.checked).toBe(true);
+    expect(element.data).toEqual({ id: "a" });
+
+    data.value = { id: "b" };
+
+    expect(element.data).toEqual({ id: "b" });
   });
 
   describe("styles", () => {
