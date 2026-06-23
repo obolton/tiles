@@ -48,7 +48,7 @@ export default function ChartView({ chart, className }: ChartViewProps) {
             gradient={series.fill.derive((fill) =>
               fill?.type === "gradient" ? fill.direction : null,
             )}
-            $values={Editor.current.page
+            bind:values={Editor.current.page
               .getTile(chart.tableId.value, Table)
               .getColumnData(series.column.value.id)
               .derive((cells) => cells.map(toNumber))}

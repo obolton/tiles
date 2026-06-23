@@ -124,7 +124,7 @@ export default function LibraryCard({
             [styles.checkbox]: true,
             [styles.visible]: selected,
           }}
-          $checked={selected}
+          bind:checked={selected}
           on:change={onCheckboxChange}
           aria-label={`Select ${page.title}`}
         />
