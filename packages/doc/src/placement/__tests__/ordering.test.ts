@@ -84,11 +84,6 @@ describe("getChildren", () => {
     child.set("parentId", "section-1");
     child.set("order", b);
     tiles.set("child", child);
-
-    // A malformed entry with no order — must be skipped.
-    const broken = new Y.Map<unknown>();
-    broken.set("parentId", null);
-    tiles.set("broken", broken);
   });
 
   test("returns only a parent's children, sorted ascending by order", () => {
@@ -106,6 +101,29 @@ describe("getChildren", () => {
 
   test("returns an empty array when the parent has no children", () => {
     expect(getChildren(tiles, "missing")).toEqual([]);
+  });
+
+  test("breaks ties by id when children share an order", () => {
+    const map = new Y.Doc().getMap<Y.Map<unknown>>("tiles");
+    const z = new Y.Map<unknown>();
+    z.set("parentId", null);
+    z.set("order", a);
+    map.set("z", z);
+    const x = new Y.Map<unknown>();
+    x.set("parentId", null);
+    x.set("order", a); // same order as "z"
+    map.set("x", x);
+
+    expect(getChildren(map, null).map((child) => child.id)).toEqual(["x", "z"]);
+  });
+
+  test("throws when a child has a malformed order", () => {
+    const map = new Y.Doc().getMap<Y.Map<unknown>>("tiles");
+    const broken = new Y.Map<unknown>();
+    broken.set("parentId", null);
+    map.set("broken", broken);
+
+    expect(() => getChildren(map, null)).toThrow();
   });
 });
 
@@ -126,10 +144,6 @@ describe("orderedEntries", () => {
     first = new Y.Map<unknown>();
     first.set("order", a);
     columns.set("first", first);
-
-    // A malformed entry is skipped
-    const broken = new Y.Map<unknown>();
-    columns.set("broken", broken);
   });
 
   test("returns child maps with their ids, sorted ascending by order", () => {
@@ -141,5 +155,24 @@ describe("orderedEntries", () => {
 
   test("returns an empty array for an empty map", () => {
     expect(orderedEntries(new Y.Doc().getMap("empty"))).toEqual([]);
+  });
+
+  test("breaks ties by id when entries share an order", () => {
+    const map = new Y.Doc().getMap<Y.Map<unknown>>("cols");
+    const z = new Y.Map<unknown>();
+    z.set("order", a);
+    map.set("z", z);
+    const x = new Y.Map<unknown>();
+    x.set("order", a); // same order as "z"
+    map.set("x", x);
+
+    expect(orderedEntries(map).map((entry) => entry.id)).toEqual(["x", "z"]);
+  });
+
+  test("throws when an entry has a malformed order", () => {
+    const map = new Y.Doc().getMap<Y.Map<unknown>>("cols");
+    map.set("broken", new Y.Map<unknown>());
+
+    expect(() => orderedEntries(map)).toThrow();
   });
 });

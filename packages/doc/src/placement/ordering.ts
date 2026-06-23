@@ -6,6 +6,22 @@ export interface OrderedTile {
   order: string;
 }
 
+function compareOrder(a: OrderedTile, b: OrderedTile): number {
+  if (a.order < b.order) {
+    return -1;
+  }
+  if (a.order > b.order) {
+    return 1;
+  }
+  if (a.id < b.id) {
+    return -1;
+  }
+  if (a.id > b.id) {
+    return 1;
+  }
+  return 0;
+}
+
 export function getChildren(
   tiles: Y.Map<Y.Map<unknown>>,
   parentId: string | null,
@@ -17,11 +33,11 @@ export function getChildren(
     }
     const order = tile.get("order");
     if (typeof order !== "string") {
-      continue;
+      throw new TypeError(`Invalid order for ${id}`);
     }
     children.push({ id, order });
   }
-  return children.sort((a, b) => (a.order < b.order ? -1 : 1));
+  return children.sort(compareOrder);
 }
 
 export interface OrderedEntry extends OrderedTile {
@@ -35,11 +51,12 @@ export function orderedEntries(map: Y.Map<Y.Map<unknown>>): OrderedEntry[] {
   const entries: OrderedEntry[] = [];
   for (const [id, child] of map) {
     const order = child.get("order");
-    if (typeof order === "string") {
-      entries.push({ id, order, map: child });
+    if (typeof order !== "string") {
+      throw new TypeError(`Invalid order for ${id}`);
     }
+    entries.push({ id, order, map: child });
   }
-  return entries.sort((a, b) => (a.order < b.order ? -1 : 1));
+  return entries.sort(compareOrder);
 }
 
 export function orderBetween(
