@@ -25,3 +25,11 @@ export type SubscribeCallback<T, C = void> = (
 export type UnsubscribeCallback = () => boolean;
 
 export type ReactiveType<T extends Reactive<unknown, unknown>> = T["value"];
+
+export interface ListChange<Item> {
+  readonly removed: readonly { item: Item; index: number }[];
+  readonly added: readonly { item: Item; index: number }[];
+  readonly moved: readonly { item: Item; from: number; index: number }[];
+}
+
+export type ReactiveList<T> = Reactive<readonly T[], ListChange<T>>;
