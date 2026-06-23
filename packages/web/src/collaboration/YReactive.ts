@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { BaseReactive } from "@/utils/reactivity";
+import { BaseReactive, type SubscribeCallback } from "@/utils/reactivity";
 
 /**
  * A reactive view of a `Y.AbstractType`.
@@ -18,7 +18,7 @@ export default class YReactive<
     return this.input;
   }
 
-  subscribe(callback: (reactive: this) => void, signal?: AbortSignal) {
+  subscribe(callback: SubscribeCallback<T>, signal?: AbortSignal) {
     const result = super.subscribe(callback, signal);
     if (!this.observing && this.subscribers.size > 0) {
       this.input.observeDeep(this.onDeepChange);
@@ -27,7 +27,7 @@ export default class YReactive<
     return result;
   }
 
-  unsubscribe(callback: (reactive: this) => void) {
+  unsubscribe(callback: SubscribeCallback<T>) {
     const result = super.unsubscribe(callback);
     if (this.subscribers.size === 0) {
       this.disconnect();
