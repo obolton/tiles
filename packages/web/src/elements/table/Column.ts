@@ -64,6 +64,7 @@ export default class Column {
     return this.header?.querySelector<HTMLSpanElement>("span");
   }
 
+  // TODO: Inaccurate during a batch move
   get cells() {
     return this.table.body.querySelectorAll<HTMLTableCellElement>(
       `td[aria-colindex="${this.index}"]`,
