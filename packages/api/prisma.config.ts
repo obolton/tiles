@@ -6,9 +6,6 @@ export default {
   migrations: {
     seed: "tsx prisma/seed.ts",
   },
-  typedSql: {
-    path: "./src/sql",
-  },
   datasource: {
     url: process.env.DATABASE_URL!,
   },

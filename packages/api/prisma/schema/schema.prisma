@@ -1,12 +1,7 @@
 generator client {
-  provider        = "prisma-client"
-  engineType      = "client"
-  output          = "../../src/generated/prisma"
-  previewFeatures = ["fullTextSearchPostgres", "typedSql"]
-}
-
-generator json {
-  provider = "prisma-json-types-generator"
+  provider   = "prisma-client"
+  engineType = "client"
+  output     = "../../src/generated/prisma"
 }
 
 datasource db {
