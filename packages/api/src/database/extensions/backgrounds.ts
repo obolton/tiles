@@ -68,36 +68,6 @@ export default Prisma.defineExtension({
         compute: computeBackground,
       },
     },
-    tile: {
-      background: {
-        needs: {
-          backgroundColor: true,
-          backgroundGradient: true,
-          backgroundImageId: true,
-        },
-        compute: computeBackground,
-      },
-    },
-    tableColumn: {
-      background: {
-        needs: {
-          backgroundColor: true,
-          backgroundGradient: true,
-          backgroundImageId: true,
-        },
-        compute: computeBackground,
-      },
-    },
-    tableRow: {
-      background: {
-        needs: {
-          backgroundColor: true,
-          backgroundGradient: true,
-          backgroundImageId: true,
-        },
-        compute: computeBackground,
-      },
-    },
     theme: {
       background: {
         needs: { backgroundColor: true, backgroundGradient: true },
@@ -106,12 +76,6 @@ export default Prisma.defineExtension({
             color: backgroundColor,
             gradient: backgroundGradient,
           }),
-      },
-    },
-    chartSeries: {
-      fill: {
-        needs: { color: true, gradient: true },
-        compute: computeFill,
       },
     },
   },
