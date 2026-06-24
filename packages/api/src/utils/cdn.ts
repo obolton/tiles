@@ -6,24 +6,12 @@ export function getProfileImageUrl(imageKey: string) {
   return `${process.env.PROFILE_IMAGES_BASE_URL}/${imageKey}?optimizer=image&class=small`;
 }
 
-export function getImageUrl(imageKey: string) {
-  return `${process.env.IMAGES_BASE_URL}/${imageKey}?optimizer=image&class=large`;
-}
-
-export function getVideoImageUrl(tileId: string) {
-  return `${process.env.RESOURCES_BASE_URL}/videos/${tileId}`;
-}
-
 export function getHomePageUrl() {
   return `${process.env.CLIENT_ORIGIN}/`;
 }
 
 export function getPageUrl(pageId: string) {
   return `${process.env.CLIENT_ORIGIN}/pages/${pageId}`;
-}
-
-export function getProfilePageUrl(userId: string) {
-  return `${process.env.CLIENT_ORIGIN}/profiles/${userId}`;
 }
 
 export function invalidateCachedUrls(urls: string[]) {
