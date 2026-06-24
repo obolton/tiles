@@ -68,9 +68,6 @@ importers:
       doc:
         specifier: workspace:*
         version: link:../doc
-      fractional-indexing:
-        specifier: ^3.2.0
-        version: 3.2.0
       htmlparser2:
         specifier: ^12.0.0
         version: 12.0.0
