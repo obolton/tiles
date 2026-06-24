@@ -22,7 +22,6 @@ model Theme {
   // Relations
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   pages     Page[]
-  tiles     Tile[]
 
   @@index([workspaceId])
   @@map("themes")

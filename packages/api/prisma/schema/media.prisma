@@ -29,13 +29,8 @@ model Image {
   width       Int          @default(0) @db.SmallInt
   height      Int          @default(0) @db.SmallInt
 
-  workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  imageTiles   ImageTile[]
-  linkTiles    LinkTile[]
-  tiles        Tile[]        @relation("BackgroundImage")
-  tableColumns TableColumn[]
-  tableRows    TableRow[]
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([workspaceId, purpose])
   @@index([userId])
