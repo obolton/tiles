@@ -1,5 +1,4 @@
 import * as Y from "yjs";
-import client from "@/api/client";
 import { LOCAL_ORIGIN } from "@/collaboration/YMapBinding";
 import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { uploadMedia } from "@/utils/media";
@@ -460,11 +459,6 @@ export default class Editor {
 
   async deleteTiles(tiles: Tile[]) {
     const ids = tiles.map((tile) => tile.id);
-
-    await client.tiles.delete.mutate({
-      pageId: this.pageId,
-      ids,
-    });
 
     // Tag elements before removal so the view transition can capture them.
     const items = document.getElementsByTagName("page-item");
