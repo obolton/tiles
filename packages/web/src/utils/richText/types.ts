@@ -1,30 +1,7 @@
 import type { FontId } from "api/config/fonts";
+import { TextFormat, ListType, TextAlignment } from "doc/types/richText";
 
-export enum TextFormat {
-  NONE = 0,
-  BOLD = 1,
-  ITALIC = 1 << 1,
-  STRIKETHROUGH = 1 << 2,
-  UNDERLINE = 1 << 3,
-  HIGHLIGHT = 1 << 4,
-  SUPERSCRIPT = 1 << 5,
-  SUBSCRIPT = 1 << 6,
-  SMALL_CAPS = 1 << 7,
-  CODE = 1 << 8,
-}
-
-export enum ListType {
-  ORDERED = 0,
-  UNORDERED = 1,
-  CHECK = 2,
-}
-
-export enum TextAlignment {
-  LEFT = 0,
-  CENTER = 1,
-  RIGHT = 2,
-  JUSTIFY = 3,
-}
+export { TextFormat, ListType, TextAlignment };
 
 export interface BaseNode {
   type: string;
