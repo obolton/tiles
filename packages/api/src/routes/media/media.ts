@@ -1,23 +1,11 @@
-import { randomUUID } from "node:crypto";
 import prisma from "@/database/prisma";
-import { createSignedUploadUrl } from "@/utils/storage";
 import type {
-  CreateUploadURLSchema,
   CreateImageSchema,
   UpdateImageSchema,
   DeleteImageSchema,
 } from "./schema";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 import { IMAGE_FIELDS } from "./fields";
-
-export async function createUploadUrl(
-  { type }: CreateUploadURLSchema,
-  { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
-) {
-  const key = randomUUID();
-  const url = await createSignedUploadUrl(key, type, { userId, workspaceId });
-  return { key, url };
-}
 
 export async function createImage(
   { source, purpose, type, bytes, pending }: CreateImageSchema,

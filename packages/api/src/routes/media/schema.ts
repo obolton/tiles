@@ -1,15 +1,6 @@
 import { z } from "zod";
 import { MediaSource, ImagePurpose, ImageType } from "@/generated/prisma/enums";
 
-export const MediaTypeSchema = z.enum(["image", "profile-image"]);
-export type MediaTypeSchema = z.infer<typeof MediaTypeSchema>;
-
-export const CreateUploadURLSchema = z.strictObject({
-  workspaceId: z.uuid(),
-  type: MediaTypeSchema,
-});
-export type CreateUploadURLSchema = z.infer<typeof CreateUploadURLSchema>;
-
 export const CreateImageSchema = z.strictObject({
   workspaceId: z.uuid(),
   source: z.enum(MediaSource),

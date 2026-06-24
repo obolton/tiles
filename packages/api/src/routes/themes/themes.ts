@@ -2,7 +2,6 @@ import prisma from "@/database/prisma";
 import { fromHex } from "@/utils/arrays";
 import { getBackgroundProperties } from "@/utils/themes";
 import type {
-  GetThemeByIdSchema,
   ListThemesSchema,
   CreateThemeSchema,
   UpdateThemeSchema,
@@ -10,13 +9,6 @@ import type {
 } from "./schema";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 import { THEME_FIELDS } from "./fields";
-
-export async function getThemeById({ id }: GetThemeByIdSchema) {
-  return prisma.theme.findUniqueOrThrow({
-    where: { id },
-    select: THEME_FIELDS,
-  });
-}
 
 export async function listThemes(
   { workspaceId }: ListThemesSchema,

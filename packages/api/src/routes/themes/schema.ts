@@ -25,11 +25,6 @@ const ThemeFontsSchema = z.object({
 });
 export type ThemeFontsSchema = z.infer<typeof ThemeFontsSchema>;
 
-export const GetThemeByIdSchema = z.object({
-  id: z.uuid(),
-});
-export type GetThemeByIdSchema = z.infer<typeof GetThemeByIdSchema>;
-
 export const ListThemesSchema = z.object({
   workspaceId: z.uuid(),
 });
