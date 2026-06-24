@@ -43,14 +43,9 @@ export function resolveParentId(
 }
 
 // Excludes images for now
-export const AIBackgroundSchema = z
+const AIBackgroundSchema = z
   .union([ColorBackgroundSchema, GradientBackgroundSchema])
   .nullable();
-
-export const AIColumnDefinitionSchema = z.strictObject({
-  title: z.string().nullable(),
-  background: AIBackgroundSchema,
-});
 
 export const AnimationSchema = z.enum(Animation).nullable().meta({
   description: "Entrance animation effect",
@@ -73,7 +68,7 @@ export const PositionYSchema = z.number().min(0).max(100).nullable().meta({
   description: "Vertical position (0-100%) for items in freeform sections",
 });
 
-export const TextColorSchema = ColorSchema.nullable().meta({
+const TextColorSchema = ColorSchema.nullable().meta({
   description: "Text color",
 });
 
