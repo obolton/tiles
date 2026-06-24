@@ -1,15 +1,10 @@
 import assert from "node:assert";
-import {
-  createServer,
-  type IncomingMessage,
-  type ServerResponse,
-} from "node:http";
+import { createServer } from "node:http";
 import { createHTTPHandler } from "@trpc/server/adapters/standalone";
 import cors from "cors";
 import crossws from "crossws/adapters/node";
 import router from "@/routes/index";
 import { createContext } from "@/utils/trpc";
-import { resourcesHandler } from "@/resources/index";
 import { hocuspocus } from "@/collaboration/instance";
 
 const API_HOST = process.env.API_HOST;
@@ -36,24 +31,7 @@ const trpcHandler = createHTTPHandler({
   },
 });
 
-async function requestHandler(req: IncomingMessage, res: ServerResponse) {
-  const url = new URL(req.url ?? "/", SERVER_URL);
-  const [path, ...remainingPathSegments] =
-    url.pathname.slice(1).split("/", 3) ?? [];
-  if (path === "resources") {
-    const [resourceType, resourceId] = remainingPathSegments;
-    if (!resourceType || !resourceId) {
-      res.writeHead(404);
-      res.end();
-      return;
-    }
-    return resourcesHandler(resourceType, resourceId, res);
-  } else {
-    return trpcHandler(req, res);
-  }
-}
-
-const server = createServer(requestHandler);
+const server = createServer(trpcHandler);
 
 const peerConnections = new WeakMap<
   object,
