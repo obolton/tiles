@@ -4,7 +4,7 @@ import { YMapBinding } from "@/collaboration/YMapBinding";
 import type { Reactive } from "@/utils/reactivity";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
 import type { Property } from "doc/types/chart";
-import type { ChartSeriesType } from "doc/types/enums";
+import type { ChartSeriesType } from "doc/types/tiles/chart";
 
 export type ChartType = ChartSeriesType;
 

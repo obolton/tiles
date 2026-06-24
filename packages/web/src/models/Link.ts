@@ -5,7 +5,7 @@ import { type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import Video from "./Video";
 import type Page from "@/models/Page";
-import type { ClientLinkTile } from "api/types/tiles";
+import type { LinkTile } from "doc/types/tiles";
 
 export interface CreateLinkInput extends Omit<CreateTileInput, "type"> {
   url: string;
@@ -73,7 +73,7 @@ export default class Link extends Tile {
     this.imageId = this.binding.field("imageId", null);
   }
 
-  serialize(): ClientLinkTile {
+  serialize(): LinkTile {
     return {
       ...super.serialize(),
       type: "LINK",

@@ -6,7 +6,7 @@ import { TextFormat } from "@/utils/richText/types";
 import { PAGE } from "@/test/fixtures/Page";
 import type { Meta, Story } from "@/test/storybook";
 import type { RichText } from "@/utils/richText/types";
-import type { ClientTextTile } from "api/types/tiles";
+import type { TextTile } from "doc/types/tiles";
 
 const editor = Editor.init(PAGE, new Y.Doc());
 
@@ -28,7 +28,7 @@ function paragraph(text: string): RichText {
 }
 
 function createText(props: {
-  align?: ClientTextTile["align"];
+  align?: TextTile["align"];
   content?: RichText;
 }): Text {
   return editor.page.createTile(Text.createMap(props), {}) as Text;

@@ -20,7 +20,7 @@ import Link from "@/models/Link";
 import PageLink from "@/models/PageLink";
 import Table from "@/models/Table";
 import Section from "@/models/Section";
-import type { TileType } from "api/types/tiles";
+import type { TileType } from "doc/types/enums";
 import type { JSX } from "@/jsx/jsx";
 
 type InsertTileButton = {

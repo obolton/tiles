@@ -1,14 +1,14 @@
 import type {
-  ClientTile,
-  ClientTextTile,
-  ClientImageTile,
-  ClientLinkTile,
-  ClientPageLinkTile,
-  ClientVideoTile,
-  ClientChartTile,
-  ClientTableTile,
-  ClientSectionTile,
-} from "api/types/tiles";
+  Tile,
+  TextTile,
+  ImageTile,
+  LinkTile,
+  PageLinkTile,
+  VideoTile,
+  ChartTile,
+  TableTile,
+  SectionTile,
+} from "doc/types/tiles";
 
 const SHARED = {
   sectionId: "section-id",
@@ -32,7 +32,7 @@ const SHARED = {
   background: null,
 } as const;
 
-export const TILE: ClientTile = {
+export const TILE: Tile = {
   ...SHARED,
   id: "tile-id",
   type: "TEXT",
@@ -40,7 +40,7 @@ export const TILE: ClientTile = {
   content: [],
 };
 
-export const TEXT_TILE: ClientTextTile = {
+export const TEXT_TILE: TextTile = {
   ...SHARED,
   id: "tile-id",
   type: "TEXT",
@@ -62,7 +62,7 @@ export const TEXT_TILE: ClientTextTile = {
   ],
 };
 
-export const IMAGE_TILE: ClientImageTile = {
+export const IMAGE_TILE: ImageTile = {
   ...SHARED,
   id: "tile-id",
   type: "IMAGE",
@@ -88,7 +88,7 @@ export const IMAGE_TILE: ClientImageTile = {
   ],
 };
 
-export const LINK_TILE: ClientLinkTile = {
+export const LINK_TILE: LinkTile = {
   ...SHARED,
   id: "tile-id",
   type: "LINK",
@@ -99,7 +99,7 @@ export const LINK_TILE: ClientLinkTile = {
   siteName: "Test",
 };
 
-export const PAGE_LINK_TILE: ClientPageLinkTile = {
+export const PAGE_LINK_TILE: PageLinkTile = {
   ...SHARED,
   id: "tile-id",
   type: "PAGE_LINK",
@@ -111,7 +111,7 @@ export const PAGE_LINK_TILE: ClientPageLinkTile = {
   },
 };
 
-export const VIDEO_TILE: ClientVideoTile = {
+export const VIDEO_TILE: VideoTile = {
   ...SHARED,
   id: "tile-id",
   type: "VIDEO",
@@ -122,7 +122,7 @@ export const VIDEO_TILE: ClientVideoTile = {
   description: "Video description",
 };
 
-export const TABLE_TILE: ClientTableTile = {
+export const TABLE_TILE: TableTile = {
   ...SHARED,
   id: "table-id",
   type: "TABLE",
@@ -139,7 +139,7 @@ export const TABLE_TILE: ClientTableTile = {
   ],
 };
 
-export const CHART_TILE: ClientChartTile = {
+export const CHART_TILE: ChartTile = {
   ...SHARED,
   id: "chart-id",
   type: "CHART",
@@ -161,7 +161,7 @@ export const CHART_TILE: ClientChartTile = {
   ],
 };
 
-export const SECTION_TILE: ClientSectionTile = {
+export const SECTION_TILE: SectionTile = {
   ...SHARED,
   sectionId: null,
   id: "section-id",

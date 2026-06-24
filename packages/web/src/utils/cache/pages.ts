@@ -1,13 +1,13 @@
 import type { Database, ObjectStore, SchemaDefinition } from "@/utils/idb";
 import type { PageData } from "@/models/Page";
-import type { ClientTileBase } from "api/types/tiles";
+import type { TileBase } from "doc/types/tiles";
 
 export type CachedPageData = Omit<PageData, "tiles" | "document"> & {
-  tiles: ClientTileBase[];
+  tiles: TileBase[];
 };
 
 type CachedPage = Omit<PageData, "tiles" | "document">;
-type CachedTile = ClientTileBase & { pageId: string };
+type CachedTile = TileBase & { pageId: string };
 
 export const pageStoresSchema = {
   pages: { keyPath: "id" as const },
@@ -63,7 +63,7 @@ export async function cachePageProperties(
 
 export async function cacheTiles(
   pageId: string,
-  tiles: ClientTileBase[],
+  tiles: TileBase[],
 ): Promise<void> {
   try {
     await tilesStore().putMany(tiles.map((tile) => ({ ...tile, pageId })));
@@ -84,9 +84,7 @@ export async function getCachedPageData(
     }
 
     const cachedTiles = await tilesStore().getAllByIndex("byPageId", pageId);
-    const tiles = cachedTiles.map(
-      ({ pageId: _, ...tile }): ClientTileBase => tile,
-    );
+    const tiles = cachedTiles.map(({ pageId: _, ...tile }): TileBase => tile);
 
     return { ...page, tiles };
   } catch {

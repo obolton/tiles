@@ -1,11 +1,11 @@
-import type { ClientTile } from "api/types/tiles";
+import type { Tile } from "doc/types/tiles";
 import type { Action } from "./base";
 
 export interface TileActionData {
   tileId: string;
 }
 
-export type TilePropertyChanges = Partial<ClientTile> & {
+export type TilePropertyChanges = Partial<Tile> & {
   sectionId?: string | null;
   beforeId?: string | null;
   themeId?: string | null;

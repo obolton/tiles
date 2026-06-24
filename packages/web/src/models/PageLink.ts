@@ -3,9 +3,9 @@ import Tile, { type CreateTileInput } from "./Tile";
 import { buildPageLinkMap } from "doc/tiles/pageLink";
 import { type Reactive } from "@/utils/reactivity";
 import type Page from "@/models/Page";
-import type { ClientPageLinkTile } from "api/types/tiles";
+import type { PageLinkTile } from "doc/types/tiles";
 
-type LinkedPage = ClientPageLinkTile["linkedPage"];
+type LinkedPage = PageLinkTile["linkedPage"];
 
 export interface CreatePageLinkInput extends Omit<CreateTileInput, "type"> {
   linkedPage: NonNullable<LinkedPage>;
@@ -43,7 +43,7 @@ export default class PageLink extends Tile {
     this.linkedPage = this.binding.field("linkedPage", null);
   }
 
-  serialize(): ClientPageLinkTile {
+  serialize(): PageLinkTile {
     return {
       ...super.serialize(),
       type: "PAGE_LINK",

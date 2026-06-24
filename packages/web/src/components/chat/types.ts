@@ -1,5 +1,5 @@
 import type { RichTextFormat, RichTextNode } from "doc/richText/events";
-import type { TileType } from "api/types/tiles";
+import type { TileType } from "doc/types/enums";
 
 export type MessageEvent = string | RichTextFormat | RichTextNode;
 

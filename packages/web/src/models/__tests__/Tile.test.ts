@@ -6,7 +6,7 @@ import Editor from "@/editor/Editor";
 import { ASPECT_RATIOS } from "@/constants/size";
 import { PAGE } from "@/test/fixtures/Page";
 import { THEME } from "@/test/fixtures/Theme";
-import type { Animation } from "api/types/tiles";
+import type { Animation } from "doc/types/enums";
 
 // Tile is abstract; exercise its base behavior via Section.
 const PROPS: CreateSectionInput = {

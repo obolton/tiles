@@ -8,7 +8,7 @@ import { orderBetween, orderedEntries } from "doc/placement/ordering";
 import type { Reactive } from "@/utils/reactivity";
 import type { ChartType } from "@/models/Series";
 import type Page from "@/models/Page";
-import type { ClientChartTile } from "api/types/tiles";
+import type { ChartTile } from "doc/types/tiles";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
 import type { Property } from "doc/types/chart";
 
@@ -53,7 +53,7 @@ export default class Chart extends Tile {
     );
   }
 
-  serialize(): ClientChartTile {
+  serialize(): ChartTile {
     return {
       ...super.serialize(),
       type: "CHART",

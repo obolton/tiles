@@ -3,7 +3,7 @@ import * as Y from "yjs";
 import Section, { type CreateSectionInput } from "@/models/Section";
 import Editor from "@/editor/Editor";
 import { PAGE } from "@/test/fixtures/Page";
-import type { Layout } from "api/types/tiles";
+import type { Layout } from "doc/types/tiles/section";
 
 const SECTION_PROPS: Omit<CreateSectionInput, "parentId" | "beforeId"> = {
   layout: "GRID",

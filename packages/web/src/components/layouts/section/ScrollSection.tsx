@@ -5,7 +5,7 @@ import styles from "./ScrollSection.module.css";
 import type ScrollView from "@/elements/scroll-view/ScrollView";
 import type SectionModel from "@/models/Section";
 import type { ResizeDirection } from "@/elements/item/PageItem";
-import type { Layout } from "api/types/tiles";
+import type { Layout } from "doc/types/tiles/section";
 import type { Reactive } from "@/utils/reactivity";
 
 export interface ScrollSectionProps {

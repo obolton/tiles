@@ -25,7 +25,7 @@ import type { FontId } from "api/config/fonts";
 import type { PageAccess } from "@/types/collaboration";
 import type { Awareness } from "@/collaboration/types";
 import type { PagePropertyChanges } from "@/operations";
-import type { DockEdge } from "api/types/tiles";
+import type { DockEdge } from "doc/types/enums";
 import type { HorizontalAlignment, PageType } from "api/types/pages";
 import Dropdown from "@/models/Dropdown";
 import type Tile from "@/models/Tile";

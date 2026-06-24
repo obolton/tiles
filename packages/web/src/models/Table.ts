@@ -18,7 +18,7 @@ import YReactive from "@/collaboration/YReactive";
 import { LOCAL_ORIGIN } from "@/collaboration/YMapBinding";
 import type { Reactive } from "@/utils/reactivity";
 import type Page from "@/models/Page";
-import type { ClientTableTile } from "api/types/tiles";
+import type { TableTile } from "doc/types/tiles";
 
 export type { CellValue };
 
@@ -94,7 +94,7 @@ export default class Table extends Tile {
     );
   }
 
-  serialize(): ClientTableTile {
+  serialize(): TableTile {
     return {
       ...super.serialize(),
       type: "TABLE",

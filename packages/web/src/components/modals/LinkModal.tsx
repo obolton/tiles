@@ -10,9 +10,9 @@ import { handleError } from "@/utils/errors";
 import { flag, reactive } from "@/utils/reactivity";
 import type { LibraryPage } from "@/components/library/LibraryCard";
 import type { ModalProps } from "@/utils/modals";
-import type { ClientPageLinkTile } from "api/types/tiles";
+import type { PageLinkTile } from "doc/types/tiles";
 
-type LinkedPage = NonNullable<ClientPageLinkTile["linkedPage"]>;
+type LinkedPage = NonNullable<PageLinkTile["linkedPage"]>;
 
 export type LinkModalResult =
   | { linkedPage: LinkedPage }

@@ -1,5 +1,5 @@
 import { ASPECT_RATIOS } from "@/constants/size";
-import type { Sizing } from "api/types/tiles";
+import type { Sizing } from "doc/types/enums";
 
 const DEFAULT_ASPECT = 16 / 9;
 

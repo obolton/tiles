@@ -9,9 +9,9 @@ import {
   invalidateCachedPageData,
   invalidateAllPages,
 } from "../pages";
-import type { ClientTileBase } from "api/types/tiles";
+import type { TileBase } from "doc/types/tiles";
 
-const TILES: ClientTileBase[] = [
+const TILES: TileBase[] = [
   { ...TEXT_TILE, id: "tile-1", sectionId: null },
   { ...IMAGE_TILE, id: "tile-2", sectionId: null },
 ];

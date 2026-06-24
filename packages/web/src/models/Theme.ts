@@ -1,10 +1,11 @@
 import { reactive, type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
-import type { AppRouterOutputs, AppRouterInputs } from "@/api/client";
+import type { AppRouterInputs } from "@/api/client";
+import type { Theme as ThemeData } from "api/routes/themes/fields";
 import type { Color } from "@/utils/color";
 import type { FontId } from "api/config/fonts";
 
-export type ThemeData = NonNullable<AppRouterOutputs["themes"]["getById"]>;
+export type { ThemeData };
 
 export type ThemeBackground = NonNullable<ThemeData["background"]>;
 

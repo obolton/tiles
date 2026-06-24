@@ -4,14 +4,14 @@ import type Theme from "@/models/Theme";
 import type { ThemeData } from "@/models/Theme";
 import { ASPECT_RATIOS } from "@/constants/size";
 import { LOCAL_ORIGIN, YMapBinding } from "@/collaboration/YMapBinding";
+import type { TileBase } from "doc/types/tiles";
 import type {
-  ClientTileBase,
   Sizing,
   Animation,
   FrameStyle,
   TileType,
   DockEdge,
-} from "api/types/tiles";
+} from "doc/types/enums";
 import type { Fill } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
 import type Page from "@/models/Page";
@@ -108,7 +108,7 @@ export default abstract class Tile {
     this.binding?.dispose();
   }
 
-  serialize(): ClientTileBase {
+  serialize(): TileBase {
     const parent = parseParentId(this.parentId.value);
     return {
       id: this.id,

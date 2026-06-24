@@ -3,9 +3,10 @@ import Tile from "./Tile";
 import { buildVideoMap, type VideoMapInput } from "doc/tiles/video";
 import { type Reactive } from "@/utils/reactivity";
 import type Page from "@/models/Page";
-import type { ClientVideoTile } from "api/types/tiles";
+import type { VideoTile } from "doc/types/tiles";
+import type { VideoType } from "doc/types/tiles/video";
 
-export type VideoType = ClientVideoTile["videoType"];
+export type { VideoType };
 export type CreateVideoInput = VideoMapInput;
 
 export default class Video extends Tile {
@@ -33,7 +34,7 @@ export default class Video extends Tile {
     this.title = this.binding.field("title", "");
   }
 
-  serialize(): ClientVideoTile {
+  serialize(): VideoTile {
     return {
       ...super.serialize(),
       type: "VIDEO",

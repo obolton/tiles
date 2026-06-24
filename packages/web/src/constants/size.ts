@@ -1,4 +1,4 @@
-import type { Sizing } from "api/types/tiles";
+import type { Sizing } from "doc/types/enums";
 
 export const SIZE_UNIT = 24;
 

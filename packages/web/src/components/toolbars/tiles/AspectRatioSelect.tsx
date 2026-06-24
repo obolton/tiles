@@ -6,7 +6,7 @@ import ThreeFourIcon from "@/icons/3-4.svg?jsx";
 import SixteenNineIcon from "@/icons/16-9.svg?jsx";
 import NineSixteenIcon from "@/icons/9-16.svg?jsx";
 import SizeIcon from "@/icons/size.svg?jsx";
-import type { Sizing } from "api/types/tiles";
+import type { Sizing } from "doc/types/enums";
 import type { Reactive } from "@/utils/reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
 

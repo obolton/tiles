@@ -3,7 +3,8 @@ import Tile from "./Tile";
 import { buildSectionMap, type SectionMapInput } from "doc/tiles/section";
 import type TileCollection from "./TileCollection";
 import type { Reactive } from "@/utils/reactivity";
-import type { ClientSectionTile, Layout, MapStyle } from "api/types/tiles";
+import type { SectionTile } from "doc/types/tiles";
+import type { Layout, MapStyle } from "doc/types/tiles/section";
 import type Page from "@/models/Page";
 
 export type CreateSectionInput = SectionMapInput;
@@ -42,7 +43,7 @@ export default class Section extends Tile {
     this.columns = this.binding.field<number | null>("columns", null);
   }
 
-  serialize(): ClientSectionTile {
+  serialize(): SectionTile {
     return {
       ...super.serialize(),
       type: "SECTION",

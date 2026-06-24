@@ -9,7 +9,7 @@ import Table from "@/models/Table";
 import Chart from "@/models/Chart";
 import Tile from "@/models/Tile";
 import type Page from "@/models/Page";
-import type { TileType } from "api/types/tiles";
+import type { TileType } from "doc/types/enums";
 
 export default function createTile(page: Page, map: Y.Map<unknown>): Tile {
   const type = map.get("type") as TileType;
