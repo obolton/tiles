@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 import { buildBaseTileMap, type CreateTileInput } from "./base";
-import type { VerticalAlignment } from "../types/enums";
+import type { VerticalAlignment } from "../types/tiles/text";
 
 export interface TextMapInput extends Omit<CreateTileInput, "type"> {
   align?: VerticalAlignment;

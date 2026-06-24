@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import type { ChartSeriesType } from "../types/enums";
+import type { ChartSeriesType } from "../types/tiles/chart";
 import type { Property } from "../types/chart";
 import type { ColorFill, GradientFill } from "../types/fill";
 

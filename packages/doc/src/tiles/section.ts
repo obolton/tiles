@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 import { buildBaseTileMap, type CreateTileInput } from "./base";
-import type { Layout, MapStyle } from "../types/enums";
+import type { Layout, MapStyle } from "../types/tiles/section";
 
 export interface SectionMapInput extends Omit<CreateTileInput, "type"> {
   layout?: Layout;
