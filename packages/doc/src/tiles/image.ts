@@ -1,13 +1,13 @@
 import * as Y from "yjs";
 import { buildBaseTileMap, type CreateTileInput } from "./base";
 import type { ImageSize } from "../types/image";
-import type { RichTextValue } from "../types/richText";
+import type { RichText } from "../types/richText";
 
 export interface ImageMapInput extends Omit<CreateTileInput, "type"> {
   imageId: string;
   size: ImageSize;
   alt?: string | null;
-  text?: RichTextValue | null;
+  text?: RichText | null;
 }
 
 export function buildImageMap(
