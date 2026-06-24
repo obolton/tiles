@@ -2,7 +2,6 @@ import { router } from "@/utils/trpc.ts";
 import auth from "./auth/router.ts";
 import pages from "./pages/router.ts";
 import media from "./media/router.ts";
-import tiles from "./tiles/router.ts";
 import users from "./users/router.ts";
 import places from "./places/router.ts";
 import themes from "./themes/router.ts";
@@ -18,7 +17,6 @@ const appRouter = router({
   auth,
   pages,
   media,
-  tiles,
   users,
   places,
   themes,
