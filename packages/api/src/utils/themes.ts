@@ -1,6 +1,5 @@
 import type { GradientDirection } from "@/generated/prisma/client";
 import type { BackgroundSchema } from "@/schema/Background";
-import type { ColorSchema } from "@/schema/Color";
 import type { FontId } from "@/config/fonts";
 import { fromHex } from "./arrays";
 
@@ -127,22 +126,6 @@ export function getDefaultThemesData() {
       accentColor: fromHex(accentColor),
     }),
   );
-}
-
-export interface TextColor {
-  textColor: Uint8Array<ArrayBuffer> | null | undefined;
-}
-
-export function getTextColorProperties(
-  textColor?: ColorSchema | null,
-): TextColor {
-  if (textColor === undefined) {
-    return { textColor: undefined };
-  }
-  if (textColor === null) {
-    return { textColor: null };
-  }
-  return { textColor: fromHex(textColor) };
 }
 
 type ColorBackgroundSchema = Exclude<BackgroundSchema, { type: "image" }>;
