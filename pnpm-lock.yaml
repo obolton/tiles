@@ -102,9 +102,6 @@ importers:
       prisma:
         specifier: ^7.8.0
         version: 7.8.0(magicast@0.5.2)(typescript@6.0.3)
-      prisma-json-types-generator:
-        specifier: ^5.0.0
-        version: 5.0.0(@prisma/client@7.8.0(prisma@7.8.0(magicast@0.5.2)(typescript@6.0.3))(typescript@6.0.3))(prisma@7.8.0(magicast@0.5.2)(typescript@6.0.3))(typescript@6.0.3)
       subset-font:
         specifier: ^2.5.0
         version: 2.5.0
@@ -1735,9 +1732,6 @@ packages:
   '@prisma/dev@0.24.3':
     resolution: {integrity: sha512-ffHlQuKXZiaDt9Go0OnCTdJZrHxK0k7omJKNV86/VjpsXu5EIHZLK0T7JSWgvNlJwh56kW9JFu9v0qJciFzepg==}
 
-  '@prisma/dmmf@7.8.0':
-    resolution: {integrity: sha512-7xzcSFWO6J+dFUgIX7jL7QqUhEDfaa8GSZGsjjHyZct1Su+6KrvMl3S2+fnRkuKUIoTPg3Mj02oZuUdaNSfsaw==}
-
   '@prisma/driver-adapter-utils@7.8.0':
     resolution: {integrity: sha512-/Q13o0ZT0rjc1Xk0Q9KhZYwuq2EW/vSbWUBKfgEKkaCuB/Sg6bqnjmTZqC5cD4d6y1vfFAEwBRzfzoSMIVJ55A==}
 
@@ -1749,12 +1743,6 @@ packages:
 
   '@prisma/fetch-engine@7.8.0':
     resolution: {integrity: sha512-gwB0Euiz/DDRyxFRpLXYlK3RfaZUj1c5dAYMuhZYfApg7arknJlcb9bIsOHDppJmbqYaVA+yBIiFMDBfprsNPQ==}
-
-  '@prisma/generator-helper@7.8.0':
-    resolution: {integrity: sha512-i+2Gad6D/0dS0YHKFdYX3M8KYN1gwNkET813WXKfW2HeWmgipmSJsNSzOA44kTM+Rx6Dev3yBQwx5sZXXdtgtQ==}
-
-  '@prisma/generator@7.8.0':
-    resolution: {integrity: sha512-KHGB0b8/9pNWyiK9EPJNE2/v1bMtqJgJldqjNNVvoE4uOhNSSWTmhHhPVfRsiuOVybzHCdCUQ/gdidCbpYAD5w==}
 
   '@prisma/get-platform@7.2.0':
     resolution: {integrity: sha512-k1V0l0Td1732EHpAfi2eySTezyllok9dXb6UQanajkJQzPUGi3vO2z7jdkz67SypFTdmbnyGYxvEvYZdZsMAVA==}
@@ -3729,15 +3717,6 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
-  prisma-json-types-generator@5.0.0:
-    resolution: {integrity: sha512-w1TKsvgSCIg8ThqD2lvsuEs8y9qIMiz4vPW+o+781TuSJiVwRJcd8doTEM+DxsEhSfEoZbogeS5GqraGgfV3CQ==}
-    engines: {node: '>=14.0'}
-    hasBin: true
-    peerDependencies:
-      '@prisma/client': ^7.8.0
-      prisma: ^7.8.0
-      typescript: ^6.0.3
-
   prisma@7.8.0:
     resolution: {integrity: sha512-yfN4yrw7HV9kEJhoy1+jgah0jafEIQsf7uWouSsM8MvJtlubsk+kM7AIBWZ8+GJl74Yj3c+nbYqBkMOxtsZ3Lw==}
     engines: {node: ^20.19 || ^22.12 || >=24.0}
@@ -4093,9 +4072,6 @@ packages:
   tr46@6.0.0:
     resolution: {integrity: sha512-bLVMLPtstlZ4iMQHpFHTR7GAGj2jxi8Dg0s2h2MafAE4uSWF98FC/3MomU51iQAMf8/qDUbKWf5GxuvvVcXEhw==}
     engines: {node: '>=20'}
-
-  try@1.0.3:
-    resolution: {integrity: sha512-AHA8khVCII6zKyRkyPo6pRwoR9v5jb7QFw6e5avtaVSkxVfaEucYIo06xnwB+pJaEarfYNbs7W3Vq+LZLZiWyA==}
 
   ts-dedent@2.2.0:
     resolution: {integrity: sha512-q5W7tVM71e2xjHZTlgfTDoPF/SmqKG5hddq9SzR49CH2hayqRKJtQ4mtRlSxKaJlR/+9rEM+mnBHf7I2/BQcpQ==}
@@ -5948,8 +5924,6 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@prisma/dmmf@7.8.0': {}
-
   '@prisma/driver-adapter-utils@7.8.0':
     dependencies:
       '@prisma/debug': 7.8.0
@@ -5968,14 +5942,6 @@ snapshots:
       '@prisma/debug': 7.8.0
       '@prisma/engines-version': 7.8.0-6.3c6e192761c0362d496ed980de936e2f3cebcd3a
       '@prisma/get-platform': 7.8.0
-
-  '@prisma/generator-helper@7.8.0':
-    dependencies:
-      '@prisma/debug': 7.8.0
-      '@prisma/dmmf': 7.8.0
-      '@prisma/generator': 7.8.0
-
-  '@prisma/generator@7.8.0': {}
 
   '@prisma/get-platform@7.2.0':
     dependencies:
@@ -8008,16 +7974,6 @@ snapshots:
 
   prettier@3.8.1: {}
 
-  prisma-json-types-generator@5.0.0(@prisma/client@7.8.0(prisma@7.8.0(magicast@0.5.2)(typescript@6.0.3))(typescript@6.0.3))(prisma@7.8.0(magicast@0.5.2)(typescript@6.0.3))(typescript@6.0.3):
-    dependencies:
-      '@prisma/client': 7.8.0(prisma@7.8.0(magicast@0.5.2)(typescript@6.0.3))(typescript@6.0.3)
-      '@prisma/generator-helper': 7.8.0
-      prisma: 7.8.0(magicast@0.5.2)(typescript@6.0.3)
-      semver: 7.7.4
-      try: 1.0.3
-      tslib: 2.8.1
-      typescript: 6.0.3
-
   prisma@7.8.0(magicast@0.5.2)(typescript@6.0.3):
     dependencies:
       '@prisma/config': 7.8.0(magicast@0.5.2)
@@ -8459,8 +8415,6 @@ snapshots:
   tr46@6.0.0:
     dependencies:
       punycode: 2.3.1
-
-  try@1.0.3: {}
 
   ts-dedent@2.2.0: {}
 
