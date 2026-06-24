@@ -15,7 +15,7 @@
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "lint": "oxlint",
-    "generate": "prisma generate --no-hints --sql",
+    "generate": "prisma generate --no-hints",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "cdn:purge": "tsx --env-file=\"../../../.env\" scripts/purge-cdn.ts",
