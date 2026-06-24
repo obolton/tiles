@@ -1,12 +1,14 @@
-import { generateKeyBetween } from "fractional-indexing";
 import { TRPCError } from "@trpc/server";
 import * as Y from "yjs";
-import type { Prisma } from "@/generated/prisma/client";
+import type { Prisma, PageType } from "@/generated/prisma/client";
 import prisma from "@/database/prisma";
 import { LIBRARY_PAGE_FIELDS } from "./fields";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import { invalidateCachedPages } from "@/utils/cdn";
 import { createEmptyDoc, currentSchemaVersion } from "@/collaboration";
+import { DocWriter } from "@/collaboration/DocWriter";
+import { buildTextMap } from "doc/tiles/text";
+import { buildSectionMap } from "doc/tiles/section";
 import type {
   GetPageByIdSchema,
   ListPagesSchema,
@@ -146,88 +148,65 @@ export async function listDeletedPages(
   return { pages: items, nextCursor };
 }
 
+function createDocumentDoc(): Y.Doc {
+  const doc = createEmptyDoc();
+  new DocWriter(doc).createTile(
+    buildTextMap({ sizing: "AUTO", height: 1, width: null }),
+    { parentId: null },
+  );
+  return doc;
+}
+
+function createPresentationDoc(): Y.Doc {
+  const doc = createEmptyDoc();
+  new DocWriter(doc).createTile(
+    buildSectionMap({
+      layout: "FREEFORM",
+      sizing: "LANDSCAPE",
+      height: 1,
+      width: null,
+    }),
+    { parentId: null },
+  );
+  return doc;
+}
+
+export function createInitialDoc(pageType: PageType): Y.Doc {
+  switch (pageType) {
+    case "DOCUMENT":
+      return createDocumentDoc();
+    case "PRESENTATION":
+      return createPresentationDoc();
+    default:
+      return createEmptyDoc();
+  }
+}
+
 export async function createPage(
   { title, type }: CreatePageSchema,
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const pageType = type ?? "DOCUMENT";
-  const first = generateKeyBetween(null, null);
-  return prisma.$transaction(async (transaction) => {
-    const page = await transaction.page.create({
-      data: {
-        published: false,
-        title,
-        workspace: { connect: { id: workspaceId } },
-        author: { connect: { id: userId } },
-        type: pageType,
-        document: {
-          create: {
-            snapshot: Buffer.from(Y.encodeStateAsUpdate(createEmptyDoc())),
-            schemaVersion: currentSchemaVersion,
-          },
+
+  return prisma.page.create({
+    data: {
+      published: false,
+      title,
+      workspace: { connect: { id: workspaceId } },
+      author: { connect: { id: userId } },
+      type: pageType,
+      document: {
+        create: {
+          snapshot: Buffer.from(
+            Y.encodeStateAsUpdate(createInitialDoc(pageType)),
+          ),
+          schemaVersion: currentSchemaVersion,
         },
       },
-      select: {
-        id: true,
-      },
-    });
-    switch (pageType) {
-      case "DOCUMENT":
-        await transaction.tile.create({
-          data: {
-            pageId: page.id,
-            type: "TEXT",
-            order: first,
-            x: 0,
-            y: 0,
-            width: null,
-            height: 1,
-            sizing: "AUTO",
-            text: {
-              create: {
-                pageId: page.id,
-                content: [
-                  {
-                    type: "paragraph",
-                    children: [],
-                  },
-                ],
-              },
-            },
-          },
-          select: {
-            id: true,
-          },
-        });
-        break;
-      case "PRESENTATION":
-        await transaction.tile.create({
-          data: {
-            pageId: page.id,
-            type: "SECTION",
-            order: first,
-            x: 0,
-            y: 0,
-            width: null,
-            height: 1,
-            sizing: "LANDSCAPE",
-            section: {
-              create: {
-                pageId: page.id,
-                layout: "FREEFORM",
-              },
-            },
-          },
-          select: {
-            id: true,
-          },
-        });
-        break;
-      case "COLLECTION":
-      case "FREE":
-        break;
-    }
-    return page;
+    },
+    select: {
+      id: true,
+    },
   });
 }
 

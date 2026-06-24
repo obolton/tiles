@@ -1,6 +1,7 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
+import { getTiles } from "doc/test/tiles";
 import prisma from "@/database/prisma.ts";
-import { createPage } from "../pages.ts";
+import { createPage, createInitialDoc } from "../pages.ts";
 import type { CreateQuery } from "@/test/prisma.ts";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
 
@@ -18,9 +19,6 @@ describe("createPage", () => {
     vi.clearAllMocks();
     vi.mocked(prisma.page.create<CreateQuery<{ id: true }>>).mockResolvedValue({
       id: "page-1",
-    });
-    vi.mocked(prisma.tile.create<CreateQuery<{ id: true }>>).mockResolvedValue({
-      id: "tile-1",
     });
   });
 
@@ -43,51 +41,30 @@ describe("createPage", () => {
       }),
     );
   });
+});
 
-  test("seeds a single TEXT tile for DOCUMENT pages", async () => {
-    await createPage({ title: "Doc", type: "DOCUMENT" }, MOCK_CONTEXT);
+describe("createInitialDoc", () => {
+  test("seeds a single TEXT tile for DOCUMENT pages", () => {
+    const [tile, ...rest] = getTiles(createInitialDoc("DOCUMENT"));
 
-    expect(prisma.tile.create).toHaveBeenCalledTimes(1);
-    expect(prisma.tile.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          type: "TEXT",
-          text: expect.objectContaining({
-            create: expect.objectContaining({
-              content: [{ type: "paragraph", children: [] }],
-            }),
-          }),
-        }),
-      }),
-    );
+    expect(rest).toHaveLength(0);
+    expect(tile?.type).toBe("TEXT");
   });
 
-  test("seeds a FREEFORM section with LANDSCAPE sizing for PRESENTATION pages", async () => {
-    await createPage({ title: "Deck", type: "PRESENTATION" }, MOCK_CONTEXT);
+  test("seeds a FREEFORM, LANDSCAPE section for PRESENTATION pages", () => {
+    const [tile, ...rest] = getTiles(createInitialDoc("PRESENTATION"));
 
-    expect(prisma.tile.create).toHaveBeenCalledTimes(1);
-    expect(prisma.tile.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          type: "SECTION",
-          sizing: "LANDSCAPE",
-          section: expect.objectContaining({
-            create: expect.objectContaining({ layout: "FREEFORM" }),
-          }),
-        }),
-      }),
-    );
+    expect(rest).toHaveLength(0);
+    expect(tile?.type).toBe("SECTION");
+    expect(tile?.sizing).toBe("LANDSCAPE");
+    expect(tile?.layout).toBe("FREEFORM");
   });
 
-  test("seeds no tiles for COLLECTION pages", async () => {
-    await createPage({ title: "Gallery", type: "COLLECTION" }, MOCK_CONTEXT);
-
-    expect(prisma.tile.create).not.toHaveBeenCalled();
+  test("seeds no tiles for COLLECTION pages", () => {
+    expect(getTiles(createInitialDoc("COLLECTION"))).toHaveLength(0);
   });
 
-  test("seeds no tiles for FREE pages", async () => {
-    await createPage({ title: "Free", type: "FREE" }, MOCK_CONTEXT);
-
-    expect(prisma.tile.create).not.toHaveBeenCalled();
+  test("seeds no tiles for FREE pages", () => {
+    expect(getTiles(createInitialDoc("FREE"))).toHaveLength(0);
   });
 });
