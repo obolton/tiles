@@ -3,8 +3,8 @@ import { getChildren, orderedEntries } from "doc/placement/ordering";
 import { getCell } from "doc/tiles/table";
 import { fragmentToMarkdown } from "doc/richText/markdown";
 import { toMarkdown } from "@/ai/context/markdown";
-import type { RichTextSchema } from "@/schema/RichText";
-import type { TileType } from "@/types/tiles";
+import type { RichText } from "doc/types/richText";
+import type { TileType } from "doc/types/enums";
 
 export interface TileContent {
   id: string;
@@ -54,7 +54,7 @@ function getTextContent(tile: Y.Map<unknown>): string {
 
 function getImageContent(tile: Y.Map<unknown>): string {
   const text = tile.get("text");
-  return Array.isArray(text) ? toMarkdown(text as RichTextSchema) : "";
+  return Array.isArray(text) ? toMarkdown(text as RichText) : "";
 }
 
 function getVideoContent(tile: Y.Map<unknown>): string {
@@ -129,7 +129,7 @@ function formatCell(value: unknown): string {
     return escapeCell(value);
   }
   if (Array.isArray(value)) {
-    return escapeCell(toMarkdown(value as RichTextSchema));
+    return escapeCell(toMarkdown(value as RichText));
   }
   return "";
 }

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Layout } from "@/generated/prisma/enums";
+import { Layout } from "doc/types/tiles/section";
 import { buildSectionMap } from "doc/tiles/section";
 import { SizeSchema, getDimensions } from "./schema.ts";
 import type { FunctionToolOptions, TileResult, ToolContext } from "./types.ts";

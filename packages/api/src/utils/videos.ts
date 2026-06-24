@@ -1,4 +1,4 @@
-import type { VideoType } from "@/generated/prisma/client";
+import type { VideoType } from "doc/types/tiles/video";
 
 export type Video = {
   videoType: VideoType;

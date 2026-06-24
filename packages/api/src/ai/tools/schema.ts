@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Animation, FrameStyle } from "@/generated/prisma/enums";
+import { Animation, FrameStyle } from "doc/types/enums";
 import {
   ColorBackgroundSchema,
   GradientBackgroundSchema,

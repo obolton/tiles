@@ -1,11 +1,11 @@
 import { describe, expect, test } from "vitest";
 import { toMarkdown } from "../markdown";
-import type { RichTextSchema } from "@/schema/RichText";
+import type { RichText } from "doc/types/richText";
 
 describe("toMarkdown", () => {
   describe("paragraph", () => {
     test("extracts text from a paragraph", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "paragraph",
           children: [{ type: "text", text: "Hello world", format: 0 }],
@@ -15,7 +15,7 @@ describe("toMarkdown", () => {
     });
 
     test("extracts text from multiple paragraphs", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "paragraph",
           children: [{ type: "text", text: "First", format: 0 }],
@@ -31,7 +31,7 @@ describe("toMarkdown", () => {
 
   describe("heading", () => {
     test("extracts heading level 1", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "heading",
           level: 1,
@@ -42,7 +42,7 @@ describe("toMarkdown", () => {
     });
 
     test("extracts heading level 2", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "heading",
           level: 2,
@@ -53,7 +53,7 @@ describe("toMarkdown", () => {
     });
 
     test("extracts heading level 3", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "heading",
           level: 3,
@@ -66,7 +66,7 @@ describe("toMarkdown", () => {
 
   describe("list", () => {
     test("extracts unordered list", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "list",
           listType: 1,
@@ -96,7 +96,7 @@ describe("toMarkdown", () => {
     });
 
     test("extracts ordered list", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "list",
           listType: 0,
@@ -126,7 +126,7 @@ describe("toMarkdown", () => {
     });
 
     test("extracts checklist with checked and unchecked items", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "list",
           listType: 2,
@@ -160,7 +160,7 @@ describe("toMarkdown", () => {
 
   describe("code", () => {
     test("extracts code block with language", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "code",
           language: "javascript",
@@ -172,7 +172,7 @@ describe("toMarkdown", () => {
     });
 
     test("extracts code block without language", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "code",
           language: "",
@@ -186,7 +186,7 @@ describe("toMarkdown", () => {
 
   describe("quote", () => {
     test("extracts quote", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "quote",
           children: [
@@ -203,7 +203,7 @@ describe("toMarkdown", () => {
 
   describe("divider", () => {
     test("extracts divider", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "paragraph",
           children: [{ type: "text", text: "Before", format: 0 }],
@@ -220,7 +220,7 @@ describe("toMarkdown", () => {
 
   describe("inline nodes", () => {
     test("extracts link", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "paragraph",
           children: [
@@ -236,7 +236,7 @@ describe("toMarkdown", () => {
     });
 
     test("extracts date", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "paragraph",
           children: [{ type: "date", value: "2024-01-15", format: 0 }],
@@ -246,7 +246,7 @@ describe("toMarkdown", () => {
     });
 
     test("extracts dropdown value", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "paragraph",
           children: [
@@ -263,7 +263,7 @@ describe("toMarkdown", () => {
     });
 
     test("extracts mention", () => {
-      const input: RichTextSchema = [
+      const input: RichText = [
         {
           type: "paragraph",
           children: [

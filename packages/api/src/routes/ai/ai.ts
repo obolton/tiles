@@ -16,7 +16,7 @@ import { YXmlStreamWriter } from "doc/richText/writer";
 import { decodeSelection, type SelectionRange } from "doc/richText/selection";
 import type { GenerateImageSchema, WriteSchema } from "./schema";
 import type { ToolContext } from "@/ai/tools/types";
-import type { TileType } from "@/types/tiles";
+import type { TileType } from "doc/types/enums";
 import type {
   ResponseInput,
   ResponseInputItem,

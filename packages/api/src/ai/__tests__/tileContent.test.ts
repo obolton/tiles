@@ -9,7 +9,7 @@ import { buildChartMap } from "doc/tiles/chart";
 import { buildTableMap, buildColumn, buildRow } from "doc/tiles/table";
 import { buildSectionMap } from "doc/tiles/section";
 import { getTileContent, resolveTileContents } from "@/ai/tileContent";
-import type { RichTextSchema } from "@/schema/RichText";
+import type { RichText } from "doc/types/richText";
 
 function tiles(): { doc: Y.Doc; tiles: Y.Map<Y.Map<unknown>> } {
   const doc = new Y.Doc();
@@ -59,7 +59,7 @@ describe("getTileContent", () => {
 
   test("serializes an image caption from its JSON", () => {
     const { tiles: map } = tiles();
-    const caption: RichTextSchema = [
+    const caption: RichText = [
       {
         type: "paragraph",
         children: [{ type: "text", text: "A caption", format: 0 }],
