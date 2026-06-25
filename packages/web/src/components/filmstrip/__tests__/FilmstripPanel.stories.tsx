@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import Editor from "@/editor/Editor";
 import Section from "@/models/Section";
 import FilmstripPanel from "../FilmstripPanel";
-import { flag } from "@/utils/reactivity";
+import { flag, reactive, type Reactive } from "@/utils/reactivity";
 import { PAGE } from "@/test/fixtures/Page";
 import type { Meta, Story } from "@/test/storybook";
 
@@ -26,22 +26,26 @@ const meta = {
 } satisfies Meta;
 export default meta;
 
-export const EditMode: Story = {
-  render: () => (
+function Panel({ isEditable }: { isEditable: Reactive<boolean> }) {
+  const width = reactive(240);
+  const style = width.derive((value) => ({ "--sidebar-width": `${value}px` }));
+  return (
     <FilmstripPanel
       page={editor.page}
-      isEditable={flag(true)}
+      isEditable={isEditable}
       tiles={editor.page.tiles}
+      size={width}
+      style={style}
+      on:panelresize={(event) => (width.value = event.size)}
+      on:panelresizeend={(event) => (width.value = event.size)}
     />
-  ),
+  );
+}
+
+export const EditMode: Story = {
+  render: () => <Panel isEditable={flag(true)} />,
 };
 
 export const ViewMode: Story = {
-  render: () => (
-    <FilmstripPanel
-      page={editor.page}
-      isEditable={flag(false)}
-      tiles={editor.page.tiles}
-    />
-  ),
+  render: () => <Panel isEditable={flag(false)} />,
 };
