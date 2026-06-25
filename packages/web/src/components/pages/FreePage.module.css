@@ -5,24 +5,25 @@
   margin-top: var(--header-height);
 
   &:has([data-dock-zone="TOP"]:not([data-empty])) {
-    padding-top: var(--dock-top-size);
+    padding-top: min(var(--dock-top-size), 50vh);
   }
 
   &:has([data-dock-zone="BOTTOM"]:not([data-empty])) {
-    padding-bottom: var(--dock-bottom-size);
+    padding-bottom: min(var(--dock-bottom-size), 50vh);
   }
 
   &:has([data-dock-zone="LEFT"]:not([data-empty])) {
-    padding-left: var(--dock-left-size);
+    padding-left: min(var(--dock-left-size), 50vw);
   }
 
   &:has([data-dock-zone="RIGHT"]:not([data-empty])) {
-    padding-right: var(--dock-right-size);
+    padding-right: min(var(--dock-right-size), 50vw);
   }
 }
 
 .main {
   position: relative;
+  isolation: isolate;
   display: flex;
   flex: 1;
   flex-direction: column;

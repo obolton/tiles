@@ -3,7 +3,6 @@ import If from "@/jsx/if";
 import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
 import DockLayoutEditor from "./DockLayoutEditor";
-import { ResizeEvent } from "@/elements/resize/events";
 import styles from "./DockZone.module.css";
 import type Page from "@/models/Page";
 import type { Reactive } from "@/utils/reactivity";
@@ -11,7 +10,6 @@ import type { DockEdge } from "@/models/Tile";
 import type TileCollection from "@/models/TileCollection";
 
 const MIN_DOCK_SIZE = 100;
-const MAX_DOCK_RATIO = 0.5; // 50% of viewport
 
 export interface DockZoneProps {
   page: Page;
@@ -49,63 +47,29 @@ export default function DockZone({
     });
   }
 
-  const zoneResizeDirection = isHorizontal ? "vertical" : "horizontal";
-
-  let initialSize = 0;
-
-  function getNewSize(event: ResizeEvent): number {
-    const delta = isHorizontal ? event.y : event.x;
-    const sign = edge === "RIGHT" || edge === "BOTTOM" ? -1 : 1;
-    const maxSize = isHorizontal
-      ? window.innerHeight * MAX_DOCK_RATIO
-      : window.innerWidth * MAX_DOCK_RATIO;
-    return Math.max(
-      MIN_DOCK_SIZE,
-      Math.min(maxSize, initialSize + delta * sign),
-    );
-  }
-
-  function onZoneResizeStart() {
-    initialSize = page.dockSizes[edge].value;
-  }
-
-  function onZoneResizeDrag(event: ResizeEvent) {
-    event.preventDefault();
-    page.dockSizes[edge].preview(getNewSize(event));
-  }
-
-  function onZoneResizeEnd(event: ResizeEvent) {
-    page.dockSizes[edge].value = getNewSize(event);
-  }
-
-  const Element =
-    edge === "TOP" ? "header" : edge === "BOTTOM" ? "footer" : "aside";
-
   return (
     <If condition={visible}>
-      <Element
+      <resizable-panel
         ref={ref}
         classList={{
           [styles.zone]: true,
           [styles[edgeStyle]]: true,
         }}
+        role={isHorizontal ? undefined : "complementary"}
+        aria-label={`${edgeStyle} dock`}
+        edge={edgeStyle}
+        size={page.dockSizes[edge]}
+        min={MIN_DOCK_SIZE}
+        disabled={isEditable.derive((editable) => !editable)}
         data-dock-zone={edge}
         data-empty={isEmpty}
+        on:panelresize={(event) => page.dockSizes[edge].preview(event.size)}
+        on:panelresizeend={(event) => (page.dockSizes[edge].value = event.size)}
       >
         <Each items={tiles}>
           {(tile) => <Item classList={{ [styles.item]: true }} tile={tile} />}
         </Each>
-
-        <If condition={isEditable}>
-          <resize-handle
-            direction={zoneResizeDirection}
-            classList={{ [styles["zone-resize"]]: true }}
-            on:resizestart={onZoneResizeStart}
-            on:resizedrag={onZoneResizeDrag}
-            on:resizeend={onZoneResizeEnd}
-          />
-        </If>
-      </Element>
+      </resizable-panel>
     </If>
   );
 }

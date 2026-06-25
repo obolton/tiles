@@ -7,11 +7,15 @@ import { handleError } from "@/utils/errors";
 import styles from "./FilmstripPanel.module.css";
 import type { DragDropEvent } from "@/utils/drag";
 import type { FilmstripEvent } from "@/elements/filmstrip/events";
+import type { JSX } from "@/jsx/jsx";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "@/utils/reactivity";
 
-export interface FilmstripPanelProps {
+const MIN_WIDTH = 120;
+const MAX_WIDTH = 480;
+
+export interface FilmstripPanelProps extends JSX.Attributes<"resizable-panel"> {
   page: Page;
   isEditable: Reactive<boolean>;
   tiles: TileCollection;
@@ -21,6 +25,8 @@ export default function FilmstripPanel({
   page,
   isEditable,
   tiles,
+  classList,
+  ...props
 }: FilmstripPanelProps) {
   function onSlideSelect(event: FilmstripEvent) {
     page.editor?.select([event.slideId]);
@@ -58,9 +64,18 @@ export default function FilmstripPanel({
   }
 
   return (
-    <aside
-      classList={{ [styles.panel]: true, "filmstrip-panel": true }}
+    <resizable-panel
+      classList={{
+        [styles.panel]: true,
+        "filmstrip-panel": true,
+        ...classList,
+      }}
+      role="complementary"
       aria-label="Filmstrip"
+      edge="left"
+      min={MIN_WIDTH}
+      max={MAX_WIDTH}
+      {...props}
     >
       <filmstrip-view
         className={styles.rail}
@@ -86,6 +101,6 @@ export default function FilmstripPanel({
           <NewIcon aria-hidden="true" />
         </button>
       </If>
-    </aside>
+    </resizable-panel>
   );
 }

@@ -7,7 +7,6 @@
   z-index: 1;
   background: var(--ui-background, #fff);
   border-right: 1px solid rgb(0 0 0 / 8%);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
