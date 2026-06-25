@@ -1,6 +1,5 @@
 body[data-presenting] {
   --header-height: 0px;
-  --sidebar-width: 0px;
 
   overflow: hidden;
   height: 100dvh;
@@ -25,6 +24,7 @@ body[data-presenting] {
     scrollbar-width: none;
     gap: 0;
     padding: 0;
+    margin-left: 0;
 
     /* Each top-level page-item becomes a slide */
     & > page-item {
