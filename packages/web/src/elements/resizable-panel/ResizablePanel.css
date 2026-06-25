@@ -1,0 +1,73 @@
+:host {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+}
+
+resize-handle {
+  position: absolute;
+  z-index: 1;
+  touch-action: none;
+  outline: none;
+  background: var(--highlight-color);
+  opacity: 0;
+  transition: opacity var(--animation-duration-short) var(--easing);
+  will-change: opacity;
+}
+
+resize-handle:hover {
+  opacity: 0.5;
+}
+
+resize-handle:state(resizing),
+resize-handle:focus-visible {
+  opacity: 1;
+}
+
+:host([disabled]) resize-handle {
+  display: none;
+}
+
+:host([edge="left"]) resize-handle,
+:host([edge="right"]) resize-handle {
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: ew-resize;
+}
+
+:host([edge="left"]) resize-handle {
+  right: 0;
+  translate: 50%;
+}
+
+:host([edge="right"]) resize-handle {
+  left: 0;
+  translate: -50%;
+}
+
+:host([edge="top"]) resize-handle,
+:host([edge="bottom"]) resize-handle {
+  left: 0;
+  right: 0;
+  height: 8px;
+  cursor: ns-resize;
+}
+
+:host([edge="top"]) resize-handle {
+  bottom: 0;
+  translate: 0 50%;
+}
+
+:host([edge="bottom"]) resize-handle {
+  top: 0;
+  translate: 0 -50%;
+}
+
+/* Custom colours are dropped in forced-colors; use a system colour so the
+   handle stays visible when shown. */
+@media (forced-colors: active) {
+  resize-handle {
+    background: CanvasText;
+  }
+}
