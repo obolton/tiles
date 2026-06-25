@@ -81,7 +81,7 @@
     "stylelint": "^17.9.1",
     "stylelint-config-standard": "^40.0.0",
     "svgo": "^4.0.1",
-    "tsx": "^4.21.0",
+    "tsx": "^4.22.4",
     "vite": "^8.0.16",
     "wrangler": "^4.103.0"
   }
