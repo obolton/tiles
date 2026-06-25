@@ -9,6 +9,7 @@ import "./filmstrip/FilmstripView";
 import "./calendar/CalendarMonth";
 import "./file-picker/FilePicker";
 import "./scroll-view/ScrollView";
+import "./resizable-panel/ResizablePanel";
 import "./tabs/TabBar";
 import "./tabs/TabItem";
 import "./tabs/TabPanel";

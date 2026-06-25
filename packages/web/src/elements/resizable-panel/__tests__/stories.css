@@ -1,0 +1,36 @@
+.demo {
+  display: flex;
+  gap: 16px;
+  height: 360px;
+  padding: 16px;
+  background: #fafafa;
+}
+
+.demo.column {
+  flex-direction: column;
+}
+
+.panel {
+  box-sizing: border-box;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid rgb(0 0 0 / 50%);
+  border-radius: 8px;
+}
+
+.panel.horizontal {
+  width: 240px;
+}
+
+.panel.vertical {
+  height: 160px;
+}
+
+.content {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  color: #808080;
+  background: #f4f4f4;
+  border-radius: 8px;
+}

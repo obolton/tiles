@@ -8,4 +8,8 @@ export default {
     disableTelemetry: true,
     disableWhatsNewNotifications: true,
   },
+  env: {
+    PUBLIC_FONTS_BASE_URL: "http://localhost",
+    PUBLIC_IMAGES_BASE_URL: "http://localhost",
+  },
 } satisfies StorybookConfig;
