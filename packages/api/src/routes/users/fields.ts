@@ -7,6 +7,7 @@ export const USER_FIELDS = {
   username: true,
   name: true,
   email: true,
+  imageKey: true,
   imageUrl: true,
   workspaceMemberships: {
     select: {
