@@ -22,6 +22,7 @@ const mockUser = {
   email: "alice@example.com",
   username: "alice",
   imageUrl: "https://example.com/alice.jpg",
+  imageKey: null,
   workspaces: [{ id: "ws-1", name: "Workspace 1" }],
 };
 

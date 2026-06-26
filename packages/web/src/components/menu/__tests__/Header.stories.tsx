@@ -21,6 +21,7 @@ const USER: User = {
   username: "jane",
   email: "jane@example.com",
   imageUrl: null,
+  imageKey: null,
   workspaces: [
     { id: "ws-1", name: "Personal" },
     { id: "ws-2", name: "Acme Corp" },
