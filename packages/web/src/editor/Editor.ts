@@ -1,5 +1,4 @@
 import * as Y from "yjs";
-import { LOCAL_ORIGIN } from "@/collaboration/YMapBinding";
 import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { uploadMedia } from "@/utils/media";
 import {
@@ -16,22 +15,20 @@ import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import Page, { type PageData } from "@/models/Page";
-import { cachePageProperties, cacheTiles } from "@/utils/cache/pages";
-import { isCacheInitialized } from "@/utils/cache";
-import { handleError } from "@/utils/errors";
 import Section from "@/models/Section";
 import { parseParentId } from "@/models/parentId";
 import Image from "@/models/Image";
 import Link from "@/models/Link";
 import ChatState from "@/components/chat/ChatState";
-import { OperationManager, execute } from "@/operations";
+import { PageUndoManager } from "@/collaboration/PageUndoManager";
 import type Tile from "@/models/Tile";
 import type { Reactive } from "@/utils/reactivity";
-import type { AnyAction, OperationInput } from "@/operations";
 
 export type { PageData } from "@/models/Page";
 
 const IS_SERVER = import.meta.env.SSR;
+
+const UNDO_SELECTION = Symbol("undo-selection");
 
 export default class Editor {
   static #current?: Editor;
@@ -46,7 +43,7 @@ export default class Editor {
   readonly isTileEditable: Reactive<boolean>;
   readonly chat: ChatState;
 
-  readonly operations: OperationManager<AnyAction> | null;
+  readonly undoManager: PageUndoManager | null;
   readonly canUndo: Reactive<boolean>;
   readonly canRedo: Reactive<boolean>;
 
@@ -122,11 +119,13 @@ export default class Editor {
       ({ isEditable, isPromptOpen }) => isEditable && !isPromptOpen,
     );
 
-    this.canUndo = reactive(false);
-    this.canRedo = reactive(false);
-    this.operations = IS_SERVER ? null : new OperationManager(page.id);
-
     if (!IS_SERVER) {
+      this.undoManager = new PageUndoManager(doc, {
+        onRecord: (meta) => this.rememberSelection(meta),
+        onApply: (meta) => this.restoreSelection(meta),
+      });
+      this.canUndo = this.undoManager.canUndo;
+      this.canRedo = this.undoManager.canRedo;
       this.enablePointerEvents();
 
       this.isEditable.subscribe(() => {
@@ -145,9 +144,10 @@ export default class Editor {
         this.startCollaboration();
         requestAnimationFrame(() => this.focusFirstTile());
       }
-
-      // Load operation history
-      this.operations?.load().then(() => this.syncUndoRedoState());
+    } else {
+      this.undoManager = null;
+      this.canUndo = flag(false);
+      this.canRedo = flag(false);
     }
   }
 
@@ -233,8 +233,12 @@ export default class Editor {
       return;
     }
 
-    // Redo: Cmd/Ctrl+Shift+Z (not in text inputs)
-    if (isMod && event.key === "z" && event.shiftKey && !isInput) {
+    // Redo: Cmd/Ctrl+Shift+Z or Cmd/Ctrl+Y (not in text inputs)
+    if (
+      isMod &&
+      !isInput &&
+      ((event.key === "z" && event.shiftKey) || event.key === "y")
+    ) {
       event.preventDefault();
       this.redo();
       return;
@@ -357,21 +361,27 @@ export default class Editor {
       if (tiles.size === 0) {
         return;
       }
-      this.selection.value = this.selection.value.union(tiles);
+      this.setSelection(this.selection.value.union(tiles));
     } else {
-      this.selection.value = tiles;
+      this.setSelection(tiles);
     }
   }
 
   deselect(ids: string[]) {
     const tiles = new Set(ids.map((id) => this.page.getTile(id)));
-    this.selection.value = this.selection.value.difference(tiles);
+    this.setSelection(this.selection.value.difference(tiles));
   }
 
   clearSelection() {
     if (this.selection.value.size > 0) {
-      this.selection.value = new Set();
+      this.setSelection(new Set());
     }
+  }
+
+  private setSelection(tiles: Set<Tile>) {
+    this.selection.value = tiles;
+    // Start a new undo step
+    this.undoManager?.stopCapturing();
   }
 
   deleteSelection() {
@@ -495,7 +505,7 @@ export default class Editor {
           for (const id of ids) {
             tilesMap.delete(id);
           }
-        }, LOCAL_ORIGIN);
+        });
       } else {
         this.removeTiles(tiles);
       }
@@ -530,60 +540,41 @@ export default class Editor {
     });
   }
 
-  // Operations (Undo/Redo)
+  // Undo / redo
 
-  private syncUndoRedoState(): void {
-    this.canUndo.value = this.operations?.canUndo ?? false;
-    this.canRedo.value = this.operations?.canRedo ?? false;
+  undo(): void {
+    this.undoManager?.undo();
   }
 
-  // Cache
+  redo(): void {
+    this.undoManager?.redo();
+  }
 
-  private updateCache(actions: readonly AnyAction[]) {
-    if (!isCacheInitialized()) {
+  dispose(): void {
+    this.stopCollaboration();
+    this.undoManager?.dispose();
+  }
+
+  private rememberSelection(meta: Map<unknown, unknown>) {
+    const ids = [...this.selection.value].map((tile) => tile.id);
+    meta.set(UNDO_SELECTION, ids);
+  }
+
+  private restoreSelection(meta: Map<unknown, unknown>) {
+    const ids = meta.get(UNDO_SELECTION);
+    if (!Array.isArray(ids)) {
       return;
     }
-
-    const tileIds = new Set<string>();
-    for (const { data } of actions) {
-      if ("tileId" in data) {
-        tileIds.add(data.tileId);
+    const present = ids.filter((id) => this.page.index.has(id));
+    if (present.length === 0) {
+      return;
+    }
+    this.select(present);
+    requestAnimationFrame(() => {
+      const element = document.getElementById(present[0]);
+      if (element) {
+        scrollIntoViewIfNeeded(element, { behavior: "smooth" });
       }
-    }
-    const tiles = [];
-    for (const id of tileIds) {
-      const tile = this.page.index.get(id);
-      if (tile) {
-        tiles.push(tile.serialize());
-      }
-    }
-    if (tiles.length > 0) {
-      cacheTiles(this.pageId, tiles).catch(handleError);
-    }
-    cachePageProperties(this.page.serialize()).catch(handleError);
-  }
-
-  async recordOperation(operation: OperationInput<AnyAction>): Promise<void> {
-    await this.operations?.record(operation);
-    this.syncUndoRedoState();
-    this.updateCache([operation.apply].flat());
-  }
-
-  async undo(): Promise<void> {
-    const operation = await this.operations?.undo();
-    if (operation) {
-      await execute(this, operation, "reverse");
-      this.updateCache(operation.reverse);
-    }
-    this.syncUndoRedoState();
-  }
-
-  async redo(): Promise<void> {
-    const operation = await this.operations?.redo();
-    if (operation) {
-      await execute(this, operation, "apply");
-      this.updateCache(operation.apply);
-    }
-    this.syncUndoRedoState();
+    });
   }
 }
