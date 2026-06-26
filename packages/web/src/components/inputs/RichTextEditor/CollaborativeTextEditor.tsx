@@ -4,13 +4,8 @@ import "./CollaborativeTextEditor.css";
 import { EditorView } from "prosemirror-view";
 import { Plugin } from "prosemirror-state";
 import { keymap } from "prosemirror-keymap";
-import {
-  ySyncPlugin,
-  yCursorPlugin,
-  yUndoPlugin,
-  undo,
-  redo,
-} from "y-prosemirror";
+import { ySyncPlugin, yCursorPlugin, undo, redo } from "y-prosemirror";
+import { createUndoPlugin } from "@/utils/richText/undoPlugin";
 import { createState } from "@/utils/richText/state";
 import { handleError } from "@/utils/errors";
 import type * as Y from "yjs";
@@ -22,6 +17,7 @@ import type { Reactive } from "@/utils/reactivity";
 export interface CollaborativeTextEditorProps extends JSX.Attributes<"div"> {
   contentFragment: Y.XmlFragment;
   awareness: Awareness;
+  undoManager?: Y.UndoManager;
   editorView: Reactive<EditorView | null>;
   onChange?: (state: EditorState) => void;
   signal?: AbortSignal;
@@ -30,6 +26,7 @@ export interface CollaborativeTextEditorProps extends JSX.Attributes<"div"> {
 export default function CollaborativeTextEditor({
   contentFragment,
   awareness,
+  undoManager,
   editorView,
   classList,
   onChange,
@@ -62,7 +59,7 @@ export default function CollaborativeTextEditor({
       const initialState = createState(null, [
         ySyncPlugin(contentFragment),
         yCursorPlugin(awareness),
-        yUndoPlugin(),
+        createUndoPlugin(undoManager),
         keymap({
           "Mod-z": undo,
           "Mod-y": redo,

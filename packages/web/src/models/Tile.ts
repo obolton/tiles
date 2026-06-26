@@ -3,7 +3,7 @@ import { combine, type Reactive } from "@/utils/reactivity";
 import type Theme from "@/models/Theme";
 import type { ThemeData } from "@/models/Theme";
 import { ASPECT_RATIOS } from "@/constants/size";
-import { LOCAL_ORIGIN, YMapBinding } from "@/collaboration/YMapBinding";
+import { YMapBinding } from "@/collaboration/YMapBinding";
 import type { TileBase } from "doc/types/tiles";
 import type {
   Sizing,
@@ -17,7 +17,6 @@ import type { Color } from "@/utils/color";
 import type Page from "@/models/Page";
 import { parseParentId } from "./parentId";
 import type TileCollection from "./TileCollection";
-import type { TilePropertyChanges } from "@/operations";
 
 export type { Sizing, Animation, FrameStyle, DockEdge };
 
@@ -187,59 +186,6 @@ export default abstract class Tile {
   }
 
   /**
-   * Applies changes to reactive values.
-   * Used by executors for undo/redo (does not record a new operation).
-   * Placement (parentId/order) is Y.Doc-authoritative and not handled here.
-   */
-  applyUpdate(changes: TilePropertyChanges) {
-    if (changes.x !== undefined) {
-      this.x.value = changes.x;
-    }
-    if (changes.y !== undefined) {
-      this.y.value = changes.y;
-    }
-    if (changes.width !== undefined) {
-      this.width.value = changes.width;
-    }
-    if (changes.height !== undefined) {
-      this.height.value = changes.height;
-    }
-    if (changes.sizing !== undefined) {
-      this.sizing.value = changes.sizing;
-    }
-    if (changes.animation !== undefined) {
-      this.animation.value = changes.animation;
-    }
-    if (changes.frame !== undefined) {
-      this.frame.value = changes.frame;
-    }
-    if (changes.cornerRadius !== undefined) {
-      this.cornerRadius.value = changes.cornerRadius;
-    }
-    if (changes.hide !== undefined) {
-      this.hide.value = changes.hide;
-    }
-    if (changes.rowSpan !== undefined) {
-      this.rowSpan.value = changes.rowSpan;
-    }
-    if (changes.startDate !== undefined) {
-      this.startDate.value = changes.startDate;
-    }
-    if (changes.endDate !== undefined) {
-      this.endDate.value = changes.endDate;
-    }
-    if (changes.lat !== undefined || changes.long !== undefined) {
-      const lat = changes.lat ?? this.coordinates.value?.lat ?? null;
-      const long = changes.long ?? this.coordinates.value?.long ?? null;
-      this.coordinates.value =
-        lat != null && long != null ? { lat, long } : null;
-    }
-    if (changes.textColor !== undefined) {
-      this.textColor.value = changes.textColor;
-    }
-  }
-
-  /**
    * Moves and/or repositions the tile. Placement (`parentId`/`order`) is
    * written to the Y.Doc only; the controller's observer reconciles the
    * collections. Geometry still persists to Postgres until the projection
@@ -303,26 +249,30 @@ export default abstract class Tile {
       }
     };
 
-    this.page.doc.transact(apply, LOCAL_ORIGIN);
+    this.page.doc.transact(apply);
   }
 
   setSizing(sizing: Sizing) {
-    this.sizing.value = sizing;
+    this.page.doc.transact(() => {
+      this.sizing.value = sizing;
 
-    if (sizing !== "CUSTOM" && sizing !== "AUTO") {
-      const ratio = ASPECT_RATIOS[sizing];
-      const resolvedWidth = this.width.value ?? this.page.width.value;
-      this.height.value = Math.round(resolvedWidth / ratio);
-    }
+      if (sizing !== "CUSTOM" && sizing !== "AUTO") {
+        const ratio = ASPECT_RATIOS[sizing];
+        const resolvedWidth = this.width.value ?? this.page.width.value;
+        this.height.value = Math.round(resolvedWidth / ratio);
+      }
+    });
   }
 
   setSize({ width, height }: { width?: number | null; height?: number }) {
-    if (width !== undefined) {
-      this.width.value = width;
-    }
-    if (typeof height === "number") {
-      this.height.value = height;
-    }
+    this.page.doc.transact(() => {
+      if (width !== undefined) {
+        this.width.value = width;
+      }
+      if (typeof height === "number") {
+        this.height.value = height;
+      }
+    });
   }
 
   setCoordinates(coordinates: { lat: number; long: number } | null) {
@@ -330,20 +280,22 @@ export default abstract class Tile {
   }
 
   setDates(startDate: string | null, endDate: string | null) {
-    this.startDate.value = startDate;
-    this.endDate.value = endDate;
+    this.page.doc.transact(() => {
+      this.startDate.value = startDate;
+      this.endDate.value = endDate;
+    });
   }
 
   setAnimation(animation: Animation | null) {
-    this.applyUpdate({ animation });
+    this.animation.value = animation;
   }
 
   setCornerRadius(cornerRadius: number | null) {
-    this.applyUpdate({ cornerRadius });
+    this.cornerRadius.value = cornerRadius;
   }
 
   setHidden(hide: boolean) {
-    this.applyUpdate({ hide });
+    this.hide.value = hide;
   }
 
   setTheme(theme: Theme | null) {
@@ -352,11 +304,11 @@ export default abstract class Tile {
         this.page.themes.apply(theme);
       }
       this.themeId.value = theme?.id ?? null;
-    }, LOCAL_ORIGIN);
+    });
   }
 
   setTextColor(textColor: Color | null) {
-    this.applyUpdate({ textColor });
+    this.textColor.value = textColor;
   }
 
   moveUp() {

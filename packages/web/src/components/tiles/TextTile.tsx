@@ -87,6 +87,7 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
       <CollaborativeTextEditor
         contentFragment={text.contentFragment}
         awareness={awareness}
+        undoManager={text.editor.undoManager?.manager}
         editorView={editorView}
         classList={editorClassList}
         tabindex={-1}

@@ -1,8 +1,6 @@
 import * as Y from "yjs";
 import { BaseReactive } from "@/utils/reactivity";
 
-export const LOCAL_ORIGIN = Symbol("yjs-binding:local");
-
 /**
  * A reactive view of a single key on a {@link Y.Map}.
  */

@@ -8,11 +8,7 @@ import TilePlacement from "@/models/TilePlacement";
 import { dockParentId } from "@/models/parentId";
 import Section from "@/models/Section";
 import createTileFromData from "@/models/createTile";
-import {
-  LOCAL_ORIGIN,
-  YMapBinding,
-  type BoundField,
-} from "@/collaboration/YMapBinding";
+import { YMapBinding, type BoundField } from "@/collaboration/YMapBinding";
 import { reactive, array, combine } from "@/utils/reactivity";
 import { DEFAULT_DOCK_SIZE, DEFAULT_PAGE_WIDTH } from "@/constants/size";
 import * as Y from "yjs";
@@ -24,7 +20,6 @@ import type { Color } from "@/utils/color";
 import type { FontId } from "api/config/fonts";
 import type { PageAccess } from "@/types/collaboration";
 import type { Awareness } from "@/collaboration/types";
-import type { PagePropertyChanges } from "@/operations";
 import type { DockEdge } from "doc/types/enums";
 import type { HorizontalAlignment, PageType } from "api/types/pages";
 import Dropdown from "@/models/Dropdown";
@@ -152,16 +147,6 @@ export default class Page {
     };
   }
 
-  private recordUpdate(
-    changes: PagePropertyChanges,
-    inverse: PagePropertyChanges,
-  ) {
-    this.editor?.recordOperation({
-      apply: { type: "page.setProperties", data: { changes } },
-      reverse: { type: "page.setProperties", data: { changes: inverse } },
-    });
-  }
-
   createDropdown(entry: Y.Map<unknown>): Dropdown {
     const id = createId();
     this.dropdownsMap.set(id, entry);
@@ -239,7 +224,7 @@ export default class Page {
 
     this.doc.transact(() => {
       this.doc.getMap<Y.Map<unknown>>("tiles").set(id, map);
-    }, LOCAL_ORIGIN);
+    });
 
     return this.add(map);
   }
@@ -258,20 +243,17 @@ export default class Page {
   }
 
   setTitle(title: string) {
-    this.recordUpdate({ title }, { title: this.title.value });
     this.title.value = title;
     document.title = `${title} - Tiles`;
     return this.update({ title });
   }
 
   setPublished(published: boolean) {
-    this.recordUpdate({ published }, { published: this.isPublished.value });
     this.isPublished.value = published;
     return this.update({ published });
   }
 
   setFolder(folderId: string | null) {
-    this.recordUpdate({ folderId }, { folderId: this.folderId.value });
     this.folderId.value = folderId;
     return this.update({ folderId });
   }
@@ -282,7 +264,7 @@ export default class Page {
         this.themes.apply(theme);
       }
       this.themeId.value = theme?.id ?? null;
-    }, LOCAL_ORIGIN);
+    });
   }
 
   delete() {

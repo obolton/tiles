@@ -15,7 +15,6 @@ import Row, { type CellValue } from "./Row";
 import SharedList from "@/collaboration/SharedList";
 import { createId } from "doc/id";
 import YReactive from "@/collaboration/YReactive";
-import { LOCAL_ORIGIN } from "@/collaboration/YMapBinding";
 import type { Reactive } from "@/utils/reactivity";
 import type Page from "@/models/Page";
 import type { TableTile } from "doc/types/tiles";
@@ -107,7 +106,7 @@ export default class Table extends Tile {
 
   insertColumn(afterColumnId: string | null): Column {
     const id = createId();
-    this.transact(() => {
+    this.page.doc.transact(() => {
       const order = orderAfter(orderedEntries(this.columnsMap), afterColumnId);
       this.columnsMap.set(id, buildColumn(order));
     });
@@ -115,7 +114,7 @@ export default class Table extends Tile {
   }
 
   moveColumn(id: string, afterId: string | null) {
-    this.transact(() => {
+    this.page.doc.transact(() => {
       const siblings = orderedEntries(this.columnsMap).filter(
         (e) => e.id !== id,
       );
@@ -127,7 +126,7 @@ export default class Table extends Tile {
     if (ids.length === 0) {
       return;
     }
-    this.transact(() => {
+    this.page.doc.transact(() => {
       for (const id of ids) {
         this.columns.remove(id);
       }
@@ -142,7 +141,7 @@ export default class Table extends Tile {
 
   insertRow(afterRowId: string | null): Row {
     const id = createId();
-    this.transact(() => {
+    this.page.doc.transact(() => {
       const order = orderAfter(orderedEntries(this.rowsMap), afterRowId);
       this.rowsMap.set(id, buildRow(order));
     });
@@ -155,7 +154,7 @@ export default class Table extends Tile {
   }
 
   moveRow(id: string, afterId: string | null) {
-    this.transact(() => {
+    this.page.doc.transact(() => {
       const siblings = orderedEntries(this.rowsMap).filter((e) => e.id !== id);
       this.rowsMap.get(id)?.set("order", orderAfter(siblings, afterId));
     });
@@ -165,7 +164,7 @@ export default class Table extends Tile {
     if (ids.length === 0) {
       return;
     }
-    this.transact(() => {
+    this.page.doc.transact(() => {
       for (const id of ids) {
         this.rows.remove(id);
       }
@@ -175,7 +174,7 @@ export default class Table extends Tile {
   // Cells
 
   updateCell({ rowId, columnId, value }: UpdateCellInput) {
-    this.transact(() => {
+    this.page.doc.transact(() => {
       const cells = this.rowsMap.get(rowId)?.get("cells");
       if (!(cells instanceof Y.Map)) {
         return;
@@ -193,7 +192,7 @@ export default class Table extends Tile {
     const rows = orderedEntries(this.rowsMap);
     const rowIds = rows.map((entry) => entry.id);
 
-    this.transact(() => {
+    this.page.doc.transact(() => {
       for (const range of ranges) {
         if (range.type === "columns") {
           const targets = idsInRange(columnIds, range.from, range.to);
@@ -230,9 +229,5 @@ export default class Table extends Tile {
     this.columns.dispose();
     this.rows.dispose();
     super.dispose();
-  }
-
-  private transact(fn: () => void) {
-    this.page.doc.transact(fn, LOCAL_ORIGIN);
   }
 }
