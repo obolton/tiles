@@ -1,4 +1,4 @@
-import type { ResizeHandleDirection } from "./PageItem";
+import type { ResizeHandleDirection } from "./resize";
 
 export interface PageItemEventMap {
   itemresizestart: PageItemEvent;
