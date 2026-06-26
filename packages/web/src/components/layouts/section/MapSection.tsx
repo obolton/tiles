@@ -4,13 +4,12 @@ import Each from "@/jsx/each";
 import styles from "./MapSection.module.css";
 import type MapView from "@/elements/maps/MapView";
 import type SectionModel from "@/models/Section";
-import type { ResizeDirection } from "@/elements/item/PageItem";
 import type { Reactive } from "@/utils/reactivity";
 
 export interface MapSectionProps {
   section: SectionModel;
   tabindex: Reactive<number | undefined>;
-  resize: Reactive<ResizeDirection | null>;
+  resize: Reactive<string | null>;
   signal?: AbortSignal;
 }
 

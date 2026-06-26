@@ -28,16 +28,17 @@ export default function Section({
     }
 
     switch (layout) {
-      case "GRID":
       case "FREEFORM":
       case "MAP":
         return "all";
+      case "GRID":
+        return "e se s";
       case "CALENDAR":
         return null;
       case "HORIZONTAL":
-        return "horizontal";
+        return "e";
       case "VERTICAL":
-        return "vertical";
+        return "s";
     }
   });
 

@@ -23,7 +23,7 @@ import styles from "./Item.module.css";
 import type Tile from "@/models/Tile";
 import type { Animation, Sizing } from "@/models/Tile";
 import type PageItem from "@/elements/item/PageItem";
-import type { ResizeDirection } from "@/elements/item/PageItem";
+import { getResizeHandleDirections } from "@/elements/item/resize";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
 import type { StyleDeclaration } from "@/jsx/html-attributes";
@@ -40,7 +40,7 @@ export interface ItemProps {
   classList?: { [k: string]: boolean | Reactive<boolean> };
   tile: Tile;
   tabindex?: number | Reactive<number | undefined>;
-  resize?: Reactive<ResizeDirection | null>;
+  resize?: Reactive<string | null>;
   draggable?: boolean;
 }
 
@@ -232,16 +232,15 @@ export default function Item({
     ? combine(
         { resize, sizing, isTileEditable: editor.isTileEditable },
         ({ resize, sizing, isTileEditable }) => {
-          if (!isTileEditable) {
-            return null;
+          if (!isTileEditable || !resize) {
+            return undefined;
           }
+          // Auto-height tiles can't resize their height, so keep only width handles.
           if (sizing === "AUTO") {
-            if (resize === "vertical") {
-              return null;
-            }
-            if (resize === "all") {
-              return "horizontal";
-            }
+            const horizontal = getResizeHandleDirections(resize).filter(
+              (h) => h === "e" || h === "w",
+            );
+            return horizontal.length ? horizontal.join(" ") : undefined;
           }
           return resize;
         },

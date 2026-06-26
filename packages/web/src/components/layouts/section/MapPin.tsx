@@ -5,14 +5,13 @@ import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import styles from "./MapSection.module.css";
 import type Tile from "@/models/Tile";
 import type Editor from "@/editor/Editor";
-import type { ResizeDirection } from "@/elements/item/PageItem";
 import type { Reactive } from "@/utils/reactivity";
 
 export interface MapPinProps {
   tile: Tile;
   editor: Editor;
   tabindex: Reactive<number | undefined>;
-  resize: Reactive<ResizeDirection | null>;
+  resize: Reactive<string | null>;
   signal?: AbortSignal;
 }
 
