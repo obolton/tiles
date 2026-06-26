@@ -22,6 +22,16 @@ export default function FreePage({
   signal,
 }: FreePageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
+  const resize = page.alignment.derive((alignment) => {
+    switch (alignment) {
+      case "LEFT":
+        return "e se s";
+      case "RIGHT":
+        return "w sw s";
+      default:
+        return "w e sw se s";
+    }
+  });
   const { dockedTiles } = page;
   const style = combine(page.dockSizes, (sizes) => ({
     "--dock-top-size": `${sizes.TOP}px`,
@@ -71,9 +81,7 @@ export default function FreePage({
             <Item
               tile={tile}
               tabindex={tabindex}
-              resize={tile.sizing.derive((d) =>
-                d === "AUTO" ? "horizontal" : "all",
-              )}
+              resize={resize}
             />
           )}
         </Each>

@@ -4,7 +4,7 @@ import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./CollectionPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
-import type { Reactive } from "@/utils/reactivity";
+import { reactive, type Reactive } from "@/utils/reactivity";
 
 export interface CollectionPageProps {
   page: Page;
@@ -20,6 +20,7 @@ export default function CollectionPage({
   signal,
 }: CollectionPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
+  const resize = reactive("e se s");
 
   function ref(element: HTMLElement) {
     LayoutEditor.attach({
@@ -47,9 +48,7 @@ export default function CollectionPage({
           <Item
             tile={tile}
             tabindex={tabindex}
-            resize={tile.sizing.derive((d) =>
-              d === "AUTO" ? "horizontal" : "all",
-            )}
+            resize={resize}
           />
         )}
       </Each>

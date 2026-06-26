@@ -17,7 +17,6 @@ import type CalendarGrid from "@/elements/calendar-grid/CalendarGrid";
 import type { CalendarEvent } from "@/elements/calendar-grid/events";
 import type Tile from "@/models/Tile";
 import type SectionModel from "@/models/Section";
-import type { ResizeDirection } from "@/elements/item/PageItem";
 import type { Reactive } from "@/utils/reactivity";
 
 function getSegmentTextColor(tile: Tile): Reactive<string | null> {
@@ -69,7 +68,7 @@ function getSegmentLabel(tile: Tile): Reactive<string | null> {
 export interface CalendarSectionProps {
   section: SectionModel;
   tabindex: Reactive<number | undefined>;
-  resize: Reactive<ResizeDirection | null>;
+  resize: Reactive<string | null>;
   signal?: AbortSignal;
 }
 
