@@ -8,11 +8,7 @@ import TilePlacement from "@/models/TilePlacement";
 import { dockParentId } from "@/models/parentId";
 import Section from "@/models/Section";
 import createTileFromData from "@/models/createTile";
-import {
-  LOCAL_ORIGIN,
-  YMapBinding,
-  type BoundField,
-} from "@/collaboration/YMapBinding";
+import { YMapBinding, type BoundField } from "@/collaboration/YMapBinding";
 import { reactive, array, combine } from "@/utils/reactivity";
 import { DEFAULT_DOCK_SIZE, DEFAULT_PAGE_WIDTH } from "@/constants/size";
 import * as Y from "yjs";
@@ -228,7 +224,7 @@ export default class Page {
 
     this.doc.transact(() => {
       this.doc.getMap<Y.Map<unknown>>("tiles").set(id, map);
-    }, LOCAL_ORIGIN);
+    });
 
     return this.add(map);
   }
@@ -268,7 +264,7 @@ export default class Page {
         this.themes.apply(theme);
       }
       this.themeId.value = theme?.id ?? null;
-    }, LOCAL_ORIGIN);
+    });
   }
 
   delete() {
