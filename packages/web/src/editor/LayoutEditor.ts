@@ -53,6 +53,7 @@ export default class LayoutEditor {
   private gridColumnWidth = 0;
   private gridRowMinHeight = 24;
   private gridColumnGap = 0;
+  private scale = 1;
 
   private beforeId: string | null = null;
   private x = 0;
@@ -164,6 +165,10 @@ export default class LayoutEditor {
     }
 
     this.gridRect = this.grid.getBoundingClientRect();
+    this.scale =
+      this.grid.offsetWidth > 0
+        ? this.gridRect.width / this.grid.offsetWidth
+        : 1;
 
     if (this.snap) {
       this.snapPoints = getSnapPoints(
@@ -523,15 +528,16 @@ export default class LayoutEditor {
     } else if (this.layoutType === "GRID") {
       const columns = this.gridColumns;
       const gap = this.gridColumnGap;
-      const columnWidth = (this.gridRect.width - gap * (columns - 1)) / columns;
+      const gridWidth = this.gridRect.width / this.scale;
+      const columnWidth = (gridWidth - gap * (columns - 1)) / columns;
       const cellSpan = (size: number) =>
-        Math.max(Math.round((size + gap) / (columnWidth + gap)), 1);
+        Math.max(Math.round((size / this.scale + gap) / (columnWidth + gap)), 1);
       this.resizing.width.value = Math.min(cellSpan(rect.width), columns);
       this.resizing.rowSpan.value = cellSpan(rect.height);
     } else {
       let width = Math.max(
         Math.round(
-          (rect.width + this.gridColumnGap) /
+          (rect.width / this.scale + this.gridColumnGap) /
             (this.gridColumnWidth + this.gridColumnGap),
         ),
         1,
@@ -554,7 +560,7 @@ export default class LayoutEditor {
         ? Math.round(width / ratio)
         : Math.max(
             Math.round(
-              (rect.height + this.gridColumnGap) /
+              (rect.height / this.scale + this.gridColumnGap) /
                 (this.gridRowMinHeight + this.gridColumnGap),
             ),
             1,
