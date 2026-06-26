@@ -30,6 +30,7 @@ export default class Editor {
 
   readonly page: Page;
   collaboration: PageCollaboration | null = null;
+  readonly isCollaborating = flag(false);
   readonly isEditable: Reactive<boolean>;
   readonly selection: Reactive<Set<Tile>>;
   readonly references: Reactive<Tile[]>;
@@ -151,9 +152,11 @@ export default class Editor {
       return;
     }
     this.collaboration = new PageCollaboration(this.page.id, this.page.doc);
+    this.isCollaborating.on();
   }
 
   private stopCollaboration() {
+    this.isCollaborating.off();
     this.collaboration?.dispose();
     this.collaboration = null;
   }
