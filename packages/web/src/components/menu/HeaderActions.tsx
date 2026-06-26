@@ -1,4 +1,5 @@
 import EditingTools from "./EditingTools";
+import CollaboratorList from "@/components/collaboration/CollaboratorList";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import BookmarkIcon from "@/icons/bookmark.svg?jsx";
@@ -41,6 +42,12 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
 
   return (
     <>
+      {editor.isCollaborating.derive(() =>
+        editor.collaboration ? (
+          <CollaboratorList presence={editor.collaboration.presence} />
+        ) : null,
+      )}
+
       <ToolbarGroup label="Editing" className={styles.editing}>
         <button
           type="button"
