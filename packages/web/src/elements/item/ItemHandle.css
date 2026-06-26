@@ -1,0 +1,243 @@
+:host {
+  position: fixed;
+  inset: auto;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: visible;
+  pointer-events: none;
+  outline: none;
+  border-radius: var(--border-radius);
+}
+
+:host(:state(resizing)) {
+  outline: var(--focus-outline);
+}
+
+:host([allowdrag])::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 16px rgb(0 0 0 / 7%);
+  clip-path: inset(-16px round calc(var(--border-radius) + 16px));
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity var(--animation-duration-short) var(--easing);
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+:host(:state(resizing))::before {
+  opacity: 0;
+}
+
+#drag {
+  position: absolute;
+  inset: -16px;
+  cursor: move;
+  pointer-events: auto;
+  clip-path: polygon(
+    evenodd,
+    0 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 0,
+    16px 16px,
+    calc(100% - 16px) 16px,
+    calc(100% - 16px) calc(100% - 16px),
+    16px calc(100% - 16px),
+    16px 16px
+  );
+}
+
+.resize {
+  --resize-handle-color: rgb(0 0 0 / 40%);
+
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: auto;
+  z-index: 1;
+  opacity: 0.5;
+  outline: none;
+  transition:
+    opacity var(--animation-duration-short) var(--easing),
+    border-color var(--animation-duration-short) var(--easing);
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+.resize.inactive {
+  opacity: 0;
+}
+
+.resize:hover,
+.resize:focus,
+:host(:state(resizing)) .resize:not(.inactive) {
+  opacity: 1;
+}
+
+.resize:focus,
+:host(:state(resizing)) .resize {
+  --resize-handle-color: var(--focus-ring-color);
+}
+
+:host(:state(dragging)) .resize {
+  display: none;
+}
+
+/* All corner handles */
+.resize-se,
+.resize-nw,
+.resize-ne,
+.resize-sw {
+  width: 24px;
+  height: 24px;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    background: var(--resize-handle-color);
+    transition: background-color var(--animation-duration-short) var(--easing);
+  }
+
+  &::before {
+    width: 4px;
+    height: 8px;
+  }
+
+  &::after {
+    width: 8px;
+    height: 4px;
+  }
+}
+
+.resize-se {
+  right: -12px;
+  bottom: -12px;
+  border-right: 8px solid var(--resize-handle-color);
+  border-bottom: 8px solid var(--resize-handle-color);
+  border-bottom-right-radius: calc(var(--border-radius) + 12px);
+  cursor: nwse-resize;
+
+  &::before {
+    bottom: -8px;
+    left: -4px;
+    border-radius: 4px 0 0 4px;
+  }
+
+  &::after {
+    top: -4px;
+    right: -8px;
+    border-radius: 4px 4px 0 0;
+  }
+}
+
+.resize-nw {
+  left: -12px;
+  top: -12px;
+  border-left: 8px solid var(--resize-handle-color);
+  border-top: 8px solid var(--resize-handle-color);
+  border-top-left-radius: calc(var(--border-radius) + 12px);
+  cursor: nwse-resize;
+
+  &::before {
+    top: -8px;
+    right: -4px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  &::after {
+    bottom: -4px;
+    left: -8px;
+    border-radius: 0 0 4px 4px;
+  }
+}
+
+.resize-ne {
+  right: -12px;
+  top: -12px;
+  border-right: 8px solid var(--resize-handle-color);
+  border-top: 8px solid var(--resize-handle-color);
+  border-top-right-radius: calc(var(--border-radius) + 12px);
+  cursor: nesw-resize;
+
+  &::before {
+    top: -8px;
+    left: -4px;
+    border-radius: 4px 0 0 4px;
+  }
+
+  &::after {
+    bottom: -4px;
+    right: -8px;
+    border-radius: 0 0 4px 4px;
+  }
+}
+
+.resize-sw {
+  left: -12px;
+  bottom: -12px;
+  border-left: 8px solid var(--resize-handle-color);
+  border-bottom: 8px solid var(--resize-handle-color);
+  border-bottom-left-radius: calc(var(--border-radius) + 12px);
+  cursor: nesw-resize;
+
+  &::before {
+    bottom: -8px;
+    right: -4px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  &::after {
+    top: -4px;
+    left: -8px;
+    border-radius: 4px 4px 0 0;
+  }
+}
+
+/* Edge handles */
+.resize-e,
+.resize-w {
+  width: 8px;
+  height: 48px;
+  top: calc(50% - 24px);
+  background: var(--resize-handle-color);
+  border-radius: 4px;
+  cursor: ew-resize;
+}
+
+.resize-e {
+  right: -12px;
+}
+
+.resize-w {
+  left: -12px;
+}
+
+.resize-n,
+.resize-s {
+  width: 48px;
+  height: 8px;
+  left: calc(50% - 24px);
+  background: var(--resize-handle-color);
+  border-radius: 4px;
+  cursor: ns-resize;
+}
+
+.resize-n {
+  top: -12px;
+}
+
+.resize-s {
+  bottom: -12px;
+}
