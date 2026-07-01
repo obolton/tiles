@@ -19,6 +19,14 @@ export interface SeriesPanelProps extends JSX.Attributes<"anchored-popover"> {
   table: Table;
 }
 
+function setChartType(type: ChartType, series: Series) {
+  series.type.value = type;
+}
+
+function setSeriesFill(fill: ColorFill | GradientFill | null, series: Series) {
+  series.fill.value = fill;
+}
+
 export default function SeriesPanel({ chart, table, ...props }: SeriesPanelProps) {
   const availableColumns = combine(
     {
@@ -45,14 +53,6 @@ export default function SeriesPanel({ chart, table, ...props }: SeriesPanelProps
     if (column) {
       chart.addSeries({ id: column.id, title: column.title.value });
     }
-  }
-
-  function setChartType(type: ChartType, series: Series) {
-    series.type.value = type;
-  }
-
-  function setSeriesFill(fill: ColorFill | GradientFill | null, series: Series) {
-    series.fill.value = fill;
   }
 
   function deleteSeries(series: Series) {
