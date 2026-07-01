@@ -5,6 +5,8 @@ import { ReactiveValue } from "@/utils/reactivity";
 import { BOOLEAN_STRING_ATTRIBUTES } from "../attributes";
 import type { JSX } from "../jsx";
 
+const HelloComponent = ({ name }: { name: string }) => jsx("span", { children: `Hello ${name}` });
+
 describe("renderToString", () => {
   test("renders an element to a string", () => {
     const element = jsx("div", {});
@@ -144,10 +146,8 @@ describe("renderToString", () => {
   });
 
   test("renders a child component", () => {
-    const Component = ({ name }: { name: string }) => jsx("span", { children: `Hello ${name}` });
-
     const element = jsx("p", {
-      children: jsx(Component, { name: "Test" }),
+      children: jsx(HelloComponent, { name: "Test" }),
     });
     expect(renderToString(element)).toBe("<p><span>Hello Test</span></p>");
   });

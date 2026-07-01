@@ -22,6 +22,14 @@ function seed(map: Y.Map<Y.Map<unknown>>, id: string, order: string) {
   map.set(id, entry);
 }
 
+function seedTitled(target: Y.Map<Y.Map<unknown>>, id: string, title?: string) {
+  const entry = new Y.Map<unknown>();
+  if (title !== undefined) {
+    entry.set("title", title);
+  }
+  target.set(id, entry);
+}
+
 describe("SharedList", () => {
   let doc: Y.Doc;
   let map: Y.Map<Y.Map<unknown>>;
@@ -396,14 +404,6 @@ describe("SharedList", () => {
   });
 
   describe("sort options", () => {
-    function seedTitled(target: Y.Map<Y.Map<unknown>>, id: string, title?: string) {
-      const entry = new Y.Map<unknown>();
-      if (title !== undefined) {
-        entry.set("title", title);
-      }
-      target.set(id, entry);
-    }
-
     test("orders entries by the configured key", () => {
       const titled = new Y.Doc().getMap<Y.Map<unknown>>("things");
       seedTitled(titled, "c", "Cherry");

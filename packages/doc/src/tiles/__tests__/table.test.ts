@@ -51,29 +51,29 @@ describe("buildTableMap", () => {
   });
 });
 
-describe("parseTableChanges", () => {
-  function buildTable() {
-    const doc = new Y.Doc();
-    const map = buildTableMap({
-      columns: [
-        { id: "col-1", title: "Month" },
-        { id: "col-2", title: "Revenue" },
-      ],
-      rows: [{ cells: ["Jan", "100"] }, { cells: ["Feb", "200"] }],
-    });
-    doc.getMap().set("tile", map);
+function buildTable() {
+  const doc = new Y.Doc();
+  const map = buildTableMap({
+    columns: [
+      { id: "col-1", title: "Month" },
+      { id: "col-2", title: "Revenue" },
+    ],
+    rows: [{ cells: ["Jan", "100"] }, { cells: ["Feb", "200"] }],
+  });
+  doc.getMap().set("tile", map);
 
-    const columns = map.get("columns") as Y.Map<Y.Map<unknown>>;
-    const rows = map.get("rows") as Y.Map<Y.Map<unknown>>;
-    const [row] = orderedEntries(rows);
-    const [column] = orderedEntries(columns);
-    if (!row || !column) {
-      throw new Error("expected seeded rows and columns");
-    }
-
-    return { doc, columns, rows, row, column };
+  const columns = map.get("columns") as Y.Map<Y.Map<unknown>>;
+  const rows = map.get("rows") as Y.Map<Y.Map<unknown>>;
+  const [row] = orderedEntries(rows);
+  const [column] = orderedEntries(columns);
+  if (!row || !column) {
+    throw new Error("expected seeded rows and columns");
   }
 
+  return { doc, columns, rows, row, column };
+}
+
+describe("parseTableChanges", () => {
   test("emits a cell change for an edited cell", () => {
     const { rows, row } = buildTable();
     let events: Y.YEvent<Y.AbstractType<unknown>>[] = [];

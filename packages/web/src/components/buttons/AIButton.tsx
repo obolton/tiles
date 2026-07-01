@@ -6,11 +6,11 @@ export interface AIButtonProps {
   isOpen: Reactive<boolean>;
 }
 
-export default function AIButton({ isOpen }: AIButtonProps) {
-  function onClick() {
-    Editor.current.togglePromptToolbar();
-  }
+function onClick() {
+  Editor.current.togglePromptToolbar();
+}
 
+export default function AIButton({ isOpen }: AIButtonProps) {
   return (
     <button
       id="ai-button"

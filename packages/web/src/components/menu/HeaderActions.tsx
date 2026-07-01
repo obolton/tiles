@@ -17,26 +17,26 @@ export interface HeaderActionsProps {
   editor: Editor;
 }
 
+async function onClickBookmark() {
+  const pageId = document.body.dataset.pageId;
+  if (!pageId) {
+    return;
+  }
+
+  try {
+    isBookmarked.toggle();
+    await setIsBookmarked(pageId, isBookmarked.value);
+  } catch (error) {
+    handleError(error);
+  }
+}
+
 export default function HeaderActions({ editor }: HeaderActionsProps) {
   const { isEditable } = editor;
   function toggleEdit() {
     viewTransition(() => {
       isEditable.value = !isEditable.value;
     });
-  }
-
-  async function onClickBookmark() {
-    const pageId = document.body.dataset.pageId;
-    if (!pageId) {
-      return;
-    }
-
-    try {
-      isBookmarked.toggle();
-      await setIsBookmarked(pageId, isBookmarked.value);
-    } catch (error) {
-      handleError(error);
-    }
   }
 
   return (

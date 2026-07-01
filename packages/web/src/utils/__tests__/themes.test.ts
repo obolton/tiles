@@ -350,14 +350,14 @@ describe("getThemeColors", () => {
   });
 });
 
-describe("getPageBodyStyle", () => {
-  function docWithTheme(theme: Theme = THEME): Y.Doc {
-    const doc = new Y.Doc();
-    doc.getMap("themes").set(theme.id, theme);
-    doc.getMap("metadata").set("themeId", theme.id);
-    return doc;
-  }
+function docWithTheme(theme: Theme = THEME): Y.Doc {
+  const doc = new Y.Doc();
+  doc.getMap("themes").set(theme.id, theme);
+  doc.getMap("metadata").set("themeId", theme.id);
+  return doc;
+}
 
+describe("getPageBodyStyle", () => {
   test("resolves CSS properties from the doc theme snapshot", () => {
     const doc = docWithTheme();
     const result = getPageBodyStyle(doc);

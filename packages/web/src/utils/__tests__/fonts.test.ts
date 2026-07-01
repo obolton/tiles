@@ -10,6 +10,10 @@ import {
 import type FontFace from "@/test/mocks/FontFace";
 import type { FontId } from "api/config/fonts";
 
+function getAddedFaces(): FontFace[] {
+  return vi.mocked(document.fonts.add).mock.calls.map(([face]) => face as unknown as FontFace);
+}
+
 describe("generateFontFaceCSS", () => {
   describe("with a mixed set of fonts", () => {
     const { content } = generateFontFaceCSS(["inter", "jetbrains-mono", "pt-serif"]);
@@ -101,10 +105,6 @@ describe("loadFonts", () => {
     vi.mocked(document.fonts.add).mockClear();
   });
 
-  function getAddedFaces(): FontFace[] {
-    return vi.mocked(document.fonts.add).mock.calls.map(([face]) => face as unknown as FontFace);
-  }
-
   test("registers a FontFace per file with the correct descriptors", async () => {
     await loadFonts("inter");
     const faces = getAddedFaces();
@@ -138,10 +138,6 @@ describe("loadFontPreviews", () => {
     clearLoadedPreviews();
     vi.mocked(document.fonts.add).mockClear();
   });
-
-  function getAddedFaces(): FontFace[] {
-    return vi.mocked(document.fonts.add).mock.calls.map(([face]) => face as unknown as FontFace);
-  }
 
   test("registers a FontFace under the previewFamily for each id", async () => {
     await loadFontPreviews("inter", "lora");

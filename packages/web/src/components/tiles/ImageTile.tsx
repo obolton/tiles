@@ -17,6 +17,12 @@ export interface ImageTileProps {
   showToolbar: Reactive<boolean>;
 }
 
+function onKeyDown(event: KeyboardEvent) {
+  if (event.key === "Delete" || event.key === "Backspace") {
+    event.stopPropagation();
+  }
+}
+
 export default function ImageTile({ image, showToolbar }: ImageTileProps) {
   const {
     id,
@@ -37,12 +43,6 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
       </Tile>
     );
   }
-
-  const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Delete" || event.key === "Backspace") {
-      event.stopPropagation();
-    }
-  };
 
   const srcSet = getImageSrcSet(imageUrl);
   const style = getImageStyle(image);

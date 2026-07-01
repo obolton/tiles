@@ -40,6 +40,46 @@ const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
+function createGrid() {
+  Section.create(Editor.current.page, {
+    beforeId: null,
+    layout: "GRID",
+    height: 15,
+  }).catch(handleError);
+}
+
+function createHorizontal() {
+  Section.create(Editor.current.page, {
+    beforeId: null,
+    layout: "HORIZONTAL",
+    height: 15,
+  }).catch(handleError);
+}
+
+function createVertical() {
+  Section.create(Editor.current.page, {
+    beforeId: null,
+    layout: "VERTICAL",
+    height: 15,
+  }).catch(handleError);
+}
+
+function createFreeform() {
+  Section.create(Editor.current.page, {
+    beforeId: null,
+    layout: "FREEFORM",
+    sizing: "FOUR_THREE",
+  }).catch(handleError);
+}
+
+function createCalendar() {
+  Section.create(Editor.current.page, {
+    beforeId: null,
+    layout: "CALENDAR",
+    sizing: "FOUR_THREE",
+  }).catch(handleError);
+}
+
 export default function InsertMenu({ ...props }: JSX.Attributes<"popover-menu">) {
   function onClick(event: PointerEvent) {
     const button = event.currentTarget as HTMLButtonElement;
@@ -120,46 +160,6 @@ export default function InsertMenu({ ...props }: JSX.Attributes<"popover-menu">)
         }).catch(handleError);
         break;
     }
-  }
-
-  function createGrid() {
-    Section.create(Editor.current.page, {
-      beforeId: null,
-      layout: "GRID",
-      height: 15,
-    }).catch(handleError);
-  }
-
-  function createHorizontal() {
-    Section.create(Editor.current.page, {
-      beforeId: null,
-      layout: "HORIZONTAL",
-      height: 15,
-    }).catch(handleError);
-  }
-
-  function createVertical() {
-    Section.create(Editor.current.page, {
-      beforeId: null,
-      layout: "VERTICAL",
-      height: 15,
-    }).catch(handleError);
-  }
-
-  function createFreeform() {
-    Section.create(Editor.current.page, {
-      beforeId: null,
-      layout: "FREEFORM",
-      sizing: "FOUR_THREE",
-    }).catch(handleError);
-  }
-
-  function createCalendar() {
-    Section.create(Editor.current.page, {
-      beforeId: null,
-      layout: "CALENDAR",
-      sizing: "FOUR_THREE",
-    }).catch(handleError);
   }
 
   function createMap() {

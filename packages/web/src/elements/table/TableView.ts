@@ -78,6 +78,22 @@ function isCellEqual(a: Cell, b: Cell) {
   return a.row.index === b.row.index && a.column.index === b.column.index;
 }
 
+function referencedIds(selection: Selection) {
+  switch (selection.type) {
+    case "row":
+      return [selection.row.id];
+    case "column":
+      return [selection.column.id];
+    case "range":
+      return [
+        selection.anchor.row.id,
+        selection.anchor.column.id,
+        selection.focus.row.id,
+        selection.focus.column.id,
+      ];
+  }
+}
+
 const HEADER_SIZE = 32;
 const ROW_BUFFER_MIN_SIZE = 3;
 const CELL_BUFFER_MIN_SIZE = 10;
@@ -1846,22 +1862,6 @@ export default class TableView extends HTMLElement {
     if (removedIds.size === 0 || this.selection.size === 0) {
       return;
     }
-    const referencedIds = (selection: Selection) => {
-      switch (selection.type) {
-        case "row":
-          return [selection.row.id];
-        case "column":
-          return [selection.column.id];
-        case "range":
-          return [
-            selection.anchor.row.id,
-            selection.anchor.column.id,
-            selection.focus.row.id,
-            selection.focus.column.id,
-          ];
-      }
-    };
-
     let changed = false;
     for (const selection of this.selection) {
       if (referencedIds(selection).some((id) => !!id && removedIds.has(id))) {

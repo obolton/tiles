@@ -16,6 +16,8 @@ declare global {
   }
 }
 
+const HelloComponent = ({ name }: { name: string }) => jsx("span", { children: `Hello ${name}` });
+
 describe("render", () => {
   test("creates an element with the given type", () => {
     const nodes = render(jsx("div", {}));
@@ -137,8 +139,7 @@ describe("render", () => {
   });
 
   test("adds a child component", () => {
-    const Component = ({ name }: { name: string }) => jsx("span", { children: `Hello ${name}` });
-    const [element] = render(jsx("div", { children: jsx(Component, { name: "Test" }) })) as [
+    const [element] = render(jsx("div", { children: jsx(HelloComponent, { name: "Test" }) })) as [
       HTMLElement,
     ];
     expect(element.childNodes.length).toBe(1);
@@ -304,8 +305,7 @@ describe("hydrate", () => {
     const span = document.createElement("span");
     span.appendChild(document.createTextNode("Hello"));
     container.appendChild(span);
-    const Component = ({ name }: { name: string }) => jsx("span", { children: `Hello ${name}` });
-    hydrate(jsx(Component, { name: "World" }), container);
+    hydrate(jsx(HelloComponent, { name: "World" }), container);
     expect(container.firstElementChild).toBe(span);
     expect(span.firstChild?.nodeValue).toBe("Hello World");
   });

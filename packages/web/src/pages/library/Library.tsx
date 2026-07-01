@@ -25,19 +25,19 @@ export interface LibraryProps {
   user: User;
 }
 
+function renderPlaceholder(query: string) {
+  return (
+    <Placeholder>
+      {query ? "There are no results." : "Get started by creating your first page."}
+    </Placeholder>
+  );
+}
+
 export default function Library({ workspace, folders, pages: initialPages, user }: LibraryProps) {
   const query = reactive("");
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
   const pages = reactive(initialPages.pages);
   const cursor = reactive<string | null>(initialPages.nextCursor);
-
-  function renderPlaceholder(query: string) {
-    return (
-      <Placeholder>
-        {query ? "There are no results." : "Get started by creating your first page."}
-      </Placeholder>
-    );
-  }
 
   return (
     <PageLayout

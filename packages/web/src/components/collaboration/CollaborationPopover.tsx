@@ -16,6 +16,13 @@ export interface CollaborationPopoverProps extends JSX.Attributes<"anchored-popo
   page: Page;
 }
 
+function deleteInvite(invite: PageInvite) {
+  invite
+    .delete()
+    .then(() => showToast(`The invite for ${invite.email} was cancelled.`, "success"))
+    .catch(handleError);
+}
+
 export default function CollaborationPopover({ page, ...props }: CollaborationPopoverProps) {
   const { access, invites, isPublished } = page;
 
@@ -45,13 +52,6 @@ export default function CollaborationPopover({ page, ...props }: CollaborationPo
     page
       .revokeAccess(user.id)
       .then(() => showToast(`${user.name}’s access was revoked.`, "success"))
-      .catch(handleError);
-  }
-
-  function deleteInvite(invite: PageInvite) {
-    invite
-      .delete()
-      .then(() => showToast(`The invite for ${invite.email} was cancelled.`, "success"))
       .catch(handleError);
   }
 
