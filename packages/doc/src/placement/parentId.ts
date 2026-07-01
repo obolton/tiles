@@ -52,10 +52,7 @@ export function dockParentId(edge: DockEdge): string {
  * Translates the server's separate `sectionId`/`dock` axes into a single
  * parentId. A dock assignment takes precedence over a section.
  */
-export function toParentId(
-  sectionId: string | null,
-  dock: DockEdge | null,
-): string | null {
+export function toParentId(sectionId: string | null, dock: DockEdge | null): string | null {
   if (dock !== null) {
     return dockParentId(dock);
   }

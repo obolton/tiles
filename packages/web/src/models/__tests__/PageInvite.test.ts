@@ -22,9 +22,7 @@ vi.mock("@/api/client", () => ({
 describe("PageInvite", () => {
   const page = new Page(PAGE, new Y.Doc());
   const inviteToPageMock = vi.mocked(client.collaboration.inviteToPage.mutate);
-  const deletePageInviteMock = vi.mocked(
-    client.collaboration.deletePageInvite.mutate,
-  );
+  const deletePageInviteMock = vi.mocked(client.collaboration.deletePageInvite.mutate);
 
   afterEach(() => {
     vi.clearAllMocks();

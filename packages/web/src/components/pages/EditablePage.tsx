@@ -29,11 +29,7 @@ export default function EditablePage({ editor }: EditablePageProps) {
   return (
     <>
       <If condition={isEditable}>
-        <div
-          className={styles["bottom-bar"]}
-          role="group"
-          aria-label="Editor tools"
-        >
+        <div className={styles["bottom-bar"]} role="group" aria-label="Editor tools">
           <AIButton isOpen={editor.isPromptToolbarOpen} />
           <div id="toolbar-slot" className={styles["toolbar-slot"]}>
             <If condition={showPageToolbar}>
@@ -50,11 +46,7 @@ export default function EditablePage({ editor }: EditablePageProps) {
         </div>
       </If>
 
-      <PageContents
-        page={editor.page}
-        isEditable={isEditable}
-        tiles={editor.page.tiles}
-      />
+      <PageContents page={editor.page} isEditable={isEditable} tiles={editor.page.tiles} />
     </>
   );
 }

@@ -7,16 +7,6 @@ export interface SidebarProps {
   selectedFolderId: FoldersProps["selectedId"];
 }
 
-export default function Sidebar({
-  workspace,
-  folders,
-  selectedFolderId,
-}: SidebarProps) {
-  return (
-    <Folders
-      workspaceId={workspace.id}
-      selectedId={selectedFolderId}
-      folders={folders}
-    />
-  );
+export default function Sidebar({ workspace, folders, selectedFolderId }: SidebarProps) {
+  return <Folders workspaceId={workspace.id} selectedId={selectedFolderId} folders={folders} />;
 }

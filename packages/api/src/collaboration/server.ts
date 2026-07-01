@@ -40,9 +40,7 @@ export function createHocuspocus() {
       const pageId = parseDocName(documentName);
       const state = Y.encodeStateAsUpdate(document);
       await saveDoc(pageId, state);
-      console.log(
-        `collaboration: stored page=${pageId} bytes=${state.byteLength}`,
-      );
+      console.log(`collaboration: stored page=${pageId} bytes=${state.byteLength}`);
     },
 
     async onConnect({ documentName }) {

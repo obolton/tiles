@@ -98,9 +98,7 @@ export class YXmlStreamWriter {
         this.placeBlock(this.paragraph());
         break;
       case "heading":
-        this.placeBlock(
-          this.element("heading", { align: "left", level: node.level }),
-        );
+        this.placeBlock(this.element("heading", { align: "left", level: node.level }));
         break;
       case "code":
         this.placeBlock(
@@ -132,16 +130,10 @@ export class YXmlStreamWriter {
       this.afterBlock = el;
       return;
     }
-    const at = this.resolve(
-      this.blockRel,
-      this.before ? 0 : this.fragment.length,
-    );
+    const at = this.resolve(this.blockRel, this.before ? 0 : this.fragment.length);
     this.fragment.insert(at, [el]);
     const after = !this.before || atom;
-    this.blockRel = Y.createRelativePositionFromTypeIndex(
-      this.fragment,
-      after ? at + 1 : at,
-    );
+    this.blockRel = Y.createRelativePositionFromTypeIndex(this.fragment, after ? at + 1 : at);
   }
 
   private insertListItem(type: ListType, depth: number): void {
@@ -179,17 +171,12 @@ export class YXmlStreamWriter {
   }
 
   private resolve(rel: Y.RelativePosition | null, fallback: number): number {
-    const abs = rel
-      ? Y.createAbsolutePositionFromRelativePosition(rel, this.doc)
-      : null;
+    const abs = rel ? Y.createAbsolutePositionFromRelativePosition(rel, this.doc) : null;
     return abs ? abs.index : fallback;
   }
 
   private positionAtSelection(range: SelectionRange): void {
-    const from = Y.createAbsolutePositionFromRelativePosition(
-      range.from,
-      this.doc,
-    );
+    const from = Y.createAbsolutePositionFromRelativePosition(range.from, this.doc);
     if (!(from?.type instanceof Y.XmlText)) {
       return;
     }

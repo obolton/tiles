@@ -13,11 +13,7 @@ export interface InviteModalProps extends ModalProps<InviteModalResult> {
   title?: string;
 }
 
-export default function InviteModal({
-  title = "Invite",
-  cancel,
-  confirm,
-}: InviteModalProps) {
+export default function InviteModal({ title = "Invite", cancel, confirm }: InviteModalProps) {
   const isPending = flag(false);
 
   async function onSubmit(event: Event) {
@@ -50,12 +46,7 @@ export default function InviteModal({
       <ModalBody>
         <label>
           Email address
-          <input
-            type="email"
-            name="email"
-            placeholder="Email address"
-            required
-          />
+          <input type="email" name="email" placeholder="Email address" required />
         </label>
       </ModalBody>
 

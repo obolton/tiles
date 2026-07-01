@@ -136,8 +136,7 @@
   border-top: 1px solid rgb(0 0 0 / 8%);
 }
 
-:host([editable]:not(:state(resizing), :state(selecting), [data-drop-target]))
-  .day:hover {
+:host([editable]:not(:state(resizing), :state(selecting), [data-drop-target])) .day:hover {
   background: rgb(0 0 0 / 10%);
   cursor: pointer;
 }

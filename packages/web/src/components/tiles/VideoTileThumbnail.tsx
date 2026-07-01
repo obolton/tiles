@@ -21,9 +21,7 @@ export default function VideoTileThumbnail({ video }: VideoTileThumbnailProps) {
           ),
         )}
         {title.derive((value) =>
-          value ? (
-            <figcaption className={styles.caption}>{value}</figcaption>
-          ) : null,
+          value ? <figcaption className={styles.caption}>{value}</figcaption> : null,
         )}
       </figure>
       <VideoIcon className={styles.icon} aria-hidden="true" />

@@ -19,20 +19,12 @@ export function findTextChange(
   let newEnd = newText.length;
 
   // Find common prefix
-  while (
-    start < oldEnd &&
-    start < newEnd &&
-    oldText[start] === newText[start]
-  ) {
+  while (start < oldEnd && start < newEnd && oldText[start] === newText[start]) {
     start++;
   }
 
   // Find common suffix
-  while (
-    oldEnd > start &&
-    newEnd > start &&
-    oldText[oldEnd - 1] === newText[newEnd - 1]
-  ) {
+  while (oldEnd > start && newEnd > start && oldText[oldEnd - 1] === newText[newEnd - 1]) {
     oldEnd--;
     newEnd--;
   }

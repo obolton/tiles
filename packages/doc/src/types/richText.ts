@@ -121,14 +121,7 @@ interface QuoteNode {
 
 interface PendingNode {
   type: "pending";
-  children: (
-    | ParagraphNode
-    | HeadingNode
-    | ListNode
-    | QuoteNode
-    | CodeNode
-    | DividerNode
-  )[];
+  children: (ParagraphNode | HeadingNode | ListNode | QuoteNode | CodeNode | DividerNode)[];
 }
 
 type BlockNode =

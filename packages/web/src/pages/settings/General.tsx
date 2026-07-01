@@ -55,18 +55,10 @@ export default function General({ workspace, user }: GeneralProps) {
   }
 
   return (
-    <PageLayout
-      workspaceId={workspace.id}
-      user={user}
-      center={<h1>Settings</h1>}
-    >
+    <PageLayout workspaceId={workspace.id} user={user} center={<h1>Settings</h1>}>
       <SidebarLayout
         sidebar={
-          <Sidebar
-            workspaceId={workspace.id}
-            page="GENERAL"
-            isAdmin={workspace.role === "ADMIN"}
-          />
+          <Sidebar workspaceId={workspace.id} page="GENERAL" isAdmin={workspace.role === "ADMIN"} />
         }
       >
         <form class="vertical" on:submit={onSubmit}>
@@ -95,11 +87,7 @@ export default function General({ workspace, user }: GeneralProps) {
         <If condition={isAdmin}>
           <section className={styles.delete}>
             <h3>Danger zone</h3>
-            <button
-              type="button"
-              className="secondary destructive"
-              on:click={deleteWorkspace}
-            >
+            <button type="button" className="secondary destructive" on:click={deleteWorkspace}>
               Delete workspace
             </button>
           </section>

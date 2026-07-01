@@ -8,7 +8,5 @@ interface ModalBodyProps {
 }
 
 export default function ModalBody({ children, className }: ModalBodyProps) {
-  return (
-    <section className={classNames(styles.body, className)}>{children}</section>
-  );
+  return <section className={classNames(styles.body, className)}>{children}</section>;
 }

@@ -1,10 +1,6 @@
 import { toCSSColor } from "@/utils/color";
 
-export type GradientDirection =
-  | "VERTICAL"
-  | "HORIZONTAL"
-  | "BOTTOM_RIGHT"
-  | "BOTTOM_LEFT";
+export type GradientDirection = "VERTICAL" | "HORIZONTAL" | "BOTTOM_RIGHT" | "BOTTOM_LEFT";
 
 const GRADIENT_COORDS: Record<
   GradientDirection,
@@ -25,10 +21,7 @@ export function createSVGGradient(
     throw new Error("Gradient requires at least two colors");
   }
 
-  const gradient = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "linearGradient",
-  );
+  const gradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
   gradient.id = id;
   const coords = GRADIENT_COORDS[direction];
   gradient.setAttribute("x1", coords.x1);

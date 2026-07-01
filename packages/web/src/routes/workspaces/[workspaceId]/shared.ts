@@ -5,16 +5,9 @@ import { authenticatedRoute } from "@/utils/middleware";
 import { initRoute } from "@/routes/init";
 import Shared, { type SharedProps } from "@/pages/library/Shared";
 import { notFound, forbidden } from "@/router/responses";
-import type {
-  Route,
-  RequestProperties,
-  RouteLoaderResult,
-} from "@/router/router";
+import type { Route, RequestProperties, RouteLoaderResult } from "@/router/router";
 
-async function loader({
-  headers,
-  parameters,
-}: RequestProperties): RouteLoaderResult<SharedProps> {
+async function loader({ headers, parameters }: RequestProperties): RouteLoaderResult<SharedProps> {
   const { workspaceId } = parameters;
   if (!workspaceId) {
     return notFound();
@@ -44,6 +37,5 @@ export default {
   loader,
   component: Shared,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters, data }) =>
-    initRoute(parameters.workspaceId, data.user),
+  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
 } satisfies Route<SharedProps>;

@@ -25,10 +25,7 @@ export default function PresentationPage({
 }: PresentationPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
 
-  const storedWidth = persistent<number>(
-    "filmstrip:width",
-    DEFAULT_SIDEBAR_WIDTH,
-  );
+  const storedWidth = persistent<number>("filmstrip:width", DEFAULT_SIDEBAR_WIDTH);
   const width = reactive(storedWidth.value);
   const style = width.derive((value) => ({ "--sidebar-width": `${value}px` }));
 

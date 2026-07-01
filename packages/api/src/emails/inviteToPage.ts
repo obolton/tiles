@@ -10,11 +10,7 @@ interface InviteToPageEmailOptions {
 assert(process.env.CLIENT_ORIGIN, "CLIENT_ORIGIN is required");
 const BASE_URL = process.env.CLIENT_ORIGIN;
 
-export function inviteToPageEmail({
-  inviter,
-  title,
-  key,
-}: InviteToPageEmailOptions): Email {
+export function inviteToPageEmail({ inviter, title, key }: InviteToPageEmailOptions): Email {
   return {
     subject: `${inviter.name} has invited you to collaborate on "${title}"`,
     body: `<p>Hi,</p>

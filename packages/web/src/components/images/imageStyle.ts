@@ -28,8 +28,7 @@ const VARIANTS: ImageVariant[] = [
 
 export function getImageSrcSet(src: string) {
   return VARIANTS.map(
-    ({ width, searchParams }) =>
-      `${setSearchParams(src, searchParams)} ${width}w`,
+    ({ width, searchParams }) => `${setSearchParams(src, searchParams)} ${width}w`,
   ).join(", ");
 }
 
@@ -38,14 +37,9 @@ export function getMaxWidth(columns: number) {
 }
 
 export function getImageStyle(image: Image) {
-  return combine(
-    { origin: image.origin, sizing: image.sizing },
-    ({ origin, sizing }) => ({
-      objectPosition: `${origin.x * 100}% ${origin.y * 100}%`,
-      aspectRatio:
-        sizing === "AUTO"
-          ? `${image.size.value.width} / ${image.size.value.height}`
-          : undefined,
-    }),
-  );
+  return combine({ origin: image.origin, sizing: image.sizing }, ({ origin, sizing }) => ({
+    objectPosition: `${origin.x * 100}% ${origin.y * 100}%`,
+    aspectRatio:
+      sizing === "AUTO" ? `${image.size.value.width} / ${image.size.value.height}` : undefined,
+  }));
 }

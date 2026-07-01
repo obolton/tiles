@@ -23,16 +23,13 @@ export type FontCategory = FontConfig["category"];
 export const FontsSchema = z
   .array(FontConfigSchema)
   .nonempty()
-  .refine(
-    (fonts) => new Set(fonts.map((font) => font.id)).size === fonts.length,
-    { message: "Font IDs must be unique" },
-  );
+  .refine((fonts) => new Set(fonts.map((font) => font.id)).size === fonts.length, {
+    message: "Font IDs must be unique",
+  });
 
 export const FONTS: readonly FontConfig[] = FontsSchema.parse(fontsJson);
 
-const FONTS_BY_ID: ReadonlyMap<string, FontConfig> = new Map(
-  FONTS.map((font) => [font.id, font]),
-);
+const FONTS_BY_ID: ReadonlyMap<string, FontConfig> = new Map(FONTS.map((font) => [font.id, font]));
 
 export const FONT_IDS: readonly string[] = FONTS.map((font) => font.id);
 

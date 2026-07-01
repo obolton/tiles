@@ -42,11 +42,7 @@ class ListItemNodeView implements NodeView, EventListenerObject {
   }
 
   private onClick(event: MouseEvent) {
-    if (
-      event.defaultPrevented ||
-      event.target !== this.dom ||
-      this.dom.role !== "checkbox"
-    ) {
+    if (event.defaultPrevented || event.target !== this.dom || this.dom.role !== "checkbox") {
       return;
     }
 
@@ -56,9 +52,7 @@ class ListItemNodeView implements NodeView, EventListenerObject {
     }
 
     const checked = this.dom.ariaChecked === "true";
-    this.view.dispatch(
-      this.view.state.tr.setNodeAttribute(pos, "checked", !checked),
-    );
+    this.view.dispatch(this.view.state.tr.setNodeAttribute(pos, "checked", !checked));
     event.preventDefault();
   }
 }

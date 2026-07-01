@@ -5,11 +5,7 @@ import Tile from "./Tile";
 import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
-import {
-  getImageSrcSet,
-  getImageStyle,
-  getMaxWidth,
-} from "@/components/images/imageStyle";
+import { getImageSrcSet, getImageStyle, getMaxWidth } from "@/components/images/imageStyle";
 import { flag, reactive } from "@/utils/reactivity";
 import styles from "@/components/images/ImageView.module.css";
 import type Image from "@/models/Image";
@@ -19,6 +15,12 @@ import type { EditorView } from "prosemirror-view";
 export interface ImageTileProps {
   image: Image;
   showToolbar: Reactive<boolean>;
+}
+
+function onKeyDown(event: KeyboardEvent) {
+  if (event.key === "Delete" || event.key === "Backspace") {
+    event.stopPropagation();
+  }
 }
 
 export default function ImageTile({ image, showToolbar }: ImageTileProps) {
@@ -41,12 +43,6 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
       </Tile>
     );
   }
-
-  const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Delete" || event.key === "Backspace") {
-      event.stopPropagation();
-    }
-  };
 
   const srcSet = getImageSrcSet(imageUrl);
   const style = getImageStyle(image);

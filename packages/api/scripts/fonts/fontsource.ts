@@ -9,10 +9,7 @@ const FontsourceFontSchema = z.object({
   version: z.string(),
   variable: z.boolean().optional(),
   styles: z.array(z.string()),
-  variants: z.record(
-    z.string(),
-    z.record(z.string(), z.record(z.string(), z.unknown())),
-  ),
+  variants: z.record(z.string(), z.record(z.string(), z.record(z.string(), z.unknown()))),
 });
 
 export type FontsourceFont = z.infer<typeof FontsourceFontSchema>;
@@ -29,9 +26,7 @@ const FontsourceVariableFontSchema = z.object({
   axes: z.record(z.string(), FontsourceAxisSchema),
 });
 
-export type FontsourceVariableFont = z.infer<
-  typeof FontsourceVariableFontSchema
->;
+export type FontsourceVariableFont = z.infer<typeof FontsourceVariableFontSchema>;
 
 export async function fetchFontMetadata(id: string): Promise<FontsourceFont> {
   const response = await fetch(`${FONTSOURCE_API}/fonts/${id}`);
@@ -53,9 +48,7 @@ export async function fetchVariableFontMetadata(
   }
 
   if (!response.ok) {
-    throw new Error(
-      `Fontsource variable API returned ${response.status} for ${id}`,
-    );
+    throw new Error(`Fontsource variable API returned ${response.status} for ${id}`);
   }
 
   return FontsourceVariableFontSchema.parse(await response.json());

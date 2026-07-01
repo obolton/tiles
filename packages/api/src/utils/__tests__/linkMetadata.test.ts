@@ -55,14 +55,9 @@ describe("getLinkMetadata", () => {
     </head>
     <body></body>
     </html>`;
-    const fetchMock = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(htmlResponse(html));
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(htmlResponse(html));
 
-    const metadata = await getLinkMetadata(
-      "https://example.com/page",
-      "es-ES,es",
-    );
+    const metadata = await getLinkMetadata("https://example.com/page", "es-ES,es");
 
     expect(metadata).toEqual({
       title: "OG Title",
@@ -114,9 +109,7 @@ describe("getLinkMetadata", () => {
 
     expect(metadata).toBeNull();
     expect(errorSpy).toHaveBeenCalledWith(
-      expect.stringContaining(
-        "Failed to fetch metadata for https://example.com/error",
-      ),
+      expect.stringContaining("Failed to fetch metadata for https://example.com/error"),
     );
   });
 
@@ -132,9 +125,7 @@ describe("getLinkMetadata", () => {
     const metadata = await getLinkMetadata("https://example.com/api");
 
     expect(metadata).toBeNull();
-    expect(errorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("Invalid content type"),
-    );
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("Invalid content type"));
   });
 
   test("parses og:image from name attribute", async () => {

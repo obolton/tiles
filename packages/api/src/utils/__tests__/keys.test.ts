@@ -13,11 +13,9 @@ describe("createKey", () => {
 
   test("rejects if the random byte generation fails", async () => {
     const error = new Error("Random bytes generation failed");
-    const spy = vi
-      .spyOn(crypto, "randomBytes")
-      .mockImplementation((_, callback) => {
-        callback(error, Buffer.from(""));
-      });
+    const spy = vi.spyOn(crypto, "randomBytes").mockImplementation((_, callback) => {
+      callback(error, Buffer.from(""));
+    });
     await expect(createKey(16)).rejects.toThrow(error.message);
     spy.mockRestore();
   });

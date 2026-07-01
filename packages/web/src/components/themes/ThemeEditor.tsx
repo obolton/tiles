@@ -27,10 +27,7 @@ export default function ThemeEditor({
   onDelete,
 }: ThemeEditorProps) {
   return (
-    <form
-      className={styles.editor}
-      on:submit={(e: Event) => e.preventDefault()}
-    >
+    <form className={styles.editor} on:submit={(e: Event) => e.preventDefault()}>
       <div className={styles.header}>
         <ToolbarButton label="Back" on:click={onBack}>
           <ArrowLeftIcon aria-hidden="true" />
@@ -39,9 +36,7 @@ export default function ThemeEditor({
           type="text"
           value={theme.name}
           aria-label="Theme name"
-          on:input={(e: Event) =>
-            theme.setName((e.target as HTMLInputElement).value)
-          }
+          on:input={(e: Event) => theme.setName((e.target as HTMLInputElement).value)}
         />
         <ToolbarButton label="Duplicate" on:click={onDuplicate}>
           <DuplicateIcon aria-hidden="true" />

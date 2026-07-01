@@ -24,11 +24,7 @@ export default class CalendarDate extends HTMLElement {
   #start: Date | null = null;
   #end: Date | null = null;
 
-  attributeChangedCallback(
-    name: string,
-    _old: string | null,
-    value: string | null,
-  ) {
+  attributeChangedCallback(name: string, _old: string | null, value: string | null) {
     switch (name) {
       case "start":
         this.#start = value ? new Date(value + "T00:00:00") : null;

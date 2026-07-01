@@ -2,11 +2,7 @@ import { Buffer } from "node:buffer";
 import prisma from "@/database/prisma";
 import { upload, IMAGES_BUCKET } from "@/utils/storage";
 import { openai } from "../openai";
-import {
-  IMAGE_GENERATION_OPTIONS,
-  IMAGE_CONTENT_TYPE,
-  IMAGE_TYPE,
-} from "../constants";
+import { IMAGE_GENERATION_OPTIONS, IMAGE_CONTENT_TYPE, IMAGE_TYPE } from "../constants";
 import type { ToolContext } from "./types";
 
 export async function generateImageFromPrompt(prompt: string) {

@@ -13,12 +13,7 @@ export interface DocumentPageProps {
   signal?: AbortSignal;
 }
 
-export default function DocumentPage({
-  page,
-  isEditable,
-  tiles,
-  signal,
-}: DocumentPageProps) {
+export default function DocumentPage({ page, isEditable, tiles, signal }: DocumentPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
 
   function ref(element: HTMLElement) {

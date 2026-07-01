@@ -30,11 +30,7 @@ export default function NewPageMenu({ workspaceId }: NewPageMenuProps) {
 
   return (
     <>
-      <ToolbarButton
-        label="New page"
-        popovertarget="new-page-menu"
-        aria-haspopup="menu"
-      >
+      <ToolbarButton label="New page" popovertarget="new-page-menu" aria-haspopup="menu">
         <WriteIcon aria-hidden="true" />
       </ToolbarButton>
       <popover-menu id="new-page-menu">
@@ -57,10 +53,7 @@ export default function NewPageMenu({ workspaceId }: NewPageMenuProps) {
           >
             Collection
           </MenuItem>
-          <MenuItem
-            icon={<EmptyIcon aria-hidden="true" />}
-            on:click={() => createNewPage("FREE")}
-          >
+          <MenuItem icon={<EmptyIcon aria-hidden="true" />} on:click={() => createNewPage("FREE")}>
             Blank page
           </MenuItem>
         </MenuItemGroup>

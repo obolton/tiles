@@ -5,16 +5,9 @@ import { authenticatedRoute } from "@/utils/middleware";
 import { initRoute } from "@/routes/init";
 import Library, { type LibraryProps } from "@/pages/library/Library";
 import { notFound, forbidden } from "@/router/responses";
-import type {
-  Route,
-  RequestProperties,
-  RouteLoaderResult,
-} from "@/router/router";
+import type { Route, RequestProperties, RouteLoaderResult } from "@/router/router";
 
-async function loader({
-  headers,
-  parameters,
-}: RequestProperties): RouteLoaderResult<LibraryProps> {
+async function loader({ headers, parameters }: RequestProperties): RouteLoaderResult<LibraryProps> {
   const { workspaceId } = parameters;
   if (!workspaceId) {
     return notFound();
@@ -45,6 +38,5 @@ export default {
   loader,
   component: Library,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters, data }) =>
-    initRoute(parameters.workspaceId, data.user),
+  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
 } satisfies Route<LibraryProps>;

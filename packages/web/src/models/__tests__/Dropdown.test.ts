@@ -8,11 +8,7 @@ describe("Dropdown", () => {
   beforeEach(() => {
     const map = Dropdown.createMap({
       title: "Status",
-      options: [
-        { value: "Active" },
-        { value: "Inactive" },
-        { value: "Pending" },
-      ],
+      options: [{ value: "Active" }, { value: "Inactive" }, { value: "Pending" }],
     });
     new Y.Doc().getMap("dropdowns").set("dropdown-id", map);
     dropdown = new Dropdown("dropdown-id", map);
@@ -47,10 +43,7 @@ describe("Dropdown", () => {
     test("removes the option at the given index", () => {
       dropdown.removeOption(1);
 
-      expect(dropdown.options.value).toEqual([
-        { value: "Active" },
-        { value: "Pending" },
-      ]);
+      expect(dropdown.options.value).toEqual([{ value: "Active" }, { value: "Pending" }]);
     });
   });
 
@@ -66,9 +59,7 @@ describe("Dropdown", () => {
     });
 
     test("throws for an invalid from index", () => {
-      expect(() => dropdown.reorderOptions(5, 0)).toThrow(
-        "Invalid option index: 5",
-      );
+      expect(() => dropdown.reorderOptions(5, 0)).toThrow("Invalid option index: 5");
     });
   });
 });

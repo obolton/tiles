@@ -4,11 +4,7 @@ export interface MenuItemGroupProps extends JSX.Attributes<"div"> {
   label?: string;
 }
 
-export default function MenuItemGroup({
-  label,
-  children,
-  ...props
-}: MenuItemGroupProps) {
+export default function MenuItemGroup({ label, children, ...props }: MenuItemGroupProps) {
   return (
     <div role="group" aria-label={label} {...props}>
       {children}

@@ -45,6 +45,4 @@ export const HereAutosuggestQueryResults = z.object({
     ]),
   ),
 });
-export type HereAutosuggestQueryResults = z.infer<
-  typeof HereAutosuggestQueryResults
->;
+export type HereAutosuggestQueryResults = z.infer<typeof HereAutosuggestQueryResults>;

@@ -28,19 +28,12 @@ export interface SharedProps {
 function renderPlaceholder(query: string) {
   return (
     <Placeholder>
-      {query
-        ? "There are no results."
-        : "You haven't been shared any pages yet."}
+      {query ? "There are no results." : "You haven't been shared any pages yet."}
     </Placeholder>
   );
 }
 
-export default function Shared({
-  workspace,
-  folders,
-  pages: initialPages,
-  user,
-}: SharedProps) {
+export default function Shared({ workspace, folders, pages: initialPages, user }: SharedProps) {
   const query = reactive("");
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
   const pages = reactive(initialPages.pages);
@@ -61,13 +54,7 @@ export default function Shared({
       }
     >
       <SidebarLayout
-        sidebar={
-          <Sidebar
-            workspace={workspace}
-            folders={folders}
-            selectedFolderId="SHARED"
-          />
-        }
+        sidebar={<Sidebar workspace={workspace} folders={folders} selectedFolderId="SHARED" />}
       >
         <PagesGrid
           workspaceId={workspace.id}

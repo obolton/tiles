@@ -2,10 +2,7 @@ import styles from "./ColorfulStackedDateTime.module.css";
 import { combine } from "@/utils/reactivity";
 import type { DateTimeThemeProps } from "./themes";
 
-export default function ColorfulStackedDateTime({
-  value,
-  time,
-}: DateTimeThemeProps) {
+export default function ColorfulStackedDateTime({ value, time }: DateTimeThemeProps) {
   const monthFormatter = new Intl.DateTimeFormat(undefined, {
     month: "short",
     timeZone: "UTC",
@@ -28,12 +25,8 @@ export default function ColorfulStackedDateTime({
       )}
     >
       <span className={styles.date}>
-        <span className={styles.month}>
-          {value.derive((date) => monthFormatter.format(date))}
-        </span>
-        <span className={styles.day}>
-          {value.derive((date) => dayFormatter.format(date))}
-        </span>
+        <span className={styles.month}>{value.derive((date) => monthFormatter.format(date))}</span>
+        <span className={styles.day}>{value.derive((date) => dayFormatter.format(date))}</span>
       </span>
       {time.derive((showTime) =>
         showTime ? (

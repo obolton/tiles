@@ -1,9 +1,6 @@
 import { ReactiveValue } from "./value";
 
-export class ReactiveArray<T>
-  extends ReactiveValue<T[]>
-  implements Iterable<T>
-{
+export class ReactiveArray<T> extends ReactiveValue<T[]> implements Iterable<T> {
   get length(): number {
     return this.value.length;
   }

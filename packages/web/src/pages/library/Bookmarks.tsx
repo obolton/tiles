@@ -23,9 +23,7 @@ export interface BookmarksProps {
 
 function renderPlaceholder(query: string) {
   return (
-    <Placeholder>
-      {query ? "There are no results." : "You don’t have any bookmarks."}
-    </Placeholder>
+    <Placeholder>{query ? "There are no results." : "You don’t have any bookmarks."}</Placeholder>
   );
 }
 
@@ -43,22 +41,10 @@ export default function Bookmarks({
     <PageLayout
       workspaceId={workspace.id}
       user={user}
-      center={
-        <SearchToolbar
-          id="search-pages"
-          placeholder="Search bookmarks"
-          query={query}
-        />
-      }
+      center={<SearchToolbar id="search-pages" placeholder="Search bookmarks" query={query} />}
     >
       <SidebarLayout
-        sidebar={
-          <Sidebar
-            workspace={workspace}
-            folders={folders}
-            selectedFolderId="BOOKMARKS"
-          />
-        }
+        sidebar={<Sidebar workspace={workspace} folders={folders} selectedFolderId="BOOKMARKS" />}
       >
         <PagesGrid
           workspaceId={workspace.id}

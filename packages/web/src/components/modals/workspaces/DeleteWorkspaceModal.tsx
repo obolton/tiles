@@ -7,10 +7,7 @@ import type { ModalProps } from "@/utils/modals";
 
 export type DeleteWorkspaceModalProps = ModalProps<void>;
 
-export default function DeleteWorkspaceModal({
-  cancel,
-  confirm,
-}: DeleteWorkspaceModalProps) {
+export default function DeleteWorkspaceModal({ cancel, confirm }: DeleteWorkspaceModalProps) {
   const pending = flag(false);
 
   async function onSubmit(event: Event) {
@@ -38,9 +35,8 @@ export default function DeleteWorkspaceModal({
 
       <ModalBody>
         <p>
-          This will permanently delete this workspace and all of its data,
-          including all pages, folders, images and themes. This action cannot be
-          undone.
+          This will permanently delete this workspace and all of its data, including all pages,
+          folders, images and themes. This action cannot be undone.
         </p>
       </ModalBody>
 

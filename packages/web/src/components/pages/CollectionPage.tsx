@@ -13,12 +13,7 @@ export interface CollectionPageProps {
   signal?: AbortSignal;
 }
 
-export default function CollectionPage({
-  page,
-  isEditable,
-  tiles,
-  signal,
-}: CollectionPageProps) {
+export default function CollectionPage({ page, isEditable, tiles, signal }: CollectionPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = reactive("e se s");
 
@@ -44,13 +39,7 @@ export default function CollectionPage({
       data-page-type="COLLECTION"
     >
       <Each items={tiles}>
-        {(tile) => (
-          <Item
-            tile={tile}
-            tabindex={tabindex}
-            resize={resize}
-          />
-        )}
+        {(tile) => <Item tile={tile} tabindex={tabindex} resize={resize} />}
       </Each>
     </main>
   );

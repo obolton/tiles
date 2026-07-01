@@ -32,9 +32,7 @@ export function buildTableMap(
   const map = buildBaseTileMap({ ...baseProperties, type: "TABLE" });
 
   const columnInputs: readonly TableColumnInput[] =
-    typeof columns === "number"
-      ? Array.from({ length: columns }, () => ({}))
-      : columns;
+    typeof columns === "number" ? Array.from({ length: columns }, () => ({})) : columns;
   const columnsMap = new Y.Map<Y.Map<unknown>>();
   const columnIds: string[] = [];
   const columnOrders = generateNKeysBetween(null, null, columnInputs.length);
@@ -57,10 +55,7 @@ export function buildTableMap(
   return map;
 }
 
-export function buildColumn(
-  order: string,
-  column: TableColumnInput = {},
-): Y.Map<unknown> {
+export function buildColumn(order: string, column: TableColumnInput = {}): Y.Map<unknown> {
   const map = new Y.Map<unknown>();
   map.set("order", order);
   map.set("title", column.title ?? null);
@@ -92,10 +87,7 @@ export function buildRow(
 }
 
 /** Deletes the given columns from a row's cells, or all cells when omitted. */
-export function clearRowCells(
-  row: Y.Map<unknown>,
-  columnIds?: readonly string[],
-) {
+export function clearRowCells(row: Y.Map<unknown>, columnIds?: readonly string[]) {
   const cells = row.get("cells");
   if (!(cells instanceof Y.Map)) {
     return;
@@ -109,10 +101,7 @@ export function clearRowCells(
   }
 }
 
-export function getCell<T = unknown>(
-  row: Y.Map<unknown>,
-  columnId: string,
-): T | null {
+export function getCell<T = unknown>(row: Y.Map<unknown>, columnId: string): T | null {
   const cells = row.get("cells");
   return cells instanceof Y.Map ? ((cells.get(columnId) as T) ?? null) : null;
 }
@@ -120,11 +109,7 @@ export function getCell<T = unknown>(
 /**
  * The inclusive list of ids between two endpoints in an ordered list.
  */
-export function idsInRange(
-  ordered: string[],
-  from: string,
-  to: string,
-): string[] {
+export function idsInRange(ordered: string[], from: string, to: string): string[] {
   const i = ordered.indexOf(from);
   const j = ordered.indexOf(to);
   if (i === -1 || j === -1) {
@@ -164,14 +149,8 @@ export function parseTableChanges(
 
     const moved = event.keysChanged.has("order");
     if (source === "rows") {
-      return [
-        moved ? { type: "moveRow", rowId: id } : { type: "row", rowId: id },
-      ];
+      return [moved ? { type: "moveRow", rowId: id } : { type: "row", rowId: id }];
     }
-    return [
-      moved
-        ? { type: "moveColumn", columnId: id }
-        : { type: "column", columnId: id },
-    ];
+    return [moved ? { type: "moveColumn", columnId: id } : { type: "column", columnId: id }];
   });
 }

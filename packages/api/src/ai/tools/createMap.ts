@@ -9,8 +9,7 @@ const CreateMapSchema = z.strictObject({
   mapStyle: z
     .enum(MapStyle)
     .meta({
-      description:
-        "Map style: DEFAULT (street map), SATELLITE, WATERCOLOR, or MONOCHROME",
+      description: "Map style: DEFAULT (street map), SATELLITE, WATERCOLOR, or MONOCHROME",
     })
     .default("DEFAULT"),
 });

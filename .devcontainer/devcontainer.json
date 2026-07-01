@@ -61,7 +61,6 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "esbenp.prettier-vscode",
         "ms-azuretools.vscode-containers",
         "oxc.oxc-vscode",
         "Prisma.prisma",

@@ -152,17 +152,15 @@ export default class ThemeSelector extends HTMLElement {
 
     // TODO: Merge SwipeView into this element to simplify this
     const newPreviousItem = this.getLiveItem(previousValue);
-    const previousSlot = this.swipe.shadowRoot?.querySelector(
-      `li[value="${previousValue}"]`,
-    )?.firstElementChild as HTMLSlotElement | undefined;
+    const previousSlot = this.swipe.shadowRoot?.querySelector(`li[value="${previousValue}"]`)
+      ?.firstElementChild as HTMLSlotElement | undefined;
     this.swipe.appendChild(newPreviousItem);
     previousSlot?.assignedElements().forEach((element) => element.remove());
     previousSlot?.assign(newPreviousItem);
 
     const item = this.getLiveItem(this.swipe.value);
-    const slot = this.swipe.shadowRoot?.querySelector(
-      `li[value="${this.swipe.value}"]`,
-    )?.firstElementChild as HTMLSlotElement | undefined;
+    const slot = this.swipe.shadowRoot?.querySelector(`li[value="${this.swipe.value}"]`)
+      ?.firstElementChild as HTMLSlotElement | undefined;
     this.swipe.appendChild(item);
     slot?.assignedElements().forEach((element) => element.remove());
     slot?.assign(item);

@@ -42,9 +42,7 @@ export default class Dropdown {
     if (!option) {
       throw new Error(`Invalid option index: ${fromIndex}`);
     }
-    this.options.value = this.options.value
-      .toSpliced(fromIndex, 1)
-      .toSpliced(toIndex, 0, option);
+    this.options.value = this.options.value.toSpliced(fromIndex, 1).toSpliced(toIndex, 0, option);
   }
 
   dispose() {

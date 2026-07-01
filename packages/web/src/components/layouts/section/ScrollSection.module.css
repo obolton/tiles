@@ -94,9 +94,7 @@
   &:not(:defined),
   &::part(contents) {
     grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
-    grid-auto-rows: calc(
-      (100cqi - 32px - (var(--columns) - 1) * var(--gap)) / var(--columns)
-    );
+    grid-auto-rows: calc((100cqi - 32px - (var(--columns) - 1) * var(--gap)) / var(--columns));
     grid-auto-flow: row dense;
     gap: var(--gap);
   }
@@ -111,21 +109,13 @@
   }
 
   & .item:global(.aspect-fixed) {
-    --cell-size: calc(
-      (100cqi - 32px - (var(--columns) - 1) * var(--gap)) / var(--columns)
-    );
+    --cell-size: calc((100cqi - 32px - (var(--columns) - 1) * var(--gap)) / var(--columns));
     --column-area: calc(
-      var(--column-span) * var(--cell-size) + (var(--column-span) - 1) *
-        var(--gap)
+      var(--column-span) * var(--cell-size) + (var(--column-span) - 1) * var(--gap)
     );
-    --row-area: calc(
-      var(--rows, 1) * var(--cell-size) + (var(--rows, 1) - 1) * var(--gap)
-    );
+    --row-area: calc(var(--rows, 1) * var(--cell-size) + (var(--rows, 1) - 1) * var(--gap));
 
-    inline-size: min(
-      var(--column-area),
-      calc(var(--row-area) * var(--aspect-ratio))
-    );
+    inline-size: min(var(--column-area), calc(var(--row-area) * var(--aspect-ratio)));
     place-self: center;
   }
 

@@ -9,12 +9,7 @@ export default function ReferenceList() {
   return (
     <div className={styles.list}>
       <Each items={editor.references}>
-        {(tile) => (
-          <ReferenceChip
-            tile={tile}
-            onRemove={() => editor.toggleReference(tile.id)}
-          />
-        )}
+        {(tile) => <ReferenceChip tile={tile} onRemove={() => editor.toggleReference(tile.id)} />}
       </Each>
     </div>
   );

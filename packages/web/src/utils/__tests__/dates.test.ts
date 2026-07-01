@@ -129,15 +129,7 @@ describe("daysBetween", () => {
 
 describe("getWeekdays", () => {
   test("returns narrow weekday names starting from Sunday for en-US", () => {
-    expect(getWeekdays("narrow", "en-US")).toEqual([
-      "S",
-      "M",
-      "T",
-      "W",
-      "T",
-      "F",
-      "S",
-    ]);
+    expect(getWeekdays("narrow", "en-US")).toEqual(["S", "M", "T", "W", "T", "F", "S"]);
   });
 
   test("returns short weekday names", () => {

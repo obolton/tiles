@@ -16,9 +16,7 @@ export function formatTileContext(tiles: TileContent[]): string {
   }
 
   const sections = tiles.map((tile, i) =>
-    tile.content
-      ? `[${i}] (${tile.type})\n${tile.content}`
-      : `[${i}] (${tile.type}, empty)`,
+    tile.content ? `[${i}] (${tile.type})\n${tile.content}` : `[${i}] (${tile.type}, empty)`,
   );
 
   return `The following content is referenced from the document. You can edit these using their IDs:\n\n${sections.join("\n\n---\n\n")}`;

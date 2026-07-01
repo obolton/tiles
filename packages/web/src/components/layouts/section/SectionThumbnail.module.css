@@ -4,10 +4,7 @@
   height: calc(var(--height) * 24px);
   aspect-ratio: var(--aspect-ratio);
   border-radius: var(--border-radius);
-  scale: min(
-    calc(100cqw / (var(--width) * 24px)),
-    calc(100cqh / (var(--height) * 24px))
-  );
+  scale: min(calc(100cqw / (var(--width) * 24px)), calc(100cqh / (var(--height) * 24px)));
   transform-origin: top left;
   overflow: hidden;
 

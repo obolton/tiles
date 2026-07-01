@@ -221,8 +221,7 @@ export default class ScrollView extends HTMLElement {
     const scrollPaddingTop = parseFloat(style.scrollPaddingTop);
     const scrollPaddingBottom = parseFloat(style.scrollPaddingBottom);
     const top = scrollTop + scrollPaddingTop;
-    const bottom =
-      scrollTop + this.container.clientHeight - scrollPaddingBottom;
+    const bottom = scrollTop + this.container.clientHeight - scrollPaddingBottom;
 
     let element: HTMLElement | null = null;
     for (const child of this.children) {
@@ -350,12 +349,10 @@ export default class ScrollView extends HTMLElement {
   private updateButtons() {
     this.upButton.disabled = this.container.scrollTop < 16;
     this.downButton.disabled =
-      this.container.scrollTop >
-      this.container.scrollHeight - this.container.clientHeight - 16;
+      this.container.scrollTop > this.container.scrollHeight - this.container.clientHeight - 16;
     this.leftButton.disabled = this.container.scrollLeft < 16;
     this.rightButton.disabled =
-      this.container.scrollLeft >
-      this.container.scrollWidth - this.container.clientWidth - 16;
+      this.container.scrollLeft > this.container.scrollWidth - this.container.clientWidth - 16;
   }
 
   private handleScroll() {
@@ -371,15 +368,9 @@ export default class ScrollView extends HTMLElement {
     }
 
     if (clientX <= rect.left + SCROLL_MARGIN) {
-      this.scrollSpeed = -Math.max(
-        Math.min(1 - (clientX - rect.left) / SCROLL_MARGIN, 1),
-        0,
-      );
+      this.scrollSpeed = -Math.max(Math.min(1 - (clientX - rect.left) / SCROLL_MARGIN, 1), 0);
     } else if (rect.right - clientX <= SCROLL_MARGIN) {
-      this.scrollSpeed = Math.max(
-        Math.min(1 - (rect.right - clientX) / SCROLL_MARGIN, 1),
-        0,
-      );
+      this.scrollSpeed = Math.max(Math.min(1 - (rect.right - clientX) / SCROLL_MARGIN, 1), 0);
     } else {
       this.scrollSpeed = 0;
     }

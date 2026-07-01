@@ -35,9 +35,7 @@ export default class Image extends Tile {
     return imageId ? getImageUrl(imageId) : null;
   }
 
-  static createMap(
-    properties: Omit<CreateImageInput, "parentId" | "beforeId">,
-  ): Y.Map<unknown> {
+  static createMap(properties: Omit<CreateImageInput, "parentId" | "beforeId">): Y.Map<unknown> {
     return buildImageMap(properties);
   }
 

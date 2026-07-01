@@ -14,9 +14,7 @@ describe("Dataset", () => {
     });
 
     test("initializes with provided properties and records", () => {
-      const properties: [string, TestProperty][] = [
-        ["prop1", { type: "string" }],
-      ];
+      const properties: [string, TestProperty][] = [["prop1", { type: "string" }]];
       const records: [string, Record<string, unknown>][] = [
         ["rec1", { prop1: "value1" }],
         ["rec2", { prop1: "value2" }],
@@ -28,9 +26,7 @@ describe("Dataset", () => {
 
   describe("records", () => {
     test("get returns value for existing record and property", () => {
-      const records: [string, Record<string, unknown>][] = [
-        ["rec1", { name: "Alice", age: 30 }],
-      ];
+      const records: [string, Record<string, unknown>][] = [["rec1", { name: "Alice", age: 30 }]];
       const dataset = new Dataset<TestProperty>([], records);
       expect(dataset.get("rec1", "name")).toBe("Alice");
       expect(dataset.get("rec1", "age")).toBe(30);
@@ -42,9 +38,7 @@ describe("Dataset", () => {
     });
 
     test("get returns undefined for non-existent property on existing record", () => {
-      const records: [string, Record<string, unknown>][] = [
-        ["rec1", { name: "Alice" }],
-      ];
+      const records: [string, Record<string, unknown>][] = [["rec1", { name: "Alice" }]];
       const dataset = new Dataset<TestProperty>([], records);
       expect(dataset.get("rec1", "nonexistent")).toBeUndefined();
     });
@@ -60,9 +54,7 @@ describe("Dataset", () => {
     });
 
     test("insert overwrites an existing record", () => {
-      const records: [string, Record<string, unknown>][] = [
-        ["rec1", { name: "Alice" }],
-      ];
+      const records: [string, Record<string, unknown>][] = [["rec1", { name: "Alice" }]];
       const dataset = new Dataset<TestProperty>([], records);
 
       dataset.insert("rec1", { name: "Bob" });
@@ -87,9 +79,7 @@ describe("Dataset", () => {
     });
 
     test("remove does nothing for non-existent record", () => {
-      const records: [string, Record<string, unknown>][] = [
-        ["rec1", { name: "Alice" }],
-      ];
+      const records: [string, Record<string, unknown>][] = [["rec1", { name: "Alice" }]];
       const dataset = new Dataset<TestProperty>([], records);
 
       dataset.remove("nonexistent");
@@ -116,17 +106,13 @@ describe("Dataset", () => {
     });
 
     test("getProperty returns property for existing id", () => {
-      const properties: [string, TestProperty][] = [
-        ["prop1", { type: "number" }],
-      ];
+      const properties: [string, TestProperty][] = [["prop1", { type: "number" }]];
       const dataset = new Dataset(properties, []);
       expect(dataset.getProperty("prop1")).toEqual({ type: "number" });
     });
 
     test("updateProperty updates an existing property", () => {
-      const properties: [string, TestProperty][] = [
-        ["prop1", { type: "string", required: false }],
-      ];
+      const properties: [string, TestProperty][] = [["prop1", { type: "string", required: false }]];
       const dataset = new Dataset(properties, []);
 
       dataset.updateProperty("prop1", { required: true });
@@ -145,9 +131,7 @@ describe("Dataset", () => {
     });
 
     test("removeProperty deletes a property", () => {
-      const properties: [string, TestProperty][] = [
-        ["prop1", { type: "string" }],
-      ];
+      const properties: [string, TestProperty][] = [["prop1", { type: "string" }]];
       const dataset = new Dataset(properties, []);
 
       dataset.removeProperty("prop1");

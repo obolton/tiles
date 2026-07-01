@@ -12,16 +12,10 @@ interface UploadImageProps {
   cancel: () => void;
 }
 
-export default function UploadImage({
-  file: initialFile,
-  confirm,
-  cancel,
-}: UploadImageProps) {
+export default function UploadImage({ file: initialFile, confirm, cancel }: UploadImageProps) {
   const isPending = new ReactiveValue(false);
   const file = new ReactiveValue(initialFile);
-  const imageUrl = new ReactiveValue(
-    initialFile ? URL.createObjectURL(initialFile) : undefined,
-  );
+  const imageUrl = new ReactiveValue(initialFile ? URL.createObjectURL(initialFile) : undefined);
 
   const onChange = (event: Event) => {
     const newFile = (event.target as FilePicker).file;
@@ -60,11 +54,7 @@ export default function UploadImage({
         >
           {imageUrl.derive((url) =>
             url ? (
-              <img
-                className={styles.image}
-                src={url}
-                alt={file.value?.name ?? ""}
-              />
+              <img className={styles.image} src={url} alt={file.value?.name ?? ""} />
             ) : (
               <p>Select an image or drag and drop</p>
             ),

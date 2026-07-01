@@ -397,9 +397,7 @@ describe("YXmlStreamWriter", () => {
           children: [
             {
               name: "list_item",
-              children: [
-                { name: "paragraph", children: [[{ insert: "item!" }]] },
-              ],
+              children: [{ name: "paragraph", children: [[{ insert: "item!" }]] }],
             },
           ],
         },

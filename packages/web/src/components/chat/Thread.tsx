@@ -12,9 +12,7 @@ export default function Thread() {
 
   return (
     <section className={styles.thread} role="log" aria-label="Messages">
-      <Each items={editor.chat.messages}>
-        {(message) => <MessageBubble message={message} />}
-      </Each>
+      <Each items={editor.chat.messages}>{(message) => <MessageBubble message={message} />}</Each>
 
       <Switch value={state}>
         <Case value="pending">

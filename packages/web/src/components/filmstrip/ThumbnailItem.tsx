@@ -12,11 +12,7 @@ export interface ThumbnailItemProps {
   children?: JSX.Node;
 }
 
-export default function ThumbnailItem({
-  tile,
-  classList,
-  children,
-}: ThumbnailItemProps) {
+export default function ThumbnailItem({ tile, classList, children }: ThumbnailItemProps) {
   const { sizing, x, y, width, height, rowSpan, hide } = tile;
 
   const position =
@@ -33,8 +29,7 @@ export default function ThumbnailItem({
       theme: tile.theme,
       textColor: tile.textColor,
     },
-    ({ background, theme, textColor }) =>
-      getThemeStyles(theme, { background, textColor }),
+    ({ background, theme, textColor }) => getThemeStyles(theme, { background, textColor }),
   );
 
   const combinedStyles = combine(
@@ -47,21 +42,12 @@ export default function ThumbnailItem({
       themeStyles,
       cornerRadius: tile.cornerRadius,
     },
-    ({
-      sizing,
-      width,
-      height,
-      rowSpan,
-      position,
-      themeStyles,
-      cornerRadius,
-    }) => ({
+    ({ sizing, width, height, rowSpan, position, themeStyles, cornerRadius }) => ({
       ...position,
       ...getSizeStyle(sizing, width, height),
       "--rows": rowSpan.toString(),
       ...themeStyles,
-      "--border-radius":
-        cornerRadius !== null ? `${cornerRadius}px` : undefined,
+      "--border-radius": cornerRadius !== null ? `${cornerRadius}px` : undefined,
     }),
   );
 
@@ -74,9 +60,7 @@ export default function ThumbnailItem({
         [styles["frame-card"]]: tile.frame.derive((f) => f === "CARD"),
         [styles["frame-raised"]]: tile.frame.derive((f) => f === "RAISED"),
         [styles["frame-framed"]]: tile.frame.derive((f) => f === "FRAMED"),
-        [styles["frame-full-bleed"]]: tile.frame.derive(
-          (f) => f === "FULL_BLEED",
-        ),
+        [styles["frame-full-bleed"]]: tile.frame.derive((f) => f === "FULL_BLEED"),
         "aspect-fixed": sizing.derive((s) => s !== "AUTO" && s !== "CUSTOM"),
         [styles.hide]: hide,
         ...classList,

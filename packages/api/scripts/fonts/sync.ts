@@ -2,12 +2,7 @@ import subsetFont from "subset-font";
 import { FONTS_BUCKET, objectExists, upload } from "@/utils/storage";
 import type { FontConfig } from "@/config/fonts";
 import { FontStyleSchema } from "@/fonts/manifest";
-import type {
-  FontsManifest,
-  FontStyle,
-  FontVariant,
-  ManifestFont,
-} from "@/fonts/manifest";
+import type { FontsManifest, FontStyle, FontVariant, ManifestFont } from "@/fonts/manifest";
 import {
   getFontUrl,
   fetchFontMetadata,
@@ -61,26 +56,15 @@ async function syncFile(path: string, url: string): Promise<boolean> {
   const response = await fetch(url);
 
   if (!response.ok || !response.body) {
-    throw new Error(
-      `Failed to fetch ${url}: ${response.status} ${response.statusText}`,
-    );
+    throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
   }
 
-  await upload(
-    FONTS_BUCKET,
-    path,
-    response.body,
-    WOFF2_CONTENT_TYPE,
-    WOFF2_CACHE_CONTROL,
-  );
+  await upload(FONTS_BUCKET, path, response.body, WOFF2_CONTENT_TYPE, WOFF2_CACHE_CONTROL);
 
   return true;
 }
 
-async function syncVariant(
-  fontId: string,
-  variant: FontVariant,
-): Promise<VariantResult> {
+async function syncVariant(fontId: string, variant: FontVariant): Promise<VariantResult> {
   const slug = typeof variant.weight === "number" ? variant.weight : "wght";
   const url = getFontUrl(fontId, variant.subset, slug, variant.style);
   return {
@@ -115,15 +99,11 @@ async function collectStaticVariants(
     }
   }
 
-  const variants = await Promise.all(
-    targets.map((variant) => syncVariant(font.id, variant)),
-  );
+  const variants = await Promise.all(targets.map((variant) => syncVariant(font.id, variant)));
 
   variants.sort((a, b) => {
-    const aw =
-      typeof a.file.weight === "number" ? a.file.weight : a.file.weight.min;
-    const bw =
-      typeof b.file.weight === "number" ? b.file.weight : b.file.weight.min;
+    const aw = typeof a.file.weight === "number" ? a.file.weight : a.file.weight.min;
+    const bw = typeof b.file.weight === "number" ? b.file.weight : b.file.weight.min;
     return aw - bw || a.file.style.localeCompare(b.file.style);
   });
 
@@ -169,10 +149,7 @@ async function syncPreview(
     sourceUrl = getFontUrl(font.id, SUBSET, "wght", "normal");
   } else {
     const weight = font.weights[0];
-    if (
-      weight === undefined ||
-      !meta.variants[String(weight)]?.normal?.[SUBSET]
-    ) {
+    if (weight === undefined || !meta.variants[String(weight)]?.normal?.[SUBSET]) {
       throw new Error(`No source font to subset for ${font.id}`);
     }
 
@@ -181,9 +158,7 @@ async function syncPreview(
 
   const response = await fetch(sourceUrl);
   if (!response.ok) {
-    throw new Error(
-      `Failed to fetch ${sourceUrl}: ${response.status} ${response.statusText}`,
-    );
+    throw new Error(`Failed to fetch ${sourceUrl}: ${response.status} ${response.statusText}`);
   }
   const fontBuffer = Buffer.from(await response.arrayBuffer());
 
@@ -195,13 +170,7 @@ async function syncPreview(
     variationAxes,
   });
 
-  await upload(
-    FONTS_BUCKET,
-    path,
-    subsetBuffer,
-    WOFF2_CONTENT_TYPE,
-    WOFF2_CACHE_CONTROL,
-  );
+  await upload(FONTS_BUCKET, path, subsetBuffer, WOFF2_CONTENT_TYPE, WOFF2_CACHE_CONTROL);
 
   return { path, uploaded: true };
 }

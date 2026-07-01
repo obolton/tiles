@@ -134,10 +134,7 @@ describe("signIn", () => {
     it("should send welcome email for new user", async () => {
       await signIn(validInput);
 
-      expect(sendEmail).toHaveBeenCalledWith(
-        "test@example.com",
-        expect.anything(),
-      );
+      expect(sendEmail).toHaveBeenCalledWith("test@example.com", expect.anything());
     });
 
     it("should return a session for new user", async () => {
@@ -149,9 +146,7 @@ describe("signIn", () => {
     });
 
     it("should handle welcome email failure gracefully", async () => {
-      const consoleSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
       vi.mocked(sendEmail).mockRejectedValue(new Error("Email failed"));
 
       const result = await signIn(validInput);
@@ -159,10 +154,7 @@ describe("signIn", () => {
       expect(result).toMatchObject({
         id: "new-session-id",
       });
-      expect(consoleSpy).toHaveBeenCalledWith(
-        "Failed to send welcome email:",
-        expect.any(Error),
-      );
+      expect(consoleSpy).toHaveBeenCalledWith("Failed to send welcome email:", expect.any(Error));
       consoleSpy.mockRestore();
     });
   });

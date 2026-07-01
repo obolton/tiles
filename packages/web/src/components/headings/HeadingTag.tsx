@@ -21,17 +21,11 @@ export default function HeadingTag({
   const style = { lineHeight, "--indent": indent };
   switch (level) {
     case 1:
-      return (
-        <h1 className={classNames(align, className)} style={style} {...props} />
-      );
+      return <h1 className={classNames(align, className)} style={style} {...props} />;
     case 2:
-      return (
-        <h2 className={classNames(align, className)} style={style} {...props} />
-      );
+      return <h2 className={classNames(align, className)} style={style} {...props} />;
     case 3:
-      return (
-        <h3 className={classNames(align, className)} style={style} {...props} />
-      );
+      return <h3 className={classNames(align, className)} style={style} {...props} />;
     default:
       throw new Error("Invalid heading level: " + level);
   }

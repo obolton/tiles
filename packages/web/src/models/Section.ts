@@ -20,9 +20,7 @@ export default class Section extends Tile {
     return this.page.placement.getCollection(this.id);
   }
 
-  static createMap(
-    properties: Omit<CreateSectionInput, "parentId" | "beforeId">,
-  ): Y.Map<unknown> {
+  static createMap(properties: Omit<CreateSectionInput, "parentId" | "beforeId">): Y.Map<unknown> {
     return buildSectionMap(properties);
   }
 

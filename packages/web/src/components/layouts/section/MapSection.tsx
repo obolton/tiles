@@ -13,12 +13,7 @@ export interface MapSectionProps {
   signal?: AbortSignal;
 }
 
-export default function MapSection({
-  section,
-  tabindex,
-  resize,
-  signal,
-}: MapSectionProps) {
+export default function MapSection({ section, tabindex, resize, signal }: MapSectionProps) {
   const { tiles, editor } = section;
 
   function ref(element: MapView) {
@@ -41,14 +36,7 @@ export default function MapSection({
       mapstyle={section.mapStyle}
     >
       <Each items={tiles}>
-        {(tile) => (
-          <MapPin
-            tile={tile}
-            editor={editor}
-            tabindex={tabindex}
-            resize={resize}
-          />
-        )}
+        {(tile) => <MapPin tile={tile} editor={editor} tabindex={tabindex} resize={resize} />}
       </Each>
     </map-view>
   );

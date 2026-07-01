@@ -70,8 +70,6 @@ describe("getFontConfig", () => {
   });
 
   test("throws for an unknown id", () => {
-    expect(() => getFontConfig("not-a-font" as FontId)).toThrow(
-      "Invalid font: not-a-font",
-    );
+    expect(() => getFontConfig("not-a-font" as FontId)).toThrow("Invalid font: not-a-font");
   });
 });

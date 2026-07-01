@@ -76,14 +76,8 @@ export default class Table extends Tile {
     this.rowsMap = rowsMap as Y.Map<Y.Map<unknown>>;
     this.rowsContent = new YReactive(this.rowsMap);
 
-    this.columns = new SharedList(
-      this.columnsMap,
-      (id, columnMap) => new Column(id, columnMap),
-    );
-    this.rows = new SharedList(
-      this.rowsMap,
-      (id, rowMap) => new Row(id, rowMap),
-    );
+    this.columns = new SharedList(this.columnsMap, (id, columnMap) => new Column(id, columnMap));
+    this.rows = new SharedList(this.rowsMap, (id, rowMap) => new Row(id, rowMap));
   }
 
   getColumnData(columnId: string): Reactive<CellValue[]> {
@@ -105,9 +99,7 @@ export default class Table extends Tile {
 
   moveColumn(id: string, afterId: string | null) {
     this.page.doc.transact(() => {
-      const siblings = orderedEntries(this.columnsMap).filter(
-        (e) => e.id !== id,
-      );
+      const siblings = orderedEntries(this.columnsMap).filter((e) => e.id !== id);
       this.columnsMap.get(id)?.set("order", orderAfter(siblings, afterId));
     });
   }
@@ -197,14 +189,8 @@ export default class Table extends Tile {
             }
           }
         } else {
-          const targetRows = new Set(
-            idsInRange(rowIds, range.from.row, range.to.row),
-          );
-          const targetColumns = idsInRange(
-            columnIds,
-            range.from.column,
-            range.to.column,
-          );
+          const targetRows = new Set(idsInRange(rowIds, range.from.row, range.to.row));
+          const targetColumns = idsInRange(columnIds, range.from.column, range.to.column);
           for (const { id, map } of rows) {
             if (targetRows.has(id)) {
               clearRowCells(map, targetColumns);

@@ -91,9 +91,7 @@ describe("getUserInfo", () => {
   test("clears user store and cache on error", async () => {
     user.value = mockUser;
     localStorage.setItem("user", JSON.stringify(mockUser));
-    vi.mocked(client.users.getUserInfo.query).mockRejectedValueOnce(
-      new Error("Unauthorized"),
-    );
+    vi.mocked(client.users.getUserInfo.query).mockRejectedValueOnce(new Error("Unauthorized"));
 
     await expect(getUserInfo()).rejects.toThrow("Unauthorized");
 
@@ -113,9 +111,7 @@ describe("getUserInfo", () => {
   });
 
   test("handles localStorage being unavailable on error", async () => {
-    vi.mocked(client.users.getUserInfo.query).mockRejectedValueOnce(
-      new Error("Unauthorized"),
-    );
+    vi.mocked(client.users.getUserInfo.query).mockRejectedValueOnce(new Error("Unauthorized"));
     vi.spyOn(Storage.prototype, "removeItem").mockImplementation(() => {
       throw new Error("quota exceeded");
     });
@@ -167,9 +163,7 @@ describe("initializeSession", () => {
 
   describe("when signed in", () => {
     beforeEach(() => {
-      vi.spyOn(document, "cookie", "get").mockReturnValue(
-        "__Secure-signed-in=1",
-      );
+      vi.spyOn(document, "cookie", "get").mockReturnValue("__Secure-signed-in=1");
     });
 
     test("loads cached user from localStorage", () => {
@@ -206,15 +200,11 @@ describe("initializeSession", () => {
     });
 
     test("handles background refresh failure gracefully", async () => {
-      vi.mocked(client.users.getUserInfo.query).mockRejectedValueOnce(
-        new Error("Network error"),
-      );
+      vi.mocked(client.users.getUserInfo.query).mockRejectedValueOnce(new Error("Network error"));
 
       initializeSession();
 
-      await vi.waitFor(() =>
-        expect(client.users.getUserInfo.query).toHaveBeenCalled(),
-      );
+      await vi.waitFor(() => expect(client.users.getUserInfo.query).toHaveBeenCalled());
       expect(user.value).toBeNull();
     });
   });
@@ -250,9 +240,7 @@ describe("signOut", () => {
 
     await signOut();
 
-    expect(cookieSetter).toHaveBeenCalledWith(
-      expect.stringContaining("Max-Age=0"),
-    );
+    expect(cookieSetter).toHaveBeenCalledWith(expect.stringContaining("Max-Age=0"));
   });
 
   test("redirects to the home page", async () => {

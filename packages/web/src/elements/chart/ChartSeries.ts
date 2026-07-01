@@ -54,12 +54,7 @@ export default class ChartSeries extends HTMLElement {
   ) {
     switch (name) {
       case "type":
-        if (
-          typeof value === "string" &&
-          value !== "BAR" &&
-          value !== "LINE" &&
-          value !== "AREA"
-        ) {
+        if (typeof value === "string" && value !== "BAR" && value !== "LINE" && value !== "AREA") {
           throw new Error(`Invalid series type: ${value}`);
         }
         this.type = value ?? DEFAULT_TYPE;

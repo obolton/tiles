@@ -32,16 +32,12 @@ async function onChangeUsername(event: Event) {
   } else if (validity.tooLong) {
     username.setCustomValidity("Usernames must be no more than 30 characters.");
   } else if (validity.patternMismatch) {
-    username.setCustomValidity(
-      "Usernames can contain only letters, numbers and dashes.",
-    );
+    username.setCustomValidity("Usernames can contain only letters, numbers and dashes.");
   } else if (validity.valid && value.length > 0) {
     const isAvailable = await client.users.isUsernameAvailable.query({
       username: value,
     });
-    username.setCustomValidity(
-      isAvailable ? "" : "This username is already taken.",
-    );
+    username.setCustomValidity(isAvailable ? "" : "This username is already taken.");
   } else {
     username.setCustomValidity("");
   }
@@ -99,15 +95,9 @@ export default function Profile({ workspaceId, user, isAdmin }: ProfileProps) {
   }
 
   return (
-    <PageLayout
-      workspaceId={user.workspaces[0]?.id}
-      user={user}
-      center={<h1>Settings</h1>}
-    >
+    <PageLayout workspaceId={user.workspaces[0]?.id} user={user} center={<h1>Settings</h1>}>
       <SidebarLayout
-        sidebar={
-          <Sidebar workspaceId={workspaceId} page="PROFILE" isAdmin={isAdmin} />
-        }
+        sidebar={<Sidebar workspaceId={workspaceId} page="PROFILE" isAdmin={isAdmin} />}
       >
         <form class="vertical" on:submit={onSubmit}>
           <file-picker

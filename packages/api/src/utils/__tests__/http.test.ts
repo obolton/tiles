@@ -13,10 +13,7 @@ describe("getStream", () => {
           },
         }),
     );
-    const { stream, contentType } = await getStream(
-      "https://example.com/stream",
-      ["image/jpeg"],
-    );
+    const { stream, contentType } = await getStream("https://example.com/stream", ["image/jpeg"]);
     expect(stream).toBeInstanceOf(ReadableStream);
     expect(contentType).toEqual("image/jpeg");
   });
@@ -29,9 +26,9 @@ describe("getStream", () => {
           headers: {},
         }),
     );
-    await expect(
-      getStream("https://example.com/stream", ["image/jpeg"]),
-    ).rejects.toThrowError("getStream: No Content-Type header.");
+    await expect(getStream("https://example.com/stream", ["image/jpeg"])).rejects.toThrowError(
+      "getStream: No Content-Type header.",
+    );
   });
 
   test("throws an error if the response has an unexpected content type", async () => {
@@ -44,9 +41,7 @@ describe("getStream", () => {
           },
         }),
     );
-    await expect(
-      getStream("https://example.com/stream", ["image/jpeg"]),
-    ).rejects.toThrowError(
+    await expect(getStream("https://example.com/stream", ["image/jpeg"])).rejects.toThrowError(
       "getStream: Invalid Content-Type header: text/plain.",
     );
   });
@@ -54,11 +49,10 @@ describe("getStream", () => {
   test("throws an error if the response has no body", async () => {
     vi.stubGlobal(
       "fetch",
-      async () =>
-        new Response(undefined, { headers: { "Content-Type": "image/jpeg" } }),
+      async () => new Response(undefined, { headers: { "Content-Type": "image/jpeg" } }),
     );
-    await expect(
-      getStream("https://example.com/stream", ["image/jpeg"]),
-    ).rejects.toThrowError("getStream: No response body.");
+    await expect(getStream("https://example.com/stream", ["image/jpeg"])).rejects.toThrowError(
+      "getStream: No response body.",
+    );
   });
 });

@@ -6,26 +6,15 @@ interface ProfileImageProps {
   size?: "small" | "medium" | "large";
 }
 
-export default function ProfileImage({
-  imageUrl,
-  name,
-  size = "small",
-}: ProfileImageProps) {
+export default function ProfileImage({ imageUrl, name, size = "small" }: ProfileImageProps) {
   if (imageUrl) {
     return (
-      <img
-        classList={{ [styles.image]: true, [styles[size]]: true }}
-        src={imageUrl}
-        alt={name}
-      />
+      <img classList={{ [styles.image]: true, [styles[size]]: true }} src={imageUrl} alt={name} />
     );
   }
 
   return (
-    <span
-      classList={{ [styles.initials]: true, [styles[size]]: true }}
-      aria-hidden="true"
-    >
+    <span classList={{ [styles.initials]: true, [styles[size]]: true }} aria-hidden="true">
       {name.charAt(0).toUpperCase()}
     </span>
   );

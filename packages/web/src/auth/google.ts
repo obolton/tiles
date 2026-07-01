@@ -29,19 +29,14 @@ export function getGoogleAuthorizationUrl() {
   });
 }
 
-const GOOGLE_JWKS = createRemoteJWKSet(
-  new URL("https://www.googleapis.com/oauth2/v3/certs"),
-);
+const GOOGLE_JWKS = createRemoteJWKSet(new URL("https://www.googleapis.com/oauth2/v3/certs"));
 
 type ExchangeCodeOptions = {
   code: string;
   codeVerifier: string;
 };
 
-export async function exchangeCode({
-  code,
-  codeVerifier,
-}: ExchangeCodeOptions) {
+export async function exchangeCode({ code, codeVerifier }: ExchangeCodeOptions) {
   return getOAuth2AccessToken({
     endpoint: TOKEN_ENDPOINT,
     clientId: GOOGLE_CLIENT_ID,

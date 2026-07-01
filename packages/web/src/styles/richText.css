@@ -218,8 +218,7 @@
 
   & .context {
     background: color-mix(in oklch, currentcolor 10%, transparent);
-    text-decoration: underline solid
-      color-mix(in oklch, currentcolor 50%, transparent) 2px;
+    text-decoration: underline solid color-mix(in oklch, currentcolor 50%, transparent) 2px;
     text-underline-position: under;
   }
 

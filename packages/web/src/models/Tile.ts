@@ -93,9 +93,8 @@ export default abstract class Tile {
     this.cornerRadius = this.binding.field("cornerRadius", null);
     this.hide = this.binding.field("hide", false);
     this.themeId = this.binding.field("themeId", null);
-    this.theme = combine(
-      { id: this.themeId, themes: this.page.themes },
-      ({ id, themes }) => (id ? (themes.get(id) ?? null) : null),
+    this.theme = combine({ id: this.themeId, themes: this.page.themes }, ({ id, themes }) =>
+      id ? (themes.get(id) ?? null) : null,
     );
     this.textColor = this.binding.field("textColor", null);
     this.background = this.binding.field("background", null);
@@ -181,19 +180,13 @@ export default abstract class Tile {
     lat?: number | null;
     long?: number | null;
   }) {
-    const reparenting =
-      parentId !== undefined && parentId !== this.parentId.value;
+    const reparenting = parentId !== undefined && parentId !== this.parentId.value;
     const repositioning = beforeId !== undefined;
 
     const apply = () => {
       if (reparenting || repositioning) {
-        const targetParentId =
-          parentId !== undefined ? parentId : this.parentId.value;
-        this.order.value = this.page.placement.orderBefore(
-          targetParentId,
-          beforeId,
-          this,
-        );
+        const targetParentId = parentId !== undefined ? parentId : this.parentId.value;
+        this.order.value = this.page.placement.orderBefore(targetParentId, beforeId, this);
         this.parentId.value = targetParentId;
       }
 
@@ -214,9 +207,7 @@ export default abstract class Tile {
         const newLat = lat ?? prev?.lat ?? null;
         const newLong = long ?? prev?.long ?? null;
         this.coordinates.value =
-          newLat != null && newLong != null
-            ? { lat: newLat, long: newLong }
-            : null;
+          newLat != null && newLong != null ? { lat: newLat, long: newLong } : null;
       }
     };
 

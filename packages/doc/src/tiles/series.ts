@@ -9,10 +9,7 @@ export interface SeriesMapInput {
   fill: ColorFill | GradientFill | null;
 }
 
-export function buildSeriesMap(
-  order: string,
-  input: SeriesMapInput,
-): Y.Map<unknown> {
+export function buildSeriesMap(order: string, input: SeriesMapInput): Y.Map<unknown> {
   const map = new Y.Map<unknown>();
   map.set("order", order);
   map.set("type", input.type);

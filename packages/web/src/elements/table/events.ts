@@ -37,8 +37,7 @@ export class TableEvent extends Event {
   readonly title?: string;
 
   constructor(type: keyof TableEventMap, options?: TableEventInit) {
-    const { column, row, width, height, afterIndex, afterId, title, ...init } =
-      options || {};
+    const { column, row, width, height, afterIndex, afterId, title, ...init } = options || {};
     super(type, init);
     this.column = column;
     this.row = row;

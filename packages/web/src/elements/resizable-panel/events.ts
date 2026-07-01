@@ -1,7 +1,4 @@
-export type PanelResizeEventType =
-  | "panelresizestart"
-  | "panelresize"
-  | "panelresizeend";
+export type PanelResizeEventType = "panelresizestart" | "panelresize" | "panelresizeend";
 
 export interface PanelResizeEventMap {
   panelresizestart: PanelResizeEvent;

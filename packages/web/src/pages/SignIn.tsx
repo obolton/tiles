@@ -6,9 +6,7 @@ export interface SignInProps {
 }
 
 export default function SignIn({ destination }: SignInProps) {
-  const params = destination
-    ? `?destination=${encodeURIComponent(destination)}`
-    : "";
+  const params = destination ? `?destination=${encodeURIComponent(destination)}` : "";
   return (
     <PageLayout>
       <main className="card">

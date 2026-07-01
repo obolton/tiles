@@ -24,11 +24,7 @@ declare module "@/jsx/html-attributes" {
 }
 
 export default class PageItem extends HTMLElement {
-  static readonly observedAttributes = [
-    "allowdrag",
-    "resize",
-    "aria-selected",
-  ] as const;
+  static readonly observedAttributes = ["allowdrag", "resize", "aria-selected"] as const;
 
   #handle: ItemHandle | null = null;
 
@@ -74,8 +70,7 @@ export default class PageItem extends HTMLElement {
 
   private updateHandle() {
     const selected = this.getAttribute("aria-selected") === "true";
-    const showHandle =
-      this.hasAttribute("allowdrag") && (this.matches(":hover") || selected);
+    const showHandle = this.hasAttribute("allowdrag") && (this.matches(":hover") || selected);
     const showResize = this.resize !== null && selected;
 
     if (!showHandle && !showResize) {

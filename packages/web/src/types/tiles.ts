@@ -7,12 +7,4 @@ import type PageLink from "@/models/PageLink";
 import type Table from "@/models/Table";
 import type Chart from "@/models/Chart";
 
-export type TileVariant =
-  | Section
-  | Text
-  | Image
-  | Video
-  | Link
-  | PageLink
-  | Table
-  | Chart;
+export type TileVariant = Section | Text | Image | Video | Link | PageLink | Table | Chart;

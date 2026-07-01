@@ -61,10 +61,7 @@ export async function cachePageProperties(
   }
 }
 
-export async function cacheTiles(
-  pageId: string,
-  tiles: TileBase[],
-): Promise<void> {
+export async function cacheTiles(pageId: string, tiles: TileBase[]): Promise<void> {
   try {
     await tilesStore().putMany(tiles.map((tile) => ({ ...tile, pageId })));
   } catch (error) {
@@ -74,9 +71,7 @@ export async function cacheTiles(
   }
 }
 
-export async function getCachedPageData(
-  pageId: string,
-): Promise<CachedPageData | null> {
+export async function getCachedPageData(pageId: string): Promise<CachedPageData | null> {
   try {
     const page = await pagesStore().get(pageId);
     if (!page) {

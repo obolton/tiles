@@ -1,9 +1,5 @@
 import { TEXT_MODEL } from "@/ai/constants";
-import {
-  transformMarkdown,
-  type RichTextFormat,
-  type RichTextNode,
-} from "@/utils/markdown";
+import { transformMarkdown, type RichTextFormat, type RichTextNode } from "@/utils/markdown";
 import { openai } from "@/ai/openai";
 import { generateImageFromPrompt } from "@/ai/tools/images";
 import { TOOLS, useFunctionTool } from "@/ai/tools/tools";
@@ -43,9 +39,7 @@ interface SelectionAnchor {
   range: SelectionRange;
 }
 
-function resolveSelection(
-  selection: WriteSchema["selection"],
-): SelectionAnchor | null {
+function resolveSelection(selection: WriteSchema["selection"]): SelectionAnchor | null {
   if (!selection) {
     return null;
   }
@@ -183,10 +177,7 @@ function buildInput({
  * The artifact id of the selection's tile, registering it as a reference if it
  * is not already in context.
  */
-function resolveSelectionRef(
-  anchor: SelectionAnchor,
-  artifactIds: string[],
-): number {
+function resolveSelectionRef(anchor: SelectionAnchor, artifactIds: string[]): number {
   const index = artifactIds.indexOf(anchor.tileId);
   if (index !== -1) {
     return index;
@@ -221,9 +212,7 @@ export async function* write(
     const contextTiles = resolveTileContents(document, [...contextIds]);
     const artifactIds = buildContextIds(contextTiles);
 
-    const selectionRef = anchor
-      ? resolveSelectionRef(anchor, artifactIds)
-      : null;
+    const selectionRef = anchor ? resolveSelectionRef(anchor, artifactIds) : null;
     const input = buildInput({
       prompt,
       contextText: context?.text,
@@ -347,9 +336,7 @@ export async function streamTurn(
           const tileId = toolContext.resolveArtifactId(textEvent.destination);
           const mode = textEvent.mode ?? "insert";
           const range =
-            mode === "selection" && anchor && tileId === anchor.tileId
-              ? anchor.range
-              : undefined;
+            mode === "selection" && anchor && tileId === anchor.tileId ? anchor.range : undefined;
           writer = toolContext.session.streamText(tileId, mode, range);
         }
       } else if (writer) {

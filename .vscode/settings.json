@@ -1,8 +1,8 @@
 {
   "editor.tabSize": 2,
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
   "stylelint.validate": ["css", "postcss"],
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },

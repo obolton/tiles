@@ -19,16 +19,11 @@ export default class Link extends Tile {
   readonly siteName: Reactive<string | null>;
   readonly imageId: Reactive<string | null>;
 
-  static createMap(
-    properties: Omit<LinkMapInput, "parentId" | "beforeId">,
-  ): Y.Map<unknown> {
+  static createMap(properties: Omit<LinkMapInput, "parentId" | "beforeId">): Y.Map<unknown> {
     return buildLinkMap(properties);
   }
 
-  static async create(
-    page: Page,
-    data: CreateLinkInput,
-  ): Promise<Link | Video> {
+  static async create(page: Page, data: CreateLinkInput): Promise<Link | Video> {
     const { parentId, beforeId, url, ...rest } = data;
     const metadata = await client.externalLinks.getMetadata.query({
       pageId: page.id,

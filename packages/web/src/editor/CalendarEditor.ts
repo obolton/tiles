@@ -78,11 +78,7 @@ export default class CalendarEditor {
     if (!this.drag) {
       return;
     }
-    const dates = this.element.dateRangeFromPoint(
-      event.clientX,
-      event.clientY,
-      this.drag.days,
-    );
+    const dates = this.element.dateRangeFromPoint(event.clientX, event.clientY, this.drag.days);
     if (dates) {
       this.drag.start = dates.start;
       this.drag.end = dates.end;

@@ -14,6 +14,10 @@ const CONTEXT = { userId: "user-1", sessionId: "session-1", pageId: PAGE_ID };
 type Server = ReturnType<typeof createHocuspocus>;
 type Connection = Awaited<ReturnType<Server["openDirectConnection"]>>;
 
+function tiles(doc: Y.Doc): Y.Map<Y.Map<unknown>> {
+  return doc.getMap<Y.Map<unknown>>("tiles");
+}
+
 describe("DocWriter over a live Hocuspocus document", () => {
   let server: Server;
   let connection: Connection;
@@ -51,10 +55,6 @@ describe("DocWriter over a live Hocuspocus document", () => {
       Y.applyUpdate(peer, update, "remote");
     });
     return peer;
-  }
-
-  function tiles(doc: Y.Doc): Y.Map<Y.Map<unknown>> {
-    return doc.getMap<Y.Map<unknown>>("tiles");
   }
 
   test("a created tile broadcasts to every client, correctly placed", () => {

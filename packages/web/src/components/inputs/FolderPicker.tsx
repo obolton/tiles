@@ -9,19 +9,12 @@ import type { Reactive } from "@/utils/reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type { JSX } from "@/jsx/jsx";
 
-interface FolderPickerProps extends Omit<
-  JSX.Attributes<"list-select">,
-  "value" | "on:change"
-> {
+interface FolderPickerProps extends Omit<JSX.Attributes<"list-select">, "value" | "on:change"> {
   value?: Reactive<string | null>;
   onChange: (folderId: string | null) => void;
 }
 
-export default function FolderPicker({
-  value,
-  onChange,
-  ...props
-}: FolderPickerProps) {
+export default function FolderPicker({ value, onChange, ...props }: FolderPickerProps) {
   getWorkspaceFolders().catch(handleError);
 
   function setFolder(event: Event) {

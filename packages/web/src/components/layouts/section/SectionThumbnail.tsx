@@ -28,13 +28,10 @@ export default function SectionThumbnail({ section }: SectionThumbnailProps) {
 
     const style =
       layout === "GRID"
-        ? combine(
-            { sizeStyle, columns: section.columns },
-            ({ sizeStyle, columns }) => ({
-              ...sizeStyle,
-              "--columns": columns?.toString(),
-            }),
-          )
+        ? combine({ sizeStyle, columns: section.columns }, ({ sizeStyle, columns }) => ({
+            ...sizeStyle,
+            "--columns": columns?.toString(),
+          }))
         : sizeStyle;
 
     return (
@@ -45,9 +42,7 @@ export default function SectionThumbnail({ section }: SectionThumbnailProps) {
         style={style}
       >
         <Each items={section.tiles}>
-          {(tile) => (
-            <ThumbnailItem tile={tile}>{getTileThumbnail(tile)}</ThumbnailItem>
-          )}
+          {(tile) => <ThumbnailItem tile={tile}>{getTileThumbnail(tile)}</ThumbnailItem>}
         </Each>
       </div>
     );

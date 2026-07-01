@@ -45,9 +45,7 @@ export async function showModal<T, P>(
   dialog.addEventListener(
     "close",
     () => {
-      Promise.all(
-        dialog!.getAnimations().map((animation) => animation.finished),
-      )
+      Promise.all(dialog!.getAnimations().map((animation) => animation.finished))
         .catch(() => {})
         .finally(() => {
           dialog?.remove();

@@ -2,12 +2,7 @@ import { z } from "zod";
 import { resolveLinkMetadata } from "@/routes/links/links.ts";
 import { buildLinkMap } from "doc/tiles/link";
 import { buildVideoMap } from "doc/tiles/video";
-import {
-  SizeSchema,
-  getDimensions,
-  CoordinatesSchema,
-  resolveParentId,
-} from "./schema";
+import { SizeSchema, getDimensions, CoordinatesSchema, resolveParentId } from "./schema";
 import type { FunctionToolOptions, TileResult, ToolContext } from "./types";
 
 const CreateLinkSchema = z.strictObject({

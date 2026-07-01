@@ -14,9 +14,7 @@ const LINKED_PAGE = {
 describe("PageLink", () => {
   const editor = Editor.init(PAGE, new Y.Doc());
 
-  function createPageLink(
-    overrides: Partial<CreatePageLinkInput> = {},
-  ): PageLink {
+  function createPageLink(overrides: Partial<CreatePageLinkInput> = {}): PageLink {
     return editor.page.createTile(
       PageLink.createMap({ linkedPage: LINKED_PAGE, ...overrides }),
       {},

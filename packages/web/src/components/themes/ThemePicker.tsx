@@ -28,12 +28,7 @@ export interface ThemePickerProps extends Omit<
   onChange: (theme: Theme | null) => void;
 }
 
-export default function ThemePicker({
-  id,
-  value,
-  onChange,
-  ...props
-}: ThemePickerProps) {
+export default function ThemePicker({ id, value, onChange, ...props }: ThemePickerProps) {
   getWorkspaceThemes().catch(handleError);
 
   let listSelect: ListSelect;

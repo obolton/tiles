@@ -15,12 +15,7 @@ export interface FreePageProps {
   signal?: AbortSignal;
 }
 
-export default function FreePage({
-  page,
-  isEditable,
-  tiles,
-  signal,
-}: FreePageProps) {
+export default function FreePage({ page, isEditable, tiles, signal }: FreePageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = page.alignment.derive((alignment) => {
     switch (alignment) {
@@ -77,13 +72,7 @@ export default function FreePage({
         data-page-type="FREE"
       >
         <Each items={tiles}>
-          {(tile) => (
-            <Item
-              tile={tile}
-              tabindex={tabindex}
-              resize={resize}
-            />
-          )}
+          {(tile) => <Item tile={tile} tabindex={tabindex} resize={resize} />}
         </Each>
       </main>
       <DockZone

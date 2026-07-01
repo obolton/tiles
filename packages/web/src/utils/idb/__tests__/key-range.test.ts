@@ -57,9 +57,7 @@ describe("keyRange", () => {
 
   describe("error handling", () => {
     test("throws if no bounds are provided", () => {
-      expect(() => keyRange({})).toThrow(
-        "keyRange requires at least a lower or upper bound",
-      );
+      expect(() => keyRange({})).toThrow("keyRange requires at least a lower or upper bound");
     });
   });
 

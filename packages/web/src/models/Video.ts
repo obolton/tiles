@@ -17,9 +17,7 @@ export default class Video extends Tile {
   readonly description: Reactive<string | null>;
   readonly title: Reactive<string>;
 
-  static createMap(
-    properties: Omit<CreateVideoInput, "parentId" | "beforeId">,
-  ): Y.Map<unknown> {
+  static createMap(properties: Omit<CreateVideoInput, "parentId" | "beforeId">): Y.Map<unknown> {
     return buildVideoMap(properties);
   }
 

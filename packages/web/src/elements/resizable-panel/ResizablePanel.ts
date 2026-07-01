@@ -120,9 +120,7 @@ export default class ResizablePanel extends HTMLElement {
 
     this.updateHandleDirection();
     this.handle.ariaValueMin = String(Math.round(this.min));
-    this.handle.ariaValueMax = Number.isFinite(this.max)
-      ? String(Math.round(this.max))
-      : null;
+    this.handle.ariaValueMax = Number.isFinite(this.max) ? String(Math.round(this.max)) : null;
     this.setHandleValue(this.size);
   }
 
@@ -145,9 +143,7 @@ export default class ResizablePanel extends HTMLElement {
         this.handle.ariaValueMin = String(Math.round(this.min));
         break;
       case "max":
-        this.handle.ariaValueMax = Number.isFinite(this.max)
-          ? String(Math.round(this.max))
-          : null;
+        this.handle.ariaValueMax = Number.isFinite(this.max) ? String(Math.round(this.max)) : null;
         break;
     }
   }
@@ -224,14 +220,7 @@ export default class ResizablePanel extends HTMLElement {
   }
 
   private sizeFromDrag(event: ResizeEvent) {
-    return resolveSize(
-      this.edge,
-      this.startSize,
-      event.x,
-      event.y,
-      this.min,
-      this.max,
-    );
+    return resolveSize(this.edge, this.startSize, event.x, event.y, this.min, this.max);
   }
 
   private commit(type: "panelresize" | "panelresizeend", size: number) {

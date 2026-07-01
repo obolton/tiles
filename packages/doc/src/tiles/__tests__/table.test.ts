@@ -42,10 +42,7 @@ describe("buildTableMap", () => {
 
     const columns = orderedEntries(map.get("columns") as Y.Map<Y.Map<unknown>>);
     expect(columns.map((c) => c.id)).toEqual(["col-1", "col-2"]);
-    expect(columns.map((c) => c.map.get("title"))).toEqual([
-      "Month",
-      "Revenue",
-    ]);
+    expect(columns.map((c) => c.map.get("title"))).toEqual(["Month", "Revenue"]);
 
     const rows = orderedEntries(map.get("rows") as Y.Map<Y.Map<unknown>>);
     const cells = rows[0]!.map.get("cells") as Y.Map<unknown>;
@@ -54,29 +51,29 @@ describe("buildTableMap", () => {
   });
 });
 
-describe("parseTableChanges", () => {
-  function buildTable() {
-    const doc = new Y.Doc();
-    const map = buildTableMap({
-      columns: [
-        { id: "col-1", title: "Month" },
-        { id: "col-2", title: "Revenue" },
-      ],
-      rows: [{ cells: ["Jan", "100"] }, { cells: ["Feb", "200"] }],
-    });
-    doc.getMap().set("tile", map);
+function buildTable() {
+  const doc = new Y.Doc();
+  const map = buildTableMap({
+    columns: [
+      { id: "col-1", title: "Month" },
+      { id: "col-2", title: "Revenue" },
+    ],
+    rows: [{ cells: ["Jan", "100"] }, { cells: ["Feb", "200"] }],
+  });
+  doc.getMap().set("tile", map);
 
-    const columns = map.get("columns") as Y.Map<Y.Map<unknown>>;
-    const rows = map.get("rows") as Y.Map<Y.Map<unknown>>;
-    const [row] = orderedEntries(rows);
-    const [column] = orderedEntries(columns);
-    if (!row || !column) {
-      throw new Error("expected seeded rows and columns");
-    }
-
-    return { doc, columns, rows, row, column };
+  const columns = map.get("columns") as Y.Map<Y.Map<unknown>>;
+  const rows = map.get("rows") as Y.Map<Y.Map<unknown>>;
+  const [row] = orderedEntries(rows);
+  const [column] = orderedEntries(columns);
+  if (!row || !column) {
+    throw new Error("expected seeded rows and columns");
   }
 
+  return { doc, columns, rows, row, column };
+}
+
+describe("parseTableChanges", () => {
   test("emits a cell change for an edited cell", () => {
     const { rows, row } = buildTable();
     let events: Y.YEvent<Y.AbstractType<unknown>>[] = [];
@@ -127,9 +124,7 @@ describe("parseTableChanges", () => {
 
     row.map.set("height", 64);
 
-    expect(parseTableChanges(events, "rows")).toEqual([
-      { type: "row", rowId: row.id },
-    ]);
+    expect(parseTableChanges(events, "rows")).toEqual([{ type: "row", rowId: row.id }]);
   });
 
   test("emits a moveRow change for an order edit", () => {
@@ -141,9 +136,7 @@ describe("parseTableChanges", () => {
 
     row.map.set("order", "a5");
 
-    expect(parseTableChanges(events, "rows")).toEqual([
-      { type: "moveRow", rowId: row.id },
-    ]);
+    expect(parseTableChanges(events, "rows")).toEqual([{ type: "moveRow", rowId: row.id }]);
   });
 
   test("emits a column change for a field edit", () => {
@@ -155,9 +148,7 @@ describe("parseTableChanges", () => {
 
     column.map.set("title", "Quarter");
 
-    expect(parseTableChanges(events, "columns")).toEqual([
-      { type: "column", columnId: column.id },
-    ]);
+    expect(parseTableChanges(events, "columns")).toEqual([{ type: "column", columnId: column.id }]);
   });
 
   test("emits a moveColumn change for an order edit", () => {

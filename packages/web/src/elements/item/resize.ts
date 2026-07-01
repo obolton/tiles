@@ -1,19 +1,8 @@
-export const RESIZE_HANDLE_DIRECTIONS = [
-  "nw",
-  "n",
-  "ne",
-  "e",
-  "se",
-  "s",
-  "sw",
-  "w",
-] as const;
+export const RESIZE_HANDLE_DIRECTIONS = ["nw", "n", "ne", "e", "se", "s", "sw", "w"] as const;
 
 export type ResizeHandleDirection = (typeof RESIZE_HANDLE_DIRECTIONS)[number];
 
-export function getResizeHandleDirections(
-  value: string | null,
-): readonly ResizeHandleDirection[] {
+export function getResizeHandleDirections(value: string | null): readonly ResizeHandleDirection[] {
   if (!value) {
     return [];
   }

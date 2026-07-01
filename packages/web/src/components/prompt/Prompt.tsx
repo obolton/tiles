@@ -69,11 +69,7 @@ export default function Prompt({
   }
 
   return (
-    <form
-      {...props}
-      className={classNames(styles.prompt, className)}
-      on:submit={handleSubmit}
-    >
+    <form {...props} className={classNames(styles.prompt, className)} on:submit={handleSubmit}>
       <ReferenceList />
 
       <ResizingTextarea

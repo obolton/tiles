@@ -16,9 +16,7 @@ vi.mock("../client", () => ({
 }));
 
 vi.mock("image-dimensions", () => ({
-  imageDimensionsFromStream: vi.fn(() =>
-    Promise.resolve({ width: 800, height: 600, type: "png" }),
-  ),
+  imageDimensionsFromStream: vi.fn(() => Promise.resolve({ width: 800, height: 600, type: "png" })),
 }));
 
 const UPLOAD_PARAMS: UploadParams = {
@@ -74,9 +72,7 @@ describe("uploadImage", () => {
   });
 
   test("throws BadRequestError when body is null", async () => {
-    await expect(
-      uploadImage(UPLOAD_PARAMS, null, client, bucket),
-    ).rejects.toThrow(BadRequestError);
+    await expect(uploadImage(UPLOAD_PARAMS, null, client, bucket)).rejects.toThrow(BadRequestError);
   });
 
   test("creates image record with correct parameters", async () => {
@@ -94,16 +90,12 @@ describe("uploadImage", () => {
   test("uploads to R2 with correct key and metadata", async () => {
     await uploadImage(UPLOAD_PARAMS, createBody(), client, bucket);
 
-    expect(bucket.put).toHaveBeenCalledWith(
-      "img-123",
-      expect.any(ReadableStream),
-      {
-        customMetadata: {
-          workspace: "ws-123",
-          user: "user-456",
-        },
+    expect(bucket.put).toHaveBeenCalledWith("img-123", expect.any(ReadableStream), {
+      customMetadata: {
+        workspace: "ws-123",
+        user: "user-456",
       },
-    );
+    });
   });
 
   test("updates image record with file size and dimensions", async () => {
@@ -120,12 +112,7 @@ describe("uploadImage", () => {
   });
 
   test("returns upload result", async () => {
-    const result = await uploadImage(
-      UPLOAD_PARAMS,
-      createBody(),
-      client,
-      bucket,
-    );
+    const result = await uploadImage(UPLOAD_PARAMS, createBody(), client, bucket);
 
     expect(result).toEqual({ id: "img-123", width: 800, height: 600 });
   });
@@ -133,9 +120,9 @@ describe("uploadImage", () => {
   test("rolls back and throws BadRequestError when dimensions cannot be read", async () => {
     vi.mocked(imageDimensionsFromStream).mockResolvedValueOnce(undefined);
 
-    await expect(
-      uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
-    ).rejects.toThrow(BadRequestError);
+    await expect(uploadImage(UPLOAD_PARAMS, createBody(), client, bucket)).rejects.toThrow(
+      BadRequestError,
+    );
 
     expect(bucket.delete).toHaveBeenCalledWith("img-123");
     expect(deleteImageMock).toHaveBeenCalledWith({
@@ -151,9 +138,9 @@ describe("uploadImage", () => {
       type: "jpeg",
     });
 
-    await expect(
-      uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
-    ).rejects.toThrow(UnsupportedMediaTypeError);
+    await expect(uploadImage(UPLOAD_PARAMS, createBody(), client, bucket)).rejects.toThrow(
+      UnsupportedMediaTypeError,
+    );
 
     expect(bucket.delete).toHaveBeenCalledWith("img-123");
     expect(deleteImageMock).toHaveBeenCalledWith({
@@ -168,9 +155,9 @@ describe("uploadImage", () => {
     });
 
     test("deletes the database record but not the R2 object", async () => {
-      await expect(
-        uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
-      ).rejects.toThrow("R2 error");
+      await expect(uploadImage(UPLOAD_PARAMS, createBody(), client, bucket)).rejects.toThrow(
+        "R2 error",
+      );
 
       expect(bucket.delete).not.toHaveBeenCalled();
       expect(deleteImageMock).toHaveBeenCalledWith({
@@ -186,9 +173,9 @@ describe("uploadImage", () => {
     });
 
     test("deletes the R2 object and database record", async () => {
-      await expect(
-        uploadImage(UPLOAD_PARAMS, createBody(), client, bucket),
-      ).rejects.toThrow("Database error");
+      await expect(uploadImage(UPLOAD_PARAMS, createBody(), client, bucket)).rejects.toThrow(
+        "Database error",
+      );
 
       expect(bucket.delete).toHaveBeenCalledWith("img-123");
       expect(deleteImageMock).toHaveBeenCalledWith({

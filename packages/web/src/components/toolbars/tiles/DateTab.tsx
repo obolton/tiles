@@ -32,11 +32,7 @@ export default function DateTab({ tile }: DateTabProps) {
       <ToolbarGroup label="Date range">
         <label>
           Start
-          <input
-            type="date"
-            value={tile.startDate}
-            on:change={handleStartChange}
-          />
+          <input type="date" value={tile.startDate} on:change={handleStartChange} />
         </label>
         <label>
           End

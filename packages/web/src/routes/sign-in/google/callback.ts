@@ -1,8 +1,4 @@
-import {
-  getOAuth2Cookies,
-  clearOAuth2Cookies,
-  compareOAuth2State,
-} from "@/auth/oauth2";
+import { getOAuth2Cookies, clearOAuth2Cookies, compareOAuth2State } from "@/auth/oauth2";
 import { redirect, forbidden } from "@/router/responses";
 import { exchangeCode, verifyIdToken } from "@/auth/google";
 import { validateDestination } from "@/auth/destinations";
@@ -63,17 +59,11 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
     return redirect("/sign-in?error=failed", 302, cookiesToSet);
   }
 
-  const authenticationCookies = setAuthenticationCookies(
-    session.id,
-    new Date(session.expiresAt),
-  );
+  const authenticationCookies = setAuthenticationCookies(session.id, new Date(session.expiresAt));
 
   const destination = `/${cookies.destination ?? ""}`;
 
-  return redirect(destination, 302, [
-    ...cookiesToSet,
-    ...authenticationCookies,
-  ]);
+  return redirect(destination, 302, [...cookiesToSet, ...authenticationCookies]);
 };
 
 export default {

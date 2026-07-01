@@ -19,10 +19,7 @@ export async function loadDoc(pageId: string): Promise<Y.Doc> {
   return doc;
 }
 
-export async function saveDoc(
-  pageId: string,
-  state: Uint8Array,
-): Promise<void> {
+export async function saveDoc(pageId: string, state: Uint8Array): Promise<void> {
   const snapshot = Buffer.from(state);
   await prisma.page.update({
     where: { id: pageId },

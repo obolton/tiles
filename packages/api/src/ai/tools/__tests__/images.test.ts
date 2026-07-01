@@ -49,18 +49,10 @@ describe("generateImageFromPrompt", () => {
 
 describe("generateAndUploadImage", () => {
   test("uploads the generated image, records it, and returns the id", async () => {
-    const imageId = await generateAndUploadImage(
-      "a red circle",
-      MOCK_TOOL_CONTEXT,
-    );
+    const imageId = await generateAndUploadImage("a red circle", MOCK_TOOL_CONTEXT);
 
     expect(imageId).toBeTypeOf("string");
-    expect(upload).toHaveBeenCalledWith(
-      "images-bucket",
-      imageId,
-      expect.any(Buffer),
-      "image/webp",
-    );
+    expect(upload).toHaveBeenCalledWith("images-bucket", imageId, expect.any(Buffer), "image/webp");
     expect(prisma.image.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({

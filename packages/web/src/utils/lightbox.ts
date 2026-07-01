@@ -95,15 +95,12 @@ function openLightbox(element: HTMLElement) {
       observer.disconnect();
 
       // Animate out the visible items
-      const element = list.children[currentIndex]
-        ?.firstElementChild as HTMLElement;
+      const element = list.children[currentIndex]?.firstElementChild as HTMLElement;
 
       const previous = list.children[currentIndex - 1]?.firstElementChild as
         | HTMLElement
         | undefined;
-      const next = list.children[currentIndex + 1]?.firstElementChild as
-        | HTMLElement
-        | undefined;
+      const next = list.children[currentIndex + 1]?.firstElementChild as HTMLElement | undefined;
 
       if (previous) {
         moveTo(previous, { y: "-6vh" });
@@ -113,9 +110,7 @@ function openLightbox(element: HTMLElement) {
       }
 
       const relatedId = element.getAttribute("data-related");
-      const relatedElement = relatedId
-        ? document.getElementById(relatedId)
-        : null;
+      const relatedElement = relatedId ? document.getElementById(relatedId) : null;
 
       const image = element.querySelector("img");
       const caption = element.querySelector("figcaption");
@@ -144,10 +139,7 @@ function openLightbox(element: HTMLElement) {
         );
         rootStyle.setProperty("--view-transition-new-object-fit", "contain");
         rootStyle.setProperty("--view-transition-old-object-fit", "cover");
-        rootStyle.setProperty(
-          "--view-transition-animation-direction",
-          "reverse",
-        );
+        rootStyle.setProperty("--view-transition-animation-direction", "reverse");
 
         const transition = viewTransition(() => {
           image?.remove();
@@ -259,10 +251,7 @@ function createItem(element: Element) {
 
 function itemClick(event: MouseEvent) {
   const element = event.currentTarget as Element;
-  const index = Array.prototype.indexOf.call(
-    element.parentElement?.children,
-    element,
-  );
+  const index = Array.prototype.indexOf.call(element.parentElement?.children, element);
 
   // Scroll item into view
   if (index !== currentIndex) {
@@ -276,20 +265,13 @@ function itemClick(event: MouseEvent) {
 
 function keyDown(event: KeyboardEvent) {
   const items = lightbox?.firstElementChild?.children;
-  if (
-    items &&
-    ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(event.key)
-  ) {
+  if (items && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(event.key)) {
     event.preventDefault();
     event.stopPropagation();
 
     if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
       currentIndex = Math.max(0, currentIndex - 1);
-    } else if (
-      event.key === "ArrowDown" ||
-      event.key === "ArrowRight" ||
-      event.key === " "
-    ) {
+    } else if (event.key === "ArrowDown" || event.key === "ArrowRight" || event.key === " ") {
       currentIndex = Math.min(items.length - 1, currentIndex + 1);
     }
 

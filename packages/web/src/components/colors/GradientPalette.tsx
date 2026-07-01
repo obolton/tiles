@@ -44,20 +44,14 @@ const GRADIENTS: readonly Gradient[] = [
   },
 ];
 
-function getItemStyles(
-  colors: Reactive<(Color | null)[]>,
-): Reactive<StyleDeclaration> {
+function getItemStyles(colors: Reactive<(Color | null)[]>): Reactive<StyleDeclaration> {
   return colors.derive(([colorA, colorB]) => ({
     "--color-a": colorA ? toCSSColor(colorA) : "transparent",
     "--color-b": colorB ? toCSSColor(colorB) : "transparent",
   }));
 }
 
-export default function GradientPalette({
-  colors,
-  value,
-  onChange,
-}: GradientPaletteProps) {
+export default function GradientPalette({ colors, value, onChange }: GradientPaletteProps) {
   function handleChange(event: Event) {
     const element = event.target as HTMLInputElement;
     const index = parseInt(element.value, 10);
@@ -80,9 +74,7 @@ export default function GradientPalette({
           data-direction={gradient.direction}
           aria-label={gradient.description}
           value={i.toString()}
-          checked={value.derive(
-            (v) => gradient.direction === (v?.direction ?? null),
-          )}
+          checked={value.derive((v) => gradient.direction === (v?.direction ?? null))}
         />
       ))}
     </fieldset>

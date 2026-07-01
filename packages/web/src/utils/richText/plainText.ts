@@ -7,9 +7,7 @@ import type { RichText, Node } from "./types";
 type FragmentChild = Y.XmlElement | Y.XmlText | Y.XmlHook;
 type QueueItem = Y.XmlFragment | FragmentChild | "\n";
 
-export function fragmentToPlainText(
-  fragment: Y.XmlFragment | Y.XmlElement,
-): string {
+export function fragmentToPlainText(fragment: Y.XmlFragment | Y.XmlElement): string {
   let output = "";
   const queue: QueueItem[] = [fragment];
 

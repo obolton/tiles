@@ -86,17 +86,10 @@ export default function LibrarySelectionToolbar({
   }
 
   return (
-    <floating-toolbar
-      className="primary"
-      aria-label="Bulk actions"
-      data-tooltip-position="top"
-    >
+    <floating-toolbar className="primary" aria-label="Bulk actions" data-tooltip-position="top">
       <toolbar-tab label="Actions">
         <ToolbarGroup label="Selection">
-          <ToolbarButton
-            label="Clear selection"
-            on:click={() => selection.clear()}
-          >
+          <ToolbarButton label="Clear selection" on:click={() => selection.clear()}>
             <CloseIcon aria-hidden="true" />
           </ToolbarButton>
         </ToolbarGroup>

@@ -10,9 +10,7 @@ const IMAGE_TEXT: RichText = [
   {
     type: "paragraph",
     align: 0,
-    children: [
-      { type: "text", text: "Caption", format: 0, pending: undefined, size: 1 },
-    ],
+    children: [{ type: "text", text: "Caption", format: 0, pending: undefined, size: 1 }],
   },
 ];
 
@@ -27,10 +25,7 @@ describe("Image", () => {
   const editor = Editor.init(PAGE, new Y.Doc());
 
   function createImage(overrides: Partial<CreateImageInput> = {}): Image {
-    return editor.page.createTile(
-      Image.createMap({ ...IMAGE_PROPS, ...overrides }),
-      {},
-    ) as Image;
+    return editor.page.createTile(Image.createMap({ ...IMAGE_PROPS, ...overrides }), {}) as Image;
   }
 
   test("maps properties to reactive values", () => {

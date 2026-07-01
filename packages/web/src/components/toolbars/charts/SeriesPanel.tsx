@@ -19,11 +19,7 @@ export interface SeriesPanelProps extends JSX.Attributes<"anchored-popover"> {
   table: Table;
 }
 
-export default function SeriesPanel({
-  chart,
-  table,
-  ...props
-}: SeriesPanelProps) {
+export default function SeriesPanel({ chart, table, ...props }: SeriesPanelProps) {
   const availableColumns = combine(
     {
       series: chart.series,

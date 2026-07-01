@@ -16,15 +16,11 @@ export interface DefaultProps {
   children: JSX.Node;
 }
 
-function isCaseElement<T>(
-  node: JSX.Node,
-): node is JSX.Element<JSX.Component<CaseProps<T>>> {
+function isCaseElement<T>(node: JSX.Node): node is JSX.Element<JSX.Component<CaseProps<T>>> {
   return isElementNode(node) && node.type === Case;
 }
 
-function isDefaultElement(
-  node: JSX.Node,
-): node is JSX.Element<JSX.Component<DefaultProps>> {
+function isDefaultElement(node: JSX.Node): node is JSX.Element<JSX.Component<DefaultProps>> {
   return isElementNode(node) && node.type === Default;
 }
 

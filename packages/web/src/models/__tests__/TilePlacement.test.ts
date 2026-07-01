@@ -29,34 +29,18 @@ describe("TilePlacement", () => {
     });
 
     test("returns a stable instance per parentId", () => {
-      expect(page.placement.getCollection(null)).toBe(
-        page.placement.getCollection(null),
-      );
-      expect(page.placement.getCollection("dock:TOP")).not.toBe(
-        page.placement.getCollection(null),
-      );
+      expect(page.placement.getCollection(null)).toBe(page.placement.getCollection(null));
+      expect(page.placement.getCollection("dock:TOP")).not.toBe(page.placement.getCollection(null));
     });
   });
 
   describe("initial placement", () => {
     test("places tiles into root, section, and dock collections", () => {
       const doc = new Y.Doc();
-      placeTile(
-        doc,
-        Section.createMap({ layout: "VERTICAL" }),
-        "sec",
-        null,
-        "a0",
-      );
+      placeTile(doc, Section.createMap({ layout: "VERTICAL" }), "sec", null, "a0");
       placeTile(doc, Text.createMap({ align: "TOP" }), "root-1", null, "a1");
       placeTile(doc, Text.createMap({ align: "TOP" }), "child", "sec", "a1");
-      placeTile(
-        doc,
-        Text.createMap({ align: "TOP" }),
-        "docked",
-        "dock:TOP",
-        "a1",
-      );
+      placeTile(doc, Text.createMap({ align: "TOP" }), "docked", "dock:TOP", "a1");
       const page = new Page(PAGE, doc);
 
       expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "root-1"]);
@@ -88,13 +72,7 @@ describe("TilePlacement", () => {
     test("places children regardless of section order in the doc map", () => {
       const doc = new Y.Doc();
       placeTile(doc, Text.createMap({ align: "TOP" }), "child", "sec", "a1");
-      placeTile(
-        doc,
-        Section.createMap({ layout: "VERTICAL" }),
-        "sec",
-        null,
-        "a0",
-      );
+      placeTile(doc, Section.createMap({ layout: "VERTICAL" }), "sec", null, "a0");
       const page = new Page(PAGE, doc);
 
       const section = page.index.get("sec") as Section;
@@ -107,13 +85,7 @@ describe("TilePlacement", () => {
 
     beforeEach(() => {
       const doc = new Y.Doc();
-      placeTile(
-        doc,
-        Section.createMap({ layout: "VERTICAL" }),
-        "sec",
-        null,
-        "a0",
-      );
+      placeTile(doc, Section.createMap({ layout: "VERTICAL" }), "sec", null, "a0");
       placeTile(doc, Text.createMap({ align: "TOP" }), "t1", null, "a1");
       placeTile(doc, Text.createMap({ align: "TOP" }), "t2", null, "a2");
       page = new Page(PAGE, doc);
@@ -172,31 +144,14 @@ describe("TilePlacement", () => {
       });
 
       expect(page.index.has("t3")).toBe(true);
-      expect(page.tiles.value.map((t) => t.id)).toEqual([
-        "sec",
-        "t1",
-        "t2",
-        "t3",
-      ]);
+      expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "t1", "t2", "t3"]);
     });
 
     test("places a sync-arriving child under a sync-arriving section in the same batch", () => {
       page.doc.transact(() => {
         // Insert the child before the section to exercise the two-pass.
-        placeTile(
-          page.doc,
-          Text.createMap({ align: "TOP" }),
-          "child",
-          "new-sec",
-          "a1",
-        );
-        placeTile(
-          page.doc,
-          Section.createMap({ layout: "VERTICAL" }),
-          "new-sec",
-          null,
-          "a3",
-        );
+        placeTile(page.doc, Text.createMap({ align: "TOP" }), "child", "new-sec", "a1");
+        placeTile(page.doc, Section.createMap({ layout: "VERTICAL" }), "new-sec", null, "a3");
       });
 
       const newSection = page.index.get("new-sec") as Section;
@@ -209,13 +164,7 @@ describe("TilePlacement", () => {
 
     beforeEach(() => {
       const doc = new Y.Doc();
-      placeTile(
-        doc,
-        Section.createMap({ layout: "VERTICAL" }),
-        "sec",
-        null,
-        "a0",
-      );
+      placeTile(doc, Section.createMap({ layout: "VERTICAL" }), "sec", null, "a0");
       placeTile(doc, Text.createMap({ align: "TOP" }), "t1", null, "a1");
       placeTile(doc, Text.createMap({ align: "TOP" }), "t2", null, "a2");
       placeTile(doc, Text.createMap({ align: "TOP" }), "t3", null, "a3");
@@ -226,53 +175,31 @@ describe("TilePlacement", () => {
       page.getTile("t1").move({ parentId: "sec" });
 
       expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "t2", "t3"]);
-      expect(page.getSection("sec").tiles.value.map((t) => t.id)).toEqual([
-        "t1",
-      ]);
+      expect(page.getSection("sec").tiles.value.map((t) => t.id)).toEqual(["t1"]);
     });
 
     test("reorders before a sibling via beforeId", () => {
       page.getTile("t3").move({ beforeId: "t1" });
 
-      expect(page.tiles.value.map((t) => t.id)).toEqual([
-        "sec",
-        "t3",
-        "t1",
-        "t2",
-      ]);
+      expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "t3", "t1", "t2"]);
     });
 
     test("appends to the end when beforeId is null", () => {
       page.getTile("t1").move({ beforeId: null });
 
-      expect(page.tiles.value.map((t) => t.id)).toEqual([
-        "sec",
-        "t2",
-        "t3",
-        "t1",
-      ]);
+      expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "t2", "t3", "t1"]);
     });
 
     test("moveUp swaps with the previous sibling", () => {
       page.getTile("t3").moveUp();
 
-      expect(page.tiles.value.map((t) => t.id)).toEqual([
-        "sec",
-        "t1",
-        "t3",
-        "t2",
-      ]);
+      expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "t1", "t3", "t2"]);
     });
 
     test("moveDown swaps with the next sibling", () => {
       page.getTile("t1").moveDown();
 
-      expect(page.tiles.value.map((t) => t.id)).toEqual([
-        "sec",
-        "t2",
-        "t1",
-        "t3",
-      ]);
+      expect(page.tiles.value.map((t) => t.id)).toEqual(["sec", "t2", "t1", "t3"]);
     });
   });
 });

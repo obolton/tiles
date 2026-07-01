@@ -1,8 +1,5 @@
 import { router } from "@/utils/trpc.ts";
-import {
-  authenticatedProcedure,
-  authenticatedPageProcedure,
-} from "@/utils/middleware.ts";
+import { authenticatedProcedure, authenticatedPageProcedure } from "@/utils/middleware.ts";
 import {
   inviteToPage,
   acceptPageInvite,

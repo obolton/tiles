@@ -82,11 +82,7 @@ export function findSnapPoint(
   for (const value of values) {
     const lower = getLowerBound(snapPoints, value - threshold);
 
-    for (
-      let i = lower;
-      i < snapPoints.length && snapPoints[i]!.value <= value + threshold;
-      i++
-    ) {
+    for (let i = lower; i < snapPoints.length && snapPoints[i]!.value <= value + threshold; i++) {
       const guide = snapPoints[i]!;
 
       if (ignoreId && ignoreId === guide.id) {

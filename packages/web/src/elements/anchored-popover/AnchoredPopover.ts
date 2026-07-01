@@ -116,8 +116,7 @@ export default class AnchoredPopover extends HTMLElement {
     }
 
     if (this.#triggerElement) {
-      this.#triggerElement.ariaExpanded =
-        event.newState === "open" ? "true" : "false";
+      this.#triggerElement.ariaExpanded = event.newState === "open" ? "true" : "false";
     }
   }
 
@@ -188,9 +187,7 @@ export default class AnchoredPopover extends HTMLElement {
 
   private getHorizontalAlignment(anchorBounds: DOMRect, width: number) {
     if (this.align === "auto") {
-      return anchorBounds.right + width + VIEWPORT_MARGIN < window.innerWidth
-        ? "left"
-        : "right";
+      return anchorBounds.right + width + VIEWPORT_MARGIN < window.innerWidth ? "left" : "right";
     }
     return this.align;
   }
@@ -205,15 +202,10 @@ export default class AnchoredPopover extends HTMLElement {
     const height = this.offsetHeight;
     const anchorBounds = anchor.getBoundingClientRect();
 
-    const horizontalAlignment = this.getHorizontalAlignment(
-      anchorBounds,
-      width,
-    );
+    const horizontalAlignment = this.getHorizontalAlignment(anchorBounds, width);
 
     const verticalPosition =
-      anchorBounds.bottom + height + VIEWPORT_MARGIN < window.innerHeight
-        ? "bottom"
-        : "top";
+      anchorBounds.bottom + height + VIEWPORT_MARGIN < window.innerHeight ? "bottom" : "top";
 
     let left = "auto";
     let right = "auto";
@@ -226,8 +218,7 @@ export default class AnchoredPopover extends HTMLElement {
         left = anchorBounds.left + "px";
         break;
       case "right":
-        right =
-          window.innerWidth - (anchorBounds.left + anchorBounds.width) + "px";
+        right = window.innerWidth - (anchorBounds.left + anchorBounds.width) + "px";
         break;
       case "center":
         left = anchorBounds.left + (anchorBounds.width - width) / 2 + "px";

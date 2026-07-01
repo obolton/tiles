@@ -18,16 +18,11 @@ export default class Text extends Tile {
   readonly align: Reactive<TextTile["align"]>;
   readonly contentFragment: Y.XmlFragment;
 
-  static createMap(
-    properties: Omit<CreateTextInput, "parentId" | "beforeId">,
-  ): Y.Map<unknown> {
+  static createMap(properties: Omit<CreateTextInput, "parentId" | "beforeId">): Y.Map<unknown> {
     const { content, ...rest } = properties;
     const map = buildTextMap(rest);
     if (content && content.length > 0) {
-      prosemirrorToYXmlFragment(
-        deserialize(content),
-        map.get("content") as Y.XmlFragment,
-      );
+      prosemirrorToYXmlFragment(deserialize(content), map.get("content") as Y.XmlFragment);
     }
     return map;
   }

@@ -55,29 +55,22 @@ export default async function createDevServer(options: DevServerOptions) {
     console.log(`Development server: ${process.env.PUBLIC_WEB_ORIGIN}`),
   );
 
-  async function handleRequest(
-    request: IncomingMessage,
-    response: ServerResponse,
-  ) {
+  async function handleRequest(request: IncomingMessage, response: ServerResponse) {
     vite.middlewares(request, response, async () => {
-      const { default: respond } = (await vite.ssrLoadModule(
-        "@/server/server",
-      )) as { default: Respond };
+      const { default: respond } = (await vite.ssrLoadModule("@/server/server")) as {
+        default: Respond;
+      };
 
       try {
         const method = request.method ?? "GET";
         const hasBody = method !== "GET" && method !== "HEAD";
         const proto = request.headers["x-forwarded-proto"] ?? "http";
         const host = request.headers.host;
-        const baseUrl = host
-          ? `${proto}://${host}`
-          : process.env.PUBLIC_WEB_ORIGIN;
+        const baseUrl = host ? `${proto}://${host}` : process.env.PUBLIC_WEB_ORIGIN;
         const webRequest = new Request(new URL(request.url ?? "", baseUrl), {
           method,
           headers: toWebHeaders(request.headers),
-          body: hasBody
-            ? (Readable.toWeb(request) as globalThis.ReadableStream)
-            : undefined,
+          body: hasBody ? (Readable.toWeb(request) as globalThis.ReadableStream) : undefined,
           duplex: hasBody ? "half" : undefined,
         });
         const webResponse = await respond(webRequest, vite);
@@ -87,9 +80,7 @@ export default async function createDevServer(options: DevServerOptions) {
           fromWebHeaders(webResponse.headers),
         );
         if (webResponse.body) {
-          Readable.fromWeb(webResponse.body as ReadableStream<Uint8Array>).pipe(
-            response,
-          );
+          Readable.fromWeb(webResponse.body as ReadableStream<Uint8Array>).pipe(response);
         } else {
           response.end();
         }
@@ -100,9 +91,7 @@ export default async function createDevServer(options: DevServerOptions) {
         console.error(request.url + ":", error);
         response.writeHead(500, { "Content-Type": "text/plain" });
         response.end(
-          error instanceof Error
-            ? `${error.message}\n\n${error.stack}`
-            : "Internal Server Error",
+          error instanceof Error ? `${error.message}\n\n${error.stack}` : "Internal Server Error",
         );
       }
     });

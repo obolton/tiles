@@ -1,10 +1,6 @@
 import { describe, test, expect } from "vitest";
 import * as Y from "yjs";
-import {
-  applyMigrations,
-  createEmptyDoc,
-  CURRENT_SCHEMA_VERSION,
-} from "../migrator.ts";
+import { applyMigrations, createEmptyDoc, CURRENT_SCHEMA_VERSION } from "../migrator.ts";
 
 describe("createEmptyDoc", () => {
   test("returns a doc stamped at the current schema version", () => {

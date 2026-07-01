@@ -7,10 +7,7 @@ vi.mock("@/utils/storage.ts", () => ({
 }));
 
 vi.mock("../fontsource.ts", async () => {
-  const actual =
-    await vi.importActual<typeof import("../fontsource.ts")>(
-      "../fontsource.ts",
-    );
+  const actual = await vi.importActual<typeof import("../fontsource.ts")>("../fontsource.ts");
   return {
     ...actual,
     fetchFontMetadata: vi.fn(),
@@ -175,9 +172,7 @@ describe("syncFonts", () => {
     const progress: FontProgress[] = [];
     await syncFonts([FONT_INTER], (p) => progress.push(p));
 
-    expect(progress).toEqual([
-      { id: "inter", files: 5, uploaded: 0, skipped: 5 },
-    ]);
+    expect(progress).toEqual([{ id: "inter", files: 5, uploaded: 0, skipped: 5 }]);
   });
 
   test("builds a manifest with sorted file lists and a syncedAt timestamp", async () => {
@@ -233,10 +228,7 @@ describe("syncFonts", () => {
       .mockResolvedValueOnce(true)
       .mockResolvedValue(true);
 
-    const result = await syncFonts([
-      FONT_INTER,
-      { ...FONT_INTER, id: "lora", family: "Lora" },
-    ]);
+    const result = await syncFonts([FONT_INTER, { ...FONT_INTER, id: "lora", family: "Lora" }]);
 
     expect(result.uploaded).toBe(2);
     expect(result.skipped).toBe(8);
@@ -376,9 +368,7 @@ describe("syncFonts", () => {
         "font/woff2",
         "public, max-age=31536000, immutable",
       );
-      expect(manifest.fonts.inter?.previewPath).toBe(
-        "inter/inter-preview.woff2",
-      );
+      expect(manifest.fonts.inter?.previewPath).toBe("inter/inter-preview.woff2");
     });
 
     test("pins the wght axis to its default for variable fonts", async () => {
@@ -410,9 +400,7 @@ describe("syncFonts", () => {
         expect.anything(),
         expect.anything(),
       );
-      expect(manifest.fonts.inter?.previewPath).toBe(
-        "inter/inter-preview.woff2",
-      );
+      expect(manifest.fonts.inter?.previewPath).toBe("inter/inter-preview.woff2");
     });
 
     test("propagates the subsetting error", async () => {

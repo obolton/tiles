@@ -21,13 +21,7 @@ export interface DockZoneProps {
 
 type EdgeStyle = "top" | "bottom" | "left" | "right";
 
-export default function DockZone({
-  page,
-  isEditable,
-  edge,
-  tiles,
-  signal,
-}: DockZoneProps) {
+export default function DockZone({ page, isEditable, edge, tiles, signal }: DockZoneProps) {
   const isEmpty = tiles.derive((items) => items.length === 0);
   const edgeStyle = edge.toLowerCase() as EdgeStyle;
   const isHorizontal = edge === "TOP" || edge === "BOTTOM";

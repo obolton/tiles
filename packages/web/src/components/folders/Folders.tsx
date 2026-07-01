@@ -29,8 +29,7 @@ export interface FoldersProps {
   };
 }
 
-const FolderModalLoader = () =>
-  import("@/components/modals/folders/FolderModal");
+const FolderModalLoader = () => import("@/components/modals/folders/FolderModal");
 
 export default function Folders({
   workspaceId,
@@ -80,11 +79,7 @@ export default function Folders({
             nextCursor: folders.value.nextCursor,
           };
           if (selectedId === folder.id) {
-            redirectWithToast(
-              `/workspaces/${workspaceId}`,
-              "The folder was deleted.",
-              "success",
-            );
+            redirectWithToast(`/workspaces/${workspaceId}`, "The folder was deleted.", "success");
           }
           return;
         }

@@ -175,9 +175,7 @@ describe("CacheCollection", () => {
 
       await collection.append([{ id: "2", name: "Second" }], "new-cursor");
 
-      expect(collection.meta?.cachedAt.getTime()).toBeGreaterThan(
-        firstTimestamp,
-      );
+      expect(collection.meta?.cachedAt.getTime()).toBeGreaterThan(firstTimestamp);
       expect(collection.meta?.nextCursor).toBe("new-cursor");
     });
 
@@ -558,9 +556,7 @@ describe("CacheCollection", () => {
 
   describe("serialize/deserialize", () => {
     let transformCollection: CacheCollection<TestItemRaw, TestModel>;
-    let transformDb: Database<
-      ReturnType<typeof createTransformCollection>["schema"]
-    >;
+    let transformDb: Database<ReturnType<typeof createTransformCollection>["schema"]>;
 
     function createTransformCollection() {
       return new CacheCollection<TestItemRaw, TestModel>({
@@ -591,9 +587,7 @@ describe("CacheCollection", () => {
     });
 
     test("set stores model instances in memory", async () => {
-      await transformCollection.set([
-        new TestModel({ id: "1", name: "Test", count: 5 }),
-      ]);
+      await transformCollection.set([new TestModel({ id: "1", name: "Test", count: 5 })]);
 
       expect(transformCollection.items.value[0]).toBeInstanceOf(TestModel);
       expect(transformCollection.items.value[0]?.name).toBe("Test");
@@ -601,9 +595,7 @@ describe("CacheCollection", () => {
     });
 
     test("set persists raw form to IDB and getCached deserializes", async () => {
-      await transformCollection.set([
-        new TestModel({ id: "1", name: "Test", count: 5 }),
-      ]);
+      await transformCollection.set([new TestModel({ id: "1", name: "Test", count: 5 })]);
 
       const freshCollection = createTransformCollection();
       freshCollection.initialize(transformDb);
@@ -617,12 +609,8 @@ describe("CacheCollection", () => {
     });
 
     test("append stores model instances in memory and IDB", async () => {
-      await transformCollection.set([
-        new TestModel({ id: "1", name: "First", count: 1 }),
-      ]);
-      await transformCollection.append([
-        new TestModel({ id: "2", name: "Second", count: 2 }),
-      ]);
+      await transformCollection.set([new TestModel({ id: "1", name: "First", count: 1 })]);
+      await transformCollection.append([new TestModel({ id: "2", name: "Second", count: 2 })]);
 
       expect(transformCollection.items.value).toHaveLength(2);
       expect(transformCollection.items.value[1]).toBeInstanceOf(TestModel);
@@ -637,24 +625,16 @@ describe("CacheCollection", () => {
     });
 
     test("upsert inserts model instance", async () => {
-      await transformCollection.set([
-        new TestModel({ id: "1", name: "First", count: 1 }),
-      ]);
-      await transformCollection.upsert(
-        new TestModel({ id: "2", name: "Second", count: 2 }),
-      );
+      await transformCollection.set([new TestModel({ id: "1", name: "First", count: 1 })]);
+      await transformCollection.upsert(new TestModel({ id: "2", name: "Second", count: 2 }));
 
       expect(transformCollection.items.value).toHaveLength(2);
       expect(transformCollection.getById("2")).toBeInstanceOf(TestModel);
     });
 
     test("upsert updates existing model instance", async () => {
-      await transformCollection.set([
-        new TestModel({ id: "1", name: "Original", count: 1 }),
-      ]);
-      await transformCollection.upsert(
-        new TestModel({ id: "1", name: "Updated", count: 10 }),
-      );
+      await transformCollection.set([new TestModel({ id: "1", name: "Original", count: 1 })]);
+      await transformCollection.upsert(new TestModel({ id: "1", name: "Updated", count: 10 }));
 
       expect(transformCollection.items.value).toHaveLength(1);
       expect(transformCollection.items.value[0]).toBeInstanceOf(TestModel);
@@ -663,9 +643,7 @@ describe("CacheCollection", () => {
     });
 
     test("update round-trips through serialize and deserialize", async () => {
-      await transformCollection.set([
-        new TestModel({ id: "1", name: "Original", count: 5 }),
-      ]);
+      await transformCollection.set([new TestModel({ id: "1", name: "Original", count: 5 })]);
 
       const updated = await transformCollection.update("1", {
         name: "Updated",
@@ -679,9 +657,7 @@ describe("CacheCollection", () => {
     });
 
     test("update persists raw form to IDB", async () => {
-      await transformCollection.set([
-        new TestModel({ id: "1", name: "Original", count: 5 }),
-      ]);
+      await transformCollection.set([new TestModel({ id: "1", name: "Original", count: 5 })]);
       await transformCollection.update("1", { name: "Updated" });
 
       const freshCollection = createTransformCollection();
@@ -707,9 +683,7 @@ describe("CacheCollection", () => {
     });
 
     test("invalidate clears all model instances", async () => {
-      await transformCollection.set([
-        new TestModel({ id: "1", name: "Test", count: 1 }),
-      ]);
+      await transformCollection.set([new TestModel({ id: "1", name: "Test", count: 1 })]);
 
       await transformCollection.invalidate();
 

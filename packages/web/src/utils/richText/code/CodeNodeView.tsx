@@ -1,18 +1,10 @@
-import {
-  EditorView as CMEditorView,
-  keymap,
-  lineNumbers as cmLineNumbers,
-} from "@codemirror/view";
+import { EditorView as CMEditorView, keymap, lineNumbers as cmLineNumbers } from "@codemirror/view";
 import { EditorState, Compartment } from "@codemirror/state";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { loadLanguage } from "./languages";
 import { editorTheme, highlightingExtension } from "./theme";
 import { forwardToProseMirror, applyToCodeMirror } from "./sync";
-import {
-  createEscapeCommand,
-  insertParagraphAfter,
-  deleteCodeBlockIfEmpty,
-} from "./navigation";
+import { createEscapeCommand, insertParagraphAfter, deleteCodeBlockIfEmpty } from "./navigation";
 import { handleError } from "@/utils/errors";
 import styles from "./code.module.css";
 import "./highlight.css";
@@ -57,9 +49,7 @@ export class CodeNodeView implements NodeView {
           editorTheme,
           highlightingExtension,
           this.languageCompartment.of([]),
-          this.lineNumbersCompartment.of(
-            this.lineNumbers ? cmLineNumbers() : [],
-          ),
+          this.lineNumbersCompartment.of(this.lineNumbers ? cmLineNumbers() : []),
           CMEditorView.updateListener.of((update) => {
             if (!this.updating) {
               forwardToProseMirror(update, this.view, this.getPos);
@@ -97,19 +87,14 @@ export class CodeNodeView implements NodeView {
         mac: "Cmd-Enter",
         run: () => {
           const pos = this.getPos();
-          return (
-            typeof pos === "number" && insertParagraphAfter(this.view, pos)
-          );
+          return typeof pos === "number" && insertParagraphAfter(this.view, pos);
         },
       },
       {
         key: "Backspace",
         run: () => {
           const pos = this.getPos();
-          return (
-            typeof pos === "number" &&
-            deleteCodeBlockIfEmpty(this.cm, this.view, pos)
-          );
+          return typeof pos === "number" && deleteCodeBlockIfEmpty(this.cm, this.view, pos);
         },
       },
     ];
@@ -141,17 +126,13 @@ export class CodeNodeView implements NodeView {
     if (newLineNumbers !== this.lineNumbers) {
       this.lineNumbers = newLineNumbers;
       this.cm.dispatch({
-        effects: this.lineNumbersCompartment.reconfigure(
-          newLineNumbers ? cmLineNumbers() : [],
-        ),
+        effects: this.lineNumbersCompartment.reconfigure(newLineNumbers ? cmLineNumbers() : []),
       });
     }
 
     // Sync editable state
     this.cm.dispatch({
-      effects: this.editableCompartment.reconfigure(
-        CMEditorView.editable.of(this.view.editable),
-      ),
+      effects: this.editableCompartment.reconfigure(CMEditorView.editable.of(this.view.editable)),
     });
 
     // Sync content from ProseMirror (e.g., undo/redo)

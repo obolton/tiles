@@ -1,12 +1,7 @@
 import * as Y from "yjs";
 import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { uploadMedia } from "@/utils/media";
-import {
-  ACCEPT_IMAGE_TYPES,
-  getAcceptableDragItem,
-  isImage,
-  isUriList,
-} from "@/utils/media";
+import { ACCEPT_IMAGE_TYPES, getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
 import { reactive, flag, combine } from "@/utils/reactivity";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import { focusInside } from "@/utils/focus";
@@ -234,11 +229,7 @@ export default class Editor {
     }
 
     // Redo: Cmd/Ctrl+Shift+Z or Cmd/Ctrl+Y (not in text inputs)
-    if (
-      isMod &&
-      !isInput &&
-      ((event.key === "z" && event.shiftKey) || event.key === "y")
-    ) {
+    if (isMod && !isInput && ((event.key === "z" && event.shiftKey) || event.key === "y")) {
       event.preventDefault();
       this.redo();
       return;
@@ -452,9 +443,7 @@ export default class Editor {
   }
 
   transitionSections(update: () => void) {
-    const sections = document.querySelectorAll<HTMLElement>(
-      "section[data-section-id]",
-    );
+    const sections = document.querySelectorAll<HTMLElement>("section[data-section-id]");
     for (const section of sections) {
       section.style.viewTransitionName = `section-${section.dataset.sectionId}`;
     }
@@ -478,22 +467,17 @@ export default class Editor {
       }
     }
 
-    const elements = ids
-      .map((id) => document.getElementById(id))
-      .filter((element) => !!element);
+    const elements = ids.map((id) => document.getElementById(id)).filter((element) => !!element);
     elements.forEach((element) => {
       element.style.viewTransitionClass = "destroy";
     });
 
     // If the focus was in a tile to be deleted, move focus to a new element
     let focus: Element | null = null;
-    const containsFocus = !!elements.find((element) =>
-      element.contains(document.activeElement),
-    );
+    const containsFocus = !!elements.find((element) => element.contains(document.activeElement));
     if (containsFocus) {
       const last = elements.at(-1);
-      focus =
-        (last?.nextElementSibling || last?.previousElementSibling) ?? null;
+      focus = (last?.nextElementSibling || last?.previousElementSibling) ?? null;
     }
 
     const doc = this.page.doc;

@@ -75,9 +75,7 @@ describe("Page", () => {
     test("throws for an unknown dropdown ID", () => {
       const page = new Page(PAGE, new Y.Doc());
 
-      expect(() => page.getDropdown("unknown")).toThrow(
-        "Item not found: unknown",
-      );
+      expect(() => page.getDropdown("unknown")).toThrow("Item not found: unknown");
     });
   });
 
@@ -100,9 +98,7 @@ describe("Page", () => {
     test("throws for an unknown invite ID", () => {
       const page = new Page(PAGE, new Y.Doc());
 
-      expect(() => page.getInvite("unknown")).toThrow(
-        "Invite cannot be found: unknown",
-      );
+      expect(() => page.getInvite("unknown")).toThrow("Invite cannot be found: unknown");
     });
   });
 
@@ -121,12 +117,10 @@ describe("Page", () => {
 
       await pageWithAccess.revokeAccess("user-1");
 
-      expect(client.collaboration.revokePageAccess.mutate).toHaveBeenCalledWith(
-        {
-          pageId: PAGE.id,
-          userId: "user-1",
-        },
-      );
+      expect(client.collaboration.revokePageAccess.mutate).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        userId: "user-1",
+      });
       expect(pageWithAccess.access.value).toHaveLength(1);
       expect(pageWithAccess.access.value[0]?.user.id).toBe("user-2");
     });
@@ -303,16 +297,11 @@ describe("Page", () => {
       });
 
       expect(inserted.order.value < existing.order.value).toBe(true);
-      expect(page.tiles.value.map((t) => t.id)).toEqual([
-        inserted.id,
-        existing.id,
-      ]);
+      expect(page.tiles.value.map((t) => t.id)).toEqual([inserted.id, existing.id]);
     });
 
     test("places the tile under the specified parent section", () => {
-      const section = page.createTile(
-        Section.createMap({ layout: "VERTICAL" }),
-      ) as Section;
+      const section = page.createTile(Section.createMap({ layout: "VERTICAL" })) as Section;
       const child = page.createTile(Text.createMap({ align: "TOP" }), {
         parentId: section.id,
       });

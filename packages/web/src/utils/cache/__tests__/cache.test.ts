@@ -65,9 +65,7 @@ describe("cache", () => {
     });
 
     test("throws if cache not initialized", () => {
-      expect(() => getWorkspaceId()).toThrow(
-        "Cache not initialized. Call initializeCache first.",
-      );
+      expect(() => getWorkspaceId()).toThrow("Cache not initialized. Call initializeCache first.");
     });
   });
 

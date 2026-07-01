@@ -40,8 +40,7 @@ export default function FramePicker({ tile, onChange }: FramePickerProps) {
   }
 
   const parent = parseParentId(tile.parentId.value);
-  const section =
-    parent.type === "section" ? page.getSection(parent.sectionId) : null;
+  const section = parent.type === "section" ? page.getSection(parent.sectionId) : null;
   const fullBleedDisabled = section
     ? section.layout.derive((layout) => !FULL_BLEED_LAYOUTS.includes(layout))
     : reactive(false);
@@ -92,9 +91,7 @@ export default function FramePicker({ tile, onChange }: FramePickerProps) {
             value={value.toString()}
             aria-label={label}
             style={{ "--preview": `${preview}px` }}
-            checked={cornerRadius.derive(
-              (r) => (r ?? DEFAULT_CORNER_RADIUS) === value,
-            )}
+            checked={cornerRadius.derive((r) => (r ?? DEFAULT_CORNER_RADIUS) === value)}
           />
         ))}
       </fieldset>

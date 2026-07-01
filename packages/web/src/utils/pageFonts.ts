@@ -11,9 +11,7 @@ function getTileFonts(tile: Y.Map<unknown>): Set<FontId> {
   switch (tile.get("type")) {
     case "TEXT": {
       const content = tile.get("content");
-      return content instanceof Y.XmlFragment
-        ? getFragmentFonts(content)
-        : new Set();
+      return content instanceof Y.XmlFragment ? getFragmentFonts(content) : new Set();
     }
     case "IMAGE": {
       const text = tile.get("text") as RichText | null;

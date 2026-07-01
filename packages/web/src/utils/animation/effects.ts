@@ -41,38 +41,21 @@ export function move(
 
 export function moveFrom(
   element: Element,
-  {
-    x = "0",
-    y = "0",
-    timing = SPRING,
-  }: { x?: string; y?: string; timing?: EffectTiming },
+  { x = "0", y = "0", timing = SPRING }: { x?: string; y?: string; timing?: EffectTiming },
 ) {
-  const animation = element.animate(
-    [{ translate: `${x} ${y}` }, { translate: "none" }],
-    timing,
-  );
+  const animation = element.animate([{ translate: `${x} ${y}` }, { translate: "none" }], timing);
   return createAnimationPromise(animation);
 }
 
 export function moveTo(
   element: Element,
-  {
-    x = "0",
-    y = "0",
-    timing = SPRING,
-  }: { x?: string; y?: string; timing?: EffectTiming },
+  { x = "0", y = "0", timing = SPRING }: { x?: string; y?: string; timing?: EffectTiming },
 ) {
-  const animation = element.animate(
-    [{ translate: "none" }, { translate: `${x} ${y}` }],
-    timing,
-  );
+  const animation = element.animate([{ translate: "none" }, { translate: `${x} ${y}` }], timing);
   return createAnimationPromise(animation);
 }
 
-export function fadeIn(
-  element: Element,
-  { timing = DEFAULT_TIMING } = { timing: DEFAULT_TIMING },
-) {
+export function fadeIn(element: Element, { timing = DEFAULT_TIMING } = { timing: DEFAULT_TIMING }) {
   const animation = element.animate([{ opacity: 0 }, { opacity: 1 }], timing);
   return createAnimationPromise(animation);
 }

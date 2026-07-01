@@ -1,9 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import {
-  getGoogleAuthorizationUrl,
-  exchangeCode,
-  verifyIdToken,
-} from "../google";
+import { getGoogleAuthorizationUrl, exchangeCode, verifyIdToken } from "../google";
 import { jwtVerify } from "jose";
 import * as oauth2 from "../oauth2";
 
@@ -18,12 +14,8 @@ describe("google", () => {
       expect(parsedUrl.origin).toBe("https://localhost");
       expect(parsedUrl.pathname).toBe("/sign-in/google");
       expect(parsedUrl.searchParams.get("response_type")).toBe("code");
-      expect(parsedUrl.searchParams.get("client_id")).toBe(
-        process.env.GOOGLE_CLIENT_ID,
-      );
-      expect(parsedUrl.searchParams.get("redirect_uri")).toBe(
-        process.env.GOOGLE_REDIRECT_URI,
-      );
+      expect(parsedUrl.searchParams.get("client_id")).toBe(process.env.GOOGLE_CLIENT_ID);
+      expect(parsedUrl.searchParams.get("redirect_uri")).toBe(process.env.GOOGLE_REDIRECT_URI);
       expect(parsedUrl.searchParams.get("scope")).toBe("openid profile email");
       expect(parsedUrl.searchParams.get("access_type")).toBe("online");
       expect(parsedUrl.searchParams.get("code_challenge_method")).toBe("S256");
@@ -190,9 +182,7 @@ describe("google", () => {
     });
 
     it("should propagate jose verification errors", async () => {
-      vi.mocked(jwtVerify).mockRejectedValue(
-        new Error("JWT verification failed"),
-      );
+      vi.mocked(jwtVerify).mockRejectedValue(new Error("JWT verification failed"));
 
       await expect(
         verifyIdToken({

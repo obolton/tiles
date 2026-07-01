@@ -87,19 +87,14 @@ function serializeNode(node: Node): SerializedNode {
       size: getTextSize(node),
       color: getTextColor(node),
       font: getTextFont(node),
-      pending: node.marks.find((mark) => mark.type === schema.marks.pending)
-        ? true
-        : undefined,
+      pending: node.marks.find((mark) => mark.type === schema.marks.pending) ? true : undefined,
     };
   }
 
   if (node.type === nodes.pending) {
     return {
       type: "pending",
-      children: node.children.map(serializeNode) as Exclude<
-        BlockNode,
-        { type: "pending" }
-      >[],
+      children: node.children.map(serializeNode) as Exclude<BlockNode, { type: "pending" }>[],
     };
   }
 

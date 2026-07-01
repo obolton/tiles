@@ -93,9 +93,7 @@ export default class Each<T> implements JSX.ElementClass {
   }
 
   private getCombinedSignal(abort: AbortController) {
-    return this.signal
-      ? AbortSignal.any([abort.signal, this.signal])
-      : abort.signal;
+    return this.signal ? AbortSignal.any([abort.signal, this.signal]) : abort.signal;
   }
 
   private update() {

@@ -13,13 +13,7 @@ export interface ColorToggleProps {
   onSelect: (color: ActiveColor) => void;
 }
 
-export default function ColorToggle({
-  colorA,
-  colorB,
-  active,
-  showB,
-  onSelect,
-}: ColorToggleProps) {
+export default function ColorToggle({ colorA, colorB, active, showB, onSelect }: ColorToggleProps) {
   function handleChange(event: Event) {
     const element = event.target as HTMLInputElement;
     onSelect(element.value as ActiveColor);

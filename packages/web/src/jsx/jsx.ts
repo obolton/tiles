@@ -21,20 +21,16 @@ export namespace JSX {
     key?: string | null;
   };
 
-  export type Properties<T extends ElementType> =
-    T extends keyof IntrinsicElements
-      ? IntrinsicElements[T]
-      : T extends Component<infer R>
+  export type Properties<T extends ElementType> = T extends keyof IntrinsicElements
+    ? IntrinsicElements[T]
+    : T extends Component<infer R>
+      ? R
+      : T extends ClassComponent<infer R>
         ? R
-        : T extends ClassComponent<infer R>
-          ? R
-          : never;
+        : never;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export type ElementType =
-    | keyof IntrinsicElements
-    | Component<any>
-    | ClassComponent<any>;
+  export type ElementType = keyof IntrinsicElements | Component<any> | ClassComponent<any>;
 
   export type Node =
     | Element
@@ -66,14 +62,10 @@ export namespace JSX {
   export type DataAttribute = `data-${string}`;
 
   export type EventHandlers = {
-    [K in keyof HTMLElementEventMap as `on:${K}`]?: (
-      event: HTMLElementEventMap[K],
-    ) => void;
+    [K in keyof HTMLElementEventMap as `on:${K}`]?: (event: HTMLElementEventMap[K]) => void;
   };
 
-  export type Attributes<TagName extends string> = WithReactiveProperties<
-    AttributesFor<TagName>
-  > &
+  export type Attributes<TagName extends string> = WithReactiveProperties<AttributesFor<TagName>> &
     WithProperties<ElementTypeFor<TagName>> &
     WithBindings<ElementTypeFor<TagName>> & {
       ref?: Ref<ElementTypeFor<TagName>>;
@@ -86,18 +78,14 @@ export namespace JSX {
   };
 
   export type SVGElements = {
-    [T in keyof Omit<
-      SVGElementTagNameMap,
-      "a" | "script" | "style" | "title"
-    >]: Attributes<T>;
+    [T in keyof Omit<SVGElementTagNameMap, "a" | "script" | "style" | "title">]: Attributes<T>;
   };
 
   export type MathMLElements = {
     [T in keyof MathMLElementTagNameMap]: Attributes<T>;
   };
 
-  export interface IntrinsicElements
-    extends HTMLElements, SVGElements, MathMLElements {}
+  export interface IntrinsicElements extends HTMLElements, SVGElements, MathMLElements {}
 }
 
 export function jsx<T extends JSX.ElementType>(
@@ -116,8 +104,6 @@ export function Fragment({ children }: FragmentProperties) {
   return children;
 }
 
-export function isClassComponent<T>(
-  node: JSX.ElementType,
-): node is JSX.ClassComponent<T> {
+export function isClassComponent<T>(node: JSX.ElementType): node is JSX.ClassComponent<T> {
   return typeof node === "function" && node.prototype && node.prototype.render;
 }

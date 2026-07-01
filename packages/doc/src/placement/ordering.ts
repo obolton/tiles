@@ -22,10 +22,7 @@ function compareOrder(a: OrderedTile, b: OrderedTile): number {
   return 0;
 }
 
-export function getChildren(
-  tiles: Y.Map<Y.Map<unknown>>,
-  parentId: string | null,
-): OrderedTile[] {
+export function getChildren(tiles: Y.Map<Y.Map<unknown>>, parentId: string | null): OrderedTile[] {
   const children: OrderedTile[] = [];
   for (const [id, tile] of tiles) {
     if (tile.get("parentId") !== parentId) {
@@ -81,16 +78,7 @@ export function orderBetween(
   return generateKeyBetween(prev?.order ?? null, next?.order ?? null);
 }
 
-export function orderAfter(
-  siblings: OrderedTile[],
-  afterId: string | null,
-): string {
-  const index =
-    afterId == null
-      ? -1
-      : siblings.findIndex((sibling) => sibling.id === afterId);
-  return generateKeyBetween(
-    siblings[index]?.order ?? null,
-    siblings[index + 1]?.order ?? null,
-  );
+export function orderAfter(siblings: OrderedTile[], afterId: string | null): string {
+  const index = afterId == null ? -1 : siblings.findIndex((sibling) => sibling.id === afterId);
+  return generateKeyBetween(siblings[index]?.order ?? null, siblings[index + 1]?.order ?? null);
 }

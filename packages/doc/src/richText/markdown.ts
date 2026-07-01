@@ -76,8 +76,7 @@ function serializeList(node: Y.XmlElement): string {
 
 function serializeListItem(item: Y.XmlElement, indent: number): string {
   const blocks = item.toArray();
-  const head =
-    blocks[0] instanceof Y.XmlElement ? serializeInline(blocks[0]) : "";
+  const head = blocks[0] instanceof Y.XmlElement ? serializeInline(blocks[0]) : "";
   const rest = serializeBlocks(blocks.slice(1)).trim();
   return rest ? `${head}\n${indentLines(rest, indent)}` : head;
 }
@@ -90,11 +89,7 @@ function indentLines(text: string, indent: number): string {
     .join("\n");
 }
 
-function listMarker(
-  list: Y.XmlElement,
-  item: Y.XmlElement,
-  index: number,
-): string {
+function listMarker(list: Y.XmlElement, item: Y.XmlElement, index: number): string {
   switch (list.nodeName) {
     case "ordered_list":
       return `${index}.`;

@@ -11,18 +11,9 @@ export interface HeaderProps {
   actions?: JSX.Node;
 }
 
-export default function Header({
-  user,
-  workspaceId,
-  center,
-  actions,
-}: HeaderProps) {
+export default function Header({ user, workspaceId, center, actions }: HeaderProps) {
   return (
-    <header
-      id="header"
-      className={styles.header}
-      data-tooltip-position="bottom"
-    >
+    <header id="header" className={styles.header} data-tooltip-position="bottom">
       <nav className={styles.start} aria-label="Navigation">
         <NavigationMenu user={user} workspaceId={workspaceId} />
         <NewPageMenu workspaceId={workspaceId} />

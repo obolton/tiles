@@ -9,11 +9,7 @@ import type { Reactive } from "@/utils/reactivity";
 // Style types
 
 export type ClassList = {
-  [className: string]:
-    | boolean
-    | null
-    | undefined
-    | Reactive<boolean | null | undefined>;
+  [className: string]: boolean | null | undefined | Reactive<boolean | null | undefined>;
 };
 
 export type StyleValue = string | number | null | undefined;
@@ -21,9 +17,7 @@ export type StyleValue = string | number | null | undefined;
 export type CustomCSSProperty = `--${string}`;
 
 export type StyleDeclaration = {
-  [K in keyof CSSStyleDeclaration | CustomCSSProperty]?:
-    | StyleValue
-    | Reactive<StyleValue>;
+  [K in keyof CSSStyleDeclaration | CustomCSSProperty]?: StyleValue | Reactive<StyleValue>;
 };
 
 // Global attributes shared by all HTML elements
@@ -44,24 +38,9 @@ export interface GlobalHTMLAttributes {
   autofocus?: boolean;
   contenteditable?: "true" | "false" | "plaintext-only" | "";
   draggable?: "true" | "false";
-  enterkeyhint?:
-    | "enter"
-    | "done"
-    | "go"
-    | "next"
-    | "previous"
-    | "search"
-    | "send";
+  enterkeyhint?: "enter" | "done" | "go" | "next" | "previous" | "search" | "send";
   inert?: boolean;
-  inputmode?:
-    | "none"
-    | "text"
-    | "decimal"
-    | "numeric"
-    | "tel"
-    | "search"
-    | "email"
-    | "url";
+  inputmode?: "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url";
   is?: string;
   itemid?: string;
   itemprop?: string;
@@ -76,16 +55,7 @@ export interface GlobalHTMLAttributes {
 
   // ARIA boolean string attributes
   "aria-checked"?: boolean | "true" | "false" | "mixed" | {};
-  "aria-current"?:
-    | boolean
-    | "true"
-    | "false"
-    | "page"
-    | "step"
-    | "location"
-    | "date"
-    | "time"
-    | {};
+  "aria-current"?: boolean | "true" | "false" | "page" | "step" | "location" | "date" | "time" | {};
   "aria-disabled"?: boolean | "true" | "false" | {};
   "aria-expanded"?: boolean | "true" | "false" | {};
   "aria-pressed"?: boolean | "true" | "false" | "mixed" | {};
@@ -112,10 +82,7 @@ export interface ButtonHTMLAttributes extends GlobalHTMLAttributes {
   value?: string;
   form?: string;
   formaction?: string;
-  formenctype?:
-    | "application/x-www-form-urlencoded"
-    | "multipart/form-data"
-    | "text/plain";
+  formenctype?: "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain";
   formmethod?: "get" | "post" | "dialog";
   formnovalidate?: boolean;
   formtarget?: string;
@@ -230,10 +197,7 @@ export interface OptgroupHTMLAttributes extends GlobalHTMLAttributes {
 export interface FormHTMLAttributes extends GlobalHTMLAttributes {
   action?: string;
   method?: "get" | "post" | "dialog";
-  enctype?:
-    | "application/x-www-form-urlencoded"
-    | "multipart/form-data"
-    | "text/plain";
+  enctype?: "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain";
   target?: string;
   novalidate?: boolean;
   autocomplete?: "on" | "off";
@@ -684,24 +648,22 @@ export interface HTMLAttributesByTagName {
 }
 
 // Lookup with fallback chain: HTML → SVG → MathML → global
-export type AttributesFor<T extends string> =
-  T extends keyof HTMLAttributesByTagName
-    ? HTMLAttributesByTagName[T]
-    : T extends keyof SVGElementTagNameMap
-      ? SVGAttributes
-      : T extends keyof MathMLElementTagNameMap
-        ? MathMLAttributes
-        : GlobalHTMLAttributes;
+export type AttributesFor<T extends string> = T extends keyof HTMLAttributesByTagName
+  ? HTMLAttributesByTagName[T]
+  : T extends keyof SVGElementTagNameMap
+    ? SVGAttributes
+    : T extends keyof MathMLElementTagNameMap
+      ? MathMLAttributes
+      : GlobalHTMLAttributes;
 
 // Map tag name to element type for property access
-export type ElementTypeFor<T extends string> =
-  T extends keyof HTMLElementTagNameMap
-    ? HTMLElementTagNameMap[T]
-    : T extends keyof SVGElementTagNameMap
-      ? SVGElementTagNameMap[T]
-      : T extends keyof MathMLElementTagNameMap
-        ? MathMLElementTagNameMap[T]
-        : Element;
+export type ElementTypeFor<T extends string> = T extends keyof HTMLElementTagNameMap
+  ? HTMLElementTagNameMap[T]
+  : T extends keyof SVGElementTagNameMap
+    ? SVGElementTagNameMap[T]
+    : T extends keyof MathMLElementTagNameMap
+      ? MathMLElementTagNameMap[T]
+      : Element;
 
 // SVG attributes
 export interface SVGAttributes {

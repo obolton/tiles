@@ -6,10 +6,7 @@ const WEEK = 7 * DAY;
 const MONTH = 30 * DAY;
 const YEAR = 365 * DAY;
 
-export function formatRelativeDate(
-  date: Date,
-  locale: Intl.LocalesArgument = "en",
-) {
+export function formatRelativeDate(date: Date, locale: Intl.LocalesArgument = "en") {
   const formatter = new Intl.RelativeTimeFormat(locale, {
     style: "long",
     numeric: "auto",
@@ -120,10 +117,7 @@ export function getNearestMonth(dates: Date[]): {
   let nearestPast: Date | null = null;
 
   for (const date of dates) {
-    if (
-      date.getFullYear() === currentYear &&
-      date.getMonth() === currentMonth
-    ) {
+    if (date.getFullYear() === currentYear && date.getMonth() === currentMonth) {
       return { year: currentYear, month: currentMonth };
     }
 
@@ -152,11 +146,7 @@ export function getNearestMonth(dates: Date[]): {
  * @param month 0-indexed month (0 = January)
  * @param firstDayOfWeek 0 = Sunday, 1 = Monday, etc.
  */
-export function getCalendarWeeks(
-  year: number,
-  month: number,
-  firstDayOfWeek: number,
-): Date[][] {
+export function getCalendarWeeks(year: number, month: number, firstDayOfWeek: number): Date[][] {
   const daysInMonth = getDaysInMonth(new Date(year, month, 1));
   const firstWeekday = new Date(year, month, 1).getDay();
   const leadingDays = (firstWeekday - firstDayOfWeek + 7) % 7;

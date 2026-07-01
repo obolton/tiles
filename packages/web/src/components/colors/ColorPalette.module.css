@@ -32,7 +32,6 @@
 
   &:active,
   &:checked {
-    box-shadow: inset 0 0 0 3px
-      oklch(from var(--color) calc(1 - l) calc(c / 2) h / 50%);
+    box-shadow: inset 0 0 0 3px oklch(from var(--color) calc(1 - l) calc(c / 2) h / 50%);
   }
 }

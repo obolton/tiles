@@ -55,22 +55,13 @@ export default function SectionToolbar({ section }: SectionToolbarProps) {
               on:change={setLayout}
             >
               <ListGroup>
-                <ListOption
-                  icon={<GridLayoutIcon aria-hidden="true" />}
-                  value="GRID"
-                >
+                <ListOption icon={<GridLayoutIcon aria-hidden="true" />} value="GRID">
                   Grid
                 </ListOption>
-                <ListOption
-                  icon={<HorizontalLayoutIcon aria-hidden="true" />}
-                  value="HORIZONTAL"
-                >
+                <ListOption icon={<HorizontalLayoutIcon aria-hidden="true" />} value="HORIZONTAL">
                   Horizontal
                 </ListOption>
-                <ListOption
-                  icon={<VerticalLayoutIcon aria-hidden="true" />}
-                  value="VERTICAL"
-                >
+                <ListOption icon={<VerticalLayoutIcon aria-hidden="true" />} value="VERTICAL">
                   Vertical
                 </ListOption>
               </ListGroup>

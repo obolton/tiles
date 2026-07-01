@@ -17,10 +17,7 @@ export const VOID_ELEMENTS = new Set([
   "wbr",
 ]);
 
-export type Attributes = Record<
-  string,
-  string | boolean | number | bigint | null | undefined
->;
+export type Attributes = Record<string, string | boolean | number | bigint | null | undefined>;
 
 function serializeAttributes(attributes: Attributes): string {
   const parts: string[] = [];
@@ -48,11 +45,7 @@ export function closeTag(name: string): string {
   return "</" + name + ">";
 }
 
-export function tag(
-  name: string,
-  attributes: Attributes,
-  content?: string,
-): string {
+export function tag(name: string, attributes: Attributes, content?: string): string {
   const open = openTag(name, attributes);
   if (VOID_ELEMENTS.has(name)) {
     return open;

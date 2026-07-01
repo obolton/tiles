@@ -62,9 +62,7 @@ export default router({
     .input(ListWorkspaceInvitesSchema)
     .query(async ({ input, ctx }) => listWorkspaceInvites(input, ctx)),
 
-  leave: authenticatedWorkspaceProcedure.mutation(({ ctx }) =>
-    leaveWorkspace(ctx),
-  ),
+  leave: authenticatedWorkspaceProcedure.mutation(({ ctx }) => leaveWorkspace(ctx)),
 
   remove: adminWorkspaceProcedure
     .input(RemoveFromWorkspaceSchema)

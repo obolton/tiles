@@ -85,9 +85,7 @@ export default function FilmstripPanel({
         on:slidereorder={onSlideReorder}
         on:dnd-dragstart={onDragStart}
       >
-        <Each items={tiles}>
-          {(tile) => <FilmstripThumbnail tile={tile} />}
-        </Each>
+        <Each items={tiles}>{(tile) => <FilmstripThumbnail tile={tile} />}</Each>
       </filmstrip-view>
 
       <If condition={isEditable}>

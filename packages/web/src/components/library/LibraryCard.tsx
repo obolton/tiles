@@ -14,15 +14,13 @@ import type { JSX } from "@/jsx/jsx";
 
 export type LibraryPage = AppRouterOutputs["pages"]["list"]["pages"][number];
 
-const PAGE_TYPES: Record<
-  PageType,
-  { Icon: JSX.Component<JSX.Attributes<"svg">>; label: string }
-> = {
-  DOCUMENT: { Icon: DocumentIcon, label: "Document" },
-  PRESENTATION: { Icon: PresentationIcon, label: "Presentation" },
-  COLLECTION: { Icon: GridLayoutIcon, label: "Collection" },
-  FREE: { Icon: EmptyIcon, label: "Blank page" },
-};
+const PAGE_TYPES: Record<PageType, { Icon: JSX.Component<JSX.Attributes<"svg">>; label: string }> =
+  {
+    DOCUMENT: { Icon: DocumentIcon, label: "Document" },
+    PRESENTATION: { Icon: PresentationIcon, label: "Presentation" },
+    COLLECTION: { Icon: GridLayoutIcon, label: "Collection" },
+    FREE: { Icon: EmptyIcon, label: "Blank page" },
+  };
 
 export interface LibraryCardProps {
   page: LibraryPage;
@@ -62,9 +60,7 @@ export default function LibraryCard({
           >
             {formatRelativeDate(updatedAt)}
           </time>
-          {page.folder ? (
-            <span className={styles.folder}>{page.folder.name}</span>
-          ) : null}
+          {page.folder ? <span className={styles.folder}>{page.folder.name}</span> : null}
           {page.published ? (
             <PublicIcon
               className={styles.published}
@@ -75,10 +71,7 @@ export default function LibraryCard({
         </div>
 
         <div className={styles.author}>
-          <ProfileImage
-            imageUrl={page.author.imageUrl}
-            name={page.author.name}
-          />
+          <ProfileImage imageUrl={page.author.imageUrl} name={page.author.name} />
           <span className={styles["author-name"]}>{page.author.name}</span>
         </div>
       </div>
@@ -87,11 +80,7 @@ export default function LibraryCard({
 
   return (
     <article
-      ref={
-        draggable
-          ? (element) => makeDraggable(element, { clone: true })
-          : undefined
-      }
+      ref={draggable ? (element) => makeDraggable(element, { clone: true }) : undefined}
       classList={{
         [styles.card]: true,
         [styles.selected]: selected,
@@ -106,11 +95,7 @@ export default function LibraryCard({
         <div className={styles.link}>{content}</div>
       )}
 
-      <TypeIcon
-        className={styles.type}
-        aria-label={typeLabel}
-        data-tooltip={typeLabel}
-      />
+      <TypeIcon className={styles.type} aria-label={typeLabel} data-tooltip={typeLabel} />
 
       {selected != null ? (
         <input

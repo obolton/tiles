@@ -126,9 +126,7 @@ export default class DropdownEditor extends HTMLElement {
   private updateOptionsEditingState(editing: boolean) {
     if (!editing) {
       // Remove blank options when exiting edit mode
-      for (const option of this.select.querySelectorAll(
-        'dropdown-option[value=""]',
-      )) {
+      for (const option of this.select.querySelectorAll('dropdown-option[value=""]')) {
         option.remove();
       }
     }

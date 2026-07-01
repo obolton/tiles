@@ -12,10 +12,7 @@ export interface TableViewContentsProps {
   ) => JSX.Node;
 }
 
-export default function TableViewContents({
-  table,
-  children,
-}: TableViewContentsProps) {
+export default function TableViewContents({ table, children }: TableViewContentsProps) {
   return (
     <table>
       <colgroup>

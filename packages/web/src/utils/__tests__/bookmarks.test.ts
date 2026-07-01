@@ -73,9 +73,7 @@ describe("bookmarks", () => {
     });
 
     test("fetches from API when cache is empty", async () => {
-      vi.mocked(client.bookmarks.isBookmarked.query).mockResolvedValueOnce(
-        true,
-      );
+      vi.mocked(client.bookmarks.isBookmarked.query).mockResolvedValueOnce(true);
 
       const result = await getIsBookmarked("page-1");
 
@@ -86,9 +84,7 @@ describe("bookmarks", () => {
     });
 
     test("caches API result when bookmarked", async () => {
-      vi.mocked(client.bookmarks.isBookmarked.query).mockResolvedValueOnce(
-        true,
-      );
+      vi.mocked(client.bookmarks.isBookmarked.query).mockResolvedValueOnce(true);
 
       await getIsBookmarked("page-1");
 
@@ -96,9 +92,7 @@ describe("bookmarks", () => {
     });
 
     test("returns false from API when not bookmarked", async () => {
-      vi.mocked(client.bookmarks.isBookmarked.query).mockResolvedValueOnce(
-        false,
-      );
+      vi.mocked(client.bookmarks.isBookmarked.query).mockResolvedValueOnce(false);
 
       const result = await getIsBookmarked("page-1");
       expect(result).toBe(false);

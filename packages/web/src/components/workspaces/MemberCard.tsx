@@ -6,8 +6,7 @@ import type { Reactive } from "@/utils/reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type { AppRouterOutputs } from "@/api/client";
 
-export type WorkspaceMember =
-  AppRouterOutputs["workspaces"]["listUsers"]["users"][number];
+export type WorkspaceMember = AppRouterOutputs["workspaces"]["listUsers"]["users"][number];
 
 const ROLE_LABELS: Record<string, string> = {
   ADMIN: "Admin",
@@ -41,11 +40,7 @@ export default function MemberCard({
 
   return (
     <article className={styles.card}>
-      <ProfileImage
-        imageUrl={member.imageUrl}
-        name={member.name}
-        size="medium"
-      />
+      <ProfileImage imageUrl={member.imageUrl} name={member.name} size="medium" />
 
       <div className={styles.text}>
         <span className={styles.name}>{member.name}</span>
@@ -70,19 +65,13 @@ export default function MemberCard({
               </ListOption>
             </ListGroup>
             <ListGroup>
-              <ListOption
-                value="REMOVE"
-                label="Remove"
-                classList={{ destructive: true }}
-              >
+              <ListOption value="REMOVE" label="Remove" classList={{ destructive: true }}>
                 {isSelf ? "Leave workspace" : "Remove from workspace"}
               </ListOption>
             </ListGroup>
           </list-select>
         ) : (
-          <span className={styles.role}>
-            {ROLE_LABELS[member.role] ?? member.role}
-          </span>
+          <span className={styles.role}>{ROLE_LABELS[member.role] ?? member.role}</span>
         ),
       )}
     </article>

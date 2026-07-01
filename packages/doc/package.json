@@ -1,9 +1,9 @@
 {
   "name": "doc",
-  "type": "module",
   "version": "0.0.1",
-  "description": "Document schema and utilities",
   "private": true,
+  "description": "Document schema and utilities",
+  "type": "module",
   "exports": {
     "./*": "./src/*.ts"
   },

@@ -22,12 +22,7 @@ export default function PageLayout(props: PageLayoutProps) {
         ? user.derive((value) => {
             const userData = value ?? props.user;
             return userData ? (
-              <Header
-                user={userData}
-                workspaceId={workspaceId}
-                center={center}
-                actions={actions}
-              />
+              <Header user={userData} workspaceId={workspaceId} center={center} actions={actions} />
             ) : null;
           })
         : null}

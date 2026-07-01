@@ -28,12 +28,7 @@ export async function resolveLinkMetadata(
 ): Promise<LinkMetadataResult> {
   const videoInfo = getVideoInfo(url);
   const linkMetadata = await getLinkMetadata(url);
-  const {
-    title = null,
-    description = null,
-    siteName = null,
-    imageUrl = null,
-  } = linkMetadata ?? {};
+  const { title = null, description = null, siteName = null, imageUrl = null } = linkMetadata ?? {};
 
   if (videoInfo) {
     return {
@@ -46,9 +41,7 @@ export async function resolveLinkMetadata(
     };
   }
 
-  const imageId = imageUrl
-    ? await fetchImage(imageUrl, ctx.workspaceId, ctx.userId)
-    : null;
+  const imageId = imageUrl ? await fetchImage(imageUrl, ctx.workspaceId, ctx.userId) : null;
 
   return {
     type: "LINK",

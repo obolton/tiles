@@ -25,10 +25,7 @@ function onClick(event: PointerEvent) {
   }
 }
 
-export default function PageLinkTile({
-  pageLink,
-  showToolbar,
-}: PageLinkTileProps) {
+export default function PageLinkTile({ pageLink, showToolbar }: PageLinkTileProps) {
   const linkedPage = pageLink.linkedPage.value;
 
   if (!linkedPage) {

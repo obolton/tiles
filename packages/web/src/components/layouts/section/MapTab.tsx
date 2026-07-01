@@ -24,9 +24,7 @@ export default function MapTab({ section }: MapTabProps) {
   }
 
   function addPlace() {
-    const mapView = document.querySelector<MapView>(
-      `map-view[data-section-id="${section.id}"]`,
-    );
+    const mapView = document.querySelector<MapView>(`map-view[data-section-id="${section.id}"]`);
     const boundingBox = mapView?.getBoundingBox();
 
     showModal(PlaceModalLoader, {

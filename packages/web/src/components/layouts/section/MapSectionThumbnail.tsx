@@ -6,9 +6,7 @@ export interface MapSectionThumbnailProps {
   section: SectionModel;
 }
 
-export default function MapSectionThumbnail({
-  section: _section,
-}: MapSectionThumbnailProps) {
+export default function MapSectionThumbnail({ section: _section }: MapSectionThumbnailProps) {
   return (
     <Tile>
       <div className={styles.map} aria-hidden="true">

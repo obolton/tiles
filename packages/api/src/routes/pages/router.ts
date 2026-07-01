@@ -1,8 +1,5 @@
 import { router, publicProcedure } from "@/utils/trpc.ts";
-import {
-  authenticatedWorkspaceProcedure,
-  pageUpdateProcedure,
-} from "@/utils/middleware.ts";
+import { authenticatedWorkspaceProcedure, pageUpdateProcedure } from "@/utils/middleware.ts";
 import {
   GetPageByIdSchema,
   ListPagesSchema,
@@ -63,7 +60,5 @@ export default router({
     .input(MovePagesSchema)
     .mutation(async ({ input, ctx }) => movePages(input, ctx)),
 
-  emptyTrash: authenticatedWorkspaceProcedure.mutation(async ({ ctx }) =>
-    emptyTrash(ctx),
-  ),
+  emptyTrash: authenticatedWorkspaceProcedure.mutation(async ({ ctx }) => emptyTrash(ctx)),
 });

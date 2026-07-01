@@ -23,13 +23,9 @@ export default function ColorfulDateTime({ value, time }: DateTimeThemeProps) {
         time ? value.toISOString() : value.toISOString().slice(0, 10),
       )}
     >
-      <span className={styles.month}>
-        {value.derive((date) => monthFormatter.format(date))}
-      </span>
+      <span className={styles.month}>{value.derive((date) => monthFormatter.format(date))}</span>
       &nbsp;
-      <span className={styles.day}>
-        {value.derive((date) => dayFormatter.format(date))}
-      </span>
+      <span className={styles.day}>{value.derive((date) => dayFormatter.format(date))}</span>
       {time.derive((showTime) =>
         showTime ? (
           <>

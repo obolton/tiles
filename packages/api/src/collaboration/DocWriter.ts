@@ -25,10 +25,7 @@ export class DocWriter {
     const parentId = placement.parentId ?? null;
     const id = randomUUID();
     this.doc.transact(() => {
-      const order = orderBetween(
-        getChildren(this.tiles, parentId),
-        placement.beforeId,
-      );
+      const order = orderBetween(getChildren(this.tiles, parentId), placement.beforeId);
       map.set("id", id);
       map.set("parentId", parentId);
       map.set("order", order);

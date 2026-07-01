@@ -19,8 +19,7 @@ export default function MenuItem({
   classList,
   ...props
 }: MenuItemProps) {
-  const resolvedRole =
-    role ?? (checked !== undefined ? "menuitemcheckbox" : "menuitem");
+  const resolvedRole = role ?? (checked !== undefined ? "menuitemcheckbox" : "menuitem");
   return (
     <button
       type="button"

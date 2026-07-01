@@ -22,8 +22,7 @@ import type { Reactive } from "@/utils/reactivity";
 function getSegmentTextColor(tile: Tile): Reactive<string | null> {
   return combine(
     { textColor: tile.textColor, theme: tile.theme },
-    ({ textColor, theme }) =>
-      getThemeStyles(theme, { textColor })["--text-color"] ?? null,
+    ({ textColor, theme }) => getThemeStyles(theme, { textColor })["--text-color"] ?? null,
   );
 }
 
@@ -31,17 +30,13 @@ function getSegmentBackground(tile: Tile): Reactive<string | null> {
   if (tile instanceof Image && tile.imageUrl) {
     return reactive(`url(${tile.imageUrl}) center / cover`);
   }
-  return tile.background.derive(
-    (bg) => getBackgroundStyle(bg)?.background ?? null,
-  );
+  return tile.background.derive((bg) => getBackgroundStyle(bg)?.background ?? null);
 }
 
 function getSegmentLabel(tile: Tile): Reactive<string | null> {
   if (tile instanceof Text) {
     // TODO: react to Y.XmlFragment changes; currently a snapshot at mount time.
-    const text = fragmentToPlainText(tile.contentFragment)
-      .split("\n")[0]
-      ?.trim();
+    const text = fragmentToPlainText(tile.contentFragment).split("\n")[0]?.trim();
     return reactive(text || null);
   }
   if (tile instanceof Link) {

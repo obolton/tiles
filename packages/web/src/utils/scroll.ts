@@ -2,11 +2,7 @@
  * Scrolls a container to reveal a descendant element, if it is not
  * fully visible within the container's bounds.
  */
-export function reveal(
-  container: Element,
-  element: Element,
-  options?: ScrollToOptions,
-) {
+export function reveal(container: Element, element: Element, options?: ScrollToOptions) {
   const containerRect = container.getBoundingClientRect();
   const elementRect = element.getBoundingClientRect();
 
@@ -32,19 +28,13 @@ export function reveal(
   if (elementRect.top < containerRect.top + padTop) {
     top = elementRect.top - containerRect.top - padTop + container.scrollTop;
   } else if (elementRect.bottom > containerRect.bottom - padBottom) {
-    top =
-      elementRect.bottom -
-      containerRect.bottom +
-      padBottom +
-      container.scrollTop;
+    top = elementRect.bottom - containerRect.bottom + padBottom + container.scrollTop;
   }
 
   if (elementRect.left < containerRect.left + padLeft) {
-    left =
-      elementRect.left - containerRect.left - padLeft + container.scrollLeft;
+    left = elementRect.left - containerRect.left - padLeft + container.scrollLeft;
   } else if (elementRect.right > containerRect.right - padRight) {
-    left =
-      elementRect.right - containerRect.right + padRight + container.scrollLeft;
+    left = elementRect.right - containerRect.right + padRight + container.scrollLeft;
   }
 
   if (top !== undefined || left !== undefined) {
@@ -56,10 +46,7 @@ export function reveal(
   }
 }
 
-export function scrollIntoViewIfNeeded(
-  element: Element,
-  options?: ScrollIntoViewOptions,
-) {
+export function scrollIntoViewIfNeeded(element: Element, options?: ScrollIntoViewOptions) {
   const rect = element.getBoundingClientRect();
 
   // Element is outside the viewport

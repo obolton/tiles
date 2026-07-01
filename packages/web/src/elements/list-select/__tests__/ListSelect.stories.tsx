@@ -85,22 +85,13 @@ export const WithMultipleGroups: Story = {
         </ListOption>
       </ListGroup>
       <ListGroup>
-        <ListOption
-          icon={<UnorderedListIcon aria-hidden="true" />}
-          value="unordered-list"
-        >
+        <ListOption icon={<UnorderedListIcon aria-hidden="true" />} value="unordered-list">
           Bulleted list
         </ListOption>
-        <ListOption
-          icon={<OrderedListIcon aria-hidden="true" />}
-          value="ordered-list"
-        >
+        <ListOption icon={<OrderedListIcon aria-hidden="true" />} value="ordered-list">
           Numbered list
         </ListOption>
-        <ListOption
-          icon={<CheckListIcon aria-hidden="true" />}
-          value="check-list"
-        >
+        <ListOption icon={<CheckListIcon aria-hidden="true" />} value="check-list">
           Check list
         </ListOption>
       </ListGroup>
@@ -110,18 +101,9 @@ export const WithMultipleGroups: Story = {
 
 export const Horizontal: Story = {
   render: () => (
-    <list-select
-      label="Text alignment"
-      orientation="horizontal"
-      align="center"
-      value="left"
-    >
+    <list-select label="Text alignment" orientation="horizontal" align="center" value="left">
       <ListGroup>
-        <ListOption
-          icon={<AlignLeftIcon aria-hidden="true" />}
-          value="left"
-          label="Align left"
-        />
+        <ListOption icon={<AlignLeftIcon aria-hidden="true" />} value="left" label="Align left" />
         <ListOption
           icon={<AlignCenterIcon aria-hidden="true" />}
           value="center"
@@ -167,12 +149,7 @@ export const WithDisabledOption: Story = {
 
 export const Disabled: Story = {
   render: () => (
-    <list-select
-      label="Fruit"
-      orientation="vertical"
-      value="apple"
-      aria-disabled="true"
-    >
+    <list-select label="Fruit" orientation="vertical" value="apple" aria-disabled="true">
       <ListGroup>
         <ListOption value="apple">Apple</ListOption>
         <ListOption value="banana">Banana</ListOption>

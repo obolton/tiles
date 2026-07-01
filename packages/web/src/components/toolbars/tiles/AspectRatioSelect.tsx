@@ -26,43 +26,26 @@ export default function AspectRatioSelect({
   }
 
   return (
-    <list-select
-      label="Aspect ratio"
-      value={value}
-      showvalue
-      on:change={handleChange}
-    >
+    <list-select label="Aspect ratio" value={value} showvalue on:change={handleChange}>
       <SizeIcon slot="default-icon" aria-hidden="true" />
       <ListGroup>
         <ListOption icon={<SizeIcon aria-hidden="true" />} value="CUSTOM">
           Custom
         </ListOption>
         {showAuto && <ListOption value="AUTO">Auto</ListOption>}
-        <ListOption
-          icon={<SixteenNineIcon aria-hidden="true" />}
-          value="LANDSCAPE"
-        >
+        <ListOption icon={<SixteenNineIcon aria-hidden="true" />} value="LANDSCAPE">
           16:9
         </ListOption>
-        <ListOption
-          icon={<NineSixteenIcon aria-hidden="true" />}
-          value="PORTRAIT"
-        >
+        <ListOption icon={<NineSixteenIcon aria-hidden="true" />} value="PORTRAIT">
           9:16
         </ListOption>
         <ListOption icon={<SquareIcon aria-hidden="true" />} value="SQUARE">
           Square
         </ListOption>
-        <ListOption
-          icon={<FourThreeIcon aria-hidden="true" />}
-          value="FOUR_THREE"
-        >
+        <ListOption icon={<FourThreeIcon aria-hidden="true" />} value="FOUR_THREE">
           4:3
         </ListOption>
-        <ListOption
-          icon={<ThreeFourIcon aria-hidden="true" />}
-          value="THREE_FOUR"
-        >
+        <ListOption icon={<ThreeFourIcon aria-hidden="true" />} value="THREE_FOUR">
           3:4
         </ListOption>
       </ListGroup>

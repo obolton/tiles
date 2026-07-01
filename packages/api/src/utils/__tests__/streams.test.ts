@@ -5,9 +5,7 @@ import { streamToBase64String } from "../streams.ts";
 
 // Helper function to create a ReadableStream from a string or Buffer
 function createTestStream(data: string | Buffer) {
-  return Readable.toWeb(
-    Readable.from(data instanceof Buffer ? data : Buffer.from(data)),
-  );
+  return Readable.toWeb(Readable.from(data instanceof Buffer ? data : Buffer.from(data)));
 }
 
 describe("streamToBase64String", () => {

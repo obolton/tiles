@@ -18,11 +18,7 @@ const schema = {
   },
 } as const;
 
-async function readFromIdb(
-  idb: IDBDatabase,
-  storeName: string,
-  key: IDBValidKey,
-) {
+async function readFromIdb(idb: IDBDatabase, storeName: string, key: IDBValidKey) {
   const tx = idb.transaction(storeName, "readonly");
   const store = tx.objectStore(storeName);
   return toPromise(store.get(key));
@@ -107,9 +103,7 @@ describe("ObjectStore", () => {
       await writeToIdb(idb, "items", { id: "1", name: "existing", value: 1 });
 
       const store = db.store<Item>("items");
-      await expect(
-        store.add({ id: "1", name: "new", value: 2 }),
-      ).rejects.toThrow();
+      await expect(store.add({ id: "1", name: "new", value: 2 })).rejects.toThrow();
     });
   });
 

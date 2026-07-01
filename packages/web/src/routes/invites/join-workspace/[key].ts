@@ -15,10 +15,7 @@ const GET: APIRequestHandler = async ({ headers, parameters }) => {
       302,
     );
   }
-  await client.workspaces.acceptInvite.mutate(
-    { key },
-    { context: { sessionId } },
-  );
+  await client.workspaces.acceptInvite.mutate({ key }, { context: { sessionId } });
   return redirect("/library", 302);
 };
 

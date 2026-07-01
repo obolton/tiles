@@ -21,6 +21,4 @@ export type UpdateUserSchema = z.infer<typeof UpdateUserSchema>;
 export const IsUsernameAvailableSchema = z.object({
   username: UsernameSchema,
 });
-export type IsUsernameAvailableSchema = z.infer<
-  typeof IsUsernameAvailableSchema
->;
+export type IsUsernameAvailableSchema = z.infer<typeof IsUsernameAvailableSchema>;

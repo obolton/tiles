@@ -20,9 +20,7 @@ describe("loadDoc", () => {
     const doc = await loadDoc("page-1");
 
     expect(doc.getMap("metadata").get("custom")).toBe("value");
-    expect(doc.getMap("metadata").get("schemaVersion")).toBe(
-      CURRENT_SCHEMA_VERSION,
-    );
+    expect(doc.getMap("metadata").get("schemaVersion")).toBe(CURRENT_SCHEMA_VERSION);
   });
 
   test("runs pending migrations when the stored schemaVersion is stale", async () => {
@@ -34,16 +32,12 @@ describe("loadDoc", () => {
 
     const doc = await loadDoc("page-1");
 
-    expect(doc.getMap("metadata").get("schemaVersion")).toBe(
-      CURRENT_SCHEMA_VERSION,
-    );
+    expect(doc.getMap("metadata").get("schemaVersion")).toBe(CURRENT_SCHEMA_VERSION);
     expect(typeof doc.getMap("metadata").get("createdAt")).toBe("string");
   });
 
   test("throws when the page does not exist", async () => {
-    vi.mocked(prisma.page.findUniqueOrThrow).mockRejectedValue(
-      new Error("Record not found"),
-    );
+    vi.mocked(prisma.page.findUniqueOrThrow).mockRejectedValue(new Error("Record not found"));
 
     await expect(loadDoc("missing")).rejects.toThrow("Record not found");
   });

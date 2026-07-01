@@ -27,11 +27,7 @@ class TooltipController {
             return;
           }
           const target = event.target.closest<HTMLElement>("[data-tooltip]");
-          if (
-            target &&
-            target !== this.target &&
-            target.ariaExpanded !== "true"
-          ) {
+          if (target && target !== this.target && target.ariaExpanded !== "true") {
             this.enter(target);
           }
         }
@@ -90,9 +86,8 @@ class TooltipController {
 
   private getPosition() {
     return (
-      this.target
-        ?.closest("[data-tooltip-position]")
-        ?.getAttribute("data-tooltip-position") ?? "bottom"
+      this.target?.closest("[data-tooltip-position]")?.getAttribute("data-tooltip-position") ??
+      "bottom"
     );
   }
 

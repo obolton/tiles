@@ -29,10 +29,7 @@ export function notFound(headers?: HeadersInit) {
   });
 }
 
-export function internalError(
-  body: string = "Internal Server Error",
-  headers?: HeadersInit,
-) {
+export function internalError(body: string = "Internal Server Error", headers?: HeadersInit) {
   return new Response(body, {
     status: 500,
     statusText: "Internal Server Error",

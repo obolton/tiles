@@ -5,12 +5,7 @@ import type { APIRoute, APIRequestHandler } from "@/router/router";
 
 export const GET: APIRequestHandler = ({ url }) => {
   const destination = url.searchParams.get("destination");
-  const {
-    url: googleUrl,
-    state,
-    verifier,
-    nonce,
-  } = getGoogleAuthorizationUrl();
+  const { url: googleUrl, state, verifier, nonce } = getGoogleAuthorizationUrl();
   return redirect(
     googleUrl,
     302,

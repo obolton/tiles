@@ -1,9 +1,6 @@
 import { ReactiveValue } from "./value";
 
-export class ReactiveSet<T>
-  extends ReactiveValue<Set<T>>
-  implements Iterable<T>
-{
+export class ReactiveSet<T> extends ReactiveValue<Set<T>> implements Iterable<T> {
   get size(): number {
     return this.value.size;
   }

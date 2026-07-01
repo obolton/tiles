@@ -13,12 +13,8 @@ describe("getSnapPoints", () => {
     const second = document.createElement("div");
     second.id = "second";
 
-    vi.spyOn(first, "getBoundingClientRect").mockReturnValue(
-      new DOMRect(20, 30, 40, 50),
-    );
-    vi.spyOn(second, "getBoundingClientRect").mockReturnValue(
-      new DOMRect(-10, 0, 30, 10),
-    );
+    vi.spyOn(first, "getBoundingClientRect").mockReturnValue(new DOMRect(20, 30, 40, 50));
+    vi.spyOn(second, "getBoundingClientRect").mockReturnValue(new DOMRect(-10, 0, 30, 10));
 
     const points = getSnapPoints([first, second], origin);
 

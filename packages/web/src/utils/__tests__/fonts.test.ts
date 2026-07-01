@@ -10,13 +10,13 @@ import {
 import type FontFace from "@/test/mocks/FontFace";
 import type { FontId } from "api/config/fonts";
 
+function getAddedFaces(): FontFace[] {
+  return vi.mocked(document.fonts.add).mock.calls.map(([face]) => face as unknown as FontFace);
+}
+
 describe("generateFontFaceCSS", () => {
   describe("with a mixed set of fonts", () => {
-    const { content } = generateFontFaceCSS([
-      "inter",
-      "jetbrains-mono",
-      "pt-serif",
-    ]);
+    const { content } = generateFontFaceCSS(["inter", "jetbrains-mono", "pt-serif"]);
 
     test("emits at least one @font-face declaration", () => {
       expect(content.match(/@font-face\{/g)?.length ?? 0).toBeGreaterThan(0);
@@ -89,9 +89,7 @@ describe("getFontPreload", () => {
   });
 
   test("throws on unknown font id", () => {
-    expect(() => getFontPreload("not-a-font" as FontId)).toThrow(
-      "Unknown font: not-a-font",
-    );
+    expect(() => getFontPreload("not-a-font" as FontId)).toThrow("Unknown font: not-a-font");
   });
 
   test("throws when no file matches the requested variant", () => {
@@ -106,12 +104,6 @@ describe("loadFonts", () => {
     clearLoadedFonts();
     vi.mocked(document.fonts.add).mockClear();
   });
-
-  function getAddedFaces(): FontFace[] {
-    return vi
-      .mocked(document.fonts.add)
-      .mock.calls.map(([face]) => face as unknown as FontFace);
-  }
 
   test("registers a FontFace per file with the correct descriptors", async () => {
     await loadFonts("inter");
@@ -137,9 +129,7 @@ describe("loadFonts", () => {
   });
 
   test("throws on unknown font id", async () => {
-    await expect(loadFonts("not-a-font" as FontId)).rejects.toThrow(
-      "Unknown font: not-a-font",
-    );
+    await expect(loadFonts("not-a-font" as FontId)).rejects.toThrow("Unknown font: not-a-font");
   });
 });
 
@@ -148,12 +138,6 @@ describe("loadFontPreviews", () => {
     clearLoadedPreviews();
     vi.mocked(document.fonts.add).mockClear();
   });
-
-  function getAddedFaces(): FontFace[] {
-    return vi
-      .mocked(document.fonts.add)
-      .mock.calls.map(([face]) => face as unknown as FontFace);
-  }
 
   test("registers a FontFace under the previewFamily for each id", async () => {
     await loadFontPreviews("inter", "lora");
@@ -204,18 +188,12 @@ describe("variable fonts", () => {
 
   describe("getFontPreload", () => {
     test("returns the variable file for any weight in range", () => {
-      expect(getFontPreload("inter", 600).href).toContain(
-        "inter-latin-wght-normal.woff2",
-      );
+      expect(getFontPreload("inter", 600).href).toContain("inter-latin-wght-normal.woff2");
     });
 
     test("returns the variable file at the boundary weights", () => {
-      expect(getFontPreload("inter", 100).href).toContain(
-        "inter-latin-wght-normal.woff2",
-      );
-      expect(getFontPreload("inter", 900).href).toContain(
-        "inter-latin-wght-normal.woff2",
-      );
+      expect(getFontPreload("inter", 100).href).toContain("inter-latin-wght-normal.woff2");
+      expect(getFontPreload("inter", 900).href).toContain("inter-latin-wght-normal.woff2");
     });
 
     test("throws when the requested weight is outside the range", () => {

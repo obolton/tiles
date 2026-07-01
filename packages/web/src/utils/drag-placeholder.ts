@@ -12,9 +12,7 @@ export interface DragPlaceholderOptions {
 /**
  * Creates a drag placeholder element with CSS custom properties.
  */
-export function createDragPlaceholder(
-  options: DragPlaceholderOptions = {},
-): HTMLElement {
+export function createDragPlaceholder(options: DragPlaceholderOptions = {}): HTMLElement {
   const { x = 0, y = 0, width, height, rowSpan, freeform = false } = options;
 
   const placeholder = document.createElement("div");

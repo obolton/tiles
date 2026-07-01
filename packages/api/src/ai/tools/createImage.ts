@@ -35,11 +35,10 @@ async function createImageTile(
   return { tileId, type: "IMAGE" };
 }
 
-export const CREATE_IMAGE_TOOL: FunctionToolOptions<typeof CreateImageSchema> =
-  {
-    name: "create_image",
-    description:
-      "Generates an image from a text prompt and places it as an image block. Pass a parentId and/or coordinates to place it inside a section or on a map.",
-    schema: CreateImageSchema,
-    function: createImageTile,
-  };
+export const CREATE_IMAGE_TOOL: FunctionToolOptions<typeof CreateImageSchema> = {
+  name: "create_image",
+  description:
+    "Generates an image from a text prompt and places it as an image block. Pass a parentId and/or coordinates to place it inside a section or on a map.",
+  schema: CreateImageSchema,
+  function: createImageTile,
+};

@@ -1,16 +1,8 @@
 import { z } from "zod";
 import { Animation, FrameStyle } from "doc/types/enums";
-import {
-  ColorBackgroundSchema,
-  GradientBackgroundSchema,
-} from "@/schema/Background";
+import { ColorBackgroundSchema, GradientBackgroundSchema } from "@/schema/Background";
 import { ColorSchema } from "@/schema/Color";
-import {
-  MIN_LATITUDE,
-  MAX_LATITUDE,
-  MIN_LONGITUDE,
-  MAX_LONGITUDE,
-} from "@/constants/geo";
+import { MIN_LATITUDE, MAX_LATITUDE, MIN_LONGITUDE, MAX_LONGITUDE } from "@/constants/geo";
 import type { ToolContext } from "./types";
 
 export const SizeSchema = z.enum(["small", "medium", "large"]).meta({
@@ -43,9 +35,7 @@ export function resolveParentId(
 }
 
 // Excludes images for now
-const AIBackgroundSchema = z
-  .union([ColorBackgroundSchema, GradientBackgroundSchema])
-  .nullable();
+const AIBackgroundSchema = z.union([ColorBackgroundSchema, GradientBackgroundSchema]).nullable();
 
 export const AnimationSchema = z.enum(Animation).nullable().meta({
   description: "Entrance animation effect",
@@ -79,8 +69,7 @@ export const CoordinatesSchema = z
   })
   .nullable()
   .meta({
-    description:
-      "Geographic coordinates for placing this tile on a map section",
+    description: "Geographic coordinates for placing this tile on a map section",
   });
 
 export const CommonTileSchema = {

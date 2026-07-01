@@ -4,12 +4,12 @@ import Editor from "@/editor/Editor";
 import { submitPrompt } from "@/utils/ai";
 import styles from "./ChatPanel.module.css";
 
+async function onSubmit(prompt: string) {
+  await submitPrompt(prompt);
+}
+
 export default function ChatPanel() {
   const editor = Editor.current;
-
-  async function onSubmit(prompt: string) {
-    await submitPrompt(prompt);
-  }
 
   function onCancel() {
     editor.closePromptToolbar();

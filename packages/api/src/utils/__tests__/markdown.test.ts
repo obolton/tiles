@@ -16,42 +16,22 @@ describe("transformMarkdown", () => {
   describe("bold", () => {
     test("supports **bold** syntax", async () => {
       const output = await getEvents(["hello **world**"]);
-      expect(output).toEqual([
-        "hello ",
-        { bold: true },
-        "world",
-        { bold: false },
-      ]);
+      expect(output).toEqual(["hello ", { bold: true }, "world", { bold: false }]);
     });
 
     test("supports __bold__ syntax", async () => {
       const output = await getEvents(["hello __world__"]);
-      expect(output).toEqual([
-        "hello ",
-        { bold: true },
-        "world",
-        { bold: false },
-      ]);
+      expect(output).toEqual(["hello ", { bold: true }, "world", { bold: false }]);
     });
 
     test("handles delimeters at the end of a chunk", async () => {
       const output = await getEvents(["hello **", "world", "**"]);
-      expect(output).toEqual([
-        "hello ",
-        { bold: true },
-        "world",
-        { bold: false },
-      ]);
+      expect(output).toEqual(["hello ", { bold: true }, "world", { bold: false }]);
     });
 
     test("handles delimiters split over two chunks", async () => {
       const output = await getEvents(["hello *", "*world*", "*"]);
-      expect(output).toEqual([
-        "hello ",
-        { bold: true },
-        "world",
-        { bold: false },
-      ]);
+      expect(output).toEqual(["hello ", { bold: true }, "world", { bold: false }]);
     });
 
     test("treats a start delimiter followed by whitespace as text", async () => {
@@ -66,45 +46,24 @@ describe("transformMarkdown", () => {
 
     test("preserves whitespace before bold when split across chunks", async () => {
       const output = await getEvents(["hello", " **world**"]);
-      expect(output).toEqual([
-        "hello",
-        " ",
-        { bold: true },
-        "world",
-        { bold: false },
-      ]);
+      expect(output).toEqual(["hello", " ", { bold: true }, "world", { bold: false }]);
     });
   });
 
   describe("italic", () => {
     test("supports *italic* syntax", async () => {
       const output = await getEvents(["hello *world*"]);
-      expect(output).toEqual([
-        "hello ",
-        { italic: true },
-        "world",
-        { italic: false },
-      ]);
+      expect(output).toEqual(["hello ", { italic: true }, "world", { italic: false }]);
     });
 
     test("supports _italic_ syntax", async () => {
       const output = await getEvents(["hello _world_"]);
-      expect(output).toEqual([
-        "hello ",
-        { italic: true },
-        "world",
-        { italic: false },
-      ]);
+      expect(output).toEqual(["hello ", { italic: true }, "world", { italic: false }]);
     });
 
     test("handles delimeters at the end of a chunk", async () => {
       const output = await getEvents(["hello *", "world", "*"]);
-      expect(output).toEqual([
-        "hello ",
-        { italic: true },
-        "world",
-        { italic: false },
-      ]);
+      expect(output).toEqual(["hello ", { italic: true }, "world", { italic: false }]);
     });
 
     test("treats a start delimiter followed by whitespace as text", async () => {
@@ -114,13 +73,7 @@ describe("transformMarkdown", () => {
 
     test("preserves whitespace before italic when split across chunks", async () => {
       const output = await getEvents(["hello", " *world*"]);
-      expect(output).toEqual([
-        "hello",
-        " ",
-        { italic: true },
-        "world",
-        { italic: false },
-      ]);
+      expect(output).toEqual(["hello", " ", { italic: true }, "world", { italic: false }]);
     });
   });
 
@@ -187,21 +140,15 @@ describe("transformMarkdown", () => {
       expect(output).toEqual(["hello", { type: "paragraph" }, "world"]);
     });
 
-    test.for([2, 3, 4])(
-      "treats %i spaces at the end of a line as a hard line break",
-      async (i) => {
-        const output = await getEvents([`hello${" ".repeat(i)}\nworld`]);
-        expect(output).toEqual(["hello", "\nworld"]);
-      },
-    );
+    test.for([2, 3, 4])("treats %i spaces at the end of a line as a hard line break", async (i) => {
+      const output = await getEvents([`hello${" ".repeat(i)}\nworld`]);
+      expect(output).toEqual(["hello", "\nworld"]);
+    });
 
-    test.for([2, 3, 4])(
-      "treats %i tabs at the end of a line as a hard line break",
-      async (i) => {
-        const output = await getEvents([`hello${"\t".repeat(i)}\nworld`]);
-        expect(output).toEqual(["hello", "\nworld"]);
-      },
-    );
+    test.for([2, 3, 4])("treats %i tabs at the end of a line as a hard line break", async (i) => {
+      const output = await getEvents([`hello${"\t".repeat(i)}\nworld`]);
+      expect(output).toEqual(["hello", "\nworld"]);
+    });
   });
 
   describe("heading", () => {
@@ -237,11 +184,7 @@ describe("transformMarkdown", () => {
 
     test("returns a heading following a paragraph", async () => {
       const output = await getEvents(["foo\n\n", "### hello world"]);
-      expect(output).toEqual([
-        "foo",
-        { type: "heading", level: 3 },
-        "hello world",
-      ]);
+      expect(output).toEqual(["foo", { type: "heading", level: 3 }, "hello world"]);
     });
 
     test("requires the heading to be at the start of the line", async () => {
@@ -312,12 +255,7 @@ describe("transformMarkdown", () => {
     });
 
     test("returns a series of list items", async () => {
-      const output = await getEvents([
-        "- hello world\n",
-        "- foo",
-        "\n",
-        "- bar\n",
-      ]);
+      const output = await getEvents(["- hello world\n", "- foo", "\n", "- bar\n"]);
       expect(output).toEqual([
         { type: "listitem", listType: "unordered", depth: 0 },
         "hello world",
@@ -329,9 +267,7 @@ describe("transformMarkdown", () => {
     });
 
     test("supports list item depth based on indentation", async () => {
-      const output = await getEvents([
-        "* hello world\n  * nested item 1\n    * nested item 2",
-      ]);
+      const output = await getEvents(["* hello world\n  * nested item 1\n    * nested item 2"]);
       expect(output).toEqual([
         { type: "listitem", listType: "unordered", depth: 0 },
         "hello world",
@@ -362,18 +298,12 @@ describe("transformMarkdown", () => {
   describe("ordered list item", () => {
     test("supports 1. item syntax", async () => {
       const output = await getEvents(["1. hello world"]);
-      expect(output).toEqual([
-        { type: "listitem", listType: "ordered", depth: 0 },
-        "hello world",
-      ]);
+      expect(output).toEqual([{ type: "listitem", listType: "ordered", depth: 0 }, "hello world"]);
     });
 
     test("supports item split over multiple chunks", async () => {
       const output = await getEvents(["1", ". hello world"]);
-      expect(output).toEqual([
-        { type: "listitem", listType: "ordered", depth: 0 },
-        "hello world",
-      ]);
+      expect(output).toEqual([{ type: "listitem", listType: "ordered", depth: 0 }, "hello world"]);
     });
 
     test("supports formatted list items", async () => {
@@ -387,12 +317,7 @@ describe("transformMarkdown", () => {
     });
 
     test("returns a series of list items", async () => {
-      const output = await getEvents([
-        "1. hello world\n",
-        "2. foo",
-        "\n",
-        "3. bar\n",
-      ]);
+      const output = await getEvents(["1. hello world\n", "2. foo", "\n", "3. bar\n"]);
       expect(output).toEqual([
         { type: "listitem", listType: "ordered", depth: 0 },
         "hello world",
@@ -404,9 +329,7 @@ describe("transformMarkdown", () => {
     });
 
     test("supports nested list items", async () => {
-      const output = await getEvents([
-        "1. hello world\n  1. nested item 1\n  2. nested item 2",
-      ]);
+      const output = await getEvents(["1. hello world\n  1. nested item 1\n  2. nested item 2"]);
       expect(output).toEqual([
         { type: "listitem", listType: "ordered", depth: 0 },
         "hello world",
@@ -446,12 +369,7 @@ describe("transformMarkdown", () => {
 
     test("returns a divider between paragraphs", async () => {
       const output = await getEvents(["hello\n\n---\nworld"]);
-      expect(output).toEqual([
-        "hello",
-        { type: "divider" },
-        { type: "paragraph" },
-        "world",
-      ]);
+      expect(output).toEqual(["hello", { type: "divider" }, { type: "paragraph" }, "world"]);
     });
 
     test("supports divider split over multiple chunks", async () => {
@@ -463,18 +381,12 @@ describe("transformMarkdown", () => {
   describe("blocks", () => {
     test("returns a block start", async () => {
       const output = await getEvents([">>> 1\n", "hello world"]);
-      expect(output).toEqual([
-        { destination: 1, mode: "insert" },
-        "hello world",
-      ]);
+      expect(output).toEqual([{ destination: 1, mode: "insert" }, "hello world"]);
     });
 
     test("supports block start syntax split over multiple chunks", async () => {
       const output = await getEvents([">>", "> 1", "2", "\n", "hello world"]);
-      expect(output).toEqual([
-        { destination: 12, mode: "insert" },
-        "hello world",
-      ]);
+      expect(output).toEqual([{ destination: 12, mode: "insert" }, "hello world"]);
     });
 
     test("returns a block end", async () => {
@@ -498,34 +410,22 @@ describe("transformMarkdown", () => {
 
     test("supports replace mode with >>>= syntax", async () => {
       const output = await getEvents([">>>= 1\n", "replaced content"]);
-      expect(output).toEqual([
-        { destination: 1, mode: "replace" },
-        "replaced content",
-      ]);
+      expect(output).toEqual([{ destination: 1, mode: "replace" }, "replaced content"]);
     });
 
     test("supports append mode with >>>+ syntax", async () => {
       const output = await getEvents([">>>+ 1\n", "appended content"]);
-      expect(output).toEqual([
-        { destination: 1, mode: "append" },
-        "appended content",
-      ]);
+      expect(output).toEqual([{ destination: 1, mode: "append" }, "appended content"]);
     });
 
     test("supports prepend mode with >>>^ syntax", async () => {
       const output = await getEvents([">>>^ 1\n", "prepended content"]);
-      expect(output).toEqual([
-        { destination: 1, mode: "prepend" },
-        "prepended content",
-      ]);
+      expect(output).toEqual([{ destination: 1, mode: "prepend" }, "prepended content"]);
     });
 
     test("supports selection mode with >>>@ syntax", async () => {
       const output = await getEvents([">>>@ 1\n", "inserted content"]);
-      expect(output).toEqual([
-        { destination: 1, mode: "selection" },
-        "inserted content",
-      ]);
+      expect(output).toEqual([{ destination: 1, mode: "selection" }, "inserted content"]);
     });
 
     test("ignores block start with non-numeric ID", async () => {
@@ -545,10 +445,7 @@ describe("transformMarkdown", () => {
 
     test("supports backtick code blocks without language", async () => {
       const output = await getEvents(["```\nhello\n```\n"]);
-      expect(output).toEqual([
-        { type: "code", language: "", lineNumbers: false },
-        "hello",
-      ]);
+      expect(output).toEqual([{ type: "code", language: "", lineNumbers: false }, "hello"]);
     });
 
     test("supports tilde code blocks", async () => {
@@ -589,18 +486,12 @@ describe("transformMarkdown", () => {
 
     test("handles code block split across chunks", async () => {
       const output = await getEvents(["```", "js\n", "code\n", "```\n"]);
-      expect(output).toEqual([
-        { type: "code", language: "js", lineNumbers: false },
-        "code",
-      ]);
+      expect(output).toEqual([{ type: "code", language: "js", lineNumbers: false }, "code"]);
     });
 
     test("handles code block end at end of stream without trailing newline", async () => {
       const output = await getEvents(["```\nhello\n```"]);
-      expect(output).toEqual([
-        { type: "code", language: "", lineNumbers: false },
-        "hello",
-      ]);
+      expect(output).toEqual([{ type: "code", language: "", lineNumbers: false }, "hello"]);
     });
 
     test("preserves empty lines in code blocks", async () => {

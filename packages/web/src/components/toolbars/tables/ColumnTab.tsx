@@ -79,9 +79,7 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
       parentId: table.parentId.value,
       tableId: id,
       sizing: "FOUR_THREE",
-      columns: selected
-        ? [{ id: selected.id, title: selected.title.value }]
-        : [],
+      columns: selected ? [{ id: selected.id, title: selected.title.value }] : [],
     });
   }
 

@@ -20,9 +20,7 @@ describe("date node", () => {
   });
 
   test("emits date-only string when time is false", () => {
-    expect(
-      serialize(createState("2026-01-01T12:00:00.000Z", false)),
-    ).toMatchObject([
+    expect(serialize(createState("2026-01-01T12:00:00.000Z", false))).toMatchObject([
       {
         type: "paragraph",
         children: [{ type: "date", value: "2026-01-01" }],
@@ -38,9 +36,7 @@ describe("date node", () => {
   });
 
   test("round-trips a date-only through serialize and deserialize", () => {
-    const after = deserialize(
-      serialize(createState("2026-01-01T12:00:00.000Z", false)),
-    );
+    const after = deserialize(serialize(createState("2026-01-01T12:00:00.000Z", false)));
     const dateNode = after.firstChild?.firstChild;
     expect(dateNode?.attrs).toMatchObject({
       value: "2026-01-01",

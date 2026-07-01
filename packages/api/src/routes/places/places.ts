@@ -14,12 +14,9 @@ type SearchPlacesResult = {
 assert(process.env.HERE_API_KEY);
 
 const API_KEY = process.env.HERE_API_KEY;
-const AUTOSUGGEST_ENDPOINT =
-  "https://autosuggest.search.hereapi.com/v1/autosuggest";
+const AUTOSUGGEST_ENDPOINT = "https://autosuggest.search.hereapi.com/v1/autosuggest";
 
-export async function searchPlaces(
-  input: SearchPlacesSchema,
-): Promise<SearchPlacesResult[]> {
+export async function searchPlaces(input: SearchPlacesSchema): Promise<SearchPlacesResult[]> {
   const query = input.query;
 
   const url = new URL(AUTOSUGGEST_ENDPOINT);
@@ -40,9 +37,7 @@ export async function searchPlaces(
   });
 
   if (!response.ok) {
-    throw new Error(
-      `Place search failed: ${response.status}: ${response.statusText}`,
-    );
+    throw new Error(`Place search failed: ${response.status}: ${response.statusText}`);
   }
 
   const json = await response.json();
@@ -57,12 +52,7 @@ export async function searchPlaces(
       long: result.position.lng,
       address: result.address.label,
       boundingBox: result.mapView
-        ? [
-            result.mapView.west,
-            result.mapView.south,
-            result.mapView.east,
-            result.mapView.north,
-          ]
+        ? [result.mapView.west, result.mapView.south, result.mapView.east, result.mapView.north]
         : null,
     }));
 }

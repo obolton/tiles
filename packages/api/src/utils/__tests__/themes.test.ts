@@ -35,9 +35,7 @@ describe("getBackgroundProperties", () => {
         direction: "VERTICAL",
       }),
     ).toEqual({
-      backgroundColor: new Uint8Array([
-        255, 0, 255, 0, 255, 0, 0, 255, 0, 0, 255, 0,
-      ]),
+      backgroundColor: new Uint8Array([255, 0, 255, 0, 255, 0, 0, 255, 0, 0, 255, 0]),
       backgroundGradient: "VERTICAL",
     });
   });

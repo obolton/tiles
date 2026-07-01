@@ -250,8 +250,7 @@
         position: absolute;
         inset: 0 auto 0 0;
         width: 40px;
-        background: url("@/icons/close.svg?inline") no-repeat 8px center / 24px
-          24px;
+        background: url("@/icons/close.svg?inline") no-repeat 8px center / 24px 24px;
         opacity: 0;
         scale: 0.7;
         rotate: z -45deg;
@@ -398,8 +397,7 @@ form[data-pending] button[type="submit"] {
       oklch(80% 90% 360deg)
     );
     animation:
-      var(--animation-duration) var(--easing) var(--delay) backwards
-        reveal-overlay,
+      var(--animation-duration) var(--easing) var(--delay) backwards reveal-overlay,
       1s linear var(--delay) infinite rotate;
   }
 
@@ -410,8 +408,7 @@ form[data-pending] button[type="submit"] {
     align-content: center;
     border-radius: inherit;
     background: inherit;
-    animation: var(--animation-duration) var(--easing) var(--delay) forwards
-      reveal-border;
+    animation: var(--animation-duration) var(--easing) var(--delay) forwards reveal-border;
   }
 
   &.primary::after,

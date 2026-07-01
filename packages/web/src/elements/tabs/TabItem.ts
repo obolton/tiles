@@ -19,9 +19,7 @@ declare module "@/jsx/html-attributes" {
 }
 
 export default class TabItem extends HTMLElement {
-  static readonly observedAttributes: (keyof TabItemAttributes)[] = [
-    "for",
-  ] as const;
+  static readonly observedAttributes: (keyof TabItemAttributes)[] = ["for"] as const;
 
   private internals: ElementInternals;
 
@@ -40,11 +38,7 @@ export default class TabItem extends HTMLElement {
     }
   }
 
-  attributeChangedCallback(
-    name: keyof TabItemAttributes,
-    _: string,
-    value: string | null,
-  ) {
+  attributeChangedCallback(name: keyof TabItemAttributes, _: string, value: string | null) {
     switch (name) {
       case "for":
         if (value === null) {

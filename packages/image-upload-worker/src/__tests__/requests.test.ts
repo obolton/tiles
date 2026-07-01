@@ -63,13 +63,10 @@ describe("parseUploadRequest", () => {
 
   describe("workspace ID", () => {
     test("throws BadRequestError when workspaceId is missing", () => {
-      const request = new Request(
-        "https://example.com/upload?purpose=content",
-        {
-          method: "PUT",
-          headers: HEADERS,
-        },
-      );
+      const request = new Request("https://example.com/upload?purpose=content", {
+        method: "PUT",
+        headers: HEADERS,
+      });
 
       expect(() => parseUploadRequest(request)).toThrow(BadRequestError);
     });
@@ -88,25 +85,19 @@ describe("parseUploadRequest", () => {
 
   describe("purpose", () => {
     test("throws BadRequestError when purpose is missing", () => {
-      const request = new Request(
-        "https://example.com/upload?workspaceId=ws-123",
-        {
-          method: "PUT",
-          headers: HEADERS,
-        },
-      );
+      const request = new Request("https://example.com/upload?workspaceId=ws-123", {
+        method: "PUT",
+        headers: HEADERS,
+      });
 
       expect(() => parseUploadRequest(request)).toThrow(BadRequestError);
     });
 
     test("throws BadRequestError for invalid purpose", () => {
-      const request = new Request(
-        "https://example.com/upload?workspaceId=ws-123&purpose=invalid",
-        {
-          method: "PUT",
-          headers: HEADERS,
-        },
-      );
+      const request = new Request("https://example.com/upload?workspaceId=ws-123&purpose=invalid", {
+        method: "PUT",
+        headers: HEADERS,
+      });
 
       expect(() => parseUploadRequest(request)).toThrow(BadRequestError);
     });
@@ -123,13 +114,10 @@ describe("parseUploadRequest", () => {
     });
 
     test("parses profile purpose", () => {
-      const request = new Request(
-        "https://example.com/upload?workspaceId=ws-123&purpose=profile",
-        {
-          method: "PUT",
-          headers: HEADERS,
-        },
-      );
+      const request = new Request("https://example.com/upload?workspaceId=ws-123&purpose=profile", {
+        method: "PUT",
+        headers: HEADERS,
+      });
 
       const params = parseUploadRequest(request);
 
@@ -147,9 +135,7 @@ describe("parseUploadRequest", () => {
         },
       });
 
-      expect(() => parseUploadRequest(request)).toThrow(
-        UnsupportedMediaTypeError,
-      );
+      expect(() => parseUploadRequest(request)).toThrow(UnsupportedMediaTypeError);
     });
 
     test("throws UnsupportedMediaTypeError for unsupported content type", () => {
@@ -161,9 +147,7 @@ describe("parseUploadRequest", () => {
         },
       });
 
-      expect(() => parseUploadRequest(request)).toThrow(
-        UnsupportedMediaTypeError,
-      );
+      expect(() => parseUploadRequest(request)).toThrow(UnsupportedMediaTypeError);
     });
 
     test.each([

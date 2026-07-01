@@ -19,9 +19,7 @@ declare module "@/jsx/html-attributes" {
 }
 
 export default class ToolbarTab extends HTMLElement {
-  static readonly observedAttributes: (keyof ToolbarTabAttributes)[] = [
-    "selected",
-  ] as const;
+  static readonly observedAttributes: (keyof ToolbarTabAttributes)[] = ["selected"] as const;
 
   private internals: ElementInternals;
   #selected = false;

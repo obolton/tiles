@@ -7,9 +7,7 @@ const MANIFEST = FontsManifestSchema.parse(manifestJson);
 const FONTS_BASE_URL = import.meta.env.PUBLIC_FONTS_BASE_URL as string;
 
 function formatWeight(weight: ManifestWeight): string {
-  return typeof weight === "number"
-    ? String(weight)
-    : `${weight.min} ${weight.max}`;
+  return typeof weight === "number" ? String(weight) : `${weight.min} ${weight.max}`;
 }
 
 function weightMatches(weight: ManifestWeight, target: number): boolean {
@@ -43,19 +41,13 @@ export function generateFontFaceCSS(fontIds: Iterable<FontId>): Style {
   return { content: declarations.join("") };
 }
 
-export function getFontPreload(
-  fontId: FontId,
-  weight = 400,
-  style = "normal",
-): Link {
+export function getFontPreload(fontId: FontId, weight = 400, style = "normal"): Link {
   const font = MANIFEST.fonts[fontId];
   if (!font) {
     throw new Error(`Unknown font: ${fontId}`);
   }
 
-  const file = font.files.find(
-    (f) => f.style === style && weightMatches(f.weight, weight),
-  );
+  const file = font.files.find((f) => f.style === style && weightMatches(f.weight, weight));
 
   if (!file) {
     throw new Error(`No file for ${fontId} (weight ${weight}, style ${style})`);

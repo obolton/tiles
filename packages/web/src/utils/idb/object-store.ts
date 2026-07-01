@@ -56,10 +56,7 @@ export class ObjectStore<T> {
    * @param query - Key or key range to filter by
    * @param count - Maximum number of records to return
    */
-  async getAll(
-    query?: IDBValidKey | IDBKeyRange,
-    count?: number,
-  ): Promise<T[]> {
+  async getAll(query?: IDBValidKey | IDBKeyRange, count?: number): Promise<T[]> {
     const store = await this.openStore("readonly");
     return toPromise<T[]>(store.getAll(query, count));
   }
@@ -70,10 +67,7 @@ export class ObjectStore<T> {
    * @param query - Key or key range to filter by
    * @param count - Maximum number of keys to return
    */
-  async getKeys(
-    query?: IDBValidKey | IDBKeyRange,
-    count?: number,
-  ): Promise<IDBValidKey[]> {
+  async getKeys(query?: IDBValidKey | IDBKeyRange, count?: number): Promise<IDBValidKey[]> {
     const store = await this.openStore("readonly");
     return toPromise<IDBValidKey[]>(store.getAllKeys(query, count));
   }
@@ -131,10 +125,7 @@ export class ObjectStore<T> {
   /**
    * Gets the first record matching an index value.
    */
-  async getByIndex(
-    indexName: string,
-    query: IDBValidKey | IDBKeyRange,
-  ): Promise<T | undefined> {
+  async getByIndex(indexName: string, query: IDBValidKey | IDBKeyRange): Promise<T | undefined> {
     const store = await this.openStore("readonly");
     return toPromise<T>(store.index(indexName).get(query));
   }
@@ -158,10 +149,7 @@ export class ObjectStore<T> {
   /**
    * Counts records matching an index value.
    */
-  async countByIndex(
-    indexName: string,
-    query?: IDBValidKey | IDBKeyRange,
-  ): Promise<number> {
+  async countByIndex(indexName: string, query?: IDBValidKey | IDBKeyRange): Promise<number> {
     const store = await this.openStore("readonly");
     return toPromise<number>(store.index(indexName).count(query));
   }
@@ -178,9 +166,7 @@ export class ObjectStore<T> {
   async putMany(values: T[], keys?: IDBValidKey[]): Promise<IDBValidKey[]> {
     const store = await this.openStore("readwrite");
     return Promise.all(
-      values.map((value, i) =>
-        toPromise<IDBValidKey>(store.put(value, keys?.[i])),
-      ),
+      values.map((value, i) => toPromise<IDBValidKey>(store.put(value, keys?.[i]))),
     );
   }
 
@@ -196,10 +182,7 @@ export class ObjectStore<T> {
    * Deletes all records matching an index query in a single transaction.
    * Returns the number of records deleted.
    */
-  async deleteByIndex(
-    indexName: string,
-    query: IDBValidKey | IDBKeyRange,
-  ): Promise<number> {
+  async deleteByIndex(indexName: string, query: IDBValidKey | IDBKeyRange): Promise<number> {
     const store = await this.openStore("readwrite");
 
     return new Promise((resolve, reject) => {

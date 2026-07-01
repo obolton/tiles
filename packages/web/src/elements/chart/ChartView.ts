@@ -18,13 +18,9 @@ export default class ChartView extends HTMLElement {
 
     this.attachShadow({ mode: "open" });
 
-    this.mutationObserver = new MutationObserver(
-      this.mutationObserverCallback.bind(this),
-    );
+    this.mutationObserver = new MutationObserver(this.mutationObserverCallback.bind(this));
 
-    this.resizeObserver = new ResizeObserver(
-      this.resizeObserverCallback.bind(this),
-    );
+    this.resizeObserver = new ResizeObserver(this.resizeObserverCallback.bind(this));
   }
 
   connectedCallback() {
@@ -73,9 +69,7 @@ export default class ChartView extends HTMLElement {
   }
 
   draw() {
-    const seriesElements = Array.from(
-      this.getElementsByTagName("chart-series"),
-    );
+    const seriesElements = Array.from(this.getElementsByTagName("chart-series"));
 
     if (seriesElements.length === 0) {
       this.shadowRoot?.replaceChildren();
@@ -101,9 +95,7 @@ export default class ChartView extends HTMLElement {
           const firstColor = series.color[0];
           if (series.gradient && series.color.length >= 2) {
             const gradientId = `series-gradient-${index}`;
-            gradientDefs.push(
-              createSVGGradient(gradientId, series.color, series.gradient),
-            );
+            gradientDefs.push(createSVGGradient(gradientId, series.color, series.gradient));
             fillOrStroke = `url(#${gradientId})`;
           } else if (firstColor) {
             fillOrStroke = toCSSColor(firstColor);
@@ -135,10 +127,7 @@ export default class ChartView extends HTMLElement {
     });
 
     if (gradientDefs.length > 0) {
-      const defs = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "defs",
-      );
+      const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
       defs.append(...gradientDefs);
       chart.insertBefore(defs, chart.firstChild);
     }

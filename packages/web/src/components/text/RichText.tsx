@@ -4,10 +4,7 @@ import { toCSSColor } from "@/utils/color";
 import ThemeVariant from "@/components/themes/ThemeVariant";
 import { DATE_THEMES, DEFAULT_DATE_THEME } from "@/components/dates/themes";
 import { LINK_THEMES, DEFAULT_LINK_THEME } from "@/components/links/themes";
-import {
-  HEADING_THEMES,
-  DEFAULT_HEADING_THEME,
-} from "@/components/headings/themes";
+import { HEADING_THEMES, DEFAULT_HEADING_THEME } from "@/components/headings/themes";
 import { MIN_TEXT_SIZE, MAX_TEXT_SIZE } from "@/constants/formatting";
 import { reactive } from "@/utils/reactivity";
 import { getFontConfig, type FontId } from "api/config/fonts";
@@ -157,11 +154,7 @@ interface QuoteProps {
 }
 
 function Quote({ node }: QuoteProps) {
-  return (
-    <blockquote>
-      {node.children.length > 0 ? renderNodes(node.children) : <br />}
-    </blockquote>
-  );
+  return <blockquote>{node.children.length > 0 ? renderNodes(node.children) : <br />}</blockquote>;
 }
 
 interface ListItemProps extends JSX.Attributes<"li"> {
@@ -169,11 +162,7 @@ interface ListItemProps extends JSX.Attributes<"li"> {
 }
 
 function ListItem({ node, ...props }: ListItemProps) {
-  return (
-    <li {...props}>
-      {node.children.length > 0 ? renderNodes(node.children) : <br />}
-    </li>
-  );
+  return <li {...props}>{node.children.length > 0 ? renderNodes(node.children) : <br />}</li>;
 }
 
 interface ListProps {
@@ -206,11 +195,7 @@ function List({ node }: ListProps) {
               node={child}
               role={child.children[0]?.type === "list" ? undefined : "checkbox"}
               aria-checked={
-                child.children[0]?.type === "list"
-                  ? undefined
-                  : child.checked
-                    ? "true"
-                    : "false"
+                child.children[0]?.type === "list" ? undefined : child.checked ? "true" : "false"
               }
             />
           ))}
@@ -241,12 +226,7 @@ interface MentionProps {
 
 function Mention({ node }: MentionProps) {
   return (
-    <FormattedText
-      format={node.format}
-      size={node.size}
-      color={node.color}
-      font={node.font}
-    >
+    <FormattedText format={node.format} size={node.size} color={node.color} font={node.font}>
       <span className="mention">{node.displayName}</span>
     </FormattedText>
   );
@@ -260,13 +240,7 @@ interface FormattedTextProps {
   children: JSX.Node;
 }
 
-function FormattedText({
-  format,
-  size,
-  color,
-  font,
-  children,
-}: FormattedTextProps) {
+function FormattedText({ format, size, color, font, children }: FormattedTextProps) {
   let content = children;
   if (format & TextFormat.BOLD) {
     content = <strong>{content}</strong>;
@@ -292,15 +266,10 @@ function FormattedText({
   if (format & TextFormat.SMALL_CAPS) {
     content = <span className="small-caps">{content}</span>;
   }
-  if (
-    typeof size === "number" ||
-    typeof color === "string" ||
-    typeof font === "string"
-  ) {
+  if (typeof size === "number" || typeof color === "string" || typeof font === "string") {
     const style: Record<string, string> = {};
     if (typeof size === "number") {
-      style.fontSize =
-        Math.min(Math.max(size, MIN_TEXT_SIZE), MAX_TEXT_SIZE) + "em";
+      style.fontSize = Math.min(Math.max(size, MIN_TEXT_SIZE), MAX_TEXT_SIZE) + "em";
     }
     if (typeof color === "string") {
       style.color = toCSSColor(color);

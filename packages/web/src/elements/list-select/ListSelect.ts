@@ -90,12 +90,7 @@ export default class ListSelect extends HTMLElement {
     const button = document.createElement("div");
     button.id = "button";
     button.part.add("button");
-    button.append(
-      this.defaultIconSlot,
-      this.iconSlot,
-      this.buttonLabel,
-      this.labelSlot,
-    );
+    button.append(this.defaultIconSlot, this.iconSlot, this.buttonLabel, this.labelSlot);
 
     shadow.append(button, this.items);
 
@@ -155,8 +150,7 @@ export default class ListSelect extends HTMLElement {
 
     this.mutationObserver.disconnect();
 
-    const previousItem =
-      this.#value === null ? null : this.getItem(this.#value);
+    const previousItem = this.#value === null ? null : this.getItem(this.#value);
     if (previousItem) {
       previousItem.ariaSelected = "false";
     }
@@ -251,13 +245,7 @@ export default class ListSelect extends HTMLElement {
   }
 
   private handleFocusOut(event: FocusEvent) {
-    if (
-      this.open &&
-      !(
-        event.relatedTarget instanceof Node &&
-        this.contains(event.relatedTarget)
-      )
-    ) {
+    if (this.open && !(event.relatedTarget instanceof Node && this.contains(event.relatedTarget))) {
       this.hide();
     }
   }
@@ -272,11 +260,7 @@ export default class ListSelect extends HTMLElement {
       return;
     }
     const option = target.closest<HTMLElement>('[role="option"]');
-    if (
-      option &&
-      option !== this.activeItem &&
-      option.ariaDisabled !== "true"
-    ) {
+    if (option && option !== this.activeItem && option.ariaDisabled !== "true") {
       this.setActiveItem(option, false);
     }
   }
@@ -297,10 +281,7 @@ export default class ListSelect extends HTMLElement {
       return;
     }
 
-    const item =
-      target instanceof Element
-        ? target.closest<HTMLElement>('[role="option"]')
-        : null;
+    const item = target instanceof Element ? target.closest<HTMLElement>('[role="option"]') : null;
     if (item) {
       this.selectOption(item);
     }
@@ -377,9 +358,7 @@ export default class ListSelect extends HTMLElement {
         if (!(node instanceof Element)) {
           continue;
         }
-        const item = node.matches(selector)
-          ? node
-          : node.querySelector(selector);
+        const item = node.matches(selector) ? node : node.querySelector(selector);
         if (item) {
           item.ariaSelected = "true";
           this.showItem(item);
@@ -393,9 +372,7 @@ export default class ListSelect extends HTMLElement {
   // Items
 
   private getItem(value: string) {
-    return this.querySelector<HTMLElement>(
-      `[role="option"][data-value="${CSS.escape(value)}"]`,
-    );
+    return this.querySelector<HTMLElement>(`[role="option"][data-value="${CSS.escape(value)}"]`);
   }
 
   private showItem(item: Element | null) {
@@ -422,8 +399,7 @@ export default class ListSelect extends HTMLElement {
       return;
     }
 
-    const labelText =
-      item.getAttribute("data-label") ?? item.textContent?.trim();
+    const labelText = item.getAttribute("data-label") ?? item.textContent?.trim();
 
     if (!labelText) {
       return;
@@ -439,9 +415,7 @@ export default class ListSelect extends HTMLElement {
 
   private get options(): HTMLElement[] {
     return Array.from(
-      this.querySelectorAll<HTMLElement>(
-        '[role="option"]:not([hidden], [aria-disabled="true"])',
-      ),
+      this.querySelectorAll<HTMLElement>('[role="option"]:not([hidden], [aria-disabled="true"])'),
     );
   }
 
@@ -453,9 +427,7 @@ export default class ListSelect extends HTMLElement {
   private setActiveItem(option: HTMLElement | null, scroll = true) {
     this.ariaActiveDescendantElement = option;
 
-    for (const element of this.querySelectorAll<HTMLElement>(
-      '[role="option"][data-active]',
-    )) {
+    for (const element of this.querySelectorAll<HTMLElement>('[role="option"][data-active]')) {
       delete element.dataset.active;
     }
 
@@ -503,9 +475,7 @@ export default class ListSelect extends HTMLElement {
     const active = this.activeItem;
     const index = active ? options.indexOf(active) : -1;
     const prev =
-      index < 0
-        ? options.at(-1)
-        : options[(index - 1 + options.length) % options.length];
+      index < 0 ? options.at(-1) : options[(index - 1 + options.length) % options.length];
     if (prev) {
       this.setActiveItem(prev);
     }

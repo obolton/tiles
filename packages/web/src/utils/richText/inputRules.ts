@@ -11,19 +11,15 @@ function quoteInputRule() {
 }
 
 function headingInputRule() {
-  return textblockTypeInputRule(
-    /^(#{1,3})\s$/,
-    schema.nodes.heading,
-    (match) => ({ level: match[1]?.length ?? 1 }),
-  );
+  return textblockTypeInputRule(/^(#{1,3})\s$/, schema.nodes.heading, (match) => ({
+    level: match[1]?.length ?? 1,
+  }));
 }
 
 function orderedListInputRule() {
-  return wrappingInputRule(
-    /^\s*(\d+)[.)]\s$/,
-    schema.nodes.ordered_list,
-    (match) => ({ order: match[1] }),
-  );
+  return wrappingInputRule(/^\s*(\d+)[.)]\s$/, schema.nodes.ordered_list, (match) => ({
+    order: match[1],
+  }));
 }
 
 function unorderedListInputRule() {
@@ -50,23 +46,13 @@ function inlineCodeInputRule() {
 }
 
 function dividerInputRule() {
-  return new InputRule(
-    /^(-{3,}|\*{3,}|_{3,})$/,
-    (state, _match, start, _end) => {
-      const $start = state.doc.resolve(start);
-      if (
-        $start.parent.type !== schema.nodes.paragraph ||
-        $start.parentOffset !== 0
-      ) {
-        return null;
-      }
-      return state.tr.replaceWith(
-        $start.before(),
-        $start.after(),
-        schema.nodes.divider.create(null),
-      );
-    },
-  );
+  return new InputRule(/^(-{3,}|\*{3,}|_{3,})$/, (state, _match, start, _end) => {
+    const $start = state.doc.resolve(start);
+    if ($start.parent.type !== schema.nodes.paragraph || $start.parentOffset !== 0) {
+      return null;
+    }
+    return state.tr.replaceWith($start.before(), $start.after(), schema.nodes.divider.create(null));
+  });
 }
 
 export function createInputRules() {

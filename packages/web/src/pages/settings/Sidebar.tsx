@@ -12,11 +12,7 @@ export interface SidebarProps {
   isAdmin?: boolean;
 }
 
-export default function Sidebar({
-  workspaceId,
-  page,
-  isAdmin = false,
-}: SidebarProps) {
+export default function Sidebar({ workspaceId, page, isAdmin = false }: SidebarProps) {
   const base = `/workspaces/${workspaceId}/settings`;
 
   return (

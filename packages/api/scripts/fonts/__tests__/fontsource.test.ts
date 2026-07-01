@@ -1,9 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import {
-  getFontUrl,
-  fetchFontMetadata,
-  fetchVariableFontMetadata,
-} from "../fontsource";
+import { getFontUrl, fetchFontMetadata, fetchVariableFontMetadata } from "../fontsource";
 
 const VALID_RESPONSE = {
   family: "Inter",
@@ -40,9 +36,7 @@ describe("fetchFontMetadata", () => {
 
     await fetchFontMetadata("inter");
 
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.fontsource.org/v1/fonts/inter",
-    );
+    expect(fetch).toHaveBeenCalledWith("https://api.fontsource.org/v1/fonts/inter");
   });
 
   test("parses a well-formed response", async () => {
@@ -59,13 +53,9 @@ describe("fetchFontMetadata", () => {
   });
 
   test("throws on a non-OK response", async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response("not found", { status: 404 }),
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response("not found", { status: 404 }));
 
-    await expect(fetchFontMetadata("nope")).rejects.toThrow(
-      "Fontsource API returned 404 for nope",
-    );
+    await expect(fetchFontMetadata("nope")).rejects.toThrow("Fontsource API returned 404 for nope");
   });
 
   test("throws when the response shape is invalid", async () => {
@@ -93,9 +83,7 @@ describe("fetchVariableFontMetadata", () => {
 
     await fetchVariableFontMetadata("inter");
 
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.fontsource.org/v1/variable/inter",
-    );
+    expect(fetch).toHaveBeenCalledWith("https://api.fontsource.org/v1/variable/inter");
   });
 
   test("parses a well-formed response", async () => {
@@ -115,17 +103,13 @@ describe("fetchVariableFontMetadata", () => {
   });
 
   test("returns null on 404", async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response("not found", { status: 404 }),
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response("not found", { status: 404 }));
 
     expect(await fetchVariableFontMetadata("not-variable")).toBeNull();
   });
 
   test("throws on a non-404 error response", async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response("server error", { status: 500 }),
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response("server error", { status: 500 }));
 
     await expect(fetchVariableFontMetadata("inter")).rejects.toThrow(
       "Fontsource variable API returned 500 for inter",

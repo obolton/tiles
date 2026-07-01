@@ -13,7 +13,5 @@ export default function ReferenceChip({ tile, onRemove }: ReferenceChipProps) {
   const icon = TILE_ICONS[tile.type] ?? TextIcon;
   const label = getTileLabel(tile);
 
-  return (
-    <Chip icon={icon} label={label} href={`#${tile.id}`} onRemove={onRemove} />
-  );
+  return <Chip icon={icon} label={label} href={`#${tile.id}`} onRemove={onRemove} />;
 }

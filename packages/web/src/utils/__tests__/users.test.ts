@@ -1,10 +1,6 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
 import "fake-indexeddb/auto";
-import {
-  getWorkspaceUsers,
-  invalidateWorkspaceUsers,
-  getUserName,
-} from "../users";
+import { getWorkspaceUsers, invalidateWorkspaceUsers, getUserName } from "../users";
 import { initializeCache, destroyCache, usersCache } from "../cache";
 import client from "@/api/client";
 
@@ -50,9 +46,7 @@ describe("users", () => {
 
   describe("getWorkspaceUsers", () => {
     test("returns cached value without fetching when cache exists", async () => {
-      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
-        mockUsersResponse,
-      );
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(mockUsersResponse);
       await getWorkspaceUsers();
 
       vi.clearAllMocks();
@@ -64,9 +58,7 @@ describe("users", () => {
     });
 
     test("fetches and caches users when cache is empty", async () => {
-      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
-        mockUsersResponse,
-      );
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(mockUsersResponse);
 
       const result = await getWorkspaceUsers();
 
@@ -82,9 +74,7 @@ describe("users", () => {
 
   describe("invalidateWorkspaceUsers", () => {
     test("removes the cached user list", async () => {
-      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
-        mockUsersResponse,
-      );
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(mockUsersResponse);
       await getWorkspaceUsers();
 
       // Verify cache exists
@@ -100,9 +90,7 @@ describe("users", () => {
     });
 
     test("clears the in-memory user map", async () => {
-      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
-        mockUsersResponse,
-      );
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(mockUsersResponse);
       await getWorkspaceUsers();
 
       expect(getUserName("user-1")).toBe("Alice Smith");
@@ -115,9 +103,7 @@ describe("users", () => {
 
   describe("getUserName", () => {
     test("returns user name when user is in memory map", async () => {
-      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
-        mockUsersResponse,
-      );
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(mockUsersResponse);
       await getWorkspaceUsers();
 
       const result = getUserName("user-1");
@@ -126,9 +112,7 @@ describe("users", () => {
     });
 
     test("returns null when user is not in memory map", async () => {
-      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(
-        mockUsersResponse,
-      );
+      vi.mocked(client.workspaces.listUsers.query).mockResolvedValueOnce(mockUsersResponse);
       await getWorkspaceUsers();
 
       const result = getUserName("user-999");

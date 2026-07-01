@@ -8,10 +8,7 @@ import type {
 
 type NotifyArgs<Change> = [Change] extends [void] ? [] : [change: Change];
 
-export abstract class BaseReactive<Value, Change = void> implements Reactive<
-  Value,
-  Change
-> {
+export abstract class BaseReactive<Value, Change = void> implements Reactive<Value, Change> {
   protected readonly subscribers = new Set<SubscribeCallback<Value, Change>>();
 
   subscribe(callback: SubscribeCallback<Value, Change>, signal?: AbortSignal) {
@@ -41,17 +38,12 @@ export abstract class BaseReactive<Value, Change = void> implements Reactive<
 
   abstract get value(): Value;
 
-  derive<DerivedValue>(
-    transform: (input: Value) => DerivedValue,
-  ): ComputedReactive<DerivedValue> {
+  derive<DerivedValue>(transform: (input: Value) => DerivedValue): ComputedReactive<DerivedValue> {
     return new Computed(this, transform);
   }
 }
 
-export class Computed<
-  Input extends Reactive<unknown, unknown>,
-  Value,
-> extends BaseReactive<Value> {
+export class Computed<Input extends Reactive<unknown, unknown>, Value> extends BaseReactive<Value> {
   private readonly input: Input;
   private readonly transform: (value: ReactiveType<Input>) => Value;
   private unsubscribeCallback?: UnsubscribeCallback;
@@ -95,9 +87,7 @@ export class Computed<
 
   get value() {
     if (!this.unsubscribeCallback || this.stale) {
-      this.cachedValue = this.transform(
-        this.input.value as ReactiveType<Input>,
-      );
+      this.cachedValue = this.transform(this.input.value as ReactiveType<Input>);
       this.stale = false;
     }
     return this.cachedValue as Value;

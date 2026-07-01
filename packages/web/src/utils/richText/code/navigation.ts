@@ -8,11 +8,7 @@ type Direction = -1 | 1;
 /**
  * Check if the CodeMirror cursor is at the boundary of the document.
  */
-function isAtBoundary(
-  cm: CMEditorView,
-  unit: "line" | "char",
-  dir: Direction,
-): boolean {
+function isAtBoundary(cm: CMEditorView, unit: "line" | "char", dir: Direction): boolean {
   const { state } = cm;
   const sel = state.selection.main;
 
@@ -117,11 +113,7 @@ export function insertParagraphAfter(pm: PMEditorView, pos: number): boolean {
 /**
  * Delete the code block if it's empty.
  */
-export function deleteCodeBlockIfEmpty(
-  cm: CMEditorView,
-  pm: PMEditorView,
-  pos: number,
-): boolean {
+export function deleteCodeBlockIfEmpty(cm: CMEditorView, pm: PMEditorView, pos: number): boolean {
   if (cm.state.doc.length > 0) {
     return false;
   }
@@ -131,9 +123,7 @@ export function deleteCodeBlockIfEmpty(
     return false;
   }
 
-  pm.dispatch(
-    pm.state.tr.deleteRange(pos, pos + node.nodeSize).scrollIntoView(),
-  );
+  pm.dispatch(pm.state.tr.deleteRange(pos, pos + node.nodeSize).scrollIntoView());
   pm.focus();
   return true;
 }

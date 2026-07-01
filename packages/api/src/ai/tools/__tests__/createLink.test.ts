@@ -79,10 +79,7 @@ describe("CREATE_LINK_TOOL", () => {
       imageId: null,
     });
 
-    const result = await CREATE_LINK_TOOL.function(
-      { ...BASE_ARGS, parentId: 0 },
-      context,
-    );
+    const result = await CREATE_LINK_TOOL.function({ ...BASE_ARGS, parentId: 0 }, context);
 
     expect(context.resolveArtifactId).toHaveBeenCalledWith(0);
     expect(getCreatedTile(doc, result).get("parentId")).toBe("resolved-0");

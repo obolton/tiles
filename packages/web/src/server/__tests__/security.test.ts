@@ -1,10 +1,5 @@
 import { describe, expect, test } from "vitest";
-import {
-  buildCSPHeader,
-  buildCSPPolicy,
-  securityHeaders,
-  type CSPPolicy,
-} from "../security";
+import { buildCSPHeader, buildCSPPolicy, securityHeaders, type CSPPolicy } from "../security";
 
 describe("buildCSPHeader", () => {
   test("formats a single directive with sources", () => {
@@ -18,9 +13,7 @@ describe("buildCSPHeader", () => {
     const policy: CSPPolicy = {
       "img-src": ["'self'", "data:", "https://example.com"],
     };
-    expect(buildCSPHeader(policy)).toBe(
-      "img-src 'self' data: https://example.com",
-    );
+    expect(buildCSPHeader(policy)).toBe("img-src 'self' data: https://example.com");
   });
 
   test("separates multiple directives with semicolons", () => {
@@ -28,9 +21,7 @@ describe("buildCSPHeader", () => {
       "default-src": ["'self'"],
       "script-src": ["'self'"],
     };
-    expect(buildCSPHeader(policy)).toBe(
-      "default-src 'self'; script-src 'self'",
-    );
+    expect(buildCSPHeader(policy)).toBe("default-src 'self'; script-src 'self'");
   });
 
   test("handles directives with no sources", () => {
@@ -45,9 +36,7 @@ describe("buildCSPHeader", () => {
       "default-src": ["'self'"],
       "upgrade-insecure-requests": [],
     };
-    expect(buildCSPHeader(policy)).toBe(
-      "default-src 'self'; upgrade-insecure-requests",
-    );
+    expect(buildCSPHeader(policy)).toBe("default-src 'self'; upgrade-insecure-requests");
   });
 
   test("handles empty policy", () => {
@@ -164,8 +153,6 @@ describe("securityHeaders", () => {
   });
 
   test("includes Referrer-Policy header", () => {
-    expect(securityHeaders["Referrer-Policy"]).toBe(
-      "strict-origin-when-cross-origin",
-    );
+    expect(securityHeaders["Referrer-Policy"]).toBe("strict-origin-when-cross-origin");
   });
 });

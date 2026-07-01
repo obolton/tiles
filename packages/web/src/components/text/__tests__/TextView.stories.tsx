@@ -20,17 +20,12 @@ function paragraph(text: string): RichText {
     {
       type: "paragraph",
       align: 0,
-      children: [
-        { type: "text", text, format: 0, size: 1, pending: undefined },
-      ],
+      children: [{ type: "text", text, format: 0, size: 1, pending: undefined }],
     },
   ];
 }
 
-function createText(props: {
-  align?: TextTile["align"];
-  content?: RichText;
-}): Text {
+function createText(props: { align?: TextTile["align"]; content?: RichText }): Text {
   return editor.page.createTile(Text.createMap(props), {}) as Text;
 }
 

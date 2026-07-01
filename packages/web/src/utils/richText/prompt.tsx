@@ -62,11 +62,7 @@ function getElement(view: EditorView) {
   }
 
   const element = render(
-    <InlinePrompt
-      placeholder="Ask anything"
-      onSubmit={onSubmit}
-      onCancel={removePrompt}
-    />,
+    <InlinePrompt placeholder="Ask anything" onSubmit={onSubmit} onCancel={removePrompt} />,
   )[0] as HTMLElement;
 
   requestAnimationFrame(() => {
@@ -112,13 +108,9 @@ export function prompt() {
           return null;
         } else {
           const { selection } = tr;
-          const contextDecoration = Decoration.inline(
-            selection.from,
-            selection.to,
-            {
-              class: "context",
-            },
-          );
+          const contextDecoration = Decoration.inline(selection.from, selection.to, {
+            class: "context",
+          });
           const promptDecoration = Decoration.widget(meta.pos, getElement, {
             ignoreSelection: true,
 
@@ -127,10 +119,7 @@ export function prompt() {
               return true;
             },
           });
-          return DecorationSet.create(tr.doc, [
-            contextDecoration,
-            promptDecoration,
-          ]);
+          return DecorationSet.create(tr.doc, [contextDecoration, promptDecoration]);
         }
       },
     },

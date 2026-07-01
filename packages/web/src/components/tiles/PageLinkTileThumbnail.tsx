@@ -7,9 +7,7 @@ export interface PageLinkTileThumbnailProps {
   pageLink: PageLink;
 }
 
-export default function PageLinkTileThumbnail({
-  pageLink,
-}: PageLinkTileThumbnailProps) {
+export default function PageLinkTileThumbnail({ pageLink }: PageLinkTileThumbnailProps) {
   const { linkedPage } = pageLink;
 
   if (!linkedPage) {

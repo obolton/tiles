@@ -1,7 +1,4 @@
-import {
-  SIGNED_IN_FLAG_COOKIE_NAME,
-  SESSION_COOKIE_NAME,
-} from "api/constants/cookies";
+import { SIGNED_IN_FLAG_COOKIE_NAME, SESSION_COOKIE_NAME } from "api/constants/cookies";
 import client from "@/api/client";
 import { getCookie } from "./cookies";
 import { reactive } from "./reactivity";

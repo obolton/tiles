@@ -11,16 +11,10 @@ describe("createPreflightResponse", () => {
   test("sets CORS headers", () => {
     const response = createPreflightResponse();
 
-    expect(response.headers.get("Access-Control-Allow-Origin")).toBe(
-      "https://example.com",
-    );
-    expect(response.headers.get("Access-Control-Allow-Credentials")).toBe(
-      "true",
-    );
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe("https://example.com");
+    expect(response.headers.get("Access-Control-Allow-Credentials")).toBe("true");
     expect(response.headers.get("Access-Control-Allow-Methods")).toBe("PUT");
-    expect(response.headers.get("Access-Control-Allow-Headers")).toBe(
-      "Content-Type",
-    );
+    expect(response.headers.get("Access-Control-Allow-Headers")).toBe("Content-Type");
     expect(response.headers.get("Access-Control-Max-Age")).toBe("3600");
   });
 
@@ -53,12 +47,8 @@ describe("createJsonResponse", () => {
   test("sets CORS headers", () => {
     const response = createJsonResponse({ foo: "bar" });
 
-    expect(response.headers.get("Access-Control-Allow-Origin")).toBe(
-      "https://example.com",
-    );
-    expect(response.headers.get("Access-Control-Allow-Credentials")).toBe(
-      "true",
-    );
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe("https://example.com");
+    expect(response.headers.get("Access-Control-Allow-Credentials")).toBe("true");
   });
 
   test("serializes data as JSON", async () => {

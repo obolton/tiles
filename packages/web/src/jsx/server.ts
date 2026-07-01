@@ -1,11 +1,6 @@
 import { escapeText } from "entities";
 import { unwrap } from "@/utils/reactivity";
-import {
-  openTag,
-  closeTag,
-  VOID_ELEMENTS,
-  type Attributes,
-} from "@/utils/html";
+import { openTag, closeTag, VOID_ELEMENTS, type Attributes } from "@/utils/html";
 import { isClassComponent } from "./jsx";
 import { isEmptyNode, isTextNode, isElementNode } from "./node-types";
 import {
@@ -109,8 +104,7 @@ function getAttributes(properties: Record<string, unknown>): Attributes {
         attributes["style"] = styles;
       }
     } else if (BOOLEAN_STRING_ATTRIBUTES.has(name)) {
-      attributes[name] =
-        typeof value === "string" ? value : value ? "true" : "false";
+      attributes[name] = typeof value === "string" ? value : value ? "true" : "false";
     } else if (
       typeof value === "string" ||
       typeof value === "number" ||

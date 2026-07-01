@@ -13,10 +13,7 @@ import type { DragDropEvent } from "@/utils/drag";
 import type { Fill } from "@/components/fills/types";
 import { applyListChange } from "@/utils/reactivity";
 import type { Reactive, ReactiveList, ListChange } from "@/utils/reactivity";
-import type {
-  StyleDeclaration,
-  GlobalHTMLAttributes,
-} from "@/jsx/html-attributes";
+import type { StyleDeclaration, GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -81,14 +78,28 @@ function isCellEqual(a: Cell, b: Cell) {
   return a.row.index === b.row.index && a.column.index === b.column.index;
 }
 
+function referencedIds(selection: Selection) {
+  switch (selection.type) {
+    case "row":
+      return [selection.row.id];
+    case "column":
+      return [selection.column.id];
+    case "range":
+      return [
+        selection.anchor.row.id,
+        selection.anchor.column.id,
+        selection.focus.row.id,
+        selection.focus.column.id,
+      ];
+  }
+}
+
 const HEADER_SIZE = 32;
 const ROW_BUFFER_MIN_SIZE = 3;
 const CELL_BUFFER_MIN_SIZE = 10;
 
 export default class TableView extends HTMLElement {
-  static readonly observedAttributes: (keyof TableViewAttributes)[] = [
-    "editable",
-  ] as const;
+  static readonly observedAttributes: (keyof TableViewAttributes)[] = ["editable"] as const;
 
   #columns?: ReactiveList<ColumnItem>;
   #rows?: ReactiveList<RowItem>;
@@ -145,9 +156,7 @@ export default class TableView extends HTMLElement {
   set columns(list: ReactiveList<ColumnItem> | undefined) {
     this.#unsubscribeColumns?.();
     this.#columns = list;
-    this.#unsubscribeColumns = list?.subscribe((_, change) =>
-      this.applyColumnChange(change),
-    );
+    this.#unsubscribeColumns = list?.subscribe((_, change) => this.applyColumnChange(change));
     this.update();
   }
 
@@ -158,9 +167,7 @@ export default class TableView extends HTMLElement {
   set rows(list: ReactiveList<RowItem> | undefined) {
     this.#unsubscribeRows?.();
     this.#rows = list;
-    this.#unsubscribeRows = list?.subscribe((_, change) =>
-      this.applyRowChange(change),
-    );
+    this.#unsubscribeRows = list?.subscribe((_, change) => this.applyRowChange(change));
     this.update();
   }
 
@@ -193,9 +200,7 @@ export default class TableView extends HTMLElement {
 
   refreshCell(rowId: string, columnId: string) {
     const row = this.visibleRows.find((candidate) => candidate.id === rowId);
-    const column = this.visibleColumns.find(
-      (candidate) => candidate.id === columnId,
-    );
+    const column = this.visibleColumns.find((candidate) => candidate.id === columnId);
     if (!row || !column) {
       return;
     }
@@ -275,13 +280,9 @@ export default class TableView extends HTMLElement {
     this.verticalBufferSize = this.height / 2;
 
     const firstRow = this.tableBody.rows[0];
-    const firstColumn = this.colGroup.children[1] as
-      | HTMLTableColElement
-      | undefined;
+    const firstColumn = this.colGroup.children[1] as HTMLTableColElement | undefined;
 
-    this.firstVisibleRow = firstRow?.ariaRowIndex
-      ? parseInt(firstRow.ariaRowIndex, 10)
-      : 0;
+    this.firstVisibleRow = firstRow?.ariaRowIndex ? parseInt(firstRow.ariaRowIndex, 10) : 0;
     this.firstVisibleColumn = firstColumn?.dataset.index
       ? parseInt(firstColumn.dataset.index, 10)
       : 0;
@@ -291,9 +292,7 @@ export default class TableView extends HTMLElement {
       const column = this.colGroup.children[i] as HTMLTableColElement;
       const header = headerRow?.cells[i];
       const { width } = column.getBoundingClientRect();
-      const index = column.dataset.index
-        ? parseInt(column.dataset.index, 10)
-        : i - 1;
+      const index = column.dataset.index ? parseInt(column.dataset.index, 10) : i - 1;
       const title = header?.querySelector("span")?.textContent ?? null;
       this.visibleColumns.push(
         new Column({
@@ -335,9 +334,7 @@ export default class TableView extends HTMLElement {
 
     this.addEventListener("scroll", this, { passive: true });
 
-    this.resizeObserver = new ResizeObserver(
-      this.resizeObserverCallback.bind(this),
-    );
+    this.resizeObserver = new ResizeObserver(this.resizeObserverCallback.bind(this));
     this.resizeObserver.observe(this, { box: "border-box" });
   }
 
@@ -457,10 +454,7 @@ export default class TableView extends HTMLElement {
 
   private handleKeyDown(event: KeyboardEvent) {
     // Column title input handling
-    if (
-      event.target instanceof HTMLInputElement &&
-      event.target.closest("th[scope='col']")
-    ) {
+    if (event.target instanceof HTMLInputElement && event.target.closest("th[scope='col']")) {
       switch (event.key) {
         case "Enter":
           event.preventDefault();
@@ -561,20 +555,13 @@ export default class TableView extends HTMLElement {
   }
 
   private handleBlur(event: FocusEvent) {
-    if (
-      event.target instanceof HTMLInputElement &&
-      event.target.closest("th[scope='col']")
-    ) {
+    if (event.target instanceof HTMLInputElement && event.target.closest("th[scope='col']")) {
       this.commitColumnTitleEdit();
     }
   }
 
   private handlePointerDown(event: PointerEvent) {
-    if (
-      event.button !== PRIMARY_MOUSE_BUTTON ||
-      !this.editable ||
-      event.defaultPrevented
-    ) {
+    if (event.button !== PRIMARY_MOUSE_BUTTON || !this.editable || event.defaultPrevented) {
       return;
     }
 
@@ -596,8 +583,7 @@ export default class TableView extends HTMLElement {
       target.parentElement
     ) {
       event.stopPropagation();
-      const index =
-        Array.prototype.indexOf.call(target.parentElement.children, target) - 1;
+      const index = Array.prototype.indexOf.call(target.parentElement.children, target) - 1;
       const column = this.visibleColumns[index];
       if (column) {
         const selection: ColumnSelection = { type: "column", column };
@@ -641,11 +627,7 @@ export default class TableView extends HTMLElement {
     }
 
     // Cell selection
-    if (
-      target.tagName === "TD" &&
-      target.ariaColIndex &&
-      target.parentElement?.ariaRowIndex
-    ) {
+    if (target.tagName === "TD" && target.ariaColIndex && target.parentElement?.ariaRowIndex) {
       event.stopPropagation();
       const anchor = this.getCellInfo(target);
       const selection: RangeSelection = {
@@ -672,11 +654,7 @@ export default class TableView extends HTMLElement {
   }
 
   private handlePointerOver(event: PointerEvent) {
-    if (
-      !this.isDraggingRange ||
-      !this.rangeSelection ||
-      !(event.target instanceof Element)
-    ) {
+    if (!this.isDraggingRange || !this.rangeSelection || !(event.target instanceof Element)) {
       return;
     }
 
@@ -705,8 +683,7 @@ export default class TableView extends HTMLElement {
       return;
     }
 
-    const columnIndex =
-      Array.prototype.indexOf.call(th.parentElement.children, th) - 1;
+    const columnIndex = Array.prototype.indexOf.call(th.parentElement.children, th) - 1;
 
     const column = this.visibleColumns[columnIndex];
     if (!column) {
@@ -795,10 +772,7 @@ export default class TableView extends HTMLElement {
       const { offset } = this.getColumnDropTarget(event.clientX);
       const indicator = this.showDropIndicator(true);
       requestAnimationFrame(() => {
-        indicator.style.setProperty(
-          "--translate-x",
-          HEADER_SIZE + offset + "px",
-        );
+        indicator.style.setProperty("--translate-x", HEADER_SIZE + offset + "px");
       });
     }
 
@@ -806,10 +780,7 @@ export default class TableView extends HTMLElement {
       const { offset } = this.getRowDropTarget(event.clientY);
       const indicator = this.showDropIndicator(false);
       requestAnimationFrame(() => {
-        indicator.style.setProperty(
-          "--translate-y",
-          HEADER_SIZE + offset + "px",
-        );
+        indicator.style.setProperty("--translate-y", HEADER_SIZE + offset + "px");
       });
     }
   }
@@ -876,11 +847,7 @@ export default class TableView extends HTMLElement {
       return;
     }
 
-    if (
-      element.scope === "col" &&
-      element.ariaColIndex &&
-      element.parentElement
-    ) {
+    if (element.scope === "col" && element.ariaColIndex && element.parentElement) {
       const columnIndex = parseInt(element.ariaColIndex, 10);
       const column = this.getColumnAtIndex(columnIndex);
       const { index } = this.getColumnDropTarget(event.clientX);
@@ -899,10 +866,7 @@ export default class TableView extends HTMLElement {
       return;
     }
 
-    if (
-      element.scope === "row" &&
-      element.parentElement instanceof HTMLTableRowElement
-    ) {
+    if (element.scope === "row" && element.parentElement instanceof HTMLTableRowElement) {
       const rowElement = element.parentElement;
       const ariaRowIndex = rowElement.ariaRowIndex;
       if (!ariaRowIndex) {
@@ -1062,9 +1026,7 @@ export default class TableView extends HTMLElement {
   }
 
   private redrawSelection() {
-    for (const selected of Array.from(
-      this.getElementsByClassName("selected"),
-    )) {
+    for (const selected of Array.from(this.getElementsByClassName("selected"))) {
       selected.classList.remove("selected");
     }
 
@@ -1084,28 +1046,13 @@ export default class TableView extends HTMLElement {
   }
 
   private drawRangeSelection(selection: RangeSelection) {
-    const startRow = Math.min(
-      selection.anchor.row.index,
-      selection.focus.row.index,
-    );
-    const endRow = Math.max(
-      selection.anchor.row.index,
-      selection.focus.row.index,
-    );
-    const startColumn = Math.min(
-      selection.anchor.column.index,
-      selection.focus.column.index,
-    );
-    const endColumn = Math.max(
-      selection.anchor.column.index,
-      selection.focus.column.index,
-    );
+    const startRow = Math.min(selection.anchor.row.index, selection.focus.row.index);
+    const endRow = Math.max(selection.anchor.row.index, selection.focus.row.index);
+    const startColumn = Math.min(selection.anchor.column.index, selection.focus.column.index);
+    const endColumn = Math.max(selection.anchor.column.index, selection.focus.column.index);
 
     const startVisibleRow = Math.max(startRow, this.firstVisibleRow);
-    const endVisibleRow = Math.min(
-      endRow,
-      this.firstVisibleRow + this.visibleRows.length - 1,
-    );
+    const endVisibleRow = Math.min(endRow, this.firstVisibleRow + this.visibleRows.length - 1);
     const startVisibleColumn = Math.max(startColumn, this.firstVisibleColumn);
     const endVisibleColumn = Math.min(
       endColumn,
@@ -1196,9 +1143,7 @@ export default class TableView extends HTMLElement {
     this.moveSelectionFocus(
       {
         ...focus,
-        column: this.getColumnAtIndex(
-          Math.min(focus.column.index + 1, this.#columnCount - 1),
-        ),
+        column: this.getColumnAtIndex(Math.min(focus.column.index + 1, this.#columnCount - 1)),
       },
       expandSelection,
     );
@@ -1254,9 +1199,7 @@ export default class TableView extends HTMLElement {
     this.moveSelectionFocus(
       {
         ...focus,
-        row: this.getRowAtIndex(
-          Math.min(focus.row.index + 1, this.#rowCount - 1),
-        ),
+        row: this.getRowAtIndex(Math.min(focus.row.index + 1, this.#rowCount - 1)),
       },
       expandSelection,
     );
@@ -1341,9 +1284,7 @@ export default class TableView extends HTMLElement {
     input.remove();
 
     if (titleChanged) {
-      this.dispatchEvent(
-        new TableEvent("updatetablecolumn", { column, title: newTitle }),
-      );
+      this.dispatchEvent(new TableEvent("updatetablecolumn", { column, title: newTitle }));
     }
   }
 
@@ -1549,10 +1490,7 @@ export default class TableView extends HTMLElement {
 
     const referenceCells = reference?.cells;
     this.visibleRows.forEach((row, index) => {
-      row.element.insertBefore(
-        this.getCell(row, column),
-        referenceCells?.[index] ?? null,
-      );
+      row.element.insertBefore(this.getCell(row, column), referenceCells?.[index] ?? null);
     });
 
     this.visibleColumns.splice(position, 0, column);
@@ -1588,10 +1526,7 @@ export default class TableView extends HTMLElement {
   }
 
   private fillTop() {
-    while (
-      this.firstVisibleRow > 0 &&
-      this.scrollTop - this.translateY < this.verticalBufferSize
-    ) {
+    while (this.firstVisibleRow > 0 && this.scrollTop - this.translateY < this.verticalBufferSize) {
       const index = this.firstVisibleRow - 1;
       const { id, height, style } = this.getRow(index);
       this.insertRow(0, index, height, id, style);
@@ -1606,8 +1541,7 @@ export default class TableView extends HTMLElement {
   private fillBottom() {
     while (
       this.firstVisibleRow + this.visibleRows.length < this.#rowCount &&
-      this.translateY - this.scrollTop + this.contentHeight - this.height <
-        this.verticalBufferSize
+      this.translateY - this.scrollTop + this.contentHeight - this.height < this.verticalBufferSize
     ) {
       const index = this.firstVisibleRow + this.visibleRows.length;
       const { id, height, style } = this.getRow(index);
@@ -1634,10 +1568,8 @@ export default class TableView extends HTMLElement {
 
   private fillRight() {
     while (
-      this.firstVisibleColumn + this.visibleColumns.length <
-        this.#columnCount &&
-      this.translateX - this.scrollLeft + this.contentWidth - this.width <
-        this.horizontalBufferSize
+      this.firstVisibleColumn + this.visibleColumns.length < this.#columnCount &&
+      this.translateX - this.scrollLeft + this.contentWidth - this.width < this.horizontalBufferSize
     ) {
       const index = this.firstVisibleColumn + this.visibleColumns.length;
       const properties = this.getColumn(index);
@@ -1649,10 +1581,7 @@ export default class TableView extends HTMLElement {
   private drainTop() {
     let row = this.visibleRows[0];
 
-    while (
-      row &&
-      this.scrollTop - this.translateY - row.height > this.verticalBufferSize
-    ) {
+    while (row && this.scrollTop - this.translateY - row.height > this.verticalBufferSize) {
       this.recycleRow(row.element);
       this.visibleRows.shift();
       this.firstVisibleRow++;
@@ -1669,10 +1598,7 @@ export default class TableView extends HTMLElement {
     const bottom = this.scrollTop - this.translateY + this.height;
     let row = this.visibleRows.at(-1);
 
-    while (
-      row &&
-      this.contentHeight - bottom - row.height > this.verticalBufferSize
-    ) {
+    while (row && this.contentHeight - bottom - row.height > this.verticalBufferSize) {
       this.recycleRow(row.element);
       this.visibleRows.pop();
       this.contentHeight -= row.height;
@@ -1689,11 +1615,7 @@ export default class TableView extends HTMLElement {
     const rows = this.tableBody.rows;
     let column = this.visibleColumns[0];
 
-    while (
-      column &&
-      this.scrollLeft - this.translateX - column.width >
-        this.horizontalBufferSize
-    ) {
+    while (column && this.scrollLeft - this.translateX - column.width > this.horizontalBufferSize) {
       column.element.remove();
       column.header?.remove();
 
@@ -1724,10 +1646,7 @@ export default class TableView extends HTMLElement {
     const right = this.scrollLeft - this.translateX + this.width;
     let column = this.visibleColumns.at(-1);
 
-    while (
-      column &&
-      this.contentWidth - right - column.width > this.horizontalBufferSize
-    ) {
+    while (column && this.contentWidth - right - column.width > this.horizontalBufferSize) {
       column.element.remove();
       column.header?.remove();
 
@@ -1802,13 +1721,7 @@ export default class TableView extends HTMLElement {
     if (position > this.visibleRows.length) {
       return; // below the rendered window
     }
-    this.insertRow(
-      position,
-      index,
-      item.height.value,
-      item.id,
-      item.style?.value,
-    );
+    this.insertRow(position, index, item.height.value, item.id, item.style?.value);
     this.contentHeight += item.height.value;
   }
 
@@ -1824,11 +1737,7 @@ export default class TableView extends HTMLElement {
       this.recycleRow(element); // moved below the window
       return;
     }
-    moveBefore(
-      this.tableBody!,
-      element,
-      this.visibleRows[position]?.element ?? null,
-    );
+    moveBefore(this.tableBody!, element, this.visibleRows[position]?.element ?? null);
     this.visibleRows.splice(
       position,
       0,
@@ -1852,9 +1761,7 @@ export default class TableView extends HTMLElement {
       detach: (item, index) => this.detachColumn(item, index),
       insert: (item, index) => this.addColumn(item, index),
       attach: (item, index, column) =>
-        column
-          ? this.moveColumn(item, index, column)
-          : this.addColumn(item, index),
+        column ? this.moveColumn(item, index, column) : this.addColumn(item, index),
     });
     this.reindexColumns();
     this.pruneSelection(new Set(change.removed.map((entry) => entry.item.id)));
@@ -1955,22 +1862,6 @@ export default class TableView extends HTMLElement {
     if (removedIds.size === 0 || this.selection.size === 0) {
       return;
     }
-    const referencedIds = (selection: Selection) => {
-      switch (selection.type) {
-        case "row":
-          return [selection.row.id];
-        case "column":
-          return [selection.column.id];
-        case "range":
-          return [
-            selection.anchor.row.id,
-            selection.anchor.column.id,
-            selection.focus.row.id,
-            selection.focus.column.id,
-          ];
-      }
-    };
-
     let changed = false;
     for (const selection of this.selection) {
       if (referencedIds(selection).some((id) => !!id && removedIds.has(id))) {
@@ -2008,9 +1899,7 @@ export default class TableView extends HTMLElement {
 
     const width = this.getColumnSpan(0, this.#columnCount);
     const averageRowHeight =
-      this.visibleRows.length > 0
-        ? this.contentHeight / this.visibleRows.length
-        : 0;
+      this.visibleRows.length > 0 ? this.contentHeight / this.visibleRows.length : 0;
     const height = this.#rowCount * averageRowHeight + this.footerHeight;
 
     this.scrollContainer.style.setProperty("--scroll-width", width + "px");
@@ -2094,9 +1983,7 @@ export default class TableView extends HTMLElement {
   }
 
   appendRow() {
-    this.dispatchEvent(
-      new TableEvent("appendtablerow", { bubbles: true, cancelable: false }),
-    );
+    this.dispatchEvent(new TableEvent("appendtablerow", { bubbles: true, cancelable: false }));
   }
 
   private createResizeHandle() {
@@ -2128,21 +2015,13 @@ export default class TableView extends HTMLElement {
     const headerRow = this.tableHead.rows[0];
     if (headerRow) {
       for (let i = fromIndex + 1; i < headerRow.cells.length; i++) {
-        headerRow.cells[i]!.ariaColIndex = (
-          this.firstVisibleColumn +
-          i -
-          1
-        ).toString();
+        headerRow.cells[i]!.ariaColIndex = (this.firstVisibleColumn + i - 1).toString();
       }
     }
 
     for (const row of this.tableBody.rows) {
       for (let i = fromIndex + 1; i < row.cells.length; i++) {
-        row.cells[i]!.ariaColIndex = (
-          this.firstVisibleColumn +
-          i -
-          1
-        ).toString();
+        row.cells[i]!.ariaColIndex = (this.firstVisibleColumn + i - 1).toString();
       }
     }
   }
@@ -2156,16 +2035,14 @@ export default class TableView extends HTMLElement {
   setColumnBackground(id: string, background: Fill | null) {
     const column = this.visibleColumns.find((c) => c.id === id);
     if (column) {
-      column.element.style.background =
-        getBackgroundStyle(background)?.background ?? "";
+      column.element.style.background = getBackgroundStyle(background)?.background ?? "";
     }
   }
 
   setRowBackground(id: string, background: Fill | null) {
     const row = this.visibleRows.find((r) => r.id === id);
     if (row) {
-      row.element.style.background =
-        getBackgroundStyle(background)?.background ?? "";
+      row.element.style.background = getBackgroundStyle(background)?.background ?? "";
     }
   }
 }

@@ -5,11 +5,7 @@ export type ThemeVariantProps<T> = {
   registry: ThemeRegistry<T>;
 } & T;
 
-export default function ThemeVariant<T>({
-  theme,
-  registry,
-  ...props
-}: ThemeVariantProps<T>) {
+export default function ThemeVariant<T>({ theme, registry, ...props }: ThemeVariantProps<T>) {
   const Component = registry[theme];
   if (!Component) {
     return null;

@@ -1,15 +1,7 @@
 import { handleError } from "@/utils/errors";
-import {
-  getSnapPoints,
-  findSnapPoint,
-  type SnapPoint,
-  type SnapPoints,
-} from "@/utils/snap";
+import { getSnapPoints, findSnapPoint, type SnapPoint, type SnapPoints } from "@/utils/snap";
 import { moveBefore } from "@/utils/dom";
-import {
-  createDragPlaceholder,
-  getDragPosition,
-} from "@/utils/drag-placeholder";
+import { createDragPlaceholder, getDragPosition } from "@/utils/drag-placeholder";
 import { ASPECT_RATIOS } from "@/constants/size";
 import type Page from "@/models/Page";
 import type { DragDropEvent } from "@/utils/drag";
@@ -144,20 +136,13 @@ export default class LayoutEditor {
     }
 
     const style = getComputedStyle(this.grid);
-    this.gridColumnWidth = parseFloat(
-      style.getPropertyValue("--grid-column-width"),
-    );
-    this.gridRowMinHeight = parseFloat(
-      style.getPropertyValue("--grid-row-height"),
-    );
+    this.gridColumnWidth = parseFloat(style.getPropertyValue("--grid-column-width"));
+    this.gridRowMinHeight = parseFloat(style.getPropertyValue("--grid-row-height"));
 
     if (this.layoutType === "GRID") {
-      this.gridColumnGap =
-        style.columnGap === "normal" ? 0 : parseFloat(style.columnGap);
+      this.gridColumnGap = style.columnGap === "normal" ? 0 : parseFloat(style.columnGap);
       this.gridColumns =
-        style.gridTemplateColumns === "none"
-          ? 4
-          : style.gridTemplateColumns.split(" ").length;
+        style.gridTemplateColumns === "none" ? 4 : style.gridTemplateColumns.split(" ").length;
     }
 
     if (this.dragPlaceholder) {
@@ -165,19 +150,13 @@ export default class LayoutEditor {
     }
 
     this.gridRect = this.grid.getBoundingClientRect();
-    this.scale =
-      this.grid.offsetWidth > 0
-        ? this.gridRect.width / this.grid.offsetWidth
-        : 1;
+    this.scale = this.grid.offsetWidth > 0 ? this.gridRect.width / this.grid.offsetWidth : 1;
 
     if (this.snap) {
-      this.snapPoints = getSnapPoints(
-        this.element.getElementsByTagName("page-item"),
-        {
-          x: this.gridRect.x,
-          y: this.gridRect.y,
-        },
-      );
+      this.snapPoints = getSnapPoints(this.element.getElementsByTagName("page-item"), {
+        x: this.gridRect.x,
+        y: this.gridRect.y,
+      });
     }
   }
 
@@ -232,15 +211,12 @@ export default class LayoutEditor {
 
     const affectsX = direction !== "n" && direction !== "s";
     const affectsY = direction !== "e" && direction !== "w";
-    const movesLeft =
-      direction === "nw" || direction === "w" || direction === "sw";
-    const movesTop =
-      direction === "nw" || direction === "n" || direction === "ne";
+    const movesLeft = direction === "nw" || direction === "w" || direction === "sw";
+    const movesTop = direction === "nw" || direction === "n" || direction === "ne";
 
     if (affectsX) {
       const snappedX =
-        this.snapEdge(this.snapPoints.x, clientX - this.gridRect.x, id) +
-        this.gridRect.x;
+        this.snapEdge(this.snapPoints.x, clientX - this.gridRect.x, id) + this.gridRect.x;
       if (movesLeft) {
         rect.width = rect.right - snappedX;
         rect.x = snappedX;
@@ -251,8 +227,7 @@ export default class LayoutEditor {
 
     if (affectsY) {
       const snappedY =
-        this.snapEdge(this.snapPoints.y, clientY - this.gridRect.y, id) +
-        this.gridRect.y;
+        this.snapEdge(this.snapPoints.y, clientY - this.gridRect.y, id) + this.gridRect.y;
       if (movesTop) {
         rect.height = rect.bottom - snappedY;
         rect.y = snappedY;
@@ -280,14 +255,8 @@ export default class LayoutEditor {
       this.y = y;
 
       requestAnimationFrame(() => {
-        this.dragPlaceholder?.style.setProperty(
-          "--placeholder-x",
-          x.toString(),
-        );
-        this.dragPlaceholder?.style.setProperty(
-          "--placeholder-y",
-          y.toString(),
-        );
+        this.dragPlaceholder?.style.setProperty("--placeholder-x", x.toString());
+        this.dragPlaceholder?.style.setProperty("--placeholder-y", y.toString());
         this.updateLayoutInfo();
       });
     }
@@ -305,18 +274,13 @@ export default class LayoutEditor {
           ? "grid"
           : "vertical";
 
-    const position = getDragPosition(
-      this.element,
-      event.clientX,
-      event.clientY,
-      direction,
-      (el) => this.isElementOrdered(el),
+    const position = getDragPosition(this.element, event.clientX, event.clientY, direction, (el) =>
+      this.isElementOrdered(el),
     );
 
     if (position) {
       const { next } = position;
-      this.beforeId =
-        next instanceof HTMLElement ? next.dataset.id || next.id : null;
+      this.beforeId = next instanceof HTMLElement ? next.dataset.id || next.id : null;
       moveBefore(this.element, this.dragPlaceholder, next);
     }
   }
@@ -473,9 +437,7 @@ export default class LayoutEditor {
   }
 
   private isElementOrdered(element: Element) {
-    return (
-      element !== this.dragPlaceholder && !element.matches(":popover-open")
-    );
+    return element !== this.dragPlaceholder && !element.matches(":popover-open");
   }
 
   // Resize
@@ -493,12 +455,7 @@ export default class LayoutEditor {
 
     if (this.layoutType === "VERTICAL") {
       const cw = this.page.width.value;
-      this.widthSnapValues = [
-        cw,
-        Math.round((cw * 2) / 3),
-        Math.round(cw / 2),
-        Math.round(cw / 3),
-      ];
+      this.widthSnapValues = [cw, Math.round((cw * 2) / 3), Math.round(cw / 2), Math.round(cw / 3)];
     }
   }
 
@@ -521,10 +478,7 @@ export default class LayoutEditor {
       this.resizing.x.value = Math.max(0, this.pixelToPercentX(offsetX));
       this.resizing.y.value = Math.max(0, this.pixelToPercentY(offsetY));
       this.resizing.width.value = Math.max(this.pixelToPercentX(rect.width), 1);
-      this.resizing.height.value = Math.max(
-        this.pixelToPercentY(rect.height),
-        1,
-      );
+      this.resizing.height.value = Math.max(this.pixelToPercentY(rect.height), 1);
     } else if (this.layoutType === "GRID") {
       const columns = this.gridColumns;
       const gap = this.gridColumnGap;
@@ -543,9 +497,7 @@ export default class LayoutEditor {
         1,
       );
 
-      const snapped = this.widthSnapValues.find(
-        (v) => Math.abs(width - v) <= 1,
-      );
+      const snapped = this.widthSnapValues.find((v) => Math.abs(width - v) <= 1);
       if (snapped) {
         width = snapped;
       }
@@ -566,8 +518,7 @@ export default class LayoutEditor {
             1,
           );
 
-      this.resizing.width.value =
-        width === this.page.width.value ? null : width;
+      this.resizing.width.value = width === this.page.width.value ? null : width;
       this.resizing.height.value = height;
     }
   }
